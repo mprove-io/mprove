@@ -93,7 +93,7 @@ test('1', async t => {
         projectId: projectId,
         isRepoProd: false,
         branchId: common.BRANCH_MASTER,
-        dashboardId: dashboardId,
+        newDashboardId: dashboardId,
         dashboardFileText: `dashboard: ${dashboardId}
 title: 'd1'
 `

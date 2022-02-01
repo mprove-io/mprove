@@ -46,12 +46,15 @@ export class ModelField {
   @IsString()
   groupDescription?: string;
 
+  @IsOptional()
   @IsString()
-  formatNumber: string;
+  formatNumber?: string;
 
+  @IsOptional()
   @IsString()
-  currencyPrefix: string;
+  currencyPrefix?: string;
 
+  @IsOptional()
   @IsString()
-  currencySuffix: string;
+  currencySuffix?: string;
 }

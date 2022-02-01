@@ -41,7 +41,10 @@ export class CreateVizController {
       isRepoProd,
       branchId,
       vizId,
-      vizFileText
+      reportTitle,
+      accessRoles,
+      accessUsers,
+      mconfig
     } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
@@ -75,6 +78,30 @@ export class CreateVizController {
         message: apiToBackend.ErEnum.BACKEND_RESTRICTED_PROJECT
       });
     }
+
+    let rep = common.prepareReport({
+      isForDashboard: false,
+      mconfig: mconfig
+    });
+
+    rep.title = reportTitle;
+
+    let vizFileText = common.toYaml({
+      viz: vizId,
+      // group:
+      //   common.isDefined(group) && group.trim().length > 0
+      //     ? group.trim()
+      //     : undefined,
+      access_roles:
+        common.isDefined(accessRoles) && accessRoles.trim().length > 0
+          ? accessRoles.split(',').map(x => x.trim())
+          : undefined,
+      access_users:
+        common.isDefined(accessUsers) && accessUsers.trim().length > 0
+          ? accessUsers.split(',').map(x => x.trim())
+          : undefined,
+      reports: [rep]
+    });
 
     let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
       info: {

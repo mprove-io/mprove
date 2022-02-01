@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { makeDashboardFileText } from '~front/app/functions/make-dashboard-file-text';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
@@ -31,10 +30,6 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
   titleForm: FormGroup = this.fb.group({
     title: [undefined, [Validators.required, Validators.maxLength(255)]]
-  });
-
-  groupForm: FormGroup = this.fb.group({
-    group: [undefined, [Validators.maxLength(255)]]
   });
 
   rolesForm: FormGroup = this.fb.group({
@@ -144,21 +139,18 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   save() {
     if (
       this.titleForm.controls['title'].valid &&
-      this.groupForm.controls['group'].valid &&
       this.rolesForm.controls['roles'].valid &&
       this.usersForm.controls['users'].valid
     ) {
       this.ref.close();
 
       let newTitle = this.titleForm.controls['title'].value;
-      let group = this.groupForm.controls['group'].value;
       let roles = this.rolesForm.controls['roles'].value;
       let users = this.usersForm.controls['users'].value;
 
       if (this.saveAs === DashboardSaveAsEnum.NEW_DASHBOARD) {
         this.saveAsNewDashboard({
           newTitle: newTitle,
-          group: group,
           roles: roles,
           users: users
         });
@@ -167,7 +159,6 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       ) {
         this.saveAsExistingDashboard({
           newTitle: newTitle,
-          group: group,
           roles: roles,
           users: users
         });
@@ -183,29 +174,24 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     this.saveAs = DashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD;
   }
 
-  saveAsNewDashboard(item: {
-    newTitle: string;
-    group: string;
-    roles: string;
-    users: string;
-  }) {
-    let { newTitle, group, roles, users } = item;
-
-    let dashboardFileText = makeDashboardFileText({
-      dashboard: this.dashboard,
-      newDashboardId: this.newDashboardId,
-      newTitle: newTitle,
-      group: group,
-      roles: roles,
-      users: users
-    });
+  saveAsNewDashboard(item: { newTitle: string; roles: string; users: string }) {
+    let { newTitle, roles, users } = item;
 
     let payload: apiToBackend.ToBackendCreateDashboardRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       isRepoProd: this.nav.isRepoProd,
-      dashboardId: this.newDashboardId,
-      dashboardFileText: dashboardFileText
+      newDashboardId: this.newDashboardId,
+      fromDashboardId: this.dashboard.dashboardId,
+      accessRoles: roles,
+      accessUsers: users,
+      dashboardTitle: newTitle,
+      reportsGrid: this.dashboard.reports.map(x => {
+        let z = common.makeCopy(x);
+        delete z.mconfig;
+        delete z.query;
+        return z;
+      })
     };
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -230,27 +216,25 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
   saveAsExistingDashboard(item: {
     newTitle: string;
-    group: string;
     roles: string;
     users: string;
   }) {
-    let { newTitle, group, roles, users } = item;
-
-    let dashboardFileText = makeDashboardFileText({
-      dashboard: this.dashboard,
-      newDashboardId: this.selectedDashboardId,
-      newTitle: newTitle,
-      group: group,
-      roles: roles,
-      users: users
-    });
+    let { newTitle, roles, users } = item;
 
     let payload: apiToBackend.ToBackendModifyDashboardRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       isRepoProd: this.nav.isRepoProd,
       dashboardId: this.selectedDashboardId,
-      dashboardFileText: dashboardFileText
+      accessRoles: roles,
+      accessUsers: users,
+      dashboardTitle: newTitle,
+      reportsGrid: this.dashboard.reports.map(x => {
+        let z = common.makeCopy(x);
+        delete z.mconfig;
+        delete z.query;
+        return z;
+      })
     };
 
     let apiService: ApiService = this.ref.data.apiService;

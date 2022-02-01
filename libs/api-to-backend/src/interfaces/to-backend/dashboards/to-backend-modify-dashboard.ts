@@ -1,5 +1,10 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
@@ -16,8 +21,39 @@ export class ToBackendModifyDashboardRequestPayload {
   @IsString()
   dashboardId: string;
 
+  // for add or replace report
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => common.ReportX)
+  newReport?: common.ReportX;
+
+  @IsOptional()
+  @IsBoolean()
+  isReplaceReport?: boolean;
+
+  @IsOptional()
   @IsString()
-  dashboardFileText: string;
+  selectedReportTitle?: string;
+
+  // for dashboard
+
+  @IsOptional()
+  @IsString()
+  dashboardTitle?: string;
+
+  @IsOptional()
+  @IsString()
+  accessRoles?: string;
+
+  @IsOptional()
+  @IsString()
+  accessUsers?: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => common.ReportX)
+  reportsGrid?: common.ReportX[];
 }
 
 export class ToBackendModifyDashboardRequest extends ToBackendRequest {

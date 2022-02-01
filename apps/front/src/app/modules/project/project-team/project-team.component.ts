@@ -64,7 +64,7 @@ export class ProjectTeamComponent implements OnInit {
           })
         })
       );
-      console.log(this.members);
+      // console.log(this.members);
       this.cd.detectChanges();
     })
   );

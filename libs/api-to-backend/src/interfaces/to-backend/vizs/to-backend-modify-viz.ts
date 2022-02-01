@@ -17,7 +17,17 @@ export class ToBackendModifyVizRequestPayload {
   vizId: string;
 
   @IsString()
-  vizFileText: string;
+  reportTitle: string;
+
+  @IsString()
+  accessRoles: string;
+
+  @IsString()
+  accessUsers: string;
+
+  @ValidateNested()
+  @Type(() => common.MconfigX)
+  mconfig: common.MconfigX;
 }
 
 export class ToBackendModifyVizRequest extends ToBackendRequest {

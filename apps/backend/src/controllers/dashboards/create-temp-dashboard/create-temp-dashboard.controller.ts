@@ -97,9 +97,7 @@ export class CreateTempDashboardController {
       x.tile.tile_y = `${freshReport.tileY}`;
       x.tile.tile_width = `${freshReport.tileWidth}`;
       x.tile.tile_height = `${freshReport.tileHeight}`;
-      if (common.isDefined(freshReport.listen)) {
-        x.listen = freshReport.listen;
-      }
+      x.listen = common.isDefined(freshReport.listen) ? freshReport.listen : {};
     });
 
     let oldReports: any[] = [];

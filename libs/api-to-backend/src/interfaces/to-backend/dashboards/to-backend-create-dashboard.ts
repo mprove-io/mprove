@@ -1,5 +1,10 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
@@ -13,28 +18,28 @@ export class ToBackendCreateDashboardRequestPayload {
   @IsString()
   branchId: string;
 
+  @IsOptional()
   @IsString()
-  dashboardId: string;
+  fromDashboardId?: string;
 
   @IsString()
-  dashboardFileText: string;
+  newDashboardId: string;
 
-  // @IsOptional()
-  // @IsString()
-  // copyReportsFromDashboardId?: string;
+  @IsString()
+  dashboardTitle: string;
 
-  // @IsString()
-  // title: string;
+  @IsOptional()
+  @IsString()
+  accessRoles?: string;
 
-  // @IsOptional()
-  // @IsString()
-  // gr?: string;
+  @IsOptional()
+  @IsString()
+  accessUsers?: string;
 
-  // @IsString({ each: true })
-  // accessUsers: string[];
-
-  // @IsString({ each: true })
-  // accessRoles: string[];
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => common.ReportX)
+  reportsGrid?: common.ReportX[];
 }
 
 export class ToBackendCreateDashboardRequest extends ToBackendRequest {

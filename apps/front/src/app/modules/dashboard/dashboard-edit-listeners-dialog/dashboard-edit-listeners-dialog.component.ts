@@ -121,7 +121,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
             (x as ReportX2).mconfigListenSwap = swap;
           });
 
-          console.log(this.dashboard.reports);
+          // console.log(this.dashboard.reports);
 
           this.cd.detectChanges();
         })
@@ -176,7 +176,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
     let dashboardService: DashboardService = this.ref.data.dashboardService;
 
     dashboardService.navCreateTempDashboard({
-      dashboard: this.dashboard,
+      reports: this.dashboard.reports,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: this.dashboard.fields

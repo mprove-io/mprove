@@ -1,10 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
-import { prepareReport } from '~front/app/functions/prepare-report';
-import { toYaml } from '~front/app/functions/to-yaml';
-import { UserQuery } from '~front/app/queries/user.query';
+import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-view-blockml-dialog',
@@ -26,21 +22,15 @@ export class ViewBlockmlDialogComponent implements OnInit {
 
   reportYaml: string;
 
-  constructor(
-    public ref: DialogRef,
-    private fb: FormBuilder,
-    private router: Router,
-    private userQuery: UserQuery,
-    private cd: ChangeDetectorRef
-  ) {}
+  constructor(public ref: DialogRef) {}
 
   ngOnInit() {
-    let rep = prepareReport({
+    let rep = common.prepareReport({
       isForDashboard: false,
       mconfig: this.ref.data.mconfig
     });
 
-    this.reportYaml = toYaml({ reports: [rep] });
+    this.reportYaml = common.toYaml({ reports: [rep] });
   }
 
   async onEditorInit(editor: monaco.editor.IStandaloneCodeEditor) {

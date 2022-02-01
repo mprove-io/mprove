@@ -184,9 +184,6 @@ export class MyDialogService {
 
   showChartSaveAs(item: {
     apiService: any;
-    projectId: string;
-    isRepoProd: boolean;
-    branchId: string;
     mconfig: common.MconfigX;
     query: common.Query;
     model: common.Model;

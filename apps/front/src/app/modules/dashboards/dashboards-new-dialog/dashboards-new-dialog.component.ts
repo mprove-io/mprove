@@ -2,7 +2,6 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { makeDashboardFileText } from '~front/app/functions/make-dashboard-file-text';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -20,10 +19,6 @@ export class DashboardsNewDialogComponent {
 
   titleForm: FormGroup = this.fb.group({
     title: [undefined, [Validators.required, Validators.maxLength(255)]]
-  });
-
-  groupForm: FormGroup = this.fb.group({
-    group: [undefined, [Validators.maxLength(255)]]
   });
 
   rolesForm: FormGroup = this.fb.group({
@@ -70,67 +65,34 @@ export class DashboardsNewDialogComponent {
 
     if (
       this.titleForm.controls['title'].valid &&
-      this.groupForm.controls['group'].valid &&
       this.rolesForm.controls['roles'].valid &&
       this.usersForm.controls['users'].valid
     ) {
       this.ref.close();
 
       let newTitle = this.titleForm.controls['title'].value;
-      let group = this.groupForm.controls['group'].value;
       let roles = this.rolesForm.controls['roles'].value;
       let users = this.usersForm.controls['users'].value;
 
       this.createDashboard({
         newTitle: newTitle,
-        group: group,
         roles: roles,
         users: users
       });
     }
   }
 
-  createDashboard(item: {
-    newTitle: string;
-    group: string;
-    roles: string;
-    users: string;
-  }) {
-    let { newTitle, group, roles, users } = item;
-
-    let newDashboard: common.DashboardX = {
-      structId: undefined,
-      dashboardId: this.newDashboardId,
-      filePath: undefined,
-      content: undefined,
-      accessUsers: undefined,
-      accessRoles: undefined,
-      title: undefined,
-      hidden: false,
-      reports: [],
-      author: undefined,
-      canEditOrDeleteDashboard: true,
-      serverTs: undefined,
-      extendedFilters: [],
-      fields: [],
-      temp: false
-    };
-
-    let dashboardFileText = makeDashboardFileText({
-      dashboard: newDashboard,
-      newDashboardId: this.newDashboardId,
-      newTitle: newTitle,
-      group: group,
-      roles: roles,
-      users: users
-    });
+  createDashboard(item: { newTitle: string; roles: string; users: string }) {
+    let { newTitle, roles, users } = item;
 
     let payload: apiToBackend.ToBackendCreateDashboardRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
-      dashboardId: this.newDashboardId,
-      dashboardFileText: dashboardFileText
+      newDashboardId: this.newDashboardId,
+      dashboardTitle: newTitle,
+      accessRoles: roles,
+      accessUsers: users
     };
 
     let apiService: ApiService = this.ref.data.apiService;

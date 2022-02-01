@@ -8,11 +8,8 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { map, take, tap } from 'rxjs/operators';
-import { makeDashboardFileText } from '~front/app/functions/make-dashboard-file-text';
-import { prepareReport } from '~front/app/functions/prepare-report';
+import { take, tap } from 'rxjs/operators';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
-import { toYaml } from '~front/app/functions/to-yaml';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -50,10 +47,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
     }
   );
 
-  groupForm: FormGroup = this.fb.group({
-    group: [undefined, [Validators.maxLength(255)]]
-  });
-
   rolesForm: FormGroup = this.fb.group({
     roles: [undefined, [Validators.maxLength(255)]]
   });
@@ -82,6 +75,14 @@ export class ChartSaveAsDialogComponent implements OnInit {
   selectedReportTitle: string;
 
   dashboards: common.DashboardX[];
+
+  nav: NavState;
+  nav$ = this.navQuery.select().pipe(
+    tap(x => {
+      this.nav = x;
+      this.cd.detectChanges();
+    })
+  );
 
   constructor(
     public ref: DialogRef,
@@ -189,18 +190,15 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
       if (
         this.chartSaveAs === ChartSaveAsEnum.NEW_VIZ &&
-        this.groupForm.controls['group'].valid &&
         this.rolesForm.controls['roles'].valid &&
         this.usersForm.controls['users'].valid
       ) {
         this.ref.close();
-        let group = this.groupForm.controls['group'].value;
         let roles = this.rolesForm.controls['roles'].value;
         let users = this.usersForm.controls['users'].value;
 
         this.saveAsNewViz({
           newTitle: newTitle,
-          group: group,
           roles: roles,
           users: users
         });
@@ -276,44 +274,18 @@ export class ChartSaveAsDialogComponent implements OnInit {
     }
   }
 
-  saveAsNewViz(item: {
-    newTitle: string;
-    group: string;
-    roles: string;
-    users: string;
-  }) {
-    let { newTitle, group, roles, users } = item;
-
-    let rep = prepareReport({
-      isForDashboard: false,
-      mconfig: this.ref.data.mconfig
-    });
-
-    rep.title = newTitle.trim();
-
-    let vizFileText = toYaml({
-      viz: this.vizId,
-      group:
-        common.isDefined(group) && group.trim().length > 0
-          ? group.trim()
-          : undefined,
-      access_roles:
-        common.isDefined(roles) && roles.trim().length > 0
-          ? roles.split(',').map(x => x.trim())
-          : undefined,
-      access_users:
-        common.isDefined(users) && users.trim().length > 0
-          ? users.split(',').map(x => x.trim())
-          : undefined,
-      reports: [rep]
-    });
+  saveAsNewViz(item: { newTitle: string; roles: string; users: string }) {
+    let { newTitle, roles, users } = item;
 
     let payload: apiToBackend.ToBackendCreateVizRequestPayload = {
-      projectId: this.ref.data.projectId,
-      isRepoProd: this.ref.data.isRepoProd,
-      branchId: this.ref.data.branchId,
+      projectId: this.nav.projectId,
+      isRepoProd: this.nav.isRepoProd,
+      branchId: this.nav.branchId,
       vizId: this.vizId,
-      vizFileText: vizFileText
+      reportTitle: newTitle.trim(),
+      accessRoles: roles,
+      accessUsers: users,
+      mconfig: this.ref.data.mconfig
     };
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -339,95 +311,32 @@ export class ChartSaveAsDialogComponent implements OnInit {
   async saveAsReport(item: { newTitle: string }) {
     let { newTitle } = item;
 
-    let nav: NavState;
-    this.navQuery
-      .select()
-      .pipe(
-        tap(x => {
-          nav = x;
-        }),
-        take(1)
-      )
-      .subscribe();
-
-    let payloadGetDashboard: apiToBackend.ToBackendGetDashboardRequestPayload = {
-      projectId: nav.projectId,
-      branchId: nav.branchId,
-      isRepoProd: nav.isRepoProd,
-      dashboardId: this.selectedDashboardId
-    };
-
     let apiService: ApiService = this.ref.data.apiService;
-
-    let dashboard: common.DashboardX = await apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
-        payloadGetDashboard
-      )
-      .pipe(
-        map(
-          (resp: apiToBackend.ToBackendGetDashboardResponse) =>
-            resp.payload.dashboard
-        )
-      )
-      .toPromise();
-
-    let tileY = 0;
-
-    dashboard.reports.forEach(report => {
-      tileY = tileY + report.tileHeight;
-    });
 
     let newReport: common.ReportX = {
       mconfig: this.ref.data.mconfig,
-      query: this.ref.data.query,
       modelId: this.ref.data.mconfig.modelId,
       modelLabel: this.ref.data.model.label,
       mconfigId: this.ref.data.mconfig.mconfigId,
-      listen: undefined,
+      listen: {},
       queryId: this.ref.data.mconfig.queryId,
       hasAccessToModel: this.ref.data.model.hasAccess,
       title: newTitle.trim(),
       tileWidth: common.REPORT_DEFAULT_TILE_WIDTH,
       tileHeight: common.REPORT_DEFAULT_TILE_HEIGHT,
       tileX: common.REPORT_DEFAULT_TILE_X,
-      tileY: tileY
+      tileY: common.REPORT_DEFAULT_TILE_Y // recalculated on backend
     };
 
-    newReport.mconfig.chart.title = newReport.title;
-
-    if (this.reportSaveAs === ReportSaveAsEnum.REPLACE_EXISTING_REPORT) {
-      let oldReportIndex = dashboard.reports.findIndex(
-        x => x.title === this.selectedReportTitle
-      );
-
-      let oldReport = dashboard.reports[oldReportIndex];
-
-      newReport.tileWidth = oldReport.tileWidth;
-      newReport.tileHeight = oldReport.tileHeight;
-      newReport.tileX = oldReport.tileX;
-      newReport.tileY = oldReport.tileY;
-
-      dashboard.reports[oldReportIndex] = newReport;
-    } else {
-      dashboard.reports = [...dashboard.reports, newReport];
-    }
-
-    let dashboardFileText = makeDashboardFileText({
-      dashboard: dashboard,
-      newDashboardId: this.selectedDashboardId,
-      newTitle: dashboard.title,
-      group: dashboard.gr,
-      roles: dashboard.accessRoles.join(', '),
-      users: dashboard.accessUsers.join(', ')
-    });
-
     let payloadModifyDashboard: apiToBackend.ToBackendModifyDashboardRequestPayload = {
-      projectId: this.ref.data.projectId,
-      isRepoProd: this.ref.data.isRepoProd,
-      branchId: this.ref.data.branchId,
+      projectId: this.nav.projectId,
+      isRepoProd: this.nav.isRepoProd,
+      branchId: this.nav.branchId,
       dashboardId: this.selectedDashboardId,
-      dashboardFileText: dashboardFileText
+      selectedReportTitle: this.selectedReportTitle,
+      newReport: newReport,
+      isReplaceReport:
+        this.reportSaveAs === ReportSaveAsEnum.REPLACE_EXISTING_REPORT
     };
 
     apiService

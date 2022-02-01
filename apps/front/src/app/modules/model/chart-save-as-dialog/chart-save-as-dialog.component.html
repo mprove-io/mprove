@@ -213,30 +213,6 @@
     </div>
   </div>
 
-  <!-- <div class="text-base font-semibold mt-5 mb-5">Visualization Info</div> -->
-
-  <!-- <div class="flex flex-row items-start">
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >Group</div
-      >
-    </div>
-
-    <div [formGroup]="groupForm" class="flex flex-col ml-5 items-start">
-      <input spellcheck="false" 
-        data-cy="chartSaveAsDialogGroupInput"
-        class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            groupForm.controls['group'].invalid &&
-            groupForm.controls['group'].touched
-        }"
-        formControlName="group"
-      />
-      <m-validation [control]="groupForm.controls['group']"></m-validation>
-    </div>
-  </div> -->
-
   <div class="flex flex-row h-9 items-start">
     <div class="flex flex-col" *ngIf="chartSaveAs === chartSaveAsEnum.NEW_VIZ">
       <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
@@ -329,3 +305,4 @@
 </div>
 
 <div *ngIf="alias$ | async"></div>
+<div *ngIf="nav$ | async"></div>

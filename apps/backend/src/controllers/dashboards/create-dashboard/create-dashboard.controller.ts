@@ -8,8 +8,10 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { makeDashboardFileText } from '~backend/functions/make-dashboard-file-text';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
+import { DashboardsService } from '~backend/services/dashboards.service';
 import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -22,6 +24,7 @@ export class CreateDashboardController {
     private rabbitService: RabbitService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
+    private dashboardsService: DashboardsService,
     private blockmlService: BlockmlService,
     private dbService: DbService,
     private cs: ConfigService<interfaces.Config>
@@ -38,8 +41,12 @@ export class CreateDashboardController {
       projectId,
       isRepoProd,
       branchId,
-      dashboardId,
-      dashboardFileText
+      newDashboardId,
+      fromDashboardId,
+      dashboardTitle,
+      accessUsers,
+      accessRoles,
+      reportsGrid
     } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
@@ -74,6 +81,66 @@ export class CreateDashboardController {
       });
     }
 
+    let dashboardFileText: string;
+
+    if (common.isDefined(fromDashboardId)) {
+      let existingDashboard = await this.dashboardsService.getDashboardCheckExists(
+        {
+          structId: branch.struct_id,
+          dashboardId: fromDashboardId
+        }
+      );
+
+      let fromDashboard = await this.dashboardsService.getDashboardX({
+        user: user,
+        member: member,
+        dashboard: existingDashboard,
+        branch: branch
+      });
+
+      fromDashboard.reports.forEach(x => {
+        let freshReport = reportsGrid.find(y => x.title === y.title);
+        x.tileX = freshReport.tileX;
+        x.tileY = freshReport.tileY;
+        x.tileWidth = freshReport.tileWidth;
+        x.tileHeight = freshReport.tileHeight;
+      });
+
+      dashboardFileText = makeDashboardFileText({
+        dashboard: fromDashboard,
+        newDashboardId: newDashboardId,
+        newTitle: dashboardTitle,
+        roles: accessRoles,
+        users: accessUsers
+      });
+    } else {
+      let newDashboard: common.DashboardX = {
+        structId: undefined,
+        dashboardId: newDashboardId,
+        filePath: undefined,
+        content: undefined,
+        accessUsers: undefined,
+        accessRoles: undefined,
+        title: undefined,
+        hidden: false,
+        reports: [],
+        author: undefined,
+        canEditOrDeleteDashboard: true,
+        serverTs: undefined,
+        extendedFilters: [],
+        fields: [],
+        temp: false
+      };
+
+      dashboardFileText = makeDashboardFileText({
+        dashboard: newDashboard,
+        newDashboardId: newDashboardId,
+        newTitle: dashboardTitle,
+        roles: accessRoles,
+        users: accessUsers
+      });
+    }
+
     let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateFile,
@@ -85,7 +152,7 @@ export class CreateDashboardController {
         repoId: repoId,
         branch: branchId,
         parentNodeId: `${projectId}/${common.FILES_USERS_FOLDER}/${user.alias}`,
-        fileName: `${dashboardId}.dashboard`,
+        fileName: `${newDashboardId}.dashboard`,
         userAlias: user.alias,
         fileText: dashboardFileText
       }
@@ -117,7 +184,7 @@ export class CreateDashboardController {
       skipDb: true
     });
 
-    let dashboard = dashboards.find(x => x.dashboardId === dashboardId);
+    let dashboard = dashboards.find(x => x.dashboardId === newDashboardId);
 
     let dashboardMconfigIds = dashboard.reports.map(x => x.mconfigId);
     let dashboardMconfigs = mconfigs.filter(

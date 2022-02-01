@@ -656,9 +656,6 @@ export class ModelComponent implements OnInit, OnDestroy {
   saveAs() {
     this.myDialogService.showChartSaveAs({
       apiService: this.apiService,
-      projectId: this.nav.projectId,
-      branchId: this.nav.branchId,
-      isRepoProd: this.nav.isRepoProd,
       mconfig: this.mconfig,
       model: this.model,
       query: this.query

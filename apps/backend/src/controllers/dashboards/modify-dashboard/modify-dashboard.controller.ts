@@ -8,6 +8,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { makeDashboardFileText } from '~backend/functions/make-dashboard-file-text';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { DashboardsService } from '~backend/services/dashboards.service';
@@ -41,7 +42,13 @@ export class ModifyDashboardController {
       isRepoProd,
       branchId,
       dashboardId,
-      dashboardFileText
+      selectedReportTitle,
+      newReport,
+      isReplaceReport,
+      accessUsers,
+      accessRoles,
+      dashboardTitle,
+      reportsGrid
     } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
@@ -93,6 +100,76 @@ export class ModifyDashboardController {
       });
     }
 
+    let dashboard = await this.dashboardsService.getDashboardX({
+      user: user,
+      member: member,
+      dashboard: existingDashboard,
+      branch: branch
+    });
+
+    let dashboardFileText: string;
+
+    if (common.isDefined(newReport)) {
+      newReport.mconfig.chart.title = newReport.title;
+
+      let tileY = 0;
+
+      dashboard.reports.forEach(report => {
+        tileY = tileY + report.tileHeight;
+      });
+
+      newReport.tileY = tileY;
+
+      if (isReplaceReport === true) {
+        let oldReportIndex = dashboard.reports.findIndex(
+          x => x.title === selectedReportTitle
+        );
+
+        let oldReport = dashboard.reports[oldReportIndex];
+
+        newReport.tileWidth = oldReport.tileWidth;
+        newReport.tileHeight = oldReport.tileHeight;
+        newReport.tileX = oldReport.tileX;
+        newReport.tileY = oldReport.tileY;
+
+        dashboard.reports[oldReportIndex] = newReport;
+      } else {
+        dashboard.reports = [...dashboard.reports, newReport];
+      }
+
+      dashboardFileText = makeDashboardFileText({
+        dashboard: dashboard,
+        newDashboardId: dashboard.dashboardId,
+        newTitle: dashboard.title,
+        roles: dashboard.accessRoles.join(', '),
+        users: dashboard.accessUsers.join(', ')
+      });
+    } else {
+      let newReports: common.ReportX[] = [];
+
+      dashboard.reports.forEach(x => {
+        let freshReport = reportsGrid.find(y => x.title === y.title);
+
+        if (common.isDefined(freshReport)) {
+          x.tileX = freshReport.tileX;
+          x.tileY = freshReport.tileY;
+          x.tileWidth = freshReport.tileWidth;
+          x.tileHeight = freshReport.tileHeight;
+          newReports.push(x);
+        }
+      });
+
+      dashboard.reports = newReports;
+
+      dashboardFileText = makeDashboardFileText({
+        dashboard: dashboard,
+        newDashboardId: dashboardId,
+        newTitle: dashboardTitle,
+        roles: accessRoles,
+        users: accessUsers
+      });
+    }
+
     let toDiskSaveFileRequest: apiToDisk.ToDiskSaveFileRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
@@ -136,14 +213,14 @@ export class ModifyDashboardController {
       skipDb: true
     });
 
-    let dashboard = dashboards.find(x => x.dashboardId === dashboardId);
+    let newDashboard = dashboards.find(x => x.dashboardId === dashboardId);
 
-    let dashboardMconfigIds = dashboard.reports.map(x => x.mconfigId);
+    let dashboardMconfigIds = newDashboard.reports.map(x => x.mconfigId);
     let dashboardMconfigs = mconfigs.filter(
       x => dashboardMconfigIds.indexOf(x.mconfigId) > -1
     );
 
-    let dashboardQueryIds = dashboard.reports.map(x => x.queryId);
+    let dashboardQueryIds = newDashboard.reports.map(x => x.queryId);
     let dashboardQueries = queries.filter(
       x => dashboardQueryIds.indexOf(x.queryId) > -1
     );
@@ -159,7 +236,7 @@ export class ModifyDashboardController {
     await this.dbService.writeRecords({
       modify: true,
       records: {
-        dashboards: [wrapper.wrapToEntityDashboard(dashboard)],
+        dashboards: [wrapper.wrapToEntityDashboard(newDashboard)],
         structs: [struct]
       }
     });

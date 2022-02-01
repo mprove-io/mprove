@@ -37,7 +37,7 @@ export class DashboardFiltersComponent {
     ];
 
     this.dashboardService.navCreateTempDashboard({
-      dashboard: this.dashboard,
+      reports: this.dashboard.reports,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: newDashboardFields
@@ -66,7 +66,7 @@ export class DashboardFiltersComponent {
     ];
 
     this.dashboardService.navCreateTempDashboard({
-      dashboard: this.dashboard,
+      reports: this.dashboard.reports,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: newDashboardFields
@@ -87,6 +87,14 @@ export class DashboardFiltersComponent {
         ...this.dashboard.fields.slice(0, fieldIndex),
         ...this.dashboard.fields.slice(fieldIndex + 1)
       ];
+
+      this.dashboard.reports.forEach(report => {
+        Object.keys(report.listen).forEach(key => {
+          if (report.listen[key] === dashboardField.id) {
+            delete report.listen[key];
+          }
+        });
+      });
     } else {
       let newFractions = [
         ...fractions.slice(0, fractionIndex),
@@ -105,7 +113,7 @@ export class DashboardFiltersComponent {
     }
 
     this.dashboardService.navCreateTempDashboard({
-      dashboard: this.dashboard,
+      reports: this.dashboard.reports,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: newDashboardFields

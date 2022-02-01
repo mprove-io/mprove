@@ -27,25 +27,20 @@ export class DashboardService {
   }
 
   navCreateTempDashboard(item: {
-    dashboard: common.DashboardX;
+    reports: common.ReportX[];
     oldDashboardId: string;
     newDashboardId: string;
     newDashboardFields: common.DashboardField[];
   }) {
-    let {
-      dashboard,
-      oldDashboardId,
-      newDashboardId,
-      newDashboardFields
-    } = item;
+    let { reports, oldDashboardId, newDashboardId, newDashboardFields } = item;
 
-    let reports: common.ReportX[] = [];
+    let newReports: common.ReportX[] = [];
 
-    dashboard.reports.forEach(x => {
+    reports.forEach(x => {
       let z: any = common.makeCopy(x);
       delete z.query;
       delete z.mconfig;
-      reports.push(z);
+      newReports.push(z);
     });
 
     let payload: apiToBackend.ToBackendCreateTempDashboardRequestPayload = {
@@ -55,7 +50,7 @@ export class DashboardService {
       oldDashboardId: oldDashboardId,
       newDashboardId: newDashboardId,
       newDashboardFields: newDashboardFields,
-      reports: reports
+      reports: newReports
     };
 
     this.apiService
