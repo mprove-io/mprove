@@ -1,5 +1,10 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
@@ -19,11 +24,13 @@ export class ToBackendModifyVizRequestPayload {
   @IsString()
   reportTitle: string;
 
+  @IsOptional()
   @IsString()
-  accessRoles: string;
+  accessRoles?: string;
 
+  @IsOptional()
   @IsString()
-  accessUsers: string;
+  accessUsers?: string;
 
   @ValidateNested()
   @Type(() => common.MconfigX)

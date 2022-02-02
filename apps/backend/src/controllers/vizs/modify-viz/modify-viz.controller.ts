@@ -8,6 +8,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { makeVizFileText } from '~backend/functions/make-viz-file-text';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { DbService } from '~backend/services/db.service';
@@ -94,28 +95,12 @@ export class ModifyVizController {
       });
     }
 
-    let rep = common.prepareReport({
-      isForDashboard: false,
-      mconfig: mconfig
-    });
-
-    rep.title = reportTitle;
-
-    let vizFileText = common.toYaml({
-      viz: vizId,
-      // group:
-      //   common.isDefined(group) && group.trim().length > 0
-      //     ? group.trim()
-      //     : undefined,
-      access_roles:
-        common.isDefined(accessRoles) && accessRoles.trim().length > 0
-          ? accessRoles.split(',').map(x => x.trim())
-          : undefined,
-      access_users:
-        common.isDefined(accessUsers) && accessUsers.trim().length > 0
-          ? accessUsers.split(',').map(x => x.trim())
-          : undefined,
-      reports: [rep]
+    let vizFileText = makeVizFileText({
+      mconfig: mconfig,
+      reportTitle: reportTitle,
+      roles: accessRoles,
+      users: accessUsers,
+      vizId: vizId
     });
 
     let toDiskSaveFileRequest: apiToDisk.ToDiskSaveFileRequest = {

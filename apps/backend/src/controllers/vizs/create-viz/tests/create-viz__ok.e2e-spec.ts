@@ -21,6 +21,7 @@ let projectId = common.makeId();
 let projectName = testId;
 
 let vizId = common.makeId();
+let newTitle = testId;
 
 let prep: interfaces.Prep;
 
@@ -82,6 +83,30 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
+    let req1: apiToBackend.ToBackendGetDashboardRequest = {
+      info: {
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
+        traceId: traceId,
+        idempotencyKey: testId
+      },
+      payload: {
+        projectId: projectId,
+        isRepoProd: false,
+        branchId: common.BRANCH_MASTER,
+        dashboardId: 'ec_d4'
+      }
+    };
+
+    let resp1 = await helper.sendToBackend<apiToBackend.ToBackendGetDashboardResponse>(
+      {
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: req1
+      }
+    );
+
+    let newMconfig = resp1.payload.dashboard.reports[0].mconfig;
+
     let req: apiToBackend.ToBackendCreateVizRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateViz,
@@ -93,19 +118,8 @@ test('1', async t => {
         isRepoProd: false,
         branchId: common.BRANCH_MASTER,
         vizId: vizId,
-        vizFileText: `viz: ${vizId}
-reports:
-- title: Average sale price by category
-  model: ec_m1
-  select:
-  - f.category
-  - a.average_sale_price_int
-  sorts: a.average_sale_price_int desc  
-  type: table
-  tile:
-    tile_width: '4'
-    tile_height: '500'
-`
+        mconfig: newMconfig,
+        reportTitle: newTitle
       }
     };
 
