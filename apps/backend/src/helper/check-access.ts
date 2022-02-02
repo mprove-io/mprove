@@ -6,11 +6,13 @@ export function checkAccess(item: {
   userAlias: string;
   member: MemberEntity;
   vmd: entities.VizEntity | entities.ModelEntity | entities.DashboardEntity;
-  checkExplorer?: boolean;
 }): boolean {
-  let { userAlias, member, vmd, checkExplorer } = item;
+  let { userAlias, member, vmd } = item;
 
-  if (checkExplorer === true && member.is_explorer === common.BoolEnum.FALSE) {
+  if (
+    common.isDefined((vmd as entities.ModelEntity).connection_id) && // only models have connection_id
+    member.is_explorer === common.BoolEnum.FALSE
+  ) {
     return false;
   }
 

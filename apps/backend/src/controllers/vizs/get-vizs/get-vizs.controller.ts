@@ -75,8 +75,7 @@ export class GetVizsController {
               hasAccess: helper.checkAccess({
                 userAlias: user.alias,
                 member: member,
-                vmd: model,
-                checkExplorer: true
+                vmd: model
               })
             })
           ),

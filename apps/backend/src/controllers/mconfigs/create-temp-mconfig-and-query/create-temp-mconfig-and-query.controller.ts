@@ -74,8 +74,7 @@ export class CreateTempMconfigAndQueryController {
     let isAccessGranted = helper.checkAccess({
       userAlias: user.alias,
       member: member,
-      vmd: model,
-      checkExplorer: true
+      vmd: model
     });
 
     if (isAccessGranted === false) {

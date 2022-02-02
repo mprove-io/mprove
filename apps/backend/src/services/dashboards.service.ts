@@ -44,7 +44,7 @@ export class DashboardsService {
     }
   }
 
-  async getDashboardX(item: {
+  async getDashboardXCheckAccess(item: {
     dashboard: entities.DashboardEntity;
     member: entities.MemberEntity;
     user: entities.UserEntity;
@@ -90,8 +90,7 @@ export class DashboardsService {
         hasAccess: helper.checkAccess({
           userAlias: user.alias,
           member: member,
-          vmd: model,
-          checkExplorer: true
+          vmd: model
         })
       })
     );

@@ -14,6 +14,7 @@ import { BranchesService } from '~backend/services/branches.service';
 import { DashboardsService } from '~backend/services/dashboards.service';
 import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
+import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 
@@ -25,6 +26,7 @@ export class ModifyDashboardController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private blockmlService: BlockmlService,
+    private modelsService: ModelsService,
     private dbService: DbService,
     private dashboardsService: DashboardsService,
     private cs: ConfigService<interfaces.Config>
@@ -100,7 +102,7 @@ export class ModifyDashboardController {
       });
     }
 
-    let dashboard = await this.dashboardsService.getDashboardX({
+    let dashboard = await this.dashboardsService.getDashboardXCheckAccess({
       user: user,
       member: member,
       dashboard: existingDashboard,
@@ -110,6 +112,23 @@ export class ModifyDashboardController {
     let dashboardFileText: string;
 
     if (common.isDefined(newReport)) {
+      let mconfigModel = await this.modelsService.getModelCheckExists({
+        structId: branch.struct_id,
+        modelId: newReport.mconfig.modelId
+      });
+
+      let isAccessGranted = helper.checkAccess({
+        userAlias: user.alias,
+        member: member,
+        vmd: mconfigModel
+      });
+
+      if (isAccessGranted === false) {
+        throw new common.ServerError({
+          message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_MODEL
+        });
+      }
+
       newReport.mconfig.chart.title = newReport.title;
 
       let tileY = 0;

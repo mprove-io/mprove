@@ -91,12 +91,14 @@ export class CreateDashboardController {
         }
       );
 
-      let fromDashboard = await this.dashboardsService.getDashboardX({
-        user: user,
-        member: member,
-        dashboard: existingDashboard,
-        branch: branch
-      });
+      let fromDashboard = await this.dashboardsService.getDashboardXCheckAccess(
+        {
+          user: user,
+          member: member,
+          dashboard: existingDashboard,
+          branch: branch
+        }
+      );
 
       fromDashboard.reports.forEach(x => {
         let freshReport = reportsGrid.find(y => x.title === y.title);
@@ -122,10 +124,10 @@ export class CreateDashboardController {
         accessUsers: undefined,
         accessRoles: undefined,
         title: undefined,
-        hidden: false,
+        hidden: undefined,
         reports: [],
         author: undefined,
-        canEditOrDeleteDashboard: true,
+        canEditOrDeleteDashboard: undefined,
         serverTs: undefined,
         extendedFilters: [],
         fields: [],

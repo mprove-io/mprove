@@ -13,6 +13,7 @@ import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
+import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { VizsService } from '~backend/services/vizs.service';
@@ -25,6 +26,7 @@ export class ModifyVizController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private vizsService: VizsService,
+    private modelsService: ModelsService,
     private blockmlService: BlockmlService,
     private dbService: DbService,
     private cs: ConfigService<interfaces.Config>
@@ -92,6 +94,23 @@ export class ModifyVizController {
       this.vizsService.checkVizPath({
         userAlias: user.alias,
         filePath: existingViz.file_path
+      });
+    }
+
+    let mconfigModel = await this.modelsService.getModelCheckExists({
+      structId: branch.struct_id,
+      modelId: mconfig.modelId
+    });
+
+    let isAccessGranted = helper.checkAccess({
+      userAlias: user.alias,
+      member: member,
+      vmd: mconfigModel
+    });
+
+    if (isAccessGranted === false) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_MODEL
       });
     }
 

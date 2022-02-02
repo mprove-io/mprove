@@ -47,7 +47,7 @@ export class GetDashboardController {
       dashboardId: dashboardId
     });
 
-    let dashboardX = await this.dashboardsService.getDashboardX({
+    let dashboardX = await this.dashboardsService.getDashboardXCheckAccess({
       user: user,
       member: member,
       dashboard: dashboard,
