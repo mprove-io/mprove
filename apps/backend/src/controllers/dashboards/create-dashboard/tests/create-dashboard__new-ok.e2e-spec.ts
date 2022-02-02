@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-modify-dashboard__ok';
+let testId = 'backend-create-dashboard__new-ok';
 
 let traceId = testId;
 
@@ -20,12 +20,14 @@ let testProjectId = 't1';
 let projectId = common.makeId();
 let projectName = testId;
 
-let dashboardId = 'ec_d1';
+let newTitle = testId;
+
+let dashboardId = common.makeId();
 
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendModifyDashboardResponse;
+  let resp: apiToBackend.ToBackendCreateDashboardResponse;
 
   try {
     prep = await prepareTest({
@@ -82,10 +84,10 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendModifyDashboardRequest = {
+    let req: apiToBackend.ToBackendCreateDashboardRequest = {
       info: {
         name:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyDashboard,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDashboard,
         traceId: traceId,
         idempotencyKey: testId
       },
@@ -93,14 +95,12 @@ test('1', async t => {
         projectId: projectId,
         isRepoProd: false,
         branchId: common.BRANCH_MASTER,
-        dashboardId: dashboardId,
-        dashboardFileText: `dashboard: ${dashboardId}
-title: 'd1'
-`
+        newDashboardId: dashboardId,
+        dashboardTitle: newTitle
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendModifyDashboardResponse>(
+    resp = await helper.sendToBackend<apiToBackend.ToBackendCreateDashboardResponse>(
       {
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,

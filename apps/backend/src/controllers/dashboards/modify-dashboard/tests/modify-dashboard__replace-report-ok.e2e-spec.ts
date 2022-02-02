@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-create-dashboard__ok';
+let testId = 'backend-modify-dashboard__replace-report-ok';
 
 let traceId = testId;
 
@@ -20,12 +20,12 @@ let testProjectId = 't1';
 let projectId = common.makeId();
 let projectName = testId;
 
-let dashboardId = common.makeId();
+let dashboardId = 'ec_d2';
 
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendCreateDashboardResponse;
+  let resp: apiToBackend.ToBackendModifyDashboardResponse;
 
   try {
     prep = await prepareTest({
@@ -82,10 +82,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendCreateDashboardRequest = {
+    let req1: apiToBackend.ToBackendGetDashboardRequest = {
       info: {
-        name:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDashboard,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
         traceId: traceId,
         idempotencyKey: testId
       },
@@ -93,14 +92,39 @@ test('1', async t => {
         projectId: projectId,
         isRepoProd: false,
         branchId: common.BRANCH_MASTER,
-        newDashboardId: dashboardId,
-        dashboardFileText: `dashboard: ${dashboardId}
-title: 'd1'
-`
+        dashboardId: dashboardId
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendCreateDashboardResponse>(
+    let resp1 = await helper.sendToBackend<apiToBackend.ToBackendGetDashboardResponse>(
+      {
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: req1
+      }
+    );
+
+    let fromDashboard = resp1.payload.dashboard;
+
+    let req: apiToBackend.ToBackendModifyDashboardRequest = {
+      info: {
+        name:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyDashboard,
+        traceId: traceId,
+        idempotencyKey: testId
+      },
+      payload: {
+        projectId: projectId,
+        isRepoProd: false,
+        branchId: common.BRANCH_MASTER,
+        dashboardId: dashboardId,
+        newReport: fromDashboard.reports[0],
+        isReplaceReport: true,
+        selectedReportTitle: fromDashboard.reports[0].title
+      }
+    };
+
+    resp = await helper.sendToBackend<apiToBackend.ToBackendModifyDashboardResponse>(
       {
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
