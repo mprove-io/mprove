@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-modify-dashboard__replace-report-ok';
+let testId = 'backend-modify-dashboard__save-dashboard-ok';
 
 let traceId = testId;
 
@@ -20,7 +20,10 @@ let testProjectId = 't1';
 let projectId = common.makeId();
 let projectName = testId;
 
-let dashboardId = 'ec_d2';
+let toDashboardId = 'ec_d2';
+let fromDashboardId = 'ec_d2';
+
+let newTitle = testId;
 
 let prep: interfaces.Prep;
 
@@ -92,7 +95,7 @@ test('1', async t => {
         projectId: projectId,
         isRepoProd: false,
         branchId: common.BRANCH_MASTER,
-        dashboardId: dashboardId
+        dashboardId: toDashboardId
       }
     };
 
@@ -117,11 +120,12 @@ test('1', async t => {
         projectId: projectId,
         isRepoProd: false,
         branchId: common.BRANCH_MASTER,
-        toDashboardId: dashboardId,
-        fromDashboardId: dashboardId,
-        newReport: fromDashboard.reports[0],
-        isReplaceReport: true,
-        selectedReportTitle: fromDashboard.reports[0].title
+        toDashboardId: toDashboardId,
+        fromDashboardId: fromDashboardId,
+        dashboardTitle: newTitle,
+        accessRoles: fromDashboard.accessRoles.join(', '),
+        accessUsers: fromDashboard.accessUsers.join(', '),
+        reportsGrid: fromDashboard.reports
       }
     };
 

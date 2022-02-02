@@ -43,7 +43,8 @@ export class ModifyDashboardController {
       projectId,
       isRepoProd,
       branchId,
-      dashboardId,
+      toDashboardId,
+      fromDashboardId,
       selectedReportTitle,
       newReport,
       isReplaceReport,
@@ -85,10 +86,24 @@ export class ModifyDashboardController {
       });
     }
 
-    let existingDashboard = await this.dashboardsService.getDashboardCheckExists(
+    let fromDashboardEntity = await this.dashboardsService.getDashboardCheckExists(
       {
         structId: branch.struct_id,
-        dashboardId: dashboardId
+        dashboardId: fromDashboardId
+      }
+    );
+
+    let fromDashboard = await this.dashboardsService.getDashboardXCheckAccess({
+      user: user,
+      member: member,
+      dashboard: fromDashboardEntity,
+      branch: branch
+    });
+
+    let toDashboardEntity = await this.dashboardsService.getDashboardCheckExists(
+      {
+        structId: branch.struct_id,
+        dashboardId: toDashboardId
       }
     );
 
@@ -98,16 +113,16 @@ export class ModifyDashboardController {
     ) {
       this.dashboardsService.checkDashboardPath({
         userAlias: user.alias,
-        filePath: existingDashboard.file_path
+        filePath: toDashboardEntity.file_path
       });
     }
 
-    let dashboard = await this.dashboardsService.getDashboardXCheckAccess({
-      user: user,
-      member: member,
-      dashboard: existingDashboard,
-      branch: branch
-    });
+    // let toDashboard = await this.dashboardsService.getDashboardXCheckAccess({
+    //   user: user,
+    //   member: member,
+    //   dashboard: toDashboardEntity,
+    //   branch: branch
+    // });
 
     let dashboardFileText: string;
 
@@ -133,56 +148,58 @@ export class ModifyDashboardController {
 
       let tileY = 0;
 
-      dashboard.reports.forEach(report => {
+      fromDashboard.reports.forEach(report => {
         tileY = tileY + report.tileHeight;
       });
 
       newReport.tileY = tileY;
 
       if (isReplaceReport === true) {
-        let oldReportIndex = dashboard.reports.findIndex(
+        let oldReportIndex = fromDashboard.reports.findIndex(
           x => x.title === selectedReportTitle
         );
 
-        let oldReport = dashboard.reports[oldReportIndex];
+        let oldReport = fromDashboard.reports[oldReportIndex];
 
         newReport.tileWidth = oldReport.tileWidth;
         newReport.tileHeight = oldReport.tileHeight;
         newReport.tileX = oldReport.tileX;
         newReport.tileY = oldReport.tileY;
 
-        dashboard.reports[oldReportIndex] = newReport;
+        fromDashboard.reports[oldReportIndex] = newReport;
       } else {
-        dashboard.reports = [...dashboard.reports, newReport];
+        fromDashboard.reports = [...fromDashboard.reports, newReport];
       }
 
       dashboardFileText = makeDashboardFileText({
-        dashboard: dashboard,
-        newDashboardId: dashboard.dashboardId,
-        newTitle: dashboard.title,
-        roles: dashboard.accessRoles.join(', '),
-        users: dashboard.accessUsers.join(', ')
+        dashboard: fromDashboard,
+        newDashboardId: fromDashboard.dashboardId,
+        newTitle: fromDashboard.title,
+        roles: fromDashboard.accessRoles.join(', '),
+        users: fromDashboard.accessUsers.join(', ')
       });
     } else {
-      let newReports: common.ReportX[] = [];
+      // dashboard save as - replace existing
+      let zReports: common.ReportX[] = [];
 
-      dashboard.reports.forEach(x => {
-        let freshReport = reportsGrid.find(y => x.title === y.title);
+      reportsGrid.forEach(freshReport => {
+        let zReport = fromDashboard.reports.find(
+          y => freshReport.title === y.title
+        );
 
-        if (common.isDefined(freshReport)) {
-          x.tileX = freshReport.tileX;
-          x.tileY = freshReport.tileY;
-          x.tileWidth = freshReport.tileWidth;
-          x.tileHeight = freshReport.tileHeight;
-          newReports.push(x);
-        }
+        zReport.tileX = freshReport.tileX;
+        zReport.tileY = freshReport.tileY;
+        zReport.tileWidth = freshReport.tileWidth;
+        zReport.tileHeight = freshReport.tileHeight;
+
+        zReports.push(zReport);
       });
 
-      dashboard.reports = newReports;
+      fromDashboard.reports = zReports;
 
       dashboardFileText = makeDashboardFileText({
-        dashboard: dashboard,
-        newDashboardId: dashboardId,
+        dashboard: fromDashboard,
+        newDashboardId: toDashboardId,
         newTitle: dashboardTitle,
         roles: accessRoles,
         users: accessUsers
@@ -199,7 +216,7 @@ export class ModifyDashboardController {
         projectId: projectId,
         repoId: repoId,
         branch: branchId,
-        fileNodeId: existingDashboard.file_path,
+        fileNodeId: toDashboardEntity.file_path,
         userAlias: user.alias,
         content: dashboardFileText
       }
@@ -232,7 +249,7 @@ export class ModifyDashboardController {
       skipDb: true
     });
 
-    let newDashboard = dashboards.find(x => x.dashboardId === dashboardId);
+    let newDashboard = dashboards.find(x => x.dashboardId === toDashboardId);
 
     let dashboardMconfigIds = newDashboard.reports.map(x => x.mconfigId);
     let dashboardMconfigs = mconfigs.filter(

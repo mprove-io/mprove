@@ -117,7 +117,8 @@ test('1', async t => {
         projectId: projectId,
         isRepoProd: false,
         branchId: common.BRANCH_MASTER,
-        dashboardId: dashboardId,
+        toDashboardId: dashboardId,
+        fromDashboardId: dashboardId,
         newReport: fromDashboard.reports[0],
         isReplaceReport: false
       }

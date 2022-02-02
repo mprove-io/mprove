@@ -84,7 +84,7 @@ export class CreateDashboardController {
     let dashboardFileText: string;
 
     if (common.isDefined(fromDashboardId)) {
-      let existingDashboard = await this.dashboardsService.getDashboardCheckExists(
+      let fromDashboardEntity = await this.dashboardsService.getDashboardCheckExists(
         {
           structId: branch.struct_id,
           dashboardId: fromDashboardId
@@ -95,18 +95,27 @@ export class CreateDashboardController {
         {
           user: user,
           member: member,
-          dashboard: existingDashboard,
+          dashboard: fromDashboardEntity,
           branch: branch
         }
       );
 
-      fromDashboard.reports.forEach(x => {
-        let freshReport = reportsGrid.find(y => x.title === y.title);
-        x.tileX = freshReport.tileX;
-        x.tileY = freshReport.tileY;
-        x.tileWidth = freshReport.tileWidth;
-        x.tileHeight = freshReport.tileHeight;
+      let zReports: common.ReportX[] = [];
+
+      reportsGrid.forEach(freshReport => {
+        let zReport = fromDashboard.reports.find(
+          y => freshReport.title === y.title
+        );
+
+        zReport.tileX = freshReport.tileX;
+        zReport.tileY = freshReport.tileY;
+        zReport.tileWidth = freshReport.tileWidth;
+        zReport.tileHeight = freshReport.tileHeight;
+
+        zReports.push(zReport);
       });
+
+      fromDashboard.reports = zReports;
 
       dashboardFileText = makeDashboardFileText({
         dashboard: fromDashboard,

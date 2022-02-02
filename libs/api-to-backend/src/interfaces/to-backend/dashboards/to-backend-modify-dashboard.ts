@@ -19,7 +19,10 @@ export class ToBackendModifyDashboardRequestPayload {
   branchId: string;
 
   @IsString()
-  dashboardId: string;
+  toDashboardId: string;
+
+  @IsString()
+  fromDashboardId: string;
 
   // for add or replace report
 

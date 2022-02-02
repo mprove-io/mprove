@@ -332,7 +332,8 @@ export class ChartSaveAsDialogComponent implements OnInit {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
-      dashboardId: this.selectedDashboardId,
+      toDashboardId: this.selectedDashboardId,
+      fromDashboardId: this.selectedDashboardId,
       selectedReportTitle: this.selectedReportTitle,
       newReport: newReport,
       isReplaceReport:
