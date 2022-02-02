@@ -36,8 +36,18 @@
           <button
             type="button"
             data-cy="dashboardEditListenButton"
-            class="px-6 h-12 ml-5 text-blue3 border-2 text-base rounded font-medium focus:outline-none"
+            class="px-6 h-12 ml-5 border-2 text-base rounded font-medium focus:outline-none"
             (click)="editListen()"
+            [ngClass]="{
+              'text-blue3 border-2':
+                dashboard?.reports.length > 0 && dashboard?.fields.length > 0,
+              'bg-gray-400  text-white cursor-default':
+                dashboard?.reports.length === 0 ||
+                dashboard?.fields.length === 0
+            }"
+            [disabled]="
+              dashboard?.reports.length === 0 || dashboard?.fields.length === 0
+            "
             >Edit Listeners</button
           >
 
