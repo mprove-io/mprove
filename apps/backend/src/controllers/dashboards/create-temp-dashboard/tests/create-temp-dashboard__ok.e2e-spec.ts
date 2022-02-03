@@ -20,6 +20,8 @@ let testProjectId = 't1';
 let projectId = common.makeId();
 let projectName = testId;
 
+let oldDashboardId = 'ec_d1';
+
 let prep: interfaces.Prep;
 
 test('1', async t => {
@@ -80,6 +82,28 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
+    let req1: apiToBackend.ToBackendGetDashboardRequest = {
+      info: {
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
+        traceId: traceId,
+        idempotencyKey: testId
+      },
+      payload: {
+        projectId: projectId,
+        isRepoProd: false,
+        branchId: common.BRANCH_MASTER,
+        dashboardId: oldDashboardId
+      }
+    };
+
+    let resp1 = await helper.sendToBackend<apiToBackend.ToBackendGetDashboardResponse>(
+      {
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: req1
+      }
+    );
+
     let req: apiToBackend.ToBackendCreateTempDashboardRequest = {
       info: {
         name:
@@ -92,10 +116,10 @@ test('1', async t => {
         projectId: projectId,
         isRepoProd: false,
         branchId: common.BRANCH_MASTER,
-        oldDashboardId: 'ec_d1',
+        oldDashboardId: oldDashboardId,
         newDashboardId: common.makeId(),
-        newDashboardFields: [],
-        reports: []
+        newDashboardFields: resp1.payload.dashboard.fields,
+        reports: resp1.payload.dashboard.reports
       }
     };
 

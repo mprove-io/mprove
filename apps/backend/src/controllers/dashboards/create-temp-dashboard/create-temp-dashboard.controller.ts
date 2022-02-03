@@ -1,20 +1,19 @@
 import { Controller, Post } from '@nestjs/common';
-import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToBlockml } from '~backend/barrels/api-to-blockml';
+import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
-import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { makeDashboardFileText } from '~backend/functions/make-dashboard-file-text';
+import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { DashboardsService } from '~backend/services/dashboards.service';
 import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { StructsService } from '~backend/services/structs.service';
 
 @Controller()
 export class CreateTempDashboardController {
@@ -23,8 +22,7 @@ export class CreateTempDashboardController {
     private rabbitService: RabbitService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private structsService: StructsService,
-    private modelsRepository: repositories.ModelsRepository,
+    private blockmlService: BlockmlService,
     private dashboardsService: DashboardsService,
     private dbService: DbService
   ) {}
@@ -63,102 +61,153 @@ export class CreateTempDashboardController {
       branchId: branchId
     });
 
-    let oldDashboard = await this.dashboardsService.getDashboardCheckExists({
-      structId: branch.struct_id,
-      dashboardId: oldDashboardId
-    });
-
-    let isAccessGranted = helper.checkAccess({
-      userAlias: user.alias,
-      member: member,
-      vmd: oldDashboard
-    });
-
-    if (isAccessGranted === false) {
-      throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_DASHBOARD
-      });
-    }
-
-    let struct = await this.structsService.getStructCheckExists({
-      structId: branch.struct_id
-    });
-
-    //
-
-    oldDashboard.content.reports = oldDashboard.content.reports.filter(
-      (x: any) => reports.findIndex(y => y.title === x.title) > -1
+    let fromDashboardEntity = await this.dashboardsService.getDashboardCheckExists(
+      {
+        structId: branch.struct_id,
+        dashboardId: oldDashboardId
+      }
     );
 
-    oldDashboard.content.reports.forEach((x: any) => {
-      let freshReport = reports.find(y => x.title === y.title);
-      x.tile = {};
-      x.tile.tile_x = `${freshReport.tileX}`;
-      x.tile.tile_y = `${freshReport.tileY}`;
-      x.tile.tile_width = `${freshReport.tileWidth}`;
-      x.tile.tile_height = `${freshReport.tileHeight}`;
-      x.listen = common.isDefined(freshReport.listen) ? freshReport.listen : {};
+    let fromDashboard = await this.dashboardsService.getDashboardXCheckAccess({
+      user: user,
+      member: member,
+      dashboard: fromDashboardEntity,
+      branch: branch
     });
 
-    let oldReports: any[] = [];
+    let zReports: common.ReportX[] = [];
 
-    reports.forEach(z => {
-      let oldReport = oldDashboard.content.reports.find(
-        (y: any) => z.title === y.title
+    reports.forEach(freshReport => {
+      let zReport = fromDashboard.reports.find(
+        y => freshReport.title === y.title
       );
-      oldReports.push(oldReport);
+
+      zReport.tileX = freshReport.tileX;
+      zReport.tileY = freshReport.tileY;
+      zReport.tileWidth = freshReport.tileWidth;
+      zReport.tileHeight = freshReport.tileHeight;
+
+      zReport.listen = freshReport.listen;
+
+      zReports.push(zReport);
     });
 
-    oldDashboard.content.reports = oldReports;
+    fromDashboard.reports = zReports;
+    fromDashboard.fields = newDashboardFields;
 
-    //
+    let dashboardFileText = makeDashboardFileText({
+      dashboard: fromDashboard,
+      newDashboardId: newDashboardId,
+      newTitle: fromDashboard.title,
+      roles: fromDashboard.accessRoles.join(', '),
+      users: fromDashboard.accessUsers.join(', ')
+    });
 
-    let modelIds = oldDashboard.reports.map(x => x.modelId);
-    let models =
-      modelIds.length === 0
-        ? []
-        : await this.modelsRepository.find({
-            struct_id: branch.struct_id,
-            model_id: In(modelIds)
-          });
-
-    let toBlockmlProcessDashboardRequest: apiToBlockml.ToBlockmlProcessDashboardRequest = {
+    let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {
       info: {
-        name:
-          apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlProcessDashboard,
-        traceId: traceId
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
+        traceId: reqValid.info.traceId
       },
       payload: {
         orgId: project.org_id,
         projectId: projectId,
-        structId: branch.struct_id,
-        weekStart: struct.week_start,
-        udfsDict: struct.udfs_dict,
-        modelContents: models.map(x => x.content),
-        dashboardContent: oldDashboard.content,
-        newDashboardId: newDashboardId,
-        newDashboardFields: newDashboardFields
+        repoId: repoId,
+        branch: branchId
       }
     };
 
-    let blockmlProcessDashboardResponse = await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlProcessDashboardResponse>(
+    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
       {
-        routingKey: common.RabbitBlockmlRoutingEnum.ProcessDashboard.toString(),
-        message: toBlockmlProcessDashboardRequest,
+        routingKey: helper.makeRoutingKeyToDisk({
+          orgId: project.org_id,
+          projectId: projectId
+        }),
+        message: getCatalogFilesRequest,
         checkIsOk: true
       }
     );
 
-    let newDashboard = blockmlProcessDashboardResponse.payload.dashboard;
-    let mconfigs = blockmlProcessDashboardResponse.payload.mconfigs;
-    let queries = blockmlProcessDashboardResponse.payload.queries;
+    // add dashboard file
+
+    let fileName = `${newDashboardId}${common.FileExtensionEnum.Dashboard}`;
+
+    let relativePath = `${common.FILES_USERS_FOLDER}/${user.alias}/${fileName}`;
+
+    let fileNodeId = `${projectId}/${relativePath}`;
+
+    let pathString = JSON.stringify(fileNodeId.split('/'));
+
+    let fileId = common.MyRegex.replaceSlashesWithUnderscores(relativePath);
+
+    let tempFile: common.DiskCatalogFile = {
+      projectId: projectId,
+      repoId: repoId,
+      fileId: fileId,
+      pathString: pathString,
+      fileNodeId: fileNodeId,
+      name: fileName,
+      content: dashboardFileText
+    };
+
+    let diskFiles = [
+      tempFile,
+      ...diskResponse.payload.files.filter(x => {
+        let ar = x.name.split('.');
+        let ext = ar[ar.length - 1];
+        let allow =
+          [
+            common.FileExtensionEnum.Viz,
+            common.FileExtensionEnum.Dashboard
+          ].indexOf(`.${ext}` as common.FileExtensionEnum) < 0;
+        return allow;
+      })
+    ];
+
+    let {
+      struct,
+      dashboards,
+      vizs,
+      mconfigs,
+      queries,
+      models
+    } = await this.blockmlService.rebuildStruct({
+      traceId,
+      orgId: project.org_id,
+      projectId,
+      structId: branch.struct_id,
+      diskFiles: diskFiles,
+      skipDb: true
+    });
+
+    let newDashboard = dashboards.find(x => x.dashboardId === newDashboardId);
+
+    if (common.isUndefined(newDashboard)) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_CREATE_TEMP_DASHBOARD_FAIL,
+        data: {
+          structErrors: struct.errors
+        }
+      });
+    }
+
+    newDashboard.temp = true;
+
+    let dashboardMconfigIds = newDashboard.reports.map(x => x.mconfigId);
+    let dashboardMconfigs = mconfigs.filter(
+      x => dashboardMconfigIds.indexOf(x.mconfigId) > -1
+    );
+
+    let dashboardQueryIds = newDashboard.reports.map(x => x.queryId);
+    let dashboardQueries = queries.filter(
+      x => dashboardQueryIds.indexOf(x.queryId) > -1
+    );
 
     await this.dbService.writeRecords({
       modify: false,
       records: {
-        queries: queries.map(x => wrapper.wrapToEntityQuery(x)),
-        mconfigs: mconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
-        dashboards: [wrapper.wrapToEntityDashboard(newDashboard)]
+        dashboards: [wrapper.wrapToEntityDashboard(newDashboard)],
+        mconfigs: dashboardMconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
+        queries: dashboardQueries.map(x => wrapper.wrapToEntityQuery(x))
       }
     });
 

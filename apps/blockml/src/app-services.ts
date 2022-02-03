@@ -3,7 +3,6 @@ import { common } from './barrels/common';
 import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
 import { GenSqlService } from './controllers/gen-sql/gen-sql.service';
-import { ProcessDashboardService } from './controllers/process-dashboard/process-dashboard.service';
 import { ProcessQueryService } from './controllers/process-query/process-query.service';
 import { RebuildStructService } from './controllers/rebuild-struct/rebuild-struct.service';
 import { ConsumerMainService } from './services/consumer-main.service';
@@ -36,40 +35,18 @@ export const appServices = [
     inject: [ConfigService, RabbitService]
   },
   {
-    provide: ProcessDashboardService,
-    useFactory: (
-      cs: ConfigService<interfaces.Config>,
-      rabbitService: RabbitService
-    ) =>
-      helper.isSingleOrMain(cs)
-        ? new ProcessDashboardService(rabbitService, cs)
-        : {},
-    inject: [ConfigService, RabbitService]
-  },
-  {
     provide: ConsumerMainService,
     useFactory: (
       cs: ConfigService<interfaces.Config>,
       structService: RebuildStructService,
-      queryService: ProcessQueryService,
-      dashboardService: ProcessDashboardService
+      queryService: ProcessQueryService
     ) => {
       let result = helper.isSingleOrMain(cs)
-        ? new ConsumerMainService(
-            cs,
-            structService,
-            queryService,
-            dashboardService
-          )
+        ? new ConsumerMainService(cs, structService, queryService)
         : {};
       return result;
     },
-    inject: [
-      ConfigService,
-      RebuildStructService,
-      ProcessQueryService,
-      ProcessDashboardService
-    ]
+    inject: [ConfigService, RebuildStructService, ProcessQueryService]
   },
   {
     provide: ConsumerWorkerService,

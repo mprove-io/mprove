@@ -3,11 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
-import { ProcessDashboardService } from '~blockml/controllers/process-dashboard/process-dashboard.service';
 import { ProcessQueryService } from '~blockml/controllers/process-query/process-query.service';
 import { RebuildStructService } from '~blockml/controllers/rebuild-struct/rebuild-struct.service';
 
-let pathProcessDashboard = common.RabbitBlockmlRoutingEnum.ProcessDashboard.toString();
 let pathProcessQuery = common.RabbitBlockmlRoutingEnum.ProcessQuery.toString();
 let pathRebuildStruct = common.RabbitBlockmlRoutingEnum.RebuildStruct.toString();
 
@@ -16,36 +14,8 @@ export class ConsumerMainService {
   constructor(
     private cs: ConfigService<interfaces.Config>,
     private structService: RebuildStructService,
-    private queryService: ProcessQueryService,
-    private processDashboardService: ProcessDashboardService
+    private queryService: ProcessQueryService
   ) {}
-
-  @RabbitRPC({
-    exchange: common.RabbitExchangesEnum.Blockml.toString(),
-    routingKey: pathProcessDashboard,
-    queue: pathProcessDashboard
-  })
-  async processDashboard(request: any, context: any) {
-    try {
-      let payload = await this.processDashboardService.process(request);
-
-      return common.makeOkResponse({
-        payload,
-        cs: this.cs,
-        body: request,
-        path: pathProcessDashboard,
-        method: common.METHOD_RABBIT
-      });
-    } catch (e) {
-      return common.makeErrorResponse({
-        e,
-        cs: this.cs,
-        body: request,
-        path: pathProcessDashboard,
-        method: common.METHOD_RABBIT
-      });
-    }
-  }
 
   @RabbitRPC({
     exchange: common.RabbitExchangesEnum.Blockml.toString(),

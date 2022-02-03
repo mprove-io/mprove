@@ -140,7 +140,8 @@ export class CreateVizController {
       vizs,
       mconfigs,
       queries,
-      models
+      models,
+      struct
     } = await this.blockmlService.rebuildStruct({
       traceId,
       orgId: project.org_id,
@@ -168,6 +169,13 @@ export class CreateVizController {
         vizs: [wrapper.wrapToEntityViz(viz)],
         mconfigs: [wrapper.wrapToEntityMconfig(vizMconfig)],
         queries: [wrapper.wrapToEntityQuery(vizQuery)]
+      }
+    });
+
+    await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        structs: [struct]
       }
     });
 
