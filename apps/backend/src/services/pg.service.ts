@@ -26,7 +26,8 @@ export class PgService {
       port: connection.postgres_port,
       database: connection.postgres_database,
       user: connection.postgres_user,
-      password: connection.postgres_password
+      password: connection.postgres_password,
+      ssl: connection.is_ssl === common.BoolEnum.TRUE
     };
 
     let postgresQueryJobId = common.makeId();
