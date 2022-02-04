@@ -280,8 +280,7 @@ export class ApiService {
         errorData.onClickFnBindThis = (() => {
           this.navigateService.navigateToFileLine({
             underscoreFileId:
-              errorData.response.body.info.error.originalError.data
-                .underscoreFileId
+              errorData.response.body.info.error.data.underscoreFileId
           });
         }).bind(this);
 

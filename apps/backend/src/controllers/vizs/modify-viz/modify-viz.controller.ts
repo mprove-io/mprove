@@ -9,6 +9,7 @@ import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { makeVizFileText } from '~backend/functions/make-viz-file-text';
+import { VizsRepository } from '~backend/models/store-repositories/_index';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { DbService } from '~backend/services/db.service';
@@ -28,6 +29,7 @@ export class ModifyVizController {
     private vizsService: VizsService,
     private modelsService: ModelsService,
     private blockmlService: BlockmlService,
+    private vizsRepository: VizsRepository,
     private dbService: DbService,
     private cs: ConfigService<interfaces.Config>
   ) {}
@@ -167,7 +169,22 @@ export class ModifyVizController {
 
     let viz = vizs.find(x => x.vizId === vizId);
 
+    await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        vizs: common.isDefined(viz)
+          ? [wrapper.wrapToEntityViz(viz)]
+          : undefined,
+        structs: [struct]
+      }
+    });
+
     if (common.isUndefined(viz)) {
+      await this.vizsRepository.delete({
+        viz_id: vizId,
+        struct_id: branch.struct_id
+      });
+
       let fileIdAr = existingViz.file_path.split('/');
       fileIdAr.shift();
       let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
@@ -189,14 +206,6 @@ export class ModifyVizController {
       records: {
         mconfigs: [wrapper.wrapToEntityMconfig(vizMconfig)],
         queries: [wrapper.wrapToEntityQuery(vizQuery)]
-      }
-    });
-
-    await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        vizs: [wrapper.wrapToEntityViz(viz)],
-        structs: [struct]
       }
     });
 

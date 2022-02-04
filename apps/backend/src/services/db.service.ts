@@ -52,10 +52,12 @@ export class DbService {
     let newServerTs = helper.makeTs();
 
     Object.keys(records).forEach(key => {
-      helper.refreshServerTs(
-        records[key as keyof interfaces.Records] as any,
-        newServerTs
-      );
+      if (common.isDefined(records[key as keyof interfaces.Records])) {
+        helper.refreshServerTs(
+          records[key as keyof interfaces.Records] as any,
+          newServerTs
+        );
+      }
     });
 
     await this.connection.transaction(async manager => {
@@ -188,10 +190,12 @@ export class DbService {
     let newServerTs = helper.makeTs();
 
     Object.keys(records).forEach(key => {
-      helper.refreshServerTs(
-        records[key as keyof interfaces.Records] as any,
-        newServerTs
-      );
+      if (common.isDefined(records[key as keyof interfaces.Records])) {
+        helper.refreshServerTs(
+          records[key as keyof interfaces.Records] as any,
+          newServerTs
+        );
+      }
     });
 
     await this.connection.transaction(async manager => {
@@ -270,11 +274,23 @@ export class DbService {
           .save(branches);
       }
 
-      // structs
+      if (common.isDefined(structs) && structs.length > 0) {
+        await manager
+          .getCustomRepository(repositories.StructsRepository)
+          .save(structs);
+      }
 
-      // models
+      if (common.isDefined(models) && models.length > 0) {
+        await manager
+          .getCustomRepository(repositories.ModelsRepository)
+          .save(models);
+      }
 
-      // mconfigs
+      if (common.isDefined(mconfigs) && mconfigs.length > 0) {
+        await manager
+          .getCustomRepository(repositories.MconfigsRepository)
+          .save(mconfigs);
+      }
 
       if (common.isDefined(dashboards) && dashboards.length > 0) {
         await manager

@@ -104,7 +104,9 @@ export class DashboardsNewDialogComponent {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateDashboardResponse) => {
-          this.navigateService.navigateToDashboard(this.newDashboardId);
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.navigateService.navigateToDashboard(this.newDashboardId);
+          }
         }),
         take(1)
       )

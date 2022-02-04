@@ -188,7 +188,8 @@ export class CreateDashboardController {
       vizs,
       mconfigs,
       queries,
-      models
+      models,
+      struct
     } = await this.blockmlService.rebuildStruct({
       traceId,
       orgId: project.org_id,
@@ -199,6 +200,16 @@ export class CreateDashboardController {
     });
 
     let dashboard = dashboards.find(x => x.dashboardId === newDashboardId);
+
+    // console.log('struct');
+    // console.log(struct);
+
+    await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        structs: [struct]
+      }
+    });
 
     if (common.isUndefined(dashboard)) {
       let fileId = `${parentNodeId}/${fileName}`;

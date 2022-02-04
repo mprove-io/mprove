@@ -8,6 +8,7 @@ import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-edit-viz-info-dialog',
@@ -90,7 +91,9 @@ export class EditVizInfoDialogComponent implements OnInit {
         )
         .pipe(
           tap(async (resp: apiToBackend.ToBackendModifyVizResponse) => {
-            this.navigateService.reloadVizs();
+            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+              this.navigateService.reloadVizs();
+            }
           }),
           take(1)
         )

@@ -156,6 +156,16 @@ export class CreateVizController {
 
     let viz = vizs.find(x => x.vizId === vizId);
 
+    // console.log('struct');
+    // console.log(struct);
+
+    await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        structs: [struct]
+      }
+    });
+
     if (common.isUndefined(viz)) {
       let fileId = `${parentNodeId}/${fileName}`;
       let fileIdAr = fileId.split('/');
@@ -180,13 +190,6 @@ export class CreateVizController {
         vizs: [wrapper.wrapToEntityViz(viz)],
         mconfigs: [wrapper.wrapToEntityMconfig(vizMconfig)],
         queries: [wrapper.wrapToEntityQuery(vizQuery)]
-      }
-    });
-
-    await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        structs: [struct]
       }
     });
 

@@ -9,6 +9,7 @@ import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { makeDashboardFileText } from '~backend/functions/make-dashboard-file-text';
+import { DashboardsRepository } from '~backend/models/store-repositories/_index';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { DashboardsService } from '~backend/services/dashboards.service';
@@ -27,6 +28,7 @@ export class ModifyDashboardController {
     private projectsService: ProjectsService,
     private blockmlService: BlockmlService,
     private modelsService: ModelsService,
+    private dashboardsRepository: DashboardsRepository,
     private dbService: DbService,
     private dashboardsService: DashboardsService,
     private cs: ConfigService<interfaces.Config>
@@ -251,7 +253,22 @@ export class ModifyDashboardController {
 
     let newDashboard = dashboards.find(x => x.dashboardId === toDashboardId);
 
+    await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        dashboards: common.isDefined(newDashboard)
+          ? [wrapper.wrapToEntityDashboard(newDashboard)]
+          : undefined,
+        structs: [struct]
+      }
+    });
+
     if (common.isUndefined(newDashboard)) {
+      await this.dashboardsRepository.delete({
+        dashboard_id: toDashboardId,
+        struct_id: branch.struct_id
+      });
+
       let fileIdAr = toDashboardEntity.file_path.split('/');
       fileIdAr.shift();
       let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
@@ -279,14 +296,6 @@ export class ModifyDashboardController {
       records: {
         mconfigs: dashboardMconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
         queries: dashboardQueries.map(x => wrapper.wrapToEntityQuery(x))
-      }
-    });
-
-    await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        dashboards: [wrapper.wrapToEntityDashboard(newDashboard)],
-        structs: [struct]
       }
     });
 

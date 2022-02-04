@@ -297,11 +297,13 @@ export class ChartSaveAsDialogComponent implements OnInit {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateVizResponse) => {
-          this.navigateService.navigateToVizs({
-            extra: {
-              queryParams: { search: resp.payload.viz.vizId }
-            }
-          });
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.navigateService.navigateToVizs({
+              extra: {
+                queryParams: { search: resp.payload.viz.vizId }
+              }
+            });
+          }
         }),
         take(1)
       )
@@ -347,7 +349,9 @@ export class ChartSaveAsDialogComponent implements OnInit {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendModifyDashboardResponse) => {
-          this.navigateService.navigateToDashboard(this.selectedDashboardId);
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.navigateService.navigateToDashboard(this.selectedDashboardId);
+          }
         }),
         take(1)
       )

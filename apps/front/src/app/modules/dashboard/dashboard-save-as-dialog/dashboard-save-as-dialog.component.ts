@@ -203,11 +203,13 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateDashboardResponse) => {
-          this.navigateService.navigateToDashboards({
-            extra: {
-              queryParams: { search: this.newDashboardId }
-            }
-          });
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.navigateService.navigateToDashboards({
+              extra: {
+                queryParams: { search: this.newDashboardId }
+              }
+            });
+          }
         }),
         take(1)
       )
@@ -247,11 +249,13 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendModifyDashboardResponse) => {
-          this.navigateService.navigateToDashboards({
-            extra: {
-              queryParams: { search: this.selectedDashboardId }
-            }
-          });
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.navigateService.navigateToDashboards({
+              extra: {
+                queryParams: { search: this.selectedDashboardId }
+              }
+            });
+          }
         }),
         take(1)
       )
