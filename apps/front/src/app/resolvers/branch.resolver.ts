@@ -1,10 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  Resolve,
-  Router,
-  RouterStateSnapshot
-} from '@angular/router';
+import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -24,10 +19,7 @@ export class BranchResolver implements Resolve<Observable<boolean>> {
     private router: Router
   ) {}
 
-  resolve(
-    route: ActivatedRouteSnapshot,
-    routerStateSnapshot: RouterStateSnapshot
-  ): Observable<boolean> {
+  resolve(route: ActivatedRouteSnapshot): Observable<boolean> {
     let nav: NavState;
     this.navQuery
       .select()

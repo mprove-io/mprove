@@ -152,6 +152,9 @@ export class CreateDashboardController {
       });
     }
 
+    let parentNodeId = `${projectId}/${common.FILES_USERS_FOLDER}/${user.alias}`;
+    let fileName = `${newDashboardId}${common.FileExtensionEnum.Dashboard}`;
+
     let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateFile,
@@ -162,8 +165,8 @@ export class CreateDashboardController {
         projectId: projectId,
         repoId: repoId,
         branch: branchId,
-        parentNodeId: `${projectId}/${common.FILES_USERS_FOLDER}/${user.alias}`,
-        fileName: `${newDashboardId}.dashboard`,
+        parentNodeId: parentNodeId,
+        fileName: fileName,
         userAlias: user.alias,
         fileText: dashboardFileText
       }
@@ -196,6 +199,20 @@ export class CreateDashboardController {
     });
 
     let dashboard = dashboards.find(x => x.dashboardId === newDashboardId);
+
+    if (common.isUndefined(dashboard)) {
+      let fileId = `${parentNodeId}/${fileName}`;
+      let fileIdAr = fileId.split('/');
+      fileIdAr.shift();
+      let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
+
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_CREATE_DASHBOARD_FAIL,
+        data: {
+          underscoreFileId: underscoreFileId
+        }
+      });
+    }
 
     let dashboardMconfigIds = dashboard.reports.map(x => x.mconfigId);
     let dashboardMconfigs = mconfigs.filter(

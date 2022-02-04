@@ -1,9 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  Resolve,
-  RouterStateSnapshot
-} from '@angular/router';
+import { Resolve } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -21,10 +17,7 @@ export class ModelsResolver implements Resolve<Observable<boolean>> {
     private modelsStore: ModelsStore
   ) {}
 
-  resolve(
-    route: ActivatedRouteSnapshot,
-    routerStateSnapshot: RouterStateSnapshot
-  ): Observable<boolean> {
+  resolve(): Observable<boolean> {
     let nav: NavState;
     this.navQuery
       .select()

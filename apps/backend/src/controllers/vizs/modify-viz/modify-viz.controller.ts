@@ -166,6 +166,20 @@ export class ModifyVizController {
     });
 
     let viz = vizs.find(x => x.vizId === vizId);
+
+    if (common.isUndefined(viz)) {
+      let fileIdAr = existingViz.file_path.split('/');
+      fileIdAr.shift();
+      let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
+
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_MODIFY_VIZ_FAIL,
+        data: {
+          underscoreFileId: underscoreFileId
+        }
+      });
+    }
+
     let vizReport = viz.reports[0];
     let vizMconfig = mconfigs.find(x => x.mconfigId === vizReport.mconfigId);
     let vizQuery = queries.find(x => x.queryId === vizReport.queryId);

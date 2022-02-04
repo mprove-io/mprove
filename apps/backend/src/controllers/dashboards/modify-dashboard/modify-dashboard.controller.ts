@@ -251,6 +251,19 @@ export class ModifyDashboardController {
 
     let newDashboard = dashboards.find(x => x.dashboardId === toDashboardId);
 
+    if (common.isUndefined(newDashboard)) {
+      let fileIdAr = toDashboardEntity.file_path.split('/');
+      fileIdAr.shift();
+      let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
+
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_MODIFY_DASHBOARD_FAIL,
+        data: {
+          underscoreFileId: underscoreFileId
+        }
+      });
+    }
+
     let dashboardMconfigIds = newDashboard.reports.map(x => x.mconfigId);
     let dashboardMconfigs = mconfigs.filter(
       x => dashboardMconfigIds.indexOf(x.mconfigId) > -1

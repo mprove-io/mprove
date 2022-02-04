@@ -261,7 +261,28 @@ export class ApiService {
         errorData.description = `Don't worry, most likely the project editor has pushed new changes to the current branch files recently`;
         errorData.buttonText = 'Ok, reload and fetch changes';
         errorData.onClickFnBindThis = (() => {
-          this.navigateService.windowOpenModels();
+          this.navigateService.navigateToModels();
+        }).bind(this);
+
+        this.myDialogService.showError({ errorData, isThrow: false });
+      } else if (
+        errorData.message ===
+          enums.ErEnum.FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK &&
+        [
+          apiToBackend.ErEnum.BACKEND_CREATE_DASHBOARD_FAIL,
+          apiToBackend.ErEnum.BACKEND_MODIFY_DASHBOARD_FAIL,
+          apiToBackend.ErEnum.BACKEND_CREATE_VIZ_FAIL,
+          apiToBackend.ErEnum.BACKEND_MODIFY_VIZ_FAIL
+        ].indexOf(errorData.response.body.info.error.message) > -1
+      ) {
+        errorData.description = `The changes were saved to the file, but it failed the BlockML validation. It's probably a bug.`;
+        errorData.buttonText = 'Ok, go to file';
+        errorData.onClickFnBindThis = (() => {
+          this.navigateService.navigateToFileLine({
+            underscoreFileId:
+              errorData.response.body.info.error.originalError.data
+                .underscoreFileId
+          });
         }).bind(this);
 
         this.myDialogService.showError({ errorData, isThrow: false });

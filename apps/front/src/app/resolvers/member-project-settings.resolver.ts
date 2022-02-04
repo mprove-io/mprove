@@ -1,29 +1,30 @@
 import { Injectable } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  Resolve,
-  RouterStateSnapshot
-} from '@angular/router';
-import { Observable } from 'rxjs';
+import { Resolve } from '@angular/router';
 import { map, take } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 import { ProjectStore } from '../stores/project.store';
+import { MemberResolver } from './member.resolver';
 
 @Injectable({ providedIn: 'root' })
-export class ProjectSettingsResolver implements Resolve<Observable<boolean>> {
+export class MemberProjectSettingsResolver
+  implements Resolve<Promise<boolean>> {
   constructor(
     private projectStore: ProjectStore,
     private navQuery: NavQuery,
+    private memberResolver: MemberResolver,
     private apiService: ApiService
   ) {}
 
-  resolve(
-    route: ActivatedRouteSnapshot,
-    routerStateSnapshot: RouterStateSnapshot
-  ): Observable<boolean> {
+  async resolve(): Promise<boolean> {
+    let pass = await this.memberResolver.resolve().toPromise();
+
+    if (pass === false) {
+      return false;
+    }
+
     let projectId;
 
     this.navQuery.projectId$.pipe(take(1)).subscribe(x => {
@@ -48,6 +49,7 @@ export class ProjectSettingsResolver implements Resolve<Observable<boolean>> {
             return false;
           }
         })
-      );
+      )
+      .toPromise();
   }
 }

@@ -4,53 +4,64 @@ import {
   Resolve,
   RouterStateSnapshot
 } from '@angular/router';
-import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
-import { TeamStore } from '../stores/team.store';
+import { ConnectionsStore } from '../stores/connections.store';
+import { MemberResolver } from './member.resolver';
 
 @Injectable({ providedIn: 'root' })
-export class TeamResolver implements Resolve<Observable<boolean>> {
+export class MemberConnectionsResolver implements Resolve<Promise<boolean>> {
   constructor(
     private navQuery: NavQuery,
     private apiService: ApiService,
-    private teamStore: TeamStore
+    private memberResolver: MemberResolver,
+    private connectionsStore: ConnectionsStore
   ) {}
 
-  resolve(
+  async resolve(
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
-  ): Observable<boolean> {
+  ): Promise<boolean> {
+    let pass = await this.memberResolver.resolve().toPromise();
+
+    if (pass === false) {
+      return false;
+    }
+
     let projectId;
 
     this.navQuery.projectId$.pipe(take(1)).subscribe(x => {
       projectId = x;
     });
 
-    let payload: apiToBackend.ToBackendGetMembersRequestPayload = {
+    let payload: apiToBackend.ToBackendGetConnectionsRequestPayload = {
       projectId: projectId,
       pageNum: 1,
-      perPage: constants.MEMBERS_PER_PAGE
+      perPage: constants.CONNECTIONS_PER_PAGE
     };
 
     return this.apiService
       .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMembers,
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetConnections,
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendGetMembersResponse) => {
+        map((resp: apiToBackend.ToBackendGetConnectionsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.teamStore.update(resp.payload);
+            this.connectionsStore.update({
+              connections: resp.payload.connections,
+              total: resp.payload.total
+            });
             return true;
           } else {
             return false;
           }
         })
-      );
+      )
+      .toPromise();
   }
 }

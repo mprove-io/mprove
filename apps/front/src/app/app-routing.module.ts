@@ -35,27 +35,24 @@ import { OrgDeletedComponent } from './modules/special/org-deleted/org-deleted.c
 import { OrgOwnerChangedComponent } from './modules/special/org-owner-changed/org-owner-changed.component';
 import { ProjectDeletedComponent } from './modules/special/project-deleted/project-deleted.component';
 import { VisualizationsComponent } from './modules/visualizations/visualizations.component';
-import { BranchResolver } from './resolvers/branch.resolver';
-import { ConnectionsResolver } from './resolvers/connections.resolver';
 import { DashboardResolver } from './resolvers/dashboard.resolver';
-import { DashboardsResolver } from './resolvers/dashboards.resolver';
 import { FileResolver } from './resolvers/file.resolver';
 import { MconfigResolver } from './resolvers/mconfig.resolver';
-import { MemberResolver } from './resolvers/member.resolver';
+import { MemberConnectionsResolver } from './resolvers/member-connections.resolver';
+import { MemberProjectSettingsResolver } from './resolvers/member-project-settings.resolver';
+import { MemberRepoResolver } from './resolvers/member-repo.resolver';
+import { MemberTeamResolver } from './resolvers/member-team.resolver';
 import { ModelResolver } from './resolvers/model.resolver';
-import { ModelsResolver } from './resolvers/models.resolver';
 import { NavBarResolver } from './resolvers/navbar.resolver';
 import { OrgAccountResolver } from './resolvers/org-account.resolver';
 import { OrgResolver } from './resolvers/org.resolver';
 import { ProfileResolver } from './resolvers/profile.resolver';
-import { ProjectSettingsResolver } from './resolvers/project-settings.resolver';
 import { ProjectResolver } from './resolvers/project.resolver';
 import { QueryResolver } from './resolvers/query.resolver';
-import { RepoStructResolver } from './resolvers/repo-struct.resolver';
-import { RepoResolver } from './resolvers/repo.resolver';
-import { TeamResolver } from './resolvers/team.resolver';
+import { StackDashboardsResolver } from './resolvers/stack-dashboards.resolver';
+import { StackVizsResolver } from './resolvers/stack-vizs.resolver';
+import { StackResolver } from './resolvers/stack.resolver';
 import { UsersResolver } from './resolvers/users.resolver';
-import { VizsResolver } from './resolvers/vizs.resolver';
 
 const routes: Routes = [
   {
@@ -164,35 +161,31 @@ const routes: Routes = [
               {
                 component: ProjectSettingsComponent,
                 path: common.PATH_SETTINGS,
-                resolve: [MemberResolver, ProjectSettingsResolver]
+                resolve: [MemberProjectSettingsResolver]
               },
               {
                 component: ProjectConnectionsComponent,
                 path: common.PATH_CONNECTIONS,
-                resolve: [MemberResolver, ConnectionsResolver]
+                resolve: [MemberConnectionsResolver]
               },
               {
                 component: ProjectTeamComponent,
                 path: common.PATH_TEAM,
-                resolve: [MemberResolver, TeamResolver]
+                resolve: [MemberTeamResolver]
               },
               {
                 path: common.PATH_REPO + `/:${common.PARAMETER_REPO_ID}`,
-                resolve: [MemberResolver, RepoResolver],
+                resolve: [MemberRepoResolver],
                 children: [
                   {
                     path:
                       common.PATH_BRANCH + `/:${common.PARAMETER_BRANCH_ID}`,
-                    resolve: [
-                      MemberResolver,
-                      BranchResolver,
-                      RepoStructResolver
-                    ],
+                    resolve: [StackResolver],
                     children: [
                       {
                         component: FilesComponent,
                         path: common.PATH_FILES,
-                        resolve: [RepoStructResolver],
+                        resolve: [StackResolver],
                         children: [
                           {
                             component: FileEditorComponent,
@@ -207,24 +200,24 @@ const routes: Routes = [
                       {
                         component: VisualizationsComponent,
                         path: common.PATH_VISUALIZATIONS,
-                        resolve: [ModelsResolver, VizsResolver]
+                        resolve: [StackVizsResolver]
                       },
                       {
                         component: DashboardsComponent,
                         path: common.PATH_DASHBOARDS,
-                        resolve: [ModelsResolver, DashboardsResolver]
+                        resolve: [StackDashboardsResolver]
                       },
                       {
                         component: ModelsComponent,
                         path: common.PATH_MODELS,
-                        resolve: [ModelsResolver]
+                        resolve: [StackResolver]
                       },
                       {
                         component: ModelComponent,
                         canDeactivate: [DeactivateGuard],
                         path:
                           common.PATH_MODEL + `/:${common.PARAMETER_MODEL_ID}`,
-                        resolve: [RepoStructResolver, ModelResolver],
+                        resolve: [ModelResolver],
                         children: [
                           {
                             component: MconfigComponent,

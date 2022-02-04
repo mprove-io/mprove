@@ -1,30 +1,30 @@
 import { Injectable } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  Resolve,
-  RouterStateSnapshot
-} from '@angular/router';
-import { Observable } from 'rxjs';
+import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
-import { DashboardsStore } from '../stores/dashboards.store';
 import { NavState } from '../stores/nav.store';
+import { VizsStore } from '../stores/vizs.store';
+import { StackResolver } from './stack.resolver';
 
 @Injectable({ providedIn: 'root' })
-export class DashboardsResolver implements Resolve<Observable<boolean>> {
+export class StackVizsResolver implements Resolve<Promise<boolean>> {
   constructor(
     private navQuery: NavQuery,
     private apiService: ApiService,
-    private dashboardsStore: DashboardsStore
+    private stackResolver: StackResolver,
+    private vizsStore: VizsStore
   ) {}
 
-  resolve(
-    route: ActivatedRouteSnapshot,
-    routerStateSnapshot: RouterStateSnapshot
-  ): Observable<boolean> {
+  async resolve(route: ActivatedRouteSnapshot): Promise<boolean> {
+    let pass = await this.stackResolver.resolve(route);
+
+    if (pass === false) {
+      return false;
+    }
+
     let nav: NavState;
     this.navQuery
       .select()
@@ -36,28 +36,26 @@ export class DashboardsResolver implements Resolve<Observable<boolean>> {
       )
       .subscribe();
 
-    let payload: apiToBackend.ToBackendGetDashboardsRequestPayload = {
+    let payload: apiToBackend.ToBackendGetVizsRequestPayload = {
       projectId: nav.projectId,
       branchId: nav.branchId,
       isRepoProd: nav.isRepoProd
     };
 
     return this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
-        payload
-      )
+      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs, payload)
       .pipe(
-        map((resp: apiToBackend.ToBackendGetDashboardsResponse) => {
+        map((resp: apiToBackend.ToBackendGetVizsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.dashboardsStore.update({
-              dashboards: resp.payload.dashboards
+            this.vizsStore.update({
+              vizs: resp.payload.vizs
             });
             return true;
           } else {
             return false;
           }
         })
-      );
+      )
+      .toPromise();
   }
 }

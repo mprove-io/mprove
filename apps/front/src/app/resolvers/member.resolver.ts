@@ -1,9 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  Resolve,
-  RouterStateSnapshot
-} from '@angular/router';
+import { Resolve } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -20,10 +16,7 @@ export class MemberResolver implements Resolve<Observable<boolean>> {
     private memberStore: MemberStore
   ) {}
 
-  resolve(
-    route: ActivatedRouteSnapshot,
-    routerStateSnapshot: RouterStateSnapshot
-  ): Observable<boolean> {
+  resolve(): Observable<boolean> {
     let projectId;
 
     this.projectQuery.projectId$.pipe(take(1)).subscribe(x => {

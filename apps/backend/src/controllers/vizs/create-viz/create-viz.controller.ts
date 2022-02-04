@@ -107,6 +107,9 @@ export class CreateVizController {
       vizId: vizId
     });
 
+    let parentNodeId = `${projectId}/${common.FILES_USERS_FOLDER}/${user.alias}`;
+    let fileName = `${vizId}${common.FileExtensionEnum.Viz}`;
+
     let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateFile,
@@ -118,8 +121,8 @@ export class CreateVizController {
         repoId: repoId,
         branch: branchId,
         userAlias: user.alias,
-        parentNodeId: `${projectId}/${common.FILES_USERS_FOLDER}/${user.alias}`,
-        fileName: `${vizId}.viz`,
+        parentNodeId: parentNodeId,
+        fileName: fileName,
         fileText: vizFileText
       }
     };
@@ -154,8 +157,16 @@ export class CreateVizController {
     let viz = vizs.find(x => x.vizId === vizId);
 
     if (common.isUndefined(viz)) {
+      let fileId = `${parentNodeId}/${fileName}`;
+      let fileIdAr = fileId.split('/');
+      fileIdAr.shift();
+      let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
+
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_CHECK_BLOCKML_ERRORS
+        message: apiToBackend.ErEnum.BACKEND_CREATE_VIZ_FAIL,
+        data: {
+          underscoreFileId: underscoreFileId
+        }
       });
     }
 
