@@ -35,21 +35,20 @@ import { OrgDeletedComponent } from './modules/special/org-deleted/org-deleted.c
 import { OrgOwnerChangedComponent } from './modules/special/org-owner-changed/org-owner-changed.component';
 import { ProjectDeletedComponent } from './modules/special/project-deleted/project-deleted.component';
 import { VisualizationsComponent } from './modules/visualizations/visualizations.component';
-import { DashboardResolver } from './resolvers/dashboard.resolver';
 import { FileResolver } from './resolvers/file.resolver';
 import { MconfigResolver } from './resolvers/mconfig.resolver';
 import { MemberConnectionsResolver } from './resolvers/member-connections.resolver';
 import { MemberProjectSettingsResolver } from './resolvers/member-project-settings.resolver';
-import { MemberRepoResolver } from './resolvers/member-repo.resolver';
 import { MemberTeamResolver } from './resolvers/member-team.resolver';
-import { ModelResolver } from './resolvers/model.resolver';
 import { NavBarResolver } from './resolvers/navbar.resolver';
 import { OrgAccountResolver } from './resolvers/org-account.resolver';
 import { OrgResolver } from './resolvers/org.resolver';
 import { ProfileResolver } from './resolvers/profile.resolver';
 import { ProjectResolver } from './resolvers/project.resolver';
 import { QueryResolver } from './resolvers/query.resolver';
+import { StackDashboardResolver } from './resolvers/stack-dashboard.resolver';
 import { StackDashboardsResolver } from './resolvers/stack-dashboards.resolver';
+import { StackModelResolver } from './resolvers/stack-model.resolver';
 import { StackVizsResolver } from './resolvers/stack-vizs.resolver';
 import { StackResolver } from './resolvers/stack.resolver';
 import { UsersResolver } from './resolvers/users.resolver';
@@ -175,12 +174,10 @@ const routes: Routes = [
               },
               {
                 path: common.PATH_REPO + `/:${common.PARAMETER_REPO_ID}`,
-                resolve: [MemberRepoResolver],
                 children: [
                   {
                     path:
                       common.PATH_BRANCH + `/:${common.PARAMETER_BRANCH_ID}`,
-                    resolve: [StackResolver],
                     children: [
                       {
                         component: FilesComponent,
@@ -217,7 +214,7 @@ const routes: Routes = [
                         canDeactivate: [DeactivateGuard],
                         path:
                           common.PATH_MODEL + `/:${common.PARAMETER_MODEL_ID}`,
-                        resolve: [ModelResolver],
+                        resolve: [StackModelResolver],
                         children: [
                           {
                             component: MconfigComponent,
@@ -243,7 +240,7 @@ const routes: Routes = [
                         path:
                           common.PATH_DASHBOARD +
                           `/:${common.PARAMETER_DASHBOARD_ID}`,
-                        resolve: [DashboardResolver],
+                        resolve: [StackDashboardResolver],
                         children: []
                       }
                     ]

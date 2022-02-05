@@ -4,41 +4,35 @@ import {
   Resolve,
   RouterStateSnapshot
 } from '@angular/router';
-import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { ModelQuery } from '../queries/model.query';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 import { ModelStore } from '../stores/model.store';
 import { NavState } from '../stores/nav.store';
+import { StackResolver } from './stack.resolver';
 
 @Injectable({ providedIn: 'root' })
-export class ModelResolver implements Resolve<Observable<boolean>> {
+export class StackModelResolver implements Resolve<Promise<boolean>> {
   constructor(
     private apiService: ApiService,
     private navQuery: NavQuery,
-    private modelQuery: ModelQuery,
+    private stackResolver: StackResolver,
     private modelStore: ModelStore
   ) {}
 
-  resolve(
+  async resolve(
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
-  ): Observable<boolean> {
-    let parametersModelId = route.params[common.PARAMETER_MODEL_ID];
+  ): Promise<boolean> {
+    let pass = await this.stackResolver.resolve(route);
 
-    let model: common.Model;
-    this.modelQuery
-      .select()
-      .pipe(
-        tap(x => {
-          model = x;
-        }),
-        take(1)
-      )
-      .subscribe();
+    if (pass === false) {
+      return false;
+    }
+
+    let parametersModelId = route.params[common.PARAMETER_MODEL_ID];
 
     let nav: NavState;
     this.navQuery
@@ -58,24 +52,18 @@ export class ModelResolver implements Resolve<Observable<boolean>> {
       modelId: parametersModelId
     };
 
-    if (model.modelId === parametersModelId) {
-      return of(true);
-    } else {
-      return this.apiService
-        .req(
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel,
-          payload
-        )
-        .pipe(
-          map((resp: apiToBackend.ToBackendGetModelResponse) => {
-            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-              this.modelStore.update(resp.payload.model);
-              return true;
-            } else {
-              return false;
-            }
-          })
-        );
-    }
+    return this.apiService
+      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel, payload)
+      .pipe(
+        map((resp: apiToBackend.ToBackendGetModelResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.modelStore.update(resp.payload.model);
+            return true;
+          } else {
+            return false;
+          }
+        })
+      )
+      .toPromise();
   }
 }
