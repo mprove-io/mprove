@@ -29,15 +29,14 @@
     class="absolute right-0 mt-1 w-56 z-10 bg-white rounded-md shadow-xl border-2 border-gray4"
     *ngIf="isOrgMenuOpen === true"
   >
-    <div class="block mt-2 px-4 py-2 text-gray1 font-semibold text-base"
+    <div class="block mt-2 px-4 py-2 text-gray-400 font-semibold text-base"
       >{{ nav?.orgName | capitalize }} Org</div
     >
 
     <button
       class="block px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
       [ngClass]="{
-        'cursor-default': lastUrl === pathAccount,
-        'text-red-800': lastUrl === pathAccount
+        'font-semibold': lastUrl === pathAccount
       }"
       [disabled]="lastUrl === pathAccount"
       (click)="navigateAccount()"
@@ -47,8 +46,7 @@
     <button
       class="block px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
       [ngClass]="{
-        'cursor-default': lastUrl === pathUsers,
-        'text-red-800': lastUrl === pathUsers
+        'font-semibold': lastUrl === pathUsers
       }"
       [disabled]="lastUrl === pathUsers"
       (click)="navigateUsers()"

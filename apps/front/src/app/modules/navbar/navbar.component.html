@@ -11,7 +11,8 @@
         class="block ml-3 h-10 px-5 text-gray1 w-full text-left text-base focus:outline-none"
         [ngClass]="{
           'cursor-default text-gray-400':
-            !nav || !nav.projectId || needSave === true
+            !nav || !nav.projectId || needSave === true,
+          'font-semibold': isFilesRouteActive === true
         }"
         (click)="navigateFiles()"
         [disabled]="!nav || !nav.projectId || needSave === true"
@@ -24,7 +25,8 @@
         class="block px-5 h-10 text-gray1 text-left text-base focus:outline-none"
         [ngClass]="{
           'cursor-default text-gray-400':
-            !nav || !nav.projectId || needSave === true
+            !nav || !nav.projectId || needSave === true,
+          'font-semibold': isVizsRouteActive === true
         }"
         (click)="navigateVisualizations()"
         [disabled]="!nav || !nav.projectId || needSave === true"
@@ -35,7 +37,8 @@
         class="block px-5 h-10 text-gray1 text-left text-base focus:outline-none"
         [ngClass]="{
           'cursor-default text-gray-400':
-            !nav || !nav.projectId || needSave === true
+            !nav || !nav.projectId || needSave === true,
+          'font-semibold': isDashboardsRouteActive === true
         }"
         (click)="navigateDashboards()"
         [disabled]="!nav || !nav.projectId || needSave === true"
@@ -46,7 +49,8 @@
         class="block px-5 h-10 text-gray1 text-left text-base focus:outline-none"
         [ngClass]="{
           'cursor-default text-gray-400':
-            !nav || !nav.projectId || needSave === true
+            !nav || !nav.projectId || needSave === true,
+          'font-semibold': isModelsRouteActive === true
         }"
         (click)="navigateModels()"
         [disabled]="!nav || !nav.projectId || needSave === true"
@@ -72,3 +76,4 @@
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="member$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
+<div *ngIf="routerEvents$ | async"></div>

@@ -29,15 +29,14 @@
     class="absolute right-0 z-10 mt-1 w-56 bg-white rounded-md shadow-xl border-2 border-gray4"
     *ngIf="isProjectMenuOpen === true"
   >
-    <div class="block mt-2 px-4 py-2 text-gray1 font-semibold text-base"
+    <div class="block mt-2 px-4 py-2 text-gray-400 font-semibold text-base"
       >{{ nav?.projectName | capitalize }} Project</div
     >
 
     <button
       class="block px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
       [ngClass]="{
-        'cursor-default': lastUrl === pathSettings,
-        'text-red-800': lastUrl === pathSettings
+        'font-semibold': lastUrl === pathSettings
       }"
       [disabled]="lastUrl === pathSettings"
       (click)="navigateSettings()"
@@ -47,8 +46,7 @@
     <button
       class="block px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
       [ngClass]="{
-        'cursor-default': lastUrl === pathConnections,
-        'text-red-800': lastUrl === pathConnections
+        'font-semibold': lastUrl === pathConnections
       }"
       [disabled]="lastUrl === pathConnections"
       (click)="navigateConnections()"
@@ -58,8 +56,7 @@
     <button
       class="block px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
       [ngClass]="{
-        'cursor-default': lastUrl === pathTeam,
-        'text-red-800': lastUrl === pathTeam
+        'font-semibold': lastUrl === pathTeam
       }"
       [disabled]="lastUrl === pathTeam"
       (click)="navigateTeam()"

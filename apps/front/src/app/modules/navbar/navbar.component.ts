@@ -1,6 +1,7 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { take, tap } from 'rxjs/operators';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, take, tap } from 'rxjs/operators';
+import { constants } from '~common/barrels/constants';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -12,7 +13,7 @@ import { common } from '~front/barrels/common';
   selector: 'm-navbar',
   templateUrl: './navbar.component.html'
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
     tap(x => {
@@ -32,6 +33,18 @@ export class NavbarComponent {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
+  isFilesRouteActive: boolean;
+  isVizsRouteActive: boolean;
+  isDashboardsRouteActive: boolean;
+  isModelsRouteActive: boolean;
+
+  routerEvents$ = this.router.events.pipe(
+    filter(ev => ev instanceof NavigationEnd),
+    tap((x: any) => {
+      this.checkUrls(x.url);
+    })
+  );
+
   constructor(
     private router: Router,
     public navQuery: NavQuery,
@@ -40,6 +53,20 @@ export class NavbarComponent {
     public memberQuery: MemberQuery,
     private cd: ChangeDetectorRef
   ) {}
+
+  ngOnInit() {
+    this.checkUrls(this.router.url);
+  }
+
+  checkUrls(url: string) {
+    this.isFilesRouteActive = url.split('/')[9] === constants.PATH_FILES;
+    this.isVizsRouteActive =
+      url.split('/')[9] === constants.PATH_VISUALIZATIONS;
+    this.isDashboardsRouteActive =
+      url.split('/')[9] === constants.PATH_DASHBOARDS;
+    this.isModelsRouteActive = url.split('/')[9] === constants.PATH_MODELS;
+    this.cd.detectChanges();
+  }
 
   navigateFiles() {
     let userId;

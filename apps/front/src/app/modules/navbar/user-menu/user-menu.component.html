@@ -24,13 +24,12 @@
     class="absolute right-0 z-10 mt-1 w-56 bg-white rounded-md shadow-xl border-2 border-gray4"
     *ngIf="isUserMenuOpen === true"
   >
-    <div class="block mt-2 px-4 py-2 text-gray1 font-bold text-sm">User</div>
+    <div class="block mt-2 px-4 py-2 text-gray-400 font-bold text-sm">User</div>
 
     <button
       class="block px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
       [ngClass]="{
-        'cursor-default': lastUrl === pathProfile,
-        'text-red-800': lastUrl === pathProfile
+        'font-semibold': lastUrl === pathProfile
       }"
       [disabled]="lastUrl === pathProfile"
       (click)="navigateProfile()"
@@ -43,7 +42,7 @@
       >LogOut</button
     >
 
-    <div class="block px-4 py-2 text-gray1 font-bold text-sm">Resources</div>
+    <div class="block px-4 py-2 text-gray-400 font-bold text-sm">Resources</div>
 
     <a
       class="block px-4 py-2 text-gray1 text-base hover:bg-blue2 hover:text-gray1"

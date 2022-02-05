@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, switchMap, take, tap } from 'rxjs/operators';
+import { constants } from '~common/barrels/constants';
 import { makeBranchExtraId } from '~front/app/functions/make-branch-extra-id';
 import { makeBranchExtraName } from '~front/app/functions/make-branch-extra-name';
 import { FileQuery } from '~front/app/queries/file.query';
@@ -12,9 +13,10 @@ import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { FileState } from '~front/app/stores/file.store';
 import { MemberStore } from '~front/app/stores/member.store';
-import { NavState, NavStore } from '~front/app/stores/nav.store';
+import { NavStore } from '~front/app/stores/nav.store';
 import { RepoState } from '~front/app/stores/repo.store';
 import { UserState } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -115,6 +117,7 @@ export class BranchSelectComponent {
     private fileQuery: FileQuery,
     private repoQuery: RepoQuery,
     private apiService: ApiService,
+    public navigateService: NavigateService,
     private fileService: FileService,
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,
@@ -279,7 +282,10 @@ export class BranchSelectComponent {
     let repoId =
       newSelectedBranchItem.isRepoProd === true ? common.PROD_REPO_ID : userId;
 
-    this.router.navigate([
+    // console.log(this.router.url);
+    let urlParts = this.router.url.split('/');
+
+    let navArray = [
       common.PATH_ORG,
       this.selectedOrgId,
       common.PATH_PROJECT,
@@ -287,15 +293,28 @@ export class BranchSelectComponent {
       common.PATH_REPO,
       repoId,
       common.PATH_BRANCH,
-      newSelectedBranchItem.branchId,
-      common.PATH_FILES
-    ]);
+      newSelectedBranchItem.branchId
+    ];
 
-    this.navStore.update(state =>
-      Object.assign({}, state, <NavState>{
-        branchId: this.prevBranchItem.branchId
-      })
-    );
+    if (urlParts[9] === constants.PATH_VISUALIZATIONS) {
+      navArray.push(common.PATH_VISUALIZATIONS);
+      this.router.navigate(navArray);
+    } else if (
+      urlParts[9] === constants.PATH_MODELS ||
+      urlParts[9] === constants.PATH_MODEL
+    ) {
+      navArray.push(common.PATH_MODELS);
+      this.router.navigate(navArray);
+    } else if (
+      urlParts[9] === constants.PATH_DASHBOARDS ||
+      urlParts[9] === constants.PATH_DASHBOARD
+    ) {
+      navArray.push(common.PATH_DASHBOARDS);
+      this.router.navigate(navArray);
+    } else {
+      navArray.push(common.PATH_FILES);
+      this.router.navigate(navArray);
+    }
   }
 
   makeBranchItem(item: {
