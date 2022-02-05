@@ -11,6 +11,9 @@ export class Report {
   mconfigId: string;
 
   @IsString()
+  timezone: string;
+
+  @IsString()
   queryId: string;
 
   listen: { [a: string]: string };

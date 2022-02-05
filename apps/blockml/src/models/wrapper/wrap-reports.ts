@@ -287,6 +287,7 @@ export function wrapReports(item: {
       modelId: model.name,
       modelLabel: model.label,
       mconfigId: mconfigId,
+      timezone: report.timezone,
       queryId: queryId,
       listen: report.listen,
       title: chart.title,

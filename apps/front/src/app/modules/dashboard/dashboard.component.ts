@@ -8,12 +8,14 @@ import {
   ViewChild,
   ViewChildren
 } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { KtdGridLayout } from '@katoid/angular-grid-layout';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, filter, tap } from 'rxjs/operators';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DashboardService } from '~front/app/services/dashboard.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
@@ -66,6 +68,18 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isShow = true;
 
+  timezoneForm = this.fb.group({
+    timezone: [
+      {
+        value: undefined
+      }
+    ]
+  });
+
+  timezones = common
+    .getTimezones()
+    .filter(x => x.value !== common.USE_PROJECT_TIMEZONE_VALUE);
+
   dashboard: common.DashboardX;
   dashboard$ = this.dashboardQuery.select().pipe(
     filter(z => common.isDefined(z.dashboardId)),
@@ -73,6 +87,25 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dashboard = x;
 
       // console.log(this.dashboard);
+
+      let usedTimezones: string[] = [];
+
+      this.dashboard.reports.forEach(report => {
+        let mconfigTimezone = report.mconfig?.timezone;
+
+        if (
+          common.isDefined(mconfigTimezone) &&
+          usedTimezones.findIndex(z => mconfigTimezone === z) < 0
+        ) {
+          usedTimezones.push(mconfigTimezone);
+        }
+      });
+
+      if (usedTimezones.length > 1 || usedTimezones.length === 0) {
+        this.timezoneForm.controls['timezone'].setValue(undefined);
+      } else {
+        this.timezoneForm.controls['timezone'].setValue(usedTimezones[0]);
+      }
 
       this.filtersIsExpanded =
         this.filtersIsExpanded === false
@@ -101,6 +134,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     })
   );
 
+  struct$ = this.structQuery.select().pipe(
+    tap(x => {
+      if (x.allowTimezones === false) {
+        this.timezoneForm.controls['timezone'].disable();
+      } else {
+        this.timezoneForm.controls['timezone'].enable();
+      }
+    })
+  );
+
   compactType: any = 'vertical';
   preventCollision = false;
   cols = 24;
@@ -113,6 +156,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private dashboardQuery: DashboardQuery,
     private title: Title,
+    private fb: FormBuilder,
+    private structQuery: StructQuery,
     public navigateService: NavigateService,
     public myDialogService: MyDialogService,
     private dashboardService: DashboardService,
@@ -212,6 +257,21 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dashboardStore.update(newDashboard);
 
     this.refreshShow();
+  }
+
+  timezoneChange() {
+    let timezone = this.timezoneForm.controls['timezone'].value;
+
+    this.dashboard.reports.forEach(x => {
+      x.timezone = timezone;
+    });
+
+    this.dashboardService.navCreateTempDashboard({
+      reports: this.dashboard.reports,
+      oldDashboardId: this.dashboard.dashboardId,
+      newDashboardId: common.makeId(),
+      newDashboardFields: this.dashboard.fields
+    });
   }
 
   run() {

@@ -25,32 +25,6 @@
             >Add Report</button
           >
 
-          <button
-            type="button"
-            data-cy="dashboardAddFilterButton"
-            class="px-6 h-12 ml-5 text-blue3 border-2 text-base rounded font-medium focus:outline-none"
-            (click)="addFilter()"
-            >Add Filter</button
-          >
-
-          <button
-            type="button"
-            data-cy="dashboardEditListenButton"
-            class="px-6 h-12 ml-5 border-2 text-base rounded font-medium focus:outline-none"
-            (click)="editListen()"
-            [ngClass]="{
-              'text-blue3 border-2':
-                dashboard?.reports.length > 0 && dashboard?.fields.length > 0,
-              'bg-gray-400  text-white cursor-default':
-                dashboard?.reports.length === 0 ||
-                dashboard?.fields.length === 0
-            }"
-            [disabled]="
-              dashboard?.reports.length === 0 || dashboard?.fields.length === 0
-            "
-            >Edit Listeners</button
-          >
-
           <div class="flex flex-row items-center space-x-5">
             <ui-switch
               class="ml-5"
@@ -65,11 +39,42 @@
 
           <div class="flex-grow"></div>
 
+          <div class="flex flex-row items-center space-x-5">
+            <div class="flex h-9 text-gray1 text-base items-center select-none"
+              >Timezone</div
+            >
+
+            <form [formGroup]="timezoneForm">
+              <ng-select
+                data-cy="dashboardTimezoneSelect"
+                class="custom w-96 text-base focus:outline-none"
+                [items]="timezones"
+                [clearable]="false"
+                (change)="timezoneChange()"
+                placeholder="Reports have different timezones"
+                appendTo="body"
+                bindLabel="label"
+                bindValue="value"
+                formControlName="timezone"
+              >
+                <ng-template ng-label-tmp let-item="item">
+                  <div class="flex">{{ item.label }}</div>
+                </ng-template>
+
+                <ng-template ng-option-tmp let-item="item">
+                  <div class="flex">{{ item.label }}</div>
+                </ng-template>
+              </ng-select>
+            </form>
+          </div>
+
+          <!-- <div class="flex-grow"></div> -->
+
           <div class="flex flex-row items-center text-base text-gray1">
             <button
               type="button"
               data-cy="dashboardSaveAsButton"
-              class="px-6 h-12 ml-5 text-blue3 border-2 text-base rounded font-medium focus:outline-none"
+              class="px-6 h-12 ml-16 text-blue3 border-2 text-base rounded font-medium focus:outline-none"
               (click)="saveAs()"
               >Save As</button
             >
@@ -102,9 +107,37 @@
             <div
               class="flex flex-row flex-grow mr-5 min-h-[95px] flex-shrink-0"
             >
+              <button
+                type="button"
+                data-cy="dashboardAddFilterButton"
+                class="mt-6 h-12 ml-8 text-blue3 text-base rounded font-medium focus:outline-none"
+                (click)="addFilter()"
+                >Add Filter</button
+              >
+
+              <button
+                type="button"
+                data-cy="dashboardEditListenButton"
+                class="mt-6 h-12 ml-10 text-base rounded font-medium focus:outline-none"
+                (click)="editListen()"
+                [ngClass]="{
+                  'text-blue3 ':
+                    dashboard?.reports.length > 0 &&
+                    dashboard?.fields.length > 0,
+                  'bg-gray-400  text-white cursor-default':
+                    dashboard?.reports.length === 0 ||
+                    dashboard?.fields.length === 0
+                }"
+                [disabled]="
+                  dashboard?.reports.length === 0 ||
+                  dashboard?.fields.length === 0
+                "
+                >Edit Listeners</button
+              >
+
               <div
                 (click)="toggleFiltersPanel()"
-                class="flex flex-row space-x-2 mt-5 py-3 px-5 items-start cursor-pointer font-semibold text-2xl text-gray1 select-none"
+                class="flex flex-row space-x-2 mt-5 ml-5 py-3 px-5 items-start cursor-pointer font-semibold text-2xl text-gray1 select-none"
               >
                 <div class="flex flex-row items-center space-x-2">
                   <div> Filters </div>
@@ -199,3 +232,4 @@
 
 <div *ngIf="dashboard$ | async"></div>
 <div *ngIf="nav$ | async"></div>
+<div *ngIf="struct$ | async"></div>

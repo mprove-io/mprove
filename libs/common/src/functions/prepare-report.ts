@@ -54,8 +54,8 @@ export function prepareReport(item: {
     select: mconfig.select,
     sorts: isDefined(mconfig.sorts) ? mconfig.sorts : undefined,
     timezone:
-      isDefined(mconfig.timezone) && mconfig.timezone !== constants.UTC
-        ? mconfig.timezone
+      isDefined(report.timezone) && report.timezone !== constants.UTC
+        ? report.timezone
         : undefined,
     limit:
       isDefined(mconfig.limit) &&

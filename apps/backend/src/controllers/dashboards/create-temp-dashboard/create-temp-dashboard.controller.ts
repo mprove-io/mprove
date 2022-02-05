@@ -88,6 +88,7 @@ export class CreateTempDashboardController {
       zReport.tileHeight = freshReport.tileHeight;
 
       zReport.listen = freshReport.listen;
+      zReport.timezone = freshReport.timezone;
 
       zReports.push(zReport);
     });
