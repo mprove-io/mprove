@@ -18,7 +18,7 @@ export class DashboardsNewDialogComponent {
   dashboard: common.DashboardX;
 
   titleForm: FormGroup = this.fb.group({
-    title: [undefined, [Validators.required, Validators.maxLength(255)]]
+    title: [undefined, [Validators.maxLength(255)]]
   });
 
   rolesForm: FormGroup = this.fb.group({

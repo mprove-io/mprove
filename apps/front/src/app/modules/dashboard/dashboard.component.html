@@ -20,8 +20,20 @@
           <button
             type="button"
             data-cy="dashboardAddReportButton"
-            class="px-6 h-12 ml-5 text-blue3 border-2 text-base rounded font-medium focus:outline-none"
+            class="px-5 py-2 ml-5 text-white text-base rounded font-medium focus:outline-none"
+            [ngClass]="{
+              'bg-blue3':
+                dashboard?.temp === false &&
+                dashboard?.canEditOrDeleteDashboard === true,
+              'bg-gray-400 cursor-default':
+                dashboard?.temp === true ||
+                dashboard?.canEditOrDeleteDashboard === false
+            }"
             (click)="addReport()"
+            [disabled]="
+              dashboard?.temp === true ||
+              dashboard?.canEditOrDeleteDashboard === false
+            "
             >Add Report</button
           >
 
@@ -124,7 +136,7 @@
                   'text-blue3 ':
                     dashboard?.reports.length > 0 &&
                     dashboard?.fields.length > 0,
-                  'bg-gray-400  text-white cursor-default':
+                  'text-gray-400  cursor-default':
                     dashboard?.reports.length === 0 ||
                     dashboard?.fields.length === 0
                 }"

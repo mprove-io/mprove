@@ -65,7 +65,7 @@ export function makeDashboardFileText(item: {
 
   let dashboardFileText = common.toYaml({
     dashboard: newDashboardId,
-    title: newTitle.trim(),
+    title: common.isDefined(newTitle) ? newTitle.trim() : undefined,
     description: common.isDefined(dashboard.description)
       ? dashboard.description
       : undefined,

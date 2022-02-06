@@ -25,8 +25,9 @@ export class ToBackendCreateDashboardRequestPayload {
   @IsString()
   newDashboardId: string;
 
+  @IsOptional()
   @IsString()
-  dashboardTitle: string;
+  dashboardTitle?: string;
 
   @IsOptional()
   @IsString()

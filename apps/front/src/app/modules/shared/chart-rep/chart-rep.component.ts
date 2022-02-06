@@ -200,8 +200,6 @@ export class ChartRepComponent implements OnInit, OnDestroy {
       this.closeMenu();
     }
 
-    this.spinner.show(this.report.mconfigId);
-
     let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
       queryIds: [this.query.queryId]
     };
@@ -216,6 +214,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
           let { runningQueries } = resp.payload;
 
           this.query = runningQueries[0];
+          this.spinner.show(this.report.title);
         }),
         take(1)
       )
@@ -263,7 +262,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
     this.query = query;
 
     if (this.query.status !== common.QueryStatusEnum.Running) {
-      this.spinner.hide(this.report.mconfigId);
+      this.spinner.hide(this.report.title);
     }
 
     this.qData =
