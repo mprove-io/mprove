@@ -17,6 +17,18 @@
             }}</div>
           </div>
 
+          <div class="flex flex-row items-center space-x-5">
+            <ui-switch
+              class="ml-5"
+              [checked]="showBricks"
+              (change)="toggleShowReportFilters()"
+            ></ui-switch>
+
+            <div class="flex h-9 text-gray1 text-base items-center select-none"
+              >Show Report Filters</div
+            >
+          </div>
+
           <button
             type="button"
             data-cy="dashboardAddReportButton"
@@ -36,18 +48,6 @@
             "
             >Add Report</button
           >
-
-          <div class="flex flex-row items-center space-x-5">
-            <ui-switch
-              class="ml-5"
-              [checked]="showBricks"
-              (change)="toggleShowReportFilters()"
-            ></ui-switch>
-
-            <div class="flex h-9 text-gray1 text-base items-center select-none"
-              >Show Report Filters</div
-            >
-          </div>
 
           <div class="flex-grow"></div>
 
@@ -86,7 +86,11 @@
             <button
               type="button"
               data-cy="dashboardSaveAsButton"
-              class="px-6 h-12 ml-16 text-blue3 border-2 text-base rounded font-medium focus:outline-none"
+              class="px-6 h-12 ml-16 text-base rounded font-medium focus:outline-none"
+              [ngClass]="{
+                'text-blue3 border-2': dashboard?.temp === false,
+                'text-white bg-pink-500': dashboard?.temp === true
+              }"
               (click)="saveAs()"
               >Save As</button
             >
@@ -228,6 +232,7 @@
                   [mconfig]="item.report.mconfig"
                   [query]="item.report.query"
                   [showBricks]="showBricks"
+                  (repDeleted)="reportDeleted()"
                 ></m-chart-rep>
               </div>
               <m-resize-icon

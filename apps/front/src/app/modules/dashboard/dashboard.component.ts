@@ -230,7 +230,21 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.refreshShow();
   }
 
-  onResizeEnded(event: any) {}
+  onResizeEnded(event: any) {
+    this.dashboardStore.update(
+      Object.assign({}, this.dashboard, {
+        temp: true
+      })
+    );
+  }
+
+  reportDeleted() {
+    this.dashboardStore.update(
+      Object.assign({}, this.dashboard, {
+        temp: true
+      })
+    );
+  }
 
   onDragStarted(event: any) {
     // this.preventCollision = true;
@@ -238,12 +252,18 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onDragEnded(event: any) {
     // this.preventCollision = false;
+    this.dashboardStore.update(
+      Object.assign({}, this.dashboard, {
+        temp: true
+      })
+    );
   }
 
   onLayoutUpdated(layout: KtdGridLayout) {
     // console.log('onLayoutUpdated', layout);
 
     let newDashboard = Object.assign({}, this.dashboard, {
+      temp: true,
       reports: this.dashboard.reports.map((report, i: number) => {
         report.tileX = layout[i].x;
         report.tileY = layout[i].y;

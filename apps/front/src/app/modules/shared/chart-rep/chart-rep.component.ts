@@ -234,9 +234,12 @@ export class ChartRepComponent implements OnInit, OnDestroy {
       ...this.dashboard.reports.slice(deleteReportIndex + 1)
     ];
 
+    this.repDeleted.emit();
+
     this.dashboardStore.update(
       Object.assign({}, this.dashboard, {
-        reports: newReports
+        reports: newReports,
+        temp: true
       })
     );
   }
