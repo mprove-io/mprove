@@ -18,11 +18,13 @@ import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { StructsService } from '~backend/services/structs.service';
 
 @Controller()
 export class ModifyDashboardController {
   constructor(
     private branchesService: BranchesService,
+    private structsService: StructsService,
     private rabbitService: RabbitService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
@@ -71,6 +73,10 @@ export class ModifyDashboardController {
       projectId: projectId,
       repoId: repoId,
       branchId: branchId
+    });
+
+    let currentStruct = await this.structsService.getStructCheckExists({
+      structId: branch.struct_id
     });
 
     let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
@@ -178,7 +184,8 @@ export class ModifyDashboardController {
         newDashboardId: fromDashboard.dashboardId,
         newTitle: fromDashboard.title,
         roles: fromDashboard.accessRoles.join(', '),
-        users: fromDashboard.accessUsers.join(', ')
+        users: fromDashboard.accessUsers.join(', '),
+        defaultTimezone: currentStruct.default_timezone
       });
     } else {
       // dashboard save as - replace existing
@@ -204,7 +211,8 @@ export class ModifyDashboardController {
         newDashboardId: toDashboardId,
         newTitle: dashboardTitle,
         roles: accessRoles,
-        users: accessUsers
+        users: accessUsers,
+        defaultTimezone: currentStruct.default_timezone
       });
     }
 

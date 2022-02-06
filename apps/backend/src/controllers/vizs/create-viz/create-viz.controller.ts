@@ -17,12 +17,14 @@ import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { StructsService } from '~backend/services/structs.service';
 
 @Controller()
 export class CreateVizController {
   constructor(
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
+    private structsService: StructsService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private modelsRepository: repositories.ModelsRepository,
@@ -67,6 +69,10 @@ export class CreateVizController {
       branchId: branchId
     });
 
+    let currentStruct = await this.structsService.getStructCheckExists({
+      structId: branch.struct_id
+    });
+
     let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
       'firstProjectId'
     );
@@ -104,7 +110,8 @@ export class CreateVizController {
       reportTitle: reportTitle,
       roles: accessRoles,
       users: accessUsers,
-      vizId: vizId
+      vizId: vizId,
+      defaultTimezone: currentStruct.default_timezone
     });
 
     let parentNodeId = `${projectId}/${common.FILES_USERS_FOLDER}/${user.alias}`;

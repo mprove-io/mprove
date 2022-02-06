@@ -6,12 +6,14 @@ export function makeVizFileText(item: {
   reportTitle: string;
   roles: string;
   users: string;
+  defaultTimezone: string;
 }) {
-  let { mconfig, vizId, reportTitle, roles, users } = item;
+  let { mconfig, vizId, reportTitle, roles, users, defaultTimezone } = item;
 
   let rep = common.prepareReport({
     isForDashboard: false,
-    mconfig: mconfig
+    mconfig: mconfig,
+    defaultTimezone: defaultTimezone
   });
 
   rep.title = reportTitle;

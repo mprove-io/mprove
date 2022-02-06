@@ -7,8 +7,8 @@ export function getTimezones() {
       label: constants.USE_PROJECT_TIMEZONE_LABEL
     },
     {
-      value: 'UTC',
-      label: 'UTC'
+      value: constants.UTC,
+      label: constants.UTC
     }
   ];
 

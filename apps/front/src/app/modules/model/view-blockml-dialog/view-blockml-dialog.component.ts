@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
+import { take, tap } from 'rxjs/operators';
+import { StructQuery } from '~front/app/queries/struct.query';
+import { StructState } from '~front/app/stores/struct.store';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -22,12 +25,22 @@ export class ViewBlockmlDialogComponent implements OnInit {
 
   reportYaml: string;
 
-  constructor(public ref: DialogRef) {}
+  constructor(public ref: DialogRef, private structQuery: StructQuery) {}
 
   ngOnInit() {
+    let struct: StructState;
+    this.structQuery
+      .select()
+      .pipe(
+        tap(x => (struct = x)),
+        take(1)
+      )
+      .subscribe();
+
     let rep = common.prepareReport({
       isForDashboard: false,
-      mconfig: this.ref.data.mconfig
+      mconfig: this.ref.data.mconfig,
+      defaultTimezone: struct.defaultTimezone
     });
 
     this.reportYaml = common.toYaml({ reports: [rep] });

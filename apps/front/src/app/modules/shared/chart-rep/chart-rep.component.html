@@ -5,6 +5,10 @@
         class="mt-8 mx-5 mb-5 flex flex-row text-lg text-gray1 justify-center items-start flex-shrink-0"
       >
         <div class="w-9 mr-3"></div>
+        <div
+          class="flex w-9 h-9 relative flex-shrink-0"
+          *ngIf="query?.status === queryStatusRunning"
+        ></div>
 
         <div
           class="flex flex-col flex-grow max-h-[60px] text-gray1 hover:text-blue-500 justify-start items-center cursor-pointer"
@@ -17,7 +21,10 @@
           </div>
         </div>
 
-        <div class="flex w-9 h-9 relative flex-shrink-0">
+        <div
+          class="flex w-9 h-9 relative flex-shrink-0"
+          *ngIf="query?.status === queryStatusRunning"
+        >
           <ngx-spinner
             [name]="report.mconfigId"
             color="rgba(54, 94, 224, 100)"

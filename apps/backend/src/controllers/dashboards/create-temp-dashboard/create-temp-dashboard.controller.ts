@@ -14,6 +14,7 @@ import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { StructsService } from '~backend/services/structs.service';
 
 @Controller()
 export class CreateTempDashboardController {
@@ -23,6 +24,7 @@ export class CreateTempDashboardController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private blockmlService: BlockmlService,
+    private structsService: StructsService,
     private dashboardsService: DashboardsService,
     private dbService: DbService
   ) {}
@@ -59,6 +61,10 @@ export class CreateTempDashboardController {
       projectId: projectId,
       repoId: repoId,
       branchId: branchId
+    });
+
+    let currentStruct = await this.structsService.getStructCheckExists({
+      structId: branch.struct_id
     });
 
     let fromDashboardEntity = await this.dashboardsService.getDashboardCheckExists(
@@ -101,7 +107,8 @@ export class CreateTempDashboardController {
       newDashboardId: newDashboardId,
       newTitle: fromDashboard.title,
       roles: fromDashboard.accessRoles.join(', '),
-      users: fromDashboard.accessUsers.join(', ')
+      users: fromDashboard.accessUsers.join(', '),
+      defaultTimezone: currentStruct.default_timezone
     });
 
     let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {

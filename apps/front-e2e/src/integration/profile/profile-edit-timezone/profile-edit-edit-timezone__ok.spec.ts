@@ -25,6 +25,6 @@ describe('front-e2e', () => {
     cy.get('.ng-option').eq(1).click();
     cy.get('[data-cy=editTimezoneDialogSaveButton]').click();
     cy.loading();
-    cy.get('[data-cy=profileTimezone]').should('contain', 'UTC');
+    cy.get('[data-cy=profileTimezone]').should('contain', common.UTC);
   });
 });

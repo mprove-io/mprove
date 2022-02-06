@@ -17,6 +17,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { StructsService } from '~backend/services/structs.service';
 import { VizsService } from '~backend/services/vizs.service';
 
 @Controller()
@@ -24,6 +25,7 @@ export class ModifyVizController {
   constructor(
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
+    private structsService: StructsService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private vizsService: VizsService,
@@ -67,6 +69,10 @@ export class ModifyVizController {
       projectId: projectId,
       repoId: repoId,
       branchId: branchId
+    });
+
+    let currentStruct = await this.structsService.getStructCheckExists({
+      structId: branch.struct_id
     });
 
     let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
@@ -121,7 +127,8 @@ export class ModifyVizController {
       reportTitle: reportTitle,
       roles: accessRoles,
       users: accessUsers,
-      vizId: vizId
+      vizId: vizId,
+      defaultTimezone: currentStruct.default_timezone
     });
 
     let toDiskSaveFileRequest: apiToDisk.ToDiskSaveFileRequest = {

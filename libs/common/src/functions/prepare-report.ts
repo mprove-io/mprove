@@ -7,8 +7,9 @@ export function prepareReport(item: {
   report?: ReportX;
   mconfig: MconfigX;
   isForDashboard: boolean;
+  defaultTimezone: string;
 }) {
-  let { report, mconfig, isForDashboard } = item;
+  let { report, mconfig, isForDashboard, defaultTimezone } = item;
 
   let chart = mconfig.chart;
 
@@ -54,7 +55,7 @@ export function prepareReport(item: {
     select: mconfig.select,
     sorts: isDefined(mconfig.sorts) ? mconfig.sorts : undefined,
     timezone:
-      isDefined(report.timezone) && report.timezone !== constants.UTC
+      isDefined(report.timezone) && report.timezone !== defaultTimezone
         ? report.timezone
         : undefined,
     limit:

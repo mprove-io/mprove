@@ -7,8 +7,16 @@ export function makeDashboardFileText(item: {
   // group: string;
   roles: string;
   users: string;
+  defaultTimezone: string;
 }) {
-  let { dashboard, newDashboardId, newTitle, roles, users } = item;
+  let {
+    dashboard,
+    newDashboardId,
+    newTitle,
+    roles,
+    users,
+    defaultTimezone
+  } = item;
 
   let fields = dashboard.fields.map(field => ({
     filter: field.id,
@@ -50,7 +58,8 @@ export function makeDashboardFileText(item: {
     return common.prepareReport({
       report: x,
       isForDashboard: true,
-      mconfig: newMconfig
+      mconfig: newMconfig,
+      defaultTimezone: defaultTimezone
     });
   });
 

@@ -119,7 +119,7 @@
   </div>
 
   <div
-    class="flex flex-row mt-7 items-center justify-start"
+    class="flex flex-row mt-7 items-center justify-start cursor-default"
     *ngIf="showNav === true"
   >
     <div class="text-base font-semibold text-gray-400">Model:</div>
@@ -141,5 +141,11 @@
       [nzTooltipTitle]="'No access to model'"
       nzTooltipPlacement="bottom"
     ></m-lock-closed-icon>
+
+    <div class="ml-10 text-base font-semibold text-gray-400">Timezone:</div>
+
+    <div class="ml-2 text-base text-gray-400 focus:outline-none">{{
+      mconfig?.timezone | capitalize
+    }}</div>
   </div>
 </div>

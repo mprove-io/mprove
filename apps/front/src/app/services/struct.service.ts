@@ -66,11 +66,10 @@ export class StructService {
       fields: [],
       sorts: null,
       timezone:
-        this.struct.allowTimezones === false
-          ? this.struct.defaultTimezone
-          : this.user.timezone === common.USE_PROJECT_TIMEZONE_VALUE
-          ? this.struct.defaultTimezone
-          : this.user.timezone,
+        this.struct.allowTimezones === true &&
+        this.user.timezone !== common.USE_PROJECT_TIMEZONE_VALUE
+          ? this.user.timezone
+          : this.struct.defaultTimezone,
       limit: 500,
       filters: [],
       extendedFilters: [],

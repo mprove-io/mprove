@@ -16,11 +16,13 @@ import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { StructsService } from '~backend/services/structs.service';
 
 @Controller()
 export class CreateDashboardController {
   constructor(
     private branchesService: BranchesService,
+    private structsService: StructsService,
     private rabbitService: RabbitService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
@@ -64,6 +66,10 @@ export class CreateDashboardController {
       projectId: projectId,
       repoId: repoId,
       branchId: branchId
+    });
+
+    let currentStruct = await this.structsService.getStructCheckExists({
+      structId: branch.struct_id
     });
 
     let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
@@ -122,7 +128,8 @@ export class CreateDashboardController {
         newDashboardId: newDashboardId,
         newTitle: dashboardTitle,
         roles: accessRoles,
-        users: accessUsers
+        users: accessUsers,
+        defaultTimezone: currentStruct.default_timezone
       });
     } else {
       let newDashboard: common.DashboardX = {
@@ -148,7 +155,8 @@ export class CreateDashboardController {
         newDashboardId: newDashboardId,
         newTitle: dashboardTitle,
         roles: accessRoles,
-        users: accessUsers
+        users: accessUsers,
+        defaultTimezone: currentStruct.default_timezone
       });
     }
 
