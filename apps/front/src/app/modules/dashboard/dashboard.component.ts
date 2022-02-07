@@ -14,6 +14,7 @@ import { KtdGridLayout } from '@katoid/angular-grid-layout';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, filter, tap } from 'rxjs/operators';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
+import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -144,6 +145,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     })
   );
 
+  isExplorer = false;
+  isExplorer$ = this.memberQuery.isExplorer$.pipe(
+    tap(x => {
+      this.isExplorer = x;
+      this.cd.detectChanges();
+    })
+  );
+
   compactType: any = 'vertical';
   preventCollision = false;
   cols = 24;
@@ -158,6 +167,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private title: Title,
     private fb: FormBuilder,
     private structQuery: StructQuery,
+    private memberQuery: MemberQuery,
     public navigateService: NavigateService,
     public myDialogService: MyDialogService,
     private dashboardService: DashboardService,
@@ -300,7 +310,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  editListen() {
+  editListeners() {
     this.myDialogService.showDashboardEditListeners({
       dashboardService: this.dashboardService,
       apiService: this.apiService,

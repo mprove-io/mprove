@@ -52,7 +52,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   enableUnequalChildrenSizes = true;
 
   dashboardsModels: ModelXWithTotalDashboards[];
-  hasAccessModels: common.ModelX[];
+  hasAccessModels: common.ModelX[] = [];
 
   dashboards: common.DashboardX[];
   dashboardsFilteredByWord: common.DashboardX[];
@@ -344,7 +344,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       qData: qData,
       canAccessModel: item.hasAccessToModel,
       showNav: true,
-      isSelectValid: isSelectValid
+      isSelectValid: isSelectValid,
+      dashboardId: dashboardId,
+      vizId: undefined
     });
 
     this.spinner.hide(item.mconfigId);

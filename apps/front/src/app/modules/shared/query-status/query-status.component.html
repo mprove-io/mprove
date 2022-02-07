@@ -25,9 +25,8 @@
   <div
     *ngIf="query?.status === queryStatusEnum.Error"
     class="max-w-xl px-3 py-2 bg-red-100 text-red-700 truncate select-none"
-    nz-tooltip
-    [nzTooltipTitle]="query?.lastErrorMessage | capitalize"
-    nzTooltipPlacement="bottom"
+    tippy="{{ query?.lastErrorMessage | capitalize }}"
+    [isEnabled]="query?.status === queryStatusEnum.Error"
     >{{ query?.lastErrorMessage | capitalize }}</div
   >
 

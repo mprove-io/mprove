@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TreeModule } from '@circlon/angular-tree-component';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { TippyModule } from '@ngneat/helipopper';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { VirtualScrollerModule } from 'ngx-virtual-scroller';
@@ -21,8 +21,8 @@ import { VisualizationsComponent } from './visualizations.component';
     TreeModule,
     VirtualScrollerModule,
     UiSwitchModule,
-    NzToolTipModule,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    TippyModule
   ]
 })
 export class VisualizationsModule {}

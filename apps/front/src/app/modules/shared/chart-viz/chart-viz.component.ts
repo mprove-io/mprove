@@ -274,7 +274,9 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       qData: this.qData,
       canAccessModel: this.viz.reports[0].hasAccessToModel,
       showNav: true,
-      isSelectValid: this.isSelectValid
+      isSelectValid: this.isSelectValid,
+      dashboardId: undefined,
+      vizId: this.viz.vizId
     });
   }
 

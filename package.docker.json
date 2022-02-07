@@ -26,6 +26,8 @@
     "@nestjs/typeorm": "^7.1.5",
     "@ng-select/ng-select": "^6.1.0",
     "@ngneat/dialog": "^1.6.0",
+    "@ngneat/helipopper": "4.3.0",
+    "@ngneat/overview": "2.1.0",
     "@nrwl/angular": "^11.5.2",
     "@sentinel-one/ngx-monaco-editor": "^9.0.1",
     "@swimlane/ngx-charts": "17.0.1",

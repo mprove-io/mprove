@@ -4,7 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TreeModule } from '@circlon/angular-tree-component';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
@@ -42,7 +41,6 @@ import { SqlComponent } from './sql/sql.component';
     RouterModule,
     TreeModule,
     NgSelectModule,
-    NzToolTipModule,
     UiSwitchModule,
     NgxSpinnerModule
   ]

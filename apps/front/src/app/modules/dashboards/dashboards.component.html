@@ -59,48 +59,34 @@
         <div class="flex-grow"></div>
 
         <div class="flex flex-row items-center text-base text-gray1">
-          <button
-            type="button"
-            data-cy="dashboardsNewButton"
-            class="w-24 py-2 ml-5 mr-9 text-white text-base rounded font-medium focus:outline-none"
-            [ngClass]="{
-              'bg-blue3 cursor-pointer':
-                isExplorer === true && hasAccessModels?.length > 0,
-              'bg-gray-400 cursor-default':
-                isExplorer === false ||
-                !hasAccessModels ||
-                hasAccessModels.length === 0
-            }"
-            (click)="newDashboard()"
-            [disabled]="
-              isExplorer === false ||
-              !hasAccessModels ||
-              hasAccessModels.length === 0
-            "
+          <ng-template #templateNewDashboard>
+            <div *ngIf="isExplorer === false">Explorer role is required</div>
+            <div *ngIf="isExplorer === true && hasAccessModels.length === 0"
+              >No models available</div
+            >
+          </ng-template>
+
+          <div
+            [tippy]="templateNewDashboard"
+            [isEnabled]="isExplorer === false || hasAccessModels.length === 0"
+            class="ml-5 mr-9"
           >
-            <div *ngIf="isExplorer === true && hasAccessModels?.length > 0"
-              >New</div
+            <button
+              type="button"
+              data-cy="dashboardsNewButton"
+              class="w-24 py-2 text-white text-base rounded font-medium focus:outline-none"
+              [ngClass]="{
+                'bg-blue3 cursor-pointer':
+                  isExplorer === true && hasAccessModels.length > 0,
+                'bg-gray-400 cursor-default':
+                  isExplorer === false || hasAccessModels.length === 0
+              }"
+              (click)="newDashboard()"
+              [disabled]="isExplorer === false || hasAccessModels.length === 0"
             >
-
-            <div
-              *ngIf="isExplorer === false"
-              nz-tooltip
-              [nzTooltipTitle]="'Model Explorer role is required'"
-              nzTooltipPlacement="left"
-              >New</div
-            >
-
-            <div
-              *ngIf="
-                isExplorer === true &&
-                (!hasAccessModels || hasAccessModels.length === 0)
-              "
-              nz-tooltip
-              [nzTooltipTitle]="'No models available'"
-              nzTooltipPlacement="left"
-              >New</div
-            >
-          </button>
+              New
+            </button>
+          </div>
         </div>
       </div>
 
@@ -385,7 +371,11 @@
                       ></div>
 
                       <div class="flex flex-1 flex-row space-x-5">
-                        <div class="flex flex-1 flex-row truncate">
+                        <div
+                          class="flex flex-1 flex-row truncate"
+                          tippy="No access to model"
+                          [isEnabled]="report.hasAccessToModel === false"
+                        >
                           <button
                             class="flex items-start truncate focus:outline-none cursor-default"
                             [ngClass]="{
@@ -405,9 +395,6 @@
                           <m-lock-closed-icon
                             class="mb-1 ml-2 text-gray-400"
                             *ngIf="report.hasAccessToModel === false"
-                            nz-tooltip
-                            [nzTooltipTitle]="'No access to model'"
-                            nzTooltipPlacement="bottom"
                           ></m-lock-closed-icon>
                         </div>
                         <div class="flex flex-1 cursor-default"></div>

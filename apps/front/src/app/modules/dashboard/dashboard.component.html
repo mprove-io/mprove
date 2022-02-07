@@ -29,25 +29,57 @@
             >
           </div>
 
-          <button
-            type="button"
-            data-cy="dashboardAddReportButton"
-            class="px-5 py-2 ml-5 text-white text-base rounded font-medium focus:outline-none"
-            [ngClass]="{
-              'bg-blue3':
+          <ng-template #templateAddReport>
+            <div *ngIf="isExplorer === false">Explorer role is required</div>
+
+            <div *ngIf="isExplorer === true && dashboard?.temp === true"
+              >Save changes to be able to add reports</div
+            >
+
+            <div
+              *ngIf="
+                isExplorer === true &&
                 dashboard?.temp === false &&
-                dashboard?.canEditOrDeleteDashboard === true,
-              'bg-gray-400 cursor-default':
-                dashboard?.temp === true ||
                 dashboard?.canEditOrDeleteDashboard === false
-            }"
-            (click)="addReport()"
-            [disabled]="
+              "
+              >Only the dashboard author, project editors, and administrators
+              can edit this dashboard. Try saving this dashboard as a new one to
+              become an author.</div
+            >
+          </ng-template>
+
+          <div
+            [tippy]="templateAddReport"
+            [isEnabled]="
+              isExplorer === false ||
               dashboard?.temp === true ||
               dashboard?.canEditOrDeleteDashboard === false
             "
-            >Add Report</button
+            class="ml-5"
           >
+            <button
+              type="button"
+              data-cy="dashboardAddReportButton"
+              class="px-5 py-2 ml-5 text-white text-base rounded font-medium focus:outline-none"
+              [ngClass]="{
+                'bg-blue3':
+                  isExplorer === true &&
+                  dashboard?.temp === false &&
+                  dashboard?.canEditOrDeleteDashboard === true,
+                'bg-gray-400 cursor-default':
+                  isExplorer === false ||
+                  dashboard?.temp === true ||
+                  dashboard?.canEditOrDeleteDashboard === false
+              }"
+              (click)="addReport()"
+              [disabled]="
+                isExplorer === false ||
+                dashboard?.temp === true ||
+                dashboard?.canEditOrDeleteDashboard === false
+              "
+              >Add Report</button
+            >
+          </div>
 
           <div class="flex-grow"></div>
 
@@ -131,25 +163,39 @@
                 >Add Filter</button
               >
 
-              <button
-                type="button"
-                data-cy="dashboardEditListenButton"
-                class="mt-6 h-12 ml-10 text-base rounded font-medium focus:outline-none"
-                (click)="editListen()"
-                [ngClass]="{
-                  'text-blue3 ':
-                    dashboard?.reports.length > 0 &&
-                    dashboard?.fields.length > 0,
-                  'text-gray-400  cursor-default':
-                    dashboard?.reports.length === 0 ||
-                    dashboard?.fields.length === 0
-                }"
-                [disabled]="
+              <ng-template #templateEditListeners>
+                <div *ngIf="dashboard?.reports.length === 0">No reports</div>
+                <div *ngIf="dashboard?.fields.length === 0">No filters</div>
+              </ng-template>
+
+              <div
+                [tippy]="templateEditListeners"
+                [isEnabled]="
                   dashboard?.reports.length === 0 ||
                   dashboard?.fields.length === 0
                 "
-                >Edit Listeners</button
+                class="mt-6 ml-10 h-12"
               >
+                <button
+                  type="button"
+                  data-cy="dashboardEditListenButton"
+                  class="h-12 text-base rounded font-medium focus:outline-none"
+                  (click)="editListeners()"
+                  [ngClass]="{
+                    'text-blue3 ':
+                      dashboard?.reports.length > 0 &&
+                      dashboard?.fields.length > 0,
+                    'text-gray-400  cursor-default':
+                      dashboard?.reports.length === 0 ||
+                      dashboard?.fields.length === 0
+                  }"
+                  [disabled]="
+                    dashboard?.reports.length === 0 ||
+                    dashboard?.fields.length === 0
+                  "
+                  >Edit Listeners</button
+                >
+              </div>
 
               <div
                 (click)="toggleFiltersPanel()"
@@ -250,3 +296,4 @@
 <div *ngIf="dashboard$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="struct$ | async"></div>
+<div *ngIf="isExplorer$ | async"></div>

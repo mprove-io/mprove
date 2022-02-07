@@ -383,7 +383,9 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
       qData: qData,
       canAccessModel: item.reports[0].hasAccessToModel,
       showNav: true,
-      isSelectValid: isSelectValid
+      isSelectValid: isSelectValid,
+      dashboardId: undefined,
+      vizId: item.vizId
     });
 
     this.spinner.hide(item.vizId);

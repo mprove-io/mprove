@@ -99,21 +99,21 @@ export class GetOrgUsersController {
           firstName: x.first_name,
           lastName: x.last_name
         }),
-        projectAdminProjects: userMembers
+        adminProjects: userMembers
           .filter(m => m.is_admin === common.BoolEnum.TRUE)
           .map(m => m.project_id)
           .map(z => {
             let project = projects.find(p => p.project_id === z);
             return project.name;
           }),
-        filesEditorProjects: userMembers
+        editorProjects: userMembers
           .filter(m => m.is_editor === common.BoolEnum.TRUE)
           .map(m => m.project_id)
           .map(z => {
             let project = projects.find(p => p.project_id === z);
             return project.name;
           }),
-        modelExplorerProjects: userMembers
+        explorerProjects: userMembers
           .filter(m => m.is_explorer === common.BoolEnum.TRUE)
           .map(m => m.project_id)
           .map(z => {

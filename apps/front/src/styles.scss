@@ -17,6 +17,10 @@
 @import '~@ng-select/ng-select/themes/default.theme.css';
 // @import "~@ng-select/ng-select/themes/material.theme.css";
 
+@import '~tippy.js/dist/tippy.css';
+@import '~tippy.js/themes/light.css';
+@import '~tippy.js/animations/scale.css';
+
 @font-face {
   font-family: 'Montserrat';
   font-style: normal;

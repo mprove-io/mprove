@@ -43,13 +43,13 @@ export class OrgUsersItem {
   fullName: string;
 
   @IsString({ each: true })
-  projectAdminProjects: string[];
+  adminProjects: string[];
 
   @IsString({ each: true })
-  filesEditorProjects: string[];
+  editorProjects: string[];
 
   @IsString({ each: true })
-  modelExplorerProjects: string[];
+  explorerProjects: string[];
 
   @IsString({ each: true })
   projectUserProjects: string[];

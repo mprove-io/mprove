@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { interval, of, Subscription } from 'rxjs';
 import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
+import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService, RData } from '~front/app/services/query.service';
@@ -29,10 +30,19 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   mconfig: common.MconfigX;
   isSelectValid = false;
 
+  isExplorer = false;
+  isExplorer$ = this.memberQuery.isExplorer$.pipe(
+    tap(x => {
+      this.isExplorer = x;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     public ref: DialogRef,
     private cd: ChangeDetectorRef,
     private queryService: QueryService,
+    private memberQuery: MemberQuery,
     private navQuery: NavQuery,
     private navigateService: NavigateService
   ) {}

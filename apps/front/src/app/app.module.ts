@@ -7,7 +7,11 @@ import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogModule } from '@ngneat/dialog';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import {
+  popperVariation,
+  TippyModule,
+  tooltipVariation
+} from '@ngneat/helipopper';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -52,6 +56,13 @@ registerLocaleData(en);
     NgxSpinnerModule,
     BrowserAnimationsModule,
     DialogModule.forRoot(),
+    TippyModule.forRoot({
+      defaultVariation: 'tooltip',
+      variations: {
+        tooltip: tooltipVariation,
+        popper: popperVariation
+      }
+    }),
     SharedModule,
     SpecialModule,
     ReactiveFormsModule,
@@ -61,8 +72,7 @@ registerLocaleData(en);
     VisualizationsModule,
     DashboardsModule,
     ModelsModule,
-    UiSwitchModule,
-    NzToolTipModule
+    UiSwitchModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

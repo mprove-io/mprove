@@ -26,7 +26,7 @@
 
       <div class="flex-grow"></div>
 
-      <div class="flex-1 flex flex-row items-center justify-end">
+      <div class="flex flex-row items-center justify-end">
         <m-query-status [query]="query"></m-query-status>
       </div>
 
@@ -38,26 +38,33 @@
         Run
       </button>
 
-      <button
-        data-cy="chartDialogExploreButton"
-        class="px-6 py-2 ml-5 text-white text-base rounded font-medium focus:outline-none"
-        [ngClass]="{
-          'bg-blue3 cursor-pointer': canAccessModel === true,
-          'bg-gray-400 cursor-default': canAccessModel !== true
-        }"
-        [disabled]="canAccessModel === false"
-        (click)="explore($event)"
+      <ng-template #templateChartDialogExplore>
+        <div *ngIf="isExplorer === false">Explorer role is required</div>
+        <div *ngIf="isExplorer === true && canAccessModel === false"
+          >No access to model</div
+        >
+      </ng-template>
+
+      <div
+        class="ml-5"
+        [tippy]="templateChartDialogExplore"
+        [isEnabled]="isExplorer === false || canAccessModel === false"
       >
-        <div *ngIf="canAccessModel === true"> Explore </div>
-        <div
-          *ngIf="canAccessModel === false"
-          nz-tooltip
-          [nzTooltipTitle]="'No access to model'"
-          nzTooltipPlacement="bottom"
+        <button
+          data-cy="chartDialogExploreButton"
+          class="px-6 py-2 text-white text-base rounded font-medium focus:outline-none"
+          [ngClass]="{
+            'bg-blue3 cursor-pointer':
+              isExplorer === true && canAccessModel === true,
+            'bg-gray-400 cursor-default':
+              isExplorer === false || canAccessModel === false
+          }"
+          [disabled]="isExplorer === false || canAccessModel === false"
+          (click)="explore($event)"
         >
           Explore
-        </div>
-      </button>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -125,22 +132,25 @@
     <div class="text-base font-semibold text-gray-400">Model:</div>
 
     <div
-      (click)="goToModel(mconfig.modelId, canAccessModel)"
-      class="ml-2 text-base font-semibold focus:outline-none"
-      [ngClass]="{
-        'cursor-pointer hover:text-blue-500': canAccessModel === true,
-        'cursor-default': canAccessModel === false
-      }"
-      >{{ mconfig?.modelLabel | capitalize }}</div
+      class="ml-2 flex flex-row items-center"
+      tippy="No access to model"
+      [isEnabled]="canAccessModel === false"
     >
+      <div
+        (click)="goToModel(mconfig.modelId, canAccessModel)"
+        class="text-base font-semibold focus:outline-none"
+        [ngClass]="{
+          'cursor-pointer hover:text-blue-500': canAccessModel === true,
+          'cursor-default': canAccessModel === false
+        }"
+        >{{ mconfig?.modelLabel | capitalize }}</div
+      >
 
-    <m-lock-closed-icon
-      class="mb-1 ml-2 text-gray-400"
-      *ngIf="canAccessModel === false"
-      nz-tooltip
-      [nzTooltipTitle]="'No access to model'"
-      nzTooltipPlacement="bottom"
-    ></m-lock-closed-icon>
+      <m-lock-closed-icon
+        class="mb-1 ml-2 text-gray-400"
+        *ngIf="canAccessModel === false"
+      ></m-lock-closed-icon>
+    </div>
 
     <div class="ml-10 text-base font-semibold text-gray-400">Timezone:</div>
 
@@ -149,3 +159,5 @@
     }}</div>
   </div>
 </div>
+
+<div *ngIf="isExplorer$ | async"></div>

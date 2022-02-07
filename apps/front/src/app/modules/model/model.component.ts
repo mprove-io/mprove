@@ -672,7 +672,9 @@ export class ModelComponent implements OnInit, OnDestroy {
       qData: this.qData,
       canAccessModel: true,
       showNav: false,
-      isSelectValid: this.isSelectValid
+      isSelectValid: this.isSelectValid,
+      dashboardId: undefined,
+      vizId: undefined
     });
   }
 

@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { BranchSelectComponent } from './branch-select/branch-select.component';
 import { NavbarComponent } from './navbar.component';
@@ -29,7 +28,6 @@ import { UserMenuComponent } from './user-menu/user-menu.component';
     FormsModule,
     RouterModule,
     SharedModule,
-    NzToolTipModule,
     NgSelectModule
   ]
 })

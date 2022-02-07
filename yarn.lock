@@ -1876,6 +1876,21 @@
   dependencies:
     tslib "^1.10.0"
 
+"@ngneat/helipopper@4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@ngneat/helipopper/-/helipopper-4.3.0.tgz#7fd6d538a6f243fefcf37f15284a4edc11c2901c"
+  integrity sha512-DhAeZjr9slN4nV2SAIMWXlebCYD4Wzn9jpcQ6LmpTPwPe3urH9UoMYTv3zMs01XE36e9PJZOwKxYuKQOIGrJcg==
+  dependencies:
+    tippy.js "^6.2.3"
+    tslib "^2.0.0"
+
+"@ngneat/overview@2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@ngneat/overview/-/overview-2.1.0.tgz#db256e2f0f77ad6d4a774df583f5698af0ab9f64"
+  integrity sha512-v05lg7P/7PrVHjelZCEJUZ08idaC51a8rjlvUk5BrSnxlw97DijLViOaMgqosMFDI1Qpfbp/7sjP0rpA+CBKLQ==
+  dependencies:
+    tslib "^2.0.0"
+
 "@ngtools/webpack@11.2.6":
   version "11.2.6"
   resolved "https://registry.yarnpkg.com/@ngtools/webpack/-/webpack-11.2.6.tgz#1bd823f9279db6a3d00e0cbcd5723859891c2e88"
@@ -2108,6 +2123,11 @@
     p-queue "^6.6.2"
     walker "^1.0.7"
     yargs "^16.2.0"
+
+"@popperjs/core@^2.9.0":
+  version "2.11.2"
+  resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.2.tgz#830beaec4b4091a9e9398ac50f865ddea52186b9"
+  integrity sha512-92FRmppjjqz29VMJ2dn+xdyXZBrMlE42AV6Kq6BwjWV7CNUW1hs2FtxSNLQE+gJhaZ6AAmYuO9y8dshhcBl7vA==
 
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.1"
@@ -15353,6 +15373,13 @@ tiny-async-pool@^1.2.0:
   dependencies:
     semver "^5.5.0"
     yaassertion "^1.0.0"
+
+tippy.js@^6.2.3:
+  version "6.3.7"
+  resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-6.3.7.tgz#8ccfb651d642010ed9a32ff29b0e9e19c5b8c61c"
+  integrity sha512-E1d3oP2emgJ9dRQZdf3Kkn0qJgI6ZLpyS5z6ZkY1DF3kaQaBsGZsndEpHwx+eC+tYM41HaSNvNtLx8tU57FzTQ==
+  dependencies:
+    "@popperjs/core" "^2.9.0"
 
 tlds@1.208.0:
   version "1.208.0"

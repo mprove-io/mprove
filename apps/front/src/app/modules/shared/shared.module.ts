@@ -2,11 +2,11 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { TippyModule } from '@ngneat/helipopper';
 import { MonacoEditorModule } from '@sentinel-one/ngx-monaco-editor';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { ColorSketchModule } from 'ngx-color/sketch';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { AvatarComponent } from './avatar/avatar.component';
@@ -144,8 +144,8 @@ let sharedComponents = [
     NzTimePickerModule,
     NgxChartsModule,
     ColorSketchModule,
-    NzToolTipModule,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    TippyModule
   ],
   exports: [...sharedComponents, ...pipesArray, MonacoEditorModule]
 })

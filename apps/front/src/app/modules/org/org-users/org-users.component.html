@@ -18,7 +18,7 @@
               <th class="text-left">Project User</th>
               <th class="text-left">Project Admin</th>
               <th class="text-left">Files Editor</th>
-              <th class="text-left">Model Explorer</th>
+              <th class="text-left">Explorer</th>
             </tr>
           </thead>
 
@@ -82,37 +82,27 @@
               >
               <td class="w-48">
                 <div class="flex flex-col my-3">
-                  <div
-                    *ngFor="
-                      let projectAdminProject of user.projectAdminProjects
-                    "
-                  >
+                  <div *ngFor="let adminProject of user.adminProjects">
                     <div class="flex flex-row items-center text-base">
-                      <div>{{ projectAdminProject | capitalize }} </div>
+                      <div>{{ adminProject | capitalize }} </div>
                     </div>
                   </div>
                 </div></td
               >
               <td class="w-48">
                 <div class="flex flex-col my-3">
-                  <div
-                    *ngFor="let filesEditorProject of user.filesEditorProjects"
-                  >
+                  <div *ngFor="let editorProject of user.editorProjects">
                     <div class="flex flex-row items-center text-base">
-                      <div>{{ filesEditorProject | capitalize }} </div>
+                      <div>{{ editorProject | capitalize }} </div>
                     </div>
                   </div>
                 </div></td
               >
               <td class="w-48">
                 <div class="flex flex-col my-3">
-                  <div
-                    *ngFor="
-                      let modelExplorerProject of user.modelExplorerProjects
-                    "
-                  >
+                  <div *ngFor="let explorerProject of user.explorerProjects">
                     <div class="flex flex-row items-center text-base">
-                      <div>{{ modelExplorerProject | capitalize }} </div>
+                      <div>{{ explorerProject | capitalize }} </div>
                     </div>
                   </div>
                 </div></td

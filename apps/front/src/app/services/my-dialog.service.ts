@@ -169,8 +169,8 @@ export class MyDialogService {
     canAccessModel: boolean;
     showNav: boolean;
     isSelectValid: boolean;
-    vizId?: string;
-    dashboardId?: string;
+    vizId: string;
+    dashboardId: string;
     updateQueryFn?: any;
   }): void {
     this.dialogService.open(ChartDialogComponent, {
