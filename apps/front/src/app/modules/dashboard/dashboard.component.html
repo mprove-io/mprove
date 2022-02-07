@@ -55,12 +55,12 @@
               dashboard?.temp === true ||
               dashboard?.canEditOrDeleteDashboard === false
             "
-            class="ml-5"
+            class="flex ml-5 flex-shrink-0"
           >
             <button
               type="button"
               data-cy="dashboardAddReportButton"
-              class="px-5 py-2 ml-5 text-white text-base rounded font-medium focus:outline-none"
+              class="px-5 py-2 ml-5 text-white text-base rounded font-medium focus:outline-none flex-shrink-0"
               [ngClass]="{
                 'bg-blue3':
                   isExplorer === true &&
@@ -116,7 +116,7 @@
 
           <div class="flex flex-row items-center text-base text-gray1">
             <div
-              class="ml-16 h-12"
+              class="flex ml-16 h-12 flex-shrink-0"
               tippy="Explorer role is required"
               [isEnabled]="isExplorer === false"
             >
