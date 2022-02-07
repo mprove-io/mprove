@@ -79,18 +79,20 @@ export class RenameFileDialogComponent implements OnInit {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendRenameCatalogNodeResponse) => {
-          this.repoStore.update(resp.payload.repo);
-          this.structStore.update(resp.payload.struct);
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.repoStore.update(resp.payload.repo);
+            this.structStore.update(resp.payload.struct);
 
-          let fIdAr = this.ref.data.nodeId.split('/');
-          fIdAr.shift();
-          fIdAr.pop();
-          fIdAr.push(newName);
-          let fileId = fIdAr.join(common.TRIPLE_UNDERSCORE);
+            let fIdAr = this.ref.data.nodeId.split('/');
+            fIdAr.shift();
+            fIdAr.pop();
+            fIdAr.push(newName);
+            let fileId = fIdAr.join(common.TRIPLE_UNDERSCORE);
 
-          this.navigateService.navigateToFileLine({
-            underscoreFileId: fileId
-          });
+            this.navigateService.navigateToFileLine({
+              underscoreFileId: fileId
+            });
+          }
         }),
         take(1)
       )

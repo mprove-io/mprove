@@ -9,6 +9,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { UsersStore } from '~front/app/stores/users.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 class OrgUserItemExtended extends apiToBackend.OrgUsersItem {
@@ -119,11 +120,13 @@ export class OrgUsersComponent implements OnInit {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendGetAvatarBigResponse) => {
-          this.myDialogService.showPhoto({
-            apiService: this.apiService,
-            avatarBig: resp.payload.avatarBig,
-            initials: initials
-          });
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.myDialogService.showPhoto({
+              apiService: this.apiService,
+              avatarBig: resp.payload.avatarBig,
+              initials: initials
+            });
+          }
         }),
         take(1)
       )

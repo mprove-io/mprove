@@ -63,27 +63,29 @@ export class CreateBranchDialogComponent implements OnInit {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateBranchResponse) => {
-          let userId;
-          this.userQuery.userId$
-            .pipe(
-              tap(x => (userId = x)),
-              take(1)
-            )
-            .subscribe();
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let userId;
+            this.userQuery.userId$
+              .pipe(
+                tap(x => (userId = x)),
+                take(1)
+              )
+              .subscribe();
 
-          let repoId = userId;
+            let repoId = userId;
 
-          this.router.navigate([
-            common.PATH_ORG,
-            this.ref.data.orgId,
-            common.PATH_PROJECT,
-            this.ref.data.projectId,
-            common.PATH_REPO,
-            repoId,
-            common.PATH_BRANCH,
-            this.createBranchForm.value.branchId,
-            common.PATH_FILES
-          ]);
+            this.router.navigate([
+              common.PATH_ORG,
+              this.ref.data.orgId,
+              common.PATH_PROJECT,
+              this.ref.data.projectId,
+              common.PATH_REPO,
+              repoId,
+              common.PATH_BRANCH,
+              this.createBranchForm.value.branchId,
+              common.PATH_FILES
+            ]);
+          }
         }),
         take(1)
       )

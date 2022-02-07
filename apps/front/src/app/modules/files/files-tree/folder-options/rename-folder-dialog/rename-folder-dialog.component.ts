@@ -7,6 +7,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-rename-folder-dialog',
@@ -59,10 +60,12 @@ export class RenameFolderDialogComponent implements OnInit {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendRenameCatalogNodeResponse) => {
-          this.repoStore.update(resp.payload.repo);
-          this.structStore.update(resp.payload.struct);
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.repoStore.update(resp.payload.repo);
+            this.structStore.update(resp.payload.struct);
 
-          this.navigateService.navigateToFiles();
+            this.navigateService.navigateToFiles();
+          }
         }),
         take(1)
       )

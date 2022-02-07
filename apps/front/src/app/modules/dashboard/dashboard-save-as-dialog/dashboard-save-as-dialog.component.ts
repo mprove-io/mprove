@@ -122,15 +122,17 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendGetDashboardsResponse) => {
-          this.dashboards = resp.payload.dashboards.filter(
-            z => z.canEditOrDeleteDashboard === true
-          );
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.dashboards = resp.payload.dashboards.filter(
+              z => z.canEditOrDeleteDashboard === true
+            );
 
-          this.makePath();
+            this.makePath();
 
-          this.spinner.hide(this.spinnerName);
+            this.spinner.hide(this.spinnerName);
 
-          this.cd.detectChanges();
+            this.cd.detectChanges();
+          }
         })
       )
       .toPromise();

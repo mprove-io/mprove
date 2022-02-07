@@ -74,17 +74,19 @@ export class CreateFileDialogComponent implements OnInit {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateFileResponse) => {
-          this.repoStore.update(resp.payload.repo);
-          this.structStore.update(resp.payload.struct);
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.repoStore.update(resp.payload.repo);
+            this.structStore.update(resp.payload.struct);
 
-          let fId = this.ref.data.parentNodeId + '/' + fileName;
-          let fIdAr = fId.split('/');
-          fIdAr.shift();
-          let fileId = fIdAr.join(common.TRIPLE_UNDERSCORE);
+            let fId = this.ref.data.parentNodeId + '/' + fileName;
+            let fIdAr = fId.split('/');
+            fIdAr.shift();
+            let fileId = fIdAr.join(common.TRIPLE_UNDERSCORE);
 
-          this.navigateService.navigateToFileLine({
-            underscoreFileId: fileId
-          });
+            this.navigateService.navigateToFileLine({
+              underscoreFileId: fileId
+            });
+          }
         }),
         take(1)
       )

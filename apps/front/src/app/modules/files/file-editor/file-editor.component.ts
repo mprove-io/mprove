@@ -233,14 +233,16 @@ export class FileEditorComponent implements OnDestroy {
       .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveFile, payload)
       .pipe(
         tap((resp: apiToBackend.ToBackendSaveFileResponse) => {
-          this.repoStore.update(resp.payload.repo);
-          this.structStore.update(resp.payload.struct);
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.repoStore.update(resp.payload.repo);
+            this.structStore.update(resp.payload.struct);
 
-          this.originalText = this.content;
-          this.uiStore.update(state =>
-            Object.assign({}, state, <UiState>{ needSave: false })
-          );
-          this.cd.detectChanges();
+            this.originalText = this.content;
+            this.uiStore.update(state =>
+              Object.assign({}, state, <UiState>{ needSave: false })
+            );
+            this.cd.detectChanges();
+          }
         }),
         take(1)
       )

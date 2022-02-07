@@ -148,8 +148,10 @@ export class BranchSelectComponent {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendGetProjectResponse) => {
-          this.memberStore.update(resp.payload.userMember);
-          return true;
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.memberStore.update(resp.payload.userMember);
+            return true;
+          }
         }),
         switchMap(a =>
           this.apiService
@@ -159,10 +161,11 @@ export class BranchSelectComponent {
               payload
             )
             .pipe(
-              map(
-                (resp: apiToBackend.ToBackendGetBranchesListResponse) =>
-                  resp.payload.branchesList
-              ),
+              map((resp: apiToBackend.ToBackendGetBranchesListResponse) => {
+                if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+                  return resp.payload.branchesList;
+                }
+              }),
               tap(x => {
                 this.branchesList = x.map(z =>
                   this.makeBranchItem({

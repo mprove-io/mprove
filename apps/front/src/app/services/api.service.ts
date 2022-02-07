@@ -159,6 +159,7 @@ export class ApiService {
     ]).pipe(
       map(x =>
         this.mapRes({
+          pathInfoName: pathInfoName,
           res: x[1],
           req: {
             url: url,
@@ -191,6 +192,7 @@ export class ApiService {
   }
 
   private mapRes(item: {
+    pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum;
     res: any;
     req: {
       url: string;
@@ -198,7 +200,7 @@ export class ApiService {
       body: any;
     };
   }) {
-    let { res, req } = item;
+    let { res, req, pathInfoName } = item;
 
     let errorData: interfaces.ErrorData = {
       reqUrl: req.url,
@@ -213,19 +215,22 @@ export class ApiService {
           : undefined
     };
 
-    if (common.isDefined(errorData.message)) {
+    let infoErrorMessage = res?.body?.info?.error?.message;
+
+    if (
+      common.isDefined(errorData.message) &&
+      errorData.message === enums.ErEnum.FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK
+    ) {
       if (
         [apiToBackend.ErEnum.BACKEND_USER_DOES_NOT_EXIST].indexOf(
-          res.body?.info?.error?.message
+          infoErrorMessage
         ) > -1
       ) {
         this.authService.logout();
       }
 
       if (
-        errorData.message ===
-          enums.ErEnum.FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK &&
-        errorData.response.body.info.error.message ===
+        infoErrorMessage ===
           apiToBackend.ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK &&
         errorData.response.body.info.error.originalError?.message ===
           apiToDisk.ErEnum.DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH
@@ -246,8 +251,6 @@ export class ApiService {
           });
         }, 0);
       } else if (
-        errorData.message ===
-          enums.ErEnum.FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK &&
         [
           apiToBackend.ErEnum.BACKEND_MCONFIG_DOES_NOT_EXIST,
           apiToBackend.ErEnum.BACKEND_MODEL_DOES_NOT_EXIST,
@@ -256,7 +259,7 @@ export class ApiService {
           apiToBackend.ErEnum.BACKEND_STRUCT_ID_CHANGED,
           apiToBackend.ErEnum.BACKEND_STRUCT_DOES_NOT_EXIST,
           apiToBackend.ErEnum.BACKEND_QUERY_DOES_NOT_EXIST
-        ].indexOf(errorData.response.body.info.error.message) > -1
+        ].indexOf(infoErrorMessage) > -1
       ) {
         errorData.description = `Don't worry, most likely the project editor has pushed new changes to the current branch files recently`;
         errorData.buttonText = 'Ok, reload and fetch changes';
@@ -266,14 +269,26 @@ export class ApiService {
 
         this.myDialogService.showError({ errorData, isThrow: false });
       } else if (
-        errorData.message ===
-          enums.ErEnum.FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK &&
+        infoErrorMessage === apiToBackend.ErEnum.BACKEND_RESTRICTED_PROJECT &&
+        pathInfoName ===
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPushRepo
+      ) {
+        errorData.description = `Some actions of this project is restricted for Demo purposes. Change organization/project to remove restrictions and be able to push to production.`;
+        this.myDialogService.showError({ errorData, isThrow: false });
+      } else if (
+        infoErrorMessage === apiToBackend.ErEnum.BACKEND_RESTRICTED_PROJECT &&
+        pathInfoName !==
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPushRepo
+      ) {
+        errorData.description = `Some actions of this project is restricted for Demo purposes. Switch to personal branch or change organization/project to remove restrictions.`;
+        this.myDialogService.showError({ errorData, isThrow: false });
+      } else if (
         [
           apiToBackend.ErEnum.BACKEND_CREATE_DASHBOARD_FAIL,
           apiToBackend.ErEnum.BACKEND_MODIFY_DASHBOARD_FAIL,
           apiToBackend.ErEnum.BACKEND_CREATE_VIZ_FAIL,
           apiToBackend.ErEnum.BACKEND_MODIFY_VIZ_FAIL
-        ].indexOf(errorData.response.body.info.error.message) > -1
+        ].indexOf(infoErrorMessage) > -1
       ) {
         errorData.description = `The changes were saved to the file, but it failed the BlockML validation. It's probably a bug.`;
         errorData.buttonText = 'Ok, go to file';
@@ -286,8 +301,15 @@ export class ApiService {
 
         this.myDialogService.showError({ errorData, isThrow: false });
       } else {
-        this.myDialogService.showError({ errorData, isThrow: true });
+        this.myDialogService.showError({ errorData, isThrow: false });
       }
+
+      return { errorData: errorData };
+    } else if (
+      common.isDefined(errorData.message) &&
+      errorData.message !== enums.ErEnum.FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK
+    ) {
+      this.myDialogService.showError({ errorData, isThrow: true });
 
       return { errorData: errorData };
     }

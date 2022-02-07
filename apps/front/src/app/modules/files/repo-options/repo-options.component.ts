@@ -104,10 +104,12 @@ export class RepoOptionsComponent implements OnDestroy {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendRevertRepoToLastCommitResponse) => {
-          this.repoStore.update(resp.payload.repo);
-          this.structStore.update(resp.payload.struct);
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.repoStore.update(resp.payload.repo);
+            this.structStore.update(resp.payload.struct);
 
-          this.navigateService.navigateToFiles();
+            this.navigateService.navigateToFiles();
+          }
         }),
         // switchMap(x =>
         //   common.isDefined(this.file.fileId)
@@ -136,10 +138,12 @@ export class RepoOptionsComponent implements OnDestroy {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendRevertRepoToProductionResponse) => {
-          this.repoStore.update(resp.payload.repo);
-          this.structStore.update(resp.payload.struct);
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.repoStore.update(resp.payload.repo);
+            this.structStore.update(resp.payload.struct);
 
-          this.navigateService.navigateToFiles();
+            this.navigateService.navigateToFiles();
+          }
         }),
         // switchMap(x =>
         //   common.isDefined(this.file.fileId)
@@ -164,10 +168,12 @@ export class RepoOptionsComponent implements OnDestroy {
       .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo, payload)
       .pipe(
         tap((resp: apiToBackend.ToBackendPullRepoResponse) => {
-          this.repoStore.update(resp.payload.repo);
-          this.structStore.update(resp.payload.struct);
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.repoStore.update(resp.payload.repo);
+            this.structStore.update(resp.payload.struct);
 
-          this.navigateService.navigateToFiles();
+            this.navigateService.navigateToFiles();
+          }
         }),
         // switchMap(x =>
         //   common.isDefined(this.file.fileId)

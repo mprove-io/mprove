@@ -35,7 +35,9 @@ export class DeleteVizDialogComponent {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteVizResponse) => {
-          this.ref.data.vizDeletedFnBindThis(viz.vizId);
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.ref.data.vizDeletedFnBindThis(viz.vizId);
+          }
         }),
         take(1)
       )

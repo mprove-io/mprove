@@ -103,8 +103,10 @@ export class FilesComponent implements OnInit {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendCommitRepoResponse) => {
-          this.repoStore.update(resp.payload.repo);
-          this.structStore.update(resp.payload.struct);
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.repoStore.update(resp.payload.repo);
+            this.structStore.update(resp.payload.struct);
+          }
         }),
         take(1)
       )
@@ -121,8 +123,10 @@ export class FilesComponent implements OnInit {
       .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPushRepo, payload)
       .pipe(
         tap((resp: apiToBackend.ToBackendPushRepoResponse) => {
-          this.repoStore.update(resp.payload.repo);
-          this.structStore.update(resp.payload.struct);
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.repoStore.update(resp.payload.repo);
+            this.structStore.update(resp.payload.struct);
+          }
         }),
         take(1)
       )
@@ -139,8 +143,10 @@ export class FilesComponent implements OnInit {
       .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo, payload)
       .pipe(
         tap((resp: apiToBackend.ToBackendPullRepoResponse) => {
-          this.repoStore.update(resp.payload.repo);
-          this.structStore.update(resp.payload.struct);
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.repoStore.update(resp.payload.repo);
+            this.structStore.update(resp.payload.struct);
+          }
         }),
         switchMap(x =>
           common.isDefined(this.file.fileId)

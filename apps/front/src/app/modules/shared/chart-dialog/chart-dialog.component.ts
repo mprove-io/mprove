@@ -81,23 +81,26 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
               )
               .pipe(
                 tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
-                  this.query = resp.payload.query;
+                  if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+                    this.query = resp.payload.query;
 
-                  this.qData =
-                    this.mconfig.queryId === this.query.queryId
-                      ? this.queryService.makeQData({
-                          data: this.query.data,
-                          columns: this.mconfig.fields
-                        })
-                      : [];
+                    this.qData =
+                      this.mconfig.queryId === this.query.queryId
+                        ? this.queryService.makeQData({
+                            data: this.query.data,
+                            columns: this.mconfig.fields
+                          })
+                        : [];
 
-                  this.cd.detectChanges();
+                    this.cd.detectChanges();
 
-                  if (
-                    common.isDefined(this.ref.data.updateQueryFn) &&
-                    resp.payload.query.status !== common.QueryStatusEnum.Running
-                  ) {
-                    this.ref.data.updateQueryFn(resp.payload.query);
+                    if (
+                      common.isDefined(this.ref.data.updateQueryFn) &&
+                      resp.payload.query.status !==
+                        common.QueryStatusEnum.Running
+                    ) {
+                      this.ref.data.updateQueryFn(resp.payload.query);
+                    }
                   }
                 })
               );

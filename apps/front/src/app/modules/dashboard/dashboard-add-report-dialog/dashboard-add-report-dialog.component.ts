@@ -57,11 +57,13 @@ export class DashboardAddReportDialogComponent implements OnInit {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendGetModelsResponse) => {
-          this.models = resp.payload.models.filter(z => z.hasAccess === true);
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.models = resp.payload.models.filter(z => z.hasAccess === true);
 
-          this.spinner.hide(this.spinnerName);
+            this.spinner.hide(this.spinnerName);
 
-          this.cd.detectChanges();
+            this.cd.detectChanges();
+          }
         })
       )
       .toPromise();

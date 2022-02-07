@@ -35,7 +35,9 @@ export class DeleteDashboardDialogComponent {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteDashboardResponse) => {
-          this.ref.data.dashboardDeletedFnBindThis(dashboard.dashboardId);
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.ref.data.dashboardDeletedFnBindThis(dashboard.dashboardId);
+          }
         }),
         take(1)
       )

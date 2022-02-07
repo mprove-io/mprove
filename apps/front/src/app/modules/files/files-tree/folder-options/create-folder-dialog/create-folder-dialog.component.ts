@@ -6,6 +6,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-create-folder-dialog',
@@ -56,8 +57,10 @@ export class CreateFolderDialogComponent implements OnInit {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateFolderResponse) => {
-          this.repoStore.update(resp.payload.repo);
-          this.structStore.update(resp.payload.struct);
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.repoStore.update(resp.payload.repo);
+            this.structStore.update(resp.payload.struct);
+          }
         }),
         take(1)
       )

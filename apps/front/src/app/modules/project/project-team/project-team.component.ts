@@ -139,11 +139,13 @@ export class ProjectTeamComponent implements OnInit {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendGetAvatarBigResponse) => {
-          this.myDialogService.showPhoto({
-            apiService: this.apiService,
-            avatarBig: resp.payload.avatarBig,
-            initials: initials
-          });
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.myDialogService.showPhoto({
+              apiService: this.apiService,
+              avatarBig: resp.payload.avatarBig,
+              initials: initials
+            });
+          }
         }),
         take(1)
       )

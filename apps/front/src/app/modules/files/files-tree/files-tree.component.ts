@@ -215,10 +215,12 @@ export class FilesTreeComponent implements OnDestroy {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendMoveCatalogNodeResponse) => {
-          this.repoStore.update(resp.payload.repo);
-          this.structStore.update(resp.payload.struct);
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.repoStore.update(resp.payload.repo);
+            this.structStore.update(resp.payload.struct);
 
-          this.cd.reattach();
+            this.cd.reattach();
+          }
         }),
         take(1)
       )
