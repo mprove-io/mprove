@@ -115,17 +115,27 @@
           <!-- <div class="flex-grow"></div> -->
 
           <div class="flex flex-row items-center text-base text-gray1">
-            <button
-              type="button"
-              data-cy="dashboardSaveAsButton"
-              class="px-6 h-12 ml-16 text-base rounded font-medium focus:outline-none"
-              [ngClass]="{
-                'text-blue3 border-2': dashboard?.temp === false,
-                'text-white bg-pink-500': dashboard?.temp === true
-              }"
-              (click)="saveAs()"
-              >Save As</button
+            <div
+              class="ml-16 h-12"
+              tippy="Explorer role is required"
+              [isEnabled]="isExplorer === false"
             >
+              <button
+                type="button"
+                data-cy="dashboardSaveAsButton"
+                class="px-6 h-12 text-base rounded font-medium focus:outline-none"
+                [ngClass]="{
+                  'text-blue3 border-2':
+                    isExplorer === true && dashboard?.temp === false,
+                  'text-white bg-pink-500':
+                    isExplorer === true && dashboard?.temp === true,
+                  'bg-gray-400 cursor-default': isExplorer === false
+                }"
+                (click)="saveAs()"
+                [disabled]="isExplorer === false"
+                >Save As</button
+              >
+            </div>
 
             <button
               type="button"

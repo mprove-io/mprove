@@ -65,6 +65,12 @@ export class ModifyVizController {
       memberId: user.user_id
     });
 
+    if (member.is_explorer === common.BoolEnum.FALSE) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+      });
+    }
+
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
       repoId: repoId,
