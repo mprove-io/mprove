@@ -219,9 +219,18 @@
                     <div
                       class="flex flex-1 flex-row text-base cursor-default space-x-5"
                     >
+                      <ng-template #templateVizsModel>
+                        <div *ngIf="isExplorer === false"
+                          >Explorer role is required</div
+                        >
+                        <div *ngIf="isExplorer === true"
+                          >No access to model</div
+                        >
+                      </ng-template>
+
                       <div
                         class="flex flex-1 flex-row py-3 truncate"
-                        tippy="No access to model"
+                        [tippy]="templateVizsModel"
                         [isEnabled]="item.reports[0].hasAccessToModel === false"
                       >
                         <button

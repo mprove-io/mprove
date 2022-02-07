@@ -129,7 +129,7 @@
                     isExplorer === true && dashboard?.temp === false,
                   'text-white bg-pink-500':
                     isExplorer === true && dashboard?.temp === true,
-                  'bg-gray-400 cursor-default': isExplorer === false
+                  'bg-gray-400 text-white cursor-default': isExplorer === false
                 }"
                 (click)="saveAs()"
                 [disabled]="isExplorer === false"

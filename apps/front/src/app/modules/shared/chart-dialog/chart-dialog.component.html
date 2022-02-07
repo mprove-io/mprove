@@ -131,9 +131,14 @@
   >
     <div class="text-base font-semibold text-gray-400">Model:</div>
 
+    <ng-template #templateChartDialogModel>
+      <div *ngIf="isExplorer === false">Explorer role is required</div>
+      <div *ngIf="isExplorer === true">No access to model</div>
+    </ng-template>
+
     <div
       class="ml-2 flex flex-row items-center"
-      tippy="No access to model"
+      [tippy]="templateChartDialogModel"
       [isEnabled]="canAccessModel === false"
     >
       <div

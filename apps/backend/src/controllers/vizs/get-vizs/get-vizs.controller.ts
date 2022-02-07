@@ -58,7 +58,13 @@ export class GetVizsController {
     );
 
     let models = await this.modelsRepository.find({
-      select: ['model_id', 'access_users', 'access_roles', 'hidden'],
+      select: [
+        'model_id',
+        'access_users',
+        'access_roles',
+        'hidden',
+        'connection_id'
+      ],
       where: { struct_id: branch.struct_id }
     });
 
