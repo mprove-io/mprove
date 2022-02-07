@@ -123,13 +123,13 @@
               <button
                 type="button"
                 data-cy="dashboardSaveAsButton"
-                class="px-6 h-12 text-base rounded font-medium focus:outline-none"
+                class="px-6 h-12 text-base text-white rounded font-medium focus:outline-none"
                 [ngClass]="{
                   'text-blue3 border-2':
                     isExplorer === true && dashboard?.temp === false,
-                  'text-white bg-pink-500':
+                  'bg-pink-500':
                     isExplorer === true && dashboard?.temp === true,
-                  'bg-gray-400 text-white cursor-default': isExplorer === false
+                  'bg-gray-400 cursor-default': isExplorer === false
                 }"
                 (click)="saveAs()"
                 [disabled]="isExplorer === false"
