@@ -55,8 +55,13 @@ export function prepareReport(item: {
     select: mconfig.select,
     sorts: isDefined(mconfig.sorts) ? mconfig.sorts : undefined,
     timezone:
-      isDefined(report.timezone) && report.timezone !== defaultTimezone
+      isForDashboard === true &&
+      isDefined(report) &&
+      isDefined(report.timezone) &&
+      report.timezone !== defaultTimezone
         ? report.timezone
+        : mconfig.timezone !== defaultTimezone
+        ? mconfig.timezone
         : undefined,
     limit:
       isDefined(mconfig.limit) &&
@@ -418,7 +423,7 @@ export function prepareReport(item: {
     tile: {}
   };
 
-  if (isForDashboard === true) {
+  if (isForDashboard === true && isDefined(report)) {
     rep.tile = {
       tile_width:
         // report.tileWidth !== constants.REPORT_DEFAULT_TILE_WIDTH &&
