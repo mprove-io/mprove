@@ -123,6 +123,7 @@ export class ClickHouseService {
 
     //     if (common.isDefined(q)) {
     //       q.status = common.QueryStatusEnum.Error;
+    //       q.data = [];
     //       q.postgres_query_job_id = null;
     //       q.last_error_message = e.message
     //         ? e.message
@@ -223,6 +224,7 @@ export class ClickHouseService {
 
         if (common.isDefined(q)) {
           q.status = common.QueryStatusEnum.Error;
+          q.data = [];
           q.postgres_query_job_id = null;
           q.last_error_message = e.message
             ? e.message
@@ -255,6 +257,7 @@ export class ClickHouseService {
 
   //       if (common.isDefined(q)) {
   //         q.status = common.QueryStatusEnum.Error;
+  //         q.data = [];
   //         q.postgres_query_job_id = null;
   //         q.last_error_message = e.message
   //           ? e.message

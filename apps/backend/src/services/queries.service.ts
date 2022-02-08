@@ -69,6 +69,7 @@ WHERE m.mconfig_id is NULL
 
         if (common.isUndefined(connection)) {
           query.status = common.QueryStatusEnum.Error;
+          query.data = [];
           query.last_error_message = `Project connection not found`;
           query.last_error_ts = helper.makeTs();
 
@@ -93,6 +94,7 @@ WHERE m.mconfig_id is NULL
           .catch(async (e: any) => {
             if (query.bigquery_consecutive_errors_get_job > 2) {
               query.status = common.QueryStatusEnum.Error;
+              query.data = [];
               query.last_error_message = `Bigquery get Job fail`;
               query.last_error_ts = helper.makeTs();
             } else {
@@ -125,6 +127,7 @@ WHERE m.mconfig_id is NULL
             let errorResult = queryJobGetResponse.status.errorResult;
 
             query.status = common.QueryStatusEnum.Error;
+            query.data = [];
             query.last_error_message =
               `Query fail. ` +
               `Message: '${errorResult.message}'. ` +
@@ -144,6 +147,7 @@ WHERE m.mconfig_id is NULL
               .catch(async (e: any) => {
                 if (query.bigquery_consecutive_errors_get_results > 2) {
                   query.status = common.QueryStatusEnum.Error;
+                  query.data = [];
                   query.last_error_message = `Bigquery get QueryResults fail`;
                   query.last_error_ts = helper.makeTs();
                 } else {

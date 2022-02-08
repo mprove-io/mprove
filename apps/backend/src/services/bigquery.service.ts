@@ -40,6 +40,7 @@ export class BigQueryService {
       })
       .catch(e => {
         query.status = common.QueryStatusEnum.Error;
+        query.data = [];
         query.last_error_message = e.message;
         query.last_error_ts = helper.makeTs();
       });
@@ -85,6 +86,7 @@ export class BigQueryService {
       })
       .catch(e => {
         query.status = common.QueryStatusEnum.Error;
+        query.data = [];
         query.last_error_message = e.message;
         query.last_error_ts = helper.makeTs();
 

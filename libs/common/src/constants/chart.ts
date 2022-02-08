@@ -3,7 +3,7 @@ import { ChartInterpolationEnum } from '~common/enums/chart/chart-interpolation.
 import { ChartSchemeTypeEnum } from '~common/enums/chart/chart-scheme-type.enum';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
 
-export const CHART_DEFAULT_TYPE = ChartTypeEnum.Line;
+export const CHART_DEFAULT_TYPE = ChartTypeEnum.Table;
 export const CHART_DEFAULT_TITLE = 'Title';
 
 export const CHART_DEFAULT_INTERPOLATION = ChartInterpolationEnum.Linear;
