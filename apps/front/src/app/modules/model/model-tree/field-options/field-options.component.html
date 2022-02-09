@@ -1,31 +1,24 @@
 <button
   data-cy="fieldOptionsMenuButton"
-  class="flex relative z-10 h-8 w-8 rounded focus:outline-none hover:bg-white items-center justify-center"
-  [ngClass]="{
-    'cursor-default': openedMenuId && menuId !== openedMenuId
-  }"
-  (click)="toggleMenu($event)"
-  [disabled]="openedMenuId && menuId !== openedMenuId"
+  class="flex ml-3 flex-shrink-0 h-8 w-8 rounded focus:outline-none hover:bg-white items-center justify-center"
+  #t1="tippy"
+  [tippy]="templateFieldOptions"
+  [hideOnEscape]="true"
+  variation="menu"
+  className="my-menu"
+  [offset]="[0, 5]"
+  (click)="clickMenu($event)"
 >
   <m-dots-vertical-icon></m-dots-vertical-icon>
 </button>
 
-<button
-  class="fixed inset-0 z-10 w-full h-full cursor-default focus:outline-none"
-  *ngIf="isFieldOptionsMenuOpen === true"
-  (click)="closeMenu($event)"
-></button>
-
-<div
-  class="absolute top-1/2 right-10 transform -translate-y-1/2 mt-1 w-48 z-10 bg-white rounded-md shadow-xl border-2 border-gray4"
-  *ngIf="isFieldOptionsMenuOpen === true"
->
-  <button
-    data-cy="fileOptionsGoToFileLineButton"
-    class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-    (click)="goToFileLine($event)"
-    >Go to File Line</button
-  >
-</div>
-
-<div *ngIf="openedMenuId$ | async"></div>
+<ng-template #templateFieldOptions>
+  <div class="w-48 bg-white rounded-md shadow-xl border-2 border-gray4">
+    <button
+      data-cy="fileOptionsGoToFileLineButton"
+      class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+      (click)="t1.hide(); goToFileLine($event)"
+      >Go to File Line</button
+    >
+  </div>
+</ng-template>
