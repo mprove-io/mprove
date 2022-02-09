@@ -41,13 +41,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   isShow = true;
 
-  openedMenuId: string;
-  openedMenuId$ = this.uiQuery.openedMenuId$.pipe(
-    tap(x => (this.openedMenuId = x))
-  );
-
-  isDashboardOptionsMenuOpen = false;
-
   bufferAmount = 10;
   enableUnequalChildrenSizes = true;
 
@@ -352,31 +345,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.spinner.hide(item.mconfigId);
   }
 
-  openMenu(item: common.DashboardX) {
-    this.isDashboardOptionsMenuOpen = true;
-    this.uiStore.update({ openedMenuId: item.dashboardId });
-  }
-
-  closeMenu(event?: MouseEvent) {
-    if (common.isDefined(event)) {
-      event.stopPropagation();
-    }
-    this.isDashboardOptionsMenuOpen = false;
-    this.uiStore.update({ openedMenuId: undefined });
-  }
-
-  toggleMenu(event: MouseEvent, item: common.DashboardX) {
-    event.stopPropagation();
-    if (this.isDashboardOptionsMenuOpen === true) {
-      this.closeMenu();
-    } else {
-      this.openMenu(item);
-    }
-  }
-
   deleteDashboard(event: MouseEvent, item: common.DashboardX) {
     event.stopPropagation();
-    this.closeMenu();
 
     this.myDialogService.showDeleteDashboard({
       dashboard: item,
@@ -418,8 +388,5 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     if (this.timer) {
       clearTimeout(this.timer);
     }
-
-    if (common.isDefined(this.openedMenuId))
-      this.uiStore.update({ openedMenuId: undefined });
   }
 }

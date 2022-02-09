@@ -240,76 +240,28 @@
                       </div>
 
                       <div class="flex w-24 pt-2">
-                        <div class="relative ml-3">
-                          <button
-                            data-cy="dashboardOptionsMenuButton"
-                            class="flex relative z-9 h-9 w-9 rounded focus:outline-none items-center justify-center hover:bg-blue-200 invisible group-hover:visible"
-                            *ngIf="
-                              isDashboardOptionsMenuOpen === false ||
-                              item.dashboardId === openedMenuId
-                            "
-                            [ngClass]="{
-                              'cursor-default text-gray-400':
-                                openedMenuId &&
-                                item.dashboardId !== openedMenuId
-                            }"
-                            (click)="toggleMenu($event, item)"
-                            [disabled]="
-                              openedMenuId && item.dashboardId !== openedMenuId
-                            "
-                          >
-                            <m-dots-vertical-icon></m-dots-vertical-icon>
-                          </button>
+                        <button
+                          data-cy="dashboardOptionsMenuButton"
+                          class="flex ml-3 relative h-9 w-9 rounded focus:outline-none items-center justify-center hover:bg-blue-200 invisible group-hover:visible"
+                          #t1="tippy"
+                          [tippy]="templateDashboardOptions"
+                          [hideOnEscape]="true"
+                          variation="menu"
+                          className="my-menu"
+                        >
+                          <m-dots-vertical-icon></m-dots-vertical-icon>
+                        </button>
 
-                          <button
-                            class="fixed inset-0 z-9 w-10 h-10 cursor-default focus:outline-none"
-                            *ngIf="
-                              isDashboardOptionsMenuOpen === true &&
-                              item.dashboardId === openedMenuId
-                            "
-                            (click)="closeMenu($event)"
-                          ></button>
-
+                        <ng-template #templateDashboardOptions>
                           <div
-                            class="absolute right-0 mt-1 w-64 z-9 bg-white rounded-md shadow-xl border-2 border-gray4"
-                            *ngIf="
-                              isDashboardOptionsMenuOpen === true &&
-                              item.dashboardId === openedMenuId
-                            "
+                            class="w-64 bg-white rounded-md shadow-xl border-2 border-gray4"
                           >
-                            <!-- <button
-                            data-cy="dashboardOptionsRun"
-                            class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-                            (click)="run($event)"
-                            >Run</button
-                          > -->
-
-                            <!-- <button
-                            data-cy="dashboardOptionsExplore"
-                            class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-                            [ngClass]="{
-                              'cursor-default text-gray-400': canAccessModel === false
-                            }"
-                            (click)="explore($event)"
-                            [disabled]="canAccessModel === false"
-                            >Explore</button
-                          > -->
-
-                            <!-- <button
-                            data-cy="dashboardOptionsEditInfo"
-                            class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-                            [ngClass]="{
-                              'cursor-default text-gray-400': canEditOrDeleteDashboard === false
-                            }"
-                            (click)="editVizInfo($event)"
-                            [disabled]="canEditOrDeleteDashboard === false"
-                            >Edit Info</button
-                          > -->
-
                             <button
                               data-cy="dashboardOptionsGoToFile"
                               class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-                              (click)="goToDashboardFile($event, item)"
+                              (click)="
+                                t1.hide(); goToDashboardFile($event, item)
+                              "
                               >Go to file</button
                             >
 
@@ -320,14 +272,14 @@
                                 'cursor-default text-gray-400':
                                   item.canEditOrDeleteDashboard === false
                               }"
-                              (click)="deleteDashboard($event, item)"
+                              (click)="t1.hide(); deleteDashboard($event, item)"
                               [disabled]="
                                 item.canEditOrDeleteDashboard === false
                               "
                               >Delete</button
                             >
                           </div>
-                        </div>
+                        </ng-template>
                       </div>
                     </div>
                   </div>
@@ -435,7 +387,6 @@
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="member$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>
-<div *ngIf="openedMenuId$ | async"></div>
 
 <!-- [ngClass]="{
   'h-1/2': screenAspectRatio >= 1.5,
