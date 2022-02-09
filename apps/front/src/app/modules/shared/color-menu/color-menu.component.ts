@@ -1,15 +1,4 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output
-} from '@angular/core';
-import { tap } from 'rxjs/operators';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { UiStore } from '~front/app/stores/ui.store';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { common } from '~front/barrels/common';
 
 export class RgbaColor {
@@ -27,16 +16,7 @@ export class ColorChange {
   selector: 'm-color-menu',
   templateUrl: './color-menu.component.html'
 })
-export class ColorMenuComponent implements OnDestroy, OnInit {
-  menuId = 'colorMenu';
-
-  openedMenuId: string;
-  openedMenuId$ = this.uiQuery.openedMenuId$.pipe(
-    tap(x => (this.openedMenuId = x))
-  );
-
-  isColorMenuOpen = false;
-
+export class ColorMenuComponent implements OnInit {
   @Input()
   color: string;
 
@@ -45,11 +25,7 @@ export class ColorMenuComponent implements OnDestroy, OnInit {
   @Output()
   colorChange = new EventEmitter<ColorChange>();
 
-  constructor(
-    public uiQuery: UiQuery,
-    public uiStore: UiStore,
-    private cd: ChangeDetectorRef
-  ) {}
+  constructor() {}
 
   ngOnInit() {
     let r = 255;
@@ -81,32 +57,12 @@ export class ColorMenuComponent implements OnDestroy, OnInit {
     // console.log(this.rgbaColor);
   }
 
-  openMenu() {
-    this.isColorMenuOpen = true;
-    this.uiStore.update({ openedMenuId: this.menuId });
-  }
-
-  closeMenu() {
-    this.isColorMenuOpen = false;
-    this.uiStore.update({ openedMenuId: undefined });
-  }
-
-  toggleMenu() {
-    if (this.isColorMenuOpen === true) {
-      this.closeMenu();
-    } else {
-      this.openMenu();
-    }
-  }
-
   onChangeComplete($event: any): void {
     // console.log($event.color);
     this.rgbaColor = $event.color.rgb;
   }
 
   save() {
-    this.closeMenu();
-
     // console.log('save');
     // console.log(this.rgbaColor);
 
@@ -116,17 +72,10 @@ export class ColorMenuComponent implements OnDestroy, OnInit {
   }
 
   cancel() {
-    this.closeMenu();
     // this.colorChange.emit({ color: this.color });
   }
 
   clear() {
-    this.closeMenu();
     this.colorChange.emit({ color: undefined });
-  }
-
-  ngOnDestroy() {
-    if (this.menuId === this.openedMenuId)
-      this.uiStore.update({ openedMenuId: undefined });
   }
 }

@@ -1,26 +1,18 @@
-<div class="relative">
-  <button
-    class="h-7 w-7 z-10 border-2 border-gray-500 rounded focus:outline-none align-middle"
-    [ngStyle]="{ 'background-color': color }"
-    [ngClass]="{
-      'cursor-default': openedMenuId && menuId !== openedMenuId
-    }"
-    (click)="toggleMenu()"
-    [disabled]="openedMenuId && menuId !== openedMenuId"
-  >
-    <div *ngIf="!color">U</div>
-  </button>
+<button
+  class="h-7 w-7 border-2 border-gray-500 rounded focus:outline-none align-middle"
+  [ngStyle]="{ 'background-color': color }"
+  #t1="tippy"
+  [tippy]="templateColor"
+  [hideOnEscape]="true"
+  variation="menu"
+  placement="right-start"
+  className="my-menu"
+>
+  <div *ngIf="!color">U</div>
+</button>
 
-  <button
-    class="fixed inset-0 z-10 w-full h-full cursor-default focus:outline-none"
-    *ngIf="isColorMenuOpen === true"
-    (click)="closeMenu()"
-  ></button>
-
-  <div
-    class="absolute top-1/2 left-10 transform -translate-y-1/2 mt-1 w-56 z-10 bg-white rounded-md shadow-xl border-2 border-gray4"
-    *ngIf="isColorMenuOpen === true"
-  >
+<ng-template #templateColor>
+  <div class="w-56 z-10 bg-white rounded-md shadow-xl border-2 border-gray4">
     <color-sketch
       [color]="rgbaColor"
       (onChangeComplete)="onChangeComplete($event)"
@@ -29,23 +21,21 @@
     <div class="flex flex-row justify-between bg-white">
       <button
         class="block px-3 py-2 bg-blue3 rounded text-white font-medium text-sm focus:outline-none"
-        (click)="save()"
+        (click)="t1.hide(); save()"
         >Save</button
       >
 
       <button
         class="block px-3 py-2 bg-blue3 rounded text-white font-medium text-sm focus:outline-none"
-        (click)="cancel()"
+        (click)="t1.hide(); cancel()"
         >Cancel</button
       >
 
       <button
         class="block px-3 py-2 bg-blue3 rounded text-white font-medium text-sm focus:outline-none"
-        (click)="clear()"
+        (click)="t1.hide(); clear()"
         >Undef</button
       >
     </div>
   </div>
-</div>
-
-<div *ngIf="openedMenuId$ | async"></div>
+</ng-template>
