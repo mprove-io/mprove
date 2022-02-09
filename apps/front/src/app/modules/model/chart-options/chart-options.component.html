@@ -1,34 +1,26 @@
 <button
   data-cy="chartOptionsMenuButton"
-  class="flex relative z-9 h-9 w-9 rounded focus:outline-none items-center justify-center"
-  [ngClass]="{
-    'hover:bg-blue-200':
-      (!openedMenuId || menuId === openedMenuId) && isDisabled === false,
-    'cursor-default text-gray-400':
-      (openedMenuId && menuId !== openedMenuId) || isDisabled === true
-  }"
-  (click)="toggleMenu($event)"
-  [disabled]="(openedMenuId && menuId !== openedMenuId) || isDisabled === true"
+  class="flex h-9 w-9 rounded focus:outline-none items-center justify-center hover:bg-blue-200"
+  #t1="tippy"
+  [tippy]="templateChartOptions"
+  [hideOnEscape]="true"
+  variation="menu"
+  className="my-menu"
 >
   <m-dots-vertical-icon></m-dots-vertical-icon>
 </button>
 
-<button
-  class="fixed inset-0 z-9 w-full h-full cursor-default focus:outline-none"
-  *ngIf="isChartOptionsMenuOpen === true"
-  (click)="closeMenu($event)"
-></button>
-
-<div
-  class="absolute right-0 mt-1 w-64 z-9 bg-white rounded-md shadow-xl border-2 border-gray4"
-  *ngIf="isChartOptionsMenuOpen === true"
->
-  <button
-    data-cy="chartOptionsViewBlockML"
-    class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-    (click)="viewBlockML($event)"
-    >View BlockML</button
-  >
-</div>
-
-<div *ngIf="openedMenuId$ | async"></div>
+<ng-template #templateChartOptions>
+  <div class="w-64 bg-white rounded-md shadow-xl border-2 border-gray4">
+    <button
+      data-cy="chartOptionsViewBlockML"
+      class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+      [ngClass]="{
+        'cursor-default text-gray-400': isDisabled === true
+      }"
+      (click)="t1.hide(); viewBlockML($event)"
+      [disabled]="isDisabled === true"
+      >View BlockML</button
+    >
+  </div>
+</ng-template>
