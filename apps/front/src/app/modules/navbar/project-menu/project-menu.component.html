@@ -1,71 +1,61 @@
-<div class="block relative">
+<div
+  class="ml-2 h-10 w-10"
+  #t1="tippy"
+  [tippy]="templateProjectOptions"
+  [hideOnEscape]="true"
+  variation="menu"
+  className="my-menu"
+  [offset]="[0, 5]"
+  [isEnabled]="nav?.projectId !== undefined && needSave === false"
+>
   <button
-    class="relative block ml-2 h-10 w-10 z-10 rounded-full focus:outline-none"
-    [ngClass]="{
-      'cursor-default':
-        nav?.projectId === undefined ||
-        needSave === true ||
-        (openedMenuId && menuId !== openedMenuId)
-    }"
-    (click)="toggleMenu()"
-    [disabled]="
-      nav?.projectId === undefined ||
-      needSave === true ||
-      (openedMenuId && menuId !== openedMenuId)
-    "
+    class="h-10 w-10 rounded-full focus:outline-none"
+    [disabled]="nav?.projectId === undefined || needSave === true"
   >
     <div class="flex justify-center">
       <m-settings-icon></m-settings-icon>
     </div>
   </button>
 
-  <button
-    class="fixed inset-0 z-10 w-full h-full cursor-default focus:outline-none"
-    *ngIf="isProjectMenuOpen === true"
-    (click)="closeMenu()"
-  ></button>
+  <ng-template #templateProjectOptions>
+    <div class="w-56 bg-white rounded-md shadow-xl border-2 border-gray4">
+      <div class="block mt-2 px-4 py-2 text-gray-400 font-semibold text-base"
+        >{{ nav?.projectName | capitalize }} Project</div
+      >
 
-  <div
-    class="absolute right-0 z-10 mt-1 w-56 bg-white rounded-md shadow-xl border-2 border-gray4"
-    *ngIf="isProjectMenuOpen === true"
-  >
-    <div class="block mt-2 px-4 py-2 text-gray-400 font-semibold text-base"
-      >{{ nav?.projectName | capitalize }} Project</div
-    >
+      <button
+        class="block px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+        [ngClass]="{
+          'font-semibold': lastUrl === pathSettings
+        }"
+        [disabled]="lastUrl === pathSettings"
+        (click)="t1.hide(); navigateSettings()"
+        >Settings</button
+      >
 
-    <button
-      class="block px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-      [ngClass]="{
-        'font-semibold': lastUrl === pathSettings
-      }"
-      [disabled]="lastUrl === pathSettings"
-      (click)="navigateSettings()"
-      >Settings</button
-    >
+      <button
+        class="block px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+        [ngClass]="{
+          'font-semibold': lastUrl === pathConnections
+        }"
+        [disabled]="lastUrl === pathConnections"
+        (click)="t1.hide(); navigateConnections()"
+        >Connections</button
+      >
 
-    <button
-      class="block px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-      [ngClass]="{
-        'font-semibold': lastUrl === pathConnections
-      }"
-      [disabled]="lastUrl === pathConnections"
-      (click)="navigateConnections()"
-      >Connections</button
-    >
-
-    <button
-      class="block px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-      [ngClass]="{
-        'font-semibold': lastUrl === pathTeam
-      }"
-      [disabled]="lastUrl === pathTeam"
-      (click)="navigateTeam()"
-      >Team</button
-    >
-  </div>
+      <button
+        class="block px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+        [ngClass]="{
+          'font-semibold': lastUrl === pathTeam
+        }"
+        [disabled]="lastUrl === pathTeam"
+        (click)="t1.hide(); navigateTeam()"
+        >Team</button
+      >
+    </div>
+  </ng-template>
 </div>
 
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="routerEvents$ | async"></div>
-<div *ngIf="openedMenuId$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
