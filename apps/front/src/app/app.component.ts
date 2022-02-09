@@ -40,12 +40,9 @@ export class AppComponent implements OnInit {
             urlPartArray.indexOf(common.PATH_FORGOT_PASSWORD) !== 1 &&
             urlPartArray.indexOf(common.PATH_PASSWORD_RESET_SENT) !== 1 &&
             urlPartArray.indexOf(common.PATH_UPDATE_PASSWORD) !== 1 &&
-            urlPartArray.indexOf(common.PATH_NEW_PASSWORD_WAS_SET) !== 1 &&
-            //
+            urlPartArray.indexOf(common.PATH_NEW_PASSWORD_WAS_SET) !== 1
             // urlPartArray.indexOf(common.PATH_LOGIN_SUCCESS) !== 1 &&
             // urlPartArray.indexOf(common.PATH_PASSWORD_RESET_SENT_AUTH) !== 1 &&
-            (urlPartArray.indexOf(common.EMPTY) > -1 ||
-              urlPartArray.indexOf(common.PATH_MODEL) < 0)
           ) {
             // console.log('NavigationStart', x.url);
             this.spinnerStartedTs = Date.now();

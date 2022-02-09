@@ -294,74 +294,68 @@
                       </div>
 
                       <div class="flex w-24 pt-1">
-                        <div class="ml-3">
+                        <button
+                          data-cy="vizOptionsMenuButton"
+                          class="flex ml-3 h-9 w-9 rounded focus:outline-none items-center justify-center hover:bg-blue-200 invisible group-hover:visible"
+                          #t1="tippy"
+                          [tippy]="templateVizOptions"
+                          [hideOnEscape]="true"
+                          variation="menu"
+                          className="my-menu"
+                        >
+                          <m-dots-vertical-icon></m-dots-vertical-icon>
+                        </button>
+
+                        <ng-template #templateVizOptions>
                           <div
-                            class="h-9 w-9"
-                            #t1="tippy"
-                            [tippy]="templateVizOptions"
-                            [hideOnEscape]="true"
-                            variation="menu"
-                            className="my-menu"
+                            class="w-64 bg-white rounded-md shadow-xl border-2 border-gray4"
                           >
                             <button
-                              data-cy="vizOptionsMenuButton"
-                              class="flex h-9 w-9 rounded focus:outline-none items-center justify-center hover:bg-blue-200 invisible group-hover:visible"
-                            >
-                              <m-dots-vertical-icon></m-dots-vertical-icon>
-                            </button>
-                          </div>
-
-                          <ng-template #templateVizOptions>
-                            <div
-                              class="w-64 bg-white rounded-md shadow-xl border-2 border-gray4"
-                            >
-                              <button
-                                data-cy="vizOptionsExplore"
-                                class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-                                [ngClass]="{
-                                  'cursor-default text-gray-400':
-                                    item.reports[0].hasAccessToModel === false
-                                }"
-                                (click)="t1.hide(); explore($event, item)"
-                                [disabled]="
+                              data-cy="vizOptionsExplore"
+                              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+                              [ngClass]="{
+                                'cursor-default text-gray-400':
                                   item.reports[0].hasAccessToModel === false
-                                "
-                                >Explore</button
-                              >
+                              }"
+                              (click)="t1.hide(); explore($event, item)"
+                              [disabled]="
+                                item.reports[0].hasAccessToModel === false
+                              "
+                              >Explore</button
+                            >
 
-                              <button
-                                data-cy="vizOptionsEditInfo"
-                                class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-                                [ngClass]="{
-                                  'cursor-default text-gray-400':
-                                    item.canEditOrDeleteViz === false
-                                }"
-                                (click)="t1.hide(); editVizInfo($event, item)"
-                                [disabled]="item.canEditOrDeleteViz === false"
-                                >Edit Info</button
-                              >
+                            <button
+                              data-cy="vizOptionsEditInfo"
+                              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+                              [ngClass]="{
+                                'cursor-default text-gray-400':
+                                  item.canEditOrDeleteViz === false
+                              }"
+                              (click)="t1.hide(); editVizInfo($event, item)"
+                              [disabled]="item.canEditOrDeleteViz === false"
+                              >Edit Info</button
+                            >
 
-                              <button
-                                data-cy="vizOptionsGoToFile"
-                                class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-                                (click)="t1.hide(); goToVizFile($event, item)"
-                                >Go to file</button
-                              >
+                            <button
+                              data-cy="vizOptionsGoToFile"
+                              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+                              (click)="t1.hide(); goToVizFile($event, item)"
+                              >Go to file</button
+                            >
 
-                              <button
-                                data-cy="vizOptionsDelete"
-                                class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-                                [ngClass]="{
-                                  'cursor-default text-gray-400':
-                                    item.canEditOrDeleteViz === false
-                                }"
-                                (click)="t1.hide(); deleteViz($event, item)"
-                                [disabled]="item.canEditOrDeleteViz === false"
-                                >Delete</button
-                              >
-                            </div>
-                          </ng-template>
-                        </div>
+                            <button
+                              data-cy="vizOptionsDelete"
+                              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+                              [ngClass]="{
+                                'cursor-default text-gray-400':
+                                  item.canEditOrDeleteViz === false
+                              }"
+                              (click)="t1.hide(); deleteViz($event, item)"
+                              [disabled]="item.canEditOrDeleteViz === false"
+                              >Delete</button
+                            >
+                          </div>
+                        </ng-template>
                       </div>
                     </div>
                   </div>
