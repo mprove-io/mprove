@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -13,7 +13,7 @@ import { common } from '~front/barrels/common';
   selector: 'm-dashboard-options',
   templateUrl: './dashboard-options.component.html'
 })
-export class DashboardOptionsComponent implements OnDestroy {
+export class DashboardOptionsComponent {
   @Input()
   dashboard: common.DashboardX;
 
@@ -30,15 +30,6 @@ export class DashboardOptionsComponent implements OnDestroy {
 
   dashboardDeletedFnBindThis = this.dashboardDeletedFn.bind(this);
 
-  menuId = 'dashboardOptions';
-
-  openedMenuId: string;
-  openedMenuId$ = this.uiQuery.openedMenuId$.pipe(
-    tap(x => (this.openedMenuId = x))
-  );
-
-  isDashboardOptionsMenuOpen = false;
-
   constructor(
     public uiQuery: UiQuery,
     public uiStore: UiStore,
@@ -49,41 +40,8 @@ export class DashboardOptionsComponent implements OnDestroy {
     private cd: ChangeDetectorRef
   ) {}
 
-  openMenu() {
-    this.isDashboardOptionsMenuOpen = true;
-    this.uiStore.update({ openedMenuId: this.menuId });
-  }
-
-  closeMenu(event?: MouseEvent) {
-    if (common.isDefined(event)) {
-      event.stopPropagation();
-    }
-    this.isDashboardOptionsMenuOpen = false;
-    this.uiStore.update({ openedMenuId: undefined });
-  }
-
-  toggleMenu(event?: MouseEvent) {
-    event.stopPropagation();
-    if (this.isDashboardOptionsMenuOpen === true) {
-      this.closeMenu();
-    } else {
-      this.openMenu();
-    }
-  }
-
-  // saveAs(event: MouseEvent) {
-  //   event.stopPropagation();
-  //   this.closeMenu();
-
-  //   this.myDialogService.showDashboardSaveAs({
-  //     apiService: this.apiService,
-  //     dashboard: this.dashboard
-  //   });
-  // }
-
   goToFile(event?: MouseEvent) {
     event.stopPropagation();
-    this.closeMenu();
 
     let fileIdAr = this.dashboard.filePath.split('/');
     fileIdAr.shift();
@@ -95,7 +53,6 @@ export class DashboardOptionsComponent implements OnDestroy {
 
   deleteDashboard(event: MouseEvent) {
     event.stopPropagation();
-    this.closeMenu();
 
     this.myDialogService.showDeleteDashboard({
       dashboard: this.dashboard,
@@ -109,10 +66,5 @@ export class DashboardOptionsComponent implements OnDestroy {
 
   dashboardDeletedFn(deletedDashboardId: string) {
     this.navigateService.navigateToDashboards();
-  }
-
-  ngOnDestroy() {
-    if (this.menuId === this.openedMenuId)
-      this.uiStore.update({ openedMenuId: undefined });
   }
 }
