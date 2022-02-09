@@ -1,12 +1,16 @@
-<div class="block relative">
+<div
+  class="ml-5 h-10 w-10"
+  #t1="tippy"
+  [tippy]="templateUserOptions"
+  [hideOnEscape]="true"
+  variation="menu"
+  className="my-menu"
+  [offset]="[0, 5]"
+  [isEnabled]="needSave === false"
+>
   <button
-    class="relative block ml-5 h-10 w-10 z-10 rounded-full bg-blue-200 text-base tracking-wider focus:outline-none"
-    [ngClass]="{
-      'cursor-default':
-        needSave === true || (openedMenuId && menuId !== openedMenuId)
-    }"
-    (click)="toggleMenu()"
-    [disabled]="needSave === true || (openedMenuId && menuId !== openedMenuId)"
+    class="h-10 w-10 rounded-full bg-blue-200 text-base tracking-wider focus:outline-none"
+    [disabled]="needSave === true"
   >
     <m-avatar
       [avatar]="navQuery.avatarBig$ | async"
@@ -14,45 +18,42 @@
     ></m-avatar>
   </button>
 
-  <button
-    class="fixed inset-0 z-10 w-full h-full cursor-default focus:outline-none"
-    *ngIf="isUserMenuOpen === true"
-    (click)="closeMenu()"
-  ></button>
+  <ng-template #templateUserOptions>
+    <div class="w-56 bg-white rounded-md shadow-xl border-2 border-gray4">
+      <div class="block mt-2 px-4 py-2 text-gray-400 font-bold text-sm"
+        >User</div
+      >
 
-  <div
-    class="absolute right-0 z-10 mt-1 w-56 bg-white rounded-md shadow-xl border-2 border-gray4"
-    *ngIf="isUserMenuOpen === true"
-  >
-    <div class="block mt-2 px-4 py-2 text-gray-400 font-bold text-sm">User</div>
+      <button
+        class="block px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+        [ngClass]="{
+          'font-semibold': lastUrl === pathProfile
+        }"
+        [disabled]="lastUrl === pathProfile"
+        (click)="t1.hide(); navigateProfile()"
+        >Profile</button
+      >
 
-    <button
-      class="block px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-      [ngClass]="{
-        'font-semibold': lastUrl === pathProfile
-      }"
-      [disabled]="lastUrl === pathProfile"
-      (click)="navigateProfile()"
-      >Profile</button
-    >
+      <button
+        class="block px-4 py-2 text-gray1 text-base hover:bg-blue2 w-full text-left focus:outline-none"
+        (click)="t1.hide(); logout()"
+        >LogOut</button
+      >
 
-    <button
-      class="block px-4 py-2 text-gray1 text-base hover:bg-blue2 w-full text-left focus:outline-none"
-      (click)="logout()"
-      >LogOut</button
-    >
+      <div class="block px-4 py-2 text-gray-400 font-bold text-sm"
+        >Resources</div
+      >
 
-    <div class="block px-4 py-2 text-gray-400 font-bold text-sm">Resources</div>
-
-    <a
-      class="block px-4 py-2 text-gray1 text-base hover:bg-blue2 hover:text-gray1"
-      target="_blank"
-      href="https://mprove.io/docs"
-      >Docs</a
-    >
-  </div>
+      <a
+        class="block px-4 py-2 text-gray1 text-base hover:bg-blue2 hover:text-gray1"
+        target="_blank"
+        href="https://mprove.io/docs"
+        (click)="t1.hide()"
+        >Docs</a
+      >
+    </div>
+  </ng-template>
 </div>
 
 <div *ngIf="routerEvents$ | async"></div>
-<div *ngIf="openedMenuId$ | async"></div>
 <div *ngIf="needSave$ | async"></div>

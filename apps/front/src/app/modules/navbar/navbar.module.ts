@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { TippyModule } from '@ngneat/helipopper';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { BranchSelectComponent } from './branch-select/branch-select.component';
 import { NavbarComponent } from './navbar.component';
@@ -28,7 +29,8 @@ import { UserMenuComponent } from './user-menu/user-menu.component';
     FormsModule,
     RouterModule,
     SharedModule,
-    NgSelectModule
+    NgSelectModule,
+    TippyModule
   ]
 })
 export class NavbarModule {}
