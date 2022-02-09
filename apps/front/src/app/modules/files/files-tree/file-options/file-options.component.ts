@@ -24,6 +24,10 @@ export class FileOptionsComponent {
     })
   );
 
+  clickMenu(event: MouseEvent) {
+    event.stopPropagation();
+  }
+
   constructor(
     public navQuery: NavQuery,
     private authService: AuthService,

@@ -1,55 +1,48 @@
 <button
-  class="flex relative z-10 h-8 w-8 rounded focus:outline-none hover:bg-blue-200 items-center justify-center"
+  class="flex flex-shrink-0 h-8 w-8 rounded focus:outline-none hover:bg-white items-center justify-center"
   data-cy="folderOptionsMenuButton"
-  [ngClass]="{
-    'cursor-default': openedMenuId && menuId !== openedMenuId
-  }"
-  (click)="toggleMenu(node, $event)"
-  [disabled]="openedMenuId && menuId !== openedMenuId"
+  #t1="tippy"
+  [tippy]="templateFolderOptions"
+  [hideOnEscape]="true"
+  variation="menu"
+  className="my-menu"
+  (click)="clickMenu($event)"
 >
   <m-dots-vertical-icon></m-dots-vertical-icon>
 </button>
 
-<button
-  class="fixed inset-0 z-10 w-full h-full cursor-default focus:outline-none"
-  *ngIf="isFolderOptionsMenuOpen === true"
-  (click)="closeMenu($event)"
-></button>
+<ng-template #templateFolderOptions>
+  <div class="w-48 bg-white rounded-md shadow-xl border-2 border-gray4">
+    <button
+      data-cy="folderOptionsNewFolderButton"
+      class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+      (click)="t1.hide(); newFolder(node, $event)"
+      >New Folder</button
+    >
 
-<div
-  class="absolute top-1/2 right-10 transform -translate-y-1/2 mt-1 w-48 z-10 bg-white rounded-md shadow-xl border-2 border-gray4"
-  *ngIf="isFolderOptionsMenuOpen === true"
->
-  <button
-    data-cy="folderOptionsNewFolderButton"
-    class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-    (click)="newFolder(node, $event)"
-    >New Folder</button
-  >
+    <button
+      data-cy="folderOptionsNewFileButton"
+      class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+      (click)="t1.hide(); newFile(node, $event)"
+      >New File</button
+    >
 
-  <button
-    data-cy="folderOptionsNewFileButton"
-    class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-    (click)="newFile(node, $event)"
-    >New File</button
-  >
+    <button
+      *ngIf="!(node.parent === null || node.parent.data.virtual)"
+      data-cy="folderOptionsDeleteFolderButton"
+      class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+      (click)="t1.hide(); deleteFolder(node, $event)"
+      >Delete Folder</button
+    >
 
-  <button
-    *ngIf="!(node.parent === null || node.parent.data.virtual)"
-    data-cy="folderOptionsDeleteFolderButton"
-    class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-    (click)="deleteFolder(node, $event)"
-    >Delete Folder</button
-  >
+    <button
+      *ngIf="!(node.parent === null || node.parent.data.virtual)"
+      data-cy="folderOptionsRenameFolderButton"
+      class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+      (click)="t1.hide(); renameFolder(node, $event)"
+      >Rename Folder</button
+    >
+  </div>
+</ng-template>
 
-  <button
-    *ngIf="!(node.parent === null || node.parent.data.virtual)"
-    data-cy="folderOptionsRenameFolderButton"
-    class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-    (click)="renameFolder(node, $event)"
-    >Rename Folder</button
-  >
-</div>
-
-<div *ngIf="openedMenuId$ | async"></div>
 <div *ngIf="nav$ | async"></div>
