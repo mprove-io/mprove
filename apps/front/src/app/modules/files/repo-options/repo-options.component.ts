@@ -1,17 +1,17 @@
-import { ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { TreeNode } from '@circlon/angular-tree-component';
 import { take, tap } from 'rxjs/operators';
 import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { RepoQuery } from '~front/app/queries/repo.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { FileState, FileStore } from '~front/app/stores/file.store';
 import { NavState } from '~front/app/stores/nav.store';
-import { RepoStore } from '~front/app/stores/repo.store';
+import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
-import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -19,18 +19,11 @@ import { common } from '~front/barrels/common';
   selector: 'm-repo-options',
   templateUrl: './repo-options.component.html'
 })
-export class RepoOptionsComponent implements OnDestroy {
+export class RepoOptionsComponent {
   @Input()
   node: TreeNode;
 
-  menuId = 'repoOptions';
-
-  openedMenuId: string;
-  openedMenuId$ = this.uiQuery.openedMenuId$.pipe(
-    tap(x => (this.openedMenuId = x))
-  );
-
-  isRepoOptionsMenuOpen = false;
+  repoStatusNeedCommit = common.RepoStatusEnum.NeedCommit;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -51,12 +44,20 @@ export class RepoOptionsComponent implements OnDestroy {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
+  repo: RepoState;
+  repo$ = this.repoQuery.select().pipe(
+    tap(x => {
+      this.repo = x;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     public uiQuery: UiQuery,
     public fileQuery: FileQuery,
-    public uiStore: UiStore,
     public repoStore: RepoStore,
     public fileStore: FileStore,
+    public repoQuery: RepoQuery,
     public fileService: FileService,
     public navQuery: NavQuery,
     private navigateService: NavigateService,
@@ -65,31 +66,8 @@ export class RepoOptionsComponent implements OnDestroy {
     private apiService: ApiService
   ) {}
 
-  openMenu() {
-    this.isRepoOptionsMenuOpen = true;
-    this.uiStore.update({ openedMenuId: this.menuId });
-  }
-
-  closeMenu(event?: MouseEvent) {
-    if (common.isDefined(event)) {
-      event.stopPropagation();
-    }
-    this.isRepoOptionsMenuOpen = false;
-    this.uiStore.update({ openedMenuId: undefined });
-  }
-
-  toggleMenu(event?: MouseEvent) {
-    event.stopPropagation();
-    if (this.isRepoOptionsMenuOpen === true) {
-      this.closeMenu();
-    } else {
-      this.openMenu();
-    }
-  }
-
   revertToLastCommit(event?: MouseEvent) {
     event.stopPropagation();
-    this.closeMenu();
 
     let payload: apiToBackend.ToBackendRevertRepoToLastCommitRequestPayload = {
       projectId: this.nav.projectId,
@@ -123,7 +101,6 @@ export class RepoOptionsComponent implements OnDestroy {
 
   revertToProduction(event?: MouseEvent) {
     event.stopPropagation();
-    this.closeMenu();
 
     let payload: apiToBackend.ToBackendRevertRepoToProductionRequestPayload = {
       projectId: this.nav.projectId,
@@ -157,7 +134,6 @@ export class RepoOptionsComponent implements OnDestroy {
 
   pullFromProduction(event?: MouseEvent) {
     event.stopPropagation();
-    this.closeMenu();
 
     let payload: apiToBackend.ToBackendPullRepoRequestPayload = {
       projectId: this.nav.projectId,
@@ -183,10 +159,5 @@ export class RepoOptionsComponent implements OnDestroy {
         take(1)
       )
       .subscribe();
-  }
-
-  ngOnDestroy() {
-    if (this.menuId === this.openedMenuId)
-      this.uiStore.update({ openedMenuId: undefined });
   }
 }

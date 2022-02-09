@@ -1,50 +1,58 @@
 <button
   data-cy="repoOptionsMenuButton"
-  class="flex relative z-9 h-9 w-9 rounded focus:outline-none items-center justify-center"
-  [ngClass]="{
-    'cursor-default text-gray-400':
-      (openedMenuId && menuId !== openedMenuId) || needSave === true,
-    'hover:bg-blue-200': needSave === false
-  }"
-  (click)="toggleMenu($event)"
-  [disabled]="(openedMenuId && menuId !== openedMenuId) || needSave === true"
+  class="flex flex-shrink-0 h-9 w-9 rounded focus:outline-none items-center justify-center hover:bg-blue-200"
+  #t1="tippy"
+  [tippy]="templateRepoOptions"
+  [hideOnEscape]="true"
+  variation="menu"
+  className="my-menu"
 >
   <m-dots-vertical-icon></m-dots-vertical-icon>
 </button>
 
-<button
-  class="fixed inset-0 z-9 w-full h-full cursor-default focus:outline-none"
-  *ngIf="isRepoOptionsMenuOpen === true"
-  (click)="closeMenu($event)"
-></button>
-
-<div
-  class="absolute top-1/2 right-10 transform -translate-y-1/2 mt-1 w-64 z-9 bg-white rounded-md shadow-xl border-2 border-gray4"
-  *ngIf="isRepoOptionsMenuOpen === true"
->
-  <button
-    data-cy="repoOptionsRevertRepoToLastCommitButton"
-    class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-    (click)="revertToLastCommit($event)"
-    >Revert to Last Commit</button
+<ng-template #templateRepoOptions>
+  <div
+    class="absolute top-1/2 right-10 transform -translate-y-1/2 mt-1 w-64 z-9 bg-white rounded-md shadow-xl border-2 border-gray4"
   >
+    <button
+      data-cy="repoOptionsRevertRepoToLastCommitButton"
+      class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+      [ngClass]="{
+        'cursor-default text-gray-400': needSave === true
+      }"
+      [disabled]="needSave === true"
+      (click)="t1.hide(); revertToLastCommit($event)"
+      >Revert to Last Commit</button
+    >
 
-  <button
-    data-cy="repoOptionsRevertRepoToProductionButton"
-    class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-    (click)="revertToProduction($event)"
-    >Revert to Production</button
-  >
+    <button
+      data-cy="repoOptionsRevertRepoToProductionButton"
+      class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+      [ngClass]="{
+        'cursor-default text-gray-400': needSave === true
+      }"
+      [disabled]="needSave === true"
+      (click)="t1.hide(); revertToProduction($event)"
+      >Revert to Production</button
+    >
 
-  <button
-    data-cy="repoOptionsPullFromProductionButton"
-    class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-    (click)="pullFromProduction($event)"
-    >Pull from Production</button
-  >
-</div>
+    <button
+      data-cy="repoOptionsPullFromProductionButton"
+      class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+      [ngClass]="{
+        'cursor-default text-gray-400':
+          needSave === true || repo?.repoStatus === repoStatusNeedCommit
+      }"
+      [disabled]="
+        needSave === true || repo?.repoStatus === repoStatusNeedCommit
+      "
+      (click)="t1.hide(); pullFromProduction($event)"
+      >Pull from Production</button
+    >
+  </div>
+</ng-template>
 
-<div *ngIf="openedMenuId$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="file$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
+<div *ngIf="repo$ | async"></div>

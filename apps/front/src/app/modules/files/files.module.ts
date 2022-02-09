@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TreeModule } from '@circlon/angular-tree-component';
+import { TippyModule } from '@ngneat/helipopper';
 import { SharedModule } from '../shared/shared.module';
 import { FileEditorComponent } from './file-editor/file-editor.component';
 import { BlockmlErrorsComponent } from './files-right/blockml-errors/blockml-errors.component';
@@ -32,7 +33,8 @@ import { RepoOptionsComponent } from './repo-options/repo-options.component';
     ReactiveFormsModule,
     SharedModule,
     RouterModule,
-    TreeModule
+    TreeModule,
+    TippyModule
   ]
 })
 export class FilesModule {}
