@@ -1,27 +1,17 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { OrgQuery } from '~front/app/queries/org.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { NavState } from '~front/app/stores/nav.store';
-import { UiStore } from '~front/app/stores/ui.store';
 import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-org-menu',
   templateUrl: './org-menu.component.html'
 })
-export class OrgMenuComponent implements OnInit, OnDestroy {
-  menuId = 'orgMenu';
-
-  openedMenuId: string;
-  openedMenuId$ = this.uiQuery.openedMenuId$.pipe(
-    tap(x => (this.openedMenuId = x))
-  );
-
-  isOrgMenuOpen = false;
-
+export class OrgMenuComponent implements OnInit {
   pathAccount = common.PATH_ACCOUNT;
   pathUsers = common.PATH_USERS;
 
@@ -48,7 +38,6 @@ export class OrgMenuComponent implements OnInit, OnDestroy {
 
   constructor(
     public uiQuery: UiQuery,
-    public uiStore: UiStore,
     public orgQuery: OrgQuery,
     public navQuery: NavQuery,
     private router: Router,
@@ -60,7 +49,6 @@ export class OrgMenuComponent implements OnInit, OnDestroy {
   }
 
   navigateAccount() {
-    this.closeMenu();
     this.router.navigate([
       common.PATH_ORG,
       this.nav.orgId,
@@ -69,30 +57,6 @@ export class OrgMenuComponent implements OnInit, OnDestroy {
   }
 
   navigateUsers() {
-    this.closeMenu();
     this.router.navigate([common.PATH_ORG, this.nav.orgId, common.PATH_USERS]);
-  }
-
-  openMenu() {
-    this.isOrgMenuOpen = true;
-    this.uiStore.update({ openedMenuId: this.menuId });
-  }
-
-  closeMenu() {
-    this.isOrgMenuOpen = false;
-    this.uiStore.update({ openedMenuId: undefined });
-  }
-
-  toggleMenu() {
-    if (this.isOrgMenuOpen === true) {
-      this.closeMenu();
-    } else {
-      this.openMenu();
-    }
-  }
-
-  ngOnDestroy() {
-    if (this.menuId === this.openedMenuId)
-      this.uiStore.update({ openedMenuId: undefined });
   }
 }

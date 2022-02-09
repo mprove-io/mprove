@@ -1,61 +1,51 @@
-<div class="relative">
+<div
+  class="ml-2 h-10 w-10"
+  #t1="tippy"
+  [tippy]="templateOrgOptions"
+  [hideOnEscape]="true"
+  variation="menu"
+  className="my-menu"
+  [offset]="[0, 5]"
+  [isEnabled]="nav?.orgId !== undefined && needSave === false"
+>
   <button
-    class="ml-2 h-10 w-10 z-10 rounded-full focus:outline-none"
-    [ngClass]="{
-      'cursor-default':
-        nav?.orgId === undefined ||
-        needSave === true ||
-        (openedMenuId && menuId !== openedMenuId)
-    }"
-    (click)="toggleMenu()"
-    [disabled]="
-      nav?.orgId === undefined ||
-      needSave === true ||
-      (openedMenuId && menuId !== openedMenuId)
-    "
+    class="h-10 w-10 rounded-full focus:outline-none"
+    [disabled]="nav?.orgId === undefined || needSave === true"
   >
     <div class="flex justify-center">
       <m-settings-icon></m-settings-icon>
     </div>
   </button>
 
-  <button
-    class="fixed inset-0 z-10 w-full h-full cursor-default focus:outline-none"
-    *ngIf="isOrgMenuOpen === true"
-    (click)="closeMenu()"
-  ></button>
+  <ng-template #templateOrgOptions>
+    <div class="w-56 bg-white rounded-md shadow-xl border-2 border-gray4">
+      <div class="block mt-2 px-4 py-2 text-gray-400 font-semibold text-base"
+        >{{ nav?.orgName | capitalize }} Org</div
+      >
 
-  <div
-    class="absolute right-0 mt-1 w-56 z-10 bg-white rounded-md shadow-xl border-2 border-gray4"
-    *ngIf="isOrgMenuOpen === true"
-  >
-    <div class="block mt-2 px-4 py-2 text-gray-400 font-semibold text-base"
-      >{{ nav?.orgName | capitalize }} Org</div
-    >
+      <button
+        class="block px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+        [ngClass]="{
+          'font-semibold': lastUrl === pathAccount
+        }"
+        [disabled]="lastUrl === pathAccount"
+        (click)="t1.hide(); navigateAccount()"
+        >Account</button
+      >
 
-    <button
-      class="block px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-      [ngClass]="{
-        'font-semibold': lastUrl === pathAccount
-      }"
-      [disabled]="lastUrl === pathAccount"
-      (click)="navigateAccount()"
-      >Account</button
-    >
-
-    <button
-      class="block px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-      [ngClass]="{
-        'font-semibold': lastUrl === pathUsers
-      }"
-      [disabled]="lastUrl === pathUsers"
-      (click)="navigateUsers()"
-      >Users</button
-    >
-  </div>
+      <button
+        class="block px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+        [ngClass]="{
+          'font-semibold': lastUrl === pathUsers
+        }"
+        [disabled]="lastUrl === pathUsers"
+        (click)="t1.hide(); navigateUsers()"
+        >Users</button
+      >
+    </div>
+  </ng-template>
 </div>
 
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="routerEvents$ | async"></div>
-<div *ngIf="openedMenuId$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
