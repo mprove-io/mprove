@@ -1,39 +1,31 @@
 <button
   data-cy="fileOptionsMenuButton"
-  class="flex relative z-10 h-8 w-8 rounded focus:outline-none hover:bg-blue-200 items-center justify-center"
-  [ngClass]="{
-    'cursor-default': openedMenuId && menuId !== openedMenuId
-  }"
-  (click)="toggleMenu(node, $event)"
-  [disabled]="openedMenuId && menuId !== openedMenuId"
+  class="flex flex-shrink-0 h-8 w-8 rounded focus:outline-none hover:bg-white items-center justify-center"
+  #t1="tippy"
+  [tippy]="templateFileOptions"
+  [hideOnEscape]="true"
+  variation="menu"
+  className="my-menu"
 >
   <m-dots-vertical-icon></m-dots-vertical-icon>
 </button>
 
-<button
-  class="fixed inset-0 z-10 w-full h-full cursor-default focus:outline-none"
-  *ngIf="isFileOptionsMenuOpen === true"
-  (click)="closeMenu($event)"
-></button>
+<ng-template #templateFileOptions>
+  <div class="w-48 bg-white rounded-md shadow-xl border-2 border-gray4">
+    <button
+      data-cy="fileOptionsDeleteFileButton"
+      class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+      (click)="t1.hide(); deleteFile(node, $event)"
+      >Delete File</button
+    >
 
-<div
-  class="absolute top-1/2 right-10 transform -translate-y-1/2 mt-1 w-48 z-10 bg-white rounded-md shadow-xl border-2 border-gray4"
-  *ngIf="isFileOptionsMenuOpen === true"
->
-  <button
-    data-cy="fileOptionsDeleteFileButton"
-    class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-    (click)="deleteFile(node, $event)"
-    >Delete File</button
-  >
+    <button
+      data-cy="fileOptionsRenameFileButton"
+      class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+      (click)="t1.hide(); renameFile(node, $event)"
+      >Rename File</button
+    >
+  </div>
+</ng-template>
 
-  <button
-    data-cy="fileOptionsRenameFileButton"
-    class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-    (click)="renameFile(node, $event)"
-    >Rename File</button
-  >
-</div>
-
-<div *ngIf="openedMenuId$ | async"></div>
 <div *ngIf="nav$ | async"></div>
