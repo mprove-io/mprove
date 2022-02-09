@@ -60,15 +60,6 @@ export class ChartRepComponent implements OnInit, OnDestroy {
 
   qData: RData[];
 
-  menuId = common.makeId();
-
-  openedMenuId: string;
-  openedMenuId$ = this.uiQuery.openedMenuId$.pipe(
-    tap(x => (this.openedMenuId = x))
-  );
-
-  isRepOptionsMenuOpen = false;
-
   checkRunning$: Subscription;
 
   nav: NavState;
@@ -161,7 +152,6 @@ export class ChartRepComponent implements OnInit, OnDestroy {
 
   explore(event?: MouseEvent) {
     event.stopPropagation();
-    // this.closeMenu();
 
     if (this.report.hasAccessToModel === true) {
       this.navigateService.navigateMconfigQuery({
@@ -172,32 +162,9 @@ export class ChartRepComponent implements OnInit, OnDestroy {
     }
   }
 
-  openMenu() {
-    this.isRepOptionsMenuOpen = true;
-    this.uiStore.update({ openedMenuId: this.menuId });
-  }
-
-  closeMenu(event?: MouseEvent) {
-    if (common.isDefined(event)) {
-      event.stopPropagation();
-    }
-    this.isRepOptionsMenuOpen = false;
-    this.uiStore.update({ openedMenuId: undefined });
-  }
-
-  toggleMenu(event?: MouseEvent) {
-    event.stopPropagation();
-    if (this.isRepOptionsMenuOpen === true) {
-      this.closeMenu();
-    } else {
-      this.openMenu();
-    }
-  }
-
   run(event?: MouseEvent) {
     if (common.isDefined(event)) {
       event.stopPropagation();
-      this.closeMenu();
     }
 
     let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
@@ -223,7 +190,6 @@ export class ChartRepComponent implements OnInit, OnDestroy {
 
   deleteReport(event: MouseEvent) {
     event.stopPropagation();
-    this.closeMenu();
 
     let deleteReportIndex = this.dashboard.reports.findIndex(
       x => x.mconfigId === this.mconfig.mconfigId
@@ -286,8 +252,5 @@ export class ChartRepComponent implements OnInit, OnDestroy {
     if (common.isDefined(this.checkRunning$)) {
       this.checkRunning$?.unsubscribe();
     }
-
-    if (this.menuId === this.openedMenuId)
-      this.uiStore.update({ openedMenuId: undefined });
   }
 }
