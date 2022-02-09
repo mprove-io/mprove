@@ -33,34 +33,24 @@
           </ngx-spinner>
         </div>
 
-        <div class="relative ml-3">
-          <button
-            data-cy="vizOptionsMenuButton"
-            class="flex relative z-9 h-9 w-9 rounded focus:outline-none items-center justify-center hover:bg-blue-200 invisible group-hover:visible"
-            [ngClass]="{
-              'cursor-default text-gray-400':
-                openedMenuId && menuId !== openedMenuId
-            }"
-            (click)="toggleMenu($event)"
-            [disabled]="openedMenuId && menuId !== openedMenuId"
-          >
-            <m-dots-vertical-icon></m-dots-vertical-icon>
-          </button>
+        <button
+          data-cy="vizOptionsMenuButton"
+          class="flex flex-shrink-0 ml-3 h-9 w-9 rounded focus:outline-none items-center justify-center hover:bg-blue-200 invisible group-hover:visible"
+          #t1="tippy"
+          [tippy]="templateChartVizOptions"
+          [hideOnEscape]="true"
+          variation="menu"
+          className="my-menu"
+        >
+          <m-dots-vertical-icon></m-dots-vertical-icon>
+        </button>
 
-          <button
-            class="fixed inset-0 z-9 w-full h-full cursor-default focus:outline-none"
-            *ngIf="isVizOptionsMenuOpen === true"
-            (click)="closeMenu($event)"
-          ></button>
-
-          <div
-            class="absolute right-0 mt-1 w-64 z-9 bg-white rounded-md shadow-xl border-2 border-gray4"
-            *ngIf="isVizOptionsMenuOpen === true"
-          >
+        <ng-template #templateChartVizOptions>
+          <div class="w-64 bg-white rounded-md shadow-xl border-2 border-gray4">
             <button
               data-cy="vizOptionsRun"
               class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-              (click)="run($event)"
+              (click)="t1.hide(); run($event)"
               >Run</button
             >
 
@@ -71,7 +61,7 @@
                 'cursor-default text-gray-400':
                   viz.reports[0].hasAccessToModel === false
               }"
-              (click)="explore($event)"
+              (click)="t1.hide(); explore($event)"
               [disabled]="viz.reports[0].hasAccessToModel === false"
               >Explore</button
             >
@@ -82,7 +72,7 @@
               [ngClass]="{
                 'cursor-default text-gray-400': viz.canEditOrDeleteViz === false
               }"
-              (click)="editVizInfo($event)"
+              (click)="t1.hide(); editVizInfo($event)"
               [disabled]="viz.canEditOrDeleteViz === false"
               >Edit Info</button
             >
@@ -90,7 +80,7 @@
             <button
               data-cy="vizOptionsGoToFile"
               class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-              (click)="goToFile($event)"
+              (click)="t1.hide(); goToFile($event)"
               >Go to file</button
             >
 
@@ -100,12 +90,12 @@
               [ngClass]="{
                 'cursor-default text-gray-400': viz.canEditOrDeleteViz === false
               }"
-              (click)="deleteViz($event)"
+              (click)="t1.hide(); deleteViz($event)"
               [disabled]="viz.canEditOrDeleteViz === false"
               >Delete</button
             >
           </div>
-        </div>
+        </ng-template>
       </div>
 
       <m-bricks
@@ -138,5 +128,4 @@
   </div>
 </div>
 
-<div *ngIf="openedMenuId$ | async"></div>
 <div *ngIf="nav$ | async"></div>

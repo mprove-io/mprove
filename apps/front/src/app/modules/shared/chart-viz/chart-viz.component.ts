@@ -10,13 +10,11 @@ import { interval, of, Subscription } from 'rxjs';
 import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { NavQuery } from '~front/app/queries/nav.query';
-import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService, RData } from '~front/app/services/query.service';
 import { NavState } from '~front/app/stores/nav.store';
-import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -48,15 +46,6 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   query: common.Query;
   mconfig: common.MconfigX;
 
-  menuId = common.makeId();
-
-  openedMenuId: string;
-  openedMenuId$ = this.uiQuery.openedMenuId$.pipe(
-    tap(x => (this.openedMenuId = x))
-  );
-
-  isVizOptionsMenuOpen = false;
-
   checkRunning$: Subscription;
 
   nav: NavState;
@@ -75,9 +64,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
     private myDialogService: MyDialogService,
-    private spinner: NgxSpinnerService,
-    public uiQuery: UiQuery,
-    public uiStore: UiStore
+    private spinner: NgxSpinnerService
   ) {}
 
   async ngOnInit() {
@@ -190,7 +177,6 @@ export class ChartVizComponent implements OnInit, OnDestroy {
 
   explore(event?: MouseEvent) {
     event.stopPropagation();
-    // this.closeMenu();
 
     if (this.viz.reports[0].hasAccessToModel === true) {
       this.navigateService.navigateMconfigQuery({
@@ -201,32 +187,9 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     }
   }
 
-  openMenu() {
-    this.isVizOptionsMenuOpen = true;
-    this.uiStore.update({ openedMenuId: this.menuId });
-  }
-
-  closeMenu(event?: MouseEvent) {
-    if (common.isDefined(event)) {
-      event.stopPropagation();
-    }
-    this.isVizOptionsMenuOpen = false;
-    this.uiStore.update({ openedMenuId: undefined });
-  }
-
-  toggleMenu(event?: MouseEvent) {
-    event.stopPropagation();
-    if (this.isVizOptionsMenuOpen === true) {
-      this.closeMenu();
-    } else {
-      this.openMenu();
-    }
-  }
-
   run(event?: MouseEvent) {
     if (common.isDefined(event)) {
       event.stopPropagation();
-      this.closeMenu();
     }
 
     this.spinner.show(this.viz.vizId);
@@ -253,7 +216,6 @@ export class ChartVizComponent implements OnInit, OnDestroy {
 
   deleteViz(event?: MouseEvent) {
     event.stopPropagation();
-    this.closeMenu();
 
     this.myDialogService.showDeleteViz({
       viz: this.viz,
@@ -286,7 +248,6 @@ export class ChartVizComponent implements OnInit, OnDestroy {
 
   editVizInfo(event?: MouseEvent) {
     event.stopPropagation();
-    this.closeMenu();
 
     this.myDialogService.showEditVizInfo({
       apiService: this.apiService,
@@ -332,8 +293,5 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     if (common.isDefined(this.checkRunning$)) {
       this.checkRunning$?.unsubscribe();
     }
-
-    if (this.menuId === this.openedMenuId)
-      this.uiStore.update({ openedMenuId: undefined });
   }
 }
