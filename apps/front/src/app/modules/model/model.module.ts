@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TreeModule } from '@circlon/angular-tree-component';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { TippyModule } from '@ngneat/helipopper';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
@@ -42,7 +43,8 @@ import { SqlComponent } from './sql/sql.component';
     TreeModule,
     NgSelectModule,
     UiSwitchModule,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    TippyModule
   ]
 })
 export class ModelModule {}

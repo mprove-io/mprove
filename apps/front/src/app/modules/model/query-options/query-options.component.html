@@ -1,40 +1,32 @@
 <button
   data-cy="queryOptionsMenuButton"
-  class="flex relative z-9 h-9 w-9 rounded focus:outline-none items-center justify-center hover:bg-blue-200"
-  [ngClass]="{
-    'cursor-default text-gray-400': openedMenuId && menuId !== openedMenuId
-  }"
-  (click)="toggleMenu($event)"
-  [disabled]="openedMenuId && menuId !== openedMenuId"
+  class="flex h-9 w-9 rounded focus:outline-none items-center justify-center hover:bg-blue-200"
+  #t1="tippy"
+  [tippy]="templateQueryOptions"
+  [hideOnEscape]="true"
+  variation="menu"
+  className="my-menu"
 >
   <m-dots-vertical-icon></m-dots-vertical-icon>
 </button>
 
-<button
-  class="fixed inset-0 z-9 w-full h-full cursor-default focus:outline-none"
-  *ngIf="isQueryOptionsMenuOpen === true"
-  (click)="closeMenu($event)"
-></button>
+<ng-template #templateQueryOptions>
+  <div class="w-64 bg-white rounded-md shadow-xl border-2 border-gray4">
+    <button
+      data-cy="queryOptionsClearSelection"
+      class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+      (click)="t1.hide(); clearSelection($event)"
+      >Clear Selection</button
+    >
 
-<div
-  class="absolute right-0 mt-1 w-64 z-9 bg-white rounded-md shadow-xl border-2 border-gray4"
-  *ngIf="isQueryOptionsMenuOpen === true"
->
-  <button
-    data-cy="queryOptionsClearSelection"
-    class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-    (click)="clearSelection($event)"
-    >Clear Selection</button
-  >
+    <button
+      *ngIf="showRunDryButton === true"
+      data-cy="queryOptionsRunDry"
+      class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+      (click)="t1.hide(); runDry($event)"
+      >Run Dry</button
+    >
+  </div>
+</ng-template>
 
-  <button
-    *ngIf="showRunDryButton === true"
-    data-cy="queryOptionsRunDry"
-    class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-    (click)="runDry($event)"
-    >Run Dry</button
-  >
-</div>
-
-<div *ngIf="openedMenuId$ | async"></div>
 <div *ngIf="model$ | async"></div>
