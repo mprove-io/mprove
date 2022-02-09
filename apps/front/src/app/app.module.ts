@@ -60,7 +60,17 @@ registerLocaleData(en);
       defaultVariation: 'tooltip',
       variations: {
         tooltip: tooltipVariation,
-        popper: popperVariation
+        popper: popperVariation,
+        menu: {
+          theme: null,
+          placement: 'bottom-end',
+          animation: null,
+          trigger: 'click manual',
+          interactive: true,
+          appendTo: 'parent',
+          arrow: false,
+          offset: [0, 7]
+        }
       }
     }),
     SharedModule,

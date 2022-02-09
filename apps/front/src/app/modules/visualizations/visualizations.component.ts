@@ -21,8 +21,6 @@ import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService } from '~front/app/services/query.service';
-import { ModelStore } from '~front/app/stores/model.store';
-import { MqStore } from '~front/app/stores/mq.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -48,13 +46,6 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   showBricks = false;
 
   isShow = true;
-
-  openedMenuId: string;
-  openedMenuId$ = this.uiQuery.openedMenuId$.pipe(
-    tap(x => (this.openedMenuId = x))
-  );
-
-  isVizOptionsMenuOpen = false;
 
   bufferAmount = 10;
   enableUnequalChildrenSizes = true;
@@ -142,9 +133,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     private spinner: NgxSpinnerService,
     private navigateService: NavigateService,
     private location: Location,
-    private title: Title,
-    private mqStore: MqStore,
-    private modelStore: ModelStore
+    private title: Title
   ) {}
 
   calculateAspectRatio() {
@@ -305,9 +294,8 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
 
   navigateToViz(vizId: string) {}
 
-  async explore(event: any, item: common.VizX) {
+  explore(event: any, item: common.VizX) {
     event.stopPropagation();
-    this.closeMenu();
 
     this.navigateService.navigateMconfigQuery({
       modelId: item.reports[0].modelId,
@@ -391,31 +379,8 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     this.spinner.hide(item.vizId);
   }
 
-  openMenu(item: common.VizX) {
-    this.isVizOptionsMenuOpen = true;
-    this.uiStore.update({ openedMenuId: item.vizId });
-  }
-
-  closeMenu(event?: MouseEvent) {
-    if (common.isDefined(event)) {
-      event.stopPropagation();
-    }
-    this.isVizOptionsMenuOpen = false;
-    this.uiStore.update({ openedMenuId: undefined });
-  }
-
-  toggleMenu(event: MouseEvent, item: common.VizX) {
-    event.stopPropagation();
-    if (this.isVizOptionsMenuOpen === true) {
-      this.closeMenu();
-    } else {
-      this.openMenu(item);
-    }
-  }
-
   goToVizFile(event: MouseEvent, item: common.VizX) {
     event.stopPropagation();
-    this.closeMenu();
 
     let fileIdAr = item.filePath.split('/');
     fileIdAr.shift();
@@ -427,7 +392,6 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
 
   async editVizInfo(event: MouseEvent, item: common.VizX) {
     event.stopPropagation();
-    this.closeMenu();
 
     let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
       projectId: this.nav.projectId,
@@ -461,7 +425,6 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
 
   deleteViz(event: MouseEvent, item: common.VizX) {
     event.stopPropagation();
-    this.closeMenu();
 
     this.myDialogService.showDeleteViz({
       viz: item,
@@ -482,8 +445,5 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     if (this.timer) {
       clearTimeout(this.timer);
     }
-
-    if (common.isDefined(this.openedMenuId))
-      this.uiStore.update({ openedMenuId: undefined });
   }
 }

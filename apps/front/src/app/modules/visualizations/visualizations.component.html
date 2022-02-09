@@ -294,94 +294,73 @@
                       </div>
 
                       <div class="flex w-24 pt-1">
-                        <div class="relative ml-3">
-                          <button
-                            data-cy="vizOptionsMenuButton"
-                            class="flex relative z-9 h-9 w-9 rounded focus:outline-none items-center justify-center hover:bg-blue-200 invisible group-hover:visible"
-                            *ngIf="
-                              isVizOptionsMenuOpen === false ||
-                              item.vizId === openedMenuId
-                            "
-                            [ngClass]="{
-                              'cursor-default text-gray-400':
-                                openedMenuId && item.vizId !== openedMenuId
-                            }"
-                            (click)="toggleMenu($event, item)"
-                            [disabled]="
-                              openedMenuId && item.vizId !== openedMenuId
-                            "
-                          >
-                            <m-dots-vertical-icon></m-dots-vertical-icon>
-                          </button>
-
-                          <button
-                            class="fixed inset-0 z-9 w-10 h-10 cursor-default focus:outline-none"
-                            *ngIf="
-                              isVizOptionsMenuOpen === true &&
-                              item.vizId === openedMenuId
-                            "
-                            (click)="closeMenu($event)"
-                          ></button>
-
+                        <div class="ml-3">
                           <div
-                            class="absolute right-0 mt-1 w-64 z-9 bg-white rounded-md shadow-xl border-2 border-gray4"
-                            *ngIf="
-                              isVizOptionsMenuOpen === true &&
-                              item.vizId === openedMenuId
-                            "
+                            class="h-9 w-9"
+                            #t1="tippy"
+                            [tippy]="templateVizOptions"
+                            [hideOnEscape]="true"
+                            variation="menu"
+                            className="my-menu"
                           >
-                            <!-- <button
-                            data-cy="vizOptionsRun"
-                            class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-                            (click)="run($event)"
-                            >Run</button
-                          > -->
-
                             <button
-                              data-cy="vizOptionsExplore"
-                              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-                              [ngClass]="{
-                                'cursor-default text-gray-400':
-                                  item.reports[0].hasAccessToModel === false
-                              }"
-                              (click)="explore($event, item)"
-                              [disabled]="
-                                item.reports[0].hasAccessToModel === false
-                              "
-                              >Explore</button
+                              data-cy="vizOptionsMenuButton"
+                              class="flex h-9 w-9 rounded focus:outline-none items-center justify-center hover:bg-blue-200 invisible group-hover:visible"
                             >
-
-                            <button
-                              data-cy="vizOptionsEditInfo"
-                              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-                              [ngClass]="{
-                                'cursor-default text-gray-400':
-                                  item.canEditOrDeleteViz === false
-                              }"
-                              (click)="editVizInfo($event, item)"
-                              [disabled]="item.canEditOrDeleteViz === false"
-                              >Edit Info</button
-                            >
-
-                            <button
-                              data-cy="vizOptionsGoToFile"
-                              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-                              (click)="goToVizFile($event, item)"
-                              >Go to file</button
-                            >
-
-                            <button
-                              data-cy="vizOptionsDelete"
-                              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-                              [ngClass]="{
-                                'cursor-default text-gray-400':
-                                  item.canEditOrDeleteViz === false
-                              }"
-                              (click)="deleteViz($event, item)"
-                              [disabled]="item.canEditOrDeleteViz === false"
-                              >Delete</button
-                            >
+                              <m-dots-vertical-icon></m-dots-vertical-icon>
+                            </button>
                           </div>
+
+                          <ng-template #templateVizOptions>
+                            <div
+                              class="w-64 bg-white rounded-md shadow-xl border-2 border-gray4"
+                            >
+                              <button
+                                data-cy="vizOptionsExplore"
+                                class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+                                [ngClass]="{
+                                  'cursor-default text-gray-400':
+                                    item.reports[0].hasAccessToModel === false
+                                }"
+                                (click)="t1.hide(); explore($event, item)"
+                                [disabled]="
+                                  item.reports[0].hasAccessToModel === false
+                                "
+                                >Explore</button
+                              >
+
+                              <button
+                                data-cy="vizOptionsEditInfo"
+                                class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+                                [ngClass]="{
+                                  'cursor-default text-gray-400':
+                                    item.canEditOrDeleteViz === false
+                                }"
+                                (click)="t1.hide(); editVizInfo($event, item)"
+                                [disabled]="item.canEditOrDeleteViz === false"
+                                >Edit Info</button
+                              >
+
+                              <button
+                                data-cy="vizOptionsGoToFile"
+                                class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+                                (click)="t1.hide(); goToVizFile($event, item)"
+                                >Go to file</button
+                              >
+
+                              <button
+                                data-cy="vizOptionsDelete"
+                                class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+                                [ngClass]="{
+                                  'cursor-default text-gray-400':
+                                    item.canEditOrDeleteViz === false
+                                }"
+                                (click)="t1.hide(); deleteViz($event, item)"
+                                [disabled]="item.canEditOrDeleteViz === false"
+                                >Delete</button
+                              >
+                            </div>
+                          </ng-template>
                         </div>
                       </div>
                     </div>
@@ -389,7 +368,7 @@
                 </div>
               </div>
 
-              <div class="h-48"></div>
+              <div class="h-12"></div>
             </virtual-scroller>
 
             <div
@@ -441,7 +420,6 @@
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="member$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>
-<div *ngIf="openedMenuId$ | async"></div>
 
 <!-- [ngClass]="{
   'h-1/2': screenAspectRatio >= 1.5,

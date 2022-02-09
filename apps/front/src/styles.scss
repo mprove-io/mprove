@@ -21,6 +21,17 @@
 @import '~tippy.js/themes/light.css';
 @import '~tippy.js/animations/scale.css';
 
+.my-menu {
+  .tippy-box {
+    background-color: transparent;
+  }
+
+  .tippy-content {
+    padding: 0;
+    background-color: transparent;
+  }
+}
+
 @font-face {
   font-family: 'Montserrat';
   font-style: normal;
