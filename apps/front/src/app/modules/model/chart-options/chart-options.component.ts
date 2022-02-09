@@ -1,9 +1,7 @@
-import { ChangeDetectorRef, Component, Input } from '@angular/core';
-import { UiQuery } from '~front/app/queries/ui.query';
+import { Component, Input } from '@angular/core';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { RepoStore } from '~front/app/stores/repo.store';
-import { UiStore } from '~front/app/stores/ui.store';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -18,12 +16,9 @@ export class ChartOptionsComponent {
   mconfig: common.MconfigX;
 
   constructor(
-    public uiQuery: UiQuery,
-    public uiStore: UiStore,
     public repoStore: RepoStore,
     public myDialogService: MyDialogService,
-    private apiService: ApiService,
-    private cd: ChangeDetectorRef
+    private apiService: ApiService
   ) {}
 
   viewBlockML(event?: MouseEvent) {

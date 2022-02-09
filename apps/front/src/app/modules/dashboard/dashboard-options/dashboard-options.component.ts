@@ -1,12 +1,10 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
-import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { NavState } from '~front/app/stores/nav.store';
-import { UiStore } from '~front/app/stores/ui.store';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -31,8 +29,6 @@ export class DashboardOptionsComponent {
   dashboardDeletedFnBindThis = this.dashboardDeletedFn.bind(this);
 
   constructor(
-    public uiQuery: UiQuery,
-    public uiStore: UiStore,
     private myDialogService: MyDialogService,
     private navigateService: NavigateService,
     private navQuery: NavQuery,

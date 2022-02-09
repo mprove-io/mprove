@@ -7,10 +7,8 @@ import {
 } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { ModelQuery } from '~front/app/queries/model.query';
-import { UiQuery } from '~front/app/queries/ui.query';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { ModelState } from '~front/app/stores/model.store';
-import { UiStore } from '~front/app/stores/ui.store';
 
 @Component({
   selector: 'm-query-options',
@@ -32,9 +30,7 @@ export class QueryOptionsComponent {
   );
 
   constructor(
-    public uiQuery: UiQuery,
     public modelQuery: ModelQuery,
-    public uiStore: UiStore,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef
   ) {}

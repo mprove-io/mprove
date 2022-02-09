@@ -15,14 +15,12 @@ import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
 import { NavQuery } from '~front/app/queries/nav.query';
-import { UiQuery } from '~front/app/queries/ui.query';
 import { VizsQuery } from '~front/app/queries/vizs.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService } from '~front/app/services/query.service';
 import { NavState } from '~front/app/stores/nav.store';
-import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -126,8 +124,6 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     private memberQuery: MemberQuery,
     private apiService: ApiService,
     private navQuery: NavQuery,
-    public uiStore: UiStore,
-    public uiQuery: UiQuery,
     private queryService: QueryService,
     private myDialogService: MyDialogService,
     private spinner: NgxSpinnerService,

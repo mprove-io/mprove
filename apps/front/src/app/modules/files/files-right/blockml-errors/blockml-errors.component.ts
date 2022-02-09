@@ -5,7 +5,6 @@ import { transformBlockmlErrorTitle } from '~front/app/functions/transform-block
 import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { StructQuery } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { StructState } from '~front/app/stores/struct.store';
 import { common } from '~front/barrels/common';
@@ -55,7 +54,6 @@ export class BlockmlErrorsComponent {
     public fileQuery: FileQuery,
     public structQuery: StructQuery,
     public navigateService: NavigateService,
-    public uiQuery: UiQuery,
     public navQuery: NavQuery,
     private cd: ChangeDetectorRef
   ) {}

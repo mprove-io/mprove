@@ -12,14 +12,12 @@ import { interval, of, Subscription } from 'rxjs';
 import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { NavQuery } from '~front/app/queries/nav.query';
-import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService, RData } from '~front/app/services/query.service';
 import { DashboardStore } from '~front/app/stores/dashboard.store';
 import { NavState } from '~front/app/stores/nav.store';
-import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -79,9 +77,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private myDialogService: MyDialogService,
     private spinner: NgxSpinnerService,
-    private dashboardStore: DashboardStore,
-    public uiQuery: UiQuery,
-    public uiStore: UiStore
+    private dashboardStore: DashboardStore
   ) {}
 
   async ngOnInit() {
