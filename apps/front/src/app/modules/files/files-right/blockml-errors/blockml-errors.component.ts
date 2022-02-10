@@ -1,5 +1,17 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
-import { tap } from 'rxjs/operators';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  ViewChild
+} from '@angular/core';
+import {
+  IActionMapping,
+  KEYS,
+  TreeComponent,
+  TreeNode
+} from '@circlon/angular-tree-component';
+import { Subscription } from 'rxjs';
+import { take, tap } from 'rxjs/operators';
 import { getFileExtension } from '~front/app/functions/get-file-extension';
 import { transformBlockmlErrorTitle } from '~front/app/functions/transform-blockml-error-title';
 import { FileQuery } from '~front/app/queries/file.query';
@@ -14,12 +26,22 @@ export class BmlErrorExtra extends common.BmlError {
   sortOrder: number;
 }
 
+export class BmlErrorsNode {
+  id: string;
+  name: string;
+  isError: boolean;
+  children: BmlErrorsNode[];
+}
+
 @Component({
   selector: 'm-blockml-errors',
-  templateUrl: './blockml-errors.component.html'
+  templateUrl: './blockml-errors.component.html',
+  styleUrls: ['blockml-errors.component.scss']
 })
-export class BlockmlErrorsComponent {
+export class BlockmlErrorsComponent implements OnDestroy {
   errors: BmlErrorExtra[];
+
+  nodes: BmlErrorsNode[];
 
   struct: StructState;
   struct$ = this.structQuery.select().pipe(
@@ -46,6 +68,89 @@ export class BlockmlErrorsComponent {
           }
         });
 
+      let nodes: BmlErrorsNode[] = [];
+
+      this.errors.forEach(error => {
+        error.lines.forEach(line => {
+          let node = nodes.find(y => y.id === line.fileId);
+
+          let newError: BmlErrorsNode = Object.assign({}, error, {
+            id: common.makeId(),
+            name: '123',
+            isError: true,
+            children: []
+          });
+
+          if (common.isUndefined(node)) {
+            let newNode: BmlErrorsNode = {
+              id: line.fileId,
+              name: line.fileName,
+              children: [newError],
+              isError: false
+            };
+            nodes.push(newNode);
+          } else {
+            node.children.push(newError);
+          }
+        });
+      });
+
+      this.nodes = nodes;
+
+      console.log(this.nodes);
+
+      this.cd.detectChanges();
+    })
+  );
+
+  actionMapping: IActionMapping = {
+    mouse: {
+      // dragStart: () => {
+      //   this.cd.detach();
+      // },
+      // dragEnd: () => {
+      //   this.cd.reattach();
+      // }
+    },
+    keys: {
+      [KEYS.ENTER]: (tree, node, $event) => alert(`This is ${node.data.name}`)
+    }
+  };
+
+  treeOptions = {
+    actionMapping: this.actionMapping,
+    displayField: 'name'
+  };
+
+  @ViewChild('itemsTree') itemsTree: TreeComponent;
+
+  expandLevel$: Subscription;
+
+  fileNodeId: string;
+
+  file$ = this.fileQuery.select().pipe(
+    tap(x => {
+      if (common.isUndefined(x.fileId)) {
+        this.fileNodeId = undefined;
+        this.cd.detectChanges();
+        return;
+      }
+
+      let projectId;
+
+      this.navQuery
+        .select()
+        .pipe(
+          tap(z => {
+            projectId = z.projectId;
+          }),
+          take(1)
+        )
+        .subscribe();
+
+      let fIdAr = x.fileId.split(common.TRIPLE_UNDERSCORE);
+
+      this.fileNodeId = [projectId, ...fIdAr].join('/');
       this.cd.detectChanges();
     })
   );
@@ -58,25 +163,77 @@ export class BlockmlErrorsComponent {
     private cd: ChangeDetectorRef
   ) {}
 
+  treeOnInitialized() {
+    if (this.nodes.length === 0) {
+      return;
+    }
+
+    this.expandLevel$ = this.fileQuery
+      .select()
+      .pipe(
+        tap(x => {
+          let projectId: string;
+          this.navQuery.projectId$
+            .pipe(
+              tap(z => {
+                projectId = z;
+              }),
+              take(1)
+            )
+            .subscribe();
+
+          if (common.isDefined(x.fileId)) {
+            let fileIdAr = x.fileId.split(common.TRIPLE_UNDERSCORE);
+            let fileId = [projectId, ...fileIdAr].join('/');
+
+            let node = this.itemsTree.treeModel.getNodeById(fileId);
+
+            if (common.isDefined(node)) {
+              node.expand();
+            }
+          }
+
+          this.cd.detectChanges();
+        })
+      )
+      .subscribe();
+  }
+
+  treeOnUpdateData() {}
+
+  nodeOnClick(node: TreeNode) {
+    node.toggleExpanded();
+    // node.toggleActivated();
+    // if (node.data.isFolder) {
+    //   if (node.hasChildren) {
+    //     node.toggleExpanded();
+    //   }
+    // } else {
+    //   this.navigateService.navigateToFileLine({
+    //     underscoreFileId: node.data.fileId
+    //   });
+    // }
+  }
+
   errorSortOrder(errorExt: string): number {
     let ext = `.${errorExt}`;
 
     switch (ext) {
       case 'other':
         return 1;
-      case common.FileExtensionEnum.Udf:
-        return 2;
-      case common.FileExtensionEnum.View:
-        return 3;
-      case common.FileExtensionEnum.Model:
-        return 4;
-      case common.FileExtensionEnum.Viz:
-        return 5;
-      case common.FileExtensionEnum.Dashboard:
-        return 6;
       case common.FileExtensionEnum.Conf:
-        return 7;
+        return 2;
       case common.FileExtensionEnum.Md:
+        return 3;
+      case common.FileExtensionEnum.Udf:
+        return 4;
+      case common.FileExtensionEnum.View:
+        return 5;
+      case common.FileExtensionEnum.Model:
+        return 6;
+      case common.FileExtensionEnum.Dashboard:
+        return 7;
+      case common.FileExtensionEnum.Viz:
         return 8;
       default:
         return 0;
@@ -93,5 +250,10 @@ export class BlockmlErrorsComponent {
       underscoreFileId: fileId,
       lineNumber: line.lineNumber
     });
+  }
+
+  ngOnDestroy() {
+    // console.log('ngOnDestroyFilesTree');
+    this.expandLevel$.unsubscribe();
   }
 }
