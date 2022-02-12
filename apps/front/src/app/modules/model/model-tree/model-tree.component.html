@@ -9,7 +9,7 @@
   >
     <ng-template #treeNodeTemplate let-node="node" let-index="index">
       <div
-        class="flex flex-row w-full h-11 group-scope"
+        class="flex flex-row w-full h-11 group-bar"
         [ngClass]="{
           'pl-6 pr-5':
             node.data.nodeClass === nodeClassDimension ||
@@ -114,7 +114,7 @@
               *ngIf="node.data.isField === true"
               type="button"
               data-cy="filesTreeFilterButton"
-              class="group h-10 ml-3 rounded w-28 flex items-center justify-center focus:outline-none invisible group-scope-hover:visible"
+              class="group h-10 ml-3 rounded w-28 flex items-center justify-center focus:outline-none invisible group-bar-hover:visible"
               [ngClass]="{
                 'text-blue3': node.data.isFiltered === true,
                 'text-gray1': node.data.isFiltered === false
@@ -125,7 +125,7 @@
                 class="flex px-3 h-8 flex-row space-x-2 items-center justify-start rounded group-hover:bg-white"
               >
                 <div
-                  class="w-[76px] flex justify-start invisible group-scope-hover:visible text-sm flex-shrink-0"
+                  class="w-[76px] flex justify-start invisible group-bar-hover:visible text-sm flex-shrink-0"
                   [ngClass]="{
                     'text-blue3': node.data.isFiltered === true,
                     'text-gray-400': node.data.isFiltered === false
@@ -143,7 +143,7 @@
 
             <div
               *ngIf="node.data.isField === true"
-              class="flex ml-2 invisible group-scope-hover:visible"
+              class="flex ml-2 invisible group-bar-hover:visible"
             >
               <m-field-options [node]="node"></m-field-options>
             </div>

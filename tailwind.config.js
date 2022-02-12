@@ -19,14 +19,26 @@ var purple2 = '#E1E7FB';
 
 var red1 = '#DE4343';
 
+const colors = require('tailwindcss/colors');
+
 module.exports = {
   prefix: '',
-  purge: ['apps/front/src/**/*.{html,ts}'],
-  darkMode: false, // or 'media' or 'class'
+  // purge: ['apps/front/src/**/*.{html,ts}'],
+  // darkMode: false, // or 'media' or 'class'
+  content: [
+    // Example content paths...
+    './apps/front/**/*.html'
+  ],
   theme: {
-    groupLevel: 10,
-    groupScope: 'scope',
+    namedGroups: ['foo', 'bar'],
+    // groupLevel: 10,
+    // groupScope: 'scope',
     extend: {
+      colors: {
+        green: colors.emerald,
+        yellow: colors.amber,
+        purple: colors.violet
+      },
       scale: {
         '-1': '-1'
       },
@@ -71,16 +83,17 @@ module.exports = {
       red1
     })
   },
-  variants: {
-    extend: {}
-  },
+  // variants: {
+  //   extend: {}
+  // },
   plugins: [
+    require('tailwindcss-named-groups'),
     require('@tailwindcss/aspect-ratio'),
     require('@tailwindcss/forms')({
       strategy: 'class'
     }),
     require('@tailwindcss/line-clamp'),
-    require('@tailwindcss/typography'),
-    require('tailwindcss-nested-groups')
+    require('@tailwindcss/typography')
+    // require('tailwindcss-nested-groups')
   ]
 };
