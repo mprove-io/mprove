@@ -1,12 +1,12 @@
-<div class="flex flex-col h-full">
-  <div class="flex h-20 flex-row justify-between items-center px-5">
-    <div class="flex flex-row items-center space-x-5 min-w-[2px]">
-      <div class="flex-grow text-lg text-gray1 truncate min-w-[2px]">{{
+<div class="flex h-full flex-col">
+  <div class="flex h-20 flex-row items-center justify-between px-5">
+    <div class="flex min-w-[2px] flex-row items-center space-x-5">
+      <div class="min-w-[2px] flex-grow truncate text-lg text-gray1">{{
         file?.name
       }}</div>
 
       <button
-        class="flex flex-row items-center text-blue-500 focus:outline-none flex-shrink-0"
+        class="flex flex-shrink-0 flex-row items-center text-blue-500 focus:outline-none"
         (click)="goTo()"
         *ngIf="
           ((file?.name | extension) === 'model' &&
@@ -22,13 +22,13 @@
       </button>
     </div>
 
-    <div *ngIf="nav?.isRepoProd === false" class="space-x-3 flex-shrink-0">
+    <div *ngIf="nav?.isRepoProd === false" class="flex-shrink-0 space-x-3">
       <button
         type="button"
         data-cy="fileEditorSaveButton"
-        class="py-2 px-5 text-white text-base rounded font-medium focus:outline-none"
+        class="rounded py-2 px-5 text-base font-medium text-white focus:outline-none"
         [ngClass]="{
-          'bg-gray-400 cursor-default': !needSave,
+          'cursor-default bg-gray-400': !needSave,
           'bg-blue3': needSave
         }"
         (click)="save()"
@@ -39,10 +39,10 @@
       <button
         type="button"
         data-cy="fileEditorCancelButton"
-        class="py-2 px-5 text-base rounded border font-medium focus:outline-none"
+        class="rounded border py-2 px-5 text-base font-medium focus:outline-none"
         [ngClass]="{
-          ' text-gray-400 border-gray-400 cursor-default': !needSave,
-          'text-blue3 border-blue3 ': needSave
+          ' cursor-default border-gray-400 text-gray-400': !needSave,
+          'border-blue3 text-blue3 ': needSave
         }"
         (click)="cancel()"
         [disabled]="!needSave"
@@ -51,7 +51,7 @@
     </div>
   </div>
 
-  <div class="bg-[#1E1E1E] rounded h-full">
+  <div class="h-full rounded bg-[#1E1E1E]">
     <!-- <div class="bg-green-300 h-full">3</div> -->
 
     <ngx-monaco-editor

@@ -21,7 +21,7 @@
     selectedBranchItem.branchId !== branchMaster -->
 
     <div
-      class="ml-1 truncate py-[1px] px-[8px] rounded"
+      class="ml-1 truncate rounded py-[1px] px-[8px]"
       [ngClass]="{
         'bg-green1': !!repo.repoId && repo.repoId !== prodRepoID,
         'bg-blue5': !repo.repoId || repo.repoId === prodRepoID
@@ -36,7 +36,7 @@
     'bg-blue5': item.isRepoProd === true && item.branchId !== branchMaster
   }" -->
 
-    <div class="ml-1 truncate px-[8px] rounded">{{ item.extraName }}</div>
+    <div class="ml-1 truncate rounded px-[8px]">{{ item.extraName }}</div>
   </ng-template>
 
   <ng-template ng-footer-tmp *ngIf="isEditor === true">
@@ -72,9 +72,9 @@
           repo.repoStatus !== repoStatusNeedCommit)
       "
       data-cy="branchSelectDeleteBranchButton"
-      class="py-3 rounded w-full text-base focus:outline-none"
+      class="w-full rounded py-3 text-base focus:outline-none"
       [ngClass]="{
-        'text-gray-400 cursor-default':
+        'cursor-default text-gray-400':
           selectedBranchItem.branchId === branchMaster,
         'text-blue3 hover:bg-blue2':
           selectedBranchItem.branchId !== branchMaster
@@ -105,9 +105,9 @@
         repo.repoId !== prodRepoID
       "
       data-cy="branchSelectMergeBranchButton"
-      class="py-3 rounded w-full text-base focus:outline-none"
+      class="w-full rounded py-3 text-base focus:outline-none"
       [ngClass]="{
-        'text-gray-400 cursor-default': selectedBranchItem.isRepoProd === true,
+        'cursor-default text-gray-400': selectedBranchItem.isRepoProd === true,
         'text-blue3 hover:bg-blue2': selectedBranchItem.isRepoProd === false
       }"
       (click)="mergeBranch(branchSelect, $event)"
@@ -123,7 +123,7 @@
         repo.repoId !== prodRepoID
       "
       data-cy="branchSelectCreateBranchButton"
-      class="py-3 rounded text-base text-blue3 hover:bg-blue2 w-full focus:outline-none"
+      class="w-full rounded py-3 text-base text-blue3 hover:bg-blue2 focus:outline-none"
       (click)="createNewBranch(branchSelect, $event)"
       >New Local Branch</button
     >

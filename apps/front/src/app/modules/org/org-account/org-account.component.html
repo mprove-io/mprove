@@ -1,57 +1,57 @@
-<div class="bg-blue1 flex flex-col h-full">
-  <div class="flex flex-grow flex-col mx-6 mb-6 mt-8 h-2">
+<div class="flex h-full flex-col bg-blue1">
+  <div class="mx-6 mb-6 mt-8 flex h-2 flex-grow flex-col">
     <div class="flex h-11 items-center">
       <div
         data-cy="orgAccountTitle"
-        class="font-semibold text-2xl text-gray1"
+        class="text-2xl font-semibold text-gray1"
         >{{ pageTitle }}</div
       >
     </div>
 
-    <div class="flex flex-1 bg-white mt-6 rounded shadow-lg w-full h-2">
-      <div class="w-full h-full overflow-auto">
-        <div class="flex flex-row mt-16 ml-32">
+    <div class="mt-6 flex h-2 w-full flex-1 rounded bg-white shadow-lg">
+      <div class="h-full w-full overflow-auto">
+        <div class="mt-16 ml-32 flex flex-row">
           <div class="flex flex-col text-base">
-            <div class="h-16 flex items-center justify-end font-semibold"
+            <div class="flex h-16 items-center justify-end font-semibold"
               >Organization Name</div
             >
-            <div class="h-16 flex items-center justify-end font-semibold"
+            <div class="flex h-16 items-center justify-end font-semibold"
               >Owner</div
             >
-            <div class="h-16 flex items-center justify-end font-semibold"
+            <div class="flex h-16 items-center justify-end font-semibold"
               >Company Size</div
             >
-            <div class="h-16 flex items-center justify-end font-semibold"
+            <div class="flex h-16 items-center justify-end font-semibold"
               >Contact Phone Number</div
             >
             <div class="flex items-center justify-end font-semibold"></div>
           </div>
 
-          <div class="flex flex-col ml-6 text-base">
+          <div class="ml-6 flex flex-col text-base">
             <div
               data-cy="orgAccountName"
-              class="h-16 flex items-center max-w-xl truncate"
+              class="flex h-16 max-w-xl items-center truncate"
               >{{ org?.name }}</div
             >
             <div
               data-cy="orgAccountOwnerEmail"
-              class="h-16 flex items-center max-w-xl truncate"
+              class="flex h-16 max-w-xl items-center truncate"
               >{{ org?.ownerEmail }}</div
             >
             <div
               data-cy="orgAccountCompanySize"
-              class="h-16 flex items-center max-w-xl truncate"
+              class="flex h-16 max-w-xl items-center truncate"
               >{{ org?.companySize }}</div
             >
             <div
               data-cy="orgAccountContactPhone"
-              class="h-16 flex items-center max-w-xl truncate"
+              class="flex h-16 max-w-xl items-center truncate"
               >{{ org?.contactPhone }}</div
             >
             <div class="flex items-center">
               <button
                 data-cy="orgAccountDeleteOrgButton"
-                class="mt-7 px-5 mb-5 py-3 text-base border shadow-sm rounded font-medium focus:outline-none"
+                class="mt-7 mb-5 rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
                 [ngClass]="{
                   'cursor-default text-gray-400': isOrgOwner === false,
                   'border-red1 text-red1': isOrgOwner === true
@@ -63,53 +63,53 @@
             </div>
           </div>
 
-          <div class="flex flex-col ml-6">
-            <div class="h-16 flex items-center">
+          <div class="ml-6 flex flex-col">
+            <div class="flex h-16 items-center">
               <button
                 data-cy="orgAccountEditNameButton"
-                class="py-2 px-3 border rounded shadow-sm text-sm leading-3 font-medium focus:outline-none"
+                class="rounded border py-2 px-3 text-sm font-medium leading-3 shadow-sm focus:outline-none"
                 [ngClass]="{
                   'cursor-default text-gray-400': isOrgOwner === false,
-                  'text-gray1 border-gray3': isOrgOwner === true
+                  'border-gray3 text-gray1': isOrgOwner === true
                 }"
                 [disabled]="isOrgOwner === false"
                 (click)="editName()"
                 >Edit</button
               ></div
             >
-            <div class="h-16 flex items-center">
+            <div class="flex h-16 items-center">
               <button
                 data-cy="orgAccountEditOwnerButton"
-                class="py-2 px-3 border rounded shadow-sm text-sm leading-3 font-medium focus:outline-none"
+                class="rounded border py-2 px-3 text-sm font-medium leading-3 shadow-sm focus:outline-none"
                 [ngClass]="{
                   'cursor-default text-gray-400': isOrgOwner === false,
-                  'text-gray1 border-gray3': isOrgOwner === true
+                  'border-gray3 text-gray1': isOrgOwner === true
                 }"
                 [disabled]="isOrgOwner === false"
                 (click)="editOwner()"
                 >Edit</button
               ></div
             >
-            <div class="h-16 flex items-center">
+            <div class="flex h-16 items-center">
               <button
                 data-cy="orgAccountEditCompanySizeButton"
-                class="py-2 px-3 border rounded shadow-sm text-sm leading-3 font-medium focus:outline-none"
+                class="rounded border py-2 px-3 text-sm font-medium leading-3 shadow-sm focus:outline-none"
                 [ngClass]="{
                   'cursor-default text-gray-400': isOrgOwner === false,
-                  'text-gray1 border-gray3': isOrgOwner === true
+                  'border-gray3 text-gray1': isOrgOwner === true
                 }"
                 [disabled]="isOrgOwner === false"
                 (click)="editCompanySize()"
                 >Edit</button
               ></div
             >
-            <div class="h-16 flex items-center">
+            <div class="flex h-16 items-center">
               <button
                 data-cy="orgAccountEditContactPhoneButton"
-                class="py-2 px-3 border rounded shadow-sm text-sm leading-3 font-medium focus:outline-none"
+                class="rounded border py-2 px-3 text-sm font-medium leading-3 shadow-sm focus:outline-none"
                 [ngClass]="{
                   'cursor-default text-gray-400': isOrgOwner === false,
-                  'text-gray1 border-gray3': isOrgOwner === true
+                  'border-gray3 text-gray1': isOrgOwner === true
                 }"
                 [disabled]="isOrgOwner === false"
                 (click)="editContactPhone()"

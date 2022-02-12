@@ -1,19 +1,19 @@
-<div class="flex flex-col p-9 bg-white">
+<div class="flex flex-col bg-white p-9">
   <div
     data-cy="createFolderDialogTitle"
-    class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
+    class="mt-5 flex-grow text-left text-2xl font-semibold text-gray2"
     >Create Folder</div
   >
 
   <form
-    class="flex flex-col w-80"
+    class="flex w-80 flex-col"
     [formGroup]="createFolderForm"
     (ngSubmit)="create()"
   >
     <input
       spellcheck="false"
       data-cy="createFolderDialogFolderNameInput"
-      class="mt-9 form-input rounded border-gray3 focus:border-blue3"
+      class="form-input mt-9 rounded border-gray3 focus:border-blue3"
       [ngClass]="{
         'border-red-600':
           createFolderForm.controls['folderName'].invalid &&
@@ -29,14 +29,14 @@
     <div class="mt-6">
       <button
         data-cy="createFolderDialogCreateButton"
-        class="py-3 w-28 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
+        class="w-28 rounded bg-blue3 py-3 text-base font-medium text-white focus:outline-none"
         type="submit"
         >Create</button
       >
 
       <button
         data-cy="createFolderDialogCancelButton"
-        class="ml-3 py-3 w-28 text-base rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+        class="ml-3 w-28 rounded border border-blue3 py-3 text-base font-medium text-blue3 focus:outline-none"
         type="button"
         (click)="cancel()"
         >Cancel</button

@@ -1,11 +1,11 @@
-<div class="flex flex-col p-9 bg-white">
+<div class="flex flex-col bg-white p-9">
   <div
     data-cy="removeMemberDialogTitle"
-    class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
+    class="mt-5 flex-grow text-left text-2xl font-semibold text-gray2"
     >Remove Member</div
   >
 
-  <div class="mt-6 text-gray1 text-lg"
+  <div class="mt-6 text-lg text-gray1"
     >Are you sure you want to remove
     <span class="font-semibold">
       {{ ref.data.email }}
@@ -16,14 +16,14 @@
   <div class="mt-6">
     <button
       data-cy="removeMemberDialogRemoveButton"
-      class="py-3 w-28 border text-base bg-red1 text-white rounded font-medium focus:outline-none"
+      class="w-28 rounded border bg-red1 py-3 text-base font-medium text-white focus:outline-none"
       (click)="remove()"
       >Remove</button
     >
 
     <button
       data-cy="removeMemberDialogCancelButton"
-      class="ml-3 py-3 w-28 text-base rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+      class="ml-3 w-28 rounded border border-blue3 py-3 text-base font-medium text-blue3 focus:outline-none"
       type="button"
       (click)="cancel()"
       >Cancel</button

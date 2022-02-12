@@ -3,7 +3,7 @@
     <tr>
       <th
         style="min-width: 200px; max-width: 350px"
-        class="group align-top border-white border-4 p-0"
+        class="group border-4 border-white p-0 align-top"
         [ngClass]="{
           'bg-blue5': column.fieldClass === fieldClassDimension,
           'bg-purple-300': column.fieldClass === fieldClassMeasure,
@@ -13,11 +13,11 @@
       >
         <div
           *ngIf="isEdit === true"
-          class="pr-5 h-12 flex items-center justify-start space-x-3 bg-white"
+          class="flex h-12 items-center justify-start space-x-3 bg-white pr-5"
         >
           <div class="flex items-center justify-start">
             <div
-              class="h-8 w-4 flex items-center justify-center text-blue-500 select-none"
+              class="flex h-8 w-4 select-none items-center justify-center text-blue-500"
             >
               <div *ngIf="column.sortingNumber > -1">{{
                 column.sortingNumber + 1
@@ -26,7 +26,7 @@
 
             <button
               *ngIf="column.sorting?.desc === false"
-              class="h-8 w-8 flex items-center justify-center rounded hover:bg-blue2 text-blue-500 focus:outline-none"
+              class="flex h-8 w-8 items-center justify-center rounded text-blue-500 hover:bg-blue2 focus:outline-none"
               (click)="sort(column.id, false)"
             >
               <m-asc-icon></m-asc-icon>
@@ -34,7 +34,7 @@
 
             <button
               *ngIf="column.sorting?.desc === true"
-              class="h-8 w-8 flex items-center justify-center rounded hover:bg-blue2 text-blue-500 focus:outline-none"
+              class="flex h-8 w-8 items-center justify-center rounded text-blue-500 hover:bg-blue2 focus:outline-none"
               (click)="sort(column.id, true)"
             >
               <m-desc-icon></m-desc-icon>
@@ -42,7 +42,7 @@
 
             <button
               *ngIf="!column.sorting"
-              class="h-8 w-8 flex items-center justify-center rounded hover:bg-blue2 focus:outline-none invisible group-hover:visible"
+              class="invisible flex h-8 w-8 items-center justify-center rounded hover:bg-blue2 focus:outline-none group-hover:visible"
               (click)="sort(column.id, true)"
             >
               <m-desc-icon></m-desc-icon>
@@ -50,7 +50,7 @@
           </div>
 
           <button
-            class="h-8 w-8 flex items-center justify-center rounded focus:outline-none invisible group-hover:visible"
+            class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
             [ngClass]="{
               'cursor-default text-gray-400':
                 columnIndex === 0 ||
@@ -69,7 +69,7 @@
           </button>
 
           <button
-            class="h-8 w-8 flex items-center justify-center rounded focus:outline-none invisible group-hover:visible"
+            class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
             [ngClass]="{
               'cursor-default text-gray-400':
                 columnIndex + 1 === mconfigFields.length ||
@@ -88,7 +88,7 @@
           </button>
 
           <button
-            class="h-8 w-8 flex items-center justify-center rounded hover:bg-blue2 focus:outline-none invisible group-hover:visible"
+            class="invisible flex h-8 w-8 items-center justify-center rounded hover:bg-blue2 focus:outline-none group-hover:visible"
             (click)="remove(column.id)"
           >
             <m-delete-icon></m-delete-icon>
@@ -96,14 +96,14 @@
         </div>
 
         <div
-          class="flex flex-col px-5 py-2 justify-center items-start text-clip overflow-hidden"
+          class="flex flex-col items-start justify-center overflow-hidden text-clip px-5 py-2"
         >
-          <div class="flex flex-col justify-center items-start select-none">
-            <div class="font-normal text-sm truncate">{{
+          <div class="flex select-none flex-col items-start justify-center">
+            <div class="truncate text-sm font-normal">{{
               column.topLabel | capitalize
             }}</div>
 
-            <div class="flex flex-row font-semibold text-left">
+            <div class="flex flex-row text-left font-semibold">
               <div *ngIf="column.groupLabel"
                 >{{ column.groupLabel | capitalize }} -
                 {{ column.label | capitalize }}</div
@@ -125,7 +125,7 @@
         style="min-width: 200px; max-width: 350px"
         data-cy="mainTableCell"
         *ngFor="let column of mconfigFields"
-        class="px-5 truncate"
+        class="truncate px-5"
         [ngClass]="{
           'bg-gray-100': (i + 1) % 2 === 0,
           'text-right': column.result === fieldResultNumber

@@ -3,7 +3,7 @@
     <tr>
       <th
         style="min-width: 200px; max-width: 350px"
-        class="group align-top border-white border-4 p-0"
+        class="group border-4 border-white p-0 align-top"
         [ngClass]="{
           'bg-blue5': column.fieldClass === fieldClassDimension,
           'bg-purple-300': column.fieldClass === fieldClassMeasure,
@@ -15,15 +15,15 @@
         "
       >
         <div
-          class="flex flex-col px-5 py-2 justify-center items-start text-clip overflow-hidden"
+          class="flex flex-col items-start justify-center overflow-hidden text-clip px-5 py-2"
           *ngIf="column.isHideColumn === false"
         >
-          <div class="flex flex-col justify-center items-start select-none">
-            <div class="font-normal text-sm truncate">{{
+          <div class="flex select-none flex-col items-start justify-center">
+            <div class="truncate text-sm font-normal">{{
               column.topLabel | capitalize
             }}</div>
 
-            <div class="flex flex-row font-semibold text-left">
+            <div class="flex flex-row text-left font-semibold">
               <div *ngIf="column.groupLabel"
                 >{{ column.groupLabel | capitalize }} -
                 {{ column.label | capitalize }}</div
@@ -46,7 +46,7 @@
           style="min-width: 200px; max-width: 350px"
           data-cy="chartTableCell"
           *ngFor="let column of mconfigFields | hideColumns: hideColumns"
-          class="px-5 truncate"
+          class="truncate px-5"
           [ngClass]="{
             'bg-gray-100': (i + 1) % 2 === 0,
             'text-right': column.result === fieldResultNumber

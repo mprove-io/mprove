@@ -1,17 +1,17 @@
-<div class="flex flex-col items-center h-72 p-9 bg-white">
+<div class="flex h-72 flex-col items-center bg-white p-9">
   <div>
     <m-completed-ring></m-completed-ring>
   </div>
 
   <div
     data-cy="emailIsConfirmedDialogTitle"
-    class="flex-grow mt-5 text-2xl text-gray2 font-semibold"
+    class="mt-5 flex-grow text-2xl font-semibold text-gray2"
     >Email is confirmed!</div
   >
 
   <div>
     <button
-      class="w-28 py-3 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
+      class="w-28 rounded bg-blue3 py-3 text-base font-medium text-white focus:outline-none"
       (click)="onOk()"
       >Ok</button
     >

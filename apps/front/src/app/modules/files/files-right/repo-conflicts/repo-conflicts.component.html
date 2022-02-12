@@ -1,6 +1,6 @@
-<div class="flex flex-col h-full">
+<div class="flex h-full flex-col">
   <div
-    class="flex mt-6 mx-6 mb-6 flex-row items-center space-x-3 font-semibold text-2xl text-red1"
+    class="mx-6 mt-6 mb-6 flex flex-row items-center space-x-3 text-2xl font-semibold text-red1"
   >
     <m-exclamation-icon></m-exclamation-icon>
     <div>Merge Conflicts</div>
@@ -10,13 +10,13 @@
     <div *ngIf="repo?.conflicts" class="mt-5 h-2">
       <div
         *ngFor="let conflict of repo.conflicts"
-        class="px-6 py-2 text-base hover:bg-blue2 hover:cursor-pointer"
+        class="px-6 py-2 text-base hover:cursor-pointer hover:bg-blue2"
         (click)="goToFileLine(conflict)"
       >
-        <div *ngIf="conflict.lineNumber !== 0" class="flex flex-row w-full">
-          <div class="truncate max-w-[80%]">{{ conflict.fileName }}</div>
+        <div *ngIf="conflict.lineNumber !== 0" class="flex w-full flex-row">
+          <div class="max-w-[80%] truncate">{{ conflict.fileName }}</div>
 
-          <div class="flex ml-5 font-semibold"
+          <div class="ml-5 flex font-semibold"
             >line: {{ conflict.lineNumber }}</div
           >
         </div>

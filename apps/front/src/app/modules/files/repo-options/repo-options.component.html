@@ -1,6 +1,6 @@
 <button
   data-cy="repoOptionsMenuButton"
-  class="flex flex-shrink-0 h-9 w-9 rounded focus:outline-none items-center justify-center hover:bg-blue-200"
+  class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
   #t1="tippy"
   [tippy]="templateRepoOptions"
   [hideOnEscape]="true"
@@ -11,10 +11,10 @@
 </button>
 
 <ng-template #templateRepoOptions>
-  <div class="w-64 bg-white rounded-md shadow-xl border-2 border-gray4">
+  <div class="w-64 rounded-md border-2 border-gray4 bg-white shadow-xl">
     <button
       data-cy="repoOptionsRevertRepoToLastCommitButton"
-      class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+      class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
       [ngClass]="{
         'cursor-default text-gray-400': needSave === true
       }"
@@ -25,7 +25,7 @@
 
     <button
       data-cy="repoOptionsRevertRepoToProductionButton"
-      class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+      class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
       [ngClass]="{
         'cursor-default text-gray-400': needSave === true
       }"
@@ -36,7 +36,7 @@
 
     <button
       data-cy="repoOptionsPullFromProductionButton"
-      class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+      class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
       [ngClass]="{
         'cursor-default text-gray-400':
           needSave === true || repo?.repoStatus === repoStatusNeedCommit

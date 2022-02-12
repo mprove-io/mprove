@@ -1,9 +1,9 @@
-<div class="flex flex-col h-full w-full">
-  <div class="flex items-center justify-between h-14 shadow relative px-6">
+<div class="flex h-full w-full flex-col">
+  <div class="relative flex h-14 items-center justify-between px-6 shadow">
     <m-logo></m-logo>
     <div class="flex">
       <button
-        class="text-base focus:outline-none w-28 h-8"
+        class="h-8 w-28 text-base focus:outline-none"
         [ngClass]="{
           'font-bold': lastUrl === pathRegister
         }"
@@ -15,7 +15,7 @@
         <div></div>
       </div>
       <button
-        class="w-24 h-8 text-base focus:outline-none"
+        class="h-8 w-24 text-base focus:outline-none"
         [ngClass]="{
           'font-bold': lastUrl === pathLogin
         }"

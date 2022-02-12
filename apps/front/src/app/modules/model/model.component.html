@@ -1,12 +1,12 @@
-<div class="bg-blue1 flex flex-col h-full">
-  <div class="flex flex-row h-full">
-    <div class="flex flex-col flex-grow mx-6 mb-6 mt-8 min-w-[2px]">
-      <div class="flex flex-row justify-between items-center h-11">
-        <div class="flex flex-row items-center w-full">
+<div class="flex h-full flex-col bg-blue1">
+  <div class="flex h-full flex-row">
+    <div class="mx-6 mb-6 mt-8 flex min-w-[2px] flex-grow flex-col">
+      <div class="flex h-11 flex-row items-center justify-between">
+        <div class="flex w-full flex-row items-center">
           <div class="flex flex-row items-center space-x-5">
             <div
               data-cy="modelTitle"
-              class="flex font-semibold text-2xl text-gray1 items-center self-center"
+              class="flex items-center self-center text-2xl font-semibold text-gray1"
             >
               {{ pageTitle }}
             </div>
@@ -48,7 +48,7 @@
             ></ui-switch>
 
             <div
-              class="flex ml-5 h-9 text-gray1 text-base items-center select-none"
+              class="ml-5 flex h-9 select-none items-center text-base text-gray1"
               >Auto Run</div
             >
 
@@ -56,7 +56,7 @@
               type="button"
               *ngIf="query?.status === queryStatusEnum.Running"
               data-cy="modelCancelButton"
-              class="w-24 py-2 ml-5 text-white bg-blue3 text-base rounded font-medium focus:outline-none"
+              class="ml-5 w-24 rounded bg-blue3 py-2 text-base font-medium text-white focus:outline-none"
               (click)="cancel()"
               >Cancel</button
             >
@@ -65,10 +65,10 @@
               type="button"
               *ngIf="query?.status !== queryStatusEnum.Running"
               data-cy="modelRunButton"
-              class="w-24 py-2 ml-5 text-white text-base rounded font-medium focus:outline-none"
+              class="ml-5 w-24 rounded py-2 text-base font-medium text-white focus:outline-none"
               [ngClass]="{
                 'bg-blue3': mconfig?.select.length > 0,
-                'bg-gray-400 cursor-default': mconfig?.select.length === 0
+                'cursor-default bg-gray-400': mconfig?.select.length === 0
               }"
               (click)="run()"
               [disabled]="mconfig?.select.length === 0"
@@ -87,7 +87,7 @@
         </div>
       </div>
 
-      <div class="flex flex-row flex-grow mt-6">
+      <div class="mt-6 flex flex-grow flex-row">
         <m-model-tree
           class="flex w-1/4 flex-shrink-0"
           (expandFilters)="expandFiltersPanel()"
@@ -95,17 +95,17 @@
         ></m-model-tree>
 
         <div
-          class="flex flex-col flex-grow ml-6 space-y-6 min-w-[2px]"
+          class="ml-6 flex min-w-[2px] flex-grow flex-col space-y-6"
           *ngIf="isShow === true"
         >
-          <div class="bg-white rounded shadow-md w-full">
+          <div class="w-full rounded bg-white shadow-md">
             <div class="flex flex-col">
               <div
-                class="flex flex-row flex-grow mr-5 min-h-[95px] flex-shrink-0"
+                class="mr-5 flex min-h-[95px] flex-shrink-0 flex-grow flex-row"
               >
                 <div
                   (click)="toggleFiltersPanel()"
-                  class="flex flex-row space-x-2 mt-5 py-3 px-5 items-start cursor-pointer font-semibold text-2xl text-gray1 select-none"
+                  class="mt-5 flex cursor-pointer select-none flex-row items-start space-x-2 py-3 px-5 text-2xl font-semibold text-gray1"
                 >
                   <div class="flex flex-row items-center space-x-2">
                     <div> Filters </div>
@@ -124,20 +124,20 @@
                   }"
                 >
                   <m-bricks
-                    class="mr-5 my-3 flex flex-row items-start justify-start overflow-auto max-h-[150px] max-w-max"
+                    class="my-3 mr-5 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"
                     *ngIf="!filtersIsExpanded && mconfig?.filters.length > 0"
                     [extendedFilters]="mconfig.extendedFilters"
                   ></m-bricks>
                 </div>
 
                 <div
-                  class="flex items-center justify-center text-xl mt-9 mr-36 h-full w-full select-none text-gray1"
+                  class="mt-9 mr-36 flex h-full w-full select-none items-center justify-center text-xl text-gray1"
                   *ngIf="filtersIsExpanded && mconfig?.filters.length === 0"
                   >No filters</div
                 >
 
                 <div
-                  class="flex-1 w-2 mt-2 max-h-96 overflow-auto"
+                  class="mt-2 max-h-96 w-2 flex-1 overflow-auto"
                   *ngIf="filtersIsExpanded && mconfig?.filters.length > 0"
                 >
                   <m-model-filters></m-model-filters>
@@ -147,13 +147,13 @@
           </div>
 
           <div
-            class="bg-white rounded shadow-md w-full"
+            class="w-full rounded bg-white shadow-md"
             [ngClass]="{
               'flex-1': chartIsExpanded
             }"
           >
-            <div class="flex flex-col h-full">
-              <div class="flex flex-row h-20 items-center flex-shrink-0 mr-5">
+            <div class="flex h-full flex-col">
+              <div class="mr-5 flex h-20 flex-shrink-0 flex-row items-center">
                 <m-panel-title
                   [title]="'Chart'"
                   [isExpanded]="chartIsExpanded"
@@ -186,7 +186,7 @@
                   >
                     <ng-template ng-label-tmp let-item="item">
                       <div
-                        class="flex ml-1 flex-row space-x-2 justify-start items-center"
+                        class="ml-1 flex flex-row items-center justify-start space-x-2"
                       >
                         <img class="h-6 w-6" [src]="item.iconPath" />
                         <div> {{ item.label }} </div>
@@ -199,7 +199,7 @@
                       let-search="searchTerm"
                     >
                       <div
-                        class="flex ml-1 flex-row space-x-2 justify-start items-center"
+                        class="ml-1 flex flex-row items-center justify-start space-x-2"
                       >
                         <img class="h-6 w-6" [src]="item.iconPath" />
                         <div> {{ item.label }} </div>
@@ -217,13 +217,13 @@
                 <div
                   *ngIf="mconfig?.select.length > 0"
                   [formGroup]="chartTitleForm"
-                  class="flex flex-col ml-5 items-start w-full"
+                  class="ml-5 flex w-full flex-col items-start"
                 >
                   <div class="h-6"></div>
                   <input
                     spellcheck="false"
                     data-cy="modelChartTitleInput"
-                    class="w-full h-[36px] form-input rounded border-gray3 focus:border-blue3"
+                    class="form-input h-[36px] w-full rounded border-gray3 focus:border-blue3"
                     [ngClass]="{
                       'border-red-600':
                         chartTitleForm.controls['chartTitle'].invalid &&
@@ -244,13 +244,13 @@
                   type="button"
                   *ngIf="mconfig?.select.length > 0"
                   data-cy="modelSaveAsButton"
-                  class="w-28 py-2 ml-[138px] text-base rounded font-medium focus:outline-none flex-shrink-0"
+                  class="ml-[138px] w-28 flex-shrink-0 rounded py-2 text-base font-medium focus:outline-none"
                   [ngClass]="{
-                    'bg-white text-blue3 border-2':
+                    'border-2 bg-white text-blue3':
                       isSelectValid === true &&
                       mconfig.chart.isValid === true &&
                       chartTitleForm.valid === true,
-                    'bg-gray-400 cursor-default text-white':
+                    'cursor-default bg-gray-400 text-white':
                       isSelectValid === false ||
                       mconfig.chart.isValid === false ||
                       chartTitleForm.valid === false
@@ -267,7 +267,7 @@
                 <button
                   *ngIf="mconfig?.select.length > 0"
                   data-cy="modelShowChartButton"
-                  class="flex flex-shrink-0 h-9 w-9 ml-5 rounded focus:outline-none items-center justify-center hover:bg-blue-200"
+                  class="ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
                   (click)="showChart($event)"
                 >
                   <m-full-screen-icon></m-full-screen-icon>
@@ -286,22 +286,22 @@
               </div>
 
               <div
-                class="flex flex-grow mt-5 mb-5 mx-5 h-2"
+                class="mx-5 mt-5 mb-5 flex h-2 flex-grow"
                 *ngIf="chartIsExpanded"
               >
                 <div
                   *ngIf="mconfig?.select.length === 0"
-                  class="flex items-center justify-center text-xl h-full w-full select-none text-gray1"
+                  class="flex h-full w-full select-none items-center justify-center text-xl text-gray1"
                   >No selected fields</div
                 >
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
-                  class="flex flex-1 flex-row items-start justify-center space-x-5 w-2 h-full"
+                  class="flex h-full w-2 flex-1 flex-row items-start justify-center space-x-5"
                 >
                   <m-chart-view
                     *ngIf="mconfig?.chart"
-                    class="w-2/3 h-full overflow-auto"
+                    class="h-full w-2/3 overflow-auto"
                     [mconfigFields]="mconfig.fields"
                     [qData]="qData"
                     [chart]="mconfig.chart"
@@ -309,7 +309,7 @@
                   ></m-chart-view>
 
                   <div
-                    class="w-1/3 h-full border-l overflow-auto flex-shrink-0"
+                    class="h-full w-1/3 flex-shrink-0 overflow-auto border-l"
                     [ngClass]="{
                       'border-gray-300': mconfig.chart.isValid === true,
                       'border-red-600': mconfig.chart.isValid === false
@@ -327,13 +327,13 @@
           </div>
 
           <div
-            class="bg-white rounded shadow-md w-full"
+            class="w-full rounded bg-white shadow-md"
             [ngClass]="{
               'flex-1': dataIsExpanded
             }"
           >
-            <div class="flex flex-col h-full">
-              <div class="flex flex-row h-20 items-center flex-shrink-0 mr-5">
+            <div class="flex h-full flex-col">
+              <div class="mr-5 flex h-20 flex-shrink-0 flex-row items-center">
                 <m-panel-title
                   [title]="'Data'"
                   [isExpanded]="dataIsExpanded"
@@ -341,10 +341,10 @@
                 ></m-panel-title>
 
                 <button
-                  class="w-24 py-3 ml-5 items-center text-lg text-gray1 select-none focus:outline-none"
+                  class="ml-5 w-24 select-none items-center py-3 text-lg text-gray1 focus:outline-none"
                   [ngClass]="{
                     'font-semibold': resultsIsShow,
-                    'text-gray-400 cursor-default':
+                    'cursor-default text-gray-400':
                       !dataIsExpanded || mconfig?.select.length === 0
                   }"
                   (click)="toggleResults()"
@@ -353,10 +353,10 @@
                 >
 
                 <button
-                  class="w-16 py-3 ml-5 items-center text-lg text-gray1 select-none focus:outline-none"
+                  class="ml-5 w-16 select-none items-center py-3 text-lg text-gray1 focus:outline-none"
                   [ngClass]="{
                     'font-semibold': sqlIsShow,
-                    'text-gray-400 cursor-default':
+                    'cursor-default text-gray-400':
                       !dataIsExpanded || mconfig?.select.length === 0
                   }"
                   (click)="toggleSql()"
@@ -368,7 +368,7 @@
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
-                  class="ml-5 text-gray1 text-base select-none"
+                  class="ml-5 select-none text-base text-gray1"
                   >Timezone</div
                 >
 
@@ -404,20 +404,20 @@
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
-                  class="ml-5 text-gray1 text-base select-none"
+                  class="ml-5 select-none text-base text-gray1"
                   >Limit</div
                 >
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
                   [formGroup]="limitForm"
-                  class="flex flex-col ml-3 items-start"
+                  class="ml-3 flex flex-col items-start"
                 >
                   <div class="h-6"></div>
                   <input
                     spellcheck="false"
                     data-cy="modelLimitInput"
-                    class="w-32 h-[36px] form-input rounded border-gray3 focus:border-blue3"
+                    class="form-input h-[36px] w-32 rounded border-gray3 focus:border-blue3"
                     [ngClass]="{
                       'border-red-600':
                         limitForm.controls['limit'].invalid &&
@@ -432,7 +432,7 @@
                 </div>
 
                 <div
-                  class="flex ml-5 h-9 text-gray1 text-base items-center select-none"
+                  class="ml-5 flex h-9 select-none items-center text-base text-gray1"
                   >Format</div
                 >
 
@@ -444,22 +444,22 @@
               </div>
 
               <div
-                class="flex flex-grow mt-5 mb-5 mx-5 h-2"
+                class="mx-5 mt-5 mb-5 flex h-2 flex-grow"
                 *ngIf="dataIsExpanded"
               >
                 <div
                   *ngIf="mconfig?.select.length === 0"
-                  class="flex items-center justify-center text-xl h-full w-full select-none text-gray1"
+                  class="flex h-full w-full select-none items-center justify-center text-xl text-gray1"
                   >No selected fields</div
                 >
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
-                  class="flex flex-row items-start justify-center space-x-5 w-full h-full"
+                  class="flex h-full w-full flex-row items-start justify-center space-x-5"
                 >
                   <div
                     *ngIf="resultsIsShow"
-                    class="flex-1 h-full w-2 overflow-auto"
+                    class="h-full w-2 flex-1 overflow-auto"
                   >
                     <m-main-table
                       [isEdit]="true"
@@ -470,7 +470,7 @@
                     ></m-main-table>
                   </div>
 
-                  <div *ngIf="sqlIsShow" class="flex-1 h-full w-2">
+                  <div *ngIf="sqlIsShow" class="h-full w-2 flex-1">
                     <m-sql></m-sql>
                   </div>
                 </div>

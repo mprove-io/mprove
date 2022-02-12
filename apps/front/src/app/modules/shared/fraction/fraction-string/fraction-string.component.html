@@ -1,4 +1,4 @@
-<div class="flex flex-row ml-2 space-x-5 h-16">
+<div class="ml-2 flex h-16 flex-row space-x-5">
   <form [formGroup]="fractionTypeForm">
     <ng-select
       #fractionStringTypeSelect
@@ -45,7 +45,7 @@
     <input
       spellcheck="false"
       data-cy="fractionStringValueInput"
-      class="w-[404px] h-[36px] form-input rounded border-gray3 focus:border-blue3"
+      class="form-input h-[36px] w-[404px] rounded border-gray3 focus:border-blue3"
       [ngClass]="{
         'border-red-600':
           fractionForm.controls['stringValue'].invalid &&

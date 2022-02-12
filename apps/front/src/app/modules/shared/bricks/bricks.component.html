@@ -1,8 +1,8 @@
-<div class="py-1 px-5 bg-gray-200 rounded h-full w-full overflow-auto">
+<div class="h-full w-full overflow-auto rounded bg-gray-200 py-1 px-5">
   <table>
     <tbody class="divide-y divide-gray-300">
       <tr *ngFor="let filter of extendedFilters; let filterIndex = index">
-        <td class="align-top py-1">
+        <td class="py-1 align-top">
           <div class="flex flex-col items-start justify-start">
             <m-field-label
               [column]="filter.field"
@@ -16,9 +16,9 @@
           }}</div></td
         > -->
 
-        <td class="align-top py-1">
+        <td class="py-1 align-top">
           <div
-            class="flex flex-row ml-5 justify-start items-start"
+            class="ml-5 flex flex-row items-start justify-start"
             *ngFor="
               let fraction of filter.fractions;
               let isFirst = first;
@@ -37,7 +37,7 @@
                 }}
               </div>
             </div>
-            <div class="flex ml-5 px-5 max-w-[350px] flex-shrink-0">{{
+            <div class="ml-5 flex max-w-[350px] flex-shrink-0 px-5">{{
               fraction.brick
             }}</div>
           </div>

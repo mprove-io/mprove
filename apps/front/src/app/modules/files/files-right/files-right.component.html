@@ -1,4 +1,4 @@
-<div class="bg-white ml-6 rounded shadow-lg w-full">
+<div class="ml-6 w-full rounded bg-white shadow-lg">
   <m-repo-conflicts
     *ngIf="repo && repo.conflicts.length > 0"
   ></m-repo-conflicts>
@@ -16,7 +16,7 @@
       struct &&
       struct.errors.length === 0
     "
-    class="flex flex-col space-y-3 justify-center items-center h-full"
+    class="flex h-full flex-col items-center justify-center space-y-3"
   >
     <m-completed-ring></m-completed-ring>
     <div class="text-xl"> BlockML is valid </div>

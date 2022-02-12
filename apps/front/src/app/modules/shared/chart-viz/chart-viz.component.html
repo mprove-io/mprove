@@ -1,25 +1,25 @@
-<div class="group h-full w-full bg-white border border-white rounded shadow-md">
+<div class="group h-full w-full rounded border border-white bg-white shadow-md">
   <div class="h-full">
-    <div class="flex flex-col h-full w-full">
+    <div class="flex h-full w-full flex-col">
       <div
-        class="mt-8 mx-5 mb-5 flex flex-row text-lg text-gray1 justify-center items-start flex-shrink-0"
+        class="mx-5 mt-8 mb-5 flex flex-shrink-0 flex-row items-start justify-center text-lg text-gray1"
       >
-        <div class="w-9 mr-3"></div>
+        <div class="mr-3 w-9"></div>
 
-        <div class="flex w-9 mx-5 flex-shrink-0"></div>
+        <div class="mx-5 flex w-9 flex-shrink-0"></div>
 
         <div
-          class="flex flex-col flex-grow max-h-[60px] text-gray1 hover:text-blue-500 justify-start items-center cursor-pointer"
+          class="flex max-h-[60px] flex-grow cursor-pointer flex-col items-center justify-start text-gray1 hover:text-blue-500"
           (click)="showChart()"
         >
           <div
-            class="flex flex-col items-center max-h-[60px] mt-[2px] text-center line-clamp-2"
+            class="mt-[2px] flex max-h-[60px] flex-col items-center text-center line-clamp-2"
           >
             {{ title }}
           </div>
         </div>
 
-        <div class="flex w-9 h-9 mx-5 relative flex-shrink-0">
+        <div class="relative mx-5 flex h-9 w-9 flex-shrink-0">
           <ngx-spinner
             [name]="viz.vizId"
             color="rgba(54, 94, 224, 100)"
@@ -35,7 +35,7 @@
 
         <button
           data-cy="vizOptionsMenuButton"
-          class="flex flex-shrink-0 ml-3 h-9 w-9 rounded focus:outline-none items-center justify-center hover:bg-blue-200 invisible group-hover:visible"
+          class="invisible ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded hover:bg-blue-200 focus:outline-none group-hover:visible"
           #t1="tippy"
           [tippy]="templateChartVizOptions"
           [hideOnEscape]="true"
@@ -46,17 +46,17 @@
         </button>
 
         <ng-template #templateChartVizOptions>
-          <div class="w-64 bg-white rounded-md shadow-xl border-2 border-gray4">
+          <div class="w-64 rounded-md border-2 border-gray4 bg-white shadow-xl">
             <button
               data-cy="vizOptionsRun"
-              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+              class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
               (click)="t1.hide(); run($event)"
               >Run</button
             >
 
             <button
               data-cy="vizOptionsExplore"
-              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+              class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
               [ngClass]="{
                 'cursor-default text-gray-400':
                   viz.reports[0].hasAccessToModel === false
@@ -68,7 +68,7 @@
 
             <button
               data-cy="vizOptionsEditInfo"
-              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+              class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
               [ngClass]="{
                 'cursor-default text-gray-400': viz.canEditOrDeleteViz === false
               }"
@@ -79,14 +79,14 @@
 
             <button
               data-cy="vizOptionsGoToFile"
-              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+              class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
               (click)="t1.hide(); goToFile($event)"
               >Go to file</button
             >
 
             <button
               data-cy="vizOptionsDelete"
-              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+              class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
               [ngClass]="{
                 'cursor-default text-gray-400': viz.canEditOrDeleteViz === false
               }"
@@ -99,13 +99,13 @@
       </div>
 
       <m-bricks
-        class="flex flex-row mx-7 mb-5 max-h-[120px] items-start justify-start overflow-auto max-w-max flex-shrink-0"
+        class="mx-7 mb-5 flex max-h-[120px] max-w-max flex-shrink-0 flex-row items-start justify-start overflow-auto"
         *ngIf="showBricks === true && mconfig?.filters.length > 0"
         [extendedFilters]="mconfig.extendedFilters"
       ></m-bricks>
 
       <div
-        class="flex flex-grow w-full pt-5 px-7 pb-10 rounded bg-white cursor-default overflow-auto"
+        class="flex w-full flex-grow cursor-default overflow-auto rounded bg-white px-7 pt-5 pb-10"
         (click)="stopClick($event)"
       >
         <m-chart-view
@@ -117,7 +117,7 @@
               mconfig?.chart.isValid === true &&
               qData?.length > 0
           }"
-          class="w-full h-full"
+          class="h-full w-full"
           [mconfigFields]="mconfig.fields"
           [qData]="qData"
           [chart]="mconfig?.chart"

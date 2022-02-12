@@ -1,12 +1,12 @@
-<div class="flex-grow flex-col p-9 bg-white overflow-y-auto">
+<div class="flex-grow flex-col overflow-y-auto bg-white p-9">
   <div
     data-cy="editConnectionDialogTitle"
-    class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
+    class="mt-5 flex-grow text-left text-2xl font-semibold text-gray2"
     >Edit Connection</div
   >
 
   <form
-    class="flex flex-col w-80 text-base"
+    class="flex w-80 flex-col text-base"
     [formGroup]="editConnectionForm"
     (ngSubmit)="save()"
   >
@@ -28,7 +28,7 @@
       <textarea
         rows="9"
         data-cy="editConnectionDialogBigqueryCredentialsInput"
-        class="mt-6 w-80 form-input rounded border-gray3 focus:border-blue3 resize-none"
+        class="form-input mt-6 w-80 resize-none rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
             editConnectionForm.controls['bigqueryCredentials'].invalid &&
@@ -44,7 +44,7 @@
       <input
         spellcheck="false"
         data-cy="editConnectionDialogBigqueryQuerySizeLimitGbInput"
-        class="w-80 form-input rounded border-gray3 focus:border-blue3"
+        class="form-input w-80 rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
             editConnectionForm.controls['bigqueryQuerySizeLimitGb'].invalid &&
@@ -64,8 +64,8 @@
         editConnectionForm.controls['type'].value === typeClickHouse
       "
     >
-      <div class="flex flex-row mt-6 items-center">
-        <div class="flex h-9 text-gray1 text-base items-center select-none"
+      <div class="mt-6 flex flex-row items-center">
+        <div class="flex h-9 select-none items-center text-base text-gray1"
           >SSL (https)</div
         >
 
@@ -79,7 +79,7 @@
       <input
         spellcheck="false"
         data-cy="editConnectionDialogPostgresHostInput"
-        class="w-80 mt-6 form-input rounded border-gray3 focus:border-blue3"
+        class="form-input mt-6 w-80 rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
             editConnectionForm.controls['postgresHost'].invalid &&
@@ -95,7 +95,7 @@
       <input
         spellcheck="false"
         data-cy="editConnectionDialogPostgresPortInput"
-        class="w-80 form-input rounded border-gray3 focus:border-blue3"
+        class="form-input w-80 rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
             editConnectionForm.controls['postgresPort'].invalid &&
@@ -112,7 +112,7 @@
         *ngIf="editConnectionForm.controls['type'].value !== typeClickHouse"
         spellcheck="false"
         data-cy="editConnectionDialogPostgresDatabaseInput"
-        class="w-80 form-input rounded border-gray3 focus:border-blue3"
+        class="form-input w-80 rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
             editConnectionForm.controls['postgresDatabase'].invalid &&
@@ -129,7 +129,7 @@
       <input
         spellcheck="false"
         data-cy="editConnectionDialogPostgresUserInput"
-        class="w-80 form-input rounded border-gray3 focus:border-blue3"
+        class="form-input w-80 rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
             editConnectionForm.controls['postgresUser'].invalid &&
@@ -145,7 +145,7 @@
       <input
         spellcheck="false"
         data-cy="editConnectionDialogPostgresPasswordInput"
-        class="w-80 form-input rounded border-gray3 focus:border-blue3"
+        class="form-input w-80 rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
             editConnectionForm.controls['postgresPassword'].invalid &&
@@ -163,14 +163,14 @@
     <div class="mt-6">
       <button
         data-cy="editConnectionDialogSaveButton"
-        class="py-3 w-28 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
+        class="w-28 rounded bg-blue3 py-3 text-base font-medium text-white focus:outline-none"
         type="submit"
         >Save</button
       >
 
       <button
         data-cy="editConnectionDialogCancelButton"
-        class="ml-3 py-3 w-28 text-base rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+        class="ml-3 w-28 rounded border border-blue3 py-3 text-base font-medium text-blue3 focus:outline-none"
         type="button"
         (click)="cancel()"
         >Cancel</button

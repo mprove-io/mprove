@@ -1,7 +1,7 @@
-<div class="flex flex-col p-9 bg-white max-h-[600px] overflow-y-auto">
+<div class="flex max-h-[600px] flex-col overflow-y-auto bg-white p-9">
   <div
     data-cy="editPhotoDialogTitle"
-    class="mt-5 text-2xl text-gray2 font-semibold text-left"
+    class="mt-5 text-left text-2xl font-semibold text-gray2"
     >Edit Photo</div
   >
 
@@ -35,14 +35,14 @@
   <div class="mt-6">
     <button
       data-cy="editPhotoDialogSaveButton"
-      class="py-3 w-28 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
+      class="w-28 rounded bg-blue3 py-3 text-base font-medium text-white focus:outline-none"
       (click)="save()"
       >Save</button
     >
 
     <button
       data-cy="editPhotoDialogCancelButton"
-      class="ml-3 py-3 w-28 text-base rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+      class="ml-3 w-28 rounded border border-blue3 py-3 text-base font-medium text-blue3 focus:outline-none"
       type="button"
       (click)="cancel()"
       >Cancel</button

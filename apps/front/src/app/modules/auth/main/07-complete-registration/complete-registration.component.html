@@ -1,18 +1,18 @@
-<div class="flex flex-col bg-blue1 justify-center items-center h-full">
-  <div class="flex text-gray2 max-w-sm text-2xl text-center font-semibold">{{
+<div class="flex h-full flex-col items-center justify-center bg-blue1">
+  <div class="flex max-w-sm text-center text-2xl font-semibold text-gray2">{{
     pageTitle
   }}</div>
 
-  <div class="flex text-gray2 mt-5 text-xl text-center">{{ email }}</div>
+  <div class="mt-5 flex text-center text-xl text-gray2">{{ email }}</div>
   <form
-    class="flex flex-col w-96"
+    class="flex w-96 flex-col"
     [formGroup]="setPasswordForm"
     (ngSubmit)="setPassword()"
   >
     <input
       spellcheck="false"
       data-cy="completeRegistrationPasswordInput"
-      class="mt-9 form-input rounded border-gray3 focus:border-blue3"
+      class="form-input mt-9 rounded border-gray3 focus:border-blue3"
       [ngClass]="{
         'border-red-600':
           setPasswordForm.controls['newPassword'].invalid &&
@@ -28,7 +28,7 @@
 
     <button
       data-cy="completeRegistrationSignUpButton"
-      class="mt-1 py-3 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
+      class="mt-1 rounded bg-blue3 py-3 text-base font-medium text-white focus:outline-none"
       type="submit"
       >SignUp</button
     >

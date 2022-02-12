@@ -1,10 +1,10 @@
-<div class="flex flex-col h-full bg-blue1">
-  <div class="flex flex-row h-full mx-6 mt-8">
-    <div class="flex flex-col flex-grow">
-      <div class="flex flex-row items-center h-11">
+<div class="flex h-full flex-col bg-blue1">
+  <div class="mx-6 mt-8 flex h-full flex-row">
+    <div class="flex flex-grow flex-col">
+      <div class="flex h-11 flex-row items-center">
         <div
           data-cy="modelsTitle"
-          class="flex font-semibold text-2xl text-gray1 items-center self-center"
+          class="flex items-center self-center text-2xl font-semibold text-gray1"
           >{{ pageTitle }}
         </div>
 
@@ -13,7 +13,7 @@
         <input
           spellcheck="false"
           data-cy="modelsSearchInput"
-          class="w-[400px] ml-3 h-10 form-input rounded bg-blue1 border-gray-400 focus:border-blue3"
+          class="form-input ml-3 h-10 w-[400px] rounded border-gray-400 bg-blue1 focus:border-blue3"
           placeholder="Search by Label, File Name"
           [ngClass]="{
             'bg-purple-200': !!word
@@ -25,7 +25,7 @@
         <div class="h-9 w-9">
           <m-delete-icon
             *ngIf="!!word"
-            class="flex ml-3 text-gray1 h-9 w-9 rounded focus:outline-none items-center justify-center flex-shrink-0"
+            class="ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray1 focus:outline-none"
             [ngClass]="{
               'cursor-pointer bg-purple-200 hover:bg-purple-300': !!word
             }"
@@ -40,7 +40,7 @@
             (change)="toggleShowViews()"
           ></ui-switch>
 
-          <div class="flex h-9 text-gray1 text-base items-center select-none"
+          <div class="flex h-9 select-none items-center text-base text-gray1"
             >Show Views</div
           >
         </div>
@@ -48,13 +48,13 @@
         <div class="flex-grow"></div>
       </div>
 
-      <div class="flex flex-row flex-grow mt-6">
-        <div class="flex flex-grow mb-6 bg-white rounded shadow-md">
+      <div class="mt-6 flex flex-grow flex-row">
+        <div class="mb-6 flex flex-grow rounded bg-white shadow-md">
           <div
-            class="ml-5 mr-5 mt-10 w-full flex flex-col divide-y divide-gray-500"
+            class="ml-5 mr-5 mt-10 flex w-full flex-col divide-y divide-gray-500"
           >
             <div
-              class="flex flex-row px-5 mb-3 mr-4 text-base font-semibold text-gray1 space-x-5"
+              class="mb-3 mr-4 flex flex-row space-x-5 px-5 text-base font-semibold text-gray1"
             >
               <div class="flex w-1/3">Model</div>
               <div class="flex flex-1 flex-row space-x-5">
@@ -71,7 +71,7 @@
               *ngIf="isShow === true && filteredModels?.length > 0"
               #scroll
               [items]="filteredModels"
-              class="w-full h-full"
+              class="h-full w-full"
             >
               <div
                 *ngFor="let item of scroll.viewPortItems; trackBy: trackByFn"
@@ -90,7 +90,7 @@
               >
                 <div class="flex-grow flex-col">
                   <div
-                    class="flex flex-row mr-5 px-5 space-x-5 w-full items-start text-lg text-gray1 focus:outline-none bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
+                    class="mr-5 flex w-full flex-row items-start space-x-5 rounded border border-white bg-white px-5 text-lg text-gray1 hover:border-blue2 hover:bg-blue2 focus:outline-none"
                   >
                     <ng-template #templateModelsModel>
                       <div *ngIf="isExplorer === false"
@@ -100,7 +100,7 @@
                     </ng-template>
 
                     <div
-                      class="flex flex-row w-1/3 py-3 h-full"
+                      class="flex h-full w-1/3 flex-row py-3"
                       (click)="navigateToModel(item)"
                       [tippy]="templateModelsModel"
                       [isEnabled]="item.hasAccess === false"
@@ -122,10 +122,10 @@
                     </div>
 
                     <div
-                      class="flex flex-1 flex-row space-x-5 text-base cursor-default"
+                      class="flex flex-1 cursor-default flex-row space-x-5 text-base"
                     >
                       <div
-                        class="flex flex-1 truncate cursor-pointer items-start py-3 hover:text-blue-500 focus:outline-none"
+                        class="flex flex-1 cursor-pointer items-start truncate py-3 hover:text-blue-500 focus:outline-none"
                         (click)="goToModelFile($event, item)"
                       >
                         <span class="truncate">
@@ -133,14 +133,14 @@
                         </span>
                       </div>
 
-                      <div class="flex flex-1 items-start py-3 truncate">
+                      <div class="flex flex-1 items-start truncate py-3">
                         <span class="truncate">
                           {{ item.connectionId }}
                         </span>
                       </div>
 
                       <div
-                        class="flex flex-1 py-3 text-base flex-wrap truncate"
+                        class="flex flex-1 flex-wrap truncate py-3 text-base"
                       >
                         <span
                           *ngFor="let role of item.accessRoles"
@@ -151,7 +151,7 @@
                       </div>
 
                       <div
-                        class="flex flex-1 py-3 text-base flex-wrap truncate"
+                        class="flex flex-1 flex-wrap truncate py-3 text-base"
                       >
                         <span
                           *ngFor="let user of item.accessUsers"
@@ -164,21 +164,21 @@
                   </div>
 
                   <div
-                    class="flex flex-col mr-5 px-5 mt-3 mb-5 w-full items-center text-base space-y-3 focus:outline-none"
+                    class="mr-5 mt-3 mb-5 flex w-full flex-col items-center space-y-3 px-5 text-base focus:outline-none"
                     *ngIf="showViews === true"
                   >
                     <div
-                      class="flex flex-row space-x-5 w-full"
+                      class="flex w-full flex-row space-x-5"
                       *ngFor="let node of item.nodes"
                     >
-                      <div class="flex w-1/3 truncate pl-5 cursor-default">
+                      <div class="flex w-1/3 cursor-default truncate pl-5">
                         <span class="truncate">
                           {{ node.label }}
                         </span>
                       </div>
                       <div class="flex flex-1 flex-row">
                         <div
-                          class="flex flex-1 truncate cursor-pointer items-start hover:text-blue-500 focus:outline-none"
+                          class="flex flex-1 cursor-pointer items-start truncate hover:text-blue-500 focus:outline-none"
                           (click)="goToFile($event, node, item)"
                         >
                           <span class="truncate">
@@ -198,7 +198,7 @@
             </virtual-scroller>
 
             <div
-              class="flex items-center justify-center text-xl h-full w-full select-none text-gray1"
+              class="flex h-full w-full select-none items-center justify-center text-xl text-gray1"
               *ngIf="filteredModels?.length === 0"
               >No models</div
             >

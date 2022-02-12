@@ -1,15 +1,15 @@
-<div class="flex flex-col p-9 bg-white">
+<div class="flex flex-col bg-white p-9">
   <div
     data-cy="mergeDialogTitle"
-    class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
+    class="mt-5 flex-grow text-left text-2xl font-semibold text-gray2"
     >Merge Branch</div
   >
 
-  <form class="flex mt-9 flex-col" [formGroup]="mergeForm" (ngSubmit)="merge()">
+  <form class="mt-9 flex flex-col" [formGroup]="mergeForm" (ngSubmit)="merge()">
     <ng-select
       #branchSelect
       data-cy="branchSelect"
-      class="custom mt-2 text-base focus:outline-none w-96"
+      class="custom mt-2 w-96 text-base focus:outline-none"
       [items]="branchesList"
       [clearable]="false"
       [searchable]="false"
@@ -29,7 +29,7 @@
       </ng-template>
     </ng-select>
 
-    <div class="mt-5 text-base flex justify-start items-center">
+    <div class="mt-5 flex items-center justify-start text-base">
       <span>To the current branch</span>
       <span class="ml-2 font-semibold">{{
         ref.data.currentBranchExtraName
@@ -39,14 +39,14 @@
     <div class="mt-9">
       <button
         data-cy="mergeDialogMergeButton"
-        class="py-3 w-28 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
+        class="w-28 rounded bg-blue3 py-3 text-base font-medium text-white focus:outline-none"
         type="submit"
         >Merge</button
       >
 
       <button
         data-cy="mergeDialogCancelButton"
-        class="ml-3 py-3 w-28 text-base rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+        class="ml-3 w-28 rounded border border-blue3 py-3 text-base font-medium text-blue3 focus:outline-none"
         type="button"
         (click)="cancel()"
         >Cancel</button

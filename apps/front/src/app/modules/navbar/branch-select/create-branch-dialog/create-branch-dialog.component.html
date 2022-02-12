@@ -1,7 +1,7 @@
-<div class="flex flex-col p-9 bg-white">
+<div class="flex flex-col bg-white p-9">
   <div
     data-cy="createBranchDialogTitle"
-    class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
+    class="mt-5 flex-grow text-left text-2xl font-semibold text-gray2"
     >Create Local Branch</div
   >
 
@@ -13,7 +13,7 @@
     <input
       spellcheck="false"
       data-cy="createBranchDialogBranchIdInput"
-      class="mt-9 w-72 form-input rounded border-gray3 focus:border-blue3"
+      class="form-input mt-9 w-72 rounded border-gray3 focus:border-blue3"
       [ngClass]="{
         'border-red-600':
           createBranchForm.controls['branchId'].invalid &&
@@ -30,7 +30,7 @@
     <ng-select
       #branchSelect
       data-cy="branchSelect"
-      class="custom mt-2 text-base focus:outline-none w-96"
+      class="custom mt-2 w-96 text-base focus:outline-none"
       [items]="branchesList"
       [clearable]="false"
       [searchable]="false"
@@ -53,14 +53,14 @@
     <div class="mt-9">
       <button
         data-cy="createBranchDialogCreateButton"
-        class="py-3 w-28 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
+        class="w-28 rounded bg-blue3 py-3 text-base font-medium text-white focus:outline-none"
         type="submit"
         >Create</button
       >
 
       <button
         data-cy="createBranchDialogCancelButton"
-        class="ml-3 py-3 w-28 text-base rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+        class="ml-3 w-28 rounded border border-blue3 py-3 text-base font-medium text-blue3 focus:outline-none"
         type="button"
         (click)="cancel()"
         >Cancel</button

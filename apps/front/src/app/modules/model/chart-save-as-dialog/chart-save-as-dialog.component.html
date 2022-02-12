@@ -1,17 +1,17 @@
-<div class="flex flex-col p-9 bg-white">
+<div class="flex flex-col bg-white p-9">
   <div
     data-cy="chartSaveAsDialogTitle"
-    class="flex-grow mt-5 mb-9 text-2xl text-gray2 font-semibold text-left"
+    class="mt-5 mb-9 flex-grow text-left text-2xl font-semibold text-gray2"
     >Save As</div
   >
 
   <div
     data-cy="chartSaveAsDialogNewVizCheckbox"
-    class="flex flex-row h-9 items-center cursor-pointer"
+    class="flex h-9 cursor-pointer flex-row items-center"
     (click)="newVizOnClick()"
   >
     <div
-      class="flex items-center justify-center h-6 w-6 border-2 border-blue3 text-white rounded-full focus:outline-none"
+      class="flex h-6 w-6 items-center justify-center rounded-full border-2 border-blue3 text-white focus:outline-none"
       [ngClass]="{
         'bg-blue3 ': chartSaveAs === chartSaveAsEnum.NEW_VIZ
       }"
@@ -26,11 +26,11 @@
 
   <div
     data-cy="chartSaveAsDialogNewReportOfDashboardCheckbox"
-    class="flex mt-5 h-9 flex-row items-center cursor-pointer"
+    class="mt-5 flex h-9 cursor-pointer flex-row items-center"
     (click)="reportOfDashboardOnClick()"
   >
     <button
-      class="flex items-center justify-center h-6 w-6 border-2 border-blue3 text-white rounded-full focus:outline-none"
+      class="flex h-6 w-6 items-center justify-center rounded-full border-2 border-blue3 text-white focus:outline-none"
       [ngClass]="{
         'bg-blue3 ': chartSaveAs === chartSaveAsEnum.REPORT_OF_DASHBOARD
       }"
@@ -41,12 +41,12 @@
     </button>
 
     <div class="flex flex-row items-center">
-      <div class="flex ml-5 mr-5 text-base flex-shrink-0"
+      <div class="ml-5 mr-5 flex flex-shrink-0 text-base"
         >Report of Dashboard</div
       >
 
       <div
-        class="flex w-9 h-2 mx-5 relative flex-shrink-0"
+        class="relative mx-5 flex h-2 w-9 flex-shrink-0"
         *ngIf="
           !dashboards && chartSaveAs === chartSaveAsEnum.REPORT_OF_DASHBOARD
         "
@@ -73,7 +73,7 @@
         *ngIf="
           !!dashboards && chartSaveAs === chartSaveAsEnum.REPORT_OF_DASHBOARD
         "
-        class="custom w-[500px] text-base focus:outline-none flex-shrink-0"
+        class="custom w-[500px] flex-shrink-0 text-base focus:outline-none"
         [items]="dashboards"
         [searchable]="false"
         [clearable]="false"
@@ -94,10 +94,10 @@
     </div>
   </div>
 
-  <div class="flex flex-col h-9 ml-12 mt-5">
+  <div class="ml-12 mt-5 flex h-9 flex-col">
     <div
       data-cy="chartSaveAsDialogNewVizCheckbox"
-      class="flex flex-row h-9 items-center cursor-pointer"
+      class="flex h-9 cursor-pointer flex-row items-center"
       *ngIf="
         chartSaveAs === chartSaveAsEnum.REPORT_OF_DASHBOARD &&
         !!selectedDashboardId
@@ -105,7 +105,7 @@
       (click)="newReportOnClick()"
     >
       <div
-        class="flex items-center justify-center h-6 w-6 border-2 border-blue3 text-white rounded-full focus:outline-none"
+        class="flex h-6 w-6 items-center justify-center rounded-full border-2 border-blue3 text-white focus:outline-none"
         [ngClass]="{
           'bg-blue3 ': reportSaveAs === reportSaveAsEnum.NEW_REPORT
         }"
@@ -119,10 +119,10 @@
     </div>
   </div>
 
-  <div class="flex flex-col h-9 ml-12 mt-5">
+  <div class="ml-12 mt-5 flex h-9 flex-col">
     <div
       data-cy="chartSaveAsDialogNewReportOfDashboardCheckbox"
-      class="flex h-9 flex-row items-center cursor-pointer"
+      class="flex h-9 cursor-pointer flex-row items-center"
       *ngIf="
         chartSaveAs === chartSaveAsEnum.REPORT_OF_DASHBOARD &&
         !!selectedDashboardId
@@ -130,7 +130,7 @@
       (click)="replaceExistingReportOnClick()"
     >
       <button
-        class="flex items-center justify-center h-6 w-6 border-2 border-blue3 text-white rounded-full focus:outline-none"
+        class="flex h-6 w-6 items-center justify-center rounded-full border-2 border-blue3 text-white focus:outline-none"
         [ngClass]="{
           'bg-blue3 ': reportSaveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT
         }"
@@ -141,13 +141,13 @@
       </button>
 
       <div class="flex flex-row items-center">
-        <div class="flex ml-5 mr-5 text-base flex-shrink-0"
+        <div class="ml-5 mr-5 flex flex-shrink-0 text-base"
           >Replace Existing Report</div
         >
         <ng-select
           data-cy="dashboardSaveAsDialogExistingDashboardSelect"
           *ngIf="reportSaveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT"
-          class="custom w-[500px] text-base focus:outline-none flex-shrink-0"
+          class="custom w-[500px] flex-shrink-0 text-base focus:outline-none"
           [items]="selectedDashboard?.reports || []"
           [searchable]="false"
           [clearable]="false"
@@ -169,7 +169,7 @@
     </div>
   </div>
 
-  <div class="mt-9 h-7 text-gray-400 text-base">
+  <div class="mt-9 h-7 text-base text-gray-400">
     <div *ngIf="chartSaveAs === chartSaveAsEnum.NEW_VIZ"
       >Users / {{ alias }} / {{ vizId }}.viz</div
     >
@@ -192,16 +192,16 @@
 
   <div class="mt-9 flex flex-row items-start">
     <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+      <div class="flex h-9 w-32 select-none items-center text-base text-gray1"
         >Title</div
       >
     </div>
 
-    <div [formGroup]="titleForm" class="flex flex-col ml-5 items-start">
+    <div [formGroup]="titleForm" class="ml-5 flex flex-col items-start">
       <input
         spellcheck="false"
         data-cy="chartSaveAsDialogTitleInput"
-        class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
+        class="form-input h-9 w-96 rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
             titleForm.controls['title'].invalid &&
@@ -213,22 +213,22 @@
     </div>
   </div>
 
-  <div class="flex flex-row h-9 items-start">
+  <div class="flex h-9 flex-row items-start">
     <div class="flex flex-col" *ngIf="chartSaveAs === chartSaveAsEnum.NEW_VIZ">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+      <div class="flex h-9 w-32 select-none items-center text-base text-gray1"
         >Access Roles</div
       >
     </div>
 
     <div
       [formGroup]="rolesForm"
-      class="flex flex-col ml-5 items-start"
+      class="ml-5 flex flex-col items-start"
       *ngIf="chartSaveAs === chartSaveAsEnum.NEW_VIZ"
     >
       <input
         spellcheck="false"
         data-cy="chartSaveAsDialogRolesInput"
-        class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
+        class="form-input h-9 w-96 rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
             rolesForm.controls['roles'].invalid &&
@@ -240,22 +240,22 @@
     </div>
   </div>
 
-  <div class="flex flex-row h-9 mt-5 items-start">
+  <div class="mt-5 flex h-9 flex-row items-start">
     <div class="flex flex-col" *ngIf="chartSaveAs === chartSaveAsEnum.NEW_VIZ">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+      <div class="flex h-9 w-32 select-none items-center text-base text-gray1"
         >Access Users</div
       >
     </div>
 
     <div
       [formGroup]="usersForm"
-      class="flex flex-col ml-5 items-start"
+      class="ml-5 flex flex-col items-start"
       *ngIf="chartSaveAs === chartSaveAsEnum.NEW_VIZ"
     >
       <input
         spellcheck="false"
         data-cy="chartSaveAsDialogUsersInput"
-        class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
+        class="form-input h-9 w-96 rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
             usersForm.controls['users'].invalid &&
@@ -270,7 +270,7 @@
   <div class="mt-9">
     <button
       data-cy="chartSaveAsDialogSaveButton"
-      class="py-3 w-28 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
+      class="w-28 rounded bg-blue3 py-3 text-base font-medium text-white focus:outline-none"
       type="button"
       [ngClass]="{
         'bg-blue3':
@@ -278,7 +278,7 @@
           (!!selectedDashboardId &&
             (reportSaveAs === reportSaveAsEnum.NEW_REPORT ||
               !!selectedReportTitle)),
-        'bg-gray-400 cursor-default':
+        'cursor-default bg-gray-400':
           chartSaveAs === chartSaveAsEnum.REPORT_OF_DASHBOARD &&
           (selectedDashboardId === undefined ||
             (reportSaveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT &&
@@ -296,7 +296,7 @@
 
     <button
       data-cy="chartSaveAsDialogCancelButton"
-      class="ml-3 py-3 w-28 text-base rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+      class="ml-3 w-28 rounded border border-blue3 py-3 text-base font-medium text-blue3 focus:outline-none"
       type="button"
       (click)="cancel()"
       >Cancel</button

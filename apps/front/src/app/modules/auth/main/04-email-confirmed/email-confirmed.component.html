@@ -1,17 +1,17 @@
-<div class="bg-blue1 flex justify-center items-center h-full">
-  <div class="flex flex-col w-96 items-center">
+<div class="flex h-full items-center justify-center bg-blue1">
+  <div class="flex w-96 flex-col items-center">
     <div>
       <m-completed-ring></m-completed-ring>
     </div>
 
     <div
       data-cy="emailIsConfirmedTitle"
-      class="mt-9 text-2xl text-gray2 font-semibold"
+      class="mt-9 text-2xl font-semibold text-gray2"
       >{{ pageTitle }}</div
     >
 
     <button
-      class="mt-12 py-3 bg-blue3 w-28 text-white rounded font-medium focus:outline-none"
+      class="mt-12 w-28 rounded bg-blue3 py-3 font-medium text-white focus:outline-none"
       (click)="ok()"
       >Ok</button
     >

@@ -1,20 +1,20 @@
-<div class="flex flex-col bg-blue1 justify-center items-center h-full">
+<div class="flex h-full flex-col items-center justify-center bg-blue1">
   <div>
     <m-email-ring></m-email-ring>
   </div>
 
-  <div class="mt-5 mb-8 text-gray2 text-2xl text-center font-semibold">{{
+  <div class="mt-5 mb-8 text-center text-2xl font-semibold text-gray2">{{
     pageTitle
   }}</div>
-  <div class="text-gray2 text-base"
+  <div class="text-base text-gray2"
     >We sent an email to {{ email$ | async }}</div
   >
-  <div class="text-gray2 text-base"
+  <div class="text-base text-gray2"
     >Please check your inbox and confirm your email</div
   >
-  <div class="mt-8 text-gray2 text-base">Didn't receive the email?</div>
+  <div class="mt-8 text-base text-gray2">Didn't receive the email?</div>
   <button
-    class="focus:outline-none text-base mt-1"
+    class="mt-1 text-base focus:outline-none"
     [ngClass]="{
       'text-blue4': isResendEnabled === true,
       'text-gray1': isResendEnabled === false,

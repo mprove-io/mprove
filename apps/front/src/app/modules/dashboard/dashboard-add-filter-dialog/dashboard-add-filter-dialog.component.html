@@ -1,14 +1,14 @@
-<div class="flex flex-col p-9 bg-white">
+<div class="flex flex-col bg-white p-9">
   <div
     data-cy="dashboardAddFilterDialogTitle"
-    class="flex-grow mt-5 mb-9 text-2xl text-gray2 font-semibold text-left"
+    class="mt-5 mb-9 flex-grow text-left text-2xl font-semibold text-gray2"
     >Add Filter</div
   >
 
   <form class="flex flex-col" [formGroup]="filterForm" (ngSubmit)="save()">
     <div class="mt-9 flex flex-row items-start">
       <div class="flex flex-col">
-        <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+        <div class="flex h-9 w-32 select-none items-center text-base text-gray1"
           >Label</div
         >
       </div>
@@ -17,7 +17,7 @@
         <input
           spellcheck="false"
           data-cy="dashboardAddFilterDialogLabelInput"
-          class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
+          class="form-input h-9 w-96 rounded border-gray3 focus:border-blue3"
           [ngClass]="{
             'border-red-600':
               filterForm.controls['label'].invalid &&
@@ -29,9 +29,9 @@
       </div>
     </div>
 
-    <div class="flex mt-2 flex-row items-start">
+    <div class="mt-2 flex flex-row items-start">
       <div class="flex flex-col">
-        <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+        <div class="flex h-9 w-32 select-none items-center text-base text-gray1"
           >Type (result)</div
         >
       </div>
@@ -57,17 +57,17 @@
       </ng-select>
     </div>
 
-    <div class="flex mt-14">
+    <div class="mt-14 flex">
       <button
         data-cy="dashboardAddFilterDialogSaveButton"
-        class="py-3 w-28 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
+        class="w-28 rounded bg-blue3 py-3 text-base font-medium text-white focus:outline-none"
         type="submit"
         >Save</button
       >
 
       <button
         data-cy="dashboardAddFilterDialogCancelButton"
-        class="ml-3 py-3 w-28 text-base rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+        class="ml-3 w-28 rounded border border-blue3 py-3 text-base font-medium text-blue3 focus:outline-none"
         type="button"
         (click)="cancel()"
         >Cancel</button

@@ -1,20 +1,20 @@
-<div class="flex flex-col p-9 bg-white max-h-[500px]">
+<div class="flex max-h-[500px] flex-col bg-white p-9">
   <div
     data-cy="deleteUserDialogTitle"
-    class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
+    class="mt-5 flex-grow text-left text-2xl font-semibold text-gray2"
     >New Visualization</div
   >
 
-  <div class="text-lg mt-9 text-gray1"
+  <div class="mt-9 text-lg text-gray1"
     >To create a new visualization, go to the model page, customize the chart,
     and click Save As</div
   >
 
-  <div class="text-lg mt-9 mb-3 font-semibold text-gray2">Models:</div>
+  <div class="mt-9 mb-3 text-lg font-semibold text-gray2">Models:</div>
 
   <div class="overflow-y-auto">
     <div
-      class="text-gray1 pl-5 py-3 text-base rounded hover:bg-blue2 hover:cursor-pointer"
+      class="rounded py-3 pl-5 text-base text-gray1 hover:cursor-pointer hover:bg-blue2"
       *ngFor="let model of ref.data.models"
       (click)="navToModel(model.modelId)"
     >

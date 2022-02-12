@@ -1,10 +1,10 @@
-<div class="flex flex-col h-full bg-blue1">
-  <div class="flex flex-row h-full mx-6 mt-8">
-    <div class="flex flex-col flex-grow">
-      <div class="flex flex-row items-center h-11">
+<div class="flex h-full flex-col bg-blue1">
+  <div class="mx-6 mt-8 flex h-full flex-row">
+    <div class="flex flex-grow flex-col">
+      <div class="flex h-11 flex-row items-center">
         <div
           data-cy="dashboardsTitle"
-          class="flex font-semibold text-2xl text-gray1 items-center self-center"
+          class="flex items-center self-center text-2xl font-semibold text-gray1"
           >{{ pageTitle }}
         </div>
 
@@ -13,7 +13,7 @@
         <input
           spellcheck="false"
           data-cy="dashboardsSearchInput"
-          class="w-[400px] ml-3 h-10 form-input rounded bg-blue1 border-gray-400 focus:border-blue3"
+          class="form-input ml-3 h-10 w-[400px] rounded border-gray-400 bg-blue1 focus:border-blue3"
           placeholder="Search by Title, File Name"
           [ngClass]="{
             'bg-purple-200': !!word
@@ -25,7 +25,7 @@
         <div class="h-9 w-9">
           <m-delete-icon
             *ngIf="!!word"
-            class="flex ml-3 text-gray1 h-9 w-9 rounded focus:outline-none items-center justify-center flex-shrink-0"
+            class="ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray1 focus:outline-none"
             [ngClass]="{
               'cursor-pointer bg-purple-200 hover:bg-purple-300': !!word
             }"
@@ -33,13 +33,13 @@
           ></m-delete-icon>
         </div>
 
-        <div class="flex flex-row ml-10 items-center space-x-5">
+        <div class="ml-10 flex flex-row items-center space-x-5">
           <ui-switch
             [checked]="showReports"
             (change)="toggleShowReports()"
           ></ui-switch>
 
-          <div class="flex h-9 text-gray1 text-base items-center select-none"
+          <div class="flex h-9 select-none items-center text-base text-gray1"
             >Show Reports</div
           >
         </div>
@@ -51,7 +51,7 @@
             (change)="toggleShowFilters()"
           ></ui-switch>
 
-          <div class="flex h-9 text-gray1 text-base items-center select-none"
+          <div class="flex h-9 select-none items-center text-base text-gray1"
             >Show Filters</div
           >
         </div>
@@ -74,11 +74,11 @@
             <button
               type="button"
               data-cy="dashboardsNewButton"
-              class="w-24 py-2 text-white text-base rounded font-medium focus:outline-none"
+              class="w-24 rounded py-2 text-base font-medium text-white focus:outline-none"
               [ngClass]="{
-                'bg-blue3 cursor-pointer':
+                'cursor-pointer bg-blue3':
                   isExplorer === true && hasAccessModels.length > 0,
-                'bg-gray-400 cursor-default':
+                'cursor-default bg-gray-400':
                   isExplorer === false || hasAccessModels.length === 0
               }"
               (click)="newDashboard()"
@@ -90,14 +90,14 @@
         </div>
       </div>
 
-      <div class="flex flex-row flex-grow mt-6">
-        <div class="flex w-1/6 mb-6">
-          <div class="bg-white rounded shadow-lg w-full">
-            <div class="flex flex-col text-base text-gray1 ml-5 mr-5 mt-6">
-              <div class="flex mb-3 text-lg font-semibold">by Model</div>
+      <div class="mt-6 flex flex-grow flex-row">
+        <div class="mb-6 flex w-1/6">
+          <div class="w-full rounded bg-white shadow-lg">
+            <div class="ml-5 mr-5 mt-6 flex flex-col text-base text-gray1">
+              <div class="mb-3 flex text-lg font-semibold">by Model</div>
 
               <div
-                class="flex flex-row justify-between hover:cursor-pointer py-2 px-4 rounded"
+                class="flex flex-row justify-between rounded py-2 px-4 hover:cursor-pointer"
                 [ngClass]="{
                   'bg-blue-100': !modelId,
                   'hover:bg-blue2': !!modelId
@@ -105,27 +105,27 @@
                 (click)="allModelsOnClick()"
               >
                 <div class="text-gray1"> All Models </div>
-                <div class="flex justify-end ml-3 w-12">
+                <div class="ml-3 flex w-12 justify-end">
                   {{ dashboardsFilteredByWord?.length }}
                 </div>
               </div>
 
               <div
                 *ngFor="let model of dashboardsModels"
-                class="flex flex-row hover:cursor-pointer py-2 px-4 rounded"
+                class="flex flex-row rounded py-2 px-4 hover:cursor-pointer"
                 [ngClass]="{
                   'bg-blue-100': modelId === model.modelId,
                   'hover:bg-blue2': modelId !== model.modelId
                 }"
                 (click)="modelOnClick(model.modelId)"
               >
-                <div class="text-gray1 truncate">
+                <div class="truncate text-gray1">
                   {{ model.label | capitalize }}
                 </div>
 
                 <div class="flex flex-grow"></div>
 
-                <div class="flex justify-end ml-3 w-12">
+                <div class="ml-3 flex w-12 justify-end">
                   {{ model.totalDashboards }}
                 </div>
               </div>
@@ -133,12 +133,12 @@
           </div>
         </div>
 
-        <div class="flex flex-grow ml-6 mb-6 bg-white rounded shadow-md">
+        <div class="ml-6 mb-6 flex flex-grow rounded bg-white shadow-md">
           <div
-            class="ml-5 mr-5 mt-10 w-full flex flex-col divide-y divide-gray-500"
+            class="ml-5 mr-5 mt-10 flex w-full flex-col divide-y divide-gray-500"
           >
             <div
-              class="flex flex-row space-x-5 px-5 mb-3 mr-4 text-base font-semibold text-gray1"
+              class="mb-3 mr-4 flex flex-row space-x-5 px-5 text-base font-semibold text-gray1"
             >
               <div class="flex w-1/3">Dashboard</div>
               <div class="flex flex-1 flex-row space-x-5">
@@ -159,7 +159,7 @@
               *ngIf="isShow === true && filteredDashboards?.length > 0"
               #scroll
               [items]="filteredDashboards"
-              class="w-full h-full"
+              class="h-full w-full"
             >
               <div
                 *ngFor="let item of scroll.viewPortItems; trackBy: trackByFn"
@@ -180,10 +180,10 @@
               >
                 <div class="flex-grow flex-col">
                   <div
-                    class="group flex flex-row space-x-5 mr-5 px-5 w-full items-start text-lg text-gray1 focus:outline-none bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
+                    class="group mr-5 flex w-full flex-row items-start space-x-5 rounded border border-white bg-white px-5 text-lg text-gray1 hover:border-blue2 hover:bg-blue2 focus:outline-none"
                   >
                     <div
-                      class="flex w-1/3 truncate h-full py-3 cursor-pointer hover:text-blue-500"
+                      class="flex h-full w-1/3 cursor-pointer truncate py-3 hover:text-blue-500"
                       [ngClass]="{
                         'font-semibold': showReports === true
                       }"
@@ -195,13 +195,13 @@
                     </div>
 
                     <div
-                      class="flex flex-1 flex-row space-x-5 text-base cursor-default"
+                      class="flex flex-1 cursor-default flex-row space-x-5 text-base"
                     >
                       <div class="flex flex-1" *ngIf="showReports === true">
                       </div>
 
                       <div
-                        class="flex flex-1 truncate cursor-pointer items-start py-3 hover:text-blue-500 focus:outline-none"
+                        class="flex flex-1 cursor-pointer items-start truncate py-3 hover:text-blue-500 focus:outline-none"
                         (click)="goToDashboardFile($event, item)"
                       >
                         <span class="truncate">
@@ -210,7 +210,7 @@
                       </div>
 
                       <div
-                        class="flex flex-1 py-3 text-base flex-wrap truncate"
+                        class="flex flex-1 flex-wrap truncate py-3 text-base"
                       >
                         <span
                           *ngFor="let role of item.accessRoles"
@@ -221,7 +221,7 @@
                       </div>
 
                       <div
-                        class="flex flex-1 py-3 text-base flex-wrap truncate"
+                        class="flex flex-1 flex-wrap truncate py-3 text-base"
                       >
                         <span
                           *ngFor="let user of item.accessUsers"
@@ -232,7 +232,7 @@
                       </div>
 
                       <div
-                        class="flex flex-1 truncate items-start py-3 focus:outline-none"
+                        class="flex flex-1 items-start truncate py-3 focus:outline-none"
                       >
                         <span>
                           {{ item.author }}
@@ -242,7 +242,7 @@
                       <div class="flex w-24 pt-2">
                         <button
                           data-cy="dashboardOptionsMenuButton"
-                          class="flex ml-3 relative h-9 w-9 rounded focus:outline-none items-center justify-center hover:bg-blue-200 invisible group-hover:visible"
+                          class="invisible relative ml-3 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none group-hover:visible"
                           #t1="tippy"
                           [tippy]="templateDashboardOptions"
                           [hideOnEscape]="true"
@@ -254,11 +254,11 @@
 
                         <ng-template #templateDashboardOptions>
                           <div
-                            class="w-64 bg-white rounded-md shadow-xl border-2 border-gray4"
+                            class="w-64 rounded-md border-2 border-gray4 bg-white shadow-xl"
                           >
                             <button
                               data-cy="dashboardOptionsGoToFile"
-                              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+                              class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
                               (click)="
                                 t1.hide(); goToDashboardFile($event, item)
                               "
@@ -267,7 +267,7 @@
 
                             <button
                               data-cy="dashboardOptionsDelete"
-                              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+                              class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
                               [ngClass]="{
                                 'cursor-default text-gray-400':
                                   item.canEditOrDeleteDashboard === false
@@ -285,14 +285,14 @@
                   </div>
 
                   <m-bricks
-                    class="ml-10 mt-3 mb-6 flex flex-row items-start justify-start overflow-auto max-h-[150px] max-w-max"
+                    class="ml-10 mt-3 mb-6 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"
                     *ngIf="showBricks === true && item?.fields.length > 0"
                     [extendedFilters]="item.extendedFilters"
                   ></m-bricks>
 
                   <div
                     *ngIf="showReports === true"
-                    class="flex-1 flex-col mt-3 mb-5 space-y-3"
+                    class="mt-3 mb-5 flex-1 flex-col space-y-3"
                   >
                     <div
                       *ngFor="let report of item.reports"
@@ -300,15 +300,15 @@
                     >
                       <div
                         (click)="showChart(report, item.dashboardId)"
-                        class="flex w-1/3 flex-row items-center text-gray1 hover:text-blue-500 cursor-pointer"
+                        class="flex w-1/3 cursor-pointer flex-row items-center text-gray1 hover:text-blue-500"
                       >
-                        <div class="flex flex-wrap truncate ml-10">
+                        <div class="ml-10 flex flex-wrap truncate">
                           <span class="truncate">
                             {{ report.title | capitalize }}
                           </span>
                         </div>
 
-                        <div class="flex w-9 h-2 mx-5 relative flex-shrink-0">
+                        <div class="relative mx-5 flex h-2 w-9 flex-shrink-0">
                           <ngx-spinner
                             [name]="report.mconfigId"
                             color="rgba(54, 94, 224, 100)"
@@ -338,7 +338,7 @@
                           [isEnabled]="report.hasAccessToModel === false"
                         >
                           <button
-                            class="flex items-start truncate focus:outline-none cursor-default"
+                            class="flex cursor-default items-start truncate focus:outline-none"
                             [ngClass]="{
                               'cursor-pointer hover:text-blue-500':
                                 report.hasAccessToModel === true,
@@ -372,7 +372,7 @@
             </virtual-scroller>
 
             <div
-              class="flex items-center justify-center text-xl h-full w-full select-none text-gray1"
+              class="flex h-full w-full select-none items-center justify-center text-xl text-gray1"
               *ngIf="filteredDashboards?.length === 0"
               >No dashboards</div
             >

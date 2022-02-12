@@ -1,5 +1,5 @@
 <button
-  class="h-7 w-7 border-2 border-gray-500 rounded focus:outline-none align-middle"
+  class="h-7 w-7 rounded border-2 border-gray-500 align-middle focus:outline-none"
   [ngStyle]="{ 'background-color': color }"
   #t1="tippy"
   [tippy]="templateColor"
@@ -12,7 +12,7 @@
 </button>
 
 <ng-template #templateColor>
-  <div class="w-56 bg-white rounded-md shadow-xl border-2 border-gray4">
+  <div class="w-56 rounded-md border-2 border-gray4 bg-white shadow-xl">
     <color-sketch
       [color]="rgbaColor"
       (onChangeComplete)="onChangeComplete($event)"
@@ -20,19 +20,19 @@
 
     <div class="flex flex-row justify-between bg-white">
       <button
-        class="block px-3 py-2 bg-blue3 rounded text-white font-medium text-sm focus:outline-none"
+        class="block rounded bg-blue3 px-3 py-2 text-sm font-medium text-white focus:outline-none"
         (click)="t1.hide(); save()"
         >Save</button
       >
 
       <button
-        class="block px-3 py-2 bg-blue3 rounded text-white font-medium text-sm focus:outline-none"
+        class="block rounded bg-blue3 px-3 py-2 text-sm font-medium text-white focus:outline-none"
         (click)="t1.hide(); cancel()"
         >Cancel</button
       >
 
       <button
-        class="block px-3 py-2 bg-blue3 rounded text-white font-medium text-sm focus:outline-none"
+        class="block rounded bg-blue3 px-3 py-2 text-sm font-medium text-white focus:outline-none"
         (click)="t1.hide(); clear()"
         >Undef</button
       >

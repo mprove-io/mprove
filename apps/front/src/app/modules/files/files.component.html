@@ -1,10 +1,10 @@
-<div class="flex flex-col h-full bg-blue1">
-  <div class="flex flex-row h-full mx-6 mb-6 mt-8">
-    <div class="flex flex-col flex-grow min-w-[2px]">
-      <div class="flex flex-row justify-between items-center h-11">
+<div class="flex h-full flex-col bg-blue1">
+  <div class="mx-6 mb-6 mt-8 flex h-full flex-row">
+    <div class="flex min-w-[2px] flex-grow flex-col">
+      <div class="flex h-11 flex-row items-center justify-between">
         <div
           data-cy="filesTitle"
-          class="flex font-semibold text-2xl text-gray1 items-center self-center"
+          class="flex items-center self-center text-2xl font-semibold text-gray1"
           >{{ pageTitle }}
         </div>
 
@@ -15,9 +15,9 @@
           <button
             type="button"
             data-cy="filesCommitButton"
-            class="py-2 px-5 ml-3 text-white text-base rounded font-medium focus:outline-none"
+            class="ml-3 rounded py-2 px-5 text-base font-medium text-white focus:outline-none"
             [ngClass]="{
-              'bg-gray-400 cursor-default':
+              'cursor-default bg-gray-400':
                 repo.repoStatus !== repoStatusNeedCommit || needSave === true,
               'bg-blue3':
                 repo.repoStatus === repoStatusNeedCommit && needSave === false
@@ -32,10 +32,10 @@
           <button
             type="button"
             data-cy="filesCommitButton"
-            class="py-2 px-5 ml-3 text-white text-base rounded font-medium focus:outline-none"
+            class="ml-3 rounded py-2 px-5 text-base font-medium text-white focus:outline-none"
             *ngIf="repo.repoStatus === repoStatusNeedPull"
             [ngClass]="{
-              'bg-gray-400 cursor-default':
+              'cursor-default bg-gray-400':
                 repo.repoStatus !== repoStatusNeedPull || needSave === true,
               'bg-blue3':
                 repo.repoStatus === repoStatusNeedPull && needSave === false
@@ -50,9 +50,9 @@
           <button
             type="button"
             data-cy="filesPushButton"
-            class="py-2 px-5 ml-3 text-white text-base rounded font-medium focus:outline-none"
+            class="ml-3 rounded py-2 px-5 text-base font-medium text-white focus:outline-none"
             [ngClass]="{
-              'bg-gray-400 cursor-default':
+              'cursor-default bg-gray-400':
                 repo.repoStatus !== repoStatusNeedPush || needSave === true,
               'bg-blue3':
                 repo.repoStatus === repoStatusNeedPush && needSave === false
@@ -70,14 +70,14 @@
         </div>
       </div>
 
-      <div class="flex flex-row flex-grow mt-6">
+      <div class="mt-6 flex flex-grow flex-row">
         <m-files-tree class="flex w-1/3 flex-shrink-0"></m-files-tree>
 
-        <div class="flex flex-grow ml-6 min-w-[2px]">
-          <div class="bg-white rounded shadow-lg w-full">
+        <div class="ml-6 flex min-w-[2px] flex-grow">
+          <div class="w-full rounded bg-white shadow-lg">
             <div
               *ngIf="lastUrl === pathFiles"
-              class="flex justify-center items-center h-full text-xl"
+              class="flex h-full items-center justify-center text-xl"
               >Select file...</div
             >
 

@@ -18,13 +18,13 @@
   </button>
 
   <ng-template #templateOrgOptions>
-    <div class="w-56 bg-white rounded-md shadow-xl border-2 border-gray4">
-      <div class="block mt-2 px-4 py-2 text-gray-400 font-semibold text-base"
+    <div class="w-56 rounded-md border-2 border-gray4 bg-white shadow-xl">
+      <div class="mt-2 block px-4 py-2 text-base font-semibold text-gray-400"
         >{{ nav?.orgName | capitalize }} Org</div
       >
 
       <button
-        class="block px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+        class="block w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
         [ngClass]="{
           'font-semibold': lastUrl === pathAccount
         }"
@@ -34,7 +34,7 @@
       >
 
       <button
-        class="block px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+        class="block w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
         [ngClass]="{
           'font-semibold': lastUrl === pathUsers
         }"

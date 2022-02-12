@@ -11,12 +11,12 @@
         <m-add-icon></m-add-icon>
       </button>
 
-      <div class="flex flex-col justify-start items-start w-36 ml-3 mb-5">
-        <div class="font-normal text-sm truncate">{{
+      <div class="ml-3 mb-5 flex w-36 flex-col items-start justify-start">
+        <div class="truncate text-sm font-normal">{{
           filter.field.topLabel | capitalize
         }}</div>
 
-        <div class="flex flex-row font-semibold text-left">
+        <div class="flex flex-row text-left font-semibold">
           <div *ngIf="filter.field.groupLabel"
             >{{ filter.field.groupLabel | capitalize }} -
             {{ filter.field.label | capitalize }}</div
@@ -31,7 +31,7 @@
 
     <div>
       <div
-        class="flex flex-row justify-start items-start group"
+        class="group flex flex-row items-start justify-start"
         *ngFor="
           let fraction of filter.fractions;
           let isFirst = first;
@@ -48,7 +48,7 @@
         </m-fraction>
 
         <button
-          class="flex h-9 w-9 items-center justify-center rounded hover:bg-blue2 ml-5 invisible group-hover:visible focus:outline-none"
+          class="invisible ml-5 flex h-9 w-9 items-center justify-center rounded hover:bg-blue2 focus:outline-none group-hover:visible"
           (click)="deleteFraction(filter, filterIndex, fractionIndex)"
         >
           <m-delete-icon></m-delete-icon>

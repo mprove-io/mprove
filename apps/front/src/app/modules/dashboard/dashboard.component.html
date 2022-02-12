@@ -1,12 +1,12 @@
-<div class="bg-blue1 flex flex-col h-full">
-  <div class="flex flex-row h-full">
-    <div class="flex flex-col flex-grow mx-6 mb-6 mt-8 min-w-[2px]">
-      <div class="flex flex-row justify-between items-center h-11">
-        <div class="flex flex-row items-center w-full">
+<div class="flex h-full flex-col bg-blue1">
+  <div class="flex h-full flex-row">
+    <div class="mx-6 mb-6 mt-8 flex min-w-[2px] flex-grow flex-col">
+      <div class="flex h-11 flex-row items-center justify-between">
+        <div class="flex w-full flex-row items-center">
           <div class="flex flex-row items-center space-x-5">
             <div
               data-cy="dashboardTitle"
-              class="flex font-semibold text-2xl text-gray1 items-center self-center"
+              class="flex items-center self-center text-2xl font-semibold text-gray1"
             >
               {{ pageTitle }}
             </div>
@@ -24,7 +24,7 @@
               (change)="toggleShowReportFilters()"
             ></ui-switch>
 
-            <div class="flex h-9 text-gray1 text-base items-center select-none"
+            <div class="flex h-9 select-none items-center text-base text-gray1"
               >Show Report Filters</div
             >
           </div>
@@ -55,18 +55,18 @@
               dashboard?.temp === true ||
               dashboard?.canEditOrDeleteDashboard === false
             "
-            class="flex ml-5 flex-shrink-0"
+            class="ml-5 flex flex-shrink-0"
           >
             <button
               type="button"
               data-cy="dashboardAddReportButton"
-              class="px-5 py-2 ml-5 text-white text-base rounded font-medium focus:outline-none flex-shrink-0"
+              class="ml-5 flex-shrink-0 rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
               [ngClass]="{
                 'bg-blue3':
                   isExplorer === true &&
                   dashboard?.temp === false &&
                   dashboard?.canEditOrDeleteDashboard === true,
-                'bg-gray-400 cursor-default':
+                'cursor-default bg-gray-400':
                   isExplorer === false ||
                   dashboard?.temp === true ||
                   dashboard?.canEditOrDeleteDashboard === false
@@ -84,7 +84,7 @@
           <div class="flex-grow"></div>
 
           <div class="flex flex-row items-center space-x-5">
-            <div class="flex h-9 text-gray1 text-base items-center select-none"
+            <div class="flex h-9 select-none items-center text-base text-gray1"
               >Timezone</div
             >
 
@@ -116,20 +116,20 @@
 
           <div class="flex flex-row items-center text-base text-gray1">
             <div
-              class="flex ml-16 h-12 flex-shrink-0"
+              class="ml-16 flex h-12 flex-shrink-0"
               tippy="Explorer role is required"
               [isEnabled]="isExplorer === false"
             >
               <button
                 type="button"
                 data-cy="dashboardSaveAsButton"
-                class="px-6 h-12 text-base text-white rounded font-medium focus:outline-none"
+                class="h-12 rounded px-6 text-base font-medium text-white focus:outline-none"
                 [ngClass]="{
-                  'text-blue3 border-2':
+                  'border-2 text-blue3':
                     isExplorer === true && dashboard?.temp === false,
                   'bg-pink-500':
                     isExplorer === true && dashboard?.temp === true,
-                  'bg-gray-400 cursor-default': isExplorer === false
+                  'cursor-default bg-gray-400': isExplorer === false
                 }"
                 (click)="saveAs()"
                 [disabled]="isExplorer === false"
@@ -140,10 +140,10 @@
             <button
               type="button"
               data-cy="dashboardRunButton"
-              class="px-8 py-2 ml-5 text-white text-base rounded font-medium focus:outline-none"
+              class="ml-5 rounded px-8 py-2 text-base font-medium text-white focus:outline-none"
               [ngClass]="{
                 'bg-blue3': dashboard?.reports.length > 0,
-                'bg-gray-400 cursor-default': dashboard?.reports.length === 0
+                'cursor-default bg-gray-400': dashboard?.reports.length === 0
               }"
               (click)="run()"
               [disabled]="dashboard?.reports.length === 0"
@@ -159,16 +159,16 @@
         </div>
       </div>
 
-      <div class="flex flex-col flex-grow space-y-6 min-w-[2px] mt-6">
-        <div class="bg-white rounded shadow-md w-full">
+      <div class="mt-6 flex min-w-[2px] flex-grow flex-col space-y-6">
+        <div class="w-full rounded bg-white shadow-md">
           <div class="flex flex-col">
             <div
-              class="flex flex-row flex-grow mr-5 min-h-[95px] flex-shrink-0"
+              class="mr-5 flex min-h-[95px] flex-shrink-0 flex-grow flex-row"
             >
               <button
                 type="button"
                 data-cy="dashboardAddFilterButton"
-                class="mt-6 h-12 ml-8 text-blue3 text-base rounded font-medium focus:outline-none"
+                class="mt-6 ml-8 h-12 rounded text-base font-medium text-blue3 focus:outline-none"
                 (click)="addFilter()"
                 >Add Filter</button
               >
@@ -189,13 +189,13 @@
                 <button
                   type="button"
                   data-cy="dashboardEditListenButton"
-                  class="h-12 text-base rounded font-medium focus:outline-none"
+                  class="h-12 rounded text-base font-medium focus:outline-none"
                   (click)="editListeners()"
                   [ngClass]="{
                     'text-blue3 ':
                       dashboard?.reports.length > 0 &&
                       dashboard?.fields.length > 0,
-                    'text-gray-400  cursor-default':
+                    'cursor-default  text-gray-400':
                       dashboard?.reports.length === 0 ||
                       dashboard?.fields.length === 0
                   }"
@@ -209,7 +209,7 @@
 
               <div
                 (click)="toggleFiltersPanel()"
-                class="flex flex-row space-x-2 mt-5 ml-5 py-3 px-5 items-start cursor-pointer font-semibold text-2xl text-gray1 select-none"
+                class="mt-5 ml-5 flex cursor-pointer select-none flex-row items-start space-x-2 py-3 px-5 text-2xl font-semibold text-gray1"
               >
                 <div class="flex flex-row items-center space-x-2">
                   <div> Filters </div>
@@ -228,7 +228,7 @@
                 }"
               >
                 <m-bricks
-                  class="mr-5 my-3 flex flex-row items-start justify-start overflow-auto max-h-[150px] max-w-max"
+                  class="my-3 mr-5 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"
                   *ngIf="!filtersIsExpanded && dashboard?.fields.length > 0"
                   [extendedFilters]="dashboard.extendedFilters"
                 ></m-bricks>
@@ -236,12 +236,12 @@
 
               <div
                 *ngIf="filtersIsExpanded && dashboard?.fields.length === 0"
-                class="flex items-center justify-center text-xl mt-9 h-full w-full select-none text-gray1"
+                class="mt-9 flex h-full w-full select-none items-center justify-center text-xl text-gray1"
                 >No filters</div
               >
 
               <div
-                class="flex-1 w-2 mt-2 max-h-96 overflow-auto"
+                class="mt-2 max-h-96 w-2 flex-1 overflow-auto"
                 *ngIf="filtersIsExpanded && dashboard?.fields.length > 0"
               >
                 <m-dashboard-filters
@@ -252,7 +252,7 @@
           </div>
         </div>
 
-        <div #scrollable class="flex flex-row flex-grow mt-6 overflow-auto h-2">
+        <div #scrollable class="mt-6 flex h-2 flex-grow flex-row overflow-auto">
           <ktd-grid
             *ngIf="dashboard?.reports"
             [compactType]="compactType"
@@ -274,10 +274,10 @@
             >
               <div
                 ktdGridDragHandle
-                class="flex drag-handle justify-center items-center invisible group-hover:visible"
+                class="drag-handle invisible flex items-center justify-center group-hover:visible"
                 ><m-drag-icon></m-drag-icon
               ></div>
-              <div class="pb-6 pr-5 w-full h-full">
+              <div class="h-full w-full pb-6 pr-5">
                 <m-chart-rep
                   #chartRep
                   [isShow]="isShow"
@@ -293,7 +293,7 @@
               </div>
               <m-resize-icon
                 ktdGridResizeHandle
-                class="flex resize-handle justify-center items-center invisible group-hover:visible"
+                class="resize-handle invisible flex items-center justify-center group-hover:visible"
               ></m-resize-icon>
             </ktd-grid-item>
           </ktd-grid>

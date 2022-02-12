@@ -5,9 +5,9 @@
   >
     <div>Running - seconds</div>
 
-    <div class="w-8 ml-1">{{ runSecondsAgo }}</div>
+    <div class="ml-1 w-8">{{ runSecondsAgo }}</div>
 
-    <div class="w-9 h-9 relative">
+    <div class="relative h-9 w-9">
       <ngx-spinner
         [name]="spinnerName"
         color="rgba(54, 94, 224, 100)"
@@ -24,7 +24,7 @@
 
   <div
     *ngIf="query?.status === queryStatusEnum.Error"
-    class="max-w-xl px-3 py-2 bg-red-100 text-red-700 truncate select-none"
+    class="max-w-xl select-none truncate bg-red-100 px-3 py-2 text-red-700"
     tippy="{{ query?.lastErrorMessage | capitalize }}"
     [isEnabled]="query?.status === queryStatusEnum.Error"
     >{{ query?.lastErrorMessage | capitalize }}</div

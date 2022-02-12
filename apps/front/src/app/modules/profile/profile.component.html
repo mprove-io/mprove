@@ -1,37 +1,37 @@
-<div class="bg-blue1 flex flex-col h-full">
-  <div class="flex flex-grow flex-col mx-6 mb-6 mt-8 h-2">
+<div class="flex h-full flex-col bg-blue1">
+  <div class="mx-6 mb-6 mt-8 flex h-2 flex-grow flex-col">
     <div class="flex h-11 items-center">
-      <div data-cy="profileTitle" class="font-semibold text-2xl text-gray1">{{
+      <div data-cy="profileTitle" class="text-2xl font-semibold text-gray1">{{
         pageTitle
       }}</div>
     </div>
-    <div class="flex-1 bg-white mt-6 rounded shadow-lg h-2">
-      <div class="w-full h-full overflow-auto">
-        <div class="flex flex-row mt-16 ml-32">
+    <div class="mt-6 h-2 flex-1 rounded bg-white shadow-lg">
+      <div class="h-full w-full overflow-auto">
+        <div class="mt-16 ml-32 flex flex-row">
           <div class="flex flex-col text-base">
-            <div class="h-24 flex items-center justify-end font-semibold"
+            <div class="flex h-24 items-center justify-end font-semibold"
               >Profile Photo</div
             >
-            <div class="h-16 flex items-center justify-end font-semibold"
+            <div class="flex h-16 items-center justify-end font-semibold"
               >Name</div
             >
-            <div class="h-16 flex items-center justify-end font-semibold"
+            <div class="flex h-16 items-center justify-end font-semibold"
               >Default Time Zone</div
             >
-            <div class="h-16 flex items-center justify-end font-semibold"
+            <div class="flex h-16 items-center justify-end font-semibold"
               >Email</div
             >
-            <div class="h-16 flex items-center justify-end font-semibold"
+            <div class="flex h-16 items-center justify-end font-semibold"
               >Alias</div
             >
             <div class="flex items-center justify-end font-semibold"></div>
             <div class="flex items-center justify-end font-semibold"></div>
           </div>
 
-          <div class="flex flex-col ml-2">
-            <div class="h-24 flex items-center"></div>
-            <div class="h-16 flex items-center"></div>
-            <div class="h-16 flex items-center text-gray1">
+          <div class="ml-2 flex flex-col">
+            <div class="flex h-24 items-center"></div>
+            <div class="flex h-16 items-center"></div>
+            <div class="flex h-16 items-center text-gray1">
               <!-- <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-6 w-6"
@@ -47,14 +47,14 @@
                 />
               </svg> -->
             </div>
-            <div class="h-16 flex items-center"></div>
+            <div class="flex h-16 items-center"></div>
             <div class="flex items-center"></div>
             <div class="flex items-center"></div>
             <div class="flex items-center"></div>
           </div>
 
-          <div class="flex flex-col ml-6">
-            <div class="h-24 flex items-center">
+          <div class="ml-6 flex flex-col">
+            <div class="flex h-24 items-center">
               <div class="flex flex-row">
                 <button
                   class="block h-20 w-20 rounded-full bg-blue-200 text-base tracking-wider focus:outline-none"
@@ -78,28 +78,28 @@
             </div>
             <div
               data-cy="profileFullName"
-              class="h-16 flex items-center max-w-xl text-base truncate"
+              class="flex h-16 max-w-xl items-center truncate text-base"
               >{{ userQuery.fullName$ | async }}</div
             >
             <div
               data-cy="profileTimezone"
-              class="h-16 flex text-base items-center"
+              class="flex h-16 items-center text-base"
               >{{ userTimezoneLabel }}</div
             >
             <div
               data-cy="profileEmail"
-              class="h-16 flex text-base items-center"
+              class="flex h-16 items-center text-base"
               >{{ userQuery.email$ | async }}</div
             >
             <div
               data-cy="profileAlias"
-              class="h-16 flex text-base items-center"
+              class="flex h-16 items-center text-base"
               >{{ userQuery.alias$ | async }}</div
             >
             <div class="flex items-center">
               <button
                 data-cy="profileChangePasswordButton"
-                class="mt-3 px-5 py-3 text-base border border-gray-300 text-gray1 shadow-sm rounded font-medium focus:outline-none"
+                class="mt-3 rounded border border-gray-300 px-5 py-3 text-base font-medium text-gray1 shadow-sm focus:outline-none"
                 (click)="changePassword()"
                 >Change Password
               </button>
@@ -107,42 +107,42 @@
             <div class="flex items-center">
               <button
                 data-cy="profileDeleteUserButton"
-                class="mt-7 px-5 py-3 mb-5 text-base border border-red1 text-red1 shadow-sm rounded font-medium focus:outline-none"
+                class="mt-7 mb-5 rounded border border-red1 px-5 py-3 text-base font-medium text-red1 shadow-sm focus:outline-none"
                 (click)="deleteUser()"
                 >Delete User</button
               >
             </div>
           </div>
 
-          <div class="flex flex-col ml-6">
-            <div class="h-24 flex items-center"
+          <div class="ml-6 flex flex-col">
+            <div class="flex h-24 items-center"
               ><button
                 data-cy="profileEditPhotoButton"
                 (click)="editPhoto()"
-                class="py-2 px-3 border border-gray-300 rounded shadow-sm text-base leading-3 font-medium text-gray-700 focus:outline-none"
+                class="rounded border border-gray-300 py-2 px-3 text-base font-medium leading-3 text-gray-700 shadow-sm focus:outline-none"
                 >Edit</button
               ></div
             >
 
-            <div class="h-16 flex items-center">
+            <div class="flex h-16 items-center">
               <button
                 data-cy="profileEditNameButton"
                 (click)="editName()"
-                class="py-2 px-3 border border-gray3 rounded shadow-sm text-base leading-3 font-medium text-gray1 focus:outline-none"
+                class="rounded border border-gray3 py-2 px-3 text-base font-medium leading-3 text-gray1 shadow-sm focus:outline-none"
                 >Edit</button
               ></div
             >
 
-            <div class="h-16 flex items-center"
+            <div class="flex h-16 items-center"
               ><button
                 data-cy="profileEditTimezoneButton"
                 (click)="editTimezone()"
-                class="py-2 px-3 border border-gray-300 rounded shadow-sm text-base leading-3 font-medium text-gray-700 focus:outline-none"
+                class="rounded border border-gray-300 py-2 px-3 text-base font-medium leading-3 text-gray-700 shadow-sm focus:outline-none"
                 >Edit</button
               ></div
             >
-            <div class="h-16 flex items-center"></div>
-            <div class="h-16 flex items-center"></div>
+            <div class="flex h-16 items-center"></div>
+            <div class="flex h-16 items-center"></div>
             <div class="flex items-center"></div>
             <div class="flex items-center"></div>
           </div>

@@ -1,18 +1,18 @@
-<div class="flex flex-col w-[90vw] h-[80vh] p-9 bg-white">
+<div class="flex h-[80vh] w-[90vw] flex-col bg-white p-9">
   <div
     data-cy="editListenDialogTitle"
-    class="mt-5 text-2xl text-gray2 font-semibold text-left cursor-default"
+    class="mt-5 cursor-default text-left text-2xl font-semibold text-gray2"
     >Edit Listeners</div
   >
 
   <div
     data-cy="editListenDialogTitle"
-    class="mt-2 mb-6 text-xl text-gray1 text-left cursor-default"
+    class="mt-2 mb-6 cursor-default text-left text-xl text-gray1"
     >Map dashboard filters to report's model fields</div
   >
 
   <div class="flex flex-grow flex-col overflow-auto" *ngIf="!models">
-    <div class="flex w-9 h-9 relative flex-shrink-0">
+    <div class="relative flex h-9 w-9 flex-shrink-0">
       <ngx-spinner
         [name]="spinnerName"
         color="rgba(54, 94, 224, 100)"
@@ -28,23 +28,23 @@
   </div>
 
   <div
-    class="flex flex-grow flex-col overflow-auto divide-y divide-gray-500"
+    class="flex flex-grow flex-col divide-y divide-gray-500 overflow-auto"
     *ngIf="!!models"
   >
     <div
-      class="flex flex-row space-x-5 mb-3 text-base text-gray1 cursor-default"
+      class="mb-3 flex cursor-default flex-row space-x-5 text-base text-gray1"
     >
       <div class="flex w-[500px] flex-shrink-0 font-semibold"> Report</div>
 
       <div
-        class="flex flex-row w-[480px] flex-shrink-0"
+        class="flex w-[480px] flex-shrink-0 flex-row"
         *ngFor="let dashboardField of dashboard.fields"
       >
-        <div class="flex font-semibold truncate">
+        <div class="flex truncate font-semibold">
           <div class="truncate"> {{ dashboardField.label }}</div>
         </div>
 
-        <div class="flex ml-2 flex-shrink-0">
+        <div class="ml-2 flex flex-shrink-0">
           <div> ({{ dashboardField.result }})</div>
         </div>
       </div>
@@ -52,7 +52,7 @@
 
     <div>
       <div
-        class="flex flex-row space-x-5 py-4 text-base text-gray1 border-gray-300"
+        class="flex flex-row space-x-5 border-gray-300 py-4 text-base text-gray1"
         [ngStyle]="
           report.title !==
             dashboard.reports[dashboard.reports.length - 1].title && {
@@ -62,17 +62,17 @@
         *ngFor="let report of dashboard.reports"
       >
         <div
-          class="flex flex-row w-[500px] flex-shrink-0 items-start justify-start"
+          class="flex w-[500px] flex-shrink-0 flex-row items-start justify-start"
         >
-          <div class="truncate items-start">
-            <div class="truncate mt-2 cursor-default">
+          <div class="items-start truncate">
+            <div class="mt-2 cursor-default truncate">
               {{ report.title }}
             </div>
           </div>
         </div>
 
         <div
-          class="group flex flex-col w-[480px] space-y-4 flex-shrink-0"
+          class="group flex w-[480px] flex-shrink-0 flex-col space-y-4"
           *ngFor="let dashboardField of dashboard.fields"
         >
           <div
@@ -98,7 +98,7 @@
               <ng-template ng-label-tmp let-item="item">
                 <m-field-label
                   [column]="item"
-                  class="flex ml-1 text-sm"
+                  class="ml-1 flex text-sm"
                 ></m-field-label>
               </ng-template>
               <ng-template
@@ -109,14 +109,14 @@
               >
                 <m-field-label
                   [column]="item"
-                  class="flex ml-1 text-sm"
+                  class="ml-1 flex text-sm"
                 ></m-field-label>
               </ng-template>
             </ng-select>
 
             <button
               *ngIf="i === 0"
-              class="flex h-9 w-9 ml-5 items-center justify-center flex-shrink-0 rounded invisible group-hover:visible hover:bg-blue2 focus:outline-none"
+              class="invisible ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded hover:bg-blue2 focus:outline-none group-hover:visible"
               (click)="addListener(report, dashboardField.id)"
             >
               <m-add-icon></m-add-icon>
@@ -124,7 +124,7 @@
 
             <button
               *ngIf="i > 0"
-              class="flex h-9 w-9 ml-5 items-center justify-center flex-shrink-0 rounded invisible group-hover:visible hover:bg-blue2 focus:outline-none"
+              class="invisible ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded hover:bg-blue2 focus:outline-none group-hover:visible"
               (click)="removeListener($event, report, dashboardField.id, i)"
             >
               <m-delete-icon></m-delete-icon>
@@ -138,7 +138,7 @@
   <div class="mt-9">
     <button
       data-cy="editListenDialogApplyButton"
-      class="py-3 w-28 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
+      class="w-28 rounded bg-blue3 py-3 text-base font-medium text-white focus:outline-none"
       type="button"
       (click)="apply()"
       >Apply</button
@@ -146,7 +146,7 @@
 
     <button
       data-cy="editListenDialogCancelButton"
-      class="ml-3 py-3 w-28 text-base rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+      class="ml-3 w-28 rounded border border-blue3 py-3 text-base font-medium text-blue3 focus:outline-none"
       type="button"
       (click)="cancel()"
       >Cancel</button

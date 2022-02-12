@@ -1,19 +1,19 @@
-<div class="bg-blue1 flex flex-col h-full">
-  <div class="flex flex-grow flex-col mx-6 mb-6 mt-8 h-2">
-    <div class="flex flex-row items-center justify-between h-11">
+<div class="flex h-full flex-col bg-blue1">
+  <div class="mx-6 mb-6 mt-8 flex h-2 flex-grow flex-col">
+    <div class="flex h-11 flex-row items-center justify-between">
       <div
         data-cy="projectConnectionsTitle"
-        class="flex font-semibold text-2xl text-gray1"
+        class="flex text-2xl font-semibold text-gray1"
         >{{ pageTitle }}
       </div>
 
       <button
         data-cy="projectConnectionsAddConnectionButton"
-        class="py-2 px-5 text-base text-white rounded font-medium focus:outline-none"
+        class="rounded py-2 px-5 text-base font-medium text-white focus:outline-none"
         type="submit"
         [ngClass]="{
           'bg-blue3': isAdmin === true,
-          'bg-gray-400 cursor-default': isAdmin === false
+          'cursor-default bg-gray-400': isAdmin === false
         }"
         (click)="addConnection()"
         [disabled]="isAdmin === false"
@@ -21,11 +21,11 @@
       >
     </div>
 
-    <div class="flex-grow bg-white mt-6 mb-4 rounded shadow-lg overflow-auto">
+    <div class="mt-6 mb-4 flex-grow overflow-auto rounded bg-white shadow-lg">
       <div class="mx-5 mt-8 text-gray1">
         <table class="min-w-full divide-y divide-gray-500">
           <thead>
-            <tr class="text-sm h-12">
+            <tr class="h-12 text-sm">
               <th class="text-left">Name</th>
               <th class="text-left">Type</th>
               <th class="text-left">SSL (https)</th>
@@ -40,7 +40,7 @@
             </tr>
           </thead>
 
-          <tbody class="text-base divide-y divide-gray-300">
+          <tbody class="divide-y divide-gray-300 text-base">
             <tr
               *ngFor="
                 let connection of connections
@@ -100,10 +100,10 @@
                 <button
                   data-cy="projectConnectionsEditButton"
                   (click)="editConnection(connection, i)"
-                  class="ml-5 py-2 px-3 text-base border rounded shadow-sm leading-3 font-medium focus:outline-none"
+                  class="ml-5 rounded border py-2 px-3 text-base font-medium leading-3 shadow-sm focus:outline-none"
                   [ngClass]="{
                     'cursor-default text-gray-400': isAdmin === false,
-                    'text-gray1 border-gray3': isAdmin === true
+                    'border-gray3 text-gray1': isAdmin === true
                   }"
                   [disabled]="isAdmin === false"
                   >Edit</button
@@ -133,7 +133,7 @@
     </div>
 
     <pagination-controls
-      class="flex justify-center mt-3"
+      class="mt-3 flex justify-center"
       (pageChange)="getConnections($event)"
       id="connections"
     ></pagination-controls>

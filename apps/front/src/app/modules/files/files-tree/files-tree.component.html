@@ -1,6 +1,6 @@
-<div class="flex flex-grow bg-white w-full rounded shadow-lg overflow-y-auto">
+<div class="flex w-full flex-grow overflow-y-auto rounded bg-white shadow-lg">
   <tree-root
-    class="w-full h-2 mt-4"
+    class="mt-4 h-2 w-full"
     #itemsTree
     [nodes]="repo?.nodes"
     [options]="treeOptions"
@@ -9,10 +9,10 @@
     (moveNode)="onMoveNode($event)"
   >
     <ng-template #treeNodeTemplate let-node="node" let-index="index">
-      <div class="flex flex-row h-11 w-[95%]">
+      <div class="flex h-11 w-[95%] flex-row">
         <div
           data-cy="filesTreeItem"
-          class="group flex flex-row cursor-pointer px-5 py-1 w-full select-none"
+          class="group flex w-full cursor-pointer select-none flex-row px-5 py-1"
           [ngClass]="{
             'bg-blue-100': !!fileNodeId && node.data.id === fileNodeId,
             'hover:bg-blue2': !fileNodeId || node.data.id !== fileNodeId
@@ -20,16 +20,16 @@
           (click)="nodeOnClick(node)"
         >
           <div
-            class="relative flex flex-row items-center w-full"
+            class="relative flex w-full flex-row items-center"
             [ngClass]="{
               'ml-10': !node.data.isFolder,
               'ml-3': node.data.isFolder
             }"
           >
-            <div class="flex items-center min-w-[2px]">
+            <div class="flex min-w-[2px] items-center">
               <div
                 *ngIf="node.data.isFolder"
-                class="flex flex-row space-x-1 flex-shrink-0"
+                class="flex flex-shrink-0 flex-row space-x-1"
               >
                 <div class="h-6 w-6" *ngIf="!node.hasChildren"></div>
                 <m-chevron-right-icon
@@ -49,7 +49,7 @@
 
               <div
                 *ngIf="!node.data.isFolder"
-                class="font-bold w-7 text-center flex-shrink-0"
+                class="w-7 flex-shrink-0 text-center font-bold"
                 [ngClass]="{
                   'text-[#5dd0a8]': true
                 }"
@@ -57,7 +57,7 @@
                 {{ node.data.fileId | extension: true | capitalize }}
               </div>
 
-              <div class="ml-2 text-base min-w-[2px] truncate">
+              <div class="ml-2 min-w-[2px] truncate text-base">
                 {{
                   node.parent === null || node.parent.data.virtual
                     ? (projectName$ | async | capitalize)
@@ -75,7 +75,7 @@
 
             <div
               *ngIf="nav.isRepoProd === false && needSave === false"
-              class="flex invisible group-hover:visible flex-shrink-0"
+              class="invisible flex flex-shrink-0 group-hover:visible"
             >
               <m-folder-options
                 *ngIf="node.data.isFolder"

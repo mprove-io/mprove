@@ -1,6 +1,6 @@
-<div class="flex flex-col h-full w-full">
+<div class="flex h-full w-full flex-col">
   <div
-    class="relative flex items-center justify-between h-14 px-6 shadow flex-shrink-0"
+    class="relative flex h-14 flex-shrink-0 items-center justify-between px-6 shadow"
   >
     <m-logo></m-logo>
 
@@ -8,7 +8,7 @@
       <m-branch-select></m-branch-select>
 
       <button
-        class="block ml-3 h-10 px-5 text-gray1 w-full text-left text-base focus:outline-none"
+        class="ml-3 block h-10 w-full px-5 text-left text-base text-gray1 focus:outline-none"
         [ngClass]="{
           'cursor-default text-gray-400':
             !nav || !nav.projectId || needSave === true,
@@ -22,7 +22,7 @@
 
     <div *ngIf="!!nav && !!nav.projectId" class="flex flex-row items-center">
       <button
-        class="block px-5 h-10 text-gray1 text-left text-base focus:outline-none"
+        class="block h-10 px-5 text-left text-base text-gray1 focus:outline-none"
         [ngClass]="{
           'cursor-default text-gray-400':
             !nav || !nav.projectId || needSave === true,
@@ -34,7 +34,7 @@
       >
 
       <button
-        class="block px-5 h-10 text-gray1 text-left text-base focus:outline-none"
+        class="block h-10 px-5 text-left text-base text-gray1 focus:outline-none"
         [ngClass]="{
           'cursor-default text-gray-400':
             !nav || !nav.projectId || needSave === true,
@@ -46,7 +46,7 @@
       >
 
       <button
-        class="block px-5 h-10 text-gray1 text-left text-base focus:outline-none"
+        class="block h-10 px-5 text-left text-base text-gray1 focus:outline-none"
         [ngClass]="{
           'cursor-default text-gray-400':
             !nav || !nav.projectId || needSave === true,

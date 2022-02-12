@@ -1,33 +1,33 @@
-<div class="bg-blue1 flex flex-col h-full">
-  <div class="flex flex-grow flex-col mx-6 mb-6 mt-8 h-2">
+<div class="flex h-full flex-col bg-blue1">
+  <div class="mx-6 mb-6 mt-8 flex h-2 flex-grow flex-col">
     <div class="flex h-11 items-center">
       <div
         data-cy="projectSettingsTitle"
-        class="font-semibold text-2xl text-gray1"
+        class="text-2xl font-semibold text-gray1"
         >{{ pageTitle }}
       </div>
     </div>
 
-    <div class="flex-1 bg-white mt-6 rounded shadow-lg w-full h-2">
-      <div class="w-full h-full overflow-auto">
-        <div class="flex flex-row mt-16 ml-32">
+    <div class="mt-6 h-2 w-full flex-1 rounded bg-white shadow-lg">
+      <div class="h-full w-full overflow-auto">
+        <div class="mt-16 ml-32 flex flex-row">
           <div class="flex flex-col text-base">
-            <div class="h-16 flex items-center justify-end font-semibold"
+            <div class="flex h-16 items-center justify-end font-semibold"
               >Project Name</div
             >
             <div class="flex items-center justify-end font-semibold"></div>
           </div>
 
-          <div class="flex flex-col ml-6">
+          <div class="ml-6 flex flex-col">
             <div
               data-cy="projectSettingsName"
-              class="h-16 flex text-base items-center max-w-xl truncate"
+              class="flex h-16 max-w-xl items-center truncate text-base"
               >{{ project?.name | capitalize }}</div
             >
             <div class="flex items-center">
               <button
                 data-cy="projectSettingsDeleteProjectButton"
-                class="mt-7 px-5 py-3 mb-5 text-base border shadow-sm rounded font-medium focus:outline-none"
+                class="mt-7 mb-5 rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
                 [ngClass]="{
                   'cursor-default text-gray-400': isAdmin === false,
                   'border-red1 text-red1': isAdmin === true
@@ -39,14 +39,14 @@
             </div>
           </div>
 
-          <div class="flex flex-col ml-6">
-            <div class="h-16 flex items-center">
+          <div class="ml-6 flex flex-col">
+            <div class="flex h-16 items-center">
               <button
                 data-cy="projectSettingsEditNameButton"
-                class="py-2 px-3 text-base border rounded shadow-sm leading-3 font-medium focus:outline-none"
+                class="rounded border py-2 px-3 text-base font-medium leading-3 shadow-sm focus:outline-none"
                 [ngClass]="{
                   'cursor-default text-gray-400': isAdmin === false,
-                  'text-gray1 border-gray3': isAdmin === true
+                  'border-gray3 text-gray1': isAdmin === true
                 }"
                 [disabled]="isAdmin === false"
                 (click)="editName()"
