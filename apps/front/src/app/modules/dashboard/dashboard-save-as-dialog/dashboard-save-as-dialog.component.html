@@ -85,12 +85,22 @@
         bindLabel="title"
         bindValue="dashboardId"
       >
-        <ng-template ng-label-tmp let-item="item">
-          <div class="ml-1 truncate">{{ item.title || item.dashboardId }}</div>
-        </ng-template>
-
-        <ng-template ng-option-tmp let-item="item">
-          <div class="ml-1 truncate">{{ item.title || item.dashboardId }}</div>
+        <ng-template ng-label-tmp ng-option-tmp let-item="item">
+          <div
+            class="ml-1 flex flex-row"
+            [isEnabled]="item.canEditOrDeleteDashboard === false"
+            tippy="Dashboard can be modified by author and project members with ProjectAdmin or FilesEditor role. Try to save dashboard as new to become an author."
+          >
+            <div class="flex truncate">
+              <div class="truncate">
+                {{ item.title || item.dashboardId }}
+              </div>
+            </div>
+            <div class="flex flex-grow"></div>
+            <div class="ml-5 mr-5 flex flex-shrink-0 font-semibold">{{
+              item.author
+            }}</div>
+          </div>
         </ng-template>
       </ng-select>
     </div>

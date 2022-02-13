@@ -79,7 +79,10 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     this.dashboard = this.ref.data.dashboard as common.DashboardX;
 
     this.selectedDashboardId =
-      this.dashboard.temp === false ? this.dashboard.dashboardId : undefined;
+      this.dashboard.temp === false &&
+      this.dashboard.canEditOrDeleteDashboard === true
+        ? this.dashboard.dashboardId
+        : undefined;
 
     setValueAndMark({
       control: this.titleForm.controls['title'],
@@ -123,9 +126,10 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendGetDashboardsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.dashboards = resp.payload.dashboards.filter(
-              z => z.canEditOrDeleteDashboard === true
-            );
+            this.dashboards = resp.payload.dashboards.map(z => {
+              (z as any).disabled = !z.canEditOrDeleteDashboard;
+              return z;
+            });
 
             this.makePath();
 
