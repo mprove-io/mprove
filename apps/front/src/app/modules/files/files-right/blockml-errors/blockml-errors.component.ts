@@ -97,7 +97,7 @@ export class BlockmlErrorsComponent implements OnDestroy {
 
       this.nodes = nodes;
 
-      console.log(this.nodes);
+      // console.log(this.nodes);
 
       this.cd.detectChanges();
     })

@@ -58,7 +58,7 @@ export function sawCheckCharsInRefs(
           title: enums.ErTitleEnum.WRONG_CHARS_IN_SQL_ALWAYS_WHERE_REFS,
           message:
             `characters "${wrongCharsString}" can not be used ` +
-            `inside \$\{\} of ${common.FileExtensionEnum.Model}`,
+            `inside \$\{\} of ${common.FileExtensionEnum.Model} (only snake_case "a...z0...9_" is allowed)`,
           lines: [
             {
               line: x.sql_always_where_line_num,

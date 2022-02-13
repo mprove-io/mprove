@@ -65,16 +65,19 @@ export function checkTopValues(
             enums.ParameterEnum.Udf.toString(),
             enums.ParameterEnum.View.toString(),
             enums.ParameterEnum.Model.toString(),
-            enums.ParameterEnum.Dashboard.toString()
+            enums.ParameterEnum.Dashboard.toString(),
+            enums.ParameterEnum.Viz.toString()
           ].indexOf(parameter) > -1 &&
           file[parameter]
             .toString()
-            .match(common.MyRegex.CAPTURE_SPECIAL_CHARS_G())
+            .match(
+              common.MyRegex.CAPTURE_NOT_ALLOWED_FILE_DECLARATION_CHARS_G()
+            )
         ) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.WRONG_CHAR_IN_PARAMETER_VALUE,
-              message: `parameter "${parameter}" contains wrong characters or whitespace`,
+              message: `parameter "${parameter}" contains wrong characters or whitespace (only snake_case "a...zA...Z0...9_" is allowed)`,
               lines: [
                 {
                   line: file[parameter + constants.LINE_NUM],

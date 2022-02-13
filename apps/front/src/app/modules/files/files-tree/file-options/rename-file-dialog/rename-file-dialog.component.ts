@@ -4,6 +4,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
+import { ValidationService } from '~front/app/services/validation.service';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -39,7 +40,11 @@ export class RenameFileDialogComponent implements OnInit {
     this.renameFileForm = this.fb.group({
       fileName: [
         nameArray.join('.'),
-        [Validators.required, Validators.maxLength(255)]
+        [
+          Validators.required,
+          ValidationService.fileNameWrongChars,
+          Validators.maxLength(255)
+        ]
       ],
       fileExt: [this.fileExt]
     });

@@ -139,7 +139,7 @@ export function checkCharsInFieldRefs<T extends types.vmType>(item: {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.WRONG_CHARS_IN_VIEW_FIELDS_REFS,
-            message: `characters "${viewWrongCharsString}" can not be used inside \${} of view`,
+            message: `characters "${viewWrongCharsString}" can not be used inside \${} of view (only snake_case "a...z0...9_" is allowed)`,
             lines: [
               {
                 line: item.lineNum,
@@ -173,7 +173,7 @@ export function checkCharsInFieldRefs<T extends types.vmType>(item: {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.WRONG_CHARS_IN_MODEL_FIELDS_REFS,
-            message: `characters "${modelWrongCharsString}" can not be used inside \${} of model`,
+            message: `characters "${modelWrongCharsString}" can not be used inside \${} of model (only snake_case "a...z0...9_" is allowed)`,
             lines: [
               {
                 line: item.lineNum,

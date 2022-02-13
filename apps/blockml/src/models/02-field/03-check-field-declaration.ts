@@ -80,13 +80,13 @@ export function checkFieldDeclaration<T extends types.vmdType>(
 
       if (
         (field[declaration as keyof interfaces.FieldAny] as any).match(
-          common.MyRegex.CAPTURE_SPECIAL_CHARS_G()
+          common.MyRegex.CAPTURE_NOT_ALLOWED_FIELD_CHARS_G()
         )
       ) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.FIELD_DECLARATION_WRONG_VALUE,
-            message: `parameter "${declaration}" contains wrong characters or whitespace`,
+            message: `parameter "${declaration}" contains wrong characters or whitespace (only snake_case "a...z0...9_" is allowed)`,
             lines: [
               {
                 line: field[

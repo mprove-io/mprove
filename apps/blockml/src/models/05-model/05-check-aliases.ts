@@ -78,6 +78,40 @@ export function checkAliases(
           );
           return;
         }
+
+        //
+
+        let aliasWrongChars: string[] = [];
+
+        let reg2 = common.MyRegex.CAPTURE_NOT_ALLOWED_ALIAS_CHARS_G();
+        let r2;
+
+        while ((r2 = reg2.exec(alias.as))) {
+          aliasWrongChars.push(r2[1]);
+        }
+
+        let aliasWrongCharsString = '';
+
+        if (aliasWrongChars.length > 0) {
+          aliasWrongCharsString = [...new Set(aliasWrongChars)].join(', '); // unique
+
+          item.errors.push(
+            new BmError({
+              title: enums.ErTitleEnum.WRONG_CHARS_IN_ALIAS,
+              message: `Characters "${aliasWrongCharsString}" can not be used for alias (only snake_case "a...z0...9_" is allowed)`,
+              lines: [
+                {
+                  line: alias.asLineNums[0],
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return false;
+        }
+
+        //
       });
     }
 
