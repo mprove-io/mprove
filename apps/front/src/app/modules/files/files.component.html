@@ -12,57 +12,136 @@
           *ngIf="nav?.isRepoProd === false"
           class="flex flex-row items-center"
         >
-          <button
-            type="button"
-            data-cy="filesCommitButton"
-            class="ml-3 rounded py-2 px-5 text-base font-medium text-white focus:outline-none"
-            [ngClass]="{
-              'cursor-default bg-gray-400':
-                repo.repoStatus !== repoStatusNeedCommit || needSave === true,
-              'bg-blue3':
-                repo.repoStatus === repoStatusNeedCommit && needSave === false
-            }"
-            (click)="commit()"
-            [disabled]="
+          <ng-template #templateCommit>
+            <div *ngIf="needSave === true">Need to Save changes</div>
+
+            <div
+              *ngIf="
+                needSave === false && repo.repoStatus === repoStatusNeedResolve
+              "
+              >Need to Resolve conflicts</div
+            >
+
+            <div
+              *ngIf="
+                needSave === false && repo.repoStatus === repoStatusNeedPull
+              "
+              >Need to Pull changes from Production</div
+            >
+
+            <div
+              *ngIf="
+                needSave === false &&
+                (repo.repoStatus === repoStatusOk ||
+                  repo.repoStatus === repoStatusNeedPush)
+              "
+              >No changes to commit</div
+            >
+          </ng-template>
+
+          <div
+            [tippy]="templateCommit"
+            [isEnabled]="
               repo.repoStatus !== repoStatusNeedCommit || needSave === true
             "
-            >Commit</button
           >
+            <button
+              type="button"
+              data-cy="filesCommitButton"
+              class="ml-3 rounded py-2 px-5 text-base font-medium text-white focus:outline-none"
+              [ngClass]="{
+                'cursor-default bg-gray-400':
+                  repo.repoStatus !== repoStatusNeedCommit || needSave === true,
+                'bg-blue3':
+                  repo.repoStatus === repoStatusNeedCommit && needSave === false
+              }"
+              (click)="commit()"
+              [disabled]="
+                repo.repoStatus !== repoStatusNeedCommit || needSave === true
+              "
+              >Commit</button
+            >
+          </div>
 
-          <button
-            type="button"
-            data-cy="filesCommitButton"
-            class="ml-3 rounded py-2 px-5 text-base font-medium text-white focus:outline-none"
+          <ng-template #templatePullFromProduction>
+            <div *ngIf="needSave === true">Need to Save changes</div>
+          </ng-template>
+
+          <div
             *ngIf="repo.repoStatus === repoStatusNeedPull"
-            [ngClass]="{
-              'cursor-default bg-gray-400':
-                repo.repoStatus !== repoStatusNeedPull || needSave === true,
-              'bg-blue3':
-                repo.repoStatus === repoStatusNeedPull && needSave === false
-            }"
-            (click)="pull()"
-            [disabled]="
-              repo.repoStatus !== repoStatusNeedPull || needSave === true
-            "
-            >Pull from Production</button
+            [tippy]="templatePullFromProduction"
+            [isEnabled]="needSave === true"
           >
+            <button
+              type="button"
+              data-cy="filesCommitButton"
+              class="ml-3 rounded py-2 px-5 text-base font-medium text-white focus:outline-none"
+              [ngClass]="{
+                'cursor-default bg-gray-400':
+                  repo.repoStatus !== repoStatusNeedPull || needSave === true,
+                'bg-blue3':
+                  repo.repoStatus === repoStatusNeedPull && needSave === false
+              }"
+              (click)="pull()"
+              [disabled]="
+                repo.repoStatus !== repoStatusNeedPull || needSave === true
+              "
+              >Pull from Production</button
+            >
+          </div>
 
-          <button
-            type="button"
-            data-cy="filesPushButton"
-            class="ml-3 rounded py-2 px-5 text-base font-medium text-white focus:outline-none"
-            [ngClass]="{
-              'cursor-default bg-gray-400':
-                repo.repoStatus !== repoStatusNeedPush || needSave === true,
-              'bg-blue3':
-                repo.repoStatus === repoStatusNeedPush && needSave === false
-            }"
-            (click)="push()"
-            [disabled]="
+          <ng-template #templatePushToProduction>
+            <div *ngIf="needSave === true">Need to Save changes</div>
+
+            <div
+              *ngIf="
+                needSave === false && repo.repoStatus === repoStatusNeedCommit
+              "
+              >Need to Commit changes</div
+            >
+
+            <div
+              *ngIf="
+                needSave === false && repo.repoStatus === repoStatusNeedResolve
+              "
+              >Need to Resolve conflicts</div
+            >
+
+            <div
+              *ngIf="
+                needSave === false && repo.repoStatus === repoStatusNeedPull
+              "
+              >Need to Pull changes from Production</div
+            >
+
+            <div *ngIf="needSave === false && repo.repoStatus === repoStatusOk"
+              >No changes to Push</div
+            >
+          </ng-template>
+
+          <div
+            [tippy]="templatePushToProduction"
+            [isEnabled]="
               repo.repoStatus !== repoStatusNeedPush || needSave === true
             "
-            >Push to Production</button
           >
+            <button
+              type="button"
+              data-cy="filesPushButton"
+              class="ml-3 rounded py-2 px-5 text-base font-medium text-white focus:outline-none"
+              [ngClass]="{
+                'cursor-default bg-gray-400':
+                  repo.repoStatus !== repoStatusNeedPush || needSave === true,
+                'bg-blue3':
+                  repo.repoStatus === repoStatusNeedPush && needSave === false
+              }"
+              (click)="push()"
+              [disabled]="
+                repo.repoStatus !== repoStatusNeedPush || needSave === true
+              "
+              >Push to Production</button
+            >
+          </div>
 
           <div class="relative ml-5">
             <m-repo-options></m-repo-options>

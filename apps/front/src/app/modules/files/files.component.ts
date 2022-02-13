@@ -25,8 +25,10 @@ export class FilesComponent implements OnInit {
   pageTitle = constants.FILES_PAGE_TITLE;
 
   repoStatusNeedCommit = common.RepoStatusEnum.NeedCommit;
-  repoStatusNeedPush = common.RepoStatusEnum.NeedPush;
+  repoStatusNeedResolve = common.RepoStatusEnum.NeedResolve;
   repoStatusNeedPull = common.RepoStatusEnum.NeedPull;
+  repoStatusNeedPush = common.RepoStatusEnum.NeedPush;
+  repoStatusOk = common.RepoStatusEnum.Ok;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
