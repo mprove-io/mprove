@@ -44,6 +44,8 @@ class LayoutItem {
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   pageTitle = frontConstants.DASHBOARD_PAGE_TITLE;
 
+  // @ViewChild(KtdGridComponent, {static: true}) grid: KtdGridComponent;
+
   @ViewChild('scrollable') scrollable: any;
 
   @ViewChildren('chartRep') chartRepComponents: QueryList<ChartRepComponent>;
@@ -227,12 +229,18 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   refreshShow() {
-    this.isShow = false;
-    this.cd.detectChanges();
+    // this.isShow = false;
+    // this.cd.detectChanges();
+    // setTimeout(() => {
+    //   this.isShow = true;
+    //   this.cd.detectChanges();
+    // }, 500);
+
     setTimeout(() => {
-      this.isShow = true;
-      this.cd.detectChanges();
-    }, 500);
+      this.chartRepComponents.forEach(x => {
+        x.updateChartView();
+      });
+    }, 0);
   }
 
   toggleShowReportFilters() {

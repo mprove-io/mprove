@@ -92,6 +92,7 @@
         (click)="stopClick($event)"
       >
         <m-chart-view
+          #chartView
           *ngIf="!!qData && isShow === true"
           [ngClass]="{
             'max-w-max':

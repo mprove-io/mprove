@@ -5,7 +5,9 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  QueryList,
+  ViewChildren
 } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { interval, of, Subscription } from 'rxjs';
@@ -20,6 +22,7 @@ import { DashboardStore } from '~front/app/stores/dashboard.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { ChartViewComponent } from '../chart-view/chart-view.component';
 
 @Component({
   selector: 'm-chart-rep',
@@ -29,6 +32,8 @@ export class ChartRepComponent implements OnInit, OnDestroy {
   chartTypeEnumTable = common.ChartTypeEnum.Table;
   queryStatusEnum = common.QueryStatusEnum;
   queryStatusRunning = common.QueryStatusEnum.Running;
+
+  @ViewChildren('chartView') chartViewComponents: QueryList<ChartViewComponent>;
 
   @Input()
   report: common.ReportX;
@@ -156,6 +161,12 @@ export class ChartRepComponent implements OnInit, OnDestroy {
         queryId: this.report.queryId
       });
     }
+  }
+
+  updateChartView() {
+    this.chartViewComponents.forEach(x => {
+      x.updateChart();
+    });
   }
 
   run(event?: MouseEvent) {

@@ -254,6 +254,7 @@
 
         <div #scrollable class="mt-6 flex h-2 flex-grow flex-row overflow-auto">
           <ktd-grid
+            class="w-[97vw]"
             *ngIf="dashboard?.reports"
             [compactType]="compactType"
             [preventCollision]="preventCollision"
@@ -269,6 +270,7 @@
           >
             <ktd-grid-item
               class="group"
+              [transition]="null"
               *ngFor="let item of layout; trackBy: trackByFn"
               [id]="item.id"
             >

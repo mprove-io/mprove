@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges
+} from '@angular/core';
 import { formatLocale } from 'd3-format';
 import { getChartCurve } from '~front/app/functions/get-chart-curve';
 import { getChartScheme } from '~front/app/functions/get-chart-scheme';
@@ -17,6 +23,8 @@ export class ChartViewComponent implements OnChanges {
   chartTypeEnum = common.ChartTypeEnum;
   chartSchemeTypeEnum = common.ChartSchemeTypeEnum;
   queryStatusEnum = common.QueryStatusEnum;
+
+  // isInitialized = false;
 
   @Input()
   mconfigFields: common.MconfigField[];
@@ -64,10 +72,25 @@ export class ChartViewComponent implements OnChanges {
 
   constructor(
     private dataService: DataService,
-    private formatNumberService: FormatNumberService
+    private formatNumberService: FormatNumberService,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
+    // console.log('chart-view ngOnChanges');
+    // if (this.isInitialized === true) {
+    this.updateChart();
+    // }
+  }
+
+  // ngAfterViewInit() {
+  // console.log('chart-view ngAfterViewInit');
+  // this.updateChart();
+  // this.isInitialized = true;
+  // }
+
+  updateChart() {
+    // console.log('updateChart');
     let checkSelectResult = getSelectValid({
       chart: this.chart,
       mconfigFields: this.mconfigFields
@@ -149,6 +172,8 @@ export class ChartViewComponent implements OnChanges {
           : [];
       // console.log(this.multi);
     }
+
+    this.cd.detectChanges();
   }
 
   onSelect(event: any) {}
