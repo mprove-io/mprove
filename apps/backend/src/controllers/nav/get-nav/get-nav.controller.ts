@@ -112,7 +112,7 @@ export class GetNavController {
       avatarSmall: avatar?.avatar_small,
       avatarBig: avatar?.avatar_big,
       orgId: resultOrgId,
-      orgOwnerId: resultOrg.owner_id,
+      orgOwnerId: resultOrg?.owner_id,
       orgName: resultOrg?.name,
       projectId: resultProjectId,
       projectName: resultProject?.name,
