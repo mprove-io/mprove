@@ -554,13 +554,15 @@ export class ModelComponent implements OnInit, OnDestroy {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendRunQueriesResponse) => {
-          let { runningQueries } = resp.payload;
+        tap((resp: apiToBackend.ToBackendRunQueriesResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let { runningQueries } = resp.payload;
 
-          if (this.isQueryIdTheSameAndServerTsChanged(runningQueries[0])) {
-            this.mqStore.update((state: MqState) =>
-              Object.assign({}, state, { query: runningQueries[0] })
-            );
+            if (this.isQueryIdTheSameAndServerTsChanged(runningQueries[0])) {
+              this.mqStore.update((state: MqState) =>
+                Object.assign({}, state, { query: runningQueries[0] })
+              );
+            }
           }
         }),
         take(1)
@@ -582,20 +584,22 @@ export class ModelComponent implements OnInit, OnDestroy {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendRunQueriesDryResponse) => {
-          let { validQueryEstimates, errorQueries } = resp.payload;
+        tap((resp: apiToBackend.ToBackendRunQueriesDryResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let { validQueryEstimates, errorQueries } = resp.payload;
 
-          if (errorQueries.length > 0) {
-            if (this.isQueryIdTheSameAndServerTsChanged(errorQueries[0])) {
-              this.mqStore.update((state: MqState) =>
-                Object.assign({}, state, { query: errorQueries[0] })
+            if (errorQueries.length > 0) {
+              if (this.isQueryIdTheSameAndServerTsChanged(errorQueries[0])) {
+                this.mqStore.update((state: MqState) =>
+                  Object.assign({}, state, { query: errorQueries[0] })
+                );
+              }
+            } else {
+              this.dryDataSize = this.dataSizeService.getSize(
+                validQueryEstimates[0].estimate
               );
+              this.dryQueryEstimate = validQueryEstimates[0];
             }
-          } else {
-            this.dryDataSize = this.dataSizeService.getSize(
-              validQueryEstimates[0].estimate
-            );
-            this.dryQueryEstimate = validQueryEstimates[0];
           }
         }),
         take(1)
@@ -614,12 +618,14 @@ export class ModelComponent implements OnInit, OnDestroy {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendCancelQueriesResponse) => {
-          let { queries } = resp.payload;
-          if (this.isQueryIdTheSameAndServerTsChanged(queries[0])) {
-            this.mqStore.update((state: MqState) =>
-              Object.assign({}, state, { query: queries[0] })
-            );
+        tap((resp: apiToBackend.ToBackendCancelQueriesResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let { queries } = resp.payload;
+            if (this.isQueryIdTheSameAndServerTsChanged(queries[0])) {
+              this.mqStore.update((state: MqState) =>
+                Object.assign({}, state, { query: queries[0] })
+              );
+            }
           }
         }),
         take(1)

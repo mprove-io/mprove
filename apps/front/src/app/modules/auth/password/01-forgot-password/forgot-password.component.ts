@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { map, take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -52,9 +52,11 @@ export class ForgotPasswordComponent implements OnInit {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendResetUserPasswordResponse) => {
-          localStorage.setItem('PASSWORD_RESET_EMAIL', email);
-          this.router.navigate([common.PATH_PASSWORD_RESET_SENT]);
+        tap((resp: apiToBackend.ToBackendResetUserPasswordResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            localStorage.setItem('PASSWORD_RESET_EMAIL', email);
+            this.router.navigate([common.PATH_PASSWORD_RESET_SENT]);
+          }
         }),
         take(1)
       )

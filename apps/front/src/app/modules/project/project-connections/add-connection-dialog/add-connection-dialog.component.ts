@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
-import { map, take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { conditionalValidator } from '~front/app/functions/conditional-validator';
 import { ApiService } from '~front/app/services/api.service';
 import { ValidationService } from '~front/app/services/validation.service';
@@ -215,16 +215,18 @@ export class AddConnectionDialogComponent implements OnInit {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendCreateConnectionResponse) => {
-          let connection = resp.payload.connection;
+        tap((resp: apiToBackend.ToBackendCreateConnectionResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let connection = resp.payload.connection;
 
-          this.connectionsStore.update(
-            state =>
-              <ConnectionsState>{
-                connections: [...state.connections, connection],
-                total: state.total
-              }
-          );
+            this.connectionsStore.update(
+              state =>
+                <ConnectionsState>{
+                  connections: [...state.connections, connection],
+                  total: state.total
+                }
+            );
+          }
         }),
         take(1)
       )

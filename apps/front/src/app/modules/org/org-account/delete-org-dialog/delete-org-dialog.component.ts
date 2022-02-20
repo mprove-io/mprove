@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
-import { map, take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { NavStore } from '~front/app/stores/nav.store';
 import { OrgStore } from '~front/app/stores/org.store';
@@ -36,14 +36,16 @@ export class DeleteOrgDialogComponent {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendDeleteOrgResponse) => {
-          localStorage.setItem(
-            constants.LOCAL_STORAGE_DELETED_ORG_NAME,
-            this.ref.data.orgName
-          );
-          this.router.navigate([common.PATH_ORG_DELETED]);
-          this.navStore.clearOrgAndDeps();
-          this.orgStore.reset();
+        tap((resp: apiToBackend.ToBackendDeleteOrgResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            localStorage.setItem(
+              constants.LOCAL_STORAGE_DELETED_ORG_NAME,
+              this.ref.data.orgName
+            );
+            this.router.navigate([common.PATH_ORG_DELETED]);
+            this.navStore.clearOrgAndDeps();
+            this.orgStore.reset();
+          }
         }),
         take(1)
       )

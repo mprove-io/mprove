@@ -150,7 +150,7 @@ export class MconfigService {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse) => {
+        tap((resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let { mconfig, query } = resp.payload;
 

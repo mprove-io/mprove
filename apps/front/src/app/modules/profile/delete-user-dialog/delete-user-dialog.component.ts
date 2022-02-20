@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
-import { map, take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -26,8 +26,10 @@ export class DeleteUserDialogComponent {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendDeleteUserResponse) => {
-          this.router.navigate([common.PATH_USER_DELETED]);
+        tap((resp: apiToBackend.ToBackendDeleteUserResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.router.navigate([common.PATH_USER_DELETED]);
+          }
         }),
         take(1)
       )

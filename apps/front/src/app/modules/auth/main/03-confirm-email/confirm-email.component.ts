@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
@@ -47,20 +47,22 @@ export class ConfirmEmailComponent implements OnInit {
         }
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendConfirmUserEmailResponse) => {
-          let user = resp.payload.user;
-          let token = resp.payload.token;
+        tap((resp: apiToBackend.ToBackendConfirmUserEmailResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let user = resp.payload.user;
+            let token = resp.payload.token;
 
-          if (common.isDefined(user) && common.isDefined(token)) {
-            // first email verification
-            this.myDialogService.showEmailConfirmed();
-            this.userStore.update(user);
-            this.authService.stopWatch();
-            localStorage.setItem(constants.LOCAL_STORAGE_TOKEN, token);
-            this.router.navigate([common.PATH_LOGIN_SUCCESS]);
-          } else {
-            // email was verified already
-            this.router.navigate([common.PATH_EMAIL_CONFIRMED]);
+            if (common.isDefined(user) && common.isDefined(token)) {
+              // first email verification
+              this.myDialogService.showEmailConfirmed();
+              this.userStore.update(user);
+              this.authService.stopWatch();
+              localStorage.setItem(constants.LOCAL_STORAGE_TOKEN, token);
+              this.router.navigate([common.PATH_LOGIN_SUCCESS]);
+            } else {
+              // email was verified already
+              this.router.navigate([common.PATH_EMAIL_CONFIRMED]);
+            }
           }
         }),
         take(1)

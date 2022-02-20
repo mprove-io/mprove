@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
@@ -86,17 +86,19 @@ export class CompleteRegistrationComponent implements OnInit {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendCompleteUserRegistrationResponse) => {
-          let user = resp.payload.user;
-          let token = resp.payload.token;
+        tap((resp: apiToBackend.ToBackendCompleteUserRegistrationResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let user = resp.payload.user;
+            let token = resp.payload.token;
 
-          if (common.isDefined(user) && common.isDefined(token)) {
-            // first email verification
-            this.myDialogService.showEmailConfirmed();
-            this.userStore.update(user);
-            this.authService.stopWatch();
-            localStorage.setItem(constants.LOCAL_STORAGE_TOKEN, token);
-            this.router.navigate([common.PATH_LOGIN_SUCCESS]);
+            if (common.isDefined(user) && common.isDefined(token)) {
+              // first email verification
+              this.myDialogService.showEmailConfirmed();
+              this.userStore.update(user);
+              this.authService.stopWatch();
+              localStorage.setItem(constants.LOCAL_STORAGE_TOKEN, token);
+              this.router.navigate([common.PATH_LOGIN_SUCCESS]);
+            }
           }
         }),
         take(1)

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { map, take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { UserStore } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -57,12 +57,14 @@ export class RegisterComponent implements OnInit {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendRegisterUserResponse) => {
-          let user = resp.payload.user;
+        tap((resp: apiToBackend.ToBackendRegisterUserResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let user = resp.payload.user;
 
-          this.userStore.update(user);
+            this.userStore.update(user);
 
-          this.router.navigate([common.PATH_VERIFY_EMAIL]);
+            this.router.navigate([common.PATH_VERIFY_EMAIL]);
+          }
         }),
         take(1)
       )

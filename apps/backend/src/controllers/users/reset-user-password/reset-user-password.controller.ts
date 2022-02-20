@@ -31,6 +31,12 @@ export class ResetUserPasswordController {
       email: email
     });
 
+    if (user.alias === common.RESTRICTED_USER_ALIAS) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_RESTRICTED_USER
+      });
+    }
+
     this.usersService.checkUserHashIsDefined({ user: user });
 
     user.password_reset_token = common.makeId();

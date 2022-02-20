@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
 import { ValidationService } from '~front/app/services/validation.service';
@@ -72,8 +72,10 @@ export class UpdatePasswordComponent implements OnInit {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendUpdateUserPasswordResponse) => {
-          this.router.navigate([common.PATH_NEW_PASSWORD_WAS_SET]);
+        tap((resp: apiToBackend.ToBackendUpdateUserPasswordResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.router.navigate([common.PATH_NEW_PASSWORD_WAS_SET]);
+          }
         }),
         take(1)
       )

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
 import { UserStore } from '~front/app/stores/user.store';
@@ -71,18 +71,20 @@ export class LoginComponent implements OnInit {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendLoginUserResponse) => {
-          let user = resp.payload.user;
-          let token = resp.payload.token;
+        tap((resp: apiToBackend.ToBackendLoginUserResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let user = resp.payload.user;
+            let token = resp.payload.token;
 
-          this.userStore.update(user);
+            this.userStore.update(user);
 
-          if (user.isEmailVerified === true) {
-            this.authService.stopWatch();
-            localStorage.setItem(constants.LOCAL_STORAGE_TOKEN, token);
-            this.router.navigate([common.PATH_LOGIN_SUCCESS]);
-          } else {
-            this.router.navigate([common.PATH_VERIFY_EMAIL]);
+            if (user.isEmailVerified === true) {
+              this.authService.stopWatch();
+              localStorage.setItem(constants.LOCAL_STORAGE_TOKEN, token);
+              this.router.navigate([common.PATH_LOGIN_SUCCESS]);
+            } else {
+              this.router.navigate([common.PATH_VERIFY_EMAIL]);
+            }
           }
         }),
         take(1)

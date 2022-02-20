@@ -71,3 +71,5 @@ export const PATH_CONNECTIONS = 'connections';
 export const PATH_TEAM = 'team';
 
 export const METHOD_RABBIT = 'RABBIT';
+
+export const RESTRICTED_USER_ALIAS = 'demo-user';

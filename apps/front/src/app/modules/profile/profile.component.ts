@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { map, take, tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { getTimezoneLabelByValue } from '~common/_index';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
@@ -57,9 +57,11 @@ export class ProfileComponent implements OnInit {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendResetUserPasswordResponse) => {
-          localStorage.setItem('PASSWORD_RESET_EMAIL', email);
-          this.router.navigate([common.PATH_PASSWORD_RESET_SENT_AUTH]);
+        tap((resp: apiToBackend.ToBackendResetUserPasswordResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            localStorage.setItem('PASSWORD_RESET_EMAIL', email);
+            this.router.navigate([common.PATH_PASSWORD_RESET_SENT_AUTH]);
+          }
         }),
         take(1)
       )

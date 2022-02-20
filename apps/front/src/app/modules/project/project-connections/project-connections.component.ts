@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { map, take, tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { ConnectionsQuery } from '~front/app/queries/connections.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -85,9 +85,11 @@ export class ProjectConnectionsComponent implements OnInit {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendGetConnectionsResponse) => {
-          this.connectionsStore.update(resp.payload);
-          this.currentPage = pageNum;
+        tap((resp: apiToBackend.ToBackendGetConnectionsResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.connectionsStore.update(resp.payload);
+            this.currentPage = pageNum;
+          }
         }),
         take(1)
       )

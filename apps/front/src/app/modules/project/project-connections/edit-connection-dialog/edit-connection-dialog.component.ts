@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
-import { map, take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { conditionalValidator } from '~front/app/functions/conditional-validator';
 import { ApiService } from '~front/app/services/api.service';
 import { ValidationService } from '~front/app/services/validation.service';
@@ -213,15 +213,17 @@ export class EditConnectionDialogComponent implements OnInit {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendEditConnectionResponse) => {
-          this.connectionsStore.update(state => {
-            state.connections[this.ref.data.i] = resp.payload.connection;
+        tap((resp: apiToBackend.ToBackendEditConnectionResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.connectionsStore.update(state => {
+              state.connections[this.ref.data.i] = resp.payload.connection;
 
-            return <ConnectionsState>{
-              connections: [...state.connections],
-              total: state.total
-            };
-          });
+              return <ConnectionsState>{
+                connections: [...state.connections],
+                total: state.total
+              };
+            });
+          }
         }),
         take(1)
       )

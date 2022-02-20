@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
-import { map, take, tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { UserStore } from '~front/app/stores/user.store';
@@ -45,9 +45,11 @@ export class EditTimezoneDialogComponent {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendSetUserTimezoneResponse) => {
-          let user = resp.payload.user;
-          this.userStore.update(user);
+        tap((resp: apiToBackend.ToBackendSetUserTimezoneResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let user = resp.payload.user;
+            this.userStore.update(user);
+          }
         }),
         take(1)
       )

@@ -36,6 +36,12 @@ export class DeleteVizController {
     @ValidateRequest(apiToBackend.ToBackendDeleteVizRequest)
     reqValid: apiToBackend.ToBackendDeleteVizRequest
   ) {
+    if (user.alias === common.RESTRICTED_USER_ALIAS) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_RESTRICTED_USER
+      });
+    }
+
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, branchId, vizId } = reqValid.payload;
 

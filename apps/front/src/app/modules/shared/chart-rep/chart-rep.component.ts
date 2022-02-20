@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { interval, of, Subscription } from 'rxjs';
-import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
+import { startWith, switchMap, take, tap } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -184,11 +184,13 @@ export class ChartRepComponent implements OnInit, OnDestroy {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendRunQueriesResponse) => {
-          let { runningQueries } = resp.payload;
+        tap((resp: apiToBackend.ToBackendRunQueriesResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let { runningQueries } = resp.payload;
 
-          this.query = runningQueries[0];
-          this.spinner.show(this.report.title);
+            this.query = runningQueries[0];
+            this.spinner.show(this.report.title);
+          }
         }),
         take(1)
       )

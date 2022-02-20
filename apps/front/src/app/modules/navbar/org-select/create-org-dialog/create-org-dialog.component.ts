@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
-import { map, take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -52,23 +52,25 @@ export class CreateOrgDialogComponent implements OnInit {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendCreateOrgResponse) => {
-          this.router.navigate([
-            common.PATH_ORG,
-            resp.payload.org.orgId,
-            common.PATH_ACCOUNT
-          ]);
+        tap((resp: apiToBackend.ToBackendCreateOrgResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.router.navigate([
+              common.PATH_ORG,
+              resp.payload.org.orgId,
+              common.PATH_ACCOUNT
+            ]);
 
-          this.navStore.update(state =>
-            Object.assign({}, state, <NavState>{
-              projectId: undefined,
-              projectName: undefined,
-              isRepoProd: true,
-              branchId: undefined
-            })
-          );
+            this.navStore.update(state =>
+              Object.assign({}, state, <NavState>{
+                projectId: undefined,
+                projectName: undefined,
+                isRepoProd: true,
+                branchId: undefined
+              })
+            );
 
-          localStorage.removeItem(constants.LOCAL_STORAGE_PROJECT_ID);
+            localStorage.removeItem(constants.LOCAL_STORAGE_PROJECT_ID);
+          }
         }),
         take(1)
       )

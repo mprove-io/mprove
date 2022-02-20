@@ -28,6 +28,12 @@ export class ResendUserEmailController {
       });
     }
 
+    if (user.alias === common.RESTRICTED_USER_ALIAS) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_RESTRICTED_USER
+      });
+    }
+
     if (user.is_email_verified === common.BoolEnum.TRUE) {
       let payload: apiToBackend.ToBackendResendUserEmailResponsePayload = {
         isEmailVerified: true

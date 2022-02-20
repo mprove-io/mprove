@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map, take, tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { NavQuery } from '../queries/nav.query';
@@ -59,8 +59,10 @@ export class DashboardService {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendCreateTempDashboardResponse) => {
-          this.navigateService.navigateToDashboard(newDashboardId);
+        tap((resp: apiToBackend.ToBackendCreateTempDashboardResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.navigateService.navigateToDashboard(newDashboardId);
+          }
         }),
         take(1)
       )

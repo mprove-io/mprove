@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
-import { map, take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -35,18 +35,20 @@ export class DeleteBranchDialogComponent {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendDeleteBranchResponse) => {
-          this.router.navigate([
-            common.PATH_ORG,
-            this.ref.data.orgId,
-            common.PATH_PROJECT,
-            this.ref.data.projectId,
-            common.PATH_REPO,
-            common.PROD_REPO_ID,
-            common.PATH_BRANCH,
-            common.BRANCH_MASTER,
-            common.PATH_FILES
-          ]);
+        tap((resp: apiToBackend.ToBackendDeleteBranchResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.router.navigate([
+              common.PATH_ORG,
+              this.ref.data.orgId,
+              common.PATH_PROJECT,
+              this.ref.data.projectId,
+              common.PATH_REPO,
+              common.PROD_REPO_ID,
+              common.PATH_BRANCH,
+              common.BRANCH_MASTER,
+              common.PATH_FILES
+            ]);
+          }
         }),
         take(1)
       )

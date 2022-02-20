@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { map, take, tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { makeInitials } from '~front/app/functions/make-initials';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -107,9 +107,11 @@ export class ProjectTeamComponent implements OnInit {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendGetMembersResponse) => {
-          this.teamStore.update(resp.payload);
-          this.currentPage = pageNum;
+        tap((resp: apiToBackend.ToBackendGetMembersResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.teamStore.update(resp.payload);
+            this.currentPage = pageNum;
+          }
         }),
         take(1)
       )
@@ -208,18 +210,20 @@ export class ProjectTeamComponent implements OnInit {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendEditMemberResponse) => {
-          this.teamStore.update(state => {
-            state.members[i] = resp.payload.member;
+        tap((resp: apiToBackend.ToBackendEditMemberResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.teamStore.update(state => {
+              state.members[i] = resp.payload.member;
 
-            return <TeamState>{
-              members: [...state.members],
-              total: state.total
-            };
-          });
+              return <TeamState>{
+                members: [...state.members],
+                total: state.total
+              };
+            });
 
-          if (resp.payload.member.memberId === this.userId) {
-            this.memberStore.update(resp.payload.member);
+            if (resp.payload.member.memberId === this.userId) {
+              this.memberStore.update(resp.payload.member);
+            }
           }
         }),
         take(1)
@@ -254,15 +258,17 @@ export class ProjectTeamComponent implements OnInit {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendEditMemberResponse) => {
-          this.teamStore.update(state => {
-            state.members[i] = resp.payload.member;
+        tap((resp: apiToBackend.ToBackendEditMemberResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.teamStore.update(state => {
+              state.members[i] = resp.payload.member;
 
-            return <TeamState>{
-              members: [...state.members],
-              total: state.total
-            };
-          });
+              return <TeamState>{
+                members: [...state.members],
+                total: state.total
+              };
+            });
+          }
         }),
         take(1)
       )

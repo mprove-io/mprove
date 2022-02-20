@@ -1,5 +1,6 @@
 import { Controller, Post } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
@@ -19,6 +20,12 @@ export class SetUserTimezoneController {
     @ValidateRequest(apiToBackend.ToBackendSetUserTimezoneRequest)
     reqValid: apiToBackend.ToBackendSetUserTimezoneRequest
   ) {
+    if (user.alias === common.RESTRICTED_USER_ALIAS) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_RESTRICTED_USER
+      });
+    }
+
     let { timezone } = reqValid.payload;
 
     user.timezone = timezone;

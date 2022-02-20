@@ -27,6 +27,12 @@ export class DeleteUserController {
     @ValidateRequest(apiToBackend.ToBackendDeleteUserRequest)
     reqValid: apiToBackend.ToBackendDeleteUserRequest
   ) {
+    if (user.alias === common.RESTRICTED_USER_ALIAS) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_RESTRICTED_USER
+      });
+    }
+
     let { traceId } = reqValid.info;
 
     let ownerOrgs = await this.orgsRepository.find({

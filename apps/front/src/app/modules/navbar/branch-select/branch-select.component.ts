@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { switchMap, take, tap } from 'rxjs/operators';
 import { constants } from '~common/barrels/constants';
 import { makeBranchExtraId } from '~front/app/functions/make-branch-extra-id';
 import { makeBranchExtraName } from '~front/app/functions/make-branch-extra-name';
@@ -161,55 +161,56 @@ export class BranchSelectComponent {
               payload
             )
             .pipe(
-              map((resp: apiToBackend.ToBackendGetBranchesListResponse) => {
+              tap((resp: apiToBackend.ToBackendGetBranchesListResponse) => {
                 if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-                  return resp.payload.branchesList;
+                  let x = resp.payload.branchesList;
+
+                  this.branchesList = x.map(z =>
+                    this.makeBranchItem({
+                      branchId: z.branchId,
+                      isRepoProd: z.isRepoProd,
+                      alias: user.alias,
+                      userId: user.userId
+                    })
+                  );
+
+                  let prodBranchesMaster = this.branchesList.filter(
+                    y =>
+                      y.isRepoProd === true &&
+                      y.branchId === common.BRANCH_MASTER
+                  );
+
+                  let prodBranchesNotMaster = this.branchesList.filter(
+                    y =>
+                      y.isRepoProd === true &&
+                      y.branchId !== common.BRANCH_MASTER
+                  );
+
+                  let localBranchesMaster = this.branchesList.filter(
+                    y =>
+                      y.isRepoProd === false &&
+                      y.branchId === common.BRANCH_MASTER
+                  );
+
+                  let localBranchesNotMaster = this.branchesList.filter(
+                    y =>
+                      y.isRepoProd === false &&
+                      y.branchId !== common.BRANCH_MASTER
+                  );
+
+                  this.branchesList =
+                    this.isEditor === true
+                      ? [
+                          ...prodBranchesMaster,
+                          ...prodBranchesNotMaster,
+                          ...localBranchesMaster,
+                          ...localBranchesNotMaster
+                        ]
+                      : [...prodBranchesMaster, ...prodBranchesNotMaster];
+
+                  this.branchesListLength = x.length;
+                  this.branchesListLoading = false;
                 }
-              }),
-              tap(x => {
-                this.branchesList = x.map(z =>
-                  this.makeBranchItem({
-                    branchId: z.branchId,
-                    isRepoProd: z.isRepoProd,
-                    alias: user.alias,
-                    userId: user.userId
-                  })
-                );
-
-                let prodBranchesMaster = this.branchesList.filter(
-                  y =>
-                    y.isRepoProd === true && y.branchId === common.BRANCH_MASTER
-                );
-
-                let prodBranchesNotMaster = this.branchesList.filter(
-                  y =>
-                    y.isRepoProd === true && y.branchId !== common.BRANCH_MASTER
-                );
-
-                let localBranchesMaster = this.branchesList.filter(
-                  y =>
-                    y.isRepoProd === false &&
-                    y.branchId === common.BRANCH_MASTER
-                );
-
-                let localBranchesNotMaster = this.branchesList.filter(
-                  y =>
-                    y.isRepoProd === false &&
-                    y.branchId !== common.BRANCH_MASTER
-                );
-
-                this.branchesList =
-                  this.isEditor === true
-                    ? [
-                        ...prodBranchesMaster,
-                        ...prodBranchesNotMaster,
-                        ...localBranchesMaster,
-                        ...localBranchesNotMaster
-                      ]
-                    : [...prodBranchesMaster, ...prodBranchesNotMaster];
-
-                this.branchesListLength = x.length;
-                this.branchesListLoading = false;
               })
             )
         ),

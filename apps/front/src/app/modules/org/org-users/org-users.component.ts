@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { map, take, tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { makeInitials } from '~front/app/functions/make-initials';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { OrgQuery } from '~front/app/queries/org.query';
@@ -86,12 +86,14 @@ export class OrgUsersComponent implements OnInit {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendGetOrgUsersResponse) => {
-          this.usersStore.update({
-            users: resp.payload.orgUsersList,
-            total: resp.payload.total
-          });
-          this.currentPage = pageNum;
+        tap((resp: apiToBackend.ToBackendGetOrgUsersResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.usersStore.update({
+              users: resp.payload.orgUsersList,
+              total: resp.payload.total
+            });
+            this.currentPage = pageNum;
+          }
         })
       )
       .subscribe();

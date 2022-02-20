@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
-import { map, take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { NavStore } from '~front/app/stores/nav.store';
 import { OrgStore } from '~front/app/stores/org.store';
@@ -60,19 +60,21 @@ export class EditOrgOwnerDialogComponent implements OnInit {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendSetOrgOwnerResponse) => {
-          let org = resp.payload.org;
-          localStorage.setItem(
-            constants.LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME,
-            org.name
-          );
-          localStorage.setItem(
-            constants.LOCAL_STORAGE_NEW_ORG_OWNER,
-            newOwnerEmail
-          );
-          this.router.navigate([common.PATH_ORG_OWNER_CHANGED]);
-          this.orgStore.reset();
-          this.navStore.clearOrgAndDeps();
+        tap((resp: apiToBackend.ToBackendSetOrgOwnerResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let org = resp.payload.org;
+            localStorage.setItem(
+              constants.LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME,
+              org.name
+            );
+            localStorage.setItem(
+              constants.LOCAL_STORAGE_NEW_ORG_OWNER,
+              newOwnerEmail
+            );
+            this.router.navigate([common.PATH_ORG_OWNER_CHANGED]);
+            this.orgStore.reset();
+            this.navStore.clearOrgAndDeps();
+          }
         }),
         take(1)
       )

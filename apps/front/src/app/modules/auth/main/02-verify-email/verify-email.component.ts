@@ -62,13 +62,15 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendResendUserEmailResponse) => {
-          let isEmailVerified = resp.payload.isEmailVerified;
+        tap((resp: apiToBackend.ToBackendResendUserEmailResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let isEmailVerified = resp.payload.isEmailVerified;
 
-          if (isEmailVerified === true) {
-            this.router.navigate([common.PATH_LOGIN]);
-          } else {
-            this.startTimer();
+            if (isEmailVerified === true) {
+              this.router.navigate([common.PATH_LOGIN]);
+            } else {
+              this.startTimer();
+            }
           }
         }),
         take(1)

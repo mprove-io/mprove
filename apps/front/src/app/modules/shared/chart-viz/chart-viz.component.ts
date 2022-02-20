@@ -204,10 +204,12 @@ export class ChartVizComponent implements OnInit, OnDestroy {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendRunQueriesResponse) => {
-          let { runningQueries } = resp.payload;
+        tap((resp: apiToBackend.ToBackendRunQueriesResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let { runningQueries } = resp.payload;
 
-          this.query = runningQueries[0];
+            this.query = runningQueries[0];
+          }
         }),
         take(1)
       )

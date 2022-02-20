@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
-import { map, take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { TeamState, TeamStore } from '~front/app/stores/team.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-invite-member-dialog',
@@ -50,15 +51,17 @@ export class InviteMemberDialogComponent implements OnInit {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendCreateMemberResponse) => {
-          let member = resp.payload.member;
-          this.teamStore.update(
-            state =>
-              <TeamState>{
-                members: [...state.members, member],
-                total: state.total
-              }
-          );
+        tap((resp: apiToBackend.ToBackendCreateMemberResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let member = resp.payload.member;
+            this.teamStore.update(
+              state =>
+                <TeamState>{
+                  members: [...state.members, member],
+                  total: state.total
+                }
+            );
+          }
         }),
         take(1)
       )

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
-import { map, take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -50,14 +50,16 @@ export class CreateProjectDialogComponent implements OnInit {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendCreateProjectResponse) => {
-          this.router.navigate([
-            common.PATH_ORG,
-            resp.payload.project.orgId,
-            common.PATH_PROJECT,
-            resp.payload.project.projectId,
-            common.PATH_SETTINGS
-          ]);
+        tap((resp: apiToBackend.ToBackendCreateProjectResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.router.navigate([
+              common.PATH_ORG,
+              resp.payload.project.orgId,
+              common.PATH_PROJECT,
+              resp.payload.project.projectId,
+              common.PATH_SETTINGS
+            ]);
+          }
         }),
         take(1)
       )

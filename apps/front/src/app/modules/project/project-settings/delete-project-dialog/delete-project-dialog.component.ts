@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
-import { map, take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { NavStore } from '~front/app/stores/nav.store';
 import { ProjectStore } from '~front/app/stores/project.store';
@@ -36,14 +36,16 @@ export class DeleteProjectDialogComponent {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendDeleteProjectResponse) => {
-          localStorage.setItem(
-            constants.LOCAL_STORAGE_DELETED_PROJECT_NAME,
-            this.ref.data.projectName
-          );
-          this.router.navigate([common.PATH_PROJECT_DELETED]);
-          this.navStore.clearProjectAndDeps();
-          this.projectStore.reset();
+        tap((resp: apiToBackend.ToBackendDeleteProjectResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            localStorage.setItem(
+              constants.LOCAL_STORAGE_DELETED_PROJECT_NAME,
+              this.ref.data.projectName
+            );
+            this.router.navigate([common.PATH_PROJECT_DELETED]);
+            this.navStore.clearProjectAndDeps();
+            this.projectStore.reset();
+          }
         }),
         take(1)
       )

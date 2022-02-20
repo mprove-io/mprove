@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { interval, of, Subscription } from 'rxjs';
-import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
+import { startWith, switchMap, take, tap } from 'rxjs/operators';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -163,10 +163,12 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendRunQueriesResponse) => {
-          let { runningQueries } = resp.payload;
+        tap((resp: apiToBackend.ToBackendRunQueriesResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let { runningQueries } = resp.payload;
 
-          this.query = runningQueries[0];
+            this.query = runningQueries[0];
+          }
         }),
         take(1)
       )

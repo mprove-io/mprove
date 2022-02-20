@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
-import { map, take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { ProjectStore } from '~front/app/stores/project.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-edit-project-name-dialog',
@@ -51,15 +52,17 @@ export class EditProjectNameDialogComponent implements OnInit {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendSetProjectInfoResponse) => {
-          let project = resp.payload.project;
-          this.projectStore.update(project);
-          this.navStore.update(state =>
-            Object.assign({}, state, <NavState>{
-              projectId: project.projectId,
-              projectName: project.name
-            })
-          );
+        tap((resp: apiToBackend.ToBackendSetProjectInfoResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let project = resp.payload.project;
+            this.projectStore.update(project);
+            this.navStore.update(state =>
+              Object.assign({}, state, <NavState>{
+                projectId: project.projectId,
+                projectName: project.name
+              })
+            );
+          }
         }),
         take(1)
       )

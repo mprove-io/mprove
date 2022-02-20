@@ -40,6 +40,12 @@ export class CreateVizController {
     @ValidateRequest(apiToBackend.ToBackendCreateVizRequest)
     reqValid: apiToBackend.ToBackendCreateVizRequest
   ) {
+    if (user.alias === common.RESTRICTED_USER_ALIAS) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_RESTRICTED_USER
+      });
+    }
+
     let { traceId } = reqValid.info;
     let {
       projectId,

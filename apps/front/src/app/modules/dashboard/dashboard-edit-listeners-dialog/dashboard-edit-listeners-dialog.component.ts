@@ -84,46 +84,47 @@ export class DashboardEditListenersDialogComponent implements OnInit {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendGetModelsResponse) => {
-          this.spinner.hide(this.spinnerName);
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.spinner.hide(this.spinnerName);
 
-          this.models = resp.payload.models;
+            this.models = resp.payload.models;
 
-          this.dashboard.reports.forEach(x => {
-            let model = this.models.find(m => m.modelId === x.modelId);
+            this.dashboard.reports.forEach(x => {
+              let model = this.models.find(m => m.modelId === x.modelId);
 
-            let swap: { [a: string]: string[] } = {};
+              let swap: { [a: string]: string[] } = {};
 
-            Object.keys(x.listen).forEach(modelFieldId => {
-              let dashboardFieldId = x.listen[modelFieldId];
+              Object.keys(x.listen).forEach(modelFieldId => {
+                let dashboardFieldId = x.listen[modelFieldId];
 
-              if (common.isUndefined(swap[dashboardFieldId])) {
-                swap[dashboardFieldId] = [modelFieldId];
-              } else {
-                swap[dashboardFieldId].push(modelFieldId);
-              }
+                if (common.isUndefined(swap[dashboardFieldId])) {
+                  swap[dashboardFieldId] = [modelFieldId];
+                } else {
+                  swap[dashboardFieldId].push(modelFieldId);
+                }
+              });
+
+              let modelFields: { [a: string]: common.ModelField[] } = {};
+
+              this.dashboard.fields.forEach(f => {
+                modelFields[f.id] = [
+                  <ModelField>{ id: undefined },
+                  ...model.fields.filter(y => y.result === f.result)
+                ];
+
+                if (common.isUndefined(swap[f.id])) {
+                  swap[f.id] = [undefined];
+                }
+              });
+
+              (x as ReportX2).modelFields = modelFields;
+
+              (x as ReportX2).mconfigListenSwap = swap;
             });
 
-            let modelFields: { [a: string]: common.ModelField[] } = {};
-
-            this.dashboard.fields.forEach(f => {
-              modelFields[f.id] = [
-                <ModelField>{ id: undefined },
-                ...model.fields.filter(y => y.result === f.result)
-              ];
-
-              if (common.isUndefined(swap[f.id])) {
-                swap[f.id] = [undefined];
-              }
-            });
-
-            (x as ReportX2).modelFields = modelFields;
-
-            (x as ReportX2).mconfigListenSwap = swap;
-          });
-
-          // console.log(this.dashboard.reports);
-
-          this.cd.detectChanges();
+            // console.log(this.dashboard.reports);
+            this.cd.detectChanges();
+          }
         })
       )
       .toPromise();

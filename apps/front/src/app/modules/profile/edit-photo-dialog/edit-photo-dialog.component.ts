@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxImageCompressService } from 'ngx-image-compress';
-import { map, take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-edit-photo-dialog',
@@ -74,13 +75,15 @@ export class EditPhotoDialogComponent {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendSetAvatarResponse) => {
-          this.navStore.update(state =>
-            Object.assign({}, state, <NavState>{
-              avatarSmall: resp.payload.avatarSmall,
-              avatarBig: resp.payload.avatarBig
-            })
-          );
+        tap((resp: apiToBackend.ToBackendSetAvatarResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.navStore.update(state =>
+              Object.assign({}, state, <NavState>{
+                avatarSmall: resp.payload.avatarSmall,
+                avatarBig: resp.payload.avatarBig
+              })
+            );
+          }
         }),
         take(1)
       )

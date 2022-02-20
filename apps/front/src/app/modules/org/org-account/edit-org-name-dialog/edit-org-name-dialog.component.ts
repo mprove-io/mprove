@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
-import { map, take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { OrgStore } from '~front/app/stores/org.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-edit-org-name-dialog',
@@ -51,15 +52,17 @@ export class EditOrgNameDialogComponent implements OnInit {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendSetOrgInfoResponse) => {
-          let org = resp.payload.org;
-          this.orgStore.update(org);
-          this.navStore.update(state =>
-            Object.assign({}, state, <NavState>{
-              orgId: org.orgId,
-              orgName: org.name
-            })
-          );
+        tap((resp: apiToBackend.ToBackendSetOrgInfoResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let org = resp.payload.org;
+            this.orgStore.update(org);
+            this.navStore.update(state =>
+              Object.assign({}, state, <NavState>{
+                orgId: org.orgId,
+                orgName: org.name
+              })
+            );
+          }
         }),
         take(1)
       )
