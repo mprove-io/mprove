@@ -271,7 +271,7 @@ export class ApiService {
       } else if (
         infoErrorMessage === apiToBackend.ErEnum.BACKEND_RESTRICTED_USER
       ) {
-        errorData.description = `This user is restricted for Demo purposes. Sign Up on https://mprove.io to get full access.`;
+        errorData.description = `This user is restricted for Demo purposes. Sign Up at https://mprove.io to get full access.`;
         this.myDialogService.showError({ errorData, isThrow: false });
       } else if (
         infoErrorMessage === apiToBackend.ErEnum.BACKEND_RESTRICTED_PROJECT &&

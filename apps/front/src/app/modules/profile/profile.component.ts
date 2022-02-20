@@ -17,6 +17,8 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit {
+  restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
+
   pageTitle = constants.PROFILE_PAGE_TITLE;
 
   userTimezoneLabel: string;
@@ -24,6 +26,14 @@ export class ProfileComponent implements OnInit {
   userTimezone$ = this.userQuery.timezone$.pipe(
     tap(x => {
       this.userTimezoneLabel = getTimezoneLabelByValue(x);
+      this.cd.detectChanges();
+    })
+  );
+
+  alias: string;
+  alias$ = this.userQuery.alias$.pipe(
+    tap(x => {
+      this.alias = x;
       this.cd.detectChanges();
     })
   );

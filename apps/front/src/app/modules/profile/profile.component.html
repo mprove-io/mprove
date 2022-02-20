@@ -1,4 +1,4 @@
-<div class="flex h-full flex-col bg-blue1">
+<div class="flex h-full cursor-default flex-col bg-blue1">
   <div class="mx-6 mb-6 mt-8 flex h-2 flex-grow flex-col">
     <div class="flex h-11 items-center">
       <div data-cy="profileTitle" class="text-2xl font-semibold text-gray1">{{
@@ -96,51 +96,107 @@
               class="flex h-16 items-center text-base"
               >{{ userQuery.alias$ | async }}</div
             >
-            <div class="flex items-center">
-              <button
-                data-cy="profileChangePasswordButton"
-                class="mt-3 rounded border border-gray-300 px-5 py-3 text-base font-medium text-gray1 shadow-sm focus:outline-none"
-                (click)="changePassword()"
-                >Change Password
-              </button>
-            </div>
-            <div class="flex items-center">
-              <button
-                data-cy="profileDeleteUserButton"
-                class="mt-7 mb-5 rounded border border-red1 px-5 py-3 text-base font-medium text-red1 shadow-sm focus:outline-none"
-                (click)="deleteUser()"
-                >Delete User</button
+            <div class="mt-3 flex items-center">
+              <div
+                tippy="User is restricted. Sign Up at https://mprove.io to get full access."
+                [isEnabled]="alias === restrictedUserAlias"
               >
+                <button
+                  data-cy="profileChangePasswordButton"
+                  class="rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
+                  [ngClass]="{
+                    'cursor-default text-gray-400':
+                      alias === restrictedUserAlias,
+                    'border-gray3 text-gray1': alias !== restrictedUserAlias
+                  }"
+                  (click)="changePassword()"
+                  [disabled]="alias === restrictedUserAlias"
+                  >Change Password
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-7 mb-5 flex items-center">
+              <div
+                tippy="User is restricted. Sign Up at https://mprove.io to get full access."
+                [isEnabled]="alias === restrictedUserAlias"
+              >
+                <button
+                  data-cy="profileDeleteUserButton"
+                  class="rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
+                  [ngClass]="{
+                    'cursor-default text-gray-400':
+                      alias === restrictedUserAlias,
+                    'border-red1 text-red1': alias !== restrictedUserAlias
+                  }"
+                  (click)="deleteUser()"
+                  [disabled]="alias === restrictedUserAlias"
+                  >Delete User</button
+                >
+              </div>
             </div>
           </div>
 
           <div class="ml-6 flex flex-col">
-            <div class="flex h-24 items-center"
-              ><button
-                data-cy="profileEditPhotoButton"
-                (click)="editPhoto()"
-                class="rounded border border-gray-300 py-2 px-3 text-base font-medium leading-3 text-gray-700 shadow-sm focus:outline-none"
-                >Edit</button
-              ></div
-            >
+            <div class="flex h-24 items-center">
+              <div
+                tippy="User is restricted. Sign Up at https://mprove.io to get full access."
+                [isEnabled]="alias === restrictedUserAlias"
+              >
+                <button
+                  data-cy="profileEditPhotoButton"
+                  class="rounded border py-2 px-3 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                  [ngClass]="{
+                    'cursor-default text-gray-400':
+                      alias === restrictedUserAlias,
+                    'border-gray3 text-gray1': alias !== restrictedUserAlias
+                  }"
+                  (click)="editPhoto()"
+                  [disabled]="alias === restrictedUserAlias"
+                  >Edit</button
+                ></div
+              >
+            </div>
 
             <div class="flex h-16 items-center">
-              <button
-                data-cy="profileEditNameButton"
-                (click)="editName()"
-                class="rounded border border-gray3 py-2 px-3 text-base font-medium leading-3 text-gray1 shadow-sm focus:outline-none"
-                >Edit</button
-              ></div
-            >
+              <div
+                tippy="User is restricted. Sign Up at https://mprove.io to get full access."
+                [isEnabled]="alias === restrictedUserAlias"
+              >
+                <button
+                  data-cy="profileEditNameButton"
+                  class="rounded border py-2 px-3 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                  [ngClass]="{
+                    'cursor-default text-gray-400':
+                      alias === restrictedUserAlias,
+                    'border-gray3 text-gray1': alias !== restrictedUserAlias
+                  }"
+                  (click)="editName()"
+                  [disabled]="alias === restrictedUserAlias"
+                  >Edit</button
+                ></div
+              >
+            </div>
 
-            <div class="flex h-16 items-center"
-              ><button
-                data-cy="profileEditTimezoneButton"
-                (click)="editTimezone()"
-                class="rounded border border-gray-300 py-2 px-3 text-base font-medium leading-3 text-gray-700 shadow-sm focus:outline-none"
-                >Edit</button
-              ></div
-            >
+            <div class="flex h-16 items-center">
+              <div
+                tippy="User is restricted. Sign Up at https://mprove.io to get full access."
+                [isEnabled]="alias === restrictedUserAlias"
+              >
+                <button
+                  data-cy="profileEditTimezoneButton"
+                  class="rounded border py-2 px-3 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                  [ngClass]="{
+                    'cursor-default text-gray-400':
+                      alias === restrictedUserAlias,
+                    'border-gray3 text-gray1': alias !== restrictedUserAlias
+                  }"
+                  (click)="editTimezone()"
+                  [disabled]="alias === restrictedUserAlias"
+                  >Edit</button
+                ></div
+              >
+            </div>
             <div class="flex h-16 items-center"></div>
             <div class="flex h-16 items-center"></div>
             <div class="flex items-center"></div>
@@ -153,3 +209,4 @@
 </div>
 
 <div *ngIf="userTimezone$ | async"></div>
+<div *ngIf="alias$ | async"></div>

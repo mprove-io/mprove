@@ -1,4 +1,4 @@
-<div class="flex h-full flex-col bg-blue1">
+<div class="flex h-full cursor-default flex-col bg-blue1">
   <div class="mx-6 mb-6 mt-8 flex h-2 flex-grow flex-col">
     <div class="flex h-11 items-center">
       <div
@@ -24,10 +24,14 @@
               class="flex h-16 max-w-xl items-center truncate text-base"
               >{{ project?.name | capitalize }}</div
             >
-            <div class="flex items-center">
+            <div
+              class="mt-7 mb-5 flex items-center"
+              tippy="Admin role is required"
+              [isEnabled]="isAdmin === false"
+            >
               <button
                 data-cy="projectSettingsDeleteProjectButton"
-                class="mt-7 mb-5 rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
+                class="rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
                 [ngClass]="{
                   'cursor-default text-gray-400': isAdmin === false,
                   'border-red1 text-red1': isAdmin === true
@@ -41,18 +45,23 @@
 
           <div class="ml-6 flex flex-col">
             <div class="flex h-16 items-center">
-              <button
-                data-cy="projectSettingsEditNameButton"
-                class="rounded border py-2 px-3 text-base font-medium leading-3 shadow-sm focus:outline-none"
-                [ngClass]="{
-                  'cursor-default text-gray-400': isAdmin === false,
-                  'border-gray3 text-gray1': isAdmin === true
-                }"
-                [disabled]="isAdmin === false"
-                (click)="editName()"
-                >Edit</button
-              ></div
-            >
+              <div
+                tippy="Admin role is required"
+                [isEnabled]="isAdmin === false"
+              >
+                <button
+                  data-cy="projectSettingsEditNameButton"
+                  class="rounded border py-2 px-3 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                  [ngClass]="{
+                    'cursor-default text-gray-400': isAdmin === false,
+                    'border-gray3 text-gray1': isAdmin === true
+                  }"
+                  [disabled]="isAdmin === false"
+                  (click)="editName()"
+                  >Edit</button
+                ></div
+              >
+            </div>
             <div class="flex items-center"></div>
           </div>
         </div>
