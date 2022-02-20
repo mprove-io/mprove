@@ -26,7 +26,7 @@
             >
             <div
               class="mt-7 mb-5 flex items-center"
-              tippy="Admin role is required"
+              tippy="Admin role required"
               [isEnabled]="isAdmin === false"
             >
               <button
@@ -45,10 +45,7 @@
 
           <div class="ml-6 flex flex-col">
             <div class="flex h-16 items-center">
-              <div
-                tippy="Admin role is required"
-                [isEnabled]="isAdmin === false"
-              >
+              <div tippy="Admin role required" [isEnabled]="isAdmin === false">
                 <button
                   data-cy="projectSettingsEditNameButton"
                   class="rounded border py-2 px-3 text-base font-medium leading-3 shadow-sm focus:outline-none"

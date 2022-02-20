@@ -39,7 +39,7 @@
       </button>
 
       <ng-template #templateChartDialogExplore>
-        <div *ngIf="isExplorer === false">Explorer role is required</div>
+        <div *ngIf="isExplorer === false">Explorer role required</div>
         <div *ngIf="isExplorer === true && canAccessModel === false"
           >No access to model</div
         >
@@ -132,7 +132,7 @@
     <div class="text-base font-semibold text-gray-400">Model:</div>
 
     <ng-template #templateChartDialogModel>
-      <div *ngIf="isExplorer === false">Explorer role is required</div>
+      <div *ngIf="isExplorer === false">Explorer role required</div>
       <div *ngIf="isExplorer === true">No access to model</div>
     </ng-template>
 

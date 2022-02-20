@@ -69,7 +69,7 @@
 
         <div class="flex flex-row items-center text-base text-gray1">
           <ng-template #templateNewViz>
-            <div *ngIf="isExplorer === false">Explorer role is required</div>
+            <div *ngIf="isExplorer === false">Explorer role required</div>
             <div *ngIf="isExplorer === true && hasAccessModels.length === 0"
               >No models available</div
             >
@@ -221,7 +221,7 @@
                     >
                       <ng-template #templateVizsModel>
                         <div *ngIf="isExplorer === false"
-                          >Explorer role is required</div
+                          >Explorer role required</div
                         >
                         <div *ngIf="isExplorer === true"
                           >No access to model</div

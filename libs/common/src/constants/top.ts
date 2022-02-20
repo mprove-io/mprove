@@ -1,8 +1,10 @@
 // export const API_PATH = 'api';
 export const PROD_REPO_ID = 'prod';
 export const BRANCH_MASTER = 'master';
+
 export const FIRST_ORG_NAME = 'demo';
 export const FIRST_PROJECT_NAME = 'p1';
+export const RESTRICTED_USER_ALIAS = 'demo-user';
 
 export const README_FILE_NAME = 'readme.md';
 
@@ -71,5 +73,3 @@ export const PATH_CONNECTIONS = 'connections';
 export const PATH_TEAM = 'team';
 
 export const METHOD_RABBIT = 'RABBIT';
-
-export const RESTRICTED_USER_ALIAS = 'demo-user';

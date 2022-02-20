@@ -30,7 +30,7 @@
           </div>
 
           <ng-template #templateAddReport>
-            <div *ngIf="isExplorer === false">Explorer role is required</div>
+            <div *ngIf="isExplorer === false">Explorer role required</div>
 
             <div *ngIf="isExplorer === true && dashboard?.temp === true"
               >Save changes to be able to add reports</div
@@ -117,7 +117,7 @@
           <div class="flex flex-row items-center text-base text-gray1">
             <div
               class="ml-16 flex h-12 flex-shrink-0"
-              tippy="Explorer role is required"
+              tippy="Explorer role required"
               [isEnabled]="isExplorer === false"
             >
               <button

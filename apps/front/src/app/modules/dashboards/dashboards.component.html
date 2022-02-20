@@ -60,7 +60,7 @@
 
         <div class="flex flex-row items-center text-base text-gray1">
           <ng-template #templateNewDashboard>
-            <div *ngIf="isExplorer === false">Explorer role is required</div>
+            <div *ngIf="isExplorer === false">Explorer role required</div>
             <div *ngIf="isExplorer === true && hasAccessModels.length === 0"
               >No models available</div
             >
@@ -325,7 +325,7 @@
                       <div class="flex flex-1 flex-row space-x-5">
                         <ng-template #templateDashboardsReportModel>
                           <div *ngIf="isExplorer === false"
-                            >Explorer role is required</div
+                            >Explorer role required</div
                           >
                           <div *ngIf="isExplorer === true"
                             >No access to model</div

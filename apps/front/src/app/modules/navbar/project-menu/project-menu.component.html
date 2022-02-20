@@ -1,5 +1,5 @@
 <div
-  class="ml-2 h-10 w-10"
+  class="ml-2 h-10 w-10 cursor-default"
   #t1="tippy"
   [tippy]="templateProjectOptions"
   [hideOnEscape]="true"
@@ -18,7 +18,9 @@
   </button>
 
   <ng-template #templateProjectOptions>
-    <div class="w-56 rounded-md border-2 border-gray4 bg-white shadow-xl">
+    <div
+      class="w-56 cursor-default rounded-md border-2 border-gray4 bg-white shadow-xl"
+    >
       <div class="mt-2 block px-4 py-2 text-base font-semibold text-gray-400"
         >{{ nav?.projectName | capitalize }} Project</div
       >
@@ -33,25 +35,42 @@
         >Settings</button
       >
 
-      <button
-        class="block w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
-        [ngClass]="{
-          'font-semibold': lastUrl === pathConnections
-        }"
-        [disabled]="lastUrl === pathConnections"
-        (click)="t1.hide(); navigateConnections()"
-        >Connections</button
+      <div
+        tippy="Admin or Editor role required"
+        [isEnabled]="isAdmin === false && isEditor === false"
       >
+        <button
+          class="block w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
+          [ngClass]="{
+            'font-semibold': lastUrl === pathConnections,
+            'text-gray-400': isAdmin === false && isEditor === false,
+            'border-gray3 text-gray1': isAdmin === true || isEditor === true
+          }"
+          [disabled]="
+            lastUrl === pathConnections ||
+            (isAdmin === false && isEditor === false)
+          "
+          (click)="t1.hide(); navigateConnections()"
+          >Connections</button
+        >
+      </div>
 
-      <button
-        class="block w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
-        [ngClass]="{
-          'font-semibold': lastUrl === pathTeam
-        }"
-        [disabled]="lastUrl === pathTeam"
-        (click)="t1.hide(); navigateTeam()"
-        >Team</button
+      <div
+        tippy="Project is restricted for demo purposes"
+        [isEnabled]="nav.orgName === restrictedOrgName"
       >
+        <button
+          class="block w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
+          [ngClass]="{
+            'font-semibold': lastUrl === pathTeam,
+            'text-gray-400': nav.orgName === restrictedOrgName,
+            'border-gray3 text-gray1': nav.orgName !== restrictedOrgName
+          }"
+          [disabled]="lastUrl === pathTeam || nav.orgName === restrictedOrgName"
+          (click)="t1.hide(); navigateTeam()"
+          >Team</button
+        >
+      </div>
     </div>
   </ng-template>
 </div>
@@ -59,3 +78,6 @@
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
+<div *ngIf="alias$ | async"></div>
+<div *ngIf="isAdmin$ | async"></div>
+<div *ngIf="isEditor$ | async"></div>
