@@ -44,6 +44,9 @@ export class ToBackendGetNavResponsePayload {
   orgId: string;
 
   @IsString()
+  orgOwnerId: string;
+
+  @IsString()
   orgName: string;
 
   @IsString()

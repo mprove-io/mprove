@@ -5,6 +5,7 @@ export class NavState {
   avatarSmall: string;
   avatarBig: string;
   orgId: string;
+  orgOwnerId: string;
   orgName: string;
   projectId: string;
   projectName: string;
@@ -18,6 +19,7 @@ function createInitialState(): NavState {
     avatarSmall: undefined,
     avatarBig: undefined,
     orgId: undefined,
+    orgOwnerId: undefined,
     orgName: undefined,
     projectId: undefined,
     projectName: undefined,
@@ -42,6 +44,7 @@ export class NavStore extends Store<NavState> {
       Object.assign({}, state, <NavState>{
         orgId: undefined,
         orgName: undefined,
+        orgOwnerId: undefined,
         projectId: undefined,
         projectName: undefined,
         isRepoProd: true,

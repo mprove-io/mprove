@@ -36,17 +36,17 @@
       >
 
       <div
-        tippy="Project is restricted for demo purposes"
-        [isEnabled]="nav.orgName === firstOrgName"
+        tippy="Only organization owner can access"
+        [isEnabled]="user.userId !== nav.orgOwnerId"
       >
         <button
           class="block w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
           [ngClass]="{
             'font-semibold': lastUrl === pathUsers,
-            'text-gray-400': nav.orgName === firstOrgName,
-            'border-gray3': nav.orgName !== firstOrgName
+            'text-gray-400': user.userId !== nav.orgOwnerId,
+            'border-gray3': user.userId === nav.orgOwnerId
           }"
-          [disabled]="lastUrl === pathUsers || nav.orgName === firstOrgName"
+          [disabled]="lastUrl === pathUsers || user.userId !== nav.orgOwnerId"
           (click)="t1.hide(); navigateUsers()"
           >Users</button
         >
@@ -58,3 +58,4 @@
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
+<div *ngIf="user$ | async"></div>
