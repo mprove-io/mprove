@@ -18,7 +18,9 @@
   </button>
 
   <ng-template #templateOrgOptions>
-    <div class="w-56 rounded-md border-2 border-gray4 bg-white shadow-xl">
+    <div
+      class="w-56 cursor-default rounded-md border-2 border-gray4 bg-white shadow-xl"
+    >
       <div class="mt-2 block px-4 py-2 text-base font-semibold text-gray-400"
         >{{ nav?.orgName | capitalize }} Org</div
       >
@@ -33,15 +35,22 @@
         >Account</button
       >
 
-      <button
-        class="block w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
-        [ngClass]="{
-          'font-semibold': lastUrl === pathUsers
-        }"
-        [disabled]="lastUrl === pathUsers"
-        (click)="t1.hide(); navigateUsers()"
-        >Users</button
+      <div
+        tippy="Project is restricted for demo purposes"
+        [isEnabled]="nav.orgName === firstOrgName"
       >
+        <button
+          class="block w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
+          [ngClass]="{
+            'font-semibold': lastUrl === pathUsers,
+            'text-gray-400': nav.orgName === firstOrgName,
+            'border-gray3': nav.orgName !== firstOrgName
+          }"
+          [disabled]="lastUrl === pathUsers || nav.orgName === firstOrgName"
+          (click)="t1.hide(); navigateUsers()"
+          >Users</button
+        >
+      </div>
     </div>
   </ng-template>
 </div>

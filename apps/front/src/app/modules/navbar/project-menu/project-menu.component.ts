@@ -16,7 +16,7 @@ import { common } from '~front/barrels/common';
 export class ProjectMenuComponent implements OnInit {
   restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
 
-  restrictedOrgName = common.FIRST_ORG_NAME;
+  firstOrgName = common.FIRST_ORG_NAME;
 
   pathSettings = common.PATH_SETTINGS;
   pathConnections = common.PATH_CONNECTIONS;

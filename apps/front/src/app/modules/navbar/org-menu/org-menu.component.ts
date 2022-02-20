@@ -12,6 +12,8 @@ import { common } from '~front/barrels/common';
   templateUrl: './org-menu.component.html'
 })
 export class OrgMenuComponent implements OnInit {
+  firstOrgName = common.FIRST_ORG_NAME;
+
   pathAccount = common.PATH_ACCOUNT;
   pathUsers = common.PATH_USERS;
 

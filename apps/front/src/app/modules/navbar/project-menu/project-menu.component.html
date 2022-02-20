@@ -1,5 +1,5 @@
 <div
-  class="ml-2 h-10 w-10 cursor-default"
+  class="ml-2 h-10 w-10"
   #t1="tippy"
   [tippy]="templateProjectOptions"
   [hideOnEscape]="true"
@@ -44,7 +44,7 @@
           [ngClass]="{
             'font-semibold': lastUrl === pathConnections,
             'text-gray-400': isAdmin === false && isEditor === false,
-            'border-gray3 text-gray1': isAdmin === true || isEditor === true
+            'border-gray3': isAdmin === true || isEditor === true
           }"
           [disabled]="
             lastUrl === pathConnections ||
@@ -57,16 +57,16 @@
 
       <div
         tippy="Project is restricted for demo purposes"
-        [isEnabled]="nav.orgName === restrictedOrgName"
+        [isEnabled]="nav.orgName === firstOrgName"
       >
         <button
           class="block w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
           [ngClass]="{
             'font-semibold': lastUrl === pathTeam,
-            'text-gray-400': nav.orgName === restrictedOrgName,
-            'border-gray3 text-gray1': nav.orgName !== restrictedOrgName
+            'text-gray-400': nav.orgName === firstOrgName,
+            'border-gray3': nav.orgName !== firstOrgName
           }"
-          [disabled]="lastUrl === pathTeam || nav.orgName === restrictedOrgName"
+          [disabled]="lastUrl === pathTeam || nav.orgName === firstOrgName"
           (click)="t1.hide(); navigateTeam()"
           >Team</button
         >
