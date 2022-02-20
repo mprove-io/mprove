@@ -41,7 +41,7 @@ export class CreateBranchController {
       projectId: projectId
     });
 
-    await this.membersService.getMemberCheckExists({
+    await this.membersService.getMemberCheckIsEditor({
       memberId: user.user_id,
       projectId: projectId
     });

@@ -70,7 +70,7 @@ export class MembersService {
     }
   }
 
-  async checkMemberIsEditor(item: { memberId: string; projectId: string }) {
+  async getMemberCheckIsEditor(item: { memberId: string; projectId: string }) {
     let { projectId, memberId } = item;
 
     let member = await this.membersRepository.findOne({

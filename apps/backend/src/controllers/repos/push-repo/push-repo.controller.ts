@@ -45,7 +45,7 @@ export class PushRepoController {
       projectId: projectId
     });
 
-    let member = await this.membersService.checkMemberIsEditor({
+    let member = await this.membersService.getMemberCheckIsEditor({
       projectId: projectId,
       memberId: user.user_id
     });

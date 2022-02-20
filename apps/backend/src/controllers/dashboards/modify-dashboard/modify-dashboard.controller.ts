@@ -42,6 +42,12 @@ export class ModifyDashboardController {
     @ValidateRequest(apiToBackend.ToBackendModifyDashboardRequest)
     reqValid: apiToBackend.ToBackendModifyDashboardRequest
   ) {
+    if (user.alias === common.RESTRICTED_USER_ALIAS) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_RESTRICTED_USER
+      });
+    }
+
     let { traceId } = reqValid.info;
     let {
       projectId,

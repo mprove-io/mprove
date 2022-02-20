@@ -36,6 +36,12 @@ export class DeleteDashboardController {
     @ValidateRequest(apiToBackend.ToBackendDeleteDashboardRequest)
     reqValid: apiToBackend.ToBackendDeleteDashboardRequest
   ) {
+    if (user.alias === common.RESTRICTED_USER_ALIAS) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_RESTRICTED_USER
+      });
+    }
+
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, branchId, dashboardId } = reqValid.payload;
 

@@ -20,6 +20,12 @@ export class SetAvatarController {
     @ValidateRequest(apiToBackend.ToBackendSetAvatarRequest)
     reqValid: apiToBackend.ToBackendSetAvatarRequest
   ) {
+    if (user.alias === common.RESTRICTED_USER_ALIAS) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_RESTRICTED_USER
+      });
+    }
+
     let { avatarSmall, avatarBig } = reqValid.payload;
 
     let avatar: entities.AvatarEntity;

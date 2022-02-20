@@ -36,7 +36,7 @@ export class DeleteBranchController {
       projectId: projectId
     });
 
-    let member = await this.membersService.checkMemberIsEditor({
+    let member = await this.membersService.getMemberCheckIsEditor({
       memberId: user.user_id,
       projectId: projectId
     });
