@@ -92,12 +92,17 @@ export class ChartVizComponent implements OnInit, OnDestroy {
         payloadGetMconfig
       )
       .pipe(
-        map(
-          (resp: apiToBackend.ToBackendGetMconfigResponse) =>
-            resp.payload.mconfig
-        )
+        map((resp: apiToBackend.ToBackendGetMconfigResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            return resp.payload.mconfig;
+          }
+        })
       )
       .toPromise();
+
+    if (common.isUndefined(mconfig)) {
+      return;
+    }
 
     let payloadGetQuery: apiToBackend.ToBackendGetQueryRequestPayload = {
       projectId: nav.projectId,
@@ -114,11 +119,17 @@ export class ChartVizComponent implements OnInit, OnDestroy {
         payloadGetQuery
       )
       .pipe(
-        map(
-          (resp: apiToBackend.ToBackendGetQueryResponse) => resp.payload.query
-        )
+        map((resp: apiToBackend.ToBackendGetQueryResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            return resp.payload.query;
+          }
+        })
       )
       .toPromise();
+
+    if (common.isUndefined(query)) {
+      return;
+    }
 
     this.qData =
       mconfig.queryId === query.queryId
