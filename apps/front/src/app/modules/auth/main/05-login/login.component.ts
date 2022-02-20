@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
@@ -30,6 +30,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private route: ActivatedRoute,
     private apiService: ApiService,
     private router: Router,
     private userStore: UserStore,
@@ -42,6 +43,14 @@ export class LoginComponent implements OnInit {
 
     this.userStore.reset();
     this.authService.startWatch();
+
+    let email = this.route.snapshot.queryParamMap.get('email');
+    let password = this.route.snapshot.queryParamMap.get('password');
+
+    if (common.isDefined(email) && common.isDefined(password)) {
+      this.loginForm.controls['email'].setValue(email);
+      this.loginForm.controls['password'].setValue(password);
+    }
   }
 
   login() {
