@@ -1,4 +1,4 @@
-<div class="flex h-full flex-col bg-blue1">
+<div class="flex h-full cursor-default flex-col bg-blue1">
   <div class="mx-6 mb-6 mt-8 flex h-full flex-row">
     <div class="flex min-w-[2px] flex-grow flex-col">
       <div class="flex h-11 flex-row items-center justify-between">
@@ -6,6 +6,14 @@
           data-cy="filesTitle"
           class="flex items-center self-center text-2xl font-semibold text-gray1"
           >{{ pageTitle }}
+        </div>
+
+        <div
+          tippy="Switch to local branch in navigation bar to enter development mode"
+          *ngIf="nav?.isRepoProd === true"
+          class="mt-5 mr-5 flex flex-row items-center text-lg font-semibold text-gray-500"
+        >
+          PRODUCTION MODE
         </div>
 
         <div
