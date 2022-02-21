@@ -56,6 +56,7 @@ export class CompleteRegistrationComponent implements OnInit {
     this.title.setTitle(this.pageTitle);
 
     this.authService.clearLocalStorage();
+    // console.log('stopWatch from CompleteRegistrationComponent');
     this.authService.stopWatch();
 
     this.emailConfirmationToken = this.route.snapshot.queryParamMap.get(
@@ -95,6 +96,7 @@ export class CompleteRegistrationComponent implements OnInit {
               // first email verification
               this.myDialogService.showEmailConfirmed();
               this.userStore.update(user);
+              // console.log('stopWatch from CompleteRegistrationComponent - 2');
               this.authService.stopWatch();
               localStorage.setItem(constants.LOCAL_STORAGE_TOKEN, token);
               this.router.navigate([common.PATH_LOGIN_SUCCESS]);

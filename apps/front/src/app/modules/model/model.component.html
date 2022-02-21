@@ -62,13 +62,13 @@
             >
 
             <div
+              *ngIf="query?.status !== queryStatusEnum.Running"
               tippy="No selected fields"
               class="ml-5"
               [isEnabled]="mconfig?.select.length === 0"
             >
               <button
                 type="button"
-                *ngIf="query?.status !== queryStatusEnum.Running"
                 data-cy="modelRunButton"
                 class="w-24 rounded py-2 text-base font-medium text-white focus:outline-none"
                 [ngClass]="{

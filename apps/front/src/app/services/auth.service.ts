@@ -45,6 +45,7 @@ export class AuthService {
   }
 
   logout() {
+    // console.log('stopWatch from AuthService');
     this.stopWatch();
     this.clearLocalStorage();
     this.router.navigate([common.PATH_LOGIN]);
@@ -52,12 +53,18 @@ export class AuthService {
 
   startWatch() {
     if (common.isDefined(this.checkAuthSubscription)) {
+      // console.log('restartWatch from AuthService - 2');
       this.stopWatch();
     }
 
     this.checkAuthSubscription = observableInterval(1000).subscribe(() => {
+      // let startTime = Date.now();
+      // console.log(startTime);
+
       let pathArray = this.location.path().split('/');
       let firstPath = pathArray[1];
+      firstPath = firstPath.split('?')[0];
+      // console.log(firstPath);
 
       if (
         [common.PATH_PROFILE, common.PATH_ORG].indexOf(firstPath) > -1 &&
@@ -77,6 +84,9 @@ export class AuthService {
         // console.log('[WatchAuthenticationService] login success');
         this.router.navigate([common.PATH_LOGIN_SUCCESS]);
       }
+
+      // let endTime = Date.now();
+      // console.log(endTime - startTime);
     });
   }
 

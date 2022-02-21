@@ -26,6 +26,7 @@ export class LoginSuccessComponent implements OnInit {
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
 
+    // console.log('startWatch from LoginSuccessComponent');
     this.authService.startWatch();
 
     let userId: string;
