@@ -52,6 +52,7 @@ export class ProjectSelectComponent {
   user$ = this.userQuery.select().pipe(
     tap(x => {
       this.user = x;
+      this.cd.detectChanges();
     })
   );
 

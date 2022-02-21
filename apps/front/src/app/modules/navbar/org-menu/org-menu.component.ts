@@ -44,6 +44,7 @@ export class OrgMenuComponent implements OnInit {
   user$ = this.userQuery.select().pipe(
     tap(x => {
       this.user = x;
+      this.cd.detectChanges();
     })
   );
 

@@ -59,7 +59,8 @@ export class EditOrgNameDialogComponent implements OnInit {
             this.navStore.update(state =>
               Object.assign({}, state, <NavState>{
                 orgId: org.orgId,
-                orgName: org.name
+                orgName: org.name,
+                orgOwnerId: org.ownerId
               })
             );
           }
