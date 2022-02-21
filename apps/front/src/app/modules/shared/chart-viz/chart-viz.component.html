@@ -54,28 +54,46 @@
               >Run</button
             >
 
-            <button
-              data-cy="vizOptionsExplore"
-              class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
-              [ngClass]="{
-                'cursor-default text-gray-400':
-                  viz.reports[0].hasAccessToModel === false
-              }"
-              (click)="t1.hide(); explore($event)"
-              [disabled]="viz.reports[0].hasAccessToModel === false"
-              >Explore</button
-            >
+            <ng-template #templateChartVizOptionsExploreViz>
+              <div *ngIf="isExplorer === false">Explorer role required</div>
+              <div *ngIf="isExplorer === true">No access to model</div>
+            </ng-template>
 
-            <button
-              data-cy="vizOptionsEditInfo"
-              class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
-              [ngClass]="{
-                'cursor-default text-gray-400': viz.canEditOrDeleteViz === false
-              }"
-              (click)="t1.hide(); editVizInfo($event)"
-              [disabled]="viz.canEditOrDeleteViz === false"
-              >Edit Info</button
+            <div
+              [tippy]="templateChartVizOptionsExploreViz"
+              placement="left"
+              [isEnabled]="viz.canEditOrDeleteViz === false"
             >
+              <button
+                data-cy="vizOptionsExplore"
+                class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
+                [ngClass]="{
+                  'cursor-default text-gray-400':
+                    viz.reports[0].hasAccessToModel === false
+                }"
+                (click)="t1.hide(); explore($event)"
+                [disabled]="viz.reports[0].hasAccessToModel === false"
+                >Explore</button
+              >
+            </div>
+
+            <div
+              tippy="Viz can be edited by author and project members with ProjectAdmin or FilesEditor role. Try to save viz as new to become an author."
+              placement="left"
+              [isEnabled]="viz.canEditOrDeleteViz === false"
+            >
+              <button
+                data-cy="vizOptionsEditInfo"
+                class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
+                [ngClass]="{
+                  'cursor-default text-gray-400':
+                    viz.canEditOrDeleteViz === false
+                }"
+                (click)="t1.hide(); editVizInfo($event)"
+                [disabled]="viz.canEditOrDeleteViz === false"
+                >Edit Info</button
+              >
+            </div>
 
             <button
               data-cy="vizOptionsGoToFile"
@@ -84,16 +102,23 @@
               >Go to file</button
             >
 
-            <button
-              data-cy="vizOptionsDelete"
-              class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
-              [ngClass]="{
-                'cursor-default text-gray-400': viz.canEditOrDeleteViz === false
-              }"
-              (click)="t1.hide(); deleteViz($event)"
-              [disabled]="viz.canEditOrDeleteViz === false"
-              >Delete</button
+            <div
+              tippy="Viz can be deleted by author and project members with ProjectAdmin or FilesEditor role. Try to save viz as new to become an author."
+              placement="left"
+              [isEnabled]="viz.canEditOrDeleteViz === false"
             >
+              <button
+                data-cy="vizOptionsDelete"
+                class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
+                [ngClass]="{
+                  'cursor-default text-gray-400':
+                    viz.canEditOrDeleteViz === false
+                }"
+                (click)="t1.hide(); deleteViz($event)"
+                [disabled]="viz.canEditOrDeleteViz === false"
+                >Delete</button
+              >
+            </div>
           </div>
         </ng-template>
       </div>
@@ -129,3 +154,4 @@
 </div>
 
 <div *ngIf="nav$ | async"></div>
+<div *ngIf="isExplorer$ | async"></div>
