@@ -38,8 +38,8 @@ export class EditNameDialogComponent implements OnInit {
       .subscribe();
 
     this.editNameForm = this.fb.group({
-      firstName: [firstName, [Validators.maxLength(255)]],
-      lastName: [lastName, [Validators.maxLength(255)]]
+      firstName: [firstName, [Validators.maxLength(255), Validators.required]],
+      lastName: [lastName, [Validators.maxLength(255), Validators.required]]
     });
   }
 

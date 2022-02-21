@@ -1,2 +1,10 @@
 <img *ngIf="avatar" class="rounded-full" [src]="avatar" />
-<div *ngIf="!avatar">{{ initials }}</div>
+<div *ngIf="!avatar && alias !== restrictedUserAlias">{{ initials }}</div>
+<div
+  *ngIf="!avatar && alias === restrictedUserAlias"
+  class="flex flex-row items-center justify-center"
+>
+  <m-user-icon></m-user-icon>
+</div>
+
+<div *ngIf="alias$ | async"></div>
