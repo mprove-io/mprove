@@ -213,14 +213,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.scrollSubscription = merge(
-      fromEvent(this.scrollable.nativeElement, 'scroll')
-    )
-      .pipe(debounceTime(100))
-      .subscribe((event: any) => {
-        this.randomId = common.makeId();
-        this.cd.detectChanges();
-      });
+    if (common.isDefined(this.dashboard)) {
+      this.scrollSubscription = merge(
+        fromEvent(this.scrollable.nativeElement, 'scroll')
+      )
+        .pipe(debounceTime(100))
+        .subscribe((event: any) => {
+          this.randomId = common.makeId();
+          this.cd.detectChanges();
+        });
+    }
   }
 
   toggleFiltersPanel() {
@@ -366,7 +368,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.resizeSubscription.unsubscribe();
-    this.scrollSubscription.unsubscribe();
+    this.resizeSubscription?.unsubscribe();
+    this.scrollSubscription?.unsubscribe();
   }
 }

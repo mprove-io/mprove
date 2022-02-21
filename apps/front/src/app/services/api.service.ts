@@ -251,6 +251,30 @@ export class ApiService {
           });
         }, 0);
       } else if (
+        [apiToBackend.ErEnum.BACKEND_FORBIDDEN_DASHBOARD].indexOf(
+          infoErrorMessage
+        ) > -1
+      ) {
+        errorData.description = `Check dashboard access rules`;
+        errorData.buttonText = 'Ok, go to dashboards';
+        errorData.onClickFnBindThis = (() => {
+          this.navigateService.navigateToDashboards();
+        }).bind(this);
+
+        this.myDialogService.showError({ errorData, isThrow: false });
+      } else if (
+        [apiToBackend.ErEnum.BACKEND_FORBIDDEN_MODEL].indexOf(
+          infoErrorMessage
+        ) > -1
+      ) {
+        errorData.description = `Check model access rules`;
+        errorData.buttonText = 'Ok, go to models';
+        errorData.onClickFnBindThis = (() => {
+          this.navigateService.navigateToModels();
+        }).bind(this);
+
+        this.myDialogService.showError({ errorData, isThrow: false });
+      } else if (
         [
           apiToBackend.ErEnum.BACKEND_MCONFIG_DOES_NOT_EXIST,
           apiToBackend.ErEnum.BACKEND_MODEL_DOES_NOT_EXIST,
