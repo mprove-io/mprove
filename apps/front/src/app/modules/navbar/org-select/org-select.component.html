@@ -24,14 +24,26 @@
   </ng-template>
 
   <ng-template ng-footer-tmp>
-    <button
-      data-cy="orgSelectCreateOrgButton"
-      class="w-full rounded py-3 text-base text-blue3 hover:bg-blue2 focus:outline-none"
-      (click)="createNewOrg(orgsSelect)"
-      >New Org</button
+    <div
+      tippy="User is restricted. Sign Up at https://mprove.io to get full access."
+      placement="left"
+      [isEnabled]="alias === restrictedUserAlias"
     >
+      <button
+        data-cy="orgSelectCreateOrgButton"
+        class="w-full rounded py-3 text-base focus:outline-none"
+        [ngClass]="{
+          'text-blue3 hover:bg-blue2': alias !== restrictedUserAlias,
+          'cursor-default bg-gray-400 text-white': alias === restrictedUserAlias
+        }"
+        (click)="createNewOrg(orgsSelect)"
+        [disabled]="alias === restrictedUserAlias"
+        >New Org</button
+      >
+    </div>
   </ng-template>
 </ng-select>
 
 <div *ngIf="selectedOrg$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
+<div *ngIf="alias$ | async"></div>

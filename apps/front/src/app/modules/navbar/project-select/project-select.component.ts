@@ -3,9 +3,11 @@ import { Router } from '@angular/router';
 import { map, take, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
+import { UserState } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -38,8 +40,24 @@ export class ProjectSelectComponent {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
+  nav: NavState;
+  nav$ = this.navQuery.select().pipe(
+    tap(x => {
+      this.nav = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  user: UserState;
+  user$ = this.userQuery.select().pipe(
+    tap(x => {
+      this.user = x;
+    })
+  );
+
   constructor(
     private uiQuery: UiQuery,
+    private userQuery: UserQuery,
     private navQuery: NavQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,

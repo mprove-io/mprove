@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { map, take, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
@@ -15,6 +16,8 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './org-select.component.html'
 })
 export class OrgSelectComponent {
+  restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
+
   orgsList: common.OrgsItem[] = [];
   orgsListLoading = false;
   orgsListLength = 0;
@@ -31,9 +34,18 @@ export class OrgSelectComponent {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
+  alias: string;
+  alias$ = this.userQuery.alias$.pipe(
+    tap(x => {
+      this.alias = x;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     private navQuery: NavQuery,
     private navStore: NavStore,
+    private userQuery: UserQuery,
     private uiQuery: UiQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,

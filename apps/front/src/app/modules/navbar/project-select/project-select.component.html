@@ -24,15 +24,28 @@
   </ng-template>
 
   <ng-template ng-footer-tmp>
-    <button
-      data-cy="projectSelectCreateProjectButton"
-      class="w-full rounded py-3 text-base text-blue3 hover:bg-blue2 focus:outline-none"
-      (click)="createNewProject(projectSelect)"
-      >New Project</button
+    <div
+      tippy="Only organization owner can access"
+      placement="left"
+      [isEnabled]="user.userId !== nav.orgOwnerId"
     >
+      <button
+        data-cy="projectSelectCreateProjectButton"
+        class="w-full rounded py-3 text-base focus:outline-none"
+        [ngClass]="{
+          'text-blue3 hover:bg-blue2': alias !== restrictedUserAlias,
+          'cursor-default bg-gray-400 text-white': alias === restrictedUserAlias
+        }"
+        (click)="createNewProject(projectSelect)"
+        [disabled]="user.userId !== nav.orgOwnerId"
+        >New Project</button
+      >
+    </div>
   </ng-template>
 </ng-select>
 
 <div *ngIf="selectedProject$ | async"></div>
 <div *ngIf="selectedOrg$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
+<div *ngIf="nav$ | async"></div>
+<div *ngIf="user$ | async"></div>
