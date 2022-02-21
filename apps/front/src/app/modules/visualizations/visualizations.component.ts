@@ -15,6 +15,7 @@ import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { UserQuery } from '~front/app/queries/user.query';
 import { VizsQuery } from '~front/app/queries/vizs.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
@@ -34,6 +35,8 @@ class ModelXWithTotalVizs extends common.ModelX {
   templateUrl: './visualizations.component.html'
 })
 export class VisualizationsComponent implements OnInit, OnDestroy {
+  restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
+
   pageTitle = constants.VISUALIZATIONS_PAGE_TITLE;
 
   vizDeletedFnBindThis = this.vizDeletedFn.bind(this);
@@ -113,6 +116,14 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
 
   screenAspectRatio: number;
 
+  alias: string;
+  alias$ = this.userQuery.alias$.pipe(
+    tap(x => {
+      this.alias = x;
+      this.cd.detectChanges();
+    })
+  );
+
   private timer: any;
 
   constructor(
@@ -121,6 +132,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private modelsQuery: ModelsQuery,
     private vizsQuery: VizsQuery,
+    private userQuery: UserQuery,
     private memberQuery: MemberQuery,
     private apiService: ApiService,
     private navQuery: NavQuery,

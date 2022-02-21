@@ -69,15 +69,32 @@
 
         <div class="flex flex-row items-center text-base text-gray1">
           <ng-template #templateNewViz>
-            <div *ngIf="isExplorer === false">Explorer role required</div>
-            <div *ngIf="isExplorer === true && hasAccessModels.length === 0"
+            <div *ngIf="alias === restrictedUserAlias"
+              >User is restricted. Sign Up at https://mprove.io to get full
+              access.</div
+            >
+
+            <div *ngIf="alias !== restrictedUserAlias && isExplorer === false"
+              >Explorer role required</div
+            >
+
+            <div
+              *ngIf="
+                alias !== restrictedUserAlias &&
+                isExplorer === true &&
+                hasAccessModels.length === 0
+              "
               >No models available</div
             >
           </ng-template>
 
           <div
             [tippy]="templateNewViz"
-            [isEnabled]="isExplorer === false || hasAccessModels.length === 0"
+            [isEnabled]="
+              alias === restrictedUserAlias ||
+              isExplorer === false ||
+              hasAccessModels.length === 0
+            "
             class="ml-5 mr-9"
           >
             <button
@@ -86,12 +103,20 @@
               class="w-24 rounded py-2 text-base font-medium text-white focus:outline-none"
               [ngClass]="{
                 'cursor-pointer bg-blue3':
-                  isExplorer === true && hasAccessModels?.length > 0,
+                  alias !== restrictedUserAlias &&
+                  isExplorer === true &&
+                  hasAccessModels?.length > 0,
                 'cursor-default bg-gray-400':
-                  isExplorer === false || hasAccessModels.length === 0
+                  alias === restrictedUserAlias ||
+                  isExplorer === false ||
+                  hasAccessModels.length === 0
               }"
               (click)="newViz()"
-              [disabled]="isExplorer === false || hasAccessModels.length === 0"
+              [disabled]="
+                alias === restrictedUserAlias ||
+                isExplorer === false ||
+                hasAccessModels.length === 0
+              "
             >
               New
             </button>
@@ -441,6 +466,7 @@
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="member$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>
+<div *ngIf="alias$ | async"></div>
 
 <!-- [ngClass]="{
   'h-1/2': screenAspectRatio >= 1.5,

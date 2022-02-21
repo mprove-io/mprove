@@ -10,6 +10,7 @@ import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -28,6 +29,8 @@ export class ModelXWithTotalDashboards extends common.ModelX {
   templateUrl: './dashboards.component.html'
 })
 export class DashboardsComponent implements OnInit, OnDestroy {
+  restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
+
   pageTitle = constants.DASHBOARDS_PAGE_TITLE;
 
   dashboardDeletedFnBindThis = this.dashboardDeletedFn.bind(this);
@@ -107,6 +110,14 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   word: string;
   // fileName: string;
 
+  alias: string;
+  alias$ = this.userQuery.alias$.pipe(
+    tap(x => {
+      this.alias = x;
+      this.cd.detectChanges();
+    })
+  );
+
   private timer: any;
 
   constructor(
@@ -115,6 +126,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private apiService: ApiService,
     private navQuery: NavQuery,
+    private userQuery: UserQuery,
     private queryService: QueryService,
     private dashboardsQuery: DashboardsQuery,
     private spinner: NgxSpinnerService,
