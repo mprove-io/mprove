@@ -12,6 +12,7 @@ import { MqQuery } from '~front/app/queries/mq.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
+import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DataSizeService } from '~front/app/services/data-size.service';
 import { FileService } from '~front/app/services/file.service';
@@ -42,6 +43,8 @@ export class ChartTypeItem {
   templateUrl: './model.component.html'
 })
 export class ModelComponent implements OnInit, OnDestroy {
+  restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
+
   pageTitle = frontConstants.MODEL_PAGE_TITLE;
 
   queryStatusEnum = common.QueryStatusEnum;
@@ -217,6 +220,14 @@ export class ModelComponent implements OnInit, OnDestroy {
     })
   );
 
+  alias: string;
+  alias$ = this.userQuery.alias$.pipe(
+    tap(x => {
+      this.alias = x;
+      this.cd.detectChanges();
+    })
+  );
+
   timezoneForm = this.fb.group({
     timezone: [
       {
@@ -374,6 +385,7 @@ export class ModelComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
     private modelQuery: ModelQuery,
+    private userQuery: UserQuery,
     private mqQuery: MqQuery,
     public repoQuery: RepoQuery,
     public repoStore: RepoStore,

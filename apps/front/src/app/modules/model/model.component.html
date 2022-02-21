@@ -61,19 +61,25 @@
               >Cancel</button
             >
 
-            <button
-              type="button"
-              *ngIf="query?.status !== queryStatusEnum.Running"
-              data-cy="modelRunButton"
-              class="ml-5 w-24 rounded py-2 text-base font-medium text-white focus:outline-none"
-              [ngClass]="{
-                'bg-blue3': mconfig?.select.length > 0,
-                'cursor-default bg-gray-400': mconfig?.select.length === 0
-              }"
-              (click)="run()"
-              [disabled]="mconfig?.select.length === 0"
-              >Run</button
+            <div
+              tippy="No selected fields"
+              class="ml-5"
+              [isEnabled]="mconfig?.select.length === 0"
             >
+              <button
+                type="button"
+                *ngIf="query?.status !== queryStatusEnum.Running"
+                data-cy="modelRunButton"
+                class="w-24 rounded py-2 text-base font-medium text-white focus:outline-none"
+                [ngClass]="{
+                  'bg-blue3': mconfig?.select.length > 0,
+                  'cursor-default bg-gray-400': mconfig?.select.length === 0
+                }"
+                (click)="run()"
+                [disabled]="mconfig?.select.length === 0"
+                >Run</button
+              >
+            </div>
 
             <div class="relative ml-5">
               <m-query-options
@@ -240,29 +246,65 @@
 
                 <div class="flex-1"></div>
 
-                <button
-                  type="button"
-                  *ngIf="mconfig?.select.length > 0"
-                  data-cy="modelSaveAsButton"
-                  class="ml-[138px] w-28 flex-shrink-0 rounded py-2 text-base font-medium focus:outline-none"
-                  [ngClass]="{
-                    'border-2 bg-white text-blue3':
+                <ng-template #templateChartSaveAs>
+                  <div
+                    *ngIf="
+                      isSelectValid === false ||
+                      mconfig?.chart?.isValid === false ||
+                      chartTitleForm?.valid === false
+                    "
+                    >Chart is not valid</div
+                  >
+
+                  <div
+                    *ngIf="
                       isSelectValid === true &&
-                      mconfig.chart.isValid === true &&
-                      chartTitleForm.valid === true,
-                    'cursor-default bg-gray-400 text-white':
+                      mconfig?.chart?.isValid === true &&
+                      chartTitleForm?.valid === true &&
+                      alias === restrictedUserAlias
+                    "
+                    >User is restricted. Sign Up at https://mprove.io to get
+                    full access.</div
+                  >
+                </ng-template>
+
+                <div
+                  *ngIf="mconfig?.select.length > 0"
+                  class="ml-[138px]"
+                  [tippy]="templateChartSaveAs"
+                  [isEnabled]="
+                    isSelectValid === false ||
+                    mconfig?.chart?.isValid === false ||
+                    chartTitleForm?.valid === false ||
+                    alias === restrictedUserAlias
+                  "
+                >
+                  <button
+                    type="button"
+                    data-cy="modelSaveAsButton"
+                    class="w-28 flex-shrink-0 rounded py-2 text-base font-medium focus:outline-none"
+                    [ngClass]="{
+                      'border-2 bg-white text-blue3':
+                        isSelectValid === true &&
+                        mconfig.chart.isValid === true &&
+                        chartTitleForm.valid === true &&
+                        alias !== restrictedUserAlias,
+                      'cursor-default bg-gray-400 text-white':
+                        isSelectValid === false ||
+                        mconfig.chart.isValid === false ||
+                        chartTitleForm.valid === false ||
+                        alias === restrictedUserAlias
+                    }"
+                    (click)="saveAs()"
+                    [disabled]="
                       isSelectValid === false ||
                       mconfig.chart.isValid === false ||
-                      chartTitleForm.valid === false
-                  }"
-                  (click)="saveAs()"
-                  [disabled]="
-                    isSelectValid === false ||
-                    mconfig.chart.isValid === false ||
-                    chartTitleForm.valid === false
-                  "
-                  >Save As</button
-                >
+                      chartTitleForm.valid === false ||
+                      alias === restrictedUserAlias
+                    "
+                    >Save As</button
+                  >
+                </div>
 
                 <button
                   *ngIf="mconfig?.select.length > 0"
@@ -488,3 +530,4 @@
 <div *ngIf="model$ | async"></div>
 <div *ngIf="mq$ | async"></div>
 <div *ngIf="struct$ | async"></div>
+<div *ngIf="alias$ | async"></div>

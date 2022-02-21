@@ -50,6 +50,7 @@
 
           <div
             [tippy]="templateAddReport"
+            placement="right"
             [isEnabled]="
               isExplorer === false ||
               dashboard?.temp === true ||
@@ -115,10 +116,21 @@
           <!-- <div class="flex-grow"></div> -->
 
           <div class="flex flex-row items-center text-base text-gray1">
+            <ng-template #templateDashboardSaveAs>
+              <div *ngIf="isExplorer === false">Explorer role required</div>
+
+              <div *ngIf="isExplorer === true && alias === restrictedUserAlias"
+                >User is restricted. Sign Up at https://mprove.io to get full
+                access.</div
+              >
+            </ng-template>
+
             <div
               class="ml-16 flex h-12 flex-shrink-0"
-              tippy="Explorer role required"
-              [isEnabled]="isExplorer === false"
+              [tippy]="templateDashboardSaveAs"
+              [isEnabled]="
+                isExplorer === false || alias === restrictedUserAlias
+              "
             >
               <button
                 type="button"
@@ -126,13 +138,20 @@
                 class="h-12 rounded px-6 text-base font-medium text-white focus:outline-none"
                 [ngClass]="{
                   'border-2 text-blue3':
-                    isExplorer === true && dashboard?.temp === false,
+                    isExplorer === true &&
+                    dashboard?.temp === false &&
+                    alias !== restrictedUserAlias,
                   'bg-pink-500':
-                    isExplorer === true && dashboard?.temp === true,
-                  'cursor-default bg-gray-400': isExplorer === false
+                    isExplorer === true &&
+                    dashboard?.temp === true &&
+                    alias !== restrictedUserAlias,
+                  'cursor-default bg-gray-400':
+                    isExplorer === false || alias === restrictedUserAlias
                 }"
                 (click)="saveAs()"
-                [disabled]="isExplorer === false"
+                [disabled]="
+                  isExplorer === false || alias === restrictedUserAlias
+                "
                 >Save As</button
               >
             </div>
@@ -309,3 +328,4 @@
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="struct$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>
+<div *ngIf="alias$ | async"></div>

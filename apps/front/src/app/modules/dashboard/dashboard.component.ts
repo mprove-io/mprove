@@ -17,6 +17,7 @@ import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { StructQuery } from '~front/app/queries/struct.query';
+import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DashboardService } from '~front/app/services/dashboard.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
@@ -42,6 +43,8 @@ class LayoutItem {
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
+  restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
+
   pageTitle = frontConstants.DASHBOARD_PAGE_TITLE;
 
   // @ViewChild(KtdGridComponent, {static: true}) grid: KtdGridComponent;
@@ -161,11 +164,20 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   rowHeight = 50;
   layout: LayoutItem[] = [];
 
+  alias: string;
+  alias$ = this.userQuery.alias$.pipe(
+    tap(x => {
+      this.alias = x;
+      this.cd.detectChanges();
+    })
+  );
+
   private resizeSubscription: Subscription;
   private scrollSubscription: Subscription;
 
   constructor(
     private dashboardQuery: DashboardQuery,
+    private userQuery: UserQuery,
     private title: Title,
     private fb: FormBuilder,
     private structQuery: StructQuery,
