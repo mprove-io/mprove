@@ -48,10 +48,14 @@
               class="flex h-16 max-w-xl items-center truncate"
               >{{ org?.contactPhone }}</div
             >
-            <div class="flex items-center">
+            <div
+              class="mt-7 mb-5 flex items-center"
+              tippy="Only organization owner can delete"
+              [isEnabled]="isOrgOwner === false"
+            >
               <button
                 data-cy="orgAccountDeleteOrgButton"
-                class="mt-7 mb-5 rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
+                class="rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
                 [ngClass]="{
                   'cursor-default text-gray-400': isOrgOwner === false,
                   'border-red1 text-red1': isOrgOwner === true
@@ -65,57 +69,81 @@
 
           <div class="ml-6 flex flex-col">
             <div class="flex h-16 items-center">
-              <button
-                data-cy="orgAccountEditNameButton"
-                class="rounded border py-2 px-3 text-sm font-medium leading-3 shadow-sm focus:outline-none"
-                [ngClass]="{
-                  'cursor-default text-gray-400': isOrgOwner === false,
-                  'border-gray3 text-gray1': isOrgOwner === true
-                }"
-                [disabled]="isOrgOwner === false"
-                (click)="editName()"
-                >Edit</button
-              ></div
-            >
+              <div
+                tippy="Only organization owner can edit"
+                [isEnabled]="isOrgOwner === false"
+              >
+                <button
+                  data-cy="orgAccountEditNameButton"
+                  class="rounded border py-2 px-3 text-sm font-medium leading-3 shadow-sm focus:outline-none"
+                  [ngClass]="{
+                    'cursor-default text-gray-400': isOrgOwner === false,
+                    'border-gray3 text-gray1': isOrgOwner === true
+                  }"
+                  [disabled]="isOrgOwner === false"
+                  (click)="editName()"
+                  >Edit</button
+                ></div
+              >
+            </div>
+
             <div class="flex h-16 items-center">
-              <button
-                data-cy="orgAccountEditOwnerButton"
-                class="rounded border py-2 px-3 text-sm font-medium leading-3 shadow-sm focus:outline-none"
-                [ngClass]="{
-                  'cursor-default text-gray-400': isOrgOwner === false,
-                  'border-gray3 text-gray1': isOrgOwner === true
-                }"
-                [disabled]="isOrgOwner === false"
-                (click)="editOwner()"
-                >Edit</button
+              <div
+                tippy="Only organization owner can edit"
+                [isEnabled]="isOrgOwner === false"
+              >
+                <button
+                  data-cy="orgAccountEditOwnerButton"
+                  class="rounded border py-2 px-3 text-sm font-medium leading-3 shadow-sm focus:outline-none"
+                  [ngClass]="{
+                    'cursor-default text-gray-400': isOrgOwner === false,
+                    'border-gray3 text-gray1': isOrgOwner === true
+                  }"
+                  [disabled]="isOrgOwner === false"
+                  (click)="editOwner()"
+                  >Edit</button
+                ></div
               ></div
             >
+
             <div class="flex h-16 items-center">
-              <button
-                data-cy="orgAccountEditCompanySizeButton"
-                class="rounded border py-2 px-3 text-sm font-medium leading-3 shadow-sm focus:outline-none"
-                [ngClass]="{
-                  'cursor-default text-gray-400': isOrgOwner === false,
-                  'border-gray3 text-gray1': isOrgOwner === true
-                }"
-                [disabled]="isOrgOwner === false"
-                (click)="editCompanySize()"
-                >Edit</button
+              <div
+                tippy="Only organization owner can edit"
+                [isEnabled]="isOrgOwner === false"
+              >
+                <button
+                  data-cy="orgAccountEditCompanySizeButton"
+                  class="rounded border py-2 px-3 text-sm font-medium leading-3 shadow-sm focus:outline-none"
+                  [ngClass]="{
+                    'cursor-default text-gray-400': isOrgOwner === false,
+                    'border-gray3 text-gray1': isOrgOwner === true
+                  }"
+                  [disabled]="isOrgOwner === false"
+                  (click)="editCompanySize()"
+                  >Edit</button
+                ></div
               ></div
             >
+
             <div class="flex h-16 items-center">
-              <button
-                data-cy="orgAccountEditContactPhoneButton"
-                class="rounded border py-2 px-3 text-sm font-medium leading-3 shadow-sm focus:outline-none"
-                [ngClass]="{
-                  'cursor-default text-gray-400': isOrgOwner === false,
-                  'border-gray3 text-gray1': isOrgOwner === true
-                }"
-                [disabled]="isOrgOwner === false"
-                (click)="editContactPhone()"
-                >Edit</button
+              <div
+                tippy="Only organization owner can edit"
+                [isEnabled]="isOrgOwner === false"
+              >
+                <button
+                  data-cy="orgAccountEditContactPhoneButton"
+                  class="rounded border py-2 px-3 text-sm font-medium leading-3 shadow-sm focus:outline-none"
+                  [ngClass]="{
+                    'cursor-default text-gray-400': isOrgOwner === false,
+                    'border-gray3 text-gray1': isOrgOwner === true
+                  }"
+                  [disabled]="isOrgOwner === false"
+                  (click)="editContactPhone()"
+                  >Edit</button
+                ></div
               ></div
             >
+
             <div class="flex items-center"></div>
           </div>
         </div>

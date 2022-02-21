@@ -37,6 +37,7 @@
 
       <div
         tippy="Admin or Editor role required"
+        placement="left"
         [isEnabled]="isAdmin === false && isEditor === false"
       >
         <button
@@ -57,6 +58,7 @@
 
       <div
         tippy="Project is restricted for demo purposes"
+        placement="left"
         [isEnabled]="nav.orgName === firstOrgName"
       >
         <button
