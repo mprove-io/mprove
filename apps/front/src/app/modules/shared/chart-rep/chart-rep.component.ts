@@ -13,6 +13,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { interval, of, Subscription } from 'rxjs';
 import { startWith, switchMap, take, tap } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
+import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
@@ -74,9 +75,18 @@ export class ChartRepComponent implements OnInit, OnDestroy {
 
   isSelectValid = false;
 
+  isExplorer = false;
+  isExplorer$ = this.memberQuery.isExplorer$.pipe(
+    tap(x => {
+      this.isExplorer = x;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     private apiService: ApiService,
     private navQuery: NavQuery,
+    private memberQuery: MemberQuery,
     private queryService: QueryService,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
