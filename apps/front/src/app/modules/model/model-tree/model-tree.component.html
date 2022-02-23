@@ -14,19 +14,24 @@
           'pl-6 pr-5':
             node.data.nodeClass === nodeClassDimension ||
             node.data.nodeClass === nodeClassMeasure ||
-            node.data.nodeClass === nodeClassCalculation
+            node.data.nodeClass === nodeClassCalculation ||
+            node.data.nodeClass === nodeClassFilter
         }"
       >
         <div
           data-cy="modelTreeItem"
           class="flex w-full select-none flex-row pr-5"
           [ngClass]="{
-            'cursor-pointer': node.data.nodeClass !== nodeClassInfo,
+            'cursor-pointer':
+              node.data.nodeClass !== nodeClassInfo &&
+              node.data.nodeClass !== nodeClassFilter,
             'bg-blue2': node.data.nodeClass === nodeClassDimension,
             'hover:bg-blue5':
               node.data.nodeClass === nodeClassDimension && node.data.isField,
             'bg-purple-100 hover:bg-purple-200':
               node.data.nodeClass === nodeClassMeasure,
+            'bg-gray-100 hover:bg-gray-200':
+              node.data.nodeClass === nodeClassFilter,
             'bg-green2 hover:bg-green1':
               node.data.nodeClass === nodeClassCalculation,
             'px-5': !node.data.isField

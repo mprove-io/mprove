@@ -42,6 +42,7 @@ export class ModelTreeComponent implements AfterViewInit {
   nodeClassDimension = common.FieldClassEnum.Dimension;
   nodeClassMeasure = common.FieldClassEnum.Measure;
   nodeClassCalculation = common.FieldClassEnum.Calculation;
+  nodeClassFilter = common.FieldClassEnum.Filter;
   fieldResultTs = common.FieldResultEnum.Ts;
 
   nodesExtra: ModelNodeExtra[] = [];
@@ -168,6 +169,9 @@ export class ModelTreeComponent implements AfterViewInit {
   }
 
   nodeOnClick(node: TreeNode) {
+    if (node.data.nodeClass === this.nodeClassFilter) {
+      return;
+    }
     node.toggleActivated();
     if (!node.data.isField) {
       if (node.hasChildren) {
