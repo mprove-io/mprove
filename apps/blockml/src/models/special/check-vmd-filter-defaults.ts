@@ -33,19 +33,28 @@ export function checkVmdFilterDefaults<T extends types.vmdType>(
         return;
       }
 
-      if (
-        x.fileExt === common.FileExtensionEnum.Dashboard &&
-        common.isUndefined(field.default)
-      ) {
+      if (common.isUndefined(field.default)) {
+        field.default = ['any'];
+      }
+
+      field.fractions = [];
+
+      let p = processFilter({
+        filterBricks: field.default,
+        result: field.result,
+        fractions: field.fractions
+      });
+
+      if (p.valid === 0) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.DASHBOARD_FILTER_MUST_HAVE_DEFAULT,
+            title: enums.ErTitleEnum.WRONG_FILTER_EXPRESSION,
             message:
-              `${common.FileExtensionEnum.Dashboard} ${common.FieldClassEnum.Filter} must ` +
-              `have "${enums.ParameterEnum.Default}" parameter`,
+              `found expression "${p.brick}" for result "${field.result}" of ` +
+              `filter "${field.name}"`,
             lines: [
               {
-                line: field.name_line_num,
+                line: field.default_line_num,
                 name: x.fileName,
                 path: x.filePath
               }
@@ -55,38 +64,7 @@ export function checkVmdFilterDefaults<T extends types.vmdType>(
         return;
       }
 
-      if (common.isUndefined(field.default)) {
-        x.filters[field.name] = [];
-      } else {
-        field.fractions = [];
-
-        let p = processFilter({
-          filterBricks: field.default,
-          result: field.result,
-          fractions: field.fractions
-        });
-
-        if (p.valid === 0) {
-          item.errors.push(
-            new BmError({
-              title: enums.ErTitleEnum.WRONG_FILTER_EXPRESSION,
-              message:
-                `found expression "${p.brick}" for result "${field.result}" of ` +
-                `filter "${field.name}"`,
-              lines: [
-                {
-                  line: field.default_line_num,
-                  name: x.fileName,
-                  path: x.filePath
-                }
-              ]
-            })
-          );
-          return;
-        }
-
-        x.filters[field.name] = common.makeCopy(field.default);
-      }
+      x.filters[field.name] = common.makeCopy(field.default);
     });
 
     if (errorsOnStart === item.errors.length) {
