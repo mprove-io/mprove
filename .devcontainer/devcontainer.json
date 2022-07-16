@@ -1,0 +1,140 @@
+{
+  "name": "Node",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "VARIANT": "14-bullseye"
+    }
+  },
+  "remoteUser": "node",
+  "features": {
+    "docker-in-docker": "20.10",
+    "kubectl-helm-minikube": "1.23",
+    "git": "os-provided",
+    "git-lfs": "latest",
+    "github-cli": "latest",
+    "sshd": "latest"
+  },
+  "initializeCommand": "rsync --ignore-existing ${localWorkspaceFolder}/.devcontainer/.zshrc.example ${localWorkspaceFolder}/.devcontainer/.zshrc",
+  "postCreateCommand": "sudo chown node node_modules",
+  "mounts": [
+    "source=mprove-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
+    "source=${localEnv:HOME}/mprove_data,target=${localEnv:HOME}/mprove_data,type=bind,consistency=cached",
+    "source=${localWorkspaceFolder}/.devcontainer/.zshrc,target=/home/node/.zshrc,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.okteto,target=/home/node/.okteto,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.kube/config,target=/home/node/.kube/config,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.zsh_history,target=/home/node/.zsh_history,type=bind,consistency=cached"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "IronGeek.vscode-env",
+        "rvest.vs-code-prettier-eslint",
+        "teclado.vscode-nginx-format",
+        "Okteto.kubernetes-context",
+        "eamodio.gitlens",
+        "withfig.fig",
+        "redhat.vscode-yaml",
+        "william-voyek.vscode-nginx",
+        "kraftwer1.darcula-extra",
+        "Okteto.remote-kubernetes",
+        "yzhang.markdown-all-in-one",
+        "Zignd.html-css-class-completion",
+        "streetsidesoftware.code-spell-checker",
+        "ghaschel.vscode-angular-html",
+        "ms-vscode-remote.remote-containers",
+        "k--kato.intellij-idea-keybindings",
+        "wayou.vscode-todo-highlight",
+        "PKief.material-icon-theme"
+      ],
+      "settings": {
+        "typescript.tsdk": "node_modules/typescript/lib",
+        "[typescript]": {
+          "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+        },
+        "[javascript]": {
+          "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+        },
+        "[html]": {
+          "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+        },
+        "[json]": {
+          "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+        },
+        "[jsonc]": {
+          "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+        },
+        // "[jinja-sql]" : {
+        //   "editor.defaultFormatter" : "dorzey.vscode-sqlfluff"
+        // },
+        // "[njk]" : {
+        //   "editor.defaultFormatter" : "douglaszaltron.nunjucks-vscode-extensionpack"
+        // },
+        "search.exclude": {
+          "**/node_modules": true,
+          "**/dist": true
+        },
+        "workbench.editor.closeOnFileDelete": true,
+        "files.enableTrash": false,
+        "workbench.colorTheme": "Darcula Extra",
+        "diffEditor.ignoreTrimWhitespace": false,
+        "git.confirmSync": false,
+        "git.enableSmartCommit": true,
+        "editor.links": false,
+        "terminal.integrated.scrollback": 10000,
+        "editor.accessibilitySupport": "off",
+        "workbench.iconTheme": "material-icon-theme",
+        "editor.suggest.showReferences": false,
+        "gitlens.currentLine.enabled": false,
+        "gitlens.hovers.currentLine.over": "line",
+        "files.autoSave": "afterDelay",
+        "javascript.updateImportsOnFileMove.enabled": "never",
+        "nxConsole.enableTelemetry": false,
+        "gitlens.codeLens.enabled": false,
+        "workbench.startupEditor": "newUntitledFile",
+        "typescript.updateImportsOnFileMove.enabled": "never",
+        "extensions.ignoreRecommendations": true,
+        "files.autoSaveDelay": 300,
+        "workbench.editor.untitled.hint": "hidden",
+        "editor.largeFileOptimizations": false,
+        "workbench.panel.defaultLocation": "bottom",
+        "typescript.referencesCodeLens.enabled": true,
+        "editor.detectIndentation": false,
+        "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+        "window.zoomLevel": 3.25,
+        "redhat.telemetry.enabled": false,
+        "editor.bracketPairColorization.enabled": false,
+        "okteto.telemetry": false,
+        // "settingsSync.ignoredExtensions": ["dbaeumer.vscode-eslint"],
+        "workbench.editor.splitInGroupLayout": "vertical",
+        "editor.tabSize": 2,
+        "eslint.validate": ["javascript", "typescript"],
+        // "prettier-eslint.eslintIntegration": true,
+        "gitlens.hovers.enabled": false,
+        "gitlens.statusBar.enabled": false,
+        "workbench.settings.useSplitJSON": true,
+        "explorer.confirmDelete": false,
+        "workbench.settings.editor": "json",
+        "editor.codeLens": false,
+        "cSpell.dictionaries": ["cspell-words"],
+        "cSpell.caseSensitive": false,
+        "cSpell.dictionaryDefinitions": [
+          {
+            "name": "cspell-words",
+            "path": "./.vscode/cspell-words.txt",
+            "addWords": true
+          }
+        ],
+        "files.associations": {
+          "*.view": "yaml",
+          "*.model": "yaml",
+          "*.dashboard": "yaml",
+          "*.viz": "yaml",
+          "*.udf": "yaml",
+          "*.config": "yaml"
+        }
+      }
+    }
+  }
+}
