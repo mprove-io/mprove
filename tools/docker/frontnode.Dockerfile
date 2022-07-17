@@ -1,16 +1,12 @@
 FROM node:14.15.3
-
 WORKDIR /usr/src/app
-
 RUN npm config set scripts-prepend-node-path true
-
-COPY package.docker.json package.json
+COPY package.json .
 COPY yarn.lock .
-
 RUN yarn
+COPY . .
 
-COPY dist/apps/blockml .
+EXPOSE 4200
 
-EXPOSE 3001
+CMD ["yarn", "serve:front:dev"]
 
-CMD [ "node", "main.js" ]

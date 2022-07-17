@@ -18,16 +18,6 @@
             "parallel": true
           }
         },
-        "pj": {
-          "executor": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              "ts-node ./tools/utils/prepare-package-json-for-docker"
-            ],
-            "parallel": false,
-            "outputPath": "package.docker.json"
-          }
-        },
         "test-plus-e2e": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
@@ -44,7 +34,6 @@
             "commands": [
               "nx affected --target=build --configuration=production",
               "nx affected --target=test",
-              "nx pj top",
               "nx affected --target=compose-up-build",
               "nx affected --target=e2e"
             ],
@@ -56,7 +45,6 @@
           "options": {
             "commands": [
               "nx affected --target=build --configuration=production",
-              "nx pj top",
               "nx affected --target=compose-up-build"
             ],
             "parallel": false
@@ -68,7 +56,6 @@
             "commands": [
               "nx run-many --target=build --configuration=production --all",
               "nx run-many --target=test --all",
-              "nx pj top",
               "nx run-many --target=compose-up-build --all",
               "nx run-many --target=e2e --all"
             ],
@@ -80,7 +67,6 @@
           "options": {
             "commands": [
               "nx run-many --target=build --configuration=production --all",
-              "nx pj top",
               "nx run-many --target=compose-up-build --all"
             ],
             "parallel": false

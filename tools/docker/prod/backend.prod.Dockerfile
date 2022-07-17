@@ -1,16 +1,12 @@
 FROM node:14.15.3
-
 WORKDIR /usr/src/app
-
 RUN npm config set scripts-prepend-node-path true
-
-COPY package.docker.json package.json
+COPY package.json .
 COPY yarn.lock .
-
 RUN yarn
+COPY . .
+RUN yarn build:backend:prod
 
-COPY dist/apps/disk .
+EXPOSE 3000 9229
 
-EXPOSE 3002
-
-CMD [ "node", "main.js" ]
+CMD [ "node", "dist/apps/backend/main.js" ]

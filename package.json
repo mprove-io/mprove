@@ -8,6 +8,7 @@
     "url": "https://github.com/mprove-io/mprove.git"
   },
   "scripts": {
+    "postinstall": "ngcc --properties es2015 browser module main",
     "typeorm": "node -r ts-node/register -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "mig:drop": "npm run typeorm schema:drop",
     "mig:run": "npm run typeorm migration:run",
@@ -22,7 +23,6 @@
     "circular": "nx run-many --target=circular --all",
     "lint": "nx run-many --target=lint --all",
     "build-prod": "nx run-many --target=build --configuration=production --all",
-    "pj": "nx pj top",
     "compose-build": "nx run-many --target=compose-build --all",
     "test": "nx run-many --target=test --all",
     "compose-up-build": "nx run-many --target=compose-up-build --all",
@@ -32,9 +32,14 @@
     "test-plus-e2e": "nx test-plus-e2e top",
     "steps-all": "nx steps-all top",
     "steps-all-short": "nx steps-all-short top",
-    "postinstall": "ngcc --properties es2015 browser module main",
     "start:dev": "nx serve front",
-    "start": "nx start top"
+    "start": "nx start top",
+    "build:backend:prod": "nx build backend -c production",
+    "build:blockml:prod": "nx build blockml -c production",
+    "build:disk:prod": "nx build disk -c production",
+    "build:front:prod": "nx build front -c production",
+    "serve:front:dev": "nx serve front -c development --host 0.0.0.0",
+    "serve:front:prod": "nx serve front -c production --host 0.0.0.0"
   },
   "dependencies": {
     "@angular/animations": "11.2.7",
