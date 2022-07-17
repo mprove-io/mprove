@@ -1,9 +1,13 @@
-.envrc
 .git
+.devcontainer
 .vscode
 .idea
+.env
+.envrc
 
 node_modules
 nogit
 **/logs
 
+tools/deploy
+tools/docker

@@ -157,7 +157,7 @@
         "compose-build": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "cwd": "tools/deploy/base-dev",
+            "cwd": "./",
             "commands": ["docker-compose build disk"],
             "parallel": false
           }
@@ -258,7 +258,7 @@
         "compose-build": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "cwd": "tools/deploy/base-dev",
+            "cwd": "./",
             "commands": ["docker-compose build blockml-main"],
             "parallel": false
           }
@@ -351,7 +351,7 @@
         "compose-build": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "cwd": "tools/deploy/base-dev",
+            "cwd": "./",
             "commands": ["docker-compose build backend"],
             "parallel": false
           }
@@ -643,7 +643,7 @@
         "compose-build": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "cwd": "tools/deploy/base-dev",
+            "cwd": "./",
             "commands": ["docker-compose build front"],
             "parallel": false
           }

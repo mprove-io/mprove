@@ -54,83 +54,96 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=$COMPOSE_RABBITMQ_DEFAULT_USER
       - RABBITMQ_DEFAULT_PASS=$COMPOSE_RABBITMQ_DEFAULT_PASS
+      - RABBITMQ_ERLANG_COOKIE=$COMPOSE_RABBITMQ_ERLANG_COOKIE
     ports:
       - 5672:5672
       - 15672:15672
       
-  # backend:
-  #   build:
-  #     context: ../../../
-  #     dockerfile: tools/docker/backend.dev.Dockerfile
-  #   image: mprove/mprove-base-m-backend:$MPROVE_BASE_RELEASE_TAG
-  #   env_file:
-  #     - $BACKEND_ENV_FILE_PATH
-  #   ports:
-  #     - 3000:3000
-  #   volumes:
-  #     - type: bind
-  #       source: $BACKEND_ENV_FILE_PATH
-  #       target: $BACKEND_ENV_FILE_PATH
+  backend:
+    build:
+      context: ./
+      dockerfile: tools/docker/prod/backend.prod.Dockerfile
+    image: mprove/mprove-base-m-backend:$MPROVE_BASE_RELEASE_TAG
+    env_file:
+      - $COMPOSE_BACKEND_ENV_FILE_PATH
+    environment:
+      BACKEND_IS_SCHEDULER: 'FALSE'      
+    ports:
+      - 3000:3000
+    volumes:
+      - type: bind
+        source: $COMPOSE_BACKEND_ENV_FILE_SOURCE_PATH
+        target: $COMPOSE_BACKEND_ENV_FILE_PATH
 
-  # backend-scheduler:
-  #   build:
-  #     context: ../../../
-  #     dockerfile: tools/docker/backend.dev.Dockerfile
-  #   image: mprove/mprove-base-m-backend:$MPROVE_BASE_RELEASE_TAG
-  #   env_file:
-  #     - $BACKEND_SCHEDULER_ENV_FILE_PATH
-  #   volumes:
-  #     - type: bind
-  #       source: $BACKEND_SCHEDULER_ENV_FILE_PATH
-  #       target: $BACKEND_SCHEDULER_ENV_FILE_PATH
+  backend-scheduler:
+    build:
+      context: ./
+      dockerfile: tools/docker/prod/backend.prod.Dockerfile
+    image: mprove/mprove-base-m-backend:$MPROVE_BASE_RELEASE_TAG
+    env_file:
+      - $COMPOSE_BACKEND_SCHEDULER_ENV_FILE_PATH
+    environment:
+      BACKEND_IS_SCHEDULER: 'TRUE'     
+    volumes:
+      - type: bind
+        source: $COMPOSE_BACKEND_SCHEDULER_ENV_FILE_SOURCE_PATH
+        target: $COMPOSE_BACKEND_SCHEDULER_ENV_FILE_PATH
 
-  # blockml-main:
-  #   build:
-  #     context: ../../../
-  #     dockerfile: tools/docker/blockml.dev.Dockerfile
-  #   image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG
-  #   env_file:
-  #     - $BLOCKML_MAIN_ENV_FILE_PATH
-  #   ports:
-  #     - 3001:3001
-  #   volumes:
-  #     - type: bind
-  #       source: $BLOCKML_MAIN_ENV_FILE_PATH
-  #       target: $BLOCKML_MAIN_ENV_FILE_PATH
+  blockml-main:
+    build:
+      context: ./
+      dockerfile: tools/docker/prod/blockml.prod.Dockerfile
+    image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG
+    env_file:
+      - $COMPOSE_BLOCKML_MAIN_ENV_FILE_PATH
+    environment:
+      BLOCKML_IS_SINGLE: 'FALSE'
+      BLOCKML_IS_MAIN: 'TRUE'
+      BLOCKML_IS_WORKER: 'FALSE'      
+    ports:
+      - 3001:3001
+    volumes:
+      - type: bind
+        source: $COMPOSE_BLOCKML_MAIN_ENV_FILE_SOURCE_PATH
+        target: $COMPOSE_BLOCKML_MAIN_ENV_FILE_PATH
 
-  # blockml-worker:
-  #   build:
-  #     context: ../../../
-  #     dockerfile: tools/docker/blockml.dev.Dockerfile
-  #   image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG
-  #   env_file:
-  #     - $BLOCKML_WORKER_ENV_FILE_PATH
-  #   volumes:
-  #     - type: bind
-  #       source: $BLOCKML_WORKER_ENV_FILE_PATH
-  #       target: $BLOCKML_WORKER_ENV_FILE_PATH
+  blockml-worker:
+    build:
+      context: ./
+      dockerfile: tools/docker/prod/blockml.prod.Dockerfile
+    image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG
+    env_file:
+      - $COMPOSE_BLOCKML_WORKER_ENV_FILE_PATH
+    environment:
+      BLOCKML_IS_SINGLE: 'FALSE'
+      BLOCKML_IS_MAIN: 'FALSE'
+      BLOCKML_IS_WORKER: 'TRUE'
+    volumes:
+      - type: bind
+        source: $COMPOSE_BLOCKML_WORKER_ENV_FILE_SOURCE_PATH
+        target: $COMPOSE_BLOCKML_WORKER_ENV_FILE_PATH
 
-  # disk:
-  #   build:
-  #     context: ../../../
-  #     dockerfile: tools/docker/disk.dev.Dockerfile
-  #   image: mprove/mprove-base-m-disk:$MPROVE_BASE_RELEASE_TAG
-  #   env_file:
-  #     - $DISK_ENV_FILE_PATH
-  #   ports:
-  #     - 3002:3002
-  #   volumes:
-  #     - type: bind
-  #       source: $DISK_ENV_FILE_PATH
-  #       target: $DISK_ENV_FILE_PATH
-  #     - type: bind
-  #       source: $M_DATA_ORG_PATH
-  #       target: $M_DATA_ORG_PATH
+  disk:
+    build:
+      context: ./
+      dockerfile: tools/docker/prod/disk.prod.Dockerfile
+    image: mprove/mprove-base-m-disk:$MPROVE_BASE_RELEASE_TAG
+    env_file:
+      - $COMPOSE_DISK_ENV_FILE_PATH
+    ports:
+      - 3002:3002
+    volumes:
+      - type: bind
+        source: $COMPOSE_DISK_ENV_FILE_SOURCE_PATH
+        target: $COMPOSE_DISK_ENV_FILE_PATH
+      - type: bind
+        source: $COMPOSE_DISK_ORGANIZATIONS_VOLUME_SOURCE_PATH
+        target: $COMPOSE_DISK_ORGANIZATIONS_VOLUME_PATH
 
-  # front:
-  #   build:
-  #     context: ../../../
-  #     dockerfile: tools/docker/front.dev.Dockerfile
-  #   image: mprove/mprove-base-m-front:$MPROVE_BASE_RELEASE_TAG
-  #   ports:
-  #     - 3003:80
+  front:
+    build:
+      context: ./
+      dockerfile: tools/docker/prod/front.prod.Dockerfile
+    image: mprove/mprove-base-m-front:$MPROVE_BASE_RELEASE_TAG
+    ports:
+      - 3003:80
