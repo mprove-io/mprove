@@ -33,7 +33,8 @@
     "steps-all": "nx steps-all top",
     "steps-all-short": "nx steps-all-short top",
     "postinstall": "ngcc --properties es2015 browser module main",
-    "start:dev": "nx serve front"
+    "start:dev": "nx serve front",
+    "start": "nx start top"
   },
   "dependencies": {
     "@angular/animations": "11.2.7",

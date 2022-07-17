@@ -4,6 +4,20 @@
     "top": {
       "root": ".",
       "targets": {
+        "start": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "cwd": "./",
+            "commands": [
+              "docker-compose up db rabbit",
+              "nx serve backend",
+              "nx serve disk",
+              "nx serve blockml",
+              "nx serve front -c development --host 0.0.0.0"
+            ],
+            "parallel": true
+          }
+        },
         "pj": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
@@ -573,6 +587,14 @@
                   "maximumError": "10kb"
                 }
               ]
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
             }
           }
         },
@@ -583,9 +605,15 @@
           },
           "configurations": {
             "production": {
-              "browserTarget": "front:build:production"
+              "browserTarget": "front:build:production",
+              "disableHostCheck": true
+            },
+            "development": {
+              "browserTarget": "front:build:development",
+              "disableHostCheck": true
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "executor": "@angular-devkit/build-angular:extract-i18n",
