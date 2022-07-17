@@ -48,6 +48,7 @@
         "PKief.material-icon-theme"
       ],
       "settings": {
+        "workbench.settings.useSplitJSON": false,
         "typescript.tsdk": "node_modules/typescript/lib",
         "[typescript]": {
           "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
@@ -64,12 +65,6 @@
         "[jsonc]": {
           "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
         },
-        // "[jinja-sql]" : {
-        //   "editor.defaultFormatter" : "dorzey.vscode-sqlfluff"
-        // },
-        // "[njk]" : {
-        //   "editor.defaultFormatter" : "douglaszaltron.nunjucks-vscode-extensionpack"
-        // },
         "search.exclude": {
           "**/node_modules": true,
           "**/dist": true
@@ -85,12 +80,9 @@
         "editor.accessibilitySupport": "off",
         "workbench.iconTheme": "material-icon-theme",
         "editor.suggest.showReferences": false,
-        "gitlens.currentLine.enabled": false,
-        "gitlens.hovers.currentLine.over": "line",
         "files.autoSave": "afterDelay",
         "javascript.updateImportsOnFileMove.enabled": "never",
         "nxConsole.enableTelemetry": false,
-        "gitlens.codeLens.enabled": false,
         "workbench.startupEditor": "newUntitledFile",
         "typescript.updateImportsOnFileMove.enabled": "never",
         "extensions.ignoreRecommendations": true,
@@ -105,13 +97,9 @@
         "redhat.telemetry.enabled": false,
         "editor.bracketPairColorization.enabled": false,
         "okteto.telemetry": false,
-        "workbench.editor.splitInGroupLayout": "vertical",
+        "workbench.editor.splitInGroupLayout": "horizontal",
         "editor.tabSize": 2,
         "eslint.validate": ["javascript", "typescript"],
-        // "settingsSync.ignoredExtensions": ["dbaeumer.vscode-eslint"],
-        // "prettier-eslint.eslintIntegration": true,
-        "gitlens.hovers.enabled": false,
-        "gitlens.statusBar.enabled": false,
         "explorer.confirmDelete": false,
         "workbench.settings.editor": "json",
         "editor.codeLens": false,
@@ -132,7 +120,20 @@
           "*.udf": "yaml",
           "*.config": "yaml"
         },
-        "workbench.settings.useSplitJSON": true
+        "gitlens.hovers.enabled": false,
+        "gitlens.statusBar.enabled": false,
+        "gitlens.codeLens.enabled": false,
+        "gitlens.currentLine.enabled": false,
+        "gitlens.hovers.currentLine.over": "line",
+        "gitlens.keymap": "none",
+        "gitlens.advanced.messages": {
+          "suppressCommitHasNoPreviousCommitWarning": false,
+          "suppressCommitNotFoundWarning": false,
+          "suppressFileNotUnderSourceControlWarning": false,
+          "suppressGitVersionWarning": false,
+          "suppressLineUncommittedWarning": false,
+          "suppressNoRepositoryWarning": false
+        }
       }
     }
   }
