@@ -15,15 +15,14 @@
     "github-cli": "latest",
     "sshd": "latest"
   },
-  "initializeCommand": "rsync --ignore-existing ${localWorkspaceFolder}/.devcontainer/.zshrc.example ${localWorkspaceFolder}/.devcontainer/.zshrc",
-  "postCreateCommand": "sudo chown node node_modules",
+  "postCreateCommand": "sudo chown node node_modules && sudo chown node /etc/hosts && echo \"$(echo '127.0.0.1 db' | cat - /etc/hosts)\" > /etc/hosts && cp -n ${containerWorkspaceFolder}/.devcontainer/.zshrc.example ${containerWorkspaceFolder}/.devcontainer/.zshrc && ln -sf ${containerWorkspaceFolder}/.devcontainer/.zshrc ~/.zshrc && ln -sf /etc/hosts ${containerWorkspaceFolder}/.devcontainer/hosts",
   "mounts": [
     "source=mprove-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
-    "source=${localEnv:HOME}/mprove_data,target=${localEnv:HOME}/mprove_data,type=bind,consistency=cached",
-    "source=${localWorkspaceFolder}/.devcontainer/.zshrc,target=/home/node/.zshrc,type=bind,consistency=cached",
-    "source=${localEnv:HOME}/.okteto,target=/home/node/.okteto,type=bind,consistency=cached",
-    "source=${localEnv:HOME}/.kube/config,target=/home/node/.kube/config,type=bind,consistency=cached",
-    "source=${localEnv:HOME}/.zsh_history,target=/home/node/.zsh_history,type=bind,consistency=cached"
+    "source=mprove-data,target=/home/node/mprove_data,type=volume",
+    // "source=${localEnv:HOME}${localEnv:USERPROFILE}/mprove_data,target=/home/node/mprove_data,type=bind,consistency=cached",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.okteto,target=/home/node/.okteto,type=bind,consistency=cached",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.kube/config,target=/home/node/.kube/config,type=bind,consistency=cached",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.zsh_history,target=/home/node/.zsh_history,type=bind,consistency=cached"
   ],
   "customizations": {
     "vscode": {
@@ -34,7 +33,7 @@
         "teclado.vscode-nginx-format",
         "Okteto.kubernetes-context",
         "eamodio.gitlens",
-        "withfig.fig",
+        // "withfig.fig",
         "redhat.vscode-yaml",
         "william-voyek.vscode-nginx",
         "kraftwer1.darcula-extra",
@@ -106,14 +105,13 @@
         "redhat.telemetry.enabled": false,
         "editor.bracketPairColorization.enabled": false,
         "okteto.telemetry": false,
-        // "settingsSync.ignoredExtensions": ["dbaeumer.vscode-eslint"],
         "workbench.editor.splitInGroupLayout": "vertical",
         "editor.tabSize": 2,
         "eslint.validate": ["javascript", "typescript"],
+        // "settingsSync.ignoredExtensions": ["dbaeumer.vscode-eslint"],
         // "prettier-eslint.eslintIntegration": true,
         "gitlens.hovers.enabled": false,
         "gitlens.statusBar.enabled": false,
-        "workbench.settings.useSplitJSON": true,
         "explorer.confirmDelete": false,
         "workbench.settings.editor": "json",
         "editor.codeLens": false,
@@ -133,7 +131,8 @@
           "*.viz": "yaml",
           "*.udf": "yaml",
           "*.config": "yaml"
-        }
+        },
+        "workbench.settings.useSplitJSON": true
       }
     }
   }
