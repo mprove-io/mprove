@@ -5,7 +5,7 @@ containerWorkspaceFolder=$1
 echo $containerWorkspaceFolder 
 
 sudo chown node node_modules 
- 
+sudo chown node dist 
 sudo chown node /etc/hosts 
 
 cp -n $containerWorkspaceFolder/.devcontainer/.zshrc.example $containerWorkspaceFolder/.devcontainer/.zshrc 
