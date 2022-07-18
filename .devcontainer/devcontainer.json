@@ -15,7 +15,7 @@
     "github-cli": "latest",
     "sshd": "latest"
   },
-  "postCreateCommand": "sudo chown node node_modules && sudo chown node /etc/hosts && echo \"$(echo '127.0.0.1 db\n127.0.0.1 rabbit' | cat - /etc/hosts)\" > /etc/hosts && cp -n ${containerWorkspaceFolder}/.devcontainer/.zshrc.example ${containerWorkspaceFolder}/.devcontainer/.zshrc && ln -sf ${containerWorkspaceFolder}/.devcontainer/.zshrc ~/.zshrc && ln -sf /etc/hosts ${containerWorkspaceFolder}/.devcontainer/hosts",
+  "postCreateCommand": "bash .devcontainer/post-create.sh ${containerWorkspaceFolder}",
   "mounts": [
     "source=mprove-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
     "source=mprove-dist,target=${containerWorkspaceFolder}/dist,type=volume",
