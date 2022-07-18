@@ -5,24 +5,26 @@ import { enums } from '~disk/barrels/enums';
 import { interfaces } from '~disk/barrels/interfaces';
 
 export function getDevConfig(envFilePath: any) {
-  let env = common.isDefined(envFilePath)
-    ? parse(fse.readFileSync(envFilePath))
-    : process.env;
+  let envFile;
 
-  let commonConfig: common.Config = common.getCommonConfig(env);
+  if (common.isDefined(envFilePath)) {
+    envFile = parse(fse.readFileSync(envFilePath));
+  }
+
+  let commonConfig: common.Config = common.getCommonConfig(envFile);
 
   let devConfig: interfaces.Config = Object.assign({}, commonConfig, <
     interfaces.Config
   >{
-    diskEnv: <enums.DiskEnvEnum>env.DISK_ENV,
+    diskEnv: <enums.DiskEnvEnum>(process.env.DISK_ENV || envFile.DISK_ENV),
 
-    rabbitUser: env.RABBIT_USER,
-    rabbitPass: env.RABBIT_PASS,
-    rabbitHost: env.RABBIT_HOST,
-    rabbitPort: env.RABBIT_PORT,
-    rabbitProtocol: env.RABBIT_PROTOCOL,
+    rabbitUser: process.env.RABBIT_USER || envFile.RABBIT_USER,
+    rabbitPass: process.env.RABBIT_PASS || envFile.RABBIT_PASS,
+    rabbitHost: process.env.RABBIT_HOST || envFile.RABBIT_HOST,
+    rabbitPort: process.env.RABBIT_PORT || envFile.RABBIT_PORT,
+    rabbitProtocol: process.env.RABBIT_PROTOCOL || envFile.RABBIT_PROTOCOL,
 
-    mDataOrgPath: env.M_DATA_ORG_PATH
+    mDataOrgPath: process.env.M_DATA_ORG_PATH || envFile.M_DATA_ORG_PATH
   });
   return devConfig;
 }

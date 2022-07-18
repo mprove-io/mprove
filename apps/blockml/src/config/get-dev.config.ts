@@ -5,30 +5,51 @@ import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
 
 export function getDevConfig(envFilePath: any) {
-  let env = common.isDefined(envFilePath)
-    ? parse(fse.readFileSync(envFilePath))
-    : process.env;
+  let envFile;
 
-  let commonConfig: common.Config = common.getCommonConfig(env);
+  if (common.isDefined(envFilePath)) {
+    envFile = parse(fse.readFileSync(envFilePath));
+  }
+
+  let commonConfig: common.Config = common.getCommonConfig(envFile);
 
   let devConfig: interfaces.Config = Object.assign({}, commonConfig, <
     interfaces.Config
   >{
-    blockmlEnv: <enums.BlockmlEnvEnum>env.BLOCKML_ENV,
-    logIO: <common.BoolEnum>env.BLOCKML_LOG_IO,
-    logFunc: <enums.FuncEnum>env.BLOCKML_LOG_FUNC,
-    copyLogsToModels: <common.BoolEnum>env.BLOCKML_COPY_LOGS_TO_MODELS,
-    logsPath: <common.BoolEnum>env.BLOCKML_LOGS_PATH,
-    isSingle: <common.BoolEnum>env.BLOCKML_IS_SINGLE,
-    isMain: <common.BoolEnum>env.BLOCKML_IS_MAIN,
-    isWorker: <common.BoolEnum>env.BLOCKML_IS_WORKER,
-    concurrencyLimit: Number(env.BLOCKML_CONCURRENCY_LIMIT),
+    blockmlEnv: <enums.BlockmlEnvEnum>(
+      (process.env.BLOCKML_ENV || envFile.BLOCKML_ENV)
+    ),
+    logIO: <common.BoolEnum>(
+      (process.env.BLOCKML_LOG_IO || envFile.BLOCKML_LOG_IO)
+    ),
+    logFunc: <enums.FuncEnum>(
+      (process.env.BLOCKML_LOG_FUNC || envFile.BLOCKML_LOG_FUNC)
+    ),
+    copyLogsToModels: <common.BoolEnum>(
+      (process.env.BLOCKML_COPY_LOGS_TO_MODELS ||
+        envFile.BLOCKML_COPY_LOGS_TO_MODELS)
+    ),
+    logsPath: <common.BoolEnum>(
+      (process.env.BLOCKML_LOGS_PATH || envFile.BLOCKML_LOGS_PATH)
+    ),
+    isSingle: <common.BoolEnum>(
+      (process.env.BLOCKML_IS_SINGLE || envFile.BLOCKML_IS_SINGLE)
+    ),
+    isMain: <common.BoolEnum>(
+      (process.env.BLOCKML_IS_MAIN || envFile.BLOCKML_IS_MAIN)
+    ),
+    isWorker: <common.BoolEnum>(
+      (process.env.BLOCKML_IS_WORKER || envFile.BLOCKML_IS_WORKER)
+    ),
+    concurrencyLimit: Number(
+      process.env.BLOCKML_CONCURRENCY_LIMIT || envFile.BLOCKML_CONCURRENCY_LIMIT
+    ),
 
-    rabbitUser: env.RABBIT_USER,
-    rabbitPass: env.RABBIT_PASS,
-    rabbitHost: env.RABBIT_HOST,
-    rabbitPort: env.RABBIT_PORT,
-    rabbitProtocol: env.RABBIT_PROTOCOL
+    rabbitUser: process.env.RABBIT_USER || envFile.RABBIT_USER,
+    rabbitPass: process.env.RABBIT_PASS || envFile.RABBIT_PASS,
+    rabbitHost: process.env.RABBIT_HOST || envFile.RABBIT_HOST,
+    rabbitPort: process.env.RABBIT_PORT || envFile.RABBIT_PORT,
+    rabbitProtocol: process.env.RABBIT_PROTOCOL || envFile.RABBIT_PROTOCOL
   });
   return devConfig;
 }
