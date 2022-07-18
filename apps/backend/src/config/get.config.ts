@@ -23,7 +23,7 @@ export function getConfig() {
     errorMessage: apiToBackend.ErEnum.BACKEND_WRONG_ENV_VALUES
   });
 
-  console.log(`validatedConfig.isScheduler=${validatedConfig.isScheduler}`);
+  // console.log(`validatedConfig.isScheduler=${validatedConfig.isScheduler}`);
 
   return validatedConfig;
 }
