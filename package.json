@@ -45,9 +45,9 @@
     "clean:db": "rm -rf /root/mprove_data/mysql/*",
     "clean:org": "rm -rf /root/mprove_data/organizations/*",
     "clean": "yarn clean:db && yarn clean:org",
+    "startup": "yarn up & yarn start",
     "start": "nx start top",
-    "up": "docker-compose up db rabbit",
-    "start-up": "yarn start && yarn up"
+    "up": "docker-compose up db rabbit"
   },
   "dependencies": {
     "@angular/animations": "11.2.7",
