@@ -33,13 +33,21 @@
     "steps-all": "nx steps-all top",
     "steps-all-short": "nx steps-all-short top",
     "start:dev": "nx serve front",
-    "start": "nx start top",
     "build:backend:prod": "nx build backend -c production",
     "build:blockml:prod": "nx build blockml -c production",
     "build:disk:prod": "nx build disk -c production",
     "build:front:prod": "nx build front -c production",
+    "serve:backend:scheduler": "BACKEND_IS_SCHEDULER=TRUE nx serve backend",
+    "serve:blockml:single": "BLOCKML_IS_SINGLE=TRUE nx serve blockml",
+    "serve:disk": "nx serve disk",
     "serve:front:dev": "nx serve front -c development --host 0.0.0.0",
-    "serve:front:prod": "nx serve front -c production --host 0.0.0.0"
+    "serve:front:prod": "nx serve front -c production --host 0.0.0.0",
+    "clean:db": "sudo rm -rf /home/node/mprove_data/mysql/*",
+    "clean:org": "sudo rm -rf /home/node/mprove_data/organizations/*",
+    "clean": "yarn clean:db && yarn clean:org",
+    "start": "nx start top",
+    "up": "docker-compose up db rabbit",
+    "start-up": "yarn start && yarn up"
   },
   "dependencies": {
     "@angular/animations": "11.2.7",

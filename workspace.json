@@ -9,11 +9,10 @@
           "options": {
             "cwd": "./",
             "commands": [
-              "docker-compose up db rabbit",
-              "nx serve backend",
-              "nx serve disk",
-              "nx serve blockml",
-              "nx serve front -c development --host 0.0.0.0"
+              "yarn serve:backend:scheduler",
+              "yarn serve:blockml:single",
+              "yarn serve:disk",
+              "yarn serve:front:dev"
             ],
             "parallel": true
           }

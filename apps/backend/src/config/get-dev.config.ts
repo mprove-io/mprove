@@ -113,5 +113,8 @@ export function getDevConfig(envFilePath: any) {
       (process.env.BACKEND_LOG_ON_RESPONSER || envFile.BACKEND_LOG_ON_RESPONSER)
     )
   };
+
+  // console.log(`devConfig.isScheduler: ${devConfig.isScheduler}`);
+
   return devConfig;
 }

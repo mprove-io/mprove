@@ -34,15 +34,15 @@ services:
       dockerfile: tools/docker/prod/backend.prod.Dockerfile
     image: mprove/mprove-base-m-backend:$MPROVE_BASE_RELEASE_TAG
     env_file:
-      - $COMPOSE_BACKEND_ENV_FILE_PATH
+      - $ENV_FILE_PATH
     environment:
       BACKEND_IS_SCHEDULER: 'FALSE'      
     ports:
       - 3000:3000
     volumes:
       - type: bind
-        source: $COMPOSE_BACKEND_ENV_FILE_SOURCE_PATH
-        target: $COMPOSE_BACKEND_ENV_FILE_PATH
+        source: $ENV_FILE_SOURCE_PATH
+        target: $ENV_FILE_TARGET_PATH
       - type: bind
         source: $COMPOSE_BACKEND_BIGQUERY_TEST_CREDENTIALS_SOURCE_PATH
         target: $COMPOSE_BACKEND_BIGQUERY_TEST_CREDENTIALS_PATH
@@ -53,13 +53,13 @@ services:
       dockerfile: tools/docker/prod/backend.prod.Dockerfile
     image: mprove/mprove-base-m-backend:$MPROVE_BASE_RELEASE_TAG
     env_file:
-      - $COMPOSE_BACKEND_SCHEDULER_ENV_FILE_PATH
+      - $ENV_FILE_PATH
     environment:
       BACKEND_IS_SCHEDULER: 'TRUE'     
     volumes:
       - type: bind
-        source: $COMPOSE_BACKEND_SCHEDULER_ENV_FILE_SOURCE_PATH
-        target: $COMPOSE_BACKEND_SCHEDULER_ENV_FILE_PATH
+        source: $ENV_FILE_SOURCE_PATH
+        target: $ENV_FILE_TARGET_PATH
       - type: bind
         source: $COMPOSE_BACKEND_BIGQUERY_TEST_CREDENTIALS_SOURCE_PATH
         target: $COMPOSE_BACKEND_BIGQUERY_TEST_CREDENTIALS_PATH        
@@ -70,7 +70,7 @@ services:
       dockerfile: tools/docker/prod/blockml.prod.Dockerfile
     image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG
     env_file:
-      - $COMPOSE_BLOCKML_MAIN_ENV_FILE_PATH
+      - $ENV_FILE_PATH
     environment:
       BLOCKML_IS_SINGLE: 'FALSE'
       BLOCKML_IS_MAIN: 'TRUE'
@@ -79,8 +79,8 @@ services:
       - 3001:3001
     volumes:
       - type: bind
-        source: $COMPOSE_BLOCKML_MAIN_ENV_FILE_SOURCE_PATH
-        target: $COMPOSE_BLOCKML_MAIN_ENV_FILE_PATH
+        source: $ENV_FILE_SOURCE_PATH
+        target: $ENV_FILE_TARGET_PATH
 
   blockml-worker:
     build:
@@ -88,15 +88,15 @@ services:
       dockerfile: tools/docker/prod/blockml.prod.Dockerfile
     image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG
     env_file:
-      - $COMPOSE_BLOCKML_WORKER_ENV_FILE_PATH
+      - $ENV_FILE_PATH
     environment:
       BLOCKML_IS_SINGLE: 'FALSE'
       BLOCKML_IS_MAIN: 'FALSE'
       BLOCKML_IS_WORKER: 'TRUE'
     volumes:
       - type: bind
-        source: $COMPOSE_BLOCKML_WORKER_ENV_FILE_SOURCE_PATH
-        target: $COMPOSE_BLOCKML_WORKER_ENV_FILE_PATH
+        source: $ENV_FILE_SOURCE_PATH
+        target: $ENV_FILE_TARGET_PATH
 
   disk:
     build:
@@ -104,13 +104,13 @@ services:
       dockerfile: tools/docker/prod/disk.prod.Dockerfile
     image: mprove/mprove-base-m-disk:$MPROVE_BASE_RELEASE_TAG
     env_file:
-      - $COMPOSE_DISK_ENV_FILE_PATH
+      - $ENV_FILE_PATH
     ports:
       - 3002:3002
     volumes:
       - type: bind
-        source: $COMPOSE_DISK_ENV_FILE_SOURCE_PATH
-        target: $COMPOSE_DISK_ENV_FILE_PATH
+        source: $ENV_FILE_SOURCE_PATH
+        target: $ENV_FILE_TARGET_PATH
       - type: bind
         source: $COMPOSE_DISK_ORGANIZATIONS_VOLUME_SOURCE_PATH
         target: $COMPOSE_DISK_ORGANIZATIONS_VOLUME_PATH
