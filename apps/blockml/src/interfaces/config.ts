@@ -2,7 +2,7 @@ import { IsEnum, IsInt, IsString } from 'class-validator';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 
-export class Config extends common.Config {
+export class Config {
   @IsEnum(enums.BlockmlEnvEnum)
   blockmlEnv?: enums.BlockmlEnvEnum;
 
@@ -31,17 +31,32 @@ export class Config extends common.Config {
   concurrencyLimit?: number;
 
   @IsString()
-  rabbitUser?: string;
+  blockmlRabbitUser?: string;
 
   @IsString()
-  rabbitPass?: string;
+  blockmlRabbitPass?: string;
 
   @IsString()
-  rabbitProtocol?: string;
+  blockmlRabbitProtocol?: string;
 
   @IsString()
-  rabbitHost?: string;
+  blockmlRabbitHost?: string;
 
   @IsString()
-  rabbitPort?: string;
+  blockmlRabbitPort?: string;
+
+  @IsEnum(common.BoolEnum)
+  blockmlLogIsColor?: common.BoolEnum;
+
+  @IsEnum(common.BoolEnum)
+  blockmlLogResponseError?: common.BoolEnum;
+
+  @IsEnum(common.BoolEnum)
+  blockmlLogResponseOk?: common.BoolEnum;
+
+  @IsEnum(common.BoolEnum)
+  blockmlLogOnSender?: common.BoolEnum;
+
+  @IsEnum(common.BoolEnum)
+  blockmlLogOnResponser?: common.BoolEnum;
 }

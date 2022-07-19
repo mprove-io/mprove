@@ -11,11 +11,7 @@ export function getDevConfig(envFilePath: any) {
     envFile = parse(fse.readFileSync(envFilePath));
   }
 
-  let commonConfig: common.Config = common.getCommonConfig(envFile);
-
-  let devConfig: interfaces.Config = Object.assign({}, commonConfig, <
-    interfaces.Config
-  >{
+  let devConfig: interfaces.Config = {
     blockmlEnv: <enums.BlockmlEnvEnum>(
       (process.env.BLOCKML_ENV || envFile.BLOCKML_ENV)
     ),
@@ -45,11 +41,33 @@ export function getDevConfig(envFilePath: any) {
       process.env.BLOCKML_CONCURRENCY_LIMIT || envFile.BLOCKML_CONCURRENCY_LIMIT
     ),
 
-    rabbitUser: process.env.RABBIT_USER || envFile.RABBIT_USER,
-    rabbitPass: process.env.RABBIT_PASS || envFile.RABBIT_PASS,
-    rabbitHost: process.env.RABBIT_HOST || envFile.RABBIT_HOST,
-    rabbitPort: process.env.RABBIT_PORT || envFile.RABBIT_PORT,
-    rabbitProtocol: process.env.RABBIT_PROTOCOL || envFile.RABBIT_PROTOCOL
-  });
+    blockmlRabbitUser:
+      process.env.BLOCKML_RABBIT_USER || envFile.BLOCKML_RABBIT_USER,
+    blockmlRabbitPass:
+      process.env.BLOCKML_RABBIT_PASS || envFile.BLOCKML_RABBIT_PASS,
+    blockmlRabbitHost:
+      process.env.BLOCKML_RABBIT_HOST || envFile.BLOCKML_RABBIT_HOST,
+    blockmlRabbitPort:
+      process.env.BLOCKML_RABBIT_PORT || envFile.BLOCKML_RABBIT_PORT,
+    blockmlRabbitProtocol:
+      process.env.BLOCKML_RABBIT_PROTOCOL || envFile.BLOCKML_RABBIT_PROTOCOL,
+
+    blockmlLogIsColor: <common.BoolEnum>(
+      (process.env.BLOCKML_LOG_IS_COLOR || envFile.BLOCKML_LOG_IS_COLOR)
+    ),
+    blockmlLogResponseError: <common.BoolEnum>(
+      (process.env.BLOCKML_LOG_RESPONSE_ERROR ||
+        envFile.BLOCKML_LOG_RESPONSE_ERROR)
+    ),
+    blockmlLogResponseOk: <common.BoolEnum>(
+      (process.env.BLOCKML_LOG_RESPONSE_OK || envFile.BLOCKML_LOG_RESPONSE_OK)
+    ),
+    blockmlLogOnSender: <common.BoolEnum>(
+      (process.env.BLOCKML_LOG_ON_SENDER || envFile.BLOCKML_LOG_ON_SENDER)
+    ),
+    blockmlLogOnResponser: <common.BoolEnum>(
+      (process.env.BLOCKML_LOG_ON_RESPONSER || envFile.BLOCKML_LOG_ON_RESPONSER)
+    )
+  };
   return devConfig;
 }

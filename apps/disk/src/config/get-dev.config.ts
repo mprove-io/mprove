@@ -11,20 +11,34 @@ export function getDevConfig(envFilePath: any) {
     envFile = parse(fse.readFileSync(envFilePath));
   }
 
-  let commonConfig: common.Config = common.getCommonConfig(envFile);
-
-  let devConfig: interfaces.Config = Object.assign({}, commonConfig, <
-    interfaces.Config
-  >{
+  let devConfig: interfaces.Config = {
     diskEnv: <enums.DiskEnvEnum>(process.env.DISK_ENV || envFile.DISK_ENV),
 
-    rabbitUser: process.env.RABBIT_USER || envFile.RABBIT_USER,
-    rabbitPass: process.env.RABBIT_PASS || envFile.RABBIT_PASS,
-    rabbitHost: process.env.RABBIT_HOST || envFile.RABBIT_HOST,
-    rabbitPort: process.env.RABBIT_PORT || envFile.RABBIT_PORT,
-    rabbitProtocol: process.env.RABBIT_PROTOCOL || envFile.RABBIT_PROTOCOL,
+    diskRabbitUser: process.env.DISK_RABBIT_USER || envFile.DISK_RABBIT_USER,
+    diskRabbitPass: process.env.DISK_RABBIT_PASS || envFile.DISK_RABBIT_PASS,
+    diskRabbitHost: process.env.DISK_RABBIT_HOST || envFile.DISK_RABBIT_HOST,
+    diskRabbitPort: process.env.DISK_RABBIT_PORT || envFile.DISK_RABBIT_PORT,
+    diskRabbitProtocol:
+      process.env.DISK_RABBIT_PROTOCOL || envFile.DISK_RABBIT_PROTOCOL,
 
-    mDataOrgPath: process.env.M_DATA_ORG_PATH || envFile.M_DATA_ORG_PATH
-  });
+    diskOrganizationsPath:
+      process.env.DISK_ORGANIZATIONS_PATH || envFile.DISK_ORGANIZATIONS_PATH,
+
+    diskLogIsColor: <common.BoolEnum>(
+      (process.env.DISK_LOG_IS_COLOR || envFile.DISK_LOG_IS_COLOR)
+    ),
+    diskLogResponseError: <common.BoolEnum>(
+      (process.env.DISK_LOG_RESPONSE_ERROR || envFile.DISK_LOG_RESPONSE_ERROR)
+    ),
+    diskLogResponseOk: <common.BoolEnum>(
+      (process.env.DISK_LOG_RESPONSE_OK || envFile.DISK_LOG_RESPONSE_OK)
+    ),
+    diskLogOnSender: <common.BoolEnum>(
+      (process.env.DISK_LOG_ON_SENDER || envFile.DISK_LOG_ON_SENDER)
+    ),
+    diskLogOnResponser: <common.BoolEnum>(
+      (process.env.DISK_LOG_ON_RESPONSER || envFile.DISK_LOG_ON_RESPONSER)
+    )
+  };
   return devConfig;
 }

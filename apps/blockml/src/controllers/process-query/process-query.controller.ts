@@ -17,9 +17,33 @@ export class ProcessQueryController {
     try {
       let payload = await this.processQueryService.process(body);
 
-      return common.makeOkResponse({ payload, cs: this.cs, body: body });
+      return common.makeOkResponse({
+        payload,
+        body: body,
+        logResponseOk: this.cs.get<interfaces.Config['blockmlLogResponseOk']>(
+          'blockmlLogResponseOk'
+        ),
+        logOnResponser: this.cs.get<interfaces.Config['blockmlLogOnResponser']>(
+          'blockmlLogOnResponser'
+        ),
+        logIsColor: this.cs.get<interfaces.Config['blockmlLogIsColor']>(
+          'blockmlLogIsColor'
+        )
+      });
     } catch (e) {
-      return common.makeErrorResponse({ e, cs: this.cs, body: body });
+      return common.makeErrorResponse({
+        e,
+        body: body,
+        logResponseError: this.cs.get<
+          interfaces.Config['blockmlLogResponseError']
+        >('blockmlLogResponseError'),
+        logOnResponser: this.cs.get<interfaces.Config['blockmlLogOnResponser']>(
+          'blockmlLogOnResponser'
+        ),
+        logIsColor: this.cs.get<interfaces.Config['blockmlLogIsColor']>(
+          'blockmlLogIsColor'
+        )
+      });
     }
   }
 }

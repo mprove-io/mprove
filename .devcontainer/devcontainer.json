@@ -16,6 +16,7 @@
     "sshd": "latest"
   },
   "postCreateCommand": "bash .devcontainer/post-create.sh ${containerWorkspaceFolder}",
+  "postStartCommand": "bash .devcontainer/post-start.sh",
   "mounts": [
     "source=mprove-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
     "source=mprove-dist,target=${containerWorkspaceFolder}/dist,type=volume",

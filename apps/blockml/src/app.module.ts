@@ -17,12 +17,20 @@ import { getConfig } from './config/get.config';
 
     RabbitMQModule.forRootAsync(RabbitMQModule, {
       useFactory: (cs: ConfigService<interfaces.Config>) => {
-        let rabbitUser = cs.get<interfaces.Config['rabbitUser']>('rabbitUser');
-        let rabbitPass = cs.get<interfaces.Config['rabbitPass']>('rabbitPass');
-        let rabbitPort = cs.get<interfaces.Config['rabbitPort']>('rabbitPort');
-        let rabbitHost = cs.get<interfaces.Config['rabbitHost']>('rabbitHost');
-        let rabbitProtocol = cs.get<interfaces.Config['rabbitProtocol']>(
-          'rabbitProtocol'
+        let rabbitUser = cs.get<interfaces.Config['blockmlRabbitUser']>(
+          'blockmlRabbitUser'
+        );
+        let rabbitPass = cs.get<interfaces.Config['blockmlRabbitPass']>(
+          'blockmlRabbitPass'
+        );
+        let rabbitPort = cs.get<interfaces.Config['blockmlRabbitPort']>(
+          'blockmlRabbitPort'
+        );
+        let rabbitHost = cs.get<interfaces.Config['blockmlRabbitHost']>(
+          'blockmlRabbitHost'
+        );
+        let rabbitProtocol = cs.get<interfaces.Config['blockmlRabbitProtocol']>(
+          'blockmlRabbitProtocol'
         );
 
         let blockmlEnv = cs.get<interfaces.Config['blockmlEnv']>('blockmlEnv');

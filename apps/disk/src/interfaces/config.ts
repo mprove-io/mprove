@@ -2,25 +2,40 @@ import { IsEnum, IsString } from 'class-validator';
 import { common } from '~disk/barrels/common';
 import { enums } from '~disk/barrels/enums';
 
-export class Config extends common.Config {
+export class Config {
   @IsEnum(enums.DiskEnvEnum)
   diskEnv?: enums.DiskEnvEnum;
 
   @IsString()
-  rabbitUser?: string;
+  diskRabbitUser?: string;
 
   @IsString()
-  rabbitPass?: string;
+  diskRabbitPass?: string;
 
   @IsString()
-  rabbitProtocol?: string;
+  diskRabbitProtocol?: string;
 
   @IsString()
-  rabbitHost?: string;
+  diskRabbitHost?: string;
 
   @IsString()
-  rabbitPort?: string;
+  diskRabbitPort?: string;
 
   @IsString()
-  mDataOrgPath?: string;
+  diskOrganizationsPath?: string;
+
+  @IsEnum(common.BoolEnum)
+  diskLogIsColor?: common.BoolEnum;
+
+  @IsEnum(common.BoolEnum)
+  diskLogResponseError?: common.BoolEnum;
+
+  @IsEnum(common.BoolEnum)
+  diskLogResponseOk?: common.BoolEnum;
+
+  @IsEnum(common.BoolEnum)
+  diskLogOnSender?: common.BoolEnum;
+
+  @IsEnum(common.BoolEnum)
+  diskLogOnResponser?: common.BoolEnum;
 }

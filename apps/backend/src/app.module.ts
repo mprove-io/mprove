@@ -38,12 +38,20 @@ let jwtModule = JwtModule.registerAsync({
 
 let rabbitModule = RabbitMQModule.forRootAsync(RabbitMQModule, {
   useFactory: (cs: ConfigService<interfaces.Config>) => {
-    let rabbitUser = cs.get<interfaces.Config['rabbitUser']>('rabbitUser');
-    let rabbitPass = cs.get<interfaces.Config['rabbitPass']>('rabbitPass');
-    let rabbitHost = cs.get<interfaces.Config['rabbitHost']>('rabbitHost');
-    let rabbitPort = cs.get<interfaces.Config['rabbitPort']>('rabbitPort');
-    let rabbitProtocol = cs.get<interfaces.Config['rabbitProtocol']>(
-      'rabbitProtocol'
+    let rabbitUser = cs.get<interfaces.Config['backendRabbitUser']>(
+      'backendRabbitUser'
+    );
+    let rabbitPass = cs.get<interfaces.Config['backendRabbitPass']>(
+      'backendRabbitPass'
+    );
+    let rabbitHost = cs.get<interfaces.Config['backendRabbitHost']>(
+      'backendRabbitHost'
+    );
+    let rabbitPort = cs.get<interfaces.Config['backendRabbitPort']>(
+      'backendRabbitPort'
+    );
+    let rabbitProtocol = cs.get<interfaces.Config['backendRabbitProtocol']>(
+      'backendRabbitProtocol'
     );
 
     let backendEnv = cs.get<interfaces.Config['backendEnv']>('backendEnv');
@@ -78,11 +86,17 @@ let rabbitModule = RabbitMQModule.forRootAsync(RabbitMQModule, {
 let typeormRootModule = TypeOrmModule.forRootAsync({
   useFactory: (cs: ConfigService<interfaces.Config>) => ({
     type: 'mysql',
-    host: cs.get<interfaces.Config['mysqlHost']>('mysqlHost'),
-    port: cs.get<interfaces.Config['mysqlPort']>('mysqlPort'),
-    username: cs.get<interfaces.Config['mysqlUsername']>('mysqlUsername'),
-    password: cs.get<interfaces.Config['mysqlPassword']>('mysqlPassword'),
-    database: cs.get<interfaces.Config['mysqlDatabase']>('mysqlDatabase'),
+    host: cs.get<interfaces.Config['backendMysqlHost']>('backendMysqlHost'),
+    port: cs.get<interfaces.Config['backendMysqlPort']>('backendMysqlPort'),
+    username: cs.get<interfaces.Config['backendMysqlUsername']>(
+      'backendMysqlUsername'
+    ),
+    password: cs.get<interfaces.Config['backendMysqlPassword']>(
+      'backendMysqlPassword'
+    ),
+    database: cs.get<interfaces.Config['backendMysqlDatabase']>(
+      'backendMysqlDatabase'
+    ),
     entities: appEntities,
     migrations: appMigrations
   }),

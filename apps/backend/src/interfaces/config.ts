@@ -2,7 +2,7 @@ import { IsEnum, IsInt, IsNumber, IsString } from 'class-validator';
 import { common } from '~backend/barrels/common';
 import { enums } from '~backend/barrels/enums';
 
-export class Config extends common.Config {
+export class Config {
   @IsEnum(enums.BackendEnvEnum)
   backendEnv?: enums.BackendEnvEnum;
 
@@ -10,7 +10,7 @@ export class Config extends common.Config {
   isScheduler?: common.BoolEnum;
 
   @IsString()
-  mDataBigqueryPath?: string;
+  backendBigqueryPath?: string;
 
   @IsString()
   jwtSecret?: string;
@@ -78,32 +78,47 @@ export class Config extends common.Config {
 
   //
   @IsString()
-  rabbitUser?: string;
+  backendRabbitUser?: string;
 
   @IsString()
-  rabbitPass?: string;
+  backendRabbitPass?: string;
 
   @IsString()
-  rabbitProtocol?: string;
+  backendRabbitProtocol?: string;
 
   @IsString()
-  rabbitHost?: string;
+  backendRabbitHost?: string;
 
   @IsString()
-  rabbitPort?: string;
+  backendRabbitPort?: string;
 
   @IsString()
-  mysqlHost?: string;
+  backendMysqlHost?: string;
 
   @IsNumber()
-  mysqlPort?: number;
+  backendMysqlPort?: number;
 
   @IsString()
-  mysqlUsername?: string;
+  backendMysqlUsername?: string;
 
   @IsString()
-  mysqlPassword?: string;
+  backendMysqlPassword?: string;
 
   @IsString()
-  mysqlDatabase?: string;
+  backendMysqlDatabase?: string;
+
+  @IsEnum(common.BoolEnum)
+  backendLogIsColor?: common.BoolEnum;
+
+  @IsEnum(common.BoolEnum)
+  backendLogResponseError?: common.BoolEnum;
+
+  @IsEnum(common.BoolEnum)
+  backendLogResponseOk?: common.BoolEnum;
+
+  @IsEnum(common.BoolEnum)
+  backendLogOnSender?: common.BoolEnum;
+
+  @IsEnum(common.BoolEnum)
+  backendLogOnResponser?: common.BoolEnum;
 }

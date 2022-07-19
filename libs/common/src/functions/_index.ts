@@ -1,7 +1,6 @@
 export * from './boolean-to-enum';
 export * from './capitalize-first-letter';
 export * from './enum-to-boolean';
-export * from './get-common.config';
 export * from './get-fraction-type-for-any';
 export * from './get-timezone-label-by-value';
 export * from './get-timezones';

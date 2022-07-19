@@ -25,18 +25,34 @@ export class ConsumerWorkerService {
 
       return common.makeOkResponse({
         payload,
-        cs: this.cs,
         body: request,
         path: pathGenSql,
-        method: common.METHOD_RABBIT
+        method: common.METHOD_RABBIT,
+        logResponseOk: this.cs.get<interfaces.Config['blockmlLogResponseOk']>(
+          'blockmlLogResponseOk'
+        ),
+        logOnResponser: this.cs.get<interfaces.Config['blockmlLogOnResponser']>(
+          'blockmlLogOnResponser'
+        ),
+        logIsColor: this.cs.get<interfaces.Config['blockmlLogIsColor']>(
+          'blockmlLogIsColor'
+        )
       });
     } catch (e) {
       return common.makeErrorResponse({
         e,
-        cs: this.cs,
         body: request,
         path: pathGenSql,
-        method: common.METHOD_RABBIT
+        method: common.METHOD_RABBIT,
+        logResponseError: this.cs.get<
+          interfaces.Config['blockmlLogResponseError']
+        >('blockmlLogResponseError'),
+        logOnResponser: this.cs.get<interfaces.Config['blockmlLogOnResponser']>(
+          'blockmlLogOnResponser'
+        ),
+        logIsColor: this.cs.get<interfaces.Config['blockmlLogIsColor']>(
+          'blockmlLogIsColor'
+        )
       });
     }
   }

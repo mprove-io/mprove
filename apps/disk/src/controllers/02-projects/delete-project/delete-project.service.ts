@@ -10,8 +10,8 @@ export class DeleteProjectService {
   constructor(private cs: ConfigService<interfaces.Config>) {}
 
   async process(request: any) {
-    let orgPath = this.cs.get<interfaces.Config['mDataOrgPath']>(
-      'mDataOrgPath'
+    let orgPath = this.cs.get<interfaces.Config['diskOrganizationsPath']>(
+      'diskOrganizationsPath'
     );
 
     let requestValid = common.transformValidSync({

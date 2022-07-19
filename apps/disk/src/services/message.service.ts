@@ -80,18 +80,34 @@ export class MessageService {
 
       return common.makeOkResponse({
         payload,
-        cs: this.cs,
         body: request,
         path: request.info.name,
-        method: common.METHOD_RABBIT
+        method: common.METHOD_RABBIT,
+        logResponseOk: this.cs.get<interfaces.Config['diskLogResponseOk']>(
+          'diskLogResponseOk'
+        ),
+        logOnResponser: this.cs.get<interfaces.Config['diskLogOnResponser']>(
+          'diskLogOnResponser'
+        ),
+        logIsColor: this.cs.get<interfaces.Config['diskLogIsColor']>(
+          'diskLogIsColor'
+        )
       });
     } catch (e) {
       return common.makeErrorResponse({
         e,
-        cs: this.cs,
         body: request,
         path: request.info.name,
-        method: common.METHOD_RABBIT
+        method: common.METHOD_RABBIT,
+        logResponseError: this.cs.get<
+          interfaces.Config['diskLogResponseError']
+        >('diskLogResponseError'),
+        logOnResponser: this.cs.get<interfaces.Config['diskLogOnResponser']>(
+          'diskLogOnResponser'
+        ),
+        logIsColor: this.cs.get<interfaces.Config['diskLogIsColor']>(
+          'diskLogIsColor'
+        )
       });
     }
   }

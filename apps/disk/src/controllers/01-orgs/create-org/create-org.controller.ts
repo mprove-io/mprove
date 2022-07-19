@@ -17,9 +17,33 @@ export class CreateOrgController {
     try {
       let payload = await this.createOrgService.process(body);
 
-      return common.makeOkResponse({ payload, cs: this.cs, body: body });
+      return common.makeOkResponse({
+        payload,
+        body: body,
+        logResponseOk: this.cs.get<interfaces.Config['diskLogResponseOk']>(
+          'diskLogResponseOk'
+        ),
+        logOnResponser: this.cs.get<interfaces.Config['diskLogOnResponser']>(
+          'diskLogOnResponser'
+        ),
+        logIsColor: this.cs.get<interfaces.Config['diskLogIsColor']>(
+          'diskLogIsColor'
+        )
+      });
     } catch (e) {
-      return common.makeErrorResponse({ e, cs: this.cs, body: body });
+      return common.makeErrorResponse({
+        e,
+        body: body,
+        logResponseError: this.cs.get<
+          interfaces.Config['diskLogResponseError']
+        >('diskLogResponseError'),
+        logOnResponser: this.cs.get<interfaces.Config['diskLogOnResponser']>(
+          'diskLogOnResponser'
+        ),
+        logIsColor: this.cs.get<interfaces.Config['diskLogIsColor']>(
+          'diskLogIsColor'
+        )
+      });
     }
   }
 }

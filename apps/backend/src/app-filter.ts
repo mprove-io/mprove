@@ -44,11 +44,19 @@ export class AppFilter implements ExceptionFilter {
 
       let resp = common.makeErrorResponse({
         e: e,
-        cs: this.cs,
         body: req,
         request: request,
         duration: Date.now() - request.start_ts,
-        skipLog: true
+        skipLog: true,
+        logResponseError: this.cs.get<
+          interfaces.Config['backendLogResponseError']
+        >('backendLogResponseError'),
+        logOnResponser: this.cs.get<interfaces.Config['backendLogOnResponser']>(
+          'backendLogOnResponser'
+        ),
+        logIsColor: this.cs.get<interfaces.Config['backendLogIsColor']>(
+          'backendLogIsColor'
+        )
       });
 
       let iKey = req?.info?.idempotencyKey;
@@ -77,8 +85,19 @@ export class AppFilter implements ExceptionFilter {
       }
 
       common.logResponse({
-        cs: this.cs,
-        response: resp
+        response: resp,
+        logResponseOk: this.cs.get<interfaces.Config['backendLogResponseOk']>(
+          'backendLogResponseOk'
+        ),
+        logResponseError: this.cs.get<
+          interfaces.Config['backendLogResponseError']
+        >('backendLogResponseError'),
+        logOnResponser: this.cs.get<interfaces.Config['backendLogOnResponser']>(
+          'backendLogOnResponser'
+        ),
+        logIsColor: this.cs.get<interfaces.Config['backendLogIsColor']>(
+          'backendLogIsColor'
+        )
       });
 
       response.status(HttpStatus.CREATED).json(resp);

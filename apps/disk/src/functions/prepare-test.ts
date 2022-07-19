@@ -36,7 +36,9 @@ export async function prepareTest(
 
   let cs = moduleRef.get<ConfigService<interfaces.Config>>(ConfigService);
 
-  let orgPath = cs.get<interfaces.Config['mDataOrgPath']>('mDataOrgPath');
+  let orgPath = cs.get<interfaces.Config['diskOrganizationsPath']>(
+    'diskOrganizationsPath'
+  );
 
   let orgDir = `${orgPath}/${orgId}`;
 

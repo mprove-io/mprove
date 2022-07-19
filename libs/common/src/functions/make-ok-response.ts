@@ -1,6 +1,5 @@
-import { ConfigService } from '@nestjs/config';
 import { enums } from '~common/barrels/enums';
-import { Config, MyResponse } from '~common/interfaces/_index';
+import { MyResponse } from '~common/interfaces/_index';
 import { logToConsole } from './log-to-console';
 
 export function makeOkResponse(item: {
@@ -10,10 +9,23 @@ export function makeOkResponse(item: {
   duration?: number;
   body: any;
   payload: any;
-  cs: ConfigService<Config>;
   skipLog?: boolean;
+  logResponseOk: enums.BoolEnum;
+  logOnResponser: enums.BoolEnum;
+  logIsColor: enums.BoolEnum;
 }) {
-  let { body, payload, cs, request, path, method, duration, skipLog } = item;
+  let {
+    body,
+    payload,
+    request,
+    path,
+    method,
+    duration,
+    skipLog,
+    logResponseOk,
+    logOnResponser,
+    logIsColor
+  } = item;
 
   let response: MyResponse = {
     info: {
@@ -27,14 +39,12 @@ export function makeOkResponse(item: {
   };
 
   if (
-    cs.get<Config['mproveLogOnResponser']>('mproveLogOnResponser') ===
-      enums.BoolEnum.TRUE &&
-    cs.get<Config['mproveLogResponseOk']>('mproveLogResponseOk') ===
-      enums.BoolEnum.TRUE &&
+    logOnResponser === enums.BoolEnum.TRUE &&
+    logResponseOk === enums.BoolEnum.TRUE &&
     skipLog !== true
   ) {
     let part = Object.assign({}, response, { payload: undefined });
-    logToConsole(part, cs);
+    logToConsole(part, logIsColor);
   }
 
   return response;

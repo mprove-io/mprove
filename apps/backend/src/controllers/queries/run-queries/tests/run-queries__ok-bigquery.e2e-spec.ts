@@ -26,7 +26,7 @@ let prep: interfaces.Prep;
 
 let config = getConfig();
 let bigqueryTestCredentials = JSON.parse(
-  fse.readFileSync(config.mDataBigqueryPath).toString()
+  fse.readFileSync(config.backendBigqueryPath).toString()
 );
 
 test('1', async t => {

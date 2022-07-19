@@ -99,10 +99,18 @@ export class AppInterceptor implements NestInterceptor {
 
         respX = common.makeErrorResponse({
           e: err,
-          cs: this.cs,
           body: req,
           request: request,
-          skipLog: true
+          skipLog: true,
+          logResponseError: this.cs.get<
+            interfaces.Config['backendLogResponseError']
+          >('backendLogResponseError'),
+          logOnResponser: this.cs.get<
+            interfaces.Config['backendLogOnResponser']
+          >('backendLogOnResponser'),
+          logIsColor: this.cs.get<interfaces.Config['backendLogIsColor']>(
+            'backendLogIsColor'
+          )
         });
 
         let idempEntity: entities.IdempEntity = {
@@ -122,10 +130,18 @@ export class AppInterceptor implements NestInterceptor {
           mergeMap(async payload => {
             let resp = common.makeOkResponse({
               payload: payload,
-              cs: this.cs,
               request: request,
               body: req,
-              skipLog: true
+              skipLog: true,
+              logResponseOk: this.cs.get<
+                interfaces.Config['backendLogResponseOk']
+              >('backendLogResponseOk'),
+              logOnResponser: this.cs.get<
+                interfaces.Config['backendLogOnResponser']
+              >('backendLogOnResponser'),
+              logIsColor: this.cs.get<interfaces.Config['backendLogIsColor']>(
+                'backendLogIsColor'
+              )
             });
 
             if (common.isDefined(iKey)) {
@@ -146,8 +162,19 @@ export class AppInterceptor implements NestInterceptor {
           }),
           tap(x =>
             common.logResponse({
-              cs: this.cs,
-              response: x
+              response: x,
+              logResponseOk: this.cs.get<
+                interfaces.Config['backendLogResponseOk']
+              >('backendLogResponseOk'),
+              logResponseError: this.cs.get<
+                interfaces.Config['backendLogResponseError']
+              >('backendLogResponseError'),
+              logOnResponser: this.cs.get<
+                interfaces.Config['backendLogOnResponser']
+              >('backendLogOnResponser'),
+              logIsColor: this.cs.get<interfaces.Config['backendLogIsColor']>(
+                'backendLogIsColor'
+              )
             })
           )
         )
@@ -159,8 +186,19 @@ export class AppInterceptor implements NestInterceptor {
           }),
           tap(x =>
             common.logResponse({
-              cs: this.cs,
-              response: x
+              response: x,
+              logResponseOk: this.cs.get<
+                interfaces.Config['backendLogResponseOk']
+              >('backendLogResponseOk'),
+              logResponseError: this.cs.get<
+                interfaces.Config['backendLogResponseError']
+              >('backendLogResponseError'),
+              logOnResponser: this.cs.get<
+                interfaces.Config['backendLogOnResponser']
+              >('backendLogOnResponser'),
+              logIsColor: this.cs.get<interfaces.Config['backendLogIsColor']>(
+                'backendLogIsColor'
+              )
             })
           )
         )
@@ -171,8 +209,19 @@ export class AppInterceptor implements NestInterceptor {
           }),
           tap(x =>
             common.logResponse({
-              cs: this.cs,
-              response: x
+              response: x,
+              logResponseOk: this.cs.get<
+                interfaces.Config['backendLogResponseOk']
+              >('backendLogResponseOk'),
+              logResponseError: this.cs.get<
+                interfaces.Config['backendLogResponseError']
+              >('backendLogResponseError'),
+              logOnResponser: this.cs.get<
+                interfaces.Config['backendLogOnResponser']
+              >('backendLogOnResponser'),
+              logIsColor: this.cs.get<interfaces.Config['backendLogIsColor']>(
+                'backendLogIsColor'
+              )
             })
           )
         );

@@ -17,12 +17,20 @@ import { getConfig } from './config/get.config';
 
     RabbitMQModule.forRootAsync(RabbitMQModule, {
       useFactory: (cs: ConfigService<interfaces.Config>) => {
-        let rabbitUser = cs.get<interfaces.Config['rabbitUser']>('rabbitUser');
-        let rabbitPass = cs.get<interfaces.Config['rabbitPass']>('rabbitPass');
-        let rabbitHost = cs.get<interfaces.Config['rabbitHost']>('rabbitHost');
-        let rabbitPort = cs.get<interfaces.Config['rabbitPort']>('rabbitPort');
-        let rabbitProtocol = cs.get<interfaces.Config['rabbitProtocol']>(
-          'rabbitProtocol'
+        let rabbitUser = cs.get<interfaces.Config['diskRabbitUser']>(
+          'diskRabbitUser'
+        );
+        let rabbitPass = cs.get<interfaces.Config['diskRabbitPass']>(
+          'diskRabbitPass'
+        );
+        let rabbitHost = cs.get<interfaces.Config['diskRabbitHost']>(
+          'diskRabbitHost'
+        );
+        let rabbitPort = cs.get<interfaces.Config['diskRabbitPort']>(
+          'diskRabbitPort'
+        );
+        let rabbitProtocol = cs.get<interfaces.Config['diskRabbitProtocol']>(
+          'diskRabbitProtocol'
         );
 
         let diskEnv = cs.get<interfaces.Config['diskEnv']>('diskEnv');

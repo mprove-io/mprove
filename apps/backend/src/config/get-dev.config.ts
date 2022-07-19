@@ -11,24 +11,21 @@ export function getDevConfig(envFilePath: any) {
     envFile = parse(fse.readFileSync(envFilePath));
   }
 
-  let commonConfig: common.Config = common.getCommonConfig(envFile);
-
-  let devConfig: interfaces.Config = Object.assign({}, commonConfig, <
-    interfaces.Config
-  >{
+  let devConfig: interfaces.Config = {
     backendEnv: <enums.BackendEnvEnum>(
       (process.env.BACKEND_ENV || envFile.BACKEND_ENV)
     ),
     isScheduler: <common.BoolEnum>(
       (process.env.BACKEND_IS_SCHEDULER || envFile.BACKEND_IS_SCHEDULER)
     ),
-    mDataBigqueryPath:
-      process.env.M_DATA_BIGQUERY_PATH || envFile.M_DATA_BIGQUERY_PATH,
+    backendBigqueryPath:
+      process.env.BACKEND_BIGQUERY_PATH || envFile.BACKEND_BIGQUERY_PATH,
     jwtSecret: process.env.BACKEND_JWT_SECRET || envFile.BACKEND_JWT_SECRET,
     specialKey: process.env.BACKEND_SPECIAL_KEY || envFile.BACKEND_SPECIAL_KEY,
-    allowTestRoutes:
-      process.env.BACKEND_ALLOW_TEST_ROUTES ||
-      envFile.BACKEND_ALLOW_TEST_ROUTES,
+    allowTestRoutes: <common.BoolEnum>(
+      (process.env.BACKEND_ALLOW_TEST_ROUTES ||
+        envFile.BACKEND_ALLOW_TEST_ROUTES)
+    ),
     firstUserEmail:
       process.env.BACKEND_FIRST_USER_EMAIL || envFile.BACKEND_FIRST_USER_EMAIL,
     firstUserPassword:
@@ -76,17 +73,45 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_SMTP_AUTH_PASSWORD ||
       envFile.BACKEND_SMTP_AUTH_PASSWORD,
     //
-    rabbitUser: process.env.RABBIT_USER || envFile.RABBIT_USER,
-    rabbitPass: process.env.RABBIT_PASS || envFile.RABBIT_PASS,
-    rabbitHost: process.env.RABBIT_HOST || envFile.RABBIT_HOST,
-    rabbitPort: process.env.RABBIT_PORT || envFile.RABBIT_PORT,
-    rabbitProtocol: process.env.RABBIT_PROTOCOL || envFile.RABBIT_PROTOCOL,
+    backendRabbitUser:
+      process.env.BACKEND_RABBIT_USER || envFile.BACKEND_RABBIT_USER,
+    backendRabbitPass:
+      process.env.BACKEND_RABBIT_PASS || envFile.BACKEND_RABBIT_PASS,
+    backendRabbitHost:
+      process.env.BACKEND_RABBIT_HOST || envFile.BACKEND_RABBIT_HOST,
+    backendRabbitPort:
+      process.env.BACKEND_RABBIT_PORT || envFile.BACKEND_RABBIT_PORT,
+    backendRabbitProtocol:
+      process.env.BACKEND_RABBIT_PROTOCOL || envFile.BACKEND_RABBIT_PROTOCOL,
 
-    mysqlHost: process.env.MYSQL_HOST || envFile.MYSQL_HOST,
-    mysqlPort: Number(process.env.MYSQL_PORT || envFile.MYSQL_PORT),
-    mysqlUsername: process.env.MYSQL_USERNAME || envFile.MYSQL_USERNAME,
-    mysqlPassword: process.env.MYSQL_PASSWORD || envFile.MYSQL_PASSWORD,
-    mysqlDatabase: process.env.MYSQL_DATABASE || envFile.MYSQL_DATABASE
-  });
+    backendMysqlHost:
+      process.env.BACKEND_MYSQL_HOST || envFile.BACKEND_MYSQL_HOST,
+    backendMysqlPort: Number(
+      process.env.BACKEND_MYSQL_PORT || envFile.BACKEND_MYSQL_PORT
+    ),
+    backendMysqlUsername:
+      process.env.BACKEND_MYSQL_USERNAME || envFile.BACKEND_MYSQL_USERNAME,
+    backendMysqlPassword:
+      process.env.BACKEND_MYSQL_PASSWORD || envFile.BACKEND_MYSQL_PASSWORD,
+    backendMysqlDatabase:
+      process.env.BACKEND_MYSQL_DATABASE || envFile.BACKEND_MYSQL_DATABASE,
+
+    backendLogIsColor: <common.BoolEnum>(
+      (process.env.BACKEND_LOG_IS_COLOR || envFile.BACKEND_LOG_IS_COLOR)
+    ),
+    backendLogResponseError: <common.BoolEnum>(
+      (process.env.BACKEND_LOG_RESPONSE_ERROR ||
+        envFile.BACKEND_LOG_RESPONSE_ERROR)
+    ),
+    backendLogResponseOk: <common.BoolEnum>(
+      (process.env.BACKEND_LOG_RESPONSE_OK || envFile.BACKEND_LOG_RESPONSE_OK)
+    ),
+    backendLogOnSender: <common.BoolEnum>(
+      (process.env.BACKEND_LOG_ON_SENDER || envFile.BACKEND_LOG_ON_SENDER)
+    ),
+    backendLogOnResponser: <common.BoolEnum>(
+      (process.env.BACKEND_LOG_ON_RESPONSER || envFile.BACKEND_LOG_ON_RESPONSER)
+    )
+  };
   return devConfig;
 }
