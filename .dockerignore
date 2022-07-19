@@ -5,8 +5,9 @@
 .env
 .envrc
 
-node_modules
 nogit
+secrets
+node_modules
 **/logs
 
 tools/deploy

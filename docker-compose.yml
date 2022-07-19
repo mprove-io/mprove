@@ -1,38 +1,7 @@
 version: '3.7'
 services:
-  # mprove-dwh-clickhouse-nodeport-service:
-  #   image: yandex/clickhouse-server:21.11.7.9
-  #   env_file:
-  #     - $CLICKHOUSE_ENV_FILE_PATH    
-  #   ports:
-  #     - 8123:8123
-  #     - 9000:9000
-  #   volumes:
-  #     - type: bind
-  #       source: $M_DATA_CLICKHOUSE_PATH
-  #       target: /var/lib/clickhouse      
-  #     - type: bind
-  #       source: $M_DATA_CLICKHOUSE_LOG_PATH
-  #       target: /var/log/clickhouse-server
-
-  # tabix:
-  #     image: spoonest/clickhouse-tabix-web-client
-  #     ports:
-  #       - 8124:80 
-
-  # mprove-dwh-postgres-nodeport-service:
-  #   image: postgres:13.5
-  #   env_file:
-  #     - $PG_ENV_FILE_PATH
-  #   ports:
-  #     - 5432:5432
-  #   volumes:
-  #     - type: bind
-  #       source: $M_DATA_PG_PATH
-  #       target: /var/lib/postgresql/data
-
   db:
-    image: mysql:8
+    image: mysql:8.0.29
     environment:
       - MYSQL_ROOT_PASSWORD=$COMPOSE_DB_MYSQL_ROOT_PASSWORD
       - MYSQL_DATABASE=$COMPOSE_DB_MYSQL_DATABASE
@@ -50,7 +19,7 @@ services:
         target: /var/lib/mysql
 
   rabbit:
-    image: rabbitmq:3-management
+    image: rabbitmq:3.10.6-management
     environment:
       - RABBITMQ_DEFAULT_USER=$COMPOSE_RABBITMQ_DEFAULT_USER
       - RABBITMQ_DEFAULT_PASS=$COMPOSE_RABBITMQ_DEFAULT_PASS
@@ -74,6 +43,9 @@ services:
       - type: bind
         source: $COMPOSE_BACKEND_ENV_FILE_SOURCE_PATH
         target: $COMPOSE_BACKEND_ENV_FILE_PATH
+      - type: bind
+        source: $COMPOSE_BACKEND_BIGQUERY_TEST_CREDENTIALS_SOURCE_PATH
+        target: $COMPOSE_BACKEND_BIGQUERY_TEST_CREDENTIALS_PATH
 
   backend-scheduler:
     build:
@@ -88,6 +60,9 @@ services:
       - type: bind
         source: $COMPOSE_BACKEND_SCHEDULER_ENV_FILE_SOURCE_PATH
         target: $COMPOSE_BACKEND_SCHEDULER_ENV_FILE_PATH
+      - type: bind
+        source: $COMPOSE_BACKEND_BIGQUERY_TEST_CREDENTIALS_SOURCE_PATH
+        target: $COMPOSE_BACKEND_BIGQUERY_TEST_CREDENTIALS_PATH        
 
   blockml-main:
     build:
@@ -147,3 +122,40 @@ services:
     image: mprove/mprove-base-m-front:$MPROVE_BASE_RELEASE_TAG
     ports:
       - 3003:80
+
+  dwh-postgres:
+    image: postgres:13.5
+    environment:
+      - POSTGRES_USER=$COMPOSE_DWH_POSTGRES_USER
+      - POSTGRES_PASSWORD=$COMPOSE_DWH_POSTGRES_PASSWORD
+      - POSTGRES_DB=$COMPOSE_DWH_POSTGRES_DB
+    ports:
+      - 5432:5432
+    volumes:
+      - type: bind
+        source: $COMPOSE_DWH_POSTGRES_VOLUME_SOURCE_PATH
+        target: /var/lib/postgresql/data 
+
+  dwh-clickhouse:
+    image: yandex/clickhouse-server:21.11.7.9
+    environment:
+      - CLICKHOUSE_USER=$COMPOSE_DWH_CLICKHOUSE_USER
+      - CLICKHOUSE_PASSWORD=$COMPOSE_DWH_CLICKHOUSE_PASSWORD
+      - CLICKHOUSE_DB=$COMPOSE_DWH_CLICKHOUSE_DB   
+    ports:
+      - 8123:8123
+      - 9000:9000
+    volumes:
+      - type: bind
+        source: $COMPOSE_DWH_CLICKHOUSE_VOLUME_SOURCE_PATH
+        target: /var/lib/clickhouse      
+      - type: bind
+        source: $COMPOSE_DWH_CLICKHOUSE_LOGS_VOLUME_SOURCE_PATH
+        target: /var/log/clickhouse-server
+
+  # tabix:
+  #     image: spoonest/clickhouse-tabix-web-client
+  #     ports:
+  #       - 8124:80 
+
+     
