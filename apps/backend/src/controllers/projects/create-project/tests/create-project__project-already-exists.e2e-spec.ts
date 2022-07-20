@@ -10,7 +10,7 @@ let testId = 'backend-create-project__project-already-exists';
 let traceId = testId;
 
 let email = `${testId}@example.com`;
-let password = '123';
+let password = '123456';
 
 let orgId = testId;
 let orgName = testId;

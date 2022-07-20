@@ -10,7 +10,7 @@ let testId = 'backend-update-user-password__token-expired';
 let traceId = testId;
 
 let email = `${testId}@example.com`;
-let password = '123';
+let password = '123456';
 let newPassword = '456';
 let passwordResetToken = 'dj293d4958734d95';
 let expiredPasswordResetExpiresTs = '1';

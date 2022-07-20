@@ -11,7 +11,7 @@ let traceId = testId;
 
 let userId = common.makeId();
 let email = `${testId}@example.com`;
-let password = '123';
+let password = '123456';
 
 let orgId = testId;
 let orgName = testId;

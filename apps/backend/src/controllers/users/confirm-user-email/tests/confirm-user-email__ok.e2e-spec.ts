@@ -11,7 +11,7 @@ let traceId = testId;
 
 let email = `${testId}@example.com`;
 let emailToken = common.makeId();
-let password = '123';
+let password = '123456';
 
 let prep: interfaces.Prep;
 

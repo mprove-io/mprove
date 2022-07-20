@@ -10,7 +10,7 @@ let testId = 'backend-set-org-owner__new-owner-not-found';
 let traceId = testId;
 
 let email = `${testId}@example.com`;
-let password = '123';
+let password = '123456';
 
 let newOwnerEmail = `new-${testId}@example.com`;
 

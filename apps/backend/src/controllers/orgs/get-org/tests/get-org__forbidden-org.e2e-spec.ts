@@ -10,7 +10,7 @@ let testId = 'backend-get-org__forbidden-org';
 let traceId = testId;
 
 let email = `${testId}@example.com`;
-let password = '123';
+let password = '123456';
 
 let emailSecond = `second-${testId}@example.com`;
 
