@@ -27,6 +27,7 @@
     "test": "nx run-many --target=test --all",
     "compose-up-build": "nx run-many --target=compose-up-build --all",
     "e2e": "nx run-many --target=e2e --all",
+    "e2e:backend": "nx e2e backend",
     "steps": "nx steps top",
     "steps-short": "nx steps-short top",
     "test-plus-e2e": "nx test-plus-e2e top",
