@@ -1,0 +1,45 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "AVA run current test file",
+      "command": "./node_modules/.bin/ava",
+      "args": ["${relativeFile}"],
+      "options": {
+        "env": {
+          "ENV_FILE_PATH": ".env",
+          "BLOCKML_LOG_IO": "TRUE"
+        }
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "CYPRESS run current test file",
+      "command": "nx",
+      "args": [
+        "e2e",
+        "front-e2e",
+        "--spec=${relativeFile}"
+        // , "--headless"
+      ],
+      "options": {
+        "env": {
+          "ENV_FILE_PATH": ".env"
+        }
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated"
+      }
+    }
+  ]
+}
