@@ -45,6 +45,7 @@
     "serve:front:prod": "nx serve front -c production --host 0.0.0.0",
     "clean:db": "rm -rf /root/mprove_data/mysql/*",
     "clean:org": "rm -rf /root/mprove_data/organizations/*",
+    "clean:node_modules": "rm -rf ./node_modules/*",
     "clean": "yarn clean:db && yarn clean:org",
     "startup": "yarn up & yarn start",
     "start": "nx start top",

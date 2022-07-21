@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "AVA run current test file",
+      "label": "Ava test file",
       "command": "./node_modules/.bin/ava",
       "args": ["${relativeFile}"],
       "options": {
@@ -20,8 +20,8 @@
       }
     },
     {
-      "label": "CYPRESS run current test file",
-      "command": "nx",
+      "label": "Cypress test file",
+      "command": "./node_modules/.bin/nx",
       "args": [
         "e2e",
         "front-e2e",
