@@ -1,60 +1,4 @@
 {
-  "name": "mprove",
-  "author": "Alexander Kalitenya <akalitenya@mprove.io>",
-  "license": "Apache-2.0",
-  "private": true,
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/mprove-io/mprove.git"
-  },
-  "scripts": {
-    "postinstall": "ngcc --properties es2015 browser module main",
-    "typeorm": "node -r ts-node/register -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "mig:drop": "npm run typeorm schema:drop",
-    "mig:run": "npm run typeorm migration:run",
-    "mig:gen": "npm run typeorm migration:generate -- -n All",
-    "mig": "npm run mig:drop && npm run mig:run && npm run mig:gen && npm run mig:run",
-    "x:fm": "prettier \"**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js",
-    "x:circular": "madge --circular {apps,libs}",
-    "x:lint": "eslint \"**/*.ts\"",
-    "x": "npm run x:fm && npm run x:circular && npm run x:lint",
-    "nx": "nx",
-    "fm": "nx run-many --target=fm --all",
-    "circular": "nx run-many --target=circular --all",
-    "lint": "nx run-many --target=lint --all",
-    "pj": "ts-node ./tools/utils/prepare-package-json-for-docker --outputPath=package.docker.json",
-    "build": "yarn pj && docker-compose build",
-    "up-build": "yarn pj && docker-compose up --build",
-    "up-build-detach": "yarn pj && docker-compose up --build --detach",
-    "up": "docker-compose up",
-    "up-db-rabbit": "docker-compose up db rabbit",
-    "start": "yarn up-db-rabbit & yarn start-top",
-    "start-top": "nx start top",
-    "test-e2e": "yarn test && yarn e2e",
-    "test-up-build-e2e": "yarn test && yarn up-build && yarn e2e",
-    "build-prod": "nx run-many --target=build -c production --all",
-    "build:backend:prod": "nx build backend -c production",
-    "build:blockml:prod": "nx build blockml -c production",
-    "build:disk:prod": "nx build disk -c production",
-    "build:front:dev": "nx build front -c development",
-    "build:front:prod": "nx build front -c production",
-    "serve:backend:scheduler": "BACKEND_IS_SCHEDULER=TRUE nx serve backend",
-    "serve:blockml:single": "BLOCKML_IS_SINGLE=TRUE nx serve blockml",
-    "serve:disk": "nx serve disk",
-    "serve:front:dev": "nx serve front -c development --host 0.0.0.0",
-    "serve:front:prod": "nx serve front -c production --host 0.0.0.0",
-    "test": "nx run-many --target=test --all",
-    "test:disk": "nx test disk",
-    "test:blockml": "nx test blockml",
-    "e2e": "yarn e2e:backend && yarn e2e:front-e2e:prod",
-    "e2e:backend": "nx e2e backend",
-    "e2e:front-e2e": "nx e2e front-e2e",
-    "e2e:front-e2e:prod": "nx e2e front-e2e -c production",
-    "clean": "yarn clean:db && yarn clean:org",
-    "clean:db": "rm -rf /root/mprove_data/mysql/*",
-    "clean:org": "rm -rf /root/mprove_data/organizations/*",
-    "clean:node_modules": "rm -rf ./node_modules/*"
-  },
   "dependencies": {
     "@angular/animations": "11.2.7",
     "@angular/common": "11.2.7",
@@ -203,38 +147,5 @@
     "ts-loader": "^6.2.1",
     "ts-node": "~9.1.1",
     "tsconfig-paths": "^3.9.0"
-  },
-  "madge": {
-    "fileExtensions": [
-      "ts",
-      "tsx"
-    ],
-    "tsConfig": "./tsconfig.json"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "linters": {
-      "./**/*.{ts,js,json,scss,html,md}": [
-        "prettier --write --config .prettierrc.js",
-        "git add"
-      ]
-    }
-  },
-  "_moduleAliases": {
-    "~backend": "dist/tests/backend/apps/backend/src",
-    "~blockml": "dist/tests/blockml/apps/blockml/src",
-    "~disk": "dist/tests/disk/apps/disk/src",
-    "@mprove/api-to-backend": "dist/tests/api-to-backend/libs/api-to-backend/src/_index",
-    "@mprove/api-to-blockml": "dist/tests/api-to-blockml/libs/api-to-blockml/src/_index",
-    "@mprove/api-to-disk": "dist/tests/api-to-disk/libs/api-to-disk/src/_index",
-    "@mprove/common": "dist/tests/common/libs/common/src/_index",
-    "~api-to-backend": "dist/tests/api-to-backend/libs/api-to-backend/src",
-    "~api-to-blockml": "dist/tests/api-to-blockml/libs/api-to-blockml/src",
-    "~api-to-disk": "dist/tests/api-to-disk/libs/api-to-disk/src",
-    "~common": "dist/tests/common/libs/common/src"
   }
 }

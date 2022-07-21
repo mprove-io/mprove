@@ -28,7 +28,8 @@ function updateTarget(tPath: string, s: any, t: any) {
     // 'name',
     // 'version',
     // 'license',
-    'dependencies'
+    'dependencies',
+    'devDependencies'
   ];
 
   Object.keys(s)

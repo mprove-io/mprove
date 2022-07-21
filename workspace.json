@@ -16,60 +16,6 @@
             ],
             "parallel": true
           }
-        },
-        "test-plus-e2e": {
-          "executor": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              "nx run-many --target=test --all",
-              "nx run-many --target=e2e --all"
-            ],
-            "parallel": false
-          }
-        },
-        "steps": {
-          "executor": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              "nx affected --target=build --configuration=production",
-              "nx affected --target=test",
-              "nx affected --target=compose-up-build",
-              "nx affected --target=e2e"
-            ],
-            "parallel": false
-          }
-        },
-        "steps-short": {
-          "executor": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              "nx affected --target=build --configuration=production",
-              "nx affected --target=compose-up-build"
-            ],
-            "parallel": false
-          }
-        },
-        "steps-all": {
-          "executor": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              "nx run-many --target=build --configuration=production --all",
-              "nx run-many --target=test --all",
-              "nx run-many --target=compose-up-build --all",
-              "nx run-many --target=e2e --all"
-            ],
-            "parallel": false
-          }
-        },
-        "steps-all-short": {
-          "executor": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              "nx run-many --target=build --configuration=production --all",
-              "nx run-many --target=compose-up-build --all"
-            ],
-            "parallel": false
-          }
         }
       }
     },
