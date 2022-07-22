@@ -17,9 +17,10 @@
   },
   "initializeCommand": "cd \"${localWorkspaceFolder}\" && git config --local user.email \"$(git config user.email)\" && git config --local user.name \"$(git config user.name)\"",
   "postCreateCommand": "bash .devcontainer/post-create.sh ${containerWorkspaceFolder}",
-  "postStartCommand": "bash .devcontainer/post-start.sh",
+  "postStartCommand": "bash .devcontainer/post-start.sh ${containerWorkspaceFolder}",
   "mounts": [
     "source=mprove-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
+    "source=mprove-cypress-cache,target=/root/.cache/Cypress,type=volume",
     "source=mprove-dist,target=${containerWorkspaceFolder}/dist,type=volume",
     "source=mprove_data-mysql,target=/root/mprove_data/mysql,type=volume",
     "source=mprove_data-dwh-postgres,target=/root/mprove_data/dwh-postgres,type=volume",
