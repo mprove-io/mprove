@@ -147,5 +147,8 @@
     "ts-loader": "^6.2.1",
     "ts-node": "~9.1.1",
     "tsconfig-paths": "^3.9.0"
+  },
+  "scripts": {
+    "postinstall": "ngcc --properties es2015 browser module main"
   }
 }
