@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Ava test file",
+      "label": "Ava file",
       "command": "./node_modules/.bin/ava",
       "args": ["${relativeFile}"],
       "options": {
@@ -20,7 +20,7 @@
       }
     },
     {
-      "label": "Cypress test file",
+      "label": "Cypress file",
       "command": "./node_modules/.bin/nx",
       "args": [
         "e2e",
@@ -28,11 +28,11 @@
         "--spec=${relativeFile}"
         // , "--headless"
       ],
-      "options": {
-        "env": {
-          "ENV_FILE_PATH": ".env"
-        }
-      },
+      // "options": {
+      //   "env": {
+      //     "ENV_FILE_PATH": ".env"
+      //   }
+      // },
       "problemMatcher": [],
       "presentation": {
         "echo": true,

@@ -32,7 +32,7 @@ Thumbs.db
 !.vscode/cspell-words.txt
 !.vscode/extensions.json
 !.vscode/tasks.json
-# !.vscode/launch.json
+!.vscode/launch.json
 
 # misc
 /.sass-cache

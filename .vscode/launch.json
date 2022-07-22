@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Ava file",
+      "program": "${workspaceRoot}/node_modules/.bin/ava",
+      "cwd": "${workspaceRoot}",
+      "console": "integratedTerminal",
+      "args": ["${relativeFile}"],
+      "env": {
+        "ENV_FILE_PATH": ".env",
+        "BLOCKML_LOG_IO": "TRUE"
+      }
+    }
+  ]
+}
