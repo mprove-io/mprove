@@ -29,9 +29,10 @@ Thumbs.db
 
 # IDE - VSCode
 .vscode/*
+!.vscode/cspell-words.txt
+!.vscode/extensions.json
 !.vscode/tasks.json
 # !.vscode/launch.json
-!.vscode/extensions.json
 
 # misc
 /.sass-cache
