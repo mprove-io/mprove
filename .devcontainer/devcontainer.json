@@ -34,7 +34,7 @@
     "source=mprove_data-organizations,target=/root/mprove_data/organizations,type=volume",
     "source=mprove_data-blockml-logs,target=/root/mprove_data/blockml-logs,type=volume"
   ],
-  "initializeCommand": "cd \"${localWorkspaceFolder}\" && git config --local user.email \"$(git config user.email)\" && git config --local user.name \"$(git config user.name)\"",
+  "initializeCommand": "bash .devcontainer/init.sh ${localWorkspaceFolder}",
   "postCreateCommand": "bash .devcontainer/post-create.sh ${containerWorkspaceFolder}",
   "postStartCommand": "bash .devcontainer/post-start.sh ${containerWorkspaceFolder}",
   "customizations": {
