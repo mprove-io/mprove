@@ -27,7 +27,7 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
-      
+
   backend:
     build:
       context: ./
@@ -36,7 +36,7 @@ services:
     env_file:
       - $ENV_FILE_PATH
     environment:
-      BACKEND_IS_SCHEDULER: 'FALSE'      
+      BACKEND_IS_SCHEDULER: 'FALSE'
     ports:
       - 3000:3000
     volumes:
@@ -55,14 +55,14 @@ services:
     env_file:
       - $ENV_FILE_PATH
     environment:
-      BACKEND_IS_SCHEDULER: 'TRUE'     
+      BACKEND_IS_SCHEDULER: 'TRUE'
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
         target: $ENV_FILE_TARGET_PATH
       - type: bind
         source: $COMPOSE_BACKEND_BIGQUERY_TEST_CREDENTIALS_SOURCE_PATH
-        target: $COMPOSE_BACKEND_BIGQUERY_TEST_CREDENTIALS_PATH        
+        target: $COMPOSE_BACKEND_BIGQUERY_TEST_CREDENTIALS_PATH
 
   blockml-main:
     build:
@@ -74,7 +74,7 @@ services:
     environment:
       BLOCKML_IS_SINGLE: 'FALSE'
       BLOCKML_IS_MAIN: 'TRUE'
-      BLOCKML_IS_WORKER: 'FALSE'      
+      BLOCKML_IS_WORKER: 'FALSE'
     ports:
       - 3001:3001
     volumes:
@@ -134,21 +134,21 @@ services:
     volumes:
       - type: bind
         source: $COMPOSE_DWH_POSTGRES_VOLUME_SOURCE_PATH
-        target: /var/lib/postgresql/data 
+        target: /var/lib/postgresql/data
 
   dwh-clickhouse:
     image: yandex/clickhouse-server:21.11.7.9
     environment:
       - CLICKHOUSE_USER=$COMPOSE_DWH_CLICKHOUSE_USER
       - CLICKHOUSE_PASSWORD=$COMPOSE_DWH_CLICKHOUSE_PASSWORD
-      - CLICKHOUSE_DB=$COMPOSE_DWH_CLICKHOUSE_DB   
+      - CLICKHOUSE_DB=$COMPOSE_DWH_CLICKHOUSE_DB
     ports:
       - 8123:8123
       - 9000:9000
     volumes:
       - type: bind
         source: $COMPOSE_DWH_CLICKHOUSE_VOLUME_SOURCE_PATH
-        target: /var/lib/clickhouse      
+        target: /var/lib/clickhouse
       - type: bind
         source: $COMPOSE_DWH_CLICKHOUSE_LOGS_VOLUME_SOURCE_PATH
         target: /var/log/clickhouse-server
@@ -158,4 +158,15 @@ services:
   #     ports:
   #       - 8124:80 
 
-     
+  x11-bridge:
+    image: jare/x11-bridge
+    volumes:
+      - $COMPOSE_X11_BRIDGE_SOURCE_PATH:/tmp/.X11-unix:rw
+    ports:
+      - 8888:8888
+    environment:
+      - MODE=$COMPOSE_X11_BRIDGE_MODE
+      - DISPLAY=$COMPOSE_X11_BRIDGE_DISPLAY
+      - XPRA_HTML=$COMPOSE_X11_BRIDGE_XPRA_HTML
+      - XPRA_TCP_PORT=$COMPOSE_X11_BRIDGE_XPRA_TCP_PORT
+      - XPRA_PASSWORD=$COMPOSE_X11_BRIDGE_XPRA_PASSWORD

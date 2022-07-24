@@ -25,14 +25,10 @@
       "args": [
         "e2e",
         "front-e2e",
+        "--headless=false",
+        "--browser chrome",
         "--spec=${relativeFile}"
-        // , "--headless"
       ],
-      // "options": {
-      //   "env": {
-      //     "ENV_FILE_PATH": ".env"
-      //   }
-      // },
       "problemMatcher": [],
       "presentation": {
         "echo": true,

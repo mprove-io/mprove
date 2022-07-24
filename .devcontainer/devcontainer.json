@@ -1,37 +1,43 @@
 {
   "name": "Node",
+
   "build": {
-    "dockerfile": "Dockerfile",
-    "args": {
-      "VARIANT": "14-bullseye"
-    }
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "docker-in-docker": "20.10"
+    // ,
+    // "kubectl-helm-minikube": "1.23"
+    //   "git": "os-provided",
+    //   "git-lfs": "latest",
+    //   "github-cli": "latest",
+    //   "sshd": "latest"
+  },
+  "containerEnv": {
+    "DISPLAY": ":14",
+    "LIBGL_ALWAYS_INDIRECT": "0"
   },
   // "remoteUser": "node",
-  "features": {
-    "docker-in-docker": "20.10",
-    "kubectl-helm-minikube": "1.23",
-    "git": "os-provided",
-    "git-lfs": "latest",
-    "github-cli": "latest",
-    "sshd": "latest"
-  },
-  "initializeCommand": "cd \"${localWorkspaceFolder}\" && git config --local user.email \"$(git config user.email)\" && git config --local user.name \"$(git config user.name)\"",
-  "postCreateCommand": "bash .devcontainer/post-create.sh ${containerWorkspaceFolder}",
-  "postStartCommand": "bash .devcontainer/post-start.sh ${containerWorkspaceFolder}",
+  "forwardPorts": [8888],
+  "workspaceFolder": "/mprove",
   "mounts": [
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.okteto,target=/root/.okteto,type=bind,consistency=cached",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.kube/config,target=/root/.kube/config,type=bind,consistency=cached",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.zsh_history,target=/root/.zsh_history,type=bind,consistency=cached",
+    "source=${localWorkspaceFolder},target=${containerWorkspaceFolder},type=bind,consistency=cached",
     "source=mprove-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
-    "source=mprove-cypress-cache,target=/root/.cache/Cypress,type=volume",
     "source=mprove-dist,target=${containerWorkspaceFolder}/dist,type=volume",
+    "source=mprove-cypress-cache,target=/root/.cache/Cypress,type=volume",
     "source=mprove_data-mysql,target=/root/mprove_data/mysql,type=volume",
     "source=mprove_data-dwh-postgres,target=/root/mprove_data/dwh-postgres,type=volume",
     "source=mprove_data-dwh-clickhouse,target=/root/mprove_data/dwh-clickhouse,type=volume",
     "source=mprove_data-dwh-clickhouse-logs,target=/root/mprove_data/dwh-clickhouse-logs,type=volume",
     "source=mprove_data-organizations,target=/root/mprove_data/organizations,type=volume",
-    "source=mprove_data-blockml-logs,target=/root/mprove_data/blockml-logs,type=volume",
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.okteto,target=/root/.okteto,type=bind,consistency=cached",
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.kube/config,target=/root/.kube/config,type=bind,consistency=cached",
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.zsh_history,target=/root/.zsh_history,type=bind,consistency=cached"
+    "source=mprove_data-blockml-logs,target=/root/mprove_data/blockml-logs,type=volume"
   ],
+  "initializeCommand": "cd \"${localWorkspaceFolder}\" && git config --local user.email \"$(git config user.email)\" && git config --local user.name \"$(git config user.name)\"",
+  "postCreateCommand": "bash .devcontainer/post-create.sh ${containerWorkspaceFolder}",
+  "postStartCommand": "bash .devcontainer/post-start.sh ${containerWorkspaceFolder}",
   "customizations": {
     "vscode": {
       "extensions": [
