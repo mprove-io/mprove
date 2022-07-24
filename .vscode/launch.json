@@ -4,7 +4,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Debug Ava file",
+      "name": "Ava file",
       "program": "${workspaceRoot}/node_modules/.bin/ava",
       "cwd": "${workspaceRoot}",
       "console": "integratedTerminal",
@@ -13,6 +13,20 @@
         "ENV_FILE_PATH": ".env",
         "BLOCKML_LOG_IO": "TRUE"
       }
+    },
+    {
+      "name": "Chrome 4200",
+      "request": "launch",
+      "type": "chrome",
+      "url": "http://localhost:4200",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "name": "Backend 9229",
+      "port": 9229,
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node"
     }
   ]
 }

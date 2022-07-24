@@ -239,6 +239,16 @@
             "buildTarget": "backend:build"
           }
         },
+        "serve-special": {
+          "executor": "@nrwl/node:node",
+          "options": {
+            "buildTarget": "backend:build",
+            "host": "0.0.0.0",
+            "port": 9229,
+            "inspect": "inspect",
+            "watch": true
+          }
+        },
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
