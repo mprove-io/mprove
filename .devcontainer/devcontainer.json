@@ -5,13 +5,12 @@
     "dockerfile": "Dockerfile"
   },
   "features": {
-    "docker-in-docker": "20.10"
-    // ,
-    // "kubectl-helm-minikube": "1.23"
+    "docker-in-docker": "20.10",
+    "kubectl-helm-minikube": "1.23",
     //   "git": "os-provided",
     //   "git-lfs": "latest",
     //   "github-cli": "latest",
-    //   "sshd": "latest"
+    "sshd": "latest"
   },
   "containerEnv": {
     "DISPLAY": ":14",
