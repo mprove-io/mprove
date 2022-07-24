@@ -45,7 +45,11 @@
         "serve": {
           "executor": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "disk:build"
+            "buildTarget": "disk:build",
+            "host": "0.0.0.0",
+            "port": 9230,
+            "inspect": "inspect",
+            "watch": true
           }
         },
         "lint": {
@@ -135,7 +139,11 @@
         "serve": {
           "executor": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "blockml:build"
+            "buildTarget": "blockml:build",
+            "host": "0.0.0.0",
+            "port": 9231,
+            "inspect": "inspect",
+            "watch": true
           }
         },
         "lint": {
@@ -235,12 +243,6 @@
         },
         "serve": {
           "executor": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "backend:build"
-          }
-        },
-        "serve-special": {
-          "executor": "@nrwl/node:node",
           "options": {
             "buildTarget": "backend:build",
             "host": "0.0.0.0",

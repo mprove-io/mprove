@@ -1,4 +1,4 @@
-FROM node:14.15.3 AS builder
+FROM node:16.15.1 AS builder
 WORKDIR /usr/src/app
 RUN npm config set scripts-prepend-node-path true
 COPY package.docker.json package.json

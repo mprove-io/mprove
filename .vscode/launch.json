@@ -1,5 +1,17 @@
 {
   "version": "0.2.0",
+  "compounds": [
+    {
+      "name": "4200, 9229, 9230, 9231",
+      "configurations": [
+        "Chrome 4200",
+        "Backend 9229",
+        "Disk 9230",
+        "Blockml 9231"
+      ],
+      "stopAll": true
+    }
+  ],
   "configurations": [
     {
       "type": "node",
@@ -24,6 +36,20 @@
     {
       "name": "Backend 9229",
       "port": 9229,
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node"
+    },
+    {
+      "name": "Disk 9230",
+      "port": 9230,
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node"
+    },
+    {
+      "name": "Blockml 9231",
+      "port": 9231,
       "request": "attach",
       "skipFiles": ["<node_internals>/**"],
       "type": "node"
