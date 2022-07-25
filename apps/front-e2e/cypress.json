@@ -8,5 +8,8 @@
   "video": false,
   "videosFolder": "../../dist/cypress/apps/front-e2e/videos",
   "screenshotsFolder": "../../dist/cypress/apps/front-e2e/screenshots",
-  "chromeWebSecurity": false
+  "chromeWebSecurity": false,
+  "env": {
+    "tsConfig": "tsconfig.e2e.json"
+  }
 }
