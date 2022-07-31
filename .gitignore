@@ -4,6 +4,7 @@ nogit/
 # env
 *.env
 .envrc
+secrets
 
 # System Files
 .DS_Store
@@ -54,4 +55,7 @@ lerna-debug.log*
 # Tests
 coverage/
 .nyc_output
+
+.devcontainer/.zshrc
+apps/front-e2e/cypress
 
