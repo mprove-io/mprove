@@ -5,6 +5,7 @@ secrets/
 # env
 *.env
 .envrc
+secrets
 
 # System Files
 .DS_Store
@@ -60,3 +61,4 @@ coverage/
 .devcontainer/hosts
 
 apps/front-e2e/cypress
+

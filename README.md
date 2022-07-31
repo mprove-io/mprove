@@ -1,6 +1,6 @@
 # Mprove
 
-[Website](https://mprove.io) | [Docs](https://mprove.io/docs)
+[Website](https://mprove.io) | [Docs](https://docs.mprove.io)
 
 Mprove - Powerful self-service business intelligence app.
 
