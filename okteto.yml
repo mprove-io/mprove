@@ -1,0 +1,5 @@
+deploy:
+  - helm repo update
+
+
+     
