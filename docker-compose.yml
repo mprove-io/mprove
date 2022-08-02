@@ -32,7 +32,7 @@ services:
     build:
       context: ./
       dockerfile: tools/docker/prod/backend.prod.Dockerfile
-    image: mprove/mprove-base-m-backend:$MPROVE_BASE_RELEASE_TAG
+    image: ghcr.io/mprove-io/mprove-backend:latest
     env_file:
       - $ENV_FILE_PATH
     environment:
