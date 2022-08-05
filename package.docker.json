@@ -1,4 +1,5 @@
 {
+  "license": "Apache-2.0",
   "dependencies": {
     "@angular/animations": "11.2.7",
     "@angular/common": "11.2.7",

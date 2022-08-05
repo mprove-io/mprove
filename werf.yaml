@@ -1,0 +1,6 @@
+project: mprove
+configVersion: 1
+
+---
+image: front
+dockerfile: tools/docker/prod/front.prod.Dockerfile

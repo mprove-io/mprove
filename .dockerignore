@@ -4,6 +4,7 @@
 .idea
 .env
 .envrc
+.e-values.yml
 
 nogit
 secrets
@@ -11,6 +12,8 @@ node_modules
 **/logs
 
 tools/deploy
-tools/docker
 
 docker-compose.yml
+
+/.helm
+/.helm-infra

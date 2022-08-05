@@ -6,6 +6,7 @@ secrets/
 *.env
 .envrc
 secrets
+.e-values.yml
 
 # System Files
 .DS_Store
@@ -61,4 +62,6 @@ coverage/
 .devcontainer/hosts
 
 apps/front-e2e/cypress
+
+.helm-infra
 
