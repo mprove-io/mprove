@@ -32,7 +32,6 @@ services:
     build:
       context: ./
       dockerfile: tools/docker/prod/backend.prod.Dockerfile
-    image: ghcr.io/mprove-io/mprove-backend:latest
     env_file:
       - $ENV_FILE_PATH
     environment:
@@ -51,7 +50,6 @@ services:
     build:
       context: ./
       dockerfile: tools/docker/prod/backend.prod.Dockerfile
-    image: mprove/mprove-base-m-backend:$MPROVE_BASE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
     environment:
@@ -68,7 +66,6 @@ services:
     build:
       context: ./
       dockerfile: tools/docker/prod/blockml.prod.Dockerfile
-    image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
     environment:
@@ -86,7 +83,6 @@ services:
     build:
       context: ./
       dockerfile: tools/docker/prod/blockml.prod.Dockerfile
-    image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
     environment:
@@ -102,7 +98,6 @@ services:
     build:
       context: ./
       dockerfile: tools/docker/prod/disk.prod.Dockerfile
-    image: mprove/mprove-base-m-disk:$MPROVE_BASE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
     ports:
@@ -119,7 +114,6 @@ services:
     build:
       context: ./
       dockerfile: tools/docker/prod/front.prod.Dockerfile
-    image: mprove/mprove-base-m-front:$MPROVE_BASE_RELEASE_TAG
     ports:
       - 3003:80
 
