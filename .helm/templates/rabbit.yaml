@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbit
+  labels:
+    app: rabbit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbit
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: rabbit
+      annotations:
+        checksum/secret-rabbit-envs: '{{ include (print $.Template.BasePath "/secret-rabbit-envs.yaml") . | sha256sum }}'        
+    spec:
+      containers:
+      - name: rabbit
+        image: rabbitmq:3.10.6-management
+        envFrom:
+        - secretRef:
+            name: rabbit-envs          
+        ports:
+        - containerPort: 5672
+          name: rabbit-main
+        - containerPort: 15672
+          name: rabbit-ui
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbit
+  labels:
+    app: rabbit
+spec:
+  selector:
+    app: rabbit
+  type: NodePort
+  ports:
+  - port: 5672
+    targetPort: 5672
+    name: rabbit-main
+  - port: 15672
+    targetPort: 15672
+    name: rabbit-ui
