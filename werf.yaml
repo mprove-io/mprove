@@ -8,3 +8,7 @@ dockerfile: tools/docker/prod/front.prod.Dockerfile
 ---
 image: disk
 dockerfile: tools/docker/prod/disk.prod.Dockerfile
+
+---
+image: blockml
+dockerfile: tools/docker/prod/blockml.prod.Dockerfile

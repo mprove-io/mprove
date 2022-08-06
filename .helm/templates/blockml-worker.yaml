@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blockml-worker
+  labels:
+    app: blockml-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blockml-worker
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: blockml-worker
+      annotations:
+        checksum/secret-blockml-worker-envs: '{{ include (print $.Template.BasePath "/secret-blockml-worker-envs.yaml") . | sha256sum }}'        
+    spec:
+      imagePullSecrets:
+      - name: registrysecret    
+      containers:
+      - name: blockml-worker
+        image: {{ .Values.werf.image.blockml }}
+        envFrom:
+        - secretRef:
+            name: blockml-worker-envs          
+
