@@ -4,3 +4,7 @@ configVersion: 1
 ---
 image: front
 dockerfile: tools/docker/prod/front.prod.Dockerfile
+
+---
+image: disk
+dockerfile: tools/docker/prod/disk.prod.Dockerfile

@@ -7,6 +7,7 @@ import {
 import { ValidationError } from 'class-validator';
 import { ServerError } from '~common/models/server-error';
 import { isDefined } from './is-defined';
+import { logToConsole } from './log-to-console';
 
 export function transformValidSync<T extends object>(item: {
   classType: ClassType<T>;
@@ -22,19 +23,9 @@ export function transformValidSync<T extends object>(item: {
 
     if (Array.isArray(e)) {
       constraints = getConstraintsRecursive(e);
-      // console.log(constraints);
-
-      // let newValidationErrors: any = [];
-      // e.forEach(validationError => {
-      //   let validationErrorWithoutTarget = {
-      //     value: validationError.value,
-      //     property: validationError.property,
-      //     children: validationError.children,
-      //     constraints: validationError.constraints
-      //   };
-      //   newValidationErrors.push(validationErrorWithoutTarget);
-      // });
     }
+
+    logToConsole(constraints); // default ExceptionHandler doesn't log error.data
 
     throw new ServerError({
       message: item.errorMessage,

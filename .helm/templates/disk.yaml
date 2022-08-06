@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: disk
+  labels:
+    app: disk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: disk
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: disk
+      annotations:
+        checksum/secret-disk-envs: '{{ include (print $.Template.BasePath "/secret-disk-envs.yaml") . | sha256sum }}'        
+    spec:
+      imagePullSecrets:
+      - name: registrysecret    
+      containers:
+      - name: disk
+        image: {{ .Values.werf.image.disk }}
+        envFrom:
+        - secretRef:
+            name: disk-envs          
+        ports:
+        - containerPort: 3002
+          name: disk
+        volumeMounts:
+        - name: disk-persistent-storage
+          mountPath: /root/mprove_data/organizations
+      volumes:
+      - name: disk-persistent-storage
+        persistentVolumeClaim:
+          claimName: disk-pvc
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: disk-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
