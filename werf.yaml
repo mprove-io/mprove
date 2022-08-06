@@ -12,3 +12,7 @@ dockerfile: tools/docker/prod/disk.prod.Dockerfile
 ---
 image: blockml
 dockerfile: tools/docker/prod/blockml.prod.Dockerfile
+
+---
+image: backend
+dockerfile: tools/docker/prod/backend.prod.Dockerfile

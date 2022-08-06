@@ -26,9 +26,6 @@ spec:
         envFrom:
         - secretRef:
             name: disk-envs          
-        ports:
-        - containerPort: 3002
-          name: disk
         volumeMounts:
         - name: disk-persistent-storage
           mountPath: /root/mprove_data/organizations

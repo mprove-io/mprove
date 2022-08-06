@@ -15,6 +15,13 @@ spec:
   - host: {{ .Values.ingress.hostname }}
     http:
       paths:
+      - path: /api/
+        pathType: Prefix
+        backend:
+          service:
+            name: backend
+            port:
+              number: 3000      
       - path: /
         pathType: Prefix
         backend:

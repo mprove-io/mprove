@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: backend
+      annotations:
+        checksum/secret-backend-envs: '{{ include (print $.Template.BasePath "/secret-backend-envs.yaml") . | sha256sum }}'        
+    spec:
+      imagePullSecrets:
+      - name: registrysecret    
+      containers:
+      - name: backend
+        image: {{ .Values.werf.image.backend }}
+        envFrom:
+        - secretRef:
+            name: backend-envs          
+        ports:
+        - containerPort: 3000
+          name: backend
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  selector:
+    app: backend
+  type: NodePort
+  ports:
+  - port: 3000
+    targetPort: 3000

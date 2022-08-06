@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-scheduler
+  labels:
+    app: backend-scheduler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-scheduler
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: backend-scheduler
+      annotations:
+        checksum/secret-backend-scheduler-envs: '{{ include (print $.Template.BasePath "/secret-backend-scheduler-envs.yaml") . | sha256sum }}'        
+    spec:
+      imagePullSecrets:
+      - name: registrysecret    
+      containers:
+      - name: backend-scheduler
+        image: {{ .Values.werf.image.backend }}
+        envFrom:
+        - secretRef:
+            name: backend-scheduler-envs          
+
