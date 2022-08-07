@@ -1,16 +1,14 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: disk
   labels:
     app: disk
 spec:
-  replicas: 1
+  serviceName: disk
   selector:
     matchLabels:
       app: disk
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:
