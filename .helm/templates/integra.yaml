@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: integra
+  name: integra
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: integra
+  strategy:
+    type: Recreate      
+  template:
+    metadata:
+      labels:
+        app: integra
+    spec:
+      imagePullSecrets:
+      - name: registrysecret
+      containers:
+      - name: integra
+        image: {{ .Values.werf.image.integra }}
+

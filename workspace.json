@@ -619,11 +619,11 @@
             "tsConfig": "apps/front-e2e/tsconfig.e2e.json",
             "headless": true,
             "browser": "chrome",
-            "devServerTarget": "front:serve"
+            "baseUrl": "http://localhost:3003"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "front:serve:production"
+              "baseUrl": "http://front"
             }
           }
         },

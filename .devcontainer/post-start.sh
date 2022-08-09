@@ -7,5 +7,6 @@ $containerWorkspaceFolder/node_modules/.bin/cypress install
 
 echo "$(echo '127.0.0.1 db' | cat - /etc/hosts)" > /etc/hosts 
 echo "$(echo '127.0.0.1 rabbit' | cat - /etc/hosts)" > /etc/hosts  
+echo "$(echo '127.0.0.1 backend' | cat - /etc/hosts)" > /etc/hosts 
 
 direnv allow

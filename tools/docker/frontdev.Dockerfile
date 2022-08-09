@@ -1,9 +1,10 @@
 FROM node:16.15.1
+
 WORKDIR /usr/src/app
 RUN npm config set scripts-prepend-node-path true
 COPY package.docker.json package.json
 COPY yarn.lock .
-RUN yarn
+RUN yarn --frozen-lockfile
 
 COPY apps/front apps/front/
 COPY libs/api-to-backend libs/api-to-backend/

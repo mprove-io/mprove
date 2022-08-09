@@ -61,7 +61,7 @@ fontawesome
 fortawesome
 froms
 frontnginx
-FRONTNODE
+frontdev
 fullname
 ghaschel
 gitkeep

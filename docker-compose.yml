@@ -31,7 +31,7 @@ services:
   backend:
     build:
       context: ./
-      dockerfile: tools/docker/prod/backend.prod.Dockerfile
+      dockerfile: tools/docker/backend.prod.Dockerfile
     env_file:
       - $ENV_FILE_PATH
     environment:
@@ -49,7 +49,7 @@ services:
   backend-scheduler:
     build:
       context: ./
-      dockerfile: tools/docker/prod/backend.prod.Dockerfile
+      dockerfile: tools/docker/backend.prod.Dockerfile
     env_file:
       - $ENV_FILE_PATH
     environment:
@@ -65,7 +65,7 @@ services:
   blockml-main:
     build:
       context: ./
-      dockerfile: tools/docker/prod/blockml.prod.Dockerfile
+      dockerfile: tools/docker/blockml.prod.Dockerfile
     env_file:
       - $ENV_FILE_PATH
     environment:
@@ -82,7 +82,7 @@ services:
   blockml-worker:
     build:
       context: ./
-      dockerfile: tools/docker/prod/blockml.prod.Dockerfile
+      dockerfile: tools/docker/blockml.prod.Dockerfile
     env_file:
       - $ENV_FILE_PATH
     environment:
@@ -97,7 +97,7 @@ services:
   disk:
     build:
       context: ./
-      dockerfile: tools/docker/prod/disk.prod.Dockerfile
+      dockerfile: tools/docker/disk.prod.Dockerfile
     env_file:
       - $ENV_FILE_PATH
     ports:
@@ -113,9 +113,14 @@ services:
   front:
     build:
       context: ./
-      dockerfile: tools/docker/prod/front.prod.Dockerfile
+      dockerfile: tools/docker/front.prod.Dockerfile
     ports:
       - 3003:80
+
+  integra:
+    build:
+      context: ./
+      dockerfile: tools/docker/integra.Dockerfile
 
   dwh-postgres:
     image: postgres:13.5

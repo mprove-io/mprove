@@ -2,17 +2,21 @@ project: mprove
 configVersion: 1
 
 ---
-image: front
-dockerfile: tools/docker/prod/front.prod.Dockerfile
-
----
-image: disk
-dockerfile: tools/docker/prod/disk.prod.Dockerfile
+image: backend
+dockerfile: tools/docker/backend.prod.Dockerfile
 
 ---
 image: blockml
-dockerfile: tools/docker/prod/blockml.prod.Dockerfile
+dockerfile: tools/docker/blockml.prod.Dockerfile
 
 ---
-image: backend
-dockerfile: tools/docker/prod/backend.prod.Dockerfile
+image: disk
+dockerfile: tools/docker/disk.prod.Dockerfile
+
+---
+image: front
+dockerfile: tools/docker/front.prod.Dockerfile
+
+---
+image: integra
+dockerfile: tools/docker/integra.Dockerfile

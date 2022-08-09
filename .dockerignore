@@ -1,19 +1,22 @@
 .git
 .devcontainer
+.helm
 .vscode
 .idea
+.e-values.yml
 .env
 .envrc
-.e-values.yml
 
+apps/front-e2e/cypress
+dist
+node_modules
 nogit
 secrets
-node_modules
-**/logs
-
-tools/deploy
 
 docker-compose.yml
 
-/.helm
-/.helm-infra
+**/logs
+
+
+
+
