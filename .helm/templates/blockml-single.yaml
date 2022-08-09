@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blockml-single
+  labels:
+    app: blockml-single
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blockml-single
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: blockml-single
+      annotations:
+        checksum/secret-blockml-single-envs: '{{ include (print $.Template.BasePath "/secret-blockml-single-envs.yaml") . | sha256sum }}'        
+    spec:
+      imagePullSecrets:
+      - name: registrysecret    
+      containers:
+      - name: blockml-single
+        image: {{ .Values.werf.image.blockml }}
+        envFrom:
+        - secretRef:
+            name: blockml-single-envs          
+

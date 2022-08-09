@@ -1,0 +1,1 @@
+werf helm secret values encrypt .e-values.yml -o .helm/secret-values.yaml

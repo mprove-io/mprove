@@ -8,7 +8,7 @@ RUN yarn
 COPY apps/disk apps/disk/
 COPY libs/api-to-disk libs/api-to-disk/
 COPY libs/common libs/common/
-COPY nx.json package.json tsconfig.base.json tsconfig.json workspace.json ./
+COPY ava.config.js ava-js.config.js ava-js-e2e.config.js nx.json package.json tsconfig.base.json tsconfig.json workspace.json ./
 
 RUN yarn build:disk:prod
 
