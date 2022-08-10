@@ -27,7 +27,7 @@
       "~blockml/*": ["apps/blockml/src/*"],
       "~disk/*": ["apps/disk/src/*"],
       "~front/*": ["apps/front/src/*"],
-      "~front-e2e/*": ["apps/front-e2e/src/*"],
+      "~integra/*": ["apps/integra/src/*"],
       //
       "~api-to-backend/*": ["libs/api-to-backend/src/*"],
       "~api-to-blockml/*": ["libs/api-to-blockml/src/*"],

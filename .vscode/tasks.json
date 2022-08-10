@@ -24,7 +24,7 @@
       "command": "./node_modules/.bin/nx",
       "args": [
         "e2e",
-        "front-e2e",
+        "integra",
         "--headless=false",
         "--browser chrome",
         "--spec=${relativeFile}"

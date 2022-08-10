@@ -6,7 +6,7 @@ COPY package.docker.json package.json
 COPY yarn.lock .
 RUN yarn --frozen-lockfile
 
-COPY apps/front-e2e apps/front-e2e/
+COPY apps/integra apps/integra/
 COPY libs/api-to-backend libs/api-to-backend/
 COPY libs/api-to-disk libs/api-to-disk/
 COPY libs/common libs/common/

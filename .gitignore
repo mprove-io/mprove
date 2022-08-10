@@ -61,6 +61,6 @@ coverage/
 .devcontainer/.zshrc
 .devcontainer/hosts
 
-apps/front-e2e/cypress
+apps/integra/cypress
 
 

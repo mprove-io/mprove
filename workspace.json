@@ -607,16 +607,16 @@
         }
       }
     },
-    "front-e2e": {
-      "root": "apps/front-e2e",
-      "sourceRoot": "apps/front-e2e/src",
+    "integra": {
+      "root": "apps/integra",
+      "sourceRoot": "apps/integra/src",
       "projectType": "application",
       "targets": {
         "e2e": {
           "executor": "@nrwl/cypress:cypress",
           "options": {
-            "cypressConfig": "apps/front-e2e/cypress.json",
-            "tsConfig": "apps/front-e2e/tsconfig.e2e.json",
+            "cypressConfig": "apps/integra/cypress.json",
+            "tsConfig": "apps/integra/tsconfig.e2e.json",
             "headless": true,
             "browser": "chrome",
             "baseUrl": "http://localhost:3003"
@@ -630,7 +630,7 @@
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/front-e2e/**/*.{js,ts}"]
+            "lintFilePatterns": ["apps/integra/**/*.{js,ts}"]
           }
         }
       }

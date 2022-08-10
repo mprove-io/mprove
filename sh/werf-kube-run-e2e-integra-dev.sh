@@ -7,6 +7,6 @@ werf kube-run --repo ghcr.io/mprove-io/mprove --overrides='{
     ]
   }
 }' \
-  integra --dev -- yarn run nx e2e front-e2e -c production
+  integra --dev -- yarn run nx e2e integra -c production
 
 

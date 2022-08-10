@@ -7,7 +7,7 @@
 .env
 .envrc
 
-apps/front-e2e/cypress
+apps/integra/cypress
 dist
 node_modules
 nogit

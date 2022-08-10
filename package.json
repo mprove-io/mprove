@@ -48,7 +48,7 @@
     "test:blockml": "nx test blockml",
     "e2e": "nx run-many --target=e2e --all",
     "e2e:backend": "nx e2e backend",
-    "e2e:front-e2e": "nx e2e front-e2e",
+    "e2e:integra": "nx e2e integra",
     "clean:db": "rm -rf /root/mprove_data/mysql/*",
     "clean:org": "rm -rf /root/mprove_data/organizations/*",
     "clean:cypress": "rm -rf /root/.cache/Cypress/*",

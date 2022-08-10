@@ -47,6 +47,6 @@
     "blockml": { "tags": [] },
     "backend": { "tags": [], "implicitDependencies": ["disk", "blockml"] },
     "front": { "tags": [] },
-    "front-e2e": { "tags": [], "implicitDependencies": ["front", "backend"] }
+    "integra": { "tags": [], "implicitDependencies": ["front", "backend"] }
   }
 }
