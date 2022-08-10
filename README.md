@@ -8,9 +8,9 @@ Inspired by :heart: [Looker](https://looker.com/).
 
 ## Local deploy with docker-compose
 
-- Clone repo
-- Create mprove_data folder outside of mprove repo folder
-- Go to mprove repo folder
+- Clone repo to local folder
+- Create `mprove_data` folder outside of `mprove` repo folder
+- Go to `mprove` repo folder
 - Copy `.env.example` file to `.env` file
 - Set values in `.env` file
 - Run `docker-compose pull db rabbit backend blockml-main disk front`
