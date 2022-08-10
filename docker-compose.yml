@@ -32,6 +32,7 @@ services:
     build:
       context: ./
       dockerfile: tools/docker/backend.prod.Dockerfile
+    image: ghcr.io/mprove-io/mprove-backend:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
     environment:
@@ -50,6 +51,7 @@ services:
     build:
       context: ./
       dockerfile: tools/docker/backend.prod.Dockerfile
+    image: ghcr.io/mprove-io/mprove-backend:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
     environment:
@@ -66,6 +68,7 @@ services:
     build:
       context: ./
       dockerfile: tools/docker/blockml.prod.Dockerfile
+    image: ghcr.io/mprove-io/mprove-blockml:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
     environment:
@@ -83,6 +86,7 @@ services:
     build:
       context: ./
       dockerfile: tools/docker/blockml.prod.Dockerfile
+    image: ghcr.io/mprove-io/mprove-blockml:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
     environment:
@@ -98,6 +102,7 @@ services:
     build:
       context: ./
       dockerfile: tools/docker/disk.prod.Dockerfile
+    image: ghcr.io/mprove-io/mprove-disk:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
     ports:
@@ -114,6 +119,7 @@ services:
     build:
       context: ./
       dockerfile: tools/docker/front.prod.Dockerfile
+    image: ghcr.io/mprove-io/mprove-front:$MPROVE_RELEASE_TAG
     ports:
       - 3003:80
 
@@ -121,6 +127,7 @@ services:
     build:
       context: ./
       dockerfile: tools/docker/integra.Dockerfile
+    image: ghcr.io/mprove-io/mprove-integra:$MPROVE_RELEASE_TAG
 
   dwh-postgres:
     image: postgres:13.5

@@ -1,0 +1,1 @@
+werf purge --repo ghcr.io/mprove-io/mprove --repo-github-token=$CR_PAT
