@@ -12,5 +12,5 @@ COPY libs/api-to-disk libs/api-to-disk/
 COPY libs/common libs/common/
 COPY nx.json package.json tailwind.config.js tsconfig.base.json tsconfig.json workspace.json ./
 
-CMD ["yarn", "run", "cypress", "version"]
+CMD ["sleep", "infinity"]
 
