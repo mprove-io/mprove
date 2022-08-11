@@ -64,6 +64,22 @@ services:
         source: $COMPOSE_BACKEND_BIGQUERY_TEST_CREDENTIALS_SOURCE_PATH
         target: $COMPOSE_BACKEND_BIGQUERY_TEST_CREDENTIALS_PATH
 
+  blockml-single:
+    build:
+      context: ./
+      dockerfile: tools/docker/blockml.prod.Dockerfile
+    image: ghcr.io/mprove-io/mprove-blockml:$MPROVE_RELEASE_TAG
+    env_file:
+      - $ENV_FILE_PATH
+    environment:
+      BLOCKML_IS_SINGLE: 'TRUE'
+      BLOCKML_IS_MAIN: 'FALSE'
+      BLOCKML_IS_WORKER: 'FALSE'
+    volumes:
+      - type: bind
+        source: $ENV_FILE_SOURCE_PATH
+        target: $ENV_FILE_TARGET_PATH
+
   blockml-main:
     build:
       context: ./

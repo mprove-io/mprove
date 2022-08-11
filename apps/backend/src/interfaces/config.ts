@@ -38,8 +38,8 @@ export class Config {
 
   //
 
-  @IsEnum(common.BoolEnum)
-  sendEmail?: common.BoolEnum;
+  // @IsEnum(common.BoolEnum)
+  // sendEmail?: common.BoolEnum;
 
   @IsString()
   hostUrl?: string;

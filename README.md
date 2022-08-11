@@ -13,8 +13,8 @@ Inspired by :heart: [Looker](https://looker.com/).
 - Go to `mprove` repo folder
 - Copy `.env.example` file to `.env` file
 - Set values in `.env` file
-- Run `docker-compose pull db rabbit backend blockml-main disk front`
-- Run `docker-compose up db rabbit backend backend-scheduler blockml-main blockml-worker disk front`
+- Run `docker-compose pull db dwh-postgres rabbit backend blockml-single disk front`
+- Run `docker-compose up db dwh-postgres rabbit backend backend-scheduler blockml-single disk front`
 
 ## License
 

@@ -272,7 +272,7 @@ export class AppModule implements OnModuleInit {
               user: firstUser,
               traceId: common.makeId(),
               projectId: firstProjectId,
-              testProjectId: 't1'
+              testProjectId: 'first-project'
             });
           }
         }
