@@ -130,11 +130,12 @@ services:
     image: ghcr.io/mprove-io/mprove-integra:$MPROVE_RELEASE_TAG
 
   dwh-postgres:
-    image: postgres:13.5
+    build:
+      context: ./
+      dockerfile: tools/docker/dwh-postgres.Dockerfile  
+    image: ghcr.io/mprove-io/mprove-dwh-postgres:$MPROVE_RELEASE_TAG
     environment:
-      - POSTGRES_USER=$COMPOSE_DWH_POSTGRES_USER
       - POSTGRES_PASSWORD=$COMPOSE_DWH_POSTGRES_PASSWORD
-      - POSTGRES_DB=$COMPOSE_DWH_POSTGRES_DB
     ports:
       - 5432:5432
     volumes:

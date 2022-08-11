@@ -51,6 +51,7 @@
     "e2e:integra": "nx e2e integra",
     "clean:db": "rm -rf /root/mprove_data/mysql/*",
     "clean:org": "rm -rf /root/mprove_data/organizations/*",
+    "clean:pg": "rm -rf /root/mprove_data/dwh-postgres/*",
     "clean:cypress": "rm -rf /root/.cache/Cypress/*",
     "clean:node_modules": "rm -rf ./node_modules/*",
     "x11": "docker-compose up -d --force-recreate x11-bridge"

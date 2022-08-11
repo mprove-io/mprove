@@ -1,6 +1,7 @@
 # 
 nogit/
 secrets/
+tools/data
 
 # env
 *.env
