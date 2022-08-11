@@ -1,0 +1,17 @@
+viz: 4V3KWMRA9MSH21EQZCJQ
+reports:
+- title: Revenue by Quarters by User Cohorts (First Order Year)
+  model: ec1_m1
+  select:
+  - d.first_order___year
+  - a.total_sale_price
+  - b.created___quarter
+  sorts: b.created___quarter
+  type: area_stacked
+  data:
+    x_field: b.created___quarter
+    y_fields:
+    - a.total_sale_price
+    multi_field: d.first_order___year
+  options:
+    legend_title: First Order Year

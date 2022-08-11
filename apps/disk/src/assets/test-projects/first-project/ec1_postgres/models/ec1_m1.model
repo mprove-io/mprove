@@ -1,0 +1,36 @@
+model: ec1_m1
+label: Ecommerce1 (PostgreSQL)
+connection: c1_postgres
+joins:
+- from_view: ec1_order_items
+  as: a
+  
+- join_view: ec1_orders
+  as: b
+  sql_on: ${a.order_id} = ${b.order_id}
+  
+- join_view: ec1_users
+  as: c
+  sql_on: ${b.user_id} = ${c.user_id}
+  
+- join_view: ec1_user_order_facts
+  as: d
+  sql_on: ${c.user_id} = ${d.user_id}
+  
+- join_view: ec1_inventory_items
+  as: e
+  sql_on: ${a.inventory_item_id} = ${e.inventory_item_id}
+  
+- join_view: ec1_products
+  as: f
+  sql_on: ${e.product_id} = ${f.product_id}
+  
+- join_view: ec1_distribution_centers
+  as: g
+  sql_on: ${e.distribution_center_id} = ${g.distribution_center_id}
+  
+fields:
+- calculation: total_profit
+  sql: ${a.total_sale_price} - ${e.total_actual_cost}
+  format_number: '$,.0f'
+ 

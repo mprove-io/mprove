@@ -1,0 +1,18 @@
+viz: GXSO9LI1KW0GLRQXJ43V
+reports:
+- title: Users by State by Gender
+  model: ec1_m1
+  select:
+  - c.state_name
+  - c.gender
+  - c.count
+  sorts: c.state_name, c.gender
+  type: bar_vertical_stacked
+  data:
+    x_field: c.gender
+    y_fields:
+    - c.count
+    multi_field: c.state_name
+  options:
+    show_data_label: false
+    bar_padding: 4

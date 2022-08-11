@@ -1,0 +1,262 @@
+dashboard: ec1_d1
+title: Ecommerce
+fields:
+
+- filter: order_date
+  result: ts
+  default:
+  - last 3 years complete
+
+- filter: customer_age
+  result: number
+  default:
+  - any
+
+reports:
+
+- title: Average Sale Price by Category
+  model: ec1_m1
+  select:
+  - f.category
+  - a.average_sale_price
+  sorts: a.average_sale_price desc
+  listen_filters:
+    customer_age: c.age
+    order_date: b.created___date
+  type: table
+  tile:
+    tile_width: 8
+    tile_height: 12
+    tile_x: 0
+    tile_y: 0
+
+- title: Customers by Gender
+  model: ec1_m1
+  select:
+  - c.gender
+  - c.count
+  sorts: c.gender desc
+  listen_filters:
+    customer_age: c.age
+    order_date: b.created___date
+  type: pie
+  data:
+    x_field: c.gender
+    y_field: c.count
+  options:
+    explode_slices: true
+  tile:
+    tile_width: 8
+    tile_height: 12
+    tile_x: 8
+    tile_y: 0
+
+- title: Profit by Traffic Source
+  model: ec1_m1
+  select:
+  - mf.total_profit
+  - c.traffic_source
+  listen_filters:
+    customer_age: c.age
+    order_date: b.created___date
+  type: pie_grid
+  data:
+    x_field: c.traffic_source
+    y_field: mf.total_profit
+  tile:
+    tile_width: 8
+    tile_height: 12
+    tile_x: 16
+    tile_y: 0
+
+- title: Revenue by Time, by First Order Year Cohorts
+  model: ec1_m1
+  select:
+  - d.first_order___year
+  - a.total_sale_price
+  - b.created___quarter
+  listen_filters:
+    customer_age: c.age
+    order_date: b.created___date
+  type: area_stacked
+  data:
+    x_field: b.created___quarter
+    y_fields:
+    - a.total_sale_price
+    multi_field: d.first_order___year
+  tile:
+    tile_width: 12
+    tile_height: 12
+    tile_x: 0
+    tile_y: 12
+
+- title: Top 10 Brands by Sales
+  model: ec1_m1
+  select:
+  - f.brand
+  - a.total_sale_price
+  sorts: a.total_sale_price desc
+  limit: 10
+  listen_filters:
+    customer_age: c.age
+    order_date: b.created___date
+  type: tree_map
+  data:
+    x_field: f.brand
+    y_field: a.total_sale_price
+  tile:
+    tile_width: 12
+    tile_height: 12
+    tile_x: 0
+    tile_y: 32
+
+- title: Customers
+  model: ec1_m1
+  select:
+  - c.count
+  listen_filters:
+    customer_age: c.age
+    order_date: b.created___date
+  type: number_card
+  data:
+    y_field: c.count
+  options:
+    band_color: rgb(66,151,254)
+  tile:
+    tile_width: 4
+    tile_height: 8
+    tile_x: 0
+    tile_y: 24
+
+- title: Orders
+  model: ec1_m1
+  select:
+  - b.count
+  listen_filters:
+    customer_age: c.age
+    order_date: b.created___date
+  type: number_card
+  data:
+    y_field: b.count
+  options:
+    band_color: rgb(66,151,254)
+  tile:
+    tile_width: 4
+    tile_height: 8
+    tile_x: 8
+    tile_y: 24
+
+- title: Products
+  model: ec1_m1
+  select:
+  - f.count
+  listen_filters:
+    customer_age: c.age
+    order_date: b.created___date
+  type: number_card
+  data:
+    y_field: f.count
+  options:
+    band_color: rgb(66,151,254)
+  tile:
+    tile_width: 4
+    tile_height: 8
+    tile_x: 4
+    tile_y: 24
+
+- title: $ Sales
+  model: ec1_m1
+  select:
+  - a.total_sale_price
+  listen_filters:
+    customer_age: c.age
+    order_date: b.created___date
+  type: number_card
+  data:
+    y_field: a.total_sale_price
+  options:
+    band_color: rgb(0,173,19)
+  tile:
+    tile_width: 4
+    tile_height: 8
+    tile_x: 12
+    tile_y: 24
+
+- title: $ Cost
+  model: ec1_m1
+  select:
+  - e.total_actual_cost
+  listen_filters:
+    customer_age: c.age
+    order_date: b.created___date
+  type: number_card
+  data:
+    y_field: e.total_actual_cost
+  options:
+    band_color: rgb(0,173,19)
+  tile:
+    tile_width: 4
+    tile_height: 8
+    tile_x: 16
+    tile_y: 24
+
+- title: $ Profit
+  model: ec1_m1
+  select:
+  - mf.total_profit
+  listen_filters:
+    customer_age: c.age
+    order_date: b.created___date
+  type: number_card
+  data:
+    y_field: mf.total_profit
+  options:
+    band_color: rgb(0,173,19)
+  tile:
+    tile_width: 4
+    tile_height: 8
+    tile_x: 20
+    tile_y: 24
+
+- title: Dynamics of Sales and Profit
+  model: ec1_m1
+  select:
+  - b.created___month
+  - a.total_sale_price
+  - mf.total_profit
+  sorts: b.created___month
+  listen_filters:
+    customer_age: c.age
+    order_date: b.created___date
+  type: line
+  data:
+    x_field: b.created___month
+    y_fields:
+    - a.total_sale_price
+    - mf.total_profit
+  tile:
+    tile_width: 12
+    tile_height: 12
+    tile_x: 12
+    tile_y: 12
+
+- title: Users by Age Group
+  model: ec1_m1
+  select:
+  - c.age_group
+  - c.count
+  sorts: c.age_group
+  listen_filters:
+    customer_age: c.age
+    order_date: b.created___date
+  type: bar_vertical
+  data:
+    x_field: c.age_group
+    y_field: c.count
+  options:
+    show_data_label: false
+  tile:
+    tile_width: 12
+    tile_height: 12
+    tile_x: 12
+    tile_y: 32

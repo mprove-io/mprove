@@ -1,0 +1,15 @@
+viz: K0CPOH4533VJD4HIQGUR
+reports:
+- title: Dynamics of sales and profit
+  model: ec1_m1
+  select:
+  - b.created___month
+  - a.total_sale_price
+  - mf.total_profit
+  sorts: b.created___month
+  type: line
+  data:
+    x_field: b.created___month
+    y_fields:
+    - a.total_sale_price
+    - mf.total_profit

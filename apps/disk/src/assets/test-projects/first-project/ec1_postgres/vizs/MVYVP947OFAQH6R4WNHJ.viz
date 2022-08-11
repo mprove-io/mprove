@@ -1,0 +1,12 @@
+viz: MVYVP947OFAQH6R4WNHJ
+reports:
+- title: Profit by Traffic Source
+  model: ec1_m1
+  select:
+  - mf.total_profit
+  - c.traffic_source
+  sorts: mf.total_profit
+  type: pie_grid
+  data:
+    x_field: c.traffic_source
+    y_field: mf.total_profit

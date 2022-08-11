@@ -1,0 +1,13 @@
+viz: ZALVQ3YD2NA5KYDEY81S
+reports: 
+- title: Top 10 Brands by Sales
+  model: ec1_m1
+  select:
+  - f.brand
+  - a.total_sale_price
+  sorts: a.total_sale_price desc
+  limit: 10
+  type: tree_map
+  data:
+    x_field: f.brand
+    y_field: a.total_sale_price

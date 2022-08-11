@@ -1,0 +1,9 @@
+viz: C3ENGIP2LC00GUFMP333
+reports:
+- title: Users, Orders, Products
+  model: ec1_m1
+  select:
+  - c.count
+  - b.count
+  - f.count
+  type: table
