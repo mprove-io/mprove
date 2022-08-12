@@ -24,3 +24,5 @@ dockerfile: tools/docker/integra.Dockerfile
 ---
 image: dwhPostgres
 dockerfile: tools/docker/dwh-postgres.Dockerfile
+contextAddFiles:
+- tools/data/mprove-demo-p_db.dump
