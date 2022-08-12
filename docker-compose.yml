@@ -152,6 +152,7 @@ services:
     image: ghcr.io/mprove-io/mprove-dwh-postgres:$MPROVE_RELEASE_TAG
     environment:
       - POSTGRES_PASSWORD=$COMPOSE_DWH_POSTGRES_PASSWORD
+      - PGDATA=$COMPOSE_DWH_POSTGRES_PGDATA
     ports:
       - 5432:5432
     volumes:
