@@ -19,8 +19,10 @@ import { common } from './barrels/common';
 import { enums } from './barrels/enums';
 import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
+import { maker } from './barrels/maker';
 import { repositories } from './barrels/repositories';
 import { getConfig } from './config/get.config';
+import { DbService } from './services/db.service';
 import { OrgsService } from './services/orgs.service';
 import { ProjectsService } from './services/projects.service';
 import { UsersService } from './services/users.service';
@@ -192,7 +194,8 @@ export class AppModule implements OnModuleInit {
     private cs: ConfigService<interfaces.Config>,
     private usersRepository: repositories.UsersRepository,
     private orgsRepository: repositories.OrgsRepository,
-    private projectsRepository: repositories.ProjectsRepository
+    private projectsRepository: repositories.ProjectsRepository,
+    private dbService: DbService
   ) {}
 
   async onModuleInit() {
@@ -292,6 +295,31 @@ export class AppModule implements OnModuleInit {
               });
 
               if (common.isUndefined(firstProject)) {
+                let firstProjectDwhPostgresPassword = this.cs.get<
+                  interfaces.Config['firstProjectDwhPostgresPassword']
+                >('firstProjectDwhPostgresPassword');
+
+                let c1 = maker.makeConnection({
+                  projectId: firstProjectId,
+                  connectionId: 'c1_postgres',
+                  type: common.ConnectionTypeEnum.PostgreSQL,
+                  postgresHost: 'dwh-postgres',
+                  postgresPort: 5432,
+                  postgresDatabase: 'p_db',
+                  postgresUser: 'postgres',
+                  postgresPassword: firstProjectDwhPostgresPassword,
+                  bigqueryCredentials: undefined,
+                  bigqueryQuerySizeLimitGb: 1,
+                  isSSL: false
+                });
+
+                await this.dbService.writeRecords({
+                  modify: false,
+                  records: {
+                    connections: [c1]
+                  }
+                });
+
                 firstProject = await this.projectsService.addProject({
                   orgId: firstOrg.org_id,
                   name: common.FIRST_PROJECT_NAME,
