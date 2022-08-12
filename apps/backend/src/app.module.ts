@@ -7,12 +7,14 @@ import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as mg from 'nodemailer-mailgun-transport';
+import { forEachSeries } from 'p-iteration';
 import { Connection } from 'typeorm';
 import { appControllers } from './app-controllers';
 import { appEntities } from './app-entities';
 import { appMigrations } from './app-migrations';
 import { appProviders } from './app-providers';
 import { appRepositories } from './app-repositories';
+import { apiToBackend } from './barrels/api-to-backend';
 import { common } from './barrels/common';
 import { enums } from './barrels/enums';
 import { helper } from './barrels/helper';
@@ -22,6 +24,8 @@ import { getConfig } from './config/get.config';
 import { OrgsService } from './services/orgs.service';
 import { ProjectsService } from './services/projects.service';
 import { UsersService } from './services/users.service';
+
+let retry = require('async-retry');
 
 let configModule = ConfigModule.forRoot({
   load: [getConfig],
@@ -194,6 +198,20 @@ export class AppModule implements OnModuleInit {
   async onModuleInit() {
     try {
       if (helper.isScheduler(this.cs)) {
+        // TODO: remove sleep by checking rabbit connection availability
+        let sleepSeconds = 20;
+        let arraySeconds = Array.from(Array(sleepSeconds).keys()).reverse();
+        arraySeconds.pop();
+
+        await forEachSeries(arraySeconds, async key => {
+          common.logToConsole(
+            `${key} seconds sleep for rabbitMQ to be ready ...`
+          );
+          await common.sleep(1000);
+        });
+
+        common.logToConsole('Sleep ended, continue ...');
+
         const migrationsPending = await this.connection.showMigrations();
 
         if (migrationsPending) {
@@ -223,7 +241,7 @@ export class AppModule implements OnModuleInit {
           'firstProjectId'
         );
 
-        let firstUser;
+        let firstUser: any;
 
         if (common.isDefined(email) && common.isDefined(password)) {
           firstUser = await this.usersRepository.findOne({ email: email });
@@ -236,46 +254,64 @@ export class AppModule implements OnModuleInit {
           }
         }
 
-        let firstOrg;
+        await retry(
+          async (bail: any) => {
+            let firstOrg;
 
-        if (common.isDefined(firstOrgId) && common.isDefined(firstUser)) {
-          firstOrg = await this.orgsRepository.findOne({
-            org_id: firstOrgId
-          });
+            if (common.isDefined(firstOrgId) && common.isDefined(firstUser)) {
+              firstOrg = await this.orgsRepository.findOne({
+                org_id: firstOrgId
+              });
 
-          if (common.isUndefined(firstOrg)) {
-            firstOrg = await this.orgsService.addOrg({
-              ownerId: firstUser.user_id,
-              ownerEmail: firstUser.email,
-              name: common.FIRST_ORG_NAME,
-              traceId: common.makeId(),
-              orgId: firstOrgId
-            });
+              if (common.isUndefined(firstOrg)) {
+                firstOrg = await this.orgsService.addOrg({
+                  ownerId: firstUser.user_id,
+                  ownerEmail: firstUser.email,
+                  name: common.FIRST_ORG_NAME,
+                  traceId: common.makeId(),
+                  orgId: firstOrgId
+                });
+              }
+            }
+
+            let firstProject;
+
+            if (
+              common.isDefined(firstProjectId) &&
+              common.isDefined(firstOrg) &&
+              common.isDefined(firstUser)
+            ) {
+              firstProject = await this.projectsRepository.findOne({
+                project_id: firstProjectId
+              });
+
+              if (common.isUndefined(firstProject)) {
+                firstProject = await this.projectsService.addProject({
+                  orgId: firstOrg.org_id,
+                  name: common.FIRST_PROJECT_NAME,
+                  user: firstUser,
+                  traceId: common.makeId(),
+                  projectId: firstProjectId,
+                  testProjectId: 'first-project'
+                });
+              }
+            }
+          },
+          {
+            retries: 3,
+            minTimeout: 3000,
+            factor: 1, // (default 2)
+            randomize: true, // 1 to 2 (default true)
+            onRetry: (e: any) => {
+              let serverError = new common.ServerError({
+                message: apiToBackend.ErEnum.BACKEND_MODULE_INIT_ORG_RETRY,
+                originalError: e
+              });
+
+              common.logToConsole(serverError);
+            }
           }
-        }
-
-        let firstProject;
-
-        if (
-          common.isDefined(firstProjectId) &&
-          common.isDefined(firstOrg) &&
-          common.isDefined(firstUser)
-        ) {
-          firstProject = await this.projectsRepository.findOne({
-            project_id: firstProjectId
-          });
-
-          if (common.isUndefined(firstProject)) {
-            firstProject = await this.projectsService.addProject({
-              orgId: firstOrg.org_id,
-              name: common.FIRST_PROJECT_NAME,
-              user: firstUser,
-              traceId: common.makeId(),
-              projectId: firstProjectId,
-              testProjectId: 'first-project'
-            });
-          }
-        }
+        );
       }
     } catch (e) {
       common.handleError(e);
