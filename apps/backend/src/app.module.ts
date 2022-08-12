@@ -198,19 +198,25 @@ export class AppModule implements OnModuleInit {
   async onModuleInit() {
     try {
       if (helper.isScheduler(this.cs)) {
-        // TODO: remove sleep by checking rabbit connection availability
-        let sleepSeconds = 20;
-        let arraySeconds = Array.from(Array(sleepSeconds).keys()).reverse();
-        arraySeconds.pop();
+        let backendEnv = this.cs.get<interfaces.Config['backendEnv']>(
+          'backendEnv'
+        );
 
-        await forEachSeries(arraySeconds, async key => {
-          common.logToConsole(
-            `${key} seconds sleep for rabbitMQ to be ready ...`
-          );
-          await common.sleep(1000);
-        });
+        if (backendEnv === enums.BackendEnvEnum.PROD) {
+          // TODO: remove sleep by checking rabbit connection availability
+          let sleepSeconds = 20;
+          let arraySeconds = Array.from(Array(sleepSeconds).keys()).reverse();
+          arraySeconds.pop();
 
-        common.logToConsole('Sleep ended, continue ...');
+          await forEachSeries(arraySeconds, async key => {
+            common.logToConsole(
+              `${key} seconds sleep for rabbitMQ to be ready ...`
+            );
+            await common.sleep(1000);
+          });
+
+          common.logToConsole('Sleep ended, continue ...');
+        }
 
         const migrationsPending = await this.connection.showMigrations();
 
