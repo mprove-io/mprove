@@ -24,6 +24,7 @@ mkdir -p ~/mprove_data/mysql \
 - Set environment variables in `mprove/.env` file
 - Run `docker-compose pull db dwh-postgres rabbit backend blockml-single disk front`
 - Run `docker-compose up db dwh-postgres rabbit backend backend-scheduler blockml-single disk front`
+- Open `localhost:3003` chrome tab
 
 ## License
 
