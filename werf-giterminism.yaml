@@ -2,5 +2,8 @@ giterminismConfigVersion: 1
 config:
   allowUncommitted: true
   dockerfile:
-    allowUncommitted: 
+    allowUncommittedDockerignoreFiles: 
     - tools/data/mprove-demo-p_db.dump
+helm:
+  allowUncommittedFiles:
+  - tools/data/mprove-demo-p_db.dump

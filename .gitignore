@@ -1,7 +1,7 @@
 # 
 nogit/
 secrets/
-tools/data
+tools/data/mprove-demo-p_db.dump
 
 # env
 *.env
