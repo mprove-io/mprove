@@ -16,9 +16,11 @@ spec:
       annotations:
         checksum/secret-dwh-postgres-envs: '{{ include (print $.Template.BasePath "/secret-dwh-postgres-envs.yaml") . | sha256sum }}'        
     spec:
+      imagePullSecrets:
+      - name: registrysecret     
       containers:
       - name: dwh-postgres
-        image: {{ .Values.werf.image.dwhPostgres }}
+        image: {{ .Values.werf.image.dwhpostgres }}
         envFrom:
         - secretRef:
             name: dwh-postgres-envs          
