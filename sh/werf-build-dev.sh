@@ -1,0 +1,1 @@
+werf build --dev

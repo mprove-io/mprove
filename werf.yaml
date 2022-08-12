@@ -20,3 +20,7 @@ dockerfile: tools/docker/front.prod.Dockerfile
 ---
 image: integra
 dockerfile: tools/docker/integra.Dockerfile
+
+---
+image: dwhPostgres
+dockerfile: tools/docker/dwh-postgres.Dockerfile

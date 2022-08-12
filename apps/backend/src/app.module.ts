@@ -6,6 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import * as fse from 'fs-extra';
 import * as mg from 'nodemailer-mailgun-transport';
 import { forEachSeries } from 'p-iteration';
 import { Connection } from 'typeorm';
@@ -313,10 +314,32 @@ export class AppModule implements OnModuleInit {
                   isSSL: false
                 });
 
+                let backendBigqueryPath = this.cs.get<
+                  interfaces.Config['backendBigqueryPath']
+                >('backendBigqueryPath');
+
+                let bigqueryTestCredentials = JSON.parse(
+                  fse.readFileSync(backendBigqueryPath).toString()
+                );
+
+                let c2 = maker.makeConnection({
+                  projectId: firstProjectId,
+                  connectionId: 'c3_bigquery',
+                  type: common.ConnectionTypeEnum.BigQuery,
+                  postgresHost: undefined,
+                  postgresPort: undefined,
+                  postgresDatabase: undefined,
+                  postgresUser: undefined,
+                  postgresPassword: undefined,
+                  bigqueryCredentials: bigqueryTestCredentials,
+                  bigqueryQuerySizeLimitGb: 1,
+                  isSSL: true
+                });
+
                 await this.dbService.writeRecords({
                   modify: false,
                   records: {
-                    connections: [c1]
+                    connections: [c1, c2]
                   }
                 });
 

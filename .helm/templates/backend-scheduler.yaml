@@ -17,6 +17,7 @@ spec:
         app: backend-scheduler
       annotations:
         checksum/secret-backend-scheduler-envs: '{{ include (print $.Template.BasePath "/secret-backend-scheduler-envs.yaml") . | sha256sum }}'        
+        checksum/secret-backend-bigquery: '{{ include (print $.Template.BasePath "/secret-backend-bigquery.yaml") . | sha256sum }}'        
     spec:
       imagePullSecrets:
       - name: registrysecret    
@@ -25,5 +26,15 @@ spec:
         image: {{ .Values.werf.image.backend }}
         envFrom:
         - secretRef:
-            name: backend-scheduler-envs          
+            name: backend-scheduler-envs
+        volumeMounts:
+        - name: scheduler-secrets-volume
+          mountPath: /usr/src/app/secrets
+      volumes:
+      - name: scheduler-secrets-volume
+        secret:
+          secretName: backend-bigquery
+          items:
+          - key: content
+            path: bigquery-test.json
 

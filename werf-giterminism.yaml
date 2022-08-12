@@ -1,0 +1,6 @@
+giterminismConfigVersion: 1
+config:
+  allowUncommitted: true
+  dockerfile:
+    allowUncommitted: 
+    - tools/data/mprove-demo-p_db.dump

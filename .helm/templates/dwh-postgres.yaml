@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: dwh-postgres
+  labels:
+    app: dwh-postgres
+spec:
+  serviceName: dwh-postgres
+  selector:
+    matchLabels:
+      app: dwh-postgres
+  template:
+    metadata:
+      labels:
+        app: dwh-postgres
+      annotations:
+        checksum/secret-dwh-postgres-envs: '{{ include (print $.Template.BasePath "/secret-dwh-postgres-envs.yaml") . | sha256sum }}'        
+    spec:
+      containers:
+      - name: dwh-postgres
+        image: {{ .Values.werf.image.dwhPostgres }}
+        envFrom:
+        - secretRef:
+            name: dwh-postgres-envs          
+        ports:
+        - containerPort: 5432
+          name: dwh-postgres
+        volumeMounts:
+        - name: dwh-postgres-persistent-storage
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: dwh-postgres-persistent-storage
+        persistentVolumeClaim:
+          claimName: dwh-postgres-pvc
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dwh-postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dwh-postgres
+  labels:
+    app: dwh-postgres
+spec:
+  selector:
+    app: dwh-postgres
+  type: NodePort
+  ports:
+  - port: 5432
+    targetPort: 5432
