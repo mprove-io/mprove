@@ -38,6 +38,9 @@ export function getDevConfig(envFilePath: any) {
     firstProjectDwhPostgresPassword:
       process.env.BACKEND_FIRST_PROJECT_DWH_POSTGRES_PASSWORD ||
       envFile.BACKEND_FIRST_PROJECT_DWH_POSTGRES_PASSWORD,
+    firstProjectDwhClickhousePassword:
+      process.env.BACKEND_FIRST_PROJECT_DWH_CLICKHOUSE_PASSWORD ||
+      envFile.BACKEND_FIRST_PROJECT_DWH_CLICKHOUSE_PASSWORD,
     registerOnlyInvitedUsers: <common.BoolEnum>(
       (process.env.BACKEND_REGISTER_ONLY_INVITED_USERS ||
         envFile.BACKEND_REGISTER_ONLY_INVITED_USERS)

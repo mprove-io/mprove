@@ -1,5 +1,0 @@
-giterminismConfigVersion: 1
-config:
-  dockerfile:
-    allowContextAddFiles:
-    - tools/data/mprove-demo-p_db.dump

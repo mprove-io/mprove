@@ -36,6 +36,9 @@ export class Config {
   @IsString()
   firstProjectDwhPostgresPassword?: string;
 
+  @IsString()
+  firstProjectDwhClickhousePassword?: string;
+
   @IsEnum(common.BoolEnum)
   registerOnlyInvitedUsers?: common.BoolEnum;
 

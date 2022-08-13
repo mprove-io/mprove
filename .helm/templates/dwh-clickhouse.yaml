@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: dwh-clickhouse
+  labels:
+    app: dwh-clickhouse
+spec:
+  serviceName: dwh-clickhouse
+  selector:
+    matchLabels:
+      app: dwh-clickhouse
+  template:
+    metadata:
+      labels:
+        app: dwh-clickhouse
+      annotations:
+        checksum/secret-dwh-clickhouse-envs: '{{ include (print $.Template.BasePath "/secret-dwh-clickhouse-envs.yaml") . | sha256sum }}'        
+    spec:
+      imagePullSecrets:
+      - name: registrysecret     
+      containers:
+      - name: dwh-clickhouse
+        image: ghcr.io/mprove-io/mprove-dwh-clickhouse:3.2.6
+        envFrom:
+        - secretRef:
+            name: dwh-clickhouse-envs          
+        ports:
+        - containerPort: 8123
+          name: clickhouse-main
+        - containerPort: 9000
+          name: clickhouse-clt
+        volumeMounts:
+        - name: dwh-clickhouse-persistent-storage
+          mountPath: /var/lib/clickhouse        
+        - name: dwh-clickhouse-logs-persistent-storage
+          mountPath: /var/lib/clickhouse-server
+      volumes:
+      - name: dwh-clickhouse-persistent-storage
+        persistentVolumeClaim:
+          claimName: dwh-clickhouse-pvc
+      - name: dwh-clickhouse-logs-persistent-storage
+        persistentVolumeClaim:
+          claimName: dwh-clickhouse-logs-pvc
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dwh-clickhouse-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dwh-clickhouse-logs-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dwh-clickhouse
+  labels:
+    app: dwh-clickhouse
+spec:
+  selector:
+    app: dwh-clickhouse
+  type: NodePort
+  ports:
+  - port: 8123
+    targetPort: 8123
+    name: clickhouse-main  
+  - port: 9000
+    targetPort: 9000
+    name: clickhouse-clt

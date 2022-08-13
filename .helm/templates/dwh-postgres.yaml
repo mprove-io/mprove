@@ -20,7 +20,7 @@ spec:
       - name: registrysecret     
       containers:
       - name: dwh-postgres
-        image: {{ .Values.werf.image.dwhpostgres }}
+        image: ghcr.io/mprove-io/mprove-dwh-postgres:3.2.6
         envFrom:
         - secretRef:
             name: dwh-postgres-envs          

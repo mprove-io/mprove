@@ -300,6 +300,18 @@ export class AppModule implements OnModuleInit {
                   interfaces.Config['firstProjectDwhPostgresPassword']
                 >('firstProjectDwhPostgresPassword');
 
+                let firstProjectDwhClickhousePassword = this.cs.get<
+                  interfaces.Config['firstProjectDwhClickhousePassword']
+                >('firstProjectDwhClickhousePassword');
+
+                let backendBigqueryPath = this.cs.get<
+                  interfaces.Config['backendBigqueryPath']
+                >('backendBigqueryPath');
+
+                let bigqueryTestCredentials = JSON.parse(
+                  fse.readFileSync(backendBigqueryPath).toString()
+                );
+
                 let c1 = maker.makeConnection({
                   projectId: firstProjectId,
                   connectionId: 'c1_postgres',
@@ -314,15 +326,21 @@ export class AppModule implements OnModuleInit {
                   isSSL: false
                 });
 
-                let backendBigqueryPath = this.cs.get<
-                  interfaces.Config['backendBigqueryPath']
-                >('backendBigqueryPath');
-
-                let bigqueryTestCredentials = JSON.parse(
-                  fse.readFileSync(backendBigqueryPath).toString()
-                );
-
                 let c2 = maker.makeConnection({
+                  projectId: firstProjectId,
+                  connectionId: 'c2_clickhouse',
+                  type: common.ConnectionTypeEnum.ClickHouse,
+                  postgresHost: 'dwh-clickhouse',
+                  postgresPort: 8123,
+                  postgresDatabase: 'c_db',
+                  postgresUser: 'c_user',
+                  postgresPassword: firstProjectDwhClickhousePassword,
+                  bigqueryCredentials: undefined,
+                  bigqueryQuerySizeLimitGb: 1,
+                  isSSL: false
+                });
+
+                let c3 = maker.makeConnection({
                   projectId: firstProjectId,
                   connectionId: 'c3_bigquery',
                   type: common.ConnectionTypeEnum.BigQuery,
@@ -339,7 +357,7 @@ export class AppModule implements OnModuleInit {
                 await this.dbService.writeRecords({
                   modify: false,
                   records: {
-                    connections: [c1, c2]
+                    connections: [c1, c2, c3]
                   }
                 });
 
