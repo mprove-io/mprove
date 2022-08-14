@@ -196,6 +196,7 @@ export class AppModule implements OnModuleInit {
     private usersRepository: repositories.UsersRepository,
     private orgsRepository: repositories.OrgsRepository,
     private projectsRepository: repositories.ProjectsRepository,
+    private connectionsRepository: repositories.ConnectionsRepository,
     private dbService: DbService
   ) {}
 
@@ -284,82 +285,111 @@ export class AppModule implements OnModuleInit {
               }
             }
 
-            let firstProject;
-
             if (
               common.isDefined(firstProjectId) &&
               common.isDefined(firstOrg) &&
               common.isDefined(firstUser)
             ) {
-              firstProject = await this.projectsRepository.findOne({
+              let firstProject = await this.projectsRepository.findOne({
                 project_id: firstProjectId
               });
 
               if (common.isUndefined(firstProject)) {
-                let firstProjectDwhPostgresPassword = this.cs.get<
-                  interfaces.Config['firstProjectDwhPostgresPassword']
-                >('firstProjectDwhPostgresPassword');
-
-                let firstProjectDwhClickhousePassword = this.cs.get<
-                  interfaces.Config['firstProjectDwhClickhousePassword']
-                >('firstProjectDwhClickhousePassword');
-
-                let backendBigqueryPath = this.cs.get<
-                  interfaces.Config['backendBigqueryPath']
-                >('backendBigqueryPath');
-
-                let bigqueryTestCredentials = JSON.parse(
-                  fse.readFileSync(backendBigqueryPath).toString()
-                );
-
-                let c1 = maker.makeConnection({
-                  projectId: firstProjectId,
-                  connectionId: 'c1_postgres',
-                  type: common.ConnectionTypeEnum.PostgreSQL,
-                  postgresHost: 'dwh-postgres',
-                  postgresPort: 5432,
-                  postgresDatabase: 'p_db',
-                  postgresUser: 'postgres',
-                  postgresPassword: firstProjectDwhPostgresPassword,
-                  bigqueryCredentials: undefined,
-                  bigqueryQuerySizeLimitGb: 1,
-                  isSSL: false
+                let c1connection = await this.connectionsRepository.findOne({
+                  project_id: firstProjectId,
+                  connection_id: 'c1_postgres'
                 });
 
-                let c2 = maker.makeConnection({
-                  projectId: firstProjectId,
-                  connectionId: 'c2_clickhouse',
-                  type: common.ConnectionTypeEnum.ClickHouse,
-                  postgresHost: 'dwh-clickhouse',
-                  postgresPort: 8123,
-                  postgresDatabase: 'c_db',
-                  postgresUser: 'c_user',
-                  postgresPassword: firstProjectDwhClickhousePassword,
-                  bigqueryCredentials: undefined,
-                  bigqueryQuerySizeLimitGb: 1,
-                  isSSL: false
+                if (common.isUndefined(c1connection)) {
+                  let c1 = maker.makeConnection({
+                    projectId: firstProjectId,
+                    connectionId: 'c1_postgres',
+                    type: common.ConnectionTypeEnum.PostgreSQL,
+                    postgresHost: 'dwh-postgres',
+                    postgresPort: 5432,
+                    postgresDatabase: 'p_db',
+                    postgresUser: 'postgres',
+                    postgresPassword: this.cs.get<
+                      interfaces.Config['firstProjectDwhPostgresPassword']
+                    >('firstProjectDwhPostgresPassword'),
+                    bigqueryCredentials: undefined,
+                    bigqueryQuerySizeLimitGb: 1,
+                    isSSL: false
+                  });
+
+                  await this.dbService.writeRecords({
+                    modify: false,
+                    records: {
+                      connections: [c1]
+                    }
+                  });
+                }
+
+                let c2connection = await this.connectionsRepository.findOne({
+                  project_id: firstProjectId,
+                  connection_id: 'c2_clickhouse'
                 });
 
-                let c3 = maker.makeConnection({
-                  projectId: firstProjectId,
-                  connectionId: 'c3_bigquery',
-                  type: common.ConnectionTypeEnum.BigQuery,
-                  postgresHost: undefined,
-                  postgresPort: undefined,
-                  postgresDatabase: undefined,
-                  postgresUser: undefined,
-                  postgresPassword: undefined,
-                  bigqueryCredentials: bigqueryTestCredentials,
-                  bigqueryQuerySizeLimitGb: 1,
-                  isSSL: true
+                if (common.isUndefined(c2connection)) {
+                  let c2 = maker.makeConnection({
+                    projectId: firstProjectId,
+                    connectionId: 'c2_clickhouse',
+                    type: common.ConnectionTypeEnum.ClickHouse,
+                    postgresHost: 'dwh-clickhouse',
+                    postgresPort: 8123,
+                    postgresDatabase: 'c_db',
+                    postgresUser: 'c_user',
+                    postgresPassword: this.cs.get<
+                      interfaces.Config['firstProjectDwhClickhousePassword']
+                    >('firstProjectDwhClickhousePassword'),
+                    bigqueryCredentials: undefined,
+                    bigqueryQuerySizeLimitGb: 1,
+                    isSSL: false
+                  });
+
+                  await this.dbService.writeRecords({
+                    modify: false,
+                    records: {
+                      connections: [c2]
+                    }
+                  });
+                }
+
+                let c3connection = await this.connectionsRepository.findOne({
+                  project_id: firstProjectId,
+                  connection_id: 'c3_bigquery'
                 });
 
-                await this.dbService.writeRecords({
-                  modify: false,
-                  records: {
-                    connections: [c1, c2, c3]
-                  }
-                });
+                if (common.isUndefined(c3connection)) {
+                  let backendBigqueryPath = this.cs.get<
+                    interfaces.Config['backendBigqueryPath']
+                  >('backendBigqueryPath');
+
+                  let bigqueryTestCredentials = JSON.parse(
+                    fse.readFileSync(backendBigqueryPath).toString()
+                  );
+
+                  let c3 = maker.makeConnection({
+                    projectId: firstProjectId,
+                    connectionId: 'c3_bigquery',
+                    type: common.ConnectionTypeEnum.BigQuery,
+                    postgresHost: undefined,
+                    postgresPort: undefined,
+                    postgresDatabase: undefined,
+                    postgresUser: undefined,
+                    postgresPassword: undefined,
+                    bigqueryCredentials: bigqueryTestCredentials,
+                    bigqueryQuerySizeLimitGb: 1,
+                    isSSL: true
+                  });
+
+                  await this.dbService.writeRecords({
+                    modify: false,
+                    records: {
+                      connections: [c3]
+                    }
+                  });
+                }
 
                 firstProject = await this.projectsService.addProject({
                   orgId: firstOrg.org_id,
