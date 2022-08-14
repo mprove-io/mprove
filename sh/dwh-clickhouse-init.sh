@@ -1,6 +1,19 @@
 #!/bin/bash
 
+echo 'Connect Start'
+until clickhouse client \
+    --host=127.0.0.1 \
+    --user=$CLICKHOUSE_USER \
+    --password=$CLICKHOUSE_PASSWORD \
+    --database=c_db \
+    --query='SELECT 1'
+do
+  sleep 1
+done
+echo 'Connect Success'
+
 clickhouse client \
+  --host=127.0.0.1 \
   --user=$CLICKHOUSE_USER \
   --password=$CLICKHOUSE_PASSWORD \
   --database=c_db \
@@ -74,6 +87,7 @@ ENGINE = Log;
 
 cat /tmp/csv/distribution_centers.csv | \
   clickhouse client \
+  --host=127.0.0.1 \
   --user=$CLICKHOUSE_USER \
   --password=$CLICKHOUSE_PASSWORD \
   --database=c_db \
@@ -83,6 +97,7 @@ Insert into c_db.distribution_centers FORMAT CSVWithNames
 
 cat /tmp/csv/inventory_items.csv | \
   clickhouse client \
+  --host=127.0.0.1 \
   --user=$CLICKHOUSE_USER \
   --password=$CLICKHOUSE_PASSWORD \
   --database=c_db \
@@ -92,6 +107,7 @@ Insert into c_db.inventory_items FORMAT CSVWithNames
 
 cat /tmp/csv/order_items.csv | \
   clickhouse client \
+  --host=127.0.0.1 \
   --user=$CLICKHOUSE_USER \
   --password=$CLICKHOUSE_PASSWORD \
   --database=c_db \
@@ -101,6 +117,7 @@ Insert into c_db.order_items FORMAT CSVWithNames
 
 cat /tmp/csv/orders.csv | \
   clickhouse client \
+  --host=127.0.0.1 \
   --user=$CLICKHOUSE_USER \
   --password=$CLICKHOUSE_PASSWORD \
   --database=c_db \
@@ -110,6 +127,7 @@ Insert into c_db.orders FORMAT CSVWithNames
 
 cat /tmp/csv/products.csv | \
   clickhouse client \
+  --host=127.0.0.1 \
   --user=$CLICKHOUSE_USER \
   --password=$CLICKHOUSE_PASSWORD \
   --database=c_db \
@@ -119,6 +137,7 @@ Insert into c_db.products FORMAT CSVWithNames
 
 cat /tmp/csv/users.csv | \
   clickhouse client \
+  --host=127.0.0.1 \
   --user=$CLICKHOUSE_USER \
   --password=$CLICKHOUSE_PASSWORD \
   --database=c_db \
