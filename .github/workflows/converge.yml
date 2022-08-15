@@ -17,5 +17,10 @@ jobs:
 
       - name: Converge repo
         uses: werf/actions/converge@v1.2
+        env:
+          WERF_REPO_CONTAINER_REGISTRY: "github"        
+          WERF_REPO: "ghcr.io/mprove-io/mprove"
+          WERF_KUBE_CONTEXT: ${{ secrets.WERF_KUBE_CONTEXT }}       
+          WERF_SECRET_KEY: ${{ secrets.WERF_SECRET_KEY }}       
         with:
           kube-config-base64-data: ${{ secrets.KUBE_CONFIG_BASE64_DATA }}
