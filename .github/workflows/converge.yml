@@ -18,6 +18,7 @@ jobs:
       - name: Converge repo
         uses: werf/actions/converge@v1.2
         env:
+          GITHUB_TOKEN: ${{ github.token }}
           WERF_REPO_CONTAINER_REGISTRY: "github"        
           WERF_REPO: "ghcr.io/mprove-io/mprove"
           WERF_KUBE_CONTEXT: ${{ secrets.WERF_KUBE_CONTEXT }}       
