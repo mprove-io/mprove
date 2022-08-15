@@ -1,0 +1,21 @@
+name: test
+on:
+  push:
+    branches:
+      - ak
+
+jobs:
+  converge:
+    name: Converge
+    runs-on: ubuntu-latest
+    steps:
+    
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Converge repo
+        uses: werf/actions/converge@v1.2
+        with:
+          kube-config-base64-data: ${{ secrets.KUBE_CONFIG_BASE64_DATA }}
