@@ -1,11 +1,10 @@
-name: test
+name: werf-converge
 on:
   push:
     branches:
       - ak
 jobs:
   converge:
-    name: Converge
     runs-on: ubuntu-latest
     steps:
     
