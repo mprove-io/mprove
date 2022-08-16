@@ -128,7 +128,6 @@ nums
 octokit
 Octokit
 ogranization
-okteto
 organizations
 organizations abcdefghijklmnopqrstuvwxyz projects
 orgs

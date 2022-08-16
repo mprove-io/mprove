@@ -28,13 +28,6 @@ ARG ISTIO_VERSION=1.14.3
 RUN cd /usr && curl -L https://istio.io/downloadIstio | ISTIO_VERSION=${ISTIO_VERSION} sh -
 ENV PATH=$PATH:/usr/istio-${ISTIO_VERSION}/bin
 
-# okteto
-ENV OKTETO_VERSION 2.4.1
-RUN curl -sLf --retry 3 -o okteto https://github.com/okteto/okteto/releases/download/${OKTETO_VERSION}/okteto-Linux-x86_64 && \
-    cp okteto /usr/local/bin/okteto && \
-    chmod +x /usr/local/bin/okteto && \
-    /usr/local/bin/okteto version
-
 # chrome
 RUN curl -LO  https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 RUN apt-get install -y ./google-chrome-stable_current_amd64.deb
