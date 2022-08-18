@@ -146,20 +146,6 @@ services:
     ports:
       - 3003:80
 
-  frontnode:
-    build:
-      context: ./
-      dockerfile: tools/docker/frontnode.Dockerfile
-    image: ghcr.io/mprove-io/mprove-frontnode:$MPROVE_RELEASE_TAG  
-    ports:
-      - 4200:4200
-
-  integra:
-    build:
-      context: ./
-      dockerfile: tools/docker/integra.Dockerfile
-    image: ghcr.io/mprove-io/mprove-integra:$MPROVE_RELEASE_TAG
-
   dwh-postgres:
     build:
       context: ./
@@ -195,15 +181,4 @@ services:
         source: $COMPOSE_DWH_CLICKHOUSE_LOGS_VOLUME_SOURCE_PATH
         target: /var/log/clickhouse-server 
 
-  x11-bridge:
-    image: jare/x11-bridge
-    volumes:
-      - $COMPOSE_X11_BRIDGE_SOURCE_PATH:/tmp/.X11-unix:rw
-    ports:
-      - 8888:8888
-    environment:
-      - MODE=$COMPOSE_X11_BRIDGE_MODE
-      - DISPLAY=$COMPOSE_X11_BRIDGE_DISPLAY
-      - XPRA_HTML=$COMPOSE_X11_BRIDGE_XPRA_HTML
-      - XPRA_TCP_PORT=$COMPOSE_X11_BRIDGE_XPRA_TCP_PORT
-      - XPRA_PASSWORD=$COMPOSE_X11_BRIDGE_XPRA_PASSWORD
+
