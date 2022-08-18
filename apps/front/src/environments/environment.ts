@@ -4,7 +4,10 @@
 
 export const environment = {
   production: false,
-  httpUrl: 'http://localhost:3000'
+  httpUrl:
+    window.location.hostname === 'localhost'
+      ? `${window.location.protocol}//${window.location.hostname}:3000`
+      : ''
 };
 
 /*

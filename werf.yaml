@@ -3,19 +3,23 @@ configVersion: 1
 
 ---
 image: backend
-dockerfile: tools/docker/backend.prod.Dockerfile
+dockerfile: tools/docker/backend.Dockerfile
 
 ---
 image: blockml
-dockerfile: tools/docker/blockml.prod.Dockerfile
+dockerfile: tools/docker/blockml.Dockerfile
 
 ---
 image: disk
-dockerfile: tools/docker/disk.prod.Dockerfile
+dockerfile: tools/docker/disk.Dockerfile
 
 ---
 image: front
-dockerfile: tools/docker/front.prod.Dockerfile
+dockerfile: tools/docker/front.Dockerfile
+
+---
+image: frontnode
+dockerfile: tools/docker/frontnode.Dockerfile
 
 ---
 image: integra

@@ -31,12 +31,11 @@ services:
   disk:
     build:
       context: ./
-      dockerfile: tools/docker/disk.prod.Dockerfile
+      dockerfile: tools/docker/disk.Dockerfile
     image: ghcr.io/mprove-io/mprove-disk:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
     ports:
-      # - 3002:3002
       - 9230:9229
     volumes:
       - type: bind
@@ -49,7 +48,7 @@ services:
   backend:
     build:
       context: ./
-      dockerfile: tools/docker/backend.prod.Dockerfile
+      dockerfile: tools/docker/backend.Dockerfile
     image: ghcr.io/mprove-io/mprove-backend:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
@@ -69,14 +68,13 @@ services:
   backend-scheduler:
     build:
       context: ./
-      dockerfile: tools/docker/backend.prod.Dockerfile
+      dockerfile: tools/docker/backend.Dockerfile
     image: ghcr.io/mprove-io/mprove-backend:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
     environment:
       BACKEND_IS_SCHEDULER: 'TRUE'
     ports:
-      # - 3000:3000    
       - 9232:9229 
     volumes:
       - type: bind
@@ -89,7 +87,7 @@ services:
   blockml-single:
     build:
       context: ./
-      dockerfile: tools/docker/blockml.prod.Dockerfile
+      dockerfile: tools/docker/blockml.Dockerfile
     image: ghcr.io/mprove-io/mprove-blockml:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
@@ -98,7 +96,6 @@ services:
       BLOCKML_IS_MAIN: 'FALSE'
       BLOCKML_IS_WORKER: 'FALSE'
     ports:
-      # - 3001:3001 
       - 9233:9229   
     volumes:
       - type: bind
@@ -108,7 +105,7 @@ services:
   blockml-main:
     build:
       context: ./
-      dockerfile: tools/docker/blockml.prod.Dockerfile
+      dockerfile: tools/docker/blockml.Dockerfile
     image: ghcr.io/mprove-io/mprove-blockml:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
@@ -117,7 +114,6 @@ services:
       BLOCKML_IS_MAIN: 'TRUE'
       BLOCKML_IS_WORKER: 'FALSE'
     ports:
-      # - 3001:3001    
       - 9234:9229
     volumes:
       - type: bind
@@ -127,7 +123,7 @@ services:
   blockml-worker:
     build:
       context: ./
-      dockerfile: tools/docker/blockml.prod.Dockerfile
+      dockerfile: tools/docker/blockml.Dockerfile
     image: ghcr.io/mprove-io/mprove-blockml:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
@@ -136,7 +132,6 @@ services:
       BLOCKML_IS_MAIN: 'FALSE'
       BLOCKML_IS_WORKER: 'TRUE'
     ports:
-      # - 3001:3001    
       - 9235:9229      
     volumes:
       - type: bind
@@ -146,10 +141,18 @@ services:
   front:
     build:
       context: ./
-      dockerfile: tools/docker/front.prod.Dockerfile
+      dockerfile: tools/docker/front.Dockerfile
     image: ghcr.io/mprove-io/mprove-front:$MPROVE_RELEASE_TAG
     ports:
       - 3003:80
+
+  frontnode:
+    build:
+      context: ./
+      dockerfile: tools/docker/frontnode.Dockerfile
+    image: ghcr.io/mprove-io/mprove-frontnode:$MPROVE_RELEASE_TAG  
+    ports:
+      - 4200:4200
 
   integra:
     build:

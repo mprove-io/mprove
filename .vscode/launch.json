@@ -2,15 +2,28 @@
   "version": "0.2.0",
   "compounds": [
     {
-      "name": "App",
+      "name": "Remote App",
       "configurations": [
         "chrome 4200",
-        "disk 9230",
-        "backend 9231",
-        "backend-scheduler 9232",
-        "blockml-single 9233",
-        "blockml-main 9234",
-        "blockml-worker 9235"
+        "Remote disk 9230",
+        "Remote backend 9231",
+        "Remote backend-scheduler 9232",
+        "Remote blockml-single 9233",
+        "Remote blockml-main 9234",
+        "Remote blockml-worker 9235"
+      ],
+      "stopAll": true
+    },
+    {
+      "name": "Local App",
+      "configurations": [
+        "chrome 4200",
+        "Local disk 9230",
+        "Local backend 9231",
+        "Local backend-scheduler 9232",
+        "Local blockml-single 9233",
+        "Local blockml-main 9234",
+        "Local blockml-worker 9235"
       ],
       "stopAll": true
     }
@@ -36,53 +49,119 @@
       "url": "http://localhost:4200",
       "webRoot": "${workspaceFolder}"
     },
+
     {
-      "name": "disk 9230",
+      "name": "Remote disk 9230",
       "port": 9230,
       "request": "attach",
       "skipFiles": ["<node_internals>/**"],
       "type": "node",
-      "remoteRoot": "/usr/src/app"
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/usr/src/app",
+      "restart": true
     },
     {
-      "name": "backend 9231",
+      "name": "Local disk 9230",
+      "port": 9230,
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "restart": true
+    },
+
+    {
+      "name": "Remote backend 9231",
       "port": 9231,
       "request": "attach",
       "skipFiles": ["<node_internals>/**"],
       "type": "node",
-      "remoteRoot": "/usr/src/app"
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/usr/src/app",
+      "restart": true
     },
     {
-      "name": "backend-scheduler 9232",
+      "name": "Local backend 9231",
+      "port": 9231,
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "restart": true
+    },
+
+    {
+      "name": "Remote backend-scheduler 9232",
       "port": 9232,
       "request": "attach",
       "skipFiles": ["<node_internals>/**"],
       "type": "node",
-      "remoteRoot": "/usr/src/app"
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/usr/src/app",
+      "restart": true
     },
     {
-      "name": "blockml-single 9233",
+      "name": "Local backend-scheduler 9232",
+      "port": 9232,
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "restart": true
+    },
+
+    {
+      "name": "Remote blockml-single 9233",
       "port": 9233,
       "request": "attach",
       "skipFiles": ["<node_internals>/**"],
       "type": "node",
-      "remoteRoot": "/usr/src/app"
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/usr/src/app",
+      "restart": true
     },
     {
-      "name": "blockml-main 9234",
+      "name": "Local blockml-single 9233",
+      "port": 9233,
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "restart": true
+    },
+
+    {
+      "name": "Remote blockml-main 9234",
       "port": 9234,
       "request": "attach",
       "skipFiles": ["<node_internals>/**"],
       "type": "node",
-      "remoteRoot": "/usr/src/app"
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/usr/src/app",
+      "restart": true
     },
     {
-      "name": "blockml-worker 9235",
+      "name": "Local blockml-main 9234",
+      "port": 9234,
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "restart": true
+    },
+
+    {
+      "name": "Remote blockml-worker 9235",
       "port": 9235,
       "request": "attach",
       "skipFiles": ["<node_internals>/**"],
       "type": "node",
-      "remoteRoot": "/usr/src/app"
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/usr/src/app",
+      "restart": true
+    },
+    {
+      "name": "Local blockml-worker 9235",
+      "port": 9235,
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "restart": true
     }
   ]
 }

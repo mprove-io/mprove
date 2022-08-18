@@ -45,7 +45,7 @@
         "serve": {
           "executor": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "disk:build",
+            "buildTarget": "disk:build:production",
             "host": "0.0.0.0",
             "port": 9229,
             "inspect": "inspect",
@@ -139,7 +139,7 @@
         "serve": {
           "executor": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "blockml:build",
+            "buildTarget": "blockml:build:production",
             "host": "0.0.0.0",
             "port": 9229,
             "inspect": "inspect",
@@ -244,7 +244,7 @@
         "serve": {
           "executor": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "backend:build",
+            "buildTarget": "backend:build:production",
             "host": "0.0.0.0",
             "port": 9229,
             "inspect": "inspect",
