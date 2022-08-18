@@ -13,6 +13,6 @@ COPY ava.config.js ava-js.config.js ava-js-e2e.config.js nx.json package.json ts
 
 RUN yarn build:disk:prod
 
-EXPOSE 3002 9230
+EXPOSE 3002 9229
 
 CMD [ "node", "dist/apps/disk/main.js" ]

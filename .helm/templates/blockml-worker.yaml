@@ -23,7 +23,28 @@ spec:
       containers:
       - name: blockml-worker
         image: {{ .Values.werf.image.blockml }}
+        command: ['yarn']
+        args: ['serve:blockml']        
         envFrom:
         - secretRef:
-            name: blockml-worker-envs          
+            name: blockml-worker-envs
+        ports:
+        - containerPort: 9229
+          name: blockml-w-debug
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: blockml-worker
+  labels:
+    app: blockml-worker
+spec:
+  selector:
+    app: blockml-worker
+  type: NodePort
+  ports:
+  - port: 9235
+    targetPort: 9229
+    name: blockml-w-debug                         
 

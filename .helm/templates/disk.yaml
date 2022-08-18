@@ -21,9 +21,14 @@ spec:
       containers:
       - name: disk
         image: {{ .Values.werf.image.disk }}
+        command: ['yarn']
+        args: ['serve:disk']        
         envFrom:
         - secretRef:
-            name: disk-envs          
+            name: disk-envs     
+        ports:
+        - containerPort: 9229
+          name: disk-debug                 
         volumeMounts:
         - name: disk-persistent-storage
           mountPath: /root/mprove_data/organizations
@@ -43,3 +48,19 @@ spec:
   resources:
     requests:
       storage: 2Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: disk
+  labels:
+    app: disk
+spec:
+  selector:
+    app: disk
+  type: NodePort
+  ports:
+  - port: 9230
+    targetPort: 9229
+    name: disk-debug 

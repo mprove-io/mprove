@@ -13,6 +13,6 @@ COPY ava.config.js ava-js.config.js ava-js-e2e.config.js nx.json package.json ts
 
 RUN yarn build:blockml:prod
 
-EXPOSE 3001 9231
+EXPOSE 3001 9229
 
 CMD [ "node", "dist/apps/blockml/main.js" ]

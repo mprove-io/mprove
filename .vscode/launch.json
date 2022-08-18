@@ -2,12 +2,15 @@
   "version": "0.2.0",
   "compounds": [
     {
-      "name": "4200, 9229, 9230, 9231",
+      "name": "App",
       "configurations": [
-        "Chrome 4200",
-        "Backend 9229",
-        "Disk 9230",
-        "Blockml 9231"
+        "chrome 4200",
+        "disk 9230",
+        "backend 9231",
+        "backend-scheduler 9232",
+        "blockml-single 9233",
+        "blockml-main 9234",
+        "blockml-worker 9235"
       ],
       "stopAll": true
     }
@@ -27,32 +30,59 @@
       }
     },
     {
-      "name": "Chrome 4200",
+      "name": "chrome 4200",
       "request": "launch",
       "type": "chrome",
       "url": "http://localhost:4200",
       "webRoot": "${workspaceFolder}"
     },
     {
-      "name": "Backend 9229",
-      "port": 9229,
-      "request": "attach",
-      "skipFiles": ["<node_internals>/**"],
-      "type": "node"
-    },
-    {
-      "name": "Disk 9230",
+      "name": "disk 9230",
       "port": 9230,
       "request": "attach",
       "skipFiles": ["<node_internals>/**"],
-      "type": "node"
+      "type": "node",
+      "remoteRoot": "/usr/src/app"
     },
     {
-      "name": "Blockml 9231",
+      "name": "backend 9231",
       "port": 9231,
       "request": "attach",
       "skipFiles": ["<node_internals>/**"],
-      "type": "node"
+      "type": "node",
+      "remoteRoot": "/usr/src/app"
+    },
+    {
+      "name": "backend-scheduler 9232",
+      "port": 9232,
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "remoteRoot": "/usr/src/app"
+    },
+    {
+      "name": "blockml-single 9233",
+      "port": 9233,
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "remoteRoot": "/usr/src/app"
+    },
+    {
+      "name": "blockml-main 9234",
+      "port": 9234,
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "remoteRoot": "/usr/src/app"
+    },
+    {
+      "name": "blockml-worker 9235",
+      "port": 9235,
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "remoteRoot": "/usr/src/app"
     }
   ]
 }

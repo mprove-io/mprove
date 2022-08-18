@@ -28,6 +28,24 @@ services:
       - 5672:5672
       - 15672:15672
 
+  disk:
+    build:
+      context: ./
+      dockerfile: tools/docker/disk.prod.Dockerfile
+    image: ghcr.io/mprove-io/mprove-disk:$MPROVE_RELEASE_TAG
+    env_file:
+      - $ENV_FILE_PATH
+    ports:
+      # - 3002:3002
+      - 9230:9229
+    volumes:
+      - type: bind
+        source: $ENV_FILE_SOURCE_PATH
+        target: $ENV_FILE_TARGET_PATH
+      - type: bind
+        source: $COMPOSE_DISK_ORGANIZATIONS_VOLUME_SOURCE_PATH
+        target: $COMPOSE_DISK_ORGANIZATIONS_VOLUME_PATH
+
   backend:
     build:
       context: ./
@@ -39,6 +57,7 @@ services:
       BACKEND_IS_SCHEDULER: 'FALSE'
     ports:
       - 3000:3000
+      - 9231:9229
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -56,6 +75,9 @@ services:
       - $ENV_FILE_PATH
     environment:
       BACKEND_IS_SCHEDULER: 'TRUE'
+    ports:
+      # - 3000:3000    
+      - 9232:9229 
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -75,6 +97,9 @@ services:
       BLOCKML_IS_SINGLE: 'TRUE'
       BLOCKML_IS_MAIN: 'FALSE'
       BLOCKML_IS_WORKER: 'FALSE'
+    ports:
+      # - 3001:3001 
+      - 9233:9229   
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -92,7 +117,8 @@ services:
       BLOCKML_IS_MAIN: 'TRUE'
       BLOCKML_IS_WORKER: 'FALSE'
     ports:
-      - 3001:3001
+      # - 3001:3001    
+      - 9234:9229
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -109,27 +135,13 @@ services:
       BLOCKML_IS_SINGLE: 'FALSE'
       BLOCKML_IS_MAIN: 'FALSE'
       BLOCKML_IS_WORKER: 'TRUE'
-    volumes:
-      - type: bind
-        source: $ENV_FILE_SOURCE_PATH
-        target: $ENV_FILE_TARGET_PATH
-
-  disk:
-    build:
-      context: ./
-      dockerfile: tools/docker/disk.prod.Dockerfile
-    image: ghcr.io/mprove-io/mprove-disk:$MPROVE_RELEASE_TAG
-    env_file:
-      - $ENV_FILE_PATH
     ports:
-      - 3002:3002
+      # - 3001:3001    
+      - 9235:9229      
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
         target: $ENV_FILE_TARGET_PATH
-      - type: bind
-        source: $COMPOSE_DISK_ORGANIZATIONS_VOLUME_SOURCE_PATH
-        target: $COMPOSE_DISK_ORGANIZATIONS_VOLUME_PATH
 
   front:
     build:
@@ -178,12 +190,7 @@ services:
         target: /var/lib/clickhouse
       - type: bind
         source: $COMPOSE_DWH_CLICKHOUSE_LOGS_VOLUME_SOURCE_PATH
-        target: /var/log/clickhouse-server
-
-  # tabix:
-  #     image: spoonest/clickhouse-tabix-web-client
-  #     ports:
-  #       - 8124:80 
+        target: /var/log/clickhouse-server 
 
   x11-bridge:
     image: jare/x11-bridge

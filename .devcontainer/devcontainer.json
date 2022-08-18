@@ -44,7 +44,6 @@
         "rvest.vs-code-prettier-eslint",
         "teclado.vscode-nginx-format",
         "eamodio.gitlens",
-        // "withfig.fig",
         "redhat.vscode-yaml",
         "william-voyek.vscode-nginx",
         "kraftwer1.darcula-extra",
@@ -55,7 +54,8 @@
         "ms-vscode-remote.remote-containers",
         "k--kato.intellij-idea-keybindings",
         "wayou.vscode-todo-highlight",
-        "PKief.material-icon-theme"
+        "PKief.material-icon-theme",
+        "Okteto.kubernetes-context"
       ],
       "settings": {
         "workbench.settings.useSplitJSON": false,

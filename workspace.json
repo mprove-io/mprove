@@ -47,7 +47,7 @@
           "options": {
             "buildTarget": "disk:build",
             "host": "0.0.0.0",
-            "port": 9230,
+            "port": 9229,
             "inspect": "inspect",
             "watch": true
           }
@@ -141,7 +141,7 @@
           "options": {
             "buildTarget": "blockml:build",
             "host": "0.0.0.0",
-            "port": 9231,
+            "port": 9229,
             "inspect": "inspect",
             "watch": true
           }

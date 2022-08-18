@@ -23,12 +23,16 @@ spec:
       containers:
       - name: backend
         image: {{ .Values.werf.image.backend }}
+        command: ['yarn']
+        args: ['serve:backend']
         envFrom:
         - secretRef:
             name: backend-envs          
         ports:
         - containerPort: 3000
           name: backend
+        - containerPort: 9229
+          name: backend-debug          
 
 ---
 apiVersion: v1
@@ -44,3 +48,7 @@ spec:
   ports:
   - port: 3000
     targetPort: 3000
+    name: backend 
+  - port: 9231
+    targetPort: 9229
+    name: backend-debug 

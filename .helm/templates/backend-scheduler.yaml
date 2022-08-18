@@ -24,9 +24,14 @@ spec:
       containers:
       - name: backend-scheduler
         image: {{ .Values.werf.image.backend }}
+        command: ['yarn']
+        args: ['serve:backend']        
         envFrom:
         - secretRef:
             name: backend-scheduler-envs
+        ports:
+        - containerPort: 9229
+          name: backend-s-debug
         volumeMounts:
         - name: scheduler-secrets-volume
           mountPath: /usr/src/app/secrets
@@ -38,3 +43,18 @@ spec:
           - key: content
             path: bigquery-test.json
 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-scheduler
+  labels:
+    app: backend-scheduler
+spec:
+  selector:
+    app: backend-scheduler
+  type: NodePort
+  ports:
+  - port: 9232
+    targetPort: 9229
+    name: backend-s-debug 
