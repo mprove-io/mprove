@@ -54,8 +54,7 @@
         "ms-vscode-remote.remote-containers",
         "k--kato.intellij-idea-keybindings",
         "wayou.vscode-todo-highlight",
-        "PKief.material-icon-theme",
-        "Okteto.kubernetes-context"
+        "PKief.material-icon-theme"
       ],
       "settings": {
         "workbench.settings.useSplitJSON": false,
