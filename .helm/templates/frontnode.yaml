@@ -21,6 +21,11 @@ spec:
       containers:
       - name: frontnode
         image: {{ .Values.werf.image.frontnode }}
+        resources:
+          limits:
+            memory: "2500Mi"
+          requests:
+            memory: "2000Mi"        
         ports:
         - containerPort: 4200
           name: frontnode
