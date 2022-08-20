@@ -17,7 +17,6 @@
     "LIBGL_ALWAYS_INDIRECT": "0"
   },
   // "remoteUser": "node",
-  "forwardPorts": [8888],
   "workspaceFolder": "/mprove",
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.kube/config,target=/root/.kube/config,type=bind,consistency=cached",
