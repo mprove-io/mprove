@@ -1,0 +1,30 @@
+version: v2beta1
+name: mprove
+pipelines:
+  dev:
+    run: start_dev --all
+dev:
+  frontnode:
+    labelSelector:
+      app: frontnode
+    ports:
+      - port: '4200'
+    sync:
+      - path: ./apps/front
+      - path: ./libs/api-to-backend
+      - path: ./libs/api-to-disk
+      - path: ./libs/common
+
+  backend:
+    labelSelector:
+      app: backend
+    ports:
+      - port: '9231:9229'
+      - port: '3000:3000'
+    sync:
+      - path: ./dist/apps/backend
+      - path: ./apps/backend
+      - path: ./libs/api-to-backend
+      - path: ./libs/api-to-disk
+      - path: ./libs/api-to-blockml
+      - path: ./libs/common
