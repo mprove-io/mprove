@@ -1,8 +1,7 @@
 {
   "npmScope": "mprove",
-  "affected": { "defaultBase": "ak" },
+  "affected": { "defaultBase": "master" },
   "implicitDependencies": {
-    "_.env": "*",
     ".dockerignore": "*",
     ".env": "*",
     ".envrc": "*",
@@ -14,7 +13,6 @@
     "jest.config.js": ["front"],
     "jest.preset.js": ["front"],
     "nx.json": "*",
-    "orm.config.yml": ["backend"],
     "package.json": { "dependencies": "*", "devDependencies": "*" },
     "tailwind.config.js": ["front"],
     "tsconfig.base.json": "*",
@@ -45,8 +43,8 @@
     "common": { "tags": [] },
     "disk": { "tags": [] },
     "blockml": { "tags": [] },
-    "backend": { "tags": [], "implicitDependencies": ["disk", "blockml"] },
+    "backend": { "tags": [] },
     "front": { "tags": [] },
-    "integra": { "tags": [], "implicitDependencies": ["front", "backend"] }
+    "integra": { "tags": [] }
   }
 }
