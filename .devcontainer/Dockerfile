@@ -33,6 +33,11 @@ RUN curl -LO  https://dl.google.com/linux/direct/google-chrome-stable_current_am
 RUN apt-get install -y ./google-chrome-stable_current_amd64.deb
 RUN rm google-chrome-stable_current_amd64.deb
 
+# AMD64
+RUN curl -s -L "https://github.com/loft-sh/devspace/releases/latest" | sed -nE 's!.*"([^"]*devspace-linux-amd64)".*!https://github.com\1!p' | xargs -n 1 curl -L -o devspace && chmod +x devspace;
+RUN sudo install devspace /usr/local/bin;
+RUN devspace upgrade --version=v6.0.0-beta.10
+
 # direnv
 RUN apt-get install -y direnv
 
