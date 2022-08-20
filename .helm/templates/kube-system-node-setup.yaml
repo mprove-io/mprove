@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-setup
+  namespace: kube-system
+  labels:
+    k8s-app: node-setup
+spec:
+  selector:
+    matchLabels:
+      name: node-setup
+  template:
+    metadata:
+      labels:
+        name: node-setup
+    spec:
+      containers:
+      - name: node-setup
+        image: ubuntu
+        command: ["/bin/sh","-c"]
+        args: ["/script/node-setup.sh; while true; do echo Sleeping && sleep 3600; done"]
+        env:
+          - name: PARTITION_NUMBER
+            valueFrom:
+              configMapKeyRef:
+                name: node-setup-config
+                key: partition_number
+        volumeMounts:
+          - name: node-setup-script
+            mountPath: /script
+          - name: dev
+            mountPath: /dev
+          - name: etc-lvm
+            mountPath: /etc/lvm
+        securityContext:
+          allowPrivilegeEscalation: true
+          privileged: true
+      volumes:
+        - name: node-setup-script
+          configMap:
+            name: node-setup-script
+            defaultMode: 0755
+        - name: dev
+          hostPath:
+            path: /dev
+        - name: etc-lvm
+          hostPath:
+            path: /etc/lvm
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: node-setup-config
+  namespace: kube-system
+data:
+  partition_number: "3"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: node-setup-script
+  namespace: kube-system
+data:
+  node-setup.sh: |
+    #!/bin/bash
+    set -e
+
+    # insert the new value into the system config
+    sysctl -w fs.inotify.max_user_watches=524288
+    sysctl -w fs.aio-max-nr=10485760
+    sysctl -w fs.file-max=10485760
+
+    # check that the new value was applied
+    cat /proc/sys/fs/inotify/max_user_watches
