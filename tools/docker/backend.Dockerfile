@@ -7,8 +7,6 @@ COPY yarn.lock .
 RUN yarn --frozen-lockfile
 
 COPY apps/backend apps/backend/
-COPY apps/blockml apps/blockml/
-COPY apps/disk apps/disk/
 COPY libs/api-to-backend libs/api-to-backend/
 COPY libs/api-to-disk libs/api-to-disk/
 COPY libs/api-to-blockml libs/api-to-blockml/
