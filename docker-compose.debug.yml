@@ -1,31 +1,54 @@
 services:
   disk:
-    command:
-    - yarn 
-    - serve:disk 
+    ports:
+      - 9230:9229
+    command: [ 'yarn', 'serve:disk' ]
+    volumes:
+      - type: bind
+        source: $COMPOSE_DIST_APPS_DISK_SOURCE_PATH
+        target: /usr/src/app/dist/apps/disk
 
   backend:
-    command:
-    - yarn 
-    - serve:backend 
+    ports:
+      - 9231:9229
+    command: [ 'yarn', 'serve:backend' ]
+    volumes:
+      - type: bind
+        source: $COMPOSE_DIST_APPS_BACKEND_SOURCE_PATH
+        target: /usr/src/app/dist/apps/backend
 
   backend-scheduler:
-    command:
-    - yarn 
-    - serve:backend 
+    ports:
+      - 9232:9229
+    command: [ 'yarn', 'serve:backend' ]
+    volumes:
+      - type: bind
+        source: $COMPOSE_DIST_APPS_BACKEND_SOURCE_PATH
+        target: /usr/src/app/dist/apps/backend
 
   blockml-single:
-    command:
-    - yarn 
-    - serve:blockml 
+    ports:
+      - 9233:9229
+    command: [ 'yarn', 'serve:blockml' ]
+    volumes:
+      - type: bind
+        source: $COMPOSE_DIST_APPS_BLOCKML_SOURCE_PATH
+        target: /usr/src/app/dist/apps/blockml
 
   blockml-main:
-    command:
-    - yarn 
-    - serve:blockml 
+    ports:
+      - 9234:9229
+    command: [ 'yarn', 'serve:blockml' ]
+    volumes:
+      - type: bind
+        source: $COMPOSE_DIST_APPS_BLOCKML_SOURCE_PATH
+        target: /usr/src/app/dist/apps/blockml
 
   blockml-worker:
-    command:
-    - yarn 
-    - serve:blockml 
-
+    ports:
+      - 9235:9229
+    command: [ 'yarn', 'serve:blockml' ]
+    volumes:
+      - type: bind
+        source: $COMPOSE_DIST_APPS_BLOCKML_SOURCE_PATH
+        target: /usr/src/app/dist/apps/blockml

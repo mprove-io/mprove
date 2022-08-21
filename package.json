@@ -59,8 +59,9 @@
     "clean:ch-logs": "rm -rf ~/mprove_data/dwh-clickhouse-logs/*",
     "clean:blockml-logs": "rm -rf ~/mprove_data/dwh-postgres/*",
     "clean:cypress": "rm -rf ~/.cache/Cypress/*",
-    "clean:dist": "rm -rf ./dist/*",
     "clean:node_modules": "rm -rf ./node_modules/*",
+    "clean:dist": "rm -rf dist/apps/disk/* dist/apps/backend/* dist/apps/blockml/* dist/apps/front/*",
+    "make:dist": "mkdir -p dist/apps/disk dist/apps/backend dist/apps/blockml dist/apps/front",
     "x11": "docker-compose up -d --force-recreate x11-bridge"
   },
   "dependencies": {

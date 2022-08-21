@@ -35,8 +35,6 @@ services:
     image: ghcr.io/mprove-io/mprove-disk:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
-    ports:
-      - 9230:9229
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -56,7 +54,6 @@ services:
       BACKEND_IS_SCHEDULER: 'FALSE'
     ports:
       - 3000:3000
-      - 9231:9229
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -74,8 +71,6 @@ services:
       - $ENV_FILE_PATH
     environment:
       BACKEND_IS_SCHEDULER: 'TRUE'
-    ports:
-      - 9232:9229 
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -94,9 +89,7 @@ services:
     environment:
       BLOCKML_IS_SINGLE: 'TRUE'
       BLOCKML_IS_MAIN: 'FALSE'
-      BLOCKML_IS_WORKER: 'FALSE'
-    ports:
-      - 9233:9229   
+      BLOCKML_IS_WORKER: 'FALSE'  
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -113,8 +106,6 @@ services:
       BLOCKML_IS_SINGLE: 'FALSE'
       BLOCKML_IS_MAIN: 'TRUE'
       BLOCKML_IS_WORKER: 'FALSE'
-    ports:
-      - 9234:9229
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -130,9 +121,7 @@ services:
     environment:
       BLOCKML_IS_SINGLE: 'FALSE'
       BLOCKML_IS_MAIN: 'FALSE'
-      BLOCKML_IS_WORKER: 'TRUE'
-    ports:
-      - 9235:9229      
+      BLOCKML_IS_WORKER: 'TRUE'      
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
