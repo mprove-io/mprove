@@ -9,6 +9,7 @@ async function bootstrap() {
   common.listenProcessEvents();
 
   const app = await NestFactory.create(AppModule);
-  await app.listen(3001);
+
+  await app.listen(process.env.LISTEN_PORT || 3001);
 }
 bootstrap();
