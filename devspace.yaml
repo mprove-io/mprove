@@ -11,9 +11,23 @@ dev:
       - port: '4200'
     sync:
       - path: ./apps/front
-      - path: ./libs/api-to-backend
-      - path: ./libs/api-to-disk
-      - path: ./libs/common
+      - path: ./libs
+        excludePaths:
+        - ./libs/api-to-blockml
+
+  disk:
+    labelSelector:
+      app: disk
+    ports:
+      - port: '9230:9229'
+    sync:
+      - path: ./dist/apps/disk
+        initialSync: preferRemote
+      - path: ./apps/disk
+      - path: ./libs
+        excludePaths:
+        - ./libs/api-to-blockml
+        - ./libs/api-to-backend
 
   backend:
     labelSelector:
@@ -22,9 +36,63 @@ dev:
       - port: '9231:9229'
       - port: '3000:3000'
     sync:
-      - path: ./dist/apps/backend
       - path: ./apps/backend
-      - path: ./libs/api-to-backend
-      - path: ./libs/api-to-disk
-      - path: ./libs/api-to-blockml
-      - path: ./libs/common
+      - path: ./libs
+      - path: ./dist/apps/backend
+        initialSync: preferRemote    
+
+  backend-scheduler:
+    labelSelector:
+      app: backend-scheduler
+    ports:
+      - port: '9232:9229'
+    sync:
+      - path: ./apps/backend
+      - path: ./libs
+      # - path: ./dist/apps/backend
+      #   initialSync: preferRemote
+
+  blockml-single:
+    labelSelector:
+      app: blockml-single
+    ports:
+      - port: '9233:9229'
+    sync:
+      - path: ./apps/blockml
+      - path: ./libs
+        excludePaths:
+        - ./libs/api-to-backend
+        - ./libs/api-to-disk
+      - path: ./dist/apps/blockml
+        initialSync: preferRemote    
+
+  blockml-main:
+    labelSelector:
+      app: blockml-main
+    ports:
+      - port: '9234:9229'
+    sync:
+      - path: ./apps/blockml
+      - path: ./libs
+        excludePaths:
+        - ./libs/api-to-backend
+        - ./libs/api-to-disk
+      # - path: ./dist/apps/blockml
+      #   initialSync: preferRemote     
+
+  blockml-worker:
+    labelSelector:
+      app: blockml-worker
+    ports:
+      - port: '9235:9229'
+    sync:
+      - path: ./apps/blockml
+      - path: ./libs
+        excludePaths:
+        - ./libs/api-to-backend
+        - ./libs/api-to-disk
+      # - path: ./dist/apps/blockml
+      #   initialSync: preferRemote    
+     
+
+
