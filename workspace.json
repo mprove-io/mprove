@@ -1,24 +1,6 @@
 {
   "version": 2,
   "projects": {
-    "top": {
-      "root": ".",
-      "targets": {
-        "start": {
-          "executor": "@nrwl/workspace:run-commands",
-          "options": {
-            "cwd": "./",
-            "commands": [
-              "yarn serve:backend:scheduler",
-              "yarn serve:blockml:single",
-              "yarn serve:disk",
-              "yarn serve:front:dev"
-            ],
-            "parallel": true
-          }
-        }
-      }
-    },
     "disk": {
       "root": "apps/disk",
       "sourceRoot": "apps/disk/src",
@@ -83,7 +65,7 @@
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "prettier \"apps/disk/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml"
+              "prettier \"apps/disk/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js"
             ],
             "parallel": false
           }
@@ -185,7 +167,7 @@
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "prettier \"apps/blockml/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml"
+              "prettier \"apps/blockml/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js"
             ],
             "parallel": false
           }
@@ -282,7 +264,7 @@
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "prettier \"apps/backend/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml"
+              "prettier \"apps/backend/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js"
             ],
             "parallel": false
           }
@@ -341,7 +323,7 @@
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "prettier \"libs/api-to-backend/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml"
+              "prettier \"libs/api-to-backend/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js"
             ],
             "parallel": false
           }
@@ -381,7 +363,7 @@
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "prettier \"libs/api-to-blockml/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml"
+              "prettier \"libs/api-to-blockml/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js"
             ],
             "parallel": false
           }
@@ -421,7 +403,7 @@
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "prettier \"libs/api-to-disk/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml"
+              "prettier \"libs/api-to-disk/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js"
             ],
             "parallel": false
           }
@@ -461,7 +443,7 @@
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "prettier \"libs/common/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml"
+              "prettier \"libs/common/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js"
             ],
             "parallel": false
           }
@@ -577,7 +559,7 @@
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "prettier \"apps/front/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml"
+              "prettier \"apps/front/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js"
             ],
             "parallel": false
           }

@@ -36,7 +36,6 @@
     }
   },
   "projects": {
-    "top": { "tags": [] },
     "api-to-backend": { "tags": [] },
     "api-to-blockml": { "tags": [] },
     "api-to-disk": { "tags": [] },
