@@ -191,7 +191,7 @@ export class CreateTempDashboardController {
 
     if (common.isUndefined(newDashboard)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_CREATE_TEMP_DASHBOARD_FAIL,
+        message: common.ErEnum.BACKEND_CREATE_TEMP_DASHBOARD_FAIL,
         data: {
           structErrors: struct.errors
         }

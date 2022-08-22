@@ -8,7 +8,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { combineLatest, EMPTY, Observable, TimeoutError, timer } from 'rxjs';
 import { catchError, finalize, map } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
-import { apiToDisk } from '~front/barrels/api-to-disk';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { enums } from '~front/barrels/enums';
@@ -222,18 +221,16 @@ export class ApiService {
       errorData.message === enums.ErEnum.FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK
     ) {
       if (
-        [apiToBackend.ErEnum.BACKEND_USER_DOES_NOT_EXIST].indexOf(
-          infoErrorMessage
-        ) > -1
+        [common.ErEnum.BACKEND_USER_DOES_NOT_EXIST].indexOf(infoErrorMessage) >
+        -1
       ) {
         this.authService.logout();
       }
 
       if (
-        infoErrorMessage ===
-          apiToBackend.ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK &&
+        infoErrorMessage === common.ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK &&
         errorData.response.body.info.error.originalError?.message ===
-          apiToDisk.ErEnum.DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH
+          common.ErEnum.DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH
       ) {
         let currentBranchId =
           errorData.response.body.info.error.originalError.data.currentBranch;
@@ -251,9 +248,8 @@ export class ApiService {
           });
         }, 0);
       } else if (
-        [apiToBackend.ErEnum.BACKEND_FORBIDDEN_DASHBOARD].indexOf(
-          infoErrorMessage
-        ) > -1
+        [common.ErEnum.BACKEND_FORBIDDEN_DASHBOARD].indexOf(infoErrorMessage) >
+        -1
       ) {
         errorData.description = `Check dashboard access rules`;
         errorData.buttonText = 'Ok, go to dashboards';
@@ -263,9 +259,7 @@ export class ApiService {
 
         this.myDialogService.showError({ errorData, isThrow: false });
       } else if (
-        [apiToBackend.ErEnum.BACKEND_FORBIDDEN_MODEL].indexOf(
-          infoErrorMessage
-        ) > -1
+        [common.ErEnum.BACKEND_FORBIDDEN_MODEL].indexOf(infoErrorMessage) > -1
       ) {
         errorData.description = `Check model access rules`;
         errorData.buttonText = 'Ok, go to models';
@@ -276,13 +270,13 @@ export class ApiService {
         this.myDialogService.showError({ errorData, isThrow: false });
       } else if (
         [
-          apiToBackend.ErEnum.BACKEND_MCONFIG_DOES_NOT_EXIST,
-          apiToBackend.ErEnum.BACKEND_MODEL_DOES_NOT_EXIST,
-          apiToBackend.ErEnum.BACKEND_VIZ_DOES_NOT_EXIST,
-          apiToBackend.ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST,
-          apiToBackend.ErEnum.BACKEND_STRUCT_ID_CHANGED,
-          apiToBackend.ErEnum.BACKEND_STRUCT_DOES_NOT_EXIST,
-          apiToBackend.ErEnum.BACKEND_QUERY_DOES_NOT_EXIST
+          common.ErEnum.BACKEND_MCONFIG_DOES_NOT_EXIST,
+          common.ErEnum.BACKEND_MODEL_DOES_NOT_EXIST,
+          common.ErEnum.BACKEND_VIZ_DOES_NOT_EXIST,
+          common.ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST,
+          common.ErEnum.BACKEND_STRUCT_ID_CHANGED,
+          common.ErEnum.BACKEND_STRUCT_DOES_NOT_EXIST,
+          common.ErEnum.BACKEND_QUERY_DOES_NOT_EXIST
         ].indexOf(infoErrorMessage) > -1
       ) {
         errorData.description = `Don't worry, most likely the project editor has pushed new changes to the current branch files recently`;
@@ -292,20 +286,18 @@ export class ApiService {
         }).bind(this);
 
         this.myDialogService.showError({ errorData, isThrow: false });
-      } else if (
-        infoErrorMessage === apiToBackend.ErEnum.BACKEND_RESTRICTED_USER
-      ) {
+      } else if (infoErrorMessage === common.ErEnum.BACKEND_RESTRICTED_USER) {
         errorData.description = `This user is restricted for Demo purposes. Sign Up at https://mprove.io to get full access.`;
         this.myDialogService.showError({ errorData, isThrow: false });
       } else if (
-        infoErrorMessage === apiToBackend.ErEnum.BACKEND_RESTRICTED_PROJECT &&
+        infoErrorMessage === common.ErEnum.BACKEND_RESTRICTED_PROJECT &&
         pathInfoName ===
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPushRepo
       ) {
         errorData.description = `Some actions of this project is restricted for Demo purposes. Change organization/project to remove restrictions and be able to push to production.`;
         this.myDialogService.showError({ errorData, isThrow: false });
       } else if (
-        infoErrorMessage === apiToBackend.ErEnum.BACKEND_RESTRICTED_PROJECT &&
+        infoErrorMessage === common.ErEnum.BACKEND_RESTRICTED_PROJECT &&
         pathInfoName !==
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPushRepo
       ) {
@@ -313,10 +305,10 @@ export class ApiService {
         this.myDialogService.showError({ errorData, isThrow: false });
       } else if (
         [
-          apiToBackend.ErEnum.BACKEND_CREATE_DASHBOARD_FAIL,
-          apiToBackend.ErEnum.BACKEND_MODIFY_DASHBOARD_FAIL,
-          apiToBackend.ErEnum.BACKEND_CREATE_VIZ_FAIL,
-          apiToBackend.ErEnum.BACKEND_MODIFY_VIZ_FAIL
+          common.ErEnum.BACKEND_CREATE_DASHBOARD_FAIL,
+          common.ErEnum.BACKEND_MODIFY_DASHBOARD_FAIL,
+          common.ErEnum.BACKEND_CREATE_VIZ_FAIL,
+          common.ErEnum.BACKEND_MODIFY_VIZ_FAIL
         ].indexOf(infoErrorMessage) > -1
       ) {
         errorData.description = `The changes were saved to the file, but it failed the BlockML validation. It's probably a bug.`;

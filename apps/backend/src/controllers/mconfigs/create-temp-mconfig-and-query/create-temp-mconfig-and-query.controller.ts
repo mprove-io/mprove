@@ -67,7 +67,7 @@ export class CreateTempMconfigAndQueryController {
 
     if (mconfig.structId !== branch.struct_id) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_STRUCT_ID_CHANGED
+        message: common.ErEnum.BACKEND_STRUCT_ID_CHANGED
       });
     }
 
@@ -79,7 +79,7 @@ export class CreateTempMconfigAndQueryController {
 
     if (isAccessGranted === false) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_MODEL
+        message: common.ErEnum.BACKEND_FORBIDDEN_MODEL
       });
     }
 

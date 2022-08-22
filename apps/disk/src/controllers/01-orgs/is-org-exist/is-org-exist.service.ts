@@ -17,7 +17,7 @@ export class IsOrgExistService {
     let requestValid = common.transformValidSync({
       classType: apiToDisk.ToDiskIsOrgExistRequest,
       object: request,
-      errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS
+      errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let { orgId } = requestValid.payload;

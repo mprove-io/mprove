@@ -1,4 +1,3 @@
-import { apiToBackend } from '~integra/barrels/api-to-backend';
 import { common } from '~integra/barrels/common';
 
 let testId = '_update-password__token-expired';
@@ -10,7 +9,7 @@ let newPassword = '456456';
 let passwordResetToken = common.makeId();
 
 let errorMessage = common.transformErrorMessage(
-  apiToBackend.ErEnum.BACKEND_UPDATE_PASSWORD_TOKEN_EXPIRED
+  common.ErEnum.BACKEND_UPDATE_PASSWORD_TOKEN_EXPIRED
 );
 
 describe('integra', () => {

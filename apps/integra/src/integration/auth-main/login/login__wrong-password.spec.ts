@@ -1,4 +1,3 @@
-import { apiToBackend } from '~integra/barrels/api-to-backend';
 import { common } from '~integra/barrels/common';
 
 let testId = '_login__wrong-password';
@@ -7,7 +6,7 @@ let email = `${testId}@example.com`;
 let password = '123123';
 let wrongPassword = '456456';
 let errorMessage = common.transformErrorMessage(
-  apiToBackend.ErEnum.BACKEND_WRONG_PASSWORD
+  common.ErEnum.BACKEND_WRONG_PASSWORD
 );
 
 describe('integra', () => {

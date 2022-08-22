@@ -15,7 +15,6 @@ import { appEntities } from './app-entities';
 import { appMigrations } from './app-migrations';
 import { appProviders } from './app-providers';
 import { appRepositories } from './app-repositories';
-import { apiToBackend } from './barrels/api-to-backend';
 import { common } from './barrels/common';
 import { enums } from './barrels/enums';
 import { helper } from './barrels/helper';
@@ -409,7 +408,7 @@ export class AppModule implements OnModuleInit {
             randomize: true, // 1 to 2 (default true)
             onRetry: (e: any) => {
               let serverError = new common.ServerError({
-                message: apiToBackend.ErEnum.BACKEND_MODULE_INIT_ORG_RETRY,
+                message: common.ErEnum.BACKEND_MODULE_INIT_ORG_RETRY,
                 originalError: e
               });
 

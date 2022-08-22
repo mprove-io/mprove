@@ -42,7 +42,7 @@ export class CreateVizController {
   ) {
     if (user.alias === common.RESTRICTED_USER_ALIAS) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_RESTRICTED_USER
+        message: common.ErEnum.BACKEND_RESTRICTED_USER
       });
     }
 
@@ -71,7 +71,7 @@ export class CreateVizController {
 
     if (member.is_explorer === common.BoolEnum.FALSE) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+        message: common.ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
       });
     }
 
@@ -96,7 +96,7 @@ export class CreateVizController {
       branchId === common.BRANCH_MASTER
     ) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_RESTRICTED_PROJECT
+        message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
       });
     }
 
@@ -113,7 +113,7 @@ export class CreateVizController {
 
     if (isAccessGranted === false) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_MODEL
+        message: common.ErEnum.BACKEND_FORBIDDEN_MODEL
       });
     }
 
@@ -192,7 +192,7 @@ export class CreateVizController {
       let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
 
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_CREATE_VIZ_FAIL,
+        message: common.ErEnum.BACKEND_CREATE_VIZ_FAIL,
         data: {
           underscoreFileId: underscoreFileId
         }

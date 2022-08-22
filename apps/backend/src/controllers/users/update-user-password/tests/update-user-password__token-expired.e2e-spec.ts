@@ -68,6 +68,6 @@ test('1', async t => {
 
   t.is(
     resp.info.error.message,
-    apiToBackend.ErEnum.BACKEND_UPDATE_PASSWORD_TOKEN_EXPIRED
+    common.ErEnum.BACKEND_UPDATE_PASSWORD_TOKEN_EXPIRED
   );
 });

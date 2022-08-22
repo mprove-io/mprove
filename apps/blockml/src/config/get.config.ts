@@ -1,4 +1,3 @@
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -20,7 +19,7 @@ export function getConfig() {
   let validatedConfig = common.transformValidSync({
     classType: interfaces.Config,
     object: config,
-    errorMessage: apiToBlockml.ErEnum.BLOCKML_WRONG_ENV_VALUES
+    errorMessage: common.ErEnum.BLOCKML_WRONG_ENV_VALUES
   });
 
   return validatedConfig;

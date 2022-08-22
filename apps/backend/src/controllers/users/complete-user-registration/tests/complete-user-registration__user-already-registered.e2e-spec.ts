@@ -63,8 +63,5 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.is(
-    resp.info.error.message,
-    apiToBackend.ErEnum.BACKEND_USER_ALREADY_REGISTERED
-  );
+  t.is(resp.info.error.message, common.ErEnum.BACKEND_USER_ALREADY_REGISTERED);
 });

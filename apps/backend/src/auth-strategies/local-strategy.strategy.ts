@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import * as bcrypt from 'bcrypt';
 import { Strategy } from 'passport-local';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { repositories } from '~backend/barrels/repositories';
 import { UsersService } from '~backend/services/users.service';
@@ -30,7 +29,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
     if (hash !== user.hash) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_WRONG_PASSWORD
+        message: common.ErEnum.BACKEND_WRONG_PASSWORD
       });
     }
 

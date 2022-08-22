@@ -1,4 +1,3 @@
-import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { enums } from '~backend/barrels/enums';
 import { interfaces } from '~backend/barrels/interfaces';
@@ -20,7 +19,7 @@ export function getConfig() {
   let validatedConfig = common.transformValidSync({
     classType: interfaces.Config,
     object: config,
-    errorMessage: apiToBackend.ErEnum.BACKEND_WRONG_ENV_VALUES
+    errorMessage: common.ErEnum.BACKEND_WRONG_ENV_VALUES
   });
 
   // console.log(`validatedConfig.isScheduler=${validatedConfig.isScheduler}`);

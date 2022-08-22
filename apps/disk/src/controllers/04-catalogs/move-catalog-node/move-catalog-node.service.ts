@@ -18,7 +18,7 @@ export class MoveCatalogNodeService {
     let requestValid = common.transformValidSync({
       classType: apiToDisk.ToDiskMoveCatalogNodeRequest,
       object: request,
-      errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS
+      errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let { traceId } = requestValid.info;
@@ -41,21 +41,21 @@ export class MoveCatalogNodeService {
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_ORG_IS_NOT_EXIST
+        message: common.ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
     let isProjectExist = await disk.isPathExist(projectDir);
     if (isProjectExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_PROJECT_IS_NOT_EXIST
+        message: common.ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
     let isRepoExist = await disk.isPathExist(repoDir);
     if (isRepoExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_REPO_IS_NOT_EXIST
+        message: common.ErEnum.DISK_REPO_IS_NOT_EXIST
       });
     }
 
@@ -65,7 +65,7 @@ export class MoveCatalogNodeService {
     });
     if (isBranchExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_BRANCH_IS_NOT_EXIST
+        message: common.ErEnum.DISK_BRANCH_IS_NOT_EXIST
       });
     }
 
@@ -80,14 +80,14 @@ export class MoveCatalogNodeService {
     let isFromPathExist = await disk.isPathExist(fromPath);
     if (isFromPathExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_FROM_PATH_IS_NOT_EXIST
+        message: common.ErEnum.DISK_FROM_PATH_IS_NOT_EXIST
       });
     }
 
     let isToPathExist = await disk.isPathExist(toPath);
     if (isToPathExist === true) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_TO_PATH_ALREADY_EXIST
+        message: common.ErEnum.DISK_TO_PATH_ALREADY_EXIST
       });
     }
 

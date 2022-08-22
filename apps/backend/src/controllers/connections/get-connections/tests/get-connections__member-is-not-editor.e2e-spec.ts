@@ -106,6 +106,6 @@ test('1', async t => {
 
   t.is(
     resp.info.error.message,
-    apiToBackend.ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
+    common.ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
   );
 });

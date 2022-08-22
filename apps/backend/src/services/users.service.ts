@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { maker } from '~backend/barrels/maker';
@@ -19,7 +18,7 @@ export class UsersService {
 
     if (common.isUndefined(user.hash)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD
+        message: common.ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD
       });
     }
   }
@@ -33,7 +32,7 @@ export class UsersService {
 
     if (common.isUndefined(user)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_USER_DOES_NOT_EXIST
+        message: common.ErEnum.BACKEND_USER_DOES_NOT_EXIST
       });
     }
 
@@ -49,7 +48,7 @@ export class UsersService {
 
     if (common.isUndefined(user)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_USER_DOES_NOT_EXIST
+        message: common.ErEnum.BACKEND_USER_DOES_NOT_EXIST
       });
     }
 
@@ -76,7 +75,7 @@ export class UsersService {
 
     if (common.isUndefined(alias)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_USER_ALIAS_IS_UNDEFINED
+        message: common.ErEnum.BACKEND_USER_ALIAS_IS_UNDEFINED
       });
     }
 

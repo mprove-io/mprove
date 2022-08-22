@@ -180,7 +180,7 @@ export class MessageService {
 
       default:
         throw new common.ServerError({
-          message: apiToDisk.ErEnum.DISK_WRONG_REQUEST_INFO_NAME
+          message: common.ErEnum.DISK_WRONG_REQUEST_INFO_NAME
         });
     }
   }

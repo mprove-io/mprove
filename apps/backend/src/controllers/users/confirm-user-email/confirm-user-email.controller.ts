@@ -32,13 +32,13 @@ export class ConfirmUserEmailController {
 
     if (common.isUndefined(user)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_USER_DOES_NOT_EXIST
+        message: common.ErEnum.BACKEND_USER_DOES_NOT_EXIST
       });
     }
 
     if (common.isUndefined(user.hash)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD
+        message: common.ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD
       });
     }
 

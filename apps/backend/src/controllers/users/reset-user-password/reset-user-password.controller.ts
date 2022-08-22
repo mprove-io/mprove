@@ -33,7 +33,7 @@ export class ResetUserPasswordController {
 
     if (user.alias === common.RESTRICTED_USER_ALIAS) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_RESTRICTED_USER
+        message: common.ErEnum.BACKEND_RESTRICTED_USER
       });
     }
 

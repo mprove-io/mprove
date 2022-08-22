@@ -43,7 +43,7 @@ export class SpecialRebuildStructsController {
 
     if (specialKey !== envSpecialKey) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_WRONG_SPECIAL_KEY
+        message: common.ErEnum.BACKEND_WRONG_SPECIAL_KEY
       });
     }
 

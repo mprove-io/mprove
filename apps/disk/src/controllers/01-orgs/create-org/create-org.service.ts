@@ -17,7 +17,7 @@ export class CreateOrgService {
     let requestValid = common.transformValidSync({
       classType: apiToDisk.ToDiskCreateOrgRequest,
       object: request,
-      errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS
+      errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let { orgId } = requestValid.payload;
@@ -27,7 +27,7 @@ export class CreateOrgService {
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === true) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_ORG_ALREADY_EXIST
+        message: common.ErEnum.DISK_ORG_ALREADY_EXIST
       });
     }
 

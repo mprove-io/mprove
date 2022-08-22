@@ -17,7 +17,7 @@ export class DeleteProjectService {
     let requestValid = common.transformValidSync({
       classType: apiToDisk.ToDiskDeleteProjectRequest,
       object: request,
-      errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS
+      errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let { orgId, projectId } = requestValid.payload;
@@ -30,7 +30,7 @@ export class DeleteProjectService {
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_ORG_IS_NOT_EXIST
+        message: common.ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 

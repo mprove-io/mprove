@@ -47,7 +47,7 @@ export class GetOrgController {
 
       if (orgIds.indexOf(orgId) < 0) {
         throw new common.ServerError({
-          message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_ORG
+          message: common.ErEnum.BACKEND_FORBIDDEN_ORG
         });
       }
     }

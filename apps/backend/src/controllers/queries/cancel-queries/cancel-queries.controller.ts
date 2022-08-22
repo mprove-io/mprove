@@ -43,7 +43,7 @@ export class CancelQueriesController {
 
     if (uniqueProjectIds.length > 1) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_MORE_THAN_ONE_PROJECT_ID
+        message: common.ErEnum.BACKEND_MORE_THAN_ONE_PROJECT_ID
       });
     }
 
@@ -70,7 +70,7 @@ export class CancelQueriesController {
 
         if (common.isUndefined(connection)) {
           throw new common.ServerError({
-            message: apiToBackend.ErEnum.BACKEND_CONNECTION_DOES_NOT_EXIST
+            message: common.ErEnum.BACKEND_CONNECTION_DOES_NOT_EXIST
           });
         }
 
@@ -85,8 +85,7 @@ export class CancelQueriesController {
           // do not await
           bigqueryQueryJob.cancel().catch((e: any) => {
             let serverError = new common.ServerError({
-              message:
-                apiToBackend.ErEnum.BACKEND_BIGQUERY_CANCEL_QUERY_JOB_FAIL,
+              message: common.ErEnum.BACKEND_BIGQUERY_CANCEL_QUERY_JOB_FAIL,
               originalError: e
             });
 

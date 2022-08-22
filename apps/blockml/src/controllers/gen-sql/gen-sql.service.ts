@@ -11,14 +11,14 @@ export class GenSqlService {
       apiToBlockml.ToBlockmlWorkerRequestInfoNameEnum.ToBlockmlWorkerGenSql
     ) {
       throw new common.ServerError({
-        message: apiToBlockml.ErEnum.BLOCKML_WORKER_WRONG_REQUEST_INFO_NAME
+        message: common.ErEnum.BLOCKML_WORKER_WRONG_REQUEST_INFO_NAME
       });
     }
 
     let reqValid = common.transformValidSync({
       classType: apiToBlockml.ToBlockmlWorkerGenSqlRequest,
       object: request,
-      errorMessage: apiToBlockml.ErEnum.BLOCKML_WORKER_WRONG_REQUEST_PARAMS
+      errorMessage: common.ErEnum.BLOCKML_WORKER_WRONG_REQUEST_PARAMS
     });
 
     let payload = barSpecial.genSqlPro(reqValid.payload);

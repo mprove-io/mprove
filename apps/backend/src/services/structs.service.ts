@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Connection, In } from 'typeorm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { repositories } from '~backend/barrels/repositories';
 
@@ -24,7 +23,7 @@ export class StructsService {
 
     if (common.isUndefined(struct)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_STRUCT_DOES_NOT_EXIST
+        message: common.ErEnum.BACKEND_STRUCT_DOES_NOT_EXIST
       });
     }
 

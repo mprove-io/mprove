@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { repositories } from '~backend/barrels/repositories';
 
@@ -17,7 +16,7 @@ export class VizsService {
 
     if (common.isUndefined(viz)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_VIZ_DOES_NOT_EXIST
+        message: common.ErEnum.BACKEND_VIZ_DOES_NOT_EXIST
       });
     }
 
@@ -30,7 +29,7 @@ export class VizsService {
       item.filePath.split('/')[2] !== item.userAlias
     ) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_VIZ_PATH
+        message: common.ErEnum.BACKEND_FORBIDDEN_VIZ_PATH
       });
     }
   }

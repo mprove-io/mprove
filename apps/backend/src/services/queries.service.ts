@@ -2,7 +2,6 @@ import { BigQuery } from '@google-cloud/bigquery';
 import { Injectable } from '@nestjs/common';
 import asyncPool from 'tiny-async-pool';
 import { Connection, In } from 'typeorm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
@@ -27,7 +26,7 @@ export class QueriesService {
 
     if (common.isUndefined(query)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_QUERY_DOES_NOT_EXIST
+        message: common.ErEnum.BACKEND_QUERY_DOES_NOT_EXIST
       });
     }
 
@@ -186,8 +185,7 @@ WHERE m.mconfig_id is NULL
         }
       } catch (e) {
         let serverError = new common.ServerError({
-          message:
-            apiToBackend.ErEnum.BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERY,
+          message: common.ErEnum.BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERY,
           originalError: e
         });
 

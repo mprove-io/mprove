@@ -18,7 +18,7 @@ export class SaveFileService {
     let requestValid = common.transformValidSync({
       classType: apiToDisk.ToDiskSaveFileRequest,
       object: request,
-      errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS
+      errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let {
@@ -41,21 +41,21 @@ export class SaveFileService {
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_ORG_IS_NOT_EXIST
+        message: common.ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
     let isProjectExist = await disk.isPathExist(projectDir);
     if (isProjectExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_PROJECT_IS_NOT_EXIST
+        message: common.ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
     let isRepoExist = await disk.isPathExist(repoDir);
     if (isRepoExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_REPO_IS_NOT_EXIST
+        message: common.ErEnum.DISK_REPO_IS_NOT_EXIST
       });
     }
 
@@ -65,7 +65,7 @@ export class SaveFileService {
     });
     if (isBranchExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_BRANCH_IS_NOT_EXIST
+        message: common.ErEnum.DISK_BRANCH_IS_NOT_EXIST
       });
     }
 
@@ -80,7 +80,7 @@ export class SaveFileService {
     let isFileExist = await disk.isPathExist(filePath);
     if (isFileExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_FILE_IS_NOT_EXIST
+        message: common.ErEnum.DISK_FILE_IS_NOT_EXIST
       });
     }
 

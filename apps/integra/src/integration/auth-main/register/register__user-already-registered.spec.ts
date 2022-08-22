@@ -1,4 +1,3 @@
-import { apiToBackend } from '~integra/barrels/api-to-backend';
 import { common } from '~integra/barrels/common';
 
 let testId = '_register__user-already-registered';
@@ -6,7 +5,7 @@ let testId = '_register__user-already-registered';
 let email = `${testId}@example.com`;
 let password = '123123';
 let errorMessage = common.transformErrorMessage(
-  apiToBackend.ErEnum.BACKEND_USER_ALREADY_REGISTERED
+  common.ErEnum.BACKEND_USER_ALREADY_REGISTERED
 );
 
 describe('integra', () => {

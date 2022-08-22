@@ -101,6 +101,6 @@ test('1', async t => {
 
   t.is(
     resp.info.error.message,
-    apiToBackend.ErEnum.BACKEND_BRANCH_MASTER_CAN_NOT_BE_DELETED
+    common.ErEnum.BACKEND_BRANCH_MASTER_CAN_NOT_BE_DELETED
   );
 });

@@ -39,7 +39,7 @@ export async function genSql(
 
     if (resp.info.status !== common.ResponseInfoStatusEnum.Ok) {
       throw new common.ServerError({
-        message: apiToBlockml.ErEnum.BLOCKML_GEN_SQL_OUTCOME_ERROR,
+        message: common.ErEnum.BLOCKML_GEN_SQL_OUTCOME_ERROR,
         originalError: resp.info.error
       });
     }

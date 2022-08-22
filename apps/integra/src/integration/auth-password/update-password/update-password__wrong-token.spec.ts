@@ -1,4 +1,3 @@
-import { apiToBackend } from '~integra/barrels/api-to-backend';
 import { common } from '~integra/barrels/common';
 
 let testId = '_update-password__wrong-token';
@@ -11,7 +10,7 @@ let passwordResetToken = common.makeId();
 let wrongPasswordResetToken = common.makeId();
 
 let errorMessage = common.transformErrorMessage(
-  apiToBackend.ErEnum.BACKEND_UPDATE_PASSWORD_WRONG_TOKEN
+  common.ErEnum.BACKEND_UPDATE_PASSWORD_WRONG_TOKEN
 );
 
 describe('integra', () => {

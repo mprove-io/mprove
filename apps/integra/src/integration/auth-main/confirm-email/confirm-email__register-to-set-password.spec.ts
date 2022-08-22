@@ -1,4 +1,3 @@
-import { apiToBackend } from '~integra/barrels/api-to-backend';
 import { common } from '~integra/barrels/common';
 
 let testId = '_confirm-email__register-to-set-password';
@@ -7,7 +6,7 @@ let email = `${testId}@example.com`;
 let emailVerificationToken = common.makeId();
 
 let errorMessage = common.transformErrorMessage(
-  apiToBackend.ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD
+  common.ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD
 );
 
 describe('integra', () => {

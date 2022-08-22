@@ -102,6 +102,6 @@ test('1', async t => {
 
   t.is(
     resp.info.error.message,
-    apiToBackend.ErEnum.BACKEND_ADMIN_CAN_NOT_CHANGE_HIS_ADMIN_STATUS
+    common.ErEnum.BACKEND_ADMIN_CAN_NOT_CHANGE_HIS_ADMIN_STATUS
   );
 });

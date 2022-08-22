@@ -18,7 +18,7 @@ export class DeleteBranchService {
     let requestValid = common.transformValidSync({
       classType: apiToDisk.ToDiskDeleteBranchRequest,
       object: request,
-      errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS
+      errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let { orgId, projectId, repoId, branch } = requestValid.payload;
@@ -32,27 +32,27 @@ export class DeleteBranchService {
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_ORG_IS_NOT_EXIST
+        message: common.ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
     let isProjectExist = await disk.isPathExist(projectDir);
     if (isProjectExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_PROJECT_IS_NOT_EXIST
+        message: common.ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
     let isRepoExist = await disk.isPathExist(repoDir);
     if (isRepoExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_REPO_IS_NOT_EXIST
+        message: common.ErEnum.DISK_REPO_IS_NOT_EXIST
       });
     }
 
     if (branch === common.BRANCH_MASTER) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_BRANCH_MASTER_CAN_NOT_BE_DELETED
+        message: common.ErEnum.DISK_BRANCH_MASTER_CAN_NOT_BE_DELETED
       });
     }
 
@@ -93,7 +93,7 @@ export class DeleteBranchService {
       });
     } else if (errorIfNoLocalBranch === true) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_BRANCH_IS_NOT_EXIST
+        message: common.ErEnum.DISK_BRANCH_IS_NOT_EXIST
       });
     }
 

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
@@ -32,13 +31,13 @@ export class MembersService {
 
     if (common.isUndefined(member)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
+        message: common.ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
       });
     }
 
     if (member.is_admin !== common.BoolEnum.TRUE) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_MEMBER_IS_NOT_ADMIN
+        message: common.ErEnum.BACKEND_MEMBER_IS_NOT_ADMIN
       });
     }
   }
@@ -56,7 +55,7 @@ export class MembersService {
 
     if (common.isUndefined(member)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
+        message: common.ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
       });
     }
 
@@ -65,7 +64,7 @@ export class MembersService {
       member.is_admin !== common.BoolEnum.TRUE
     ) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
+        message: common.ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
       });
     }
   }
@@ -80,13 +79,13 @@ export class MembersService {
 
     if (common.isUndefined(member)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
+        message: common.ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
       });
     }
 
     if (member.is_editor !== common.BoolEnum.TRUE) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR
+        message: common.ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR
       });
     }
 
@@ -103,7 +102,7 @@ export class MembersService {
 
     if (common.isUndefined(member)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
+        message: common.ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
       });
     }
 
@@ -120,7 +119,7 @@ export class MembersService {
 
     if (common.isDefined(member)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_MEMBER_ALREADY_EXISTS
+        message: common.ErEnum.BACKEND_MEMBER_ALREADY_EXISTS
       });
     }
   }

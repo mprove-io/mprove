@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'typeorm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
@@ -30,7 +29,7 @@ export class DbService {
         randomize: true, // 1 to 2 (default true)
         onRetry: (e: any) => {
           let serverError = new common.ServerError({
-            message: apiToBackend.ErEnum.BACKEND_TRANSACTION_RETRY,
+            message: common.ErEnum.BACKEND_TRANSACTION_RETRY,
             originalError: e
           });
 

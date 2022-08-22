@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { repositories } from '~backend/barrels/repositories';
 
@@ -22,7 +21,7 @@ export class ConnectionsService {
 
     if (common.isDefined(connection)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_CONNECTION_ALREADY_EXISTS
+        message: common.ErEnum.BACKEND_CONNECTION_ALREADY_EXISTS
       });
     }
   }
@@ -40,7 +39,7 @@ export class ConnectionsService {
 
     if (common.isUndefined(connection)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_CONNECTION_DOES_NOT_EXIST
+        message: common.ErEnum.BACKEND_CONNECTION_DOES_NOT_EXIST
       });
     }
 

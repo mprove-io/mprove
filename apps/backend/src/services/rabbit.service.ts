@@ -1,6 +1,5 @@
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { Injectable } from '@nestjs/common';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 
 @Injectable()
@@ -24,7 +23,7 @@ export class RabbitService {
       response.info?.status !== common.ResponseInfoStatusEnum.Ok
     ) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
+        message: common.ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
         originalError: response.info?.error
       });
     }
@@ -50,7 +49,7 @@ export class RabbitService {
       response.info?.status !== common.ResponseInfoStatusEnum.Ok
     ) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_ERROR_RESPONSE_FROM_BLOCKML,
+        message: common.ErEnum.BACKEND_ERROR_RESPONSE_FROM_BLOCKML,
         originalError: response.info?.error
       });
     }

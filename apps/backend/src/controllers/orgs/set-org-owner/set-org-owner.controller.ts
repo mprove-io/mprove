@@ -38,7 +38,7 @@ export class SetOrgOwnerController {
 
     if (common.isUndefined(newOwner)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_NEW_OWNER_NOT_FOUND
+        message: common.ErEnum.BACKEND_NEW_OWNER_NOT_FOUND
       });
     }
 

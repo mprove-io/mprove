@@ -18,7 +18,7 @@ export class IsBranchExistService {
     let requestValid = common.transformValidSync({
       classType: apiToDisk.ToDiskIsBranchExistRequest,
       object: request,
-      errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS
+      errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let { orgId, projectId, repoId, branch, isRemote } = requestValid.payload;
@@ -32,21 +32,21 @@ export class IsBranchExistService {
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_ORG_IS_NOT_EXIST
+        message: common.ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
     let isProjectExist = await disk.isPathExist(projectDir);
     if (isProjectExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_PROJECT_IS_NOT_EXIST
+        message: common.ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
     let isRepoExist = await disk.isPathExist(repoDir);
     if (isRepoExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_REPO_IS_NOT_EXIST
+        message: common.ErEnum.DISK_REPO_IS_NOT_EXIST
       });
     }
 

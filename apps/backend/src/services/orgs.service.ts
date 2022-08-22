@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
@@ -24,7 +23,7 @@ export class OrgsService {
 
     if (common.isUndefined(org)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_ORG_DOES_NOT_EXIST
+        message: common.ErEnum.BACKEND_ORG_DOES_NOT_EXIST
       });
     }
 
@@ -36,7 +35,7 @@ export class OrgsService {
 
     if (org.owner_id !== userId) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_ONLY_ORG_OWNER_CAN_ACCESS
+        message: common.ErEnum.BACKEND_ONLY_ORG_OWNER_CAN_ACCESS
       });
     }
 

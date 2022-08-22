@@ -74,8 +74,5 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.is(
-    resp.info.error.message,
-    apiToBackend.ErEnum.BACKEND_NEW_OWNER_NOT_FOUND
-  );
+  t.is(resp.info.error.message, common.ErEnum.BACKEND_NEW_OWNER_NOT_FOUND);
 });

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { LessThan } from 'typeorm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { repositories } from '~backend/barrels/repositories';
 import { QueriesService } from './queries.service';
@@ -34,8 +33,7 @@ export class TasksService {
       await this.queriesService.checkBigqueryRunningQueries().catch(e => {
         let serverError = new common.ServerError({
           message:
-            apiToBackend.ErEnum
-              .BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERIES,
+            common.ErEnum.BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERIES,
           originalError: e
         });
 
@@ -53,8 +51,7 @@ export class TasksService {
 
       await this.structsService.removeOrphanedStructs().catch(e => {
         let serverError = new common.ServerError({
-          message:
-            apiToBackend.ErEnum.BACKEND_SCHEDULER_REMOVE_ORPHANED_STRUCTS,
+          message: common.ErEnum.BACKEND_SCHEDULER_REMOVE_ORPHANED_STRUCTS,
           originalError: e
         });
 
@@ -63,8 +60,7 @@ export class TasksService {
 
       await this.queriesService.removeOrphanedQueries().catch(e => {
         let serverError = new common.ServerError({
-          message:
-            apiToBackend.ErEnum.BACKEND_SCHEDULER_REMOVE_ORPHANED_QUERIES,
+          message: common.ErEnum.BACKEND_SCHEDULER_REMOVE_ORPHANED_QUERIES,
           originalError: e
         });
 
@@ -87,7 +83,7 @@ export class TasksService {
         .delete({ server_ts: LessThan(ts) })
         .catch(e => {
           let serverError = new common.ServerError({
-            message: apiToBackend.ErEnum.BACKEND_SCHEDULER_REMOVE_IDEMPS,
+            message: common.ErEnum.BACKEND_SCHEDULER_REMOVE_IDEMPS,
             originalError: e
           });
           common.logToConsole(serverError);

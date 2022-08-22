@@ -67,6 +67,6 @@ test('1', async t => {
 
   t.is(
     resp.info.error.message,
-    apiToBackend.ErEnum.BACKEND_UPDATE_PASSWORD_WRONG_TOKEN
+    common.ErEnum.BACKEND_UPDATE_PASSWORD_WRONG_TOKEN
   );
 });

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
@@ -29,7 +28,7 @@ export class DashboardsService {
 
     if (common.isUndefined(dashboard)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST
+        message: common.ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST
       });
     }
 
@@ -39,7 +38,7 @@ export class DashboardsService {
   checkDashboardPath(item: { filePath: string; userAlias: string }) {
     if (item.filePath.split('/')[2] !== item.userAlias) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_DASHBOARD_PATH
+        message: common.ErEnum.BACKEND_FORBIDDEN_DASHBOARD_PATH
       });
     }
   }
@@ -60,7 +59,7 @@ export class DashboardsService {
 
     if (isAccessGranted === false) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_DASHBOARD
+        message: common.ErEnum.BACKEND_FORBIDDEN_DASHBOARD
       });
     }
 

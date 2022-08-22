@@ -24,13 +24,13 @@ export class ResendUserEmailController {
 
     if (common.isUndefined(user)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_USER_DOES_NOT_EXIST
+        message: common.ErEnum.BACKEND_USER_DOES_NOT_EXIST
       });
     }
 
     if (user.alias === common.RESTRICTED_USER_ALIAS) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_RESTRICTED_USER
+        message: common.ErEnum.BACKEND_RESTRICTED_USER
       });
     }
 

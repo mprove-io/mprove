@@ -67,7 +67,7 @@ export class GetQueryController {
 
     if (mconfig.query_id !== queryId) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_MCONFIG_QUERY_ID_MISMATCH
+        message: common.ErEnum.BACKEND_MCONFIG_QUERY_ID_MISMATCH
       });
     }
 
@@ -113,10 +113,10 @@ export class GetQueryController {
     if (isAccessGranted === false) {
       throw new common.ServerError({
         message: common.isDefined(viz)
-          ? apiToBackend.ErEnum.BACKEND_FORBIDDEN_VIZ
+          ? common.ErEnum.BACKEND_FORBIDDEN_VIZ
           : common.isDefined(dashboard)
-          ? apiToBackend.ErEnum.BACKEND_FORBIDDEN_DASHBOARD
-          : apiToBackend.ErEnum.BACKEND_FORBIDDEN_MODEL
+          ? common.ErEnum.BACKEND_FORBIDDEN_DASHBOARD
+          : common.ErEnum.BACKEND_FORBIDDEN_MODEL
       });
     }
 

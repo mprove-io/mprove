@@ -40,7 +40,7 @@ export class CreateDashboardController {
   ) {
     if (user.alias === common.RESTRICTED_USER_ALIAS) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_RESTRICTED_USER
+        message: common.ErEnum.BACKEND_RESTRICTED_USER
       });
     }
 
@@ -70,7 +70,7 @@ export class CreateDashboardController {
 
     if (member.is_explorer === common.BoolEnum.FALSE) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+        message: common.ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
       });
     }
 
@@ -95,7 +95,7 @@ export class CreateDashboardController {
       branchId === common.BRANCH_MASTER
     ) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_RESTRICTED_PROJECT
+        message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
       });
     }
 
@@ -238,7 +238,7 @@ export class CreateDashboardController {
       let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
 
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_CREATE_DASHBOARD_FAIL,
+        message: common.ErEnum.BACKEND_CREATE_DASHBOARD_FAIL,
         data: {
           underscoreFileId: underscoreFileId
         }

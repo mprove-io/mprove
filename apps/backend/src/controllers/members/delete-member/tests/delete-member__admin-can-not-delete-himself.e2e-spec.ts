@@ -98,6 +98,6 @@ test('1', async t => {
 
   t.is(
     resp.info.error.message,
-    apiToBackend.ErEnum.BACKEND_ADMIN_CAN_NOT_DELETE_HIMSELF
+    common.ErEnum.BACKEND_ADMIN_CAN_NOT_DELETE_HIMSELF
   );
 });

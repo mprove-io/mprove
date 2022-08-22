@@ -39,7 +39,7 @@ export class RegisterUserController {
     if (common.isDefined(user)) {
       if (common.isDefined(user.hash)) {
         throw new common.ServerError({
-          message: apiToBackend.ErEnum.BACKEND_USER_ALREADY_REGISTERED
+          message: common.ErEnum.BACKEND_USER_ALREADY_REGISTERED
         });
       } else {
         user.hash = hash;
@@ -56,7 +56,7 @@ export class RegisterUserController {
 
       if (onlyInv === common.BoolEnum.TRUE) {
         throw new common.ServerError({
-          message: apiToBackend.ErEnum.BACKEND_USER_IS_NOT_INVITED
+          message: common.ErEnum.BACKEND_USER_IS_NOT_INVITED
         });
       } else {
         let alias = await this.usersService.makeAlias(email);

@@ -34,7 +34,7 @@ export class AppFilter implements ExceptionFilter {
       let e =
         (exception as any).message === 'Unauthorized'
           ? new common.ServerError({
-              message: apiToBackend.ErEnum.BACKEND_UNAUTHORIZED,
+              message: common.ErEnum.BACKEND_UNAUTHORIZED,
               originalError: exception
             })
           : exception;
@@ -77,7 +77,7 @@ export class AppFilter implements ExceptionFilter {
         } catch (er) {
           common.logToConsole(
             new common.ServerError({
-              message: apiToBackend.ErEnum.BACKEND_APP_FILTER_SAVE_IDEMP_ERROR,
+              message: common.ErEnum.BACKEND_APP_FILTER_SAVE_IDEMP_ERROR,
               originalError: er
             })
           );
@@ -104,7 +104,7 @@ export class AppFilter implements ExceptionFilter {
     } catch (err) {
       common.logToConsole(
         new common.ServerError({
-          message: apiToBackend.ErEnum.BACKEND_APP_FILTER_ERROR,
+          message: common.ErEnum.BACKEND_APP_FILTER_ERROR,
           originalError: err
         })
       );

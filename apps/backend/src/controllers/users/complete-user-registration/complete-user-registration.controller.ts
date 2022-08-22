@@ -36,7 +36,7 @@ export class CompleteUserRegistrationController {
 
     if (common.isUndefined(user)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_USER_DOES_NOT_EXIST
+        message: common.ErEnum.BACKEND_USER_DOES_NOT_EXIST
       });
     }
 
@@ -45,7 +45,7 @@ export class CompleteUserRegistrationController {
       user.is_email_verified === common.BoolEnum.TRUE
     ) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_USER_ALREADY_REGISTERED
+        message: common.ErEnum.BACKEND_USER_ALREADY_REGISTERED
       });
     }
 

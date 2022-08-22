@@ -43,7 +43,7 @@ export class DeleteBranchController {
 
     if (branchId === common.BRANCH_MASTER) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_BRANCH_MASTER_CAN_NOT_BE_DELETED
+        message: common.ErEnum.BACKEND_BRANCH_MASTER_CAN_NOT_BE_DELETED
       });
     }
 
@@ -57,7 +57,7 @@ export class DeleteBranchController {
       repoId === common.PROD_REPO_ID
     ) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_RESTRICTED_PROJECT
+        message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
       });
     }
 

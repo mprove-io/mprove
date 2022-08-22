@@ -29,7 +29,7 @@ export class DeleteUserController {
   ) {
     if (user.alias === common.RESTRICTED_USER_ALIAS) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_RESTRICTED_USER
+        message: common.ErEnum.BACKEND_RESTRICTED_USER
       });
     }
 
@@ -41,7 +41,7 @@ export class DeleteUserController {
 
     if (ownerOrgs.length > 0) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_USER_IS_ORG_OWNER,
+        message: common.ErEnum.BACKEND_USER_IS_ORG_OWNER,
         data: {
           orgIds: ownerOrgs.map(x => x.org_id)
         }
@@ -74,7 +74,7 @@ export class DeleteUserController {
 
     if (erProjectIds.length > 0) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_USER_IS_THE_ONLY_PROJECT_ADMIN,
+        message: common.ErEnum.BACKEND_USER_IS_THE_ONLY_PROJECT_ADMIN,
         data: {
           projectIds: erProjectIds
         }

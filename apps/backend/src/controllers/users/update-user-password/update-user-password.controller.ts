@@ -29,13 +29,13 @@ export class UpdateUserPasswordController {
 
     if (common.isUndefined(user)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_UPDATE_PASSWORD_WRONG_TOKEN
+        message: common.ErEnum.BACKEND_UPDATE_PASSWORD_WRONG_TOKEN
       });
     }
 
     if (Number(user.password_reset_expires_ts) < Number(helper.makeTs())) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_UPDATE_PASSWORD_TOKEN_EXPIRED
+        message: common.ErEnum.BACKEND_UPDATE_PASSWORD_TOKEN_EXPIRED
       });
     }
 

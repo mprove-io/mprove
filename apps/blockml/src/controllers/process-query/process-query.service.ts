@@ -20,14 +20,14 @@ export class ProcessQueryService {
       apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlProcessQuery
     ) {
       throw new common.ServerError({
-        message: apiToBlockml.ErEnum.BLOCKML_WRONG_REQUEST_INFO_NAME
+        message: common.ErEnum.BLOCKML_WRONG_REQUEST_INFO_NAME
       });
     }
 
     let reqValid = common.transformValidSync({
       classType: apiToBlockml.ToBlockmlProcessQueryRequest,
       object: request,
-      errorMessage: apiToBlockml.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS
+      errorMessage: common.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS
     });
 
     let {

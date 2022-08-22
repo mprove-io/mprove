@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
@@ -28,7 +27,7 @@ export class ProjectsService {
 
     if (common.isUndefined(project)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_PROJECT_DOES_NOT_EXIST
+        message: common.ErEnum.BACKEND_PROJECT_DOES_NOT_EXIST
       });
     }
 

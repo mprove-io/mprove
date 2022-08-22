@@ -1,6 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { interfaces } from '~backend/barrels/interfaces';
 
@@ -14,7 +13,7 @@ export class TestRoutesGuard implements CanActivate {
       common.BoolEnum.TRUE
     ) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_TEST_ROUTES_FORBIDDEN
+        message: common.ErEnum.BACKEND_TEST_ROUTES_FORBIDDEN
       });
     }
 

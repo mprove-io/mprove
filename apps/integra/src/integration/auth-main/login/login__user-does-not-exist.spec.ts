@@ -1,4 +1,3 @@
-import { apiToBackend } from '~integra/barrels/api-to-backend';
 import { common } from '~integra/barrels/common';
 
 let testId = '_login__user-does-not-exist';
@@ -6,7 +5,7 @@ let testId = '_login__user-does-not-exist';
 let email = `${testId}@example.com`;
 let password = '123123';
 let errorMessage = common.transformErrorMessage(
-  apiToBackend.ErEnum.BACKEND_USER_DOES_NOT_EXIST
+  common.ErEnum.BACKEND_USER_DOES_NOT_EXIST
 );
 
 describe('integra', () => {

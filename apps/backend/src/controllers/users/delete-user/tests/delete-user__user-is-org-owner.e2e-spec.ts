@@ -93,5 +93,5 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.is(resp.info.error.message, apiToBackend.ErEnum.BACKEND_USER_IS_ORG_OWNER);
+  t.is(resp.info.error.message, common.ErEnum.BACKEND_USER_IS_ORG_OWNER);
 });

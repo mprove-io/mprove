@@ -65,7 +65,7 @@ export class PushRepoController {
       projectId === firstProjectId
     ) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_RESTRICTED_PROJECT
+        message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
       });
     }
 

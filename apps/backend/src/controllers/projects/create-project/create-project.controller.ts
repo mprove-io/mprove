@@ -45,7 +45,7 @@ export class CreateProjectController {
 
     if (common.isDefined(project)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_PROJECT_ALREADY_EXISTS
+        message: common.ErEnum.BACKEND_PROJECT_ALREADY_EXISTS
       });
     }
 

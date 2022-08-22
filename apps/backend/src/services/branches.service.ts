@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { repositories } from '~backend/barrels/repositories';
 
@@ -22,7 +21,7 @@ export class BranchesService {
 
     if (common.isUndefined(branch)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+        message: common.ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
       });
     }
 
@@ -44,7 +43,7 @@ export class BranchesService {
 
     if (common.isDefined(branch)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_BRANCH_ALREADY_EXISTS
+        message: common.ErEnum.BACKEND_BRANCH_ALREADY_EXISTS
       });
     }
   }

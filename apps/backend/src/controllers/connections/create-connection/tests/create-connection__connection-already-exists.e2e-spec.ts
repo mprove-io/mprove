@@ -109,6 +109,6 @@ test('1', async t => {
 
   t.is(
     resp.info.error.message,
-    apiToBackend.ErEnum.BACKEND_CONNECTION_ALREADY_EXISTS
+    common.ErEnum.BACKEND_CONNECTION_ALREADY_EXISTS
   );
 });

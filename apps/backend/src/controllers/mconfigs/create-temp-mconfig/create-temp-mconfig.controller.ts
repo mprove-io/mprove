@@ -65,7 +65,7 @@ export class CreateTempMconfigController {
       oldMconfig.struct_id !== mconfig.structId
     ) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_OLD_MCONFIG_MISMATCH
+        message: common.ErEnum.BACKEND_OLD_MCONFIG_MISMATCH
       });
     }
 
@@ -82,7 +82,7 @@ export class CreateTempMconfigController {
 
     if (isAccessGranted === false) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_MODEL
+        message: common.ErEnum.BACKEND_FORBIDDEN_MODEL
       });
     }
 

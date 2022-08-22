@@ -106,8 +106,5 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.is(
-    resp.info.error.message,
-    apiToBackend.ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
-  );
+  t.is(resp.info.error.message, common.ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST);
 });

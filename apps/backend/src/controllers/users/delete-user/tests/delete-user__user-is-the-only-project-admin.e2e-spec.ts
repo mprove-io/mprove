@@ -105,6 +105,6 @@ test('1', async t => {
 
   t.is(
     resp.info.error.message,
-    apiToBackend.ErEnum.BACKEND_USER_IS_THE_ONLY_PROJECT_ADMIN
+    common.ErEnum.BACKEND_USER_IS_THE_ONLY_PROJECT_ADMIN
   );
 });

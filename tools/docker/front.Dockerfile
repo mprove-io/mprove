@@ -8,7 +8,6 @@ RUN yarn --frozen-lockfile
 
 COPY apps/front apps/front/
 COPY libs/api-to-backend libs/api-to-backend/
-COPY libs/api-to-disk libs/api-to-disk/
 COPY libs/common libs/common/
 COPY nx.json package.json tailwind.config.js tsconfig.base.json tsconfig.json workspace.json ./
 

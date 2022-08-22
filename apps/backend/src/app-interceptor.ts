@@ -83,7 +83,7 @@ export class AppInterceptor implements NestInterceptor {
             randomize: false, // 1 to 2 (default true)
             onRetry: (e: any) => {
               let serverError = new common.ServerError({
-                message: apiToBackend.ErEnum.BACKEND_GET_IDEMP_RESP_RETRY,
+                message: common.ErEnum.BACKEND_GET_IDEMP_RESP_RETRY,
                 originalError: e
               });
 
@@ -93,7 +93,7 @@ export class AppInterceptor implements NestInterceptor {
         );
       } catch (e) {
         let err = new common.ServerError({
-          message: apiToBackend.ErEnum.BACKEND_GET_IDEMP_RESP_RETRY_FAILED,
+          message: common.ErEnum.BACKEND_GET_IDEMP_RESP_RETRY_FAILED,
           originalError: e
         });
 
