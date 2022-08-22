@@ -601,7 +601,7 @@
             "tsConfig": "apps/integra/tsconfig.e2e.json",
             "headless": true,
             "browser": "chrome",
-            "baseUrl": "http://localhost:3003"
+            "baseUrl": "http://localhost:4200"
           },
           "configurations": {
             "production": {

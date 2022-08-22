@@ -1,4 +1,6 @@
 {
+  "viewportWidth": 1440,
+  "viewportHeight": 1000,
   "fileServerFolder": ".",
   "fixturesFolder": "./src/fixtures",
   "integrationFolder": "./src/integration",
