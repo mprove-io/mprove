@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Ava file",
+      "label": "Ava run spec file - backend / blockml / disk",
       "command": "./node_modules/.bin/ava",
       "args": ["${relativeFile}"],
       "options": {
@@ -20,7 +20,7 @@
       }
     },
     {
-      "label": "Cypress file",
+      "label": "Cypress run spec file",
       "command": "./node_modules/.bin/nx",
       "args": [
         "e2e",

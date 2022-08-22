@@ -32,7 +32,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Ava file",
+      "name": "Ava debug spec file - backend / blockml / disk",
       "program": "${workspaceRoot}/node_modules/.bin/ava",
       "cwd": "${workspaceRoot}",
       "console": "integratedTerminal",

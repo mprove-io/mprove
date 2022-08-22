@@ -4,6 +4,18 @@ pipelines:
   dev:
     run: start_dev --all
 dev:
+  db:
+    labelSelector:
+      app: db
+    ports:
+      - port: '3306'
+
+  rabbit:
+    labelSelector:
+      app: rabbit
+    ports:
+      - port: '5672'
+
   frontnode:
     labelSelector:
       app: frontnode
