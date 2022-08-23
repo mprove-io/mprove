@@ -32,7 +32,7 @@
     "source=mprove_data-organizations,target=/root/mprove_data/organizations,type=volume",
     "source=mprove_data-blockml-logs,target=/root/mprove_data/blockml-logs,type=volume"
   ],
-  "initializeCommand": "bash .devcontainer/init.sh ${localWorkspaceFolder}",
+  "initializeCommand": "bash .devcontainer/init.sh",
   "postCreateCommand": "bash .devcontainer/post-create.sh ${containerWorkspaceFolder}",
   "postStartCommand": "bash .devcontainer/post-start.sh ${containerWorkspaceFolder}",
   "customizations": {

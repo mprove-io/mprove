@@ -6,7 +6,7 @@ Mprove - Powerful self-service business intelligence app.
 
 Inspired by :heart: [Looker](https://looker.com/).
 
-## Local deploy with docker-compose
+## Local deploy with docker-compose (MacOS / Windows WSL / Linux / devcontainer)
 
 - Clone github repo to local `mprove` folder
 
@@ -28,7 +28,7 @@ mkdir -p ~/mprove_data/mysql \
 - Create bigquery project service account credentials
 
 ```
-echo {} > secrets/bigquery-test.json
+mkdir secrets && echo {} > secrets/bigquery-test.json
 ```
 
 - Copy `mprove/.env.example` file to `mprove/.env` file
@@ -37,7 +37,7 @@ echo {} > secrets/bigquery-test.json
 cp .env.example .env
 ```
 
-- Modify `mprove/.env` to your needs
+- Modify `mprove/.env` variables
 
 - Pull docker images
 
