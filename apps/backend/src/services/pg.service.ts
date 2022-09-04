@@ -22,11 +22,11 @@ export class PgService {
     let { query, userId, connection } = item;
 
     let cn: pg.IConnectionParameters<pg.IClient> = {
-      host: connection.postgres_host,
-      port: connection.postgres_port,
-      database: connection.postgres_database,
-      user: connection.postgres_user,
-      password: connection.postgres_password,
+      host: connection.host,
+      port: connection.port,
+      database: connection.database,
+      user: connection.username,
+      password: connection.password,
       ssl: connection.is_ssl === common.BoolEnum.TRUE
     };
 

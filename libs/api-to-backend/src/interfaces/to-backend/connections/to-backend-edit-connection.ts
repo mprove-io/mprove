@@ -25,23 +25,27 @@ export class ToBackendEditConnectionRequestPayload {
 
   @IsOptional()
   @IsString()
-  postgresHost?: string;
+  account?: string;
+
+  @IsOptional()
+  @IsString()
+  host?: string;
 
   @IsOptional()
   @IsInt()
-  postgresPort?: number;
+  port?: number;
 
   @IsOptional()
   @IsString()
-  postgresDatabase?: string;
+  database?: string;
 
   @IsOptional()
   @IsString()
-  postgresUser?: string;
+  username?: string;
 
   @IsOptional()
   @IsString()
-  postgresPassword?: string;
+  password?: string;
 
   @IsOptional()
   @IsBoolean()

@@ -21,16 +21,19 @@ export class Connection {
   bigqueryQuerySizeLimitGb: number;
 
   @IsString()
-  postgresHost: string;
+  account: string;
+
+  @IsString()
+  host: string;
 
   @IsInt()
-  postgresPort: number;
+  port: number;
 
   @IsString()
-  postgresDatabase: string;
+  database: string;
 
   @IsString()
-  postgresUser: string;
+  username: string;
 
   @IsBoolean()
   isSSL: boolean;

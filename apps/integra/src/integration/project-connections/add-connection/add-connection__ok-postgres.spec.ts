@@ -61,12 +61,12 @@ describe('integra', () => {
     cy.get('[data-cy=projectConnectionsAddConnectionButton]').click();
     cy.get('[data-cy=addConnectionDialogConnectionIdInput]').type('c1');
     cy.get('[data-cy=addConnectionDialogTypeSelect]').click();
-    cy.get('.ng-option').eq(0).click();
-    cy.get('[data-cy=addConnectionDialogPostgresHostInput]').type('1');
-    cy.get('[data-cy=addConnectionDialogPostgresPortInput]').type('2');
-    cy.get('[data-cy=addConnectionDialogPostgresDatabaseInput]').type('3');
-    cy.get('[data-cy=addConnectionDialogPostgresUserInput]').type('4');
-    cy.get('[data-cy=addConnectionDialogPostgresPasswordInput]').type('5');
+    cy.get('.ng-option').eq(3).click();
+    cy.get('[data-cy=addConnectionDialogHostInput]').type('1');
+    cy.get('[data-cy=addConnectionDialogPortInput]').type('2');
+    cy.get('[data-cy=addConnectionDialogDatabaseInput]').type('3');
+    cy.get('[data-cy=addConnectionDialogUserInput]').type('4');
+    cy.get('[data-cy=addConnectionDialogPasswordInput]').type('5');
     cy.get('[data-cy=addConnectionDialogAddButton]').click();
     cy.loading();
     cy.get('[data-cy=projectConnectionsDeleteButton]').should('have.length', 1);

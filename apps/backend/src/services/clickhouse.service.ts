@@ -49,11 +49,11 @@ export class ClickHouseService {
         connection.is_ssl === common.BoolEnum.TRUE
           ? ClickHouseConnectionProtocol.HTTPS
           : ClickHouseConnectionProtocol.HTTP,
-      host: connection.postgres_host,
-      port: connection.postgres_port,
+      host: connection.host,
+      port: connection.port,
       // database: connection.postgres_database,
-      username: connection.postgres_user,
-      password: connection.postgres_password
+      username: connection.username,
+      password: connection.password
     };
 
     // let database = connection.postgres_database;

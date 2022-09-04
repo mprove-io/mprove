@@ -78,85 +78,111 @@
 
       <input
         spellcheck="false"
-        data-cy="editConnectionDialogPostgresHostInput"
+        data-cy="editConnectionDialogHostInput"
         class="form-input mt-6 w-80 rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
-            editConnectionForm.controls['postgresHost'].invalid &&
-            editConnectionForm.controls['postgresHost'].touched
+            editConnectionForm.controls['host'].invalid &&
+            editConnectionForm.controls['host'].touched
         }"
-        formControlName="postgresHost"
+        formControlName="host"
         placeholder="Host"
       />
       <m-validation
-        [control]="editConnectionForm.controls['postgresHost']"
+        [control]="editConnectionForm.controls['host']"
       ></m-validation>
 
       <input
         spellcheck="false"
-        data-cy="editConnectionDialogPostgresPortInput"
+        data-cy="editConnectionDialogPortInput"
         class="form-input w-80 rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
-            editConnectionForm.controls['postgresPort'].invalid &&
-            editConnectionForm.controls['postgresPort'].touched
+            editConnectionForm.controls['port'].invalid &&
+            editConnectionForm.controls['port'].touched
         }"
-        formControlName="postgresPort"
+        formControlName="port"
         placeholder="Port"
       />
       <m-validation
-        [control]="editConnectionForm.controls['postgresPort']"
+        [control]="editConnectionForm.controls['port']"
       ></m-validation>
 
       <input
         *ngIf="editConnectionForm.controls['type'].value !== typeClickHouse"
         spellcheck="false"
-        data-cy="editConnectionDialogPostgresDatabaseInput"
+        data-cy="editConnectionDialogDatabaseInput"
         class="form-input w-80 rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
-            editConnectionForm.controls['postgresDatabase'].invalid &&
-            editConnectionForm.controls['postgresDatabase'].touched
+            editConnectionForm.controls['database'].invalid &&
+            editConnectionForm.controls['database'].touched
         }"
-        formControlName="postgresDatabase"
+        formControlName="database"
         placeholder="Database"
       />
       <m-validation
         *ngIf="editConnectionForm.controls['type'].value !== typeClickHouse"
-        [control]="editConnectionForm.controls['postgresDatabase']"
+        [control]="editConnectionForm.controls['database']"
       ></m-validation>
+    </div>
 
+    <div *ngIf="editConnectionForm.controls['type'].value === typeSnowFlake">
       <input
         spellcheck="false"
-        data-cy="editConnectionDialogPostgresUserInput"
+        data-cy="addConnectionDialogAccountInput"
+        class="form-input mt-6 w-80 rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            editConnectionForm.controls['account'].invalid &&
+            editConnectionForm.controls['account'].touched
+        }"
+        formControlName="account"
+        placeholder="Account"
+      />
+      <m-validation
+        [control]="editConnectionForm.controls['account']"
+      ></m-validation>
+    </div>
+
+    <div
+      *ngIf="
+        editConnectionForm.controls['type'].value === typeSnowFlake ||
+        editConnectionForm.controls['type'].value === typeClickHouse ||
+        editConnectionForm.controls['type'].value === typePostgreSQL
+      "
+    >
+      <input
+        spellcheck="false"
+        data-cy="editConnectionDialogUserInput"
         class="form-input w-80 rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
-            editConnectionForm.controls['postgresUser'].invalid &&
-            editConnectionForm.controls['postgresUser'].touched
+            editConnectionForm.controls['username'].invalid &&
+            editConnectionForm.controls['username'].touched
         }"
-        formControlName="postgresUser"
+        formControlName="username"
         placeholder="User"
       />
       <m-validation
-        [control]="editConnectionForm.controls['postgresUser']"
+        [control]="editConnectionForm.controls['username']"
       ></m-validation>
 
       <input
         spellcheck="false"
-        data-cy="editConnectionDialogPostgresPasswordInput"
+        data-cy="editConnectionDialogPasswordInput"
         class="form-input w-80 rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
-            editConnectionForm.controls['postgresPassword'].invalid &&
-            editConnectionForm.controls['postgresPassword'].touched
+            editConnectionForm.controls['password'].invalid &&
+            editConnectionForm.controls['password'].touched
         }"
-        formControlName="postgresPassword"
+        formControlName="password"
         placeholder="Password"
         type="password"
       />
       <m-validation
-        [control]="editConnectionForm.controls['postgresPassword']"
+        [control]="editConnectionForm.controls['password']"
       ></m-validation>
     </div>
 

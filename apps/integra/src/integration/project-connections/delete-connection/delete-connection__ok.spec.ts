@@ -60,11 +60,11 @@ describe('integra', () => {
           projectId: projectId,
           connectionId: connectionId,
           type: common.ConnectionTypeEnum.PostgreSQL,
-          postgresHost: '1',
-          postgresPort: 2,
-          postgresDatabase: '3',
-          postgresUser: '4',
-          postgresPassword: '5'
+          host: '1',
+          port: 2,
+          database: '3',
+          username: '4',
+          password: '5'
         }
       ]
     });

@@ -13,8 +13,6 @@ export class ConnectionEntity {
   @Column({ type: constants.VARCHAR })
   type: common.ConnectionTypeEnum;
 
-  // bigquery
-
   @Column({ type: constants.INT, nullable: true })
   bigquery_query_size_limit_gb: number;
 
@@ -27,22 +25,23 @@ export class ConnectionEntity {
   @Column({ type: constants.VARCHAR, nullable: true })
   bigquery_client_email: string;
 
-  // postgres
+  @Column({ type: constants.VARCHAR, nullable: true })
+  account: string;
 
   @Column({ type: constants.VARCHAR, nullable: true })
-  postgres_host: string;
+  host: string;
 
   @Column({ type: constants.INT, nullable: true })
-  postgres_port: number;
+  port: number;
 
   @Column({ type: constants.VARCHAR, nullable: true })
-  postgres_database: string;
+  database: string;
 
   @Column({ type: constants.VARCHAR, nullable: true })
-  postgres_user: string;
+  username: string;
 
   @Column({ type: constants.VARCHAR, nullable: true })
-  postgres_password: string;
+  password: string;
 
   @Column({ type: constants.VARCHAR, nullable: true })
   is_ssl: common.BoolEnum;

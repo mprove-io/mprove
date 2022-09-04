@@ -11,10 +11,11 @@ export function wrapToApiConnection(
     bigqueryProject: x.bigquery_project,
     bigqueryClientEmail: x.bigquery_client_email,
     bigqueryQuerySizeLimitGb: x.bigquery_query_size_limit_gb,
-    postgresHost: x.postgres_host,
-    postgresPort: x.postgres_port,
-    postgresDatabase: x.postgres_database,
-    postgresUser: x.postgres_user,
+    account: x.account,
+    host: x.host,
+    port: x.port,
+    database: x.database,
+    username: x.username,
     isSSL: common.enumToBoolean(x.is_ssl),
     serverTs: Number(x.server_ts)
   };

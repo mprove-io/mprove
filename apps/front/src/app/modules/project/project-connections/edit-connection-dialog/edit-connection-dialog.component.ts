@@ -22,14 +22,16 @@ export class EditConnectionDialogComponent implements OnInit {
   isSSL = true;
 
   connectionTypes = [
-    common.ConnectionTypeEnum.PostgreSQL,
+    common.ConnectionTypeEnum.SnowFlake,
     common.ConnectionTypeEnum.BigQuery,
-    common.ConnectionTypeEnum.ClickHouse
+    common.ConnectionTypeEnum.ClickHouse,
+    common.ConnectionTypeEnum.PostgreSQL
   ];
 
-  typePostgreSQL = common.ConnectionTypeEnum.PostgreSQL;
+  typeSnowFlake = common.ConnectionTypeEnum.SnowFlake;
   typeBigQuery = common.ConnectionTypeEnum.BigQuery;
   typeClickHouse = common.ConnectionTypeEnum.ClickHouse;
+  typePostgreSQL = common.ConnectionTypeEnum.PostgreSQL;
 
   constructor(
     public ref: DialogRef,
@@ -66,8 +68,20 @@ export class EditConnectionDialogComponent implements OnInit {
           )
         ]
       ],
-      postgresHost: [
-        this.ref.data.connection.postgresHost,
+      account: [
+        undefined,
+        [
+          conditionalValidator(
+            () =>
+              [common.ConnectionTypeEnum.SnowFlake].indexOf(
+                this.editConnectionForm.get('type').value
+              ) > -1,
+            Validators.required
+          )
+        ]
+      ],
+      host: [
+        this.ref.data.connection.host,
         [
           conditionalValidator(
             () =>
@@ -79,8 +93,8 @@ export class EditConnectionDialogComponent implements OnInit {
           )
         ]
       ],
-      postgresPort: [
-        this.ref.data.connection.postgresPort,
+      port: [
+        this.ref.data.connection.port,
         [
           conditionalValidator(
             () =>
@@ -92,8 +106,8 @@ export class EditConnectionDialogComponent implements OnInit {
           )
         ]
       ],
-      postgresDatabase: [
-        this.ref.data.connection.postgresDatabase,
+      database: [
+        this.ref.data.connection.database,
         [
           conditionalValidator(
             () =>
@@ -106,8 +120,8 @@ export class EditConnectionDialogComponent implements OnInit {
           )
         ]
       ],
-      postgresUser: [
-        this.ref.data.connection.postgresUser,
+      username: [
+        this.ref.data.connection.username,
         [
           conditionalValidator(
             () =>
@@ -119,8 +133,8 @@ export class EditConnectionDialogComponent implements OnInit {
           )
         ]
       ],
-      postgresPassword: [
-        this.ref.data.connection.postgresPassword,
+      password: [
+        this.ref.data.connection.password,
         [
           conditionalValidator(
             () =>
@@ -141,11 +155,12 @@ export class EditConnectionDialogComponent implements OnInit {
       this.editConnectionForm
         .get('bigqueryQuerySizeLimitGb')
         .updateValueAndValidity();
-      this.editConnectionForm.get('postgresHost').updateValueAndValidity();
-      this.editConnectionForm.get('postgresPort').updateValueAndValidity();
-      this.editConnectionForm.get('postgresDatabase').updateValueAndValidity();
-      this.editConnectionForm.get('postgresUser').updateValueAndValidity();
-      this.editConnectionForm.get('postgresPassword').updateValueAndValidity();
+      this.editConnectionForm.get('account').updateValueAndValidity();
+      this.editConnectionForm.get('host').updateValueAndValidity();
+      this.editConnectionForm.get('port').updateValueAndValidity();
+      this.editConnectionForm.get('database').updateValueAndValidity();
+      this.editConnectionForm.get('username').updateValueAndValidity();
+      this.editConnectionForm.get('password').updateValueAndValidity();
     });
   }
 
@@ -155,17 +170,30 @@ export class EditConnectionDialogComponent implements OnInit {
       this.editConnectionForm.controls['bigqueryQuerySizeLimitGb'].reset();
     }
 
+    if (ev !== common.ConnectionTypeEnum.SnowFlake) {
+      this.editConnectionForm.controls['account'].reset();
+    }
+
     if (
       [
-        common.ConnectionTypeEnum.PostgreSQL,
-        common.ConnectionTypeEnum.ClickHouse
+        common.ConnectionTypeEnum.SnowFlake,
+        common.ConnectionTypeEnum.ClickHouse,
+        common.ConnectionTypeEnum.PostgreSQL
       ].indexOf(ev) < 0
     ) {
-      this.editConnectionForm.controls['postgresHost'].reset();
-      this.editConnectionForm.controls['postgresPort'].reset();
-      this.editConnectionForm.controls['postgresDatabase'].reset();
-      this.editConnectionForm.controls['postgresUser'].reset();
-      this.editConnectionForm.controls['postgresPassword'].reset();
+      this.editConnectionForm.controls['username'].reset();
+      this.editConnectionForm.controls['password'].reset();
+    }
+
+    if (
+      [
+        common.ConnectionTypeEnum.ClickHouse,
+        common.ConnectionTypeEnum.PostgreSQL
+      ].indexOf(ev) < 0
+    ) {
+      this.editConnectionForm.controls['host'].reset();
+      this.editConnectionForm.controls['port'].reset();
+      this.editConnectionForm.controls['database'].reset();
     }
   }
 
@@ -195,13 +223,14 @@ export class EditConnectionDialogComponent implements OnInit {
       )
         ? Number(this.editConnectionForm.value.bigqueryQuerySizeLimitGb)
         : undefined,
-      postgresHost: this.editConnectionForm.value.postgresHost,
-      postgresPort: common.isDefined(this.editConnectionForm.value.postgresPort)
-        ? Number(this.editConnectionForm.value.postgresPort)
+      account: this.editConnectionForm.value.account,
+      host: this.editConnectionForm.value.host,
+      port: common.isDefined(this.editConnectionForm.value.port)
+        ? Number(this.editConnectionForm.value.port)
         : undefined,
-      postgresDatabase: this.editConnectionForm.value.postgresDatabase,
-      postgresUser: this.editConnectionForm.value.postgresUser,
-      postgresPassword: this.editConnectionForm.value.postgresPassword,
+      database: this.editConnectionForm.value.database,
+      username: this.editConnectionForm.value.username,
+      password: this.editConnectionForm.value.password,
       isSSL: this.isSSL
     };
 

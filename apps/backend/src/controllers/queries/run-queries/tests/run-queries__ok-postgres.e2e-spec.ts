@@ -74,11 +74,11 @@ test('1', async t => {
             projectId: projectId,
             connectionId: 'c1',
             type: common.ConnectionTypeEnum.PostgreSQL,
-            postgresHost: '0.0.0.0',
-            postgresPort: 5432,
-            postgresDatabase: 'p_db',
-            postgresUser: 'p_user',
-            postgresPassword: 'p_pass'
+            host: '0.0.0.0',
+            port: 5432,
+            database: 'p_db',
+            username: 'p_user',
+            password: 'p_pass'
           }
         ]
       },

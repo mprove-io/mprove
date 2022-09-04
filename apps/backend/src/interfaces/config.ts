@@ -39,6 +39,15 @@ export class Config {
   @IsString()
   firstProjectDwhClickhousePassword?: string;
 
+  @IsString()
+  firstProjectDwhSnowflakeAccount?: string;
+
+  @IsString()
+  firstProjectDwhSnowflakeUsername?: string;
+
+  @IsString()
+  firstProjectDwhSnowflakePassword?: string;
+
   @IsEnum(common.BoolEnum)
   registerOnlyInvitedUsers?: common.BoolEnum;
 

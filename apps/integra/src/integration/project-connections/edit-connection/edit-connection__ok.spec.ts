@@ -60,11 +60,11 @@ describe('integra', () => {
           projectId: projectId,
           connectionId: connectionId,
           type: common.ConnectionTypeEnum.PostgreSQL,
-          postgresHost: '1',
-          postgresPort: 2,
-          postgresDatabase: '3',
-          postgresUser: '4',
-          postgresPassword: '5'
+          host: '1',
+          port: 2,
+          database: '3',
+          username: '4',
+          password: '5'
         }
       ]
     });
@@ -73,19 +73,19 @@ describe('integra', () => {
       `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_CONNECTIONS}`
     );
     cy.get('[data-cy=projectConnectionsEditButton]').click();
-    cy.get('[data-cy=editConnectionDialogPostgresHostInput]')
+    cy.get('[data-cy=editConnectionDialogHostInput]')
       .clear({ force: true })
       .type('10');
-    cy.get('[data-cy=editConnectionDialogPostgresPortInput]')
+    cy.get('[data-cy=editConnectionDialogPortInput]')
       .clear({ force: true })
       .type('20');
-    cy.get('[data-cy=editConnectionDialogPostgresDatabaseInput]')
+    cy.get('[data-cy=editConnectionDialogDatabaseInput]')
       .clear({ force: true })
       .type('30');
-    cy.get('[data-cy=editConnectionDialogPostgresUserInput]')
+    cy.get('[data-cy=editConnectionDialogUserInput]')
       .clear({ force: true })
       .type('40');
-    cy.get('[data-cy=editConnectionDialogPostgresPasswordInput]')
+    cy.get('[data-cy=editConnectionDialogPasswordInput]')
       .clear({ force: true })
       .type('50');
     cy.get('[data-cy=editConnectionDialogSaveButton]').click();

@@ -22,14 +22,16 @@ export class AddConnectionDialogComponent implements OnInit {
   isSSL = true;
 
   connectionTypes = [
-    common.ConnectionTypeEnum.PostgreSQL,
+    common.ConnectionTypeEnum.SnowFlake,
     common.ConnectionTypeEnum.BigQuery,
-    common.ConnectionTypeEnum.ClickHouse
+    common.ConnectionTypeEnum.ClickHouse,
+    common.ConnectionTypeEnum.PostgreSQL
   ];
 
-  typePostgreSQL = common.ConnectionTypeEnum.PostgreSQL;
+  typeSnowFlake = common.ConnectionTypeEnum.SnowFlake;
   typeBigQuery = common.ConnectionTypeEnum.BigQuery;
   typeClickHouse = common.ConnectionTypeEnum.ClickHouse;
+  typePostgreSQL = common.ConnectionTypeEnum.PostgreSQL;
 
   constructor(
     public ref: DialogRef,
@@ -43,7 +45,7 @@ export class AddConnectionDialogComponent implements OnInit {
         undefined,
         [Validators.required, Validators.maxLength(255)]
       ],
-      type: [common.ConnectionTypeEnum.PostgreSQL],
+      type: [common.ConnectionTypeEnum.SnowFlake],
       bigqueryCredentials: [
         undefined,
         [
@@ -67,7 +69,19 @@ export class AddConnectionDialogComponent implements OnInit {
           )
         ]
       ],
-      postgresHost: [
+      account: [
+        undefined,
+        [
+          conditionalValidator(
+            () =>
+              [common.ConnectionTypeEnum.SnowFlake].indexOf(
+                this.addConnectionForm.get('type').value
+              ) > -1,
+            Validators.required
+          )
+        ]
+      ],
+      host: [
         undefined,
         [
           conditionalValidator(
@@ -80,7 +94,7 @@ export class AddConnectionDialogComponent implements OnInit {
           )
         ]
       ],
-      postgresPort: [
+      port: [
         undefined,
         [
           conditionalValidator(
@@ -93,7 +107,7 @@ export class AddConnectionDialogComponent implements OnInit {
           )
         ]
       ],
-      postgresDatabase: [
+      database: [
         undefined,
         [
           conditionalValidator(
@@ -107,27 +121,29 @@ export class AddConnectionDialogComponent implements OnInit {
           )
         ]
       ],
-      postgresUser: [
+      username: [
         undefined,
         [
           conditionalValidator(
             () =>
               [
                 common.ConnectionTypeEnum.PostgreSQL,
-                common.ConnectionTypeEnum.ClickHouse
+                common.ConnectionTypeEnum.ClickHouse,
+                common.ConnectionTypeEnum.SnowFlake
               ].indexOf(this.addConnectionForm.get('type').value) > -1,
             Validators.required
           )
         ]
       ],
-      postgresPassword: [
+      password: [
         undefined,
         [
           conditionalValidator(
             () =>
               [
                 common.ConnectionTypeEnum.PostgreSQL,
-                common.ConnectionTypeEnum.ClickHouse
+                common.ConnectionTypeEnum.ClickHouse,
+                common.ConnectionTypeEnum.SnowFlake
               ].indexOf(this.addConnectionForm.get('type').value) > -1,
             Validators.required
           )
@@ -142,11 +158,12 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addConnectionForm
         .get('bigqueryQuerySizeLimitGb')
         .updateValueAndValidity();
-      this.addConnectionForm.get('postgresHost').updateValueAndValidity();
-      this.addConnectionForm.get('postgresPort').updateValueAndValidity();
-      this.addConnectionForm.get('postgresDatabase').updateValueAndValidity();
-      this.addConnectionForm.get('postgresUser').updateValueAndValidity();
-      this.addConnectionForm.get('postgresPassword').updateValueAndValidity();
+      this.addConnectionForm.get('account').updateValueAndValidity();
+      this.addConnectionForm.get('host').updateValueAndValidity();
+      this.addConnectionForm.get('port').updateValueAndValidity();
+      this.addConnectionForm.get('database').updateValueAndValidity();
+      this.addConnectionForm.get('username').updateValueAndValidity();
+      this.addConnectionForm.get('password').updateValueAndValidity();
     });
   }
 
@@ -156,17 +173,30 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addConnectionForm.controls['bigqueryQuerySizeLimitGb'].reset();
     }
 
+    if (type !== common.ConnectionTypeEnum.SnowFlake) {
+      this.addConnectionForm.controls['account'].reset();
+    }
+
+    if (
+      [
+        common.ConnectionTypeEnum.SnowFlake,
+        common.ConnectionTypeEnum.ClickHouse,
+        common.ConnectionTypeEnum.PostgreSQL
+      ].indexOf(type) < 0
+    ) {
+      this.addConnectionForm.controls['username'].reset();
+      this.addConnectionForm.controls['password'].reset();
+    }
+
     if (
       [
         common.ConnectionTypeEnum.PostgreSQL,
         common.ConnectionTypeEnum.ClickHouse
       ].indexOf(type) < 0
     ) {
-      this.addConnectionForm.controls['postgresHost'].reset();
-      this.addConnectionForm.controls['postgresPort'].reset();
-      this.addConnectionForm.controls['postgresDatabase'].reset();
-      this.addConnectionForm.controls['postgresUser'].reset();
-      this.addConnectionForm.controls['postgresPassword'].reset();
+      this.addConnectionForm.controls['host'].reset();
+      this.addConnectionForm.controls['port'].reset();
+      this.addConnectionForm.controls['database'].reset();
     }
   }
 
@@ -197,13 +227,14 @@ export class AddConnectionDialogComponent implements OnInit {
       )
         ? Number(this.addConnectionForm.value.bigqueryQuerySizeLimitGb)
         : undefined,
-      postgresHost: this.addConnectionForm.value.postgresHost,
-      postgresPort: common.isDefined(this.addConnectionForm.value.postgresPort)
-        ? Number(this.addConnectionForm.value.postgresPort)
+      account: this.addConnectionForm.value.account,
+      host: this.addConnectionForm.value.host,
+      port: common.isDefined(this.addConnectionForm.value.port)
+        ? Number(this.addConnectionForm.value.port)
         : undefined,
-      postgresDatabase: this.addConnectionForm.value.postgresDatabase,
-      postgresUser: this.addConnectionForm.value.postgresUser,
-      postgresPassword: this.addConnectionForm.value.postgresPassword,
+      database: this.addConnectionForm.value.database,
+      username: this.addConnectionForm.value.username,
+      password: this.addConnectionForm.value.password,
       isSSL: this.isSSL
     };
 

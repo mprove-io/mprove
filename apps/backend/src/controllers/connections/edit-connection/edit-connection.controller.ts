@@ -29,11 +29,12 @@ export class EditConnectionController {
       connectionId,
       bigqueryCredentials,
       bigqueryQuerySizeLimitGb,
-      postgresHost,
-      postgresPort,
-      postgresDatabase,
-      postgresUser,
-      postgresPassword,
+      account,
+      host,
+      port,
+      database,
+      username,
+      password,
       isSSL
     } = reqValid.payload;
 
@@ -51,11 +52,12 @@ export class EditConnectionController {
       connectionId: connectionId
     });
 
-    connection.postgres_host = postgresHost;
-    connection.postgres_port = postgresPort;
-    connection.postgres_database = postgresDatabase;
-    connection.postgres_user = postgresUser;
-    connection.postgres_password = postgresPassword;
+    connection.account = account;
+    connection.host = host;
+    connection.port = port;
+    connection.database = database;
+    connection.username = username;
+    connection.password = password;
     connection.bigquery_credentials = bigqueryCredentials;
     connection.bigquery_project = bigqueryCredentials?.project_id;
     connection.bigquery_client_email = bigqueryCredentials?.client_email;
