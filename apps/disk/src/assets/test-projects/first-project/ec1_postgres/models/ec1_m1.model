@@ -1,5 +1,5 @@
 model: ec1_m1
-label: Ecommerce1 (PostgreSQL)
+label: Ecommerce 1 (PostgreSQL)
 connection: c1_postgres
 joins:
 - from_view: ec1_order_items

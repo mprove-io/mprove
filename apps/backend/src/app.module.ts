@@ -264,196 +264,196 @@ export class AppModule implements OnModuleInit {
           }
         }
 
-        await retry(
-          async (bail: any) => {
-            let firstOrg;
+        // await retry(
+        //   async (bail: any) => {
+        let firstOrg;
 
-            if (common.isDefined(firstOrgId) && common.isDefined(firstUser)) {
-              firstOrg = await this.orgsRepository.findOne({
-                org_id: firstOrgId
-              });
+        if (common.isDefined(firstOrgId) && common.isDefined(firstUser)) {
+          firstOrg = await this.orgsRepository.findOne({
+            org_id: firstOrgId
+          });
 
-              if (common.isUndefined(firstOrg)) {
-                firstOrg = await this.orgsService.addOrg({
-                  ownerId: firstUser.user_id,
-                  ownerEmail: firstUser.email,
-                  name: common.FIRST_ORG_NAME,
-                  traceId: common.makeId(),
-                  orgId: firstOrgId
-                });
-              }
-            }
-
-            if (
-              common.isDefined(firstProjectId) &&
-              common.isDefined(firstOrg) &&
-              common.isDefined(firstUser)
-            ) {
-              let c1connection = await this.connectionsRepository.findOne({
-                project_id: firstProjectId,
-                connection_id: 'c1_postgres'
-              });
-
-              if (common.isUndefined(c1connection)) {
-                let c1 = maker.makeConnection({
-                  projectId: firstProjectId,
-                  connectionId: 'c1_postgres',
-                  type: common.ConnectionTypeEnum.PostgreSQL,
-                  host: 'dwh-postgres',
-                  port: 5432,
-                  database: 'p_db',
-                  username: 'postgres',
-                  password: this.cs.get<
-                    interfaces.Config['firstProjectDwhPostgresPassword']
-                  >('firstProjectDwhPostgresPassword'),
-                  account: undefined,
-                  bigqueryCredentials: undefined,
-                  bigqueryQuerySizeLimitGb: 1,
-                  isSSL: false
-                });
-
-                await this.dbService.writeRecords({
-                  modify: false,
-                  records: {
-                    connections: [c1]
-                  }
-                });
-              }
-
-              let c2connection = await this.connectionsRepository.findOne({
-                project_id: firstProjectId,
-                connection_id: 'c2_clickhouse'
-              });
-
-              if (common.isUndefined(c2connection)) {
-                let c2 = maker.makeConnection({
-                  projectId: firstProjectId,
-                  connectionId: 'c2_clickhouse',
-                  type: common.ConnectionTypeEnum.ClickHouse,
-                  host: 'dwh-clickhouse',
-                  port: 8123,
-                  database: 'c_db',
-                  username: 'c_user',
-                  password: this.cs.get<
-                    interfaces.Config['firstProjectDwhClickhousePassword']
-                  >('firstProjectDwhClickhousePassword'),
-                  account: undefined,
-                  bigqueryCredentials: undefined,
-                  bigqueryQuerySizeLimitGb: 1,
-                  isSSL: false
-                });
-
-                await this.dbService.writeRecords({
-                  modify: false,
-                  records: {
-                    connections: [c2]
-                  }
-                });
-              }
-
-              let c3connection = await this.connectionsRepository.findOne({
-                project_id: firstProjectId,
-                connection_id: 'c3_bigquery'
-              });
-
-              if (common.isUndefined(c3connection)) {
-                let backendBigqueryPath = this.cs.get<
-                  interfaces.Config['backendBigqueryPath']
-                >('backendBigqueryPath');
-
-                let bigqueryTestCredentials = JSON.parse(
-                  fse.readFileSync(backendBigqueryPath).toString()
-                );
-
-                let c3 = maker.makeConnection({
-                  projectId: firstProjectId,
-                  connectionId: 'c3_bigquery',
-                  type: common.ConnectionTypeEnum.BigQuery,
-                  host: undefined,
-                  port: undefined,
-                  database: undefined,
-                  username: undefined,
-                  password: undefined,
-                  account: undefined,
-                  bigqueryCredentials: bigqueryTestCredentials,
-                  bigqueryQuerySizeLimitGb: 1,
-                  isSSL: true
-                });
-
-                await this.dbService.writeRecords({
-                  modify: false,
-                  records: {
-                    connections: [c3]
-                  }
-                });
-              }
-
-              let c4connection = await this.connectionsRepository.findOne({
-                project_id: firstProjectId,
-                connection_id: 'c4_snowflake'
-              });
-
-              if (common.isUndefined(c4connection)) {
-                let c4 = maker.makeConnection({
-                  projectId: firstProjectId,
-                  connectionId: 'c4_snowflake',
-                  type: common.ConnectionTypeEnum.SnowFlake,
-                  host: undefined,
-                  port: undefined,
-                  database: undefined,
-                  username: this.cs.get<
-                    interfaces.Config['firstProjectDwhSnowflakeUsername']
-                  >('firstProjectDwhSnowflakeUsername'),
-                  password: this.cs.get<
-                    interfaces.Config['firstProjectDwhSnowflakePassword']
-                  >('firstProjectDwhSnowflakePassword'),
-                  account: this.cs.get<
-                    interfaces.Config['firstProjectDwhSnowflakeAccount']
-                  >('firstProjectDwhSnowflakeAccount'),
-                  bigqueryCredentials: undefined,
-                  bigqueryQuerySizeLimitGb: 1,
-                  isSSL: true
-                });
-
-                await this.dbService.writeRecords({
-                  modify: false,
-                  records: {
-                    connections: [c4]
-                  }
-                });
-              }
-
-              let firstProject = await this.projectsRepository.findOne({
-                project_id: firstProjectId
-              });
-
-              if (common.isUndefined(firstProject)) {
-                firstProject = await this.projectsService.addProject({
-                  orgId: firstOrg.org_id,
-                  name: common.FIRST_PROJECT_NAME,
-                  user: firstUser,
-                  traceId: common.makeId(),
-                  projectId: firstProjectId,
-                  testProjectId: 'first-project'
-                });
-              }
-            }
-          },
-          {
-            retries: 3,
-            minTimeout: 3000,
-            factor: 1, // (default 2)
-            randomize: true, // 1 to 2 (default true)
-            onRetry: (e: any) => {
-              let serverError = new common.ServerError({
-                message: common.ErEnum.BACKEND_MODULE_INIT_ORG_RETRY,
-                originalError: e
-              });
-
-              common.logToConsole(serverError);
-            }
+          if (common.isUndefined(firstOrg)) {
+            firstOrg = await this.orgsService.addOrg({
+              ownerId: firstUser.user_id,
+              ownerEmail: firstUser.email,
+              name: common.FIRST_ORG_NAME,
+              traceId: common.makeId(),
+              orgId: firstOrgId
+            });
           }
-        );
+        }
+
+        if (
+          common.isDefined(firstProjectId) &&
+          common.isDefined(firstOrg) &&
+          common.isDefined(firstUser)
+        ) {
+          let c1connection = await this.connectionsRepository.findOne({
+            project_id: firstProjectId,
+            connection_id: 'c1_postgres'
+          });
+
+          if (common.isUndefined(c1connection)) {
+            let c1 = maker.makeConnection({
+              projectId: firstProjectId,
+              connectionId: 'c1_postgres',
+              type: common.ConnectionTypeEnum.PostgreSQL,
+              host: 'dwh-postgres',
+              port: 5432,
+              database: 'p_db',
+              username: 'postgres',
+              password: this.cs.get<
+                interfaces.Config['firstProjectDwhPostgresPassword']
+              >('firstProjectDwhPostgresPassword'),
+              account: undefined,
+              bigqueryCredentials: undefined,
+              bigqueryQuerySizeLimitGb: 1,
+              isSSL: false
+            });
+
+            await this.dbService.writeRecords({
+              modify: false,
+              records: {
+                connections: [c1]
+              }
+            });
+          }
+
+          let c2connection = await this.connectionsRepository.findOne({
+            project_id: firstProjectId,
+            connection_id: 'c2_clickhouse'
+          });
+
+          if (common.isUndefined(c2connection)) {
+            let c2 = maker.makeConnection({
+              projectId: firstProjectId,
+              connectionId: 'c2_clickhouse',
+              type: common.ConnectionTypeEnum.ClickHouse,
+              host: 'dwh-clickhouse',
+              port: 8123,
+              database: 'c_db',
+              username: 'c_user',
+              password: this.cs.get<
+                interfaces.Config['firstProjectDwhClickhousePassword']
+              >('firstProjectDwhClickhousePassword'),
+              account: undefined,
+              bigqueryCredentials: undefined,
+              bigqueryQuerySizeLimitGb: 1,
+              isSSL: false
+            });
+
+            await this.dbService.writeRecords({
+              modify: false,
+              records: {
+                connections: [c2]
+              }
+            });
+          }
+
+          let c3connection = await this.connectionsRepository.findOne({
+            project_id: firstProjectId,
+            connection_id: 'c3_bigquery'
+          });
+
+          if (common.isUndefined(c3connection)) {
+            let backendBigqueryPath = this.cs.get<
+              interfaces.Config['backendBigqueryPath']
+            >('backendBigqueryPath');
+
+            let bigqueryTestCredentials = JSON.parse(
+              fse.readFileSync(backendBigqueryPath).toString()
+            );
+
+            let c3 = maker.makeConnection({
+              projectId: firstProjectId,
+              connectionId: 'c3_bigquery',
+              type: common.ConnectionTypeEnum.BigQuery,
+              host: undefined,
+              port: undefined,
+              database: undefined,
+              username: undefined,
+              password: undefined,
+              account: undefined,
+              bigqueryCredentials: bigqueryTestCredentials,
+              bigqueryQuerySizeLimitGb: 1,
+              isSSL: true
+            });
+
+            await this.dbService.writeRecords({
+              modify: false,
+              records: {
+                connections: [c3]
+              }
+            });
+          }
+
+          let c4connection = await this.connectionsRepository.findOne({
+            project_id: firstProjectId,
+            connection_id: 'c4_snowflake'
+          });
+
+          if (common.isUndefined(c4connection)) {
+            let c4 = maker.makeConnection({
+              projectId: firstProjectId,
+              connectionId: 'c4_snowflake',
+              type: common.ConnectionTypeEnum.SnowFlake,
+              host: undefined,
+              port: undefined,
+              database: undefined,
+              username: this.cs.get<
+                interfaces.Config['firstProjectDwhSnowflakeUsername']
+              >('firstProjectDwhSnowflakeUsername'),
+              password: this.cs.get<
+                interfaces.Config['firstProjectDwhSnowflakePassword']
+              >('firstProjectDwhSnowflakePassword'),
+              account: this.cs.get<
+                interfaces.Config['firstProjectDwhSnowflakeAccount']
+              >('firstProjectDwhSnowflakeAccount'),
+              bigqueryCredentials: undefined,
+              bigqueryQuerySizeLimitGb: 1,
+              isSSL: true
+            });
+
+            await this.dbService.writeRecords({
+              modify: false,
+              records: {
+                connections: [c4]
+              }
+            });
+          }
+
+          let firstProject = await this.projectsRepository.findOne({
+            project_id: firstProjectId
+          });
+
+          if (common.isUndefined(firstProject)) {
+            firstProject = await this.projectsService.addProject({
+              orgId: firstOrg.org_id,
+              name: common.FIRST_PROJECT_NAME,
+              user: firstUser,
+              traceId: common.makeId(),
+              projectId: firstProjectId,
+              testProjectId: 'first-project'
+            });
+          }
+        }
+        //   },
+        //   {
+        //     retries: 3,
+        //     minTimeout: 3000,
+        //     factor: 1, // (default 2)
+        //     randomize: true, // 1 to 2 (default true)
+        //     onRetry: (e: any) => {
+        //       let serverError = new common.ServerError({
+        //         message: common.ErEnum.BACKEND_MODULE_INIT_ORG_RETRY,
+        //         originalError: e
+        //       });
+
+        //       common.logToConsole(serverError);
+        //     }
+        //   }
+        // );
       }
     } catch (e) {
       common.handleError(e);

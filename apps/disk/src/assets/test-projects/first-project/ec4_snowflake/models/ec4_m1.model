@@ -1,31 +1,31 @@
-model: ec2_m1
-label: Ecommerce 2 (ClickHouse)
-connection: c2_clickhouse
+model: ec4_m1
+label: Ecommerce 4 (SnowFlake)
+connection: c4_snowflake
 joins:
-- from_view: ec2_order_items
+- from_view: ec4_order_items
   as: a
   
-- join_view: ec2_orders
+- join_view: ec4_orders
   as: b
   sql_on: ${a.order_id} = ${b.order_id}
   
-- join_view: ec2_users
+- join_view: ec4_users
   as: c
   sql_on: ${b.user_id} = ${c.user_id}
   
-- join_view: ec2_user_order_facts
+- join_view: ec4_user_order_facts
   as: d
   sql_on: ${c.user_id} = ${d.user_id}
   
-- join_view: ec2_inventory_items
+- join_view: ec4_inventory_items
   as: e
   sql_on: ${a.inventory_item_id} = ${e.inventory_item_id}
   
-- join_view: ec2_products
+- join_view: ec4_products
   as: f
   sql_on: ${e.product_id} = ${f.product_id}
   
-- join_view: ec2_distribution_centers
+- join_view: ec4_distribution_centers
   as: g
   sql_on: ${e.distribution_center_id} = ${g.distribution_center_id}
   

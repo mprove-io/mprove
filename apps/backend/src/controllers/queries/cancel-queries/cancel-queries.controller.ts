@@ -96,7 +96,7 @@ export class CancelQueriesController {
         query.status = common.QueryStatusEnum.Canceled;
         query.data = [];
         query.last_cancel_ts = helper.makeTs();
-        query.postgres_query_job_id = null;
+        query.query_job_id = null;
       }
     );
 

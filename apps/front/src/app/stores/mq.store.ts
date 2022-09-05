@@ -41,7 +41,7 @@ export const emptyQuery: common.Query = {
   lastCompleteDuration: undefined,
   lastErrorMessage: undefined,
   lastErrorTs: 1,
-  postgresQueryJobId: undefined,
+  queryJobId: undefined,
   bigqueryQueryJobId: undefined,
   bigqueryConsecutiveErrorsGetJob: undefined,
   bigqueryConsecutiveErrorsGetResults: undefined,

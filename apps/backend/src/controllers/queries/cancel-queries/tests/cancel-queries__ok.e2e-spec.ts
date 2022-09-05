@@ -23,7 +23,7 @@ let connectionId = 'c1';
 let connectionType = common.ConnectionTypeEnum.PostgreSQL;
 
 let queryId = common.makeId();
-let postgresQueryJobId = common.makeId();
+let queryJobId = common.makeId();
 
 let structId = common.makeId();
 let mconfigId = common.makeId();
@@ -68,7 +68,7 @@ test('1', async t => {
     lastCompleteDuration: undefined,
     lastErrorMessage: undefined,
     lastErrorTs: undefined,
-    postgresQueryJobId: postgresQueryJobId,
+    queryJobId: queryJobId,
     bigqueryQueryJobId: undefined,
     bigqueryConsecutiveErrorsGetJob: 0,
     bigqueryConsecutiveErrorsGetResults: 0,

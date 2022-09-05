@@ -25,6 +25,7 @@ import { ProjectsService } from './services/projects.service';
 import { QueriesService } from './services/queries.service';
 import { RabbitService } from './services/rabbit.service';
 import { RunService } from './services/run.service';
+import { SnowFlakeService } from './services/snowflake.service';
 import { StructsService } from './services/structs.service';
 import { TasksService } from './services/tasks.service';
 import { UsersService } from './services/users.service';
@@ -45,6 +46,7 @@ export const appProviders = [
   PgService,
   ClickHouseService,
   BigQueryService,
+  SnowFlakeService,
   RunService,
   StructsService,
   QueriesService,

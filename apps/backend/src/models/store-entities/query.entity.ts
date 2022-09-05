@@ -47,7 +47,7 @@ export class QueryEntity {
   last_error_ts: string;
 
   @Column({ type: constants.VARCHAR, nullable: true })
-  postgres_query_job_id: string;
+  query_job_id: string;
 
   @Column({ type: constants.VARCHAR, nullable: true })
   bigquery_query_job_id: string;

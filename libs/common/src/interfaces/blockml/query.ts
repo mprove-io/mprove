@@ -61,7 +61,7 @@ export class Query {
 
   @IsOptional()
   @IsString()
-  postgresQueryJobId: string;
+  queryJobId: string;
 
   @IsOptional()
   @IsString()

@@ -15,7 +15,8 @@ export class RabbitService {
     let response = await this.amqpConnection.request<common.MyResponse>({
       exchange: common.RabbitExchangesEnum.Disk.toString(),
       routingKey: routingKey,
-      payload: message
+      payload: message,
+      timeout: 30000
     });
 
     if (
@@ -41,7 +42,8 @@ export class RabbitService {
     let response = await this.amqpConnection.request<common.MyResponse>({
       exchange: common.RabbitExchangesEnum.Blockml.toString(),
       routingKey: routingKey,
-      payload: message
+      payload: message,
+      timeout: 30000
     });
 
     if (

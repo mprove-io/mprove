@@ -9,7 +9,8 @@ export class RabbitService {
     const response = await this.amqpConnection.request<T>({
       exchange: common.RabbitExchangesEnum.BlockmlWorker.toString(),
       routingKey: item.routingKey,
-      payload: item.message
+      payload: item.message,
+      timeout: 30000
     });
 
     return response;

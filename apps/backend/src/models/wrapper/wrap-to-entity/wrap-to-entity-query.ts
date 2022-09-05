@@ -17,7 +17,7 @@ export function wrapToEntityQuery(x: common.Query): entities.QueryEntity {
     last_complete_duration: x.lastCompleteDuration?.toString(),
     last_error_message: x.lastErrorMessage,
     last_error_ts: x.lastErrorTs?.toString(),
-    postgres_query_job_id: null,
+    query_job_id: null,
     bigquery_query_job_id: null,
     bigquery_consecutive_errors_get_job: common.isDefined(
       x.bigqueryConsecutiveErrorsGetJob

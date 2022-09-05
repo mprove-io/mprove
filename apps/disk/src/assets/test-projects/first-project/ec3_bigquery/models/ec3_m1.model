@@ -1,5 +1,5 @@
 model: ec3_m1
-label: Ecommerce3 (BigQuery)
+label: Ecommerce 3 (BigQuery)
 connection: c3_bigquery
 joins:
 - from_view: ec3_order_items

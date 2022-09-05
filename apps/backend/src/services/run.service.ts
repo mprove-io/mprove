@@ -4,13 +4,15 @@ import { entities } from '~backend/barrels/entities';
 import { BigQueryService } from './bigquery.service';
 import { ClickHouseService } from './clickhouse.service';
 import { PgService } from './pg.service';
+import { SnowFlakeService } from './snowflake.service';
 
 @Injectable()
 export class RunService {
   constructor(
     private pgService: PgService,
     private clickhouseService: ClickHouseService,
-    private bigqueryService: BigQueryService
+    private bigqueryService: BigQueryService,
+    private snowflakeService: SnowFlakeService
   ) {}
 
   async runQuery(item: {
@@ -22,8 +24,14 @@ export class RunService {
 
     let recordsQuery: entities.QueryEntity;
 
-    if (connection.type === common.ConnectionTypeEnum.PostgreSQL) {
-      recordsQuery = await this.pgService.runQuery({
+    if (connection.type === common.ConnectionTypeEnum.SnowFlake) {
+      recordsQuery = await this.snowflakeService.runQuery({
+        userId,
+        query,
+        connection
+      });
+    } else if (connection.type === common.ConnectionTypeEnum.BigQuery) {
+      recordsQuery = await this.bigqueryService.runQuery({
         userId,
         query,
         connection
@@ -34,8 +42,8 @@ export class RunService {
         query,
         connection
       });
-    } else if (connection.type === common.ConnectionTypeEnum.BigQuery) {
-      recordsQuery = await this.bigqueryService.runQuery({
+    } else if (connection.type === common.ConnectionTypeEnum.PostgreSQL) {
+      recordsQuery = await this.pgService.runQuery({
         userId,
         query,
         connection

@@ -30,10 +30,10 @@ export class PgService {
       ssl: connection.is_ssl === common.BoolEnum.TRUE
     };
 
-    let postgresQueryJobId = common.makeId();
+    let queryJobId = common.makeId();
 
     query.status = common.QueryStatusEnum.Running;
-    query.postgres_query_job_id = postgresQueryJobId;
+    query.query_job_id = queryJobId;
     query.last_run_by = userId;
     query.last_run_ts = helper.makeTs();
 
@@ -55,12 +55,12 @@ export class PgService {
 
         let q = await this.queriesRepository.findOne({
           query_id: query.query_id,
-          postgres_query_job_id: postgresQueryJobId
+          query_job_id: queryJobId
         });
 
         if (common.isDefined(q)) {
           q.status = common.QueryStatusEnum.Completed;
-          q.postgres_query_job_id = null;
+          q.query_job_id = null;
           q.data = data;
           q.last_complete_ts = helper.makeTs();
           q.last_complete_duration = Math.floor(
@@ -81,13 +81,13 @@ export class PgService {
 
         let q = await this.queriesRepository.findOne({
           query_id: query.query_id,
-          postgres_query_job_id: postgresQueryJobId
+          query_job_id: queryJobId
         });
 
         if (common.isDefined(q)) {
           q.status = common.QueryStatusEnum.Error;
           q.data = [];
-          q.postgres_query_job_id = null;
+          q.query_job_id = null;
           q.last_error_message = e.message;
           q.last_error_ts = helper.makeTs();
 

@@ -87,7 +87,7 @@ export class ProcessQueryService {
       lastErrorMessage: undefined,
       lastErrorTs: undefined,
       data: undefined,
-      postgresQueryJobId: undefined,
+      queryJobId: undefined,
       bigqueryQueryJobId: undefined,
       bigqueryConsecutiveErrorsGetJob: 0,
       bigqueryConsecutiveErrorsGetResults: 0,
