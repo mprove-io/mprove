@@ -120,6 +120,10 @@ export class ToBackendSeedRecordsRequestPayloadConnectionsItem {
 
   @IsOptional()
   @IsString()
+  warehouse?: string;
+
+  @IsOptional()
+  @IsString()
   host?: string;
 
   @IsOptional()

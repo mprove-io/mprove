@@ -33,7 +33,8 @@ export function transformYesNoDimensions<T extends types.vmType>(
         if (
           [
             common.ConnectionTypeEnum.BigQuery,
-            common.ConnectionTypeEnum.PostgreSQL
+            common.ConnectionTypeEnum.PostgreSQL,
+            common.ConnectionTypeEnum.SnowFlake
           ].indexOf(x.connection.type) > -1
         ) {
           field.sql = `CASE WHEN (${field.sql}) IS TRUE THEN 'Yes' ELSE 'No' END`;

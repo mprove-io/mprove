@@ -29,6 +29,10 @@ export class ToBackendEditConnectionRequestPayload {
 
   @IsOptional()
   @IsString()
+  warehouse?: string;
+
+  @IsOptional()
+  @IsString()
   host?: string;
 
   @IsOptional()

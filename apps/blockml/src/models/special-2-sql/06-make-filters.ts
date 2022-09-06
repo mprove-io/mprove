@@ -112,6 +112,7 @@ export function makeFilters(item: {
       } else if (
         [
           common.ConnectionTypeEnum.PostgreSQL,
+          common.ConnectionTypeEnum.SnowFlake,
           common.ConnectionTypeEnum.ClickHouse
         ].indexOf(model.connection.type) > -1
       ) {

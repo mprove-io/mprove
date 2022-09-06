@@ -24,6 +24,9 @@ export class Connection {
   account: string;
 
   @IsString()
+  warehouse: string;
+
+  @IsString()
   host: string;
 
   @IsInt()

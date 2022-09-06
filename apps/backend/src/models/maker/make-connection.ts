@@ -12,6 +12,7 @@ export function makeConnection(item: {
   username: string;
   password: string;
   account: string;
+  warehouse: string;
   bigqueryCredentials: any;
   bigqueryQuerySizeLimitGb: number;
   isSSL: boolean;
@@ -29,6 +30,7 @@ export function makeConnection(item: {
         ? item.bigqueryQuerySizeLimitGb
         : constants.DEFAULT_QUERY_SIZE_LIMIT,
     account: item.account,
+    warehouse: item.warehouse,
     host: item.host,
     port: item.port,
     database: item.database,

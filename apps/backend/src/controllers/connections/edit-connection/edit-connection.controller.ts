@@ -30,6 +30,7 @@ export class EditConnectionController {
       bigqueryCredentials,
       bigqueryQuerySizeLimitGb,
       account,
+      warehouse,
       host,
       port,
       database,
@@ -53,6 +54,7 @@ export class EditConnectionController {
     });
 
     connection.account = account;
+    connection.warehouse = warehouse;
     connection.host = host;
     connection.port = port;
     connection.database = database;

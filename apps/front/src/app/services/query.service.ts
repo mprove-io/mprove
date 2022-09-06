@@ -31,10 +31,10 @@ export class QueryService {
 
       Object.keys(row).forEach(key => {
         let value = row[key];
-        let column = columns.find(x => x.sqlName === key);
+        let column = columns.find(x => x.sqlName === key.toLowerCase());
 
         let cell: Cell = {
-          id: key,
+          id: key.toLowerCase(),
           value: common.isDefined(value) ? value : 'NULL',
           fValue: common.isDefined(value)
             ? this.formatValue({
@@ -47,7 +47,7 @@ export class QueryService {
             : 'NULL'
         };
 
-        r[key] = cell;
+        r[key.toLowerCase()] = cell;
       });
 
       qData.push(r);

@@ -25,7 +25,8 @@ export function subMakeWith(item: {
     } else if (
       [
         common.ConnectionTypeEnum.PostgreSQL,
-        common.ConnectionTypeEnum.ClickHouse
+        common.ConnectionTypeEnum.ClickHouse,
+        common.ConnectionTypeEnum.SnowFlake
       ].indexOf(connection.type) > -1
     ) {
       table = view.table;

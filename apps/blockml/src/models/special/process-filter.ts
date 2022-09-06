@@ -495,7 +495,9 @@ export function processFilter(item: {
         not = r[1];
         blank = r[2];
 
-        if (connection.type === common.ConnectionTypeEnum.BigQuery) {
+        if (connection.type === common.ConnectionTypeEnum.SnowFlake) {
+          condition = `(${proc} IS NULL OR LENGTH(CAST(${proc} AS STRING)) = 0)`;
+        } else if (connection.type === common.ConnectionTypeEnum.BigQuery) {
           condition = `(${proc} IS NULL OR LENGTH(CAST(${proc} AS STRING)) = 0)`;
         } else if (connection.type === common.ConnectionTypeEnum.PostgreSQL) {
           condition = `(${proc} IS NULL OR LENGTH(CAST(${proc} AS TEXT)) = 0)`;

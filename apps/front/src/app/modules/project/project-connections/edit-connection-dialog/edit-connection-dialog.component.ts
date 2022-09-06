@@ -69,7 +69,19 @@ export class EditConnectionDialogComponent implements OnInit {
         ]
       ],
       account: [
-        undefined,
+        this.ref.data.connection.account,
+        [
+          conditionalValidator(
+            () =>
+              [common.ConnectionTypeEnum.SnowFlake].indexOf(
+                this.editConnectionForm.get('type').value
+              ) > -1,
+            Validators.required
+          )
+        ]
+      ],
+      warehouse: [
+        this.ref.data.connection.warehouse,
         [
           conditionalValidator(
             () =>
@@ -127,7 +139,8 @@ export class EditConnectionDialogComponent implements OnInit {
             () =>
               [
                 common.ConnectionTypeEnum.PostgreSQL,
-                common.ConnectionTypeEnum.ClickHouse
+                common.ConnectionTypeEnum.ClickHouse,
+                common.ConnectionTypeEnum.SnowFlake
               ].indexOf(this.editConnectionForm.get('type').value) > -1,
             Validators.required
           )
@@ -140,7 +153,8 @@ export class EditConnectionDialogComponent implements OnInit {
             () =>
               [
                 common.ConnectionTypeEnum.PostgreSQL,
-                common.ConnectionTypeEnum.ClickHouse
+                common.ConnectionTypeEnum.ClickHouse,
+                common.ConnectionTypeEnum.SnowFlake
               ].indexOf(this.editConnectionForm.get('type').value) > -1,
             Validators.required
           )
@@ -156,6 +170,7 @@ export class EditConnectionDialogComponent implements OnInit {
         .get('bigqueryQuerySizeLimitGb')
         .updateValueAndValidity();
       this.editConnectionForm.get('account').updateValueAndValidity();
+      this.editConnectionForm.get('warehouse').updateValueAndValidity();
       this.editConnectionForm.get('host').updateValueAndValidity();
       this.editConnectionForm.get('port').updateValueAndValidity();
       this.editConnectionForm.get('database').updateValueAndValidity();
@@ -172,6 +187,7 @@ export class EditConnectionDialogComponent implements OnInit {
 
     if (ev !== common.ConnectionTypeEnum.SnowFlake) {
       this.editConnectionForm.controls['account'].reset();
+      this.editConnectionForm.controls['warehouse'].reset();
     }
 
     if (
@@ -224,6 +240,7 @@ export class EditConnectionDialogComponent implements OnInit {
         ? Number(this.editConnectionForm.value.bigqueryQuerySizeLimitGb)
         : undefined,
       account: this.editConnectionForm.value.account,
+      warehouse: this.editConnectionForm.value.warehouse,
       host: this.editConnectionForm.value.host,
       port: common.isDefined(this.editConnectionForm.value.port)
         ? Number(this.editConnectionForm.value.port)

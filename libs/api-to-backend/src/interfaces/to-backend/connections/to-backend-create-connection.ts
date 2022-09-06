@@ -33,6 +33,10 @@ export class ToBackendCreateConnectionRequestPayload {
 
   @IsOptional()
   @IsString()
+  warehouse?: string;
+
+  @IsOptional()
+  @IsString()
   host?: string;
 
   @IsOptional()

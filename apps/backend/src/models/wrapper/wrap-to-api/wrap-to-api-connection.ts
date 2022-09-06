@@ -12,6 +12,7 @@ export function wrapToApiConnection(
     bigqueryClientEmail: x.bigquery_client_email,
     bigqueryQuerySizeLimitGb: x.bigquery_query_size_limit_gb,
     account: x.account,
+    warehouse: x.warehouse,
     host: x.host,
     port: x.port,
     database: x.database,

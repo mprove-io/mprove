@@ -136,6 +136,7 @@ export class SeedRecordsController {
           username: x.username,
           password: x.password,
           account: x.account,
+          warehouse: x.warehouse,
           bigqueryCredentials: x.bigqueryCredentials,
           bigqueryQuerySizeLimitGb: x.bigqueryQuerySizeLimitGb,
           isSSL: x.isSSL

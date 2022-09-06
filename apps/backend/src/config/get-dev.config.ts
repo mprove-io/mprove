@@ -47,6 +47,10 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_ACCOUNT ||
       envFile.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_ACCOUNT,
 
+    firstProjectDwhSnowflakeWarehouse:
+      process.env.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_WAREHOUSE ||
+      envFile.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_WAREHOUSE,
+
     firstProjectDwhSnowflakeUsername:
       process.env.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_USERNAME ||
       envFile.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_USERNAME,

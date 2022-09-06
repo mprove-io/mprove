@@ -29,6 +29,9 @@ export class ConnectionEntity {
   account: string;
 
   @Column({ type: constants.VARCHAR, nullable: true })
+  warehouse: string;
+
+  @Column({ type: constants.VARCHAR, nullable: true })
   host: string;
 
   @Column({ type: constants.INT, nullable: true })

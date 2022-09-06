@@ -81,6 +81,18 @@ export class AddConnectionDialogComponent implements OnInit {
           )
         ]
       ],
+      warehouse: [
+        undefined,
+        [
+          conditionalValidator(
+            () =>
+              [common.ConnectionTypeEnum.SnowFlake].indexOf(
+                this.addConnectionForm.get('type').value
+              ) > -1,
+            Validators.required
+          )
+        ]
+      ],
       host: [
         undefined,
         [
@@ -159,6 +171,7 @@ export class AddConnectionDialogComponent implements OnInit {
         .get('bigqueryQuerySizeLimitGb')
         .updateValueAndValidity();
       this.addConnectionForm.get('account').updateValueAndValidity();
+      this.addConnectionForm.get('warehouse').updateValueAndValidity();
       this.addConnectionForm.get('host').updateValueAndValidity();
       this.addConnectionForm.get('port').updateValueAndValidity();
       this.addConnectionForm.get('database').updateValueAndValidity();
@@ -175,6 +188,7 @@ export class AddConnectionDialogComponent implements OnInit {
 
     if (type !== common.ConnectionTypeEnum.SnowFlake) {
       this.addConnectionForm.controls['account'].reset();
+      this.addConnectionForm.controls['warehouse'].reset();
     }
 
     if (
@@ -228,6 +242,7 @@ export class AddConnectionDialogComponent implements OnInit {
         ? Number(this.addConnectionForm.value.bigqueryQuerySizeLimitGb)
         : undefined,
       account: this.addConnectionForm.value.account,
+      warehouse: this.addConnectionForm.value.warehouse,
       host: this.addConnectionForm.value.host,
       port: common.isDefined(this.addConnectionForm.value.port)
         ? Number(this.addConnectionForm.value.port)

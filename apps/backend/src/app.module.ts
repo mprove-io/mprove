@@ -307,6 +307,7 @@ export class AppModule implements OnModuleInit {
                 interfaces.Config['firstProjectDwhPostgresPassword']
               >('firstProjectDwhPostgresPassword'),
               account: undefined,
+              warehouse: undefined,
               bigqueryCredentials: undefined,
               bigqueryQuerySizeLimitGb: 1,
               isSSL: false
@@ -338,6 +339,7 @@ export class AppModule implements OnModuleInit {
                 interfaces.Config['firstProjectDwhClickhousePassword']
               >('firstProjectDwhClickhousePassword'),
               account: undefined,
+              warehouse: undefined,
               bigqueryCredentials: undefined,
               bigqueryQuerySizeLimitGb: 1,
               isSSL: false
@@ -375,6 +377,7 @@ export class AppModule implements OnModuleInit {
               username: undefined,
               password: undefined,
               account: undefined,
+              warehouse: undefined,
               bigqueryCredentials: bigqueryTestCredentials,
               bigqueryQuerySizeLimitGb: 1,
               isSSL: true
@@ -410,6 +413,9 @@ export class AppModule implements OnModuleInit {
               account: this.cs.get<
                 interfaces.Config['firstProjectDwhSnowflakeAccount']
               >('firstProjectDwhSnowflakeAccount'),
+              warehouse: this.cs.get<
+                interfaces.Config['firstProjectDwhSnowflakeWarehouse']
+              >('firstProjectDwhSnowflakeWarehouse'),
               bigqueryCredentials: undefined,
               bigqueryQuerySizeLimitGb: 1,
               isSSL: true

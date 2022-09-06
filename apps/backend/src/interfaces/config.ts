@@ -43,6 +43,9 @@ export class Config {
   firstProjectDwhSnowflakeAccount?: string;
 
   @IsString()
+  firstProjectDwhSnowflakeWarehouse?: string;
+
+  @IsString()
   firstProjectDwhSnowflakeUsername?: string;
 
   @IsString()

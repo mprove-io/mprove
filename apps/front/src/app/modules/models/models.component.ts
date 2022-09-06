@@ -18,7 +18,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   // groups: string[];
 
-  showViews = true;
+  showViews = false;
 
   isShow = true;
 

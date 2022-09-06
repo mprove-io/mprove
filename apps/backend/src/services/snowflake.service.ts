@@ -36,10 +36,10 @@ export class SnowFlakeService {
 
     let options: snowflake.ConnectionOptions = {
       account: connection.account,
+      warehouse: connection.warehouse,
       username: connection.username,
       password: connection.password
       // database: '',
-      // warehouse: ''
       //  database?: string | undefined;
       //  schema?: string | undefined;
       //  warehouse?: string | undefined;

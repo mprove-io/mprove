@@ -167,6 +167,24 @@
       ></m-validation>
     </div>
 
+    <div *ngIf="addConnectionForm.controls['type'].value === typeSnowFlake">
+      <input
+        spellcheck="false"
+        data-cy="addConnectionDialogWarehouseInput"
+        class="form-input w-80 rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            addConnectionForm.controls['warehouse'].invalid &&
+            addConnectionForm.controls['warehouse'].touched
+        }"
+        formControlName="warehouse"
+        placeholder="Warehouse"
+      />
+      <m-validation
+        [control]="addConnectionForm.controls['warehouse']"
+      ></m-validation>
+    </div>
+
     <div
       *ngIf="
         addConnectionForm.controls['type'].value === typeSnowFlake ||
