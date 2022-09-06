@@ -55,180 +55,129 @@ export class SnowFlakeService {
       //  privateKeyPass?: string;
     };
 
-    // async function connExecuteAsync(
-    //   sfConnection: snowflake.Connection,
-    //   execOptions: any
-    // ): Promise<any> {
-    //   return new Promise((resolve, reject) => {
-    //     const statement = sfConnection.execute({
-    //       ...execOptions,
-    //       complete: function (err, stmt, rows) {
-    //         if (err) {
-    //           reject(err);
-    //         } else {
-    //           resolve({ stmt, rows });
-    //         }
-    //       }
-    //     });
-    //   });
-    // }
-
     let snowflakeConnection = snowflake.createConnection(options);
 
     snowflakeConnection.connect(function (err, conn) {
       if (err) {
-        console.error('Unable to connect: ' + err.message);
-      } else {
-        console.log(
-          'Successfully connected as id: ' + snowflakeConnection.getId()
+        common.logToConsole(
+          new common.ServerError({
+            message: common.ErEnum.BACKEND_SNOWFLAKE_FAILED_TO_CONNECT,
+            originalError: err
+          })
         );
       }
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    let self = this;
+    // // eslint-disable-next-line @typescript-eslint/no-this-alias
+    // let self = this;
 
-    snowflakeConnection.execute({
-      sqlText: query.sql,
-      complete: function (err, stmt, rows) {
-        if (err) {
-          self.catchA({
-            queryJobId: queryJobId,
-            query: query,
-            e: err
+    // snowflakeConnection.execute({
+    //   sqlText: query.sql,
+    //   complete: function (err, stmt, rows) {
+    //     if (err) {
+    //       self.getQueryError({
+    //         queryJobId: queryJobId,
+    //         query: query,
+    //         e: err
+    //       });
+    //       self.destroyConnection(snowflakeConnection);
+    //     } else {
+    //       self.getQueryResults({
+    //         queryJobId: queryJobId,
+    //         query: query,
+    //         data: { stmt, rows }
+    //       });
+    //       self.destroyConnection(snowflakeConnection);
+    //     }
+    //   }
+    // });
+
+    this.snowflakeConnectionExecute(snowflakeConnection, {
+      sqlText: query.sql
+      // ,
+      // fetchAsString: ['Number', 'Date']
+    })
+      .then(async (data: any) => {
+        let q = await this.queriesRepository.findOne({
+          query_id: query.query_id,
+          query_job_id: queryJobId
+        });
+
+        if (common.isDefined(q)) {
+          q.status = common.QueryStatusEnum.Completed;
+          q.query_job_id = null;
+          q.data = data.rows;
+          q.last_complete_ts = helper.makeTs();
+          q.last_complete_duration = Math.floor(
+            (Number(q.last_complete_ts) - Number(q.last_run_ts)) / 1000
+          ).toString();
+
+          await this.dbService.writeRecords({
+            modify: true,
+            records: {
+              queries: [q]
+            }
           });
-
-          self.disconnectA(snowflakeConnection);
-        } else {
-          self.resultA({
-            queryJobId: queryJobId,
-            query: query,
-            data: { stmt, rows }
-          });
-
-          self.disconnectA(snowflakeConnection);
         }
-      }
-    });
+        this.snowflakeConnectionDestroy(snowflakeConnection);
+      })
+      .catch(async e => {
+        let q = await this.queriesRepository.findOne({
+          query_id: query.query_id,
+          query_job_id: queryJobId
+        });
 
-    // connExecuteAsync(snowflakeConnection, {
-    //   sqlText: query.sql
-    //   // ,
-    //   // fetchAsString: ['Number', 'Date']
-    // })
-    //   .then(async (data: any) => {
-    //     // common.logToConsole('data');
-    //     // common.logToConsole(data);
+        if (common.isDefined(q)) {
+          q.status = common.QueryStatusEnum.Error;
+          q.data = [];
+          q.query_job_id = null;
+          q.last_error_message = e.message;
+          q.last_error_ts = helper.makeTs();
 
-    //     let q = await this.queriesRepository.findOne({
-    //       query_id: query.query_id,
-    //       query_job_id: queryJobId
-    //     });
-
-    //     if (common.isDefined(q)) {
-    //       q.status = common.QueryStatusEnum.Completed;
-    //       q.query_job_id = null;
-    //       q.data = data.rows;
-    //       q.last_complete_ts = helper.makeTs();
-    //       q.last_complete_duration = Math.floor(
-    //         (Number(q.last_complete_ts) - Number(q.last_run_ts)) / 1000
-    //       ).toString();
-
-    //       await this.dbService.writeRecords({
-    //         modify: true,
-    //         records: {
-    //           queries: [q]
-    //         }
-    //       });
-    //     }
-    //   })
-    //   .catch(async e => {
-    //     // common.logToConsole('error');
-    //     // common.logToConsole(error);
-
-    //     let q = await this.queriesRepository.findOne({
-    //       query_id: query.query_id,
-    //       query_job_id: queryJobId
-    //     });
-
-    //     if (common.isDefined(q)) {
-    //       q.status = common.QueryStatusEnum.Error;
-    //       q.data = [];
-    //       q.query_job_id = null;
-    //       q.last_error_message = e.message;
-    //       q.last_error_ts = helper.makeTs();
-
-    //       await this.dbService.writeRecords({
-    //         modify: true,
-    //         records: {
-    //           queries: [q]
-    //         }
-    //       });
-    //     }
-    //   });
+          await this.dbService.writeRecords({
+            modify: true,
+            records: {
+              queries: [q]
+            }
+          });
+        }
+        this.snowflakeConnectionDestroy(snowflakeConnection);
+      });
 
     return query;
   }
 
-  async catchA(item: { query: any; queryJobId: any; e: any }) {
-    let { query, queryJobId, e } = item;
-
-    let q = await this.queriesRepository.findOne({
-      query_id: query.query_id,
-      query_job_id: queryJobId
+  async snowflakeConnectionExecute(
+    sfConnection: snowflake.Connection,
+    execOptions: any
+  ): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const statement = sfConnection.execute({
+        ...execOptions,
+        complete: function (err, stmt, rows) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve({ stmt, rows });
+          }
+        }
+      });
     });
+  }
 
-    if (common.isDefined(q)) {
-      q.status = common.QueryStatusEnum.Error;
-      q.data = [];
-      q.query_job_id = null;
-      q.last_error_message = e.message;
-      q.last_error_ts = helper.makeTs();
-
-      await this.dbService.writeRecords({
-        modify: true,
-        records: {
-          queries: [q]
+  snowflakeConnectionDestroy(snowflakeConnection: snowflake.Connection) {
+    if (snowflakeConnection.isUp()) {
+      snowflakeConnection.destroy(function (err, conn) {
+        if (err) {
+          common.logToConsole(
+            new common.ServerError({
+              message:
+                common.ErEnum.BACKEND_SNOWFLAKE_FAILED_TO_DESTROY_CONNECTION,
+              originalError: err
+            })
+          );
         }
       });
     }
-  }
-
-  async resultA(item: { query: any; queryJobId: any; data: any }) {
-    let { query, queryJobId, data } = item;
-
-    let q = await this.queriesRepository.findOne({
-      query_id: query.query_id,
-      query_job_id: queryJobId
-    });
-
-    if (common.isDefined(q)) {
-      q.status = common.QueryStatusEnum.Completed;
-      q.query_job_id = null;
-      q.data = data.rows;
-      q.last_complete_ts = helper.makeTs();
-      q.last_complete_duration = Math.floor(
-        (Number(q.last_complete_ts) - Number(q.last_run_ts)) / 1000
-      ).toString();
-
-      await this.dbService.writeRecords({
-        modify: true,
-        records: {
-          queries: [q]
-        }
-      });
-    }
-  }
-
-  disconnectA(snowflakeConnection: snowflake.Connection) {
-    snowflakeConnection.destroy(function (err, conn) {
-      if (err) {
-        console.error('Unable to disconnect: ' + err.message);
-      } else {
-        console.log(
-          'Disconnected connection with id: ' + snowflakeConnection.getId()
-        );
-      }
-    });
   }
 }
