@@ -58,6 +58,16 @@ export function makeMeasureAverageByKey(item: {
 
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      let val = `CAST(FLOOR(COALESCE(${sqlFinal}, 0)*(1000000*1.0)) AS DECIMAL(38,0))`;
+      let k = `(TO_NUMBER(MD5(${sqlKeyFinal}), 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX') % 1.0e27)::NUMERIC(38, 0)`;
+
+      numerator = `COALESCE(CAST((SUM(DISTINCT(${val}) + ${k}) - SUM(DISTINCT${k})) AS DOUBLE PRECISION) / CAST((1000000*1.0) AS DOUBLE PRECISION), 0)`;
+      denominator = `NULLIF(COUNT(DISTINCT CASE WHEN ${sqlFinal} IS NOT NULL THEN ${sqlKeyFinal} ELSE NULL END), 0)`;
+
+      break;
+    }
   }
 
   sqlSelect = `(${numerator} / ${denominator})`;

@@ -24,6 +24,12 @@ fields:
   sql: ${inventory_item_id}
 
 - measure: total_actual_cost
-  type: sum
+  type: sum_by_key
   sql: ${actual_cost}  
-  format_number: '$,.0f'
+  sql_key: ${inventory_item_id}
+  format_number: '$,.0f'  
+
+# - measure: total_actual_cost
+#   type: sum
+#   sql: ${actual_cost}  
+#   format_number: '$,.0f'

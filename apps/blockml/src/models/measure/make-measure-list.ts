@@ -9,6 +9,11 @@ export function makeMeasureList(item: {
   let sqlSelect;
 
   switch (connection.type) {
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sqlSelect = `LISTAGG(DISTINCT CAST(${sqlFinal} AS STRING), ', ')`;
+      break;
+    }
+
     case common.ConnectionTypeEnum.BigQuery: {
       sqlSelect = `STRING_AGG(DISTINCT CAST(${sqlFinal} AS STRING), ', ')`;
       break;
