@@ -23,6 +23,11 @@ export function makeTsFromSourceYYYYMMDD(item: {
       ts = `CAST(parseDateTimeBestEffort(${sql}) as TIMESTAMP)`;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      ts = `CAST(TO_DATE((${sql})::VARCHAR, 'YYYYMMDD') as TIMESTAMP_NTZ)`;
+      break;
+    }
   }
 
   return ts;

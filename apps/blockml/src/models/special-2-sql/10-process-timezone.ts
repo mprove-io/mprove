@@ -44,6 +44,11 @@ export function processTimezone(item: {
             two = `toTimezone(${two}, '${timezone}')`;
             break;
           }
+
+          case common.ConnectionTypeEnum.SnowFlake: {
+            two = `CONVERT_TIMEZONE('UTC', '${timezone}', ${two})`;
+            break;
+          }
         }
       }
       x = one + two + three;

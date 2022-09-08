@@ -23,6 +23,11 @@ export function makeTimeframeDate(item: {
       sql = `toDate(${sqlTimestamp})`;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sql = `TO_CHAR(TO_DATE(${sqlTimestamp}), 'YYYY-MM-DD')`;
+      break;
+    }
   }
 
   return sql;

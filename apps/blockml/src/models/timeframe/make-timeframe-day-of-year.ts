@@ -23,6 +23,11 @@ export function makeTimeframeDayOfYear(item: {
       sql = `toDayOfYear(${sqlTimestamp})`;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sql = `EXTRACT(DOY FROM ${sqlTimestamp})::integer`;
+      break;
+    }
   }
 
   return sql;

@@ -23,6 +23,11 @@ export function makeTsFromSourceEpoch(item: {
       ts = `CAST(${sql} as TIMESTAMP)`;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      ts = `CAST(${sql} as TIMESTAMP_NTZ)`;
+      break;
+    }
   }
 
   return ts;
