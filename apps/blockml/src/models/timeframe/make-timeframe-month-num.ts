@@ -23,6 +23,11 @@ export function makeTimeframeMonthNum(item: {
       sql = `toMonth(${sqlTimestamp})`;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sql = `EXTRACT(MONTH FROM ${sqlTimestamp})`;
+      break;
+    }
   }
 
   return sql;

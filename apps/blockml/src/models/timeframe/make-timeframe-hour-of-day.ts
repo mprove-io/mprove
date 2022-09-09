@@ -23,6 +23,11 @@ export function makeTimeframeHourOfDay(item: {
       sql = `toHour(toDateTime(${sqlTimestamp}))`;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sql = `EXTRACT(HOUR FROM ${sqlTimestamp})`;
+      break;
+    }
   }
 
   return sql;

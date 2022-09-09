@@ -23,6 +23,11 @@ export function makeTimeframeQuarter(item: {
       sql = `formatDateTime(toStartOfQuarter(${sqlTimestamp}), '%Y-%m')`;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sql = `TO_CHAR(DATE_TRUNC('month', CAST(DATE_TRUNC('quarter', ${sqlTimestamp}) AS DATE)), 'YYYY-MM')`;
+      break;
+    }
   }
 
   return sql;

@@ -23,6 +23,11 @@ export function makeTimeframeYear(item: {
       sql = `toYear(${sqlTimestamp})`;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sql = `EXTRACT(YEAR FROM ${sqlTimestamp})`;
+      break;
+    }
   }
 
   return sql;

@@ -26,6 +26,11 @@ export function makeTimeframeHourNum(item: {
       sql = `formatDateTime(toStartOfHour(toDateTime(subtractHours(toDateTime(${sqlTimestamp}), toHour(toDateTime(${sqlTimestamp})) % ${num}))), '%Y-%m-%d %H')`;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sql = `TO_CHAR(DATE_TRUNC('hour', DATE_TRUNC('hour', DATEADD('HOURS', -1 * (DATE_PART('HOUR', ${sqlTimestamp}) % ${num}), ${sqlTimestamp}))), 'YYYY-MM-DD HH24')`;
+      break;
+    }
   }
 
   return sql;

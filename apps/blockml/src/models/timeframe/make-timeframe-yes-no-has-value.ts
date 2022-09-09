@@ -23,6 +23,11 @@ export function makeTimeframeYesNoHasValue(item: {
       sql = `CASE WHEN (${sqlTimestamp}) IS NOT NULL THEN 'Yes' ELSE 'No' END`;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sql = `CASE WHEN (${sqlTimestamp}) IS NOT NULL THEN 'Yes' ELSE 'No' END`;
+      break;
+    }
   }
 
   return sql;

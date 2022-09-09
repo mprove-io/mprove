@@ -23,6 +23,11 @@ export function makeTimeframeTime(item: {
       sql = `CAST(${sqlTimestamp} AS String)`;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sql = `TO_CHAR(DATE_TRUNC('second', ${sqlTimestamp}), 'YYYY-MM-DD HH24:MI:SS')`;
+      break;
+    }
   }
 
   return sql;

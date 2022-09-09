@@ -38,6 +38,11 @@ END`;
           : `toWeek(${sqlTimestamp}, 3)`;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sql = `EXTRACT(WEEK from ${sqlTimestamp})`;
+      break;
+    }
   }
 
   return sql;

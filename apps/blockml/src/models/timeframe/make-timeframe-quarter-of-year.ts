@@ -23,6 +23,11 @@ export function makeTimeframeQuarterOfYear(item: {
       sql = `CONCAT(toString('Q'), toString(toQuarter(${sqlTimestamp})))`;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sql = `CONCAT(CAST('Q' AS VARCHAR), QUARTER(${sqlTimestamp}))`;
+      break;
+    }
   }
 
   return sql;

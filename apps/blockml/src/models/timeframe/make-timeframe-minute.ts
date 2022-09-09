@@ -23,6 +23,11 @@ export function makeTimeframeMinute(item: {
       sql = `formatDateTime(${sqlTimestamp}, '%Y-%m-%d %H:%M')`;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sql = `TO_CHAR(DATE_TRUNC('minute', ${sqlTimestamp}), 'YYYY-MM-DD HH24:MI')`;
+      break;
+    }
   }
 
   return sql;

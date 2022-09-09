@@ -24,6 +24,11 @@ export function makeTimeframeMinuteNum(item: {
       sql = `formatDateTime(toStartOfMinute(toDateTime(toDateTime(toUnixTimestamp(${sqlTimestamp} + interval 0 second) - (toUnixTimestamp(${sqlTimestamp} + interval 0 second) % (60*${num}))))), '%Y-%m-%d %H:%M')`;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sql = `TO_CHAR(DATE_TRUNC('minute', DATE_TRUNC('minute', TIMESTAMPADD(MINUTE, -(MOD(EXTRACT(MINUTE FROM ${sqlTimestamp}), ${num})), ${sqlTimestamp}))), 'YYYY-MM-DD HH24:MI')`;
+      break;
+    }
   }
 
   return sql;

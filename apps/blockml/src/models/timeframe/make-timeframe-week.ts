@@ -43,6 +43,11 @@ END`;
           : `toString(toDate(toStartOfWeek(${sqlTimestamp}, 3)))`;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sql = `TO_CHAR(DATE_TRUNC('week', ${sqlTimestamp}), 'YYYY-MM-DD')`;
+      break;
+    }
   }
 
   return sql;

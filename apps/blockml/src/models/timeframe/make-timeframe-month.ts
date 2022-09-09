@@ -23,6 +23,11 @@ export function makeTimeframeMonth(item: {
       sql = `formatDateTime(${sqlTimestamp}, '%Y-%m')`;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sql = `TO_CHAR(DATE_TRUNC('month', ${sqlTimestamp}), 'YYYY-MM')`;
+      break;
+    }
   }
 
   return sql;
