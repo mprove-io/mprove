@@ -25,7 +25,7 @@ export function makeTimeframeDayOfWeek(item: {
     }
 
     case common.ConnectionTypeEnum.SnowFlake: {
-      sql = `get(to_array(['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']), EXTRACT(DOW FROM ${sqlTimestamp})::integer - 1)`;
+      sql = `get(to_array(['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']), EXTRACT(DOW FROM ${sqlTimestamp}))`;
       break;
     }
   }

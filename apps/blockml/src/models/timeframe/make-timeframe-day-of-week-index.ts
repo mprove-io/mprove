@@ -46,10 +46,10 @@ export function makeTimeframeDayOfWeekIndex(item: {
     case common.ConnectionTypeEnum.SnowFlake: {
       sql =
         weekStart === common.ProjectWeekStartEnum.Sunday
-          ? `EXTRACT(DOW FROM ${sqlTimestamp})::integer + 1`
+          ? `EXTRACT(DOW FROM ${sqlTimestamp}) + 1`
           : `CASE
-      WHEN EXTRACT(DOW FROM ${sqlTimestamp})::integer + 1 = 1 THEN 7
-      ELSE EXTRACT(DOW FROM ${sqlTimestamp})::integer + 1 - 1
+      WHEN EXTRACT(DOW FROM ${sqlTimestamp}) + 1 = 1 THEN 7
+      ELSE EXTRACT(DOW FROM ${sqlTimestamp}) + 1 - 1
       END`;
       break;
     }

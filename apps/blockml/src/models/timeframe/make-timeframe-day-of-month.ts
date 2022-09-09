@@ -25,7 +25,7 @@ export function makeTimeframeDayOfMonth(item: {
     }
 
     case common.ConnectionTypeEnum.SnowFlake: {
-      sql = `EXTRACT(DAY FROM ${sqlTimestamp})::integer`;
+      sql = `EXTRACT(DAY FROM ${sqlTimestamp})`;
       break;
     }
   }
