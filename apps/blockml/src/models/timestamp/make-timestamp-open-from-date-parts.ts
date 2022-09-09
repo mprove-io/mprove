@@ -64,6 +64,21 @@ export function makeTimestampOpenFromDateParts(item: {
         : undefined;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sql = minute
+        ? `TO_TIMESTAMP('${year}-${month}-${day} ${hour}:${minute}:00')`
+        : hour
+        ? `TO_TIMESTAMP('${year}-${month}-${day} ${hour}:00:00')`
+        : day
+        ? `TO_TIMESTAMP('${year}-${month}-${day}')`
+        : month
+        ? `TO_TIMESTAMP('${year}-${month}-01')`
+        : year
+        ? `TO_TIMESTAMP('${year}-01-01')`
+        : undefined;
+      break;
+    }
   }
 
   return sql;

@@ -64,6 +64,21 @@ export function makeTimestampCloseBetweenTo(item: {
         : undefined;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sql = toMinute
+        ? `TO_TIMESTAMP('${toYear}-${toMonth}-${toDay} ${toHour}:${toMinute}:00')`
+        : toHour
+        ? `TO_TIMESTAMP('${toYear}-${toMonth}-${toDay} ${toHour}:00:00')`
+        : toDay
+        ? `TO_TIMESTAMP('${toYear}-${toMonth}-${toDay}')`
+        : toMonth
+        ? `TO_TIMESTAMP('${toYear}-${toMonth}-01')`
+        : toYear
+        ? `TO_TIMESTAMP('${toYear}-01-01')`
+        : undefined;
+      break;
+    }
   }
 
   return sql;

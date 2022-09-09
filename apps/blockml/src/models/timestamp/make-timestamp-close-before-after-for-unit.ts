@@ -71,6 +71,26 @@ export function makeTimestampCloseBeforeAfterForUnit(item: {
           : undefined;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sql =
+        forUnit === enums.FractionUnitEnum.Minutes
+          ? `${open} + INTERVAL '${sInteger} minute'`
+          : forUnit === enums.FractionUnitEnum.Hours
+          ? `${open} + INTERVAL '${sInteger} hour'`
+          : forUnit === enums.FractionUnitEnum.Days
+          ? `${open} + INTERVAL '${sInteger} day'`
+          : forUnit === enums.FractionUnitEnum.Weeks
+          ? `${open} + INTERVAL '${sInteger * 7} day'`
+          : forUnit === enums.FractionUnitEnum.Months
+          ? `${open} + INTERVAL '${sInteger} month'`
+          : forUnit === enums.FractionUnitEnum.Quarters
+          ? `${open} + INTERVAL '${sInteger * 3} month'`
+          : forUnit === enums.FractionUnitEnum.Years
+          ? `${open} + INTERVAL '${sInteger} year'`
+          : undefined;
+      break;
+    }
   }
 
   return sql;

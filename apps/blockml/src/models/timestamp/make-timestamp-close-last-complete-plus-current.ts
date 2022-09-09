@@ -86,6 +86,26 @@ export function makeTimestampCloseLastCompletePlusCurrent(item: {
           : undefined;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sql =
+        unit === enums.FractionUnitEnum.Minutes
+          ? `${currentMinuteTs} + INTERVAL '1 minute'`
+          : unit === enums.FractionUnitEnum.Hours
+          ? `${currentHourTs} + INTERVAL '1 hour'`
+          : unit === enums.FractionUnitEnum.Days
+          ? `${currentDateTs} + INTERVAL '1 day'`
+          : unit === enums.FractionUnitEnum.Weeks
+          ? `${currentWeekStartTs} + INTERVAL '${1 * 7} day'`
+          : unit === enums.FractionUnitEnum.Months
+          ? `${currentMonthTs} + INTERVAL '1 month'`
+          : unit === enums.FractionUnitEnum.Quarters
+          ? `${currentQuarterTs} + INTERVAL '${1 * 3} month'`
+          : unit === enums.FractionUnitEnum.Years
+          ? `${currentYearTs} + INTERVAL '1 year'`
+          : undefined;
+      break;
+    }
   }
 
   return sql;

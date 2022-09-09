@@ -64,6 +64,21 @@ export function makeTimestampCloseBetween(item: {
         : undefined;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sql = minute
+        ? `${open} + INTERVAL '1 minute'`
+        : hour
+        ? `${open} + INTERVAL '1 hour'`
+        : day
+        ? `${open} + INTERVAL '1 day'`
+        : month
+        ? `${open} + INTERVAL '1 month'`
+        : year
+        ? `${open} + INTERVAL '1 year'`
+        : undefined;
+      break;
+    }
   }
 
   return sql;

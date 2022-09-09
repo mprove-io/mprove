@@ -91,6 +91,26 @@ export function makeTimestampOpenBeforeAfterInFutureComplete(item: {
           : undefined;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      sql =
+        unit === enums.FractionUnitEnum.Minutes
+          ? `${currentMinuteTs} + INTERVAL '${integer + 1} minute'`
+          : unit === enums.FractionUnitEnum.Hours
+          ? `${currentHourTs} + INTERVAL '${integer + 1} hour'`
+          : unit === enums.FractionUnitEnum.Days
+          ? `${currentDateTs} + INTERVAL '${integer + 1} day'`
+          : unit === enums.FractionUnitEnum.Weeks
+          ? `${currentWeekStartTs} + INTERVAL '${integer * 7 + 1 * 7} day'`
+          : unit === enums.FractionUnitEnum.Months
+          ? `${currentMonthTs} + INTERVAL '${integer + 1} month'`
+          : unit === enums.FractionUnitEnum.Quarters
+          ? `${currentQuarterTs} + INTERVAL '${integer * 3 + 1 * 3} month'`
+          : unit === enums.FractionUnitEnum.Years
+          ? `${currentYearTs} + INTERVAL '${integer + 1} year'`
+          : undefined;
+      break;
+    }
   }
 
   return sql;

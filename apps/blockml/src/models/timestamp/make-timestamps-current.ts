@@ -77,6 +77,27 @@ export function makeTimestampsCurrent(item: {
       currentYearTimestamp = `toStartOfYear(${currentTimestamp})`;
       break;
     }
+
+    case common.ConnectionTypeEnum.SnowFlake: {
+      currentTimestamp =
+        timezone === common.UTC
+          ? 'CAST(CURRENT_TIMESTAMP() AS TIMESTAMP_NTZ)'
+          : `CONVERT_TIMEZONE('UTC', '${timezone}',  CAST(CURRENT_TIMESTAMP() AS TIMESTAMP_NTZ))`;
+
+      currentMinuteTimestamp = `DATE_TRUNC('minute', ${currentTimestamp})`;
+      currentHourTimestamp = `DATE_TRUNC('hour', ${currentTimestamp})`;
+      currentDateTimestamp = `DATE_TRUNC('day', ${currentTimestamp})`;
+
+      currentWeekStartTimestamp =
+        weekStart === common.ProjectWeekStartEnum.Sunday
+          ? `DATE_TRUNC('week', ${currentTimestamp}) + INTERVAL '-1 day'`
+          : `DATE_TRUNC('week', ${currentTimestamp})`;
+
+      currentMonthTimestamp = `DATE_TRUNC('month', ${currentTimestamp})`;
+      currentQuarterTimestamp = `DATE_TRUNC('quarter', ${currentTimestamp})`;
+      currentYearTimestamp = `DATE_TRUNC('year', ${currentTimestamp})`;
+      break;
+    }
   }
 
   return {
