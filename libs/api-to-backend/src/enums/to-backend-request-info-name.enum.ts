@@ -27,6 +27,7 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendSetOrgOwner = 'api/ToBackendSetOrgOwner',
   ToBackendDeleteOrg = 'api/ToBackendDeleteOrg',
   //
+  ToBackendGenerateProjectRemoteKey = 'api/ToBackendGenerateProjectRemoteKey',
   ToBackendCreateProject = 'api/ToBackendCreateProject',
   ToBackendIsProjectExist = 'api/ToBackendIsProjectExist',
   ToBackendGetProject = 'api/ToBackendGetProject',

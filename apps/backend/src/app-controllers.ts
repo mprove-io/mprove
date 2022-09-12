@@ -58,6 +58,7 @@ export const appControllers = [
 
   controllers.CreateProjectController,
   controllers.DeleteProjectController,
+  controllers.GenerateProjectRemoteKeyController,
   controllers.GetProjectController,
   controllers.GetProjectsListController,
   controllers.IsProjectExistController,

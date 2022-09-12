@@ -6,6 +6,7 @@ export * from './idemp.entity';
 export * from './mconfig.entity';
 export * from './member.entity';
 export * from './model.entity';
+export * from './note.entity';
 export * from './org.entity';
 export * from './project.entity';
 export * from './query.entity';

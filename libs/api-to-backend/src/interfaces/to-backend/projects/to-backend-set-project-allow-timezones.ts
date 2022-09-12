@@ -18,7 +18,8 @@ export class ToBackendSetProjectAllowTimezonesRequest extends ToBackendRequest {
 }
 
 export class ToBackendSetProjectAllowTimezonesResponsePayload {
-  @IsString()
+  @ValidateNested()
+  @Type(() => common.Project)
   project: common.Project;
 }
 

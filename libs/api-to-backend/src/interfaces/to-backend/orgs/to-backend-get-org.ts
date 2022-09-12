@@ -15,7 +15,8 @@ export class ToBackendGetOrgRequest extends ToBackendRequest {
 }
 
 export class ToBackendGetOrgResponsePayload {
-  @IsString()
+  @ValidateNested()
+  @Type(() => common.Org)
   org: common.Org;
 }
 

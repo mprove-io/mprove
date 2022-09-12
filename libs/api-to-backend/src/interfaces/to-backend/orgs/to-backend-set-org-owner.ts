@@ -18,7 +18,8 @@ export class ToBackendSetOrgOwnerRequest extends ToBackendRequest {
 }
 
 export class ToBackendSetOrgOwnerResponsePayload {
-  @IsString()
+  @ValidateNested()
+  @Type(() => common.Org)
   org: common.Org;
 }
 

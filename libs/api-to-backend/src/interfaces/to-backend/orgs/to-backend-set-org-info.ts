@@ -27,7 +27,8 @@ export class ToBackendSetOrgInfoRequest extends ToBackendRequest {
 }
 
 export class ToBackendSetOrgInfoResponsePayload {
-  @IsString()
+  @ValidateNested()
+  @Type(() => common.Org)
   org: common.Org;
 }
 

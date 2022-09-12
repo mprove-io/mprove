@@ -90,7 +90,8 @@ export class DbService {
         queries,
         models,
         mconfigs,
-        dashboards
+        dashboards,
+        notes
       } = records;
 
       if (common.isDefined(users) && users.length > 0) {
@@ -174,6 +175,12 @@ export class DbService {
           .orIgnore()
           .execute();
       }
+
+      if (common.isDefined(notes) && notes.length > 0) {
+        await manager
+          .getCustomRepository(repositories.NotesRepository)
+          .insert(notes);
+      }
     });
 
     return records;
@@ -228,7 +235,8 @@ export class DbService {
         queries,
         models,
         mconfigs,
-        dashboards
+        dashboards,
+        notes
       } = records;
 
       if (common.isDefined(users) && users.length > 0) {
@@ -307,6 +315,12 @@ export class DbService {
         await manager
           .getCustomRepository(repositories.QueriesRepository)
           .save(queries);
+      }
+
+      if (common.isDefined(notes) && notes.length > 0) {
+        await manager
+          .getCustomRepository(repositories.NotesRepository)
+          .save(notes);
       }
     });
 

@@ -18,7 +18,8 @@ export class ToBackendSetProjectWeekStartRequest extends ToBackendRequest {
 }
 
 export class ToBackendSetProjectWeekStartResponsePayload {
-  @IsString()
+  @ValidateNested()
+  @Type(() => common.Project)
   project: common.Project;
 }
 

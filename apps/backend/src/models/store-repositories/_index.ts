@@ -3,6 +3,7 @@ export * from './branches.repository';
 export * from './connections.repository';
 export * from './idemps.repository';
 export * from './members.repository';
+export * from './notes.repository';
 export * from './orgs.repository';
 export * from './projects.repository';
 export * from './struct/_index';

@@ -14,4 +14,5 @@ export class Records {
   models?: entities.ModelEntity[];
   mconfigs?: entities.MconfigEntity[];
   dashboards?: entities.DashboardEntity[];
+  notes?: entities.NoteEntity[];
 }

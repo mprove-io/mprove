@@ -1,5 +1,6 @@
 export * from './to-backend-create-project';
 export * from './to-backend-delete-project';
+export * from './to-backend-generate-project-remote-key';
 export * from './to-backend-get-project';
 export * from './to-backend-get-projects-list';
 export * from './to-backend-is-project-exist';

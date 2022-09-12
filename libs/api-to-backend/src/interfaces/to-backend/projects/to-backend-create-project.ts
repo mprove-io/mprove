@@ -18,7 +18,8 @@ export class ToBackendCreateProjectRequest extends ToBackendRequest {
 }
 
 export class ToBackendCreateProjectResponsePayload {
-  @IsString()
+  @ValidateNested()
+  @Type(() => common.Project)
   project: common.Project;
 }
 
