@@ -1,12 +1,12 @@
 <div class="flex flex-col bg-white p-9">
   <div
     data-cy="createProjectDialogTitle"
-    class="mt-5 flex-grow text-left text-2xl font-semibold text-gray2"
+    class="mt-5 select-none text-left text-2xl font-semibold text-gray2"
     >Create Project</div
   >
 
   <form
-    class="flex w-80 flex-col"
+    class="flex flex-col"
     [formGroup]="createProjectForm"
     (ngSubmit)="create()"
   >
@@ -26,17 +26,142 @@
       [control]="createProjectForm.controls['projectName']"
     ></m-validation>
 
+    <div class="mt-5 select-none text-left text-lg font-semibold text-gray2"
+      >Remote Repo</div
+    >
+
+    <div
+      data-cy="createProjectDialogManagedCheckbox"
+      class="mt-5 flex h-9 cursor-pointer flex-row items-center"
+      (click)="managedOnClick()"
+    >
+      <div
+        class="flex h-6 w-6 items-center justify-center rounded-full border-2 border-blue3 text-white focus:outline-none"
+        [ngClass]="{
+          'bg-blue3 ':
+            projectRemoteRepoType === projectRemoteRepoTypeEnum.Managed
+        }"
+      >
+        <m-check-icon
+          *ngIf="projectRemoteRepoType === projectRemoteRepoTypeEnum.Managed"
+        ></m-check-icon>
+      </div>
+
+      <div class="ml-5 select-none text-base">Managed (server directory)</div>
+    </div>
+
+    <div
+      data-cy="createProjectDialogGitCloneCheckbox"
+      class="mt-5 flex h-9 cursor-pointer flex-row items-center"
+      (click)="gitCloneOnClick()"
+    >
+      <div
+        class="flex h-6 w-6 items-center justify-center rounded-full border-2 border-blue3 text-white focus:outline-none"
+        [ngClass]="{
+          'bg-blue3 ':
+            projectRemoteRepoType === projectRemoteRepoTypeEnum.GitClone
+        }"
+      >
+        <m-check-icon
+          *ngIf="projectRemoteRepoType === projectRemoteRepoTypeEnum.GitClone"
+        ></m-check-icon>
+      </div>
+
+      <div class="ml-5 select-none text-base"
+        >git Clone (GitHub, GitLab, BitBucket, etc)</div
+      >
+    </div>
+
+    <div
+      *ngIf="projectRemoteRepoType === projectRemoteRepoTypeEnum.GitClone"
+      class="flex w-full flex-col"
+    >
+      <input
+        spellcheck="false"
+        data-cy="createProjectDialogGitUrlInput"
+        class="form-input mt-9 w-full rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            createProjectForm.controls['projectGitUrl'].invalid &&
+            createProjectForm.controls['projectGitUrl'].touched
+        }"
+        formControlName="projectGitUrl"
+        placeholder="git@ or SSH git URL"
+      />
+      <m-validation
+        [control]="createProjectForm.controls['projectGitUrl']"
+      ></m-validation>
+
+      <div class="mt-5 select-none text-left text-lg text-gray2"
+        >Add this <span class="font-semibold">Deploy Key</span> with
+        <span class="font-semibold">Write Access</span> to your git
+        provider</div
+      >
+      <div class="text-left text-lg text-gray2"
+        >(for github.com use Repo Settings Page)</div
+      >
+
+      <div class="relative mt-5 h-[300px] w-full">
+        <div *ngIf="publicKey" class="text-green-700">{{ publicKey }}</div>
+        <ngx-spinner
+          [ngClass]="{
+            invisible: !!publicKey
+          }"
+          class="invisible"
+          [name]="spinnerName"
+          color="rgba(54, 94, 224, 100)"
+          bdColor="rgba(0, 0, 0, 0)"
+          size="default"
+          type="ball-clip-rotate"
+          [fullScreen]="false"
+          [disableAnimation]="true"
+          [zIndex]="99998"
+        >
+        </ngx-spinner>
+      </div>
+
+      <div
+        data-cy="createProjectDialogGitCloneCheckbox"
+        class="mt-5 flex h-9 cursor-pointer flex-row items-center"
+        (click)="isDeployKeyAddedOnClick($event)"
+      >
+        <div
+          data-cy="createProjectDialogDeployKeyAddedCheckbox"
+          class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border-2 border-blue3 text-white focus:outline-none"
+          [ngClass]="{
+            'bg-blue3 ': isDeployKeyAdded === true
+          }"
+        >
+          <m-check-icon *ngIf="isDeployKeyAdded === true"></m-check-icon>
+        </div>
+
+        <div class="ml-5 select-none text-base">Deploy Key is added</div>
+      </div>
+    </div>
+
     <div class="mt-6">
       <button
         data-cy="createProjectDialogCreateButton"
-        class="w-28 rounded bg-blue3 py-3 font-medium text-white focus:outline-none"
+        class="w-28 select-none rounded bg-blue3 py-3 font-medium text-white focus:outline-none"
         type="submit"
+        [ngClass]="{
+          'bg-blue3 ':
+            projectRemoteRepoType === projectRemoteRepoTypeEnum.Managed ||
+            isDeployKeyAdded === true,
+          'cursor-default bg-gray-400':
+            projectRemoteRepoType === projectRemoteRepoTypeEnum.GitClone &&
+            isDeployKeyAdded === false
+        }"
+        [disabled]="
+          projectRemoteRepoType === projectRemoteRepoTypeEnum.GitClone &&
+          isDeployKeyAdded === false
+        "
         >Create</button
       >
 
       <button
         data-cy="createProjectDialogCancelButton"
-        class="ml-3 w-28 rounded border border-blue3 py-3 font-medium text-blue3 focus:outline-none"
+        class="ml-3 w-28 select-none rounded border border-blue3 py-3 font-medium text-blue3 focus:outline-none"
         type="button"
         (click)="cancel()"
         >Cancel</button

@@ -11,6 +11,7 @@ export * from './file-extension.enum';
 export * from './fraction/_index';
 export * from './model-node-id-suffix.enum';
 export * from './model-node-label.enum';
+export * from './project-remote-type.enum';
 export * from './project-week-start.enum';
 export * from './query-status.enum';
 export * from './rabbit-blockml-routing-keys.enum';

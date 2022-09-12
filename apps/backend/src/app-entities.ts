@@ -14,5 +14,6 @@ export const appEntities = [
   entities.MemberEntity,
   entities.OrgEntity,
   entities.ProjectEntity,
-  entities.UserEntity
+  entities.UserEntity,
+  entities.NoteEntity
 ];

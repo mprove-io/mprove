@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsString, ValidateNested } from 'class-validator';
+import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
@@ -9,6 +9,17 @@ export class ToBackendCreateProjectRequestPayload {
 
   @IsString()
   name: string;
+
+  @IsEnum(common.ProjectRemoteTypeEnum)
+  remoteType: common.ProjectRemoteTypeEnum;
+
+  @IsString()
+  @IsOptional()
+  gitUrl?: string;
+
+  @IsString()
+  @IsOptional()
+  noteId?: string;
 }
 
 export class ToBackendCreateProjectRequest extends ToBackendRequest {

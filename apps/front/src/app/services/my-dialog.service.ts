@@ -133,7 +133,8 @@ export class MyDialogService {
     this.dialogService.open(CreateProjectDialogComponent, {
       enableClose: true,
       closeButton: false,
-      data: item
+      data: item,
+      width: 800
     });
   }
 

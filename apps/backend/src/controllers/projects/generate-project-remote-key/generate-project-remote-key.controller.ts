@@ -17,8 +17,8 @@ export class GenerateProjectRemoteKeyController {
   )
   async createProject(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendCreateProjectRequest)
-    reqValid: apiToBackend.ToBackendCreateProjectRequest
+    @ValidateRequest(apiToBackend.ToBackendGenerateProjectRemoteKeyRequest)
+    reqValid: apiToBackend.ToBackendGenerateProjectRemoteKeyRequest
   ) {
     let { traceId } = reqValid.info;
     let { orgId } = reqValid.payload;
@@ -39,7 +39,8 @@ export class GenerateProjectRemoteKeyController {
       privateKeyEncoding: {
         type: 'pkcs8',
         format: 'pem',
-        cipher: 'aes-256-cbc'
+        cipher: 'aes-256-cbc',
+        passphrase: ''
       }
     });
 
