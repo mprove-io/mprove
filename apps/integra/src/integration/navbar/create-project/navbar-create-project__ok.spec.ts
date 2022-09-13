@@ -38,6 +38,7 @@ describe('integra', () => {
     cy.visit(`${common.PATH_ORG}/${orgId}/${common.PATH_ACCOUNT}`);
     cy.get('[data-cy=projectSelect]').click();
     cy.get('[data-cy=projectSelectCreateProjectButton]').click();
+    cy.get('[data-cy=createProjectDialogManagedCheckbox]').click();
     cy.get('[data-cy=createProjectDialogProjectNameInput]').type(projectName);
     cy.get('[data-cy=createProjectDialogCreateButton]').click();
     cy.loading();
