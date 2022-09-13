@@ -89,7 +89,11 @@ test('1', async t => {
         projectId: projectId,
         testProjectId: testProjectId,
         devRepoId: devRepoId,
-        userAlias: userAlias
+        userAlias: userAlias,
+        remoteType: common.ProjectRemoteTypeEnum.Managed,
+        gitUrl: undefined,
+        privateKey: undefined,
+        publicKey: undefined
       }
     };
 

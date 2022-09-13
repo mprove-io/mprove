@@ -5,6 +5,7 @@ import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { git } from '~disk/barrels/git';
 import { interfaces } from '~disk/barrels/interfaces';
+import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 
 @Injectable()
 export class CreateFileService {
@@ -29,8 +30,19 @@ export class CreateFileService {
       fileName,
       parentNodeId,
       userAlias,
-      fileText
+      fileText,
+      remoteType,
+      gitUrl,
+      privateKey,
+      publicKey
     } = requestValid.payload;
+
+    let fetchOptions = makeFetchOptions({
+      remoteType: remoteType,
+      gitUrl: gitUrl,
+      privateKey: privateKey,
+      publicKey: publicKey
+    });
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -82,7 +94,8 @@ export class CreateFileService {
       projectDir: projectDir,
       repoId: repoId,
       repoDir: repoDir,
-      branchName: branch
+      branchName: branch,
+      fetchOptions: fetchOptions
     });
 
     await disk.ensureDir(parentPath);
@@ -110,12 +123,13 @@ export class CreateFileService {
         commitMessage: `created ${relativeFilePath}`
       });
 
-      await git.pushToCentral({
+      await git.pushToRemote({
         projectId: projectId,
         projectDir: projectDir,
         repoId: repoId,
         repoDir: repoDir,
-        branch: branch
+        branch: branch,
+        fetchOptions: fetchOptions
       });
     }
 
@@ -124,7 +138,8 @@ export class CreateFileService {
         projectId: projectId,
         projectDir: projectDir,
         repoId: repoId,
-        repoDir: repoDir
+        repoDir: repoDir,
+        fetchOptions: fetchOptions
       })
     );
 

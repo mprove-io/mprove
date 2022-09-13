@@ -120,7 +120,11 @@ export class CreateTempDashboardController {
         orgId: project.org_id,
         projectId: projectId,
         repoId: repoId,
-        branch: branchId
+        branch: branchId,
+        remoteType: project.remote_type,
+        gitUrl: project.git_url,
+        privateKey: project.private_key,
+        publicKey: project.public_key
       }
     };
 

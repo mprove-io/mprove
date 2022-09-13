@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as nodegit from 'nodegit';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { git } from '~disk/barrels/git';
 import { interfaces } from '~disk/barrels/interfaces';
+import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 
 @Injectable()
 export class CreateDevRepoService {
@@ -21,7 +23,15 @@ export class CreateDevRepoService {
       errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
-    let { orgId, projectId, devRepoId } = requestValid.payload;
+    let {
+      orgId,
+      projectId,
+      devRepoId,
+      remoteType,
+      gitUrl,
+      privateKey,
+      publicKey
+    } = requestValid.payload;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -43,13 +53,25 @@ export class CreateDevRepoService {
       });
     }
 
+    let cloneOptions: nodegit.CloneOptions = {
+      fetchOpts: makeFetchOptions({
+        remoteType: remoteType,
+        gitUrl: gitUrl,
+        privateKey: privateKey,
+        publicKey: publicKey
+      })
+    };
+
     let isDevRepoExist = await disk.isPathExist(devRepoDir);
     if (isDevRepoExist === false) {
-      await git.cloneCentralToDev({
+      await git.cloneRemoteToDev({
         orgId: orgId,
         projectId: projectId,
         devRepoId: devRepoId,
-        orgPath: orgPath
+        orgPath: orgPath,
+        remoteType: remoteType,
+        gitUrl: gitUrl,
+        cloneOptions: cloneOptions
       });
     }
 
@@ -60,7 +82,8 @@ export class CreateDevRepoService {
         projectId: projectId,
         projectDir: projectDir,
         repoId: devRepoId,
-        repoDir: devRepoDir
+        repoDir: devRepoDir,
+        fetchOptions: cloneOptions.fetchOpts
       })
     );
 

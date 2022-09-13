@@ -35,7 +35,8 @@ test('1', async t => {
         orgId: orgId,
         projectId: projectId,
         devRepoId: 'r1',
-        userAlias: 'u1'
+        userAlias: 'u1',
+        remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
 

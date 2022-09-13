@@ -5,6 +5,7 @@ import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { git } from '~disk/barrels/git';
 import { interfaces } from '~disk/barrels/interfaces';
+import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 
 @Injectable()
 export class MergeRepoService {
@@ -28,8 +29,19 @@ export class MergeRepoService {
       branch,
       theirBranch,
       isTheirBranchRemote,
-      userAlias
+      userAlias,
+      remoteType,
+      gitUrl,
+      privateKey,
+      publicKey
     } = requestValid.payload;
+
+    let fetchOptions = makeFetchOptions({
+      remoteType: remoteType,
+      gitUrl: gitUrl,
+      privateKey: privateKey,
+      publicKey: publicKey
+    });
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -70,7 +82,8 @@ export class MergeRepoService {
       isTheirBranchRemote === true
         ? await git.isRemoteBranchExist({
             repoDir: repoDir,
-            remoteBranch: theirBranch
+            remoteBranch: theirBranch,
+            fetchOptions: fetchOptions
           })
         : await git.isLocalBranchExist({
             repoDir: repoDir,
@@ -87,7 +100,8 @@ export class MergeRepoService {
       projectDir: projectDir,
       repoId: repoId,
       repoDir: repoDir,
-      branchName: branch
+      branchName: branch,
+      fetchOptions: fetchOptions
     });
 
     //
@@ -101,7 +115,8 @@ export class MergeRepoService {
       branch: branch,
       theirBranch:
         isTheirBranchRemote === true ? `origin/${theirBranch}` : theirBranch,
-      isTheirBranchRemote: isTheirBranchRemote
+      isTheirBranchRemote: isTheirBranchRemote,
+      fetchOptions: fetchOptions
     });
 
     let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
@@ -109,7 +124,8 @@ export class MergeRepoService {
         projectId: projectId,
         projectDir: projectDir,
         repoId: repoId,
-        repoDir: repoDir
+        repoDir: repoDir,
+        fetchOptions: fetchOptions
       })
     );
 

@@ -156,7 +156,11 @@ export class SeedRecordsController {
           let newProject = maker.makeProject({
             orgId: x.orgId,
             projectId: x.projectId,
-            name: x.name
+            name: x.name,
+            remoteType: common.ProjectRemoteTypeEnum.Managed,
+            gitUrl: undefined,
+            privateKey: undefined,
+            publicKey: undefined
           });
 
           let toDiskSeedProjectRequest: apiToDisk.ToDiskSeedProjectRequest = {
@@ -169,7 +173,11 @@ export class SeedRecordsController {
               projectId: newProject.project_id,
               testProjectId: x.testProjectId,
               devRepoId: users[0].user_id,
-              userAlias: users[0].alias
+              userAlias: users[0].alias,
+              remoteType: newProject.remote_type,
+              gitUrl: newProject.git_url,
+              privateKey: newProject.private_key,
+              publicKey: newProject.public_key
             }
           };
 

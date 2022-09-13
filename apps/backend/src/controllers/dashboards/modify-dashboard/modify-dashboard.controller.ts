@@ -240,7 +240,11 @@ export class ModifyDashboardController {
         branch: branchId,
         fileNodeId: toDashboardEntity.file_path,
         userAlias: user.alias,
-        content: dashboardFileText
+        content: dashboardFileText,
+        remoteType: project.remote_type,
+        gitUrl: project.git_url,
+        privateKey: project.private_key,
+        publicKey: project.public_key
       }
     };
 

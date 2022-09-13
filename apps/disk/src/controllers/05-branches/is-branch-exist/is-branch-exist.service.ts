@@ -5,6 +5,7 @@ import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { git } from '~disk/barrels/git';
 import { interfaces } from '~disk/barrels/interfaces';
+import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 
 @Injectable()
 export class IsBranchExistService {
@@ -21,7 +22,24 @@ export class IsBranchExistService {
       errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
-    let { orgId, projectId, repoId, branch, isRemote } = requestValid.payload;
+    let {
+      orgId,
+      projectId,
+      repoId,
+      branch,
+      isRemote,
+      remoteType,
+      gitUrl,
+      privateKey,
+      publicKey
+    } = requestValid.payload;
+
+    let fetchOptions = makeFetchOptions({
+      remoteType: remoteType,
+      gitUrl: gitUrl,
+      privateKey: privateKey,
+      publicKey: publicKey
+    });
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -54,7 +72,8 @@ export class IsBranchExistService {
       isRemote === true
         ? await git.isRemoteBranchExist({
             repoDir: repoDir,
-            remoteBranch: branch
+            remoteBranch: branch,
+            fetchOptions: fetchOptions
           })
         : await git.isLocalBranchExist({
             repoDir: repoDir,

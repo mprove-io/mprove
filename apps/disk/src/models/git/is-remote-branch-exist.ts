@@ -1,13 +1,13 @@
 import * as nodegit from 'nodegit';
-import { constantFetchOptions } from './_constant-fetch-options';
 
 export async function isRemoteBranchExist(item: {
   repoDir: string;
   remoteBranch: string;
+  fetchOptions: nodegit.FetchOptions;
 }): Promise<boolean> {
   let gitRepo = <nodegit.Repository>await nodegit.Repository.open(item.repoDir);
 
-  await gitRepo.fetch('origin', constantFetchOptions);
+  await gitRepo.fetch('origin', item.fetchOptions);
 
   let ref = await nodegit.Branch.lookup(
     gitRepo,

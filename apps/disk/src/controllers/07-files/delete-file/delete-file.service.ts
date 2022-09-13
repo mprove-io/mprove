@@ -5,6 +5,7 @@ import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { git } from '~disk/barrels/git';
 import { interfaces } from '~disk/barrels/interfaces';
+import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 
 @Injectable()
 export class DeleteFileService {
@@ -27,8 +28,19 @@ export class DeleteFileService {
       repoId,
       branch,
       fileNodeId,
-      userAlias
+      userAlias,
+      remoteType,
+      gitUrl,
+      privateKey,
+      publicKey
     } = requestValid.payload;
+
+    let fetchOptions = makeFetchOptions({
+      remoteType: remoteType,
+      gitUrl: gitUrl,
+      privateKey: privateKey,
+      publicKey: publicKey
+    });
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -75,7 +87,8 @@ export class DeleteFileService {
       projectDir: projectDir,
       repoId: repoId,
       repoDir: repoDir,
-      branchName: branch
+      branchName: branch,
+      fetchOptions: fetchOptions
     });
 
     let isFileExist = await disk.isPathExist(filePath);
@@ -98,12 +111,13 @@ export class DeleteFileService {
         commitMessage: `deleted ${relativeFilePath}`
       });
 
-      await git.pushToCentral({
+      await git.pushToRemote({
         projectId: projectId,
         projectDir: projectDir,
         repoId: repoId,
         repoDir: repoDir,
-        branch: branch
+        branch: branch,
+        fetchOptions: fetchOptions
       });
     }
 
@@ -112,7 +126,8 @@ export class DeleteFileService {
         projectId: projectId,
         projectDir: projectDir,
         repoId: repoId,
-        repoDir: repoDir
+        repoDir: repoDir,
+        fetchOptions: fetchOptions
       })
     );
 

@@ -5,6 +5,7 @@ import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { git } from '~disk/barrels/git';
 import { interfaces } from '~disk/barrels/interfaces';
+import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 
 @Injectable()
 export class GetFileService {
@@ -21,7 +22,24 @@ export class GetFileService {
       errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
-    let { orgId, projectId, repoId, branch, fileNodeId } = requestValid.payload;
+    let {
+      orgId,
+      projectId,
+      repoId,
+      branch,
+      fileNodeId,
+      remoteType,
+      gitUrl,
+      privateKey,
+      publicKey
+    } = requestValid.payload;
+
+    let fetchOptions = makeFetchOptions({
+      remoteType: remoteType,
+      gitUrl: gitUrl,
+      privateKey: privateKey,
+      publicKey: publicKey
+    });
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -65,7 +83,8 @@ export class GetFileService {
       projectDir: projectDir,
       repoId: repoId,
       repoDir: repoDir,
-      branchName: branch
+      branchName: branch,
+      fetchOptions: fetchOptions
     });
 
     let isFileExist = await disk.isPathExist(filePath);
@@ -84,7 +103,8 @@ export class GetFileService {
         projectId: projectId,
         projectDir: projectDir,
         repoId: repoId,
-        repoDir: repoDir
+        repoDir: repoDir,
+        fetchOptions: fetchOptions
       })
     );
 

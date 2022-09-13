@@ -51,7 +51,11 @@ export class GetFileController {
         projectId: projectId,
         repoId: repoId,
         branch: branchId,
-        fileNodeId: fileNodeId
+        fileNodeId: fileNodeId,
+        remoteType: project.remote_type,
+        gitUrl: project.git_url,
+        privateKey: project.private_key,
+        publicKey: project.public_key
       }
     };
 

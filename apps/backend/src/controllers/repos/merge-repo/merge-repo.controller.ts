@@ -75,7 +75,11 @@ export class MergeRepoController {
         branch: branchId,
         theirBranch: theirBranchId,
         isTheirBranchRemote: isTheirBranchRemote,
-        userAlias: user.alias
+        userAlias: user.alias,
+        remoteType: project.remote_type,
+        gitUrl: project.git_url,
+        privateKey: project.private_key,
+        publicKey: project.public_key
       }
     };
 

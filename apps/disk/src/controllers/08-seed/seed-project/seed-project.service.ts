@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as nodegit from 'nodegit';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { git } from '~disk/barrels/git';
 import { interfaces } from '~disk/barrels/interfaces';
+import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 
 @Injectable()
 export class SeedProjectService {
@@ -26,8 +28,19 @@ export class SeedProjectService {
       projectId,
       devRepoId,
       userAlias,
-      testProjectId
+      testProjectId,
+      remoteType,
+      gitUrl,
+      privateKey,
+      publicKey
     } = requestValid.payload;
+
+    let fetchOptions = makeFetchOptions({
+      remoteType: remoteType,
+      gitUrl: gitUrl,
+      privateKey: privateKey,
+      publicKey: publicKey
+    });
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -40,18 +53,28 @@ export class SeedProjectService {
 
     //
 
-    await git.prepareCentralAndProd({
+    let cloneOptions: nodegit.CloneOptions = {
+      fetchOpts: fetchOptions
+    };
+
+    await git.prepareRemoteAndProd({
       projectId: projectId,
       projectDir: projectDir,
       testProjectId: testProjectId,
-      userAlias: userAlias
+      userAlias: userAlias,
+      remoteType: remoteType,
+      gitUrl: gitUrl,
+      cloneOptions: cloneOptions
     });
 
-    await git.cloneCentralToDev({
+    await git.cloneRemoteToDev({
       orgId: orgId,
       projectId: projectId,
       devRepoId: devRepoId,
-      orgPath: orgPath
+      orgPath: orgPath,
+      remoteType: remoteType,
+      gitUrl: gitUrl,
+      cloneOptions: cloneOptions
     });
 
     let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
@@ -66,7 +89,8 @@ export class SeedProjectService {
         projectId: projectId,
         projectDir: projectDir,
         repoId: devRepoId,
-        repoDir: devRepoDir
+        repoDir: devRepoDir,
+        fetchOptions: fetchOptions
       })
     );
 

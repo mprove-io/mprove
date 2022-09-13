@@ -5,6 +5,7 @@ import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { git } from '~disk/barrels/git';
 import { interfaces } from '~disk/barrels/interfaces';
+import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 
 @Injectable()
 export class DeleteBranchService {
@@ -21,7 +22,23 @@ export class DeleteBranchService {
       errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
-    let { orgId, projectId, repoId, branch } = requestValid.payload;
+    let {
+      orgId,
+      projectId,
+      repoId,
+      branch,
+      remoteType,
+      gitUrl,
+      privateKey,
+      publicKey
+    } = requestValid.payload;
+
+    let fetchOptions = makeFetchOptions({
+      remoteType: remoteType,
+      gitUrl: gitUrl,
+      privateKey: privateKey,
+      publicKey: publicKey
+    });
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -61,7 +78,8 @@ export class DeleteBranchService {
       projectDir: projectDir,
       repoId: repoId,
       repoDir: repoDir,
-      branchName: common.BRANCH_MASTER
+      branchName: common.BRANCH_MASTER,
+      fetchOptions: fetchOptions
     });
 
     let errorIfNoLocalBranch = true;
@@ -69,13 +87,15 @@ export class DeleteBranchService {
     if (repoId === common.PROD_REPO_ID) {
       let isRemoteBranchExist = await git.isRemoteBranchExist({
         repoDir: repoDir,
-        remoteBranch: branch
+        remoteBranch: branch,
+        fetchOptions: fetchOptions
       });
 
       if (isRemoteBranchExist === true) {
         await git.deleteRemoteBranch({
           projectDir: projectDir,
-          branch: branch
+          branch: branch,
+          fetchOptions: fetchOptions
         });
         errorIfNoLocalBranch = false;
       }
@@ -102,7 +122,8 @@ export class DeleteBranchService {
         projectId: projectId,
         projectDir: projectDir,
         repoId: repoId,
-        repoDir: repoDir
+        repoDir: repoDir,
+        fetchOptions: fetchOptions
       })
     );
 

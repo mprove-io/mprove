@@ -3,13 +3,13 @@ import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { interfaces } from '~disk/barrels/interfaces';
 import { isRemoteBranchExist } from './is-remote-branch-exist';
-import { constantFetchOptions } from './_constant-fetch-options';
 
 export async function getRepoStatus(item: {
   projectId: string;
   repoId: string;
   projectDir: string;
   repoDir: string;
+  fetchOptions: nodegit.FetchOptions;
 }): Promise<interfaces.ItemStatus> {
   // priorities order:
   // NeedSave (frontend only)
@@ -80,11 +80,12 @@ export async function getRepoStatus(item: {
     };
   }
 
-  await gitRepo.fetch('origin', constantFetchOptions);
+  await gitRepo.fetch('origin', item.fetchOptions);
 
   let isBranchExistRemote = await isRemoteBranchExist({
     repoDir: item.repoDir,
-    remoteBranch: currentBranchName
+    remoteBranch: currentBranchName,
+    fetchOptions: item.fetchOptions
   });
   // RETURN NeedPush
   if (isBranchExistRemote === false) {

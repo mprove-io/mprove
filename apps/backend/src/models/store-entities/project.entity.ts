@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 
 @Entity('projects')
@@ -11,6 +12,18 @@ export class ProjectEntity {
 
   @Column({ type: constants.VARCHAR })
   name: string; // name is unique across org projects
+
+  @Column({ type: constants.VARCHAR })
+  remote_type: common.ProjectRemoteTypeEnum;
+
+  @Column({ type: constants.VARCHAR, nullable: true })
+  git_url: string;
+
+  @Column({ type: constants.TEXT, nullable: true })
+  public_key: string;
+
+  @Column({ type: constants.TEXT, nullable: true })
+  private_key: string;
 
   // @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
   // has_credentials: enums.bEnum;

@@ -34,7 +34,8 @@ test('1', async t => {
         orgId: orgId,
         projectId: projectId,
         devRepoId: 'r1',
-        userAlias: 'u1'
+        userAlias: 'u1',
+        remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
 
@@ -46,7 +47,8 @@ test('1', async t => {
       payload: {
         orgId: orgId,
         projectId: projectId,
-        devRepoId: 'r2'
+        devRepoId: 'r2',
+        remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
 
@@ -62,7 +64,8 @@ test('1', async t => {
         branch: 'master',
         fileNodeId: `${projectId}/readme.md`,
         content: '1',
-        userAlias: 'u1'
+        userAlias: 'u1',
+        remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
 
@@ -77,7 +80,8 @@ test('1', async t => {
         repoId: 'r1',
         branch: 'master',
         userAlias: 'u1',
-        commitMessage: 'r1-commitMessage'
+        commitMessage: 'r1-commitMessage',
+        remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
 
@@ -91,7 +95,8 @@ test('1', async t => {
         projectId: projectId,
         repoId: 'r1',
         branch: 'master',
-        userAlias: 'u1'
+        userAlias: 'u1',
+        remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
 
@@ -107,7 +112,8 @@ test('1', async t => {
         branch: 'master',
         fileName: 's.view',
         parentNodeId: `${projectId}/`,
-        userAlias: 'u2'
+        userAlias: 'u2',
+        remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
 
@@ -122,7 +128,8 @@ test('1', async t => {
         repoId: 'r2',
         branch: 'master',
         userAlias: 'u2',
-        commitMessage: 'r2-commitMessage'
+        commitMessage: 'r2-commitMessage',
+        remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
 

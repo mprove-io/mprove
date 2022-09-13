@@ -440,7 +440,8 @@ export class AppModule implements OnModuleInit {
               user: firstUser,
               traceId: common.makeId(),
               projectId: firstProjectId,
-              testProjectId: 'first-project'
+              testProjectId: 'first-project',
+              remoteType: common.ProjectRemoteTypeEnum.Managed
             });
           }
         }

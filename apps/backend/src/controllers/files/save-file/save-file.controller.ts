@@ -64,7 +64,11 @@ export class SaveFileController {
         branch: branchId,
         fileNodeId: fileNodeId,
         userAlias: user.alias,
-        content: content
+        content: content,
+        remoteType: project.remote_type,
+        gitUrl: project.git_url,
+        privateKey: project.private_key,
+        publicKey: project.public_key
       }
     };
 

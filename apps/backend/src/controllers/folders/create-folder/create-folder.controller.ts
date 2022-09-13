@@ -57,7 +57,11 @@ export class CreateFolderController {
         repoId: repoId,
         branch: branchId,
         parentNodeId: parentNodeId,
-        folderName: folderName.toLowerCase()
+        folderName: folderName.toLowerCase(),
+        remoteType: project.remote_type,
+        gitUrl: project.git_url,
+        privateKey: project.private_key,
+        publicKey: project.public_key
       }
     };
 

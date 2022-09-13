@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsString, ValidateNested } from 'class-validator';
+import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-disk/barrels/common';
 import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
@@ -15,6 +15,21 @@ export class ToDiskDeleteBranchRequestPayload {
 
   @IsString()
   branch: string;
+
+  @IsEnum(common.ProjectRemoteTypeEnum)
+  remoteType: common.ProjectRemoteTypeEnum;
+
+  @IsString()
+  @IsOptional()
+  gitUrl?: string;
+
+  @IsString()
+  @IsOptional()
+  privateKey?: string;
+
+  @IsString()
+  @IsOptional()
+  publicKey?: string;
 }
 
 export class ToDiskDeleteBranchRequest extends ToDiskRequest {

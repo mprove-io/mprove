@@ -63,7 +63,11 @@ export class RenameCatalogNodeController {
         repoId: repoId,
         branch: branchId,
         nodeId: nodeId,
-        newName: newName.toLowerCase()
+        newName: newName.toLowerCase(),
+        remoteType: project.remote_type,
+        gitUrl: project.git_url,
+        privateKey: project.private_key,
+        publicKey: project.public_key
       }
     };
 

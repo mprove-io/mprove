@@ -1,10 +1,10 @@
 import * as nodegit from 'nodegit';
 import { common } from '~disk/barrels/common';
-import { constantFetchOptions } from './_constant-fetch-options';
 
 export async function deleteRemoteBranch(item: {
   projectDir: string;
   branch: string;
+  fetchOptions: nodegit.FetchOptions;
 }) {
   let repoDir = `${item.projectDir}/${common.PROD_REPO_ID}`;
 
@@ -12,5 +12,5 @@ export async function deleteRemoteBranch(item: {
 
   let originRemote = <nodegit.Remote>await gitRepo.getRemote('origin');
 
-  await originRemote.push([`:refs/heads/${item.branch}`], constantFetchOptions);
+  await originRemote.push([`:refs/heads/${item.branch}`], item.fetchOptions);
 }

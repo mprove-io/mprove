@@ -5,6 +5,7 @@ import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { git } from '~disk/barrels/git';
 import { interfaces } from '~disk/barrels/interfaces';
+import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 
 @Injectable()
 export class CommitRepoService {
@@ -27,8 +28,19 @@ export class CommitRepoService {
       repoId,
       branch,
       userAlias,
-      commitMessage
+      commitMessage,
+      remoteType,
+      gitUrl,
+      privateKey,
+      publicKey
     } = requestValid.payload;
+
+    let fetchOptions = makeFetchOptions({
+      remoteType: remoteType,
+      gitUrl: gitUrl,
+      privateKey: privateKey,
+      publicKey: publicKey
+    });
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -70,7 +82,8 @@ export class CommitRepoService {
       projectDir: projectDir,
       repoId: repoId,
       repoDir: repoDir,
-      branchName: branch
+      branchName: branch,
+      fetchOptions: fetchOptions
     });
 
     //
@@ -86,7 +99,8 @@ export class CommitRepoService {
         projectId: projectId,
         projectDir: projectDir,
         repoId: repoId,
-        repoDir: repoDir
+        repoDir: repoDir,
+        fetchOptions: fetchOptions
       })
     );
 

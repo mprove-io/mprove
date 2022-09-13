@@ -7,12 +7,16 @@ import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
+import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 
 @UseGuards(TestRoutesGuard)
 @Controller()
 export class SpecialRebuildStructController {
-  constructor(private rabbitService: RabbitService) {}
+  constructor(
+    private rabbitService: RabbitService,
+    private projectsService: ProjectsService
+  ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSpecialRebuildStruct)
   async specialRebuildStruct(
@@ -35,6 +39,10 @@ export class SpecialRebuildStructController {
       connections
     } = reqValid.payload;
 
+    let project = await this.projectsService.getProjectCheckExists({
+      projectId: projectId
+    });
+
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 
     // to disk
@@ -48,7 +56,11 @@ export class SpecialRebuildStructController {
         orgId: orgId,
         projectId: projectId,
         repoId: repoId,
-        branch: branch
+        branch: branch,
+        remoteType: project.remote_type,
+        gitUrl: project.git_url,
+        privateKey: project.private_key,
+        publicKey: project.public_key
       }
     };
 

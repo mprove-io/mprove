@@ -62,7 +62,11 @@ export class DeleteFolderController {
         projectId: projectId,
         repoId: repoId,
         branch: branchId,
-        folderNodeId: folderNodeId
+        folderNodeId: folderNodeId,
+        remoteType: project.remote_type,
+        gitUrl: project.git_url,
+        privateKey: project.private_key,
+        publicKey: project.public_key
       }
     };
 

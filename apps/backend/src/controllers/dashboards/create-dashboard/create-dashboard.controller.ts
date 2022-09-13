@@ -188,7 +188,11 @@ export class CreateDashboardController {
         parentNodeId: parentNodeId,
         fileName: fileName,
         userAlias: user.alias,
-        fileText: dashboardFileText
+        fileText: dashboardFileText,
+        remoteType: project.remote_type,
+        gitUrl: project.git_url,
+        privateKey: project.private_key,
+        publicKey: project.public_key
       }
     };
 

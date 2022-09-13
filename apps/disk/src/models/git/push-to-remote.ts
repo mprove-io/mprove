@@ -2,21 +2,22 @@ import * as nodegit from 'nodegit';
 import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
 import { getRepoStatus } from './get-repo-status';
-import { constantFetchOptions } from './_constant-fetch-options';
 
-export async function pushToCentral(item: {
+export async function pushToRemote(item: {
   projectId: string;
   projectDir: string;
   repoId: string;
   repoDir: string;
   branch: string;
+  fetchOptions: nodegit.FetchOptions;
 }) {
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
     await getRepoStatus({
       projectId: item.projectId,
       projectDir: item.projectDir,
       repoId: item.repoId,
-      repoDir: item.repoDir
+      repoDir: item.repoDir,
+      fetchOptions: item.fetchOptions
     })
   );
 
@@ -34,6 +35,6 @@ export async function pushToCentral(item: {
 
   await originRemote.push(
     [`refs/heads/${item.branch}:refs/heads/${item.branch}`],
-    constantFetchOptions
+    item.fetchOptions
   );
 }

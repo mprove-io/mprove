@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as nodegit from 'nodegit';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { git } from '~disk/barrels/git';
 import { interfaces } from '~disk/barrels/interfaces';
+import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 
 @Injectable()
 export class CreateProjectService {
@@ -26,7 +28,11 @@ export class CreateProjectService {
       projectId,
       testProjectId,
       devRepoId,
-      userAlias
+      userAlias,
+      remoteType,
+      gitUrl,
+      privateKey,
+      publicKey
     } = requestValid.payload;
 
     let orgDir = `${orgPath}/${orgId}`;
@@ -52,18 +58,33 @@ export class CreateProjectService {
 
     await disk.ensureDir(projectDir);
 
-    await git.prepareCentralAndProd({
+    let cloneOptions: nodegit.CloneOptions = {
+      fetchOpts: makeFetchOptions({
+        remoteType: remoteType,
+        gitUrl: gitUrl,
+        privateKey: privateKey,
+        publicKey: publicKey
+      })
+    };
+
+    await git.prepareRemoteAndProd({
       projectId: projectId,
       projectDir: projectDir,
       testProjectId: testProjectId,
-      userAlias: userAlias
+      userAlias: userAlias,
+      remoteType: remoteType,
+      cloneOptions: cloneOptions,
+      gitUrl: gitUrl
     });
 
-    await git.cloneCentralToDev({
+    await git.cloneRemoteToDev({
       orgId: orgId,
       projectId: projectId,
       devRepoId: devRepoId,
-      orgPath: orgPath
+      orgPath: orgPath,
+      remoteType: remoteType,
+      gitUrl: gitUrl,
+      cloneOptions: cloneOptions
     });
 
     let prodItemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({

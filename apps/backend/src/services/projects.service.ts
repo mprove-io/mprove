@@ -41,13 +41,32 @@ export class ProjectsService {
     traceId: string;
     testProjectId: string;
     projectId?: string;
+    remoteType: common.ProjectRemoteTypeEnum;
+    gitUrl?: string;
+    privateKey?: string;
+    publicKey?: string;
   }) {
-    let { orgId, name, user, traceId, projectId, testProjectId } = item;
+    let {
+      orgId,
+      name,
+      user,
+      traceId,
+      projectId,
+      testProjectId,
+      remoteType,
+      gitUrl,
+      privateKey,
+      publicKey
+    } = item;
 
     let newProject = maker.makeProject({
       orgId: orgId,
       name: name,
-      projectId: projectId
+      projectId: projectId,
+      remoteType: remoteType,
+      gitUrl: gitUrl,
+      publicKey: publicKey,
+      privateKey: privateKey
     });
 
     let newMember = maker.makeMember({
@@ -68,7 +87,11 @@ export class ProjectsService {
         projectId: newProject.project_id,
         devRepoId: user.user_id,
         userAlias: user.alias,
-        testProjectId: testProjectId
+        testProjectId: testProjectId,
+        remoteType: remoteType,
+        gitUrl: gitUrl,
+        privateKey: privateKey,
+        publicKey: publicKey
       }
     };
 

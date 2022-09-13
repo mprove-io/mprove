@@ -108,7 +108,11 @@ export class SpecialRebuildStructsController {
           orgId: project.org_id,
           projectId: project.project_id,
           repoId: branch.repo_id,
-          branch: branch.branch_id
+          branch: branch.branch_id,
+          remoteType: project.remote_type,
+          gitUrl: project.git_url,
+          privateKey: project.private_key,
+          publicKey: project.public_key
         }
       };
 

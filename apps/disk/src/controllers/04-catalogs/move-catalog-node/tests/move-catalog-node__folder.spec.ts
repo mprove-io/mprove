@@ -34,7 +34,8 @@ test('1', async t => {
         orgId: orgId,
         projectId: projectId,
         devRepoId: 'r1',
-        userAlias: 'u1'
+        userAlias: 'u1',
+        remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
 
@@ -49,7 +50,8 @@ test('1', async t => {
         repoId: 'r1',
         branch: 'master',
         parentNodeId: `${projectId}/`,
-        folderName: 'fo1'
+        folderName: 'fo1',
+        remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
 
@@ -64,7 +66,8 @@ test('1', async t => {
         repoId: 'r1',
         branch: 'master',
         parentNodeId: `${projectId}/`,
-        folderName: 'fo2'
+        folderName: 'fo2',
+        remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
 
@@ -79,7 +82,8 @@ test('1', async t => {
         repoId: 'r1',
         branch: 'master',
         fromNodeId: 'p1/fo2',
-        toNodeId: 'p1/fo1/fo2'
+        toNodeId: 'p1/fo1/fo2',
+        remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
 

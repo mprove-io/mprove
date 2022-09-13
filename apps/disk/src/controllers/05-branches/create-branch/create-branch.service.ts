@@ -5,6 +5,7 @@ import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { git } from '~disk/barrels/git';
 import { interfaces } from '~disk/barrels/interfaces';
+import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 
 @Injectable()
 export class CreateBranchService {
@@ -28,8 +29,19 @@ export class CreateBranchService {
       repoId,
       newBranch,
       fromBranch,
-      isFromRemote
+      isFromRemote,
+      remoteType,
+      gitUrl,
+      privateKey,
+      publicKey
     } = requestValid.payload;
+
+    let fetchOptions = makeFetchOptions({
+      remoteType: remoteType,
+      gitUrl: gitUrl,
+      privateKey: privateKey,
+      publicKey: publicKey
+    });
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -72,7 +84,8 @@ export class CreateBranchService {
       isFromRemote === true
         ? await git.isRemoteBranchExist({
             repoDir: repoDir,
-            remoteBranch: fromBranch
+            remoteBranch: fromBranch,
+            fetchOptions: fetchOptions
           })
         : await git.isLocalBranchExist({
             repoDir: repoDir,
@@ -89,7 +102,8 @@ export class CreateBranchService {
     await git.createBranch({
       repoDir: repoDir,
       fromBranch: isFromRemote === true ? `origin/${fromBranch}` : fromBranch,
-      newBranch: newBranch
+      newBranch: newBranch,
+      fetchOptions: fetchOptions
     });
 
     let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
@@ -97,7 +111,8 @@ export class CreateBranchService {
         projectId: projectId,
         projectDir: projectDir,
         repoId: repoId,
-        repoDir: repoDir
+        repoDir: repoDir,
+        fetchOptions: fetchOptions
       })
     );
 

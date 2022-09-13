@@ -5,6 +5,7 @@ import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { NoteEntity } from '~backend/models/store-entities/_index';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { DbService } from '~backend/services/db.service';
 import { OrgsService } from '~backend/services/orgs.service';
@@ -19,6 +20,7 @@ export class CreateProjectController {
     private projectsService: ProjectsService,
     private orgsService: OrgsService,
     private projectsRepository: repositories.ProjectsRepository,
+    private notesRepository: repositories.NotesRepository,
     private blockmlService: BlockmlService
   ) {}
 
@@ -29,7 +31,7 @@ export class CreateProjectController {
     reqValid: apiToBackend.ToBackendCreateProjectRequest
   ) {
     let { traceId } = reqValid.info;
-    let { name, orgId } = reqValid.payload;
+    let { name, orgId, remoteType, noteId, gitUrl } = reqValid.payload;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 
@@ -49,12 +51,30 @@ export class CreateProjectController {
       });
     }
 
+    let note: NoteEntity;
+
+    if (remoteType === common.ProjectRemoteTypeEnum.GitClone) {
+      await this.notesRepository.findOne({
+        note_id: noteId
+      });
+
+      if (common.isUndefined(note)) {
+        throw new common.ServerError({
+          message: common.ErEnum.BACKEND_NOTE_DOES_NOT_EXIST
+        });
+      }
+    }
+
     let newProject = await this.projectsService.addProject({
       orgId: orgId,
       name: name,
       traceId: reqValid.info.traceId,
       user: user,
-      testProjectId: undefined
+      testProjectId: undefined,
+      remoteType: remoteType,
+      gitUrl: gitUrl,
+      privateKey: note?.private_key,
+      publicKey: note?.public_key
     });
 
     let payload: apiToBackend.ToBackendCreateProjectResponsePayload = {

@@ -34,7 +34,8 @@ test('1', async t => {
         orgId: orgId,
         projectId: projectId,
         devRepoId: 'r1',
-        userAlias: 'u1'
+        userAlias: 'u1',
+        remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
 
@@ -46,7 +47,8 @@ test('1', async t => {
       payload: {
         orgId: orgId,
         projectId: projectId,
-        devRepoId: 'r2'
+        devRepoId: 'r2',
+        remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
 

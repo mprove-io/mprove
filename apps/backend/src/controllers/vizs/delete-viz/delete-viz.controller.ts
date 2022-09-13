@@ -103,7 +103,11 @@ export class DeleteVizController {
         repoId: repoId,
         branch: branchId,
         fileNodeId: existingViz.file_path,
-        userAlias: user.alias
+        userAlias: user.alias,
+        remoteType: project.remote_type,
+        gitUrl: project.git_url,
+        privateKey: project.private_key,
+        publicKey: project.public_key
       }
     };
 

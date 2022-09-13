@@ -69,7 +69,11 @@ export class CreateBranchController {
         repoId: repoId,
         newBranch: newBranchId,
         fromBranch: fromBranchId,
-        isFromRemote: isFromRemote
+        isFromRemote: isFromRemote,
+        remoteType: project.remote_type,
+        gitUrl: project.git_url,
+        privateKey: project.private_key,
+        publicKey: project.public_key
       }
     };
 

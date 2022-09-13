@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { common } from '~api-to-disk/barrels/common';
 import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
@@ -24,6 +30,21 @@ export class ToDiskMergeRepoRequestPayload {
 
   @IsString()
   userAlias: string;
+
+  @IsEnum(common.ProjectRemoteTypeEnum)
+  remoteType: common.ProjectRemoteTypeEnum;
+
+  @IsString()
+  @IsOptional()
+  gitUrl?: string;
+
+  @IsString()
+  @IsOptional()
+  privateKey?: string;
+
+  @IsString()
+  @IsOptional()
+  publicKey?: string;
 }
 
 export class ToDiskMergeRepoRequest extends ToDiskRequest {
