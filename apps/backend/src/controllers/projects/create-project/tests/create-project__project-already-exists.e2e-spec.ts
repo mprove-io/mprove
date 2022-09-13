@@ -64,7 +64,8 @@ test('1', async t => {
       },
       payload: {
         orgId: orgId,
-        name: projectName
+        name: projectName,
+        remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
 
