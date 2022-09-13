@@ -98,7 +98,7 @@ export class CreateProjectDialogComponent implements OnInit {
       orgId: this.ref.data.orgId,
       name: this.createProjectForm.value.projectName,
       remoteType: this.projectRemoteRepoType,
-      gitUrl: this.createProjectForm.value.gitUrl,
+      gitUrl: this.createProjectForm.value.projectGitUrl,
       noteId: this.noteId
     };
 

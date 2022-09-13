@@ -1,5 +1,6 @@
 import { Controller, Post } from '@nestjs/common';
 import * as crypto from 'crypto';
+import { parseKey, parsePrivateKey } from 'sshpk';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { entities } from '~backend/barrels/entities';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
@@ -30,6 +31,8 @@ export class GenerateProjectRemoteKeyController {
       userId: user.user_id
     });
 
+    let passphrase = '';
+
     let { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
       modulusLength: 4096,
       publicKeyEncoding: {
@@ -40,13 +43,21 @@ export class GenerateProjectRemoteKeyController {
         type: 'pkcs8',
         format: 'pem',
         cipher: 'aes-256-cbc',
-        passphrase: ''
+        passphrase: passphrase
       }
     });
 
+    let sshPublicKey = parseKey(publicKey, 'pem', {
+      passphrase: passphrase
+    }).toString('ssh');
+
+    let sshPrivateKey = parsePrivateKey(privateKey, 'pem', {
+      passphrase: passphrase
+    }).toString('ssh');
+
     let note: NoteEntity = makeNote({
-      privateKey: privateKey,
-      publicKey: publicKey
+      publicKey: sshPublicKey,
+      privateKey: sshPrivateKey
     });
 
     await this.dbService.writeRecords({

@@ -102,7 +102,12 @@
       >
 
       <div class="relative mt-5 h-[300px] w-full">
-        <div *ngIf="publicKey" class="text-green-700">{{ publicKey }}</div>
+        <div
+          *ngIf="publicKey"
+          class="text-base text-green-700"
+          style="word-break: break-all"
+          >{{ publicKey }}</div
+        >
         <ngx-spinner
           [ngClass]="{
             invisible: !!publicKey

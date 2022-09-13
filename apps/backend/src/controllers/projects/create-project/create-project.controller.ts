@@ -54,7 +54,7 @@ export class CreateProjectController {
     let note: NoteEntity;
 
     if (remoteType === common.ProjectRemoteTypeEnum.GitClone) {
-      await this.notesRepository.findOne({
+      note = await this.notesRepository.findOne({
         note_id: noteId
       });
 
