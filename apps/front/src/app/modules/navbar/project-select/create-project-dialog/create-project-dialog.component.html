@@ -68,7 +68,7 @@
       </div>
 
       <div class="ml-5 select-none text-base"
-        >git Clone (GitHub, GitLab, BitBucket, etc)</div
+        >git Clone (GitHub, GitLab, BitBucket, etc) - recommended</div
       >
     </div>
 
@@ -86,19 +86,18 @@
             createProjectForm.controls['projectGitUrl'].touched
         }"
         formControlName="projectGitUrl"
-        placeholder="git@ or SSH git URL"
+        placeholder="git@ or SSH git URL (git@github.com:ACCOUNT/REPOSITORY.git)"
       />
       <m-validation
         [control]="createProjectForm.controls['projectGitUrl']"
       ></m-validation>
 
       <div class="mt-5 select-none text-left text-lg text-gray2"
-        >Add this <span class="font-semibold">Deploy Key</span> with
-        <span class="font-semibold">Write Access</span> to your git
-        provider</div
-      >
+        >Add this <span class="font-semibold">Deploy Key</span> to your git
+        provider and enable <span class="font-semibold">Write Access</span>
+      </div>
       <div class="text-left text-lg text-gray2"
-        >(for github.com use Repo Settings Page)</div
+        >(for github.com use Github Repository Settings Page)</div
       >
 
       <div class="relative mt-5 h-[300px] w-full">
@@ -140,11 +139,19 @@
           <m-check-icon *ngIf="isDeployKeyAdded === true"></m-check-icon>
         </div>
 
-        <div class="ml-5 select-none text-base">Deploy Key is added</div>
+        <div class="ml-5 select-none flex-col text-base">
+          <div
+            >Remote Repo default branch is "master". It has at least 1
+            commit.</div
+          >
+          <div
+            >Deploy key is added. Write access for deploy key is enabled.</div
+          >
+        </div>
       </div>
     </div>
 
-    <div class="mt-6">
+    <div class="mt-8">
       <button
         data-cy="createProjectDialogCreateButton"
         class="w-28 select-none rounded bg-blue3 py-3 font-medium text-white focus:outline-none"

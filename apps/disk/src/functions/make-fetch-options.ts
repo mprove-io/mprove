@@ -1,24 +1,35 @@
+import * as fse from 'fs-extra';
 import * as nodegit from 'nodegit';
 import { common } from '~disk/barrels/common';
 
 export function makeFetchOptions(item: {
   remoteType: common.ProjectRemoteTypeEnum;
+  keyDir: string;
   gitUrl?: string;
   publicKey?: string;
   privateKey?: string;
 }) {
+  let pubKeyPath = `${item.keyDir}/id_rsa.pub`;
+  let privateKeyPath = `${item.keyDir}/id_rsa`;
+
+  if (item.remoteType === common.ProjectRemoteTypeEnum.GitClone) {
+    fse.writeFileSync(pubKeyPath, item.publicKey);
+    fse.writeFileSync(privateKeyPath, item.privateKey);
+  }
+
   let fetchOptions: nodegit.FetchOptions =
     item.remoteType === common.ProjectRemoteTypeEnum.GitClone
       ? {
           callbacks: {
             certificateCheck: () => 0,
-            credentials: (url: any, userName: any) =>
-              nodegit.Cred.sshKeyMemoryNew(
-                userName,
-                item.publicKey,
-                item.privateKey,
-                '' // passphrase
-              )
+            credentials: function (url: any, userName: any) {
+              return nodegit.Cred.sshKeyNew(
+                'git',
+                pubKeyPath,
+                privateKeyPath,
+                common.PASS_PHRASE
+              );
+            }
           },
           prune: 1
         }

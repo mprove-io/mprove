@@ -33,19 +33,21 @@ export async function prepareRemoteAndProd(item: {
 
   await nodegit.Clone.clone(remoteUrl, prodDir, item.cloneOptions);
 
-  await createInitialCommitToProd({
-    prodDir: prodDir,
-    testProjectId: item.testProjectId,
-    projectId: item.projectId,
-    userAlias: item.userAlias
-  });
+  if (item.remoteType === common.ProjectRemoteTypeEnum.Managed) {
+    await createInitialCommitToProd({
+      prodDir: prodDir,
+      testProjectId: item.testProjectId,
+      projectId: item.projectId,
+      userAlias: item.userAlias
+    });
 
-  await pushToRemote({
-    projectId: item.projectId,
-    projectDir: item.projectDir,
-    repoId: common.PROD_REPO_ID,
-    repoDir: prodDir,
-    branch: common.BRANCH_MASTER,
-    fetchOptions: item.cloneOptions.fetchOpts
-  });
+    await pushToRemote({
+      projectId: item.projectId,
+      projectDir: item.projectDir,
+      repoId: common.PROD_REPO_ID,
+      repoDir: prodDir,
+      branch: common.BRANCH_MASTER,
+      fetchOptions: item.cloneOptions.fetchOpts
+    });
+  }
 }

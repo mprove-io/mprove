@@ -33,13 +33,6 @@ export class DeleteBranchService {
       publicKey
     } = requestValid.payload;
 
-    let fetchOptions = makeFetchOptions({
-      remoteType: remoteType,
-      gitUrl: gitUrl,
-      privateKey: privateKey,
-      publicKey: publicKey
-    });
-
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
     let repoDir = `${projectDir}/${repoId}`;
@@ -72,6 +65,18 @@ export class DeleteBranchService {
         message: common.ErEnum.DISK_BRANCH_MASTER_CAN_NOT_BE_DELETED
       });
     }
+
+    let keyDir = `${orgDir}/_keys/${projectId}`;
+
+    await disk.ensureDir(keyDir);
+
+    let fetchOptions = makeFetchOptions({
+      remoteType: remoteType,
+      keyDir: keyDir,
+      gitUrl: gitUrl,
+      privateKey: privateKey,
+      publicKey: publicKey
+    });
 
     await git.checkoutBranch({
       projectId: projectId,

@@ -53,9 +53,14 @@ export class CreateDevRepoService {
       });
     }
 
+    let keyDir = `${orgDir}/_keys/${projectId}`;
+
+    await disk.ensureDir(keyDir);
+
     let cloneOptions: nodegit.CloneOptions = {
       fetchOpts: makeFetchOptions({
         remoteType: remoteType,
+        keyDir: keyDir,
         gitUrl: gitUrl,
         privateKey: privateKey,
         publicKey: publicKey

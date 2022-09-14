@@ -12,10 +12,6 @@ export class SaveFileService {
   constructor(private cs: ConfigService<interfaces.Config>) {}
 
   async process(request: any) {
-    let orgPath = this.cs.get<interfaces.Config['diskOrganizationsPath']>(
-      'diskOrganizationsPath'
-    );
-
     let requestValid = common.transformValidSync({
       classType: apiToDisk.ToDiskSaveFileRequest,
       object: request,
@@ -36,16 +32,24 @@ export class SaveFileService {
       publicKey
     } = requestValid.payload;
 
+    let orgPath = this.cs.get<interfaces.Config['diskOrganizationsPath']>(
+      'diskOrganizationsPath'
+    );
+
+    let orgDir = `${orgPath}/${orgId}`;
+    let keyDir = `${orgDir}/_keys/${projectId}`;
+    let projectDir = `${orgDir}/${projectId}`;
+    let repoDir = `${projectDir}/${repoId}`;
+
+    await disk.ensureDir(keyDir);
+
     let fetchOptions = makeFetchOptions({
       remoteType: remoteType,
+      keyDir: keyDir,
       gitUrl: gitUrl,
       privateKey: privateKey,
       publicKey: publicKey
     });
-
-    let orgDir = `${orgPath}/${orgId}`;
-    let projectDir = `${orgDir}/${projectId}`;
-    let repoDir = `${projectDir}/${repoId}`;
 
     let relativeFilePath = fileNodeId.substring(projectId.length + 1);
     let filePath = repoDir + '/' + relativeFilePath;
