@@ -14,12 +14,16 @@ spec:
       labels:
         app: disk
       annotations:
+        # sidecar.istio.io/proxyCPU: "100m"    
         checksum/secret-disk-envs: '{{ include (print $.Template.BasePath "/secret-disk-envs.yaml") . | sha256sum }}'        
     spec:
       imagePullSecrets:
       - name: registrysecret    
       containers:
       - name: disk
+        # resources:
+        #   requests:
+        #     cpu: "100m"
         image: {{ .Values.werf.image.disk }}
         command: ['yarn']
         args: ['serve:disk']        

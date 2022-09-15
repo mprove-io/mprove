@@ -14,13 +14,17 @@ spec:
       labels:
         app: dwh-postgres
       annotations:
+        # sidecar.istio.io/proxyCPU: "100m"   
         checksum/secret-dwh-postgres-envs: '{{ include (print $.Template.BasePath "/secret-dwh-postgres-envs.yaml") . | sha256sum }}'        
     spec:
       imagePullSecrets:
       - name: registrysecret     
       containers:
       - name: dwh-postgres
-        image: ghcr.io/mprove-io/mprove-dwh-postgres:3.2.14
+        # resources:
+        #   requests:
+        #     cpu: "100m"
+        image: ghcr.io/mprove-io/mprove-dwh-postgres:3.3.1
         envFrom:
         - secretRef:
             name: dwh-postgres-envs          

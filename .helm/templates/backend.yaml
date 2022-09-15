@@ -16,12 +16,16 @@ spec:
       labels:
         app: backend
       annotations:
+        # sidecar.istio.io/proxyCPU: "100m"    
         checksum/secret-backend-envs: '{{ include (print $.Template.BasePath "/secret-backend-envs.yaml") . | sha256sum }}'        
     spec:
       imagePullSecrets:
       - name: registrysecret    
       containers:
       - name: backend
+        # resources:
+        #   requests:
+        #     cpu: "100m"
         image: {{ .Values.werf.image.backend }}
         command: ['yarn']
         args: ['serve:backend']

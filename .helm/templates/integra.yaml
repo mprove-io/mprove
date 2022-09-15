@@ -15,10 +15,15 @@ spec:
     metadata:
       labels:
         app: integra
+      # annotations:
+      #   sidecar.istio.io/proxyCPU: "100m"      
     spec:
       imagePullSecrets:
       - name: registrysecret
       containers:
       - name: integra
+        # resources:
+        #   requests:
+        #     cpu: "100m"
         image: {{ .Values.werf.image.integra }}
 

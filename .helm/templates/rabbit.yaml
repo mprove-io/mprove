@@ -16,10 +16,14 @@ spec:
       labels:
         app: rabbit
       annotations:
+        # sidecar.istio.io/proxyCPU: "100m"    
         checksum/secret-rabbit-envs: '{{ include (print $.Template.BasePath "/secret-rabbit-envs.yaml") . | sha256sum }}'        
     spec:
       containers:
       - name: rabbit
+        # resources:
+        #   requests:
+        #     cpu: "100m"
         image: rabbitmq:3.10.6-management
         envFrom:
         - secretRef:

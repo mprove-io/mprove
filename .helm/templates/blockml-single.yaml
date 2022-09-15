@@ -16,12 +16,16 @@ spec:
       labels:
         app: blockml-single
       annotations:
+        # sidecar.istio.io/proxyCPU: "100m"   
         checksum/secret-blockml-single-envs: '{{ include (print $.Template.BasePath "/secret-blockml-single-envs.yaml") . | sha256sum }}'        
     spec:
       imagePullSecrets:
       - name: registrysecret    
       containers:
       - name: blockml-single
+        # resources:
+        #   requests:
+        #     cpu: "100m"
         image: {{ .Values.werf.image.blockml }}
         command: ['yarn']
         args: ['serve:blockml']        

@@ -14,10 +14,14 @@ spec:
       labels:
         app: db
       annotations:
+        # sidecar.istio.io/proxyCPU: "100m"    
         checksum/secret-db-envs: '{{ include (print $.Template.BasePath "/secret-db-envs.yaml") . | sha256sum }}'        
     spec:
       containers:
       - name: db
+        # resources:
+        #   requests:
+        #     cpu: "100m"      
         image: mysql:8.0.29
         envFrom:
         - secretRef:

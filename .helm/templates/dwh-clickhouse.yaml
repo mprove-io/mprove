@@ -14,13 +14,17 @@ spec:
       labels:
         app: dwh-clickhouse
       annotations:
+        # sidecar.istio.io/proxyCPU: "100m"     
         checksum/secret-dwh-clickhouse-envs: '{{ include (print $.Template.BasePath "/secret-dwh-clickhouse-envs.yaml") . | sha256sum }}'        
     spec:
       imagePullSecrets:
       - name: registrysecret     
       containers:
       - name: dwh-clickhouse
-        image: ghcr.io/mprove-io/mprove-dwh-clickhouse:3.2.14
+        # resources:
+        #   requests:
+        #     cpu: "100m"
+        image: ghcr.io/mprove-io/mprove-dwh-clickhouse:3.3.1
         envFrom:
         - secretRef:
             name: dwh-clickhouse-envs          
