@@ -113,7 +113,7 @@ export class DeleteFileService {
       await git.commit({
         repoDir: repoDir,
         userAlias: userAlias,
-        commitMessage: `deleted ${relativeFilePath}`
+        commitMessage: `Deleted file ${relativeFilePath}`
       });
 
       await git.pushToRemote({

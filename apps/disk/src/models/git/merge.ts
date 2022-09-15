@@ -76,7 +76,7 @@ export async function merge(item: {
   let author = nodegit.Signature.now(item.userAlias, `${item.userAlias}@`);
   let committer = nodegit.Signature.now(item.userAlias, `${item.userAlias}@`);
 
-  let message = `merge ${item.theirBranch} to ${item.branch}`;
+  let message = `Merged branch ${item.theirBranch} to ${item.branch}`;
 
   let commitOid = <nodegit.Oid>(
     await gitRepo.createCommit('HEAD', author, committer, message, oid, [

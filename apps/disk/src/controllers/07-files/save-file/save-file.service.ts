@@ -114,7 +114,7 @@ export class SaveFileService {
       await git.commit({
         repoDir: repoDir,
         userAlias: userAlias,
-        commitMessage: `created ${relativeFilePath}`
+        commitMessage: `Modified file ${relativeFilePath}`
       });
 
       await git.pushToRemote({

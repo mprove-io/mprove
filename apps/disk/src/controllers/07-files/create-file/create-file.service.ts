@@ -125,7 +125,7 @@ export class CreateFileService {
       await git.commit({
         repoDir: repoDir,
         userAlias: userAlias,
-        commitMessage: `created ${relativeFilePath}`
+        commitMessage: `Created file ${relativeFilePath}`
       });
 
       await git.pushToRemote({
