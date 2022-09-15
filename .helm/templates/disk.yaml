@@ -21,9 +21,10 @@ spec:
       - name: registrysecret    
       containers:
       - name: disk
-        # resources:
-        #   requests:
-        #     cpu: "100m"
+        resources:
+          requests:
+            memory: "1550Mi"
+            # cpu: "100m"
         image: {{ .Values.werf.image.disk }}
         command: ['yarn']
         args: ['serve:disk']        
