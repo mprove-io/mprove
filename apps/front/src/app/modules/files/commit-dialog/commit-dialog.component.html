@@ -1,0 +1,44 @@
+<div class="flex flex-col bg-white p-9">
+  <div
+    data-cy="commitDialogTitle"
+    class="mt-5 flex-grow text-left text-2xl font-semibold text-gray2"
+    >Write a Commit Message</div
+  >
+
+  <form
+    class="flex w-full flex-col"
+    [formGroup]="commitForm"
+    (ngSubmit)="commit()"
+  >
+    <input
+      spellcheck="false"
+      data-cy="commitDialogMessageInput"
+      class="form-input mt-9 rounded border-gray3 focus:border-blue3"
+      [ngClass]="{
+        'border-red-600':
+          commitForm.controls['message'].invalid &&
+          commitForm.controls['message'].touched
+      }"
+      formControlName="message"
+      placeholder="Commit message"
+    />
+    <m-validation [control]="commitForm.controls['message']"></m-validation>
+
+    <div class="mt-6">
+      <button
+        data-cy="commitDialogCommitButton"
+        class="w-28 rounded bg-blue3 py-3 font-medium text-white focus:outline-none"
+        type="submit"
+        >Commit</button
+      >
+
+      <button
+        data-cy="commitDialogCancelButton"
+        class="ml-3 w-28 rounded border border-blue3 py-3 font-medium text-blue3 focus:outline-none"
+        type="button"
+        (click)="cancel()"
+        >Cancel</button
+      >
+    </div>
+  </form>
+</div>

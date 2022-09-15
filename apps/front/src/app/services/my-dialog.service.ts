@@ -10,6 +10,7 @@ import { DashboardAddReportDialogComponent } from '../modules/dashboard/dashboar
 import { DashboardEditListenersDialogComponent } from '../modules/dashboard/dashboard-edit-listeners-dialog/dashboard-edit-listeners-dialog.component';
 import { DashboardSaveAsDialogComponent } from '../modules/dashboard/dashboard-save-as-dialog/dashboard-save-as-dialog.component';
 import { DashboardsNewDialogComponent } from '../modules/dashboards/dashboards-new-dialog/dashboards-new-dialog.component';
+import { CommitDialogComponent } from '../modules/files/commit-dialog/commit-dialog.component';
 import { DeleteFileDialogComponent } from '../modules/files/files-tree/file-options/delete-file-dialog/delete-file-dialog.component';
 import { RenameFileDialogComponent } from '../modules/files/files-tree/file-options/rename-file-dialog/rename-file-dialog.component';
 import { CreateFileDialogComponent } from '../modules/files/files-tree/folder-options/create-file-dialog/create-file-dialog.component';
@@ -323,6 +324,19 @@ export class MyDialogService {
       enableClose: true,
       closeButton: false,
       data: item
+    });
+  }
+
+  showCommit(item: {
+    apiService: any;
+    projectId: string;
+    branchId: string;
+  }): void {
+    this.dialogService.open(CommitDialogComponent, {
+      enableClose: true,
+      closeButton: false,
+      data: item,
+      width: 800
     });
   }
 

@@ -9,6 +9,7 @@ import { RepoQuery } from '~front/app/queries/repo.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
+import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { FileState } from '~front/app/stores/file.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
@@ -79,6 +80,7 @@ export class FilesComponent implements OnInit {
     public repoQuery: RepoQuery,
     public repoStore: RepoStore,
     private apiService: ApiService,
+    private myDialogService: MyDialogService,
     public structStore: StructStore,
     public fileService: FileService,
     private title: Title
@@ -92,27 +94,11 @@ export class FilesComponent implements OnInit {
   }
 
   commit() {
-    let payload: apiToBackend.ToBackendCommitRepoRequestPayload = {
+    this.myDialogService.showCommit({
+      apiService: this.apiService,
       projectId: this.nav.projectId,
-      branchId: this.nav.branchId,
-      commitMessage: 'withoutMessage'
-    };
-
-    this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
-        payload
-      )
-      .pipe(
-        tap((resp: apiToBackend.ToBackendCommitRepoResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.repoStore.update(resp.payload.repo);
-            this.structStore.update(resp.payload.struct);
-          }
-        }),
-        take(1)
-      )
-      .subscribe();
+      branchId: this.nav.branchId
+    });
   }
 
   push() {
