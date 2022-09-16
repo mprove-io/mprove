@@ -124,6 +124,7 @@ export class FilesComponent implements OnInit {
   pull() {
     let payload: apiToBackend.ToBackendPullRepoRequestPayload = {
       projectId: this.nav.projectId,
+      isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId
     };
 

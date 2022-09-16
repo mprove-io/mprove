@@ -8,18 +8,22 @@
           >{{ pageTitle }}
         </div>
 
-        <div
-          tippy="Switch to local branch in navigation bar to enter development mode"
-          *ngIf="nav?.isRepoProd === true"
-          class="mt-5 mr-5 flex flex-row items-center text-lg font-semibold text-gray-500"
-        >
-          PRODUCTION (READ-ONLY)
-        </div>
+        <div class="flex flex-row items-center" *ngIf="!!repo">
+          <div
+            tippy="Production is the read-only version of the Remote repo. Switch to the Dev repo in the navigation bar to enter Development mode."
+            *ngIf="nav?.isRepoProd === true"
+            class="mr-5 flex h-11 flex-row items-center text-lg font-semibold text-gray-500"
+          >
+            PRODUCTION
+          </div>
 
-        <div
-          *ngIf="nav?.isRepoProd === false"
-          class="flex flex-row items-center"
-        >
+          <!-- <div
+            *ngIf="nav?.isRepoProd === false"
+            class="mr-5 flex flex-row h-11 items-center text-lg font-semibold text-gray-500"
+          >
+            DEVELOPMENT REPO
+          </div>           -->
+
           <ng-template #templateCommit>
             <div *ngIf="needSave === true">Need to Save changes</div>
 
@@ -48,6 +52,7 @@
           </ng-template>
 
           <div
+            *ngIf="nav?.isRepoProd === false"
             [tippy]="templateCommit"
             [isEnabled]="
               repo.repoStatus !== repoStatusNeedCommit || needSave === true
@@ -128,6 +133,7 @@
           </ng-template>
 
           <div
+            *ngIf="nav?.isRepoProd === false"
             [tippy]="templatePushToRemote"
             [isEnabled]="
               repo.repoStatus !== repoStatusNeedPush || needSave === true

@@ -19,8 +19,8 @@
     <div
       class="ml-1 truncate rounded py-[1px] px-[8px]"
       [ngClass]="{
-        'bg-green1': !!repo.repoId && repo.repoId !== prodRepoID,
-        'bg-blue5': !repo.repoId || repo.repoId === prodRepoID
+        'bg-green1': item.extraName.substring(0, 4) === 'dev-',
+        'bg-blue5': item.extraName.substring(0, 10) === 'production'
       }"
       >{{ item.extraName }}</div
     >
@@ -32,15 +32,15 @@
 
   <ng-template ng-footer-tmp>
     <div class="cursor-default p-3 text-gray-400" *ngIf="isEditor === false">
-      FileEditor role required to switch to local repository branches
-      (development mode)
+      FileEditor role is required to switch to Dev repo branches (Development
+      mode)
     </div>
 
     <div
       class="cursor-default p-3 text-gray-400"
       *ngIf="isEditor === true && !!repo.repoId && repo.conflicts.length > 0"
     >
-      Resolve conflicts to be able to switch, merge, delete or create local
+      Resolve conflicts to be able to switch, merge, delete or create Dev repo
       branches
     </div>
 
@@ -53,7 +53,7 @@
         repo.repoStatus === repoStatusNeedCommit
       "
     >
-      Commit changes to be able to switch, merge, delete or create local
+      Commit changes to be able to switch, merge, delete or create Dev repo
       branches
     </div>
 
@@ -87,8 +87,7 @@
             repo.repoId === prodRepoID))
       "
     >
-      Switch to local branch to be able to merge, delete or create local
-      branches
+      Switch to the Dev repo to be able to merge, delete or create branches
     </div>
 
     <button
@@ -121,7 +120,7 @@
       data-cy="branchSelectCreateBranchButton"
       class="w-full rounded py-3 text-base text-blue3 hover:bg-blue2 focus:outline-none"
       (click)="createNewBranch(branchSelect, $event)"
-      >New Local Branch</button
+      >New Dev Branch</button
     >
   </ng-template>
 </ng-select>
