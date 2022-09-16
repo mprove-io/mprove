@@ -66,35 +66,15 @@
     <button
       *ngIf="
         isEditor === true &&
-        (!repo.repoId ||
-          (repo.conflicts.length === 0 &&
-            repo.repoStatus !== repoStatusNeedCommit))
+        !!repo.repoId &&
+        repo.conflicts.length === 0 &&
+        repo.repoStatus !== repoStatusNeedCommit
       "
-      data-cy="branchSelectDeleteBranchButton"
-      class="w-full rounded py-3 text-base focus:outline-none"
-      [ngClass]="{
-        'cursor-default text-gray-400':
-          selectedBranchItem.branchId === branchMaster,
-        'text-blue3 hover:bg-blue2':
-          selectedBranchItem.branchId !== branchMaster
-      }"
-      (click)="deleteBranch(branchSelect, $event)"
-      [disabled]="selectedBranchItem.branchId === branchMaster"
-      >Delete Branch</button
+      data-cy="branchSelectCreateBranchButton"
+      class="w-full rounded py-3 text-base text-blue3 hover:bg-blue2 focus:outline-none"
+      (click)="createNewBranch(branchSelect, $event)"
+      >New Branch</button
     >
-
-    <div
-      class="cursor-default p-3 text-gray-400"
-      *ngIf="
-        isEditor === true &&
-        (!repo.repoId ||
-          (repo.conflicts.length === 0 &&
-            repo.repoStatus !== repoStatusNeedCommit &&
-            repo.repoId === prodRepoID))
-      "
-    >
-      Switch to the Dev repo to be able to merge, delete or create dev branches
-    </div>
 
     <button
       *ngIf="
@@ -118,16 +98,35 @@
     <button
       *ngIf="
         isEditor === true &&
-        !!repo.repoId &&
-        repo.conflicts.length === 0 &&
-        repo.repoStatus !== repoStatusNeedCommit &&
-        repo.repoId !== prodRepoID
+        (!repo.repoId ||
+          (repo.conflicts.length === 0 &&
+            repo.repoStatus !== repoStatusNeedCommit))
       "
-      data-cy="branchSelectCreateBranchButton"
-      class="w-full rounded py-3 text-base text-blue3 hover:bg-blue2 focus:outline-none"
-      (click)="createNewBranch(branchSelect, $event)"
-      >New Dev Branch</button
+      data-cy="branchSelectDeleteBranchButton"
+      class="w-full rounded py-3 text-base focus:outline-none"
+      [ngClass]="{
+        'cursor-default text-gray-400':
+          selectedBranchItem.branchId === branchMaster,
+        'text-blue3 hover:bg-blue2':
+          selectedBranchItem.branchId !== branchMaster
+      }"
+      (click)="deleteBranch(branchSelect, $event)"
+      [disabled]="selectedBranchItem.branchId === branchMaster"
+      >Delete Branch</button
     >
+
+    <!-- <div
+      class="cursor-default p-3 text-gray-400"
+      *ngIf="
+        isEditor === true &&
+        (!repo.repoId ||
+          (repo.conflicts.length === 0 &&
+            repo.repoStatus !== repoStatusNeedCommit &&
+            repo.repoId === prodRepoID))
+      "
+    >
+      Switch to the Dev repo to be able to merge dev branches
+    </div> -->
   </ng-template>
 </ng-select>
 

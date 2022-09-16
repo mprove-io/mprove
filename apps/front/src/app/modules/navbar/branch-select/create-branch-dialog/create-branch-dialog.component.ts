@@ -3,8 +3,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
+import { NavState } from '~front/app/stores/nav.store';
+import { UserState } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
@@ -16,17 +19,55 @@ import { interfaces } from '~front/barrels/interfaces';
 export class CreateBranchDialogComponent implements OnInit {
   createBranchForm: FormGroup;
 
-  branchesList: interfaces.BranchItem[] = this.ref.data.branchesList;
+  user: UserState;
+  user$ = this.userQuery.select().pipe(
+    tap(x => {
+      this.user = x;
+      this.cd.detectChanges();
+    }),
+    take(1)
+  );
+
+  nav: NavState;
+  nav$ = this.navQuery.select().pipe(
+    tap(x => {
+      this.nav = x;
+
+      this.isTargetProd = this.nav.isRepoProd;
+
+      this.branchesList = common
+        .makeCopy<interfaces.BranchItem[]>(this.ref.data.branchesList)
+        .filter(y => y.isRepoProd === this.isTargetProd);
+
+      this.cd.detectChanges();
+    })
+  );
+
+  branchesList: interfaces.BranchItem[] = [];
+  //  = common
+  //   .makeCopy<interfaces.BranchItem[]>(this.ref.data.branchesList)
+  //   .filter(y => y.isRepoProd === this.nav.isRepoProd);
+  // .map(x => {
+  //   if (x.isRepoProd === true) {
+  //     let name = x.extraName.substring(10, x.extraName.length);
+
+  //     x.extraName = `remote${name}`;
+  //   }
+  //   return x;
+  // });
 
   selectedBranchItem: interfaces.BranchItem = this.ref.data.selectedBranchItem;
   selectedBranchExtraId: string = this.ref.data.selectedBranchExtraId;
+
+  isTargetProd = false;
 
   constructor(
     public ref: DialogRef,
     private fb: FormBuilder,
     private router: Router,
     private userQuery: UserQuery,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private navQuery: NavQuery
   ) {}
 
   ngOnInit() {
@@ -36,6 +77,32 @@ export class CreateBranchDialogComponent implements OnInit {
       branchId: [branchId, [Validators.maxLength(255)]],
       fromBranch: [this.selectedBranchExtraId]
     });
+  }
+
+  prodOnClick() {
+    this.isTargetProd = true;
+
+    this.branchesList = common
+      .makeCopy<interfaces.BranchItem[]>(this.ref.data.branchesList)
+      .filter(y => y.isRepoProd === this.isTargetProd);
+
+    this.selectedBranchItem = this.branchesList[0];
+    this.selectedBranchExtraId = this.selectedBranchItem.extraId;
+
+    this.cd.detectChanges();
+  }
+
+  devOnClick() {
+    this.isTargetProd = false;
+
+    this.branchesList = common
+      .makeCopy<interfaces.BranchItem[]>(this.ref.data.branchesList)
+      .filter(y => y.isRepoProd === this.isTargetProd);
+
+    this.selectedBranchItem = this.branchesList[0];
+    this.selectedBranchExtraId = this.selectedBranchItem.extraId;
+
+    this.cd.detectChanges();
   }
 
   create() {
@@ -51,7 +118,8 @@ export class CreateBranchDialogComponent implements OnInit {
       projectId: this.ref.data.projectId,
       newBranchId: this.createBranchForm.value.branchId,
       fromBranchId: this.selectedBranchItem.branchId,
-      isFromRemote: this.selectedBranchItem.isRepoProd
+      // isFromRemote: this.selectedBranchItem.isRepoProd,
+      isRepoProd: this.isTargetProd
     };
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -72,7 +140,8 @@ export class CreateBranchDialogComponent implements OnInit {
               )
               .subscribe();
 
-            let repoId = userId;
+            let repoId =
+              this.isTargetProd === true ? common.PROD_REPO_ID : userId;
 
             this.router.navigate([
               common.PATH_ORG,

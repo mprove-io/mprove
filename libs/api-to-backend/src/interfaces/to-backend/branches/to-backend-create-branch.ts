@@ -14,7 +14,7 @@ export class ToBackendCreateBranchRequestPayload {
   fromBranchId: string;
 
   @IsBoolean()
-  isFromRemote: boolean;
+  isRepoProd: boolean;
 }
 
 export class ToBackendCreateBranchRequest extends ToBackendRequest {

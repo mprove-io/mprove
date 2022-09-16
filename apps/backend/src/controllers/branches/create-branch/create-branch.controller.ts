@@ -28,14 +28,9 @@ export class CreateBranchController {
     @ValidateRequest(apiToBackend.ToBackendCreateBranchRequest)
     reqValid: apiToBackend.ToBackendCreateBranchRequest
   ) {
-    let {
-      projectId,
-      newBranchId,
-      fromBranchId,
-      isFromRemote
-    } = reqValid.payload;
+    let { projectId, newBranchId, fromBranchId, isRepoProd } = reqValid.payload;
 
-    let repoId = user.user_id;
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -48,13 +43,13 @@ export class CreateBranchController {
 
     let fromBranch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isFromRemote === true ? common.PROD_REPO_ID : user.user_id,
+      repoId: repoId,
       branchId: fromBranchId
     });
 
     await this.branchesService.checkBranchDoesNotExist({
       projectId: projectId,
-      repoId: user.user_id,
+      repoId: repoId,
       branchId: newBranchId
     });
 
@@ -69,7 +64,7 @@ export class CreateBranchController {
         repoId: repoId,
         newBranch: newBranchId,
         fromBranch: fromBranchId,
-        isFromRemote: isFromRemote,
+        isFromRemote: false,
         remoteType: project.remote_type,
         gitUrl: project.git_url,
         privateKey: project.private_key,

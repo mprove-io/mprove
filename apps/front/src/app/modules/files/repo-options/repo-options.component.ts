@@ -104,6 +104,7 @@ export class RepoOptionsComponent {
 
     let payload: apiToBackend.ToBackendRevertRepoToRemoteRequestPayload = {
       projectId: this.nav.projectId,
+      isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId
     };
 

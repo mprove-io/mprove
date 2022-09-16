@@ -48,7 +48,7 @@ export class PullRepoController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: user.user_id,
+      repoId: repoId,
       branchId: branchId
     });
 

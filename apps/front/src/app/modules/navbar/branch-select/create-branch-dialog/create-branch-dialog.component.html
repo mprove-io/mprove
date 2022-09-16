@@ -2,7 +2,7 @@
   <div
     data-cy="createBranchDialogTitle"
     class="mt-5 flex-grow text-left text-2xl font-semibold text-gray2"
-    >Create Dev Branch</div
+    >Create Branch</div
   >
 
   <form
@@ -10,10 +10,52 @@
     [formGroup]="createBranchForm"
     (ngSubmit)="create()"
   >
+    <div class="mt-8 select-none text-left text-base font-semibold text-gray2"
+      >Repo</div
+    >
+
+    <div
+      data-cy="createProjectDialogManagedCheckbox"
+      class="mt-2 flex h-9 cursor-pointer flex-row items-center"
+      (click)="prodOnClick()"
+    >
+      <div
+        class="flex h-6 w-6 items-center justify-center rounded-full border-2 border-blue3 text-white focus:outline-none"
+        [ngClass]="{
+          'bg-blue3 ': isTargetProd === true
+        }"
+      >
+        <m-check-icon *ngIf="isTargetProd === true"></m-check-icon>
+      </div>
+
+      <div class="ml-5 select-none text-base">Production</div>
+    </div>
+
+    <div
+      data-cy="createProjectDialogGitCloneCheckbox"
+      class="mt-5 flex h-9 cursor-pointer flex-row items-center"
+      (click)="devOnClick()"
+    >
+      <div
+        class="flex h-6 w-6 items-center justify-center rounded-full border-2 border-blue3 text-white focus:outline-none"
+        [ngClass]="{
+          'bg-blue3 ': isTargetProd === false
+        }"
+      >
+        <m-check-icon *ngIf="isTargetProd === false"></m-check-icon>
+      </div>
+
+      <div class="ml-5 select-none text-base">Dev-{{ user?.alias }}</div>
+    </div>
+
+    <div class="mt-8 select-none text-left text-base font-semibold text-gray2"
+      >Branch name</div
+    >
+
     <input
       spellcheck="false"
       data-cy="createBranchDialogBranchIdInput"
-      class="form-input mt-9 w-72 rounded border-gray3 focus:border-blue3"
+      class="form-input mt-2 w-72 rounded border-gray3 focus:border-blue3"
       [ngClass]="{
         'border-red-600':
           createBranchForm.controls['branchId'].invalid &&
@@ -26,7 +68,7 @@
       [control]="createBranchForm.controls['branchId']"
     ></m-validation>
 
-    <div class="text-base">Base on branch:</div>
+    <div class="mt-6 text-base font-semibold">Source branch</div>
     <ng-select
       #branchSelect
       data-cy="branchSelect"
@@ -34,6 +76,7 @@
       [items]="branchesList"
       [clearable]="false"
       [searchable]="false"
+      [(ngModel)]="selectedBranchExtraId"
       (change)="branchChange($event)"
       appendTo="body"
       formControlName="fromBranch"
@@ -68,3 +111,6 @@
     </div>
   </form>
 </div>
+
+<div *ngIf="nav$ | async"></div>
+<div *ngIf="user$ | async"></div>

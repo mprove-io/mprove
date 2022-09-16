@@ -33,9 +33,9 @@ export class RevertRepoToRemoteController {
     reqValid: apiToBackend.ToBackendRevertRepoToRemoteRequest
   ) {
     let { traceId } = reqValid.info;
-    let { projectId, branchId } = reqValid.payload;
+    let { projectId, isRepoProd, branchId } = reqValid.payload;
 
-    let repoId = user.user_id;
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -48,7 +48,7 @@ export class RevertRepoToRemoteController {
 
     let devBranch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: user.user_id,
+      repoId: repoId,
       branchId: branchId
     });
 
