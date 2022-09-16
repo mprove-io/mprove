@@ -74,6 +74,7 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendCreateFile = 'api/ToBackendCreateFile',
   ToBackendDeleteFile = 'api/ToBackendDeleteFile',
   ToBackendSaveFile = 'api/ToBackendSaveFile',
+  ToBackendValidateFiles = 'api/ToBackendValidateFiles',
   //
   ToBackendGetModels = 'api/ToBackendGetModels',
   ToBackendGetModel = 'api/ToBackendGetModel',

@@ -48,6 +48,13 @@
       (click)="t1.hide(); pullFromRemote($event)"
       >Pull from Remote</button
     >
+
+    <button
+      data-cy="repoOptionsRevalidateRemoteButton"
+      class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
+      (click)="t1.hide(); revalidate($event)"
+      >Revalidate</button
+    >
   </div>
 </ng-template>
 

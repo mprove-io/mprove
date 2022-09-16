@@ -28,6 +28,7 @@ export const appControllers = [
   controllers.DeleteFileController,
   controllers.GetFileController,
   controllers.SaveFileController,
+  controllers.ValidateFilesController,
 
   controllers.CreateFolderController,
   controllers.DeleteFolderController,

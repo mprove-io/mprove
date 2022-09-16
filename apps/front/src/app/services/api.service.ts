@@ -71,6 +71,7 @@ export class ApiService {
     // files repo options
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
     // model
     apiToBackend.ToBackendRequestInfoNameEnum
       .ToBackendCreateTempMconfigAndQuery,

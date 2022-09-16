@@ -160,4 +160,30 @@ export class RepoOptionsComponent {
       )
       .subscribe();
   }
+
+  revalidate(event?: MouseEvent) {
+    event.stopPropagation();
+
+    let payload: apiToBackend.ToBackendValidateFilesRequestPayload = {
+      projectId: this.nav.projectId,
+      isRepoProd: this.nav.isRepoProd,
+      branchId: this.nav.branchId
+    };
+
+    this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
+        payload
+      )
+      .pipe(
+        tap((resp: apiToBackend.ToBackendValidateFilesResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.repoStore.update(resp.payload.repo);
+            this.structStore.update(resp.payload.struct);
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
 }
