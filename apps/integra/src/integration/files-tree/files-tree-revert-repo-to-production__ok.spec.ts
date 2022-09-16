@@ -1,6 +1,6 @@
 import { common } from '~integra/barrels/common';
 
-let testId = '_files-tree-revert-repo-to-production__ok';
+let testId = '_files-tree-revert-repo-to-remote__ok';
 
 let userId = common.makeId();
 let email = `${testId}@example.com`;
@@ -81,7 +81,7 @@ describe('integra', () => {
     cy.get('.view-line').contains(text).should('exist');
 
     cy.get('[data-cy=repoOptionsMenuButton]').click();
-    cy.get('[data-cy=repoOptionsRevertRepoToProductionButton]').click();
+    cy.get('[data-cy=repoOptionsRevertRepoToRemoteButton]').click();
     cy.loading();
 
     cy.visit(

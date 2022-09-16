@@ -8,7 +8,7 @@ import { interfaces } from '~disk/barrels/interfaces';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 
 @Injectable()
-export class RevertRepoToProductionService {
+export class RevertRepoToRemoteService {
   constructor(private cs: ConfigService<interfaces.Config>) {}
 
   async process(request: any) {
@@ -17,7 +17,7 @@ export class RevertRepoToProductionService {
     );
 
     let requestValid = common.transformValidSync({
-      classType: apiToDisk.ToDiskRevertRepoToProductionRequest,
+      classType: apiToDisk.ToDiskRevertRepoToRemoteRequest,
       object: request,
       errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
@@ -91,7 +91,7 @@ export class RevertRepoToProductionService {
 
     //
 
-    await git.revertRepoToProduction({
+    await git.revertRepoToRemote({
       repoDir: repoDir,
       remoteBranch: branch
     });
@@ -113,7 +113,7 @@ export class RevertRepoToProductionService {
       readFiles: true
     });
 
-    let payload: apiToDisk.ToDiskRevertRepoToProductionResponsePayload = {
+    let payload: apiToDisk.ToDiskRevertRepoToRemoteResponsePayload = {
       repo: {
         orgId: orgId,
         projectId: projectId,

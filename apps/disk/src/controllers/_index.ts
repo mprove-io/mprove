@@ -11,7 +11,7 @@ export * from './03-repos/merge-repo/merge-repo.controller';
 export * from './03-repos/pull-repo/pull-repo.controller';
 export * from './03-repos/push-repo/push-repo.controller';
 export * from './03-repos/revert-repo-to-last-commit/revert-repo-to-last-commit.controller';
-export * from './03-repos/revert-repo-to-production/revert-repo-to-production.controller';
+export * from './03-repos/revert-repo-to-remote/revert-repo-to-remote.controller';
 export * from './04-catalogs/get-catalog-files/get-catalog-files.controller';
 export * from './04-catalogs/get-catalog-nodes/get-catalog-nodes.controller';
 export * from './04-catalogs/move-catalog-node/move-catalog-node.controller';

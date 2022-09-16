@@ -16,7 +16,7 @@ export const appControllers = [
   controllers.PullRepoController,
   controllers.PushRepoController,
   controllers.RevertRepoToLastCommitController,
-  controllers.RevertRepoToProductionController,
+  controllers.RevertRepoToRemoteController,
 
   controllers.GetCatalogFilesController,
   controllers.GetCatalogNodesController,

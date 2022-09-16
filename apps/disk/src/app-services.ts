@@ -11,7 +11,7 @@ import { MergeRepoService } from './controllers/03-repos/merge-repo/merge-repo.s
 import { PullRepoService } from './controllers/03-repos/pull-repo/pull-repo.service';
 import { PushRepoService } from './controllers/03-repos/push-repo/push-repo.service';
 import { RevertRepoToLastCommitService } from './controllers/03-repos/revert-repo-to-last-commit/revert-repo-to-last-commit.service';
-import { RevertRepoToProductionService } from './controllers/03-repos/revert-repo-to-production/revert-repo-to-production.service';
+import { RevertRepoToRemoteService } from './controllers/03-repos/revert-repo-to-remote/revert-repo-to-remote.service';
 import { GetCatalogFilesService } from './controllers/04-catalogs/get-catalog-files/get-catalog-files.service';
 import { GetCatalogNodesService } from './controllers/04-catalogs/get-catalog-nodes/get-catalog-nodes.service';
 import { MoveCatalogNodeService } from './controllers/04-catalogs/move-catalog-node/move-catalog-node.service';
@@ -48,7 +48,7 @@ export const appServices = [
   PullRepoService,
   PushRepoService,
   RevertRepoToLastCommitService,
-  RevertRepoToProductionService,
+  RevertRepoToRemoteService,
 
   GetCatalogFilesService,
   GetCatalogNodesService,

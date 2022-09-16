@@ -15,7 +15,7 @@ import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
 
 @Controller()
-export class RevertRepoToProductionController {
+export class RevertRepoToRemoteController {
   constructor(
     private projectsService: ProjectsService,
     private dbService: DbService,
@@ -26,13 +26,11 @@ export class RevertRepoToProductionController {
     private blockmlService: BlockmlService
   ) {}
 
-  @Post(
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToProduction
-  )
-  async revertRepoToProduction(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote)
+  async revertRepoToRemote(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendRevertRepoToProductionRequest)
-    reqValid: apiToBackend.ToBackendRevertRepoToProductionRequest
+    @ValidateRequest(apiToBackend.ToBackendRevertRepoToRemoteRequest)
+    reqValid: apiToBackend.ToBackendRevertRepoToRemoteRequest
   ) {
     let { traceId } = reqValid.info;
     let { projectId, branchId } = reqValid.payload;
@@ -54,9 +52,9 @@ export class RevertRepoToProductionController {
       branchId: branchId
     });
 
-    let toDiskRevertRepoToProductionRequest: apiToDisk.ToDiskRevertRepoToProductionRequest = {
+    let toDiskRevertRepoToRemoteRequest: apiToDisk.ToDiskRevertRepoToRemoteRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToProduction,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToRemote,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -71,13 +69,13 @@ export class RevertRepoToProductionController {
       }
     };
 
-    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskRevertRepoToProductionResponse>(
+    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskRevertRepoToRemoteResponse>(
       {
         routingKey: helper.makeRoutingKeyToDisk({
           orgId: project.org_id,
           projectId: projectId
         }),
-        message: toDiskRevertRepoToProductionRequest,
+        message: toDiskRevertRepoToRemoteRequest,
         checkIsOk: true
       }
     );
@@ -105,7 +103,7 @@ export class RevertRepoToProductionController {
       structId: structId
     });
 
-    let payload: apiToBackend.ToBackendRevertRepoToProductionResponsePayload = {
+    let payload: apiToBackend.ToBackendRevertRepoToRemoteResponsePayload = {
       repo: diskResponse.payload.repo,
       struct: wrapper.wrapToApiStruct(struct)
     };

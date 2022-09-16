@@ -3,19 +3,19 @@ import { ConfigService } from '@nestjs/config';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
-import { RevertRepoToProductionService } from './revert-repo-to-production.service';
+import { RevertRepoToRemoteService } from './revert-repo-to-remote.service';
 
 @Controller()
-export class RevertRepoToProductionController {
+export class RevertRepoToRemoteController {
   constructor(
     private cs: ConfigService<interfaces.Config>,
-    private revertRepoToProductionService: RevertRepoToProductionService
+    private revertRepoToRemoteService: RevertRepoToRemoteService
   ) {}
 
-  @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToProduction)
-  async revertRepoToProduction(@Body() body: any) {
+  @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToRemote)
+  async revertRepoToRemote(@Body() body: any) {
     try {
-      let payload = await this.revertRepoToProductionService.process(body);
+      let payload = await this.revertRepoToRemoteService.process(body);
 
       return common.makeOkResponse({
         payload,

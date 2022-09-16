@@ -14,7 +14,7 @@ export enum ToDiskRequestInfoNameEnum {
   ToDiskPullRepo = 'ToDiskPullRepo',
   ToDiskPushRepo = 'ToDiskPushRepo',
   ToDiskRevertRepoToLastCommit = 'ToDiskRevertRepoToLastCommit',
-  ToDiskRevertRepoToProduction = 'ToDiskRevertRepoToProduction',
+  ToDiskRevertRepoToRemote = 'ToDiskRevertRepoToRemote',
 
   ToDiskGetCatalogFiles = 'ToDiskGetCatalogFiles',
   ToDiskGetCatalogNodes = 'ToDiskGetCatalogNodes',

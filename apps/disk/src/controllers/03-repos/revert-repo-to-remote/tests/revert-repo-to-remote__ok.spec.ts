@@ -3,14 +3,14 @@ import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
-let testId = 'disk-revert-repo-to-production__ok';
+let testId = 'disk-revert-repo-to-remote__ok';
 
 let traceId = testId;
 let orgId = testId;
 let projectId = 'p1';
 
 test('1', async t => {
-  let resp1: apiToDisk.ToDiskRevertRepoToProductionResponse;
+  let resp1: apiToDisk.ToDiskRevertRepoToRemoteResponse;
   let resp2: apiToDisk.ToDiskGetFileResponse;
   let content1 = '1';
 
@@ -106,9 +106,9 @@ test('1', async t => {
       }
     };
 
-    let revertRepoToProductionRequest: apiToDisk.ToDiskRevertRepoToProductionRequest = {
+    let revertRepoToRemoteRequest: apiToDisk.ToDiskRevertRepoToRemoteRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToProduction,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToRemote,
         traceId: traceId
       },
       payload: {
@@ -146,7 +146,7 @@ test('1', async t => {
 
     await messageService.processMessage(r1_master_saveFileRequest_2);
 
-    resp1 = await messageService.processMessage(revertRepoToProductionRequest);
+    resp1 = await messageService.processMessage(revertRepoToRemoteRequest);
 
     resp2 = await messageService.processMessage(getFileRequest);
   } catch (e) {

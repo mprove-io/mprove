@@ -12,4 +12,4 @@ export * from './merge';
 export * from './prepare-remote-and-prod';
 export * from './push-to-remote';
 export * from './revert-repo-to-last-commit';
-export * from './revert-repo-to-production';
+export * from './revert-repo-to-remote';

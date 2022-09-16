@@ -3,7 +3,7 @@ import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-disk/barrels/common';
 import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
-export class ToDiskRevertRepoToProductionRequestPayload {
+export class ToDiskRevertRepoToRemoteRequestPayload {
   @IsString()
   orgId: string;
 
@@ -32,13 +32,13 @@ export class ToDiskRevertRepoToProductionRequestPayload {
   publicKey?: string;
 }
 
-export class ToDiskRevertRepoToProductionRequest extends ToDiskRequest {
+export class ToDiskRevertRepoToRemoteRequest extends ToDiskRequest {
   @ValidateNested()
-  @Type(() => ToDiskRevertRepoToProductionRequestPayload)
-  payload: ToDiskRevertRepoToProductionRequestPayload;
+  @Type(() => ToDiskRevertRepoToRemoteRequestPayload)
+  payload: ToDiskRevertRepoToRemoteRequestPayload;
 }
 
-export class ToDiskRevertRepoToProductionResponsePayload {
+export class ToDiskRevertRepoToRemoteResponsePayload {
   @ValidateNested()
   @Type(() => common.Repo)
   repo: common.Repo;
@@ -48,8 +48,8 @@ export class ToDiskRevertRepoToProductionResponsePayload {
   files: common.DiskCatalogFile[];
 }
 
-export class ToDiskRevertRepoToProductionResponse extends common.MyResponse {
+export class ToDiskRevertRepoToRemoteResponse extends common.MyResponse {
   @ValidateNested()
-  @Type(() => ToDiskRevertRepoToProductionResponsePayload)
-  payload: ToDiskRevertRepoToProductionResponsePayload;
+  @Type(() => ToDiskRevertRepoToRemoteResponsePayload)
+  payload: ToDiskRevertRepoToRemoteResponsePayload;
 }

@@ -99,22 +99,21 @@ export class RepoOptionsComponent {
       .subscribe();
   }
 
-  revertToProduction(event?: MouseEvent) {
+  revertToRemote(event?: MouseEvent) {
     event.stopPropagation();
 
-    let payload: apiToBackend.ToBackendRevertRepoToProductionRequestPayload = {
+    let payload: apiToBackend.ToBackendRevertRepoToRemoteRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId
     };
 
     this.apiService
       .req(
-        apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendRevertRepoToProduction,
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote,
         payload
       )
       .pipe(
-        tap((resp: apiToBackend.ToBackendRevertRepoToProductionResponse) => {
+        tap((resp: apiToBackend.ToBackendRevertRepoToRemoteResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.repoStore.update(resp.payload.repo);
             this.structStore.update(resp.payload.struct);
@@ -132,7 +131,7 @@ export class RepoOptionsComponent {
       .subscribe();
   }
 
-  pullFromProduction(event?: MouseEvent) {
+  pullFromRemote(event?: MouseEvent) {
     event.stopPropagation();
 
     let payload: apiToBackend.ToBackendPullRepoRequestPayload = {

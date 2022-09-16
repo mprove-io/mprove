@@ -1,6 +1,6 @@
 import * as nodegit from 'nodegit';
 
-export async function revertRepoToProduction(item: {
+export async function revertRepoToRemote(item: {
   repoDir: string;
   remoteBranch: string;
 }) {

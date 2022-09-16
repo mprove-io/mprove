@@ -78,7 +78,7 @@ export const appControllers = [
   controllers.PullRepoController,
   controllers.PushRepoController,
   controllers.RevertRepoToLastCommitController,
-  controllers.RevertRepoToProductionController,
+  controllers.RevertRepoToRemoteController,
 
   controllers.SpecialRebuildStructController,
   controllers.SpecialRebuildStructsController,

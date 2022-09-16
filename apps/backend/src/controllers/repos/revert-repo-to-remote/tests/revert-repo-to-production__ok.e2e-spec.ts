@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-revert-repo-to-production__ok';
+let testId = 'backend-revert-repo-to-remote__ok';
 
 let traceId = testId;
 
@@ -24,7 +24,7 @@ let branchId = common.BRANCH_MASTER;
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendRevertRepoToProductionResponse;
+  let resp: apiToBackend.ToBackendRevertRepoToRemoteResponse;
 
   try {
     prep = await prepareTest({
@@ -73,11 +73,10 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendRevertRepoToProductionRequest = {
+    let req: apiToBackend.ToBackendRevertRepoToRemoteRequest = {
       info: {
         name:
-          apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendRevertRepoToProduction,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote,
         traceId: traceId,
         idempotencyKey: testId
       },
@@ -87,7 +86,7 @@ test('1', async t => {
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendRevertRepoToProductionResponse>(
+    resp = await helper.sendToBackend<apiToBackend.ToBackendRevertRepoToRemoteResponse>(
       {
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,

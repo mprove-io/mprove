@@ -24,18 +24,18 @@
     >
 
     <button
-      data-cy="repoOptionsRevertRepoToProductionButton"
+      data-cy="repoOptionsRevertRepoToRemoteButton"
       class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
       [ngClass]="{
         'cursor-default text-gray-400': needSave === true
       }"
       [disabled]="needSave === true"
-      (click)="t1.hide(); revertToProduction($event)"
-      >Revert to Production</button
+      (click)="t1.hide(); revertToRemote($event)"
+      >Revert to Remote</button
     >
 
     <button
-      data-cy="repoOptionsPullFromProductionButton"
+      data-cy="repoOptionsPullFromRemoteButton"
       class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
       [ngClass]="{
         'cursor-default text-gray-400':
@@ -44,8 +44,8 @@
       [disabled]="
         needSave === true || repo?.repoStatus === repoStatusNeedCommit
       "
-      (click)="t1.hide(); pullFromProduction($event)"
-      >Pull from Production</button
+      (click)="t1.hide(); pullFromRemote($event)"
+      >Pull from Remote</button
     >
   </div>
 </ng-template>

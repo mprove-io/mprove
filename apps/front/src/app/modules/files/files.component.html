@@ -13,7 +13,7 @@
           *ngIf="nav?.isRepoProd === true"
           class="mt-5 mr-5 flex flex-row items-center text-lg font-semibold text-gray-500"
         >
-          PRODUCTION MODE
+          PRODUCTION (READ-ONLY)
         </div>
 
         <div
@@ -34,7 +34,7 @@
               *ngIf="
                 needSave === false && repo.repoStatus === repoStatusNeedPull
               "
-              >Need to Pull changes from Production</div
+              >Need to Pull changes from Remote</div
             >
 
             <div
@@ -71,13 +71,13 @@
             >
           </div>
 
-          <ng-template #templatePullFromProduction>
+          <ng-template #templatePullFromRemote>
             <div *ngIf="needSave === true">Need to Save changes</div>
           </ng-template>
 
           <div
             *ngIf="repo.repoStatus === repoStatusNeedPull"
-            [tippy]="templatePullFromProduction"
+            [tippy]="templatePullFromRemote"
             [isEnabled]="needSave === true"
           >
             <button
@@ -94,11 +94,11 @@
               [disabled]="
                 repo.repoStatus !== repoStatusNeedPull || needSave === true
               "
-              >Pull from Production</button
+              >Pull from Remote</button
             >
           </div>
 
-          <ng-template #templatePushToProduction>
+          <ng-template #templatePushToRemote>
             <div *ngIf="needSave === true">Need to Save changes</div>
 
             <div
@@ -119,7 +119,7 @@
               *ngIf="
                 needSave === false && repo.repoStatus === repoStatusNeedPull
               "
-              >Need to Pull changes from Production</div
+              >Need to Pull changes from Remote</div
             >
 
             <div *ngIf="needSave === false && repo.repoStatus === repoStatusOk"
@@ -128,7 +128,7 @@
           </ng-template>
 
           <div
-            [tippy]="templatePushToProduction"
+            [tippy]="templatePushToRemote"
             [isEnabled]="
               repo.repoStatus !== repoStatusNeedPush || needSave === true
             "
@@ -147,7 +147,7 @@
               [disabled]="
                 repo.repoStatus !== repoStatusNeedPush || needSave === true
               "
-              >Push to Production</button
+              >Push to Remote</button
             >
           </div>
 

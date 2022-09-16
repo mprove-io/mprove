@@ -70,7 +70,7 @@ export class ApiService {
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo,
     // files repo options
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToProduction,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote,
     // model
     apiToBackend.ToBackendRequestInfoNameEnum
       .ToBackendCreateTempMconfigAndQuery,
@@ -294,7 +294,7 @@ export class ApiService {
         pathInfoName ===
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPushRepo
       ) {
-        errorData.description = `Some actions of this project is restricted for Demo purposes. Change organization/project to remove restrictions and be able to push to production.`;
+        errorData.description = `Some actions of this project is restricted for Demo purposes. Change organization/project to remove restrictions and be able to push to remote.`;
         this.myDialogService.showError({ errorData, isThrow: false });
       } else if (
         infoErrorMessage === common.ErEnum.BACKEND_RESTRICTED_PROJECT &&
