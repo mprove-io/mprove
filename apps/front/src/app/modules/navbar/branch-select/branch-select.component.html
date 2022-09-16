@@ -1,4 +1,10 @@
 <ng-select
+  *ngIf="showEmptySelector === true"
+  class="custom w-72 text-base focus:outline-none"
+></ng-select>
+
+<ng-select
+  *ngIf="showEmptySelector === false"
   #branchSelect
   data-cy="branchSelect"
   class="custom w-72 text-base focus:outline-none"
@@ -130,3 +136,4 @@
 <div *ngIf="isEditor$ | async"></div>
 <div *ngIf="file$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
+<div *ngIf="routerEvents$ | async"></div>

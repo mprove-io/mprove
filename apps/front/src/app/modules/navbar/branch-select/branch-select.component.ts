@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { switchMap, take, tap } from 'rxjs/operators';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, switchMap, take, tap } from 'rxjs/operators';
 import { constants } from '~common/barrels/constants';
 import { makeBranchExtraId } from '~front/app/functions/make-branch-extra-id';
 import { makeBranchExtraName } from '~front/app/functions/make-branch-extra-name';
@@ -58,9 +58,6 @@ export class BranchSelectComponent {
   selectedBranchItem: interfaces.BranchItem;
   selectedBranchExtraId: string;
 
-  prevBranchItem: interfaces.BranchItem;
-  prevBranchExtraId: string;
-
   nav$ = this.navQuery.select().pipe(
     tap(x => {
       let user: UserState;
@@ -91,8 +88,6 @@ export class BranchSelectComponent {
         ? [this.selectedBranchItem]
         : [];
 
-      this.prevBranchItem = this.selectedBranchItem;
-
       this.cd.detectChanges();
     })
   );
@@ -107,6 +102,16 @@ export class BranchSelectComponent {
 
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
+
+  showEmptySelector = false;
+
+  routerEvents$ = this.router.events.pipe(
+    filter(ev => ev instanceof NavigationEnd),
+    tap((x: any) => {
+      this.showEmptySelector = false;
+      this.cd.detectChanges();
+    })
+  );
 
   constructor(
     private userQuery: UserQuery,
@@ -271,6 +276,9 @@ export class BranchSelectComponent {
   }
 
   branchChange() {
+    this.showEmptySelector = true;
+    this.cd.detectChanges();
+
     let newSelectedBranchItem = this.branchesList.find(
       x => x.extraId === this.selectedBranchExtraId
     );

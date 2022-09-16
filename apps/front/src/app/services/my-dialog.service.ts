@@ -62,7 +62,7 @@ export class MyDialogService {
         enableClose: false,
         closeButton: false,
         data: errorData,
-        width: 800
+        width: 900
       });
     }
 
