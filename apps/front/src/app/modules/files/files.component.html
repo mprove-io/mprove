@@ -14,15 +14,15 @@
             *ngIf="nav?.isRepoProd === true"
             class="mr-5 flex h-11 flex-row items-center text-lg font-semibold text-gray-500"
           >
-            PRODUCTION
+            production - {{ nav.branchId }}
           </div>
 
-          <!-- <div
+          <div
             *ngIf="nav?.isRepoProd === false"
-            class="mr-5 flex flex-row h-11 items-center text-lg font-semibold text-gray-500"
+            class="mr-5 flex h-11 flex-row items-center text-lg font-semibold text-gray-500"
           >
-            DEVELOPMENT REPO
-          </div>           -->
+            dev-{{ user.alias }} - {{ nav.branchId }}
+          </div>
 
           <ng-template #templateCommit>
             <div *ngIf="needSave === true">Need to Save changes</div>
@@ -52,7 +52,7 @@
           </ng-template>
 
           <div
-            *ngIf="nav?.isRepoProd === false"
+            *ngIf="isEditor === true"
             [tippy]="templateCommit"
             [isEnabled]="
               repo.repoStatus !== repoStatusNeedCommit || needSave === true
@@ -81,7 +81,7 @@
           </ng-template>
 
           <div
-            *ngIf="repo.repoStatus === repoStatusNeedPull"
+            *ngIf="isEditor === true && repo.repoStatus === repoStatusNeedPull"
             [tippy]="templatePullFromRemote"
             [isEnabled]="needSave === true"
           >
@@ -133,13 +133,13 @@
           </ng-template>
 
           <div
+            *ngIf="isEditor === true"
             [tippy]="templatePushToRemote"
             [isEnabled]="
               repo.repoStatus !== repoStatusNeedPush || needSave === true
             "
           >
             <button
-              *ngIf="isEditor === true"
               type="button"
               data-cy="filesPushButton"
               class="ml-3 rounded py-2 px-5 text-base font-medium text-white focus:outline-none"
@@ -190,3 +190,4 @@
 <div *ngIf="repo$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
 <div *ngIf="isEditor$ | async"></div>
+<div *ngIf="user$ | async"></div>

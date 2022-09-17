@@ -330,6 +330,7 @@ export class MyDialogService {
   showCommit(item: {
     apiService: any;
     projectId: string;
+    isRepoProd: boolean;
     branchId: string;
   }): void {
     this.dialogService.open(CommitDialogComponent, {
@@ -351,7 +352,8 @@ export class MyDialogService {
     this.dialogService.open(DeleteBranchDialogComponent, {
       enableClose: true,
       closeButton: false,
-      data: item
+      data: item,
+      width: 900
     });
   }
 

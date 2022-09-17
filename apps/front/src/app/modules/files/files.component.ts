@@ -8,6 +8,7 @@ import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
@@ -15,6 +16,7 @@ import { FileState } from '~front/app/stores/file.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
+import { UserState } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -80,6 +82,14 @@ export class FilesComponent implements OnInit {
     })
   );
 
+  user: UserState;
+  user$ = this.userQuery.select().pipe(
+    tap(x => {
+      this.user = x;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     private router: Router,
     private cd: ChangeDetectorRef,
@@ -93,7 +103,8 @@ export class FilesComponent implements OnInit {
     public structStore: StructStore,
     public fileService: FileService,
     private title: Title,
-    private memberQuery: MemberQuery
+    private memberQuery: MemberQuery,
+    private userQuery: UserQuery
   ) {}
 
   ngOnInit() {
@@ -107,6 +118,7 @@ export class FilesComponent implements OnInit {
     this.myDialogService.showCommit({
       apiService: this.apiService,
       projectId: this.nav.projectId,
+      isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId
     });
   }

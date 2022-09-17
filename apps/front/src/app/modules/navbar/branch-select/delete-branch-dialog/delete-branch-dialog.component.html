@@ -5,16 +5,26 @@
     >Delete Branch</div
   >
 
-  <div class="mt-6 text-lg text-gray1"
+  <div class="mt-6 text-lg text-gray1" *ngIf="ref.data.isRepoProd === false"
     >Are you sure you want to delete branch
     <span class="font-semibold">
       {{ ref.data.branchId }}
     </span>
     in
-    <span class="font-semibold">
-      {{ repoName }}
-    </span>
+    <span class="font-semibold"> dev-{{ repoName }} </span>
     repository ?</div
+  >
+
+  <div class="mt-6 text-lg text-gray1" *ngIf="ref.data.isRepoProd === true"
+    >Are you sure you want to delete branch
+    <span class="font-semibold">
+      {{ ref.data.branchId }}
+    </span>
+    in
+    <span class="font-semibold"> Production </span>
+    and
+    <span class="font-semibold"> Remote </span>
+    repositories ?</div
   >
 
   <div class="mt-6">

@@ -43,6 +43,7 @@ export class CommitDialogComponent implements OnInit {
 
     let payload: apiToBackend.ToBackendCommitRepoRequestPayload = {
       projectId: this.ref.data.projectId,
+      isRepoProd: this.ref.data.isRepoProd,
       branchId: this.ref.data.branchId,
       commitMessage: this.commitForm.value.message
     };

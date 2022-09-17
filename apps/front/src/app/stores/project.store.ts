@@ -9,6 +9,9 @@ function createInitialState(): ProjectState {
     orgId: undefined,
     projectId: undefined,
     name: undefined,
+    remoteType: undefined,
+    gitUrl: undefined,
+    publicKey: undefined,
     serverTs: 1
   };
 }

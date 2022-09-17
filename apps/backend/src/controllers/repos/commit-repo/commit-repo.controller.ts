@@ -1,6 +1,7 @@
 import { Controller, Post } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
+import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
@@ -27,9 +28,18 @@ export class CommitRepoController {
     @ValidateRequest(apiToBackend.ToBackendCommitRepoRequest)
     reqValid: apiToBackend.ToBackendCommitRepoRequest
   ) {
-    let { projectId, branchId, commitMessage } = reqValid.payload;
+    let { projectId, branchId, isRepoProd, commitMessage } = reqValid.payload;
 
-    let repoId = user.user_id;
+    if (isRepoProd === true) {
+      throw new common.ServerError({
+        message:
+          common.ErEnum.BACKEND_MANUAL_COMMIT_TO_PRODUCTION_REPO_IS_FORBIDDEN
+      });
+    }
+
+    let repoId =
+      // isRepoProd === true ? common.PROD_REPO_ID :
+      user.user_id;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -42,7 +52,7 @@ export class CommitRepoController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: user.user_id,
+      repoId: repoId,
       branchId: branchId
     });
 

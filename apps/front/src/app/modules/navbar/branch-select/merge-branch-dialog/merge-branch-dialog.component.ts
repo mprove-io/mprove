@@ -18,7 +18,9 @@ import { interfaces } from '~front/barrels/interfaces';
 export class MergeBranchDialogComponent implements OnInit {
   mergeForm: FormGroup;
 
-  branchesList: interfaces.BranchItem[] = this.ref.data.branchesList;
+  branchesList: interfaces.BranchItem[] = this.ref.data.branchesList.filter(
+    (x: interfaces.BranchItem) => x.isRepoProd === false
+  );
 
   selectedBranchItem: interfaces.BranchItem = undefined;
 

@@ -18,12 +18,12 @@
             <div class="flex h-16 items-center justify-end font-semibold"
               >Owner</div
             >
-            <div class="flex h-16 items-center justify-end font-semibold"
+            <!-- <div class="flex h-16 items-center justify-end font-semibold"
               >Company Size</div
             >
             <div class="flex h-16 items-center justify-end font-semibold"
               >Contact Phone Number</div
-            >
+            > -->
             <div class="flex items-center justify-end font-semibold"></div>
           </div>
 
@@ -38,7 +38,7 @@
               class="flex h-16 max-w-xl items-center truncate"
               >{{ org?.ownerEmail }}</div
             >
-            <div
+            <!-- <div
               data-cy="orgAccountCompanySize"
               class="flex h-16 max-w-xl items-center truncate"
               >{{ org?.companySize }}</div
@@ -47,7 +47,7 @@
               data-cy="orgAccountContactPhone"
               class="flex h-16 max-w-xl items-center truncate"
               >{{ org?.contactPhone }}</div
-            >
+            > -->
             <div
               class="mt-7 mb-5 flex items-center"
               tippy="Only organization owner can delete"
@@ -106,7 +106,7 @@
               ></div
             >
 
-            <div class="flex h-16 items-center">
+            <!-- <div class="flex h-16 items-center">
               <div
                 tippy="Only organization owner can edit"
                 [isEnabled]="isOrgOwner === false"
@@ -123,9 +123,9 @@
                   >Edit</button
                 ></div
               ></div
-            >
+            > -->
 
-            <div class="flex h-16 items-center">
+            <!-- <div class="flex h-16 items-center">
               <div
                 tippy="Only organization owner can edit"
                 [isEnabled]="isOrgOwner === false"
@@ -142,7 +142,7 @@
                   >Edit</button
                 ></div
               ></div
-            >
+            > -->
 
             <div class="flex items-center"></div>
           </div>

@@ -15,6 +15,15 @@
             <div class="flex h-16 items-center justify-end font-semibold"
               >Project Name</div
             >
+            <div class="flex h-16 items-center justify-end font-semibold"
+              >Remote Type</div
+            >
+            <div class="flex h-16 items-center justify-end font-semibold"
+              >Remote Git Url</div
+            >
+            <div class="flex h-16 items-center justify-end font-semibold"
+              >Remote Deploy Key</div
+            >
             <div class="flex items-center justify-end font-semibold"></div>
           </div>
 
@@ -23,6 +32,22 @@
               data-cy="projectSettingsName"
               class="flex h-16 max-w-xl items-center truncate text-base"
               >{{ project?.name | capitalize }}</div
+            >
+            <div
+              data-cy="projectSettingsRemoteType"
+              class="flex h-16 max-w-xl items-center truncate text-base"
+              >{{ project?.remoteType | capitalize }}</div
+            >
+            <div
+              data-cy="projectSettingsGitUrl"
+              class="flex h-16 max-w-xl items-center truncate text-base"
+              >{{ project?.gitUrl }}</div
+            >
+            <div
+              data-cy="projectSettingsPublicKey"
+              class="flex min-h-[64px] max-w-xl items-center py-4 text-base"
+              style="word-break: break-all"
+              >{{ project?.publicKey }}</div
             >
             <div
               class="mt-7 mb-5 flex items-center"
