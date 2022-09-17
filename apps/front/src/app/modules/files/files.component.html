@@ -10,7 +10,7 @@
 
         <div class="flex flex-row items-center" *ngIf="!!repo">
           <div
-            tippy="Production is the read-only version of the Remote repo. Switch to the Dev repo in the navigation bar to enter Development mode."
+            tippy="Production repo is a read-only version of a Remote repo. Switch to the Dev repo to enter development mode."
             *ngIf="nav?.isRepoProd === true"
             class="mr-5 flex h-11 flex-row items-center text-lg font-semibold text-gray-500"
           >
@@ -133,13 +133,13 @@
           </ng-template>
 
           <div
-            *ngIf="nav?.isRepoProd === false"
             [tippy]="templatePushToRemote"
             [isEnabled]="
               repo.repoStatus !== repoStatusNeedPush || needSave === true
             "
           >
             <button
+              *ngIf="isEditor === true"
               type="button"
               data-cy="filesPushButton"
               class="ml-3 rounded py-2 px-5 text-base font-medium text-white focus:outline-none"
@@ -157,7 +157,7 @@
             >
           </div>
 
-          <div class="relative ml-5">
+          <div class="relative ml-5" *ngIf="isEditor === true">
             <m-repo-options></m-repo-options>
           </div>
         </div>
@@ -189,3 +189,4 @@
 <div *ngIf="file$ | async"></div>
 <div *ngIf="repo$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
+<div *ngIf="isEditor$ | async"></div>

@@ -4,6 +4,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { filter, switchMap, take, tap } from 'rxjs/operators';
 import { FileQuery } from '~front/app/queries/file.query';
+import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -71,6 +72,14 @@ export class FilesComponent implements OnInit {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
+  isEditor: boolean;
+  isEditor$ = this.memberQuery.isEditor$.pipe(
+    tap(x => {
+      this.isEditor = x;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     private router: Router,
     private cd: ChangeDetectorRef,
@@ -83,7 +92,8 @@ export class FilesComponent implements OnInit {
     private myDialogService: MyDialogService,
     public structStore: StructStore,
     public fileService: FileService,
-    private title: Title
+    private title: Title,
+    private memberQuery: MemberQuery
   ) {}
 
   ngOnInit() {
@@ -104,6 +114,7 @@ export class FilesComponent implements OnInit {
   push() {
     let payload: apiToBackend.ToBackendPushRepoRequestPayload = {
       projectId: this.nav.projectId,
+      isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId
     };
 

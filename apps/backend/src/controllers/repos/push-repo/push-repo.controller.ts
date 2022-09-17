@@ -37,9 +37,9 @@ export class PushRepoController {
     reqValid: apiToBackend.ToBackendPushRepoRequest
   ) {
     let { traceId } = reqValid.info;
-    let { projectId, branchId } = reqValid.payload;
+    let { projectId, isRepoProd, branchId } = reqValid.payload;
 
-    let repoId = user.user_id;
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -50,9 +50,9 @@ export class PushRepoController {
       memberId: user.user_id
     });
 
-    let devBranch = await this.branchesService.getBranchCheckExists({
+    await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: user.user_id,
+      repoId: repoId,
       branchId: branchId
     });
 
