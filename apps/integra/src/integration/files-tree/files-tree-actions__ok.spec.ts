@@ -15,6 +15,8 @@ let projectId = common.makeId();
 let projectName = testId;
 let testProjectId = 't3';
 
+let commitMessage = 'update';
+
 let text = '123';
 
 describe('integra', () => {
@@ -92,6 +94,9 @@ describe('integra', () => {
     cy.get('[data-cy=filesPushButton]').should('be.disabled');
 
     cy.get('[data-cy=filesCommitButton]').click();
+    cy.get('[data-cy=commitDialogMessageInput]').type(commitMessage);
+    cy.get('[data-cy=commitDialogCommitButton]').click();
+
     cy.loading();
 
     cy.get('[data-cy=fileEditorSaveButton]').should('be.disabled');
