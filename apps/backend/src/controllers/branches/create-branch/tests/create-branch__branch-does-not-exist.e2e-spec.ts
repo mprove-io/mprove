@@ -84,7 +84,7 @@ test('1', async t => {
         projectId: projectId,
         fromBranchId: fromBranchId,
         newBranchId: newBranchId,
-        isFromRemote: false
+        isRepoProd: false
       }
     };
 
