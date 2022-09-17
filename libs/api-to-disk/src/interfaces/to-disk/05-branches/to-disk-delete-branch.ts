@@ -16,6 +16,9 @@ export class ToDiskDeleteBranchRequestPayload {
   @IsString()
   branch: string;
 
+  @IsString()
+  defaultBranch: string;
+
   @IsEnum(common.ProjectRemoteTypeEnum)
   remoteType: common.ProjectRemoteTypeEnum;
 

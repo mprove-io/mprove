@@ -35,7 +35,8 @@ test('1', async t => {
         projectId: projectId,
         devRepoId: 'r1',
         userAlias: 'u1',
-        remoteType: common.ProjectRemoteTypeEnum.Managed
+        remoteType: common.ProjectRemoteTypeEnum.Managed,
+        defaultBranch: common.BRANCH_MASTER
       }
     };
 
@@ -48,7 +49,7 @@ test('1', async t => {
         orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
-        branch: 'master',
+        branch: common.BRANCH_MASTER,
         fileNodeId: `${projectId}/readme.md`,
         content: '1',
         userAlias: 'u1',
@@ -65,7 +66,7 @@ test('1', async t => {
         orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
-        branch: 'master',
+        branch: common.BRANCH_MASTER,
         userAlias: 'u1',
         commitMessage: 'r1-commitMessage-1',
         remoteType: common.ProjectRemoteTypeEnum.Managed
@@ -81,7 +82,7 @@ test('1', async t => {
         orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
-        branch: 'master',
+        branch: common.BRANCH_MASTER,
         userAlias: 'u1',
         remoteType: common.ProjectRemoteTypeEnum.Managed
       }
@@ -97,7 +98,7 @@ test('1', async t => {
         projectId: projectId,
         repoId: 'r1',
         newBranch: 'b2',
-        fromBranch: 'master',
+        fromBranch: common.BRANCH_MASTER,
         isFromRemote: true,
         remoteType: common.ProjectRemoteTypeEnum.Managed
       }

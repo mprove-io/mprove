@@ -131,7 +131,7 @@ export class NavigateService {
     ]);
   }
 
-  navigateToProdMasterVizs() {
+  navigateToProdDefaultBranchVizs() {
     if (
       common.isDefined(this.nav.orgId) &&
       common.isDefined(this.nav.projectId)
@@ -144,7 +144,7 @@ export class NavigateService {
         common.PATH_REPO,
         common.PROD_REPO_ID,
         common.PATH_BRANCH,
-        common.BRANCH_MASTER,
+        this.nav.projectDefaultBranch,
         common.PATH_VISUALIZATIONS
       ];
 

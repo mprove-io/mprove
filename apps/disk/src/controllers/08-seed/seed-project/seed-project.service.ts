@@ -29,6 +29,7 @@ export class SeedProjectService {
       devRepoId,
       userAlias,
       testProjectId,
+      defaultBranch,
       remoteType,
       gitUrl,
       privateKey,
@@ -67,6 +68,7 @@ export class SeedProjectService {
       projectDir: projectDir,
       testProjectId: testProjectId,
       userAlias: userAlias,
+      defaultBranch: defaultBranch,
       remoteType: remoteType,
       gitUrl: gitUrl,
       cloneOptions: cloneOptions

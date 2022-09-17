@@ -56,7 +56,9 @@ test('1', async t => {
           {
             orgId,
             projectId,
-            name: projectName
+            name: projectName,
+            remoteType: common.ProjectRemoteTypeEnum.Managed,
+            defaultBranch: common.BRANCH_MASTER
           }
         ],
         members: [
@@ -101,6 +103,6 @@ test('1', async t => {
 
   t.is(
     resp.info.error.message,
-    common.ErEnum.BACKEND_BRANCH_MASTER_CAN_NOT_BE_DELETED
+    common.ErEnum.BACKEND_DEFAULT_BRANCH_CAN_NOT_BE_DELETED
   );
 });

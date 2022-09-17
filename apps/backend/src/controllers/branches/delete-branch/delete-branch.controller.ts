@@ -41,9 +41,9 @@ export class DeleteBranchController {
       projectId: projectId
     });
 
-    if (branchId === common.BRANCH_MASTER) {
+    if (branchId === project.default_branch) {
       throw new common.ServerError({
-        message: common.ErEnum.BACKEND_BRANCH_MASTER_CAN_NOT_BE_DELETED
+        message: common.ErEnum.BACKEND_DEFAULT_BRANCH_CAN_NOT_BE_DELETED
       });
     }
 
@@ -71,6 +71,7 @@ export class DeleteBranchController {
         projectId: projectId,
         repoId: repoId,
         branch: branchId,
+        defaultBranch: project.default_branch,
         remoteType: project.remote_type,
         gitUrl: project.git_url,
         privateKey: project.private_key,

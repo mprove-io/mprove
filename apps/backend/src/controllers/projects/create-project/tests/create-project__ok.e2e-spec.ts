@@ -59,7 +59,8 @@ test('1', async t => {
       payload: {
         orgId: orgId,
         name: projectName,
-        remoteType: common.ProjectRemoteTypeEnum.Managed
+        remoteType: common.ProjectRemoteTypeEnum.Managed,
+        defaultBranch: common.BRANCH_MASTER
       }
     };
 

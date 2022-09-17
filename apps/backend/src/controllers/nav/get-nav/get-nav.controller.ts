@@ -100,7 +100,7 @@ export class GetNavController {
       common.isDefined(branchId) &&
       existingBranchIds.indexOf(branchId) > -1
         ? branchId
-        : common.BRANCH_MASTER;
+        : resultProject?.default_branch;
 
     let avatar = await this.avatarsRepository.findOne({
       where: {
@@ -116,6 +116,7 @@ export class GetNavController {
       orgName: resultOrg?.name,
       projectId: resultProjectId,
       projectName: resultProject?.name,
+      projectDefaultBranch: resultProject?.default_branch,
       isRepoProd: resultRepoId === common.PROD_REPO_ID,
       branchId: resultBranchId,
       user: wrapper.wrapToApiUser(user),

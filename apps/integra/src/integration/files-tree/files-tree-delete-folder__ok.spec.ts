@@ -46,7 +46,9 @@ describe('integra', () => {
           orgId,
           projectId,
           testProjectId,
-          name: projectName
+          name: projectName,
+          defaultBranch: common.BRANCH_MASTER,
+          remoteType: common.ProjectRemoteTypeEnum.Managed
         }
       ],
       members: [

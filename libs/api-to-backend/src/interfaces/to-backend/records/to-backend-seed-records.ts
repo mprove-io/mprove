@@ -70,6 +70,24 @@ export class ToBackendSeedRecordsRequestPayloadProjectsItem {
 
   @IsString()
   name: string;
+
+  @IsString()
+  defaultBranch: string;
+
+  @IsEnum(common.ProjectRemoteTypeEnum)
+  remoteType: common.ProjectRemoteTypeEnum;
+
+  @IsOptional()
+  @IsString()
+  gitUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  publicKey?: string;
+
+  @IsOptional()
+  @IsString()
+  privateKey?: string;
 }
 
 export class ToBackendSeedRecordsRequestPayloadMembersItem {

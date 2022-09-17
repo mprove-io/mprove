@@ -106,12 +106,12 @@
       class="w-full rounded py-3 text-base focus:outline-none"
       [ngClass]="{
         'cursor-default text-gray-400':
-          selectedBranchItem.branchId === branchMaster,
+          selectedBranchItem.branchId === defaultBranch,
         'text-blue3 hover:bg-blue2':
-          selectedBranchItem.branchId !== branchMaster
+          selectedBranchItem.branchId !== defaultBranch
       }"
       (click)="deleteBranch(branchSelect, $event)"
-      [disabled]="selectedBranchItem.branchId === branchMaster"
+      [disabled]="selectedBranchItem.branchId === defaultBranch"
       >Delete Branch</button
     >
 

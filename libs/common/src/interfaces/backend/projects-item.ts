@@ -6,4 +6,7 @@ export class ProjectsItem {
 
   @IsString()
   name: string;
+
+  @IsString()
+  defaultBranch: string;
 }

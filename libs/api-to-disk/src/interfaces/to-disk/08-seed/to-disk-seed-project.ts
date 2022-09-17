@@ -20,6 +20,9 @@ export class ToDiskSeedProjectRequestPayload {
   @IsString()
   userAlias: string;
 
+  @IsString()
+  defaultBranch: string;
+
   @IsEnum(common.ProjectRemoteTypeEnum)
   remoteType: common.ProjectRemoteTypeEnum;
 

@@ -11,6 +11,9 @@ export class Project {
   @IsString()
   name: string;
 
+  @IsString()
+  defaultBranch: string;
+
   @IsEnum(enums.ProjectRemoteTypeEnum)
   remoteType: enums.ProjectRemoteTypeEnum;
 

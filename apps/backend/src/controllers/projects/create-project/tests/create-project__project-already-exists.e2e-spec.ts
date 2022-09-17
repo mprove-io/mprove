@@ -49,7 +49,9 @@ test('1', async t => {
         projects: [
           {
             orgId,
-            name: projectName
+            name: projectName,
+            remoteType: common.ProjectRemoteTypeEnum.Managed,
+            defaultBranch: common.BRANCH_MASTER
           }
         ]
       },
@@ -65,7 +67,8 @@ test('1', async t => {
       payload: {
         orgId: orgId,
         name: projectName,
-        remoteType: common.ProjectRemoteTypeEnum.Managed
+        remoteType: common.ProjectRemoteTypeEnum.Managed,
+        defaultBranch: common.BRANCH_MASTER
       }
     };
 

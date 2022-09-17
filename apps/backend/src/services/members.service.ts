@@ -181,14 +181,14 @@ export class MembersService {
           let prodBranch = await this.branchesRepository.findOne({
             project_id: firstProjectId,
             repo_id: common.PROD_REPO_ID,
-            branch_id: common.BRANCH_MASTER
+            branch_id: project.default_branch
           });
 
           let devBranch = maker.makeBranch({
             structId: prodBranch.struct_id,
             projectId: firstProjectId,
             repoId: newMember.member_id,
-            branchId: common.BRANCH_MASTER
+            branchId: project.default_branch
           });
 
           await this.dbService.writeRecords({

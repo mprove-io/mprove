@@ -157,10 +157,11 @@ export class SeedRecordsController {
             orgId: x.orgId,
             projectId: x.projectId,
             name: x.name,
-            remoteType: common.ProjectRemoteTypeEnum.Managed,
-            gitUrl: undefined,
-            privateKey: undefined,
-            publicKey: undefined
+            defaultBranch: x.defaultBranch,
+            remoteType: x.remoteType,
+            gitUrl: x.gitUrl,
+            privateKey: x.privateKey,
+            publicKey: x.publicKey
           });
 
           let toDiskSeedProjectRequest: apiToDisk.ToDiskSeedProjectRequest = {
@@ -174,6 +175,7 @@ export class SeedRecordsController {
               testProjectId: x.testProjectId,
               devRepoId: users[0].user_id,
               userAlias: users[0].alias,
+              defaultBranch: newProject.default_branch,
               remoteType: newProject.remote_type,
               gitUrl: newProject.git_url,
               privateKey: newProject.private_key,
@@ -258,14 +260,14 @@ export class SeedRecordsController {
             structId: structId,
             projectId: newProject.project_id,
             repoId: common.PROD_REPO_ID,
-            branchId: common.BRANCH_MASTER
+            branchId: newProject.default_branch
           });
 
           let devBranch = maker.makeBranch({
             structId: structId,
             projectId: newProject.project_id,
             repoId: users[0].user_id,
-            branchId: common.BRANCH_MASTER
+            branchId: newProject.default_branch
           });
 
           projects.push(newProject);

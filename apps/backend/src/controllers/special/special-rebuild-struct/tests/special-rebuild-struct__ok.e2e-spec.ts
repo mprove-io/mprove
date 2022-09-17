@@ -60,7 +60,9 @@ test('1', async t => {
           {
             orgId,
             projectId,
-            name: projectName
+            name: projectName,
+            remoteType: common.ProjectRemoteTypeEnum.Managed,
+            defaultBranch: common.BRANCH_MASTER
           }
         ],
         members: [
@@ -90,6 +92,7 @@ test('1', async t => {
         testProjectId: testProjectId,
         devRepoId: devRepoId,
         userAlias: userAlias,
+        defaultBranch: common.BRANCH_MASTER,
         remoteType: common.ProjectRemoteTypeEnum.Managed,
         gitUrl: undefined,
         privateKey: undefined,
@@ -120,7 +123,7 @@ test('1', async t => {
         orgId: orgId,
         projectId: projectId,
         isRepoProd: false,
-        branch: 'master',
+        branch: common.BRANCH_MASTER,
         structId: testId,
         connections: [
           {

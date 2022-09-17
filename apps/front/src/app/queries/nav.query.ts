@@ -14,7 +14,8 @@ export class NavQuery extends Query<NavState> {
 
   project$ = this.select(state => ({
     projectId: state.projectId,
-    name: state.projectName
+    name: state.projectName,
+    defaultBranch: state.projectDefaultBranch
   }));
 
   projectId$ = this.select(state => state.projectId);

@@ -43,7 +43,7 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
               Object.assign({}, state, <NavState>{
                 projectId: project.projectId,
                 projectName: project.name,
-                branchId: state.branchId || common.BRANCH_MASTER,
+                branchId: state.branchId || project.defaultBranch,
                 isRepoProd: common.isDefined(state.branchId)
                   ? state.isRepoProd
                   : true

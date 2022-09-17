@@ -346,6 +346,7 @@ export class MyDialogService {
     orgId: string;
     projectId: string;
     branchId: string;
+    defaultBranch: string;
     isRepoProd: boolean;
     alias: string;
   }): void {

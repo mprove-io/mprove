@@ -98,8 +98,7 @@ export class ModifyDashboardController {
     if (
       member.is_admin === common.BoolEnum.FALSE &&
       projectId === firstProjectId &&
-      repoId === common.PROD_REPO_ID &&
-      branchId === common.BRANCH_MASTER
+      repoId === common.PROD_REPO_ID
     ) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_RESTRICTED_PROJECT

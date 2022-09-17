@@ -10,6 +10,7 @@ export async function prepareRemoteAndProd(item: {
   projectDir: string;
   testProjectId: string;
   userAlias: string;
+  defaultBranch: string;
   remoteType: common.ProjectRemoteTypeEnum;
   gitUrl: string;
   cloneOptions: nodegit.CloneOptions;
@@ -46,7 +47,7 @@ export async function prepareRemoteAndProd(item: {
       projectDir: item.projectDir,
       repoId: common.PROD_REPO_ID,
       repoDir: prodDir,
-      branch: common.BRANCH_MASTER,
+      branch: item.defaultBranch,
       fetchOptions: item.cloneOptions.fetchOpts
     });
   }

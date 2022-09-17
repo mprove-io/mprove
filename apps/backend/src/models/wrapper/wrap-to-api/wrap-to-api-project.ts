@@ -9,6 +9,7 @@ export function wrapToApiProject(
     projectId: project.project_id,
     name: project.name,
     remoteType: project.remote_type,
+    defaultBranch: project.default_branch,
     gitUrl: project.git_url,
     publicKey: project.public_key,
     serverTs: Number(project.server_ts)

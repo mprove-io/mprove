@@ -27,6 +27,7 @@ export class DeleteBranchService {
       projectId,
       repoId,
       branch,
+      defaultBranch,
       remoteType,
       gitUrl,
       privateKey,
@@ -60,9 +61,9 @@ export class DeleteBranchService {
       });
     }
 
-    if (branch === common.BRANCH_MASTER) {
+    if (branch === defaultBranch) {
       throw new common.ServerError({
-        message: common.ErEnum.DISK_BRANCH_MASTER_CAN_NOT_BE_DELETED
+        message: common.ErEnum.DISK_DEFAULT_BRANCH_CAN_NOT_BE_DELETED
       });
     }
 
@@ -83,7 +84,7 @@ export class DeleteBranchService {
       projectDir: projectDir,
       repoId: repoId,
       repoDir: repoDir,
-      branchName: common.BRANCH_MASTER,
+      branchName: defaultBranch,
       fetchOptions: fetchOptions
     });
 

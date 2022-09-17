@@ -28,7 +28,7 @@ import { interfaces } from '~front/barrels/interfaces';
   templateUrl: './branch-select.component.html'
 })
 export class BranchSelectComponent {
-  branchMaster = common.BRANCH_MASTER;
+  defaultBranch: string;
   prodRepoID = common.PROD_REPO_ID;
 
   repoStatusNeedCommit = common.RepoStatusEnum.NeedCommit;
@@ -68,6 +68,8 @@ export class BranchSelectComponent {
           take(1)
         )
         .subscribe();
+
+      this.defaultBranch = x.projectDefaultBranch;
 
       this.selectedOrgId = x.orgId;
       this.selectedProjectId = x.projectId;
@@ -179,39 +181,37 @@ export class BranchSelectComponent {
                     })
                   );
 
-                  let prodBranchesMaster = this.branchesList.filter(
+                  let prodBranchesDefault = this.branchesList.filter(
                     y =>
-                      y.isRepoProd === true &&
-                      y.branchId === common.BRANCH_MASTER
+                      y.isRepoProd === true && y.branchId === this.defaultBranch
                   );
 
-                  let prodBranchesNotMaster = this.branchesList.filter(
+                  let prodBranchesNotDefault = this.branchesList.filter(
                     y =>
-                      y.isRepoProd === true &&
-                      y.branchId !== common.BRANCH_MASTER
+                      y.isRepoProd === true && y.branchId !== this.defaultBranch
                   );
 
-                  let localBranchesMaster = this.branchesList.filter(
+                  let localBranchesDefault = this.branchesList.filter(
                     y =>
                       y.isRepoProd === false &&
-                      y.branchId === common.BRANCH_MASTER
+                      y.branchId === this.defaultBranch
                   );
 
-                  let localBranchesNotMaster = this.branchesList.filter(
+                  let localBranchesNotDefault = this.branchesList.filter(
                     y =>
                       y.isRepoProd === false &&
-                      y.branchId !== common.BRANCH_MASTER
+                      y.branchId !== this.defaultBranch
                   );
 
                   this.branchesList =
                     this.isEditor === true
                       ? [
-                          ...prodBranchesMaster,
-                          ...prodBranchesNotMaster,
-                          ...localBranchesMaster,
-                          ...localBranchesNotMaster
+                          ...prodBranchesDefault,
+                          ...prodBranchesNotDefault,
+                          ...localBranchesDefault,
+                          ...localBranchesNotDefault
                         ]
-                      : [...prodBranchesMaster, ...prodBranchesNotMaster];
+                      : [...prodBranchesDefault, ...prodBranchesNotDefault];
 
                   this.branchesListLength = x.length;
                   this.branchesListLoading = false;
@@ -269,6 +269,7 @@ export class BranchSelectComponent {
       apiService: this.apiService,
       orgId: this.selectedOrgId,
       projectId: this.selectedProjectId,
+      defaultBranch: this.defaultBranch,
       branchId: this.selectedBranchItem.branchId,
       isRepoProd: this.selectedBranchItem.isRepoProd,
       alias: alias

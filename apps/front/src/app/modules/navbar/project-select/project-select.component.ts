@@ -115,7 +115,9 @@ export class ProjectSelectComponent {
     this.navStore.update(state =>
       Object.assign({}, state, <NavState>{
         isRepoProd: true,
-        branchId: common.BRANCH_MASTER
+        branchId: this.projectsList.find(
+          x => x.projectId === this.selectedProjectId
+        ).defaultBranch
       })
     );
   }

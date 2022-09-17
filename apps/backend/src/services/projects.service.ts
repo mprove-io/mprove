@@ -41,6 +41,7 @@ export class ProjectsService {
     traceId: string;
     testProjectId: string;
     projectId?: string;
+    defaultBranch: string;
     remoteType: common.ProjectRemoteTypeEnum;
     gitUrl?: string;
     privateKey?: string;
@@ -53,6 +54,7 @@ export class ProjectsService {
       traceId,
       projectId,
       testProjectId,
+      defaultBranch,
       remoteType,
       gitUrl,
       privateKey,
@@ -63,6 +65,7 @@ export class ProjectsService {
       orgId: orgId,
       name: name,
       projectId: projectId,
+      defaultBranch: defaultBranch,
       remoteType: remoteType,
       gitUrl: gitUrl,
       publicKey: publicKey,
@@ -88,6 +91,7 @@ export class ProjectsService {
         devRepoId: user.user_id,
         userAlias: user.alias,
         testProjectId: testProjectId,
+        defaultBranch: defaultBranch,
         remoteType: remoteType,
         gitUrl: gitUrl,
         privateKey: privateKey,
@@ -112,14 +116,14 @@ export class ProjectsService {
       structId: structId,
       projectId: newProject.project_id,
       repoId: common.PROD_REPO_ID,
-      branchId: common.BRANCH_MASTER
+      branchId: newProject.default_branch
     });
 
     let devBranch = maker.makeBranch({
       structId: structId,
       projectId: newProject.project_id,
       repoId: user.user_id,
-      branchId: common.BRANCH_MASTER
+      branchId: newProject.default_branch
     });
 
     await this.blockmlService.rebuildStruct({

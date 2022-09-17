@@ -14,6 +14,9 @@ export class ProjectEntity {
   name: string; // name is unique across org projects
 
   @Column({ type: constants.VARCHAR })
+  default_branch: string;
+
+  @Column({ type: constants.VARCHAR })
   remote_type: common.ProjectRemoteTypeEnum;
 
   @Column({ type: constants.VARCHAR, nullable: true })

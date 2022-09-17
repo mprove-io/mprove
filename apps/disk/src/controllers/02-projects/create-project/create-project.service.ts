@@ -29,6 +29,7 @@ export class CreateProjectService {
       testProjectId,
       devRepoId,
       userAlias,
+      defaultBranch,
       remoteType,
       gitUrl,
       privateKey,
@@ -76,6 +77,7 @@ export class CreateProjectService {
       projectDir: projectDir,
       testProjectId: testProjectId,
       userAlias: userAlias,
+      defaultBranch: defaultBranch,
       remoteType: remoteType,
       cloneOptions: cloneOptions,
       gitUrl: gitUrl

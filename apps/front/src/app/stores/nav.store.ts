@@ -9,6 +9,7 @@ export class NavState {
   orgName: string;
   projectId: string;
   projectName: string;
+  projectDefaultBranch: string;
   isRepoProd: boolean;
   branchId: string;
   serverTimeDiff: number;
@@ -23,6 +24,7 @@ function createInitialState(): NavState {
     orgName: undefined,
     projectId: undefined,
     projectName: undefined,
+    projectDefaultBranch: undefined,
     isRepoProd: undefined,
     branchId: undefined,
     serverTimeDiff: undefined
@@ -47,6 +49,7 @@ export class NavStore extends Store<NavState> {
         orgOwnerId: undefined,
         projectId: undefined,
         projectName: undefined,
+        projectDefaultBranch: undefined,
         isRepoProd: true,
         branchId: undefined
       })
@@ -58,6 +61,7 @@ export class NavStore extends Store<NavState> {
       Object.assign({}, state, <NavState>{
         projectId: undefined,
         projectName: undefined,
+        projectDefaultBranch: undefined,
         isRepoProd: true,
         branchId: undefined
       })

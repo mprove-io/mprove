@@ -5,6 +5,7 @@ export function makeProject(item: {
   orgId: string;
   projectId?: string;
   name: string;
+  defaultBranch: string;
   gitUrl: string;
   remoteType: common.ProjectRemoteTypeEnum;
   privateKey: string;
@@ -14,6 +15,7 @@ export function makeProject(item: {
     org_id: item.orgId,
     project_id: item.projectId || common.makeId(),
     name: item.name,
+    default_branch: item.defaultBranch,
     remote_type: item.remoteType,
     git_url: item.gitUrl,
     private_key: item.privateKey,

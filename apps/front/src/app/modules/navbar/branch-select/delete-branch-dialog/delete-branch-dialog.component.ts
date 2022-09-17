@@ -45,7 +45,7 @@ export class DeleteBranchDialogComponent {
               common.PATH_REPO,
               common.PROD_REPO_ID,
               common.PATH_BRANCH,
-              common.BRANCH_MASTER,
+              this.ref.data.defaultBranch,
               common.PATH_FILES
             ]);
           }

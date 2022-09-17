@@ -14,7 +14,7 @@ export class LogoComponent {
 
   goTo() {
     if (this.auth.authenticated()) {
-      this.navigateService.navigateToProdMasterVizs();
+      this.navigateService.navigateToProdDefaultBranchVizs();
     } else {
       window.open('https://mprove.io');
     }

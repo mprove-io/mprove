@@ -55,6 +55,9 @@ export class ToBackendGetNavResponsePayload {
   @IsString()
   projectName: string;
 
+  @IsString()
+  projectDefaultBranch: string;
+
   @IsBoolean()
   isRepoProd: boolean;
 

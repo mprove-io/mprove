@@ -20,6 +20,9 @@ export class ToDiskCreateProjectRequestPayload {
   @IsString()
   userAlias: string;
 
+  @IsString()
+  defaultBranch: string;
+
   @IsEnum(common.ProjectRemoteTypeEnum)
   remoteType: common.ProjectRemoteTypeEnum;
 

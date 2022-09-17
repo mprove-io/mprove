@@ -108,14 +108,14 @@ export class CreateMemberController {
     let prodBranch = await this.branchesRepository.findOne({
       project_id: projectId,
       repo_id: common.PROD_REPO_ID,
-      branch_id: common.BRANCH_MASTER
+      branch_id: project.default_branch
     });
 
     let devBranch = maker.makeBranch({
       structId: prodBranch.struct_id,
       projectId: projectId,
       repoId: newMember.member_id,
-      branchId: common.BRANCH_MASTER
+      branchId: project.default_branch
     });
 
     await this.dbService.writeRecords({
@@ -149,7 +149,7 @@ export class CreateMemberController {
         constants.PATH_REPO,
         constants.PROD_REPO_ID,
         constants.PATH_BRANCH,
-        constants.BRANCH_MASTER,
+        project.default_branch,
         constants.PATH_VISUALIZATIONS
       ].join('/');
 
