@@ -42,6 +42,6 @@ describe('integra', () => {
     cy.get('[data-cy=createProjectDialogProjectNameInput]').type(projectName);
     cy.get('[data-cy=createProjectDialogCreateButton]').click();
     cy.loading();
-    cy.get('[data-cy=projectSettingsTitle]').should('exist');
+    cy.get('[data-cy=filesTitle]').should('exist');
   });
 });
