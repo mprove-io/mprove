@@ -35,8 +35,7 @@ test('1', async t => {
         projectId: projectId,
         devRepoId: 'r1',
         userAlias: 'u1',
-        remoteType: common.ProjectRemoteTypeEnum.Managed,
-        defaultBranch: common.BRANCH_MASTER
+        remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
 
@@ -81,8 +80,7 @@ test('1', async t => {
         projectId: projectId,
         repoId: common.PROD_REPO_ID,
         branch: 'b2',
-        remoteType: common.ProjectRemoteTypeEnum.Managed,
-        defaultBranch: common.BRANCH_MASTER
+        remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
 
