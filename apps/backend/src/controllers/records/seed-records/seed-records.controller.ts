@@ -155,7 +155,7 @@ export class SeedRecordsController {
         ) => {
           let newProject = maker.makeProject({
             orgId: x.orgId,
-            projectId: x.projectId,
+            projectId: x.projectId || common.makeId(),
             name: x.name,
             defaultBranch: x.defaultBranch,
             remoteType: x.remoteType,

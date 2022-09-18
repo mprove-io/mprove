@@ -3,7 +3,7 @@ import { entities } from '~backend/barrels/entities';
 
 export function makeProject(item: {
   orgId: string;
-  projectId?: string;
+  projectId: string;
   name: string;
   defaultBranch: string;
   gitUrl: string;
