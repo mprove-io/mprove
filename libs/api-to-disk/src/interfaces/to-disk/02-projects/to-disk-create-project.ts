@@ -20,9 +20,6 @@ export class ToDiskCreateProjectRequestPayload {
   @IsString()
   userAlias: string;
 
-  @IsString()
-  defaultBranch: string;
-
   @IsEnum(common.ProjectRemoteTypeEnum)
   remoteType: common.ProjectRemoteTypeEnum;
 
@@ -51,6 +48,9 @@ export class ToDiskCreateProjectResponsePayload {
 
   @IsString()
   projectId: string;
+
+  @IsString()
+  defaultBranch: string;
 
   @ValidateNested()
   @Type(() => common.DiskCatalogFile)

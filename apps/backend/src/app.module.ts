@@ -441,8 +441,7 @@ export class AppModule implements OnModuleInit {
               traceId: common.makeId(),
               projectId: firstProjectId,
               testProjectId: 'first-project',
-              remoteType: common.ProjectRemoteTypeEnum.Managed,
-              defaultBranch: common.BRANCH_MASTER
+              remoteType: common.ProjectRemoteTypeEnum.Managed
             });
           }
         }

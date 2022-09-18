@@ -19,6 +19,9 @@
               >Remote Type</div
             >
             <div class="flex h-16 items-center justify-end font-semibold"
+              >Remote Default Branch</div
+            >
+            <div class="flex h-16 items-center justify-end font-semibold"
               >Remote Git Url</div
             >
             <div class="flex h-16 items-center justify-end font-semibold"
@@ -37,6 +40,11 @@
               data-cy="projectSettingsRemoteType"
               class="flex h-16 max-w-xl items-center truncate text-base"
               >{{ project?.remoteType | capitalize }}</div
+            >
+            <div
+              data-cy="projectSettingsRemoteType"
+              class="flex h-16 max-w-xl items-center truncate text-base"
+              >{{ project?.defaultBranch }}</div
             >
             <div
               data-cy="projectSettingsGitUrl"

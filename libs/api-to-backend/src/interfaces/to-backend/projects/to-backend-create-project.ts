@@ -13,10 +13,6 @@ export class ToBackendCreateProjectRequestPayload {
   @IsEnum(common.ProjectRemoteTypeEnum)
   remoteType: common.ProjectRemoteTypeEnum;
 
-  @IsOptional()
-  @IsString()
-  defaultBranch?: string;
-
   @IsString()
   @IsOptional()
   gitUrl?: string;

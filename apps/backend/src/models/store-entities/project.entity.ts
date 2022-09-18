@@ -13,10 +13,13 @@ export class ProjectEntity {
   @Column({ type: constants.VARCHAR })
   name: string; // name is unique across org projects
 
-  @Column({ type: constants.VARCHAR })
+  @Column({ type: constants.VARCHAR, default: common.BRANCH_MASTER })
   default_branch: string;
 
-  @Column({ type: constants.VARCHAR })
+  @Column({
+    type: constants.VARCHAR,
+    default: common.ProjectRemoteTypeEnum.Managed
+  })
   remote_type: common.ProjectRemoteTypeEnum;
 
   @Column({ type: constants.VARCHAR, nullable: true })

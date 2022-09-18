@@ -31,14 +31,7 @@ export class CreateProjectController {
     reqValid: apiToBackend.ToBackendCreateProjectRequest
   ) {
     let { traceId } = reqValid.info;
-    let {
-      name,
-      orgId,
-      remoteType,
-      defaultBranch,
-      noteId,
-      gitUrl
-    } = reqValid.payload;
+    let { name, orgId, remoteType, noteId, gitUrl } = reqValid.payload;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 
@@ -79,10 +72,7 @@ export class CreateProjectController {
       user: user,
       testProjectId: undefined,
       remoteType: remoteType,
-      defaultBranch:
-        remoteType === common.ProjectRemoteTypeEnum.Managed
-          ? common.BRANCH_MASTER
-          : defaultBranch || common.BRANCH_MASTER,
+      projectId: common.makeId(),
       gitUrl: gitUrl,
       privateKey: note?.private_key,
       publicKey: note?.public_key

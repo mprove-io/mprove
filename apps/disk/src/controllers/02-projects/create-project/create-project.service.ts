@@ -29,7 +29,6 @@ export class CreateProjectService {
       testProjectId,
       devRepoId,
       userAlias,
-      defaultBranch,
       remoteType,
       gitUrl,
       privateKey,
@@ -62,14 +61,16 @@ export class CreateProjectService {
     let keyDir = `${orgDir}/_keys/${projectId}`;
     await disk.ensureDir(keyDir);
 
+    let fetchOptions = makeFetchOptions({
+      remoteType: remoteType,
+      keyDir: keyDir,
+      gitUrl: gitUrl,
+      privateKey: privateKey,
+      publicKey: publicKey
+    });
+
     let cloneOptions: nodegit.CloneOptions = {
-      fetchOpts: makeFetchOptions({
-        remoteType: remoteType,
-        keyDir: keyDir,
-        gitUrl: gitUrl,
-        privateKey: privateKey,
-        publicKey: publicKey
-      })
+      fetchOpts: fetchOptions
     };
 
     await git.prepareRemoteAndProd({
@@ -77,7 +78,6 @@ export class CreateProjectService {
       projectDir: projectDir,
       testProjectId: testProjectId,
       userAlias: userAlias,
-      defaultBranch: defaultBranch,
       remoteType: remoteType,
       cloneOptions: cloneOptions,
       gitUrl: gitUrl
@@ -100,9 +100,20 @@ export class CreateProjectService {
       readFiles: true
     });
 
+    let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
+      await git.getRepoStatus({
+        projectId: projectId,
+        projectDir: projectDir,
+        repoId: common.PROD_REPO_ID,
+        repoDir: `${projectDir}/${common.PROD_REPO_ID}`,
+        fetchOptions: fetchOptions
+      })
+    );
+
     let payload: apiToDisk.ToDiskCreateProjectResponsePayload = {
       orgId: orgId,
       projectId: projectId,
+      defaultBranch: currentBranch,
       prodFiles: prodItemCatalog.files
     };
 

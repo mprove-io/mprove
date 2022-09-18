@@ -40,8 +40,7 @@ export class ProjectsService {
     user: entities.UserEntity;
     traceId: string;
     testProjectId: string;
-    projectId?: string;
-    defaultBranch: string;
+    projectId: string;
     remoteType: common.ProjectRemoteTypeEnum;
     gitUrl?: string;
     privateKey?: string;
@@ -54,18 +53,46 @@ export class ProjectsService {
       traceId,
       projectId,
       testProjectId,
-      defaultBranch,
       remoteType,
       gitUrl,
       privateKey,
       publicKey
     } = item;
 
+    let toDiskCreateProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
+      info: {
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        traceId: traceId
+      },
+      payload: {
+        orgId: orgId,
+        projectId: projectId,
+        devRepoId: user.user_id,
+        userAlias: user.alias,
+        testProjectId: testProjectId,
+        remoteType: remoteType,
+        gitUrl: gitUrl,
+        privateKey: privateKey,
+        publicKey: publicKey
+      }
+    };
+
+    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateProjectResponse>(
+      {
+        routingKey: helper.makeRoutingKeyToDisk({
+          orgId: orgId,
+          projectId: projectId
+        }),
+        message: toDiskCreateProjectRequest,
+        checkIsOk: true
+      }
+    );
+
     let newProject = maker.makeProject({
       orgId: orgId,
       name: name,
       projectId: projectId,
-      defaultBranch: defaultBranch,
+      defaultBranch: diskResponse.payload.defaultBranch,
       remoteType: remoteType,
       gitUrl: gitUrl,
       publicKey: publicKey,
@@ -79,36 +106,6 @@ export class ProjectsService {
       isEditor: common.BoolEnum.TRUE,
       isExplorer: common.BoolEnum.TRUE
     });
-
-    let toDiskCreateProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
-      info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
-        projectId: newProject.project_id,
-        devRepoId: user.user_id,
-        userAlias: user.alias,
-        testProjectId: testProjectId,
-        defaultBranch: defaultBranch,
-        remoteType: remoteType,
-        gitUrl: gitUrl,
-        privateKey: privateKey,
-        publicKey: publicKey
-      }
-    };
-
-    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateProjectResponse>(
-      {
-        routingKey: helper.makeRoutingKeyToDisk({
-          orgId: orgId,
-          projectId: newProject.project_id
-        }),
-        message: toDiskCreateProjectRequest,
-        checkIsOk: true
-      }
-    );
 
     let structId = common.makeId();
 

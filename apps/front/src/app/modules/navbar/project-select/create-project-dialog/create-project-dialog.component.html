@@ -92,22 +92,6 @@
         [control]="createProjectForm.controls['projectGitUrl']"
       ></m-validation>
 
-      <input
-        spellcheck="false"
-        data-cy="createProjectDialogDefaultBranchInput"
-        class="form-input mt-9 w-full rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            createProjectForm.controls['projectDefaultBranch'].invalid &&
-            createProjectForm.controls['projectDefaultBranch'].touched
-        }"
-        formControlName="projectDefaultBranch"
-        placeholder="master or main"
-      />
-      <m-validation
-        [control]="createProjectForm.controls['projectDefaultBranch']"
-      ></m-validation>
-
       <div class="mt-5 select-none text-left text-lg text-gray2"
         >Add this <span class="font-semibold">Deploy Key</span> to your git
         provider and enable <span class="font-semibold">Write Access</span>

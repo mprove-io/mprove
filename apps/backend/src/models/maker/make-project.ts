@@ -13,7 +13,7 @@ export function makeProject(item: {
 }) {
   let projectEntity: entities.ProjectEntity = {
     org_id: item.orgId,
-    project_id: item.projectId || common.makeId(),
+    project_id: item.projectId,
     name: item.name,
     default_branch: item.defaultBranch,
     remote_type: item.remoteType,

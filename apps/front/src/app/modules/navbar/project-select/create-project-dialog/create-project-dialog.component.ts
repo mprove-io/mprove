@@ -37,7 +37,6 @@ export class CreateProjectDialogComponent implements OnInit {
   ngOnInit() {
     let projectName: string;
     let projectGitUrl: string;
-    let projectDefaultBranch: string;
 
     this.spinner.show(this.spinnerName);
 
@@ -48,10 +47,6 @@ export class CreateProjectDialogComponent implements OnInit {
       ],
       projectGitUrl: [
         projectGitUrl,
-        [Validators.required, Validators.maxLength(255)]
-      ],
-      projectDefaultBranch: [
-        projectDefaultBranch,
         [Validators.required, Validators.maxLength(255)]
       ]
     });
@@ -92,8 +87,7 @@ export class CreateProjectDialogComponent implements OnInit {
 
     if (
       this.projectRemoteRepoType === common.ProjectRemoteTypeEnum.GitClone &&
-      (!this.createProjectForm.controls['projectGitUrl'].valid ||
-        !this.createProjectForm.controls['projectDefaultBranch'].valid)
+      !this.createProjectForm.controls['projectGitUrl'].valid
     ) {
       return;
     }
@@ -103,7 +97,6 @@ export class CreateProjectDialogComponent implements OnInit {
     let payload: apiToBackend.ToBackendCreateProjectRequestPayload = {
       orgId: this.ref.data.orgId,
       name: this.createProjectForm.value.projectName,
-      defaultBranch: this.createProjectForm.value.defaultBranch,
       remoteType: this.projectRemoteRepoType,
       gitUrl: this.createProjectForm.value.projectGitUrl,
       noteId: this.noteId
@@ -124,7 +117,11 @@ export class CreateProjectDialogComponent implements OnInit {
               resp.payload.project.orgId,
               common.PATH_PROJECT,
               resp.payload.project.projectId,
-              common.PATH_SETTINGS
+              common.PATH_REPO,
+              common.PROD_REPO_ID,
+              common.PATH_BRANCH,
+              resp.payload.project.defaultBranch,
+              common.PATH_FILES
             ]);
           }
         }),
