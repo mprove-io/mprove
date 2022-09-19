@@ -101,7 +101,7 @@ export class ProjectsService {
 
     let prodEnv = maker.makeEnv({
       projectId: newProject.project_id,
-      envId: common.ENV_PROD
+      envId: common.PROJECT_ENV_PROD
     });
 
     let newMember = maker.makeMember({
@@ -147,7 +147,8 @@ export class ProjectsService {
       orgId: newProject.org_id,
       projectId: newProject.project_id,
       structId,
-      diskFiles: diskResponse.payload.prodFiles
+      diskFiles: diskResponse.payload.prodFiles,
+      envId: common.PROJECT_ENV_PROD
     });
 
     let records = await this.dbService.writeRecords({

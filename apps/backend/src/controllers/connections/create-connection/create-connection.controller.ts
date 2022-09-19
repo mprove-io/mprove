@@ -26,6 +26,7 @@ export class CreateConnectionController {
   ) {
     let {
       projectId,
+      envId,
       connectionId,
       type,
       bigqueryCredentials,
@@ -56,6 +57,7 @@ export class CreateConnectionController {
 
     let newConnection = maker.makeConnection({
       projectId: projectId,
+      envId: envId,
       connectionId: connectionId,
       type: type,
       account: account,

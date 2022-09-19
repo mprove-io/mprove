@@ -15,6 +15,9 @@ export class ToBackendCreateConnectionRequestPayload {
   projectId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   connectionId: string;
 
   @IsEnum(common.ConnectionTypeEnum)

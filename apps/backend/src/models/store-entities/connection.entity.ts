@@ -7,6 +7,9 @@ export class ConnectionEntity {
   @PrimaryColumn({ type: constants.PROJECT_ID_VARCHAR })
   project_id: string; // composite
 
+  @PrimaryColumn({ type: constants.ENV_ID_VARCHAR })
+  env_id: string; // name
+
   @PrimaryColumn({ type: constants.CONNECTION_ID_VARCHAR })
   connection_id: string; // name
 

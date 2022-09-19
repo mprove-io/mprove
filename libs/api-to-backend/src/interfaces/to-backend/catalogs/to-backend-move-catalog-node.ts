@@ -11,6 +11,9 @@ export class ToBackendMoveCatalogNodeRequestPayload {
   branchId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   fromNodeId: string;
 
   @IsString()

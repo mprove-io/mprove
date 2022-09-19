@@ -105,20 +105,29 @@ export class PushRepoController {
       orgId: project.org_id,
       projectId,
       structId,
-      diskFiles: diskResponse.payload.files
+      diskFiles: diskResponse.payload.files,
+      envId: common.PROJECT_ENV_PROD
     });
 
     let prodBranch = maker.makeBranch({
-      structId: structId,
       projectId: projectId,
       repoId: common.PROD_REPO_ID,
       branchId: branchId
     });
 
+    let prodBranchBridgeProdEnv = maker.makeBridge({
+      structId: structId,
+      projectId: prodBranch.project_id,
+      repoId: prodBranch.repo_id,
+      branchId: prodBranch.branch_id,
+      envId: common.PROJECT_ENV_PROD
+    });
+
     await this.dbService.writeRecords({
       modify: true,
       records: {
-        branches: [prodBranch]
+        branches: [prodBranch],
+        bridges: [prodBranchBridgeProdEnv]
       }
     });
 

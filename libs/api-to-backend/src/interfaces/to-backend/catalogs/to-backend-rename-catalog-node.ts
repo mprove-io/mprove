@@ -8,6 +8,9 @@ export class ToBackendRenameCatalogNodeRequestPayload {
   projectId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   branchId: string;
 
   @IsString()

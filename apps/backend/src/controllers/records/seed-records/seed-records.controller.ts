@@ -130,6 +130,7 @@ export class SeedRecordsController {
       payloadConnections.forEach(x => {
         let newConnection = maker.makeConnection({
           projectId: x.projectId,
+          envId: x.envId,
           connectionId: x.connectionId,
           type: x.type,
           host: x.host,
@@ -168,7 +169,7 @@ export class SeedRecordsController {
 
           let prodEnv = maker.makeEnv({
             projectId: newProject.project_id,
-            envId: common.ENV_PROD
+            envId: common.PROJECT_ENV_PROD
           });
 
           let toDiskSeedProjectRequest: apiToDisk.ToDiskSeedProjectRequest = {
@@ -216,7 +217,11 @@ export class SeedRecordsController {
               projectId: newProject.project_id,
               files: helper.diskFilesToBlockmlFiles(diskResponse.payload.files),
               connections: connections
-                .filter(z => z.project_id === newProject.project_id)
+                .filter(
+                  z =>
+                    z.project_id === newProject.project_id &&
+                    z.env_id === prodEnv.env_id
+                )
                 .map(c => ({
                   connectionId: c.connection_id,
                   type: c.type

@@ -5,6 +5,7 @@ import { entities } from '~backend/barrels/entities';
 export function makeConnection(item: {
   projectId: string;
   connectionId: string;
+  envId: string;
   type: common.ConnectionTypeEnum;
   host: string;
   port: number;
@@ -19,6 +20,7 @@ export function makeConnection(item: {
 }) {
   let connectionEntity: entities.ConnectionEntity = {
     project_id: item.projectId,
+    env_id: item.envId,
     connection_id: item.connectionId,
     type: item.type,
     bigquery_credentials: item.bigqueryCredentials,

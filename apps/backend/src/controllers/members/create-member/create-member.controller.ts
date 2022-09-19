@@ -25,6 +25,7 @@ export class CreateMemberController {
     private rabbitService: RabbitService,
     private avatarsRepository: repositories.AvatarsRepository,
     private branchesRepository: repositories.BranchesRepository,
+    private bridgesRepository: repositories.BridgesRepository,
     private usersRepository: repositories.UsersRepository,
     private projectsService: ProjectsService,
     private usersService: UsersService,
@@ -112,10 +113,29 @@ export class CreateMemberController {
     });
 
     let devBranch = maker.makeBranch({
-      structId: prodBranch.struct_id,
       projectId: projectId,
       repoId: newMember.member_id,
       branchId: project.default_branch
+    });
+
+    let prodBranchBridges = await this.bridgesRepository.find({
+      project_id: prodBranch.project_id,
+      repo_id: prodBranch.repo_id,
+      branch_id: prodBranch.branch_id
+    });
+
+    let devBranchBridges: entities.BridgeEntity[] = [];
+
+    prodBranchBridges.forEach(x => {
+      let devBranchBridge = maker.makeBridge({
+        structId: x.struct_id,
+        projectId: devBranch.project_id,
+        repoId: devBranch.repo_id,
+        branchId: devBranch.branch_id,
+        envId: x.env_id
+      });
+
+      devBranchBridges.push(devBranchBridge);
     });
 
     await this.dbService.writeRecords({
@@ -123,7 +143,8 @@ export class CreateMemberController {
       records: {
         members: [newMember],
         users: common.isDefined(newUser) ? [newUser] : [],
-        branches: [devBranch]
+        branches: [devBranch],
+        bridges: [...devBranchBridges]
       }
     });
 

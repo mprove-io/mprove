@@ -1,13 +1,16 @@
 import { Controller, Post } from '@nestjs/common';
+import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
+import { BridgesService } from '~backend/services/bridges.service';
 import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -19,11 +22,13 @@ export class MoveCatalogNodeController {
   constructor(
     private projectsService: ProjectsService,
     private dbService: DbService,
+    private bridgesRepository: repositories.BridgesRepository,
     private membersService: MembersService,
     private rabbitService: RabbitService,
     private structsService: StructsService,
     private blockmlService: BlockmlService,
-    private branchesService: BranchesService
+    private branchesService: BranchesService,
+    private bridgesService: BridgesService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMoveCatalogNode)
@@ -33,7 +38,7 @@ export class MoveCatalogNodeController {
     reqValid: apiToBackend.ToBackendMoveCatalogNodeRequest
   ) {
     let { traceId } = reqValid.info;
-    let { projectId, branchId, fromNodeId, toNodeId } = reqValid.payload;
+    let { projectId, branchId, envId, fromNodeId, toNodeId } = reqValid.payload;
 
     let repoId = user.user_id;
 
@@ -50,6 +55,13 @@ export class MoveCatalogNodeController {
       projectId: projectId,
       repoId: user.user_id,
       branchId: branchId
+    });
+
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.project_id,
+      repoId: branch.repo_id,
+      branchId: branch.branch_id,
+      envId: envId
     });
 
     let toDiskMoveCatalogNodeRequest: apiToDisk.ToDiskMoveCatalogNodeRequest = {
@@ -82,27 +94,38 @@ export class MoveCatalogNodeController {
       }
     );
 
-    let structId = common.makeId();
-
-    await this.blockmlService.rebuildStruct({
-      traceId,
-      orgId: project.org_id,
-      projectId,
-      structId,
-      diskFiles: diskResponse.payload.files
+    let branchBridges = await this.bridgesRepository.find({
+      project_id: branch.project_id,
+      repo_id: branch.repo_id,
+      branch_id: branch.branch_id
     });
 
-    branch.struct_id = structId;
+    await forEachSeries(branchBridges, async x => {
+      let structId = common.makeId();
+
+      await this.blockmlService.rebuildStruct({
+        traceId,
+        orgId: project.org_id,
+        projectId,
+        structId,
+        diskFiles: diskResponse.payload.files,
+        envId: x.env_id
+      });
+
+      x.struct_id = structId;
+    });
 
     await this.dbService.writeRecords({
       modify: true,
       records: {
-        branches: [branch]
+        bridges: [...branchBridges]
       }
     });
 
+    let currentBridge = branchBridges.find(y => y.env_id === envId);
+
     let struct = await this.structsService.getStructCheckExists({
-      structId: structId
+      structId: currentBridge.struct_id
     });
 
     let payload: apiToBackend.ToBackendMoveCatalogNodeResponsePayload = {

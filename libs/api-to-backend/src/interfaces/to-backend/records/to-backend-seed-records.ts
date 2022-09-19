@@ -119,6 +119,9 @@ export class ToBackendSeedRecordsRequestPayloadConnectionsItem {
   projectId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   connectionId: string;
 
   @IsEnum(common.ConnectionTypeEnum)

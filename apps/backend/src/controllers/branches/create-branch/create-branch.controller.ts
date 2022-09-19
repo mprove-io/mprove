@@ -5,6 +5,7 @@ import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { maker } from '~backend/barrels/maker';
+import { repositories } from '~backend/barrels/repositories';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
 import { DbService } from '~backend/services/db.service';
@@ -18,6 +19,7 @@ export class CreateBranchController {
     private projectsService: ProjectsService,
     private rabbitService: RabbitService,
     private branchesService: BranchesService,
+    private bridgesRepository: repositories.BridgesRepository,
     private membersService: MembersService,
     private dbService: DbService
   ) {}
@@ -84,16 +86,36 @@ export class CreateBranchController {
     );
 
     let newBranch = maker.makeBranch({
-      structId: fromBranch.struct_id,
       projectId: projectId,
       repoId: repoId,
       branchId: newBranchId
     });
 
+    let fromBranchBridges = await this.bridgesRepository.find({
+      project_id: fromBranch.project_id,
+      repo_id: fromBranch.repo_id,
+      branch_id: fromBranch.branch_id
+    });
+
+    let newBranchBridges: entities.BridgeEntity[] = [];
+
+    fromBranchBridges.forEach(x => {
+      let newBranchBridge = maker.makeBridge({
+        structId: x.struct_id,
+        projectId: newBranch.project_id,
+        repoId: newBranch.repo_id,
+        branchId: newBranch.branch_id,
+        envId: x.env_id
+      });
+
+      newBranchBridges.push(newBranchBridge);
+    });
+
     await this.dbService.writeRecords({
       modify: false,
       records: {
-        branches: [newBranch]
+        branches: [newBranch],
+        bridges: [...newBranchBridges]
       }
     });
 

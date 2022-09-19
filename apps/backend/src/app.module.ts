@@ -297,6 +297,7 @@ export class AppModule implements OnModuleInit {
           if (common.isUndefined(c1connection)) {
             let c1 = maker.makeConnection({
               projectId: firstProjectId,
+              envId: common.PROJECT_ENV_PROD,
               connectionId: 'c1_postgres',
               type: common.ConnectionTypeEnum.PostgreSQL,
               host: 'dwh-postgres',
@@ -329,6 +330,7 @@ export class AppModule implements OnModuleInit {
           if (common.isUndefined(c2connection)) {
             let c2 = maker.makeConnection({
               projectId: firstProjectId,
+              envId: common.PROJECT_ENV_PROD,
               connectionId: 'c2_clickhouse',
               type: common.ConnectionTypeEnum.ClickHouse,
               host: 'dwh-clickhouse',
@@ -369,6 +371,7 @@ export class AppModule implements OnModuleInit {
 
             let c3 = maker.makeConnection({
               projectId: firstProjectId,
+              envId: common.PROJECT_ENV_PROD,
               connectionId: 'c3_bigquery',
               type: common.ConnectionTypeEnum.BigQuery,
               host: undefined,
@@ -399,6 +402,7 @@ export class AppModule implements OnModuleInit {
           if (common.isUndefined(c4connection)) {
             let c4 = maker.makeConnection({
               projectId: firstProjectId,
+              envId: common.PROJECT_ENV_PROD,
               connectionId: 'c4_snowflake',
               type: common.ConnectionTypeEnum.SnowFlake,
               host: undefined,

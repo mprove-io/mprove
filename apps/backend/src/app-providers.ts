@@ -11,11 +11,13 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { BigQueryService } from './services/bigquery.service';
 import { BlockmlService } from './services/blockml.service';
 import { BranchesService } from './services/branches.service';
+import { BridgesService } from './services/bridges.service';
 import { ClickHouseService } from './services/clickhouse.service';
 import { ConnectionsService } from './services/connections.service';
 import { DashboardsService } from './services/dashboards.service';
 import { DbService } from './services/db.service';
 import { EmailService } from './services/email.service';
+import { EnvsService } from './services/envs.service';
 import { MconfigsService } from './services/mconfigs.service';
 import { MembersService } from './services/members.service';
 import { ModelsService } from './services/models.service';
@@ -53,6 +55,8 @@ export const appProviders = [
   VizsService,
   DashboardsService,
   MembersService,
+  EnvsService,
+  BridgesService,
   {
     provide: TasksService,
     useFactory: (

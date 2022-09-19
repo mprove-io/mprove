@@ -20,14 +20,24 @@ export class BlockmlService {
     traceId: string;
     projectId: string;
     structId: string;
+    envId: string;
     orgId: string;
     diskFiles: common.DiskCatalogFile[];
     skipDb?: boolean;
   }) {
-    let { traceId, structId, orgId, projectId, diskFiles, skipDb } = item;
+    let {
+      traceId,
+      structId,
+      orgId,
+      projectId,
+      envId,
+      diskFiles,
+      skipDb
+    } = item;
 
     let connections = await this.connectionsRepository.find({
-      project_id: projectId
+      project_id: projectId,
+      env_id: envId
     });
 
     let toBlockmlRebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest = {
