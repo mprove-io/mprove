@@ -99,6 +99,11 @@ export class ProjectsService {
       privateKey: privateKey
     });
 
+    let prodEnv = maker.makeEnv({
+      projectId: newProject.project_id,
+      envId: common.ENV_PROD
+    });
+
     let newMember = maker.makeMember({
       projectId: newProject.project_id,
       user: user,
@@ -110,17 +115,31 @@ export class ProjectsService {
     let structId = common.makeId();
 
     let prodBranch = maker.makeBranch({
-      structId: structId,
       projectId: newProject.project_id,
       repoId: common.PROD_REPO_ID,
       branchId: newProject.default_branch
     });
 
     let devBranch = maker.makeBranch({
-      structId: structId,
       projectId: newProject.project_id,
       repoId: user.user_id,
       branchId: newProject.default_branch
+    });
+
+    let prodBranchBridgeProdEnv = maker.makeBridge({
+      structId: structId,
+      projectId: prodBranch.project_id,
+      repoId: prodBranch.repo_id,
+      branchId: prodBranch.branch_id,
+      envId: prodEnv.env_id
+    });
+
+    let devBranchBridgeProdEnv = maker.makeBridge({
+      structId: structId,
+      projectId: devBranch.project_id,
+      repoId: devBranch.repo_id,
+      branchId: devBranch.branch_id,
+      envId: prodEnv.env_id
     });
 
     await this.blockmlService.rebuildStruct({
@@ -135,8 +154,10 @@ export class ProjectsService {
       modify: false,
       records: {
         projects: [newProject],
+        envs: [prodEnv],
         members: [newMember],
-        branches: [prodBranch, devBranch]
+        branches: [prodBranch, devBranch],
+        bridges: [prodBranchBridgeProdEnv, devBranchBridgeProdEnv]
       }
     });
 

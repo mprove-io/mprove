@@ -43,10 +43,12 @@ export class SeedRecordsController {
     let users: entities.UserEntity[] = [];
     let orgs: entities.OrgEntity[] = [];
     let projects: entities.ProjectEntity[] = [];
+    let envs: entities.EnvEntity[] = [];
     let members: entities.MemberEntity[] = [];
     let connections: entities.ConnectionEntity[] = [];
     let structs: entities.StructEntity[] = [];
     let branches: entities.BranchEntity[] = [];
+    let bridges: entities.BridgeEntity[] = [];
     let vizs: entities.VizEntity[] = [];
     let queries: entities.QueryEntity[] = [];
     let models: entities.ModelEntity[] = [];
@@ -164,6 +166,11 @@ export class SeedRecordsController {
             publicKey: x.publicKey
           });
 
+          let prodEnv = maker.makeEnv({
+            projectId: newProject.project_id,
+            envId: common.ENV_PROD
+          });
+
           let toDiskSeedProjectRequest: apiToDisk.ToDiskSeedProjectRequest = {
             info: {
               name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSeedProject,
@@ -257,22 +264,42 @@ export class SeedRecordsController {
           });
 
           let prodBranch = maker.makeBranch({
-            structId: structId,
             projectId: newProject.project_id,
             repoId: common.PROD_REPO_ID,
             branchId: newProject.default_branch
           });
 
           let devBranch = maker.makeBranch({
-            structId: structId,
             projectId: newProject.project_id,
             repoId: users[0].user_id,
             branchId: newProject.default_branch
           });
 
+          let prodBranchBridgeProdEnv = maker.makeBridge({
+            structId: structId,
+            projectId: prodBranch.project_id,
+            repoId: prodBranch.repo_id,
+            branchId: prodBranch.branch_id,
+            envId: prodEnv.env_id
+          });
+
+          let devBranchBridgeProdEnv = maker.makeBridge({
+            structId: structId,
+            projectId: devBranch.project_id,
+            repoId: devBranch.repo_id,
+            branchId: devBranch.branch_id,
+            envId: prodEnv.env_id
+          });
+
           projects.push(newProject);
+          envs.push(prodEnv);
           structs.push(struct);
           branches = [...branches, prodBranch, devBranch];
+          bridges = [
+            ...bridges,
+            prodBranchBridgeProdEnv,
+            devBranchBridgeProdEnv
+          ];
 
           vizs = [...vizs, ...vizsApi.map(z => wrapper.wrapToEntityViz(z))];
 
@@ -342,9 +369,11 @@ export class SeedRecordsController {
         users: users,
         orgs: orgs,
         projects: projects,
+        envs: envs,
         members: members,
         connections: connections,
         branches: branches,
+        bridges: bridges,
         structs: structs,
         vizs: vizs,
         queries: queries,

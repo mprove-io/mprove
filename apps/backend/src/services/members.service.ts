@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
+import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { maker } from '~backend/barrels/maker';
@@ -17,6 +18,7 @@ export class MembersService {
     private cs: ConfigService<interfaces.Config>,
     private branchesRepository: repositories.BranchesRepository,
     private projectsRepository: repositories.ProjectsRepository,
+    private bridgesRepository: repositories.BridgesRepository,
     private rabbitService: RabbitService,
     private dbService: DbService
   ) {}
@@ -185,17 +187,37 @@ export class MembersService {
           });
 
           let devBranch = maker.makeBranch({
-            structId: prodBranch.struct_id,
             projectId: firstProjectId,
             repoId: newMember.member_id,
             branchId: project.default_branch
+          });
+
+          let prodBranchBridges = await this.bridgesRepository.find({
+            project_id: prodBranch.project_id,
+            repo_id: prodBranch.repo_id,
+            branch_id: prodBranch.branch_id
+          });
+
+          let devBranchBridges: entities.BridgeEntity[] = [];
+
+          prodBranchBridges.forEach(x => {
+            let devBranchBridge = maker.makeBridge({
+              structId: x.struct_id,
+              projectId: devBranch.project_id,
+              repoId: devBranch.repo_id,
+              branchId: devBranch.branch_id,
+              envId: x.env_id
+            });
+
+            devBranchBridges.push(devBranchBridge);
           });
 
           await this.dbService.writeRecords({
             modify: true,
             records: {
               members: [newMember],
-              branches: [devBranch]
+              branches: [devBranch],
+              bridges: [...devBranchBridges]
             }
           });
         }

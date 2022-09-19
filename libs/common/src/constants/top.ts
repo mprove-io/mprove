@@ -1,6 +1,7 @@
 // export const API_PATH = 'api';
 export const PROD_REPO_ID = 'prod';
 export const BRANCH_MASTER = 'master';
+export const ENV_PROD = 'prod';
 export const PASS_PHRASE = '';
 
 export const FIRST_ORG_NAME = 'demo';

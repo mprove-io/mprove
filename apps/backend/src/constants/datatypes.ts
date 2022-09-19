@@ -12,6 +12,7 @@ export const PROJECT_ID_VARCHAR = 'varchar';
 export const NOTE_ID_VARCHAR = 'varchar';
 export const REPO_ID_VARCHAR = 'varchar';
 export const BRANCH_ID_VARCHAR = 'varchar';
+export const ENV_ID_VARCHAR = 'varchar';
 export const CONNECTION_ID_VARCHAR = 'varchar';
 export const USER_ID_VARCHAR = 'varchar';
 export const IDEMPOTENCY_KEY_VARCHAR = 'varchar';

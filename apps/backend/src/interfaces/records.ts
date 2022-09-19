@@ -9,6 +9,8 @@ export class Records {
   connections?: entities.ConnectionEntity[];
   structs?: entities.StructEntity[];
   branches?: entities.BranchEntity[];
+  bridges?: entities.BridgeEntity[];
+  envs?: entities.EnvEntity[];
   vizs?: entities.VizEntity[];
   queries?: entities.QueryEntity[];
   models?: entities.ModelEntity[];

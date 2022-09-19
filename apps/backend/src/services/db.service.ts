@@ -82,10 +82,12 @@ export class DbService {
         avatars,
         orgs,
         projects,
+        envs,
         members,
         connections,
         structs,
         branches,
+        bridges,
         vizs,
         queries,
         models,
@@ -118,6 +120,12 @@ export class DbService {
           .insert(projects);
       }
 
+      if (common.isDefined(envs) && envs.length > 0) {
+        await manager
+          .getCustomRepository(repositories.EnvsRepository)
+          .insert(envs);
+      }
+
       if (common.isDefined(members) && members.length > 0) {
         await manager
           .getCustomRepository(repositories.MembersRepository)
@@ -134,6 +142,12 @@ export class DbService {
         await manager
           .getCustomRepository(repositories.BranchesRepository)
           .insert(branches);
+      }
+
+      if (common.isDefined(bridges) && bridges.length > 0) {
+        await manager
+          .getCustomRepository(repositories.BridgesRepository)
+          .insert(bridges);
       }
 
       if (common.isDefined(structs) && structs.length > 0) {
@@ -227,10 +241,12 @@ export class DbService {
         avatars,
         orgs,
         projects,
+        envs,
         members,
         connections,
         structs,
         branches,
+        bridges,
         vizs,
         queries,
         models,
@@ -263,6 +279,12 @@ export class DbService {
           .save(projects);
       }
 
+      if (common.isDefined(envs) && envs.length > 0) {
+        await manager
+          .getCustomRepository(repositories.EnvsRepository)
+          .save(envs);
+      }
+
       if (common.isDefined(members) && members.length > 0) {
         await manager
           .getCustomRepository(repositories.MembersRepository)
@@ -279,6 +301,12 @@ export class DbService {
         await manager
           .getCustomRepository(repositories.BranchesRepository)
           .save(branches);
+      }
+
+      if (common.isDefined(bridges) && bridges.length > 0) {
+        await manager
+          .getCustomRepository(repositories.BridgesRepository)
+          .save(bridges);
       }
 
       if (common.isDefined(structs) && structs.length > 0) {

@@ -1,8 +1,11 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { constants } from '~backend/barrels/constants';
 
-@Entity('branches')
-export class BranchEntity {
+@Entity('bridges')
+export class BridgeEntity {
+  @Column({ type: constants.STRUCT_ID_VARCHAR })
+  struct_id: string;
+
   @PrimaryColumn({ type: constants.PROJECT_ID_VARCHAR })
   project_id: string; // composite
 
@@ -11,6 +14,9 @@ export class BranchEntity {
 
   @PrimaryColumn({ type: constants.BRANCH_ID_VARCHAR })
   branch_id: string; // name
+
+  @PrimaryColumn({ type: constants.ENV_ID_VARCHAR })
+  env_id: string; // name
 
   @Column({ type: constants.BIGINT })
   server_ts: string;
