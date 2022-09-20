@@ -19,6 +19,9 @@ export class ToBackendGetQueryRequestPayload {
   branchId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   mconfigId: string;
 
   @IsString()

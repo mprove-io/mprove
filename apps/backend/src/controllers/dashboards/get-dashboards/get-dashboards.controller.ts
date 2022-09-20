@@ -7,6 +7,8 @@ import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
+import { BridgesService } from '~backend/services/bridges.service';
+import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
@@ -17,7 +19,9 @@ export class GetDashboardsController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private modelsRepository: repositories.ModelsRepository,
-    private dashboardsRepository: repositories.DashboardsRepository
+    private dashboardsRepository: repositories.DashboardsRepository,
+    private bridgesService: BridgesService,
+    private envsService: EnvsService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards)
@@ -26,7 +30,7 @@ export class GetDashboardsController {
     @ValidateRequest(apiToBackend.ToBackendGetDashboardsRequest)
     reqValid: apiToBackend.ToBackendGetDashboardsRequest
   ) {
-    let { projectId, isRepoProd, branchId } = reqValid.payload;
+    let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 
@@ -45,6 +49,18 @@ export class GetDashboardsController {
       branchId: branchId
     });
 
+    let env = await this.envsService.getEnvCheckExists({
+      projectId: projectId,
+      envId: envId
+    });
+
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.project_id,
+      repoId: branch.repo_id,
+      branchId: branch.branch_id,
+      envId: envId
+    });
+
     let dashboards = await this.dashboardsRepository.find({
       select: [
         'dashboard_id',
@@ -58,7 +74,7 @@ export class GetDashboardsController {
         'reports',
         'description'
       ],
-      where: { struct_id: branch.struct_id, temp: common.BoolEnum.FALSE }
+      where: { struct_id: bridge.struct_id, temp: common.BoolEnum.FALSE }
     });
 
     let dashboardsGrantedAccess = dashboards.filter(x =>
@@ -77,7 +93,7 @@ export class GetDashboardsController {
         'hidden',
         'connection_id'
       ],
-      where: { struct_id: branch.struct_id }
+      where: { struct_id: bridge.struct_id }
     });
 
     let payload: apiToBackend.ToBackendGetDashboardsResponsePayload = {

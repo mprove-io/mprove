@@ -6,6 +6,8 @@ import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
+import { BridgesService } from '~backend/services/bridges.service';
+import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -18,7 +20,9 @@ export class CreateFolderController {
     private membersService: MembersService,
     private rabbitService: RabbitService,
     private structsService: StructsService,
-    private branchesService: BranchesService
+    private branchesService: BranchesService,
+    private bridgesService: BridgesService,
+    private envsService: EnvsService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFolder)
@@ -27,7 +31,13 @@ export class CreateFolderController {
     @ValidateRequest(apiToBackend.ToBackendCreateFolderRequest)
     reqValid: apiToBackend.ToBackendCreateFolderRequest
   ) {
-    let { projectId, branchId, parentNodeId, folderName } = reqValid.payload;
+    let {
+      projectId,
+      branchId,
+      parentNodeId,
+      folderName,
+      envId
+    } = reqValid.payload;
 
     let repoId = user.user_id;
 
@@ -44,6 +54,18 @@ export class CreateFolderController {
       projectId: projectId,
       repoId: user.user_id,
       branchId: branchId
+    });
+
+    let env = await this.envsService.getEnvCheckExists({
+      projectId: projectId,
+      envId: envId
+    });
+
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.project_id,
+      repoId: branch.repo_id,
+      branchId: branch.branch_id,
+      envId: envId
     });
 
     let toDiskCreateFolderRequest: apiToDisk.ToDiskCreateFolderRequest = {
@@ -77,7 +99,7 @@ export class CreateFolderController {
     );
 
     let struct = await this.structsService.getStructCheckExists({
-      structId: branch.struct_id
+      structId: bridge.struct_id
     });
 
     let payload: apiToBackend.ToBackendCreateFolderResponsePayload = {

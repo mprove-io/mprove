@@ -130,7 +130,7 @@ export class CreateDashboardController {
           user: user,
           member: member,
           dashboard: fromDashboardEntity,
-          branch: branch
+          bridge: bridge
         }
       );
 

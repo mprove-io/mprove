@@ -14,6 +14,9 @@ export class ToBackendCreateTempMconfigRequestPayload {
   branchId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   oldMconfigId: string;
 
   @ValidateNested()

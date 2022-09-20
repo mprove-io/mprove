@@ -18,6 +18,9 @@ export class ToBackendGetModelsRequestPayload {
   @IsString()
   branchId: string;
 
+  @IsString()
+  envId: string;
+
   @IsOptional()
   @IsString({ each: true })
   filterByModelIds?: string[];

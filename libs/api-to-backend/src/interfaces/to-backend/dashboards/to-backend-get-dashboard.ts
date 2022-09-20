@@ -14,6 +14,9 @@ export class ToBackendGetDashboardRequestPayload {
   branchId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   dashboardId: string;
 }
 

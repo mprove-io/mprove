@@ -13,6 +13,9 @@ export class ToBackendCreateTempMconfigAndQueryRequestPayload {
   @IsString()
   branchId: string;
 
+  @IsString()
+  envId: string;
+
   @ValidateNested()
   @Type(() => common.Mconfig)
   mconfig: common.Mconfig;

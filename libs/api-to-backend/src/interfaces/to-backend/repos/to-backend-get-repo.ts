@@ -12,6 +12,9 @@ export class ToBackendGetRepoRequestPayload {
 
   @IsString()
   branchId: string;
+
+  @IsString()
+  envId: string;
 }
 
 export class ToBackendGetRepoRequest extends ToBackendRequest {

@@ -14,6 +14,9 @@ export class ToBackendGetMconfigRequestPayload {
   branchId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   mconfigId: string;
 }
 

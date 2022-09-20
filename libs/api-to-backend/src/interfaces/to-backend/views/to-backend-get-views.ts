@@ -12,6 +12,9 @@ export class ToBackendGetViewsRequestPayload {
 
   @IsString()
   branchId: string;
+
+  @IsString()
+  envId: string;
 }
 
 export class ToBackendGetViewsRequest extends ToBackendRequest {

@@ -47,9 +47,9 @@ export class DashboardsService {
     dashboard: entities.DashboardEntity;
     member: entities.MemberEntity;
     user: entities.UserEntity;
-    branch: entities.BranchEntity;
+    bridge: entities.BridgeEntity;
   }) {
-    let { dashboard, member, user, branch } = item;
+    let { dashboard, member, user, bridge } = item;
 
     let isAccessGranted = helper.checkAccess({
       userAlias: user.alias,
@@ -80,7 +80,7 @@ export class DashboardsService {
           });
 
     let models = await this.modelsRepository.find({
-      struct_id: branch.struct_id
+      struct_id: bridge.struct_id
     });
 
     let apiModels = models.map(model =>

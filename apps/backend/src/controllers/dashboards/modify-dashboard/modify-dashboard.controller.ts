@@ -133,7 +133,7 @@ export class ModifyDashboardController {
       user: user,
       member: member,
       dashboard: fromDashboardEntity,
-      branch: branch
+      bridge: bridge
     });
 
     let toDashboardEntity = await this.dashboardsService.getDashboardCheckExists(
@@ -157,7 +157,7 @@ export class ModifyDashboardController {
     //   user: user,
     //   member: member,
     //   dashboard: toDashboardEntity,
-    //   branch: branch
+    //   bridge: bridge
     // });
 
     let dashboardFileText: string;

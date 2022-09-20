@@ -6,6 +6,8 @@ import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
+import { BridgesService } from '~backend/services/bridges.service';
+import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -18,7 +20,9 @@ export class CreateFileController {
     private membersService: MembersService,
     private branchesService: BranchesService,
     private structsService: StructsService,
-    private rabbitService: RabbitService
+    private rabbitService: RabbitService,
+    private bridgesService: BridgesService,
+    private envsService: EnvsService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFile)
@@ -27,7 +31,13 @@ export class CreateFileController {
     @ValidateRequest(apiToBackend.ToBackendCreateFileRequest)
     reqValid: apiToBackend.ToBackendCreateFileRequest
   ) {
-    let { projectId, branchId, parentNodeId, fileName } = reqValid.payload;
+    let {
+      projectId,
+      branchId,
+      parentNodeId,
+      fileName,
+      envId
+    } = reqValid.payload;
 
     let repoId = user.user_id;
 
@@ -77,8 +87,20 @@ export class CreateFileController {
       branchId: branchId
     });
 
+    let env = await this.envsService.getEnvCheckExists({
+      projectId: projectId,
+      envId: envId
+    });
+
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.project_id,
+      repoId: branch.repo_id,
+      branchId: branch.branch_id,
+      envId: envId
+    });
+
     let struct = await this.structsService.getStructCheckExists({
-      structId: branch.struct_id
+      structId: bridge.struct_id
     });
 
     let payload: apiToBackend.ToBackendCreateFileResponsePayload = {

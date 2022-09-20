@@ -8,7 +8,9 @@ import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
+import { BridgesService } from '~backend/services/bridges.service';
 import { DbService } from '~backend/services/db.service';
+import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -25,7 +27,9 @@ export class CreateTempMconfigAndQueryController {
     private rabbitService: RabbitService,
     private branchesService: BranchesService,
     private structsService: StructsService,
-    private queriesRepository: repositories.QueriesRepository
+    private queriesRepository: repositories.QueriesRepository,
+    private bridgesService: BridgesService,
+    private envsService: EnvsService
   ) {}
 
   @Post(
@@ -37,7 +41,7 @@ export class CreateTempMconfigAndQueryController {
     reqValid: apiToBackend.ToBackendCreateTempMconfigAndQueryRequest
   ) {
     let { traceId } = reqValid.info;
-    let { mconfig, projectId, isRepoProd, branchId } = reqValid.payload;
+    let { mconfig, projectId, isRepoProd, branchId, envId } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 
@@ -56,16 +60,28 @@ export class CreateTempMconfigAndQueryController {
       branchId: branchId
     });
 
+    let env = await this.envsService.getEnvCheckExists({
+      projectId: projectId,
+      envId: envId
+    });
+
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.project_id,
+      repoId: branch.repo_id,
+      branchId: branch.branch_id,
+      envId: envId
+    });
+
     let struct = await this.structsService.getStructCheckExists({
-      structId: branch.struct_id
+      structId: bridge.struct_id
     });
 
     let model = await this.modelsService.getModelCheckExists({
-      structId: branch.struct_id,
+      structId: bridge.struct_id,
       modelId: mconfig.modelId
     });
 
-    if (mconfig.structId !== branch.struct_id) {
+    if (mconfig.structId !== bridge.struct_id) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_STRUCT_ID_CHANGED
       });

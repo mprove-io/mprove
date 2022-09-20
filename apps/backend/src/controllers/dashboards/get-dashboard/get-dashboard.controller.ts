@@ -4,7 +4,9 @@ import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
+import { BridgesService } from '~backend/services/bridges.service';
 import { DashboardsService } from '~backend/services/dashboards.service';
+import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
@@ -14,7 +16,9 @@ export class GetDashboardController {
     private branchesService: BranchesService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private dashboardsService: DashboardsService
+    private dashboardsService: DashboardsService,
+    private bridgesService: BridgesService,
+    private envsService: EnvsService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard)
@@ -23,7 +27,13 @@ export class GetDashboardController {
     @ValidateRequest(apiToBackend.ToBackendGetDashboardRequest)
     reqValid: apiToBackend.ToBackendGetDashboardRequest
   ) {
-    let { projectId, isRepoProd, branchId, dashboardId } = reqValid.payload;
+    let {
+      projectId,
+      isRepoProd,
+      branchId,
+      envId,
+      dashboardId
+    } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 
@@ -42,8 +52,20 @@ export class GetDashboardController {
       branchId: branchId
     });
 
+    let env = await this.envsService.getEnvCheckExists({
+      projectId: projectId,
+      envId: envId
+    });
+
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.project_id,
+      repoId: branch.repo_id,
+      branchId: branch.branch_id,
+      envId: envId
+    });
+
     let dashboard = await this.dashboardsService.getDashboardCheckExists({
-      structId: branch.struct_id,
+      structId: bridge.struct_id,
       dashboardId: dashboardId
     });
 
@@ -51,7 +73,7 @@ export class GetDashboardController {
       user: user,
       member: member,
       dashboard: dashboard,
-      branch: branch
+      bridge: bridge
     });
 
     let payload: apiToBackend.ToBackendGetDashboardResponsePayload = {

@@ -12,6 +12,9 @@ export class ToBackendGetVizsRequestPayload {
 
   @IsString()
   branchId: string;
+
+  @IsString()
+  envId: string;
 }
 
 export class ToBackendGetVizsRequest extends ToBackendRequest {

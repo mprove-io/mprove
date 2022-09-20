@@ -10,6 +10,9 @@ export class ToBackendCommitRepoRequestPayload {
   @IsString()
   branchId: string;
 
+  @IsString()
+  envId: string;
+
   @IsBoolean()
   isRepoProd: boolean;
 

@@ -12,6 +12,9 @@ export class ToBackendGetDashboardsRequestPayload {
 
   @IsString()
   branchId: string;
+
+  @IsString()
+  envId: string;
 }
 
 export class ToBackendGetDashboardsRequest extends ToBackendRequest {

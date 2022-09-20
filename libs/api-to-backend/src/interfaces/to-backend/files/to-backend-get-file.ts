@@ -14,6 +14,9 @@ export class ToBackendGetFileRequestPayload {
   branchId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   fileNodeId: string;
 }
 

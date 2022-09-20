@@ -8,6 +8,8 @@ import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
+import { BridgesService } from '~backend/services/bridges.service';
+import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
@@ -17,7 +19,9 @@ export class GetModelsController {
     private branchesService: BranchesService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private modelsRepository: repositories.ModelsRepository
+    private modelsRepository: repositories.ModelsRepository,
+    private bridgesService: BridgesService,
+    private envsService: EnvsService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels)
@@ -30,6 +34,7 @@ export class GetModelsController {
       projectId,
       isRepoProd,
       branchId,
+      envId,
       filterByModelIds,
       addFields
     } = reqValid.payload;
@@ -49,6 +54,18 @@ export class GetModelsController {
       projectId: projectId,
       repoId: repoId,
       branchId: branchId
+    });
+
+    let env = await this.envsService.getEnvCheckExists({
+      projectId: projectId,
+      envId: envId
+    });
+
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.project_id,
+      repoId: branch.repo_id,
+      branchId: branch.branch_id,
+      envId: envId
     });
 
     let selectAr: (
@@ -80,7 +97,7 @@ export class GetModelsController {
       'description'
     ];
 
-    let where = { struct_id: branch.struct_id };
+    let where = { struct_id: bridge.struct_id };
 
     if (common.isDefined(filterByModelIds) && filterByModelIds.length > 0) {
       where = Object.assign(where, {

@@ -6,7 +6,9 @@ import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
+import { BridgesService } from '~backend/services/bridges.service';
 import { DashboardsService } from '~backend/services/dashboards.service';
+import { EnvsService } from '~backend/services/envs.service';
 import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
@@ -24,7 +26,9 @@ export class GetQueryController {
     private membersService: MembersService,
     private branchesService: BranchesService,
     private projectsService: ProjectsService,
-    private mconfigsService: MconfigsService
+    private mconfigsService: MconfigsService,
+    private bridgesService: BridgesService,
+    private envsService: EnvsService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery)
@@ -40,7 +44,8 @@ export class GetQueryController {
       dashboardId,
       projectId,
       isRepoProd,
-      branchId
+      branchId,
+      envId
     } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
@@ -60,9 +65,21 @@ export class GetQueryController {
       branchId: branchId
     });
 
+    let env = await this.envsService.getEnvCheckExists({
+      projectId: projectId,
+      envId: envId
+    });
+
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.project_id,
+      repoId: branch.repo_id,
+      branchId: branch.branch_id,
+      envId: envId
+    });
+
     let mconfig = await this.mconfigsService.getMconfigCheckExists({
       mconfigId: mconfigId,
-      structId: branch.struct_id
+      structId: bridge.struct_id
     });
 
     if (mconfig.query_id !== queryId) {
@@ -72,14 +89,14 @@ export class GetQueryController {
     }
 
     let model = await this.modelsService.getModelCheckExists({
-      structId: branch.struct_id,
+      structId: bridge.struct_id,
       modelId: mconfig.model_id
     });
 
     let viz;
     if (common.isDefined(vizId)) {
       viz = await this.vizsService.getVizCheckExists({
-        structId: branch.struct_id,
+        structId: bridge.struct_id,
         vizId: vizId
       });
     }
@@ -87,7 +104,7 @@ export class GetQueryController {
     let dashboard;
     if (common.isDefined(dashboardId)) {
       viz = await this.dashboardsService.getDashboardCheckExists({
-        structId: branch.struct_id,
+        structId: bridge.struct_id,
         dashboardId: dashboardId
       });
     }

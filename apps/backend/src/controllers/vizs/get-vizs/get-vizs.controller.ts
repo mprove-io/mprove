@@ -7,6 +7,8 @@ import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
+import { BridgesService } from '~backend/services/bridges.service';
+import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
@@ -17,7 +19,9 @@ export class GetVizsController {
     private membersService: MembersService,
     private modelsRepository: repositories.ModelsRepository,
     private projectsService: ProjectsService,
-    private vizsRepository: repositories.VizsRepository
+    private vizsRepository: repositories.VizsRepository,
+    private bridgesService: BridgesService,
+    private envsService: EnvsService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs)
@@ -26,7 +30,7 @@ export class GetVizsController {
     @ValidateRequest(apiToBackend.ToBackendGetVizsRequest)
     reqValid: apiToBackend.ToBackendGetVizsRequest
   ) {
-    let { projectId, isRepoProd, branchId } = reqValid.payload;
+    let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 
@@ -45,8 +49,20 @@ export class GetVizsController {
       branchId: branchId
     });
 
+    let env = await this.envsService.getEnvCheckExists({
+      projectId: projectId,
+      envId: envId
+    });
+
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.project_id,
+      repoId: branch.repo_id,
+      branchId: branch.branch_id,
+      envId: envId
+    });
+
     let vizs = await this.vizsRepository.find({
-      struct_id: branch.struct_id
+      struct_id: bridge.struct_id
     });
 
     let vizsGrantedAccess = vizs.filter(x =>
@@ -65,7 +81,7 @@ export class GetVizsController {
         'hidden',
         'connection_id'
       ],
-      where: { struct_id: branch.struct_id }
+      where: { struct_id: bridge.struct_id }
     });
 
     let payload: apiToBackend.ToBackendGetVizsResponsePayload = {

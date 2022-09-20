@@ -11,6 +11,9 @@ export class ToBackendCreateFileRequestPayload {
   branchId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   parentNodeId: string;
 
   @IsString()

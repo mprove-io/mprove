@@ -14,6 +14,9 @@ export class ToBackendGetModelRequestPayload {
   branchId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   modelId: string;
 }
 

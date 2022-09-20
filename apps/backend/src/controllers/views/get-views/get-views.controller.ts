@@ -4,6 +4,8 @@ import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
+import { BridgesService } from '~backend/services/bridges.service';
+import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { StructsService } from '~backend/services/structs.service';
@@ -14,7 +16,9 @@ export class GetViewsController {
     private branchesService: BranchesService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private structsService: StructsService
+    private structsService: StructsService,
+    private bridgesService: BridgesService,
+    private envsService: EnvsService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetViews)
@@ -23,7 +27,7 @@ export class GetViewsController {
     @ValidateRequest(apiToBackend.ToBackendGetViewsRequest)
     reqValid: apiToBackend.ToBackendGetViewsRequest
   ) {
-    let { projectId, isRepoProd, branchId } = reqValid.payload;
+    let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 
@@ -42,8 +46,20 @@ export class GetViewsController {
       branchId: branchId
     });
 
+    let env = await this.envsService.getEnvCheckExists({
+      projectId: projectId,
+      envId: envId
+    });
+
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.project_id,
+      repoId: branch.repo_id,
+      branchId: branch.branch_id,
+      envId: envId
+    });
+
     let struct = await this.structsService.getStructCheckExists({
-      structId: branch.struct_id
+      structId: bridge.struct_id
     });
 
     let payload: apiToBackend.ToBackendGetViewsResponsePayload = {
