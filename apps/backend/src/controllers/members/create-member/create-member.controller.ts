@@ -128,11 +128,12 @@ export class CreateMemberController {
 
     prodBranchBridges.forEach(x => {
       let devBranchBridge = maker.makeBridge({
-        structId: x.struct_id,
         projectId: devBranch.project_id,
         repoId: devBranch.repo_id,
         branchId: devBranch.branch_id,
-        envId: x.env_id
+        envId: x.env_id,
+        structId: x.struct_id,
+        needValidate: x.need_validate
       });
 
       devBranchBridges.push(devBranchBridge);

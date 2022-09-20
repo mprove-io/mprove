@@ -14,6 +14,9 @@ export class ToBackendCreateTempDashboardRequestPayload {
   branchId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   oldDashboardId: string;
 
   @IsString()

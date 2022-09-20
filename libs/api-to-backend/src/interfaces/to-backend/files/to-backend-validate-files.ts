@@ -12,6 +12,9 @@ export class ToBackendValidateFilesRequestPayload {
 
   @IsString()
   branchId: string;
+
+  @IsString()
+  envId: string;
 }
 
 export class ToBackendValidateFilesRequest extends ToBackendRequest {

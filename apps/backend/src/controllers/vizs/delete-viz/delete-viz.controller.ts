@@ -10,7 +10,9 @@ import { repositories } from '~backend/barrels/repositories';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
+import { BridgesService } from '~backend/services/bridges.service';
 import { DbService } from '~backend/services/db.service';
+import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -27,7 +29,9 @@ export class DeleteVizController {
     private vizsRepository: repositories.VizsRepository,
     private blockmlService: BlockmlService,
     private dbService: DbService,
-    private cs: ConfigService<interfaces.Config>
+    private cs: ConfigService<interfaces.Config>,
+    private envsService: EnvsService,
+    private bridgesService: BridgesService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteViz)
@@ -43,7 +47,7 @@ export class DeleteVizController {
     }
 
     let { traceId } = reqValid.info;
-    let { projectId, isRepoProd, branchId, vizId } = reqValid.payload;
+    let { projectId, isRepoProd, branchId, envId, vizId } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 
@@ -62,6 +66,18 @@ export class DeleteVizController {
       branchId: branchId
     });
 
+    let env = await this.envsService.getEnvCheckExists({
+      projectId: projectId,
+      envId: envId
+    });
+
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.project_id,
+      repoId: branch.repo_id,
+      branchId: branch.branch_id,
+      envId: envId
+    });
+
     let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
       'firstProjectId'
     );
@@ -77,7 +93,7 @@ export class DeleteVizController {
     }
 
     let existingViz = await this.vizsService.getVizCheckExists({
-      structId: branch.struct_id,
+      structId: bridge.struct_id,
       vizId: vizId
     });
 
@@ -125,14 +141,15 @@ export class DeleteVizController {
       traceId,
       orgId: project.org_id,
       projectId,
-      structId: branch.struct_id,
+      structId: bridge.struct_id,
       diskFiles: diskResponse.payload.files,
-      skipDb: true
+      skipDb: true,
+      envId: envId
     });
 
     await this.vizsRepository.delete({
       viz_id: vizId,
-      struct_id: branch.struct_id
+      struct_id: bridge.struct_id
     });
 
     await this.dbService.writeRecords({

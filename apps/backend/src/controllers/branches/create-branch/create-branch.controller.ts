@@ -101,11 +101,12 @@ export class CreateBranchController {
 
     fromBranchBridges.forEach(x => {
       let newBranchBridge = maker.makeBridge({
-        structId: x.struct_id,
         projectId: newBranch.project_id,
         repoId: newBranch.repo_id,
         branchId: newBranch.branch_id,
-        envId: x.env_id
+        envId: x.env_id,
+        structId: x.struct_id,
+        needValidate: x.need_validate
       });
 
       newBranchBridges.push(newBranchBridge);

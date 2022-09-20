@@ -14,6 +14,9 @@ export class ToBackendDeleteDashboardRequestPayload {
   branchId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   dashboardId: string;
 }
 

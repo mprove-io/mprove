@@ -12,6 +12,9 @@ export class ToBackendRevertRepoToRemoteRequestPayload {
 
   @IsString()
   branchId: string;
+
+  @IsString()
+  envId: string;
 }
 
 export class ToBackendRevertRepoToRemoteRequest extends ToBackendRequest {

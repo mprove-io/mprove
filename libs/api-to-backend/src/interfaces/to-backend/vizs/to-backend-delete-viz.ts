@@ -14,6 +14,9 @@ export class ToBackendDeleteVizRequestPayload {
   branchId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   vizId: string;
 }
 

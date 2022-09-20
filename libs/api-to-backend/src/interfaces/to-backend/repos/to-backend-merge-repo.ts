@@ -11,6 +11,9 @@ export class ToBackendMergeRepoRequestPayload {
   branchId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   theirBranchId: string;
 
   @IsBoolean()

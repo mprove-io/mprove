@@ -19,6 +19,9 @@ export class ToBackendModifyVizRequestPayload {
   branchId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   vizId: string;
 
   @IsString()

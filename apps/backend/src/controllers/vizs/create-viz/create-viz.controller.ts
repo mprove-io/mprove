@@ -12,7 +12,9 @@ import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { makeVizFileText } from '~backend/functions/make-viz-file-text';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
+import { BridgesService } from '~backend/services/bridges.service';
 import { DbService } from '~backend/services/db.service';
+import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -31,7 +33,9 @@ export class CreateVizController {
     private blockmlService: BlockmlService,
     private modelsService: ModelsService,
     private dbService: DbService,
-    private cs: ConfigService<interfaces.Config>
+    private cs: ConfigService<interfaces.Config>,
+    private envsService: EnvsService,
+    private bridgesService: BridgesService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateViz)
@@ -55,7 +59,8 @@ export class CreateVizController {
       reportTitle,
       accessRoles,
       accessUsers,
-      mconfig
+      mconfig,
+      envId
     } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
@@ -81,8 +86,20 @@ export class CreateVizController {
       branchId: branchId
     });
 
+    let env = await this.envsService.getEnvCheckExists({
+      projectId: projectId,
+      envId: envId
+    });
+
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.project_id,
+      repoId: branch.repo_id,
+      branchId: branch.branch_id,
+      envId: envId
+    });
+
     let currentStruct = await this.structsService.getStructCheckExists({
-      structId: branch.struct_id
+      structId: bridge.struct_id
     });
 
     let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
@@ -100,7 +117,7 @@ export class CreateVizController {
     }
 
     let mconfigModel = await this.modelsService.getModelCheckExists({
-      structId: branch.struct_id,
+      structId: bridge.struct_id,
       modelId: mconfig.modelId
     });
 
@@ -171,9 +188,10 @@ export class CreateVizController {
       traceId,
       orgId: project.org_id,
       projectId,
-      structId: branch.struct_id,
+      structId: bridge.struct_id,
       diskFiles: diskResponse.payload.files,
-      skipDb: true
+      skipDb: true,
+      envId: envId
     });
 
     let viz = vizs.find(x => x.vizId === vizId);
@@ -217,7 +235,7 @@ export class CreateVizController {
 
     let modelsEntities = await this.modelsRepository.find({
       select: ['model_id', 'access_users', 'access_roles', 'hidden'],
-      where: { struct_id: branch.struct_id }
+      where: { struct_id: bridge.struct_id }
     });
 
     let payload: apiToBackend.ToBackendCreateVizResponsePayload = {

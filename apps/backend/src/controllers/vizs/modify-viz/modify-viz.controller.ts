@@ -12,7 +12,9 @@ import { makeVizFileText } from '~backend/functions/make-viz-file-text';
 import { VizsRepository } from '~backend/models/store-repositories/_index';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
+import { BridgesService } from '~backend/services/bridges.service';
 import { DbService } from '~backend/services/db.service';
+import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -33,7 +35,9 @@ export class ModifyVizController {
     private blockmlService: BlockmlService,
     private vizsRepository: VizsRepository,
     private dbService: DbService,
-    private cs: ConfigService<interfaces.Config>
+    private cs: ConfigService<interfaces.Config>,
+    private envsService: EnvsService,
+    private bridgesService: BridgesService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyViz)
@@ -53,6 +57,7 @@ export class ModifyVizController {
       projectId,
       isRepoProd,
       branchId,
+      envId,
       vizId,
       reportTitle,
       accessRoles,
@@ -83,8 +88,20 @@ export class ModifyVizController {
       branchId: branchId
     });
 
+    let env = await this.envsService.getEnvCheckExists({
+      projectId: projectId,
+      envId: envId
+    });
+
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.project_id,
+      repoId: branch.repo_id,
+      branchId: branch.branch_id,
+      envId: envId
+    });
+
     let currentStruct = await this.structsService.getStructCheckExists({
-      structId: branch.struct_id
+      structId: bridge.struct_id
     });
 
     let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
@@ -102,7 +119,7 @@ export class ModifyVizController {
     }
 
     let existingViz = await this.vizsService.getVizCheckExists({
-      structId: branch.struct_id,
+      structId: bridge.struct_id,
       vizId: vizId
     });
 
@@ -117,7 +134,7 @@ export class ModifyVizController {
     }
 
     let mconfigModel = await this.modelsService.getModelCheckExists({
-      structId: branch.struct_id,
+      structId: bridge.struct_id,
       modelId: mconfig.modelId
     });
 
@@ -184,9 +201,10 @@ export class ModifyVizController {
       traceId,
       orgId: project.org_id,
       projectId,
-      structId: branch.struct_id,
+      structId: bridge.struct_id,
       diskFiles: diskResponse.payload.files,
-      skipDb: true
+      skipDb: true,
+      envId: envId
     });
 
     let viz = vizs.find(x => x.vizId === vizId);
@@ -204,7 +222,7 @@ export class ModifyVizController {
     if (common.isUndefined(viz)) {
       await this.vizsRepository.delete({
         viz_id: vizId,
-        struct_id: branch.struct_id
+        struct_id: bridge.struct_id
       });
 
       let fileIdAr = existingViz.file_path.split('/');

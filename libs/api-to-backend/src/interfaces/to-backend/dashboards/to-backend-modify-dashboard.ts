@@ -19,6 +19,9 @@ export class ToBackendModifyDashboardRequestPayload {
   branchId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   toDashboardId: string;
 
   @IsString()

@@ -127,19 +127,21 @@ export class ProjectsService {
     });
 
     let prodBranchBridgeProdEnv = maker.makeBridge({
-      structId: structId,
       projectId: prodBranch.project_id,
       repoId: prodBranch.repo_id,
       branchId: prodBranch.branch_id,
-      envId: prodEnv.env_id
+      envId: prodEnv.env_id,
+      structId: structId,
+      needValidate: common.BoolEnum.FALSE
     });
 
     let devBranchBridgeProdEnv = maker.makeBridge({
-      structId: structId,
       projectId: devBranch.project_id,
       repoId: devBranch.repo_id,
       branchId: devBranch.branch_id,
-      envId: prodEnv.env_id
+      envId: prodEnv.env_id,
+      structId: structId,
+      needValidate: common.BoolEnum.FALSE
     });
 
     await this.blockmlService.rebuildStruct({

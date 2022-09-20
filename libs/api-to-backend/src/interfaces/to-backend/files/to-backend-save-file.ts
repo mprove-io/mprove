@@ -11,6 +11,9 @@ export class ToBackendSaveFileRequestPayload {
   branchId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   fileNodeId: string;
 
   @IsString()

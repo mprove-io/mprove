@@ -11,6 +11,9 @@ export class ToBackendDeleteFolderRequestPayload {
   branchId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   folderNodeId: string;
 }
 

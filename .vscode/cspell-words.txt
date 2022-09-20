@@ -161,7 +161,6 @@ redshift
 repo
 repos
 repository
-rvest
 s
 schemaname
 scrollback

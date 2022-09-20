@@ -9,6 +9,9 @@ export class ToBackendRevertRepoToLastCommitRequestPayload {
 
   @IsString()
   branchId: string;
+
+  @IsString()
+  envId: string;
 }
 
 export class ToBackendRevertRepoToLastCommitRequest extends ToBackendRequest {

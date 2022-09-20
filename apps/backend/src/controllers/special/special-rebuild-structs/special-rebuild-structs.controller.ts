@@ -20,7 +20,7 @@ export class SpecialRebuildStructsController {
   constructor(
     private rabbitService: RabbitService,
     private projectsRepository: repositories.ProjectsRepository,
-    private branchesRepository: repositories.BranchesRepository,
+    private bridgesRepository: repositories.BridgesRepository,
     private membersRepository: repositories.MembersRepository,
     private blockmlService: BlockmlService,
     private dbService: DbService,
@@ -68,33 +68,33 @@ export class SpecialRebuildStructsController {
       projects = await this.projectsRepository.find();
     }
 
-    let branches: entities.BranchEntity[];
+    let bridges: entities.BridgeEntity[];
 
     if (userIds.length > 0) {
-      branches = await this.branchesRepository.find({
+      bridges = await this.bridgesRepository.find({
         where: { repo_id: In(userIds) }
       });
     } else {
-      branches = await this.branchesRepository.find();
+      bridges = await this.bridgesRepository.find();
     }
 
     let notFoundProjectIds: string[] = [];
     let errorGetCatalogBranchItems: apiToBackend.BranchItem[] = [];
     let successBranchItems: apiToBackend.BranchItem[] = [];
 
-    await asyncPool(1, branches, async branch => {
-      let project = projects.find(x => x.project_id === branch.project_id);
+    await asyncPool(1, bridges, async bridge => {
+      let project = projects.find(x => x.project_id === bridge.project_id);
 
       if (common.isUndefined(project)) {
-        notFoundProjectIds.push(branch.project_id);
+        notFoundProjectIds.push(bridge.project_id);
         return;
       }
 
       let branchItem: apiToBackend.BranchItem = {
         orgId: project.org_id,
         projectId: project.project_id,
-        repoId: branch.repo_id,
-        branchId: branch.branch_id
+        repoId: bridge.repo_id,
+        branchId: bridge.branch_id
       };
 
       // to disk
@@ -107,8 +107,8 @@ export class SpecialRebuildStructsController {
         payload: {
           orgId: project.org_id,
           projectId: project.project_id,
-          repoId: branch.repo_id,
-          branch: branch.branch_id,
+          repoId: bridge.repo_id,
+          branch: bridge.branch_id,
           remoteType: project.remote_type,
           gitUrl: project.git_url,
           privateKey: project.private_key,
@@ -139,20 +139,21 @@ export class SpecialRebuildStructsController {
 
       let structId = common.makeId();
 
-      branch.struct_id = structId;
+      bridge.struct_id = structId;
 
       await this.blockmlService.rebuildStruct({
         traceId,
         orgId: project.org_id,
         projectId: project.project_id,
         structId: structId,
-        diskFiles: getCatalogFilesResponse.payload.files
+        diskFiles: getCatalogFilesResponse.payload.files,
+        envId: bridge.env_id
       });
 
       await this.dbService.writeRecords({
         modify: true,
         records: {
-          branches: [branch]
+          bridges: [bridge]
         }
       });
 

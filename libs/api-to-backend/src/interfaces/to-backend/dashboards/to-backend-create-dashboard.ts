@@ -18,6 +18,9 @@ export class ToBackendCreateDashboardRequestPayload {
   @IsString()
   branchId: string;
 
+  @IsString()
+  envId: string;
+
   @IsOptional()
   @IsString()
   fromDashboardId?: string;

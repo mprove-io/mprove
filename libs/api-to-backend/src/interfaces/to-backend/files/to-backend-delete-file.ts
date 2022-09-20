@@ -11,6 +11,9 @@ export class ToBackendDeleteFileRequestPayload {
   branchId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   fileNodeId: string;
 }
 

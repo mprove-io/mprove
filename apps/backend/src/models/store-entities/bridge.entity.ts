@@ -1,11 +1,9 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 
 @Entity('bridges')
 export class BridgeEntity {
-  @Column({ type: constants.STRUCT_ID_VARCHAR })
-  struct_id: string;
-
   @PrimaryColumn({ type: constants.PROJECT_ID_VARCHAR })
   project_id: string; // composite
 
@@ -17,6 +15,12 @@ export class BridgeEntity {
 
   @PrimaryColumn({ type: constants.ENV_ID_VARCHAR })
   env_id: string; // name
+
+  @Column({ type: constants.STRUCT_ID_VARCHAR })
+  struct_id: string;
+
+  @Column({ type: constants.VARCHAR })
+  need_validate: common.BoolEnum;
 
   @Column({ type: constants.BIGINT })
   server_ts: string;

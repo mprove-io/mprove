@@ -1,14 +1,17 @@
 import { Controller, Post } from '@nestjs/common';
+import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { DbService } from '~backend/services/db.service';
+import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -23,7 +26,9 @@ export class ValidateFilesController {
     private blockmlService: BlockmlService,
     private branchesService: BranchesService,
     private structsService: StructsService,
-    private dbService: DbService
+    private dbService: DbService,
+    private bridgesRepository: repositories.BridgesRepository,
+    private envsService: EnvsService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendValidateFiles)
@@ -33,7 +38,7 @@ export class ValidateFilesController {
     reqValid: apiToBackend.ToBackendValidateFilesRequest
   ) {
     let { traceId } = reqValid.info;
-    let { projectId, isRepoProd, branchId } = reqValid.payload;
+    let { projectId, isRepoProd, envId, branchId } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 
@@ -50,6 +55,11 @@ export class ValidateFilesController {
       projectId: projectId,
       repoId: repoId,
       branchId: branchId
+    });
+
+    let env = await this.envsService.getEnvCheckExists({
+      projectId: projectId,
+      envId: envId
     });
 
     let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {
@@ -80,27 +90,42 @@ export class ValidateFilesController {
       }
     );
 
-    let structId = common.makeId();
+    let branchBridges = await this.bridgesRepository.find({
+      project_id: branch.project_id,
+      repo_id: branch.repo_id,
+      branch_id: branch.branch_id
+    });
 
-    branch.struct_id = structId;
+    await forEachSeries(branchBridges, async x => {
+      if (x.env_id === envId || x.env_id === common.PROJECT_ENV_PROD) {
+        let structId = common.makeId();
 
-    await this.blockmlService.rebuildStruct({
-      traceId,
-      orgId: project.org_id,
-      projectId,
-      structId,
-      diskFiles: diskResponse.payload.files
+        await this.blockmlService.rebuildStruct({
+          traceId,
+          orgId: project.org_id,
+          projectId,
+          structId,
+          diskFiles: diskResponse.payload.files,
+          envId: x.env_id
+        });
+
+        x.struct_id = structId;
+      } else {
+        x.need_validate = common.BoolEnum.TRUE;
+      }
     });
 
     await this.dbService.writeRecords({
       modify: true,
       records: {
-        branches: [branch]
+        bridges: [...branchBridges]
       }
     });
 
+    let currentBridge = branchBridges.find(y => y.env_id === envId);
+
     let struct = await this.structsService.getStructCheckExists({
-      structId: structId
+      structId: currentBridge.struct_id
     });
 
     let payload: apiToBackend.ToBackendValidateFilesResponsePayload = {

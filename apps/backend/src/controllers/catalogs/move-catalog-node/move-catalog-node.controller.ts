@@ -10,8 +10,8 @@ import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
 import { DbService } from '~backend/services/db.service';
+import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -22,13 +22,13 @@ export class MoveCatalogNodeController {
   constructor(
     private projectsService: ProjectsService,
     private dbService: DbService,
-    private bridgesRepository: repositories.BridgesRepository,
     private membersService: MembersService,
     private rabbitService: RabbitService,
     private structsService: StructsService,
     private blockmlService: BlockmlService,
     private branchesService: BranchesService,
-    private bridgesService: BridgesService
+    private bridgesRepository: repositories.BridgesRepository,
+    private envsService: EnvsService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMoveCatalogNode)
@@ -57,10 +57,8 @@ export class MoveCatalogNodeController {
       branchId: branchId
     });
 
-    let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.project_id,
-      repoId: branch.repo_id,
-      branchId: branch.branch_id,
+    let env = await this.envsService.getEnvCheckExists({
+      projectId: projectId,
       envId: envId
     });
 
@@ -101,18 +99,22 @@ export class MoveCatalogNodeController {
     });
 
     await forEachSeries(branchBridges, async x => {
-      let structId = common.makeId();
+      if (x.env_id === envId || x.env_id === common.PROJECT_ENV_PROD) {
+        let structId = common.makeId();
 
-      await this.blockmlService.rebuildStruct({
-        traceId,
-        orgId: project.org_id,
-        projectId,
-        structId,
-        diskFiles: diskResponse.payload.files,
-        envId: x.env_id
-      });
+        await this.blockmlService.rebuildStruct({
+          traceId,
+          orgId: project.org_id,
+          projectId,
+          structId,
+          diskFiles: diskResponse.payload.files,
+          envId: x.env_id
+        });
 
-      x.struct_id = structId;
+        x.struct_id = structId;
+      } else {
+        x.need_validate = common.BoolEnum.TRUE;
+      }
     });
 
     await this.dbService.writeRecords({

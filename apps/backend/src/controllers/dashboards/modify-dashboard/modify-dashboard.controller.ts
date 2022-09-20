@@ -12,8 +12,10 @@ import { makeDashboardFileText } from '~backend/functions/make-dashboard-file-te
 import { DashboardsRepository } from '~backend/models/store-repositories/_index';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
+import { BridgesService } from '~backend/services/bridges.service';
 import { DashboardsService } from '~backend/services/dashboards.service';
 import { DbService } from '~backend/services/db.service';
+import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -33,7 +35,9 @@ export class ModifyDashboardController {
     private dashboardsRepository: DashboardsRepository,
     private dbService: DbService,
     private dashboardsService: DashboardsService,
-    private cs: ConfigService<interfaces.Config>
+    private cs: ConfigService<interfaces.Config>,
+    private envsService: EnvsService,
+    private bridgesService: BridgesService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyDashboard)
@@ -53,6 +57,7 @@ export class ModifyDashboardController {
       projectId,
       isRepoProd,
       branchId,
+      envId,
       toDashboardId,
       fromDashboardId,
       selectedReportTitle,
@@ -87,8 +92,20 @@ export class ModifyDashboardController {
       branchId: branchId
     });
 
+    let env = await this.envsService.getEnvCheckExists({
+      projectId: projectId,
+      envId: envId
+    });
+
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.project_id,
+      repoId: branch.repo_id,
+      branchId: branch.branch_id,
+      envId: envId
+    });
+
     let currentStruct = await this.structsService.getStructCheckExists({
-      structId: branch.struct_id
+      structId: bridge.struct_id
     });
 
     let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
@@ -107,7 +124,7 @@ export class ModifyDashboardController {
 
     let fromDashboardEntity = await this.dashboardsService.getDashboardCheckExists(
       {
-        structId: branch.struct_id,
+        structId: bridge.struct_id,
         dashboardId: fromDashboardId
       }
     );
@@ -121,7 +138,7 @@ export class ModifyDashboardController {
 
     let toDashboardEntity = await this.dashboardsService.getDashboardCheckExists(
       {
-        structId: branch.struct_id,
+        structId: bridge.struct_id,
         dashboardId: toDashboardId
       }
     );
@@ -147,7 +164,7 @@ export class ModifyDashboardController {
 
     if (common.isDefined(newReport)) {
       let mconfigModel = await this.modelsService.getModelCheckExists({
-        structId: branch.struct_id,
+        structId: bridge.struct_id,
         modelId: newReport.mconfig.modelId
       });
 
@@ -269,9 +286,10 @@ export class ModifyDashboardController {
       traceId,
       orgId: project.org_id,
       projectId,
-      structId: branch.struct_id,
+      structId: bridge.struct_id,
       diskFiles: diskResponse.payload.files,
-      skipDb: true
+      skipDb: true,
+      envId: envId
     });
 
     let newDashboard = dashboards.find(x => x.dashboardId === toDashboardId);
@@ -289,7 +307,7 @@ export class ModifyDashboardController {
     if (common.isUndefined(newDashboard)) {
       await this.dashboardsRepository.delete({
         dashboard_id: toDashboardId,
-        struct_id: branch.struct_id
+        struct_id: bridge.struct_id
       });
 
       let fileIdAr = toDashboardEntity.file_path.split('/');
