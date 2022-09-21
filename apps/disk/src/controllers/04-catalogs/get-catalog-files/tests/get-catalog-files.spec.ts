@@ -61,6 +61,6 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.is(resp.payload.files[0].fileNodeId, 'p1/readme.md');
-  t.is(resp.payload.files[0].content, '# P1');
+  t.is(resp.payload.files[0].fileNodeId, `${projectId}/readme.md`);
+  t.is(resp.payload.files[0].content, `# ${projectId}`);
 });

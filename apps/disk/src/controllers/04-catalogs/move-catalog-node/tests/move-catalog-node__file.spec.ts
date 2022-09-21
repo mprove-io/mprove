@@ -83,6 +83,6 @@ test('1', async t => {
 
   t.is(
     resp.payload.repo.nodes[0].children[0].children[0].id,
-    'p1/fo1/readme.md'
+    `${projectId}/fo1/readme.md`
   );
 });
