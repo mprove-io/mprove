@@ -61,6 +61,7 @@ describe('integra', () => {
         {
           projectId: projectId,
           connectionId: connectionId,
+          envId: common.PROJECT_ENV_PROD,
           type: common.ConnectionTypeEnum.PostgreSQL,
           host: '1',
           port: 2,
