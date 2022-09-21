@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class All1663753774947 implements MigrationInterface {
-  name = 'All1663753774947';
+export class All1663757506953 implements MigrationInterface {
+  name = 'All1663757506953';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -202,7 +202,7 @@ export class All1663753774947 implements MigrationInterface {
     await queryRunner.query('ALTER TABLE `orgs` DROP PRIMARY KEY');
     await queryRunner.query('ALTER TABLE `orgs` DROP COLUMN `org_id`');
     await queryRunner.query(
-      'ALTER TABLE `orgs` ADD `org_id` varchar(32) NOT NULL PRIMARY KEY'
+      'ALTER TABLE `orgs` ADD `org_id` varchar(128) NOT NULL PRIMARY KEY'
     );
     await queryRunner.query('ALTER TABLE `projects` DROP PRIMARY KEY');
     await queryRunner.query(
@@ -210,7 +210,7 @@ export class All1663753774947 implements MigrationInterface {
     );
     await queryRunner.query('ALTER TABLE `projects` DROP COLUMN `org_id`');
     await queryRunner.query(
-      'ALTER TABLE `projects` ADD `org_id` varchar(32) NOT NULL'
+      'ALTER TABLE `projects` ADD `org_id` varchar(128) NOT NULL'
     );
     await queryRunner.query('ALTER TABLE `projects` DROP PRIMARY KEY');
     await queryRunner.query(

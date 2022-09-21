@@ -7,7 +7,7 @@ let testId = 'disk-revert-repo-to-remote__ok';
 
 let traceId = testId;
 let orgId = testId;
-let projectId = 'p1';
+let projectId = common.makeId();
 
 test('1', async t => {
   let resp1: apiToDisk.ToDiskRevertRepoToRemoteResponse;
