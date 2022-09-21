@@ -24,6 +24,7 @@ export class DeleteVizDialogComponent {
     let payload: apiToBackend.ToBackendDeleteVizRequestPayload = {
       projectId: projectId,
       branchId: branchId,
+      envId: this.ref.data.envId,
       isRepoProd: isRepoProd,
       vizId: viz.vizId
     };

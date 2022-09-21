@@ -13,7 +13,7 @@ export class QueryEntity {
   @Column({ type: constants.VARCHAR })
   connection_type: common.ConnectionTypeEnum;
 
-  @PrimaryColumn({ type: constants.QUERY_ID_VARCHAR, length: 32 })
+  @PrimaryColumn({ type: constants.QUERY_ID_VARCHAR, length: 64 })
   query_id: string;
 
   @Column({ type: constants.MEDIUMTEXT, nullable: true })

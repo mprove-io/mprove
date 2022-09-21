@@ -77,6 +77,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
             let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
               projectId: nav.projectId,
               branchId: nav.branchId,
+              envId: nav.envId,
               isRepoProd: nav.isRepoProd,
               mconfigId: this.mconfig.mconfigId,
               queryId: this.query.queryId,

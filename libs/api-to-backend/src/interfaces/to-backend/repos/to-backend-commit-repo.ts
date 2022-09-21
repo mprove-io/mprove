@@ -10,9 +10,6 @@ export class ToBackendCommitRepoRequestPayload {
   @IsString()
   branchId: string;
 
-  @IsString()
-  envId: string;
-
   @IsBoolean()
   isRepoProd: boolean;
 
@@ -30,10 +27,6 @@ export class ToBackendCommitRepoResponsePayload {
   @ValidateNested()
   @Type(() => common.Repo)
   repo: common.Repo;
-
-  @ValidateNested()
-  @Type(() => common.Repo)
-  struct: common.Struct;
 }
 
 export class ToBackendCommitRepoResponse extends common.MyResponse {

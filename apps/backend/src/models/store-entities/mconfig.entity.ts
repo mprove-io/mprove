@@ -7,7 +7,7 @@ export class MconfigEntity {
   @Column({ type: constants.STRUCT_ID_VARCHAR, length: 32 })
   struct_id: string;
 
-  @Column({ type: constants.QUERY_ID_VARCHAR, length: 32 })
+  @Column({ type: constants.QUERY_ID_VARCHAR, length: 64 })
   query_id: string;
 
   @PrimaryColumn({ type: constants.MCONFIG_ID_VARCHAR, length: 32 })

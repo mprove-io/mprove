@@ -46,6 +46,7 @@ export class StackDashboardsResolver implements Resolve<Promise<boolean>> {
     let payload: apiToBackend.ToBackendGetDashboardsRequestPayload = {
       projectId: nav.projectId,
       branchId: nav.branchId,
+      envId: nav.envId,
       isRepoProd: nav.isRepoProd
     };
 

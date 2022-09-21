@@ -89,6 +89,7 @@ export class DashboardsNewDialogComponent {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       newDashboardId: this.newDashboardId,
       dashboardTitle: newTitle,
       accessRoles: roles,

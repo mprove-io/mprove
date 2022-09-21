@@ -204,6 +204,7 @@ export class FilesTreeComponent implements OnDestroy {
     let payload: apiToBackend.ToBackendMoveCatalogNodeRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       fromNodeId: event.node.id,
       toNodeId: toNodeId
     };

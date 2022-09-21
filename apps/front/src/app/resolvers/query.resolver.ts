@@ -70,6 +70,7 @@ export class QueryResolver implements Resolve<Observable<boolean>> {
     let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
       projectId: nav.projectId,
       branchId: nav.branchId,
+      envId: nav.envId,
       isRepoProd: nav.isRepoProd,
       mconfigId: mconfig.mconfigId,
       queryId: parametersQueryId

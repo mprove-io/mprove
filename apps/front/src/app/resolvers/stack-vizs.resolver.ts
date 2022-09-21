@@ -39,6 +39,7 @@ export class StackVizsResolver implements Resolve<Promise<boolean>> {
     let payload: apiToBackend.ToBackendGetVizsRequestPayload = {
       projectId: nav.projectId,
       branchId: nav.branchId,
+      envId: nav.envId,
       isRepoProd: nav.isRepoProd
     };
 

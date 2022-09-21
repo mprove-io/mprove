@@ -64,6 +64,9 @@ export class ToBackendGetNavResponsePayload {
   @IsString()
   branchId: string;
 
+  @IsString()
+  envId: string;
+
   @ValidateNested()
   @Type(() => common.User)
   user: common.User;

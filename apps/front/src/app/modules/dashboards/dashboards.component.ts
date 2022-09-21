@@ -279,6 +279,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd,
       mconfigId: item.mconfigId
     };
@@ -304,6 +305,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     let payloadGetQuery: apiToBackend.ToBackendGetQueryRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd,
       mconfigId: item.mconfigId,
       queryId: item.queryId,
@@ -373,6 +375,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       dashboardDeletedFnBindThis: this.dashboardDeletedFnBindThis,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd
     });
   }

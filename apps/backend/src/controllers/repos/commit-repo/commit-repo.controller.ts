@@ -4,7 +4,6 @@ import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
-import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
@@ -32,13 +31,7 @@ export class CommitRepoController {
     @ValidateRequest(apiToBackend.ToBackendCommitRepoRequest)
     reqValid: apiToBackend.ToBackendCommitRepoRequest
   ) {
-    let {
-      projectId,
-      branchId,
-      isRepoProd,
-      commitMessage,
-      envId
-    } = reqValid.payload;
+    let { projectId, branchId, isRepoProd, commitMessage } = reqValid.payload;
 
     if (isRepoProd === true) {
       throw new common.ServerError({
@@ -64,18 +57,6 @@ export class CommitRepoController {
       projectId: projectId,
       repoId: repoId,
       branchId: branchId
-    });
-
-    let env = await this.envsService.getEnvCheckExists({
-      projectId: projectId,
-      envId: envId
-    });
-
-    let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.project_id,
-      repoId: branch.repo_id,
-      branchId: branch.branch_id,
-      envId: envId
     });
 
     let toDiskCommitRepoRequest: apiToDisk.ToDiskCommitRepoRequest = {
@@ -108,13 +89,8 @@ export class CommitRepoController {
       }
     );
 
-    let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.struct_id
-    });
-
     let payload: apiToBackend.ToBackendCommitRepoResponsePayload = {
-      repo: diskResponse.payload.repo,
-      struct: wrapper.wrapToApiStruct(struct)
+      repo: diskResponse.payload.repo
     };
 
     return payload;

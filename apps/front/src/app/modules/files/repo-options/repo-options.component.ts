@@ -71,7 +71,8 @@ export class RepoOptionsComponent {
 
     let payload: apiToBackend.ToBackendRevertRepoToLastCommitRequestPayload = {
       projectId: this.nav.projectId,
-      branchId: this.nav.branchId
+      branchId: this.nav.branchId,
+      envId: this.nav.envId
     };
 
     this.apiService
@@ -105,7 +106,8 @@ export class RepoOptionsComponent {
     let payload: apiToBackend.ToBackendRevertRepoToRemoteRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
-      branchId: this.nav.branchId
+      branchId: this.nav.branchId,
+      envId: this.nav.envId
     };
 
     this.apiService
@@ -138,7 +140,8 @@ export class RepoOptionsComponent {
     let payload: apiToBackend.ToBackendPullRepoRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
-      branchId: this.nav.branchId
+      branchId: this.nav.branchId,
+      envId: this.nav.envId
     };
 
     this.apiService
@@ -168,7 +171,8 @@ export class RepoOptionsComponent {
     let payload: apiToBackend.ToBackendValidateFilesRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
-      branchId: this.nav.branchId
+      branchId: this.nav.branchId,
+      envId: this.nav.envId
     };
 
     this.apiService

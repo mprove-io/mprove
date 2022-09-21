@@ -56,6 +56,7 @@ export class DashboardOptionsComponent {
       dashboardDeletedFnBindThis: this.dashboardDeletedFnBindThis,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd
     });
   }

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store, StoreConfig } from '@datorama/akita';
+import { common } from '~front/barrels/common';
 
 export class NavState {
   avatarSmall: string;
@@ -12,6 +13,7 @@ export class NavState {
   projectDefaultBranch: string;
   isRepoProd: boolean;
   branchId: string;
+  envId: string;
   serverTimeDiff: number;
 }
 
@@ -27,6 +29,7 @@ function createInitialState(): NavState {
     projectDefaultBranch: undefined,
     isRepoProd: undefined,
     branchId: undefined,
+    envId: common.PROJECT_ENV_PROD,
     serverTimeDiff: undefined
   };
 }

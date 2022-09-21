@@ -39,6 +39,7 @@ export class FolderOptionsComponent {
       apiService: this.apiService,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       parentNodeId: node.data.id
     });
   }
@@ -49,6 +50,7 @@ export class FolderOptionsComponent {
       apiService: this.apiService,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       parentNodeId: node.data.id
     });
   }
@@ -59,6 +61,7 @@ export class FolderOptionsComponent {
       apiService: this.apiService,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       folderNodeId: node.data.id,
       folderName: node.data.name
     });
@@ -70,6 +73,7 @@ export class FolderOptionsComponent {
       apiService: this.apiService,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       nodeId: node.data.id,
       folderName: node.data.name
     });

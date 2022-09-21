@@ -34,7 +34,8 @@ export class RepoStructResolver implements Resolve<Observable<boolean>> {
     let payload: apiToBackend.ToBackendGetRepoRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
-      branchId: branchId
+      branchId: branchId,
+      envId: nav.envId
     };
 
     return this.apiService

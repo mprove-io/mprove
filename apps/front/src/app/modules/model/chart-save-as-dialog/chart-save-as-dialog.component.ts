@@ -122,6 +122,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
     let payload: apiToBackend.ToBackendGetDashboardsRequestPayload = {
       projectId: nav.projectId,
       branchId: nav.branchId,
+      envId: nav.envId,
       isRepoProd: nav.isRepoProd
     };
 
@@ -284,6 +285,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       vizId: this.vizId,
       reportTitle: newTitle.trim(),
       accessRoles: roles,
@@ -338,6 +340,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       toDashboardId: this.selectedDashboardId,
       fromDashboardId: this.selectedDashboardId,
       selectedReportTitle: this.selectedReportTitle,

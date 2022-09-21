@@ -47,7 +47,8 @@ export class DashboardAddReportDialogComponent implements OnInit {
     let payload: apiToBackend.ToBackendGetModelsRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
-      branchId: nav.branchId
+      branchId: nav.branchId,
+      envId: nav.envId
     };
 
     apiService

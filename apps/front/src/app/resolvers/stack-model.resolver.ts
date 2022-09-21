@@ -48,6 +48,7 @@ export class StackModelResolver implements Resolve<Promise<boolean>> {
     let payload: apiToBackend.ToBackendGetModelRequestPayload = {
       projectId: nav.projectId,
       branchId: nav.branchId,
+      envId: nav.envId,
       isRepoProd: nav.isRepoProd,
       modelId: parametersModelId
     };

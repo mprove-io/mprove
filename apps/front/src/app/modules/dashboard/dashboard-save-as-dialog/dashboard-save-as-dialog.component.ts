@@ -111,7 +111,8 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     let payload: apiToBackend.ToBackendGetDashboardsRequestPayload = {
       projectId: nav.projectId,
       branchId: nav.branchId,
-      isRepoProd: nav.isRepoProd
+      isRepoProd: nav.isRepoProd,
+      envId: nav.envId
     };
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -186,6 +187,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     let payload: apiToBackend.ToBackendCreateDashboardRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd,
       newDashboardId: this.newDashboardId,
       fromDashboardId: this.dashboard.dashboardId,
@@ -232,6 +234,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     let payload: apiToBackend.ToBackendModifyDashboardRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd,
       toDashboardId: this.selectedDashboardId,
       fromDashboardId: this.dashboard.dashboardId,

@@ -57,7 +57,6 @@ export class CommitDialogComponent implements OnInit {
         tap((resp: apiToBackend.ToBackendCommitRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.repoStore.update(resp.payload.repo);
-            this.structStore.update(resp.payload.struct);
           }
         }),
         take(1)

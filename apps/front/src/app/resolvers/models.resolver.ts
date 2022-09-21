@@ -32,7 +32,8 @@ export class ModelsResolver implements Resolve<Observable<boolean>> {
     let payload: apiToBackend.ToBackendGetModelsRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
-      branchId: nav.branchId
+      branchId: nav.branchId,
+      envId: nav.envId
     };
 
     return this.apiService

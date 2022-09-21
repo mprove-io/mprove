@@ -118,7 +118,6 @@ export class CreateBranchDialogComponent implements OnInit {
       projectId: this.ref.data.projectId,
       newBranchId: this.createBranchForm.value.branchId,
       fromBranchId: this.selectedBranchItem.branchId,
-      // isFromRemote: this.selectedBranchItem.isRepoProd,
       isRepoProd: this.isTargetProd
     };
 

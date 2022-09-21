@@ -52,6 +52,7 @@ export class FileService {
         projectId: this.nav.projectId,
         isRepoProd: this.nav.isRepoProd,
         branchId: this.nav.branchId,
+        envId: this.nav.envId,
         fileNodeId:
           this.nav.projectId +
           '/' +

@@ -70,6 +70,7 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
     let payload: apiToBackend.ToBackendGetMconfigRequestPayload = {
       projectId: nav.projectId,
       branchId: nav.branchId,
+      envId: nav.envId,
       isRepoProd: nav.isRepoProd,
       mconfigId: parametersMconfigId
     };

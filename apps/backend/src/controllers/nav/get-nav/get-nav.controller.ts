@@ -25,6 +25,8 @@ export class GetNavController {
   ) {
     let { orgId, projectId, isRepoProd, branchId } = reqValid.payload;
 
+    let envId = common.PROJECT_ENV_PROD;
+
     let repoId =
       common.isUndefined(isRepoProd) || isRepoProd === true
         ? common.PROD_REPO_ID
@@ -119,6 +121,7 @@ export class GetNavController {
       projectDefaultBranch: resultProject?.default_branch,
       isRepoProd: resultRepoId === common.PROD_REPO_ID,
       branchId: resultBranchId,
+      envId: envId,
       user: wrapper.wrapToApiUser(user),
       serverNowTs: Date.now()
     };

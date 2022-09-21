@@ -262,6 +262,7 @@ export class MyDialogService {
     projectId: string;
     isRepoProd: boolean;
     branchId: string;
+    envId: string;
     mconfig: common.MconfigX;
     viz: common.Viz;
   }): void {
@@ -287,6 +288,7 @@ export class MyDialogService {
     viz: common.Viz;
     projectId: string;
     branchId: string;
+    envId: string;
     isRepoProd: boolean;
   }): void {
     this.dialogService.open(DeleteVizDialogComponent, {
@@ -302,6 +304,7 @@ export class MyDialogService {
     dashboard: common.Dashboard;
     projectId: string;
     branchId: string;
+    envId: string;
     isRepoProd: boolean;
   }): void {
     this.dialogService.open(DeleteDashboardDialogComponent, {
@@ -318,6 +321,7 @@ export class MyDialogService {
     fileId: string;
     currentBranchId: string;
     currentBranchExtraName: string;
+    envId: string;
     branchesList: BranchItem[];
   }): void {
     this.dialogService.open(MergeBranchDialogComponent, {
@@ -511,6 +515,7 @@ export class MyDialogService {
     apiService: any;
     projectId: string;
     branchId: string;
+    envId: string;
     parentNodeId: string;
   }): void {
     this.dialogService.open(CreateFolderDialogComponent, {
@@ -524,6 +529,7 @@ export class MyDialogService {
     apiService: any;
     projectId: string;
     branchId: string;
+    envId: string;
     parentNodeId: string;
   }): void {
     this.dialogService.open(CreateFileDialogComponent, {
@@ -537,6 +543,7 @@ export class MyDialogService {
     apiService: any;
     projectId: string;
     branchId: string;
+    envId: string;
     folderNodeId: string;
     folderName: string;
   }): void {
@@ -551,6 +558,7 @@ export class MyDialogService {
     apiService: any;
     projectId: string;
     branchId: string;
+    envId: string;
     nodeId: string;
     folderName: string;
   }): void {
@@ -565,6 +573,7 @@ export class MyDialogService {
     apiService: any;
     projectId: string;
     branchId: string;
+    envId: string;
     nodeId: string;
     fileName: string;
   }): void {
@@ -579,6 +588,7 @@ export class MyDialogService {
     apiService: any;
     projectId: string;
     branchId: string;
+    envId: string;
     fileNodeId: string;
     fileName: string;
   }): void {

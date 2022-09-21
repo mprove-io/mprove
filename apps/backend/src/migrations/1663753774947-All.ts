@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class All1663746563450 implements MigrationInterface {
-  name = 'All1663746563450';
+export class All1663753774947 implements MigrationInterface {
+  name = 'All1663753774947';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -16,7 +16,7 @@ export class All1663746563450 implements MigrationInterface {
     );
     await queryRunner.query('ALTER TABLE `connections` DROP PRIMARY KEY');
     await queryRunner.query(
-      'ALTER TABLE `connections` ADD PRIMARY KEY (`connection_id`, `project_id`, `env_id`)'
+      'ALTER TABLE `connections` ADD PRIMARY KEY (`project_id`, `connection_id`, `env_id`)'
     );
     await queryRunner.query('ALTER TABLE `avatars` DROP PRIMARY KEY');
     await queryRunner.query('ALTER TABLE `avatars` DROP COLUMN `user_id`');
@@ -25,7 +25,7 @@ export class All1663746563450 implements MigrationInterface {
     );
     await queryRunner.query('ALTER TABLE `branches` DROP PRIMARY KEY');
     await queryRunner.query(
-      'ALTER TABLE `branches` ADD PRIMARY KEY (`branch_id`, `repo_id`)'
+      'ALTER TABLE `branches` ADD PRIMARY KEY (`repo_id`, `branch_id`)'
     );
     await queryRunner.query('ALTER TABLE `branches` DROP COLUMN `project_id`');
     await queryRunner.query(
@@ -33,7 +33,7 @@ export class All1663746563450 implements MigrationInterface {
     );
     await queryRunner.query('ALTER TABLE `branches` DROP PRIMARY KEY');
     await queryRunner.query(
-      'ALTER TABLE `branches` ADD PRIMARY KEY (`branch_id`, `repo_id`, `project_id`)'
+      'ALTER TABLE `branches` ADD PRIMARY KEY (`repo_id`, `branch_id`, `project_id`)'
     );
     await queryRunner.query('ALTER TABLE `branches` DROP PRIMARY KEY');
     await queryRunner.query(
@@ -131,7 +131,7 @@ export class All1663746563450 implements MigrationInterface {
     );
     await queryRunner.query('ALTER TABLE `mconfigs` DROP COLUMN `query_id`');
     await queryRunner.query(
-      'ALTER TABLE `mconfigs` ADD `query_id` varchar(32) NOT NULL'
+      'ALTER TABLE `mconfigs` ADD `query_id` varchar(64) NOT NULL'
     );
     await queryRunner.query('ALTER TABLE `mconfigs` DROP PRIMARY KEY');
     await queryRunner.query('ALTER TABLE `mconfigs` DROP COLUMN `mconfig_id`');
@@ -241,7 +241,7 @@ export class All1663746563450 implements MigrationInterface {
     await queryRunner.query('ALTER TABLE `queries` DROP PRIMARY KEY');
     await queryRunner.query('ALTER TABLE `queries` DROP COLUMN `query_id`');
     await queryRunner.query(
-      'ALTER TABLE `queries` ADD `query_id` varchar(32) NOT NULL PRIMARY KEY'
+      'ALTER TABLE `queries` ADD `query_id` varchar(64) NOT NULL PRIMARY KEY'
     );
     await queryRunner.query('ALTER TABLE `structs` DROP COLUMN `project_id`');
     await queryRunner.query(
@@ -401,7 +401,7 @@ export class All1663746563450 implements MigrationInterface {
     );
     await queryRunner.query('ALTER TABLE `models` DROP PRIMARY KEY');
     await queryRunner.query(
-      'ALTER TABLE `models` ADD PRIMARY KEY (`model_id`, `struct_id`)'
+      'ALTER TABLE `models` ADD PRIMARY KEY (`struct_id`, `model_id`)'
     );
     await queryRunner.query('ALTER TABLE `members` DROP PRIMARY KEY');
     await queryRunner.query(
@@ -425,7 +425,7 @@ export class All1663746563450 implements MigrationInterface {
     );
     await queryRunner.query('ALTER TABLE `members` DROP PRIMARY KEY');
     await queryRunner.query(
-      'ALTER TABLE `members` ADD PRIMARY KEY (`member_id`, `project_id`)'
+      'ALTER TABLE `members` ADD PRIMARY KEY (`project_id`, `member_id`)'
     );
     await queryRunner.query('ALTER TABLE `mconfigs` DROP COLUMN `model_id`');
     await queryRunner.query(
@@ -482,7 +482,7 @@ export class All1663746563450 implements MigrationInterface {
     );
     await queryRunner.query('ALTER TABLE `dashboards` DROP PRIMARY KEY');
     await queryRunner.query(
-      'ALTER TABLE `dashboards` ADD PRIMARY KEY (`dashboard_id`, `struct_id`)'
+      'ALTER TABLE `dashboards` ADD PRIMARY KEY (`struct_id`, `dashboard_id`)'
     );
     await queryRunner.query('ALTER TABLE `connections` DROP PRIMARY KEY');
     await queryRunner.query(
@@ -510,7 +510,7 @@ export class All1663746563450 implements MigrationInterface {
     );
     await queryRunner.query('ALTER TABLE `connections` DROP PRIMARY KEY');
     await queryRunner.query(
-      'ALTER TABLE `connections` ADD PRIMARY KEY (`connection_id`, `project_id`, `env_id`)'
+      'ALTER TABLE `connections` ADD PRIMARY KEY (`project_id`, `connection_id`, `env_id`)'
     );
     await queryRunner.query('ALTER TABLE `branches` DROP PRIMARY KEY');
     await queryRunner.query(
@@ -534,11 +534,11 @@ export class All1663746563450 implements MigrationInterface {
     );
     await queryRunner.query('ALTER TABLE `branches` DROP PRIMARY KEY');
     await queryRunner.query(
-      'ALTER TABLE `branches` ADD PRIMARY KEY (`branch_id`, `repo_id`, `project_id`)'
+      'ALTER TABLE `branches` ADD PRIMARY KEY (`repo_id`, `branch_id`, `project_id`)'
     );
     await queryRunner.query('ALTER TABLE `branches` DROP PRIMARY KEY');
     await queryRunner.query(
-      'ALTER TABLE `branches` ADD PRIMARY KEY (`branch_id`, `repo_id`)'
+      'ALTER TABLE `branches` ADD PRIMARY KEY (`repo_id`, `branch_id`)'
     );
     await queryRunner.query('ALTER TABLE `branches` DROP COLUMN `project_id`');
     await queryRunner.query(
@@ -546,7 +546,7 @@ export class All1663746563450 implements MigrationInterface {
     );
     await queryRunner.query('ALTER TABLE `branches` DROP PRIMARY KEY');
     await queryRunner.query(
-      'ALTER TABLE `branches` ADD PRIMARY KEY (`branch_id`, `project_id`, `repo_id`)'
+      'ALTER TABLE `branches` ADD PRIMARY KEY (`project_id`, `repo_id`, `branch_id`)'
     );
     await queryRunner.query('ALTER TABLE `avatars` DROP COLUMN `user_id`');
     await queryRunner.query(
@@ -557,7 +557,7 @@ export class All1663746563450 implements MigrationInterface {
     );
     await queryRunner.query('ALTER TABLE `connections` DROP PRIMARY KEY');
     await queryRunner.query(
-      'ALTER TABLE `connections` ADD PRIMARY KEY (`connection_id`, `project_id`)'
+      'ALTER TABLE `connections` ADD PRIMARY KEY (`project_id`, `connection_id`)'
     );
     await queryRunner.query('ALTER TABLE `connections` DROP COLUMN `env_id`');
     await queryRunner.query(

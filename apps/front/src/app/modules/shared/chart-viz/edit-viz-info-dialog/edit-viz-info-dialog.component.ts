@@ -75,6 +75,7 @@ export class EditVizInfoDialogComponent implements OnInit {
         projectId: this.ref.data.projectId,
         isRepoProd: this.ref.data.isRepoProd,
         branchId: this.ref.data.branchId,
+        envId: this.ref.data.envId,
         vizId: this.ref.data.viz.vizId,
         reportTitle: newTitle.trim(),
         accessRoles: roles,

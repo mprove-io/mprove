@@ -61,6 +61,7 @@ export class MergeBranchDialogComponent implements OnInit {
     let payload: apiToBackend.ToBackendMergeRepoRequestPayload = {
       projectId: this.ref.data.projectId,
       branchId: this.ref.data.currentBranchId,
+      envId: this.ref.data.envId,
       theirBranchId: this.selectedBranchItem.branchId,
       isTheirBranchRemote: this.selectedBranchItem.isRepoProd
     };

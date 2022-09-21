@@ -69,6 +69,7 @@ export class CreateFileDialogComponent implements OnInit {
     let payload: apiToBackend.ToBackendCreateFileRequestPayload = {
       projectId: this.ref.data.projectId,
       branchId: this.ref.data.branchId,
+      envId: this.ref.data.envId,
       parentNodeId: this.ref.data.parentNodeId,
       fileName: fileName
     };

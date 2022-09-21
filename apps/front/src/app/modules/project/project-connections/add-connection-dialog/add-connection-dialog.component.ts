@@ -230,6 +230,7 @@ export class AddConnectionDialogComponent implements OnInit {
     let payload: apiToBackend.ToBackendCreateConnectionRequestPayload = {
       projectId: this.ref.data.projectId,
       connectionId: this.addConnectionForm.value.connectionId,
+      envId: common.PROJECT_ENV_PROD,
       type: this.addConnectionForm.value.type,
       bigqueryCredentials: common.isDefined(
         this.addConnectionForm.value.bigqueryCredentials

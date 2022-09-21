@@ -73,6 +73,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
+      envId: nav.envId,
       addFields: true,
       filterByModelIds: this.dashboard.reports.map(report => report.modelId)
     };

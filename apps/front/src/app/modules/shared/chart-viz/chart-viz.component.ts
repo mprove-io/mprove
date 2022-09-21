@@ -92,6 +92,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
       projectId: nav.projectId,
       branchId: nav.branchId,
+      envId: nav.envId,
       isRepoProd: nav.isRepoProd,
       mconfigId: this.report.mconfigId
     };
@@ -117,6 +118,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     let payloadGetQuery: apiToBackend.ToBackendGetQueryRequestPayload = {
       projectId: nav.projectId,
       branchId: nav.branchId,
+      envId: nav.envId,
       isRepoProd: nav.isRepoProd,
       mconfigId: this.report.mconfigId,
       queryId: this.report.queryId,
@@ -160,6 +162,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
             let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
               projectId: nav.projectId,
               branchId: nav.branchId,
+              envId: nav.envId,
               isRepoProd: nav.isRepoProd,
               mconfigId: this.mconfig.mconfigId,
               queryId: this.query.queryId,
@@ -246,6 +249,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       vizDeletedFnBindThis: this.vizDeletedFnBindThis,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd
     });
   }
@@ -276,6 +280,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       apiService: this.apiService,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd,
       viz: this.viz,
       mconfig: this.mconfig

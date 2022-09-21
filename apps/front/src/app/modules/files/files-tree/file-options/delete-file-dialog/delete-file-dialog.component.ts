@@ -26,6 +26,7 @@ export class DeleteFileDialogComponent {
     let payload: apiToBackend.ToBackendDeleteFileRequestPayload = {
       projectId: this.ref.data.projectId,
       branchId: this.ref.data.branchId,
+      envId: this.ref.data.envId,
       fileNodeId: this.ref.data.fileNodeId
     };
 

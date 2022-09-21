@@ -140,6 +140,7 @@ export class MconfigService {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       mconfig: newMconfig
     };
 
@@ -177,6 +178,7 @@ export class MconfigService {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       mconfig: newMconfig
     };
 

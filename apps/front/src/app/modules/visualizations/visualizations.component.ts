@@ -318,6 +318,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd,
       mconfigId: item.reports[0].mconfigId
     };
@@ -343,6 +344,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     let payloadGetQuery: apiToBackend.ToBackendGetQueryRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd,
       mconfigId: item.reports[0].mconfigId,
       queryId: item.reports[0].queryId,
@@ -415,6 +417,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd,
       mconfigId: item.reports[0].mconfigId
     };
@@ -441,6 +444,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
       apiService: this.apiService,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd,
       viz: item,
       mconfig: mconfig
@@ -456,6 +460,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
       vizDeletedFnBindThis: this.vizDeletedFnBindThis,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd
     });
   }

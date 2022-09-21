@@ -24,6 +24,7 @@ export class DeleteDashboardDialogComponent {
     let payload: apiToBackend.ToBackendDeleteDashboardRequestPayload = {
       projectId: projectId,
       branchId: branchId,
+      envId: this.ref.data.envId,
       isRepoProd: isRepoProd,
       dashboardId: dashboard.dashboardId
     };

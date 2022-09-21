@@ -110,7 +110,8 @@ export class CreateTempMconfigAndQueryController {
         weekStart: struct.week_start,
         udfsDict: struct.udfs_dict,
         mconfig: mconfig,
-        modelContent: model.content
+        modelContent: model.content,
+        envId: envId
       }
     };
 

@@ -26,6 +26,7 @@ export class DeleteFolderDialogComponent {
     let payload: apiToBackend.ToBackendDeleteFolderRequestPayload = {
       projectId: this.ref.data.projectId,
       branchId: this.ref.data.branchId,
+      envId: this.ref.data.envId,
       folderNodeId: this.ref.data.folderNodeId
     };
 

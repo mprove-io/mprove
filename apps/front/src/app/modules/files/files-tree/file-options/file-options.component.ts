@@ -43,6 +43,7 @@ export class FileOptionsComponent {
       apiService: this.apiService,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       fileNodeId: node.data.id,
       fileName: node.data.name
     });
@@ -54,6 +55,7 @@ export class FileOptionsComponent {
       apiService: this.apiService,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       nodeId: node.data.id,
       fileName: node.data.name
     });

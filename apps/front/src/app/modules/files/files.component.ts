@@ -127,7 +127,8 @@ export class FilesComponent implements OnInit {
     let payload: apiToBackend.ToBackendPushRepoRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
-      branchId: this.nav.branchId
+      branchId: this.nav.branchId,
+      envId: this.nav.envId
     };
 
     this.apiService
@@ -148,7 +149,8 @@ export class FilesComponent implements OnInit {
     let payload: apiToBackend.ToBackendPullRepoRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
-      branchId: this.nav.branchId
+      branchId: this.nav.branchId,
+      envId: this.nav.envId
     };
 
     this.apiService

@@ -47,6 +47,7 @@ export class DashboardService {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       oldDashboardId: oldDashboardId,
       newDashboardId: newDashboardId,
       newDashboardFields: newDashboardFields,

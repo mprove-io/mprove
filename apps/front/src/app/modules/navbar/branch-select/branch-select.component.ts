@@ -16,7 +16,7 @@ import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { FileState } from '~front/app/stores/file.store';
 import { MemberStore } from '~front/app/stores/member.store';
-import { NavStore } from '~front/app/stores/nav.store';
+import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoState } from '~front/app/stores/repo.store';
 import { UserState } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -58,8 +58,11 @@ export class BranchSelectComponent {
   selectedBranchItem: interfaces.BranchItem;
   selectedBranchExtraId: string;
 
+  nav: NavState;
   nav$ = this.navQuery.select().pipe(
     tap(x => {
+      this.nav = x;
+
       let user: UserState;
       this.userQuery
         .select()
@@ -69,16 +72,17 @@ export class BranchSelectComponent {
         )
         .subscribe();
 
-      this.defaultBranch = x.projectDefaultBranch;
+      this.defaultBranch = this.nav.projectDefaultBranch;
 
-      this.selectedOrgId = x.orgId;
-      this.selectedProjectId = x.projectId;
+      this.selectedOrgId = this.nav.orgId;
+      this.selectedProjectId = this.nav.projectId;
 
       this.selectedBranchItem =
-        common.isDefined(x.projectId) && common.isDefined(x.branchId)
+        common.isDefined(this.nav.projectId) &&
+        common.isDefined(this.nav.branchId)
           ? this.makeBranchItem({
-              branchId: x.branchId,
-              isRepoProd: x.isRepoProd,
+              branchId: this.nav.branchId,
+              isRepoProd: this.nav.isRepoProd,
               alias: user.alias,
               userId: user.userId
             })
@@ -138,6 +142,17 @@ export class BranchSelectComponent {
       .select()
       .pipe(
         tap(z => (user = z)),
+        take(1)
+      )
+      .subscribe();
+
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
         take(1)
       )
       .subscribe();
@@ -247,6 +262,7 @@ export class BranchSelectComponent {
       fileService: this.fileService,
       projectId: this.selectedProjectId,
       fileId: this.file.fileId,
+      envId: this.nav.envId,
       currentBranchId: this.selectedBranchItem.branchId,
       currentBranchExtraName: this.selectedBranchItem.extraName,
       branchesList: this.branchesList

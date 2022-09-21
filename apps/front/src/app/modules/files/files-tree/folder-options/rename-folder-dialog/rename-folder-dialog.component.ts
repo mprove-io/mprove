@@ -47,6 +47,7 @@ export class RenameFolderDialogComponent implements OnInit {
     let payload: apiToBackend.ToBackendRenameCatalogNodeRequestPayload = {
       projectId: this.ref.data.projectId,
       branchId: this.ref.data.branchId,
+      envId: this.ref.data.envId,
       nodeId: this.ref.data.nodeId,
       newName: newName
     };

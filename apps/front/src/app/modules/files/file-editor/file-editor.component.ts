@@ -222,6 +222,7 @@ export class FileEditorComponent implements OnDestroy {
     let payload: apiToBackend.ToBackendSaveFileRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
+      envId: this.nav.envId,
       fileNodeId:
         this.nav.projectId +
         '/' +
