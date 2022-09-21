@@ -180,6 +180,7 @@ export class SeedRecordsController {
             payload: {
               orgId: newProject.org_id,
               projectId: newProject.project_id,
+              projectName: newProject.name,
               testProjectId: x.testProjectId,
               devRepoId: users[0].user_id,
               userAlias: users[0].alias,

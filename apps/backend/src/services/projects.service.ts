@@ -67,6 +67,7 @@ export class ProjectsService {
       payload: {
         orgId: orgId,
         projectId: projectId,
+        projectName: name,
         devRepoId: user.user_id,
         userAlias: user.alias,
         testProjectId: testProjectId,

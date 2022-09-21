@@ -7,6 +7,7 @@ export async function createInitialCommitToProd(item: {
   prodDir: string;
   projectId: string;
   testProjectId: string;
+  projectName: string;
   userAlias: string;
 }) {
   let gitRepo = <nodegit.Repository>await nodegit.Repository.open(item.prodDir);
@@ -24,8 +25,7 @@ export async function createInitialCommitToProd(item: {
     let fileName = common.README_FILE_NAME;
     let filePath = `${item.prodDir}/${fileName}`;
 
-    let projectName = common.capitalizeFirstLetter(item.projectId);
-    let content = `# ${projectName}`;
+    let content = `# ${item.projectName} project`;
 
     await disk.writeToFile({
       filePath: filePath,

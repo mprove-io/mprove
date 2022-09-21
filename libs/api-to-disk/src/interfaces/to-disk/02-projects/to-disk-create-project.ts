@@ -10,6 +10,9 @@ export class ToDiskCreateProjectRequestPayload {
   @IsString()
   projectId: string;
 
+  @IsString()
+  projectName: string;
+
   @IsOptional()
   @IsString()
   testProjectId?: string;

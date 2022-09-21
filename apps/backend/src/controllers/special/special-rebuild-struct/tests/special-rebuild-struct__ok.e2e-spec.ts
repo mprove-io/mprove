@@ -91,6 +91,7 @@ test('1', async t => {
       payload: {
         orgId: orgId,
         projectId: projectId,
+        projectName: projectName,
         testProjectId: testProjectId,
         devRepoId: devRepoId,
         userAlias: userAlias,

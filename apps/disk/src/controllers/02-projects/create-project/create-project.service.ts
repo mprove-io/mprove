@@ -26,6 +26,7 @@ export class CreateProjectService {
     let {
       orgId,
       projectId,
+      projectName,
       testProjectId,
       devRepoId,
       userAlias,
@@ -75,6 +76,7 @@ export class CreateProjectService {
 
     await git.prepareRemoteAndProd({
       projectId: projectId,
+      projectName: projectName,
       projectDir: projectDir,
       testProjectId: testProjectId,
       userAlias: userAlias,

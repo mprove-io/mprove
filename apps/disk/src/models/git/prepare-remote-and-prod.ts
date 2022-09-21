@@ -9,6 +9,7 @@ export async function prepareRemoteAndProd(item: {
   projectId: string;
   projectDir: string;
   testProjectId: string;
+  projectName: string;
   userAlias: string;
   remoteType: common.ProjectRemoteTypeEnum;
   gitUrl: string;
@@ -38,7 +39,8 @@ export async function prepareRemoteAndProd(item: {
       prodDir: prodDir,
       testProjectId: item.testProjectId,
       projectId: item.projectId,
-      userAlias: item.userAlias
+      userAlias: item.userAlias,
+      projectName: item.projectName
     });
 
     await pushToRemote({

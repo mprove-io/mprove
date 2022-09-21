@@ -26,6 +26,7 @@ export class SeedProjectService {
     let {
       orgId,
       projectId,
+      projectName,
       devRepoId,
       userAlias,
       testProjectId,
@@ -64,6 +65,7 @@ export class SeedProjectService {
 
     await git.prepareRemoteAndProd({
       projectId: projectId,
+      projectName: projectName,
       projectDir: projectDir,
       testProjectId: testProjectId,
       userAlias: userAlias,
