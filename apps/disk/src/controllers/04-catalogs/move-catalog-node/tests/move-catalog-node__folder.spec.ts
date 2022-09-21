@@ -83,8 +83,8 @@ test('1', async t => {
         projectId: projectId,
         repoId: 'r1',
         branch: common.BRANCH_MASTER,
-        fromNodeId: 'p1/fo2',
-        toNodeId: 'p1/fo1/fo2',
+        fromNodeId: `${projectId}/fo2`,
+        toNodeId: `${projectId}/fo1/fo2`,
         remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
