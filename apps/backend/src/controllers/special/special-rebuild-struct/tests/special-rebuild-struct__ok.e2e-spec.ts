@@ -25,6 +25,8 @@ let projectName = testId;
 let devRepoId = userId;
 let userAlias = testId;
 
+let envId = common.PROJECT_ENV_PROD;
+
 let prep: interfaces.Prep;
 
 test('1', async t => {
@@ -122,6 +124,7 @@ test('1', async t => {
       payload: {
         orgId: orgId,
         projectId: projectId,
+        envId: envId,
         isRepoProd: false,
         branch: common.BRANCH_MASTER,
         structId: testId,

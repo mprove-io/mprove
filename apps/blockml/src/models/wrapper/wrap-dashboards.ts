@@ -9,8 +9,9 @@ export function wrapDashboards(item: {
   projectId: string;
   dashboards: interfaces.Dashboard[];
   models: interfaces.Model[];
+  envId: string;
 }) {
-  let { structId, orgId, projectId, models, dashboards } = item;
+  let { structId, orgId, projectId, models, dashboards, envId } = item;
 
   let apiDashboards: common.Dashboard[] = [];
   let dashMconfigs: common.Mconfig[] = [];
@@ -35,7 +36,8 @@ export function wrapDashboards(item: {
       projectId: projectId,
       structId: structId,
       models: models,
-      reports: x.reports
+      reports: x.reports,
+      envId: envId
     });
 
     dashMconfigs = [...dashMconfigs, ...mconfigs];

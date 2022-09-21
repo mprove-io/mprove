@@ -36,7 +36,14 @@ export class RebuildStructService {
       errorMessage: common.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS
     });
 
-    let { structId, orgId, projectId, files, connections } = reqValid.payload;
+    let {
+      structId,
+      orgId,
+      projectId,
+      files,
+      connections,
+      envId
+    } = reqValid.payload;
 
     let {
       errors,
@@ -76,7 +83,8 @@ export class RebuildStructService {
       orgId: orgId,
       projectId: projectId,
       models: models,
-      dashboards: dashboards
+      dashboards: dashboards,
+      envId: envId
     });
 
     let { apiVizs, vizMconfigs, vizQueries } = barWrapper.wrapVizs({
@@ -84,7 +92,8 @@ export class RebuildStructService {
       orgId: orgId,
       projectId: projectId,
       models: models,
-      vizs: vizs
+      vizs: vizs,
+      envId: envId
     });
 
     let queries = [...dashQueries, ...vizQueries];

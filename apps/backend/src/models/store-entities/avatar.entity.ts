@@ -3,7 +3,7 @@ import { constants } from '~backend/barrels/constants';
 
 @Entity('avatars')
 export class AvatarEntity {
-  @PrimaryColumn({ type: constants.USER_ID_VARCHAR })
+  @PrimaryColumn({ type: constants.USER_ID_VARCHAR, length: 32 })
   user_id: string;
 
   @Column({ type: constants.AVATAR_SMALL_MEDIUMTEXT, nullable: true })

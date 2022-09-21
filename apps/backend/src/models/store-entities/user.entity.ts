@@ -4,7 +4,7 @@ import { constants } from '~backend/barrels/constants';
 
 @Entity('users')
 export class UserEntity {
-  @PrimaryColumn({ type: constants.USER_ID_VARCHAR })
+  @PrimaryColumn({ type: constants.USER_ID_VARCHAR, length: 32 })
   user_id: string;
 
   @Column({ unique: true, type: constants.USER_EMAIL_VARCHAR })

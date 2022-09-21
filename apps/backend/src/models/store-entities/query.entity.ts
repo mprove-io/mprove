@@ -4,16 +4,16 @@ import { constants } from '~backend/barrels/constants';
 
 @Entity('queries')
 export class QueryEntity {
-  @Column({ type: constants.PROJECT_ID_VARCHAR })
+  @Column({ type: constants.PROJECT_ID_VARCHAR, length: 32 })
   project_id: string; // for connection
 
-  @Column({ type: constants.CONNECTION_ID_VARCHAR })
+  @Column({ type: constants.CONNECTION_ID_VARCHAR, length: 32 })
   connection_id: string; // name
 
   @Column({ type: constants.VARCHAR })
   connection_type: common.ConnectionTypeEnum;
 
-  @PrimaryColumn({ type: constants.QUERY_ID_VARCHAR })
+  @PrimaryColumn({ type: constants.QUERY_ID_VARCHAR, length: 32 })
   query_id: string;
 
   @Column({ type: constants.MEDIUMTEXT, nullable: true })

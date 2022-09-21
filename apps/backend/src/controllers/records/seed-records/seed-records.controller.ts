@@ -215,6 +215,7 @@ export class SeedRecordsController {
               structId: structId,
               orgId: newProject.org_id,
               projectId: newProject.project_id,
+              envId: prodEnv.env_id,
               files: helper.diskFilesToBlockmlFiles(diskResponse.payload.files),
               connections: connections
                 .filter(

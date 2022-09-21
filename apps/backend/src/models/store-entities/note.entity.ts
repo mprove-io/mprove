@@ -3,7 +3,7 @@ import { constants } from '~backend/barrels/constants';
 
 @Entity('notes')
 export class NoteEntity {
-  @PrimaryColumn({ type: constants.NOTE_ID_VARCHAR })
+  @PrimaryColumn({ type: constants.NOTE_ID_VARCHAR, length: 32 })
   note_id: string;
 
   @Column({ type: constants.TEXT })

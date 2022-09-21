@@ -4,10 +4,10 @@ import { constants } from '~backend/barrels/constants';
 
 @Entity('models')
 export class ModelEntity {
-  @PrimaryColumn({ type: constants.STRUCT_ID_VARCHAR })
+  @PrimaryColumn({ type: constants.STRUCT_ID_VARCHAR, length: 32 })
   struct_id: string; // composite
 
-  @PrimaryColumn({ type: constants.MODEL_ID_VARCHAR })
+  @PrimaryColumn({ type: constants.MODEL_ID_VARCHAR, length: 32 })
   model_id: string; // name
 
   @Column({ type: constants.VARCHAR, nullable: true })

@@ -6,7 +6,7 @@ export class IdempEntity {
   @PrimaryColumn({ type: constants.IDEMPOTENCY_KEY_VARCHAR })
   idempotency_key: string;
 
-  @PrimaryColumn({ type: constants.USER_ID_VARCHAR })
+  @PrimaryColumn({ type: constants.USER_ID_VARCHAR, length: 32 })
   user_id: string;
 
   @Column({ type: constants.JSON })

@@ -33,6 +33,7 @@ export class SpecialRebuildStructController {
     let {
       orgId,
       projectId,
+      envId,
       isRepoProd,
       branch,
       structId,
@@ -85,6 +86,7 @@ export class SpecialRebuildStructController {
       payload: {
         structId: structId,
         orgId: orgId,
+        envId: envId,
         projectId: projectId,
         files: helper.diskFilesToBlockmlFiles(
           getCatalogFilesResponse.payload.files

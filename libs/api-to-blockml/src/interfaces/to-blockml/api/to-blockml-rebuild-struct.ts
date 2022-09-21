@@ -11,6 +11,9 @@ export class ToBlockmlRebuildStructRequestPayload {
   projectId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   structId: string;
 
   @ValidateNested()

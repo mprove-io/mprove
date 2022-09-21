@@ -4,16 +4,16 @@ import { constants } from '~backend/barrels/constants';
 
 @Entity('vizs')
 export class VizEntity {
-  @PrimaryColumn({ type: constants.STRUCT_ID_VARCHAR })
+  @PrimaryColumn({ type: constants.STRUCT_ID_VARCHAR, length: 32 })
   struct_id: string; // composite
 
-  @PrimaryColumn({ type: constants.VISUALIZATION_ID_VARCHAR })
+  @PrimaryColumn({ type: constants.VISUALIZATION_ID_VARCHAR, length: 32 })
   viz_id: string; // name
 
   @Column({ type: constants.VARCHAR })
   title: string;
 
-  @Column({ type: constants.MODEL_ID_VARCHAR })
+  @Column({ type: constants.MODEL_ID_VARCHAR, length: 32 })
   model_id: string;
 
   @Column({ type: constants.VARCHAR })

@@ -4,10 +4,10 @@ import { constants } from '~backend/barrels/constants';
 
 @Entity('dashboards')
 export class DashboardEntity {
-  @PrimaryColumn({ type: constants.STRUCT_ID_VARCHAR })
+  @PrimaryColumn({ type: constants.STRUCT_ID_VARCHAR, length: 32 })
   struct_id: string; // composite
 
-  @PrimaryColumn({ type: constants.DASHBOARD_ID_VARCHAR })
+  @PrimaryColumn({ type: constants.DASHBOARD_ID_VARCHAR, length: 32 })
   dashboard_id: string; // name
 
   @Column({ type: constants.TEXT, nullable: true })

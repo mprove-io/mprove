@@ -7,10 +7,11 @@ export function wrapVizs(item: {
   structId: string;
   orgId: string;
   projectId: string;
+  envId: string;
   models: interfaces.Model[];
   vizs: interfaces.Viz[];
 }) {
-  let { structId, orgId, projectId, models, vizs } = item;
+  let { structId, orgId, projectId, models, vizs, envId } = item;
 
   let apiVizs: common.Viz[] = [];
   let vizMconfigs: common.Mconfig[] = [];
@@ -22,7 +23,8 @@ export function wrapVizs(item: {
       projectId: projectId,
       structId: structId,
       models: models,
-      reports: x.reports
+      reports: x.reports,
+      envId: envId
     });
 
     vizMconfigs = [...vizMconfigs, ...mconfigs];

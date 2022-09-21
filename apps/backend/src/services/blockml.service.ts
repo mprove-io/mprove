@@ -49,6 +49,7 @@ export class BlockmlService {
         structId: structId,
         orgId: orgId,
         projectId: projectId,
+        envId: envId,
         files: helper.diskFilesToBlockmlFiles(diskFiles),
         connections: connections.map(x => ({
           connectionId: x.connection_id,

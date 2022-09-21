@@ -10,6 +10,9 @@ export class ToBlockmlProcessQueryRequestPayload {
   @IsString()
   projectId: string;
 
+  @IsString()
+  envId: string;
+
   @IsEnum(common.ProjectWeekStartEnum)
   weekStart: common.ProjectWeekStartEnum;
 

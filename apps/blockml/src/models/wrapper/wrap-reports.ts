@@ -6,10 +6,11 @@ export function wrapReports(item: {
   structId: string;
   orgId: string;
   projectId: string;
+  envId: string;
   reports: interfaces.Report[];
   models: interfaces.Model[];
 }) {
-  let { structId, orgId, projectId, models, reports } = item;
+  let { structId, orgId, projectId, models, reports, envId } = item;
 
   let apiReports: common.Report[] = [];
   let mconfigs: common.Mconfig[] = [];
@@ -234,7 +235,8 @@ export function wrapReports(item: {
       sql: report.sql,
       orgId: orgId,
       projectId: projectId,
-      connection: model.connection
+      connection: model.connection,
+      envId: envId
     });
 
     let query: common.Query = {

@@ -4,13 +4,13 @@ import { constants } from '~backend/barrels/constants';
 
 @Entity('connections')
 export class ConnectionEntity {
-  @PrimaryColumn({ type: constants.PROJECT_ID_VARCHAR })
+  @PrimaryColumn({ type: constants.PROJECT_ID_VARCHAR, length: 32 })
   project_id: string; // composite
 
-  @PrimaryColumn({ type: constants.ENV_ID_VARCHAR })
+  @PrimaryColumn({ type: constants.ENV_ID_VARCHAR, length: 32 })
   env_id: string; // name
 
-  @PrimaryColumn({ type: constants.CONNECTION_ID_VARCHAR })
+  @PrimaryColumn({ type: constants.CONNECTION_ID_VARCHAR, length: 32 })
   connection_id: string; // name
 
   @Column({ type: constants.VARCHAR })

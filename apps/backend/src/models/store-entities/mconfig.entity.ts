@@ -4,19 +4,19 @@ import { constants } from '~backend/barrels/constants';
 
 @Entity('mconfigs')
 export class MconfigEntity {
-  @Column({ type: constants.STRUCT_ID_VARCHAR })
+  @Column({ type: constants.STRUCT_ID_VARCHAR, length: 32 })
   struct_id: string;
 
-  @Column({ type: constants.QUERY_ID_VARCHAR })
+  @Column({ type: constants.QUERY_ID_VARCHAR, length: 32 })
   query_id: string;
 
-  @PrimaryColumn({ type: constants.MCONFIG_ID_VARCHAR })
+  @PrimaryColumn({ type: constants.MCONFIG_ID_VARCHAR, length: 32 })
   mconfig_id: string;
 
   @Column({ type: constants.VARCHAR, nullable: true })
   model_label: string;
 
-  @Column({ type: constants.MODEL_ID_VARCHAR })
+  @Column({ type: constants.MODEL_ID_VARCHAR, length: 32 })
   model_id: string;
 
   @Column({ type: constants.JSON })

@@ -6,13 +6,19 @@ export function makeQueryId(item: {
   orgId: string;
   projectId: string;
   connection: common.ProjectConnection;
+  envId: string;
 }) {
-  let { sql, orgId, projectId, connection } = item;
+  let { sql, orgId, projectId, connection, envId } = item;
 
   let sqlString = sql.join('\n');
 
   let text =
-    sqlString + orgId + projectId + connection.connectionId + connection.type;
+    sqlString +
+    orgId +
+    projectId +
+    connection.connectionId +
+    envId +
+    connection.type;
 
   const hash = crypto.createHash('sha256').update(text).digest('hex');
 

@@ -36,7 +36,8 @@ export class ProcessQueryService {
       weekStart,
       udfsDict,
       mconfig,
-      modelContent: model
+      modelContent: model,
+      envId
     } = reqValid.payload;
 
     let { select, sorts, timezone, limit, filters } = mconfig;
@@ -69,7 +70,8 @@ export class ProcessQueryService {
       orgId: orgId,
       projectId: projectId,
       connection: model.connection,
-      sql: sql
+      sql: sql,
+      envId: envId
     });
 
     let query: common.Query = {

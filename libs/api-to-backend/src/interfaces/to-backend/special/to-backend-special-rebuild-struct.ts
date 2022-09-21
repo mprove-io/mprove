@@ -10,6 +10,9 @@ export class ToBackendSpecialRebuildStructRequestPayload {
   @IsString()
   projectId: string;
 
+  @IsString()
+  envId: string;
+
   @IsBoolean()
   isRepoProd: boolean;
 
