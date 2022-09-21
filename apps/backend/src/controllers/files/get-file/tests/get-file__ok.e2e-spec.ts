@@ -85,6 +85,7 @@ test('1', async t => {
         projectId: projectId,
         isRepoProd: false,
         branchId: branchId,
+        envId: common.PROJECT_ENV_PROD,
         fileNodeId: `${projectId}/readme.md`
       }
     };

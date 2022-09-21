@@ -75,6 +75,7 @@ test('1', async t => {
           {
             projectId: projectId,
             connectionId: 'c1',
+            envId: common.PROJECT_ENV_PROD,
             type: common.ConnectionTypeEnum.PostgreSQL,
             host: '0.0.0.0',
             port: 5432,
@@ -96,7 +97,8 @@ test('1', async t => {
       payload: {
         projectId: projectId,
         isRepoProd: false,
-        branchId: common.BRANCH_MASTER
+        branchId: common.BRANCH_MASTER,
+        envId: common.PROJECT_ENV_PROD
       }
     };
 

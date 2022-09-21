@@ -72,6 +72,7 @@ test('1', async t => {
         connections: [
           {
             connectionId: 'c1',
+            envId: common.PROJECT_ENV_PROD,
             projectId: projectId,
             type: common.ConnectionTypeEnum.PostgreSQL
           }

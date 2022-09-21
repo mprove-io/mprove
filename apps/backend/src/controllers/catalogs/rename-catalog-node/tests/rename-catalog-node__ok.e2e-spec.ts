@@ -87,6 +87,7 @@ test('1', async t => {
       payload: {
         projectId: projectId,
         branchId: branchId,
+        envId: common.PROJECT_ENV_PROD,
         nodeId: `${projectId}/readme.md`,
         newName: `readme2.md`
       }

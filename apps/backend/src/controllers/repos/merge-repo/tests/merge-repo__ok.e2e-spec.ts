@@ -85,6 +85,7 @@ test('1', async t => {
       payload: {
         projectId: projectId,
         branchId: branchId,
+        envId: common.PROJECT_ENV_PROD,
         theirBranchId: theirBranchId,
         isTheirBranchRemote: true
       }

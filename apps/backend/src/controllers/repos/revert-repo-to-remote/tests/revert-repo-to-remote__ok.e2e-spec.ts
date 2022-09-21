@@ -85,7 +85,8 @@ test('1', async t => {
       payload: {
         projectId: projectId,
         isRepoProd: false,
-        branchId: branchId
+        branchId: branchId,
+        envId: common.PROJECT_ENV_PROD
       }
     };
 

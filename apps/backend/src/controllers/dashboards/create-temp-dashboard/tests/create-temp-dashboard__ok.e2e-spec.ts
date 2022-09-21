@@ -77,6 +77,7 @@ test('1', async t => {
           {
             projectId: projectId,
             connectionId: 'c1',
+            envId: common.PROJECT_ENV_PROD,
             type: common.ConnectionTypeEnum.PostgreSQL
           }
         ]
@@ -94,6 +95,7 @@ test('1', async t => {
         projectId: projectId,
         isRepoProd: false,
         branchId: common.BRANCH_MASTER,
+        envId: common.PROJECT_ENV_PROD,
         dashboardId: oldDashboardId
       }
     };
@@ -118,6 +120,7 @@ test('1', async t => {
         projectId: projectId,
         isRepoProd: false,
         branchId: common.BRANCH_MASTER,
+        envId: common.PROJECT_ENV_PROD,
         oldDashboardId: oldDashboardId,
         newDashboardId: common.makeId(),
         newDashboardFields: resp1.payload.dashboard.fields,

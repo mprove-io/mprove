@@ -87,6 +87,7 @@ test('1', async t => {
       payload: {
         projectId: projectId,
         branchId: branchId,
+        envId: common.PROJECT_ENV_PROD,
         fromNodeId: `${projectId}/readme.md`,
         toNodeId: `${projectId}/ecommerce/readme.md`
       }

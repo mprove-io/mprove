@@ -74,6 +74,7 @@ test('1', async t => {
         connections: [
           {
             connectionId: connectionId,
+            envId: common.PROJECT_ENV_PROD,
             projectId: projectId,
             type: common.ConnectionTypeEnum.BigQuery
           }

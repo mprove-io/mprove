@@ -84,6 +84,7 @@ test('1', async t => {
       payload: {
         projectId: projectId,
         branchId: branchId,
+        envId: common.PROJECT_ENV_PROD,
         parentNodeId: `${projectId}`,
         fileName: `r.md`
       }

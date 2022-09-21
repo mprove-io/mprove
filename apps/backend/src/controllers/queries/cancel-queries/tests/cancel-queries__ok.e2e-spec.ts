@@ -124,6 +124,7 @@ test('1', async t => {
           {
             projectId: projectId,
             connectionId: connectionId,
+            envId: common.PROJECT_ENV_PROD,
             type: connectionType
           }
         ],
