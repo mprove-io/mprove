@@ -74,8 +74,7 @@ test('1', async t => {
 
     let req: apiToBackend.ToBackendGetEnvsListRequest = {
       info: {
-        name:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProjectsList,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvsList,
         traceId: traceId,
         idempotencyKey: testId
       },
