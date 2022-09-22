@@ -29,6 +29,7 @@
           <thead>
             <tr class="h-12 text-sm">
               <th class="text-left">Name</th>
+              <th class="text-left">Env</th>
               <th class="text-left">Type</th>
               <th class="text-left">SSL (https)</th>
               <th class="text-left">Host</th>
@@ -58,6 +59,8 @@
               class="h-16"
             >
               <td class="w-48">{{ connection.connectionId }}</td>
+
+              <td class="w-48">{{ connection.envId }}</td>
 
               <td class="w-48">{{ connection.type }} </td>
 

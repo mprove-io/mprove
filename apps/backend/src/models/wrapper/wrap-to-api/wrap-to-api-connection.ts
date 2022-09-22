@@ -7,6 +7,7 @@ export function wrapToApiConnection(
   return {
     projectId: x.project_id,
     connectionId: x.connection_id,
+    envId: x.env_id,
     type: x.type,
     bigqueryProject: x.bigquery_project,
     bigqueryClientEmail: x.bigquery_client_email,

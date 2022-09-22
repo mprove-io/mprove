@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
-import { take, tap } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 import { conditionalValidator } from '~front/app/functions/conditional-validator';
 import { ApiService } from '~front/app/services/api.service';
 import { ValidationService } from '~front/app/services/validation.service';
@@ -18,6 +18,10 @@ import { common } from '~front/barrels/common';
 })
 export class AddConnectionDialogComponent implements OnInit {
   addConnectionForm: FormGroup;
+
+  envsList: common.EnvsItem[] = [];
+  envsListLoading = false;
+  envsListLength = 0;
 
   isSSL = true;
 
@@ -45,6 +49,7 @@ export class AddConnectionDialogComponent implements OnInit {
         undefined,
         [Validators.required, Validators.maxLength(255)]
       ],
+      envId: [common.PROJECT_ENV_PROD],
       type: [common.ConnectionTypeEnum.SnowFlake],
       bigqueryCredentials: [
         undefined,
@@ -180,6 +185,35 @@ export class AddConnectionDialogComponent implements OnInit {
     });
   }
 
+  openEnvSelect() {
+    this.envsListLoading = true;
+
+    let payload: apiToBackend.ToBackendGetEnvsListRequestPayload = {
+      projectId: this.ref.data.projectId
+    };
+
+    let apiService: ApiService = this.ref.data.apiService;
+
+    apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvsList,
+        payload
+      )
+      .pipe(
+        map(
+          (resp: apiToBackend.ToBackendGetEnvsListResponse) =>
+            resp.payload.envsList
+        ),
+        tap(x => {
+          this.envsList = x;
+          this.envsListLoading = false;
+          this.envsListLength = x.length;
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
   changeType(type: common.ConnectionTypeEnum) {
     if (type !== common.ConnectionTypeEnum.BigQuery) {
       this.addConnectionForm.controls['bigqueryCredentials'].reset();
@@ -230,7 +264,7 @@ export class AddConnectionDialogComponent implements OnInit {
     let payload: apiToBackend.ToBackendCreateConnectionRequestPayload = {
       projectId: this.ref.data.projectId,
       connectionId: this.addConnectionForm.value.connectionId,
-      envId: common.PROJECT_ENV_PROD,
+      envId: this.addConnectionForm.value.envId,
       type: this.addConnectionForm.value.type,
       bigqueryCredentials: common.isDefined(
         this.addConnectionForm.value.bigqueryCredentials

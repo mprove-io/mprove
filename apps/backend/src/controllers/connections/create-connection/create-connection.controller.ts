@@ -6,6 +6,7 @@ import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { ConnectionsService } from '~backend/services/connections.service';
 import { DbService } from '~backend/services/db.service';
+import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
@@ -14,6 +15,7 @@ export class CreateConnectionController {
   constructor(
     private projectsService: ProjectsService,
     private connectionsService: ConnectionsService,
+    private envsService: EnvsService,
     private membersService: MembersService,
     private dbService: DbService
   ) {}
@@ -53,6 +55,11 @@ export class CreateConnectionController {
     await this.connectionsService.checkConnectionDoesNotExist({
       projectId: projectId,
       connectionId: connectionId
+    });
+
+    await this.envsService.getEnvCheckExists({
+      projectId: projectId,
+      envId: envId
     });
 
     let newConnection = maker.makeConnection({

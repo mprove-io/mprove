@@ -8,6 +8,9 @@ export class Connection {
   @IsString()
   connectionId: string;
 
+  @IsString()
+  envId: string;
+
   @IsEnum(enums.ConnectionTypeEnum)
   type: enums.ConnectionTypeEnum;
 
