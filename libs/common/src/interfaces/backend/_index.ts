@@ -1,5 +1,6 @@
 export * from './connection';
 export * from './dashboard-x';
+export * from './envs-item';
 export * from './filter-x';
 export * from './mconfig-field';
 export * from './mconfig-x';

@@ -6,6 +6,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyModule } from '@ngneat/helipopper';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { BranchSelectComponent } from './branch-select/branch-select.component';
+import { EnvSelectComponent } from './env-select/env-select.component';
 import { NavbarComponent } from './navbar.component';
 import { OrgMenuComponent } from './org-menu/org-menu.component';
 import { OrgSelectComponent } from './org-select/org-select.component';
@@ -21,7 +22,8 @@ import { UserMenuComponent } from './user-menu/user-menu.component';
     OrgSelectComponent,
     OrgMenuComponent,
     ProjectSelectComponent,
-    ProjectMenuComponent
+    ProjectMenuComponent,
+    EnvSelectComponent
   ],
   imports: [
     CommonModule,

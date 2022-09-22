@@ -38,6 +38,8 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendDeleteProject = 'api/ToBackendDeleteProject',
   ToBackendSetProjectInfo = 'api/ToBackendSetProjectInfo',
   //
+  ToBackendGetEnvsList = 'api/ToBackendGetEnvsList',
+  //
   ToBackendGetMembers = 'api/ToBackendGetMembers',
   ToBackendCreateMember = 'api/ToBackendCreateMember',
   ToBackendEditMember = 'api/ToBackendEditMember',
