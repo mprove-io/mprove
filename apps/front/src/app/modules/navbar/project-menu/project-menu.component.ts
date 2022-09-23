@@ -20,6 +20,7 @@ export class ProjectMenuComponent implements OnInit {
 
   pathSettings = common.PATH_SETTINGS;
   pathConnections = common.PATH_CONNECTIONS;
+  pathEnvironments = common.PATH_ENVIRONMENTS;
   pathTeam = common.PATH_TEAM;
 
   lastUrl: string;
@@ -98,6 +99,16 @@ export class ProjectMenuComponent implements OnInit {
       common.PATH_PROJECT,
       this.nav.projectId,
       common.PATH_CONNECTIONS
+    ]);
+  }
+
+  navigateEnvironments() {
+    this.router.navigate([
+      common.PATH_ORG,
+      this.nav.orgId,
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_ENVIRONMENTS
     ]);
   }
 

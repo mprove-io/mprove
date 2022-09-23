@@ -1,5 +1,6 @@
 export * from './wrap-to-api-connection';
 export * from './wrap-to-api-dashboard';
+export * from './wrap-to-api-env';
 export * from './wrap-to-api-envs-item';
 export * from './wrap-to-api-mconfig';
 export * from './wrap-to-api-member';

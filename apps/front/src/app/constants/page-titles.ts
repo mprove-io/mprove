@@ -17,6 +17,7 @@ export const PROFILE_PAGE_TITLE = 'Profile';
 export const ORGANIZATION_ACCOUNT_PAGE_TITLE = 'Organization - Account';
 export const ORGANIZATION_USERS_PAGE_TITLE = 'Organization - Users';
 
+export const PROJECT_ENVIRONMENTS_PAGE_TITLE = 'Project - Environments';
 export const PROJECT_CONNECTIONS_PAGE_TITLE = 'Project - Connections';
 export const PROJECT_SETTINGS_PAGE_TITLE = 'Project - Settings';
 export const PROJECT_TEAM_PAGE_TITLE = 'Project - Team';

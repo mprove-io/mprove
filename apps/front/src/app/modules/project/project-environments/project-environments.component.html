@@ -1,0 +1,93 @@
+<div class="flex h-full cursor-default flex-col bg-blue1">
+  <div class="mx-6 mb-6 mt-8 flex h-2 flex-grow flex-col">
+    <div class="flex h-11 flex-row items-center justify-between">
+      <div
+        data-cy="projectEnvironmentsTitle"
+        class="flex text-2xl font-semibold text-gray1"
+        >{{ pageTitle }}
+      </div>
+
+      <div tippy="Admin role required" [isEnabled]="isAdmin === false">
+        <button
+          data-cy="projectEnvironmentsAddEnvironmentButton"
+          class="rounded py-2 px-5 text-base font-medium text-white focus:outline-none"
+          type="submit"
+          [ngClass]="{
+            'bg-blue3': isAdmin === true,
+            'cursor-default bg-gray-400': isAdmin === false
+          }"
+          (click)="addEnvironment()"
+          [disabled]="isAdmin === false"
+          >Add Environment</button
+        >
+      </div>
+    </div>
+
+    <div class="mt-6 mb-4 flex-grow overflow-auto rounded bg-white shadow-lg">
+      <div class="mx-5 mt-8 text-gray1">
+        <table class="min-w-full divide-y divide-gray-500">
+          <thead>
+            <tr class="h-12 text-sm">
+              <th class="text-left">Name</th>
+              <th class="text-left"></th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody class="divide-y divide-gray-300 text-base">
+            <tr
+              *ngFor="
+                let environment of environments
+                  | paginate
+                    : {
+                        id: 'environments',
+                        itemsPerPage: perPage,
+                        currentPage: currentPage,
+                        totalItems: total
+                      };
+                let i = index
+              "
+              class="h-16"
+            >
+              <td class="w-48">{{ environment.envId }}</td>
+
+              <td class="w-32">
+                <div
+                  class="ml-3 w-fit"
+                  tippy="Admin role required"
+                  [isEnabled]="isAdmin === false"
+                >
+                  <button
+                    data-cy="projectEnvironmentsDeleteButton"
+                    class="h-9 w-9 rounded focus:outline-none"
+                    [ngClass]="{
+                      'cursor-default text-gray-400': isAdmin === false,
+                      'hover:bg-blue2': isAdmin !== false
+                    }"
+                    [disabled]="isAdmin === false"
+                    (click)="deleteEnvironment(environment)"
+                  >
+                    <div class="flex justify-center">
+                      <m-delete-icon></m-delete-icon>
+                    </div>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <pagination-controls
+      class="mt-3 flex justify-center"
+      (pageChange)="getEnvironments($event)"
+      id="environments"
+    ></pagination-controls>
+  </div>
+</div>
+
+<div *ngIf="projectId$ | async"></div>
+<div *ngIf="isAdmin$ | async"></div>
+<div *ngIf="environments$ | async"></div>
+<div *ngIf="total$ | async"></div>

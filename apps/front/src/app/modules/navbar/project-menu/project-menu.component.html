@@ -43,6 +43,27 @@
         <button
           class="block w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
           [ngClass]="{
+            'font-semibold': lastUrl === pathEnvironments,
+            'text-gray-400': isAdmin === false && isEditor === false,
+            'border-gray3': isAdmin === true || isEditor === true
+          }"
+          [disabled]="
+            lastUrl === pathEnvironments ||
+            (isAdmin === false && isEditor === false)
+          "
+          (click)="t1.hide(); navigateEnvironments()"
+          >Environments</button
+        >
+      </div>
+
+      <div
+        tippy="Admin or Editor role required"
+        placement="left"
+        [isEnabled]="isAdmin === false && isEditor === false"
+      >
+        <button
+          class="block w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
+          [ngClass]="{
             'font-semibold': lastUrl === pathConnections,
             'text-gray-400': isAdmin === false && isEditor === false,
             'border-gray3': isAdmin === true || isEditor === true

@@ -66,6 +66,7 @@ export const appControllers = [
   controllers.SetProjectInfoController,
 
   controllers.GetEnvsListController,
+  controllers.GetEnvsController,
 
   controllers.CancelQueriesController,
   controllers.GetQueryController,

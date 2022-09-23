@@ -15,6 +15,7 @@ export const LOCAL_STORAGE_NEW_ORG_OWNER = 'newOrgOwner';
 export const MEMBERS_PER_PAGE = 10;
 export const USERS_PER_PAGE = 10;
 export const CONNECTIONS_PER_PAGE = 10;
+export const ENVIRONMENTS_PER_PAGE = 10;
 
 export const EXT_LIST: common.FileExtensionEnum[] = [
   common.FileExtensionEnum.View,
