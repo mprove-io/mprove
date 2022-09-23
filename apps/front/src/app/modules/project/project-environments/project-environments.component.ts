@@ -6,6 +6,7 @@ import { EnvironmentsQuery } from '~front/app/queries/environments.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
+import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { EnvironmentsStore } from '~front/app/stores/environments.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -60,6 +61,7 @@ export class ProjectEnvironmentsComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private environmentsQuery: EnvironmentsQuery,
     private environmentsStore: EnvironmentsStore,
+    private myDialogService: MyDialogService,
     private apiService: ApiService,
     public navQuery: NavQuery,
     private memberQuery: MemberQuery,
@@ -93,10 +95,10 @@ export class ProjectEnvironmentsComponent implements OnInit {
   }
 
   addEnvironment() {
-    // this.myDialogService.showAddConnection({
-    //   apiService: this.apiService,
-    //   projectId: this.projectId
-    // });
+    this.myDialogService.showAddEnvironment({
+      apiService: this.apiService,
+      projectId: this.projectId
+    });
   }
 
   deleteEnvironment(environment: common.Env) {

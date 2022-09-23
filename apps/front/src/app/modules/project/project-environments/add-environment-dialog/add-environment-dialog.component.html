@@ -1,0 +1,46 @@
+<div class="flex-grow flex-col overflow-y-auto bg-white p-9">
+  <div
+    data-cy="addEnvironmentDialogTitle"
+    class="mt-5 flex-grow text-left text-2xl font-semibold text-gray2"
+    >Add Environment</div
+  >
+
+  <form
+    class="flex w-80 flex-col"
+    [formGroup]="addEnvironmentForm"
+    (ngSubmit)="add()"
+  >
+    <input
+      spellcheck="false"
+      data-cy="addEnvironmentDialogEnvironmentIdInput"
+      class="form-input mt-9 rounded border-gray3 focus:border-blue3"
+      [ngClass]="{
+        'border-red-600':
+          addEnvironmentForm.controls['envId'].invalid &&
+          addEnvironmentForm.controls['envId'].touched
+      }"
+      formControlName="envId"
+      placeholder="Name"
+    />
+    <m-validation
+      [control]="addEnvironmentForm.controls['envId']"
+    ></m-validation>
+
+    <div class="mt-6">
+      <button
+        data-cy="addEnvironmentDialogAddButton"
+        class="w-28 rounded bg-blue3 py-3 text-base font-medium text-white focus:outline-none"
+        type="submit"
+        >Add</button
+      >
+
+      <button
+        data-cy="addEnvironmentDialogCancelButton"
+        class="ml-3 w-28 rounded border border-blue3 py-3 text-base font-medium text-blue3 focus:outline-none"
+        type="button"
+        (click)="cancel()"
+        >Cancel</button
+      >
+    </div>
+  </form>
+</div>

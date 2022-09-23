@@ -36,6 +36,10 @@ import { EditTimezoneDialogComponent } from '../modules/profile/edit-timezone-di
 import { AddConnectionDialogComponent } from '../modules/project/project-connections/add-connection-dialog/add-connection-dialog.component';
 import { DeleteConnectionDialogComponent } from '../modules/project/project-connections/delete-connection-dialog/delete-connection-dialog.component';
 import { EditConnectionDialogComponent } from '../modules/project/project-connections/edit-connection-dialog/edit-connection-dialog.component';
+import {
+  AddEnvironmentDialogComponent,
+  AddEnvironmentDialogDataItem
+} from '../modules/project/project-environments/add-environment-dialog/add-environment-dialog.component';
 import { DeleteProjectDialogComponent } from '../modules/project/project-settings/delete-project-dialog/delete-project-dialog.component';
 import { EditProjectNameDialogComponent } from '../modules/project/project-settings/edit-project-name-dialog/edit-project-name-dialog.component';
 import { AddRoleDialogComponent } from '../modules/project/project-team/add-role-dialog/add-role-dialog.component';
@@ -481,6 +485,14 @@ export class MyDialogService {
 
   showAddConnection(item: { apiService: any; projectId: string }): void {
     this.dialogService.open(AddConnectionDialogComponent, {
+      enableClose: true,
+      closeButton: false,
+      data: item
+    });
+  }
+
+  showAddEnvironment(item: AddEnvironmentDialogDataItem): void {
+    this.dialogService.open(AddEnvironmentDialogComponent, {
       enableClose: true,
       closeButton: false,
       data: item

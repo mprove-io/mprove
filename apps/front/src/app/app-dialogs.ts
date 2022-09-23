@@ -30,6 +30,7 @@ import { EditTimezoneDialogComponent } from './modules/profile/edit-timezone-dia
 import { AddConnectionDialogComponent } from './modules/project/project-connections/add-connection-dialog/add-connection-dialog.component';
 import { DeleteConnectionDialogComponent } from './modules/project/project-connections/delete-connection-dialog/delete-connection-dialog.component';
 import { EditConnectionDialogComponent } from './modules/project/project-connections/edit-connection-dialog/edit-connection-dialog.component';
+import { AddEnvironmentDialogComponent } from './modules/project/project-environments/add-environment-dialog/add-environment-dialog.component';
 import { EditProjectNameDialogComponent } from './modules/project/project-settings/edit-project-name-dialog/edit-project-name-dialog.component';
 import { AddRoleDialogComponent } from './modules/project/project-team/add-role-dialog/add-role-dialog.component';
 import { InviteMemberDialogComponent } from './modules/project/project-team/invite-member-dialog/invite-member-dialog.component';
@@ -66,6 +67,8 @@ export const appDialogs = [
   // project team
   InviteMemberDialogComponent,
   AddRoleDialogComponent,
+  // project envrironments
+  AddEnvironmentDialogComponent,
   // project connections
   AddConnectionDialogComponent,
   DeleteConnectionDialogComponent,
