@@ -44,6 +44,7 @@ export class RunQueriesDryController {
 
       let connection = await this.connectionsService.getConnectionCheckExists({
         projectId: query.project_id,
+        envId: query.env_id,
         connectionId: query.connection_id
       });
 

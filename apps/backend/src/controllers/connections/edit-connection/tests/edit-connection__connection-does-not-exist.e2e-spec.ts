@@ -82,8 +82,9 @@ test('1', async t => {
         idempotencyKey: testId
       },
       payload: {
-        connectionId: connectionId,
-        projectId: projectId
+        projectId: projectId,
+        envId: common.PROJECT_ENV_PROD,
+        connectionId: connectionId
       }
     };
 

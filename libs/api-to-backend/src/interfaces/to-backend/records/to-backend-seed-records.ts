@@ -167,6 +167,13 @@ export class ToBackendSeedRecordsRequestPayloadConnectionsItem {
   @IsBoolean()
   isSSL?: boolean;
 }
+export class ToBackendSeedRecordsRequestPayloadEnvsItem {
+  @IsString()
+  projectId: string;
+
+  @IsString()
+  envId: string;
+}
 
 export class ToBackendSeedRecordsRequestPayload {
   @IsOptional()
@@ -193,6 +200,11 @@ export class ToBackendSeedRecordsRequestPayload {
   @ValidateNested()
   @Type(() => ToBackendSeedRecordsRequestPayloadConnectionsItem)
   connections?: ToBackendSeedRecordsRequestPayloadConnectionsItem[];
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ToBackendSeedRecordsRequestPayloadEnvsItem)
+  envs?: ToBackendSeedRecordsRequestPayloadEnvsItem[];
 
   @IsOptional()
   @ValidateNested()

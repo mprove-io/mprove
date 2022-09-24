@@ -3,23 +3,20 @@ import { IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
-export class ToBackendDeleteConnectionRequestPayload {
+export class ToBackendDeleteEnvRequestPayload {
   @IsString()
   projectId: string;
 
   @IsString()
   envId: string;
-
-  @IsString()
-  connectionId: string;
 }
 
-export class ToBackendDeleteConnectionRequest extends ToBackendRequest {
+export class ToBackendDeleteEnvRequest extends ToBackendRequest {
   @ValidateNested()
-  @Type(() => ToBackendDeleteConnectionRequestPayload)
-  payload: ToBackendDeleteConnectionRequestPayload;
+  @Type(() => ToBackendDeleteEnvRequestPayload)
+  payload: ToBackendDeleteEnvRequestPayload;
 }
 
-export class ToBackendDeleteConnectionResponse extends common.MyResponse {
+export class ToBackendDeleteEnvResponse extends common.MyResponse {
   payload: { [k in any]: never };
 }

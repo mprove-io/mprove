@@ -7,20 +7,20 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
 @Controller()
-export class DeleteConnectionController {
+export class DeleteEnvController {
   constructor(
     private projectsService: ProjectsService,
-    private connectionsRepository: repositories.ConnectionsRepository,
+    private envsRepository: repositories.EnvsRepository,
     private membersService: MembersService
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteConnection)
-  async deleteConnection(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEnv)
+  async deleteEnv(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendDeleteConnectionRequest)
-    reqValid: apiToBackend.ToBackendDeleteConnectionRequest
+    @ValidateRequest(apiToBackend.ToBackendDeleteEnvRequest)
+    reqValid: apiToBackend.ToBackendDeleteEnvRequest
   ) {
-    let { projectId, connectionId, envId } = reqValid.payload;
+    let { projectId, envId } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -31,10 +31,9 @@ export class DeleteConnectionController {
       projectId: projectId
     });
 
-    await this.connectionsRepository.delete({
+    await this.envsRepository.delete({
       project_id: projectId,
-      env_id: envId,
-      connection_id: connectionId
+      env_id: envId
     });
 
     let payload = {};

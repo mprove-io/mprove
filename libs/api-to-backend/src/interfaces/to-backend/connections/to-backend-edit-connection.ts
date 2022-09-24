@@ -14,6 +14,9 @@ export class ToBackendEditConnectionRequestPayload {
   projectId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   connectionId: string;
 
   @IsOptional()

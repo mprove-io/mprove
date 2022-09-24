@@ -26,6 +26,7 @@ export class EditConnectionController {
   ) {
     let {
       projectId,
+      envId,
       connectionId,
       bigqueryCredentials,
       bigqueryQuerySizeLimitGb,
@@ -50,6 +51,7 @@ export class EditConnectionController {
 
     let connection = await this.connectionsService.getConnectionCheckExists({
       projectId: projectId,
+      envId: envId,
       connectionId: connectionId
     });
 

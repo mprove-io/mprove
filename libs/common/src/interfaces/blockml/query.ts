@@ -13,6 +13,9 @@ export class Query {
   projectId: string;
 
   @IsString()
+  envId: string;
+
+  @IsString()
   connectionId: string;
 
   @IsEnum(enums.ConnectionTypeEnum)

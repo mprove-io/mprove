@@ -35,6 +35,7 @@ export class SeedRecordsController {
     let payloadOrgs = reqValid.payload.orgs;
     let payloadProjects = reqValid.payload.projects;
     let payloadConnections = reqValid.payload.connections;
+    let payloadEnvs = reqValid.payload.envs;
     let payloadQueries = reqValid.payload.queries;
     let payloadMconfigs = reqValid.payload.mconfigs;
 
@@ -146,6 +147,17 @@ export class SeedRecordsController {
         });
 
         connections.push(newConnection);
+      });
+    }
+
+    if (common.isDefined(payloadEnvs)) {
+      payloadEnvs.forEach(x => {
+        let newEnv = maker.makeEnv({
+          projectId: x.projectId,
+          envId: x.envId
+        });
+
+        envs.push(newEnv);
       });
     }
 

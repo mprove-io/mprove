@@ -242,6 +242,7 @@ export function wrapReports(item: {
     let query: common.Query = {
       queryId: queryId,
       projectId: projectId,
+      envId: envId,
       connectionId: model.connection.connectionId,
       connectionType: model.connection.type,
       sql: report.sql.join('\n'),

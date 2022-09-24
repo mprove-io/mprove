@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-delete-connection__ok';
+let testId = 'backend-delete-env__ok';
 
 let traceId = testId;
 
@@ -19,12 +19,12 @@ let orgName = testId;
 let projectId = common.makeId();
 let projectName = testId;
 
-let connectionId = 'c1';
+let envId = 'env1';
 
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendDeleteConnectionResponse;
+  let resp: apiToBackend.ToBackendDeleteEnvResponse;
 
   try {
     prep = await prepareTest({
@@ -71,39 +71,33 @@ test('1', async t => {
             isExplorer: common.BoolEnum.TRUE
           }
         ],
-        connections: [
+        envs: [
           {
-            connectionId: connectionId,
-            envId: common.PROJECT_ENV_PROD,
             projectId: projectId,
-            type: common.ConnectionTypeEnum.BigQuery
+            envId: envId
           }
         ]
       },
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendDeleteConnectionRequest = {
+    let req: apiToBackend.ToBackendDeleteEnvRequest = {
       info: {
-        name:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteConnection,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEnv,
         traceId: traceId,
         idempotencyKey: testId
       },
       payload: {
         projectId: projectId,
-        envId: common.PROJECT_ENV_PROD,
-        connectionId: connectionId
+        envId: envId
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendDeleteConnectionResponse>(
-      {
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req
-      }
-    );
+    resp = await helper.sendToBackend<apiToBackend.ToBackendDeleteEnvResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: req
+    });
 
     await prep.app.close();
   } catch (e) {

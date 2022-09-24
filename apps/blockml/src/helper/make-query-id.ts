@@ -8,7 +8,7 @@ export function makeQueryId(item: {
   connection: common.ProjectConnection;
   envId: string;
 }) {
-  let { sql, orgId, projectId, connection, envId } = item;
+  let { sql, orgId, projectId, envId, connection } = item;
 
   let sqlString = sql.join('\n');
 

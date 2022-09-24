@@ -9,13 +9,15 @@ export class ConnectionsService {
   ) {}
 
   async checkConnectionDoesNotExist(item: {
-    connectionId: string;
     projectId: string;
+    envId: string;
+    connectionId: string;
   }) {
-    let { projectId, connectionId } = item;
+    let { projectId, envId, connectionId } = item;
 
     let connection = await this.connectionsRepository.findOne({
       connection_id: connectionId,
+      env_id: envId,
       project_id: projectId
     });
 
@@ -28,12 +30,14 @@ export class ConnectionsService {
 
   async getConnectionCheckExists(item: {
     connectionId: string;
+    envId: string;
     projectId: string;
   }) {
-    let { projectId, connectionId } = item;
+    let { projectId, envId, connectionId } = item;
 
     let connection = await this.connectionsRepository.findOne({
       connection_id: connectionId,
+      env_id: envId,
       project_id: projectId
     });
 

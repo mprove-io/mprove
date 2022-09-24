@@ -77,6 +77,7 @@ export class ProcessQueryService {
     let query: common.Query = {
       queryId: queryId,
       projectId: projectId,
+      envId: envId,
       connectionId: model.connection.connectionId,
       connectionType: model.connection.type,
       sql: sql.join('\n'),

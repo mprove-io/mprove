@@ -54,6 +54,7 @@ export class CreateConnectionController {
 
     await this.connectionsService.checkConnectionDoesNotExist({
       projectId: projectId,
+      envId: envId,
       connectionId: connectionId
     });
 

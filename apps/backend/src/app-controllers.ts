@@ -65,9 +65,10 @@ export const appControllers = [
   controllers.IsProjectExistController,
   controllers.SetProjectInfoController,
 
-  controllers.GetEnvsListController,
-  controllers.GetEnvsController,
   controllers.CreateEnvController,
+  controllers.DeleteEnvController,
+  controllers.GetEnvsController,
+  controllers.GetEnvsListController,
 
   controllers.CancelQueriesController,
   controllers.GetQueryController,
