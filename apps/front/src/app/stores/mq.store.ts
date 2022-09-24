@@ -28,6 +28,7 @@ export const emptyMconfig: common.MconfigX = {
 
 export const emptyQuery: common.Query = {
   projectId: undefined,
+  envId: undefined,
   connectionId: undefined,
   connectionType: undefined,
   queryId: common.EMPTY,
