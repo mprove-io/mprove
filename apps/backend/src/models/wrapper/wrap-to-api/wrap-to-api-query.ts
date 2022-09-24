@@ -4,6 +4,7 @@ import { entities } from '~backend/barrels/entities';
 export function wrapToApiQuery(x: entities.QueryEntity): common.Query {
   return {
     projectId: x.project_id,
+    envId: x.env_id,
     connectionId: x.connection_id,
     connectionType: x.connection_type,
     queryId: x.query_id,
