@@ -53,25 +53,25 @@
         "k--kato.intellij-idea-keybindings",
         "wayou.vscode-todo-highlight",
         "PKief.material-icon-theme",
-        "esbenp.prettier-vscode"
+        "rvest.vs-code-prettier-eslint"
       ],
       "settings": {
         "workbench.settings.useSplitJSON": false,
         "typescript.tsdk": "node_modules/typescript/lib",
         "[typescript]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
+          "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
         },
         "[javascript]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
+          "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
         },
         "[html]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
+          "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
         },
         "[json]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
+          "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
         },
         "[jsonc]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
+          "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
         },
         "search.exclude": {
           "**/node_modules": true,
@@ -100,7 +100,7 @@
         "workbench.panel.defaultLocation": "bottom",
         "typescript.referencesCodeLens.enabled": true,
         "editor.detectIndentation": false,
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
         "window.zoomLevel": 3.25,
         "redhat.telemetry.enabled": false,
         "editor.bracketPairColorization.enabled": false,
