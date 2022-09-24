@@ -55,6 +55,7 @@ test('1', async t => {
 
   let query: common.Query = {
     projectId: projectId,
+    envId: common.PROJECT_ENV_PROD,
     connectionId: connectionId,
     connectionType: connectionType,
     queryId: queryId,
