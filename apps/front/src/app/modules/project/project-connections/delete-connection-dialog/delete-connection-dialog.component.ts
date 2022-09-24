@@ -9,11 +9,20 @@ import {
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface DeleteConnectionDialogDataItem {
+  apiService: any;
+  projectId: string;
+  envId: string;
+  connectionId: string;
+}
+
 @Component({
   selector: 'm-delete-connection-dialog',
   templateUrl: './delete-connection-dialog.component.html'
 })
 export class DeleteConnectionDialogComponent {
+  dataItem: DeleteConnectionDialogDataItem = this.ref.data;
+
   constructor(
     public ref: DialogRef,
     private connectionsStore: ConnectionsStore
@@ -23,11 +32,12 @@ export class DeleteConnectionDialogComponent {
     this.ref.close();
 
     let payload: apiToBackend.ToBackendDeleteConnectionRequestPayload = {
-      projectId: this.ref.data.projectId,
-      connectionId: this.ref.data.connectionId
+      projectId: this.dataItem.projectId,
+      envId: this.dataItem.envId,
+      connectionId: this.dataItem.connectionId
     };
 
-    let apiService: ApiService = this.ref.data.apiService;
+    let apiService: ApiService = this.dataItem.apiService;
 
     apiService
       .req(
@@ -42,8 +52,9 @@ export class DeleteConnectionDialogComponent {
                 <ConnectionsState>{
                   connections: state.connections.filter(
                     x =>
-                      x.connectionId !== this.ref.data.connectionId ||
-                      x.projectId !== this.ref.data.projectId
+                      x.projectId !== this.dataItem.projectId ||
+                      x.envId !== this.dataItem.envId ||
+                      x.connectionId !== this.dataItem.connectionId
                   )
                 }
             );

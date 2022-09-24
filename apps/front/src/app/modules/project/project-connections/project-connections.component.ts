@@ -107,6 +107,7 @@ export class ProjectConnectionsComponent implements OnInit {
     this.myDialogService.showDeleteConnection({
       apiService: this.apiService,
       projectId: connection.projectId,
+      envId: connection.envId,
       connectionId: connection.connectionId
     });
   }

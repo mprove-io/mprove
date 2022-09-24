@@ -12,11 +12,19 @@ import {
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface EditConnectionDialogDataItem {
+  apiService: any;
+  connection: common.Connection;
+  i: number;
+}
+
 @Component({
   selector: 'm-edit-connection-dialog',
   templateUrl: './edit-connection-dialog.component.html'
 })
 export class EditConnectionDialogComponent implements OnInit {
+  dataItem: EditConnectionDialogDataItem = this.ref.data;
+
   editConnectionForm: FormGroup;
 
   isSSL = true;
@@ -40,11 +48,11 @@ export class EditConnectionDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.isSSL = this.ref.data.connection.isSSL === true ? true : false;
+    this.isSSL = this.dataItem.connection.isSSL === true ? true : false;
 
     this.editConnectionForm = this.fb.group({
-      connectionId: [this.ref.data.connection.connectionId],
-      type: [this.ref.data.connection.type],
+      connectionId: [this.dataItem.connection.connectionId],
+      type: [this.dataItem.connection.type],
       bigqueryCredentials: [
         undefined,
         [
@@ -57,7 +65,7 @@ export class EditConnectionDialogComponent implements OnInit {
         ]
       ],
       bigqueryQuerySizeLimitGb: [
-        this.ref.data.connection.bigqueryQuerySizeLimitGb,
+        this.dataItem.connection.bigqueryQuerySizeLimitGb,
         [
           ValidationService.integerOrEmptyValidator,
           conditionalValidator(
@@ -69,7 +77,7 @@ export class EditConnectionDialogComponent implements OnInit {
         ]
       ],
       account: [
-        this.ref.data.connection.account,
+        this.dataItem.connection.account,
         [
           conditionalValidator(
             () =>
@@ -81,7 +89,7 @@ export class EditConnectionDialogComponent implements OnInit {
         ]
       ],
       warehouse: [
-        this.ref.data.connection.warehouse,
+        this.dataItem.connection.warehouse,
         [
           conditionalValidator(
             () =>
@@ -93,7 +101,7 @@ export class EditConnectionDialogComponent implements OnInit {
         ]
       ],
       host: [
-        this.ref.data.connection.host,
+        this.dataItem.connection.host,
         [
           conditionalValidator(
             () =>
@@ -106,7 +114,7 @@ export class EditConnectionDialogComponent implements OnInit {
         ]
       ],
       port: [
-        this.ref.data.connection.port,
+        this.dataItem.connection.port,
         [
           conditionalValidator(
             () =>
@@ -119,7 +127,7 @@ export class EditConnectionDialogComponent implements OnInit {
         ]
       ],
       database: [
-        this.ref.data.connection.database,
+        this.dataItem.connection.database,
         [
           conditionalValidator(
             () =>
@@ -133,7 +141,7 @@ export class EditConnectionDialogComponent implements OnInit {
         ]
       ],
       username: [
-        this.ref.data.connection.username,
+        this.dataItem.connection.username,
         [
           conditionalValidator(
             () =>
@@ -147,7 +155,7 @@ export class EditConnectionDialogComponent implements OnInit {
         ]
       ],
       password: [
-        this.ref.data.connection.password,
+        undefined,
         [
           conditionalValidator(
             () =>
@@ -227,7 +235,8 @@ export class EditConnectionDialogComponent implements OnInit {
     this.ref.close();
 
     let payload: apiToBackend.ToBackendEditConnectionRequestPayload = {
-      projectId: this.ref.data.connection.projectId,
+      projectId: this.dataItem.connection.projectId,
+      envId: this.dataItem.connection.envId,
       connectionId: this.editConnectionForm.value.connectionId,
       bigqueryCredentials: common.isDefined(
         this.editConnectionForm.value.bigqueryCredentials
@@ -251,7 +260,7 @@ export class EditConnectionDialogComponent implements OnInit {
       isSSL: this.isSSL
     };
 
-    let apiService: ApiService = this.ref.data.apiService;
+    let apiService: ApiService = this.dataItem.apiService;
 
     apiService
       .req(
@@ -262,7 +271,7 @@ export class EditConnectionDialogComponent implements OnInit {
         tap((resp: apiToBackend.ToBackendEditConnectionResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.connectionsStore.update(state => {
-              state.connections[this.ref.data.i] = resp.payload.connection;
+              state.connections[this.dataItem.i] = resp.payload.connection;
 
               return <ConnectionsState>{
                 connections: [...state.connections],

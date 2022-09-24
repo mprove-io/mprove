@@ -34,8 +34,14 @@ import { EditNameDialogComponent } from '../modules/profile/edit-name-dialog/edi
 import { EditPhotoDialogComponent } from '../modules/profile/edit-photo-dialog/edit-photo-dialog.component';
 import { EditTimezoneDialogComponent } from '../modules/profile/edit-timezone-dialog/edit-timezone-dialog.component';
 import { AddConnectionDialogComponent } from '../modules/project/project-connections/add-connection-dialog/add-connection-dialog.component';
-import { DeleteConnectionDialogComponent } from '../modules/project/project-connections/delete-connection-dialog/delete-connection-dialog.component';
-import { EditConnectionDialogComponent } from '../modules/project/project-connections/edit-connection-dialog/edit-connection-dialog.component';
+import {
+  DeleteConnectionDialogComponent,
+  DeleteConnectionDialogDataItem
+} from '../modules/project/project-connections/delete-connection-dialog/delete-connection-dialog.component';
+import {
+  EditConnectionDialogComponent,
+  EditConnectionDialogDataItem
+} from '../modules/project/project-connections/edit-connection-dialog/edit-connection-dialog.component';
 import {
   AddEnvironmentDialogComponent,
   AddEnvironmentDialogDataItem
@@ -499,11 +505,7 @@ export class MyDialogService {
     });
   }
 
-  showDeleteConnection(item: {
-    apiService: any;
-    projectId: string;
-    connectionId: string;
-  }): void {
+  showDeleteConnection(item: DeleteConnectionDialogDataItem): void {
     this.dialogService.open(DeleteConnectionDialogComponent, {
       enableClose: true,
       closeButton: false,
@@ -511,11 +513,7 @@ export class MyDialogService {
     });
   }
 
-  showEditConnection(item: {
-    apiService: any;
-    connection: common.Connection;
-    i: number;
-  }): void {
+  showEditConnection(item: EditConnectionDialogDataItem): void {
     this.dialogService.open(EditConnectionDialogComponent, {
       enableClose: true,
       closeButton: false,
