@@ -96,8 +96,5 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.is(
-    resp.info.error.message,
-    common.ErEnum.BACKEND_CONNECTION_ALREADY_EXISTS
-  );
+  t.is(resp.info.error.message, common.ErEnum.BACKEND_ENV_ALREADY_EXISTS);
 });
