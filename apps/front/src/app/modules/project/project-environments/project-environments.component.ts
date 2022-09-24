@@ -1,13 +1,11 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
 import { take, tap } from 'rxjs/operators';
 import { EnvironmentsQuery } from '~front/app/queries/environments.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { NavigateService } from '~front/app/services/navigate.service';
 import { EnvironmentsStore } from '~front/app/stores/environments.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -56,8 +54,6 @@ export class ProjectEnvironmentsComponent implements OnInit {
   );
 
   constructor(
-    private router: Router,
-    private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
     private environmentsQuery: EnvironmentsQuery,
     private environmentsStore: EnvironmentsStore,
@@ -65,7 +61,6 @@ export class ProjectEnvironmentsComponent implements OnInit {
     private apiService: ApiService,
     public navQuery: NavQuery,
     private memberQuery: MemberQuery,
-    private navigateService: NavigateService,
     private title: Title
   ) {}
 
@@ -73,7 +68,7 @@ export class ProjectEnvironmentsComponent implements OnInit {
     this.title.setTitle(this.pageTitle);
   }
 
-  getEnvironments(pageNum: number) {
+  getEnvsPage(pageNum: number) {
     let payload: apiToBackend.ToBackendGetEnvsRequestPayload = {
       projectId: this.projectId,
       pageNum: pageNum,
@@ -85,7 +80,10 @@ export class ProjectEnvironmentsComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendGetEnvsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.environmentsStore.update(resp.payload);
+            this.environmentsStore.update({
+              environments: resp.payload.envs,
+              total: resp.payload.total
+            });
             this.currentPage = pageNum;
           }
         }),
@@ -106,6 +104,8 @@ export class ProjectEnvironmentsComponent implements OnInit {
       apiService: this.apiService,
       projectId: environment.projectId,
       envId: environment.envId
+      // pageNum: this.currentPage,
+      // getEnvsPageFn: this.getEnvsPage.bind(this)
     });
   }
 }

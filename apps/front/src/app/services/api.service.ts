@@ -46,6 +46,7 @@ export class ApiService {
     // project environments
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEnv,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEnv,
+    // apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvs,
     // project connections
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateConnection,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteConnection,

@@ -13,6 +13,8 @@ export interface DeleteEnvironmentDialogDataItem {
   apiService: any;
   projectId: string;
   envId: string;
+  // pageNum: number;
+  // getEnvsPageFn?: any;
 }
 
 @Component({
@@ -45,13 +47,16 @@ export class DeleteEnvironmentDialogComponent {
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteEnvResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            // this.dataItem.getEnvsPageFn(this.dataItem.pageNum);
             this.environmentsStore.update(
               state =>
                 <EnvironmentsState>{
                   environments: state.environments.filter(
                     x =>
-                      x.projectId !== this.dataItem.projectId ||
-                      x.envId !== this.dataItem.envId
+                      !(
+                        x.projectId === this.dataItem.projectId &&
+                        x.envId === this.dataItem.envId
+                      )
                   )
                 }
             );
