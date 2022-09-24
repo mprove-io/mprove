@@ -31,6 +31,7 @@ import { AddConnectionDialogComponent } from './modules/project/project-connecti
 import { DeleteConnectionDialogComponent } from './modules/project/project-connections/delete-connection-dialog/delete-connection-dialog.component';
 import { EditConnectionDialogComponent } from './modules/project/project-connections/edit-connection-dialog/edit-connection-dialog.component';
 import { AddEnvironmentDialogComponent } from './modules/project/project-environments/add-environment-dialog/add-environment-dialog.component';
+import { DeleteEnvironmentDialogComponent } from './modules/project/project-environments/delete-environment-dialog/delete-environment-dialog.component';
 import { EditProjectNameDialogComponent } from './modules/project/project-settings/edit-project-name-dialog/edit-project-name-dialog.component';
 import { AddRoleDialogComponent } from './modules/project/project-team/add-role-dialog/add-role-dialog.component';
 import { InviteMemberDialogComponent } from './modules/project/project-team/invite-member-dialog/invite-member-dialog.component';
@@ -69,6 +70,7 @@ export const appDialogs = [
   AddRoleDialogComponent,
   // project envrironments
   AddEnvironmentDialogComponent,
+  DeleteEnvironmentDialogComponent,
   // project connections
   AddConnectionDialogComponent,
   DeleteConnectionDialogComponent,

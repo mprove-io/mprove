@@ -53,7 +53,6 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendGetConnections = 'api/ToBackendGetConnections',
   ToBackendCreateConnection = 'api/ToBackendCreateConnection',
   ToBackendDeleteConnection = 'api/ToBackendDeleteConnection',
-  //
   ToBackendEditConnection = 'api/ToBackendEditConnection',
   //
   ToBackendGetBranchesList = 'api/ToBackendGetBranchesList',

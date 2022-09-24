@@ -46,6 +46,10 @@ import {
   AddEnvironmentDialogComponent,
   AddEnvironmentDialogDataItem
 } from '../modules/project/project-environments/add-environment-dialog/add-environment-dialog.component';
+import {
+  DeleteEnvironmentDialogComponent,
+  DeleteEnvironmentDialogDataItem
+} from '../modules/project/project-environments/delete-environment-dialog/delete-environment-dialog.component';
 import { DeleteProjectDialogComponent } from '../modules/project/project-settings/delete-project-dialog/delete-project-dialog.component';
 import { EditProjectNameDialogComponent } from '../modules/project/project-settings/edit-project-name-dialog/edit-project-name-dialog.component';
 import { AddRoleDialogComponent } from '../modules/project/project-team/add-role-dialog/add-role-dialog.component';
@@ -497,8 +501,8 @@ export class MyDialogService {
     });
   }
 
-  showAddEnvironment(item: AddEnvironmentDialogDataItem): void {
-    this.dialogService.open(AddEnvironmentDialogComponent, {
+  showEditConnection(item: EditConnectionDialogDataItem): void {
+    this.dialogService.open(EditConnectionDialogComponent, {
       enableClose: true,
       closeButton: false,
       data: item
@@ -513,8 +517,16 @@ export class MyDialogService {
     });
   }
 
-  showEditConnection(item: EditConnectionDialogDataItem): void {
-    this.dialogService.open(EditConnectionDialogComponent, {
+  showAddEnvironment(item: AddEnvironmentDialogDataItem): void {
+    this.dialogService.open(AddEnvironmentDialogComponent, {
+      enableClose: true,
+      closeButton: false,
+      data: item
+    });
+  }
+
+  showDeleteEnvironment(item: DeleteEnvironmentDialogDataItem): void {
+    this.dialogService.open(DeleteEnvironmentDialogComponent, {
       enableClose: true,
       closeButton: false,
       data: item

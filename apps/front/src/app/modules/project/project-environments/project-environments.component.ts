@@ -102,10 +102,10 @@ export class ProjectEnvironmentsComponent implements OnInit {
   }
 
   deleteEnvironment(environment: common.Env) {
-    // this.myDialogService.showDeleteConnection({
-    //   apiService: this.apiService,
-    //   projectId: connection.projectId,
-    //   connectionId: connection.connectionId
-    // });
+    this.myDialogService.showDeleteEnvironment({
+      apiService: this.apiService,
+      projectId: environment.projectId,
+      envId: environment.envId
+    });
   }
 }
