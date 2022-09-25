@@ -44,6 +44,7 @@ export class LoginSuccessComponent implements OnInit {
     let projectId;
     let isRepoProd;
     let branchId;
+    let envId;
     this.navQuery
       .select()
       .pipe(
@@ -52,6 +53,7 @@ export class LoginSuccessComponent implements OnInit {
           projectId = x.projectId;
           isRepoProd = x.isRepoProd;
           branchId = x.branchId;
+          envId = x.envId;
 
           if (
             common.isUndefined(orgId) ||
@@ -72,6 +74,8 @@ export class LoginSuccessComponent implements OnInit {
               repoId,
               common.PATH_BRANCH,
               branchId,
+              common.PATH_ENV,
+              envId,
               common.PATH_VISUALIZATIONS
             ];
 

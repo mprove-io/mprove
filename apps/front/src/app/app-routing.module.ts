@@ -187,68 +187,74 @@ const routes: Routes = [
                       common.PATH_BRANCH + `/:${common.PARAMETER_BRANCH_ID}`,
                     children: [
                       {
-                        component: FilesComponent,
-                        path: common.PATH_FILES,
-                        resolve: [StackResolver],
+                        path: common.PATH_ENV + `/:${common.PARAMETER_ENV_ID}`,
                         children: [
                           {
-                            component: FileEditorComponent,
-                            canDeactivate: [DeactivateGuard],
-                            path:
-                              common.PATH_FILE +
-                              `/:${common.PARAMETER_FILE_ID}`,
-                            resolve: [FileResolver]
-                          }
-                        ]
-                      },
-                      {
-                        component: VisualizationsComponent,
-                        path: common.PATH_VISUALIZATIONS,
-                        resolve: [StackVizsResolver]
-                      },
-                      {
-                        component: DashboardsComponent,
-                        path: common.PATH_DASHBOARDS,
-                        resolve: [StackDashboardsResolver]
-                      },
-                      {
-                        component: ModelsComponent,
-                        path: common.PATH_MODELS,
-                        resolve: [StackResolver]
-                      },
-                      {
-                        component: ModelComponent,
-                        canDeactivate: [DeactivateGuard],
-                        path:
-                          common.PATH_MODEL + `/:${common.PARAMETER_MODEL_ID}`,
-                        resolve: [StackModelResolver],
-                        children: [
-                          {
-                            component: MconfigComponent,
-                            path:
-                              common.PATH_MCONFIG +
-                              `/:${common.PARAMETER_MCONFIG_ID}`,
-                            resolve: [MconfigResolver],
+                            component: FilesComponent,
+                            path: common.PATH_FILES,
+                            resolve: [StackResolver],
                             children: [
                               {
-                                component: QueryComponent,
+                                component: FileEditorComponent,
+                                canDeactivate: [DeactivateGuard],
                                 path:
-                                  common.PATH_QUERY +
-                                  `/:${common.PARAMETER_QUERY_ID}`,
-                                resolve: [QueryResolver]
+                                  common.PATH_FILE +
+                                  `/:${common.PARAMETER_FILE_ID}`,
+                                resolve: [FileResolver]
                               }
                             ]
+                          },
+                          {
+                            component: VisualizationsComponent,
+                            path: common.PATH_VISUALIZATIONS,
+                            resolve: [StackVizsResolver]
+                          },
+                          {
+                            component: DashboardsComponent,
+                            path: common.PATH_DASHBOARDS,
+                            resolve: [StackDashboardsResolver]
+                          },
+                          {
+                            component: ModelsComponent,
+                            path: common.PATH_MODELS,
+                            resolve: [StackResolver]
+                          },
+                          {
+                            component: ModelComponent,
+                            canDeactivate: [DeactivateGuard],
+                            path:
+                              common.PATH_MODEL +
+                              `/:${common.PARAMETER_MODEL_ID}`,
+                            resolve: [StackModelResolver],
+                            children: [
+                              {
+                                component: MconfigComponent,
+                                path:
+                                  common.PATH_MCONFIG +
+                                  `/:${common.PARAMETER_MCONFIG_ID}`,
+                                resolve: [MconfigResolver],
+                                children: [
+                                  {
+                                    component: QueryComponent,
+                                    path:
+                                      common.PATH_QUERY +
+                                      `/:${common.PARAMETER_QUERY_ID}`,
+                                    resolve: [QueryResolver]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            component: DashboardComponent,
+                            canDeactivate: [DeactivateGuard],
+                            path:
+                              common.PATH_DASHBOARD +
+                              `/:${common.PARAMETER_DASHBOARD_ID}`,
+                            resolve: [StackDashboardResolver],
+                            children: []
                           }
                         ]
-                      },
-                      {
-                        component: DashboardComponent,
-                        canDeactivate: [DeactivateGuard],
-                        path:
-                          common.PATH_DASHBOARD +
-                          `/:${common.PARAMETER_DASHBOARD_ID}`,
-                        resolve: [StackDashboardResolver],
-                        children: []
                       }
                     ]
                   }

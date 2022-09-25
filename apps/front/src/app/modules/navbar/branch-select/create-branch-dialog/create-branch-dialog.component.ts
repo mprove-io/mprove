@@ -151,6 +151,8 @@ export class CreateBranchDialogComponent implements OnInit {
               repoId,
               common.PATH_BRANCH,
               this.createBranchForm.value.branchId,
+              common.PATH_ENV,
+              this.nav.envId,
               common.PATH_FILES
             ]);
           }

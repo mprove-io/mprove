@@ -65,6 +65,8 @@ export class NavigateService {
       repoId,
       common.PATH_BRANCH,
       this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
       common.PATH_MODEL,
       common.isDefined(modelId) ? modelId : this.model.modelId,
       common.PATH_MCONFIG,
@@ -87,6 +89,8 @@ export class NavigateService {
       repoId,
       common.PATH_BRANCH,
       this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
       common.PATH_MODEL,
       modelId,
       common.PATH_MCONFIG,
@@ -109,6 +113,8 @@ export class NavigateService {
       repoId,
       common.PATH_BRANCH,
       this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
       common.PATH_DASHBOARD,
       dashboardId
     ]);
@@ -127,6 +133,8 @@ export class NavigateService {
       repoId,
       common.PATH_BRANCH,
       common.isDefined(branchId) ? branchId : this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
       common.PATH_FILES
     ]);
   }
@@ -145,6 +153,8 @@ export class NavigateService {
         common.PROD_REPO_ID,
         common.PATH_BRANCH,
         this.nav.projectDefaultBranch,
+        common.PATH_ENV,
+        this.nav.envId,
         common.PATH_VISUALIZATIONS
       ];
 
@@ -169,6 +179,8 @@ export class NavigateService {
           repoId,
           common.PATH_BRANCH,
           this.nav.branchId,
+          common.PATH_ENV,
+          this.nav.envId,
           common.PATH_VISUALIZATIONS
         ];
 
@@ -192,6 +204,8 @@ export class NavigateService {
       repoId,
       common.PATH_BRANCH,
       this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
       common.PATH_MODELS
     ];
 
@@ -211,6 +225,8 @@ export class NavigateService {
       repoId,
       common.PATH_BRANCH,
       this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
       common.PATH_MODELS
     ];
 
@@ -237,6 +253,8 @@ export class NavigateService {
       repoId,
       common.PATH_BRANCH,
       this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
       common.PATH_DASHBOARDS
     ];
 
@@ -259,7 +277,9 @@ export class NavigateService {
       common.PATH_REPO,
       repoId,
       common.PATH_BRANCH,
-      this.nav.branchId
+      this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId
     ]);
 
     setTimeout(() =>
@@ -272,6 +292,8 @@ export class NavigateService {
         repoId,
         common.PATH_BRANCH,
         this.nav.branchId,
+        common.PATH_ENV,
+        this.nav.envId,
         common.PATH_VISUALIZATIONS
       ])
     );
@@ -292,6 +314,8 @@ export class NavigateService {
       repoId,
       common.PATH_BRANCH,
       this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
       common.PATH_FILES,
       common.PATH_FILE,
       underscoreFileId

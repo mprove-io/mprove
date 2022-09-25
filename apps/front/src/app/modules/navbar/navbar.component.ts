@@ -59,12 +59,12 @@ export class NavbarComponent implements OnInit {
   }
 
   checkUrls(url: string) {
-    this.isFilesRouteActive = url.split('/')[9] === constants.PATH_FILES;
+    this.isFilesRouteActive = url.split('/')[11] === constants.PATH_FILES;
     this.isVizsRouteActive =
-      url.split('/')[9] === constants.PATH_VISUALIZATIONS;
+      url.split('/')[11] === constants.PATH_VISUALIZATIONS;
     this.isDashboardsRouteActive =
-      url.split('/')[9] === constants.PATH_DASHBOARDS;
-    this.isModelsRouteActive = url.split('/')[9] === constants.PATH_MODELS;
+      url.split('/')[11] === constants.PATH_DASHBOARDS;
+    this.isModelsRouteActive = url.split('/')[11] === constants.PATH_MODELS;
     this.cd.detectChanges();
   }
 
@@ -88,6 +88,8 @@ export class NavbarComponent implements OnInit {
       repoId,
       common.PATH_BRANCH,
       this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
       common.PATH_FILES
     ]);
   }
@@ -112,6 +114,8 @@ export class NavbarComponent implements OnInit {
       repoId,
       common.PATH_BRANCH,
       this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
       common.PATH_VISUALIZATIONS
     ]);
   }
@@ -136,6 +140,8 @@ export class NavbarComponent implements OnInit {
       repoId,
       common.PATH_BRANCH,
       this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
       common.PATH_DASHBOARDS
     ]);
   }
@@ -160,6 +166,8 @@ export class NavbarComponent implements OnInit {
       repoId,
       common.PATH_BRANCH,
       this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
       common.PATH_MODELS
     ]);
   }

@@ -121,6 +121,8 @@ export class CreateProjectDialogComponent implements OnInit {
               common.PROD_REPO_ID,
               common.PATH_BRANCH,
               resp.payload.project.defaultBranch,
+              common.PATH_ENV,
+              common.PROJECT_ENV_PROD,
               common.PATH_FILES
             ]);
           }

@@ -172,6 +172,8 @@ export class CreateMemberController {
         constants.PROD_REPO_ID,
         constants.PATH_BRANCH,
         project.default_branch,
+        constants.PATH_ENV,
+        common.PROJECT_ENV_PROD,
         constants.PATH_VISUALIZATIONS
       ].join('/');
 

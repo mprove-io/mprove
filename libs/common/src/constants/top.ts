@@ -58,6 +58,7 @@ export const PARAMETER_ORG_ID = 'orgId';
 export const PARAMETER_PROJECT_ID = 'projectId';
 export const PARAMETER_REPO_ID = 'repoId';
 export const PARAMETER_BRANCH_ID = 'branchId';
+export const PARAMETER_ENV_ID = 'envId';
 export const PARAMETER_FILE_ID = 'fileId';
 export const PARAMETER_MODEL_ID = 'modelId';
 export const PARAMETER_DASHBOARD_ID = 'dashboardId';
@@ -69,6 +70,7 @@ export const EMPTY = 'empty';
 export const PATH_PROJECT = 'project';
 export const PATH_REPO = 'repo';
 export const PATH_BRANCH = 'branch';
+export const PATH_ENV = 'env';
 
 export const PATH_SETTINGS = 'settings';
 export const PATH_CONNECTIONS = 'connections';

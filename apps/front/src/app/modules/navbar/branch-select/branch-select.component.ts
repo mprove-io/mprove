@@ -287,6 +287,7 @@ export class BranchSelectComponent {
       projectId: this.selectedProjectId,
       defaultBranch: this.defaultBranch,
       branchId: this.selectedBranchItem.branchId,
+      envId: this.nav.envId,
       isRepoProd: this.selectedBranchItem.isRepoProd,
       alias: alias
     });
@@ -322,21 +323,23 @@ export class BranchSelectComponent {
       common.PATH_REPO,
       repoId,
       common.PATH_BRANCH,
-      newSelectedBranchItem.branchId
+      newSelectedBranchItem.branchId,
+      common.PATH_ENV,
+      this.nav.envId
     ];
 
-    if (urlParts[9] === constants.PATH_VISUALIZATIONS) {
+    if (urlParts[11] === constants.PATH_VISUALIZATIONS) {
       navArray.push(common.PATH_VISUALIZATIONS);
       this.router.navigate(navArray);
     } else if (
-      urlParts[9] === constants.PATH_MODELS ||
-      urlParts[9] === constants.PATH_MODEL
+      urlParts[11] === constants.PATH_MODELS ||
+      urlParts[11] === constants.PATH_MODEL
     ) {
       navArray.push(common.PATH_MODELS);
       this.router.navigate(navArray);
     } else if (
-      urlParts[9] === constants.PATH_DASHBOARDS ||
-      urlParts[9] === constants.PATH_DASHBOARD
+      urlParts[11] === constants.PATH_DASHBOARDS ||
+      urlParts[11] === constants.PATH_DASHBOARD
     ) {
       navArray.push(common.PATH_DASHBOARDS);
       this.router.navigate(navArray);

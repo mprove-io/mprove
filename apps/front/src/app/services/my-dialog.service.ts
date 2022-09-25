@@ -364,6 +364,7 @@ export class MyDialogService {
     orgId: string;
     projectId: string;
     branchId: string;
+    envId: string;
     defaultBranch: string;
     isRepoProd: boolean;
     alias: string;
