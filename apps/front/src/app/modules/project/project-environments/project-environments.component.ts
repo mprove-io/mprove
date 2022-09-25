@@ -18,6 +18,8 @@ import { constants } from '~front/barrels/constants';
 export class ProjectEnvironmentsComponent implements OnInit {
   pageTitle = constants.PROJECT_ENVIRONMENTS_PAGE_TITLE;
 
+  envProd = common.PROJECT_ENV_PROD;
+
   currentPage: any = 1;
   perPage = constants.ENVIRONMENTS_PER_PAGE;
 

@@ -52,19 +52,36 @@
               <td class="w-48">{{ environment.envId }}</td>
 
               <td class="w-32">
+                <ng-template #templateDeleteEnv>
+                  <div *ngIf="environment.envId === envProd"
+                    >Env Prod can not be deleted</div
+                  >
+
+                  <div
+                    *ngIf="environment.envId !== envProd && isAdmin === false"
+                    >Admin role required</div
+                  >
+                </ng-template>
+
                 <div
                   class="ml-3 w-fit"
-                  tippy="Admin role required"
-                  [isEnabled]="isAdmin === false"
+                  [tippy]="templateDeleteEnv"
+                  [isEnabled]="
+                    isAdmin === false || environment.envId === envProd
+                  "
                 >
                   <button
                     data-cy="projectEnvironmentsDeleteButton"
                     class="h-9 w-9 rounded focus:outline-none"
                     [ngClass]="{
-                      'cursor-default text-gray-400': isAdmin === false,
-                      'hover:bg-blue2': isAdmin !== false
+                      'cursor-default text-gray-400':
+                        isAdmin === false || environment.envId === envProd,
+                      'hover:bg-blue2':
+                        isAdmin !== false && environment.envId !== envProd
                     }"
-                    [disabled]="isAdmin === false"
+                    [disabled]="
+                      isAdmin === false || environment.envId === envProd
+                    "
                     (click)="deleteEnvironment(environment)"
                   >
                     <div class="flex justify-center">
@@ -83,7 +100,8 @@
       class="mt-3 flex justify-center"
       (pageChange)="getEnvsPage($event)"
       id="environments"
-    ></pagination-controls>
+    >
+    </pagination-controls>
   </div>
 </div>
 
