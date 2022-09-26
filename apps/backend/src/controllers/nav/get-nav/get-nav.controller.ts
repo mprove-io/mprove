@@ -107,7 +107,7 @@ export class GetNavController {
         : resultProject?.default_branch;
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: projectId,
+      projectId: resultProjectId,
       repoId: resultRepoId,
       branchId: resultBranchId,
       envId: envId
