@@ -6,10 +6,12 @@ import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { BridgesService } from '~backend/services/bridges.service';
 
 @Controller()
 export class GetNavController {
   constructor(
+    private bridgesService: BridgesService,
     private avatarsRepository: repositories.AvatarsRepository,
     private membersRepository: repositories.MembersRepository,
     private projectsRepository: repositories.ProjectsRepository,
@@ -104,6 +106,13 @@ export class GetNavController {
         ? branchId
         : resultProject?.default_branch;
 
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: projectId,
+      repoId: resultRepoId,
+      branchId: resultBranchId,
+      envId: envId
+    });
+
     let avatar = await this.avatarsRepository.findOne({
       where: {
         user_id: user.user_id
@@ -122,6 +131,7 @@ export class GetNavController {
       isRepoProd: resultRepoId === common.PROD_REPO_ID,
       branchId: resultBranchId,
       envId: envId,
+      needValidate: common.enumToBoolean(bridge.need_validate),
       user: wrapper.wrapToApiUser(user),
       serverNowTs: Date.now()
     };

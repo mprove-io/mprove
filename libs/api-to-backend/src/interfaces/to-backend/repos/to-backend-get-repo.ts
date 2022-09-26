@@ -28,6 +28,9 @@ export class ToBackendGetRepoResponsePayload {
   @Type(() => common.Repo)
   repo: common.Repo;
 
+  @IsBoolean()
+  needValidate: boolean;
+
   @ValidateNested()
   @Type(() => common.Repo)
   struct: common.Struct;

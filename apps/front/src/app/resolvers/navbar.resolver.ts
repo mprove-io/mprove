@@ -94,6 +94,7 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
               isRepoProd,
               branchId,
               envId,
+              needValidate,
               user,
               serverNowTs
             } = resp.payload;
@@ -110,6 +111,7 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
               isRepoProd,
               branchId,
               envId,
+              needValidate,
               serverTimeDiff: Date.now() - serverNowTs
             };
 

@@ -100,7 +100,7 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (common.isDefined(this.timerSubscription)) {
-      this.timerSubscription.unsubscribe();
+      this.timerSubscription?.unsubscribe();
       this.timerSubscription = undefined;
     }
   }

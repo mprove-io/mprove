@@ -98,6 +98,7 @@ export class GetRepoController {
 
     let payload: apiToBackend.ToBackendGetRepoResponsePayload = {
       repo: diskResponse.payload.repo,
+      needValidate: common.enumToBoolean(bridge.need_validate),
       struct: wrapper.wrapToApiStruct(struct)
     };
 

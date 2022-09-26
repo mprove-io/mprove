@@ -67,6 +67,9 @@ export class ToBackendGetNavResponsePayload {
   @IsString()
   envId: string;
 
+  @IsBoolean()
+  needValidate: boolean;
+
   @ValidateNested()
   @Type(() => common.User)
   user: common.User;

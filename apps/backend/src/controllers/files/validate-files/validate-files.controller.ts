@@ -110,6 +110,7 @@ export class ValidateFilesController {
         });
 
         x.struct_id = structId;
+        x.need_validate = common.BoolEnum.FALSE;
       } else {
         x.need_validate = common.BoolEnum.TRUE;
       }
@@ -131,6 +132,7 @@ export class ValidateFilesController {
 
     let payload: apiToBackend.ToBackendValidateFilesResponsePayload = {
       repo: diskResponse.payload.repo,
+      needValidate: common.enumToBoolean(currentBridge.need_validate),
       struct: wrapper.wrapToApiStruct(struct)
     };
 

@@ -92,7 +92,7 @@ export class AuthService {
 
   stopWatch() {
     if (common.isDefined(this.checkAuthSubscription)) {
-      this.checkAuthSubscription.unsubscribe();
+      this.checkAuthSubscription?.unsubscribe();
       this.checkAuthSubscription = undefined;
     }
   }

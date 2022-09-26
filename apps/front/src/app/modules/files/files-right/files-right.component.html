@@ -1,16 +1,39 @@
 <div class="ml-6 w-full rounded bg-white shadow-lg">
+  <div
+    class="flex h-full flex-col items-center justify-center space-y-3"
+    *ngIf="nav?.needValidate === true"
+  >
+    <button
+      data-cy="filesRightValidateButton"
+      class="rounded py-2 px-5 text-base font-medium text-white focus:outline-none"
+      type="button"
+      [ngClass]="{
+        'bg-blue3': isAdmin === true,
+        'cursor-default bg-gray-400': isAdmin === false
+      }"
+      (click)="validate()"
+      [disabled]="isAdmin === false"
+      >Validate</button
+    >
+  </div>
+
   <m-repo-conflicts
-    *ngIf="repo && repo.conflicts.length > 0"
+    *ngIf="nav?.needValidate === false && repo && repo.conflicts.length > 0"
   ></m-repo-conflicts>
 
   <m-blockml-errors
     *ngIf="
-      repo && repo.conflicts.length === 0 && struct && struct.errors.length > 0
+      nav?.needValidate === false &&
+      repo &&
+      repo.conflicts.length === 0 &&
+      struct &&
+      struct.errors.length > 0
     "
   ></m-blockml-errors>
 
   <div
     *ngIf="
+      nav?.needValidate === false &&
       repo &&
       repo.conflicts.length === 0 &&
       struct &&
@@ -25,3 +48,5 @@
 
 <div *ngIf="repo$ | async"></div>
 <div *ngIf="struct$ | async"></div>
+<div *ngIf="nav$ | async"></div>
+<div *ngIf="isAdmin$ | async"></div>

@@ -230,6 +230,6 @@ export class FilesTreeComponent implements OnDestroy {
 
   ngOnDestroy() {
     // console.log('ngOnDestroyFilesTree');
-    this.expandLevel$.unsubscribe();
+    this.expandLevel$?.unsubscribe();
   }
 }

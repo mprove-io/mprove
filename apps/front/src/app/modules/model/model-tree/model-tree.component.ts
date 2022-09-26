@@ -313,6 +313,6 @@ export class ModelTreeComponent implements AfterViewInit {
   }
 
   // ngOnDestroy() {
-  //   this.expandLevel$.unsubscribe();
+  //   this.expandLevel$?.unsubscribe();
   // }
 }

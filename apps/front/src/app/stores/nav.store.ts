@@ -14,6 +14,7 @@ export class NavState {
   isRepoProd: boolean;
   branchId: string;
   envId: string;
+  needValidate: boolean;
   serverTimeDiff: number;
 }
 
@@ -30,6 +31,7 @@ function createInitialState(): NavState {
     isRepoProd: undefined,
     branchId: undefined,
     envId: common.PROJECT_ENV_PROD,
+    needValidate: false,
     serverTimeDiff: undefined
   };
 }

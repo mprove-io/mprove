@@ -254,6 +254,6 @@ export class BlockmlErrorsComponent implements OnDestroy {
 
   ngOnDestroy() {
     // console.log('ngOnDestroyFilesTree');
-    this.expandLevel$.unsubscribe();
+    this.expandLevel$?.unsubscribe();
   }
 }

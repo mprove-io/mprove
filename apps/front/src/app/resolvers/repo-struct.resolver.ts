@@ -36,7 +36,7 @@ export class RepoStructResolver implements Resolve<Observable<boolean>> {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: branchId,
-      envId: nav.envId
+      envId: envId
     };
 
     return this.apiService
@@ -54,7 +54,8 @@ export class RepoStructResolver implements Resolve<Observable<boolean>> {
             this.navStore.update(state =>
               Object.assign({}, state, <NavState>{
                 branchId: branchId,
-                envId: envId
+                envId: envId,
+                needValidate: resp.payload.needValidate
               })
             );
 
