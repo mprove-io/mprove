@@ -17,6 +17,7 @@ export class DeleteBranchController {
   constructor(
     private projectsService: ProjectsService,
     private branchesRepository: repositories.BranchesRepository,
+    private bridgesRepository: repositories.BridgesRepository,
     private rabbitService: RabbitService,
     private membersService: MembersService,
     private cs: ConfigService<interfaces.Config>
@@ -91,6 +92,12 @@ export class DeleteBranchController {
     );
 
     await this.branchesRepository.delete({
+      project_id: projectId,
+      repo_id: repoId,
+      branch_id: branchId
+    });
+
+    await this.bridgesRepository.delete({
       project_id: projectId,
       repo_id: repoId,
       branch_id: branchId

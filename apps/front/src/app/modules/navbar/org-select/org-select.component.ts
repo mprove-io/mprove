@@ -93,7 +93,8 @@ export class OrgSelectComponent {
         projectId: undefined,
         projectName: undefined,
         isRepoProd: false,
-        branchId: undefined
+        branchId: undefined,
+        envId: common.PROJECT_ENV_PROD
       })
     );
 

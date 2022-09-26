@@ -117,7 +117,8 @@ export class ProjectSelectComponent {
         isRepoProd: true,
         branchId: this.projectsList.find(
           x => x.projectId === this.selectedProjectId
-        ).defaultBranch
+        ).defaultBranch,
+        envId: common.PROJECT_ENV_PROD
       })
     );
   }

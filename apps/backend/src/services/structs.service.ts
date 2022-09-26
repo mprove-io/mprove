@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Connection, In } from 'typeorm';
 import { common } from '~backend/barrels/common';
+import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 
 @Injectable()
@@ -14,17 +15,36 @@ export class StructsService {
     private connection: Connection
   ) {}
 
-  async getStructCheckExists(item: { structId: string }) {
-    let { structId: structId } = item;
+  async getStructCheckExists(item: { structId: string; projectId: string }) {
+    let { structId, projectId } = item;
 
-    let struct = await this.structsRepository.findOne({
-      struct_id: structId
-    });
+    let struct;
 
-    if (common.isUndefined(struct)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_STRUCT_DOES_NOT_EXIST
+    if (structId === common.EMPTY_STRUCT_ID) {
+      struct = maker.makeStruct({
+        projectId: projectId,
+        structId: structId,
+        weekStart: undefined,
+        allowTimezones: undefined,
+        defaultTimezone: undefined,
+        formatNumber: undefined,
+        currencyPrefix: undefined,
+        currencySuffix: undefined,
+        errors: [],
+        views: [],
+        udfsDict: {}
       });
+    } else {
+      struct = await this.structsRepository.findOne({
+        struct_id: structId,
+        project_id: projectId
+      });
+
+      if (common.isUndefined(struct)) {
+        throw new common.ServerError({
+          message: common.ErEnum.BACKEND_STRUCT_DOES_NOT_EXIST
+        });
+      }
     }
 
     return struct;

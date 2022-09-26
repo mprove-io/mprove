@@ -101,7 +101,8 @@ export class ModifyVizController {
     });
 
     let currentStruct = await this.structsService.getStructCheckExists({
-      structId: bridge.struct_id
+      structId: bridge.struct_id,
+      projectId: projectId
     });
 
     let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(

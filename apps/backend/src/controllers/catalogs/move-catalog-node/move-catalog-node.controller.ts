@@ -127,7 +127,8 @@ export class MoveCatalogNodeController {
     let currentBridge = branchBridges.find(y => y.env_id === envId);
 
     let struct = await this.structsService.getStructCheckExists({
-      structId: currentBridge.struct_id
+      structId: currentBridge.struct_id,
+      projectId: projectId
     });
 
     let payload: apiToBackend.ToBackendMoveCatalogNodeResponsePayload = {

@@ -4,6 +4,8 @@ export const BRANCH_MASTER = 'master';
 export const PROJECT_ENV_PROD = 'prod';
 export const PASS_PHRASE = '';
 
+export const EMPTY_STRUCT_ID = 'EMPTY_STRUCT_ID';
+
 export const FIRST_ORG_NAME = 'demo';
 export const FIRST_PROJECT_NAME = 'p1';
 export const RESTRICTED_USER_ALIAS = 'demo-user';

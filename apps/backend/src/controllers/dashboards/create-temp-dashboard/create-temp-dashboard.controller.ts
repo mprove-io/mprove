@@ -81,7 +81,8 @@ export class CreateTempDashboardController {
     });
 
     let currentStruct = await this.structsService.getStructCheckExists({
-      structId: bridge.struct_id
+      structId: bridge.struct_id,
+      projectId: projectId
     });
 
     let fromDashboardEntity = await this.dashboardsService.getDashboardCheckExists(

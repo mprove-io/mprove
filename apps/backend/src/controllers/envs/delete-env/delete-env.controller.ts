@@ -12,7 +12,8 @@ export class DeleteEnvController {
   constructor(
     private projectsService: ProjectsService,
     private envsRepository: repositories.EnvsRepository,
-    private membersService: MembersService
+    private membersService: MembersService,
+    private bridgesRepository: repositories.BridgesRepository
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEnv)
@@ -39,6 +40,11 @@ export class DeleteEnvController {
     }
 
     await this.envsRepository.delete({
+      project_id: projectId,
+      env_id: envId
+    });
+
+    await this.bridgesRepository.delete({
       project_id: projectId,
       env_id: envId
     });

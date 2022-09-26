@@ -100,7 +100,8 @@ export class CreateFileController {
     });
 
     let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.struct_id
+      structId: bridge.struct_id,
+      projectId: projectId
     });
 
     let payload: apiToBackend.ToBackendCreateFileResponsePayload = {

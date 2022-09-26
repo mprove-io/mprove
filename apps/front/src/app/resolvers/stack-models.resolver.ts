@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Resolve } from '@angular/router';
-import { Observable } from 'rxjs';
+import {
+  ActivatedRouteSnapshot,
+  Resolve,
+  RouterStateSnapshot
+} from '@angular/router';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -8,16 +11,27 @@ import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 import { ModelsStore } from '../stores/models.store';
 import { NavState } from '../stores/nav.store';
+import { StackResolver } from './stack.resolver';
 
 @Injectable({ providedIn: 'root' })
-export class ModelsResolver implements Resolve<Observable<boolean>> {
+export class StackModelsResolver implements Resolve<Promise<boolean>> {
   constructor(
     private navQuery: NavQuery,
     private apiService: ApiService,
+    private stackResolver: StackResolver,
     private modelsStore: ModelsStore
   ) {}
 
-  resolve(): Observable<boolean> {
+  async resolve(
+    route: ActivatedRouteSnapshot,
+    routerStateSnapshot: RouterStateSnapshot
+  ): Promise<boolean> {
+    let pass = await this.stackResolver.resolve(route);
+
+    if (pass === false) {
+      return false;
+    }
+
     let nav: NavState;
     this.navQuery
       .select()
@@ -53,6 +67,7 @@ export class ModelsResolver implements Resolve<Observable<boolean>> {
             return false;
           }
         })
-      );
+      )
+      .toPromise();
   }
 }

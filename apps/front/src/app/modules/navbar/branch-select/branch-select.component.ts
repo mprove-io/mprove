@@ -330,23 +330,21 @@ export class BranchSelectComponent {
 
     if (urlParts[11] === constants.PATH_VISUALIZATIONS) {
       navArray.push(common.PATH_VISUALIZATIONS);
-      this.router.navigate(navArray);
     } else if (
       urlParts[11] === constants.PATH_MODELS ||
       urlParts[11] === constants.PATH_MODEL
     ) {
       navArray.push(common.PATH_MODELS);
-      this.router.navigate(navArray);
     } else if (
       urlParts[11] === constants.PATH_DASHBOARDS ||
       urlParts[11] === constants.PATH_DASHBOARD
     ) {
       navArray.push(common.PATH_DASHBOARDS);
-      this.router.navigate(navArray);
     } else {
       navArray.push(common.PATH_FILES);
-      this.router.navigate(navArray);
     }
+
+    this.router.navigate(navArray);
   }
 
   makeBranchItem(item: {

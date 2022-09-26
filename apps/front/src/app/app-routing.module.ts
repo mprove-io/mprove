@@ -51,6 +51,7 @@ import { QueryResolver } from './resolvers/query.resolver';
 import { StackDashboardResolver } from './resolvers/stack-dashboard.resolver';
 import { StackDashboardsResolver } from './resolvers/stack-dashboards.resolver';
 import { StackModelResolver } from './resolvers/stack-model.resolver';
+import { StackModelsResolver } from './resolvers/stack-models.resolver';
 import { StackVizsResolver } from './resolvers/stack-vizs.resolver';
 import { StackResolver } from './resolvers/stack.resolver';
 import { UsersResolver } from './resolvers/users.resolver';
@@ -217,7 +218,7 @@ const routes: Routes = [
                           {
                             component: ModelsComponent,
                             path: common.PATH_MODELS,
-                            resolve: [StackResolver]
+                            resolve: [StackModelsResolver]
                           },
                           {
                             component: ModelComponent,

@@ -1,7 +1,9 @@
 import { Controller, Post } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { maker } from '~backend/barrels/maker';
+import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { DbService } from '~backend/services/db.service';
@@ -15,6 +17,7 @@ export class CreateEnvController {
     private projectsService: ProjectsService,
     private envsService: EnvsService,
     private membersService: MembersService,
+    private branchesRepository: repositories.BranchesRepository,
     private dbService: DbService
   ) {}
 
@@ -45,10 +48,30 @@ export class CreateEnvController {
       envId: envId
     });
 
+    let branches = await this.branchesRepository.find({
+      project_id: projectId
+    });
+
+    let newBridges: entities.BridgeEntity[] = [];
+
+    branches.forEach(x => {
+      let newBridge = maker.makeBridge({
+        projectId: projectId,
+        repoId: x.repo_id,
+        branchId: x.branch_id,
+        envId: envId,
+        structId: common.EMPTY_STRUCT_ID,
+        needValidate: common.BoolEnum.TRUE
+      });
+
+      newBridges.push(newBridge);
+    });
+
     await this.dbService.writeRecords({
       modify: false,
       records: {
-        envs: [newEnv]
+        envs: [newEnv],
+        bridges: newBridges
       }
     });
 

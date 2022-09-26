@@ -30,6 +30,7 @@ export class RepoStructResolver implements Resolve<Observable<boolean>> {
       });
 
     let branchId = route.params[common.PARAMETER_BRANCH_ID];
+    let envId = route.params[common.PARAMETER_ENV_ID];
 
     let payload: apiToBackend.ToBackendGetRepoRequestPayload = {
       projectId: nav.projectId,
@@ -52,7 +53,8 @@ export class RepoStructResolver implements Resolve<Observable<boolean>> {
 
             this.navStore.update(state =>
               Object.assign({}, state, <NavState>{
-                branchId: branchId
+                branchId: branchId,
+                envId: envId
               })
             );
 

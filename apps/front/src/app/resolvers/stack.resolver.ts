@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
 import { BranchResolver } from './branch.resolver';
 import { MemberResolver } from './member.resolver';
-import { ModelsResolver } from './models.resolver';
 import { RepoStructResolver } from './repo-struct.resolver';
 import { RepoResolver } from './repo.resolver';
 
@@ -12,8 +11,7 @@ export class StackResolver implements Resolve<Promise<boolean>> {
     private memberResolver: MemberResolver,
     private repoResolver: RepoResolver,
     private branchResolver: BranchResolver,
-    private repoStructResolver: RepoStructResolver,
-    private modelsResolver: ModelsResolver
+    private repoStructResolver: RepoStructResolver
   ) {}
 
   async resolve(route: ActivatedRouteSnapshot): Promise<boolean> {
@@ -42,12 +40,6 @@ export class StackResolver implements Resolve<Promise<boolean>> {
       .toPromise();
 
     if (repoStructResolverPass === false) {
-      return false;
-    }
-
-    let modelsResolverPass = await this.modelsResolver.resolve().toPromise();
-
-    if (modelsResolverPass === false) {
       return false;
     }
 
