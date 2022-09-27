@@ -6,17 +6,15 @@ import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
-import { BridgesService } from '~backend/services/bridges.service';
 
 @Controller()
 export class GetNavController {
   constructor(
-    private bridgesService: BridgesService,
     private avatarsRepository: repositories.AvatarsRepository,
+    private bridgesRepository: repositories.BridgesRepository,
     private membersRepository: repositories.MembersRepository,
     private projectsRepository: repositories.ProjectsRepository,
-    private orgsRepository: repositories.OrgsRepository,
-    private branchesRepository: repositories.BranchesRepository
+    private orgsRepository: repositories.OrgsRepository
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetNav)
@@ -25,18 +23,7 @@ export class GetNavController {
     @ValidateRequest(apiToBackend.ToBackendGetNavRequest)
     reqValid: apiToBackend.ToBackendGetNavRequest
   ) {
-    let { orgId, projectId, isRepoProd, branchId } = reqValid.payload;
-
-    let envId = common.PROJECT_ENV_PROD;
-
-    let repoId =
-      common.isUndefined(isRepoProd) || isRepoProd === true
-        ? common.PROD_REPO_ID
-        : user.alias;
-
-    if (common.isUndefined(repoId)) {
-      repoId = common.PROD_REPO_ID;
-    }
+    let { orgId, projectId } = reqValid.payload;
 
     let members = await this.membersRepository.find({
       member_id: user.user_id
@@ -84,34 +71,16 @@ export class GetNavController {
 
     let resultProject = projects.find(x => x.project_id === resultProjectId);
 
-    let projectMember = members.find(x => x.project_id === resultProjectId);
+    let bridge: entities.BridgeEntity;
 
-    let resultRepoId =
-      common.isDefined(projectMember) &&
-      projectMember.is_editor === common.BoolEnum.TRUE
-        ? repoId
-        : common.PROD_REPO_ID;
-
-    let branches = await this.branchesRepository.find({
-      project_id: resultProjectId,
-      repo_id: resultRepoId
-    });
-
-    let existingBranchIds = branches.map(x => x.branch_id);
-
-    let resultBranchId =
-      resultRepoId === repoId &&
-      common.isDefined(branchId) &&
-      existingBranchIds.indexOf(branchId) > -1
-        ? branchId
-        : resultProject?.default_branch;
-
-    let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: resultProjectId,
-      repoId: resultRepoId,
-      branchId: resultBranchId,
-      envId: envId
-    });
+    if (common.isDefined(resultProject)) {
+      bridge = await this.bridgesRepository.findOne({
+        project_id: resultProject.project_id,
+        repo_id: common.PROD_REPO_ID,
+        branch_id: resultProject.default_branch,
+        env_id: common.PROJECT_ENV_PROD
+      });
+    }
 
     let avatar = await this.avatarsRepository.findOne({
       where: {
@@ -128,10 +97,12 @@ export class GetNavController {
       projectId: resultProjectId,
       projectName: resultProject?.name,
       projectDefaultBranch: resultProject?.default_branch,
-      isRepoProd: resultRepoId === common.PROD_REPO_ID,
-      branchId: resultBranchId,
-      envId: envId,
-      needValidate: common.enumToBoolean(bridge.need_validate),
+      isRepoProd: true,
+      branchId: resultProject?.default_branch,
+      envId: common.PROJECT_ENV_PROD,
+      needValidate: common.isDefined(bridge)
+        ? common.enumToBoolean(bridge.need_validate)
+        : false,
       user: wrapper.wrapToApiUser(user),
       serverNowTs: Date.now()
     };
