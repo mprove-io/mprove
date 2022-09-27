@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
@@ -34,6 +34,9 @@ export class ToBackendCreateFolderResponsePayload {
   @ValidateNested()
   @Type(() => common.Repo)
   struct: common.Struct;
+
+  @IsBoolean()
+  needValidate: boolean;
 }
 
 export class ToBackendCreateFolderResponse extends common.MyResponse {

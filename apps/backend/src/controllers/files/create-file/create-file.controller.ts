@@ -1,6 +1,7 @@
 import { Controller, Post } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
+import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
@@ -106,7 +107,8 @@ export class CreateFileController {
 
     let payload: apiToBackend.ToBackendCreateFileResponsePayload = {
       repo: diskResponse.payload.repo,
-      struct: wrapper.wrapToApiStruct(struct)
+      struct: wrapper.wrapToApiStruct(struct),
+      needValidate: common.enumToBoolean(bridge.need_validate)
     };
 
     return payload;

@@ -51,6 +51,8 @@ export class RepoStructResolver implements Resolve<Observable<boolean>> {
               return false;
             }
 
+            this.repoStore.update(resp.payload.repo);
+            this.structStore.update(resp.payload.struct);
             this.navStore.update(state =>
               Object.assign({}, state, <NavState>{
                 branchId: branchId,
@@ -58,9 +60,6 @@ export class RepoStructResolver implements Resolve<Observable<boolean>> {
                 needValidate: resp.payload.needValidate
               })
             );
-
-            this.repoStore.update(resp.payload.repo);
-            this.structStore.update(resp.payload.struct);
 
             return true;
           } else {

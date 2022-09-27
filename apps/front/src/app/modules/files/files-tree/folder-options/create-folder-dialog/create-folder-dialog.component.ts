@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
+import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -19,7 +20,8 @@ export class CreateFolderDialogComponent implements OnInit {
     public ref: DialogRef,
     private fb: FormBuilder,
     public structStore: StructStore,
-    private repoStore: RepoStore
+    private repoStore: RepoStore,
+    private navStore: NavStore
   ) {}
 
   ngOnInit() {
@@ -61,6 +63,11 @@ export class CreateFolderDialogComponent implements OnInit {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.repoStore.update(resp.payload.repo);
             this.structStore.update(resp.payload.struct);
+            this.navStore.update(state =>
+              Object.assign({}, state, <NavState>{
+                needValidate: resp.payload.needValidate
+              })
+            );
           }
         }),
         take(1)

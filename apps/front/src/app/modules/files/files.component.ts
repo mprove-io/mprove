@@ -13,7 +13,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { FileState } from '~front/app/stores/file.store';
-import { NavState } from '~front/app/stores/nav.store';
+import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { UserState } from '~front/app/stores/user.store';
@@ -101,6 +101,7 @@ export class FilesComponent implements OnInit {
     private apiService: ApiService,
     private myDialogService: MyDialogService,
     public structStore: StructStore,
+    public navStore: NavStore,
     public fileService: FileService,
     private title: Title,
     private memberQuery: MemberQuery,
@@ -138,6 +139,11 @@ export class FilesComponent implements OnInit {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.repoStore.update(resp.payload.repo);
             this.structStore.update(resp.payload.struct);
+            this.navStore.update(state =>
+              Object.assign({}, state, <NavState>{
+                needValidate: resp.payload.needValidate
+              })
+            );
           }
         }),
         take(1)
@@ -160,6 +166,11 @@ export class FilesComponent implements OnInit {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.repoStore.update(resp.payload.repo);
             this.structStore.update(resp.payload.struct);
+            this.navStore.update(state =>
+              Object.assign({}, state, <NavState>{
+                needValidate: resp.payload.needValidate
+              })
+            );
           }
         }),
         switchMap(x =>

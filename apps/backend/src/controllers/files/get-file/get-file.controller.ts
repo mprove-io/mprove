@@ -106,7 +106,8 @@ export class GetFileController {
     let payload: apiToBackend.ToBackendGetFileResponsePayload = {
       repo: diskResponse.payload.repo,
       content: diskResponse.payload.content,
-      struct: wrapper.wrapToApiStruct(struct)
+      struct: wrapper.wrapToApiStruct(struct),
+      needValidate: common.enumToBoolean(bridge.need_validate)
     };
 
     return payload;

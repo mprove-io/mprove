@@ -5,6 +5,7 @@ import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { ValidationService } from '~front/app/services/validation.service';
+import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -28,6 +29,7 @@ export class CreateFileDialogComponent implements OnInit {
     private repoStore: RepoStore,
     public structStore: StructStore,
     private navigateService: NavigateService,
+    private navStore: NavStore,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -86,6 +88,11 @@ export class CreateFileDialogComponent implements OnInit {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.repoStore.update(resp.payload.repo);
             this.structStore.update(resp.payload.struct);
+            this.navStore.update(state =>
+              Object.assign({}, state, <NavState>{
+                needValidate: resp.payload.needValidate
+              })
+            );
 
             let fId = this.ref.data.parentNodeId + '/' + fileName;
             let fIdAr = fId.split('/');

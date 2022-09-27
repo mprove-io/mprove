@@ -134,7 +134,8 @@ export class SaveFileController {
 
     let payload: apiToBackend.ToBackendSaveFileResponsePayload = {
       repo: diskResponse.payload.repo,
-      struct: wrapper.wrapToApiStruct(struct)
+      struct: wrapper.wrapToApiStruct(struct),
+      needValidate: common.enumToBoolean(currentBridge.need_validate)
     };
 
     return payload;

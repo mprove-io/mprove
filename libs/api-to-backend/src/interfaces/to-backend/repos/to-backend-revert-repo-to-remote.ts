@@ -31,6 +31,9 @@ export class ToBackendRevertRepoToRemoteResponsePayload {
   @ValidateNested()
   @Type(() => common.Repo)
   struct: common.Struct;
+
+  @IsBoolean()
+  needValidate: boolean;
 }
 
 export class ToBackendRevertRepoToRemoteResponse extends common.MyResponse {

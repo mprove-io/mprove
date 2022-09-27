@@ -133,7 +133,8 @@ export class RevertRepoToLastCommitController {
 
     let payload: apiToBackend.ToBackendRevertRepoToLastCommitResponsePayload = {
       repo: diskResponse.payload.repo,
-      struct: wrapper.wrapToApiStruct(struct)
+      struct: wrapper.wrapToApiStruct(struct),
+      needValidate: common.enumToBoolean(currentBridge.need_validate)
     };
 
     return payload;

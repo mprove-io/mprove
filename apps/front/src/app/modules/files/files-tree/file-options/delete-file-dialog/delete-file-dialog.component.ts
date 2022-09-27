@@ -3,6 +3,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
+import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -17,6 +18,7 @@ export class DeleteFileDialogComponent {
     public ref: DialogRef,
     private repoStore: RepoStore,
     private navigateService: NavigateService,
+    private navStore: NavStore,
     public structStore: StructStore
   ) {}
 
@@ -42,6 +44,11 @@ export class DeleteFileDialogComponent {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.repoStore.update(resp.payload.repo);
             this.structStore.update(resp.payload.struct);
+            this.navStore.update(state =>
+              Object.assign({}, state, <NavState>{
+                needValidate: resp.payload.needValidate
+              })
+            );
 
             this.navigateService.navigateToFiles();
           }

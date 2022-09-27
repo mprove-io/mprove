@@ -5,7 +5,7 @@ import { common } from '~front/barrels/common';
 import { FileQuery } from '../queries/file.query';
 import { NavQuery } from '../queries/nav.query';
 import { FileState, FileStore } from '../stores/file.store';
-import { NavState } from '../stores/nav.store';
+import { NavState, NavStore } from '../stores/nav.store';
 import { RepoStore } from '../stores/repo.store';
 import { StructStore } from '../stores/struct.store';
 import { ApiService } from './api.service';
@@ -32,6 +32,7 @@ export class FileService {
     public structStore: StructStore,
     public fileStore: FileStore,
     public navQuery: NavQuery,
+    private navStore: NavStore,
     private apiService: ApiService
   ) {
     this.file$.subscribe();
@@ -70,6 +71,11 @@ export class FileService {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.repoStore.update(resp.payload.repo);
             this.structStore.update(resp.payload.struct);
+            this.navStore.update(state =>
+              Object.assign({}, state, <NavState>{
+                needValidate: resp.payload.needValidate
+              })
+            );
 
             this.fileStore.update({
               content: resp.payload.content,

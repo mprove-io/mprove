@@ -11,7 +11,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { ConfirmService } from '~front/app/services/confirm.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { FileState, FileStore } from '~front/app/stores/file.store';
-import { NavState } from '~front/app/stores/nav.store';
+import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { StructState, StructStore } from '~front/app/stores/struct.store';
 import { UiState, UiStore } from '~front/app/stores/ui.store';
@@ -116,6 +116,7 @@ export class FileEditorComponent implements OnDestroy {
     private navigateService: NavigateService,
     private repoStore: RepoStore,
     private fileStore: FileStore,
+    private navStore: NavStore,
     public structStore: StructStore,
     private uiStore: UiStore,
     private route: ActivatedRoute
@@ -237,6 +238,11 @@ export class FileEditorComponent implements OnDestroy {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.repoStore.update(resp.payload.repo);
             this.structStore.update(resp.payload.struct);
+            this.navStore.update(state =>
+              Object.assign({}, state, <NavState>{
+                needValidate: resp.payload.needValidate
+              })
+            );
 
             this.originalText = this.content;
             this.uiStore.update(state =>

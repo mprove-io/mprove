@@ -31,6 +31,9 @@ export class ToBackendPullRepoResponsePayload {
   @ValidateNested()
   @Type(() => common.Repo)
   struct: common.Struct;
+
+  @IsBoolean()
+  needValidate: boolean;
 }
 
 export class ToBackendPullRepoResponse extends common.MyResponse {

@@ -37,6 +37,9 @@ export class ToBackendGetFileResponsePayload {
   @ValidateNested()
   @Type(() => common.Repo)
   struct: common.Struct;
+
+  @IsBoolean()
+  needValidate: boolean;
 }
 
 export class ToBackendGetFileResponse extends common.MyResponse {
