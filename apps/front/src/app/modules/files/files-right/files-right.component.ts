@@ -79,12 +79,12 @@ export class FilesRightComponent {
         tap((resp: apiToBackend.ToBackendValidateFilesResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.repoStore.update(resp.payload.repo);
+            this.structStore.update(resp.payload.struct);
             this.navStore.update(state =>
               Object.assign({}, state, <NavState>{
                 needValidate: resp.payload.needValidate
               })
             );
-            this.structStore.update(resp.payload.struct);
           }
         }),
         take(1)

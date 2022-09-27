@@ -9,7 +9,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { FileState, FileStore } from '~front/app/stores/file.store';
-import { NavState } from '~front/app/stores/nav.store';
+import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -56,6 +56,7 @@ export class RepoOptionsComponent {
     public uiQuery: UiQuery,
     public fileQuery: FileQuery,
     public repoStore: RepoStore,
+    public navStore: NavStore,
     public fileStore: FileStore,
     public repoQuery: RepoQuery,
     public fileService: FileService,
@@ -185,6 +186,11 @@ export class RepoOptionsComponent {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.repoStore.update(resp.payload.repo);
             this.structStore.update(resp.payload.struct);
+            this.navStore.update(state =>
+              Object.assign({}, state, <NavState>{
+                needValidate: resp.payload.needValidate
+              })
+            );
           }
         }),
         take(1)
