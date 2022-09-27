@@ -4,20 +4,24 @@
   >
     <m-logo></m-logo>
 
-    <div *ngIf="!!nav && !!nav.projectId" class="flex flex-row items-center">
-      <m-branch-select></m-branch-select>
+    <div class="flex flex-row items-center">
+      <div *ngIf="!!nav && !!nav.projectId" class="flex flex-row items-center">
+        <m-branch-select></m-branch-select>
 
-      <button
-        class="ml-3 block h-10 w-full px-5 text-left text-base text-gray1 focus:outline-none"
-        [ngClass]="{
-          'cursor-default text-gray-400':
-            !nav || !nav.projectId || needSave === true,
-          'font-semibold': isFilesRouteActive === true
-        }"
-        (click)="navigateFiles()"
-        [disabled]="!nav || !nav.projectId || needSave === true"
-        >Files</button
-      >
+        <m-env-select class="ml-8"></m-env-select>
+
+        <button
+          class="ml-3 block h-10 w-full px-5 text-left text-base text-gray1 focus:outline-none"
+          [ngClass]="{
+            'cursor-default text-gray-400':
+              !nav || !nav.projectId || needSave === true,
+            'font-semibold': isFilesRouteActive === true
+          }"
+          (click)="navigateFiles()"
+          [disabled]="!nav || !nav.projectId || needSave === true"
+          >Files</button
+        >
+      </div>
     </div>
 
     <div *ngIf="!!nav && !!nav.projectId" class="flex flex-row items-center">
@@ -56,8 +60,6 @@
         [disabled]="!nav || !nav.projectId || needSave === true"
         >Models</button
       >
-
-      <m-env-select class="ml-10"></m-env-select>
     </div>
 
     <div class="flex flex-row items-center">
