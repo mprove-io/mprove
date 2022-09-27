@@ -98,7 +98,7 @@ export class DeleteFolderController {
     });
 
     await forEachSeries(branchBridges, async x => {
-      if (x.env_id === envId || x.env_id === common.PROJECT_ENV_PROD) {
+      if (x.env_id === envId) {
         let structId = common.makeId();
 
         await this.blockmlService.rebuildStruct({
