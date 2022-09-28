@@ -102,7 +102,8 @@ test('1', async t => {
         isAdmin: false,
         isEditor: true,
         isExplorer: true,
-        roles: []
+        roles: [],
+        envs: []
       }
     };
 
