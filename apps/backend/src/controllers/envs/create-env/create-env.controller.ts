@@ -18,6 +18,7 @@ export class CreateEnvController {
     private envsService: EnvsService,
     private membersService: MembersService,
     private branchesRepository: repositories.BranchesRepository,
+    private connectionsRepository: repositories.ConnectionsRepository,
     private dbService: DbService
   ) {}
 
@@ -75,8 +76,20 @@ export class CreateEnvController {
       }
     });
 
+    let connections = await this.connectionsRepository.find({
+      where: {
+        project_id: projectId,
+        env_id: newEnv.env_id
+      }
+    });
+
+    let envConnectionIds = connections.map(x => x.connection_id);
+
     let payload: apiToBackend.ToBackendCreateEnvResponsePayload = {
-      env: wrapper.wrapToApiEnv(newEnv)
+      env: wrapper.wrapToApiEnv({
+        env: newEnv,
+        envConnectionIds: envConnectionIds
+      })
     };
 
     return payload;

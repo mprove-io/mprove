@@ -17,7 +17,7 @@ export class RepoStore extends Store<RepoState> {
       repoId: undefined,
       currentBranchId: undefined,
       repoStatus: undefined,
-      conflicts: undefined,
+      conflicts: [],
       nodes: []
     });
   }

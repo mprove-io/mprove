@@ -6,4 +6,7 @@ export class Env {
 
   @IsString()
   projectId: string;
+
+  @IsString({ each: true })
+  envConnectionIds: string[];
 }

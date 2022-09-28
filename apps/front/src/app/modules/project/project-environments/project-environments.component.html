@@ -29,6 +29,7 @@
           <thead>
             <tr class="h-12 text-sm">
               <th class="text-left">Name</th>
+              <th class="text-left">Connections</th>
               <th class="text-left"></th>
               <th></th>
             </tr>
@@ -50,6 +51,18 @@
               class="h-16"
             >
               <td class="w-48">{{ environment.envId }}</td>
+
+              <td class="w-48">
+                <div class="my-3 flex flex-col">
+                  <div
+                    *ngFor="let connectionId of environment.envConnectionIds"
+                  >
+                    <div class="flex flex-row items-center text-base">
+                      <div>{{ connectionId }} </div>
+                    </div>
+                  </div>
+                </div></td
+              >
 
               <td class="w-32">
                 <ng-template #templateDeleteEnv>
