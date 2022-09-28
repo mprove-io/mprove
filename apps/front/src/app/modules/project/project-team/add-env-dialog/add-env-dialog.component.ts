@@ -14,6 +14,8 @@ import { common } from '~front/barrels/common';
 export class AddEnvDialogComponent implements OnInit {
   addEnvForm: FormGroup;
 
+  member = this.ref.data.member;
+
   envsList: common.EnvsItem[] = [];
   envsListLoading = false;
   envsListLength = 0;
@@ -35,11 +37,13 @@ export class AddEnvDialogComponent implements OnInit {
   openEnvSelect() {
     this.envsListLoading = true;
 
-    let payload: apiToBackend.ToBackendGetEnvsListRequestPayload = {
-      projectId: this.ref.data.projectId
-    };
+    let member: common.Member = this.ref.data.member;
 
     let apiService: ApiService = this.ref.data.apiService;
+
+    let payload: apiToBackend.ToBackendGetEnvsListRequestPayload = {
+      projectId: member.projectId
+    };
 
     apiService
       .req(

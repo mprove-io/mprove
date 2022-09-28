@@ -30,7 +30,8 @@ export class EditMemberController {
       isAdmin,
       isEditor,
       isExplorer,
-      roles
+      roles,
+      envs
     } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
@@ -57,6 +58,7 @@ export class EditMemberController {
     member.is_editor = common.booleanToEnum(isEditor);
     member.is_explorer = common.booleanToEnum(isExplorer);
     member.roles = roles;
+    member.envs = envs;
 
     await this.dbService.writeRecords({
       modify: true,
