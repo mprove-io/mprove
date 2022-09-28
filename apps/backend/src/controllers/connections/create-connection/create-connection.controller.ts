@@ -1,7 +1,10 @@
 import { Controller, Post } from '@nestjs/common';
+import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { maker } from '~backend/barrels/maker';
+import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { ConnectionsService } from '~backend/services/connections.service';
@@ -15,6 +18,7 @@ export class CreateConnectionController {
   constructor(
     private projectsService: ProjectsService,
     private connectionsService: ConnectionsService,
+    private bridgesRepository: repositories.BridgesRepository,
     private envsService: EnvsService,
     private membersService: MembersService,
     private dbService: DbService
@@ -80,10 +84,26 @@ export class CreateConnectionController {
       isSSL: isSSL
     });
 
+    let branchBridges = await this.bridgesRepository.find({
+      project_id: projectId,
+      env_id: envId
+    });
+
+    await forEachSeries(branchBridges, async x => {
+      x.need_validate = common.BoolEnum.TRUE;
+    });
+
     await this.dbService.writeRecords({
       modify: false,
       records: {
         connections: [newConnection]
+      }
+    });
+
+    await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        bridges: [...branchBridges]
       }
     });
 

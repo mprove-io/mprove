@@ -181,7 +181,7 @@ export class RepoOptionsComponent {
       .subscribe();
   }
 
-  revalidate(event?: MouseEvent) {
+  validate(event?: MouseEvent) {
     event.stopPropagation();
 
     let payload: apiToBackend.ToBackendValidateFilesRequestPayload = {
