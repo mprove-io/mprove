@@ -1,18 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
-import { take, tap } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { TeamState, TeamStore } from '~front/app/stores/team.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
 @Component({
-  selector: 'm-add-role-dialog',
-  templateUrl: './add-role-dialog.component.html'
+  selector: 'm-add-env-dialog',
+  templateUrl: './add-env-dialog.component.html'
 })
-export class AddRoleDialogComponent implements OnInit {
-  addRoleForm: FormGroup;
+export class AddEnvDialogComponent implements OnInit {
+  addEnvForm: FormGroup;
+
+  envsList: common.EnvsItem[] = [];
+  envsListLoading = false;
+  envsListLength = 0;
 
   projectId: string;
 
@@ -23,15 +27,44 @@ export class AddRoleDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.addRoleForm = this.fb.group({
-      role: ['', [Validators.maxLength(255)]]
+    this.addEnvForm = this.fb.group({
+      envId: ['', [Validators.maxLength(255)]]
     });
   }
 
-  add() {
-    this.addRoleForm.markAllAsTouched();
+  openEnvSelect() {
+    this.envsListLoading = true;
 
-    if (!this.addRoleForm.valid) {
+    let payload: apiToBackend.ToBackendGetEnvsListRequestPayload = {
+      projectId: this.ref.data.projectId
+    };
+
+    let apiService: ApiService = this.ref.data.apiService;
+
+    apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvsList,
+        payload
+      )
+      .pipe(
+        map(
+          (resp: apiToBackend.ToBackendGetEnvsListResponse) =>
+            resp.payload.envsList
+        ),
+        tap(x => {
+          this.envsList = x.filter(z => z.envId !== common.PROJECT_ENV_PROD);
+          this.envsListLoading = false;
+          this.envsListLength = x.length - 1;
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  add() {
+    this.addEnvForm.markAllAsTouched();
+
+    if (!this.addEnvForm.valid) {
       return;
     }
 
@@ -45,8 +78,8 @@ export class AddRoleDialogComponent implements OnInit {
       isAdmin: member.isAdmin,
       isEditor: member.isEditor,
       isExplorer: member.isExplorer,
-      roles: [...member.roles, this.addRoleForm.value.role],
-      envs: member.envs
+      roles: member.roles,
+      envs: [...member.envs, this.addEnvForm.value.envId]
     };
 
     let apiService: ApiService = this.ref.data.apiService;

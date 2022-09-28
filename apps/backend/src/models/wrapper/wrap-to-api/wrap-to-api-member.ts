@@ -17,6 +17,7 @@ export function wrapToApiMember(x: entities.MemberEntity): common.Member {
     isEditor: common.enumToBoolean(x.is_editor),
     isExplorer: common.enumToBoolean(x.is_explorer),
     roles: x.roles,
+    envs: x.envs,
     serverTs: Number(x.server_ts)
   };
 }

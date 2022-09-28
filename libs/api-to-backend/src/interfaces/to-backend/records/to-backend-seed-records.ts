@@ -104,6 +104,10 @@ export class ToBackendSeedRecordsRequestPayloadMembersItem {
   @IsString({ each: true })
   roles?: string[];
 
+  @IsOptional()
+  @IsString({ each: true })
+  envs?: string[];
+
   @IsEnum(common.BoolEnum)
   isAdmin: common.BoolEnum;
 

@@ -52,6 +52,7 @@ import {
 } from '../modules/project/project-environments/delete-environment-dialog/delete-environment-dialog.component';
 import { DeleteProjectDialogComponent } from '../modules/project/project-settings/delete-project-dialog/delete-project-dialog.component';
 import { EditProjectNameDialogComponent } from '../modules/project/project-settings/edit-project-name-dialog/edit-project-name-dialog.component';
+import { AddEnvDialogComponent } from '../modules/project/project-team/add-env-dialog/add-env-dialog.component';
 import { AddRoleDialogComponent } from '../modules/project/project-team/add-role-dialog/add-role-dialog.component';
 import { InviteMemberDialogComponent } from '../modules/project/project-team/invite-member-dialog/invite-member-dialog.component';
 import { RemoveMemberDialogComponent } from '../modules/project/project-team/remove-member-dialog/remove-member-dialog.component';
@@ -488,6 +489,18 @@ export class MyDialogService {
     i: number;
   }): void {
     this.dialogService.open(AddRoleDialogComponent, {
+      enableClose: true,
+      closeButton: false,
+      data: item
+    });
+  }
+
+  showAddEnv(item: {
+    apiService: any;
+    member: common.Member;
+    i: number;
+  }): void {
+    this.dialogService.open(AddEnvDialogComponent, {
       enableClose: true,
       closeButton: false,
       data: item

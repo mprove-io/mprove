@@ -360,6 +360,7 @@ export class SeedRecordsController {
             projectId: x.projectId,
             user: user,
             roles: x.roles,
+            envs: x.envs,
             isAdmin: x.isAdmin,
             isEditor: x.isEditor,
             isExplorer: x.isExplorer

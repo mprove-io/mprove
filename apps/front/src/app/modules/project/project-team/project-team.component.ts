@@ -201,7 +201,8 @@ export class ProjectTeamComponent implements OnInit {
       isAdmin: member.isAdmin,
       isEditor: member.isEditor,
       isExplorer: member.isExplorer,
-      roles: member.roles
+      roles: member.roles,
+      envs: member.envs
     };
 
     this.apiService
@@ -239,6 +240,14 @@ export class ProjectTeamComponent implements OnInit {
     });
   }
 
+  addEnv(member: common.Member, i: number) {
+    this.myDialogService.showAddEnv({
+      apiService: this.apiService,
+      member: member,
+      i: i
+    });
+  }
+
   removeRole(member: common.Member, i: number, n: number) {
     let newRoles = [...member.roles];
     newRoles.splice(n, 1);
@@ -249,7 +258,45 @@ export class ProjectTeamComponent implements OnInit {
       isAdmin: member.isAdmin,
       isEditor: member.isEditor,
       isExplorer: member.isExplorer,
-      roles: newRoles
+      roles: newRoles,
+      envs: member.envs
+    };
+
+    this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember,
+        payload
+      )
+      .pipe(
+        tap((resp: apiToBackend.ToBackendEditMemberResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.teamStore.update(state => {
+              state.members[i] = resp.payload.member;
+
+              return <TeamState>{
+                members: [...state.members],
+                total: state.total
+              };
+            });
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  removeEnv(member: common.Member, i: number, n: number) {
+    let newEnvs = [...member.envs];
+    newEnvs.splice(n, 1);
+
+    let payload: apiToBackend.ToBackendEditMemberRequestPayload = {
+      projectId: member.projectId,
+      memberId: member.memberId,
+      isAdmin: member.isAdmin,
+      isEditor: member.isEditor,
+      isExplorer: member.isExplorer,
+      roles: member.roles,
+      envs: newEnvs
     };
 
     this.apiService
