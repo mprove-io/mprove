@@ -56,6 +56,11 @@ export class CreateConnectionController {
       projectId: projectId
     });
 
+    let member = await this.membersService.getMemberCheckExists({
+      memberId: user.user_id,
+      projectId: projectId
+    });
+
     await this.connectionsService.checkConnectionDoesNotExist({
       projectId: projectId,
       envId: envId,
@@ -64,7 +69,8 @@ export class CreateConnectionController {
 
     await this.envsService.getEnvCheckExists({
       projectId: projectId,
-      envId: envId
+      envId: envId,
+      member: member
     });
 
     let newConnection = maker.makeConnection({

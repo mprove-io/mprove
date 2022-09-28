@@ -46,7 +46,7 @@ export class DeleteFileController {
       projectId: projectId
     });
 
-    await this.membersService.getMemberCheckIsEditor({
+    let member = await this.membersService.getMemberCheckIsEditor({
       projectId: projectId,
       memberId: user.user_id
     });
@@ -59,7 +59,8 @@ export class DeleteFileController {
 
     let env = await this.envsService.getEnvCheckExists({
       projectId: projectId,
-      envId: envId
+      envId: envId,
+      member: member
     });
 
     let toDiskDeleteFileRequest: apiToDisk.ToDiskDeleteFileRequest = {

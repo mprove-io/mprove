@@ -46,7 +46,7 @@ export class GetFileController {
       projectId: projectId
     });
 
-    await this.membersService.getMemberCheckExists({
+    let member = await this.membersService.getMemberCheckExists({
       projectId: projectId,
       memberId: user.user_id
     });
@@ -88,7 +88,8 @@ export class GetFileController {
 
     let env = await this.envsService.getEnvCheckExists({
       projectId: projectId,
-      envId: envId
+      envId: envId,
+      member: member
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({

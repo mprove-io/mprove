@@ -48,7 +48,7 @@ export class RevertRepoToLastCommitController {
       projectId: projectId
     });
 
-    await this.membersService.getMemberCheckIsEditor({
+    let member = await this.membersService.getMemberCheckIsEditor({
       projectId: projectId,
       memberId: user.user_id
     });
@@ -61,7 +61,8 @@ export class RevertRepoToLastCommitController {
 
     let env = await this.envsService.getEnvCheckExists({
       projectId: projectId,
-      envId: envId
+      envId: envId,
+      member: member
     });
 
     let toDiskRevertRepoToLastCommitRequest: apiToDisk.ToDiskRevertRepoToLastCommitRequest = {

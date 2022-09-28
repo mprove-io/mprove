@@ -46,7 +46,7 @@ export class RevertRepoToRemoteController {
       projectId: projectId
     });
 
-    await this.membersService.getMemberCheckIsEditor({
+    let member = await this.membersService.getMemberCheckIsEditor({
       projectId: projectId,
       memberId: user.user_id
     });
@@ -59,7 +59,8 @@ export class RevertRepoToRemoteController {
 
     let env = await this.envsService.getEnvCheckExists({
       projectId: projectId,
-      envId: envId
+      envId: envId,
+      member: member
     });
 
     let toDiskRevertRepoToRemoteRequest: apiToDisk.ToDiskRevertRepoToRemoteRequest = {

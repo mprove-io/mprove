@@ -46,9 +46,15 @@ export class GetRepoController {
       branchId: branchId
     });
 
+    let member = await this.membersService.getMemberCheckExists({
+      projectId: projectId,
+      memberId: user.user_id
+    });
+
     let env = await this.envsService.getEnvCheckExists({
       projectId: projectId,
-      envId: envId
+      envId: envId,
+      member: member
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
@@ -56,11 +62,6 @@ export class GetRepoController {
       repoId: branch.repo_id,
       branchId: branch.branch_id,
       envId: envId
-    });
-
-    await this.membersService.getMemberCheckExists({
-      projectId: projectId,
-      memberId: user.user_id
     });
 
     let toDiskGetCatalogNodesRequest: apiToDisk.ToDiskGetCatalogNodesRequest = {

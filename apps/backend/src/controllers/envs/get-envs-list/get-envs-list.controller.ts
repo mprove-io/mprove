@@ -1,5 +1,7 @@
 import { Controller, Post } from '@nestjs/common';
+import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
@@ -33,7 +35,10 @@ export class GetEnvsListController {
     });
 
     let envs = await this.envsRepository.find({
-      project_id: projectId
+      where: {
+        project_id: projectId,
+        env_id: In([...member.envs, common.PROJECT_ENV_PROD])
+      }
     });
 
     let sortedEnvs = envs.sort((a, b) =>

@@ -62,7 +62,8 @@ export class CreateTempMconfigAndQueryController {
 
     let env = await this.envsService.getEnvCheckExists({
       projectId: projectId,
-      envId: envId
+      envId: envId,
+      member: member
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({

@@ -46,7 +46,7 @@ export class SaveFileController {
       projectId: projectId
     });
 
-    await this.membersService.getMemberCheckIsEditor({
+    let member = await this.membersService.getMemberCheckIsEditor({
       projectId: projectId,
       memberId: user.user_id
     });
@@ -59,7 +59,8 @@ export class SaveFileController {
 
     let env = await this.envsService.getEnvCheckExists({
       projectId: projectId,
-      envId: envId
+      envId: envId,
+      member: member
     });
 
     let toDiskSaveFileRequest: apiToDisk.ToDiskSaveFileRequest = {

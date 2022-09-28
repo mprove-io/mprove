@@ -63,7 +63,8 @@ export class PushRepoController {
 
     let env = await this.envsService.getEnvCheckExists({
       projectId: projectId,
-      envId: envId
+      envId: envId,
+      member: member
     });
 
     let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(

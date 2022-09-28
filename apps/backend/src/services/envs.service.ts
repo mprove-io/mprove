@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { common } from '~backend/barrels/common';
 import { repositories } from '~backend/barrels/repositories';
+import { MemberEntity } from '~backend/models/store-entities/_index';
 
 @Injectable()
 export class EnvsService {
@@ -21,8 +22,12 @@ export class EnvsService {
     }
   }
 
-  async getEnvCheckExists(item: { projectId: string; envId: string }) {
-    let { projectId, envId } = item;
+  async getEnvCheckExists(item: {
+    projectId: string;
+    envId: string;
+    member: MemberEntity;
+  }) {
+    let { projectId, envId, member } = item;
 
     let env = await this.envsRepository.findOne({
       env_id: envId,
@@ -32,6 +37,16 @@ export class EnvsService {
     if (common.isUndefined(env)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_ENV_DOES_NOT_EXIST
+      });
+    }
+
+    if (
+      envId !== common.PROJECT_ENV_PROD &&
+      member.is_admin === common.BoolEnum.FALSE &&
+      member.envs.indexOf(envId) < 0
+    ) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_MEMBER_DOES_NOT_HAVE_ACCESS_TO_ENV
       });
     }
 
