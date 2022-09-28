@@ -21,6 +21,22 @@
           [disabled]="!nav || !nav.projectId || needSave === true"
           >Files</button
         >
+
+        <div class="flex h-8 w-8 flex-shrink-0">
+          <div class="text-amber-500" *ngIf="nav.needValidate === true">
+            <m-exclamation-icon></m-exclamation-icon>
+          </div>
+
+          <div
+            class="text-red1"
+            *ngIf="
+              nav.needValidate === false &&
+              (struct?.errors.length > 0 || repo?.conflicts.length > 0)
+            "
+          >
+            <m-exclamation-icon></m-exclamation-icon>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -78,6 +94,8 @@
 </div>
 
 <div *ngIf="nav$ | async"></div>
+<div *ngIf="repo$ | async"></div>
+<div *ngIf="struct$ | async"></div>
 <div *ngIf="member$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
 <div *ngIf="routerEvents$ | async"></div>

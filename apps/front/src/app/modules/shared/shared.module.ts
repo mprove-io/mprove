@@ -63,6 +63,7 @@ import { ExtensionPipe } from './pipes/extension.pipe';
 import { HideColumnsPipe } from './pipes/hide-columns.pipe';
 import { ResultPipe } from './pipes/result.pipe';
 import { QueryStatusComponent } from './query-status/query-status.component';
+import { AlertRingComponent } from './rings/alert-ring/alert-ring.component';
 import { CompletedRingComponent } from './rings/completed-ring/completed-ring.component';
 import { DocumentRingComponent } from './rings/document-ring/document-ring.component';
 import { EmailRingComponent } from './rings/email-ring/email-ring.component';
@@ -86,6 +87,7 @@ let sharedComponents = [
   CompletedRingComponent,
   EmailRingComponent,
   DocumentRingComponent,
+  AlertRingComponent,
   //
   SettingsIconComponent,
   DeleteIconComponent,

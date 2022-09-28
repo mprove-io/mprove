@@ -128,27 +128,24 @@ export class PushRepoController {
         });
 
         x.struct_id = structId;
-      } else {
-        x.need_validate = common.BoolEnum.TRUE;
+        x.need_validate = common.BoolEnum.FALSE;
       }
     });
 
     let prodBranchBridges: entities.BridgeEntity[] = [];
 
-    if (envId !== common.PROJECT_ENV_PROD) {
-      branchBridges.forEach(x => {
-        let prodBranchBridge = maker.makeBridge({
-          projectId: branch.project_id,
-          repoId: common.PROD_REPO_ID,
-          branchId: branch.branch_id,
-          envId: x.env_id,
-          structId: x.struct_id,
-          needValidate: x.need_validate
-        });
-
-        prodBranchBridges.push(prodBranchBridge);
+    branchBridges.forEach(x => {
+      let prodBranchBridge = maker.makeBridge({
+        projectId: branch.project_id,
+        repoId: common.PROD_REPO_ID,
+        branchId: branch.branch_id,
+        envId: x.env_id,
+        structId: x.struct_id,
+        needValidate: x.need_validate
       });
-    }
+
+      prodBranchBridges.push(prodBranchBridge);
+    });
 
     let prodBranch = maker.makeBranch({
       projectId: projectId,

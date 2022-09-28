@@ -1,11 +1,17 @@
 <div class="ml-6 w-full rounded bg-white shadow-lg">
   <div
-    class="flex h-full flex-col items-center justify-center space-y-3"
+    class="flex h-full flex-col items-center justify-center"
     *ngIf="nav?.needValidate === true"
   >
+    <div class="text-amber-500">
+      <m-alert-ring></m-alert-ring>
+    </div>
+
+    <div class="text-xl"> Validation is required </div>
+
     <button
       data-cy="filesRightValidateButton"
-      class="rounded py-2 px-5 text-base font-medium text-white focus:outline-none"
+      class="mt-5 rounded py-2 px-5 text-base font-medium text-white focus:outline-none"
       type="button"
       [ngClass]="{
         'bg-blue3': isAdmin === true,
@@ -39,10 +45,10 @@
       struct &&
       struct.errors.length === 0
     "
-    class="flex h-full flex-col items-center justify-center space-y-3"
+    class="flex h-full flex-col items-center justify-center"
   >
     <m-completed-ring></m-completed-ring>
-    <div class="text-xl"> BlockML is valid </div>
+    <div class="mt-4 text-xl"> BlockML is valid </div>
   </div>
 </div>
 

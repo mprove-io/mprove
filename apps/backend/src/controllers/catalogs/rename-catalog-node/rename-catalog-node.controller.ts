@@ -112,6 +112,7 @@ export class RenameCatalogNodeController {
         });
 
         x.struct_id = structId;
+        x.need_validate = common.BoolEnum.FALSE;
       } else {
         x.need_validate = common.BoolEnum.TRUE;
       }

@@ -4,9 +4,13 @@ import { filter, take, tap } from 'rxjs/operators';
 import { constants } from '~common/barrels/constants';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { RepoQuery } from '~front/app/queries/repo.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { NavState } from '~front/app/stores/nav.store';
+import { RepoState } from '~front/app/stores/repo.store';
+import { StructState } from '~front/app/stores/struct.store';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -45,9 +49,27 @@ export class NavbarComponent implements OnInit {
     })
   );
 
+  repo: RepoState;
+  repo$ = this.repoQuery.select().pipe(
+    tap(x => {
+      this.repo = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  struct: StructState;
+  struct$ = this.structQuery.select().pipe(
+    tap(x => {
+      this.struct = x;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     private router: Router,
     public navQuery: NavQuery,
+    public repoQuery: RepoQuery,
+    public structQuery: StructQuery,
     public uiQuery: UiQuery,
     public userQuery: UserQuery,
     public memberQuery: MemberQuery,
