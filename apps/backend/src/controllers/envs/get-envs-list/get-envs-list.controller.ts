@@ -23,7 +23,7 @@ export class GetEnvsListController {
     @ValidateRequest(apiToBackend.ToBackendGetEnvsListRequest)
     reqValid: apiToBackend.ToBackendGetEnvsListRequest
   ) {
-    let { projectId } = reqValid.payload;
+    let { projectId, isFilter } = reqValid.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -34,12 +34,18 @@ export class GetEnvsListController {
       memberId: user.user_id
     });
 
-    let envs = await this.envsRepository.find({
-      where: {
-        project_id: projectId,
-        env_id: In([...member.envs, common.PROJECT_ENV_PROD])
-      }
-    });
+    let envs: entities.EnvEntity[] = [];
+
+    if (isFilter === true) {
+      envs = await this.envsRepository.find({
+        where: {
+          project_id: projectId,
+          env_id: In([...member.envs, common.PROJECT_ENV_PROD])
+        }
+      });
+    } else {
+      envs = await this.envsRepository.find({ project_id: projectId });
+    }
 
     let sortedEnvs = envs.sort((a, b) =>
       a.env_id > b.env_id ? 1 : b.env_id > a.env_id ? -1 : 0

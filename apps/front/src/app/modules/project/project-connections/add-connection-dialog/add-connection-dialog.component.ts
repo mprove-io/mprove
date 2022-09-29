@@ -189,7 +189,8 @@ export class AddConnectionDialogComponent implements OnInit {
     this.envsListLoading = true;
 
     let payload: apiToBackend.ToBackendGetEnvsListRequestPayload = {
-      projectId: this.ref.data.projectId
+      projectId: this.ref.data.projectId,
+      isFilter: false
     };
 
     let apiService: ApiService = this.ref.data.apiService;

@@ -42,7 +42,8 @@ export class AddEnvDialogComponent implements OnInit {
     let apiService: ApiService = this.ref.data.apiService;
 
     let payload: apiToBackend.ToBackendGetEnvsListRequestPayload = {
-      projectId: member.projectId
+      projectId: member.projectId,
+      isFilter: false
     };
 
     apiService

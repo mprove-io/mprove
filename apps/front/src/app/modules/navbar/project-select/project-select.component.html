@@ -34,8 +34,7 @@
         class="w-full rounded py-3 text-base focus:outline-none"
         [ngClass]="{
           'text-blue3 hover:bg-blue2': user.userId === nav.orgOwnerId,
-          'cursor-default bg-gray-400 text-white':
-            user.userId !== nav.orgOwnerId
+          'cursor-default text-gray-400': user.userId !== nav.orgOwnerId
         }"
         (click)="createNewProject(projectSelect)"
         [disabled]="user.userId !== nav.orgOwnerId"

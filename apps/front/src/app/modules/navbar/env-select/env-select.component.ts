@@ -69,7 +69,8 @@ export class EnvSelectComponent {
     this.envsListLoading = true;
 
     let payload: apiToBackend.ToBackendGetEnvsListRequestPayload = {
-      projectId: this.selectedProjectId
+      projectId: this.selectedProjectId,
+      isFilter: true
     };
 
     this.apiService
