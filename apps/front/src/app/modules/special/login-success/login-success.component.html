@@ -1,1 +1,16 @@
-<div class="flex h-full items-center justify-center bg-blue1"> </div>
+<div class="flex h-full flex-col items-center justify-center bg-blue1">
+  <div class="relative">
+    <ngx-spinner
+      [name]="spinnerName"
+      color="rgba(54, 94, 224, 100)"
+      bdColor="rgba(0, 0, 0, 0)"
+      size="default"
+      type="ball-clip-rotate"
+      [fullScreen]="false"
+      [disableAnimation]="true"
+      [zIndex]="99998"
+    >
+    </ngx-spinner>
+  </div>
+  <div class="h-[300px]"></div>
+</div>

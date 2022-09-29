@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
@@ -12,19 +13,24 @@ import { constants } from '~front/barrels/constants';
   selector: 'm-login-success',
   templateUrl: './login-success.component.html'
 })
-export class LoginSuccessComponent implements OnInit {
+export class LoginSuccessComponent implements OnInit, OnDestroy {
   pageTitle = constants.LOGIN_SUCCESS_PAGE_TITLE;
+
+  spinnerName = 'loginSuccessSpinner';
 
   constructor(
     private title: Title,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
     private authService: AuthService,
-    private navigateService: NavigateService
+    private navigateService: NavigateService,
+    private spinner: NgxSpinnerService
   ) {}
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
+
+    this.spinner.show(this.spinnerName);
 
     // console.log('startWatch from LoginSuccessComponent');
     this.authService.startWatch();
@@ -85,5 +91,9 @@ export class LoginSuccessComponent implements OnInit {
         take(1)
       )
       .subscribe();
+  }
+
+  ngOnDestroy() {
+    this.spinner.hide(this.spinnerName);
   }
 }

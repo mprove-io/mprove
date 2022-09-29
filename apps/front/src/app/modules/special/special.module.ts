@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { NgxSpinnerModule } from 'ngx-spinner';
 import { SharedModule } from '../shared/shared.module';
 import { LoginSuccessComponent } from './login-success/login-success.component';
 import { NotFoundComponent } from './not-found/not-found.component';
@@ -16,6 +17,6 @@ import { ProjectDeletedComponent } from './project-deleted/project-deleted.compo
     NotFoundComponent,
     LoginSuccessComponent
   ],
-  imports: [CommonModule, ReactiveFormsModule, SharedModule]
+  imports: [CommonModule, ReactiveFormsModule, SharedModule, NgxSpinnerModule]
 })
 export class SpecialModule {}
