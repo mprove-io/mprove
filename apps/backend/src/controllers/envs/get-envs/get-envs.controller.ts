@@ -1,6 +1,7 @@
 import { Controller, Post } from '@nestjs/common';
 import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
@@ -14,6 +15,7 @@ export class GetEnvsController {
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private envsRepository: repositories.EnvsRepository,
+    private membersRepository: repositories.MembersRepository,
     private connectionsRepository: repositories.ConnectionsRepository
   ) {}
 
@@ -52,13 +54,21 @@ export class GetEnvsController {
       }
     });
 
+    let members = await this.membersRepository.find({
+      project_id: projectId
+    });
+
     let payload: apiToBackend.ToBackendGetEnvsResponsePayload = {
       envs: envs.map(x =>
         wrapper.wrapToApiEnv({
           env: x,
           envConnectionIds: connections
             .filter(y => y.env_id === x.env_id)
-            .map(connection => connection.connection_id)
+            .map(connection => connection.connection_id),
+          envMembers:
+            x.env_id === common.PROJECT_ENV_PROD
+              ? members
+              : members.filter(m => m.envs.indexOf(x.env_id) > -1)
         })
       ),
       total: total
