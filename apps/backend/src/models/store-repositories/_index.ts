@@ -3,6 +3,7 @@ export * from './branches.repository';
 export * from './bridges.repository';
 export * from './connections.repository';
 export * from './envs.repository';
+export * from './evars.repository';
 export * from './idemps.repository';
 export * from './members.repository';
 export * from './notes.repository';

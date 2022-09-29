@@ -4,6 +4,7 @@ export * from './catalogs/_index';
 export * from './connections/_index';
 export * from './dashboards/_index';
 export * from './envs/_index';
+export * from './evars/_index';
 export * from './files/_index';
 export * from './folders/_index';
 export * from './mconfigs/_index';

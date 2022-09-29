@@ -2,6 +2,7 @@ export * from './connection';
 export * from './dashboard-x';
 export * from './env';
 export * from './envs-item';
+export * from './evar';
 export * from './filter-x';
 export * from './mconfig-field';
 export * from './mconfig-x';

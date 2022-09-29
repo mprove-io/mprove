@@ -4,6 +4,7 @@ export * from './bridge.entity';
 export * from './connection.entity';
 export * from './dashboard.entity';
 export * from './env.entity';
+export * from './evar.entity';
 export * from './idemp.entity';
 export * from './mconfig.entity';
 export * from './member.entity';

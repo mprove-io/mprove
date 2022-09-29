@@ -11,6 +11,7 @@ export const appEntities = [
   entities.BranchEntity,
   entities.BridgeEntity,
   entities.EnvEntity,
+  entities.EvarEntity,
   entities.ConnectionEntity,
   entities.IdempEntity,
   entities.MemberEntity,
