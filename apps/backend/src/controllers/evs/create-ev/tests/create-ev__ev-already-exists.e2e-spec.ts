@@ -22,7 +22,7 @@ let projectName = testId;
 let envId = 'env1';
 
 let evId = 'MPROVE_EV1';
-let val: '123';
+let val = '123';
 
 let prep: interfaces.Prep;
 

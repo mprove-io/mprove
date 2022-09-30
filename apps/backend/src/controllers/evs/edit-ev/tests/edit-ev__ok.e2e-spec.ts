@@ -20,7 +20,7 @@ let projectId = common.makeId();
 let projectName = testId;
 
 let evId = 'MPROVE_EV1';
-let val: '123';
+let val = '123';
 
 let prep: interfaces.Prep;
 
