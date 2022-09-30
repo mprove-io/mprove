@@ -14,10 +14,7 @@ export class GetEvsController {
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private envsService: EnvsService,
-    private envsRepository: repositories.EnvsRepository,
-    private evsRepository: repositories.EvsRepository,
-    private membersRepository: repositories.MembersRepository,
-    private connectionsRepository: repositories.ConnectionsRepository
+    private evsRepository: repositories.EvsRepository
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEvs)

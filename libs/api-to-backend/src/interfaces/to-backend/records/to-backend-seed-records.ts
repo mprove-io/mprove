@@ -191,7 +191,7 @@ export class ToBackendSeedRecordsRequestPayloadEvsItem {
   evId: string;
 
   @IsString()
-  value: string;
+  val: string;
 }
 
 export class ToBackendSeedRecordsRequestPayload {

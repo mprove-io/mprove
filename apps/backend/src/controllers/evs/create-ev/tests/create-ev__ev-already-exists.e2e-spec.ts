@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-delete-ev__ok';
+let testId = 'backend-create-ev__ev-already-exists';
 
 let traceId = testId;
 
@@ -27,7 +27,7 @@ let val: '123';
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendDeleteEvResponse;
+  let resp: apiToBackend.ToBackendCreateEvResponse;
 
   try {
     prep = await prepareTest({
@@ -92,20 +92,21 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendDeleteEvRequest = {
+    let req: apiToBackend.ToBackendCreateEvRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEv,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEv,
         traceId: traceId,
         idempotencyKey: testId
       },
       payload: {
         projectId: projectId,
         envId: envId,
-        evId: evId
+        evId: evId,
+        val: val
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendDeleteEvResponse>({
+    resp = await helper.sendToBackend<apiToBackend.ToBackendCreateEvResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req
@@ -116,6 +117,5 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.is(resp.info.error, undefined);
-  t.is(resp.info.status, common.ResponseInfoStatusEnum.Ok);
+  t.is(resp.info.error.message, common.ErEnum.BACKEND_EV_ALREADY_EXISTS);
 });

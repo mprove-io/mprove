@@ -18,6 +18,7 @@ import { DashboardsService } from './services/dashboards.service';
 import { DbService } from './services/db.service';
 import { EmailService } from './services/email.service';
 import { EnvsService } from './services/envs.service';
+import { EvsService } from './services/evs.service';
 import { MconfigsService } from './services/mconfigs.service';
 import { MembersService } from './services/members.service';
 import { ModelsService } from './services/models.service';
@@ -56,6 +57,7 @@ export const appProviders = [
   DashboardsService,
   MembersService,
   EnvsService,
+  EvsService,
   BridgesService,
   {
     provide: TasksService,

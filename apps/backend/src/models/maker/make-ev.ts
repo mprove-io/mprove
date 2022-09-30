@@ -4,13 +4,13 @@ export function makeEv(item: {
   projectId: string;
   envId: string;
   evId: string;
-  value: string;
+  val: string;
 }) {
   let evEntity: entities.EvEntity = {
     project_id: item.projectId,
     env_id: item.envId,
     ev_id: item.evId,
-    value: item.value,
+    val: item.val,
     server_ts: undefined
   };
   return evEntity;

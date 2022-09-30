@@ -13,7 +13,7 @@ export class EvEntity {
   ev_id: string; // name
 
   @Column({ type: constants.VARCHAR, nullable: true })
-  value: string;
+  val: string;
 
   @Column({ type: constants.BIGINT })
   server_ts: string;

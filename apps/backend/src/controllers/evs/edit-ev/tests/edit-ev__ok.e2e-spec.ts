@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-delete-ev__ok';
+let testId = 'backend-edit-ev__ok';
 
 let traceId = testId;
 
@@ -19,15 +19,13 @@ let orgName = testId;
 let projectId = common.makeId();
 let projectName = testId;
 
-let envId = 'env1';
-
 let evId = 'MPROVE_EV1';
 let val: '123';
 
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendDeleteEvResponse;
+  let resp: apiToBackend.ToBackendEditEvResponse;
 
   try {
     prep = await prepareTest({
@@ -74,38 +72,33 @@ test('1', async t => {
             isExplorer: common.BoolEnum.TRUE
           }
         ],
-        envs: [
-          {
-            projectId: projectId,
-            envId: envId
-          }
-        ],
         evs: [
           {
             projectId: projectId,
-            envId: envId,
+            envId: common.PROJECT_ENV_PROD,
             evId: evId,
-            val: val
+            val: '1'
           }
         ]
       },
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendDeleteEvRequest = {
+    let req: apiToBackend.ToBackendEditEvRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEv,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditEv,
         traceId: traceId,
         idempotencyKey: testId
       },
       payload: {
         projectId: projectId,
-        envId: envId,
-        evId: evId
+        envId: common.PROJECT_ENV_PROD,
+        evId: evId,
+        val: val
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendDeleteEvResponse>({
+    resp = await helper.sendToBackend<apiToBackend.ToBackendEditEvResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

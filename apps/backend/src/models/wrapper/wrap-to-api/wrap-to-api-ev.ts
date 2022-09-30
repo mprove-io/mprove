@@ -6,6 +6,6 @@ export function wrapToApiEv(ev: entities.EvEntity): common.Ev {
     projectId: ev.project_id,
     envId: ev.env_id,
     evId: ev.ev_id,
-    value: ev.value
+    value: ev.val
   };
 }

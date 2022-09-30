@@ -169,7 +169,7 @@ export class SeedRecordsController {
           projectId: x.projectId,
           envId: x.envId,
           evId: x.evId,
-          value: x.value
+          val: x.val
         });
 
         evs.push(newEv);

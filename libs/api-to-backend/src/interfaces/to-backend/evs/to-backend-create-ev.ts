@@ -14,7 +14,7 @@ export class ToBackendCreateEvRequestPayload {
   evId: string;
 
   @IsString()
-  value: string;
+  val: string;
 }
 
 export class ToBackendCreateEvRequest extends ToBackendRequest {
