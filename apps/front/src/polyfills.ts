@@ -63,3 +63,7 @@
 import 'hammerjs/hammer';
 import 'reflect-metadata';
 import 'zone.js/dist/zone'; // Included with Angular CLI.
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+(window as any).process = { env: { DEBUG: undefined } };
+(window as any).global = window;

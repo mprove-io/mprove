@@ -21,13 +21,14 @@ var red1 = '#DE4343';
 
 const colors = require('tailwindcss/colors');
 
+const { createGlobPatternsForDependencies } = require('@nrwl/angular/tailwind');
+const { join } = require('path');
+
 module.exports = {
   prefix: '',
-  // purge: ['apps/front/src/**/*.{html,ts}'],
-  // darkMode: false, // or 'media' or 'class'
   content: [
-    // Example content paths...
-    './apps/front/**/*.html'
+    join(__dirname, 'src/**/!(*.stories|*.spec).{ts,html}'),
+    ...createGlobPatternsForDependencies(__dirname)
   ],
   theme: {
     namedGroups: ['foo', 'bar'],
@@ -83,9 +84,6 @@ module.exports = {
       red1
     })
   },
-  // variants: {
-  //   extend: {}
-  // },
   plugins: [
     require('tailwindcss-named-groups'),
     require('@tailwindcss/aspect-ratio'),

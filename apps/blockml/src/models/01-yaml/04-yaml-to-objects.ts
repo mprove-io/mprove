@@ -30,7 +30,7 @@ export function yamlToObjects(
     let breakOnYamlParsing: boolean;
     try {
       load(x.content);
-    } catch (e) {
+    } catch (e: any) {
       item.errors.push(
         new BmError({
           title: enums.ErTitleEnum.FILE_CONTENT_IS_NOT_YAML,

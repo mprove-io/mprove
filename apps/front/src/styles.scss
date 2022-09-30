@@ -1,9 +1,13 @@
+// @tailwind base;
+// @tailwind components;
+// @tailwind utilities;
+
 // @import '~ng-zorro-antd/style/index.min.css';
 // @import '~ng-zorro-antd/date-picker/style/index.min.css';
 // @import '~ng-zorro-antd/time-picker/style/index.min.css';
 @import '~ng-zorro-antd/ng-zorro-antd.min.css';
 
-@import '~ngx-ui-switch/ui-switch.component.scss';
+// @import '~ngx-ui-switch/ui-switch.component.scss';
 
 .switch:focus {
   outline: none;

@@ -1,0 +1,135 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "prefix": "m",
+  "projectType": "application",
+  "sourceRoot": "apps/front/src",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "options": {
+        "allowedCommonJsDependencies": ["validator"],
+        "outputPath": "dist/apps/front",
+        "index": "apps/front/src/index.html",
+        "main": "apps/front/src/main.ts",
+        "polyfills": "apps/front/src/polyfills.ts",
+        "tsConfig": "apps/front/tsconfig.app.json",
+        "aot": true,
+        "assets": [
+          "apps/front/src/favicon.svg",
+          "apps/front/src/assets",
+          {
+            "glob": "**/*",
+            "input": "node_modules/@sentinel-one/ngx-monaco-editor/assets/monaco",
+            "output": "./assets/monaco/"
+          }
+        ],
+        "styles": [
+          "apps/front/src/styles.scss",
+          "./node_modules/ngx-ui-switch/ui-switch.component.scss"
+        ],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/front/src/environments/environment.ts",
+              "with": "apps/front/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "6mb",
+              "maximumError": "10mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "6kb",
+              "maximumError": "10kb"
+            }
+          ]
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      }
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "browserTarget": "front:build"
+      },
+      "configurations": {
+        "production": {
+          "browserTarget": "front:build:production",
+          "disableHostCheck": true
+        },
+        "development": {
+          "browserTarget": "front:build:development",
+          "disableHostCheck": true
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "front:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/front/src/**/*.ts",
+          "apps/front/src/**/*.html"
+        ]
+      }
+    },
+    "fm": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "prettier \"apps/front/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js"
+        ],
+        "parallel": false
+      }
+    },
+    "circular": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["madge --circular apps/front"],
+        "parallel": false
+      }
+    },
+    "compose-up-build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "cwd": "tools/deploy/base-dev",
+        "commands": ["docker-compose up --detach --build front"],
+        "parallel": false
+      }
+    },
+    "compose-build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "cwd": "./",
+        "commands": ["docker-compose build front"],
+        "parallel": false
+      }
+    }
+  }
+}

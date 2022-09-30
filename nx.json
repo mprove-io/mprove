@@ -1,6 +1,12 @@
 {
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "npmScope": "mprove",
-  "affected": { "defaultBase": "master" },
+  "affected": {
+    "defaultBase": "master"
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/nest"
+  },
   "implicitDependencies": {
     ".dockerignore": "*",
     ".env": "*",
@@ -22,7 +28,7 @@
   },
   "tasksRunnerOptions": {
     "default": {
-      "runner": "@nrwl/workspace/tasks-runners/default",
+      "runner": "nx/tasks-runners/default",
       "options": {
         "cacheableOperations": [
           "lint",
@@ -35,15 +41,21 @@
       }
     }
   },
-  "projects": {
-    "api-to-backend": { "tags": [] },
-    "api-to-blockml": { "tags": [] },
-    "api-to-disk": { "tags": [] },
-    "common": { "tags": [] },
-    "disk": { "tags": [] },
-    "blockml": { "tags": [] },
-    "backend": { "tags": [] },
-    "front": { "tags": [] },
-    "integra": { "tags": [] }
+  "defaultProject": "disk",
+  "generators": {
+    "@nrwl/angular:application": {
+      "style": "scss",
+      "linter": "eslint",
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "cypress"
+    },
+    "@nrwl/angular:library": {
+      "style": "scss",
+      "linter": "eslint",
+      "unitTestRunner": "jest"
+    },
+    "@nrwl/angular:component": {
+      "style": "scss"
+    }
   }
 }

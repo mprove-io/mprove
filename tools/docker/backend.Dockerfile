@@ -6,6 +6,11 @@ COPY package.docker.json package.json
 COPY yarn.lock .
 RUN yarn --frozen-lockfile
 
+COPY apps/disk apps/disk/
+COPY apps/front apps/front/
+COPY apps/blockml apps/blockml/
+COPY apps/integra apps/integra/
+
 COPY apps/backend apps/backend/
 COPY libs/api-to-backend libs/api-to-backend/
 COPY libs/api-to-disk libs/api-to-disk/

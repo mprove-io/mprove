@@ -149,7 +149,7 @@ export class Chart {
 
   @IsOptional()
   @IsEnum(enums.ChartSchemeTypeEnum)
-  schemeType?: enums.ChartSchemeTypeEnum;
+  schemeType?: any;
 
   @IsOptional()
   @IsInt()

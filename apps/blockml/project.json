@@ -1,0 +1,105 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "prefix": "blockml",
+  "sourceRoot": "apps/blockml/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/node:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/blockml",
+        "main": "apps/blockml/src/main.ts",
+        "tsConfig": "apps/blockml/tsconfig.app.json",
+        "assets": ["apps/blockml/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "blockml:build:production",
+        "host": "0.0.0.0",
+        "port": 9229,
+        "inspect": "inspect",
+        "watch": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/blockml/**/*.ts"]
+      }
+    },
+    "clean-logs": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["rimraf \"./apps/blockml/src/models/**/logs/*.log\""],
+        "parallel": false
+      }
+    },
+    "build-tests": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "rimraf \"./dist/tests/blockml\"",
+          "tsc --project apps/blockml/tsconfig.test.json"
+        ],
+        "parallel": false,
+        "outputPath": "dist/tests/blockml"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "nx clean-logs blockml",
+          "nx build-tests blockml --with-deps",
+          "BLOCKML_LOG_IO=TRUE ava --config=ava-js.config.js dist/tests/blockml/apps/blockml/**/*.spec.js"
+        ],
+        "parallel": false
+      }
+    },
+    "fm": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "prettier \"apps/blockml/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js"
+        ],
+        "parallel": false
+      }
+    },
+    "circular": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["madge --circular apps/blockml"],
+        "parallel": false
+      }
+    },
+    "compose-up-build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "cwd": "tools/deploy/base-dev",
+        "commands": [
+          "docker-compose up --detach --build blockml-main",
+          "docker-compose up --detach --build blockml-worker"
+        ],
+        "parallel": false
+      }
+    },
+    "compose-build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "cwd": "./",
+        "commands": ["docker-compose build blockml-main"],
+        "parallel": false
+      }
+    }
+  }
+}

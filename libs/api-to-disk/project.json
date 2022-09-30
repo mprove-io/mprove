@@ -1,0 +1,40 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api-to-disk/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/api-to-disk/**/*.ts"]
+      }
+    },
+    "build-tests": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "rimraf \"./dist/tests/api-to-disk\"",
+          "tsc --project libs/api-to-disk/tsconfig.test.json"
+        ],
+        "parallel": false,
+        "outputPath": "dist/tests/api-to-disk"
+      }
+    },
+    "fm": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "prettier \"libs/api-to-disk/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js"
+        ],
+        "parallel": false
+      }
+    },
+    "circular": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["madge --circular libs/api-to-disk"],
+        "parallel": false
+      }
+    }
+  }
+}

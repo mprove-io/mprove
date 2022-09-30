@@ -33,6 +33,7 @@ module.exports = {
           'error',
           {
             enforceBuildableLibDependency: true,
+            allowCircularSelfDependency: true,
             allow: [],
             depConstraints: [
               { sourceTag: '*', onlyDependOnLibsWithTags: ['*'] }
@@ -54,6 +55,7 @@ module.exports = {
           'error',
           {
             enforceBuildableLibDependency: true,
+            allowCircularSelfDependency: true,
             allow: [],
             depConstraints: [
               { sourceTag: '*', onlyDependOnLibsWithTags: ['*'] }

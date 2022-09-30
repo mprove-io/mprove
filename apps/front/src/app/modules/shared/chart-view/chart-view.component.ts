@@ -5,6 +5,7 @@ import {
   OnChanges,
   SimpleChanges
 } from '@angular/core';
+import { LegendPosition } from '@swimlane/ngx-charts';
 import { formatLocale } from 'd3-format';
 import { getChartCurve } from '~front/app/functions/get-chart-curve';
 import { getChartScheme } from '~front/app/functions/get-chart-scheme';
@@ -53,7 +54,7 @@ export class ChartViewComponent implements OnChanges {
   timeline = common.CHART_DEFAULT_TIMELINE;
   rangeFillOpacity = common.CHART_DEFAULT_RANGE_FILL_OPACITY;
   legendForHeatMap = false;
-  legendPosition = 'right';
+  legendPosition = LegendPosition.Right;
 
   labelFormattingFn = this.labelFormatting.bind(this);
   dataLabelFormattingFn = this.dataLabelFormatting.bind(this);

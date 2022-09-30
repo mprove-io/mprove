@@ -1,0 +1,28 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/integra/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/integra/cypress.json",
+        "tsConfig": "apps/integra/tsconfig.e2e.json",
+        "headless": true,
+        "browser": "chrome",
+        "baseUrl": "http://localhost:4200"
+      },
+      "configurations": {
+        "production": {
+          "baseUrl": "http://front"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/integra/**/*.{js,ts}"]
+      }
+    }
+  }
+}

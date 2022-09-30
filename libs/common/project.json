@@ -1,0 +1,40 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/common/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/common/**/*.ts"]
+      }
+    },
+    "build-tests": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "rimraf \"./dist/tests/common\"",
+          "tsc --project libs/common/tsconfig.test.json"
+        ],
+        "parallel": false,
+        "outputPath": "dist/tests/common"
+      }
+    },
+    "fm": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "prettier \"libs/common/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js"
+        ],
+        "parallel": false
+      }
+    },
+    "circular": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["madge --circular libs/common"],
+        "parallel": false
+      }
+    }
+  }
+}
