@@ -25,7 +25,7 @@ spec:
       - name: blockml-single
         resources:
           requests:
-            memory: "1550Mi"
+            memory: "1800Mi"
             # cpu: "100m"
         image: {{ .Values.werf.image.blockml }}
         command: ['yarn']

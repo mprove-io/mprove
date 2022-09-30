@@ -23,7 +23,7 @@ spec:
       - name: disk
         resources:
           requests:
-            memory: "1550Mi"
+            memory: "1800Mi"
             # cpu: "100m"
         image: {{ .Values.werf.image.disk }}
         command: ['yarn']
