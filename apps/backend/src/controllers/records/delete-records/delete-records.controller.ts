@@ -24,6 +24,9 @@ export class DeleteRecordsController {
     private vizsRepository: repositories.VizsRepository,
     private avatarsRepository: repositories.AvatarsRepository,
     private branchesRepository: repositories.BranchesRepository,
+    private bridgesRepository: repositories.BridgesRepository,
+    private envsRepository: repositories.EnvsRepository,
+    private evsRepository: repositories.EvsRepository,
     private connectionsRepository: repositories.ConnectionsRepository,
     private membersRepository: repositories.MembersRepository,
     private orgsRepository: repositories.OrgsRepository,
@@ -136,6 +139,9 @@ export class DeleteRecordsController {
     }
     if (projectIds.length > 0) {
       await this.branchesRepository.delete({ project_id: In(projectIds) });
+      await this.bridgesRepository.delete({ project_id: In(projectIds) });
+      await this.envsRepository.delete({ project_id: In(projectIds) });
+      await this.evsRepository.delete({ project_id: In(projectIds) });
     }
     if (structIds.length > 0) {
       await this.vizsRepository.delete({ struct_id: In(structIds) });
