@@ -1,17 +1,17 @@
 import { entities } from '~backend/barrels/entities';
 
-export function makeEvar(item: {
+export function makeEv(item: {
   projectId: string;
   envId: string;
-  evarId: string;
+  evId: string;
   value: string;
 }) {
-  let evarEntity: entities.EvarEntity = {
+  let evEntity: entities.EvEntity = {
     project_id: item.projectId,
     env_id: item.envId,
-    evar_id: item.evarId,
+    ev_id: item.evId,
     value: item.value,
     server_ts: undefined
   };
-  return evarEntity;
+  return evEntity;
 }

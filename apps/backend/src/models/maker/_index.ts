@@ -3,7 +3,7 @@ export * from './make-branch';
 export * from './make-bridge';
 export * from './make-connection';
 export * from './make-env';
-export * from './make-evar';
+export * from './make-ev';
 export * from './make-member';
 export * from './make-note';
 export * from './make-org';

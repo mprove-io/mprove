@@ -9,22 +9,22 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
 @Controller()
-export class GetEvarsController {
+export class GetEvsController {
   constructor(
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private envsService: EnvsService,
     private envsRepository: repositories.EnvsRepository,
-    private evarsRepository: repositories.EvarsRepository,
+    private evsRepository: repositories.EvsRepository,
     private membersRepository: repositories.MembersRepository,
     private connectionsRepository: repositories.ConnectionsRepository
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEvars)
-  async getEvars(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEvs)
+  async getEvs(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendGetEvarsRequest)
-    reqValid: apiToBackend.ToBackendGetEvarsRequest
+    @ValidateRequest(apiToBackend.ToBackendGetEvsRequest)
+    reqValid: apiToBackend.ToBackendGetEvsRequest
   ) {
     let { projectId, envId } = reqValid.payload;
 
@@ -43,13 +43,13 @@ export class GetEvarsController {
       member: member
     });
 
-    let evars = await this.evarsRepository.find({
+    let evs = await this.evsRepository.find({
       project_id: projectId,
       env_id: envId
     });
 
-    let payload: apiToBackend.ToBackendGetEvarsResponsePayload = {
-      evars: evars.map(x => wrapper.wrapToApiEvar(x))
+    let payload: apiToBackend.ToBackendGetEvsResponsePayload = {
+      evs: evs.map(x => wrapper.wrapToApiEv(x))
     };
 
     return payload;

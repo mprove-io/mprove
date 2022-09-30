@@ -43,10 +43,10 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendCreateEnv = 'api/ToBackendCreateEnv',
   ToBackendDeleteEnv = 'api/ToBackendDeleteEnv',
   //
-  ToBackendGetEvars = 'api/ToBackendGetEvars',
-  ToBackendCreateEvar = 'api/ToBackendCreateEvar',
-  ToBackendDeleteEvar = 'api/ToBackendDeleteEvar',
-  ToBackendEditEvar = 'api/ToBackendEditEvar',
+  ToBackendGetEvs = 'api/ToBackendGetEvs',
+  ToBackendCreateEv = 'api/ToBackendCreateEv',
+  ToBackendDeleteEv = 'api/ToBackendDeleteEv',
+  ToBackendEditEv = 'api/ToBackendEditEv',
   //
   ToBackendGetMembers = 'api/ToBackendGetMembers',
   ToBackendCreateMember = 'api/ToBackendCreateMember',

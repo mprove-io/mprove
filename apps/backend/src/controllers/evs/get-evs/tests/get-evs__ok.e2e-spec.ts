@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-get-evars__ok';
+let testId = 'backend-get-evs__ok';
 
 let traceId = testId;
 
@@ -22,7 +22,7 @@ let projectName = testId;
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendGetEvarsResponse;
+  let resp: apiToBackend.ToBackendGetEvsResponse;
 
   try {
     prep = await prepareTest({
@@ -72,9 +72,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendGetEvarsRequest = {
+    let req: apiToBackend.ToBackendGetEvsRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEvars,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEvs,
         traceId: traceId,
         idempotencyKey: testId
       },
@@ -84,7 +84,7 @@ test('1', async t => {
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendGetEvarsResponse>({
+    resp = await helper.sendToBackend<apiToBackend.ToBackendGetEvsResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

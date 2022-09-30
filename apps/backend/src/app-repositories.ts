@@ -18,5 +18,5 @@ export const appRepositories = [
   repositories.NotesRepository,
   repositories.BridgesRepository,
   repositories.EnvsRepository,
-  repositories.EvarsRepository
+  repositories.EvsRepository
 ];

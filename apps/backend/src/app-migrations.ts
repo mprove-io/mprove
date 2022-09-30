@@ -12,7 +12,7 @@ import { All1663489919330 } from './migrations/1663489919330-All';
 import { All1663757506953 } from './migrations/1663757506953-All';
 import { All1664003339398 } from './migrations/1664003339398-All';
 import { All1664369364119 } from './migrations/1664369364119-All';
-import { All1664455799238 } from './migrations/1664455799238-All';
+import { All1664527176436 } from './migrations/1664527176436-All';
 
 export const appMigrations = [
   All1629629416532,
@@ -29,5 +29,5 @@ export const appMigrations = [
   All1663757506953,
   All1664003339398,
   All1664369364119,
-  All1664455799238
+  All1664527176436
 ];

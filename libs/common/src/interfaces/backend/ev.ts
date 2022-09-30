@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class Evar {
+export class Ev {
   @IsString()
   envId: string;
 
@@ -8,7 +8,7 @@ export class Evar {
   projectId: string;
 
   @IsString()
-  evarId: string;
+  evId: string;
 
   @IsString()
   value: string;
