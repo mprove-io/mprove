@@ -21,7 +21,7 @@ export class EvsService {
 
     if (common.isDefined(ev)) {
       throw new common.ServerError({
-        message: common.ErEnum.BACKEND_ENV_ALREADY_EXISTS
+        message: common.ErEnum.BACKEND_EV_ALREADY_EXISTS
       });
     }
   }

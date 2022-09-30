@@ -9,6 +9,7 @@ import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { DbService } from '~backend/services/db.service';
 import { EnvsService } from '~backend/services/envs.service';
+import { EvsService } from '~backend/services/evs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
@@ -18,6 +19,7 @@ export class CreateEvController {
     private projectsService: ProjectsService,
     private bridgesRepository: repositories.BridgesRepository,
     private envsService: EnvsService,
+    private evsService: EvsService,
     private membersService: MembersService,
     private dbService: DbService
   ) {}
@@ -43,6 +45,12 @@ export class CreateEvController {
       projectId: projectId,
       envId: envId,
       member: member
+    });
+
+    await this.evsService.checkEvDoesNotExist({
+      projectId: projectId,
+      envId: envId,
+      evId: evId
     });
 
     let newEv = maker.makeEv({
