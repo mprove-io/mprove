@@ -11,6 +11,7 @@ export class Records {
   branches?: entities.BranchEntity[];
   bridges?: entities.BridgeEntity[];
   envs?: entities.EnvEntity[];
+  evs?: entities.EvEntity[];
   vizs?: entities.VizEntity[];
   queries?: entities.QueryEntity[];
   models?: entities.ModelEntity[];

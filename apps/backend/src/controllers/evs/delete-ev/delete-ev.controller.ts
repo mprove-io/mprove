@@ -2,39 +2,35 @@ import { Controller, Post } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
 @Controller()
-export class GetEvsController {
+export class DeleteEvController {
   constructor(
     private projectsService: ProjectsService,
-    private membersService: MembersService,
     private envsService: EnvsService,
-    private envsRepository: repositories.EnvsRepository,
     private evsRepository: repositories.EvsRepository,
-    private membersRepository: repositories.MembersRepository,
-    private connectionsRepository: repositories.ConnectionsRepository
+    private membersService: MembersService
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEvs)
-  async getEvs(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEv)
+  async deleteEv(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendGetEvsRequest)
-    reqValid: apiToBackend.ToBackendGetEvsRequest
+    @ValidateRequest(apiToBackend.ToBackendDeleteEvRequest)
+    reqValid: apiToBackend.ToBackendDeleteEvRequest
   ) {
-    let { projectId, envId } = reqValid.payload;
+    let { projectId, envId, evId } = reqValid.payload;
 
-    let project = await this.projectsService.getProjectCheckExists({
+    await this.projectsService.getProjectCheckExists({
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckExists({
-      projectId: projectId,
-      memberId: user.user_id
+    let member = await this.membersService.getMemberCheckIsEditorOrAdmin({
+      memberId: user.user_id,
+      projectId: projectId
     });
 
     let env = await this.envsService.getEnvCheckExistsAndAccess({
@@ -43,14 +39,13 @@ export class GetEvsController {
       member: member
     });
 
-    let evs = await this.evsRepository.find({
+    await this.evsRepository.delete({
       project_id: projectId,
-      env_id: envId
+      env_id: envId,
+      ev_id: evId
     });
 
-    let payload: apiToBackend.ToBackendGetEvsResponsePayload = {
-      evs: evs.map(x => wrapper.wrapToApiEv(x))
-    };
+    let payload = {};
 
     return payload;
   }

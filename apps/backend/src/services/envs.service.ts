@@ -22,7 +22,7 @@ export class EnvsService {
     }
   }
 
-  async getEnvCheckExists(item: {
+  async getEnvCheckExistsAndAccess(item: {
     projectId: string;
     envId: string;
     member: MemberEntity;

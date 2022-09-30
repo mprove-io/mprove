@@ -36,6 +36,7 @@ export class SeedRecordsController {
     let payloadProjects = reqValid.payload.projects;
     let payloadConnections = reqValid.payload.connections;
     let payloadEnvs = reqValid.payload.envs;
+    let payloadEvs = reqValid.payload.evs;
     let payloadQueries = reqValid.payload.queries;
     let payloadMconfigs = reqValid.payload.mconfigs;
 
@@ -45,6 +46,7 @@ export class SeedRecordsController {
     let orgs: entities.OrgEntity[] = [];
     let projects: entities.ProjectEntity[] = [];
     let envs: entities.EnvEntity[] = [];
+    let evs: entities.EvEntity[] = [];
     let members: entities.MemberEntity[] = [];
     let connections: entities.ConnectionEntity[] = [];
     let structs: entities.StructEntity[] = [];
@@ -158,6 +160,19 @@ export class SeedRecordsController {
         });
 
         envs.push(newEnv);
+      });
+    }
+
+    if (common.isDefined(payloadEvs)) {
+      payloadEvs.forEach(x => {
+        let newEv = maker.makeEv({
+          projectId: x.projectId,
+          envId: x.envId,
+          evId: x.evId,
+          value: x.value
+        });
+
+        evs.push(newEv);
       });
     }
 
@@ -392,6 +407,7 @@ export class SeedRecordsController {
         orgs: orgs,
         projects: projects,
         envs: envs,
+        evs: evs,
         members: members,
         connections: connections,
         branches: branches,

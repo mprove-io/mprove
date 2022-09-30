@@ -48,7 +48,7 @@ export class GetModelController {
       branchId: branchId
     });
 
-    let env = await this.envsService.getEnvCheckExists({
+    let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
       member: member

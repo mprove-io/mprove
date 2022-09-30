@@ -44,7 +44,7 @@ export class MembersService {
     }
   }
 
-  async checkMemberIsEditorOrAdmin(item: {
+  async getMemberCheckIsEditorOrAdmin(item: {
     memberId: string;
     projectId: string;
   }) {
@@ -69,6 +69,8 @@ export class MembersService {
         message: common.ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
       });
     }
+
+    return member;
   }
 
   async getMemberCheckIsEditor(item: { memberId: string; projectId: string }) {

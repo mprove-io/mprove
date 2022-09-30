@@ -2,10 +2,10 @@ import { IsString } from 'class-validator';
 
 export class Ev {
   @IsString()
-  envId: string;
+  projectId: string;
 
   @IsString()
-  projectId: string;
+  envId: string;
 
   @IsString()
   evId: string;

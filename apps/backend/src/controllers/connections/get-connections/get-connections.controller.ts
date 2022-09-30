@@ -27,7 +27,7 @@ export class GetConnectionsController {
       projectId: projectId
     });
 
-    await this.membersService.checkMemberIsEditorOrAdmin({
+    await this.membersService.getMemberCheckIsEditorOrAdmin({
       memberId: user.user_id,
       projectId: projectId
     });

@@ -83,6 +83,7 @@ export class DbService {
         orgs,
         projects,
         envs,
+        evs,
         members,
         connections,
         structs,
@@ -124,6 +125,12 @@ export class DbService {
         await manager
           .getCustomRepository(repositories.EnvsRepository)
           .insert(envs);
+      }
+
+      if (common.isDefined(evs) && evs.length > 0) {
+        await manager
+          .getCustomRepository(repositories.EvsRepository)
+          .insert(evs);
       }
 
       if (common.isDefined(members) && members.length > 0) {
@@ -242,6 +249,7 @@ export class DbService {
         orgs,
         projects,
         envs,
+        evs,
         members,
         connections,
         structs,
@@ -283,6 +291,10 @@ export class DbService {
         await manager
           .getCustomRepository(repositories.EnvsRepository)
           .save(envs);
+      }
+
+      if (common.isDefined(evs) && evs.length > 0) {
+        await manager.getCustomRepository(repositories.EvsRepository).save(evs);
       }
 
       if (common.isDefined(members) && members.length > 0) {

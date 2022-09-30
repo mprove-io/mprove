@@ -67,7 +67,7 @@ export class CreateConnectionController {
       connectionId: connectionId
     });
 
-    await this.envsService.getEnvCheckExists({
+    await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
       member: member
