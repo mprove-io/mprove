@@ -2,6 +2,7 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -12,6 +13,8 @@ import { forEachSeries } from 'p-iteration';
 import { Connection } from 'typeorm';
 import { appControllers } from './app-controllers';
 import { appEntities } from './app-entities';
+import { AppFilter } from './app-filter';
+import { AppInterceptor } from './app-interceptor';
 import { appMigrations } from './app-migrations';
 import { appProviders } from './app-providers';
 import { appRepositories } from './app-repositories';
@@ -22,6 +25,7 @@ import { interfaces } from './barrels/interfaces';
 import { maker } from './barrels/maker';
 import { repositories } from './barrels/repositories';
 import { getConfig } from './config/get.config';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { DbService } from './services/db.service';
 import { OrgsService } from './services/orgs.service';
 import { ProjectsService } from './services/projects.service';
@@ -183,7 +187,21 @@ let mailerModule = MailerModule.forRootAsync({
     typeormFeatureModule
   ],
   controllers: appControllers,
-  providers: appProviders
+  providers: [
+    ...appProviders,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard
+    },
+    {
+      provide: APP_FILTER,
+      useClass: AppFilter
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AppInterceptor
+    }
+  ]
 })
 export class AppModule implements OnModuleInit {
   constructor(

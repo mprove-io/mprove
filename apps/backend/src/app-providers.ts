@@ -1,13 +1,9 @@
 import { ConfigService } from '@nestjs/config';
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { AppFilter } from './app-filter';
-import { AppInterceptor } from './app-interceptor';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
 import { repositories } from './barrels/repositories';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { BigQueryService } from './services/bigquery.service';
 import { BlockmlService } from './services/blockml.service';
 import { BranchesService } from './services/branches.service';
@@ -78,17 +74,5 @@ export const appProviders = [
     ]
   },
   LocalStrategy,
-  JwtStrategy,
-  {
-    provide: APP_GUARD,
-    useClass: JwtAuthGuard
-  },
-  {
-    provide: APP_FILTER,
-    useClass: AppFilter
-  },
-  {
-    provide: APP_INTERCEPTOR,
-    useClass: AppInterceptor
-  }
+  JwtStrategy
 ];
