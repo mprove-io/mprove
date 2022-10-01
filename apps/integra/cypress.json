@@ -5,7 +5,7 @@
   "fixturesFolder": "./src/fixtures",
   "integrationFolder": "./src/integration",
   "modifyObstructiveCode": false,
-  "pluginsFile": "./src/plugins/index",
+  "pluginsFile": false,
   "supportFile": "./src/support/index.ts",
   "video": false,
   "videosFolder": "../../dist/cypress/apps/integra/videos",

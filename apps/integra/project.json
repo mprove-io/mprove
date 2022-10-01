@@ -8,7 +8,6 @@
       "options": {
         "cypressConfig": "apps/integra/cypress.json",
         "tsConfig": "apps/integra/tsconfig.e2e.json",
-        "headless": true,
         "browser": "chrome",
         "baseUrl": "http://localhost:4200"
       },

@@ -20,12 +20,12 @@
       }
     },
     {
-      "label": "Cypress run spec file",
+      "label": "Cypress run spec file (headed)",
       "command": "./node_modules/.bin/nx",
       "args": [
         "e2e",
         "integra",
-        "--headless=false",
+        "--headed",
         "--no-exit",
         "--browser chrome",
         "--spec=${relativeFile}"
@@ -39,7 +39,7 @@
       }
     },
     {
-      "label": "Cypress run spec file (headless)",
+      "label": "Cypress run spec file",
       "command": "./node_modules/.bin/nx",
       "args": ["e2e", "integra", "--browser chrome", "--spec=${relativeFile}"],
       "problemMatcher": [],
