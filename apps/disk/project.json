@@ -38,6 +38,12 @@
       }
     },
     "build-tests": {
+      "dependsOn": [
+        {
+          "target": "build-tests",
+          "projects": "dependencies"
+        }
+      ],
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [

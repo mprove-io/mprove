@@ -24,9 +24,9 @@ spec:
       - name: registrysecret    
       containers:
       - name: backend-scheduler
-        # resources:
-        #   requests:
-        #     memory: "1800Mi"
+        resources:
+          requests:
+            memory: "2000Mi"
             # cpu: "100m"
         image: {{ .Values.werf.image.backend }}
         command: ['yarn']

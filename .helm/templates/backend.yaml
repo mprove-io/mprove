@@ -24,8 +24,8 @@ spec:
       containers:
       - name: backend
         resources:
-          # requests:
-          #   memory: "1800Mi"
+          requests:
+            memory: "2000Mi"
             # cpu: "100m"            
         image: {{ .Values.werf.image.backend }}
         command: ['yarn']

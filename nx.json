@@ -41,6 +41,14 @@
       }
     }
   },
+  "targetDependencies": {
+    "build": [
+      {
+        "target": "build",
+        "projects": "dependencies"
+      }
+    ]
+  },
   "defaultProject": "disk",
   "generators": {
     "@nrwl/angular:application": {

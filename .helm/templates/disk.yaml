@@ -21,9 +21,23 @@ spec:
       - name: registrysecret    
       containers:
       - name: disk
-        # resources:
-        #   requests:
-        #     memory: "1800Mi"
+        # livenessProbe:
+        #   exec:
+        #     command:
+        #     - cat
+        #     - /tmp/healthy
+        #   initialDelaySeconds: 120
+        #   periodSeconds: 5
+        # readinessProbe:
+        #   exec:
+        #     command:
+        #     - cat
+        #     - /tmp/healthy
+        #   initialDelaySeconds: 50
+        #   periodSeconds: 5
+        resources:
+          requests:
+            memory: "2000Mi"
             # cpu: "100m"
         image: {{ .Values.werf.image.disk }}
         command: ['yarn']
