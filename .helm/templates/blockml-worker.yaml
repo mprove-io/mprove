@@ -23,9 +23,9 @@ spec:
       - name: registrysecret    
       containers:
       - name: blockml-worker
-        resources:
-          requests:
-            memory: "1800Mi"
+        # resources:
+        #   requests:
+        #     memory: "1800Mi"
             # cpu: "100m"
         image: {{ .Values.werf.image.blockml }}
         command: ['yarn']

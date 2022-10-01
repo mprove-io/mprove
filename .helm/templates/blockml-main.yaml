@@ -24,8 +24,8 @@ spec:
       containers:
       - name: blockml-main
         resources:
-          requests:
-            memory: "1800Mi"
+          # requests:
+          #   memory: "1800Mi"
             # cpu: "100m"
         image: {{ .Values.werf.image.blockml }}
         command: ['yarn']
