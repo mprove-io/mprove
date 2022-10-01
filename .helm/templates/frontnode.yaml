@@ -23,6 +23,8 @@ spec:
       containers:
       - name: frontnode
         resources:
+          limits:
+            memory: "2500Mi"        
           requests:
             memory: "2500Mi"        
             # cpu: "100m"

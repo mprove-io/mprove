@@ -24,6 +24,8 @@ spec:
       containers:
       - name: backend
         resources:
+          limits:
+            memory: "2000Mi"        
           requests:
             memory: "2000Mi"
             # cpu: "100m"            

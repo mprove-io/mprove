@@ -25,6 +25,8 @@ spec:
       containers:
       - name: backend-scheduler
         resources:
+          limits:
+            memory: "2000Mi"        
           requests:
             memory: "2000Mi"
             # cpu: "100m"
