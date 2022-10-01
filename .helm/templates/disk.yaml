@@ -38,8 +38,8 @@ spec:
         resources:
           limits:
             memory: "2000Mi"        
-          requests:
-            memory: "2000Mi"
+          # requests:
+          #   memory: "2000Mi"
             # cpu: "100m"
         image: {{ .Values.werf.image.disk }}
         command: ['yarn']

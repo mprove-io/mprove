@@ -5,7 +5,7 @@ metadata:
   labels:
     app: blockml-main
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: blockml-main
@@ -26,8 +26,8 @@ spec:
         resources:
           limits:
             memory: "2000Mi"        
-          requests:
-            memory: "2000Mi"
+          # requests:
+          #   memory: "2000Mi"
             # cpu: "100m"
         image: {{ .Values.werf.image.blockml }}
         command: ['yarn']
