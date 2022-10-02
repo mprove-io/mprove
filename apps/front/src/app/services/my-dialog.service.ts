@@ -55,6 +55,10 @@ import {
   AddEvDialogDataItem
 } from '../modules/project/project-evs/add-ev-dialog/add-ev-dialog.component';
 import {
+  DeleteEvDialogComponent,
+  DeleteEvDialogDataItem
+} from '../modules/project/project-evs/delete-ev-dialog/delete-ev-dialog.component';
+import {
   EditEvDialogComponent,
   EditEvDialogDataItem
 } from '../modules/project/project-evs/edit-ev-dialog/edit-ev-dialog.component';
@@ -558,6 +562,15 @@ export class MyDialogService {
 
   showEditEv(item: EditEvDialogDataItem): void {
     this.dialogService.open(EditEvDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item,
+      width: 800
+    });
+  }
+
+  showDeleteEv(item: DeleteEvDialogDataItem): void {
+    this.dialogService.open(DeleteEvDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item,

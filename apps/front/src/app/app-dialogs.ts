@@ -33,6 +33,7 @@ import { EditConnectionDialogComponent } from './modules/project/project-connect
 import { AddEnvironmentDialogComponent } from './modules/project/project-environments/add-environment-dialog/add-environment-dialog.component';
 import { DeleteEnvironmentDialogComponent } from './modules/project/project-environments/delete-environment-dialog/delete-environment-dialog.component';
 import { AddEvDialogComponent } from './modules/project/project-evs/add-ev-dialog/add-ev-dialog.component';
+import { DeleteEvDialogComponent } from './modules/project/project-evs/delete-ev-dialog/delete-ev-dialog.component';
 import { EditEvDialogComponent } from './modules/project/project-evs/edit-ev-dialog/edit-ev-dialog.component';
 import { EditProjectNameDialogComponent } from './modules/project/project-settings/edit-project-name-dialog/edit-project-name-dialog.component';
 import { AddEnvDialogComponent } from './modules/project/project-team/add-env-dialog/add-env-dialog.component';
@@ -78,6 +79,7 @@ export const appDialogs = [
   // project environment variables
   AddEvDialogComponent,
   EditEvDialogComponent,
+  DeleteEvDialogComponent,
   // project connections
   AddConnectionDialogComponent,
   DeleteConnectionDialogComponent,

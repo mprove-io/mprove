@@ -85,12 +85,10 @@ export class ProjectEvsComponent implements OnInit {
   }
 
   deleteVariable(ev: common.Ev) {
-    // this.myDialogService.showDeleteConnection({
-    //   apiService: this.apiService,
-    //   projectId: connection.projectId,
-    //   envId: connection.envId,
-    //   connectionId: connection.connectionId
-    // });
+    this.myDialogService.showDeleteEv({
+      apiService: this.apiService,
+      ev: ev
+    });
   }
 
   editVariable(ev: common.Ev, i: number) {
