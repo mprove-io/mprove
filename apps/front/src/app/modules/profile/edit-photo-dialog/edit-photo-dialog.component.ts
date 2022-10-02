@@ -7,6 +7,10 @@ import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface EditPhotoDialogItem {
+  apiService: ApiService;
+}
+
 @Component({
   selector: 'm-edit-photo-dialog',
   templateUrl: './edit-photo-dialog.component.html'
@@ -18,7 +22,7 @@ export class EditPhotoDialogComponent {
   showCropper = false;
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<EditPhotoDialogItem>,
     private navStore: NavStore,
     private imageCompressService: NgxImageCompressService
   ) {}

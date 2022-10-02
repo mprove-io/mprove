@@ -17,6 +17,11 @@ enum DashboardSaveAsEnum {
   REPLACE_EXISTING_DASHBOARD = 'REPLACE_EXISTING_DASHBOARD'
 }
 
+export interface DashboardSaveAsDialogDataItem {
+  apiService: ApiService;
+  dashboard: common.Dashboard;
+}
+
 @Component({
   selector: 'm-dashboard-save-as-dialog',
   templateUrl: './dashboard-save-as-dialog.component.html'
@@ -66,7 +71,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   );
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<DashboardSaveAsDialogDataItem>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
     private navQuery: NavQuery,

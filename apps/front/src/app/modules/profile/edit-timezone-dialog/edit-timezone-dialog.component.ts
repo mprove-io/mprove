@@ -7,6 +7,10 @@ import { UserStore } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface EditTimezoneDialogItem {
+  apiService: ApiService;
+}
+
 @Component({
   selector: 'm-edit-timezone-dialog',
   templateUrl: './edit-timezone-dialog.component.html'
@@ -24,7 +28,7 @@ export class EditTimezoneDialogComponent {
   );
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<EditTimezoneDialogItem>,
     private userStore: UserStore,
     private userQuery: UserQuery,
     private cd: ChangeDetectorRef

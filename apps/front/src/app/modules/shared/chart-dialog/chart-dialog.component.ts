@@ -4,11 +4,25 @@ import { interval, of, Subscription } from 'rxjs';
 import { startWith, switchMap, take, tap } from 'rxjs/operators';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService, RData } from '~front/app/services/query.service';
 import { NavState } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+
+export interface ChartDialogDataItem {
+  apiService: ApiService;
+  mconfig: common.MconfigX;
+  query: common.Query;
+  qData: RData[];
+  canAccessModel: boolean;
+  showNav: boolean;
+  isSelectValid: boolean;
+  vizId: string;
+  dashboardId: string;
+  updateQueryFn?: any;
+}
 
 @Component({
   selector: 'm-chart-dialog',
@@ -39,7 +53,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   );
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<ChartDialogDataItem>,
     private cd: ChangeDetectorRef,
     private queryService: QueryService,
     private memberQuery: MemberQuery,

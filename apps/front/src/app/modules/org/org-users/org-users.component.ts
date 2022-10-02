@@ -124,7 +124,6 @@ export class OrgUsersComponent implements OnInit {
         tap((resp: apiToBackend.ToBackendGetAvatarBigResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.myDialogService.showPhoto({
-              apiService: this.apiService,
               avatarBig: resp.payload.avatarBig,
               initials: initials
             });

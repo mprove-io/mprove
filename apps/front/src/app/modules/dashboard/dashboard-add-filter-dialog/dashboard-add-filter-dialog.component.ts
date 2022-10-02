@@ -15,6 +15,11 @@ import { NavState } from '~front/app/stores/nav.store';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
+export interface DashboardAddFilterDialogDataItem {
+  dashboardService: DashboardService;
+  dashboard: common.DashboardX;
+}
+
 @Component({
   selector: 'm-dashboard-add-filter-dialog',
   templateUrl: './dashboard-add-filter-dialog.component.html'
@@ -37,7 +42,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   dashboard: common.DashboardX;
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<DashboardAddFilterDialogDataItem>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
     private navQuery: NavQuery,

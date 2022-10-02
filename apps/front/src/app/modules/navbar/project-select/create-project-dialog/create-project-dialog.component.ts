@@ -8,6 +8,11 @@ import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface CreateProjectDialogDataItem {
+  apiService: ApiService;
+  orgId: string;
+}
+
 @Component({
   selector: 'm-create-project-dialog',
   templateUrl: './create-project-dialog.component.html'
@@ -27,7 +32,7 @@ export class CreateProjectDialogComponent implements OnInit {
   spinnerName = 'createProjectDialogSpinner';
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<CreateProjectDialogDataItem>,
     private fb: FormBuilder,
     private router: Router,
     private cd: ChangeDetectorRef,

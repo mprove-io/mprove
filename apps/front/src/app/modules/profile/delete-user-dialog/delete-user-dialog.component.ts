@@ -6,12 +6,19 @@ import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface DeleteUserDialogItem {
+  apiService: ApiService;
+}
+
 @Component({
   selector: 'm-delete-user-dialog',
   templateUrl: './delete-user-dialog.component.html'
 })
 export class DeleteUserDialogComponent {
-  constructor(public ref: DialogRef, private router: Router) {}
+  constructor(
+    public ref: DialogRef<DeleteUserDialogItem>,
+    private router: Router
+  ) {}
 
   delete() {
     this.ref.close();

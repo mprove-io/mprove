@@ -9,6 +9,10 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
+export interface CreateOrgDialogItem {
+  apiService: ApiService;
+}
+
 @Component({
   selector: 'm-create-org-dialog',
   templateUrl: './create-org-dialog.component.html'
@@ -17,7 +21,7 @@ export class CreateOrgDialogComponent implements OnInit {
   createOrgForm: FormGroup;
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<CreateOrgDialogItem>,
     private fb: FormBuilder,
     private navStore: NavStore,
     private router: Router

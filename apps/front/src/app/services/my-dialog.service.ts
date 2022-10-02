@@ -5,10 +5,19 @@ import { constants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
 import { BranchItem } from '../interfaces/_index';
 import { EmailConfirmedDialogComponent } from '../modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
-import { DashboardAddFilterDialogComponent } from '../modules/dashboard/dashboard-add-filter-dialog/dashboard-add-filter-dialog.component';
-import { DashboardAddReportDialogComponent } from '../modules/dashboard/dashboard-add-report-dialog/dashboard-add-report-dialog.component';
+import {
+  DashboardAddFilterDialogComponent,
+  DashboardAddFilterDialogDataItem
+} from '../modules/dashboard/dashboard-add-filter-dialog/dashboard-add-filter-dialog.component';
+import {
+  DashboardAddReportDialogComponent,
+  DashboardAddReportDialogDataItem
+} from '../modules/dashboard/dashboard-add-report-dialog/dashboard-add-report-dialog.component';
 import { DashboardEditListenersDialogComponent } from '../modules/dashboard/dashboard-edit-listeners-dialog/dashboard-edit-listeners-dialog.component';
-import { DashboardSaveAsDialogComponent } from '../modules/dashboard/dashboard-save-as-dialog/dashboard-save-as-dialog.component';
+import {
+  DashboardSaveAsDialogComponent,
+  DashboardSaveAsDialogDataItem
+} from '../modules/dashboard/dashboard-save-as-dialog/dashboard-save-as-dialog.component';
 import { DashboardsNewDialogComponent } from '../modules/dashboards/dashboards-new-dialog/dashboards-new-dialog.component';
 import { CommitDialogComponent } from '../modules/files/commit-dialog/commit-dialog.component';
 import { DeleteFileDialogComponent } from '../modules/files/files-tree/file-options/delete-file-dialog/delete-file-dialog.component';
@@ -17,22 +26,49 @@ import { CreateFileDialogComponent } from '../modules/files/files-tree/folder-op
 import { CreateFolderDialogComponent } from '../modules/files/files-tree/folder-options/create-folder-dialog/create-folder-dialog.component';
 import { DeleteFolderDialogComponent } from '../modules/files/files-tree/folder-options/delete-folder-dialog/delete-folder-dialog.component';
 import { RenameFolderDialogComponent } from '../modules/files/files-tree/folder-options/rename-folder-dialog/rename-folder-dialog.component';
-import { ChartSaveAsDialogComponent } from '../modules/model/chart-save-as-dialog/chart-save-as-dialog.component';
-import { ViewBlockmlDialogComponent } from '../modules/model/view-blockml-dialog/view-blockml-dialog.component';
-import { CreateBranchDialogComponent } from '../modules/navbar/branch-select/create-branch-dialog/create-branch-dialog.component';
+import {
+  ChartSaveAsDialogComponent,
+  ChartSaveAsDialogDataItem
+} from '../modules/model/chart-save-as-dialog/chart-save-as-dialog.component';
+import {
+  ViewBlockmlDialogComponent,
+  ViewBlockmlDialogDataItem
+} from '../modules/model/view-blockml-dialog/view-blockml-dialog.component';
+import {
+  CreateBranchDialogComponent,
+  CreateBranchDialogDataItem
+} from '../modules/navbar/branch-select/create-branch-dialog/create-branch-dialog.component';
 import { DeleteBranchDialogComponent } from '../modules/navbar/branch-select/delete-branch-dialog/delete-branch-dialog.component';
 import { MergeBranchDialogComponent } from '../modules/navbar/branch-select/merge-branch-dialog/merge-branch-dialog.component';
-import { CreateOrgDialogComponent } from '../modules/navbar/org-select/create-org-dialog/create-org-dialog.component';
-import { CreateProjectDialogComponent } from '../modules/navbar/project-select/create-project-dialog/create-project-dialog.component';
+import {
+  CreateOrgDialogComponent,
+  CreateOrgDialogItem as CreateOrgDialogDataItem
+} from '../modules/navbar/org-select/create-org-dialog/create-org-dialog.component';
+import {
+  CreateProjectDialogComponent,
+  CreateProjectDialogDataItem
+} from '../modules/navbar/project-select/create-project-dialog/create-project-dialog.component';
 import { DeleteOrgDialogComponent } from '../modules/org/org-account/delete-org-dialog/delete-org-dialog.component';
 import { EditCompanySizeDialogComponent } from '../modules/org/org-account/edit-company-size-dialog/edit-company-size-dialog.component';
 import { EditOrgNameDialogComponent } from '../modules/org/org-account/edit-org-name-dialog/edit-org-name-dialog.component';
 import { EditOrgOwnerDialogComponent } from '../modules/org/org-account/edit-org-owner-dialog/edit-org-owner-dialog.component';
 import { EditPhoneNumberDialogComponent } from '../modules/org/org-account/edit-phone-number-dialog/edit-phone-number-dialog.component';
-import { DeleteUserDialogComponent } from '../modules/profile/delete-user-dialog/delete-user-dialog.component';
-import { EditNameDialogComponent } from '../modules/profile/edit-name-dialog/edit-name-dialog.component';
-import { EditPhotoDialogComponent } from '../modules/profile/edit-photo-dialog/edit-photo-dialog.component';
-import { EditTimezoneDialogComponent } from '../modules/profile/edit-timezone-dialog/edit-timezone-dialog.component';
+import {
+  DeleteUserDialogComponent,
+  DeleteUserDialogItem as DeleteUserDialogDataItem
+} from '../modules/profile/delete-user-dialog/delete-user-dialog.component';
+import {
+  EditNameDialogComponent,
+  EditNameDialogItem as EditNameDialogDataItem
+} from '../modules/profile/edit-name-dialog/edit-name-dialog.component';
+import {
+  EditPhotoDialogComponent,
+  EditPhotoDialogItem as EditPhotoDialogDataItem
+} from '../modules/profile/edit-photo-dialog/edit-photo-dialog.component';
+import {
+  EditTimezoneDialogComponent,
+  EditTimezoneDialogItem as EditTimezoneDialogDataItem
+} from '../modules/profile/edit-timezone-dialog/edit-timezone-dialog.component';
 import { AddConnectionDialogComponent } from '../modules/project/project-connections/add-connection-dialog/add-connection-dialog.component';
 import {
   DeleteConnectionDialogComponent,
@@ -68,14 +104,19 @@ import { AddEnvDialogComponent } from '../modules/project/project-team/add-env-d
 import { AddRoleDialogComponent } from '../modules/project/project-team/add-role-dialog/add-role-dialog.component';
 import { InviteMemberDialogComponent } from '../modules/project/project-team/invite-member-dialog/invite-member-dialog.component';
 import { RemoveMemberDialogComponent } from '../modules/project/project-team/remove-member-dialog/remove-member-dialog.component';
-import { ChartDialogComponent } from '../modules/shared/chart-dialog/chart-dialog.component';
+import {
+  ChartDialogComponent,
+  ChartDialogDataItem
+} from '../modules/shared/chart-dialog/chart-dialog.component';
 import { DeleteVizDialogComponent } from '../modules/shared/chart-viz/delete-viz-dialog/delete-viz-dialog.component';
 import { EditVizInfoDialogComponent } from '../modules/shared/chart-viz/edit-viz-info-dialog/edit-viz-info-dialog.component';
 import { DeleteDashboardDialogComponent } from '../modules/shared/delete-dashboard-dialog/delete-dashboard-dialog.component';
-import { PhotoDialogComponent } from '../modules/shared/photo-dialog/photo-dialog.component';
+import {
+  PhotoDialogComponent,
+  PhotoDialogDataItem
+} from '../modules/shared/photo-dialog/photo-dialog.component';
 import { ErrorDialogComponent } from '../modules/special/error-dialog/error-dialog.component';
 import { NewVizDialogComponent } from '../modules/visualizations/new-viz-dialog/new-viz-dialog.component';
-import { RData } from './query.service';
 
 @Injectable({ providedIn: 'root' })
 export class MyDialogService {
@@ -105,11 +146,7 @@ export class MyDialogService {
     });
   }
 
-  showPhoto(item: {
-    apiService: any;
-    avatarBig: string;
-    initials: string;
-  }): void {
+  showPhoto(item: PhotoDialogDataItem): void {
     this.dialogService.open(PhotoDialogComponent, {
       enableClose: false,
       closeButton: true,
@@ -117,7 +154,7 @@ export class MyDialogService {
     });
   }
 
-  showEditPhoto(item: { apiService: any }): void {
+  showEditPhoto(item: EditPhotoDialogDataItem): void {
     this.dialogService.open(EditPhotoDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -125,7 +162,7 @@ export class MyDialogService {
     });
   }
 
-  showEditName(item: { apiService: any }): void {
+  showEditName(item: EditNameDialogDataItem): void {
     this.dialogService.open(EditNameDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -133,7 +170,7 @@ export class MyDialogService {
     });
   }
 
-  showEditTimezone(item: { apiService: any }): void {
+  showEditTimezone(item: EditTimezoneDialogDataItem): void {
     this.dialogService.open(EditTimezoneDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -141,7 +178,7 @@ export class MyDialogService {
     });
   }
 
-  showDeleteUser(item: { apiService: any }): void {
+  showDeleteUser(item: DeleteUserDialogDataItem): void {
     this.dialogService.open(DeleteUserDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -149,7 +186,7 @@ export class MyDialogService {
     });
   }
 
-  showCreateOrg(item: { apiService: any }): void {
+  showCreateOrg(item: CreateOrgDialogDataItem): void {
     this.dialogService.open(CreateOrgDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -157,7 +194,7 @@ export class MyDialogService {
     });
   }
 
-  showCreateProject(item: { apiService: any; orgId: string }): void {
+  showCreateProject(item: CreateProjectDialogDataItem): void {
     this.dialogService.open(CreateProjectDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -166,14 +203,7 @@ export class MyDialogService {
     });
   }
 
-  showCreateBranch(item: {
-    apiService: any;
-    orgId: string;
-    projectId: string;
-    branchesList: BranchItem[];
-    selectedBranchItem: BranchItem;
-    selectedBranchExtraId: string;
-  }): void {
+  showCreateBranch(item: CreateBranchDialogDataItem): void {
     this.dialogService.open(CreateBranchDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -181,7 +211,7 @@ export class MyDialogService {
     });
   }
 
-  showViewBlockml(item: { apiService: any; mconfig: common.MconfigX }): void {
+  showViewBlockml(item: ViewBlockmlDialogDataItem): void {
     this.dialogService.open(ViewBlockmlDialogComponent, {
       enableClose: false,
       closeButton: true,
@@ -190,18 +220,7 @@ export class MyDialogService {
     });
   }
 
-  showChart(item: {
-    apiService: any;
-    mconfig: common.MconfigX;
-    query: common.Query;
-    qData: RData[];
-    canAccessModel: boolean;
-    showNav: boolean;
-    isSelectValid: boolean;
-    vizId: string;
-    dashboardId: string;
-    updateQueryFn?: any;
-  }): void {
+  showChart(item: ChartDialogDataItem): void {
     this.dialogService.open(ChartDialogComponent, {
       enableClose: false,
       closeButton: true,
@@ -211,12 +230,7 @@ export class MyDialogService {
     });
   }
 
-  showChartSaveAs(item: {
-    apiService: any;
-    mconfig: common.MconfigX;
-    query: common.Query;
-    model: common.Model;
-  }): void {
+  showChartSaveAs(item: ChartSaveAsDialogDataItem): void {
     this.dialogService.open(ChartSaveAsDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -225,10 +239,7 @@ export class MyDialogService {
     });
   }
 
-  showDashboardSaveAs(item: {
-    apiService: any;
-    dashboard: common.Dashboard;
-  }): void {
+  showDashboardSaveAs(item: DashboardSaveAsDialogDataItem): void {
     this.dialogService.open(DashboardSaveAsDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -237,10 +248,7 @@ export class MyDialogService {
     });
   }
 
-  showDashboardAddReport(item: {
-    apiService: any;
-    dashboard: common.Dashboard;
-  }): void {
+  showDashboardAddReport(item: DashboardAddReportDialogDataItem): void {
     this.dialogService.open(DashboardAddReportDialogComponent, {
       enableClose: false,
       closeButton: true,
@@ -249,10 +257,7 @@ export class MyDialogService {
     });
   }
 
-  showDashboardAddFilter(item: {
-    dashboardService: any;
-    dashboard: common.Dashboard;
-  }): void {
+  showDashboardAddFilter(item: DashboardAddFilterDialogDataItem): void {
     this.dialogService.open(DashboardAddFilterDialogComponent, {
       enableClose: false,
       closeButton: false,

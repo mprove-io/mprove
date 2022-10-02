@@ -97,7 +97,6 @@ export class ProfileComponent implements OnInit {
       .subscribe();
 
     this.myDialogService.showPhoto({
-      apiService: this.apiService,
       avatarBig: avatarBig,
       initials: initials
     });

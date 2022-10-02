@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { BranchItem } from '~front/app/interfaces/branch-item';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -11,6 +12,15 @@ import { UserState } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
+
+export interface CreateBranchDialogDataItem {
+  apiService: ApiService;
+  orgId: string;
+  projectId: string;
+  branchesList: BranchItem[];
+  selectedBranchItem: BranchItem;
+  selectedBranchExtraId: string;
+}
 
 @Component({
   selector: 'm-create-branch-dialog',
@@ -62,7 +72,7 @@ export class CreateBranchDialogComponent implements OnInit {
   isTargetProd = false;
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<CreateBranchDialogDataItem>,
     private fb: FormBuilder,
     private router: Router,
     private userQuery: UserQuery,

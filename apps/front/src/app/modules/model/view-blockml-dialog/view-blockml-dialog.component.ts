@@ -5,6 +5,10 @@ import { StructQuery } from '~front/app/queries/struct.query';
 import { StructState } from '~front/app/stores/struct.store';
 import { common } from '~front/barrels/common';
 
+export interface ViewBlockmlDialogDataItem {
+  mconfig: common.MconfigX;
+}
+
 @Component({
   selector: 'm-view-blockml-dialog',
   templateUrl: './view-blockml-dialog.component.html'
@@ -25,7 +29,10 @@ export class ViewBlockmlDialogComponent implements OnInit {
 
   reportYaml: string;
 
-  constructor(public ref: DialogRef, private structQuery: StructQuery) {}
+  constructor(
+    public ref: DialogRef<ViewBlockmlDialogDataItem>,
+    private structQuery: StructQuery
+  ) {}
 
   ngOnInit() {
     let struct: StructState;

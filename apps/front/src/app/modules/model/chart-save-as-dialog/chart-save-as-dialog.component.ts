@@ -28,6 +28,13 @@ enum ReportSaveAsEnum {
   REPLACE_EXISTING_REPORT = 'REPLACE_EXISTING_REPORT'
 }
 
+export interface ChartSaveAsDialogDataItem {
+  apiService: ApiService;
+  mconfig: common.MconfigX;
+  query: common.Query;
+  model: common.Model;
+}
+
 @Component({
   selector: 'm-chart-save-as-dialog',
   templateUrl: './chart-save-as-dialog.component.html'
@@ -85,7 +92,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
   );
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<ChartSaveAsDialogDataItem>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
     private navigateService: NavigateService,
@@ -328,7 +335,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       timezone: this.ref.data.mconfig.timezone,
       listen: {},
       queryId: this.ref.data.mconfig.queryId,
-      hasAccessToModel: this.ref.data.model.hasAccess,
+      hasAccessToModel: true,
       title: newTitle.trim(),
       tileWidth: common.REPORT_DEFAULT_TILE_WIDTH,
       tileHeight: common.REPORT_DEFAULT_TILE_HEIGHT,

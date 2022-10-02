@@ -8,6 +8,10 @@ import { UserStore } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface EditNameDialogItem {
+  apiService: ApiService;
+}
+
 @Component({
   selector: 'm-edit-name-dialog',
   templateUrl: './edit-name-dialog.component.html'
@@ -16,7 +20,7 @@ export class EditNameDialogComponent implements OnInit {
   editNameForm: FormGroup;
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<EditNameDialogItem>,
     private fb: FormBuilder,
     private userStore: UserStore,
     private userQuery: UserQuery

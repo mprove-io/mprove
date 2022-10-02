@@ -9,6 +9,11 @@ import { NavState } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface DashboardAddReportDialogDataItem {
+  apiService: ApiService;
+  dashboard: common.Dashboard;
+}
+
 @Component({
   selector: 'm-dashboard-add-report-dialog',
   templateUrl: './dashboard-add-report-dialog.component.html'
@@ -19,7 +24,7 @@ export class DashboardAddReportDialogComponent implements OnInit {
   models: common.Model[];
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<DashboardAddReportDialogDataItem>,
     private navQuery: NavQuery,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
