@@ -30,7 +30,7 @@ export class AddEvDialogComponent implements OnInit {
 
   ngOnInit() {
     this.addEvForm = this.fb.group({
-      evId: [undefined, [Validators.required, Validators.maxLength(255)]],
+      evId: [undefined, [Validators.required, Validators.maxLength(128)]],
       val: [undefined, [Validators.required, Validators.maxLength(255)]]
     });
   }

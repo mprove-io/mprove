@@ -547,7 +547,8 @@ export class MyDialogService {
     this.dialogService.open(AddEvDialogComponent, {
       enableClose: true,
       closeButton: false,
-      data: item
+      data: item,
+      width: 800
     });
   }
 

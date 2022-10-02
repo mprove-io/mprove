@@ -44,9 +44,13 @@
 
           <tbody class="divide-y divide-gray-300 text-base">
             <tr *ngFor="let ev of evs; let i = index" class="h-16">
-              <td class="w-32">{{ ev.evId }}</td>
+              <td class="w-[700px]">
+                <div class="w-[700px] truncate">{{ ev.evId }}</div>
+              </td>
 
-              <td class="w-32">{{ ev.value }}</td>
+              <td class="w-[700px]">
+                <div class="w-[700px] truncate">{{ ev.val }}</div>
+              </td>
 
               <td class="w-32">
                 <div
@@ -57,7 +61,7 @@
                   <button
                     data-cy="projectEvsEditButton"
                     (click)="editVariable(ev, i)"
-                    class="rounded border py-2 px-3 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                    class="ml-5 rounded border py-2 px-3 text-base font-medium leading-3 shadow-sm focus:outline-none"
                     [ngClass]="{
                       'cursor-default text-gray-400': isEditor === false,
                       'border-gray3 text-gray1': isEditor === true

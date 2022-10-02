@@ -11,5 +11,5 @@ export class Ev {
   evId: string;
 
   @IsString()
-  value: string;
+  val: string;
 }

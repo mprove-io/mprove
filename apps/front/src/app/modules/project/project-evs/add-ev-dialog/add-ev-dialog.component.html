@@ -5,7 +5,11 @@
     >Add Variable</div
   >
 
-  <form class="flex w-80 flex-col" [formGroup]="addEvForm" (ngSubmit)="add()">
+  <form
+    class="flex w-[700px] flex-col"
+    [formGroup]="addEvForm"
+    (ngSubmit)="add()"
+  >
     <input
       spellcheck="false"
       data-cy="addEvDialogEvIdInput"
