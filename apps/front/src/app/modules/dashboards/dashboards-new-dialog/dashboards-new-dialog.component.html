@@ -1,7 +1,7 @@
 <div class="flex flex-col bg-white p-9">
   <div
-    data-cy="createBranchDialogTitle"
-    class="mt-5 mb-9 flex-grow text-left text-2xl font-semibold text-gray2"
+    data-cy="dashboardsCreateDialogTitle"
+    class="text-gray2 mt-5 mb-9 flex-grow text-left text-2xl font-semibold"
     >New Dashboard</div
   >
 
@@ -11,7 +11,7 @@
 
   <div class="mt-9 flex flex-row items-start">
     <div class="flex flex-col">
-      <div class="flex h-9 w-32 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
         >Title</div
       >
     </div>
@@ -20,7 +20,7 @@
       <input
         spellcheck="false"
         data-cy="dashboardsCreateDialogTitleInput"
-        class="form-input h-9 w-96 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-96 rounded"
         [ngClass]="{
           'border-red-600':
             titleForm.controls['title'].invalid &&
@@ -34,7 +34,7 @@
 
   <div class="flex flex-row items-start">
     <div class="flex flex-col">
-      <div class="flex h-9 w-32 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
         >Access Roles</div
       >
     </div>
@@ -43,7 +43,7 @@
       <input
         spellcheck="false"
         data-cy="dashboardsCreateDialogRolesInput"
-        class="form-input h-9 w-96 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-96 rounded"
         [ngClass]="{
           'border-red-600':
             rolesForm.controls['roles'].invalid &&
@@ -57,7 +57,7 @@
 
   <div class="flex flex-row items-start">
     <div class="flex flex-col">
-      <div class="flex h-9 w-32 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
         >Access Users</div
       >
     </div>
@@ -66,7 +66,7 @@
       <input
         spellcheck="false"
         data-cy="dashboardsCreateDialogUsersInput"
-        class="form-input h-9 w-96 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-96 rounded"
         [ngClass]="{
           'border-red-600':
             usersForm.controls['users'].invalid &&
@@ -81,7 +81,7 @@
   <div class="mt-9">
     <button
       data-cy="createBranchDialogCreateButton"
-      class="w-28 rounded bg-blue3 py-3 text-base font-medium text-white focus:outline-none"
+      class="bg-blue3 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
       type="button"
       (click)="create()"
       >Create</button
@@ -89,7 +89,7 @@
 
     <button
       data-cy="createBranchDialogCancelButton"
-      class="ml-3 w-28 rounded border border-blue3 py-3 text-base font-medium text-blue3 focus:outline-none"
+      class="border-blue3 text-blue3 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
       type="button"
       (click)="cancel()"
       >Cancel</button

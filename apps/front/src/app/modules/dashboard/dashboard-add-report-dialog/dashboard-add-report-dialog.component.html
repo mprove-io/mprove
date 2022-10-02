@@ -1,15 +1,15 @@
 <div class="flex max-h-[500px] flex-col bg-white p-9">
   <div
-    data-cy="deleteUserDialogTitle"
-    class="mt-5 flex-grow text-left text-2xl font-semibold text-gray2"
+    data-cy="addReportDialogTitle"
+    class="text-gray2 mt-5 flex-grow text-left text-2xl font-semibold"
     >Add Report</div
   >
 
-  <div class="mt-9 text-lg text-gray1"
+  <div class="text-gray1 mt-9 text-lg"
     >Go to the Model page, build a chart and click "Save As"</div
   >
 
-  <div class="mt-9 mb-3 text-lg font-semibold text-gray2">Models:</div>
+  <div class="text-gray2 mt-9 mb-3 text-lg font-semibold">Models:</div>
 
   <div class="relative flex h-9 w-9 flex-shrink-0" *ngIf="!models">
     <ngx-spinner
@@ -27,7 +27,7 @@
 
   <div class="overflow-y-auto" *ngIf="!!models">
     <div
-      class="rounded py-3 pl-5 text-base text-gray1 hover:cursor-pointer hover:bg-blue2"
+      class="text-gray1 hover:bg-blue2 rounded py-3 pl-5 text-base hover:cursor-pointer"
       *ngFor="let model of models"
       (click)="navToModel(model.modelId)"
     >
