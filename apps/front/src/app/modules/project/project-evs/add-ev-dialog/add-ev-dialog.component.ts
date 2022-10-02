@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
+import { ValidationService } from '~front/app/services/validation.service';
 import { EvsState, EvsStore } from '~front/app/stores/evs.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -30,7 +31,14 @@ export class AddEvDialogComponent implements OnInit {
 
   ngOnInit() {
     this.addEvForm = this.fb.group({
-      evId: [undefined, [Validators.required, Validators.maxLength(128)]],
+      evId: [
+        undefined,
+        [
+          Validators.required,
+          ValidationService.envVariableNameWrongChars,
+          Validators.maxLength(128)
+        ]
+      ],
       val: [undefined, [Validators.required, Validators.maxLength(255)]]
     });
   }

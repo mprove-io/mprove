@@ -149,6 +149,9 @@ export class MyRegex {
   static CAPTURE_NOT_ALLOWED_VIEW_REF_CHARS_G(): RegExp {
     return cloneRegexp(/([^a-z0-9_])/g);
   }
+  static CAPTURE_NOT_ALLOWED_ENV_VAR_CHARS_G(): RegExp {
+    return cloneRegexp(/([^A-Z0-9_])/g);
+  }
   static CAPTURE_NOT_ALLOWED_ALIAS_CHARS_G(): RegExp {
     return cloneRegexp(/([^a-z0-9_])/g);
   }

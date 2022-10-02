@@ -32,6 +32,7 @@ export class ValidationService {
       ['wrongFormatNumber', 'Wrong format number'],
       ['titleIsNotUnique', 'Report title must be unique for dashboard'],
       ['fileNameWrongChars', 'Use only "a...z0...9_" chars'],
+      ['envVariableNameWrongChars', 'Use only "A...Z0...9_" chars'],
       [
         'labelIsNotUnique',
         'Filter label must be unique for filter labels and Ids'
@@ -131,6 +132,27 @@ export class ValidationService {
       return null;
     } else {
       return { fileNameWrongChars: true };
+    }
+  }
+
+  static envVariableNameWrongChars(control: FormControl) {
+    if (common.isUndefined(control.value) || control.value === '') {
+      return null;
+    }
+
+    let wrongChars: string[] = [];
+
+    let reg2 = common.MyRegex.CAPTURE_NOT_ALLOWED_ENV_VAR_CHARS_G();
+    let r2;
+
+    while ((r2 = reg2.exec(control.value.toString()))) {
+      wrongChars.push(r2[1]);
+    }
+
+    if (wrongChars.length === 0) {
+      return null;
+    } else {
+      return { envVariableNameWrongChars: true };
     }
   }
 
