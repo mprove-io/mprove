@@ -9,7 +9,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
 export interface AddEvDialogDataItem {
-  apiService: any;
+  apiService: ApiService;
   projectId: string;
   envId: string;
 }
@@ -24,7 +24,7 @@ export class AddEvDialogComponent implements OnInit {
   addEvForm: FormGroup;
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<AddEvDialogDataItem>,
     private fb: FormBuilder,
     private evsStore: EvsStore
   ) {}

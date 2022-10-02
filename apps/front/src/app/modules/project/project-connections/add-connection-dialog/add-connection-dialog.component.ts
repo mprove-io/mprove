@@ -12,6 +12,11 @@ import {
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface AddConnectionDialogDataItem {
+  apiService: ApiService;
+  projectId: string;
+}
+
 @Component({
   selector: 'm-add-connection-dialog',
   templateUrl: './add-connection-dialog.component.html'
@@ -38,7 +43,7 @@ export class AddConnectionDialogComponent implements OnInit {
   typePostgreSQL = common.ConnectionTypeEnum.PostgreSQL;
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<AddConnectionDialogDataItem>,
     private fb: FormBuilder,
     private connectionsStore: ConnectionsStore
   ) {}

@@ -1,6 +1,11 @@
 import { Component } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { NavigateService } from '~front/app/services/navigate.service';
+import { common } from '~front/barrels/common';
+
+export interface NewVizDialogDataItem {
+  models: common.ModelX[];
+}
 
 @Component({
   selector: 'm-new-viz-dialog',
@@ -8,7 +13,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 })
 export class NewVizDialogComponent {
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<NewVizDialogDataItem>,
     private navigateService: NavigateService
   ) {}
 

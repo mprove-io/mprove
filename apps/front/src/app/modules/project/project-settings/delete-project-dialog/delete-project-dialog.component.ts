@@ -9,13 +9,19 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
+export interface DeleteProjectDialogDataItem {
+  apiService: ApiService;
+  projectId: string;
+  projectName: string;
+}
+
 @Component({
   selector: 'm-delete-project-dialog',
   templateUrl: './delete-project-dialog.component.html'
 })
 export class DeleteProjectDialogComponent {
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<DeleteProjectDialogDataItem>,
     private router: Router,
     private projectStore: ProjectStore,
     private navStore: NavStore

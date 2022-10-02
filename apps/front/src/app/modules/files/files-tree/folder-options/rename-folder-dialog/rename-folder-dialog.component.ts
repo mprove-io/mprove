@@ -10,6 +10,15 @@ import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface RenameFolderDialogDataItem {
+  apiService: ApiService;
+  projectId: string;
+  branchId: string;
+  envId: string;
+  nodeId: string;
+  folderName: string;
+}
+
 @Component({
   selector: 'm-rename-folder-dialog',
   templateUrl: './rename-folder-dialog.component.html'
@@ -18,7 +27,7 @@ export class RenameFolderDialogComponent implements OnInit {
   renameFolderForm: FormGroup;
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<RenameFolderDialogDataItem>,
     private fb: FormBuilder,
     private navigateService: NavigateService,
     private repoStore: RepoStore,

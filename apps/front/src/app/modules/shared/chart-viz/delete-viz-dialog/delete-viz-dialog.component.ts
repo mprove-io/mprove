@@ -6,12 +6,25 @@ import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface DeleteVizDialogDataItem {
+  apiService: ApiService;
+  vizDeletedFnBindThis: any;
+  viz: common.Viz;
+  projectId: string;
+  branchId: string;
+  envId: string;
+  isRepoProd: boolean;
+}
+
 @Component({
   selector: 'm-delete-viz-dialog',
   templateUrl: './delete-viz-dialog.component.html'
 })
 export class DeleteVizDialogComponent {
-  constructor(public ref: DialogRef, private router: Router) {}
+  constructor(
+    public ref: DialogRef<DeleteVizDialogDataItem>,
+    private router: Router
+  ) {}
 
   delete() {
     this.ref.close();

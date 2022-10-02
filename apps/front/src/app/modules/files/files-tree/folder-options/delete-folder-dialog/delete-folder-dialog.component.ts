@@ -9,13 +9,22 @@ import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface DeleteFolderDialogDataItem {
+  apiService: ApiService;
+  projectId: string;
+  branchId: string;
+  envId: string;
+  folderNodeId: string;
+  folderName: string;
+}
+
 @Component({
   selector: 'm-delete-folder-dialog',
   templateUrl: './delete-folder-dialog.component.html'
 })
 export class DeleteFolderDialogComponent {
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<DeleteFolderDialogDataItem>,
     private repoStore: RepoStore,
     private navigateService: NavigateService,
     private navStore: NavStore,

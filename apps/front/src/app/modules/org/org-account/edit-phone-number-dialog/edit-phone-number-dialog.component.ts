@@ -7,6 +7,12 @@ import { OrgStore } from '~front/app/stores/org.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface EditPhoneNumberDialogDataItem {
+  apiService: ApiService;
+  orgId: string;
+  contactPhone: string;
+}
+
 @Component({
   selector: 'm-edit-phone-number-dialog',
   templateUrl: './edit-phone-number-dialog.component.html'
@@ -17,7 +23,7 @@ export class EditPhoneNumberDialogComponent implements OnInit {
   orgId: string;
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<EditPhoneNumberDialogDataItem>,
     private fb: FormBuilder,
     private orgStore: OrgStore
   ) {}

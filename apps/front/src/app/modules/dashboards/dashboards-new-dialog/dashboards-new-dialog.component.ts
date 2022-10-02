@@ -10,6 +10,10 @@ import { NavState } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface DashboardsNewDialogDataItem {
+  apiService: ApiService;
+}
+
 @Component({
   selector: 'm-dashboards-new-dialog',
   templateUrl: './dashboards-new-dialog.component.html'
@@ -48,7 +52,7 @@ export class DashboardsNewDialogComponent {
   );
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<DashboardsNewDialogDataItem>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
     private navigateService: NavigateService,

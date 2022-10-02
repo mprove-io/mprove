@@ -6,12 +6,25 @@ import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface DeleteDashboardDialogDataItem {
+  apiService: ApiService;
+  dashboardDeletedFnBindThis: any;
+  dashboard: common.Dashboard;
+  projectId: string;
+  branchId: string;
+  envId: string;
+  isRepoProd: boolean;
+}
+
 @Component({
   selector: 'm-delete-dashboard-dialog',
   templateUrl: './delete-dashboard-dialog.component.html'
 })
 export class DeleteDashboardDialogComponent {
-  constructor(public ref: DialogRef, private router: Router) {}
+  constructor(
+    public ref: DialogRef<DeleteDashboardDialogDataItem>,
+    private router: Router
+  ) {}
 
   delete() {
     this.ref.close();

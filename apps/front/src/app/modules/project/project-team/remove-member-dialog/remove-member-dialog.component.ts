@@ -6,12 +6,22 @@ import { TeamState, TeamStore } from '~front/app/stores/team.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface RemoveMemberDialogDataItem {
+  apiService: ApiService;
+  projectId: string;
+  memberId: string;
+  email: string;
+}
+
 @Component({
   selector: 'm-remove-member-dialog',
   templateUrl: './remove-member-dialog.component.html'
 })
 export class RemoveMemberDialogComponent {
-  constructor(public ref: DialogRef, private teamStore: TeamStore) {}
+  constructor(
+    public ref: DialogRef<RemoveMemberDialogDataItem>,
+    private teamStore: TeamStore
+  ) {}
 
   remove() {
     this.ref.close();

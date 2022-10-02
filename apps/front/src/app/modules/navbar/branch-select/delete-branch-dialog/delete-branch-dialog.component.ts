@@ -6,6 +6,17 @@ import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface DeleteBranchDialogDataItem {
+  apiService: ApiService;
+  orgId: string;
+  projectId: string;
+  branchId: string;
+  envId: string;
+  defaultBranch: string;
+  isRepoProd: boolean;
+  alias: string;
+}
+
 @Component({
   selector: 'm-delete-branch-dialog',
   templateUrl: './delete-branch-dialog.component.html'
@@ -16,7 +27,10 @@ export class DeleteBranchDialogComponent {
       ? common.PROD_REPO_ID
       : this.ref.data.alias;
 
-  constructor(public ref: DialogRef, private router: Router) {}
+  constructor(
+    public ref: DialogRef<DeleteBranchDialogDataItem>,
+    private router: Router
+  ) {}
 
   delete() {
     this.ref.close();

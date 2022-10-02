@@ -9,6 +9,14 @@ import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface CreateFolderDialogDataItem {
+  apiService: ApiService;
+  projectId: string;
+  branchId: string;
+  envId: string;
+  parentNodeId: string;
+}
+
 @Component({
   selector: 'm-create-folder-dialog',
   templateUrl: './create-folder-dialog.component.html'
@@ -17,7 +25,7 @@ export class CreateFolderDialogComponent implements OnInit {
   createFolderForm: FormGroup;
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<CreateFolderDialogDataItem>,
     private fb: FormBuilder,
     public structStore: StructStore,
     private repoStore: RepoStore,

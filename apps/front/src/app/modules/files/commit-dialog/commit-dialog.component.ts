@@ -8,6 +8,13 @@ import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface CommitDialogDialogDataItem {
+  apiService: ApiService;
+  projectId: string;
+  isRepoProd: boolean;
+  branchId: string;
+}
+
 @Component({
   selector: 'm-commit-dialog',
   templateUrl: './commit-dialog.component.html'
@@ -16,7 +23,7 @@ export class CommitDialogComponent implements OnInit {
   commitForm: FormGroup;
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<CommitDialogDialogDataItem>,
     private fb: FormBuilder,
     public repoStore: RepoStore,
     public structStore: StructStore

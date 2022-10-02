@@ -20,6 +20,12 @@ export class DashboardX2 extends common.DashboardX {
   reports: ReportX2[];
 }
 
+export interface DashboardEditListenersDialogDataItem {
+  dashboardService: DashboardService;
+  apiService: ApiService;
+  dashboard: common.Dashboard;
+}
+
 @Component({
   selector: 'm-dashboard-edit-listeners-dialog',
   templateUrl: './dashboard-edit-listeners-dialog.component.html'
@@ -40,7 +46,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
   );
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<DashboardEditListenersDialogDataItem>,
     private fb: FormBuilder,
     private navQuery: NavQuery,
     private spinner: NgxSpinnerService,

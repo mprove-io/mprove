@@ -7,6 +7,11 @@ import { TeamState, TeamStore } from '~front/app/stores/team.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface InviteMemberDialogDataItem {
+  apiService: ApiService;
+  projectId: string;
+}
+
 @Component({
   selector: 'm-invite-member-dialog',
   templateUrl: './invite-member-dialog.component.html'
@@ -15,17 +20,14 @@ export class InviteMemberDialogComponent implements OnInit {
   inviteMemberForm: FormGroup;
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<InviteMemberDialogDataItem>,
     private fb: FormBuilder,
     private teamStore: TeamStore
   ) {}
 
   ngOnInit() {
     this.inviteMemberForm = this.fb.group({
-      email: [
-        this.ref.data.email,
-        [Validators.email, Validators.maxLength(255)]
-      ]
+      email: [undefined, [Validators.email, Validators.maxLength(255)]]
     });
   }
 

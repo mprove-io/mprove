@@ -12,6 +12,15 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
+export interface RenameFileDialogDataItem {
+  apiService: ApiService;
+  projectId: string;
+  branchId: string;
+  envId: string;
+  nodeId: string;
+  fileName: string;
+}
+
 @Component({
   selector: 'm-rename-file-dialog',
   templateUrl: './rename-file-dialog.component.html'
@@ -24,7 +33,7 @@ export class RenameFileDialogComponent implements OnInit {
   fileExt = common.FileExtensionEnum.View;
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<RenameFileDialogDataItem>,
     private fb: FormBuilder,
     private repoStore: RepoStore,
     private navStore: NavStore,

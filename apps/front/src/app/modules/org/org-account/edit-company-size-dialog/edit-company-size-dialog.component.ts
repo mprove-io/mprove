@@ -6,6 +6,12 @@ import { OrgStore } from '~front/app/stores/org.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface EditCompanySizeDialogDataItem {
+  apiService: ApiService;
+  orgId: string;
+  companySize: any;
+}
+
 @Component({
   selector: 'm-edit-company-size-dialog',
   templateUrl: './edit-company-size-dialog.component.html'
@@ -21,7 +27,10 @@ export class EditCompanySizeDialogComponent implements OnInit {
     common.CompanySizeEnum.MoreThanFiveHundred
   ];
 
-  constructor(public ref: DialogRef, private orgStore: OrgStore) {}
+  constructor(
+    public ref: DialogRef<EditCompanySizeDialogDataItem>,
+    private orgStore: OrgStore
+  ) {}
 
   ngOnInit() {
     this.size = this.ref.data.companySize;

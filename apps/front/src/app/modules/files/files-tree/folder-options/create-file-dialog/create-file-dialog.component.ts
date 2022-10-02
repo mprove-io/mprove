@@ -12,6 +12,14 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
+export interface CreateFileDialogDataItem {
+  apiService: ApiService;
+  projectId: string;
+  branchId: string;
+  envId: string;
+  parentNodeId: string;
+}
+
 @Component({
   selector: 'm-create-file-dialog',
   templateUrl: './create-file-dialog.component.html'
@@ -24,7 +32,7 @@ export class CreateFileDialogComponent implements OnInit {
   fileExt = common.FileExtensionEnum.View;
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<CreateFileDialogDataItem>,
     private fb: FormBuilder,
     private repoStore: RepoStore,
     public structStore: StructStore,

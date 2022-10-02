@@ -8,7 +8,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
 export interface EditEvDialogDataItem {
-  apiService: any;
+  apiService: ApiService;
   ev: common.Ev;
   i: number;
 }
@@ -23,7 +23,7 @@ export class EditEvDialogComponent implements OnInit {
   editEvForm: FormGroup;
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<EditEvDialogDataItem>,
     private fb: FormBuilder,
     private evsStore: EvsStore
   ) {}

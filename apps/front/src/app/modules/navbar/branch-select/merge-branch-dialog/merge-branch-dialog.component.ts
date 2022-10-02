@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { BranchItem } from '~front/app/interfaces/branch-item';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -11,6 +12,17 @@ import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
+
+export interface MergeBranchDialogDataItem {
+  apiService: ApiService;
+  fileService: FileService;
+  projectId: string;
+  fileId: string;
+  currentBranchId: string;
+  currentBranchExtraName: string;
+  envId: string;
+  branchesList: BranchItem[];
+}
 
 @Component({
   selector: 'm-merge-branch-dialog',
@@ -26,7 +38,7 @@ export class MergeBranchDialogComponent implements OnInit {
   selectedBranchItem: interfaces.BranchItem = undefined;
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<MergeBranchDialogDataItem>,
     private fb: FormBuilder,
     private repoStore: RepoStore,
     private navigateService: NavigateService,

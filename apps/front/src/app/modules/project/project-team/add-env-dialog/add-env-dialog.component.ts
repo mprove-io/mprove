@@ -7,6 +7,12 @@ import { TeamState, TeamStore } from '~front/app/stores/team.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface AddEnvDialogDataItem {
+  apiService: ApiService;
+  member: common.Member;
+  i: number;
+}
+
 @Component({
   selector: 'm-add-env-dialog',
   templateUrl: './add-env-dialog.component.html'
@@ -23,7 +29,7 @@ export class AddEnvDialogComponent implements OnInit {
   projectId: string;
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<AddEnvDialogDataItem>,
     private fb: FormBuilder,
     private teamStore: TeamStore
   ) {}

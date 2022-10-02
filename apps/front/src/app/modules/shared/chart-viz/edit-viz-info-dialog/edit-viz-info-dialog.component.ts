@@ -10,6 +10,16 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface EditVizInfoDialogDataItem {
+  apiService: ApiService;
+  projectId: string;
+  isRepoProd: boolean;
+  branchId: string;
+  envId: string;
+  mconfig: common.MconfigX;
+  viz: common.Viz;
+}
+
 @Component({
   selector: 'm-edit-viz-info-dialog',
   templateUrl: './edit-viz-info-dialog.component.html'
@@ -36,7 +46,7 @@ export class EditVizInfoDialogComponent implements OnInit {
   );
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<EditVizInfoDialogDataItem>,
     private fb: FormBuilder,
     private router: Router,
     private userQuery: UserQuery,

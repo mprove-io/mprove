@@ -9,13 +9,19 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
+export interface DeleteOrgDialogDataItem {
+  apiService: ApiService;
+  orgId: string;
+  orgName: string;
+}
+
 @Component({
   selector: 'm-delete-org-dialog',
   templateUrl: './delete-org-dialog.component.html'
 })
 export class DeleteOrgDialogComponent {
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<DeleteOrgDialogDataItem>,
     private router: Router,
     private orgStore: OrgStore,
     private navStore: NavStore

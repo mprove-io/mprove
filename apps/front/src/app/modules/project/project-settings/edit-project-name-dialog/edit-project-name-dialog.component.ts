@@ -8,6 +8,12 @@ import { ProjectStore } from '~front/app/stores/project.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+export interface EditProjectNameDialogDataItem {
+  apiService: ApiService;
+  projectId: string;
+  projectName: string;
+}
+
 @Component({
   selector: 'm-edit-project-name-dialog',
   templateUrl: './edit-project-name-dialog.component.html'
@@ -18,7 +24,7 @@ export class EditProjectNameDialogComponent implements OnInit {
   projectId: string;
 
   constructor(
-    public ref: DialogRef,
+    public ref: DialogRef<EditProjectNameDialogDataItem>,
     private fb: FormBuilder,
     private projectStore: ProjectStore,
     private navStore: NavStore
