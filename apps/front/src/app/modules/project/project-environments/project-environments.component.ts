@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { take, tap } from 'rxjs/operators';
 import { EnvironmentsQuery } from '~front/app/queries/environments.query';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -7,6 +8,7 @@ import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { EnvironmentsStore } from '~front/app/stores/environments.store';
+import { NavState } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -23,10 +25,10 @@ export class ProjectEnvironmentsComponent implements OnInit {
   currentPage: any = 1;
   perPage = constants.ENVIRONMENTS_PER_PAGE;
 
-  projectId: string;
-  projectId$ = this.navQuery.projectId$.pipe(
+  nav: NavState;
+  nav$ = this.navQuery.select().pipe(
     tap(x => {
-      this.projectId = x;
+      this.nav = x;
       this.cd.detectChanges();
     })
   );
@@ -61,6 +63,7 @@ export class ProjectEnvironmentsComponent implements OnInit {
     private environmentsStore: EnvironmentsStore,
     private myDialogService: MyDialogService,
     private apiService: ApiService,
+    private router: Router,
     public navQuery: NavQuery,
     private memberQuery: MemberQuery,
     private title: Title
@@ -72,7 +75,7 @@ export class ProjectEnvironmentsComponent implements OnInit {
 
   getEnvsPage(pageNum: number) {
     let payload: apiToBackend.ToBackendGetEnvsRequestPayload = {
-      projectId: this.projectId,
+      projectId: this.nav.projectId,
       pageNum: pageNum,
       perPage: this.perPage
     };
@@ -97,8 +100,19 @@ export class ProjectEnvironmentsComponent implements OnInit {
   addEnvironment() {
     this.myDialogService.showAddEnvironment({
       apiService: this.apiService,
-      projectId: this.projectId
+      projectId: this.nav.projectId
     });
+  }
+
+  navToVariables(environment: common.Env) {
+    this.router.navigate([
+      common.PATH_ORG,
+      this.nav.orgId,
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_ENV_VARIABLES,
+      environment.envId
+    ]);
   }
 
   deleteEnvironment(environment: common.Env) {

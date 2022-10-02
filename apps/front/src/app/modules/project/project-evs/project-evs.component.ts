@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { take, tap } from 'rxjs/operators';
 import { EvsQuery } from '~front/app/queries/evs.query';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -52,6 +52,7 @@ export class ProjectEvsComponent implements OnInit {
     public navQuery: NavQuery,
     public evsQuery: EvsQuery,
     private apiService: ApiService,
+    private router: Router,
     private route: ActivatedRoute,
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,
@@ -85,11 +86,22 @@ export class ProjectEvsComponent implements OnInit {
       .subscribe();
   }
 
+  navToEnvironments() {
+    this.router.navigate([
+      common.PATH_ORG,
+      this.nav.orgId,
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_ENVIRONMENTS
+    ]);
+  }
+
   addVariable() {
-    // this.myDialogService.showAddConnection({
-    //   apiService: this.apiService,
-    //   projectId: this.projectId
-    // });
+    this.myDialogService.showAddEv({
+      apiService: this.apiService,
+      projectId: this.nav.projectId,
+      envId: this.environmentId
+    });
   }
 
   deleteVariable(ev: common.Ev) {

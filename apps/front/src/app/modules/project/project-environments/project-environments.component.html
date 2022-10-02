@@ -1,9 +1,9 @@
-<div class="flex h-full cursor-default flex-col bg-blue1">
+<div class="bg-blue1 flex h-full cursor-default flex-col">
   <div class="mx-6 mb-6 mt-8 flex h-2 flex-grow flex-col">
     <div class="flex h-11 flex-row items-center justify-between">
       <div
         data-cy="projectEnvironmentsTitle"
-        class="flex text-2xl font-semibold text-gray1"
+        class="text-gray1 flex text-2xl font-semibold"
         >{{ pageTitle }}
       </div>
 
@@ -24,13 +24,14 @@
     </div>
 
     <div class="mt-6 mb-4 flex-grow overflow-auto rounded bg-white shadow-lg">
-      <div class="mx-5 mt-8 text-gray1">
+      <div class="text-gray1 mx-5 mt-8">
         <table class="min-w-full divide-y divide-gray-500">
           <thead>
             <tr class="h-12 text-sm">
               <th class="text-left">Name</th>
               <th class="text-left">Connections</th>
               <th class="text-left">Users</th>
+              <th class="text-left"></th>
               <th class="text-left"></th>
               <th></th>
             </tr>
@@ -82,6 +83,26 @@
                   </div>
                 </div></td
               >
+
+              <td class="w-32">
+                <div
+                  class="w-fit"
+                  tippy="Admin role required"
+                  [isEnabled]="isAdmin === false"
+                >
+                  <button
+                    data-cy="projectEnvironmentsVariablesButton"
+                    (click)="navToVariables(environment)"
+                    class="rounded border py-2 px-3 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                    [ngClass]="{
+                      'cursor-default text-gray-400': isAdmin === false,
+                      'border-gray3 text-gray1': isAdmin === true
+                    }"
+                    [disabled]="isAdmin === false"
+                    >Variables</button
+                  >
+                </div>
+              </td>
 
               <td class="w-32">
                 <ng-template #templateDeleteEnv>
@@ -137,7 +158,7 @@
   </div>
 </div>
 
-<div *ngIf="projectId$ | async"></div>
+<div *ngIf="nav$ | async"></div>
 <div *ngIf="isAdmin$ | async"></div>
 <div *ngIf="environments$ | async"></div>
 <div *ngIf="total$ | async"></div>

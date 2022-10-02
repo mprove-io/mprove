@@ -50,6 +50,10 @@ import {
   DeleteEnvironmentDialogComponent,
   DeleteEnvironmentDialogDataItem
 } from '../modules/project/project-environments/delete-environment-dialog/delete-environment-dialog.component';
+import {
+  AddEvDialogComponent,
+  AddEvDialogDataItem
+} from '../modules/project/project-evs/add-ev-dialog/add-ev-dialog.component';
 import { DeleteProjectDialogComponent } from '../modules/project/project-settings/delete-project-dialog/delete-project-dialog.component';
 import { EditProjectNameDialogComponent } from '../modules/project/project-settings/edit-project-name-dialog/edit-project-name-dialog.component';
 import { AddEnvDialogComponent } from '../modules/project/project-team/add-env-dialog/add-env-dialog.component';
@@ -533,6 +537,14 @@ export class MyDialogService {
 
   showAddEnvironment(item: AddEnvironmentDialogDataItem): void {
     this.dialogService.open(AddEnvironmentDialogComponent, {
+      enableClose: true,
+      closeButton: false,
+      data: item
+    });
+  }
+
+  showAddEv(item: AddEvDialogDataItem): void {
+    this.dialogService.open(AddEvDialogComponent, {
       enableClose: true,
       closeButton: false,
       data: item

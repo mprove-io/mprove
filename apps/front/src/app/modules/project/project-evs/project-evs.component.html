@@ -4,7 +4,13 @@
       <div
         data-cy="projectEvsTitle"
         class="text-gray1 flex text-2xl font-semibold"
-        >Project - Environments - {{ environmentId | capitalize }}
+        >Project -
+        <span
+          class="mx-[6px] cursor-pointer hover:text-blue-500"
+          (click)="navToEnvironments()"
+          >Environments</span
+        >
+        - {{ environmentId | capitalize }}
       </div>
 
       <div tippy="Editor role required" [isEnabled]="isEditor === false">
@@ -38,9 +44,9 @@
 
           <tbody class="divide-y divide-gray-300 text-base">
             <tr *ngFor="let ev of evs; let i = index" class="h-16">
-              <td class="w-48">{{ ev.evId }}</td>
+              <td class="w-32">{{ ev.evId }}</td>
 
-              <td class="w-48">{{ ev.value }}</td>
+              <td class="w-32">{{ ev.value }}</td>
 
               <td class="w-32">
                 <div

@@ -9,7 +9,7 @@ export class EvEntity {
   @PrimaryColumn({ type: constants.ENV_ID_VARCHAR, length: 32 })
   env_id: string; // name
 
-  @PrimaryColumn({ type: constants.EV_ID_VARCHAR, length: 32 })
+  @PrimaryColumn({ type: constants.EV_ID_VARCHAR, length: 128 })
   ev_id: string; // name
 
   @Column({ type: constants.VARCHAR, nullable: true })
