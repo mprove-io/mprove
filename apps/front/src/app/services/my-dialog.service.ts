@@ -54,6 +54,10 @@ import {
   AddEvDialogComponent,
   AddEvDialogDataItem
 } from '../modules/project/project-evs/add-ev-dialog/add-ev-dialog.component';
+import {
+  EditEvDialogComponent,
+  EditEvDialogDataItem
+} from '../modules/project/project-evs/edit-ev-dialog/edit-ev-dialog.component';
 import { DeleteProjectDialogComponent } from '../modules/project/project-settings/delete-project-dialog/delete-project-dialog.component';
 import { EditProjectNameDialogComponent } from '../modules/project/project-settings/edit-project-name-dialog/edit-project-name-dialog.component';
 import { AddEnvDialogComponent } from '../modules/project/project-team/add-env-dialog/add-env-dialog.component';
@@ -92,7 +96,7 @@ export class MyDialogService {
 
   showEmailConfirmed(): void {
     this.dialogService.open(EmailConfirmedDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false
     });
   }
@@ -103,7 +107,7 @@ export class MyDialogService {
     initials: string;
   }): void {
     this.dialogService.open(PhotoDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: true,
       data: item
     });
@@ -111,7 +115,7 @@ export class MyDialogService {
 
   showEditPhoto(item: { apiService: any }): void {
     this.dialogService.open(EditPhotoDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -119,7 +123,7 @@ export class MyDialogService {
 
   showEditName(item: { apiService: any }): void {
     this.dialogService.open(EditNameDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -127,7 +131,7 @@ export class MyDialogService {
 
   showEditTimezone(item: { apiService: any }): void {
     this.dialogService.open(EditTimezoneDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -135,7 +139,7 @@ export class MyDialogService {
 
   showDeleteUser(item: { apiService: any }): void {
     this.dialogService.open(DeleteUserDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -143,7 +147,7 @@ export class MyDialogService {
 
   showCreateOrg(item: { apiService: any }): void {
     this.dialogService.open(CreateOrgDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -151,7 +155,7 @@ export class MyDialogService {
 
   showCreateProject(item: { apiService: any; orgId: string }): void {
     this.dialogService.open(CreateProjectDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item,
       width: 800
@@ -167,7 +171,7 @@ export class MyDialogService {
     selectedBranchExtraId: string;
   }): void {
     this.dialogService.open(CreateBranchDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -175,8 +179,8 @@ export class MyDialogService {
 
   showViewBlockml(item: { apiService: any; mconfig: common.MconfigX }): void {
     this.dialogService.open(ViewBlockmlDialogComponent, {
-      enableClose: true,
-      closeButton: false,
+      enableClose: false,
+      closeButton: true,
       data: item,
       width: 1024
     });
@@ -195,8 +199,8 @@ export class MyDialogService {
     updateQueryFn?: any;
   }): void {
     this.dialogService.open(ChartDialogComponent, {
-      enableClose: true,
-      closeButton: false,
+      enableClose: false,
+      closeButton: true,
       data: item,
       width: '80vw',
       height: '80vh'
@@ -210,7 +214,7 @@ export class MyDialogService {
     model: common.Model;
   }): void {
     this.dialogService.open(ChartSaveAsDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item,
       width: 900
@@ -222,7 +226,7 @@ export class MyDialogService {
     dashboard: common.Dashboard;
   }): void {
     this.dialogService.open(DashboardSaveAsDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item,
       width: 900
@@ -234,8 +238,8 @@ export class MyDialogService {
     dashboard: common.Dashboard;
   }): void {
     this.dialogService.open(DashboardAddReportDialogComponent, {
-      enableClose: true,
-      closeButton: false,
+      enableClose: false,
+      closeButton: true,
       data: item,
       width: 640
     });
@@ -246,7 +250,7 @@ export class MyDialogService {
     dashboard: common.Dashboard;
   }): void {
     this.dialogService.open(DashboardAddFilterDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item,
       width: 640
@@ -259,7 +263,7 @@ export class MyDialogService {
     dashboard: common.Dashboard;
   }): void {
     this.dialogService.open(DashboardEditListenersDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item,
       width: '90vw',
@@ -269,7 +273,7 @@ export class MyDialogService {
 
   showDashboardsNew(item: { apiService: any }): void {
     this.dialogService.open(DashboardsNewDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item,
       width: 640
@@ -286,7 +290,7 @@ export class MyDialogService {
     viz: common.Viz;
   }): void {
     this.dialogService.open(EditVizInfoDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item,
       width: 640
@@ -295,8 +299,8 @@ export class MyDialogService {
 
   showNewViz(item: { models: common.ModelX[] }): void {
     this.dialogService.open(NewVizDialogComponent, {
-      enableClose: true,
-      closeButton: false,
+      enableClose: false,
+      closeButton: true,
       data: item
     });
   }
@@ -311,7 +315,7 @@ export class MyDialogService {
     isRepoProd: boolean;
   }): void {
     this.dialogService.open(DeleteVizDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -327,7 +331,7 @@ export class MyDialogService {
     isRepoProd: boolean;
   }): void {
     this.dialogService.open(DeleteDashboardDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -344,7 +348,7 @@ export class MyDialogService {
     branchesList: BranchItem[];
   }): void {
     this.dialogService.open(MergeBranchDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -357,7 +361,7 @@ export class MyDialogService {
     branchId: string;
   }): void {
     this.dialogService.open(CommitDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item,
       width: 800
@@ -375,7 +379,7 @@ export class MyDialogService {
     alias: string;
   }): void {
     this.dialogService.open(DeleteBranchDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item,
       width: 900
@@ -388,7 +392,7 @@ export class MyDialogService {
     orgName: string;
   }): void {
     this.dialogService.open(EditOrgNameDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -400,7 +404,7 @@ export class MyDialogService {
     ownerEmail: string;
   }): void {
     this.dialogService.open(EditOrgOwnerDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -412,7 +416,7 @@ export class MyDialogService {
     companySize: string;
   }): void {
     this.dialogService.open(EditCompanySizeDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -424,7 +428,7 @@ export class MyDialogService {
     contactPhone: string;
   }): void {
     this.dialogService.open(EditPhoneNumberDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -436,7 +440,7 @@ export class MyDialogService {
     orgName: string;
   }): void {
     this.dialogService.open(DeleteOrgDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -448,7 +452,7 @@ export class MyDialogService {
     projectName: string;
   }): void {
     this.dialogService.open(EditProjectNameDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -460,7 +464,7 @@ export class MyDialogService {
     projectName: string;
   }): void {
     this.dialogService.open(DeleteProjectDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -468,7 +472,7 @@ export class MyDialogService {
 
   showInviteMember(item: { apiService: any; projectId: string }): void {
     this.dialogService.open(InviteMemberDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -481,7 +485,7 @@ export class MyDialogService {
     email: string;
   }): void {
     this.dialogService.open(RemoveMemberDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -493,7 +497,7 @@ export class MyDialogService {
     i: number;
   }): void {
     this.dialogService.open(AddRoleDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -505,7 +509,7 @@ export class MyDialogService {
     i: number;
   }): void {
     this.dialogService.open(AddEnvDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -513,7 +517,7 @@ export class MyDialogService {
 
   showAddConnection(item: { apiService: any; projectId: string }): void {
     this.dialogService.open(AddConnectionDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -521,7 +525,7 @@ export class MyDialogService {
 
   showEditConnection(item: EditConnectionDialogDataItem): void {
     this.dialogService.open(EditConnectionDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -529,7 +533,7 @@ export class MyDialogService {
 
   showDeleteConnection(item: DeleteConnectionDialogDataItem): void {
     this.dialogService.open(DeleteConnectionDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -537,7 +541,7 @@ export class MyDialogService {
 
   showAddEnvironment(item: AddEnvironmentDialogDataItem): void {
     this.dialogService.open(AddEnvironmentDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -545,7 +549,16 @@ export class MyDialogService {
 
   showAddEv(item: AddEvDialogDataItem): void {
     this.dialogService.open(AddEvDialogComponent, {
-      enableClose: true,
+      enableClose: false,
+      closeButton: false,
+      data: item,
+      width: 800
+    });
+  }
+
+  showEditEv(item: EditEvDialogDataItem): void {
+    this.dialogService.open(EditEvDialogComponent, {
+      enableClose: false,
       closeButton: false,
       data: item,
       width: 800
@@ -554,7 +567,7 @@ export class MyDialogService {
 
   showDeleteEnvironment(item: DeleteEnvironmentDialogDataItem): void {
     this.dialogService.open(DeleteEnvironmentDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -568,7 +581,7 @@ export class MyDialogService {
     parentNodeId: string;
   }): void {
     this.dialogService.open(CreateFolderDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -582,7 +595,7 @@ export class MyDialogService {
     parentNodeId: string;
   }): void {
     this.dialogService.open(CreateFileDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -597,7 +610,7 @@ export class MyDialogService {
     folderName: string;
   }): void {
     this.dialogService.open(DeleteFolderDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -612,7 +625,7 @@ export class MyDialogService {
     folderName: string;
   }): void {
     this.dialogService.open(RenameFolderDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -627,7 +640,7 @@ export class MyDialogService {
     fileName: string;
   }): void {
     this.dialogService.open(RenameFileDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });
@@ -642,7 +655,7 @@ export class MyDialogService {
     fileName: string;
   }): void {
     this.dialogService.open(DeleteFileDialogComponent, {
-      enableClose: true,
+      enableClose: false,
       closeButton: false,
       data: item
     });

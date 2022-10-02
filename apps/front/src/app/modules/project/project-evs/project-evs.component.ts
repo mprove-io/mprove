@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { take, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { EvsQuery } from '~front/app/queries/evs.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -9,7 +9,6 @@ import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { EvsStore } from '~front/app/stores/evs.store';
 import { NavState } from '~front/app/stores/nav.store';
-import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
@@ -67,25 +66,6 @@ export class ProjectEvsComponent implements OnInit {
     ];
   }
 
-  getEvs() {
-    let payload: apiToBackend.ToBackendGetEvsRequestPayload = {
-      projectId: this.nav.projectId,
-      envId: this.environmentId
-    };
-
-    this.apiService
-      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEvs, payload)
-      .pipe(
-        tap((resp: apiToBackend.ToBackendGetEvsResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.evsStore.update(resp.payload);
-          }
-        }),
-        take(1)
-      )
-      .subscribe();
-  }
-
   navToEnvironments() {
     this.router.navigate([
       common.PATH_ORG,
@@ -114,10 +94,10 @@ export class ProjectEvsComponent implements OnInit {
   }
 
   editVariable(ev: common.Ev, i: number) {
-    // this.myDialogService.showEditConnection({
-    //   apiService: this.apiService,
-    //   connection: connection,
-    //   i: i
-    // });
+    this.myDialogService.showEditEv({
+      apiService: this.apiService,
+      ev: ev,
+      i: i
+    });
   }
 }
