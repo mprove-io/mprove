@@ -7,6 +7,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { SharedModule } from '../shared/shared.module';
 import { ProjectConnectionsComponent } from './project-connections/project-connections.component';
 import { ProjectEnvironmentsComponent } from './project-environments/project-environments.component';
+import { ProjectEvsComponent } from './project-evs/project-evs.component';
 import { ProjectSettingsComponent } from './project-settings/project-settings.component';
 import { ProjectTeamComponent } from './project-team/project-team.component';
 
@@ -15,7 +16,8 @@ import { ProjectTeamComponent } from './project-team/project-team.component';
     ProjectSettingsComponent,
     ProjectTeamComponent,
     ProjectConnectionsComponent,
-    ProjectEnvironmentsComponent
+    ProjectEnvironmentsComponent,
+    ProjectEvsComponent
   ],
   imports: [
     CommonModule,

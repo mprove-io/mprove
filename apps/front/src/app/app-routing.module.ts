@@ -28,6 +28,7 @@ import { OrgUsersComponent } from './modules/org/org-users/org-users.component';
 import { ProfileComponent } from './modules/profile/profile.component';
 import { ProjectConnectionsComponent } from './modules/project/project-connections/project-connections.component';
 import { ProjectEnvironmentsComponent } from './modules/project/project-environments/project-environments.component';
+import { ProjectEvsComponent } from './modules/project/project-evs/project-evs.component';
 import { ProjectSettingsComponent } from './modules/project/project-settings/project-settings.component';
 import { ProjectTeamComponent } from './modules/project/project-team/project-team.component';
 import { LoginSuccessComponent } from './modules/special/login-success/login-success.component';
@@ -40,6 +41,7 @@ import { FileResolver } from './resolvers/file.resolver';
 import { MconfigResolver } from './resolvers/mconfig.resolver';
 import { MemberConnectionsResolver } from './resolvers/member-connections.resolver';
 import { MemberEnvironmentsResolver } from './resolvers/member-environments.resolver';
+import { MemberEvsResolver } from './resolvers/member-evs.resolver';
 import { MemberProjectSettingsResolver } from './resolvers/member-project-settings.resolver';
 import { MemberTeamResolver } from './resolvers/member-team.resolver';
 import { NavBarResolver } from './resolvers/navbar.resolver';
@@ -174,6 +176,13 @@ const routes: Routes = [
                 component: ProjectEnvironmentsComponent,
                 path: common.PATH_ENVIRONMENTS,
                 resolve: [MemberEnvironmentsResolver]
+              },
+              {
+                component: ProjectEvsComponent,
+                path:
+                  common.PATH_ENV_VARIABLES +
+                  `/:${common.PARAMETER_ENVIRONMENT_ID}`,
+                resolve: [MemberEvsResolver]
               },
               {
                 component: ProjectTeamComponent,

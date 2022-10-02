@@ -24,9 +24,9 @@ spec:
       - name: frontnode
         resources:
           limits:
-            memory: "2500Mi"        
-          # requests:
-          #   memory: "2500Mi"        
+            memory: "5000Mi"        
+          requests:
+            memory: "5000Mi"        
             # cpu: "100m"
         image: {{ .Values.werf.image.frontnode }}
         ports:
