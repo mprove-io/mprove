@@ -126,6 +126,7 @@ test('1', async t => {
         orgId: orgId,
         projectId: projectId,
         envId: envId,
+        evs: [],
         isRepoProd: false,
         branch: common.BRANCH_MASTER,
         structId: testId,
