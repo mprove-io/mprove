@@ -34,6 +34,8 @@ test('1', async t => {
       traceId: traceId,
       dir: dataDir,
       structId: structId,
+      envId: common.PROJECT_ENV_PROD,
+      evs: [],
       connections: [connection]
     });
 
@@ -96,6 +98,8 @@ test('2', async t => {
       traceId: traceId,
       dir: dataDir,
       structId: structId,
+      envId: common.PROJECT_ENV_PROD,
+      evs: [],
       connections: [connection]
     });
 
