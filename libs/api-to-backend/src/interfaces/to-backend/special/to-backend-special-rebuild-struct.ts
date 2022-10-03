@@ -13,6 +13,10 @@ export class ToBackendSpecialRebuildStructRequestPayload {
   @IsString()
   envId: string;
 
+  @ValidateNested()
+  @Type(() => common.Ev)
+  evs: common.Ev[];
+
   @IsBoolean()
   isRepoProd: boolean;
 

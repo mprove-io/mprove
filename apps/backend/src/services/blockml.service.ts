@@ -12,6 +12,7 @@ import { RabbitService } from './rabbit.service';
 export class BlockmlService {
   constructor(
     private connectionsRepository: repositories.ConnectionsRepository,
+    private evsRepository: repositories.EvsRepository,
     private rabbitService: RabbitService,
     private dbService: DbService
   ) {}
@@ -40,6 +41,11 @@ export class BlockmlService {
       env_id: envId
     });
 
+    let evs = await this.evsRepository.find({
+      project_id: projectId,
+      env_id: envId
+    });
+
     let toBlockmlRebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest = {
       info: {
         name: apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct,
@@ -50,6 +56,7 @@ export class BlockmlService {
         orgId: orgId,
         projectId: projectId,
         envId: envId,
+        evs: evs.map(x => wrapper.wrapToApiEv(x)),
         files: helper.diskFilesToBlockmlFiles(diskFiles),
         connections: connections.map(x => ({
           connectionId: x.connection_id,

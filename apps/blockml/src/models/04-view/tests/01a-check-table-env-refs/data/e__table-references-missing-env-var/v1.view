@@ -1,6 +1,6 @@
 view: v1
 connection: c1
-table: $env{DATABASE}
+table: ${env.DATABASE}.table1
 fields:
 - dimension: dim1
   sql: d1

@@ -34,6 +34,7 @@ export class SpecialRebuildStructController {
       orgId,
       projectId,
       envId,
+      evs,
       isRepoProd,
       branch,
       structId,
@@ -87,6 +88,7 @@ export class SpecialRebuildStructController {
         structId: structId,
         orgId: orgId,
         envId: envId,
+        evs: evs,
         projectId: projectId,
         files: helper.diskFilesToBlockmlFiles(
           getCatalogFilesResponse.payload.files

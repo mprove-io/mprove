@@ -168,10 +168,10 @@ export class MyRegex {
     return cloneRegexp(/\$\{(\w+?)\}/g);
   }
   static CAPTURE_ENV_REF(): RegExp {
-    return cloneRegexp(/\$env\{(\w+)\}/);
+    return cloneRegexp(/\$\{env\.(\w+)\}/);
   }
   static CAPTURE_ENV_REF_G(): RegExp {
-    return cloneRegexp(/\$env\{(\w+)\}/g);
+    return cloneRegexp(/\$\{env\.(\w+)\}/g);
   }
   static WORD_CHARACTERS(): RegExp {
     return cloneRegexp(/^(?:\w+)$/);
@@ -415,7 +415,7 @@ export class MyRegex {
   }
 
   static replaceEnvRefs(input: string, ref: string, val: string): string {
-    return input.split(`\$env\{${ref}\}`).join(`${val}`);
+    return input.split(`\$\{env.${ref}\}`).join(`${val}`);
   }
 
   // static replacePdtTableId(input: string, ref: string, val: string): string {
