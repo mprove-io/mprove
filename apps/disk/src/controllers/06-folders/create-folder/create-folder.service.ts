@@ -44,7 +44,6 @@ export class CreateFolderService {
     let parentPath = repoDir + '/' + parent;
 
     let folderAbsolutePath = parentPath + folderName;
-    let gitKeepFileAbsolutePath = folderAbsolutePath + '/' + '.gitkeep';
 
     //
 
@@ -116,9 +115,7 @@ export class CreateFolderService {
 
     //
 
-    await disk.ensureFile(gitKeepFileAbsolutePath);
-
-    await git.addChangesToStage({ repoDir: repoDir });
+    await disk.ensureDir(folderAbsolutePath);
 
     let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
       await git.getRepoStatus({

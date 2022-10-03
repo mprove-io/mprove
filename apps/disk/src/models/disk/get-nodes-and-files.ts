@@ -1,4 +1,5 @@
 import * as fse from 'fs-extra';
+import { Dirent } from 'fs-extra';
 import { forEachSeries } from 'p-iteration';
 import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
@@ -61,20 +62,18 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
   let udfNodes: common.DiskCatalogNode[] = [];
   let otherNodes: common.DiskCatalogNode[] = [];
 
-  let fileNames: string[] = <string[]>await fse.readdir(item.dir);
+  let dirents: Dirent[] = <Dirent[]>await fse.readdir(item.dir, {
+    withFileTypes: true
+  });
 
-  await forEachSeries(fileNames, async name => {
-    if (!name.match(common.MyRegex.STARTS_WITH_DOT())) {
-      let fileAbsolutePath = item.dir + '/' + name;
+  await forEachSeries(dirents, async dirent => {
+    if (!dirent.name.match(common.MyRegex.STARTS_WITH_DOT())) {
+      let fileAbsolutePath = item.dir + '/' + dirent.name;
 
       let nodeId =
         item.projectId + fileAbsolutePath.substring(item.repoDirPathLength);
 
-      let stat = <fse.Stats>await fse.stat(fileAbsolutePath);
-
-      let statIsDirectory = stat.isDirectory();
-
-      if (statIsDirectory === true) {
+      if (dirent.isDirectory() === true) {
         let itemDir = <interfaces.ItemCatalog>(
           await getDirCatalogNodesAndFilesRecursive({
             dir: fileAbsolutePath,
@@ -91,7 +90,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
 
         let node = {
           id: nodeId,
-          name: name,
+          name: dirent.name,
           isFolder: true,
           children: itemDir.nodes
         };
@@ -107,13 +106,13 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
 
         let node = {
           id: nodeId,
-          name: name,
+          name: dirent.name,
           isFolder: false,
           fileId: fileId
         };
 
         let reg = common.MyRegex.CAPTURE_EXT();
-        let r = reg.exec(name.toLowerCase());
+        let r = reg.exec(dirent.name.toLowerCase());
 
         let ext: any = r ? r[1] : '';
 
@@ -154,7 +153,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
             fileId: fileId,
             pathString: path,
             fileNodeId: nodeId,
-            name: name,
+            name: dirent.name,
             content: content
           };
 
