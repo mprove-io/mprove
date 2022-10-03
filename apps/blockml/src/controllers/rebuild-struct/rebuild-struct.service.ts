@@ -42,7 +42,8 @@ export class RebuildStructService {
       projectId,
       files,
       connections,
-      envId
+      envId,
+      evs
     } = reqValid.payload;
 
     let {
@@ -62,6 +63,8 @@ export class RebuildStructService {
       traceId: reqValid.info.traceId,
       files: files,
       structId: structId,
+      envId: envId,
+      evs: evs,
       connections: connections
     });
 
@@ -123,6 +126,8 @@ export class RebuildStructService {
     traceId: string;
     dir: string;
     structId: string;
+    envId: string;
+    evs: common.Ev[];
     connections: common.ProjectConnection[];
   }) {
     let files: common.BmlFile[] = await barYaml.collectFiles(
@@ -138,6 +143,8 @@ export class RebuildStructService {
       traceId: item.traceId,
       files: files,
       structId: item.structId,
+      envId: item.envId,
+      evs: item.evs,
       connections: item.connections
     });
   }
@@ -146,6 +153,8 @@ export class RebuildStructService {
     traceId: string;
     files: common.BmlFile[];
     structId: string;
+    envId: string;
+    evs: common.Ev[];
     connections: common.ProjectConnection[];
   }) {
     //
@@ -243,6 +252,8 @@ export class RebuildStructService {
         udfsDict: udfsDict,
         weekStart: projectConfig.week_start,
         structId: item.structId,
+        envId: item.envId,
+        evs: item.evs,
         errors: errors,
         caller: enums.CallerEnum.BuildView
       },

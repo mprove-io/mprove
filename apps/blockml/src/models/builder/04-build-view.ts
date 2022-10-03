@@ -13,6 +13,8 @@ export function buildView(
     weekStart: common.ProjectWeekStartEnum;
     errors: BmError[];
     structId: string;
+    envId: string;
+    evs: common.Ev[];
     caller: enums.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
@@ -23,6 +25,30 @@ export function buildView(
     {
       views: views,
       structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
+  views = barView.checkTableEnvRefs(
+    {
+      views: views,
+      structId: item.structId,
+      envId: item.envId,
+      evs: item.evs,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
+  views = barView.checkDerivedTableEnvRefs(
+    {
+      views: views,
+      structId: item.structId,
+      envId: item.envId,
+      evs: item.evs,
       errors: item.errors,
       caller: item.caller
     },

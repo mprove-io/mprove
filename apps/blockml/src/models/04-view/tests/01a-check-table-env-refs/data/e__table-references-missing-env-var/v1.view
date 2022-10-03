@@ -1,0 +1,6 @@
+view: v1
+connection: c1
+table: $env{DATABASE}
+fields:
+- dimension: dim1
+  sql: d1

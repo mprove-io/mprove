@@ -35,6 +35,8 @@ export enum FuncEnum {
   MakeUdfsDict = '03-udf/01-make-udfs-dict',
 
   CheckTable = '04-view/01-check-table',
+  CheckTableEnvRefs = '04-view/01a-check-table-env-refs',
+  CheckDerivedTableEnvRefs = '04-view/01b-check-derived-table-env-refs',
   CheckViewUdfs = '04-view/02-check-view-udfs',
   CheckViewFilterDefaults = '04-view/03-check-view-filter-defaults',
   CheckDerivedTableApplyFilter = '04-view/04-check-derived-table-apply-filter',

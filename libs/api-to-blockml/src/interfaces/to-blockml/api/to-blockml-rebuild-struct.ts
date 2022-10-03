@@ -13,6 +13,10 @@ export class ToBlockmlRebuildStructRequestPayload {
   @IsString()
   envId: string;
 
+  @ValidateNested()
+  @Type(() => common.Ev)
+  evs: common.Ev[];
+
   @IsString()
   structId: string;
 
