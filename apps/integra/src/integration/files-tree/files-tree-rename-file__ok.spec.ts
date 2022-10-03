@@ -15,7 +15,7 @@ let projectId = common.makeId();
 let projectName = testId;
 let testProjectId = 't3';
 
-let newFileName = 'v3';
+let newFileName = 'v3.view';
 
 describe('integra', () => {
   it(testId, () => {
@@ -72,11 +72,9 @@ describe('integra', () => {
     cy.get('[data-cy=renameFileDialogFileNameInput]')
       .clear({ force: true })
       .type(newFileName);
-    cy.get('[data-cy=typeSelect]').click();
-    cy.get('.ng-option').eq(0).click();
     cy.get('[data-cy=renameFileDialogSaveButton]').click();
     cy.loading();
     cy.get('[data-cy=filesTreeItem]').eq(2).should('contain', newFileName);
-    cy.url().should('include', `${newFileName}.view`);
+    cy.url().should('include', `${newFileName}`);
   });
 });

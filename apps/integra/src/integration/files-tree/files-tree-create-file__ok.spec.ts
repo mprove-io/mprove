@@ -14,7 +14,7 @@ let orgName = testId;
 let projectId = common.makeId();
 let projectName = testId;
 
-let fileName = 'sales';
+let fileName = 'sales.view';
 
 describe('integra', () => {
   it(testId, () => {
@@ -68,10 +68,8 @@ describe('integra', () => {
     cy.get('[data-cy=folderOptionsMenuButton]').click({ force: true });
     cy.get('[data-cy=folderOptionsNewFileButton]').click({ force: true });
     cy.get('[data-cy=createFileDialogFileNameInput]').type(fileName);
-    cy.get('[data-cy=typeSelect]').click();
-    cy.get('.ng-option').eq(0).click();
     cy.get('[data-cy=createFileDialogCreateButton]').click();
     cy.loading();
-    cy.url().should('include', `${fileName}.view`);
+    cy.url().should('include', `${fileName}`);
   });
 });
