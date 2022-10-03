@@ -2,6 +2,7 @@ import * as fse from 'fs-extra';
 import { Dirent } from 'fs-extra';
 import { forEachSeries } from 'p-iteration';
 import { common } from '~disk/barrels/common';
+import { disk } from '~disk/barrels/disk';
 import { interfaces } from '~disk/barrels/interfaces';
 
 export async function getNodesAndFiles(item: {
@@ -145,7 +146,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
         if (item.readFiles === true) {
           let path = JSON.stringify(nodeId.split('/'));
 
-          let content = <string>await fse.readFile(fileAbsolutePath, 'utf8');
+          let content = await disk.readFile(fileAbsolutePath);
 
           let file: common.DiskCatalogFile = {
             projectId: item.projectId,
