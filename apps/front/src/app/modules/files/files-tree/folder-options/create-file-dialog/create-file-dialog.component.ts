@@ -4,13 +4,11 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { ValidationService } from '~front/app/services/validation.service';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 export interface CreateFileDialogDataItem {
   apiService: ApiService;
@@ -27,10 +25,6 @@ export interface CreateFileDialogDataItem {
 export class CreateFileDialogComponent implements OnInit {
   createFileForm: FormGroup;
 
-  extList = constants.EXT_LIST;
-
-  fileExt = common.FileExtensionEnum.View;
-
   constructor(
     public ref: DialogRef<CreateFileDialogDataItem>,
     private fb: FormBuilder,
@@ -45,21 +39,8 @@ export class CreateFileDialogComponent implements OnInit {
     let fileName: string;
 
     this.createFileForm = this.fb.group({
-      fileName: [
-        fileName,
-        [
-          Validators.required,
-          ValidationService.fileNameWrongChars,
-          Validators.maxLength(255)
-        ]
-      ],
-      fileExt: [this.fileExt]
+      fileName: [fileName, [Validators.required, Validators.maxLength(255)]]
     });
-  }
-
-  extChange(fileExt: common.FileExtensionEnum) {
-    this.fileExt = fileExt;
-    this.cd.detectChanges();
   }
 
   create() {
@@ -71,8 +52,7 @@ export class CreateFileDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let fileName =
-      this.createFileForm.value.fileName + this.createFileForm.value.fileExt;
+    let fileName = this.createFileForm.value.fileName;
 
     fileName = fileName.toLowerCase();
 

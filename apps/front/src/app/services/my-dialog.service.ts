@@ -587,7 +587,8 @@ export class MyDialogService {
     this.dialogService.open(CreateFolderDialogComponent, {
       enableClose: false,
       closeButton: false,
-      data: item
+      data: item,
+      width: 700
     });
   }
 
@@ -595,7 +596,8 @@ export class MyDialogService {
     this.dialogService.open(CreateFileDialogComponent, {
       enableClose: false,
       closeButton: false,
-      data: item
+      data: item,
+      width: 700
     });
   }
 
@@ -611,7 +613,8 @@ export class MyDialogService {
     this.dialogService.open(RenameFolderDialogComponent, {
       enableClose: false,
       closeButton: false,
-      data: item
+      data: item,
+      width: 700
     });
   }
 
@@ -619,7 +622,8 @@ export class MyDialogService {
     this.dialogService.open(RenameFileDialogComponent, {
       enableClose: false,
       closeButton: false,
-      data: item
+      data: item,
+      width: 700
     });
   }
 

@@ -4,13 +4,11 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { ValidationService } from '~front/app/services/validation.service';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 export interface RenameFileDialogDataItem {
   apiService: ApiService;
@@ -27,10 +25,6 @@ export interface RenameFileDialogDataItem {
 })
 export class RenameFileDialogComponent implements OnInit {
   renameFileForm: FormGroup;
-
-  extList = constants.EXT_LIST;
-
-  fileExt = common.FileExtensionEnum.View;
 
   constructor(
     public ref: DialogRef<RenameFileDialogDataItem>,
@@ -50,20 +44,10 @@ export class RenameFileDialogComponent implements OnInit {
 
     this.renameFileForm = this.fb.group({
       fileName: [
-        nameArray.join('.'),
-        [
-          Validators.required,
-          ValidationService.fileNameWrongChars,
-          Validators.maxLength(255)
-        ]
-      ],
-      fileExt: [this.fileExt]
+        this.ref.data.fileName,
+        [Validators.required, Validators.maxLength(255)]
+      ]
     });
-  }
-
-  extChange(fileExt: common.FileExtensionEnum) {
-    this.fileExt = fileExt;
-    this.cd.detectChanges();
   }
 
   save() {
@@ -75,8 +59,7 @@ export class RenameFileDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let newName =
-      this.renameFileForm.value.fileName + this.renameFileForm.value.fileExt;
+    let newName = this.renameFileForm.value.fileName;
     newName = newName.toLowerCase();
 
     let payload: apiToBackend.ToBackendRenameCatalogNodeRequestPayload = {

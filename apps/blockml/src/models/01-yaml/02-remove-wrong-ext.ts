@@ -55,19 +55,19 @@ export function removeWrongExt(
         });
       }
     } else {
-      item.errors.push(
-        new BmError({
-          title: enums.ErTitleEnum.WRONG_FILE_EXTENSION,
-          message: `valid BlockML file extensions are: ${common.FileExtensionEnum.View} ${common.FileExtensionEnum.Model} ${common.FileExtensionEnum.Dashboard} ${common.FileExtensionEnum.Viz} ${common.FileExtensionEnum.Udf} ${common.FileExtensionEnum.Md} ${common.FileExtensionEnum.Conf}`,
-          lines: [
-            {
-              line: 0,
-              name: x.name,
-              path: x.path
-            }
-          ]
-        })
-      );
+      // item.errors.push(
+      //   new BmError({
+      //     title: enums.ErTitleEnum.WRONG_FILE_EXTENSION,
+      //     message: `valid BlockML file extensions are: ${common.FileExtensionEnum.View} ${common.FileExtensionEnum.Model} ${common.FileExtensionEnum.Dashboard} ${common.FileExtensionEnum.Viz} ${common.FileExtensionEnum.Udf} ${common.FileExtensionEnum.Md} ${common.FileExtensionEnum.Conf}`,
+      //     lines: [
+      //       {
+      //         line: 0,
+      //         name: x.name,
+      //         path: x.path
+      //       }
+      //     ]
+      //   })
+      // );
     }
   });
 
