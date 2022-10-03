@@ -118,7 +118,8 @@ export class ProjectSelectComponent {
         branchId: this.projectsList.find(
           x => x.projectId === this.selectedProjectId
         ).defaultBranch,
-        envId: common.PROJECT_ENV_PROD
+        envId: common.PROJECT_ENV_PROD,
+        needValidate: false
       })
     );
   }
