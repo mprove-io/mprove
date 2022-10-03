@@ -1,8 +1,10 @@
 import { Controller, Post } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
+import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
@@ -19,6 +21,7 @@ export class EditEvController {
     private envsService: EnvsService,
     private evsService: EvsService,
     private membersService: MembersService,
+    private cs: ConfigService<interfaces.Config>,
     private bridgesRepository: repositories.BridgesRepository,
     private dbService: DbService
   ) {}
@@ -39,6 +42,19 @@ export class EditEvController {
       memberId: user.user_id,
       projectId: projectId
     });
+
+    let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
+      'firstProjectId'
+    );
+
+    if (
+      member.is_admin === common.BoolEnum.FALSE &&
+      projectId === firstProjectId
+    ) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
+      });
+    }
 
     await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
