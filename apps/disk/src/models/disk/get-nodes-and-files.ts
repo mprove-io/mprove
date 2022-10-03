@@ -67,7 +67,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
   });
 
   await forEachSeries(dirents, async dirent => {
-    if (!dirent.name.match(common.MyRegex.STARTS_WITH_DOT())) {
+    if (!dirent.name.match(common.MyRegex.IGNORED_FILE_NAMES())) {
       let fileAbsolutePath = item.dir + '/' + dirent.name;
 
       let nodeId =

@@ -12,8 +12,8 @@ export class MyRegex {
     return cloneRegexp(/[/]/g);
   }
 
-  static STARTS_WITH_DOT(): RegExp {
-    return cloneRegexp(/^[.]/);
+  static IGNORED_FILE_NAMES(): RegExp {
+    return cloneRegexp(/^(?:\.git|\.svn|\.hg|\.DS_Store)$/);
   }
 
   static ENDS_WITH_MD(): RegExp {

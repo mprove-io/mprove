@@ -25,13 +25,7 @@ export async function collectFiles(
     let walker = walk.walk(item.dir, { followLinks: false });
 
     walker.on('file', async (root: any, stat: any, next: any) => {
-      if (
-        !stat.name.match(common.MyRegex.STARTS_WITH_DOT()) &&
-        !stat.name.match(common.MyRegex.ENDS_WITH_IML()) &&
-        !stat.name.match(common.MyRegex.ENDS_WITH_MD()) &&
-        !root.match(common.MyRegex.GIT_FOLDER()) &&
-        !root.match(common.MyRegex.IDEA_FOLDER())
-      ) {
+      if (!stat.name.match(common.MyRegex.IGNORED_FILE_NAMES())) {
         let fullPath = root + '/' + stat.name;
 
         let path = fullPath.substr(item.dir.length + 1);
