@@ -206,7 +206,7 @@ export function checkTopUnknownParameters(
           case common.FileExtensionEnum.Yml: {
             if (
               [
-                enums.ParameterEnum.FilesDir.toString(),
+                enums.ParameterEnum.MproveDir.toString(),
                 enums.ParameterEnum.WeekStart.toString(),
                 enums.ParameterEnum.DefaultTimezone.toString(),
                 enums.ParameterEnum.AllowTimezones.toString(),

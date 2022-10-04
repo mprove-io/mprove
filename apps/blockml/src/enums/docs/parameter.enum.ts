@@ -25,7 +25,7 @@ export enum ParameterEnum {
   Description = 'description',
   Fields = 'fields',
   Filter = 'filter',
-  FilesDir = 'files_dir',
+  MproveDir = 'mprove_dir',
   FormatNumber = 'format_number',
   FromView = 'from_view',
   JoinView = 'join_view',

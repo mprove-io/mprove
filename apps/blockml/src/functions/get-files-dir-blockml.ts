@@ -33,20 +33,31 @@ export async function getFilesDirBlockml(item: {
   ) {
     return item.dir;
   } else {
-    if (common.isUndefined(parsedYaml.filesDir)) {
+    if (common.isUndefined(parsedYaml.mprove_dir)) {
       return item.dir;
     }
 
     if (
       [
-        common.MPROVE_CONFIG_FILES_DIR_ROOT,
-        common.MPROVE_CONFIG_FILES_DIR_ROOT_SLASH
-      ].indexOf(parsedYaml.filesDir) > -1
+        common.MPROVE_CONFIG_DIR_DOT,
+        common.MPROVE_CONFIG_DIR_DOT_SLASH,
+        common.MPROVE_CONFIG_DIR_SLASH
+      ].indexOf(parsedYaml.mprove_dir) > -1
     ) {
       return item.dir;
     }
 
-    let mproveDir = item.dir + '/' + parsedYaml.files_dir;
+    let mdir = parsedYaml.mprove_dir;
+
+    if (mdir.length > 0 && mdir.substring(0, 1) === '.') {
+      mdir = mdir.substring(1);
+    }
+
+    if (mdir.length > 0 && mdir.substring(0, 1) === '/') {
+      mdir = mdir.substring(1);
+    }
+
+    let mproveDir = item.dir + '/' + mdir;
 
     let isDirPathExist = await fse.pathExists(mproveDir);
     if (isDirPathExist === false) {

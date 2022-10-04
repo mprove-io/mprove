@@ -1,8 +1,11 @@
 // export const API_PATH = 'api';
 export const MPROVE_CONFIG_FILENAME = 'mprove.yml';
 export const MPROVE_CONFIG_NAME = 'mprove';
-export const MPROVE_CONFIG_FILES_DIR_ROOT = '.';
-export const MPROVE_CONFIG_FILES_DIR_ROOT_SLASH = './';
+
+export const MPROVE_CONFIG_DIR_DOT = '.';
+export const MPROVE_CONFIG_DIR_DOT_SLASH = './';
+export const MPROVE_CONFIG_DIR_SLASH = '/';
+
 export const PROD_REPO_ID = 'production';
 export const BRANCH_MASTER = 'master';
 export const PROJECT_ENV_PROD = 'prod';

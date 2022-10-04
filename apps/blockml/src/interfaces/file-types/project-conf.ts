@@ -2,8 +2,8 @@ import { common } from '~blockml/barrels/common';
 import { FileBasic } from '~blockml/interfaces/file/file-basic';
 
 export interface ProjectConf extends FileBasic {
-  files_dir?: string;
-  files_dir_line_num?: number;
+  mprove_dir?: string;
+  mprove_dir_line_num?: number;
 
   week_start?: common.ProjectWeekStartEnum;
   week_start_line_num?: number;

@@ -24,7 +24,7 @@ export function checkProjectConfig(
   let errorsOnStart = item.errors.length;
 
   let projectConfig: interfaces.ProjectConf = {
-    files_dir: common.MPROVE_CONFIG_FILES_DIR_ROOT,
+    mprove_dir: common.MPROVE_CONFIG_DIR_DOT,
     allow_timezones: constants.PROJECT_CONFIG_ALLOW_TIMEZONES,
     default_timezone: constants.PROJECT_CONFIG_DEFAULT_TIMEZONE,
     week_start: constants.PROJECT_CONFIG_WEEK_START,
