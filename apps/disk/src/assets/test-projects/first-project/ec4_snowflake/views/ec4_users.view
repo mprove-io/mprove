@@ -1,7 +1,7 @@
 view: ec4_users
 label: Users
 connection: c4_snowflake
-table: s_db.ecommerce.users
+table: ${env.MPROVE_SNOWFLAKE_DATABASE}.ecommerce.users
 
 fields:
 - dimension: user_id

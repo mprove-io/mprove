@@ -1,7 +1,7 @@
 view: ec4_products
 label: Products
 connection: c4_snowflake
-table: s_db.ecommerce.products
+table: ${env.MPROVE_SNOWFLAKE_DATABASE}.ecommerce.products
 
 fields:
 - dimension: product_id

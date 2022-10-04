@@ -6,7 +6,7 @@ derived_table: |
     user_id,
     MIN(CAST(created_at as TIMESTAMP)) AS first_order_ts
   FROM 
-    s_db.ecommerce.orders
+    ${env.MPROVE_SNOWFLAKE_DATABASE}.ecommerce.orders
   GROUP BY
     user_id
 

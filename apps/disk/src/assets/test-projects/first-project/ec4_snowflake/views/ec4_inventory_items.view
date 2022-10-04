@@ -1,7 +1,7 @@
 view: ec4_inventory_items
 label: Inventory Items
 connection: c4_snowflake
-table: s_db.ecommerce.inventory_items
+table: ${env.MPROVE_SNOWFLAKE_DATABASE}.ecommerce.inventory_items
 
 fields:
 - dimension: inventory_item_id

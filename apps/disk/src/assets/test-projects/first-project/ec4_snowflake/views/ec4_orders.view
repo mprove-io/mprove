@@ -1,7 +1,7 @@
 view: ec4_orders
 label: Orders
 connection: c4_snowflake
-table: s_db.ecommerce.orders
+table: ${env.MPROVE_SNOWFLAKE_DATABASE}.ecommerce.orders
 
 fields:
 - dimension: order_id

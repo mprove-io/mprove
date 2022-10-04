@@ -214,6 +214,7 @@ export class AppModule implements OnModuleInit {
     private orgsRepository: repositories.OrgsRepository,
     private projectsRepository: repositories.ProjectsRepository,
     private connectionsRepository: repositories.ConnectionsRepository,
+    private evsRepository: repositories.EvsRepository,
     private dbService: DbService
   ) {}
 
@@ -307,6 +308,8 @@ export class AppModule implements OnModuleInit {
           common.isDefined(firstOrg) &&
           common.isDefined(firstUser)
         ) {
+          let connections = [];
+
           let c1connection = await this.connectionsRepository.findOne({
             project_id: firstProjectId,
             connection_id: 'c1_postgres'
@@ -332,12 +335,7 @@ export class AppModule implements OnModuleInit {
               isSSL: false
             });
 
-            await this.dbService.writeRecords({
-              modify: false,
-              records: {
-                connections: [c1]
-              }
-            });
+            connections.push(c1);
           }
 
           let c2connection = await this.connectionsRepository.findOne({
@@ -365,12 +363,7 @@ export class AppModule implements OnModuleInit {
               isSSL: false
             });
 
-            await this.dbService.writeRecords({
-              modify: false,
-              records: {
-                connections: [c2]
-              }
-            });
+            connections.push(c2);
           }
 
           let c3connection = await this.connectionsRepository.findOne({
@@ -404,12 +397,7 @@ export class AppModule implements OnModuleInit {
               isSSL: true
             });
 
-            await this.dbService.writeRecords({
-              modify: false,
-              records: {
-                connections: [c3]
-              }
-            });
+            connections.push(c3);
           }
 
           let c4connection = await this.connectionsRepository.findOne({
@@ -443,13 +431,35 @@ export class AppModule implements OnModuleInit {
               isSSL: true
             });
 
-            await this.dbService.writeRecords({
-              modify: false,
-              records: {
-                connections: [c4]
-              }
-            });
+            connections.push(c4);
           }
+
+          let evs = [];
+
+          let ev = await this.evsRepository.findOne({
+            project_id: firstProjectId,
+            env_id: common.PROJECT_ENV_PROD,
+            ev_id: 'MPROVE_SNOWFLAKE_DATABASE'
+          });
+
+          if (common.isUndefined(ev)) {
+            let ev1 = maker.makeEv({
+              projectId: firstProjectId,
+              envId: common.PROJECT_ENV_PROD,
+              evId: 'MPROVE_SNOWFLAKE_DATABASE',
+              val: 's_db'
+            });
+
+            evs.push(ev1);
+          }
+
+          await this.dbService.writeRecords({
+            modify: false,
+            records: {
+              connections: connections,
+              evs: evs
+            }
+          });
 
           let firstProject = await this.projectsRepository.findOne({
             project_id: firstProjectId
