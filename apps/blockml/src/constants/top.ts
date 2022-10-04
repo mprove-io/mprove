@@ -2,8 +2,6 @@ import { common } from '~blockml/barrels/common';
 
 export const SRC_PATH = `apps/blockml/src`;
 
-export const PROJECT = 'project';
-
 export const LINE_NUM_START = '_line_num___';
 export const LINE_NUM_END = '___line_num_';
 export const LINE_NUMBERS = 'LineNumbers';

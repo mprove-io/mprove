@@ -23,7 +23,7 @@ export const EXT_LIST: common.FileExtensionEnum[] = [
   common.FileExtensionEnum.Dashboard,
   common.FileExtensionEnum.Viz,
   common.FileExtensionEnum.Udf,
-  common.FileExtensionEnum.Conf,
+  common.FileExtensionEnum.Yml,
   common.FileExtensionEnum.Md
 ];
 

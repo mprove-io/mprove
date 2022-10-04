@@ -34,8 +34,8 @@ export function getFileExtension(value: string, short?: boolean) {
         letter = 'u';
         break;
 
-      case common.FileExtensionEnum.Conf:
-        letter = 'c';
+      case common.FileExtensionEnum.Yml:
+        letter = 'y';
         break;
 
       case common.FileExtensionEnum.Md:

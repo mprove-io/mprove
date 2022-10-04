@@ -1,3 +1,4 @@
+files_dir: .
 week_start: Monday    
 allow_timezones: true
 default_timezone: UTC

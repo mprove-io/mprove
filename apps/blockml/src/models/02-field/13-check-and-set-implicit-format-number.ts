@@ -14,7 +14,7 @@ export function checkAndSetImplicitFormatNumber<T extends types.vmdType>(
     entities: T[];
     errors: BmError[];
     structId: string;
-    projectConfig: interfaces.Conf;
+    projectConfig: interfaces.ProjectConf;
     caller: enums.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>

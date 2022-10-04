@@ -221,7 +221,7 @@ export class BlockmlErrorsComponent implements OnDestroy {
     switch (ext) {
       case 'other':
         return 1;
-      case common.FileExtensionEnum.Conf:
+      case common.FileExtensionEnum.Yml:
         return 2;
       case common.FileExtensionEnum.Md:
         return 3;

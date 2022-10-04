@@ -1,6 +1,8 @@
 import * as fse from 'fs-extra';
 import { Dirent } from 'fs-extra';
 import { forEachSeries } from 'p-iteration';
+import { constants } from '~common/barrels/constants';
+import { enums } from '~common/barrels/enums';
 import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { interfaces } from '~disk/barrels/interfaces';
@@ -36,7 +38,38 @@ export async function getNodesAndFiles(item: {
 
   let nodes = [topNode];
 
-  let files = itemDir.files;
+  let configPath = repoDir + '/' + common.MPROVE_CONFIG_FILENAME;
+
+  let mproveDir = await common.getFilesDir({
+    dir: repoDir,
+    configPath: configPath
+  });
+
+  let mproveDirRelative =
+    mproveDir === repoDir ? undefined : mproveDir.substr(repoDir.length + 1);
+
+  let files = common.isDefined(mproveDirRelative)
+    ? itemDir.files.filter(
+        x =>
+          x.fileNodeId.split(mproveDirRelative)[0] === `${item.projectId}/` ||
+          x.fileNodeId ===
+            `${item.projectId}/${constants.MPROVE_CONFIG_FILENAME}`
+      )
+    : itemDir.files.filter(y => {
+        let ar = y.name.split('.');
+        let lastIndex = ar.length - 1;
+
+        if (`.${ar[lastIndex]}` !== enums.FileExtensionEnum.Yml) {
+          return true;
+        } else if (
+          y.fileNodeId ===
+          `${item.projectId}/${constants.MPROVE_CONFIG_FILENAME}`
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      });
 
   return { nodes: nodes, files: files };
 }
@@ -54,7 +87,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
   let nodes: common.DiskCatalogNode[] = [];
 
   let folderNodes: common.DiskCatalogNode[] = [];
-  let confNodes: common.DiskCatalogNode[] = [];
+  let ymlNodes: common.DiskCatalogNode[] = [];
   let mdNodes: common.DiskCatalogNode[] = [];
   let dashboardNodes: common.DiskCatalogNode[] = [];
   let vizNodes: common.DiskCatalogNode[] = [];
@@ -136,8 +169,8 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
           case common.FileExtensionEnum.Md:
             mdNodes.push(node);
             break;
-          case common.FileExtensionEnum.Conf:
-            confNodes.push(node);
+          case common.FileExtensionEnum.Yml:
+            ymlNodes.push(node);
             break;
           default:
             otherNodes.push(node);
@@ -169,7 +202,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
 
   nodes = [
     ...sortNodes(folderNodes),
-    ...sortNodes(confNodes),
+    ...sortNodes(ymlNodes),
     ...sortNodes(mdNodes),
     ...sortNodes(dashboardNodes),
     ...sortNodes(vizNodes),

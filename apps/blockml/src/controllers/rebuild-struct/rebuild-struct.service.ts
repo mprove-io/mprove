@@ -130,14 +130,29 @@ export class RebuildStructService {
     evs: common.Ev[];
     connections: common.ProjectConnection[];
   }) {
+    let configPath = item.dir + '/' + common.MPROVE_CONFIG_FILENAME;
+
+    let mproveDir = await common.getFilesDir({
+      dir: item.dir,
+      configPath: configPath
+    });
+
     let files: common.BmlFile[] = await barYaml.collectFiles(
       {
-        dir: item.dir,
+        dir: mproveDir,
         structId: item.structId,
         caller: enums.CallerEnum.RebuildStruct
       },
       this.cs
     );
+
+    files = files.filter(x => x.name !== common.MPROVE_CONFIG_FILENAME);
+
+    let mproveConfigFile = await common.getMproveConfigFile(configPath);
+
+    if (common.isDefined(mproveConfigFile)) {
+      files.push(mproveConfigFile);
+    }
 
     return await this.rebuildStructStateless({
       traceId: item.traceId,
@@ -164,7 +179,7 @@ export class RebuildStructService {
     let models: interfaces.Model[];
     let dashboards: interfaces.Dashboard[];
     let vizs: interfaces.Viz[];
-    let projectConfig: interfaces.Conf;
+    let projectConfig: interfaces.ProjectConf;
 
     let yamlBuildItem = barBuilder.buildYaml(
       {

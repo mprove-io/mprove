@@ -1,6 +1,5 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -25,7 +24,7 @@ export function splitFiles(
   let models: interfaces.Model[] = [];
   let dashboards: interfaces.Dashboard[] = [];
   let vizs: interfaces.Viz[] = [];
-  let confs: interfaces.Conf[] = [];
+  let confs: interfaces.ProjectConf[] = [];
 
   item.filesAny.forEach(file => {
     let fileExt = file.ext;
@@ -207,14 +206,14 @@ export function splitFiles(
         break;
       }
 
-      case common.FileExtensionEnum.Conf: {
-        if (file.name === constants.PROJECT + common.FileExtensionEnum.Conf) {
+      case common.FileExtensionEnum.Yml: {
+        if (file.name === common.MPROVE_CONFIG_FILENAME) {
           delete file.ext;
           delete file.name;
           delete file.path;
 
-          let newConfOptions: interfaces.Conf = {
-            name: constants.PROJECT,
+          let newConfOptions: interfaces.ProjectConf = {
+            name: common.MPROVE_CONFIG_NAME,
             fileName: fileName,
             filePath: filePath,
             fileExt: fileExt
@@ -222,19 +221,7 @@ export function splitFiles(
 
           confs.push(Object.assign(file, newConfOptions));
         } else {
-          item.errors.push(
-            new BmError({
-              title: enums.ErTitleEnum.WRONG_CONFIG_NAME,
-              message: `"${file.name}${common.FileExtensionEnum.Conf}" filename must be "${constants.PROJECT}${common.FileExtensionEnum.Conf}"`,
-              lines: [
-                {
-                  line: 0,
-                  name: file.name,
-                  path: file.path
-                }
-              ]
-            })
-          );
+          // do nothing
         }
         break;
       }

@@ -5,5 +5,5 @@ export enum FileExtensionEnum {
   Viz = '.viz',
   Udf = '.udf',
   Md = '.md',
-  Conf = '.config'
+  Yml = '.yml'
 }

@@ -203,9 +203,10 @@ export function checkTopUnknownParameters(
             break;
           }
 
-          case common.FileExtensionEnum.Conf: {
+          case common.FileExtensionEnum.Yml: {
             if (
               [
+                enums.ParameterEnum.FilesDir.toString(),
                 enums.ParameterEnum.WeekStart.toString(),
                 enums.ParameterEnum.DefaultTimezone.toString(),
                 enums.ParameterEnum.AllowTimezones.toString(),
@@ -216,10 +217,10 @@ export function checkTopUnknownParameters(
             ) {
               item.errors.push(
                 new BmError({
-                  title: enums.ErTitleEnum.UNKNOWN_PROJECT_CONFIG_PARAMETER,
+                  title: enums.ErTitleEnum.UNKNOWN_MPROVE_CONFIG_PARAMETER,
                   message:
                     `parameter "${parameter}" can not be used on top level of ` +
-                    `${common.FileExtensionEnum.Conf} file`,
+                    `${common.MPROVE_CONFIG_FILENAME} file`,
                   lines: [
                     {
                       line: file[parameter + constants.LINE_NUM],

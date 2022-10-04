@@ -20,7 +20,7 @@ export function buildYaml(
   let models: interfaces.Model[];
   let dashboards: interfaces.Dashboard[];
   let vizs: interfaces.Viz[];
-  let confs: interfaces.Conf[];
+  let confs: interfaces.ProjectConf[];
 
   let file2s: interfaces.File2[] = barYaml.removeWrongExt(
     {
@@ -47,7 +47,7 @@ export function buildYaml(
       file3s: file3s.filter(
         x =>
           [
-            common.FileExtensionEnum.Conf,
+            common.FileExtensionEnum.Yml,
             common.FileExtensionEnum.Udf,
             common.FileExtensionEnum.View,
             common.FileExtensionEnum.Model,

@@ -11,7 +11,7 @@ let func = enums.FuncEnum.CheckProjectConfig;
 
 export function checkProjectConfig(
   item: {
-    confs: interfaces.Conf[];
+    confs: interfaces.ProjectConf[];
     errors: BmError[];
     structId: string;
     caller: enums.CallerEnum;
@@ -23,7 +23,8 @@ export function checkProjectConfig(
 
   let errorsOnStart = item.errors.length;
 
-  let projectConfig: interfaces.Conf = {
+  let projectConfig: interfaces.ProjectConf = {
+    files_dir: common.MPROVE_CONFIG_FILES_DIR_ROOT,
     allow_timezones: constants.PROJECT_CONFIG_ALLOW_TIMEZONES,
     default_timezone: constants.PROJECT_CONFIG_DEFAULT_TIMEZONE,
     week_start: constants.PROJECT_CONFIG_WEEK_START,
@@ -54,7 +55,7 @@ export function checkProjectConfig(
 
         if (
           parameter === enums.ParameterEnum.AllowTimezones.toString() &&
-          !conf[parameter as keyof interfaces.Conf]
+          !conf[parameter as keyof interfaces.ProjectConf]
             .toString()
             .match(common.MyRegex.TRUE_FALSE())
         ) {
@@ -65,7 +66,8 @@ export function checkProjectConfig(
               lines: [
                 {
                   line: conf[
-                    (parameter + constants.LINE_NUM) as keyof interfaces.Conf
+                    (parameter +
+                      constants.LINE_NUM) as keyof interfaces.ProjectConf
                   ] as number,
                   name: conf.fileName,
                   path: conf.filePath
@@ -84,7 +86,9 @@ export function checkProjectConfig(
             [
               common.ProjectWeekStartEnum.Sunday.toString(),
               common.ProjectWeekStartEnum.Monday.toString()
-            ].indexOf(conf[parameter as keyof interfaces.Conf].toString()) < 0
+            ].indexOf(
+              conf[parameter as keyof interfaces.ProjectConf].toString()
+            ) < 0
           ) {
             item.errors.push(
               new BmError({
@@ -93,7 +97,8 @@ export function checkProjectConfig(
                 lines: [
                   {
                     line: conf[
-                      (parameter + constants.LINE_NUM) as keyof interfaces.Conf
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.ProjectConf
                     ] as number,
                     name: conf.fileName,
                     path: conf.filePath
@@ -109,7 +114,7 @@ export function checkProjectConfig(
         if (
           parameter === enums.ParameterEnum.DefaultTimezone.toString() &&
           helper.isTimezoneValid(
-            conf[parameter as keyof interfaces.Conf].toString()
+            conf[parameter as keyof interfaces.ProjectConf].toString()
           ) === false
         ) {
           item.errors.push(
@@ -119,7 +124,8 @@ export function checkProjectConfig(
               lines: [
                 {
                   line: conf[
-                    (parameter + constants.LINE_NUM) as keyof interfaces.Conf
+                    (parameter +
+                      constants.LINE_NUM) as keyof interfaces.ProjectConf
                   ] as number,
                   name: conf.fileName,
                   path: conf.filePath
@@ -132,7 +138,9 @@ export function checkProjectConfig(
         }
 
         if (parameter === enums.ParameterEnum.FormatNumber.toString()) {
-          let value = conf[parameter as keyof interfaces.Conf].toString();
+          let value = conf[
+            parameter as keyof interfaces.ProjectConf
+          ].toString();
           try {
             formatSpecifier(value);
           } catch (e) {
@@ -143,7 +151,8 @@ export function checkProjectConfig(
                 lines: [
                   {
                     line: conf[
-                      (parameter + constants.LINE_NUM) as keyof interfaces.Conf
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.ProjectConf
                     ] as number,
                     name: conf.fileName,
                     path: conf.filePath
