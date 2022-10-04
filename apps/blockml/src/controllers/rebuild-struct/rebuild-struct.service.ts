@@ -10,6 +10,8 @@ import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
+import { getFilesDirBlockml } from '~blockml/functions/get-files-dir-blockml';
+import { getMproveConfigFile } from '~blockml/functions/get-mprove-config-file';
 import { BmError } from '~blockml/models/bm-error';
 import { RabbitService } from '~blockml/services/rabbit.service';
 
@@ -132,7 +134,7 @@ export class RebuildStructService {
   }) {
     let configPath = item.dir + '/' + common.MPROVE_CONFIG_FILENAME;
 
-    let mproveDir = await common.getFilesDir({
+    let mproveDir = await getFilesDirBlockml({
       dir: item.dir,
       configPath: configPath
     });
@@ -148,7 +150,7 @@ export class RebuildStructService {
 
     files = files.filter(x => x.name !== common.MPROVE_CONFIG_FILENAME);
 
-    let mproveConfigFile = await common.getMproveConfigFile(configPath);
+    let mproveConfigFile = await getMproveConfigFile(configPath);
 
     if (common.isDefined(mproveConfigFile)) {
       files.push(mproveConfigFile);

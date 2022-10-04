@@ -1,9 +1,11 @@
 import * as fse from 'fs-extra';
 import { load } from 'js-yaml';
-import { constants } from '~common/barrels/constants';
-import { isUndefined } from './is-undefined';
+import { common } from '~disk/barrels/common';
 
-export async function getFilesDir(item: { dir: string; configPath: string }) {
+export async function getFilesDirBlockml(item: {
+  dir: string;
+  configPath: string;
+}) {
   let isConfigPathExist = await fse.pathExists(item.configPath);
   if (isConfigPathExist === false) {
     return item.dir;
@@ -26,19 +28,19 @@ export async function getFilesDir(item: { dir: string; configPath: string }) {
 
   if (
     breakOnYamlParsing === true ||
-    isUndefined(parsedYaml) ||
+    common.isUndefined(parsedYaml) ||
     parsedYaml.constructor !== Object
   ) {
     return item.dir;
   } else {
-    if (isUndefined(parsedYaml.filesDir)) {
+    if (common.isUndefined(parsedYaml.filesDir)) {
       return item.dir;
     }
 
     if (
       [
-        constants.MPROVE_CONFIG_FILES_DIR_ROOT,
-        constants.MPROVE_CONFIG_FILES_DIR_ROOT_SLASH
+        common.MPROVE_CONFIG_FILES_DIR_ROOT,
+        common.MPROVE_CONFIG_FILES_DIR_ROOT_SLASH
       ].indexOf(parsedYaml.filesDir) > -1
     ) {
       return item.dir;

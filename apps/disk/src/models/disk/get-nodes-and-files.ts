@@ -6,6 +6,7 @@ import { enums } from '~common/barrels/enums';
 import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { interfaces } from '~disk/barrels/interfaces';
+import { getFilesDirDisk } from '~disk/functions/get-files-dir-disk';
 
 export async function getNodesAndFiles(item: {
   projectId: string;
@@ -40,7 +41,7 @@ export async function getNodesAndFiles(item: {
 
   let configPath = repoDir + '/' + common.MPROVE_CONFIG_FILENAME;
 
-  let mproveDir = await common.getFilesDir({
+  let mproveDir = await getFilesDirDisk({
     dir: repoDir,
     configPath: configPath
   });
