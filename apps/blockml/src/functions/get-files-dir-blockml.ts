@@ -1,6 +1,6 @@
 import * as fse from 'fs-extra';
 import { load } from 'js-yaml';
-import { common } from '~disk/barrels/common';
+import { common } from '~blockml/barrels/common';
 
 export async function getFilesDirBlockml(item: {
   dir: string;
