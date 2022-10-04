@@ -303,14 +303,14 @@ export class ApiService {
         pathInfoName ===
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPushRepo
       ) {
-        errorData.description = `Some actions of this project is restricted for Demo purposes. Change organization/project to remove restrictions and be able to push to remote.`;
+        errorData.description = `Some actions of this project is restricted for Demo purposes. Switch organization/project to remove restrictions and be able to push to remote.`;
         this.myDialogService.showError({ errorData, isThrow: false });
       } else if (
         infoErrorMessage === common.ErEnum.BACKEND_RESTRICTED_PROJECT &&
         pathInfoName !==
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPushRepo
       ) {
-        errorData.description = `Some actions of this project is restricted for Demo purposes. Switch to personal branch or change organization/project to remove restrictions.`;
+        errorData.description = `Some actions of this project is restricted for Demo purposes. Switch organization/project to remove restrictions.`;
         this.myDialogService.showError({ errorData, isThrow: false });
       } else if (
         [

@@ -41,6 +41,14 @@ export class ProjectEnvironmentsComponent implements OnInit {
     })
   );
 
+  isEditor: boolean;
+  isEditor$ = this.memberQuery.isEditor$.pipe(
+    tap(x => {
+      this.isEditor = x;
+      this.cd.detectChanges();
+    })
+  );
+
   environments: common.Env[] = [];
   environments$ = this.environmentsQuery.environments$.pipe(
     tap(x => {

@@ -87,18 +87,18 @@
               <td class="w-32">
                 <div
                   class="w-fit"
-                  tippy="Admin role required"
-                  [isEnabled]="isAdmin === false"
+                  tippy="Editor role required"
+                  [isEnabled]="isEditor === false"
                 >
                   <button
                     data-cy="projectEnvironmentsVariablesButton"
                     (click)="navToVariables(environment)"
                     class="rounded border py-2 px-3 text-base font-medium leading-3 shadow-sm focus:outline-none"
                     [ngClass]="{
-                      'cursor-default text-gray-400': isAdmin === false,
-                      'border-gray3 text-gray1': isAdmin === true
+                      'cursor-default text-gray-400': isEditor === false,
+                      'border-gray3 text-gray1': isEditor === true
                     }"
-                    [disabled]="isAdmin === false"
+                    [disabled]="isEditor === false"
                     >Variables</button
                   >
                 </div>
@@ -160,5 +160,6 @@
 
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="isAdmin$ | async"></div>
+<div *ngIf="isEditor$ | async"></div>
 <div *ngIf="environments$ | async"></div>
 <div *ngIf="total$ | async"></div>
