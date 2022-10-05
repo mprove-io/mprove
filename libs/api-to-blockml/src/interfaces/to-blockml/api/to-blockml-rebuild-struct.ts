@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { common } from '~api-to-blockml/barrels/common';
 import { ToBlockmlRequest } from '~api-to-blockml/interfaces/to-blockml/to-blockml-request';
 
@@ -20,8 +26,9 @@ export class ToBlockmlRebuildStructRequestPayload {
   @IsString()
   structId: string;
 
+  @IsOptional()
   @IsString()
-  mproveDir: string;
+  mproveDir: string; // IsOptional is only for validator, not for type checks
 
   @ValidateNested()
   @Type(() => common.BmlFile)
