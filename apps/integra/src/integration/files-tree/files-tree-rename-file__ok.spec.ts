@@ -67,14 +67,14 @@ describe('integra', () => {
       `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_REPO}/${userId}/${common.PATH_BRANCH}/${common.BRANCH_MASTER}/${common.PATH_ENV}/${common.PROJECT_ENV_PROD}/${common.PATH_FILES}`
     );
     cy.loading();
-    cy.get('[data-cy=fileOptionsMenuButton]').eq(0).click({ force: true });
+    cy.get('[data-cy=fileOptionsMenuButton]').eq(1).click({ force: true });
     cy.get('[data-cy=fileOptionsRenameFileButton]').click({ force: true });
     cy.get('[data-cy=renameFileDialogFileNameInput]')
       .clear({ force: true })
       .type(newFileName);
     cy.get('[data-cy=renameFileDialogSaveButton]').click();
     cy.loading();
-    cy.get('[data-cy=filesTreeItem]').eq(2).should('contain', newFileName);
+    cy.get('[data-cy=filesTreeItem]').eq(3).should('contain', newFileName);
     cy.url().should('include', `${newFileName}`);
   });
 });

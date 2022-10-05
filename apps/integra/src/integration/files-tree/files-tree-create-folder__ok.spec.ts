@@ -65,12 +65,12 @@ describe('integra', () => {
       `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_REPO}/${userId}/${common.PATH_BRANCH}/${common.BRANCH_MASTER}/${common.PATH_ENV}/${common.PROJECT_ENV_PROD}/${common.PATH_FILES}`
     );
     cy.loading();
-    cy.get('[data-cy=filesTreeItem]').should('have.length', 2);
+    cy.get('[data-cy=filesTreeItem]').should('have.length', 3);
     cy.get('[data-cy=folderOptionsMenuButton]').click({ force: true });
     cy.get('[data-cy=folderOptionsNewFolderButton]').click({ force: true });
     cy.get('[data-cy=createFolderDialogFolderNameInput]').type(folderName);
     cy.get('[data-cy=createFolderDialogCreateButton]').click();
     cy.loading();
-    cy.get('[data-cy=filesTreeItem]').should('have.length', 3);
+    cy.get('[data-cy=filesTreeItem]').should('have.length', 4);
   });
 });
