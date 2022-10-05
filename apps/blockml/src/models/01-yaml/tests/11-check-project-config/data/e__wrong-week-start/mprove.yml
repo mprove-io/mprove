@@ -1,3 +1,4 @@
+mprove_dir: .
 allow_timezones: true
 default_timezone: UTC
 week_start: unk

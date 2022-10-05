@@ -48,5 +48,5 @@ test('1', async t => {
   t.is(errors.length, 1);
 
   t.is(errors[0].title, enums.ErTitleEnum.WRONG_DEFAULT_TIMEZONE);
-  t.is(errors[0].lines[0].line, 2);
+  t.is(errors[0].lines[0].line, 3);
 });

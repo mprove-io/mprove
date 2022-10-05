@@ -10,8 +10,8 @@ import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
-import { getFilesDirBlockml } from '~blockml/functions/get-files-dir-blockml';
 import { getMproveConfigFile } from '~blockml/functions/get-mprove-config-file';
+import { getMproveDirBlockml } from '~blockml/functions/get-mprove-dir-blockml';
 import { BmError } from '~blockml/models/bm-error';
 import { RabbitService } from '~blockml/services/rabbit.service';
 
@@ -134,19 +134,23 @@ export class RebuildStructService {
   }) {
     let configPath = item.dir + '/' + common.MPROVE_CONFIG_FILENAME;
 
-    let mproveDir = await getFilesDirBlockml({
+    let mproveDir = await getMproveDirBlockml({
       dir: item.dir,
       configPath: configPath
     });
 
-    let files: common.BmlFile[] = await barYaml.collectFiles(
-      {
-        dir: mproveDir,
-        structId: item.structId,
-        caller: enums.CallerEnum.RebuildStruct
-      },
-      this.cs
-    );
+    let files: common.BmlFile[] = [];
+
+    if (common.isDefined(mproveDir)) {
+      files = await barYaml.collectFiles(
+        {
+          dir: mproveDir,
+          structId: item.structId,
+          caller: enums.CallerEnum.RebuildStruct
+        },
+        this.cs
+      );
+    }
 
     files = files.filter(x => x.name !== common.MPROVE_CONFIG_FILENAME);
 

@@ -44,5 +44,5 @@ test('1', async t => {
 
   // no case for PROCESSED_CONTENT_IS_NOT_YAML yet
   t.is(errors.length, 0);
-  t.is(filesAny.length, 1);
+  t.is(filesAny.length, 2);
 });

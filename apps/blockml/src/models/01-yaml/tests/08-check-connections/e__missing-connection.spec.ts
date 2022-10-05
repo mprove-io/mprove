@@ -43,7 +43,7 @@ test('1', async t => {
   }
 
   t.is(errors.length, 2);
-  t.is(filesAny.length, 0);
+  t.is(filesAny.length, 1);
 
   t.is(errors[0].title, enums.ErTitleEnum.MISSING_CONNECTION);
   t.is(errors[0].lines[0].line, 0);

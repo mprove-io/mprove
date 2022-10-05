@@ -2,11 +2,10 @@ import * as fse from 'fs-extra';
 import { Dirent } from 'fs-extra';
 import { forEachSeries } from 'p-iteration';
 import { constants } from '~common/barrels/constants';
-import { enums } from '~common/barrels/enums';
 import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { interfaces } from '~disk/barrels/interfaces';
-import { getFilesDirDisk } from '~disk/functions/get-files-dir-disk';
+import { getMproveDirDisk } from '~disk/functions/get-mprove-dir-disk';
 
 export async function getNodesAndFiles(item: {
   projectId: string;
@@ -25,13 +24,22 @@ export async function getNodesAndFiles(item: {
 
   let repoDirPathLength = repoDir.length;
 
+  let configPath = repoDir + '/' + common.MPROVE_CONFIG_FILENAME;
+
+  let mproveDir = await getMproveDirDisk({
+    dir: repoDir,
+    configPath: configPath
+  });
+
   let itemDir = <interfaces.ItemCatalog>(
     await getDirCatalogNodesAndFilesRecursive({
       dir: repoDir,
       projectId: item.projectId,
       repoId: item.repoId,
       repoDirPathLength: repoDirPathLength,
-      readFiles: item.readFiles
+      readFiles: item.readFiles,
+      mproveDir: mproveDir,
+      repoDir: repoDir
     })
   );
 
@@ -39,38 +47,7 @@ export async function getNodesAndFiles(item: {
 
   let nodes = [topNode];
 
-  let configPath = repoDir + '/' + common.MPROVE_CONFIG_FILENAME;
-
-  let mproveDir = await getFilesDirDisk({
-    dir: repoDir,
-    configPath: configPath
-  });
-
-  let mproveDirRelative =
-    mproveDir === repoDir ? undefined : mproveDir.substr(repoDir.length + 1);
-
-  let files = common.isDefined(mproveDirRelative)
-    ? itemDir.files.filter(
-        x =>
-          x.fileNodeId.split(mproveDirRelative)[0] === `${item.projectId}/` ||
-          x.fileNodeId ===
-            `${item.projectId}/${constants.MPROVE_CONFIG_FILENAME}`
-      )
-    : itemDir.files.filter(y => {
-        let ar = y.name.split('.');
-        let lastIndex = ar.length - 1;
-
-        if (`.${ar[lastIndex]}` !== enums.FileExtensionEnum.Yml) {
-          return true;
-        } else if (
-          y.fileNodeId ===
-          `${item.projectId}/${constants.MPROVE_CONFIG_FILENAME}`
-        ) {
-          return true;
-        } else {
-          return false;
-        }
-      });
+  let files = itemDir.files;
 
   return { nodes: nodes, files: files };
 }
@@ -82,6 +59,8 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
   repoId: string;
   repoDirPathLength: number;
   readFiles: boolean;
+  mproveDir: string;
+  repoDir: string;
 }) {
   let files: common.DiskCatalogFile[] = [];
 
@@ -115,7 +94,9 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
             projectId: item.projectId,
             repoId: item.repoId,
             repoDirPathLength: item.repoDirPathLength,
-            readFiles: item.readFiles
+            readFiles: item.readFiles,
+            mproveDir: item.mproveDir,
+            repoDir: item.repoDir
           })
         );
 
@@ -177,7 +158,21 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
             otherNodes.push(node);
         }
 
-        if (item.readFiles === true) {
+        let mproveDirRelative =
+          common.isDefined(item.mproveDir) && item.mproveDir !== item.repoDir
+            ? item.mproveDir.substr(item.repoDir.length + 1)
+            : undefined;
+
+        let isPass =
+          nodeId === `${item.projectId}/${constants.MPROVE_CONFIG_FILENAME}`
+            ? true
+            : common.isDefined(item.mproveDir)
+            ? item.mproveDir === item.repoDir
+              ? true
+              : nodeId.split(mproveDirRelative)[0] === `${item.projectId}/`
+            : false;
+
+        if (item.readFiles === true && isPass === true) {
           let path = JSON.stringify(nodeId.split('/'));
 
           let content = await disk.readFile(fileAbsolutePath);

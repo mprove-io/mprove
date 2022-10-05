@@ -1,19 +1,19 @@
 import * as fse from 'fs-extra';
 import { load } from 'js-yaml';
-import { common } from '~disk/barrels/common';
+import { common } from '~blockml/barrels/common';
 
-export async function getFilesDirDisk(item: {
+export async function getMproveDirBlockml(item: {
   dir: string;
   configPath: string;
 }) {
   let isConfigPathExist = await fse.pathExists(item.configPath);
   if (isConfigPathExist === false) {
-    return item.dir;
+    return undefined;
   }
 
   let configStat = await fse.stat(item.configPath);
   if (configStat.isFile() === false) {
-    return item.dir;
+    return undefined;
   }
 
   let content = <string>await fse.readFile(item.configPath, 'utf8');
@@ -31,10 +31,10 @@ export async function getFilesDirDisk(item: {
     common.isUndefined(parsedYaml) ||
     parsedYaml.constructor !== Object
   ) {
-    return item.dir;
+    return undefined;
   } else {
     if (common.isUndefined(parsedYaml.mprove_dir)) {
-      return item.dir;
+      return undefined;
     }
 
     if (
@@ -61,12 +61,12 @@ export async function getFilesDirDisk(item: {
 
     let isDirPathExist = await fse.pathExists(mproveDir);
     if (isDirPathExist === false) {
-      return item.dir;
+      return undefined;
     }
 
     let stat = await fse.stat(mproveDir);
     if (stat.isDirectory() === false) {
-      return item.dir;
+      return undefined;
     }
 
     return mproveDir;

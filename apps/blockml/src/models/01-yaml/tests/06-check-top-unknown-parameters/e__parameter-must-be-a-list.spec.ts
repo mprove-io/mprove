@@ -43,7 +43,7 @@ test('1', async t => {
   }
 
   t.is(errors.length, 10);
-  t.is(filesAny.length, 0);
+  t.is(filesAny.length, 1);
 
   t.is(errors[0].title, enums.ErTitleEnum.PARAMETER_IS_NOT_A_LIST);
 });

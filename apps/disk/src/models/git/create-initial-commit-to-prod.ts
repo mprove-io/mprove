@@ -22,14 +22,29 @@ export async function createInitialCommitToProd(item: {
       destinationPath: item.prodDir
     });
   } else {
-    let fileName = common.README_FILE_NAME;
-    let filePath = `${item.prodDir}/${fileName}`;
-
-    let content = `# ${item.projectName} project`;
+    let readmeFileName = common.README_FILE_NAME;
+    let readmeFilePath = `${item.prodDir}/${readmeFileName}`;
+    let readmeContent = `# ${item.projectName} project`;
 
     await disk.writeToFile({
-      filePath: filePath,
-      content: content
+      filePath: readmeFilePath,
+      content: readmeContent
+    });
+
+    let mproveFileName = common.MPROVE_CONFIG_FILENAME;
+    let mproveFilePath = `${item.prodDir}/${mproveFileName}`;
+    let mproveContent = `mprove_dir: .
+week_start: Monday    
+allow_timezones: true
+default_timezone: UTC
+format_number: ',.0f'
+currency_prefix: $
+currency_suffix: ''
+`;
+
+    await disk.writeToFile({
+      filePath: mproveFilePath,
+      content: mproveContent
     });
   }
 

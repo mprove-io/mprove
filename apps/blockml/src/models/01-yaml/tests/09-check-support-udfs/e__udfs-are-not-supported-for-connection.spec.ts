@@ -52,7 +52,7 @@ test('1', async t => {
   }
 
   t.is(errors.length, 2);
-  t.is(filesAny.length, 2);
+  t.is(filesAny.length, 3);
 
   t.is(
     errors[0].title,

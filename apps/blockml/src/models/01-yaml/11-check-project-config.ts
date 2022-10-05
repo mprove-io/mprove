@@ -167,7 +167,15 @@ export function checkProjectConfig(
 
     projectConfig = Object.assign(projectConfig, conf);
   } else if (item.confs.length === 0) {
-    // do nothing
+    item.errors.push(
+      new BmError({
+        title: enums.ErTitleEnum.MPROVE_CONFIG_NOT_FOUND,
+        message: `project must have ./${common.MPROVE_CONFIG_FILENAME} file`,
+        lines: []
+      })
+    );
+
+    return;
   } else {
     // item.confs.length > 1
     // already checked by "duplicate file names" and "wrong extension"
