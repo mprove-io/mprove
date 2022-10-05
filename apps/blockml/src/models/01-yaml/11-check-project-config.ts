@@ -166,7 +166,13 @@ export function checkProjectConfig(
       });
 
     projectConfig = Object.assign(projectConfig, conf);
-  } else if (item.confs.length === 0) {
+  } else if (
+    item.confs.length === 0 &&
+    item.errors
+      .map(e => e.lines)
+      .reduce((a, b) => a.concat(b), [])
+      .findIndex(line => line.name === common.MPROVE_CONFIG_FILENAME) < 0
+  ) {
     item.errors.push(
       new BmError({
         title: enums.ErTitleEnum.MPROVE_CONFIG_NOT_FOUND,
