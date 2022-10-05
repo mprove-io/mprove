@@ -207,6 +207,7 @@ export class CreateTempDashboardController {
       projectId,
       structId: bridge.struct_id,
       diskFiles: diskFiles,
+      mproveDir: diskResponse.payload.mproveDir,
       skipDb: true,
       envId: envId
     });

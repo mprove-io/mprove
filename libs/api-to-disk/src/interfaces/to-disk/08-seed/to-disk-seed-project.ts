@@ -56,6 +56,9 @@ export class ToDiskSeedProjectResponsePayload {
   @ValidateNested()
   @Type(() => common.DiskCatalogFile)
   files: common.DiskCatalogFile[];
+
+  @IsString()
+  mproveDir: string;
 }
 
 export class ToDiskSeedProjectResponse extends common.MyResponse {

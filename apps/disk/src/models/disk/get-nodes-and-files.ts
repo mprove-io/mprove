@@ -49,7 +49,7 @@ export async function getNodesAndFiles(item: {
 
   let files = itemDir.files;
 
-  return { nodes: nodes, files: files };
+  return { nodes: nodes, files: files, mproveDir: mproveDir };
 }
 
 async function getDirCatalogNodesAndFilesRecursive(item: {

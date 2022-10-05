@@ -131,7 +131,8 @@ export class PullRepoService {
         conflicts: conflicts,
         nodes: itemCatalog.nodes
       },
-      files: itemCatalog.files
+      files: itemCatalog.files,
+      mproveDir: itemCatalog.mproveDir
     };
 
     return payload;

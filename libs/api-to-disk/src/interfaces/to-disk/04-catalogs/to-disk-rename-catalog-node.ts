@@ -52,6 +52,9 @@ export class ToDiskRenameCatalogNodeResponsePayload {
   @ValidateNested()
   @Type(() => common.DiskCatalogFile)
   files: common.DiskCatalogFile[];
+
+  @IsString()
+  mproveDir: string;
 }
 
 export class ToDiskRenameCatalogNodeResponse extends common.MyResponse {

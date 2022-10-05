@@ -90,6 +90,7 @@ export class SpecialRebuildStructController {
         envId: envId,
         evs: evs,
         projectId: projectId,
+        mproveDir: getCatalogFilesResponse.payload.mproveDir,
         files: helper.diskFilesToBlockmlFiles(
           getCatalogFilesResponse.payload.files
         ),

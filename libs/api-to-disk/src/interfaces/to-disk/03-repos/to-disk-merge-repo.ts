@@ -61,6 +61,9 @@ export class ToDiskMergeRepoResponsePayload {
   @ValidateNested()
   @Type(() => common.DiskCatalogFile)
   files: common.DiskCatalogFile[];
+
+  @IsString()
+  mproveDir: string;
 }
 
 export class ToDiskMergeRepoResponse extends common.MyResponse {

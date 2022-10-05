@@ -46,6 +46,9 @@ export class ToDiskRevertRepoToRemoteResponsePayload {
   @ValidateNested()
   @Type(() => common.DiskCatalogFile)
   files: common.DiskCatalogFile[];
+
+  @IsString()
+  mproveDir: string;
 }
 
 export class ToDiskRevertRepoToRemoteResponse extends common.MyResponse {

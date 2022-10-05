@@ -11,6 +11,7 @@ export function buildYaml(
     files: common.BmlFile[];
     structId: string;
     connections: common.ProjectConnection[];
+    mproveDir: string;
     caller: enums.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
@@ -134,6 +135,7 @@ export function buildYaml(
     {
       confs: confs,
       structId: item.structId,
+      mproveDir: item.mproveDir,
       errors: item.errors,
       caller: item.caller
     },

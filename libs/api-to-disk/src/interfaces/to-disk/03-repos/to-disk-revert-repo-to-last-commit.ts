@@ -46,6 +46,9 @@ export class ToDiskRevertRepoToLastCommitResponsePayload {
   @ValidateNested()
   @Type(() => common.DiskCatalogFile)
   files: common.DiskCatalogFile[];
+
+  @IsString()
+  mproveDir: string;
 }
 
 export class ToDiskRevertRepoToLastCommitResponse extends common.MyResponse {

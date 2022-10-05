@@ -147,6 +147,7 @@ export class SpecialRebuildStructsController {
         projectId: project.project_id,
         structId: structId,
         diskFiles: getCatalogFilesResponse.payload.files,
+        mproveDir: getCatalogFilesResponse.payload.mproveDir,
         envId: bridge.env_id
       });
 

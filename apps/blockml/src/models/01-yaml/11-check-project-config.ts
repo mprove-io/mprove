@@ -15,6 +15,7 @@ export function checkProjectConfig(
     errors: BmError[];
     structId: string;
     caller: enums.CallerEnum;
+    mproveDir: string;
   },
   cs: ConfigService<interfaces.Config>
 ) {
@@ -24,7 +25,6 @@ export function checkProjectConfig(
   let errorsOnStart = item.errors.length;
 
   let projectConfig: interfaces.ProjectConf = {
-    mprove_dir: common.MPROVE_CONFIG_DIR_DOT,
     allow_timezones: constants.PROJECT_CONFIG_ALLOW_TIMEZONES,
     default_timezone: constants.PROJECT_CONFIG_DEFAULT_TIMEZONE,
     week_start: constants.PROJECT_CONFIG_WEEK_START,
@@ -40,87 +40,95 @@ export function checkProjectConfig(
   if (item.confs.length === 1) {
     let conf = item.confs[0];
 
-    Object.keys(conf)
-      .filter(x => !x.toString().match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-      .forEach(parameter => {
+    let parameters = Object.keys(conf).filter(
+      x => !x.toString().match(common.MyRegex.ENDS_WITH_LINE_NUM())
+    );
+
+    if (parameters.indexOf(enums.ParameterEnum.MproveDir.toString()) < 0) {
+      item.errors.push(
+        new BmError({
+          title: enums.ErTitleEnum.MISSING_MPROVE_DIR,
+          message: `parameter "${enums.ParameterEnum.MproveDir}" must be specified`,
+          lines: [
+            {
+              line: 0,
+              name: conf.fileName,
+              path: conf.filePath
+            }
+          ]
+        })
+      );
+    } else if (common.isUndefined(item.mproveDir)) {
+      let value = conf[
+        enums.ParameterEnum.MproveDir as keyof interfaces.ProjectConf
+      ].toString();
+      item.errors.push(
+        new BmError({
+          title: enums.ErTitleEnum.MPROVE_DIR_PATH_DOES_NOT_EXIST,
+          message: `relative path "${value}" does not exist or is not a directory`,
+          lines: [
+            {
+              line: 0,
+              name: conf.fileName,
+              path: conf.filePath
+            }
+          ]
+        })
+      );
+    }
+
+    parameters.forEach(parameter => {
+      if (
+        [
+          enums.ParameterEnum.Path.toString(),
+          enums.ParameterEnum.Ext.toString(),
+          enums.ParameterEnum.Name.toString()
+        ].indexOf(parameter) > -1
+      ) {
+        return;
+      }
+
+      if (
+        parameter === enums.ParameterEnum.AllowTimezones.toString() &&
+        !conf[parameter as keyof interfaces.ProjectConf]
+          .toString()
+          .match(common.MyRegex.TRUE_FALSE())
+      ) {
+        item.errors.push(
+          new BmError({
+            title: enums.ErTitleEnum.WRONG_ALLOW_TIMEZONES,
+            message: `parameter "${parameter}:" must be "true" or "false" if specified`,
+            lines: [
+              {
+                line: conf[
+                  (parameter +
+                    constants.LINE_NUM) as keyof interfaces.ProjectConf
+                ] as number,
+                name: conf.fileName,
+                path: conf.filePath
+              }
+            ]
+          })
+        );
+
+        return;
+      }
+
+      if (parameter === enums.ParameterEnum.WeekStart.toString()) {
+        (<any>conf).week_start = conf.week_start.toLowerCase();
+
         if (
           [
-            enums.ParameterEnum.Path.toString(),
-            enums.ParameterEnum.Ext.toString(),
-            enums.ParameterEnum.Name.toString()
-          ].indexOf(parameter) > -1
-        ) {
-          return;
-        }
-
-        if (
-          parameter === enums.ParameterEnum.AllowTimezones.toString() &&
-          !conf[parameter as keyof interfaces.ProjectConf]
-            .toString()
-            .match(common.MyRegex.TRUE_FALSE())
-        ) {
-          item.errors.push(
-            new BmError({
-              title: enums.ErTitleEnum.WRONG_ALLOW_TIMEZONES,
-              message: `parameter "${parameter}:" must be "true" or "false" if specified`,
-              lines: [
-                {
-                  line: conf[
-                    (parameter +
-                      constants.LINE_NUM) as keyof interfaces.ProjectConf
-                  ] as number,
-                  name: conf.fileName,
-                  path: conf.filePath
-                }
-              ]
-            })
-          );
-
-          return;
-        }
-
-        if (parameter === enums.ParameterEnum.WeekStart.toString()) {
-          (<any>conf).week_start = conf.week_start.toLowerCase();
-
-          if (
-            [
-              common.ProjectWeekStartEnum.Sunday.toString(),
-              common.ProjectWeekStartEnum.Monday.toString()
-            ].indexOf(
-              conf[parameter as keyof interfaces.ProjectConf].toString()
-            ) < 0
-          ) {
-            item.errors.push(
-              new BmError({
-                title: enums.ErTitleEnum.WRONG_WEEK_START,
-                message: `parameter "${parameter}:" must be "Sunday" or "Monday" if specified`,
-                lines: [
-                  {
-                    line: conf[
-                      (parameter +
-                        constants.LINE_NUM) as keyof interfaces.ProjectConf
-                    ] as number,
-                    name: conf.fileName,
-                    path: conf.filePath
-                  }
-                ]
-              })
-            );
-
-            return;
-          }
-        }
-
-        if (
-          parameter === enums.ParameterEnum.DefaultTimezone.toString() &&
-          helper.isTimezoneValid(
+            common.ProjectWeekStartEnum.Sunday.toString(),
+            common.ProjectWeekStartEnum.Monday.toString()
+          ].indexOf(
             conf[parameter as keyof interfaces.ProjectConf].toString()
-          ) === false
+          ) < 0
         ) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.WRONG_DEFAULT_TIMEZONE,
-              message: `wrong ${enums.ParameterEnum.DefaultTimezone} value`,
+              title: enums.ErTitleEnum.WRONG_WEEK_START,
+              message: `parameter "${parameter}:" must be "Sunday" or "Monday" if specified`,
               lines: [
                 {
                   line: conf[
@@ -136,34 +144,59 @@ export function checkProjectConfig(
 
           return;
         }
+      }
 
-        if (parameter === enums.ParameterEnum.FormatNumber.toString()) {
-          let value = conf[
-            parameter as keyof interfaces.ProjectConf
-          ].toString();
-          try {
-            formatSpecifier(value);
-          } catch (e) {
-            item.errors.push(
-              new BmError({
-                title: enums.ErTitleEnum.WRONG_FORMAT_NUMBER,
-                message: ` ${enums.ParameterEnum.FormatNumber} value "${value}" is not valid`,
-                lines: [
-                  {
-                    line: conf[
-                      (parameter +
-                        constants.LINE_NUM) as keyof interfaces.ProjectConf
-                    ] as number,
-                    name: conf.fileName,
-                    path: conf.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
+      if (
+        parameter === enums.ParameterEnum.DefaultTimezone.toString() &&
+        helper.isTimezoneValid(
+          conf[parameter as keyof interfaces.ProjectConf].toString()
+        ) === false
+      ) {
+        item.errors.push(
+          new BmError({
+            title: enums.ErTitleEnum.WRONG_DEFAULT_TIMEZONE,
+            message: `wrong ${enums.ParameterEnum.DefaultTimezone} value`,
+            lines: [
+              {
+                line: conf[
+                  (parameter +
+                    constants.LINE_NUM) as keyof interfaces.ProjectConf
+                ] as number,
+                name: conf.fileName,
+                path: conf.filePath
+              }
+            ]
+          })
+        );
+
+        return;
+      }
+
+      if (parameter === enums.ParameterEnum.FormatNumber.toString()) {
+        let value = conf[parameter as keyof interfaces.ProjectConf].toString();
+        try {
+          formatSpecifier(value);
+        } catch (e) {
+          item.errors.push(
+            new BmError({
+              title: enums.ErTitleEnum.WRONG_FORMAT_NUMBER,
+              message: ` ${enums.ParameterEnum.FormatNumber} value "${value}" is not valid`,
+              lines: [
+                {
+                  line: conf[
+                    (parameter +
+                      constants.LINE_NUM) as keyof interfaces.ProjectConf
+                  ] as number,
+                  name: conf.fileName,
+                  path: conf.filePath
+                }
+              ]
+            })
+          );
+          return;
         }
-      });
+      }
+    });
 
     projectConfig = Object.assign(projectConfig, conf);
   } else if (

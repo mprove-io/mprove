@@ -151,6 +151,7 @@ export class ProjectsService {
       projectId: newProject.project_id,
       structId,
       diskFiles: diskResponse.payload.prodFiles,
+      mproveDir: diskResponse.payload.mproveDir,
       envId: common.PROJECT_ENV_PROD
     });
 

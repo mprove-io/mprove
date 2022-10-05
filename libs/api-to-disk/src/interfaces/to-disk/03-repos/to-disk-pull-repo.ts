@@ -49,6 +49,9 @@ export class ToDiskPullRepoResponsePayload {
   @ValidateNested()
   @Type(() => common.DiskCatalogFile)
   files: common.DiskCatalogFile[];
+
+  @IsString()
+  mproveDir: string;
 }
 
 export class ToDiskPullRepoResponse extends common.MyResponse {

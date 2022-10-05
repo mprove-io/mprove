@@ -137,7 +137,8 @@ export class DeleteFolderService {
         nodes: itemCatalog.nodes
       },
       deletedFolderNodeId: folderNodeId,
-      files: itemCatalog.files
+      files: itemCatalog.files,
+      mproveDir: itemCatalog.mproveDir
     };
 
     return payload;

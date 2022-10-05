@@ -154,7 +154,8 @@ export class DeleteFileService {
         nodes: itemCatalog.nodes
       },
       deletedFileNodeId: fileNodeId,
-      files: itemCatalog.files
+      files: itemCatalog.files,
+      mproveDir: itemCatalog.mproveDir
     };
 
     return payload;

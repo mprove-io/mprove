@@ -116,7 +116,8 @@ export class CreateProjectService {
       orgId: orgId,
       projectId: projectId,
       defaultBranch: currentBranch,
-      prodFiles: prodItemCatalog.files
+      prodFiles: prodItemCatalog.files,
+      mproveDir: prodItemCatalog.mproveDir
     };
 
     return payload;

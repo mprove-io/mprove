@@ -45,7 +45,8 @@ export class RebuildStructService {
       files,
       connections,
       envId,
-      evs
+      evs,
+      mproveDir
     } = reqValid.payload;
 
     let {
@@ -67,7 +68,8 @@ export class RebuildStructService {
       structId: structId,
       envId: envId,
       evs: evs,
-      connections: connections
+      connections: connections,
+      mproveDir: mproveDir
     });
 
     let apiErrors = barWrapper.wrapErrors({ errors: errors });
@@ -166,7 +168,8 @@ export class RebuildStructService {
       structId: item.structId,
       envId: item.envId,
       evs: item.evs,
-      connections: item.connections
+      connections: item.connections,
+      mproveDir: mproveDir
     });
   }
 
@@ -177,6 +180,7 @@ export class RebuildStructService {
     envId: string;
     evs: common.Ev[];
     connections: common.ProjectConnection[];
+    mproveDir: string;
   }) {
     //
     let errors: BmError[] = [];
@@ -191,6 +195,7 @@ export class RebuildStructService {
       {
         files: item.files,
         connections: item.connections,
+        mproveDir: item.mproveDir,
         structId: item.structId,
         errors: errors,
         caller: enums.CallerEnum.BuildYaml

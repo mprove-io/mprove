@@ -238,6 +238,7 @@ export class CreateDashboardController {
       projectId,
       structId: bridge.struct_id,
       diskFiles: diskResponse.payload.files,
+      mproveDir: diskResponse.payload.mproveDir,
       skipDb: true,
       envId: envId
     });

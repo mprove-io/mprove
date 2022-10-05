@@ -247,6 +247,7 @@ export class SeedRecordsController {
               evs: evs
                 .map(evEntity => wrapper.wrapToApiEv(evEntity))
                 .filter(ev => ev.envId === prodEnv.env_id),
+              mproveDir: diskResponse.payload.mproveDir,
               files: helper.diskFilesToBlockmlFiles(diskResponse.payload.files),
               connections: connections
                 .filter(

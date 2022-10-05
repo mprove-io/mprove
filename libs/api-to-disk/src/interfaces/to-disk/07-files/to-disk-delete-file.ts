@@ -55,6 +55,9 @@ export class ToDiskDeleteFileResponsePayload {
   @ValidateNested()
   @Type(() => common.DiskCatalogFile)
   files: common.DiskCatalogFile[];
+
+  @IsString()
+  mproveDir: string;
 }
 
 export class ToDiskDeleteFileResponse extends common.MyResponse {

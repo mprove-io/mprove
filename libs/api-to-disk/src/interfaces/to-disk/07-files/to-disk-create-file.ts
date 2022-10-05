@@ -59,6 +59,9 @@ export class ToDiskCreateFileResponsePayload {
   @ValidateNested()
   @Type(() => common.DiskCatalogFile)
   files: common.DiskCatalogFile[];
+
+  @IsString()
+  mproveDir: string;
 }
 
 export class ToDiskCreateFileResponse extends common.MyResponse {

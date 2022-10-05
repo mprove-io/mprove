@@ -109,6 +109,7 @@ export class RenameCatalogNodeController {
           projectId,
           structId,
           diskFiles: diskResponse.payload.files,
+          mproveDir: diskResponse.payload.mproveDir,
           envId: x.env_id
         });
 

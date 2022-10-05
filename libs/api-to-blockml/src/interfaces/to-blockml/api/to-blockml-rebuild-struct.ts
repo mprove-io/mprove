@@ -20,6 +20,9 @@ export class ToBlockmlRebuildStructRequestPayload {
   @IsString()
   structId: string;
 
+  @IsString()
+  mproveDir: string;
+
   @ValidateNested()
   @Type(() => common.BmlFile)
   files: common.BmlFile[];

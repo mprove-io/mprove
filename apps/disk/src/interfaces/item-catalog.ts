@@ -4,4 +4,6 @@ export interface ItemCatalog {
   files: common.DiskCatalogFile[];
 
   nodes: common.DiskCatalogNode[];
+
+  mproveDir: string;
 }

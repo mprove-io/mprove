@@ -290,6 +290,7 @@ export class ModifyDashboardController {
       projectId,
       structId: bridge.struct_id,
       diskFiles: diskResponse.payload.files,
+      mproveDir: diskResponse.payload.mproveDir,
       skipDb: true,
       envId: envId
     });

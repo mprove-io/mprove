@@ -24,6 +24,7 @@ export class BlockmlService {
     envId: string;
     orgId: string;
     diskFiles: common.DiskCatalogFile[];
+    mproveDir: string;
     skipDb?: boolean;
   }) {
     let {
@@ -57,6 +58,7 @@ export class BlockmlService {
         projectId: projectId,
         envId: envId,
         evs: evs.map(x => wrapper.wrapToApiEv(x)),
+        mproveDir: item.mproveDir,
         files: helper.diskFilesToBlockmlFiles(diskFiles),
         connections: connections.map(x => ({
           connectionId: x.connection_id,
