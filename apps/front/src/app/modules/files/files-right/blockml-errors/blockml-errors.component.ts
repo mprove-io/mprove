@@ -50,11 +50,16 @@ export class BlockmlErrorsComponent implements OnDestroy {
 
       this.errors = x.errors
         .map(error => {
-          let errorExt = getFileExtension(error.lines[0].fileId);
+          let errorExt =
+            error.lines.length > 0
+              ? getFileExtension(error.lines[0].fileId)
+              : undefined;
 
           return Object.assign({}, error, <BmlErrorExtra>{
             errorExt: errorExt,
-            sortOrder: this.errorSortOrder(errorExt),
+            sortOrder: common.isDefined(errorExt)
+              ? this.errorSortOrder(errorExt)
+              : 1,
             title: transformBlockmlErrorTitle(error.title)
           });
         })
@@ -71,28 +76,38 @@ export class BlockmlErrorsComponent implements OnDestroy {
       let nodes: BmlErrorsNode[] = [];
 
       this.errors.forEach(error => {
-        error.lines.forEach(line => {
-          let node = nodes.find(y => y.id === line.fileId);
-
-          let newError: BmlErrorsNode = Object.assign({}, error, {
-            id: common.makeId(),
-            name: '123',
-            isError: true,
-            children: []
-          });
-
-          if (common.isUndefined(node)) {
-            let newNode: BmlErrorsNode = {
-              id: line.fileId,
-              name: line.fileName,
-              children: [newError],
-              isError: false
-            };
-            nodes.push(newNode);
-          } else {
-            node.children.push(newError);
-          }
+        let newError: BmlErrorsNode = Object.assign({}, error, {
+          id: common.makeId(),
+          name: '123',
+          isError: true,
+          children: []
         });
+
+        if (error.lines.length > 0) {
+          error.lines.forEach(line => {
+            let node = nodes.find(y => y.id === line.fileId);
+
+            if (common.isUndefined(node)) {
+              let newNode: BmlErrorsNode = {
+                id: line.fileId,
+                name: line.fileName,
+                children: [newError],
+                isError: false
+              };
+              nodes.push(newNode);
+            } else {
+              node.children.push(newError);
+            }
+          });
+        } else {
+          let newNode: BmlErrorsNode = {
+            id: undefined,
+            name: 'No file',
+            children: [newError],
+            isError: false
+          };
+          nodes.push(newNode);
+        }
       });
 
       this.nodes = nodes;
