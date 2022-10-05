@@ -4,6 +4,7 @@ import { entities } from '~backend/barrels/entities';
 export function makeStruct(item: {
   projectId: string;
   structId: string;
+  mproveDirValue: string;
   weekStart: common.ProjectWeekStartEnum;
   allowTimezones: common.BoolEnum;
   defaultTimezone: string;
@@ -17,6 +18,7 @@ export function makeStruct(item: {
   let structEntity: entities.StructEntity = {
     project_id: item.projectId,
     struct_id: item.structId,
+    mprove_dir_value: item.mproveDirValue,
     week_start: item.weekStart,
     allow_timezones: item.allowTimezones,
     default_timezone: item.defaultTimezone,

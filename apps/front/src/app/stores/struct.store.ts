@@ -14,6 +14,7 @@ export class StructStore extends Store<StructState> {
     super(<StructState>{
       projectId: undefined,
       structId: undefined,
+      mproveDirValue: undefined,
       weekStart: undefined,
       allowTimezones: false,
       defaultTimezone: undefined,

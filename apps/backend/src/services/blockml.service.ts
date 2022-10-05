@@ -77,6 +77,7 @@ export class BlockmlService {
     );
 
     let {
+      mproveDirValue,
       weekStart,
       allowTimezones,
       defaultTimezone,
@@ -96,6 +97,7 @@ export class BlockmlService {
     let struct = maker.makeStruct({
       projectId: projectId,
       structId: structId,
+      mproveDirValue: mproveDirValue,
       weekStart: weekStart,
       allowTimezones: common.booleanToEnum(allowTimezones),
       defaultTimezone: defaultTimezone,

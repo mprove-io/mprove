@@ -271,6 +271,7 @@ export class SeedRecordsController {
           );
 
           let {
+            mproveDirValue,
             weekStart,
             allowTimezones,
             defaultTimezone,
@@ -290,6 +291,7 @@ export class SeedRecordsController {
           let struct = maker.makeStruct({
             projectId: newProject.project_id,
             structId: structId,
+            mproveDirValue: mproveDirValue,
             weekStart: weekStart,
             allowTimezones: common.booleanToEnum(allowTimezones),
             defaultTimezone: defaultTimezone,

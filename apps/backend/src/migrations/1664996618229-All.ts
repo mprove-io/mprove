@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class All1664880925471 implements MigrationInterface {
-  name = 'All1664880925471';
+export class All1664996618229 implements MigrationInterface {
+  name = 'All1664996618229';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -50,7 +50,7 @@ export class All1664880925471 implements MigrationInterface {
       'CREATE TABLE `queries` (`project_id` varchar(32) NOT NULL, `env_id` varchar(32) NOT NULL, `connection_id` varchar(32) NOT NULL, `connection_type` varchar(255) NOT NULL, `query_id` varchar(64) NOT NULL, `sql` mediumtext NULL, `status` varchar(255) NOT NULL, `data` json NULL, `last_run_by` varchar(255) NULL, `last_run_ts` bigint NULL, `last_cancel_ts` bigint NULL, `last_complete_ts` bigint NULL, `last_complete_duration` bigint NULL, `last_error_message` mediumtext NULL, `last_error_ts` bigint NULL, `query_job_id` varchar(255) NULL, `bigquery_query_job_id` varchar(255) NULL, `bigquery_consecutive_errors_get_job` int NOT NULL, `bigquery_consecutive_errors_get_results` int NOT NULL, `server_ts` bigint NOT NULL, PRIMARY KEY (`query_id`)) ENGINE=InnoDB'
     );
     await queryRunner.query(
-      'CREATE TABLE `structs` (`project_id` varchar(32) NOT NULL, `struct_id` varchar(32) NOT NULL, `week_start` varchar(255) NOT NULL, `allow_timezones` varchar(255) NOT NULL, `default_timezone` varchar(255) NOT NULL, `format_number` varchar(255) NULL, `currency_prefix` varchar(255) NULL, `currency_suffix` varchar(255) NULL, `errors` json NOT NULL, `views` json NOT NULL, `udfs_dict` json NOT NULL, `server_ts` bigint NOT NULL, PRIMARY KEY (`struct_id`)) ENGINE=InnoDB'
+      'CREATE TABLE `structs` (`project_id` varchar(32) NOT NULL, `struct_id` varchar(32) NOT NULL, `mprove_dir_value` varchar(255) NULL, `week_start` varchar(255) NOT NULL, `allow_timezones` varchar(255) NOT NULL, `default_timezone` varchar(255) NOT NULL, `format_number` varchar(255) NULL, `currency_prefix` varchar(255) NULL, `currency_suffix` varchar(255) NULL, `errors` json NOT NULL, `views` json NOT NULL, `udfs_dict` json NOT NULL, `server_ts` bigint NOT NULL, PRIMARY KEY (`struct_id`)) ENGINE=InnoDB'
     );
     await queryRunner.query(
       'CREATE TABLE `users` (`user_id` varchar(32) NOT NULL, `email` varchar(255) NOT NULL, `alias` varchar(255) NULL, `is_email_verified` varchar(255) NOT NULL, `email_verification_token` varchar(255) NOT NULL, `password_reset_token` varchar(255) NULL, `password_reset_expires_ts` bigint NULL, `hash` varchar(255) NULL, `salt` varchar(255) NULL, `first_name` varchar(255) NULL, `last_name` varchar(255) NULL, `timezone` varchar(255) NOT NULL, `server_ts` bigint NOT NULL, UNIQUE INDEX `IDX_97672ac88f789774dd47f7c8be` (`email`), UNIQUE INDEX `IDX_f002c336d3299ee4eba0019690` (`alias`), UNIQUE INDEX `IDX_baf4ca2a5aa907023a2f3748be` (`email_verification_token`), UNIQUE INDEX `IDX_c0d176bcc1665dc7cb60482c81` (`password_reset_token`), PRIMARY KEY (`user_id`)) ENGINE=InnoDB'

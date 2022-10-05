@@ -10,6 +10,9 @@ export class StructEntity {
   @PrimaryColumn({ type: constants.STRUCT_ID_VARCHAR, length: 32 })
   struct_id: string;
 
+  @Column({ type: constants.VARCHAR, nullable: true })
+  mprove_dir_value: string;
+
   @Column({ type: constants.VARCHAR })
   week_start: common.ProjectWeekStartEnum;
 

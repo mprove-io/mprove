@@ -5,6 +5,7 @@ export function wrapToApiStruct(struct: entities.StructEntity): common.Struct {
   return {
     projectId: struct.project_id,
     structId: struct.struct_id,
+    mproveDirValue: struct.mprove_dir_value,
     weekStart: struct.week_start,
     allowTimezones: common.enumToBoolean(struct.allow_timezones),
     defaultTimezone: struct.default_timezone,

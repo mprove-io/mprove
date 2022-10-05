@@ -39,6 +39,9 @@ export class ToBlockmlRebuildStructRequest extends ToBlockmlRequest {
 }
 
 export class ToBlockmlRebuildStructResponsePayload {
+  @IsString()
+  mproveDirValue: string;
+
   @IsEnum(common.ProjectWeekStartEnum)
   weekStart: common.ProjectWeekStartEnum;
 

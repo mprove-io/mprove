@@ -24,6 +24,7 @@ export class StructsService {
       struct = maker.makeStruct({
         projectId: projectId,
         structId: structId,
+        mproveDirValue: undefined,
         weekStart: undefined,
         allowTimezones: undefined,
         defaultTimezone: undefined,

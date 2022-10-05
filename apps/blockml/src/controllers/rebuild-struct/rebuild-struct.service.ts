@@ -56,6 +56,7 @@ export class RebuildStructService {
       models,
       dashboards,
       vizs,
+      mproveDirValue,
       weekStart,
       allowTimezones,
       defaultTimezone,
@@ -115,6 +116,7 @@ export class RebuildStructService {
       vizs: apiVizs,
       mconfigs: mconfigs,
       queries: queries,
+      mproveDirValue: mproveDirValue,
       weekStart: weekStart,
       allowTimezones: allowTimezones,
       defaultTimezone: defaultTimezone,
@@ -217,6 +219,7 @@ export class RebuildStructService {
         models: [],
         dashboards: [],
         vizs: [],
+        mproveDirValue: undefined,
         weekStart: constants.PROJECT_CONFIG_WEEK_START,
         allowTimezones: helper.toBooleanFromLowercaseString(
           constants.PROJECT_CONFIG_ALLOW_TIMEZONES
@@ -452,6 +455,7 @@ export class RebuildStructService {
       models: models,
       dashboards: dashboards,
       vizs: vizs,
+      mproveDirValue: projectConfig.mprove_dir,
       weekStart: projectConfig.week_start,
       allowTimezones: helper.toBooleanFromLowercaseString(
         projectConfig.allow_timezones
