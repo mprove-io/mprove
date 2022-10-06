@@ -15,7 +15,7 @@ export function wrapToApiViz(item: {
   let filePathArray = viz.file_path.split('/');
 
   let usersFolderIndex = filePathArray.findIndex(
-    x => x === common.FILES_USERS_FOLDER
+    x => x === common.MPROVE_USERS_FOLDER
   );
 
   let author =

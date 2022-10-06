@@ -27,7 +27,7 @@ export class VizsService {
     let filePathArray = item.filePath.split('/');
 
     let usersFolderIndex = filePathArray.findIndex(
-      x => x === common.FILES_USERS_FOLDER
+      x => x === common.MPROVE_USERS_FOLDER
     );
 
     if (

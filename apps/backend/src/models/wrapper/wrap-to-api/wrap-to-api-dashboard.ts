@@ -23,7 +23,7 @@ export function wrapToApiDashboard(item: {
   let filePathArray = dashboard.file_path.split('/');
 
   let usersFolderIndex = filePathArray.findIndex(
-    x => x === common.FILES_USERS_FOLDER
+    x => x === common.MPROVE_USERS_FOLDER
   );
 
   let author =

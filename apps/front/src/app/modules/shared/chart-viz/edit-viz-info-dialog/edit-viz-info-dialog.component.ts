@@ -27,7 +27,7 @@ export interface EditVizInfoDialogDataItem {
   templateUrl: './edit-viz-info-dialog.component.html'
 })
 export class EditVizInfoDialogComponent implements OnInit {
-  usersFolder = common.FILES_USERS_FOLDER;
+  usersFolder = common.MPROVE_USERS_FOLDER;
 
   titleForm: FormGroup = this.fb.group({
     title: [undefined, [Validators.required, Validators.maxLength(255)]]

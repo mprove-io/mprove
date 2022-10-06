@@ -204,8 +204,8 @@ export class CreateDashboardController {
         common.MPROVE_CONFIG_DIR_DOT,
         common.MPROVE_CONFIG_DIR_DOT_SLASH
       ].indexOf(currentStruct.mprove_dir_value) > -1
-        ? `${projectId}/${common.FILES_USERS_FOLDER}/${user.alias}`
-        : `${projectId}/${mdir}/${common.FILES_USERS_FOLDER}/${user.alias}`;
+        ? `${projectId}/${common.MPROVE_USERS_FOLDER}/${user.alias}`
+        : `${projectId}/${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}`;
 
     let fileName = `${newDashboardId}${common.FileExtensionEnum.Dashboard}`;
 

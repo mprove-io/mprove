@@ -26,7 +26,7 @@ export const UTC = 'UTC';
 
 export const DEFAULT_LIMIT = '500';
 
-export const FILES_USERS_FOLDER = 'users';
+export const MPROVE_USERS_FOLDER = 'mprove-users';
 
 export const PATH_REGISTER = 'register';
 export const PATH_VERIFY_EMAIL = 'verify-email';

@@ -29,7 +29,7 @@ export interface DashboardSaveAsDialogDataItem {
   templateUrl: './dashboard-save-as-dialog.component.html'
 })
 export class DashboardSaveAsDialogComponent implements OnInit {
-  usersFolder = common.FILES_USERS_FOLDER;
+  usersFolder = common.MPROVE_USERS_FOLDER;
 
   dashboardSaveAsEnum = DashboardSaveAsEnum;
 

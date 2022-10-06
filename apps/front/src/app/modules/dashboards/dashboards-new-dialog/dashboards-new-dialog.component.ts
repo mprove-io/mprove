@@ -21,7 +21,7 @@ export interface DashboardsNewDialogDataItem {
   templateUrl: './dashboards-new-dialog.component.html'
 })
 export class DashboardsNewDialogComponent {
-  usersFolder = common.FILES_USERS_FOLDER;
+  usersFolder = common.MPROVE_USERS_FOLDER;
 
   dashboard: common.DashboardX;
 
