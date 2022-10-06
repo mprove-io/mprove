@@ -10,6 +10,7 @@ import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
+import { BridgesService } from '~backend/services/bridges.service';
 import { DbService } from '~backend/services/db.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
@@ -27,6 +28,7 @@ export class DeleteFolderController {
     private blockmlService: BlockmlService,
     private structsService: StructsService,
     private branchesService: BranchesService,
+    private bridgesService: BridgesService,
     private bridgesRepository: repositories.BridgesRepository,
     private envsService: EnvsService
   ) {}
@@ -61,6 +63,13 @@ export class DeleteFolderController {
       projectId: projectId,
       envId: envId,
       member: member
+    });
+
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.project_id,
+      repoId: branch.repo_id,
+      branchId: branch.branch_id,
+      envId: envId
     });
 
     let toDiskDeleteFolderRequest: apiToDisk.ToDiskDeleteFolderRequest = {

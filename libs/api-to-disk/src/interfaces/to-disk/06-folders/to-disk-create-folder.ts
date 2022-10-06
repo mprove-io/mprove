@@ -48,6 +48,13 @@ export class ToDiskCreateFolderResponsePayload {
   @ValidateNested()
   @Type(() => common.Repo)
   repo: common.Repo;
+
+  @ValidateNested()
+  @Type(() => common.DiskCatalogFile)
+  files: common.DiskCatalogFile[];
+
+  @IsString()
+  mproveDir: string;
 }
 
 export class ToDiskCreateFolderResponse extends common.MyResponse {

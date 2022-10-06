@@ -131,7 +131,7 @@ export class CreateFolderService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
-      readFiles: false
+      readFiles: true
     });
 
     let payload: apiToDisk.ToDiskCreateFolderResponsePayload = {
@@ -143,7 +143,9 @@ export class CreateFolderService {
         currentBranchId: currentBranch,
         conflicts: conflicts,
         nodes: itemCatalog.nodes
-      }
+      },
+      files: itemCatalog.files,
+      mproveDir: itemCatalog.mproveDir
     };
 
     return payload;
