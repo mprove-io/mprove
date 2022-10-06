@@ -1,1 +1,1 @@
-# First project example data
+# Example

@@ -1,4 +1,4 @@
-mprove_dir: .
+mprove_dir: ./data
 week_start: Monday    
 allow_timezones: true
 default_timezone: UTC
