@@ -6,7 +6,8 @@
   >
 
   <div class="text-base text-gray-400"
-    >Users / {{ alias }} / {{ newDashboardId }}.dashboard</div
+    >{{ struct?.mproveDirValue | mproveDir | capitalize }} / {{ usersFolder }} /
+    {{ alias }} / {{ newDashboardId }}.dashboard</div
   >
 
   <div class="mt-9 flex flex-row items-start">
@@ -99,3 +100,4 @@
 
 <div *ngIf="alias$ | async"></div>
 <div *ngIf="nav$ | async"></div>
+<div *ngIf="struct$ | async"></div>

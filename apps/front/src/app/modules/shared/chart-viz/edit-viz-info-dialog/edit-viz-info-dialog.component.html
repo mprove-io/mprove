@@ -6,7 +6,8 @@
   >
 
   <div class="text-base text-gray-400"
-    >Users / {{ alias }} / {{ ref.data.viz.vizId }}.viz</div
+    >{{ struct?.mproveDirValue | mproveDir | capitalize }} / {{ usersFolder }} /
+    {{ alias }} / {{ ref.data.viz.vizId }}.viz</div
   >
 
   <div class="mt-9 flex flex-row items-start">
@@ -98,3 +99,4 @@
 </div>
 
 <div *ngIf="alias$ | async"></div>
+<div *ngIf="struct$ | async"></div>

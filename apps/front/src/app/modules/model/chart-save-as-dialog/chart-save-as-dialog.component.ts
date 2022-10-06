@@ -11,10 +11,12 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { NavState } from '~front/app/stores/nav.store';
+import { StructState } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -40,6 +42,8 @@ export interface ChartSaveAsDialogDataItem {
   templateUrl: './chart-save-as-dialog.component.html'
 })
 export class ChartSaveAsDialogComponent implements OnInit {
+  usersFolder = common.FILES_USERS_FOLDER;
+
   chartSaveAsEnum = ChartSaveAsEnum;
   reportSaveAsEnum = ReportSaveAsEnum;
 
@@ -91,12 +95,21 @@ export class ChartSaveAsDialogComponent implements OnInit {
     })
   );
 
+  struct: StructState;
+  struct$ = this.structQuery.select().pipe(
+    tap(x => {
+      this.struct = x;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     public ref: DialogRef<ChartSaveAsDialogDataItem>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
     private navigateService: NavigateService,
     private navQuery: NavQuery,
+    private structQuery: StructQuery,
     private spinner: NgxSpinnerService,
     private cd: ChangeDetectorRef
   ) {}

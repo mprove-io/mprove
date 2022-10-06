@@ -181,7 +181,8 @@
 
   <div class="mt-9 h-7 text-base text-gray-400">
     <div *ngIf="chartSaveAs === chartSaveAsEnum.NEW_VIZ"
-      >Users / {{ alias }} / {{ vizId }}.viz</div
+      >{{ struct?.mproveDirValue | mproveDir | capitalize }} /
+      {{ usersFolder }} / {{ alias }} / {{ vizId }}.viz</div
     >
 
     <div
@@ -316,3 +317,4 @@
 
 <div *ngIf="alias$ | async"></div>
 <div *ngIf="nav$ | async"></div>
+<div *ngIf="struct$ | async"></div>

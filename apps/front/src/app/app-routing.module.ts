@@ -51,10 +51,10 @@ import { ProfileResolver } from './resolvers/profile.resolver';
 import { ProjectResolver } from './resolvers/project.resolver';
 import { QueryResolver } from './resolvers/query.resolver';
 import { StackDashboardResolver } from './resolvers/stack-dashboard.resolver';
-import { StackDashboardsResolver } from './resolvers/stack-dashboards.resolver';
 import { StackModelResolver } from './resolvers/stack-model.resolver';
+import { StackModelsDashboardsResolver } from './resolvers/stack-models-dashboards.resolver';
+import { StackModelsVizsResolver } from './resolvers/stack-models-vizs.resolver';
 import { StackModelsResolver } from './resolvers/stack-models.resolver';
-import { StackVizsResolver } from './resolvers/stack-vizs.resolver';
 import { StackResolver } from './resolvers/stack.resolver';
 import { UsersResolver } from './resolvers/users.resolver';
 
@@ -217,12 +217,12 @@ const routes: Routes = [
                           {
                             component: VisualizationsComponent,
                             path: common.PATH_VISUALIZATIONS,
-                            resolve: [StackVizsResolver]
+                            resolve: [StackModelsVizsResolver]
                           },
                           {
                             component: DashboardsComponent,
                             path: common.PATH_DASHBOARDS,
-                            resolve: [StackDashboardsResolver]
+                            resolve: [StackModelsDashboardsResolver]
                           },
                           {
                             component: ModelsComponent,

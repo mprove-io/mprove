@@ -108,7 +108,8 @@
 
   <div class="mt-9 h-7 text-base text-gray-400">
     <div *ngIf="saveAs === dashboardSaveAsEnum.NEW_DASHBOARD"
-      >Users / {{ alias }} / {{ newDashboardId }}.dashboard</div
+      >{{ struct?.mproveDirValue | mproveDir | capitalize }} /
+      {{ usersFolder }} / {{ alias }} / {{ newDashboardId }}.dashboard</div
     >
 
     <div
@@ -228,3 +229,4 @@
 
 <div *ngIf="alias$ | async"></div>
 <div *ngIf="nav$ | async"></div>
+<div *ngIf="struct$ | async"></div>

@@ -22,9 +22,13 @@ export function wrapToApiDashboard(item: {
 
   let filePathArray = dashboard.file_path.split('/');
 
+  let usersFolderIndex = filePathArray.findIndex(
+    x => x === common.FILES_USERS_FOLDER
+  );
+
   let author =
-    filePathArray.length > 1 && filePathArray[1] === common.FILES_USERS_FOLDER
-      ? filePathArray[2]
+    usersFolderIndex > -1 && filePathArray.length > usersFolderIndex + 1
+      ? filePathArray[usersFolderIndex + 1]
       : undefined;
 
   let canEditOrDeleteDashboard =

@@ -1,9 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  Resolve,
-  RouterStateSnapshot
-} from '@angular/router';
+import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -22,10 +18,7 @@ export class StackModelsResolver implements Resolve<Promise<boolean>> {
     private modelsStore: ModelsStore
   ) {}
 
-  async resolve(
-    route: ActivatedRouteSnapshot,
-    routerStateSnapshot: RouterStateSnapshot
-  ): Promise<boolean> {
+  async resolve(route: ActivatedRouteSnapshot): Promise<boolean> {
     let pass = await this.stackResolver.resolve(route);
 
     if (pass === false) {

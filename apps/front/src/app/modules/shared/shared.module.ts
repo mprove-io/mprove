@@ -61,6 +61,7 @@ import { CapitalizeWordsPipe } from './pipes/capitalize-words.pipe';
 import { CapitalizePipe } from './pipes/capitalize.pipe';
 import { ExtensionPipe } from './pipes/extension.pipe';
 import { HideColumnsPipe } from './pipes/hide-columns.pipe';
+import { MproveDirPipe } from './pipes/mprove-dir.pipe';
 import { ResultPipe } from './pipes/result.pipe';
 import { QueryStatusComponent } from './query-status/query-status.component';
 import { AlertRingComponent } from './rings/alert-ring/alert-ring.component';
@@ -72,6 +73,7 @@ import { ValidationComponent } from './validation/validation.component';
 let pipesArray = [
   ExtensionPipe,
   CapitalizePipe,
+  MproveDirPipe,
   CapitalizeWordsPipe,
   HideColumnsPipe,
   ResultPipe

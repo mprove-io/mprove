@@ -162,7 +162,22 @@ export class CreateTempDashboardController {
 
     let fileName = `${newDashboardId}${common.FileExtensionEnum.Dashboard}`;
 
-    let relativePath = `${common.FILES_USERS_FOLDER}/${user.alias}/${fileName}`;
+    let mdir = currentStruct.mprove_dir_value;
+
+    if (
+      mdir.length > 2 &&
+      mdir.substring(0, 2) === common.MPROVE_CONFIG_DIR_DOT_SLASH
+    ) {
+      mdir = mdir.substring(2);
+    }
+
+    let relativePath =
+      [
+        common.MPROVE_CONFIG_DIR_DOT,
+        common.MPROVE_CONFIG_DIR_DOT_SLASH
+      ].indexOf(currentStruct.mprove_dir_value) > -1
+        ? `${common.FILES_USERS_FOLDER}/${user.alias}/${fileName}`
+        : `${mdir}/${common.FILES_USERS_FOLDER}/${user.alias}/${fileName}`;
 
     let fileNodeId = `${projectId}/${relativePath}`;
 

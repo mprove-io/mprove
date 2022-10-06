@@ -24,9 +24,16 @@ export class VizsService {
   }
 
   checkVizPath(item: { filePath: string; userAlias: string }) {
+    let filePathArray = item.filePath.split('/');
+
+    let usersFolderIndex = filePathArray.findIndex(
+      x => x === common.FILES_USERS_FOLDER
+    );
+
     if (
-      item.filePath.split('/')[1] !== common.FILES_USERS_FOLDER ||
-      item.filePath.split('/')[2] !== item.userAlias
+      usersFolderIndex < 0 ||
+      filePathArray.length === usersFolderIndex + 1 ||
+      filePathArray[usersFolderIndex + 1] !== item.userAlias
     ) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_FORBIDDEN_VIZ_PATH

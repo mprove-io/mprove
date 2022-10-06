@@ -2,6 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { common } from '~front/barrels/common';
 
 @Pipe({ name: 'result' })
+// eslint-disable-next-line @angular-eslint/use-pipe-transform-interface
 export class ResultPipe implements PipeTransform {
   transform(value: string) {
     if (common.isUndefined(value)) {

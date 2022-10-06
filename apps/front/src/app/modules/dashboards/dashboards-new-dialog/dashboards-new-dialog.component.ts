@@ -3,10 +3,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { NavState } from '~front/app/stores/nav.store';
+import { StructState } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -19,6 +21,8 @@ export interface DashboardsNewDialogDataItem {
   templateUrl: './dashboards-new-dialog.component.html'
 })
 export class DashboardsNewDialogComponent {
+  usersFolder = common.FILES_USERS_FOLDER;
+
   dashboard: common.DashboardX;
 
   titleForm: FormGroup = this.fb.group({
@@ -51,12 +55,21 @@ export class DashboardsNewDialogComponent {
     })
   );
 
+  struct: StructState;
+  struct$ = this.structQuery.select().pipe(
+    tap(x => {
+      this.struct = x;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     public ref: DialogRef<DashboardsNewDialogDataItem>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
     private navigateService: NavigateService,
     private navQuery: NavQuery,
+    private structQuery: StructQuery,
     private cd: ChangeDetectorRef
   ) {}
 
