@@ -59,22 +59,44 @@ export function checkProjectConfig(
         })
       );
     } else if (common.isUndefined(item.mproveDir)) {
-      let value = conf[
-        enums.ParameterEnum.MproveDir as keyof interfaces.ProjectConf
-      ].toString();
-      item.errors.push(
-        new BmError({
-          title: enums.ErTitleEnum.MPROVE_DIR_PATH_DOES_NOT_EXIST,
-          message: `relative path "${value}" does not exist or is not a directory`,
-          lines: [
-            {
-              line: 0,
-              name: conf.fileName,
-              path: conf.filePath
-            }
-          ]
-        })
-      );
+      let mdir = conf[enums.ParameterEnum.MproveDir].toString();
+
+      if (
+        mdir.length > 2 &&
+        mdir.substring(0, 2) === common.MPROVE_CONFIG_DIR_DOT_SLASH
+      ) {
+        mdir = mdir.substring(2);
+      }
+
+      if (mdir.match(common.MyRegex.CONTAINS_DOT())) {
+        item.errors.push(
+          new BmError({
+            title: enums.ErTitleEnum.MPROVE_DIR_FOLDER_NAME_HAS_A_DOT,
+            message: `relative path "${mdir}" must not have a dot in folder names`,
+            lines: [
+              {
+                line: 0,
+                name: conf.fileName,
+                path: conf.filePath
+              }
+            ]
+          })
+        );
+      } else {
+        item.errors.push(
+          new BmError({
+            title: enums.ErTitleEnum.MPROVE_DIR_PATH_DOES_NOT_EXIST,
+            message: `relative path "${mdir}" does not exist or is not a directory`,
+            lines: [
+              {
+                line: 0,
+                name: conf.fileName,
+                path: conf.filePath
+              }
+            ]
+          })
+        );
+      }
     }
 
     parameters.forEach(parameter => {

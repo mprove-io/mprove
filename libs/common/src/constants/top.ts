@@ -4,7 +4,6 @@ export const MPROVE_CONFIG_NAME = 'mprove';
 
 export const MPROVE_CONFIG_DIR_DOT = '.';
 export const MPROVE_CONFIG_DIR_DOT_SLASH = './';
-export const MPROVE_CONFIG_DIR_SLASH = '/';
 
 export const PROD_REPO_ID = 'production';
 export const BRANCH_MASTER = 'master';

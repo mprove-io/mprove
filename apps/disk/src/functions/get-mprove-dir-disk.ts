@@ -40,8 +40,7 @@ export async function getMproveDirDisk(item: {
     if (
       [
         common.MPROVE_CONFIG_DIR_DOT,
-        common.MPROVE_CONFIG_DIR_DOT_SLASH,
-        common.MPROVE_CONFIG_DIR_SLASH
+        common.MPROVE_CONFIG_DIR_DOT_SLASH
       ].indexOf(parsedYaml.mprove_dir) > -1
     ) {
       return item.dir;
@@ -49,12 +48,15 @@ export async function getMproveDirDisk(item: {
 
     let mdir = parsedYaml.mprove_dir;
 
-    if (mdir.length > 0 && mdir.substring(0, 1) === '.') {
-      mdir = mdir.substring(1);
+    if (
+      mdir.length > 2 &&
+      mdir.substring(0, 2) === common.MPROVE_CONFIG_DIR_DOT_SLASH
+    ) {
+      mdir = mdir.substring(2);
     }
 
-    if (mdir.length > 0 && mdir.substring(0, 1) === '/') {
-      mdir = mdir.substring(1);
+    if (mdir.match(common.MyRegex.CONTAINS_DOT())) {
+      return undefined;
     }
 
     let mproveDir = item.dir + '/' + mdir;

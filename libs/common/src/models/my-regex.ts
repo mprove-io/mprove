@@ -24,6 +24,10 @@ export class MyRegex {
     return cloneRegexp(/([.][\s\S]+)$/);
   }
 
+  static CONTAINS_DOT(): RegExp {
+    return cloneRegexp(/[.]+/);
+  }
+
   // DISK
 
   static CAPTURE_FILE_NAME_BEFORE_EXT(): RegExp {
