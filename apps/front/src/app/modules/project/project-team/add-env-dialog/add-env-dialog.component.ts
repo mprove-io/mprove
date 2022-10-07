@@ -36,7 +36,7 @@ export class AddEnvDialogComponent implements OnInit {
 
   ngOnInit() {
     this.addEnvForm = this.fb.group({
-      envId: ['', [Validators.maxLength(255)]]
+      envId: ['', [Validators.required, Validators.maxLength(255)]]
     });
   }
 

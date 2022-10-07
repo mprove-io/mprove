@@ -69,7 +69,8 @@ export class RenameFolderDialogComponent implements OnInit {
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRenameCatalogNode,
-        payload: payload
+        payload: payload,
+        showSpinner: true
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendRenameCatalogNodeResponse) => {

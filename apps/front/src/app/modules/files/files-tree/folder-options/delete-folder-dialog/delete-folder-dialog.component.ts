@@ -9,7 +9,6 @@ import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 export interface DeleteFolderDialogDataItem {
   apiService: ApiService;
@@ -37,8 +36,6 @@ export class DeleteFolderDialogComponent {
   delete() {
     this.ref.close();
 
-    this.spinner.show(constants.APP_SPINNER_NAME);
-
     let payload: apiToBackend.ToBackendDeleteFolderRequestPayload = {
       projectId: this.ref.data.projectId,
       branchId: this.ref.data.branchId,
@@ -52,7 +49,8 @@ export class DeleteFolderDialogComponent {
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFolder,
-        payload: payload
+        payload: payload,
+        showSpinner: true
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteFolderResponse) => {

@@ -12,7 +12,6 @@ import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
 
 export interface MergeBranchDialogDataItem {
@@ -73,8 +72,6 @@ export class MergeBranchDialogComponent implements OnInit {
       return;
     }
 
-    this.spinner.show(constants.APP_SPINNER_NAME);
-
     this.ref.close();
 
     let payload: apiToBackend.ToBackendMergeRepoRequestPayload = {
@@ -92,7 +89,8 @@ export class MergeBranchDialogComponent implements OnInit {
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMergeRepo,
-        payload: payload
+        payload: payload,
+        showSpinner: true
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendMergeRepoResponse) => {

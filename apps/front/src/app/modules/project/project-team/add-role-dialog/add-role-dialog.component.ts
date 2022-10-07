@@ -30,7 +30,7 @@ export class AddRoleDialogComponent implements OnInit {
 
   ngOnInit() {
     this.addRoleForm = this.fb.group({
-      role: ['', [Validators.maxLength(255)]]
+      role: ['', [Validators.required, Validators.maxLength(255)]]
     });
   }
 
