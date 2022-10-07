@@ -1,10 +1,12 @@
 import { Controller, Post } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
@@ -25,6 +27,7 @@ export class RevertRepoToRemoteController {
     private membersService: MembersService,
     private rabbitService: RabbitService,
     private structsService: StructsService,
+    private cs: ConfigService<interfaces.Config>,
     private branchesService: BranchesService,
     private blockmlService: BlockmlService,
     private bridgesRepository: repositories.BridgesRepository,
@@ -50,6 +53,20 @@ export class RevertRepoToRemoteController {
       projectId: projectId,
       memberId: user.user_id
     });
+
+    let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
+      'firstProjectId'
+    );
+
+    if (
+      member.is_admin === common.BoolEnum.FALSE &&
+      projectId === firstProjectId &&
+      repoId === common.PROD_REPO_ID
+    ) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
+      });
+    }
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,

@@ -16,6 +16,8 @@ import { common } from '~front/barrels/common';
   templateUrl: './project-select.component.html'
 })
 export class ProjectSelectComponent {
+  firstOrgName = common.FIRST_ORG_NAME;
+
   projectsList: common.ProjectsItem[] = [];
   projectsListLoading = false;
   projectsListLength = 0;

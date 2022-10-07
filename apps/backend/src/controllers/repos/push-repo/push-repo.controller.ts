@@ -72,7 +72,7 @@ export class PushRepoController {
     );
 
     if (
-      member.is_admin === common.BoolEnum.FALSE &&
+      member.is_admin === common.BoolEnum.FALSE && // no check for repoId
       projectId === firstProjectId
     ) {
       throw new common.ServerError({

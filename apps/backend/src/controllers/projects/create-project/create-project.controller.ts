@@ -1,7 +1,9 @@
 import { Controller, Post } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
+import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
@@ -19,6 +21,7 @@ export class CreateProjectController {
     private rabbitService: RabbitService,
     private projectsService: ProjectsService,
     private orgsService: OrgsService,
+    private cs: ConfigService<interfaces.Config>,
     private projectsRepository: repositories.ProjectsRepository,
     private notesRepository: repositories.NotesRepository,
     private blockmlService: BlockmlService
@@ -39,6 +42,14 @@ export class CreateProjectController {
       org: org,
       userId: user.user_id
     });
+
+    let firstOrgId = this.cs.get<interfaces.Config['firstOrgId']>('firstOrgId');
+
+    if (org.org_id === firstOrgId) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_RESTRICTED_ORGANIZATION
+      });
+    }
 
     let project = await this.projectsRepository.findOne({
       org_id: orgId,

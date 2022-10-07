@@ -1,17 +1,16 @@
 import { Controller, Post } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { interfaces } from '~backend/barrels/interfaces';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { StructsService } from '~backend/services/structs.service';
 
 @Controller()
 export class CommitRepoController {
@@ -19,10 +18,8 @@ export class CommitRepoController {
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private rabbitService: RabbitService,
-    private structsService: StructsService,
-    private branchesService: BranchesService,
-    private bridgesService: BridgesService,
-    private envsService: EnvsService
+    private cs: ConfigService<interfaces.Config>,
+    private branchesService: BranchesService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCommitRepo)
@@ -48,10 +45,24 @@ export class CommitRepoController {
       projectId: projectId
     });
 
-    await this.membersService.getMemberCheckIsEditor({
+    let member = await this.membersService.getMemberCheckIsEditor({
       projectId: projectId,
       memberId: user.user_id
     });
+
+    let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
+      'firstProjectId'
+    );
+
+    if (
+      member.is_admin === common.BoolEnum.FALSE &&
+      projectId === firstProjectId &&
+      repoId === common.PROD_REPO_ID
+    ) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
+      });
+    }
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,

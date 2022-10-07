@@ -34,6 +34,12 @@ export class CreateOrgController {
 
     let org = await this.orgsRepository.findOne({ name: name });
 
+    if (name.toLowerCase() === common.FIRST_ORG_NAME.toLowerCase()) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_RESTRICTED_ORGANIZATION_NAME
+      });
+    }
+
     if (common.isDefined(org)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_ORG_ALREADY_EXISTS
