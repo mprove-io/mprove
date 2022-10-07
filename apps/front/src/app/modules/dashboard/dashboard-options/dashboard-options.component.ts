@@ -58,7 +58,7 @@ export class DashboardOptionsComponent {
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd,
-      isStartSpinnerUntilNavEnd: false
+      isStartSpinnerUntilNavEnd: true
     });
   }
 

@@ -379,7 +379,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd,
-      isStartSpinnerUntilNavEnd: true
+      isStartSpinnerUntilNavEnd: false
     });
   }
 
