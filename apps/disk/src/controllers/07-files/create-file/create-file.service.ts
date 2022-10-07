@@ -152,7 +152,7 @@ export class CreateFileService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
-      readFiles: common.isDefined(fileText) ? true : false
+      readFiles: true
     });
 
     let payload: apiToDisk.ToDiskCreateFileResponsePayload = {
