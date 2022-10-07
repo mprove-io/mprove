@@ -80,10 +80,11 @@ export class QueryResolver implements Resolve<Observable<boolean>> {
       return of(true);
     } else {
       return this.apiService
-        .req(
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
-          payload
-        )
+        .req({
+          pathInfoName:
+            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+          payload: payload
+        })
         .pipe(
           map((resp: apiToBackend.ToBackendGetQueryResponse) => {
             if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

@@ -79,10 +79,11 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
       return of(true);
     } else {
       return this.apiService
-        .req(
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
-          payload
-        )
+        .req({
+          pathInfoName:
+            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
+          payload: payload
+        })
         .pipe(
           map((resp: apiToBackend.ToBackendGetMconfigResponse) => {
             if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
