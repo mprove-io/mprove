@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { StructQuery } from '~front/app/queries/struct.query';
@@ -11,6 +12,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { StructState } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 export interface EditVizInfoDialogDataItem {
   apiService: ApiService;
@@ -62,6 +64,7 @@ export class EditVizInfoDialogComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private userQuery: UserQuery,
+    private spinner: NgxSpinnerService,
     private structQuery: StructQuery,
     private cd: ChangeDetectorRef,
     private navigateService: NavigateService
@@ -88,6 +91,8 @@ export class EditVizInfoDialogComponent implements OnInit {
       this.rolesForm.controls['roles'].valid &&
       this.usersForm.controls['users'].valid
     ) {
+      this.spinner.show(constants.APP_SPINNER_NAME);
+
       this.ref.close();
 
       let newTitle: string = this.titleForm.controls['title'].value;
@@ -109,10 +114,11 @@ export class EditVizInfoDialogComponent implements OnInit {
       let apiService: ApiService = this.ref.data.apiService;
 
       apiService
-        .req(
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyViz,
-          payload
-        )
+        .req({
+          pathInfoName:
+            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyViz,
+          payload: payload
+        })
         .pipe(
           tap(async (resp: apiToBackend.ToBackendModifyVizResponse) => {
             if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

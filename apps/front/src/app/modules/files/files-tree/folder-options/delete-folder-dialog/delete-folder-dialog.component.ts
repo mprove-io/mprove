@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -8,6 +9,7 @@ import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 export interface DeleteFolderDialogDataItem {
   apiService: ApiService;
@@ -28,11 +30,14 @@ export class DeleteFolderDialogComponent {
     private repoStore: RepoStore,
     private navigateService: NavigateService,
     private navStore: NavStore,
+    private spinner: NgxSpinnerService,
     public structStore: StructStore
   ) {}
 
   delete() {
     this.ref.close();
+
+    this.spinner.show(constants.APP_SPINNER_NAME);
 
     let payload: apiToBackend.ToBackendDeleteFolderRequestPayload = {
       projectId: this.ref.data.projectId,

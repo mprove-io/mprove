@@ -36,13 +36,13 @@ export class ForgotPasswordComponent implements OnInit {
   }
 
   resetPassword() {
-    this.spinner.show(constants.APP_SPINNER_NAME);
-
     this.resetPasswordForm.markAllAsTouched();
 
     if (!this.resetPasswordForm.valid) {
       return;
     }
+
+    this.spinner.show(constants.APP_SPINNER_NAME);
 
     let email = this.resetPasswordForm.value.email;
 

@@ -7,6 +7,7 @@ import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 export interface CreateProjectDialogDataItem {
   apiService: ApiService;
@@ -97,6 +98,8 @@ export class CreateProjectDialogComponent implements OnInit {
     ) {
       return;
     }
+
+    this.spinner.show(constants.APP_SPINNER_NAME);
 
     this.ref.close();
 

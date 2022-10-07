@@ -57,13 +57,13 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    this.spinner.show(constants.APP_SPINNER_NAME);
-
     this.loginForm.markAllAsTouched();
 
     if (!this.loginForm.valid) {
       return;
     }
+
+    this.spinner.show(constants.APP_SPINNER_NAME);
 
     let payload: apiToBackend.ToBackendLoginUserRequestPayload = {
       email: this.loginForm.value.email,

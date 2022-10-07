@@ -70,7 +70,8 @@ export class CreateFileDialogComponent implements OnInit {
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFile,
-        payload: payload
+        payload: payload,
+        showSpinner: true
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateFileResponse) => {

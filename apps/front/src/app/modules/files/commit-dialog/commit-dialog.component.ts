@@ -59,7 +59,8 @@ export class CommitDialogComponent implements OnInit {
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
-        payload: payload
+        payload: payload,
+        showSpinner: true
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendCommitRepoResponse) => {

@@ -42,13 +42,13 @@ export class RegisterComponent implements OnInit {
   }
 
   register() {
-    this.spinner.show(constants.APP_SPINNER_NAME);
-
     this.registerForm.markAllAsTouched();
 
     if (!this.registerForm.valid) {
       return;
     }
+
+    this.spinner.show(constants.APP_SPINNER_NAME);
 
     let payload: apiToBackend.ToBackendRegisterUserRequestPayload = {
       email: this.registerForm.value.email,

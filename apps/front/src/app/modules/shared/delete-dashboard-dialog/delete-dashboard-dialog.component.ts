@@ -31,9 +31,6 @@ export class DeleteDashboardDialogComponent {
   ) {}
 
   delete() {
-    let urlPart = this.router.url.split('?')[0];
-    let urlPartArray = urlPart.split('/');
-
     if (this.ref.data.isStartSpinnerUntilNavEnd === true) {
       this.spinner.show(constants.APP_SPINNER_NAME);
     }

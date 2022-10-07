@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { TreeNode } from '@circlon/angular-tree-component';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -14,6 +15,7 @@ import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-repo-options',
@@ -60,6 +62,7 @@ export class RepoOptionsComponent {
     public fileStore: FileStore,
     public repoQuery: RepoQuery,
     public fileService: FileService,
+    private spinner: NgxSpinnerService,
     public navQuery: NavQuery,
     private navigateService: NavigateService,
     public structStore: StructStore,
@@ -69,6 +72,8 @@ export class RepoOptionsComponent {
 
   revertToLastCommit(event?: MouseEvent) {
     event.stopPropagation();
+
+    this.spinner.show(constants.APP_SPINNER_NAME);
 
     let payload: apiToBackend.ToBackendRevertRepoToLastCommitRequestPayload = {
       projectId: this.nav.projectId,
@@ -110,6 +115,8 @@ export class RepoOptionsComponent {
   revertToRemote(event?: MouseEvent) {
     event.stopPropagation();
 
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     let payload: apiToBackend.ToBackendRevertRepoToRemoteRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
@@ -149,6 +156,8 @@ export class RepoOptionsComponent {
 
   pullFromRemote(event?: MouseEvent) {
     event.stopPropagation();
+
+    this.spinner.show(constants.APP_SPINNER_NAME);
 
     let payload: apiToBackend.ToBackendPullRepoRequestPayload = {
       projectId: this.nav.projectId,
@@ -201,7 +210,8 @@ export class RepoOptionsComponent {
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
-        payload: payload
+        payload: payload,
+        showSpinner: true
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendValidateFilesResponse) => {

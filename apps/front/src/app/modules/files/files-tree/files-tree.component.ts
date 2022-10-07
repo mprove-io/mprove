@@ -215,7 +215,8 @@ export class FilesTreeComponent implements OnDestroy {
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMoveCatalogNode,
-        payload: payload
+        payload: payload,
+        showSpinner: true
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendMoveCatalogNodeResponse) => {

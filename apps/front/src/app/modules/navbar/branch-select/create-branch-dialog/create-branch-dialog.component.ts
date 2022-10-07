@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { BranchItem } from '~front/app/interfaces/branch-item';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -11,6 +12,7 @@ import { NavState } from '~front/app/stores/nav.store';
 import { UserState } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
 
 export interface CreateBranchDialogDataItem {
@@ -76,6 +78,7 @@ export class CreateBranchDialogComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private userQuery: UserQuery,
+    private spinner: NgxSpinnerService,
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery
   ) {}
@@ -121,6 +124,8 @@ export class CreateBranchDialogComponent implements OnInit {
     if (!this.createBranchForm.valid) {
       return;
     }
+
+    this.spinner.show(constants.APP_SPINNER_NAME);
 
     this.ref.close();
 

@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { BranchItem } from '~front/app/interfaces/branch-item';
 import { ApiService } from '~front/app/services/api.service';
@@ -11,6 +12,7 @@ import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
 
 export interface MergeBranchDialogDataItem {
@@ -43,6 +45,7 @@ export class MergeBranchDialogComponent implements OnInit {
     private repoStore: RepoStore,
     private navigateService: NavigateService,
     private navStore: NavStore,
+    private spinner: NgxSpinnerService,
     public structStore: StructStore,
     private cd: ChangeDetectorRef
   ) {}
@@ -69,6 +72,8 @@ export class MergeBranchDialogComponent implements OnInit {
     if (!this.mergeForm.valid) {
       return;
     }
+
+    this.spinner.show(constants.APP_SPINNER_NAME);
 
     this.ref.close();
 

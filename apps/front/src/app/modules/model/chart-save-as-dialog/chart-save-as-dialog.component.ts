@@ -301,6 +301,8 @@ export class ChartSaveAsDialogComponent implements OnInit {
   }
 
   saveAsNewViz(item: { newTitle: string; roles: string; users: string }) {
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     let { newTitle, roles, users } = item;
 
     let payload: apiToBackend.ToBackendCreateVizRequestPayload = {

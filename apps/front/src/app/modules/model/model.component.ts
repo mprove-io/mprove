@@ -597,7 +597,8 @@ export class ModelComponent implements OnInit, OnDestroy {
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry,
-        payload: payload
+        payload: payload,
+        showSpinner: true
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendRunQueriesDryResponse) => {

@@ -235,7 +235,8 @@ export class FileEditorComponent implements OnDestroy {
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveFile,
-        payload: payload
+        payload: payload,
+        showSpinner: true
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendSaveFileResponse) => {

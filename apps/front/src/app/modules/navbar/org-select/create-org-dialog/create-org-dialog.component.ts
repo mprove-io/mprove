@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
@@ -23,6 +24,7 @@ export class CreateOrgDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<CreateOrgDialogItem>,
     private fb: FormBuilder,
+    private spinner: NgxSpinnerService,
     private navStore: NavStore,
     private router: Router
   ) {}
@@ -41,6 +43,8 @@ export class CreateOrgDialogComponent implements OnInit {
     if (!this.createOrgForm.valid) {
       return;
     }
+
+    this.spinner.show(constants.APP_SPINNER_NAME);
 
     this.ref.close();
 

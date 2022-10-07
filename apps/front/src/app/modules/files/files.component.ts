@@ -136,7 +136,8 @@ export class FilesComponent implements OnInit {
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPushRepo,
-        payload: payload
+        payload: payload,
+        showSpinner: true
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendPushRepoResponse) => {
@@ -167,7 +168,8 @@ export class FilesComponent implements OnInit {
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo,
-        payload: payload
+        payload: payload,
+        showSpinner: true
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendPullRepoResponse) => {

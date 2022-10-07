@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 export interface DeleteBranchDialogDataItem {
   apiService: ApiService;
@@ -29,11 +31,14 @@ export class DeleteBranchDialogComponent {
 
   constructor(
     public ref: DialogRef<DeleteBranchDialogDataItem>,
+    private spinner: NgxSpinnerService,
     private router: Router
   ) {}
 
   delete() {
     this.ref.close();
+
+    this.spinner.show(constants.APP_SPINNER_NAME);
 
     let payload: apiToBackend.ToBackendDeleteBranchRequestPayload = {
       projectId: this.ref.data.projectId,

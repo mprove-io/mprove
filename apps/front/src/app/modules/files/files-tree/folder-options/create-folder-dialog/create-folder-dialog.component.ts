@@ -65,7 +65,8 @@ export class CreateFolderDialogComponent implements OnInit {
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFolder,
-        payload: payload
+        payload: payload,
+        showSpinner: true
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateFolderResponse) => {

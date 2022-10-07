@@ -71,13 +71,13 @@ export class CompleteRegistrationComponent implements OnInit {
   }
 
   setPassword() {
-    this.spinner.show(constants.APP_SPINNER_NAME);
-
     this.setPasswordForm.markAllAsTouched();
 
     if (!this.setPasswordForm.valid) {
       return;
     }
+
+    this.spinner.show(constants.APP_SPINNER_NAME);
 
     let payload: apiToBackend.ToBackendCompleteUserRegistrationRequestPayload = {
       emailConfirmationToken: this.emailConfirmationToken,

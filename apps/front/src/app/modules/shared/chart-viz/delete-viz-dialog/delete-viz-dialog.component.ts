@@ -46,7 +46,8 @@ export class DeleteVizDialogComponent {
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteViz,
-        payload: payload
+        payload: payload,
+        showSpinner: true
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteVizResponse) => {

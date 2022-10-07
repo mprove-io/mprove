@@ -74,7 +74,8 @@ export class FilesRightComponent {
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
-        payload: payload
+        payload: payload,
+        showSpinner: true
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendValidateFilesResponse) => {
