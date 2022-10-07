@@ -59,7 +59,8 @@ export class FilesTreeComponent implements OnDestroy {
   treeOptions = {
     actionMapping: this.actionMapping,
     displayField: 'name',
-    allowDrag: (node: TreeNode) => node.data.id !== this.nav.projectId,
+    allowDrag: (node: TreeNode) =>
+      this.nav?.isRepoProd === false && node.data.id !== this.nav.projectId,
     allowDrop: (node: TreeNode, to: { parent: any; index: number }) =>
       (to.parent.data.isFolder && to.parent.data.id !== node.parent.data.id) ||
       (!to.parent.data.isFolder &&
