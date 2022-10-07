@@ -24,6 +24,23 @@ export function yamlToObjects(
   let filesAny: any[] = [];
 
   item.file3s.forEach((x: interfaces.File3) => {
+    if (x.content === '') {
+      item.errors.push(
+        new BmError({
+          title: enums.ErTitleEnum.FILE_IS_EMPTY,
+          message: `file must not be empty`,
+          lines: [
+            {
+              line: 0,
+              name: x.name,
+              path: x.path
+            }
+          ]
+        })
+      );
+      return;
+    }
+
     let tiedFileArray: string[] = [];
 
     // try YAML parsing
@@ -108,7 +125,19 @@ export function yamlToObjects(
     }
 
     if (common.isUndefined(parsedYaml)) {
-      // empty file
+      item.errors.push(
+        new BmError({
+          title: enums.ErTitleEnum.PARSED_YAML_IS_EMPTY,
+          message: `file content must be valid yaml`,
+          lines: [
+            {
+              line: 0,
+              name: x.name,
+              path: x.path
+            }
+          ]
+        })
+      );
       return;
     } else if (parsedYaml.constructor !== Object) {
       item.errors.push(
