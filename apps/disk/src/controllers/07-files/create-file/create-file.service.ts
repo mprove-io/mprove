@@ -202,10 +202,11 @@ function getContentFromFileName(item: { fileName: string }) {
     case common.FileExtensionEnum.Udf:
       content = `udf: ${part}`;
       break;
-    case common.FileExtensionEnum.Md:
-      content = '';
-      break;
     case common.FileExtensionEnum.Yml:
+      content =
+        item.fileName === common.MPROVE_CONFIG_FILENAME ? 'mprove_dir: ./' : '';
+      break;
+    case common.FileExtensionEnum.Md:
       content = '';
       break;
     default:

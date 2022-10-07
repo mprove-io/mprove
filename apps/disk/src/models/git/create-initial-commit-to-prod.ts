@@ -33,7 +33,7 @@ export async function createInitialCommitToProd(item: {
 
     let mproveFileName = common.MPROVE_CONFIG_FILENAME;
     let mproveFilePath = `${item.prodDir}/${mproveFileName}`;
-    let mproveContent = `mprove_dir: .
+    let mproveContent = `mprove_dir: ./
 week_start: Monday    
 allow_timezones: true
 default_timezone: UTC
