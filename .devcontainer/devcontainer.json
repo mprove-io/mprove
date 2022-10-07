@@ -16,7 +16,7 @@
     "DISPLAY": ":14",
     "LIBGL_ALWAYS_INDIRECT": "0"
   },
-  // "remoteUser": "node",
+  "remoteUser": "root",
   "workspaceFolder": "/mprove",
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.kube/config,target=/root/.kube/config,type=bind,consistency=cached",
