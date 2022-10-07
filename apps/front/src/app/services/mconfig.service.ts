@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 import { ModelQuery } from '../queries/model.query';
 import { NavQuery } from '../queries/nav.query';
 import { MqState, MqStore } from '../stores/mq.store';
@@ -23,6 +25,7 @@ export class MconfigService {
     public modelQuery: ModelQuery,
     private apiService: ApiService,
     private mqStore: MqStore,
+    private spinner: NgxSpinnerService,
     public navQuery: NavQuery,
     public structStore: StructStore,
     private navigateService: NavigateService
@@ -136,6 +139,8 @@ export class MconfigService {
   }
 
   navCreateMconfigAndQuery(newMconfig: common.MconfigX) {
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
@@ -145,11 +150,12 @@ export class MconfigService {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendCreateTempMconfigAndQuery,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum
+            .ToBackendCreateTempMconfigAndQuery,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -172,6 +178,8 @@ export class MconfigService {
     newMconfig: common.MconfigX;
     queryId: string;
   }) {
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     let { newMconfig, queryId } = item;
 
     let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload = {
@@ -200,12 +208,12 @@ export class MconfigService {
 
     // is required to check that structId is still valid
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendCreateTempMconfigAndQuery,
-        payload,
-        true
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum
+            .ToBackendCreateTempMconfigAndQuery,
+        payload: payload
+      })
       .pipe(
         map(
           (resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse) => {}

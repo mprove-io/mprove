@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { StructQuery } from '~front/app/queries/struct.query';
@@ -11,6 +12,7 @@ import { NavState } from '~front/app/stores/nav.store';
 import { StructState } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 export interface DashboardsNewDialogDataItem {
   apiService: ApiService;
@@ -68,6 +70,7 @@ export class DashboardsNewDialogComponent {
     private fb: FormBuilder,
     private userQuery: UserQuery,
     private navigateService: NavigateService,
+    private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private structQuery: StructQuery,
     private cd: ChangeDetectorRef
@@ -100,6 +103,8 @@ export class DashboardsNewDialogComponent {
   }
 
   createDashboard(item: { newTitle: string; roles: string; users: string }) {
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     let { newTitle, roles, users } = item;
 
     let payload: apiToBackend.ToBackendCreateDashboardRequestPayload = {
@@ -116,10 +121,11 @@ export class DashboardsNewDialogComponent {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDashboard,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDashboard,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateDashboardResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

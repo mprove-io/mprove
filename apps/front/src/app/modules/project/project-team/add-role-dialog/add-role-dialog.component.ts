@@ -58,10 +58,12 @@ export class AddRoleDialogComponent implements OnInit {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember,
+        payload: payload,
+        showSpinner: true
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendEditMemberResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

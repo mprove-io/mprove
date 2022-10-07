@@ -44,10 +44,12 @@ export class EditTimezoneDialogComponent {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserTimezone,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserTimezone,
+        payload: payload,
+        showSpinner: true
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendSetUserTimezoneResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
@@ -15,9 +17,14 @@ export class ErrorDialogComponent implements OnInit {
   path: string;
   traceId: string;
 
-  constructor(public ref: DialogRef<interfaces.ErrorData>) {}
+  constructor(
+    public ref: DialogRef<interfaces.ErrorData>,
+    private spinner: NgxSpinnerService
+  ) {}
 
   ngOnInit() {
+    this.spinner.hide(constants.APP_SPINNER_NAME);
+
     if (this.ref.data?.skipLogToConsole !== true) {
       console.log(this.ref.data);
 

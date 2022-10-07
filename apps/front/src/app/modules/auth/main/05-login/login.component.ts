@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
@@ -34,6 +35,7 @@ export class LoginComponent implements OnInit {
     private apiService: ApiService,
     private router: Router,
     private userStore: UserStore,
+    private spinner: NgxSpinnerService,
     private authService: AuthService,
     private title: Title
   ) {}
@@ -55,6 +57,8 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     this.loginForm.markAllAsTouched();
 
     if (!this.loginForm.valid) {
@@ -67,10 +71,11 @@ export class LoginComponent implements OnInit {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendLoginUserResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

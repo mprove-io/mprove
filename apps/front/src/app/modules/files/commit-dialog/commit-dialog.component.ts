@@ -56,10 +56,11 @@ export class CommitDialogComponent implements OnInit {
     };
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendCommitRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

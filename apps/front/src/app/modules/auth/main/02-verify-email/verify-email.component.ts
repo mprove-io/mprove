@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { from, of, Subscription } from 'rxjs';
 import { concatMap, delay, map, startWith, take, tap } from 'rxjs/operators';
 import { UserQuery } from '~front/app/queries/user.query';
@@ -40,6 +41,7 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
     private userQuery: UserQuery,
     private authService: AuthService,
     private apiService: ApiService,
+    private spinner: NgxSpinnerService,
     private router: Router,
     private title: Title
   ) {}
@@ -53,15 +55,18 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
   }
 
   resendEmail() {
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     let payload: apiToBackend.ToBackendResendUserEmailRequestPayload = {
       userId: this.userId
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResendUserEmail,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResendUserEmail,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendResendUserEmailResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -70,6 +75,7 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
             if (isEmailVerified === true) {
               this.router.navigate([common.PATH_LOGIN]);
             } else {
+              this.spinner.hide(constants.APP_SPINNER_NAME);
               this.startTimer();
             }
           }

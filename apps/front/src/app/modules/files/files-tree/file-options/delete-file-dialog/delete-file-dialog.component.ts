@@ -44,10 +44,11 @@ export class DeleteFileDialogComponent {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFile,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFile,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteFileResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

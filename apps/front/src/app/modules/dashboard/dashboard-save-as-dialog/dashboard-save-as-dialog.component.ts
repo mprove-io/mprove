@@ -13,6 +13,7 @@ import { NavState } from '~front/app/stores/nav.store';
 import { StructState } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 enum DashboardSaveAsEnum {
   NEW_DASHBOARD = 'NEW_DASHBOARD',
@@ -138,10 +139,11 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     this.spinner.show(this.spinnerName);
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendGetDashboardsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -200,6 +202,8 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   }
 
   saveAsNewDashboard(item: { newTitle: string; roles: string; users: string }) {
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     let { newTitle, roles, users } = item;
 
     let payload: apiToBackend.ToBackendCreateDashboardRequestPayload = {
@@ -223,10 +227,11 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDashboard,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDashboard,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateDashboardResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -247,6 +252,8 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     roles: string;
     users: string;
   }) {
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     let { newTitle, roles, users } = item;
 
     let payload: apiToBackend.ToBackendModifyDashboardRequestPayload = {
@@ -270,10 +277,11 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyDashboard,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyDashboard,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendModifyDashboardResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

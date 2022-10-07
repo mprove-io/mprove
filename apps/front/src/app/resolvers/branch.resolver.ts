@@ -37,10 +37,11 @@ export class BranchResolver implements Resolve<Observable<boolean>> {
     };
 
     return this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendIsBranchExist,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendIsBranchExist,
+        payload: payload
+      })
       .pipe(
         map((resp: apiToBackend.ToBackendIsBranchExistResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

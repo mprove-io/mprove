@@ -134,10 +134,11 @@ export class CreateBranchDialogComponent implements OnInit {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateBranchResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

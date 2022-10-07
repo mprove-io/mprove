@@ -53,10 +53,12 @@ export class EditProjectNameDialogComponent implements OnInit {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetProjectInfo,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetProjectInfo,
+        payload: payload,
+        showSpinner: true
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendSetProjectInfoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

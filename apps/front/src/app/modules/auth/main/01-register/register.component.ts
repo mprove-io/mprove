@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { UserStore } from '~front/app/stores/user.store';
@@ -30,6 +31,7 @@ export class RegisterComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private apiService: ApiService,
+    private spinner: NgxSpinnerService,
     private router: Router,
     private userStore: UserStore,
     private title: Title
@@ -40,6 +42,8 @@ export class RegisterComponent implements OnInit {
   }
 
   register() {
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     this.registerForm.markAllAsTouched();
 
     if (!this.registerForm.valid) {
@@ -52,10 +56,11 @@ export class RegisterComponent implements OnInit {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRegisterUser,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRegisterUser,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendRegisterUserResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

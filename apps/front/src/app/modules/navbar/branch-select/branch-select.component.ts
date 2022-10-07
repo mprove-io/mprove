@@ -164,10 +164,11 @@ export class BranchSelectComponent {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendGetProjectResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -177,11 +178,12 @@ export class BranchSelectComponent {
         }),
         switchMap(a =>
           this.apiService
-            .req(
-              apiToBackend.ToBackendRequestInfoNameEnum
-                .ToBackendGetBranchesList,
-              payload
-            )
+            .req({
+              pathInfoName:
+                apiToBackend.ToBackendRequestInfoNameEnum
+                  .ToBackendGetBranchesList,
+              payload: payload
+            })
             .pipe(
               tap((resp: apiToBackend.ToBackendGetBranchesListResponse) => {
                 if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

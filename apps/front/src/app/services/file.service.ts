@@ -62,10 +62,11 @@ export class FileService {
     }
 
     return this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetFile,
-        getFilePayload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetFile,
+        payload: getFilePayload
+      })
       .pipe(
         map((resp: apiToBackend.ToBackendGetFileResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

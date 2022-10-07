@@ -77,10 +77,11 @@ export class ProjectSelectComponent {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProjectsList,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProjectsList,
+        payload: payload
+      })
       .pipe(
         map(
           (resp: apiToBackend.ToBackendGetProjectsListResponse) =>

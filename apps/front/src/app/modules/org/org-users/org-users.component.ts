@@ -81,10 +81,11 @@ export class OrgUsersComponent implements OnInit {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendGetOrgUsersResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -116,10 +117,11 @@ export class OrgUsersComponent implements OnInit {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendGetAvatarBigResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

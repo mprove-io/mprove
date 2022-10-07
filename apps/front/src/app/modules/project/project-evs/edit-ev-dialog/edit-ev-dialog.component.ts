@@ -56,7 +56,11 @@ export class EditEvDialogComponent implements OnInit {
     let apiService: ApiService = this.dataItem.apiService;
 
     apiService
-      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditEv, payload)
+      .req({
+        pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditEv,
+        payload: payload,
+        showSpinner: true
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendEditEvResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

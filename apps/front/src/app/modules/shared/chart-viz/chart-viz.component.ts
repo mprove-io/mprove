@@ -98,10 +98,11 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     };
 
     let mconfig: common.MconfigX = await this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
-        payloadGetMconfig
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
+        payload: payloadGetMconfig
+      })
       .pipe(
         map((resp: apiToBackend.ToBackendGetMconfigResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -126,10 +127,11 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     };
 
     let query: common.Query = await this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
-        payloadGetQuery
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+        payload: payloadGetQuery
+      })
       .pipe(
         map((resp: apiToBackend.ToBackendGetQueryResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -170,10 +172,11 @@ export class ChartVizComponent implements OnInit, OnDestroy {
             };
 
             return this.apiService
-              .req(
-                apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
-                payload
-              )
+              .req({
+                pathInfoName:
+                  apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+                payload: payload
+              })
               .pipe(
                 tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
                   if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -223,10 +226,11 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendRunQueriesResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

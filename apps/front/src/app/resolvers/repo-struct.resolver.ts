@@ -40,7 +40,11 @@ export class RepoStructResolver implements Resolve<Observable<boolean>> {
     };
 
     return this.apiService
-      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRepo, payload)
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRepo,
+        payload: payload
+      })
       .pipe(
         map((resp: apiToBackend.ToBackendGetRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

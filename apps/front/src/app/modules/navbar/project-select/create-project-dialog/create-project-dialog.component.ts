@@ -63,11 +63,12 @@ export class CreateProjectDialogComponent implements OnInit {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendGenerateProjectRemoteKey,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum
+            .ToBackendGenerateProjectRemoteKey,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendGenerateProjectRemoteKeyResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -110,10 +111,11 @@ export class CreateProjectDialogComponent implements OnInit {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateProject,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateProject,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateProjectResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

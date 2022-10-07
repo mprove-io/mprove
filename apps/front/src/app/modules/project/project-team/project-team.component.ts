@@ -102,10 +102,11 @@ export class ProjectTeamComponent implements OnInit {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMembers,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMembers,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendGetMembersResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -135,10 +136,11 @@ export class ProjectTeamComponent implements OnInit {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendGetAvatarBigResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -205,10 +207,12 @@ export class ProjectTeamComponent implements OnInit {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember,
+        payload: payload,
+        showSpinner: true
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendEditMemberResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -262,10 +266,11 @@ export class ProjectTeamComponent implements OnInit {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendEditMemberResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -299,10 +304,11 @@ export class ProjectTeamComponent implements OnInit {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendEditMemberResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

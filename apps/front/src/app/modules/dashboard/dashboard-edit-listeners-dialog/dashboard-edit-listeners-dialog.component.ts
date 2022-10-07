@@ -85,10 +85,11 @@ export class DashboardEditListenersDialogComponent implements OnInit {
     };
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendGetModelsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

@@ -84,10 +84,11 @@ export class MergeBranchDialogComponent implements OnInit {
     let fileService: FileService = this.ref.data.fileService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMergeRepo,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMergeRepo,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendMergeRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

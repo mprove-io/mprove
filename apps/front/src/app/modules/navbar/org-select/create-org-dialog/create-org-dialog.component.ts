@@ -51,10 +51,11 @@ export class CreateOrgDialogComponent implements OnInit {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateOrg,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateOrg,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateOrgResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

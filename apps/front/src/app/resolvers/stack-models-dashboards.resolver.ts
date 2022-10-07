@@ -52,10 +52,11 @@ export class StackModelsDashboardsResolver
     };
 
     return this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
+        payload: payload
+      })
       .pipe(
         map((resp: apiToBackend.ToBackendGetDashboardsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

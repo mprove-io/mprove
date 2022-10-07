@@ -38,10 +38,11 @@ export class UsersResolver implements Resolve<Observable<boolean>> {
     };
 
     return this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers,
+        payload: payload
+      })
       .pipe(
         map((resp: apiToBackend.ToBackendGetOrgUsersResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

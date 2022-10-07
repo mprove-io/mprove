@@ -71,10 +71,11 @@ export class FilesRightComponent {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendValidateFilesResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

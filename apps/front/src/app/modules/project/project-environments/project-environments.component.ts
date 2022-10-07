@@ -89,7 +89,11 @@ export class ProjectEnvironmentsComponent implements OnInit {
     };
 
     this.apiService
-      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvs, payload)
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvs,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendGetEnvsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

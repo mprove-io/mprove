@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -25,6 +26,7 @@ export class ForgotPasswordComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
+    private spinner: NgxSpinnerService,
     private apiService: ApiService,
     private title: Title
   ) {}
@@ -34,6 +36,8 @@ export class ForgotPasswordComponent implements OnInit {
   }
 
   resetPassword() {
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     this.resetPasswordForm.markAllAsTouched();
 
     if (!this.resetPasswordForm.valid) {
@@ -47,10 +51,11 @@ export class ForgotPasswordComponent implements OnInit {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResetUserPassword,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResetUserPassword,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendResetUserPasswordResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

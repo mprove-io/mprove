@@ -53,10 +53,12 @@ export class AddEnvironmentDialogComponent implements OnInit {
     let apiService: ApiService = this.dataItem.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEnv,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEnv,
+        payload: payload,
+        showSpinner: true
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateEnvResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

@@ -62,7 +62,12 @@ export class AddEvDialogComponent implements OnInit {
     let apiService: ApiService = this.dataItem.apiService;
 
     apiService
-      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEv, payload)
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEv,
+        payload: payload,
+        showSpinner: true
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateEvResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

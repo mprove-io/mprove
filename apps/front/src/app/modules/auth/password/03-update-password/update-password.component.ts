@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
@@ -40,6 +41,7 @@ export class UpdatePasswordComponent implements OnInit {
     private fb: FormBuilder,
     private apiService: ApiService,
     private authService: AuthService,
+    private spinner: NgxSpinnerService,
     private router: Router,
     private route: ActivatedRoute,
     private title: Title
@@ -56,6 +58,8 @@ export class UpdatePasswordComponent implements OnInit {
   }
 
   setPassword() {
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     this.setPasswordForm.markAllAsTouched();
 
     if (!this.setPasswordForm.valid) {
@@ -68,10 +72,11 @@ export class UpdatePasswordComponent implements OnInit {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendUpdateUserPasswordResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

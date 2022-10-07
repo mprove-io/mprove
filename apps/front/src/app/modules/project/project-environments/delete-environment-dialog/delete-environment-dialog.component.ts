@@ -40,10 +40,12 @@ export class DeleteEnvironmentDialogComponent {
     let apiService: ApiService = this.dataItem.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEnv,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEnv,
+        payload: payload,
+        showSpinner: true
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteEnvResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

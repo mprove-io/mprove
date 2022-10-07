@@ -44,10 +44,11 @@ export class DeleteBranchDialogComponent {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteBranch,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteBranch,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteBranchResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

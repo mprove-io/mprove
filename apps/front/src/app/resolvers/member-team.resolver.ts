@@ -38,10 +38,11 @@ export class MemberTeamResolver implements Resolve<Promise<boolean>> {
     };
 
     return this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMembers,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMembers,
+        payload: payload
+      })
       .pipe(
         map((resp: apiToBackend.ToBackendGetMembersResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

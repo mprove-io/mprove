@@ -57,7 +57,8 @@ export class DashboardOptionsComponent {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
-      isRepoProd: this.nav.isRepoProd
+      isRepoProd: this.nav.isRepoProd,
+      isStartSpinnerUntilNavEnd: false
     });
   }
 

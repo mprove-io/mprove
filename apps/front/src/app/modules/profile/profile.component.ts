@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { getTimezoneLabelByValue } from '~common/_index';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -43,6 +44,7 @@ export class ProfileComponent implements OnInit {
     public navQuery: NavQuery,
     private authService: AuthService,
     private apiService: ApiService,
+    private spinner: NgxSpinnerService,
     private router: Router,
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,
@@ -54,6 +56,8 @@ export class ProfileComponent implements OnInit {
   }
 
   changePassword() {
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     let email: string;
     this.userQuery.email$.pipe(take(1)).subscribe(x => (email = x));
 
@@ -62,10 +66,11 @@ export class ProfileComponent implements OnInit {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResetUserPassword,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResetUserPassword,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendResetUserPasswordResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

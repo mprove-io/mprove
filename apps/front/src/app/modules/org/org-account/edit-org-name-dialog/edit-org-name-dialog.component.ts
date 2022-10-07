@@ -53,10 +53,12 @@ export class EditOrgNameDialogComponent implements OnInit {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgInfo,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgInfo,
+        payload: payload,
+        showSpinner: true
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendSetOrgInfoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

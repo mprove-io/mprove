@@ -45,10 +45,11 @@ export class MemberConnectionsResolver implements Resolve<Promise<boolean>> {
     };
 
     return this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetConnections,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetConnections,
+        payload: payload
+      })
       .pipe(
         map((resp: apiToBackend.ToBackendGetConnectionsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

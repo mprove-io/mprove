@@ -61,10 +61,12 @@ export class EditOrgOwnerDialogComponent implements OnInit {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner,
+        payload: payload,
+        showSpinner: true
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendSetOrgOwnerResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

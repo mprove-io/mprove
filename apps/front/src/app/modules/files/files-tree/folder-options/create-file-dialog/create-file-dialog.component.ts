@@ -67,10 +67,11 @@ export class CreateFileDialogComponent implements OnInit {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFile,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFile,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateFileResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

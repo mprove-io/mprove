@@ -78,7 +78,10 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
     };
 
     return this.apiService
-      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetNav, payload)
+      .req({
+        pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetNav,
+        payload: payload
+      })
       .pipe(
         map((resp: apiToBackend.ToBackendGetNavResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

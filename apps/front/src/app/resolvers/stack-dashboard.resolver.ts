@@ -56,10 +56,11 @@ export class StackDashboardResolver implements Resolve<Promise<boolean>> {
     };
 
     return this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
+        payload: payload
+      })
       .pipe(
         map((resp: apiToBackend.ToBackendGetDashboardResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

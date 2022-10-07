@@ -80,10 +80,11 @@ export class ProjectConnectionsComponent implements OnInit {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetConnections,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetConnections,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendGetConnectionsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

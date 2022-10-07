@@ -53,10 +53,11 @@ export class AddEnvDialogComponent implements OnInit {
     };
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvsList,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvsList,
+        payload: payload
+      })
       .pipe(
         map(
           (resp: apiToBackend.ToBackendGetEnvsListResponse) =>
@@ -96,10 +97,12 @@ export class AddEnvDialogComponent implements OnInit {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember,
+        payload: payload,
+        showSpinner: true
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendEditMemberResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

@@ -435,10 +435,11 @@ export class ModelComponent implements OnInit, OnDestroy {
             };
 
             return this.apiService
-              .req(
-                apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
-                payload
-              )
+              .req({
+                pathInfoName:
+                  apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+                payload: payload
+              })
               .pipe(
                 tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
                   if (
@@ -562,10 +563,11 @@ export class ModelComponent implements OnInit, OnDestroy {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendRunQueriesResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -592,10 +594,11 @@ export class ModelComponent implements OnInit, OnDestroy {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendRunQueriesDryResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -626,10 +629,11 @@ export class ModelComponent implements OnInit, OnDestroy {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendCancelQueriesResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

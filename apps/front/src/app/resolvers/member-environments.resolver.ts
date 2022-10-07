@@ -45,7 +45,11 @@ export class MemberEnvironmentsResolver implements Resolve<Promise<boolean>> {
     };
 
     return this.apiService
-      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvs, payload)
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvs,
+        payload: payload
+      })
       .pipe(
         map((resp: apiToBackend.ToBackendGetEnvsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

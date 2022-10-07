@@ -44,7 +44,11 @@ export class StackModelsVizsResolver implements Resolve<Promise<boolean>> {
     };
 
     return this.apiService
-      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs, payload)
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs,
+        payload: payload
+      })
       .pipe(
         map((resp: apiToBackend.ToBackendGetVizsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

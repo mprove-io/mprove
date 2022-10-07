@@ -35,7 +35,12 @@ export class DeleteEvDialogComponent {
     let apiService: ApiService = this.dataItem.apiService;
 
     apiService
-      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEv, payload)
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEv,
+        payload: payload,
+        showSpinner: true
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteEvResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

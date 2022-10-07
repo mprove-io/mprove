@@ -62,10 +62,11 @@ export class CreateFolderDialogComponent implements OnInit {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFolder,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFolder,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateFolderResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

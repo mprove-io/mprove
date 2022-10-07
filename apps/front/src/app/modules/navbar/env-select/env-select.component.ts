@@ -74,10 +74,11 @@ export class EnvSelectComponent {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvsList,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvsList,
+        payload: payload
+      })
       .pipe(
         map(
           (resp: apiToBackend.ToBackendGetEnvsListResponse) =>

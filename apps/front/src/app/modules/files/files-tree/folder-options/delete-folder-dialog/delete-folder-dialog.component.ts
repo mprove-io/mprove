@@ -44,10 +44,11 @@ export class DeleteFolderDialogComponent {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFolder,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFolder,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteFolderResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

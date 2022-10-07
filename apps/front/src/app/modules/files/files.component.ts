@@ -133,7 +133,11 @@ export class FilesComponent implements OnInit {
     };
 
     this.apiService
-      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPushRepo, payload)
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPushRepo,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendPushRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -160,7 +164,11 @@ export class FilesComponent implements OnInit {
     };
 
     this.apiService
-      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo, payload)
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendPullRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

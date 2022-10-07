@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
@@ -24,12 +25,15 @@ export class ConfirmEmailComponent implements OnInit {
     private apiService: ApiService,
     private userStore: UserStore,
     private authService: AuthService,
+    private spinner: NgxSpinnerService,
     private router: Router,
     private myDialogService: MyDialogService,
     private title: Title
   ) {}
 
   ngOnInit() {
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     this.title.setTitle(this.pageTitle);
 
     this.authService.clearLocalStorage();
@@ -41,12 +45,13 @@ export class ConfirmEmailComponent implements OnInit {
     );
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail,
-        {
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail,
+        payload: {
           token: this.emailConfirmationToken
         }
-      )
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendConfirmUserEmailResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

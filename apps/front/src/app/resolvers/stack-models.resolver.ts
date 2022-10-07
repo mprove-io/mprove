@@ -44,10 +44,11 @@ export class StackModelsResolver implements Resolve<Promise<boolean>> {
     };
 
     return this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels,
+        payload: payload
+      })
       .pipe(
         map((resp: apiToBackend.ToBackendGetModelsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

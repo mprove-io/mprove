@@ -263,10 +263,12 @@ export class EditConnectionDialogComponent implements OnInit {
     let apiService: ApiService = this.dataItem.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditConnection,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditConnection,
+        payload: payload,
+        showSpinner: true
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendEditConnectionResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

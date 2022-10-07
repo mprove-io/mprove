@@ -57,7 +57,11 @@ export class OrgSelectComponent {
     this.orgsListLoading = true;
 
     this.apiService
-      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgsList, {})
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgsList,
+        payload: {}
+      })
       .pipe(
         map(
           (resp: apiToBackend.ToBackendGetOrgsListResponse) =>

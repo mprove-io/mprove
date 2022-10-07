@@ -43,10 +43,11 @@ export class DeleteVizDialogComponent {
     };
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteViz,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteViz,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteVizResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

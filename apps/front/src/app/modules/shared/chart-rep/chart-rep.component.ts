@@ -133,10 +133,11 @@ export class ChartRepComponent implements OnInit, OnDestroy {
             };
 
             return this.apiService
-              .req(
-                apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
-                payload
-              )
+              .req({
+                pathInfoName:
+                  apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+                payload: payload
+              })
               .pipe(
                 tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
                   if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -190,10 +191,11 @@ export class ChartRepComponent implements OnInit, OnDestroy {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendRunQueriesResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

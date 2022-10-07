@@ -77,11 +77,12 @@ export class RepoOptionsComponent {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendRevertRepoToLastCommit,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum
+            .ToBackendRevertRepoToLastCommit,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendRevertRepoToLastCommitResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -117,10 +118,11 @@ export class RepoOptionsComponent {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendRevertRepoToRemoteResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -156,7 +158,11 @@ export class RepoOptionsComponent {
     };
 
     this.apiService
-      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo, payload)
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendPullRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -192,10 +198,11 @@ export class RepoOptionsComponent {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendValidateFilesResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

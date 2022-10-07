@@ -20,10 +20,11 @@ export class ProfileResolver implements Resolve<Observable<boolean>> {
     routerStateSnapshot: RouterStateSnapshot
   ): Observable<boolean> {
     return this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetUserProfile,
-        {}
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetUserProfile,
+        payload: {}
+      })
       .pipe(
         map((resp: apiToBackend.ToBackendGetUserProfileResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

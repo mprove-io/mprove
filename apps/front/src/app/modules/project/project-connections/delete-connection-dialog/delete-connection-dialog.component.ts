@@ -40,10 +40,12 @@ export class DeleteConnectionDialogComponent {
     let apiService: ApiService = this.dataItem.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteConnection,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteConnection,
+        payload: payload,
+        showSpinner: true
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteConnectionResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

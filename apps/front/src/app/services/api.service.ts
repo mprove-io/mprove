@@ -19,83 +19,83 @@ import { NavigateService } from './navigate.service';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  showSpinner: apiToBackend.ToBackendRequestInfoNameEnum[] = [
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCompleteUserRegistration,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRegisterUser,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResendUserEmail,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResetUserPassword,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword,
-    // user
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserName,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserTimezone,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetAvatar,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteUser,
-    // org account
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgInfo,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteOrg,
-    // project settings
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetProjectInfo,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteProject,
-    // project team
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateMember,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteMember,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember,
-    // project environments
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEnv,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEnv,
-    // apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvs,
-    // project env variables
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEv,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditEv,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEv,
-    // project connections
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateConnection,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteConnection,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditConnection,
-    // navbar
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateOrg,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateProject,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteBranch,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMergeRepo,
-    // special
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig,
-    // files tree
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFolder,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFile,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFolder,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFile,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRenameCatalogNode,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMoveCatalogNode,
-    // files editor
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveFile,
-    // files
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPushRepo,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo,
-    // files repo options
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
-    // model
-    apiToBackend.ToBackendRequestInfoNameEnum
-      .ToBackendCreateTempMconfigAndQuery,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry,
-    // apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
-    // apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateViz,
-    // visualizations
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteViz,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyViz,
-    // dashboards
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateTempDashboard,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDashboard,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyDashboard,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDashboard
-  ];
+  // showSpinner: apiToBackend.ToBackendRequestInfoNameEnum[] = [
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRegisterUser,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResendUserEmail,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCompleteUserRegistration,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResetUserPassword,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword,
+  //   // user
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserName,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserTimezone,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetAvatar,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteUser,
+  //   // org account
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgInfo,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteOrg,
+  //   // project settings
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetProjectInfo,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteProject,
+  //   // project team
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateMember,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteMember,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember,
+  //   // project environments
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEnv,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEnv,
+  //   // project env variables
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEv,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditEv,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEv,
+  //   // project connections
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateConnection,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteConnection,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditConnection,
+  //   // navbar
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateOrg,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateProject,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteBranch,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMergeRepo,
+  //   // special
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig,
+  //   // files tree
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFolder,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFile,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFolder,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFile,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRenameCatalogNode,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMoveCatalogNode,
+  //   // files editor
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveFile,
+  //   // files
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPushRepo,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo,
+  //   // files repo options
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
+  //   // model
+  //         // apiToBackend.ToBackendRequestInfoNameEnum
+  //         //   .ToBackendCreateTempMconfigAndQuery,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry,
+  //   // apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+  //   // apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateViz,
+  //   // visualizations
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteViz,
+  //   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyViz
+  //   // dashboards
+  //         // apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateTempDashboard,
+  //         // apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDashboard,
+  //         // apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyDashboard,
+  //         // apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDashboard
+  //   //
+  // ];
 
   constructor(
     private authHttpClient: HttpClient,
@@ -105,11 +105,13 @@ export class ApiService {
     private navigateService: NavigateService
   ) {}
 
-  req(
-    pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum,
-    payload: any,
-    skipSpinner?: boolean
-  ): Observable<any> {
+  req(item: {
+    pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum;
+    payload: any;
+    showSpinner?: boolean;
+  }): Observable<any> {
+    let { pathInfoName, payload, showSpinner } = item;
+
     let bypassAuth = [
       apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser
       // api.PATH_REGISTER_USER,
@@ -154,15 +156,13 @@ export class ApiService {
 
     // let spinnerStartedTs: number;
 
-    if (skipSpinner !== true && this.showSpinner.includes(pathInfoName)) {
+    if (showSpinner === true) {
       // spinnerStartedTs = Date.now();
       this.spinner.show(constants.APP_SPINNER_NAME);
     }
 
     return combineLatest([
-      timer(
-        this.showSpinner.includes(pathInfoName) ? constants.MIN_TIME_TO_SPIN : 0
-      ),
+      timer(showSpinner === true ? constants.MIN_TIME_TO_SPIN : 0),
       this.authHttpClient.request('post', url, options)
     ]).pipe(
       map(x =>
@@ -178,7 +178,7 @@ export class ApiService {
       ),
       catchError(e => this.catchErr(e)),
       finalize(() => {
-        if (this.showSpinner.includes(pathInfoName)) {
+        if (showSpinner === true) {
           // let endedTs = Date.now();
 
           // let spinTimeAlready = endedTs - spinnerStartedTs;

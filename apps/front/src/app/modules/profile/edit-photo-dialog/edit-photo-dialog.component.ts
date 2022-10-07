@@ -74,10 +74,12 @@ export class EditPhotoDialogComponent {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetAvatar,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetAvatar,
+        payload: payload,
+        showSpinner: true
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendSetAvatarResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

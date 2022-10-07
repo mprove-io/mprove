@@ -28,10 +28,11 @@ export class MemberResolver implements Resolve<Observable<boolean>> {
     };
 
     return this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject,
+        payload: payload
+      })
       .pipe(
         map((resp: apiToBackend.ToBackendGetProjectResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

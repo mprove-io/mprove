@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 export interface DeleteUserDialogItem {
   apiService: ApiService;
@@ -17,10 +19,13 @@ export interface DeleteUserDialogItem {
 export class DeleteUserDialogComponent {
   constructor(
     public ref: DialogRef<DeleteUserDialogItem>,
+    private spinner: NgxSpinnerService,
     private router: Router
   ) {}
 
   delete() {
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     this.ref.close();
 
     let payload = {};
@@ -28,10 +33,11 @@ export class DeleteUserDialogComponent {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteUser,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteUser,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteUserResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

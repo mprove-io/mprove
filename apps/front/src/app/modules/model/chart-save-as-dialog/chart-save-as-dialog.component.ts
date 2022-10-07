@@ -19,6 +19,7 @@ import { NavState } from '~front/app/stores/nav.store';
 import { StructState } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 enum ChartSaveAsEnum {
   NEW_VIZ = 'NEW_VIZ',
@@ -151,10 +152,11 @@ export class ChartSaveAsDialogComponent implements OnInit {
     this.spinner.show(this.spinnerName);
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendGetDashboardsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -316,10 +318,11 @@ export class ChartSaveAsDialogComponent implements OnInit {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateViz,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateViz,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateVizResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -336,6 +339,8 @@ export class ChartSaveAsDialogComponent implements OnInit {
   }
 
   async saveAsReport(item: { newTitle: string }) {
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     let { newTitle } = item;
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -370,10 +375,11 @@ export class ChartSaveAsDialogComponent implements OnInit {
     };
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyDashboard,
-        payloadModifyDashboard
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyDashboard,
+        payload: payloadModifyDashboard
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendModifyDashboardResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

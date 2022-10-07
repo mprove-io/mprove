@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { NavStore } from '~front/app/stores/nav.store';
@@ -24,10 +25,13 @@ export class DeleteOrgDialogComponent {
     public ref: DialogRef<DeleteOrgDialogDataItem>,
     private router: Router,
     private orgStore: OrgStore,
+    private spinner: NgxSpinnerService,
     private navStore: NavStore
   ) {}
 
   delete() {
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     this.ref.close();
 
     let payload: apiToBackend.ToBackendDeleteOrgRequestPayload = {
@@ -37,10 +41,11 @@ export class DeleteOrgDialogComponent {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteOrg,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteOrg,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteOrgResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

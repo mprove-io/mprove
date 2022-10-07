@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 import { NavQuery } from '../queries/nav.query';
-import { DashboardStore } from '../stores/dashboard.store';
 import { NavState } from '../stores/nav.store';
 import { ApiService } from './api.service';
 import { NavigateService } from './navigate.service';
@@ -19,7 +20,7 @@ export class DashboardService {
 
   constructor(
     private apiService: ApiService,
-    private dashboardStore: DashboardStore,
+    private spinner: NgxSpinnerService,
     private navigateService: NavigateService,
     public navQuery: NavQuery
   ) {
@@ -32,6 +33,8 @@ export class DashboardService {
     newDashboardId: string;
     newDashboardFields: common.DashboardField[];
   }) {
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     let { reports, oldDashboardId, newDashboardId, newDashboardFields } = item;
 
     let newReports: common.ReportX[] = [];
@@ -55,10 +58,12 @@ export class DashboardService {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateTempDashboard,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum
+            .ToBackendCreateTempDashboard,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateTempDashboardResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

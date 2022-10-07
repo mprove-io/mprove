@@ -25,7 +25,10 @@ export class OrgResolver implements Resolve<Observable<boolean>> {
     };
 
     return this.apiService
-      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrg, payload)
+      .req({
+        pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrg,
+        payload: payload
+      })
       .pipe(
         map((resp: apiToBackend.ToBackendGetOrgResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

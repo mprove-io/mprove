@@ -201,10 +201,11 @@ export class AddConnectionDialogComponent implements OnInit {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvsList,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvsList,
+        payload: payload
+      })
       .pipe(
         map(
           (resp: apiToBackend.ToBackendGetEnvsListResponse) =>
@@ -297,10 +298,12 @@ export class AddConnectionDialogComponent implements OnInit {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateConnection,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateConnection,
+        payload: payload,
+        showSpinner: true
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateConnectionResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

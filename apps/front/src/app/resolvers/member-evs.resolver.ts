@@ -51,7 +51,10 @@ export class MemberEvsResolver implements Resolve<Promise<boolean>> {
     };
 
     return this.apiService
-      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEvs, payload)
+      .req({
+        pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEvs,
+        payload: payload
+      })
       .pipe(
         map((resp: apiToBackend.ToBackendGetEvsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

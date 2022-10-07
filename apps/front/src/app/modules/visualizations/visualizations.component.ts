@@ -324,10 +324,11 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     };
 
     let mconfig: common.MconfigX = await this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
-        payloadGetMconfig
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
+        payload: payloadGetMconfig
+      })
       .pipe(
         map((resp: apiToBackend.ToBackendGetMconfigResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -352,10 +353,11 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     };
 
     let query: common.Query = await this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
-        payloadGetQuery
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+        payload: payloadGetQuery
+      })
       .pipe(
         map((resp: apiToBackend.ToBackendGetQueryResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -423,10 +425,11 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     };
 
     let mconfig: common.MconfigX = await this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
-        payloadGetMconfig
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
+        payload: payloadGetMconfig
+      })
       .pipe(
         map((resp: apiToBackend.ToBackendGetMconfigResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

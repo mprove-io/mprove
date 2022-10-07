@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 export interface DeleteDashboardDialogDataItem {
   apiService: ApiService;
@@ -14,6 +16,7 @@ export interface DeleteDashboardDialogDataItem {
   branchId: string;
   envId: string;
   isRepoProd: boolean;
+  isStartSpinnerUntilNavEnd: boolean;
 }
 
 @Component({
@@ -23,10 +26,18 @@ export interface DeleteDashboardDialogDataItem {
 export class DeleteDashboardDialogComponent {
   constructor(
     public ref: DialogRef<DeleteDashboardDialogDataItem>,
+    private spinner: NgxSpinnerService,
     private router: Router
   ) {}
 
   delete() {
+    let urlPart = this.router.url.split('?')[0];
+    let urlPartArray = urlPart.split('/');
+
+    if (this.ref.data.isStartSpinnerUntilNavEnd === true) {
+      this.spinner.show(constants.APP_SPINNER_NAME);
+    }
+
     this.ref.close();
 
     let { projectId, branchId, isRepoProd } = this.ref.data;
@@ -43,10 +54,12 @@ export class DeleteDashboardDialogComponent {
     };
 
     apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDashboard,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDashboard,
+        payload: payload,
+        showSpinner: !this.ref.data.isStartSpinnerUntilNavEnd
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteDashboardResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

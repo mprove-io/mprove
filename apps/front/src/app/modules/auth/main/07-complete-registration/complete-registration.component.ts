@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
@@ -47,6 +48,7 @@ export class CompleteRegistrationComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
+    private spinner: NgxSpinnerService,
     private title: Title,
     private userStore: UserStore,
     private myDialogService: MyDialogService
@@ -69,6 +71,8 @@ export class CompleteRegistrationComponent implements OnInit {
   }
 
   setPassword() {
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     this.setPasswordForm.markAllAsTouched();
 
     if (!this.setPasswordForm.valid) {
@@ -81,11 +85,12 @@ export class CompleteRegistrationComponent implements OnInit {
     };
 
     this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendCompleteUserRegistration,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum
+            .ToBackendCompleteUserRegistration,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendCompleteUserRegistrationResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {

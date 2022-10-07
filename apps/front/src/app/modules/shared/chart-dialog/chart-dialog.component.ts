@@ -100,10 +100,11 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
             };
 
             return this.ref.data.apiService
-              .req(
-                apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
-                payload
-              )
+              .req({
+                pathInfoName:
+                  apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+                payload: payload
+              })
               .pipe(
                 tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
                   if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -173,10 +174,11 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     };
 
     this.ref.data.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
-        payload
-      )
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+        payload: payload
+      })
       .pipe(
         tap((resp: apiToBackend.ToBackendRunQueriesResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
