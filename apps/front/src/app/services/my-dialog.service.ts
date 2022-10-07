@@ -365,7 +365,7 @@ export class MyDialogService {
       enableClose: false,
       closeButton: false,
       data: item,
-      width: 640
+      width: 800
     });
   }
 
