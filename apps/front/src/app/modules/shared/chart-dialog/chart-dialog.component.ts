@@ -1,7 +1,15 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
-import { interval, of, Subscription } from 'rxjs';
-import { startWith, switchMap, take, tap } from 'rxjs/operators';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { from, interval, of, Subscription } from 'rxjs';
+import {
+  concatMap,
+  delay,
+  startWith,
+  switchMap,
+  take,
+  tap
+} from 'rxjs/operators';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -29,6 +37,10 @@ export interface ChartDialogDataItem {
   templateUrl: './chart-dialog.component.html'
 })
 export class ChartDialogComponent implements OnInit, OnDestroy {
+  chartDialogRunButtonSpinnerName = 'chartDialogRunButtonSpinnerName';
+
+  isRunButtonPressed = false;
+
   chartTypeEnumTable = common.ChartTypeEnum.Table;
 
   isShow = true;
@@ -52,11 +64,14 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     })
   );
 
+  runButtonTimerSubscription: Subscription;
+
   constructor(
     public ref: DialogRef<ChartDialogDataItem>,
     private cd: ChangeDetectorRef,
     private queryService: QueryService,
     private memberQuery: MemberQuery,
+    private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private navigateService: NavigateService
   ) {}
@@ -169,6 +184,8 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   }
 
   run() {
+    this.startRunButtonTimer();
+
     let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
       queryIds: [this.query.queryId]
     };
@@ -201,8 +218,30 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     this.navigateService.navigateToModel(modelId);
   }
 
+  startRunButtonTimer() {
+    this.isRunButtonPressed = true;
+    this.spinner.show(this.chartDialogRunButtonSpinnerName);
+    this.cd.detectChanges();
+
+    this.runButtonTimerSubscription = from([0])
+      .pipe(
+        concatMap(v => of(v).pipe(delay(1000))),
+        startWith(1),
+        tap(x => {
+          if (x === 0) {
+            this.spinner.hide(this.chartDialogRunButtonSpinnerName);
+            this.isRunButtonPressed = false;
+            this.cd.detectChanges();
+          }
+        })
+      )
+      .subscribe();
+  }
+
   ngOnDestroy() {
     // console.log('ngOnDestroyChartDialog');
+    this.runButtonTimerSubscription?.unsubscribe();
+
     if (common.isDefined(this.checkRunning$)) {
       this.checkRunning$?.unsubscribe();
     }

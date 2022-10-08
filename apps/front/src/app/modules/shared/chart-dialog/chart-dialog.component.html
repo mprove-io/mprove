@@ -3,15 +3,15 @@
     <div class="tems-center flex w-1/4 flex-1 flex-row justify-start"> </div>
 
     <div
-      class="mx-5 flex h-14 max-w-prose flex-shrink-0 flex-grow flex-row flex-wrap text-center text-gray1 line-clamp-2"
+      class="text-gray1 line-clamp-2 mx-5 flex h-14 max-w-prose flex-shrink-0 flex-grow flex-row flex-wrap text-center"
       >{{ mconfig?.chart?.title }}
     </div>
 
     <div class="flex w-1/4 flex-1 flex-row items-center justify-end"> </div>
   </div>
 
-  <div class="mb-5 flex flex-row items-center justify-start text-xl text-gray1">
-    <div class="flex flex-1 flex-row" *ngIf="showNav === true">
+  <div class="text-gray1 mb-5 flex flex-row items-center justify-start text-xl">
+    <div class="flex flex-1 flex-row items-center" *ngIf="showNav === true">
       <div class="flex flex-row items-center justify-start">
         <ui-switch
           class="mb-1"
@@ -19,7 +19,7 @@
           (change)="toggleData()"
         ></ui-switch>
 
-        <div class="ml-5 flex h-9 select-none items-center text-base text-gray1"
+        <div class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
           >Show Data</div
         >
       </div>
@@ -32,10 +32,30 @@
 
       <button
         data-cy="chartDialogRunButton"
-        class="ml-5 cursor-pointer rounded bg-blue3 px-6 py-2 text-base font-medium text-white focus:outline-none"
+        class="bg-blue3 ml-5 flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
+        [ngClass]="{
+          'cursor-default': isRunButtonPressed === true
+        }"
         (click)="run()"
+        [disabled]="isRunButtonPressed === true"
       >
-        Run
+        <div *ngIf="isRunButtonPressed === false">Run</div>
+        <div
+          *ngIf="isRunButtonPressed === true"
+          class="relative flex h-9 w-9 flex-shrink-0"
+        >
+          <ngx-spinner
+            [name]="chartDialogRunButtonSpinnerName"
+            color="rgba(255, 255, 255, 1)"
+            bdColor="rgba(0, 0, 0, 0)"
+            size="default"
+            type="ball-clip-rotate"
+            [fullScreen]="false"
+            [disableAnimation]="true"
+            [zIndex]="99998"
+          >
+          </ngx-spinner>
+        </div>
       </button>
 
       <ng-template #templateChartDialogExplore>
@@ -52,9 +72,9 @@
       >
         <button
           data-cy="chartDialogExploreButton"
-          class="rounded px-6 py-2 text-base font-medium text-white focus:outline-none"
+          class="h-12 rounded px-6 text-base font-medium text-white focus:outline-none"
           [ngClass]="{
-            'cursor-pointer bg-blue3':
+            'bg-blue3 cursor-pointer':
               isExplorer === true && canAccessModel === true,
             'cursor-default bg-gray-400':
               isExplorer === false || canAccessModel === false
@@ -107,7 +127,7 @@
       (change)="toggleFormat()"
     ></ui-switch>
 
-    <div class="ml-5 flex h-9 select-none items-center text-base text-gray1"
+    <div class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
       >Format Numbers</div
     >
   </div>

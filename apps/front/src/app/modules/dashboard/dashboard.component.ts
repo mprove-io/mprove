@@ -383,10 +383,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.spinner.show(this.dashboardRunButtonSpinnerName);
     this.cd.detectChanges();
 
-    this.runButtonTimerSubscription = from([1, 0])
+    this.runButtonTimerSubscription = from([0])
       .pipe(
-        concatMap(v => of(v).pipe(delay(1000))),
-        startWith(2),
+        concatMap(v => of(v).pipe(delay(2000))),
+        startWith(1),
         tap(x => {
           if (x === 0) {
             this.spinner.hide(this.dashboardRunButtonSpinnerName);

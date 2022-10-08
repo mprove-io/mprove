@@ -2,8 +2,18 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
-import { interval, of, Subscription } from 'rxjs';
-import { filter, map, startWith, switchMap, take, tap } from 'rxjs/operators';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { from, interval, of, Subscription } from 'rxjs';
+import {
+  concatMap,
+  delay,
+  filter,
+  map,
+  startWith,
+  switchMap,
+  take,
+  tap
+} from 'rxjs/operators';
 import { constants } from '~common/barrels/constants';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { setChartFields } from '~front/app/functions/set-chart-fields';
@@ -46,6 +56,12 @@ export class ModelComponent implements OnInit, OnDestroy {
   restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
 
   pageTitle = frontConstants.MODEL_PAGE_TITLE;
+
+  modelRunButtonSpinnerName = 'modelRunButtonSpinnerName';
+  modelCancelButtonSpinnerName = 'modelCancelButtonSpinnerName';
+
+  isRunButtonPressed = false;
+  isCancelButtonPressed = false;
 
   queryStatusEnum = common.QueryStatusEnum;
   connectionTypeEnum = common.ConnectionTypeEnum;
@@ -209,6 +225,9 @@ export class ModelComponent implements OnInit, OnDestroy {
   );
 
   checkRunning$: Subscription;
+
+  runButtonTimerSubscription: Subscription;
+  cancelButtonTimerSubscription: Subscription;
 
   struct$ = this.structQuery.select().pipe(
     tap(x => {
@@ -395,6 +414,7 @@ export class ModelComponent implements OnInit, OnDestroy {
     public navigateService: NavigateService,
     private mqStore: MqStore,
     private structService: StructService,
+    private spinner: NgxSpinnerService,
     private timeService: TimeService,
     private mconfigService: MconfigService,
     private structQuery: StructQuery,
@@ -558,6 +578,8 @@ export class ModelComponent implements OnInit, OnDestroy {
   }
 
   run() {
+    this.startRunButtonTimer();
+
     let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
       queryIds: [this.query.queryId]
     };
@@ -625,6 +647,8 @@ export class ModelComponent implements OnInit, OnDestroy {
   }
 
   cancel() {
+    this.startCancelButtonTimer();
+
     let payload: apiToBackend.ToBackendCancelQueriesRequestPayload = {
       queryIds: [this.query.queryId]
     };
@@ -737,6 +761,46 @@ export class ModelComponent implements OnInit, OnDestroy {
     );
   }
 
+  startRunButtonTimer() {
+    this.isRunButtonPressed = true;
+    this.spinner.show(this.modelRunButtonSpinnerName);
+    this.cd.detectChanges();
+
+    this.runButtonTimerSubscription = from([0])
+      .pipe(
+        concatMap(v => of(v).pipe(delay(1000))),
+        startWith(1),
+        tap(x => {
+          if (x === 0) {
+            this.spinner.hide(this.modelRunButtonSpinnerName);
+            this.isRunButtonPressed = false;
+            this.cd.detectChanges();
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  startCancelButtonTimer() {
+    this.isCancelButtonPressed = true;
+    this.spinner.show(this.modelCancelButtonSpinnerName);
+    this.cd.detectChanges();
+
+    this.runButtonTimerSubscription = from([0])
+      .pipe(
+        concatMap(v => of(v).pipe(delay(1000))),
+        startWith(1),
+        tap(x => {
+          if (x === 0) {
+            this.spinner.hide(this.modelCancelButtonSpinnerName);
+            this.isCancelButtonPressed = false;
+            this.cd.detectChanges();
+          }
+        })
+      )
+      .subscribe();
+  }
+
   canDeactivate(): Promise<boolean> | boolean {
     // console.log('canDeactivateModel')
     this.mqStore.reset();
@@ -746,6 +810,9 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     // console.log('ngOnDestroyModel')
+    this.runButtonTimerSubscription?.unsubscribe();
+    this.cancelButtonTimerSubscription?.unsubscribe();
+
     if (common.isDefined(this.checkRunning$)) {
       this.checkRunning$?.unsubscribe();
     }

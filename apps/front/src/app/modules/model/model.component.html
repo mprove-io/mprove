@@ -1,4 +1,4 @@
-<div class="flex h-full cursor-default flex-col bg-blue1">
+<div class="bg-blue1 flex h-full cursor-default flex-col">
   <div class="flex h-full flex-row">
     <div class="mx-6 mb-6 mt-8 flex min-w-[2px] flex-grow flex-col">
       <div class="flex h-11 flex-row items-center justify-between">
@@ -6,12 +6,12 @@
           <div class="flex flex-row items-center space-x-5">
             <div
               data-cy="modelTitle"
-              class="flex items-center self-center text-2xl font-semibold text-gray1"
+              class="text-gray1 flex items-center self-center text-2xl font-semibold"
             >
               {{ pageTitle }}
             </div>
 
-            <div class="text-xl text-gray1">{{
+            <div class="text-gray1 text-xl">{{
               model?.label | capitalize
             }}</div>
 
@@ -27,7 +27,7 @@
 
           <div class="flex-grow"></div>
 
-          <div class="flex flex-row items-center text-base text-gray1">
+          <div class="text-gray1 flex flex-row items-center text-base">
             <!-- <div *ngIf="isRunningDry === true">Calculating ... </div> -->
             <!-- <div *ngIf="isRunning === true">Running ... </div> -->
             <!-- <div *ngIf="isCanceling === true">Canceling ... </div> -->
@@ -48,7 +48,7 @@
             ></ui-switch>
 
             <div
-              class="ml-5 flex h-9 select-none items-center text-base text-gray1"
+              class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
               >Auto Run</div
             >
 
@@ -56,10 +56,31 @@
               type="button"
               *ngIf="query?.status === queryStatusEnum.Running"
               data-cy="modelCancelButton"
-              class="ml-5 w-24 rounded bg-blue3 py-2 text-base font-medium text-white focus:outline-none"
+              class="ml-5 flex h-12 w-24 items-center justify-center rounded bg-red-600 py-2 text-base font-medium text-white focus:outline-none"
+              [ngClass]="{
+                'cursor-default': isCancelButtonPressed === true
+              }"
               (click)="cancel()"
-              >Cancel</button
+              [disabled]="isCancelButtonPressed === true"
             >
+              <div *ngIf="isCancelButtonPressed === false">Cancel</div>
+              <div
+                *ngIf="isCancelButtonPressed === true"
+                class="relative flex h-9 w-9 flex-shrink-0"
+              >
+                <ngx-spinner
+                  [name]="modelCancelButtonSpinnerName"
+                  color="rgba(255, 255, 255, 1)"
+                  bdColor="rgba(0, 0, 0, 0)"
+                  size="default"
+                  type="ball-clip-rotate"
+                  [fullScreen]="false"
+                  [disableAnimation]="true"
+                  [zIndex]="99998"
+                >
+                </ngx-spinner>
+              </div>
+            </button>
 
             <div
               *ngIf="query?.status !== queryStatusEnum.Running"
@@ -70,15 +91,36 @@
               <button
                 type="button"
                 data-cy="modelRunButton"
-                class="w-24 rounded py-2 text-base font-medium text-white focus:outline-none"
+                class="flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
                 [ngClass]="{
                   'bg-blue3': mconfig?.select.length > 0,
-                  'cursor-default bg-gray-400': mconfig?.select.length === 0
+                  'cursor-default':
+                    mconfig?.select.length === 0 || isRunButtonPressed === true,
+                  'bg-gray-400': mconfig?.select.length === 0
                 }"
                 (click)="run()"
-                [disabled]="mconfig?.select.length === 0"
-                >Run</button
+                [disabled]="
+                  mconfig?.select.length === 0 || isRunButtonPressed === true
+                "
               >
+                <div *ngIf="isRunButtonPressed === false">Run</div>
+                <div
+                  *ngIf="isRunButtonPressed === true"
+                  class="relative flex h-9 w-9 flex-shrink-0"
+                >
+                  <ngx-spinner
+                    [name]="modelRunButtonSpinnerName"
+                    color="rgba(255, 255, 255, 1)"
+                    bdColor="rgba(0, 0, 0, 0)"
+                    size="default"
+                    type="ball-clip-rotate"
+                    [fullScreen]="false"
+                    [disableAnimation]="true"
+                    [zIndex]="99998"
+                  >
+                  </ngx-spinner>
+                </div>
+              </button>
             </div>
 
             <div class="relative ml-5">
@@ -111,7 +153,7 @@
               >
                 <div
                   (click)="toggleFiltersPanel()"
-                  class="mt-5 flex cursor-pointer select-none flex-row items-start space-x-2 py-3 px-5 text-2xl font-semibold text-gray1"
+                  class="text-gray1 mt-5 flex cursor-pointer select-none flex-row items-start space-x-2 py-3 px-5 text-2xl font-semibold"
                 >
                   <div class="flex flex-row items-center space-x-2">
                     <div> Filters </div>
@@ -137,7 +179,7 @@
                 </div>
 
                 <div
-                  class="mt-9 mr-36 flex h-full w-full select-none items-center justify-center text-xl text-gray1"
+                  class="text-gray1 mt-9 mr-36 flex h-full w-full select-none items-center justify-center text-xl"
                   *ngIf="filtersIsExpanded && mconfig?.filters.length === 0"
                   >No filters</div
                 >
@@ -229,7 +271,7 @@
                   <input
                     spellcheck="false"
                     data-cy="modelChartTitleInput"
-                    class="form-input h-[36px] w-full rounded border-gray3 focus:border-blue3"
+                    class="form-input border-gray3 focus:border-blue3 h-[36px] w-full rounded"
                     [ngClass]="{
                       'border-red-600':
                         chartTitleForm.controls['chartTitle'].invalid &&
@@ -284,7 +326,7 @@
                     data-cy="modelSaveAsButton"
                     class="w-28 flex-shrink-0 rounded py-2 text-base font-medium focus:outline-none"
                     [ngClass]="{
-                      'border-2 bg-white text-blue3':
+                      'text-blue3 border-2 bg-white':
                         isSelectValid === true &&
                         mconfig.chart.isValid === true &&
                         chartTitleForm.valid === true &&
@@ -333,7 +375,7 @@
               >
                 <div
                   *ngIf="mconfig?.select.length === 0"
-                  class="flex h-full w-full select-none items-center justify-center text-xl text-gray1"
+                  class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
                   >No selected fields</div
                 >
 
@@ -383,7 +425,7 @@
                 ></m-panel-title>
 
                 <button
-                  class="ml-5 w-24 select-none items-center py-3 text-lg text-gray1 focus:outline-none"
+                  class="text-gray1 ml-5 w-24 select-none items-center py-3 text-lg focus:outline-none"
                   [ngClass]="{
                     'font-semibold': resultsIsShow,
                     'cursor-default text-gray-400':
@@ -395,7 +437,7 @@
                 >
 
                 <button
-                  class="ml-5 w-16 select-none items-center py-3 text-lg text-gray1 focus:outline-none"
+                  class="text-gray1 ml-5 w-16 select-none items-center py-3 text-lg focus:outline-none"
                   [ngClass]="{
                     'font-semibold': sqlIsShow,
                     'cursor-default text-gray-400':
@@ -410,7 +452,7 @@
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
-                  class="ml-5 select-none text-base text-gray1"
+                  class="text-gray1 ml-5 select-none text-base"
                   >Timezone</div
                 >
 
@@ -446,7 +488,7 @@
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
-                  class="ml-5 select-none text-base text-gray1"
+                  class="text-gray1 ml-5 select-none text-base"
                   >Limit</div
                 >
 
@@ -459,7 +501,7 @@
                   <input
                     spellcheck="false"
                     data-cy="modelLimitInput"
-                    class="form-input h-[36px] w-32 rounded border-gray3 focus:border-blue3"
+                    class="form-input border-gray3 focus:border-blue3 h-[36px] w-32 rounded"
                     [ngClass]="{
                       'border-red-600':
                         limitForm.controls['limit'].invalid &&
@@ -474,7 +516,7 @@
                 </div>
 
                 <div
-                  class="ml-5 flex h-9 select-none items-center text-base text-gray1"
+                  class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
                   >Format</div
                 >
 
@@ -491,7 +533,7 @@
               >
                 <div
                   *ngIf="mconfig?.select.length === 0"
-                  class="flex h-full w-full select-none items-center justify-center text-xl text-gray1"
+                  class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
                   >No selected fields</div
                 >
 

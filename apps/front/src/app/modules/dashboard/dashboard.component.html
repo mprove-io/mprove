@@ -162,7 +162,10 @@
               class="ml-5 flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
               [ngClass]="{
                 'bg-blue3': dashboard?.reports.length > 0,
-                'cursor-default bg-gray-400': dashboard?.reports.length === 0
+                'cursor-default':
+                  dashboard?.reports.length === 0 ||
+                  isRunButtonPressed === true,
+                'bg-gray-400': dashboard?.reports.length === 0
               }"
               (click)="run()"
               [disabled]="
@@ -182,7 +185,7 @@
                   type="ball-clip-rotate"
                   [fullScreen]="false"
                   [disableAnimation]="true"
-                  [zIndex]="99999"
+                  [zIndex]="99998"
                 >
                 </ngx-spinner>
               </div>
