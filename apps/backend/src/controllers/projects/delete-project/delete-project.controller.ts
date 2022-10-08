@@ -17,6 +17,9 @@ export class DeleteProjectController {
     private projectsRepository: repositories.ProjectsRepository,
     private membersRepository: repositories.MembersRepository,
     private branchesRepository: repositories.BranchesRepository,
+    private bridgesRepository: repositories.BridgesRepository,
+    private envsRepository: repositories.EnvsRepository,
+    private evsRepository: repositories.EvsRepository,
     private connectionsRepository: repositories.ConnectionsRepository,
     private rabbitService: RabbitService
   ) {}
@@ -63,7 +66,10 @@ export class DeleteProjectController {
     await this.projectsRepository.delete({ project_id: projectId });
     await this.membersRepository.delete({ project_id: projectId });
     await this.connectionsRepository.delete({ project_id: projectId });
+    await this.envsRepository.delete({ project_id: projectId });
+    await this.evsRepository.delete({ project_id: projectId });
     await this.branchesRepository.delete({ project_id: projectId });
+    await this.bridgesRepository.delete({ project_id: projectId });
 
     let payload = {};
 

@@ -17,6 +17,9 @@ export class DeleteOrgController {
     private projectsRepository: repositories.ProjectsRepository,
     private membersRepository: repositories.MembersRepository,
     private branchesRepository: repositories.BranchesRepository,
+    private bridgesRepository: repositories.BridgesRepository,
+    private envsRepository: repositories.EnvsRepository,
+    private evsRepository: repositories.EvsRepository,
     private connectionsRepository: repositories.ConnectionsRepository,
     private orgsRepository: repositories.OrgsRepository
   ) {}
@@ -66,7 +69,10 @@ export class DeleteOrgController {
       await this.projectsRepository.delete({ project_id: In(projectIds) });
       await this.membersRepository.delete({ project_id: In(projectIds) });
       await this.connectionsRepository.delete({ project_id: In(projectIds) });
+      await this.envsRepository.delete({ project_id: In(projectIds) });
+      await this.evsRepository.delete({ project_id: In(projectIds) });
       await this.branchesRepository.delete({ project_id: In(projectIds) });
+      await this.bridgesRepository.delete({ project_id: In(projectIds) });
     }
 
     let payload = {};
