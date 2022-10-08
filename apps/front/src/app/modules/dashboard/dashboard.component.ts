@@ -11,8 +11,16 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { KtdGridLayout } from '@katoid/angular-grid-layout';
-import { fromEvent, merge, Subscription } from 'rxjs';
-import { debounceTime, filter, tap } from 'rxjs/operators';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { from, fromEvent, merge, of, Subscription } from 'rxjs';
+import {
+  concatMap,
+  debounceTime,
+  delay,
+  filter,
+  startWith,
+  tap
+} from 'rxjs/operators';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -47,6 +55,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   pageTitle = frontConstants.DASHBOARD_PAGE_TITLE;
 
+  dashboardRunButtonSpinnerName = 'dashboardRunButtonSpinnerName';
+
   // @ViewChild(KtdGridComponent, {static: true}) grid: KtdGridComponent;
 
   @ViewChild('scrollable') scrollable: any;
@@ -67,6 +77,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   randomId = common.makeId();
 
   scrollSpeed = 8;
+
+  isRunButtonPressed = false;
 
   filtersIsExpanded = true;
 
@@ -172,6 +184,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     })
   );
 
+  runButtonTimerSubscription: Subscription;
+
   private resizeSubscription: Subscription;
   private scrollSubscription: Subscription;
 
@@ -185,6 +199,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public navigateService: NavigateService,
     public myDialogService: MyDialogService,
     private dashboardService: DashboardService,
+    private spinner: NgxSpinnerService,
     private apiService: ApiService,
     private navQuery: NavQuery,
     private dashboardStore: DashboardStore,
@@ -327,6 +342,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   run() {
+    this.startRunButtonTimer();
+
     this.chartRepComponents.forEach(x => {
       x.run();
     });
@@ -361,6 +378,26 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  startRunButtonTimer() {
+    this.isRunButtonPressed = true;
+    this.spinner.show(this.dashboardRunButtonSpinnerName);
+    this.cd.detectChanges();
+
+    this.runButtonTimerSubscription = from([1, 0])
+      .pipe(
+        concatMap(v => of(v).pipe(delay(1000))),
+        startWith(2),
+        tap(x => {
+          if (x === 0) {
+            this.spinner.hide(this.dashboardRunButtonSpinnerName);
+            this.isRunButtonPressed = false;
+            this.cd.detectChanges();
+          }
+        })
+      )
+      .subscribe();
+  }
+
   canDeactivate(): Promise<boolean> | boolean {
     // console.log('canDeactivateDashboard')
     this.dashboardStore.reset();
@@ -368,6 +405,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.runButtonTimerSubscription?.unsubscribe();
     this.resizeSubscription?.unsubscribe();
     this.scrollSubscription?.unsubscribe();
   }
