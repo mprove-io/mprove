@@ -35,6 +35,9 @@ services:
     image: ghcr.io/mprove-io/mprove-disk:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
+    depends_on:
+      - rabbit
+    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- node dist/apps/disk/main.js'
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -54,6 +57,10 @@ services:
       BACKEND_IS_SCHEDULER: 'FALSE'
     ports:
       - 3000:3000
+    depends_on:
+      - db
+      - rabbit
+    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:3306 --timeout=120 -- node dist/apps/backend/main.js'
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -71,6 +78,10 @@ services:
       - $ENV_FILE_PATH
     environment:
       BACKEND_IS_SCHEDULER: 'TRUE'
+    depends_on:
+      - db
+      - rabbit
+    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:3306 --timeout=120 -- node dist/apps/backend/main.js'     
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -89,7 +100,10 @@ services:
     environment:
       BLOCKML_IS_SINGLE: 'TRUE'
       BLOCKML_IS_MAIN: 'FALSE'
-      BLOCKML_IS_WORKER: 'FALSE'  
+      BLOCKML_IS_WORKER: 'FALSE'
+    depends_on:
+      - rabbit
+    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- node dist/apps/blockml/main.js'
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -106,6 +120,9 @@ services:
       BLOCKML_IS_SINGLE: 'FALSE'
       BLOCKML_IS_MAIN: 'TRUE'
       BLOCKML_IS_WORKER: 'FALSE'
+    depends_on:
+      - rabbit
+    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- node dist/apps/blockml/main.js'      
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -121,7 +138,10 @@ services:
     environment:
       BLOCKML_IS_SINGLE: 'FALSE'
       BLOCKML_IS_MAIN: 'FALSE'
-      BLOCKML_IS_WORKER: 'TRUE'      
+      BLOCKML_IS_WORKER: 'TRUE'
+    depends_on:
+      - rabbit
+    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- node dist/apps/blockml/main.js'      
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -139,14 +159,14 @@ services:
     build:
       context: ./
       dockerfile: tools/docker/frontnode.Dockerfile
-    image: ghcr.io/mprove-io/mprove-frontnode:$MPROVE_RELEASE_TAG  
+    image: ghcr.io/mprove-io/mprove-frontnode:$MPROVE_RELEASE_TAG
     ports:
       - 4200:4200
 
   dwh-postgres:
     build:
       context: ./
-      dockerfile: tools/docker/dwh-postgres.Dockerfile  
+      dockerfile: tools/docker/dwh-postgres.Dockerfile
     image: ghcr.io/mprove-io/mprove-dwh-postgres:$MPROVE_RELEASE_TAG
     environment:
       - POSTGRES_PASSWORD=$COMPOSE_DWH_POSTGRES_PASSWORD
@@ -161,7 +181,7 @@ services:
   dwh-clickhouse:
     build:
       context: ./
-      dockerfile: tools/docker/dwh-clickhouse.Dockerfile    
+      dockerfile: tools/docker/dwh-clickhouse.Dockerfile
     image: ghcr.io/mprove-io/mprove-dwh-clickhouse:$MPROVE_RELEASE_TAG
     environment:
       - CLICKHOUSE_USER=$COMPOSE_DWH_CLICKHOUSE_USER
@@ -176,7 +196,7 @@ services:
         target: /var/lib/clickhouse
       - type: bind
         source: $COMPOSE_DWH_CLICKHOUSE_LOGS_VOLUME_SOURCE_PATH
-        target: /var/log/clickhouse-server 
+        target: /var/log/clickhouse-server
 
   integra:
     build:
@@ -195,6 +215,4 @@ services:
       - DISPLAY=$COMPOSE_X11_BRIDGE_DISPLAY
       - XPRA_HTML=$COMPOSE_X11_BRIDGE_XPRA_HTML
       - XPRA_TCP_PORT=$COMPOSE_X11_BRIDGE_XPRA_TCP_PORT
-      - XPRA_PASSWORD=$COMPOSE_X11_BRIDGE_XPRA_PASSWORD        
-
-
+      - XPRA_PASSWORD=$COMPOSE_X11_BRIDGE_XPRA_PASSWORD

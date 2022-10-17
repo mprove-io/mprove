@@ -9,7 +9,6 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as fse from 'fs-extra';
 import * as mg from 'nodemailer-mailgun-transport';
-import { forEachSeries } from 'p-iteration';
 import { Connection } from 'typeorm';
 import { appControllers } from './app-controllers';
 import { appEntities } from './app-entities';
@@ -64,8 +63,6 @@ let rabbitModule = RabbitMQModule.forRootAsync(RabbitMQModule, {
       'backendRabbitProtocol'
     );
 
-    let backendEnv = cs.get<interfaces.Config['backendEnv']>('backendEnv');
-
     return {
       exchanges: [
         {
@@ -82,8 +79,8 @@ let rabbitModule = RabbitMQModule.forRootAsync(RabbitMQModule, {
       ],
       connectionInitOptions: {
         // wait for connection on startup, but do not recover when connection lost
-        wait: backendEnv !== enums.BackendEnvEnum.PROD,
-        timeout: backendEnv !== enums.BackendEnvEnum.PROD ? 75000 : undefined
+        wait: false,
+        timeout: undefined
       },
       connectionManagerOptions: {
         connectionOptions: { rejectUnauthorized: false }
@@ -221,26 +218,6 @@ export class AppModule implements OnModuleInit {
   async onModuleInit() {
     try {
       if (helper.isScheduler(this.cs)) {
-        let backendEnv = this.cs.get<interfaces.Config['backendEnv']>(
-          'backendEnv'
-        );
-
-        if (backendEnv === enums.BackendEnvEnum.PROD) {
-          // TODO: remove sleep by checking rabbit connection availability
-          let sleepSeconds = 20;
-          let arraySeconds = Array.from(Array(sleepSeconds).keys()).reverse();
-          arraySeconds.pop();
-
-          await forEachSeries(arraySeconds, async key => {
-            common.logToConsole(
-              `${key} seconds sleep for rabbitMQ to be ready ...`
-            );
-            await common.sleep(1000);
-          });
-
-          common.logToConsole('Sleep ended, continue ...');
-        }
-
         const migrationsPending = await this.connection.showMigrations();
 
         if (migrationsPending) {

@@ -4,7 +4,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { appControllers } from './app-controllers';
 import { appServices } from './app-services';
 import { common } from './barrels/common';
-import { enums } from './barrels/enums';
 import { interfaces } from './barrels/interfaces';
 import { getConfig } from './config/get.config';
 
@@ -33,8 +32,6 @@ import { getConfig } from './config/get.config';
           'diskRabbitProtocol'
         );
 
-        let diskEnv = cs.get<interfaces.Config['diskEnv']>('diskEnv');
-
         return {
           exchanges: [
             {
@@ -47,8 +44,8 @@ import { getConfig } from './config/get.config';
           ],
           connectionInitOptions: {
             // wait for connection on startup, but do not recover when connection lost
-            wait: diskEnv !== enums.DiskEnvEnum.PROD,
-            timeout: diskEnv !== enums.DiskEnvEnum.PROD ? 75000 : undefined
+            wait: false,
+            timeout: undefined
           },
           connectionManagerOptions: {
             connectionOptions: { rejectUnauthorized: false }

@@ -6,6 +6,8 @@ COPY package.docker.json package.json
 COPY yarn.lock .
 RUN yarn --frozen-lockfile
 
+COPY scripts/wait-for-it.sh scripts/wait-for-it.sh
+
 COPY apps/backend apps/backend/
 COPY apps/disk apps/disk/
 COPY apps/front apps/front/
@@ -18,6 +20,7 @@ COPY libs/api-to-blockml libs/api-to-blockml/
 COPY libs/common libs/common/
 COPY ava.config.js ava-js.config.js ava-js-e2e.config.js nx.json package.json tsconfig.base.json tsconfig.json workspace.json ./
 
+RUN chmod +x scripts/wait-for-it.sh
 RUN yarn build:blockml:prod
 
 EXPOSE 3001 9229
