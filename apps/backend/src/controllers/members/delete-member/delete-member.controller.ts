@@ -16,6 +16,7 @@ export class DeleteMemberController {
     private rabbitService: RabbitService,
     private membersRepository: repositories.MembersRepository,
     private branchesRepository: repositories.BranchesRepository,
+    private bridgesRepository: repositories.BridgesRepository,
     private projectsService: ProjectsService,
     private membersService: MembersService
   ) {}
@@ -78,6 +79,11 @@ export class DeleteMemberController {
     });
 
     await this.branchesRepository.delete({
+      project_id: projectId,
+      repo_id: devRepoId
+    });
+
+    await this.bridgesRepository.delete({
       project_id: projectId,
       repo_id: devRepoId
     });
