@@ -31,8 +31,35 @@ spec:
           #   memory: "2000Mi"
             # cpu: "100m"
         image: {{ .Values.werf.image.backend }}
-        command: ['yarn']
-        args: ['serve:backend']        
+        command:  
+        - sh
+        - '-c'
+        - >
+          until wget http://$BACKEND_RABBIT_USER:$BACKEND_RABBIT_PASS@$BACKEND_RABBIT_HOST:15672/api/aliveness-test/%2F > /dev/null 2>&1; 
+          do echo waiting for rabbit ...; sleep 10; done && 
+          echo rabbit is ready &&
+          until yarn typeorm query "SELECT 1" > /dev/null 2>&1; 
+          do echo waiting for db ...; sleep 10; done && 
+          echo db is ready && 
+          yarn serve:backend
+        env:
+        - name: TYPEORM_CONNECTION
+          value: mysql
+        - name: TYPEORM_HOST
+          valueFrom:
+            secretKeyRef:
+              name: backend-scheduler-envs
+              key: BACKEND_MYSQL_HOST
+        - name: TYPEORM_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: backend-scheduler-envs
+              key: BACKEND_MYSQL_USERNAME
+        - name: TYPEORM_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: backend-scheduler-envs
+              key: BACKEND_MYSQL_PASSWORD        
         envFrom:
         - secretRef:
             name: backend-scheduler-envs

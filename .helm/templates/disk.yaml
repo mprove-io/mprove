@@ -42,8 +42,14 @@ spec:
           #   memory: "2000Mi"
             # cpu: "100m"
         image: {{ .Values.werf.image.disk }}
-        command: ['yarn']
-        args: ['serve:disk']        
+        command:  
+        - sh
+        - '-c'
+        - >
+          until wget http://$DISK_RABBIT_USER:$DISK_RABBIT_PASS@$DISK_RABBIT_HOST:15672/api/aliveness-test/%2F > /dev/null 2>&1; 
+          do echo waiting for rabbit ...; sleep 10; done && 
+          echo rabbit is ready &&
+          yarn serve:disk
         envFrom:
         - secretRef:
             name: disk-envs     
