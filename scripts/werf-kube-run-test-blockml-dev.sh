@@ -10,6 +10,10 @@ werf kube-run --repo ghcr.io/mprove-io/mprove --overrides='{
         "name": "%container_name%",
         "env": [
           {
+            "name": "BLOCKML_IS_SINGLE",
+            "value": "TRUE"
+          },                 
+          {
             "name": "BLOCKML_LOG_IO",
             "value": "TRUE"
           }
@@ -17,7 +21,7 @@ werf kube-run --repo ghcr.io/mprove-io/mprove --overrides='{
         "envFrom": [
           {
             "secretRef": {
-              "name": "blockml-single-envs"
+              "name": "blockml-common-envs"
             }
           }
         ]
