@@ -147,6 +147,25 @@ services:
         source: $ENV_FILE_SOURCE_PATH
         target: $ENV_FILE_TARGET_PATH
 
+  blockml-main-worker:
+    build:
+      context: ./
+      dockerfile: tools/docker/blockml.Dockerfile
+    image: ghcr.io/mprove-io/mprove-blockml:$MPROVE_RELEASE_TAG
+    env_file:
+      - $ENV_FILE_PATH
+    environment:
+      BLOCKML_IS_SINGLE: 'FALSE'
+      BLOCKML_IS_MAIN: 'TRUE'
+      BLOCKML_IS_WORKER: 'TRUE'
+    depends_on:
+      - rabbit
+    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- node dist/apps/blockml/main.js'      
+    volumes:
+      - type: bind
+        source: $ENV_FILE_SOURCE_PATH
+        target: $ENV_FILE_TARGET_PATH        
+
   front:
     build:
       context: ./

@@ -10,7 +10,8 @@
         "Remote backend-scheduler 9232",
         "Remote blockml-single 9233",
         "Remote blockml-main 9234",
-        "Remote blockml-worker 9235"
+        "Remote blockml-worker 9235",
+        "Remote blockml-main-worker 9236"
       ],
       "stopAll": true
     },
@@ -23,7 +24,8 @@
         "Local backend-scheduler 9232",
         "Local blockml-single 9233",
         "Local blockml-main 9234",
-        "Local blockml-worker 9235"
+        "Local blockml-worker 9235",
+        "Local blockml-main-worker 9236"
       ],
       "stopAll": true
     }
@@ -110,6 +112,16 @@
       "restart": true
     },
     {
+      "name": "Remote blockml-main-worker 9236",
+      "port": 9236,
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/usr/src/app",
+      "restart": true
+    },
+    {
       "name": "Local disk 9230",
       "port": 9230,
       "request": "attach",
@@ -152,6 +164,14 @@
     {
       "name": "Local blockml-worker 9235",
       "port": 9235,
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "restart": true
+    },
+    {
+      "name": "Local blockml-main-worker 9236",
+      "port": 9236,
       "request": "attach",
       "skipFiles": ["<node_internals>/**"],
       "type": "node",

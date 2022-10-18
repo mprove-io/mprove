@@ -11,7 +11,7 @@ werf kube-run --repo ghcr.io/mprove-io/mprove --overrides='{
         "envFrom": [
           {
             "secretRef": {
-              "name": "backend-envs"
+              "name": "backend-common-envs"
             }
           }
         ],
@@ -27,7 +27,7 @@ werf kube-run --repo ghcr.io/mprove-io/mprove --overrides='{
       {
         "name": "secrets-volume",
         "secret": {
-          "secretName": "backend-bigquery",
+          "secretName": "backend-common-bigquery",
           "items": [
             {
               "key": "content",

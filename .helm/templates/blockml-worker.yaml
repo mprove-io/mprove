@@ -17,7 +17,7 @@ spec:
         app: blockml-worker
       annotations:
         # sidecar.istio.io/proxyCPU: "100m"   
-        checksum/secret-blockml-worker-envs: '{{ include (print $.Template.BasePath "/secret-blockml-worker-envs.yaml") . | sha256sum }}'        
+        checksum/secret-blockml-common-envs: '{{ include (print $.Template.BasePath "/secret-blockml-common-envs.yaml") . | sha256sum }}'        
     spec:
       imagePullSecrets:
       - name: registrysecret    
@@ -37,10 +37,13 @@ spec:
           until wget http://$BLOCKML_RABBIT_USER:$BLOCKML_RABBIT_PASS@$BLOCKML_RABBIT_HOST:15672/api/aliveness-test/%2F > /dev/null 2>&1; 
           do echo waiting for rabbit ...; sleep 10; done && 
           echo rabbit is ready &&
-          yarn serve:blockml        
+          yarn serve:blockml  
+        env:
+        - name: BLOCKML_IS_WORKER
+          value: 'TRUE'                
         envFrom:
         - secretRef:
-            name: blockml-worker-envs
+            name: blockml-common-envs
         ports:
         - containerPort: 9229
           name: blockml-w-debug

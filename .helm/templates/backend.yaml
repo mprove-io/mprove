@@ -17,7 +17,7 @@ spec:
         app: backend
       annotations:
         # sidecar.istio.io/proxyCPU: "100m"    
-        checksum/secret-backend-envs: '{{ include (print $.Template.BasePath "/secret-backend-envs.yaml") . | sha256sum }}'        
+        checksum/secret-backend-common-envs: '{{ include (print $.Template.BasePath "/secret-backend-common-envs.yaml") . | sha256sum }}'        
     spec:
       imagePullSecrets:
       - name: registrysecret    
@@ -47,21 +47,21 @@ spec:
         - name: TYPEORM_HOST
           valueFrom:
             secretKeyRef:
-              name: backend-envs
+              name: backend-common-envs
               key: BACKEND_MYSQL_HOST
         - name: TYPEORM_USERNAME
           valueFrom:
             secretKeyRef:
-              name: backend-envs
+              name: backend-common-envs
               key: BACKEND_MYSQL_USERNAME
         - name: TYPEORM_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: backend-envs
-              key: BACKEND_MYSQL_PASSWORD        
+              name: backend-common-envs
+              key: BACKEND_MYSQL_PASSWORD                
         envFrom:
         - secretRef:
-            name: backend-envs          
+            name: backend-common-envs          
         ports:
         - containerPort: 3000
           name: backend

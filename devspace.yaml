@@ -65,19 +65,19 @@ dev:
       # - path: ./dist/apps/backend
       #   initialSync: preferRemote
 
-  blockml-single:
-    labelSelector:
-      app: blockml-single
-    # ports:
-    #   - port: '9233:9229'
-    sync:
-      - path: ./apps/blockml
-      - path: ./libs
-        excludePaths:
-        - ./libs/api-to-backend
-        - ./libs/api-to-disk
-      - path: ./dist/apps/blockml
-        initialSync: preferRemote    
+  # blockml-single:
+  #   labelSelector:
+  #     app: blockml-single
+  #   # ports:
+  #   #   - port: '9233:9229'
+  #   sync:
+  #     - path: ./apps/blockml
+  #     - path: ./libs
+  #       excludePaths:
+  #       - ./libs/api-to-backend
+  #       - ./libs/api-to-disk
+  #     - path: ./dist/apps/blockml
+  #       initialSync: preferRemote    
 
   # blockml-main:
   #   labelSelector:
@@ -105,7 +105,21 @@ dev:
   #       - ./libs/api-to-backend
   #       - ./libs/api-to-disk
   #     # - path: ./dist/apps/blockml
-  #     #   initialSync: preferRemote    
+  #     #   initialSync: preferRemote  
+
+  blockml-main-worker:
+    labelSelector:
+      app: blockml-main-worker
+    # ports:
+    #   - port: '9236:9229'
+    sync:
+      - path: ./apps/blockml
+      - path: ./libs
+        excludePaths:
+        - ./libs/api-to-backend
+        - ./libs/api-to-disk
+      # - path: ./dist/apps/blockml
+      #   initialSync: preferRemote  
      
 
 

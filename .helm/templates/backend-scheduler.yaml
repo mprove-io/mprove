@@ -17,8 +17,8 @@ spec:
         app: backend-scheduler
       annotations:
         # sidecar.istio.io/proxyCPU: "100m"
-        checksum/secret-backend-scheduler-envs: '{{ include (print $.Template.BasePath "/secret-backend-scheduler-envs.yaml") . | sha256sum }}'        
-        checksum/secret-backend-bigquery: '{{ include (print $.Template.BasePath "/secret-backend-bigquery.yaml") . | sha256sum }}'        
+        checksum/secret-backend-common-envs: '{{ include (print $.Template.BasePath "/secret-backend-common-envs.yaml") . | sha256sum }}'        
+        checksum/secret-backend-common-bigquery: '{{ include (print $.Template.BasePath "/secret-backend-common-bigquery.yaml") . | sha256sum }}'        
     spec:
       imagePullSecrets:
       - name: registrysecret    
@@ -48,21 +48,23 @@ spec:
         - name: TYPEORM_HOST
           valueFrom:
             secretKeyRef:
-              name: backend-scheduler-envs
+              name: backend-common-envs
               key: BACKEND_MYSQL_HOST
         - name: TYPEORM_USERNAME
           valueFrom:
             secretKeyRef:
-              name: backend-scheduler-envs
+              name: backend-common-envs
               key: BACKEND_MYSQL_USERNAME
         - name: TYPEORM_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: backend-scheduler-envs
-              key: BACKEND_MYSQL_PASSWORD        
+              name: backend-common-envs
+              key: BACKEND_MYSQL_PASSWORD
+        - name: BACKEND_IS_SCHEDULER
+          value: 'TRUE'                      
         envFrom:
         - secretRef:
-            name: backend-scheduler-envs
+            name: backend-common-envs
         ports:
         - containerPort: 9229
           name: backend-s-debug
@@ -72,7 +74,7 @@ spec:
       volumes:
       - name: scheduler-secrets-volume
         secret:
-          secretName: backend-bigquery
+          secretName: backend-common-bigquery
           items:
           - key: content
             path: bigquery-test.json

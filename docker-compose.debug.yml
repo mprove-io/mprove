@@ -52,3 +52,12 @@ services:
       - type: bind
         source: $COMPOSE_DIST_APPS_BLOCKML_SOURCE_PATH
         target: /usr/src/app/dist/apps/blockml
+
+  blockml-main-worker:
+    ports:
+      - 9236:9229
+    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- yarn serve:blockml'
+    volumes:
+      - type: bind
+        source: $COMPOSE_DIST_APPS_BLOCKML_SOURCE_PATH
+        target: /usr/src/app/dist/apps/blockml        

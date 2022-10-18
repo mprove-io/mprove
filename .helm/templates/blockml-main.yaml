@@ -17,7 +17,7 @@ spec:
         app: blockml-main
       annotations:
         # sidecar.istio.io/proxyCPU: "100m"    
-        checksum/secret-blockml-main-envs: '{{ include (print $.Template.BasePath "/secret-blockml-main-envs.yaml") . | sha256sum }}'        
+        checksum/secret-blockml-common-envs: '{{ include (print $.Template.BasePath "/secret-blockml-common-envs.yaml") . | sha256sum }}'        
     spec:
       imagePullSecrets:
       - name: registrysecret    
@@ -38,9 +38,12 @@ spec:
           do echo waiting for rabbit ...; sleep 10; done && 
           echo rabbit is ready &&
           yarn serve:blockml        
+        env:
+        - name: BLOCKML_IS_MAIN
+          value: 'TRUE'         
         envFrom:
         - secretRef:
-            name: blockml-main-envs
+            name: blockml-common-envs
         ports:
         - containerPort: 9229
           name: blockml-m-debug
