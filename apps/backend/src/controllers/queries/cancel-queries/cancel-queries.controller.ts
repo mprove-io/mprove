@@ -76,7 +76,7 @@ export class CancelQueriesController {
 
         if (connection.type === common.ConnectionTypeEnum.BigQuery) {
           let bigquery = new BigQuery({
-            projectId: connection.project_id,
+            projectId: connection.bigquery_project,
             credentials: connection.bigquery_credentials
           });
 
