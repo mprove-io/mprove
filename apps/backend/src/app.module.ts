@@ -63,6 +63,8 @@ let rabbitModule = RabbitMQModule.forRootAsync(RabbitMQModule, {
       'backendRabbitProtocol'
     );
 
+    let backendEnv = cs.get<interfaces.Config['backendEnv']>('backendEnv');
+
     return {
       exchanges: [
         {
@@ -79,8 +81,8 @@ let rabbitModule = RabbitMQModule.forRootAsync(RabbitMQModule, {
       ],
       connectionInitOptions: {
         // wait for connection on startup, but do not recover when connection lost
-        wait: false,
-        timeout: undefined
+        wait: backendEnv === enums.BackendEnvEnum.TEST ? true : false,
+        timeout: backendEnv === enums.BackendEnvEnum.TEST ? 75000 : undefined
       },
       connectionManagerOptions: {
         connectionOptions: { rejectUnauthorized: false }

@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '~backend/app.module';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
+import { enums } from '~backend/barrels/enums';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { getConfig } from '~backend/config/get.config';
@@ -24,7 +25,15 @@ export async function prepareTest(item: {
     loginUserPayload
   } = item;
 
-  let mockConfig = Object.assign(getConfig(), overrideConfigOptions);
+  let extraOverride: interfaces.Config = {
+    backendEnv: enums.BackendEnvEnum.TEST
+  };
+
+  let mockConfig = Object.assign(
+    getConfig(),
+    overrideConfigOptions,
+    extraOverride
+  );
 
   let moduleRef: TestingModule = await Test.createTestingModule({
     imports: [AppModule]
