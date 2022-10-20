@@ -1,1 +1,0 @@
-werf helm secret file encrypt secrets/bigquery-test.json -o .helm/secret/bigquery-test.json

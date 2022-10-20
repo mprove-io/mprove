@@ -8,6 +8,12 @@ werf kube-run --repo ghcr.io/mprove-io/mprove --overrides='{
     "containers": [
       {
         "name": "%container_name%",
+        "env": [
+          {
+            "name": "BACKEND_FIRST_PROJECT_REMOTE_TYPE",
+            "value": "Managed"
+          }
+        ],
         "envFrom": [
           {
             "secretRef": {
@@ -27,11 +33,19 @@ werf kube-run --repo ghcr.io/mprove-io/mprove --overrides='{
       {
         "name": "secrets-volume",
         "secret": {
-          "secretName": "backend-common-bigquery",
+          "secretName": "backend-common-secret-files",
           "items": [
             {
-              "key": "content",
+              "key": "contentBigquery",
               "path": "bigquery-test.json"
+            },
+            {
+              "key": "contentRemotePrivateKey",
+              "path": "first-project-remote-private-key.pem"
+            },
+            {
+              "key": "contentRemotePublicKey",
+              "path": "first-project-remote-public-key.pem"
             }
           ]          
         }
