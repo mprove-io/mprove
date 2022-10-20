@@ -1,7 +1,7 @@
 <div class="flex h-full flex-col">
   <div class="flex h-20 flex-row items-center justify-between px-5">
     <div class="flex min-w-[2px] flex-row items-center space-x-5">
-      <div class="min-w-[2px] flex-grow truncate text-lg text-gray1">{{
+      <div class="text-gray1 min-w-[2px] flex-grow truncate text-lg">{{
         file?.name
       }}</div>
 
@@ -11,7 +11,7 @@
         *ngIf="
           ((file?.name | extension) === 'model' &&
             member?.isExplorer === true) ||
-          (file?.name | extension) === 'viz' ||
+          (file?.name | extension) === 'vis' ||
           (file?.name | extension) === 'dashboard'
         "
       >

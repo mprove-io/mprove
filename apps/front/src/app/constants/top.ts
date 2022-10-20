@@ -21,7 +21,7 @@ export const EXT_LIST: common.FileExtensionEnum[] = [
   common.FileExtensionEnum.View,
   common.FileExtensionEnum.Model,
   common.FileExtensionEnum.Dashboard,
-  common.FileExtensionEnum.Viz,
+  common.FileExtensionEnum.Vis,
   common.FileExtensionEnum.Udf,
   common.FileExtensionEnum.Yml,
   common.FileExtensionEnum.Md

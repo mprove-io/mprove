@@ -37,7 +37,7 @@ export function removeWrongExt(
         common.FileExtensionEnum.View,
         common.FileExtensionEnum.Model,
         common.FileExtensionEnum.Dashboard,
-        common.FileExtensionEnum.Viz,
+        common.FileExtensionEnum.Vis,
         common.FileExtensionEnum.Udf,
         common.FileExtensionEnum.Md,
         common.FileExtensionEnum.Yml

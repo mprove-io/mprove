@@ -5,7 +5,7 @@ import { enums } from '~disk/barrels/enums';
 import { interfaces } from '~disk/barrels/interfaces';
 
 export function getDevConfig(envFilePath: any) {
-  let envFile;
+  let envFile: any = {};
 
   if (common.isDefined(envFilePath)) {
     envFile = parse(fse.readFileSync(envFilePath));

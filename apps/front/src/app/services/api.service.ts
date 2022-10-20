@@ -281,7 +281,7 @@ export class ApiService {
         [
           common.ErEnum.BACKEND_MCONFIG_DOES_NOT_EXIST,
           common.ErEnum.BACKEND_MODEL_DOES_NOT_EXIST,
-          common.ErEnum.BACKEND_VIZ_DOES_NOT_EXIST,
+          common.ErEnum.BACKEND_VIS_DOES_NOT_EXIST,
           common.ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST,
           common.ErEnum.BACKEND_STRUCT_ID_CHANGED,
           common.ErEnum.BACKEND_STRUCT_DOES_NOT_EXIST,
@@ -316,8 +316,8 @@ export class ApiService {
         [
           common.ErEnum.BACKEND_CREATE_DASHBOARD_FAIL,
           common.ErEnum.BACKEND_MODIFY_DASHBOARD_FAIL,
-          common.ErEnum.BACKEND_CREATE_VIZ_FAIL,
-          common.ErEnum.BACKEND_MODIFY_VIZ_FAIL
+          common.ErEnum.BACKEND_CREATE_VIS_FAIL,
+          common.ErEnum.BACKEND_MODIFY_VIS_FAIL
         ].indexOf(infoErrorMessage) > -1
       ) {
         errorData.description = `The changes were saved to the file, but it failed the BlockML validation. It's probably a bug.`;

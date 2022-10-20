@@ -174,14 +174,14 @@ export function splitFiles(
         break;
       }
 
-      case common.FileExtensionEnum.Viz: {
-        if (file.name === file.viz + common.FileExtensionEnum.Viz) {
+      case common.FileExtensionEnum.Vis: {
+        if (file.name === file.vis + common.FileExtensionEnum.Vis) {
           delete file.ext;
           delete file.name;
           delete file.path;
 
           let newVizOptions: interfaces.Viz = {
-            name: file.viz,
+            name: file.vis,
             fileName: fileName,
             filePath: filePath,
             fileExt: fileExt
@@ -191,11 +191,11 @@ export function splitFiles(
         } else {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.WRONG_VIZ_NAME,
-              message: `filename ${file.name} does not match "viz: ${file.viz}"`,
+              title: enums.ErTitleEnum.WRONG_VIS_NAME,
+              message: `filename ${file.name} does not match "${enums.ParameterEnum.Vis}: ${file.vis}"`,
               lines: [
                 {
-                  line: file.viz_line_num,
+                  line: file.vis_line_num,
                   name: file.name,
                   path: file.path
                 }

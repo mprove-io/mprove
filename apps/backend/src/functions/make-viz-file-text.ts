@@ -19,7 +19,7 @@ export function makeVizFileText(item: {
   rep.title = reportTitle;
 
   let vizFileText = common.toYaml({
-    viz: vizId,
+    vis: vizId,
     access_roles:
       common.isDefined(roles) && roles.trim().length > 0
         ? roles.split(',').map(x => x.trim())

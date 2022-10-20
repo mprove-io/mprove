@@ -5,7 +5,7 @@ import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
 
 export function getDevConfig(envFilePath: any) {
-  let envFile;
+  let envFile: any = {};
 
   if (common.isDefined(envFilePath)) {
     envFile = parse(fse.readFileSync(envFilePath));

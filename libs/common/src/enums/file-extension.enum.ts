@@ -2,7 +2,7 @@ export enum FileExtensionEnum {
   View = '.view',
   Model = '.model',
   Dashboard = '.dashboard',
-  Viz = '.viz',
+  Vis = '.vis',
   Udf = '.udf',
   Md = '.md',
   Yml = '.yml'

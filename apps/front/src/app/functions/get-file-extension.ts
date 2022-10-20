@@ -26,7 +26,7 @@ export function getFileExtension(value: string, short?: boolean) {
         letter = 'd';
         break;
 
-      case common.FileExtensionEnum.Viz:
+      case common.FileExtensionEnum.Vis:
         letter = 's';
         break;
 

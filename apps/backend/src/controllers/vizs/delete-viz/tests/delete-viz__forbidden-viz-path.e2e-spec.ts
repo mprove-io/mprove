@@ -20,7 +20,7 @@ let testProjectId = 't1';
 let projectId = common.makeId();
 let projectName = testId;
 
-let vizId = 'ec_z1';
+let vizId = 'ec_s1';
 
 let prep: interfaces.Prep;
 
@@ -111,5 +111,5 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.is(resp.info.error.message, common.ErEnum.BACKEND_FORBIDDEN_VIZ_PATH);
+  t.is(resp.info.error.message, common.ErEnum.BACKEND_FORBIDDEN_VIS_PATH);
 });

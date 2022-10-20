@@ -1,4 +1,4 @@
-viz: s_z1
+vis: s_s1
 reports:
 - title: 'k'
   model: s_m1

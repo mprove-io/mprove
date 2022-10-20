@@ -27,13 +27,13 @@ export function checkVizReportsExist(
     if (common.isUndefined(x.reports)) {
       item.errors.push(
         new BmError({
-          title: enums.ErTitleEnum.VIZ_MISSING_REPORTS,
+          title: enums.ErTitleEnum.VIS_MISSING_REPORTS,
           message:
-            `${common.FileExtensionEnum.Viz} must have ` +
+            `${common.FileExtensionEnum.Vis} must have ` +
             `"${enums.ParameterEnum.Reports}" parameter`,
           lines: [
             {
-              line: x.viz_line_num,
+              line: x.vis_line_num,
               name: x.fileName,
               path: x.filePath
             }
@@ -46,11 +46,11 @@ export function checkVizReportsExist(
     if (x.reports.length > 1) {
       item.errors.push(
         new BmError({
-          title: enums.ErTitleEnum.VIZ_TOO_MANY_REPORTS,
-          message: `${common.FileExtensionEnum.Viz} must have exactly one report`,
+          title: enums.ErTitleEnum.VIS_TOO_MANY_REPORTS,
+          message: `${common.FileExtensionEnum.Vis} must have exactly one report`,
           lines: [
             {
-              line: x.viz_line_num,
+              line: x.vis_line_num,
               name: x.fileName,
               path: x.filePath
             }

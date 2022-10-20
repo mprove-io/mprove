@@ -161,7 +161,7 @@ export class CreateVizController {
         ? `${projectId}/${common.MPROVE_USERS_FOLDER}/${user.alias}`
         : `${projectId}/${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}`;
 
-    let fileName = `${vizId}${common.FileExtensionEnum.Viz}`;
+    let fileName = `${vizId}${common.FileExtensionEnum.Vis}`;
 
     let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
       info: {
@@ -232,7 +232,7 @@ export class CreateVizController {
       let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
 
       throw new common.ServerError({
-        message: common.ErEnum.BACKEND_CREATE_VIZ_FAIL,
+        message: common.ErEnum.BACKEND_CREATE_VIS_FAIL,
         data: {
           underscoreFileId: underscoreFileId
         }

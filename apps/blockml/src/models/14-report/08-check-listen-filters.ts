@@ -37,13 +37,13 @@ export function checkListenFilters<T extends types.dzType>(
 
       if (
         common.isDefined(report.listen_filters) &&
-        x.fileExt === common.FileExtensionEnum.Viz
+        x.fileExt === common.FileExtensionEnum.Vis
       ) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.VIZ_REPORT_CAN_NOT_HAVE_LISTEN_FILTERS,
+            title: enums.ErTitleEnum.VIS_REPORT_CAN_NOT_HAVE_LISTEN_FILTERS,
             message:
-              `${common.FileExtensionEnum.Viz} does not support ` +
+              `${common.FileExtensionEnum.Vis} does not support ` +
               `"${enums.ParameterEnum.ListenFilters}" parameter for reports`,
             lines: [
               {

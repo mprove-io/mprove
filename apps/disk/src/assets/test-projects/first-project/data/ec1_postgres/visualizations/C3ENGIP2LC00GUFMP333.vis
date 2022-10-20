@@ -1,4 +1,4 @@
-viz: C3ENGIP2LC00GUFMP333
+vis: C3ENGIP2LC00GUFMP333
 reports:
 - title: Users, Orders, Products
   model: ec1_m1

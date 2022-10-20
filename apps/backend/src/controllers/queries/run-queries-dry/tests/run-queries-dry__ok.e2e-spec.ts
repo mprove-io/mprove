@@ -113,7 +113,7 @@ test('1', async t => {
       }
     );
 
-    let viz = resp1.payload.vizs.find(x => x.vizId === 's_z1');
+    let viz = resp1.payload.vizs.find(x => x.vizId === 's_s1');
 
     let req2: apiToBackend.ToBackendRunQueriesDryRequest = {
       info: {

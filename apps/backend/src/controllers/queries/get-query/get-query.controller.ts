@@ -131,7 +131,7 @@ export class GetQueryController {
     if (isAccessGranted === false) {
       throw new common.ServerError({
         message: common.isDefined(viz)
-          ? common.ErEnum.BACKEND_FORBIDDEN_VIZ
+          ? common.ErEnum.BACKEND_FORBIDDEN_VIS
           : common.isDefined(dashboard)
           ? common.ErEnum.BACKEND_FORBIDDEN_DASHBOARD
           : common.ErEnum.BACKEND_FORBIDDEN_MODEL

@@ -66,7 +66,7 @@ export function checkTopValues(
             enums.ParameterEnum.View.toString(),
             enums.ParameterEnum.Model.toString(),
             enums.ParameterEnum.Dashboard.toString(),
-            enums.ParameterEnum.Viz.toString()
+            enums.ParameterEnum.Vis.toString()
           ].indexOf(parameter) > -1 &&
           file[parameter]
             .toString()

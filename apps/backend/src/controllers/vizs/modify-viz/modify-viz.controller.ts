@@ -233,7 +233,7 @@ export class ModifyVizController {
       let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
 
       throw new common.ServerError({
-        message: common.ErEnum.BACKEND_MODIFY_VIZ_FAIL,
+        message: common.ErEnum.BACKEND_MODIFY_VIS_FAIL,
         data: {
           underscoreFileId: underscoreFileId
         }

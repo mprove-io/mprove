@@ -202,7 +202,7 @@ export class CreateTempDashboardController {
         let ext = ar[ar.length - 1];
         let allow =
           [
-            common.FileExtensionEnum.Viz,
+            common.FileExtensionEnum.Vis,
             common.FileExtensionEnum.Dashboard
           ].indexOf(`.${ext}` as common.FileExtensionEnum) < 0;
         return allow;

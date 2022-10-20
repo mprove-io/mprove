@@ -52,7 +52,7 @@ export function buildYaml(
             common.FileExtensionEnum.Udf,
             common.FileExtensionEnum.View,
             common.FileExtensionEnum.Model,
-            common.FileExtensionEnum.Viz,
+            common.FileExtensionEnum.Vis,
             common.FileExtensionEnum.Dashboard
           ].indexOf(x.ext) > -1
       ),

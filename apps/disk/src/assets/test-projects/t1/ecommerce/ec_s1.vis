@@ -1,4 +1,4 @@
-viz: ec_z1
+vis: ec_s1
 reports:
 - title: Average sale price by category
   model: ec_m1

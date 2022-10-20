@@ -172,10 +172,10 @@ export function checkTopUnknownParameters(
             break;
           }
 
-          case common.FileExtensionEnum.Viz: {
+          case common.FileExtensionEnum.Vis: {
             if (
               [
-                enums.ParameterEnum.Viz.toString(),
+                enums.ParameterEnum.Vis.toString(),
                 // enums.ParameterEnum.Group.toString(),
                 // enums.ParameterEnum.Hidden.toString(),
                 enums.ParameterEnum.AccessUsers.toString(),
@@ -185,10 +185,10 @@ export function checkTopUnknownParameters(
             ) {
               item.errors.push(
                 new BmError({
-                  title: enums.ErTitleEnum.UNKNOWN_VIZ_PARAMETER,
+                  title: enums.ErTitleEnum.UNKNOWN_VIS_PARAMETER,
                   message:
                     `parameter "${parameter}" can not be used on top level of ` +
-                    `${common.FileExtensionEnum.Viz} file`,
+                    `${common.FileExtensionEnum.Vis} file`,
                   lines: [
                     {
                       line: file[parameter + constants.LINE_NUM],

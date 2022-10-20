@@ -288,7 +288,7 @@ export class FileEditorComponent implements OnDestroy {
     }
     if (dotExt === common.FileExtensionEnum.Dashboard) {
       this.navigateService.navigateToDashboard(id);
-    } else if (dotExt === common.FileExtensionEnum.Viz) {
+    } else if (dotExt === common.FileExtensionEnum.Vis) {
       this.navigateService.navigateToVizs({
         extra: {
           queryParams: { search: id }

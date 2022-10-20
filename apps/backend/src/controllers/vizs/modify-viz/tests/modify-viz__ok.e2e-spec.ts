@@ -22,7 +22,7 @@ let testProjectId = 't1';
 let projectId = common.makeId();
 let projectName = testId;
 
-let vizId = 'ec_z1';
+let vizId = 'ec_s1';
 
 let prep: interfaces.Prep;
 

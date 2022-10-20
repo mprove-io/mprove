@@ -123,7 +123,7 @@
           "*.view": "yaml",
           "*.model": "yaml",
           "*.dashboard": "yaml",
-          "*.viz": "yaml",
+          "*.vis": "yaml",
           "*.udf": "yaml",
           "*.config": "yaml"
         },
