@@ -33,6 +33,21 @@ export class Config {
   @IsString()
   firstProjectId?: string;
 
+  @IsEnum(common.ProjectRemoteTypeEnum)
+  firstProjectRemoteType?: common.ProjectRemoteTypeEnum;
+
+  @IsString()
+  firstProjectRemoteGitUrl?: string;
+
+  @IsString()
+  firstProjectRemotePrivateKeyPath?: string;
+
+  @IsString()
+  firstProjectRemotePublicKeyPath?: string;
+
+  @IsEnum(common.BoolEnum)
+  firstProjectSeedConnections?: common.BoolEnum;
+
   @IsString()
   firstProjectDwhPostgresPassword?: string;
 
