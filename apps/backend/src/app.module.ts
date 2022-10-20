@@ -243,7 +243,10 @@ export class AppModule implements OnModuleInit {
 
         let firstUser: any;
 
-        if (common.isDefined(email) && common.isDefined(password)) {
+        if (
+          common.isDefinedAndNotEmpty(email) &&
+          common.isDefinedAndNotEmpty(password)
+        ) {
           firstUser = await this.usersRepository.findOne({ email: email });
 
           if (common.isUndefined(firstUser)) {
@@ -258,9 +261,21 @@ export class AppModule implements OnModuleInit {
           'firstOrgId'
         );
 
+        let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
+          'firstProjectId'
+        );
+
+        let firstProjectSeedConnections = this.cs.get<
+          interfaces.Config['firstProjectSeedConnections']
+        >('firstProjectSeedConnections');
+
         let firstOrg;
 
-        if (common.isDefined(firstOrgId) && common.isDefined(firstUser)) {
+        if (
+          common.isDefined(firstUser) &&
+          common.isDefinedAndNotEmpty(firstOrgId) &&
+          common.isDefinedAndNotEmpty(firstProjectId)
+        ) {
           firstOrg = await this.orgsRepository.findOne({
             org_id: firstOrgId
           });
@@ -274,28 +289,10 @@ export class AppModule implements OnModuleInit {
               orgId: firstOrgId
             });
           }
-        }
 
-        let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
-          'firstProjectId'
-        );
-
-        if (
-          common.isDefined(firstUser) &&
-          common.isDefined(firstOrg) &&
-          common.isDefined(firstProjectId)
-        ) {
           let connections = [];
 
-          let firstProjectSeedConnections = this.cs.get<
-            interfaces.Config['firstProjectSeedConnections']
-          >('firstProjectSeedConnections');
-
-          if (
-            common.isDefined(
-              firstProjectSeedConnections === common.BoolEnum.TRUE
-            )
-          ) {
+          if (firstProjectSeedConnections === common.BoolEnum.TRUE) {
             let c1connection = await this.connectionsRepository.findOne({
               project_id: firstProjectId,
               connection_id: 'c1_postgres'
@@ -473,8 +470,8 @@ export class AppModule implements OnModuleInit {
             let publicKey;
 
             if (
-              common.isDefined(firstProjectRemotePrivateKeyPath) &&
-              common.isDefined(firstProjectRemotePublicKeyPath)
+              common.isDefinedAndNotEmpty(firstProjectRemotePrivateKeyPath) &&
+              common.isDefinedAndNotEmpty(firstProjectRemotePublicKeyPath)
             ) {
               privateKey = fse
                 .readFileSync(firstProjectRemotePrivateKeyPath)

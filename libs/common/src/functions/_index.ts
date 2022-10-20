@@ -6,6 +6,7 @@ export * from './get-timezone-label-by-value';
 export * from './get-timezones';
 export * from './handle-error';
 export * from './is-defined';
+export * from './is-defined-and-not-empty';
 export * from './is-undefined';
 export * from './is-undefined-or-empty';
 export * from './listen-process-events';
