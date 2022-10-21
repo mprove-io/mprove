@@ -25,10 +25,13 @@ mkdir -p ~/mprove_data/mysql \
   ~/mprove_data/blockml-logs
 ```
 
-- Create bigquery project service account credentials
+- Create secrets folder and files
 
 ```
-mkdir secrets && echo {} > secrets/bigquery-test.json
+mkdir secrets \
+  && echo {} > secrets/bigquery-test.json \
+  && echo '' > secrets/first-project-remote-private-key.pem \
+  && echo '' > secrets/first-project-remote-public-key.pem
 ```
 
 - Copy `mprove/.env.example` file to `mprove/.env` file
@@ -42,13 +45,13 @@ cp .env.example .env
 - Pull docker images
 
 ```
-docker-compose pull db dwh-postgres dwh-clickhouse rabbit backend blockml-single disk front
+docker-compose pull db dwh-postgres dwh-clickhouse rabbit backend blockml-main-worker disk front
 ```
 
 - Run docker images
 
 ```
-docker-compose up db dwh-postgres dwh-clickhouse rabbit backend backend-scheduler blockml-single disk front
+docker-compose up db dwh-postgres dwh-clickhouse rabbit backend backend-scheduler blockml-main-worker disk front
 ```
 
 - Open chrome tab and login using first user credentials
