@@ -2,9 +2,13 @@
 
 [Website](https://mprove.io) | [Docs](https://docs.mprove.io)
 
-Mprove - Powerful self-service business intelligence app.
+Mprove - Self-service Business Intelligence with Version Control.
 
 Inspired by :heart: [Looker](https://looker.com/).
+
+## Deploy to Kubernetes Cluster with Helm Chart
+
+Check [Mprove Helm Charts](https://github.com/mprove-io/mprove-helm-charts) for instructions.
 
 ## Local deploy with docker-compose (MacOS / Windows WSL / Linux / devcontainer)
 
