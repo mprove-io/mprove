@@ -1,7 +1,9 @@
 import { Controller, Post } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
+import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
@@ -15,7 +17,8 @@ export class CreateOrgController {
     private dbService: DbService,
     private rabbitService: RabbitService,
     private orgsRepository: repositories.OrgsRepository,
-    private orgsService: OrgsService
+    private orgsService: OrgsService,
+    private cs: ConfigService<interfaces.Config>
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateOrg)
@@ -27,6 +30,23 @@ export class CreateOrgController {
     if (user.alias === common.RESTRICTED_USER_ALIAS) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_RESTRICTED_USER
+      });
+    }
+
+    let allowUsersToCreateOrganizations = this.cs.get<
+      interfaces.Config['allowUsersToCreateOrganizations']
+    >('allowUsersToCreateOrganizations');
+
+    let firstUserEmail = this.cs.get<interfaces.Config['firstUserEmail']>(
+      'firstUserEmail'
+    );
+
+    if (
+      allowUsersToCreateOrganizations !== common.BoolEnum.TRUE &&
+      user.email !== firstUserEmail
+    ) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_CREATION_OF_ORGANIZATIONS_IS_FORBIDDEN
       });
     }
 

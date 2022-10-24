@@ -36,8 +36,8 @@ werf kube-run --repo ghcr.io/mprove-io/mprove --overrides='{
           "secretName": "backend-common-secret-files",
           "items": [
             {
-              "key": "contentBigquery",
-              "path": "bigquery-test.json"
+              "key": "contentBigqueryCredentials",
+              "path": "first-project-bigquery-credentials.json"
             },
             {
               "key": "contentRemotePrivateKey",

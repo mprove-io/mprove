@@ -20,8 +20,9 @@ export function getDevConfig(envFilePath: any) {
       (process.env.BACKEND_IS_SCHEDULER || envFile.BACKEND_IS_SCHEDULER)
     ),
 
-    backendBigqueryPath:
-      process.env.BACKEND_BIGQUERY_PATH || envFile.BACKEND_BIGQUERY_PATH,
+    firstProjectDwhBigqueryCredentialsPath:
+      process.env.BACKEND_FIRST_PROJECT_DWH_BIGQUERY_CREDENTIALS_PATH ||
+      envFile.BACKEND_FIRST_PROJECT_DWH_BIGQUERY_CREDENTIALS_PATH,
 
     jwtSecret: process.env.BACKEND_JWT_SECRET || envFile.BACKEND_JWT_SECRET,
 
@@ -90,6 +91,11 @@ export function getDevConfig(envFilePath: any) {
     firstProjectDwhSnowflakePassword:
       process.env.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_PASSWORD ||
       envFile.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_PASSWORD,
+
+    allowUsersToCreateOrganizations: <common.BoolEnum>(
+      (process.env.BACKEND_ALLOW_USERS_TO_CREATE_ORGANIZATIONS ||
+        envFile.BACKEND_ALLOW_USERS_TO_CREATE_ORGANIZATIONS)
+    ),
 
     registerOnlyInvitedUsers: <common.BoolEnum>(
       (process.env.BACKEND_REGISTER_ONLY_INVITED_USERS ||

@@ -81,6 +81,7 @@ export const appControllers = [
   controllers.RunQueriesDryController,
 
   controllers.DeleteRecordsController,
+  controllers.GetRebuildStructController,
   controllers.SeedRecordsController,
 
   controllers.CommitRepoController,
@@ -91,7 +92,6 @@ export const appControllers = [
   controllers.RevertRepoToLastCommitController,
   controllers.RevertRepoToRemoteController,
 
-  controllers.SpecialRebuildStructController,
   controllers.SpecialRebuildStructsController,
 
   controllers.ConfirmUserEmailController,

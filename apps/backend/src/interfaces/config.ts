@@ -10,7 +10,7 @@ export class Config {
   isScheduler?: common.BoolEnum;
 
   @IsString()
-  backendBigqueryPath?: string;
+  firstProjectDwhBigqueryCredentialsPath?: string;
 
   @IsString()
   jwtSecret?: string;
@@ -65,6 +65,9 @@ export class Config {
 
   @IsString()
   firstProjectDwhSnowflakePassword?: string;
+
+  @IsEnum(common.BoolEnum)
+  allowUsersToCreateOrganizations?: common.BoolEnum;
 
   @IsEnum(common.BoolEnum)
   registerOnlyInvitedUsers?: common.BoolEnum;

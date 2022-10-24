@@ -76,8 +76,8 @@ spec:
         secret:
           secretName: backend-common-secret-files
           items:
-          - key: contentBigquery
-            path: bigquery-test.json
+          - key: contentBigqueryCredentials
+            path: first-project-bigquery-credentials.json
           - key: contentRemotePrivateKey
             path: first-project-remote-private-key.pem
           - key: contentRemotePublicKey

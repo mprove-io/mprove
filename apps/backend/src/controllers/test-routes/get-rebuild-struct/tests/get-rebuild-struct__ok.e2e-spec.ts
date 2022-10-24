@@ -7,7 +7,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'special-rebuild-struct__ok';
+let testId = 'get-rebuild-struct__ok';
 
 let traceId = testId;
 
@@ -77,8 +77,7 @@ test('1', async t => {
             isExplorer: common.BoolEnum.TRUE
           }
         ]
-      },
-      loginUserPayload: { email, password }
+      }
     });
 
     // to disk
@@ -114,36 +113,26 @@ test('1', async t => {
 
     // to backend
 
-    let specialRebuildStructReq: apiToBackend.ToBackendSpecialRebuildStructRequest = {
+    let getRebuildStructReq: apiToBackend.ToBackendGetRebuildStructRequest = {
       info: {
         name:
-          apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendSpecialRebuildStruct,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRebuildStruct,
         traceId: traceId,
         idempotencyKey: testId
       },
       payload: {
         orgId: orgId,
         projectId: projectId,
-        envId: envId,
-        evs: [],
-        isRepoProd: false,
+        repoId: devRepoId,
         branch: common.BRANCH_MASTER,
-        structId: testId,
-        connections: [
-          {
-            connectionId: 'c1',
-            type: common.ConnectionTypeEnum.PostgreSQL
-          }
-        ]
+        envId: envId
       }
     };
 
     resp = await helper.sendToBackend<apiToBlockml.ToBlockmlRebuildStructResponse>(
       {
         httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: specialRebuildStructReq
+        req: getRebuildStructReq
       }
     );
 

@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  IsBoolean,
   IsNumber,
   IsOptional,
   IsString,
@@ -8,7 +9,7 @@ import {
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
-export class BranchItem {
+export class BridgeItem {
   @IsString()
   orgId: string;
 
@@ -21,6 +22,15 @@ export class BranchItem {
   @IsString()
   branchId: string;
 
+  @IsString()
+  envId: string;
+
+  @IsString()
+  structId: string;
+
+  @IsBoolean()
+  needValidate: boolean;
+
   @IsOptional()
   @IsString()
   errorMessage?: string;
@@ -32,6 +42,9 @@ export class ToBackendSpecialRebuildStructsRequestPayload {
 
   @IsString({ each: true })
   userIds: string[];
+
+  @IsBoolean()
+  skipRebuild: boolean;
 }
 
 export class ToBackendSpecialRebuildStructsRequest extends ToBackendRequest {
@@ -45,15 +58,15 @@ export class ToBackendSpecialRebuildStructsResponsePayload {
   notFoundProjectIds: string[];
 
   @ValidateNested()
-  @Type(() => BranchItem)
-  successBranchItems: BranchItem[];
+  @Type(() => BridgeItem)
+  successBridgeItems: BridgeItem[];
 
   @IsNumber()
   successTotal: number;
 
   @ValidateNested()
-  @Type(() => BranchItem)
-  errorGetCatalogBranchItems: BranchItem[];
+  @Type(() => BridgeItem)
+  errorGetCatalogBridgeItems: BridgeItem[];
 
   @IsNumber()
   errorTotal: number;

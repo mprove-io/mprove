@@ -5,47 +5,41 @@ import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { repositories } from '~backend/barrels/repositories';
+import { wrapper } from '~backend/barrels/wrapper';
+import {
+  AttachUser,
+  SkipJwtCheck,
+  ValidateRequest
+} from '~backend/decorators/_index';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 
 @UseGuards(TestRoutesGuard)
+@SkipJwtCheck()
 @Controller()
-export class SpecialRebuildStructController {
+export class GetRebuildStructController {
   constructor(
     private rabbitService: RabbitService,
+    private connectionsRepository: repositories.ConnectionsRepository,
+    private evsRepository: repositories.EvsRepository,
     private projectsService: ProjectsService
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSpecialRebuildStruct)
-  async specialRebuildStruct(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRebuildStruct)
+  async getRebuildStruct(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendSpecialRebuildStructRequest)
-    reqValid: apiToBackend.ToBackendSpecialRebuildStructRequest
+    @ValidateRequest(apiToBackend.ToBackendGetRebuildStructRequest)
+    reqValid: apiToBackend.ToBackendGetRebuildStructRequest
   ) {
-    if (user.alias === common.RESTRICTED_USER_ALIAS) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_USER
-      });
-    }
+    let { orgId, projectId, repoId, branch, envId } = reqValid.payload;
 
-    let {
-      orgId,
-      projectId,
-      envId,
-      evs,
-      isRepoProd,
-      branch,
-      structId,
-      connections
-    } = reqValid.payload;
+    let structId = common.makeId();
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
     });
-
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 
     // to disk
 
@@ -77,6 +71,16 @@ export class SpecialRebuildStructController {
       }
     );
 
+    let connections = await this.connectionsRepository.find({
+      project_id: projectId,
+      env_id: envId
+    });
+
+    let evs = await this.evsRepository.find({
+      project_id: projectId,
+      env_id: envId
+    });
+
     // to blockml
 
     let rebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest = {
@@ -88,13 +92,17 @@ export class SpecialRebuildStructController {
         structId: structId,
         orgId: orgId,
         envId: envId,
-        evs: evs,
+        evs: evs.map(x => wrapper.wrapToApiEv(x)),
         projectId: projectId,
         mproveDir: getCatalogFilesResponse.payload.mproveDir,
         files: helper.diskFilesToBlockmlFiles(
           getCatalogFilesResponse.payload.files
         ),
-        connections: connections
+        connections: connections.map(x => ({
+          connectionId: x.connection_id,
+          type: x.type,
+          bigqueryProject: x.bigquery_project
+        }))
       }
     };
 

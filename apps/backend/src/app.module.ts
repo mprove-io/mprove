@@ -355,12 +355,14 @@ export class AppModule implements OnModuleInit {
             });
 
             if (common.isUndefined(c3connection)) {
-              let backendBigqueryPath = this.cs.get<
-                interfaces.Config['backendBigqueryPath']
-              >('backendBigqueryPath');
+              let firstProjectDwhBigqueryCredentialsPath = this.cs.get<
+                interfaces.Config['firstProjectDwhBigqueryCredentialsPath']
+              >('firstProjectDwhBigqueryCredentialsPath');
 
               let bigqueryTestCredentials = JSON.parse(
-                fse.readFileSync(backendBigqueryPath).toString()
+                fse
+                  .readFileSync(firstProjectDwhBigqueryCredentialsPath)
+                  .toString()
               );
 
               let c3 = maker.makeConnection({

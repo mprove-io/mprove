@@ -35,20 +35,20 @@ export class SpecialRebuildStructsController {
     reqValid: apiToBackend.ToBackendSpecialRebuildStructsRequest
   ) {
     let { traceId } = reqValid.info;
-    let { specialKey, userIds } = reqValid.payload;
+    let { specialKey, userIds, skipRebuild } = reqValid.payload;
 
     let envSpecialKey = this.cs.get<interfaces.Config['specialKey']>(
       'specialKey'
     );
 
-    if (specialKey !== envSpecialKey) {
+    if (common.isUndefinedOrEmpty(specialKey) || specialKey !== envSpecialKey) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_WRONG_SPECIAL_KEY
       });
     }
 
     let projectIds: string[] = [];
-    let members: entities.MemberEntity[];
+    let members: entities.MemberEntity[] = [];
 
     if (userIds.length > 0) {
       members = await this.membersRepository.find({
@@ -58,7 +58,7 @@ export class SpecialRebuildStructsController {
       projectIds = members.map(x => x.project_id);
     }
 
-    let projects: entities.ProjectEntity[];
+    let projects: entities.ProjectEntity[] = [];
 
     if (projectIds.length > 0) {
       projects = await this.projectsRepository.find({
@@ -79,8 +79,8 @@ export class SpecialRebuildStructsController {
     }
 
     let notFoundProjectIds: string[] = [];
-    let errorGetCatalogBranchItems: apiToBackend.BranchItem[] = [];
-    let successBranchItems: apiToBackend.BranchItem[] = [];
+    let errorGetCatalogBridgeItems: apiToBackend.BridgeItem[] = [];
+    let successBridgeItems: apiToBackend.BridgeItem[] = [];
 
     await asyncPool(1, bridges, async bridge => {
       let project = projects.find(x => x.project_id === bridge.project_id);
@@ -90,66 +90,71 @@ export class SpecialRebuildStructsController {
         return;
       }
 
-      let branchItem: apiToBackend.BranchItem = {
+      let bridgeItem: apiToBackend.BridgeItem = {
         orgId: project.org_id,
         projectId: project.project_id,
         repoId: bridge.repo_id,
-        branchId: bridge.branch_id
+        branchId: bridge.branch_id,
+        envId: bridge.env_id,
+        structId: bridge.struct_id,
+        needValidate: common.enumToBoolean(bridge.need_validate)
       };
 
-      // to disk
+      if (skipRebuild === false) {
+        let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {
+          info: {
+            name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
+            traceId: reqValid.info.traceId
+          },
+          payload: {
+            orgId: project.org_id,
+            projectId: project.project_id,
+            repoId: bridge.repo_id,
+            branch: bridge.branch_id,
+            remoteType: project.remote_type,
+            gitUrl: project.git_url,
+            privateKey: project.private_key,
+            publicKey: project.public_key
+          }
+        };
 
-      let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {
-        info: {
-          name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
-          traceId: reqValid.info.traceId
-        },
-        payload: {
+        let getCatalogFilesResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
+          {
+            routingKey: helper.makeRoutingKeyToDisk({
+              orgId: project.org_id,
+              projectId: project.project_id
+            }),
+            message: getCatalogFilesRequest,
+            checkIsOk: false
+          }
+        );
+
+        if (
+          getCatalogFilesResponse.info.status !==
+          common.ResponseInfoStatusEnum.Ok
+        ) {
+          bridgeItem.errorMessage = getCatalogFilesResponse.info.error.message;
+          errorGetCatalogBridgeItems.push(bridgeItem);
+          return;
+        }
+
+        let structId = common.makeId();
+
+        await this.blockmlService.rebuildStruct({
+          traceId,
           orgId: project.org_id,
           projectId: project.project_id,
-          repoId: bridge.repo_id,
-          branch: bridge.branch_id,
-          remoteType: project.remote_type,
-          gitUrl: project.git_url,
-          privateKey: project.private_key,
-          publicKey: project.public_key
-        }
-      };
+          structId: structId,
+          diskFiles: getCatalogFilesResponse.payload.files,
+          mproveDir: getCatalogFilesResponse.payload.mproveDir,
+          envId: bridge.env_id
+        });
 
-      let getCatalogFilesResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
-        {
-          routingKey: helper.makeRoutingKeyToDisk({
-            orgId: project.org_id,
-            projectId: project.project_id
-          }),
-          message: getCatalogFilesRequest,
-          checkIsOk: false
-        }
-      );
-
-      if (
-        getCatalogFilesResponse.info.status !== common.ResponseInfoStatusEnum.Ok
-      ) {
-        branchItem.errorMessage = getCatalogFilesResponse.info.error.message;
-        errorGetCatalogBranchItems.push(branchItem);
-        return;
+        bridge.struct_id = structId;
+        bridge.need_validate = common.BoolEnum.FALSE;
+      } else {
+        bridge.need_validate = common.BoolEnum.TRUE;
       }
-
-      // to blockml
-
-      let structId = common.makeId();
-
-      bridge.struct_id = structId;
-
-      await this.blockmlService.rebuildStruct({
-        traceId,
-        orgId: project.org_id,
-        projectId: project.project_id,
-        structId: structId,
-        diskFiles: getCatalogFilesResponse.payload.files,
-        mproveDir: getCatalogFilesResponse.payload.mproveDir,
-        envId: bridge.env_id
-      });
 
       await this.dbService.writeRecords({
         modify: true,
@@ -158,15 +163,18 @@ export class SpecialRebuildStructsController {
         }
       });
 
-      successBranchItems.push(branchItem);
+      bridgeItem.structId = bridge.struct_id;
+      bridgeItem.needValidate = common.enumToBoolean(bridge.need_validate);
+
+      successBridgeItems.push(bridgeItem);
     });
 
     let payload: apiToBackend.ToBackendSpecialRebuildStructsResponsePayload = {
       notFoundProjectIds: notFoundProjectIds,
-      successTotal: successBranchItems.length,
-      errorTotal: errorGetCatalogBranchItems.length,
-      successBranchItems: successBranchItems,
-      errorGetCatalogBranchItems: errorGetCatalogBranchItems
+      successTotal: successBridgeItems.length,
+      errorTotal: errorGetCatalogBridgeItems.length,
+      successBridgeItems: successBridgeItems,
+      errorGetCatalogBridgeItems: errorGetCatalogBridgeItems
     };
 
     return payload;

@@ -29,7 +29,7 @@ mkdir -p ~/mprove_data/mysql \
 
 ```
 mkdir secrets \
-  && echo {} > secrets/bigquery-test.json \
+  && echo {} > secrets/first-project-bigquery-credentials.json \
   && echo '' > secrets/first-project-remote-private-key.pem \
   && echo '' > secrets/first-project-remote-public-key.pem
 ```
