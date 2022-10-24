@@ -4,13 +4,15 @@
 
 Mprove - Self-service Business Intelligence with Version Control.
 
+Check [Mprove Demo p1](https://github.com/mprove-io/mprove-demo-p1) for example project repository.
+
 Inspired by :heart: [Looker](https://looker.com/).
 
-## Deploy to Kubernetes Cluster with Helm Chart
+## Deploy to a Kubernetes cluster using Helm Chart
 
 Check [Mprove Helm Charts](https://github.com/mprove-io/mprove-helm-charts) for instructions.
 
-## Local deploy with docker-compose (MacOS / Windows WSL / Linux / devcontainer)
+## Local deploy using docker-compose (MacOS / Windows WSL / Linux / devcontainer)
 
 - Clone github repo to local `mprove` folder
 
