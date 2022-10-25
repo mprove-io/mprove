@@ -27,6 +27,7 @@ export class GetCatalogNodesService {
       projectId,
       repoId,
       branch,
+      isFetch,
       remoteType,
       gitUrl,
       privateKey,
@@ -89,7 +90,8 @@ export class GetCatalogNodesService {
         repoId: repoId,
         repoDir: repoDir,
         branchName: branch,
-        fetchOptions: fetchOptions
+        fetchOptions: fetchOptions,
+        isFetch: isFetch
       });
     }
 
@@ -108,7 +110,8 @@ export class GetCatalogNodesService {
         projectDir: projectDir,
         repoId: repoId,
         repoDir: repoDir,
-        fetchOptions: fetchOptions
+        fetchOptions: fetchOptions,
+        isFetch: isFetch
       })
     );
 

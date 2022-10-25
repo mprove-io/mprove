@@ -93,7 +93,8 @@ export class DeleteFolderService {
       repoId: repoId,
       repoDir: repoDir,
       branchName: branch,
-      fetchOptions: fetchOptions
+      fetchOptions: fetchOptions,
+      isFetch: false
     });
 
     let isFolderExist = await disk.isPathExist(folderAbsolutePath);
@@ -115,7 +116,8 @@ export class DeleteFolderService {
         projectDir: projectDir,
         repoId: repoId,
         repoDir: repoDir,
-        fetchOptions: fetchOptions
+        fetchOptions: fetchOptions,
+        isFetch: false
       })
     );
 

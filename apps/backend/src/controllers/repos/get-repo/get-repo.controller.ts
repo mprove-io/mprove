@@ -32,7 +32,7 @@ export class GetRepoController {
     @ValidateRequest(apiToBackend.ToBackendGetRepoRequest)
     reqValid: apiToBackend.ToBackendGetRepoRequest
   ) {
-    let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
+    let { projectId, isRepoProd, branchId, envId, isFetch } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 
@@ -74,6 +74,7 @@ export class GetRepoController {
         projectId: projectId,
         repoId: repoId,
         branch: branchId,
+        isFetch: isFetch,
         remoteType: project.remote_type,
         gitUrl: project.git_url,
         privateKey: project.private_key,

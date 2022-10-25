@@ -96,7 +96,8 @@ export class CreateFolderService {
       repoId: repoId,
       repoDir: repoDir,
       branchName: branch,
-      fetchOptions: fetchOptions
+      fetchOptions: fetchOptions,
+      isFetch: false
     });
 
     let isParentPathExist = await disk.isPathExist(parentPath);
@@ -123,7 +124,8 @@ export class CreateFolderService {
         projectDir: projectDir,
         repoId: repoId,
         repoDir: repoDir,
-        fetchOptions: fetchOptions
+        fetchOptions: fetchOptions,
+        isFetch: false
       })
     );
 

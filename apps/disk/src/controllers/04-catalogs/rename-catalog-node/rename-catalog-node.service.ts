@@ -94,7 +94,8 @@ export class RenameCatalogNodeService {
       repoId: repoId,
       repoDir: repoDir,
       branchName: branch,
-      fetchOptions: fetchOptions
+      fetchOptions: fetchOptions,
+      isFetch: false
     });
 
     let isOldPathExist = await disk.isPathExist(oldPath);
@@ -124,7 +125,8 @@ export class RenameCatalogNodeService {
         projectDir: projectDir,
         repoId: repoId,
         repoDir: repoDir,
-        fetchOptions: fetchOptions
+        fetchOptions: fetchOptions,
+        isFetch: false
       })
     );
 

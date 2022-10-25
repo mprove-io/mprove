@@ -36,7 +36,8 @@ export class RepoStructResolver implements Resolve<Observable<boolean>> {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: branchId,
-      envId: envId
+      envId: envId,
+      isFetch: false
     };
 
     return this.apiService
@@ -48,12 +49,12 @@ export class RepoStructResolver implements Resolve<Observable<boolean>> {
       .pipe(
         map((resp: apiToBackend.ToBackendGetRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            if (
-              common.isUndefined(resp?.payload?.repo) ||
-              common.isUndefined(resp?.payload?.struct)
-            ) {
-              return false;
-            }
+            // if (
+            //   common.isUndefined(resp?.payload?.repo) ||
+            //   common.isUndefined(resp?.payload?.struct)
+            // ) {
+            //   return false;
+            // }
 
             this.repoStore.update(resp.payload.repo);
             this.structStore.update(resp.payload.struct);

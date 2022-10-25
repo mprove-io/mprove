@@ -15,6 +15,9 @@ export class ToBackendGetRepoRequestPayload {
 
   @IsString()
   envId: string;
+
+  @IsBoolean()
+  isFetch: boolean;
 }
 
 export class ToBackendGetRepoRequest extends ToBackendRequest {

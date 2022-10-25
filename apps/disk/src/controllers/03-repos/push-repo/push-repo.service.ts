@@ -89,7 +89,8 @@ export class PushRepoService {
       repoId: repoId,
       repoDir: repoDir,
       branchName: branch,
-      fetchOptions: fetchOptions
+      fetchOptions: fetchOptions,
+      isFetch: true
     });
 
     //
@@ -134,7 +135,8 @@ export class PushRepoService {
         projectDir: projectDir,
         repoId: repoId,
         repoDir: repoDir,
-        fetchOptions: fetchOptions
+        fetchOptions: fetchOptions,
+        isFetch: true
       })
     );
 

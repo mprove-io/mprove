@@ -93,7 +93,8 @@ export class DeleteFileService {
       repoId: repoId,
       repoDir: repoDir,
       branchName: branch,
-      fetchOptions: fetchOptions
+      fetchOptions: fetchOptions,
+      isFetch: false
     });
 
     let isFileExist = await disk.isPathExist(filePath);
@@ -132,7 +133,8 @@ export class DeleteFileService {
         projectDir: projectDir,
         repoId: repoId,
         repoDir: repoDir,
-        fetchOptions: fetchOptions
+        fetchOptions: fetchOptions,
+        isFetch: false
       })
     );
 

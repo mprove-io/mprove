@@ -117,7 +117,8 @@ export class CreateBranchService {
         projectDir: projectDir,
         repoId: repoId,
         repoDir: repoDir,
-        fetchOptions: fetchOptions
+        fetchOptions: fetchOptions,
+        isFetch: true
       })
     );
 

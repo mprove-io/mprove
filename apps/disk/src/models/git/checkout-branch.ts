@@ -10,6 +10,7 @@ export async function checkoutBranch(item: {
   repoDir: string;
   branchName: string;
   fetchOptions: nodegit.FetchOptions;
+  isFetch: boolean;
 }) {
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
     await getRepoStatus({
@@ -17,7 +18,8 @@ export async function checkoutBranch(item: {
       projectDir: item.projectDir,
       repoId: item.repoId,
       repoDir: item.repoDir,
-      fetchOptions: item.fetchOptions
+      fetchOptions: item.fetchOptions,
+      isFetch: item.isFetch
     })
   );
 

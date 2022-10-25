@@ -88,7 +88,8 @@ export class CreateDevRepoService {
         projectDir: projectDir,
         repoId: devRepoId,
         repoDir: devRepoDir,
-        fetchOptions: cloneOptions.fetchOpts
+        fetchOptions: cloneOptions.fetchOpts,
+        isFetch: true
       })
     );
 

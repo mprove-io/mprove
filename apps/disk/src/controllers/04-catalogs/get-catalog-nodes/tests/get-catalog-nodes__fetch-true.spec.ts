@@ -3,7 +3,7 @@ import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
-let testId = 'disk-get-catalog-nodes';
+let testId = 'disk-get-catalog-nodes__fetch-true';
 
 let traceId = testId;
 let orgId = testId;
@@ -51,7 +51,8 @@ test('1', async t => {
         projectId: projectId,
         repoId: 'r1',
         branch: common.BRANCH_MASTER,
-        remoteType: common.ProjectRemoteTypeEnum.Managed
+        remoteType: common.ProjectRemoteTypeEnum.Managed,
+        isFetch: true
       }
     };
 

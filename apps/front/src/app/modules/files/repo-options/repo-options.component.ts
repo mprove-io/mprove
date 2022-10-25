@@ -151,6 +151,57 @@ export class RepoOptionsComponent {
       .subscribe();
   }
 
+  gitFetch(event?: MouseEvent) {
+    event.stopPropagation();
+
+    let payload: apiToBackend.ToBackendGetRepoRequestPayload = {
+      projectId: this.nav.projectId,
+      isRepoProd: this.nav.isRepoProd,
+      branchId: this.nav.branchId,
+      envId: this.nav.envId,
+      isFetch: true
+    };
+
+    this.apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRepo,
+        payload: payload,
+        showSpinner: true
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendGetRepoResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            // if (
+            //   common.isUndefined(resp?.payload?.repo) ||
+            //   common.isUndefined(resp?.payload?.struct)
+            // ) {
+            //   return false;
+            // }
+
+            this.repoStore.update(resp.payload.repo);
+            this.structStore.update(resp.payload.struct);
+            this.navStore.update(state =>
+              Object.assign({}, state, <NavState>{
+                needValidate: resp.payload.needValidate
+              })
+            );
+
+            return true;
+          } else {
+            return false;
+          }
+        }),
+        // switchMap(x =>
+        //   common.isDefined(this.file.fileId)
+        //     ? this.fileService.getFile()
+        //     : of([])
+        // ),
+        take(1)
+      )
+      .subscribe();
+  }
+
   pullFromRemote(event?: MouseEvent) {
     event.stopPropagation();
 

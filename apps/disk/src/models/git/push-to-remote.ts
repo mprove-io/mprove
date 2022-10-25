@@ -17,7 +17,8 @@ export async function pushToRemote(item: {
       projectDir: item.projectDir,
       repoId: item.repoId,
       repoDir: item.repoDir,
-      fetchOptions: item.fetchOptions
+      fetchOptions: item.fetchOptions,
+      isFetch: true
     })
   );
 

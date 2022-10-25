@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-get-repo__ok';
+let testId = 'backend-get-repo__ok-fetch-true';
 
 let traceId = testId;
 
@@ -85,7 +85,8 @@ test('1', async t => {
         projectId: projectId,
         isRepoProd: false,
         branchId: branchId,
-        envId: common.PROJECT_ENV_PROD
+        envId: common.PROJECT_ENV_PROD,
+        isFetch: true
       }
     };
 

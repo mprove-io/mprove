@@ -88,7 +88,8 @@ export class GetCatalogFilesService {
       repoId: repoId,
       repoDir: repoDir,
       branchName: branch,
-      fetchOptions: fetchOptions
+      fetchOptions: fetchOptions,
+      isFetch: false
     });
 
     //
@@ -106,7 +107,8 @@ export class GetCatalogFilesService {
         projectDir: projectDir,
         repoId: repoId,
         repoDir: repoDir,
-        fetchOptions: fetchOptions
+        fetchOptions: fetchOptions,
+        isFetch: false
       })
     );
 

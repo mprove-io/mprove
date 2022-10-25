@@ -97,7 +97,8 @@ export class SeedProjectService {
         projectDir: projectDir,
         repoId: devRepoId,
         repoDir: devRepoDir,
-        fetchOptions: fetchOptions
+        fetchOptions: fetchOptions,
+        isFetch: true
       })
     );
 

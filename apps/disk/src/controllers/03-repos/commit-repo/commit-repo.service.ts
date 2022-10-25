@@ -88,7 +88,8 @@ export class CommitRepoService {
       repoId: repoId,
       repoDir: repoDir,
       branchName: branch,
-      fetchOptions: fetchOptions
+      fetchOptions: fetchOptions,
+      isFetch: true
     });
 
     //
@@ -105,7 +106,8 @@ export class CommitRepoService {
         projectDir: projectDir,
         repoId: repoId,
         repoDir: repoDir,
-        fetchOptions: fetchOptions
+        fetchOptions: fetchOptions,
+        isFetch: true
       })
     );
 

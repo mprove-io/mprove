@@ -85,7 +85,8 @@ export class DeleteBranchService {
       repoId: repoId,
       repoDir: repoDir,
       branchName: defaultBranch,
-      fetchOptions: fetchOptions
+      fetchOptions: fetchOptions,
+      isFetch: true
     });
 
     let errorIfNoLocalBranch = true;
@@ -129,7 +130,8 @@ export class DeleteBranchService {
         projectDir: projectDir,
         repoId: repoId,
         repoDir: repoDir,
-        fetchOptions: fetchOptions
+        fetchOptions: fetchOptions,
+        isFetch: true
       })
     );
 

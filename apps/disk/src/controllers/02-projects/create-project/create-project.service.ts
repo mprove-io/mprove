@@ -108,7 +108,8 @@ export class CreateProjectService {
         projectDir: projectDir,
         repoId: common.PROD_REPO_ID,
         repoDir: `${projectDir}/${common.PROD_REPO_ID}`,
-        fetchOptions: fetchOptions
+        fetchOptions: fetchOptions,
+        isFetch: true
       })
     );
 

@@ -92,7 +92,8 @@ export class MoveCatalogNodeService {
       repoId: repoId,
       repoDir: repoDir,
       branchName: branch,
-      fetchOptions: fetchOptions
+      fetchOptions: fetchOptions,
+      isFetch: false
     });
 
     let isFromPathExist = await disk.isPathExist(fromPath);
@@ -124,7 +125,8 @@ export class MoveCatalogNodeService {
         projectDir: projectDir,
         repoId: repoId,
         repoDir: repoDir,
-        fetchOptions: fetchOptions
+        fetchOptions: fetchOptions,
+        isFetch: false
       })
     );
 

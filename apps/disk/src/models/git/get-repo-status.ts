@@ -10,6 +10,7 @@ export async function getRepoStatus(item: {
   projectDir: string;
   repoDir: string;
   fetchOptions: nodegit.FetchOptions;
+  isFetch: boolean;
 }): Promise<interfaces.ItemStatus> {
   // priorities order:
   // NeedSave (frontend only)
@@ -80,74 +81,83 @@ export async function getRepoStatus(item: {
     };
   }
 
-  await gitRepo.fetch('origin', item.fetchOptions);
-
-  let isBranchExistRemote = await isRemoteBranchExist({
-    repoDir: item.repoDir,
-    remoteBranch: currentBranchName,
-    fetchOptions: item.fetchOptions
-  });
-  // RETURN NeedPush
-  if (isBranchExistRemote === false) {
-    return {
-      repoStatus: common.RepoStatusEnum.NeedPush,
-      conflicts: conflicts,
-      currentBranch: currentBranchName
-    };
-  }
-
-  let localCommit = <nodegit.Commit>(
-    await gitRepo.getReferenceCommit(`refs/heads/${currentBranchName}`)
-  );
-
-  let localCommitOid = localCommit.id();
-  let localCommitId = localCommitOid.tostrS();
-
-  let remoteOriginCommit = <nodegit.Commit>(
-    await gitRepo.getReferenceCommit(`refs/remotes/origin/${currentBranchName}`)
-  );
-
-  let remoteOriginCommitOid = remoteOriginCommit.id();
-  let remoteOriginCommitId = remoteOriginCommitOid.tostrS();
-
-  //
-  let baseCommitOid = <nodegit.Oid>(
-    await nodegit.Merge.base(gitRepo, localCommitOid, remoteOriginCommitOid)
-  );
-  let baseCommitId = baseCommitOid.tostrS();
-
-  // RETURN Ok
-  if (localCommitId === remoteOriginCommitId) {
+  if (item.isFetch === false) {
     return {
       repoStatus: common.RepoStatusEnum.Ok,
       conflicts: conflicts,
       currentBranch: currentBranchName
     };
-  }
+  } else {
+    // isRemoteBranchExist() does gitRepo.fetch()
+    let isBranchExistRemote = await isRemoteBranchExist({
+      repoDir: item.repoDir,
+      remoteBranch: currentBranchName,
+      fetchOptions: item.fetchOptions
+    });
+    // RETURN NeedPush
+    if (isBranchExistRemote === false) {
+      return {
+        repoStatus: common.RepoStatusEnum.NeedPush,
+        conflicts: conflicts,
+        currentBranch: currentBranchName
+      };
+    }
 
-  // RETURN NeedPull
-  if (localCommitId === baseCommitId) {
+    let localCommit = <nodegit.Commit>(
+      await gitRepo.getReferenceCommit(`refs/heads/${currentBranchName}`)
+    );
+
+    let localCommitOid = localCommit.id();
+    let localCommitId = localCommitOid.tostrS();
+
+    let remoteOriginCommit = <nodegit.Commit>(
+      await gitRepo.getReferenceCommit(
+        `refs/remotes/origin/${currentBranchName}`
+      )
+    );
+
+    let remoteOriginCommitOid = remoteOriginCommit.id();
+    let remoteOriginCommitId = remoteOriginCommitOid.tostrS();
+
+    //
+    let baseCommitOid = <nodegit.Oid>(
+      await nodegit.Merge.base(gitRepo, localCommitOid, remoteOriginCommitOid)
+    );
+    let baseCommitId = baseCommitOid.tostrS();
+
+    // RETURN Ok
+    if (localCommitId === remoteOriginCommitId) {
+      return {
+        repoStatus: common.RepoStatusEnum.Ok,
+        conflicts: conflicts,
+        currentBranch: currentBranchName
+      };
+    }
+
+    // RETURN NeedPull
+    if (localCommitId === baseCommitId) {
+      return {
+        repoStatus: common.RepoStatusEnum.NeedPull,
+        conflicts: conflicts,
+        currentBranch: currentBranchName
+      };
+    }
+
+    // RETURN NeedPush
+    if (remoteOriginCommitId === baseCommitId) {
+      return {
+        repoStatus: common.RepoStatusEnum.NeedPush,
+        conflicts: conflicts,
+        currentBranch: currentBranchName
+      };
+    }
+
+    // RETURN NeedPull
+    // diverged
     return {
       repoStatus: common.RepoStatusEnum.NeedPull,
       conflicts: conflicts,
       currentBranch: currentBranchName
     };
   }
-
-  // RETURN NeedPush
-  if (remoteOriginCommitId === baseCommitId) {
-    return {
-      repoStatus: common.RepoStatusEnum.NeedPush,
-      conflicts: conflicts,
-      currentBranch: currentBranchName
-    };
-  }
-
-  // RETURN NeedPull
-  // diverged
-  return {
-    repoStatus: common.RepoStatusEnum.NeedPull,
-    conflicts: conflicts,
-    currentBranch: currentBranchName
-  };
 }
