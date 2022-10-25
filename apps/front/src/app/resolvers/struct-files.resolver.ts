@@ -44,7 +44,7 @@ export class StructFilesResolver implements Resolve<Promise<boolean>> {
       isRepoProd: nav.isRepoProd,
       branchId: branchId,
       envId: envId,
-      isFetch: false
+      isFetch: true
     };
 
     return this.apiService
