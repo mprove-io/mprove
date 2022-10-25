@@ -94,6 +94,8 @@ export const appControllers = [
 
   controllers.SpecialRebuildStructsController,
 
+  controllers.GetStructController,
+
   controllers.ConfirmUserEmailController,
   controllers.CompleteUserRegistrationController,
   controllers.DeleteUserController,

@@ -18,6 +18,7 @@ export * from './projects/_index';
 export * from './queries/_index';
 export * from './repos/_index';
 export * from './special/_index';
+export * from './structs/_index';
 export * from './test-routes/_index';
 export * from './users/_index';
 export * from './views/_index';

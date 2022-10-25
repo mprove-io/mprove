@@ -51,11 +51,11 @@ import { ProfileResolver } from './resolvers/profile.resolver';
 import { ProjectResolver } from './resolvers/project.resolver';
 import { QueryResolver } from './resolvers/query.resolver';
 import { StackDashboardResolver } from './resolvers/stack-dashboard.resolver';
+import { StackFilesResolver } from './resolvers/stack-files.resolver';
 import { StackModelResolver } from './resolvers/stack-model.resolver';
 import { StackModelsDashboardsResolver } from './resolvers/stack-models-dashboards.resolver';
 import { StackModelsVizsResolver } from './resolvers/stack-models-vizs.resolver';
 import { StackModelsResolver } from './resolvers/stack-models.resolver';
-import { StackResolver } from './resolvers/stack.resolver';
 import { UsersResolver } from './resolvers/users.resolver';
 
 const routes: Routes = [
@@ -202,7 +202,7 @@ const routes: Routes = [
                           {
                             component: FilesComponent,
                             path: common.PATH_FILES,
-                            resolve: [StackResolver],
+                            resolve: [StackFilesResolver],
                             children: [
                               {
                                 component: FileEditorComponent,
