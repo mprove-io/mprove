@@ -25,11 +25,18 @@ export class ToBackendGetStructRequest extends ToBackendRequest {
 
 export class ToBackendGetStructResponsePayload {
   @IsBoolean()
+  isBranchExist: boolean;
+
+  @IsBoolean()
   needValidate: boolean;
 
   @ValidateNested()
   @Type(() => common.Repo)
   struct: common.Struct;
+
+  @ValidateNested()
+  @Type(() => common.Member)
+  userMember: common.Member;
 }
 
 export class ToBackendGetStructResponse extends common.MyResponse {

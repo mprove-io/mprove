@@ -8,21 +8,21 @@ import { ApiService } from '../services/api.service';
 import { NavState, NavStore } from '../stores/nav.store';
 import { RepoStore } from '../stores/repo.store';
 import { StructStore } from '../stores/struct.store';
-import { StackResolver } from './stack.resolver';
+import { StructResolver } from './struct.resolver';
 
 @Injectable({ providedIn: 'root' })
-export class StackFilesResolver implements Resolve<Promise<boolean>> {
+export class StructFilesResolver implements Resolve<Promise<boolean>> {
   constructor(
     private navQuery: NavQuery,
     private apiService: ApiService,
-    private stackResolver: StackResolver,
+    private structResolver: StructResolver,
     private repoStore: RepoStore,
     private structStore: StructStore,
     private navStore: NavStore
   ) {}
 
   async resolve(route: ActivatedRouteSnapshot): Promise<boolean> {
-    let pass = await this.stackResolver.resolve(route);
+    let pass = await this.structResolver.resolve(route).toPromise();
 
     if (pass === false) {
       return false;

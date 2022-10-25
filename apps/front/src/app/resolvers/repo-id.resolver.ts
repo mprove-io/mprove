@@ -9,7 +9,7 @@ import { MyDialogService } from '../services/my-dialog.service';
 import { NavState, NavStore } from '../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
-export class RepoResolver implements Resolve<Promise<boolean>> {
+export class RepoIdResolver implements Resolve<Promise<boolean>> {
   constructor(
     private navStore: NavStore,
     private navQuery: NavQuery,

@@ -9,29 +9,30 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
-import { DashboardsStore } from '../stores/dashboards.store';
+import { DashboardStore } from '../stores/dashboard.store';
 import { NavState } from '../stores/nav.store';
-import { StackModelsResolver } from './stack-models.resolver';
+import { StructResolver } from './struct.resolver';
 
 @Injectable({ providedIn: 'root' })
-export class StackModelsDashboardsResolver
-  implements Resolve<Promise<boolean>> {
+export class StructDashboardResolver implements Resolve<Promise<boolean>> {
   constructor(
-    private navQuery: NavQuery,
     private apiService: ApiService,
-    private stackModelsResolver: StackModelsResolver,
-    private dashboardsStore: DashboardsStore
+    private navQuery: NavQuery,
+    private structResolver: StructResolver,
+    private dashboardStore: DashboardStore
   ) {}
 
   async resolve(
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
   ): Promise<boolean> {
-    let pass = await this.stackModelsResolver.resolve(route);
+    let pass = await this.structResolver.resolve(route).toPromise();
 
     if (pass === false) {
       return false;
     }
+
+    let parametersDashboardId = route.params[common.PARAMETER_DASHBOARD_ID];
 
     let nav: NavState;
     this.navQuery
@@ -44,25 +45,24 @@ export class StackModelsDashboardsResolver
       )
       .subscribe();
 
-    let payload: apiToBackend.ToBackendGetDashboardsRequestPayload = {
+    let payload: apiToBackend.ToBackendGetDashboardRequestPayload = {
       projectId: nav.projectId,
       branchId: nav.branchId,
       envId: nav.envId,
-      isRepoProd: nav.isRepoProd
+      isRepoProd: nav.isRepoProd,
+      dashboardId: parametersDashboardId
     };
 
     return this.apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetDashboardsResponse) => {
+        map((resp: apiToBackend.ToBackendGetDashboardResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.dashboardsStore.update({
-              dashboards: resp.payload.dashboards
-            });
+            this.dashboardStore.update(resp.payload.dashboard);
             return true;
           } else {
             return false;

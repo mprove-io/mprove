@@ -1,25 +1,33 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  Resolve,
+  RouterStateSnapshot
+} from '@angular/router';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
-import { ModelsStore } from '../stores/models.store';
+import { DashboardsStore } from '../stores/dashboards.store';
 import { NavState } from '../stores/nav.store';
-import { StackResolver } from './stack.resolver';
+import { StructModelsResolver } from './struct-models.resolver';
 
 @Injectable({ providedIn: 'root' })
-export class StackModelsResolver implements Resolve<Promise<boolean>> {
+export class StructModelsDashboardsResolver
+  implements Resolve<Promise<boolean>> {
   constructor(
     private navQuery: NavQuery,
     private apiService: ApiService,
-    private stackResolver: StackResolver,
-    private modelsStore: ModelsStore
+    private structModelsResolver: StructModelsResolver,
+    private dashboardsStore: DashboardsStore
   ) {}
 
-  async resolve(route: ActivatedRouteSnapshot): Promise<boolean> {
-    let pass = await this.stackResolver.resolve(route);
+  async resolve(
+    route: ActivatedRouteSnapshot,
+    routerStateSnapshot: RouterStateSnapshot
+  ): Promise<boolean> {
+    let pass = await this.structModelsResolver.resolve(route);
 
     if (pass === false) {
       return false;
@@ -36,26 +44,25 @@ export class StackModelsResolver implements Resolve<Promise<boolean>> {
       )
       .subscribe();
 
-    let payload: apiToBackend.ToBackendGetModelsRequestPayload = {
+    let payload: apiToBackend.ToBackendGetDashboardsRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
-      envId: nav.envId
+      envId: nav.envId,
+      isRepoProd: nav.isRepoProd
     };
 
     return this.apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetModelsResponse) => {
+        map((resp: apiToBackend.ToBackendGetDashboardsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.modelsStore.update({
-              models: resp.payload.models
+            this.dashboardsStore.update({
+              dashboards: resp.payload.dashboards
             });
-
             return true;
           } else {
             return false;

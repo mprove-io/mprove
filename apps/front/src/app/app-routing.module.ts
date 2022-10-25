@@ -50,12 +50,13 @@ import { OrgResolver } from './resolvers/org.resolver';
 import { ProfileResolver } from './resolvers/profile.resolver';
 import { ProjectResolver } from './resolvers/project.resolver';
 import { QueryResolver } from './resolvers/query.resolver';
-import { StackDashboardResolver } from './resolvers/stack-dashboard.resolver';
-import { StackFilesResolver } from './resolvers/stack-files.resolver';
-import { StackModelResolver } from './resolvers/stack-model.resolver';
-import { StackModelsDashboardsResolver } from './resolvers/stack-models-dashboards.resolver';
-import { StackModelsVizsResolver } from './resolvers/stack-models-vizs.resolver';
-import { StackModelsResolver } from './resolvers/stack-models.resolver';
+import { RepoIdResolver } from './resolvers/repo-id.resolver';
+import { StructDashboardResolver } from './resolvers/struct-dashboard.resolver';
+import { StructFilesResolver } from './resolvers/struct-files.resolver';
+import { StructModelResolver } from './resolvers/struct-model.resolver';
+import { StructModelsDashboardsResolver } from './resolvers/struct-models-dashboards.resolver';
+import { StructModelsVizsResolver } from './resolvers/struct-models-vizs.resolver';
+import { StructModelsResolver } from './resolvers/struct-models.resolver';
 import { UsersResolver } from './resolvers/users.resolver';
 
 const routes: Routes = [
@@ -191,6 +192,7 @@ const routes: Routes = [
               },
               {
                 path: common.PATH_REPO + `/:${common.PARAMETER_REPO_ID}`,
+                resolve: [RepoIdResolver],
                 children: [
                   {
                     path:
@@ -202,7 +204,7 @@ const routes: Routes = [
                           {
                             component: FilesComponent,
                             path: common.PATH_FILES,
-                            resolve: [StackFilesResolver],
+                            resolve: [StructFilesResolver],
                             children: [
                               {
                                 component: FileEditorComponent,
@@ -217,17 +219,17 @@ const routes: Routes = [
                           {
                             component: VisualizationsComponent,
                             path: common.PATH_VISUALIZATIONS,
-                            resolve: [StackModelsVizsResolver]
+                            resolve: [StructModelsVizsResolver]
                           },
                           {
                             component: DashboardsComponent,
                             path: common.PATH_DASHBOARDS,
-                            resolve: [StackModelsDashboardsResolver]
+                            resolve: [StructModelsDashboardsResolver]
                           },
                           {
                             component: ModelsComponent,
                             path: common.PATH_MODELS,
-                            resolve: [StackModelsResolver]
+                            resolve: [StructModelsResolver]
                           },
                           {
                             component: ModelComponent,
@@ -235,7 +237,7 @@ const routes: Routes = [
                             path:
                               common.PATH_MODEL +
                               `/:${common.PARAMETER_MODEL_ID}`,
-                            resolve: [StackModelResolver],
+                            resolve: [StructModelResolver],
                             children: [
                               {
                                 component: MconfigComponent,
@@ -261,7 +263,7 @@ const routes: Routes = [
                             path:
                               common.PATH_DASHBOARD +
                               `/:${common.PARAMETER_DASHBOARD_ID}`,
-                            resolve: [StackDashboardResolver],
+                            resolve: [StructDashboardResolver],
                             children: []
                           }
                         ]

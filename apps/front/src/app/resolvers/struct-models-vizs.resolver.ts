@@ -7,19 +7,19 @@ import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 import { NavState } from '../stores/nav.store';
 import { VizsStore } from '../stores/vizs.store';
-import { StackModelsResolver } from './stack-models.resolver';
+import { StructModelsResolver } from './struct-models.resolver';
 
 @Injectable({ providedIn: 'root' })
-export class StackModelsVizsResolver implements Resolve<Promise<boolean>> {
+export class StructModelsVizsResolver implements Resolve<Promise<boolean>> {
   constructor(
     private navQuery: NavQuery,
     private apiService: ApiService,
-    private stackModelsResolver: StackModelsResolver,
+    private structModelsResolver: StructModelsResolver,
     private vizsStore: VizsStore
   ) {}
 
   async resolve(route: ActivatedRouteSnapshot): Promise<boolean> {
-    let pass = await this.stackModelsResolver.resolve(route);
+    let pass = await this.structModelsResolver.resolve(route);
 
     if (pass === false) {
       return false;
