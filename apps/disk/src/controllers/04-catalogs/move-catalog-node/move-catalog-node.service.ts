@@ -126,7 +126,8 @@ export class MoveCatalogNodeService {
         repoId: repoId,
         repoDir: repoDir,
         fetchOptions: fetchOptions,
-        isFetch: false
+        isFetch: true,
+        isCheckConflicts: true
       })
     );
 
@@ -134,7 +135,8 @@ export class MoveCatalogNodeService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
-      readFiles: true
+      readFiles: true,
+      isRootMproveDir: false
     });
 
     let payload: apiToDisk.ToDiskMoveCatalogNodeResponsePayload = {

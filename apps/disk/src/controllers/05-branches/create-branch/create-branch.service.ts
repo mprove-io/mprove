@@ -118,7 +118,8 @@ export class CreateBranchService {
         repoId: repoId,
         repoDir: repoDir,
         fetchOptions: fetchOptions,
-        isFetch: true
+        isFetch: true,
+        isCheckConflicts: true
       })
     );
 
@@ -126,7 +127,8 @@ export class CreateBranchService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
-      readFiles: false
+      readFiles: false,
+      isRootMproveDir: false
     });
 
     let payload: apiToDisk.ToDiskCreateBranchResponsePayload = {

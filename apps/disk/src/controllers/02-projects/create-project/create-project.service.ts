@@ -99,7 +99,8 @@ export class CreateProjectService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: common.PROD_REPO_ID,
-      readFiles: true
+      readFiles: true,
+      isRootMproveDir: false
     });
 
     let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
@@ -109,7 +110,8 @@ export class CreateProjectService {
         repoId: common.PROD_REPO_ID,
         repoDir: `${projectDir}/${common.PROD_REPO_ID}`,
         fetchOptions: fetchOptions,
-        isFetch: true
+        isFetch: true,
+        isCheckConflicts: true
       })
     );
 

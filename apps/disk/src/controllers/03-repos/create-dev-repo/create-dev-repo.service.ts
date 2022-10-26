@@ -89,7 +89,8 @@ export class CreateDevRepoService {
         repoId: devRepoId,
         repoDir: devRepoDir,
         fetchOptions: cloneOptions.fetchOpts,
-        isFetch: true
+        isFetch: true,
+        isCheckConflicts: true
       })
     );
 
@@ -97,7 +98,8 @@ export class CreateDevRepoService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: devRepoId,
-      readFiles: false
+      readFiles: false,
+      isRootMproveDir: false
     });
 
     let payload: apiToDisk.ToDiskCreateDevRepoResponsePayload = {

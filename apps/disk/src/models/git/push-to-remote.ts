@@ -18,7 +18,8 @@ export async function pushToRemote(item: {
       repoId: item.repoId,
       repoDir: item.repoDir,
       fetchOptions: item.fetchOptions,
-      isFetch: true
+      isFetch: true,
+      isCheckConflicts: false
     })
   );
 

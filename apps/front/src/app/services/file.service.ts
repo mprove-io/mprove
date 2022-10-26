@@ -6,7 +6,7 @@ import { FileQuery } from '../queries/file.query';
 import { NavQuery } from '../queries/nav.query';
 import { FileState, FileStore } from '../stores/file.store';
 import { NavState, NavStore } from '../stores/nav.store';
-import { RepoStore } from '../stores/repo.store';
+import { RepoState, RepoStore } from '../stores/repo.store';
 import { StructStore } from '../stores/struct.store';
 import { ApiService } from './api.service';
 
@@ -70,7 +70,12 @@ export class FileService {
       .pipe(
         map((resp: apiToBackend.ToBackendGetFileResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.repoStore.update(resp.payload.repo);
+            this.repoStore.update(state =>
+              Object.assign(resp.payload.repo, <RepoState>{
+                conflicts: state.conflicts, // getFile does not check for conflicts
+                repoStatus: state.repoStatus // getFile does not use git fetch
+              })
+            );
             this.structStore.update(resp.payload.struct);
             this.navStore.update(state =>
               Object.assign({}, state, <NavState>{

@@ -112,7 +112,8 @@ export class PullRepoService {
         repoId: repoId,
         repoDir: repoDir,
         fetchOptions: fetchOptions,
-        isFetch: true
+        isFetch: true,
+        isCheckConflicts: true
       })
     );
 
@@ -120,7 +121,8 @@ export class PullRepoService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
-      readFiles: true
+      readFiles: true,
+      isRootMproveDir: false
     });
 
     let payload: apiToDisk.ToDiskPullRepoResponsePayload = {

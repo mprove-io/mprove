@@ -89,7 +89,7 @@ export class CommitRepoService {
       repoDir: repoDir,
       branchName: branch,
       fetchOptions: fetchOptions,
-      isFetch: true
+      isFetch: false
     });
 
     //
@@ -107,7 +107,8 @@ export class CommitRepoService {
         repoId: repoId,
         repoDir: repoDir,
         fetchOptions: fetchOptions,
-        isFetch: true
+        isFetch: true,
+        isCheckConflicts: true
       })
     );
 
@@ -115,7 +116,8 @@ export class CommitRepoService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
-      readFiles: false
+      readFiles: false,
+      isRootMproveDir: false
     });
 
     let payload: apiToDisk.ToDiskCommitRepoResponsePayload = {

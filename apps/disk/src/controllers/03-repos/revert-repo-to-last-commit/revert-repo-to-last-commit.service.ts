@@ -88,7 +88,7 @@ export class RevertRepoToLastCommitService {
       repoDir: repoDir,
       branchName: branch,
       fetchOptions: fetchOptions,
-      isFetch: true
+      isFetch: false
     });
 
     //
@@ -104,7 +104,8 @@ export class RevertRepoToLastCommitService {
         repoId: repoId,
         repoDir: repoDir,
         fetchOptions: fetchOptions,
-        isFetch: true
+        isFetch: true,
+        isCheckConflicts: true
       })
     );
 
@@ -112,7 +113,8 @@ export class RevertRepoToLastCommitService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
-      readFiles: true
+      readFiles: true,
+      isRootMproveDir: false
     });
 
     let payload: apiToDisk.ToDiskRevertRepoToLastCommitResponsePayload = {

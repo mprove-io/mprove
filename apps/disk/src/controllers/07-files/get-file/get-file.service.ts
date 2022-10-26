@@ -111,7 +111,8 @@ export class GetFileService {
         repoId: repoId,
         repoDir: repoDir,
         fetchOptions: fetchOptions,
-        isFetch: false
+        isFetch: false,
+        isCheckConflicts: false
       })
     );
 
@@ -119,7 +120,8 @@ export class GetFileService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
-      readFiles: true
+      readFiles: true,
+      isRootMproveDir: false
     });
 
     let payload: apiToDisk.ToDiskGetFileResponsePayload = {

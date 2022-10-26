@@ -136,7 +136,8 @@ export class PushRepoService {
         repoId: repoId,
         repoDir: repoDir,
         fetchOptions: fetchOptions,
-        isFetch: true
+        isFetch: true,
+        isCheckConflicts: true
       })
     );
 
@@ -144,7 +145,8 @@ export class PushRepoService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
-      readFiles: true
+      readFiles: true,
+      isRootMproveDir: false
     });
 
     let payload: apiToDisk.ToDiskPushRepoResponsePayload = {

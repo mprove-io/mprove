@@ -12,6 +12,7 @@ export async function getNodesAndFiles(item: {
   projectDir: string;
   repoId: string;
   readFiles: boolean;
+  isRootMproveDir: boolean;
 }) {
   let topNode: common.DiskCatalogNode = {
     id: item.projectId,
@@ -26,10 +27,13 @@ export async function getNodesAndFiles(item: {
 
   let configPath = repoDir + '/' + common.MPROVE_CONFIG_FILENAME;
 
-  let mproveDir = await getMproveDirDisk({
-    dir: repoDir,
-    configPath: configPath
-  });
+  let mproveDir =
+    item.isRootMproveDir === true
+      ? repoDir
+      : await getMproveDirDisk({
+          dir: repoDir,
+          configPath: configPath
+        });
 
   let itemDir = <interfaces.ItemCatalog>(
     await getDirCatalogNodesAndFilesRecursive({

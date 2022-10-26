@@ -11,6 +11,7 @@ export async function getRepoStatus(item: {
   repoDir: string;
   fetchOptions: nodegit.FetchOptions;
   isFetch: boolean;
+  isCheckConflicts: boolean;
 }): Promise<interfaces.ItemStatus> {
   // priorities order:
   // NeedSave (frontend only)
@@ -40,36 +41,40 @@ export async function getRepoStatus(item: {
     await diffTreeToIndex.patches()
   );
 
-  // check conflicts manually instead of git - because they are already committed
+  if (item.isCheckConflicts === true) {
+    // check conflicts manually instead of git - because they are already committed
+    let itemDevRepoCatalog = <interfaces.ItemCatalog>(
+      await disk.getNodesAndFiles({
+        projectId: item.projectId,
+        projectDir: item.projectDir,
+        repoId: item.repoId,
+        readFiles: true,
+        isRootMproveDir: true
+      })
+    );
 
-  let itemDevRepoCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
-    projectId: item.projectId,
-    projectDir: item.projectDir,
-    repoId: item.repoId,
-    readFiles: true
-  });
+    itemDevRepoCatalog.files.forEach(file => {
+      let fileArray = file.content.split('\n');
 
-  itemDevRepoCatalog.files.forEach(file => {
-    let fileArray = file.content.split('\n');
-
-    fileArray.forEach((s: string, ind) => {
-      if (s.match(common.MyRegex.CONTAINS_CONFLICT_START())) {
-        conflicts.push({
-          fileId: file.fileId,
-          fileName: file.name,
-          lineNumber: ind + 1
-        });
-      }
+      fileArray.forEach((s: string, ind) => {
+        if (s.match(common.MyRegex.CONTAINS_CONFLICT_START())) {
+          conflicts.push({
+            fileId: file.fileId,
+            fileName: file.name,
+            lineNumber: ind + 1
+          });
+        }
+      });
     });
-  });
 
-  // RETURN NeedResolve
-  if (conflicts.length > 0) {
-    return {
-      repoStatus: common.RepoStatusEnum.NeedResolve,
-      conflicts: conflicts,
-      currentBranch: currentBranchName
-    };
+    // RETURN NeedResolve
+    if (conflicts.length > 0) {
+      return {
+        repoStatus: common.RepoStatusEnum.NeedResolve,
+        conflicts: conflicts,
+        currentBranch: currentBranchName
+      };
+    }
   }
 
   // RETURN NeedCommit

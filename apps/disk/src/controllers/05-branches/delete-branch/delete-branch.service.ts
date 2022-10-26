@@ -86,7 +86,7 @@ export class DeleteBranchService {
       repoDir: repoDir,
       branchName: defaultBranch,
       fetchOptions: fetchOptions,
-      isFetch: true
+      isFetch: false
     });
 
     let errorIfNoLocalBranch = true;
@@ -131,7 +131,8 @@ export class DeleteBranchService {
         repoId: repoId,
         repoDir: repoDir,
         fetchOptions: fetchOptions,
-        isFetch: true
+        isFetch: true,
+        isCheckConflicts: true
       })
     );
 
@@ -139,7 +140,8 @@ export class DeleteBranchService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
-      readFiles: false
+      readFiles: false,
+      isRootMproveDir: false
     });
 
     let payload: apiToDisk.ToDiskDeleteBranchResponsePayload = {

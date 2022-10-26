@@ -88,7 +88,8 @@ export class SeedProjectService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: devRepoId,
-      readFiles: true
+      readFiles: true,
+      isRootMproveDir: false
     });
 
     let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
@@ -98,7 +99,8 @@ export class SeedProjectService {
         repoId: devRepoId,
         repoDir: devRepoDir,
         fetchOptions: fetchOptions,
-        isFetch: true
+        isFetch: true,
+        isCheckConflicts: true
       })
     );
 

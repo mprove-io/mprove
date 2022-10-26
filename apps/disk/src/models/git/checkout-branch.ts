@@ -19,7 +19,8 @@ export async function checkoutBranch(item: {
       repoId: item.repoId,
       repoDir: item.repoDir,
       fetchOptions: item.fetchOptions,
-      isFetch: item.isFetch
+      isFetch: item.isFetch,
+      isCheckConflicts: false
     })
   );
 

@@ -104,7 +104,8 @@ export class RevertRepoToRemoteService {
         repoId: repoId,
         repoDir: repoDir,
         fetchOptions: fetchOptions,
-        isFetch: true
+        isFetch: true,
+        isCheckConflicts: true
       })
     );
 
@@ -112,7 +113,8 @@ export class RevertRepoToRemoteService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
-      readFiles: true
+      readFiles: true,
+      isRootMproveDir: false
     });
 
     let payload: apiToDisk.ToDiskRevertRepoToRemoteResponsePayload = {

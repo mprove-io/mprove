@@ -98,7 +98,8 @@ export class GetCatalogFilesService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
-      readFiles: true
+      readFiles: true,
+      isRootMproveDir: false
     });
 
     let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
@@ -108,7 +109,8 @@ export class GetCatalogFilesService {
         repoId: repoId,
         repoDir: repoDir,
         fetchOptions: fetchOptions,
-        isFetch: false
+        isFetch: false,
+        isCheckConflicts: false
       })
     );
 
