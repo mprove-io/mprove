@@ -3,7 +3,7 @@ import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
-let testId = 'disk-pull-repo__force-need-resolve';
+let testId = 'disk-merge-repo__force-need-push-conflicts';
 
 let traceId = testId;
 let orgId = testId;
@@ -11,7 +11,7 @@ let projectId = common.makeId();
 let projectName = 'p1';
 
 test('1', async t => {
-  let resp: apiToDisk.ToDiskPullRepoResponse;
+  let resp: apiToDisk.ToDiskMergeRepoResponse;
 
   try {
     let { messageService } = await prepareTest(orgId);
@@ -41,20 +41,23 @@ test('1', async t => {
       }
     };
 
-    let createDevRepoRequest: apiToDisk.ToDiskCreateDevRepoRequest = {
+    let createBranchRequest: apiToDisk.ToDiskCreateBranchRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateBranch,
         traceId: traceId
       },
       payload: {
         orgId: orgId,
         projectId: projectId,
-        devRepoId: 'r2',
+        repoId: 'r1',
+        fromBranch: common.BRANCH_MASTER,
+        newBranch: 'b2',
+        isFromRemote: false,
         remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
 
-    let r1_master_saveFileRequest_1: apiToDisk.ToDiskSaveFileRequest = {
+    let r1_master_saveFileRequest: apiToDisk.ToDiskSaveFileRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
         traceId: traceId
@@ -71,7 +74,7 @@ test('1', async t => {
       }
     };
 
-    let r1_master_commitRepoRequest_1: apiToDisk.ToDiskCommitRepoRequest = {
+    let r1_master_commitRepoRequest: apiToDisk.ToDiskCommitRepoRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
         traceId: traceId
@@ -82,12 +85,12 @@ test('1', async t => {
         repoId: 'r1',
         branch: common.BRANCH_MASTER,
         userAlias: 'u1',
-        commitMessage: 'r1-commitMessage-1',
+        commitMessage: 'commitMessage-1',
         remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
 
-    let r1_master_saveFileRequest_2: apiToDisk.ToDiskSaveFileRequest = {
+    let r1_b2_saveFileRequest: apiToDisk.ToDiskSaveFileRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
         traceId: traceId
@@ -96,7 +99,7 @@ test('1', async t => {
         orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
-        branch: common.BRANCH_MASTER,
+        branch: 'b2',
         fileNodeId: `${projectId}/readme.md`,
         content: '2',
         userAlias: 'u1',
@@ -104,7 +107,7 @@ test('1', async t => {
       }
     };
 
-    let r1_master_commitRepoRequest_2: apiToDisk.ToDiskCommitRepoRequest = {
+    let r1_b2_commitRepoRequest: apiToDisk.ToDiskCommitRepoRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
         traceId: traceId
@@ -113,95 +116,48 @@ test('1', async t => {
         orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
-        branch: common.BRANCH_MASTER,
+        branch: 'b2',
         userAlias: 'u1',
-        commitMessage: 'r1-commitMessage-2',
+        commitMessage: 'commitMessage-2',
         remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
 
-    let r1_master_pushRepoRequest: apiToDisk.ToDiskPushRepoRequest = {
+    let r1_b2_mergeRepoRequest: apiToDisk.ToDiskMergeRepoRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskPushRepo,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskMergeRepo,
         traceId: traceId
       },
       payload: {
         orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
-        branch: common.BRANCH_MASTER,
+        branch: 'b2',
         userAlias: 'u1',
-        remoteType: common.ProjectRemoteTypeEnum.Managed
-      }
-    };
-
-    let r2_master_saveFileRequest: apiToDisk.ToDiskSaveFileRequest = {
-      info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
-        projectId: projectId,
-        repoId: 'r2',
-        branch: common.BRANCH_MASTER,
-        fileNodeId: `${projectId}/readme.md`,
-        content: '3',
-        userAlias: 'u2',
-        remoteType: common.ProjectRemoteTypeEnum.Managed
-      }
-    };
-
-    let r2_master_commitRepoRequest: apiToDisk.ToDiskCommitRepoRequest = {
-      info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
-        projectId: projectId,
-        repoId: 'r2',
-        branch: common.BRANCH_MASTER,
-        userAlias: 'u2',
-        commitMessage: 'r2-commitMessage-3',
-        remoteType: common.ProjectRemoteTypeEnum.Managed
-      }
-    };
-
-    let r2_master_pullRepoRequest: apiToDisk.ToDiskPullRepoRequest = {
-      info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskPullRepo,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
-        projectId: projectId,
-        repoId: 'r2',
-        branch: common.BRANCH_MASTER,
-        userAlias: 'u2',
+        theirBranch: common.BRANCH_MASTER,
+        isTheirBranchRemote: false,
         remoteType: common.ProjectRemoteTypeEnum.Managed
       }
     };
 
     await messageService.processMessage(createOrgRequest);
     await messageService.processMessage(createProjectRequest);
-    await messageService.processMessage(createDevRepoRequest);
 
     // await helper.delay(1000);
 
-    await messageService.processMessage(r1_master_saveFileRequest_1);
-    await messageService.processMessage(r1_master_commitRepoRequest_1);
-    await messageService.processMessage(r1_master_saveFileRequest_2);
-    await messageService.processMessage(r1_master_commitRepoRequest_2);
-    await messageService.processMessage(r1_master_pushRepoRequest);
+    await messageService.processMessage(createBranchRequest);
 
-    await messageService.processMessage(r2_master_saveFileRequest);
-    await messageService.processMessage(r2_master_commitRepoRequest);
+    await messageService.processMessage(r1_master_saveFileRequest);
+    await messageService.processMessage(r1_master_commitRepoRequest);
 
-    resp = await messageService.processMessage(r2_master_pullRepoRequest);
+    await messageService.processMessage(r1_b2_saveFileRequest);
+    await messageService.processMessage(r1_b2_commitRepoRequest);
+
+    resp = await messageService.processMessage(r1_b2_mergeRepoRequest);
   } catch (e) {
     common.logToConsole(e);
   }
 
-  t.is(resp.payload.repo.repoStatus, common.RepoStatusEnum.NeedResolve);
+  t.is(resp.payload.repo.repoStatus, common.RepoStatusEnum.NeedPush);
+  t.is(resp.payload.repo.conflicts.length > 0, true);
 });

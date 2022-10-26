@@ -16,7 +16,6 @@ export async function getRepoStatus(item: {
   // priorities order:
   // NeedSave (frontend only)
   // NeedStage (no need because auto add file after each save)
-  // NeedResolve
   // NeedCommit
   // NeedPull
   // NeedPush
@@ -66,15 +65,6 @@ export async function getRepoStatus(item: {
         }
       });
     });
-
-    // RETURN NeedResolve
-    if (conflicts.length > 0) {
-      return {
-        repoStatus: common.RepoStatusEnum.NeedResolve,
-        conflicts: conflicts,
-        currentBranch: currentBranchName
-      };
-    }
   }
 
   // RETURN NeedCommit

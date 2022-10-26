@@ -1,10 +1,10 @@
-<div class="flex h-full cursor-default flex-col bg-blue1">
+<div class="bg-blue1 flex h-full cursor-default flex-col">
   <div class="mx-6 mb-6 mt-8 flex h-full flex-row">
     <div class="flex min-w-[2px] flex-grow flex-col">
       <div class="flex h-11 flex-row items-center justify-between">
         <div
           data-cy="filesTitle"
-          class="flex items-center self-center text-2xl font-semibold text-gray1"
+          class="text-gray1 flex items-center self-center text-2xl font-semibold"
           >{{ pageTitle }}
         </div>
 
@@ -27,12 +27,12 @@
           <ng-template #templateCommit>
             <div *ngIf="needSave === true">Need to Save changes</div>
 
-            <div
+            <!-- <div
               *ngIf="
-                needSave === false && repo.repoStatus === repoStatusNeedResolve
+                needSave === false && repo.conflicts.length > 0
               "
               >Need to Resolve conflicts</div
-            >
+            > -->
 
             <div
               *ngIf="
@@ -113,12 +113,12 @@
               >Need to Commit changes</div
             >
 
-            <div
+            <!-- <div
               *ngIf="
-                needSave === false && repo.repoStatus === repoStatusNeedResolve
+                needSave === false && repo.conflicts.length > 0
               "
               >Need to Resolve conflicts</div
-            >
+            > -->
 
             <div
               *ngIf="

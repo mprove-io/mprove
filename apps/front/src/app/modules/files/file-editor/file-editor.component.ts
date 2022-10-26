@@ -147,7 +147,7 @@ export class FileEditorComponent implements OnDestroy {
       return;
     }
 
-    if (this.repo.repoStatus === common.RepoStatusEnum.NeedResolve) {
+    if (this.repo.conflicts.length > 0) {
       let conflictMarkers: monaco.editor.IMarkerData[] = [];
 
       this.repo.conflicts

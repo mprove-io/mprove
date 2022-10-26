@@ -3,7 +3,7 @@ import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
-let testId = 'disk-merge-repo__remote-force-need-resolve';
+let testId = 'disk-merge-repo__remote-force-need-push-conflicts';
 
 let traceId = testId;
 let orgId = testId;
@@ -174,5 +174,6 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.is(resp.payload.repo.repoStatus, common.RepoStatusEnum.NeedResolve);
+  t.is(resp.payload.repo.repoStatus, common.RepoStatusEnum.NeedPush);
+  t.is(resp.payload.repo.conflicts.length > 0, true);
 });

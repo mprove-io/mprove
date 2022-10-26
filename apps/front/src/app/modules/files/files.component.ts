@@ -29,7 +29,6 @@ export class FilesComponent implements OnInit {
   pageTitle = constants.FILES_PAGE_TITLE;
 
   repoStatusNeedCommit = common.RepoStatusEnum.NeedCommit;
-  repoStatusNeedResolve = common.RepoStatusEnum.NeedResolve;
   repoStatusNeedPull = common.RepoStatusEnum.NeedPull;
   repoStatusNeedPush = common.RepoStatusEnum.NeedPush;
   repoStatusOk = common.RepoStatusEnum.Ok;
