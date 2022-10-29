@@ -4,7 +4,6 @@ import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
-import { AvatarsRepository } from '~backend/models/store-repositories/avatars.repository';
 import { BranchesRepository } from '~backend/models/store-repositories/branches.repository';
 import { BridgesService } from '~backend/services/bridges.service';
 import { EnvsService } from '~backend/services/envs.service';
@@ -19,7 +18,6 @@ export class GetStructController {
     private membersService: MembersService,
     private structsService: StructsService,
     private bridgesService: BridgesService,
-    private avatarsRepository: AvatarsRepository,
     private branchesRepository: BranchesRepository,
     private envsService: EnvsService
   ) {}
@@ -50,9 +48,9 @@ export class GetStructController {
     if (common.isUndefined(branch)) {
       let payloadBranchDoesNotExist: apiToBackend.ToBackendGetStructResponsePayload = {
         isBranchExist: false,
+        userMember: undefined,
         needValidate: undefined,
-        struct: undefined,
-        userMember: undefined
+        struct: undefined
       };
 
       return payloadBranchDoesNotExist;
@@ -76,16 +74,6 @@ export class GetStructController {
       });
 
       let apiMember = wrapper.wrapToApiMember(userMember);
-
-      let avatar = await this.avatarsRepository.findOne({
-        where: {
-          user_id: user.user_id
-        }
-      });
-
-      if (common.isDefined(avatar)) {
-        apiMember.avatarSmall = avatar.avatar_small;
-      }
 
       let payloadBranchExist: apiToBackend.ToBackendGetStructResponsePayload = {
         isBranchExist: true,

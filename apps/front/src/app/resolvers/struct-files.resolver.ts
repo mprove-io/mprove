@@ -1,33 +1,31 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
+import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
 import { map, take } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { enums } from '~front/barrels/enums';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
+import { MyDialogService } from '../services/my-dialog.service';
+import { MemberState, MemberStore } from '../stores/member.store';
 import { NavState, NavStore } from '../stores/nav.store';
 import { RepoStore } from '../stores/repo.store';
 import { StructStore } from '../stores/struct.store';
-import { StructResolver } from './struct.resolver';
 
 @Injectable({ providedIn: 'root' })
 export class StructFilesResolver implements Resolve<Promise<boolean>> {
   constructor(
     private navQuery: NavQuery,
     private apiService: ApiService,
-    private structResolver: StructResolver,
+    private memberStore: MemberStore,
+    private myDialogService: MyDialogService,
     private repoStore: RepoStore,
     private structStore: StructStore,
-    private navStore: NavStore
+    private navStore: NavStore,
+    private router: Router
   ) {}
 
   async resolve(route: ActivatedRouteSnapshot): Promise<boolean> {
-    let pass = await this.structResolver.resolve(route).toPromise();
-
-    if (pass === false) {
-      return false;
-    }
-
     let nav: NavState;
     this.navQuery
       .select()
@@ -56,24 +54,41 @@ export class StructFilesResolver implements Resolve<Promise<boolean>> {
       .pipe(
         map((resp: apiToBackend.ToBackendGetRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            // if (
-            //   common.isUndefined(resp?.payload?.repo) ||
-            //   common.isUndefined(resp?.payload?.struct)
-            // ) {
-            //   return false;
-            // }
+            if (resp.payload.isBranchExist === true) {
+              this.memberStore.update(state =>
+                Object.assign(resp.payload.userMember, <MemberState>{
+                  avatarSmall: state.avatarSmall
+                })
+              );
+              this.structStore.update(resp.payload.struct);
+              this.navStore.update(state =>
+                Object.assign({}, state, <NavState>{
+                  branchId: branchId,
+                  envId: envId,
+                  needValidate: resp.payload.needValidate
+                })
+              );
+              this.repoStore.update(resp.payload.repo);
 
-            this.repoStore.update(resp.payload.repo);
-            this.structStore.update(resp.payload.struct);
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                branchId: branchId,
-                envId: envId,
-                needValidate: resp.payload.needValidate
-              })
-            );
+              return true;
+            } else {
+              this.myDialogService.showError({
+                errorData: {
+                  message: enums.ErEnum.BRANCH_DOES_NOT_EXIST
+                },
+                isThrow: false
+              });
 
-            return true;
+              this.router.navigate([
+                common.PATH_ORG,
+                nav.orgId,
+                common.PATH_PROJECT,
+                nav.projectId,
+                common.PATH_SETTINGS
+              ]);
+
+              return false;
+            }
           } else {
             return false;
           }

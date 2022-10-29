@@ -24,6 +24,24 @@ export class ToBackendGetVizsRequest extends ToBackendRequest {
 }
 
 export class ToBackendGetVizsResponsePayload {
+  @IsBoolean()
+  isBranchExist: boolean;
+
+  @IsBoolean()
+  needValidate: boolean;
+
+  @ValidateNested()
+  @Type(() => common.Repo)
+  struct: common.Struct;
+
+  @ValidateNested()
+  @Type(() => common.Member)
+  userMember: common.Member;
+
+  @ValidateNested()
+  @Type(() => common.ModelX)
+  models: common.ModelX[];
+
   @ValidateNested()
   @Type(() => common.VizX)
   vizs: common.VizX[];

@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import {
+  ActivatedRouteSnapshot,
+  Resolve,
+  Router,
+  RouterStateSnapshot
+} from '@angular/router';
 import { map, take } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -8,23 +12,30 @@ import { enums } from '~front/barrels/enums';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 import { MyDialogService } from '../services/my-dialog.service';
-import { MemberStore } from '../stores/member.store';
+import { DashboardsStore } from '../stores/dashboards.store';
+import { MemberState, MemberStore } from '../stores/member.store';
+import { ModelsStore } from '../stores/models.store';
 import { NavState, NavStore } from '../stores/nav.store';
 import { StructStore } from '../stores/struct.store';
 
 @Injectable({ providedIn: 'root' })
-export class StructResolver implements Resolve<Observable<boolean>> {
+export class StructDashboardsResolver implements Resolve<Promise<boolean>> {
   constructor(
     private navQuery: NavQuery,
+    private apiService: ApiService,
+    private dashboardsStore: DashboardsStore,
+    private modelsStore: ModelsStore,
     private structStore: StructStore,
     private memberStore: MemberStore,
     private myDialogService: MyDialogService,
-    private apiService: ApiService,
     private navStore: NavStore,
     private router: Router
   ) {}
 
-  resolve(route: ActivatedRouteSnapshot): Observable<boolean> {
+  async resolve(
+    route: ActivatedRouteSnapshot,
+    routerStateSnapshot: RouterStateSnapshot
+  ): Promise<boolean> {
     let nav: NavState;
     this.navQuery
       .select()
@@ -36,24 +47,28 @@ export class StructResolver implements Resolve<Observable<boolean>> {
     let branchId = route.params[common.PARAMETER_BRANCH_ID];
     let envId = route.params[common.PARAMETER_ENV_ID];
 
-    let payload: apiToBackend.ToBackendGetStructRequestPayload = {
+    let payload: apiToBackend.ToBackendGetDashboardsRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
-      branchId: branchId,
-      envId: envId
+      branchId: nav.branchId,
+      envId: nav.envId,
+      isRepoProd: nav.isRepoProd
     };
 
     return this.apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetStruct,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetStructResponse) => {
+        map((resp: apiToBackend.ToBackendGetDashboardsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             if (resp.payload.isBranchExist === true) {
-              this.memberStore.update(resp.payload.userMember);
+              this.memberStore.update(state =>
+                Object.assign(resp.payload.userMember, <MemberState>{
+                  avatarSmall: state.avatarSmall
+                })
+              );
               this.structStore.update(resp.payload.struct);
               this.navStore.update(state =>
                 Object.assign({}, state, <NavState>{
@@ -62,6 +77,11 @@ export class StructResolver implements Resolve<Observable<boolean>> {
                   needValidate: resp.payload.needValidate
                 })
               );
+              this.modelsStore.update({ models: resp.payload.models });
+
+              this.dashboardsStore.update({
+                dashboards: resp.payload.dashboards
+              });
 
               return true;
             } else {
@@ -86,6 +106,7 @@ export class StructResolver implements Resolve<Observable<boolean>> {
             return false;
           }
         })
-      );
+      )
+      .toPromise();
   }
 }

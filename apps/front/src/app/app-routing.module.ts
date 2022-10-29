@@ -52,11 +52,11 @@ import { ProjectResolver } from './resolvers/project.resolver';
 import { QueryResolver } from './resolvers/query.resolver';
 import { RepoIdResolver } from './resolvers/repo-id.resolver';
 import { StructDashboardResolver } from './resolvers/struct-dashboard.resolver';
+import { StructDashboardsResolver } from './resolvers/struct-dashboards.resolver';
 import { StructFilesResolver } from './resolvers/struct-files.resolver';
 import { StructModelResolver } from './resolvers/struct-model.resolver';
-import { StructModelsDashboardsResolver } from './resolvers/struct-models-dashboards.resolver';
-import { StructModelsVizsResolver } from './resolvers/struct-models-vizs.resolver';
 import { StructModelsResolver } from './resolvers/struct-models.resolver';
+import { StructVizsResolver } from './resolvers/struct-vizs.resolver';
 import { UsersResolver } from './resolvers/users.resolver';
 
 const routes: Routes = [
@@ -219,12 +219,12 @@ const routes: Routes = [
                           {
                             component: VisualizationsComponent,
                             path: common.PATH_VISUALIZATIONS,
-                            resolve: [StructModelsVizsResolver]
+                            resolve: [StructVizsResolver]
                           },
                           {
                             component: DashboardsComponent,
                             path: common.PATH_DASHBOARDS,
-                            resolve: [StructModelsDashboardsResolver]
+                            resolve: [StructDashboardsResolver]
                           },
                           {
                             component: ModelsComponent,

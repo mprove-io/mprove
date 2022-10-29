@@ -27,9 +27,8 @@ export class ToBackendGetRepoRequest extends ToBackendRequest {
 }
 
 export class ToBackendGetRepoResponsePayload {
-  @ValidateNested()
-  @Type(() => common.Repo)
-  repo: common.Repo;
+  @IsBoolean()
+  isBranchExist: boolean;
 
   @IsBoolean()
   needValidate: boolean;
@@ -37,6 +36,14 @@ export class ToBackendGetRepoResponsePayload {
   @ValidateNested()
   @Type(() => common.Repo)
   struct: common.Struct;
+
+  @ValidateNested()
+  @Type(() => common.Member)
+  userMember: common.Member;
+
+  @ValidateNested()
+  @Type(() => common.Repo)
+  repo: common.Repo;
 }
 
 export class ToBackendGetRepoResponse extends common.MyResponse {

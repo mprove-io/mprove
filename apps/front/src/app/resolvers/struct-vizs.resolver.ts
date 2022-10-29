@@ -11,12 +11,14 @@ import { MemberState, MemberStore } from '../stores/member.store';
 import { ModelsStore } from '../stores/models.store';
 import { NavState, NavStore } from '../stores/nav.store';
 import { StructStore } from '../stores/struct.store';
+import { VizsStore } from '../stores/vizs.store';
 
 @Injectable({ providedIn: 'root' })
-export class StructModelsResolver implements Resolve<Promise<boolean>> {
+export class StructVizsResolver implements Resolve<Promise<boolean>> {
   constructor(
     private navQuery: NavQuery,
     private apiService: ApiService,
+    private vizsStore: VizsStore,
     private modelsStore: ModelsStore,
     private structStore: StructStore,
     private memberStore: MemberStore,
@@ -37,21 +39,21 @@ export class StructModelsResolver implements Resolve<Promise<boolean>> {
     let branchId = route.params[common.PARAMETER_BRANCH_ID];
     let envId = route.params[common.PARAMETER_ENV_ID];
 
-    let payload: apiToBackend.ToBackendGetModelsRequestPayload = {
+    let payload: apiToBackend.ToBackendGetVizsRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
-      envId: nav.envId
+      envId: nav.envId,
+      isRepoProd: nav.isRepoProd
     };
 
     return this.apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetModelsResponse) => {
+        map((resp: apiToBackend.ToBackendGetVizsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             if (resp.payload.isBranchExist === true) {
               this.memberStore.update(state =>
@@ -68,6 +70,8 @@ export class StructModelsResolver implements Resolve<Promise<boolean>> {
                 })
               );
               this.modelsStore.update({ models: resp.payload.models });
+
+              this.vizsStore.update({ vizs: resp.payload.vizs });
 
               return true;
             } else {

@@ -27,6 +27,20 @@ export class ToBackendGetModelRequest extends ToBackendRequest {
 }
 
 export class ToBackendGetModelResponsePayload {
+  @IsBoolean()
+  isBranchExist: boolean;
+
+  @IsBoolean()
+  needValidate: boolean;
+
+  @ValidateNested()
+  @Type(() => common.Repo)
+  struct: common.Struct;
+
+  @ValidateNested()
+  @Type(() => common.Member)
+  userMember: common.Member;
+
   @ValidateNested()
   @Type(() => common.Model)
   model: common.Model;
