@@ -29,7 +29,7 @@ export class GetEvsController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckExists({
+    let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
       memberId: user.user_id
     });
@@ -37,7 +37,7 @@ export class GetEvsController {
     let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
-      member: member
+      member: userMember
     });
 
     let evs = await this.evsRepository.find({
@@ -45,7 +45,10 @@ export class GetEvsController {
       env_id: envId
     });
 
+    let apiMember = wrapper.wrapToApiMember(userMember);
+
     let payload: apiToBackend.ToBackendGetEvsResponsePayload = {
+      userMember: apiMember,
       evs: evs.map(x => wrapper.wrapToApiEv(x))
     };
 

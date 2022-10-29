@@ -4,21 +4,21 @@ import {
   Resolve,
   RouterStateSnapshot
 } from '@angular/router';
-import { map, take, tap } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 import { EvsStore } from '../stores/evs.store';
+import { MemberState, MemberStore } from '../stores/member.store';
 import { NavState } from '../stores/nav.store';
-import { MemberResolver } from './member.resolver';
 
 @Injectable({ providedIn: 'root' })
-export class MemberEvsResolver implements Resolve<Promise<boolean>> {
+export class ProjectEvsResolver implements Resolve<Promise<boolean>> {
   constructor(
     private navQuery: NavQuery,
     private apiService: ApiService,
-    private memberResolver: MemberResolver,
+    private memberStore: MemberStore,
     private evsStore: EvsStore
   ) {}
 
@@ -26,22 +26,13 @@ export class MemberEvsResolver implements Resolve<Promise<boolean>> {
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
   ): Promise<boolean> {
-    let pass = await this.memberResolver.resolve().toPromise();
-
-    if (pass === false) {
-      return false;
-    }
-
     let nav: NavState;
     this.navQuery
       .select()
-      .pipe(
-        tap(x => {
-          nav = x;
-        }),
-        take(1)
-      )
-      .subscribe();
+      .pipe(take(1))
+      .subscribe(x => {
+        nav = x;
+      });
 
     let environmentId = route.params[common.PARAMETER_ENVIRONMENT_ID];
 
@@ -58,6 +49,11 @@ export class MemberEvsResolver implements Resolve<Promise<boolean>> {
       .pipe(
         map((resp: apiToBackend.ToBackendGetEvsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.memberStore.update(state =>
+              Object.assign(resp.payload.userMember, <MemberState>{
+                avatarSmall: state.avatarSmall
+              })
+            );
             this.evsStore.update(resp.payload);
             return true;
           } else {

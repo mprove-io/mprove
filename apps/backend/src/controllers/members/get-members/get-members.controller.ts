@@ -33,7 +33,7 @@ export class GetMembersController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckExists({
+    let userMember = await this.membersService.getMemberCheckExists({
       memberId: user.user_id,
       projectId: projectId
     });
@@ -43,7 +43,7 @@ export class GetMembersController {
     );
 
     if (
-      member.is_admin === common.BoolEnum.FALSE &&
+      userMember.is_admin === common.BoolEnum.FALSE &&
       projectId === firstProjectId
     ) {
       throw new common.ServerError({
@@ -83,7 +83,10 @@ export class GetMembersController {
       }
     });
 
+    let apiMember = wrapper.wrapToApiMember(userMember);
+
     let payload: apiToBackend.ToBackendGetMembersResponsePayload = {
+      userMember: apiMember,
       members: apiMembers,
       total: total
     };

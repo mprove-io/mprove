@@ -19,6 +19,10 @@ export class ToBackendGetEvsRequest extends ToBackendRequest {
 
 export class ToBackendGetEvsResponsePayload {
   @ValidateNested()
+  @Type(() => common.Member)
+  userMember: common.Member;
+
+  @ValidateNested()
   @Type(() => common.Ev)
   evs: common.Ev[];
 }

@@ -31,7 +31,7 @@ export class GetEnvsController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckExists({
+    let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
       memberId: user.user_id
     });
@@ -58,7 +58,10 @@ export class GetEnvsController {
       project_id: projectId
     });
 
+    let apiMember = wrapper.wrapToApiMember(userMember);
+
     let payload: apiToBackend.ToBackendGetEnvsResponsePayload = {
+      userMember: apiMember,
       envs: envs.map(x =>
         wrapper.wrapToApiEnv({
           env: x,

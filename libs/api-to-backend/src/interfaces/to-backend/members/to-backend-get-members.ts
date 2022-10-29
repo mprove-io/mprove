@@ -23,6 +23,10 @@ export class ToBackendGetMembersRequest extends ToBackendRequest {
 export class ToBackendGetMembersResponsePayload {
   @ValidateNested()
   @Type(() => common.Member)
+  userMember: common.Member;
+
+  @ValidateNested()
+  @Type(() => common.Member)
   members: common.Member[];
 
   @IsInt()

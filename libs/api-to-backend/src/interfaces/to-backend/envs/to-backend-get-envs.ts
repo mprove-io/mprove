@@ -22,6 +22,10 @@ export class ToBackendGetEnvsRequest extends ToBackendRequest {
 
 export class ToBackendGetEnvsResponsePayload {
   @ValidateNested()
+  @Type(() => common.Member)
+  userMember: common.Member;
+
+  @ValidateNested()
   @Type(() => common.Env)
   envs: common.Env[];
 

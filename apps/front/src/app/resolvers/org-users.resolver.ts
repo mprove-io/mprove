@@ -4,57 +4,50 @@ import {
   Resolve,
   RouterStateSnapshot
 } from '@angular/router';
+import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
-import { ConnectionsStore } from '../stores/connections.store';
-import { MemberResolver } from './member.resolver';
+import { UsersStore } from '../stores/users.store';
 
 @Injectable({ providedIn: 'root' })
-export class MemberConnectionsResolver implements Resolve<Promise<boolean>> {
+export class OrgUsersResolver implements Resolve<Observable<boolean>> {
   constructor(
     private navQuery: NavQuery,
     private apiService: ApiService,
-    private memberResolver: MemberResolver,
-    private connectionsStore: ConnectionsStore
+    private usersStore: UsersStore
   ) {}
 
-  async resolve(
+  resolve(
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
-  ): Promise<boolean> {
-    let pass = await this.memberResolver.resolve().toPromise();
+  ): Observable<boolean> {
+    let orgId;
 
-    if (pass === false) {
-      return false;
-    }
-
-    let projectId;
-
-    this.navQuery.projectId$.pipe(take(1)).subscribe(x => {
-      projectId = x;
+    this.navQuery.orgId$.pipe(take(1)).subscribe(x => {
+      orgId = x;
     });
 
-    let payload: apiToBackend.ToBackendGetConnectionsRequestPayload = {
-      projectId: projectId,
+    let payload: apiToBackend.ToBackendGetOrgUsersRequestPayload = {
+      orgId: orgId,
       pageNum: 1,
-      perPage: constants.CONNECTIONS_PER_PAGE
+      perPage: constants.USERS_PER_PAGE
     };
 
     return this.apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetConnections,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetConnectionsResponse) => {
+        map((resp: apiToBackend.ToBackendGetOrgUsersResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.connectionsStore.update({
-              connections: resp.payload.connections,
+            this.usersStore.update({
+              users: resp.payload.orgUsersList,
               total: resp.payload.total
             });
             return true;
@@ -62,7 +55,6 @@ export class MemberConnectionsResolver implements Resolve<Promise<boolean>> {
             return false;
           }
         })
-      )
-      .toPromise();
+      );
   }
 }

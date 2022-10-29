@@ -4,6 +4,7 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
+import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -28,7 +29,7 @@ export class GetBranchesListController {
       projectId: projectId
     });
 
-    await this.membersService.getMemberCheckExists({
+    let userMember = await this.membersService.getMemberCheckExists({
       memberId: user.user_id,
       projectId: projectId
     });
@@ -43,7 +44,10 @@ export class GetBranchesListController {
       }
     });
 
+    let apiMember = wrapper.wrapToApiMember(userMember);
+
     let payload: apiToBackend.ToBackendGetBranchesListResponsePayload = {
+      userMember: apiMember,
       branchesList: branches.map(x => ({
         branchId: x.branch_id,
         isRepoProd: x.repo_id === common.PROD_REPO_ID

@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, switchMap, take, tap } from 'rxjs/operators';
+import { filter, take, tap } from 'rxjs/operators';
 import { constants } from '~common/barrels/constants';
 import { makeBranchExtraId } from '~front/app/functions/make-branch-extra-id';
 import { makeBranchExtraName } from '~front/app/functions/make-branch-extra-name';
@@ -15,8 +15,8 @@ import { FileService } from '~front/app/services/file.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { FileState } from '~front/app/stores/file.store';
-import { MemberStore } from '~front/app/stores/member.store';
-import { NavState, NavStore } from '~front/app/stores/nav.store';
+import { MemberState, MemberStore } from '~front/app/stores/member.store';
+import { NavState } from '~front/app/stores/nav.store';
 import { RepoState } from '~front/app/stores/repo.store';
 import { UserState } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -132,8 +132,7 @@ export class BranchSelectComponent {
     private fileService: FileService,
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,
-    private router: Router,
-    private navStore: NavStore
+    private router: Router
   ) {}
 
   openBranchSelect() {
@@ -166,76 +165,58 @@ export class BranchSelectComponent {
     this.apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetBranchesList,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetProjectResponse) => {
+        tap((resp: apiToBackend.ToBackendGetBranchesListResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.memberStore.update(resp.payload.userMember);
-            return true;
+            this.memberStore.update(state =>
+              Object.assign(resp.payload.userMember, <MemberState>{
+                avatarSmall: state.avatarSmall
+              })
+            );
+            let x = resp.payload.branchesList;
+
+            this.branchesList = x.map(z =>
+              this.makeBranchItem({
+                branchId: z.branchId,
+                isRepoProd: z.isRepoProd,
+                alias: user.alias,
+                userId: user.userId
+              })
+            );
+
+            let prodBranchesDefault = this.branchesList.filter(
+              y => y.isRepoProd === true && y.branchId === this.defaultBranch
+            );
+
+            let prodBranchesNotDefault = this.branchesList.filter(
+              y => y.isRepoProd === true && y.branchId !== this.defaultBranch
+            );
+
+            let localBranchesDefault = this.branchesList.filter(
+              y => y.isRepoProd === false && y.branchId === this.defaultBranch
+            );
+
+            let localBranchesNotDefault = this.branchesList.filter(
+              y => y.isRepoProd === false && y.branchId !== this.defaultBranch
+            );
+
+            this.branchesList =
+              this.isEditor === true
+                ? [
+                    ...prodBranchesDefault,
+                    ...prodBranchesNotDefault,
+                    ...localBranchesDefault,
+                    ...localBranchesNotDefault
+                  ]
+                : [...prodBranchesDefault, ...prodBranchesNotDefault];
+
+            this.branchesListLength = x.length;
+            this.branchesListLoading = false;
           }
         }),
-        switchMap(a =>
-          this.apiService
-            .req({
-              pathInfoName:
-                apiToBackend.ToBackendRequestInfoNameEnum
-                  .ToBackendGetBranchesList,
-              payload: payload
-            })
-            .pipe(
-              tap((resp: apiToBackend.ToBackendGetBranchesListResponse) => {
-                if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-                  let x = resp.payload.branchesList;
-
-                  this.branchesList = x.map(z =>
-                    this.makeBranchItem({
-                      branchId: z.branchId,
-                      isRepoProd: z.isRepoProd,
-                      alias: user.alias,
-                      userId: user.userId
-                    })
-                  );
-
-                  let prodBranchesDefault = this.branchesList.filter(
-                    y =>
-                      y.isRepoProd === true && y.branchId === this.defaultBranch
-                  );
-
-                  let prodBranchesNotDefault = this.branchesList.filter(
-                    y =>
-                      y.isRepoProd === true && y.branchId !== this.defaultBranch
-                  );
-
-                  let localBranchesDefault = this.branchesList.filter(
-                    y =>
-                      y.isRepoProd === false &&
-                      y.branchId === this.defaultBranch
-                  );
-
-                  let localBranchesNotDefault = this.branchesList.filter(
-                    y =>
-                      y.isRepoProd === false &&
-                      y.branchId !== this.defaultBranch
-                  );
-
-                  this.branchesList =
-                    this.isEditor === true
-                      ? [
-                          ...prodBranchesDefault,
-                          ...prodBranchesNotDefault,
-                          ...localBranchesDefault,
-                          ...localBranchesNotDefault
-                        ]
-                      : [...prodBranchesDefault, ...prodBranchesNotDefault];
-
-                  this.branchesListLength = x.length;
-                  this.branchesListLoading = false;
-                }
-              })
-            )
-        ),
         take(1)
       )
       .subscribe();

@@ -39,15 +39,16 @@ import { ProjectDeletedComponent } from './modules/special/project-deleted/proje
 import { VisualizationsComponent } from './modules/visualizations/visualizations.component';
 import { FileResolver } from './resolvers/file.resolver';
 import { MconfigResolver } from './resolvers/mconfig.resolver';
-import { MemberConnectionsResolver } from './resolvers/member-connections.resolver';
-import { MemberEnvironmentsResolver } from './resolvers/member-environments.resolver';
-import { MemberEvsResolver } from './resolvers/member-evs.resolver';
-import { MemberProjectSettingsResolver } from './resolvers/member-project-settings.resolver';
-import { MemberTeamResolver } from './resolvers/member-team.resolver';
 import { NavBarResolver } from './resolvers/navbar.resolver';
 import { OrgAccountResolver } from './resolvers/org-account.resolver';
+import { OrgUsersResolver } from './resolvers/org-users.resolver';
 import { OrgResolver } from './resolvers/org.resolver';
 import { ProfileResolver } from './resolvers/profile.resolver';
+import { ProjectConnectionsResolver } from './resolvers/project-connections.resolver';
+import { ProjectEnvironmentsResolver } from './resolvers/project-environments.resolver';
+import { ProjectEvsResolver } from './resolvers/project-evs.resolver';
+import { ProjectSettingsResolver } from './resolvers/project-settings.resolver';
+import { ProjectTeamResolver } from './resolvers/project-team.resolver';
 import { ProjectResolver } from './resolvers/project.resolver';
 import { QueryResolver } from './resolvers/query.resolver';
 import { RepoIdResolver } from './resolvers/repo-id.resolver';
@@ -57,7 +58,6 @@ import { StructFilesResolver } from './resolvers/struct-files.resolver';
 import { StructModelResolver } from './resolvers/struct-model.resolver';
 import { StructModelsResolver } from './resolvers/struct-models.resolver';
 import { StructVizsResolver } from './resolvers/struct-vizs.resolver';
-import { UsersResolver } from './resolvers/users.resolver';
 
 const routes: Routes = [
   {
@@ -157,7 +157,7 @@ const routes: Routes = [
           {
             component: OrgUsersComponent,
             path: common.PATH_USERS,
-            resolve: [UsersResolver]
+            resolve: [OrgUsersResolver]
           },
           {
             path: common.PATH_PROJECT + `/:${common.PARAMETER_PROJECT_ID}`,
@@ -166,29 +166,29 @@ const routes: Routes = [
               {
                 component: ProjectSettingsComponent,
                 path: common.PATH_SETTINGS,
-                resolve: [MemberProjectSettingsResolver]
+                resolve: [ProjectSettingsResolver]
               },
               {
                 component: ProjectConnectionsComponent,
                 path: common.PATH_CONNECTIONS,
-                resolve: [MemberConnectionsResolver]
+                resolve: [ProjectConnectionsResolver]
               },
               {
                 component: ProjectEnvironmentsComponent,
                 path: common.PATH_ENVIRONMENTS,
-                resolve: [MemberEnvironmentsResolver]
+                resolve: [ProjectEnvironmentsResolver]
               },
               {
                 component: ProjectEvsComponent,
                 path:
                   common.PATH_ENV_VARIABLES +
                   `/:${common.PARAMETER_ENVIRONMENT_ID}`,
-                resolve: [MemberEvsResolver]
+                resolve: [ProjectEvsResolver]
               },
               {
                 component: ProjectTeamComponent,
                 path: common.PATH_TEAM,
-                resolve: [MemberTeamResolver]
+                resolve: [ProjectTeamResolver]
               },
               {
                 path: common.PATH_REPO + `/:${common.PARAMETER_REPO_ID}`,

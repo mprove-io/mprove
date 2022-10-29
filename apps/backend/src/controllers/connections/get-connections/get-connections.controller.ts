@@ -27,7 +27,7 @@ export class GetConnectionsController {
       projectId: projectId
     });
 
-    await this.membersService.getMemberCheckIsEditorOrAdmin({
+    let userMember = await this.membersService.getMemberCheckIsEditorOrAdmin({
       memberId: user.user_id,
       projectId: projectId
     });
@@ -43,7 +43,10 @@ export class GetConnectionsController {
       skip: (pageNum - 1) * perPage
     });
 
+    let apiMember = wrapper.wrapToApiMember(userMember);
+
     let payload: apiToBackend.ToBackendGetConnectionsResponsePayload = {
+      userMember: apiMember,
       connections: connections.map(x => wrapper.wrapToApiConnection(x)),
       total: total
     };

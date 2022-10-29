@@ -1,25 +1,26 @@
 import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
-import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { ProjectQuery } from '../queries/project.query';
+import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
-import { MemberStore } from '../stores/member.store';
+import { MemberState, MemberStore } from '../stores/member.store';
+import { ProjectStore } from '../stores/project.store';
 
 @Injectable({ providedIn: 'root' })
-export class MemberResolver implements Resolve<Observable<boolean>> {
+export class ProjectSettingsResolver implements Resolve<Promise<boolean>> {
   constructor(
-    private apiService: ApiService,
-    private projectQuery: ProjectQuery,
-    private memberStore: MemberStore
+    private projectStore: ProjectStore,
+    private navQuery: NavQuery,
+    private memberStore: MemberStore,
+    private apiService: ApiService
   ) {}
 
-  resolve(): Observable<boolean> {
+  async resolve(): Promise<boolean> {
     let projectId;
 
-    this.projectQuery.projectId$.pipe(take(1)).subscribe(x => {
+    this.navQuery.projectId$.pipe(take(1)).subscribe(x => {
       projectId = x;
     });
 
@@ -36,12 +37,18 @@ export class MemberResolver implements Resolve<Observable<boolean>> {
       .pipe(
         map((resp: apiToBackend.ToBackendGetProjectResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.memberStore.update(resp.payload.userMember);
+            this.memberStore.update(state =>
+              Object.assign(resp.payload.userMember, <MemberState>{
+                avatarSmall: state.avatarSmall
+              })
+            );
+            this.projectStore.update(resp.payload.project);
             return true;
           } else {
             return false;
           }
         })
-      );
+      )
+      .toPromise();
   }
 }

@@ -26,6 +26,10 @@ export class ToBackendGetBranchesListResponsePayload {
   @ValidateNested()
   @Type(() => ToBackendGetBranchesListResponsePayloadBranchesItem)
   branchesList: ToBackendGetBranchesListResponsePayloadBranchesItem[];
+
+  @ValidateNested()
+  @Type(() => common.Member)
+  userMember: common.Member;
 }
 
 export class ToBackendGetBranchesListResponse extends common.MyResponse {

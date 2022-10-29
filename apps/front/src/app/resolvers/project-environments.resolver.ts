@@ -11,14 +11,14 @@ import { constants } from '~front/barrels/constants';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 import { EnvironmentsStore } from '../stores/environments.store';
-import { MemberResolver } from './member.resolver';
+import { MemberState, MemberStore } from '../stores/member.store';
 
 @Injectable({ providedIn: 'root' })
-export class MemberEnvironmentsResolver implements Resolve<Promise<boolean>> {
+export class ProjectEnvironmentsResolver implements Resolve<Promise<boolean>> {
   constructor(
     private navQuery: NavQuery,
     private apiService: ApiService,
-    private memberResolver: MemberResolver,
+    private memberStore: MemberStore,
     private environmentsStore: EnvironmentsStore
   ) {}
 
@@ -26,12 +26,6 @@ export class MemberEnvironmentsResolver implements Resolve<Promise<boolean>> {
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
   ): Promise<boolean> {
-    let pass = await this.memberResolver.resolve().toPromise();
-
-    if (pass === false) {
-      return false;
-    }
-
     let projectId;
 
     this.navQuery.projectId$.pipe(take(1)).subscribe(x => {
@@ -53,6 +47,11 @@ export class MemberEnvironmentsResolver implements Resolve<Promise<boolean>> {
       .pipe(
         map((resp: apiToBackend.ToBackendGetEnvsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.memberStore.update(state =>
+              Object.assign(resp.payload.userMember, <MemberState>{
+                avatarSmall: state.avatarSmall
+              })
+            );
             this.environmentsStore.update({
               environments: resp.payload.envs,
               total: resp.payload.total

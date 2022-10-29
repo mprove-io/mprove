@@ -1,10 +1,8 @@
 import { Controller, Post } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
-import { AvatarsRepository } from '~backend/models/store-repositories/_index';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
@@ -12,8 +10,7 @@ import { ProjectsService } from '~backend/services/projects.service';
 export class GetProjectController {
   constructor(
     private projectsService: ProjectsService,
-    private membersService: MembersService,
-    private avatarsRepository: AvatarsRepository
+    private membersService: MembersService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject)
@@ -34,16 +31,6 @@ export class GetProjectController {
     });
 
     let apiMember = wrapper.wrapToApiMember(userMember);
-
-    let avatar = await this.avatarsRepository.findOne({
-      where: {
-        user_id: user.user_id
-      }
-    });
-
-    if (common.isDefined(avatar)) {
-      apiMember.avatarSmall = avatar.avatar_small;
-    }
 
     let payload: apiToBackend.ToBackendGetProjectResponsePayload = {
       project: wrapper.wrapToApiProject(project),
