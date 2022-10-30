@@ -23,7 +23,9 @@ export class IsProjectExistController {
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 
-    let project = await this.projectsRepository.findOne({ name: name });
+    let project = await this.projectsRepository.findOne({
+      where: { name: name }
+    });
 
     let payload: apiToBackend.ToBackendIsProjectExistResponsePayload = {
       isExist: common.isDefined(project)

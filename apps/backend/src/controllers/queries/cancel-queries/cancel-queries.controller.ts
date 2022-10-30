@@ -33,7 +33,9 @@ export class CancelQueriesController {
       queryIds.length === 0
         ? []
         : await this.queriesRepository.find({
-            query_id: In(queryIds)
+            where: {
+              query_id: In(queryIds)
+            }
           });
 
     let projectIdsWithDuplicates = queries.map(q => q.project_id);
@@ -56,8 +58,10 @@ export class CancelQueriesController {
       queries.length === 0
         ? []
         : await this.connectionsRepository.find({
-            project_id: projectId,
-            connection_id: In(queries.map(q => q.connection_id))
+            where: {
+              project_id: projectId,
+              connection_id: In(queries.map(q => q.connection_id))
+            }
           });
 
     await asyncPool(

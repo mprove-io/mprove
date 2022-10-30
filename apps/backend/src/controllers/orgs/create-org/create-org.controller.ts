@@ -52,7 +52,7 @@ export class CreateOrgController {
 
     let { name } = reqValid.payload;
 
-    let org = await this.orgsRepository.findOne({ name: name });
+    let org = await this.orgsRepository.findOne({ where: { name: name } });
 
     if (name.toLowerCase() === common.FIRST_ORG_NAME.toLowerCase()) {
       throw new common.ServerError({

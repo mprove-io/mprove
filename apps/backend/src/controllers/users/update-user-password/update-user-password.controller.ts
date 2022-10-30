@@ -24,7 +24,9 @@ export class UpdateUserPasswordController {
     let { passwordResetToken, newPassword } = reqValid.payload;
 
     let user = await this.usersRepository.findOne({
-      password_reset_token: passwordResetToken
+      where: {
+        password_reset_token: passwordResetToken
+      }
     });
 
     if (common.isUndefined(user)) {

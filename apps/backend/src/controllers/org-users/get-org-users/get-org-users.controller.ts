@@ -38,7 +38,9 @@ export class GetOrgUsersController {
       userId: user.user_id
     });
 
-    let projects = await this.projectsRepository.find({ org_id: orgId });
+    let projects = await this.projectsRepository.find({
+      where: { org_id: orgId }
+    });
 
     let projectIds = projects.map(x => x.project_id);
 
@@ -69,8 +71,10 @@ export class GetOrgUsersController {
       userIds.length === 0
         ? []
         : await this.membersRepository.find({
-            member_id: In(userIds),
-            project_id: In(projectIds)
+            where: {
+              member_id: In(userIds),
+              project_id: In(projectIds)
+            }
           });
 
     let orgUsers: apiToBackend.OrgUsersItem[] = [];

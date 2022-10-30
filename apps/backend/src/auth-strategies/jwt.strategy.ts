@@ -20,7 +20,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    let user = await this.userRepository.findOne(payload.userId);
+    let user = await this.userRepository.findOne({
+      where: {
+        user_id: payload.userId
+      }
+    });
 
     if (common.isUndefined(user)) {
       throw new common.ServerError({

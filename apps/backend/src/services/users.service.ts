@@ -27,7 +27,9 @@ export class UsersService {
     let { userId } = item;
 
     let user = await this.usersRepository.findOne({
-      user_id: userId
+      where: {
+        user_id: userId
+      }
     });
 
     if (common.isUndefined(user)) {
@@ -43,7 +45,9 @@ export class UsersService {
     let { email } = item;
 
     let user = await this.usersRepository.findOne({
-      email: email
+      where: {
+        email: email
+      }
     });
 
     if (common.isUndefined(user)) {
@@ -84,7 +88,9 @@ export class UsersService {
     let restart = true;
 
     while (restart) {
-      let aliasUser = await this.usersRepository.findOne({ alias: alias });
+      let aliasUser = await this.usersRepository.findOne({
+        where: { alias: alias }
+      });
 
       if (common.isDefined(aliasUser)) {
         alias = `${alias}${count}`;

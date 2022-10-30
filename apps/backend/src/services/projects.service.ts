@@ -22,7 +22,9 @@ export class ProjectsService {
     let { projectId } = item;
 
     let project = await this.projectsRepository.findOne({
-      project_id: projectId
+      where: {
+        project_id: projectId
+      }
     });
 
     if (common.isUndefined(project)) {

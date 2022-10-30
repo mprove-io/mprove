@@ -44,7 +44,9 @@ export class GetEnvsListController {
         }
       });
     } else {
-      envs = await this.envsRepository.find({ project_id: projectId });
+      envs = await this.envsRepository.find({
+        where: { project_id: projectId }
+      });
     }
 
     let sortedEnvs = envs.sort((a, b) =>

@@ -10,8 +10,10 @@ export class MconfigsService {
     let { mconfigId, structId } = item;
 
     let mconfig = await this.mconfigsRepository.findOne({
-      mconfig_id: mconfigId,
-      struct_id: structId
+      where: {
+        mconfig_id: mconfigId,
+        struct_id: structId
+      }
     });
 
     if (common.isUndefined(mconfig)) {

@@ -15,10 +15,12 @@ export class BridgesService {
     let { projectId, repoId, branchId, envId } = item;
 
     let bridge = await this.bridgesRepository.findOne({
-      project_id: projectId,
-      repo_id: repoId,
-      branch_id: branchId,
-      env_id: envId
+      where: {
+        project_id: projectId,
+        repo_id: repoId,
+        branch_id: branchId,
+        env_id: envId
+      }
     });
 
     if (common.isUndefined(bridge)) {

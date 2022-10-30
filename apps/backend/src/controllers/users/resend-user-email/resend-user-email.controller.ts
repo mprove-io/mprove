@@ -20,7 +20,9 @@ export class ResendUserEmailController {
   ) {
     let { userId } = reqValid.payload;
 
-    let user = await this.userRepository.findOne({ user_id: userId });
+    let user = await this.userRepository.findOne({
+      where: { user_id: userId }
+    });
 
     if (common.isUndefined(user)) {
       throw new common.ServerError({

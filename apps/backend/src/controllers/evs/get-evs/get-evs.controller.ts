@@ -41,8 +41,10 @@ export class GetEvsController {
     });
 
     let evs = await this.evsRepository.find({
-      project_id: projectId,
-      env_id: envId
+      where: {
+        project_id: projectId,
+        env_id: envId
+      }
     });
 
     let apiMember = wrapper.wrapToApiMember(userMember);

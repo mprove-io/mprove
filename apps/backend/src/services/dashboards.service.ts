@@ -22,8 +22,10 @@ export class DashboardsService {
     let { dashboardId, structId } = item;
 
     let dashboard = await this.dashboardsRepository.findOne({
-      struct_id: structId,
-      dashboard_id: dashboardId
+      where: {
+        struct_id: structId,
+        dashboard_id: dashboardId
+      }
     });
 
     if (common.isUndefined(dashboard)) {
@@ -68,7 +70,9 @@ export class DashboardsService {
       mconfigIds.length === 0
         ? []
         : await this.mconfigsRepository.find({
-            mconfig_id: In(mconfigIds)
+            where: {
+              mconfig_id: In(mconfigIds)
+            }
           });
 
     let queryIds = dashboard.reports.map(x => x.queryId);
@@ -76,11 +80,15 @@ export class DashboardsService {
       queryIds.length === 0
         ? []
         : await this.queriesRepository.find({
-            query_id: In(queryIds)
+            where: {
+              query_id: In(queryIds)
+            }
           });
 
     let models = await this.modelsRepository.find({
-      struct_id: bridge.struct_id
+      where: {
+        struct_id: bridge.struct_id
+      }
     });
 
     let apiModels = models.map(model =>

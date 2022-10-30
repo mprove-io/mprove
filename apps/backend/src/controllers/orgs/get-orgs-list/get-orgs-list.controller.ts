@@ -21,7 +21,9 @@ export class GetOrgsListController {
     reqValid: apiToBackend.ToBackendGetOrgsListRequest
   ) {
     let userMembers = await this.membersRepository.find({
-      member_id: user.user_id
+      where: {
+        member_id: user.user_id
+      }
     });
 
     let userProjectIds = userMembers.map(m => m.project_id);
@@ -29,7 +31,9 @@ export class GetOrgsListController {
       userProjectIds.length === 0
         ? []
         : await this.projectsRepository.find({
-            project_id: In(userProjectIds)
+            where: {
+              project_id: In(userProjectIds)
+            }
           });
 
     let userOrgIds = userProjects.map(p => p.org_id);
@@ -37,11 +41,15 @@ export class GetOrgsListController {
       userOrgIds.length === 0
         ? []
         : await this.orgsRepository.find({
-            org_id: In(userOrgIds)
+            where: {
+              org_id: In(userOrgIds)
+            }
           });
 
     let ownerOrgs = await this.orgsRepository.find({
-      owner_id: user.user_id
+      where: {
+        owner_id: user.user_id
+      }
     });
 
     let orgs = [...userOrgs];

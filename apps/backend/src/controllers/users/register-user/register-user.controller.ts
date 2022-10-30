@@ -34,7 +34,7 @@ export class RegisterUserController {
 
     let { salt, hash } = await this.usersService.makeSaltAndHash(password);
 
-    let user = await this.userRepository.findOne({ email: email });
+    let user = await this.userRepository.findOne({ where: { email: email } });
 
     if (common.isDefined(user)) {
       if (common.isDefined(user.hash)) {

@@ -52,7 +52,9 @@ export class CreateMemberController {
       projectId: projectId
     });
 
-    let invitedUser = await this.usersRepository.findOne({ email: email });
+    let invitedUser = await this.usersRepository.findOne({
+      where: { email: email }
+    });
 
     let newUser;
 
@@ -107,9 +109,11 @@ export class CreateMemberController {
     });
 
     let prodBranch = await this.branchesRepository.findOne({
-      project_id: projectId,
-      repo_id: common.PROD_REPO_ID,
-      branch_id: project.default_branch
+      where: {
+        project_id: projectId,
+        repo_id: common.PROD_REPO_ID,
+        branch_id: project.default_branch
+      }
     });
 
     let devBranch = maker.makeBranch({
@@ -119,9 +123,11 @@ export class CreateMemberController {
     });
 
     let prodBranchBridges = await this.bridgesRepository.find({
-      project_id: prodBranch.project_id,
-      repo_id: prodBranch.repo_id,
-      branch_id: prodBranch.branch_id
+      where: {
+        project_id: prodBranch.project_id,
+        repo_id: prodBranch.repo_id,
+        branch_id: prodBranch.branch_id
+      }
     });
 
     let devBranchBridges: entities.BridgeEntity[] = [];

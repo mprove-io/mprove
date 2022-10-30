@@ -90,10 +90,12 @@ export class ClickHouseService {
     //     // common.logToConsole('result');
     //     // common.logToConsole(result);
 
-    //     let q = await this.queriesRepository.findOne({
-    //       query_id: query.query_id,
-    //       postgres_query_job_id: postgresQueryJobId
-    //     });
+    // let q = await this.queriesRepository.findOne({
+    //   where: {
+    //     query_id: query.query_id,
+    //     postgres_query_job_id: postgresQueryJobId
+    //   }
+    // });
 
     //     if (common.isDefined(q)) {
     //       q.status = common.QueryStatusEnum.Completed;
@@ -116,10 +118,12 @@ export class ClickHouseService {
     //     // common.logToConsole('error');
     //     // common.logToConsole(e);
 
-    //     let q = await this.queriesRepository.findOne({
-    //       query_id: query.query_id,
-    //       postgres_query_job_id: postgresQueryJobId
-    //     });
+    // let q = await this.queriesRepository.findOne({
+    //   where: {
+    //     query_id: query.query_id,
+    //     postgres_query_job_id: postgresQueryJobId
+    //   }
+    // });
 
     //     if (common.isDefined(q)) {
     //       q.status = common.QueryStatusEnum.Error;
@@ -192,8 +196,10 @@ export class ClickHouseService {
       },
       complete: async () => {
         let q = await this.queriesRepository.findOne({
-          query_id: query.query_id,
-          query_job_id: queryJobId
+          where: {
+            query_id: query.query_id,
+            query_job_id: queryJobId
+          }
         });
 
         if (common.isDefined(q)) {
@@ -218,8 +224,10 @@ export class ClickHouseService {
         // common.logToConsole(e);
 
         let q = await this.queriesRepository.findOne({
-          query_id: query.query_id,
-          query_job_id: queryJobId
+          where: {
+            query_id: query.query_id,
+            query_job_id: queryJobId
+          }
         });
 
         if (common.isDefined(q)) {
@@ -251,8 +259,10 @@ export class ClickHouseService {
   //       common.logToConsole(e);
 
   //       let q = await this.queriesRepository.findOne({
-  //         query_id: query.query_id,
-  //         postgres_query_job_id: postgresQueryJobId
+  //         where: {
+  //           query_id: query.query_id,
+  //           postgres_query_job_id: postgresQueryJobId
+  //         }
   //       });
 
   //       if (common.isDefined(q)) {
@@ -277,8 +287,10 @@ export class ClickHouseService {
   //   common.logToConsole(data);
 
   //   let q = await this.queriesRepository.findOne({
-  //     query_id: query.query_id,
-  //     postgres_query_job_id: postgresQueryJobId
+  //     where: {
+  //       query_id: query.query_id,
+  //       postgres_query_job_id: postgresQueryJobId
+  //     }
   //   });
 
   //   if (common.isDefined(q)) {

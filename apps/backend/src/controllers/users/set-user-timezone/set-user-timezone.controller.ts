@@ -32,7 +32,9 @@ export class SetUserTimezoneController {
 
     let userMembers = <entities.MemberEntity[]>await this.memberRepository.find(
       {
-        member_id: user.user_id
+        where: {
+          member_id: user.user_id
+        }
       }
     );
 

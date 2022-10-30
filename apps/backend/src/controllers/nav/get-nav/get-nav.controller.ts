@@ -26,7 +26,9 @@ export class GetNavController {
     let { orgId, projectId } = reqValid.payload;
 
     let members = await this.membersRepository.find({
-      member_id: user.user_id
+      where: {
+        member_id: user.user_id
+      }
     });
 
     let projectIds = members.map(x => x.project_id);
@@ -34,7 +36,9 @@ export class GetNavController {
       projectIds.length === 0
         ? []
         : await this.projectsRepository.find({
-            project_id: In(projectIds)
+            where: {
+              project_id: In(projectIds)
+            }
           });
 
     let orgIds = projects.map(x => x.org_id);
@@ -42,11 +46,15 @@ export class GetNavController {
       orgIds.length === 0
         ? []
         : await this.orgsRepository.find({
-            org_id: In(orgIds)
+            where: {
+              org_id: In(orgIds)
+            }
           });
 
     let ownerOrgs = await this.orgsRepository.find({
-      owner_id: user.user_id
+      where: {
+        owner_id: user.user_id
+      }
     });
 
     let orgIdsWithDuplicates = [...orgs, ...ownerOrgs].map(x => x.org_id);
@@ -75,10 +83,12 @@ export class GetNavController {
 
     if (common.isDefined(resultProject)) {
       bridge = await this.bridgesRepository.findOne({
-        project_id: resultProject.project_id,
-        repo_id: common.PROD_REPO_ID,
-        branch_id: resultProject.default_branch,
-        env_id: common.PROJECT_ENV_PROD
+        where: {
+          project_id: resultProject.project_id,
+          repo_id: common.PROD_REPO_ID,
+          branch_id: resultProject.default_branch,
+          env_id: common.PROJECT_ENV_PROD
+        }
       });
     }
 

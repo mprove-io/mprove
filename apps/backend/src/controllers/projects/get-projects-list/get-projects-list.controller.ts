@@ -22,7 +22,9 @@ export class GetProjectsListController {
     let { orgId } = reqValid.payload;
 
     let userMembers = await this.membersRepository.find({
-      member_id: user.user_id
+      where: {
+        member_id: user.user_id
+      }
     });
 
     let projectIds = userMembers.map(m => m.project_id);
@@ -30,8 +32,10 @@ export class GetProjectsListController {
       projectIds.length === 0
         ? []
         : await this.projectsRepository.find({
-            project_id: In(projectIds),
-            org_id: orgId
+            where: {
+              project_id: In(projectIds),
+              org_id: orgId
+            }
           });
 
     let sortedProjects = projects.sort((a, b) =>

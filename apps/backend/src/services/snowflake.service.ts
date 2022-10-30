@@ -99,8 +99,10 @@ export class SnowFlakeService {
     })
       .then(async (data: any) => {
         let q = await this.queriesRepository.findOne({
-          query_id: query.query_id,
-          query_job_id: queryJobId
+          where: {
+            query_id: query.query_id,
+            query_job_id: queryJobId
+          }
         });
 
         if (common.isDefined(q)) {
@@ -123,8 +125,10 @@ export class SnowFlakeService {
       })
       .catch(async e => {
         let q = await this.queriesRepository.findOne({
-          query_id: query.query_id,
-          query_job_id: queryJobId
+          where: {
+            query_id: query.query_id,
+            query_job_id: queryJobId
+          }
         });
 
         if (common.isDefined(q)) {

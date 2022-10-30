@@ -11,8 +11,10 @@ export class EnvsService {
     let { projectId, envId } = item;
 
     let env = await this.envsRepository.findOne({
-      env_id: envId,
-      project_id: projectId
+      where: {
+        env_id: envId,
+        project_id: projectId
+      }
     });
 
     if (common.isDefined(env)) {
@@ -30,8 +32,10 @@ export class EnvsService {
     let { projectId, envId, member } = item;
 
     let env = await this.envsRepository.findOne({
-      env_id: envId,
-      project_id: projectId
+      where: {
+        env_id: envId,
+        project_id: projectId
+      }
     });
 
     if (common.isUndefined(env)) {

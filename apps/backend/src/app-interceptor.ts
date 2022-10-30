@@ -5,8 +5,10 @@ import {
   NestInterceptor
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+// import { InjectRepository } from '@nestjs/typeorm';
 import { Observable, of } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
+// import { Repository } from 'typeorm';
 import { apiToBackend } from './barrels/api-to-backend';
 import { common } from './barrels/common';
 import { constants } from './barrels/constants';
@@ -22,7 +24,9 @@ export class AppInterceptor implements NestInterceptor {
   constructor(
     private cs: ConfigService<interfaces.Config>,
     private idempsRepository: repositories.IdempsRepository
-  ) {}
+  ) // @InjectRepository(entities.IdempEntity)
+  // private idempsRepository: Repository<entities.IdempEntity>
+  {}
 
   async intercept(
     context: ExecutionContext,
@@ -43,8 +47,10 @@ export class AppInterceptor implements NestInterceptor {
     let idemp = common.isUndefined(iKey)
       ? undefined
       : await this.idempsRepository.findOne({
-          idempotency_key: iKey,
-          user_id: userId
+          where: {
+            idempotency_key: iKey,
+            user_id: userId
+          }
         });
 
     if (common.isUndefined(idemp) && common.isDefined(iKey)) {
@@ -66,8 +72,10 @@ export class AppInterceptor implements NestInterceptor {
         await retry(
           async (bail: any, num: number) => {
             let idempX = await this.idempsRepository.findOne({
-              idempotency_key: iKey,
-              user_id: userId
+              where: {
+                idempotency_key: iKey,
+                user_id: userId
+              }
             });
 
             if (common.isUndefined(idempX.resp)) {

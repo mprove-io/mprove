@@ -37,8 +37,10 @@ export class StructsService {
       });
     } else {
       struct = await this.structsRepository.findOne({
-        struct_id: structId,
-        project_id: projectId
+        where: {
+          struct_id: structId,
+          project_id: projectId
+        }
       });
 
       if (common.isUndefined(struct)) {

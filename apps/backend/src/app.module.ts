@@ -247,7 +247,9 @@ export class AppModule implements OnModuleInit {
           common.isDefinedAndNotEmpty(email) &&
           common.isDefinedAndNotEmpty(password)
         ) {
-          firstUser = await this.usersRepository.findOne({ email: email });
+          firstUser = await this.usersRepository.findOne({
+            where: { email: email }
+          });
 
           if (common.isUndefined(firstUser)) {
             firstUser = await this.usersService.addFirstUser({
@@ -277,7 +279,9 @@ export class AppModule implements OnModuleInit {
           common.isDefinedAndNotEmpty(firstProjectId)
         ) {
           firstOrg = await this.orgsRepository.findOne({
-            org_id: firstOrgId
+            where: {
+              org_id: firstOrgId
+            }
           });
 
           if (common.isUndefined(firstOrg)) {
@@ -294,8 +298,10 @@ export class AppModule implements OnModuleInit {
 
           if (firstProjectSeedConnections === common.BoolEnum.TRUE) {
             let c1connection = await this.connectionsRepository.findOne({
-              project_id: firstProjectId,
-              connection_id: 'c1_postgres'
+              where: {
+                project_id: firstProjectId,
+                connection_id: 'c1_postgres'
+              }
             });
 
             if (common.isUndefined(c1connection)) {
@@ -322,8 +328,10 @@ export class AppModule implements OnModuleInit {
             }
 
             let c2connection = await this.connectionsRepository.findOne({
-              project_id: firstProjectId,
-              connection_id: 'c2_clickhouse'
+              where: {
+                project_id: firstProjectId,
+                connection_id: 'c2_clickhouse'
+              }
             });
 
             if (common.isUndefined(c2connection)) {
@@ -350,8 +358,10 @@ export class AppModule implements OnModuleInit {
             }
 
             let c3connection = await this.connectionsRepository.findOne({
-              project_id: firstProjectId,
-              connection_id: 'c3_bigquery'
+              where: {
+                project_id: firstProjectId,
+                connection_id: 'c3_bigquery'
+              }
             });
 
             if (common.isUndefined(c3connection)) {
@@ -386,8 +396,10 @@ export class AppModule implements OnModuleInit {
             }
 
             let c4connection = await this.connectionsRepository.findOne({
-              project_id: firstProjectId,
-              connection_id: 'c4_snowflake'
+              where: {
+                project_id: firstProjectId,
+                connection_id: 'c4_snowflake'
+              }
             });
 
             if (common.isUndefined(c4connection)) {
@@ -423,9 +435,11 @@ export class AppModule implements OnModuleInit {
           let evs = [];
 
           let ev = await this.evsRepository.findOne({
-            project_id: firstProjectId,
-            env_id: common.PROJECT_ENV_PROD,
-            ev_id: 'MPROVE_SNOWFLAKE_DATABASE'
+            where: {
+              project_id: firstProjectId,
+              env_id: common.PROJECT_ENV_PROD,
+              ev_id: 'MPROVE_SNOWFLAKE_DATABASE'
+            }
           });
 
           if (common.isUndefined(ev)) {
@@ -448,7 +462,9 @@ export class AppModule implements OnModuleInit {
           });
 
           let firstProject = await this.projectsRepository.findOne({
-            project_id: firstProjectId
+            where: {
+              project_id: firstProjectId
+            }
           });
 
           if (common.isUndefined(firstProject)) {

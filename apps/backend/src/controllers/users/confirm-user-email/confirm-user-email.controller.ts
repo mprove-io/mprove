@@ -27,7 +27,9 @@ export class ConfirmUserEmailController {
     let { token } = reqValid.payload;
 
     let user = await this.userRepository.findOne({
-      email_verification_token: token
+      where: {
+        email_verification_token: token
+      }
     });
 
     if (common.isUndefined(user)) {

@@ -92,9 +92,11 @@ export class CreateBranchController {
     });
 
     let fromBranchBridges = await this.bridgesRepository.find({
-      project_id: fromBranch.project_id,
-      repo_id: fromBranch.repo_id,
-      branch_id: fromBranch.branch_id
+      where: {
+        project_id: fromBranch.project_id,
+        repo_id: fromBranch.repo_id,
+        branch_id: fromBranch.branch_id
+      }
     });
 
     let newBranchBridges: entities.BridgeEntity[] = [];

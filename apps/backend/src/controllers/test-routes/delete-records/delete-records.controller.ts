@@ -58,8 +58,10 @@ export class DeleteRecordsController {
 
     if (common.isDefined(projectNames) && projectNames.length > 0) {
       let projects = await this.projectsRepository.find({
-        org_id: In(orgIds),
-        name: In(projectNames)
+        where: {
+          org_id: In(orgIds),
+          name: In(projectNames)
+        }
       });
       if (projects.length > 0) {
         projectIds = [...projectIds, ...projects.map(x => x.project_id)];
@@ -67,7 +69,9 @@ export class DeleteRecordsController {
     }
 
     if (common.isDefined(orgNames) && orgNames.length > 0) {
-      let orgs = await this.orgsRepository.find({ name: In(orgNames) });
+      let orgs = await this.orgsRepository.find({
+        where: { name: In(orgNames) }
+      });
       if (orgs.length > 0) {
         orgIds = [...orgIds, ...orgs.map(x => x.org_id)];
       }
@@ -98,7 +102,9 @@ export class DeleteRecordsController {
 
     if (emails.length > 0) {
       await asyncPool(1, emails, async (email: string) => {
-        let user = await this.usersRepository.findOne({ email: email });
+        let user = await this.usersRepository.findOne({
+          where: { email: email }
+        });
         if (common.isDefined(user)) {
           userIds.push(user.user_id);
         }
@@ -109,7 +115,9 @@ export class DeleteRecordsController {
       projectIds.length === 0
         ? []
         : await this.structsRepository.find({
-            project_id: In(projectIds)
+            where: {
+              project_id: In(projectIds)
+            }
           });
 
     structIds = structs.map(struct => struct.struct_id);

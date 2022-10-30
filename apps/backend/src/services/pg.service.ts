@@ -54,8 +54,10 @@ export class PgService {
         // common.logToConsole(data);
 
         let q = await this.queriesRepository.findOne({
-          query_id: query.query_id,
-          query_job_id: queryJobId
+          where: {
+            query_id: query.query_id,
+            query_job_id: queryJobId
+          }
         });
 
         if (common.isDefined(q)) {
@@ -80,8 +82,10 @@ export class PgService {
         // common.logToConsole(error);
 
         let q = await this.queriesRepository.findOne({
-          query_id: query.query_id,
-          query_job_id: queryJobId
+          where: {
+            query_id: query.query_id,
+            query_job_id: queryJobId
+          }
         });
 
         if (common.isDefined(q)) {

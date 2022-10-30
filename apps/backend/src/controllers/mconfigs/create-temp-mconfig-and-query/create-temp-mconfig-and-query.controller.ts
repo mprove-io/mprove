@@ -129,7 +129,9 @@ export class CreateTempMconfigAndQueryController {
     let newQuery = blockmlProcessQueryResponse.payload.query;
 
     let query = await this.queriesRepository.findOne({
-      query_id: newQuery.queryId
+      where: {
+        query_id: newQuery.queryId
+      }
     });
 
     let records = await this.dbService.writeRecords({

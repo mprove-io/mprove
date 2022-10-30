@@ -38,13 +38,17 @@ export class BlockmlService {
     } = item;
 
     let connections = await this.connectionsRepository.find({
-      project_id: projectId,
-      env_id: envId
+      where: {
+        project_id: projectId,
+        env_id: envId
+      }
     });
 
     let evs = await this.evsRepository.find({
-      project_id: projectId,
-      env_id: envId
+      where: {
+        project_id: projectId,
+        env_id: envId
+      }
     });
 
     let toBlockmlRebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest = {

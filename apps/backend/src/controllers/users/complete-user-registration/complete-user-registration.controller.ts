@@ -31,7 +31,9 @@ export class CompleteUserRegistrationController {
     let { emailConfirmationToken, newPassword } = reqValid.payload;
 
     let user = await this.userRepository.findOne({
-      email_verification_token: emailConfirmationToken
+      where: {
+        email_verification_token: emailConfirmationToken
+      }
     });
 
     if (common.isUndefined(user)) {

@@ -17,7 +17,9 @@ export class GetAvatarBigController {
     let { avatarUserId } = reqValid.payload;
 
     let avatar = await this.avatarsRepository.findOne({
-      user_id: avatarUserId
+      where: {
+        user_id: avatarUserId
+      }
     });
 
     let payload: apiToBackend.ToBackendGetAvatarBigResponsePayload = {

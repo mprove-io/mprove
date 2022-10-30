@@ -51,7 +51,9 @@ export class CreateEnvController {
     });
 
     let branches = await this.branchesRepository.find({
-      project_id: projectId
+      where: {
+        project_id: projectId
+      }
     });
 
     let newBridges: entities.BridgeEntity[] = [];
@@ -85,7 +87,9 @@ export class CreateEnvController {
     });
 
     let members = await this.membersRepository.find({
-      project_id: projectId
+      where: {
+        project_id: projectId
+      }
     });
 
     let envConnectionIds = connections.map(x => x.connection_id);

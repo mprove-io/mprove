@@ -31,7 +31,9 @@ export class SetAvatarController {
     let avatar: entities.AvatarEntity;
 
     avatar = await this.avatarsRepository.findOne({
-      user_id: user.user_id
+      where: {
+        user_id: user.user_id
+      }
     });
 
     if (common.isDefined(avatar)) {

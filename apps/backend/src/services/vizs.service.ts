@@ -10,8 +10,10 @@ export class VizsService {
     let { vizId, structId } = item;
 
     let viz = await this.vizsRepository.findOne({
-      struct_id: structId,
-      viz_id: vizId
+      where: {
+        struct_id: structId,
+        viz_id: vizId
+      }
     });
 
     if (common.isUndefined(viz)) {

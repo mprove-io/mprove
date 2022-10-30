@@ -36,7 +36,9 @@ export class DeleteUserController {
     let { traceId } = reqValid.info;
 
     let ownerOrgs = await this.orgsRepository.find({
-      owner_id: user.user_id
+      where: {
+        owner_id: user.user_id
+      }
     });
 
     if (ownerOrgs.length > 0) {
@@ -49,8 +51,10 @@ export class DeleteUserController {
     }
 
     let userAdminMembers = await this.membersRepository.find({
-      member_id: user.user_id,
-      is_admin: common.BoolEnum.TRUE
+      where: {
+        member_id: user.user_id,
+        is_admin: common.BoolEnum.TRUE
+      }
     });
 
     let userAdminProjectIds = userAdminMembers.map(x => x.project_id);
@@ -59,8 +63,10 @@ export class DeleteUserController {
       userAdminProjectIds.length === 0
         ? []
         : await this.membersRepository.find({
-            project_id: In(userAdminProjectIds),
-            is_admin: common.BoolEnum.TRUE
+            where: {
+              project_id: In(userAdminProjectIds),
+              is_admin: common.BoolEnum.TRUE
+            }
           });
 
     let erProjectIds: string[] = [];
@@ -82,7 +88,9 @@ export class DeleteUserController {
     }
 
     let userMembers = await this.membersRepository.find({
-      member_id: user.user_id
+      where: {
+        member_id: user.user_id
+      }
     });
 
     let projectIds = userMembers.map(x => x.project_id);
@@ -91,7 +99,9 @@ export class DeleteUserController {
       projectIds.length === 0
         ? []
         : await this.projectsRepository.find({
-            project_id: In(projectIds)
+            where: {
+              project_id: In(projectIds)
+            }
           });
 
     await asyncPool(1, userMembers, async (m: entities.MemberEntity) => {

@@ -35,9 +35,11 @@ export class IsBranchExistController {
     });
 
     let branch = await this.branchesRepository.findOne({
-      project_id: projectId,
-      repo_id: repoId,
-      branch_id: branchId
+      where: {
+        project_id: projectId,
+        repo_id: repoId,
+        branch_id: branchId
+      }
     });
 
     let payload: apiToBackend.ToBackendIsBranchExistResponsePayload = {

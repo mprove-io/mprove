@@ -12,8 +12,10 @@ export class ModelsService {
     let { modelId, structId } = item;
 
     let model = await this.modelsRepository.findOne({
-      struct_id: structId,
-      model_id: modelId
+      where: {
+        struct_id: structId,
+        model_id: modelId
+      }
     });
 
     if (common.isUndefined(model)) {

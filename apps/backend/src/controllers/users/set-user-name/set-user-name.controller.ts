@@ -32,7 +32,9 @@ export class SetUserNameController {
     user.last_name = lastName;
 
     let userMembers = await this.memberRepository.find({
-      member_id: user.user_id
+      where: {
+        member_id: user.user_id
+      }
     });
 
     userMembers.map(member => {

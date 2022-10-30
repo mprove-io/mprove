@@ -52,8 +52,10 @@ export class CreateProjectController {
     }
 
     let project = await this.projectsRepository.findOne({
-      org_id: orgId,
-      name: name
+      where: {
+        org_id: orgId,
+        name: name
+      }
     });
 
     if (common.isDefined(project)) {
@@ -66,7 +68,9 @@ export class CreateProjectController {
 
     if (remoteType === common.ProjectRemoteTypeEnum.GitClone) {
       note = await this.notesRepository.findOne({
-        note_id: noteId
+        where: {
+          note_id: noteId
+        }
       });
 
       if (common.isUndefined(note)) {

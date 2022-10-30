@@ -62,7 +62,9 @@ export class DeleteOrgController {
 
     await this.orgsRepository.delete({ org_id: orgId });
 
-    let projects = await this.projectsRepository.find({ org_id: orgId });
+    let projects = await this.projectsRepository.find({
+      where: { org_id: orgId }
+    });
     let projectIds = projects.map(x => x.project_id);
 
     if (projectIds.length > 0) {

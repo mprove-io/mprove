@@ -110,9 +110,11 @@ export class PullRepoController {
     );
 
     let branchBridges = await this.bridgesRepository.find({
-      project_id: branch.project_id,
-      repo_id: branch.repo_id,
-      branch_id: branch.branch_id
+      where: {
+        project_id: branch.project_id,
+        repo_id: branch.repo_id,
+        branch_id: branch.branch_id
+      }
     });
 
     await forEachSeries(branchBridges, async x => {

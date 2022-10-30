@@ -21,7 +21,9 @@ export class QueriesService {
     let { queryId: queryId } = item;
 
     let query = await this.queriesRepository.findOne({
-      query_id: queryId
+      where: {
+        query_id: queryId
+      }
     });
 
     if (common.isUndefined(query)) {
@@ -55,15 +57,19 @@ WHERE m.mconfig_id is NULL
 
   async checkBigqueryRunningQueries() {
     let queries = await this.queriesRepository.find({
-      status: common.QueryStatusEnum.Running,
-      connection_type: common.ConnectionTypeEnum.BigQuery
+      where: {
+        status: common.QueryStatusEnum.Running,
+        connection_type: common.ConnectionTypeEnum.BigQuery
+      }
     });
 
     await asyncPool(8, queries, async (query: entities.QueryEntity) => {
       try {
         let connection = await this.connectionsRepository.findOne({
-          project_id: query.project_id,
-          connection_id: query.connection_id
+          where: {
+            project_id: query.project_id,
+            connection_id: query.connection_id
+          }
         });
 
         if (common.isUndefined(connection)) {

@@ -31,7 +31,9 @@ export class GetOrgController {
 
     if (org.owner_id !== user.user_id) {
       let userMembers = await this.membersRepository.find({
-        member_id: user.user_id
+        where: {
+          member_id: user.user_id
+        }
       });
 
       let projectIds = userMembers.map(m => m.project_id);
@@ -39,8 +41,10 @@ export class GetOrgController {
         projectIds.length === 0
           ? []
           : await this.projectsRepository.find({
-              project_id: In(projectIds),
-              org_id: orgId
+              where: {
+                project_id: In(projectIds),
+                org_id: orgId
+              }
             });
 
       let orgIds = projects.map(x => x.org_id);

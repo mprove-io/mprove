@@ -14,9 +14,11 @@ export class EvsService {
     let { projectId, envId, evId } = item;
 
     let ev = await this.evsRepository.findOne({
-      project_id: projectId,
-      env_id: envId,
-      ev_id: evId
+      where: {
+        project_id: projectId,
+        env_id: envId,
+        ev_id: evId
+      }
     });
 
     if (common.isDefined(ev)) {
@@ -34,9 +36,11 @@ export class EvsService {
     let { projectId, envId, evId } = item;
 
     let ev = await this.evsRepository.findOne({
-      project_id: projectId,
-      env_id: envId,
-      ev_id: evId
+      where: {
+        project_id: projectId,
+        env_id: envId,
+        ev_id: evId
+      }
     });
 
     if (common.isUndefined(ev)) {

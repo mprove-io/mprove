@@ -42,9 +42,11 @@ export class GetModelController {
       memberId: user.user_id
     });
     let branch = await this.branchesRepository.findOne({
-      project_id: projectId,
-      repo_id: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
-      branch_id: branchId
+      where: {
+        project_id: projectId,
+        repo_id: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
+        branch_id: branchId
+      }
     });
 
     if (common.isUndefined(branch)) {

@@ -19,7 +19,7 @@ export class OrgsService {
   async getOrgCheckExists(item: { orgId: string }) {
     let { orgId } = item;
 
-    let org = await this.orgsRepository.findOne({ org_id: orgId });
+    let org = await this.orgsRepository.findOne({ where: { org_id: orgId } });
 
     if (common.isUndefined(org)) {
       throw new common.ServerError({

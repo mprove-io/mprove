@@ -27,8 +27,10 @@ export class MembersService {
     let { projectId, memberId } = item;
 
     let member = await this.membersRepository.findOne({
-      member_id: memberId,
-      project_id: projectId
+      where: {
+        member_id: memberId,
+        project_id: projectId
+      }
     });
 
     if (common.isUndefined(member)) {
@@ -51,8 +53,10 @@ export class MembersService {
     let { projectId, memberId } = item;
 
     let member = await this.membersRepository.findOne({
-      member_id: memberId,
-      project_id: projectId
+      where: {
+        member_id: memberId,
+        project_id: projectId
+      }
     });
 
     if (common.isUndefined(member)) {
@@ -77,8 +81,10 @@ export class MembersService {
     let { projectId, memberId } = item;
 
     let member = await this.membersRepository.findOne({
-      member_id: memberId,
-      project_id: projectId
+      where: {
+        member_id: memberId,
+        project_id: projectId
+      }
     });
 
     if (common.isUndefined(member)) {
@@ -100,8 +106,10 @@ export class MembersService {
     let { projectId, memberId } = item;
 
     let member = await this.membersRepository.findOne({
-      member_id: memberId,
-      project_id: projectId
+      where: {
+        member_id: memberId,
+        project_id: projectId
+      }
     });
 
     if (common.isUndefined(member)) {
@@ -117,8 +125,10 @@ export class MembersService {
     let { projectId, memberId } = item;
 
     let member = await this.membersRepository.findOne({
-      member_id: memberId,
-      project_id: projectId
+      where: {
+        member_id: memberId,
+        project_id: projectId
+      }
     });
 
     if (common.isDefined(member)) {
@@ -137,13 +147,17 @@ export class MembersService {
 
     if (common.isDefined(firstProjectId)) {
       let project = await this.projectsRepository.findOne({
-        project_id: firstProjectId
+        where: {
+          project_id: firstProjectId
+        }
       });
 
       if (common.isDefined(project)) {
         let member = await this.membersRepository.findOne({
-          member_id: user.user_id,
-          project_id: firstProjectId
+          where: {
+            member_id: user.user_id,
+            project_id: firstProjectId
+          }
         });
 
         if (common.isUndefined(member)) {
@@ -183,9 +197,11 @@ export class MembersService {
           );
 
           let prodBranch = await this.branchesRepository.findOne({
-            project_id: firstProjectId,
-            repo_id: common.PROD_REPO_ID,
-            branch_id: project.default_branch
+            where: {
+              project_id: firstProjectId,
+              repo_id: common.PROD_REPO_ID,
+              branch_id: project.default_branch
+            }
           });
 
           let devBranch = maker.makeBranch({
@@ -195,9 +211,11 @@ export class MembersService {
           });
 
           let prodBranchBridges = await this.bridgesRepository.find({
-            project_id: prodBranch.project_id,
-            repo_id: prodBranch.repo_id,
-            branch_id: prodBranch.branch_id
+            where: {
+              project_id: prodBranch.project_id,
+              repo_id: prodBranch.repo_id,
+              branch_id: prodBranch.branch_id
+            }
           });
 
           let devBranchBridges: entities.BridgeEntity[] = [];

@@ -55,7 +55,9 @@ export class GetEnvsController {
     });
 
     let members = await this.membersRepository.find({
-      project_id: projectId
+      where: {
+        project_id: projectId
+      }
     });
 
     let apiMember = wrapper.wrapToApiMember(userMember);

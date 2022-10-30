@@ -16,9 +16,11 @@ export class ConnectionsService {
     let { projectId, envId, connectionId } = item;
 
     let connection = await this.connectionsRepository.findOne({
-      connection_id: connectionId,
-      env_id: envId,
-      project_id: projectId
+      where: {
+        connection_id: connectionId,
+        env_id: envId,
+        project_id: projectId
+      }
     });
 
     if (common.isDefined(connection)) {
@@ -36,9 +38,11 @@ export class ConnectionsService {
     let { projectId, envId, connectionId } = item;
 
     let connection = await this.connectionsRepository.findOne({
-      connection_id: connectionId,
-      env_id: envId,
-      project_id: projectId
+      where: {
+        connection_id: connectionId,
+        env_id: envId,
+        project_id: projectId
+      }
     });
 
     if (common.isUndefined(connection)) {

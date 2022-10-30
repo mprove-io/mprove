@@ -71,8 +71,10 @@ export class EditEvController {
     ev.val = value;
 
     let branchBridges = await this.bridgesRepository.find({
-      project_id: projectId,
-      env_id: envId
+      where: {
+        project_id: projectId,
+        env_id: envId
+      }
     });
 
     await forEachSeries(branchBridges, async x => {
