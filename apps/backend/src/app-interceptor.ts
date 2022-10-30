@@ -5,10 +5,8 @@ import {
   NestInterceptor
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-// import { InjectRepository } from '@nestjs/typeorm';
 import { Observable, of } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
-// import { Repository } from 'typeorm';
 import { apiToBackend } from './barrels/api-to-backend';
 import { common } from './barrels/common';
 import { constants } from './barrels/constants';
@@ -22,11 +20,9 @@ let retry = require('async-retry');
 @Injectable()
 export class AppInterceptor implements NestInterceptor {
   constructor(
-    private cs: ConfigService<interfaces.Config>,
-    private idempsRepository: repositories.IdempsRepository
-  ) // @InjectRepository(entities.IdempEntity)
-  // private idempsRepository: Repository<entities.IdempEntity>
-  {}
+    private idempsRepository: repositories.IdempsRepository,
+    private cs: ConfigService<interfaces.Config>
+  ) {}
 
   async intercept(
     context: ExecutionContext,

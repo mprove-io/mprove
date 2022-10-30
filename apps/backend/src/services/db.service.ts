@@ -4,7 +4,6 @@ import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
-import { repositories } from '~backend/barrels/repositories';
 
 let retry = require('async-retry');
 
@@ -98,93 +97,67 @@ export class DbService {
       } = records;
 
       if (common.isDefined(users) && users.length > 0) {
-        await manager
-          .getCustomRepository(repositories.UsersRepository)
-          .insert(users);
+        await manager.getRepository(entities.UserEntity).insert(users);
       }
 
       if (common.isDefined(avatars) && avatars.length > 0) {
-        await manager
-          .getCustomRepository(repositories.AvatarsRepository)
-          .insert(avatars);
+        await manager.getRepository(entities.AvatarEntity).insert(avatars);
       }
 
       if (common.isDefined(orgs) && orgs.length > 0) {
-        await manager
-          .getCustomRepository(repositories.OrgsRepository)
-          .insert(orgs);
+        await manager.getRepository(entities.OrgEntity).insert(orgs);
       }
 
       if (common.isDefined(projects) && projects.length > 0) {
-        await manager
-          .getCustomRepository(repositories.ProjectsRepository)
-          .insert(projects);
+        await manager.getRepository(entities.ProjectEntity).insert(projects);
       }
 
       if (common.isDefined(envs) && envs.length > 0) {
-        await manager
-          .getCustomRepository(repositories.EnvsRepository)
-          .insert(envs);
+        await manager.getRepository(entities.EnvEntity).insert(envs);
       }
 
       if (common.isDefined(evs) && evs.length > 0) {
-        await manager
-          .getCustomRepository(repositories.EvsRepository)
-          .insert(evs);
+        await manager.getRepository(entities.EvEntity).insert(evs);
       }
 
       if (common.isDefined(members) && members.length > 0) {
-        await manager
-          .getCustomRepository(repositories.MembersRepository)
-          .insert(members);
+        await manager.getRepository(entities.MemberEntity).insert(members);
       }
 
       if (common.isDefined(connections) && connections.length > 0) {
         await manager
-          .getCustomRepository(repositories.ConnectionsRepository)
+          .getRepository(entities.ConnectionEntity)
           .insert(connections);
       }
 
       if (common.isDefined(branches) && branches.length > 0) {
-        await manager
-          .getCustomRepository(repositories.BranchesRepository)
-          .insert(branches);
+        await manager.getRepository(entities.BranchEntity).insert(branches);
       }
 
       if (common.isDefined(bridges) && bridges.length > 0) {
-        await manager
-          .getCustomRepository(repositories.BridgesRepository)
-          .insert(bridges);
+        await manager.getRepository(entities.BridgeEntity).insert(bridges);
       }
 
       if (common.isDefined(structs) && structs.length > 0) {
-        await manager
-          .getCustomRepository(repositories.StructsRepository)
-          .insert(structs);
+        await manager.getRepository(entities.StructEntity).insert(structs);
       }
 
       if (common.isDefined(models) && models.length > 0) {
-        await manager
-          .getCustomRepository(repositories.ModelsRepository)
-          .insert(models);
+        await manager.getRepository(entities.ModelEntity).insert(models);
       }
 
       if (common.isDefined(mconfigs) && mconfigs.length > 0) {
-        await manager
-          .getCustomRepository(repositories.MconfigsRepository)
-          .insert(mconfigs);
+        await manager.getRepository(entities.MconfigEntity).insert(mconfigs);
       }
 
       if (common.isDefined(dashboards) && dashboards.length > 0) {
         await manager
-          .getCustomRepository(repositories.DashboardsRepository)
+          .getRepository(entities.DashboardEntity)
           .insert(dashboards);
       }
 
       if (common.isDefined(vizs) && vizs.length > 0) {
-        await manager
-          .getCustomRepository(repositories.VizsRepository)
-          .insert(vizs);
+        await manager.getRepository(entities.VizEntity).insert(vizs);
       }
 
       if (common.isDefined(queries) && queries.length > 0) {
@@ -198,9 +171,7 @@ export class DbService {
       }
 
       if (common.isDefined(notes) && notes.length > 0) {
-        await manager
-          .getCustomRepository(repositories.NotesRepository)
-          .insert(notes);
+        await manager.getRepository(entities.NoteEntity).insert(notes);
       }
     });
 
@@ -264,103 +235,73 @@ export class DbService {
       } = records;
 
       if (common.isDefined(users) && users.length > 0) {
-        await manager
-          .getCustomRepository(repositories.UsersRepository)
-          .save(users);
+        await manager.getRepository(entities.UserEntity).save(users);
       }
 
       if (common.isDefined(avatars) && avatars.length > 0) {
-        await manager
-          .getCustomRepository(repositories.AvatarsRepository)
-          .save(avatars);
+        await manager.getRepository(entities.AvatarEntity).save(avatars);
       }
 
       if (common.isDefined(orgs) && orgs.length > 0) {
-        await manager
-          .getCustomRepository(repositories.OrgsRepository)
-          .save(orgs);
+        await manager.getRepository(entities.OrgEntity).save(orgs);
       }
 
       if (common.isDefined(projects) && projects.length > 0) {
-        await manager
-          .getCustomRepository(repositories.ProjectsRepository)
-          .save(projects);
+        await manager.getRepository(entities.ProjectEntity).save(projects);
       }
 
       if (common.isDefined(envs) && envs.length > 0) {
-        await manager
-          .getCustomRepository(repositories.EnvsRepository)
-          .save(envs);
+        await manager.getRepository(entities.EnvEntity).save(envs);
       }
 
       if (common.isDefined(evs) && evs.length > 0) {
-        await manager.getCustomRepository(repositories.EvsRepository).save(evs);
+        await manager.getRepository(entities.EvEntity).save(evs);
       }
 
       if (common.isDefined(members) && members.length > 0) {
-        await manager
-          .getCustomRepository(repositories.MembersRepository)
-          .save(members);
+        await manager.getRepository(entities.MemberEntity).save(members);
       }
 
       if (common.isDefined(connections) && connections.length > 0) {
         await manager
-          .getCustomRepository(repositories.ConnectionsRepository)
+          .getRepository(entities.ConnectionEntity)
           .save(connections);
       }
 
       if (common.isDefined(branches) && branches.length > 0) {
-        await manager
-          .getCustomRepository(repositories.BranchesRepository)
-          .save(branches);
+        await manager.getRepository(entities.BranchEntity).save(branches);
       }
 
       if (common.isDefined(bridges) && bridges.length > 0) {
-        await manager
-          .getCustomRepository(repositories.BridgesRepository)
-          .save(bridges);
+        await manager.getRepository(entities.BridgeEntity).save(bridges);
       }
 
       if (common.isDefined(structs) && structs.length > 0) {
-        await manager
-          .getCustomRepository(repositories.StructsRepository)
-          .save(structs);
+        await manager.getRepository(entities.StructEntity).save(structs);
       }
 
       if (common.isDefined(models) && models.length > 0) {
-        await manager
-          .getCustomRepository(repositories.ModelsRepository)
-          .save(models);
+        await manager.getRepository(entities.ModelEntity).save(models);
       }
 
       if (common.isDefined(mconfigs) && mconfigs.length > 0) {
-        await manager
-          .getCustomRepository(repositories.MconfigsRepository)
-          .save(mconfigs);
+        await manager.getRepository(entities.MconfigEntity).save(mconfigs);
       }
 
       if (common.isDefined(dashboards) && dashboards.length > 0) {
-        await manager
-          .getCustomRepository(repositories.DashboardsRepository)
-          .save(dashboards);
+        await manager.getRepository(entities.DashboardEntity).save(dashboards);
       }
 
       if (common.isDefined(vizs) && vizs.length > 0) {
-        await manager
-          .getCustomRepository(repositories.VizsRepository)
-          .save(vizs);
+        await manager.getRepository(entities.VizEntity).save(vizs);
       }
 
       if (common.isDefined(queries) && queries.length > 0) {
-        await manager
-          .getCustomRepository(repositories.QueriesRepository)
-          .save(queries);
+        await manager.getRepository(entities.QueryEntity).save(queries);
       }
 
       if (common.isDefined(notes) && notes.length > 0) {
-        await manager
-          .getCustomRepository(repositories.NotesRepository)
-          .save(notes);
+        await manager.getRepository(entities.NoteEntity).save(notes);
       }
     });
 

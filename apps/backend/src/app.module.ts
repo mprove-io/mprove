@@ -112,7 +112,7 @@ let typeormRootModule = TypeOrmModule.forRootAsync({
   inject: [ConfigService]
 });
 
-let typeormFeatureModule = TypeOrmModule.forFeature([...appRepositories]);
+let typeormFeatureModule = TypeOrmModule.forFeature([...appEntities]);
 
 let mailerModule = MailerModule.forRootAsync({
   useFactory: (cs: ConfigService<interfaces.Config>) => {
@@ -188,6 +188,7 @@ let mailerModule = MailerModule.forRootAsync({
   controllers: appControllers,
   providers: [
     ...appProviders,
+    ...appRepositories,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard
@@ -209,6 +210,16 @@ export class AppModule implements OnModuleInit {
     private orgsService: OrgsService,
     private projectsService: ProjectsService,
     private cs: ConfigService<interfaces.Config>,
+    // @InjectRepository(entities.UserEntity)
+    // private usersRepository: Repository<entities.UserEntity>,
+    // @InjectRepository(entities.OrgEntity)
+    // private orgsRepository: Repository<entities.OrgEntity>,
+    // @InjectRepository(entities.ProjectEntity)
+    // private projectsRepository: Repository<entities.ProjectEntity>,
+    // @InjectRepository(entities.ConnectionEntity)
+    // private connectionsRepository: Repository<entities.ConnectionEntity>,
+    // @InjectRepository(entities.EvEntity)
+    // private evsRepository: Repository<entities.EvEntity>,
     private usersRepository: repositories.UsersRepository,
     private orgsRepository: repositories.OrgsRepository,
     private projectsRepository: repositories.ProjectsRepository,
