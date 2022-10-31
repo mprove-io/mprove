@@ -44,7 +44,7 @@ spec:
         env:
         - name: BACKEND_IS_SCHEDULER
           value: 'FALSE'
-        - name: CLI_TYPEORM_MYSQL_HOST
+        - name: CLI_TYPEORM_HOST
           valueFrom:
             secretKeyRef:
               name: backend-common-envs
