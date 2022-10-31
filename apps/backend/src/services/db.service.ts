@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
@@ -9,7 +9,7 @@ let retry = require('async-retry');
 
 @Injectable()
 export class DbService {
-  constructor(private connection: Connection) {}
+  constructor(private dataSource: DataSource) {}
 
   async writeRecords(item: { records: interfaces.Records; modify: boolean }) {
     let { records, modify } = item;
@@ -58,7 +58,7 @@ export class DbService {
       }
     });
 
-    await this.connection.transaction(async manager => {
+    await this.dataSource.transaction(async manager => {
       // if (!item.skip_chunk) {
       //   let chunkId = common.makeId();
 
@@ -196,7 +196,7 @@ export class DbService {
       }
     });
 
-    await this.connection.transaction(async manager => {
+    await this.dataSource.transaction(async manager => {
       // if (!item.skipChunk) {
       //   let chunkId = common.makeId();
 

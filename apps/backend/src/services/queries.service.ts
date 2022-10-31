@@ -1,7 +1,7 @@
 import { BigQuery } from '@google-cloud/bigquery';
 import { Injectable } from '@nestjs/common';
 import asyncPool from 'tiny-async-pool';
-import { Connection, In } from 'typeorm';
+import { DataSource, In } from 'typeorm';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
@@ -14,7 +14,7 @@ export class QueriesService {
     private queriesRepository: repositories.QueriesRepository,
     private connectionsRepository: repositories.ConnectionsRepository,
     private dbService: DbService,
-    private connection: Connection
+    private dataSource: DataSource
   ) {}
 
   async getQueryCheckExists(item: { queryId: string }) {
@@ -38,7 +38,7 @@ export class QueriesService {
   async removeOrphanedQueries() {
     let rawData: any;
 
-    await this.connection.transaction(async manager => {
+    await this.dataSource.transaction(async manager => {
       rawData = await manager.query(`
 SELECT 
   q.query_id

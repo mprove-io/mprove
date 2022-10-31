@@ -1,5 +1,5 @@
 import { Controller, Post } from '@nestjs/common';
-import { Connection, In } from 'typeorm';
+import { DataSource, In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
@@ -20,7 +20,7 @@ export class GetOrgUsersController {
     private avatarsRepository: repositories.AvatarsRepository,
     private projectsRepository: repositories.ProjectsRepository,
     private orgsService: OrgsService,
-    private connection: Connection
+    private dataSource: DataSource
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers)
@@ -44,7 +44,7 @@ export class GetOrgUsersController {
 
     let projectIds = projects.map(x => x.project_id);
 
-    let membersPart: MemberEntity[] = await this.connection
+    let membersPart: MemberEntity[] = await this.dataSource
       .getRepository(MemberEntity)
       .createQueryBuilder('members')
       .select('DISTINCT member_id')

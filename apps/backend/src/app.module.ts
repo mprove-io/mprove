@@ -9,7 +9,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as fse from 'fs-extra';
 import * as mg from 'nodemailer-mailgun-transport';
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { appControllers } from './app-controllers';
 import { appEntities } from './app-entities';
 import { AppFilter } from './app-filter';
@@ -205,7 +205,7 @@ let mailerModule = MailerModule.forRootAsync({
 })
 export class AppModule implements OnModuleInit {
   constructor(
-    private connection: Connection,
+    private dataSource: DataSource,
     private usersService: UsersService,
     private orgsService: OrgsService,
     private projectsService: ProjectsService,
@@ -231,10 +231,10 @@ export class AppModule implements OnModuleInit {
   async onModuleInit() {
     try {
       if (helper.isScheduler(this.cs)) {
-        const migrationsPending = await this.connection.showMigrations();
+        const migrationsPending = await this.dataSource.showMigrations();
 
         if (migrationsPending) {
-          const migrations = await this.connection.runMigrations({
+          const migrations = await this.dataSource.runMigrations({
             transaction: 'all'
           });
           migrations.forEach(migration => {

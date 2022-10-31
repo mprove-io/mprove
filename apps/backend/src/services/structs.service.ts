@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Connection, In } from 'typeorm';
+import { DataSource, In } from 'typeorm';
 import { common } from '~backend/barrels/common';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
@@ -12,7 +12,7 @@ export class StructsService {
     private mconfigsRepository: repositories.MconfigsRepository,
     private modelsRepository: repositories.ModelsRepository,
     private vizsRepository: repositories.VizsRepository,
-    private connection: Connection
+    private dataSource: DataSource
   ) {}
 
   async getStructCheckExists(item: { structId: string; projectId: string }) {
@@ -56,7 +56,7 @@ export class StructsService {
   async removeOrphanedStructs() {
     let rawData: any;
 
-    await this.connection.transaction(async manager => {
+    await this.dataSource.transaction(async manager => {
       rawData = await manager.query(`
 SELECT 
   s.struct_id
