@@ -37,28 +37,18 @@ spec:
           until wget http://$BACKEND_RABBIT_USER:$BACKEND_RABBIT_PASS@$BACKEND_RABBIT_HOST:15672/api/aliveness-test/%2F > /dev/null 2>&1; 
           do echo waiting for rabbit ...; sleep 10; done && 
           echo rabbit is ready &&
-          until yarn typeorm query "SELECT 1" > /dev/null 2>&1; 
+          until yarn typeorm query "SELECT 1" -d secrets/typeorm-datasource.ts > /dev/null 2>&1; 
           do echo waiting for db ...; sleep 10; done && 
           echo db is ready && 
           yarn serve:backend
         env:
-        - name: TYPEORM_CONNECTION
-          value: mysql
-        - name: TYPEORM_HOST
+        - name: BACKEND_IS_SCHEDULER
+          value: 'FALSE'
+        - name: CLI_TYPEORM_MYSQL_HOST
           valueFrom:
             secretKeyRef:
               name: backend-common-envs
-              key: BACKEND_MYSQL_HOST
-        - name: TYPEORM_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: backend-common-envs
-              key: BACKEND_MYSQL_USERNAME
-        - name: TYPEORM_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: backend-common-envs
-              key: BACKEND_MYSQL_PASSWORD                
+              key: BACKEND_MYSQL_HOST               
         envFrom:
         - secretRef:
             name: backend-common-envs          
@@ -66,7 +56,17 @@ spec:
         - containerPort: 3000
           name: backend
         - containerPort: 9229
-          name: backend-debug          
+          name: backend-debug
+        volumeMounts:
+        - name: backend-secrets-volume
+          mountPath: /usr/src/app/secrets
+      volumes:
+      - name: backend-secrets-volume
+        secret:
+          secretName: backend-common-secret-files
+          items:
+          - key: contentTypeormDataSource
+            path: typeorm-datasource.ts                    
 
 ---
 apiVersion: v1

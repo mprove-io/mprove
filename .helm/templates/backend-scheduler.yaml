@@ -38,30 +38,18 @@ spec:
           until wget http://$BACKEND_RABBIT_USER:$BACKEND_RABBIT_PASS@$BACKEND_RABBIT_HOST:15672/api/aliveness-test/%2F > /dev/null 2>&1; 
           do echo waiting for rabbit ...; sleep 10; done && 
           echo rabbit is ready &&
-          until yarn typeorm query "SELECT 1" > /dev/null 2>&1; 
+          until yarn typeorm query "SELECT 1" -d secrets/typeorm-datasource.ts > /dev/null 2>&1; 
           do echo waiting for db ...; sleep 10; done && 
           echo db is ready && 
           yarn serve:backend
         env:
-        - name: TYPEORM_CONNECTION
-          value: mysql
-        - name: TYPEORM_HOST
-          valueFrom:
-            secretKeyRef:
-              name: backend-common-envs
-              key: BACKEND_MYSQL_HOST
-        - name: TYPEORM_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: backend-common-envs
-              key: BACKEND_MYSQL_USERNAME
-        - name: TYPEORM_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: backend-common-envs
-              key: BACKEND_MYSQL_PASSWORD
         - name: BACKEND_IS_SCHEDULER
-          value: 'TRUE'                      
+          value: 'TRUE'
+        - name: CLI_TYPEORM_MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: backend-common-envs
+              key: BACKEND_MYSQL_HOST                      
         envFrom:
         - secretRef:
             name: backend-common-envs
@@ -76,6 +64,8 @@ spec:
         secret:
           secretName: backend-common-secret-files
           items:
+          - key: contentTypeormDataSource
+            path: typeorm-datasource.ts
           - key: contentBigqueryCredentials
             path: first-project-bigquery-credentials.json
           - key: contentRemotePrivateKey
