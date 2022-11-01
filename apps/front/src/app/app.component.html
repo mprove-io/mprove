@@ -1,13 +1,14 @@
 <ngx-spinner
   [name]="appSpinnerName"
-  bdColor="rgba(0, 0, 0, 0.7)"
+  bdColor="rgba(0, 0, 0, 0.0)"
   size="medium"
-  color="#fff"
+  color="#2563EB"
   type="line-scale"
   [fullScreen]="true"
+  [disableAnimation]="true"
 >
   <div data-cy="loadingSpinner"></div>
-  <p style="color: white"> Loading... </p>
+  <!-- <p style="color: white"> Loading... </p> -->
 </ngx-spinner>
 <router-outlet></router-outlet>
 <div *ngIf="routerEvents$ | async"></div>
