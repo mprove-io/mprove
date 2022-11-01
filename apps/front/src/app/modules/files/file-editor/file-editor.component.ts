@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import * as monaco from 'monaco-editor';
+import { MonacoEditorLoaderService } from '@materia-ui/ngx-monaco-editor';
 import { filter, take, tap } from 'rxjs/operators';
 import { FileQuery } from '~front/app/queries/file.query';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -18,6 +18,7 @@ import { StructState, StructStore } from '~front/app/stores/struct.store';
 import { UiState, UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-file-editor',
@@ -25,15 +26,13 @@ import { common } from '~front/barrels/common';
   styleUrls: ['file-editor.component.scss']
 })
 export class FileEditorComponent implements OnDestroy {
-  editorTheme = 'vs-dark';
-
   line = 1;
 
   editor: monaco.editor.IStandaloneCodeEditor = null;
 
   editorOptions = {
     // automaticLayout: true,
-    theme: this.editorTheme,
+    theme: 'textmate',
     fontSize: 16,
     language: 'yaml'
   };
@@ -120,15 +119,35 @@ export class FileEditorComponent implements OnDestroy {
     private navStore: NavStore,
     public structStore: StructStore,
     private uiStore: UiStore,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private monacoLoaderService: MonacoEditorLoaderService
+  ) {
+    this.monacoLoaderService.isMonacoLoaded$
+      .pipe(
+        filter(isLoaded => isLoaded),
+        take(1)
+      )
+      .subscribe(() => {
+        monaco.editor.defineTheme(
+          this.editorOptions.theme,
+          constants.MY_TEXTMATE_THEME as any
+        );
+        monaco.editor.setTheme(this.editorOptions.theme);
+      });
+  }
 
-  async onEditorInit(editor: monaco.editor.IStandaloneCodeEditor) {
+  async onEditorInit(editor: any) {
     this.editor = editor;
 
-    monaco.editor.setTheme(this.editorTheme);
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(take(1))
+      .subscribe(x => {
+        nav = x;
+      });
 
-    this.editor.updateOptions({ readOnly: this.nav.isRepoProd });
+    this.editor.updateOptions({ readOnly: nav.isRepoProd });
 
     this.editor.getModel().updateOptions({ tabSize: 2 });
 
@@ -147,6 +166,27 @@ export class FileEditorComponent implements OnDestroy {
     if (!this.editor || !this.editor.getModel()) {
       return;
     }
+
+    this.repoQuery
+      .select()
+      .pipe(take(1))
+      .subscribe(x => {
+        this.repo = x;
+      });
+
+    this.structQuery
+      .select()
+      .pipe(take(1))
+      .subscribe(x => {
+        this.struct = x;
+      });
+
+    this.fileQuery
+      .select()
+      .pipe(take(1))
+      .subscribe(x => {
+        this.file = x;
+      });
 
     if (this.repo.conflicts.length > 0) {
       let conflictMarkers: monaco.editor.IMarkerData[] = [];
@@ -215,7 +255,6 @@ export class FileEditorComponent implements OnDestroy {
       this.uiStore.update(state =>
         Object.assign({}, state, <UiState>{ needSave: false })
       );
-    } else {
       this.refreshMarkers();
     }
   }

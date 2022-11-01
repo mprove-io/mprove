@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MonacoEditorModule } from '@dmlukichev/ngx-monaco-editor';
+import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyModule } from '@ngneat/helipopper';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
@@ -143,7 +143,7 @@ let sharedComponents = [
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MonacoEditorModule.forRoot(),
+    MonacoEditorModule,
     FormsModule,
     NgSelectModule,
     NzDatePickerModule,

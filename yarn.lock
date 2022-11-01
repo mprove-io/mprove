@@ -1816,13 +1816,6 @@
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.6.tgz#d5e0706cf8c6acd8c6032f8d54070af261bbbb2f"
   integrity sha512-ws57AidsDvREKrZKYffXddNkyaF14iHNHm8VQnZH6t99E8gczjNN0GpvcGny0imC80yQ0tHz1xVUKk/KFQSUyA==
 
-"@dmlukichev/ngx-monaco-editor@13.0.0":
-  version "13.0.0"
-  resolved "https://registry.yarnpkg.com/@dmlukichev/ngx-monaco-editor/-/ngx-monaco-editor-13.0.0.tgz#74fd1fcd42c113e99741e02b86a13e2507746d8a"
-  integrity sha512-LbmV/lY3IxmR1/ywRsqMa+LVfpsnC1MjEHA6Cp7k8BKv8QfLMlyNsvpFLxL02gk9bFEGrfyO9JG7QijGSQfSJQ==
-  dependencies:
-    tslib "^2.1.0"
-
 "@eslint/eslintrc@^0.1.3":
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.1.3.tgz#7d1a2b2358552cc04834c0979bd4275362e37085"
@@ -2365,6 +2358,13 @@
     rimraf "^3.0.2"
     semver "^7.3.5"
     tar "^6.1.11"
+
+"@materia-ui/ngx-monaco-editor@6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@materia-ui/ngx-monaco-editor/-/ngx-monaco-editor-6.0.0.tgz#9ae93666019e9a6d4f787370b4373cbb63a04a38"
+  integrity sha512-gTqNQjOGznZxOC0NlmKdKSGCJuTts8YmK4dsTQAGc5IgIV7cZdQWiW6AL742h0ruED6q0cAunEYjXT6jzHBoIQ==
+  dependencies:
+    tslib "^2.0.0"
 
 "@nestjs-modules/mailer@1.8.1":
   version "1.8.1"
@@ -8401,6 +8401,11 @@ fast-levenshtein@^2.0.6, fast-levenshtein@~2.0.6:
   resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
   integrity sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
 
+fast-plist@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/fast-plist/-/fast-plist-0.1.2.tgz#a45aff345196006d406ca6cdcd05f69051ef35b8"
+  integrity sha512-2HxzrqJhmMoxVzARjYFvkzkL2dCBB8sogU5sD8gqcZWv5UCivK9/cXM9KIPDRwU+eD3mbRDN/GhW8bO/4dtMfg==
+
 fast-safe-stringify@2.1.1, fast-safe-stringify@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/fast-safe-stringify/-/fast-safe-stringify-2.1.1.tgz#c406a83b6e70d9e35ce3b30a81141df30aeba884"
@@ -13110,10 +13115,17 @@ moment@^2.29.3:
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.4.tgz#3dbe052889fe7c1b2ed966fcb3a77328964ef108"
   integrity sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==
 
-monaco-editor@^0.33.0:
-  version "0.33.0"
-  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.33.0.tgz#842e244f3750a2482f8a29c676b5684e75ff34af"
-  integrity sha512-VcRWPSLIUEgQJQIE0pVT8FcGBIgFoxz7jtqctE+IiCxWugD0DwgyQBcZBhdSrdMC84eumoqMZsGl2GTreOzwqw==
+monaco-editor@0.34.1:
+  version "0.34.1"
+  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.34.1.tgz#1b75c4ad6bc4c1f9da656d740d98e0b850a22f87"
+  integrity sha512-FKc80TyiMaruhJKKPz5SpJPIjL+dflGvz4CpuThaPMc94AyN7SeC9HQ8hrvaxX7EyHdJcUY5i4D0gNyJj1vSZQ==
+
+monaco-themes@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/monaco-themes/-/monaco-themes-0.4.2.tgz#6939339cb2f0bfb743f6e454de4136971834f16a"
+  integrity sha512-T3kp6SC5MPJvwYGXZENCd0UOIKVgUVV5SjsiXLBhgEZBnScY+6gEbwNRK1oYmfwbf+dGVqF1bSLN5YcrFu3HmA==
+  dependencies:
+    fast-plist "^0.1.2"
 
 moo@^0.5.0, moo@^0.5.1:
   version "0.5.2"

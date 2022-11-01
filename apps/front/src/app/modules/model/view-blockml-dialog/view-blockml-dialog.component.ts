@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { MonacoEditorLoaderService } from '@materia-ui/ngx-monaco-editor';
 import { DialogRef } from '@ngneat/dialog';
-import * as monaco from 'monaco-editor';
-import { take, tap } from 'rxjs/operators';
+import { filter, take, tap } from 'rxjs/operators';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { StructState } from '~front/app/stores/struct.store';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 export interface ViewBlockmlDialogDataItem {
   mconfig: common.MconfigX;
@@ -15,25 +16,36 @@ export interface ViewBlockmlDialogDataItem {
   templateUrl: './view-blockml-dialog.component.html'
 })
 export class ViewBlockmlDialogComponent implements OnInit {
-  editorTheme = 'vs-dark';
-  editorLanguage = 'yaml';
-
   editor: monaco.editor.IStandaloneCodeEditor = null;
 
   editorOptions = {
     // automaticLayout: true,
     readOnly: true,
-    theme: this.editorTheme,
+    theme: 'textmate',
     fontSize: 16,
-    language: this.editorLanguage
+    language: 'yaml'
   };
 
   reportYaml: string;
 
   constructor(
     public ref: DialogRef<ViewBlockmlDialogDataItem>,
-    private structQuery: StructQuery
-  ) {}
+    private structQuery: StructQuery,
+    private monacoLoaderService: MonacoEditorLoaderService
+  ) {
+    this.monacoLoaderService.isMonacoLoaded$
+      .pipe(
+        filter(isLoaded => isLoaded),
+        take(1)
+      )
+      .subscribe(() => {
+        monaco.editor.defineTheme(
+          this.editorOptions.theme,
+          constants.MY_TEXTMATE_THEME as any
+        );
+        monaco.editor.setTheme(this.editorOptions.theme);
+      });
+  }
 
   ngOnInit() {
     let struct: StructState;
@@ -54,9 +66,7 @@ export class ViewBlockmlDialogComponent implements OnInit {
     this.reportYaml = common.toYaml({ reports: [rep] });
   }
 
-  async onEditorInit(editor: monaco.editor.IStandaloneCodeEditor) {
+  async onEditorInit(editor: any) {
     this.editor = editor;
-    // monaco.editor.setTheme(this.editorTheme);
-    // monaco.editor.setModelLanguage(editor.getModel(), this.editorLanguage);
   }
 }

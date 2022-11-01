@@ -65,3 +65,5 @@ coverage/
 apps/integra/cypress
 
 .devspace/
+
+.angular

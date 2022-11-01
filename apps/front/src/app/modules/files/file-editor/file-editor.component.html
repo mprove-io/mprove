@@ -57,9 +57,8 @@
     </div>
   </div>
 
-  <div class="h-full rounded bg-[#1E1E1E]">
-    <!-- <div class="bg-green-300 h-full">3</div> -->
-
+  <div class="h-full rounded">
+    <!-- <div class="h-full rounded bg-[#1E1E1E]"> -->
     <ngx-monaco-editor
       style="height: 100%"
       class="my-code-editor"
@@ -67,7 +66,7 @@
       [options]="editorOptions"
       [(ngModel)]="content"
       (ngModelChange)="onTextChanged()"
-      (onInit)="onEditorInit($event)"
+      (init)="onEditorInit($event)"
     ></ngx-monaco-editor>
   </div>
 </div>
