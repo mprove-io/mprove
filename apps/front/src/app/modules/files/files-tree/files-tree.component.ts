@@ -9,7 +9,7 @@ import {
   KEYS,
   TreeComponent,
   TreeNode
-} from '@circlon/angular-tree-component';
+} from '@bugsplat/angular-tree-component';
 import { Subscription } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { FileQuery } from '~front/app/queries/file.query';

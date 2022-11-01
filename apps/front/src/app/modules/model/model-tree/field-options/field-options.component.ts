@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { TreeNode } from '@circlon/angular-tree-component';
+import { TreeNode } from '@bugsplat/angular-tree-component';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { common } from '~front/barrels/common';

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
+import * as monaco from 'monaco-editor';
 import { take, tap } from 'rxjs/operators';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { StructState } from '~front/app/stores/struct.store';

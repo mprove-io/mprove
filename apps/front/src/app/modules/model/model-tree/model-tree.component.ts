@@ -10,7 +10,7 @@ import {
   IActionMapping,
   TreeComponent,
   TreeNode
-} from '@circlon/angular-tree-component';
+} from '@bugsplat/angular-tree-component';
 import { take, tap } from 'rxjs/operators';
 import { ModelNode } from '~common/_index';
 import { setChartFields } from '~front/app/functions/set-chart-fields';

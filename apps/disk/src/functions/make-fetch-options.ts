@@ -23,7 +23,7 @@ export function makeFetchOptions(item: {
           callbacks: {
             certificateCheck: () => 0,
             credentials: function (url: any, userName: any) {
-              return nodegit.Cred.sshKeyNew(
+              return (nodegit as any).Credential.sshKeyNew(
                 'git',
                 pubKeyPath,
                 privateKeyPath,

@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
+import * as monaco from 'monaco-editor';
 import { tap } from 'rxjs/operators';
 import { MqQuery } from '~front/app/queries/mq.query';
 import { common } from '~front/barrels/common';

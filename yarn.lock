@@ -18,7 +18,7 @@
     "@angular-devkit/core" "13.3.9"
     rxjs "6.6.7"
 
-"@angular-devkit/build-angular@13.3.9":
+"@angular-devkit/build-angular@13.3.9", "@angular-devkit/build-angular@^13.3.5":
   version "13.3.9"
   resolved "https://registry.yarnpkg.com/@angular-devkit/build-angular/-/build-angular-13.3.9.tgz#400cc6e7c1662c66929077c511b2aa0eab76d9be"
   integrity sha512-1LqcMizeabx3yOkx3tptCSAoEhG6nO6hPgI/B3EJ07G/ZcoxunMWSeN3P3zT10dZMEHhcxl+8cSStSXaXj9hfA==
@@ -330,10 +330,10 @@
   resolved "https://registry.yarnpkg.com/@assemblyscript/loader/-/loader-0.10.1.tgz#70e45678f06c72fa2e350e8553ec4a4d72b92e06"
   integrity sha512-H71nDOOL8Y7kWRLqf6Sums+01Q5msqBW2KhDUTemh1tvY04eSkSXrK0uj/4mmY0Xr16/3zyZmsrxN7CKuRbNRg==
 
-"@auth0/angular-jwt@^5.0.2":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@auth0/angular-jwt/-/angular-jwt-5.0.2.tgz#0a23f240e8c6ed37c5c7a354ad79a755a217936e"
-  integrity sha512-rSamC9mu+gUxoR86AXcIo+KD7xRIro+/iu1F2Ld85YAZEVKlpB5vYG+g0yGaEOqjtQWP/i0H6fi6XMGPVHSYYQ==
+"@auth0/angular-jwt@5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@auth0/angular-jwt/-/angular-jwt-5.1.0.tgz#766abad6e6ee2e30b7c24362303c16b13e198a84"
+  integrity sha512-EAQoNKPQSZYphcX6FnY2e7xQpD4ZdHQ1DbHq/m+G1U1qA60m3XnhdjPPfu+blVHARlxEbRzWXc48UOVrnMsrZw==
   dependencies:
     tslib "^2.0.0"
 
@@ -1689,13 +1689,14 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@circlon/angular-tree-component@^11.0.4":
-  version "11.0.4"
-  resolved "https://registry.yarnpkg.com/@circlon/angular-tree-component/-/angular-tree-component-11.0.4.tgz#7fb5ca294331d45d4d2a01cb7afc7197a45aa905"
-  integrity sha512-Ck86mG6Z9eWG03RiOACDzrCjuzEDXU8rcEDi0aw0+Ku62x6ZY2mx8G0VX3CLEkS1BAXM2ef6luOIcoSKAKtDaA==
+"@bugsplat/angular-tree-component@13.0.1":
+  version "13.0.1"
+  resolved "https://registry.yarnpkg.com/@bugsplat/angular-tree-component/-/angular-tree-component-13.0.1.tgz#746e35647aebd949a19828252e2a777b88448d4b"
+  integrity sha512-PEcvFncqN1PwTrRs3FW8yFqOejDpPKdsvMg+zWPGFzsTOlih3sHj93D4ubYx2Tkzmf2GPUJv8HENKFuPZqyddw==
   dependencies:
+    core-js "^3.22.5"
     mobx "~4.14.1"
-    tslib "^2.0.0"
+    tslib "^2.3.0"
 
 "@cnakazawa/watch@^1.0.3":
   version "1.0.4"
@@ -1815,6 +1816,13 @@
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.6.tgz#d5e0706cf8c6acd8c6032f8d54070af261bbbb2f"
   integrity sha512-ws57AidsDvREKrZKYffXddNkyaF14iHNHm8VQnZH6t99E8gczjNN0GpvcGny0imC80yQ0tHz1xVUKk/KFQSUyA==
 
+"@dmlukichev/ngx-monaco-editor@13.0.0":
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/@dmlukichev/ngx-monaco-editor/-/ngx-monaco-editor-13.0.0.tgz#74fd1fcd42c113e99741e02b86a13e2507746d8a"
+  integrity sha512-LbmV/lY3IxmR1/ywRsqMa+LVfpsnC1MjEHA6Cp7k8BKv8QfLMlyNsvpFLxL02gk9bFEGrfyO9JG7QijGSQfSJQ==
+  dependencies:
+    tslib "^2.1.0"
+
 "@eslint/eslintrc@^0.1.3":
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.1.3.tgz#7d1a2b2358552cc04834c0979bd4275362e37085"
@@ -1925,6 +1933,16 @@
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/@google-cloud/promisify/-/promisify-2.0.3.tgz#f934b5cdc939e3c7039ff62b9caaf59a9d89e3a8"
   integrity sha512-d4VSA86eL/AFTe5xtyZX+ePUjE8dIFu2T8zmdeNBSa5/kNgXPCx/o/wbFNHAGLJdGnk1vddRuMESD9HbOC8irw==
+
+"@iharbeck/ngx-virtual-scroller@13.0.4":
+  version "13.0.4"
+  resolved "https://registry.yarnpkg.com/@iharbeck/ngx-virtual-scroller/-/ngx-virtual-scroller-13.0.4.tgz#68eb4294c4d358558bdcaa1e363bf21f8a4370f8"
+  integrity sha512-giKoIn3WIk3zlq1v/91vOxKLshIZEAQDCTX+qR1ekFWHfojolm00FAu7zp5lQXD4cEC6WqJi7YC+XneVMlsw8Q==
+  dependencies:
+    "@angular-devkit/build-angular" "^13.3.5"
+    "@tweenjs/tween.js" "^18.6.4"
+    "@types/tween.js" "^18.6.1"
+    tslib "^2.3.0"
 
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
@@ -2844,11 +2862,6 @@
     domhandler "^4.2.0"
     selderee "^0.6.0"
 
-"@sentinel-one/ngx-monaco-editor@^9.0.1":
-  version "9.0.1"
-  resolved "https://registry.yarnpkg.com/@sentinel-one/ngx-monaco-editor/-/ngx-monaco-editor-9.0.1.tgz#ec0ee8ffd1e2ba30dad0702fdc50344cfcc636d9"
-  integrity sha512-z0j2GbzIWEaUs42GFpxL7bYGFQDP21+l/bbYAda1ByosuIfe4MXK8Sa1pAhgg1vNrYD5q1CRTzVShfHzjqSs1A==
-
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"
@@ -3090,10 +3103,10 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"
   integrity sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==
 
-"@tweenjs/tween.js@17.4.0":
-  version "17.4.0"
-  resolved "https://registry.yarnpkg.com/@tweenjs/tween.js/-/tween.js-17.4.0.tgz#2e9ab3f2111906b30dfe1ef3259a9781dd211d35"
-  integrity sha512-J3fzl1F6wvh8KXVVcIuHN12xi1ZDcPA/0Vix+ZcJYwZWVHUwfIqfvzYXXEw7ybeev6477KCTt9fKydU+ajUqcg==
+"@tweenjs/tween.js@*", "@tweenjs/tween.js@^18.6.4":
+  version "18.6.4"
+  resolved "https://registry.yarnpkg.com/@tweenjs/tween.js/-/tween.js-18.6.4.tgz#40a3d0a93647124872dec8e0fd1bd5926695b6ca"
+  integrity sha512-lB9lMjuqjtuJrx7/kOkqQBtllspPIN+96OvTCeJ2j5FEzinoAXTdAMFnDAQT1KVPRlnYfBrqxtqP66vDM40xxQ==
 
 "@types/asn1@*":
   version "0.2.0"
@@ -3449,10 +3462,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.18.22.tgz#fd2a15dca290fc9ad565b672fde746191cd0c6e6"
   integrity sha512-qzaYbXVzin6EPjghf/hTdIbnVW1ErMx8rPzwRNJhlbyJhu2SyqlvjGOY/tbUt6VFyzg56lROcOeSQRInpt63Yw==
 
-"@types/nodegit@^0.26.10":
-  version "0.26.15"
-  resolved "https://registry.yarnpkg.com/@types/nodegit/-/nodegit-0.26.15.tgz#5b3e187c8d4b99c1a7ad0ee957287b6251f06573"
-  integrity sha512-gENag14KBX63P83D8ZQt6FtElWJ624Y3hY8aPtMR4A0fM3+iJAsWRlZ9v8ONahZTxTHFmKWrH1c1IZTeGJu3fA==
+"@types/nodegit@0.27.10":
+  version "0.27.10"
+  resolved "https://registry.yarnpkg.com/@types/nodegit/-/nodegit-0.27.10.tgz#746a5053acf5fd48e64031e9241f41b9d923517b"
+  integrity sha512-BCqbmp9iwOcCKRQui7GYMAHsD3DlPdAmzyNvX6hsoBSGMqgkOmrak2sF7gWrOoisH460MPFHaLEgQwuAYQqe2g==
   dependencies:
     "@types/node" "*"
 
@@ -3630,10 +3643,12 @@
   dependencies:
     "@types/node" "*"
 
-"@types/tween.js@17.2.0":
-  version "17.2.0"
-  resolved "https://registry.yarnpkg.com/@types/tween.js/-/tween.js-17.2.0.tgz#25f98311daecb165ab91ee2cd7f17a9b1e6cc30c"
-  integrity sha512-mOsqurEtFEzwgkVc/jDVE2XrjZBYTbrmDUyCr9GXmnfc6q5otokxFtKvSY/B21zgz9LVRIvRTawKczjKi57wrA==
+"@types/tween.js@^18.6.1":
+  version "18.6.1"
+  resolved "https://registry.yarnpkg.com/@types/tween.js/-/tween.js-18.6.1.tgz#567acc4b47859b1e3aa52e9bd5eace24b4cbb783"
+  integrity sha512-TJsLKUQtHPMvxEzh9Iy1Rb8C+a1q8IRrZsYy21LX4l9mhVtvfkPzQ7p7SA25N2YvCm0dEZ0V0y/5cPOnGI/atw==
+  dependencies:
+    "@tweenjs/tween.js" "*"
 
 "@types/validator@13.0.0":
   version "13.0.0"
@@ -6291,6 +6306,11 @@ core-js@3.20.3:
   version "3.20.3"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.20.3.tgz#c710d0a676e684522f3db4ee84e5e18a9d11d69a"
   integrity sha512-vVl8j8ph6tRS3B8qir40H7yw7voy17xL0piAjlbBUsH7WIfzoedL/ZOr1OV9FyZQLWXsayOJyV4tnRyXR85/ag==
+
+core-js@^3.22.5:
+  version "3.26.0"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.26.0.tgz#a516db0ed0811be10eac5d94f3b8463d03faccfe"
+  integrity sha512-+DkDrhoR4Y0PxDz6rurahuB+I45OsEUv8E1maPTB6OuHRohMMcznBq9TMpdpDMm/hUPob/mJJS3PqgbHpMTQgw==
 
 core-js@^3.6.5:
   version "3.25.3"
@@ -13090,6 +13110,11 @@ moment@^2.29.3:
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.4.tgz#3dbe052889fe7c1b2ed966fcb3a77328964ef108"
   integrity sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==
 
+monaco-editor@^0.33.0:
+  version "0.33.0"
+  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.33.0.tgz#842e244f3750a2482f8a29c676b5684e75ff34af"
+  integrity sha512-VcRWPSLIUEgQJQIE0pVT8FcGBIgFoxz7jtqctE+IiCxWugD0DwgyQBcZBhdSrdMC84eumoqMZsGl2GTreOzwqw==
+
 moo@^0.5.0, moo@^0.5.1:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/moo/-/moo-0.5.2.tgz#f9fe82473bc7c184b0d32e2215d3f6e67278733c"
@@ -13316,14 +13341,6 @@ ngx-ui-switch@13.0.2:
   integrity sha512-dhRAQZmrSH8l8VVtce/jD0PIwQjagSYPSln9I6A6gda1HIhvU/M6bqOVJLComWX32aVIBewdJP625wp/S3FdTA==
   dependencies:
     tslib "^2.3.0"
-
-ngx-virtual-scroller@^4.0.3:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/ngx-virtual-scroller/-/ngx-virtual-scroller-4.0.3.tgz#2d2ce26dbdbfd89507cca7f58c5e4e9cc1285f48"
-  integrity sha512-JBqUJ/f7GRCZDnI/JeiFoTmYR8rC/Hyv8L5I7ImePM6f/hwiFNRsrK8Abdd0E3TwklwgmZAK875te9XQJrgsyQ==
-  dependencies:
-    "@tweenjs/tween.js" "17.4.0"
-    "@types/tween.js" "17.2.0"
 
 nice-napi@^1.0.2:
   version "1.0.2"
