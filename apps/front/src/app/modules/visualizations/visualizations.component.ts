@@ -21,6 +21,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService } from '~front/app/services/query.service';
+import { MemberState, MemberStore } from '~front/app/stores/member.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -135,6 +136,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     private userQuery: UserQuery,
     private memberQuery: MemberQuery,
     private apiService: ApiService,
+    private memberStore: MemberStore,
     private navQuery: NavQuery,
     private queryService: QueryService,
     private myDialogService: MyDialogService,
@@ -315,53 +317,34 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   async showChart(item: common.VizX) {
     this.spinner.show(item.vizId);
 
-    let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
+    let payloadGetViz: apiToBackend.ToBackendGetVizRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd,
-      mconfigId: item.reports[0].mconfigId
-    };
-
-    let mconfig: common.MconfigX = await this.apiService
-      .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
-        payload: payloadGetMconfig
-      })
-      .pipe(
-        map((resp: apiToBackend.ToBackendGetMconfigResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            return resp.payload.mconfig;
-          }
-        })
-      )
-      .toPromise();
-
-    if (common.isUndefined(mconfig)) {
-      return;
-    }
-
-    let payloadGetQuery: apiToBackend.ToBackendGetQueryRequestPayload = {
-      projectId: this.nav.projectId,
-      branchId: this.nav.branchId,
-      envId: this.nav.envId,
-      isRepoProd: this.nav.isRepoProd,
-      mconfigId: item.reports[0].mconfigId,
-      queryId: item.reports[0].queryId,
       vizId: item.vizId
     };
 
-    let query: common.Query = await this.apiService
+    let query: common.Query;
+    let mconfig: common.MconfigX;
+
+    await this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
-        payload: payloadGetQuery
+        pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetViz,
+        payload: payloadGetViz
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetQueryResponse) => {
+        tap((resp: apiToBackend.ToBackendGetVizResponse) => {
+          this.spinner.hide(item.vizId);
+
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            return resp.payload.query;
+            this.memberStore.update(state =>
+              Object.assign(resp.payload.userMember, <MemberState>{
+                avatarSmall: state.avatarSmall
+              })
+            );
+            query = resp.payload.viz.reports[0].query;
+            mconfig = resp.payload.viz.reports[0].mconfig;
           }
         })
       )
@@ -398,8 +381,6 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
       dashboardId: undefined,
       vizId: item.vizId
     });
-
-    this.spinner.hide(item.vizId);
   }
 
   goToVizFile(event: MouseEvent, item: common.VizX) {

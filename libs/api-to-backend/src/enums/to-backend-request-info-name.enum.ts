@@ -94,12 +94,14 @@ export enum ToBackendRequestInfoNameEnum {
   //
   ToBackendGetDashboards = 'api/ToBackendGetDashboards',
   ToBackendGetDashboard = 'api/ToBackendGetDashboard',
+  ToBackendGetDashboardReport = 'api/ToBackendGetDashboardReport',
   ToBackendCreateTempDashboard = 'api/ToBackendCreateTempDashboard',
   ToBackendCreateDashboard = 'api/ToBackendCreateDashboard',
   ToBackendModifyDashboard = 'api/ToBackendModifyDashboard',
   ToBackendDeleteDashboard = 'api/ToBackendDeleteDashboard',
   //
   ToBackendGetVizs = 'api/ToBackendGetVizs',
+  ToBackendGetViz = 'api/ToBackendGetViz',
   ToBackendCreateViz = 'api/ToBackendCreateViz',
   ToBackendModifyViz = 'api/ToBackendModifyViz',
   ToBackendDeleteViz = 'api/ToBackendDeleteViz',

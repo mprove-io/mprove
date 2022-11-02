@@ -4,7 +4,7 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import FuzzySearch from 'fuzzy-search';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { map, take, tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -15,6 +15,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService } from '~front/app/services/query.service';
+import { MemberState, MemberStore } from '~front/app/stores/member.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -129,6 +130,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     private userQuery: UserQuery,
     private queryService: QueryService,
     private dashboardsQuery: DashboardsQuery,
+    private memberStore: MemberStore,
     private spinner: NgxSpinnerService,
     private modelsQuery: ModelsQuery,
     private memberQuery: MemberQuery,
@@ -273,56 +275,39 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     });
   }
 
-  async showChart(item: common.ReportX, dashboardId: string) {
-    this.spinner.show(item.mconfigId);
+  async showChart(report: common.ReportX, dashboardId: string) {
+    this.spinner.show(report.mconfigId);
 
-    let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
+    let payloadGetDashboardReport: apiToBackend.ToBackendGetDashboardReportRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd,
-      mconfigId: item.mconfigId
+      dashboardId: dashboardId,
+      mconfigId: report.mconfigId
     };
 
-    let mconfig: common.MconfigX = await this.apiService
+    let query: common.Query;
+    let mconfig: common.MconfigX;
+
+    await this.apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
-        payload: payloadGetMconfig
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboardReport,
+        payload: payloadGetDashboardReport
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetMconfigResponse) => {
+        tap((resp: apiToBackend.ToBackendGetDashboardReportResponse) => {
+          this.spinner.hide(report.mconfigId);
+
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            return resp.payload.mconfig;
-          }
-        })
-      )
-      .toPromise();
-
-    if (common.isUndefined(mconfig)) {
-      return;
-    }
-
-    let payloadGetQuery: apiToBackend.ToBackendGetQueryRequestPayload = {
-      projectId: this.nav.projectId,
-      branchId: this.nav.branchId,
-      envId: this.nav.envId,
-      isRepoProd: this.nav.isRepoProd,
-      mconfigId: item.mconfigId,
-      queryId: item.queryId,
-      dashboardId: dashboardId
-    };
-
-    let query: common.Query = await this.apiService
-      .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
-        payload: payloadGetQuery
-      })
-      .pipe(
-        map((resp: apiToBackend.ToBackendGetQueryResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            return resp.payload.query;
+            this.memberStore.update(state =>
+              Object.assign(resp.payload.userMember, <MemberState>{
+                avatarSmall: state.avatarSmall
+              })
+            );
+            query = resp.payload.query;
+            mconfig = resp.payload.mconfig;
           }
         })
       )
@@ -340,11 +325,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
           })
         : [];
 
-    // let canAccessModel = checkAccessModel({
-    //   model: model,
-    //   member: this.member
-    // });
-
     let checkSelectResult = getSelectValid({
       chart: mconfig.chart,
       mconfigFields: mconfig.fields
@@ -358,14 +338,12 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       mconfig: mconfig,
       query: query,
       qData: qData,
-      canAccessModel: item.hasAccessToModel,
+      canAccessModel: report.hasAccessToModel,
       showNav: true,
       isSelectValid: isSelectValid,
       dashboardId: dashboardId,
       vizId: undefined
     });
-
-    this.spinner.hide(item.mconfigId);
   }
 
   deleteDashboard(event: MouseEvent, item: common.DashboardX) {

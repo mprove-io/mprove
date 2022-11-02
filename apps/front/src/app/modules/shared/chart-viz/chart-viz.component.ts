@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { interval, of, Subscription } from 'rxjs';
-import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
+import { startWith, switchMap, take, tap } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -15,6 +15,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService, RData } from '~front/app/services/query.service';
+import { MemberState, MemberStore } from '~front/app/stores/member.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -71,6 +72,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     private navQuery: NavQuery,
     private queryService: QueryService,
     private memberQuery: MemberQuery,
+    private memberStore: MemberStore,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
     private myDialogService: MyDialogService,
@@ -89,53 +91,32 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
+    let payloadGetViz: apiToBackend.ToBackendGetVizRequestPayload = {
       projectId: nav.projectId,
       branchId: nav.branchId,
       envId: nav.envId,
       isRepoProd: nav.isRepoProd,
-      mconfigId: this.report.mconfigId
-    };
-
-    let mconfig: common.MconfigX = await this.apiService
-      .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
-        payload: payloadGetMconfig
-      })
-      .pipe(
-        map((resp: apiToBackend.ToBackendGetMconfigResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            return resp.payload.mconfig;
-          }
-        })
-      )
-      .toPromise();
-
-    if (common.isUndefined(mconfig)) {
-      return;
-    }
-
-    let payloadGetQuery: apiToBackend.ToBackendGetQueryRequestPayload = {
-      projectId: nav.projectId,
-      branchId: nav.branchId,
-      envId: nav.envId,
-      isRepoProd: nav.isRepoProd,
-      mconfigId: this.report.mconfigId,
-      queryId: this.report.queryId,
       vizId: this.viz.vizId
     };
 
-    let query: common.Query = await this.apiService
+    let query: common.Query;
+    let mconfig: common.MconfigX;
+
+    await this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
-        payload: payloadGetQuery
+        pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetViz,
+        payload: payloadGetViz
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetQueryResponse) => {
+        tap((resp: apiToBackend.ToBackendGetVizResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            return resp.payload.query;
+            this.memberStore.update(state =>
+              Object.assign(resp.payload.userMember, <MemberState>{
+                avatarSmall: state.avatarSmall
+              })
+            );
+            query = resp.payload.viz.reports[0].query;
+            mconfig = resp.payload.viz.reports[0].mconfig;
           }
         })
       )
