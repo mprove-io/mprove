@@ -20,6 +20,28 @@ export const TEXTMATE_BLOCKML_THEME = {
     },
     //
     {
+      foreground: '#94A3B8',
+      token: 'blockmlApplyFilterStartRefBrackets'
+    },
+    {
+      foreground: '#94A3B8',
+      token: 'blockmlApplyFilterStartRefKeyword'
+    },
+    {
+      foreground: '#BE185D',
+      token: 'blockmlApplyFilterStartRefName'
+    },
+    //
+    {
+      foreground: '#94A3B8',
+      token: 'blockmlApplyFilterEndRefBrackets'
+    },
+    {
+      foreground: '#94A3B8',
+      token: 'blockmlApplyFilterEndRefKeyword'
+    },
+    //
+    {
       background: 'FFFFFF',
       token: ''
     },

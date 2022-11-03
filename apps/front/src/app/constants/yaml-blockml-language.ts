@@ -48,6 +48,11 @@ export const YAML_BLOCKML_LANGUAGE = <languages.IMonarchLanguage>{
 
       { include: '@anchor' },
       { include: '@tagHandle' },
+
+      { include: '@blockmlRef' },
+      { include: '@blockmlApplyFilterStartRef' },
+      { include: '@blockmlApplyFilterEndRef' },
+
       { include: '@flowCollections' },
       // { include: '@blockStyle' },
 
@@ -69,9 +74,8 @@ export const YAML_BLOCKML_LANGUAGE = <languages.IMonarchLanguage>{
       { include: '@flowScalars' },
 
       // String nodes
-      { include: '@blockmlRef' },
       [
-        /[^#$]+/,
+        /[^#${%]+/,
         {
           cases: {
             '@keywords': 'keyword',
@@ -197,7 +201,7 @@ export const YAML_BLOCKML_LANGUAGE = <languages.IMonarchLanguage>{
     ],
 
     // Start Block Scalar
-    // blockStyle: [[/[>|][0-9]*[+-]?$/, 'operators', '@multiString']],
+    blockStyle: [[/[>|][0-9]*[+-]?$/, 'operators', '@multiString']],
 
     // Numbers in Flow Collections (terminate with ,]})
     flowNumber: [
@@ -233,6 +237,39 @@ export const YAML_BLOCKML_LANGUAGE = <languages.IMonarchLanguage>{
       ]
     ],
 
-    blockmlRefState: [[/\}/, 'blockmlRefBrackets', '@pop']]
+    blockmlApplyFilterStartRef: [
+      [
+        /(\{\%\s)(apply_filter)(\s\w+)(\s\%\})/,
+        [
+          'blockmlApplyFilterStartRefBrackets',
+          'blockmlApplyFilterStartRefKeyword',
+          'blockmlApplyFilterStartRefName',
+          'blockmlApplyFilterStartRefBrackets'
+        ],
+        '@blockmlApplyFilterStartRefState'
+      ]
+    ],
+
+    blockmlApplyFilterEndRef: [
+      [
+        /(\{\%\s)(end_apply_filter)(\s\%\})/,
+        [
+          'blockmlApplyFilterEndRefBrackets',
+          'blockmlApplyFilterEndRefKeyword',
+          'blockmlApplyFilterEndRefBrackets'
+        ],
+        '@blockmlApplyFilterEndRefRefState'
+      ]
+    ],
+
+    blockmlRefState: [[/\}/, 'blockmlRefBrackets', '@pop']],
+
+    blockmlApplyFilterStartRefState: [
+      [/\%\}/, 'blockmlApplyFilterStartRefBrackets', '@pop']
+    ],
+
+    blockmlApplyFilterEndRefState: [
+      [/\%\}/, 'blockmlApplyFilterEndRefBrackets', '@pop']
+    ]
   }
 };
