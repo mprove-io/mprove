@@ -34,7 +34,7 @@ export class FileEditorComponent implements OnDestroy {
     // automaticLayout: true,
     theme: 'textmate',
     fontSize: 16,
-    language: 'myLanguage'
+    language: 'yaml'
   };
 
   needSave = false;
@@ -128,7 +128,9 @@ export class FileEditorComponent implements OnDestroy {
         take(1)
       )
       .subscribe(async () => {
-        monaco.languages.register({ id: this.editorOptions.language });
+        monaco.languages.register({
+          id: this.editorOptions.language
+        });
 
         monaco.languages.setMonarchTokensProvider(
           this.editorOptions.language,
