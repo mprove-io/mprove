@@ -31,9 +31,9 @@ export class ViewBlockmlDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<ViewBlockmlDialogDataItem>,
     private structQuery: StructQuery,
-    private monacoLoaderService: MonacoEditorLoaderService
+    private monacoEditorLoaderService: MonacoEditorLoaderService
   ) {
-    this.monacoLoaderService.isMonacoLoaded$
+    this.monacoEditorLoaderService.isMonacoLoaded$
       .pipe(
         filter(isLoaded => isLoaded),
         take(1)
@@ -41,7 +41,7 @@ export class ViewBlockmlDialogComponent implements OnInit {
       .subscribe(() => {
         monaco.editor.defineTheme(
           this.editorOptions.theme,
-          constants.MY_TEXTMATE_THEME as any
+          constants.TEXTMATE_BLOCKML_THEME as any
         );
         monaco.editor.setTheme(this.editorOptions.theme);
       });

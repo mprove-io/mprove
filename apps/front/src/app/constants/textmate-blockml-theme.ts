@@ -1,7 +1,24 @@
-export const MY_TEXTMATE_THEME = {
+export const TEXTMATE_BLOCKML_THEME = {
   base: 'vs',
   inherit: true,
   rules: [
+    {
+      foreground: '#BE185D',
+      token: 'blockmlRefBrackets'
+    },
+    {
+      foreground: '#BE185D',
+      token: 'blockmlRefLeft'
+    },
+    {
+      foreground: '#BE185D',
+      token: 'blockmlRefDot'
+    },
+    {
+      foreground: '#BE185D',
+      token: 'blockmlRefRight'
+    },
+    //
     {
       background: 'FFFFFF',
       token: ''

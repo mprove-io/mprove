@@ -1,6 +1,6 @@
 import { languages } from 'monaco-editor';
 
-export const MY_LANGUAGE = <languages.IMonarchLanguage>{
+export const YAML_BLOCKML_LANGUAGE = <languages.IMonarchLanguage>{
   tokenPostfix: '.yaml',
 
   brackets: [
@@ -49,7 +49,7 @@ export const MY_LANGUAGE = <languages.IMonarchLanguage>{
       { include: '@anchor' },
       { include: '@tagHandle' },
       { include: '@flowCollections' },
-      { include: '@blockStyle' },
+      // { include: '@blockStyle' },
 
       // Numbers
       [/@numberInteger(?![ \t]*\S+)/, 'number'],
@@ -69,16 +69,7 @@ export const MY_LANGUAGE = <languages.IMonarchLanguage>{
       { include: '@flowScalars' },
 
       // String nodes
-      [
-        /(\$\{)(\w+)(\.)([^}]*)(\})/,
-        ['refBrackets', 'refLeft', 'refDot', 'refRight', 'refBrackets'],
-        '@refState'
-      ],
-      [
-        /(\$\{)([^}]*)(\})/,
-        ['refBrackets', 'refRight', 'refBrackets'],
-        '@refState'
-      ],
+      { include: '@blockmlRef' },
       [
         /[^#$]+/,
         {
@@ -117,6 +108,7 @@ export const MY_LANGUAGE = <languages.IMonarchLanguage>{
       { include: '@flowNumber' },
 
       // Other value (keyword or string)
+      // { include: '@blockmlRef' },
       [
         /[^\},]+/,
         {
@@ -149,6 +141,7 @@ export const MY_LANGUAGE = <languages.IMonarchLanguage>{
       { include: '@flowNumber' },
 
       // Other value (keyword or string)
+      // { include: '@blockmlRef' },
       [
         /[^\],]+/,
         {
@@ -204,7 +197,7 @@ export const MY_LANGUAGE = <languages.IMonarchLanguage>{
     ],
 
     // Start Block Scalar
-    blockStyle: [[/[>|][0-9]*[+-]?$/, 'operators', '@multiString']],
+    // blockStyle: [[/[>|][0-9]*[+-]?$/, 'operators', '@multiString']],
 
     // Numbers in Flow Collections (terminate with ,]})
     flowNumber: [
@@ -221,6 +214,25 @@ export const MY_LANGUAGE = <languages.IMonarchLanguage>{
 
     anchor: [[/[&*][^ ]+/, 'namespace']],
 
-    refState: [[/\}/, 'refBrackets', '@pop']]
+    blockmlRef: [
+      [
+        /(\$\{)(\w+)(\.)([^}]*)(\})/,
+        [
+          'blockmlRefBrackets',
+          'blockmlRefLeft',
+          'blockmlRefDot',
+          'blockmlRefRight',
+          'blockmlRefBrackets'
+        ],
+        '@blockmlRefState'
+      ],
+      [
+        /(\$\{)([^}]*)(\})/,
+        ['blockmlRefBrackets', 'blockmlRefRight', 'blockmlRefBrackets'],
+        '@blockmlRefState'
+      ]
+    ],
+
+    blockmlRefState: [[/\}/, 'blockmlRefBrackets', '@pop']]
   }
 };

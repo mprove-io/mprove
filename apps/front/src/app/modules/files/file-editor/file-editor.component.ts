@@ -34,7 +34,7 @@ export class FileEditorComponent implements OnDestroy {
     // automaticLayout: true,
     theme: 'textmate',
     fontSize: 16,
-    language: 'yaml'
+    language: 'myLanguage'
   };
 
   needSave = false;
@@ -120,17 +120,24 @@ export class FileEditorComponent implements OnDestroy {
     public structStore: StructStore,
     private uiStore: UiStore,
     private route: ActivatedRoute,
-    private monacoLoaderService: MonacoEditorLoaderService
+    private monacoEditorLoaderService: MonacoEditorLoaderService
   ) {
-    this.monacoLoaderService.isMonacoLoaded$
+    this.monacoEditorLoaderService.isMonacoLoaded$
       .pipe(
         filter(isLoaded => isLoaded),
         take(1)
       )
-      .subscribe(() => {
+      .subscribe(async () => {
+        monaco.languages.register({ id: this.editorOptions.language });
+
+        monaco.languages.setMonarchTokensProvider(
+          this.editorOptions.language,
+          constants.YAML_BLOCKML_LANGUAGE
+        );
+
         monaco.editor.defineTheme(
           this.editorOptions.theme,
-          constants.MY_TEXTMATE_THEME as any
+          constants.TEXTMATE_BLOCKML_THEME as any
         );
         monaco.editor.setTheme(this.editorOptions.theme);
       });
