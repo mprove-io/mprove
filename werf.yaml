@@ -17,9 +17,9 @@ dockerfile: tools/docker/disk.Dockerfile
 image: front
 dockerfile: tools/docker/front.Dockerfile
 
----
-image: frontnode
-dockerfile: tools/docker/frontnode.Dockerfile
+# ---
+# image: frontnode
+# dockerfile: tools/docker/frontnode.Dockerfile
 
 ---
 image: integra

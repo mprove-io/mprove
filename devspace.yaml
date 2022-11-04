@@ -16,17 +16,17 @@ dev:
   #   ports:
   #     - port: '5672'
 
-  frontnode:
-    labelSelector:
-      app: frontnode
-    # ports:
-    #   - port: '4200'
-    sync:
-      - path: ./apps/front
-      - path: ./libs
-        excludePaths:
-        - ./libs/api-to-blockml
-        - ./libs/api-to-disk
+  # frontnode:
+  #   labelSelector:
+  #     app: frontnode
+  #   # ports:
+  #   #   - port: '4200'
+  #   sync:
+  #     - path: ./apps/front
+  #     - path: ./libs
+  #       excludePaths:
+  #       - ./libs/api-to-blockml
+  #       - ./libs/api-to-disk
 
   disk:
     labelSelector:
