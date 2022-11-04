@@ -34,9 +34,10 @@ export class FileEditorComponent implements OnDestroy {
 
   editorOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
     // automaticLayout: true,
+    fontSize: 16,
     language: constants.DEFAULT_LANGUAGE_NAME,
     theme: constants.DEFAULT_THEME_NAME,
-    fontSize: 16
+    renderValidationDecorations: 'off'
   };
 
   needSave = false;
@@ -265,6 +266,10 @@ export class FileEditorComponent implements OnDestroy {
 
   onTextChanged() {
     this.removeMarkers();
+    if (this.content === this.originalText) {
+      this.refreshMarkers();
+    }
+
     if (!this.needSave && this.content !== this.originalText) {
       this.uiStore.update(state =>
         Object.assign({}, state, <UiState>{ needSave: true })
@@ -273,7 +278,6 @@ export class FileEditorComponent implements OnDestroy {
       this.uiStore.update(state =>
         Object.assign({}, state, <UiState>{ needSave: false })
       );
-      this.refreshMarkers();
     }
   }
 
@@ -426,11 +430,13 @@ export class FileEditorComponent implements OnDestroy {
     ) {
       monaco.editor.setTheme(constants.BLOCKML_TEXTMATE_THEME_NAME);
 
-      this.editorOptions = Object.assign({}, this.editorOptions, {
+      let patch: monaco.editor.IStandaloneEditorConstructionOptions = {
         language: constants.BLOCKML_LANGUAGE_NAME,
-        theme: constants.BLOCKML_TEXTMATE_THEME_NAME
-      });
+        theme: constants.BLOCKML_TEXTMATE_THEME_NAME,
+        renderValidationDecorations: 'on'
+      };
 
+      this.editorOptions = Object.assign({}, this.editorOptions, patch);
       this.refreshMarkers();
     } else {
       let langId;
@@ -443,14 +449,17 @@ export class FileEditorComponent implements OnDestroy {
       });
 
       monaco.editor.setTheme(constants.DEFAULT_THEME_NAME);
+      // monaco.editor.set
 
-      this.editorOptions = {
+      let patch: monaco.editor.IStandaloneEditorConstructionOptions = {
         language: common.isDefined(langId)
           ? langId
           : constants.DEFAULT_LANGUAGE_NAME,
-        theme: constants.DEFAULT_THEME_NAME
+        theme: constants.DEFAULT_THEME_NAME,
+        renderValidationDecorations: 'off'
       };
 
+      this.editorOptions = Object.assign({}, this.editorOptions, patch);
       this.removeMarkers();
     }
   }
