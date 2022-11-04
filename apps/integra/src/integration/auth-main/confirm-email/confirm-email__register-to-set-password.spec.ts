@@ -22,7 +22,6 @@ describe('integra', () => {
       ]
     });
     cy.visit(common.PATH_CONFIRM_EMAIL + '?token=' + emailVerificationToken);
-    cy.loading();
     cy.get('[data-cy=errorDialogMessage]').should('contain', errorMessage);
   });
 });
