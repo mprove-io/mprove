@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { MonacoEditorLoaderService } from '@materia-ui/ngx-monaco-editor';
-import { filter, take, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { MqQuery } from '~front/app/queries/mq.query';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -15,9 +15,9 @@ export class SqlComponent {
   editorOptions = {
     // automaticLayout: true,
     readOnly: true,
-    theme: 'textmate',
-    fontSize: 16,
-    language: 'sql'
+    language: 'sql',
+    theme: constants.DEFAULT_THEME_NAME,
+    fontSize: 16
   };
 
   content: string;
@@ -35,20 +35,7 @@ export class SqlComponent {
     private cd: ChangeDetectorRef,
     private mqQuery: MqQuery,
     private monacoEditorLoaderService: MonacoEditorLoaderService
-  ) {
-    this.monacoEditorLoaderService.isMonacoLoaded$
-      .pipe(
-        filter(isLoaded => isLoaded),
-        take(1)
-      )
-      .subscribe(() => {
-        monaco.editor.defineTheme(
-          this.editorOptions.theme,
-          constants.TEXTMATE_BLOCKML_THEME as any
-        );
-        monaco.editor.setTheme(this.editorOptions.theme);
-      });
-  }
+  ) {}
 
   async onEditorInit(editor: any) {
     this.editor = editor;

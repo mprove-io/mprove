@@ -30,11 +30,13 @@ export class FileEditorComponent implements OnDestroy {
 
   editor: monaco.editor.IStandaloneCodeEditor = null;
 
-  editorOptions = {
+  languages: monaco.languages.ILanguageExtensionPoint[] = [];
+
+  editorOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
     // automaticLayout: true,
-    theme: 'textmate',
-    fontSize: 16,
-    language: 'yaml'
+    language: constants.DEFAULT_LANGUAGE_NAME,
+    theme: constants.DEFAULT_THEME_NAME,
+    fontSize: 16
   };
 
   needSave = false;
@@ -58,7 +60,9 @@ export class FileEditorComponent implements OnDestroy {
       this.file = x;
       this.content = x.content;
       this.originalText = x.content;
-      this.refreshMarkers();
+
+      this.setEditorOptionsLanguage();
+
       this.cd.detectChanges();
     })
   );
@@ -103,6 +107,8 @@ export class FileEditorComponent implements OnDestroy {
     })
   );
 
+  isLoadedMonaco = false;
+
   constructor(
     public fileQuery: FileQuery,
     public structQuery: StructQuery,
@@ -128,20 +134,23 @@ export class FileEditorComponent implements OnDestroy {
         take(1)
       )
       .subscribe(async () => {
-        monaco.languages.register({
-          id: this.editorOptions.language
-        });
+        monaco.languages.register({ id: constants.BLOCKML_LANGUAGE_NAME });
 
         monaco.languages.setMonarchTokensProvider(
-          this.editorOptions.language,
-          constants.YAML_BLOCKML_LANGUAGE
+          constants.BLOCKML_LANGUAGE_NAME,
+          constants.BLOCKML_YAML_LANGUAGE
         );
 
         monaco.editor.defineTheme(
-          this.editorOptions.theme,
-          constants.TEXTMATE_BLOCKML_THEME as any
+          constants.BLOCKML_TEXTMATE_THEME_NAME,
+          constants.BLOCKML_TEXTMATE_THEME as any
         );
-        monaco.editor.setTheme(this.editorOptions.theme);
+
+        this.languages = monaco.languages.getLanguages();
+
+        this.isLoadedMonaco = true;
+
+        this.setEditorOptionsLanguage();
       });
   }
 
@@ -363,6 +372,87 @@ export class FileEditorComponent implements OnDestroy {
         return false;
       }
     });
+  }
+
+  setEditorOptionsLanguage() {
+    if (this.isLoadedMonaco === false) {
+      return;
+    }
+
+    this.navQuery
+      .select()
+      .pipe(take(1))
+      .subscribe(x => {
+        this.nav = x;
+      });
+
+    this.structQuery
+      .select()
+      .pipe(take(1))
+      .subscribe(x => {
+        this.struct = x;
+      });
+
+    let mdir = this.struct.mproveDirValue;
+
+    if (common.isDefined(this.struct.mproveDirValue)) {
+      if (mdir.substring(0, 1) === '.') {
+        mdir = mdir.substring(1);
+      }
+
+      if (mdir.substring(0, 1) === '/') {
+        mdir = mdir.substring(1);
+      }
+    }
+
+    this.fileQuery
+      .select()
+      .pipe(take(1))
+      .subscribe(x => {
+        this.file = x;
+      });
+
+    let ar = this.file.name.split('.');
+    let ext = ar.pop();
+    let dotExt = `.${ext}`;
+
+    if (
+      (this.file.fileId === common.MPROVE_CONFIG_FILENAME ||
+        (common.isDefined(mdir) &&
+          this.file.fileNodeId.split(mdir)[0] === `${this.nav.projectId}/`) ||
+        this.struct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT ||
+        this.struct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH) &&
+      constants.YAML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0
+    ) {
+      monaco.editor.setTheme(constants.BLOCKML_TEXTMATE_THEME_NAME);
+
+      this.editorOptions = Object.assign({}, this.editorOptions, {
+        language: constants.BLOCKML_LANGUAGE_NAME,
+        theme: constants.BLOCKML_TEXTMATE_THEME_NAME
+      });
+
+      this.refreshMarkers();
+    } else {
+      let langId;
+
+      this.languages.forEach(language => {
+        if (language.extensions?.indexOf(dotExt) > -1) {
+          langId = language.id;
+          return;
+        }
+      });
+
+      monaco.editor.setTheme(constants.DEFAULT_THEME_NAME);
+
+      this.editorOptions = {
+        language: common.isDefined(langId)
+          ? langId
+          : constants.DEFAULT_LANGUAGE_NAME,
+        theme: constants.DEFAULT_THEME_NAME
+      };
+
+      this.removeMarkers();
+    }
   }
 
   ngOnDestroy() {

@@ -1,6 +1,6 @@
 import { languages } from 'monaco-editor';
 
-export const YAML_BLOCKML_LANGUAGE = <languages.IMonarchLanguage>{
+export const BLOCKML_YAML_LANGUAGE = <languages.IMonarchLanguage>{
   tokenPostfix: '.yaml',
 
   brackets: [

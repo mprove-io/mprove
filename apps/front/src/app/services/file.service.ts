@@ -45,6 +45,11 @@ export class FileService {
     let fileIdx = fileId || this.file.fileId;
     let fileName: string;
 
+    let fileNodeId =
+      this.nav.projectId +
+      '/' +
+      fileIdx.split(common.TRIPLE_UNDERSCORE).join('/');
+
     if (common.isDefined(fileIdx)) {
       let fileIdArr = fileIdx.split(common.TRIPLE_UNDERSCORE);
       fileName = fileIdArr[fileIdArr.length - 1];
@@ -54,10 +59,7 @@ export class FileService {
         isRepoProd: this.nav.isRepoProd,
         branchId: this.nav.branchId,
         envId: this.nav.envId,
-        fileNodeId:
-          this.nav.projectId +
-          '/' +
-          fileIdx.split(common.TRIPLE_UNDERSCORE).join('/')
+        fileNodeId: fileNodeId
       };
     }
 
@@ -86,7 +88,8 @@ export class FileService {
             this.fileStore.update({
               content: resp.payload.content,
               name: fileName,
-              fileId: fileIdx
+              fileId: fileIdx,
+              fileNodeId: fileNodeId
             });
           }
         })

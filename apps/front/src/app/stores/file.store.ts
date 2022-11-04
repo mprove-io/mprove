@@ -5,6 +5,7 @@ export class FileState {
   content: string;
   name: string;
   fileId: string;
+  fileNodeId: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -17,7 +18,8 @@ export class FileStore extends Store<FileState> {
     super(<FileState>{
       content: undefined,
       name: undefined,
-      fileId: undefined
+      fileId: undefined,
+      fileNodeId: undefined
     });
   }
 }

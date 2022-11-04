@@ -1,4 +1,4 @@
-export const TEXTMATE_BLOCKML_THEME = {
+export const BLOCKML_TEXTMATE_THEME = {
   base: 'vs',
   inherit: true,
   rules: [

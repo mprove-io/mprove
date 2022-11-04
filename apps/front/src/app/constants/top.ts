@@ -17,14 +17,19 @@ export const USERS_PER_PAGE = 10;
 export const CONNECTIONS_PER_PAGE = 10;
 export const ENVIRONMENTS_PER_PAGE = 10;
 
-export const EXT_LIST: common.FileExtensionEnum[] = [
+export const DEFAULT_LANGUAGE_NAME = 'markdown';
+export const DEFAULT_THEME_NAME = 'textmate';
+
+export const BLOCKML_LANGUAGE_NAME = 'yaml';
+export const BLOCKML_TEXTMATE_THEME_NAME = 'blockml-textmate';
+
+export const YAML_EXT_LIST: common.FileExtensionEnum[] = [
   common.FileExtensionEnum.View,
   common.FileExtensionEnum.Model,
   common.FileExtensionEnum.Dashboard,
   common.FileExtensionEnum.Vis,
   common.FileExtensionEnum.Udf,
-  common.FileExtensionEnum.Yml,
-  common.FileExtensionEnum.Md
+  common.FileExtensionEnum.Yml
 ];
 
 export const RESULT_LIST: common.FieldResultEnum[] = [

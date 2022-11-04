@@ -21,9 +21,9 @@ export class ViewBlockmlDialogComponent implements OnInit {
   editorOptions = {
     // automaticLayout: true,
     readOnly: true,
-    theme: 'textmate',
-    fontSize: 16,
-    language: 'yaml'
+    language: constants.BLOCKML_LANGUAGE_NAME,
+    theme: constants.BLOCKML_TEXTMATE_THEME_NAME,
+    fontSize: 16
   };
 
   reportYaml: string;
@@ -39,11 +39,19 @@ export class ViewBlockmlDialogComponent implements OnInit {
         take(1)
       )
       .subscribe(() => {
+        monaco.languages.register({ id: constants.BLOCKML_LANGUAGE_NAME });
+
+        monaco.languages.setMonarchTokensProvider(
+          constants.BLOCKML_LANGUAGE_NAME,
+          constants.BLOCKML_YAML_LANGUAGE
+        );
+
         monaco.editor.defineTheme(
           this.editorOptions.theme,
-          constants.TEXTMATE_BLOCKML_THEME as any
+          constants.BLOCKML_TEXTMATE_THEME as any
         );
-        monaco.editor.setTheme(this.editorOptions.theme);
+
+        monaco.editor.setTheme(constants.BLOCKML_TEXTMATE_THEME_NAME);
       });
   }
 
