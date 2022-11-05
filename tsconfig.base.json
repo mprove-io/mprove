@@ -2,7 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "rootDir": ".",
-    "module": "commonjs",
+    "module": "esnext",
     "moduleResolution": "node",
     "lib": ["es2017", "dom"],
     "importHelpers": true,

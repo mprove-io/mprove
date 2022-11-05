@@ -7,7 +7,12 @@
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
       "options": {
-        "allowedCommonJsDependencies": ["validator"],
+        "allowedCommonJsDependencies": [
+          "validator",
+          "class-transformer-validator",
+          "class-transformer",
+          "clone-deep"
+        ],
         "outputPath": "dist/apps/front",
         "index": "apps/front/src/index.html",
         "main": "apps/front/src/main.ts",

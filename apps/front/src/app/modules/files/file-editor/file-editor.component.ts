@@ -48,7 +48,7 @@ export class FileEditorComponent implements OnDestroy {
     // suggest: undefined,
     snippetSuggestions: 'none',
     suggestOnTriggerCharacters: false,
-    quickSuggestions: false,
+    // quickSuggestions: false,
     wordBasedSuggestionsOnlySameLanguage: true,
     wordBasedSuggestions: false
   };
@@ -150,10 +150,10 @@ export class FileEditorComponent implements OnDestroy {
       .subscribe(async () => {
         monaco.languages.register({ id: constants.BLOCKML_LANGUAGE_NAME });
 
-        // monaco.languages.setMonarchTokensProvider(
-        //   constants.BLOCKML_LANGUAGE_NAME,
-        //   constants.BLOCKML_YAML_LANGUAGE
-        // );
+        monaco.languages.setMonarchTokensProvider(
+          constants.BLOCKML_LANGUAGE_NAME,
+          constants.BLOCKML_YAML_LANGUAGE
+        );
 
         monaco.editor.defineTheme(
           constants.BLOCKML_TEXTMATE_THEME_NAME,
@@ -462,7 +462,6 @@ export class FileEditorComponent implements OnDestroy {
       });
 
       monaco.editor.setTheme(constants.DEFAULT_THEME_NAME);
-      // monaco.editor.set
 
       let patch: monaco.editor.IStandaloneEditorConstructionOptions = {
         language: common.isDefined(langId)
