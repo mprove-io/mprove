@@ -18,7 +18,7 @@
     "strictPropertyInitialization": false,
     "strictNullChecks": false,
     "allowJs": true,
-    "types": ["node", "jest", "cypress"],
+    "types": ["node", "cypress"],
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": ".",

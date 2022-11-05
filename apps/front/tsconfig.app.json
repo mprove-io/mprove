@@ -2,6 +2,6 @@
   "extends": "./tsconfig.base.json",
   "files": ["src/main.ts", "src/polyfills.ts"],
   "compilerOptions": {
-    "types": ["node", "jest"]
+    "types": ["node"]
   }
 }

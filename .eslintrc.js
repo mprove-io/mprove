@@ -1,8 +1,7 @@
 module.exports = {
   root: true,
   env: {
-    node: true,
-    jest: true
+    node: true
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
