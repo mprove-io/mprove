@@ -534,7 +534,7 @@
     browserslist "^4.21.3"
     semver "^6.3.0"
 
-"@babel/helper-create-class-features-plugin@^7.18.6", "@babel/helper-create-class-features-plugin@^7.19.0":
+"@babel/helper-create-class-features-plugin@^7.18.6":
   version "7.20.2"
   resolved "https://registry.yarnpkg.com/@babel/helper-create-class-features-plugin/-/helper-create-class-features-plugin-7.20.2.tgz#3c08a5b5417c7f07b5cf3dfb6dc79cbec682e8c2"
   integrity sha512-k22GoYRAHPYr9I+Gvy2ZQlAe5mGy8BqWst2wRt8cwIufWTxrsVshhIBvYNqC80N0GSFWTsqRVexOtfzlgOEDvA==
@@ -662,7 +662,7 @@
   dependencies:
     "@babel/types" "^7.20.2"
 
-"@babel/helper-skip-transparent-expression-wrappers@7.18.9", "@babel/helper-skip-transparent-expression-wrappers@^7.18.9":
+"@babel/helper-skip-transparent-expression-wrappers@^7.18.9":
   version "7.18.9"
   resolved "https://registry.yarnpkg.com/@babel/helper-skip-transparent-expression-wrappers/-/helper-skip-transparent-expression-wrappers-7.18.9.tgz#778d87b3a758d90b471e7b9918f34a9a02eb5818"
   integrity sha512-imytd2gHi3cJPsybLRbmFrF7u5BIEuI2cNheyKi3/iOBC63kNn3q8Crn2xVuESli0aM4KYsyEqKyS7lFL8YVtw==
@@ -775,17 +775,6 @@
     "@babel/helper-create-class-features-plugin" "^7.18.6"
     "@babel/helper-plugin-utils" "^7.18.6"
     "@babel/plugin-syntax-class-static-block" "^7.14.5"
-
-"@babel/plugin-proposal-decorators@7.19.6":
-  version "7.19.6"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-proposal-decorators/-/plugin-proposal-decorators-7.19.6.tgz#0f1af5c21957e9a438cc1d08d2a6a6858af127b7"
-  integrity sha512-PKWforYpkVkogpOW0RaPuh7eQ7AoFgBJP+d87tQCRY2LVbvyGtfRM7RtrhCBsNgZb+2EY28SeWB6p2xe1Z5oAw==
-  dependencies:
-    "@babel/helper-create-class-features-plugin" "^7.19.0"
-    "@babel/helper-plugin-utils" "^7.19.0"
-    "@babel/helper-replace-supers" "^7.19.1"
-    "@babel/helper-split-export-declaration" "^7.18.6"
-    "@babel/plugin-syntax-decorators" "^7.19.0"
 
 "@babel/plugin-proposal-dynamic-import@^7.16.7":
   version "7.18.6"
@@ -916,13 +905,6 @@
   integrity sha512-b+YyPmr6ldyNnM6sqYeMWE+bgJcJpO6yS4QD7ymxgH34GBPNDM/THBh8iunyvKIZztiwLH4CJZ0RxTk9emgpjw==
   dependencies:
     "@babel/helper-plugin-utils" "^7.14.5"
-
-"@babel/plugin-syntax-decorators@^7.19.0":
-  version "7.19.0"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-decorators/-/plugin-syntax-decorators-7.19.0.tgz#5f13d1d8fce96951bea01a10424463c9a5b3a599"
-  integrity sha512-xaBZUEDntt4faL1yN8oIFlhfXeQAWJW7CLKYsHTUqriCUbj8xOra8bfxxKGi/UwExPFBuPdH4XfHc9rGQhrVkQ==
-  dependencies:
-    "@babel/helper-plugin-utils" "^7.19.0"
 
 "@babel/plugin-syntax-dynamic-import@^7.8.3":
   version "7.8.3"
@@ -1391,11 +1373,6 @@
   integrity sha512-EXpLCrk55f+cYqmHsSR+yD/0gAIMxxA9QK9lnQWzhMCvt+YmoBN7Zx94s++Kv0+unHk39vxNO8t+CMA2WSS3wA==
   dependencies:
     regenerator-runtime "^0.13.4"
-
-"@babel/standalone@7.19.4":
-  version "7.19.4"
-  resolved "https://registry.yarnpkg.com/@babel/standalone/-/standalone-7.19.4.tgz#948634af5b0f36c6e3f22505cf45be4149722eb9"
-  integrity sha512-ik4TzEzGn92t0Ig7m0fq0BofSrIbKZv0dZsGOGejs9XxwhxWAp/ZoGdQ/CJCH2qJnIg0m29OV535f4rQm/R3SQ==
 
 "@babel/template@7.16.7":
   version "7.16.7"
@@ -11765,6 +11742,13 @@ netmask@^2.0.2:
   resolved "https://registry.yarnpkg.com/netmask/-/netmask-2.0.2.tgz#8b01a07644065d536383835823bc52004ebac5e7"
   integrity sha512-dBpDMdxv9Irdq66304OLfEmQ9tbNRFnFTuZiLo+bD+r332bBmMJ8GBLXklIXXgxd3+v9+KUnZaUR5PJMa75Gsg==
 
+ng-monaco-editor@5.0.3:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/ng-monaco-editor/-/ng-monaco-editor-5.0.3.tgz#662ee32797e73f6cd2f17cc872462bd2d26ae5b4"
+  integrity sha512-ekk6rXR+z/KvBBg361m/fILfCaJvH7NEh3pNZglpclkOwyZ4QUfTLmuQ0UVmQC2N8iCiilmkbiSgwt4Py2khEA==
+  dependencies:
+    tslib "^2.3.0"
+
 ng-zorro-antd@13.4.0:
   version "13.4.0"
   resolved "https://registry.yarnpkg.com/ng-zorro-antd/-/ng-zorro-antd-13.4.0.tgz#a62a9df914d7241a6f5baabe1f4740ddd724b737"
@@ -13466,12 +13450,7 @@ prettier-plugin-tailwindcss@^0.1.7:
   resolved "https://registry.yarnpkg.com/prettier-plugin-tailwindcss/-/prettier-plugin-tailwindcss-0.1.13.tgz#ca1071361dc7e2ed5d95a2ee36825ce45f814942"
   integrity sha512-/EKQURUrxLu66CMUg4+1LwGdxnz8of7IDvrSLqEtDqhLH61SAlNNUSr90UTvZaemujgl3OH/VHg+fyGltrNixw==
 
-prettier@2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.2.1.tgz#795a1a78dd52f073da0cd42b21f9c91381923ff5"
-  integrity sha512-PqyhM2yCjg/oKkFPtTGUojv7gnZAoG80ttl45O6x2Ug/rMJw4wcc9k6aaf2hibP7BGVCCM33gZoGjyvt9mm16Q==
-
-prettier@^2.0.0:
+prettier@2.7.1, prettier@^2.0.0:
   version "2.7.1"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.7.1.tgz#e235806850d057f97bb08368a4f7d899f7760c64"
   integrity sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==
