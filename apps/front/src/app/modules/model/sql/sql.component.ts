@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-// import { MonacoEditorLoaderService } from '@materia-ui/ngx-monaco-editor';
+import { MonacoEditorOptions } from 'ng-monaco-editor';
 import { tap } from 'rxjs/operators';
 import { MqQuery } from '~front/app/queries/mq.query';
 import { common } from '~front/barrels/common';
@@ -10,14 +10,17 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './sql.component.html'
 })
 export class SqlComponent {
-  // editor: monaco.editor.IStandaloneCodeEditor = null;
-
-  editorOptions = {
-    // automaticLayout: true,
+  editorOptions: MonacoEditorOptions = {
+    theme: constants.DEFAULT_THEME_NAME,
     readOnly: true,
     language: 'sql',
-    theme: constants.DEFAULT_THEME_NAME,
-    fontSize: 16
+    fontSize: 16,
+    renderValidationDecorations: 'off',
+    snippetSuggestions: 'none',
+    suggestOnTriggerCharacters: false,
+    quickSuggestions: false,
+    wordBasedSuggestionsOnlySameLanguage: true,
+    wordBasedSuggestions: false
   };
 
   content: string;
@@ -31,11 +34,5 @@ export class SqlComponent {
     })
   );
 
-  constructor(private cd: ChangeDetectorRef, private mqQuery: MqQuery) // ,
-  // private monacoEditorLoaderService: MonacoEditorLoaderService
-  {}
-
-  async onEditorInit(editor: any) {
-    // this.editor = editor;
-  }
+  constructor(private cd: ChangeDetectorRef, private mqQuery: MqQuery) {}
 }

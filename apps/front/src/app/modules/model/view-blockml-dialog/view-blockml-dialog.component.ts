@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-// import { MonacoEditorLoaderService } from '@materia-ui/ngx-monaco-editor';
 import { DialogRef } from '@ngneat/dialog';
+import { MonacoEditorOptions } from 'ng-monaco-editor';
 import { take, tap } from 'rxjs/operators';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { StructState } from '~front/app/stores/struct.store';
@@ -13,17 +13,21 @@ export interface ViewBlockmlDialogDataItem {
 
 @Component({
   selector: 'm-view-blockml-dialog',
-  templateUrl: './view-blockml-dialog.component.html'
+  templateUrl: './view-blockml-dialog.component.html',
+  styleUrls: ['./view-blockml-dialog.component.scss']
 })
 export class ViewBlockmlDialogComponent implements OnInit {
-  // editor: monaco.editor.IStandaloneCodeEditor = null;
-
-  editorOptions = {
-    // automaticLayout: true,
-    readOnly: true,
+  editorOptions: MonacoEditorOptions = {
     language: constants.BLOCKML_LANGUAGE_ID,
     theme: constants.BLOCKML_THEME_NAME,
-    fontSize: 16
+    readOnly: true,
+    fontSize: 16,
+    renderValidationDecorations: 'off',
+    snippetSuggestions: 'none',
+    suggestOnTriggerCharacters: false,
+    quickSuggestions: false,
+    wordBasedSuggestionsOnlySameLanguage: true,
+    wordBasedSuggestions: false
   };
 
   reportYaml: string;
@@ -31,27 +35,7 @@ export class ViewBlockmlDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<ViewBlockmlDialogDataItem>,
     private structQuery: StructQuery
-  ) // ,
-  // private monacoEditorLoaderService: MonacoEditorLoaderService
-  {
-    // this.monacoEditorLoaderService.isMonacoLoaded$
-    //   .pipe(
-    //     filter(isLoaded => isLoaded),
-    //     take(1)
-    //   )
-    //   .subscribe(() => {
-    //     monaco.languages.register({ id: constants.BLOCKML_LANGUAGE_NAME });
-    //     monaco.languages.setMonarchTokensProvider(
-    //       constants.BLOCKML_LANGUAGE_NAME,
-    //       constants.BLOCKML_YAML_LANGUAGE
-    //     );
-    //     monaco.editor.defineTheme(
-    //       this.editorOptions.theme,
-    //       constants.BLOCKML_TEXTMATE_THEME as any
-    //     );
-    //     monaco.editor.setTheme(constants.BLOCKML_TEXTMATE_THEME_NAME);
-    //   });
-  }
+  ) {}
 
   ngOnInit() {
     let struct: StructState;
@@ -70,9 +54,5 @@ export class ViewBlockmlDialogComponent implements OnInit {
     });
 
     this.reportYaml = common.toYaml({ reports: [rep] });
-  }
-
-  async onEditorInit(editor: any) {
-    // this.editor = editor;
   }
 }

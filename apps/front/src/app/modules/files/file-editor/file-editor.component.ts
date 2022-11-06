@@ -154,17 +154,6 @@ export class FileEditorComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.monaco = await this.monacoService.initMonaco();
-    // id 'yaml' already exists
-    // this.monaco.languages.register({ id: constants.BLOCKML_LANGUAGE_NAME });
-    this.monaco.languages.setMonarchTokensProvider(
-      constants.BLOCKML_LANGUAGE_ID,
-      constants.BLOCKML_YAML_LANGUAGE
-    );
-    this.monaco.editor.defineTheme(
-      constants.BLOCKML_THEME_NAME,
-      constants.BLOCKML_TEXTMATE_THEME as any
-    );
-
     this.isLoadedMonaco = true;
 
     this.setEditorOptionsLanguage();
@@ -246,7 +235,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
       let language =
         this.monaco.languages
           .getLanguages()
-          .find(x => x.extensions?.indexOf(dotExt) > -1).id ||
+          .find(x => x.extensions?.indexOf(dotExt) > -1)?.id ||
         constants.DEFAULT_LANGUAGE_ID;
 
       this.monaco.editor.setModelLanguage(this.editor.getModel(), language);

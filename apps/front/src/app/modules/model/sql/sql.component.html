@@ -1,10 +1,8 @@
-<!-- <ngx-monaco-editor
+<ng-monaco-editor
   style="height: 100%"
-  class="model-sql-editor"
   data-cy="modelSqlEditor"
   [options]="editorOptions"
   [(ngModel)]="content"
-  (init)="onEditorInit($event)"
-></ngx-monaco-editor> -->
+></ng-monaco-editor>
 
 <div *ngIf="query$ | async"></div>

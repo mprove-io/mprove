@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { TreeModule } from '@bugsplat/angular-tree-component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyModule } from '@ngneat/helipopper';
+import { MonacoEditorModule } from 'ng-monaco-editor';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
@@ -44,7 +45,8 @@ import { SqlComponent } from './sql/sql.component';
     NgSelectModule,
     UiSwitchModule,
     NgxSpinnerModule,
-    TippyModule
+    TippyModule,
+    MonacoEditorModule
   ]
 })
 export class ModelModule {}
