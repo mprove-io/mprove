@@ -18,6 +18,7 @@ export interface ViewBlockmlDialogDataItem {
 })
 export class ViewBlockmlDialogComponent implements OnInit {
   editorOptions: MonacoEditorOptions = {
+    fixedOverflowWidgets: true,
     language: constants.BLOCKML_LANGUAGE_ID,
     theme: constants.BLOCKML_THEME_NAME,
     readOnly: true,

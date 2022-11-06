@@ -11,6 +11,7 @@ import { constants } from '~front/barrels/constants';
 })
 export class SqlComponent {
   editorOptions: MonacoEditorOptions = {
+    fixedOverflowWidgets: true,
     theme: constants.DEFAULT_THEME_NAME,
     readOnly: true,
     language: 'sql',
