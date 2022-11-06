@@ -2,7 +2,7 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "outDir": "../dist/out-tsc/tools",
-    "target": "es5",
+    "target": "es6",
     "types": ["node"],
     "importHelpers": false
   },

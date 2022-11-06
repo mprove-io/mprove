@@ -34,7 +34,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
 
   editor: editorType.IStandaloneCodeEditor = null;
 
-  monaco: typeof import('/mprove/node_modules/monaco-editor/esm/vs/editor/editor.api');
+  monaco: typeof import('monaco-editor');
 
   editorOptions: MonacoEditorOptions = {
     fixedOverflowWidgets: true,

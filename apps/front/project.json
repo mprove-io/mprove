@@ -87,12 +87,10 @@
       },
       "configurations": {
         "production": {
-          "browserTarget": "front:build:production",
-          "disableHostCheck": true
+          "browserTarget": "front:build:production"
         },
         "development": {
-          "browserTarget": "front:build:development",
-          "disableHostCheck": true
+          "browserTarget": "front:build:development"
         }
       },
       "defaultConfiguration": "development"
