@@ -1,0 +1,16 @@
+{
+  "oneOf": [
+    {
+      "$ref": "https://raw.githubusercontent.com/alauda/k8s-form-in-action/master/docs/schema/_definitions.json#/definitions/com.github.openshift.origin.pkg.image.apis.image.v1.NamedTagEventList"
+    },
+    {
+      "$ref": "https://raw.githubusercontent.com/alauda/k8s-form-in-action/master/docs/schema/_definitions.json#/definitions/com.github.openshift.origin.pkg.image.apis.image.v1.TagEventCondition"
+    },
+    {
+      "$ref": "https://raw.githubusercontent.com/alauda/k8s-form-in-action/master/docs/schema/_definitions.json#/definitions/com.github.openshift.origin.pkg.image.apis.image.v1.TagEvent"
+    },
+    {
+      "$ref": "https://raw.githubusercontent.com/alauda/k8s-form-in-action/master/docs/schema/_definitions.json#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.Time"
+    }
+  ]
+}

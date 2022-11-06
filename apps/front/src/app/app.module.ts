@@ -12,6 +12,7 @@ import {
   TippyModule,
   tooltipVariation
 } from '@ngneat/helipopper';
+import { MonacoEditorModule, MonacoProviderService } from 'ng-monaco-editor';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -33,6 +34,7 @@ import { ProjectModule } from './modules/project/project.module';
 import { SharedModule } from './modules/shared/shared.module';
 import { SpecialModule } from './modules/special/special.module';
 import { VisualizationsModule } from './modules/visualizations/visualizations.module';
+import { CustomMonacoProviderService } from './services/custom-monaco-provider.service';
 import { ErrorHandlerService } from './services/error-handler.service';
 
 registerLocaleData(en);
@@ -73,6 +75,9 @@ registerLocaleData(en);
         }
       }
     }),
+    MonacoEditorModule.forRoot({
+      dynamicImport: () => import('monaco-editor')
+    }),
     SharedModule,
     SpecialModule,
     ReactiveFormsModule,
@@ -91,7 +96,11 @@ registerLocaleData(en);
       useClass: ErrorHandlerService
     },
     NgxImageCompressService,
-    Title
+    Title,
+    {
+      provide: MonacoProviderService,
+      useClass: CustomMonacoProviderService
+    }
   ],
   bootstrap: [AppComponent]
 })

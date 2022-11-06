@@ -1,6 +1,8 @@
-import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MonacoEditorLoaderService } from '@materia-ui/ngx-monaco-editor';
+import type { editor as editorType } from 'monaco-editor';
+import { MarkerSeverity } from 'monaco-editor';
+import { MonacoEditorOptions, MonacoProviderService } from 'ng-monaco-editor';
 import { filter, take, tap } from 'rxjs/operators';
 import { FileQuery } from '~front/app/queries/file.query';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -25,18 +27,27 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './file-editor.component.html',
   styleUrls: ['file-editor.component.scss']
 })
-export class FileEditorComponent implements OnDestroy {
+export class FileEditorComponent implements OnInit, OnDestroy {
   line = 1;
 
-  editor: monaco.editor.IStandaloneCodeEditor = null;
+  isLoadedMonaco = false;
 
-  languages: monaco.languages.ILanguageExtensionPoint[] = [];
+  editor: editorType.IStandaloneCodeEditor = null;
 
-  editorOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
+  monaco: typeof import('/mprove/node_modules/monaco-editor/esm/vs/editor/editor.api');
+
+  editorOptions: MonacoEditorOptions = {
+    theme: constants.DEFAULT_THEME_NAME,
     // automaticLayout: true,
     fontSize: 16,
-    language: constants.DEFAULT_LANGUAGE_NAME,
-    theme: constants.DEFAULT_THEME_NAME,
+    // folding: true,
+    // wordWrap: 'on',
+    // minimap: { enabled: false },
+    tabSize: 2,
+    // lineNumbers: 'on',
+    // scrollbar: {
+    //   alwaysConsumeMouseWheel: false
+    // },
     renderValidationDecorations: 'off',
     // suggestFontSize:  undefined,
     // suggestLineHeight: undefined,
@@ -121,8 +132,6 @@ export class FileEditorComponent implements OnDestroy {
     })
   );
 
-  isLoadedMonaco = false;
-
   constructor(
     public fileQuery: FileQuery,
     public structQuery: StructQuery,
@@ -140,62 +149,131 @@ export class FileEditorComponent implements OnDestroy {
     public structStore: StructStore,
     private uiStore: UiStore,
     private route: ActivatedRoute,
-    private monacoEditorLoaderService: MonacoEditorLoaderService
-  ) {
-    this.monacoEditorLoaderService.isMonacoLoaded$
-      .pipe(
-        filter(isLoaded => isLoaded),
-        take(1)
-      )
-      .subscribe(async () => {
-        monaco.languages.register({ id: constants.BLOCKML_LANGUAGE_NAME });
+    private monacoService: MonacoProviderService
+  ) {}
 
-        monaco.languages.setMonarchTokensProvider(
-          constants.BLOCKML_LANGUAGE_NAME,
-          constants.BLOCKML_YAML_LANGUAGE
-        );
+  async ngOnInit() {
+    this.monaco = await this.monacoService.initMonaco();
+    // id 'yaml' already exists
+    // this.monaco.languages.register({ id: constants.BLOCKML_LANGUAGE_NAME });
+    this.monaco.languages.setMonarchTokensProvider(
+      constants.BLOCKML_LANGUAGE_ID,
+      constants.BLOCKML_YAML_LANGUAGE
+    );
+    this.monaco.editor.defineTheme(
+      constants.BLOCKML_THEME_NAME,
+      constants.BLOCKML_TEXTMATE_THEME as any
+    );
 
-        monaco.editor.defineTheme(
-          constants.BLOCKML_TEXTMATE_THEME_NAME,
-          constants.BLOCKML_TEXTMATE_THEME as any
-        );
+    this.isLoadedMonaco = true;
 
-        this.languages = monaco.languages.getLanguages();
-
-        this.isLoadedMonaco = true;
-
-        this.setEditorOptionsLanguage();
-      });
+    this.setEditorOptionsLanguage();
+    this.refreshMarkers();
   }
 
-  async onEditorInit(editor: any) {
+  async onEditorChange(editor: editorType.IStandaloneCodeEditor) {
     this.editor = editor;
 
-    let nav: NavState;
+    if (this.isLoadedMonaco === false) {
+      return;
+    }
+
+    this.setEditorOptionsLanguage();
+    this.refreshMarkers();
+    this.cd.detectChanges();
+  }
+
+  setEditorOptionsLanguage() {
+    if (this.isLoadedMonaco === false || common.isUndefined(this.editor)) {
+      return;
+    }
+
     this.navQuery
       .select()
       .pipe(take(1))
       .subscribe(x => {
-        nav = x;
+        this.nav = x;
       });
 
-    this.editor.updateOptions({ readOnly: nav.isRepoProd });
+    this.structQuery
+      .select()
+      .pipe(take(1))
+      .subscribe(x => {
+        this.struct = x;
+      });
 
-    this.editor.getModel().updateOptions({ tabSize: 2 });
+    let mdir = this.struct.mproveDirValue;
+    if (common.isDefined(this.struct.mproveDirValue)) {
+      if (mdir.substring(0, 1) === '.') {
+        mdir = mdir.substring(1);
+      }
+      if (mdir.substring(0, 1) === '/') {
+        mdir = mdir.substring(1);
+      }
+    }
 
-    this.refreshMarkers();
+    this.fileQuery
+      .select()
+      .pipe(take(1))
+      .subscribe(x => {
+        this.file = x;
+      });
+
+    let ar = this.file.name.split('.');
+    let ext = ar.pop();
+    let dotExt = `.${ext}`;
+
+    if (
+      (this.file.fileId === common.MPROVE_CONFIG_FILENAME ||
+        (common.isDefined(mdir) &&
+          this.file.fileNodeId.split(mdir)[0] === `${this.nav.projectId}/`) ||
+        this.struct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT ||
+        this.struct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH) &&
+      constants.YAML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0
+    ) {
+      let language = constants.BLOCKML_LANGUAGE_ID;
+      this.monaco.editor.setModelLanguage(this.editor.getModel(), language);
+
+      let patch: editorType.IStandaloneEditorConstructionOptions = {
+        theme: constants.BLOCKML_THEME_NAME,
+        renderValidationDecorations: 'on',
+        readOnly: this.nav.isRepoProd
+      };
+      this.editorOptions = Object.assign({}, this.editorOptions, patch);
+
+      this.refreshMarkers();
+    } else {
+      let language =
+        this.monaco.languages
+          .getLanguages()
+          .find(x => x.extensions?.indexOf(dotExt) > -1).id ||
+        constants.DEFAULT_LANGUAGE_ID;
+
+      this.monaco.editor.setModelLanguage(this.editor.getModel(), language);
+
+      let patch: editorType.IStandaloneEditorConstructionOptions = {
+        theme: constants.DEFAULT_THEME_NAME,
+        renderValidationDecorations: 'off',
+        readOnly: this.nav.isRepoProd
+      };
+
+      this.editorOptions = Object.assign({}, this.editorOptions, patch);
+
+      this.removeMarkers();
+    }
   }
 
   removeMarkers() {
-    if (!this.editor || !this.editor.getModel()) {
+    if (this.isLoadedMonaco === false || common.isUndefined(this.editor)) {
       return;
     }
-    monaco.editor.setModelMarkers(this.editor.getModel(), 'Conflicts', []);
-    monaco.editor.setModelMarkers(this.editor.getModel(), 'BlockML', []);
+
+    this.monaco.editor.setModelMarkers(this.editor.getModel(), 'Conflicts', []);
+    this.monaco.editor.setModelMarkers(this.editor.getModel(), 'BlockML', []);
   }
 
   refreshMarkers() {
-    if (!this.editor || !this.editor.getModel()) {
+    if (this.isLoadedMonaco === false || common.isUndefined(this.editor)) {
       return;
     }
 
@@ -221,8 +299,7 @@ export class FileEditorComponent implements OnDestroy {
       });
 
     if (this.repo.conflicts.length > 0) {
-      let conflictMarkers: monaco.editor.IMarkerData[] = [];
-
+      let conflictMarkers: editorType.IMarkerData[] = [];
       this.repo.conflicts
         .filter(x => x.fileId === this.file.fileId)
         .map(x => x.lineNumber)
@@ -234,19 +311,17 @@ export class FileEditorComponent implements OnDestroy {
               startColumn: 1,
               endColumn: 99,
               message: `conflict`,
-              severity: monaco.MarkerSeverity.Error
+              severity: MarkerSeverity.Error
             });
           }
         });
-
-      monaco.editor.setModelMarkers(
+      this.monaco.editor.setModelMarkers(
         this.editor.getModel(),
         'Conflicts',
         conflictMarkers
       );
     } else {
-      let errorMarkers: monaco.editor.IMarkerData[] = [];
-
+      let errorMarkers: editorType.IMarkerData[] = [];
       this.struct.errors.forEach(error =>
         error.lines
           .filter(x => {
@@ -263,13 +338,12 @@ export class FileEditorComponent implements OnDestroy {
                 startColumn: 1,
                 endColumn: 99,
                 message: `${error.title}: ${error.message}`,
-                severity: monaco.MarkerSeverity.Error
+                severity: MarkerSeverity.Error
               });
             }
           })
       );
-
-      monaco.editor.setModelMarkers(
+      this.monaco.editor.setModelMarkers(
         this.editor.getModel(),
         'BlockML',
         errorMarkers
@@ -373,7 +447,6 @@ export class FileEditorComponent implements OnDestroy {
   }
 
   canDeactivate(): Promise<boolean> | boolean {
-    // console.log('canDeactivateFileEditor');
     if (this.needSave === false) {
       return true;
     }
@@ -391,93 +464,7 @@ export class FileEditorComponent implements OnDestroy {
     });
   }
 
-  setEditorOptionsLanguage() {
-    if (this.isLoadedMonaco === false) {
-      return;
-    }
-
-    this.navQuery
-      .select()
-      .pipe(take(1))
-      .subscribe(x => {
-        this.nav = x;
-      });
-
-    this.structQuery
-      .select()
-      .pipe(take(1))
-      .subscribe(x => {
-        this.struct = x;
-      });
-
-    let mdir = this.struct.mproveDirValue;
-
-    if (common.isDefined(this.struct.mproveDirValue)) {
-      if (mdir.substring(0, 1) === '.') {
-        mdir = mdir.substring(1);
-      }
-
-      if (mdir.substring(0, 1) === '/') {
-        mdir = mdir.substring(1);
-      }
-    }
-
-    this.fileQuery
-      .select()
-      .pipe(take(1))
-      .subscribe(x => {
-        this.file = x;
-      });
-
-    let ar = this.file.name.split('.');
-    let ext = ar.pop();
-    let dotExt = `.${ext}`;
-
-    if (
-      (this.file.fileId === common.MPROVE_CONFIG_FILENAME ||
-        (common.isDefined(mdir) &&
-          this.file.fileNodeId.split(mdir)[0] === `${this.nav.projectId}/`) ||
-        this.struct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT ||
-        this.struct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH) &&
-      constants.YAML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0
-    ) {
-      monaco.editor.setTheme(constants.BLOCKML_TEXTMATE_THEME_NAME);
-
-      let patch: monaco.editor.IStandaloneEditorConstructionOptions = {
-        language: constants.BLOCKML_LANGUAGE_NAME,
-        theme: constants.BLOCKML_TEXTMATE_THEME_NAME,
-        renderValidationDecorations: 'on'
-      };
-
-      this.editorOptions = Object.assign({}, this.editorOptions, patch);
-      this.refreshMarkers();
-    } else {
-      let langId;
-
-      this.languages.forEach(language => {
-        if (language.extensions?.indexOf(dotExt) > -1) {
-          langId = language.id;
-          return;
-        }
-      });
-
-      monaco.editor.setTheme(constants.DEFAULT_THEME_NAME);
-
-      let patch: monaco.editor.IStandaloneEditorConstructionOptions = {
-        language: common.isDefined(langId)
-          ? langId
-          : constants.DEFAULT_LANGUAGE_NAME,
-        theme: constants.DEFAULT_THEME_NAME,
-        renderValidationDecorations: 'off'
-      };
-
-      this.editorOptions = Object.assign({}, this.editorOptions, patch);
-      this.removeMarkers();
-    }
-  }
-
   ngOnDestroy() {
-    // console.log('ngOnDestroyFileEditor');
     this.fileStore.reset();
   }
 }

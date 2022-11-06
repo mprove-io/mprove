@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { MonacoEditorLoaderService } from '@materia-ui/ngx-monaco-editor';
+// import { MonacoEditorLoaderService } from '@materia-ui/ngx-monaco-editor';
 import { tap } from 'rxjs/operators';
 import { MqQuery } from '~front/app/queries/mq.query';
 import { common } from '~front/barrels/common';
@@ -10,7 +10,7 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './sql.component.html'
 })
 export class SqlComponent {
-  editor: monaco.editor.IStandaloneCodeEditor = null;
+  // editor: monaco.editor.IStandaloneCodeEditor = null;
 
   editorOptions = {
     // automaticLayout: true,
@@ -31,13 +31,11 @@ export class SqlComponent {
     })
   );
 
-  constructor(
-    private cd: ChangeDetectorRef,
-    private mqQuery: MqQuery,
-    private monacoEditorLoaderService: MonacoEditorLoaderService
-  ) {}
+  constructor(private cd: ChangeDetectorRef, private mqQuery: MqQuery) // ,
+  // private monacoEditorLoaderService: MonacoEditorLoaderService
+  {}
 
   async onEditorInit(editor: any) {
-    this.editor = editor;
+    // this.editor = editor;
   }
 }

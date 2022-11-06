@@ -1,5 +1,7 @@
 <div class="flex h-full flex-col">
-  <div class="flex h-20 flex-row items-center justify-between px-5">
+  <div
+    class="flex h-20 flex-shrink-0 flex-row items-center justify-between px-5"
+  >
     <div class="flex min-w-[2px] flex-row items-center space-x-5">
       <div class="text-gray1 min-w-[2px] flex-grow truncate text-lg">{{
         file?.name
@@ -58,16 +60,13 @@
   </div>
 
   <div class="h-full rounded">
-    <!-- <div class="h-full rounded bg-[#1E1E1E]"> -->
-    <ngx-monaco-editor
-      style="height: 100%"
-      class="my-code-editor"
+    <ng-monaco-editor
       data-cy="fileEditorMonacoEditor"
       [options]="editorOptions"
       [(ngModel)]="content"
+      (editorChange)="onEditorChange($event)"
       (ngModelChange)="onTextChanged()"
-      (init)="onEditorInit($event)"
-    ></ngx-monaco-editor>
+    ></ng-monaco-editor>
   </div>
 </div>
 
