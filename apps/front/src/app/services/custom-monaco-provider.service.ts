@@ -13,8 +13,8 @@ export class CustomMonacoProviderService extends MonacoProviderService {
           .initMonaco()
           .then(monaco => {
             monaco.editor.defineTheme(
-              constants.BLOCKML_THEME_NAME,
-              constants.BLOCKML_THEME as any
+              constants.BLOCKML_THEME,
+              constants.BLOCKML_THEME_DATA
             );
 
             resolve(monaco);

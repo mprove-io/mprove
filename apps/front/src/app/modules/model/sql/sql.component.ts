@@ -11,12 +11,12 @@ import { constants } from '~front/barrels/constants';
 })
 export class SqlComponent {
   editorOptions: MonacoEditorOptions = {
-    fixedOverflowWidgets: true,
-    theme: constants.DEFAULT_THEME_NAME,
     readOnly: true,
-    language: 'sql',
-    fontSize: 16,
     renderValidationDecorations: 'off',
+    theme: constants.TEXTMATE_THEME,
+    language: constants.SQL_LANGUAGE_ID,
+    fontSize: 16,
+    fixedOverflowWidgets: true,
     snippetSuggestions: 'none',
     suggestOnTriggerCharacters: false,
     quickSuggestions: false,

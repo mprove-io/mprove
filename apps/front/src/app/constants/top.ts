@@ -17,11 +17,12 @@ export const USERS_PER_PAGE = 10;
 export const CONNECTIONS_PER_PAGE = 10;
 export const ENVIRONMENTS_PER_PAGE = 10;
 
-export const DEFAULT_LANGUAGE_ID = 'markdown';
+export const MARKDOWN_LANGUAGE_ID = 'markdown';
 export const YAML_LANGUAGE_ID = 'yaml';
+export const SQL_LANGUAGE_ID = 'sql';
 
-export const DEFAULT_THEME_NAME = 'textmate';
-export const BLOCKML_THEME_NAME = 'blockml';
+export const TEXTMATE_THEME = 'textmate';
+export const BLOCKML_THEME = 'blockml';
 
 export const YAML_EXT_LIST: common.FileExtensionEnum[] = [
   common.FileExtensionEnum.View,

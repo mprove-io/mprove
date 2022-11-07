@@ -1,6 +1,6 @@
-import { languages } from 'monaco-editor';
+import type { languages as languagesType } from 'monaco-editor';
 
-export const YAML_LANGUAGE = <languages.IMonarchLanguage>{
+export const BLOCKML_LANGUAGE_DATA: languagesType.IMonarchLanguage = {
   tokenPostfix: '.yaml',
 
   brackets: [
@@ -49,8 +49,13 @@ export const YAML_LANGUAGE = <languages.IMonarchLanguage>{
 
       { include: '@anchor' },
       { include: '@tagHandle' },
+
+      { include: '@blockmlRef' },
+      { include: '@blockmlApplyFilterStartRef' },
+      { include: '@blockmlApplyFilterEndRef' },
+
       { include: '@flowCollections' },
-      { include: '@blockStyle' },
+      // { include: '@blockStyle' },
 
       // Numbers
       [/@numberInteger(?![ \t]*\S+)/, 'number'],
@@ -71,7 +76,7 @@ export const YAML_LANGUAGE = <languages.IMonarchLanguage>{
 
       // String nodes
       [
-        /[^#]+/,
+        /[^#${%]+/,
         {
           cases: {
             '@keywords': 'keyword',
@@ -108,6 +113,7 @@ export const YAML_LANGUAGE = <languages.IMonarchLanguage>{
       { include: '@flowNumber' },
 
       // Other value (keyword or string)
+      // { include: '@blockmlRef' },
       [
         /[^\},]+/,
         {
@@ -140,6 +146,7 @@ export const YAML_LANGUAGE = <languages.IMonarchLanguage>{
       { include: '@flowNumber' },
 
       // Other value (keyword or string)
+      // { include: '@blockmlRef' },
       [
         /[^\],]+/,
         {
@@ -210,6 +217,60 @@ export const YAML_LANGUAGE = <languages.IMonarchLanguage>{
 
     tagHandle: [[/\![^ ]*/, 'tag']],
 
-    anchor: [[/[&*][^ ]+/, 'namespace']]
+    anchor: [[/[&*][^ ]+/, 'namespace']],
+
+    blockmlRef: [
+      [
+        /(\$\{)(\w+)(\.)([^}]*)(\})/,
+        [
+          'blockmlRefBrackets',
+          'blockmlRefLeft',
+          'blockmlRefDot',
+          'blockmlRefRight',
+          'blockmlRefBrackets'
+        ],
+        '@blockmlRefState'
+      ],
+      [
+        /(\$\{)([^}]*)(\})/,
+        ['blockmlRefBrackets', 'blockmlRefRight', 'blockmlRefBrackets'],
+        '@blockmlRefState'
+      ]
+    ],
+
+    blockmlApplyFilterStartRef: [
+      [
+        /(\{\%\s)(apply_filter)(\s\w+)(\s\%\})/,
+        [
+          'blockmlApplyFilterStartRefBrackets',
+          'blockmlApplyFilterStartRefKeyword',
+          'blockmlApplyFilterStartRefName',
+          'blockmlApplyFilterStartRefBrackets'
+        ],
+        '@blockmlApplyFilterStartRefState'
+      ]
+    ],
+
+    blockmlApplyFilterEndRef: [
+      [
+        /(\{\%\s)(end_apply_filter)(\s\%\})/,
+        [
+          'blockmlApplyFilterEndRefBrackets',
+          'blockmlApplyFilterEndRefKeyword',
+          'blockmlApplyFilterEndRefBrackets'
+        ],
+        '@blockmlApplyFilterEndRefRefState'
+      ]
+    ],
+
+    blockmlRefState: [[/\}/, 'blockmlRefBrackets', '@pop']],
+
+    blockmlApplyFilterStartRefState: [
+      [/\%\}/, 'blockmlApplyFilterStartRefBrackets', '@pop']
+    ],
+
+    blockmlApplyFilterEndRefState: [
+      [/\%\}/, 'blockmlApplyFilterEndRefBrackets', '@pop']
+    ]
   }
 };

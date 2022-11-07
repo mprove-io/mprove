@@ -1,4 +1,6 @@
-export const BLOCKML_THEME = {
+import type { editor as editorType } from 'monaco-editor';
+
+export const BLOCKML_THEME_DATA: editorType.IStandaloneThemeData = {
   base: 'vs',
   inherit: true,
   rules: [

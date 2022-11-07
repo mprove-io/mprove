@@ -38,19 +38,19 @@ export class FileEditorComponent implements OnInit, OnDestroy {
   monaco: typeof import('monaco-editor');
 
   editorOptions: MonacoEditorOptions = {
+    renderValidationDecorations: 'off',
     fixedOverflowWidgets: true,
-    theme: constants.DEFAULT_THEME_NAME,
-    // automaticLayout: true,
+    theme: constants.TEXTMATE_THEME,
     fontSize: 16,
+    tabSize: 2,
+    // automaticLayout: true,
     // folding: true,
     // wordWrap: 'on',
     // minimap: { enabled: false },
-    tabSize: 2,
     // lineNumbers: 'on',
     // scrollbar: {
     //   alwaysConsumeMouseWheel: false
     // },
-    renderValidationDecorations: 'off',
     // suggestFontSize:  undefined,
     // suggestLineHeight: undefined,
     // suggestSelection: undefined,
@@ -223,10 +223,10 @@ export class FileEditorComponent implements OnInit, OnDestroy {
       constants.YAML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0
     ) {
       // language id 'yaml' already exists
-      // this.monaco.languages.register({ id: constants.BLOCKML_LANGUAGE_NAME });
+      // this.monaco.languages.register({ id: constants.YAML_LANGUAGE_ID });
       this.monaco.languages.setMonarchTokensProvider(
         constants.YAML_LANGUAGE_ID,
-        constants.BLOCKML_LANGUAGE
+        constants.BLOCKML_LANGUAGE_DATA
       );
 
       let language = constants.YAML_LANGUAGE_ID;
@@ -261,7 +261,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
       this.monaco.editor.setModelLanguage(this.editor.getModel(), language);
 
       let patch: editorType.IStandaloneEditorConstructionOptions = {
-        theme: constants.BLOCKML_THEME_NAME,
+        theme: constants.BLOCKML_THEME,
         renderValidationDecorations: 'on',
         readOnly: this.nav.isRepoProd
       };
@@ -273,14 +273,14 @@ export class FileEditorComponent implements OnInit, OnDestroy {
         this.monaco.languages
           .getLanguages()
           .find(x => x.extensions?.indexOf(dotExt) > -1)?.id ||
-        constants.DEFAULT_LANGUAGE_ID;
+        constants.MARKDOWN_LANGUAGE_ID;
 
       if (language === 'yaml') {
         // language id 'yaml' already exists
         // this.monaco.languages.register({ id: constants.BLOCKML_LANGUAGE_NAME });
         this.monaco.languages.setMonarchTokensProvider(
           constants.YAML_LANGUAGE_ID,
-          constants.YAML_LANGUAGE
+          constants.YAML_LANGUAGE_DATA
         );
 
         setDiagnosticsOptions({
@@ -293,7 +293,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
       this.monaco.editor.setModelLanguage(this.editor.getModel(), language);
 
       let patch: editorType.IStandaloneEditorConstructionOptions = {
-        theme: constants.DEFAULT_THEME_NAME,
+        theme: constants.TEXTMATE_THEME,
         renderValidationDecorations: 'off',
         readOnly: this.nav.isRepoProd
       };

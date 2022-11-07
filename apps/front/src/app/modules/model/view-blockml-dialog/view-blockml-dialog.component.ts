@@ -18,12 +18,12 @@ export interface ViewBlockmlDialogDataItem {
 })
 export class ViewBlockmlDialogComponent implements OnInit {
   editorOptions: MonacoEditorOptions = {
-    fixedOverflowWidgets: true,
-    language: constants.YAML_LANGUAGE_ID,
-    theme: constants.DEFAULT_THEME_NAME,
     readOnly: true,
-    fontSize: 16,
     renderValidationDecorations: 'off',
+    theme: constants.BLOCKML_THEME,
+    language: constants.YAML_LANGUAGE_ID,
+    fontSize: 16,
+    fixedOverflowWidgets: true,
     snippetSuggestions: 'none',
     suggestOnTriggerCharacters: false,
     quickSuggestions: false,
@@ -60,7 +60,7 @@ export class ViewBlockmlDialogComponent implements OnInit {
     let monaco = await this.monacoService.initMonaco();
     monaco.languages.setMonarchTokensProvider(
       constants.YAML_LANGUAGE_ID,
-      constants.BLOCKML_LANGUAGE
+      constants.BLOCKML_LANGUAGE_DATA
     );
   }
 }
