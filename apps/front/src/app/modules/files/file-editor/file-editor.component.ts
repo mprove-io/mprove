@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { JSONSchema7 } from 'json-schema';
 import type { editor as editorType } from 'monaco-editor';
 import { MarkerSeverity } from 'monaco-editor';
 import { setDiagnosticsOptions } from 'monaco-yaml';
@@ -215,12 +216,13 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     let dotExt = `.${ext}`;
 
     if (
-      (this.file.fileId === common.MPROVE_CONFIG_FILENAME ||
+      this.file.fileId === common.MPROVE_CONFIG_FILENAME ||
+      ((this.struct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT ||
+        this.struct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH ||
         (common.isDefined(mdir) &&
-          this.file.fileNodeId.split(mdir)[0] === `${this.nav.projectId}/`) ||
-        this.struct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT ||
-        this.struct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH) &&
-      constants.YAML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0
+          this.file.fileNodeId.split(mdir)[0] === `${this.nav.projectId}/`)) &&
+        constants.BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >=
+          0)
     ) {
       // language id 'yaml' already exists
       // this.monaco.languages.register({ id: constants.YAML_LANGUAGE_ID });
@@ -231,31 +233,50 @@ export class FileEditorComponent implements OnInit, OnDestroy {
 
       let language = constants.YAML_LANGUAGE_ID;
 
-      let schema =
-        dotExt === common.FileExtensionEnum.Dashboard
-          ? constants.blockmlDashboardSchema
+      let schema: JSONSchema7 =
+        this.file.fileId === common.MPROVE_CONFIG_FILENAME
+          ? common.CONFIG_SCHEMA
+          : dotExt === common.FileExtensionEnum.Dashboard
+          ? common.DASHBOARD_SCHEMA
           : dotExt === common.FileExtensionEnum.Vis
-          ? constants.blockmlDashboardSchema
-          : constants.blockmlReportSchema;
+          ? common.VISUALIZATION_SCHEMA
+          : dotExt === common.FileExtensionEnum.Model
+          ? common.MODEL_SCHEMA
+          : dotExt === common.FileExtensionEnum.View
+          ? common.VIEW_SCHEMA
+          : dotExt === common.FileExtensionEnum.Udf
+          ? common.UDF_SCHEMA
+          : undefined;
 
       let uri =
-        dotExt === common.FileExtensionEnum.Dashboard
+        this.file.fileId === common.MPROVE_CONFIG_FILENAME
+          ? 'https://docs.mprove.io/top/blockml/mprove-project-config'
+          : dotExt === common.FileExtensionEnum.Dashboard
           ? 'https://docs.mprove.io/top/blockml/dashboard'
           : dotExt === common.FileExtensionEnum.Vis
           ? 'https://docs.mprove.io/top/blockml/visualization'
-          : 'https://raw.githubusercontent.com/mprove-io/mprove/master/apps/front/src/app/constants/json-schemas/blockml-report-schema.ts';
+          : dotExt === common.FileExtensionEnum.Model
+          ? 'https://docs.mprove.io/top/blockml/model-and-joins'
+          : dotExt === common.FileExtensionEnum.View
+          ? 'https://docs.mprove.io/top/blockml/view'
+          : dotExt === common.FileExtensionEnum.Udf
+          ? 'https://docs.mprove.io/top/blockml/user-defined-function'
+          : undefined;
 
       setDiagnosticsOptions({
         validate: true,
         format: true,
         enableSchemaRequest: true,
-        schemas: [
-          {
-            uri: uri,
-            fileMatch: ['*'],
-            schema: schema
-          }
-        ]
+        schemas:
+          common.isDefined(schema) && common.isDefined(uri)
+            ? [
+                {
+                  uri: uri,
+                  fileMatch: ['*'],
+                  schema: schema
+                }
+              ]
+            : []
       });
 
       this.monaco.editor.setModelLanguage(this.editor.getModel(), language);

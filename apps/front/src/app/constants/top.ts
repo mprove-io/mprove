@@ -24,13 +24,12 @@ export const SQL_LANGUAGE_ID = 'sql';
 export const TEXTMATE_THEME = 'textmate';
 export const BLOCKML_THEME = 'blockml';
 
-export const YAML_EXT_LIST: common.FileExtensionEnum[] = [
+export const BLOCKML_EXT_LIST: common.FileExtensionEnum[] = [
   common.FileExtensionEnum.View,
   common.FileExtensionEnum.Model,
   common.FileExtensionEnum.Dashboard,
   common.FileExtensionEnum.Vis,
-  common.FileExtensionEnum.Udf,
-  common.FileExtensionEnum.Yml
+  common.FileExtensionEnum.Udf
 ];
 
 export const RESULT_LIST: common.FieldResultEnum[] = [
