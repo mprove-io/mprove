@@ -270,6 +270,12 @@ export const BLOCKML_THEME_DATA: editorType.IStandaloneThemeData = {
     'editor.selectionBackground': '#4D97FF54',
     'editor.lineHighlightBackground': '#00000012',
     'editorCursor.foreground': '#000000',
-    'editorWhitespace.foreground': '#BFBFBF'
+    'editorWhitespace.foreground': '#BFBFBF',
+    // blockml custom
+    'editorError.foreground': '#e51400',
+    'editorWarning.foreground': '#e51400',
+    'minimap.errorHighlight': '#e51400',
+    'editorOverviewRuler.errorForeground': '#e51400',
+    errorForeground: '#e51400'
   }
 };
