@@ -1,5 +1,8 @@
 {
   "license": "Apache-2.0",
+  "scripts": {
+    "postinstall": "ngcc --properties es2015 browser module main"
+  },
   "dependencies": {
     "@angular/animations": "13.3.11",
     "@angular/cdk": "13.3.9",
@@ -159,7 +162,13 @@
     "monaco-editor-webpack-plugin": "7.0.1",
     "webpack": "^5.74.0"
   },
-  "scripts": {
-    "postinstall": "ngcc --properties es2015 browser module main"
+  "resolutions": {
+    "prettier": "2.7.1",
+    "webpack": "^5",
+    "@babel/types": "7.19.4",
+    "@babel/traverse": "7.19.4",
+    "@babel/generator": "7.19.4",
+    "@babel/parser": "7.19.4",
+    "@babel/runtime": "7.19.4"
   }
 }

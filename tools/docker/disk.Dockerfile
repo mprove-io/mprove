@@ -1,4 +1,4 @@
-FROM node:16.15.1
+FROM node:16.18.0
 
 WORKDIR /usr/src/app
 RUN npm config set scripts-prepend-node-path true

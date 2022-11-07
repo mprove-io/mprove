@@ -24,21 +24,27 @@ function updateTarget(tPath: string, s: any, t: any) {
   // s.name = 'preparedName';
   // s.version = 'preparedVersion';
 
-  let allowed = [
+  let allowedTop = [
     // 'name',
     // 'version',
     'license',
+    'scripts',
     'dependencies',
-    'devDependencies'
+    'devDependencies',
+    'resolutions'
   ];
 
   Object.keys(s)
-    .filter(key => !allowed.includes(key))
+    .filter(key => !allowedTop.includes(key))
     .forEach(key => delete s[key]);
 
-  s['scripts'] = {
-    postinstall: 'ngcc --properties es2015 browser module main'
-  };
+  let allowedScripts = ['postinstall'];
+
+  Object.keys(s.scripts)
+    .filter(key => !allowedScripts.includes(key))
+    .forEach(key => delete s.scripts[key]);
+
+  s.scripts.postinstall = 'ngcc --properties es2015 browser module main';
 
   if (t === null || !deepEqual(s, t)) {
     fse.writeFileSync(tPath, JSON.stringify(s, null, 2));
