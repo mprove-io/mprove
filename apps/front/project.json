@@ -24,15 +24,7 @@
         "main": "apps/front/src/main.ts",
         "polyfills": "apps/front/src/polyfills.ts",
         "tsConfig": "apps/front/tsconfig.app.json",
-        "assets": [
-          "apps/front/src/favicon.svg",
-          "apps/front/src/assets",
-          {
-            "glob": "**/*",
-            "input": "apps/front/src/assets/schema",
-            "output": "schema"
-          }
-        ],
+        "assets": ["apps/front/src/favicon.svg", "apps/front/src/assets"],
         "styles": [
           "apps/front/src/styles.scss",
           "./node_modules/monaco-editor/min/vs/editor/editor.main.css",

@@ -1,6 +1,6 @@
 import { languages } from 'monaco-editor';
 
-export const BLOCKML_YAML_LANGUAGE = <languages.IMonarchLanguage>{
+export const YAML_LANGUAGE = <languages.IMonarchLanguage>{
   tokenPostfix: '.yaml',
 
   brackets: [
@@ -27,7 +27,8 @@ export const BLOCKML_YAML_LANGUAGE = <languages.IMonarchLanguage>{
   numberHex: /0x[0-9a-fA-F]+/,
   numberInfinity: /[+-]?\.(?:inf|Inf|INF)/,
   numberNaN: /\.(?:nan|Nan|NAN)/,
-  numberDate: /\d{4}-\d\d-\d\d([Tt ]\d\d:\d\d:\d\d(\.\d+)?(( ?[+-]\d\d?(:\d\d)?)|Z)?)?/,
+  numberDate:
+    /\d{4}-\d\d-\d\d([Tt ]\d\d:\d\d:\d\d(\.\d+)?(( ?[+-]\d\d?(:\d\d)?)|Z)?)?/,
 
   escapes: /\\(?:[btnfr\\"']|[0-7][0-7]?|[0-3][0-7]{2})/,
 
@@ -48,13 +49,8 @@ export const BLOCKML_YAML_LANGUAGE = <languages.IMonarchLanguage>{
 
       { include: '@anchor' },
       { include: '@tagHandle' },
-
-      { include: '@blockmlRef' },
-      { include: '@blockmlApplyFilterStartRef' },
-      { include: '@blockmlApplyFilterEndRef' },
-
       { include: '@flowCollections' },
-      // { include: '@blockStyle' },
+      { include: '@blockStyle' },
 
       // Numbers
       [/@numberInteger(?![ \t]*\S+)/, 'number'],
@@ -75,7 +71,7 @@ export const BLOCKML_YAML_LANGUAGE = <languages.IMonarchLanguage>{
 
       // String nodes
       [
-        /[^#${%]+/,
+        /[^#]+/,
         {
           cases: {
             '@keywords': 'keyword',
@@ -112,7 +108,6 @@ export const BLOCKML_YAML_LANGUAGE = <languages.IMonarchLanguage>{
       { include: '@flowNumber' },
 
       // Other value (keyword or string)
-      // { include: '@blockmlRef' },
       [
         /[^\},]+/,
         {
@@ -145,7 +140,6 @@ export const BLOCKML_YAML_LANGUAGE = <languages.IMonarchLanguage>{
       { include: '@flowNumber' },
 
       // Other value (keyword or string)
-      // { include: '@blockmlRef' },
       [
         /[^\],]+/,
         {
@@ -216,60 +210,6 @@ export const BLOCKML_YAML_LANGUAGE = <languages.IMonarchLanguage>{
 
     tagHandle: [[/\![^ ]*/, 'tag']],
 
-    anchor: [[/[&*][^ ]+/, 'namespace']],
-
-    blockmlRef: [
-      [
-        /(\$\{)(\w+)(\.)([^}]*)(\})/,
-        [
-          'blockmlRefBrackets',
-          'blockmlRefLeft',
-          'blockmlRefDot',
-          'blockmlRefRight',
-          'blockmlRefBrackets'
-        ],
-        '@blockmlRefState'
-      ],
-      [
-        /(\$\{)([^}]*)(\})/,
-        ['blockmlRefBrackets', 'blockmlRefRight', 'blockmlRefBrackets'],
-        '@blockmlRefState'
-      ]
-    ],
-
-    blockmlApplyFilterStartRef: [
-      [
-        /(\{\%\s)(apply_filter)(\s\w+)(\s\%\})/,
-        [
-          'blockmlApplyFilterStartRefBrackets',
-          'blockmlApplyFilterStartRefKeyword',
-          'blockmlApplyFilterStartRefName',
-          'blockmlApplyFilterStartRefBrackets'
-        ],
-        '@blockmlApplyFilterStartRefState'
-      ]
-    ],
-
-    blockmlApplyFilterEndRef: [
-      [
-        /(\{\%\s)(end_apply_filter)(\s\%\})/,
-        [
-          'blockmlApplyFilterEndRefBrackets',
-          'blockmlApplyFilterEndRefKeyword',
-          'blockmlApplyFilterEndRefBrackets'
-        ],
-        '@blockmlApplyFilterEndRefRefState'
-      ]
-    ],
-
-    blockmlRefState: [[/\}/, 'blockmlRefBrackets', '@pop']],
-
-    blockmlApplyFilterStartRefState: [
-      [/\%\}/, 'blockmlApplyFilterStartRefBrackets', '@pop']
-    ],
-
-    blockmlApplyFilterEndRefState: [
-      [/\%\}/, 'blockmlApplyFilterEndRefBrackets', '@pop']
-    ]
+    anchor: [[/[&*][^ ]+/, 'namespace']]
   }
 };

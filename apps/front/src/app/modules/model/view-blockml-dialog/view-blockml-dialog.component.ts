@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
-import { MonacoEditorOptions } from 'ng-monaco-editor';
+import { MonacoEditorOptions, MonacoProviderService } from 'ng-monaco-editor';
 import { take, tap } from 'rxjs/operators';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { StructState } from '~front/app/stores/struct.store';
@@ -19,8 +19,8 @@ export interface ViewBlockmlDialogDataItem {
 export class ViewBlockmlDialogComponent implements OnInit {
   editorOptions: MonacoEditorOptions = {
     fixedOverflowWidgets: true,
-    language: constants.BLOCKML_LANGUAGE_ID,
-    theme: constants.BLOCKML_THEME_NAME,
+    language: constants.YAML_LANGUAGE_ID,
+    theme: constants.DEFAULT_THEME_NAME,
     readOnly: true,
     fontSize: 16,
     renderValidationDecorations: 'off',
@@ -35,10 +35,11 @@ export class ViewBlockmlDialogComponent implements OnInit {
 
   constructor(
     public ref: DialogRef<ViewBlockmlDialogDataItem>,
-    private structQuery: StructQuery
+    private structQuery: StructQuery,
+    private monacoService: MonacoProviderService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     let struct: StructState;
     this.structQuery
       .select()
@@ -55,5 +56,11 @@ export class ViewBlockmlDialogComponent implements OnInit {
     });
 
     this.reportYaml = common.toYaml({ reports: [rep] });
+
+    let monaco = await this.monacoService.initMonaco();
+    monaco.languages.setMonarchTokensProvider(
+      constants.YAML_LANGUAGE_ID,
+      constants.BLOCKML_LANGUAGE
+    );
   }
 }

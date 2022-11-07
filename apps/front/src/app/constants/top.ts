@@ -18,9 +18,9 @@ export const CONNECTIONS_PER_PAGE = 10;
 export const ENVIRONMENTS_PER_PAGE = 10;
 
 export const DEFAULT_LANGUAGE_ID = 'markdown';
-export const DEFAULT_THEME_NAME = 'textmate';
+export const YAML_LANGUAGE_ID = 'yaml';
 
-export const BLOCKML_LANGUAGE_ID = 'yaml';
+export const DEFAULT_THEME_NAME = 'textmate';
 export const BLOCKML_THEME_NAME = 'blockml';
 
 export const YAML_EXT_LIST: common.FileExtensionEnum[] = [

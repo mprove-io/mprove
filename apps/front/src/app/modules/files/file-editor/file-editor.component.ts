@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import type { editor as editorType } from 'monaco-editor';
 import { MarkerSeverity } from 'monaco-editor';
+import { setDiagnosticsOptions } from 'monaco-yaml';
 import { MonacoEditorOptions, MonacoProviderService } from 'ng-monaco-editor';
 import { filter, take, tap } from 'rxjs/operators';
 import { FileQuery } from '~front/app/queries/file.query';
@@ -221,7 +222,42 @@ export class FileEditorComponent implements OnInit, OnDestroy {
         this.struct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH) &&
       constants.YAML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0
     ) {
-      let language = constants.BLOCKML_LANGUAGE_ID;
+      // language id 'yaml' already exists
+      // this.monaco.languages.register({ id: constants.BLOCKML_LANGUAGE_NAME });
+      this.monaco.languages.setMonarchTokensProvider(
+        constants.YAML_LANGUAGE_ID,
+        constants.BLOCKML_LANGUAGE
+      );
+
+      let language = constants.YAML_LANGUAGE_ID;
+
+      let schema =
+        dotExt === common.FileExtensionEnum.Dashboard
+          ? constants.blockmlDashboardSchema
+          : dotExt === common.FileExtensionEnum.Vis
+          ? constants.blockmlDashboardSchema
+          : constants.blockmlReportSchema;
+
+      let uri =
+        dotExt === common.FileExtensionEnum.Dashboard
+          ? 'https://docs.mprove.io/top/blockml/dashboard'
+          : dotExt === common.FileExtensionEnum.Vis
+          ? 'https://docs.mprove.io/top/blockml/visualization'
+          : 'https://raw.githubusercontent.com/mprove-io/mprove/master/apps/front/src/app/constants/json-schemas/blockml-report-schema.ts';
+
+      setDiagnosticsOptions({
+        validate: true,
+        format: true,
+        enableSchemaRequest: true,
+        schemas: [
+          {
+            uri: uri,
+            fileMatch: ['*'],
+            schema: schema
+          }
+        ]
+      });
+
       this.monaco.editor.setModelLanguage(this.editor.getModel(), language);
 
       let patch: editorType.IStandaloneEditorConstructionOptions = {
@@ -238,6 +274,21 @@ export class FileEditorComponent implements OnInit, OnDestroy {
           .getLanguages()
           .find(x => x.extensions?.indexOf(dotExt) > -1)?.id ||
         constants.DEFAULT_LANGUAGE_ID;
+
+      if (language === 'yaml') {
+        // language id 'yaml' already exists
+        // this.monaco.languages.register({ id: constants.BLOCKML_LANGUAGE_NAME });
+        this.monaco.languages.setMonarchTokensProvider(
+          constants.YAML_LANGUAGE_ID,
+          constants.YAML_LANGUAGE
+        );
+
+        setDiagnosticsOptions({
+          validate: false,
+          format: true,
+          schemas: []
+        });
+      }
 
       this.monaco.editor.setModelLanguage(this.editor.getModel(), language);
 

@@ -20,4 +20,4 @@ COPY nx.json package.json tsconfig.base.json tsconfig.json workspace.json ./
 
 EXPOSE 4200
 
-CMD ["yarn", "serve:front:dev"]
+CMD ["yarn", "serve:front:dev:host"]
