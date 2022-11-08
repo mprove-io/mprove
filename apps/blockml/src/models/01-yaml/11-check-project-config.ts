@@ -6,6 +6,7 @@ import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
+import { capitalizeFirstLetter } from '~common/_index';
 
 let func = enums.FuncEnum.CheckProjectConfig;
 
@@ -137,7 +138,9 @@ export function checkProjectConfig(
       }
 
       if (parameter === enums.ParameterEnum.WeekStart.toString()) {
-        (<any>conf).week_start = conf.week_start.toLowerCase();
+        let lowerCaseWeekStart = conf.week_start.toLowerCase();
+
+        (<any>conf).week_start = capitalizeFirstLetter(lowerCaseWeekStart);
 
         if (
           common.PROJECT_WEEK_START_VALUES.map(x => x.toString()).indexOf(
