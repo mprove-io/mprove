@@ -1,4 +1,5 @@
 import { JSONSchema7 } from 'json-schema';
+import { constants } from '~common/barrels/constants';
 
 export const MEASURE_SCHEMA: JSONSchema7 = {
   properties: {
@@ -15,10 +16,12 @@ export const MEASURE_SCHEMA: JSONSchema7 = {
       type: 'string'
     },
     type: {
-      // type: 'enum'
+      type: 'string',
+      enum: constants.MEASURE_TYPE_VALUES
     },
     result: {
-      // type: 'enum'
+      type: 'string',
+      enum: constants.MEASURE_RESULT_VALUES
     },
     format_number: {
       type: 'string'

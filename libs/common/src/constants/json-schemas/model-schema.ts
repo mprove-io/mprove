@@ -1,4 +1,5 @@
 import { JSONSchema7 } from 'json-schema';
+import { constants } from '~common/barrels/constants';
 import { CALCULATION_SCHEMA } from './parts/calculation-schema';
 import { DIMENSION_SCHEMA } from './parts/dimension-schema';
 import { FILTER_SCHEMA } from './parts/filter-schema';
@@ -46,9 +47,10 @@ const joinView: JSONSchema7 = {
     join_view: {
       type: 'string'
     },
-    // type: {
-    //   type: 'enum'
-    // },
+    type: {
+      type: 'string',
+      enum: constants.JOIN_TYPE_VALUES
+    },
     sql_on: {
       type: 'string'
     },

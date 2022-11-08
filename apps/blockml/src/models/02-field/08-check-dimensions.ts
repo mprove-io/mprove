@@ -38,11 +38,7 @@ export function checkDimensions<T extends types.vmType>(
       if (common.isUndefined(field.type)) {
         field.type = common.FieldTypeEnum.Custom;
         field.type_line_num = 0;
-      } else if (
-        [common.FieldTypeEnum.Custom, common.FieldTypeEnum.YesnoIsTrue].indexOf(
-          field.type
-        ) < 0
-      ) {
+      } else if (common.DIMENSION_TYPE_VALUES.indexOf(field.type) < 0) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.WRONG_DIMENSION_TYPE,

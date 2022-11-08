@@ -1,4 +1,5 @@
 import { JSONSchema7 } from 'json-schema';
+import { constants } from '~common/barrels/constants';
 
 export const REPORT_SCHEMA: JSONSchema7 = {
   properties: {
@@ -33,7 +34,8 @@ export const REPORT_SCHEMA: JSONSchema7 = {
       properties: {}
     },
     type: {
-      // type: 'enum'
+      type: 'string',
+      enum: constants.CHART_TYPE_VALUES
     },
     data: {},
     axis: {},

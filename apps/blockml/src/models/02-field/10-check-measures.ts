@@ -50,21 +50,7 @@ export function checkMeasures<T extends types.vmType>(
           })
         );
         return;
-      } else if (
-        [
-          common.FieldTypeEnum.CountDistinct,
-          common.FieldTypeEnum.Sum,
-          common.FieldTypeEnum.SumByKey,
-          common.FieldTypeEnum.Average,
-          common.FieldTypeEnum.AverageByKey,
-          common.FieldTypeEnum.MedianByKey,
-          common.FieldTypeEnum.PercentileByKey,
-          common.FieldTypeEnum.Min,
-          common.FieldTypeEnum.Max,
-          common.FieldTypeEnum.List,
-          common.FieldTypeEnum.Custom
-        ].indexOf(field.type) < 0
-      ) {
+      } else if (common.MEASURE_TYPE_VALUES.indexOf(field.type) < 0) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.WRONG_MEASURE_TYPE,

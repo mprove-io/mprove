@@ -28,20 +28,9 @@ export function checkJoinType(
       .filter(j => j.as !== x.fromAs)
       .forEach(join => {
         if (common.isUndefined(join.type)) {
-          join.type = enums.JoinTypeEnum.LeftOuter;
+          join.type = common.JoinTypeEnum.LeftOuter;
           join.type_line_num = 0;
-        } else if (
-          [
-            enums.JoinTypeEnum.Cross,
-            enums.JoinTypeEnum.Full,
-            enums.JoinTypeEnum.FullOuter,
-            enums.JoinTypeEnum.Inner,
-            enums.JoinTypeEnum.Left,
-            enums.JoinTypeEnum.LeftOuter,
-            enums.JoinTypeEnum.Right,
-            enums.JoinTypeEnum.RightOuter
-          ].indexOf(join.type) < 0
-        ) {
+        } else if (common.JOIN_TYPE_VALUES.indexOf(join.type) < 0) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.JOIN_WRONG_TYPE,

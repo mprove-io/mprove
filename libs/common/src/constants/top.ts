@@ -1,3 +1,5 @@
+import { enums } from '~common/barrels/enums';
+
 // export const API_PATH = 'api';
 export const MPROVE_CONFIG_FILENAME = 'mprove.yml';
 export const MPROVE_CONFIG_NAME = 'mprove';
@@ -88,3 +90,128 @@ export const PATH_ENVIRONMENTS = 'environments';
 export const PATH_TEAM = 'team';
 
 export const METHOD_RABBIT = 'RABBIT';
+
+export const DIMENSION_TYPE_VALUES = [
+  enums.FieldTypeEnum.Custom,
+  enums.FieldTypeEnum.YesnoIsTrue
+];
+
+export const DIMENSION_RESULT_VALUES = [
+  enums.FieldResultEnum.String,
+  enums.FieldResultEnum.Number
+];
+
+export const MEASURE_TYPE_VALUES = [
+  enums.FieldTypeEnum.CountDistinct,
+  enums.FieldTypeEnum.Sum,
+  enums.FieldTypeEnum.SumByKey,
+  enums.FieldTypeEnum.Average,
+  enums.FieldTypeEnum.AverageByKey,
+  enums.FieldTypeEnum.MedianByKey,
+  enums.FieldTypeEnum.PercentileByKey,
+  enums.FieldTypeEnum.Min,
+  enums.FieldTypeEnum.Max,
+  enums.FieldTypeEnum.List,
+  enums.FieldTypeEnum.Custom
+];
+
+export const MEASURE_RESULT_VALUES = [
+  enums.FieldResultEnum.String,
+  enums.FieldResultEnum.Number
+];
+
+export const CALCULATION_RESULT_VALUES = [
+  enums.FieldResultEnum.String,
+  enums.FieldResultEnum.Number
+];
+
+export const FILTER_RESULT_VALUES = [
+  enums.FieldResultEnum.String,
+  enums.FieldResultEnum.Number,
+  enums.FieldResultEnum.DayOfWeek,
+  enums.FieldResultEnum.DayOfWeekIndex,
+  enums.FieldResultEnum.MonthName,
+  enums.FieldResultEnum.QuarterOfYear,
+  enums.FieldResultEnum.Ts,
+  enums.FieldResultEnum.Yesno
+];
+
+export const CHART_TYPE_VALUES = [
+  enums.ChartTypeEnum.Area,
+  enums.ChartTypeEnum.AreaNormalized,
+  enums.ChartTypeEnum.AreaStacked,
+  enums.ChartTypeEnum.BarHorizontal,
+  enums.ChartTypeEnum.BarHorizontalGrouped,
+  enums.ChartTypeEnum.BarHorizontalNormalized,
+  enums.ChartTypeEnum.BarHorizontalStacked,
+  enums.ChartTypeEnum.BarVertical,
+  enums.ChartTypeEnum.BarVerticalGrouped,
+  enums.ChartTypeEnum.BarVerticalNormalized,
+  enums.ChartTypeEnum.BarVerticalStacked,
+  enums.ChartTypeEnum.Gauge,
+  enums.ChartTypeEnum.GaugeLinear,
+  enums.ChartTypeEnum.HeatMap,
+  enums.ChartTypeEnum.Line,
+  enums.ChartTypeEnum.NumberCard,
+  enums.ChartTypeEnum.Pie,
+  enums.ChartTypeEnum.PieAdvanced,
+  enums.ChartTypeEnum.PieGrid,
+  enums.ChartTypeEnum.Table,
+  enums.ChartTypeEnum.TreeMap
+];
+
+export const JOIN_TYPE_VALUES = [
+  enums.JoinTypeEnum.Cross,
+  enums.JoinTypeEnum.Full,
+  enums.JoinTypeEnum.FullOuter,
+  enums.JoinTypeEnum.Inner,
+  enums.JoinTypeEnum.Left,
+  enums.JoinTypeEnum.LeftOuter,
+  enums.JoinTypeEnum.Right,
+  enums.JoinTypeEnum.RightOuter
+];
+
+export const PROJECT_WEEK_START_VALUES = [
+  enums.ProjectWeekStartEnum.Sunday,
+  enums.ProjectWeekStartEnum.Monday
+];
+
+export const TIME_SOURCE_VALUES = [
+  enums.TimeSourceEnum.Timestamp,
+  enums.TimeSourceEnum.Epoch,
+  enums.TimeSourceEnum.YYYYMMDD
+];
+
+export const TIMEFRAME_VALUES = [
+  enums.TimeframeEnum.Year,
+  enums.TimeframeEnum.Quarter,
+  enums.TimeframeEnum.QuarterOfYear,
+  enums.TimeframeEnum.Month,
+  enums.TimeframeEnum.MonthName,
+  enums.TimeframeEnum.MonthNum,
+  enums.TimeframeEnum.Week,
+  enums.TimeframeEnum.WeekOfYear,
+  enums.TimeframeEnum.Date,
+  enums.TimeframeEnum.DayOfWeek,
+  enums.TimeframeEnum.DayOfWeekIndex,
+  enums.TimeframeEnum.DayOfMonth,
+  enums.TimeframeEnum.DayOfYear,
+  enums.TimeframeEnum.Hour,
+  enums.TimeframeEnum.Hour2,
+  enums.TimeframeEnum.Hour3,
+  enums.TimeframeEnum.Hour4,
+  enums.TimeframeEnum.Hour6,
+  enums.TimeframeEnum.Hour8,
+  enums.TimeframeEnum.Hour12,
+  enums.TimeframeEnum.HourOfDay,
+  enums.TimeframeEnum.Minute,
+  enums.TimeframeEnum.Minute2,
+  enums.TimeframeEnum.Minute3,
+  enums.TimeframeEnum.Minute5,
+  enums.TimeframeEnum.Minute10,
+  enums.TimeframeEnum.Minute15,
+  enums.TimeframeEnum.Minute30,
+  enums.TimeframeEnum.Time,
+  enums.TimeframeEnum.TimeOfDay,
+  enums.TimeframeEnum.YesNoHasValue
+];

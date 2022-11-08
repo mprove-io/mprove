@@ -43,31 +43,7 @@ export function checkChartType<T extends types.dzType>(
         return;
       }
 
-      if (
-        [
-          common.ChartTypeEnum.Area,
-          common.ChartTypeEnum.AreaNormalized,
-          common.ChartTypeEnum.AreaStacked,
-          common.ChartTypeEnum.BarHorizontal,
-          common.ChartTypeEnum.BarHorizontalGrouped,
-          common.ChartTypeEnum.BarHorizontalNormalized,
-          common.ChartTypeEnum.BarHorizontalStacked,
-          common.ChartTypeEnum.BarVertical,
-          common.ChartTypeEnum.BarVerticalGrouped,
-          common.ChartTypeEnum.BarVerticalNormalized,
-          common.ChartTypeEnum.BarVerticalStacked,
-          common.ChartTypeEnum.Gauge,
-          common.ChartTypeEnum.GaugeLinear,
-          common.ChartTypeEnum.HeatMap,
-          common.ChartTypeEnum.Line,
-          common.ChartTypeEnum.NumberCard,
-          common.ChartTypeEnum.Pie,
-          common.ChartTypeEnum.PieAdvanced,
-          common.ChartTypeEnum.PieGrid,
-          common.ChartTypeEnum.Table,
-          common.ChartTypeEnum.TreeMap
-        ].indexOf(report.type) < 0
-      ) {
+      if (common.CHART_TYPE_VALUES.indexOf(report.type) < 0) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.REPORT_WRONG_TYPE,

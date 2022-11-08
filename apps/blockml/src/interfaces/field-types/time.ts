@@ -1,5 +1,4 @@
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 
 export interface Time {
   hidden?: string; // boolean
@@ -14,13 +13,13 @@ export interface Time {
   sql?: string;
   sql_line_num?: number;
 
-  source?: enums.TimeSourceEnum;
+  source?: common.TimeSourceEnum;
   source_line_num?: number;
 
   unnest?: string;
   unnest_line_num?: number;
 
-  timeframes?: enums.TimeframeEnum[];
+  timeframes?: common.TimeframeEnum[];
   timeframes_line_num?: number;
 
   //

@@ -1,4 +1,5 @@
 import { JSONSchema7 } from 'json-schema';
+import { constants } from '~common/barrels/constants';
 
 export const CALCULATION_SCHEMA: JSONSchema7 = {
   properties: {
@@ -15,7 +16,8 @@ export const CALCULATION_SCHEMA: JSONSchema7 = {
       type: 'string'
     },
     result: {
-      // type: 'enum'
+      type: 'string',
+      enum: constants.CALCULATION_RESULT_VALUES
     },
     sql: {
       type: 'string'

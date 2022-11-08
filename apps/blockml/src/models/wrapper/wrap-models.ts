@@ -1,43 +1,8 @@
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { wrapField } from './wrap-field';
-
-let timeframesOrder = [
-  enums.TimeframeEnum.Year,
-  enums.TimeframeEnum.Quarter,
-  enums.TimeframeEnum.QuarterOfYear,
-  enums.TimeframeEnum.Month,
-  enums.TimeframeEnum.MonthName,
-  enums.TimeframeEnum.MonthNum,
-  enums.TimeframeEnum.Week,
-  enums.TimeframeEnum.WeekOfYear,
-  enums.TimeframeEnum.Date,
-  enums.TimeframeEnum.DayOfWeek,
-  enums.TimeframeEnum.DayOfWeekIndex,
-  enums.TimeframeEnum.DayOfMonth,
-  enums.TimeframeEnum.DayOfYear,
-  enums.TimeframeEnum.Hour,
-  enums.TimeframeEnum.Hour2,
-  enums.TimeframeEnum.Hour3,
-  enums.TimeframeEnum.Hour4,
-  enums.TimeframeEnum.Hour6,
-  enums.TimeframeEnum.Hour8,
-  enums.TimeframeEnum.Hour12,
-  enums.TimeframeEnum.HourOfDay,
-  enums.TimeframeEnum.Minute,
-  enums.TimeframeEnum.Minute2,
-  enums.TimeframeEnum.Minute3,
-  enums.TimeframeEnum.Minute5,
-  enums.TimeframeEnum.Minute10,
-  enums.TimeframeEnum.Minute15,
-  enums.TimeframeEnum.Minute30,
-  enums.TimeframeEnum.Time,
-  enums.TimeframeEnum.TimeOfDay,
-  enums.TimeframeEnum.YesNoHasValue
-];
 
 export function wrapModels(item: {
   structId: string;
@@ -234,13 +199,13 @@ export function wrapModels(item: {
         node.children.forEach(nc => {
           if (common.isDefined(nc.children)) {
             nc.children = nc.children.sort((a, b) => {
-              let timeframeIndexA = timeframesOrder
-                .map(t => t.toString())
-                .indexOf(a.id.split(common.TRIPLE_UNDERSCORE)[1]);
+              let timeframeIndexA = common.TIMEFRAME_VALUES.map(t =>
+                t.toString()
+              ).indexOf(a.id.split(common.TRIPLE_UNDERSCORE)[1]);
 
-              let timeframeIndexB = timeframesOrder
-                .map(t => t.toString())
-                .indexOf(b.id.split(common.TRIPLE_UNDERSCORE)[1]);
+              let timeframeIndexB = common.TIMEFRAME_VALUES.map(t =>
+                t.toString()
+              ).indexOf(b.id.split(common.TRIPLE_UNDERSCORE)[1]);
 
               let labelA = a.label.toUpperCase();
               let labelB = b.label.toUpperCase();

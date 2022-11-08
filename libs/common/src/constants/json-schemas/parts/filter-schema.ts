@@ -1,4 +1,5 @@
 import { JSONSchema7 } from 'json-schema';
+import { constants } from '~common/barrels/constants';
 
 export const FILTER_SCHEMA: JSONSchema7 = {
   properties: {
@@ -15,7 +16,8 @@ export const FILTER_SCHEMA: JSONSchema7 = {
       type: 'string'
     },
     result: {
-      // type: 'enum'
+      type: 'string',
+      enum: constants.FILTER_RESULT_VALUES
     },
     default: {
       type: 'array',

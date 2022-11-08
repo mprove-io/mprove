@@ -1,4 +1,5 @@
 import { JSONSchema7 } from 'json-schema';
+import { constants } from '~common/barrels/constants';
 
 export const CONFIG_SCHEMA: JSONSchema7 = {
   properties: {
@@ -6,7 +7,8 @@ export const CONFIG_SCHEMA: JSONSchema7 = {
       type: 'string'
     },
     week_start: {
-      // type: 'enum'
+      type: 'string',
+      enum: constants.PROJECT_WEEK_START_VALUES
     },
     allow_timezones: {
       type: 'boolean'

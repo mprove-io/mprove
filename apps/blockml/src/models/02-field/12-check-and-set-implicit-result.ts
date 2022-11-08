@@ -76,12 +76,7 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(
       } else {
         switch (field.fieldClass) {
           case common.FieldClassEnum.Dimension: {
-            if (
-              [
-                common.FieldResultEnum.String,
-                common.FieldResultEnum.Number
-              ].indexOf(field.result) < 0
-            ) {
+            if (common.DIMENSION_RESULT_VALUES.indexOf(field.result) < 0) {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.WRONG_DIMENSION_RESULT,
@@ -101,12 +96,7 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(
           }
 
           case common.FieldClassEnum.Measure: {
-            if (
-              [
-                common.FieldResultEnum.String,
-                common.FieldResultEnum.Number
-              ].indexOf(field.result) < 0
-            ) {
+            if (common.MEASURE_RESULT_VALUES.indexOf(field.result) < 0) {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.WRONG_MEASURE_RESULT,
@@ -126,12 +116,7 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(
           }
 
           case common.FieldClassEnum.Calculation: {
-            if (
-              [
-                common.FieldResultEnum.String,
-                common.FieldResultEnum.Number
-              ].indexOf(field.result) < 0
-            ) {
+            if (common.CALCULATION_RESULT_VALUES.indexOf(field.result) < 0) {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.WRONG_CALCULATION_RESULT,
@@ -151,18 +136,7 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(
           }
 
           case common.FieldClassEnum.Filter: {
-            if (
-              [
-                common.FieldResultEnum.String,
-                common.FieldResultEnum.Number,
-                common.FieldResultEnum.DayOfWeek,
-                common.FieldResultEnum.DayOfWeekIndex,
-                common.FieldResultEnum.MonthName,
-                common.FieldResultEnum.QuarterOfYear,
-                common.FieldResultEnum.Ts,
-                common.FieldResultEnum.Yesno
-              ].indexOf(field.result) < 0
-            ) {
+            if (common.FILTER_RESULT_VALUES.indexOf(field.result) < 0) {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.WRONG_FILTER_RESULT,

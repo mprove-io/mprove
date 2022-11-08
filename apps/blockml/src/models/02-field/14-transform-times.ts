@@ -43,25 +43,25 @@ export function transformTimes<T extends types.vmType>(
 
       if (common.isUndefined(field.timeframes)) {
         field.timeframes = [
-          enums.TimeframeEnum.Time,
-          enums.TimeframeEnum.Date,
-          enums.TimeframeEnum.HourOfDay,
-          enums.TimeframeEnum.Hour,
-          enums.TimeframeEnum.TimeOfDay,
-          enums.TimeframeEnum.DayOfWeek,
-          enums.TimeframeEnum.DayOfWeekIndex,
-          enums.TimeframeEnum.DayOfYear,
-          enums.TimeframeEnum.Week,
-          enums.TimeframeEnum.WeekOfYear,
-          enums.TimeframeEnum.DayOfMonth,
-          enums.TimeframeEnum.Month,
-          enums.TimeframeEnum.MonthNum,
-          enums.TimeframeEnum.MonthName,
-          enums.TimeframeEnum.Year,
-          enums.TimeframeEnum.Quarter,
-          enums.TimeframeEnum.QuarterOfYear,
-          enums.TimeframeEnum.Minute,
-          enums.TimeframeEnum.YesNoHasValue
+          common.TimeframeEnum.Time,
+          common.TimeframeEnum.Date,
+          common.TimeframeEnum.HourOfDay,
+          common.TimeframeEnum.Hour,
+          common.TimeframeEnum.TimeOfDay,
+          common.TimeframeEnum.DayOfWeek,
+          common.TimeframeEnum.DayOfWeekIndex,
+          common.TimeframeEnum.DayOfYear,
+          common.TimeframeEnum.Week,
+          common.TimeframeEnum.WeekOfYear,
+          common.TimeframeEnum.DayOfMonth,
+          common.TimeframeEnum.Month,
+          common.TimeframeEnum.MonthNum,
+          common.TimeframeEnum.MonthName,
+          common.TimeframeEnum.Year,
+          common.TimeframeEnum.Quarter,
+          common.TimeframeEnum.QuarterOfYear,
+          common.TimeframeEnum.Minute,
+          common.TimeframeEnum.YesNoHasValue
         ];
 
         field.timeframes_line_num = 0;
@@ -83,15 +83,15 @@ export function transformTimes<T extends types.vmType>(
 
       if (
         common.isUndefined(field.source) ||
-        field.source === enums.TimeSourceEnum.Timestamp
+        field.source === common.TimeSourceEnum.Timestamp
       ) {
         ts = field.sql;
-      } else if (field.source === enums.TimeSourceEnum.Epoch) {
+      } else if (field.source === common.TimeSourceEnum.Epoch) {
         ts = barTimeframe.makeTsFromSourceEpoch({
           sql: field.sql,
           connection: x.connection
         });
-      } else if (field.source === enums.TimeSourceEnum.YYYYMMDD) {
+      } else if (field.source === common.TimeSourceEnum.YYYYMMDD) {
         ts = barTimeframe.makeTsFromSourceYYYYMMDD({
           sql: field.sql,
           connection: x.connection
@@ -100,7 +100,7 @@ export function transformTimes<T extends types.vmType>(
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.WRONG_TIME_SOURCE,
-            message: `possible values for "${enums.ParameterEnum.Source}" of time field are: "${enums.TimeSourceEnum.Timestamp}", "${enums.TimeSourceEnum.Epoch}", "${enums.TimeSourceEnum.YYYYMMDD}"`,
+            message: `possible values for "${enums.ParameterEnum.Source}" of time field are: "${common.TimeSourceEnum.Timestamp}", "${common.TimeSourceEnum.Epoch}", "${common.TimeSourceEnum.YYYYMMDD}"`,
             lines: [
               {
                 line: field.source_line_num,
@@ -122,7 +122,7 @@ export function transformTimes<T extends types.vmType>(
         let result: common.FieldResultEnum;
 
         switch (true) {
-          case timeframe === enums.TimeframeEnum.DayOfWeek: {
+          case timeframe === common.TimeframeEnum.DayOfWeek: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
 
             label = enums.TimeLabelEnum.DayOfWeek;
@@ -136,7 +136,7 @@ export function transformTimes<T extends types.vmType>(
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.DayOfWeekIndex: {
+          case timeframe === common.TimeframeEnum.DayOfWeekIndex: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.DayOfWeekIndex;
 
@@ -150,7 +150,7 @@ export function transformTimes<T extends types.vmType>(
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.DayOfYear: {
+          case timeframe === common.TimeframeEnum.DayOfYear: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.DayOfYear;
 
@@ -164,7 +164,7 @@ export function transformTimes<T extends types.vmType>(
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.Week: {
+          case timeframe === common.TimeframeEnum.Week: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Week;
 
@@ -178,7 +178,7 @@ export function transformTimes<T extends types.vmType>(
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.WeekOfYear: {
+          case timeframe === common.TimeframeEnum.WeekOfYear: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.WeekOfYear;
 
@@ -192,7 +192,7 @@ export function transformTimes<T extends types.vmType>(
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.Date: {
+          case timeframe === common.TimeframeEnum.Date: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Date;
 
@@ -205,7 +205,7 @@ export function transformTimes<T extends types.vmType>(
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.DayOfMonth: {
+          case timeframe === common.TimeframeEnum.DayOfMonth: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.DayOfMonth;
 
@@ -218,7 +218,7 @@ export function transformTimes<T extends types.vmType>(
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.Hour: {
+          case timeframe === common.TimeframeEnum.Hour: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Hour;
 
@@ -231,7 +231,7 @@ export function transformTimes<T extends types.vmType>(
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.HourOfDay: {
+          case timeframe === common.TimeframeEnum.HourOfDay: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.HourOfDay;
 
@@ -244,12 +244,12 @@ export function transformTimes<T extends types.vmType>(
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.Hour2 ||
-            timeframe === enums.TimeframeEnum.Hour3 ||
-            timeframe === enums.TimeframeEnum.Hour4 ||
-            timeframe === enums.TimeframeEnum.Hour6 ||
-            timeframe === enums.TimeframeEnum.Hour8 ||
-            timeframe === enums.TimeframeEnum.Hour12: {
+          case timeframe === common.TimeframeEnum.Hour2 ||
+            timeframe === common.TimeframeEnum.Hour3 ||
+            timeframe === common.TimeframeEnum.Hour4 ||
+            timeframe === common.TimeframeEnum.Hour6 ||
+            timeframe === common.TimeframeEnum.Hour8 ||
+            timeframe === common.TimeframeEnum.Hour12: {
             let reg = common.MyRegex.CAPTURE_DIGITS_G();
             let r = reg.exec(timeframe);
 
@@ -268,7 +268,7 @@ export function transformTimes<T extends types.vmType>(
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.Minute: {
+          case timeframe === common.TimeframeEnum.Minute: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Minute;
 
@@ -281,12 +281,12 @@ export function transformTimes<T extends types.vmType>(
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.Minute2 ||
-            timeframe === enums.TimeframeEnum.Minute3 ||
-            timeframe === enums.TimeframeEnum.Minute5 ||
-            timeframe === enums.TimeframeEnum.Minute10 ||
-            timeframe === enums.TimeframeEnum.Minute15 ||
-            timeframe === enums.TimeframeEnum.Minute30: {
+          case timeframe === common.TimeframeEnum.Minute2 ||
+            timeframe === common.TimeframeEnum.Minute3 ||
+            timeframe === common.TimeframeEnum.Minute5 ||
+            timeframe === common.TimeframeEnum.Minute10 ||
+            timeframe === common.TimeframeEnum.Minute15 ||
+            timeframe === common.TimeframeEnum.Minute30: {
             let reg = common.MyRegex.CAPTURE_DIGITS_G();
             let r = reg.exec(timeframe);
             let num = r[1];
@@ -304,7 +304,7 @@ export function transformTimes<T extends types.vmType>(
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.Month: {
+          case timeframe === common.TimeframeEnum.Month: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Month;
 
@@ -317,7 +317,7 @@ export function transformTimes<T extends types.vmType>(
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.MonthName: {
+          case timeframe === common.TimeframeEnum.MonthName: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.MonthName;
 
@@ -330,7 +330,7 @@ export function transformTimes<T extends types.vmType>(
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.MonthNum: {
+          case timeframe === common.TimeframeEnum.MonthNum: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.MonthNum;
 
@@ -343,7 +343,7 @@ export function transformTimes<T extends types.vmType>(
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.Quarter: {
+          case timeframe === common.TimeframeEnum.Quarter: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Quarter;
 
@@ -356,7 +356,7 @@ export function transformTimes<T extends types.vmType>(
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.QuarterOfYear: {
+          case timeframe === common.TimeframeEnum.QuarterOfYear: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.QuarterOfYear;
 
@@ -369,7 +369,7 @@ export function transformTimes<T extends types.vmType>(
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.Time: {
+          case timeframe === common.TimeframeEnum.Time: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Time;
 
@@ -382,7 +382,7 @@ export function transformTimes<T extends types.vmType>(
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.TimeOfDay: {
+          case timeframe === common.TimeframeEnum.TimeOfDay: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.TimeOfDay;
 
@@ -395,7 +395,7 @@ export function transformTimes<T extends types.vmType>(
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.Year: {
+          case timeframe === common.TimeframeEnum.Year: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Year;
 
@@ -408,7 +408,7 @@ export function transformTimes<T extends types.vmType>(
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.YesNoHasValue: {
+          case timeframe === common.TimeframeEnum.YesNoHasValue: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.YesNoHasValue;
 

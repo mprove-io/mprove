@@ -1,4 +1,5 @@
 import { JSONSchema7 } from 'json-schema';
+import { constants } from '~common/barrels/constants';
 
 export const TIME_SCHEMA: JSONSchema7 = {
   properties: {
@@ -15,7 +16,8 @@ export const TIME_SCHEMA: JSONSchema7 = {
       type: 'string'
     },
     source: {
-      // type: 'enum'
+      type: 'string',
+      enum: constants.TIME_SOURCE_VALUES
     },
     sql: {
       type: 'string'
@@ -26,7 +28,8 @@ export const TIME_SCHEMA: JSONSchema7 = {
     timeframes: {
       type: 'array',
       items: {
-        // type: 'enum'
+        type: 'string',
+        enum: constants.TIMEFRAME_VALUES
       }
     }
   },

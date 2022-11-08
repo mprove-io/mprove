@@ -1,4 +1,5 @@
 import { JSONSchema7 } from 'json-schema';
+import { constants } from '~common/barrels/constants';
 
 export const DIMENSION_SCHEMA: JSONSchema7 = {
   properties: {
@@ -15,10 +16,12 @@ export const DIMENSION_SCHEMA: JSONSchema7 = {
       type: 'string'
     },
     type: {
-      // type: 'enum'
+      type: 'string',
+      enum: constants.DIMENSION_TYPE_VALUES
     },
     result: {
-      // type: 'enum'
+      type: 'string',
+      enum: constants.DIMENSION_RESULT_VALUES
     },
     sql: {
       type: 'string'

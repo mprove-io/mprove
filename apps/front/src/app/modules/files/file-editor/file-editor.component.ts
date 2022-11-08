@@ -63,7 +63,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     snippetSuggestions: 'none',
     suggestOnTriggerCharacters: false,
     // quickSuggestions: false,
-    wordBasedSuggestionsOnlySameLanguage: true,
+    // wordBasedSuggestionsOnlySameLanguage: true,
     wordBasedSuggestions: false
   };
 
@@ -266,6 +266,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
       setDiagnosticsOptions({
         validate: true,
         format: true,
+        completion: true,
         enableSchemaRequest: true,
         schemas:
           common.isDefined(schema) && common.isDefined(uri)

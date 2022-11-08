@@ -140,10 +140,7 @@ export function checkProjectConfig(
         (<any>conf).week_start = conf.week_start.toLowerCase();
 
         if (
-          [
-            common.ProjectWeekStartEnum.Sunday.toString(),
-            common.ProjectWeekStartEnum.Monday.toString()
-          ].indexOf(
+          common.PROJECT_WEEK_START_VALUES.map(x => x.toString()).indexOf(
             conf[parameter as keyof interfaces.ProjectConf].toString()
           ) < 0
         ) {

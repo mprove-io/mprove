@@ -1,6 +1,4 @@
 import { JSONSchema7 } from 'json-schema';
-import { FILTER_SCHEMA } from './parts/filter-schema';
-import { REPORT_SCHEMA } from './parts/report-schema';
 
 export const DASHBOARD_SCHEMA: JSONSchema7 = {
   properties: {
@@ -26,12 +24,12 @@ export const DASHBOARD_SCHEMA: JSONSchema7 = {
       }
     },
     fields: {
-      type: 'array',
-      items: FILTER_SCHEMA
+      // type: 'array',
+      // items: FILTER_SCHEMA
     },
     reports: {
-      type: 'array',
-      items: REPORT_SCHEMA
+      // type: 'array',
+      // items: REPORT_SCHEMA
     }
   },
   required: ['dashboard', 'reports']

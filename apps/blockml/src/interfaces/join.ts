@@ -1,4 +1,4 @@
-import { enums } from '~blockml/barrels/enums';
+import { common } from '~blockml/barrels/common';
 import { View } from './file-types/view';
 
 export interface Join {
@@ -20,7 +20,7 @@ export interface Join {
   join_view: string;
   join_view_line_num: number;
 
-  type: enums.JoinTypeEnum;
+  type: common.JoinTypeEnum;
   type_line_num: number;
 
   sql_on: string;

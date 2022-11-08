@@ -47,9 +47,8 @@ export function makeWith(item: {
   let filt: { [s: string]: { [f: string]: number } } = {};
 
   Object.keys(filters).forEach(element => {
-    let r = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(
-      element
-    );
+    let r =
+      common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(element);
     let asName = r[1];
     let fieldName = r[2];
 
@@ -111,21 +110,21 @@ export function makeWith(item: {
         contents.push(`${constants.FROM} ${viewTable} as ${asName}`);
       } else {
         let joinTypeString =
-          join.type === enums.JoinTypeEnum.Inner
+          join.type === common.JoinTypeEnum.Inner
             ? 'INNER JOIN'
-            : join.type === enums.JoinTypeEnum.Cross
+            : join.type === common.JoinTypeEnum.Cross
             ? 'CROSS JOIN'
-            : join.type === enums.JoinTypeEnum.Full
+            : join.type === common.JoinTypeEnum.Full
             ? 'FULL JOIN'
-            : join.type === enums.JoinTypeEnum.FullOuter
+            : join.type === common.JoinTypeEnum.FullOuter
             ? 'FULL OUTER JOIN'
-            : join.type === enums.JoinTypeEnum.Left
+            : join.type === common.JoinTypeEnum.Left
             ? 'LEFT JOIN'
-            : join.type === enums.JoinTypeEnum.LeftOuter
+            : join.type === common.JoinTypeEnum.LeftOuter
             ? 'LEFT OUTER JOIN'
-            : join.type === enums.JoinTypeEnum.Right
+            : join.type === common.JoinTypeEnum.Right
             ? 'RIGHT JOIN'
-            : join.type === enums.JoinTypeEnum.RightOuter
+            : join.type === common.JoinTypeEnum.RightOuter
             ? 'RIGHT OUTER JOIN'
             : constants.UNKNOWN_JOIN_TYPE;
 
