@@ -2,6 +2,10 @@ import { JSONSchema7 } from 'json-schema';
 import { constants } from '~common/barrels/constants';
 
 export const CALCULATION_SCHEMA: JSONSchema7 = {
+  $schema: 'http://json-schema.org/draft-07/schema#',
+  $id: 'https://docs.mprove.io/top/blockml/calculation',
+  type: 'object',
+  additionalProperties: false,
   properties: {
     calculation: {
       type: 'string'
@@ -31,6 +35,5 @@ export const CALCULATION_SCHEMA: JSONSchema7 = {
     currency_suffix: {
       type: 'string'
     }
-  },
-  required: ['calculation', 'sql']
+  }
 };

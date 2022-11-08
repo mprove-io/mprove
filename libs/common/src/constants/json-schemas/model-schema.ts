@@ -1,65 +1,65 @@
 import { JSONSchema7 } from 'json-schema';
 import { constants } from '~common/barrels/constants';
-import { CALCULATION_SCHEMA } from './parts/calculation-schema';
-import { DIMENSION_SCHEMA } from './parts/dimension-schema';
-import { FILTER_SCHEMA } from './parts/filter-schema';
-import { MEASURE_SCHEMA } from './parts/measure-schema';
-import { TIME_SCHEMA } from './parts/time-schema';
+import { FIELD_SCHEMA } from './field-schema';
 
-const commonJoinProperties: JSONSchema7['properties'] = {
-  hidden: {
-    type: 'boolean'
-  },
-  label: {
-    type: 'string'
-  },
-  description: {
-    type: 'string'
-  },
-  as: {
-    type: 'string'
-  },
-  hide_fields: {
-    type: 'array',
-    items: {
-      type: 'string'
-    }
-  },
-  show_fields: {
-    type: 'array',
-    items: {
-      type: 'string'
-    }
-  }
-};
+// const commonJoinProperties: JSONSchema7['properties'] = {
+//   hidden: {
+//     type: 'boolean'
+//   },
+//   label: {
+//     type: 'string'
+//   },
+//   description: {
+//     type: 'string'
+//   },
+//   as: {
+//     type: 'string'
+//   },
+//   hide_fields: {
+//     type: 'array',
+//     items: {
+//       type: 'string'
+//     }
+//   },
+//   show_fields: {
+//     type: 'array',
+//     items: {
+//       type: 'string'
+//     }
+//   }
+// };
 
-const fromJoin: JSONSchema7 = {
-  properties: Object.assign(commonJoinProperties, {
-    from_view: {
-      type: 'string'
-    }
-  }),
-  required: ['from_view', 'as']
-};
+// const fromJoin: JSONSchema7 = {
+//   $id: 'https://docs.mprove.io/schema-joins-from-join',
+//   type: 'object',
+//   additionalProperties: false,
+//   properties: Object.assign(commonJoinProperties, {
+//     from_view: {
+//       type: 'string'
+//     }
+//   })
+// };
 
-const joinView: JSONSchema7 = {
-  properties: Object.assign(commonJoinProperties, {
-    join_view: {
-      type: 'string'
-    },
-    type: {
-      type: 'string',
-      enum: constants.JOIN_TYPE_VALUES
-    },
-    sql_on: {
-      type: 'string'
-    },
-    sql_where: {
-      type: 'string'
-    }
-  }),
-  required: ['join_view', 'as']
-};
+// const joinView: JSONSchema7 = {
+//   $id: 'https://docs.mprove.io/schema-joins-join-view',
+//   type: 'object',
+//   additionalProperties: false,
+//   properties: Object.assign(commonJoinProperties, {
+//     join_view: {
+//       type: 'string'
+//     },
+//     type: {
+//       type: 'string',
+//       enum: constants.JOIN_TYPE_VALUES
+//     },
+//     sql_on: {
+//       type: 'string'
+//     },
+//     sql_where: {
+//       type: 'string'
+//     }
+//   })
+// };
 
 export const MODEL_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
@@ -109,21 +109,67 @@ export const MODEL_SCHEMA: JSONSchema7 = {
     joins: {
       type: 'array',
       items: {
-        anyOf: [fromJoin, joinView]
-      },
-      contains: fromJoin
+        // anyOf: [fromJoin, joinView],
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          hidden: {
+            type: 'boolean'
+          },
+          label: {
+            type: 'string'
+          },
+          description: {
+            type: 'string'
+          },
+          as: {
+            type: 'string'
+          },
+          hide_fields: {
+            type: 'array',
+            items: {
+              type: 'string'
+            }
+          },
+          show_fields: {
+            type: 'array',
+            items: {
+              type: 'string'
+            }
+          },
+          //
+          from_view: {
+            type: 'string'
+          },
+          //
+          join_view: {
+            type: 'string'
+          },
+          type: {
+            type: 'string',
+            enum: constants.JOIN_TYPE_VALUES
+          },
+          sql_on: {
+            type: 'string'
+          },
+          sql_where: {
+            type: 'string'
+          }
+        }
+      }
     },
     fields: {
       type: 'array',
-      items: {
-        anyOf: [
-          DIMENSION_SCHEMA,
-          TIME_SCHEMA,
-          MEASURE_SCHEMA,
-          CALCULATION_SCHEMA,
-          FILTER_SCHEMA
-        ]
-      }
+      items: FIELD_SCHEMA
+      // items: {
+      //   anyOf: [
+      //     DIMENSION_SCHEMA,
+      //     TIME_SCHEMA,
+      //     MEASURE_SCHEMA,
+      //     CALCULATION_SCHEMA,
+      //     FILTER_SCHEMA
+      //   ]
+      // }
     }
   },
   required: ['model', 'connection', 'joins']

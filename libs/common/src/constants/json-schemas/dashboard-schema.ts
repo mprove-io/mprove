@@ -1,4 +1,6 @@
 import { JSONSchema7 } from 'json-schema';
+import { FILTER_SCHEMA } from './fields/filter-schema';
+import { REPORT_SCHEMA } from './report-schema';
 
 export const DASHBOARD_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
@@ -28,12 +30,12 @@ export const DASHBOARD_SCHEMA: JSONSchema7 = {
       }
     },
     fields: {
-      // type: 'array',
-      // items: FILTER_SCHEMA
+      type: 'array',
+      items: FILTER_SCHEMA
     },
     reports: {
-      // type: 'array',
-      // items: REPORT_SCHEMA
+      type: 'array',
+      items: REPORT_SCHEMA
     }
   },
   required: ['dashboard', 'reports']

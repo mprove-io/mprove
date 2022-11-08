@@ -1,9 +1,5 @@
 import { JSONSchema7 } from 'json-schema';
-import { CALCULATION_SCHEMA } from './parts/calculation-schema';
-import { DIMENSION_SCHEMA } from './parts/dimension-schema';
-import { FILTER_SCHEMA } from './parts/filter-schema';
-import { MEASURE_SCHEMA } from './parts/measure-schema';
-import { TIME_SCHEMA } from './parts/time-schema';
+import { FIELD_SCHEMA } from './field-schema';
 
 export const VIEW_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
@@ -37,15 +33,16 @@ export const VIEW_SCHEMA: JSONSchema7 = {
     },
     fields: {
       type: 'array',
-      items: {
-        anyOf: [
-          DIMENSION_SCHEMA,
-          TIME_SCHEMA,
-          MEASURE_SCHEMA,
-          CALCULATION_SCHEMA,
-          FILTER_SCHEMA
-        ]
-      }
+      items: FIELD_SCHEMA
+      // items: {
+      //   anyOf: [
+      //     DIMENSION_SCHEMA,
+      //     TIME_SCHEMA,
+      //     MEASURE_SCHEMA,
+      //     CALCULATION_SCHEMA,
+      //     FILTER_SCHEMA
+      //   ]
+      // }
     }
   },
   required: ['view', 'connection']

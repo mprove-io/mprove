@@ -194,23 +194,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
 
           if (
             parameter === enums.ParameterEnum.Interpolation &&
-            [
-              common.ChartInterpolationEnum.Basis,
-              common.ChartInterpolationEnum.BasisClosed,
-              common.ChartInterpolationEnum.Bundle,
-              common.ChartInterpolationEnum.Cardinal,
-              common.ChartInterpolationEnum.CardinalClosed,
-              common.ChartInterpolationEnum.CatmullRomClosed,
-              common.ChartInterpolationEnum.CatmullRom,
-              common.ChartInterpolationEnum.Linear,
-              common.ChartInterpolationEnum.LinearClosed,
-              common.ChartInterpolationEnum.MonotoneX,
-              common.ChartInterpolationEnum.MonotoneY,
-              common.ChartInterpolationEnum.Natural,
-              common.ChartInterpolationEnum.Step,
-              common.ChartInterpolationEnum.StepAfter,
-              common.ChartInterpolationEnum.StepBefore
-            ].indexOf(
+            common.CHART_INTERPOLATION_VALUES.indexOf(
               report.options[parameter as keyof interfaces.ChartOptions] as any
             ) < 0
           ) {
@@ -240,24 +224,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
 
           if (
             parameter === enums.ParameterEnum.ColorScheme &&
-            [
-              common.ChartColorSchemeEnum.Soft,
-              common.ChartColorSchemeEnum.Air,
-              common.ChartColorSchemeEnum.Aqua,
-              common.ChartColorSchemeEnum.Cool,
-              common.ChartColorSchemeEnum.Fire,
-              common.ChartColorSchemeEnum.Flame,
-              common.ChartColorSchemeEnum.Forest,
-              common.ChartColorSchemeEnum.Horizon,
-              common.ChartColorSchemeEnum.Natural,
-              common.ChartColorSchemeEnum.Neons,
-              common.ChartColorSchemeEnum.Night,
-              common.ChartColorSchemeEnum.NightLights,
-              common.ChartColorSchemeEnum.Ocean,
-              common.ChartColorSchemeEnum.Picnic,
-              common.ChartColorSchemeEnum.Solar,
-              common.ChartColorSchemeEnum.Vivid
-            ].indexOf(
+            common.CHART_COLOR_SCHEME_VALUES.indexOf(
               report.options[parameter as keyof interfaces.ChartOptions] as any
             ) < 0
           ) {
@@ -287,10 +254,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
 
           if (
             parameter === enums.ParameterEnum.SchemeType &&
-            [
-              common.ChartSchemeTypeEnum.Linear,
-              common.ChartSchemeTypeEnum.Ordinal
-            ].indexOf(
+            common.CHART_SCHEME_TYPE_VALUES.indexOf(
               report.options[parameter as keyof interfaces.ChartOptions] as any
             ) < 0
           ) {
@@ -330,9 +294,9 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               enums.ParameterEnum.Min.toString(),
               enums.ParameterEnum.Max.toString()
             ].indexOf(parameter) > -1 &&
-            !(report.options[
-              parameter as keyof interfaces.ChartOptions
-            ] as any).match(common.MyRegex.CAPTURE_DIGITS_START_TO_END_G())
+            !(
+              report.options[parameter as keyof interfaces.ChartOptions] as any
+            ).match(common.MyRegex.CAPTURE_DIGITS_START_TO_END_G())
           ) {
             item.errors.push(
               new BmError({
@@ -365,9 +329,9 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               enums.ParameterEnum.ArcWidth.toString(),
               enums.ParameterEnum.RangeFillOpacity.toString()
             ].indexOf(parameter) > -1 &&
-            !(report.options[
-              parameter as keyof interfaces.ChartOptions
-            ] as any).match(common.MyRegex.CAPTURE_FLOAT_START_TO_END_G())
+            !(
+              report.options[parameter as keyof interfaces.ChartOptions] as any
+            ).match(common.MyRegex.CAPTURE_FLOAT_START_TO_END_G())
           ) {
             item.errors.push(
               new BmError({
@@ -401,11 +365,9 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               enums.ParameterEnum.YScaleMin.toString(),
               enums.ParameterEnum.YScaleMax.toString()
             ].indexOf(parameter) > -1 &&
-            !(report.options[
-              parameter as keyof interfaces.ChartOptions
-            ] as any).match(
-              common.MyRegex.CAPTURE_MINUS_DIGITS_START_TO_END_G()
-            )
+            !(
+              report.options[parameter as keyof interfaces.ChartOptions] as any
+            ).match(common.MyRegex.CAPTURE_MINUS_DIGITS_START_TO_END_G())
           ) {
             item.errors.push(
               new BmError({
@@ -439,12 +401,12 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               enums.ParameterEnum.TextColor.toString(),
               enums.ParameterEnum.EmptyColor.toString()
             ].indexOf(parameter) > -1 &&
-            !(report.options[
-              parameter as keyof interfaces.ChartOptions
-            ] as any).match(common.MyRegex.CAPTURE_RGB_SPLIT_G()) &&
-            !(report.options[
-              parameter as keyof interfaces.ChartOptions
-            ] as any).match(common.MyRegex.CAPTURE_RGBA_SPLIT_G())
+            !(
+              report.options[parameter as keyof interfaces.ChartOptions] as any
+            ).match(common.MyRegex.CAPTURE_RGB_SPLIT_G()) &&
+            !(
+              report.options[parameter as keyof interfaces.ChartOptions] as any
+            ).match(common.MyRegex.CAPTURE_RGBA_SPLIT_G())
           ) {
             item.errors.push(
               new BmError({

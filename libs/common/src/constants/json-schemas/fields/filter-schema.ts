@@ -2,6 +2,10 @@ import { JSONSchema7 } from 'json-schema';
 import { constants } from '~common/barrels/constants';
 
 export const FILTER_SCHEMA: JSONSchema7 = {
+  $schema: 'http://json-schema.org/draft-07/schema#',
+  $id: 'https://docs.mprove.io/top/blockml/fields/filter',
+  type: 'object',
+  additionalProperties: false,
   properties: {
     filter: {
       type: 'string'
@@ -25,6 +29,5 @@ export const FILTER_SCHEMA: JSONSchema7 = {
         type: 'string'
       }
     }
-  },
-  required: ['filter']
+  }
 };

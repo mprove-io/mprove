@@ -2,6 +2,10 @@ import { JSONSchema7 } from 'json-schema';
 import { constants } from '~common/barrels/constants';
 
 export const MEASURE_SCHEMA: JSONSchema7 = {
+  $schema: 'http://json-schema.org/draft-07/schema#',
+  $id: 'https://docs.mprove.io/top/blockml/fields/measure',
+  type: 'object',
+  additionalProperties: false,
   properties: {
     measure: {
       type: 'string'
@@ -41,6 +45,5 @@ export const MEASURE_SCHEMA: JSONSchema7 = {
     percentile: {
       type: 'string'
     }
-  },
-  required: ['measure', 'type', 'sql']
+  }
 };

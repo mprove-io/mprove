@@ -1,5 +1,5 @@
 import { JSONSchema7 } from 'json-schema';
-import { REPORT_SCHEMA } from './parts/report-schema';
+import { REPORT_SCHEMA } from './report-schema';
 
 export const VISUALIZATION_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
