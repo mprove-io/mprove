@@ -43,7 +43,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     fixedOverflowWidgets: true,
     theme: constants.TEXTMATE_THEME,
     fontSize: 16,
-    tabSize: 2,
+    tabSize: 2
     // automaticLayout: true,
     // folding: true,
     // wordWrap: 'on',
@@ -51,20 +51,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     // lineNumbers: 'on',
     // scrollbar: {
     //   alwaysConsumeMouseWheel: false
-    // },
-    // suggestFontSize:  undefined,
-    // suggestLineHeight: undefined,
-    // suggestSelection: undefined,
-    // quickSuggestionsDelay: undefined,
-    // acceptSuggestionOnCommitCharacter: undefined,
-    // acceptSuggestionOnEnter: undefined,
-    // inlineSuggest: undefined,
-    // suggest: undefined,
-    snippetSuggestions: 'none',
-    suggestOnTriggerCharacters: false,
-    // quickSuggestions: false,
-    // wordBasedSuggestionsOnlySameLanguage: true,
-    wordBasedSuggestions: false
+    // }
   };
 
   needSave = false;
@@ -224,14 +211,13 @@ export class FileEditorComponent implements OnInit, OnDestroy {
         constants.BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >=
           0)
     ) {
-      // language id 'yaml' already exists
-      // this.monaco.languages.register({ id: constants.YAML_LANGUAGE_ID });
+      let languageId = constants.YAML_LANGUAGE_ID;
+
+      // this.monaco.languages.register({ id: languageId });
       this.monaco.languages.setMonarchTokensProvider(
-        constants.YAML_LANGUAGE_ID,
+        languageId,
         constants.BLOCKML_LANGUAGE_DATA
       );
-
-      let language = constants.YAML_LANGUAGE_ID;
 
       let schema: JSONSchema7 =
         this.file.fileId === common.MPROVE_CONFIG_FILENAME
@@ -248,76 +234,107 @@ export class FileEditorComponent implements OnInit, OnDestroy {
           ? common.UDF_SCHEMA
           : undefined;
 
-      let uri =
-        this.file.fileId === common.MPROVE_CONFIG_FILENAME
-          ? 'https://docs.mprove.io/top/blockml/mprove-project-config'
-          : dotExt === common.FileExtensionEnum.Dashboard
-          ? 'https://docs.mprove.io/top/blockml/dashboard'
-          : dotExt === common.FileExtensionEnum.Vis
-          ? 'https://docs.mprove.io/top/blockml/visualization'
-          : dotExt === common.FileExtensionEnum.Model
-          ? 'https://docs.mprove.io/top/blockml/model-and-joins'
-          : dotExt === common.FileExtensionEnum.View
-          ? 'https://docs.mprove.io/top/blockml/view'
-          : dotExt === common.FileExtensionEnum.Udf
-          ? 'https://docs.mprove.io/top/blockml/user-defined-function'
-          : undefined;
-
       setDiagnosticsOptions({
         validate: true,
-        format: true,
         completion: true,
+        format: true,
         enableSchemaRequest: true,
-        schemas:
-          common.isDefined(schema) && common.isDefined(uri)
-            ? [
-                {
-                  uri: uri,
-                  fileMatch: ['*'],
-                  schema: schema
-                }
-              ]
-            : []
+        schemas: common.isDefined(schema)
+          ? [
+              {
+                uri: schema.$id,
+                fileMatch: ['*'],
+                schema: schema
+              }
+            ]
+          : []
       });
 
-      this.monaco.editor.setModelLanguage(this.editor.getModel(), language);
+      this.monaco.editor.setModelLanguage(this.editor.getModel(), languageId);
 
       let patch: editorType.IStandaloneEditorConstructionOptions = {
         theme: constants.BLOCKML_THEME,
         renderValidationDecorations: 'on',
-        readOnly: this.nav.isRepoProd
+        readOnly: this.nav.isRepoProd,
+        snippetSuggestions: 'none',
+        suggestOnTriggerCharacters: true,
+        wordBasedSuggestions: false
+        // wordBasedSuggestionsOnlySameLanguage: true,
+        // quickSuggestions: false,
+        // suggestFontSize:  undefined,
+        // suggestLineHeight: undefined,
+        // suggestSelection: undefined,
+        // quickSuggestionsDelay: undefined,
+        // acceptSuggestionOnCommitCharacter: undefined,
+        // acceptSuggestionOnEnter: undefined,
+        // inlineSuggest: undefined,
+        // suggest: undefined,
       };
       this.editorOptions = Object.assign({}, this.editorOptions, patch);
 
+      // let pc: monacoLanguages.CompletionItemProvider = {
+      //   triggerCharacters: [' ', ':'],
+
+      //   async provideCompletionItems(model, position) {
+      //     let mySuggestions: monacoLanguages.CompletionItem[] = [
+      //       {
+      //         label: '"label10"',
+      //         kind: 1,
+      //         // kind: monaco.languages.CompletionItemKind.Function,
+      //         documentation: '...',
+      //         insertText: '"abc": "*"',
+      //         range: {
+      //           startLineNumber: 1,
+      //           endLineNumber: 2,
+      //           startColumn: 1,
+      //           endColumn: 10
+      //         }
+      //       }
+      //     ];
+
+      //     return {
+      //       // incomplete: info.isIncomplete,
+      //       // suggestions: items
+      //       suggestions: mySuggestions
+      //     };
+      //   }
+      // };
+
+      // this.monaco.languages.registerCompletionItemProvider(languageId, pc);
+
       this.refreshMarkers();
     } else {
-      let language =
+      let languageId =
         this.monaco.languages
           .getLanguages()
           .find(x => x.extensions?.indexOf(dotExt) > -1)?.id ||
         constants.MARKDOWN_LANGUAGE_ID;
 
-      if (language === 'yaml') {
-        // language id 'yaml' already exists
-        // this.monaco.languages.register({ id: constants.BLOCKML_LANGUAGE_NAME });
+      if (languageId === constants.YAML_LANGUAGE_ID) {
+        // this.monaco.languages.register({ id: languageId });
         this.monaco.languages.setMonarchTokensProvider(
-          constants.YAML_LANGUAGE_ID,
+          languageId,
           constants.YAML_LANGUAGE_DATA
         );
 
         setDiagnosticsOptions({
           validate: false,
+          completion: false,
           format: true,
           schemas: []
         });
       }
 
-      this.monaco.editor.setModelLanguage(this.editor.getModel(), language);
+      this.monaco.editor.setModelLanguage(this.editor.getModel(), languageId);
 
       let patch: editorType.IStandaloneEditorConstructionOptions = {
         theme: constants.TEXTMATE_THEME,
         renderValidationDecorations: 'off',
-        readOnly: this.nav.isRepoProd
+        readOnly: this.nav.isRepoProd,
+        snippetSuggestions: 'none',
+        suggestOnTriggerCharacters: false,
+        wordBasedSuggestions: false,
+        quickSuggestions: false
       };
 
       this.editorOptions = Object.assign({}, this.editorOptions, patch);

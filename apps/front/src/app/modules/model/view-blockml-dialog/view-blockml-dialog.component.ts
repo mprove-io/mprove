@@ -23,12 +23,7 @@ export class ViewBlockmlDialogComponent implements OnInit {
     theme: constants.BLOCKML_THEME,
     language: constants.YAML_LANGUAGE_ID,
     fontSize: 16,
-    fixedOverflowWidgets: true,
-    snippetSuggestions: 'none',
-    suggestOnTriggerCharacters: false,
-    quickSuggestions: false,
-    wordBasedSuggestionsOnlySameLanguage: true,
-    wordBasedSuggestions: false
+    fixedOverflowWidgets: true
   };
 
   reportYaml: string;

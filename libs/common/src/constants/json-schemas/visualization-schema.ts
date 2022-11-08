@@ -2,6 +2,10 @@ import { JSONSchema7 } from 'json-schema';
 import { REPORT_SCHEMA } from './parts/report-schema';
 
 export const VISUALIZATION_SCHEMA: JSONSchema7 = {
+  $schema: 'http://json-schema.org/draft-07/schema#',
+  $id: 'https://docs.mprove.io/top/blockml/visualization',
+  type: 'object',
+  additionalProperties: false,
   properties: {
     vis: {
       type: 'string'

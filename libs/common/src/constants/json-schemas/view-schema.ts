@@ -6,6 +6,10 @@ import { MEASURE_SCHEMA } from './parts/measure-schema';
 import { TIME_SCHEMA } from './parts/time-schema';
 
 export const VIEW_SCHEMA: JSONSchema7 = {
+  $schema: 'http://json-schema.org/draft-07/schema#',
+  $id: 'https://docs.mprove.io/top/blockml/view',
+  type: 'object',
+  additionalProperties: false,
   properties: {
     view: {
       type: 'string'

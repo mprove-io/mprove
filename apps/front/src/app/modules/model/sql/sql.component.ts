@@ -16,12 +16,7 @@ export class SqlComponent {
     theme: constants.TEXTMATE_THEME,
     language: constants.SQL_LANGUAGE_ID,
     fontSize: 16,
-    fixedOverflowWidgets: true,
-    snippetSuggestions: 'none',
-    suggestOnTriggerCharacters: false,
-    quickSuggestions: false,
-    wordBasedSuggestionsOnlySameLanguage: true,
-    wordBasedSuggestions: false
+    fixedOverflowWidgets: true
   };
 
   content: string;

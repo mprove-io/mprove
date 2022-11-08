@@ -62,6 +62,10 @@ const joinView: JSONSchema7 = {
 };
 
 export const MODEL_SCHEMA: JSONSchema7 = {
+  $schema: 'http://json-schema.org/draft-07/schema#',
+  $id: 'https://docs.mprove.io/top/blockml/model-and-joins',
+  type: 'object',
+  additionalProperties: false,
   properties: {
     model: {
       type: 'string'
