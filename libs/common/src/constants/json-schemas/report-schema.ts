@@ -1,6 +1,6 @@
 import { JSONSchema7 } from 'json-schema';
 import { constants } from '~common/barrels/constants';
-import { getTimezones } from '~common/_index';
+import { getTimezonesValues } from '~common/functions/get-timezones-values';
 
 export const REPORT_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
@@ -28,9 +28,7 @@ export const REPORT_SCHEMA: JSONSchema7 = {
     },
     timezone: {
       type: 'string',
-      enum: getTimezones()
-        .filter(x => x.value !== constants.USE_PROJECT_TIMEZONE_VALUE)
-        .map(t => t.value)
+      enum: getTimezonesValues()
     },
     limit: {
       type: 'integer'

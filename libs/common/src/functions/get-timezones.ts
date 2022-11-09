@@ -1,25 +1,30 @@
-import { constants } from '~common/barrels/constants';
+import { timezones } from '~common/constants/timezones';
+import {
+  USE_PROJECT_TIMEZONE_LABEL,
+  USE_PROJECT_TIMEZONE_VALUE,
+  UTC
+} from '~common/constants/top';
 
 export function getTimezones() {
-  let timezones: { value: string; label: string }[] = [
+  let tzs: { value: string; label: string }[] = [
     {
-      value: constants.USE_PROJECT_TIMEZONE_VALUE,
-      label: constants.USE_PROJECT_TIMEZONE_LABEL
+      value: USE_PROJECT_TIMEZONE_VALUE,
+      label: USE_PROJECT_TIMEZONE_LABEL
     },
     {
-      value: constants.UTC,
-      label: constants.UTC
+      value: UTC,
+      label: UTC
     }
   ];
 
-  constants.timezones.forEach(group => {
+  timezones.forEach(group => {
     group.zones.forEach(zone => {
-      timezones.push({
+      tzs.push({
         value: zone.value,
         label: `${group.group} - ${zone.name}`
       });
     });
   });
 
-  return timezones;
+  return tzs;
 }
