@@ -21,11 +21,11 @@ export const FIELD_SCHEMA: JSONSchema7 = {
     },
     type: {
       type: 'string',
-      enum: constants.DIMENSION_TYPE_VALUES
+      enum: constants.FIELD_TYPE_VALUES
     },
     result: {
       type: 'string',
-      enum: constants.DIMENSION_RESULT_VALUES
+      enum: constants.FIELD_RESULT_VALUES
     },
     sql: {
       type: 'string'
@@ -69,7 +69,9 @@ export const FIELD_SCHEMA: JSONSchema7 = {
       type: 'string'
     },
     percentile: {
-      type: 'string'
+      type: 'integer',
+      minimum: 1,
+      maximum: 99
     },
     calculation: {
       type: 'string'

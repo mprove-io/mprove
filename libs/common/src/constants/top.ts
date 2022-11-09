@@ -91,6 +91,32 @@ export const PATH_TEAM = 'team';
 
 export const METHOD_RABBIT = 'RABBIT';
 
+export const FIELD_TYPE_VALUES = [
+  enums.FieldTypeEnum.CountDistinct,
+  enums.FieldTypeEnum.Sum,
+  enums.FieldTypeEnum.SumByKey,
+  enums.FieldTypeEnum.Average,
+  enums.FieldTypeEnum.AverageByKey,
+  enums.FieldTypeEnum.MedianByKey,
+  enums.FieldTypeEnum.PercentileByKey,
+  enums.FieldTypeEnum.Min,
+  enums.FieldTypeEnum.Max,
+  enums.FieldTypeEnum.List,
+  enums.FieldTypeEnum.Custom,
+  enums.FieldTypeEnum.YesnoIsTrue
+];
+
+export const FIELD_RESULT_VALUES = [
+  enums.FieldResultEnum.String,
+  enums.FieldResultEnum.Number,
+  enums.FieldResultEnum.DayOfWeek,
+  enums.FieldResultEnum.DayOfWeekIndex,
+  enums.FieldResultEnum.MonthName,
+  enums.FieldResultEnum.QuarterOfYear,
+  enums.FieldResultEnum.Ts,
+  enums.FieldResultEnum.Yesno
+];
+
 export const DIMENSION_TYPE_VALUES = [
   enums.FieldTypeEnum.Custom,
   enums.FieldTypeEnum.YesnoIsTrue

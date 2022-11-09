@@ -1,5 +1,6 @@
 import { JSONSchema7 } from 'json-schema';
 import { constants } from '~common/barrels/constants';
+import { getTimezones } from '~common/_index';
 
 export const REPORT_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
@@ -26,7 +27,10 @@ export const REPORT_SCHEMA: JSONSchema7 = {
       type: 'string'
     },
     timezone: {
-      type: 'string'
+      type: 'string',
+      enum: getTimezones()
+        .filter(x => x.value !== constants.USE_PROJECT_TIMEZONE_VALUE)
+        .map(t => t.value)
     },
     limit: {
       type: 'integer'
@@ -210,7 +214,7 @@ export const REPORT_SCHEMA: JSONSchema7 = {
           type: 'integer'
         },
         max: {
-          type: 'number'
+          type: 'integer'
         },
         y_scale_min: {
           type: 'number'
@@ -222,19 +226,19 @@ export const REPORT_SCHEMA: JSONSchema7 = {
           type: 'number'
         },
         format_number_data_label: {
-          type: 'number'
+          type: 'string'
         },
         format_number_value: {
-          type: 'number'
+          type: 'string'
         },
         format_number_axis_tick: {
-          type: 'number'
+          type: 'string'
         },
         format_number_y_axis_tick: {
-          type: 'number'
+          type: 'string'
         },
         format_number_x_axis_tick: {
-          type: 'number'
+          type: 'string'
         }
       }
     },

@@ -1,5 +1,6 @@
 import { JSONSchema7 } from 'json-schema';
 import { constants } from '~common/barrels/constants';
+import { getTimezones } from '~common/functions/get-timezones';
 
 export const CONFIG_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
@@ -18,7 +19,10 @@ export const CONFIG_SCHEMA: JSONSchema7 = {
       type: 'boolean'
     },
     default_timezone: {
-      type: 'string'
+      type: 'string',
+      enum: getTimezones()
+        .filter(x => x.value !== constants.USE_PROJECT_TIMEZONE_VALUE)
+        .map(t => t.value)
     },
     format_number: {
       type: 'string'

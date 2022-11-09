@@ -155,7 +155,8 @@ export const MODEL_SCHEMA: JSONSchema7 = {
           sql_where: {
             type: 'string'
           }
-        }
+        },
+        required: ['as']
       }
     },
     fields: {
