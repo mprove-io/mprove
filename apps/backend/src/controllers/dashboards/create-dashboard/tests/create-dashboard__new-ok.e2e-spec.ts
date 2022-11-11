@@ -3,6 +3,7 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
 let testId = 'backend-create-dashboard__new-ok';
@@ -89,8 +90,8 @@ test('1', async t => {
 
     let req: apiToBackend.ToBackendCreateDashboardRequest = {
       info: {
-        name:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDashboard,
+        name: apiToBackend.ToBackendRequestInfoNameEnum
+          .ToBackendCreateDashboard,
         traceId: traceId,
         idempotencyKey: testId
       },
@@ -104,17 +105,18 @@ test('1', async t => {
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendCreateDashboardResponse>(
-      {
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req
-      }
-    );
+    resp =
+      await helper.sendToBackend<apiToBackend.ToBackendCreateDashboardResponse>(
+        {
+          httpServer: prep.httpServer,
+          loginToken: prep.loginToken,
+          req: req
+        }
+      );
 
     await prep.app.close();
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleBackend(e);
   }
 
   t.is(resp.info.error, undefined);

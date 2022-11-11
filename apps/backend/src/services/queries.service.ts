@@ -1,11 +1,14 @@
 import { BigQuery } from '@google-cloud/bigquery';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
 import { DataSource, In } from 'typeorm';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { DbService } from '~backend/services/db.service';
 
 @Injectable()
@@ -14,6 +17,7 @@ export class QueriesService {
     private queriesRepository: repositories.QueriesRepository,
     private connectionsRepository: repositories.ConnectionsRepository,
     private dbService: DbService,
+    private cs: ConfigService<interfaces.Config>,
     private dataSource: DataSource
   ) {}
 
@@ -194,8 +198,7 @@ WHERE m.mconfig_id is NULL
           message: common.ErEnum.BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERY,
           originalError: e
         });
-
-        common.logToConsole(serverError);
+        logToConsoleBackend(serverError);
       }
     });
   }

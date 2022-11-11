@@ -1,6 +1,7 @@
 import test from 'ava';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
+import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
 import { prepareTest } from '~disk/functions/prepare-test';
 
 let testId = 'disk-revert-repo-to-last-commit__ok';
@@ -58,19 +59,21 @@ test('1', async t => {
       }
     };
 
-    let revertRepoToLastCommitRequest: apiToDisk.ToDiskRevertRepoToLastCommitRequest = {
-      info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
-        projectId: projectId,
-        repoId: 'r1',
-        branch: common.BRANCH_MASTER,
-        remoteType: common.ProjectRemoteTypeEnum.Managed
-      }
-    };
+    let revertRepoToLastCommitRequest: apiToDisk.ToDiskRevertRepoToLastCommitRequest =
+      {
+        info: {
+          name: apiToDisk.ToDiskRequestInfoNameEnum
+            .ToDiskRevertRepoToLastCommit,
+          traceId: traceId
+        },
+        payload: {
+          orgId: orgId,
+          projectId: projectId,
+          repoId: 'r1',
+          branch: common.BRANCH_MASTER,
+          remoteType: common.ProjectRemoteTypeEnum.Managed
+        }
+      };
 
     await messageService.processMessage(createOrgRequest);
     await messageService.processMessage(createProjectRequest);
@@ -81,7 +84,7 @@ test('1', async t => {
 
     resp = await messageService.processMessage(revertRepoToLastCommitRequest);
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleDisk(e);
   }
 
   t.is(resp.payload.repo.repoStatus, common.RepoStatusEnum.Ok);

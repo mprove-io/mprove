@@ -27,7 +27,14 @@ export class ProcessQueryService {
     let reqValid = common.transformValidSync({
       classType: apiToBlockml.ToBlockmlProcessQueryRequest,
       object: request,
-      errorMessage: common.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS
+      errorMessage: common.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS,
+      logIsColor:
+        this.cs.get<interfaces.Config['blockmlLogIsColor']>(
+          'blockmlLogIsColor'
+        ),
+      logIsStringify: this.cs.get<interfaces.Config['blockmlLogIsStringify']>(
+        'blockmlLogIsStringify'
+      )
     });
 
     let {

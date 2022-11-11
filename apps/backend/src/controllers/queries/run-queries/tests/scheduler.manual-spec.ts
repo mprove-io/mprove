@@ -1,6 +1,7 @@
 import test from 'ava';
 import { common } from '~backend/barrels/common';
 import { interfaces } from '~backend/barrels/interfaces';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
 let testId = 'backend-run-queries__ok-bigquery';
@@ -25,7 +26,7 @@ test('1', async t => {
 
     await prep.app.close();
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleBackend(e);
   }
 
   t.is(1, 1);

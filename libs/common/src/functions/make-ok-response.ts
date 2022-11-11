@@ -10,9 +10,10 @@ export function makeOkResponse(item: {
   body: any;
   payload: any;
   skipLog?: boolean;
-  logResponseOk: enums.BoolEnum;
-  logOnResponser: enums.BoolEnum;
-  logIsColor: enums.BoolEnum;
+  logResponseOk: boolean;
+  logOnResponser: boolean;
+  logIsColor: boolean;
+  logIsStringify: boolean;
 }) {
   let {
     body,
@@ -24,7 +25,8 @@ export function makeOkResponse(item: {
     skipLog,
     logResponseOk,
     logOnResponser,
-    logIsColor
+    logIsColor,
+    logIsStringify
   } = item;
 
   let response: MyResponse = {
@@ -38,13 +40,13 @@ export function makeOkResponse(item: {
     payload: payload
   };
 
-  if (
-    logOnResponser === enums.BoolEnum.TRUE &&
-    logResponseOk === enums.BoolEnum.TRUE &&
-    skipLog !== true
-  ) {
+  if (logOnResponser === true && logResponseOk === true && skipLog !== true) {
     let part = Object.assign({}, response, { payload: undefined });
-    logToConsole(part, logIsColor);
+    logToConsole({
+      log: part,
+      logIsColor: logIsColor,
+      logIsStringify: logIsStringify
+    });
   }
 
   return response;

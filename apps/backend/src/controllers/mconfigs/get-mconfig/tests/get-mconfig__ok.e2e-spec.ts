@@ -3,6 +3,7 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
 let testId = 'backend-get-mconfig__ok';
@@ -98,13 +99,12 @@ test('1', async t => {
       }
     };
 
-    let resp1 = await helper.sendToBackend<apiToBackend.ToBackendGetDashboardResponse>(
-      {
+    let resp1 =
+      await helper.sendToBackend<apiToBackend.ToBackendGetDashboardResponse>({
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req1
-      }
-    );
+      });
 
     let req2: apiToBackend.ToBackendGetMconfigRequest = {
       info: {
@@ -121,17 +121,16 @@ test('1', async t => {
       }
     };
 
-    resp2 = await helper.sendToBackend<apiToBackend.ToBackendGetMconfigResponse>(
-      {
+    resp2 =
+      await helper.sendToBackend<apiToBackend.ToBackendGetMconfigResponse>({
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req2
-      }
-    );
+      });
 
     await prep.app.close();
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleBackend(e);
   }
 
   t.is(resp2.info.error, undefined);

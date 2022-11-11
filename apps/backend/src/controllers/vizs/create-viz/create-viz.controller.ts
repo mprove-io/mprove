@@ -104,9 +104,8 @@ export class CreateVizController {
       projectId: projectId
     });
 
-    let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
-      'firstProjectId'
-    );
+    let firstProjectId =
+      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
     if (
       member.is_admin === common.BoolEnum.FALSE &&
@@ -184,39 +183,29 @@ export class CreateVizController {
       }
     };
 
-    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateFileResponse>(
-      {
+    let diskResponse =
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateFileResponse>({
         routingKey: helper.makeRoutingKeyToDisk({
           orgId: project.org_id,
           projectId: projectId
         }),
         message: toDiskCreateFileRequest,
         checkIsOk: true
-      }
-    );
+      });
 
-    let {
-      dashboards,
-      vizs,
-      mconfigs,
-      queries,
-      models,
-      struct
-    } = await this.blockmlService.rebuildStruct({
-      traceId,
-      orgId: project.org_id,
-      projectId,
-      structId: bridge.struct_id,
-      diskFiles: diskResponse.payload.files,
-      mproveDir: diskResponse.payload.mproveDir,
-      skipDb: true,
-      envId: envId
-    });
+    let { dashboards, vizs, mconfigs, queries, models, struct } =
+      await this.blockmlService.rebuildStruct({
+        traceId,
+        orgId: project.org_id,
+        projectId,
+        structId: bridge.struct_id,
+        diskFiles: diskResponse.payload.files,
+        mproveDir: diskResponse.payload.mproveDir,
+        skipDb: true,
+        envId: envId
+      });
 
     let viz = vizs.find(x => x.vizId === vizId);
-
-    // console.log('struct');
-    // console.log(struct);
 
     await this.dbService.writeRecords({
       modify: true,

@@ -1,15 +1,20 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { DataSource } from 'typeorm';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 
 let retry = require('async-retry');
 
 @Injectable()
 export class DbService {
-  constructor(private dataSource: DataSource) {}
+  constructor(
+    private dataSource: DataSource,
+    private cs: ConfigService<interfaces.Config>
+  ) {}
 
   async writeRecords(item: { records: interfaces.Records; modify: boolean }) {
     let { records, modify } = item;
@@ -31,8 +36,7 @@ export class DbService {
             message: common.ErEnum.BACKEND_TRANSACTION_RETRY,
             originalError: e
           });
-
-          common.logToConsole(serverError);
+          logToConsoleBackend(serverError);
         }
       }
     );

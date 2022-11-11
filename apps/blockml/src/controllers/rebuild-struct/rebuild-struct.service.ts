@@ -35,7 +35,14 @@ export class RebuildStructService {
     let reqValid = common.transformValidSync({
       classType: apiToBlockml.ToBlockmlRebuildStructRequest,
       object: request,
-      errorMessage: common.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS
+      errorMessage: common.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS,
+      logIsColor:
+        this.cs.get<interfaces.Config['blockmlLogIsColor']>(
+          'blockmlLogIsColor'
+        ),
+      logIsStringify: this.cs.get<interfaces.Config['blockmlLogIsStringify']>(
+        'blockmlLogIsStringify'
+      )
     });
 
     let {
@@ -82,18 +89,15 @@ export class RebuildStructService {
       models: models
     });
 
-    let {
-      apiDashboards,
-      dashMconfigs,
-      dashQueries
-    } = barWrapper.wrapDashboards({
-      structId: structId,
-      orgId: orgId,
-      projectId: projectId,
-      models: models,
-      dashboards: dashboards,
-      envId: envId
-    });
+    let { apiDashboards, dashMconfigs, dashQueries } =
+      barWrapper.wrapDashboards({
+        structId: structId,
+        orgId: orgId,
+        projectId: projectId,
+        models: models,
+        dashboards: dashboards,
+        envId: envId
+      });
 
     let { apiVizs, vizMconfigs, vizQueries } = barWrapper.wrapVizs({
       structId: structId,

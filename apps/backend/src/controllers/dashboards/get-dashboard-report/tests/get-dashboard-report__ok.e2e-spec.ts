@@ -3,6 +3,7 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
 let testId = 'backend-get-dashboard-report__ok';
@@ -100,18 +101,17 @@ test('1', async t => {
       }
     };
 
-    let getDashboardResponse = await helper.sendToBackend<apiToBackend.ToBackendGetDashboardResponse>(
-      {
+    let getDashboardResponse =
+      await helper.sendToBackend<apiToBackend.ToBackendGetDashboardResponse>({
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: getDashboardRequest
-      }
-    );
+      });
 
     let req: apiToBackend.ToBackendGetDashboardReportRequest = {
       info: {
-        name:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboardReport,
+        name: apiToBackend.ToBackendRequestInfoNameEnum
+          .ToBackendGetDashboardReport,
         traceId: traceId,
         idempotencyKey: testId
       },
@@ -125,17 +125,18 @@ test('1', async t => {
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendGetDashboardReportResponse>(
-      {
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req
-      }
-    );
+    resp =
+      await helper.sendToBackend<apiToBackend.ToBackendGetDashboardReportResponse>(
+        {
+          httpServer: prep.httpServer,
+          loginToken: prep.loginToken,
+          req: req
+        }
+      );
 
     await prep.app.close();
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleBackend(e);
   }
 
   t.is(resp.info.error, undefined);

@@ -87,8 +87,6 @@ export class ClickHouseService {
 
     // ch.querying(query.sql, { dataObjects: true })
     //   .then(async (result: any) => {
-    //     // common.logToConsole('result');
-    //     // common.logToConsole(result);
 
     // let q = await this.queriesRepository.findOne({
     //   where: {
@@ -115,8 +113,6 @@ export class ClickHouseService {
     //     }
     //   })
     //   .catch(async (e: any) => {
-    //     // common.logToConsole('error');
-    //     // common.logToConsole(e);
 
     // let q = await this.queriesRepository.findOne({
     //   where: {
@@ -220,9 +216,6 @@ export class ClickHouseService {
         }
       },
       error: async (e: any) => {
-        // common.logToConsole('error');
-        // common.logToConsole(e);
-
         let q = await this.queriesRepository.findOne({
           where: {
             query_id: query.query_id,
@@ -255,8 +248,6 @@ export class ClickHouseService {
   //     .query(query.sql)
   //     .toPromise()
   //     .catch(async (e: any) => {
-  //       common.logToConsole('error');
-  //       common.logToConsole(e);
 
   //       let q = await this.queriesRepository.findOne({
   //         where: {
@@ -282,9 +273,6 @@ export class ClickHouseService {
   //         });
   //       }
   //     });
-
-  //   common.logToConsole('data');
-  //   common.logToConsole(data);
 
   //   let q = await this.queriesRepository.findOne({
   //     where: {

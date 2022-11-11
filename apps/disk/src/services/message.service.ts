@@ -31,6 +31,8 @@ import { DeleteFileService } from '~disk/controllers/07-files/delete-file/delete
 import { GetFileService } from '~disk/controllers/07-files/get-file/get-file.service';
 import { SaveFileService } from '~disk/controllers/07-files/save-file/save-file.service';
 import { SeedProjectService } from '~disk/controllers/08-seed/seed-project/seed-project.service';
+import { makeErrorResponseDisk } from '~disk/functions/make-error-response-disk';
+import { makeOkResponseDisk } from '~disk/functions/make-ok-response-disk';
 
 @Injectable()
 export class MessageService {
@@ -78,36 +80,20 @@ export class MessageService {
     try {
       let payload = await this.processSwitch(request);
 
-      return common.makeOkResponse({
-        payload,
+      return makeOkResponseDisk({
+        payload: payload,
         body: request,
         path: request.info.name,
         method: common.METHOD_RABBIT,
-        logResponseOk: this.cs.get<interfaces.Config['diskLogResponseOk']>(
-          'diskLogResponseOk'
-        ),
-        logOnResponser: this.cs.get<interfaces.Config['diskLogOnResponser']>(
-          'diskLogOnResponser'
-        ),
-        logIsColor: this.cs.get<interfaces.Config['diskLogIsColor']>(
-          'diskLogIsColor'
-        )
+        cs: this.cs
       });
     } catch (e) {
-      return common.makeErrorResponse({
-        e,
+      return makeErrorResponseDisk({
+        e: e,
         body: request,
         path: request.info.name,
         method: common.METHOD_RABBIT,
-        logResponseError: this.cs.get<
-          interfaces.Config['diskLogResponseError']
-        >('diskLogResponseError'),
-        logOnResponser: this.cs.get<interfaces.Config['diskLogOnResponser']>(
-          'diskLogOnResponser'
-        ),
-        logIsColor: this.cs.get<interfaces.Config['diskLogIsColor']>(
-          'diskLogIsColor'
-        )
+        cs: this.cs
       });
     }
   }

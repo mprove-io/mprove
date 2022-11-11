@@ -25,6 +25,9 @@ export class Config {
   diskOrganizationsPath?: string;
 
   @IsEnum(common.BoolEnum)
+  diskLogIsStringify?: common.BoolEnum;
+
+  @IsEnum(common.BoolEnum)
   diskLogIsColor?: common.BoolEnum;
 
   @IsEnum(common.BoolEnum)

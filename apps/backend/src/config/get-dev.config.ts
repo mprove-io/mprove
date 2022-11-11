@@ -176,6 +176,10 @@ export function getDevConfig(envFilePath: any) {
     backendMysqlDatabase:
       process.env.BACKEND_MYSQL_DATABASE || envFile.BACKEND_MYSQL_DATABASE,
 
+    backendLogIsStringify: <common.BoolEnum>(
+      (process.env.BACKEND_LOG_IS_STRINGIFY || envFile.BACKEND_LOG_IS_STRINGIFY)
+    ),
+
     backendLogIsColor: <common.BoolEnum>(
       (process.env.BACKEND_LOG_IS_COLOR || envFile.BACKEND_LOG_IS_COLOR)
     ),
@@ -197,8 +201,6 @@ export function getDevConfig(envFilePath: any) {
       (process.env.BACKEND_LOG_ON_RESPONSER || envFile.BACKEND_LOG_ON_RESPONSER)
     )
   };
-
-  // console.log(`devConfig.isScheduler: ${devConfig.isScheduler}`);
 
   return devConfig;
 }

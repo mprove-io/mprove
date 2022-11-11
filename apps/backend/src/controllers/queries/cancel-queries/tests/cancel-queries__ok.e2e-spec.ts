@@ -3,6 +3,7 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
 let testId = 'backend-cancel-queries__ok';
@@ -146,17 +147,16 @@ test('1', async t => {
       }
     };
 
-    resp1 = await helper.sendToBackend<apiToBackend.ToBackendCancelQueriesResponse>(
-      {
+    resp1 =
+      await helper.sendToBackend<apiToBackend.ToBackendCancelQueriesResponse>({
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req1
-      }
-    );
+      });
 
     await prep.app.close();
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleBackend(e);
   }
 
   t.is(resp1.info.error, undefined);

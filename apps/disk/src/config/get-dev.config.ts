@@ -24,6 +24,9 @@ export function getDevConfig(envFilePath: any) {
     diskOrganizationsPath:
       process.env.DISK_ORGANIZATIONS_PATH || envFile.DISK_ORGANIZATIONS_PATH,
 
+    diskLogIsStringify: <common.BoolEnum>(
+      (process.env.DISK_LOG_IS_STRINGIFY || envFile.DISK_LOG_IS_STRINGIFY)
+    ),
     diskLogIsColor: <common.BoolEnum>(
       (process.env.DISK_LOG_IS_COLOR || envFile.DISK_LOG_IS_COLOR)
     ),

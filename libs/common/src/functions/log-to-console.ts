@@ -1,35 +1,35 @@
 import * as util from 'util';
-import { enums } from '~common/barrels/enums';
-import { enumToBoolean } from './enum-to-boolean';
 
-export function logToConsole(object: any, logIsColor?: enums.BoolEnum) {
-  let logIsColorDefined = logIsColor || enums.BoolEnum.TRUE;
+export function logToConsole(item: {
+  log: any;
+  logIsColor: boolean;
+  logIsStringify: boolean;
+}) {
+  let { log, logIsColor, logIsStringify } = item;
 
-  let isColor: boolean = enumToBoolean(logIsColorDefined);
+  // let lg = util.inspect(message, false, null, isColor);
 
-  // let lg = util.inspect(object, false, null, isColor);
-
-  if (isColor) {
-    console.log(
-      util.inspect(object, {
-        showHidden: false,
-        depth: null,
-        colors: true,
-        breakLength: Infinity,
-        compact: false
-      })
-    );
-  } else {
+  if (logIsStringify === true) {
     console.log(
       JSON.stringify(
-        util.inspect(object, {
+        util.inspect(log, {
           showHidden: false,
           depth: null,
-          colors: false,
+          colors: logIsColor,
           breakLength: Infinity,
           compact: true
         })
       )
+    );
+  } else {
+    console.log(
+      util.inspect(log, {
+        showHidden: false,
+        depth: null,
+        colors: logIsColor,
+        breakLength: Infinity,
+        compact: false
+      })
     );
   }
 }

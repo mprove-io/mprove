@@ -3,6 +3,7 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
 let testId = 'backend-delete-folder__ok';
@@ -91,17 +92,16 @@ test('1', async t => {
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendDeleteFolderResponse>(
-      {
+    resp =
+      await helper.sendToBackend<apiToBackend.ToBackendDeleteFolderResponse>({
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
-      }
-    );
+      });
 
     await prep.app.close();
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleBackend(e);
   }
 
   t.is(resp.info.error, undefined);

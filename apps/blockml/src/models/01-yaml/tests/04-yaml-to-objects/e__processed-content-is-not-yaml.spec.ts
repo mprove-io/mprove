@@ -3,6 +3,7 @@ import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
+import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
@@ -15,14 +16,8 @@ test('1', async t => {
   let filesAny: any[];
 
   try {
-    let {
-      structService,
-      traceId,
-      structId,
-      dataDir,
-      fromDir,
-      toDir
-    } = await prepareTest(caller, func, testId);
+    let { structService, traceId, structId, dataDir, fromDir, toDir } =
+      await prepareTest(caller, func, testId);
 
     await structService.rebuildStruct({
       traceId: traceId,
@@ -39,7 +34,7 @@ test('1', async t => {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleBlockml(e);
   }
 
   // no case for PROCESSED_CONTENT_IS_NOT_YAML yet

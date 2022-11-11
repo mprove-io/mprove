@@ -3,6 +3,7 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
 let testId = 'backend-get-user-profile__unauthorized';
@@ -44,16 +45,15 @@ test('1', async t => {
       payload: {}
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendGetUserProfileResponse>(
-      {
+    resp =
+      await helper.sendToBackend<apiToBackend.ToBackendGetUserProfileResponse>({
         httpServer: prep.httpServer,
         req: getUserProfileReq
-      }
-    );
+      });
 
     await prep.app.close();
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleBackend(e);
   }
 
   t.is(resp?.info?.error?.message, common.ErEnum.BACKEND_UNAUTHORIZED);

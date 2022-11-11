@@ -3,6 +3,7 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
 let testId = 'backend-reset-user-password__ok';
@@ -38,25 +39,26 @@ test('1', async t => {
 
     let resetUserPasswordReq: apiToBackend.ToBackendResetUserPasswordRequest = {
       info: {
-        name:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResetUserPassword,
+        name: apiToBackend.ToBackendRequestInfoNameEnum
+          .ToBackendResetUserPassword,
         traceId: traceId,
         idempotencyKey: testId
       },
       payload: { email: email }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendResetUserPasswordResponse>(
-      {
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: resetUserPasswordReq
-      }
-    );
+    resp =
+      await helper.sendToBackend<apiToBackend.ToBackendResetUserPasswordResponse>(
+        {
+          httpServer: prep.httpServer,
+          loginToken: prep.loginToken,
+          req: resetUserPasswordReq
+        }
+      );
 
     await prep.app.close();
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleBackend(e);
   }
 
   t.is(resp.info.error, undefined);

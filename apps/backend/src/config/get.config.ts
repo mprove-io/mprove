@@ -19,10 +19,10 @@ export function getConfig() {
   let validatedConfig = common.transformValidSync({
     classType: interfaces.Config,
     object: config,
-    errorMessage: common.ErEnum.BACKEND_WRONG_ENV_VALUES
+    errorMessage: common.ErEnum.BACKEND_WRONG_ENV_VALUES,
+    logIsColor: config.backendLogIsColor,
+    logIsStringify: config.backendLogIsStringify
   });
-
-  // console.log(`validatedConfig.isScheduler=${validatedConfig.isScheduler}`);
 
   return validatedConfig;
 }

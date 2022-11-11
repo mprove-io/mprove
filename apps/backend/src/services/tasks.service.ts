@@ -4,6 +4,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { LessThan } from 'typeorm';
 import { common } from '~backend/barrels/common';
 import { repositories } from '~backend/barrels/repositories';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { QueriesService } from './queries.service';
 import { StructsService } from './structs.service';
 
@@ -20,9 +21,9 @@ export class TasksService {
     private idempsRepository: repositories.IdempsRepository
   ) {}
 
+  // // Called every 10 seconds
   // @Cron(CronExpression.EVERY_10_SECONDS)
   // handleCron() {
-  //   common.logToConsole('Called every 10 seconds');
   // }
 
   @Cron('*/3 * * * * *')
@@ -37,7 +38,7 @@ export class TasksService {
           originalError: e
         });
 
-        common.logToConsole(serverError);
+        logToConsoleBackend(serverError);
       });
 
       this.isRunningLoopCheckQueries = false;
@@ -55,7 +56,7 @@ export class TasksService {
           originalError: e
         });
 
-        common.logToConsole(serverError);
+        logToConsoleBackend(serverError);
       });
 
       await this.queriesService.removeOrphanedQueries().catch(e => {
@@ -64,7 +65,7 @@ export class TasksService {
           originalError: e
         });
 
-        common.logToConsole(serverError);
+        logToConsoleBackend(serverError);
       });
 
       this.isRunningLoopRemoveOrphans = false;
@@ -86,7 +87,8 @@ export class TasksService {
             message: common.ErEnum.BACKEND_SCHEDULER_REMOVE_IDEMPS,
             originalError: e
           });
-          common.logToConsole(serverError);
+
+          logToConsoleBackend(serverError);
         });
 
       this.isRunningLoopRemoveIdemps = false;

@@ -3,6 +3,7 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
 let testId = 'backend-run-queries__ok-postgres';
@@ -102,13 +103,12 @@ test('1', async t => {
       }
     };
 
-    let resp1 = await helper.sendToBackend<apiToBackend.ToBackendGetVizsResponse>(
-      {
+    let resp1 =
+      await helper.sendToBackend<apiToBackend.ToBackendGetVizsResponse>({
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req1
-      }
-    );
+      });
 
     let viz = resp1.payload.vizs.find(x => x.vizId === 's_s1');
 
@@ -123,17 +123,16 @@ test('1', async t => {
       }
     };
 
-    resp2 = await helper.sendToBackend<apiToBackend.ToBackendRunQueriesResponse>(
-      {
+    resp2 =
+      await helper.sendToBackend<apiToBackend.ToBackendRunQueriesResponse>({
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req2
-      }
-    );
+      });
 
     await prep.app.close();
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleBackend(e);
   }
 
   t.is(resp2.info.error, undefined);

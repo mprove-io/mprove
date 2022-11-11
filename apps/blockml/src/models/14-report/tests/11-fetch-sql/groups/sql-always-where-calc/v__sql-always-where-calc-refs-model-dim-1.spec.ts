@@ -4,6 +4,7 @@ import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
+import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
@@ -22,14 +23,8 @@ test('1', async t => {
       type: common.ConnectionTypeEnum.BigQuery
     };
 
-    let {
-      structService,
-      traceId,
-      structId,
-      dataDir,
-      fromDir,
-      toDir
-    } = await prepareTest(caller, func, testId, connection);
+    let { structService, traceId, structId, dataDir, fromDir, toDir } =
+      await prepareTest(caller, func, testId, connection);
 
     await structService.rebuildStruct({
       traceId: traceId,
@@ -46,7 +41,7 @@ test('1', async t => {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleBlockml(e);
   }
 
   let sql = `#standardSQL
@@ -90,14 +85,8 @@ test('2', async t => {
       type: common.ConnectionTypeEnum.PostgreSQL
     };
 
-    let {
-      structService,
-      traceId,
-      structId,
-      dataDir,
-      fromDir,
-      toDir
-    } = await prepareTest(caller, func, testId, connection);
+    let { structService, traceId, structId, dataDir, fromDir, toDir } =
+      await prepareTest(caller, func, testId, connection);
 
     await structService.rebuildStruct({
       traceId: traceId,
@@ -114,7 +103,7 @@ test('2', async t => {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleBlockml(e);
   }
 
   let sql = `WITH

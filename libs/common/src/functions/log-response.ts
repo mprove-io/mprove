@@ -4,29 +4,35 @@ import { logToConsole } from './log-to-console';
 
 export function logResponse(item: {
   response: MyResponse;
-  logResponseOk: enums.BoolEnum;
-  logResponseError: enums.BoolEnum;
-  logOnResponser: enums.BoolEnum;
-  logIsColor: enums.BoolEnum;
+  logResponseOk: boolean;
+  logResponseError: boolean;
+  logOnResponser: boolean;
+  logIsColor: boolean;
+  logIsStringify: boolean;
 }) {
   let {
     response,
     logResponseOk,
     logResponseError,
     logOnResponser,
-    logIsColor
+    logIsColor,
+    logIsStringify
   } = item;
 
   let isLogOk =
-    logResponseOk === enums.BoolEnum.TRUE &&
+    logResponseOk === true &&
     response.info.status === enums.ResponseInfoStatusEnum.Ok;
 
   let isLogError =
-    logResponseError === enums.BoolEnum.TRUE &&
+    logResponseError === true &&
     response.info.status === enums.ResponseInfoStatusEnum.Error;
 
-  if (logOnResponser === enums.BoolEnum.TRUE && (isLogOk || isLogError)) {
+  if (logOnResponser === true && (isLogOk || isLogError)) {
     let part = Object.assign({}, response, { payload: undefined });
-    logToConsole(part, logIsColor);
+    logToConsole({
+      log: part,
+      logIsColor: logIsColor,
+      logIsStringify: logIsStringify
+    });
   }
 }

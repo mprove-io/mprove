@@ -9,6 +9,7 @@ import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 
@@ -93,7 +94,7 @@ export class CancelQueriesController {
               originalError: e
             });
 
-            common.logToConsole(serverError);
+            logToConsoleBackend(serverError);
           });
         }
 

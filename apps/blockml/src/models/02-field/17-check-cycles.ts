@@ -42,7 +42,6 @@ export function checkCycles<T extends types.vmType>(
       let lines: interfaces.BmErrorLine[] = [];
 
       let cycles: any[] = g.getCycles();
-      // api.logToConsole(cycles);
 
       let cycledNames = cycles[0].map((c: any) => c.name);
 

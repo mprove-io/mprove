@@ -24,6 +24,8 @@ import { interfaces } from './barrels/interfaces';
 import { maker } from './barrels/maker';
 import { repositories } from './barrels/repositories';
 import { getConfig } from './config/get.config';
+import { handleErrorBackend } from './functions/handle-error-backend';
+import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { DbService } from './services/db.service';
 import { OrgsService } from './services/orgs.service';
@@ -47,18 +49,14 @@ let jwtModule = JwtModule.registerAsync({
 
 let rabbitModule = RabbitMQModule.forRootAsync(RabbitMQModule, {
   useFactory: (cs: ConfigService<interfaces.Config>) => {
-    let rabbitUser = cs.get<interfaces.Config['backendRabbitUser']>(
-      'backendRabbitUser'
-    );
-    let rabbitPass = cs.get<interfaces.Config['backendRabbitPass']>(
-      'backendRabbitPass'
-    );
-    let rabbitHost = cs.get<interfaces.Config['backendRabbitHost']>(
-      'backendRabbitHost'
-    );
-    let rabbitPort = cs.get<interfaces.Config['backendRabbitPort']>(
-      'backendRabbitPort'
-    );
+    let rabbitUser =
+      cs.get<interfaces.Config['backendRabbitUser']>('backendRabbitUser');
+    let rabbitPass =
+      cs.get<interfaces.Config['backendRabbitPass']>('backendRabbitPass');
+    let rabbitHost =
+      cs.get<interfaces.Config['backendRabbitHost']>('backendRabbitHost');
+    let rabbitPort =
+      cs.get<interfaces.Config['backendRabbitPort']>('backendRabbitPort');
     let rabbitProtocol = cs.get<interfaces.Config['backendRabbitProtocol']>(
       'backendRabbitProtocol'
     );
@@ -118,9 +116,8 @@ let mailerModule = MailerModule.forRootAsync({
   useFactory: (cs: ConfigService<interfaces.Config>) => {
     let transport;
 
-    let emailTransport = cs.get<interfaces.Config['emailTransport']>(
-      'emailTransport'
-    );
+    let emailTransport =
+      cs.get<interfaces.Config['emailTransport']>('emailTransport');
 
     if (emailTransport === enums.EmailTransportEnum.MAILGUN) {
       transport = mg({
@@ -149,9 +146,8 @@ let mailerModule = MailerModule.forRootAsync({
       };
     }
 
-    let fromName = cs.get<interfaces.Config['sendEmailFromName']>(
-      'sendEmailFromName'
-    );
+    let fromName =
+      cs.get<interfaces.Config['sendEmailFromName']>('sendEmailFromName');
 
     let fromAddress = cs.get<interfaces.Config['sendEmailFromAddress']>(
       'sendEmailFromAddress'
@@ -238,19 +234,19 @@ export class AppModule implements OnModuleInit {
             transaction: 'all'
           });
           migrations.forEach(migration => {
-            common.logToConsole(`Migration ${migration.name} success`);
+            logToConsoleBackend(`Migration ${migration.name} success`);
           });
         } else {
-          common.logToConsole('No migrations pending');
+          logToConsoleBackend('No migrations pending');
         }
 
-        let email = this.cs.get<interfaces.Config['firstUserEmail']>(
-          'firstUserEmail'
-        );
+        let email =
+          this.cs.get<interfaces.Config['firstUserEmail']>('firstUserEmail');
 
-        let password = this.cs.get<interfaces.Config['firstUserPassword']>(
-          'firstUserPassword'
-        );
+        let password =
+          this.cs.get<interfaces.Config['firstUserPassword']>(
+            'firstUserPassword'
+          );
 
         let firstUser: any;
 
@@ -270,13 +266,11 @@ export class AppModule implements OnModuleInit {
           }
         }
 
-        let firstOrgId = this.cs.get<interfaces.Config['firstOrgId']>(
-          'firstOrgId'
-        );
+        let firstOrgId =
+          this.cs.get<interfaces.Config['firstOrgId']>('firstOrgId');
 
-        let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
-          'firstProjectId'
-        );
+        let firstProjectId =
+          this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
         let firstProjectSeedConnections = this.cs.get<
           interfaces.Config['firstProjectSeedConnections']
@@ -527,7 +521,7 @@ export class AppModule implements OnModuleInit {
         }
       }
     } catch (e) {
-      common.handleError(e);
+      handleErrorBackend(e);
       process.exit(1);
     }
   }

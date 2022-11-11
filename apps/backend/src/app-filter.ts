@@ -12,6 +12,8 @@ import { entities } from './barrels/entities';
 import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
 import { repositories } from './barrels/repositories';
+import { logToConsoleBackend } from './functions/log-to-console-backend';
+import { makeErrorResponseBackend } from './functions/make-error-response-backend';
 
 @Catch()
 export class AppFilter implements ExceptionFilter {
@@ -42,21 +44,13 @@ export class AppFilter implements ExceptionFilter {
       let req: apiToBackend.ToBackendRequest = request.body;
       let user: entities.UserEntity = request.user;
 
-      let resp = common.makeErrorResponse({
+      let resp = makeErrorResponseBackend({
         e: e,
         body: req,
         request: request,
         duration: Date.now() - request.start_ts,
         skipLog: true,
-        logResponseError: this.cs.get<
-          interfaces.Config['backendLogResponseError']
-        >('backendLogResponseError'),
-        logOnResponser: this.cs.get<interfaces.Config['backendLogOnResponser']>(
-          'backendLogOnResponser'
-        ),
-        logIsColor: this.cs.get<interfaces.Config['backendLogIsColor']>(
-          'backendLogIsColor'
-        )
+        cs: this.cs
       });
 
       let iKey = req?.info?.idempotencyKey;
@@ -75,7 +69,7 @@ export class AppFilter implements ExceptionFilter {
 
           await this.idempsRepository.save(idempEntity);
         } catch (er) {
-          common.logToConsole(
+          logToConsoleBackend(
             new common.ServerError({
               message: common.ErEnum.BACKEND_APP_FILTER_SAVE_IDEMP_ERROR,
               originalError: er
@@ -86,23 +80,36 @@ export class AppFilter implements ExceptionFilter {
 
       common.logResponse({
         response: resp,
-        logResponseOk: this.cs.get<interfaces.Config['backendLogResponseOk']>(
-          'backendLogResponseOk'
+        logResponseOk: common.enumToBoolean(
+          this.cs.get<interfaces.Config['backendLogResponseOk']>(
+            'backendLogResponseOk'
+          )
         ),
-        logResponseError: this.cs.get<
-          interfaces.Config['backendLogResponseError']
-        >('backendLogResponseError'),
-        logOnResponser: this.cs.get<interfaces.Config['backendLogOnResponser']>(
-          'backendLogOnResponser'
+        logResponseError: common.enumToBoolean(
+          this.cs.get<interfaces.Config['backendLogResponseError']>(
+            'backendLogResponseError'
+          )
         ),
-        logIsColor: this.cs.get<interfaces.Config['backendLogIsColor']>(
-          'backendLogIsColor'
+        logOnResponser: common.enumToBoolean(
+          this.cs.get<interfaces.Config['backendLogOnResponser']>(
+            'backendLogOnResponser'
+          )
+        ),
+        logIsColor: common.enumToBoolean(
+          this.cs.get<interfaces.Config['backendLogIsColor']>(
+            'backendLogIsColor'
+          )
+        ),
+        logIsStringify: common.enumToBoolean(
+          this.cs.get<interfaces.Config['backendLogIsStringify']>(
+            'backendLogIsStringify'
+          )
         )
       });
 
       response.status(HttpStatus.CREATED).json(resp);
     } catch (err) {
-      common.logToConsole(
+      logToConsoleBackend(
         new common.ServerError({
           message: common.ErEnum.BACKEND_APP_FILTER_ERROR,
           originalError: err

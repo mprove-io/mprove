@@ -321,8 +321,6 @@ export class NavigateService {
       underscoreFileId
     ];
 
-    // console.log(ar);
-
     if (common.isDefined(lineNumber) && lineNumber !== 0) {
       this.router.navigate(ar, {
         queryParams: { line: lineNumber }

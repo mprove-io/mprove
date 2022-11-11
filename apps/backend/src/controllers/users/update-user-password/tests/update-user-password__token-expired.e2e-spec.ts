@@ -3,6 +3,7 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
 let testId = 'backend-update-user-password__token-expired';
@@ -40,30 +41,32 @@ test('1', async t => {
       }
     });
 
-    let updateUserPasswordReq: apiToBackend.ToBackendUpdateUserPasswordRequest = {
-      info: {
-        name:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword,
-        traceId: traceId,
-        idempotencyKey: testId
-      },
-      payload: {
-        passwordResetToken,
-        newPassword
-      }
-    };
-
-    resp = await helper.sendToBackend<apiToBackend.ToBackendUpdateUserPasswordResponse>(
+    let updateUserPasswordReq: apiToBackend.ToBackendUpdateUserPasswordRequest =
       {
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: updateUserPasswordReq
-      }
-    );
+        info: {
+          name: apiToBackend.ToBackendRequestInfoNameEnum
+            .ToBackendUpdateUserPassword,
+          traceId: traceId,
+          idempotencyKey: testId
+        },
+        payload: {
+          passwordResetToken,
+          newPassword
+        }
+      };
+
+    resp =
+      await helper.sendToBackend<apiToBackend.ToBackendUpdateUserPasswordResponse>(
+        {
+          httpServer: prep.httpServer,
+          loginToken: prep.loginToken,
+          req: updateUserPasswordReq
+        }
+      );
 
     await prep.app.close();
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleBackend(e);
   }
 
   t.is(

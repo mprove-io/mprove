@@ -50,9 +50,6 @@ export class PgService {
     pgDb
       .any(query.sql)
       .then(async (data: any) => {
-        // common.logToConsole('data');
-        // common.logToConsole(data);
-
         let q = await this.queriesRepository.findOne({
           where: {
             query_id: query.query_id,
@@ -78,9 +75,6 @@ export class PgService {
         }
       })
       .catch(async e => {
-        // common.logToConsole('error');
-        // common.logToConsole(error);
-
         let q = await this.queriesRepository.findOne({
           where: {
             query_id: query.query_id,

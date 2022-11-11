@@ -52,6 +52,9 @@ export function getDevConfig(envFilePath: any) {
     blockmlRabbitProtocol:
       process.env.BLOCKML_RABBIT_PROTOCOL || envFile.BLOCKML_RABBIT_PROTOCOL,
 
+    blockmlLogIsStringify: <common.BoolEnum>(
+      (process.env.BLOCKML_LOG_IS_STRINGIFY || envFile.BLOCKML_LOG_IS_STRINGIFY)
+    ),
     blockmlLogIsColor: <common.BoolEnum>(
       (process.env.BLOCKML_LOG_IS_COLOR || envFile.BLOCKML_LOG_IS_COLOR)
     ),

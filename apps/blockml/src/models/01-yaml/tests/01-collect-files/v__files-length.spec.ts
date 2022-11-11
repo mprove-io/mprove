@@ -3,6 +3,7 @@ import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
+import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 
 let caller = enums.CallerEnum.RebuildStruct;
@@ -13,14 +14,8 @@ test('1', async t => {
   let files: common.BmlFile[];
 
   try {
-    let {
-      structService,
-      traceId,
-      structId,
-      dataDir,
-      fromDir,
-      toDir
-    } = await prepareTest(caller, func, testId);
+    let { structService, traceId, structId, dataDir, fromDir, toDir } =
+      await prepareTest(caller, func, testId);
 
     await structService.rebuildStruct({
       traceId: traceId,
@@ -36,7 +31,7 @@ test('1', async t => {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleBlockml(e);
   }
 
   t.is(files.length, 7);

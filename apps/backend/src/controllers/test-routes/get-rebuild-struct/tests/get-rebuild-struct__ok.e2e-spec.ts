@@ -5,6 +5,7 @@ import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
 let testId = 'get-rebuild-struct__ok';
@@ -115,8 +116,8 @@ test('1', async t => {
 
     let getRebuildStructReq: apiToBackend.ToBackendGetRebuildStructRequest = {
       info: {
-        name:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRebuildStruct,
+        name: apiToBackend.ToBackendRequestInfoNameEnum
+          .ToBackendGetRebuildStruct,
         traceId: traceId,
         idempotencyKey: testId
       },
@@ -129,16 +130,15 @@ test('1', async t => {
       }
     };
 
-    resp = await helper.sendToBackend<apiToBlockml.ToBlockmlRebuildStructResponse>(
-      {
+    resp =
+      await helper.sendToBackend<apiToBlockml.ToBlockmlRebuildStructResponse>({
         httpServer: prep.httpServer,
         req: getRebuildStructReq
-      }
-    );
+      });
 
     await prep.app.close();
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleBackend(e);
   }
 
   t.is(resp.info.error, undefined);

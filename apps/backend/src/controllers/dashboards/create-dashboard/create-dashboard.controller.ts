@@ -103,9 +103,8 @@ export class CreateDashboardController {
       projectId: projectId
     });
 
-    let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
-      'firstProjectId'
-    );
+    let firstProjectId =
+      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
     if (
       member.is_admin === common.BoolEnum.FALSE &&
@@ -120,12 +119,11 @@ export class CreateDashboardController {
     let dashboardFileText: string;
 
     if (common.isDefined(fromDashboardId)) {
-      let fromDashboardEntity = await this.dashboardsService.getDashboardCheckExists(
-        {
+      let fromDashboardEntity =
+        await this.dashboardsService.getDashboardCheckExists({
           structId: bridge.struct_id,
           dashboardId: fromDashboardId
-        }
-      );
+        });
 
       let fromDashboard = await this.dashboardsService.getDashboardXCheckAccess(
         {
@@ -230,39 +228,29 @@ export class CreateDashboardController {
       }
     };
 
-    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateFileResponse>(
-      {
+    let diskResponse =
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateFileResponse>({
         routingKey: helper.makeRoutingKeyToDisk({
           orgId: project.org_id,
           projectId: projectId
         }),
         message: toDiskCreateFileRequest,
         checkIsOk: true
-      }
-    );
+      });
 
-    let {
-      dashboards,
-      vizs,
-      mconfigs,
-      queries,
-      models,
-      struct
-    } = await this.blockmlService.rebuildStruct({
-      traceId,
-      orgId: project.org_id,
-      projectId,
-      structId: bridge.struct_id,
-      diskFiles: diskResponse.payload.files,
-      mproveDir: diskResponse.payload.mproveDir,
-      skipDb: true,
-      envId: envId
-    });
+    let { dashboards, vizs, mconfigs, queries, models, struct } =
+      await this.blockmlService.rebuildStruct({
+        traceId,
+        orgId: project.org_id,
+        projectId,
+        structId: bridge.struct_id,
+        diskFiles: diskResponse.payload.files,
+        mproveDir: diskResponse.payload.mproveDir,
+        skipDb: true,
+        envId: envId
+      });
 
     let dashboard = dashboards.find(x => x.dashboardId === newDashboardId);
-
-    // console.log('struct');
-    // console.log(struct);
 
     await this.dbService.writeRecords({
       modify: true,

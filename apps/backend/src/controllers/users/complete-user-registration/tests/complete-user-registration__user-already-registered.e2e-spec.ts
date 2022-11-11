@@ -3,6 +3,7 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
 let testId = 'backend-confirm-user-email__user-already-registered';
@@ -37,30 +38,31 @@ test('1', async t => {
       }
     });
 
-    let completeUserRegistrationRequest: apiToBackend.ToBackendCompleteUserRegistrationRequest = {
-      info: {
-        name:
-          apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendCompleteUserRegistration,
-        traceId: traceId,
-        idempotencyKey: testId
-      },
-      payload: {
-        emailConfirmationToken: emailToken,
-        newPassword: newPassword
-      }
-    };
-
-    resp = await helper.sendToBackend<apiToBackend.ToBackendCompleteUserRegistrationResponse>(
+    let completeUserRegistrationRequest: apiToBackend.ToBackendCompleteUserRegistrationRequest =
       {
-        httpServer: prep.httpServer,
-        req: completeUserRegistrationRequest
-      }
-    );
+        info: {
+          name: apiToBackend.ToBackendRequestInfoNameEnum
+            .ToBackendCompleteUserRegistration,
+          traceId: traceId,
+          idempotencyKey: testId
+        },
+        payload: {
+          emailConfirmationToken: emailToken,
+          newPassword: newPassword
+        }
+      };
+
+    resp =
+      await helper.sendToBackend<apiToBackend.ToBackendCompleteUserRegistrationResponse>(
+        {
+          httpServer: prep.httpServer,
+          req: completeUserRegistrationRequest
+        }
+      );
 
     await prep.app.close();
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleBackend(e);
   }
 
   t.is(resp.info.error.message, common.ErEnum.BACKEND_USER_ALREADY_REGISTERED);

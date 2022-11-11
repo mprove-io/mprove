@@ -3,6 +3,7 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
 let testId = 'backend-set-org-owner__new-owner-not-found';
@@ -61,17 +62,16 @@ test('1', async t => {
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendSetOrgOwnerResponse>(
-      {
+    resp =
+      await helper.sendToBackend<apiToBackend.ToBackendSetOrgOwnerResponse>({
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
-      }
-    );
+      });
 
     await prep.app.close();
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleBackend(e);
   }
 
   t.is(resp.info.error.message, common.ErEnum.BACKEND_NEW_OWNER_NOT_FOUND);

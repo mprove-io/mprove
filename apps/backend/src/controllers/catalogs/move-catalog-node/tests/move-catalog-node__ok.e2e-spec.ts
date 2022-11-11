@@ -3,6 +3,7 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
 let testId = 'backend-move-catalog-node__ok';
@@ -79,8 +80,8 @@ test('1', async t => {
 
     let req: apiToBackend.ToBackendMoveCatalogNodeRequest = {
       info: {
-        name:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMoveCatalogNode,
+        name: apiToBackend.ToBackendRequestInfoNameEnum
+          .ToBackendMoveCatalogNode,
         traceId: traceId,
         idempotencyKey: testId
       },
@@ -93,17 +94,18 @@ test('1', async t => {
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendMoveCatalogNodeResponse>(
-      {
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req
-      }
-    );
+    resp =
+      await helper.sendToBackend<apiToBackend.ToBackendMoveCatalogNodeResponse>(
+        {
+          httpServer: prep.httpServer,
+          loginToken: prep.loginToken,
+          req: req
+        }
+      );
 
     await prep.app.close();
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleBackend(e);
   }
 
   t.is(resp.info.error, undefined);

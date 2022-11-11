@@ -1,6 +1,7 @@
 import test from 'ava';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
+import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
 import { prepareTest } from '~disk/functions/prepare-test';
 
 let testId = 'disk-is-project-exist';
@@ -70,7 +71,7 @@ test('1', async t => {
     resp1 = await messageService.processMessage(isProjectExistRequest_1);
     resp2 = await messageService.processMessage(isProjectExistRequest_2);
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleDisk(e);
   }
 
   t.is(resp1.payload.isProjectExist, true);

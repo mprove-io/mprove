@@ -2,12 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { json, urlencoded } from 'body-parser';
 import 'module-alias/register';
 import { AppModule } from './app.module';
-import { common } from './barrels/common';
+import { listenProcessEventsBackend } from './functions/listen-process-events-backend';
+import { logToConsoleBackend } from './functions/log-to-console-backend';
 
 async function bootstrap() {
-  console.log(`NODE_ENV is set to "${process.env.NODE_ENV}"`);
+  logToConsoleBackend(`NODE_ENV is set to "${process.env.NODE_ENV}"`);
 
-  common.listenProcessEvents();
+  listenProcessEventsBackend();
 
   const app = await NestFactory.create(AppModule);
   // use after nestjs 8

@@ -19,7 +19,13 @@ export class GetFileService {
     let requestValid = common.transformValidSync({
       classType: apiToDisk.ToDiskGetFileRequest,
       object: request,
-      errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS
+      errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS,
+      logIsColor:
+        this.cs.get<interfaces.Config['diskLogIsColor']>('diskLogIsColor'),
+      logIsStringify:
+        this.cs.get<interfaces.Config['diskLogIsStringify']>(
+          'diskLogIsStringify'
+        )
     });
 
     let {

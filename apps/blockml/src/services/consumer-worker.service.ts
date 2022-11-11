@@ -4,6 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { GenSqlService } from '~blockml/controllers/gen-sql/gen-sql.service';
+import { makeErrorResponseBlockml } from '~blockml/functions/make-error-response-blockml';
+import { makeOkResponseBlockml } from '~blockml/functions/make-ok-response-blockml';
 
 let pathGenSql = common.RabbitBlockmlWorkerRoutingEnum.GenSql.toString();
 
@@ -23,36 +25,20 @@ export class ConsumerWorkerService {
     try {
       let payload = await this.genSqlService.gen(request);
 
-      return common.makeOkResponse({
-        payload,
+      return makeOkResponseBlockml({
+        payload: payload,
         body: request,
         path: pathGenSql,
         method: common.METHOD_RABBIT,
-        logResponseOk: this.cs.get<interfaces.Config['blockmlLogResponseOk']>(
-          'blockmlLogResponseOk'
-        ),
-        logOnResponser: this.cs.get<interfaces.Config['blockmlLogOnResponser']>(
-          'blockmlLogOnResponser'
-        ),
-        logIsColor: this.cs.get<interfaces.Config['blockmlLogIsColor']>(
-          'blockmlLogIsColor'
-        )
+        cs: this.cs
       });
     } catch (e) {
-      return common.makeErrorResponse({
-        e,
+      return makeErrorResponseBlockml({
+        e: e,
         body: request,
         path: pathGenSql,
         method: common.METHOD_RABBIT,
-        logResponseError: this.cs.get<
-          interfaces.Config['blockmlLogResponseError']
-        >('blockmlLogResponseError'),
-        logOnResponser: this.cs.get<interfaces.Config['blockmlLogOnResponser']>(
-          'blockmlLogOnResponser'
-        ),
-        logIsColor: this.cs.get<interfaces.Config['blockmlLogIsColor']>(
-          'blockmlLogIsColor'
-        )
+        cs: this.cs
       });
     }
   }

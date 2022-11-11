@@ -3,6 +3,7 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
 let testId = 'backend-register-user__user-already-registered';
@@ -49,16 +50,15 @@ test('1', async t => {
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendRegisterUserResponse>(
-      {
+    resp =
+      await helper.sendToBackend<apiToBackend.ToBackendRegisterUserResponse>({
         httpServer: prep.httpServer,
         req: registerUserReq
-      }
-    );
+      });
 
     await prep.app.close();
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleBackend(e);
   }
 
   t.is(resp.info.error.message, common.ErEnum.BACKEND_USER_ALREADY_REGISTERED);

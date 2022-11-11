@@ -19,7 +19,9 @@ export function getConfig() {
   let validatedConfig = common.transformValidSync({
     classType: interfaces.Config,
     object: config,
-    errorMessage: common.ErEnum.BLOCKML_WRONG_ENV_VALUES
+    errorMessage: common.ErEnum.BLOCKML_WRONG_ENV_VALUES,
+    logIsColor: config.blockmlLogIsColor,
+    logIsStringify: config.blockmlLogIsStringify
   });
 
   return validatedConfig;

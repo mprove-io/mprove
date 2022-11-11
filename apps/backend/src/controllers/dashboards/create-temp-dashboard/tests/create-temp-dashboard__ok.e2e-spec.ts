@@ -3,6 +3,7 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
 let testId = 'backend-create-temp-dashboard__ok';
@@ -100,19 +101,17 @@ test('1', async t => {
       }
     };
 
-    let resp1 = await helper.sendToBackend<apiToBackend.ToBackendGetDashboardResponse>(
-      {
+    let resp1 =
+      await helper.sendToBackend<apiToBackend.ToBackendGetDashboardResponse>({
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req1
-      }
-    );
+      });
 
     let req: apiToBackend.ToBackendCreateTempDashboardRequest = {
       info: {
-        name:
-          apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendCreateTempDashboard,
+        name: apiToBackend.ToBackendRequestInfoNameEnum
+          .ToBackendCreateTempDashboard,
         traceId: traceId,
         idempotencyKey: testId
       },
@@ -128,17 +127,18 @@ test('1', async t => {
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendCreateTempDashboardResponse>(
-      {
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req
-      }
-    );
+    resp =
+      await helper.sendToBackend<apiToBackend.ToBackendCreateTempDashboardResponse>(
+        {
+          httpServer: prep.httpServer,
+          loginToken: prep.loginToken,
+          req: req
+        }
+      );
 
     await prep.app.close();
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleBackend(e);
   }
 
   t.is(resp.info.error, undefined);

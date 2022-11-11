@@ -13,12 +13,8 @@ export class DataService {
     currentValueFieldId: string;
     previousValueFieldId: string;
   }) {
-    let {
-      mconfigFields,
-      data,
-      currentValueFieldId,
-      previousValueFieldId
-    } = item;
+    let { mconfigFields, data, currentValueFieldId, previousValueFieldId } =
+      item;
 
     let currentValueField = mconfigFields.find(
       f => f.id === currentValueFieldId
@@ -62,8 +58,6 @@ export class DataService {
       value: convertToNumberOrZero(raw[yName].value)
     }));
 
-    // console.log(singleData);
-
     return singleData;
   }
 
@@ -104,16 +98,8 @@ export class DataService {
     yFieldsIds: string[];
     chartType: common.ChartTypeEnum;
   }) {
-    // console.log(item);
-
-    let {
-      selectFields,
-      data,
-      multiFieldId,
-      xFieldId,
-      yFieldsIds,
-      chartType
-    } = item;
+    let { selectFields, data, multiFieldId, xFieldId, yFieldsIds, chartType } =
+      item;
 
     let xField = selectFields.find(f => f.id === xFieldId);
 
@@ -215,9 +201,6 @@ export class DataService {
         series: prepareData[x]
       })
     );
-
-    // console.log('multiData');
-    // console.log(multiData);
 
     return multiData;
   }

@@ -3,6 +3,7 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
 let testId = 'resend-user-email__ok-verified-false';
@@ -39,8 +40,8 @@ test('1', async t => {
 
     let resendUserEmailReq: apiToBackend.ToBackendResendUserEmailRequest = {
       info: {
-        name:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResendUserEmail,
+        name: apiToBackend.ToBackendRequestInfoNameEnum
+          .ToBackendResendUserEmail,
         traceId: traceId,
         idempotencyKey: testId
       },
@@ -49,16 +50,17 @@ test('1', async t => {
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendResendUserEmailResponse>(
-      {
-        httpServer: prep.httpServer,
-        req: resendUserEmailReq
-      }
-    );
+    resp =
+      await helper.sendToBackend<apiToBackend.ToBackendResendUserEmailResponse>(
+        {
+          httpServer: prep.httpServer,
+          req: resendUserEmailReq
+        }
+      );
 
     await prep.app.close();
   } catch (e) {
-    common.logToConsole(e);
+    logToConsoleBackend(e);
   }
 
   t.is(resp.info.error, undefined);

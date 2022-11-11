@@ -144,6 +144,9 @@ export class Config {
   backendMysqlDatabase?: string;
 
   @IsEnum(common.BoolEnum)
+  backendLogIsStringify?: common.BoolEnum;
+
+  @IsEnum(common.BoolEnum)
   backendLogIsColor?: common.BoolEnum;
 
   @IsEnum(common.BoolEnum)

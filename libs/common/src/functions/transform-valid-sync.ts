@@ -6,6 +6,8 @@ import {
 } from 'class-transformer-validator';
 import { ValidationError } from 'class-validator';
 import { ServerError } from '~common/models/server-error';
+import { BoolEnum } from '~common/_index';
+import { enumToBoolean } from './enum-to-boolean';
 import { isDefined } from './is-defined';
 import { logToConsole } from './log-to-console';
 
@@ -14,6 +16,8 @@ export function transformValidSync<T extends object>(item: {
   object: object;
   options?: TransformValidationOptions;
   errorMessage: any;
+  logIsColor: BoolEnum;
+  logIsStringify: BoolEnum;
 }) {
   let valid: T;
   try {
@@ -25,7 +29,15 @@ export function transformValidSync<T extends object>(item: {
       constraints = getConstraintsRecursive(e);
     }
 
-    logToConsole(constraints); // default ExceptionHandler doesn't log error.data
+    logToConsole({
+      log: constraints,
+      logIsColor: isDefined(item.logIsColor)
+        ? enumToBoolean(item.logIsColor)
+        : true,
+      logIsStringify: isDefined(item.logIsStringify)
+        ? enumToBoolean(item.logIsStringify)
+        : false
+    }); // default ExceptionHandler doesn't log error.data
 
     throw new ServerError({
       message: item.errorMessage,

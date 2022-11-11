@@ -1,16 +1,20 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as snowflake from 'snowflake-sdk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { DbService } from '~backend/services/db.service';
 
 @Injectable()
 export class SnowFlakeService {
   constructor(
     private queriesRepository: repositories.QueriesRepository,
-    private dbService: DbService
+    private dbService: DbService,
+    private cs: ConfigService<interfaces.Config>
   ) {}
 
   async runQuery(item: {
@@ -57,9 +61,9 @@ export class SnowFlakeService {
 
     let snowflakeConnection = snowflake.createConnection(options);
 
-    snowflakeConnection.connect(function (err, conn) {
+    snowflakeConnection.connect(function (err, conn): void {
       if (err) {
-        common.logToConsole(
+        logToConsoleBackend(
           new common.ServerError({
             message: common.ErEnum.BACKEND_SNOWFLAKE_FAILED_TO_CONNECT,
             originalError: err
@@ -173,7 +177,7 @@ export class SnowFlakeService {
     if (snowflakeConnection.isUp()) {
       snowflakeConnection.destroy(function (err, conn) {
         if (err) {
-          common.logToConsole(
+          logToConsoleBackend(
             new common.ServerError({
               message:
                 common.ErEnum.BACKEND_SNOWFLAKE_FAILED_TO_DESTROY_CONNECTION,

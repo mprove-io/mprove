@@ -1,12 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import 'module-alias/register';
 import { AppModule } from './app.module';
-import { common } from './barrels/common';
+import { listenProcessEventsBlockml } from './functions/listen-process-events-blockml';
+import { logToConsoleBlockml } from './functions/log-to-console-blockml';
 
 async function bootstrap() {
-  console.log(`NODE_ENV is set to "${process.env.NODE_ENV}"`);
+  logToConsoleBlockml(`NODE_ENV is set to "${process.env.NODE_ENV}"`);
 
-  common.listenProcessEvents();
+  listenProcessEventsBlockml();
 
   const app = await NestFactory.create(AppModule);
 

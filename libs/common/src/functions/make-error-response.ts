@@ -11,9 +11,10 @@ export function makeErrorResponse(item: {
   body: any;
   e: any;
   skipLog?: boolean;
-  logResponseError: enums.BoolEnum;
-  logOnResponser: enums.BoolEnum;
-  logIsColor: enums.BoolEnum;
+  logResponseError: boolean;
+  logOnResponser: boolean;
+  logIsColor: boolean;
+  logIsStringify: boolean;
 }) {
   let {
     body,
@@ -25,7 +26,8 @@ export function makeErrorResponse(item: {
     skipLog,
     logResponseError,
     logOnResponser,
-    logIsColor
+    logIsColor,
+    logIsStringify
   } = item;
 
   let response: MyResponse = {
@@ -41,12 +43,16 @@ export function makeErrorResponse(item: {
   };
 
   if (
-    logOnResponser === enums.BoolEnum.TRUE &&
-    logResponseError === enums.BoolEnum.TRUE &&
+    logOnResponser === true &&
+    logResponseError === true &&
     skipLog !== true
   ) {
     let part = Object.assign({}, response, { payload: undefined });
-    logToConsole(part, logIsColor);
+    logToConsole({
+      log: part,
+      logIsColor: logIsColor,
+      logIsStringify: logIsStringify
+    });
   }
 
   return response;

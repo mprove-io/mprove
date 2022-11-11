@@ -46,6 +46,9 @@ export class Config {
   blockmlRabbitPort?: string;
 
   @IsEnum(common.BoolEnum)
+  blockmlLogIsStringify?: common.BoolEnum;
+
+  @IsEnum(common.BoolEnum)
   blockmlLogIsColor?: common.BoolEnum;
 
   @IsEnum(common.BoolEnum)

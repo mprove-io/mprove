@@ -14,6 +14,9 @@ import { entities } from './barrels/entities';
 import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
 import { repositories } from './barrels/repositories';
+import { logToConsoleBackend } from './functions/log-to-console-backend';
+import { makeErrorResponseBackend } from './functions/make-error-response-backend';
+import { makeOkResponseBackend } from './functions/make-ok-response-backend';
 
 let retry = require('async-retry');
 
@@ -90,8 +93,7 @@ export class AppInterceptor implements NestInterceptor {
                 message: common.ErEnum.BACKEND_GET_IDEMP_RESP_RETRY,
                 originalError: e
               });
-
-              common.logToConsole(serverError);
+              logToConsoleBackend(serverError);
             }
           }
         );
@@ -101,20 +103,12 @@ export class AppInterceptor implements NestInterceptor {
           originalError: e
         });
 
-        respX = common.makeErrorResponse({
+        respX = makeErrorResponseBackend({
           e: err,
           body: req,
           request: request,
           skipLog: true,
-          logResponseError: this.cs.get<
-            interfaces.Config['backendLogResponseError']
-          >('backendLogResponseError'),
-          logOnResponser: this.cs.get<
-            interfaces.Config['backendLogOnResponser']
-          >('backendLogOnResponser'),
-          logIsColor: this.cs.get<interfaces.Config['backendLogIsColor']>(
-            'backendLogIsColor'
-          )
+          cs: this.cs
         });
 
         let idempEntity: entities.IdempEntity = {
@@ -132,20 +126,12 @@ export class AppInterceptor implements NestInterceptor {
     return common.isUndefined(idemp)
       ? next.handle().pipe(
           mergeMap(async payload => {
-            let resp = common.makeOkResponse({
+            let resp = makeOkResponseBackend({
               payload: payload,
               request: request,
               body: req,
               skipLog: true,
-              logResponseOk: this.cs.get<
-                interfaces.Config['backendLogResponseOk']
-              >('backendLogResponseOk'),
-              logOnResponser: this.cs.get<
-                interfaces.Config['backendLogOnResponser']
-              >('backendLogOnResponser'),
-              logIsColor: this.cs.get<interfaces.Config['backendLogIsColor']>(
-                'backendLogIsColor'
-              )
+              cs: this.cs
             });
 
             if (common.isDefined(iKey)) {
@@ -167,17 +153,30 @@ export class AppInterceptor implements NestInterceptor {
           tap(x =>
             common.logResponse({
               response: x,
-              logResponseOk: this.cs.get<
-                interfaces.Config['backendLogResponseOk']
-              >('backendLogResponseOk'),
-              logResponseError: this.cs.get<
-                interfaces.Config['backendLogResponseError']
-              >('backendLogResponseError'),
-              logOnResponser: this.cs.get<
-                interfaces.Config['backendLogOnResponser']
-              >('backendLogOnResponser'),
-              logIsColor: this.cs.get<interfaces.Config['backendLogIsColor']>(
-                'backendLogIsColor'
+              logResponseOk: common.enumToBoolean(
+                this.cs.get<interfaces.Config['backendLogResponseOk']>(
+                  'backendLogResponseOk'
+                )
+              ),
+              logResponseError: common.enumToBoolean(
+                this.cs.get<interfaces.Config['backendLogResponseError']>(
+                  'backendLogResponseError'
+                )
+              ),
+              logOnResponser: common.enumToBoolean(
+                this.cs.get<interfaces.Config['backendLogOnResponser']>(
+                  'backendLogOnResponser'
+                )
+              ),
+              logIsColor: common.enumToBoolean(
+                this.cs.get<interfaces.Config['backendLogIsColor']>(
+                  'backendLogIsColor'
+                )
+              ),
+              logIsStringify: common.enumToBoolean(
+                this.cs.get<interfaces.Config['backendLogIsStringify']>(
+                  'backendLogIsStringify'
+                )
               )
             })
           )
@@ -191,17 +190,30 @@ export class AppInterceptor implements NestInterceptor {
           tap(x =>
             common.logResponse({
               response: x,
-              logResponseOk: this.cs.get<
-                interfaces.Config['backendLogResponseOk']
-              >('backendLogResponseOk'),
-              logResponseError: this.cs.get<
-                interfaces.Config['backendLogResponseError']
-              >('backendLogResponseError'),
-              logOnResponser: this.cs.get<
-                interfaces.Config['backendLogOnResponser']
-              >('backendLogOnResponser'),
-              logIsColor: this.cs.get<interfaces.Config['backendLogIsColor']>(
-                'backendLogIsColor'
+              logResponseOk: common.enumToBoolean(
+                this.cs.get<interfaces.Config['backendLogResponseOk']>(
+                  'backendLogResponseOk'
+                )
+              ),
+              logResponseError: common.enumToBoolean(
+                this.cs.get<interfaces.Config['backendLogResponseError']>(
+                  'backendLogResponseError'
+                )
+              ),
+              logOnResponser: common.enumToBoolean(
+                this.cs.get<interfaces.Config['backendLogOnResponser']>(
+                  'backendLogOnResponser'
+                )
+              ),
+              logIsColor: common.enumToBoolean(
+                this.cs.get<interfaces.Config['backendLogIsColor']>(
+                  'backendLogIsColor'
+                )
+              ),
+              logIsStringify: common.enumToBoolean(
+                this.cs.get<interfaces.Config['backendLogIsStringify']>(
+                  'backendLogIsStringify'
+                )
               )
             })
           )
@@ -214,17 +226,30 @@ export class AppInterceptor implements NestInterceptor {
           tap(x =>
             common.logResponse({
               response: x,
-              logResponseOk: this.cs.get<
-                interfaces.Config['backendLogResponseOk']
-              >('backendLogResponseOk'),
-              logResponseError: this.cs.get<
-                interfaces.Config['backendLogResponseError']
-              >('backendLogResponseError'),
-              logOnResponser: this.cs.get<
-                interfaces.Config['backendLogOnResponser']
-              >('backendLogOnResponser'),
-              logIsColor: this.cs.get<interfaces.Config['backendLogIsColor']>(
-                'backendLogIsColor'
+              logResponseOk: common.enumToBoolean(
+                this.cs.get<interfaces.Config['backendLogResponseOk']>(
+                  'backendLogResponseOk'
+                )
+              ),
+              logResponseError: common.enumToBoolean(
+                this.cs.get<interfaces.Config['backendLogResponseError']>(
+                  'backendLogResponseError'
+                )
+              ),
+              logOnResponser: common.enumToBoolean(
+                this.cs.get<interfaces.Config['backendLogOnResponser']>(
+                  'backendLogOnResponser'
+                )
+              ),
+              logIsColor: common.enumToBoolean(
+                this.cs.get<interfaces.Config['backendLogIsColor']>(
+                  'backendLogIsColor'
+                )
+              ),
+              logIsStringify: common.enumToBoolean(
+                this.cs.get<interfaces.Config['backendLogIsStringify']>(
+                  'backendLogIsStringify'
+                )
               )
             })
           )

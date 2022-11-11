@@ -19,7 +19,9 @@ export function getConfig() {
   let validatedConfig = common.transformValidSync({
     classType: interfaces.Config,
     object: config,
-    errorMessage: common.ErEnum.DISK_WRONG_ENV_VALUES
+    errorMessage: common.ErEnum.DISK_WRONG_ENV_VALUES,
+    logIsColor: config.diskLogIsColor,
+    logIsStringify: config.diskLogIsStringify
   });
 
   return validatedConfig;
