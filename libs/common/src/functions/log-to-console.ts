@@ -10,17 +10,7 @@ export function logToConsole(item: {
   // let lg = util.inspect(message, false, null, isColor);
 
   if (logIsStringify === true) {
-    console.log(
-      JSON.stringify(
-        util.inspect(log, {
-          showHidden: false,
-          depth: null,
-          colors: logIsColor,
-          breakLength: Infinity,
-          compact: true
-        })
-      )
-    );
+    console.log(JSON.stringify(log));
   } else {
     console.log(
       util.inspect(log, {
