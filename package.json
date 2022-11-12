@@ -30,6 +30,7 @@
     "serve:disk:9230": "nx serve disk --port 9230",
     "serve:backend": "nx serve backend",
     "serve:backend:9231": "nx serve backend --port 9231",
+    "serve:backend:scheduler": "LISTEN_PORT=3032 BACKEND_IS_SCHEDULER=TRUE nx serve backend",
     "serve:backend:scheduler:9232": "LISTEN_PORT=3032 BACKEND_IS_SCHEDULER=TRUE nx serve backend --port 9232",
     "serve:blockml": "nx serve blockml",
     "serve:blockml:single:9233": "BLOCKML_IS_SINGLE=TRUE nx serve blockml --port 9233",

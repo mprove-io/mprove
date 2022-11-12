@@ -137,11 +137,19 @@ test('1', async t => {
 
     await prep.app.close();
   } catch (e) {
-    logToConsoleBackend(e);
+    logToConsoleBackend({
+      log: e,
+      logLevel: common.LogLevelEnum.Error,
+      pinoLogger: prep.pinoLogger
+    });
   }
 
   if (common.isDefined(resp2.info.error)) {
-    logToConsoleBackend(resp2.info.error);
+    logToConsoleBackend({
+      log: resp2.info.error,
+      logLevel: common.LogLevelEnum.Error,
+      pinoLogger: prep.pinoLogger
+    });
   }
 
   t.is(resp2.info.error, undefined);

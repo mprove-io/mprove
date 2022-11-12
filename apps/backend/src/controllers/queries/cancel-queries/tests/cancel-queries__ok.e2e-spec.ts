@@ -156,7 +156,11 @@ test('1', async t => {
 
     await prep.app.close();
   } catch (e) {
-    logToConsoleBackend(e);
+    logToConsoleBackend({
+      log: e,
+      logLevel: common.LogLevelEnum.Error,
+      pinoLogger: prep.pinoLogger
+    });
   }
 
   t.is(resp1.info.error, undefined);

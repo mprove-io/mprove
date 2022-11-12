@@ -106,7 +106,11 @@ test('1', async t => {
 
     await prep.app.close();
   } catch (e) {
-    logToConsoleBackend(e);
+    logToConsoleBackend({
+      log: e,
+      logLevel: common.LogLevelEnum.Error,
+      pinoLogger: prep.pinoLogger
+    });
   }
 
   t.is(resp.info.error.message, common.ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST);
