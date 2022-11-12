@@ -1,12 +1,13 @@
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { LoggerModule } from 'nestjs-pino';
+import { LoggerModule, PinoLogger } from 'nestjs-pino';
 import { appControllers } from './app-controllers';
 import { appServices } from './app-services';
 import { common } from './barrels/common';
 import { interfaces } from './barrels/interfaces';
 import { getConfig } from './config/get.config';
+import { logToConsoleDisk } from './functions/log-to-console-disk';
 
 @Module({
   imports: [
@@ -17,20 +18,9 @@ import { getConfig } from './config/get.config';
 
     LoggerModule.forRoot({
       pinoHttp: {
-        // level: process.env.NODE_ENV !== 'production' ? 'debug' : 'info',
         transport:
           process.env.DISK_LOG_IS_STRINGIFY === common.BoolEnum.FALSE
-            ? {
-                target: 'pino-pretty',
-                options: {
-                  colorize: true,
-                  ignore: 'context,pid,hostname',
-                  levelFirst: false,
-                  translateTime: 'UTC:yyyy-mm-dd HH:MM:ss',
-                  messageFormat:
-                    '   \x1B[33m[{context}]\x1b[0m' + ' \x1B[32m{msg}\x1B[39m'
-                }
-              }
+            ? common.LOGGER_MODULE_TRANSPORT
             : undefined
       }
     }),
@@ -74,15 +64,14 @@ import { getConfig } from './config/get.config';
   controllers: appControllers,
   providers: appServices
 })
-// implements OnModuleInit
-export class AppModule {
-  //   constructor(private pinoLogger: PinoLogger) {}
-  //   async onModuleInit() {
-  //     console.log(123);
-  //     this.pinoLogger.info(12345);
-  //     this.pinoLogger.error(555);
-  //     this.pinoLogger.error(['a', 'b']);
-  //     this.pinoLogger.info(['c', 'd']);
-  //     this.pinoLogger.error(new ServerError({ message: '555' }));
-  //   }
+export class AppModule implements OnModuleInit {
+  constructor(private pinoLogger: PinoLogger) {}
+
+  async onModuleInit() {
+    logToConsoleDisk({
+      log: `NODE_ENV is set to "${process.env.NODE_ENV}"`,
+      logLevel: common.LogLevelEnum.Info,
+      pinoLogger: this.pinoLogger
+    });
+  }
 }

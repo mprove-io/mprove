@@ -1,5 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PinoLogger } from 'nestjs-pino';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { makeErrorResponseBlockml } from '~blockml/functions/make-error-response-blockml';
@@ -10,7 +11,8 @@ import { GenSqlService } from './gen-sql.service';
 export class GenSqlController {
   constructor(
     private cs: ConfigService<interfaces.Config>,
-    private genSqlService: GenSqlService
+    private genSqlService: GenSqlService,
+    private pinoLogger: PinoLogger
   ) {}
 
   @Post(apiToBlockml.ToBlockmlWorkerRequestInfoNameEnum.ToBlockmlWorkerGenSql)
@@ -21,13 +23,15 @@ export class GenSqlController {
       return makeOkResponseBlockml({
         payload: payload,
         body: body,
-        cs: this.cs
+        cs: this.cs,
+        pinoLogger: this.pinoLogger
       });
     } catch (e) {
       return makeErrorResponseBlockml({
         e,
         body: body,
-        cs: this.cs
+        cs: this.cs,
+        pinoLogger: this.pinoLogger
       });
     }
   }

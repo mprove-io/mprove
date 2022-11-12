@@ -1,5 +1,6 @@
 import { BigQuery } from '@google-cloud/bigquery';
 import { Controller, Post } from '@nestjs/common';
+import { PinoLogger } from 'nestjs-pino';
 import asyncPool from 'tiny-async-pool';
 import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
@@ -19,7 +20,8 @@ export class CancelQueriesController {
     private queriesRepository: repositories.QueriesRepository,
     private connectionsRepository: repositories.ConnectionsRepository,
     private membersService: MembersService,
-    private dbService: DbService
+    private dbService: DbService,
+    private pinoLogger: PinoLogger
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries)
@@ -89,12 +91,14 @@ export class CancelQueriesController {
 
           // do not await
           bigqueryQueryJob.cancel().catch((e: any) => {
-            let serverError = new common.ServerError({
-              message: common.ErEnum.BACKEND_BIGQUERY_CANCEL_QUERY_JOB_FAIL,
-              originalError: e
+            logToConsoleBackend({
+              log: new common.ServerError({
+                message: common.ErEnum.BACKEND_BIGQUERY_CANCEL_QUERY_JOB_FAIL,
+                originalError: e
+              }),
+              logLevel: common.LogLevelEnum.Error,
+              pinoLogger: this.pinoLogger
             });
-
-            logToConsoleBackend(serverError);
           });
         }
 

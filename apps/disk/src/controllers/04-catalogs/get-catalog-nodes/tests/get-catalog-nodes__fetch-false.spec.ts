@@ -14,8 +14,11 @@ let projectName = 'p1';
 test('1', async t => {
   let resp: apiToDisk.ToDiskGetCatalogNodesResponse;
 
+  let pLogger;
+
   try {
-    let { messageService } = await prepareTest(orgId);
+    let { messageService, pinoLogger } = await prepareTest(orgId);
+    pLogger = pinoLogger;
 
     let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
       info: {
@@ -62,7 +65,11 @@ test('1', async t => {
 
     resp = await messageService.processMessage(getCatalogNodesRequest);
   } catch (e) {
-    logToConsoleDisk(e);
+    logToConsoleDisk({
+      log: e,
+      logLevel: common.LogLevelEnum.Error,
+      pinoLogger: pLogger
+    });
   }
 
   t.is(resp.payload.repo.nodes[0].children[1].id, `${projectId}/readme.md`);

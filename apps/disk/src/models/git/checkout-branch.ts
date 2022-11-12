@@ -45,7 +45,7 @@ export async function checkoutBranch(item: {
 
   let gitRepo = <nodegit.Repository>await nodegit.Repository.open(item.repoDir);
 
-  let checkoutOptions = new nodegit.CheckoutOptions();
+  // let checkoutOptions = new nodegit.CheckoutOptions();
 
-  await gitRepo.checkoutBranch(item.branchName, checkoutOptions);
+  await gitRepo.checkoutBranch(item.branchName, {});
 }

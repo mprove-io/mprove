@@ -1,6 +1,7 @@
 import { RabbitRPC } from '@golevelup/nestjs-rabbitmq';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PinoLogger } from 'nestjs-pino';
 import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { ProcessQueryService } from '~blockml/controllers/process-query/process-query.service';
@@ -17,7 +18,8 @@ export class ConsumerMainService {
   constructor(
     private cs: ConfigService<interfaces.Config>,
     private structService: RebuildStructService,
-    private queryService: ProcessQueryService
+    private queryService: ProcessQueryService,
+    private pinoLogger: PinoLogger
   ) {}
 
   @RabbitRPC({
@@ -34,7 +36,8 @@ export class ConsumerMainService {
         body: request,
         path: pathProcessQuery,
         method: common.METHOD_RABBIT,
-        cs: this.cs
+        cs: this.cs,
+        pinoLogger: this.pinoLogger
       });
     } catch (e) {
       return makeErrorResponseBlockml({
@@ -42,7 +45,8 @@ export class ConsumerMainService {
         body: request,
         path: pathProcessQuery,
         method: common.METHOD_RABBIT,
-        cs: this.cs
+        cs: this.cs,
+        pinoLogger: this.pinoLogger
       });
     }
   }
@@ -61,7 +65,8 @@ export class ConsumerMainService {
         body: request,
         path: pathRebuildStruct,
         method: common.METHOD_RABBIT,
-        cs: this.cs
+        cs: this.cs,
+        pinoLogger: this.pinoLogger
       });
     } catch (e) {
       return makeErrorResponseBlockml({
@@ -69,7 +74,8 @@ export class ConsumerMainService {
         body: request,
         path: pathRebuildStruct,
         method: common.METHOD_RABBIT,
-        cs: this.cs
+        cs: this.cs,
+        pinoLogger: this.pinoLogger
       });
     }
   }

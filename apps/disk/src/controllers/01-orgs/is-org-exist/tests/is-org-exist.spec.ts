@@ -1,5 +1,6 @@
 import test from 'ava';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
+import { common } from '~disk/barrels/common';
 import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
 import { prepareTest } from '~disk/functions/prepare-test';
 
@@ -12,8 +13,11 @@ test('1', async t => {
   let resp1: apiToDisk.ToDiskIsOrgExistResponse;
   let resp2: apiToDisk.ToDiskIsOrgExistResponse;
 
+  let pLogger;
+
   try {
-    let { messageService } = await prepareTest(orgId);
+    let { messageService, pinoLogger } = await prepareTest(orgId);
+    pLogger = pinoLogger;
 
     let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
       info: {
@@ -50,7 +54,11 @@ test('1', async t => {
     resp1 = await messageService.processMessage(isOrgExistRequest_1);
     resp2 = await messageService.processMessage(isOrgExistRequest_2);
   } catch (e) {
-    logToConsoleDisk(e);
+    logToConsoleDisk({
+      log: e,
+      logLevel: common.LogLevelEnum.Error,
+      pinoLogger: pLogger
+    });
   }
 
   t.is(resp1.payload.isOrgExist, true);

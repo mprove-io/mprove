@@ -8,6 +8,7 @@ import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as fse from 'fs-extra';
+import { LoggerModule, PinoLogger } from 'nestjs-pino';
 import * as mg from 'nodemailer-mailgun-transport';
 import { DataSource } from 'typeorm';
 import { appControllers } from './app-controllers';
@@ -24,7 +25,6 @@ import { interfaces } from './barrels/interfaces';
 import { maker } from './barrels/maker';
 import { repositories } from './barrels/repositories';
 import { getConfig } from './config/get.config';
-import { handleErrorBackend } from './functions/handle-error-backend';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { DbService } from './services/db.service';
@@ -37,6 +37,15 @@ let retry = require('async-retry');
 let configModule = ConfigModule.forRoot({
   load: [getConfig],
   isGlobal: true
+});
+
+let loggerModule = LoggerModule.forRoot({
+  pinoHttp: {
+    transport:
+      process.env.BACKEND_LOG_IS_STRINGIFY === common.BoolEnum.FALSE
+        ? common.LOGGER_MODULE_TRANSPORT
+        : undefined
+  }
 });
 
 let jwtModule = JwtModule.registerAsync({
@@ -173,6 +182,7 @@ let mailerModule = MailerModule.forRootAsync({
 @Module({
   imports: [
     configModule,
+    loggerModule,
     ScheduleModule.forRoot(),
     jwtModule,
     PassportModule,
@@ -221,11 +231,18 @@ export class AppModule implements OnModuleInit {
     private projectsRepository: repositories.ProjectsRepository,
     private connectionsRepository: repositories.ConnectionsRepository,
     private evsRepository: repositories.EvsRepository,
-    private dbService: DbService
+    private dbService: DbService,
+    private pinoLogger: PinoLogger
   ) {}
 
   async onModuleInit() {
     try {
+      logToConsoleBackend({
+        log: `NODE_ENV is set to "${process.env.NODE_ENV}"`,
+        logLevel: common.LogLevelEnum.Info,
+        pinoLogger: this.pinoLogger
+      });
+
       if (helper.isScheduler(this.cs)) {
         const migrationsPending = await this.dataSource.showMigrations();
 
@@ -234,10 +251,18 @@ export class AppModule implements OnModuleInit {
             transaction: 'all'
           });
           migrations.forEach(migration => {
-            logToConsoleBackend(`Migration ${migration.name} success`);
+            logToConsoleBackend({
+              log: `Migration ${migration.name} success`,
+              logLevel: common.LogLevelEnum.Info,
+              pinoLogger: this.pinoLogger
+            });
           });
         } else {
-          logToConsoleBackend('No migrations pending');
+          logToConsoleBackend({
+            log: 'No migrations pending',
+            logLevel: common.LogLevelEnum.Info,
+            pinoLogger: this.pinoLogger
+          });
         }
 
         let email =
@@ -521,7 +546,11 @@ export class AppModule implements OnModuleInit {
         }
       }
     } catch (e) {
-      handleErrorBackend(e);
+      logToConsoleBackend({
+        log: common.wrapError(e),
+        pinoLogger: undefined,
+        logLevel: common.LogLevelEnum.Fatal
+      });
       process.exit(1);
     }
   }

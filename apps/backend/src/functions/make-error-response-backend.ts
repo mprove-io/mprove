@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { PinoLogger } from 'nestjs-pino';
 import { common } from '~backend/barrels/common';
 import { interfaces } from '~backend/barrels/interfaces';
 
@@ -11,8 +12,10 @@ export function makeErrorResponseBackend(item: {
   duration?: number;
   skipLog?: boolean;
   cs: ConfigService<interfaces.Config>;
+  pinoLogger: PinoLogger;
 }) {
-  let { e, body, cs, request, path, method, duration, skipLog } = item;
+  let { e, body, cs, request, path, method, duration, skipLog, pinoLogger } =
+    item;
 
   return common.makeErrorResponse({
     e: e,
@@ -39,6 +42,7 @@ export function makeErrorResponseBackend(item: {
       cs.get<interfaces.Config['backendLogIsStringify']>(
         'backendLogIsStringify'
       )
-    )
+    ),
+    pinoLogger: pinoLogger
   });
 }

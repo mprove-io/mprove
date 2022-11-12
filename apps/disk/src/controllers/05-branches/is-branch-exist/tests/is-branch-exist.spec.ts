@@ -17,8 +17,11 @@ test('1', async t => {
   let resp3: apiToDisk.ToDiskIsBranchExistResponse;
   let resp4: apiToDisk.ToDiskIsBranchExistResponse;
 
+  let pLogger;
+
   try {
-    let { messageService } = await prepareTest(orgId);
+    let { messageService, pinoLogger } = await prepareTest(orgId);
+    pLogger = pinoLogger;
 
     let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
       info: {
@@ -113,7 +116,11 @@ test('1', async t => {
     resp3 = await messageService.processMessage(isBranchExistRequest_3);
     resp4 = await messageService.processMessage(isBranchExistRequest_4);
   } catch (e) {
-    logToConsoleDisk(e);
+    logToConsoleDisk({
+      log: e,
+      logLevel: common.LogLevelEnum.Error,
+      pinoLogger: pLogger
+    });
   }
 
   t.is(resp1.payload.isBranchExist, true);

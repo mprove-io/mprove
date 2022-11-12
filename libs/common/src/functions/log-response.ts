@@ -1,3 +1,4 @@
+import { PinoLogger } from 'nestjs-pino';
 import { enums } from '~common/barrels/enums';
 import { MyResponse } from '~common/interfaces/_index';
 import { logToConsole } from './log-to-console';
@@ -9,6 +10,8 @@ export function logResponse(item: {
   logOnResponser: boolean;
   logIsColor: boolean;
   logIsStringify: boolean;
+  pinoLogger: PinoLogger;
+  logLevel: enums.LogLevelEnum;
 }) {
   let {
     response,
@@ -16,7 +19,9 @@ export function logResponse(item: {
     logResponseError,
     logOnResponser,
     logIsColor,
-    logIsStringify
+    logIsStringify,
+    pinoLogger,
+    logLevel
   } = item;
 
   let isLogOk =
@@ -32,7 +37,9 @@ export function logResponse(item: {
     logToConsole({
       log: part,
       logIsColor: logIsColor,
-      logIsStringify: logIsStringify
+      logIsStringify: logIsStringify,
+      pinoLogger: pinoLogger,
+      logLevel: logLevel
     });
   }
 }

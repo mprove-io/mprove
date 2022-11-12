@@ -1,6 +1,7 @@
 import { BigQuery } from '@google-cloud/bigquery';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PinoLogger } from 'nestjs-pino';
 import asyncPool from 'tiny-async-pool';
 import { DataSource, In } from 'typeorm';
 import { common } from '~backend/barrels/common';
@@ -18,7 +19,8 @@ export class QueriesService {
     private connectionsRepository: repositories.ConnectionsRepository,
     private dbService: DbService,
     private cs: ConfigService<interfaces.Config>,
-    private dataSource: DataSource
+    private dataSource: DataSource,
+    private pinoLogger: PinoLogger
   ) {}
 
   async getQueryCheckExists(item: { queryId: string }) {
@@ -194,11 +196,15 @@ WHERE m.mconfig_id is NULL
           }
         }
       } catch (e) {
-        let serverError = new common.ServerError({
-          message: common.ErEnum.BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERY,
-          originalError: e
+        logToConsoleBackend({
+          log: new common.ServerError({
+            message:
+              common.ErEnum.BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERY,
+            originalError: e
+          }),
+          logLevel: common.LogLevelEnum.Error,
+          pinoLogger: this.pinoLogger
         });
-        logToConsoleBackend(serverError);
       }
     });
   }

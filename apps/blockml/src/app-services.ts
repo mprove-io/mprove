@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { PinoLogger } from 'nestjs-pino';
 import { common } from './barrels/common';
 import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
@@ -39,10 +40,11 @@ export const appServices = [
     useFactory: (
       cs: ConfigService<interfaces.Config>,
       structService: RebuildStructService,
-      queryService: ProcessQueryService
+      queryService: ProcessQueryService,
+      pinoLogger: PinoLogger
     ) => {
       let result = helper.isSingleOrMain(cs)
-        ? new ConsumerMainService(cs, structService, queryService)
+        ? new ConsumerMainService(cs, structService, queryService, pinoLogger)
         : {};
       return result;
     },
@@ -52,12 +54,13 @@ export const appServices = [
     provide: ConsumerWorkerService,
     useFactory: (
       cs: ConfigService<interfaces.Config>,
-      genSqlService: GenSqlService
+      genSqlService: GenSqlService,
+      pinoLogger: PinoLogger
     ) => {
       let isWorker = cs.get<interfaces.Config['isWorker']>('isWorker');
 
       return isWorker === common.BoolEnum.TRUE
-        ? new ConsumerWorkerService(cs, genSqlService)
+        ? new ConsumerWorkerService(cs, genSqlService, pinoLogger)
         : {};
     },
     inject: [ConfigService, GenSqlService]

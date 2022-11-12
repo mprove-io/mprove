@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PinoLogger } from 'nestjs-pino';
 import * as snowflake from 'snowflake-sdk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
@@ -14,7 +15,8 @@ export class SnowFlakeService {
   constructor(
     private queriesRepository: repositories.QueriesRepository,
     private dbService: DbService,
-    private cs: ConfigService<interfaces.Config>
+    private cs: ConfigService<interfaces.Config>,
+    private pinoLogger: PinoLogger
   ) {}
 
   async runQuery(item: {
@@ -61,14 +63,18 @@ export class SnowFlakeService {
 
     let snowflakeConnection = snowflake.createConnection(options);
 
+    let pLogger = this.pinoLogger;
+
     snowflakeConnection.connect(function (err, conn): void {
       if (err) {
-        logToConsoleBackend(
-          new common.ServerError({
+        logToConsoleBackend({
+          log: new common.ServerError({
             message: common.ErEnum.BACKEND_SNOWFLAKE_FAILED_TO_CONNECT,
             originalError: err
-          })
-        );
+          }),
+          logLevel: common.LogLevelEnum.Error,
+          pinoLogger: pLogger
+        });
       }
     });
 
@@ -175,15 +181,19 @@ export class SnowFlakeService {
 
   snowflakeConnectionDestroy(snowflakeConnection: snowflake.Connection) {
     if (snowflakeConnection.isUp()) {
+      let pLogger = this.pinoLogger;
+
       snowflakeConnection.destroy(function (err, conn) {
         if (err) {
-          logToConsoleBackend(
-            new common.ServerError({
+          logToConsoleBackend({
+            log: new common.ServerError({
               message:
                 common.ErEnum.BACKEND_SNOWFLAKE_FAILED_TO_DESTROY_CONNECTION,
               originalError: err
-            })
-          );
+            }),
+            logLevel: common.LogLevelEnum.Error,
+            pinoLogger: pLogger
+          });
         }
       });
     }

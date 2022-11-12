@@ -1,6 +1,7 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as fse from 'fs-extra';
+import { LoggerModule, PinoLogger } from 'nestjs-pino';
 import { appServices } from '~blockml/app-services';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
@@ -30,6 +31,15 @@ export async function prepareTest(
       ConfigModule.forRoot({
         load: [getConfig],
         isGlobal: true
+      }),
+
+      LoggerModule.forRoot({
+        pinoHttp: {
+          transport:
+            process.env.DISK_LOG_IS_STRINGIFY === common.BoolEnum.FALSE
+              ? common.LOGGER_MODULE_TRANSPORT
+              : undefined
+        }
       })
     ],
     providers: appServices
@@ -45,12 +55,12 @@ export async function prepareTest(
     .compile();
 
   let structService = moduleRef.get<RebuildStructService>(RebuildStructService);
+  let pinoLogger = await moduleRef.resolve<PinoLogger>(PinoLogger);
 
   let cs = moduleRef.get<ConfigService<interfaces.Config>>(ConfigService);
   let logsPath = cs.get<interfaces.Config['logsPath']>('logsPath');
-  let copyLogsToModels = cs.get<interfaces.Config['copyLogsToModels']>(
-    'copyLogsToModels'
-  );
+  let copyLogsToModels =
+    cs.get<interfaces.Config['copyLogsToModels']>('copyLogsToModels');
 
   let funcArray = func.toString().split('/');
 
@@ -77,6 +87,7 @@ export async function prepareTest(
 
   return {
     structService: structService,
+    pinoLogger: pinoLogger,
     traceId: traceId,
     structId: structId,
     dataDir: dataDir,

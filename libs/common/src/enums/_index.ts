@@ -10,6 +10,7 @@ export * from './field-type.enum';
 export * from './file-extension.enum';
 export * from './fraction/_index';
 export * from './join-type.enum';
+export * from './log-level.enum';
 export * from './model-node-id-suffix.enum';
 export * from './model-node-label.enum';
 export * from './project-remote-type.enum';

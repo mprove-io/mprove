@@ -5,6 +5,7 @@ import {
   HttpStatus
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PinoLogger } from 'nestjs-pino';
 import { apiToBackend } from './barrels/api-to-backend';
 import { common } from './barrels/common';
 import { constants } from './barrels/constants';
@@ -19,7 +20,8 @@ import { makeErrorResponseBackend } from './functions/make-error-response-backen
 export class AppFilter implements ExceptionFilter {
   constructor(
     private cs: ConfigService<interfaces.Config>,
-    private idempsRepository: repositories.IdempsRepository
+    private idempsRepository: repositories.IdempsRepository,
+    private pinoLogger: PinoLogger
   ) {}
 
   async catch(exception: unknown, host: ArgumentsHost) {
@@ -50,7 +52,8 @@ export class AppFilter implements ExceptionFilter {
         request: request,
         duration: Date.now() - request.start_ts,
         skipLog: true,
-        cs: this.cs
+        cs: this.cs,
+        pinoLogger: this.pinoLogger
       });
 
       let iKey = req?.info?.idempotencyKey;
@@ -69,12 +72,14 @@ export class AppFilter implements ExceptionFilter {
 
           await this.idempsRepository.save(idempEntity);
         } catch (er) {
-          logToConsoleBackend(
-            new common.ServerError({
+          logToConsoleBackend({
+            log: new common.ServerError({
               message: common.ErEnum.BACKEND_APP_FILTER_SAVE_IDEMP_ERROR,
               originalError: er
-            })
-          );
+            }),
+            logLevel: common.LogLevelEnum.Error,
+            pinoLogger: this.pinoLogger
+          });
         }
       }
 
@@ -104,17 +109,21 @@ export class AppFilter implements ExceptionFilter {
           this.cs.get<interfaces.Config['backendLogIsStringify']>(
             'backendLogIsStringify'
           )
-        )
+        ),
+        logLevel: common.LogLevelEnum.Info,
+        pinoLogger: this.pinoLogger
       });
 
       response.status(HttpStatus.CREATED).json(resp);
     } catch (err) {
-      logToConsoleBackend(
-        new common.ServerError({
+      logToConsoleBackend({
+        log: new common.ServerError({
           message: common.ErEnum.BACKEND_APP_FILTER_ERROR,
           originalError: err
-        })
-      );
+        }),
+        logLevel: common.LogLevelEnum.Error,
+        pinoLogger: this.pinoLogger
+      });
     }
   }
 }

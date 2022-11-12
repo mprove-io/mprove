@@ -15,8 +15,11 @@ test('1', async t => {
   let resp1: apiToDisk.ToDiskIsProjectExistResponse;
   let resp2: apiToDisk.ToDiskIsProjectExistResponse;
 
+  let pLogger;
+
   try {
-    let { messageService } = await prepareTest(orgId);
+    let { messageService, pinoLogger } = await prepareTest(orgId);
+    pLogger = pinoLogger;
 
     let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
       info: {
@@ -71,7 +74,11 @@ test('1', async t => {
     resp1 = await messageService.processMessage(isProjectExistRequest_1);
     resp2 = await messageService.processMessage(isProjectExistRequest_2);
   } catch (e) {
-    logToConsoleDisk(e);
+    logToConsoleDisk({
+      log: e,
+      logLevel: common.LogLevelEnum.Error,
+      pinoLogger: pLogger
+    });
   }
 
   t.is(resp1.payload.isProjectExist, true);

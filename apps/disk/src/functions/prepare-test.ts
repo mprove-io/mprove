@@ -2,7 +2,9 @@ import { INestApplication } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as fse from 'fs-extra';
+import { Logger, LoggerModule, PinoLogger } from 'nestjs-pino';
 import { appServices } from '~disk/app-services';
+import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
 import { getConfig } from '~disk/config/get.config';
 import { ConsumerService } from '~disk/services/consumer.service';
@@ -21,6 +23,15 @@ export async function prepareTest(
       ConfigModule.forRoot({
         load: [getConfig],
         isGlobal: true
+      }),
+
+      LoggerModule.forRoot({
+        pinoHttp: {
+          transport:
+            process.env.DISK_LOG_IS_STRINGIFY === common.BoolEnum.FALSE
+              ? common.LOGGER_MODULE_TRANSPORT
+              : undefined
+        }
       })
     ],
     providers: appServices
@@ -32,6 +43,7 @@ export async function prepareTest(
     .compile();
 
   app = moduleRef.createNestApplication();
+  app.useLogger(app.get(Logger));
   await app.init();
 
   let cs = moduleRef.get<ConfigService<interfaces.Config>>(ConfigService);
@@ -48,8 +60,10 @@ export async function prepareTest(
   }
 
   let messageService = moduleRef.get<MessageService>(MessageService);
+  let pinoLogger = await moduleRef.resolve<PinoLogger>(PinoLogger);
 
   return {
-    messageService: messageService
+    messageService: messageService,
+    pinoLogger: pinoLogger
   };
 }

@@ -5,6 +5,7 @@ import {
   TransformValidationOptions
 } from 'class-transformer-validator';
 import { ValidationError } from 'class-validator';
+import { enums } from '~common/barrels/enums';
 import { ServerError } from '~common/models/server-error';
 import { BoolEnum } from '~common/_index';
 import { enumToBoolean } from './enum-to-boolean';
@@ -36,7 +37,9 @@ export function transformValidSync<T extends object>(item: {
         : true,
       logIsStringify: isDefined(item.logIsStringify)
         ? enumToBoolean(item.logIsStringify)
-        : false
+        : false,
+      pinoLogger: undefined,
+      logLevel: enums.LogLevelEnum.Error
     }); // default ExceptionHandler doesn't log error.data
 
     throw new ServerError({

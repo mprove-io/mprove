@@ -1,5 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PinoLogger } from 'nestjs-pino';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { interfaces } from '~disk/barrels/interfaces';
 import { makeErrorResponseDisk } from '~disk/functions/make-error-response-disk';
@@ -10,7 +11,8 @@ import { CreateDevRepoService } from './create-dev-repo.service';
 export class CreateDevRepoController {
   constructor(
     private cs: ConfigService<interfaces.Config>,
-    private createDevRepoService: CreateDevRepoService
+    private createDevRepoService: CreateDevRepoService,
+    private pinoLogger: PinoLogger
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo)
@@ -21,13 +23,15 @@ export class CreateDevRepoController {
       return makeOkResponseDisk({
         payload: payload,
         body: body,
-        cs: this.cs
+        cs: this.cs,
+        pinoLogger: this.pinoLogger
       });
     } catch (e) {
       return makeErrorResponseDisk({
         e: e,
         body: body,
-        cs: this.cs
+        cs: this.cs,
+        pinoLogger: this.pinoLogger
       });
     }
   }

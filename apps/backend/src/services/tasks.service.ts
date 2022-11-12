@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { PinoLogger } from 'nestjs-pino';
 import { LessThan } from 'typeorm';
 import { common } from '~backend/barrels/common';
 import { repositories } from '~backend/barrels/repositories';
@@ -18,7 +19,8 @@ export class TasksService {
     private cs: ConfigService,
     private queriesService: QueriesService,
     private structsService: StructsService,
-    private idempsRepository: repositories.IdempsRepository
+    private idempsRepository: repositories.IdempsRepository,
+    private pinoLogger: PinoLogger
   ) {}
 
   // // Called every 10 seconds
@@ -32,13 +34,15 @@ export class TasksService {
       this.isRunningLoopCheckQueries = true;
 
       await this.queriesService.checkBigqueryRunningQueries().catch(e => {
-        let serverError = new common.ServerError({
-          message:
-            common.ErEnum.BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERIES,
-          originalError: e
+        logToConsoleBackend({
+          log: new common.ServerError({
+            message:
+              common.ErEnum.BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERIES,
+            originalError: e
+          }),
+          logLevel: common.LogLevelEnum.Error,
+          pinoLogger: this.pinoLogger
         });
-
-        logToConsoleBackend(serverError);
       });
 
       this.isRunningLoopCheckQueries = false;
@@ -51,21 +55,25 @@ export class TasksService {
       this.isRunningLoopRemoveOrphans = true;
 
       await this.structsService.removeOrphanedStructs().catch(e => {
-        let serverError = new common.ServerError({
-          message: common.ErEnum.BACKEND_SCHEDULER_REMOVE_ORPHANED_STRUCTS,
-          originalError: e
+        logToConsoleBackend({
+          log: new common.ServerError({
+            message: common.ErEnum.BACKEND_SCHEDULER_REMOVE_ORPHANED_STRUCTS,
+            originalError: e
+          }),
+          logLevel: common.LogLevelEnum.Error,
+          pinoLogger: this.pinoLogger
         });
-
-        logToConsoleBackend(serverError);
       });
 
       await this.queriesService.removeOrphanedQueries().catch(e => {
-        let serverError = new common.ServerError({
-          message: common.ErEnum.BACKEND_SCHEDULER_REMOVE_ORPHANED_QUERIES,
-          originalError: e
+        logToConsoleBackend({
+          log: new common.ServerError({
+            message: common.ErEnum.BACKEND_SCHEDULER_REMOVE_ORPHANED_QUERIES,
+            originalError: e
+          }),
+          logLevel: common.LogLevelEnum.Error,
+          pinoLogger: this.pinoLogger
         });
-
-        logToConsoleBackend(serverError);
       });
 
       this.isRunningLoopRemoveOrphans = false;
@@ -83,12 +91,14 @@ export class TasksService {
       await this.idempsRepository
         .delete({ server_ts: LessThan(ts) })
         .catch(e => {
-          let serverError = new common.ServerError({
-            message: common.ErEnum.BACKEND_SCHEDULER_REMOVE_IDEMPS,
-            originalError: e
+          logToConsoleBackend({
+            log: new common.ServerError({
+              message: common.ErEnum.BACKEND_SCHEDULER_REMOVE_IDEMPS,
+              originalError: e
+            }),
+            logLevel: common.LogLevelEnum.Error,
+            pinoLogger: this.pinoLogger
           });
-
-          logToConsoleBackend(serverError);
         });
 
       this.isRunningLoopRemoveIdemps = false;

@@ -5,6 +5,7 @@ import {
   NestInterceptor
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PinoLogger } from 'nestjs-pino';
 import { Observable, of } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
 import { apiToBackend } from './barrels/api-to-backend';
@@ -24,7 +25,8 @@ let retry = require('async-retry');
 export class AppInterceptor implements NestInterceptor {
   constructor(
     private idempsRepository: repositories.IdempsRepository,
-    private cs: ConfigService<interfaces.Config>
+    private cs: ConfigService<interfaces.Config>,
+    private pinoLogger: PinoLogger
   ) {}
 
   async intercept(
@@ -89,11 +91,14 @@ export class AppInterceptor implements NestInterceptor {
             factor: 1, // (default 2)
             randomize: false, // 1 to 2 (default true)
             onRetry: (e: any) => {
-              let serverError = new common.ServerError({
-                message: common.ErEnum.BACKEND_GET_IDEMP_RESP_RETRY,
-                originalError: e
+              logToConsoleBackend({
+                log: new common.ServerError({
+                  message: common.ErEnum.BACKEND_GET_IDEMP_RESP_RETRY,
+                  originalError: e
+                }),
+                logLevel: common.LogLevelEnum.Error,
+                pinoLogger: this.pinoLogger
               });
-              logToConsoleBackend(serverError);
             }
           }
         );
@@ -108,7 +113,8 @@ export class AppInterceptor implements NestInterceptor {
           body: req,
           request: request,
           skipLog: true,
-          cs: this.cs
+          cs: this.cs,
+          pinoLogger: this.pinoLogger
         });
 
         let idempEntity: entities.IdempEntity = {
@@ -131,7 +137,8 @@ export class AppInterceptor implements NestInterceptor {
               request: request,
               body: req,
               skipLog: true,
-              cs: this.cs
+              cs: this.cs,
+              pinoLogger: this.pinoLogger
             });
 
             if (common.isDefined(iKey)) {
@@ -177,7 +184,9 @@ export class AppInterceptor implements NestInterceptor {
                 this.cs.get<interfaces.Config['backendLogIsStringify']>(
                   'backendLogIsStringify'
                 )
-              )
+              ),
+              logLevel: common.LogLevelEnum.Info,
+              pinoLogger: this.pinoLogger
             })
           )
         )
@@ -214,7 +223,9 @@ export class AppInterceptor implements NestInterceptor {
                 this.cs.get<interfaces.Config['backendLogIsStringify']>(
                   'backendLogIsStringify'
                 )
-              )
+              ),
+              logLevel: common.LogLevelEnum.Info,
+              pinoLogger: this.pinoLogger
             })
           )
         )
@@ -250,7 +261,9 @@ export class AppInterceptor implements NestInterceptor {
                 this.cs.get<interfaces.Config['backendLogIsStringify']>(
                   'backendLogIsStringify'
                 )
-              )
+              ),
+              logLevel: common.LogLevelEnum.Info,
+              pinoLogger: this.pinoLogger
             })
           )
         );

@@ -16,8 +16,11 @@ test('1', async t => {
   let resp2: apiToDisk.ToDiskGetFileResponse;
   let content1 = '1';
 
+  let pLogger;
+
   try {
-    let { messageService } = await prepareTest(orgId);
+    let { messageService, pinoLogger } = await prepareTest(orgId);
+    pLogger = pinoLogger;
 
     let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
       info: {
@@ -153,7 +156,11 @@ test('1', async t => {
 
     resp2 = await messageService.processMessage(getFileRequest);
   } catch (e) {
-    logToConsoleDisk(e);
+    logToConsoleDisk({
+      log: e,
+      logLevel: common.LogLevelEnum.Error,
+      pinoLogger: pLogger
+    });
   }
 
   t.is(resp1.payload.repo.repoStatus, common.RepoStatusEnum.Ok);

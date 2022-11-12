@@ -1,11 +1,13 @@
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { LoggerModule, PinoLogger } from 'nestjs-pino';
 import { appControllers } from './app-controllers';
 import { appServices } from './app-services';
 import { common } from './barrels/common';
 import { interfaces } from './barrels/interfaces';
 import { getConfig } from './config/get.config';
+import { logToConsoleBlockml } from './functions/log-to-console-blockml';
 
 @Module({
   imports: [
@@ -14,20 +16,25 @@ import { getConfig } from './config/get.config';
       isGlobal: true
     }),
 
+    LoggerModule.forRoot({
+      pinoHttp: {
+        transport:
+          process.env.BLOCKML_LOG_IS_STRINGIFY === common.BoolEnum.FALSE
+            ? common.LOGGER_MODULE_TRANSPORT
+            : undefined
+      }
+    }),
+
     RabbitMQModule.forRootAsync(RabbitMQModule, {
       useFactory: (cs: ConfigService<interfaces.Config>) => {
-        let rabbitUser = cs.get<interfaces.Config['blockmlRabbitUser']>(
-          'blockmlRabbitUser'
-        );
-        let rabbitPass = cs.get<interfaces.Config['blockmlRabbitPass']>(
-          'blockmlRabbitPass'
-        );
-        let rabbitPort = cs.get<interfaces.Config['blockmlRabbitPort']>(
-          'blockmlRabbitPort'
-        );
-        let rabbitHost = cs.get<interfaces.Config['blockmlRabbitHost']>(
-          'blockmlRabbitHost'
-        );
+        let rabbitUser =
+          cs.get<interfaces.Config['blockmlRabbitUser']>('blockmlRabbitUser');
+        let rabbitPass =
+          cs.get<interfaces.Config['blockmlRabbitPass']>('blockmlRabbitPass');
+        let rabbitPort =
+          cs.get<interfaces.Config['blockmlRabbitPort']>('blockmlRabbitPort');
+        let rabbitHost =
+          cs.get<interfaces.Config['blockmlRabbitHost']>('blockmlRabbitHost');
         let rabbitProtocol = cs.get<interfaces.Config['blockmlRabbitProtocol']>(
           'blockmlRabbitProtocol'
         );
@@ -62,4 +69,14 @@ import { getConfig } from './config/get.config';
   controllers: appControllers,
   providers: appServices
 })
-export class AppModule {}
+export class AppModule implements OnModuleInit {
+  constructor(private pinoLogger: PinoLogger) {}
+
+  async onModuleInit() {
+    logToConsoleBlockml({
+      log: `NODE_ENV is set to "${process.env.NODE_ENV}"`,
+      logLevel: common.LogLevelEnum.Info,
+      pinoLogger: this.pinoLogger
+    });
+  }
+}

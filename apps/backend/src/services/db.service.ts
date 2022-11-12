@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PinoLogger } from 'nestjs-pino';
 import { DataSource } from 'typeorm';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
@@ -13,7 +14,8 @@ let retry = require('async-retry');
 export class DbService {
   constructor(
     private dataSource: DataSource,
-    private cs: ConfigService<interfaces.Config>
+    private cs: ConfigService<interfaces.Config>,
+    private pinoLogger: PinoLogger
   ) {}
 
   async writeRecords(item: { records: interfaces.Records; modify: boolean }) {
@@ -32,11 +34,14 @@ export class DbService {
         factor: 1, // (default 2)
         randomize: true, // 1 to 2 (default true)
         onRetry: (e: any) => {
-          let serverError = new common.ServerError({
-            message: common.ErEnum.BACKEND_TRANSACTION_RETRY,
-            originalError: e
+          logToConsoleBackend({
+            log: new common.ServerError({
+              message: common.ErEnum.BACKEND_TRANSACTION_RETRY,
+              originalError: e
+            }),
+            logLevel: common.LogLevelEnum.Error,
+            pinoLogger: this.pinoLogger
           });
-          logToConsoleBackend(serverError);
         }
       }
     );

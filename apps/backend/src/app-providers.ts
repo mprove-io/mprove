@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { PinoLogger } from 'nestjs-pino';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { helper } from './barrels/helper';
@@ -61,10 +62,17 @@ export const appProviders = [
       cs: ConfigService<interfaces.Config>,
       queriesService: QueriesService,
       structsService: StructsService,
-      idempsRepository: repositories.IdempsRepository
+      idempsRepository: repositories.IdempsRepository,
+      pinoLogger: PinoLogger
     ) =>
       helper.isScheduler(cs)
-        ? new TasksService(cs, queriesService, structsService, idempsRepository)
+        ? new TasksService(
+            cs,
+            queriesService,
+            structsService,
+            idempsRepository,
+            pinoLogger
+          )
         : {},
     inject: [
       ConfigService,
