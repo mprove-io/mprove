@@ -13,9 +13,20 @@ let testId = 'v__files-length';
 test('1', async t => {
   let files: common.BmlFile[];
 
+  let pLogger;
+
   try {
-    let { structService, traceId, structId, dataDir, fromDir, toDir } =
-      await prepareTest(caller, func, testId);
+    let {
+      structService,
+      traceId,
+      structId,
+      dataDir,
+      fromDir,
+      toDir,
+      pinoLogger
+    } = await prepareTest(caller, func, testId);
+
+    pLogger = pinoLogger;
 
     await structService.rebuildStruct({
       traceId: traceId,
@@ -31,7 +42,11 @@ test('1', async t => {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {
-    logToConsoleBlockml(e);
+    logToConsoleBlockml({
+      log: e,
+      logLevel: common.LogLevelEnum.Error,
+      pinoLogger: pLogger
+    });
   }
 
   t.is(files.length, 7);

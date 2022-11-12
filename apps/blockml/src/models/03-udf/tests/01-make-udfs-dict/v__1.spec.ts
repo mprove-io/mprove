@@ -15,9 +15,20 @@ test('1', async t => {
   let errors: BmError[];
   let udfsDict;
 
+  let pLogger;
+
   try {
-    let { structService, traceId, structId, dataDir, fromDir, toDir } =
-      await prepareTest(caller, func, testId);
+    let {
+      structService,
+      traceId,
+      structId,
+      dataDir,
+      fromDir,
+      toDir,
+      pinoLogger
+    } = await prepareTest(caller, func, testId);
+
+    pLogger = pinoLogger;
 
     let connection: common.ProjectConnection = {
       connectionId: 'c1',
@@ -39,7 +50,11 @@ test('1', async t => {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {
-    logToConsoleBlockml(e);
+    logToConsoleBlockml({
+      log: e,
+      logLevel: common.LogLevelEnum.Error,
+      pinoLogger: pLogger
+    });
   }
 
   t.is(errors.length, 0);
