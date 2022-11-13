@@ -40,7 +40,7 @@ export function transformValidSync<T extends object>(item: {
         ? enumToBoolean(logIsStringify)
         : false,
       pinoLogger: pinoLogger,
-      logLevel: enums.LogLevelEnum.Error
+      logLevel: enums.LogLevelEnum.Warn
     }); // default ExceptionHandler doesn't log error.data
 
     throw new ServerError({

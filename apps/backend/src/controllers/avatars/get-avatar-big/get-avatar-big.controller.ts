@@ -1,28 +1,21 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class GetAvatarBigController {
   constructor(private avatarsRepository: repositories.AvatarsRepository) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig)
   async getAvatarBig(
-    @AttachUser() user: entities.UserEntity
-    // @ValidateRequest(apiToBackend.ToBackendGetAvatarBigRequest)
-    // reqValid: apiToBackend.ToBackendGetAvatarBigRequest
+    @AttachUser() user: entities.UserEntity,
+    @Req() request: any
   ) {
-    let reqValid = common.transformValidSync({
-      classType: apiToBlockml.ToBlockmlWorkerGenSqlRequest,
-      object: request,
-      errorMessage: common.ErEnum.BLOCKML_WORKER_WRONG_REQUEST_PARAMS,
-      logIsStringify: this.cs.get<interfaces.Config['blockmlLogIsStringify']>(
-        'blockmlLogIsStringify'
-      ),
-      pinoLogger: this.pinoLogger
-    });
+    let reqValid: apiToBackend.ToBackendGetAvatarBigRequest = request.body;
 
     let { avatarUserId } = reqValid.payload;
 

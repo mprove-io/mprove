@@ -1,12 +1,14 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { common } from '~api-to-backend/barrels/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { entities } from '~backend/barrels/entities';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DbService } from '~backend/services/db.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class SetAvatarController {
   constructor(
@@ -17,9 +19,10 @@ export class SetAvatarController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetAvatar)
   async setAvatar(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendSetAvatarRequest)
-    reqValid: apiToBackend.ToBackendSetAvatarRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendSetAvatarRequest = request.body;
+
     if (user.alias === common.RESTRICTED_USER_ALIAS) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_RESTRICTED_USER
