@@ -34,14 +34,22 @@ export function transformValidSync<T extends object>(item: {
       constraints = getConstraintsRecursive(e);
     }
 
-    logToConsole({
-      log: constraints,
-      logIsStringify: isDefined(logIsStringify)
-        ? enumToBoolean(logIsStringify)
-        : false,
-      pinoLogger: pinoLogger,
-      logLevel: enums.LogLevelEnum.Warn
-    }); // default ExceptionHandler doesn't log error.data
+    if (
+      [
+        enums.ErEnum.BACKEND_WRONG_ENV_VALUES,
+        enums.ErEnum.BLOCKML_WRONG_ENV_VALUES,
+        enums.ErEnum.DISK_WRONG_ENV_VALUES
+      ].indexOf(errorMessage) > -1
+    ) {
+      logToConsole({
+        log: constraints,
+        logIsStringify: isDefined(logIsStringify)
+          ? enumToBoolean(logIsStringify)
+          : false,
+        pinoLogger: pinoLogger,
+        logLevel: enums.LogLevelEnum.Fatal
+      });
+    }
 
     throw new ServerError({
       message: errorMessage,
