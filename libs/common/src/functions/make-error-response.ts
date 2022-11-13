@@ -14,7 +14,6 @@ export function makeErrorResponse(item: {
   skipLog?: boolean;
   logResponseError: boolean;
   logOnResponser: boolean;
-  logIsColor: boolean;
   logIsStringify: boolean;
   pinoLogger: PinoLogger;
 }) {
@@ -28,7 +27,6 @@ export function makeErrorResponse(item: {
     skipLog,
     logResponseError,
     logOnResponser,
-    logIsColor,
     logIsStringify,
     pinoLogger
   } = item;
@@ -53,10 +51,9 @@ export function makeErrorResponse(item: {
     let part = Object.assign({}, response, { payload: undefined });
     logToConsole({
       log: part,
-      logIsColor: logIsColor,
+      logLevel: enums.LogLevelEnum.Error,
       logIsStringify: logIsStringify,
-      pinoLogger: pinoLogger,
-      logLevel: enums.LogLevelEnum.Error
+      pinoLogger: pinoLogger
     });
   }
 

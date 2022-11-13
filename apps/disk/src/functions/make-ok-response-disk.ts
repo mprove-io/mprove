@@ -40,9 +40,6 @@ export function makeOkResponseDisk(item: {
     logOnResponser: common.enumToBoolean(
       cs.get<interfaces.Config['diskLogOnResponser']>('diskLogOnResponser')
     ),
-    logIsColor: common.enumToBoolean(
-      cs.get<interfaces.Config['diskLogIsColor']>('diskLogIsColor')
-    ),
     logIsStringify: common.enumToBoolean(
       cs.get<interfaces.Config['diskLogIsStringify']>('diskLogIsStringify')
     ),

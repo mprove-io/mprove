@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PinoLogger } from 'nestjs-pino';
 import * as nodegit from 'nodegit';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
@@ -10,7 +11,10 @@ import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 
 @Injectable()
 export class CreateDevRepoService {
-  constructor(private cs: ConfigService<interfaces.Config>) {}
+  constructor(
+    private cs: ConfigService<interfaces.Config>,
+    private pinoLogger: PinoLogger
+  ) {}
 
   async process(request: any) {
     let orgPath = this.cs.get<interfaces.Config['diskOrganizationsPath']>(
@@ -21,12 +25,11 @@ export class CreateDevRepoService {
       classType: apiToDisk.ToDiskCreateDevRepoRequest,
       object: request,
       errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsColor:
-        this.cs.get<interfaces.Config['diskLogIsColor']>('diskLogIsColor'),
       logIsStringify:
         this.cs.get<interfaces.Config['diskLogIsStringify']>(
           'diskLogIsStringify'
-        )
+        ),
+      pinoLogger: this.pinoLogger
     });
 
     let {

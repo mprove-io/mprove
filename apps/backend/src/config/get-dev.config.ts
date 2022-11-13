@@ -180,8 +180,8 @@ export function getDevConfig(envFilePath: any) {
       (process.env.BACKEND_LOG_IS_STRINGIFY || envFile.BACKEND_LOG_IS_STRINGIFY)
     ),
 
-    backendLogIsColor: <common.BoolEnum>(
-      (process.env.BACKEND_LOG_IS_COLOR || envFile.BACKEND_LOG_IS_COLOR)
+    backendLogResAuto: <common.BoolEnum>(
+      (process.env.BACKEND_LOG_RES_AUTO || envFile.BACKEND_LOG_RES_AUTO)
     ),
 
     backendLogResponseError: <common.BoolEnum>(

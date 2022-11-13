@@ -9,6 +9,8 @@ import { interfaces } from './barrels/interfaces';
 import { getConfig } from './config/get.config';
 import { logToConsoleBlockml } from './functions/log-to-console-blockml';
 
+let config = getConfig();
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -18,8 +20,9 @@ import { logToConsoleBlockml } from './functions/log-to-console-blockml';
 
     LoggerModule.forRoot({
       pinoHttp: {
+        autoLogging: false,
         transport:
-          process.env.BLOCKML_LOG_IS_STRINGIFY === common.BoolEnum.FALSE
+          config.blockmlLogIsStringify === common.BoolEnum.FALSE
             ? common.LOGGER_MODULE_TRANSPORT
             : undefined
       }

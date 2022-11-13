@@ -175,11 +175,6 @@ export class AppInterceptor implements NestInterceptor {
                   'backendLogOnResponser'
                 )
               ),
-              logIsColor: common.enumToBoolean(
-                this.cs.get<interfaces.Config['backendLogIsColor']>(
-                  'backendLogIsColor'
-                )
-              ),
               logIsStringify: common.enumToBoolean(
                 this.cs.get<interfaces.Config['backendLogIsStringify']>(
                   'backendLogIsStringify'
@@ -214,11 +209,6 @@ export class AppInterceptor implements NestInterceptor {
                   'backendLogOnResponser'
                 )
               ),
-              logIsColor: common.enumToBoolean(
-                this.cs.get<interfaces.Config['backendLogIsColor']>(
-                  'backendLogIsColor'
-                )
-              ),
               logIsStringify: common.enumToBoolean(
                 this.cs.get<interfaces.Config['backendLogIsStringify']>(
                   'backendLogIsStringify'
@@ -250,11 +240,6 @@ export class AppInterceptor implements NestInterceptor {
               logOnResponser: common.enumToBoolean(
                 this.cs.get<interfaces.Config['backendLogOnResponser']>(
                   'backendLogOnResponser'
-                )
-              ),
-              logIsColor: common.enumToBoolean(
-                this.cs.get<interfaces.Config['backendLogIsColor']>(
-                  'backendLogIsColor'
                 )
               ),
               logIsStringify: common.enumToBoolean(

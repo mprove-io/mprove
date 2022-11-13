@@ -20,8 +20,8 @@ export function getConfig() {
     classType: interfaces.Config,
     object: config,
     errorMessage: common.ErEnum.DISK_WRONG_ENV_VALUES,
-    logIsColor: config.diskLogIsColor,
-    logIsStringify: config.diskLogIsStringify
+    logIsStringify: config.diskLogIsStringify,
+    pinoLogger: undefined
   });
 
   return validatedConfig;

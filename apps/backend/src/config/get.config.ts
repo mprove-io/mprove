@@ -20,8 +20,8 @@ export function getConfig() {
     classType: interfaces.Config,
     object: config,
     errorMessage: common.ErEnum.BACKEND_WRONG_ENV_VALUES,
-    logIsColor: config.backendLogIsColor,
-    logIsStringify: config.backendLogIsStringify
+    logIsStringify: config.backendLogIsStringify,
+    pinoLogger: undefined
   });
 
   return validatedConfig;

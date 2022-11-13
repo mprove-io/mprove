@@ -1,6 +1,6 @@
 import { PinoLogger } from 'nestjs-pino';
 import { common } from '~backend/barrels/common';
-import { getLogOptionsBackend } from './get-log-options-backend';
+import { getConfig } from '~backend/config/get.config';
 
 export function logToConsoleBackend(item: {
   log: any;
@@ -8,12 +8,12 @@ export function logToConsoleBackend(item: {
   logLevel: common.LogLevelEnum;
 }) {
   let { log, pinoLogger, logLevel } = item;
-  let { logIsColor, logIsStringify } = getLogOptionsBackend();
+
+  let config = getConfig();
 
   common.logToConsole({
     log: log,
-    logIsColor: common.enumToBoolean(logIsColor),
-    logIsStringify: common.enumToBoolean(logIsStringify),
+    logIsStringify: common.enumToBoolean(config.backendLogIsStringify),
     pinoLogger: pinoLogger,
     logLevel: logLevel
   });

@@ -9,6 +9,8 @@ import { interfaces } from './barrels/interfaces';
 import { getConfig } from './config/get.config';
 import { logToConsoleDisk } from './functions/log-to-console-disk';
 
+let config = getConfig();
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -18,8 +20,9 @@ import { logToConsoleDisk } from './functions/log-to-console-disk';
 
     LoggerModule.forRoot({
       pinoHttp: {
+        autoLogging: false,
         transport:
-          process.env.DISK_LOG_IS_STRINGIFY === common.BoolEnum.FALSE
+          config.diskLogIsStringify === common.BoolEnum.FALSE
             ? common.LOGGER_MODULE_TRANSPORT
             : undefined
       }

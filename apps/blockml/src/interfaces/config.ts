@@ -49,9 +49,6 @@ export class Config {
   blockmlLogIsStringify?: common.BoolEnum;
 
   @IsEnum(common.BoolEnum)
-  blockmlLogIsColor?: common.BoolEnum;
-
-  @IsEnum(common.BoolEnum)
   blockmlLogResponseError?: common.BoolEnum;
 
   @IsEnum(common.BoolEnum)

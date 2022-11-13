@@ -27,9 +27,6 @@ export function getDevConfig(envFilePath: any) {
     diskLogIsStringify: <common.BoolEnum>(
       (process.env.DISK_LOG_IS_STRINGIFY || envFile.DISK_LOG_IS_STRINGIFY)
     ),
-    diskLogIsColor: <common.BoolEnum>(
-      (process.env.DISK_LOG_IS_COLOR || envFile.DISK_LOG_IS_COLOR)
-    ),
     diskLogResponseError: <common.BoolEnum>(
       (process.env.DISK_LOG_RESPONSE_ERROR || envFile.DISK_LOG_RESPONSE_ERROR)
     ),

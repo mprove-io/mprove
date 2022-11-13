@@ -13,7 +13,6 @@ export function makeOkResponse(item: {
   skipLog?: boolean;
   logResponseOk: boolean;
   logOnResponser: boolean;
-  logIsColor: boolean;
   logIsStringify: boolean;
   pinoLogger: PinoLogger;
 }) {
@@ -27,7 +26,6 @@ export function makeOkResponse(item: {
     skipLog,
     logResponseOk,
     logOnResponser,
-    logIsColor,
     logIsStringify,
     pinoLogger
   } = item;
@@ -47,10 +45,9 @@ export function makeOkResponse(item: {
     let part = Object.assign({}, response, { payload: undefined });
     logToConsole({
       log: part,
-      logIsColor: logIsColor,
+      logLevel: enums.LogLevelEnum.Info,
       logIsStringify: logIsStringify,
-      pinoLogger: pinoLogger,
-      logLevel: enums.LogLevelEnum.Info
+      pinoLogger: pinoLogger
     });
   }
 

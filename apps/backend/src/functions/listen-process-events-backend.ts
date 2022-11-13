@@ -7,7 +7,12 @@ export function listenProcessEventsBackend() {
   signalsNames.forEach(signalName =>
     process.on(signalName, signal => {
       logToConsoleBackend({
-        log: `Received signal: ${signal}, application terminated`,
+        log: new common.ServerError({
+          message: common.ErEnum.BACKEND_APP_TERMINATED,
+          data: {
+            signal: signal
+          }
+        }),
         pinoLogger: undefined,
         logLevel: common.LogLevelEnum.Fatal
       });
@@ -16,12 +21,10 @@ export function listenProcessEventsBackend() {
   );
   process.on('uncaughtException', e => {
     logToConsoleBackend({
-      log: common.wrapError(
-        new common.ServerError({
-          message: common.ErEnum.BACKEND_UNCAUGHT_EXCEPTION,
-          originalError: e
-        })
-      ),
+      log: new common.ServerError({
+        message: common.ErEnum.BACKEND_UNCAUGHT_EXCEPTION,
+        originalError: e
+      }),
       pinoLogger: undefined,
       logLevel: common.LogLevelEnum.Fatal
     });
@@ -29,28 +32,24 @@ export function listenProcessEventsBackend() {
   });
   process.on('unhandledRejection', (reason, promise) => {
     logToConsoleBackend({
-      log: common.wrapError(
-        new common.ServerError({
-          message: common.ErEnum.BACKEND_UNHANDLED_REJECTION_REASON,
-          data: {
-            reason: reason
-          }
-        })
-      ),
+      log: new common.ServerError({
+        message: common.ErEnum.BACKEND_UNHANDLED_REJECTION_REASON,
+        data: {
+          reason: reason
+        }
+      }),
       logLevel: common.LogLevelEnum.Fatal,
       pinoLogger: undefined
     });
     promise.catch(e => {
       logToConsoleBackend({
-        log: common.wrapError(
-          new common.ServerError({
-            message: common.ErEnum.BACKEND_UNHANDLED_REJECTION_ERROR,
-            originalError: e,
-            data: {
-              reason: reason
-            }
-          })
-        ),
+        log: new common.ServerError({
+          message: common.ErEnum.BACKEND_UNHANDLED_REJECTION_ERROR,
+          originalError: e,
+          data: {
+            reason: reason
+          }
+        }),
         logLevel: common.LogLevelEnum.Fatal,
         pinoLogger: undefined
       });

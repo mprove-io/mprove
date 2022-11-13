@@ -7,7 +7,12 @@ export function listenProcessEventsBlockml() {
   signalsNames.forEach(signalName =>
     process.on(signalName, signal => {
       logToConsoleBlockml({
-        log: `Received signal: ${signal}, application terminated`,
+        log: new common.ServerError({
+          message: common.ErEnum.BLOCKML_APP_TERMINATED,
+          data: {
+            signal: signal
+          }
+        }),
         pinoLogger: undefined,
         logLevel: common.LogLevelEnum.Fatal
       });
@@ -16,12 +21,10 @@ export function listenProcessEventsBlockml() {
   );
   process.on('uncaughtException', e => {
     logToConsoleBlockml({
-      log: common.wrapError(
-        new common.ServerError({
-          message: common.ErEnum.BLOCKML_UNCAUGHT_EXCEPTION,
-          originalError: e
-        })
-      ),
+      log: new common.ServerError({
+        message: common.ErEnum.BLOCKML_UNCAUGHT_EXCEPTION,
+        originalError: e
+      }),
       pinoLogger: undefined,
       logLevel: common.LogLevelEnum.Fatal
     });
@@ -29,28 +32,24 @@ export function listenProcessEventsBlockml() {
   });
   process.on('unhandledRejection', (reason, promise) => {
     logToConsoleBlockml({
-      log: common.wrapError(
-        new common.ServerError({
-          message: common.ErEnum.BLOCKML_UNHANDLED_REJECTION_REASON,
-          data: {
-            reason: reason
-          }
-        })
-      ),
+      log: new common.ServerError({
+        message: common.ErEnum.BLOCKML_UNHANDLED_REJECTION_REASON,
+        data: {
+          reason: reason
+        }
+      }),
       logLevel: common.LogLevelEnum.Fatal,
       pinoLogger: undefined
     });
     promise.catch(e => {
       logToConsoleBlockml({
-        log: common.wrapError(
-          new common.ServerError({
-            message: common.ErEnum.BLOCKML_UNHANDLED_REJECTION_ERROR,
-            originalError: e,
-            data: {
-              reason: reason
-            }
-          })
-        ),
+        log: new common.ServerError({
+          message: common.ErEnum.BLOCKML_UNHANDLED_REJECTION_ERROR,
+          originalError: e,
+          data: {
+            reason: reason
+          }
+        }),
         logLevel: common.LogLevelEnum.Fatal,
         pinoLogger: undefined
       });

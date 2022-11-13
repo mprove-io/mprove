@@ -32,17 +32,18 @@ import { OrgsService } from './services/orgs.service';
 import { ProjectsService } from './services/projects.service';
 import { UsersService } from './services/users.service';
 
-let retry = require('async-retry');
-
 let configModule = ConfigModule.forRoot({
   load: [getConfig],
   isGlobal: true
 });
 
+let config = getConfig();
+
 let loggerModule = LoggerModule.forRoot({
   pinoHttp: {
+    autoLogging: common.enumToBoolean(config.backendLogResAuto),
     transport:
-      process.env.BACKEND_LOG_IS_STRINGIFY === common.BoolEnum.FALSE
+      config.backendLogIsStringify === common.BoolEnum.FALSE
         ? common.LOGGER_MODULE_TRANSPORT
         : undefined
   }
@@ -551,6 +552,7 @@ export class AppModule implements OnModuleInit {
         pinoLogger: undefined,
         logLevel: common.LogLevelEnum.Fatal
       });
+
       process.exit(1);
     }
   }

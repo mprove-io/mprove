@@ -42,9 +42,6 @@ export function makeOkResponseBackend(item: {
         'backendLogOnResponser'
       )
     ),
-    logIsColor: common.enumToBoolean(
-      cs.get<interfaces.Config['backendLogIsColor']>('backendLogIsColor')
-    ),
     logIsStringify: common.enumToBoolean(
       cs.get<interfaces.Config['backendLogIsStringify']>(
         'backendLogIsStringify'

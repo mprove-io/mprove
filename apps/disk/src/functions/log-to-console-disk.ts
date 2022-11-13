@@ -1,6 +1,6 @@
 import { PinoLogger } from 'nestjs-pino';
 import { common } from '~disk/barrels/common';
-import { getLogOptionsDisk } from './get-log-options-disk';
+import { getConfig } from '~disk/config/get.config';
 
 export function logToConsoleDisk(item: {
   log: any;
@@ -8,12 +8,12 @@ export function logToConsoleDisk(item: {
   logLevel: common.LogLevelEnum;
 }) {
   let { log, pinoLogger, logLevel } = item;
-  let { logIsColor, logIsStringify } = getLogOptionsDisk();
+
+  let config = getConfig();
 
   common.logToConsole({
     log: log,
-    logIsColor: common.enumToBoolean(logIsColor),
-    logIsStringify: common.enumToBoolean(logIsStringify),
+    logIsStringify: common.enumToBoolean(config.diskLogIsStringify),
     pinoLogger: pinoLogger,
     logLevel: logLevel
   });

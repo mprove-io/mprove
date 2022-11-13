@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PinoLogger } from 'nestjs-pino';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barSpecial } from '~blockml/barrels/bar-special';
 import { common } from '~blockml/barrels/common';
@@ -11,7 +12,8 @@ import { RabbitService } from '~blockml/services/rabbit.service';
 export class ProcessQueryService {
   constructor(
     private rabbitService: RabbitService,
-    private cs: ConfigService<interfaces.Config>
+    private cs: ConfigService<interfaces.Config>,
+    private pinoLogger: PinoLogger
   ) {}
 
   async process(request: any) {
@@ -28,13 +30,10 @@ export class ProcessQueryService {
       classType: apiToBlockml.ToBlockmlProcessQueryRequest,
       object: request,
       errorMessage: common.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS,
-      logIsColor:
-        this.cs.get<interfaces.Config['blockmlLogIsColor']>(
-          'blockmlLogIsColor'
-        ),
       logIsStringify: this.cs.get<interfaces.Config['blockmlLogIsStringify']>(
         'blockmlLogIsStringify'
-      )
+      ),
+      pinoLogger: this.pinoLogger
     });
 
     let {

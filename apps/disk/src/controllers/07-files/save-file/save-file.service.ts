@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PinoLogger } from 'nestjs-pino';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
@@ -9,19 +10,21 @@ import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 
 @Injectable()
 export class SaveFileService {
-  constructor(private cs: ConfigService<interfaces.Config>) {}
+  constructor(
+    private cs: ConfigService<interfaces.Config>,
+    private pinoLogger: PinoLogger
+  ) {}
 
   async process(request: any) {
     let requestValid = common.transformValidSync({
       classType: apiToDisk.ToDiskSaveFileRequest,
       object: request,
       errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsColor:
-        this.cs.get<interfaces.Config['diskLogIsColor']>('diskLogIsColor'),
       logIsStringify:
         this.cs.get<interfaces.Config['diskLogIsStringify']>(
           'diskLogIsStringify'
-        )
+        ),
+      pinoLogger: this.pinoLogger
     });
 
     let {

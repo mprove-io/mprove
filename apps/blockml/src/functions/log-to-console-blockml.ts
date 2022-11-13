@@ -1,6 +1,6 @@
 import { PinoLogger } from 'nestjs-pino';
 import { common } from '~blockml/barrels/common';
-import { getLogOptionsBlockml } from './get-log-options-blockml';
+import { getConfig } from '~blockml/config/get.config';
 
 export function logToConsoleBlockml(item: {
   log: any;
@@ -8,12 +8,12 @@ export function logToConsoleBlockml(item: {
   logLevel: common.LogLevelEnum;
 }) {
   let { log, pinoLogger, logLevel } = item;
-  let { logIsColor, logIsStringify } = getLogOptionsBlockml();
+
+  let config = getConfig();
 
   common.logToConsole({
     log: log,
-    logIsColor: common.enumToBoolean(logIsColor),
-    logIsStringify: common.enumToBoolean(logIsStringify),
+    logIsStringify: common.enumToBoolean(config.blockmlLogIsStringify),
     pinoLogger: pinoLogger,
     logLevel: logLevel
   });

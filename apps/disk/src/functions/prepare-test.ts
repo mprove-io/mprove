@@ -27,8 +27,9 @@ export async function prepareTest(
 
       LoggerModule.forRoot({
         pinoHttp: {
+          autoLogging: false,
           transport:
-            process.env.DISK_LOG_IS_STRINGIFY === common.BoolEnum.FALSE
+            mockConfig.diskLogIsStringify === common.BoolEnum.FALSE
               ? common.LOGGER_MODULE_TRANSPORT
               : undefined
         }

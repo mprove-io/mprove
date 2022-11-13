@@ -55,9 +55,6 @@ export function getDevConfig(envFilePath: any) {
     blockmlLogIsStringify: <common.BoolEnum>(
       (process.env.BLOCKML_LOG_IS_STRINGIFY || envFile.BLOCKML_LOG_IS_STRINGIFY)
     ),
-    blockmlLogIsColor: <common.BoolEnum>(
-      (process.env.BLOCKML_LOG_IS_COLOR || envFile.BLOCKML_LOG_IS_COLOR)
-    ),
     blockmlLogResponseError: <common.BoolEnum>(
       (process.env.BLOCKML_LOG_RESPONSE_ERROR ||
         envFile.BLOCKML_LOG_RESPONSE_ERROR)

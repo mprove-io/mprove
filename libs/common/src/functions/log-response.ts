@@ -8,7 +8,6 @@ export function logResponse(item: {
   logResponseOk: boolean;
   logResponseError: boolean;
   logOnResponser: boolean;
-  logIsColor: boolean;
   logIsStringify: boolean;
   pinoLogger: PinoLogger;
   logLevel: enums.LogLevelEnum;
@@ -18,7 +17,6 @@ export function logResponse(item: {
     logResponseOk,
     logResponseError,
     logOnResponser,
-    logIsColor,
     logIsStringify,
     pinoLogger,
     logLevel
@@ -36,7 +34,6 @@ export function logResponse(item: {
     let part = Object.assign({}, response, { payload: undefined });
     logToConsole({
       log: part,
-      logIsColor: logIsColor,
       logIsStringify: logIsStringify,
       pinoLogger: pinoLogger,
       logLevel: logLevel

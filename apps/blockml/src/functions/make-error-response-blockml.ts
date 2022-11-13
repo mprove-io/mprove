@@ -35,9 +35,6 @@ export function makeErrorResponseBlockml(item: {
         'blockmlLogOnResponser'
       )
     ),
-    logIsColor: common.enumToBoolean(
-      cs.get<interfaces.Config['blockmlLogIsColor']>('blockmlLogIsColor')
-    ),
     logIsStringify: common.enumToBoolean(
       cs.get<interfaces.Config['blockmlLogIsStringify']>(
         'blockmlLogIsStringify'

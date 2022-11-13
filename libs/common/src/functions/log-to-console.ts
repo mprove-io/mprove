@@ -7,10 +7,9 @@ export function logToConsole(item: {
   log: any;
   logLevel: enums.LogLevelEnum;
   pinoLogger: PinoLogger;
-  logIsColor: boolean;
   logIsStringify: boolean;
 }) {
-  let { log, logIsColor, logIsStringify, pinoLogger, logLevel } = item;
+  let { log, logIsStringify, pinoLogger, logLevel } = item;
 
   if (isDefined(pinoLogger)) {
     if (logLevel === enums.LogLevelEnum.Fatal) {
@@ -25,12 +24,11 @@ export function logToConsole(item: {
   } else if (logIsStringify === true) {
     console.log(JSON.stringify(log));
   } else {
-    // let lg = util.inspect(message, false, null, isColor);
     console.log(
       util.inspect(log, {
         showHidden: false,
         depth: null,
-        colors: logIsColor,
+        colors: true,
         breakLength: Infinity,
         compact: false
       })

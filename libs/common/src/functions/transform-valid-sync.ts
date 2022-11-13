@@ -5,6 +5,7 @@ import {
   TransformValidationOptions
 } from 'class-transformer-validator';
 import { ValidationError } from 'class-validator';
+import { PinoLogger } from 'nestjs-pino';
 import { enums } from '~common/barrels/enums';
 import { ServerError } from '~common/models/server-error';
 import { BoolEnum } from '~common/_index';
@@ -17,12 +18,15 @@ export function transformValidSync<T extends object>(item: {
   object: object;
   options?: TransformValidationOptions;
   errorMessage: any;
-  logIsColor: BoolEnum;
   logIsStringify: BoolEnum;
+  pinoLogger: PinoLogger;
 }) {
+  let { classType, object, options, errorMessage, logIsStringify, pinoLogger } =
+    item;
+
   let valid: T;
   try {
-    valid = transformAndValidateSync(item.classType, item.object, item.options);
+    valid = transformAndValidateSync(classType, object, options);
   } catch (e) {
     let constraints;
 
@@ -32,18 +36,15 @@ export function transformValidSync<T extends object>(item: {
 
     logToConsole({
       log: constraints,
-      logIsColor: isDefined(item.logIsColor)
-        ? enumToBoolean(item.logIsColor)
-        : true,
-      logIsStringify: isDefined(item.logIsStringify)
-        ? enumToBoolean(item.logIsStringify)
+      logIsStringify: isDefined(logIsStringify)
+        ? enumToBoolean(logIsStringify)
         : false,
-      pinoLogger: undefined,
+      pinoLogger: pinoLogger,
       logLevel: enums.LogLevelEnum.Error
     }); // default ExceptionHandler doesn't log error.data
 
     throw new ServerError({
-      message: item.errorMessage,
+      message: errorMessage,
       data: constraints,
       originalError: null
     });

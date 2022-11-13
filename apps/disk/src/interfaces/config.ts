@@ -28,9 +28,6 @@ export class Config {
   diskLogIsStringify?: common.BoolEnum;
 
   @IsEnum(common.BoolEnum)
-  diskLogIsColor?: common.BoolEnum;
-
-  @IsEnum(common.BoolEnum)
   diskLogResponseError?: common.BoolEnum;
 
   @IsEnum(common.BoolEnum)

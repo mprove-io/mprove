@@ -20,8 +20,8 @@ export function getConfig() {
     classType: interfaces.Config,
     object: config,
     errorMessage: common.ErEnum.BLOCKML_WRONG_ENV_VALUES,
-    logIsColor: config.blockmlLogIsColor,
-    logIsStringify: config.blockmlLogIsStringify
+    logIsStringify: config.blockmlLogIsStringify,
+    pinoLogger: undefined
   });
 
   return validatedConfig;
