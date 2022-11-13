@@ -17,10 +17,11 @@ export const appServices = [
     provide: RebuildStructService,
     useFactory: (
       cs: ConfigService<interfaces.Config>,
-      rabbitService: RabbitService
+      rabbitService: RabbitService,
+      pinoLogger: PinoLogger
     ) =>
       helper.isSingleOrMain(cs)
-        ? new RebuildStructService(rabbitService, cs)
+        ? new RebuildStructService(rabbitService, cs, pinoLogger)
         : {},
     inject: [ConfigService, RabbitService]
   },
@@ -28,10 +29,11 @@ export const appServices = [
     provide: ProcessQueryService,
     useFactory: (
       cs: ConfigService<interfaces.Config>,
-      rabbitService: RabbitService
+      rabbitService: RabbitService,
+      pinoLogger: PinoLogger
     ) =>
       helper.isSingleOrMain(cs)
-        ? new ProcessQueryService(rabbitService, cs)
+        ? new ProcessQueryService(rabbitService, cs, pinoLogger)
         : {},
     inject: [ConfigService, RabbitService]
   },
