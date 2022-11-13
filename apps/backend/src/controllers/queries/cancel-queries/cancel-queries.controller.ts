@@ -1,5 +1,5 @@
 import { BigQuery } from '@google-cloud/bigquery';
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { PinoLogger } from 'nestjs-pino';
 import asyncPool from 'tiny-async-pool';
 import { In } from 'typeorm';
@@ -9,11 +9,13 @@ import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class CancelQueriesController {
   constructor(
@@ -27,9 +29,10 @@ export class CancelQueriesController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries)
   async cancelQueries(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendCancelQueriesRequest)
-    reqValid: apiToBackend.ToBackendCancelQueriesRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendCancelQueriesRequest = request.body;
+
     let { queryIds } = reqValid.payload;
 
     let queries =

@@ -1,5 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
@@ -10,7 +10,8 @@ import { interfaces } from '~backend/barrels/interfaces';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -18,6 +19,7 @@ import { RabbitService } from '~backend/services/rabbit.service';
 import { UsersService } from '~backend/services/users.service';
 import { constants } from '~common/barrels/constants';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class CreateMemberController {
   constructor(
@@ -37,9 +39,10 @@ export class CreateMemberController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateMember)
   async createMember(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendCreateMemberRequest)
-    reqValid: apiToBackend.ToBackendCreateMemberRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendCreateMemberRequest = request.body;
+
     let { traceId } = reqValid.info;
     let { projectId, email } = reqValid.payload;
 

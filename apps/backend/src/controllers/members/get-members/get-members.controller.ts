@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
@@ -7,10 +7,12 @@ import { entities } from '~backend/barrels/entities';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class GetMembersController {
   constructor(
@@ -24,9 +26,10 @@ export class GetMembersController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMembers)
   async getMembers(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendGetMembersRequest)
-    reqValid: apiToBackend.ToBackendGetMembersRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendGetMembersRequest = request.body;
+
     let { projectId, perPage, pageNum } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
@@ -38,9 +41,8 @@ export class GetMembersController {
       projectId: projectId
     });
 
-    let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
-      'firstProjectId'
-    );
+    let firstProjectId =
+      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
     if (
       userMember.is_admin === common.BoolEnum.FALSE &&

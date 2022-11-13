@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
@@ -7,7 +7,8 @@ import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { DbService } from '~backend/services/db.service';
@@ -17,6 +18,7 @@ import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class RevertRepoToLastCommitController {
   constructor(
@@ -36,9 +38,11 @@ export class RevertRepoToLastCommitController {
   )
   async revertRepoToLastCommit(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendRevertRepoToLastCommitRequest)
-    reqValid: apiToBackend.ToBackendRevertRepoToLastCommitRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendRevertRepoToLastCommitRequest =
+      request.body;
+
     let { traceId } = reqValid.info;
     let { projectId, branchId, envId } = reqValid.payload;
 
@@ -65,33 +69,36 @@ export class RevertRepoToLastCommitController {
       member: member
     });
 
-    let toDiskRevertRepoToLastCommitRequest: apiToDisk.ToDiskRevertRepoToLastCommitRequest = {
-      info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit,
-        traceId: reqValid.info.traceId
-      },
-      payload: {
-        orgId: project.org_id,
-        projectId: projectId,
-        repoId: repoId,
-        branch: branchId,
-        remoteType: project.remote_type,
-        gitUrl: project.git_url,
-        privateKey: project.private_key,
-        publicKey: project.public_key
-      }
-    };
-
-    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskRevertRepoToLastCommitResponse>(
+    let toDiskRevertRepoToLastCommitRequest: apiToDisk.ToDiskRevertRepoToLastCommitRequest =
       {
-        routingKey: helper.makeRoutingKeyToDisk({
+        info: {
+          name: apiToDisk.ToDiskRequestInfoNameEnum
+            .ToDiskRevertRepoToLastCommit,
+          traceId: reqValid.info.traceId
+        },
+        payload: {
           orgId: project.org_id,
-          projectId: projectId
-        }),
-        message: toDiskRevertRepoToLastCommitRequest,
-        checkIsOk: true
-      }
-    );
+          projectId: projectId,
+          repoId: repoId,
+          branch: branchId,
+          remoteType: project.remote_type,
+          gitUrl: project.git_url,
+          privateKey: project.private_key,
+          publicKey: project.public_key
+        }
+      };
+
+    let diskResponse =
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskRevertRepoToLastCommitResponse>(
+        {
+          routingKey: helper.makeRoutingKeyToDisk({
+            orgId: project.org_id,
+            projectId: projectId
+          }),
+          message: toDiskRevertRepoToLastCommitRequest,
+          checkIsOk: true
+        }
+      );
 
     let branchBridges = await this.bridgesRepository.find({
       where: {

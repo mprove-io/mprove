@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
@@ -7,17 +7,15 @@ import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import {
-  AttachUser,
-  SkipJwtCheck,
-  ValidateRequest
-} from '~backend/decorators/_index';
+import { AttachUser, SkipJwtCheck } from '~backend/decorators/_index';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 
 @UseGuards(TestRoutesGuard)
 @SkipJwtCheck()
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class GetRebuildStructController {
   constructor(
@@ -30,9 +28,10 @@ export class GetRebuildStructController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRebuildStruct)
   async getRebuildStruct(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendGetRebuildStructRequest)
-    reqValid: apiToBackend.ToBackendGetRebuildStructRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendGetRebuildStructRequest = request.body;
+
     let { orgId, projectId, repoId, branch, envId } = reqValid.payload;
 
     let structId = common.makeId();
@@ -60,16 +59,17 @@ export class GetRebuildStructController {
       }
     };
 
-    let getCatalogFilesResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
-      {
-        routingKey: helper.makeRoutingKeyToDisk({
-          orgId: orgId,
-          projectId: projectId
-        }),
-        message: getCatalogFilesRequest,
-        checkIsOk: true
-      }
-    );
+    let getCatalogFilesResponse =
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
+        {
+          routingKey: helper.makeRoutingKeyToDisk({
+            orgId: orgId,
+            projectId: projectId
+          }),
+          message: getCatalogFilesRequest,
+          checkIsOk: true
+        }
+      );
 
     let connections = await this.connectionsRepository.find({
       where: {
@@ -110,13 +110,14 @@ export class GetRebuildStructController {
       }
     };
 
-    let rebuildStructResponse = await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlRebuildStructResponse>(
-      {
-        routingKey: common.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
-        message: rebuildStructRequest,
-        checkIsOk: true
-      }
-    );
+    let rebuildStructResponse =
+      await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlRebuildStructResponse>(
+        {
+          routingKey: common.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
+          message: rebuildStructRequest,
+          checkIsOk: true
+        }
+      );
 
     let payload = rebuildStructResponse.payload;
 

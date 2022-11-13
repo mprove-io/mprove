@@ -1,10 +1,11 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { EnvsService } from '~backend/services/envs.service';
@@ -16,6 +17,7 @@ import { QueriesService } from '~backend/services/queries.service';
 import { StructsService } from '~backend/services/structs.service';
 import { VizsService } from '~backend/services/vizs.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class GetVizController {
   constructor(
@@ -32,11 +34,9 @@ export class GetVizController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetViz)
-  async getViz(
-    @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendGetVizRequest)
-    reqValid: apiToBackend.ToBackendGetVizRequest
-  ) {
+  async getViz(@AttachUser() user: entities.UserEntity, @Req() request: any) {
+    let reqValid: apiToBackend.ToBackendGetVizRequest = request.body;
+
     let { projectId, isRepoProd, branchId, envId, vizId } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({

@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
@@ -7,7 +7,8 @@ import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { DbService } from '~backend/services/db.service';
@@ -17,6 +18,7 @@ import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class MergeRepoController {
   constructor(
@@ -34,17 +36,13 @@ export class MergeRepoController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMergeRepo)
   async mergeRepo(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendMergeRepoRequest)
-    reqValid: apiToBackend.ToBackendMergeRepoRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendMergeRepoRequest = request.body;
+
     let { traceId } = reqValid.info;
-    let {
-      projectId,
-      branchId,
-      envId,
-      theirBranchId,
-      isTheirBranchRemote
-    } = reqValid.payload;
+    let { projectId, branchId, envId, theirBranchId, isTheirBranchRemote } =
+      reqValid.payload;
 
     let repoId = user.user_id;
 
@@ -95,16 +93,15 @@ export class MergeRepoController {
       }
     };
 
-    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskMergeRepoResponse>(
-      {
+    let diskResponse =
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskMergeRepoResponse>({
         routingKey: helper.makeRoutingKeyToDisk({
           orgId: project.org_id,
           projectId: projectId
         }),
         message: toDiskMergeRepoRequest,
         checkIsOk: true
-      }
-    );
+      });
 
     let branchBridges = await this.bridgesRepository.find({
       where: {

@@ -1,11 +1,13 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class GetProjectsListController {
   constructor(
@@ -16,9 +18,10 @@ export class GetProjectsListController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProjectsList)
   async getProjectsList(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendGetProjectsListRequest)
-    reqValid: apiToBackend.ToBackendGetProjectsListRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendGetProjectsListRequest = request.body;
+
     let { orgId } = reqValid.payload;
 
     let userMembers = await this.membersRepository.find({

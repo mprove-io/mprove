@@ -1,14 +1,16 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class DeleteConnectionController {
   constructor(
@@ -22,9 +24,10 @@ export class DeleteConnectionController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteConnection)
   async deleteConnection(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendDeleteConnectionRequest)
-    reqValid: apiToBackend.ToBackendDeleteConnectionRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendDeleteConnectionRequest = request.body;
+
     let { traceId } = reqValid.info;
     let { projectId, connectionId, envId } = reqValid.payload;
 

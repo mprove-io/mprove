@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
@@ -7,8 +7,9 @@ import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
 import { makeDashboardFileText } from '~backend/functions/make-dashboard-file-text';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
@@ -20,6 +21,7 @@ import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class CreateDashboardController {
   constructor(
@@ -39,9 +41,10 @@ export class CreateDashboardController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDashboard)
   async createEmptyDashboard(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendCreateDashboardRequest)
-    reqValid: apiToBackend.ToBackendCreateDashboardRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendCreateDashboardRequest = request.body;
+
     if (user.alias === common.RESTRICTED_USER_ALIAS) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_RESTRICTED_USER

@@ -1,10 +1,11 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { DashboardsService } from '~backend/services/dashboards.service';
@@ -16,6 +17,7 @@ import { ProjectsService } from '~backend/services/projects.service';
 import { QueriesService } from '~backend/services/queries.service';
 import { StructsService } from '~backend/services/structs.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class GetDashboardReportController {
   constructor(
@@ -34,17 +36,13 @@ export class GetDashboardReportController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboardReport)
   async getDashboardReport(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendGetDashboardReportRequest)
-    reqValid: apiToBackend.ToBackendGetDashboardReportRequest
+    @Req() request: any
   ) {
-    let {
-      projectId,
-      isRepoProd,
-      branchId,
-      envId,
-      dashboardId,
-      mconfigId
-    } = reqValid.payload;
+    let reqValid: apiToBackend.ToBackendGetDashboardReportRequest =
+      request.body;
+
+    let { projectId, isRepoProd, branchId, envId, dashboardId, mconfigId } =
+      reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId

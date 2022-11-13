@@ -1,10 +1,11 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesRepository } from '~backend/models/store-repositories/branches.repository';
 import { BridgesService } from '~backend/services/bridges.service';
 import { EnvsService } from '~backend/services/envs.service';
@@ -13,6 +14,7 @@ import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { StructsService } from '~backend/services/structs.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class GetModelsController {
   constructor(
@@ -28,9 +30,10 @@ export class GetModelsController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels)
   async getModels(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendGetModelsRequest)
-    reqValid: apiToBackend.ToBackendGetModelsRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendGetModelsRequest = request.body;
+
     let {
       projectId,
       isRepoProd,
@@ -58,13 +61,14 @@ export class GetModelsController {
     });
 
     if (common.isUndefined(branch)) {
-      let payloadBranchDoesNotExist: apiToBackend.ToBackendGetModelsResponsePayload = {
-        isBranchExist: false,
-        userMember: undefined,
-        struct: undefined,
-        needValidate: undefined,
-        models: []
-      };
+      let payloadBranchDoesNotExist: apiToBackend.ToBackendGetModelsResponsePayload =
+        {
+          isBranchExist: false,
+          userMember: undefined,
+          struct: undefined,
+          needValidate: undefined,
+          models: []
+        };
 
       return payloadBranchDoesNotExist;
     } else {

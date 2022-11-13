@@ -1,15 +1,17 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class DeleteMemberController {
   constructor(
@@ -24,9 +26,10 @@ export class DeleteMemberController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteMember)
   async deleteMember(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendDeleteMemberRequest)
-    reqValid: apiToBackend.ToBackendDeleteMemberRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendDeleteMemberRequest = request.body;
+
     let { traceId } = reqValid.info;
     let { projectId, memberId } = reqValid.payload;
 

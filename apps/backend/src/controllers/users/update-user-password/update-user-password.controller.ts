@@ -1,13 +1,15 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
-import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
+import { SkipJwtCheck } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DbService } from '~backend/services/db.service';
 import { UsersService } from '~backend/services/users.service';
 
 @SkipJwtCheck()
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class UpdateUserPasswordController {
   constructor(
@@ -17,10 +19,10 @@ export class UpdateUserPasswordController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword)
-  async updateUserPassword(
-    @ValidateRequest(apiToBackend.ToBackendUpdateUserPasswordRequest)
-    reqValid: apiToBackend.ToBackendUpdateUserPasswordRequest
-  ) {
+  async updateUserPassword(@Req() request: any) {
+    let reqValid: apiToBackend.ToBackendUpdateUserPasswordRequest =
+      request.body;
+
     let { passwordResetToken, newPassword } = reqValid.payload;
 
     let user = await this.usersRepository.findOne({

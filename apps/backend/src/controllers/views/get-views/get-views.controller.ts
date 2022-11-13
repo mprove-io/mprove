@@ -1,8 +1,9 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { EnvsService } from '~backend/services/envs.service';
@@ -10,6 +11,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { StructsService } from '~backend/services/structs.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class GetViewsController {
   constructor(
@@ -22,11 +24,9 @@ export class GetViewsController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetViews)
-  async getViews(
-    @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendGetViewsRequest)
-    reqValid: apiToBackend.ToBackendGetViewsRequest
-  ) {
+  async getViews(@AttachUser() user: entities.UserEntity, @Req() request: any) {
+    let reqValid: apiToBackend.ToBackendGetViewsRequest = request.body;
+
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;

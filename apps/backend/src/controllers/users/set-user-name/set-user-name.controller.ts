@@ -1,12 +1,14 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DbService } from '~backend/services/db.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class SetUserNameController {
   constructor(
@@ -17,9 +19,10 @@ export class SetUserNameController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserName)
   async setUserName(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendSetUserNameRequest)
-    reqValid: apiToBackend.ToBackendSetUserNameRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendSetUserNameRequest = request.body;
+
     if (user.alias === common.RESTRICTED_USER_ALIAS) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_RESTRICTED_USER

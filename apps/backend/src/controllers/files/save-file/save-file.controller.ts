@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
@@ -7,7 +7,8 @@ import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { DbService } from '~backend/services/db.service';
@@ -17,6 +18,7 @@ import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class SaveFileController {
   constructor(
@@ -32,11 +34,9 @@ export class SaveFileController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveFile)
-  async saveFile(
-    @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendSaveFileRequest)
-    reqValid: apiToBackend.ToBackendSaveFileRequest
-  ) {
+  async saveFile(@AttachUser() user: entities.UserEntity, @Req() request: any) {
+    let reqValid: apiToBackend.ToBackendSaveFileRequest = request.body;
+
     let { traceId } = reqValid.info;
     let { projectId, branchId, envId, fileNodeId, content } = reqValid.payload;
 
@@ -83,16 +83,15 @@ export class SaveFileController {
       }
     };
 
-    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskSaveFileResponse>(
-      {
+    let diskResponse =
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskSaveFileResponse>({
         routingKey: helper.makeRoutingKeyToDisk({
           orgId: project.org_id,
           projectId: projectId
         }),
         message: toDiskSaveFileRequest,
         checkIsOk: true
-      }
-    );
+      });
 
     let branchBridges = await this.bridgesRepository.find({
       where: {

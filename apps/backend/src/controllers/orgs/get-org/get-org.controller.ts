@@ -1,16 +1,18 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import {
   MembersRepository,
   ProjectsRepository
 } from '~backend/models/store-repositories/_index';
 import { OrgsService } from '~backend/services/orgs.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class GetOrgController {
   constructor(
@@ -20,11 +22,9 @@ export class GetOrgController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrg)
-  async getOrg(
-    @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendGetOrgRequest)
-    reqValid: apiToBackend.ToBackendGetOrgRequest
-  ) {
+  async getOrg(@AttachUser() user: entities.UserEntity, @Req() request: any) {
+    let reqValid: apiToBackend.ToBackendGetOrgRequest = request.body;
+
     let { orgId } = reqValid.payload;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });

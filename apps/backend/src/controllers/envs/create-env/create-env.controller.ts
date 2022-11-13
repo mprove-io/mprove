@@ -1,16 +1,18 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DbService } from '~backend/services/db.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class CreateEnvController {
   constructor(
@@ -26,9 +28,10 @@ export class CreateEnvController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEnv)
   async createEnv(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendCreateEnvRequest)
-    reqValid: apiToBackend.ToBackendCreateEnvRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendCreateEnvRequest = request.body;
+
     let { projectId, envId } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({

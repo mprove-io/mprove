@@ -15,17 +15,10 @@ export class ValidateRequestGuard implements CanActivate {
   canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
 
-    let url = request.url?.substring(1);
+    let url: apiToBackend.ToBackendRequestInfoNameEnum =
+      request.url?.substring(1);
 
-    let classType: any =
-      url === apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig
-        ? apiToBackend.ToBackendGetAvatarBigRequest
-        : url === apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetAvatar
-        ? apiToBackend.ToBackendSetAvatarRequest
-        : url ===
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch
-        ? apiToBackend.ToBackendCreateBranchRequest
-        : undefined;
+    let classType: any = apiToBackend.nameToClass[url];
 
     if (common.isUndefined(classType)) {
       throw new common.ServerError({

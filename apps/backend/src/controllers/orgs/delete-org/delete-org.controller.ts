@@ -1,14 +1,16 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/orgs.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class DeleteOrgController {
   constructor(
@@ -27,9 +29,10 @@ export class DeleteOrgController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteOrg)
   async deleteOrg(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendDeleteOrgRequest)
-    reqValid: apiToBackend.ToBackendDeleteOrgRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendDeleteOrgRequest = request.body;
+
     let { orgId } = reqValid.payload;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
@@ -49,16 +52,15 @@ export class DeleteOrgController {
       }
     };
 
-    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteOrgResponse>(
-      {
+    let diskResponse =
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteOrgResponse>({
         routingKey: helper.makeRoutingKeyToDisk({
           orgId: orgId,
           projectId: undefined
         }),
         message: toDiskDeleteOrgRequest,
         checkIsOk: true
-      }
-    );
+      });
 
     await this.orgsRepository.delete({ org_id: orgId });
 

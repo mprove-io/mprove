@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
@@ -9,7 +9,8 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { DbService } from '~backend/services/db.service';
@@ -19,6 +20,7 @@ import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class ValidateFilesController {
   constructor(
@@ -35,11 +37,9 @@ export class ValidateFilesController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendValidateFiles)
-  async saveFile(
-    @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendValidateFilesRequest)
-    reqValid: apiToBackend.ToBackendValidateFilesRequest
-  ) {
+  async saveFile(@AttachUser() user: entities.UserEntity, @Req() request: any) {
+    let reqValid: apiToBackend.ToBackendValidateFilesRequest = request.body;
+
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, envId, branchId } = reqValid.payload;
 
@@ -54,9 +54,8 @@ export class ValidateFilesController {
       memberId: user.user_id
     });
 
-    let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
-      'firstProjectId'
-    );
+    let firstProjectId =
+      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
     if (
       member.is_admin === common.BoolEnum.FALSE &&
@@ -97,16 +96,17 @@ export class ValidateFilesController {
       }
     };
 
-    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
-      {
-        routingKey: helper.makeRoutingKeyToDisk({
-          orgId: project.org_id,
-          projectId: projectId
-        }),
-        message: getCatalogFilesRequest,
-        checkIsOk: true
-      }
-    );
+    let diskResponse =
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
+        {
+          routingKey: helper.makeRoutingKeyToDisk({
+            orgId: project.org_id,
+            projectId: projectId
+          }),
+          message: getCatalogFilesRequest,
+          checkIsOk: true
+        }
+      );
 
     let branchBridges = await this.bridgesRepository.find({
       where: {

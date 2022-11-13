@@ -549,7 +549,7 @@ export class AppModule implements OnModuleInit {
     } catch (e) {
       logToConsoleBackend({
         log: common.wrapError(e),
-        pinoLogger: undefined,
+        pinoLogger: this.pinoLogger,
         logLevel: common.LogLevelEnum.Fatal
       });
 

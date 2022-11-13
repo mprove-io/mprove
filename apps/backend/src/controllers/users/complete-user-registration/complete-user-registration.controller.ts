@@ -1,15 +1,17 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
+import { SkipJwtCheck } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { UsersService } from '~backend/services/users.service';
 
 @SkipJwtCheck()
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class CompleteUserRegistrationController {
   constructor(
@@ -23,10 +25,10 @@ export class CompleteUserRegistrationController {
   @Post(
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCompleteUserRegistration
   )
-  async completeUserRegistration(
-    @ValidateRequest(apiToBackend.ToBackendCompleteUserRegistrationRequest)
-    reqValid: apiToBackend.ToBackendCompleteUserRegistrationRequest
-  ) {
+  async completeUserRegistration(@Req() request: any) {
+    let reqValid: apiToBackend.ToBackendCompleteUserRegistrationRequest =
+      request.body;
+
     let { traceId } = reqValid.info;
     let { emailConfirmationToken, newPassword } = reqValid.payload;
 

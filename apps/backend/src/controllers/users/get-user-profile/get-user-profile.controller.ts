@@ -1,9 +1,11 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class GetUserProfileController {
   constructor() {}
@@ -11,9 +13,10 @@ export class GetUserProfileController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetUserProfile)
   async getUserProfile(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendGetUserProfileRequest)
-    reqValid: apiToBackend.ToBackendGetUserProfileRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendGetUserProfileRequest = request.body;
+
     let payload: apiToBackend.ToBackendGetUserProfileResponsePayload = {
       user: wrapper.wrapToApiUser(user)
     };

@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
@@ -7,7 +7,8 @@ import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
@@ -18,6 +19,7 @@ import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { VizsService } from '~backend/services/vizs.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class DeleteVizController {
   constructor(
@@ -37,9 +39,10 @@ export class DeleteVizController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteViz)
   async createEmptyDashboard(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendDeleteVizRequest)
-    reqValid: apiToBackend.ToBackendDeleteVizRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendDeleteVizRequest = request.body;
+
     if (user.alias === common.RESTRICTED_USER_ALIAS) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_RESTRICTED_USER
@@ -79,9 +82,8 @@ export class DeleteVizController {
       envId: envId
     });
 
-    let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
-      'firstProjectId'
-    );
+    let firstProjectId =
+      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
     if (
       member.is_admin === common.BoolEnum.FALSE &&
@@ -127,16 +129,15 @@ export class DeleteVizController {
       }
     };
 
-    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteFileResponse>(
-      {
+    let diskResponse =
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteFileResponse>({
         routingKey: helper.makeRoutingKeyToDisk({
           orgId: project.org_id,
           projectId: projectId
         }),
         message: toDiskDeleteFileRequest,
         checkIsOk: true
-      }
-    );
+      });
 
     let { struct } = await this.blockmlService.rebuildStruct({
       traceId,

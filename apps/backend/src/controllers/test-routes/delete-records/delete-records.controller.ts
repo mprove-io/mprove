@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import asyncPool from 'tiny-async-pool';
 import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
@@ -6,12 +6,14 @@ import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
-import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
+import { SkipJwtCheck } from '~backend/decorators/_index';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { RabbitService } from '~backend/services/rabbit.service';
 
 @UseGuards(TestRoutesGuard)
 @SkipJwtCheck()
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class DeleteRecordsController {
   constructor(
@@ -36,10 +38,9 @@ export class DeleteRecordsController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords)
-  async deleteRecords(
-    @ValidateRequest(apiToBackend.ToBackendDeleteRecordsRequest)
-    reqValid: apiToBackend.ToBackendDeleteRecordsRequest
-  ) {
+  async deleteRecords(@Req() request: any) {
+    let reqValid: apiToBackend.ToBackendDeleteRecordsRequest = request.body;
+
     let {
       orgIds,
       projectIds,

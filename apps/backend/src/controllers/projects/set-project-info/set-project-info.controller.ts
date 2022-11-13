@@ -1,13 +1,15 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class SetProjectInfoController {
   constructor(
@@ -19,9 +21,10 @@ export class SetProjectInfoController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetProjectInfo)
   async setProjectInfo(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendSetProjectInfoRequest)
-    reqValid: apiToBackend.ToBackendSetProjectInfoRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendSetProjectInfoRequest = request.body;
+
     let { projectId, name } = reqValid.payload;
 
     let project = await this.projectsService.getProjectCheckExists({

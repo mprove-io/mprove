@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
@@ -7,7 +7,8 @@ import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { DbService } from '~backend/services/db.service';
@@ -17,6 +18,7 @@ import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class RenameCatalogNodeController {
   constructor(
@@ -34,9 +36,10 @@ export class RenameCatalogNodeController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRenameCatalogNode)
   async renameCatalogNode(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendRenameCatalogNodeRequest)
-    reqValid: apiToBackend.ToBackendRenameCatalogNodeRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendRenameCatalogNodeRequest = request.body;
+
     let { traceId } = reqValid.info;
     let { projectId, branchId, envId, nodeId, newName } = reqValid.payload;
 
@@ -63,35 +66,37 @@ export class RenameCatalogNodeController {
       member: member
     });
 
-    let toDiskRenameCatalogNodeRequest: apiToDisk.ToDiskRenameCatalogNodeRequest = {
-      info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRenameCatalogNode,
-        traceId: reqValid.info.traceId
-      },
-      payload: {
-        orgId: project.org_id,
-        projectId: projectId,
-        repoId: repoId,
-        branch: branchId,
-        nodeId: nodeId,
-        newName: newName.toLowerCase(),
-        remoteType: project.remote_type,
-        gitUrl: project.git_url,
-        privateKey: project.private_key,
-        publicKey: project.public_key
-      }
-    };
-
-    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskRenameCatalogNodeResponse>(
+    let toDiskRenameCatalogNodeRequest: apiToDisk.ToDiskRenameCatalogNodeRequest =
       {
-        routingKey: helper.makeRoutingKeyToDisk({
+        info: {
+          name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRenameCatalogNode,
+          traceId: reqValid.info.traceId
+        },
+        payload: {
           orgId: project.org_id,
-          projectId: projectId
-        }),
-        message: toDiskRenameCatalogNodeRequest,
-        checkIsOk: true
-      }
-    );
+          projectId: projectId,
+          repoId: repoId,
+          branch: branchId,
+          nodeId: nodeId,
+          newName: newName.toLowerCase(),
+          remoteType: project.remote_type,
+          gitUrl: project.git_url,
+          privateKey: project.private_key,
+          publicKey: project.public_key
+        }
+      };
+
+    let diskResponse =
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskRenameCatalogNodeResponse>(
+        {
+          routingKey: helper.makeRoutingKeyToDisk({
+            orgId: project.org_id,
+            projectId: projectId
+          }),
+          message: toDiskRenameCatalogNodeRequest,
+          checkIsOk: true
+        }
+      );
 
     let branchBridges = await this.bridgesRepository.find({
       where: {

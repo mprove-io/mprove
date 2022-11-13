@@ -30,11 +30,9 @@ export async function prepareTest(item: {
     backendEnv: enums.BackendEnvEnum.TEST
   };
 
-  let mockConfig = Object.assign(
-    getConfig(),
-    overrideConfigOptions,
-    extraOverride
-  );
+  let config = getConfig();
+
+  let mockConfig = Object.assign(config, overrideConfigOptions, extraOverride);
 
   let moduleRef: TestingModule = await Test.createTestingModule({
     imports: [AppModule]

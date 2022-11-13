@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
@@ -7,12 +7,14 @@ import { interfaces } from '~backend/barrels/interfaces';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
+import { SkipJwtCheck } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DbService } from '~backend/services/db.service';
 import { EmailService } from '~backend/services/email.service';
 import { UsersService } from '~backend/services/users.service';
 
 @SkipJwtCheck()
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class RegisterUserController {
   constructor(
@@ -24,10 +26,9 @@ export class RegisterUserController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRegisterUser)
-  async registerUser(
-    @ValidateRequest(apiToBackend.ToBackendRegisterUserRequest)
-    reqValid: apiToBackend.ToBackendRegisterUserRequest
-  ) {
+  async registerUser(@Req() request: any) {
+    let reqValid: apiToBackend.ToBackendRegisterUserRequest = request.body;
+
     let { email, password } = reqValid.payload;
 
     let newUser: entities.UserEntity;

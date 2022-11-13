@@ -1,14 +1,16 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import asyncPool from 'tiny-async-pool';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { ConnectionsService } from '~backend/services/connections.service';
 import { MembersService } from '~backend/services/members.service';
 import { QueriesService } from '~backend/services/queries.service';
 import { RunService } from '~backend/services/run.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class RunQueriesController {
   constructor(
@@ -21,9 +23,10 @@ export class RunQueriesController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries)
   async runQueries(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendRunQueriesRequest)
-    reqValid: apiToBackend.ToBackendRunQueriesRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendRunQueriesRequest = request.body;
+
     let { queryIds } = reqValid.payload;
 
     let runningQueries: entities.QueryEntity[] = [];

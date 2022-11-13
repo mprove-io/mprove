@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
@@ -6,12 +6,14 @@ import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class CommitRepoController {
   constructor(
@@ -25,9 +27,10 @@ export class CommitRepoController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCommitRepo)
   async commitRepo(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendCommitRepoRequest)
-    reqValid: apiToBackend.ToBackendCommitRepoRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendCommitRepoRequest = request.body;
+
     let { projectId, branchId, isRepoProd, commitMessage } = reqValid.payload;
 
     if (isRepoProd === true) {
@@ -50,9 +53,8 @@ export class CommitRepoController {
       memberId: user.user_id
     });
 
-    let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
-      'firstProjectId'
-    );
+    let firstProjectId =
+      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
     if (
       member.is_admin === common.BoolEnum.FALSE &&
@@ -89,16 +91,15 @@ export class CommitRepoController {
       }
     };
 
-    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskCommitRepoResponse>(
-      {
+    let diskResponse =
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskCommitRepoResponse>({
         routingKey: helper.makeRoutingKeyToDisk({
           orgId: project.org_id,
           projectId: projectId
         }),
         message: toDiskCommitRepoRequest,
         checkIsOk: true
-      }
-    );
+      });
 
     let payload: apiToBackend.ToBackendCommitRepoResponsePayload = {
       repo: diskResponse.payload.repo

@@ -1,17 +1,19 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { DataSource, In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
 import { makeFullName } from '~backend/functions/make-full-name';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import {
   MemberEntity,
   UserEntity
 } from '~backend/models/store-entities/_index';
 import { OrgsService } from '~backend/services/orgs.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class GetOrgUsersController {
   constructor(
@@ -26,9 +28,10 @@ export class GetOrgUsersController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers)
   async getOrgUsers(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendGetOrgUsersRequest)
-    reqValid: apiToBackend.ToBackendGetOrgUsersRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendGetOrgUsersRequest = request.body;
+
     let { orgId, perPage, pageNum } = reqValid.payload;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
@@ -53,19 +56,17 @@ export class GetOrgUsersController {
 
     let userIds = membersPart.map(x => x.member_id);
 
-    let [users, total]: [
-      UserEntity[],
-      number
-    ] = await this.usersRepository.findAndCount({
-      where: {
-        user_id: In(userIds)
-      },
-      order: {
-        email: 'ASC'
-      },
-      take: perPage,
-      skip: (pageNum - 1) * perPage
-    });
+    let [users, total]: [UserEntity[], number] =
+      await this.usersRepository.findAndCount({
+        where: {
+          user_id: In(userIds)
+        },
+        order: {
+          email: 'ASC'
+        },
+        take: perPage,
+        skip: (pageNum - 1) * perPage
+      });
 
     let members =
       userIds.length === 0

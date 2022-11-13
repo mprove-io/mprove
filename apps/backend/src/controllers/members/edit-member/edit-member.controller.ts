@@ -1,14 +1,16 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { AvatarsRepository } from '~backend/models/store-repositories/_index';
 import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class EditMemberController {
   constructor(
@@ -21,18 +23,12 @@ export class EditMemberController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember)
   async editMember(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendEditMemberRequest)
-    reqValid: apiToBackend.ToBackendEditMemberRequest
+    @Req() request: any
   ) {
-    let {
-      projectId,
-      memberId,
-      isAdmin,
-      isEditor,
-      isExplorer,
-      roles,
-      envs
-    } = reqValid.payload;
+    let reqValid: apiToBackend.ToBackendEditMemberRequest = request.body;
+
+    let { projectId, memberId, isAdmin, isEditor, isExplorer, roles, envs } =
+      reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId

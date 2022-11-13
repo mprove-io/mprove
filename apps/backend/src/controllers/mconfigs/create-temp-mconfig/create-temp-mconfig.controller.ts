@@ -1,10 +1,11 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { DbService } from '~backend/services/db.service';
@@ -14,6 +15,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class CreateTempMconfigController {
   constructor(
@@ -30,17 +32,12 @@ export class CreateTempMconfigController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfig)
   async createTempMconfig(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendCreateTempMconfigRequest)
-    reqValid: apiToBackend.ToBackendCreateTempMconfigRequest
+    @Req() request: any
   ) {
-    let {
-      oldMconfigId,
-      mconfig,
-      projectId,
-      isRepoProd,
-      branchId,
-      envId
-    } = reqValid.payload;
+    let reqValid: apiToBackend.ToBackendCreateTempMconfigRequest = request.body;
+
+    let { oldMconfigId, mconfig, projectId, isRepoProd, branchId, envId } =
+      reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 

@@ -1,12 +1,14 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class IsBranchExistController {
   constructor(
@@ -18,9 +20,10 @@ export class IsBranchExistController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendIsBranchExist)
   async isBranchExist(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendIsBranchExistRequest)
-    reqValid: apiToBackend.ToBackendIsBranchExistRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendIsBranchExistRequest = request.body;
+
     let { projectId, branchId, isRepoProd } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;

@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import asyncPool from 'tiny-async-pool';
 import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
@@ -7,9 +7,11 @@ import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { RabbitService } from '~backend/services/rabbit.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class DeleteUserController {
   constructor(
@@ -24,9 +26,10 @@ export class DeleteUserController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteUser)
   async deleteUser(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendDeleteUserRequest)
-    reqValid: apiToBackend.ToBackendDeleteUserRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendDeleteUserRequest = request.body;
+
     if (user.alias === common.RESTRICTED_USER_ALIAS) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_RESTRICTED_USER

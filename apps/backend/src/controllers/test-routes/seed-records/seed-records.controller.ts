@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import asyncPool from 'tiny-async-pool';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
@@ -9,14 +9,16 @@ import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { maker } from '~backend/barrels/maker';
 import { wrapper } from '~backend/barrels/wrapper';
-import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
+import { SkipJwtCheck } from '~backend/decorators/_index';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DbService } from '~backend/services/db.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { UsersService } from '~backend/services/users.service';
 
 @UseGuards(TestRoutesGuard)
 @SkipJwtCheck()
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class SeedRecordsController {
   constructor(
@@ -26,10 +28,9 @@ export class SeedRecordsController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSeedRecords)
-  async seedRecords(
-    @ValidateRequest(apiToBackend.ToBackendSeedRecordsRequest)
-    reqValid: apiToBackend.ToBackendSeedRecordsRequest
-  ) {
+  async seedRecords(@Req() request: any) {
+    let reqValid: apiToBackend.ToBackendSeedRecordsRequest = request.body;
+
     let payloadUsers = reqValid.payload.users;
     let payloadMembers = reqValid.payload.members;
     let payloadOrgs = reqValid.payload.orgs;
@@ -219,56 +220,61 @@ export class SeedRecordsController {
             }
           };
 
-          let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskSeedProjectResponse>(
-            {
-              routingKey: helper.makeRoutingKeyToDisk({
-                orgId: newProject.org_id,
-                projectId: newProject.project_id
-              }),
-              message: toDiskSeedProjectRequest,
-              checkIsOk: true
-            }
-          );
+          let diskResponse =
+            await this.rabbitService.sendToDisk<apiToDisk.ToDiskSeedProjectResponse>(
+              {
+                routingKey: helper.makeRoutingKeyToDisk({
+                  orgId: newProject.org_id,
+                  projectId: newProject.project_id
+                }),
+                message: toDiskSeedProjectRequest,
+                checkIsOk: true
+              }
+            );
 
           let structId = common.makeId();
 
-          let toBlockmlRebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest = {
-            info: {
-              name:
-                apiToBlockml.ToBlockmlRequestInfoNameEnum
-                  .ToBlockmlRebuildStruct,
-              traceId: reqValid.info.traceId
-            },
-            payload: {
-              structId: structId,
-              orgId: newProject.org_id,
-              projectId: newProject.project_id,
-              envId: prodEnv.env_id,
-              evs: evs
-                .map(evEntity => wrapper.wrapToApiEv(evEntity))
-                .filter(ev => ev.envId === prodEnv.env_id),
-              mproveDir: diskResponse.payload.mproveDir,
-              files: helper.diskFilesToBlockmlFiles(diskResponse.payload.files),
-              connections: connections
-                .filter(
-                  z =>
-                    z.project_id === newProject.project_id &&
-                    z.env_id === prodEnv.env_id
-                )
-                .map(c => ({
-                  connectionId: c.connection_id,
-                  type: c.type
-                }))
-            }
-          };
-
-          let blockmlRebuildStructResponse = await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlRebuildStructResponse>(
+          let toBlockmlRebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest =
             {
-              routingKey: common.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
-              message: toBlockmlRebuildStructRequest,
-              checkIsOk: true
-            }
-          );
+              info: {
+                name: apiToBlockml.ToBlockmlRequestInfoNameEnum
+                  .ToBlockmlRebuildStruct,
+                traceId: reqValid.info.traceId
+              },
+              payload: {
+                structId: structId,
+                orgId: newProject.org_id,
+                projectId: newProject.project_id,
+                envId: prodEnv.env_id,
+                evs: evs
+                  .map(evEntity => wrapper.wrapToApiEv(evEntity))
+                  .filter(ev => ev.envId === prodEnv.env_id),
+                mproveDir: diskResponse.payload.mproveDir,
+                files: helper.diskFilesToBlockmlFiles(
+                  diskResponse.payload.files
+                ),
+                connections: connections
+                  .filter(
+                    z =>
+                      z.project_id === newProject.project_id &&
+                      z.env_id === prodEnv.env_id
+                  )
+                  .map(c => ({
+                    connectionId: c.connection_id,
+                    type: c.type
+                  }))
+              }
+            };
+
+          let blockmlRebuildStructResponse =
+            await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlRebuildStructResponse>(
+              {
+                routingKey:
+                  common.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
+                message: toBlockmlRebuildStructRequest,
+                checkIsOk: true
+              }
+            );
 
           let {
             mproveDirValue,

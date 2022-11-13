@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
@@ -7,8 +7,9 @@ import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
 import { makeVizFileText } from '~backend/functions/make-viz-file-text';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { VizsRepository } from '~backend/models/store-repositories/_index';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
@@ -22,6 +23,7 @@ import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
 import { VizsService } from '~backend/services/vizs.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class ModifyVizController {
   constructor(
@@ -43,9 +45,10 @@ export class ModifyVizController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyViz)
   async createEmptyDashboard(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendModifyVizRequest)
-    reqValid: apiToBackend.ToBackendModifyVizRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendModifyVizRequest = request.body;
+
     if (user.alias === common.RESTRICTED_USER_ALIAS) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_RESTRICTED_USER
@@ -106,9 +109,8 @@ export class ModifyVizController {
       projectId: projectId
     });
 
-    let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
-      'firstProjectId'
-    );
+    let firstProjectId =
+      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
     if (
       member.is_admin === common.BoolEnum.FALSE &&
@@ -181,34 +183,27 @@ export class ModifyVizController {
       }
     };
 
-    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskSaveFileResponse>(
-      {
+    let diskResponse =
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskSaveFileResponse>({
         routingKey: helper.makeRoutingKeyToDisk({
           orgId: project.org_id,
           projectId: projectId
         }),
         message: toDiskSaveFileRequest,
         checkIsOk: true
-      }
-    );
+      });
 
-    let {
-      struct,
-      dashboards,
-      vizs,
-      mconfigs,
-      queries,
-      models
-    } = await this.blockmlService.rebuildStruct({
-      traceId,
-      orgId: project.org_id,
-      projectId,
-      structId: bridge.struct_id,
-      diskFiles: diskResponse.payload.files,
-      mproveDir: diskResponse.payload.mproveDir,
-      skipDb: true,
-      envId: envId
-    });
+    let { struct, dashboards, vizs, mconfigs, queries, models } =
+      await this.blockmlService.rebuildStruct({
+        traceId,
+        orgId: project.org_id,
+        projectId,
+        structId: bridge.struct_id,
+        diskFiles: diskResponse.payload.files,
+        mproveDir: diskResponse.payload.mproveDir,
+        skipDb: true,
+        envId: envId
+      });
 
     let viz = vizs.find(x => x.vizId === vizId);
 

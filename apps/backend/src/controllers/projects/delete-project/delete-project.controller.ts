@@ -1,14 +1,16 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class DeleteProjectController {
   constructor(
@@ -27,9 +29,10 @@ export class DeleteProjectController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteProject)
   async deleteProject(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendDeleteProjectRequest)
-    reqValid: apiToBackend.ToBackendDeleteProjectRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendDeleteProjectRequest = request.body;
+
     let { projectId } = reqValid.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
@@ -52,16 +55,17 @@ export class DeleteProjectController {
       }
     };
 
-    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteProjectResponse>(
-      {
-        routingKey: helper.makeRoutingKeyToDisk({
-          orgId: project.org_id,
-          projectId: projectId
-        }),
-        message: toDiskDeleteProjectRequest,
-        checkIsOk: true
-      }
-    );
+    let diskResponse =
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteProjectResponse>(
+        {
+          routingKey: helper.makeRoutingKeyToDisk({
+            orgId: project.org_id,
+            projectId: projectId
+          }),
+          message: toDiskDeleteProjectRequest,
+          checkIsOk: true
+        }
+      );
 
     await this.projectsRepository.delete({ project_id: projectId });
     await this.membersRepository.delete({ project_id: projectId });

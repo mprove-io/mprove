@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
@@ -9,7 +9,8 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { DbService } from '~backend/services/db.service';
@@ -19,6 +20,7 @@ import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class RevertRepoToRemoteController {
   constructor(
@@ -37,9 +39,11 @@ export class RevertRepoToRemoteController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote)
   async revertRepoToRemote(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendRevertRepoToRemoteRequest)
-    reqValid: apiToBackend.ToBackendRevertRepoToRemoteRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendRevertRepoToRemoteRequest =
+      request.body;
+
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
 
@@ -54,9 +58,8 @@ export class RevertRepoToRemoteController {
       memberId: user.user_id
     });
 
-    let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
-      'firstProjectId'
-    );
+    let firstProjectId =
+      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
     if (
       member.is_admin === common.BoolEnum.FALSE &&
@@ -80,33 +83,35 @@ export class RevertRepoToRemoteController {
       member: member
     });
 
-    let toDiskRevertRepoToRemoteRequest: apiToDisk.ToDiskRevertRepoToRemoteRequest = {
-      info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToRemote,
-        traceId: reqValid.info.traceId
-      },
-      payload: {
-        orgId: project.org_id,
-        projectId: projectId,
-        repoId: repoId,
-        branch: branchId,
-        remoteType: project.remote_type,
-        gitUrl: project.git_url,
-        privateKey: project.private_key,
-        publicKey: project.public_key
-      }
-    };
-
-    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskRevertRepoToRemoteResponse>(
+    let toDiskRevertRepoToRemoteRequest: apiToDisk.ToDiskRevertRepoToRemoteRequest =
       {
-        routingKey: helper.makeRoutingKeyToDisk({
+        info: {
+          name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToRemote,
+          traceId: reqValid.info.traceId
+        },
+        payload: {
           orgId: project.org_id,
-          projectId: projectId
-        }),
-        message: toDiskRevertRepoToRemoteRequest,
-        checkIsOk: true
-      }
-    );
+          projectId: projectId,
+          repoId: repoId,
+          branch: branchId,
+          remoteType: project.remote_type,
+          gitUrl: project.git_url,
+          privateKey: project.private_key,
+          publicKey: project.public_key
+        }
+      };
+
+    let diskResponse =
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskRevertRepoToRemoteResponse>(
+        {
+          routingKey: helper.makeRoutingKeyToDisk({
+            orgId: project.org_id,
+            projectId: projectId
+          }),
+          message: toDiskRevertRepoToRemoteRequest,
+          checkIsOk: true
+        }
+      );
 
     let branchBridges = await this.bridgesRepository.find({
       where: {

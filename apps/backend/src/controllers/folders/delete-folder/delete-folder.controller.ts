@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
@@ -7,7 +7,8 @@ import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
@@ -18,6 +19,7 @@ import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class DeleteFolderController {
   constructor(
@@ -36,9 +38,10 @@ export class DeleteFolderController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFolder)
   async deleteFolder(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendDeleteFolderRequest)
-    reqValid: apiToBackend.ToBackendDeleteFolderRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendDeleteFolderRequest = request.body;
+
     let { traceId } = reqValid.info;
     let { projectId, branchId, envId, folderNodeId } = reqValid.payload;
 
@@ -90,16 +93,17 @@ export class DeleteFolderController {
       }
     };
 
-    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteFolderResponse>(
-      {
-        routingKey: helper.makeRoutingKeyToDisk({
-          orgId: project.org_id,
-          projectId: projectId
-        }),
-        message: toDiskDeleteFolderRequest,
-        checkIsOk: true
-      }
-    );
+    let diskResponse =
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteFolderResponse>(
+        {
+          routingKey: helper.makeRoutingKeyToDisk({
+            orgId: project.org_id,
+            projectId: projectId
+          }),
+          message: toDiskDeleteFolderRequest,
+          checkIsOk: true
+        }
+      );
 
     let branchBridges = await this.bridgesRepository.find({
       where: {

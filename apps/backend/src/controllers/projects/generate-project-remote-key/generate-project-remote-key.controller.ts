@@ -1,15 +1,17 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import * as crypto from 'crypto';
 import { parseKey, parsePrivateKey } from 'sshpk';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { makeNote } from '~backend/models/maker/_index';
 import { NoteEntity } from '~backend/models/store-entities/_index';
 import { DbService } from '~backend/services/db.service';
 import { OrgsService } from '~backend/services/orgs.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class GenerateProjectRemoteKeyController {
   constructor(private dbService: DbService, private orgsService: OrgsService) {}
@@ -19,9 +21,11 @@ export class GenerateProjectRemoteKeyController {
   )
   async createProject(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendGenerateProjectRemoteKeyRequest)
-    reqValid: apiToBackend.ToBackendGenerateProjectRemoteKeyRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendGenerateProjectRemoteKeyRequest =
+      request.body;
+
     let { traceId } = reqValid.info;
     let { orgId } = reqValid.payload;
 
@@ -66,10 +70,11 @@ export class GenerateProjectRemoteKeyController {
       }
     });
 
-    let payload: apiToBackend.ToBackendGenerateProjectRemoteKeyResponsePayload = {
-      noteId: note.note_id,
-      publicKey: note.public_key
-    };
+    let payload: apiToBackend.ToBackendGenerateProjectRemoteKeyResponsePayload =
+      {
+        noteId: note.note_id,
+        publicKey: note.public_key
+      };
 
     return payload;
   }

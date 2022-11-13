@@ -1,11 +1,13 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class GetOrgsListController {
   constructor(
@@ -17,9 +19,10 @@ export class GetOrgsListController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgsList)
   async getOrgsList(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendGetOrgsListRequest)
-    reqValid: apiToBackend.ToBackendGetOrgsListRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendGetOrgsListRequest = request.body;
+
     let userMembers = await this.membersRepository.find({
       where: {
         member_id: user.user_id

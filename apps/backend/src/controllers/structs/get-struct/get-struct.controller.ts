@@ -1,9 +1,10 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesRepository } from '~backend/models/store-repositories/branches.repository';
 import { BridgesService } from '~backend/services/bridges.service';
 import { EnvsService } from '~backend/services/envs.service';
@@ -11,6 +12,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { StructsService } from '~backend/services/structs.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class GetStructController {
   constructor(
@@ -25,9 +27,10 @@ export class GetStructController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetStruct)
   async getStruct(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendGetStructRequest)
-    reqValid: apiToBackend.ToBackendGetStructRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendGetStructRequest = request.body;
+
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
@@ -48,12 +51,13 @@ export class GetStructController {
     });
 
     if (common.isUndefined(branch)) {
-      let payloadBranchDoesNotExist: apiToBackend.ToBackendGetStructResponsePayload = {
-        isBranchExist: false,
-        userMember: undefined,
-        needValidate: undefined,
-        struct: undefined
-      };
+      let payloadBranchDoesNotExist: apiToBackend.ToBackendGetStructResponsePayload =
+        {
+          isBranchExist: false,
+          userMember: undefined,
+          needValidate: undefined,
+          struct: undefined
+        };
 
       return payloadBranchDoesNotExist;
     } else {

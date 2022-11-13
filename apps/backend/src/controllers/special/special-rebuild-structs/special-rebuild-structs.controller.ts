@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
 import { In } from 'typeorm';
@@ -9,12 +9,14 @@ import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
-import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
+import { SkipJwtCheck } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { DbService } from '~backend/services/db.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 
 @SkipJwtCheck()
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class SpecialRebuildStructsController {
   constructor(
@@ -30,16 +32,15 @@ export class SpecialRebuildStructsController {
   @Post(
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSpecialRebuildStructs
   )
-  async specialRebuildStructs(
-    @ValidateRequest(apiToBackend.ToBackendSpecialRebuildStructsRequest)
-    reqValid: apiToBackend.ToBackendSpecialRebuildStructsRequest
-  ) {
+  async specialRebuildStructs(@Req() request: any) {
+    let reqValid: apiToBackend.ToBackendSpecialRebuildStructsRequest =
+      request.body;
+
     let { traceId } = reqValid.info;
     let { specialKey, userIds, skipRebuild } = reqValid.payload;
 
-    let envSpecialKey = this.cs.get<interfaces.Config['specialKey']>(
-      'specialKey'
-    );
+    let envSpecialKey =
+      this.cs.get<interfaces.Config['specialKey']>('specialKey');
 
     if (common.isUndefinedOrEmpty(specialKey) || specialKey !== envSpecialKey) {
       throw new common.ServerError({
@@ -118,16 +119,17 @@ export class SpecialRebuildStructsController {
           }
         };
 
-        let getCatalogFilesResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
-          {
-            routingKey: helper.makeRoutingKeyToDisk({
-              orgId: project.org_id,
-              projectId: project.project_id
-            }),
-            message: getCatalogFilesRequest,
-            checkIsOk: false
-          }
-        );
+        let getCatalogFilesResponse =
+          await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
+            {
+              routingKey: helper.makeRoutingKeyToDisk({
+                orgId: project.org_id,
+                projectId: project.project_id
+              }),
+              message: getCatalogFilesRequest,
+              checkIsOk: false
+            }
+          );
 
         if (
           getCatalogFilesResponse.info.status !==

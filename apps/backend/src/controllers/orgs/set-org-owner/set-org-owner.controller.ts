@@ -1,13 +1,15 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DbService } from '~backend/services/db.service';
 import { OrgsService } from '~backend/services/orgs.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class SetOrgOwnerController {
   constructor(
@@ -19,9 +21,10 @@ export class SetOrgOwnerController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner)
   async setOrgOwner(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendSetOrgOwnerRequest)
-    reqValid: apiToBackend.ToBackendSetOrgOwnerRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendSetOrgOwnerRequest = request.body;
+
     let { orgId, ownerEmail } = reqValid.payload;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });

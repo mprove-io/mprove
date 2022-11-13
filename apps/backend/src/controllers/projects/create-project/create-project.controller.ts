@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
@@ -6,7 +6,8 @@ import { entities } from '~backend/barrels/entities';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { NoteEntity } from '~backend/models/store-entities/_index';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { DbService } from '~backend/services/db.service';
@@ -14,6 +15,7 @@ import { OrgsService } from '~backend/services/orgs.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class CreateProjectController {
   constructor(
@@ -30,9 +32,10 @@ export class CreateProjectController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateProject)
   async createProject(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendCreateProjectRequest)
-    reqValid: apiToBackend.ToBackendCreateProjectRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendCreateProjectRequest = request.body;
+
     let { traceId } = reqValid.info;
     let { name, orgId, remoteType, noteId, gitUrl } = reqValid.payload;
 

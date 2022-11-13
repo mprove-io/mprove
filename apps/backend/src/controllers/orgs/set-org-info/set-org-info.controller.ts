@@ -1,12 +1,14 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { common } from '~api-to-backend/barrels/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DbService } from '~backend/services/db.service';
 import { OrgsService } from '~backend/services/orgs.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class SetOrgInfoController {
   constructor(private orgsService: OrgsService, private dbService: DbService) {}
@@ -14,9 +16,10 @@ export class SetOrgInfoController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgInfo)
   async setOrgInfo(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendSetOrgInfoRequest)
-    reqValid: apiToBackend.ToBackendSetOrgInfoRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendSetOrgInfoRequest = request.body;
+
     let { orgId, name, companySize, contactPhone } = reqValid.payload;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });

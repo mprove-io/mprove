@@ -1,12 +1,13 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
 import { makeDashboardFileText } from '~backend/functions/make-dashboard-file-text';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
@@ -18,6 +19,7 @@ import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class CreateTempDashboardController {
   constructor(
@@ -36,9 +38,11 @@ export class CreateTempDashboardController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateTempDashboard)
   async createTempDashboard(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendCreateTempDashboardRequest)
-    reqValid: apiToBackend.ToBackendCreateTempDashboardRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendCreateTempDashboardRequest =
+      request.body;
+
     let { traceId } = reqValid.info;
     let {
       projectId,
@@ -86,12 +90,11 @@ export class CreateTempDashboardController {
       projectId: projectId
     });
 
-    let fromDashboardEntity = await this.dashboardsService.getDashboardCheckExists(
-      {
+    let fromDashboardEntity =
+      await this.dashboardsService.getDashboardCheckExists({
         structId: bridge.struct_id,
         dashboardId: oldDashboardId
-      }
-    );
+      });
 
     let fromDashboard = await this.dashboardsService.getDashboardXCheckAccess({
       user: user,
@@ -147,16 +150,17 @@ export class CreateTempDashboardController {
       }
     };
 
-    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
-      {
-        routingKey: helper.makeRoutingKeyToDisk({
-          orgId: project.org_id,
-          projectId: projectId
-        }),
-        message: getCatalogFilesRequest,
-        checkIsOk: true
-      }
-    );
+    let diskResponse =
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
+        {
+          routingKey: helper.makeRoutingKeyToDisk({
+            orgId: project.org_id,
+            projectId: projectId
+          }),
+          message: getCatalogFilesRequest,
+          checkIsOk: true
+        }
+      );
 
     // add dashboard file
 
@@ -209,23 +213,17 @@ export class CreateTempDashboardController {
       })
     ];
 
-    let {
-      struct,
-      dashboards,
-      vizs,
-      mconfigs,
-      queries,
-      models
-    } = await this.blockmlService.rebuildStruct({
-      traceId,
-      orgId: project.org_id,
-      projectId,
-      structId: bridge.struct_id,
-      diskFiles: diskFiles,
-      mproveDir: diskResponse.payload.mproveDir,
-      skipDb: true,
-      envId: envId
-    });
+    let { struct, dashboards, vizs, mconfigs, queries, models } =
+      await this.blockmlService.rebuildStruct({
+        traceId,
+        orgId: project.org_id,
+        projectId,
+        structId: bridge.struct_id,
+        diskFiles: diskFiles,
+        mproveDir: diskResponse.payload.mproveDir,
+        skipDb: true,
+        envId: envId
+      });
 
     let newDashboard = dashboards.find(x => x.dashboardId === newDashboardId);
 

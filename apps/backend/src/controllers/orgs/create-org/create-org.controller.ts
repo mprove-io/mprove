@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
@@ -6,11 +6,13 @@ import { entities } from '~backend/barrels/entities';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DbService } from '~backend/services/db.service';
 import { OrgsService } from '~backend/services/orgs.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class CreateOrgController {
   constructor(
@@ -24,9 +26,10 @@ export class CreateOrgController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateOrg)
   async createOrg(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendCreateOrgRequest)
-    reqValid: apiToBackend.ToBackendCreateOrgRequest
+    @Req() request: any
   ) {
+    let reqValid: apiToBackend.ToBackendCreateOrgRequest = request.body;
+
     if (user.alias === common.RESTRICTED_USER_ALIAS) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_RESTRICTED_USER
@@ -37,9 +40,8 @@ export class CreateOrgController {
       interfaces.Config['allowUsersToCreateOrganizations']
     >('allowUsersToCreateOrganizations');
 
-    let firstUserEmail = this.cs.get<interfaces.Config['firstUserEmail']>(
-      'firstUserEmail'
-    );
+    let firstUserEmail =
+      this.cs.get<interfaces.Config['firstUserEmail']>('firstUserEmail');
 
     if (
       allowUsersToCreateOrganizations !== common.BoolEnum.TRUE &&

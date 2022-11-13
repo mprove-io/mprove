@@ -1,16 +1,18 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
-import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
+import { SkipJwtCheck } from '~backend/decorators/_index';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DbService } from '~backend/services/db.service';
 import { UsersService } from '~backend/services/users.service';
 
 @SkipJwtCheck()
+@UseGuards(ValidateRequestGuard)
 @Controller()
 export class ResetUserPasswordController {
   constructor(
@@ -21,10 +23,9 @@ export class ResetUserPasswordController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResetUserPassword)
-  async resetUserPassword(
-    @ValidateRequest(apiToBackend.ToBackendResetUserPasswordRequest)
-    reqValid: apiToBackend.ToBackendResetUserPasswordRequest
-  ) {
+  async resetUserPassword(@Req() request: any) {
+    let reqValid: apiToBackend.ToBackendResetUserPasswordRequest = request.body;
+
     let { email } = reqValid.payload;
 
     let user = await this.usersService.getUserByEmailCheckExists({
