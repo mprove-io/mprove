@@ -1,5 +1,5 @@
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PinoLogger } from 'nestjs-pino';
 import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
 
@@ -12,10 +12,9 @@ export function makeErrorResponseBlockml(item: {
   duration?: number;
   skipLog?: boolean;
   cs: ConfigService<interfaces.Config>;
-  pinoLogger: PinoLogger;
+  logger: Logger;
 }) {
-  let { e, body, cs, request, path, method, duration, skipLog, pinoLogger } =
-    item;
+  let { e, body, cs, request, path, method, duration, skipLog, logger } = item;
 
   return common.makeErrorResponse({
     e: e,
@@ -40,6 +39,6 @@ export function makeErrorResponseBlockml(item: {
         'blockmlLogIsStringify'
       )
     ),
-    logger: pinoLogger
+    logger: logger
   });
 }

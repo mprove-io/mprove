@@ -5,7 +5,7 @@ import {
   NestInterceptor
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PinoLogger } from 'nestjs-pino';
+import { Logger } from 'nestjs-pino';
 import { Observable, of } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
 import { apiToBackend } from './barrels/api-to-backend';
@@ -26,7 +26,7 @@ export class AppInterceptor implements NestInterceptor {
   constructor(
     private idempsRepository: repositories.IdempsRepository,
     private cs: ConfigService<interfaces.Config>,
-    private pinoLogger: PinoLogger
+    private pinoLogger: Logger
   ) {}
 
   async intercept(

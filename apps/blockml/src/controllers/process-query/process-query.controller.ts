@@ -1,6 +1,5 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Logger, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PinoLogger } from 'nestjs-pino';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { makeErrorResponseBlockml } from '~blockml/functions/make-error-response-blockml';
@@ -12,7 +11,7 @@ export class ProcessQueryController {
   constructor(
     private cs: ConfigService<interfaces.Config>,
     private processQueryService: ProcessQueryService,
-    private pinoLogger: PinoLogger
+    private logger: Logger
   ) {}
 
   @Post(apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlProcessQuery)
@@ -24,14 +23,14 @@ export class ProcessQueryController {
         payload: payload,
         body: body,
         cs: this.cs,
-        pinoLogger: this.pinoLogger
+        logger: this.logger
       });
     } catch (e) {
       return makeErrorResponseBlockml({
         e,
         body: body,
         cs: this.cs,
-        pinoLogger: this.pinoLogger
+        logger: this.logger
       });
     }
   }

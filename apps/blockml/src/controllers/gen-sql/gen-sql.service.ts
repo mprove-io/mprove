@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PinoLogger } from 'nestjs-pino';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barSpecial } from '~blockml/barrels/bar-special';
 import { common } from '~blockml/barrels/common';
@@ -10,7 +9,7 @@ import { interfaces } from '~blockml/barrels/interfaces';
 export class GenSqlService {
   constructor(
     private cs: ConfigService<interfaces.Config>,
-    private pinoLogger: PinoLogger
+    private logger: Logger
   ) {}
 
   async gen(request: any) {
@@ -30,7 +29,7 @@ export class GenSqlService {
       logIsStringify: this.cs.get<interfaces.Config['blockmlLogIsStringify']>(
         'blockmlLogIsStringify'
       ),
-      logger: this.pinoLogger
+      logger: this.logger
     });
 
     let payload = barSpecial.genSqlPro(reqValid.payload);

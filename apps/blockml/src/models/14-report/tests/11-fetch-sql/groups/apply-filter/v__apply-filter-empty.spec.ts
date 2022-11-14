@@ -16,7 +16,7 @@ test('1', async t => {
   let errors: BmError[];
   let entDashboards: interfaces.Dashboard[];
 
-  let pLogger;
+  let wLogger;
 
   try {
     let connection: common.ProjectConnection = {
@@ -24,17 +24,10 @@ test('1', async t => {
       type: common.ConnectionTypeEnum.BigQuery
     };
 
-    let {
-      structService,
-      traceId,
-      structId,
-      dataDir,
-      fromDir,
-      toDir,
-      pinoLogger
-    } = await prepareTest(caller, func, testId, connection);
+    let { structService, traceId, structId, dataDir, fromDir, toDir, logger } =
+      await prepareTest(caller, func, testId, connection);
 
-    pLogger = pinoLogger;
+    wLogger = logger;
 
     await structService.rebuildStruct({
       traceId: traceId,
@@ -54,7 +47,7 @@ test('1', async t => {
     logToConsoleBlockml({
       log: e,
       logLevel: common.LogLevelEnum.Error,
-      pinoLogger: pLogger
+      logger: wLogger
     });
   }
 
@@ -90,7 +83,7 @@ test('2', async t => {
   let errors: BmError[];
   let entDashboards: interfaces.Dashboard[];
 
-  let pLogger;
+  let wLogger;
 
   try {
     let connection: common.ProjectConnection = {
@@ -98,17 +91,10 @@ test('2', async t => {
       type: common.ConnectionTypeEnum.PostgreSQL
     };
 
-    let {
-      structService,
-      traceId,
-      structId,
-      dataDir,
-      fromDir,
-      toDir,
-      pinoLogger
-    } = await prepareTest(caller, func, testId, connection);
+    let { structService, traceId, structId, dataDir, fromDir, toDir, logger } =
+      await prepareTest(caller, func, testId, connection);
 
-    pLogger = pinoLogger;
+    wLogger = logger;
 
     await structService.rebuildStruct({
       traceId: traceId,
@@ -128,7 +114,7 @@ test('2', async t => {
     logToConsoleBlockml({
       log: e,
       logLevel: common.LogLevelEnum.Error,
-      pinoLogger: pLogger
+      logger: wLogger
     });
   }
 

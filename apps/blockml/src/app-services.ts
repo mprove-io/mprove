@@ -1,5 +1,5 @@
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PinoLogger } from 'nestjs-pino';
 import { common } from './barrels/common';
 import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
@@ -18,10 +18,10 @@ export const appServices = [
     useFactory: (
       cs: ConfigService<interfaces.Config>,
       rabbitService: RabbitService,
-      pinoLogger: PinoLogger
+      logger: Logger
     ) =>
       helper.isSingleOrMain(cs)
-        ? new RebuildStructService(rabbitService, cs, pinoLogger)
+        ? new RebuildStructService(rabbitService, cs, logger)
         : {},
     inject: [ConfigService, RabbitService]
   },
@@ -30,10 +30,10 @@ export const appServices = [
     useFactory: (
       cs: ConfigService<interfaces.Config>,
       rabbitService: RabbitService,
-      pinoLogger: PinoLogger
+      logger: Logger
     ) =>
       helper.isSingleOrMain(cs)
-        ? new ProcessQueryService(rabbitService, cs, pinoLogger)
+        ? new ProcessQueryService(rabbitService, cs, logger)
         : {},
     inject: [ConfigService, RabbitService]
   },
@@ -43,10 +43,10 @@ export const appServices = [
       cs: ConfigService<interfaces.Config>,
       structService: RebuildStructService,
       queryService: ProcessQueryService,
-      pinoLogger: PinoLogger
+      logger: Logger
     ) => {
       let result = helper.isSingleOrMain(cs)
-        ? new ConsumerMainService(cs, structService, queryService, pinoLogger)
+        ? new ConsumerMainService(cs, structService, queryService, logger)
         : {};
       return result;
     },
@@ -57,12 +57,12 @@ export const appServices = [
     useFactory: (
       cs: ConfigService<interfaces.Config>,
       genSqlService: GenSqlService,
-      pinoLogger: PinoLogger
+      logger: Logger
     ) => {
       let isWorker = cs.get<interfaces.Config['isWorker']>('isWorker');
 
       return isWorker === common.BoolEnum.TRUE
-        ? new ConsumerWorkerService(cs, genSqlService, pinoLogger)
+        ? new ConsumerWorkerService(cs, genSqlService, logger)
         : {};
     },
     inject: [ConfigService, GenSqlService]

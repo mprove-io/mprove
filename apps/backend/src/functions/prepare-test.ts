@@ -1,7 +1,7 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PinoLogger } from 'nestjs-pino';
+import { Logger } from 'nestjs-pino';
 import { AppModule } from '~backend/app.module';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
@@ -102,7 +102,7 @@ export async function prepareTest(item: {
   }
 
   let rabbitService = moduleRef.get<RabbitService>(RabbitService);
-  let pinoLogger = await moduleRef.resolve<PinoLogger>(PinoLogger);
+  let pinoLogger = await moduleRef.resolve<Logger>(Logger);
 
   let prep: interfaces.Prep = {
     app,

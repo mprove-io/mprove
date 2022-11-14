@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { PinoLogger } from 'nestjs-pino';
+import { Logger } from 'nestjs-pino';
 import { LessThan } from 'typeorm';
 import { common } from '~backend/barrels/common';
 import { repositories } from '~backend/barrels/repositories';
@@ -20,7 +20,7 @@ export class TasksService {
     private queriesService: QueriesService,
     private structsService: StructsService,
     private idempsRepository: repositories.IdempsRepository,
-    private pinoLogger: PinoLogger
+    private pinoLogger: Logger
   ) {}
 
   // // Called every 10 seconds

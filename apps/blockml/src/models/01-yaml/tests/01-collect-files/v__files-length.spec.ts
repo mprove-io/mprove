@@ -13,20 +13,13 @@ let testId = 'v__files-length';
 test('1', async t => {
   let files: common.BmlFile[];
 
-  let pLogger;
+  let wLogger;
 
   try {
-    let {
-      structService,
-      traceId,
-      structId,
-      dataDir,
-      fromDir,
-      toDir,
-      pinoLogger
-    } = await prepareTest(caller, func, testId);
+    let { structService, traceId, structId, dataDir, fromDir, toDir, logger } =
+      await prepareTest(caller, func, testId);
 
-    pLogger = pinoLogger;
+    wLogger = logger;
 
     await structService.rebuildStruct({
       traceId: traceId,
@@ -45,7 +38,7 @@ test('1', async t => {
     logToConsoleBlockml({
       log: e,
       logLevel: common.LogLevelEnum.Error,
-      pinoLogger: pLogger
+      logger: wLogger
     });
   }
 

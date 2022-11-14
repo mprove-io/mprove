@@ -8,7 +8,7 @@ import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as fse from 'fs-extra';
-import { LoggerModule, PinoLogger } from 'nestjs-pino';
+import { Logger, LoggerModule } from 'nestjs-pino';
 import * as mg from 'nodemailer-mailgun-transport';
 import { DataSource } from 'typeorm';
 import { appControllers } from './app-controllers';
@@ -233,7 +233,7 @@ export class AppModule implements OnModuleInit {
     private connectionsRepository: repositories.ConnectionsRepository,
     private evsRepository: repositories.EvsRepository,
     private dbService: DbService,
-    private pinoLogger: PinoLogger
+    private pinoLogger: Logger
   ) {}
 
   async onModuleInit() {

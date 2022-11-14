@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PinoLogger } from 'nestjs-pino';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barBuilder } from '~blockml/barrels/bar-builder';
 import { barSpecial } from '~blockml/barrels/bar-special';
@@ -21,7 +20,7 @@ export class RebuildStructService {
   constructor(
     private rabbitService: RabbitService,
     private cs: ConfigService<interfaces.Config>,
-    private pinoLogger: PinoLogger
+    private logger: Logger
   ) {}
 
   async rebuild(request: any) {
@@ -41,7 +40,7 @@ export class RebuildStructService {
       logIsStringify: this.cs.get<interfaces.Config['blockmlLogIsStringify']>(
         'blockmlLogIsStringify'
       ),
-      logger: this.pinoLogger
+      logger: this.logger
     });
 
     let {

@@ -1,4 +1,4 @@
-import { INestApplication, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as fse from 'fs-extra';
@@ -14,8 +14,6 @@ export async function prepareTest(
   orgId: string,
   overrideConfigOptions?: interfaces.Config
 ) {
-  let app: INestApplication;
-
   let config = getConfig();
 
   let mockConfig = Object.assign(config, overrideConfigOptions);
@@ -40,8 +38,8 @@ export async function prepareTest(
     .useValue({})
     .compile();
 
-  app = moduleRef.createNestApplication();
-  await app.init();
+  // let app: INestApplication = moduleRef.createNestApplication();
+  // await app.init();
 
   let cs = moduleRef.get<ConfigService<interfaces.Config>>(ConfigService);
 

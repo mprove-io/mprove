@@ -15,20 +15,13 @@ test('1', async t => {
   let errors: BmError[];
   let filesAny: any[];
 
-  let pLogger;
+  let wLogger;
 
   try {
-    let {
-      structService,
-      traceId,
-      structId,
-      dataDir,
-      fromDir,
-      toDir,
-      pinoLogger
-    } = await prepareTest(caller, func, testId);
+    let { structService, traceId, structId, dataDir, fromDir, toDir, logger } =
+      await prepareTest(caller, func, testId);
 
-    pLogger = pinoLogger;
+    wLogger = logger;
 
     let connection1: common.ProjectConnection = {
       connectionId: 'c1',
@@ -57,7 +50,7 @@ test('1', async t => {
     logToConsoleBlockml({
       log: e,
       logLevel: common.LogLevelEnum.Error,
-      pinoLogger: pLogger
+      logger: wLogger
     });
   }
 

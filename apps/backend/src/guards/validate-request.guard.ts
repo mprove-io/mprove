@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PinoLogger } from 'nestjs-pino';
+import { Logger } from 'nestjs-pino';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { interfaces } from '~backend/barrels/interfaces';
@@ -9,7 +9,7 @@ import { interfaces } from '~backend/barrels/interfaces';
 export class ValidateRequestGuard implements CanActivate {
   constructor(
     private cs: ConfigService<interfaces.Config>,
-    private pinoLogger: PinoLogger
+    private pinoLogger: Logger
   ) {}
 
   canActivate(context: ExecutionContext) {

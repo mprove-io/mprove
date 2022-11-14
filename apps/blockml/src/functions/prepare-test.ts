@@ -1,7 +1,8 @@
+import { Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as fse from 'fs-extra';
-import { LoggerModule, PinoLogger } from 'nestjs-pino';
+import { WinstonModule } from 'nest-winston';
 import { appServices } from '~blockml/app-services';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
@@ -20,8 +21,10 @@ export async function prepareTest(
   connection?: common.ProjectConnection,
   overrideConfigOptions?: interfaces.Config
 ) {
+  let config = getConfig();
+
   let mockConfig: interfaces.Config = Object.assign(
-    getConfig(),
+    config,
     <interfaces.Config>{ logFunc: func },
     overrideConfigOptions
   );
@@ -32,18 +35,13 @@ export async function prepareTest(
         load: [getConfig],
         isGlobal: true
       }),
-
-      LoggerModule.forRoot({
-        pinoHttp: {
-          autoLogging: false,
-          transport:
-            mockConfig.blockmlLogIsStringify === common.BoolEnum.FALSE
-              ? common.LOGGER_MODULE_TRANSPORT
-              : undefined
-        }
-      })
+      WinstonModule.forRoot(
+        mockConfig.blockmlLogIsStringify === common.BoolEnum.TRUE
+          ? common.WINSTON_JSON_OPTIONS
+          : common.WINSTON_PRETTY_OPTIONS
+      )
     ],
-    providers: appServices
+    providers: [Logger, ...appServices]
   })
     .overrideProvider(ConfigService)
     .useValue({ get: (key: any) => mockConfig[key as keyof interfaces.Config] })
@@ -55,8 +53,11 @@ export async function prepareTest(
     .useValue({})
     .compile();
 
+  // let app: INestApplication = moduleRef.createNestApplication();
+  // await app.init();
+
   let structService = moduleRef.get<RebuildStructService>(RebuildStructService);
-  let pinoLogger = await moduleRef.resolve<PinoLogger>(PinoLogger);
+  let logger = await moduleRef.resolve<Logger>(Logger);
 
   let cs = moduleRef.get<ConfigService<interfaces.Config>>(ConfigService);
   let logsPath = cs.get<interfaces.Config['logsPath']>('logsPath');
@@ -88,7 +89,7 @@ export async function prepareTest(
 
   return {
     structService: structService,
-    pinoLogger: pinoLogger,
+    logger: logger,
     traceId: traceId,
     structId: structId,
     dataDir: dataDir,

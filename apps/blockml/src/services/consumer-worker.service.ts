@@ -1,7 +1,6 @@
 import { RabbitRPC } from '@golevelup/nestjs-rabbitmq';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PinoLogger } from 'nestjs-pino';
 import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { GenSqlService } from '~blockml/controllers/gen-sql/gen-sql.service';
@@ -15,7 +14,7 @@ export class ConsumerWorkerService {
   constructor(
     private cs: ConfigService<interfaces.Config>,
     private genSqlService: GenSqlService,
-    private pinoLogger: PinoLogger
+    private logger: Logger
   ) {}
 
   @RabbitRPC({
@@ -33,7 +32,7 @@ export class ConsumerWorkerService {
         path: pathGenSql,
         method: common.METHOD_RABBIT,
         cs: this.cs,
-        pinoLogger: this.pinoLogger
+        logger: this.logger
       });
     } catch (e) {
       return makeErrorResponseBlockml({
@@ -42,7 +41,7 @@ export class ConsumerWorkerService {
         path: pathGenSql,
         method: common.METHOD_RABBIT,
         cs: this.cs,
-        pinoLogger: this.pinoLogger
+        logger: this.logger
       });
     }
   }

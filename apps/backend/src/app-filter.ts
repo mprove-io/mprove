@@ -5,7 +5,7 @@ import {
   HttpStatus
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PinoLogger } from 'nestjs-pino';
+import { Logger } from 'nestjs-pino';
 import { apiToBackend } from './barrels/api-to-backend';
 import { common } from './barrels/common';
 import { constants } from './barrels/constants';
@@ -21,7 +21,7 @@ export class AppFilter implements ExceptionFilter {
   constructor(
     private cs: ConfigService<interfaces.Config>,
     private idempsRepository: repositories.IdempsRepository,
-    private pinoLogger: PinoLogger
+    private pinoLogger: Logger
   ) {}
 
   async catch(exception: unknown, host: ArgumentsHost) {

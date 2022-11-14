@@ -1,6 +1,6 @@
 import { BigQuery } from '@google-cloud/bigquery';
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-import { PinoLogger } from 'nestjs-pino';
+import { Logger } from 'nestjs-pino';
 import asyncPool from 'tiny-async-pool';
 import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
@@ -23,7 +23,7 @@ export class CancelQueriesController {
     private connectionsRepository: repositories.ConnectionsRepository,
     private membersService: MembersService,
     private dbService: DbService,
-    private pinoLogger: PinoLogger
+    private pinoLogger: Logger
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries)

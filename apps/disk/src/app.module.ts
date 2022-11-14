@@ -14,6 +14,7 @@ import { logToConsoleDisk } from './functions/log-to-console-disk';
       load: [getConfig],
       isGlobal: true
     }),
+
     RabbitMQModule.forRootAsync(RabbitMQModule, {
       useFactory: (cs: ConfigService<interfaces.Config>) => {
         let rabbitUser =

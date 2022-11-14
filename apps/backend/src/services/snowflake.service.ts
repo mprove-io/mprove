@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PinoLogger } from 'nestjs-pino';
+import { Logger } from 'nestjs-pino';
 import * as snowflake from 'snowflake-sdk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
@@ -16,7 +16,7 @@ export class SnowFlakeService {
     private queriesRepository: repositories.QueriesRepository,
     private dbService: DbService,
     private cs: ConfigService<interfaces.Config>,
-    private pinoLogger: PinoLogger
+    private pinoLogger: Logger
   ) {}
 
   async runQuery(item: {

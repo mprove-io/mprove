@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PinoLogger } from 'nestjs-pino';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barSpecial } from '~blockml/barrels/bar-special';
 import { common } from '~blockml/barrels/common';
@@ -13,7 +12,7 @@ export class ProcessQueryService {
   constructor(
     private rabbitService: RabbitService,
     private cs: ConfigService<interfaces.Config>,
-    private pinoLogger: PinoLogger
+    private logger: Logger
   ) {}
 
   async process(request: any) {
@@ -33,7 +32,7 @@ export class ProcessQueryService {
       logIsStringify: this.cs.get<interfaces.Config['blockmlLogIsStringify']>(
         'blockmlLogIsStringify'
       ),
-      logger: this.pinoLogger
+      logger: this.logger
     });
 
     let {
