@@ -4,6 +4,12 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 module.exports = (config, context) => {
+  config.resolve = config.resolve || {};
+  config.resolve.fallback = config.resolve.fallback || {};
+  config.resolve.fallback = Object.assign(config.resolve.fallback, {
+    os: false
+  });
+
   return merge({
     ...config,
     plugins: [
