@@ -5,6 +5,7 @@ import * as fse from 'fs-extra';
 import { WinstonModule } from 'nest-winston';
 import { appServices } from '~disk/app-services';
 import { common } from '~disk/barrels/common';
+import { constants } from '~disk/barrels/constants';
 import { interfaces } from '~disk/barrels/interfaces';
 import { getConfig } from '~disk/config/get.config';
 import { ConsumerService } from '~disk/services/consumer.service';
@@ -26,8 +27,8 @@ export async function prepareTest(
       }),
       WinstonModule.forRoot(
         mockConfig.diskLogIsStringify === common.BoolEnum.TRUE
-          ? common.WINSTON_JSON_OPTIONS
-          : common.WINSTON_PRETTY_OPTIONS
+          ? constants.WINSTON_JSON_OPTIONS
+          : constants.WINSTON_PRETTY_OPTIONS
       )
     ],
     providers: [Logger, ...appServices]

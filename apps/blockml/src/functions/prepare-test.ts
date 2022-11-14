@@ -37,8 +37,8 @@ export async function prepareTest(
       }),
       WinstonModule.forRoot(
         mockConfig.blockmlLogIsStringify === common.BoolEnum.TRUE
-          ? common.WINSTON_JSON_OPTIONS
-          : common.WINSTON_PRETTY_OPTIONS
+          ? constants.WINSTON_JSON_OPTIONS
+          : constants.WINSTON_PRETTY_OPTIONS
       )
     ],
     providers: [Logger, ...appServices]
