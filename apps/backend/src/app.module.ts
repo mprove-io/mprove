@@ -548,7 +548,7 @@ export class AppModule implements OnModuleInit {
       }
     } catch (e) {
       logToConsoleBackend({
-        log: common.wrapError(e),
+        log: e,
         pinoLogger: this.pinoLogger,
         logLevel: common.LogLevelEnum.Fatal
       });

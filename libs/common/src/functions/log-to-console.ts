@@ -2,6 +2,7 @@ import { PinoLogger } from 'nestjs-pino';
 import * as util from 'util';
 import { enums } from '~common/barrels/enums';
 import { isDefined } from './is-defined';
+import { wrapError } from './wrap-error';
 
 export function logToConsole(item: {
   log: any;
@@ -10,6 +11,13 @@ export function logToConsole(item: {
   logIsStringify: boolean;
 }) {
   let { log, logIsStringify, pinoLogger, logLevel } = item;
+
+  if (
+    log instanceof Error ||
+    (isDefined(log) && isDefined(log.stack) && isDefined(log.message))
+  ) {
+    log = wrapError(log);
+  }
 
   if (isDefined(pinoLogger)) {
     if (logLevel === enums.LogLevelEnum.Fatal) {
