@@ -41,7 +41,7 @@ export class RebuildStructService {
       logIsStringify: this.cs.get<interfaces.Config['blockmlLogIsStringify']>(
         'blockmlLogIsStringify'
       ),
-      pinoLogger: this.pinoLogger
+      logger: this.pinoLogger
     });
 
     let {

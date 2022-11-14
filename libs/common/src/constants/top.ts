@@ -1,4 +1,32 @@
+import {
+  utilities as nestWinstonModuleUtilities,
+  WinstonModuleOptions
+} from 'nest-winston';
+import { format, transports } from 'winston';
 import { enums } from '~common/barrels/enums';
+
+export const WINSTON_PRETTY_OPTIONS: WinstonModuleOptions = {
+  transports: new transports.Console({
+    format: format.combine(
+      format.timestamp(),
+      // format.ms(),
+      nestWinstonModuleUtilities.format.nestLike('Mprove', {
+        prettyPrint: true,
+        colors: true
+      })
+    )
+  })
+};
+
+export const WINSTON_JSON_OPTIONS: WinstonModuleOptions = {
+  transports: new transports.Console({
+    format: format.combine(
+      format.timestamp(),
+      // format.ms(),
+      format.json()
+    )
+  })
+};
 
 // export const API_PATH = 'api';
 export const MPROVE_CONFIG_FILENAME = 'mprove.yml';
@@ -283,14 +311,3 @@ export const CHART_INTERPOLATION_VALUES = [
   enums.ChartInterpolationEnum.StepAfter,
   enums.ChartInterpolationEnum.StepBefore
 ];
-
-export const LOGGER_MODULE_TRANSPORT = {
-  target: 'pino-pretty',
-  options: {
-    colorize: true,
-    ignore: 'context,pid,hostname',
-    levelFirst: false,
-    translateTime: 'UTC:yyyy-mm-dd HH:MM:ss',
-    messageFormat: '   \x1B[33m[{context}]\x1b[0m' + ' \x1B[32m{msg}\x1B[39m'
-  }
-};

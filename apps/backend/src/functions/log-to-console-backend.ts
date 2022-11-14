@@ -14,7 +14,7 @@ export function logToConsoleBackend(item: {
   common.logToConsole({
     log: log,
     logIsStringify: common.enumToBoolean(config.backendLogIsStringify),
-    pinoLogger: pinoLogger,
+    logger: pinoLogger,
     logLevel: logLevel
   });
 }

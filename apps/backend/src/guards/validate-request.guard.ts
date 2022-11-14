@@ -33,7 +33,7 @@ export class ValidateRequestGuard implements CanActivate {
       logIsStringify: this.cs.get<interfaces.Config['backendLogIsStringify']>(
         'backendLogIsStringify'
       ),
-      pinoLogger: this.pinoLogger
+      logger: this.pinoLogger
     });
 
     return true;

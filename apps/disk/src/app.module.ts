@@ -1,7 +1,6 @@
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { LoggerModule, PinoLogger } from 'nestjs-pino';
 import { appControllers } from './app-controllers';
 import { appServices } from './app-services';
 import { common } from './barrels/common';
@@ -9,25 +8,12 @@ import { interfaces } from './barrels/interfaces';
 import { getConfig } from './config/get.config';
 import { logToConsoleDisk } from './functions/log-to-console-disk';
 
-let config = getConfig();
-
 @Module({
   imports: [
     ConfigModule.forRoot({
       load: [getConfig],
       isGlobal: true
     }),
-
-    LoggerModule.forRoot({
-      pinoHttp: {
-        autoLogging: false,
-        transport:
-          config.diskLogIsStringify === common.BoolEnum.FALSE
-            ? common.LOGGER_MODULE_TRANSPORT
-            : undefined
-      }
-    }),
-
     RabbitMQModule.forRootAsync(RabbitMQModule, {
       useFactory: (cs: ConfigService<interfaces.Config>) => {
         let rabbitUser =
@@ -65,16 +51,16 @@ let config = getConfig();
     })
   ],
   controllers: appControllers,
-  providers: appServices
+  providers: [Logger, ...appServices]
 })
 export class AppModule implements OnModuleInit {
-  constructor(private pinoLogger: PinoLogger) {}
+  constructor(private logger: Logger) {}
 
   async onModuleInit() {
     logToConsoleDisk({
       log: `NODE_ENV is set to "${process.env.NODE_ENV}"`,
       logLevel: common.LogLevelEnum.Info,
-      pinoLogger: this.pinoLogger
+      logger: this.logger
     });
   }
 }

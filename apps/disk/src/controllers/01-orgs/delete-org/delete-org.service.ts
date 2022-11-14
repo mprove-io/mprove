@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PinoLogger } from 'nestjs-pino';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
@@ -10,7 +9,7 @@ import { interfaces } from '~disk/barrels/interfaces';
 export class DeleteOrgService {
   constructor(
     private cs: ConfigService<interfaces.Config>,
-    private pinoLogger: PinoLogger
+    private logger: Logger
   ) {}
 
   async process(request: any) {
@@ -26,7 +25,7 @@ export class DeleteOrgService {
         this.cs.get<interfaces.Config['diskLogIsStringify']>(
           'diskLogIsStringify'
         ),
-      pinoLogger: this.pinoLogger
+      logger: this.logger
     });
 
     let { orgId } = requestValid.payload;

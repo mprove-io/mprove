@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PinoLogger } from 'nestjs-pino';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
@@ -75,7 +74,7 @@ export class MessageService {
     private saveFileService: SaveFileService,
 
     private seedProjectService: SeedProjectService,
-    private pinoLogger: PinoLogger
+    private logger: Logger
   ) {}
 
   async processMessage(request: any) {
@@ -88,7 +87,7 @@ export class MessageService {
         path: request.info.name,
         method: common.METHOD_RABBIT,
         cs: this.cs,
-        pinoLogger: this.pinoLogger
+        logger: this.logger
       });
     } catch (e) {
       return makeErrorResponseDisk({
@@ -97,7 +96,7 @@ export class MessageService {
         path: request.info.name,
         method: common.METHOD_RABBIT,
         cs: this.cs,
-        pinoLogger: this.pinoLogger
+        logger: this.logger
       });
     }
   }

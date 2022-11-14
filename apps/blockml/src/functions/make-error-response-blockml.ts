@@ -40,6 +40,6 @@ export function makeErrorResponseBlockml(item: {
         'blockmlLogIsStringify'
       )
     ),
-    pinoLogger: pinoLogger
+    logger: pinoLogger
   });
 }

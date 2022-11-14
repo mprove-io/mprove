@@ -1,17 +1,23 @@
 import { NestFactory } from '@nestjs/core';
 import 'module-alias/register';
-import { Logger } from 'nestjs-pino';
+import { WinstonModule } from 'nest-winston';
 import { AppModule } from './app.module';
+import { common } from './barrels/common';
+import { getConfig } from './config/get.config';
 import { listenProcessEventsDisk } from './functions/listen-process-events-disk';
 
 async function bootstrap() {
   listenProcessEventsDisk();
 
-  const app = await NestFactory.create(AppModule, {
-    bufferLogs: true
-  });
+  let config = getConfig();
 
-  app.useLogger(app.get(Logger));
+  const app = await NestFactory.create(AppModule, {
+    logger: WinstonModule.createLogger(
+      config.diskLogIsStringify === common.BoolEnum.TRUE
+        ? common.WINSTON_JSON_OPTIONS
+        : common.WINSTON_PRETTY_OPTIONS
+    )
+  });
 
   await app.listen(process.env.LISTEN_PORT || 3002);
 }

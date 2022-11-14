@@ -1,6 +1,5 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Logger, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PinoLogger } from 'nestjs-pino';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { interfaces } from '~disk/barrels/interfaces';
 import { makeErrorResponseDisk } from '~disk/functions/make-error-response-disk';
@@ -12,7 +11,7 @@ export class DeleteFileController {
   constructor(
     private cs: ConfigService<interfaces.Config>,
     private deleteFileService: DeleteFileService,
-    private pinoLogger: PinoLogger
+    private logger: Logger
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteFile)
@@ -24,14 +23,14 @@ export class DeleteFileController {
         payload: payload,
         body: body,
         cs: this.cs,
-        pinoLogger: this.pinoLogger
+        logger: this.logger
       });
     } catch (e) {
       return makeErrorResponseDisk({
         e: e,
         body: body,
         cs: this.cs,
-        pinoLogger: this.pinoLogger
+        logger: this.logger
       });
     }
   }

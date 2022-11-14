@@ -1,5 +1,5 @@
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PinoLogger } from 'nestjs-pino';
 import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
 
@@ -12,19 +12,10 @@ export function makeOkResponseDisk(item: {
   duration?: number;
   skipLog?: boolean;
   cs: ConfigService<interfaces.Config>;
-  pinoLogger: PinoLogger;
+  logger: Logger;
 }) {
-  let {
-    payload,
-    body,
-    request,
-    path,
-    method,
-    duration,
-    skipLog,
-    cs,
-    pinoLogger
-  } = item;
+  let { payload, body, request, path, method, duration, skipLog, cs, logger } =
+    item;
 
   return common.makeOkResponse({
     payload: payload,
@@ -43,6 +34,6 @@ export function makeOkResponseDisk(item: {
     logIsStringify: common.enumToBoolean(
       cs.get<interfaces.Config['diskLogIsStringify']>('diskLogIsStringify')
     ),
-    pinoLogger: pinoLogger
+    logger: logger
   });
 }

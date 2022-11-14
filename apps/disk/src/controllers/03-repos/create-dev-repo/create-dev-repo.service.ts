@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PinoLogger } from 'nestjs-pino';
 import * as nodegit from 'nodegit';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
@@ -13,7 +12,7 @@ import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 export class CreateDevRepoService {
   constructor(
     private cs: ConfigService<interfaces.Config>,
-    private pinoLogger: PinoLogger
+    private logger: Logger
   ) {}
 
   async process(request: any) {
@@ -29,7 +28,7 @@ export class CreateDevRepoService {
         this.cs.get<interfaces.Config['diskLogIsStringify']>(
           'diskLogIsStringify'
         ),
-      pinoLogger: this.pinoLogger
+      logger: this.logger
     });
 
     let {

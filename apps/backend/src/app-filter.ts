@@ -106,7 +106,7 @@ export class AppFilter implements ExceptionFilter {
           )
         ),
         logLevel: common.LogLevelEnum.Info,
-        pinoLogger: this.pinoLogger
+        logger: this.pinoLogger
       });
 
       response.status(HttpStatus.CREATED).json(resp);

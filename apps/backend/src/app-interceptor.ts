@@ -181,7 +181,7 @@ export class AppInterceptor implements NestInterceptor {
                 )
               ),
               logLevel: common.LogLevelEnum.Info,
-              pinoLogger: this.pinoLogger
+              logger: this.pinoLogger
             })
           )
         )
@@ -215,7 +215,7 @@ export class AppInterceptor implements NestInterceptor {
                 )
               ),
               logLevel: common.LogLevelEnum.Info,
-              pinoLogger: this.pinoLogger
+              logger: this.pinoLogger
             })
           )
         )
@@ -248,7 +248,7 @@ export class AppInterceptor implements NestInterceptor {
                 )
               ),
               logLevel: common.LogLevelEnum.Info,
-              pinoLogger: this.pinoLogger
+              logger: this.pinoLogger
             })
           )
         );

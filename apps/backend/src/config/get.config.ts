@@ -21,7 +21,7 @@ export function getConfig() {
     object: config,
     errorMessage: common.ErEnum.BACKEND_WRONG_ENV_VALUES,
     logIsStringify: config.backendLogIsStringify,
-    pinoLogger: undefined
+    logger: undefined
   });
 
   return validatedConfig;

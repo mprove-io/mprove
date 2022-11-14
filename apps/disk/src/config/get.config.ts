@@ -21,7 +21,7 @@ export function getConfig() {
     object: config,
     errorMessage: common.ErEnum.DISK_WRONG_ENV_VALUES,
     logIsStringify: config.diskLogIsStringify,
-    pinoLogger: undefined
+    logger: undefined
   });
 
   return validatedConfig;

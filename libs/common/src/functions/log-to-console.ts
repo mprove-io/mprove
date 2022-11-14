@@ -1,5 +1,5 @@
-import { PinoLogger } from 'nestjs-pino';
-import { hostname } from 'os';
+import { Logger } from '@nestjs/common';
+// import { hostname } from 'os';
 import * as util from 'util';
 import { enums } from '~common/barrels/enums';
 import { isDefined } from './is-defined';
@@ -8,10 +8,10 @@ import { wrapError } from './wrap-error';
 export function logToConsole(item: {
   log: any;
   logLevel: enums.LogLevelEnum;
-  pinoLogger: PinoLogger;
+  logger: Logger;
   logIsStringify: boolean;
 }) {
-  let { log, logIsStringify, pinoLogger, logLevel } = item;
+  let { log, logIsStringify, logger, logLevel } = item;
 
   if (
     log instanceof Error ||
@@ -20,25 +20,25 @@ export function logToConsole(item: {
     log = wrapError(log);
   }
 
-  if (isDefined(pinoLogger)) {
+  if (isDefined(logger)) {
     if (logLevel === enums.LogLevelEnum.Error) {
-      pinoLogger.error(log);
+      logger.error(log);
     } else {
-      pinoLogger.info(log);
+      logger.log(log);
     }
   } else if (logIsStringify === true) {
-    let opts = {
-      level: logLevel === enums.LogLevelEnum.Error ? 50 : 30,
-      time: Math.floor(new Date().getTime()),
-      pid: process.pid,
-      hostname: hostname()
-    };
+    // let opts = {
+    //   level: logLevel === enums.LogLevelEnum.Error ? 50 : 30,
+    //   time: Math.floor(new Date().getTime()),
+    //   pid: process.pid,
+    //   hostname: hostname()
+    // };
 
-    if (log.constructor === Object) {
-      log = Object.assign(opts, log);
-    } else {
-      log = Object.assign(opts, { log: log });
-    }
+    // if (log.constructor === Object) {
+    //   log = Object.assign(opts, log);
+    // } else {
+    //   log = Object.assign(opts, { log: log });
+    // }
 
     console.log(JSON.stringify(log));
   } else {

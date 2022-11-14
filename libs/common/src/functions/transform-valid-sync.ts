@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import { Logger } from '@nestjs/common';
 import {
   ClassType,
   transformAndValidateSync,
   TransformValidationOptions
 } from 'class-transformer-validator';
 import { ValidationError } from 'class-validator';
-import { PinoLogger } from 'nestjs-pino';
 import { enums } from '~common/barrels/enums';
 import { ServerError } from '~common/models/server-error';
 import { BoolEnum } from '~common/_index';
@@ -19,9 +19,9 @@ export function transformValidSync<T extends object>(item: {
   options?: TransformValidationOptions;
   errorMessage: any;
   logIsStringify: BoolEnum;
-  pinoLogger: PinoLogger;
+  logger: Logger;
 }) {
-  let { classType, object, options, errorMessage, logIsStringify, pinoLogger } =
+  let { classType, object, options, errorMessage, logIsStringify, logger } =
     item;
 
   let valid: T;
@@ -52,7 +52,7 @@ export function transformValidSync<T extends object>(item: {
         logIsStringify: isDefined(logIsStringify)
           ? enumToBoolean(logIsStringify)
           : false,
-        pinoLogger: pinoLogger,
+        logger: logger,
         logLevel: enums.LogLevelEnum.Error
       });
     }

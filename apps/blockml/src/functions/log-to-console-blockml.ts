@@ -14,7 +14,7 @@ export function logToConsoleBlockml(item: {
   common.logToConsole({
     log: log,
     logIsStringify: common.enumToBoolean(config.blockmlLogIsStringify),
-    pinoLogger: pinoLogger,
+    logger: pinoLogger,
     logLevel: logLevel
   });
 }

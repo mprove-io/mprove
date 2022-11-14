@@ -30,7 +30,7 @@ export class GenSqlService {
       logIsStringify: this.cs.get<interfaces.Config['blockmlLogIsStringify']>(
         'blockmlLogIsStringify'
       ),
-      pinoLogger: this.pinoLogger
+      logger: this.pinoLogger
     });
 
     let payload = barSpecial.genSqlPro(reqValid.payload);

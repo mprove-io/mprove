@@ -47,6 +47,6 @@ export function makeOkResponseBlockml(item: {
         'blockmlLogIsStringify'
       )
     ),
-    pinoLogger: pinoLogger
+    logger: pinoLogger
   });
 }

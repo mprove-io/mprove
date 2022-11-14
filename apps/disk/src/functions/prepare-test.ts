@@ -1,8 +1,8 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as fse from 'fs-extra';
-import { Logger, LoggerModule, PinoLogger } from 'nestjs-pino';
+import { WinstonModule } from 'nest-winston';
 import { appServices } from '~disk/app-services';
 import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
@@ -16,7 +16,9 @@ export async function prepareTest(
 ) {
   let app: INestApplication;
 
-  let mockConfig = Object.assign(getConfig(), overrideConfigOptions);
+  let config = getConfig();
+
+  let mockConfig = Object.assign(config, overrideConfigOptions);
 
   let moduleRef: TestingModule = await Test.createTestingModule({
     imports: [
@@ -24,18 +26,13 @@ export async function prepareTest(
         load: [getConfig],
         isGlobal: true
       }),
-
-      LoggerModule.forRoot({
-        pinoHttp: {
-          autoLogging: false,
-          transport:
-            mockConfig.diskLogIsStringify === common.BoolEnum.FALSE
-              ? common.LOGGER_MODULE_TRANSPORT
-              : undefined
-        }
-      })
+      WinstonModule.forRoot(
+        mockConfig.diskLogIsStringify === common.BoolEnum.TRUE
+          ? common.WINSTON_JSON_OPTIONS
+          : common.WINSTON_PRETTY_OPTIONS
+      )
     ],
-    providers: appServices
+    providers: [Logger, ...appServices]
   })
     .overrideProvider(ConfigService)
     .useValue({ get: (key: any) => mockConfig[key as keyof interfaces.Config] })
@@ -44,7 +41,6 @@ export async function prepareTest(
     .compile();
 
   app = moduleRef.createNestApplication();
-  app.useLogger(app.get(Logger));
   await app.init();
 
   let cs = moduleRef.get<ConfigService<interfaces.Config>>(ConfigService);
@@ -61,10 +57,10 @@ export async function prepareTest(
   }
 
   let messageService = moduleRef.get<MessageService>(MessageService);
-  let pinoLogger = await moduleRef.resolve<PinoLogger>(PinoLogger);
+  let logger = await moduleRef.resolve<Logger>(Logger);
 
   return {
     messageService: messageService,
-    pinoLogger: pinoLogger
+    logger: logger
   };
 }

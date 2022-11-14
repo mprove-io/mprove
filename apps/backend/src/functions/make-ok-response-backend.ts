@@ -47,6 +47,6 @@ export function makeOkResponseBackend(item: {
         'backendLogIsStringify'
       )
     ),
-    pinoLogger: pinoLogger
+    logger: pinoLogger
   });
 }

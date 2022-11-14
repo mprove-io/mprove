@@ -17,8 +17,8 @@ test('1', async t => {
   let pLogger;
 
   try {
-    let { messageService, pinoLogger } = await prepareTest(orgId);
-    pLogger = pinoLogger;
+    let { messageService, logger: logger } = await prepareTest(orgId);
+    pLogger = logger;
 
     let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
       info: {
@@ -86,7 +86,7 @@ test('1', async t => {
     logToConsoleDisk({
       log: e,
       logLevel: common.LogLevelEnum.Error,
-      pinoLogger: pLogger
+      logger: pLogger
     });
   }
 

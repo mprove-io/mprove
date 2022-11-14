@@ -40,6 +40,6 @@ export function makeErrorResponseBackend(item: {
         'backendLogIsStringify'
       )
     ),
-    pinoLogger: pinoLogger
+    logger: pinoLogger
   });
 }
