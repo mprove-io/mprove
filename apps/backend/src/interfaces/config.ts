@@ -147,9 +147,6 @@ export class Config {
   backendLogIsStringify?: common.BoolEnum;
 
   @IsEnum(common.BoolEnum)
-  backendLogResAuto?: common.BoolEnum;
-
-  @IsEnum(common.BoolEnum)
   backendLogResponseError?: common.BoolEnum;
 
   @IsEnum(common.BoolEnum)
