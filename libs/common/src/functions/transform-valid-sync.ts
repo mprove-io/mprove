@@ -34,6 +34,12 @@ export function transformValidSync<T extends object>(item: {
       constraints = getConstraintsRecursive(e);
     }
 
+    let serverError = new ServerError({
+      message: errorMessage,
+      data: constraints,
+      originalError: null
+    });
+
     if (
       [
         enums.ErEnum.BACKEND_WRONG_ENV_VALUES,
@@ -42,7 +48,7 @@ export function transformValidSync<T extends object>(item: {
       ].indexOf(errorMessage) > -1
     ) {
       logToConsole({
-        log: constraints,
+        log: serverError, // default exception handler doesn't print constraints (error.data)
         logIsStringify: isDefined(logIsStringify)
           ? enumToBoolean(logIsStringify)
           : false,
@@ -51,11 +57,7 @@ export function transformValidSync<T extends object>(item: {
       });
     }
 
-    throw new ServerError({
-      message: errorMessage,
-      data: constraints,
-      originalError: null
-    });
+    throw serverError;
   }
   return valid;
 }

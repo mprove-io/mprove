@@ -1,4 +1,5 @@
 import { PinoLogger } from 'nestjs-pino';
+import { hostname } from 'os';
 import * as util from 'util';
 import { enums } from '~common/barrels/enums';
 import { isDefined } from './is-defined';
@@ -20,17 +21,25 @@ export function logToConsole(item: {
   }
 
   if (isDefined(pinoLogger)) {
-    // if (logLevel === enums.LogLevelEnum.Fatal) {
-    //   pinoLogger.fatal(log);
-    // } else
     if (logLevel === enums.LogLevelEnum.Error) {
       pinoLogger.error(log);
-      // } else if (logLevel === enums.LogLevelEnum.Warn) {
-      //   pinoLogger.warn(log);
     } else {
       pinoLogger.info(log);
     }
   } else if (logIsStringify === true) {
+    let opts = {
+      level: logLevel === enums.LogLevelEnum.Error ? 50 : 30,
+      time: Math.floor(new Date().getTime()),
+      pid: process.pid,
+      hostname: hostname()
+    };
+
+    if (log.constructor === Object) {
+      log = Object.assign(opts, log);
+    } else {
+      log = Object.assign(opts, { log: log });
+    }
+
     console.log(JSON.stringify(log));
   } else {
     console.log(
