@@ -4,6 +4,7 @@ import 'module-alias/register';
 import { WinstonModule } from 'nest-winston';
 import { AppModule } from './app.module';
 import { common } from './barrels/common';
+import { constants } from './barrels/constants';
 import { getConfig } from './config/get.config';
 import { listenProcessEventsBackend } from './functions/listen-process-events-backend';
 
@@ -15,8 +16,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger(
       config.backendLogIsStringify === common.BoolEnum.TRUE
-        ? common.WINSTON_JSON_OPTIONS
-        : common.WINSTON_PRETTY_OPTIONS
+        ? constants.WINSTON_JSON_OPTIONS
+        : constants.WINSTON_PRETTY_OPTIONS
     )
   });
 

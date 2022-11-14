@@ -1,32 +1,4 @@
-import {
-  utilities as nestWinstonModuleUtilities,
-  WinstonModuleOptions
-} from 'nest-winston';
-import { format, transports } from 'winston';
 import { enums } from '~common/barrels/enums';
-
-export const WINSTON_PRETTY_OPTIONS: WinstonModuleOptions = {
-  transports: new transports.Console({
-    format: format.combine(
-      format.timestamp(),
-      // format.ms(),
-      nestWinstonModuleUtilities.format.nestLike('Mprove', {
-        prettyPrint: true,
-        colors: true
-      })
-    )
-  })
-};
-
-export const WINSTON_JSON_OPTIONS: WinstonModuleOptions = {
-  transports: new transports.Console({
-    format: format.combine(
-      format.timestamp(),
-      // format.ms(),
-      format.json()
-    )
-  })
-};
 
 // export const API_PATH = 'api';
 export const MPROVE_CONFIG_FILENAME = 'mprove.yml';

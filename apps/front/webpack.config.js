@@ -7,7 +7,7 @@ module.exports = (config, context) => {
   config.resolve = config.resolve || {};
   config.resolve.fallback = config.resolve.fallback || {};
   config.resolve.fallback = Object.assign(config.resolve.fallback, {
-    os: false
+    // os: false,
   });
 
   return merge({
