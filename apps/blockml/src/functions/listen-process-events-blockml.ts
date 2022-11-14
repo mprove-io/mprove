@@ -14,7 +14,7 @@ export function listenProcessEventsBlockml() {
           }
         }),
         pinoLogger: undefined,
-        logLevel: common.LogLevelEnum.Fatal
+        logLevel: common.LogLevelEnum.Error
       });
       process.exit(0);
     })
@@ -26,7 +26,7 @@ export function listenProcessEventsBlockml() {
         originalError: e
       }),
       pinoLogger: undefined,
-      logLevel: common.LogLevelEnum.Fatal
+      logLevel: common.LogLevelEnum.Error
     });
     process.exit(1);
   });
@@ -38,7 +38,7 @@ export function listenProcessEventsBlockml() {
           reason: reason
         }
       }),
-      logLevel: common.LogLevelEnum.Fatal,
+      logLevel: common.LogLevelEnum.Error,
       pinoLogger: undefined
     });
     promise.catch(e => {
@@ -50,7 +50,7 @@ export function listenProcessEventsBlockml() {
             reason: reason
           }
         }),
-        logLevel: common.LogLevelEnum.Fatal,
+        logLevel: common.LogLevelEnum.Error,
         pinoLogger: undefined
       });
       process.exit(1);

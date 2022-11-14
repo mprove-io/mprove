@@ -47,7 +47,7 @@ export function transformValidSync<T extends object>(item: {
           ? enumToBoolean(logIsStringify)
           : false,
         pinoLogger: pinoLogger,
-        logLevel: enums.LogLevelEnum.Fatal
+        logLevel: enums.LogLevelEnum.Error
       });
     }
 

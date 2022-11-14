@@ -1,6 +1,6 @@
 export enum LogLevelEnum {
-  Fatal = 'Fatal',
+  // Fatal = 'Fatal',
   Error = 'Error',
-  Warn = 'Warn',
+  // Warn = 'Warn',
   Info = 'Info'
 }

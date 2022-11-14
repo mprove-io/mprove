@@ -550,7 +550,7 @@ export class AppModule implements OnModuleInit {
       logToConsoleBackend({
         log: e,
         pinoLogger: this.pinoLogger,
-        logLevel: common.LogLevelEnum.Fatal
+        logLevel: common.LogLevelEnum.Error
       });
 
       process.exit(1);

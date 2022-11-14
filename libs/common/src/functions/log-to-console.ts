@@ -20,12 +20,13 @@ export function logToConsole(item: {
   }
 
   if (isDefined(pinoLogger)) {
-    if (logLevel === enums.LogLevelEnum.Fatal) {
-      pinoLogger.fatal(log);
-    } else if (logLevel === enums.LogLevelEnum.Error) {
+    // if (logLevel === enums.LogLevelEnum.Fatal) {
+    //   pinoLogger.fatal(log);
+    // } else
+    if (logLevel === enums.LogLevelEnum.Error) {
       pinoLogger.error(log);
-    } else if (logLevel === enums.LogLevelEnum.Warn) {
-      pinoLogger.warn(log);
+      // } else if (logLevel === enums.LogLevelEnum.Warn) {
+      //   pinoLogger.warn(log);
     } else {
       pinoLogger.info(log);
     }
