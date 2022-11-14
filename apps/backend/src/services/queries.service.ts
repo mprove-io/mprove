@@ -1,7 +1,6 @@
 import { BigQuery } from '@google-cloud/bigquery';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Logger } from 'nestjs-pino';
 import asyncPool from 'tiny-async-pool';
 import { DataSource, In } from 'typeorm';
 import { common } from '~backend/barrels/common';
@@ -20,7 +19,7 @@ export class QueriesService {
     private dbService: DbService,
     private cs: ConfigService<interfaces.Config>,
     private dataSource: DataSource,
-    private pinoLogger: Logger
+    private logger: Logger
   ) {}
 
   async getQueryCheckExists(item: { queryId: string }) {
@@ -203,7 +202,7 @@ WHERE m.mconfig_id is NULL
             originalError: e
           }),
           logLevel: common.LogLevelEnum.Error,
-          pinoLogger: this.pinoLogger
+          logger: this.logger
         });
       }
     });

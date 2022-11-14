@@ -142,7 +142,7 @@ test('1', async t => {
     logToConsoleBackend({
       log: e,
       logLevel: common.LogLevelEnum.Error,
-      pinoLogger: prep.pinoLogger
+      logger: prep.logger
     });
   }
 
@@ -150,7 +150,7 @@ test('1', async t => {
     logToConsoleBackend({
       log: resp2.info.error,
       logLevel: common.LogLevelEnum.Error,
-      pinoLogger: prep.pinoLogger
+      logger: prep.logger
     });
   }
 

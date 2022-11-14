@@ -2,10 +2,10 @@ import {
   CallHandler,
   ExecutionContext,
   Injectable,
+  Logger,
   NestInterceptor
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Logger } from 'nestjs-pino';
 import { Observable, of } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
 import { apiToBackend } from './barrels/api-to-backend';
@@ -26,7 +26,7 @@ export class AppInterceptor implements NestInterceptor {
   constructor(
     private idempsRepository: repositories.IdempsRepository,
     private cs: ConfigService<interfaces.Config>,
-    private pinoLogger: Logger
+    private logger: Logger
   ) {}
 
   async intercept(
@@ -97,7 +97,7 @@ export class AppInterceptor implements NestInterceptor {
                   originalError: e
                 }),
                 logLevel: common.LogLevelEnum.Error,
-                pinoLogger: this.pinoLogger
+                logger: this.logger
               });
             }
           }
@@ -114,7 +114,7 @@ export class AppInterceptor implements NestInterceptor {
           request: request,
           skipLog: true,
           cs: this.cs,
-          pinoLogger: this.pinoLogger
+          logger: this.logger
         });
 
         let idempEntity: entities.IdempEntity = {
@@ -138,7 +138,7 @@ export class AppInterceptor implements NestInterceptor {
               body: req,
               skipLog: true,
               cs: this.cs,
-              pinoLogger: this.pinoLogger
+              logger: this.logger
             });
 
             if (common.isDefined(iKey)) {
@@ -181,7 +181,7 @@ export class AppInterceptor implements NestInterceptor {
                 )
               ),
               logLevel: common.LogLevelEnum.Info,
-              logger: this.pinoLogger
+              logger: this.logger
             })
           )
         )
@@ -215,7 +215,7 @@ export class AppInterceptor implements NestInterceptor {
                 )
               ),
               logLevel: common.LogLevelEnum.Info,
-              logger: this.pinoLogger
+              logger: this.logger
             })
           )
         )
@@ -248,7 +248,7 @@ export class AppInterceptor implements NestInterceptor {
                 )
               ),
               logLevel: common.LogLevelEnum.Info,
-              logger: this.pinoLogger
+              logger: this.logger
             })
           )
         );

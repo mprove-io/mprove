@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Logger } from 'nestjs-pino';
 import { DataSource } from 'typeorm';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
@@ -15,7 +14,7 @@ export class DbService {
   constructor(
     private dataSource: DataSource,
     private cs: ConfigService<interfaces.Config>,
-    private pinoLogger: Logger
+    private logger: Logger
   ) {}
 
   async writeRecords(item: { records: interfaces.Records; modify: boolean }) {
@@ -40,7 +39,7 @@ export class DbService {
               originalError: e
             }),
             logLevel: common.LogLevelEnum.Error,
-            pinoLogger: this.pinoLogger
+            logger: this.logger
           });
         }
       }

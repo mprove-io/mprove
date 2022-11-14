@@ -1,7 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { Logger } from 'nestjs-pino';
 import { LessThan } from 'typeorm';
 import { common } from '~backend/barrels/common';
 import { repositories } from '~backend/barrels/repositories';
@@ -20,7 +19,7 @@ export class TasksService {
     private queriesService: QueriesService,
     private structsService: StructsService,
     private idempsRepository: repositories.IdempsRepository,
-    private pinoLogger: Logger
+    private logger: Logger
   ) {}
 
   // // Called every 10 seconds
@@ -41,7 +40,7 @@ export class TasksService {
             originalError: e
           }),
           logLevel: common.LogLevelEnum.Error,
-          pinoLogger: this.pinoLogger
+          logger: this.logger
         });
       });
 
@@ -61,7 +60,7 @@ export class TasksService {
             originalError: e
           }),
           logLevel: common.LogLevelEnum.Error,
-          pinoLogger: this.pinoLogger
+          logger: this.logger
         });
       });
 
@@ -72,7 +71,7 @@ export class TasksService {
             originalError: e
           }),
           logLevel: common.LogLevelEnum.Error,
-          pinoLogger: this.pinoLogger
+          logger: this.logger
         });
       });
 
@@ -97,7 +96,7 @@ export class TasksService {
               originalError: e
             }),
             logLevel: common.LogLevelEnum.Error,
-            pinoLogger: this.pinoLogger
+            logger: this.logger
           });
         });
 

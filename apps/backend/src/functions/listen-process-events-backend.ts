@@ -13,7 +13,7 @@ export function listenProcessEventsBackend() {
             signal: signal
           }
         }),
-        pinoLogger: undefined,
+        logger: undefined,
         logLevel: common.LogLevelEnum.Error
       });
       process.exit(0);
@@ -25,7 +25,7 @@ export function listenProcessEventsBackend() {
         message: common.ErEnum.BACKEND_UNCAUGHT_EXCEPTION,
         originalError: e
       }),
-      pinoLogger: undefined,
+      logger: undefined,
       logLevel: common.LogLevelEnum.Error
     });
     process.exit(1);
@@ -39,7 +39,7 @@ export function listenProcessEventsBackend() {
         }
       }),
       logLevel: common.LogLevelEnum.Error,
-      pinoLogger: undefined
+      logger: undefined
     });
     promise.catch(e => {
       logToConsoleBackend({
@@ -51,7 +51,7 @@ export function listenProcessEventsBackend() {
           }
         }),
         logLevel: common.LogLevelEnum.Error,
-        pinoLogger: undefined
+        logger: undefined
       });
       process.exit(1);
     });

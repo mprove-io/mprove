@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Logger } from 'nestjs-pino';
 import * as snowflake from 'snowflake-sdk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
@@ -16,7 +15,7 @@ export class SnowFlakeService {
     private queriesRepository: repositories.QueriesRepository,
     private dbService: DbService,
     private cs: ConfigService<interfaces.Config>,
-    private pinoLogger: Logger
+    private logger: Logger
   ) {}
 
   async runQuery(item: {
@@ -63,7 +62,7 @@ export class SnowFlakeService {
 
     let snowflakeConnection = snowflake.createConnection(options);
 
-    let pLogger = this.pinoLogger;
+    let pLogger = this.logger;
 
     snowflakeConnection.connect(function (err, conn): void {
       if (err) {
@@ -73,7 +72,7 @@ export class SnowFlakeService {
             originalError: err
           }),
           logLevel: common.LogLevelEnum.Error,
-          pinoLogger: pLogger
+          logger: pLogger
         });
       }
     });
@@ -181,7 +180,7 @@ export class SnowFlakeService {
 
   snowflakeConnectionDestroy(snowflakeConnection: snowflake.Connection) {
     if (snowflakeConnection.isUp()) {
-      let pLogger = this.pinoLogger;
+      let pLogger = this.logger;
 
       snowflakeConnection.destroy(function (err, conn) {
         if (err) {
@@ -192,7 +191,7 @@ export class SnowFlakeService {
               originalError: err
             }),
             logLevel: common.LogLevelEnum.Error,
-            pinoLogger: pLogger
+            logger: pLogger
           });
         }
       });

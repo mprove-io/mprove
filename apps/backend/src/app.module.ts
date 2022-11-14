@@ -1,6 +1,6 @@
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
@@ -8,7 +8,6 @@ import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as fse from 'fs-extra';
-import { Logger, LoggerModule } from 'nestjs-pino';
 import * as mg from 'nodemailer-mailgun-transport';
 import { DataSource } from 'typeorm';
 import { appControllers } from './app-controllers';
@@ -35,18 +34,6 @@ import { UsersService } from './services/users.service';
 let configModule = ConfigModule.forRoot({
   load: [getConfig],
   isGlobal: true
-});
-
-let config = getConfig();
-
-let loggerModule = LoggerModule.forRoot({
-  pinoHttp: {
-    autoLogging: common.enumToBoolean(config.backendLogResAuto),
-    transport:
-      config.backendLogIsStringify === common.BoolEnum.FALSE
-        ? common.LOGGER_MODULE_TRANSPORT
-        : undefined
-  }
 });
 
 let jwtModule = JwtModule.registerAsync({
@@ -183,7 +170,6 @@ let mailerModule = MailerModule.forRootAsync({
 @Module({
   imports: [
     configModule,
-    loggerModule,
     ScheduleModule.forRoot(),
     jwtModule,
     PassportModule,
@@ -194,6 +180,7 @@ let mailerModule = MailerModule.forRootAsync({
   ],
   controllers: appControllers,
   providers: [
+    Logger,
     ...appProviders,
     ...appRepositories,
     {
@@ -217,23 +204,13 @@ export class AppModule implements OnModuleInit {
     private orgsService: OrgsService,
     private projectsService: ProjectsService,
     private cs: ConfigService<interfaces.Config>,
-    // @InjectRepository(entities.UserEntity)
-    // private usersRepository: Repository<entities.UserEntity>,
-    // @InjectRepository(entities.OrgEntity)
-    // private orgsRepository: Repository<entities.OrgEntity>,
-    // @InjectRepository(entities.ProjectEntity)
-    // private projectsRepository: Repository<entities.ProjectEntity>,
-    // @InjectRepository(entities.ConnectionEntity)
-    // private connectionsRepository: Repository<entities.ConnectionEntity>,
-    // @InjectRepository(entities.EvEntity)
-    // private evsRepository: Repository<entities.EvEntity>,
     private usersRepository: repositories.UsersRepository,
     private orgsRepository: repositories.OrgsRepository,
     private projectsRepository: repositories.ProjectsRepository,
     private connectionsRepository: repositories.ConnectionsRepository,
     private evsRepository: repositories.EvsRepository,
     private dbService: DbService,
-    private pinoLogger: Logger
+    private logger: Logger
   ) {}
 
   async onModuleInit() {
@@ -241,7 +218,7 @@ export class AppModule implements OnModuleInit {
       logToConsoleBackend({
         log: `NODE_ENV is set to "${process.env.NODE_ENV}"`,
         logLevel: common.LogLevelEnum.Info,
-        pinoLogger: this.pinoLogger
+        logger: this.logger
       });
 
       if (helper.isScheduler(this.cs)) {
@@ -255,14 +232,14 @@ export class AppModule implements OnModuleInit {
             logToConsoleBackend({
               log: `Migration ${migration.name} success`,
               logLevel: common.LogLevelEnum.Info,
-              pinoLogger: this.pinoLogger
+              logger: this.logger
             });
           });
         } else {
           logToConsoleBackend({
             log: 'No migrations pending',
             logLevel: common.LogLevelEnum.Info,
-            pinoLogger: this.pinoLogger
+            logger: this.logger
           });
         }
 
@@ -549,7 +526,7 @@ export class AppModule implements OnModuleInit {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        pinoLogger: this.pinoLogger,
+        logger: this.logger,
         logLevel: common.LogLevelEnum.Error
       });
 

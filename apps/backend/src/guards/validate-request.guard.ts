@@ -1,6 +1,10 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  Logger
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Logger } from 'nestjs-pino';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { interfaces } from '~backend/barrels/interfaces';
@@ -9,7 +13,7 @@ import { interfaces } from '~backend/barrels/interfaces';
 export class ValidateRequestGuard implements CanActivate {
   constructor(
     private cs: ConfigService<interfaces.Config>,
-    private pinoLogger: Logger
+    private logger: Logger
   ) {}
 
   canActivate(context: ExecutionContext) {
@@ -33,7 +37,7 @@ export class ValidateRequestGuard implements CanActivate {
       logIsStringify: this.cs.get<interfaces.Config['backendLogIsStringify']>(
         'backendLogIsStringify'
       ),
-      logger: this.pinoLogger
+      logger: this.logger
     });
 
     return true;

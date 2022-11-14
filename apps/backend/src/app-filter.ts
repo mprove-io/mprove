@@ -2,10 +2,10 @@ import {
   ArgumentsHost,
   Catch,
   ExceptionFilter,
-  HttpStatus
+  HttpStatus,
+  Logger
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Logger } from 'nestjs-pino';
 import { apiToBackend } from './barrels/api-to-backend';
 import { common } from './barrels/common';
 import { constants } from './barrels/constants';
@@ -21,7 +21,7 @@ export class AppFilter implements ExceptionFilter {
   constructor(
     private cs: ConfigService<interfaces.Config>,
     private idempsRepository: repositories.IdempsRepository,
-    private pinoLogger: Logger
+    private logger: Logger
   ) {}
 
   async catch(exception: unknown, host: ArgumentsHost) {
@@ -53,7 +53,7 @@ export class AppFilter implements ExceptionFilter {
         duration: Date.now() - request.start_ts,
         skipLog: true,
         cs: this.cs,
-        pinoLogger: this.pinoLogger
+        logger: this.logger
       });
 
       let iKey = req?.info?.idempotencyKey;
@@ -78,7 +78,7 @@ export class AppFilter implements ExceptionFilter {
               originalError: er
             }),
             logLevel: common.LogLevelEnum.Error,
-            pinoLogger: this.pinoLogger
+            logger: this.logger
           });
         }
       }
@@ -106,7 +106,7 @@ export class AppFilter implements ExceptionFilter {
           )
         ),
         logLevel: common.LogLevelEnum.Info,
-        logger: this.pinoLogger
+        logger: this.logger
       });
 
       response.status(HttpStatus.CREATED).json(resp);
@@ -117,7 +117,7 @@ export class AppFilter implements ExceptionFilter {
           originalError: err
         }),
         logLevel: common.LogLevelEnum.Error,
-        pinoLogger: this.pinoLogger
+        logger: this.logger
       });
     }
   }

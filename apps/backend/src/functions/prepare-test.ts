@@ -1,7 +1,7 @@
 import { MailerService } from '@nestjs-modules/mailer';
+import { INestApplication, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Logger } from 'nestjs-pino';
 import { AppModule } from '~backend/app.module';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
@@ -43,8 +43,9 @@ export async function prepareTest(item: {
     .useValue({ sendMail: async () => {} })
     .compile();
 
-  let app = moduleRef.createNestApplication();
+  let app: INestApplication = moduleRef.createNestApplication();
   await app.init();
+
   let httpServer = app.getHttpServer();
 
   if (common.isDefined(deleteRecordsPayload)) {
@@ -102,14 +103,14 @@ export async function prepareTest(item: {
   }
 
   let rabbitService = moduleRef.get<RabbitService>(RabbitService);
-  let pinoLogger = await moduleRef.resolve<Logger>(Logger);
+  let logger = await moduleRef.resolve<Logger>(Logger);
 
   let prep: interfaces.Prep = {
     app,
     httpServer,
     moduleRef,
     rabbitService,
-    pinoLogger,
+    logger: logger,
     loginToken: loginUserResp?.payload?.token
   };
 

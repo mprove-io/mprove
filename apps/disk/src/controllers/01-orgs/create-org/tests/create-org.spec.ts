@@ -14,7 +14,7 @@ test('1', async t => {
   let pLogger;
 
   try {
-    let { messageService, logger: logger } = await prepareTest(orgId);
+    let { messageService, logger } = await prepareTest(orgId);
     pLogger = logger;
 
     let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {

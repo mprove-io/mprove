@@ -1,5 +1,5 @@
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Logger } from 'nestjs-pino';
 import { common } from '~backend/barrels/common';
 import { interfaces } from '~backend/barrels/interfaces';
 
@@ -12,19 +12,10 @@ export function makeOkResponseBackend(item: {
   duration?: number;
   skipLog?: boolean;
   cs: ConfigService<interfaces.Config>;
-  pinoLogger: Logger;
+  logger: Logger;
 }) {
-  let {
-    payload,
-    body,
-    request,
-    path,
-    method,
-    duration,
-    skipLog,
-    cs,
-    pinoLogger
-  } = item;
+  let { payload, body, request, path, method, duration, skipLog, cs, logger } =
+    item;
 
   return common.makeOkResponse({
     payload: payload,
@@ -47,6 +38,6 @@ export function makeOkResponseBackend(item: {
         'backendLogIsStringify'
       )
     ),
-    logger: pinoLogger
+    logger: logger
   });
 }

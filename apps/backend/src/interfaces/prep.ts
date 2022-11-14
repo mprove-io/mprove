@@ -1,6 +1,5 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, Logger } from '@nestjs/common';
 import { TestingModule } from '@nestjs/testing';
-import { Logger } from 'nestjs-pino';
 import { RabbitService } from '~backend/services/rabbit.service';
 
 export interface Prep {
@@ -8,6 +7,6 @@ export interface Prep {
   moduleRef: TestingModule;
   httpServer: any;
   rabbitService: RabbitService;
-  pinoLogger: Logger;
+  logger: Logger;
   loginToken: string;
 }
