@@ -13,8 +13,9 @@ export function listenProcessEventsDisk() {
             signal: signal
           }
         }),
+        logLevel: common.LogLevelEnum.Error,
         logger: undefined,
-        logLevel: common.LogLevelEnum.Error
+        cs: undefined
       });
       process.exit(0);
     })
@@ -25,8 +26,9 @@ export function listenProcessEventsDisk() {
         message: common.ErEnum.DISK_UNCAUGHT_EXCEPTION,
         originalError: e
       }),
+      logLevel: common.LogLevelEnum.Error,
       logger: undefined,
-      logLevel: common.LogLevelEnum.Error
+      cs: undefined
     });
     process.exit(1);
   });
@@ -39,7 +41,8 @@ export function listenProcessEventsDisk() {
         }
       }),
       logLevel: common.LogLevelEnum.Error,
-      logger: undefined
+      logger: undefined,
+      cs: undefined
     });
     promise.catch(e => {
       logToConsoleDisk({
@@ -51,7 +54,8 @@ export function listenProcessEventsDisk() {
           }
         }),
         logLevel: common.LogLevelEnum.Error,
-        logger: undefined
+        logger: undefined,
+        cs: undefined
       });
       process.exit(1);
     });

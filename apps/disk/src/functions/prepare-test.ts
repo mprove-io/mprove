@@ -60,6 +60,7 @@ export async function prepareTest(
 
   return {
     messageService: messageService,
-    logger: logger
+    logger: logger,
+    cs: cs
   };
 }
