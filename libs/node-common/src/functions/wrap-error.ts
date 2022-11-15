@@ -13,7 +13,7 @@ export function wrapError(e: any) {
     data: e.data || null,
     stackArray: e.stack?.split('\n') || null,
     originalError: e.originalError || null,
-    originalErrorStack: e.originalError?.stack || null,
+    originalErrorStack: e.originalError?.stack?.split('\n') || null,
     e: e instanceof ServerError ? null : e
   };
 

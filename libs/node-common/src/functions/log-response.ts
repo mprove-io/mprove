@@ -31,9 +31,11 @@ export function logResponse(item: {
     response.info.status === enums.ResponseInfoStatusEnum.Error;
 
   if (logOnResponser === true && (isLogOk || isLogError)) {
-    let part = Object.assign({}, response, { payload: undefined });
+    let log = {
+      response: Object.assign({}, response, { payload: undefined })
+    };
     logToConsole({
-      log: part,
+      log: log,
       logIsJson: logIsJson,
       logger: logger,
       logLevel: logLevel

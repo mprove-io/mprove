@@ -48,9 +48,11 @@ export function makeErrorResponse(item: {
     logResponseError === true &&
     skipLog !== true
   ) {
-    let part = Object.assign({}, response, { payload: undefined });
+    let log = {
+      response: Object.assign({}, response, { payload: undefined })
+    };
     logToConsole({
-      log: part,
+      log: log,
       logLevel: enums.LogLevelEnum.Error,
       logIsJson: logIsJson,
       logger: logger

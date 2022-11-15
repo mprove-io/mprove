@@ -19,8 +19,17 @@ export function logToConsole(item: {
       common.isDefined(log.stack) &&
       common.isDefined(log.message))
   ) {
-    log = wrapError(log);
+    log = { error: wrapError(log) };
   }
+
+  if (log.constructor !== Object) {
+    log = { message: log };
+  }
+
+  // log = Object.assign(log, {
+  //   pid: process.pid,
+  //   hostname: hostname()
+  // });
 
   if (common.isDefined(logger)) {
     if (logLevel === enums.LogLevelEnum.Error) {
@@ -28,30 +37,25 @@ export function logToConsole(item: {
     } else {
       logger.log(log);
     }
-  } else if (logIsJson === true) {
-    // let opts = {
-    //   level: logLevel === enums.LogLevelEnum.Error ? 50 : 30,
-    //   time: Math.floor(new Date().getTime()),
-    //   pid: process.pid,
-    //   hostname: hostname()
-    // };
-
-    // if (log.constructor === Object) {
-    //   log = Object.assign(opts, log);
-    // } else {
-    //   log = Object.assign(opts, { log: log });
-    // }
-
-    console.log(JSON.stringify(log));
   } else {
-    console.log(
-      util.inspect(log, {
-        showHidden: false,
-        depth: null,
-        colors: true,
-        breakLength: Infinity,
-        compact: false
-      })
-    );
+    // no logger
+    log = Object.assign(log, {
+      level: logLevel.toLowerCase(),
+      timestamp: new Date().toISOString()
+    });
+
+    if (logIsJson === true) {
+      console.log(JSON.stringify(log));
+    } else {
+      console.log(
+        util.inspect(log, {
+          showHidden: false,
+          depth: null,
+          colors: true,
+          breakLength: Infinity,
+          compact: false
+        })
+      );
+    }
   }
 }
