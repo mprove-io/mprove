@@ -39,7 +39,8 @@ export class DbService {
               originalError: e
             }),
             logLevel: common.LogLevelEnum.Error,
-            logger: this.logger
+            logger: this.logger,
+            cs: this.cs
           });
         }
       }

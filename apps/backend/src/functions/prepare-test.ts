@@ -104,14 +104,16 @@ export async function prepareTest(item: {
 
   let rabbitService = moduleRef.get<RabbitService>(RabbitService);
   let logger = await moduleRef.resolve<Logger>(Logger);
+  let cs = await moduleRef.resolve<ConfigService>(ConfigService);
 
   let prep: interfaces.Prep = {
+    loginToken: loginUserResp?.payload?.token,
     app,
     httpServer,
     moduleRef,
     rabbitService,
-    logger: logger,
-    loginToken: loginUserResp?.payload?.token
+    logger,
+    cs
   };
 
   return prep;

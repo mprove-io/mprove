@@ -12,11 +12,11 @@ let orgId = testId;
 test('1', async t => {
   let resp: apiToDisk.ToDiskIsOrgExistResponse;
 
-  let pLogger;
+  let wLogger;
 
   try {
     let { messageService, logger } = await prepareTest(orgId);
-    pLogger = logger;
+    wLogger = logger;
     let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
@@ -55,7 +55,7 @@ test('1', async t => {
     logToConsoleDisk({
       log: e,
       logLevel: common.LogLevelEnum.Error,
-      logger: pLogger
+      logger: wLogger
     });
   }
   t.is(resp.payload.isOrgExist, false);

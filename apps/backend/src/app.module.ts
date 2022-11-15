@@ -218,7 +218,8 @@ export class AppModule implements OnModuleInit {
       logToConsoleBackend({
         log: `NODE_ENV is set to "${process.env.NODE_ENV}"`,
         logLevel: common.LogLevelEnum.Info,
-        logger: this.logger
+        logger: this.logger,
+        cs: this.cs
       });
 
       if (helper.isScheduler(this.cs)) {
@@ -232,14 +233,16 @@ export class AppModule implements OnModuleInit {
             logToConsoleBackend({
               log: `Migration ${migration.name} success`,
               logLevel: common.LogLevelEnum.Info,
-              logger: this.logger
+              logger: this.logger,
+              cs: this.cs
             });
           });
         } else {
           logToConsoleBackend({
             log: 'No migrations pending',
             logLevel: common.LogLevelEnum.Info,
-            logger: this.logger
+            logger: this.logger,
+            cs: this.cs
           });
         }
 
@@ -526,8 +529,9 @@ export class AppModule implements OnModuleInit {
     } catch (e) {
       logToConsoleBackend({
         log: e,
+        logLevel: common.LogLevelEnum.Error,
         logger: this.logger,
-        logLevel: common.LogLevelEnum.Error
+        cs: this.cs
       });
 
       process.exit(1);

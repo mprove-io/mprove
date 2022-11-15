@@ -97,7 +97,8 @@ export class AppInterceptor implements NestInterceptor {
                   originalError: e
                 }),
                 logLevel: common.LogLevelEnum.Error,
-                logger: this.logger
+                logger: this.logger,
+                cs: this.cs
               });
             }
           }

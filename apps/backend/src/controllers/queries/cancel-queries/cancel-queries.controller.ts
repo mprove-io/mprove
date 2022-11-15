@@ -1,5 +1,6 @@
 import { BigQuery } from '@google-cloud/bigquery';
 import { Controller, Logger, Post, Req, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
 import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
@@ -22,7 +23,8 @@ export class CancelQueriesController {
     private connectionsRepository: repositories.ConnectionsRepository,
     private membersService: MembersService,
     private dbService: DbService,
-    private logger: Logger
+    private logger: Logger,
+    private cs: ConfigService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries)
@@ -99,7 +101,8 @@ export class CancelQueriesController {
                 originalError: e
               }),
               logLevel: common.LogLevelEnum.Error,
-              logger: this.logger
+              logger: this.logger,
+              cs: this.cs
             });
           });
         }

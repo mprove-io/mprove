@@ -17,11 +17,11 @@ test('1', async t => {
   let resp3: apiToDisk.ToDiskIsBranchExistResponse;
   let resp4: apiToDisk.ToDiskIsBranchExistResponse;
 
-  let pLogger;
+  let wLogger;
 
   try {
     let { messageService, logger } = await prepareTest(orgId);
-    pLogger = logger;
+    wLogger = logger;
 
     let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
       info: {
@@ -119,7 +119,7 @@ test('1', async t => {
     logToConsoleDisk({
       log: e,
       logLevel: common.LogLevelEnum.Error,
-      logger: pLogger
+      logger: wLogger
     });
   }
 

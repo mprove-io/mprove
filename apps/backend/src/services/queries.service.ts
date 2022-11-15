@@ -202,7 +202,8 @@ WHERE m.mconfig_id is NULL
             originalError: e
           }),
           logLevel: common.LogLevelEnum.Error,
-          logger: this.logger
+          logger: this.logger,
+          cs: this.cs
         });
       }
     });

@@ -62,7 +62,8 @@ export class SnowFlakeService {
 
     let snowflakeConnection = snowflake.createConnection(options);
 
-    let pLogger = this.logger;
+    let logger = this.logger;
+    let cs = this.cs;
 
     snowflakeConnection.connect(function (err, conn): void {
       if (err) {
@@ -72,7 +73,8 @@ export class SnowFlakeService {
             originalError: err
           }),
           logLevel: common.LogLevelEnum.Error,
-          logger: pLogger
+          logger: logger,
+          cs: cs
         });
       }
     });
@@ -180,7 +182,8 @@ export class SnowFlakeService {
 
   snowflakeConnectionDestroy(snowflakeConnection: snowflake.Connection) {
     if (snowflakeConnection.isUp()) {
-      let pLogger = this.logger;
+      let logger = this.logger;
+      let cs = this.cs;
 
       snowflakeConnection.destroy(function (err, conn) {
         if (err) {
@@ -191,7 +194,8 @@ export class SnowFlakeService {
               originalError: err
             }),
             logLevel: common.LogLevelEnum.Error,
-            logger: pLogger
+            logger: logger,
+            cs: cs
           });
         }
       });

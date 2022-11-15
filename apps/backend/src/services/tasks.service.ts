@@ -40,7 +40,8 @@ export class TasksService {
             originalError: e
           }),
           logLevel: common.LogLevelEnum.Error,
-          logger: this.logger
+          logger: this.logger,
+          cs: this.cs
         });
       });
 
@@ -60,7 +61,8 @@ export class TasksService {
             originalError: e
           }),
           logLevel: common.LogLevelEnum.Error,
-          logger: this.logger
+          logger: this.logger,
+          cs: this.cs
         });
       });
 
@@ -71,7 +73,8 @@ export class TasksService {
             originalError: e
           }),
           logLevel: common.LogLevelEnum.Error,
-          logger: this.logger
+          logger: this.logger,
+          cs: this.cs
         });
       });
 
@@ -96,7 +99,8 @@ export class TasksService {
               originalError: e
             }),
             logLevel: common.LogLevelEnum.Error,
-            logger: this.logger
+            logger: this.logger,
+            cs: this.cs
           });
         });
 

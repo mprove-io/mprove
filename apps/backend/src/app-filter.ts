@@ -78,7 +78,8 @@ export class AppFilter implements ExceptionFilter {
               originalError: er
             }),
             logLevel: common.LogLevelEnum.Error,
-            logger: this.logger
+            logger: this.logger,
+            cs: this.cs
           });
         }
       }
@@ -115,7 +116,8 @@ export class AppFilter implements ExceptionFilter {
           originalError: err
         }),
         logLevel: common.LogLevelEnum.Error,
-        logger: this.logger
+        logger: this.logger,
+        cs: this.cs
       });
     }
   }
