@@ -6,6 +6,7 @@
     "api-to-blockml": "libs/api-to-blockml",
     "api-to-disk": "libs/api-to-disk",
     "common": "libs/common",
+    "node-common": "libs/node-common",
     "disk": "apps/disk",
     "blockml": "apps/blockml",
     "backend": "apps/backend",

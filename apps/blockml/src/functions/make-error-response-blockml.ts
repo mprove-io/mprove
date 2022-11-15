@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
+import { nodeCommon } from '~blockml/barrels/node-common';
 
 export function makeErrorResponseBlockml(item: {
   e: any;
@@ -16,7 +17,7 @@ export function makeErrorResponseBlockml(item: {
 }) {
   let { e, body, cs, request, path, method, duration, skipLog, logger } = item;
 
-  return common.makeErrorResponse({
+  return nodeCommon.makeErrorResponse({
     e: e,
     body: body,
     request: request,

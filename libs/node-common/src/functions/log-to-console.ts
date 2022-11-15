@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 // import { hostname } from 'os';
 import * as util from 'util';
 import { enums } from '~common/barrels/enums';
-import { isDefined } from './is-defined';
+import { common } from '~node-common/barrels/common';
 import { wrapError } from './wrap-error';
 
 export function logToConsole(item: {
@@ -15,12 +15,14 @@ export function logToConsole(item: {
 
   if (
     log instanceof Error ||
-    (isDefined(log) && isDefined(log.stack) && isDefined(log.message))
+    (common.isDefined(log) &&
+      common.isDefined(log.stack) &&
+      common.isDefined(log.message))
   ) {
     log = wrapError(log);
   }
 
-  if (isDefined(logger)) {
+  if (common.isDefined(logger)) {
     if (logLevel === enums.LogLevelEnum.Error) {
       logger.error(log);
     } else {

@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { common } from '~backend/barrels/common';
 import { interfaces } from '~backend/barrels/interfaces';
+import { nodeCommon } from '~backend/barrels/node-common';
 
 export function makeErrorResponseBackend(item: {
   e: any;
@@ -16,7 +17,7 @@ export function makeErrorResponseBackend(item: {
 }) {
   let { e, body, cs, request, path, method, duration, skipLog, logger } = item;
 
-  return common.makeErrorResponse({
+  return nodeCommon.makeErrorResponse({
     e: e,
     body: body,
     request: request,

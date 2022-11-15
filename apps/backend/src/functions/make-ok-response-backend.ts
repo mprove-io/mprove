@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { common } from '~backend/barrels/common';
 import { interfaces } from '~backend/barrels/interfaces';
+import { nodeCommon } from '~backend/barrels/node-common';
 
 export function makeOkResponseBackend(item: {
   payload: any;
@@ -17,7 +18,7 @@ export function makeOkResponseBackend(item: {
   let { payload, body, request, path, method, duration, skipLog, cs, logger } =
     item;
 
-  return common.makeOkResponse({
+  return nodeCommon.makeOkResponse({
     payload: payload,
     body: body,
     request: request,

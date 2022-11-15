@@ -14,6 +14,7 @@ import { constants } from './barrels/constants';
 import { entities } from './barrels/entities';
 import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
+import { nodeCommon } from './barrels/node-common';
 import { repositories } from './barrels/repositories';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { makeErrorResponseBackend } from './functions/make-error-response-backend';
@@ -159,7 +160,7 @@ export class AppInterceptor implements NestInterceptor {
             return resp;
           }),
           tap(x =>
-            common.logResponse({
+            nodeCommon.logResponse({
               response: x,
               logResponseOk: common.enumToBoolean(
                 this.cs.get<interfaces.Config['backendLogResponseOk']>(
@@ -193,7 +194,7 @@ export class AppInterceptor implements NestInterceptor {
             return x;
           }),
           tap(x =>
-            common.logResponse({
+            nodeCommon.logResponse({
               response: x,
               logResponseOk: common.enumToBoolean(
                 this.cs.get<interfaces.Config['backendLogResponseOk']>(
@@ -226,7 +227,7 @@ export class AppInterceptor implements NestInterceptor {
             return x;
           }),
           tap(x =>
-            common.logResponse({
+            nodeCommon.logResponse({
               response: x,
               logResponseOk: common.enumToBoolean(
                 this.cs.get<interfaces.Config['backendLogResponseOk']>(

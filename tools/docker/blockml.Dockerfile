@@ -18,6 +18,7 @@ COPY libs/api-to-disk libs/api-to-disk/
 COPY apps/blockml apps/blockml/
 COPY libs/api-to-blockml libs/api-to-blockml/
 COPY libs/common libs/common/
+COPY libs/node-common libs/node-common/
 COPY ava.config.js ava-js.config.js ava-js-e2e.config.js nx.json package.json tsconfig.base.json tsconfig.json workspace.json ./
 
 RUN chmod +x scripts/wait-for-it.sh

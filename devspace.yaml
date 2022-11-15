@@ -27,6 +27,7 @@ dev:
   #       excludePaths:
   #       - ./libs/api-to-blockml
   #       - ./libs/api-to-disk
+  #       - ./libs/node-common
 
   disk:
     labelSelector:

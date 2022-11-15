@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { interfaces } from '~backend/barrels/interfaces';
+import { nodeCommon } from '~backend/barrels/node-common';
 
 @Injectable()
 export class ValidateRequestGuard implements CanActivate {
@@ -30,7 +31,7 @@ export class ValidateRequestGuard implements CanActivate {
       });
     }
 
-    common.transformValidSync({
+    nodeCommon.transformValidSync({
       classType: classType,
       object: request.body,
       errorMessage: common.ErEnum.BACKEND_WRONG_REQUEST_PARAMS,

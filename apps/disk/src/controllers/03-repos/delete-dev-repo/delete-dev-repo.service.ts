@@ -4,6 +4,7 @@ import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { interfaces } from '~disk/barrels/interfaces';
+import { nodeCommon } from '~disk/barrels/node-common';
 
 @Injectable()
 export class DeleteDevRepoService {
@@ -17,7 +18,7 @@ export class DeleteDevRepoService {
       'diskOrganizationsPath'
     );
 
-    let requestValid = common.transformValidSync({
+    let requestValid = nodeCommon.transformValidSync({
       classType: apiToDisk.ToDiskDeleteDevRepoRequest,
       object: request,
       errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS,

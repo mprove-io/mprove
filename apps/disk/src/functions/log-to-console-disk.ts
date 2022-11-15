@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
+import { nodeCommon } from '~disk/barrels/node-common';
 import { getConfig } from '~disk/config/get.config';
 
 export function logToConsoleDisk(item: {
@@ -21,7 +22,7 @@ export function logToConsoleDisk(item: {
     logIsJson = config.diskLogIsJson;
   }
 
-  common.logToConsole({
+  nodeCommon.logToConsole({
     log: log,
     logIsJson: common.enumToBoolean(logIsJson),
     logger: logger,

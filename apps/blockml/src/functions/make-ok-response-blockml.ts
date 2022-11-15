@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
+import { nodeCommon } from '~blockml/barrels/node-common';
 
 export function makeOkResponseBlockml(item: {
   payload: any;
@@ -17,7 +18,7 @@ export function makeOkResponseBlockml(item: {
   let { payload, body, request, path, method, duration, skipLog, cs, logger } =
     item;
 
-  return common.makeOkResponse({
+  return nodeCommon.makeOkResponse({
     payload: payload,
     body: body,
     request: request,

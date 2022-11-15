@@ -4,6 +4,7 @@ import { WinstonModule } from 'nest-winston';
 import { AppModule } from './app.module';
 import { common } from './barrels/common';
 import { constants } from './barrels/constants';
+import { nodeCommon } from './barrels/node-common';
 import { getConfig } from './config/get.config';
 import { listenProcessEventsDisk } from './functions/listen-process-events-disk';
 
@@ -14,9 +15,10 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger(
-      config.diskLogIsJson === common.BoolEnum.TRUE
-        ? constants.WINSTON_JSON_OPTIONS
-        : constants.WINSTON_PRETTY_OPTIONS
+      nodeCommon.getLoggerOptions({
+        appName: constants.APP_NAME_DISK,
+        isJson: config.diskLogIsJson === common.BoolEnum.TRUE
+      })
     )
   });
 

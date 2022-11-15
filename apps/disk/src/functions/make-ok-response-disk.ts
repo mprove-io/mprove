@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
+import { nodeCommon } from '~disk/barrels/node-common';
 
 export function makeOkResponseDisk(item: {
   payload: any;
@@ -17,7 +18,7 @@ export function makeOkResponseDisk(item: {
   let { payload, body, request, path, method, duration, skipLog, cs, logger } =
     item;
 
-  return common.makeOkResponse({
+  return nodeCommon.makeOkResponse({
     payload: payload,
     body: body,
     request: request,

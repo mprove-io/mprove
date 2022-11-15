@@ -5,6 +5,7 @@ import { WinstonModule } from 'nest-winston';
 import { AppModule } from './app.module';
 import { common } from './barrels/common';
 import { constants } from './barrels/constants';
+import { nodeCommon } from './barrels/node-common';
 import { getConfig } from './config/get.config';
 import { listenProcessEventsBackend } from './functions/listen-process-events-backend';
 
@@ -15,9 +16,14 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger(
-      config.backendLogIsJson === common.BoolEnum.TRUE
-        ? constants.WINSTON_JSON_OPTIONS
-        : constants.WINSTON_PRETTY_OPTIONS
+      nodeCommon.getLoggerOptions({
+        appName:
+          config.isScheduler === common.BoolEnum.TRUE
+            ? constants.APP_NAME_BACKEND_SCHEDULER
+            : constants.APP_NAME_BACKEND,
+
+        isJson: config.backendLogIsJson === common.BoolEnum.TRUE
+      })
     )
   });
 

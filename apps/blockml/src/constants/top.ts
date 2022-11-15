@@ -1,32 +1,6 @@
-import {
-  utilities as nestWinstonModuleUtilities,
-  WinstonModuleOptions
-} from 'nest-winston';
-import { format, transports } from 'winston';
 import { common } from '~blockml/barrels/common';
 
-export const WINSTON_PRETTY_OPTIONS: WinstonModuleOptions = {
-  transports: new transports.Console({
-    format: format.combine(
-      format.timestamp(),
-      // format.ms(),
-      nestWinstonModuleUtilities.format.nestLike('Blockml', {
-        prettyPrint: true,
-        colors: true
-      })
-    )
-  })
-};
-
-export const WINSTON_JSON_OPTIONS: WinstonModuleOptions = {
-  transports: new transports.Console({
-    format: format.combine(
-      format.timestamp(),
-      // format.ms(),
-      format.json()
-    )
-  })
-};
+export const APP_NAME_BLOCKML = 'BLOCKML';
 
 export const SRC_PATH = `apps/blockml/src`;
 

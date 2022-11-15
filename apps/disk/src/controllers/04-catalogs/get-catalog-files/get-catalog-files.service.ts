@@ -5,6 +5,7 @@ import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { git } from '~disk/barrels/git';
 import { interfaces } from '~disk/barrels/interfaces';
+import { nodeCommon } from '~disk/barrels/node-common';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 
 @Injectable()
@@ -19,7 +20,7 @@ export class GetCatalogFilesService {
       'diskOrganizationsPath'
     );
 
-    let requestValid = common.transformValidSync({
+    let requestValid = nodeCommon.transformValidSync({
       classType: apiToDisk.ToDiskGetCatalogFilesRequest,
       object: request,
       errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS,

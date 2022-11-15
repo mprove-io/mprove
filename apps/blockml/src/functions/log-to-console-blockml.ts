@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
+import { nodeCommon } from '~blockml/barrels/node-common';
 import { getConfig } from '~blockml/config/get.config';
 
 export function logToConsoleBlockml(item: {
@@ -22,7 +23,7 @@ export function logToConsoleBlockml(item: {
     logIsJson = config.blockmlLogIsJson;
   }
 
-  common.logToConsole({
+  nodeCommon.logToConsole({
     log: log,
     logIsJson: common.enumToBoolean(logIsJson),
     logger: logger,

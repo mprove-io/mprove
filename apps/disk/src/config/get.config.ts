@@ -1,6 +1,7 @@
 import { common } from '~disk/barrels/common';
 import { enums } from '~disk/barrels/enums';
 import { interfaces } from '~disk/barrels/interfaces';
+import { nodeCommon } from '~disk/barrels/node-common';
 import { getDevConfig } from './get-dev.config';
 import { getProdConfig } from './get-prod.config';
 import { getTestConfig } from './get-test.config';
@@ -16,7 +17,7 @@ export function getConfig() {
       ? getTestConfig(devConfig)
       : devConfig;
 
-  let validatedConfig = common.transformValidSync({
+  let validatedConfig = nodeCommon.transformValidSync({
     classType: interfaces.Config,
     object: config,
     errorMessage: common.ErEnum.DISK_WRONG_ENV_VALUES,

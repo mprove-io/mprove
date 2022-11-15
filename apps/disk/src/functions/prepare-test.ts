@@ -7,6 +7,7 @@ import { appServices } from '~disk/app-services';
 import { common } from '~disk/barrels/common';
 import { constants } from '~disk/barrels/constants';
 import { interfaces } from '~disk/barrels/interfaces';
+import { nodeCommon } from '~disk/barrels/node-common';
 import { getConfig } from '~disk/config/get.config';
 import { ConsumerService } from '~disk/services/consumer.service';
 import { MessageService } from '~disk/services/message.service';
@@ -26,9 +27,10 @@ export async function prepareTest(
         isGlobal: true
       }),
       WinstonModule.forRoot(
-        mockConfig.diskLogIsJson === common.BoolEnum.TRUE
-          ? constants.WINSTON_JSON_OPTIONS
-          : constants.WINSTON_PRETTY_OPTIONS
+        nodeCommon.getLoggerOptions({
+          appName: constants.APP_NAME_DISK,
+          isJson: config.diskLogIsJson === common.BoolEnum.TRUE
+        })
       )
     ],
     providers: [Logger, ...appServices]

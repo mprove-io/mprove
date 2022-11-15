@@ -5,6 +5,7 @@ import { barSpecial } from '~blockml/barrels/bar-special';
 import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
+import { nodeCommon } from '~blockml/barrels/node-common';
 import { RabbitService } from '~blockml/services/rabbit.service';
 
 @Injectable()
@@ -25,7 +26,7 @@ export class ProcessQueryService {
       });
     }
 
-    let reqValid = common.transformValidSync({
+    let reqValid = nodeCommon.transformValidSync({
       classType: apiToBlockml.ToBlockmlProcessQueryRequest,
       object: request,
       errorMessage: common.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS,

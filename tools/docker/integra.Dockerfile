@@ -12,6 +12,7 @@ COPY apps/front apps/front/
 COPY apps/blockml apps/blockml/
 COPY libs/api-to-disk libs/api-to-disk/
 COPY libs/api-to-blockml libs/api-to-blockml/
+COPY libs/node-common libs/node-common/
 
 COPY apps/integra apps/integra/
 COPY libs/api-to-backend libs/api-to-backend/

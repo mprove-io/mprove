@@ -9,8 +9,7 @@ import { ValidationError } from 'class-validator';
 import { enums } from '~common/barrels/enums';
 import { ServerError } from '~common/models/server-error';
 import { BoolEnum } from '~common/_index';
-import { enumToBoolean } from './enum-to-boolean';
-import { isDefined } from './is-defined';
+import { common } from '~node-common/barrels/common';
 import { logToConsole } from './log-to-console';
 
 export function transformValidSync<T extends object>(item: {
@@ -48,7 +47,9 @@ export function transformValidSync<T extends object>(item: {
     ) {
       logToConsole({
         log: serverError, // default exception handler doesn't print constraints (error.data)
-        logIsJson: isDefined(logIsJson) ? enumToBoolean(logIsJson) : false,
+        logIsJson: common.isDefined(logIsJson)
+          ? common.enumToBoolean(logIsJson)
+          : false,
         logger: logger,
         logLevel: enums.LogLevelEnum.Error
       });
@@ -64,7 +65,7 @@ export function getConstraintsRecursive(
 ) {
   return nestedValidationErrors.reduce(
     (allConstraints, nestedObject: ValidationError): any[] => {
-      if (isDefined(nestedObject.constraints)) {
+      if (common.isDefined(nestedObject.constraints)) {
         allConstraints.push(nestedObject.constraints);
       }
 

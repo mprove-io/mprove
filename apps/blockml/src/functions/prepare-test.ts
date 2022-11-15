@@ -8,6 +8,7 @@ import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
+import { nodeCommon } from '~blockml/barrels/node-common';
 import { getConfig } from '~blockml/config/get.config';
 import { RebuildStructService } from '~blockml/controllers/rebuild-struct/rebuild-struct.service';
 import { ConsumerMainService } from '~blockml/services/consumer-main.service';
@@ -36,9 +37,10 @@ export async function prepareTest(
         isGlobal: true
       }),
       WinstonModule.forRoot(
-        mockConfig.blockmlLogIsJson === common.BoolEnum.TRUE
-          ? constants.WINSTON_JSON_OPTIONS
-          : constants.WINSTON_PRETTY_OPTIONS
+        nodeCommon.getLoggerOptions({
+          appName: constants.APP_NAME_BLOCKML,
+          isJson: config.blockmlLogIsJson === common.BoolEnum.TRUE
+        })
       )
     ],
     providers: [Logger, ...appServices]

@@ -10,6 +10,7 @@ import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
+import { nodeCommon } from '~blockml/barrels/node-common';
 import { getMproveConfigFile } from '~blockml/functions/get-mprove-config-file';
 import { getMproveDirBlockml } from '~blockml/functions/get-mprove-dir-blockml';
 import { BmError } from '~blockml/models/bm-error';
@@ -33,7 +34,7 @@ export class RebuildStructService {
       });
     }
 
-    let reqValid = common.transformValidSync({
+    let reqValid = nodeCommon.transformValidSync({
       classType: apiToBlockml.ToBlockmlRebuildStructRequest,
       object: request,
       errorMessage: common.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS,
