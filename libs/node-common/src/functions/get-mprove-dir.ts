@@ -1,11 +1,8 @@
 import * as fse from 'fs-extra';
 import { load } from 'js-yaml';
-import { common } from '~blockml/barrels/common';
+import { common } from '~node-common/barrels/common';
 
-export async function getMproveDirBlockml(item: {
-  dir: string;
-  configPath: string;
-}) {
+export async function getMproveDir(item: { dir: string; configPath: string }) {
   let isConfigPathExist = await fse.pathExists(item.configPath);
   if (isConfigPathExist === false) {
     return undefined;

@@ -6,10 +6,16 @@ import { common } from './barrels/common';
 import { constants } from './barrels/constants';
 import { nodeCommon } from './barrels/node-common';
 import { getConfig } from './config/get.config';
-import { listenProcessEventsDisk } from './functions/listen-process-events-disk';
+import { logToConsoleDisk } from './functions/log-to-console-disk';
 
 async function bootstrap() {
-  listenProcessEventsDisk();
+  nodeCommon.listenProcessEvents({
+    appTerminated: common.ErEnum.DISK_APP_TERMINATED,
+    uncaughtException: common.ErEnum.DISK_UNCAUGHT_EXCEPTION,
+    unhandledRejectionReason: common.ErEnum.DISK_UNHANDLED_REJECTION_REASON,
+    unhandledRejection: common.ErEnum.DISK_UNHANDLED_REJECTION_ERROR,
+    logToConsoleFn: logToConsoleDisk
+  });
 
   let config = getConfig();
 

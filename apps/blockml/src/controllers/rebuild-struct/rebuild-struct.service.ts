@@ -12,7 +12,6 @@ import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { nodeCommon } from '~blockml/barrels/node-common';
 import { getMproveConfigFile } from '~blockml/functions/get-mprove-config-file';
-import { getMproveDirBlockml } from '~blockml/functions/get-mprove-dir-blockml';
 import { BmError } from '~blockml/models/bm-error';
 import { RabbitService } from '~blockml/services/rabbit.service';
 
@@ -140,7 +139,7 @@ export class RebuildStructService {
   }) {
     let configPath = item.dir + '/' + common.MPROVE_CONFIG_FILENAME;
 
-    let mproveDir = await getMproveDirBlockml({
+    let mproveDir = await nodeCommon.getMproveDir({
       dir: item.dir,
       configPath: configPath
     });

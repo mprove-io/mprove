@@ -7,10 +7,16 @@ import { common } from './barrels/common';
 import { constants } from './barrels/constants';
 import { nodeCommon } from './barrels/node-common';
 import { getConfig } from './config/get.config';
-import { listenProcessEventsBackend } from './functions/listen-process-events-backend';
+import { logToConsoleBackend } from './functions/log-to-console-backend';
 
 async function bootstrap() {
-  listenProcessEventsBackend();
+  nodeCommon.listenProcessEvents({
+    appTerminated: common.ErEnum.BACKEND_APP_TERMINATED,
+    uncaughtException: common.ErEnum.BACKEND_UNCAUGHT_EXCEPTION,
+    unhandledRejectionReason: common.ErEnum.BACKEND_UNHANDLED_REJECTION_REASON,
+    unhandledRejection: common.ErEnum.BACKEND_UNHANDLED_REJECTION_ERROR,
+    logToConsoleFn: logToConsoleBackend
+  });
 
   let config = getConfig();
 

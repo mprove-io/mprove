@@ -1,4 +1,6 @@
 export * from './get-logger-options';
+export * from './get-mprove-dir';
+export * from './listen-process-events';
 export * from './log-response';
 export * from './log-to-console';
 export * from './make-error-response';

@@ -5,7 +5,7 @@ import { constants } from '~common/barrels/constants';
 import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { interfaces } from '~disk/barrels/interfaces';
-import { getMproveDirDisk } from '~disk/functions/get-mprove-dir-disk';
+import { nodeCommon } from '~disk/barrels/node-common';
 
 export async function getNodesAndFiles(item: {
   projectId: string;
@@ -30,7 +30,7 @@ export async function getNodesAndFiles(item: {
   let mproveDir =
     item.isRootMproveDir === true
       ? repoDir
-      : await getMproveDirDisk({
+      : await nodeCommon.getMproveDir({
           dir: repoDir,
           configPath: configPath
         });
@@ -120,9 +120,8 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
         let fileRelativePath = fileAbsolutePath.substring(
           item.repoDirPathLength + 1
         );
-        let fileId = common.MyRegex.replaceSlashesWithUnderscores(
-          fileRelativePath
-        );
+        let fileId =
+          common.MyRegex.replaceSlashesWithUnderscores(fileRelativePath);
 
         let node = {
           id: nodeId,

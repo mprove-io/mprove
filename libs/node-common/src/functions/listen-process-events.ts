@@ -1,14 +1,27 @@
-import { common } from '~backend/barrels/common';
-import { logToConsoleBackend } from './log-to-console-backend';
+import { common } from '~node-common/barrels/common';
 
 const signalsNames: NodeJS.Signals[] = ['SIGTERM', 'SIGINT', 'SIGHUP'];
 
-export function listenProcessEventsBackend() {
+export function listenProcessEvents(item: {
+  appTerminated: common.ErEnum;
+  uncaughtException: common.ErEnum;
+  unhandledRejectionReason: common.ErEnum;
+  unhandledRejection: common.ErEnum;
+  logToConsoleFn: (x: any) => void;
+}) {
+  let {
+    appTerminated,
+    uncaughtException,
+    unhandledRejectionReason,
+    unhandledRejection,
+    logToConsoleFn
+  } = item;
+
   signalsNames.forEach(signalName =>
     process.on(signalName, signal => {
-      logToConsoleBackend({
+      logToConsoleFn({
         log: new common.ServerError({
-          message: common.ErEnum.BACKEND_APP_TERMINATED,
+          message: appTerminated,
           data: {
             signal: signal
           }
@@ -21,9 +34,9 @@ export function listenProcessEventsBackend() {
     })
   );
   process.on('uncaughtException', e => {
-    logToConsoleBackend({
+    logToConsoleFn({
       log: new common.ServerError({
-        message: common.ErEnum.BACKEND_UNCAUGHT_EXCEPTION,
+        message: uncaughtException,
         originalError: e
       }),
       logLevel: common.LogLevelEnum.Error,
@@ -33,9 +46,9 @@ export function listenProcessEventsBackend() {
     process.exit(1);
   });
   process.on('unhandledRejection', (reason, promise) => {
-    logToConsoleBackend({
+    logToConsoleFn({
       log: new common.ServerError({
-        message: common.ErEnum.BACKEND_UNHANDLED_REJECTION_REASON,
+        message: unhandledRejectionReason,
         data: {
           reason: reason
         }
@@ -45,9 +58,9 @@ export function listenProcessEventsBackend() {
       cs: undefined
     });
     promise.catch(e => {
-      logToConsoleBackend({
+      logToConsoleFn({
         log: new common.ServerError({
-          message: common.ErEnum.BACKEND_UNHANDLED_REJECTION_ERROR,
+          message: unhandledRejection,
           originalError: e,
           data: {
             reason: reason
