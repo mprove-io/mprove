@@ -25,7 +25,7 @@ export class Config {
   diskOrganizationsPath?: string;
 
   @IsEnum(common.BoolEnum)
-  diskLogIsStringify?: common.BoolEnum;
+  diskLogIsJson?: common.BoolEnum;
 
   @IsEnum(common.BoolEnum)
   diskLogResponseError?: common.BoolEnum;

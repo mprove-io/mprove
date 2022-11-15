@@ -13,7 +13,7 @@ export function logToConsoleDisk(item: {
 
   common.logToConsole({
     log: log,
-    logIsStringify: common.enumToBoolean(config.diskLogIsStringify),
+    logIsJson: common.enumToBoolean(config.diskLogIsJson),
     logLevel: logLevel,
     logger: logger
   });

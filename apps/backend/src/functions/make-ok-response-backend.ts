@@ -33,10 +33,8 @@ export function makeOkResponseBackend(item: {
         'backendLogOnResponser'
       )
     ),
-    logIsStringify: common.enumToBoolean(
-      cs.get<interfaces.Config['backendLogIsStringify']>(
-        'backendLogIsStringify'
-      )
+    logIsJson: common.enumToBoolean(
+      cs.get<interfaces.Config['backendLogIsJson']>('backendLogIsJson')
     ),
     logger: logger
   });

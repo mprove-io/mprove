@@ -13,7 +13,7 @@ export function logToConsoleBlockml(item: {
 
   common.logToConsole({
     log: log,
-    logIsStringify: common.enumToBoolean(config.blockmlLogIsStringify),
+    logIsJson: common.enumToBoolean(config.blockmlLogIsJson),
     logger: logger,
     logLevel: logLevel
   });

@@ -34,9 +34,8 @@ export class ValidateRequestGuard implements CanActivate {
       classType: classType,
       object: request.body,
       errorMessage: common.ErEnum.BACKEND_WRONG_REQUEST_PARAMS,
-      logIsStringify: this.cs.get<interfaces.Config['backendLogIsStringify']>(
-        'backendLogIsStringify'
-      ),
+      logIsJson:
+        this.cs.get<interfaces.Config['backendLogIsJson']>('backendLogIsJson'),
       logger: this.logger
     });
 

@@ -14,7 +14,7 @@ export function makeErrorResponse(item: {
   skipLog?: boolean;
   logResponseError: boolean;
   logOnResponser: boolean;
-  logIsStringify: boolean;
+  logIsJson: boolean;
   logger: Logger;
 }) {
   let {
@@ -27,7 +27,7 @@ export function makeErrorResponse(item: {
     skipLog,
     logResponseError,
     logOnResponser,
-    logIsStringify,
+    logIsJson,
     logger
   } = item;
 
@@ -52,7 +52,7 @@ export function makeErrorResponse(item: {
     logToConsole({
       log: part,
       logLevel: enums.LogLevelEnum.Error,
-      logIsStringify: logIsStringify,
+      logIsJson: logIsJson,
       logger: logger
     });
   }

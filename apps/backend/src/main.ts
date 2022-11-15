@@ -15,7 +15,7 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger(
-      config.backendLogIsStringify === common.BoolEnum.TRUE
+      config.backendLogIsJson === common.BoolEnum.TRUE
         ? constants.WINSTON_JSON_OPTIONS
         : constants.WINSTON_PRETTY_OPTIONS
     )

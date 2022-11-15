@@ -13,7 +13,7 @@ export function logToConsoleBackend(item: {
 
   common.logToConsole({
     log: log,
-    logIsStringify: common.enumToBoolean(config.backendLogIsStringify),
+    logIsJson: common.enumToBoolean(config.backendLogIsJson),
     logger: logger,
     logLevel: logLevel
   });

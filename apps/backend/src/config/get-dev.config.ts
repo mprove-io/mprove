@@ -176,8 +176,8 @@ export function getDevConfig(envFilePath: any) {
     backendMysqlDatabase:
       process.env.BACKEND_MYSQL_DATABASE || envFile.BACKEND_MYSQL_DATABASE,
 
-    backendLogIsStringify: <common.BoolEnum>(
-      (process.env.BACKEND_LOG_IS_STRINGIFY || envFile.BACKEND_LOG_IS_STRINGIFY)
+    backendLogIsJson: <common.BoolEnum>(
+      (process.env.BACKEND_LOG_IS_JSON || envFile.BACKEND_LOG_IS_JSON)
     ),
 
     backendLogResponseError: <common.BoolEnum>(

@@ -33,10 +33,8 @@ export function makeOkResponseBlockml(item: {
         'blockmlLogOnResponser'
       )
     ),
-    logIsStringify: common.enumToBoolean(
-      cs.get<interfaces.Config['blockmlLogIsStringify']>(
-        'blockmlLogIsStringify'
-      )
+    logIsJson: common.enumToBoolean(
+      cs.get<interfaces.Config['blockmlLogIsJson']>('blockmlLogIsJson')
     ),
     logger: logger
   });

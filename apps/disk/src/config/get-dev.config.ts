@@ -24,8 +24,8 @@ export function getDevConfig(envFilePath: any) {
     diskOrganizationsPath:
       process.env.DISK_ORGANIZATIONS_PATH || envFile.DISK_ORGANIZATIONS_PATH,
 
-    diskLogIsStringify: <common.BoolEnum>(
-      (process.env.DISK_LOG_IS_STRINGIFY || envFile.DISK_LOG_IS_STRINGIFY)
+    diskLogIsJson: <common.BoolEnum>(
+      (process.env.DISK_LOG_IS_JSON || envFile.DISK_LOG_IS_JSON)
     ),
     diskLogResponseError: <common.BoolEnum>(
       (process.env.DISK_LOG_RESPONSE_ERROR || envFile.DISK_LOG_RESPONSE_ERROR)

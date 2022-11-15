@@ -36,7 +36,7 @@ export async function prepareTest(
         isGlobal: true
       }),
       WinstonModule.forRoot(
-        mockConfig.blockmlLogIsStringify === common.BoolEnum.TRUE
+        mockConfig.blockmlLogIsJson === common.BoolEnum.TRUE
           ? constants.WINSTON_JSON_OPTIONS
           : constants.WINSTON_PRETTY_OPTIONS
       )

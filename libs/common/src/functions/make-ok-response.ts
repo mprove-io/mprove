@@ -13,7 +13,7 @@ export function makeOkResponse(item: {
   skipLog?: boolean;
   logResponseOk: boolean;
   logOnResponser: boolean;
-  logIsStringify: boolean;
+  logIsJson: boolean;
   logger: Logger;
 }) {
   let {
@@ -26,7 +26,7 @@ export function makeOkResponse(item: {
     skipLog,
     logResponseOk,
     logOnResponser,
-    logIsStringify,
+    logIsJson,
     logger
   } = item;
 
@@ -46,7 +46,7 @@ export function makeOkResponse(item: {
     logToConsole({
       log: part,
       logLevel: enums.LogLevelEnum.Info,
-      logIsStringify: logIsStringify,
+      logIsJson: logIsJson,
       logger: logger
     });
   }

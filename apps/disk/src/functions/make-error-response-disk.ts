@@ -30,8 +30,8 @@ export function makeErrorResponseDisk(item: {
     logOnResponser: common.enumToBoolean(
       cs.get<interfaces.Config['diskLogOnResponser']>('diskLogOnResponser')
     ),
-    logIsStringify: common.enumToBoolean(
-      cs.get<interfaces.Config['diskLogIsStringify']>('diskLogIsStringify')
+    logIsJson: common.enumToBoolean(
+      cs.get<interfaces.Config['diskLogIsJson']>('diskLogIsJson')
     ),
     logger: logger
   });

@@ -18,11 +18,10 @@ export function transformValidSync<T extends object>(item: {
   object: object;
   options?: TransformValidationOptions;
   errorMessage: any;
-  logIsStringify: BoolEnum;
+  logIsJson: BoolEnum;
   logger: Logger;
 }) {
-  let { classType, object, options, errorMessage, logIsStringify, logger } =
-    item;
+  let { classType, object, options, errorMessage, logIsJson, logger } = item;
 
   let valid: T;
   try {
@@ -49,9 +48,7 @@ export function transformValidSync<T extends object>(item: {
     ) {
       logToConsole({
         log: serverError, // default exception handler doesn't print constraints (error.data)
-        logIsStringify: isDefined(logIsStringify)
-          ? enumToBoolean(logIsStringify)
-          : false,
+        logIsJson: isDefined(logIsJson) ? enumToBoolean(logIsJson) : false,
         logger: logger,
         logLevel: enums.LogLevelEnum.Error
       });

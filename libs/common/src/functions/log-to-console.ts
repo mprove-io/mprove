@@ -9,9 +9,9 @@ export function logToConsole(item: {
   log: any;
   logLevel: enums.LogLevelEnum;
   logger: Logger;
-  logIsStringify: boolean;
+  logIsJson: boolean;
 }) {
-  let { log, logIsStringify, logger, logLevel } = item;
+  let { log, logIsJson, logger, logLevel } = item;
 
   if (
     log instanceof Error ||
@@ -26,7 +26,7 @@ export function logToConsole(item: {
     } else {
       logger.log(log);
     }
-  } else if (logIsStringify === true) {
+  } else if (logIsJson === true) {
     // let opts = {
     //   level: logLevel === enums.LogLevelEnum.Error ? 50 : 30,
     //   time: Math.floor(new Date().getTime()),

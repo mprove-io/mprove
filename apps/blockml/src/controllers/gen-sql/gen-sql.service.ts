@@ -26,9 +26,8 @@ export class GenSqlService {
       classType: apiToBlockml.ToBlockmlWorkerGenSqlRequest,
       object: request,
       errorMessage: common.ErEnum.BLOCKML_WORKER_WRONG_REQUEST_PARAMS,
-      logIsStringify: this.cs.get<interfaces.Config['blockmlLogIsStringify']>(
-        'blockmlLogIsStringify'
-      ),
+      logIsJson:
+        this.cs.get<interfaces.Config['blockmlLogIsJson']>('blockmlLogIsJson'),
       logger: this.logger
     });
 

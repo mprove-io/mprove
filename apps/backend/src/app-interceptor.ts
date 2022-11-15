@@ -175,9 +175,9 @@ export class AppInterceptor implements NestInterceptor {
                   'backendLogOnResponser'
                 )
               ),
-              logIsStringify: common.enumToBoolean(
-                this.cs.get<interfaces.Config['backendLogIsStringify']>(
-                  'backendLogIsStringify'
+              logIsJson: common.enumToBoolean(
+                this.cs.get<interfaces.Config['backendLogIsJson']>(
+                  'backendLogIsJson'
                 )
               ),
               logLevel: common.LogLevelEnum.Info,
@@ -209,9 +209,9 @@ export class AppInterceptor implements NestInterceptor {
                   'backendLogOnResponser'
                 )
               ),
-              logIsStringify: common.enumToBoolean(
-                this.cs.get<interfaces.Config['backendLogIsStringify']>(
-                  'backendLogIsStringify'
+              logIsJson: common.enumToBoolean(
+                this.cs.get<interfaces.Config['backendLogIsJson']>(
+                  'backendLogIsJson'
                 )
               ),
               logLevel: common.LogLevelEnum.Info,
@@ -242,9 +242,9 @@ export class AppInterceptor implements NestInterceptor {
                   'backendLogOnResponser'
                 )
               ),
-              logIsStringify: common.enumToBoolean(
-                this.cs.get<interfaces.Config['backendLogIsStringify']>(
-                  'backendLogIsStringify'
+              logIsJson: common.enumToBoolean(
+                this.cs.get<interfaces.Config['backendLogIsJson']>(
+                  'backendLogIsJson'
                 )
               ),
               logLevel: common.LogLevelEnum.Info,

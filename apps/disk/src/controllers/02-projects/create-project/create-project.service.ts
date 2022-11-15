@@ -24,10 +24,8 @@ export class CreateProjectService {
       classType: apiToDisk.ToDiskCreateProjectRequest,
       object: request,
       errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsStringify:
-        this.cs.get<interfaces.Config['diskLogIsStringify']>(
-          'diskLogIsStringify'
-        ),
+      logIsJson:
+        this.cs.get<interfaces.Config['diskLogIsJson']>('diskLogIsJson'),
       logger: this.logger
     });
 

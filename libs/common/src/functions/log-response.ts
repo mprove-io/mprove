@@ -8,7 +8,7 @@ export function logResponse(item: {
   logResponseOk: boolean;
   logResponseError: boolean;
   logOnResponser: boolean;
-  logIsStringify: boolean;
+  logIsJson: boolean;
   logger: Logger;
   logLevel: enums.LogLevelEnum;
 }) {
@@ -17,7 +17,7 @@ export function logResponse(item: {
     logResponseOk,
     logResponseError,
     logOnResponser,
-    logIsStringify,
+    logIsJson,
     logger,
     logLevel
   } = item;
@@ -34,7 +34,7 @@ export function logResponse(item: {
     let part = Object.assign({}, response, { payload: undefined });
     logToConsole({
       log: part,
-      logIsStringify: logIsStringify,
+      logIsJson: logIsJson,
       logger: logger,
       logLevel: logLevel
     });

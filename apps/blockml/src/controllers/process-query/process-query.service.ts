@@ -29,9 +29,8 @@ export class ProcessQueryService {
       classType: apiToBlockml.ToBlockmlProcessQueryRequest,
       object: request,
       errorMessage: common.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS,
-      logIsStringify: this.cs.get<interfaces.Config['blockmlLogIsStringify']>(
-        'blockmlLogIsStringify'
-      ),
+      logIsJson:
+        this.cs.get<interfaces.Config['blockmlLogIsJson']>('blockmlLogIsJson'),
       logger: this.logger
     });
 

@@ -20,7 +20,7 @@ export function getConfig() {
     classType: interfaces.Config,
     object: config,
     errorMessage: common.ErEnum.BACKEND_WRONG_ENV_VALUES,
-    logIsStringify: config.backendLogIsStringify,
+    logIsJson: config.backendLogIsJson,
     logger: undefined
   });
 

@@ -100,10 +100,8 @@ export class AppFilter implements ExceptionFilter {
             'backendLogOnResponser'
           )
         ),
-        logIsStringify: common.enumToBoolean(
-          this.cs.get<interfaces.Config['backendLogIsStringify']>(
-            'backendLogIsStringify'
-          )
+        logIsJson: common.enumToBoolean(
+          this.cs.get<interfaces.Config['backendLogIsJson']>('backendLogIsJson')
         ),
         logLevel: common.LogLevelEnum.Info,
         logger: this.logger
