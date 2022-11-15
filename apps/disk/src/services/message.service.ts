@@ -78,6 +78,7 @@ export class MessageService {
   ) {}
 
   async processMessage(request: any) {
+    let startTs = Date.now();
     try {
       let payload = await this.processSwitch(request);
 
@@ -86,6 +87,7 @@ export class MessageService {
         body: request,
         path: request.info.name,
         method: common.METHOD_RABBIT,
+        duration: Date.now() - startTs,
         cs: this.cs,
         logger: this.logger
       });
@@ -95,6 +97,7 @@ export class MessageService {
         body: request,
         path: request.info.name,
         method: common.METHOD_RABBIT,
+        duration: Date.now() - startTs,
         cs: this.cs,
         logger: this.logger
       });

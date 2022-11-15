@@ -25,7 +25,7 @@ async function bootstrap() {
       nodeCommon.getLoggerOptions({
         appName:
           config.isScheduler === common.BoolEnum.TRUE
-            ? constants.APP_NAME_BACKEND_SCHEDULER
+            ? constants.APP_NAME_SCHEDULER
             : constants.APP_NAME_BACKEND,
 
         isJson: config.backendLogIsJson === common.BoolEnum.TRUE

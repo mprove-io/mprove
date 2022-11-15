@@ -1,4 +1,4 @@
-import { Body, Controller, Logger, Post } from '@nestjs/common';
+import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { interfaces } from '~disk/barrels/interfaces';
@@ -15,20 +15,27 @@ export class GetFileController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetFile)
-  async getFile(@Body() body: any) {
+  async getFile(@Req() request: any, @Body() body: any) {
+    let startTs = Date.now();
     try {
       let payload = await this.getFileService.process(body);
 
       return makeOkResponseDisk({
-        payload: payload,
         body: body,
+        payload: payload,
+        path: request.url,
+        method: request.method,
+        duration: Date.now() - startTs,
         cs: this.cs,
         logger: this.logger
       });
     } catch (e) {
       return makeErrorResponseDisk({
-        e: e,
         body: body,
+        e: e,
+        path: request.url,
+        method: request.method,
+        duration: Date.now() - startTs,
         cs: this.cs,
         logger: this.logger
       });

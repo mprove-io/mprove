@@ -14,8 +14,8 @@ import { constants } from './barrels/constants';
 import { entities } from './barrels/entities';
 import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
-import { nodeCommon } from './barrels/node-common';
 import { repositories } from './barrels/repositories';
+import { logResponseBackend } from './functions/log-response-backend';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { makeErrorResponseBackend } from './functions/make-error-response-backend';
 import { makeOkResponseBackend } from './functions/make-ok-response-backend';
@@ -113,7 +113,9 @@ export class AppInterceptor implements NestInterceptor {
         respX = makeErrorResponseBackend({
           e: err,
           body: req,
-          request: request,
+          path: request.url,
+          method: request.method,
+          duration: Date.now() - request.start_ts,
           skipLog: true,
           cs: this.cs,
           logger: this.logger
@@ -136,7 +138,9 @@ export class AppInterceptor implements NestInterceptor {
           mergeMap(async payload => {
             let resp = makeOkResponseBackend({
               payload: payload,
-              request: request,
+              path: request.url,
+              method: request.method,
+              duration: Date.now() - request.start_ts,
               body: req,
               skipLog: true,
               cs: this.cs,
@@ -155,34 +159,15 @@ export class AppInterceptor implements NestInterceptor {
               await this.idempsRepository.save(idempEntity);
             }
 
-            resp.info.duration = Date.now() - request.start_ts;
+            resp.info.duration = Date.now() - request.start_ts; // update
 
             return resp;
           }),
           tap(x =>
-            nodeCommon.logResponse({
+            logResponseBackend({
               response: x,
-              logResponseOk: common.enumToBoolean(
-                this.cs.get<interfaces.Config['backendLogResponseOk']>(
-                  'backendLogResponseOk'
-                )
-              ),
-              logResponseError: common.enumToBoolean(
-                this.cs.get<interfaces.Config['backendLogResponseError']>(
-                  'backendLogResponseError'
-                )
-              ),
-              logOnResponser: common.enumToBoolean(
-                this.cs.get<interfaces.Config['backendLogOnResponser']>(
-                  'backendLogOnResponser'
-                )
-              ),
-              logIsJson: common.enumToBoolean(
-                this.cs.get<interfaces.Config['backendLogIsJson']>(
-                  'backendLogIsJson'
-                )
-              ),
               logLevel: common.LogLevelEnum.Info,
+              cs: this.cs,
               logger: this.logger
             })
           )
@@ -190,66 +175,28 @@ export class AppInterceptor implements NestInterceptor {
       : common.isDefined(idemp.resp)
       ? of(idemp.resp).pipe(
           map(x => {
-            x.info.duration = Date.now() - request.start_ts;
+            x.info.duration = Date.now() - request.start_ts; // update
             return x;
           }),
           tap(x =>
-            nodeCommon.logResponse({
+            logResponseBackend({
               response: x,
-              logResponseOk: common.enumToBoolean(
-                this.cs.get<interfaces.Config['backendLogResponseOk']>(
-                  'backendLogResponseOk'
-                )
-              ),
-              logResponseError: common.enumToBoolean(
-                this.cs.get<interfaces.Config['backendLogResponseError']>(
-                  'backendLogResponseError'
-                )
-              ),
-              logOnResponser: common.enumToBoolean(
-                this.cs.get<interfaces.Config['backendLogOnResponser']>(
-                  'backendLogOnResponser'
-                )
-              ),
-              logIsJson: common.enumToBoolean(
-                this.cs.get<interfaces.Config['backendLogIsJson']>(
-                  'backendLogIsJson'
-                )
-              ),
               logLevel: common.LogLevelEnum.Info,
+              cs: this.cs,
               logger: this.logger
             })
           )
         )
       : of(respX).pipe(
           map(x => {
-            x.info.duration = Date.now() - request.start_ts;
+            x.info.duration = Date.now() - request.start_ts; // update
             return x;
           }),
           tap(x =>
-            nodeCommon.logResponse({
+            logResponseBackend({
               response: x,
-              logResponseOk: common.enumToBoolean(
-                this.cs.get<interfaces.Config['backendLogResponseOk']>(
-                  'backendLogResponseOk'
-                )
-              ),
-              logResponseError: common.enumToBoolean(
-                this.cs.get<interfaces.Config['backendLogResponseError']>(
-                  'backendLogResponseError'
-                )
-              ),
-              logOnResponser: common.enumToBoolean(
-                this.cs.get<interfaces.Config['backendLogOnResponser']>(
-                  'backendLogOnResponser'
-                )
-              ),
-              logIsJson: common.enumToBoolean(
-                this.cs.get<interfaces.Config['backendLogIsJson']>(
-                  'backendLogIsJson'
-                )
-              ),
               logLevel: common.LogLevelEnum.Info,
+              cs: this.cs,
               logger: this.logger
             })
           )

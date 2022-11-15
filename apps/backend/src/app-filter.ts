@@ -12,8 +12,8 @@ import { constants } from './barrels/constants';
 import { entities } from './barrels/entities';
 import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
-import { nodeCommon } from './barrels/node-common';
 import { repositories } from './barrels/repositories';
+import { logResponseBackend } from './functions/log-response-backend';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { makeErrorResponseBackend } from './functions/make-error-response-backend';
 
@@ -50,7 +50,8 @@ export class AppFilter implements ExceptionFilter {
       let resp = makeErrorResponseBackend({
         e: e,
         body: req,
-        request: request,
+        path: request.url,
+        method: request.method,
         duration: Date.now() - request.start_ts,
         skipLog: true,
         cs: this.cs,
@@ -85,27 +86,10 @@ export class AppFilter implements ExceptionFilter {
         }
       }
 
-      nodeCommon.logResponse({
+      logResponseBackend({
         response: resp,
-        logResponseOk: common.enumToBoolean(
-          this.cs.get<interfaces.Config['backendLogResponseOk']>(
-            'backendLogResponseOk'
-          )
-        ),
-        logResponseError: common.enumToBoolean(
-          this.cs.get<interfaces.Config['backendLogResponseError']>(
-            'backendLogResponseError'
-          )
-        ),
-        logOnResponser: common.enumToBoolean(
-          this.cs.get<interfaces.Config['backendLogOnResponser']>(
-            'backendLogOnResponser'
-          )
-        ),
-        logIsJson: common.enumToBoolean(
-          this.cs.get<interfaces.Config['backendLogIsJson']>('backendLogIsJson')
-        ),
         logLevel: common.LogLevelEnum.Info,
+        cs: this.cs,
         logger: this.logger
       });
 

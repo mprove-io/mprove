@@ -1,5 +1,5 @@
-export const APP_NAME_BACKEND = 'Backend';
-export const APP_NAME_BACKEND_SCHEDULER = 'Backend-scheduler';
+export const APP_NAME_BACKEND = 'BACKEND';
+export const APP_NAME_SCHEDULER = 'SCHEDULER';
 
 export const PASSWORD_EXPIRES_OFFSET = 86400000;
 

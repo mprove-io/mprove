@@ -4,12 +4,11 @@ import { MyResponse } from '~common/interfaces/_index';
 import { logToConsole } from './log-to-console';
 
 export function makeOkResponse(item: {
-  request?: any;
-  path?: any;
-  method?: any;
-  duration?: number;
   body: any;
   payload: any;
+  path: any;
+  method: any;
+  duration: number;
   skipLog?: boolean;
   logResponseOk: boolean;
   logOnResponser: boolean;
@@ -19,7 +18,6 @@ export function makeOkResponse(item: {
   let {
     body,
     payload,
-    request,
     path,
     method,
     duration,
@@ -32,8 +30,8 @@ export function makeOkResponse(item: {
 
   let response: MyResponse = {
     info: {
-      path: request?.url || path,
-      method: request?.method || method,
+      path: path,
+      method: method,
       duration: duration,
       traceId: body.info?.traceId,
       status: enums.ResponseInfoStatusEnum.Ok

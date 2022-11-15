@@ -1,4 +1,4 @@
-export const APP_NAME_DISK = 'Disk';
+export const APP_NAME_DISK = 'DISK';
 
 export const CENTRAL_REPO_ID = 'central';
 

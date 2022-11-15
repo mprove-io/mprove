@@ -27,23 +27,26 @@ export class ConsumerMainService {
     queue: pathProcessQuery
   })
   async processQuery(request: any, context: any) {
+    let startTs = Date.now();
     try {
       let payload = await this.queryService.process(request);
 
       return makeOkResponseBlockml({
-        payload: payload,
         body: request,
+        payload: payload,
         path: pathProcessQuery,
         method: common.METHOD_RABBIT,
+        duration: Date.now() - startTs,
         cs: this.cs,
         logger: this.logger
       });
     } catch (e) {
       return makeErrorResponseBlockml({
-        e: e,
         body: request,
+        e: e,
         path: pathProcessQuery,
         method: common.METHOD_RABBIT,
+        duration: Date.now() - startTs,
         cs: this.cs,
         logger: this.logger
       });
@@ -56,6 +59,7 @@ export class ConsumerMainService {
     queue: pathRebuildStruct
   })
   async rebuildStruct(request: any, context: any) {
+    let startTs = Date.now();
     try {
       let payload = await this.structService.rebuild(request);
 
@@ -64,6 +68,7 @@ export class ConsumerMainService {
         body: request,
         path: pathRebuildStruct,
         method: common.METHOD_RABBIT,
+        duration: Date.now() - startTs,
         cs: this.cs,
         logger: this.logger
       });
@@ -73,6 +78,7 @@ export class ConsumerMainService {
         body: request,
         path: pathRebuildStruct,
         method: common.METHOD_RABBIT,
+        duration: Date.now() - startTs,
         cs: this.cs,
         logger: this.logger
       });

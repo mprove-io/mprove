@@ -5,12 +5,11 @@ import { logToConsole } from './log-to-console';
 import { wrapError } from './wrap-error';
 
 export function makeErrorResponse(item: {
-  request?: any;
-  path?: any;
-  method?: any;
-  duration?: number;
   body: any;
   e: any;
+  path: any;
+  method: any;
+  duration: number;
   skipLog?: boolean;
   logResponseError: boolean;
   logOnResponser: boolean;
@@ -20,7 +19,6 @@ export function makeErrorResponse(item: {
   let {
     body,
     e,
-    request,
     path,
     method,
     duration,
@@ -33,8 +31,8 @@ export function makeErrorResponse(item: {
 
   let response: MyResponse = {
     info: {
-      path: request?.url || path,
-      method: request?.method || method,
+      path: path,
+      method: method,
       duration: duration,
       traceId: body.info?.traceId,
       status: enums.ResponseInfoStatusEnum.Error,

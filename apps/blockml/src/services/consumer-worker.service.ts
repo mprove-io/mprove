@@ -23,14 +23,16 @@ export class ConsumerWorkerService {
     queue: pathGenSql
   })
   async genSql(request: any, context: any) {
+    let startTs = Date.now();
     try {
       let payload = await this.genSqlService.gen(request);
 
       return makeOkResponseBlockml({
-        payload: payload,
         body: request,
+        payload: payload,
         path: pathGenSql,
         method: common.METHOD_RABBIT,
+        duration: Date.now() - startTs,
         cs: this.cs,
         logger: this.logger
       });
@@ -40,6 +42,7 @@ export class ConsumerWorkerService {
         body: request,
         path: pathGenSql,
         method: common.METHOD_RABBIT,
+        duration: Date.now() - startTs,
         cs: this.cs,
         logger: this.logger
       });

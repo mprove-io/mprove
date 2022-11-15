@@ -1,4 +1,4 @@
-import { Body, Controller, Logger, Post } from '@nestjs/common';
+import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -15,20 +15,27 @@ export class RebuildStructController {
   ) {}
 
   @Post(apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct)
-  async rebuildStruct(@Body() body: any) {
+  async rebuildStruct(@Req() request: any, @Body() body: any) {
+    let startTs = Date.now();
     try {
       let payload = await this.structService.rebuild(body);
 
       return makeOkResponseBlockml({
-        payload: payload,
         body: body,
+        payload: payload,
+        path: request.url,
+        method: request.method,
+        duration: Date.now() - startTs,
         cs: this.cs,
         logger: this.logger
       });
     } catch (e) {
       return makeErrorResponseBlockml({
-        e,
         body: body,
+        e,
+        path: request.url,
+        method: request.method,
+        duration: Date.now() - startTs,
         cs: this.cs,
         logger: this.logger
       });

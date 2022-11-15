@@ -5,23 +5,20 @@ import { interfaces } from '~disk/barrels/interfaces';
 import { nodeCommon } from '~disk/barrels/node-common';
 
 export function makeOkResponseDisk(item: {
-  payload: any;
   body: any;
-  request?: any;
-  path?: any;
-  method?: any;
-  duration?: number;
+  payload: any;
+  path: any;
+  method: any;
+  duration: number;
   skipLog?: boolean;
   cs: ConfigService<interfaces.Config>;
   logger: Logger;
 }) {
-  let { payload, body, request, path, method, duration, skipLog, cs, logger } =
-    item;
+  let { payload, body, path, method, duration, skipLog, cs, logger } = item;
 
   return nodeCommon.makeOkResponse({
-    payload: payload,
     body: body,
-    request: request,
+    payload: payload,
     path: path,
     method: method,
     duration: duration,
