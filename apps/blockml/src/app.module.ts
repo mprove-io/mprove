@@ -60,13 +60,14 @@ import { logToConsoleBlockml } from './functions/log-to-console-blockml';
   providers: [Logger, ...appServices]
 })
 export class AppModule implements OnModuleInit {
-  constructor(private logger: Logger) {}
+  constructor(private logger: Logger, private cs: ConfigService) {}
 
   async onModuleInit() {
     logToConsoleBlockml({
       log: `NODE_ENV is set to "${process.env.NODE_ENV}"`,
       logLevel: common.LogLevelEnum.Info,
-      logger: this.logger
+      logger: this.logger,
+      cs: this.cs
     });
   }
 }

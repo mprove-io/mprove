@@ -94,6 +94,7 @@ export async function prepareTest(
     structId: structId,
     dataDir: dataDir,
     fromDir: fromDir,
-    toDir: toDir
+    toDir: toDir,
+    cs: cs
   };
 }

@@ -13,8 +13,9 @@ export function listenProcessEventsBlockml() {
             signal: signal
           }
         }),
+        logLevel: common.LogLevelEnum.Error,
         logger: undefined,
-        logLevel: common.LogLevelEnum.Error
+        cs: undefined
       });
       process.exit(0);
     })
@@ -25,8 +26,9 @@ export function listenProcessEventsBlockml() {
         message: common.ErEnum.BLOCKML_UNCAUGHT_EXCEPTION,
         originalError: e
       }),
+      logLevel: common.LogLevelEnum.Error,
       logger: undefined,
-      logLevel: common.LogLevelEnum.Error
+      cs: undefined
     });
     process.exit(1);
   });
@@ -39,7 +41,8 @@ export function listenProcessEventsBlockml() {
         }
       }),
       logLevel: common.LogLevelEnum.Error,
-      logger: undefined
+      logger: undefined,
+      cs: undefined
     });
     promise.catch(e => {
       logToConsoleBlockml({
@@ -51,7 +54,8 @@ export function listenProcessEventsBlockml() {
           }
         }),
         logLevel: common.LogLevelEnum.Error,
-        logger: undefined
+        logger: undefined,
+        cs: undefined
       });
       process.exit(1);
     });

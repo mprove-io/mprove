@@ -17,10 +17,19 @@ test('1', async t => {
   let entVizs: interfaces.Viz[];
 
   let wLogger;
+  let configService;
 
   try {
-    let { structService, traceId, structId, dataDir, fromDir, toDir, logger } =
-      await prepareTest(caller, func, testId);
+    let {
+      structService,
+      traceId,
+      structId,
+      dataDir,
+      fromDir,
+      toDir,
+      logger,
+      cs
+    } = await prepareTest(caller, func, testId);
 
     wLogger = logger;
 
@@ -47,7 +56,8 @@ test('1', async t => {
     logToConsoleBlockml({
       log: e,
       logLevel: common.LogLevelEnum.Error,
-      logger: wLogger
+      logger: wLogger,
+      cs: configService
     });
   }
 

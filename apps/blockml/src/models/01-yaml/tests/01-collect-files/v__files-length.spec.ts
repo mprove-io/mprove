@@ -14,12 +14,22 @@ test('1', async t => {
   let files: common.BmlFile[];
 
   let wLogger;
+  let configService;
 
   try {
-    let { structService, traceId, structId, dataDir, fromDir, toDir, logger } =
-      await prepareTest(caller, func, testId);
+    let {
+      structService,
+      traceId,
+      structId,
+      dataDir,
+      fromDir,
+      toDir,
+      logger,
+      cs
+    } = await prepareTest(caller, func, testId);
 
     wLogger = logger;
+    configService = cs;
 
     await structService.rebuildStruct({
       traceId: traceId,
@@ -38,7 +48,8 @@ test('1', async t => {
     logToConsoleBlockml({
       log: e,
       logLevel: common.LogLevelEnum.Error,
-      logger: wLogger
+      logger: wLogger,
+      cs: configService
     });
   }
 

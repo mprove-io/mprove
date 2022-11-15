@@ -18,6 +18,7 @@ test('1', async t => {
   let entDashboards: interfaces.Dashboard[];
 
   let wLogger;
+  let configService;
 
   try {
     let connection: common.ProjectConnection = {
@@ -25,8 +26,16 @@ test('1', async t => {
       type: common.ConnectionTypeEnum.BigQuery
     };
 
-    let { structService, traceId, structId, dataDir, fromDir, toDir, logger } =
-      await prepareTest(caller, func, testId, connection);
+    let {
+      structService,
+      traceId,
+      structId,
+      dataDir,
+      fromDir,
+      toDir,
+      logger,
+      cs
+    } = await prepareTest(caller, func, testId, connection);
 
     wLogger = logger;
 
@@ -48,7 +57,8 @@ test('1', async t => {
     logToConsoleBlockml({
       log: e,
       logLevel: common.LogLevelEnum.Error,
-      logger: wLogger
+      logger: wLogger,
+      cs: configService
     });
   }
 
@@ -88,6 +98,7 @@ test('2', async t => {
   let entDashboards: interfaces.Dashboard[];
 
   let wLogger;
+  let configService;
 
   try {
     let connection: common.ProjectConnection = {
@@ -95,8 +106,16 @@ test('2', async t => {
       type: common.ConnectionTypeEnum.PostgreSQL
     };
 
-    let { structService, traceId, structId, dataDir, fromDir, toDir, logger } =
-      await prepareTest(caller, func, testId, connection);
+    let {
+      structService,
+      traceId,
+      structId,
+      dataDir,
+      fromDir,
+      toDir,
+      logger,
+      cs
+    } = await prepareTest(caller, func, testId, connection);
 
     wLogger = logger;
 
@@ -118,7 +137,8 @@ test('2', async t => {
     logToConsoleBlockml({
       log: e,
       logLevel: common.LogLevelEnum.Error,
-      logger: wLogger
+      logger: wLogger,
+      cs: configService
     });
   }
 
