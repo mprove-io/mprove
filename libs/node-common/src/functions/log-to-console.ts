@@ -32,10 +32,12 @@ export function logToConsole(item: {
   // });
 
   if (common.isDefined(logger)) {
+    let logSorted = getLogSorted(log);
+
     if (logLevel === enums.LogLevelEnum.Error) {
-      logger.error(log);
+      logger.error(logSorted);
     } else {
-      logger.log(log);
+      logger.log(logSorted);
     }
   } else {
     // no logger
@@ -44,11 +46,13 @@ export function logToConsole(item: {
       timestamp: new Date().toISOString()
     });
 
+    let logSorted = getLogSorted(log);
+
     if (logIsJson === true) {
-      console.log(JSON.stringify(log));
+      console.log(JSON.stringify(logSorted));
     } else {
       console.log(
-        util.inspect(log, {
+        util.inspect(logSorted, {
           showHidden: false,
           depth: null,
           colors: true,
@@ -58,4 +62,41 @@ export function logToConsole(item: {
       );
     }
   }
+}
+
+function getLogSorted(log: any) {
+  if (log.constructor !== Object) {
+    return log;
+  }
+
+  if (log.response?.info?.constructor === Object) {
+    let infoSorted = Object.keys(log.response.info)
+      .sort()
+      .reduce(function (ac: any, key) {
+        ac[key] = log.response.info[key];
+        return ac;
+      }, {});
+
+    log.response.info = infoSorted;
+  }
+
+  if (log.response?.constructor === Object) {
+    let responseSorted = Object.keys(log.response)
+      .sort()
+      .reduce(function (ac: any, key) {
+        ac[key] = log.response[key];
+        return ac;
+      }, {});
+
+    log.response = responseSorted;
+  }
+
+  let logSorted = Object.keys(log)
+    .sort()
+    .reduce(function (ac: any, key) {
+      ac[key] = log[key];
+      return ac;
+    }, {});
+
+  return logSorted;
 }
