@@ -51,13 +51,13 @@ cp .env.example .env
 - Pull docker images
 
 ```
-docker-compose pull db dwh-postgres dwh-clickhouse rabbit backend blockml-main-worker disk front
+docker-compose pull db dwh-postgres dwh-clickhouse rabbit backend blockml-single disk front
 ```
 
 - Run docker images
 
 ```
-docker-compose up db dwh-postgres dwh-clickhouse rabbit backend backend-scheduler blockml-main-worker disk front
+docker-compose up db dwh-postgres dwh-clickhouse rabbit backend backend-scheduler blockml-single disk front
 ```
 
 - Open chrome tab and login using first user credentials
