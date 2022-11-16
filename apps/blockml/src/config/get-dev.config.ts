@@ -61,12 +61,6 @@ export function getDevConfig(envFilePath: any) {
     ),
     blockmlLogResponseOk: <common.BoolEnum>(
       (process.env.BLOCKML_LOG_RESPONSE_OK || envFile.BLOCKML_LOG_RESPONSE_OK)
-    ),
-    blockmlLogOnSender: <common.BoolEnum>(
-      (process.env.BLOCKML_LOG_ON_SENDER || envFile.BLOCKML_LOG_ON_SENDER)
-    ),
-    blockmlLogOnResponser: <common.BoolEnum>(
-      (process.env.BLOCKML_LOG_ON_RESPONSER || envFile.BLOCKML_LOG_ON_RESPONSER)
     )
   };
   return devConfig;

@@ -53,10 +53,4 @@ export class Config {
 
   @IsEnum(common.BoolEnum)
   blockmlLogResponseOk?: common.BoolEnum;
-
-  @IsEnum(common.BoolEnum)
-  blockmlLogOnSender?: common.BoolEnum;
-
-  @IsEnum(common.BoolEnum)
-  blockmlLogOnResponser?: common.BoolEnum;
 }

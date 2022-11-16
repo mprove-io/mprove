@@ -26,11 +26,6 @@ export function makeOkResponseBlockml(item: {
     logResponseOk: common.enumToBoolean(
       cs.get<interfaces.Config['blockmlLogResponseOk']>('blockmlLogResponseOk')
     ),
-    logOnResponser: common.enumToBoolean(
-      cs.get<interfaces.Config['blockmlLogOnResponser']>(
-        'blockmlLogOnResponser'
-      )
-    ),
     logIsJson: common.enumToBoolean(
       cs.get<interfaces.Config['blockmlLogIsJson']>('blockmlLogIsJson')
     ),

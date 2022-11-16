@@ -28,11 +28,6 @@ export function makeErrorResponseBackend(item: {
         'backendLogResponseError'
       )
     ),
-    logOnResponser: common.enumToBoolean(
-      cs.get<interfaces.Config['backendLogOnResponser']>(
-        'backendLogOnResponser'
-      )
-    ),
     logIsJson: common.enumToBoolean(
       cs.get<interfaces.Config['backendLogIsJson']>('backendLogIsJson')
     ),

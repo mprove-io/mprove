@@ -32,10 +32,4 @@ export class Config {
 
   @IsEnum(common.BoolEnum)
   diskLogResponseOk?: common.BoolEnum;
-
-  @IsEnum(common.BoolEnum)
-  diskLogOnSender?: common.BoolEnum;
-
-  @IsEnum(common.BoolEnum)
-  diskLogOnResponser?: common.BoolEnum;
 }

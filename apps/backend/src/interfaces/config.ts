@@ -151,10 +151,4 @@ export class Config {
 
   @IsEnum(common.BoolEnum)
   backendLogResponseOk?: common.BoolEnum;
-
-  @IsEnum(common.BoolEnum)
-  backendLogOnSender?: common.BoolEnum;
-
-  @IsEnum(common.BoolEnum)
-  backendLogOnResponser?: common.BoolEnum;
 }

@@ -26,11 +26,6 @@ export function makeOkResponseBackend(item: {
     logResponseOk: common.enumToBoolean(
       cs.get<interfaces.Config['backendLogResponseOk']>('backendLogResponseOk')
     ),
-    logOnResponser: common.enumToBoolean(
-      cs.get<interfaces.Config['backendLogOnResponser']>(
-        'backendLogOnResponser'
-      )
-    ),
     logIsJson: common.enumToBoolean(
       cs.get<interfaces.Config['backendLogIsJson']>('backendLogIsJson')
     ),

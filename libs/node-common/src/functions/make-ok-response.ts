@@ -11,7 +11,6 @@ export function makeOkResponse(item: {
   duration: number;
   skipLog?: boolean;
   logResponseOk: boolean;
-  logOnResponser: boolean;
   logIsJson: boolean;
   logger: Logger;
 }) {
@@ -23,7 +22,6 @@ export function makeOkResponse(item: {
     duration,
     skipLog,
     logResponseOk,
-    logOnResponser,
     logIsJson,
     logger
   } = item;
@@ -39,7 +37,7 @@ export function makeOkResponse(item: {
     payload: payload
   };
 
-  if (logOnResponser === true && logResponseOk === true && skipLog !== true) {
+  if (logResponseOk === true && skipLog !== true) {
     let log = {
       response: Object.assign({}, response, { payload: undefined })
     };

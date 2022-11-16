@@ -187,14 +187,6 @@ export function getDevConfig(envFilePath: any) {
 
     backendLogResponseOk: <common.BoolEnum>(
       (process.env.BACKEND_LOG_RESPONSE_OK || envFile.BACKEND_LOG_RESPONSE_OK)
-    ),
-
-    backendLogOnSender: <common.BoolEnum>(
-      (process.env.BACKEND_LOG_ON_SENDER || envFile.BACKEND_LOG_ON_SENDER)
-    ),
-
-    backendLogOnResponser: <common.BoolEnum>(
-      (process.env.BACKEND_LOG_ON_RESPONSER || envFile.BACKEND_LOG_ON_RESPONSER)
     )
   };
 

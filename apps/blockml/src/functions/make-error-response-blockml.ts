@@ -28,11 +28,6 @@ export function makeErrorResponseBlockml(item: {
         'blockmlLogResponseError'
       )
     ),
-    logOnResponser: common.enumToBoolean(
-      cs.get<interfaces.Config['blockmlLogOnResponser']>(
-        'blockmlLogOnResponser'
-      )
-    ),
     logIsJson: common.enumToBoolean(
       cs.get<interfaces.Config['blockmlLogIsJson']>('blockmlLogIsJson')
     ),

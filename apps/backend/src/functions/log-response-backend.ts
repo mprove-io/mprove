@@ -26,12 +26,7 @@ export function logResponseBackend(item: {
     ) === common.BoolEnum.TRUE &&
     response.info.status === enums.ResponseInfoStatusEnum.Error;
 
-  if (
-    cs.get<interfaces.Config['backendLogOnResponser']>(
-      'backendLogOnResponser'
-    ) === common.BoolEnum.TRUE &&
-    (isLogOk || isLogError)
-  ) {
+  if (isLogOk || isLogError) {
     let log = {
       response: Object.assign({}, response, { payload: undefined })
     };

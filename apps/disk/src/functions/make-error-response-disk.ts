@@ -26,9 +26,6 @@ export function makeErrorResponseDisk(item: {
     logResponseError: common.enumToBoolean(
       cs.get<interfaces.Config['diskLogResponseError']>('diskLogResponseError')
     ),
-    logOnResponser: common.enumToBoolean(
-      cs.get<interfaces.Config['diskLogOnResponser']>('diskLogOnResponser')
-    ),
     logIsJson: common.enumToBoolean(
       cs.get<interfaces.Config['diskLogIsJson']>('diskLogIsJson')
     ),

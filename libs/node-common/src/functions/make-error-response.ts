@@ -12,7 +12,6 @@ export function makeErrorResponse(item: {
   duration: number;
   skipLog?: boolean;
   logResponseError: boolean;
-  logOnResponser: boolean;
   logIsJson: boolean;
   logger: Logger;
 }) {
@@ -24,7 +23,6 @@ export function makeErrorResponse(item: {
     duration,
     skipLog,
     logResponseError,
-    logOnResponser,
     logIsJson,
     logger
   } = item;
@@ -41,11 +39,7 @@ export function makeErrorResponse(item: {
     payload: {}
   };
 
-  if (
-    logOnResponser === true &&
-    logResponseError === true &&
-    skipLog !== true
-  ) {
+  if (logResponseError === true && skipLog !== true) {
     let log = {
       response: Object.assign({}, response, { payload: undefined })
     };
