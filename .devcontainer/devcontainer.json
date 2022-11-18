@@ -57,7 +57,8 @@
         "k--kato.intellij-idea-keybindings",
         "wayou.vscode-todo-highlight",
         "PKief.material-icon-theme",
-        "rvest.vs-code-prettier-eslint"
+        "rvest.vs-code-prettier-eslint",
+        "ms-kubernetes-tools.vscode-kubernetes-tools"
       ],
       "settings": {
         "workbench.settings.useSplitJSON": false,
