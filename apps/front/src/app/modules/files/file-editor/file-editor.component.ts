@@ -39,7 +39,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
   monaco: typeof import('monaco-editor');
 
   editorOptions: MonacoEditorOptions = {
-    autoIndent: 'keep',
+    // autoIndent: 'keep',
     renderValidationDecorations: 'off',
     fixedOverflowWidgets: true,
     theme: constants.TEXTMATE_THEME,
