@@ -27,7 +27,12 @@ export class PgService {
       database: connection.database,
       user: connection.username,
       password: connection.password,
-      ssl: connection.is_ssl === common.BoolEnum.TRUE
+      ssl:
+        connection.is_ssl === common.BoolEnum.TRUE
+          ? {
+              rejectUnauthorized: false
+            }
+          : false
     };
 
     let queryJobId = common.makeId();
