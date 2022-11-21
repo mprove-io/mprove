@@ -27,4 +27,8 @@ export class Repo {
   @ValidateNested()
   @Type(() => DiskCatalogNode)
   nodes: DiskCatalogNode[];
+
+  changesToCommit?: any[];
+
+  changesToRemote?: any[];
 }

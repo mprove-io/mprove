@@ -8,6 +8,7 @@ export * from './field-class.enum';
 export * from './field-result.enum';
 export * from './field-type.enum';
 export * from './file-extension.enum';
+export * from './file-status.enum';
 export * from './fraction/_index';
 export * from './join-type.enum';
 export * from './log-level.enum';

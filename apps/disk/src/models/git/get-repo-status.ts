@@ -25,6 +25,30 @@ export async function getRepoStatus(item: {
 
   let gitRepo = <nodegit.Repository>await nodegit.Repository.open(item.repoDir);
 
+  let gitRepoStatusFiles = await gitRepo.getStatus();
+
+  let changesToCommit: common.DiskFileChange[] = gitRepoStatusFiles.map(x => ({
+    path: x.path(),
+    // doesn't return booleans
+    status: x.isNew()
+      ? common.FileStatusEnum.New
+      : x.isModified()
+      ? common.FileStatusEnum.Modified
+      : x.isDeleted()
+      ? common.FileStatusEnum.Deleted
+      : x.isTypechange()
+      ? common.FileStatusEnum.TypeChange
+      : x.isRenamed()
+      ? common.FileStatusEnum.Renamed
+      : x.isIgnored()
+      ? common.FileStatusEnum.Ignored
+      : undefined
+  }));
+
+  let changesToRemote: common.DiskFileChange[] = [];
+
+  console.log(gitRepoStatusFiles);
+
   let currentBranchRef = await gitRepo.getCurrentBranch();
   let currentBranchName = await nodegit.Branch.name(currentBranchRef);
 
@@ -72,7 +96,9 @@ export async function getRepoStatus(item: {
     return {
       repoStatus: common.RepoStatusEnum.NeedCommit,
       conflicts: conflicts,
-      currentBranch: currentBranchName
+      currentBranch: currentBranchName,
+      changesToCommit: changesToCommit,
+      changesToRemote: changesToRemote
     };
   }
 
@@ -80,7 +106,9 @@ export async function getRepoStatus(item: {
     return {
       repoStatus: common.RepoStatusEnum.Ok,
       conflicts: conflicts,
-      currentBranch: currentBranchName
+      currentBranch: currentBranchName,
+      changesToCommit: changesToCommit,
+      changesToRemote: changesToRemote
     };
   } else {
     // isRemoteBranchExist() does gitRepo.fetch()
@@ -94,7 +122,9 @@ export async function getRepoStatus(item: {
       return {
         repoStatus: common.RepoStatusEnum.NeedPush,
         conflicts: conflicts,
-        currentBranch: currentBranchName
+        currentBranch: currentBranchName,
+        changesToCommit: changesToCommit,
+        changesToRemote: changesToRemote
       };
     }
 
@@ -125,7 +155,9 @@ export async function getRepoStatus(item: {
       return {
         repoStatus: common.RepoStatusEnum.Ok,
         conflicts: conflicts,
-        currentBranch: currentBranchName
+        currentBranch: currentBranchName,
+        changesToCommit: changesToCommit,
+        changesToRemote: changesToRemote
       };
     }
 
@@ -134,7 +166,9 @@ export async function getRepoStatus(item: {
       return {
         repoStatus: common.RepoStatusEnum.NeedPull,
         conflicts: conflicts,
-        currentBranch: currentBranchName
+        currentBranch: currentBranchName,
+        changesToCommit: changesToCommit,
+        changesToRemote: changesToRemote
       };
     }
 
@@ -143,7 +177,9 @@ export async function getRepoStatus(item: {
       return {
         repoStatus: common.RepoStatusEnum.NeedPush,
         conflicts: conflicts,
-        currentBranch: currentBranchName
+        currentBranch: currentBranchName,
+        changesToCommit: changesToCommit,
+        changesToRemote: changesToRemote
       };
     }
 
@@ -152,7 +188,9 @@ export async function getRepoStatus(item: {
     return {
       repoStatus: common.RepoStatusEnum.NeedPull,
       conflicts: conflicts,
-      currentBranch: currentBranchName
+      currentBranch: currentBranchName,
+      changesToCommit: changesToCommit,
+      changesToRemote: changesToRemote
     };
   }
 }

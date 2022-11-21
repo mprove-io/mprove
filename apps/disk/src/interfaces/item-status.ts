@@ -6,4 +6,8 @@ export interface ItemStatus {
   conflicts: common.DiskFileLine[];
 
   currentBranch: string;
+
+  changesToCommit: any;
+
+  changesToRemote: any;
 }
