@@ -3,11 +3,13 @@ import { Store, StoreConfig } from '@datorama/akita';
 
 export class UiState {
   needSave: boolean;
+  isDiff: boolean;
 }
 
 function createInitialState(): UiState {
   return {
-    needSave: false
+    needSave: false,
+    isDiff: false
   };
 }
 

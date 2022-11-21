@@ -16,6 +16,7 @@ import { FileState } from '~front/app/stores/file.store';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
+import { UiState, UiStore } from '~front/app/stores/ui.store';
 import { UserState } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -116,11 +117,16 @@ export class FilesComponent implements OnInit {
     public fileService: FileService,
     private title: Title,
     private memberQuery: MemberQuery,
-    private userQuery: UserQuery
+    private userQuery: UserQuery,
+    private uiStore: UiStore
   ) {}
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
+
+    this.uiStore.update(state =>
+      Object.assign({}, state, <UiState>{ isDiff: false })
+    );
 
     let ar = this.router.url.split('/');
     this.lastUrl = ar[ar.length - 1];
@@ -128,6 +134,9 @@ export class FilesComponent implements OnInit {
 
   setPanel(x: PanelEnum) {
     this.panel = x;
+    this.uiStore.update(state =>
+      Object.assign({}, state, <UiState>{ isDiff: x !== PanelEnum.WorkTree })
+    );
     this.cd.detectChanges();
   }
 

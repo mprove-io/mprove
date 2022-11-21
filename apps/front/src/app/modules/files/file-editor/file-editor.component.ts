@@ -38,6 +38,13 @@ export class FileEditorComponent implements OnInit, OnDestroy {
 
   monaco: typeof import('monaco-editor');
 
+  diffEditorOptions: editorType.IDiffEditorOptions = {
+    renderValidationDecorations: 'on',
+    fixedOverflowWidgets: true,
+    fontSize: 16,
+    renderSideBySide: true
+  };
+
   editorOptions: MonacoEditorOptions = {
     // autoIndent: 'keep',
     renderValidationDecorations: 'off',
@@ -57,6 +64,9 @@ export class FileEditorComponent implements OnInit, OnDestroy {
 
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
+
+  isDiff = false;
+  isDiff$ = this.uiQuery.isDiff$.pipe(tap(x => (this.isDiff = x)));
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -342,6 +352,8 @@ export class FileEditorComponent implements OnInit, OnDestroy {
 
       this.removeMarkers();
     }
+    // workaround for diff editor, because it doesn't accept theme as option
+    this.monaco.editor.setTheme(this.editorOptions.theme);
   }
 
   removeMarkers() {

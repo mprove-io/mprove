@@ -61,16 +61,28 @@
 
   <div class="h-full rounded">
     <ng-monaco-editor
+      *ngIf="isDiff === false"
       data-cy="fileEditorMonacoEditor"
       [options]="editorOptions"
       [(ngModel)]="content"
       (editorChange)="onEditorChange($event)"
       (ngModelChange)="onTextChanged()"
     ></ng-monaco-editor>
+
+    <ng-monaco-diff-editor
+      *ngIf="isDiff === true"
+      data-cy="fileEditorMonacoDiffEditor"
+      [options]="diffEditorOptions"
+      [originalValue]="originalText"
+      [(ngModel)]="content"
+      (editorChange)="onEditorChange($event)"
+      (ngModelChange)="onTextChanged()"
+    ></ng-monaco-diff-editor>
   </div>
 </div>
 
 <div *ngIf="needSave$ | async"></div>
+<div *ngIf="isDiff$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="file$ | async"></div>
 <div *ngIf="repo$ | async"></div>
