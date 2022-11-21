@@ -21,12 +21,24 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
+export enum PanelEnum {
+  WorkTree = 1,
+  UncommitedChanges = 2,
+  DiffToRemoteBase = 3
+}
+
 @Component({
   selector: 'm-files',
   templateUrl: './files.component.html'
 })
 export class FilesComponent implements OnInit {
   pageTitle = constants.FILES_PAGE_TITLE;
+
+  panel = PanelEnum.WorkTree;
+
+  panelWorkTree = PanelEnum.WorkTree;
+  panelUncommitedChanges = PanelEnum.UncommitedChanges;
+  panelDiffToRemoteBase = PanelEnum.DiffToRemoteBase;
 
   repoStatusNeedCommit = common.RepoStatusEnum.NeedCommit;
   repoStatusNeedPull = common.RepoStatusEnum.NeedPull;
@@ -112,6 +124,11 @@ export class FilesComponent implements OnInit {
 
     let ar = this.router.url.split('/');
     this.lastUrl = ar[ar.length - 1];
+  }
+
+  setPanel(x: PanelEnum) {
+    this.panel = x;
+    this.cd.detectChanges();
   }
 
   commit() {
