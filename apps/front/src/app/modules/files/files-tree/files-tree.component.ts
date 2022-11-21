@@ -1,6 +1,7 @@
 import {
   ChangeDetectorRef,
   Component,
+  Input,
   OnDestroy,
   ViewChild
 } from '@angular/core';
@@ -24,6 +25,7 @@ import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { PanelEnum } from '../files.component';
 
 @Component({
   selector: 'm-files-tree',
@@ -31,6 +33,43 @@ import { common } from '~front/barrels/common';
   styleUrls: ['files-tree.component.scss']
 })
 export class FilesTreeComponent implements OnDestroy {
+  @Input()
+  panel: PanelEnum;
+
+  diffId = 'id2';
+
+  diffs: any = [
+    {
+      label: 'label1',
+      path: 'path1',
+      id: 'id1'
+    },
+    {
+      label: 'label2',
+      path: 'path2',
+      id: 'id2'
+    },
+    {
+      label: 'label3',
+      path: 'path3',
+      id: 'id3'
+    },
+    {
+      label: 'label4',
+      path: 'path4',
+      id: 'id4'
+    },
+    {
+      label: 'label5',
+      path: 'path5',
+      id: 'id5'
+    }
+  ];
+
+  panelWorkingTree = PanelEnum.WorkingTree;
+  panelChangesToCommit = PanelEnum.ChangesToCommit;
+  panelChangesToRemote = PanelEnum.ChangesToRemote;
+
   repo: RepoState;
   repo$ = this.repoQuery.select().pipe(
     tap(x => {
@@ -168,6 +207,10 @@ export class FilesTreeComponent implements OnDestroy {
     }
 
     this.itemsTree.treeModel.getNodeById(this.nav.projectId).expand();
+  }
+
+  diffOnClick(diffId: string) {
+    this.diffId = diffId;
   }
 
   nodeOnClick(node: TreeNode) {

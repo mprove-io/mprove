@@ -23,9 +23,9 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 export enum PanelEnum {
-  WorkTree = 1,
-  UncommitedChanges = 2,
-  DiffToRemoteBase = 3
+  WorkingTree = 1,
+  ChangesToCommit = 2,
+  ChangesToRemote = 3
 }
 
 @Component({
@@ -35,11 +35,11 @@ export enum PanelEnum {
 export class FilesComponent implements OnInit {
   pageTitle = constants.FILES_PAGE_TITLE;
 
-  panel = PanelEnum.WorkTree;
+  panel = PanelEnum.WorkingTree;
 
-  panelWorkTree = PanelEnum.WorkTree;
-  panelUncommitedChanges = PanelEnum.UncommitedChanges;
-  panelDiffToRemoteBase = PanelEnum.DiffToRemoteBase;
+  panelWorkingTree = PanelEnum.WorkingTree;
+  panelChangesToCommit = PanelEnum.ChangesToCommit;
+  panelChangesToRemote = PanelEnum.ChangesToRemote;
 
   repoStatusNeedCommit = common.RepoStatusEnum.NeedCommit;
   repoStatusNeedPull = common.RepoStatusEnum.NeedPull;
@@ -135,7 +135,7 @@ export class FilesComponent implements OnInit {
   setPanel(x: PanelEnum) {
     this.panel = x;
     this.uiStore.update(state =>
-      Object.assign({}, state, <UiState>{ isDiff: x !== PanelEnum.WorkTree })
+      Object.assign({}, state, <UiState>{ isDiff: x !== PanelEnum.WorkingTree })
     );
     this.cd.detectChanges();
   }

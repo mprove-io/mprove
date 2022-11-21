@@ -9,32 +9,32 @@
             >{{ pageTitle }}
           </div>
 
-          <div class="ml-10 flex h-9 flex-row items-end space-x-3 text-base">
+          <div class="ml-10 flex h-8 flex-row items-end space-x-3 text-base">
             <div
-              class="w-[95px] cursor-pointer"
+              class="w-[120px] cursor-pointer"
               [ngClass]="{
-                'font-bold': panel === panelWorkTree
+                'font-bold': panel === panelWorkingTree
               }"
-              (click)="setPanel(panelWorkTree)"
-              >Work Tree</div
+              (click)="setPanel(panelWorkingTree)"
+              >Working Tree</div
             >
 
             <div
-              class="w-[205px] cursor-pointer"
+              class="w-[175px] cursor-pointer"
               [ngClass]="{
-                'font-bold': panel === panelUncommitedChanges
+                'font-bold': panel === panelChangesToCommit
               }"
-              (click)="setPanel(panelUncommitedChanges)"
-              >Uncommitted Changes</div
+              (click)="setPanel(panelChangesToCommit)"
+              >Changes to Commit</div
             >
 
             <div
-              class="w-[180px] cursor-pointer"
+              class="w-[175px] cursor-pointer"
               [ngClass]="{
-                'font-bold': panel === panelDiffToRemoteBase
+                'font-bold': panel === panelChangesToRemote
               }"
-              (click)="setPanel(panelDiffToRemoteBase)"
-              >Diff To Remote Base</div
+              (click)="setPanel(panelChangesToRemote)"
+              >Changes to Remote</div
             >
           </div>
         </div>
@@ -200,7 +200,10 @@
       </div>
 
       <div class="mt-6 flex flex-grow flex-row">
-        <m-files-tree class="flex w-3/12 flex-shrink-0"></m-files-tree>
+        <m-files-tree
+          [panel]="panel"
+          class="flex w-3/12 flex-shrink-0"
+        ></m-files-tree>
 
         <div class="ml-6 flex w-full min-w-[2px] flex-grow">
           <div class="w-full rounded bg-white shadow-lg">
@@ -214,7 +217,7 @@
           </div>
 
           <m-files-right
-            *ngIf="panel === panelWorkTree"
+            *ngIf="panel === panelWorkingTree"
             class="flex w-4/12 flex-shrink-0"
           ></m-files-right>
         </div>
