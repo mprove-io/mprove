@@ -140,7 +140,7 @@ export class SaveFileService {
       currentBranch,
       conflicts,
       changesToCommit,
-      changesToRemote
+      changesToPush
     } = <interfaces.ItemStatus>await git.getRepoStatus({
       projectId: projectId,
       projectDir: projectDir,
@@ -169,7 +169,7 @@ export class SaveFileService {
         conflicts: conflicts,
         nodes: itemCatalog.nodes,
         changesToCommit: changesToCommit,
-        changesToRemote: changesToRemote
+        changesToPush: changesToPush
       },
       files: itemCatalog.files,
       mproveDir: itemCatalog.mproveDir

@@ -25,7 +25,7 @@ import { constants } from '~front/barrels/constants';
 export enum PanelEnum {
   WorkingTree = 1,
   ChangesToCommit = 2,
-  ChangesToRemote = 3
+  ChangesToPush = 3
 }
 
 @Component({
@@ -39,7 +39,7 @@ export class FilesComponent implements OnInit {
 
   panelWorkingTree = PanelEnum.WorkingTree;
   panelChangesToCommit = PanelEnum.ChangesToCommit;
-  panelChangesToRemote = PanelEnum.ChangesToRemote;
+  panelChangesToPush = PanelEnum.ChangesToPush;
 
   repoStatusNeedCommit = common.RepoStatusEnum.NeedCommit;
   repoStatusNeedPull = common.RepoStatusEnum.NeedPull;

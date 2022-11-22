@@ -9,5 +9,5 @@ export interface ItemStatus {
 
   changesToCommit: any;
 
-  changesToRemote: any;
+  changesToPush: any;
 }

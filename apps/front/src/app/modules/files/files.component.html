@@ -9,33 +9,51 @@
             >{{ pageTitle }}
           </div>
 
-          <div class="ml-10 flex h-8 flex-row items-end space-x-3 text-base">
+          <div
+            class="mt-2 ml-10 flex h-10 flex-row items-center space-x-3 text-base"
+          >
             <div
-              class="w-[120px] cursor-pointer"
+              class="flex h-10 w-[50px] cursor-pointer items-center pl-2"
               [ngClass]="{
                 'font-bold': panel === panelWorkingTree
               }"
               (click)="setPanel(panelWorkingTree)"
-              >Working Tree</div
+              >Tree</div
             >
 
             <div
-              class="w-[175px] cursor-pointer"
-              [ngClass]="{
-                'font-bold': panel === panelChangesToCommit
-              }"
+              class="flex h-10 w-[230px] flex-shrink-0 cursor-pointer flex-row items-center pl-2"
               (click)="setPanel(panelChangesToCommit)"
-              >Changes to Commit</div
             >
+              <div
+                class="flex w-[180px] flex-shrink-0"
+                [ngClass]="{
+                  'font-bold': panel === panelChangesToCommit
+                }"
+                >Changes to Commit</div
+              >
+              <div
+                class="flex flex-shrink-0 rounded bg-blue-500 px-2 py-[1px] text-white"
+                >{{ repo?.changesToCommit?.length }}</div
+              >
+            </div>
 
             <div
-              class="w-[130px] cursor-pointer"
-              [ngClass]="{
-                'font-bold': panel === panelChangesToRemote
-              }"
-              (click)="setPanel(panelChangesToRemote)"
-              >Diff to Remote</div
+              class="flex h-10 w-[205px] flex-shrink-0 cursor-pointer flex-row items-center pl-2"
+              (click)="setPanel(panelChangesToPush)"
             >
+              <div
+                class="flex w-[155px] flex-shrink-0"
+                [ngClass]="{
+                  'font-bold': panel === panelChangesToPush
+                }"
+                >Changes to Push</div
+              >
+              <div
+                class="flex flex-shrink-0 rounded bg-blue-500 px-2 py-[1px] text-white"
+                >{{ repo?.changesToPush?.length }}</div
+              >
+            </div>
           </div>
         </div>
 

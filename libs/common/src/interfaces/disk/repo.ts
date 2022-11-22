@@ -30,5 +30,5 @@ export class Repo {
 
   changesToCommit?: any[];
 
-  changesToRemote?: any[];
+  changesToPush?: any[];
 }

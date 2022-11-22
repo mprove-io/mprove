@@ -45,14 +45,46 @@ export async function getRepoStatus(item: {
       : undefined
   }));
 
-  let changesToRemote: common.DiskFileChange[] = [];
-
-  console.log(gitRepoStatusFiles);
+  // console.log(gitRepoStatusFiles);
 
   let currentBranchRef = await gitRepo.getCurrentBranch();
   let currentBranchName = await nodegit.Branch.name(currentBranchRef);
 
-  let head = <nodegit.Commit>await gitRepo.getHeadCommit();
+  let head: nodegit.Commit = <nodegit.Commit>await gitRepo.getHeadCommit();
+  let headOid = head.id();
+
+  //
+
+  let changesToPush: common.DiskFileChange[] = [];
+
+  let theirCommit: nodegit.Commit = await gitRepo.getReferenceCommit(
+    `refs/remotes/origin/${currentBranchName}`
+  );
+
+  let theirCommitOid = theirCommit.id();
+
+  let commonAncestorOid: nodegit.Oid = await nodegit.Merge.base(
+    gitRepo,
+    headOid,
+    theirCommitOid
+  );
+
+  if (commonAncestorOid !== headOid) {
+    const fromTree = await head.getTree();
+
+    const to = await gitRepo.getCommit(commonAncestorOid);
+    const toTree = await to.getTree();
+
+    const diff = await toTree.diff(fromTree);
+    const patches = await diff.patches();
+
+    changesToPush = patches.map((x: nodegit.ConvenientPatch) => ({
+      path: x.newFile().path(),
+      status: undefined
+    }));
+  }
+
+  //
 
   let treeHead = <nodegit.Tree>await head.getTree();
 
@@ -98,7 +130,7 @@ export async function getRepoStatus(item: {
       conflicts: conflicts,
       currentBranch: currentBranchName,
       changesToCommit: changesToCommit,
-      changesToRemote: changesToRemote
+      changesToPush: changesToPush
     };
   }
 
@@ -108,7 +140,7 @@ export async function getRepoStatus(item: {
       conflicts: conflicts,
       currentBranch: currentBranchName,
       changesToCommit: changesToCommit,
-      changesToRemote: changesToRemote
+      changesToPush: changesToPush
     };
   } else {
     // isRemoteBranchExist() does gitRepo.fetch()
@@ -124,7 +156,7 @@ export async function getRepoStatus(item: {
         conflicts: conflicts,
         currentBranch: currentBranchName,
         changesToCommit: changesToCommit,
-        changesToRemote: changesToRemote
+        changesToPush: changesToPush
       };
     }
 
@@ -157,7 +189,7 @@ export async function getRepoStatus(item: {
         conflicts: conflicts,
         currentBranch: currentBranchName,
         changesToCommit: changesToCommit,
-        changesToRemote: changesToRemote
+        changesToPush: changesToPush
       };
     }
 
@@ -168,7 +200,7 @@ export async function getRepoStatus(item: {
         conflicts: conflicts,
         currentBranch: currentBranchName,
         changesToCommit: changesToCommit,
-        changesToRemote: changesToRemote
+        changesToPush: changesToPush
       };
     }
 
@@ -179,7 +211,7 @@ export async function getRepoStatus(item: {
         conflicts: conflicts,
         currentBranch: currentBranchName,
         changesToCommit: changesToCommit,
-        changesToRemote: changesToRemote
+        changesToPush: changesToPush
       };
     }
 
@@ -190,7 +222,7 @@ export async function getRepoStatus(item: {
       conflicts: conflicts,
       currentBranch: currentBranchName,
       changesToCommit: changesToCommit,
-      changesToRemote: changesToRemote
+      changesToPush: changesToPush
     };
   }
 }

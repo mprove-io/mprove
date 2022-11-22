@@ -485,8 +485,8 @@ export class FileEditorComponent implements OnInit, OnDestroy {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             console.log('resp.payload.repo.changesToCommit');
             console.log(resp.payload.repo.changesToCommit);
-            console.log('resp.payload.repo.changesToRemote');
-            console.log(resp.payload.repo.changesToRemote);
+            console.log('resp.payload.repo.changesToPush');
+            console.log(resp.payload.repo.changesToPush);
 
             this.repoStore.update(resp.payload.repo);
             this.structStore.update(resp.payload.struct);
