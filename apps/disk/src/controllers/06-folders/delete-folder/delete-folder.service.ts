@@ -117,17 +117,21 @@ export class DeleteFolderService {
 
     await git.addChangesToStage({ repoDir: repoDir });
 
-    let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
-      await git.getRepoStatus({
-        projectId: projectId,
-        projectDir: projectDir,
-        repoId: repoId,
-        repoDir: repoDir,
-        fetchOptions: fetchOptions,
-        isFetch: true,
-        isCheckConflicts: true
-      })
-    );
+    let {
+      repoStatus,
+      currentBranch,
+      conflicts,
+      changesToCommit,
+      changesToPush
+    } = <interfaces.ItemStatus>await git.getRepoStatus({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: repoId,
+      repoDir: repoDir,
+      fetchOptions: fetchOptions,
+      isFetch: true,
+      isCheckConflicts: true
+    });
 
     let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
       projectId: projectId,
@@ -145,7 +149,9 @@ export class DeleteFolderService {
         repoStatus: repoStatus,
         currentBranchId: currentBranch,
         conflicts: conflicts,
-        nodes: itemCatalog.nodes
+        nodes: itemCatalog.nodes,
+        changesToCommit: changesToCommit,
+        changesToPush: changesToPush
       },
       deletedFolderNodeId: folderNodeId,
       files: itemCatalog.files,

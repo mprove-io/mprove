@@ -111,17 +111,21 @@ export class GetFileService {
 
     let content = await disk.readFile(filePath);
 
-    let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
-      await git.getRepoStatus({
-        projectId: projectId,
-        projectDir: projectDir,
-        repoId: repoId,
-        repoDir: repoDir,
-        fetchOptions: fetchOptions,
-        isFetch: false,
-        isCheckConflicts: false
-      })
-    );
+    let {
+      repoStatus,
+      currentBranch,
+      conflicts,
+      changesToCommit,
+      changesToPush
+    } = <interfaces.ItemStatus>await git.getRepoStatus({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: repoId,
+      repoDir: repoDir,
+      fetchOptions: fetchOptions,
+      isFetch: false,
+      isCheckConflicts: false
+    });
 
     let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
       projectId: projectId,
@@ -139,7 +143,9 @@ export class GetFileService {
         repoStatus: repoStatus,
         currentBranchId: currentBranch,
         conflicts: conflicts,
-        nodes: itemCatalog.nodes
+        nodes: itemCatalog.nodes,
+        changesToCommit: changesToCommit,
+        changesToPush: changesToPush
       },
       content: content
     };

@@ -112,17 +112,21 @@ export class GetCatalogNodesService {
       isRootMproveDir: false
     });
 
-    let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
-      await git.getRepoStatus({
-        projectId: projectId,
-        projectDir: projectDir,
-        repoId: repoId,
-        repoDir: repoDir,
-        fetchOptions: fetchOptions,
-        isFetch: isFetch,
-        isCheckConflicts: true
-      })
-    );
+    let {
+      repoStatus,
+      currentBranch,
+      conflicts,
+      changesToCommit,
+      changesToPush
+    } = <interfaces.ItemStatus>await git.getRepoStatus({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: repoId,
+      repoDir: repoDir,
+      fetchOptions: fetchOptions,
+      isFetch: isFetch,
+      isCheckConflicts: true
+    });
 
     let payload: apiToDisk.ToDiskGetCatalogNodesResponsePayload = {
       repo: {
@@ -132,7 +136,9 @@ export class GetCatalogNodesService {
         repoStatus: repoStatus,
         currentBranchId: currentBranch,
         conflicts: conflicts,
-        nodes: itemCatalog.nodes
+        nodes: itemCatalog.nodes,
+        changesToCommit: changesToCommit,
+        changesToPush: changesToPush
       }
     };
 

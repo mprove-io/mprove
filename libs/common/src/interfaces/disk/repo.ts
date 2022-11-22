@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import { enums } from '~common/barrels/enums';
 import { DiskCatalogNode } from './disk-catalog-node';
+import { DiskFileChange } from './disk-file-change';
 import { DiskFileLine } from './disk-file-line';
 
 export class Repo {
@@ -28,7 +29,11 @@ export class Repo {
   @Type(() => DiskCatalogNode)
   nodes: DiskCatalogNode[];
 
-  changesToCommit?: any[];
+  @ValidateNested()
+  @Type(() => DiskFileChange)
+  changesToCommit: DiskFileChange[];
 
-  changesToPush?: any[];
+  @ValidateNested()
+  @Type(() => DiskFileChange)
+  changesToPush: DiskFileChange[];
 }

@@ -3,7 +3,10 @@ import { enums } from '~common/barrels/enums';
 
 export class DiskFileChange {
   @IsString()
-  path: string;
+  fileName: string;
+
+  @IsString()
+  parentPath: string;
 
   @IsString()
   status: enums.FileStatusEnum;

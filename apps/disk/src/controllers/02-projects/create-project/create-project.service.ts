@@ -110,17 +110,21 @@ export class CreateProjectService {
       isRootMproveDir: false
     });
 
-    let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
-      await git.getRepoStatus({
-        projectId: projectId,
-        projectDir: projectDir,
-        repoId: common.PROD_REPO_ID,
-        repoDir: `${projectDir}/${common.PROD_REPO_ID}`,
-        fetchOptions: fetchOptions,
-        isFetch: true,
-        isCheckConflicts: true
-      })
-    );
+    let {
+      repoStatus,
+      currentBranch,
+      conflicts,
+      changesToCommit,
+      changesToPush
+    } = <interfaces.ItemStatus>await git.getRepoStatus({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: common.PROD_REPO_ID,
+      repoDir: `${projectDir}/${common.PROD_REPO_ID}`,
+      fetchOptions: fetchOptions,
+      isFetch: true,
+      isCheckConflicts: true
+    });
 
     let payload: apiToDisk.ToDiskCreateProjectResponsePayload = {
       orgId: orgId,

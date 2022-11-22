@@ -27,23 +27,34 @@ export async function getRepoStatus(item: {
 
   let gitRepoStatusFiles = await gitRepo.getStatus();
 
-  let changesToCommit: common.DiskFileChange[] = gitRepoStatusFiles.map(x => ({
-    path: x.path(),
-    // doesn't return booleans
-    status: x.isNew()
-      ? common.FileStatusEnum.New
-      : x.isModified()
-      ? common.FileStatusEnum.Modified
-      : x.isDeleted()
-      ? common.FileStatusEnum.Deleted
-      : x.isTypechange()
-      ? common.FileStatusEnum.TypeChange
-      : x.isRenamed()
-      ? common.FileStatusEnum.Renamed
-      : x.isIgnored()
-      ? common.FileStatusEnum.Ignored
-      : undefined
-  }));
+  let changesToCommit: common.DiskFileChange[] = gitRepoStatusFiles.map(x => {
+    let path = x.path();
+    let pathArray = path.split('/');
+
+    let fileName = pathArray.slice(-1)[0];
+
+    let parentPath =
+      pathArray.length === 1 ? '' : pathArray.slice(0, -1).join('/');
+
+    return {
+      fileName: fileName,
+      parentPath: parentPath,
+      // doesn't return booleans
+      status: x.isNew()
+        ? common.FileStatusEnum.New
+        : x.isModified()
+        ? common.FileStatusEnum.Modified
+        : x.isDeleted()
+        ? common.FileStatusEnum.Deleted
+        : x.isTypechange()
+        ? common.FileStatusEnum.TypeChange
+        : x.isRenamed()
+        ? common.FileStatusEnum.Renamed
+        : x.isIgnored()
+        ? common.FileStatusEnum.Ignored
+        : undefined
+    };
+  });
 
   // console.log(gitRepoStatusFiles);
 
@@ -57,33 +68,49 @@ export async function getRepoStatus(item: {
 
   let changesToPush: common.DiskFileChange[] = [];
 
-  let theirCommit: nodegit.Commit = await gitRepo.getReferenceCommit(
-    `refs/remotes/origin/${currentBranchName}`
-  );
-
-  let theirCommitOid = theirCommit.id();
-
-  let commonAncestorOid: nodegit.Oid = await nodegit.Merge.base(
+  let ref = await nodegit.Branch.lookup(
     gitRepo,
-    headOid,
-    theirCommitOid
-  );
+    `origin/${currentBranchName}`,
+    nodegit.Branch.BRANCH.REMOTE
+  ).catch(e => {
+    if (e?.message?.includes('cannot locate remote-tracking branch')) {
+      return false;
+    } else {
+      throw e;
+    }
+  });
 
-  if (commonAncestorOid !== headOid) {
-    const fromTree = await head.getTree();
+  if (common.isDefined(ref) && !!ref) {
+    let theirCommit: nodegit.Commit = await gitRepo.getReferenceCommit(
+      `refs/remotes/origin/${currentBranchName}`
+    );
 
-    const to = await gitRepo.getCommit(commonAncestorOid);
-    const toTree = await to.getTree();
+    if (common.isDefined(theirCommit)) {
+      let theirCommitOid = theirCommit.id();
 
-    const diff = await toTree.diff(fromTree);
-    const patches = await diff.patches();
+      let commonAncestorOid: nodegit.Oid = await nodegit.Merge.base(
+        gitRepo,
+        headOid,
+        theirCommitOid
+      );
 
-    changesToPush = patches.map((x: nodegit.ConvenientPatch) => ({
-      path: x.newFile().path(),
-      status: undefined
-    }));
+      if (commonAncestorOid !== headOid) {
+        const fromTree = await head.getTree();
+
+        const to = await gitRepo.getCommit(commonAncestorOid);
+        const toTree = await to.getTree();
+
+        const diff = await toTree.diff(fromTree);
+        const patches = await diff.patches();
+
+        changesToPush = patches.map((x: nodegit.ConvenientPatch) => ({
+          fileName: '2',
+          parentPath: x.newFile().path(),
+          status: undefined
+        }));
+      }
+    }
   }
-
   //
 
   let treeHead = <nodegit.Tree>await head.getTree();

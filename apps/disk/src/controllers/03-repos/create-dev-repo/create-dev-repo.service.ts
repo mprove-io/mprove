@@ -89,17 +89,21 @@ export class CreateDevRepoService {
 
     //
 
-    let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
-      await git.getRepoStatus({
-        projectId: projectId,
-        projectDir: projectDir,
-        repoId: devRepoId,
-        repoDir: devRepoDir,
-        fetchOptions: cloneOptions.fetchOpts,
-        isFetch: true,
-        isCheckConflicts: true
-      })
-    );
+    let {
+      repoStatus,
+      currentBranch,
+      conflicts,
+      changesToCommit,
+      changesToPush
+    } = <interfaces.ItemStatus>await git.getRepoStatus({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: devRepoId,
+      repoDir: devRepoDir,
+      fetchOptions: cloneOptions.fetchOpts,
+      isFetch: true,
+      isCheckConflicts: true
+    });
 
     let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
       projectId: projectId,
@@ -117,7 +121,9 @@ export class CreateDevRepoService {
         repoStatus: repoStatus,
         currentBranchId: currentBranch,
         conflicts: conflicts,
-        nodes: itemCatalog.nodes
+        nodes: itemCatalog.nodes,
+        changesToCommit: changesToCommit,
+        changesToPush: changesToPush
       }
     };
 

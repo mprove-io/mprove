@@ -99,17 +99,21 @@ export class SeedProjectService {
       isRootMproveDir: false
     });
 
-    let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
-      await git.getRepoStatus({
-        projectId: projectId,
-        projectDir: projectDir,
-        repoId: devRepoId,
-        repoDir: devRepoDir,
-        fetchOptions: fetchOptions,
-        isFetch: true,
-        isCheckConflicts: true
-      })
-    );
+    let {
+      repoStatus,
+      currentBranch,
+      conflicts,
+      changesToCommit,
+      changesToPush
+    } = <interfaces.ItemStatus>await git.getRepoStatus({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: devRepoId,
+      repoDir: devRepoDir,
+      fetchOptions: fetchOptions,
+      isFetch: true,
+      isCheckConflicts: true
+    });
 
     let payload: apiToDisk.ToDiskSeedProjectResponsePayload = {
       repo: {
@@ -119,7 +123,9 @@ export class SeedProjectService {
         repoStatus: repoStatus,
         currentBranchId: currentBranch,
         conflicts: conflicts,
-        nodes: itemCatalog.nodes
+        nodes: itemCatalog.nodes,
+        changesToCommit: changesToCommit,
+        changesToPush: changesToPush
       },
       files: itemCatalog.files,
       mproveDir: itemCatalog.mproveDir
