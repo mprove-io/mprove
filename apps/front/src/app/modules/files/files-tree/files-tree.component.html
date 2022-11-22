@@ -96,19 +96,33 @@
 
   <div
     class="mt-4 h-2 w-full"
-    *ngIf="panel === panelChangesToCommit && !!repo.changesToCommit"
+    *ngIf="panel === panelChangesToCommit && !!repo?.changesToCommit"
   >
-    <!-- <div
-      *ngFor="let diff of diffs"
-      class="flex flex-row rounded py-2 px-4 hover:cursor-pointer"
-      [ngClass]="{
-        'bg-blue-100': modelId === model.modelId,
-        'hover:bg-blue2': modelId !== model.modelId
-      }"
-      (click)="modelOnClick(model.modelId)"
-    > -->
     <div
       *ngFor="let diff of repo.changesToCommit"
+      class="flex flex-row items-end rounded py-2 px-4 hover:cursor-pointer"
+      [ngClass]="{
+        'bg-blue-100': diffId === diff.fileName,
+        'hover:bg-blue2': diffId !== diff.fileName
+      }"
+      (click)="diffOnClick(diff.fileName)"
+    >
+      <div class="text-gray1 flex-shrink-0 text-base">
+        {{ diff.fileName }}
+      </div>
+
+      <div class="ml-3 truncate text-base text-gray-400">
+        {{ diff.parentPath }}
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="mt-4 h-2 w-full"
+    *ngIf="panel === panelChangesToPush && !!repo?.changesToPush"
+  >
+    <div
+      *ngFor="let diff of repo.changesToPush"
       class="flex flex-row items-end rounded py-2 px-4 hover:cursor-pointer"
       [ngClass]="{
         'bg-blue-100': diffId === diff.fileName,

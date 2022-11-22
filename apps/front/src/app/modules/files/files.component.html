@@ -43,24 +43,34 @@
             </div>
 
             <div
-              class="flex h-10 w-[205px] flex-shrink-0 cursor-pointer flex-row items-center pl-2"
-              (click)="setPanel(panelChangesToPush)"
+              tippy="Commit all changes to see Changes to Push"
+              [isEnabled]="repo?.changesToCommit?.length > 0"
             >
-              <div
-                class="flex w-[155px] flex-shrink-0"
+              <button
+                class="flex h-10 w-[205px] flex-shrink-0 flex-row items-center pl-2"
                 [ngClass]="{
-                  'font-semibold': panel === panelChangesToPush
+                  'cursor-pointer': repo?.changesToCommit?.length === 0
                 }"
-                >Changes to Push</div
+                [disabled]="repo?.changesToCommit?.length > 0"
+                (click)="setPanel(panelChangesToPush)"
               >
-              <div
-                class="flex flex-shrink-0 rounded bg-blue-500 px-2 py-[1px] text-white"
-                [ngClass]="{
-                  'bg-blue-500': repo?.changesToPush?.length > 0,
-                  'bg-gray-400': !(repo?.changesToPush?.length > 0)
-                }"
-                >{{ repo?.changesToPush?.length }}</div
-              >
+                <div
+                  class="flex w-[155px] flex-shrink-0"
+                  [ngClass]="{
+                    'font-semibold': panel === panelChangesToPush
+                  }"
+                  >Changes to Push</div
+                >
+                <div
+                  *ngIf="repo?.changesToCommit?.length === 0"
+                  class="flex flex-shrink-0 rounded bg-blue-500 px-2 py-[1px] text-white"
+                  [ngClass]="{
+                    'bg-blue-500': repo?.changesToPush?.length > 0,
+                    'bg-gray-400': !(repo?.changesToPush?.length > 0)
+                  }"
+                  >{{ repo?.changesToPush?.length }}</div
+                >
+              </button>
             </div>
           </div>
         </div>
@@ -222,7 +232,7 @@
           </div>
         </div>
 
-        <div class="w-3/12"> </div>
+        <div *ngIf="panel === panelWorkingTree" class="w-3/12"> </div>
       </div>
 
       <div class="mt-6 flex flex-grow flex-row">
