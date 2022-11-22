@@ -5,7 +5,7 @@ import { UiState, UiStore } from '../stores/ui.store';
 @Injectable({ providedIn: 'root' })
 export class UiQuery extends Query<UiState> {
   needSave$ = this.select(state => state.needSave);
-  isDiff$ = this.select(state => state.isDiff);
+  panel$ = this.select(state => state.panel);
 
   constructor(protected store: UiStore) {
     super(store);

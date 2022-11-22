@@ -23,9 +23,9 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
+import { PanelEnum } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { PanelEnum } from '../files.component';
 
 @Component({
   selector: 'm-files-tree',
@@ -66,7 +66,7 @@ export class FilesTreeComponent implements OnDestroy {
     }
   ];
 
-  panelWorkingTree = PanelEnum.WorkingTree;
+  panelTree = PanelEnum.Tree;
   panelChangesToCommit = PanelEnum.ChangesToCommit;
   panelChangesToPush = PanelEnum.ChangesToPush;
 

@@ -61,7 +61,7 @@
 
   <div class="h-full rounded">
     <ng-monaco-editor
-      *ngIf="isDiff === false"
+      *ngIf="panel === panelTree"
       data-cy="fileEditorMonacoEditor"
       [options]="editorOptions"
       [(ngModel)]="content"
@@ -70,7 +70,7 @@
     ></ng-monaco-editor>
 
     <ng-monaco-diff-editor
-      *ngIf="isDiff === true"
+      *ngIf="panel !== panelTree"
       data-cy="fileEditorMonacoDiffEditor"
       [options]="diffEditorOptions"
       [originalValue]="originalText"
@@ -81,8 +81,8 @@
   </div>
 </div>
 
+<div *ngIf="panel$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
-<div *ngIf="isDiff$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="file$ | async"></div>
 <div *ngIf="repo$ | async"></div>

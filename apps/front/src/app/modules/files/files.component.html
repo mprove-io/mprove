@@ -15,9 +15,9 @@
             <div
               class="flex h-10 w-[50px] cursor-pointer items-center pl-2"
               [ngClass]="{
-                'font-semibold': panel === panelWorkingTree
+                'font-semibold': panel === panelTree
               }"
-              (click)="setPanel(panelWorkingTree)"
+              (click)="setPanel(panelTree)"
               >Tree</div
             >
 
@@ -232,7 +232,7 @@
           </div>
         </div>
 
-        <div *ngIf="panel === panelWorkingTree" class="w-3/12"> </div>
+        <div *ngIf="panel === panelTree" class="w-3/12"> </div>
       </div>
 
       <div class="mt-6 flex flex-grow flex-row">
@@ -253,7 +253,7 @@
           </div>
 
           <m-files-right
-            *ngIf="panel === panelWorkingTree"
+            *ngIf="panel === panelTree"
             class="flex w-4/12 flex-shrink-0"
           ></m-files-right>
         </div>
@@ -266,6 +266,7 @@
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="file$ | async"></div>
 <div *ngIf="repo$ | async"></div>
+<div *ngIf="panel$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
 <div *ngIf="isEditor$ | async"></div>
 <div *ngIf="user$ | async"></div>

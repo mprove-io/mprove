@@ -19,7 +19,7 @@ import { FileState, FileStore } from '~front/app/stores/file.store';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { StructState, StructStore } from '~front/app/stores/struct.store';
-import { UiState, UiStore } from '~front/app/stores/ui.store';
+import { PanelEnum, UiState, UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -30,6 +30,8 @@ import { constants } from '~front/barrels/constants';
   styleUrls: ['file-editor.component.scss']
 })
 export class FileEditorComponent implements OnInit, OnDestroy {
+  panelTree = PanelEnum.Tree;
+
   line = 1;
 
   isLoadedMonaco = false;
@@ -65,8 +67,8 @@ export class FileEditorComponent implements OnInit, OnDestroy {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
-  isDiff = false;
-  isDiff$ = this.uiQuery.isDiff$.pipe(tap(x => (this.isDiff = x)));
+  panel: PanelEnum;
+  panel$ = this.uiQuery.panel$.pipe(tap(x => (this.panel = x)));
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -487,6 +489,12 @@ export class FileEditorComponent implements OnInit, OnDestroy {
             console.log(resp.payload.repo.changesToCommit);
             console.log('resp.payload.repo.changesToPush');
             console.log(resp.payload.repo.changesToPush);
+
+            if (this.panel === PanelEnum.ChangesToPush) {
+              this.uiStore.update(state =>
+                Object.assign({}, state, <UiState>{ panel: PanelEnum.Tree })
+              );
+            }
 
             this.repoStore.update(resp.payload.repo);
             this.structStore.update(resp.payload.struct);

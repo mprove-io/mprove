@@ -1,15 +1,21 @@
 import { Injectable } from '@angular/core';
 import { Store, StoreConfig } from '@datorama/akita';
 
+export enum PanelEnum {
+  Tree = 1,
+  ChangesToCommit = 2,
+  ChangesToPush = 3
+}
+
 export class UiState {
+  panel: PanelEnum;
   needSave: boolean;
-  isDiff: boolean;
 }
 
 function createInitialState(): UiState {
   return {
-    needSave: false,
-    isDiff: false
+    panel: PanelEnum.Tree,
+    needSave: false
   };
 }
 

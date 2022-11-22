@@ -16,17 +16,11 @@ import { FileState } from '~front/app/stores/file.store';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
-import { UiState, UiStore } from '~front/app/stores/ui.store';
+import { PanelEnum, UiState, UiStore } from '~front/app/stores/ui.store';
 import { UserState } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
-
-export enum PanelEnum {
-  WorkingTree = 1,
-  ChangesToCommit = 2,
-  ChangesToPush = 3
-}
 
 @Component({
   selector: 'm-files',
@@ -35,9 +29,7 @@ export enum PanelEnum {
 export class FilesComponent implements OnInit {
   pageTitle = constants.FILES_PAGE_TITLE;
 
-  panel = PanelEnum.WorkingTree;
-
-  panelWorkingTree = PanelEnum.WorkingTree;
+  panelTree = PanelEnum.Tree;
   panelChangesToCommit = PanelEnum.ChangesToCommit;
   panelChangesToPush = PanelEnum.ChangesToPush;
 
@@ -86,6 +78,9 @@ export class FilesComponent implements OnInit {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
+  panel = PanelEnum.Tree;
+  panel$ = this.uiQuery.panel$.pipe(tap(x => (this.panel = x)));
+
   isEditor: boolean;
   isEditor$ = this.memberQuery.isEditor$.pipe(
     tap(x => {
@@ -125,7 +120,7 @@ export class FilesComponent implements OnInit {
     this.title.setTitle(this.pageTitle);
 
     this.uiStore.update(state =>
-      Object.assign({}, state, <UiState>{ isDiff: false })
+      Object.assign({}, state, <UiState>{ panel: PanelEnum.Tree })
     );
 
     let ar = this.router.url.split('/');
@@ -133,11 +128,9 @@ export class FilesComponent implements OnInit {
   }
 
   setPanel(x: PanelEnum) {
-    this.panel = x;
     this.uiStore.update(state =>
-      Object.assign({}, state, <UiState>{ isDiff: x !== PanelEnum.WorkingTree })
+      Object.assign({}, state, <UiState>{ panel: x })
     );
-    this.cd.detectChanges();
   }
 
   commit() {
