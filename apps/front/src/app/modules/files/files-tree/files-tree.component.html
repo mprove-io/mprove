@@ -96,7 +96,7 @@
 
   <div
     class="mt-4 h-2 w-full"
-    *ngIf="panel === panelChangesToCommit && !!repo?.changesToCommit"
+    *ngIf="panel === panelChangesToCommit && repo?.changesToCommit?.length > 0"
   >
     <div
       *ngFor="let diff of repo.changesToCommit"
@@ -119,7 +119,7 @@
 
   <div
     class="mt-4 h-2 w-full"
-    *ngIf="panel === panelChangesToPush && !!repo?.changesToPush"
+    *ngIf="panel === panelChangesToPush && repo?.changesToPush?.length > 0"
   >
     <div
       *ngFor="let diff of repo.changesToPush"
@@ -138,6 +138,24 @@
         {{ diff.parentPath }}
       </div>
     </div>
+  </div>
+
+  <div
+    *ngIf="
+      panel === panelChangesToCommit && repo?.changesToCommit?.length === 0
+    "
+    class="flex h-full w-full flex-col items-center justify-center"
+  >
+    <m-completed-ring></m-completed-ring>
+    <div class="mt-4 text-xl"> No changes to Commit</div>
+  </div>
+
+  <div
+    *ngIf="panel === panelChangesToPush && repo?.changesToPush?.length === 0"
+    class="flex h-full w-full flex-col items-center justify-center"
+  >
+    <m-completed-ring></m-completed-ring>
+    <div class="mt-4 text-xl"> No changes to Push</div>
   </div>
 
   <div *ngIf="repo$ | async"></div>

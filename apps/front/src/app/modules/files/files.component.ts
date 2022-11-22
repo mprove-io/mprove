@@ -12,7 +12,7 @@ import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { FileState } from '~front/app/stores/file.store';
+import { FileState, FileStore } from '~front/app/stores/file.store';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
@@ -113,7 +113,8 @@ export class FilesComponent implements OnInit {
     private title: Title,
     private memberQuery: MemberQuery,
     private userQuery: UserQuery,
-    private uiStore: UiStore
+    private uiStore: UiStore,
+    private fileStore: FileStore
   ) {}
 
   ngOnInit() {
@@ -128,6 +129,30 @@ export class FilesComponent implements OnInit {
   }
 
   setPanel(x: PanelEnum) {
+    let userId;
+    this.userQuery.userId$
+      .pipe(
+        tap(y => (userId = y)),
+        take(1)
+      )
+      .subscribe();
+
+    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
+
+    this.router.navigate([
+      common.PATH_ORG,
+      this.nav.orgId,
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_REPO,
+      repoId,
+      common.PATH_BRANCH,
+      this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
+      common.PATH_FILES
+    ]);
+
     this.uiStore.update(state =>
       Object.assign({}, state, <UiState>{ panel: x })
     );
