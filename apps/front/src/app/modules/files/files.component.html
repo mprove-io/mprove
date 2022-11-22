@@ -63,7 +63,7 @@
                 >
                 <div
                   *ngIf="repo?.changesToCommit?.length === 0"
-                  class="flex flex-shrink-0 rounded bg-blue-500 px-2 py-[1px] text-white"
+                  class="flex flex-shrink-0 rounded px-2 py-[1px] text-white"
                   [ngClass]="{
                     'bg-blue-500': repo?.changesToPush?.length > 0,
                     'bg-gray-400': !(repo?.changesToPush?.length > 0)

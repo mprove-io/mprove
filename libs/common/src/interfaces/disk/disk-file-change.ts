@@ -6,6 +6,9 @@ export class DiskFileChange {
   fileName: string;
 
   @IsString()
+  fileId: string;
+
+  @IsString()
   parentPath: string;
 
   @IsString()

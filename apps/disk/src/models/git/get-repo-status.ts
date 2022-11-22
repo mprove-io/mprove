@@ -31,6 +31,8 @@ export async function getRepoStatus(item: {
     let path = x.path();
     let pathArray = path.split('/');
 
+    let fileId = pathArray.join(common.TRIPLE_UNDERSCORE);
+
     let fileName = pathArray.slice(-1)[0];
 
     let parentPath =
@@ -38,6 +40,7 @@ export async function getRepoStatus(item: {
 
     return {
       fileName: fileName,
+      fileId: fileId,
       parentPath: parentPath,
       // doesn't return booleans
       status: x.isNew()
@@ -110,6 +113,8 @@ export async function getRepoStatus(item: {
             let newFilePath = newFile.path();
             let newFilePathArray = newFilePath.split('/');
 
+            let newFileId = newFilePathArray.join(common.TRIPLE_UNDERSCORE);
+
             let newFileName = newFilePathArray.slice(-1)[0];
 
             let newFileParentPath =
@@ -119,6 +124,7 @@ export async function getRepoStatus(item: {
 
             return {
               fileName: newFileName,
+              fileId: newFileId,
               parentPath: newFileParentPath,
               status: undefined
             };

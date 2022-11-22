@@ -99,20 +99,20 @@
     *ngIf="panel === panelChangesToCommit && repo?.changesToCommit?.length > 0"
   >
     <div
-      *ngFor="let diff of repo.changesToCommit"
+      *ngFor="let change of repo.changesToCommit"
       class="flex flex-row items-end rounded py-2 px-4 hover:cursor-pointer"
       [ngClass]="{
-        'bg-blue-100': diffId === diff.fileName,
-        'hover:bg-blue2': diffId !== diff.fileName
+        'bg-blue-100': fileId === change.fileId,
+        'hover:bg-blue2': fileId !== change.fileId
       }"
-      (click)="diffOnClick(diff.fileName)"
+      (click)="changeOnClick(change.fileId)"
     >
       <div class="text-gray1 flex-shrink-0 text-base">
-        {{ diff.fileName }}
+        {{ change.fileName }}
       </div>
 
       <div class="ml-3 truncate text-base text-gray-400">
-        {{ diff.parentPath }}
+        {{ change.parentPath }}
       </div>
     </div>
   </div>
@@ -122,20 +122,20 @@
     *ngIf="panel === panelChangesToPush && repo?.changesToPush?.length > 0"
   >
     <div
-      *ngFor="let diff of repo.changesToPush"
+      *ngFor="let change of repo.changesToPush"
       class="flex flex-row items-end rounded py-2 px-4 hover:cursor-pointer"
       [ngClass]="{
-        'bg-blue-100': diffId === diff.fileName,
-        'hover:bg-blue2': diffId !== diff.fileName
+        'bg-blue-100': fileId === change.fileId,
+        'hover:bg-blue2': fileId !== change.fileId
       }"
-      (click)="diffOnClick(diff.fileName)"
+      (click)="changeOnClick(change.fileId)"
     >
       <div class="text-gray1 flex-shrink-0 text-base">
-        {{ diff.fileName }}
+        {{ change.fileName }}
       </div>
 
       <div class="ml-3 truncate text-base text-gray-400">
-        {{ diff.parentPath }}
+        {{ change.parentPath }}
       </div>
     </div>
   </div>

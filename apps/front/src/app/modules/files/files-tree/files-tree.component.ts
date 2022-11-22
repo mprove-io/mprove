@@ -36,36 +36,6 @@ export class FilesTreeComponent implements OnDestroy {
   @Input()
   panel: PanelEnum;
 
-  diffId = 'id2';
-
-  diffs: any = [
-    {
-      label: 'label1',
-      path: 'path1',
-      id: 'id1'
-    },
-    {
-      label: 'label2',
-      path: 'path2',
-      id: 'id2'
-    },
-    {
-      label: 'label3',
-      path: 'path3',
-      id: 'id3'
-    },
-    {
-      label: 'label4',
-      path: 'path4',
-      id: 'id4'
-    },
-    {
-      label: 'label5',
-      path: 'path5',
-      id: 'id5'
-    }
-  ];
-
   panelTree = PanelEnum.Tree;
   panelChangesToCommit = PanelEnum.ChangesToCommit;
   panelChangesToPush = PanelEnum.ChangesToPush;
@@ -120,9 +90,12 @@ export class FilesTreeComponent implements OnDestroy {
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
   fileNodeId: string;
+  fileId: string;
 
   file$ = this.fileQuery.select().pipe(
     tap(x => {
+      this.fileId = x.fileId;
+
       if (common.isUndefined(x.fileId)) {
         this.fileNodeId = undefined;
         this.cd.detectChanges();
@@ -176,26 +149,28 @@ export class FilesTreeComponent implements OnDestroy {
       .select()
       .pipe(
         tap(x => {
-          let projectId: string;
-          this.navQuery.projectId$
-            .pipe(
-              tap(z => {
-                projectId = z;
-              }),
-              take(1)
-            )
-            .subscribe();
+          if (this.panel === PanelEnum.Tree) {
+            let projectId: string;
+            this.navQuery.projectId$
+              .pipe(
+                tap(z => {
+                  projectId = z;
+                }),
+                take(1)
+              )
+              .subscribe();
 
-          let levelPath: string = projectId;
+            let levelPath: string = projectId;
 
-          if (common.isDefined(x.fileId)) {
-            x.fileId.split(common.TRIPLE_UNDERSCORE).forEach(part => {
-              levelPath = levelPath ? `${levelPath}/${part}` : part;
-              this.itemsTree.treeModel.getNodeById(levelPath).expand();
-            });
+            if (common.isDefined(x.fileId)) {
+              x.fileId.split(common.TRIPLE_UNDERSCORE).forEach(part => {
+                levelPath = levelPath ? `${levelPath}/${part}` : part;
+                this.itemsTree.treeModel.getNodeById(levelPath).expand();
+              });
+            }
+
+            this.cd.detectChanges();
           }
-
-          this.cd.detectChanges();
         })
       )
       .subscribe();
@@ -209,8 +184,10 @@ export class FilesTreeComponent implements OnDestroy {
     this.itemsTree.treeModel.getNodeById(this.nav.projectId).expand();
   }
 
-  diffOnClick(diffId: string) {
-    this.diffId = diffId;
+  changeOnClick(fileId: string) {
+    this.navigateService.navigateToFileLine({
+      underscoreFileId: fileId
+    });
   }
 
   nodeOnClick(node: TreeNode) {
