@@ -20,7 +20,7 @@ export async function getBaseCommitFileContent(item: {
     `origin/${currentBranchName}`,
     nodegit.Branch.BRANCH.REMOTE
   ).catch(e => {
-    if (e?.message?.includes('cannot locate remote-tracking branch')) {
+    if (e?.message?.includes(common.NODEGIT_REMOTE_BRANCH_NOT_FOUND)) {
       return false;
     } else {
       throw e;

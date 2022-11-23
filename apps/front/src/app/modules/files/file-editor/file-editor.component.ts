@@ -493,14 +493,6 @@ export class FileEditorComponent implements OnInit, OnDestroy {
             console.log('resp.payload.repo.changesToPush');
             console.log(resp.payload.repo.changesToPush);
 
-            if (this.panel === common.PanelEnum.ChangesToPush) {
-              this.uiStore.update(state =>
-                Object.assign({}, state, <UiState>{
-                  panel: common.PanelEnum.Tree
-                })
-              );
-            }
-
             this.repoStore.update(resp.payload.repo);
             this.structStore.update(resp.payload.struct);
             this.navStore.update(state =>
@@ -510,9 +502,14 @@ export class FileEditorComponent implements OnInit, OnDestroy {
             );
 
             this.startText = this.content;
+
             this.uiStore.update(state =>
-              Object.assign({}, state, <UiState>{ needSave: false })
+              Object.assign({}, state, <UiState>{
+                needSave: false,
+                panel: common.PanelEnum.Tree
+              })
             );
+
             this.cd.detectChanges();
           }
         }),

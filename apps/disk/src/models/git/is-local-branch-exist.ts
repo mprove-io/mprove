@@ -1,4 +1,5 @@
 import * as nodegit from 'nodegit';
+import { common } from '~disk/barrels/common';
 
 export async function isLocalBranchExist(item: {
   repoDir: string;
@@ -11,7 +12,7 @@ export async function isLocalBranchExist(item: {
     item.localBranch,
     nodegit.Branch.BRANCH.LOCAL
   ).catch(e => {
-    if (e?.message?.includes('cannot locate local branch')) {
+    if (e?.message?.includes(common.NODEGIT_LOCAL_BRANCH_NOT_FOUND)) {
       return false;
     } else {
       throw e;

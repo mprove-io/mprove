@@ -1,4 +1,5 @@
 import * as nodegit from 'nodegit';
+import { common } from '~disk/barrels/common';
 
 export async function isRemoteBranchExist(item: {
   repoDir: string;
@@ -14,7 +15,7 @@ export async function isRemoteBranchExist(item: {
     `origin/${item.remoteBranch}`,
     nodegit.Branch.BRANCH.REMOTE
   ).catch(e => {
-    if (e?.message?.includes('cannot locate remote-tracking branch')) {
+    if (e?.message?.includes(common.NODEGIT_REMOTE_BRANCH_NOT_FOUND)) {
       return false;
     } else {
       throw e;

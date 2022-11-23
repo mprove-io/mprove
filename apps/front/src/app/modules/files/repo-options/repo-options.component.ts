@@ -103,6 +103,14 @@ export class RepoOptionsComponent {
             );
 
             this.navigateService.navigateToFiles();
+
+            if (this.panel !== common.PanelEnum.Tree) {
+              this.uiStore.update(state =>
+                Object.assign({}, state, <UiState>{
+                  panel: common.PanelEnum.Tree
+                })
+              );
+            }
           }
         }),
         take(1)
@@ -139,6 +147,14 @@ export class RepoOptionsComponent {
             );
 
             this.navigateService.navigateToFiles();
+
+            if (this.panel !== common.PanelEnum.Tree) {
+              this.uiStore.update(state =>
+                Object.assign({}, state, <UiState>{
+                  panel: common.PanelEnum.Tree
+                })
+              );
+            }
           }
         }),
         take(1)
@@ -216,6 +232,14 @@ export class RepoOptionsComponent {
             );
 
             this.navigateService.navigateToFiles();
+
+            if (this.panel !== common.PanelEnum.Tree) {
+              this.uiStore.update(state =>
+                Object.assign({}, state, <UiState>{
+                  panel: common.PanelEnum.Tree
+                })
+              );
+            }
           }
         }),
         take(1)

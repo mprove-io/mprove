@@ -14,6 +14,10 @@ export const PASS_PHRASE = '';
 
 export const EMPTY_STRUCT_ID = 'EMPTY_STRUCT_ID';
 
+export const NODEGIT_REMOTE_BRANCH_NOT_FOUND =
+  'cannot locate remote-tracking branch';
+export const NODEGIT_LOCAL_BRANCH_NOT_FOUND = 'cannot locate local branch';
+
 export const FIRST_ORG_NAME = 'demo';
 export const FIRST_PROJECT_NAME = 'p1';
 export const RESTRICTED_USER_ALIAS = 'demo-user';
