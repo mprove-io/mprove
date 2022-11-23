@@ -32,7 +32,7 @@ export class GetFileController {
   async getFile(@AttachUser() user: entities.UserEntity, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetFileRequest = request.body;
 
-    let { projectId, isRepoProd, branchId, envId, fileNodeId } =
+    let { projectId, isRepoProd, branchId, envId, fileNodeId, panel } =
       reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
@@ -57,6 +57,7 @@ export class GetFileController {
         repoId: repoId,
         branch: branchId,
         fileNodeId: fileNodeId,
+        panel: panel,
         remoteType: project.remote_type,
         gitUrl: project.git_url,
         privateKey: project.private_key,
@@ -100,6 +101,7 @@ export class GetFileController {
 
     let payload: apiToBackend.ToBackendGetFileResponsePayload = {
       repo: diskResponse.payload.repo,
+      originalContent: diskResponse.payload.originalContent,
       content: diskResponse.payload.content,
       struct: wrapper.wrapToApiStruct(struct),
       needValidate: common.enumToBoolean(bridge.need_validate)

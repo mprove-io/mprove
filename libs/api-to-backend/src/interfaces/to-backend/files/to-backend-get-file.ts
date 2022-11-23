@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
@@ -18,6 +18,9 @@ export class ToBackendGetFileRequestPayload {
 
   @IsString()
   fileNodeId: string;
+
+  @IsEnum(common.PanelEnum)
+  panel: common.PanelEnum;
 }
 
 export class ToBackendGetFileRequest extends ToBackendRequest {
@@ -32,10 +35,13 @@ export class ToBackendGetFileResponsePayload {
   repo: common.Repo;
 
   @IsString()
+  originalContent: string;
+
+  @IsString()
   content: string;
 
   @ValidateNested()
-  @Type(() => common.Repo)
+  @Type(() => common.Struct)
   struct: common.Struct;
 
   @IsBoolean()

@@ -23,7 +23,6 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
-import { PanelEnum } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -34,11 +33,11 @@ import { common } from '~front/barrels/common';
 })
 export class FilesTreeComponent implements OnDestroy {
   @Input()
-  panel: PanelEnum;
+  panel: common.PanelEnum;
 
-  panelTree = PanelEnum.Tree;
-  panelChangesToCommit = PanelEnum.ChangesToCommit;
-  panelChangesToPush = PanelEnum.ChangesToPush;
+  panelTree = common.PanelEnum.Tree;
+  panelChangesToCommit = common.PanelEnum.ChangesToCommit;
+  panelChangesToPush = common.PanelEnum.ChangesToPush;
 
   repo: RepoState;
   repo$ = this.repoQuery.select().pipe(
@@ -149,7 +148,7 @@ export class FilesTreeComponent implements OnDestroy {
       .select()
       .pipe(
         tap(x => {
-          if (this.panel === PanelEnum.Tree) {
+          if (this.panel === common.PanelEnum.Tree) {
             let projectId: string;
             this.navQuery.projectId$
               .pipe(
@@ -184,8 +183,16 @@ export class FilesTreeComponent implements OnDestroy {
     this.itemsTree.treeModel.getNodeById(this.nav.projectId).expand();
   }
 
-  changeOnClick(fileId: string) {
+  changeToCommitOnClick(fileId: string) {
     this.navigateService.navigateToFileLine({
+      panel: common.PanelEnum.ChangesToCommit,
+      underscoreFileId: fileId
+    });
+  }
+
+  changeToPushOnClick(fileId: string) {
+    this.navigateService.navigateToFileLine({
+      panel: common.PanelEnum.ChangesToPush,
       underscoreFileId: fileId
     });
   }
@@ -198,6 +205,7 @@ export class FilesTreeComponent implements OnDestroy {
       }
     } else {
       this.navigateService.navigateToFileLine({
+        panel: common.PanelEnum.Tree,
         underscoreFileId: node.data.fileId
       });
     }

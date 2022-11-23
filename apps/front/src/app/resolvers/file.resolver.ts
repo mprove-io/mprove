@@ -17,8 +17,11 @@ export class FileResolver implements Resolve<Observable<boolean>> {
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
   ): Observable<boolean> {
-    let fileId = route.params[common.PARAMETER_FILE_ID];
+    let fileId: string = route.params[common.PARAMETER_FILE_ID];
+    let panel: common.PanelEnum = route.queryParams?.panel;
 
-    return this.fileService.getFile(fileId).pipe(map(x => true));
+    return this.fileService
+      .getFile({ fileId: fileId, panel: panel })
+      .pipe(map(x => true));
   }
 }

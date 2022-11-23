@@ -14,6 +14,7 @@ export * from './join-type.enum';
 export * from './log-level.enum';
 export * from './model-node-id-suffix.enum';
 export * from './model-node-label.enum';
+export * from './panel.enum';
 export * from './project-remote-type.enum';
 export * from './project-week-start.enum';
 export * from './query-status.enum';

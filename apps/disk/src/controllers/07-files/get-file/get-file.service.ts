@@ -110,6 +110,7 @@ export class GetFileService {
     //
 
     let content = await disk.readFile(filePath);
+    let originalContent = content;
 
     let {
       repoStatus,
@@ -147,6 +148,7 @@ export class GetFileService {
         changesToCommit: changesToCommit,
         changesToPush: changesToPush
       },
+      originalContent: originalContent,
       content: content
     };
 

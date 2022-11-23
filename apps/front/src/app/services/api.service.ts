@@ -324,6 +324,7 @@ export class ApiService {
         errorData.buttonText = 'Ok, go to file';
         errorData.onClickFnBindThis = (() => {
           this.navigateService.navigateToFileLine({
+            panel: common.PanelEnum.Tree,
             underscoreFileId:
               errorData.response.body.info.error.data.underscoreFileId
           });

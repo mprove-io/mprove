@@ -263,6 +263,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     fileIdAr.shift();
 
     this.navigateService.navigateToFileLine({
+      panel: common.PanelEnum.Tree,
       underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
     });
   }
@@ -278,14 +279,15 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   async showChart(report: common.ReportX, dashboardId: string) {
     this.spinner.show(report.mconfigId);
 
-    let payloadGetDashboardReport: apiToBackend.ToBackendGetDashboardReportRequestPayload = {
-      projectId: this.nav.projectId,
-      branchId: this.nav.branchId,
-      envId: this.nav.envId,
-      isRepoProd: this.nav.isRepoProd,
-      dashboardId: dashboardId,
-      mconfigId: report.mconfigId
-    };
+    let payloadGetDashboardReport: apiToBackend.ToBackendGetDashboardReportRequestPayload =
+      {
+        projectId: this.nav.projectId,
+        branchId: this.nav.branchId,
+        envId: this.nav.envId,
+        isRepoProd: this.nav.isRepoProd,
+        dashboardId: dashboardId,
+        mconfigId: report.mconfigId
+      };
 
     let query: common.Query;
     let mconfig: common.MconfigX;

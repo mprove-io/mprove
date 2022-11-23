@@ -1,20 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Store, StoreConfig } from '@datorama/akita';
-
-export enum PanelEnum {
-  Tree = 1,
-  ChangesToCommit = 2,
-  ChangesToPush = 3
-}
+import { common } from '~front/barrels/common';
 
 export class UiState {
-  panel: PanelEnum;
+  panel: common.PanelEnum;
   needSave: boolean;
 }
 
 function createInitialState(): UiState {
   return {
-    panel: PanelEnum.Tree,
+    panel: common.PanelEnum.Tree,
     needSave: false
   };
 }

@@ -101,6 +101,7 @@ export class RenameFileDialogComponent implements OnInit {
             let fileId = fIdAr.join(common.TRIPLE_UNDERSCORE);
 
             this.navigateService.navigateToFileLine({
+              panel: common.PanelEnum.Tree,
               underscoreFileId: fileId
             });
           }

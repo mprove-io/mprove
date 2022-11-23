@@ -299,8 +299,12 @@ export class NavigateService {
     );
   }
 
-  navigateToFileLine(item: { underscoreFileId: string; lineNumber?: number }) {
-    let { underscoreFileId, lineNumber } = item;
+  navigateToFileLine(item: {
+    panel: common.PanelEnum;
+    underscoreFileId: string;
+    lineNumber?: number;
+  }) {
+    let { panel, underscoreFileId, lineNumber } = item;
 
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
@@ -321,12 +325,19 @@ export class NavigateService {
       underscoreFileId
     ];
 
-    if (common.isDefined(lineNumber) && lineNumber !== 0) {
-      this.router.navigate(ar, {
-        queryParams: { line: lineNumber }
-      });
-    } else {
-      this.router.navigate(ar);
-    }
+    this.router.navigate(ar, {
+      queryParams: {
+        panel: panel,
+        line: lineNumber
+      }
+    });
+
+    // if (common.isDefined(lineNumber) && lineNumber !== 0) {
+    //   this.router.navigate(ar, {
+    //     queryParams: { line: lineNumber }
+    //   });
+    // } else {
+    //   this.router.navigate(ar);
+    // }
   }
 }

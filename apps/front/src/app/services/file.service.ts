@@ -4,10 +4,12 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { FileQuery } from '../queries/file.query';
 import { NavQuery } from '../queries/nav.query';
+import { UiQuery } from '../queries/ui.query';
 import { FileState, FileStore } from '../stores/file.store';
 import { NavState, NavStore } from '../stores/nav.store';
 import { RepoState, RepoStore } from '../stores/repo.store';
 import { StructStore } from '../stores/struct.store';
+import { UiState, UiStore } from '../stores/ui.store';
 import { ApiService } from './api.service';
 
 @Injectable({ providedIn: 'root' })
@@ -26,42 +28,50 @@ export class FileService {
     })
   );
 
+  ui: UiState;
+  ui$ = this.uiQuery.select().pipe(
+    tap(x => {
+      this.ui = x;
+    })
+  );
+
   constructor(
     public fileQuery: FileQuery,
+    public uiQuery: UiQuery,
     public repoStore: RepoStore,
     public structStore: StructStore,
     public fileStore: FileStore,
+    public uiStore: UiStore,
     public navQuery: NavQuery,
     private navStore: NavStore,
     private apiService: ApiService
   ) {
     this.file$.subscribe();
+    this.ui$.subscribe();
     this.nav$.subscribe();
   }
 
-  getFile(fileId?: string) {
-    let getFilePayload: apiToBackend.ToBackendGetFileRequestPayload;
+  getFile(item: { fileId: string; panel: common.PanelEnum }) {
+    let { fileId, panel } = item;
 
-    let fileIdx = fileId || this.file.fileId;
     let fileName: string;
 
     let fileNodeId =
       this.nav.projectId +
       '/' +
-      fileIdx.split(common.TRIPLE_UNDERSCORE).join('/');
+      fileId.split(common.TRIPLE_UNDERSCORE).join('/');
 
-    if (common.isDefined(fileIdx)) {
-      let fileIdArr = fileIdx.split(common.TRIPLE_UNDERSCORE);
-      fileName = fileIdArr[fileIdArr.length - 1];
+    let fileIdArr = fileId.split(common.TRIPLE_UNDERSCORE);
+    fileName = fileIdArr[fileIdArr.length - 1];
 
-      getFilePayload = {
-        projectId: this.nav.projectId,
-        isRepoProd: this.nav.isRepoProd,
-        branchId: this.nav.branchId,
-        envId: this.nav.envId,
-        fileNodeId: fileNodeId
-      };
-    }
+    let getFilePayload: apiToBackend.ToBackendGetFileRequestPayload = {
+      projectId: this.nav.projectId,
+      isRepoProd: this.nav.isRepoProd,
+      branchId: this.nav.branchId,
+      envId: this.nav.envId,
+      fileNodeId: fileNodeId,
+      panel: panel || common.PanelEnum.Tree
+    };
 
     return this.apiService
       .req({
@@ -86,9 +96,10 @@ export class FileService {
             );
 
             this.fileStore.update({
+              originalContent: resp.payload.originalContent,
               content: resp.payload.content,
               name: fileName,
-              fileId: fileIdx,
+              fileId: fileId,
               fileNodeId: fileNodeId
             });
           }

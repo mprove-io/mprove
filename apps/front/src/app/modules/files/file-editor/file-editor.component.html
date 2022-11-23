@@ -73,7 +73,7 @@
       *ngIf="panel !== panelTree"
       data-cy="fileEditorMonacoDiffEditor"
       [options]="diffEditorOptions"
-      [originalValue]="originalText"
+      [originalValue]="originalContent"
       [(ngModel)]="content"
       (editorChange)="onEditorChange($event)"
       (ngModelChange)="onTextChanged()"

@@ -16,7 +16,7 @@ import { FileState, FileStore } from '~front/app/stores/file.store';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
-import { PanelEnum, UiState, UiStore } from '~front/app/stores/ui.store';
+import { UiState, UiStore } from '~front/app/stores/ui.store';
 import { UserState } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -29,9 +29,9 @@ import { constants } from '~front/barrels/constants';
 export class FilesComponent implements OnInit {
   pageTitle = constants.FILES_PAGE_TITLE;
 
-  panelTree = PanelEnum.Tree;
-  panelChangesToCommit = PanelEnum.ChangesToCommit;
-  panelChangesToPush = PanelEnum.ChangesToPush;
+  panelTree = common.PanelEnum.Tree;
+  panelChangesToCommit = common.PanelEnum.ChangesToCommit;
+  panelChangesToPush = common.PanelEnum.ChangesToPush;
 
   repoStatusNeedCommit = common.RepoStatusEnum.NeedCommit;
   repoStatusNeedPull = common.RepoStatusEnum.NeedPull;
@@ -78,7 +78,7 @@ export class FilesComponent implements OnInit {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
-  panel = PanelEnum.Tree;
+  panel = common.PanelEnum.Tree;
   panel$ = this.uiQuery.panel$.pipe(tap(x => (this.panel = x)));
 
   isEditor: boolean;
@@ -121,14 +121,14 @@ export class FilesComponent implements OnInit {
     this.title.setTitle(this.pageTitle);
 
     this.uiStore.update(state =>
-      Object.assign({}, state, <UiState>{ panel: PanelEnum.Tree })
+      Object.assign({}, state, <UiState>{ panel: common.PanelEnum.Tree })
     );
 
     let ar = this.router.url.split('/');
     this.lastUrl = ar[ar.length - 1];
   }
 
-  setPanel(x: PanelEnum) {
+  setPanel(x: common.PanelEnum) {
     let userId;
     this.userQuery.userId$
       .pipe(
@@ -228,7 +228,10 @@ export class FilesComponent implements OnInit {
         }),
         switchMap(x =>
           common.isDefined(this.file.fileId)
-            ? this.fileService.getFile()
+            ? this.fileService.getFile({
+                fileId: this.file.fileId,
+                panel: this.panel
+              })
             : of([])
         ),
         take(1)

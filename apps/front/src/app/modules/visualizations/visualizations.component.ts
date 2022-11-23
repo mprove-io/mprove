@@ -390,6 +390,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     fileIdAr.shift();
 
     this.navigateService.navigateToFileLine({
+      panel: common.PanelEnum.Tree,
       underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
     });
   }

@@ -19,7 +19,7 @@ import { FileState, FileStore } from '~front/app/stores/file.store';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { StructState, StructStore } from '~front/app/stores/struct.store';
-import { PanelEnum, UiState, UiStore } from '~front/app/stores/ui.store';
+import { UiState, UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -30,7 +30,7 @@ import { constants } from '~front/barrels/constants';
   styleUrls: ['file-editor.component.scss']
 })
 export class FileEditorComponent implements OnInit, OnDestroy {
-  panelTree = PanelEnum.Tree;
+  panelTree = common.PanelEnum.Tree;
 
   line = 1;
 
@@ -67,7 +67,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
-  panel: PanelEnum;
+  panel: common.PanelEnum;
   panel$ = this.uiQuery.panel$.pipe(tap(x => (this.panel = x)));
 
   nav: NavState;
@@ -78,16 +78,19 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     })
   );
 
-  originalText: string;
+  originalContent: string;
   content: string;
+
+  startText: string;
   specialText: string;
 
   file: FileState;
   file$ = this.fileQuery.select().pipe(
     tap(x => {
       this.file = x;
+      this.originalContent = x.originalContent;
       this.content = x.content;
-      this.originalText = x.content;
+      this.startText = x.content;
 
       this.setEditorOptionsLanguage();
 
@@ -448,15 +451,15 @@ export class FileEditorComponent implements OnInit, OnDestroy {
 
   onTextChanged() {
     this.removeMarkers();
-    if (this.content === this.originalText) {
+    if (this.content === this.startText) {
       this.refreshMarkers();
     }
 
-    if (!this.needSave && this.content !== this.originalText) {
+    if (!this.needSave && this.content !== this.startText) {
       this.uiStore.update(state =>
         Object.assign({}, state, <UiState>{ needSave: true })
       );
-    } else if (this.needSave && this.content === this.originalText) {
+    } else if (this.needSave && this.content === this.startText) {
       this.uiStore.update(state =>
         Object.assign({}, state, <UiState>{ needSave: false })
       );
@@ -490,9 +493,11 @@ export class FileEditorComponent implements OnInit, OnDestroy {
             console.log('resp.payload.repo.changesToPush');
             console.log(resp.payload.repo.changesToPush);
 
-            if (this.panel === PanelEnum.ChangesToPush) {
+            if (this.panel === common.PanelEnum.ChangesToPush) {
               this.uiStore.update(state =>
-                Object.assign({}, state, <UiState>{ panel: PanelEnum.Tree })
+                Object.assign({}, state, <UiState>{
+                  panel: common.PanelEnum.Tree
+                })
               );
             }
 
@@ -504,7 +509,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
               })
             );
 
-            this.originalText = this.content;
+            this.startText = this.content;
             this.uiStore.update(state =>
               Object.assign({}, state, <UiState>{ needSave: false })
             );
@@ -517,7 +522,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
   }
 
   cancel() {
-    this.content = this.originalText;
+    this.content = this.startText;
     this.uiStore.update(state =>
       Object.assign({}, state, <UiState>{ needSave: false })
     );

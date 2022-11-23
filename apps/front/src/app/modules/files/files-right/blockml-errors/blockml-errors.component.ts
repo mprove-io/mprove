@@ -262,6 +262,7 @@ export class BlockmlErrorsComponent implements OnDestroy {
     let fileId = lineFileIdAr.join(common.TRIPLE_UNDERSCORE);
 
     this.navigateService.navigateToFileLine({
+      panel: common.PanelEnum.Tree,
       underscoreFileId: fileId,
       lineNumber: line.lineNumber
     });

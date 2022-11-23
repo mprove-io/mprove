@@ -19,6 +19,9 @@ export class ToDiskGetFileRequestPayload {
   @IsString()
   fileNodeId: string;
 
+  @IsEnum(common.PanelEnum)
+  panel: common.PanelEnum;
+
   @IsEnum(common.ProjectRemoteTypeEnum)
   remoteType: common.ProjectRemoteTypeEnum;
 
@@ -45,6 +48,9 @@ export class ToDiskGetFileResponsePayload {
   @ValidateNested()
   @Type(() => common.Repo)
   repo: common.Repo;
+
+  @IsString()
+  originalContent: string;
 
   @IsString()
   content: string;

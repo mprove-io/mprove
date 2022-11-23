@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store, StoreConfig } from '@datorama/akita';
 
 export class FileState {
+  originalContent: string;
   content: string;
   name: string;
   fileId: string;
@@ -16,6 +17,7 @@ export class FileState {
 export class FileStore extends Store<FileState> {
   constructor() {
     super(<FileState>{
+      originalContent: undefined,
       content: undefined,
       name: undefined,
       fileId: undefined,
