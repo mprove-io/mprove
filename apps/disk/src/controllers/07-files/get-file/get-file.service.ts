@@ -105,8 +105,11 @@ export class GetFileService {
 
     let content = '';
 
+    let isExist = true;
+
     let isFileExist = await disk.isPathExist(filePath);
     if (isFileExist === false) {
+      isExist = false;
       if (panel === common.PanelEnum.Tree) {
         throw new common.ServerError({
           message: common.ErEnum.DISK_FILE_IS_NOT_EXIST
@@ -167,7 +170,8 @@ export class GetFileService {
         changesToPush: changesToPush
       },
       originalContent: originalContent,
-      content: content
+      content: content,
+      isExist: isExist
     };
 
     return payload;

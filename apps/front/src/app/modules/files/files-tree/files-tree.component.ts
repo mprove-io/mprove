@@ -20,6 +20,7 @@ import { RepoQuery } from '~front/app/queries/repo.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
+import { FileState } from '~front/app/stores/file.store';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
@@ -91,8 +92,11 @@ export class FilesTreeComponent implements OnDestroy {
   fileNodeId: string;
   fileId: string;
 
+  file: FileState;
   file$ = this.fileQuery.select().pipe(
     tap(x => {
+      this.file = x;
+
       this.fileId = x.fileId;
 
       if (common.isUndefined(x.fileId)) {
@@ -148,7 +152,11 @@ export class FilesTreeComponent implements OnDestroy {
       .select()
       .pipe(
         tap(x => {
-          if (this.panel === common.PanelEnum.Tree) {
+          if (
+            this.panel === common.PanelEnum.Tree &&
+            common.isDefined(x.fileId) &&
+            this.file.isExist === true
+          ) {
             let projectId: string;
             this.navQuery.projectId$
               .pipe(
@@ -161,13 +169,10 @@ export class FilesTreeComponent implements OnDestroy {
 
             let levelPath: string = projectId;
 
-            if (common.isDefined(x.fileId)) {
-              x.fileId.split(common.TRIPLE_UNDERSCORE).forEach(part => {
-                levelPath = levelPath ? `${levelPath}/${part}` : part;
-                this.itemsTree.treeModel.getNodeById(levelPath).expand();
-              });
-            }
-
+            x.fileId.split(common.TRIPLE_UNDERSCORE).forEach(part => {
+              levelPath = levelPath ? `${levelPath}/${part}` : part;
+              this.itemsTree.treeModel.getNodeById(levelPath).expand();
+            });
             this.cd.detectChanges();
           }
         })

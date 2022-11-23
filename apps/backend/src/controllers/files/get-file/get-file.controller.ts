@@ -104,7 +104,8 @@ export class GetFileController {
       originalContent: diskResponse.payload.originalContent,
       content: diskResponse.payload.content,
       struct: wrapper.wrapToApiStruct(struct),
-      needValidate: common.enumToBoolean(bridge.need_validate)
+      needValidate: common.enumToBoolean(bridge.need_validate),
+      isExist: diskResponse.payload.isExist
     };
 
     return payload;

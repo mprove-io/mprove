@@ -271,7 +271,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
       let patch: editorType.IStandaloneEditorConstructionOptions = {
         theme: constants.BLOCKML_THEME,
         renderValidationDecorations: 'on',
-        readOnly: this.nav.isRepoProd,
+        readOnly: this.nav.isRepoProd === true || this.file.isExist === false,
         snippetSuggestions: 'none',
         suggestOnTriggerCharacters: true,
         wordBasedSuggestions: false
@@ -346,7 +346,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
       let patch: editorType.IStandaloneEditorConstructionOptions = {
         theme: constants.TEXTMATE_THEME,
         renderValidationDecorations: 'off',
-        readOnly: this.nav.isRepoProd,
+        readOnly: this.nav.isRepoProd === true || this.file.isExist === false,
         snippetSuggestions: 'none',
         suggestOnTriggerCharacters: false,
         wordBasedSuggestions: false,
@@ -357,8 +357,10 @@ export class FileEditorComponent implements OnInit, OnDestroy {
 
       this.removeMarkers();
     }
-    // workaround for diff editor, because it doesn't accept theme as option
+    // workaround for diff editor
     this.monaco.editor.setTheme(this.editorOptions.theme);
+    // workaround for diff editor
+    this.editor.updateOptions(this.editorOptions);
   }
 
   removeMarkers() {

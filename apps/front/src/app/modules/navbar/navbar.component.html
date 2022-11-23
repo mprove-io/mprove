@@ -11,7 +11,7 @@
         <m-env-select class="ml-8"></m-env-select>
 
         <button
-          class="text-gray1 ml-3 block h-10 w-full px-5 text-left text-base focus:outline-none"
+          class="text-gray1 ml-5 block flex h-10 w-full flex-row items-center justify-between text-left text-base focus:outline-none"
           [ngClass]="{
             'cursor-default text-gray-400':
               !nav || !nav.projectId || needSave === true,
@@ -19,30 +19,35 @@
           }"
           (click)="navigateFiles()"
           [disabled]="!nav || !nav.projectId || needSave === true"
-          >Files</button
         >
+          <div class="flex flex-shrink-0 flex-row items-center justify-center">
+            <div class="flex w-[60px] items-center justify-center">Files</div>
+            <div class="ml-2 mr-2 flex h-8 w-8 flex-shrink-0">
+              <div class="text-amber-500" *ngIf="nav.needValidate === true">
+                <m-exclamation-icon></m-exclamation-icon>
+              </div>
 
-        <div class="flex h-8 w-8 flex-shrink-0">
-          <div class="text-amber-500" *ngIf="nav.needValidate === true">
-            <m-exclamation-icon></m-exclamation-icon>
+              <div
+                class="text-red1"
+                *ngIf="
+                  nav.needValidate === false &&
+                  (struct?.errors.length > 0 || repo?.conflicts.length > 0)
+                "
+              >
+                <m-exclamation-icon></m-exclamation-icon>
+              </div>
+            </div>
           </div>
-
-          <div
-            class="text-red1"
-            *ngIf="
-              nav.needValidate === false &&
-              (struct?.errors.length > 0 || repo?.conflicts.length > 0)
-            "
-          >
-            <m-exclamation-icon></m-exclamation-icon>
-          </div>
-        </div>
+        </button>
       </div>
     </div>
 
-    <div *ngIf="!!nav && !!nav.projectId" class="flex flex-row items-center">
+    <div
+      *ngIf="!!nav && !!nav.projectId"
+      class="flex flex-row items-center space-x-5"
+    >
       <button
-        class="text-gray1 block h-10 px-5 text-left text-base focus:outline-none"
+        class="text-gray1 block flex h-10 w-[130px] items-center justify-center text-left text-base focus:outline-none"
         [ngClass]="{
           'cursor-default text-gray-400':
             !nav || !nav.projectId || needSave === true,
@@ -54,7 +59,7 @@
       >
 
       <button
-        class="text-gray1 block h-10 px-5 text-left text-base focus:outline-none"
+        class="text-gray1 block flex h-10 w-[120px] items-center justify-center text-left text-base focus:outline-none"
         [ngClass]="{
           'cursor-default text-gray-400':
             !nav || !nav.projectId || needSave === true,
@@ -66,7 +71,7 @@
       >
 
       <button
-        class="text-gray1 block h-10 px-5 text-left text-base focus:outline-none"
+        class="text-gray1 block flex h-10 w-[90px] items-center justify-center text-left text-base focus:outline-none"
         [ngClass]="{
           'cursor-default text-gray-400':
             !nav || !nav.projectId || needSave === true,

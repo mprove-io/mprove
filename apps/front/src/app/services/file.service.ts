@@ -100,7 +100,8 @@ export class FileService {
               content: resp.payload.content,
               name: fileName,
               fileId: fileId,
-              fileNodeId: fileNodeId
+              fileNodeId: fileNodeId,
+              isExist: resp.payload.isExist
             });
           }
         })

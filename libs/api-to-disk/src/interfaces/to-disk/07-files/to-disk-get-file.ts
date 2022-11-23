@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { common } from '~api-to-disk/barrels/common';
 import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
@@ -54,6 +60,9 @@ export class ToDiskGetFileResponsePayload {
 
   @IsString()
   content: string;
+
+  @IsBoolean()
+  isExist: boolean;
 }
 
 export class ToDiskGetFileResponse extends common.MyResponse {

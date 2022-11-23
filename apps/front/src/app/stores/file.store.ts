@@ -7,6 +7,7 @@ export class FileState {
   name: string;
   fileId: string;
   fileNodeId: string;
+  isExist: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -21,7 +22,8 @@ export class FileStore extends Store<FileState> {
       content: undefined,
       name: undefined,
       fileId: undefined,
-      fileNodeId: undefined
+      fileNodeId: undefined,
+      isExist: false
     });
   }
 }

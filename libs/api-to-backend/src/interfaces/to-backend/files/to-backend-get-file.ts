@@ -46,6 +46,9 @@ export class ToBackendGetFileResponsePayload {
 
   @IsBoolean()
   needValidate: boolean;
+
+  @IsBoolean()
+  isExist: boolean;
 }
 
 export class ToBackendGetFileResponse extends common.MyResponse {

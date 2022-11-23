@@ -122,10 +122,6 @@ export class FilesComponent implements OnInit {
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
 
-    this.uiStore.update(state =>
-      Object.assign({}, state, <UiState>{ panel: common.PanelEnum.Tree })
-    );
-
     let ar = this.router.url.split('/');
     this.lastUrl = ar[ar.length - 1];
   }
