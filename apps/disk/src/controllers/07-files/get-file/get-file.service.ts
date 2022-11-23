@@ -103,16 +103,19 @@ export class GetFileService {
       isFetch: false
     });
 
+    let content = '';
+
     let isFileExist = await disk.isPathExist(filePath);
     if (isFileExist === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_FILE_IS_NOT_EXIST
-      });
+      if (panel === common.PanelEnum.Tree) {
+        throw new common.ServerError({
+          message: common.ErEnum.DISK_FILE_IS_NOT_EXIST
+        });
+      }
+    } else {
+      content = await disk.readFile(filePath);
     }
 
-    //
-
-    let content = await disk.readFile(filePath);
     let originalContent;
 
     if (panel === common.PanelEnum.ChangesToCommit) {
@@ -126,8 +129,6 @@ export class GetFileService {
         filePathRelative: filePathRelative
       });
     }
-
-    // = content;
 
     let {
       repoStatus,

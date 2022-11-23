@@ -1,4 +1,5 @@
 import * as nodegit from 'nodegit';
+import { common } from '~disk/barrels/common';
 
 export async function getLastCommitFileContent(item: {
   repoDir: string;
@@ -7,18 +8,24 @@ export async function getLastCommitFileContent(item: {
   let originalContent = '';
 
   let gitRepo: nodegit.Repository = await nodegit.Repository.open(item.repoDir);
-
   let head: nodegit.Commit = await gitRepo.getHeadCommit();
+  let tree: nodegit.Tree = await head.getTree();
 
-  let headTree: nodegit.Tree = await head.getTree();
+  let entry: nodegit.TreeEntry = await tree
+    .getEntry(item.filePathRelative)
+    .catch(e => {
+      if (e?.message?.includes(common.NODEGIT_PATH_NOT_EXIST_IN_TREE)) {
+        return undefined;
+      } else {
+        throw e;
+      }
+    });
 
-  let headTreeEntry: nodegit.TreeEntry = await headTree.getEntry(
-    item.filePathRelative
-  );
+  if (common.isDefined(entry) && entry.isBlob()) {
+    let blob: nodegit.Blob = await entry.getBlob();
 
-  let headTreeEntryBlob = await headTreeEntry.getBlob();
-
-  originalContent = headTreeEntryBlob.toString();
+    originalContent = blob.toString();
+  }
 
   return originalContent;
 }

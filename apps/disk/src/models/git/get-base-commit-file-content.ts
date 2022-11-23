@@ -43,15 +43,23 @@ export async function getBaseCommitFileContent(item: {
 
       let baseCommit = await gitRepo.getCommit(commonAncestorOid);
 
-      let baseTree: nodegit.Tree = await baseCommit.getTree();
+      let tree: nodegit.Tree = await baseCommit.getTree();
 
-      let baseTreeEntry: nodegit.TreeEntry = await baseTree.getEntry(
-        item.filePathRelative
-      );
+      let entry: nodegit.TreeEntry = await tree
+        .getEntry(item.filePathRelative)
+        .catch(e => {
+          if (e?.message?.includes(common.NODEGIT_PATH_NOT_EXIST_IN_TREE)) {
+            return undefined;
+          } else {
+            throw e;
+          }
+        });
 
-      let baseTreeEntryBlob = await baseTreeEntry.getBlob();
+      if (common.isDefined(entry) && entry.isBlob()) {
+        let blob: nodegit.Blob = await entry.getBlob();
 
-      originalContent = baseTreeEntryBlob.toString();
+        originalContent = blob.toString();
+      }
     }
   }
 

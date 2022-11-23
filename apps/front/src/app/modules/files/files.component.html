@@ -12,46 +12,64 @@
           <div
             class="mt-2 ml-10 flex h-10 flex-row items-center space-x-3 text-base"
           >
-            <div
-              class="flex h-10 w-[50px] cursor-pointer items-center pl-2"
-              [ngClass]="{
-                'font-semibold': panel === panelTree
-              }"
-              (click)="setPanel(panelTree)"
-              >Tree</div
-            >
-
-            <div
-              class="flex h-10 w-[230px] flex-shrink-0 cursor-pointer flex-row items-center pl-2"
-              (click)="setPanel(panelChangesToCommit)"
-            >
-              <div
-                class="flex w-[180px] flex-shrink-0"
+            <div tippy="Need to Save changes" [isEnabled]="needSave === true">
+              <button
+                class="flex h-10 w-[50px] cursor-pointer items-center pl-2"
                 [ngClass]="{
-                  'font-semibold': panel === panelChangesToCommit
+                  'font-semibold': panel === panelTree
                 }"
-                >Changes to Commit</div
-              >
-              <div
-                class="flex flex-shrink-0 rounded px-2 py-[1px] text-white"
-                [ngClass]="{
-                  'bg-blue-500': repo?.changesToCommit?.length > 0,
-                  'bg-gray-400': !(repo?.changesToCommit?.length > 0)
-                }"
-                >{{ repo?.changesToCommit?.length }}</div
+                (click)="setPanel(panelTree)"
+                [disabled]="needSave === true"
+                >Tree</button
               >
             </div>
 
+            <div tippy="Need to Save changes" [isEnabled]="needSave === true">
+              <button
+                class="flex h-10 w-[230px] flex-shrink-0 cursor-pointer flex-row items-center pl-2"
+                (click)="setPanel(panelChangesToCommit)"
+                [disabled]="needSave === true"
+              >
+                <div
+                  class="flex w-[180px] flex-shrink-0"
+                  [ngClass]="{
+                    'font-semibold': panel === panelChangesToCommit
+                  }"
+                  >Changes to Commit</div
+                >
+                <div
+                  class="flex flex-shrink-0 rounded px-2 py-[1px] text-white"
+                  [ngClass]="{
+                    'bg-blue-500': repo?.changesToCommit?.length > 0,
+                    'bg-gray-400': !(repo?.changesToCommit?.length > 0)
+                  }"
+                  >{{ repo?.changesToCommit?.length }}</div
+                >
+              </button>
+            </div>
+
+            <ng-template #templateChangesToPush>
+              <div *ngIf="needSave === true">Need to Save changes</div>
+              <div
+                *ngIf="needSave === false && repo?.changesToCommit?.length > 0"
+                >Commit all changes to see Changes to Push</div
+              >
+            </ng-template>
+
             <div
-              tippy="Commit all changes to see Changes to Push"
-              [isEnabled]="repo?.changesToCommit?.length > 0"
+              [tippy]="templateChangesToPush"
+              [isEnabled]="
+                needSave === true || repo?.changesToCommit?.length > 0
+              "
             >
               <button
                 class="flex h-10 w-[205px] flex-shrink-0 flex-row items-center pl-2"
                 [ngClass]="{
                   'cursor-pointer': repo?.changesToCommit?.length === 0
                 }"
-                [disabled]="repo?.changesToCommit?.length > 0"
+                [disabled]="
+                  needSave === true || repo?.changesToCommit?.length > 0
+                "
                 (click)="setPanel(panelChangesToPush)"
               >
                 <div

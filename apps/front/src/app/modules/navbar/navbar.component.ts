@@ -12,6 +12,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { NavState } from '~front/app/stores/nav.store';
 import { RepoState } from '~front/app/stores/repo.store';
 import { StructState } from '~front/app/stores/struct.store';
+import { UiState, UiStore } from '~front/app/stores/ui.store';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -73,6 +74,7 @@ export class NavbarComponent implements OnInit {
     public structQuery: StructQuery,
     private navigateService: NavigateService,
     public uiQuery: UiQuery,
+    private uiStore: UiStore,
     public userQuery: UserQuery,
     public memberQuery: MemberQuery,
     private cd: ChangeDetectorRef
@@ -94,6 +96,10 @@ export class NavbarComponent implements OnInit {
 
   navigateFiles() {
     this.navigateService.navigateToFiles();
+
+    this.uiStore.update(state =>
+      Object.assign({}, state, <UiState>{ panel: common.PanelEnum.Tree })
+    );
   }
 
   navigateVisualizations() {
