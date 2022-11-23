@@ -13,6 +13,7 @@ import { FileState, FileStore } from '~front/app/stores/file.store';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
+import { UiState, UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -45,6 +46,9 @@ export class RepoOptionsComponent {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
+  panel = common.PanelEnum.Tree;
+  panel$ = this.uiQuery.panel$.pipe(tap(x => (this.panel = x)));
+
   repo: RepoState;
   repo$ = this.repoQuery.select().pipe(
     tap(x => {
@@ -58,6 +62,7 @@ export class RepoOptionsComponent {
     public fileQuery: FileQuery,
     public repoStore: RepoStore,
     public navStore: NavStore,
+    public uiStore: UiStore,
     public fileStore: FileStore,
     public repoQuery: RepoQuery,
     public fileService: FileService,
@@ -100,11 +105,6 @@ export class RepoOptionsComponent {
             this.navigateService.navigateToFiles();
           }
         }),
-        // switchMap(x =>
-        //   common.isDefined(this.file.fileId)
-        //     ? this.fileService.getFile()
-        //     : of([])
-        // ),
         take(1)
       )
       .subscribe();
@@ -141,11 +141,6 @@ export class RepoOptionsComponent {
             this.navigateService.navigateToFiles();
           }
         }),
-        // switchMap(x =>
-        //   common.isDefined(this.file.fileId)
-        //     ? this.fileService.getFile()
-        //     : of([])
-        // ),
         take(1)
       )
       .subscribe();
@@ -172,13 +167,6 @@ export class RepoOptionsComponent {
       .pipe(
         tap((resp: apiToBackend.ToBackendGetRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            // if (
-            //   common.isUndefined(resp?.payload?.repo) ||
-            //   common.isUndefined(resp?.payload?.struct)
-            // ) {
-            //   return false;
-            // }
-
             this.repoStore.update(resp.payload.repo);
             this.structStore.update(resp.payload.struct);
             this.navStore.update(state =>
@@ -187,16 +175,13 @@ export class RepoOptionsComponent {
               })
             );
 
+            this.navigateService.navigateToFiles();
+
             return true;
           } else {
             return false;
           }
         }),
-        // switchMap(x =>
-        //   common.isDefined(this.file.fileId)
-        //     ? this.fileService.getFile()
-        //     : of([])
-        // ),
         take(1)
       )
       .subscribe();
@@ -233,11 +218,6 @@ export class RepoOptionsComponent {
             this.navigateService.navigateToFiles();
           }
         }),
-        // switchMap(x =>
-        //   common.isDefined(this.file.fileId)
-        //     ? this.fileService.getFile()
-        //     : of([])
-        // ),
         take(1)
       )
       .subscribe();
@@ -270,6 +250,16 @@ export class RepoOptionsComponent {
                 needValidate: resp.payload.needValidate
               })
             );
+
+            if (this.panel !== common.PanelEnum.Tree) {
+              this.navigateService.navigateToFiles();
+
+              this.uiStore.update(state =>
+                Object.assign({}, state, <UiState>{
+                  panel: common.PanelEnum.Tree
+                })
+              );
+            }
           }
         }),
         take(1)

@@ -12,6 +12,7 @@ import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { FileState, FileStore } from '~front/app/stores/file.store';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
@@ -107,6 +108,7 @@ export class FilesComponent implements OnInit {
     public repoStore: RepoStore,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
+    private navigateService: NavigateService,
     public structStore: StructStore,
     public navStore: NavStore,
     public fileService: FileService,
@@ -163,7 +165,8 @@ export class FilesComponent implements OnInit {
       apiService: this.apiService,
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
-      branchId: this.nav.branchId
+      branchId: this.nav.branchId,
+      panel: this.panel
     });
   }
 
@@ -192,6 +195,9 @@ export class FilesComponent implements OnInit {
                 needValidate: resp.payload.needValidate
               })
             );
+            if (this.panel !== common.PanelEnum.Tree) {
+              this.navigateService.navigateToFiles();
+            }
           }
         }),
         take(1)
@@ -224,10 +230,15 @@ export class FilesComponent implements OnInit {
                 needValidate: resp.payload.needValidate
               })
             );
+            if (this.panel !== common.PanelEnum.Tree) {
+              this.navigateService.navigateToFiles();
+            }
           }
         }),
         switchMap(x =>
-          common.isDefined(this.file.fileId)
+          common.isDefined(
+            this.file.fileId && this.panel === common.PanelEnum.Tree
+          )
             ? this.fileService.getFile({
                 fileId: this.file.fileId,
                 panel: this.panel

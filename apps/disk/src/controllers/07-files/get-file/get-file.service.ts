@@ -38,14 +38,17 @@ export class GetFileService {
       remoteType,
       gitUrl,
       privateKey,
-      publicKey
+      publicKey,
+      panel
     } = requestValid.payload;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
     let repoDir = `${projectDir}/${repoId}`;
 
-    let filePath = repoDir + '/' + fileNodeId.substring(projectId.length + 1);
+    let filePathRelative = fileNodeId.substring(projectId.length + 1);
+
+    let filePath = repoDir + '/' + filePathRelative;
 
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
@@ -110,7 +113,21 @@ export class GetFileService {
     //
 
     let content = await disk.readFile(filePath);
-    let originalContent = content;
+    let originalContent;
+
+    if (panel === common.PanelEnum.ChangesToCommit) {
+      originalContent = await git.getLastCommitFileContent({
+        repoDir: repoDir,
+        filePathRelative: filePathRelative
+      });
+    } else if (panel === common.PanelEnum.ChangesToPush) {
+      originalContent = await git.getBaseCommitFileContent({
+        repoDir: repoDir,
+        filePathRelative: filePathRelative
+      });
+    }
+
+    // = content;
 
     let {
       repoStatus,

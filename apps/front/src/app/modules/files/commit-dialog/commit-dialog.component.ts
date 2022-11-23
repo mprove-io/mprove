@@ -3,8 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
+import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -13,6 +15,7 @@ export interface CommitDialogDialogDataItem {
   projectId: string;
   isRepoProd: boolean;
   branchId: string;
+  panel: common.PanelEnum;
 }
 
 @Component({
@@ -25,7 +28,9 @@ export class CommitDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<CommitDialogDialogDataItem>,
     private fb: FormBuilder,
+    private navigateService: NavigateService,
     public repoStore: RepoStore,
+    public uiStore: UiStore,
     public structStore: StructStore
   ) {}
 
@@ -66,6 +71,10 @@ export class CommitDialogComponent implements OnInit {
         tap((resp: apiToBackend.ToBackendCommitRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.repoStore.update(resp.payload.repo);
+
+            if (this.ref.data.panel !== common.PanelEnum.Tree) {
+              this.navigateService.navigateToFiles();
+            }
           }
         }),
         take(1)

@@ -5,6 +5,8 @@ export * from './commit';
 export * from './create-branch';
 export * from './delete-local-branch';
 export * from './delete-remote-branch';
+export * from './get-base-commit-file-content';
+export * from './get-last-commit-file-content';
 export * from './get-repo-status';
 export * from './is-local-branch-exist';
 export * from './is-remote-branch-exist';
