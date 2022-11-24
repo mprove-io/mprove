@@ -59,6 +59,7 @@ registerLocaleData(en);
     BrowserAnimationsModule,
     DialogModule.forRoot(),
     TippyModule.forRoot({
+      delay: 500,
       defaultVariation: 'tooltip',
       variations: {
         tooltip: tooltipVariation,
