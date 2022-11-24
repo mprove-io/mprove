@@ -42,6 +42,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
 
   diffEditorOptions: editorType.IDiffEditorOptions = {
     renderValidationDecorations: 'on',
+    ignoreTrimWhitespace: false,
     fixedOverflowWidgets: true,
     fontSize: 16,
     renderSideBySide: true
