@@ -46,6 +46,7 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
               Object.assign({}, state, <NavState>{
                 projectId: project.projectId,
                 projectName: project.name,
+                projectDefaultBranch: project.defaultBranch,
                 branchId: state.branchId || project.defaultBranch,
                 isRepoProd: common.isDefined(state.branchId)
                   ? state.isRepoProd

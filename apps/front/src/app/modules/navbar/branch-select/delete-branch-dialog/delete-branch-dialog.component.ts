@@ -17,6 +17,7 @@ export interface DeleteBranchDialogDataItem {
   defaultBranch: string;
   isRepoProd: boolean;
   alias: string;
+  hideBranchSelectFn: () => void;
 }
 
 @Component({
@@ -36,6 +37,8 @@ export class DeleteBranchDialogComponent {
   ) {}
 
   delete() {
+    this.ref.data.hideBranchSelectFn();
+
     this.ref.close();
 
     this.spinner.show(constants.APP_SPINNER_NAME);

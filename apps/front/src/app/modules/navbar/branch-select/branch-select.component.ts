@@ -232,7 +232,8 @@ export class BranchSelectComponent {
       projectId: this.selectedProjectId,
       branchesList: this.branchesList,
       selectedBranchItem: this.selectedBranchItem,
-      selectedBranchExtraId: this.selectedBranchExtraId
+      selectedBranchExtraId: this.selectedBranchExtraId,
+      hideBranchSelectFn: this.hideBranchSelect.bind(this)
     });
   }
 
@@ -272,13 +273,18 @@ export class BranchSelectComponent {
       branchId: this.selectedBranchItem.branchId,
       envId: this.nav.envId,
       isRepoProd: this.selectedBranchItem.isRepoProd,
-      alias: alias
+      alias: alias,
+      hideBranchSelectFn: this.hideBranchSelect.bind(this)
     });
   }
 
-  branchChange() {
+  hideBranchSelect() {
     this.showEmptySelector = true;
     this.cd.detectChanges();
+  }
+
+  branchChange() {
+    this.hideBranchSelect();
 
     let newSelectedBranchItem = this.branchesList.find(
       x => x.extraId === this.selectedBranchExtraId
