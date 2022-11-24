@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
@@ -23,6 +29,18 @@ export interface CommitDialogDialogDataItem {
   templateUrl: './commit-dialog.component.html'
 })
 export class CommitDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
+  @HostListener('window:keyup.enter')
+  onEnterKeyUp() {
+    this.commit();
+  }
+
+  @ViewChild('commitMessage') commitMessageElement: ElementRef;
+
   commitForm: FormGroup;
 
   constructor(
@@ -40,6 +58,10 @@ export class CommitDialogComponent implements OnInit {
     this.commitForm = this.fb.group({
       message: [message, [Validators.required, Validators.maxLength(255)]]
     });
+
+    setTimeout(() => {
+      this.commitMessageElement.nativeElement.focus();
+    }, 0);
   }
 
   commit() {
