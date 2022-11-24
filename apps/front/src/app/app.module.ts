@@ -7,11 +7,7 @@ import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogModule } from '@ngneat/dialog';
-import {
-  popperVariation,
-  TippyModule,
-  tooltipVariation
-} from '@ngneat/helipopper';
+import { TippyModule } from '@ngneat/helipopper';
 import { MonacoEditorModule, MonacoProviderService } from 'ng-monaco-editor';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { ImageCropperModule } from 'ngx-image-cropper';
@@ -59,11 +55,24 @@ registerLocaleData(en);
     BrowserAnimationsModule,
     DialogModule.forRoot(),
     TippyModule.forRoot({
-      delay: 500,
       defaultVariation: 'tooltip',
       variations: {
-        tooltip: tooltipVariation,
-        popper: popperVariation,
+        tooltip: {
+          delay: 500,
+          theme: null,
+          arrow: false,
+          animation: 'scale',
+          trigger: 'mouseenter',
+          offset: [0, 5]
+        },
+        popper: {
+          theme: 'light',
+          arrow: true,
+          offset: [0, 10],
+          animation: null,
+          trigger: 'click',
+          interactive: true
+        },
         menu: {
           theme: null,
           placement: 'bottom-end',
