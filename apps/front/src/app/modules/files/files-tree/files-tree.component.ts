@@ -40,6 +40,8 @@ export class FilesTreeComponent implements OnDestroy {
   panelChangesToCommit = common.PanelEnum.ChangesToCommit;
   panelChangesToPush = common.PanelEnum.ChangesToPush;
 
+  repoStatusNeedPush = common.RepoStatusEnum.NeedPush;
+
   repo: RepoState;
   repo$ = this.repoQuery.select().pipe(
     tap(x => {

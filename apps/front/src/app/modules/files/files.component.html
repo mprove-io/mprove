@@ -54,12 +54,24 @@
                 *ngIf="needSave === false && repo?.changesToCommit?.length > 0"
                 >Commit all changes to see Changes to Push</div
               >
+              <div
+                *ngIf="
+                  needSave === false &&
+                  repo?.changesToCommit?.length === 0 &&
+                  repo?.changesToPush?.length === 0 &&
+                  repo.repoStatus === repoStatusNeedPush
+                "
+                >Push branch to Remote</div
+              >
             </ng-template>
 
             <div
               [tippy]="templateChangesToPush"
               [isEnabled]="
-                needSave === true || repo?.changesToCommit?.length > 0
+                needSave === true ||
+                repo?.changesToCommit?.length > 0 ||
+                (repo?.changesToPush?.length === 0 &&
+                  repo.repoStatus === repoStatusNeedPush)
               "
             >
               <button
@@ -80,7 +92,11 @@
                   >Changes to Push</div
                 >
                 <div
-                  *ngIf="repo?.changesToCommit?.length === 0"
+                  *ngIf="
+                    repo?.changesToCommit?.length === 0 &&
+                    (repo.repoStatus !== repoStatusNeedPush ||
+                      repo?.changesToPush?.length > 0)
+                  "
                   class="flex flex-shrink-0 rounded px-2 py-[1px] text-white"
                   [ngClass]="{
                     'bg-blue-500': repo?.changesToPush?.length > 0,

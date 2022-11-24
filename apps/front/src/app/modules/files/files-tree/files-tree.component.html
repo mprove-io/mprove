@@ -163,11 +163,29 @@
   </div>
 
   <div
-    *ngIf="panel === panelChangesToPush && repo?.changesToPush?.length === 0"
+    *ngIf="
+      panel === panelChangesToPush &&
+      repo?.changesToPush?.length === 0 &&
+      repo.repoStatus !== repoStatusNeedPush
+    "
     class="flex h-full w-full flex-col items-center justify-center"
   >
     <m-completed-ring></m-completed-ring>
     <div class="mt-4 text-xl"> No changes to Push</div>
+  </div>
+
+  <div
+    *ngIf="
+      panel === panelChangesToPush &&
+      repo?.changesToPush?.length === 0 &&
+      repo.repoStatus === repoStatusNeedPush
+    "
+    class="flex h-full w-full flex-col items-center justify-center"
+  >
+    <div class="text-amber-500">
+      <m-alert-ring></m-alert-ring>
+    </div>
+    <div class="mt-4 text-xl"> Push branch to Remote</div>
   </div>
 
   <div *ngIf="repo$ | async"></div>
