@@ -25,39 +25,43 @@ export async function getRepoStatus(item: {
 
   let gitRepo = <nodegit.Repository>await nodegit.Repository.open(item.repoDir);
 
-  let gitRepoStatusFiles = await gitRepo.getStatus();
+  let statusFiles: nodegit.StatusFile[] = await gitRepo.getStatus();
 
-  let changesToCommit: common.DiskFileChange[] = gitRepoStatusFiles.map(x => {
-    let path = x.path();
-    let pathArray = path.split('/');
+  let changesToCommit: common.DiskFileChange[] = statusFiles.map(
+    (x: nodegit.StatusFile) => {
+      let path = x.path();
+      let pathArray = path.split('/');
 
-    let fileId = pathArray.join(common.TRIPLE_UNDERSCORE);
+      let fileId = pathArray.join(common.TRIPLE_UNDERSCORE);
 
-    let fileName = pathArray.slice(-1)[0];
+      let fileName = pathArray.slice(-1)[0];
 
-    let parentPath =
-      pathArray.length === 1 ? '' : pathArray.slice(0, -1).join('/');
+      let parentPath =
+        pathArray.length === 1 ? '' : pathArray.slice(0, -1).join('/');
 
-    return {
-      fileName: fileName,
-      fileId: fileId,
-      parentPath: parentPath,
-      // doesn't return booleans
-      status: x.isNew()
-        ? common.FileStatusEnum.New
-        : x.isModified()
-        ? common.FileStatusEnum.Modified
-        : x.isDeleted()
-        ? common.FileStatusEnum.Deleted
-        : x.isTypechange()
-        ? common.FileStatusEnum.TypeChange
-        : x.isRenamed()
-        ? common.FileStatusEnum.Renamed
-        : x.isIgnored()
-        ? common.FileStatusEnum.Ignored
-        : undefined
-    };
-  });
+      return {
+        fileName: fileName,
+        fileId: fileId,
+        parentPath: parentPath,
+        // doesn't return booleans
+        status: x.isNew()
+          ? common.FileStatusEnum.New
+          : x.isDeleted()
+          ? common.FileStatusEnum.Deleted
+          : x.isModified()
+          ? common.FileStatusEnum.Modified
+          : x.isConflicted()
+          ? common.FileStatusEnum.Conflicted
+          : x.isTypechange()
+          ? common.FileStatusEnum.TypeChange
+          : x.isRenamed()
+          ? common.FileStatusEnum.Renamed
+          : x.isIgnored()
+          ? common.FileStatusEnum.Ignored
+          : undefined
+      };
+    }
+  );
 
   // console.log(gitRepoStatusFiles);
 
@@ -99,34 +103,53 @@ export async function getRepoStatus(item: {
         );
 
         if (commonAncestorOid !== headOid) {
-          const fromTree = await head.getTree();
+          const headTree = await head.getTree();
 
-          const to = await gitRepo.getCommit(commonAncestorOid);
-          const toTree = await to.getTree();
+          const baseCommit = await gitRepo.getCommit(commonAncestorOid);
+          const baseTree = await baseCommit.getTree();
 
-          const diff = await toTree.diff(fromTree);
+          const diff = await headTree.diff(baseTree);
           const patches = await diff.patches();
 
           changesToPush = patches.map((x: nodegit.ConvenientPatch) => {
-            let newFile = x.newFile();
+            let file = x.newFile();
 
-            let newFilePath = newFile.path();
-            let newFilePathArray = newFilePath.split('/');
+            let filePath = file.path();
+            let filePathArray = filePath.split('/');
 
-            let newFileId = newFilePathArray.join(common.TRIPLE_UNDERSCORE);
+            let fileId = filePathArray.join(common.TRIPLE_UNDERSCORE);
+            let fileName = filePathArray.slice(-1)[0];
 
-            let newFileName = newFilePathArray.slice(-1)[0];
-
-            let newFileParentPath =
-              newFilePathArray.length === 1
+            let fileParentPath =
+              filePathArray.length === 1
                 ? ''
-                : newFilePathArray.slice(0, -1).join('/');
+                : filePathArray.slice(0, -1).join('/');
 
             return {
-              fileName: newFileName,
-              fileId: newFileId,
-              parentPath: newFileParentPath,
-              status: undefined
+              fileName: fileName,
+              fileId: fileId,
+              parentPath: fileParentPath,
+              status: x.isAdded()
+                ? common.FileStatusEnum.New
+                : x.isDeleted()
+                ? common.FileStatusEnum.Deleted
+                : x.isModified()
+                ? common.FileStatusEnum.Modified
+                : x.isTypeChange()
+                ? common.FileStatusEnum.TypeChange
+                : x.isRenamed()
+                ? common.FileStatusEnum.Renamed
+                : x.isIgnored()
+                ? common.FileStatusEnum.Ignored
+                : x.isUnmodified()
+                ? common.FileStatusEnum.Unmodified
+                : x.isCopied()
+                ? common.FileStatusEnum.Copied
+                : x.isUntracked()
+                ? common.FileStatusEnum.Untracked
+                : x.isUnreadable()
+                ? common.FileStatusEnum.Unreadable
+                : undefined
             };
           });
         }
