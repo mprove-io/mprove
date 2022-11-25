@@ -59,7 +59,8 @@ test('1', async t => {
         repoId: 'r1',
         branch: common.BRANCH_MASTER,
         fileNodeId: `${projectId}/readme.md`,
-        remoteType: common.ProjectRemoteTypeEnum.Managed
+        remoteType: common.ProjectRemoteTypeEnum.Managed,
+        panel: common.PanelEnum.Tree
       }
     };
 
