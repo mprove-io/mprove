@@ -6,6 +6,7 @@ import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { UserState } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -64,6 +65,7 @@ export class ProjectSelectComponent {
     private navQuery: NavQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
+    private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
     private router: Router,
     private navStore: NavStore
@@ -107,23 +109,24 @@ export class ProjectSelectComponent {
   }
 
   projectChange() {
-    this.router.navigate([
+    let branchId = this.projectsList.find(
+      p => p.projectId === this.selectedProjectId
+    ).defaultBranch;
+
+    let navParts = [
       common.PATH_ORG,
-      this.selectedOrgId,
+      this.nav.orgId,
       common.PATH_PROJECT,
       this.selectedProjectId,
-      common.PATH_SETTINGS
-    ]);
+      common.PATH_REPO,
+      common.PROD_REPO_ID,
+      common.PATH_BRANCH,
+      branchId,
+      common.PATH_ENV,
+      common.PROJECT_ENV_PROD,
+      common.PATH_VISUALIZATIONS
+    ];
 
-    this.navStore.update(state =>
-      Object.assign({}, state, <NavState>{
-        isRepoProd: true,
-        branchId: this.projectsList.find(
-          x => x.projectId === this.selectedProjectId
-        ).defaultBranch,
-        envId: common.PROJECT_ENV_PROD,
-        needValidate: false
-      })
-    );
+    this.navigateService.navigateToVizs({ navParts: navParts });
   }
 }
