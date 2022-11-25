@@ -13,12 +13,6 @@ export class Org {
   @IsString()
   ownerEmail: string;
 
-  @IsString()
-  companySize: string;
-
-  @IsString()
-  contactPhone: string;
-
   @IsInt()
   serverTs: number;
 }

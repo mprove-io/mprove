@@ -67,20 +67,4 @@ export class OrgAccountComponent implements OnInit {
       ownerEmail: this.org.ownerEmail
     });
   }
-
-  editContactPhone() {
-    this.myDialogService.showEditPhoneNumber({
-      apiService: this.apiService,
-      orgId: this.org.orgId,
-      contactPhone: this.org.contactPhone
-    });
-  }
-
-  editCompanySize() {
-    this.myDialogService.showEditCompanySize({
-      apiService: this.apiService,
-      orgId: this.org.orgId,
-      companySize: this.org.companySize
-    });
-  }
 }

@@ -84,10 +84,6 @@ import {
   DeleteOrgDialogDataItem
 } from '../modules/org/org-account/delete-org-dialog/delete-org-dialog.component';
 import {
-  EditCompanySizeDialogComponent,
-  EditCompanySizeDialogDataItem
-} from '../modules/org/org-account/edit-company-size-dialog/edit-company-size-dialog.component';
-import {
   EditOrgNameDialogComponent,
   EditOrgNameDialogDataItem
 } from '../modules/org/org-account/edit-org-name-dialog/edit-org-name-dialog.component';
@@ -95,10 +91,6 @@ import {
   EditOrgOwnerDialogComponent,
   EditOrgOwnerDialogDataItem
 } from '../modules/org/org-account/edit-org-owner-dialog/edit-org-owner-dialog.component';
-import {
-  EditPhoneNumberDialogComponent,
-  EditPhoneNumberDialogDataItem
-} from '../modules/org/org-account/edit-phone-number-dialog/edit-phone-number-dialog.component';
 import {
   DeleteUserDialogComponent,
   DeleteUserDialogItem as DeleteUserDialogDataItem
@@ -438,22 +430,6 @@ export class MyDialogService {
 
   showEditOrgOwner(item: EditOrgOwnerDialogDataItem): void {
     this.dialogService.open(EditOrgOwnerDialogComponent, {
-      enableClose: false,
-      closeButton: false,
-      data: item
-    });
-  }
-
-  showEditCompanySize(item: EditCompanySizeDialogDataItem): void {
-    this.dialogService.open(EditCompanySizeDialogComponent, {
-      enableClose: false,
-      closeButton: false,
-      data: item
-    });
-  }
-
-  showEditPhoneNumber(item: EditPhoneNumberDialogDataItem): void {
-    this.dialogService.open(EditPhoneNumberDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item

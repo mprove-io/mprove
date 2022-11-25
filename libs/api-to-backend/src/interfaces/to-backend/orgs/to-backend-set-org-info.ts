@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsOptional, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
@@ -10,14 +10,6 @@ export class ToBackendSetOrgInfoRequestPayload {
   @IsOptional()
   @IsString()
   name?: string;
-
-  @IsOptional()
-  @IsEnum(common.CompanySizeEnum)
-  companySize?: common.CompanySizeEnum;
-
-  @IsOptional()
-  @IsString()
-  contactPhone?: string;
 }
 
 export class ToBackendSetOrgInfoRequest extends ToBackendRequest {

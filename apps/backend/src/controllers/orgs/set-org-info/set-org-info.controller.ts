@@ -20,7 +20,7 @@ export class SetOrgInfoController {
   ) {
     let reqValid: apiToBackend.ToBackendSetOrgInfoRequest = request.body;
 
-    let { orgId, name, companySize, contactPhone } = reqValid.payload;
+    let { orgId, name } = reqValid.payload;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 
@@ -37,14 +37,6 @@ export class SetOrgInfoController {
       }
 
       org.name = name;
-    }
-
-    if (common.isDefined(companySize)) {
-      org.company_size = companySize;
-    }
-
-    if (common.isDefined(contactPhone)) {
-      org.contact_phone = contactPhone;
     }
 
     await this.dbService.writeRecords({

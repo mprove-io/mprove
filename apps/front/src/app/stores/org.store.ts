@@ -10,8 +10,6 @@ function createInitialState(): OrgState {
     name: undefined,
     ownerId: undefined,
     ownerEmail: undefined,
-    companySize: undefined,
-    contactPhone: undefined,
     serverTs: 1
   };
 }

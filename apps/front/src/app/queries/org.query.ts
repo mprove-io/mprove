@@ -10,8 +10,6 @@ export class OrgQuery extends Query<OrgState> {
   name$ = this.select(state => state.name);
   orgId$ = this.select(state => state.orgId);
   ownerEmail$ = this.select(state => state.ownerEmail);
-  companySize$ = this.select(state => state.companySize);
-  contactPhone$ = this.select(state => state.contactPhone);
 
   isOrgOwner$ = combineLatest([this.userQuery.email$, this.ownerEmail$]).pipe(
     map(([userEmail, ownerEmail]: [string, string]) => userEmail === ownerEmail)

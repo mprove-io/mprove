@@ -56,9 +56,7 @@ test('1', async t => {
       },
       payload: {
         orgId: orgId,
-        name: `2${testId}`,
-        companySize: common.CompanySizeEnum.OneToTen,
-        contactPhone: '123'
+        name: `2${testId}`
       }
     };
 
