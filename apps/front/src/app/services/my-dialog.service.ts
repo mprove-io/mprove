@@ -432,7 +432,8 @@ export class MyDialogService {
     this.dialogService.open(EditOrgOwnerDialogComponent, {
       enableClose: false,
       closeButton: false,
-      data: item
+      data: item,
+      width: 800
     });
   }
 

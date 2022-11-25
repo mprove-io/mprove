@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
@@ -19,6 +25,13 @@ export interface EditOrgNameDialogDataItem {
   templateUrl: './edit-org-name-dialog.component.html'
 })
 export class EditOrgNameDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
+  @ViewChild('orgName') orgNameElement: ElementRef;
+
   editOrgNameForm: FormGroup;
 
   orgId: string;
@@ -34,6 +47,10 @@ export class EditOrgNameDialogComponent implements OnInit {
     this.editOrgNameForm = this.fb.group({
       orgName: [this.ref.data.orgName, [Validators.maxLength(255)]]
     });
+
+    setTimeout(() => {
+      this.orgNameElement.nativeElement.focus();
+    }, 0);
   }
 
   save() {

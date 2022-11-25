@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
@@ -21,6 +21,11 @@ export interface EditOrgOwnerDialogDataItem {
   templateUrl: './edit-org-owner-dialog.component.html'
 })
 export class EditOrgOwnerDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   editOrgOwnerForm: FormGroup;
 
   orgId: string;
@@ -40,6 +45,10 @@ export class EditOrgOwnerDialogComponent implements OnInit {
         [Validators.required, Validators.email, Validators.maxLength(255)]
       ]
     });
+
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
   }
 
   save() {
