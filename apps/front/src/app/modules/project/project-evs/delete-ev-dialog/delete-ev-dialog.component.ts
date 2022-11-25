@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
@@ -15,13 +15,24 @@ export interface DeleteEvDialogDataItem {
   selector: 'm-delete-ev-dialog',
   templateUrl: './delete-ev-dialog.component.html'
 })
-export class DeleteEvDialogComponent {
+export class DeleteEvDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   dataItem: DeleteEvDialogDataItem = this.ref.data;
 
   constructor(
     public ref: DialogRef<DeleteEvDialogDataItem>,
     private evsStore: EvsStore
   ) {}
+
+  ngOnInit(): void {
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
+  }
 
   delete() {
     this.ref.close();

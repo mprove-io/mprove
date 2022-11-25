@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
@@ -18,6 +18,11 @@ export interface EditEvDialogDataItem {
   templateUrl: './edit-ev-dialog.component.html'
 })
 export class EditEvDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   dataItem: EditEvDialogDataItem = this.ref.data;
 
   editEvForm: FormGroup;
@@ -35,6 +40,10 @@ export class EditEvDialogComponent implements OnInit {
         [Validators.required, Validators.maxLength(255)]
       ]
     });
+
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
   }
 
   edit() {
