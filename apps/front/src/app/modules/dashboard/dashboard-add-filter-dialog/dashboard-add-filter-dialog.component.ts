@@ -1,4 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -25,6 +32,13 @@ export interface DashboardAddFilterDialogDataItem {
   templateUrl: './dashboard-add-filter-dialog.component.html'
 })
 export class DashboardAddFilterDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
+  @ViewChild('filterLabel') filterLabelElement: ElementRef;
+
   filterForm: FormGroup;
 
   resultList = constants.RESULT_LIST;
@@ -67,6 +81,10 @@ export class DashboardAddFilterDialogComponent implements OnInit {
         validator: this.labelValidator.bind(this)
       }
     );
+
+    setTimeout(() => {
+      this.filterLabelElement.nativeElement.focus();
+    }, 0);
   }
 
   labelValidator(group: AbstractControl): ValidationErrors | null {

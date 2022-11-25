@@ -89,6 +89,8 @@
               [items]="report.modelFields[dashboardField.id]"
               [clearable]="false"
               [searchable]="false"
+              (keyup.esc)="$event.stopImmediatePropagation()"
+              (keyup.enter)="$event.stopImmediatePropagation()"
               (change)="fieldChange()"
               [(ngModel)]="report.mconfigListenSwap[dashboardField.id][i]"
               appendTo="body"

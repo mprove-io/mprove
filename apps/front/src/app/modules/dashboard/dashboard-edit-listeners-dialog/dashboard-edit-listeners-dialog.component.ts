@@ -1,4 +1,9 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -31,6 +36,11 @@ export interface DashboardEditListenersDialogDataItem {
   templateUrl: './dashboard-edit-listeners-dialog.component.html'
 })
 export class DashboardEditListenersDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   spinnerName = 'dashboardEditListen';
 
   models: common.Model[];
@@ -136,6 +146,10 @@ export class DashboardEditListenersDialogComponent implements OnInit {
         })
       )
       .toPromise();
+
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
   }
 
   fieldChange() {}

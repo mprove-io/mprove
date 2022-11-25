@@ -34,11 +34,6 @@ export class CommitDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  @HostListener('window:keyup.enter')
-  onEnterKeyUp() {
-    this.commit();
-  }
-
   @ViewChild('commitMessage') commitMessageElement: ElementRef;
 
   commitForm: FormGroup;

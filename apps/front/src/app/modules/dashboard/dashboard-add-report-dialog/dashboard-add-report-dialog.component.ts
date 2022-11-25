@@ -1,4 +1,9 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
@@ -19,6 +24,11 @@ export interface DashboardAddReportDialogDataItem {
   templateUrl: './dashboard-add-report-dialog.component.html'
 })
 export class DashboardAddReportDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   spinnerName = 'dashboardAddReport';
 
   models: common.Model[];
@@ -74,6 +84,10 @@ export class DashboardAddReportDialogComponent implements OnInit {
         })
       )
       .toPromise();
+
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
   }
 
   navToModel(modelId: string) {
