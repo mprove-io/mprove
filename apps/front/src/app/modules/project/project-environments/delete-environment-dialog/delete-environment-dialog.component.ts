@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
@@ -21,13 +21,24 @@ export interface DeleteEnvironmentDialogDataItem {
   selector: 'm-delete-environment-dialog',
   templateUrl: './delete-environment-dialog.component.html'
 })
-export class DeleteEnvironmentDialogComponent {
+export class DeleteEnvironmentDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   dataItem: DeleteEnvironmentDialogDataItem = this.ref.data;
 
   constructor(
     public ref: DialogRef<DeleteEnvironmentDialogDataItem>,
     private environmentsStore: EnvironmentsStore
   ) {}
+
+  ngOnInit(): void {
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
+  }
 
   delete() {
     this.ref.close();

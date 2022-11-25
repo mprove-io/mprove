@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
@@ -20,6 +26,13 @@ export interface AddEnvironmentDialogDataItem {
   templateUrl: './add-environment-dialog.component.html'
 })
 export class AddEnvironmentDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
+  @ViewChild('envId') envIdElement: ElementRef;
+
   dataItem: AddEnvironmentDialogDataItem = this.ref.data;
 
   addEnvironmentForm: FormGroup;
@@ -34,6 +47,10 @@ export class AddEnvironmentDialogComponent implements OnInit {
     this.addEnvironmentForm = this.fb.group({
       envId: [undefined, [Validators.required, Validators.maxLength(255)]]
     });
+
+    setTimeout(() => {
+      this.envIdElement.nativeElement.focus();
+    }, 0);
   }
 
   add() {
