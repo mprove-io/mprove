@@ -15,7 +15,7 @@ import { FileService } from '~front/app/services/file.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { FileState } from '~front/app/stores/file.store';
-import { MemberState, MemberStore } from '~front/app/stores/member.store';
+import { MemberStore } from '~front/app/stores/member.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { RepoState } from '~front/app/stores/repo.store';
 import { UserState } from '~front/app/stores/user.store';
@@ -171,11 +171,8 @@ export class BranchSelectComponent {
       .pipe(
         tap((resp: apiToBackend.ToBackendGetBranchesListResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.memberStore.update(state =>
-              Object.assign(resp.payload.userMember, <MemberState>{
-                avatarSmall: state.avatarSmall
-              })
-            );
+            this.memberStore.update(resp.payload.userMember);
+
             let x = resp.payload.branchesList;
 
             this.branchesList = x.map(z =>

@@ -15,7 +15,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService, RData } from '~front/app/services/query.service';
-import { MemberState, MemberStore } from '~front/app/stores/member.store';
+import { MemberStore } from '~front/app/stores/member.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -110,11 +110,8 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       .pipe(
         tap((resp: apiToBackend.ToBackendGetVizResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.memberStore.update(state =>
-              Object.assign(resp.payload.userMember, <MemberState>{
-                avatarSmall: state.avatarSmall
-              })
-            );
+            this.memberStore.update(resp.payload.userMember);
+
             query = resp.payload.viz.reports[0].query;
             mconfig = resp.payload.viz.reports[0].mconfig;
           }

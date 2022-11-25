@@ -13,7 +13,7 @@ import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 import { MyDialogService } from '../services/my-dialog.service';
 import { DashboardsStore } from '../stores/dashboards.store';
-import { MemberState, MemberStore } from '../stores/member.store';
+import { MemberStore } from '../stores/member.store';
 import { ModelsStore } from '../stores/models.store';
 import { NavState, NavStore } from '../stores/nav.store';
 import { StructStore } from '../stores/struct.store';
@@ -64,11 +64,8 @@ export class StructDashboardsResolver implements Resolve<Promise<boolean>> {
         map((resp: apiToBackend.ToBackendGetDashboardsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             if (resp.payload.isBranchExist === true) {
-              this.memberStore.update(state =>
-                Object.assign(resp.payload.userMember, <MemberState>{
-                  avatarSmall: state.avatarSmall
-                })
-              );
+              this.memberStore.update(resp.payload.userMember);
+
               this.structStore.update(resp.payload.struct);
               this.navStore.update(state =>
                 Object.assign({}, state, <NavState>{

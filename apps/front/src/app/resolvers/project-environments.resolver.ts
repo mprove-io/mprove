@@ -11,7 +11,7 @@ import { constants } from '~front/barrels/constants';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 import { EnvironmentsStore } from '../stores/environments.store';
-import { MemberState, MemberStore } from '../stores/member.store';
+import { MemberStore } from '../stores/member.store';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectEnvironmentsResolver implements Resolve<Promise<boolean>> {
@@ -47,11 +47,8 @@ export class ProjectEnvironmentsResolver implements Resolve<Promise<boolean>> {
       .pipe(
         map((resp: apiToBackend.ToBackendGetEnvsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.memberStore.update(state =>
-              Object.assign(resp.payload.userMember, <MemberState>{
-                avatarSmall: state.avatarSmall
-              })
-            );
+            this.memberStore.update(resp.payload.userMember);
+
             this.environmentsStore.update({
               environments: resp.payload.envs,
               total: resp.payload.total

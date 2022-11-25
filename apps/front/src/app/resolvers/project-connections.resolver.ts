@@ -11,7 +11,7 @@ import { constants } from '~front/barrels/constants';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 import { ConnectionsStore } from '../stores/connections.store';
-import { MemberState, MemberStore } from '../stores/member.store';
+import { MemberStore } from '../stores/member.store';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectConnectionsResolver implements Resolve<Promise<boolean>> {
@@ -47,11 +47,8 @@ export class ProjectConnectionsResolver implements Resolve<Promise<boolean>> {
       .pipe(
         map((resp: apiToBackend.ToBackendGetConnectionsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.memberStore.update(state =>
-              Object.assign(resp.payload.userMember, <MemberState>{
-                avatarSmall: state.avatarSmall
-              })
-            );
+            this.memberStore.update(resp.payload.userMember);
+
             this.connectionsStore.update({
               connections: resp.payload.connections,
               total: resp.payload.total

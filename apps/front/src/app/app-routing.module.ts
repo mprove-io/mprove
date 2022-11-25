@@ -54,9 +54,9 @@ import { QueryResolver } from './resolvers/query.resolver';
 import { RepoIdResolver } from './resolvers/repo-id.resolver';
 import { StructDashboardResolver } from './resolvers/struct-dashboard.resolver';
 import { StructDashboardsResolver } from './resolvers/struct-dashboards.resolver';
-import { StructFilesResolver } from './resolvers/struct-files.resolver';
 import { StructModelResolver } from './resolvers/struct-model.resolver';
 import { StructModelsResolver } from './resolvers/struct-models.resolver';
+import { StructRepoResolver } from './resolvers/struct-repo.resolver';
 import { StructVizsResolver } from './resolvers/struct-vizs.resolver';
 
 const routes: Routes = [
@@ -200,11 +200,12 @@ const routes: Routes = [
                     children: [
                       {
                         path: common.PATH_ENV + `/:${common.PARAMETER_ENV_ID}`,
+                        resolve: [StructRepoResolver], // StructRepoResolver twice Ok
                         children: [
                           {
                             component: FilesComponent,
                             path: common.PATH_FILES,
-                            resolve: [StructFilesResolver],
+                            resolve: [StructRepoResolver], // StructRepoResolver twice Ok
                             children: [
                               {
                                 component: FileEditorComponent,

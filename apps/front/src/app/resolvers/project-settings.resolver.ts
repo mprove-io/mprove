@@ -5,7 +5,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
-import { MemberState, MemberStore } from '../stores/member.store';
+import { MemberStore } from '../stores/member.store';
 import { ProjectStore } from '../stores/project.store';
 
 @Injectable({ providedIn: 'root' })
@@ -37,11 +37,8 @@ export class ProjectSettingsResolver implements Resolve<Promise<boolean>> {
       .pipe(
         map((resp: apiToBackend.ToBackendGetProjectResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.memberStore.update(state =>
-              Object.assign(resp.payload.userMember, <MemberState>{
-                avatarSmall: state.avatarSmall
-              })
-            );
+            this.memberStore.update(resp.payload.userMember);
+
             this.projectStore.update(resp.payload.project);
             return true;
           } else {

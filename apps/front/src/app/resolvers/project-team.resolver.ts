@@ -6,7 +6,7 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
-import { MemberState, MemberStore } from '../stores/member.store';
+import { MemberStore } from '../stores/member.store';
 import { TeamStore } from '../stores/team.store';
 
 @Injectable({ providedIn: 'root' })
@@ -40,11 +40,8 @@ export class ProjectTeamResolver implements Resolve<Promise<boolean>> {
       .pipe(
         map((resp: apiToBackend.ToBackendGetMembersResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.memberStore.update(state =>
-              Object.assign(resp.payload.userMember, <MemberState>{
-                avatarSmall: state.avatarSmall
-              })
-            );
+            this.memberStore.update(resp.payload.userMember);
+
             this.teamStore.update(resp.payload);
             return true;
           } else {

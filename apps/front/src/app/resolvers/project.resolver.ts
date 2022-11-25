@@ -10,7 +10,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { ApiService } from '../services/api.service';
-import { MemberState, MemberStore } from '../stores/member.store';
+import { MemberStore } from '../stores/member.store';
 import { NavState, NavStore } from '../stores/nav.store';
 import { ProjectStore } from '../stores/project.store';
 
@@ -60,11 +60,8 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
               project.projectId
             );
 
-            this.memberStore.update(state =>
-              Object.assign(resp.payload.userMember, <MemberState>{
-                avatarSmall: state.avatarSmall
-              })
-            );
+            this.memberStore.update(resp.payload.userMember);
+
             this.projectStore.update(project);
             return true;
           } else {
