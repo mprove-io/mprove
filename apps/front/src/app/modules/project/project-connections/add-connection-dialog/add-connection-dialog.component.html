@@ -1,7 +1,7 @@
 <div class="flex-grow flex-col overflow-y-auto bg-white p-9">
   <div
     data-cy="addConnectionDialogTitle"
-    class="mt-5 flex-grow text-left text-2xl font-semibold text-gray2"
+    class="text-gray2 mt-5 flex-grow text-left text-2xl font-semibold"
     >Add Connection</div
   >
 
@@ -13,7 +13,7 @@
     <input
       spellcheck="false"
       data-cy="addConnectionDialogConnectionIdInput"
-      class="form-input mt-9 rounded border-gray3 focus:border-blue3"
+      class="form-input border-gray3 focus:border-blue3 mt-9 rounded"
       [ngClass]="{
         'border-red-600':
           addConnectionForm.controls['connectionId'].invalid &&
@@ -35,6 +35,8 @@
       [items]="envsList"
       [clearable]="false"
       [searchable]="false"
+      (keyup.esc)="$event.stopImmediatePropagation()"
+      (keyup.enter)="$event.stopImmediatePropagation()"
       appendTo="body"
       placeholder="Env"
       bindLabel="envId"
@@ -58,6 +60,8 @@
       [clearable]="false"
       [searchable]="false"
       (change)="changeType($event)"
+      (keyup.esc)="$event.stopImmediatePropagation()"
+      (keyup.enter)="$event.stopImmediatePropagation()"
       appendTo="body"
       formControlName="type"
     >
@@ -74,7 +78,7 @@
       <textarea
         rows="9"
         data-cy="addConnectionDialogBigqueryCredentialsInput"
-        class="form-input mt-6 w-96 resize-none rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 mt-6 w-96 resize-none rounded"
         [ngClass]="{
           'border-red-600':
             addConnectionForm.controls['bigqueryCredentials'].invalid &&
@@ -91,7 +95,7 @@
       <input
         spellcheck="false"
         data-cy="addConnectionDialogBigqueryQuerySizeLimitGbInput"
-        class="form-input mt-1 w-80 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 mt-1 w-80 rounded"
         [ngClass]="{
           'border-red-600':
             addConnectionForm.controls['bigqueryQuerySizeLimitGb'].invalid &&
@@ -111,7 +115,7 @@
       "
     >
       <div class="mt-6 flex flex-row items-center">
-        <div class="flex h-9 select-none items-center text-base text-gray1"
+        <div class="text-gray1 flex h-9 select-none items-center text-base"
           >SSL (https)</div
         >
 
@@ -125,7 +129,7 @@
       <input
         spellcheck="false"
         data-cy="addConnectionDialogHostInput"
-        class="form-input mt-6 w-80 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 mt-6 w-80 rounded"
         [ngClass]="{
           'border-red-600':
             addConnectionForm.controls['host'].invalid &&
@@ -141,7 +145,7 @@
       <input
         spellcheck="false"
         data-cy="addConnectionDialogPortInput"
-        class="form-input w-80 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 w-80 rounded"
         [ngClass]="{
           'border-red-600':
             addConnectionForm.controls['port'].invalid &&
@@ -158,7 +162,7 @@
         *ngIf="addConnectionForm.controls['type'].value !== typeClickHouse"
         spellcheck="false"
         data-cy="addConnectionDialogDatabaseInput"
-        class="form-input w-80 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 w-80 rounded"
         [ngClass]="{
           'border-red-600':
             addConnectionForm.controls['database'].invalid &&
@@ -177,7 +181,7 @@
       <input
         spellcheck="false"
         data-cy="addConnectionDialogAccountInput"
-        class="form-input mt-6 w-80 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 mt-6 w-80 rounded"
         [ngClass]="{
           'border-red-600':
             addConnectionForm.controls['account'].invalid &&
@@ -195,7 +199,7 @@
       <input
         spellcheck="false"
         data-cy="addConnectionDialogWarehouseInput"
-        class="form-input w-80 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 w-80 rounded"
         [ngClass]="{
           'border-red-600':
             addConnectionForm.controls['warehouse'].invalid &&
@@ -219,7 +223,7 @@
       <input
         spellcheck="false"
         data-cy="addConnectionDialogUserInput"
-        class="form-input w-80 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 w-80 rounded"
         [ngClass]="{
           'border-red-600':
             addConnectionForm.controls['username'].invalid &&
@@ -235,7 +239,7 @@
       <input
         spellcheck="false"
         data-cy="addConnectionDialogPasswordInput"
-        class="form-input w-80 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 w-80 rounded"
         [ngClass]="{
           'border-red-600':
             addConnectionForm.controls['password'].invalid &&
@@ -253,14 +257,14 @@
     <div class="mt-6">
       <button
         data-cy="addConnectionDialogAddButton"
-        class="w-28 rounded bg-blue3 py-3 text-base font-medium text-white focus:outline-none"
+        class="bg-blue3 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
         type="submit"
         >Add</button
       >
 
       <button
         data-cy="addConnectionDialogCancelButton"
-        class="ml-3 w-28 rounded border border-blue3 py-3 text-base font-medium text-blue3 focus:outline-none"
+        class="border-blue3 text-blue3 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
         type="button"
         (click)="cancel()"
         >Cancel</button

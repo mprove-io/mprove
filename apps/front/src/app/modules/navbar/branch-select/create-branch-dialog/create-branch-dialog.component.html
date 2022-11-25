@@ -1,7 +1,7 @@
 <div class="flex flex-col bg-white p-9">
   <div
     data-cy="createBranchDialogTitle"
-    class="mt-5 flex-grow text-left text-2xl font-semibold text-gray2"
+    class="text-gray2 mt-5 flex-grow text-left text-2xl font-semibold"
     >Create Branch</div
   >
 
@@ -10,7 +10,7 @@
     [formGroup]="createBranchForm"
     (ngSubmit)="create()"
   >
-    <div class="mt-8 select-none text-left text-base font-semibold text-gray2"
+    <div class="text-gray2 mt-8 select-none text-left text-base font-semibold"
       >Repo</div
     >
 
@@ -20,7 +20,7 @@
       (click)="prodOnClick()"
     >
       <div
-        class="flex h-6 w-6 items-center justify-center rounded-full border-2 border-blue3 text-white focus:outline-none"
+        class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
         [ngClass]="{
           'bg-blue3 ': isTargetProd === true
         }"
@@ -37,7 +37,7 @@
       (click)="devOnClick()"
     >
       <div
-        class="flex h-6 w-6 items-center justify-center rounded-full border-2 border-blue3 text-white focus:outline-none"
+        class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
         [ngClass]="{
           'bg-blue3 ': isTargetProd === false
         }"
@@ -48,14 +48,14 @@
       <div class="ml-5 select-none text-base">Dev-{{ user?.alias }}</div>
     </div>
 
-    <div class="mt-8 select-none text-left text-base font-semibold text-gray2"
+    <div class="text-gray2 mt-8 select-none text-left text-base font-semibold"
       >Branch name</div
     >
 
     <input
       spellcheck="false"
       data-cy="createBranchDialogBranchIdInput"
-      class="form-input mt-2 w-72 rounded border-gray3 focus:border-blue3"
+      class="form-input border-gray3 focus:border-blue3 mt-2 w-72 rounded"
       [ngClass]="{
         'border-red-600':
           createBranchForm.controls['branchId'].invalid &&
@@ -78,6 +78,8 @@
       [searchable]="false"
       [(ngModel)]="selectedBranchExtraId"
       (change)="branchChange($event)"
+      (keyup.esc)="$event.stopImmediatePropagation()"
+      (keyup.enter)="$event.stopImmediatePropagation()"
       appendTo="body"
       formControlName="fromBranch"
       placeholder="Branches"
@@ -96,14 +98,14 @@
     <div class="mt-9">
       <button
         data-cy="createBranchDialogCreateButton"
-        class="w-28 rounded bg-blue3 py-3 text-base font-medium text-white focus:outline-none"
+        class="bg-blue3 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
         type="submit"
         >Create</button
       >
 
       <button
         data-cy="createBranchDialogCancelButton"
-        class="ml-3 w-28 rounded border border-blue3 py-3 text-base font-medium text-blue3 focus:outline-none"
+        class="border-blue3 text-blue3 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
         type="button"
         (click)="cancel()"
         >Cancel</button

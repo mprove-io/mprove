@@ -81,6 +81,8 @@
         [clearable]="false"
         (change)="selectedChange()"
         [(ngModel)]="selectedDashboardId"
+        (keyup.esc)="$event.stopImmediatePropagation()"
+        (keyup.enter)="$event.stopImmediatePropagation()"
         appendTo="body"
         bindLabel="title"
         bindValue="dashboardId"

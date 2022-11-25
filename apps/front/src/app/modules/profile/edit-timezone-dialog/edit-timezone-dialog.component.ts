@@ -1,4 +1,9 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { UserQuery } from '~front/app/queries/user.query';
@@ -15,7 +20,12 @@ export interface EditTimezoneDialogItem {
   selector: 'm-edit-timezone-dialog',
   templateUrl: './edit-timezone-dialog.component.html'
 })
-export class EditTimezoneDialogComponent {
+export class EditTimezoneDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   timezone: string;
 
   timezones = common.getTimezones();
@@ -33,6 +43,12 @@ export class EditTimezoneDialogComponent {
     private userQuery: UserQuery,
     private cd: ChangeDetectorRef
   ) {}
+
+  ngOnInit(): void {
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
+  }
 
   save() {
     this.ref.close();
