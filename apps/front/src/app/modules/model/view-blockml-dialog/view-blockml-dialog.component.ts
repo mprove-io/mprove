@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { MonacoEditorOptions, MonacoProviderService } from 'ng-monaco-editor';
 import { take, tap } from 'rxjs/operators';
@@ -17,6 +17,11 @@ export interface ViewBlockmlDialogDataItem {
   styleUrls: ['./view-blockml-dialog.component.scss']
 })
 export class ViewBlockmlDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   editorOptions: MonacoEditorOptions = {
     readOnly: true,
     renderValidationDecorations: 'off',
@@ -57,5 +62,9 @@ export class ViewBlockmlDialogComponent implements OnInit {
       constants.YAML_LANGUAGE_ID,
       constants.BLOCKML_LANGUAGE_DATA
     );
+
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
   }
 }

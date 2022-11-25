@@ -57,6 +57,10 @@ export class CommitDialogComponent implements OnInit {
     setTimeout(() => {
       this.commitMessageElement.nativeElement.focus();
     }, 0);
+
+    // setTimeout(() => {
+    //   (document.activeElement as HTMLElement).blur();
+    // }, 0);
   }
 
   commit() {

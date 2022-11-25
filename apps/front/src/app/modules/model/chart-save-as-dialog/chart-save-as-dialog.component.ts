@@ -1,4 +1,9 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -43,6 +48,11 @@ export interface ChartSaveAsDialogDataItem {
   templateUrl: './chart-save-as-dialog.component.html'
 })
 export class ChartSaveAsDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   usersFolder = common.MPROVE_USERS_FOLDER;
 
   chartSaveAsEnum = ChartSaveAsEnum;
@@ -174,6 +184,10 @@ export class ChartSaveAsDialogComponent implements OnInit {
         })
       )
       .toPromise();
+
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
   }
 
   titleValidator(group: AbstractControl): ValidationErrors | null {
@@ -363,18 +377,19 @@ export class ChartSaveAsDialogComponent implements OnInit {
       tileY: common.REPORT_DEFAULT_TILE_Y // recalculated on backend
     };
 
-    let payloadModifyDashboard: apiToBackend.ToBackendModifyDashboardRequestPayload = {
-      projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
-      branchId: this.nav.branchId,
-      envId: this.nav.envId,
-      toDashboardId: this.selectedDashboardId,
-      fromDashboardId: this.selectedDashboardId,
-      selectedReportTitle: this.selectedReportTitle,
-      newReport: newReport,
-      isReplaceReport:
-        this.reportSaveAs === ReportSaveAsEnum.REPLACE_EXISTING_REPORT
-    };
+    let payloadModifyDashboard: apiToBackend.ToBackendModifyDashboardRequestPayload =
+      {
+        projectId: this.nav.projectId,
+        isRepoProd: this.nav.isRepoProd,
+        branchId: this.nav.branchId,
+        envId: this.nav.envId,
+        toDashboardId: this.selectedDashboardId,
+        fromDashboardId: this.selectedDashboardId,
+        selectedReportTitle: this.selectedReportTitle,
+        newReport: newReport,
+        isReplaceReport:
+          this.reportSaveAs === ReportSaveAsEnum.REPLACE_EXISTING_REPORT
+      };
 
     apiService
       .req({
