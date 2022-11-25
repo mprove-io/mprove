@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
@@ -19,6 +25,13 @@ export interface CreateOrgDialogItem {
   templateUrl: './create-org-dialog.component.html'
 })
 export class CreateOrgDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
+  @ViewChild('orgName') orgNameElement: ElementRef;
+
   createOrgForm: FormGroup;
 
   constructor(
@@ -33,8 +46,12 @@ export class CreateOrgDialogComponent implements OnInit {
     let orgName: string;
 
     this.createOrgForm = this.fb.group({
-      orgName: [orgName, [Validators.maxLength(255)]]
+      orgName: [orgName, [Validators.required, Validators.maxLength(255)]]
     });
+
+    setTimeout(() => {
+      this.orgNameElement.nativeElement.focus();
+    }, 0);
   }
 
   create() {

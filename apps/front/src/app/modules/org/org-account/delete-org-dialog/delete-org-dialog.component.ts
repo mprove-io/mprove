@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -20,7 +20,12 @@ export interface DeleteOrgDialogDataItem {
   selector: 'm-delete-org-dialog',
   templateUrl: './delete-org-dialog.component.html'
 })
-export class DeleteOrgDialogComponent {
+export class DeleteOrgDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   constructor(
     public ref: DialogRef<DeleteOrgDialogDataItem>,
     private router: Router,
@@ -28,6 +33,12 @@ export class DeleteOrgDialogComponent {
     private spinner: NgxSpinnerService,
     private navStore: NavStore
   ) {}
+
+  ngOnInit(): void {
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
+  }
 
   delete() {
     this.spinner.show(constants.APP_SPINNER_NAME);

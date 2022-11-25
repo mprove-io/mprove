@@ -1,4 +1,9 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
@@ -19,6 +24,11 @@ export interface CreateProjectDialogDataItem {
   templateUrl: './create-project-dialog.component.html'
 })
 export class CreateProjectDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   createProjectForm: FormGroup;
 
   projectRemoteRepoTypeEnum = common.ProjectRemoteTypeEnum;
@@ -57,9 +67,10 @@ export class CreateProjectDialogComponent implements OnInit {
       ]
     });
 
-    let payload: apiToBackend.ToBackendGenerateProjectRemoteKeyRequestPayload = {
-      orgId: this.ref.data.orgId
-    };
+    let payload: apiToBackend.ToBackendGenerateProjectRemoteKeyRequestPayload =
+      {
+        orgId: this.ref.data.orgId
+      };
 
     let apiService: ApiService = this.ref.data.apiService;
 
@@ -83,6 +94,10 @@ export class CreateProjectDialogComponent implements OnInit {
         })
       )
       .toPromise();
+
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
   }
 
   create() {
