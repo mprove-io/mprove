@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
@@ -17,6 +23,13 @@ export interface InviteMemberDialogDataItem {
   templateUrl: './invite-member-dialog.component.html'
 })
 export class InviteMemberDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
+  @ViewChild('email') emailElement: ElementRef;
+
   inviteMemberForm: FormGroup;
 
   constructor(
@@ -27,8 +40,15 @@ export class InviteMemberDialogComponent implements OnInit {
 
   ngOnInit() {
     this.inviteMemberForm = this.fb.group({
-      email: [undefined, [Validators.email, Validators.maxLength(255)]]
+      email: [
+        undefined,
+        [Validators.required, Validators.email, Validators.maxLength(255)]
+      ]
     });
+
+    setTimeout(() => {
+      this.emailElement.nativeElement.focus();
+    }, 0);
   }
 
   invite() {

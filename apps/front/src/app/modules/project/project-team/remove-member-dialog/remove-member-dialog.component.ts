@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
@@ -17,11 +17,22 @@ export interface RemoveMemberDialogDataItem {
   selector: 'm-remove-member-dialog',
   templateUrl: './remove-member-dialog.component.html'
 })
-export class RemoveMemberDialogComponent {
+export class RemoveMemberDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   constructor(
     public ref: DialogRef<RemoveMemberDialogDataItem>,
     private teamStore: TeamStore
   ) {}
+
+  ngOnInit(): void {
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
+  }
 
   remove() {
     this.ref.close();
