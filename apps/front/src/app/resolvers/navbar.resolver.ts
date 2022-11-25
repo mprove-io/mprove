@@ -13,7 +13,10 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
+import { MemberStore } from '../stores/member.store';
 import { NavState, NavStore } from '../stores/nav.store';
+import { RepoStore } from '../stores/repo.store';
+import { StructStore } from '../stores/struct.store';
 import { UserStore } from '../stores/user.store';
 
 @Injectable({ providedIn: 'root' })
@@ -28,6 +31,9 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
     private authService: AuthService,
     private userQuery: UserQuery,
     private userStore: UserStore,
+    private memberStore: MemberStore,
+    private repoStore: RepoStore,
+    private structStore: StructStore,
     private navStore: NavStore,
     private apiService: ApiService
   ) {}
@@ -99,7 +105,10 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
               envId,
               needValidate,
               user,
-              serverNowTs
+              serverNowTs,
+              userMember,
+              struct,
+              repo
             } = resp.payload;
 
             let nav: NavState = {
@@ -120,6 +129,16 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
 
             this.navStore.update(nav);
             this.userStore.update(user);
+
+            if (common.isDefined(userMember)) {
+              this.memberStore.update(resp.payload.userMember);
+            }
+            if (common.isDefined(struct)) {
+              this.structStore.update(resp.payload.struct);
+            }
+            if (common.isDefined(repo)) {
+              this.repoStore.update(resp.payload.repo);
+            }
 
             if (user.isEmailVerified === true) {
               // console.log('startWatch from NavBarResolver');

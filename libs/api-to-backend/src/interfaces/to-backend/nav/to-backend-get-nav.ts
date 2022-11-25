@@ -68,6 +68,18 @@ export class ToBackendGetNavResponsePayload {
 
   @IsInt()
   serverNowTs: number;
+
+  @ValidateNested()
+  @Type(() => common.Repo)
+  struct: common.Struct;
+
+  @ValidateNested()
+  @Type(() => common.Member)
+  userMember: common.Member;
+
+  @ValidateNested()
+  @Type(() => common.Repo)
+  repo: common.Repo;
 }
 
 export class ToBackendGetNavResponse extends common.MyResponse {
