@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
@@ -23,7 +23,12 @@ export interface DeleteFileDialogDataItem {
   selector: 'm-delete-file-dialog',
   templateUrl: './delete-file-dialog.component.html'
 })
-export class DeleteFileDialogComponent {
+export class DeleteFileDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   constructor(
     public ref: DialogRef<DeleteFileDialogDataItem>,
     private repoStore: RepoStore,
@@ -33,6 +38,12 @@ export class DeleteFileDialogComponent {
     private navStore: NavStore,
     public structStore: StructStore
   ) {}
+
+  ngOnInit(): void {
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
+  }
 
   delete() {
     this.ref.close();

@@ -1,4 +1,11 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -22,7 +29,14 @@ export interface DashboardsNewDialogDataItem {
   selector: 'm-dashboards-new-dialog',
   templateUrl: './dashboards-new-dialog.component.html'
 })
-export class DashboardsNewDialogComponent {
+export class DashboardsNewDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
+  @ViewChild('dashboardTitle') dashboardTitleElement: ElementRef;
+
   usersFolder = common.MPROVE_USERS_FOLDER;
 
   dashboard: common.DashboardX;
@@ -75,6 +89,12 @@ export class DashboardsNewDialogComponent {
     private structQuery: StructQuery,
     private cd: ChangeDetectorRef
   ) {}
+
+  ngOnInit() {
+    setTimeout(() => {
+      this.dashboardTitleElement.nativeElement.focus();
+    }, 0);
+  }
 
   create() {
     this.titleForm.markAllAsTouched();

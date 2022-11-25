@@ -527,6 +527,10 @@ export class MyRegex {
 
   // FRONT
 
+  static HAS_UPPERCASE_VALUES(): RegExp {
+    return cloneRegexp(/[A-Z]/g);
+  }
+
   static IS_NUMBER_VALUES(): RegExp {
     return cloneRegexp(
       /^(?:[-]?\d+(?:[.]\d+)?)(?:\s*,\s*[-]?\d+(?:[.]\d+)?)*$/g

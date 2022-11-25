@@ -1,10 +1,18 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
+import { ValidationService } from '~front/app/services/validation.service';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
@@ -26,6 +34,13 @@ export interface RenameFileDialogDataItem {
   templateUrl: './rename-file-dialog.component.html'
 })
 export class RenameFileDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
+  @ViewChild('fileName') fileNameElement: ElementRef;
+
   renameFileForm: FormGroup;
 
   constructor(
@@ -48,9 +63,17 @@ export class RenameFileDialogComponent implements OnInit {
     this.renameFileForm = this.fb.group({
       fileName: [
         this.ref.data.fileName,
-        [Validators.required, Validators.maxLength(255)]
+        [
+          Validators.required,
+          ValidationService.lowerCaseValidator,
+          Validators.maxLength(255)
+        ]
       ]
     });
+
+    setTimeout(() => {
+      this.fileNameElement.nativeElement.focus();
+    }, 0);
   }
 
   save() {
@@ -65,7 +88,6 @@ export class RenameFileDialogComponent implements OnInit {
     this.ref.close();
 
     let newName = this.renameFileForm.value.fileName;
-    newName = newName.toLowerCase();
 
     let payload: apiToBackend.ToBackendRenameCatalogNodeRequestPayload = {
       projectId: this.ref.data.projectId,

@@ -7,7 +7,6 @@ import {
 } from '@angular/core';
 import {
   IActionMapping,
-  KEYS,
   TreeComponent,
   TreeNode
 } from '@bugsplat/angular-tree-component';
@@ -61,9 +60,6 @@ export class FilesTreeComponent implements OnDestroy {
       // dragEnd: () => {
       //   this.cd.reattach();
       // }
-    },
-    keys: {
-      [KEYS.ENTER]: (tree, node, $event) => alert(`This is ${node.data.name}`)
     }
   };
 

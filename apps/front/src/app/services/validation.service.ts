@@ -22,6 +22,7 @@ export class ValidationService {
         'Should be Day of week indexes separated by comma'
       ],
       ['isNotNumberValues', 'Should be Numbers separated by comma'],
+      ['isNotLowerCaseValues', 'Must be lowercase'],
       ['isNotNumber', 'Is not a number'],
       ['isNotInteger', 'Must be integer'],
       ['isNotZero', 'Can not be 0'],
@@ -62,6 +63,18 @@ export class ValidationService {
       return null;
     } else {
       return { isNotDayOfWeekIndexValues: true };
+    }
+  }
+
+  static lowerCaseValidator(control: FormControl) {
+    if (common.isUndefined(control.value) || control.value === '') {
+      return null;
+    }
+
+    if (control.value.match(common.MyRegex.HAS_UPPERCASE_VALUES())) {
+      return { isNotLowerCaseValues: true };
+    } else {
+      return null;
     }
   }
 

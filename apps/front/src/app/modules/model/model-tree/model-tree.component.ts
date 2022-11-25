@@ -83,9 +83,6 @@ export class ModelTreeComponent implements AfterViewInit {
       // dragEnd: () => {
       //   this.cd.reattach();
       // }
-    },
-    keys: {
-      // [KEYS.ENTER]: (tree, node, $event) => alert(`This is ${node.data.label}`)
     }
   };
 

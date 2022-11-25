@@ -1,4 +1,9 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -30,6 +35,11 @@ export interface DashboardSaveAsDialogDataItem {
   templateUrl: './dashboard-save-as-dialog.component.html'
 })
 export class DashboardSaveAsDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   usersFolder = common.MPROVE_USERS_FOLDER;
 
   dashboardSaveAsEnum = DashboardSaveAsEnum;
@@ -161,6 +171,10 @@ export class DashboardSaveAsDialogComponent implements OnInit {
         })
       )
       .toPromise();
+
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
   }
 
   save() {
