@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
@@ -20,13 +20,24 @@ export interface DeleteConnectionDialogDataItem {
   selector: 'm-delete-connection-dialog',
   templateUrl: './delete-connection-dialog.component.html'
 })
-export class DeleteConnectionDialogComponent {
+export class DeleteConnectionDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   dataItem: DeleteConnectionDialogDataItem = this.ref.data;
 
   constructor(
     public ref: DialogRef<DeleteConnectionDialogDataItem>,
     private connectionsStore: ConnectionsStore
   ) {}
+
+  ngOnInit(): void {
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
+  }
 
   delete() {
     this.ref.close();

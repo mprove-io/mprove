@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
@@ -23,6 +23,11 @@ export interface EditConnectionDialogDataItem {
   templateUrl: './edit-connection-dialog.component.html'
 })
 export class EditConnectionDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   dataItem: EditConnectionDialogDataItem = this.ref.data;
 
   editConnectionForm: FormGroup;
@@ -185,6 +190,10 @@ export class EditConnectionDialogComponent implements OnInit {
       this.editConnectionForm.get('username').updateValueAndValidity();
       this.editConnectionForm.get('password').updateValueAndValidity();
     });
+
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
   }
 
   changeType(ev: any) {

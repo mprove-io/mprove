@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { map, take, tap } from 'rxjs/operators';
@@ -22,6 +22,11 @@ export interface AddConnectionDialogDataItem {
   templateUrl: './add-connection-dialog.component.html'
 })
 export class AddConnectionDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   addConnectionForm: FormGroup;
 
   envsList: common.EnvsItem[] = [];
@@ -188,6 +193,10 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addConnectionForm.get('username').updateValueAndValidity();
       this.addConnectionForm.get('password').updateValueAndValidity();
     });
+
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
   }
 
   openEnvSelect() {
