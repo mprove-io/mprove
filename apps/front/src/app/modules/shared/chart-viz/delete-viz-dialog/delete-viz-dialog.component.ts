@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
@@ -20,11 +20,22 @@ export interface DeleteVizDialogDataItem {
   selector: 'm-delete-viz-dialog',
   templateUrl: './delete-viz-dialog.component.html'
 })
-export class DeleteVizDialogComponent {
+export class DeleteVizDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   constructor(
     public ref: DialogRef<DeleteVizDialogDataItem>,
     private router: Router
   ) {}
+
+  ngOnInit(): void {
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
+  }
 
   delete() {
     this.ref.close();

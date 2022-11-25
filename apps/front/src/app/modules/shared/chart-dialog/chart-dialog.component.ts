@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { from, interval, of, Subscription } from 'rxjs';
@@ -37,6 +43,11 @@ export interface ChartDialogDataItem {
   templateUrl: './chart-dialog.component.html'
 })
 export class ChartDialogComponent implements OnInit, OnDestroy {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   chartDialogRunButtonSpinnerName = 'chartDialogRunButtonSpinnerName';
 
   isRunButtonPressed = false;
@@ -151,6 +162,10 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
   }
 
   toggleData() {

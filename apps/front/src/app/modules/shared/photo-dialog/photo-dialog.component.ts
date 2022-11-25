@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 
 export interface PhotoDialogDataItem {
@@ -10,8 +10,19 @@ export interface PhotoDialogDataItem {
   selector: 'm-photo-dialog',
   templateUrl: './photo-dialog.component.html'
 })
-export class PhotoDialogComponent {
+export class PhotoDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   dataItem = this.ref.data;
 
   constructor(public ref: DialogRef<PhotoDialogDataItem>) {}
+
+  ngOnInit(): void {
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
+  }
 }

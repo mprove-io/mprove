@@ -1,4 +1,9 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
@@ -29,6 +34,11 @@ export interface EditVizInfoDialogDataItem {
   templateUrl: './edit-viz-info-dialog.component.html'
 })
 export class EditVizInfoDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   usersFolder = common.MPROVE_USERS_FOLDER;
 
   titleForm: FormGroup = this.fb.group({
@@ -83,6 +93,10 @@ export class EditVizInfoDialogComponent implements OnInit {
       control: this.usersForm.controls['users'],
       value: this.ref.data.viz.accessUsers?.join(', ')
     });
+
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
   }
 
   save() {

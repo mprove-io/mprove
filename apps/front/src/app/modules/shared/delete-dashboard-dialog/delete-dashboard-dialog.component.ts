@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -23,12 +23,23 @@ export interface DeleteDashboardDialogDataItem {
   selector: 'm-delete-dashboard-dialog',
   templateUrl: './delete-dashboard-dialog.component.html'
 })
-export class DeleteDashboardDialogComponent {
+export class DeleteDashboardDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   constructor(
     public ref: DialogRef<DeleteDashboardDialogDataItem>,
     private spinner: NgxSpinnerService,
     private router: Router
   ) {}
+
+  ngOnInit(): void {
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
+  }
 
   delete() {
     if (this.ref.data.isStartSpinnerUntilNavEnd === true) {
