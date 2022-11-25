@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
@@ -18,6 +24,13 @@ export interface AddRoleDialogDataItem {
   templateUrl: './add-role-dialog.component.html'
 })
 export class AddRoleDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
+  @ViewChild('role') roleElement: ElementRef;
+
   addRoleForm: FormGroup;
 
   projectId: string;
@@ -32,6 +45,10 @@ export class AddRoleDialogComponent implements OnInit {
     this.addRoleForm = this.fb.group({
       role: ['', [Validators.required, Validators.maxLength(255)]]
     });
+
+    setTimeout(() => {
+      this.roleElement.nativeElement.focus();
+    }, 0);
   }
 
   add() {

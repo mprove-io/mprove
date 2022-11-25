@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
@@ -19,6 +25,13 @@ export interface EditProjectNameDialogDataItem {
   templateUrl: './edit-project-name-dialog.component.html'
 })
 export class EditProjectNameDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
+  @ViewChild('projectName') projectNameElement: ElementRef;
+
   editProjectNameForm: FormGroup;
 
   projectId: string;
@@ -34,6 +47,10 @@ export class EditProjectNameDialogComponent implements OnInit {
     this.editProjectNameForm = this.fb.group({
       projectName: [this.ref.data.projectName, [Validators.maxLength(255)]]
     });
+
+    setTimeout(() => {
+      this.projectNameElement.nativeElement.focus();
+    }, 0);
   }
 
   save() {
