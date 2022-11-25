@@ -5,6 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
+import { PanelEnum } from '~common/_index';
 
 let testId = 'backend-get-file__ok';
 
@@ -87,7 +88,8 @@ test('1', async t => {
         isRepoProd: false,
         branchId: branchId,
         envId: common.PROJECT_ENV_PROD,
-        fileNodeId: `${projectId}/readme.md`
+        fileNodeId: `${projectId}/readme.md`,
+        panel: PanelEnum.Tree
       }
     };
 
