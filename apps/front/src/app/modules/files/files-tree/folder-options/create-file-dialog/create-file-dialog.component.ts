@@ -1,9 +1,17 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
+import { ValidationService } from '~front/app/services/validation.service';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
@@ -23,6 +31,13 @@ export interface CreateFileDialogDataItem {
   templateUrl: './create-file-dialog.component.html'
 })
 export class CreateFileDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
+  @ViewChild('fileName') fileNameElement: ElementRef;
+
   createFileForm: FormGroup;
 
   constructor(
@@ -39,8 +54,19 @@ export class CreateFileDialogComponent implements OnInit {
     let fileName: string;
 
     this.createFileForm = this.fb.group({
-      fileName: [fileName, [Validators.required, Validators.maxLength(255)]]
+      fileName: [
+        fileName,
+        [
+          Validators.required,
+          ValidationService.lowerCaseValidator,
+          Validators.maxLength(255)
+        ]
+      ]
     });
+
+    setTimeout(() => {
+      this.fileNameElement.nativeElement.focus();
+    }, 0);
   }
 
   create() {
