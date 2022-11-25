@@ -1,4 +1,9 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
@@ -30,6 +35,11 @@ export interface CreateBranchDialogDataItem {
   templateUrl: './create-branch-dialog.component.html'
 })
 export class CreateBranchDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   createBranchForm: FormGroup;
 
   user: UserState;
@@ -91,6 +101,10 @@ export class CreateBranchDialogComponent implements OnInit {
       branchId: [branchId, [Validators.maxLength(255)]],
       fromBranch: [this.selectedBranchExtraId]
     });
+
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
   }
 
   prodOnClick() {

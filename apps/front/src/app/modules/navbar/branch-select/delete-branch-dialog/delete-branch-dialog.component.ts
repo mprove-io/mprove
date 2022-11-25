@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -24,7 +24,12 @@ export interface DeleteBranchDialogDataItem {
   selector: 'm-delete-branch-dialog',
   templateUrl: './delete-branch-dialog.component.html'
 })
-export class DeleteBranchDialogComponent {
+export class DeleteBranchDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   repoName =
     this.ref.data.isRepoProd === true
       ? common.PROD_REPO_ID
@@ -35,6 +40,12 @@ export class DeleteBranchDialogComponent {
     private spinner: NgxSpinnerService,
     private router: Router
   ) {}
+
+  ngOnInit(): void {
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
+  }
 
   delete() {
     this.ref.data.hideBranchSelectFn();

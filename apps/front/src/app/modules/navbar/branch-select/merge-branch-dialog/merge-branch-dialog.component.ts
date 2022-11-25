@@ -1,4 +1,9 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -30,6 +35,11 @@ export interface MergeBranchDialogDataItem {
   templateUrl: './merge-branch-dialog.component.html'
 })
 export class MergeBranchDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   mergeForm: FormGroup;
 
   branchesList: interfaces.BranchItem[] = this.ref.data.branchesList.filter(
@@ -63,6 +73,10 @@ export class MergeBranchDialogComponent implements OnInit {
     this.branchesList = this.branchesList.filter(
       x => x.extraName !== this.ref.data.currentBranchExtraName
     );
+
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
   }
 
   merge() {
