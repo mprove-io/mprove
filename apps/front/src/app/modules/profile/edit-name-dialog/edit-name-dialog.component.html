@@ -1,7 +1,7 @@
 <div class="flex flex-col bg-white p-9">
   <div
     data-cy="editNameDialogTitle"
-    class="mt-5 flex-grow text-left text-2xl font-semibold text-gray2"
+    class="text-gray2 mt-5 flex-grow text-left text-2xl font-semibold"
     >Edit Name</div
   >
 
@@ -13,7 +13,7 @@
     <input
       spellcheck="false"
       data-cy="editNameDialogFirstNameInput"
-      class="form-input mt-9 rounded border-gray3 focus:border-blue3"
+      class="form-input border-gray3 focus:border-blue3 mt-9 rounded"
       [ngClass]="{
         'border-red-600':
           editNameForm.controls['firstName'].invalid &&
@@ -27,7 +27,7 @@
     <input
       spellcheck="false"
       data-cy="editNameDialogLastNameInput"
-      class="form-input mt-1 rounded border-gray3 focus:border-blue3"
+      class="form-input border-gray3 focus:border-blue3 mt-1 rounded"
       [ngClass]="{
         'border-red-600':
           editNameForm.controls['lastName'].invalid &&
@@ -41,14 +41,14 @@
     <div class="mt-6">
       <button
         data-cy="editNameDialogSaveButton"
-        class="w-28 rounded bg-blue3 py-3 text-base font-medium text-white focus:outline-none"
+        class="bg-blue3 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
         type="submit"
         >Save</button
       >
 
       <button
         data-cy="editNameDialogCancelButton"
-        class="ml-3 w-28 rounded border border-blue3 py-3 text-base font-medium text-blue3 focus:outline-none"
+        class="border-blue3 text-blue3 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
         type="button"
         (click)="cancel()"
         >Cancel</button

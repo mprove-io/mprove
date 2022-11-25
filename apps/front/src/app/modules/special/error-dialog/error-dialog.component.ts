@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { common } from '~front/barrels/common';
@@ -10,6 +10,11 @@ import { interfaces } from '~front/barrels/interfaces';
   templateUrl: './error-dialog.component.html'
 })
 export class ErrorDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   originalErrorMessage: string;
   message: string;
   description: string;
@@ -49,6 +54,10 @@ export class ErrorDialogComponent implements OnInit {
 
     this.path = this.ref.data?.reqBody?.info?.name;
     this.traceId = this.ref.data?.reqBody?.info?.traceId;
+
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
   }
 
   onOk() {

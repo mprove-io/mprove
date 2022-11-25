@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { take, tap } from 'rxjs/operators';
@@ -15,7 +15,12 @@ export interface EditPhotoDialogItem {
   selector: 'm-edit-photo-dialog',
   templateUrl: './edit-photo-dialog.component.html'
 })
-export class EditPhotoDialogComponent {
+export class EditPhotoDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   imageChangedEvent: any = '';
   croppedImage: any = '';
   compressedImage: any = '';
@@ -26,6 +31,12 @@ export class EditPhotoDialogComponent {
     private navStore: NavStore,
     private imageCompressService: NgxImageCompressService
   ) {}
+
+  ngOnInit(): void {
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
+  }
 
   fileChangeEvent(event: any): void {
     this.imageChangedEvent = event;

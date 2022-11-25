@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
@@ -17,6 +17,11 @@ export interface EditNameDialogItem {
   templateUrl: './edit-name-dialog.component.html'
 })
 export class EditNameDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
   editNameForm: FormGroup;
 
   constructor(
@@ -45,6 +50,10 @@ export class EditNameDialogComponent implements OnInit {
       firstName: [firstName, [Validators.maxLength(255), Validators.required]],
       lastName: [lastName, [Validators.maxLength(255), Validators.required]]
     });
+
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
   }
 
   save() {
