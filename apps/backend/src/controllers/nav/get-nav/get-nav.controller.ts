@@ -31,7 +31,7 @@ export class GetNavController {
   async getNav(@AttachUser() user: entities.UserEntity, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetNavRequest = request.body;
 
-    let { orgId, projectId } = reqValid.payload;
+    let { orgId, projectId, getRepo } = reqValid.payload;
 
     let members = await this.membersRepository.find({
       where: {
@@ -111,6 +111,7 @@ export class GetNavController {
     let repo;
 
     if (
+      getRepo === true &&
       common.isDefined(resultOrgId) &&
       common.isDefined(resultProjectId) &&
       common.isDefined(bridge)

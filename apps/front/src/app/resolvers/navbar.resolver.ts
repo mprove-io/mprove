@@ -47,6 +47,11 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
       return of(false);
     }
 
+    let isRepoInPath =
+      routerStateSnapshot.url
+        .split('/')
+        .findIndex(el => el === common.PATH_REPO) === 5;
+
     // console.log('stopWatch from NavBarResolver');
     this.authService.stopWatch();
 
@@ -80,7 +85,8 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
 
     let payload: apiToBackend.ToBackendGetNavRequestPayload = {
       orgId: localStorage.getItem(constants.LOCAL_STORAGE_ORG_ID),
-      projectId: localStorage.getItem(constants.LOCAL_STORAGE_PROJECT_ID)
+      projectId: localStorage.getItem(constants.LOCAL_STORAGE_PROJECT_ID),
+      getRepo: isRepoInPath === false
     };
 
     return this.apiService

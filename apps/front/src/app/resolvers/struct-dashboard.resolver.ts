@@ -42,16 +42,13 @@ export class StructDashboardResolver implements Resolve<Promise<boolean>> {
         nav = x;
       });
 
-    let branchId = route.params[common.PARAMETER_BRANCH_ID];
-    let envId = route.params[common.PARAMETER_ENV_ID];
-
     let parametersDashboardId = route.params[common.PARAMETER_DASHBOARD_ID];
 
     let payload: apiToBackend.ToBackendGetDashboardRequestPayload = {
       projectId: nav.projectId,
+      isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
       envId: nav.envId,
-      isRepoProd: nav.isRepoProd,
       dashboardId: parametersDashboardId
     };
 
@@ -70,8 +67,8 @@ export class StructDashboardResolver implements Resolve<Promise<boolean>> {
               this.structStore.update(resp.payload.struct);
               this.navStore.update(state =>
                 Object.assign({}, state, <NavState>{
-                  branchId: branchId,
-                  envId: envId,
+                  branchId: nav.branchId,
+                  envId: nav.envId,
                   needValidate: resp.payload.needValidate
                 })
               );

@@ -200,12 +200,11 @@ const routes: Routes = [
                     children: [
                       {
                         path: common.PATH_ENV + `/:${common.PARAMETER_ENV_ID}`,
-                        resolve: [StructRepoResolver], // StructRepoResolver twice Ok
+                        resolve: [StructRepoResolver],
                         children: [
                           {
                             component: FilesComponent,
                             path: common.PATH_FILES,
-                            resolve: [StructRepoResolver], // StructRepoResolver twice Ok
                             children: [
                               {
                                 component: FileEditorComponent,

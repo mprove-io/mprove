@@ -17,6 +17,9 @@ export class ToBackendGetNavRequestPayload {
   @IsOptional()
   @IsString()
   projectId?: string;
+
+  @IsBoolean()
+  getRepo: boolean;
 }
 
 export class ToBackendGetNavRequest extends ToBackendRequest {

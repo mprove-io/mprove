@@ -82,7 +82,8 @@ test('1', async t => {
       },
       payload: {
         orgId: undefined,
-        projectId: undefined
+        projectId: undefined,
+        getRepo: false
       }
     };
 
