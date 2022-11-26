@@ -56,6 +56,7 @@ import { StructDashboardResolver } from './resolvers/struct-dashboard.resolver';
 import { StructDashboardsResolver } from './resolvers/struct-dashboards.resolver';
 import { StructModelResolver } from './resolvers/struct-model.resolver';
 import { StructModelsResolver } from './resolvers/struct-models.resolver';
+import { StructRepoFilesResolver } from './resolvers/struct-repo-files.resolver';
 import { StructRepoResolver } from './resolvers/struct-repo.resolver';
 import { StructVizsResolver } from './resolvers/struct-vizs.resolver';
 
@@ -205,6 +206,7 @@ const routes: Routes = [
                           {
                             component: FilesComponent,
                             path: common.PATH_FILES,
+                            resolve: [StructRepoFilesResolver],
                             children: [
                               {
                                 component: FileEditorComponent,
