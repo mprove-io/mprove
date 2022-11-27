@@ -353,11 +353,11 @@ export class AppModule implements OnModuleInit {
                 type: common.ConnectionTypeEnum.ClickHouse,
                 host: 'dwh-clickhouse',
                 port: 8123,
-                database: 'c_db',
                 username: 'c_user',
                 password: this.cs.get<
                   interfaces.Config['firstProjectDwhClickhousePassword']
                 >('firstProjectDwhClickhousePassword'),
+                database: undefined,
                 account: undefined,
                 warehouse: undefined,
                 bigqueryCredentials: undefined,
