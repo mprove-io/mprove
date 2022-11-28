@@ -10,62 +10,7 @@
     "url": "https://github.com/mprove-io/mprove.git"
   },
   "bin": "./main.js",
-  "scripts": {
-    "postinstall": "ngcc --properties es2015 browser module main && yarn pjd && yarn pjc",
-    "mcli": "yarn node -r ts-node/register apps/mcli/src/main.ts",
-    "typeorm": "node -r ts-node/register -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "mig:drop": "npm run typeorm schema:drop -- -d apps/backend/src/typeorm-datasource.ts",
-    "mig:run": "npm run typeorm migration:run -- -d apps/backend/src/typeorm-datasource.ts",
-    "mig:gen": "npm run typeorm migration:generate apps/backend/src/migrations/All -- -d apps/backend/src/typeorm-datasource.ts",
-    "mig": "npm run mig:drop && npm run mig:run && npm run mig:gen && npm run mig:run",
-    "fm": "prettier \"**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js",
-    "circular": "madge --circular apps libs",
-    "lint": "eslint \"**/*.ts\"",
-    "pjd": "ts-node ./tools/utils/prepare-package-json-for-docker",
-    "pjc": "ts-node ./tools/utils/prepare-package-json-for-cli",
-    "pjc-to-dist": "shx cp package.cli.json dist/apps/mcli/package.json && shx cp yarn.lock dist/apps/mcli/yarn.lock",
-    "publish-cli": "cd dist/apps/mcli && yarn publish",
-    "compose-build": "yarn pj && docker-compose build",
-    "nx": "nx",
-    "build:mcli": "nx build mcli && yarn pjc-to-dist && (shx echo '#!/usr/bin/env node' && shx cat dist/apps/mcli/main.js) > tempfile && shx mv tempfile dist/apps/mcli/main.js",
-    "build:prod": "nx run-many --target=build -c production --all",
-    "build:backend:prod": "nx build backend -c production",
-    "build:blockml:prod": "nx build blockml -c production",
-    "build:disk:prod": "nx build disk -c production",
-    "build:front:prod": "nx build front -c production",
-    "serve:disk": "nx serve disk",
-    "serve:disk:9230": "nx serve disk --port 9230",
-    "serve:backend": "nx serve backend",
-    "serve:backend:9231": "nx serve backend --port 9231",
-    "serve:backend:scheduler": "LISTEN_PORT=3032 BACKEND_IS_SCHEDULER=TRUE nx serve backend",
-    "serve:backend:scheduler:9232": "LISTEN_PORT=3032 BACKEND_IS_SCHEDULER=TRUE nx serve backend --port 9232",
-    "serve:blockml": "nx serve blockml",
-    "serve:blockml:single:9233": "BLOCKML_IS_SINGLE=TRUE nx serve blockml --port 9233",
-    "serve:blockml:main:9234": "LISTEN_PORT=3034 BLOCKML_IS_SINGLE=FALSE BLOCKML_IS_MAIN=TRUE nx serve blockml --port 9234",
-    "serve:blockml:worker:9235": "LISTEN_PORT=3035 BLOCKML_IS_SINGLE=FALSE BLOCKML_IS_WORKER=TRUE nx serve blockml --port 9235",
-    "serve:blockml:main-worker:9236": "LISTEN_PORT=3036 BLOCKML_IS_SINGLE=FALSE BLOCKML_IS_MAIN=TRUE BLOCKML_IS_WORKER=TRUE nx serve blockml --port 9236",
-    "serve:front:dev": "nx serve front -c development",
-    "serve:front:dev:host": "nx serve front -c development --host 0.0.0.0 --disable-host-check",
-    "test": "nx run-many --target=test --all",
-    "test:disk": "nx test disk --verbose",
-    "test:blockml": "nx test blockml --verbose",
-    "e2e": "nx run-many --target=e2e --all",
-    "e2e:backend": "nx e2e backend",
-    "e2e:integra": "nx e2e integra",
-    "make:dist": "mkdir -p dist/apps/disk dist/apps/backend dist/apps/blockml dist/apps/front",
-    "clean": "yarn clean:db && yarn clean:org && yarn clean:dist && yarn clean:pg && yarn clean:ch && yarn clean:blockml-logs",
-    "clean:db": "rm -rf ~/mprove_data/mysql/*",
-    "clean:org": "rm -rf ~/mprove_data/organizations/*",
-    "clean:dist": "yarn make:dist && rm -rf dist/apps/disk/* dist/apps/backend/* dist/apps/blockml/* dist/apps/front/* dist/tests/*",
-    "clean:pg": "rm -rf ~/mprove_data/dwh-postgres/*",
-    "clean:ch": "rm -rf ~/mprove_data/dwh-clickhouse/* ~/mprove_data/dwh-clickhouse-logs/*",
-    "clean:blockml-logs": "rm -rf ~/mprove_data/blockml-logs/*",
-    "clean:cypress": "rm -rf ~/.cache/Cypress/*",
-    "clean:node_modules": "rm -rf ./node_modules/*",
-    "clean:nx-cache": "rm -rf ./node_modules/.cache/nx",
-    "clean:angular-cache": "rm -rf .angular/*",
-    "x11": "docker-compose up -d --force-recreate x11-bridge"
-  },
+  "scripts": {},
   "dependencies": {
     "@angular/animations": "13.3.11",
     "@angular/cdk": "13.3.9",
@@ -228,26 +173,6 @@
     "ts-node": "~9.1.1",
     "tsconfig-paths": "^3.9.0",
     "webpack": "^5.74.0"
-  },
-  "madge": {
-    "fileExtensions": [
-      "ts",
-      "tsx"
-    ],
-    "tsConfig": "./tsconfig.json"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "linters": {
-      "./**/*.{ts,js,json,scss,html,md}": [
-        "prettier --write --config .prettierrc.js",
-        "git add"
-      ]
-    }
   },
   "_moduleAliases": {
     "~backend": "dist/tests/backend/apps/backend/src",

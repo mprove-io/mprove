@@ -3,7 +3,7 @@ import { exit } from 'process';
 let deepEqual = require('deep-equal');
 
 let sourcePath = './package.json';
-let targetPath = './package.docker.json';
+let targetPath = './package.cli.json';
 
 if (!fse.pathExistsSync(sourcePath)) {
   console.log(`source file "${sourcePath}" is not exist!`);
@@ -23,7 +23,7 @@ if (!fse.pathExistsSync(targetPath)) {
 function updateTarget(tPath: string, s: any, t: any) {
   let allowedTop = [
     'name',
-    // 'version',
+    'version',
     'author',
     'license',
     'private',
@@ -33,7 +33,7 @@ function updateTarget(tPath: string, s: any, t: any) {
     'scripts',
     'dependencies',
     'devDependencies',
-    // '_moduleAliases',
+    '_moduleAliases',
     'resolutions'
   ];
 
@@ -41,13 +41,13 @@ function updateTarget(tPath: string, s: any, t: any) {
     .filter(key => !allowedTop.includes(key))
     .forEach(key => delete s[key]);
 
-  let allowedScripts = ['postinstall'];
+  let allowedScripts: string[] = [];
 
   Object.keys(s.scripts)
     .filter(key => !allowedScripts.includes(key))
     .forEach(key => delete s.scripts[key]);
 
-  s.scripts.postinstall = 'ngcc --properties es2015 browser module main';
+  // s.scripts.postinstall = 'ngcc --properties es2015 browser module main';
 
   if (t === null || !deepEqual(s, t)) {
     fse.writeFileSync(tPath, JSON.stringify(s, null, 2));

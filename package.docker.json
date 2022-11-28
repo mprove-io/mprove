@@ -1,5 +1,14 @@
 {
+  "name": "mprove",
+  "author": "Alexander Kalitenya <akalitenya@mprove.io>",
   "license": "Apache-2.0",
+  "private": false,
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mprove-io/mprove.git"
+  },
+  "bin": "./main.js",
   "scripts": {
     "postinstall": "ngcc --properties es2015 browser module main"
   },
@@ -158,6 +167,7 @@
     "prettier": "2.7.1",
     "prettier-plugin-organize-imports": "^1.1.1",
     "prettier-plugin-tailwindcss": "^0.1.7",
+    "shx": "^0.3.4",
     "tailwindcss": "^3.0.22",
     "tailwindcss-named-groups": "^0.0.5",
     "ts-loader": "^6.2.1",
