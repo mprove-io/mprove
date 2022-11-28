@@ -1,15 +1,18 @@
 {
   "name": "mprove",
+  "version": "0.0.16",
   "author": "Alexander Kalitenya <akalitenya@mprove.io>",
   "license": "Apache-2.0",
-  "private": true,
+  "private": false,
   "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/mprove-io/mprove.git"
   },
+  "bin": "./main.js",
   "scripts": {
     "postinstall": "ngcc --properties es2015 browser module main && yarn pj",
+    "mcli": "yarn node -r ts-node/register apps/mcli/src/main.ts",
     "typeorm": "node -r ts-node/register -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "mig:drop": "npm run typeorm schema:drop -- -d apps/backend/src/typeorm-datasource.ts",
     "mig:run": "npm run typeorm migration:run -- -d apps/backend/src/typeorm-datasource.ts",
@@ -98,6 +101,7 @@
     "class-transformer": "0.3.1",
     "class-transformer-validator": "0.9.1",
     "class-validator": "0.12.2",
+    "clipanion": "^3.2.0-rc.14",
     "clone-regexp": "^2.2.0",
     "d3-format": "^1.4.5",
     "d3-shape": "^3.0.1",
@@ -244,6 +248,7 @@
     "~backend": "dist/tests/backend/apps/backend/src",
     "~blockml": "dist/tests/blockml/apps/blockml/src",
     "~disk": "dist/tests/disk/apps/disk/src",
+    "~mcli": "dist/tests/mcli/apps/disk/src",
     "@mprove/api-to-backend": "dist/tests/api-to-backend/libs/api-to-backend/src/_index",
     "@mprove/api-to-blockml": "dist/tests/api-to-blockml/libs/api-to-blockml/src/_index",
     "@mprove/api-to-disk": "dist/tests/api-to-disk/libs/api-to-disk/src/_index",

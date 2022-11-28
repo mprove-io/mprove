@@ -42,6 +42,7 @@
     "class-transformer": "0.3.1",
     "class-transformer-validator": "0.9.1",
     "class-validator": "0.12.2",
+    "clipanion": "^3.2.0-rc.14",
     "clone-regexp": "^2.2.0",
     "d3-format": "^1.4.5",
     "d3-shape": "^3.0.1",

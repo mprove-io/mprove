@@ -1,0 +1,74 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "prefix": "mcli",
+  "sourceRoot": "apps/mcli/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/node:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/mcli",
+        "main": "apps/mcli/src/main.ts",
+        "tsConfig": "apps/mcli/tsconfig.app.json",
+        "assets": ["apps/mcli/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/mcli/**/*.ts"]
+      }
+    },
+    "build-tests": {
+      "dependsOn": [
+        {
+          "target": "build-tests",
+          "projects": "dependencies"
+        }
+      ],
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "rimraf \"./dist/tests/mcli\"",
+          "tsc --project apps/mcli/tsconfig.test.json"
+        ],
+        "parallel": false,
+        "outputPath": "dist/tests/mcli"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "nx build-tests mcli --with-deps",
+          "ava --config=ava-js.config.js dist/tests/mcli/apps/mcli/**/*.spec.js"
+        ],
+        "parallel": false
+      }
+    },
+    "fm": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "prettier \"apps/mcli/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js"
+        ],
+        "parallel": false
+      }
+    },
+    "circular": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["madge --circular apps/mcli"],
+        "parallel": false
+      }
+    }
+  }
+}

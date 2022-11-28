@@ -10,6 +10,7 @@
     "disk": "apps/disk",
     "blockml": "apps/blockml",
     "backend": "apps/backend",
+    "mcli": "apps/mcli",
     "front": "apps/front",
     "integra": "apps/integra"
   }

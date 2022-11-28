@@ -26,6 +26,7 @@
       "~backend/*": ["apps/backend/src/*"],
       "~blockml/*": ["apps/blockml/src/*"],
       "~disk/*": ["apps/disk/src/*"],
+      "~mcli/*": ["apps/mcli/src/*"],
       "~front/*": ["apps/front/src/*"],
       "~integra/*": ["apps/integra/src/*"],
       //
