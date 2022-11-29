@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Ava run spec file - backend / blockml / disk",
+      "label": "Ava run spec file - backend / blockml / disk / mcli",
       "command": "./node_modules/.bin/ava",
       "args": ["${relativeFile}"],
       "options": {

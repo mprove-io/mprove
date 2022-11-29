@@ -33,7 +33,6 @@ function updateTarget(tPath: string, s: any, t: any) {
     'scripts',
     'dependencies',
     'devDependencies',
-    '_moduleAliases',
     'resolutions'
   ];
 

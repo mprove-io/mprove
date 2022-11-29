@@ -1,6 +1,6 @@
 {
   "name": "mprove",
-  "version": "0.0.25",
+  "version": "0.0.29",
   "author": "Alexander Kalitenya <akalitenya@mprove.io>",
   "license": "Apache-2.0",
   "private": false,
@@ -84,6 +84,7 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "pg-promise": "^10.9.5",
+    "read-pkg-up": "7.0.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.0.0",
@@ -173,22 +174,6 @@
     "ts-node": "~9.1.1",
     "tsconfig-paths": "^3.9.0",
     "webpack": "^5.74.0"
-  },
-  "_moduleAliases": {
-    "~backend": "dist/tests/backend/apps/backend/src",
-    "~blockml": "dist/tests/blockml/apps/blockml/src",
-    "~disk": "dist/tests/disk/apps/disk/src",
-    "~mcli": "dist/tests/mcli/apps/disk/src",
-    "@mprove/api-to-backend": "dist/tests/api-to-backend/libs/api-to-backend/src/_index",
-    "@mprove/api-to-blockml": "dist/tests/api-to-blockml/libs/api-to-blockml/src/_index",
-    "@mprove/api-to-disk": "dist/tests/api-to-disk/libs/api-to-disk/src/_index",
-    "@mprove/common": "dist/tests/common/libs/common/src/_index",
-    "@mprove/node-common": "dist/tests/node-common/libs/node-common/src/_index",
-    "~api-to-backend": "dist/tests/api-to-backend/libs/api-to-backend/src",
-    "~api-to-blockml": "dist/tests/api-to-blockml/libs/api-to-blockml/src",
-    "~api-to-disk": "dist/tests/api-to-disk/libs/api-to-disk/src",
-    "~common": "dist/tests/common/libs/common/src",
-    "~node-common": "dist/tests/node-common/libs/node-common/src"
   },
   "resolutions": {
     "prettier": "2.7.1",
