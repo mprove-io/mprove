@@ -25,3 +25,7 @@ dockerfile: tools/docker/front.Dockerfile
 image: integra
 dockerfile: tools/docker/integra.Dockerfile
 
+---
+image: mcli
+dockerfile: tools/docker/mcli.Dockerfile
+

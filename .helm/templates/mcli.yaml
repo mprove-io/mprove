@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mcli
+  name: mcli
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mcli
+  strategy:
+    type: Recreate      
+  template:
+    metadata:
+      labels:
+        app: mcli
+      # annotations:
+      #   sidecar.istio.io/proxyCPU: "100m"      
+    spec:
+      imagePullSecrets:
+      - name: registrysecret
+      containers:
+      - name: mcli
+        # resources:
+        #   requests:
+        #     cpu: "100m"
+        image: {{ .Values.werf.image.mcli }}
+
