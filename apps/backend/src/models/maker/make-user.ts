@@ -6,6 +6,7 @@ export function makeUser(item: {
   email: string;
   hash?: string;
   salt?: string;
+  jwt_min_iat?: string;
   alias: string;
   isEmailVerified: common.BoolEnum;
   emailVerificationToken?: string;
@@ -21,6 +22,7 @@ export function makeUser(item: {
     email_verification_token: item.emailVerificationToken || common.makeId(),
     hash: item.hash,
     salt: item.salt,
+    jwt_min_iat: item.jwt_min_iat,
     alias: item.alias,
     first_name: null,
     last_name: null,

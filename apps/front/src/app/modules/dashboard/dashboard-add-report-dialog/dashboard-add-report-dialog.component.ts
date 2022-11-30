@@ -14,7 +14,7 @@ import { NavState } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface DashboardAddReportDialogDataItem {
+export interface DashboardAddReportDialogData {
   apiService: ApiService;
   dashboard: common.Dashboard;
 }
@@ -34,7 +34,7 @@ export class DashboardAddReportDialogComponent implements OnInit {
   models: common.Model[];
 
   constructor(
-    public ref: DialogRef<DashboardAddReportDialogDataItem>,
+    public ref: DialogRef<DashboardAddReportDialogData>,
     private navQuery: NavQuery,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,

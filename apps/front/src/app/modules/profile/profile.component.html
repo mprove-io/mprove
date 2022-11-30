@@ -1,7 +1,7 @@
-<div class="flex h-full cursor-default flex-col bg-blue1">
+<div class="bg-blue1 flex h-full cursor-default flex-col">
   <div class="mx-6 mb-6 mt-8 flex h-2 flex-grow flex-col">
     <div class="flex h-11 items-center">
-      <div data-cy="profileTitle" class="text-2xl font-semibold text-gray1">{{
+      <div data-cy="profileTitle" class="text-gray1 text-2xl font-semibold">{{
         pageTitle
       }}</div>
     </div>
@@ -31,7 +31,7 @@
           <div class="ml-2 flex flex-col">
             <div class="flex h-24 items-center"></div>
             <div class="flex h-16 items-center"></div>
-            <div class="flex h-16 items-center text-gray1">
+            <div class="text-gray1 flex h-16 items-center">
               <!-- <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-6 w-6"
@@ -96,7 +96,28 @@
               class="flex h-16 items-center text-base"
               >{{ userQuery.alias$ | async }}</div
             >
+
             <div class="mt-3 flex items-center">
+              <div
+                tippy="User is restricted. Sign Up at https://mprove.io to get full access."
+                [isEnabled]="alias === restrictedUserAlias"
+              >
+                <button
+                  data-cy="profileShowApiKeyButton"
+                  class="rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
+                  [ngClass]="{
+                    'cursor-default text-gray-400':
+                      alias === restrictedUserAlias,
+                    'border-gray3 text-gray1': alias !== restrictedUserAlias
+                  }"
+                  (click)="showApiKey()"
+                  [disabled]="alias === restrictedUserAlias"
+                  >Show API Key
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-7 flex items-center">
               <div
                 tippy="User is restricted. Sign Up at https://mprove.io to get full access."
                 [isEnabled]="alias === restrictedUserAlias"
@@ -111,7 +132,7 @@
                   }"
                   (click)="changePassword()"
                   [disabled]="alias === restrictedUserAlias"
-                  >Change Password
+                  >Change Password and API Key
                 </button>
               </div>
             </div>

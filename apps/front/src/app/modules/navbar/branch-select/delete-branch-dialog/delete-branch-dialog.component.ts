@@ -8,7 +8,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-export interface DeleteBranchDialogDataItem {
+export interface DeleteBranchDialogData {
   apiService: ApiService;
   orgId: string;
   projectId: string;
@@ -36,7 +36,7 @@ export class DeleteBranchDialogComponent implements OnInit {
       : this.ref.data.alias;
 
   constructor(
-    public ref: DialogRef<DeleteBranchDialogDataItem>,
+    public ref: DialogRef<DeleteBranchDialogData>,
     private spinner: NgxSpinnerService,
     private router: Router
   ) {}

@@ -18,7 +18,7 @@ import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface CreateFileDialogDataItem {
+export interface CreateFileDialogData {
   apiService: ApiService;
   projectId: string;
   branchId: string;
@@ -41,7 +41,7 @@ export class CreateFileDialogComponent implements OnInit {
   createFileForm: FormGroup;
 
   constructor(
-    public ref: DialogRef<CreateFileDialogDataItem>,
+    public ref: DialogRef<CreateFileDialogData>,
     private fb: FormBuilder,
     private repoStore: RepoStore,
     public structStore: StructStore,

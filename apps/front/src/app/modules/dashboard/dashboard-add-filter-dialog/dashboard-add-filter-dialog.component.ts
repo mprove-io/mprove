@@ -22,7 +22,7 @@ import { NavState } from '~front/app/stores/nav.store';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-export interface DashboardAddFilterDialogDataItem {
+export interface DashboardAddFilterDialogData {
   dashboardService: DashboardService;
   dashboard: common.DashboardX;
 }
@@ -56,7 +56,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   dashboard: common.DashboardX;
 
   constructor(
-    public ref: DialogRef<DashboardAddFilterDialogDataItem>,
+    public ref: DialogRef<DashboardAddFilterDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
     private navQuery: NavQuery,

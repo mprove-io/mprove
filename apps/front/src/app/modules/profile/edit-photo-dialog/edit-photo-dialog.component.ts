@@ -7,7 +7,7 @@ import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface EditPhotoDialogItem {
+export interface EditPhotoDialogData {
   apiService: ApiService;
 }
 
@@ -27,7 +27,7 @@ export class EditPhotoDialogComponent implements OnInit {
   showCropper = false;
 
   constructor(
-    public ref: DialogRef<EditPhotoDialogItem>,
+    public ref: DialogRef<EditPhotoDialogData>,
     private navStore: NavStore,
     private imageCompressService: NgxImageCompressService
   ) {}

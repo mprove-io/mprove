@@ -12,7 +12,7 @@ import {
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface AddConnectionDialogDataItem {
+export interface AddConnectionDialogData {
   apiService: ApiService;
   projectId: string;
 }
@@ -48,7 +48,7 @@ export class AddConnectionDialogComponent implements OnInit {
   typePostgreSQL = common.ConnectionTypeEnum.PostgreSQL;
 
   constructor(
-    public ref: DialogRef<AddConnectionDialogDataItem>,
+    public ref: DialogRef<AddConnectionDialogData>,
     private fb: FormBuilder,
     private connectionsStore: ConnectionsStore
   ) {}

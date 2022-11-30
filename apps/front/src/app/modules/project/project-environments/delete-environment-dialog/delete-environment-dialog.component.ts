@@ -9,7 +9,7 @@ import {
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface DeleteEnvironmentDialogDataItem {
+export interface DeleteEnvironmentDialogData {
   apiService: ApiService;
   projectId: string;
   envId: string;
@@ -27,10 +27,10 @@ export class DeleteEnvironmentDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  dataItem: DeleteEnvironmentDialogDataItem = this.ref.data;
+  dataItem: DeleteEnvironmentDialogData = this.ref.data;
 
   constructor(
-    public ref: DialogRef<DeleteEnvironmentDialogDataItem>,
+    public ref: DialogRef<DeleteEnvironmentDialogData>,
     private environmentsStore: EnvironmentsStore
   ) {}
 

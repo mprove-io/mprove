@@ -8,7 +8,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-export interface DeleteUserDialogItem {
+export interface DeleteUserDialogData {
   apiService: ApiService;
 }
 
@@ -23,7 +23,7 @@ export class DeleteUserDialogComponent implements OnInit {
   }
 
   constructor(
-    public ref: DialogRef<DeleteUserDialogItem>,
+    public ref: DialogRef<DeleteUserDialogData>,
     private spinner: NgxSpinnerService,
     private router: Router
   ) {}

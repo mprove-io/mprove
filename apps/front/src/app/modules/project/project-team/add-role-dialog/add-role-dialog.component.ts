@@ -13,7 +13,7 @@ import { TeamState, TeamStore } from '~front/app/stores/team.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface AddRoleDialogDataItem {
+export interface AddRoleDialogData {
   apiService: ApiService;
   member: common.Member;
   i: number;
@@ -36,7 +36,7 @@ export class AddRoleDialogComponent implements OnInit {
   projectId: string;
 
   constructor(
-    public ref: DialogRef<AddRoleDialogDataItem>,
+    public ref: DialogRef<AddRoleDialogData>,
     private fb: FormBuilder,
     private teamStore: TeamStore
   ) {}

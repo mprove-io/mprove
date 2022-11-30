@@ -16,7 +16,7 @@ import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface CreateFolderDialogDataItem {
+export interface CreateFolderDialogData {
   apiService: ApiService;
   projectId: string;
   branchId: string;
@@ -39,7 +39,7 @@ export class CreateFolderDialogComponent implements OnInit {
   createFolderForm: FormGroup;
 
   constructor(
-    public ref: DialogRef<CreateFolderDialogDataItem>,
+    public ref: DialogRef<CreateFolderDialogData>,
     private fb: FormBuilder,
     public structStore: StructStore,
     private repoStore: RepoStore,

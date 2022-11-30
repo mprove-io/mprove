@@ -6,7 +6,7 @@ import { EvsState, EvsStore } from '~front/app/stores/evs.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface DeleteEvDialogDataItem {
+export interface DeleteEvDialogData {
   apiService: ApiService;
   ev: common.Ev;
 }
@@ -21,10 +21,10 @@ export class DeleteEvDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  dataItem: DeleteEvDialogDataItem = this.ref.data;
+  dataItem: DeleteEvDialogData = this.ref.data;
 
   constructor(
-    public ref: DialogRef<DeleteEvDialogDataItem>,
+    public ref: DialogRef<DeleteEvDialogData>,
     private evsStore: EvsStore
   ) {}
 

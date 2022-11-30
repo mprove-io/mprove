@@ -125,6 +125,10 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  showApiKey() {
+    this.myDialogService.showApiKey();
+  }
+
   deleteUser() {
     this.myDialogService.showDeleteUser({
       apiService: this.apiService

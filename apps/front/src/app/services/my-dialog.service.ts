@@ -5,191 +5,192 @@ import { interfaces } from '~front/barrels/interfaces';
 import { EmailConfirmedDialogComponent } from '../modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
 import {
   DashboardAddFilterDialogComponent,
-  DashboardAddFilterDialogDataItem
+  DashboardAddFilterDialogData
 } from '../modules/dashboard/dashboard-add-filter-dialog/dashboard-add-filter-dialog.component';
 import {
   DashboardAddReportDialogComponent,
-  DashboardAddReportDialogDataItem
+  DashboardAddReportDialogData
 } from '../modules/dashboard/dashboard-add-report-dialog/dashboard-add-report-dialog.component';
 import {
   DashboardEditListenersDialogComponent,
-  DashboardEditListenersDialogDataItem
+  DashboardEditListenersDialogData
 } from '../modules/dashboard/dashboard-edit-listeners-dialog/dashboard-edit-listeners-dialog.component';
 import {
   DashboardSaveAsDialogComponent,
-  DashboardSaveAsDialogDataItem
+  DashboardSaveAsDialogData
 } from '../modules/dashboard/dashboard-save-as-dialog/dashboard-save-as-dialog.component';
 import {
   DashboardsNewDialogComponent,
-  DashboardsNewDialogDataItem
+  DashboardsNewDialogData
 } from '../modules/dashboards/dashboards-new-dialog/dashboards-new-dialog.component';
 import {
   CommitDialogComponent,
-  CommitDialogDialogDataItem
+  CommitDialogDialogData
 } from '../modules/files/commit-dialog/commit-dialog.component';
 import {
   DeleteFileDialogComponent,
-  DeleteFileDialogDataItem
+  DeleteFileDialogData
 } from '../modules/files/files-tree/file-options/delete-file-dialog/delete-file-dialog.component';
 import {
   RenameFileDialogComponent,
-  RenameFileDialogDataItem
+  RenameFileDialogData
 } from '../modules/files/files-tree/file-options/rename-file-dialog/rename-file-dialog.component';
 import {
   CreateFileDialogComponent,
-  CreateFileDialogDataItem
+  CreateFileDialogData
 } from '../modules/files/files-tree/folder-options/create-file-dialog/create-file-dialog.component';
 import {
   CreateFolderDialogComponent,
-  CreateFolderDialogDataItem
+  CreateFolderDialogData
 } from '../modules/files/files-tree/folder-options/create-folder-dialog/create-folder-dialog.component';
 import {
   DeleteFolderDialogComponent,
-  DeleteFolderDialogDataItem
+  DeleteFolderDialogData
 } from '../modules/files/files-tree/folder-options/delete-folder-dialog/delete-folder-dialog.component';
 import {
   RenameFolderDialogComponent,
-  RenameFolderDialogDataItem
+  RenameFolderDialogData
 } from '../modules/files/files-tree/folder-options/rename-folder-dialog/rename-folder-dialog.component';
 import {
   ChartSaveAsDialogComponent,
-  ChartSaveAsDialogDataItem
+  ChartSaveAsDialogData
 } from '../modules/model/chart-save-as-dialog/chart-save-as-dialog.component';
 import {
   ViewBlockmlDialogComponent,
-  ViewBlockmlDialogDataItem
+  ViewBlockmlDialogData
 } from '../modules/model/view-blockml-dialog/view-blockml-dialog.component';
 import {
   CreateBranchDialogComponent,
-  CreateBranchDialogDataItem
+  CreateBranchDialogData
 } from '../modules/navbar/branch-select/create-branch-dialog/create-branch-dialog.component';
 import {
   DeleteBranchDialogComponent,
-  DeleteBranchDialogDataItem
+  DeleteBranchDialogData
 } from '../modules/navbar/branch-select/delete-branch-dialog/delete-branch-dialog.component';
 import {
   MergeBranchDialogComponent,
-  MergeBranchDialogDataItem
+  MergeBranchDialogData
 } from '../modules/navbar/branch-select/merge-branch-dialog/merge-branch-dialog.component';
 import {
   CreateOrgDialogComponent,
-  CreateOrgDialogItem as CreateOrgDialogDataItem
+  CreateOrgDialogData
 } from '../modules/navbar/org-select/create-org-dialog/create-org-dialog.component';
 import {
   CreateProjectDialogComponent,
-  CreateProjectDialogDataItem
+  CreateProjectDialogData
 } from '../modules/navbar/project-select/create-project-dialog/create-project-dialog.component';
 import {
   DeleteOrgDialogComponent,
-  DeleteOrgDialogDataItem
+  DeleteOrgDialogData
 } from '../modules/org/org-account/delete-org-dialog/delete-org-dialog.component';
 import {
   EditOrgNameDialogComponent,
-  EditOrgNameDialogDataItem
+  EditOrgNameDialogData
 } from '../modules/org/org-account/edit-org-name-dialog/edit-org-name-dialog.component';
 import {
   EditOrgOwnerDialogComponent,
-  EditOrgOwnerDialogDataItem
+  EditOrgOwnerDialogData
 } from '../modules/org/org-account/edit-org-owner-dialog/edit-org-owner-dialog.component';
+import { ApiKeyDialogComponent } from '../modules/profile/api-key-dialog/api-key-dialog.component';
 import {
   DeleteUserDialogComponent,
-  DeleteUserDialogItem as DeleteUserDialogDataItem
+  DeleteUserDialogData
 } from '../modules/profile/delete-user-dialog/delete-user-dialog.component';
 import {
   EditNameDialogComponent,
-  EditNameDialogItem as EditNameDialogDataItem
+  EditNameDialogData
 } from '../modules/profile/edit-name-dialog/edit-name-dialog.component';
 import {
   EditPhotoDialogComponent,
-  EditPhotoDialogItem as EditPhotoDialogDataItem
+  EditPhotoDialogData
 } from '../modules/profile/edit-photo-dialog/edit-photo-dialog.component';
 import {
   EditTimezoneDialogComponent,
-  EditTimezoneDialogItem as EditTimezoneDialogDataItem
+  EditTimezoneDialogData
 } from '../modules/profile/edit-timezone-dialog/edit-timezone-dialog.component';
 import {
   AddConnectionDialogComponent,
-  AddConnectionDialogDataItem
+  AddConnectionDialogData
 } from '../modules/project/project-connections/add-connection-dialog/add-connection-dialog.component';
 import {
   DeleteConnectionDialogComponent,
-  DeleteConnectionDialogDataItem
+  DeleteConnectionDialogData
 } from '../modules/project/project-connections/delete-connection-dialog/delete-connection-dialog.component';
 import {
   EditConnectionDialogComponent,
-  EditConnectionDialogDataItem
+  EditConnectionDialogData
 } from '../modules/project/project-connections/edit-connection-dialog/edit-connection-dialog.component';
 import {
   AddEnvironmentDialogComponent,
-  AddEnvironmentDialogDataItem
+  AddEnvironmentDialogData
 } from '../modules/project/project-environments/add-environment-dialog/add-environment-dialog.component';
 import {
   DeleteEnvironmentDialogComponent,
-  DeleteEnvironmentDialogDataItem
+  DeleteEnvironmentDialogData
 } from '../modules/project/project-environments/delete-environment-dialog/delete-environment-dialog.component';
 import {
   AddEvDialogComponent,
-  AddEvDialogDataItem
+  AddEvDialogData
 } from '../modules/project/project-evs/add-ev-dialog/add-ev-dialog.component';
 import {
   DeleteEvDialogComponent,
-  DeleteEvDialogDataItem
+  DeleteEvDialogData
 } from '../modules/project/project-evs/delete-ev-dialog/delete-ev-dialog.component';
 import {
   EditEvDialogComponent,
-  EditEvDialogDataItem
+  EditEvDialogData
 } from '../modules/project/project-evs/edit-ev-dialog/edit-ev-dialog.component';
 import {
   DeleteProjectDialogComponent,
-  DeleteProjectDialogDataItem
+  DeleteProjectDialogData
 } from '../modules/project/project-settings/delete-project-dialog/delete-project-dialog.component';
 import {
   EditProjectNameDialogComponent,
-  EditProjectNameDialogDataItem
+  EditProjectNameDialogData
 } from '../modules/project/project-settings/edit-project-name-dialog/edit-project-name-dialog.component';
 import {
   AddEnvDialogComponent,
-  AddEnvDialogDataItem
+  AddEnvDialogData
 } from '../modules/project/project-team/add-env-dialog/add-env-dialog.component';
 import {
   AddRoleDialogComponent,
-  AddRoleDialogDataItem
+  AddRoleDialogData
 } from '../modules/project/project-team/add-role-dialog/add-role-dialog.component';
 import {
   InviteMemberDialogComponent,
-  InviteMemberDialogDataItem
+  InviteMemberDialogData
 } from '../modules/project/project-team/invite-member-dialog/invite-member-dialog.component';
 import {
   RemoveMemberDialogComponent,
-  RemoveMemberDialogDataItem
+  RemoveMemberDialogData
 } from '../modules/project/project-team/remove-member-dialog/remove-member-dialog.component';
 import {
   ChartDialogComponent,
-  ChartDialogDataItem
+  ChartDialogData
 } from '../modules/shared/chart-dialog/chart-dialog.component';
 import {
   DeleteVizDialogComponent,
-  DeleteVizDialogDataItem
+  DeleteVizDialogData
 } from '../modules/shared/chart-viz/delete-viz-dialog/delete-viz-dialog.component';
 import {
   EditVizInfoDialogComponent,
-  EditVizInfoDialogDataItem
+  EditVizInfoDialogData
 } from '../modules/shared/chart-viz/edit-viz-info-dialog/edit-viz-info-dialog.component';
 import {
   DeleteDashboardDialogComponent,
-  DeleteDashboardDialogDataItem
+  DeleteDashboardDialogData
 } from '../modules/shared/delete-dashboard-dialog/delete-dashboard-dialog.component';
 import {
   PhotoDialogComponent,
-  PhotoDialogDataItem
+  PhotoDialogData
 } from '../modules/shared/photo-dialog/photo-dialog.component';
 import { ErrorDialogComponent } from '../modules/special/error-dialog/error-dialog.component';
 import {
   NewVizDialogComponent,
-  NewVizDialogDataItem
+  NewVizDialogData
 } from '../modules/visualizations/new-viz-dialog/new-viz-dialog.component';
 
-export interface ErrorDialogDataItem {
+export interface ErrorDialogData {
   errorData: interfaces.ErrorData;
   isThrow: boolean;
 }
@@ -198,7 +199,7 @@ export interface ErrorDialogDataItem {
 export class MyDialogService {
   constructor(private dialogService: DialogService) {}
 
-  showError(item: ErrorDialogDataItem): void {
+  showError(item: ErrorDialogData): void {
     let { errorData, isThrow } = item;
 
     if (this.dialogService.dialogs.length < 2) {
@@ -222,7 +223,7 @@ export class MyDialogService {
     });
   }
 
-  showPhoto(item: PhotoDialogDataItem): void {
+  showPhoto(item: PhotoDialogData): void {
     this.dialogService.open(PhotoDialogComponent, {
       enableClose: false,
       closeButton: true,
@@ -230,7 +231,7 @@ export class MyDialogService {
     });
   }
 
-  showEditPhoto(item: EditPhotoDialogDataItem): void {
+  showEditPhoto(item: EditPhotoDialogData): void {
     this.dialogService.open(EditPhotoDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -238,7 +239,7 @@ export class MyDialogService {
     });
   }
 
-  showEditName(item: EditNameDialogDataItem): void {
+  showEditName(item: EditNameDialogData): void {
     this.dialogService.open(EditNameDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -246,7 +247,7 @@ export class MyDialogService {
     });
   }
 
-  showEditTimezone(item: EditTimezoneDialogDataItem): void {
+  showEditTimezone(item: EditTimezoneDialogData): void {
     this.dialogService.open(EditTimezoneDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -254,7 +255,14 @@ export class MyDialogService {
     });
   }
 
-  showDeleteUser(item: DeleteUserDialogDataItem): void {
+  showApiKey(): void {
+    this.dialogService.open(ApiKeyDialogComponent, {
+      enableClose: false,
+      closeButton: true
+    });
+  }
+
+  showDeleteUser(item: DeleteUserDialogData): void {
     this.dialogService.open(DeleteUserDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -262,7 +270,7 @@ export class MyDialogService {
     });
   }
 
-  showCreateOrg(item: CreateOrgDialogDataItem): void {
+  showCreateOrg(item: CreateOrgDialogData): void {
     this.dialogService.open(CreateOrgDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -270,7 +278,7 @@ export class MyDialogService {
     });
   }
 
-  showCreateProject(item: CreateProjectDialogDataItem): void {
+  showCreateProject(item: CreateProjectDialogData): void {
     this.dialogService.open(CreateProjectDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -279,7 +287,7 @@ export class MyDialogService {
     });
   }
 
-  showCreateBranch(item: CreateBranchDialogDataItem): void {
+  showCreateBranch(item: CreateBranchDialogData): void {
     this.dialogService.open(CreateBranchDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -287,7 +295,7 @@ export class MyDialogService {
     });
   }
 
-  showViewBlockml(item: ViewBlockmlDialogDataItem): void {
+  showViewBlockml(item: ViewBlockmlDialogData): void {
     this.dialogService.open(ViewBlockmlDialogComponent, {
       enableClose: false,
       closeButton: true,
@@ -296,7 +304,7 @@ export class MyDialogService {
     });
   }
 
-  showChart(item: ChartDialogDataItem): void {
+  showChart(item: ChartDialogData): void {
     this.dialogService.open(ChartDialogComponent, {
       enableClose: false,
       closeButton: true,
@@ -306,7 +314,7 @@ export class MyDialogService {
     });
   }
 
-  showChartSaveAs(item: ChartSaveAsDialogDataItem): void {
+  showChartSaveAs(item: ChartSaveAsDialogData): void {
     this.dialogService.open(ChartSaveAsDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -315,7 +323,7 @@ export class MyDialogService {
     });
   }
 
-  showDashboardSaveAs(item: DashboardSaveAsDialogDataItem): void {
+  showDashboardSaveAs(item: DashboardSaveAsDialogData): void {
     this.dialogService.open(DashboardSaveAsDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -324,7 +332,7 @@ export class MyDialogService {
     });
   }
 
-  showDashboardAddReport(item: DashboardAddReportDialogDataItem): void {
+  showDashboardAddReport(item: DashboardAddReportDialogData): void {
     this.dialogService.open(DashboardAddReportDialogComponent, {
       enableClose: false,
       closeButton: true,
@@ -333,7 +341,7 @@ export class MyDialogService {
     });
   }
 
-  showDashboardAddFilter(item: DashboardAddFilterDialogDataItem): void {
+  showDashboardAddFilter(item: DashboardAddFilterDialogData): void {
     this.dialogService.open(DashboardAddFilterDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -342,7 +350,7 @@ export class MyDialogService {
     });
   }
 
-  showDashboardEditListeners(item: DashboardEditListenersDialogDataItem): void {
+  showDashboardEditListeners(item: DashboardEditListenersDialogData): void {
     this.dialogService.open(DashboardEditListenersDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -352,7 +360,7 @@ export class MyDialogService {
     });
   }
 
-  showDashboardsNew(item: DashboardsNewDialogDataItem): void {
+  showDashboardsNew(item: DashboardsNewDialogData): void {
     this.dialogService.open(DashboardsNewDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -361,7 +369,7 @@ export class MyDialogService {
     });
   }
 
-  showEditVizInfo(item: EditVizInfoDialogDataItem): void {
+  showEditVizInfo(item: EditVizInfoDialogData): void {
     this.dialogService.open(EditVizInfoDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -370,7 +378,7 @@ export class MyDialogService {
     });
   }
 
-  showNewViz(item: NewVizDialogDataItem): void {
+  showNewViz(item: NewVizDialogData): void {
     this.dialogService.open(NewVizDialogComponent, {
       enableClose: false,
       closeButton: true,
@@ -378,7 +386,7 @@ export class MyDialogService {
     });
   }
 
-  showDeleteViz(item: DeleteVizDialogDataItem): void {
+  showDeleteViz(item: DeleteVizDialogData): void {
     this.dialogService.open(DeleteVizDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -386,7 +394,7 @@ export class MyDialogService {
     });
   }
 
-  showDeleteDashboard(item: DeleteDashboardDialogDataItem): void {
+  showDeleteDashboard(item: DeleteDashboardDialogData): void {
     this.dialogService.open(DeleteDashboardDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -394,7 +402,7 @@ export class MyDialogService {
     });
   }
 
-  showMergeBranch(item: MergeBranchDialogDataItem): void {
+  showMergeBranch(item: MergeBranchDialogData): void {
     this.dialogService.open(MergeBranchDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -402,7 +410,7 @@ export class MyDialogService {
     });
   }
 
-  showCommit(item: CommitDialogDialogDataItem): void {
+  showCommit(item: CommitDialogDialogData): void {
     this.dialogService.open(CommitDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -411,7 +419,7 @@ export class MyDialogService {
     });
   }
 
-  showDeleteBranch(item: DeleteBranchDialogDataItem): void {
+  showDeleteBranch(item: DeleteBranchDialogData): void {
     this.dialogService.open(DeleteBranchDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -420,7 +428,7 @@ export class MyDialogService {
     });
   }
 
-  showEditOrgName(item: EditOrgNameDialogDataItem): void {
+  showEditOrgName(item: EditOrgNameDialogData): void {
     this.dialogService.open(EditOrgNameDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -428,7 +436,7 @@ export class MyDialogService {
     });
   }
 
-  showEditOrgOwner(item: EditOrgOwnerDialogDataItem): void {
+  showEditOrgOwner(item: EditOrgOwnerDialogData): void {
     this.dialogService.open(EditOrgOwnerDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -437,7 +445,7 @@ export class MyDialogService {
     });
   }
 
-  showDeleteOrg(item: DeleteOrgDialogDataItem): void {
+  showDeleteOrg(item: DeleteOrgDialogData): void {
     this.dialogService.open(DeleteOrgDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -445,7 +453,7 @@ export class MyDialogService {
     });
   }
 
-  showEditProjectName(item: EditProjectNameDialogDataItem): void {
+  showEditProjectName(item: EditProjectNameDialogData): void {
     this.dialogService.open(EditProjectNameDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -453,7 +461,7 @@ export class MyDialogService {
     });
   }
 
-  showDeleteProject(item: DeleteProjectDialogDataItem): void {
+  showDeleteProject(item: DeleteProjectDialogData): void {
     this.dialogService.open(DeleteProjectDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -461,7 +469,7 @@ export class MyDialogService {
     });
   }
 
-  showInviteMember(item: InviteMemberDialogDataItem): void {
+  showInviteMember(item: InviteMemberDialogData): void {
     this.dialogService.open(InviteMemberDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -469,7 +477,7 @@ export class MyDialogService {
     });
   }
 
-  showRemoveMember(item: RemoveMemberDialogDataItem): void {
+  showRemoveMember(item: RemoveMemberDialogData): void {
     this.dialogService.open(RemoveMemberDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -477,7 +485,7 @@ export class MyDialogService {
     });
   }
 
-  showAddRole(item: AddRoleDialogDataItem): void {
+  showAddRole(item: AddRoleDialogData): void {
     this.dialogService.open(AddRoleDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -485,7 +493,7 @@ export class MyDialogService {
     });
   }
 
-  showAddEnv(item: AddEnvDialogDataItem): void {
+  showAddEnv(item: AddEnvDialogData): void {
     this.dialogService.open(AddEnvDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -493,7 +501,7 @@ export class MyDialogService {
     });
   }
 
-  showAddConnection(item: AddConnectionDialogDataItem): void {
+  showAddConnection(item: AddConnectionDialogData): void {
     this.dialogService.open(AddConnectionDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -501,7 +509,7 @@ export class MyDialogService {
     });
   }
 
-  showEditConnection(item: EditConnectionDialogDataItem): void {
+  showEditConnection(item: EditConnectionDialogData): void {
     this.dialogService.open(EditConnectionDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -509,7 +517,7 @@ export class MyDialogService {
     });
   }
 
-  showDeleteConnection(item: DeleteConnectionDialogDataItem): void {
+  showDeleteConnection(item: DeleteConnectionDialogData): void {
     this.dialogService.open(DeleteConnectionDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -517,7 +525,7 @@ export class MyDialogService {
     });
   }
 
-  showAddEnvironment(item: AddEnvironmentDialogDataItem): void {
+  showAddEnvironment(item: AddEnvironmentDialogData): void {
     this.dialogService.open(AddEnvironmentDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -525,7 +533,7 @@ export class MyDialogService {
     });
   }
 
-  showAddEv(item: AddEvDialogDataItem): void {
+  showAddEv(item: AddEvDialogData): void {
     this.dialogService.open(AddEvDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -534,7 +542,7 @@ export class MyDialogService {
     });
   }
 
-  showEditEv(item: EditEvDialogDataItem): void {
+  showEditEv(item: EditEvDialogData): void {
     this.dialogService.open(EditEvDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -543,7 +551,7 @@ export class MyDialogService {
     });
   }
 
-  showDeleteEv(item: DeleteEvDialogDataItem): void {
+  showDeleteEv(item: DeleteEvDialogData): void {
     this.dialogService.open(DeleteEvDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -552,7 +560,7 @@ export class MyDialogService {
     });
   }
 
-  showDeleteEnvironment(item: DeleteEnvironmentDialogDataItem): void {
+  showDeleteEnvironment(item: DeleteEnvironmentDialogData): void {
     this.dialogService.open(DeleteEnvironmentDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -560,7 +568,7 @@ export class MyDialogService {
     });
   }
 
-  showCreateFolder(item: CreateFolderDialogDataItem): void {
+  showCreateFolder(item: CreateFolderDialogData): void {
     this.dialogService.open(CreateFolderDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -569,7 +577,7 @@ export class MyDialogService {
     });
   }
 
-  showCreateFile(item: CreateFileDialogDataItem): void {
+  showCreateFile(item: CreateFileDialogData): void {
     this.dialogService.open(CreateFileDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -578,7 +586,7 @@ export class MyDialogService {
     });
   }
 
-  showDeleteFolder(item: DeleteFolderDialogDataItem): void {
+  showDeleteFolder(item: DeleteFolderDialogData): void {
     this.dialogService.open(DeleteFolderDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -586,7 +594,7 @@ export class MyDialogService {
     });
   }
 
-  showRenameFolder(item: RenameFolderDialogDataItem): void {
+  showRenameFolder(item: RenameFolderDialogData): void {
     this.dialogService.open(RenameFolderDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -595,7 +603,7 @@ export class MyDialogService {
     });
   }
 
-  showRenameFile(item: RenameFileDialogDataItem): void {
+  showRenameFile(item: RenameFileDialogData): void {
     this.dialogService.open(RenameFileDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -604,7 +612,7 @@ export class MyDialogService {
     });
   }
 
-  showDeleteFile(item: DeleteFileDialogDataItem): void {
+  showDeleteFile(item: DeleteFileDialogData): void {
     this.dialogService.open(DeleteFileDialogComponent, {
       enableClose: false,
       closeButton: false,

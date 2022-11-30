@@ -10,7 +10,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-export interface DeleteProjectDialogDataItem {
+export interface DeleteProjectDialogData {
   apiService: ApiService;
   projectId: string;
   projectName: string;
@@ -27,7 +27,7 @@ export class DeleteProjectDialogComponent implements OnInit {
   }
 
   constructor(
-    public ref: DialogRef<DeleteProjectDialogDataItem>,
+    public ref: DialogRef<DeleteProjectDialogData>,
     private router: Router,
     private projectStore: ProjectStore,
     private spinner: NgxSpinnerService,

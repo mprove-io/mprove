@@ -10,7 +10,7 @@ import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface DeleteFileDialogDataItem {
+export interface DeleteFileDialogData {
   apiService: ApiService;
   projectId: string;
   branchId: string;
@@ -30,7 +30,7 @@ export class DeleteFileDialogComponent implements OnInit {
   }
 
   constructor(
-    public ref: DialogRef<DeleteFileDialogDataItem>,
+    public ref: DialogRef<DeleteFileDialogData>,
     private repoStore: RepoStore,
     private navigateService: NavigateService,
     private spinner: NgxSpinnerService,

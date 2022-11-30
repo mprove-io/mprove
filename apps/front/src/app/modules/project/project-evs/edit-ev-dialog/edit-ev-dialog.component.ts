@@ -7,7 +7,7 @@ import { EvsState, EvsStore } from '~front/app/stores/evs.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface EditEvDialogDataItem {
+export interface EditEvDialogData {
   apiService: ApiService;
   ev: common.Ev;
   i: number;
@@ -23,12 +23,12 @@ export class EditEvDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  dataItem: EditEvDialogDataItem = this.ref.data;
+  dataItem: EditEvDialogData = this.ref.data;
 
   editEvForm: FormGroup;
 
   constructor(
-    public ref: DialogRef<EditEvDialogDataItem>,
+    public ref: DialogRef<EditEvDialogData>,
     private fb: FormBuilder,
     private evsStore: EvsStore
   ) {}

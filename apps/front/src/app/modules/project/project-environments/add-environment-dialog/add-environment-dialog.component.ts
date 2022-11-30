@@ -16,7 +16,7 @@ import {
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface AddEnvironmentDialogDataItem {
+export interface AddEnvironmentDialogData {
   apiService: ApiService;
   projectId: string;
 }
@@ -33,12 +33,12 @@ export class AddEnvironmentDialogComponent implements OnInit {
 
   @ViewChild('envId') envIdElement: ElementRef;
 
-  dataItem: AddEnvironmentDialogDataItem = this.ref.data;
+  dataItem: AddEnvironmentDialogData = this.ref.data;
 
   addEnvironmentForm: FormGroup;
 
   constructor(
-    public ref: DialogRef<AddEnvironmentDialogDataItem>,
+    public ref: DialogRef<AddEnvironmentDialogData>,
     private fb: FormBuilder,
     private environmentsStore: EnvironmentsStore
   ) {}

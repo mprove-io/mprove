@@ -12,7 +12,7 @@ import {
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface EditConnectionDialogDataItem {
+export interface EditConnectionDialogData {
   apiService: ApiService;
   connection: common.Connection;
   i: number;
@@ -28,7 +28,7 @@ export class EditConnectionDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  dataItem: EditConnectionDialogDataItem = this.ref.data;
+  dataItem: EditConnectionDialogData = this.ref.data;
 
   editConnectionForm: FormGroup;
 
@@ -47,7 +47,7 @@ export class EditConnectionDialogComponent implements OnInit {
   typePostgreSQL = common.ConnectionTypeEnum.PostgreSQL;
 
   constructor(
-    public ref: DialogRef<EditConnectionDialogDataItem>,
+    public ref: DialogRef<EditConnectionDialogData>,
     private fb: FormBuilder,
     private connectionsStore: ConnectionsStore
   ) {}

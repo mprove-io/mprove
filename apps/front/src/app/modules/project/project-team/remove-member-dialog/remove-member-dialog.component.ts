@@ -6,7 +6,7 @@ import { TeamState, TeamStore } from '~front/app/stores/team.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface RemoveMemberDialogDataItem {
+export interface RemoveMemberDialogData {
   apiService: ApiService;
   projectId: string;
   memberId: string;
@@ -24,7 +24,7 @@ export class RemoveMemberDialogComponent implements OnInit {
   }
 
   constructor(
-    public ref: DialogRef<RemoveMemberDialogDataItem>,
+    public ref: DialogRef<RemoveMemberDialogData>,
     private teamStore: TeamStore
   ) {}
 

@@ -20,7 +20,7 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
 
-export interface CreateBranchDialogDataItem {
+export interface CreateBranchDialogData {
   apiService: ApiService;
   orgId: string;
   projectId: string;
@@ -85,7 +85,7 @@ export class CreateBranchDialogComponent implements OnInit {
   isTargetProd = false;
 
   constructor(
-    public ref: DialogRef<CreateBranchDialogDataItem>,
+    public ref: DialogRef<CreateBranchDialogData>,
     private fb: FormBuilder,
     private router: Router,
     private userQuery: UserQuery,

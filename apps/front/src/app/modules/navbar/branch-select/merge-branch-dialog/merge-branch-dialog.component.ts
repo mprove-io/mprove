@@ -19,7 +19,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 
-export interface MergeBranchDialogDataItem {
+export interface MergeBranchDialogData {
   apiService: ApiService;
   fileService: FileService;
   projectId: string;
@@ -49,7 +49,7 @@ export class MergeBranchDialogComponent implements OnInit {
   selectedBranchItem: interfaces.BranchItem = undefined;
 
   constructor(
-    public ref: DialogRef<MergeBranchDialogDataItem>,
+    public ref: DialogRef<MergeBranchDialogData>,
     private fb: FormBuilder,
     private repoStore: RepoStore,
     private navigateService: NavigateService,

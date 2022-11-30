@@ -10,7 +10,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-export interface EditOrgOwnerDialogDataItem {
+export interface EditOrgOwnerDialogData {
   apiService: ApiService;
   orgId: string;
   ownerEmail: string;
@@ -31,7 +31,7 @@ export class EditOrgOwnerDialogComponent implements OnInit {
   orgId: string;
 
   constructor(
-    public ref: DialogRef<EditOrgOwnerDialogDataItem>,
+    public ref: DialogRef<EditOrgOwnerDialogData>,
     private fb: FormBuilder,
     private orgStore: OrgStore,
     private router: Router,

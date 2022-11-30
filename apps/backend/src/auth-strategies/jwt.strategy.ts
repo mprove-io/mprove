@@ -32,6 +32,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       });
     }
 
+    if (
+      common.isDefined(user.jwt_min_iat) &&
+      Number(user.jwt_min_iat) > payload.iat * 1000
+    ) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_NOT_AUTHORIZED
+      });
+    }
+
     return user;
   }
 }

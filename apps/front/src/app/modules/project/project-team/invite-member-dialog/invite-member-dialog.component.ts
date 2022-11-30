@@ -13,7 +13,7 @@ import { TeamState, TeamStore } from '~front/app/stores/team.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface InviteMemberDialogDataItem {
+export interface InviteMemberDialogData {
   apiService: ApiService;
   projectId: string;
 }
@@ -33,7 +33,7 @@ export class InviteMemberDialogComponent implements OnInit {
   inviteMemberForm: FormGroup;
 
   constructor(
-    public ref: DialogRef<InviteMemberDialogDataItem>,
+    public ref: DialogRef<InviteMemberDialogData>,
     private fb: FormBuilder,
     private teamStore: TeamStore
   ) {}

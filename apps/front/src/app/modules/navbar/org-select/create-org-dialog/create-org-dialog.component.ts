@@ -16,7 +16,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-export interface CreateOrgDialogItem {
+export interface CreateOrgDialogData {
   apiService: ApiService;
 }
 
@@ -35,7 +35,7 @@ export class CreateOrgDialogComponent implements OnInit {
   createOrgForm: FormGroup;
 
   constructor(
-    public ref: DialogRef<CreateOrgDialogItem>,
+    public ref: DialogRef<CreateOrgDialogData>,
     private fb: FormBuilder,
     private spinner: NgxSpinnerService,
     private navStore: NavStore,

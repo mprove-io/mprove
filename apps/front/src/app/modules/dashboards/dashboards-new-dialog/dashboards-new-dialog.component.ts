@@ -21,7 +21,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-export interface DashboardsNewDialogDataItem {
+export interface DashboardsNewDialogData {
   apiService: ApiService;
 }
 
@@ -80,7 +80,7 @@ export class DashboardsNewDialogComponent implements OnInit {
   );
 
   constructor(
-    public ref: DialogRef<DashboardsNewDialogDataItem>,
+    public ref: DialogRef<DashboardsNewDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
     private navigateService: NavigateService,

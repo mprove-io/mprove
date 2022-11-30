@@ -36,7 +36,7 @@ enum ReportSaveAsEnum {
   REPLACE_EXISTING_REPORT = 'REPLACE_EXISTING_REPORT'
 }
 
-export interface ChartSaveAsDialogDataItem {
+export interface ChartSaveAsDialogData {
   apiService: ApiService;
   mconfig: common.MconfigX;
   query: common.Query;
@@ -115,7 +115,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
   );
 
   constructor(
-    public ref: DialogRef<ChartSaveAsDialogDataItem>,
+    public ref: DialogRef<ChartSaveAsDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
     private navigateService: NavigateService,

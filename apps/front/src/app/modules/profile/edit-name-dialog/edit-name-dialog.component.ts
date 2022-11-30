@@ -8,7 +8,7 @@ import { UserStore } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface EditNameDialogItem {
+export interface EditNameDialogData {
   apiService: ApiService;
 }
 
@@ -25,7 +25,7 @@ export class EditNameDialogComponent implements OnInit {
   editNameForm: FormGroup;
 
   constructor(
-    public ref: DialogRef<EditNameDialogItem>,
+    public ref: DialogRef<EditNameDialogData>,
     private fb: FormBuilder,
     private userStore: UserStore,
     private userQuery: UserQuery

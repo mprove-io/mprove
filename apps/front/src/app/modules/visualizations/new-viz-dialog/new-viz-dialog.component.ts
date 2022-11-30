@@ -3,7 +3,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { common } from '~front/barrels/common';
 
-export interface NewVizDialogDataItem {
+export interface NewVizDialogData {
   models: common.ModelX[];
 }
 
@@ -18,7 +18,7 @@ export class NewVizDialogComponent implements OnInit {
   }
 
   constructor(
-    public ref: DialogRef<NewVizDialogDataItem>,
+    public ref: DialogRef<NewVizDialogData>,
     private navigateService: NavigateService
   ) {}
 

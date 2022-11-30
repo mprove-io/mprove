@@ -10,7 +10,7 @@ import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface DeleteFolderDialogDataItem {
+export interface DeleteFolderDialogData {
   apiService: ApiService;
   projectId: string;
   branchId: string;
@@ -30,7 +30,7 @@ export class DeleteFolderDialogComponent implements OnInit {
   }
 
   constructor(
-    public ref: DialogRef<DeleteFolderDialogDataItem>,
+    public ref: DialogRef<DeleteFolderDialogData>,
     private repoStore: RepoStore,
     private navigateService: NavigateService,
     private navStore: NavStore,

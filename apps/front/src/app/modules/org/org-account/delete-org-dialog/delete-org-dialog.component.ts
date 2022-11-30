@@ -10,7 +10,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-export interface DeleteOrgDialogDataItem {
+export interface DeleteOrgDialogData {
   apiService: ApiService;
   orgId: string;
   orgName: string;
@@ -27,7 +27,7 @@ export class DeleteOrgDialogComponent implements OnInit {
   }
 
   constructor(
-    public ref: DialogRef<DeleteOrgDialogDataItem>,
+    public ref: DialogRef<DeleteOrgDialogData>,
     private router: Router,
     private orgStore: OrgStore,
     private spinner: NgxSpinnerService,

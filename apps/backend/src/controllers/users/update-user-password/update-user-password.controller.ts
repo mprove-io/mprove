@@ -48,6 +48,7 @@ export class UpdateUserPasswordController {
     user.hash = hash;
     user.salt = salt;
     user.password_reset_expires_ts = (1).toString();
+    user.jwt_min_iat = helper.makeTs();
 
     await this.dbService.writeRecords({
       modify: true,

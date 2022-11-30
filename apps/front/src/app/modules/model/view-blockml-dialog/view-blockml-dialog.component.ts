@@ -7,7 +7,7 @@ import { StructState } from '~front/app/stores/struct.store';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-export interface ViewBlockmlDialogDataItem {
+export interface ViewBlockmlDialogData {
   mconfig: common.MconfigX;
 }
 
@@ -34,7 +34,7 @@ export class ViewBlockmlDialogComponent implements OnInit {
   reportYaml: string;
 
   constructor(
-    public ref: DialogRef<ViewBlockmlDialogDataItem>,
+    public ref: DialogRef<ViewBlockmlDialogData>,
     private structQuery: StructQuery,
     private monacoService: MonacoProviderService
   ) {}

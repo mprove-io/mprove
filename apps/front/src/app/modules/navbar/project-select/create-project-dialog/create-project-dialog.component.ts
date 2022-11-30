@@ -14,7 +14,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-export interface CreateProjectDialogDataItem {
+export interface CreateProjectDialogData {
   apiService: ApiService;
   orgId: string;
 }
@@ -43,7 +43,7 @@ export class CreateProjectDialogComponent implements OnInit {
   spinnerName = 'createProjectDialogSpinner';
 
   constructor(
-    public ref: DialogRef<CreateProjectDialogDataItem>,
+    public ref: DialogRef<CreateProjectDialogData>,
     private fb: FormBuilder,
     private router: Router,
     private cd: ChangeDetectorRef,

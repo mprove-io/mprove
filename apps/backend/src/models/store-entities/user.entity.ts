@@ -31,6 +31,9 @@ export class UserEntity {
   @Column({ type: constants.VARCHAR, nullable: true })
   salt: string;
 
+  @Column({ type: constants.BIGINT, nullable: true })
+  jwt_min_iat: string;
+
   @Column({ type: constants.USER_FIRST_NAME_VARCHAR, nullable: true })
   first_name: string;
 

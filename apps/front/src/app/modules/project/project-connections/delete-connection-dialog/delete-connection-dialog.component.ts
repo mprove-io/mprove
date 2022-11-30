@@ -9,7 +9,7 @@ import {
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface DeleteConnectionDialogDataItem {
+export interface DeleteConnectionDialogData {
   apiService: ApiService;
   projectId: string;
   envId: string;
@@ -26,10 +26,10 @@ export class DeleteConnectionDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  dataItem: DeleteConnectionDialogDataItem = this.ref.data;
+  dataItem: DeleteConnectionDialogData = this.ref.data;
 
   constructor(
-    public ref: DialogRef<DeleteConnectionDialogDataItem>,
+    public ref: DialogRef<DeleteConnectionDialogData>,
     private connectionsStore: ConnectionsStore
   ) {}
 

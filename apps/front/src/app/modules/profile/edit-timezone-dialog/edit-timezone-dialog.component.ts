@@ -12,7 +12,7 @@ import { UserStore } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface EditTimezoneDialogItem {
+export interface EditTimezoneDialogData {
   apiService: ApiService;
 }
 
@@ -38,7 +38,7 @@ export class EditTimezoneDialogComponent implements OnInit {
   );
 
   constructor(
-    public ref: DialogRef<EditTimezoneDialogItem>,
+    public ref: DialogRef<EditTimezoneDialogData>,
     private userStore: UserStore,
     private userQuery: UserQuery,
     private cd: ChangeDetectorRef

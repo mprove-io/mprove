@@ -1,7 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 
-export interface PhotoDialogDataItem {
+export interface PhotoDialogData {
   avatarBig: string;
   initials: string;
 }
@@ -18,7 +18,7 @@ export class PhotoDialogComponent implements OnInit {
 
   dataItem = this.ref.data;
 
-  constructor(public ref: DialogRef<PhotoDialogDataItem>) {}
+  constructor(public ref: DialogRef<PhotoDialogData>) {}
 
   ngOnInit(): void {
     setTimeout(() => {

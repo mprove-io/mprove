@@ -14,7 +14,7 @@ import { OrgStore } from '~front/app/stores/org.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface EditOrgNameDialogDataItem {
+export interface EditOrgNameDialogData {
   apiService: ApiService;
   orgId: string;
   orgName: string;
@@ -37,7 +37,7 @@ export class EditOrgNameDialogComponent implements OnInit {
   orgId: string;
 
   constructor(
-    public ref: DialogRef<EditOrgNameDialogDataItem>,
+    public ref: DialogRef<EditOrgNameDialogData>,
     private fb: FormBuilder,
     private orgStore: OrgStore,
     private navStore: NavStore

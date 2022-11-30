@@ -230,8 +230,11 @@ export class ApiService {
       errorData.message === enums.ErEnum.FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK
     ) {
       if (
-        [common.ErEnum.BACKEND_USER_DOES_NOT_EXIST].indexOf(infoErrorMessage) >
-        -1
+        [
+          common.ErEnum.BACKEND_UNAUTHORIZED,
+          common.ErEnum.BACKEND_NOT_AUTHORIZED,
+          common.ErEnum.BACKEND_USER_DOES_NOT_EXIST
+        ].indexOf(infoErrorMessage) > -1
       ) {
         this.authService.logout();
       }

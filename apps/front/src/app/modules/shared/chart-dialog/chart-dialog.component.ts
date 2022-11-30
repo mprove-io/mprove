@@ -25,7 +25,7 @@ import { NavState } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface ChartDialogDataItem {
+export interface ChartDialogData {
   apiService: ApiService;
   mconfig: common.MconfigX;
   query: common.Query;
@@ -78,7 +78,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   runButtonTimerSubscription: Subscription;
 
   constructor(
-    public ref: DialogRef<ChartDialogDataItem>,
+    public ref: DialogRef<ChartDialogData>,
     private cd: ChangeDetectorRef,
     private queryService: QueryService,
     private memberQuery: MemberQuery,

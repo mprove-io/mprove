@@ -16,7 +16,7 @@ import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface CommitDialogDialogDataItem {
+export interface CommitDialogDialogData {
   apiService: ApiService;
   projectId: string;
   isRepoProd: boolean;
@@ -39,7 +39,7 @@ export class CommitDialogComponent implements OnInit {
   commitForm: FormGroup;
 
   constructor(
-    public ref: DialogRef<CommitDialogDialogDataItem>,
+    public ref: DialogRef<CommitDialogDialogData>,
     private fb: FormBuilder,
     private navigateService: NavigateService,
     public repoStore: RepoStore,

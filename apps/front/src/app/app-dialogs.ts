@@ -21,6 +21,7 @@ import { CreateProjectDialogComponent } from './modules/navbar/project-select/cr
 import { DeleteOrgDialogComponent } from './modules/org/org-account/delete-org-dialog/delete-org-dialog.component';
 import { EditOrgNameDialogComponent } from './modules/org/org-account/edit-org-name-dialog/edit-org-name-dialog.component';
 import { EditOrgOwnerDialogComponent } from './modules/org/org-account/edit-org-owner-dialog/edit-org-owner-dialog.component';
+import { ApiKeyDialogComponent } from './modules/profile/api-key-dialog/api-key-dialog.component';
 import { DeleteUserDialogComponent } from './modules/profile/delete-user-dialog/delete-user-dialog.component';
 import { EditNameDialogComponent } from './modules/profile/edit-name-dialog/edit-name-dialog.component';
 import { EditPhotoDialogComponent } from './modules/profile/edit-photo-dialog/edit-photo-dialog.component';
@@ -59,6 +60,7 @@ export const appDialogs = [
   EditNameDialogComponent,
   EditTimezoneDialogComponent,
   DeleteUserDialogComponent,
+  ApiKeyDialogComponent,
   // org-account
   EditOrgNameDialogComponent,
   DeleteOrgDialogComponent,

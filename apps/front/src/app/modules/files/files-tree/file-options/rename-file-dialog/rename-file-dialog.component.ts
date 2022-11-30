@@ -20,7 +20,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-export interface RenameFileDialogDataItem {
+export interface RenameFileDialogData {
   apiService: ApiService;
   projectId: string;
   branchId: string;
@@ -44,7 +44,7 @@ export class RenameFileDialogComponent implements OnInit {
   renameFileForm: FormGroup;
 
   constructor(
-    public ref: DialogRef<RenameFileDialogDataItem>,
+    public ref: DialogRef<RenameFileDialogData>,
     private fb: FormBuilder,
     private repoStore: RepoStore,
     private navStore: NavStore,

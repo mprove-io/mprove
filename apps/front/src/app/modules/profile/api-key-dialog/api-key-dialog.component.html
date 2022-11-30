@@ -1,0 +1,14 @@
+<div class="flex flex-col bg-white p-9">
+  <div
+    data-cy="editNameDialogTitle"
+    class="text-gray2 mt-5 flex-grow text-left text-2xl font-semibold"
+    >Personal API Key</div
+  >
+
+  <div
+    *ngIf="apiKey"
+    class="mt-5 text-base text-green-700"
+    style="word-break: break-all"
+    >{{ apiKey }}</div
+  >
+</div>

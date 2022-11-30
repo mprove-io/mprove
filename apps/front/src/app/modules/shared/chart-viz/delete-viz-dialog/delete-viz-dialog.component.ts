@@ -6,7 +6,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface DeleteVizDialogDataItem {
+export interface DeleteVizDialogData {
   apiService: ApiService;
   vizDeletedFnBindThis: any;
   viz: common.Viz;
@@ -27,7 +27,7 @@ export class DeleteVizDialogComponent implements OnInit {
   }
 
   constructor(
-    public ref: DialogRef<DeleteVizDialogDataItem>,
+    public ref: DialogRef<DeleteVizDialogData>,
     private router: Router
   ) {}
 

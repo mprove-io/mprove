@@ -8,7 +8,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-export interface DeleteDashboardDialogDataItem {
+export interface DeleteDashboardDialogData {
   apiService: ApiService;
   dashboardDeletedFnBindThis: any;
   dashboard: common.Dashboard;
@@ -30,7 +30,7 @@ export class DeleteDashboardDialogComponent implements OnInit {
   }
 
   constructor(
-    public ref: DialogRef<DeleteDashboardDialogDataItem>,
+    public ref: DialogRef<DeleteDashboardDialogData>,
     private spinner: NgxSpinnerService,
     private router: Router
   ) {}

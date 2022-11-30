@@ -25,7 +25,7 @@ export class DashboardX2 extends common.DashboardX {
   reports: ReportX2[];
 }
 
-export interface DashboardEditListenersDialogDataItem {
+export interface DashboardEditListenersDialogData {
   dashboardService: DashboardService;
   apiService: ApiService;
   dashboard: common.Dashboard;
@@ -56,7 +56,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
   );
 
   constructor(
-    public ref: DialogRef<DashboardEditListenersDialogDataItem>,
+    public ref: DialogRef<DashboardEditListenersDialogData>,
     private fb: FormBuilder,
     private navQuery: NavQuery,
     private spinner: NgxSpinnerService,

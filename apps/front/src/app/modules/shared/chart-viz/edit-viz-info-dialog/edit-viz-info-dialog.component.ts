@@ -19,7 +19,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-export interface EditVizInfoDialogDataItem {
+export interface EditVizInfoDialogData {
   apiService: ApiService;
   projectId: string;
   isRepoProd: boolean;
@@ -70,7 +70,7 @@ export class EditVizInfoDialogComponent implements OnInit {
   );
 
   constructor(
-    public ref: DialogRef<EditVizInfoDialogDataItem>,
+    public ref: DialogRef<EditVizInfoDialogData>,
     private fb: FormBuilder,
     private router: Router,
     private userQuery: UserQuery,

@@ -14,7 +14,7 @@ import { ProjectStore } from '~front/app/stores/project.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface EditProjectNameDialogDataItem {
+export interface EditProjectNameDialogData {
   apiService: ApiService;
   projectId: string;
   projectName: string;
@@ -37,7 +37,7 @@ export class EditProjectNameDialogComponent implements OnInit {
   projectId: string;
 
   constructor(
-    public ref: DialogRef<EditProjectNameDialogDataItem>,
+    public ref: DialogRef<EditProjectNameDialogData>,
     private fb: FormBuilder,
     private projectStore: ProjectStore,
     private navStore: NavStore
