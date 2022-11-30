@@ -33,6 +33,7 @@ function updateTarget(tPath: string, s: any, t: any) {
     'scripts',
     'dependencies',
     'devDependencies',
+    '_moduleAliases',
     'resolutions'
   ];
 
@@ -40,13 +41,43 @@ function updateTarget(tPath: string, s: any, t: any) {
     .filter(key => !allowedTop.includes(key))
     .forEach(key => delete s[key]);
 
-  let allowedScripts: string[] = [];
+  let allowedScripts: string[] = ['ava:mcli'];
 
   Object.keys(s.scripts)
     .filter(key => !allowedScripts.includes(key))
     .forEach(key => delete s.scripts[key]);
 
   // s.scripts.postinstall = 'ngcc --properties es2015 browser module main';
+
+  let allowedDependencies: string[] = [
+    'class-transformer',
+    'class-transformer-validator',
+    'class-validator',
+    'clipanion',
+    'clone-regexp',
+    'fs-extra',
+    'js-yaml', //
+    'nanoid',
+    'nest-winston',
+    'reflect-metadata',
+    'tslib',
+    'util', //
+    'winston',
+    //
+    'module-alias',
+    '@nestjs/common',
+    'rxjs'
+  ];
+
+  Object.keys(s.dependencies)
+    .filter(key => !allowedDependencies.includes(key))
+    .forEach(key => delete s.dependencies[key]);
+
+  let allowedDevDependencies: string[] = ['ava'];
+
+  Object.keys(s.devDependencies)
+    .filter(key => !allowedDevDependencies.includes(key))
+    .forEach(key => delete s.devDependencies[key]);
 
   if (t === null || !deepEqual(s, t)) {
     fse.writeFileSync(tPath, JSON.stringify(s, null, 2));

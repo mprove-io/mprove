@@ -25,7 +25,10 @@ export async function prepareTest(item?: {
   };
 
   let cli = new Cli({
-    enableCapture: true
+    enableCapture: true,
+    binaryLabel: `Mprove`,
+    binaryName: `mprove`,
+    binaryVersion: require('../../../../package.json').version
   });
 
   if (common.isDefined(item?.command)) {

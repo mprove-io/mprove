@@ -61,3 +61,6 @@ services:
       - type: bind
         source: $COMPOSE_DIST_APPS_BLOCKML_SOURCE_PATH
         target: /usr/src/app/dist/apps/blockml        
+
+  mcli:
+    command: sh -c 'yarn ava:mcli'        

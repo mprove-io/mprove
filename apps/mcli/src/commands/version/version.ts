@@ -9,10 +9,7 @@ export class VersionCommand extends Command {
   });
 
   async execute() {
-    let readPkgUp = require('read-pkg-up');
-    let rpj = readPkgUp.sync();
-
-    this.context.stdout.write(`version is ${rpj.packageJson.version}\n`);
+    this.context.stdout.write(`version is ${this.cli.binaryVersion}\n`);
 
     return 0;
   }

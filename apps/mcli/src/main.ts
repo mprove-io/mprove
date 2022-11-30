@@ -16,4 +16,8 @@ nodeCommon.listenProcessEvents({
 
 let appCommands = [VersionCommand];
 
-Cli.from(appCommands).runExit(process.argv.slice(2), Cli.defaultContext);
+Cli.from(appCommands, {
+  binaryLabel: `Mprove`,
+  binaryName: `mprove`,
+  binaryVersion: require('../../../package.json').version
+}).runExit(process.argv.slice(2), Cli.defaultContext);
