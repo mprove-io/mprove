@@ -3,7 +3,7 @@ import { common } from '~mcli/barrels/common';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { VersionCommand } from '../version';
-let testId = 'version';
+let testId = '--version';
 
 test('1', async t => {
   let context;
@@ -13,7 +13,7 @@ test('1', async t => {
     let { cli, mockContext } = await prepareTest({ command: VersionCommand });
 
     context = mockContext as any;
-    code = await cli.run(['version'], context);
+    code = await cli.run([testId], context);
   } catch (e) {
     logToConsoleMcli({
       log: e,

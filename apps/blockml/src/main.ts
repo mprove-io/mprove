@@ -1,5 +1,4 @@
 import { NestFactory } from '@nestjs/core';
-// import 'module-alias/register';
 import { WinstonModule } from 'nest-winston';
 import { AppModule } from './app.module';
 import { common } from './barrels/common';

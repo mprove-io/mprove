@@ -1,15 +1,22 @@
 import { Command } from 'clipanion';
+import { common } from '~mcli/barrels/common';
 
 export class VersionCommand extends Command {
-  static paths = [['version']];
+  static paths = [[`-v`], [`--version`]];
 
   static usage = Command.Usage({
-    description: 'Get the current version of Mprove CLI',
-    examples: [['Get the current version of Mprove CLI', 'mprove version']]
+    description: 'Print version of Mprove CLI',
+    examples: [['Print version of Mprove CLI', 'mprove --version']]
   });
 
   async execute() {
-    this.context.stdout.write(`version is ${this.cli.binaryVersion}\n`);
+    let version = this.cli.binaryVersion;
+
+    if (common.isDefined(version)) {
+      this.context.stdout.write(`${version}\n`);
+    } else {
+      this.context.stdout.write(`unknown`);
+    }
 
     return 0;
   }
