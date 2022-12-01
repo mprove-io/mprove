@@ -4,6 +4,7 @@ import { common } from './barrels/common';
 import { nodeCommon } from './barrels/node-common';
 import { CliDefinitionsCommand } from './commands/definitions/cli-definitions';
 import { HelpCommand } from './commands/help/help';
+import { RunCommand } from './commands/run-vis/run';
 import { VersionCommand } from './commands/version/version';
 import { logToConsoleMcli } from './functions/log-to-console-mcli';
 
@@ -15,7 +16,12 @@ nodeCommon.listenProcessEvents({
   logToConsoleFn: logToConsoleMcli
 });
 
-let appCommands = [VersionCommand, HelpCommand, CliDefinitionsCommand];
+let appCommands = [
+  VersionCommand,
+  HelpCommand,
+  CliDefinitionsCommand,
+  RunCommand
+];
 
 Cli.from(appCommands, {
   binaryLabel: `Mprove`,
