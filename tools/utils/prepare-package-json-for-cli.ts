@@ -56,6 +56,7 @@ function updateTarget(tPath: string, s: any, t: any) {
     'clipanion',
     'clone-regexp',
     'fs-extra',
+    'got',
     'js-yaml', //
     'nanoid',
     'nest-winston',

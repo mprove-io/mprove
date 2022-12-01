@@ -155,6 +155,7 @@
     "tiny-async-pool": "^1.2.0",
     "toposort": "^2.0.2",
     "tslib": "^2.0.0",
+    "typanion": "^3.12.1",
     "typeorm": "0.3.10",
     "typescript": "4.6.4",
     "walk": "^2.3.9",

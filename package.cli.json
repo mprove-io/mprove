@@ -21,6 +21,7 @@
     "clipanion": "^3.2.0-rc.14",
     "clone-regexp": "^2.2.0",
     "fs-extra": "^9.0.1",
+    "got": "11.8.5",
     "js-yaml": "^4.0.0",
     "module-alias": "^2.2.2",
     "nanoid": "^3.1.22",

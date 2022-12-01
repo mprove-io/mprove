@@ -1,13 +1,14 @@
-import got from 'got';
+import got, { OptionsOfTextResponseBody } from 'got';
 import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 
 export async function mreq<T>(item: {
   pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum;
   payload: any;
+  token?: string;
   // showSpinner?: boolean;
 }): Promise<T> {
-  let { pathInfoName, payload } = item;
+  let { pathInfoName, payload, token } = item;
 
   let body: apiToBackend.ToBackendRequest = {
     info: {
@@ -21,17 +22,16 @@ export async function mreq<T>(item: {
   let host = process.env.MPROVE_CLI_HOST;
   let url = `${host}/${pathInfoName}`;
 
-  let token = process.env.MPROVE_CLI_API_KEY;
+  let options: OptionsOfTextResponseBody = {
+    json: body,
+    headers: {}
+  };
 
-  let resp = await got
-    .post(url, {
-      headers: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        authorization: `Bearer ${token}`
-      },
-      json: body
-    })
-    .json<T>();
+  if (common.isDefined(token)) {
+    options.headers.authorization = `Bearer ${token}`;
+  }
+
+  let resp = await got.post(url, options).json<T>();
 
   return resp;
 }
