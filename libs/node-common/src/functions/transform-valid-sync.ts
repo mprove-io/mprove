@@ -42,7 +42,8 @@ export function transformValidSync<T extends object>(item: {
       [
         enums.ErEnum.BACKEND_WRONG_ENV_VALUES,
         enums.ErEnum.BLOCKML_WRONG_ENV_VALUES,
-        enums.ErEnum.DISK_WRONG_ENV_VALUES
+        enums.ErEnum.DISK_WRONG_ENV_VALUES,
+        enums.ErEnum.MCLI_WRONG_ENV_VALUES
       ].indexOf(errorMessage) > -1
     ) {
       logToConsole({

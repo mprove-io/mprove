@@ -1,6 +1,8 @@
 import { Command } from 'clipanion';
 import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
+import { interfaces } from '~mcli/barrels/interfaces';
+import { getConfig } from '~mcli/config/get.config';
 import { mreq } from '~mcli/functions/mreq';
 
 export class RunDashboardsCommand extends Command {
@@ -12,25 +14,26 @@ export class RunDashboardsCommand extends Command {
   static paths = [['run', 'dashboards']];
 
   async execute() {
+    let config: interfaces.Config = getConfig();
+
     let loginUserReqPayload: apiToBackend.ToBackendLoginUserRequestPayload = {
-      email: process.env.MPROVE_CLI_LOGIN,
-      password: process.env.MPROVE_CLI_PASSWORD
+      email: config.mproveCliEmail,
+      password: config.mproveCliPassword
     };
 
     let loginUserResp = await mreq<apiToBackend.ToBackendLoginUserResponse>({
       pathInfoName:
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
-      payload: loginUserReqPayload
+      payload: loginUserReqPayload,
+      config: config
     });
 
     let getDashboardsReqPayload: apiToBackend.ToBackendGetDashboardsRequestPayload =
       {
-        projectId: process.env.MPROVE_CLI_PROJECT_ID,
-        isRepoProd: common.enumToBoolean(
-          process.env.MPROVE_CLI_IS_REPO_PROD as common.BoolEnum
-        ),
-        branchId: process.env.MPROVE_CLI_BRANCH_ID,
-        envId: process.env.MPROVE_CLI_ENV_ID
+        projectId: config.mproveCliProjectId,
+        isRepoProd: common.enumToBoolean(config.mproveCliIsRepoProd),
+        branchId: config.mproveCliBranchId,
+        envId: config.mproveCliEnvId
       };
 
     let getDashboardsResp =
@@ -38,6 +41,7 @@ export class RunDashboardsCommand extends Command {
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
         payload: getDashboardsReqPayload,
+        config: config,
         token: loginUserResp.payload.token
       });
 
@@ -59,6 +63,7 @@ export class RunDashboardsCommand extends Command {
       pathInfoName:
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
       payload: runQueriesReqPayload,
+      config: config,
       token: loginUserResp.payload.token
     });
 
