@@ -97,7 +97,7 @@
               >{{ userQuery.alias$ | async }}</div
             >
 
-            <div class="mt-3 flex items-center">
+            <!-- <div class="mt-3 flex items-center">
               <div
                 tippy="User is restricted. Sign Up at https://mprove.io to get full access."
                 [isEnabled]="alias === restrictedUserAlias"
@@ -115,9 +115,9 @@
                   >Show API Key
                 </button>
               </div>
-            </div>
+            </div> -->
 
-            <div class="mt-7 flex items-center">
+            <div class="mt-3 flex items-center">
               <div
                 tippy="User is restricted. Sign Up at https://mprove.io to get full access."
                 [isEnabled]="alias === restrictedUserAlias"
@@ -132,7 +132,7 @@
                   }"
                   (click)="changePassword()"
                   [disabled]="alias === restrictedUserAlias"
-                  >Change Password and API Key
+                  >Change Password
                 </button>
               </div>
             </div>
