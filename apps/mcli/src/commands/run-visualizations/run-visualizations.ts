@@ -1,11 +1,10 @@
 import { Command } from 'clipanion';
 import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
-import { interfaces } from '~mcli/barrels/interfaces';
-import { getConfig } from '~mcli/config/get.config';
 import { mreq } from '~mcli/functions/mreq';
+import { CustomCommand } from '~mcli/models/custom-command';
 
-export class RunVisualizationsCommand extends Command {
+export class RunVisualizationsCommand extends CustomCommand {
   static usage = Command.Usage({
     description: 'Run visualizations',
     examples: [['Run visualizations', 'mprove run visualizations']]
@@ -14,31 +13,29 @@ export class RunVisualizationsCommand extends Command {
   static paths = [['run', 'visualizations']];
 
   async execute() {
-    let config: interfaces.Config = getConfig();
-
     let loginUserReqPayload: apiToBackend.ToBackendLoginUserRequestPayload = {
-      email: config.mproveCliEmail,
-      password: config.mproveCliPassword
+      email: this.config.mproveCliEmail,
+      password: this.config.mproveCliPassword
     };
 
     let loginUserResp = await mreq<apiToBackend.ToBackendLoginUserResponse>({
       pathInfoName:
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
       payload: loginUserReqPayload,
-      config: config
+      config: this.config
     });
 
     let getVizsReqPayload: apiToBackend.ToBackendGetVizsRequestPayload = {
-      projectId: config.mproveCliProjectId,
-      isRepoProd: common.enumToBoolean(config.mproveCliIsRepoProd),
-      branchId: config.mproveCliBranchId,
-      envId: config.mproveCliEnvId
+      projectId: this.config.mproveCliProjectId,
+      isRepoProd: common.enumToBoolean(this.config.mproveCliIsRepoProd),
+      branchId: this.config.mproveCliBranchId,
+      envId: this.config.mproveCliEnvId
     };
 
     let getVizsResp = await mreq<apiToBackend.ToBackendGetVizsResponse>({
       pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs,
       payload: getVizsReqPayload,
-      config: config,
+      config: this.config,
       token: loginUserResp.payload.token
     });
 
@@ -56,7 +53,7 @@ export class RunVisualizationsCommand extends Command {
       pathInfoName:
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
       payload: runQueriesReqPayload,
-      config: config,
+      config: this.config,
       token: loginUserResp.payload.token
     });
 

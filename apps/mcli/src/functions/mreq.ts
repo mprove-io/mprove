@@ -3,7 +3,7 @@ import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { interfaces } from '~mcli/barrels/interfaces';
 
-export async function mreq<T>(item: {
+export async function mreq<T extends common.MyResponse>(item: {
   pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum;
   payload: any;
   config: interfaces.Config;
@@ -32,6 +32,13 @@ export async function mreq<T>(item: {
   }
 
   let resp = await got.post(url, options).json<T>();
+
+  if (resp.info?.status !== common.ResponseInfoStatusEnum.Ok) {
+    throw new common.ServerError({
+      message: common.ErEnum.MCLI_ERROR_RESPONSE_FROM_BACKEND,
+      originalError: resp.info?.error
+    });
+  }
 
   return resp;
 }
