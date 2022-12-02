@@ -11,7 +11,9 @@ export function logToConsoleMcli(item: {
 
   nodeCommon.logToConsole({
     log: log,
-    logIsJson: common.enumToBoolean(config.mproveCliLogIsJson),
+    logIsJson: common.isDefined(config?.mproveCliLogIsJson)
+      ? common.enumToBoolean(config.mproveCliLogIsJson)
+      : false,
     logger: undefined,
     logLevel: logLevel
   });

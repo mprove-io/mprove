@@ -5,18 +5,21 @@ import { prepareTest } from '~mcli/functions/prepare-test';
 let testId = 'unk';
 
 test('1', async t => {
+  let config;
   let context;
   let code;
 
   try {
-    let { cli, mockContext } = await prepareTest();
+    let { cli, mockContext, prepConfig } = await prepareTest();
 
+    config = prepConfig;
     context = mockContext as any;
     code = await cli.run([testId], context);
   } catch (e) {
     logToConsoleMcli({
       log: e,
-      logLevel: common.LogLevelEnum.Error
+      logLevel: common.LogLevelEnum.Error,
+      config: config
     });
   }
 

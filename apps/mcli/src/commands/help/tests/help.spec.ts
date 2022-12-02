@@ -6,18 +6,23 @@ import { HelpCommand } from '../help';
 let testId = '--help';
 
 test('1', async t => {
+  let config;
   let context;
   let code;
 
   try {
-    let { cli, mockContext } = await prepareTest({ command: HelpCommand });
+    let { cli, mockContext, prepConfig } = await prepareTest({
+      command: HelpCommand
+    });
 
+    config = prepConfig;
     context = mockContext as any;
     code = await cli.run([testId], context);
   } catch (e) {
     logToConsoleMcli({
       log: e,
-      logLevel: common.LogLevelEnum.Error
+      logLevel: common.LogLevelEnum.Error,
+      config: config
     });
   }
 

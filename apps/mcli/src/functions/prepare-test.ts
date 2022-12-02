@@ -1,9 +1,12 @@
 import { BaseContext, Cli, CommandClass } from 'clipanion';
 import { common } from '~mcli/barrels/common';
+import { getConfig } from '~mcli/config/get.config';
 
 export async function prepareTest(item?: {
   command?: CommandClass<BaseContext>;
 }) {
+  let prepConfig = getConfig();
+
   let createMockContext = () => {
     let out = '';
     let err = '';
@@ -38,6 +41,7 @@ export async function prepareTest(item?: {
   let mockContext = createMockContext();
 
   return {
+    prepConfig: prepConfig,
     mockContext: mockContext,
     cli: cli
   };
