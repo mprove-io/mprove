@@ -1,22 +1,28 @@
 import test from 'ava';
 import { common } from '~mcli/barrels/common';
+import { interfaces } from '~mcli/barrels/interfaces';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
-let testId = 'unk';
+import { RunDashboardsCommand } from '../run-dashboards';
+let testId = 'run dashboards';
 
 test('1', async t => {
-  let config;
-  let context;
-  let code;
+  let config: interfaces.Config;
+  let context: any;
+  let code: any;
 
   try {
     let { cli, mockContext, prepConfig } = await prepareTest({
-      command: undefined
+      command: RunDashboardsCommand
     });
 
     config = prepConfig;
     context = mockContext as any;
-    code = await cli.run([testId], context);
+
+    context.config = prepConfig;
+    // (context.config as interfaces.Config).mproveCliProjectId = 'abc';
+
+    code = await cli.run([...testId.split(' ')], context);
   } catch (e) {
     logToConsoleMcli({
       log: e,
@@ -25,9 +31,7 @@ test('1', async t => {
     });
   }
 
-  let isPass =
-    code === 1 &&
-    context.stdout.toString().includes(`Command not found`) === true;
+  let isPass = code === 0;
 
   if (isPass === false) {
     console.log(context.stdout.toString());

@@ -1,6 +1,9 @@
 import { Command } from 'clipanion';
+import { common } from '~mcli/barrels/common';
+import { getConfig } from '~mcli/config/get.config';
+import { CustomCommand } from '~mcli/models/custom-command';
 
-export class CliDefinitionsCommand extends Command {
+export class CliDefinitionsCommand extends CustomCommand {
   static paths = [[`cli-definitions`]];
 
   static usage = Command.Usage({
@@ -9,10 +12,12 @@ export class CliDefinitionsCommand extends Command {
   });
 
   async execute() {
+    if (common.isUndefined(this.context.config)) {
+      this.context.config = getConfig();
+    }
+
     this.context.stdout.write(
       `${JSON.stringify(this.cli.definitions(), null, 2)}\n`
     );
-
-    return 0;
   }
 }

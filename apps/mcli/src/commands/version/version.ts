@@ -1,7 +1,9 @@
 import { Command } from 'clipanion';
 import { common } from '~mcli/barrels/common';
+import { getConfig } from '~mcli/config/get.config';
+import { CustomCommand } from '~mcli/models/custom-command';
 
-export class VersionCommand extends Command {
+export class VersionCommand extends CustomCommand {
   static paths = [[`-v`], [`--version`]];
 
   static usage = Command.Usage({
@@ -10,6 +12,10 @@ export class VersionCommand extends Command {
   });
 
   async execute() {
+    if (common.isUndefined(this.context.config)) {
+      this.context.config = getConfig();
+    }
+
     let version = this.cli.binaryVersion;
 
     if (common.isDefined(version)) {
@@ -17,7 +23,5 @@ export class VersionCommand extends Command {
     } else {
       this.context.stdout.write(`unknown`);
     }
-
-    return 0;
   }
 }

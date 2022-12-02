@@ -1,6 +1,7 @@
 import { Command } from 'clipanion';
 import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
+import { getConfig } from '~mcli/config/get.config';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
@@ -13,29 +14,33 @@ export class RunVisualizationsCommand extends CustomCommand {
   static paths = [['run', 'visualizations']];
 
   async execute() {
+    if (common.isUndefined(this.context.config)) {
+      this.context.config = getConfig();
+    }
+
     let loginUserReqPayload: apiToBackend.ToBackendLoginUserRequestPayload = {
-      email: this.config.mproveCliEmail,
-      password: this.config.mproveCliPassword
+      email: this.context.config.mproveCliEmail,
+      password: this.context.config.mproveCliPassword
     };
 
     let loginUserResp = await mreq<apiToBackend.ToBackendLoginUserResponse>({
       pathInfoName:
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
       payload: loginUserReqPayload,
-      config: this.config
+      config: this.context.config
     });
 
     let getVizsReqPayload: apiToBackend.ToBackendGetVizsRequestPayload = {
-      projectId: this.config.mproveCliProjectId,
-      isRepoProd: common.enumToBoolean(this.config.mproveCliIsRepoProd),
-      branchId: this.config.mproveCliBranchId,
-      envId: this.config.mproveCliEnvId
+      projectId: this.context.config.mproveCliProjectId,
+      isRepoProd: common.enumToBoolean(this.context.config.mproveCliIsRepoProd),
+      branchId: this.context.config.mproveCliBranchId,
+      envId: this.context.config.mproveCliEnvId
     };
 
     let getVizsResp = await mreq<apiToBackend.ToBackendGetVizsResponse>({
       pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs,
       payload: getVizsReqPayload,
-      config: this.config,
+      config: this.context.config,
       token: loginUserResp.payload.token
     });
 
@@ -53,12 +58,10 @@ export class RunVisualizationsCommand extends CustomCommand {
       pathInfoName:
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
       payload: runQueriesReqPayload,
-      config: this.config,
+      config: this.context.config,
       token: loginUserResp.payload.token
     });
 
     // this.context.stdout.write(`${JSON.stringify(runQueriesResp, null, 2)}\n`);
-
-    return 0;
   }
 }

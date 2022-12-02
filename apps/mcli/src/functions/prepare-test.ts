@@ -1,9 +1,10 @@
-import { BaseContext, Cli, CommandClass } from 'clipanion';
+import { Cli, CommandClass } from 'clipanion';
 import { common } from '~mcli/barrels/common';
 import { getConfig } from '~mcli/config/get.config';
+import { CustomContext } from '~mcli/models/custom-command';
 
-export async function prepareTest(item?: {
-  command?: CommandClass<BaseContext>;
+export async function prepareTest(item: {
+  command: CommandClass<CustomContext>;
 }) {
   let prepConfig = getConfig();
 
@@ -28,13 +29,13 @@ export async function prepareTest(item?: {
   };
 
   let cli = new Cli({
-    enableCapture: true,
+    enableCapture: false,
     binaryLabel: `Mprove`,
     binaryName: `mprove`,
     binaryVersion: require('../../../../package.json').version
   });
 
-  if (common.isDefined(item?.command)) {
+  if (common.isDefined(item.command)) {
     cli.register(item.command);
   }
 

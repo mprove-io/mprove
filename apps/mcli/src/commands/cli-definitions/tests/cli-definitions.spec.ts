@@ -17,6 +17,9 @@ test('1', async t => {
 
     config = prepConfig;
     context = mockContext as any;
+
+    context.config = prepConfig;
+
     code = await cli.run([testId], context);
   } catch (e) {
     logToConsoleMcli({

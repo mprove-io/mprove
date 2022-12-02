@@ -1,22 +1,18 @@
-import { Command } from 'clipanion';
+import { BaseContext, Command } from 'clipanion';
 import { common } from '~mcli/barrels/common';
 import { interfaces } from '~mcli/barrels/interfaces';
-import { getConfig } from '~mcli/config/get.config';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 
-export class CustomCommand extends Command {
+export interface CustomContext extends BaseContext {
   config: interfaces.Config;
+}
 
-  constructor() {
-    super();
-    this.config = getConfig();
-  }
-
+export class CustomCommand extends Command<CustomContext> {
   async catch(e: any) {
     logToConsoleMcli({
       log: e,
       logLevel: common.LogLevelEnum.Error,
-      config: this.config
+      config: this.context.config
     });
 
     throw e;
