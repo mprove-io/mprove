@@ -28,9 +28,6 @@ export class ToBackendGetRepoRequest extends ToBackendRequest {
 
 export class ToBackendGetRepoResponsePayload {
   @IsBoolean()
-  isBranchExist: boolean;
-
-  @IsBoolean()
   needValidate: boolean;
 
   @ValidateNested()

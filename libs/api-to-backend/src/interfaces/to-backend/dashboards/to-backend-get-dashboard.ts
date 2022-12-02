@@ -28,9 +28,6 @@ export class ToBackendGetDashboardRequest extends ToBackendRequest {
 
 export class ToBackendGetDashboardResponsePayload {
   @IsBoolean()
-  isBranchExist: boolean;
-
-  @IsBoolean()
   needValidate: boolean;
 
   @ValidateNested()

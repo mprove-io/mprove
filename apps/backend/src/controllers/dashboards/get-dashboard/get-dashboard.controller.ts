@@ -5,7 +5,7 @@ import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesRepository } from '~backend/models/store-repositories/branches.repository';
+import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { DashboardsService } from '~backend/services/dashboards.service';
 import { EnvsService } from '~backend/services/envs.service';
@@ -17,8 +17,8 @@ import { StructsService } from '~backend/services/structs.service';
 @Controller()
 export class GetDashboardController {
   constructor(
-    private branchesRepository: BranchesRepository,
     private membersService: MembersService,
+    private branchesService: BranchesService,
     private structsService: StructsService,
     private projectsService: ProjectsService,
     private dashboardsService: DashboardsService,
@@ -45,67 +45,51 @@ export class GetDashboardController {
       memberId: user.user_id
     });
 
-    let branch = await this.branchesRepository.findOne({
-      where: {
-        project_id: projectId,
-        repo_id: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
-        branch_id: branchId
-      }
+    let branch = await this.branchesService.getBranchCheckExists({
+      projectId: projectId,
+      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
+      branchId: branchId
     });
 
-    if (common.isUndefined(branch)) {
-      let payloadBranchDoesNotExist: apiToBackend.ToBackendGetDashboardResponsePayload =
-        {
-          isBranchExist: false,
-          userMember: undefined,
-          needValidate: undefined,
-          struct: undefined,
-          dashboard: undefined
-        };
+    let env = await this.envsService.getEnvCheckExistsAndAccess({
+      projectId: projectId,
+      envId: envId,
+      member: userMember
+    });
 
-      return payloadBranchDoesNotExist;
-    } else {
-      let env = await this.envsService.getEnvCheckExistsAndAccess({
-        projectId: projectId,
-        envId: envId,
-        member: userMember
-      });
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.project_id,
+      repoId: branch.repo_id,
+      branchId: branch.branch_id,
+      envId: envId
+    });
 
-      let bridge = await this.bridgesService.getBridgeCheckExists({
-        projectId: branch.project_id,
-        repoId: branch.repo_id,
-        branchId: branch.branch_id,
-        envId: envId
-      });
+    let dashboard = await this.dashboardsService.getDashboardCheckExists({
+      structId: bridge.struct_id,
+      dashboardId: dashboardId
+    });
 
-      let dashboard = await this.dashboardsService.getDashboardCheckExists({
-        structId: bridge.struct_id,
-        dashboardId: dashboardId
-      });
+    let dashboardX = await this.dashboardsService.getDashboardXCheckAccess({
+      user: user,
+      member: userMember,
+      dashboard: dashboard,
+      bridge: bridge
+    });
 
-      let dashboardX = await this.dashboardsService.getDashboardXCheckAccess({
-        user: user,
-        member: userMember,
-        dashboard: dashboard,
-        bridge: bridge
-      });
+    let struct = await this.structsService.getStructCheckExists({
+      structId: bridge.struct_id,
+      projectId: projectId
+    });
 
-      let struct = await this.structsService.getStructCheckExists({
-        structId: bridge.struct_id,
-        projectId: projectId
-      });
+    let apiMember = wrapper.wrapToApiMember(userMember);
 
-      let apiMember = wrapper.wrapToApiMember(userMember);
+    let payload: apiToBackend.ToBackendGetDashboardResponsePayload = {
+      needValidate: common.enumToBoolean(bridge.need_validate),
+      struct: wrapper.wrapToApiStruct(struct),
+      userMember: apiMember,
+      dashboard: dashboardX
+    };
 
-      let payload: apiToBackend.ToBackendGetDashboardResponsePayload = {
-        isBranchExist: true,
-        needValidate: common.enumToBoolean(bridge.need_validate),
-        struct: wrapper.wrapToApiStruct(struct),
-        userMember: apiMember,
-        dashboard: dashboardX
-      };
-
-      return payload;
-    }
+    return payload;
   }
 }

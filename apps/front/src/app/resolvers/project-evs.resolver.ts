@@ -2,11 +2,14 @@ import { Injectable } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   Resolve,
+  Router,
   RouterStateSnapshot
 } from '@angular/router';
-import { map, take } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 import { EvsStore } from '../stores/evs.store';
@@ -14,25 +17,35 @@ import { MemberStore } from '../stores/member.store';
 import { NavState } from '../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
-export class ProjectEvsResolver implements Resolve<Promise<boolean>> {
+export class ProjectEvsResolver implements Resolve<Observable<boolean>> {
   constructor(
     private navQuery: NavQuery,
+    private router: Router,
     private apiService: ApiService,
     private memberStore: MemberStore,
     private evsStore: EvsStore
   ) {}
 
-  async resolve(
+  resolve(
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
-  ): Promise<boolean> {
+  ): Observable<boolean> {
     let nav: NavState;
     this.navQuery
       .select()
-      .pipe(take(1))
-      .subscribe(x => {
-        nav = x;
-      });
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
+    checkNavOrgProject({
+      router: this.router,
+      route: route,
+      nav: nav
+    });
 
     let environmentId = route.params[common.PARAMETER_ENVIRONMENT_ID];
 
@@ -57,7 +70,6 @@ export class ProjectEvsResolver implements Resolve<Promise<boolean>> {
             return false;
           }
         })
-      )
-      .toPromise();
+      );
   }
 }

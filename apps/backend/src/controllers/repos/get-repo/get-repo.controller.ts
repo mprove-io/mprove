@@ -7,7 +7,7 @@ import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesRepository } from '~backend/models/store-repositories/branches.repository';
+import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
@@ -23,7 +23,7 @@ export class GetRepoController {
     private membersService: MembersService,
     private rabbitService: RabbitService,
     private structsService: StructsService,
-    private branchesRepository: BranchesRepository,
+    private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private envsService: EnvsService
   ) {}
@@ -45,86 +45,69 @@ export class GetRepoController {
       memberId: user.user_id
     });
 
-    let branch = await this.branchesRepository.findOne({
-      where: {
-        project_id: projectId,
-        repo_id: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
-        branch_id: branchId
-      }
+    let branch = await this.branchesService.getBranchCheckExists({
+      projectId: projectId,
+      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
+      branchId: branchId
     });
 
-    if (common.isUndefined(branch)) {
-      let payloadBranchDoesNotExist: apiToBackend.ToBackendGetRepoResponsePayload =
-        {
-          isBranchExist: false,
-          userMember: undefined,
-          needValidate: undefined,
-          struct: undefined,
-          repo: undefined
-        };
+    let env = await this.envsService.getEnvCheckExistsAndAccess({
+      projectId: projectId,
+      envId: envId,
+      member: userMember
+    });
 
-      return payloadBranchDoesNotExist;
-    } else {
-      let env = await this.envsService.getEnvCheckExistsAndAccess({
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.project_id,
+      repoId: branch.repo_id,
+      branchId: branch.branch_id,
+      envId: envId
+    });
+
+    let toDiskGetCatalogNodesRequest: apiToDisk.ToDiskGetCatalogNodesRequest = {
+      info: {
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes,
+        traceId: reqValid.info.traceId
+      },
+      payload: {
+        orgId: project.org_id,
         projectId: projectId,
-        envId: envId,
-        member: userMember
-      });
+        repoId: repoId,
+        branch: branchId,
+        isFetch: isFetch,
+        remoteType: project.remote_type,
+        gitUrl: project.git_url,
+        privateKey: project.private_key,
+        publicKey: project.public_key
+      }
+    };
 
-      let bridge = await this.bridgesService.getBridgeCheckExists({
-        projectId: branch.project_id,
-        repoId: branch.repo_id,
-        branchId: branch.branch_id,
-        envId: envId
-      });
-
-      let toDiskGetCatalogNodesRequest: apiToDisk.ToDiskGetCatalogNodesRequest =
+    let diskResponse =
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogNodesResponse>(
         {
-          info: {
-            name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes,
-            traceId: reqValid.info.traceId
-          },
-          payload: {
+          routingKey: helper.makeRoutingKeyToDisk({
             orgId: project.org_id,
-            projectId: projectId,
-            repoId: repoId,
-            branch: branchId,
-            isFetch: isFetch,
-            remoteType: project.remote_type,
-            gitUrl: project.git_url,
-            privateKey: project.private_key,
-            publicKey: project.public_key
-          }
-        };
+            projectId: projectId
+          }),
+          message: toDiskGetCatalogNodesRequest,
+          checkIsOk: true
+        }
+      );
 
-      let diskResponse =
-        await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogNodesResponse>(
-          {
-            routingKey: helper.makeRoutingKeyToDisk({
-              orgId: project.org_id,
-              projectId: projectId
-            }),
-            message: toDiskGetCatalogNodesRequest,
-            checkIsOk: true
-          }
-        );
+    let struct = await this.structsService.getStructCheckExists({
+      structId: bridge.struct_id,
+      projectId: projectId
+    });
 
-      let struct = await this.structsService.getStructCheckExists({
-        structId: bridge.struct_id,
-        projectId: projectId
-      });
+    let apiMember = wrapper.wrapToApiMember(userMember);
 
-      let apiMember = wrapper.wrapToApiMember(userMember);
+    let payloadBranchExist: apiToBackend.ToBackendGetRepoResponsePayload = {
+      userMember: apiMember,
+      needValidate: common.enumToBoolean(bridge.need_validate),
+      struct: wrapper.wrapToApiStruct(struct),
+      repo: diskResponse.payload.repo
+    };
 
-      let payloadBranchExist: apiToBackend.ToBackendGetRepoResponsePayload = {
-        isBranchExist: true,
-        userMember: apiMember,
-        needValidate: common.enumToBoolean(bridge.need_validate),
-        struct: wrapper.wrapToApiStruct(struct),
-        repo: diskResponse.payload.repo
-      };
-
-      return payloadBranchExist;
-    }
+    return payloadBranchExist;
   }
 }

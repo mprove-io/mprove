@@ -38,9 +38,6 @@ export class ToBackendGetModelsRequest extends ToBackendRequest {
 
 export class ToBackendGetModelsResponsePayload {
   @IsBoolean()
-  isBranchExist: boolean;
-
-  @IsBoolean()
   needValidate: boolean;
 
   @ValidateNested()

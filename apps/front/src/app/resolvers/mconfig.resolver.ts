@@ -2,14 +2,17 @@ import { Injectable } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   Resolve,
+  Router,
   RouterStateSnapshot
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { MqQuery } from '../queries/mq.query';
 import { NavQuery } from '../queries/nav.query';
+import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
 import { emptyMconfig, emptyQuery, MqState, MqStore } from '../stores/mq.store';
 import { NavState } from '../stores/nav.store';
@@ -20,6 +23,8 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
     private apiService: ApiService,
     private mqQuery: MqQuery,
     private navQuery: NavQuery,
+    private userQuery: UserQuery,
+    private router: Router,
     private mqStore: MqStore
   ) {}
 
@@ -27,8 +32,6 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
   ): Observable<boolean> {
-    let parametersMconfigId = route.params[common.PARAMETER_MCONFIG_ID];
-
     let nav: NavState;
     this.navQuery
       .select()
@@ -39,6 +42,23 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
         take(1)
       )
       .subscribe();
+
+    let userId;
+    this.userQuery.userId$
+      .pipe(
+        tap(x => (userId = x)),
+        take(1)
+      )
+      .subscribe();
+
+    checkNavOrgProjectRepoBranchEnv({
+      router: this.router,
+      route: route,
+      nav: nav,
+      userId: userId
+    });
+
+    let parametersMconfigId = route.params[common.PARAMETER_MCONFIG_ID];
 
     let mconfig: common.MconfigX;
     let query: common.Query;

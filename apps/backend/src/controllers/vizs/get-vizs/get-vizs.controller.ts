@@ -7,7 +7,7 @@ import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesRepository } from '~backend/models/store-repositories/branches.repository';
+import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
@@ -19,7 +19,7 @@ import { StructsService } from '~backend/services/structs.service';
 @Controller()
 export class GetVizsController {
   constructor(
-    private branchesRepository: BranchesRepository,
+    private branchesService: BranchesService,
     private membersService: MembersService,
     private modelsService: ModelsService,
     private structsService: StructsService,
@@ -45,85 +45,86 @@ export class GetVizsController {
       memberId: user.user_id
     });
 
-    let branch = await this.branchesRepository.findOne({
+    let branch = await this.branchesService.getBranchCheckExists({
+      projectId: projectId,
+      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
+      branchId: branchId
+    });
+
+    let env = await this.envsService.getEnvCheckExistsAndAccess({
+      projectId: projectId,
+      envId: envId,
+      member: userMember
+    });
+
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.project_id,
+      repoId: branch.repo_id,
+      branchId: branch.branch_id,
+      envId: envId
+    });
+
+    let vizs = await this.vizsRepository.find({
       where: {
-        project_id: projectId,
-        repo_id: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
-        branch_id: branchId
+        struct_id: bridge.struct_id
       }
     });
 
-    if (common.isUndefined(branch)) {
-      let payloadBranchDoesNotExist: apiToBackend.ToBackendGetVizsResponsePayload =
-        {
-          isBranchExist: false,
-          userMember: undefined,
-          struct: undefined,
-          needValidate: undefined,
-          models: [],
-          vizs: []
-        };
+    let vizsGrantedAccess = vizs.filter(x =>
+      helper.checkAccess({
+        userAlias: user.alias,
+        member: userMember,
+        vmd: x
+      })
+    );
 
-      return payloadBranchDoesNotExist;
-    } else {
-      let env = await this.envsService.getEnvCheckExistsAndAccess({
-        projectId: projectId,
-        envId: envId,
-        member: userMember
-      });
+    let models = await this.modelsRepository.find({
+      select: [
+        'model_id',
+        'access_users',
+        'access_roles',
+        'hidden',
+        'connection_id'
+      ],
+      where: { struct_id: bridge.struct_id }
+    });
 
-      let bridge = await this.bridgesService.getBridgeCheckExists({
-        projectId: branch.project_id,
-        repoId: branch.repo_id,
-        branchId: branch.branch_id,
-        envId: envId
-      });
+    let modelsY = await this.modelsService.getModelsY({
+      bridge: bridge,
+      filterByModelIds: undefined,
+      addFields: false
+    });
 
-      let vizs = await this.vizsRepository.find({
-        where: {
-          struct_id: bridge.struct_id
-        }
-      });
+    let struct = await this.structsService.getStructCheckExists({
+      structId: bridge.struct_id,
+      projectId: projectId
+    });
 
-      let vizsGrantedAccess = vizs.filter(x =>
-        helper.checkAccess({
-          userAlias: user.alias,
-          member: userMember,
-          vmd: x
-        })
-      );
+    let apiMember = wrapper.wrapToApiMember(userMember);
 
-      let models = await this.modelsRepository.find({
-        select: [
-          'model_id',
-          'access_users',
-          'access_roles',
-          'hidden',
-          'connection_id'
-        ],
-        where: { struct_id: bridge.struct_id }
-      });
-
-      let modelsY = await this.modelsService.getModelsY({
-        bridge: bridge,
-        filterByModelIds: undefined,
-        addFields: false
-      });
-
-      let struct = await this.structsService.getStructCheckExists({
-        structId: bridge.struct_id,
-        projectId: projectId
-      });
-
-      let apiMember = wrapper.wrapToApiMember(userMember);
-
-      let payload: apiToBackend.ToBackendGetVizsResponsePayload = {
-        isBranchExist: true,
-        needValidate: common.enumToBoolean(bridge.need_validate),
-        struct: wrapper.wrapToApiStruct(struct),
-        userMember: apiMember,
-        models: modelsY
-          .map(model =>
+    let payload: apiToBackend.ToBackendGetVizsResponsePayload = {
+      needValidate: common.enumToBoolean(bridge.need_validate),
+      struct: wrapper.wrapToApiStruct(struct),
+      userMember: apiMember,
+      models: modelsY
+        .map(model =>
+          wrapper.wrapToApiModel({
+            model: model,
+            hasAccess: helper.checkAccess({
+              userAlias: user.alias,
+              member: userMember,
+              vmd: model
+            })
+          })
+        )
+        .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0)),
+      vizs: vizsGrantedAccess.map(x =>
+        wrapper.wrapToApiViz({
+          viz: x,
+          mconfigs: [],
+          queries: [],
+          member: wrapper.wrapToApiMember(userMember),
+          models: models.map(model =>
             wrapper.wrapToApiModel({
               model: model,
               hasAccess: helper.checkAccess({
@@ -132,30 +133,12 @@ export class GetVizsController {
                 vmd: model
               })
             })
-          )
-          .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0)),
-        vizs: vizsGrantedAccess.map(x =>
-          wrapper.wrapToApiViz({
-            viz: x,
-            mconfigs: [],
-            queries: [],
-            member: wrapper.wrapToApiMember(userMember),
-            models: models.map(model =>
-              wrapper.wrapToApiModel({
-                model: model,
-                hasAccess: helper.checkAccess({
-                  userAlias: user.alias,
-                  member: userMember,
-                  vmd: model
-                })
-              })
-            ),
-            isAddMconfigAndQuery: false
-          })
-        )
-      };
+          ),
+          isAddMconfigAndQuery: false
+        })
+      )
+    };
 
-      return payload;
-    }
+    return payload;
   }
 }

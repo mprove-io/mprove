@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
+import { Observable, of } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { common } from '~front/barrels/common';
 import { enums } from '~front/barrels/enums';
+import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { NavQuery } from '../queries/nav.query';
 import { UserQuery } from '../queries/user.query';
 import { MyDialogService } from '../services/my-dialog.service';
 import { NavState, NavStore } from '../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
-export class RepoIdResolver implements Resolve<Promise<boolean>> {
+export class RepoIdResolver implements Resolve<Observable<boolean>> {
   constructor(
     private navStore: NavStore,
     private navQuery: NavQuery,
@@ -18,7 +20,21 @@ export class RepoIdResolver implements Resolve<Promise<boolean>> {
     private router: Router
   ) {}
 
-  async resolve(route: ActivatedRouteSnapshot): Promise<boolean> {
+  resolve(route: ActivatedRouteSnapshot): Observable<boolean> {
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(take(1))
+      .subscribe(x => {
+        nav = x;
+      });
+
+    checkNavOrgProject({
+      router: this.router,
+      route: route,
+      nav: nav
+    });
+
     let repoId = route.params[common.PARAMETER_REPO_ID];
 
     let userId;
@@ -37,14 +53,6 @@ export class RepoIdResolver implements Resolve<Promise<boolean>> {
         isThrow: false
       });
 
-      let nav: NavState;
-      this.navQuery
-        .select()
-        .pipe(take(1))
-        .subscribe(x => {
-          nav = x;
-        });
-
       this.router.navigate([
         common.PATH_ORG,
         nav.orgId,
@@ -53,7 +61,7 @@ export class RepoIdResolver implements Resolve<Promise<boolean>> {
         common.PATH_SETTINGS
       ]);
 
-      return false;
+      return of(false);
     }
 
     this.navStore.update(state =>
@@ -62,6 +70,6 @@ export class RepoIdResolver implements Resolve<Promise<boolean>> {
       })
     );
 
-    return true;
+    return of(false);
   }
 }

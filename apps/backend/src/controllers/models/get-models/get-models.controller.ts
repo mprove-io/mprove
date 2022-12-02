@@ -6,7 +6,7 @@ import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesRepository } from '~backend/models/store-repositories/branches.repository';
+import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
@@ -21,7 +21,7 @@ export class GetModelsController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private modelsService: ModelsService,
-    private branchesRepository: BranchesRepository,
+    private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private envsService: EnvsService
@@ -52,72 +52,56 @@ export class GetModelsController {
       memberId: user.user_id
     });
 
-    let branch = await this.branchesRepository.findOne({
-      where: {
-        project_id: projectId,
-        repo_id: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
-        branch_id: branchId
-      }
+    let branch = await this.branchesService.getBranchCheckExists({
+      projectId: projectId,
+      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
+      branchId: branchId
     });
 
-    if (common.isUndefined(branch)) {
-      let payloadBranchDoesNotExist: apiToBackend.ToBackendGetModelsResponsePayload =
-        {
-          isBranchExist: false,
-          userMember: undefined,
-          struct: undefined,
-          needValidate: undefined,
-          models: []
-        };
+    let env = await this.envsService.getEnvCheckExistsAndAccess({
+      projectId: projectId,
+      envId: envId,
+      member: userMember
+    });
 
-      return payloadBranchDoesNotExist;
-    } else {
-      let env = await this.envsService.getEnvCheckExistsAndAccess({
-        projectId: projectId,
-        envId: envId,
-        member: userMember
-      });
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.project_id,
+      repoId: branch.repo_id,
+      branchId: branch.branch_id,
+      envId: envId
+    });
 
-      let bridge = await this.bridgesService.getBridgeCheckExists({
-        projectId: branch.project_id,
-        repoId: branch.repo_id,
-        branchId: branch.branch_id,
-        envId: envId
-      });
+    let modelsY = await this.modelsService.getModelsY({
+      bridge: bridge,
+      filterByModelIds: filterByModelIds,
+      addFields: addFields
+    });
 
-      let modelsY = await this.modelsService.getModelsY({
-        bridge: bridge,
-        filterByModelIds: filterByModelIds,
-        addFields: addFields
-      });
+    let struct = await this.structsService.getStructCheckExists({
+      structId: bridge.struct_id,
+      projectId: projectId
+    });
 
-      let struct = await this.structsService.getStructCheckExists({
-        structId: bridge.struct_id,
-        projectId: projectId
-      });
+    let apiMember = wrapper.wrapToApiMember(userMember);
 
-      let apiMember = wrapper.wrapToApiMember(userMember);
-
-      let payload: apiToBackend.ToBackendGetModelsResponsePayload = {
-        isBranchExist: true,
-        needValidate: common.enumToBoolean(bridge.need_validate),
-        struct: wrapper.wrapToApiStruct(struct),
-        userMember: apiMember,
-        models: modelsY
-          .map(model =>
-            wrapper.wrapToApiModel({
-              model: model,
-              hasAccess: helper.checkAccess({
-                userAlias: user.alias,
-                member: userMember,
-                vmd: model
-              })
+    let payload: apiToBackend.ToBackendGetModelsResponsePayload = {
+      needValidate: common.enumToBoolean(bridge.need_validate),
+      struct: wrapper.wrapToApiStruct(struct),
+      userMember: apiMember,
+      models: modelsY
+        .map(model =>
+          wrapper.wrapToApiModel({
+            model: model,
+            hasAccess: helper.checkAccess({
+              userAlias: user.alias,
+              member: userMember,
+              vmd: model
             })
-          )
-          .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0))
-      };
+          })
+        )
+        .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0))
+    };
 
-      return payload;
-    }
+    return payload;
   }
 }

@@ -6,7 +6,7 @@ import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesRepository } from '~backend/models/store-repositories/branches.repository';
+import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
@@ -18,7 +18,7 @@ import { StructsService } from '~backend/services/structs.service';
 @Controller()
 export class GetModelController {
   constructor(
-    private branchesRepository: BranchesRepository,
+    private branchesService: BranchesService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private structsService: StructsService,
@@ -41,67 +41,52 @@ export class GetModelController {
       projectId: projectId,
       memberId: user.user_id
     });
-    let branch = await this.branchesRepository.findOne({
-      where: {
-        project_id: projectId,
-        repo_id: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
-        branch_id: branchId
-      }
+
+    let branch = await this.branchesService.getBranchCheckExists({
+      projectId: projectId,
+      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
+      branchId: branchId
     });
 
-    if (common.isUndefined(branch)) {
-      let payloadBranchDoesNotExist: apiToBackend.ToBackendGetModelResponsePayload =
-        {
-          isBranchExist: false,
-          userMember: undefined,
-          needValidate: undefined,
-          struct: undefined,
-          model: undefined
-        };
+    let env = await this.envsService.getEnvCheckExistsAndAccess({
+      projectId: projectId,
+      envId: envId,
+      member: userMember
+    });
 
-      return payloadBranchDoesNotExist;
-    } else {
-      let env = await this.envsService.getEnvCheckExistsAndAccess({
-        projectId: projectId,
-        envId: envId,
-        member: userMember
-      });
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.project_id,
+      repoId: branch.repo_id,
+      branchId: branch.branch_id,
+      envId: envId
+    });
 
-      let bridge = await this.bridgesService.getBridgeCheckExists({
-        projectId: branch.project_id,
-        repoId: branch.repo_id,
-        branchId: branch.branch_id,
-        envId: envId
-      });
+    let model = await this.modelsService.getModelCheckExists({
+      structId: bridge.struct_id,
+      modelId: modelId
+    });
 
-      let model = await this.modelsService.getModelCheckExists({
-        structId: bridge.struct_id,
-        modelId: modelId
-      });
+    let struct = await this.structsService.getStructCheckExists({
+      structId: bridge.struct_id,
+      projectId: projectId
+    });
 
-      let struct = await this.structsService.getStructCheckExists({
-        structId: bridge.struct_id,
-        projectId: projectId
-      });
+    let apiMember = wrapper.wrapToApiMember(userMember);
 
-      let apiMember = wrapper.wrapToApiMember(userMember);
-
-      let payload: apiToBackend.ToBackendGetModelResponsePayload = {
-        isBranchExist: true,
-        needValidate: common.enumToBoolean(bridge.need_validate),
-        struct: wrapper.wrapToApiStruct(struct),
-        userMember: apiMember,
-        model: wrapper.wrapToApiModel({
-          model: model,
-          hasAccess: helper.checkAccess({
-            userAlias: user.alias,
-            member: userMember,
-            vmd: model
-          })
+    let payload: apiToBackend.ToBackendGetModelResponsePayload = {
+      needValidate: common.enumToBoolean(bridge.need_validate),
+      struct: wrapper.wrapToApiStruct(struct),
+      userMember: apiMember,
+      model: wrapper.wrapToApiModel({
+        model: model,
+        hasAccess: helper.checkAccess({
+          userAlias: user.alias,
+          member: userMember,
+          vmd: model
         })
-      };
+      })
+    };
 
-      return payload;
-    }
+    return payload;
   }
 }

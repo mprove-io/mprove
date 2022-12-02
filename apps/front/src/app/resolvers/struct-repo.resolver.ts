@@ -4,24 +4,25 @@ import {
   Resolve,
   RouterStateSnapshot
 } from '@angular/router';
+import { Observable, of } from 'rxjs';
 import { common } from '~front/barrels/common';
 import { StructRepoFilesResolver } from './struct-repo-files.resolver';
 
 @Injectable({ providedIn: 'root' })
-export class StructRepoResolver implements Resolve<Promise<boolean>> {
+export class StructRepoResolver implements Resolve<Observable<boolean>> {
   constructor(private structRepoFilesResolver: StructRepoFilesResolver) {}
 
-  async resolve(
+  resolve(
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
-  ): Promise<boolean> {
+  ): Observable<boolean> {
     let isFilesInPath =
       routerStateSnapshot.url
         .split('/')
         .findIndex(el => el === common.PATH_FILES) === 11;
 
     if (isFilesInPath === true) {
-      return true;
+      return of(true);
     } else {
       return this.structRepoFilesResolver.resolve(route);
     }

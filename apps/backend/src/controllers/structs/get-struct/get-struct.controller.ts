@@ -5,7 +5,7 @@ import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesRepository } from '~backend/models/store-repositories/branches.repository';
+import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
@@ -20,7 +20,7 @@ export class GetStructController {
     private membersService: MembersService,
     private structsService: StructsService,
     private bridgesService: BridgesService,
-    private branchesRepository: BranchesRepository,
+    private branchesService: BranchesService,
     private envsService: EnvsService
   ) {}
 
@@ -42,53 +42,38 @@ export class GetStructController {
       memberId: user.user_id
     });
 
-    let branch = await this.branchesRepository.findOne({
-      where: {
-        project_id: projectId,
-        repo_id: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
-        branch_id: branchId
-      }
+    let branch = await this.branchesService.getBranchCheckExists({
+      projectId: projectId,
+      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
+      branchId: branchId
     });
 
-    if (common.isUndefined(branch)) {
-      let payloadBranchDoesNotExist: apiToBackend.ToBackendGetStructResponsePayload =
-        {
-          isBranchExist: false,
-          userMember: undefined,
-          needValidate: undefined,
-          struct: undefined
-        };
+    let env = await this.envsService.getEnvCheckExistsAndAccess({
+      projectId: projectId,
+      envId: envId,
+      member: userMember
+    });
 
-      return payloadBranchDoesNotExist;
-    } else {
-      let env = await this.envsService.getEnvCheckExistsAndAccess({
-        projectId: projectId,
-        envId: envId,
-        member: userMember
-      });
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.project_id,
+      repoId: branch.repo_id,
+      branchId: branch.branch_id,
+      envId: envId
+    });
 
-      let bridge = await this.bridgesService.getBridgeCheckExists({
-        projectId: branch.project_id,
-        repoId: branch.repo_id,
-        branchId: branch.branch_id,
-        envId: envId
-      });
+    let struct = await this.structsService.getStructCheckExists({
+      structId: bridge.struct_id,
+      projectId: projectId
+    });
 
-      let struct = await this.structsService.getStructCheckExists({
-        structId: bridge.struct_id,
-        projectId: projectId
-      });
+    let apiMember = wrapper.wrapToApiMember(userMember);
 
-      let apiMember = wrapper.wrapToApiMember(userMember);
+    let payloadBranchExist: apiToBackend.ToBackendGetStructResponsePayload = {
+      needValidate: common.enumToBoolean(bridge.need_validate),
+      struct: wrapper.wrapToApiStruct(struct),
+      userMember: apiMember
+    };
 
-      let payloadBranchExist: apiToBackend.ToBackendGetStructResponsePayload = {
-        isBranchExist: true,
-        needValidate: common.enumToBoolean(bridge.need_validate),
-        struct: wrapper.wrapToApiStruct(struct),
-        userMember: apiMember
-      };
-
-      return payloadBranchExist;
-    }
+    return payloadBranchExist;
   }
 }

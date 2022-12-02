@@ -25,9 +25,6 @@ export class ToBackendGetStructRequest extends ToBackendRequest {
 
 export class ToBackendGetStructResponsePayload {
   @IsBoolean()
-  isBranchExist: boolean;
-
-  @IsBoolean()
   needValidate: boolean;
 
   @ValidateNested()

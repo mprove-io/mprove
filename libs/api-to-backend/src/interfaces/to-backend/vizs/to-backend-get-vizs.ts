@@ -25,9 +25,6 @@ export class ToBackendGetVizsRequest extends ToBackendRequest {
 
 export class ToBackendGetVizsResponsePayload {
   @IsBoolean()
-  isBranchExist: boolean;
-
-  @IsBoolean()
   needValidate: boolean;
 
   @ValidateNested()

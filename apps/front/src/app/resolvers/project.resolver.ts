@@ -2,13 +2,16 @@ import { Injectable } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   Resolve,
+  Router,
   RouterStateSnapshot
 } from '@angular/router';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+import { checkNavOrg } from '../functions/check-nav-org';
+import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 import { MemberStore } from '../stores/member.store';
 import { NavState, NavStore } from '../stores/nav.store';
@@ -18,6 +21,8 @@ import { ProjectStore } from '../stores/project.store';
 export class ProjectResolver implements Resolve<Observable<boolean>> {
   constructor(
     private navStore: NavStore,
+    private navQuery: NavQuery,
+    private router: Router,
     private projectStore: ProjectStore,
     private memberStore: MemberStore,
     private apiService: ApiService
@@ -27,6 +32,23 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
   ): Observable<boolean> {
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
+    checkNavOrg({
+      router: this.router,
+      route: route,
+      nav: nav
+    });
+
     let payload: apiToBackend.ToBackendGetProjectRequestPayload = {
       projectId: route.params[common.PARAMETER_PROJECT_ID]
     };
