@@ -55,6 +55,7 @@ function updateTarget(tPath: string, s: any, t: any) {
     'class-validator',
     'clipanion',
     'clone-regexp',
+    'dotenv',
     'fs-extra',
     'got',
     'js-yaml', //
