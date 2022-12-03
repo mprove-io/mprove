@@ -8,8 +8,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { ApiService } from '../services/api.service';
-import { UserStore } from '../stores/user.store';
+import { ApiService } from '../../services/api.service';
+import { UserStore } from '../../stores/user.store';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileResolver implements Resolve<Observable<boolean>> {

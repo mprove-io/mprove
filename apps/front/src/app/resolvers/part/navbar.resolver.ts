@@ -11,13 +11,13 @@ import { AuthService } from '~front/app/services/auth.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
-import { UserQuery } from '../queries/user.query';
-import { ApiService } from '../services/api.service';
-import { MemberStore } from '../stores/member.store';
-import { NavState, NavStore } from '../stores/nav.store';
-import { RepoStore } from '../stores/repo.store';
-import { StructStore } from '../stores/struct.store';
-import { UserStore } from '../stores/user.store';
+import { UserQuery } from '../../queries/user.query';
+import { ApiService } from '../../services/api.service';
+import { MemberStore } from '../../stores/member.store';
+import { NavState, NavStore } from '../../stores/nav.store';
+import { RepoStore } from '../../stores/repo.store';
+import { StructStore } from '../../stores/struct.store';
+import { UserStore } from '../../stores/user.store';
 
 @Injectable({ providedIn: 'root' })
 export class NavBarResolver implements Resolve<Observable<boolean>> {

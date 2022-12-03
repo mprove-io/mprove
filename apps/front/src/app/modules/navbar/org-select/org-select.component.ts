@@ -96,9 +96,11 @@ export class OrgSelectComponent {
       Object.assign({}, state, <NavState>{
         projectId: undefined,
         projectName: undefined,
-        isRepoProd: false,
+        projectDefaultBranch: undefined,
+        isRepoProd: undefined,
         branchId: undefined,
-        envId: common.PROJECT_ENV_PROD
+        envId: common.PROJECT_ENV_PROD,
+        needValidate: false
       })
     );
 

@@ -69,10 +69,8 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
                 projectId: project.projectId,
                 projectName: project.name,
                 projectDefaultBranch: project.defaultBranch,
-                branchId: state.branchId || project.defaultBranch,
-                isRepoProd: common.isDefined(state.branchId)
-                  ? state.isRepoProd
-                  : true,
+                isRepoProd: true,
+                branchId: project.defaultBranch,
                 envId: common.PROJECT_ENV_PROD
               })
             );

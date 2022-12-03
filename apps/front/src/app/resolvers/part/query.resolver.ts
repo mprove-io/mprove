@@ -9,23 +9,23 @@ import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
-import { MqQuery } from '../queries/mq.query';
-import { NavQuery } from '../queries/nav.query';
-import { UserQuery } from '../queries/user.query';
-import { ApiService } from '../services/api.service';
-import { emptyMconfig, emptyQuery, MqState, MqStore } from '../stores/mq.store';
-import { NavState } from '../stores/nav.store';
+import { checkNavOrgProjectRepoBranchEnv } from '../../functions/check-nav-org-project-repo-branch-env';
+import { MqQuery } from '../../queries/mq.query';
+import { NavQuery } from '../../queries/nav.query';
+import { UserQuery } from '../../queries/user.query';
+import { ApiService } from '../../services/api.service';
+import { emptyQuery, MqStore } from '../../stores/mq.store';
+import { NavState } from '../../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
-export class MconfigResolver implements Resolve<Observable<boolean>> {
+export class QueryResolver implements Resolve<Observable<boolean>> {
   constructor(
     private apiService: ApiService,
-    private mqQuery: MqQuery,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
-    private router: Router,
-    private mqStore: MqStore
+    private mqQuery: MqQuery,
+    private mqStore: MqStore,
+    private router: Router
   ) {}
 
   resolve(
@@ -58,7 +58,7 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
       userId: userId
     });
 
-    let parametersMconfigId = route.params[common.PARAMETER_MCONFIG_ID];
+    let parametersQueryId = route.params[common.PARAMETER_QUERY_ID];
 
     let mconfig: common.MconfigX;
     let query: common.Query;
@@ -73,44 +73,43 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
       )
       .subscribe();
 
-    if (mconfig.mconfigId === parametersMconfigId) {
+    if (query.queryId === parametersQueryId) {
       return of(true);
     }
 
-    if (parametersMconfigId === common.EMPTY) {
-      if (mconfig.mconfigId !== common.EMPTY) {
+    if (parametersQueryId === common.EMPTY) {
+      if (query.queryId !== common.EMPTY) {
         this.mqStore.update(state =>
-          Object.assign({}, state, { mconfig: emptyMconfig, query: emptyQuery })
+          Object.assign({}, state, { query: emptyQuery })
         );
       }
 
       return of(true);
     }
 
-    let payload: apiToBackend.ToBackendGetMconfigRequestPayload = {
+    let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
       projectId: nav.projectId,
       branchId: nav.branchId,
       envId: nav.envId,
       isRepoProd: nav.isRepoProd,
-      mconfigId: parametersMconfigId
+      mconfigId: mconfig.mconfigId,
+      queryId: parametersQueryId
     };
 
-    if (mconfig.mconfigId === parametersMconfigId) {
+    if (query.queryId === parametersQueryId) {
       return of(true);
     } else {
       return this.apiService
         .req({
           pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
+            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
           payload: payload
         })
         .pipe(
-          map((resp: apiToBackend.ToBackendGetMconfigResponse) => {
+          map((resp: apiToBackend.ToBackendGetQueryResponse) => {
             if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
               this.mqStore.update(state =>
-                Object.assign({}, state, <MqState>{
-                  mconfig: resp.payload.mconfig
-                })
+                Object.assign({}, state, { query: resp.payload.query })
               );
               return true;
             } else {

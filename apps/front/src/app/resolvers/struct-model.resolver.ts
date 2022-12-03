@@ -84,8 +84,6 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
             this.structStore.update(resp.payload.struct);
             this.navStore.update(state =>
               Object.assign({}, state, <NavState>{
-                branchId: nav.branchId,
-                envId: nav.envId,
                 needValidate: resp.payload.needValidate
               })
             );
@@ -97,13 +95,6 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
             resp.info.error.message ===
               common.ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
           ) {
-            // this.myDialogService.showError({
-            //   errorData: {
-            //     message: enums.ErEnum.BRANCH_DOES_NOT_EXIST
-            //   },
-            //   isThrow: false
-            // });
-
             this.router.navigate([
               common.PATH_ORG,
               nav.orgId,

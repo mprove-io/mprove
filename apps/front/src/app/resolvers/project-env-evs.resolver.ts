@@ -17,7 +17,7 @@ import { MemberStore } from '../stores/member.store';
 import { NavState } from '../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
-export class ProjectEvsResolver implements Resolve<Observable<boolean>> {
+export class ProjectEnvEvsResolver implements Resolve<Observable<boolean>> {
   constructor(
     private navQuery: NavQuery,
     private router: Router,
@@ -67,6 +67,13 @@ export class ProjectEvsResolver implements Resolve<Observable<boolean>> {
             this.evsStore.update(resp.payload);
             return true;
           } else {
+            this.router.navigate([
+              common.PATH_ORG,
+              nav.orgId,
+              common.PATH_PROJECT,
+              nav.projectId,
+              common.PATH_SETTINGS
+            ]);
             return false;
           }
         })

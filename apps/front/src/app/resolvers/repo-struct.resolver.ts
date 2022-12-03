@@ -6,11 +6,11 @@ import {
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { common } from '~front/barrels/common';
-import { StructRepoFilesResolver } from './struct-repo-files.resolver';
+import { RepoStructFilesResolver } from './repo-struct-files.resolver';
 
 @Injectable({ providedIn: 'root' })
-export class StructRepoResolver implements Resolve<Observable<boolean>> {
-  constructor(private structRepoFilesResolver: StructRepoFilesResolver) {}
+export class RepoStructResolver implements Resolve<Observable<boolean>> {
+  constructor(private structRepoFilesResolver: RepoStructFilesResolver) {}
 
   resolve(
     route: ActivatedRouteSnapshot,

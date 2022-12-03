@@ -8,12 +8,12 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { common } from '~front/barrels/common';
-import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
-import { NavQuery } from '../queries/nav.query';
-import { UserQuery } from '../queries/user.query';
-import { FileService } from '../services/file.service';
-import { NavState } from '../stores/nav.store';
-import { UiState, UiStore } from '../stores/ui.store';
+import { checkNavOrgProjectRepoBranchEnv } from '../../functions/check-nav-org-project-repo-branch-env';
+import { NavQuery } from '../../queries/nav.query';
+import { UserQuery } from '../../queries/user.query';
+import { FileService } from '../../services/file.service';
+import { NavState } from '../../stores/nav.store';
+import { UiState, UiStore } from '../../stores/ui.store';
 
 @Injectable({ providedIn: 'root' })
 export class FileResolver implements Resolve<Observable<boolean>> {

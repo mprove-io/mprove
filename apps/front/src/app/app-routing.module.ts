@@ -37,27 +37,27 @@ import { OrgDeletedComponent } from './modules/special/org-deleted/org-deleted.c
 import { OrgOwnerChangedComponent } from './modules/special/org-owner-changed/org-owner-changed.component';
 import { ProjectDeletedComponent } from './modules/special/project-deleted/project-deleted.component';
 import { VisualizationsComponent } from './modules/visualizations/visualizations.component';
-import { FileResolver } from './resolvers/file.resolver';
-import { MconfigResolver } from './resolvers/mconfig.resolver';
-import { NavBarResolver } from './resolvers/navbar.resolver';
 import { OrgAccountResolver } from './resolvers/org-account.resolver';
 import { OrgUsersResolver } from './resolvers/org-users.resolver';
 import { OrgResolver } from './resolvers/org.resolver';
-import { ProfileResolver } from './resolvers/profile.resolver';
+import { FileResolver } from './resolvers/part/file.resolver';
+import { MconfigResolver } from './resolvers/part/mconfig.resolver';
+import { NavBarResolver } from './resolvers/part/navbar.resolver';
+import { ProfileResolver } from './resolvers/part/profile.resolver';
+import { QueryResolver } from './resolvers/part/query.resolver';
 import { ProjectConnectionsResolver } from './resolvers/project-connections.resolver';
+import { ProjectEnvEvsResolver } from './resolvers/project-env-evs.resolver';
 import { ProjectEnvironmentsResolver } from './resolvers/project-environments.resolver';
-import { ProjectEvsResolver } from './resolvers/project-evs.resolver';
 import { ProjectSettingsResolver } from './resolvers/project-settings.resolver';
 import { ProjectTeamResolver } from './resolvers/project-team.resolver';
 import { ProjectResolver } from './resolvers/project.resolver';
-import { QueryResolver } from './resolvers/query.resolver';
 import { RepoIdResolver } from './resolvers/repo-id.resolver';
+import { RepoStructFilesResolver } from './resolvers/repo-struct-files.resolver';
+import { RepoStructResolver } from './resolvers/repo-struct.resolver';
 import { StructDashboardResolver } from './resolvers/struct-dashboard.resolver';
 import { StructDashboardsResolver } from './resolvers/struct-dashboards.resolver';
 import { StructModelResolver } from './resolvers/struct-model.resolver';
 import { StructModelsResolver } from './resolvers/struct-models.resolver';
-import { StructRepoFilesResolver } from './resolvers/struct-repo-files.resolver';
-import { StructRepoResolver } from './resolvers/struct-repo.resolver';
 import { StructVizsResolver } from './resolvers/struct-vizs.resolver';
 
 const routes: Routes = [
@@ -184,7 +184,7 @@ const routes: Routes = [
                 path:
                   common.PATH_ENV_VARIABLES +
                   `/:${common.PARAMETER_ENVIRONMENT_ID}`,
-                resolve: [ProjectEvsResolver]
+                resolve: [ProjectEnvEvsResolver]
               },
               {
                 component: ProjectTeamComponent,
@@ -201,12 +201,12 @@ const routes: Routes = [
                     children: [
                       {
                         path: common.PATH_ENV + `/:${common.PARAMETER_ENV_ID}`,
-                        resolve: [StructRepoResolver],
+                        resolve: [RepoStructResolver],
                         children: [
                           {
                             component: FilesComponent,
                             path: common.PATH_FILES,
-                            resolve: [StructRepoFilesResolver],
+                            resolve: [RepoStructFilesResolver],
                             children: [
                               {
                                 component: FileEditorComponent,

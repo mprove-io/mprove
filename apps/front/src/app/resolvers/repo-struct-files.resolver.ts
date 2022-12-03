@@ -13,7 +13,7 @@ import { RepoStore } from '../stores/repo.store';
 import { StructStore } from '../stores/struct.store';
 
 @Injectable({ providedIn: 'root' })
-export class StructRepoFilesResolver implements Resolve<Observable<boolean>> {
+export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
   constructor(
     private navQuery: NavQuery,
     private apiService: ApiService,
@@ -77,13 +77,6 @@ export class StructRepoFilesResolver implements Resolve<Observable<boolean>> {
             resp.info.error.message ===
               common.ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
           ) {
-            // this.myDialogService.showError({
-            //   errorData: {
-            //     message: enums.ErEnum.BRANCH_DOES_NOT_EXIST
-            //   },
-            //   isThrow: false
-            // });
-
             this.router.navigate([
               common.PATH_ORG,
               nav.orgId,
