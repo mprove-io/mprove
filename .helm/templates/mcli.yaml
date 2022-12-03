@@ -15,8 +15,9 @@ spec:
     metadata:
       labels:
         app: mcli
-      # annotations:
-      #   sidecar.istio.io/proxyCPU: "100m"      
+      annotations:
+        # sidecar.istio.io/proxyCPU: "100m"    
+        checksum/secret-mcli-envs: '{{ include (print $.Template.BasePath "/secret-mcli-envs.yaml") . | sha256sum }}'        
     spec:
       imagePullSecrets:
       - name: registrysecret
@@ -26,4 +27,7 @@ spec:
         #   requests:
         #     cpu: "100m"
         image: {{ .Values.werf.image.mcli }}
+        envFrom:
+        - secretRef:
+            name: mcli-envs        
 
