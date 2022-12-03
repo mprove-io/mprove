@@ -1,20 +1,37 @@
 import { common } from '~mcli/barrels/common';
-import { interfaces } from '~mcli/barrels/interfaces';
 import { nodeCommon } from '~mcli/barrels/node-common';
+import { CustomContext } from '~mcli/models/custom-command';
 
 export function logToConsoleMcli(item: {
   log: any;
   logLevel: common.LogLevelEnum;
-  config: interfaces.Config;
+  context: CustomContext;
+  isStringify?: boolean;
 }) {
-  let { log, logLevel, config } = item;
+  let { log, logLevel, context, isStringify } = item;
 
-  nodeCommon.logToConsole({
-    log: log,
-    logIsJson: common.isDefined(config?.mproveCliLogIsJson)
-      ? common.enumToBoolean(config.mproveCliLogIsJson)
-      : false,
-    logger: undefined,
-    logLevel: logLevel
-  });
+  let config = context.config;
+
+  let logIsJson: boolean = common.isDefined(config?.mproveCliLogIsJson)
+    ? common.enumToBoolean(config.mproveCliLogIsJson)
+    : false;
+
+  if (
+    log instanceof Error ||
+    (common.isDefined(log) &&
+      common.isDefined(log.stack) &&
+      common.isDefined(log.message))
+  ) {
+    log = { error: nodeCommon.wrapError(log) };
+  }
+
+  if (isStringify === true) {
+    log = `${JSON.stringify(log, null, 2)}\n`;
+  }
+
+  if (logLevel === common.LogLevelEnum.Error) {
+    context.stderr.write(log);
+  } else {
+    context.stdout.write(log);
+  }
 }

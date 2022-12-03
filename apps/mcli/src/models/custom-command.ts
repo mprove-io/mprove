@@ -12,7 +12,8 @@ export class CustomCommand extends Command<CustomContext> {
     logToConsoleMcli({
       log: e,
       logLevel: common.LogLevelEnum.Error,
-      config: this.context.config
+      context: this.context,
+      isStringify: true
     });
 
     throw e;

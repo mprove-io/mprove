@@ -1,5 +1,6 @@
 import { Command } from 'clipanion';
 import { common } from '~mcli/barrels/common';
+import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 
 export class VersionCommand extends Command {
   static paths = [[`version`], [`-v`], [`--version`]];
@@ -12,10 +13,12 @@ export class VersionCommand extends Command {
   async execute() {
     let version = this.cli.binaryVersion;
 
-    if (common.isDefined(version)) {
-      this.context.stdout.write(`${version}\n`);
-    } else {
-      this.context.stdout.write(`unknown`);
-    }
+    let log = common.isDefined(version) ? `${version}\n` : `unknown\n`;
+
+    logToConsoleMcli({
+      log: log,
+      logLevel: common.LogLevelEnum.Info,
+      context: this.context as any
+    });
   }
 }

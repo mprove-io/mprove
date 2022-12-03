@@ -2,6 +2,7 @@ import { Command } from 'clipanion';
 import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { getConfig } from '~mcli/config/get.config';
+import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
@@ -71,10 +72,10 @@ export class RunDashboardsCommand extends CustomCommand {
       token: loginUserResp.payload.token
     });
 
-    // this.context.stdout.write(`${JSON.stringify(runQueriesResp, null, 2)}\n`);
-
-    console.log(
-      `Quries running: ${runQueriesResp.payload.runningQueries.length}`
-    );
+    logToConsoleMcli({
+      log: `Queries running: ${runQueriesResp.payload.runningQueries.length}\n`,
+      logLevel: common.LogLevelEnum.Info,
+      context: this.context
+    });
   }
 }

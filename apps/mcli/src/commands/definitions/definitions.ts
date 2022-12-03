@@ -1,4 +1,6 @@
 import { Command } from 'clipanion';
+import { common } from '~mcli/barrels/common';
+import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 
 export class DefinitionsCommand extends Command {
   static paths = [[`definitions`]];
@@ -9,8 +11,13 @@ export class DefinitionsCommand extends Command {
   });
 
   async execute() {
-    this.context.stdout.write(
-      `${JSON.stringify(this.cli.definitions(), null, 2)}\n`
-    );
+    let log = this.cli.definitions();
+
+    logToConsoleMcli({
+      log: log,
+      logLevel: common.LogLevelEnum.Info,
+      context: this.context as any,
+      isStringify: true
+    });
   }
 }

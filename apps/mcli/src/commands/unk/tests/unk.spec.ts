@@ -22,7 +22,7 @@ test('1', async t => {
     logToConsoleMcli({
       log: e,
       logLevel: common.LogLevelEnum.Error,
-      config: undefined
+      context: context
     });
   }
 
@@ -35,5 +35,6 @@ test('1', async t => {
     console.log(context.stderr.toString());
   }
 
-  t.is(isPass, true);
+  t.is(code, 1);
+  t.is(context.stdout.toString().includes(`Command not found`), true);
 });

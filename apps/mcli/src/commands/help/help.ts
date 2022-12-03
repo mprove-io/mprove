@@ -1,4 +1,6 @@
 import { Command } from 'clipanion';
+import { common } from '~mcli/barrels/common';
+import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 
 export class HelpCommand extends Command {
   static paths = [[`help`], [`-h`], [`--help`]];
@@ -9,6 +11,12 @@ export class HelpCommand extends Command {
   });
 
   async execute() {
-    this.context.stdout.write(this.cli.usage());
+    let log = this.cli.usage();
+
+    logToConsoleMcli({
+      log: log,
+      logLevel: common.LogLevelEnum.Info,
+      context: this.context as any
+    });
   }
 }

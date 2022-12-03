@@ -27,16 +27,18 @@ test('1', async t => {
     logToConsoleMcli({
       log: e,
       logLevel: common.LogLevelEnum.Error,
-      config: config
+      context: context
     });
   }
 
-  let isPass = code === 0;
+  let isPass =
+    code === 0 && context.stdout.toString().includes('Queries running');
 
   if (isPass === false) {
     console.log(context.stdout.toString());
     console.log(context.stderr.toString());
   }
 
-  t.is(isPass, true);
+  t.is(code, 0);
+  t.is(context.stdout.toString().includes('Queries running'), true);
 });
