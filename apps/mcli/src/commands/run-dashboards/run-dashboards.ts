@@ -49,8 +49,6 @@ export class RunDashboardsCommand extends CustomCommand {
         token: loginUserResp.payload.token
       });
 
-    console.log(getDashboardsResp);
-
     let queryIdsWithDuplicates: string[] = [];
 
     getDashboardsResp.payload.dashboards.forEach(dashboard => {
@@ -75,6 +73,8 @@ export class RunDashboardsCommand extends CustomCommand {
 
     // this.context.stdout.write(`${JSON.stringify(runQueriesResp, null, 2)}\n`);
 
-    console.log(runQueriesResp);
+    console.log(
+      `Quries running: ${runQueriesResp.payload.runningQueries.length}`
+    );
   }
 }

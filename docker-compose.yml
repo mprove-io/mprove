@@ -234,6 +234,12 @@ services:
       context: ./
       dockerfile: tools/docker/mcli.Dockerfile
     image: ghcr.io/mprove-io/mprove-mcli:$MPROVE_RELEASE_TAG
+    env_file:
+      - $ENV_FILE_PATH    
+    volumes:
+      - type: bind
+        source: $ENV_FILE_SOURCE_PATH
+        target: $ENV_FILE_TARGET_PATH      
 
   x11-bridge:
     image: jare/x11-bridge

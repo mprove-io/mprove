@@ -40,7 +40,5 @@ export async function mreq<T extends common.MyResponse>(item: {
     });
   }
 
-  console.log(resp.info);
-
   return resp;
 }
