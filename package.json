@@ -12,7 +12,7 @@
   "bin": "./main.js",
   "scripts": {
     "postinstall": "ngcc --properties es2015 browser module main && yarn pj",
-    "mcli": "yarn node -r ts-node/register -r tsconfig-paths/register apps/mcli/src/main.ts",
+    "mcli": "ENV_FILE_PATH=.env yarn node -r ts-node/register -r tsconfig-paths/register apps/mcli/src/main.ts",
     "typeorm": "node -r ts-node/register -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "mig:drop": "npm run typeorm schema:drop -- -d apps/backend/src/typeorm-datasource.ts",
     "mig:run": "npm run typeorm migration:run -- -d apps/backend/src/typeorm-datasource.ts",

@@ -40,14 +40,15 @@ export function transformValidSync<T extends object>(item: {
 
     if (
       [
+        // default exception handler doesn't print constraints (error.data)
         enums.ErEnum.BACKEND_WRONG_ENV_VALUES,
         enums.ErEnum.BLOCKML_WRONG_ENV_VALUES,
-        enums.ErEnum.DISK_WRONG_ENV_VALUES,
-        enums.ErEnum.MCLI_WRONG_ENV_VALUES
+        enums.ErEnum.DISK_WRONG_ENV_VALUES
+        // enums.ErEnum.MCLI_WRONG_ENV_VALUES // mcli already logs error.data
       ].indexOf(errorMessage) > -1
     ) {
       logToConsole({
-        log: serverError, // default exception handler doesn't print constraints (error.data)
+        log: serverError,
         logIsJson: common.isDefined(logIsJson)
           ? common.enumToBoolean(logIsJson)
           : false,
