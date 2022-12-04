@@ -13,7 +13,9 @@ export class VersionCommand extends Command {
   async execute() {
     let version = this.cli.binaryVersion;
 
-    let log = common.isDefined(version) ? `${version}\n` : `unknown\n`;
+    let log = `Mprove CLI version: ${
+      common.isDefined(version) ? version : 'unknown'
+    }\n`;
 
     logToConsoleMcli({
       log: log,

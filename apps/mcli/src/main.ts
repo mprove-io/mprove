@@ -2,11 +2,11 @@ import { Cli } from 'clipanion';
 import 'reflect-metadata';
 import { common } from './barrels/common';
 import { nodeCommon } from './barrels/node-common';
-import { RunDashboardsCommand } from './commands-custom/run-dashboards/run-dashboards';
-import { RunVisualizationsCommand } from './commands-custom/run-visualizations/run-visualizations';
-import { DefinitionsCommand } from './commands/definitions/definitions';
-import { HelpCommand } from './commands/help/help';
-import { VersionCommand } from './commands/version/version';
+import { DefinitionsCommand } from './commands/base/definitions/definitions';
+import { HelpCommand } from './commands/base/help/help';
+import { VersionCommand } from './commands/base/version/version';
+import { RunDashboardsCommand } from './commands/custom/run-dashboards/run-dashboards';
+import { RunVisualizationsCommand } from './commands/custom/run-visualizations/run-visualizations';
 import { logToConsoleMcli } from './functions/log-to-console-mcli';
 import { CustomContext } from './models/custom-command';
 
@@ -19,11 +19,11 @@ nodeCommon.listenProcessEvents({
 });
 
 let appCommands = [
-  // commands
+  // base
   DefinitionsCommand,
   HelpCommand,
   VersionCommand,
-  // commands-custom
+  // custom
   RunDashboardsCommand,
   RunVisualizationsCommand
 ];
