@@ -10,12 +10,6 @@ export function logToConsoleMcli(item: {
 }) {
   let { log, logLevel, context, isStringify } = item;
 
-  let config = context.config;
-
-  let logIsJson: boolean = common.isDefined(config?.mproveCliLogIsJson)
-    ? common.enumToBoolean(config.mproveCliLogIsJson)
-    : false;
-
   if (
     log instanceof Error ||
     (common.isDefined(log) &&

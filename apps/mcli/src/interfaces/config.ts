@@ -1,5 +1,4 @@
-import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { common } from '~mcli/barrels/common';
+import { IsString } from 'class-validator';
 
 export class Config {
   @IsString()
@@ -10,25 +9,4 @@ export class Config {
 
   @IsString()
   mproveCliPassword?: string;
-
-  @IsEnum(common.BoolEnum)
-  mproveCliLogIsJson?: common.BoolEnum;
-
-  // optional
-
-  @IsOptional()
-  @IsString()
-  mproveCliProjectId?: string;
-
-  @IsOptional()
-  @IsEnum(common.BoolEnum)
-  mproveCliIsRepoProd?: common.BoolEnum;
-
-  @IsOptional()
-  @IsString()
-  mproveCliBranchId?: string;
-
-  @IsOptional()
-  @IsString()
-  mproveCliEnvId?: string;
 }

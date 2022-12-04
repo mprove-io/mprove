@@ -1,3 +1,4 @@
+export * from './get-constraints-recursive';
 export * from './get-logger-options';
 export * from './get-mprove-dir';
 export * from './listen-process-events';

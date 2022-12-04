@@ -18,6 +18,11 @@ export class RunVisualizationsCommand extends CustomCommand {
       this.context.config = getConfig();
     }
 
+    let projectId = 'DXYE72ODCP5LWPWH2EXQ';
+    let isRepoProd = false;
+    let branchId = 'main';
+    let envId = 'prod';
+
     let loginUserReqPayload: apiToBackend.ToBackendLoginUserRequestPayload = {
       email: this.context.config.mproveCliEmail,
       password: this.context.config.mproveCliPassword
@@ -31,10 +36,10 @@ export class RunVisualizationsCommand extends CustomCommand {
     });
 
     let getVizsReqPayload: apiToBackend.ToBackendGetVizsRequestPayload = {
-      projectId: this.context.config.mproveCliProjectId,
-      isRepoProd: common.enumToBoolean(this.context.config.mproveCliIsRepoProd),
-      branchId: this.context.config.mproveCliBranchId,
-      envId: this.context.config.mproveCliEnvId
+      projectId: projectId,
+      isRepoProd: isRepoProd,
+      branchId: branchId,
+      envId: envId
     };
 
     let getVizsResp = await mreq<apiToBackend.ToBackendGetVizsResponse>({
