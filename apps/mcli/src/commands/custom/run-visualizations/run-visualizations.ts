@@ -19,6 +19,10 @@ export class RunVisualizationsCommand extends CustomCommand {
       [
         'Run visualizations for Personal Dev repo',
         'mprove run visualizations -p DXYE72ODCP5LWPWH2EXQ -b main -e prod'
+      ],
+      [
+        'Run visualizations vis1 and vis2 for Personal Dev repo',
+        'mprove run visualizations -p DXYE72ODCP5LWPWH2EXQ -b main -e prod --visualizationIds vis1,vis2'
       ]
     ]
   });
@@ -40,6 +44,10 @@ export class RunVisualizationsCommand extends CustomCommand {
   envId = Option.String(`-e,--envId`, {
     required: true,
     description: '(required) Environment Id'
+  });
+
+  visualizationIds = Option.String(`--visualizationIds`, {
+    description: `(optional) Run only visualizations with selected Ids (visualization names), separated by comma`
   });
 
   async execute() {
@@ -73,9 +81,31 @@ export class RunVisualizationsCommand extends CustomCommand {
       config: this.context.config
     });
 
-    let queryIdsWithDuplicates = getVizsResp.payload.vizs.map(
-      x => x.reports[0].queryId
-    );
+    let ids = this.visualizationIds?.split(',');
+
+    if (common.isDefined(ids)) {
+      ids.forEach(x => {
+        if (
+          getVizsResp.payload.vizs
+            .map(visualization => visualization.vizId)
+            .indexOf(x) < 0
+        ) {
+          let serverError = new common.ServerError({
+            message: common.ErEnum.MCLI_VISUALIZATION_NOT_FOUND,
+            data: { id: x },
+            originalError: null
+          });
+          throw serverError;
+        }
+      });
+    }
+
+    let queryIdsWithDuplicates = getVizsResp.payload.vizs
+      .filter(
+        visualization =>
+          common.isUndefined(ids) || ids.indexOf(visualization.vizId) > -1
+      )
+      .map(x => x.reports[0].queryId);
 
     let uniqueQueryIds = [...new Set(queryIdsWithDuplicates)];
 

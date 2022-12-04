@@ -4,7 +4,7 @@ import {
   transformAndValidateSync,
   TransformValidationOptions
 } from 'class-transformer-validator';
-import { ServerError } from '~common/models/server-error';
+import { common } from '~mcli/barrels/common';
 import { nodeCommon } from '~mcli/barrels/node-common';
 
 export function transformValidSyncMcli<T extends object>(item: {
@@ -25,7 +25,7 @@ export function transformValidSyncMcli<T extends object>(item: {
       constraints = nodeCommon.getConstraintsRecursive(e);
     }
 
-    let serverError = new ServerError({
+    let serverError = new common.ServerError({
       message: errorMessage,
       data: constraints,
       originalError: null

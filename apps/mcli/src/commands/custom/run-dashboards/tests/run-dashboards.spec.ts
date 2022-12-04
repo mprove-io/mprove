@@ -5,7 +5,7 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { RunDashboardsCommand } from '../run-dashboards';
 let testId =
-  'run dashboards -p DXYE72ODCP5LWPWH2EXQ --production -b main -e prod';
+  'run dashboards -p DXYE72ODCP5LWPWH2EXQ --production -b main -e prod --dashboardIds ec1_d1';
 
 test('1', async t => {
   let config: interfaces.Config;

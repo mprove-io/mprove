@@ -19,6 +19,10 @@ export class RunDashboardsCommand extends CustomCommand {
       [
         'Run dashboards for Personal Dev repo',
         'mprove run dashboards -p DXYE72ODCP5LWPWH2EXQ -b main -e prod'
+      ],
+      [
+        'Run dashboards d1 and d2 for Personal Dev repo',
+        'mprove run dashboards -p DXYE72ODCP5LWPWH2EXQ -b main -e prod --dashboardIds d1,d2'
       ]
     ]
   });
@@ -40,6 +44,10 @@ export class RunDashboardsCommand extends CustomCommand {
   envId = Option.String(`-e,--envId`, {
     required: true,
     description: '(required) Environment Id'
+  });
+
+  dashboardIds = Option.String(`--dashboardIds`, {
+    description: `(optional) Run only dashboards with selected Ids (dashboard names), separated by comma`
   });
 
   async execute() {
@@ -76,13 +84,37 @@ export class RunDashboardsCommand extends CustomCommand {
         config: this.context.config
       });
 
+    let ids = this.dashboardIds?.split(',');
+
+    if (common.isDefined(ids)) {
+      ids.forEach(x => {
+        if (
+          getDashboardsResp.payload.dashboards
+            .map(dashboard => dashboard.dashboardId)
+            .indexOf(x) < 0
+        ) {
+          let serverError = new common.ServerError({
+            message: common.ErEnum.MCLI_DASHBOARD_NOT_FOUND,
+            data: { id: x },
+            originalError: null
+          });
+          throw serverError;
+        }
+      });
+    }
+
     let queryIdsWithDuplicates: string[] = [];
 
-    getDashboardsResp.payload.dashboards.forEach(dashboard => {
-      dashboard.reports.forEach(report => {
-        queryIdsWithDuplicates.push(report.queryId);
+    getDashboardsResp.payload.dashboards
+      .filter(
+        dashboard =>
+          common.isUndefined(ids) || ids.indexOf(dashboard.dashboardId) > -1
+      )
+      .forEach(dashboard => {
+        dashboard.reports.forEach(report => {
+          queryIdsWithDuplicates.push(report.queryId);
+        });
       });
-    });
 
     let uniqueQueryIds = [...new Set(queryIdsWithDuplicates)];
 
