@@ -1,27 +1,51 @@
-import { Command } from 'clipanion';
+import { Command, Option } from 'clipanion';
 import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { getConfig } from '~mcli/config/get.config';
+import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
 export class RunVisualizationsCommand extends CustomCommand {
+  static paths = [['run', 'visualizations']];
+
   static usage = Command.Usage({
     description: 'Run visualizations',
-    examples: [['Run visualizations', 'mprove run visualizations']]
+    examples: [
+      [
+        'Run visualizations for Production repo',
+        'mprove run visualizations -p DXYE72ODCP5LWPWH2EXQ --production -b main -e prod'
+      ],
+      [
+        'Run visualizations for Personal Dev repo',
+        'mprove run visualizations -p DXYE72ODCP5LWPWH2EXQ -b main -e prod'
+      ]
+    ]
   });
 
-  static paths = [['run', 'visualizations']];
+  projectId = Option.String(`-p,--projectId`, {
+    required: true,
+    description: '(required) Project Id'
+  });
+
+  isRepoProd = Option.Boolean(`--production`, false, {
+    description: `(default false) If flag is set, then Production repo will be used, otherwise Personal Dev repo`
+  });
+
+  branchId = Option.String(`-b,--branchId`, {
+    required: true,
+    description: '(required) Branch Id'
+  });
+
+  envId = Option.String(`-e,--envId`, {
+    required: true,
+    description: '(required) Environment Id'
+  });
 
   async execute() {
     if (common.isUndefined(this.context.config)) {
       this.context.config = getConfig();
     }
-
-    let projectId = 'DXYE72ODCP5LWPWH2EXQ';
-    let isRepoProd = false;
-    let branchId = 'main';
-    let envId = 'prod';
 
     let loginUserReqPayload: apiToBackend.ToBackendLoginUserRequestPayload = {
       email: this.context.config.mproveCliEmail,
@@ -36,17 +60,17 @@ export class RunVisualizationsCommand extends CustomCommand {
     });
 
     let getVizsReqPayload: apiToBackend.ToBackendGetVizsRequestPayload = {
-      projectId: projectId,
-      isRepoProd: isRepoProd,
-      branchId: branchId,
-      envId: envId
+      projectId: this.projectId,
+      isRepoProd: this.isRepoProd,
+      branchId: this.branchId,
+      envId: this.envId
     };
 
     let getVizsResp = await mreq<apiToBackend.ToBackendGetVizsResponse>({
+      token: loginUserResp.payload.token,
       pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs,
       payload: getVizsReqPayload,
-      config: this.context.config,
-      token: loginUserResp.payload.token
+      config: this.context.config
     });
 
     let queryIdsWithDuplicates = getVizsResp.payload.vizs.map(
@@ -60,13 +84,17 @@ export class RunVisualizationsCommand extends CustomCommand {
     };
 
     let runQueriesResp = await mreq<apiToBackend.ToBackendRunQueriesResponse>({
+      token: loginUserResp.payload.token,
       pathInfoName:
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
       payload: runQueriesReqPayload,
-      config: this.context.config,
-      token: loginUserResp.payload.token
+      config: this.context.config
     });
 
-    // this.context.stdout.write(`${JSON.stringify(runQueriesResp, null, 2)}\n`);
+    logToConsoleMcli({
+      log: `Queries running: ${runQueriesResp.payload.runningQueries.length}\n`,
+      logLevel: common.LogLevelEnum.Info,
+      context: this.context
+    });
   }
 }

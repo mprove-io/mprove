@@ -4,10 +4,10 @@ import { common } from '~mcli/barrels/common';
 import { interfaces } from '~mcli/barrels/interfaces';
 
 export async function mreq<T extends common.MyResponse>(item: {
+  token?: string;
   pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum;
   payload: any;
   config: interfaces.Config;
-  token?: string;
 }): Promise<T> {
   let { pathInfoName, payload, config, token } = item;
 

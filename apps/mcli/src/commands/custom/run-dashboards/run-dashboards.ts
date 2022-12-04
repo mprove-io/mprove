@@ -1,4 +1,4 @@
-import { Command } from 'clipanion';
+import { Command, Option } from 'clipanion';
 import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { getConfig } from '~mcli/config/get.config';
@@ -7,22 +7,45 @@ import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
 export class RunDashboardsCommand extends CustomCommand {
+  static paths = [['run', 'dashboards']];
+
   static usage = Command.Usage({
     description: 'Run dashboards',
-    examples: [['Run dashboards', 'mprove run dashboards']]
+    examples: [
+      [
+        'Run dashboards for Production repo',
+        'mprove run dashboards -p DXYE72ODCP5LWPWH2EXQ --production -b main -e prod'
+      ],
+      [
+        'Run dashboards for Personal Dev repo',
+        'mprove run dashboards -p DXYE72ODCP5LWPWH2EXQ -b main -e prod'
+      ]
+    ]
   });
 
-  static paths = [['run', 'dashboards']];
+  projectId = Option.String(`-p,--projectId`, {
+    required: true,
+    description: '(required) Project Id'
+  });
+
+  isRepoProd = Option.Boolean(`--production`, false, {
+    description: `(default false) If flag is set, then Production repo will be used, otherwise Personal Dev repo`
+  });
+
+  branchId = Option.String(`-b,--branchId`, {
+    required: true,
+    description: '(required) Branch Id'
+  });
+
+  envId = Option.String(`-e,--envId`, {
+    required: true,
+    description: '(required) Environment Id'
+  });
 
   async execute() {
     if (common.isUndefined(this.context.config)) {
       this.context.config = getConfig();
     }
-
-    let projectId = 'DXYE72ODCP5LWPWH2EXQ';
-    let isRepoProd = false;
-    let branchId = 'main';
-    let envId = 'prod';
 
     let loginUserReqPayload: apiToBackend.ToBackendLoginUserRequestPayload = {
       email: this.context.config.mproveCliEmail,
@@ -38,19 +61,19 @@ export class RunDashboardsCommand extends CustomCommand {
 
     let getDashboardsReqPayload: apiToBackend.ToBackendGetDashboardsRequestPayload =
       {
-        projectId: projectId,
-        isRepoProd: isRepoProd,
-        branchId: branchId,
-        envId: envId
+        projectId: this.projectId,
+        isRepoProd: this.isRepoProd,
+        branchId: this.branchId,
+        envId: this.envId
       };
 
     let getDashboardsResp =
       await mreq<apiToBackend.ToBackendGetDashboardsResponse>({
+        token: loginUserResp.payload.token,
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
         payload: getDashboardsReqPayload,
-        config: this.context.config,
-        token: loginUserResp.payload.token
+        config: this.context.config
       });
 
     let queryIdsWithDuplicates: string[] = [];
@@ -68,11 +91,11 @@ export class RunDashboardsCommand extends CustomCommand {
     };
 
     let runQueriesResp = await mreq<apiToBackend.ToBackendRunQueriesResponse>({
+      token: loginUserResp.payload.token,
       pathInfoName:
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
       payload: runQueriesReqPayload,
-      config: this.context.config,
-      token: loginUserResp.payload.token
+      config: this.context.config
     });
 
     logToConsoleMcli({
