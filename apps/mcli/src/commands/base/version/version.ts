@@ -3,7 +3,7 @@ import { common } from '~mcli/barrels/common';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 
 export class VersionCommand extends Command {
-  static paths = [[`version`]];
+  static paths = [['version']];
 
   static usage = Command.Usage({
     description: 'Print version of Mprove CLI',

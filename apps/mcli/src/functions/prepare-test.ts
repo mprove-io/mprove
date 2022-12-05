@@ -36,8 +36,8 @@ export async function prepareTest(item: {
   let cli = new Cli({
     enableCapture: false,
     enableColors: true,
-    binaryLabel: `Mprove`,
-    binaryName: `mprove`,
+    binaryLabel: 'Mprove',
+    binaryName: 'mprove',
     binaryVersion: require('../../../../package.json').version
   });
 

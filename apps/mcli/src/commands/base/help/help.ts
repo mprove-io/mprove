@@ -3,7 +3,7 @@ import { common } from '~mcli/barrels/common';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 
 export class HelpCommand extends Command {
-  static paths = [[`help`], [`-h`], [`--help`]];
+  static paths = [['help'], ['-h'], ['--help']];
 
   static usage = Command.Usage({
     description: 'Print help',

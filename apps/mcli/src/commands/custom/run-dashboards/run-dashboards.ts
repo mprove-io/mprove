@@ -27,27 +27,29 @@ export class RunDashboardsCommand extends CustomCommand {
     ]
   });
 
-  projectId = Option.String(`-p,--projectId`, {
+  projectId = Option.String('-p,--projectId', {
     required: true,
     description: '(required) Project Id'
   });
 
-  isRepoProd = Option.Boolean(`--production`, false, {
-    description: `(default false) If flag is set, then Production repo will be used, otherwise Personal Dev repo`
+  isRepoProd = Option.Boolean('--production', false, {
+    description:
+      '(default false) If flag is set, then Production repo will be used, otherwise Personal Dev repo'
   });
 
-  branchId = Option.String(`-b,--branchId`, {
+  branchId = Option.String('-b,--branchId', {
     required: true,
     description: '(required) Branch Id'
   });
 
-  envId = Option.String(`-e,--envId`, {
+  envId = Option.String('-e,--envId', {
     required: true,
     description: '(required) Environment Id'
   });
 
-  dashboardIds = Option.String(`--dashboardIds`, {
-    description: `(optional) Run only dashboards with selected Ids (dashboard names), separated by comma`
+  dashboardIds = Option.String('--dashboardIds', {
+    description:
+      '(optional) Run only dashboards with selected Ids (dashboard names), separated by comma'
   });
 
   async execute() {

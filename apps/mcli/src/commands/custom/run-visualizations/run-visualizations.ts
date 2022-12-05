@@ -27,27 +27,29 @@ export class RunVisualizationsCommand extends CustomCommand {
     ]
   });
 
-  projectId = Option.String(`-p,--projectId`, {
+  projectId = Option.String('-p,--projectId', {
     required: true,
     description: '(required) Project Id'
   });
 
-  isRepoProd = Option.Boolean(`--production`, false, {
-    description: `(default false) If flag is set, then Production repo will be used, otherwise Personal Dev repo`
+  isRepoProd = Option.Boolean('--production', false, {
+    description:
+      '(default false) If flag is set, then Production repo will be used, otherwise Personal Dev repo'
   });
 
-  branchId = Option.String(`-b,--branchId`, {
+  branchId = Option.String('-b,--branchId', {
     required: true,
     description: '(required) Branch Id'
   });
 
-  envId = Option.String(`-e,--envId`, {
+  envId = Option.String('-e,--envId', {
     required: true,
     description: '(required) Environment Id'
   });
 
-  visualizationIds = Option.String(`--visualizationIds`, {
-    description: `(optional) Run only visualizations with selected Ids (visualization names), separated by comma`
+  visualizationIds = Option.String('--visualizationIds', {
+    description:
+      '(optional) Run only visualizations with selected Ids (visualization names), separated by comma'
   });
 
   async execute() {

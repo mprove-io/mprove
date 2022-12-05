@@ -29,7 +29,7 @@ test('1', async t => {
 
   let isPass =
     code === 1 &&
-    context.stdout.toString().includes(`Command not found`) === true;
+    context.stdout.toString().includes('Command not found') === true;
 
   if (isPass === false) {
     console.log(context.stdout.toString());
@@ -37,5 +37,5 @@ test('1', async t => {
   }
 
   t.is(code, 1);
-  t.is(context.stdout.toString().includes(`Command not found`), true);
+  t.is(context.stdout.toString().includes('Command not found'), true);
 });

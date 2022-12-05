@@ -36,7 +36,7 @@ let customContext: CustomContext = {
 Cli.from(appCommands, {
   enableCapture: false,
   enableColors: true,
-  binaryLabel: `Mprove CLI`,
-  binaryName: `mprove`,
+  binaryLabel: 'Mprove CLI',
+  binaryName: 'mprove',
   binaryVersion: require('../../../package.json').version
 }).runExit(process.argv.slice(2), customContext);
