@@ -1,14 +1,18 @@
+import { BaseContext } from 'clipanion';
+import * as util from 'util';
 import { common } from '~mcli/barrels/common';
 import { nodeCommon } from '~mcli/barrels/node-common';
-import { CustomContext } from '~mcli/models/custom-command';
 
 export function logToConsoleMcli(item: {
   log: any;
   logLevel: common.LogLevelEnum;
-  context: CustomContext;
-  isStringify?: boolean;
+  context: BaseContext;
+  isJson: boolean;
+  isInspect?: boolean;
 }) {
-  let { log, logLevel, context, isStringify } = item;
+  let { log, logLevel, context, isJson, isInspect } = item;
+
+  isInspect = common.isDefined(isInspect) ? isInspect : true;
 
   if (
     log instanceof Error ||
@@ -19,9 +23,19 @@ export function logToConsoleMcli(item: {
     log = { error: nodeCommon.wrapError(log) };
   }
 
-  if (isStringify === true) {
-    log = `${JSON.stringify(log, null, 2)}\n`;
+  if (isJson === true) {
+    log = JSON.stringify(log, null, 2);
+  } else if (isInspect === true) {
+    log = util.inspect(log, {
+      showHidden: false,
+      depth: null,
+      colors: true,
+      breakLength: Infinity,
+      compact: false
+    });
   }
+
+  log = `${log}\n`;
 
   if (logLevel === common.LogLevelEnum.Error) {
     context.stderr.write(log);

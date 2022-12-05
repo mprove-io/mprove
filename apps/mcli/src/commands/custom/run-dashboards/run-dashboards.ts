@@ -131,9 +131,10 @@ export class RunDashboardsCommand extends CustomCommand {
     });
 
     logToConsoleMcli({
-      log: `Queries running: ${runQueriesResp.payload.runningQueries.length}\n`,
+      log: `Queries running: ${runQueriesResp.payload.runningQueries.length}`,
       logLevel: common.LogLevelEnum.Info,
-      context: this.context
+      context: this.context,
+      isJson: false
     });
   }
 }

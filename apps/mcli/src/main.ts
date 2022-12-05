@@ -35,6 +35,7 @@ let customContext: CustomContext = {
 
 Cli.from(appCommands, {
   enableCapture: false,
+  enableColors: true,
   binaryLabel: `Mprove CLI`,
   binaryName: `mprove`,
   binaryVersion: require('../../../package.json').version

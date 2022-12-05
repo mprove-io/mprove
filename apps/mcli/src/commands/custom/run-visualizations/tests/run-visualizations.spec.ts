@@ -28,7 +28,8 @@ test('1', async t => {
     logToConsoleMcli({
       log: e,
       logLevel: common.LogLevelEnum.Error,
-      context: context
+      context: context,
+      isJson: true
     });
   }
 

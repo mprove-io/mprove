@@ -13,7 +13,7 @@ export class CustomCommand extends Command<CustomContext> {
       log: e,
       logLevel: common.LogLevelEnum.Error,
       context: this.context,
-      isStringify: true
+      isJson: false
     });
 
     throw e;

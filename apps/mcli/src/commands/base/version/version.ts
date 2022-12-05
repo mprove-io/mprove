@@ -15,12 +15,14 @@ export class VersionCommand extends Command {
 
     let log = `Mprove CLI version: ${
       common.isDefined(version) ? version : 'unknown'
-    }\n`;
+    }`;
 
     logToConsoleMcli({
       log: log,
       logLevel: common.LogLevelEnum.Info,
-      context: this.context as any
+      context: this.context,
+      isJson: false,
+      isInspect: false
     });
   }
 }

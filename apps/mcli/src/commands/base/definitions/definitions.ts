@@ -16,8 +16,8 @@ export class DefinitionsCommand extends Command {
     logToConsoleMcli({
       log: log,
       logLevel: common.LogLevelEnum.Info,
-      context: this.context as any,
-      isStringify: true
+      context: this.context,
+      isJson: false
     });
   }
 }
