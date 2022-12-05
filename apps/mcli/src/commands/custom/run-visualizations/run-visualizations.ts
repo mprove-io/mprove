@@ -6,6 +6,13 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
+interface VVisualization {
+  vizId: string;
+  title: string;
+  queryId: string;
+  queryStatus?: common.QueryStatusEnum;
+}
+
 export class RunVisualizationsCommand extends CustomCommand {
   static paths = [['run', 'visualizations']];
 
@@ -50,6 +57,14 @@ export class RunVisualizationsCommand extends CustomCommand {
   visualizationIds = Option.String('--visualizationIds', {
     description:
       '(optional) Run only visualizations with selected Ids (visualization names), separated by comma'
+  });
+
+  verbose = Option.Boolean('-v,--verbose', false, {
+    description: '(default false)'
+  });
+
+  json = Option.Boolean('-j,--json', false, {
+    description: '(default false)'
   });
 
   async execute() {
@@ -102,12 +117,24 @@ export class RunVisualizationsCommand extends CustomCommand {
       });
     }
 
+    let vVisualizations: VVisualization[] = [];
+
     let queryIdsWithDuplicates = getVizsResp.payload.vizs
       .filter(
         visualization =>
           common.isUndefined(ids) || ids.indexOf(visualization.vizId) > -1
       )
-      .map(x => x.reports[0].queryId);
+      .map(x => {
+        let vVisualization: VVisualization = {
+          title: x.title,
+          vizId: x.vizId,
+          queryId: x.reports[0].queryId
+        };
+
+        vVisualizations.push(vVisualization);
+
+        return x.reports[0].queryId;
+      });
 
     let uniqueQueryIds = [...new Set(queryIdsWithDuplicates)];
 
@@ -123,11 +150,35 @@ export class RunVisualizationsCommand extends CustomCommand {
       config: this.context.config
     });
 
-    logToConsoleMcli({
-      log: `Queries running: ${runQueriesResp.payload.runningQueries.length}`,
-      logLevel: common.LogLevelEnum.Info,
-      context: this.context,
-      isJson: false
-    });
+    if (this.verbose === true) {
+      vVisualizations.forEach(vVisualization => {
+        let query = runQueriesResp.payload.runningQueries.find(
+          q => q.queryId === vVisualization.queryId
+        );
+        vVisualization.queryStatus = query.status;
+      });
+
+      logToConsoleMcli({
+        log: { visualizations: vVisualizations },
+        logLevel: common.LogLevelEnum.Info,
+        context: this.context,
+        isJson: this.json
+      });
+    } else {
+      let log =
+        this.json === false
+          ? `Queries running: ${runQueriesResp.payload.runningQueries.length}`
+          : {
+              queriesRunning: runQueriesResp.payload.runningQueries.length
+            };
+
+      logToConsoleMcli({
+        log: log,
+        logLevel: common.LogLevelEnum.Info,
+        context: this.context,
+        isJson: this.json,
+        isInspect: false
+      });
+    }
   }
 }

@@ -6,6 +6,18 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
+interface VReport {
+  title: string;
+  queryId: string;
+  queryStatus?: common.QueryStatusEnum;
+}
+
+interface VDashboard {
+  title: string;
+  dashboardId: string;
+  reports: VReport[];
+}
+
 export class RunDashboardsCommand extends CustomCommand {
   static paths = [['run', 'dashboards']];
 
@@ -50,6 +62,14 @@ export class RunDashboardsCommand extends CustomCommand {
   dashboardIds = Option.String('--dashboardIds', {
     description:
       '(optional) Run only dashboards with selected Ids (dashboard names), separated by comma'
+  });
+
+  verbose = Option.Boolean('-v,--verbose', false, {
+    description: '(default false)'
+  });
+
+  json = Option.Boolean('-j,--json', false, {
+    description: '(default false)'
   });
 
   async execute() {
@@ -107,15 +127,34 @@ export class RunDashboardsCommand extends CustomCommand {
 
     let queryIdsWithDuplicates: string[] = [];
 
+    let vDashboards: VDashboard[] = [];
+
     getDashboardsResp.payload.dashboards
       .filter(
         dashboard =>
           common.isUndefined(ids) || ids.indexOf(dashboard.dashboardId) > -1
       )
       .forEach(dashboard => {
+        let vReports: VReport[] = [];
+
         dashboard.reports.forEach(report => {
           queryIdsWithDuplicates.push(report.queryId);
+
+          let vReport: VReport = {
+            title: report.title,
+            queryId: report.queryId
+          };
+
+          vReports.push(vReport);
         });
+
+        let vDashboard: VDashboard = {
+          title: dashboard.title,
+          dashboardId: dashboard.dashboardId,
+          reports: vReports
+        };
+
+        vDashboards.push(vDashboard);
       });
 
     let uniqueQueryIds = [...new Set(queryIdsWithDuplicates)];
@@ -132,11 +171,37 @@ export class RunDashboardsCommand extends CustomCommand {
       config: this.context.config
     });
 
-    logToConsoleMcli({
-      log: `Queries running: ${runQueriesResp.payload.runningQueries.length}`,
-      logLevel: common.LogLevelEnum.Info,
-      context: this.context,
-      isJson: false
-    });
+    if (this.verbose === true) {
+      vDashboards.forEach(vDashboard => {
+        vDashboard.reports.forEach(vReport => {
+          let query = runQueriesResp.payload.runningQueries.find(
+            q => q.queryId === vReport.queryId
+          );
+          vReport.queryStatus = query.status;
+        });
+      });
+
+      logToConsoleMcli({
+        log: { dashboards: vDashboards },
+        logLevel: common.LogLevelEnum.Info,
+        context: this.context,
+        isJson: this.json
+      });
+    } else {
+      let log =
+        this.json === false
+          ? `Queries running: ${runQueriesResp.payload.runningQueries.length}`
+          : {
+              queriesRunning: runQueriesResp.payload.runningQueries.length
+            };
+
+      logToConsoleMcli({
+        log: log,
+        logLevel: common.LogLevelEnum.Info,
+        context: this.context,
+        isJson: this.json,
+        isInspect: false
+      });
+    }
   }
 }
