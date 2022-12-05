@@ -40,6 +40,58 @@ export class QueriesService {
     return query;
   }
 
+  async getQueriesCheckExist(item: { queryIds: string[]; projectId: string }) {
+    let { queryIds, projectId } = item;
+
+    let queries = await this.queriesRepository.find({
+      select: [
+        'project_id',
+        'env_id',
+        'connection_id',
+        'connection_type',
+        'query_id',
+        // 'sql',
+        'status',
+        // 'data',
+        'last_run_by',
+        'last_run_ts',
+        'last_cancel_ts',
+        'last_complete_ts',
+        'last_complete_duration',
+        'last_error_message',
+        'last_error_ts',
+        'query_job_id',
+        'bigquery_query_job_id',
+        'bigquery_consecutive_errors_get_job',
+        'bigquery_consecutive_errors_get_results',
+        'server_ts'
+      ],
+      where: {
+        query_id: In(queryIds),
+        project_id: projectId
+      }
+    });
+
+    let notFoundQueryIds: string[] = [];
+
+    queryIds.forEach(x => {
+      if (queries.map(query => query.query_id).indexOf(x) < -1) {
+        notFoundQueryIds.push(x);
+      }
+    });
+
+    if (notFoundQueryIds.length > 0) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_QUERIES_DO_NOT_EXIST,
+        data: {
+          notFoundQueryIds: notFoundQueryIds
+        }
+      });
+    }
+
+    return queries;
+  }
+
   async removeOrphanedQueries() {
     let rawData: any;
 

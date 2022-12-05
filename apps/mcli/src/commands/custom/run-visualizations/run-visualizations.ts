@@ -67,6 +67,10 @@ export class RunVisualizationsCommand extends CustomCommand {
     description: '(default false)'
   });
 
+  wait = Option.Boolean('-w,--wait', false, {
+    description: '(default false)'
+  });
+
   async execute() {
     if (common.isUndefined(this.context.config)) {
       this.context.config = getConfig();
@@ -149,6 +153,10 @@ export class RunVisualizationsCommand extends CustomCommand {
       payload: runQueriesReqPayload,
       config: this.context.config
     });
+
+    // if (this.wait === true) {
+
+    // }
 
     if (this.verbose === true) {
       vVisualizations.forEach(vVisualization => {

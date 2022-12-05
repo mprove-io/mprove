@@ -201,6 +201,8 @@ export const nameToClass = {
   [enums.ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfigAndQuery]:
     interfaces.ToBackendCreateTempMconfigAndQueryRequest,
   //
+  [enums.ToBackendRequestInfoNameEnum.ToBackendGetQueries]:
+    interfaces.ToBackendGetQueriesRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetQuery]:
     interfaces.ToBackendGetQueryRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendRunQueries]:

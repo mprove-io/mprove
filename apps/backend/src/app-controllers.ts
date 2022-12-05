@@ -77,6 +77,7 @@ export const appControllers = [
   controllers.GetEvsController,
 
   controllers.CancelQueriesController,
+  controllers.GetQueriesController,
   controllers.GetQueryController,
   controllers.RunQueriesController,
   controllers.RunQueriesDryController,
