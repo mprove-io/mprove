@@ -3,6 +3,7 @@ import * as t from 'typanion';
 import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { getConfig } from '~mcli/config/get.config';
+import { queriesToStats } from '~mcli/functions/get-query-stats';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
@@ -54,7 +55,7 @@ export class RunVisualizationsCommand extends CustomCommand {
     description: '(required) Environment Id'
   });
 
-  visualizationIds = Option.String('--visualizationIds', {
+  ids = Option.String('--ids', {
     description:
       '(optional) Run only visualizations with selected Ids (visualization names), separated by comma'
   });
@@ -68,12 +69,12 @@ export class RunVisualizationsCommand extends CustomCommand {
   });
 
   wait = Option.Boolean('-w,--wait', false, {
-    description: '(default false)'
+    description: '(default false) Wait for results'
   });
 
   seconds = Option.String('-s,--seconds', '3', {
     validator: t.isNumber(),
-    description: '(default 3) sleep time between get results'
+    description: '(default 3) Sleep time between getting results'
   });
 
   async execute() {
@@ -107,7 +108,7 @@ export class RunVisualizationsCommand extends CustomCommand {
       config: this.context.config
     });
 
-    let ids = this.visualizationIds?.split(',');
+    let ids = this.ids?.split(',');
 
     if (common.isDefined(ids)) {
       ids.forEach(x => {
@@ -126,9 +127,9 @@ export class RunVisualizationsCommand extends CustomCommand {
       });
     }
 
-    let vizParts: VizPart[] = [];
+    let queryIdsWithDuplicates: string[] = [];
 
-    let queryIdsWithDuplicates = getVizsResp.payload.vizs
+    let vizParts: VizPart[] = getVizsResp.payload.vizs
       .filter(
         visualization =>
           common.isUndefined(ids) || ids.indexOf(visualization.vizId) > -1
@@ -140,9 +141,9 @@ export class RunVisualizationsCommand extends CustomCommand {
           query: { queryId: x.reports[0].queryId } as common.Query
         };
 
-        vizParts.push(vizPart);
+        queryIdsWithDuplicates.push(x.reports[0].queryId);
 
-        return x.reports[0].queryId;
+        return vizPart;
       });
 
     let uniqueQueryIds = [...new Set(queryIdsWithDuplicates)];
@@ -211,36 +212,42 @@ export class RunVisualizationsCommand extends CustomCommand {
       x => vizParts.find(vp => vp.query.queryId === x).query
     );
 
-    let stats = {
-      queriesCompleted: queries.filter(
-        q => q.status === common.QueryStatusEnum.Completed
-      ).length,
-      queriesError: queries.filter(
-        q => q.status === common.QueryStatusEnum.Error
-      ).length,
-      queriesRunning: queries.filter(
-        q => q.status === common.QueryStatusEnum.Running
-      ).length,
-      queriesCanceled: queries.filter(
-        q => q.status === common.QueryStatusEnum.Canceled
-      ).length
+    let queriesStats = queriesToStats(queries);
+
+    let errorVisualizations: VizPart[] =
+      queriesStats.error === 0
+        ? []
+        : vizParts
+            .filter(x => x.query.status === common.QueryStatusEnum.Error)
+            .map(v => ({
+              vizId: v.vizId,
+              title: v.title,
+              query: {
+                lastErrorMessage: v.query.lastErrorMessage,
+                status: v.query.status,
+                queryId: v.query.queryId
+              } as common.Query
+            }));
+    let log: any = {
+      queriesStats: queriesStats
     };
 
+    if (errorVisualizations.length > 0) {
+      log.errorVisualizations = errorVisualizations;
+    }
+
     if (this.verbose === true) {
+      log.visualizations = vizParts;
+
       logToConsoleMcli({
-        log: {
-          stats: stats,
-          visualizations: vizParts
-        },
+        log: log,
         logLevel: common.LogLevelEnum.Info,
         context: this.context,
         isJson: this.json
       });
     } else {
       logToConsoleMcli({
-        log: {
-          stats: stats
-        },
+        log: log,
         logLevel: common.LogLevelEnum.Info,
         context: this.context,
         isJson: this.json

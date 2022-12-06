@@ -1,21 +1,22 @@
 import { Command, Option } from 'clipanion';
+import * as t from 'typanion';
 import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { getConfig } from '~mcli/config/get.config';
+import { queriesToStats } from '~mcli/functions/get-query-stats';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
-interface VReport {
+interface ReportPart {
   title: string;
-  queryId: string;
-  queryStatus?: common.QueryStatusEnum;
+  query: common.Query;
 }
 
-interface VDashboard {
+interface DashboardPart {
   title: string;
   dashboardId: string;
-  reports: VReport[];
+  reports: ReportPart[];
 }
 
 export class RunDashboardsCommand extends CustomCommand {
@@ -59,7 +60,7 @@ export class RunDashboardsCommand extends CustomCommand {
     description: '(required) Environment Id'
   });
 
-  dashboardIds = Option.String('--dashboardIds', {
+  ids = Option.String('--ids', {
     description:
       '(optional) Run only dashboards with selected Ids (dashboard names), separated by comma'
   });
@@ -70,6 +71,15 @@ export class RunDashboardsCommand extends CustomCommand {
 
   json = Option.Boolean('-j,--json', false, {
     description: '(default false)'
+  });
+
+  wait = Option.Boolean('-w,--wait', false, {
+    description: '(default false) Wait for results'
+  });
+
+  seconds = Option.String('-s,--seconds', '3', {
+    validator: t.isNumber(),
+    description: '(default 3) Sleep time between getting results'
   });
 
   async execute() {
@@ -106,7 +116,7 @@ export class RunDashboardsCommand extends CustomCommand {
         config: this.context.config
       });
 
-    let ids = this.dashboardIds?.split(',');
+    let ids = this.ids?.split(',');
 
     if (common.isDefined(ids)) {
       ids.forEach(x => {
@@ -127,34 +137,33 @@ export class RunDashboardsCommand extends CustomCommand {
 
     let queryIdsWithDuplicates: string[] = [];
 
-    let vDashboards: VDashboard[] = [];
-
-    getDashboardsResp.payload.dashboards
+    let dashboardParts: DashboardPart[] = getDashboardsResp.payload.dashboards
       .filter(
         dashboard =>
           common.isUndefined(ids) || ids.indexOf(dashboard.dashboardId) > -1
       )
-      .forEach(dashboard => {
-        let vReports: VReport[] = [];
+      .map(dashboard => {
+        let reportParts: ReportPart[] = [];
 
         dashboard.reports.forEach(report => {
-          queryIdsWithDuplicates.push(report.queryId);
-
-          let vReport: VReport = {
+          let reportPart: ReportPart = {
             title: report.title,
-            queryId: report.queryId
+            query: {
+              queryId: report.queryId
+            } as common.Query
           };
 
-          vReports.push(vReport);
+          reportParts.push(reportPart);
+          queryIdsWithDuplicates.push(report.queryId);
         });
 
-        let vDashboard: VDashboard = {
+        let dashboardPart: DashboardPart = {
           title: dashboard.title,
           dashboardId: dashboard.dashboardId,
-          reports: vReports
+          reports: reportParts
         };
 
-        vDashboards.push(vDashboard);
+        return dashboardPart;
       });
 
     let uniqueQueryIds = [...new Set(queryIdsWithDuplicates)];
@@ -172,36 +181,114 @@ export class RunDashboardsCommand extends CustomCommand {
       config: this.context.config
     });
 
-    if (this.verbose === true) {
-      vDashboards.forEach(vDashboard => {
-        vDashboard.reports.forEach(vReport => {
-          let query = runQueriesResp.payload.runningQueries.find(
-            q => q.queryId === vReport.queryId
-          );
-          vReport.queryStatus = query.status;
-        });
+    dashboardParts.forEach(dashboardPart => {
+      dashboardPart.reports.forEach(reportPart => {
+        let query = runQueriesResp.payload.runningQueries.find(
+          q => q.queryId === reportPart.query.queryId
+        );
+        reportPart.query.status = query.status;
       });
+    });
 
-      logToConsoleMcli({
-        log: { dashboards: vDashboards },
-        logLevel: common.LogLevelEnum.Info,
-        context: this.context,
-        isJson: this.json
-      });
-    } else {
-      let log =
-        this.json === false
-          ? `Queries running: ${runQueriesResp.payload.runningQueries.length}`
-          : {
-              queriesRunning: runQueriesResp.payload.runningQueries.length
-            };
+    let queryIdsToGet: string[] = [...uniqueQueryIds];
+
+    if (this.wait === true) {
+      await common.sleep(this.seconds * 1000);
+
+      while (queryIdsToGet.length > 0) {
+        let getQueriesReqPayload: apiToBackend.ToBackendGetQueriesRequestPayload =
+          {
+            projectId: this.projectId,
+            isRepoProd: this.isRepoProd,
+            branchId: this.branchId,
+            envId: this.envId,
+            queryIds: uniqueQueryIds
+          };
+
+        let getQueriesResp =
+          await mreq<apiToBackend.ToBackendGetQueriesResponse>({
+            token: loginUserResp.payload.token,
+            pathInfoName:
+              apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQueries,
+            payload: getQueriesReqPayload,
+            config: this.context.config
+          });
+
+        getQueriesResp.payload.queries.forEach(query => {
+          if (query.status !== common.QueryStatusEnum.Running) {
+            dashboardParts.forEach(dp => {
+              dp.reports
+                .filter(
+                  reportPart => reportPart.query.queryId === query.queryId
+                )
+                .forEach(x => (x.query = query));
+            });
+
+            queryIdsToGet = queryIdsToGet.filter(id => id !== query.queryId);
+          }
+        });
+
+        if (queryIdsToGet.length > 0) {
+          await common.sleep(this.seconds * 1000);
+        }
+      }
+    }
+
+    let reportParts = [].concat(...dashboardParts.map(dp => dp.reports));
+
+    let queries = uniqueQueryIds.map(
+      x => reportParts.find(rp => rp.query.queryId === x).query
+    );
+
+    let queriesStats = queriesToStats(queries);
+
+    let errorDashboards: DashboardPart[] =
+      queriesStats.error === 0
+        ? []
+        : dashboardParts
+            .filter(
+              x =>
+                x.reports.filter(
+                  y => y.query.status === common.QueryStatusEnum.Error
+                ).length > 0
+            )
+            .map(d => ({
+              dashboardId: d.dashboardId,
+              title: d.title,
+              reports: d.reports
+                .filter(q => q.query.status === common.QueryStatusEnum.Error)
+                .map(r => ({
+                  title: r.title,
+                  query: {
+                    lastErrorMessage: r.query.lastErrorMessage,
+                    status: r.query.status,
+                    queryId: r.query.queryId
+                  } as common.Query
+                }))
+            }));
+    let log: any = {
+      queriesStats: queriesStats
+    };
+
+    if (errorDashboards.length > 0) {
+      log.errorDashboards = errorDashboards;
+    }
+
+    if (this.verbose === true) {
+      log.dashboards = dashboardParts;
 
       logToConsoleMcli({
         log: log,
         logLevel: common.LogLevelEnum.Info,
         context: this.context,
-        isJson: this.json,
-        isInspect: false
+        isJson: this.json
+      });
+    } else {
+      logToConsoleMcli({
+        log: log,
+        logLevel: common.LogLevelEnum.Info,
+        context: this.context,
+        isJson: this.json
       });
     }
   }
