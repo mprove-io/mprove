@@ -1,4 +1,5 @@
 import { Command, Option } from 'clipanion';
+import * as t from 'typanion';
 import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { getConfig } from '~mcli/config/get.config';
@@ -6,11 +7,10 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
-interface VVisualization {
+interface VizPart {
   vizId: string;
   title: string;
-  queryId: string;
-  queryStatus?: common.QueryStatusEnum;
+  query: common.Query;
 }
 
 export class RunVisualizationsCommand extends CustomCommand {
@@ -71,6 +71,11 @@ export class RunVisualizationsCommand extends CustomCommand {
     description: '(default false)'
   });
 
+  seconds = Option.String('-s,--seconds', '3', {
+    validator: t.isNumber(),
+    description: '(default 3) sleep time between get results'
+  });
+
   async execute() {
     if (common.isUndefined(this.context.config)) {
       this.context.config = getConfig();
@@ -121,7 +126,7 @@ export class RunVisualizationsCommand extends CustomCommand {
       });
     }
 
-    let vVisualizations: VVisualization[] = [];
+    let vizParts: VizPart[] = [];
 
     let queryIdsWithDuplicates = getVizsResp.payload.vizs
       .filter(
@@ -129,13 +134,13 @@ export class RunVisualizationsCommand extends CustomCommand {
           common.isUndefined(ids) || ids.indexOf(visualization.vizId) > -1
       )
       .map(x => {
-        let vVisualization: VVisualization = {
+        let vizPart: VizPart = {
           title: x.title,
           vizId: x.vizId,
-          queryId: x.reports[0].queryId
+          query: { queryId: x.reports[0].queryId } as common.Query
         };
 
-        vVisualizations.push(vVisualization);
+        vizParts.push(vizPart);
 
         return x.reports[0].queryId;
       });
@@ -143,6 +148,7 @@ export class RunVisualizationsCommand extends CustomCommand {
     let uniqueQueryIds = [...new Set(queryIdsWithDuplicates)];
 
     let runQueriesReqPayload: apiToBackend.ToBackendRunQueriesRequestPayload = {
+      projectId: this.projectId,
       queryIds: uniqueQueryIds
     };
 
@@ -154,38 +160,90 @@ export class RunVisualizationsCommand extends CustomCommand {
       config: this.context.config
     });
 
-    // if (this.wait === true) {
+    vizParts.forEach(v => {
+      let query = runQueriesResp.payload.runningQueries.find(
+        q => q.queryId === v.query.queryId
+      );
+      v.query = query;
+    });
 
-    // }
+    let queryIdsToGet: string[] = [...uniqueQueryIds];
+
+    if (this.wait === true) {
+      await common.sleep(this.seconds * 1000);
+
+      while (queryIdsToGet.length > 0) {
+        let getQueriesReqPayload: apiToBackend.ToBackendGetQueriesRequestPayload =
+          {
+            projectId: this.projectId,
+            isRepoProd: this.isRepoProd,
+            branchId: this.branchId,
+            envId: this.envId,
+            queryIds: uniqueQueryIds
+          };
+
+        let getQueriesResp =
+          await mreq<apiToBackend.ToBackendGetQueriesResponse>({
+            token: loginUserResp.payload.token,
+            pathInfoName:
+              apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQueries,
+            payload: getQueriesReqPayload,
+            config: this.context.config
+          });
+
+        getQueriesResp.payload.queries.forEach(query => {
+          if (query.status !== common.QueryStatusEnum.Running) {
+            vizParts
+              .filter(vizPart => vizPart.query.queryId === query.queryId)
+              .forEach(x => (x.query = query));
+
+            queryIdsToGet = queryIdsToGet.filter(id => id !== query.queryId);
+          }
+        });
+
+        if (queryIdsToGet.length > 0) {
+          await common.sleep(this.seconds * 1000);
+        }
+      }
+    }
+
+    let queries = uniqueQueryIds.map(
+      x => vizParts.find(vp => vp.query.queryId === x).query
+    );
+
+    let stats = {
+      queriesCompleted: queries.filter(
+        q => q.status === common.QueryStatusEnum.Completed
+      ).length,
+      queriesError: queries.filter(
+        q => q.status === common.QueryStatusEnum.Error
+      ).length,
+      queriesRunning: queries.filter(
+        q => q.status === common.QueryStatusEnum.Running
+      ).length,
+      queriesCanceled: queries.filter(
+        q => q.status === common.QueryStatusEnum.Canceled
+      ).length
+    };
 
     if (this.verbose === true) {
-      vVisualizations.forEach(vVisualization => {
-        let query = runQueriesResp.payload.runningQueries.find(
-          q => q.queryId === vVisualization.queryId
-        );
-        vVisualization.queryStatus = query.status;
-      });
-
       logToConsoleMcli({
-        log: { visualizations: vVisualizations },
+        log: {
+          stats: stats,
+          visualizations: vizParts
+        },
         logLevel: common.LogLevelEnum.Info,
         context: this.context,
         isJson: this.json
       });
     } else {
-      let log =
-        this.json === false
-          ? `Queries running: ${runQueriesResp.payload.runningQueries.length}`
-          : {
-              queriesRunning: runQueriesResp.payload.runningQueries.length
-            };
-
       logToConsoleMcli({
-        log: log,
+        log: {
+          stats: stats
+        },
         logLevel: common.LogLevelEnum.Info,
         context: this.context,
-        isJson: this.json,
-        isInspect: false
+        isJson: this.json
       });
     }
   }

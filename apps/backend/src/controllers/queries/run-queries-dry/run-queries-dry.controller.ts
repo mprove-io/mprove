@@ -30,13 +30,14 @@ export class RunQueriesDryController {
   ) {
     let reqValid: apiToBackend.ToBackendRunQueriesDryRequest = request.body;
 
-    let { dryId, queryIds } = reqValid.payload;
+    let { projectId, dryId, queryIds } = reqValid.payload;
 
     let results: {
       validEstimate: common.QueryEstimate;
       errorQuery: entities.QueryEntity;
     }[] = await asyncPool(8, queryIds, async queryId => {
-      let query = await this.queriesService.getQueryCheckExists({
+      let query = await this.queriesService.getQueryCheckExistsSkipData({
+        projectId: projectId,
         queryId: queryId
       });
 

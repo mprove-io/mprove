@@ -27,12 +27,13 @@ export class RunQueriesController {
   ) {
     let reqValid: apiToBackend.ToBackendRunQueriesRequest = request.body;
 
-    let { queryIds } = reqValid.payload;
+    let { projectId, queryIds } = reqValid.payload;
 
     let runningQueries: entities.QueryEntity[] = [];
 
     await asyncPool(1, queryIds, async queryId => {
-      let query = await this.queriesService.getQueryCheckExists({
+      let query = await this.queriesService.getQueryCheckExistsSkipData({
+        projectId: projectId,
         queryId: queryId
       });
 
@@ -52,6 +53,8 @@ export class RunQueriesController {
         query: query,
         connection: connection
       });
+
+      delete recordsQuery.sql;
 
       runningQueries.push(recordsQuery);
     });

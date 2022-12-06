@@ -122,6 +122,7 @@ test('1', async t => {
         idempotencyKey: testId + '2'
       },
       payload: {
+        projectId: projectId,
         queryIds: [viz.reports[0].queryId]
       }
     };

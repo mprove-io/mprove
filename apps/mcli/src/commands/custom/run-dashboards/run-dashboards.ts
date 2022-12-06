@@ -160,6 +160,7 @@ export class RunDashboardsCommand extends CustomCommand {
     let uniqueQueryIds = [...new Set(queryIdsWithDuplicates)];
 
     let runQueriesReqPayload: apiToBackend.ToBackendRunQueriesRequestPayload = {
+      projectId: this.projectId,
       queryIds: uniqueQueryIds
     };
 

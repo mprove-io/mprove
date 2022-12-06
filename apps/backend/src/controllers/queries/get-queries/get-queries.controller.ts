@@ -63,7 +63,7 @@ export class GetQueriesController {
       envId: envId
     });
 
-    let queries = await this.queriesService.getQueriesCheckExist({
+    let queries = await this.queriesService.getQueriesCheckExistSkipSqlData({
       queryIds: queryIds,
       projectId: projectId
     });

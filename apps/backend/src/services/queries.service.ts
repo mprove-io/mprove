@@ -22,6 +22,50 @@ export class QueriesService {
     private logger: Logger
   ) {}
 
+  async getQueryCheckExistsSkipData(item: {
+    queryId: string;
+    projectId: string;
+  }) {
+    let { queryId: queryId, projectId: projectId } = item;
+
+    let query = await this.queriesRepository.findOne({
+      select: [
+        'project_id',
+        'env_id',
+        'connection_id',
+        'connection_type',
+        'query_id',
+        'sql',
+        'status',
+        // 'data',
+        'last_run_by',
+        'last_run_ts',
+        'last_cancel_ts',
+        'last_complete_ts',
+        'last_complete_duration',
+        'last_error_message',
+        'last_error_ts',
+        'query_job_id',
+        'bigquery_query_job_id',
+        'bigquery_consecutive_errors_get_job',
+        'bigquery_consecutive_errors_get_results',
+        'server_ts'
+      ],
+      where: {
+        query_id: queryId,
+        project_id: projectId
+      }
+    });
+
+    if (common.isUndefined(query)) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_QUERY_DOES_NOT_EXIST
+      });
+    }
+
+    return query;
+  }
+
   async getQueryCheckExists(item: { queryId: string }) {
     let { queryId: queryId } = item;
 
@@ -40,7 +84,10 @@ export class QueriesService {
     return query;
   }
 
-  async getQueriesCheckExist(item: { queryIds: string[]; projectId: string }) {
+  async getQueriesCheckExistSkipSqlData(item: {
+    queryIds: string[];
+    projectId: string;
+  }) {
     let { queryIds, projectId } = item;
 
     let queries = await this.queriesRepository.find({

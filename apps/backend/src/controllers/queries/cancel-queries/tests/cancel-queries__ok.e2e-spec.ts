@@ -143,6 +143,7 @@ test('1', async t => {
         idempotencyKey: testId
       },
       payload: {
+        projectId: projectId,
         queryIds: [queryId]
       }
     };

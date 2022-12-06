@@ -197,9 +197,21 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       event.stopPropagation();
     }
 
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
     this.spinner.show(this.viz.vizId);
 
     let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
+      projectId: nav.projectId,
       queryIds: [this.query.queryId]
     };
 
@@ -214,7 +226,10 @@ export class ChartVizComponent implements OnInit, OnDestroy {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let { runningQueries } = resp.payload;
 
-            this.query = runningQueries[0];
+            this.query = Object.assign(runningQueries[0], {
+              sql: this.query.sql,
+              data: this.query.data
+            });
           }
         }),
         take(1)

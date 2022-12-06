@@ -581,7 +581,19 @@ export class ModelComponent implements OnInit, OnDestroy {
   run() {
     this.startRunButtonTimer();
 
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
     let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
+      projectId: nav.projectId,
       queryIds: [this.query.queryId]
     };
 
@@ -597,8 +609,13 @@ export class ModelComponent implements OnInit, OnDestroy {
             let { runningQueries } = resp.payload;
 
             if (this.isQueryIdTheSameAndServerTsChanged(runningQueries[0])) {
+              let query = Object.assign(runningQueries[0], {
+                sql: this.query.sql,
+                data: this.query.data
+              });
+
               this.mqStore.update((state: MqState) =>
-                Object.assign({}, state, { query: runningQueries[0] })
+                Object.assign({}, state, { query: query })
               );
             }
           }
@@ -609,9 +626,21 @@ export class ModelComponent implements OnInit, OnDestroy {
   }
 
   runDry() {
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
     this.dryId = common.makeId();
 
     let payload: apiToBackend.ToBackendRunQueriesDryRequestPayload = {
+      projectId: nav.projectId,
       queryIds: [this.query.queryId],
       dryId: this.dryId
     };
@@ -650,7 +679,19 @@ export class ModelComponent implements OnInit, OnDestroy {
   cancel() {
     this.startCancelButtonTimer();
 
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
     let payload: apiToBackend.ToBackendCancelQueriesRequestPayload = {
+      projectId: nav.projectId,
       queryIds: [this.query.queryId]
     };
 
@@ -664,7 +705,10 @@ export class ModelComponent implements OnInit, OnDestroy {
         tap((resp: apiToBackend.ToBackendCancelQueriesResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let { queries } = resp.payload;
-            if (this.isQueryIdTheSameAndServerTsChanged(queries[0])) {
+            if (
+              queries.length > 0 &&
+              this.isQueryIdTheSameAndServerTsChanged(queries[0])
+            ) {
               this.mqStore.update((state: MqState) =>
                 Object.assign({}, state, { query: queries[0] })
               );

@@ -14,14 +14,15 @@ import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
+import { QueriesService } from '~backend/services/queries.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class CancelQueriesController {
   constructor(
-    private queriesRepository: repositories.QueriesRepository,
     private connectionsRepository: repositories.ConnectionsRepository,
     private membersService: MembersService,
+    private queriesService: QueriesService,
     private dbService: DbService,
     private logger: Logger,
     private cs: ConfigService
@@ -34,42 +35,24 @@ export class CancelQueriesController {
   ) {
     let reqValid: apiToBackend.ToBackendCancelQueriesRequest = request.body;
 
-    let { queryIds } = reqValid.payload;
-
-    let queries =
-      queryIds.length === 0
-        ? []
-        : await this.queriesRepository.find({
-            where: {
-              query_id: In(queryIds)
-            }
-          });
-
-    let projectIdsWithDuplicates = queries.map(q => q.project_id);
-    let uniqueProjectIds = [...new Set(projectIdsWithDuplicates)];
-
-    let projectId = uniqueProjectIds[0];
-
-    if (uniqueProjectIds.length > 1) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_MORE_THAN_ONE_PROJECT_ID
-      });
-    }
+    let { queryIds, projectId } = reqValid.payload;
 
     let member = await this.membersService.getMemberCheckExists({
       projectId: projectId,
       memberId: user.user_id
     });
 
-    let projectConnections =
-      queries.length === 0
-        ? []
-        : await this.connectionsRepository.find({
-            where: {
-              project_id: projectId,
-              connection_id: In(queries.map(q => q.connection_id))
-            }
-          });
+    let queries = await this.queriesService.getQueriesCheckExistSkipSqlData({
+      queryIds: queryIds,
+      projectId: projectId
+    });
+
+    let projectConnections = await this.connectionsRepository.find({
+      where: {
+        project_id: projectId,
+        connection_id: In(queries.map(q => q.connection_id))
+      }
+    });
 
     await asyncPool(
       8,
@@ -114,15 +97,21 @@ export class CancelQueriesController {
       }
     );
 
-    await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        queries: queries
-      }
-    });
+    let canceledQueries = queries.filter(
+      x => x.status === common.QueryStatusEnum.Canceled
+    );
+
+    if (canceledQueries.length > 0) {
+      await this.dbService.writeRecords({
+        modify: true,
+        records: {
+          queries: canceledQueries
+        }
+      });
+    }
 
     let payload: apiToBackend.ToBackendCancelQueriesResponsePayload = {
-      queries: queries.map(x => wrapper.wrapToApiQuery(x))
+      queries: canceledQueries.map(x => wrapper.wrapToApiQuery(x))
     };
 
     return payload;

@@ -63,6 +63,7 @@ function updateTarget(tPath: string, s: any, t: any) {
     'nest-winston',
     'reflect-metadata',
     'tslib',
+    'typanion',
     'util', //
     'winston',
     //

@@ -1,14 +1,12 @@
 import test from 'ava';
-import * as fse from 'fs-extra';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
-import { getConfig } from '~backend/config/get.config';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-run-queries-dry__ok';
+let testId = 'backend-cancel-queries__array-empty';
 
 let traceId = testId;
 
@@ -19,25 +17,71 @@ let password = '123456';
 let orgId = testId;
 let orgName = testId;
 
-let testProjectId = 't2';
 let projectId = common.makeId();
 let projectName = testId;
 
+let connectionId = 'c1';
+let connectionType = common.ConnectionTypeEnum.PostgreSQL;
+
+let queryId = common.makeId();
+let queryJobId = common.makeId();
+
+let structId = common.makeId();
+let mconfigId = common.makeId();
+
 let prep: interfaces.Prep;
 
-let config = getConfig();
-let bigqueryTestCredentials = JSON.parse(
-  fse.readFileSync(config.firstProjectDwhBigqueryCredentialsPath).toString()
-);
-
 test('1', async t => {
-  let resp2: apiToBackend.ToBackendRunQueriesDryResponse;
+  let resp1: apiToBackend.ToBackendCancelQueriesResponse;
+
+  let mconfig: common.Mconfig = {
+    structId: structId,
+    mconfigId: mconfigId,
+    queryId: queryId,
+    modelId: 'abc',
+    modelLabel: 'abc',
+    select: [],
+    sortings: [],
+    sorts: undefined,
+    timezone: common.UTC,
+    limit: 500,
+    filters: [],
+    chart: {
+      isValid: true,
+      type: common.ChartTypeEnum.Table
+    },
+    temp: true,
+    serverTs: 1
+  };
+
+  let query: common.Query = {
+    projectId: projectId,
+    envId: common.PROJECT_ENV_PROD,
+    connectionId: connectionId,
+    connectionType: connectionType,
+    queryId: queryId,
+    sql: '123',
+    data: undefined,
+    status: common.QueryStatusEnum.Running,
+    lastRunBy: userId,
+    lastRunTs: 1,
+    lastCancelTs: undefined,
+    lastCompleteTs: undefined,
+    lastCompleteDuration: undefined,
+    lastErrorMessage: undefined,
+    lastErrorTs: undefined,
+    queryJobId: queryJobId,
+    bigqueryQueryJobId: undefined,
+    bigqueryConsecutiveErrorsGetJob: 0,
+    bigqueryConsecutiveErrorsGetResults: 0,
+    serverTs: 1
+  };
 
   try {
     prep = await prepareTest({
       traceId: traceId,
       deleteRecordsPayload: {
-        idempotencyKeys: [testId, testId + '2'],
+        idempotencyKeys: [testId],
         emails: [email],
         orgIds: [orgId],
         projectIds: [projectId],
@@ -63,10 +107,9 @@ test('1', async t => {
           {
             orgId,
             projectId,
-            testProjectId,
             name: projectName,
-            defaultBranch: common.BRANCH_MASTER,
-            remoteType: common.ProjectRemoteTypeEnum.Managed
+            remoteType: common.ProjectRemoteTypeEnum.Managed,
+            defaultBranch: common.BRANCH_MASTER
           }
         ],
         members: [
@@ -82,57 +125,34 @@ test('1', async t => {
         connections: [
           {
             projectId: projectId,
-            connectionId: 'c1',
+            connectionId: connectionId,
             envId: common.PROJECT_ENV_PROD,
-            type: common.ConnectionTypeEnum.BigQuery,
-            bigqueryCredentials: bigqueryTestCredentials
+            type: connectionType
           }
-        ]
+        ],
+        queries: [query],
+        mconfigs: [mconfig]
       },
       loginUserPayload: { email, password }
     });
 
-    let req1: apiToBackend.ToBackendGetVizsRequest = {
+    let req1: apiToBackend.ToBackendCancelQueriesRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
         traceId: traceId,
         idempotencyKey: testId
       },
       payload: {
         projectId: projectId,
-        isRepoProd: false,
-        branchId: common.BRANCH_MASTER,
-        envId: common.PROJECT_ENV_PROD
+        queryIds: []
       }
     };
 
-    let resp1 =
-      await helper.sendToBackend<apiToBackend.ToBackendGetVizsResponse>({
+    resp1 =
+      await helper.sendToBackend<apiToBackend.ToBackendCancelQueriesResponse>({
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req1
-      });
-
-    let viz = resp1.payload.vizs.find(x => x.vizId === 's_s1');
-
-    let req2: apiToBackend.ToBackendRunQueriesDryRequest = {
-      info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry,
-        traceId: traceId,
-        idempotencyKey: testId + '2'
-      },
-      payload: {
-        projectId: projectId,
-        dryId: common.makeId(),
-        queryIds: [viz.reports[0].queryId]
-      }
-    };
-
-    resp2 =
-      await helper.sendToBackend<apiToBackend.ToBackendRunQueriesDryResponse>({
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req2
       });
 
     await prep.app.close();
@@ -145,6 +165,6 @@ test('1', async t => {
     });
   }
 
-  t.is(resp2.info.error, undefined);
-  t.is(resp2.info.status, common.ResponseInfoStatusEnum.Ok);
+  t.is(resp1.info.error.message, common.ErEnum.BACKEND_WRONG_REQUEST_PARAMS);
+  t.is(resp1.info.error.data[0].arrayNotEmpty, 'queryIds should not be empty');
 });

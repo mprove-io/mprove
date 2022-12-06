@@ -1,9 +1,13 @@
 import { Type } from 'class-transformer';
-import { IsString, ValidateNested } from 'class-validator';
+import { ArrayNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
 export class ToBackendCancelQueriesRequestPayload {
+  @IsString()
+  projectId: string;
+
+  @ArrayNotEmpty()
   @IsString({ each: true })
   queryIds: string[];
 }
