@@ -50,7 +50,7 @@ export class RunDashboardsCommand extends CustomCommand {
     required: true,
     validator: t.isEnum(enums.RepoEnum),
     description:
-      '(required, "dev" or "production") Personal Dev Repo or Production'
+      '(required, "dev" or "production") Dev or Production repository'
   });
 
   branchId = Option.String('-b,--branch', {

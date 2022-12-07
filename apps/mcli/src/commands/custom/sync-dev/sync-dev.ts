@@ -7,10 +7,10 @@ export class SyncDevRepoCommand extends CustomCommand {
   static paths = [['sync', 'dev']];
 
   static usage = Command.Usage({
-    description: 'Synchronize files between Local and Personal Dev repository',
+    description: 'Synchronize files between Local and personal Dev repository',
     examples: [
       [
-        'Synchronize files between Local and Personal Dev repository',
+        'Synchronize files between Local and personal Dev repository',
         'sync dev --projectId DXYE72ODCP5LWPWH2EXQ'
       ]
     ]
