@@ -66,6 +66,7 @@ function updateTarget(tPath: string, s: any, t: any) {
     'typanion',
     'util', //
     'winston',
+    'nodegit',
     //
     'module-alias',
     '@nestjs/common',
