@@ -27,15 +27,15 @@ export class RunDashboardsCommand extends CustomCommand {
     examples: [
       [
         'Run dashboards for Production repo',
-        'mprove run dashboards -p DXYE72ODCP5LWPWH2EXQ --production -b main -e prod'
+        'mprove run dashboards --projectId DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
       ],
       [
-        'Run dashboards for Personal Dev repo',
-        'mprove run dashboards -p DXYE72ODCP5LWPWH2EXQ -b main -e prod'
+        'Run dashboards for Dev repo',
+        'mprove run dashboards --projectId DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
       ],
       [
-        'Run dashboards d1 and d2 for Personal Dev repo',
-        'mprove run dashboards -p DXYE72ODCP5LWPWH2EXQ -b main -e prod --dashboardIds d1,d2'
+        'Run dashboards d1 and d2 for Dev repo',
+        'mprove run dashboards --projectId DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --ids d1,d2'
       ]
     ]
   });
@@ -45,19 +45,20 @@ export class RunDashboardsCommand extends CustomCommand {
     description: '(required) Project Id'
   });
 
-  isRepoProd = Option.Boolean('--production', false, {
+  repo = Option.String('-r,--repo', {
+    required: true,
     description:
-      '(default false) If flag is set, then Production repo will be used, otherwise Personal Dev repo'
+      '(required, "dev" or "production") Personal Dev Repo or Production'
   });
 
-  branchId = Option.String('-b,--branchId', {
+  branchId = Option.String('-b,--branch', {
     required: true,
-    description: '(required) Branch Id'
+    description: '(required) Git Branch'
   });
 
-  envId = Option.String('-e,--envId', {
+  envId = Option.String('-e,--env', {
     required: true,
-    description: '(required) Environment Id'
+    description: '(required) Environment'
   });
 
   ids = Option.String('--ids', {
@@ -87,6 +88,8 @@ export class RunDashboardsCommand extends CustomCommand {
       this.context.config = getConfig();
     }
 
+    let isRepoProd = this.repo === 'production' ? true : false;
+
     let loginUserReqPayload: apiToBackend.ToBackendLoginUserRequestPayload = {
       email: this.context.config.mproveCliEmail,
       password: this.context.config.mproveCliPassword
@@ -102,7 +105,7 @@ export class RunDashboardsCommand extends CustomCommand {
     let getDashboardsReqPayload: apiToBackend.ToBackendGetDashboardsRequestPayload =
       {
         projectId: this.projectId,
-        isRepoProd: this.isRepoProd,
+        isRepoProd: isRepoProd,
         branchId: this.branchId,
         envId: this.envId
       };
@@ -199,7 +202,7 @@ export class RunDashboardsCommand extends CustomCommand {
         let getQueriesReqPayload: apiToBackend.ToBackendGetQueriesRequestPayload =
           {
             projectId: this.projectId,
-            isRepoProd: this.isRepoProd,
+            isRepoProd: isRepoProd,
             branchId: this.branchId,
             envId: this.envId,
             queryIds: uniqueQueryIds

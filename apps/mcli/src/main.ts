@@ -7,6 +7,7 @@ import { HelpCommand } from './commands/base/help/help';
 import { VersionCommand } from './commands/base/version/version';
 import { RunDashboardsCommand } from './commands/custom/run-dashboards/run-dashboards';
 import { RunVisualizationsCommand } from './commands/custom/run-visualizations/run-visualizations';
+import { SyncDevRepoCommand } from './commands/custom/sync-dev/sync-dev';
 import { logToConsoleMcli } from './functions/log-to-console-mcli';
 import { CustomContext } from './models/custom-command';
 
@@ -25,7 +26,8 @@ let appCommands = [
   VersionCommand,
   // custom
   RunDashboardsCommand,
-  RunVisualizationsCommand
+  RunVisualizationsCommand,
+  SyncDevRepoCommand
 ];
 
 let customContext: CustomContext = {
