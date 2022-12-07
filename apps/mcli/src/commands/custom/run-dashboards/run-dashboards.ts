@@ -2,6 +2,7 @@ import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
 import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
+import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
 import { queriesToStats } from '~mcli/functions/get-query-stats';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
@@ -47,6 +48,7 @@ export class RunDashboardsCommand extends CustomCommand {
 
   repo = Option.String('-r,--repo', {
     required: true,
+    validator: t.isEnum(enums.RepoEnum),
     description:
       '(required, "dev" or "production") Personal Dev Repo or Production'
   });
