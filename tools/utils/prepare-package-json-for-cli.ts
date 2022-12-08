@@ -67,6 +67,7 @@ function updateTarget(tPath: string, s: any, t: any) {
     'util', //
     'winston',
     'nodegit',
+    'p-iteration',
     //
     'module-alias',
     '@nestjs/common',

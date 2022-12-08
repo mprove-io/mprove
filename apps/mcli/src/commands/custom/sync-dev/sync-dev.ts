@@ -1,5 +1,7 @@
 import { Command, Option } from 'clipanion';
+import * as fse from 'fs-extra';
 import * as nodegit from 'nodegit';
+import { forEachSeries } from 'p-iteration';
 import { common } from '~mcli/barrels/common';
 import { getConfig } from '~mcli/config/get.config';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
@@ -53,8 +55,69 @@ export class SyncDevRepoCommand extends CustomCommand {
     // find git changed files
     let statusFiles: nodegit.StatusFile[] = await gitRepo.getStatus();
 
+    let deletedFiles: any[] = [];
+    let changedFiles: any[] = [];
+
+    await forEachSeries(
+      statusFiles,
+
+      // statusFiles.forEach(
+      async (x: nodegit.StatusFile) => {
+        let path = x.path();
+        // let pathArray = path.split('/');
+        // let fileId = pathArray.join(common.TRIPLE_UNDERSCORE);
+        // let fileName = pathArray.slice(-1)[0];
+        // let parentPath =
+        //   pathArray.length === 1 ? '' : pathArray.slice(0, -1).join('/');
+
+        let status = x.isNew()
+          ? common.FileStatusEnum.New
+          : x.isDeleted()
+          ? common.FileStatusEnum.Deleted
+          : x.isModified()
+          ? common.FileStatusEnum.Modified
+          : x.isConflicted()
+          ? common.FileStatusEnum.Conflicted
+          : x.isTypechange()
+          ? common.FileStatusEnum.TypeChange
+          : x.isRenamed()
+          ? common.FileStatusEnum.Renamed
+          : x.isIgnored()
+          ? common.FileStatusEnum.Ignored
+          : undefined;
+
+        let content: string;
+        if (status !== common.FileStatusEnum.Deleted) {
+          let fullPath = `${repoDir}/${path}`;
+
+          content = <string>await fse.readFile(fullPath, 'utf8');
+        }
+
+        let change = {
+          // fileName: fileName,
+          // fileId: fileId,
+          // parentPath: parentPath,
+          path: path,
+          // doesn't return booleans
+          status: status,
+          content: content
+        };
+
+        if (change.status === common.FileStatusEnum.Deleted) {
+          deletedFiles.push(change);
+        } else {
+          changedFiles.push(change);
+        }
+      }
+    );
+
     logToConsoleMcli({
-      log: statusFiles.map(x => x.path()),
+      log: {
+        repoDir: repoDir,
+        deletedFiles: deletedFiles,
+        changedFiles: changedFiles
+      },
+      // log: statusFiles.map(x => x.path()),
       // log: statusFiles.map(x => x.status()),
       // log: statusFiles,
       // log: headOidStr,
