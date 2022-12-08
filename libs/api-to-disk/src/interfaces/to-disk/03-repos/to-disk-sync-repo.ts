@@ -20,12 +20,12 @@ export class ToDiskSyncRepoRequestPayload {
   lastCommit: string;
 
   @ValidateNested()
-  @Type(() => common.DiskFileSync)
-  changedFiles: common.DiskFileSync[];
+  @Type(() => common.DiskSyncFile)
+  localChangedFiles: common.DiskSyncFile[];
 
   @ValidateNested()
-  @Type(() => common.DiskFileSync)
-  deletedFiles: common.DiskFileSync[];
+  @Type(() => common.DiskSyncFile)
+  localDeletedFiles: common.DiskSyncFile[];
 
   @IsString()
   userAlias: string;
@@ -62,12 +62,12 @@ export class ToDiskSyncRepoResponsePayload {
   files: common.DiskCatalogFile[];
 
   @ValidateNested()
-  @Type(() => common.DiskFileSync)
-  restChangedFiles: common.DiskFileSync[];
+  @Type(() => common.DiskSyncFile)
+  restChangedFiles: common.DiskSyncFile[];
 
   @ValidateNested()
-  @Type(() => common.DiskFileSync)
-  restDeletedFiles: common.DiskFileSync[];
+  @Type(() => common.DiskSyncFile)
+  restDeletedFiles: common.DiskSyncFile[];
 
   @IsString()
   mproveDir: string;

@@ -17,12 +17,12 @@ export class ToBackendSyncRepoRequestPayload {
   envId: string;
 
   @ValidateNested()
-  @Type(() => common.DiskFileSync)
-  changedFiles: common.DiskFileSync[];
+  @Type(() => common.DiskSyncFile)
+  localChangedFiles: common.DiskSyncFile[];
 
   @ValidateNested()
-  @Type(() => common.DiskFileSync)
-  deletedFiles: common.DiskFileSync[];
+  @Type(() => common.DiskSyncFile)
+  localDeletedFiles: common.DiskSyncFile[];
 }
 
 export class ToBackendSyncRepoRequest extends ToBackendRequest {
@@ -33,12 +33,12 @@ export class ToBackendSyncRepoRequest extends ToBackendRequest {
 
 export class ToBackendSyncRepoResponsePayload {
   @ValidateNested()
-  @Type(() => common.DiskFileSync)
-  restChangedFiles: common.DiskFileSync[];
+  @Type(() => common.DiskSyncFile)
+  restChangedFiles: common.DiskSyncFile[];
 
   @ValidateNested()
-  @Type(() => common.DiskFileSync)
-  restDeletedFiles: common.DiskFileSync[];
+  @Type(() => common.DiskSyncFile)
+  restDeletedFiles: common.DiskSyncFile[];
 
   @IsBoolean()
   needValidate: boolean;

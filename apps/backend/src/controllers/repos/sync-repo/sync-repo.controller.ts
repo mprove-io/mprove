@@ -40,8 +40,14 @@ export class SyncRepoController {
     let reqValid: apiToBackend.ToBackendSyncRepoRequest = request.body;
 
     let { traceId } = reqValid.info;
-    let { projectId, branchId, lastCommit, envId, changedFiles, deletedFiles } =
-      reqValid.payload;
+    let {
+      projectId,
+      branchId,
+      lastCommit,
+      envId,
+      localChangedFiles,
+      localDeletedFiles
+    } = reqValid.payload;
 
     let repoId = user.user_id;
 
@@ -84,8 +90,8 @@ export class SyncRepoController {
         repoId: repoId,
         branch: branchId,
         lastCommit: lastCommit,
-        changedFiles: changedFiles,
-        deletedFiles: deletedFiles,
+        localChangedFiles: localChangedFiles,
+        localDeletedFiles: localDeletedFiles,
         userAlias: user.alias,
         remoteType: project.remote_type,
         gitUrl: project.git_url,

@@ -1,11 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as nodegit from 'nodegit';
+import { forEachSeries } from 'p-iteration';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { git } from '~disk/barrels/git';
 import { interfaces } from '~disk/barrels/interfaces';
 import { nodeCommon } from '~disk/barrels/node-common';
+import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 
 @Injectable()
 export class SyncRepoService {
@@ -30,8 +33,8 @@ export class SyncRepoService {
       repoId,
       branch,
       lastCommit,
-      changedFiles,
-      deletedFiles,
+      localChangedFiles,
+      localDeletedFiles,
       userAlias,
       remoteType,
       gitUrl,
@@ -39,110 +42,134 @@ export class SyncRepoService {
       publicKey
     } = requestValid.payload;
 
-    // check projectId member is editor
-    // checkout branch
-    // check last commit === commit
-    // find rest git changed files
-    // read rest git changed files
-    // write files
-    // validate
-    // send back rest changed files & validation result
-
     let orgPath = this.cs.get<interfaces.Config['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
 
-    // let orgDir = `${orgPath}/${orgId}`;
-    // let keyDir = `${orgDir}/_keys/${projectId}`;
-    // let projectDir = `${orgDir}/${projectId}`;
-    // let repoDir = `${projectDir}/${repoId}`;
+    let orgDir = `${orgPath}/${orgId}`;
+    let keyDir = `${orgDir}/_keys/${projectId}`;
+    let projectDir = `${orgDir}/${projectId}`;
+    let repoDir = `${projectDir}/${repoId}`;
 
-    // await disk.ensureDir(keyDir);
+    await disk.ensureDir(keyDir);
 
-    // let fetchOptions = makeFetchOptions({
-    //   remoteType: remoteType,
-    //   keyDir: keyDir,
-    //   gitUrl: gitUrl,
-    //   privateKey: privateKey,
-    //   publicKey: publicKey
-    // });
+    let fetchOptions = makeFetchOptions({
+      remoteType: remoteType,
+      keyDir: keyDir,
+      gitUrl: gitUrl,
+      privateKey: privateKey,
+      publicKey: publicKey
+    });
 
-    // let relativeFilePath = fileNodeId.substring(projectId.length + 1);
-    // let filePath = repoDir + '/' + relativeFilePath;
+    let isOrgExist = await disk.isPathExist(orgDir);
+    if (isOrgExist === false) {
+      throw new common.ServerError({
+        message: common.ErEnum.DISK_ORG_IS_NOT_EXIST
+      });
+    }
 
-    // let isOrgExist = await disk.isPathExist(orgDir);
-    // if (isOrgExist === false) {
-    //   throw new common.ServerError({
-    //     message: common.ErEnum.DISK_ORG_IS_NOT_EXIST
-    //   });
-    // }
+    let isProjectExist = await disk.isPathExist(projectDir);
+    if (isProjectExist === false) {
+      throw new common.ServerError({
+        message: common.ErEnum.DISK_PROJECT_IS_NOT_EXIST
+      });
+    }
 
-    // let isProjectExist = await disk.isPathExist(projectDir);
-    // if (isProjectExist === false) {
-    //   throw new common.ServerError({
-    //     message: common.ErEnum.DISK_PROJECT_IS_NOT_EXIST
-    //   });
-    // }
+    let isRepoExist = await disk.isPathExist(repoDir);
+    if (isRepoExist === false) {
+      throw new common.ServerError({
+        message: common.ErEnum.DISK_REPO_IS_NOT_EXIST
+      });
+    }
 
-    // let isRepoExist = await disk.isPathExist(repoDir);
-    // if (isRepoExist === false) {
-    //   throw new common.ServerError({
-    //     message: common.ErEnum.DISK_REPO_IS_NOT_EXIST
-    //   });
-    // }
+    let isBranchExist = await git.isLocalBranchExist({
+      repoDir: repoDir,
+      localBranch: branch
+    });
+    if (isBranchExist === false) {
+      throw new common.ServerError({
+        message: common.ErEnum.DISK_BRANCH_IS_NOT_EXIST
+      });
+    }
 
-    // let isBranchExist = await git.isLocalBranchExist({
-    //   repoDir: repoDir,
-    //   localBranch: branch
-    // });
-    // if (isBranchExist === false) {
-    //   throw new common.ServerError({
-    //     message: common.ErEnum.DISK_BRANCH_IS_NOT_EXIST
-    //   });
-    // }
+    await git.checkoutBranch({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: repoId,
+      repoDir: repoDir,
+      branchName: branch,
+      fetchOptions: fetchOptions,
+      isFetch: false
+    });
 
-    // await git.checkoutBranch({
-    //   projectId: projectId,
-    //   projectDir: projectDir,
-    //   repoId: repoId,
-    //   repoDir: repoDir,
-    //   branchName: branch,
-    //   fetchOptions: fetchOptions,
-    //   isFetch: false
-    // });
+    let gitRepo = <nodegit.Repository>await nodegit.Repository.open(repoDir);
 
-    // let isFileExist = await disk.isPathExist(filePath);
-    // if (isFileExist === false) {
-    //   throw new common.ServerError({
-    //     message: common.ErEnum.DISK_FILE_IS_NOT_EXIST
-    //   });
-    // }
+    let head: nodegit.Commit = await gitRepo.getHeadCommit();
+    let headOid = head.id();
+    let diskLastCommit = headOid.tostrS();
 
-    // //
+    if (lastCommit !== diskLastCommit) {
+      throw new common.ServerError({
+        message: common.ErEnum.DISK_DEV_REPO_COMMIT_DOES_NOT_MATCH_LOCAL_COMMIT,
+        data: {
+          branch: branch,
+          devLastCommit: diskLastCommit,
+          localLastCommit: lastCommit
+        }
+      });
+    }
 
-    // await disk.writeToFile({
-    //   filePath: filePath,
-    //   content: content
-    // });
+    let statusFiles: nodegit.StatusFile[] = await gitRepo.getStatus();
 
-    // await git.addChangesToStage({ repoDir: repoDir });
+    let { changedFiles, deletedFiles } = await nodeCommon.getSyncFiles({
+      repoDir: repoDir,
+      statusFiles: statusFiles
+    });
 
-    // if (repoId === common.PROD_REPO_ID) {
-    //   await git.commit({
-    //     repoDir: repoDir,
-    //     userAlias: userAlias,
-    //     commitMessage: `Modified file ${relativeFilePath}`
-    //   });
+    let devChangedFiles = changedFiles;
+    let devDeletedFiles = deletedFiles;
 
-    //   await git.pushToRemote({
-    //     projectId: projectId,
-    //     projectDir: projectDir,
-    //     repoId: repoId,
-    //     repoDir: repoDir,
-    //     branch: branch,
-    //     fetchOptions: fetchOptions
-    //   });
-    // }
+    let restChangedFiles: common.DiskSyncFile[] = devChangedFiles.filter(
+      x =>
+        [...localChangedFiles, ...localDeletedFiles]
+          .map(f => f.path)
+          .indexOf(x.path) < -1
+    );
+
+    let restDeletedFiles: common.DiskSyncFile[] = devDeletedFiles.filter(
+      x =>
+        [...localChangedFiles, ...localDeletedFiles]
+          .map(f => f.path)
+          .indexOf(x.path) < -1
+    );
+
+    await forEachSeries(localDeletedFiles, async (x: common.DiskSyncFile) => {
+      let filePath = `${repoDir}/${x.path}`;
+
+      let isFileExist = await disk.isPathExist(filePath);
+      if (isFileExist === true) {
+        await disk.removePath(filePath);
+      }
+    });
+
+    await forEachSeries(localChangedFiles, async (x: common.DiskSyncFile) => {
+      let filePath = `${repoDir}/${x.path}`;
+
+      let isFileExist = await disk.isPathExist(filePath);
+      if (isFileExist === false) {
+        let parentPath = filePath.split('/').slice(0, -1).join('/');
+        await disk.ensureDir(parentPath);
+      }
+
+      await disk.writeToFile({
+        filePath: filePath,
+        content: x.content
+      });
+    });
+
+    //
+
+    await git.addChangesToStage({ repoDir: repoDir });
 
     let {
       repoStatus,
@@ -181,8 +208,8 @@ export class SyncRepoService {
         changesToPush: changesToPush
       },
       files: itemCatalog.files,
-      restChangedFiles: [],
-      restDeletedFiles: [],
+      restChangedFiles: restChangedFiles,
+      restDeletedFiles: restDeletedFiles,
       mproveDir: itemCatalog.mproveDir
     };
 
