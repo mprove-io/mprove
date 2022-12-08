@@ -17,6 +17,7 @@ import { PullRepoService } from '~disk/controllers/03-repos/pull-repo/pull-repo.
 import { PushRepoService } from '~disk/controllers/03-repos/push-repo/push-repo.service';
 import { RevertRepoToLastCommitService } from '~disk/controllers/03-repos/revert-repo-to-last-commit/revert-repo-to-last-commit.service';
 import { RevertRepoToRemoteService } from '~disk/controllers/03-repos/revert-repo-to-remote/revert-repo-to-remote.service';
+import { SyncRepoService } from '~disk/controllers/03-repos/sync-repo/sync-repo.service';
 import { GetCatalogFilesService } from '~disk/controllers/04-catalogs/get-catalog-files/get-catalog-files.service';
 import { GetCatalogNodesService } from '~disk/controllers/04-catalogs/get-catalog-nodes/get-catalog-nodes.service';
 import { MoveCatalogNodeService } from '~disk/controllers/04-catalogs/move-catalog-node/move-catalog-node.service';
@@ -55,6 +56,7 @@ export class MessageService {
     private pushRepoService: PushRepoService,
     private revertRepoToLastCommitService: RevertRepoToLastCommitService,
     private revertRepoToRemoteService: RevertRepoToRemoteService,
+    private syncRepoService: SyncRepoService,
 
     private getCatalogFilesService: GetCatalogFilesService,
     private getCatalogNodesService: GetCatalogNodesService,
@@ -136,6 +138,8 @@ export class MessageService {
         return await this.revertRepoToLastCommitService.process(request);
       case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToRemote:
         return await this.revertRepoToRemoteService.process(request);
+      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSyncRepo:
+        return await this.syncRepoService.process(request);
 
       case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles:
         return await this.getCatalogFilesService.process(request);

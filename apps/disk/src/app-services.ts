@@ -12,6 +12,7 @@ import { PullRepoService } from './controllers/03-repos/pull-repo/pull-repo.serv
 import { PushRepoService } from './controllers/03-repos/push-repo/push-repo.service';
 import { RevertRepoToLastCommitService } from './controllers/03-repos/revert-repo-to-last-commit/revert-repo-to-last-commit.service';
 import { RevertRepoToRemoteService } from './controllers/03-repos/revert-repo-to-remote/revert-repo-to-remote.service';
+import { SyncRepoService } from './controllers/03-repos/sync-repo/sync-repo.service';
 import { GetCatalogFilesService } from './controllers/04-catalogs/get-catalog-files/get-catalog-files.service';
 import { GetCatalogNodesService } from './controllers/04-catalogs/get-catalog-nodes/get-catalog-nodes.service';
 import { MoveCatalogNodeService } from './controllers/04-catalogs/move-catalog-node/move-catalog-node.service';
@@ -49,6 +50,7 @@ export const appServices = [
   PushRepoService,
   RevertRepoToLastCommitService,
   RevertRepoToRemoteService,
+  SyncRepoService,
 
   GetCatalogFilesService,
   GetCatalogNodesService,
