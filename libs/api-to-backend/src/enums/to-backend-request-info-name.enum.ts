@@ -72,6 +72,7 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendRevertRepoToLastCommit = 'api/ToBackendRevertRepoToLastCommit',
   ToBackendRevertRepoToRemote = 'api/ToBackendRevertRepoToRemote',
   ToBackendMergeRepo = 'api/ToBackendMergeRepo',
+  ToBackendSyncRepo = 'api/ToBackendSyncRepo',
   //
   ToBackendGetStruct = 'api/ToBackendGetStruct',
   //

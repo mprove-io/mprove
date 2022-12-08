@@ -73,7 +73,7 @@ export class ToBackendGetNavResponsePayload {
   serverNowTs: number;
 
   @ValidateNested()
-  @Type(() => common.Repo)
+  @Type(() => common.Struct)
   struct: common.Struct;
 
   @ValidateNested()

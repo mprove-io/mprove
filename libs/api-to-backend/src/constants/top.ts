@@ -135,6 +135,8 @@ export const nameToClass = {
     interfaces.ToBackendRevertRepoToRemoteRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendMergeRepo]:
     interfaces.ToBackendMergeRepoRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendSyncRepo]:
+    interfaces.ToBackendSyncRepoRequest,
   //
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetStruct]:
     interfaces.ToBackendGetStructRequest,

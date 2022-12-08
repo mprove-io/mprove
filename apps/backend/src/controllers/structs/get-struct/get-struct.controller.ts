@@ -68,12 +68,12 @@ export class GetStructController {
 
     let apiMember = wrapper.wrapToApiMember(userMember);
 
-    let payloadBranchExist: apiToBackend.ToBackendGetStructResponsePayload = {
+    let payload: apiToBackend.ToBackendGetStructResponsePayload = {
       needValidate: common.enumToBoolean(bridge.need_validate),
       struct: wrapper.wrapToApiStruct(struct),
       userMember: apiMember
     };
 
-    return payloadBranchExist;
+    return payload;
   }
 }

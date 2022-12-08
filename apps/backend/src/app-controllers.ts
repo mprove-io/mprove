@@ -93,6 +93,7 @@ export const appControllers = [
   controllers.PushRepoController,
   controllers.RevertRepoToLastCommitController,
   controllers.RevertRepoToRemoteController,
+  controllers.SyncRepoController,
 
   controllers.SpecialRebuildStructsController,
 

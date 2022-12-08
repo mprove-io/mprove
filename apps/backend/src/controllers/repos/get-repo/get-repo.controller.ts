@@ -101,13 +101,13 @@ export class GetRepoController {
 
     let apiMember = wrapper.wrapToApiMember(userMember);
 
-    let payloadBranchExist: apiToBackend.ToBackendGetRepoResponsePayload = {
+    let payload: apiToBackend.ToBackendGetRepoResponsePayload = {
       userMember: apiMember,
       needValidate: common.enumToBoolean(bridge.need_validate),
       struct: wrapper.wrapToApiStruct(struct),
       repo: diskResponse.payload.repo
     };
 
-    return payloadBranchExist;
+    return payload;
   }
 }

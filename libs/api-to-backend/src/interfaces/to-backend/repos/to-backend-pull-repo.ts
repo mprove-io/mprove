@@ -29,7 +29,7 @@ export class ToBackendPullRepoResponsePayload {
   repo: common.Repo;
 
   @ValidateNested()
-  @Type(() => common.Repo)
+  @Type(() => common.Struct)
   struct: common.Struct;
 
   @IsBoolean()

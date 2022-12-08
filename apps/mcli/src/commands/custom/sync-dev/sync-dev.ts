@@ -2,9 +2,11 @@ import { Command, Option } from 'clipanion';
 import * as fse from 'fs-extra';
 import * as nodegit from 'nodegit';
 import { forEachSeries } from 'p-iteration';
+import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { getConfig } from '~mcli/config/get.config';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
+import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
 export class SyncDevRepoCommand extends CustomCommand {
@@ -29,6 +31,11 @@ export class SyncDevRepoCommand extends CustomCommand {
     description: '(required) Project Id'
   });
 
+  envId = Option.String('-e,--env', {
+    required: true,
+    description: '(required) Environment'
+  });
+
   json = Option.Boolean('-j,--json', false, {
     description: '(default false)'
   });
@@ -50,27 +57,20 @@ export class SyncDevRepoCommand extends CustomCommand {
     // get last commit
     let head: nodegit.Commit = await gitRepo.getHeadCommit();
     let headOid = head.id();
-    let headOidStr = headOid.tostrS();
+    let lastCommit = headOid.tostrS();
 
     // find git changed files
     let statusFiles: nodegit.StatusFile[] = await gitRepo.getStatus();
 
-    let deletedFiles: any[] = [];
     let changedFiles: any[] = [];
+    let deletedFiles: any[] = [];
 
-    await forEachSeries(
-      statusFiles,
+    await forEachSeries(statusFiles, async (x: nodegit.StatusFile) => {
+      let path = x.path();
 
-      // statusFiles.forEach(
-      async (x: nodegit.StatusFile) => {
-        let path = x.path();
-        // let pathArray = path.split('/');
-        // let fileId = pathArray.join(common.TRIPLE_UNDERSCORE);
-        // let fileName = pathArray.slice(-1)[0];
-        // let parentPath =
-        //   pathArray.length === 1 ? '' : pathArray.slice(0, -1).join('/');
-
-        let status = x.isNew()
+      let status =
+        // doesn't return booleans
+        x.isNew()
           ? common.FileStatusEnum.New
           : x.isDeleted()
           ? common.FileStatusEnum.Deleted
@@ -86,36 +86,65 @@ export class SyncDevRepoCommand extends CustomCommand {
           ? common.FileStatusEnum.Ignored
           : undefined;
 
-        let content: string;
-        if (status !== common.FileStatusEnum.Deleted) {
-          let fullPath = `${repoDir}/${path}`;
+      // read git changed files
+      let content: string;
+      if (status !== common.FileStatusEnum.Deleted) {
+        let fullPath = `${repoDir}/${path}`;
 
-          content = <string>await fse.readFile(fullPath, 'utf8');
-        }
-
-        let change = {
-          // fileName: fileName,
-          // fileId: fileId,
-          // parentPath: parentPath,
-          path: path,
-          // doesn't return booleans
-          status: status,
-          content: content
-        };
-
-        if (change.status === common.FileStatusEnum.Deleted) {
-          deletedFiles.push(change);
-        } else {
-          changedFiles.push(change);
-        }
+        content = <string>await fse.readFile(fullPath, 'utf8');
       }
-    );
+
+      let file: common.DiskFileSync = {
+        path: path,
+        status: status,
+        content: content
+      };
+
+      if (file.status === common.FileStatusEnum.Deleted) {
+        deletedFiles.push(file);
+      } else {
+        changedFiles.push(file);
+      }
+    });
+
+    let loginUserReqPayload: apiToBackend.ToBackendLoginUserRequestPayload = {
+      email: this.context.config.mproveCliEmail,
+      password: this.context.config.mproveCliPassword
+    };
+
+    let loginUserResp = await mreq<apiToBackend.ToBackendLoginUserResponse>({
+      pathInfoName:
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+      payload: loginUserReqPayload,
+      config: this.context.config
+    });
+
+    // send git changed files
+    let syncRepoReqPayload: apiToBackend.ToBackendSyncRepoRequestPayload = {
+      projectId: this.projectId,
+      branchId: currentBranchName,
+      envId: this.envId,
+      lastCommit: lastCommit,
+      changedFiles: changedFiles,
+      deletedFiles: deletedFiles
+    };
+
+    let syncRepoResp = await mreq<apiToBackend.ToBackendSyncRepoResponse>({
+      token: loginUserResp.payload.token,
+      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSyncRepo,
+      payload: syncRepoReqPayload,
+      config: this.context.config
+    });
+
+    // receive rest changed files
+    // write rest changed files
+    // log result
 
     logToConsoleMcli({
       log: {
-        repoDir: repoDir,
-        deletedFiles: deletedFiles,
-        changedFiles: changedFiles
+        repoDir: repoDir
+        // changedFiles: changedFiles,
+        // deletedFiles: deletedFiles
       },
       // log: statusFiles.map(x => x.path()),
       // log: statusFiles.map(x => x.status()),
@@ -127,21 +156,5 @@ export class SyncDevRepoCommand extends CustomCommand {
       context: this.context,
       isJson: false
     });
-
-    // read git changed files
-    // send git changed files
-
-    // check projectId member is editor
-    // checkout branch
-    // check last commit === commit
-    // find rest git changed files
-    // read rest git changed files
-    // write files
-    // validate
-    // send back rest changed files & validation result
-
-    // receive rest changed files
-    // write rest changed files
-    // log result
   }
 }
