@@ -39,7 +39,11 @@ export async function collectFiles(
         let relativePath: string = path.replace(rpReg, '/');
         let absolutePath: string = item.dir + '/' + relativePath;
 
-        let content = await nodeCommon.readFileCheckSize(absolutePath);
+        let { content } = await nodeCommon.readFileCheckSize({
+          filePath: absolutePath,
+          getStat: false
+        });
+
         // Add this file to the list of files
         files.push({
           name: stat.name.toLowerCase(),

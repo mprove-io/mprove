@@ -177,7 +177,10 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
         if (item.readFiles === true && isPass === true) {
           let path = JSON.stringify(nodeId.split('/'));
 
-          let content = await nodeCommon.readFileCheckSize(fileAbsolutePath);
+          let { content } = await nodeCommon.readFileCheckSize({
+            filePath: fileAbsolutePath,
+            getStat: false
+          });
 
           let file: common.DiskCatalogFile = {
             projectId: item.projectId,

@@ -14,7 +14,10 @@ export async function getMproveConfigFile(configPath: string) {
     return undefined;
   }
 
-  let content = <string>await nodeCommon.readFileCheckSize(configPath);
+  let { content } = await nodeCommon.readFileCheckSize({
+    filePath: configPath,
+    getStat: false
+  });
 
   let file: common.BmlFile = {
     name: common.MPROVE_CONFIG_FILENAME,

@@ -8,7 +8,7 @@ export async function gitLsFiles(dir: string) {
         return;
       }
 
-      let paths = stdout.split('\n').filter(p => p.length !== 0);
+      let paths: string[] = stdout.split('\n').filter(p => p.length !== 0);
       resolve(paths);
     });
   });

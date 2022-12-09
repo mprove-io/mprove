@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { enums } from '~common/barrels/enums';
 
 export class DiskSyncFile {
@@ -11,4 +11,7 @@ export class DiskSyncFile {
   @IsOptional()
   @IsString()
   content: string;
+
+  @IsNumber()
+  modifiedTime: number;
 }

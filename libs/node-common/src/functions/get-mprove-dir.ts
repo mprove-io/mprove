@@ -14,7 +14,11 @@ export async function getMproveDir(item: { dir: string; configPath: string }) {
     return undefined;
   }
 
-  let content = <string>await readFileCheckSize(item.configPath);
+  let { content } = await readFileCheckSize({
+    filePath: item.configPath,
+    getStat: false
+  });
+
   let parsedYaml: any;
   let breakOnYamlParsing: boolean;
 

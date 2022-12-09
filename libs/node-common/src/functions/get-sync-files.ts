@@ -1,3 +1,4 @@
+import * as fse from 'fs-extra';
 import * as nodegit from 'nodegit';
 import { forEachSeries } from 'p-iteration';
 import { common } from '~node-common/barrels/common';
@@ -35,16 +36,25 @@ export async function getSyncFiles(item: {
 
     // read git changed files
     let content: string;
+    let stat: fse.Stats;
+
     if (status !== common.FileStatusEnum.Deleted) {
       let fullPath = `${repoDir}/${path}`;
 
-      content = <string>await readFileCheckSize(fullPath);
+      let { content: cont, stat: st } = await readFileCheckSize({
+        filePath: fullPath,
+        getStat: true
+      });
+
+      content = cont;
+      stat = st;
     }
 
     let file: common.DiskSyncFile = {
       path: path,
       status: status,
-      content: content
+      content: content,
+      modifiedTime: stat.mtimeMs
     };
 
     if (file.status === common.FileStatusEnum.Deleted) {

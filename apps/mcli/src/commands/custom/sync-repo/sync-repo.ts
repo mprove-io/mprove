@@ -10,14 +10,14 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
-export class SyncDevRepoCommand extends CustomCommand {
-  static paths = [['sync', 'dev']];
+export class SyncRepoCommand extends CustomCommand {
+  static paths = [['sync', 'repo']];
 
   static usage = Command.Usage({
-    description: 'Synchronize files between Local and personal Dev repository',
+    description: 'Synchronize files between Local and Dev repository',
     examples: [
       [
-        'Synchronize files between Local and personal Dev repository',
+        'Synchronize files between Local and Dev repository',
         'sync dev --projectId DXYE72ODCP5LWPWH2EXQ --env prod'
       ]
     ]
@@ -57,18 +57,39 @@ export class SyncDevRepoCommand extends CustomCommand {
 
     //
 
-    let paths = await nodeCommon.gitLsFiles(repoDir);
+    let fileStats: {
+      path: string;
+      stat: fse.Stats;
+    }[] = [];
 
-    logToConsoleMcli({
-      log: {
-        paths: paths
-      },
-      logLevel: common.LogLevelEnum.Info,
-      context: this.context,
-      isJson: this.json
+    let paths = (await nodeCommon.gitLsFiles(repoDir)) as string[];
+
+    await forEachSeries(paths, async (x: string) => {
+      let fullPath = `${repoDir}/${x}`;
+
+      let isFileExist = await fse.pathExists(fullPath);
+      if (isFileExist === true) {
+        let stat = <fse.Stats>await fse.stat(fullPath);
+        // stats.push(stat);
+        fileStats.push({
+          path: x,
+          stat: stat
+        });
+      }
     });
 
-    return;
+    // logToConsoleMcli({
+    //   log: {
+    //     // paths: paths,
+    //     // stats: stats
+    //     fileStats: fileStats
+    //   },
+    //   logLevel: common.LogLevelEnum.Info,
+    //   context: this.context,
+    //   isJson: this.json
+    // });
+
+    // return;
 
     //
 
