@@ -3,7 +3,6 @@ import { Dirent } from 'fs-extra';
 import { forEachSeries } from 'p-iteration';
 import { constants } from '~common/barrels/constants';
 import { common } from '~disk/barrels/common';
-import { disk } from '~disk/barrels/disk';
 import { interfaces } from '~disk/barrels/interfaces';
 import { nodeCommon } from '~disk/barrels/node-common';
 
@@ -178,7 +177,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
         if (item.readFiles === true && isPass === true) {
           let path = JSON.stringify(nodeId.split('/'));
 
-          let content = await disk.readFile(fileAbsolutePath);
+          let content = await nodeCommon.readFileCheckSize(fileAbsolutePath);
 
           let file: common.DiskCatalogFile = {
             projectId: item.projectId,

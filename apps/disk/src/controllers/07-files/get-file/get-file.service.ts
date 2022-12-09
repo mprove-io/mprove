@@ -116,7 +116,7 @@ export class GetFileService {
         });
       }
     } else {
-      content = await disk.readFile(filePath);
+      content = await nodeCommon.readFileCheckSize(filePath);
     }
 
     let originalContent;

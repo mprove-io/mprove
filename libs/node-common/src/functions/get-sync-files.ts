@@ -1,7 +1,7 @@
-import * as fse from 'fs-extra';
 import * as nodegit from 'nodegit';
 import { forEachSeries } from 'p-iteration';
 import { common } from '~node-common/barrels/common';
+import { readFileCheckSize } from './read-file-check-size';
 
 export async function getSyncFiles(item: {
   statusFiles: nodegit.StatusFile[];
@@ -38,7 +38,7 @@ export async function getSyncFiles(item: {
     if (status !== common.FileStatusEnum.Deleted) {
       let fullPath = `${repoDir}/${path}`;
 
-      content = <string>await fse.readFile(fullPath, 'utf8');
+      content = <string>await readFileCheckSize(fullPath);
     }
 
     let file: common.DiskSyncFile = {

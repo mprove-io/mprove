@@ -1,10 +1,10 @@
 import { ConfigService } from '@nestjs/config';
-import * as fse from 'fs-extra';
 import * as walk from 'walk';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
+import { nodeCommon } from '~blockml/barrels/node-common';
 
 let func = enums.FuncEnum.CollectFiles;
 
@@ -39,7 +39,7 @@ export async function collectFiles(
         let relativePath: string = path.replace(rpReg, '/');
         let absolutePath: string = item.dir + '/' + relativePath;
 
-        let content = await fse.readFile(absolutePath, 'UTF-8');
+        let content = await nodeCommon.readFileCheckSize(absolutePath);
         // Add this file to the list of files
         files.push({
           name: stat.name.toLowerCase(),

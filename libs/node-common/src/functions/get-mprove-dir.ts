@@ -1,6 +1,7 @@
 import * as fse from 'fs-extra';
 import { load } from 'js-yaml';
 import { common } from '~node-common/barrels/common';
+import { readFileCheckSize } from './read-file-check-size';
 
 export async function getMproveDir(item: { dir: string; configPath: string }) {
   let isConfigPathExist = await fse.pathExists(item.configPath);
@@ -13,7 +14,7 @@ export async function getMproveDir(item: { dir: string; configPath: string }) {
     return undefined;
   }
 
-  let content = <string>await fse.readFile(item.configPath, 'utf8');
+  let content = <string>await readFileCheckSize(item.configPath);
   let parsedYaml: any;
   let breakOnYamlParsing: boolean;
 

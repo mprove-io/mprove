@@ -18,7 +18,7 @@ export class SyncDevRepoCommand extends CustomCommand {
     examples: [
       [
         'Synchronize files between Local and personal Dev repository',
-        'sync dev --projectId DXYE72ODCP5LWPWH2EXQ'
+        'sync dev --projectId DXYE72ODCP5LWPWH2EXQ --env prod'
       ]
     ]
   });
@@ -66,6 +66,17 @@ export class SyncDevRepoCommand extends CustomCommand {
 
     let localChangedFiles = changedFiles;
     let localDeletedFiles = deletedFiles;
+
+    // logToConsoleMcli({
+    //   log: {
+    //     localChangedFiles: localChangedFiles
+    //   },
+    //   logLevel: common.LogLevelEnum.Info,
+    //   context: this.context,
+    //   isJson: this.json
+    // });
+
+    // return;
 
     let loginUserReqPayload: apiToBackend.ToBackendLoginUserRequestPayload = {
       email: this.context.config.mproveCliEmail,

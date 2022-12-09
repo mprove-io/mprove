@@ -1,7 +1,7 @@
 import * as fse from 'fs-extra';
 import { common } from '~disk/barrels/common';
 
-export async function readFile(filePath: string) {
+export async function readFileCheckSize(filePath: string) {
   let stat = <fse.Stats>await fse.stat(filePath);
   let fileSizeInBytes = stat.size;
   let fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);

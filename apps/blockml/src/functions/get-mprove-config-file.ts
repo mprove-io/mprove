@@ -1,5 +1,6 @@
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
+import { nodeCommon } from '~blockml/barrels/node-common';
 
 export async function getMproveConfigFile(configPath: string) {
   let isPathExist = await fse.pathExists(configPath);
@@ -13,7 +14,7 @@ export async function getMproveConfigFile(configPath: string) {
     return undefined;
   }
 
-  let content = <string>await fse.readFile(configPath, 'utf8');
+  let content = <string>await nodeCommon.readFileCheckSize(configPath);
 
   let file: common.BmlFile = {
     name: common.MPROVE_CONFIG_FILENAME,
