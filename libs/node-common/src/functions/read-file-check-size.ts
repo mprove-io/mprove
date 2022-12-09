@@ -1,5 +1,5 @@
 import * as fse from 'fs-extra';
-import { common } from '~disk/barrels/common';
+import { common } from '~node-common/barrels/common';
 
 export async function readFileCheckSize(filePath: string) {
   let stat = <fse.Stats>await fse.stat(filePath);
