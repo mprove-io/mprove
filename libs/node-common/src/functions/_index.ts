@@ -2,6 +2,7 @@ export * from './get-constraints-recursive';
 export * from './get-logger-options';
 export * from './get-mprove-dir';
 export * from './get-sync-files';
+export * from './git-ls-files';
 export * from './listen-process-events';
 export * from './log-to-console';
 export * from './make-error-response';

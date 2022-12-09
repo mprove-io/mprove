@@ -54,6 +54,24 @@ export class SyncDevRepoCommand extends CustomCommand {
     let currentBranchName = await nodegit.Branch.name(currentBranchRef);
 
     let head: nodegit.Commit = await gitRepo.getHeadCommit();
+
+    //
+
+    let paths = await nodeCommon.gitLsFiles(repoDir);
+
+    logToConsoleMcli({
+      log: {
+        paths: paths
+      },
+      logLevel: common.LogLevelEnum.Info,
+      context: this.context,
+      isJson: this.json
+    });
+
+    return;
+
+    //
+
     let headOid = head.id();
     let lastCommit = headOid.tostrS();
 
@@ -66,17 +84,6 @@ export class SyncDevRepoCommand extends CustomCommand {
 
     let localChangedFiles = changedFiles;
     let localDeletedFiles = deletedFiles;
-
-    // logToConsoleMcli({
-    //   log: {
-    //     localChangedFiles: localChangedFiles
-    //   },
-    //   logLevel: common.LogLevelEnum.Info,
-    //   context: this.context,
-    //   isJson: this.json
-    // });
-
-    // return;
 
     let loginUserReqPayload: apiToBackend.ToBackendLoginUserRequestPayload = {
       email: this.context.config.mproveCliEmail,
