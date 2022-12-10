@@ -87,7 +87,7 @@ export async function getSyncFiles(item: {
 
           let file: common.DiskSyncFile = {
             path: path,
-            status: common.FileStatusEnum.Modified,
+            status: undefined,
             content: content,
             modifiedTime: stat.mtimeMs
           };

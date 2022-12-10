@@ -49,6 +49,9 @@ export class ToBackendSyncRepoResponsePayload {
   @ValidateNested()
   @Type(() => common.Struct)
   struct: common.Struct;
+
+  @IsNumber()
+  currentTime: number;
 }
 
 export class ToBackendSyncRepoResponse extends common.MyResponse {

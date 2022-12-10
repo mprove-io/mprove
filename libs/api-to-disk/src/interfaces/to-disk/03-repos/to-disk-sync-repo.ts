@@ -80,6 +80,9 @@ export class ToDiskSyncRepoResponsePayload {
 
   @IsString()
   mproveDir: string;
+
+  @IsNumber()
+  currentTime: number;
 }
 
 export class ToDiskSyncRepoResponse extends common.MyResponse {

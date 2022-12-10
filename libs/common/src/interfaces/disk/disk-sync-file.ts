@@ -5,6 +5,7 @@ export class DiskSyncFile {
   @IsString()
   path: string;
 
+  @IsOptional()
   @IsString()
   status: enums.FileStatusEnum;
 

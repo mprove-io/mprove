@@ -159,7 +159,8 @@ export class SyncRepoController {
       restChangedFiles: diskResponse.payload.restChangedFiles,
       restDeletedFiles: diskResponse.payload.restDeletedFiles,
       struct: wrapper.wrapToApiStruct(struct),
-      needValidate: common.enumToBoolean(currentBridge.need_validate)
+      needValidate: common.enumToBoolean(currentBridge.need_validate),
+      currentTime: diskResponse.payload.currentTime
     };
 
     return payload;

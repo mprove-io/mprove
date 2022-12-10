@@ -261,7 +261,16 @@
             >
           </div>
 
-          <div class="relative ml-5" *ngIf="isEditor === true">
+          <button
+            type="button"
+            data-cy="filesRefreshButton"
+            class="ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
+            (click)="refresh()"
+          >
+            <m-refresh-icon></m-refresh-icon>
+          </button>
+
+          <div class="relative ml-3" *ngIf="isEditor === true">
             <m-repo-options></m-repo-options>
           </div>
         </div>

@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodegit from 'nodegit';
 import { forEachSeries } from 'p-iteration';
+import { DiskSyncFile } from '~common/_index';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
@@ -151,6 +152,14 @@ export class SyncRepoService {
           return false;
         }
 
+        if (
+          common.isUndefined(localChangedFile) &&
+          lastSyncTime > 0 &&
+          devChangedFile.modifiedTime < lastSyncTime
+        ) {
+          return false;
+        }
+
         return true;
       }
     );
@@ -168,7 +177,10 @@ export class SyncRepoService {
           x => x.path === devDeletedFile.path
         );
 
-        if (common.isDefined(localChangedFile)) {
+        if (
+          common.isDefined(localChangedFile) &&
+          localChangedFile.modifiedTime > lastSyncTime
+        ) {
           return false;
         }
 
@@ -176,14 +188,82 @@ export class SyncRepoService {
       }
     );
 
+    if (lastSyncTime > 0) {
+      await forEachSeries(
+        devChangedFiles,
+        async (devChangedFile: common.DiskSyncFile) => {
+          let localChangedFile = localChangedFiles.find(
+            x => x.path === devChangedFile.path
+          );
+
+          if (
+            common.isUndefined(localChangedFile) &&
+            devChangedFile.modifiedTime < lastSyncTime
+          ) {
+            let filePath = `${repoDir}/${devChangedFile.path}`;
+
+            let isFileExist = await disk.isPathExist(filePath);
+            if (isFileExist === true) {
+              await disk.removePath(filePath);
+            }
+          }
+        }
+      );
+
+      await forEachSeries(
+        localChangedFiles,
+        async (localChangedFile: common.DiskSyncFile) => {
+          let devChangedFile = devChangedFiles.find(
+            x => x.path === localChangedFile.path
+          );
+
+          if (
+            common.isUndefined(devChangedFile) &&
+            lastSyncTime > 0 &&
+            localChangedFile.modifiedTime < lastSyncTime
+          ) {
+            let restDeletedFile = restDeletedFiles.find(
+              f => f.path === localChangedFile.path
+            );
+            if (common.isUndefined(restDeletedFile)) {
+              let file: DiskSyncFile = {
+                path: localChangedFile.path,
+                status: undefined,
+                content: undefined,
+                modifiedTime: undefined
+              };
+
+              restDeletedFiles.push(file);
+            }
+
+            // let filePath = `${repoDir}/${localChangedFile.path}`;
+
+            // let isFileExist = await disk.isPathExist(filePath);
+            // if (isFileExist === true) {
+            //   await disk.removePath(filePath);
+            // }
+          }
+        }
+      );
+    }
+
     await forEachSeries(
       localDeletedFiles,
       async (localDeletedFile: common.DiskSyncFile) => {
-        let filePath = `${repoDir}/${localDeletedFile.path}`;
+        let devChangedFile = devChangedFiles.find(
+          x => x.path === localDeletedFile.path
+        );
 
-        let isFileExist = await disk.isPathExist(filePath);
-        if (isFileExist === true) {
-          await disk.removePath(filePath);
+        if (
+          common.isUndefined(devChangedFile) ||
+          devChangedFile.modifiedTime < lastSyncTime
+        ) {
+          let filePath = `${repoDir}/${localDeletedFile.path}`;
+
+          let isFileExist = await disk.isPathExist(filePath);
+          if (isFileExist === true) {
+            await disk.removePath(filePath);
+          }
         }
       }
     );
@@ -191,12 +271,16 @@ export class SyncRepoService {
     await forEachSeries(
       localChangedFiles,
       async (localChangedFile: common.DiskSyncFile) => {
-        let filePath = `${repoDir}/${localChangedFile.path}`;
+        let devDeletedFile = devDeletedFiles.find(
+          x => x.path === localChangedFile.path
+        );
 
-        let isFileExist = await disk.isPathExist(filePath);
-        if (isFileExist === false) {
-          let parentPath = filePath.split('/').slice(0, -1).join('/');
-          await disk.ensureDir(parentPath);
+        if (
+          common.isDefined(devDeletedFile) &&
+          lastSyncTime > 0 &&
+          localChangedFile.modifiedTime < lastSyncTime
+        ) {
+          return;
         }
 
         let devChangedFile = devChangedFiles.find(
@@ -204,9 +288,24 @@ export class SyncRepoService {
         );
 
         if (
+          common.isUndefined(devChangedFile) &&
+          localChangedFile.modifiedTime < lastSyncTime
+        ) {
+          return;
+        }
+
+        if (
           common.isUndefined(devChangedFile) ||
           localChangedFile.modifiedTime > devChangedFile.modifiedTime
         ) {
+          let filePath = `${repoDir}/${localChangedFile.path}`;
+
+          let isFileExist = await disk.isPathExist(filePath);
+          if (isFileExist === false) {
+            let parentPath = filePath.split('/').slice(0, -1).join('/');
+            await disk.ensureDir(parentPath);
+          }
+
           await disk.writeToFile({
             filePath: filePath,
             content: localChangedFile.content
@@ -258,7 +357,8 @@ export class SyncRepoService {
       files: itemCatalog.files,
       restChangedFiles: restChangedFiles,
       restDeletedFiles: restDeletedFiles,
-      mproveDir: itemCatalog.mproveDir
+      mproveDir: itemCatalog.mproveDir,
+      currentTime: Date.now()
     };
 
     return payload;

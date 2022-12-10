@@ -166,7 +166,10 @@ export class SyncRepoCommand extends CustomCommand {
 
     logToConsoleMcli({
       log: {
-        errors: syncRepoResp.payload.struct.errors
+        errors: syncRepoResp.payload.struct.errors,
+        serverCurrentTime: syncRepoResp.payload.currentTime,
+        syncTime: sync.syncTime,
+        timeDiff: sync.syncTime - syncRepoResp.payload.currentTime
       },
       logLevel: common.LogLevelEnum.Info,
       context: this.context,

@@ -245,4 +245,43 @@ export class FilesComponent implements OnInit {
       )
       .subscribe();
   }
+
+  refresh() {
+    let payload: apiToBackend.ToBackendGetRepoRequestPayload = {
+      projectId: this.nav.projectId,
+      isRepoProd: this.nav.isRepoProd,
+      branchId: this.nav.branchId,
+      envId: this.nav.envId,
+      isFetch: true
+    };
+
+    this.apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRepo,
+        payload: payload,
+        showSpinner: true
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendGetRepoResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.repoStore.update(resp.payload.repo);
+            this.structStore.update(resp.payload.struct);
+            this.navStore.update(state =>
+              Object.assign({}, state, <NavState>{
+                needValidate: resp.payload.needValidate
+              })
+            );
+
+            this.navigateService.navigateToFiles();
+
+            return true;
+          } else {
+            return false;
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
 }
