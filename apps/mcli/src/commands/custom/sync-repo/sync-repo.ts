@@ -68,12 +68,21 @@ export class SyncRepoCommand extends CustomCommand {
     let syncParentPath = `${repoDir}/${common.MPROVE_CACHE_DIR}`;
     let syncFilePath = `${syncParentPath}/${common.MPROVE_SYNC_FILENAME}`;
 
-    let { content } = await nodeCommon.readFileCheckSize({
-      filePath: syncFilePath,
-      getStat: false
-    });
+    let isSyncFileExist = await fse.pathExists(syncFilePath);
 
-    let syncFile: Sync = JSON.parse(content);
+    let syncFileContent;
+    if (isSyncFileExist === true) {
+      let { content } = await nodeCommon.readFileCheckSize({
+        filePath: syncFilePath,
+        getStat: false
+      });
+      syncFileContent = content;
+    }
+
+    let syncFile: Sync = isSyncFileExist
+      ? JSON.parse(syncFileContent)
+      : undefined;
+
     let lastSyncTime = common.isDefined(syncFile?.syncTime)
       ? Number(syncFile.syncTime)
       : 0;

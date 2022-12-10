@@ -12,6 +12,7 @@ export class DiskSyncFile {
   @IsString()
   content: string;
 
+  @IsOptional()
   @IsNumber()
   modifiedTime: number;
 }
