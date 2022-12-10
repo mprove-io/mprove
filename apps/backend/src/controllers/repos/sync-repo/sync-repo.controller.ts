@@ -44,6 +44,7 @@ export class SyncRepoController {
       projectId,
       branchId,
       lastCommit,
+      lastSyncTime,
       envId,
       localChangedFiles,
       localDeletedFiles
@@ -90,6 +91,7 @@ export class SyncRepoController {
         repoId: repoId,
         branch: branchId,
         lastCommit: lastCommit,
+        lastSyncTime: lastSyncTime,
         localChangedFiles: localChangedFiles,
         localDeletedFiles: localDeletedFiles,
         userAlias: user.alias,

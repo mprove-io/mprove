@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { common } from '~api-to-disk/barrels/common';
 import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
@@ -18,6 +24,9 @@ export class ToDiskSyncRepoRequestPayload {
 
   @IsString()
   lastCommit: string;
+
+  @IsNumber()
+  lastSyncTime: number;
 
   @ValidateNested()
   @Type(() => common.DiskSyncFile)

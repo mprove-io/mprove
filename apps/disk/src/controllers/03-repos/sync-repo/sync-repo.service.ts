@@ -33,6 +33,7 @@ export class SyncRepoService {
       repoId,
       branch,
       lastCommit,
+      lastSyncTime,
       localChangedFiles,
       localDeletedFiles,
       userAlias,
@@ -123,49 +124,96 @@ export class SyncRepoService {
 
     let { changedFiles, deletedFiles } = await nodeCommon.getSyncFiles({
       repoDir: repoDir,
-      statusFiles: statusFiles
+      statusFiles: statusFiles,
+      lastSyncTime: lastSyncTime
     });
 
     let devChangedFiles = changedFiles;
     let devDeletedFiles = deletedFiles;
 
     let restChangedFiles: common.DiskSyncFile[] = devChangedFiles.filter(
-      x =>
-        [...localChangedFiles, ...localDeletedFiles]
-          .map(f => f.path)
-          .indexOf(x.path) < -1
+      devChangedFile => {
+        let localDeletedFile = localDeletedFiles.find(
+          x => x.path === devChangedFile.path
+        );
+        if (common.isDefined(localDeletedFile)) {
+          return false;
+        }
+
+        let localChangedFile = localChangedFiles.find(
+          x => x.path === devChangedFile.path
+        );
+
+        if (
+          common.isDefined(localChangedFile) &&
+          localChangedFile.modifiedTime > devChangedFile.modifiedTime
+        ) {
+          return false;
+        }
+
+        return true;
+      }
     );
 
     let restDeletedFiles: common.DiskSyncFile[] = devDeletedFiles.filter(
-      x =>
-        [...localChangedFiles, ...localDeletedFiles]
-          .map(f => f.path)
-          .indexOf(x.path) < -1
+      devDeletedFile => {
+        let localDeletedFile = localDeletedFiles.find(
+          x => x.path === devDeletedFile.path
+        );
+        if (common.isDefined(localDeletedFile)) {
+          return false;
+        }
+
+        let localChangedFile = localChangedFiles.find(
+          x => x.path === devDeletedFile.path
+        );
+
+        if (common.isDefined(localChangedFile)) {
+          return false;
+        }
+
+        return true;
+      }
     );
 
-    await forEachSeries(localDeletedFiles, async (x: common.DiskSyncFile) => {
-      let filePath = `${repoDir}/${x.path}`;
+    await forEachSeries(
+      localDeletedFiles,
+      async (localDeletedFile: common.DiskSyncFile) => {
+        let filePath = `${repoDir}/${localDeletedFile.path}`;
 
-      let isFileExist = await disk.isPathExist(filePath);
-      if (isFileExist === true) {
-        await disk.removePath(filePath);
+        let isFileExist = await disk.isPathExist(filePath);
+        if (isFileExist === true) {
+          await disk.removePath(filePath);
+        }
       }
-    });
+    );
 
-    await forEachSeries(localChangedFiles, async (x: common.DiskSyncFile) => {
-      let filePath = `${repoDir}/${x.path}`;
+    await forEachSeries(
+      localChangedFiles,
+      async (localChangedFile: common.DiskSyncFile) => {
+        let filePath = `${repoDir}/${localChangedFile.path}`;
 
-      let isFileExist = await disk.isPathExist(filePath);
-      if (isFileExist === false) {
-        let parentPath = filePath.split('/').slice(0, -1).join('/');
-        await disk.ensureDir(parentPath);
+        let isFileExist = await disk.isPathExist(filePath);
+        if (isFileExist === false) {
+          let parentPath = filePath.split('/').slice(0, -1).join('/');
+          await disk.ensureDir(parentPath);
+        }
+
+        let devChangedFile = devChangedFiles.find(
+          x => x.path === localChangedFile.path
+        );
+
+        if (
+          common.isUndefined(devChangedFile) ||
+          localChangedFile.modifiedTime > devChangedFile.modifiedTime
+        ) {
+          await disk.writeToFile({
+            filePath: filePath,
+            content: localChangedFile.content
+          });
+        }
       }
-
-      await disk.writeToFile({
-        filePath: filePath,
-        content: x.content
-      });
-    });
+    );
 
     //
 

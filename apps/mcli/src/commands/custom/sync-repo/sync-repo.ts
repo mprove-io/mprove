@@ -10,6 +10,11 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
+interface Sync {
+  syncTime: number;
+  isFirstSync: boolean;
+}
+
 export class SyncRepoCommand extends CustomCommand {
   static paths = [['sync', 'repo']];
 
@@ -18,7 +23,7 @@ export class SyncRepoCommand extends CustomCommand {
     examples: [
       [
         'Synchronize files between Local and Dev repository',
-        'sync dev --projectId DXYE72ODCP5LWPWH2EXQ --env prod'
+        'sync repo --projectId DXYE72ODCP5LWPWH2EXQ --env prod'
       ]
     ]
   });
@@ -55,52 +60,28 @@ export class SyncRepoCommand extends CustomCommand {
 
     let head: nodegit.Commit = await gitRepo.getHeadCommit();
 
-    //
-
-    let fileStats: {
-      path: string;
-      stat: fse.Stats;
-    }[] = [];
-
-    let paths = (await nodeCommon.gitLsFiles(repoDir)) as string[];
-
-    await forEachSeries(paths, async (x: string) => {
-      let fullPath = `${repoDir}/${x}`;
-
-      let isFileExist = await fse.pathExists(fullPath);
-      if (isFileExist === true) {
-        let stat = <fse.Stats>await fse.stat(fullPath);
-        // stats.push(stat);
-        fileStats.push({
-          path: x,
-          stat: stat
-        });
-      }
-    });
-
-    // logToConsoleMcli({
-    //   log: {
-    //     // paths: paths,
-    //     // stats: stats
-    //     fileStats: fileStats
-    //   },
-    //   logLevel: common.LogLevelEnum.Info,
-    //   context: this.context,
-    //   isJson: this.json
-    // });
-
-    // return;
-
-    //
-
     let headOid = head.id();
     let lastCommit = headOid.tostrS();
 
     let statusFiles: nodegit.StatusFile[] = await gitRepo.getStatus();
 
+    let syncParentPath = `${repoDir}/${common.MPROVE_CACHE_DIR}`;
+    let syncFilePath = `${syncParentPath}/${common.MPROVE_SYNC_FILENAME}`;
+
+    let { content } = await nodeCommon.readFileCheckSize({
+      filePath: syncFilePath,
+      getStat: false
+    });
+
+    let syncFile: Sync = JSON.parse(content);
+    let lastSyncTime = common.isDefined(syncFile?.syncTime)
+      ? Number(syncFile.syncTime)
+      : 0;
+
     let { changedFiles, deletedFiles } = await nodeCommon.getSyncFiles({
       repoDir: repoDir,
-      statusFiles: statusFiles
+      statusFiles: statusFiles,
+      lastSyncTime: lastSyncTime
     });
 
     let localChangedFiles = changedFiles;
@@ -123,6 +104,7 @@ export class SyncRepoCommand extends CustomCommand {
       branchId: currentBranchName,
       envId: this.envId,
       lastCommit: lastCommit,
+      lastSyncTime: lastSyncTime,
       localChangedFiles: localChangedFiles,
       localDeletedFiles: localDeletedFiles
     };
@@ -160,6 +142,18 @@ export class SyncRepoCommand extends CustomCommand {
         await fse.writeFile(filePath, x.content);
       }
     );
+
+    //
+
+    await fse.ensureDir(syncParentPath);
+
+    let sync: Sync = {
+      syncTime: Date.now(),
+      isFirstSync: lastSyncTime === 0
+    };
+
+    let syncJson = JSON.stringify(sync, null, 2);
+    await fse.writeFile(syncFilePath, syncJson);
 
     logToConsoleMcli({
       log: {

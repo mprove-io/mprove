@@ -2,13 +2,15 @@ import * as fse from 'fs-extra';
 import * as nodegit from 'nodegit';
 import { forEachSeries } from 'p-iteration';
 import { common } from '~node-common/barrels/common';
+import { gitLsFiles } from './git-ls-files';
 import { readFileCheckSize } from './read-file-check-size';
 
 export async function getSyncFiles(item: {
   statusFiles: nodegit.StatusFile[];
   repoDir: string;
+  lastSyncTime: number;
 }) {
-  let { statusFiles, repoDir } = item;
+  let { statusFiles, repoDir, lastSyncTime } = item;
 
   let changedFiles: common.DiskSyncFile[] = [];
   let deletedFiles: common.DiskSyncFile[] = [];
@@ -34,7 +36,6 @@ export async function getSyncFiles(item: {
         ? common.FileStatusEnum.Ignored
         : undefined;
 
-    // read git changed files
     let content: string;
     let stat: fse.Stats;
 
@@ -54,7 +55,7 @@ export async function getSyncFiles(item: {
       path: path,
       status: status,
       content: content,
-      modifiedTime: stat.mtimeMs
+      modifiedTime: stat?.mtimeMs
     };
 
     if (file.status === common.FileStatusEnum.Deleted) {
@@ -63,6 +64,39 @@ export async function getSyncFiles(item: {
       changedFiles.push(file);
     }
   });
+
+  if (lastSyncTime > 0) {
+    let paths = (await gitLsFiles(repoDir)) as string[];
+
+    let extraPaths = paths.filter(
+      x => [...changedFiles, ...deletedFiles].map(f => f.path).indexOf(x) < 0
+    );
+
+    await forEachSeries(extraPaths, async (path: string) => {
+      let fullPath = `${repoDir}/${path}`;
+
+      let isFileExist = await fse.pathExists(fullPath);
+      if (isFileExist === true) {
+        let stat = <fse.Stats>await fse.stat(fullPath);
+
+        if (stat.mtimeMs > lastSyncTime) {
+          let { content } = await readFileCheckSize({
+            filePath: fullPath,
+            getStat: false
+          });
+
+          let file: common.DiskSyncFile = {
+            path: path,
+            status: common.FileStatusEnum.Modified,
+            content: content,
+            modifiedTime: stat.mtimeMs
+          };
+
+          changedFiles.push(file);
+        }
+      }
+    });
+  }
 
   return {
     changedFiles: changedFiles,
