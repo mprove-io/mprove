@@ -76,10 +76,7 @@ export class ApiService {
       // responseType: 'json',
     };
 
-    // let spinnerStartedTs: number;
-
     if (showSpinner === true) {
-      // spinnerStartedTs = Date.now();
       this.spinner.show(constants.APP_SPINNER_NAME);
     }
 
@@ -101,20 +98,6 @@ export class ApiService {
       catchError(e => this.catchErr(e)),
       finalize(() => {
         if (showSpinner === true) {
-          // let endedTs = Date.now();
-
-          // let spinTimeAlready = endedTs - spinnerStartedTs;
-          // console.log('spinTimeAlready:', spinTimeAlready);
-
-          // let time = constants.MIN_TIME_TO_SPIN - spinTimeAlready;
-          // console.log('time:', time);
-
-          // if (time > 0) {
-          //   setTimeout(() => this.spinner.hide(constants.APP_SPINNER_NAME), time);
-          // } else {
-          //   this.spinner.hide(constants.APP_SPINNER_NAME);
-          // }
-
           this.spinner.hide(constants.APP_SPINNER_NAME);
         }
       })

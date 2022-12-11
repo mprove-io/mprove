@@ -1,7 +1,8 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { TreeNode } from '@bugsplat/angular-tree-component';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { take, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { map, switchMap, take, tap } from 'rxjs/operators';
 import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
@@ -13,9 +14,10 @@ import { FileState, FileStore } from '~front/app/stores/file.store';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
-import { UiState, UiStore } from '~front/app/stores/ui.store';
+import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-repo-options',
@@ -83,16 +85,17 @@ export class RepoOptionsComponent {
       envId: this.nav.envId
     };
 
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     this.apiService
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum
             .ToBackendRevertRepoToLastCommit,
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendRevertRepoToLastCommitResponse) => {
+        map((resp: apiToBackend.ToBackendRevertRepoToLastCommitResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.repoStore.update(resp.payload.repo);
             this.structStore.update(resp.payload.struct);
@@ -102,17 +105,20 @@ export class RepoOptionsComponent {
               })
             );
 
-            this.navigateService.navigateToFiles();
-
-            if (this.panel !== common.PanelEnum.Tree) {
-              this.uiStore.update(state =>
-                Object.assign({}, state, <UiState>{
-                  panel: common.PanelEnum.Tree
-                })
-              );
-            }
+            return true;
+          } else {
+            return false;
           }
         }),
+        switchMap(x =>
+          x === true && common.isDefined(this.file.fileId)
+            ? this.fileService.getFile({
+                fileId: this.file.fileId,
+                panel: this.panel
+              })
+            : of([])
+        ),
+        tap(x => this.spinner.hide(constants.APP_SPINNER_NAME)),
         take(1)
       )
       .subscribe();
@@ -128,15 +134,16 @@ export class RepoOptionsComponent {
       envId: this.nav.envId
     };
 
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     this.apiService
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote,
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendRevertRepoToRemoteResponse) => {
+        map((resp: apiToBackend.ToBackendRevertRepoToRemoteResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.repoStore.update(resp.payload.repo);
             this.structStore.update(resp.payload.struct);
@@ -146,17 +153,20 @@ export class RepoOptionsComponent {
               })
             );
 
-            this.navigateService.navigateToFiles();
-
-            if (this.panel !== common.PanelEnum.Tree) {
-              this.uiStore.update(state =>
-                Object.assign({}, state, <UiState>{
-                  panel: common.PanelEnum.Tree
-                })
-              );
-            }
+            return true;
+          } else {
+            return false;
           }
         }),
+        switchMap(x =>
+          x === true && common.isDefined(this.file.fileId)
+            ? this.fileService.getFile({
+                fileId: this.file.fileId,
+                panel: this.panel
+              })
+            : of([])
+        ),
+        tap(x => this.spinner.hide(constants.APP_SPINNER_NAME)),
         take(1)
       )
       .subscribe();
@@ -173,15 +183,16 @@ export class RepoOptionsComponent {
       isFetch: true
     };
 
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     this.apiService
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRepo,
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetRepoResponse) => {
+        map((resp: apiToBackend.ToBackendGetRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.repoStore.update(resp.payload.repo);
             this.structStore.update(resp.payload.struct);
@@ -191,13 +202,20 @@ export class RepoOptionsComponent {
               })
             );
 
-            this.navigateService.navigateToFiles();
-
             return true;
           } else {
             return false;
           }
         }),
+        switchMap(x =>
+          x === true && common.isDefined(this.file.fileId)
+            ? this.fileService.getFile({
+                fileId: this.file.fileId,
+                panel: this.panel
+              })
+            : of([])
+        ),
+        tap(x => this.spinner.hide(constants.APP_SPINNER_NAME)),
         take(1)
       )
       .subscribe();
@@ -205,6 +223,8 @@ export class RepoOptionsComponent {
 
   pullFromRemote(event?: MouseEvent) {
     event.stopPropagation();
+
+    this.spinner.show(constants.APP_SPINNER_NAME);
 
     let payload: apiToBackend.ToBackendPullRepoRequestPayload = {
       projectId: this.nav.projectId,
@@ -217,11 +237,10 @@ export class RepoOptionsComponent {
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo,
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendPullRepoResponse) => {
+        map((resp: apiToBackend.ToBackendPullRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.repoStore.update(resp.payload.repo);
             this.structStore.update(resp.payload.struct);
@@ -231,17 +250,20 @@ export class RepoOptionsComponent {
               })
             );
 
-            this.navigateService.navigateToFiles();
-
-            if (this.panel !== common.PanelEnum.Tree) {
-              this.uiStore.update(state =>
-                Object.assign({}, state, <UiState>{
-                  panel: common.PanelEnum.Tree
-                })
-              );
-            }
+            return true;
+          } else {
+            return false;
           }
         }),
+        switchMap(x =>
+          x === true && common.isDefined(this.file.fileId)
+            ? this.fileService.getFile({
+                fileId: this.file.fileId,
+                panel: this.panel
+              })
+            : of([])
+        ),
+        tap(x => this.spinner.hide(constants.APP_SPINNER_NAME)),
         take(1)
       )
       .subscribe();
@@ -249,6 +271,8 @@ export class RepoOptionsComponent {
 
   validate(event?: MouseEvent) {
     event.stopPropagation();
+
+    this.spinner.show(constants.APP_SPINNER_NAME);
 
     let payload: apiToBackend.ToBackendValidateFilesRequestPayload = {
       projectId: this.nav.projectId,
@@ -261,11 +285,10 @@ export class RepoOptionsComponent {
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendValidateFilesResponse) => {
+        map((resp: apiToBackend.ToBackendValidateFilesResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.repoStore.update(resp.payload.repo);
             this.structStore.update(resp.payload.struct);
@@ -275,17 +298,20 @@ export class RepoOptionsComponent {
               })
             );
 
-            if (this.panel !== common.PanelEnum.Tree) {
-              this.navigateService.navigateToFiles();
-
-              this.uiStore.update(state =>
-                Object.assign({}, state, <UiState>{
-                  panel: common.PanelEnum.Tree
-                })
-              );
-            }
+            return true;
+          } else {
+            return false;
           }
         }),
+        switchMap(x =>
+          x === true && common.isDefined(this.file.fileId)
+            ? this.fileService.getFile({
+                fileId: this.file.fileId,
+                panel: this.panel
+              })
+            : of([])
+        ),
+        tap(x => this.spinner.hide(constants.APP_SPINNER_NAME)),
         take(1)
       )
       .subscribe();

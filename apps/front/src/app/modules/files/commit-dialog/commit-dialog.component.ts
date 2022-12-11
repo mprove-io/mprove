@@ -7,14 +7,18 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
-import { take, tap } from 'rxjs/operators';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { of } from 'rxjs';
+import { map, switchMap, take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
+import { FileService } from '~front/app/services/file.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 export interface CommitDialogDialogData {
   apiService: ApiService;
@@ -22,6 +26,7 @@ export interface CommitDialogDialogData {
   isRepoProd: boolean;
   branchId: string;
   panel: common.PanelEnum;
+  fileId: string;
 }
 
 @Component({
@@ -42,6 +47,8 @@ export class CommitDialogComponent implements OnInit {
     public ref: DialogRef<CommitDialogDialogData>,
     private fb: FormBuilder,
     private navigateService: NavigateService,
+    private spinner: NgxSpinnerService,
+    private fileService: FileService,
     public repoStore: RepoStore,
     public uiStore: UiStore,
     public structStore: StructStore
@@ -77,23 +84,33 @@ export class CommitDialogComponent implements OnInit {
       commitMessage: this.commitForm.value.message
     };
 
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
     apiService
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCommitRepoResponse) => {
+        map((resp: apiToBackend.ToBackendCommitRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.repoStore.update(resp.payload.repo);
 
-            if (this.ref.data.panel !== common.PanelEnum.Tree) {
-              this.navigateService.navigateToFiles();
-            }
+            return true;
+          } else {
+            return false;
           }
         }),
+        switchMap(x =>
+          x === true && common.isDefined(this.ref.data.fileId)
+            ? this.fileService.getFile({
+                fileId: this.ref.data.fileId,
+                panel: this.ref.data.panel
+              })
+            : of([])
+        ),
+        tap(x => this.spinner.hide(constants.APP_SPINNER_NAME)),
         take(1)
       )
       .subscribe();
