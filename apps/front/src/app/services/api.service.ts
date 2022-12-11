@@ -196,10 +196,37 @@ export class ApiService {
           common.ErEnum.BACKEND_QUERY_DOES_NOT_EXIST
         ].indexOf(infoErrorMessage) > -1
       ) {
-        errorData.description = `Don't worry, most likely the project editor has pushed new changes to the current branch files recently`;
-        errorData.buttonText = 'Ok, reload and fetch changes';
+        errorData.description = `Don't worry, most likely the Project Editor has recently made new changes to the files of the current branch.`;
+        errorData.buttonText = 'Ok, get changes';
         errorData.onClickFnBindThis = (() => {
-          this.navigateService.navigateToModels();
+          if (
+            [common.ErEnum.BACKEND_VIS_DOES_NOT_EXIST].indexOf(
+              infoErrorMessage
+            ) > -1
+          ) {
+            this.navigateService.navigateToVizs();
+          } else if (
+            [common.ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST].indexOf(
+              infoErrorMessage
+            ) > -1
+          ) {
+            this.navigateService.navigateToDashboards();
+          } else if (
+            [common.ErEnum.BACKEND_MODEL_DOES_NOT_EXIST].indexOf(
+              infoErrorMessage
+            ) > -1
+          ) {
+            this.navigateService.navigateToModels();
+          } else if (
+            [
+              common.ErEnum.BACKEND_MCONFIG_DOES_NOT_EXIST,
+              common.ErEnum.BACKEND_QUERY_DOES_NOT_EXIST
+            ].indexOf(infoErrorMessage) > -1
+          ) {
+            this.navigateService.navigateToModel();
+          } else {
+            this.navigateService.navigateToModels();
+          }
         }).bind(this);
 
         this.myDialogService.showError({ errorData, isThrow: false });

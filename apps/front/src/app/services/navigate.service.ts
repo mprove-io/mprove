@@ -76,9 +76,11 @@ export class NavigateService {
     ]);
   }
 
-  navigateToModel(modelId: string) {
+  navigateToModel(modelId?: string) {
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
+
+    let toModelId = common.isDefined(modelId) ? modelId : this.model.modelId;
 
     this.router.navigate([
       common.PATH_ORG,
@@ -92,7 +94,7 @@ export class NavigateService {
       common.PATH_ENV,
       this.nav.envId,
       common.PATH_MODEL,
-      modelId,
+      toModelId,
       common.PATH_MCONFIG,
       common.EMPTY,
       common.PATH_QUERY,

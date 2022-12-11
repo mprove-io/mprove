@@ -7,6 +7,9 @@ import {
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
+import { checkModel } from '~front/app/functions/check-model';
+import { ModelQuery } from '~front/app/queries/model.query';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { checkNavOrgProjectRepoBranchEnv } from '../../functions/check-nav-org-project-repo-branch-env';
@@ -26,9 +29,11 @@ import { NavState } from '../../stores/nav.store';
 export class MconfigResolver implements Resolve<Observable<boolean>> {
   constructor(
     private apiService: ApiService,
+    private navigateService: NavigateService,
     private mqQuery: MqQuery,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
+    private modelQuery: ModelQuery,
     private router: Router,
     private mqStore: MqStore
   ) {}
@@ -61,6 +66,21 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
       route: route,
       nav: nav,
       userId: userId
+    });
+
+    let modelId;
+    this.modelQuery
+      .select()
+      .pipe(
+        tap(x => (modelId = x.modelId)),
+        take(1)
+      )
+      .subscribe();
+
+    checkModel({
+      modelId: modelId,
+      route: route,
+      navigateService: this.navigateService
     });
 
     let parametersMconfigId = route.params[common.PARAMETER_MCONFIG_ID];
