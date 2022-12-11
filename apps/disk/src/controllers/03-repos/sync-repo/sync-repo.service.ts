@@ -19,6 +19,8 @@ export class SyncRepoService {
   ) {}
 
   async process(request: any) {
+    let devReqReceiveTime = Date.now();
+
     let requestValid = nodeCommon.transformValidSync({
       classType: apiToDisk.ToDiskSyncRepoRequest,
       object: request,
@@ -342,6 +344,8 @@ export class SyncRepoService {
       isRootMproveDir: false
     });
 
+    let devRespSentTime = Date.now();
+
     let payload: apiToDisk.ToDiskSyncRepoResponsePayload = {
       repo: {
         orgId: orgId,
@@ -358,7 +362,8 @@ export class SyncRepoService {
       restChangedFiles: restChangedFiles,
       restDeletedFiles: restDeletedFiles,
       mproveDir: itemCatalog.mproveDir,
-      currentTime: Date.now()
+      devReqReceiveTime: devReqReceiveTime,
+      devRespSentTime: devRespSentTime
     };
 
     return payload;

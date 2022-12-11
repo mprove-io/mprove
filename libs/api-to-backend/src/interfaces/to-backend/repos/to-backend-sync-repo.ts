@@ -51,7 +51,10 @@ export class ToBackendSyncRepoResponsePayload {
   struct: common.Struct;
 
   @IsNumber()
-  currentTime: number;
+  devReqReceiveTime: number;
+
+  @IsNumber()
+  devRespSentTime: number;
 }
 
 export class ToBackendSyncRepoResponse extends common.MyResponse {

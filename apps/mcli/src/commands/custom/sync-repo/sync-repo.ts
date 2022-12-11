@@ -108,6 +108,8 @@ export class SyncRepoCommand extends CustomCommand {
       config: this.context.config
     });
 
+    let localReqSentTime = Date.now();
+
     let syncRepoReqPayload: apiToBackend.ToBackendSyncRepoRequestPayload = {
       projectId: this.projectId,
       branchId: currentBranchName,
@@ -124,6 +126,8 @@ export class SyncRepoCommand extends CustomCommand {
       payload: syncRepoReqPayload,
       config: this.context.config
     });
+
+    let localRespReceiveTime = Date.now();
 
     await forEachSeries(
       syncRepoResp.payload.restDeletedFiles,
@@ -167,9 +171,10 @@ export class SyncRepoCommand extends CustomCommand {
     logToConsoleMcli({
       log: {
         errors: syncRepoResp.payload.struct.errors,
-        serverCurrentTime: syncRepoResp.payload.currentTime,
         syncTime: sync.syncTime,
-        timeDiff: sync.syncTime - syncRepoResp.payload.currentTime
+        reqTimeDiff: syncRepoResp.payload.devReqReceiveTime - localReqSentTime,
+        respTimeDiff:
+          localRespReceiveTime - syncRepoResp.payload.devRespSentTime
       },
       logLevel: common.LogLevelEnum.Info,
       context: this.context,
