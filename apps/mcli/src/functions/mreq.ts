@@ -6,9 +6,9 @@ export async function mreq<T extends common.MyResponse>(item: {
   host: string;
   pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum;
   payload: any;
-  token?: string;
+  loginToken?: string;
 }): Promise<T> {
-  let { host, pathInfoName, payload, token } = item;
+  let { host, pathInfoName, payload, loginToken } = item;
 
   let body: apiToBackend.ToBackendRequest = {
     info: {
@@ -26,8 +26,8 @@ export async function mreq<T extends common.MyResponse>(item: {
     headers: {}
   };
 
-  if (common.isDefined(token)) {
-    options.headers.authorization = `Bearer ${token}`;
+  if (common.isDefined(loginToken)) {
+    options.headers.authorization = `Bearer ${loginToken}`;
   }
 
   let resp = await got.post(url, options).json<T>();

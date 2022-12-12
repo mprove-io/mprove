@@ -36,7 +36,8 @@ let appCommands = [
 
 let customContext: CustomContext = {
   ...Cli.defaultContext,
-  config: undefined
+  config: undefined,
+  loginToken: undefined
 };
 
 Cli.from(appCommands, {

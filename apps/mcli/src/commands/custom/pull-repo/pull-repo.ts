@@ -62,17 +62,23 @@ export class PullRepoCommand extends CustomCommand {
 
     let isRepoProd = this.repo === 'production' ? true : false;
 
-    let loginUserReqPayload: apiToBackend.ToBackendLoginUserRequestPayload = {
-      email: this.context.config.mproveCliEmail,
-      password: this.context.config.mproveCliPassword
-    };
+    let loginToken = this.context.loginToken;
 
-    let loginUserResp = await mreq<apiToBackend.ToBackendLoginUserResponse>({
-      pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
-      payload: loginUserReqPayload,
-      host: this.context.config.mproveCliHost
-    });
+    if (common.isUndefined(loginToken)) {
+      let loginUserReqPayload: apiToBackend.ToBackendLoginUserRequestPayload = {
+        email: this.context.config.mproveCliEmail,
+        password: this.context.config.mproveCliPassword
+      };
+
+      let loginUserResp = await mreq<apiToBackend.ToBackendLoginUserResponse>({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+        payload: loginUserReqPayload,
+        host: this.context.config.mproveCliHost
+      });
+
+      loginToken = loginUserResp.payload.token;
+    }
 
     let pullRepoReqPayload: apiToBackend.ToBackendPullRepoRequestPayload = {
       projectId: this.project,
@@ -82,7 +88,7 @@ export class PullRepoCommand extends CustomCommand {
     };
 
     let pullRepoResp = await mreq<apiToBackend.ToBackendPullRepoResponse>({
-      token: loginUserResp.payload.token,
+      loginToken: loginToken,
       pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo,
       payload: pullRepoReqPayload,
       host: this.context.config.mproveCliHost

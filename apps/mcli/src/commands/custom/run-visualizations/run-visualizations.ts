@@ -106,7 +106,7 @@ export class RunVisualizationsCommand extends CustomCommand {
     };
 
     let getVizsResp = await mreq<apiToBackend.ToBackendGetVizsResponse>({
-      token: loginUserResp.payload.token,
+      loginToken: loginUserResp.payload.token,
       pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs,
       payload: getVizsReqPayload,
       host: this.context.config.mproveCliHost
@@ -158,7 +158,7 @@ export class RunVisualizationsCommand extends CustomCommand {
     };
 
     let runQueriesResp = await mreq<apiToBackend.ToBackendRunQueriesResponse>({
-      token: loginUserResp.payload.token,
+      loginToken: loginUserResp.payload.token,
       pathInfoName:
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
       payload: runQueriesReqPayload,
@@ -189,7 +189,7 @@ export class RunVisualizationsCommand extends CustomCommand {
 
         let getQueriesResp =
           await mreq<apiToBackend.ToBackendGetQueriesResponse>({
-            token: loginUserResp.payload.token,
+            loginToken: loginUserResp.payload.token,
             pathInfoName:
               apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQueries,
             payload: getQueriesReqPayload,

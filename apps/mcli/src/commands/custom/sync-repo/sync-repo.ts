@@ -136,7 +136,7 @@ export class SyncRepoCommand extends CustomCommand {
     };
 
     let syncRepoResp = await mreq<apiToBackend.ToBackendSyncRepoResponse>({
-      token: loginUserResp.payload.token,
+      loginToken: loginUserResp.payload.token,
       pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSyncRepo,
       payload: syncRepoReqPayload,
       host: this.context.config.mproveCliHost

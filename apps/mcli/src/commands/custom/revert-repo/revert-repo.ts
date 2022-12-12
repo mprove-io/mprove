@@ -99,7 +99,7 @@ export class RevertRepoCommand extends CustomCommand {
         };
 
       resp = await mreq<apiToBackend.ToBackendRevertRepoToLastCommitResponse>({
-        token: loginUserResp.payload.token,
+        loginToken: loginUserResp.payload.token,
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum
             .ToBackendRevertRepoToLastCommit,
@@ -116,7 +116,7 @@ export class RevertRepoCommand extends CustomCommand {
         };
 
       resp = await mreq<apiToBackend.ToBackendRevertRepoToRemoteResponse>({
-        token: loginUserResp.payload.token,
+        loginToken: loginUserResp.payload.token,
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote,
         payload: revertRepoToRemoteReqPayload,

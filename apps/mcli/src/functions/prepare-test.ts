@@ -80,7 +80,7 @@ export async function prepareTest(item: {
     });
   }
 
-  let loginUserResp;
+  let loginUserResp: apiToBackend.ToBackendLoginUserResponse;
   if (common.isDefined(loginEmail) && common.isDefined(loginPassword)) {
     let loginUserReqPayload: apiToBackend.ToBackendLoginUserRequestPayload = {
       email: loginEmail,
@@ -99,6 +99,6 @@ export async function prepareTest(item: {
     prepConfig: prepConfig,
     mockContext: mockContext,
     cli: cli,
-    token: loginUserResp?.payload?.token
+    loginToken: loginUserResp?.payload?.token
   };
 }
