@@ -10,7 +10,7 @@ export class VersionCommand extends Command {
     examples: [['Print version of Mprove CLI', 'mprove version']]
   });
 
-  json = Option.Boolean('-j,--json', false, {
+  json = Option.Boolean('--json', false, {
     description: '(default false)'
   });
 

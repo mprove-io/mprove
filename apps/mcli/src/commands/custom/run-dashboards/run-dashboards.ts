@@ -28,37 +28,37 @@ export class RunDashboardsCommand extends CustomCommand {
     examples: [
       [
         'Run dashboards for Production repo',
-        'mprove run dashboards --projectId DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
+        'mprove run dashboards --project DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
       ],
       [
         'Run dashboards for Dev repo',
-        'mprove run dashboards --projectId DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
+        'mprove run dashboards --project DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
       ],
       [
         'Run dashboards d1 and d2 for Dev repo',
-        'mprove run dashboards --projectId DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --ids d1,d2'
+        'mprove run dashboards --project DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --ids d1,d2'
       ]
     ]
   });
 
-  projectId = Option.String('-p,--projectId', {
+  project = Option.String('--project', {
     required: true,
     description: '(required) Project Id'
   });
 
-  repo = Option.String('-r,--repo', {
+  repo = Option.String('--repo', {
     required: true,
     validator: t.isEnum(enums.RepoEnum),
     description:
       '(required, "dev" or "production") Dev or Production repository'
   });
 
-  branchId = Option.String('-b,--branch', {
+  branchId = Option.String('--branch', {
     required: true,
     description: '(required) Git Branch'
   });
 
-  envId = Option.String('-e,--env', {
+  env = Option.String('--env', {
     required: true,
     description: '(required) Environment'
   });
@@ -68,19 +68,19 @@ export class RunDashboardsCommand extends CustomCommand {
       '(optional) Run only dashboards with selected Ids (dashboard names), separated by comma'
   });
 
-  verbose = Option.Boolean('-v,--verbose', false, {
+  verbose = Option.Boolean('--verbose', false, {
     description: '(default false)'
   });
 
-  json = Option.Boolean('-j,--json', false, {
+  json = Option.Boolean('--json', false, {
     description: '(default false)'
   });
 
-  wait = Option.Boolean('-w,--wait', false, {
+  wait = Option.Boolean('--wait', false, {
     description: '(default false) Wait for results'
   });
 
-  seconds = Option.String('-s,--seconds', '3', {
+  seconds = Option.String('--seconds', '3', {
     validator: t.isNumber(),
     description: '(default 3) Sleep time between getting results'
   });
@@ -106,10 +106,10 @@ export class RunDashboardsCommand extends CustomCommand {
 
     let getDashboardsReqPayload: apiToBackend.ToBackendGetDashboardsRequestPayload =
       {
-        projectId: this.projectId,
+        projectId: this.project,
         isRepoProd: isRepoProd,
         branchId: this.branchId,
-        envId: this.envId
+        envId: this.env
       };
 
     let getDashboardsResp =
@@ -174,7 +174,7 @@ export class RunDashboardsCommand extends CustomCommand {
     let uniqueQueryIds = [...new Set(queryIdsWithDuplicates)];
 
     let runQueriesReqPayload: apiToBackend.ToBackendRunQueriesRequestPayload = {
-      projectId: this.projectId,
+      projectId: this.project,
       queryIds: uniqueQueryIds
     };
 
@@ -203,10 +203,10 @@ export class RunDashboardsCommand extends CustomCommand {
       while (queryIdsToGet.length > 0) {
         let getQueriesReqPayload: apiToBackend.ToBackendGetQueriesRequestPayload =
           {
-            projectId: this.projectId,
+            projectId: this.project,
             isRepoProd: isRepoProd,
             branchId: this.branchId,
-            envId: this.envId,
+            envId: this.env,
             queryIds: uniqueQueryIds
           };
 

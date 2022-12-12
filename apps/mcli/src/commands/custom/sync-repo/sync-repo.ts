@@ -24,30 +24,34 @@ export class SyncRepoCommand extends CustomCommand {
     examples: [
       [
         'Synchronize files (uncommitted changes) between Local and Dev repo, validate BlockML for selected env',
-        'mprove sync repo --projectId DXYE72ODCP5LWPWH2EXQ --env prod'
+        'mprove sync repo --project DXYE72ODCP5LWPWH2EXQ --env prod'
       ]
     ]
   });
 
-  dir = Option.String('-d,--dir', {
+  dir = Option.String('--dir', {
     description: '(optional) Absolute path of local git repository'
   });
 
-  projectId = Option.String('-p,--projectId', {
+  project = Option.String('--project', {
     required: true,
     description: '(required) Project Id'
   });
 
-  envId = Option.String('-e,--env', {
+  env = Option.String('--env', {
     required: true,
     description: '(required) Environment'
   });
 
-  verbose = Option.Boolean('-v,--verbose', false, {
+  firstSync = Option.Boolean('--first-sync', false, {
     description: '(default false)'
   });
 
-  json = Option.Boolean('-j,--json', false, {
+  verbose = Option.Boolean('--verbose', false, {
+    description: '(default false)'
+  });
+
+  json = Option.Boolean('--json', false, {
     description: '(default false)'
   });
 
@@ -72,6 +76,10 @@ export class SyncRepoCommand extends CustomCommand {
 
     let syncParentPath = `${repoDir}/${common.MPROVE_CACHE_DIR}`;
     let syncFilePath = `${syncParentPath}/${common.MPROVE_SYNC_FILENAME}`;
+
+    if (this.firstSync === true) {
+      await fse.remove(syncFilePath);
+    }
 
     let isSyncFileExist = await fse.pathExists(syncFilePath);
 
@@ -116,9 +124,9 @@ export class SyncRepoCommand extends CustomCommand {
     let localReqSentTime = Date.now();
 
     let syncRepoReqPayload: apiToBackend.ToBackendSyncRepoRequestPayload = {
-      projectId: this.projectId,
+      projectId: this.project,
       branchId: currentBranchName,
-      envId: this.envId,
+      envId: this.env,
       lastCommit: lastCommit,
       lastSyncTime: lastSyncTime,
       localChangedFiles: localChangedFiles,

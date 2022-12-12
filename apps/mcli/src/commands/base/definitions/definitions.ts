@@ -10,7 +10,7 @@ export class DefinitionsCommand extends Command {
     examples: [['Print the CLI definitions', 'mprove definitions']]
   });
 
-  json = Option.Boolean('-j,--json', false, {
+  json = Option.Boolean('--json', false, {
     description: '(default false)'
   });
 

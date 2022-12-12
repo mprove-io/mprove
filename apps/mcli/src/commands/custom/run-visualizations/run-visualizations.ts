@@ -23,37 +23,37 @@ export class RunVisualizationsCommand extends CustomCommand {
     examples: [
       [
         'Run visualizations for Production repo',
-        'mprove run visualizations --projectId DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
+        'mprove run visualizations --project DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
       ],
       [
         'Run visualizations for Dev repo',
-        'mprove run visualizations --projectId DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
+        'mprove run visualizations --project DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
       ],
       [
         'Run visualizations vis1 and vis2 for Dev repo',
-        'mprove run visualizations --projectId DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --ids vis1,vis2'
+        'mprove run visualizations --project DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --ids vis1,vis2'
       ]
     ]
   });
 
-  projectId = Option.String('-p,--projectId', {
+  project = Option.String('--project', {
     required: true,
     description: '(required) Project Id'
   });
 
-  repo = Option.String('-r,--repo', {
+  repo = Option.String('--repo', {
     required: true,
     validator: t.isEnum(enums.RepoEnum),
     description:
       '(required, "dev" or "production") Dev or Production repository'
   });
 
-  branchId = Option.String('-b,--branch', {
+  branchId = Option.String('--branch', {
     required: true,
     description: '(required) Git Branch'
   });
 
-  envId = Option.String('-e,--env', {
+  env = Option.String('--env', {
     required: true,
     description: '(required) Environment'
   });
@@ -63,19 +63,19 @@ export class RunVisualizationsCommand extends CustomCommand {
       '(optional) Run only visualizations with selected Ids (visualization names), separated by comma'
   });
 
-  verbose = Option.Boolean('-v,--verbose', false, {
+  verbose = Option.Boolean('--verbose', false, {
     description: '(default false)'
   });
 
-  json = Option.Boolean('-j,--json', false, {
+  json = Option.Boolean('--json', false, {
     description: '(default false)'
   });
 
-  wait = Option.Boolean('-w,--wait', false, {
+  wait = Option.Boolean('--wait', false, {
     description: '(default false) Wait for results'
   });
 
-  seconds = Option.String('-s,--seconds', '3', {
+  seconds = Option.String('--seconds', '3', {
     validator: t.isNumber(),
     description: '(default 3) Sleep time between getting results'
   });
@@ -100,10 +100,10 @@ export class RunVisualizationsCommand extends CustomCommand {
     });
 
     let getVizsReqPayload: apiToBackend.ToBackendGetVizsRequestPayload = {
-      projectId: this.projectId,
+      projectId: this.project,
       isRepoProd: isRepoProd,
       branchId: this.branchId,
-      envId: this.envId
+      envId: this.env
     };
 
     let getVizsResp = await mreq<apiToBackend.ToBackendGetVizsResponse>({
@@ -154,7 +154,7 @@ export class RunVisualizationsCommand extends CustomCommand {
     let uniqueQueryIds = [...new Set(queryIdsWithDuplicates)];
 
     let runQueriesReqPayload: apiToBackend.ToBackendRunQueriesRequestPayload = {
-      projectId: this.projectId,
+      projectId: this.project,
       queryIds: uniqueQueryIds
     };
 
@@ -181,10 +181,10 @@ export class RunVisualizationsCommand extends CustomCommand {
       while (queryIdsToGet.length > 0) {
         let getQueriesReqPayload: apiToBackend.ToBackendGetQueriesRequestPayload =
           {
-            projectId: this.projectId,
+            projectId: this.project,
             isRepoProd: isRepoProd,
             branchId: this.branchId,
-            envId: this.envId,
+            envId: this.env,
             queryIds: uniqueQueryIds
           };
 

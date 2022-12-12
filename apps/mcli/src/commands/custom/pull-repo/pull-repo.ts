@@ -17,42 +17,42 @@ export class PullRepoCommand extends CustomCommand {
     examples: [
       [
         'Pull committed changes from Remote to Production repo, validate BlockML for env prod',
-        'mprove pull repo --projectId DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
+        'mprove pull repo --project DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
       ],
       [
         'Pull committed changes from Remote to Dev repo, validate BlockML for env prod',
-        'mprove pull repo --projectId DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
+        'mprove pull repo --project DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
       ]
     ]
   });
 
-  projectId = Option.String('-p,--projectId', {
+  project = Option.String('--project', {
     required: true,
     description: '(required) Project Id'
   });
 
-  repo = Option.String('-r,--repo', {
+  repo = Option.String('--repo', {
     required: true,
     validator: t.isEnum(enums.RepoEnum),
     description:
       '(required, "dev" or "production") Dev or Production repository'
   });
 
-  branchId = Option.String('-b,--branch', {
+  branchId = Option.String('--branch', {
     required: true,
     description: '(required) Git Branch'
   });
 
-  envId = Option.String('-e,--env', {
+  env = Option.String('--env', {
     required: true,
     description: '(required) Environment'
   });
 
-  verbose = Option.Boolean('-v,--verbose', false, {
+  verbose = Option.Boolean('--verbose', false, {
     description: '(default false)'
   });
 
-  json = Option.Boolean('-j,--json', false, {
+  json = Option.Boolean('--json', false, {
     description: '(default false)'
   });
 
@@ -76,10 +76,10 @@ export class PullRepoCommand extends CustomCommand {
     });
 
     let pullRepoReqPayload: apiToBackend.ToBackendPullRepoRequestPayload = {
-      projectId: this.projectId,
+      projectId: this.project,
       isRepoProd: isRepoProd,
       branchId: this.branchId,
-      envId: this.envId
+      envId: this.env
     };
 
     let pullRepoResp = await mreq<apiToBackend.ToBackendPullRepoResponse>({
