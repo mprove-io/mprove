@@ -62,14 +62,6 @@ export class RunVisualizationsCommand extends CustomCommand {
       '(optional) Run only visualizations with selected Ids (visualization names), separated by comma'
   });
 
-  verbose = Option.Boolean('--verbose', false, {
-    description: '(default false)'
-  });
-
-  json = Option.Boolean('--json', false, {
-    description: '(default false)'
-  });
-
   wait = Option.Boolean('--wait', false, {
     description: '(default false) Wait for results'
   });
@@ -77,6 +69,14 @@ export class RunVisualizationsCommand extends CustomCommand {
   seconds = Option.String('--seconds', '3', {
     validator: t.isNumber(),
     description: '(default 3) Sleep time between getting results'
+  });
+
+  verbose = Option.Boolean('--verbose', false, {
+    description: '(default false)'
+  });
+
+  json = Option.Boolean('--json', false, {
+    description: '(default false)'
   });
 
   async execute() {

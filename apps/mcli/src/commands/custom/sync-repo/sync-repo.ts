@@ -30,7 +30,8 @@ export class SyncRepoCommand extends CustomCommand {
   });
 
   dir = Option.String('--dir', {
-    description: '(optional) Absolute path of local git repository'
+    description:
+      '(optional, if not specified then the current working directory is used) Absolute path of local git repository'
   });
 
   project = Option.String('--projectId', {
@@ -44,7 +45,8 @@ export class SyncRepoCommand extends CustomCommand {
   });
 
   firstSync = Option.Boolean('--first-sync', false, {
-    description: '(default false)'
+    description:
+      '(default false) if set, then the previous sync timestamp is ignored'
   });
 
   verbose = Option.Boolean('--verbose', false, {
