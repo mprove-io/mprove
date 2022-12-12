@@ -100,7 +100,7 @@ export class RunDashboardsCommand extends CustomCommand {
       pathInfoName:
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
       payload: loginUserReqPayload,
-      config: this.context.config
+      host: this.context.config.mproveCliHost
     });
 
     let getDashboardsReqPayload: apiToBackend.ToBackendGetDashboardsRequestPayload =
@@ -117,7 +117,7 @@ export class RunDashboardsCommand extends CustomCommand {
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
         payload: getDashboardsReqPayload,
-        config: this.context.config
+        host: this.context.config.mproveCliHost
       });
 
     let ids = this.ids?.split(',');
@@ -182,7 +182,7 @@ export class RunDashboardsCommand extends CustomCommand {
       pathInfoName:
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
       payload: runQueriesReqPayload,
-      config: this.context.config
+      host: this.context.config.mproveCliHost
     });
 
     dashboardParts.forEach(dashboardPart => {
@@ -215,7 +215,7 @@ export class RunDashboardsCommand extends CustomCommand {
             pathInfoName:
               apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQueries,
             payload: getQueriesReqPayload,
-            config: this.context.config
+            host: this.context.config.mproveCliHost
           });
 
         getQueriesResp.payload.queries.forEach(query => {

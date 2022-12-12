@@ -95,7 +95,7 @@ export class RunVisualizationsCommand extends CustomCommand {
       pathInfoName:
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
       payload: loginUserReqPayload,
-      config: this.context.config
+      host: this.context.config.mproveCliHost
     });
 
     let getVizsReqPayload: apiToBackend.ToBackendGetVizsRequestPayload = {
@@ -109,7 +109,7 @@ export class RunVisualizationsCommand extends CustomCommand {
       token: loginUserResp.payload.token,
       pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs,
       payload: getVizsReqPayload,
-      config: this.context.config
+      host: this.context.config.mproveCliHost
     });
 
     let ids = this.ids?.split(',');
@@ -162,7 +162,7 @@ export class RunVisualizationsCommand extends CustomCommand {
       pathInfoName:
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
       payload: runQueriesReqPayload,
-      config: this.context.config
+      host: this.context.config.mproveCliHost
     });
 
     vizParts.forEach(v => {
@@ -193,7 +193,7 @@ export class RunVisualizationsCommand extends CustomCommand {
             pathInfoName:
               apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQueries,
             payload: getQueriesReqPayload,
-            config: this.context.config
+            host: this.context.config.mproveCliHost
           });
 
         getQueriesResp.payload.queries.forEach(query => {

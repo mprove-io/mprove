@@ -82,7 +82,7 @@ export class RevertRepoCommand extends CustomCommand {
       pathInfoName:
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
       payload: loginUserReqPayload,
-      config: this.context.config
+      host: this.context.config.mproveCliHost
     });
 
     let resp:
@@ -104,7 +104,7 @@ export class RevertRepoCommand extends CustomCommand {
           apiToBackend.ToBackendRequestInfoNameEnum
             .ToBackendRevertRepoToLastCommit,
         payload: revertRepoToLastCommitReqPayload,
-        config: this.context.config
+        host: this.context.config.mproveCliHost
       });
     } else {
       let revertRepoToRemoteReqPayload: apiToBackend.ToBackendRevertRepoToRemoteRequestPayload =
@@ -120,7 +120,7 @@ export class RevertRepoCommand extends CustomCommand {
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote,
         payload: revertRepoToRemoteReqPayload,
-        config: this.context.config
+        host: this.context.config.mproveCliHost
       });
     }
 

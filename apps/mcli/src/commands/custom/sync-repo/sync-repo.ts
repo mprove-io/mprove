@@ -120,7 +120,7 @@ export class SyncRepoCommand extends CustomCommand {
       pathInfoName:
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
       payload: loginUserReqPayload,
-      config: this.context.config
+      host: this.context.config.mproveCliHost
     });
 
     let localReqSentTime = Date.now();
@@ -139,7 +139,7 @@ export class SyncRepoCommand extends CustomCommand {
       token: loginUserResp.payload.token,
       pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSyncRepo,
       payload: syncRepoReqPayload,
-      config: this.context.config
+      host: this.context.config.mproveCliHost
     });
 
     let localRespReceiveTime = Date.now();

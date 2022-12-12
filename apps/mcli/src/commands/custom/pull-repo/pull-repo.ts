@@ -71,7 +71,7 @@ export class PullRepoCommand extends CustomCommand {
       pathInfoName:
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
       payload: loginUserReqPayload,
-      config: this.context.config
+      host: this.context.config.mproveCliHost
     });
 
     let pullRepoReqPayload: apiToBackend.ToBackendPullRepoRequestPayload = {
@@ -85,7 +85,7 @@ export class PullRepoCommand extends CustomCommand {
       token: loginUserResp.payload.token,
       pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo,
       payload: pullRepoReqPayload,
-      config: this.context.config
+      host: this.context.config.mproveCliHost
     });
 
     let log: any = {

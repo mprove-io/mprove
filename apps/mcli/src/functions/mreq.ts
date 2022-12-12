@@ -1,15 +1,14 @@
 import got, { OptionsOfTextResponseBody } from 'got';
 import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
-import { interfaces } from '~mcli/barrels/interfaces';
 
 export async function mreq<T extends common.MyResponse>(item: {
-  token?: string;
+  host: string;
   pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum;
   payload: any;
-  config: interfaces.Config;
+  token?: string;
 }): Promise<T> {
-  let { pathInfoName, payload, config, token } = item;
+  let { host, pathInfoName, payload, token } = item;
 
   let body: apiToBackend.ToBackendRequest = {
     info: {
@@ -20,7 +19,7 @@ export async function mreq<T extends common.MyResponse>(item: {
     payload: payload
   };
 
-  let url = `${config.mproveCliHost}/${pathInfoName}`;
+  let url = `${host}/${pathInfoName}`;
 
   let options: OptionsOfTextResponseBody = {
     json: body,
