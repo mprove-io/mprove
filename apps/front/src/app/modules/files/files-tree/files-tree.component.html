@@ -33,16 +33,20 @@
                 >
                   <div class="h-6 w-6" *ngIf="!node.hasChildren"></div>
                   <m-chevron-right-icon
+                    class="text-blue-500"
                     *ngIf="!node.isExpanded && node.hasChildren"
                   ></m-chevron-right-icon>
                   <m-chevron-down-icon
+                    class="text-blue-500"
                     *ngIf="node.isExpanded && node.hasChildren"
                   ></m-chevron-down-icon>
 
                   <m-folder-closed-icon
+                    class="text-blue-400"
                     *ngIf="!node.isExpanded || !node.hasChildren"
                   ></m-folder-closed-icon>
                   <m-folder-open-icon
+                    class="text-blue-500"
                     *ngIf="node.isExpanded && node.hasChildren"
                   ></m-folder-open-icon>
                 </div>
@@ -50,11 +54,8 @@
                 <div
                   *ngIf="!node.data.isFolder"
                   class="w-7 flex-shrink-0 text-center font-bold"
-                  [ngClass]="{
-                    'text-[#5dd0a8]': true
-                  }"
                 >
-                  {{ node.data.fileId | extension: true | capitalize }}
+                  <m-document-icon></m-document-icon>
                 </div>
 
                 <div class="ml-2 min-w-[2px] truncate text-base">
