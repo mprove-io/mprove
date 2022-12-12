@@ -44,9 +44,9 @@ export class RevertRepoToLastCommitController {
       request.body;
 
     let { traceId } = reqValid.info;
-    let { projectId, branchId, envId } = reqValid.payload;
+    let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
 
-    let repoId = user.user_id;
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

@@ -7,6 +7,9 @@ export class ToBackendRevertRepoToLastCommitRequestPayload {
   @IsString()
   projectId: string;
 
+  @IsBoolean()
+  isRepoProd: boolean;
+
   @IsString()
   branchId: string;
 

@@ -44,8 +44,7 @@ export class RunVisualizationsCommand extends CustomCommand {
   repo = Option.String('--repo', {
     required: true,
     validator: t.isEnum(enums.RepoEnum),
-    description:
-      '(required, "dev" or "production") Dev or Production repository'
+    description: `(required, "${enums.RepoEnum.Dev}" or "${enums.RepoEnum.Production}")`
   });
 
   branchId = Option.String('--branch', {
