@@ -20,11 +20,11 @@ export class SyncRepoCommand extends CustomCommand {
 
   static usage = Command.Usage({
     description:
-      'Synchronize files (uncommitted changes) between Local and Dev repository',
+      'Synchronize files (uncommitted changes) between Local and Dev repo, validate BlockML for selected env',
     examples: [
       [
-        'Synchronize files (uncommitted changes) between Local and Dev repository',
-        'sync repo --projectId DXYE72ODCP5LWPWH2EXQ --env prod'
+        'Synchronize files (uncommitted changes) between Local and Dev repo, validate BlockML for selected env',
+        'mprove sync repo --projectId DXYE72ODCP5LWPWH2EXQ --env prod'
       ]
     ]
   });
@@ -41,6 +41,10 @@ export class SyncRepoCommand extends CustomCommand {
   envId = Option.String('-e,--env', {
     required: true,
     description: '(required) Environment'
+  });
+
+  verbose = Option.Boolean('-v,--verbose', false, {
+    description: '(default false)'
   });
 
   json = Option.Boolean('-j,--json', false, {
@@ -169,14 +173,21 @@ export class SyncRepoCommand extends CustomCommand {
     let syncJson = JSON.stringify(sync, null, 2);
     await fse.writeFile(syncFilePath, syncJson);
 
-    logToConsoleMcli({
-      log: {
-        errors: syncRepoResp.payload.struct.errors,
-        syncTime: sync.syncTime,
-        reqTimeDiff: syncRepoResp.payload.devReqReceiveTime - localReqSentTime,
-        respTimeDiff:
-          localRespReceiveTime - syncRepoResp.payload.devRespSentTime
+    let log: any = {
+      struct: {
+        errorsTotal: syncRepoResp.payload.struct.errors.length
       },
+      syncTime: sync.syncTime,
+      reqTimeDiff: syncRepoResp.payload.devReqReceiveTime - localReqSentTime,
+      respTimeDiff: localRespReceiveTime - syncRepoResp.payload.devRespSentTime
+    };
+
+    if (this.verbose === true) {
+      log.struct.errors = syncRepoResp.payload.struct.errors;
+    }
+
+    logToConsoleMcli({
+      log: log,
       logLevel: common.LogLevelEnum.Info,
       context: this.context,
       isJson: this.json

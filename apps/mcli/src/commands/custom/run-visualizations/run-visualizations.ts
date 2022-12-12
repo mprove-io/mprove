@@ -243,20 +243,13 @@ export class RunVisualizationsCommand extends CustomCommand {
 
     if (this.verbose === true) {
       log.visualizations = vizParts;
-
-      logToConsoleMcli({
-        log: log,
-        logLevel: common.LogLevelEnum.Info,
-        context: this.context,
-        isJson: this.json
-      });
-    } else {
-      logToConsoleMcli({
-        log: log,
-        logLevel: common.LogLevelEnum.Info,
-        context: this.context,
-        isJson: this.json
-      });
     }
+
+    logToConsoleMcli({
+      log: log,
+      logLevel: common.LogLevelEnum.Info,
+      context: this.context,
+      isJson: this.json
+    });
   }
 }

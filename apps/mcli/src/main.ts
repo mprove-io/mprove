@@ -5,6 +5,7 @@ import { nodeCommon } from './barrels/node-common';
 import { DefinitionsCommand } from './commands/base/definitions/definitions';
 import { HelpCommand } from './commands/base/help/help';
 import { VersionCommand } from './commands/base/version/version';
+import { PullRepoCommand } from './commands/custom/pull-repo/pull-repo';
 import { RunDashboardsCommand } from './commands/custom/run-dashboards/run-dashboards';
 import { RunVisualizationsCommand } from './commands/custom/run-visualizations/run-visualizations';
 import { SyncRepoCommand } from './commands/custom/sync-repo/sync-repo';
@@ -25,6 +26,7 @@ let appCommands = [
   HelpCommand,
   VersionCommand,
   // custom
+  PullRepoCommand,
   RunDashboardsCommand,
   RunVisualizationsCommand,
   SyncRepoCommand

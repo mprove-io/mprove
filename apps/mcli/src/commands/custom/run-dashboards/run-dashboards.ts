@@ -281,20 +281,13 @@ export class RunDashboardsCommand extends CustomCommand {
 
     if (this.verbose === true) {
       log.dashboards = dashboardParts;
-
-      logToConsoleMcli({
-        log: log,
-        logLevel: common.LogLevelEnum.Info,
-        context: this.context,
-        isJson: this.json
-      });
-    } else {
-      logToConsoleMcli({
-        log: log,
-        logLevel: common.LogLevelEnum.Info,
-        context: this.context,
-        isJson: this.json
-      });
     }
+
+    logToConsoleMcli({
+      log: log,
+      logLevel: common.LogLevelEnum.Info,
+      context: this.context,
+      isJson: this.json
+    });
   }
 }
