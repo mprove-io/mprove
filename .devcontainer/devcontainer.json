@@ -34,7 +34,8 @@
     "source=mprove_data-dwh-clickhouse,target=/root/mprove_data/dwh-clickhouse,type=volume",
     "source=mprove_data-dwh-clickhouse-logs,target=/root/mprove_data/dwh-clickhouse-logs,type=volume",
     "source=mprove_data-organizations,target=/root/mprove_data/organizations,type=volume",
-    "source=mprove_data-blockml-logs,target=/root/mprove_data/blockml-logs,type=volume"
+    "source=mprove_data-blockml-logs,target=/root/mprove_data/blockml-logs,type=volume",
+    "source=mprove_data-mcli-repos,target=/root/mprove_data/mcli-repos,type=volume"
   ],
   "initializeCommand": "bash .devcontainer/init.sh",
   "postCreateCommand": "bash .devcontainer/post-create.sh ${containerWorkspaceFolder}",
