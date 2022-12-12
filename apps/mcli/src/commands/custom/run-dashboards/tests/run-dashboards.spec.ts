@@ -5,7 +5,7 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { RunDashboardsCommand } from '../run-dashboards';
 let testId =
-  'run dashboards --project DXYE72ODCP5LWPWH2EXQ --repo production --branch main ' +
+  'run dashboards --projectId DXYE72ODCP5LWPWH2EXQ --repo production --branch main ' +
   '--env prod --ids ec1_d1 --wait --seconds 2';
 
 test('1', async t => {

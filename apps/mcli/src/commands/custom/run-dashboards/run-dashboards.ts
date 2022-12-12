@@ -28,20 +28,20 @@ export class RunDashboardsCommand extends CustomCommand {
     examples: [
       [
         'Run dashboards for Production repo',
-        'mprove run dashboards --project DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
+        'mprove run dashboards --projectId DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
       ],
       [
         'Run dashboards for Dev repo',
-        'mprove run dashboards --project DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
+        'mprove run dashboards --projectId DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
       ],
       [
         'Run dashboards d1 and d2 for Dev repo',
-        'mprove run dashboards --project DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --ids d1,d2'
+        'mprove run dashboards --projectId DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --ids d1,d2'
       ]
     ]
   });
 
-  project = Option.String('--project', {
+  project = Option.String('--projectId', {
     required: true,
     description: '(required) Project Id'
   });

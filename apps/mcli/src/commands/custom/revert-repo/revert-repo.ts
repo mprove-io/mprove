@@ -22,16 +22,16 @@ export class RevertRepoCommand extends CustomCommand {
     examples: [
       [
         'Revert Production repo to the state of a last commit, validate BlockML for env prod',
-        'mprove revert repo --project DXYE72ODCP5LWPWH2EXQ --repo production --branch main --to last-commit --env prod'
+        'mprove revert repo --projectId DXYE72ODCP5LWPWH2EXQ --repo production --branch main --to last-commit --env prod'
       ],
       [
         'Revert Dev repo to the state of Remote repo, validate BlockML for env prod',
-        'mprove revert repo --project DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --to remote --env prod'
+        'mprove revert repo --projectId DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --to remote --env prod'
       ]
     ]
   });
 
-  project = Option.String('--project', {
+  project = Option.String('--projectId', {
     required: true,
     description: '(required) Project Id'
   });

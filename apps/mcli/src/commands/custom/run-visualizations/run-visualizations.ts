@@ -23,20 +23,20 @@ export class RunVisualizationsCommand extends CustomCommand {
     examples: [
       [
         'Run visualizations for Production repo',
-        'mprove run visualizations --project DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
+        'mprove run visualizations --projectId DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
       ],
       [
         'Run visualizations for Dev repo',
-        'mprove run visualizations --project DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
+        'mprove run visualizations --projectId DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
       ],
       [
         'Run visualizations vis1 and vis2 for Dev repo',
-        'mprove run visualizations --project DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --ids vis1,vis2'
+        'mprove run visualizations --projectId DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --ids vis1,vis2'
       ]
     ]
   });
 
-  project = Option.String('--project', {
+  project = Option.String('--projectId', {
     required: true,
     description: '(required) Project Id'
   });

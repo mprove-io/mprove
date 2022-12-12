@@ -5,7 +5,7 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { RunVisualizationsCommand } from '../run-visualizations';
 let testId =
-  'run visualizations --project DXYE72ODCP5LWPWH2EXQ --repo production --branch main ' +
+  'run visualizations --projectId DXYE72ODCP5LWPWH2EXQ --repo production --branch main ' +
   '--env prod --ids 4K9SNSMG0IQPQZ9CL23U,4V3KWMRA9MSH21EQZCJQ --wait --seconds 2';
 
 test('1', async t => {
