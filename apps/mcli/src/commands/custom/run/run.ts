@@ -70,21 +70,21 @@ export class RunCommand extends CustomCommand {
   });
 
   noDashboards = Option.Boolean('--no-dashboards', false, {
-    description: '(default false) Run only dashboards'
+    description: '(default false) Do not run dashboards'
   });
 
   noVisualizations = Option.Boolean('--no-visualizations', false, {
-    description: '(default false) Run only visualizations'
+    description: '(default false) Do not run visualizations'
   });
 
   dashboardIds = Option.String('--dashboardIds', {
     description:
-      '(optional) Run only dashboards with selected Ids (dashboard names), separated by comma'
+      '(optional) Filter dashboards to run by dashboard names, separated by comma'
   });
 
   visualizationIds = Option.String('--visualizationIds', {
     description:
-      '(optional) Run only visualizations with selected Ids (visualization names), separated by comma'
+      '(optional) Filter visualizations to run by visualization names, separated by comma'
   });
 
   wait = Option.Boolean('--wait', false, {
