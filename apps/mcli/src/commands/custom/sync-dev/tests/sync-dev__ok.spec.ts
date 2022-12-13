@@ -2,20 +2,30 @@ import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~mcli/barrels/common';
 import { getConfig } from '~mcli/config/get.config';
+import { cloneRepo } from '~mcli/functions/clone-repo';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
-import { RevertRepoCommand } from '../revert-repo';
+import { SyncDevCommand } from '../sync-dev';
 
-let testId = 'mcli__revert-repo__ok-to-remote';
+let testId = 'mcli__sync-dev__ok';
 
 test('1', async t => {
   let context: CustomContext;
   let code: number;
+  let config = getConfig();
+
+  let repoPath = `${config.mproveCliReposPath}/${testId}`;
+
+  await cloneRepo({
+    repoPath: repoPath,
+    gitUrl: config.mproveCliTestGitUrl,
+    publicKeyPath: config.mproveCliTestPublicKeyPath,
+    privateKeyPath: config.mproveCliTestPrivateKeyPath
+  });
 
   let projectId = common.makeId();
-  let commandLine = `revert-repo --to remote --projectId ${projectId} \
---repo production --branch main --env prod`;
+  let commandLine = `sync-dev --projectId ${projectId} --env prod --localPath ${repoPath}`;
 
   let userId = common.makeId();
   let email = `${testId}@example.com`;
@@ -26,11 +36,9 @@ test('1', async t => {
 
   let projectName = testId;
 
-  let config = getConfig();
-
   try {
     let { cli, mockContext } = await prepareTest({
-      command: RevertRepoCommand,
+      command: SyncDevCommand,
       config: config,
       deletePack: {
         emails: [email],
@@ -79,6 +87,19 @@ test('1', async t => {
             isEditor: common.BoolEnum.TRUE,
             isExplorer: common.BoolEnum.TRUE
           }
+        ],
+        connections: [
+          {
+            projectId: projectId,
+            connectionId: 'c1_postgres',
+            envId: common.PROJECT_ENV_PROD,
+            type: common.ConnectionTypeEnum.PostgreSQL,
+            host: '0.0.0.0',
+            port: 5432,
+            database: 'p_db',
+            username: 'p_user',
+            password: 'p_pass'
+          }
         ]
       },
       loginEmail: email,
@@ -96,7 +117,7 @@ test('1', async t => {
     });
   }
 
-  let isPass = code === 0 && context.stdout.toString().includes('errorsTotal');
+  let isPass = code === 0 && context.stdout.toString().includes('struct');
 
   if (isPass === false) {
     console.log(context.stdout.toString());
@@ -104,5 +125,5 @@ test('1', async t => {
   }
 
   t.is(code, 0);
-  t.is(context.stdout.toString().includes('errorsTotal'), true);
+  t.is(context.stdout.toString().includes('struct'), true);
 });

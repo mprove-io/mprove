@@ -14,7 +14,7 @@ test('1', async t => {
   let code: number;
 
   let projectId = common.makeId();
-  let commandLine = `revert repo --to last-commit --projectId ${projectId} \
+  let commandLine = `revert-repo --to last-commit --projectId ${projectId} \
 --repo production --branch main --env prod`;
 
   let userId = common.makeId();

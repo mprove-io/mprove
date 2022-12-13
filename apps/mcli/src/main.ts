@@ -8,7 +8,7 @@ import { VersionCommand } from './commands/base/version/version';
 import { PullRepoCommand } from './commands/custom/pull-repo/pull-repo';
 import { RevertRepoCommand } from './commands/custom/revert-repo/revert-repo';
 import { RunCommand } from './commands/custom/run/run';
-import { SyncRepoCommand } from './commands/custom/sync-repo/sync-repo';
+import { SyncDevCommand } from './commands/custom/sync-dev/sync-dev';
 import { logToConsoleMcli } from './functions/log-to-console-mcli';
 import { CustomContext } from './models/custom-command';
 
@@ -29,7 +29,7 @@ let appCommands = [
   PullRepoCommand,
   RevertRepoCommand,
   RunCommand,
-  SyncRepoCommand
+  SyncDevCommand
 ];
 
 let customContext: CustomContext = {

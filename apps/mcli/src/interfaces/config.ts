@@ -11,6 +11,9 @@ export class Config {
   mproveCliPassword?: string;
 
   @IsString()
+  mproveCliReposPath?: string;
+
+  @IsString()
   mproveCliTestGitUrl?: string;
 
   @IsString()

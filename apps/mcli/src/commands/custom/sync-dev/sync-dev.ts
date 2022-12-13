@@ -16,8 +16,8 @@ interface Sync {
   isFirstSync: boolean;
 }
 
-export class SyncRepoCommand extends CustomCommand {
-  static paths = [['sync', 'repo']];
+export class SyncDevCommand extends CustomCommand {
+  static paths = [['sync-dev']];
 
   static usage = Command.Usage({
     description:
@@ -25,12 +25,12 @@ export class SyncRepoCommand extends CustomCommand {
     examples: [
       [
         'Synchronize files (uncommitted changes) between Local and Dev repo, validate BlockML for selected env',
-        'mprove sync repo --projectId DXYE72ODCP5LWPWH2EXQ --env prod'
+        'mprove sync-dev --projectId DXYE72ODCP5LWPWH2EXQ --env prod'
       ]
     ]
   });
 
-  dir = Option.String('--dir', {
+  localPath = Option.String('--localPath', {
     description:
       '(optional, if not specified then the current working directory is used) Absolute path of local git repository'
   });
@@ -63,7 +63,9 @@ export class SyncRepoCommand extends CustomCommand {
       this.context.config = getConfig();
     }
 
-    let repoDir = common.isDefined(this.dir) ? this.dir : process.cwd();
+    let repoDir = common.isDefined(this.localPath)
+      ? this.localPath
+      : process.cwd();
 
     let gitRepo = <nodegit.Repository>await nodegit.Repository.open(repoDir);
 

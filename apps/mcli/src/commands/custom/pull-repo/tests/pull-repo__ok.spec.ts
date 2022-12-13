@@ -14,7 +14,7 @@ test('1', async t => {
   let code: number;
 
   let projectId = common.makeId();
-  let commandLine = `pull repo --projectId ${projectId} --repo dev --branch main --env prod`;
+  let commandLine = `pull-repo --projectId ${projectId} --repo dev --branch main --env prod`;
 
   let userId = common.makeId();
   let email = `${testId}@example.com`;
