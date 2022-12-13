@@ -6,6 +6,7 @@ import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { nodeCommon } from '~mcli/barrels/node-common';
 import { getConfig } from '~mcli/config/get.config';
+import { getLoginToken } from '~mcli/functions/get-login-token';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
@@ -111,17 +112,7 @@ export class SyncRepoCommand extends CustomCommand {
     let localChangedFiles = changedFiles;
     let localDeletedFiles = deletedFiles;
 
-    let loginUserReqPayload: apiToBackend.ToBackendLoginUserRequestPayload = {
-      email: this.context.config.mproveCliEmail,
-      password: this.context.config.mproveCliPassword
-    };
-
-    let loginUserResp = await mreq<apiToBackend.ToBackendLoginUserResponse>({
-      pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
-      payload: loginUserReqPayload,
-      host: this.context.config.mproveCliHost
-    });
+    let loginToken = await getLoginToken(this.context);
 
     let localReqSentTime = Date.now();
 
@@ -136,7 +127,7 @@ export class SyncRepoCommand extends CustomCommand {
     };
 
     let syncRepoResp = await mreq<apiToBackend.ToBackendSyncRepoResponse>({
-      loginToken: loginUserResp.payload.token,
+      loginToken: loginToken,
       pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSyncRepo,
       payload: syncRepoReqPayload,
       host: this.context.config.mproveCliHost

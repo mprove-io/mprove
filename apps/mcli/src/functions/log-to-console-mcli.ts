@@ -37,9 +37,13 @@ export function logToConsoleMcli(item: {
 
   log = `${log}\n`;
 
-  if (logLevel === common.LogLevelEnum.Error) {
-    context.stderr.write(log);
+  if (common.isUndefined(context)) {
+    console.log(log);
   } else {
-    context.stdout.write(log);
+    if (logLevel === common.LogLevelEnum.Error) {
+      context.stderr.write(log);
+    } else {
+      context.stdout.write(log);
+    }
   }
 }

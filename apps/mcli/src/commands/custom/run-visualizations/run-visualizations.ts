@@ -4,6 +4,7 @@ import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
+import { getLoginToken } from '~mcli/functions/get-login-token';
 import { queriesToStats } from '~mcli/functions/get-query-stats';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
@@ -86,17 +87,7 @@ export class RunVisualizationsCommand extends CustomCommand {
 
     let isRepoProd = this.repo === 'production' ? true : false;
 
-    let loginUserReqPayload: apiToBackend.ToBackendLoginUserRequestPayload = {
-      email: this.context.config.mproveCliEmail,
-      password: this.context.config.mproveCliPassword
-    };
-
-    let loginUserResp = await mreq<apiToBackend.ToBackendLoginUserResponse>({
-      pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
-      payload: loginUserReqPayload,
-      host: this.context.config.mproveCliHost
-    });
+    let loginToken = await getLoginToken(this.context);
 
     let getVizsReqPayload: apiToBackend.ToBackendGetVizsRequestPayload = {
       projectId: this.project,
@@ -106,7 +97,7 @@ export class RunVisualizationsCommand extends CustomCommand {
     };
 
     let getVizsResp = await mreq<apiToBackend.ToBackendGetVizsResponse>({
-      loginToken: loginUserResp.payload.token,
+      loginToken: loginToken,
       pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs,
       payload: getVizsReqPayload,
       host: this.context.config.mproveCliHost
@@ -158,7 +149,7 @@ export class RunVisualizationsCommand extends CustomCommand {
     };
 
     let runQueriesResp = await mreq<apiToBackend.ToBackendRunQueriesResponse>({
-      loginToken: loginUserResp.payload.token,
+      loginToken: loginToken,
       pathInfoName:
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
       payload: runQueriesReqPayload,
@@ -189,7 +180,7 @@ export class RunVisualizationsCommand extends CustomCommand {
 
         let getQueriesResp =
           await mreq<apiToBackend.ToBackendGetQueriesResponse>({
-            loginToken: loginUserResp.payload.token,
+            loginToken: loginToken,
             pathInfoName:
               apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQueries,
             payload: getQueriesReqPayload,

@@ -4,6 +4,7 @@ import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
+import { getLoginToken } from '~mcli/functions/get-login-token';
 import { queriesToStats } from '~mcli/functions/get-query-stats';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
@@ -91,17 +92,7 @@ export class RunDashboardsCommand extends CustomCommand {
 
     let isRepoProd = this.repo === 'production' ? true : false;
 
-    let loginUserReqPayload: apiToBackend.ToBackendLoginUserRequestPayload = {
-      email: this.context.config.mproveCliEmail,
-      password: this.context.config.mproveCliPassword
-    };
-
-    let loginUserResp = await mreq<apiToBackend.ToBackendLoginUserResponse>({
-      pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
-      payload: loginUserReqPayload,
-      host: this.context.config.mproveCliHost
-    });
+    let loginToken = await getLoginToken(this.context);
 
     let getDashboardsReqPayload: apiToBackend.ToBackendGetDashboardsRequestPayload =
       {
@@ -113,7 +104,7 @@ export class RunDashboardsCommand extends CustomCommand {
 
     let getDashboardsResp =
       await mreq<apiToBackend.ToBackendGetDashboardsResponse>({
-        loginToken: loginUserResp.payload.token,
+        loginToken: loginToken,
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
         payload: getDashboardsReqPayload,
@@ -178,7 +169,7 @@ export class RunDashboardsCommand extends CustomCommand {
     };
 
     let runQueriesResp = await mreq<apiToBackend.ToBackendRunQueriesResponse>({
-      loginToken: loginUserResp.payload.token,
+      loginToken: loginToken,
       pathInfoName:
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
       payload: runQueriesReqPayload,
@@ -211,7 +202,7 @@ export class RunDashboardsCommand extends CustomCommand {
 
         let getQueriesResp =
           await mreq<apiToBackend.ToBackendGetQueriesResponse>({
-            loginToken: loginUserResp.payload.token,
+            loginToken: loginToken,
             pathInfoName:
               apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQueries,
             payload: getQueriesReqPayload,

@@ -19,7 +19,18 @@ export function getConfig() {
     mproveCliEmail: process.env.MPROVE_CLI_EMAIL || envFile.MPROVE_CLI_EMAIL,
 
     mproveCliPassword:
-      process.env.MPROVE_CLI_PASSWORD || envFile.MPROVE_CLI_PASSWORD
+      process.env.MPROVE_CLI_PASSWORD || envFile.MPROVE_CLI_PASSWORD,
+
+    mproveCliTestGitUrl:
+      process.env.MPROVE_CLI_TEST_GIT_URL || envFile.MPROVE_CLI_TEST_GIT_URL,
+
+    mproveCliTestPrivateKeyPath:
+      process.env.MPROVE_CLI_TEST_PRIVATE_KEY_PATH ||
+      envFile.MPROVE_CLI_TEST_PRIVATE_KEY_PATH,
+
+    mproveCliTestPublicKeyPath:
+      process.env.MPROVE_CLI_TEST_PUBLIC_KEY_PATH ||
+      envFile.MPROVE_CLI_TEST_PUBLIC_KEY_PATH
   };
 
   let validatedConfig = transformValidSyncMcli({

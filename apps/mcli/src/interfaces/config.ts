@@ -9,4 +9,13 @@ export class Config {
 
   @IsString()
   mproveCliPassword?: string;
+
+  @IsString()
+  mproveCliTestGitUrl?: string;
+
+  @IsString()
+  mproveCliTestPrivateKeyPath?: string;
+
+  @IsString()
+  mproveCliTestPublicKeyPath?: string;
 }

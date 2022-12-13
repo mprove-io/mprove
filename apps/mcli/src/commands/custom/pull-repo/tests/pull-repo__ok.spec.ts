@@ -1,37 +1,91 @@
 import test from 'ava';
+import * as fse from 'fs-extra';
 import { common } from '~mcli/barrels/common';
-import { interfaces } from '~mcli/barrels/interfaces';
 import { getConfig } from '~mcli/config/get.config';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
 import { PullRepoCommand } from '../pull-repo';
-let testId =
-  'pull repo --projectId DXYE72ODCP5LWPWH2EXQ --repo production ' +
-  '--branch main --env prod';
+
+let testId = 'mcli__pull-repo__ok';
 
 test('1', async t => {
-  let config: interfaces.Config;
   let context: CustomContext;
-  let code: any;
+  let code: number;
+
+  let projectId = common.makeId();
+  let commandLine = `pull repo --projectId ${projectId} --repo dev --branch main --env prod`;
+
+  let userId = common.makeId();
+  let email = `${testId}@example.com`;
+  let password = '123123';
+
+  let orgId = 't' + testId;
+  let orgName = testId;
+
+  let projectName = testId;
+
+  let config = getConfig();
 
   try {
-    let cfg = getConfig();
-
-    let { cli, mockContext, prepConfig, loginToken } = await prepareTest({
+    let { cli, mockContext } = await prepareTest({
       command: PullRepoCommand,
-      isPrepConfig: true,
-      loginEmail: cfg.mproveCliEmail,
-      loginPassword: cfg.mproveCliPassword
+      config: config,
+      deletePack: {
+        emails: [email],
+        orgIds: [orgId],
+        projectIds: [projectId],
+        projectNames: [projectName]
+      },
+      seedPack: {
+        users: [
+          {
+            userId,
+            email: email,
+            password: password,
+            isEmailVerified: common.BoolEnum.TRUE
+          }
+        ],
+        orgs: [
+          {
+            orgId: orgId,
+            ownerEmail: email,
+            name: orgName
+          }
+        ],
+        projects: [
+          {
+            orgId,
+            projectId,
+            name: projectName,
+            defaultBranch: common.BRANCH_MAIN,
+            remoteType: common.ProjectRemoteTypeEnum.GitClone,
+            gitUrl: config.mproveCliTestGitUrl,
+            publicKey: fse
+              .readFileSync(config.mproveCliTestPublicKeyPath)
+              .toString(),
+            privateKey: fse
+              .readFileSync(config.mproveCliTestPrivateKeyPath)
+              .toString()
+          }
+        ],
+        members: [
+          {
+            memberId: userId,
+            email,
+            projectId,
+            isAdmin: common.BoolEnum.TRUE,
+            isEditor: common.BoolEnum.TRUE,
+            isExplorer: common.BoolEnum.TRUE
+          }
+        ]
+      },
+      loginEmail: email,
+      loginPassword: password
     });
 
-    config = prepConfig;
     context = mockContext as any;
-
-    context.config = prepConfig;
-    context.loginToken = loginToken;
-
-    code = await cli.run([...testId.split(' ')], context);
+    code = await cli.run([...commandLine.split(' ')], context);
   } catch (e) {
     logToConsoleMcli({
       log: e,

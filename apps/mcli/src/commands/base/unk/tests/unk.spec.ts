@@ -2,17 +2,18 @@ import test from 'ava';
 import { common } from '~mcli/barrels/common';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
+import { CustomContext } from '~mcli/models/custom-command';
 
 let testId = 'unk';
 
 test('1', async t => {
-  let context;
-  let code;
+  let context: CustomContext;
+  let code: number;
 
   try {
     let { cli, mockContext } = await prepareTest({
       command: undefined,
-      isPrepConfig: false
+      config: undefined
     });
 
     context = mockContext as any;

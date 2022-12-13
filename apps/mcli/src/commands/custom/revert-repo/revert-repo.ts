@@ -4,6 +4,7 @@ import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
+import { getLoginToken } from '~mcli/functions/get-login-token';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
@@ -73,17 +74,7 @@ export class RevertRepoCommand extends CustomCommand {
 
     let isRepoProd = this.repo === 'production' ? true : false;
 
-    let loginUserReqPayload: apiToBackend.ToBackendLoginUserRequestPayload = {
-      email: this.context.config.mproveCliEmail,
-      password: this.context.config.mproveCliPassword
-    };
-
-    let loginUserResp = await mreq<apiToBackend.ToBackendLoginUserResponse>({
-      pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
-      payload: loginUserReqPayload,
-      host: this.context.config.mproveCliHost
-    });
+    let loginToken = await getLoginToken(this.context);
 
     let resp:
       | apiToBackend.ToBackendRevertRepoToLastCommitResponse
@@ -99,7 +90,7 @@ export class RevertRepoCommand extends CustomCommand {
         };
 
       resp = await mreq<apiToBackend.ToBackendRevertRepoToLastCommitResponse>({
-        loginToken: loginUserResp.payload.token,
+        loginToken: loginToken,
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum
             .ToBackendRevertRepoToLastCommit,
@@ -116,7 +107,7 @@ export class RevertRepoCommand extends CustomCommand {
         };
 
       resp = await mreq<apiToBackend.ToBackendRevertRepoToRemoteResponse>({
-        loginToken: loginUserResp.payload.token,
+        loginToken: loginToken,
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote,
         payload: revertRepoToRemoteReqPayload,
