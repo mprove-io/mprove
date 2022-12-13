@@ -7,8 +7,7 @@ import { HelpCommand } from './commands/base/help/help';
 import { VersionCommand } from './commands/base/version/version';
 import { PullRepoCommand } from './commands/custom/pull-repo/pull-repo';
 import { RevertRepoCommand } from './commands/custom/revert-repo/revert-repo';
-import { RunDashboardsCommand } from './commands/custom/run-dashboards/run-dashboards';
-import { RunVisualizationsCommand } from './commands/custom/run-visualizations/run-visualizations';
+import { RunCommand } from './commands/custom/run/run';
 import { SyncRepoCommand } from './commands/custom/sync-repo/sync-repo';
 import { logToConsoleMcli } from './functions/log-to-console-mcli';
 import { CustomContext } from './models/custom-command';
@@ -29,8 +28,7 @@ let appCommands = [
   // custom
   PullRepoCommand,
   RevertRepoCommand,
-  RunDashboardsCommand,
-  RunVisualizationsCommand,
+  RunCommand,
   SyncRepoCommand
 ];
 
