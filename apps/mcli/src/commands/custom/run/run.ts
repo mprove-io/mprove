@@ -35,20 +35,20 @@ export class RunCommand extends CustomCommand {
     examples: [
       [
         'Run for Production repo',
-        'mprove run --projectId DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
+        'mprove run -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
       ],
       [
         'Run for Dev repo and wait for completion',
-        'mprove run --projectId DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --wait'
+        'mprove run -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --wait'
       ],
       [
         'Run dashboards d1 and d2 for Dev repo',
-        'mprove run --projectId DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --no-visualizations --dashboardIds d1,d2'
+        'mprove run -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --no-visualizations --dashboard-ids d1,d2'
       ]
     ]
   });
 
-  projectId = Option.String('--projectId', {
+  projectId = Option.String('-p', {
     required: true,
     description: '(required) Project Id'
   });
@@ -77,12 +77,12 @@ export class RunCommand extends CustomCommand {
     description: '(default false) Do not run visualizations'
   });
 
-  dashboardIds = Option.String('--dashboardIds', {
+  dashboardIds = Option.String('--dashboard-ids', {
     description:
       '(optional) Filter dashboards to run by dashboard names, separated by comma'
   });
 
-  visualizationIds = Option.String('--visualizationIds', {
+  visualizationIds = Option.String('--visualization-ids', {
     description:
       '(optional) Filter visualizations to run by visualization names, separated by comma'
   });

@@ -14,9 +14,9 @@ test('1', async t => {
   let code: number;
 
   let projectId = common.makeId();
-  let commandLine = `run --projectId ${projectId} --wait --seconds 2 \
+  let commandLine = `run -p ${projectId} --wait --seconds 2 \
 --repo production --branch main --env prod \
---dashboardIds ec1_d1 --visualizationIds 4K9SNSMG0IQPQZ9CL23U,4V3KWMRA9MSH21EQZCJQ`;
+--dashboard-ids ec1_d1 --visualization-ids 4K9SNSMG0IQPQZ9CL23U,4V3KWMRA9MSH21EQZCJQ`;
 
   let userId = common.makeId();
   let email = `${testId}@example.com`;

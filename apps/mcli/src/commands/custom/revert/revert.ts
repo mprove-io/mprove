@@ -14,8 +14,8 @@ export enum ToEnum {
   LastCommit = 'last-commit'
 }
 
-export class RevertRepoCommand extends CustomCommand {
-  static paths = [['revert-repo']];
+export class RevertCommand extends CustomCommand {
+  static paths = [['revert']];
 
   static usage = Command.Usage({
     description:
@@ -23,11 +23,11 @@ export class RevertRepoCommand extends CustomCommand {
     examples: [
       [
         'Revert Production repo to the state of a last commit, validate BlockML for env prod',
-        'mprove revert-repo --to last-commit --projectId DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
+        'mprove revert --to last-commit -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
       ],
       [
         'Revert Dev repo to the state of Remote repo, validate BlockML for env prod',
-        'mprove revert-repo --to remote --projectId DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
+        'mprove revert --to remote -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
       ]
     ]
   });
@@ -38,7 +38,7 @@ export class RevertRepoCommand extends CustomCommand {
     description: `(required, "${ToEnum.LastCommit}" or "${ToEnum.Remote}")`
   });
 
-  projectId = Option.String('--projectId', {
+  projectId = Option.String('-p', {
     required: true,
     description: '(required) Project Id'
   });

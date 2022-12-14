@@ -9,19 +9,19 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
-export class ValidateCommand extends CustomCommand {
-  static paths = [['validate']];
+export class CreateBranchCommand extends CustomCommand {
+  static paths = [['create-branch']];
 
   static usage = Command.Usage({
-    description: 'Validate (rebuild struct) BlockML for selected env',
+    description: 'Create git branch',
     examples: [
       [
-        'Validate BlockML for Production repo, env prod',
-        'mprove validate -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
+        'Create git branch for Production repo',
+        'mprove create-branch -p DXYE72ODCP5LWPWH2EXQ --repo production --new-branch n1 --from-branch main'
       ],
       [
-        'Validate BlockML for Dev repo, env prod',
-        'mprove validate -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
+        'Create git branch for Dev repo',
+        'mprove create-branch -p DXYE72ODCP5LWPWH2EXQ --repo dev --new-branch n1 --from-branch main'
       ]
     ]
   });
@@ -37,19 +37,19 @@ export class ValidateCommand extends CustomCommand {
     description: `(required, "${enums.RepoEnum.Dev}" or "${enums.RepoEnum.Production}")`
   });
 
-  branch = Option.String('--branch', {
+  newBranch = Option.String('--new-branch', {
     required: true,
-    description: '(required) Git Branch'
+    description: '(required) New Branch name'
   });
 
-  env = Option.String('--env', {
+  fromBranch = Option.String('--from-branch', {
     required: true,
-    description: '(required) Environment'
+    description: '(required) From Branch name'
   });
 
-  verbose = Option.Boolean('--verbose', false, {
-    description: '(default false)'
-  });
+  // verbose = Option.Boolean('--verbose', false, {
+  //   description: '(default false)'
+  // });
 
   json = Option.Boolean('--json', false, {
     description: '(default false)'
@@ -64,32 +64,30 @@ export class ValidateCommand extends CustomCommand {
 
     let loginToken = await getLoginToken(this.context);
 
-    let validateFilesReqPayload: apiToBackend.ToBackendValidateFilesRequestPayload =
+    let validateFilesReqPayload: apiToBackend.ToBackendCreateBranchRequestPayload =
       {
         projectId: this.projectId,
         isRepoProd: isRepoProd,
-        branchId: this.branch,
-        envId: this.env
+        newBranchId: this.newBranch,
+        fromBranchId: this.fromBranch
       };
 
     let validateFilesResp =
-      await mreq<apiToBackend.ToBackendValidateFilesResponse>({
+      await mreq<apiToBackend.ToBackendCreateBranchResponse>({
         loginToken: loginToken,
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
         payload: validateFilesReqPayload,
         host: this.context.config.mproveCliHost
       });
 
     let log: any = {
-      struct: {
-        errorsTotal: validateFilesResp.payload.struct.errors.length
-      }
+      message: `Created branch "${this.newBranch}"`
     };
 
-    if (this.verbose === true) {
-      log.struct.errors = validateFilesResp.payload.struct.errors;
-    }
+    // if (this.verbose === true) {
+    //   log.struct.errors = validateFilesResp.payload.struct.errors;
+    // }
 
     logToConsoleMcli({
       log: log,

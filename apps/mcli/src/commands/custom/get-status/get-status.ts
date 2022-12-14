@@ -17,12 +17,12 @@ export class GetStatusCommand extends CustomCommand {
     examples: [
       [
         'Get Production repo status',
-        'mprove get-status --projectId DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --verbose'
+        'mprove get-status -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --verbose'
       ]
     ]
   });
 
-  projectId = Option.String('--projectId', {
+  projectId = Option.String('-p', {
     required: true,
     description: '(required) Project Id'
   });

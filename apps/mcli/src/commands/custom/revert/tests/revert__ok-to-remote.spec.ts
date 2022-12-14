@@ -5,16 +5,17 @@ import { getConfig } from '~mcli/config/get.config';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
-import { PullRepoCommand } from '../pull-repo';
+import { RevertCommand } from '../revert';
 
-let testId = 'mcli__pull-repo__ok';
+let testId = 'mcli__revert__ok-to-remote';
 
 test('1', async t => {
   let context: CustomContext;
   let code: number;
 
   let projectId = common.makeId();
-  let commandLine = `pull-repo --projectId ${projectId} --repo dev --branch main --env prod`;
+  let commandLine = `revert --to remote -p ${projectId} \
+--repo production --branch main --env prod`;
 
   let userId = common.makeId();
   let email = `${testId}@example.com`;
@@ -29,7 +30,7 @@ test('1', async t => {
 
   try {
     let { cli, mockContext } = await prepareTest({
-      command: PullRepoCommand,
+      command: RevertCommand,
       config: config,
       deletePack: {
         emails: [email],

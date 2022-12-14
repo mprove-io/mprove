@@ -5,16 +5,16 @@ import { getConfig } from '~mcli/config/get.config';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
-import { GetStatusCommand } from '../get-status';
+import { CreateBranchCommand } from '../create-branch';
 
-let testId = 'mcli__get-status__ok';
+let testId = 'mcli__create-branch__ok';
 
 test('1', async t => {
   let context: CustomContext;
   let code: number;
 
   let projectId = common.makeId();
-  let commandLine = `get-status -p ${projectId} --repo dev --branch main --env prod --verbose`;
+  let commandLine = `create-branch -p ${projectId} --repo dev --new-branch n1 --from-branch main`;
 
   let userId = common.makeId();
   let email = `${testId}@example.com`;
@@ -29,7 +29,7 @@ test('1', async t => {
 
   try {
     let { cli, mockContext } = await prepareTest({
-      command: GetStatusCommand,
+      command: CreateBranchCommand,
       config: config,
       deletePack: {
         emails: [email],
@@ -95,7 +95,8 @@ test('1', async t => {
     });
   }
 
-  let isPass = code === 0 && context.stdout.toString().includes('errorsTotal');
+  let isPass =
+    code === 0 && context.stdout.toString().includes('Created branch');
 
   if (isPass === false) {
     console.log(context.stdout.toString());
@@ -103,5 +104,5 @@ test('1', async t => {
   }
 
   t.is(code, 0);
-  t.is(context.stdout.toString().includes('errorsTotal'), true);
+  t.is(context.stdout.toString().includes('Created branch'), true);
 });

@@ -25,7 +25,7 @@ test('1', async t => {
   });
 
   let projectId = common.makeId();
-  let commandLine = `sync --projectId ${projectId} --env prod --localPath ${repoPath}`;
+  let commandLine = `sync -p ${projectId} --env prod --local-path ${repoPath}`;
 
   let userId = common.makeId();
   let email = `${testId}@example.com`;
