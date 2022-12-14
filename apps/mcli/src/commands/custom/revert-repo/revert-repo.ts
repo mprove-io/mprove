@@ -38,7 +38,7 @@ export class RevertRepoCommand extends CustomCommand {
     description: `(required, "${ToEnum.LastCommit}" or "${ToEnum.Remote}")`
   });
 
-  project = Option.String('--projectId', {
+  projectId = Option.String('--projectId', {
     required: true,
     description: '(required) Project Id'
   });
@@ -49,7 +49,7 @@ export class RevertRepoCommand extends CustomCommand {
     description: `(required, "${enums.RepoEnum.Dev}" or "${enums.RepoEnum.Production}")`
   });
 
-  branchId = Option.String('--branch', {
+  branch = Option.String('--branch', {
     required: true,
     description: '(required) Git Branch'
   });
@@ -83,9 +83,9 @@ export class RevertRepoCommand extends CustomCommand {
     if (this.to === ToEnum.LastCommit) {
       let revertRepoToLastCommitReqPayload: apiToBackend.ToBackendRevertRepoToLastCommitRequestPayload =
         {
-          projectId: this.project,
+          projectId: this.projectId,
           isRepoProd: isRepoProd,
-          branchId: this.branchId,
+          branchId: this.branch,
           envId: this.env
         };
 
@@ -100,9 +100,9 @@ export class RevertRepoCommand extends CustomCommand {
     } else {
       let revertRepoToRemoteReqPayload: apiToBackend.ToBackendRevertRepoToRemoteRequestPayload =
         {
-          projectId: this.project,
+          projectId: this.projectId,
           isRepoProd: isRepoProd,
-          branchId: this.branchId,
+          branchId: this.branch,
           envId: this.env
         };
 

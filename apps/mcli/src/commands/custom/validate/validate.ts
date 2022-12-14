@@ -9,20 +9,19 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
-export class PullRepoCommand extends CustomCommand {
-  static paths = [['pull-repo']];
+export class ValidateCommand extends CustomCommand {
+  static paths = [['validate']];
 
   static usage = Command.Usage({
-    description:
-      'Pull committed changes from Remote to selected repo, validate BlockML for selected env',
+    description: 'Validate (rebuild struct) BlockML for selected env',
     examples: [
       [
-        'Pull committed changes from Remote to Production repo, validate BlockML for env prod',
-        'mprove pull-repo --projectId DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
+        'Validate BlockML for Production repo, env prod',
+        'mprove validate --projectId DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
       ],
       [
-        'Pull committed changes from Remote to Dev repo, validate BlockML for env prod',
-        'mprove pull-repo --projectId DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
+        'Validate BlockML for Dev repo, env prod',
+        'mprove validate --projectId DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
       ]
     ]
   });
@@ -65,28 +64,31 @@ export class PullRepoCommand extends CustomCommand {
 
     let loginToken = await getLoginToken(this.context);
 
-    let pullRepoReqPayload: apiToBackend.ToBackendPullRepoRequestPayload = {
-      projectId: this.projectId,
-      isRepoProd: isRepoProd,
-      branchId: this.branch,
-      envId: this.env
-    };
+    let validateFilesReqPayload: apiToBackend.ToBackendValidateFilesRequestPayload =
+      {
+        projectId: this.projectId,
+        isRepoProd: isRepoProd,
+        branchId: this.branch,
+        envId: this.env
+      };
 
-    let pullRepoResp = await mreq<apiToBackend.ToBackendPullRepoResponse>({
-      loginToken: loginToken,
-      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo,
-      payload: pullRepoReqPayload,
-      host: this.context.config.mproveCliHost
-    });
+    let validateFilesResp =
+      await mreq<apiToBackend.ToBackendValidateFilesResponse>({
+        loginToken: loginToken,
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
+        payload: validateFilesReqPayload,
+        host: this.context.config.mproveCliHost
+      });
 
     let log: any = {
       struct: {
-        errorsTotal: pullRepoResp.payload.struct.errors.length
+        errorsTotal: validateFilesResp.payload.struct.errors.length
       }
     };
 
     if (this.verbose === true) {
-      log.struct.errors = pullRepoResp.payload.struct.errors;
+      log.struct.errors = validateFilesResp.payload.struct.errors;
     }
 
     logToConsoleMcli({

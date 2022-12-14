@@ -9,20 +9,20 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
-export class GetRepoCommand extends CustomCommand {
-  static paths = [['get-repo']];
+export class GetStatusCommand extends CustomCommand {
+  static paths = [['get-status']];
 
   static usage = Command.Usage({
     description: 'Get repo status for selected branch',
     examples: [
       [
         'Get Production repo status',
-        'mprove get-repo --projectId DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --verbose'
+        'mprove get-status --projectId DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --verbose'
       ]
     ]
   });
 
-  project = Option.String('--projectId', {
+  projectId = Option.String('--projectId', {
     required: true,
     description: '(required) Project Id'
   });
@@ -33,7 +33,7 @@ export class GetRepoCommand extends CustomCommand {
     description: `(required, "${enums.RepoEnum.Dev}" or "${enums.RepoEnum.Production}")`
   });
 
-  branchId = Option.String('--branch', {
+  branch = Option.String('--branch', {
     required: true,
     description: '(required) Git Branch'
   });
@@ -62,9 +62,9 @@ export class GetRepoCommand extends CustomCommand {
     let loginToken = await getLoginToken(this.context);
 
     let getRepoReqPayload: apiToBackend.ToBackendGetRepoRequestPayload = {
-      projectId: this.project,
+      projectId: this.projectId,
       isRepoProd: isRepoProd,
-      branchId: this.branchId,
+      branchId: this.branch,
       envId: this.env,
       isFetch: true
     };
@@ -77,9 +77,9 @@ export class GetRepoCommand extends CustomCommand {
     });
 
     let getModelsReqPayload: apiToBackend.ToBackendGetModelsRequestPayload = {
-      projectId: this.project,
+      projectId: this.projectId,
       isRepoProd: isRepoProd,
-      branchId: this.branchId,
+      branchId: this.branch,
       envId: this.env
     };
 
@@ -92,9 +92,9 @@ export class GetRepoCommand extends CustomCommand {
     });
 
     let getVizsReqPayload: apiToBackend.ToBackendGetVizsRequestPayload = {
-      projectId: this.project,
+      projectId: this.projectId,
       isRepoProd: isRepoProd,
-      branchId: this.branchId,
+      branchId: this.branch,
       envId: this.env
     };
 
@@ -107,9 +107,9 @@ export class GetRepoCommand extends CustomCommand {
 
     let getDashboardsReqPayload: apiToBackend.ToBackendGetDashboardsRequestPayload =
       {
-        projectId: this.project,
+        projectId: this.projectId,
         isRepoProd: isRepoProd,
-        branchId: this.branchId,
+        branchId: this.branch,
         envId: this.env
       };
 

@@ -5,16 +5,16 @@ import { getConfig } from '~mcli/config/get.config';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
-import { GetRepoCommand } from '../get-repo';
+import { ValidateCommand } from '../validate';
 
-let testId = 'mcli__get-repo__ok';
+let testId = 'mcli__validate__ok';
 
 test('1', async t => {
   let context: CustomContext;
   let code: number;
 
   let projectId = common.makeId();
-  let commandLine = `get-repo --projectId ${projectId} --repo dev --branch main --env prod --verbose`;
+  let commandLine = `validate --projectId ${projectId} --repo dev --branch main --env prod --verbose`;
 
   let userId = common.makeId();
   let email = `${testId}@example.com`;
@@ -29,7 +29,7 @@ test('1', async t => {
 
   try {
     let { cli, mockContext } = await prepareTest({
-      command: GetRepoCommand,
+      command: ValidateCommand,
       config: config,
       deletePack: {
         emails: [email],

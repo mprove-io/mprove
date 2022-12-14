@@ -5,11 +5,12 @@ import { nodeCommon } from './barrels/node-common';
 import { DefinitionsCommand } from './commands/base/definitions/definitions';
 import { HelpCommand } from './commands/base/help/help';
 import { VersionCommand } from './commands/base/version/version';
-import { GetRepoCommand } from './commands/custom/get-repo/get-repo';
+import { GetStatusCommand } from './commands/custom/get-status/get-status';
 import { PullRepoCommand } from './commands/custom/pull-repo/pull-repo';
 import { RevertRepoCommand } from './commands/custom/revert-repo/revert-repo';
 import { RunCommand } from './commands/custom/run/run';
-import { SyncDevCommand } from './commands/custom/sync-dev/sync-dev';
+import { SyncCommand } from './commands/custom/sync/sync';
+import { ValidateCommand } from './commands/custom/validate/validate';
 import { logToConsoleMcli } from './functions/log-to-console-mcli';
 import { CustomContext } from './models/custom-command';
 
@@ -27,11 +28,12 @@ let appCommands = [
   HelpCommand,
   VersionCommand,
   // custom
-  GetRepoCommand,
+  GetStatusCommand,
   PullRepoCommand,
   RevertRepoCommand,
   RunCommand,
-  SyncDevCommand
+  SyncCommand,
+  ValidateCommand
 ];
 
 let customContext: CustomContext = {

@@ -16,8 +16,8 @@ interface Sync {
   isFirstSync: boolean;
 }
 
-export class SyncDevCommand extends CustomCommand {
-  static paths = [['sync-dev']];
+export class SyncCommand extends CustomCommand {
+  static paths = [['sync']];
 
   static usage = Command.Usage({
     description:
@@ -25,7 +25,7 @@ export class SyncDevCommand extends CustomCommand {
     examples: [
       [
         'Synchronize files (uncommitted changes) between Local and Dev repo, validate BlockML for selected env',
-        'mprove sync-dev --projectId DXYE72ODCP5LWPWH2EXQ --env prod'
+        'mprove sync --projectId DXYE72ODCP5LWPWH2EXQ --env prod'
       ]
     ]
   });
@@ -35,7 +35,7 @@ export class SyncDevCommand extends CustomCommand {
       '(optional, if not specified then the current working directory is used) Absolute path of local git repository'
   });
 
-  project = Option.String('--projectId', {
+  projectId = Option.String('--projectId', {
     required: true,
     description: '(required) Project Id'
   });
@@ -119,7 +119,7 @@ export class SyncDevCommand extends CustomCommand {
     let localReqSentTime = Date.now();
 
     let syncRepoReqPayload: apiToBackend.ToBackendSyncRepoRequestPayload = {
-      projectId: this.project,
+      projectId: this.projectId,
       branchId: currentBranchName,
       envId: this.env,
       lastCommit: lastCommit,

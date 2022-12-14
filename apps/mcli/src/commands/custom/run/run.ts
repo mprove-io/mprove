@@ -48,7 +48,7 @@ export class RunCommand extends CustomCommand {
     ]
   });
 
-  project = Option.String('--projectId', {
+  projectId = Option.String('--projectId', {
     required: true,
     description: '(required) Project Id'
   });
@@ -59,7 +59,7 @@ export class RunCommand extends CustomCommand {
     description: `(required, "${enums.RepoEnum.Dev}" or "${enums.RepoEnum.Production}")`
   });
 
-  branchId = Option.String('--branch', {
+  branch = Option.String('--branch', {
     required: true,
     description: '(required) Git Branch'
   });
@@ -119,9 +119,9 @@ export class RunCommand extends CustomCommand {
 
     if (this.noVisualizations === false) {
       let getVizsReqPayload: apiToBackend.ToBackendGetVizsRequestPayload = {
-        projectId: this.project,
+        projectId: this.projectId,
         isRepoProd: isRepoProd,
-        branchId: this.branchId,
+        branchId: this.branch,
         envId: this.env
       };
 
@@ -176,9 +176,9 @@ export class RunCommand extends CustomCommand {
     if (this.noDashboards === false) {
       let getDashboardsReqPayload: apiToBackend.ToBackendGetDashboardsRequestPayload =
         {
-          projectId: this.project,
+          projectId: this.projectId,
           isRepoProd: isRepoProd,
-          branchId: this.branchId,
+          branchId: this.branch,
           envId: this.env
         };
 
@@ -244,7 +244,7 @@ export class RunCommand extends CustomCommand {
     let uniqueQueryIds = [...new Set(queryIdsWithDuplicates)];
 
     let runQueriesReqPayload: apiToBackend.ToBackendRunQueriesRequestPayload = {
-      projectId: this.project,
+      projectId: this.projectId,
       queryIds: uniqueQueryIds
     };
 
@@ -284,9 +284,9 @@ export class RunCommand extends CustomCommand {
       while (queryIdsToGet.length > 0) {
         let getQueriesReqPayload: apiToBackend.ToBackendGetQueriesRequestPayload =
           {
-            projectId: this.project,
+            projectId: this.projectId,
             isRepoProd: isRepoProd,
-            branchId: this.branchId,
+            branchId: this.branch,
             envId: this.env,
             queryIds: uniqueQueryIds
           };
