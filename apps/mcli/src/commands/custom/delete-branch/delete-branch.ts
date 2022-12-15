@@ -9,19 +9,19 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
-export class CreateBranchCommand extends CustomCommand {
-  static paths = [['create-branch']];
+export class DeleteBranchCommand extends CustomCommand {
+  static paths = [['delete-branch']];
 
   static usage = Command.Usage({
-    description: 'Create git branch',
+    description: 'Delete git branch',
     examples: [
       [
-        'Create git branch for Production repo',
-        'mprove create-branch -p DXYE72ODCP5LWPWH2EXQ --repo production --new-branch b1 --from-branch main'
+        'Delete git branch for Production repo',
+        'mprove delete-branch -p DXYE72ODCP5LWPWH2EXQ --repo production --branch b1'
       ],
       [
-        'Create git branch for Dev repo',
-        'mprove create-branch -p DXYE72ODCP5LWPWH2EXQ --repo dev --new-branch b1 --from-branch main'
+        'Delete git branch for Dev repo',
+        'mprove delete-branch -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch b1'
       ]
     ]
   });
@@ -37,14 +37,9 @@ export class CreateBranchCommand extends CustomCommand {
     description: `(required, "${enums.RepoEnum.Dev}" or "${enums.RepoEnum.Production}")`
   });
 
-  newBranch = Option.String('--new-branch', {
+  branch = Option.String('--branch', {
     required: true,
-    description: '(required) New Branch name'
-  });
-
-  fromBranch = Option.String('--from-branch', {
-    required: true,
-    description: '(required) From Branch name'
+    description: '(required) Branch name'
   });
 
   // verbose = Option.Boolean('--verbose', false, {
@@ -64,29 +59,28 @@ export class CreateBranchCommand extends CustomCommand {
 
     let loginToken = await getLoginToken(this.context);
 
-    let createBranchReqPayload: apiToBackend.ToBackendCreateBranchRequestPayload =
+    let deleteBranchReqPayload: apiToBackend.ToBackendDeleteBranchRequestPayload =
       {
         projectId: this.projectId,
         isRepoProd: isRepoProd,
-        newBranchId: this.newBranch,
-        fromBranchId: this.fromBranch
+        branchId: this.branch
       };
 
-    let createBranchResp =
-      await mreq<apiToBackend.ToBackendCreateBranchResponse>({
+    let deleteBranchResp =
+      await mreq<apiToBackend.ToBackendDeleteBranchResponse>({
         loginToken: loginToken,
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
-        payload: createBranchReqPayload,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteBranch,
+        payload: deleteBranchReqPayload,
         host: this.context.config.mproveCliHost
       });
 
     let log: any = {
-      message: `Created branch "${this.newBranch}"`
+      message: `Deleted branch "${this.branch}"`
     };
 
     // if (this.verbose === true) {
-    //   log.struct.errors = createBranchResp.payload.struct.errors;
+    //   log.struct.errors = deleteBranchResp.payload.struct.errors;
     // }
 
     logToConsoleMcli({

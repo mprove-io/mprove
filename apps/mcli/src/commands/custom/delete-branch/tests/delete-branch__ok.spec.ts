@@ -1,20 +1,26 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
+import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { getConfig } from '~mcli/config/get.config';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
+import { mreq } from '~mcli/functions/mreq';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
-import { CreateBranchCommand } from '../create-branch';
+import { DeleteBranchCommand } from '../delete-branch';
 
-let testId = 'mcli__create-branch__ok';
+let testId = 'mcli__delete-branch__ok';
 
 test('1', async t => {
   let context: CustomContext;
   let code: number;
 
+  let repo = 'dev';
+  let branch = 'b1';
+
   let projectId = common.makeId();
-  let commandLine = `create-branch -p ${projectId} --repo dev --new-branch b1 --from-branch main`;
+
+  let commandLine = `delete-branch -p ${projectId} --repo ${repo} --branch ${branch}`;
 
   let userId = common.makeId();
   let email = `${testId}@example.com`;
@@ -29,7 +35,7 @@ test('1', async t => {
 
   try {
     let { cli, mockContext } = await prepareTest({
-      command: CreateBranchCommand,
+      command: DeleteBranchCommand,
       config: config,
       deletePack: {
         emails: [email],
@@ -85,6 +91,26 @@ test('1', async t => {
     });
 
     context = mockContext as any;
+
+    let isRepoProd = repo === 'production' ? true : false;
+
+    let createBranchReqPayload: apiToBackend.ToBackendCreateBranchRequestPayload =
+      {
+        projectId: projectId,
+        isRepoProd: isRepoProd,
+        newBranchId: branch,
+        fromBranchId: 'main'
+      };
+
+    let createBranchResp =
+      await mreq<apiToBackend.ToBackendCreateBranchResponse>({
+        loginToken: context.loginToken,
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
+        payload: createBranchReqPayload,
+        host: config.mproveCliHost
+      });
+
     code = await cli.run([...commandLine.split(' ')], context);
   } catch (e) {
     logToConsoleMcli({
@@ -96,7 +122,7 @@ test('1', async t => {
   }
 
   let isPass =
-    code === 0 && context.stdout.toString().includes('Created branch');
+    code === 0 && context.stdout.toString().includes('Deleted branch');
 
   if (isPass === false) {
     console.log(context.stdout.toString());
@@ -104,5 +130,5 @@ test('1', async t => {
   }
 
   t.is(code, 0);
-  t.is(context.stdout.toString().includes('Created branch'), true);
+  t.is(context.stdout.toString().includes('Deleted branch'), true);
 });

@@ -5,7 +5,10 @@ import { nodeCommon } from './barrels/node-common';
 import { DefinitionsCommand } from './commands/base/definitions/definitions';
 import { HelpCommand } from './commands/base/help/help';
 import { VersionCommand } from './commands/base/version/version';
+import { CommitCommand } from './commands/custom/commit/commit';
 import { CreateBranchCommand } from './commands/custom/create-branch/create-branch';
+import { DeleteBranchCommand } from './commands/custom/delete-branch/delete-branch';
+import { GetBranchesCommand } from './commands/custom/get-branches/get-branches';
 import { GetStatusCommand } from './commands/custom/get-status/get-status';
 import { PullCommand } from './commands/custom/pull/pull';
 import { RevertCommand } from './commands/custom/revert/revert';
@@ -29,7 +32,10 @@ let appCommands = [
   HelpCommand,
   VersionCommand,
   // custom
+  CommitCommand,
   CreateBranchCommand,
+  DeleteBranchCommand,
+  GetBranchesCommand,
   GetStatusCommand,
   PullCommand,
   RevertCommand,

@@ -1,20 +1,24 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
+import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { getConfig } from '~mcli/config/get.config';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
+import { mreq } from '~mcli/functions/mreq';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
-import { CreateBranchCommand } from '../create-branch';
+import { CommitCommand } from '../commit';
 
-let testId = 'mcli__create-branch__ok';
+let testId = 'mcli__commit__ok';
 
 test('1', async t => {
   let context: CustomContext;
   let code: number;
 
+  let branch = 'main';
+
   let projectId = common.makeId();
-  let commandLine = `create-branch -p ${projectId} --repo dev --new-branch b1 --from-branch main`;
+  let commandLine = `commit -p ${projectId} --repo dev --branch ${branch} --commit-message m1`;
 
   let userId = common.makeId();
   let email = `${testId}@example.com`;
@@ -29,7 +33,7 @@ test('1', async t => {
 
   try {
     let { cli, mockContext } = await prepareTest({
-      command: CreateBranchCommand,
+      command: CommitCommand,
       config: config,
       deletePack: {
         emails: [email],
@@ -85,6 +89,22 @@ test('1', async t => {
     });
 
     context = mockContext as any;
+
+    let saveFileReqPayload: apiToBackend.ToBackendSaveFileRequestPayload = {
+      projectId: projectId,
+      branchId: branch,
+      envId: 'prod',
+      fileNodeId: `${projectId}/README.md`,
+      content: '123'
+    };
+
+    let saveFileResp = await mreq<apiToBackend.ToBackendSaveFileResponse>({
+      loginToken: context.loginToken,
+      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveFile,
+      payload: saveFileReqPayload,
+      host: config.mproveCliHost
+    });
+
     code = await cli.run([...commandLine.split(' ')], context);
   } catch (e) {
     logToConsoleMcli({
@@ -95,8 +115,7 @@ test('1', async t => {
     });
   }
 
-  let isPass =
-    code === 0 && context.stdout.toString().includes('Created branch');
+  let isPass = code === 0 && context.stdout.toString().includes('repo');
 
   if (isPass === false) {
     console.log(context.stdout.toString());
@@ -104,5 +123,5 @@ test('1', async t => {
   }
 
   t.is(code, 0);
-  t.is(context.stdout.toString().includes('Created branch'), true);
+  t.is(context.stdout.toString().includes('repo'), true);
 });

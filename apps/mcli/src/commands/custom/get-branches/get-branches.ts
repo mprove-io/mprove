@@ -9,19 +9,19 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
-export class CreateBranchCommand extends CustomCommand {
-  static paths = [['create-branch']];
+export class GetBranchesCommand extends CustomCommand {
+  static paths = [['get-branches']];
 
   static usage = Command.Usage({
-    description: 'Create git branch',
+    description: 'Get git branches for repo',
     examples: [
       [
-        'Create git branch for Production repo',
-        'mprove create-branch -p DXYE72ODCP5LWPWH2EXQ --repo production --new-branch b1 --from-branch main'
+        'Get Production repo branches',
+        'mprove get-branches -p DXYE72ODCP5LWPWH2EXQ --repo production'
       ],
       [
-        'Create git branch for Dev repo',
-        'mprove create-branch -p DXYE72ODCP5LWPWH2EXQ --repo dev --new-branch b1 --from-branch main'
+        'Get Dev repo branches',
+        'mprove get-branches -p DXYE72ODCP5LWPWH2EXQ --repo dev'
       ]
     ]
   });
@@ -37,18 +37,9 @@ export class CreateBranchCommand extends CustomCommand {
     description: `(required, "${enums.RepoEnum.Dev}" or "${enums.RepoEnum.Production}")`
   });
 
-  newBranch = Option.String('--new-branch', {
-    required: true,
-    description: '(required) New Branch name'
-  });
-
-  fromBranch = Option.String('--from-branch', {
-    required: true,
-    description: '(required) From Branch name'
-  });
-
   // verbose = Option.Boolean('--verbose', false, {
-  //   description: '(default false)'
+  //   description:
+  //     '(default false), set flag to show modelIds, dashboardIds, visualizationIds'
   // });
 
   json = Option.Boolean('--json', false, {
@@ -64,30 +55,25 @@ export class CreateBranchCommand extends CustomCommand {
 
     let loginToken = await getLoginToken(this.context);
 
-    let createBranchReqPayload: apiToBackend.ToBackendCreateBranchRequestPayload =
+    let getBranchesListReqPayload: apiToBackend.ToBackendGetBranchesListRequestPayload =
       {
-        projectId: this.projectId,
-        isRepoProd: isRepoProd,
-        newBranchId: this.newBranch,
-        fromBranchId: this.fromBranch
+        projectId: this.projectId
       };
 
-    let createBranchResp =
-      await mreq<apiToBackend.ToBackendCreateBranchResponse>({
+    let getBranchesListResp =
+      await mreq<apiToBackend.ToBackendGetBranchesListResponse>({
         loginToken: loginToken,
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
-        payload: createBranchReqPayload,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetBranchesList,
+        payload: getBranchesListReqPayload,
         host: this.context.config.mproveCliHost
       });
 
     let log: any = {
-      message: `Created branch "${this.newBranch}"`
+      branches: getBranchesListResp.payload.branchesList
+        .filter(x => x.isRepoProd === isRepoProd)
+        .map(b => b.branchId)
     };
-
-    // if (this.verbose === true) {
-    //   log.struct.errors = createBranchResp.payload.struct.errors;
-    // }
 
     logToConsoleMcli({
       log: log,
