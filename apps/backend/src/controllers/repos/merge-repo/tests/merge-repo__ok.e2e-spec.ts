@@ -21,7 +21,8 @@ let projectId = common.makeId();
 let projectName = testId;
 
 let branchId = common.BRANCH_MASTER;
-let theirBranchId = common.BRANCH_MASTER;
+
+let theirBranchId = 'b2';
 
 let prep: interfaces.Prep;
 
@@ -77,6 +78,27 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
+    let req1: apiToBackend.ToBackendCreateBranchRequest = {
+      info: {
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
+        traceId: traceId,
+        idempotencyKey: testId
+      },
+      payload: {
+        projectId: projectId,
+        fromBranchId: branchId,
+        newBranchId: theirBranchId,
+        isRepoProd: false
+      }
+    };
+
+    let resp1 =
+      await helper.sendToBackend<apiToBackend.ToBackendCreateBranchResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: req1
+      });
+
     let req: apiToBackend.ToBackendMergeRepoRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMergeRepo,
@@ -87,8 +109,7 @@ test('1', async t => {
         projectId: projectId,
         branchId: branchId,
         envId: common.PROJECT_ENV_PROD,
-        theirBranchId: theirBranchId,
-        isTheirBranchRemote: true
+        theirBranchId: theirBranchId
       }
     };
 

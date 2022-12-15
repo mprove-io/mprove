@@ -41,8 +41,7 @@ export class MergeRepoController {
     let reqValid: apiToBackend.ToBackendMergeRepoRequest = request.body;
 
     let { traceId } = reqValid.info;
-    let { projectId, branchId, envId, theirBranchId, isTheirBranchRemote } =
-      reqValid.payload;
+    let { projectId, branchId, envId, theirBranchId } = reqValid.payload;
 
     let repoId = user.user_id;
 
@@ -63,7 +62,7 @@ export class MergeRepoController {
 
     let theirBranch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isTheirBranchRemote === true ? common.PROD_REPO_ID : user.user_id,
+      repoId: repoId,
       branchId: theirBranchId
     });
 
@@ -84,7 +83,7 @@ export class MergeRepoController {
         repoId: repoId,
         branch: branchId,
         theirBranch: theirBranchId,
-        isTheirBranchRemote: isTheirBranchRemote,
+        isTheirBranchRemote: false,
         userAlias: user.alias,
         remoteType: project.remote_type,
         gitUrl: project.git_url,

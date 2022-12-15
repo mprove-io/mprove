@@ -92,8 +92,7 @@ export class MergeBranchDialogComponent implements OnInit {
       projectId: this.ref.data.projectId,
       branchId: this.ref.data.currentBranchId,
       envId: this.ref.data.envId,
-      theirBranchId: this.selectedBranchItem.branchId,
-      isTheirBranchRemote: this.selectedBranchItem.isRepoProd
+      theirBranchId: this.selectedBranchItem.branchId
     };
 
     let apiService: ApiService = this.ref.data.apiService;
