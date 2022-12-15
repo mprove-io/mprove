@@ -31,7 +31,7 @@ export class RunCommand extends CustomCommand {
   static paths = [['run']];
 
   static usage = Command.Usage({
-    description: 'Run dashboards',
+    description: 'Run dashboards and visualizations',
     examples: [
       [
         'Run for Production repo',
@@ -91,9 +91,9 @@ export class RunCommand extends CustomCommand {
     description: '(default false) Wait for completion'
   });
 
-  seconds = Option.String('--seconds', '3', {
+  sleepSeconds = Option.String('--sleep-seconds', '3', {
     validator: t.isNumber(),
-    description: '(default 3) Sleep time between getting results'
+    description: '(default 3) Sleep time between attempts to get results'
   });
 
   verbose = Option.Boolean('--verbose', false, {
@@ -279,7 +279,7 @@ export class RunCommand extends CustomCommand {
     let queryIdsToGet: string[] = [...uniqueQueryIds];
 
     if (this.wait === true) {
-      await common.sleep(this.seconds * 1000);
+      await common.sleep(this.sleepSeconds * 1000);
 
       while (queryIdsToGet.length > 0) {
         let getQueriesReqPayload: apiToBackend.ToBackendGetQueriesRequestPayload =
@@ -323,7 +323,7 @@ export class RunCommand extends CustomCommand {
         });
 
         if (queryIdsToGet.length > 0) {
-          await common.sleep(this.seconds * 1000);
+          await common.sleep(this.sleepSeconds * 1000);
         }
       }
     }
