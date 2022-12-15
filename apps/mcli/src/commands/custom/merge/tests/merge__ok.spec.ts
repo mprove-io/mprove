@@ -16,7 +16,7 @@ test('1', async t => {
   let code: number;
 
   let theirBranch = 'b1';
-  let branch = 'main';
+  let branch = common.BRANCH_MAIN;
 
   let projectId = common.makeId();
   let commandLine = `merge -p ${projectId} --their-branch ${theirBranch} --branch ${branch} --env prod`;
@@ -63,7 +63,7 @@ test('1', async t => {
             orgId,
             projectId,
             name: projectName,
-            defaultBranch: common.BRANCH_MAIN,
+            defaultBranch: branch,
             remoteType: common.ProjectRemoteTypeEnum.GitClone,
             gitUrl: config.mproveCliTestGitUrl,
             publicKey: fse
@@ -112,7 +112,7 @@ test('1', async t => {
       projectId: projectId,
       branchId: theirBranch,
       envId: 'prod',
-      fileNodeId: `${projectId}/readme.md`,
+      fileNodeId: `${projectId}/README.md`,
       content: '123'
     };
 
