@@ -11,6 +11,7 @@ import { DeleteBranchCommand } from './commands/custom/delete-branch/delete-bran
 import { GetBranchesCommand } from './commands/custom/get-branches/get-branches';
 import { GetStatusCommand } from './commands/custom/get-status/get-status';
 import { PullCommand } from './commands/custom/pull/pull';
+import { PushCommand } from './commands/custom/push/push';
 import { RevertCommand } from './commands/custom/revert/revert';
 import { RunCommand } from './commands/custom/run/run';
 import { SyncCommand } from './commands/custom/sync/sync';
@@ -38,6 +39,7 @@ let appCommands = [
   GetBranchesCommand,
   GetStatusCommand,
   PullCommand,
+  PushCommand,
   RevertCommand,
   RunCommand,
   SyncCommand,

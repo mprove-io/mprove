@@ -16,10 +16,6 @@ export class CommitCommand extends CustomCommand {
     description: 'Commit changes for repo',
     examples: [
       [
-        'Commit changes for Production repo',
-        'mprove commit -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main'
-      ],
-      [
         'Commit changes for Dev repo',
         'mprove commit -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main'
       ]

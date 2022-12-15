@@ -22,12 +22,12 @@ export class RevertCommand extends CustomCommand {
       'Revert repo to the state of a last commit or Remote repo, validate BlockML for selected env',
     examples: [
       [
-        'Revert Production repo to the state of a last commit, validate BlockML for env prod',
-        'mprove revert --to last-commit -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
-      ],
-      [
         'Revert Dev repo to the state of Remote repo, validate BlockML for env prod',
         'mprove revert --to remote -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
+      ],
+      [
+        'Revert Production repo to the state of a last commit, validate BlockML for env prod',
+        'mprove revert --to last-commit -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
       ]
     ]
   });

@@ -16,12 +16,12 @@ export class GetBranchesCommand extends CustomCommand {
     description: 'Get git branches for repo',
     examples: [
       [
-        'Get Production repo branches',
-        'mprove get-branches -p DXYE72ODCP5LWPWH2EXQ --repo production'
-      ],
-      [
         'Get Dev repo branches',
         'mprove get-branches -p DXYE72ODCP5LWPWH2EXQ --repo dev'
+      ],
+      [
+        'Get Production repo branches',
+        'mprove get-branches -p DXYE72ODCP5LWPWH2EXQ --repo production'
       ]
     ]
   });

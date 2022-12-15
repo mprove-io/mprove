@@ -16,6 +16,10 @@ export class GetStatusCommand extends CustomCommand {
     description: 'Get repo status for selected branch',
     examples: [
       [
+        'Get Dev repo status',
+        'mprove get-status -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --verbose'
+      ],
+      [
         'Get Production repo status',
         'mprove get-status -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --verbose'
       ]

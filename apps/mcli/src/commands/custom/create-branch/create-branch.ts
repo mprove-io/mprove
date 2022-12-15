@@ -16,12 +16,12 @@ export class CreateBranchCommand extends CustomCommand {
     description: 'Create git branch',
     examples: [
       [
-        'Create git branch for Production repo',
-        'mprove create-branch -p DXYE72ODCP5LWPWH2EXQ --repo production --new-branch b1 --from-branch main'
-      ],
-      [
         'Create git branch for Dev repo',
         'mprove create-branch -p DXYE72ODCP5LWPWH2EXQ --repo dev --new-branch b1 --from-branch main'
+      ],
+      [
+        'Create git branch for Production repo',
+        'mprove create-branch -p DXYE72ODCP5LWPWH2EXQ --repo production --new-branch b1 --from-branch main'
       ]
     ]
   });

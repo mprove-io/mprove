@@ -34,16 +34,16 @@ export class RunCommand extends CustomCommand {
     description: 'Run dashboards and visualizations',
     examples: [
       [
-        'Run for Production repo',
-        'mprove run -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
-      ],
-      [
         'Run for Dev repo and wait for completion',
         'mprove run -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --wait'
       ],
       [
         'Run dashboards d1 and d2 for Dev repo',
         'mprove run -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --no-visualizations --dashboard-ids d1,d2'
+      ],
+      [
+        'Run for Production repo',
+        'mprove run -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
       ]
     ]
   });

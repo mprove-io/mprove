@@ -17,12 +17,12 @@ export class PullCommand extends CustomCommand {
       'Pull committed changes from Remote to selected repo, validate BlockML for selected env',
     examples: [
       [
-        'Pull committed changes from Remote to Production repo, validate BlockML for env prod',
-        'mprove pull -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
-      ],
-      [
         'Pull committed changes from Remote to Dev repo, validate BlockML for env prod',
         'mprove pull -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
+      ],
+      [
+        'Pull committed changes from Remote to Production repo, validate BlockML for env prod',
+        'mprove pull -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
       ]
     ]
   });

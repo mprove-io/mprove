@@ -16,12 +16,12 @@ export class DeleteBranchCommand extends CustomCommand {
     description: 'Delete git branch',
     examples: [
       [
-        'Delete git branch for Production repo',
-        'mprove delete-branch -p DXYE72ODCP5LWPWH2EXQ --repo production --branch b1'
-      ],
-      [
         'Delete git branch for Dev repo',
         'mprove delete-branch -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch b1'
+      ],
+      [
+        'Delete git branch for Production repo',
+        'mprove delete-branch -p DXYE72ODCP5LWPWH2EXQ --repo production --branch b1'
       ]
     ]
   });
