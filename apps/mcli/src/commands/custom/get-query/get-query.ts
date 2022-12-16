@@ -9,6 +9,12 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
+interface VizPartQ {
+  vizId: string;
+  title: string;
+  query: QueryPartQ;
+}
+
 interface DashboardPartQ {
   title: string;
   dashboardId: string;
@@ -116,7 +122,7 @@ export class GetQueryCommand extends CustomCommand {
 
     let loginToken = await getLoginToken(this.context);
 
-    let vizX: common.VizX;
+    let vizPartQ: VizPartQ;
 
     if (common.isDefined(this.visualizationId)) {
       let getVizReqPayload: apiToBackend.ToBackendGetVizRequestPayload = {
@@ -134,7 +140,41 @@ export class GetQueryCommand extends CustomCommand {
         host: this.context.config.mproveCliHost
       });
 
-      vizX = getVizResp.payload.viz;
+      let vizX = getVizResp.payload.viz;
+      let reportX = vizX.reports[0];
+
+      let queryPartQ: QueryPartQ = {
+        connectionId: reportX.query.connectionId,
+        connectionType: reportX.query.connectionType,
+        queryId: reportX.query.queryId,
+        status: reportX.query.status,
+        lastRunBy: reportX.query.lastRunBy,
+        lastRunTs: reportX.query.lastRunTs,
+        lastCancelTs: reportX.query.lastCancelTs,
+        lastCompleteTs: reportX.query.lastCompleteTs,
+        lastCompleteDuration: reportX.query.lastCompleteDuration,
+        lastErrorMessage: reportX.query.lastErrorMessage,
+        lastErrorTs: reportX.query.lastErrorTs,
+        data: undefined,
+        sql: undefined,
+        sqlArray: undefined
+      };
+
+      if (this.getData) {
+        queryPartQ.data = reportX.query.data;
+      }
+
+      if (this.getSql) {
+        let sqlArray = reportX.query.sql.split('\n');
+        queryPartQ.sql = sqlArray.join('');
+        queryPartQ.sqlArray = sqlArray;
+      }
+
+      vizPartQ = {
+        vizId: vizX.vizId,
+        title: reportX.mconfig.chart.title,
+        query: queryPartQ
+      };
     }
 
     let dashboardPartQ: DashboardPartQ;
@@ -218,7 +258,7 @@ export class GetQueryCommand extends CustomCommand {
     }
 
     if (common.isDefined(this.visualizationId)) {
-      log.visualization = vizX;
+      log.visualization = vizPartQ;
     }
 
     logToConsoleMcli({
