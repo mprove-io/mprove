@@ -1,5 +1,4 @@
 import test from 'ava';
-import * as fse from 'fs-extra';
 import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { getConfig } from '~mcli/config/get.config';
@@ -15,7 +14,7 @@ test('1', async t => {
   let context: CustomContext;
   let code: number;
 
-  let branch = 'main';
+  let branch = common.BRANCH_MASTER;
 
   let projectId = common.makeId();
   let commandLine = `commit -p ${projectId} --repo dev --branch ${branch} --commit-message m1`;
@@ -62,15 +61,11 @@ test('1', async t => {
             orgId,
             projectId,
             name: projectName,
-            defaultBranch: common.BRANCH_MAIN,
-            remoteType: common.ProjectRemoteTypeEnum.GitClone,
-            gitUrl: config.mproveCliTestGitUrl,
-            publicKey: fse
-              .readFileSync(config.mproveCliTestPublicKeyPath)
-              .toString(),
-            privateKey: fse
-              .readFileSync(config.mproveCliTestPrivateKeyPath)
-              .toString()
+            defaultBranch: branch,
+            remoteType: common.ProjectRemoteTypeEnum.Managed,
+            gitUrl: undefined,
+            publicKey: undefined,
+            privateKey: undefined
           }
         ],
         members: [
@@ -94,7 +89,7 @@ test('1', async t => {
       projectId: projectId,
       branchId: branch,
       envId: 'prod',
-      fileNodeId: `${projectId}/README.md`,
+      fileNodeId: `${projectId}/readme.md`,
       content: '123'
     };
 

@@ -1,5 +1,4 @@
 import test from 'ava';
-import * as fse from 'fs-extra';
 import { common } from '~mcli/barrels/common';
 import { getConfig } from '~mcli/config/get.config';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
@@ -12,6 +11,8 @@ let testId = 'mcli__get-branches__ok';
 test('1', async t => {
   let context: CustomContext;
   let code: number;
+
+  let defaultBranch = common.BRANCH_MASTER;
 
   let projectId = common.makeId();
   let commandLine = `get-branches -p ${projectId} --repo dev`;
@@ -58,15 +59,11 @@ test('1', async t => {
             orgId,
             projectId,
             name: projectName,
-            defaultBranch: common.BRANCH_MAIN,
-            remoteType: common.ProjectRemoteTypeEnum.GitClone,
-            gitUrl: config.mproveCliTestGitUrl,
-            publicKey: fse
-              .readFileSync(config.mproveCliTestPublicKeyPath)
-              .toString(),
-            privateKey: fse
-              .readFileSync(config.mproveCliTestPrivateKeyPath)
-              .toString()
+            defaultBranch: defaultBranch,
+            remoteType: common.ProjectRemoteTypeEnum.Managed,
+            gitUrl: undefined,
+            publicKey: undefined,
+            privateKey: undefined
           }
         ],
         members: [

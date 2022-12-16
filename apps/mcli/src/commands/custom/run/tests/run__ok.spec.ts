@@ -1,5 +1,4 @@
 import test from 'ava';
-import * as fse from 'fs-extra';
 import { common } from '~mcli/barrels/common';
 import { getConfig } from '~mcli/config/get.config';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
@@ -13,9 +12,11 @@ test('1', async t => {
   let context: CustomContext;
   let code: number;
 
+  let defaultBranch = common.BRANCH_MASTER;
+
   let projectId = common.makeId();
   let commandLine = `run -p ${projectId} --wait --sleep-seconds 2 \
---repo production --branch main --env prod \
+--repo production --branch ${defaultBranch} --env prod \
 --dashboard-ids ec1_d1 --visualization-ids 4K9SNSMG0IQPQZ9CL23U,4V3KWMRA9MSH21EQZCJQ`;
 
   let userId = common.makeId();
@@ -60,15 +61,12 @@ test('1', async t => {
             orgId,
             projectId,
             name: projectName,
-            defaultBranch: common.BRANCH_MAIN,
-            remoteType: common.ProjectRemoteTypeEnum.GitClone,
-            gitUrl: config.mproveCliTestGitUrl,
-            publicKey: fse
-              .readFileSync(config.mproveCliTestPublicKeyPath)
-              .toString(),
-            privateKey: fse
-              .readFileSync(config.mproveCliTestPrivateKeyPath)
-              .toString()
+            testProjectId: 'first-project',
+            defaultBranch: defaultBranch,
+            remoteType: common.ProjectRemoteTypeEnum.Managed,
+            gitUrl: undefined,
+            publicKey: undefined,
+            privateKey: undefined
           }
         ],
         members: [

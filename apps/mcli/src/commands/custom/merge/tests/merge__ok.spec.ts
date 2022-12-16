@@ -1,5 +1,4 @@
 import test from 'ava';
-import * as fse from 'fs-extra';
 import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { getConfig } from '~mcli/config/get.config';
@@ -16,10 +15,10 @@ test('1', async t => {
   let code: number;
 
   let theirBranch = 'b1';
-  let branch = common.BRANCH_MAIN;
+  let defaultBranch = common.BRANCH_MASTER;
 
   let projectId = common.makeId();
-  let commandLine = `merge -p ${projectId} --their-branch ${theirBranch} --branch ${branch} --env prod`;
+  let commandLine = `merge -p ${projectId} --their-branch ${theirBranch} --branch ${defaultBranch} --env prod`;
 
   let userId = common.makeId();
   let email = `${testId}@example.com`;
@@ -63,15 +62,11 @@ test('1', async t => {
             orgId,
             projectId,
             name: projectName,
-            defaultBranch: branch,
-            remoteType: common.ProjectRemoteTypeEnum.GitClone,
-            gitUrl: config.mproveCliTestGitUrl,
-            publicKey: fse
-              .readFileSync(config.mproveCliTestPublicKeyPath)
-              .toString(),
-            privateKey: fse
-              .readFileSync(config.mproveCliTestPrivateKeyPath)
-              .toString()
+            defaultBranch: defaultBranch,
+            remoteType: common.ProjectRemoteTypeEnum.Managed,
+            gitUrl: undefined,
+            publicKey: undefined,
+            privateKey: undefined
           }
         ],
         members: [
@@ -96,7 +91,7 @@ test('1', async t => {
         projectId: projectId,
         isRepoProd: false,
         newBranchId: theirBranch,
-        fromBranchId: branch
+        fromBranchId: defaultBranch
       };
 
     let createBranchResp =
@@ -112,7 +107,7 @@ test('1', async t => {
       projectId: projectId,
       branchId: theirBranch,
       envId: 'prod',
-      fileNodeId: `${projectId}/README.md`,
+      fileNodeId: `${projectId}/readme.md`,
       content: '123'
     };
 

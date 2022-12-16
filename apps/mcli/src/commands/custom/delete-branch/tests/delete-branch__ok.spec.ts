@@ -1,5 +1,4 @@
 import test from 'ava';
-import * as fse from 'fs-extra';
 import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { getConfig } from '~mcli/config/get.config';
@@ -14,6 +13,8 @@ let testId = 'mcli__delete-branch__ok';
 test('1', async t => {
   let context: CustomContext;
   let code: number;
+
+  let defaultBranch = common.BRANCH_MASTER;
 
   let repo = 'dev';
   let branch = 'b1';
@@ -64,15 +65,11 @@ test('1', async t => {
             orgId,
             projectId,
             name: projectName,
-            defaultBranch: common.BRANCH_MAIN,
-            remoteType: common.ProjectRemoteTypeEnum.GitClone,
-            gitUrl: config.mproveCliTestGitUrl,
-            publicKey: fse
-              .readFileSync(config.mproveCliTestPublicKeyPath)
-              .toString(),
-            privateKey: fse
-              .readFileSync(config.mproveCliTestPrivateKeyPath)
-              .toString()
+            defaultBranch: defaultBranch,
+            remoteType: common.ProjectRemoteTypeEnum.Managed,
+            gitUrl: undefined,
+            publicKey: undefined,
+            privateKey: undefined
           }
         ],
         members: [
@@ -99,7 +96,7 @@ test('1', async t => {
         projectId: projectId,
         isRepoProd: isRepoProd,
         newBranchId: branch,
-        fromBranchId: 'main'
+        fromBranchId: defaultBranch
       };
 
     let createBranchResp =
