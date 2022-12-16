@@ -89,7 +89,7 @@ export class GetQueryCommand extends CustomCommand {
   });
 
   dashboardId = Option.String('--dashboard-id', {
-    description: '(optional) Dashboard Id (name)'
+    description: '(dashboardId or visualizationId required) Dashboard Id (name)'
   });
 
   reportIndex = Option.String('--report-index', {
@@ -98,7 +98,8 @@ export class GetQueryCommand extends CustomCommand {
   });
 
   visualizationId = Option.String('--visualization-id', {
-    description: '(optional) Visualization Id (name)'
+    description:
+      '(dashboardId or visualizationId required) Visualization Id (name)'
   });
 
   getSql = Option.Boolean('--get-sql', false, {
@@ -116,6 +117,18 @@ export class GetQueryCommand extends CustomCommand {
   async execute() {
     if (common.isUndefined(this.context.config)) {
       this.context.config = getConfig();
+    }
+
+    if (
+      common.isUndefined(this.dashboardId) &&
+      common.isUndefined(this.visualizationId)
+    ) {
+      let serverError = new common.ServerError({
+        message:
+          common.ErEnum.MCLI_DASHBOARD_ID_AND_VISUALIZATION_ID_ARE_NOT_DEFINED,
+        originalError: null
+      });
+      throw serverError;
     }
 
     let isRepoProd = this.repo === 'production' ? true : false;
