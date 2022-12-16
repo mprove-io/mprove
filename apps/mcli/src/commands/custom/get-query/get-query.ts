@@ -61,12 +61,12 @@ export class GetQueryCommand extends CustomCommand {
     description: 'Get query',
     examples: [
       [
-        'Get query for Dev repo dashboard',
-        'mprove get-query -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --dashboard-id d1'
+        'Get query for Dev repo visualization',
+        'mprove get-query -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --viz-id v1 --get-sql --get-data'
       ],
       [
-        'Get query for Dev repo visualization',
-        'mprove get-query -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --viz-id v1'
+        'Get query for Dev repo dashboard',
+        'mprove get-query -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --dashboard-id d1 --get-sql --get-data'
       ]
     ]
   });
@@ -93,7 +93,7 @@ export class GetQueryCommand extends CustomCommand {
   });
 
   dashboardId = Option.String('--dashboard-id', {
-    description: '(dashboardId or vizId required) Dashboard Id (name)'
+    description: '(dashboard-id or viz-id required) Dashboard Id (name)'
   });
 
   reportIndex = Option.String('--report-index', {
@@ -102,7 +102,7 @@ export class GetQueryCommand extends CustomCommand {
   });
 
   vizId = Option.String('--viz-id', {
-    description: '(dashboardId or vizId required) Visualization Id (name)'
+    description: '(dashboard-id or viz-id required) Visualization Id (name)'
   });
 
   getSql = Option.Boolean('--get-sql', false, {
@@ -122,12 +122,33 @@ export class GetQueryCommand extends CustomCommand {
       this.context.config = getConfig();
     }
 
+    if (common.isDefined(this.dashboardId) && common.isDefined(this.vizId)) {
+      let serverError = new common.ServerError({
+        message: common.ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
+        data: `dashboard-id and viz-id`,
+        originalError: null
+      });
+      throw serverError;
+    }
+
     if (
       common.isUndefined(this.dashboardId) &&
       common.isUndefined(this.vizId)
     ) {
       let serverError = new common.ServerError({
         message: common.ErEnum.MCLI_DASHBOARD_ID_AND_VIZ_ID_ARE_NOT_DEFINED,
+        originalError: null
+      });
+      throw serverError;
+    }
+
+    if (
+      common.isDefined(this.reportIndex) &&
+      common.isUndefined(this.dashboardId)
+    ) {
+      let serverError = new common.ServerError({
+        message:
+          common.ErEnum.MCLI_REPORT_INDEX_DOES_NOT_WORK_WITHOUT_DASHBOARD_ID,
         originalError: null
       });
       throw serverError;

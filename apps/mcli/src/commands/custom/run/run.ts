@@ -4,15 +4,18 @@ import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
+import { getDashboardUrl } from '~mcli/functions/get-dashboard-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';
 import { queriesToStats } from '~mcli/functions/get-query-stats';
+import { getVisualizationUrl } from '~mcli/functions/get-visualization-url';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
 interface VizPart {
-  vizId: string;
   title: string;
+  vizId: string;
+  url: string;
   query: common.Query;
 }
 
@@ -24,6 +27,7 @@ interface ReportPart {
 interface DashboardPart {
   title: string;
   dashboardId: string;
+  url: string;
   reports: ReportPart[];
 }
 
@@ -35,7 +39,7 @@ export class RunCommand extends CustomCommand {
     examples: [
       [
         'Run for Dev repo and wait for completion',
-        'mprove run -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --wait'
+        'mprove run -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --wait --get-dashboards --get-vizs'
       ],
       [
         'Run dashboards d1 and d2 for Dev repo',
@@ -87,6 +91,14 @@ export class RunCommand extends CustomCommand {
       '(optional) Filter visualizations to run by visualization names, separated by comma'
   });
 
+  getDashboards = Option.Boolean('--get-dashboards', false, {
+    description: '(default false), show dashboards in output'
+  });
+
+  getVizs = Option.Boolean('--get-vizs', false, {
+    description: '(default false), show visualizations in output'
+  });
+
   wait = Option.Boolean('--wait', false, {
     description: '(default false) Wait for completion'
   });
@@ -94,14 +106,6 @@ export class RunCommand extends CustomCommand {
   sleepSeconds = Option.String('--sleep-seconds', '3', {
     validator: t.isNumber(),
     description: '(default 3) Sleep time between attempts to get results'
-  });
-
-  getDashboards = Option.Boolean('--get-dashboards', false, {
-    description: '(default false), show dashboards in output'
-  });
-
-  getVizs = Option.Boolean('--get-vizs', false, {
-    description: '(default false), show visualizations in output'
   });
 
   json = Option.Boolean('--json', false, {
@@ -113,9 +117,80 @@ export class RunCommand extends CustomCommand {
       this.context.config = getConfig();
     }
 
+    if (this.noDashboards === true && this.getDashboards === true) {
+      let serverError = new common.ServerError({
+        message: common.ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
+        data: `no-dashboards and get-dashboards`,
+        originalError: null
+      });
+      throw serverError;
+    }
+
+    if (this.noDashboards === true && common.isDefined(this.dashboardIds)) {
+      let serverError = new common.ServerError({
+        message: common.ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
+        data: `no-dashboards and dashboard-ids`,
+        originalError: null
+      });
+      throw serverError;
+    }
+
+    if (this.noVizs === true && this.getVizs === true) {
+      let serverError = new common.ServerError({
+        message: common.ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
+        data: `no-vizs and get-vizs`,
+        originalError: null
+      });
+      throw serverError;
+    }
+
+    if (this.noVizs === true && common.isDefined(this.vizIds)) {
+      let serverError = new common.ServerError({
+        message: common.ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
+        data: `no-vizs and viz-ids`,
+        originalError: null
+      });
+      throw serverError;
+    }
+
+    if (common.isDefined(this.sleepSeconds) && this.wait === false) {
+      let serverError = new common.ServerError({
+        message: common.ErEnum.MCLI_SLEEP_SECONDS_DOES_NOT_WORK_WITHOUT_WAIT,
+        originalError: null
+      });
+      throw serverError;
+    }
+
     let isRepoProd = this.repo === 'production' ? true : false;
 
     let loginToken = await getLoginToken(this.context);
+
+    let getProjectReqPayload: apiToBackend.ToBackendGetProjectRequestPayload = {
+      projectId: this.projectId
+    };
+
+    let getProjectResp = await mreq<apiToBackend.ToBackendGetProjectResponse>({
+      loginToken: loginToken,
+      pathInfoName:
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject,
+      payload: getProjectReqPayload,
+      host: this.context.config.mproveCliHost
+    });
+
+    let getRepoReqPayload: apiToBackend.ToBackendGetRepoRequestPayload = {
+      projectId: this.projectId,
+      isRepoProd: isRepoProd,
+      branchId: this.branch,
+      envId: this.env,
+      isFetch: true
+    };
+
+    let getRepoResp = await mreq<apiToBackend.ToBackendGetRepoResponse>({
+      loginToken: loginToken,
+      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRepo,
+      payload: getRepoReqPayload,
+      host: this.context.config.mproveCliHost
+    });
 
     let queryIdsWithDuplicates: string[] = [];
 
@@ -163,9 +238,20 @@ export class RunCommand extends CustomCommand {
             vizIds.indexOf(visualization.vizId) > -1
         )
         .map(x => {
+          let url = getVisualizationUrl({
+            host: this.context.config.mproveCliHost,
+            orgId: getProjectResp.payload.project.orgId,
+            projectId: this.projectId,
+            repoId: getRepoResp.payload.repo.repoId,
+            branch: this.branch,
+            env: this.env,
+            vizId: x.vizId
+          });
+
           let vizPart: VizPart = {
             title: x.title,
             vizId: x.vizId,
+            url: url,
             query: { queryId: x.reports[0].queryId } as common.Query
           };
 
@@ -235,9 +321,20 @@ export class RunCommand extends CustomCommand {
             queryIdsWithDuplicates.push(report.queryId);
           });
 
+          let url = getDashboardUrl({
+            host: this.context.config.mproveCliHost,
+            orgId: getProjectResp.payload.project.orgId,
+            projectId: this.projectId,
+            repoId: getRepoResp.payload.repo.repoId,
+            branch: this.branch,
+            env: this.env,
+            dashboardId: dashboard.dashboardId
+          });
+
           let dashboardPart: DashboardPart = {
             title: dashboard.title,
             dashboardId: dashboard.dashboardId,
+            url: url,
             reports: reportParts
           };
 
@@ -353,8 +450,9 @@ export class RunCommand extends CustomCommand {
         : vizParts
             .filter(x => x.query.status === common.QueryStatusEnum.Error)
             .map(v => ({
-              vizId: v.vizId,
               title: v.title,
+              vizId: v.vizId,
+              url: v.url,
               query: {
                 lastErrorMessage: v.query.lastErrorMessage,
                 status: v.query.status,
@@ -373,8 +471,9 @@ export class RunCommand extends CustomCommand {
                 ).length > 0
             )
             .map(d => ({
-              dashboardId: d.dashboardId,
               title: d.title,
+              dashboardId: d.dashboardId,
+              url: d.url,
               reports: d.reports
                 .filter(q => q.query.status === common.QueryStatusEnum.Error)
                 .map(r => ({
