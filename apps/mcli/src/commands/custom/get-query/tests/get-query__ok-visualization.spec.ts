@@ -16,7 +16,7 @@ test('1', async t => {
 
   let projectId = common.makeId();
   let commandLine = `get-query -p ${projectId} --repo dev --branch ${defaultBranch} \
---env prod --visualization-id 4K9SNSMG0IQPQZ9CL23U --get-sql`;
+--env prod --viz-id 4K9SNSMG0IQPQZ9CL23U --get-sql`;
 
   let userId = common.makeId();
   let email = `${testId}@example.com`;

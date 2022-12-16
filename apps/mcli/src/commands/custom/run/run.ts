@@ -39,7 +39,7 @@ export class RunCommand extends CustomCommand {
       ],
       [
         'Run dashboards d1 and d2 for Dev repo',
-        'mprove run -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --no-visualizations --dashboard-ids d1,d2'
+        'mprove run -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --no-vizs --dashboard-ids d1,d2'
       ],
       [
         'Run for Production repo',
@@ -73,7 +73,7 @@ export class RunCommand extends CustomCommand {
     description: '(default false) Do not run dashboards'
   });
 
-  noVisualizations = Option.Boolean('--no-visualizations', false, {
+  noVizs = Option.Boolean('--no-vizs', false, {
     description: '(default false) Do not run visualizations'
   });
 
@@ -82,7 +82,7 @@ export class RunCommand extends CustomCommand {
       '(optional) Filter dashboards to run by dashboard names, separated by comma'
   });
 
-  visualizationIds = Option.String('--visualization-ids', {
+  vizIds = Option.String('--viz-ids', {
     description:
       '(optional) Filter visualizations to run by visualization names, separated by comma'
   });
@@ -100,7 +100,7 @@ export class RunCommand extends CustomCommand {
     description: '(default false), show dashboards in output'
   });
 
-  getVisualizations = Option.Boolean('--get-visualizations', false, {
+  getVizs = Option.Boolean('--get-vizs', false, {
     description: '(default false), show visualizations in output'
   });
 
@@ -121,7 +121,7 @@ export class RunCommand extends CustomCommand {
 
     let vizParts: VizPart[] = [];
 
-    if (this.noVisualizations === false) {
+    if (this.noVizs === false) {
       let getVizsReqPayload: apiToBackend.ToBackendGetVizsRequestPayload = {
         projectId: this.projectId,
         isRepoProd: isRepoProd,
@@ -137,10 +137,10 @@ export class RunCommand extends CustomCommand {
         host: this.context.config.mproveCliHost
       });
 
-      let visualizationIds = this.visualizationIds?.split(',');
+      let vizIds = this.vizIds?.split(',');
 
-      if (common.isDefined(visualizationIds)) {
-        visualizationIds.forEach(x => {
+      if (common.isDefined(vizIds)) {
+        vizIds.forEach(x => {
           if (
             getVizsResp.payload.vizs
               .map(visualization => visualization.vizId)
@@ -159,8 +159,8 @@ export class RunCommand extends CustomCommand {
       vizParts = getVizsResp.payload.vizs
         .filter(
           visualization =>
-            common.isUndefined(visualizationIds) ||
-            visualizationIds.indexOf(visualization.vizId) > -1
+            common.isUndefined(vizIds) ||
+            vizIds.indexOf(visualization.vizId) > -1
         )
         .map(x => {
           let vizPart: VizPart = {
@@ -260,7 +260,7 @@ export class RunCommand extends CustomCommand {
       host: this.context.config.mproveCliHost
     });
 
-    if (this.noVisualizations === false) {
+    if (this.noVizs === false) {
       vizParts.forEach(v => {
         let query = runQueriesResp.payload.runningQueries.find(
           q => q.queryId === v.query.queryId
@@ -306,7 +306,7 @@ export class RunCommand extends CustomCommand {
 
         getQueriesResp.payload.queries.forEach(query => {
           if (query.status !== common.QueryStatusEnum.Running) {
-            if (this.noVisualizations === false) {
+            if (this.noVizs === false) {
               vizParts
                 .filter(vizPart => vizPart.query.queryId === query.queryId)
                 .forEach(x => (x.query = query));
@@ -403,7 +403,7 @@ export class RunCommand extends CustomCommand {
       log.dashboards = dashboardParts;
     }
 
-    if (this.getVisualizations === true) {
+    if (this.getVizs === true) {
       log.visualizations = vizParts;
     }
 

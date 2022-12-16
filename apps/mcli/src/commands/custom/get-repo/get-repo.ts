@@ -23,8 +23,8 @@ export class GetRepoCommand extends CustomCommand {
         'mprove get-repo -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --get-nodes'
       ],
       [
-        'Get Production repo models, dashboards and visualizations (with urls)',
-        'mprove get-repo -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --get-models --get-dashboards --get-visualizations --get-urls'
+        'Get Production repo models, dashboards and visualizations',
+        'mprove get-repo -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --get-models --get-dashboards --get-vizs'
       ]
     ]
   });
@@ -62,12 +62,8 @@ export class GetRepoCommand extends CustomCommand {
     description: '(default false), show dashboardIds in output'
   });
 
-  getVisualizations = Option.Boolean('--get-visualizations', false, {
-    description: '(default false), show visualizationIds in output'
-  });
-
-  getUrls = Option.Boolean('--get-urls', false, {
-    description: '(default false), show urls in output'
+  getVizs = Option.Boolean('--get-vizs', false, {
+    description: '(default false), show vizIds in output'
   });
 
   json = Option.Boolean('--json', false, {
@@ -178,25 +174,22 @@ export class GetRepoCommand extends CustomCommand {
       log.struct.errors = getRepoResp.payload.struct.errors;
     }
 
-    if (this.getVisualizations === true) {
+    if (this.getVizs === true) {
       log.visualizations = getVizsResp.payload.vizs.map(x => {
-        let visualization: any = {
+        let url = getVisualizationUrl({
+          host: this.context.config.mproveCliHost,
+          orgId: getProjectResp.payload.project.orgId,
+          projectId: this.projectId,
+          repoId: getRepoResp.payload.repo.repoId,
+          branch: this.branch,
+          env: this.env,
           vizId: x.vizId
+        });
+
+        let visualization: any = {
+          vizId: x.vizId,
+          url: url
         };
-
-        if (this.getUrls) {
-          let url = getVisualizationUrl({
-            host: this.context.config.mproveCliHost,
-            orgId: getProjectResp.payload.project.orgId,
-            projectId: this.projectId,
-            repoId: getRepoResp.payload.repo.repoId,
-            branch: this.branch,
-            env: this.env,
-            vizId: x.vizId
-          });
-
-          visualization.url = url;
-        }
 
         return visualization;
       });
@@ -204,23 +197,20 @@ export class GetRepoCommand extends CustomCommand {
 
     if (this.getDashboards === true) {
       log.dashboards = getDashboardsResp.payload.dashboards.map(x => {
-        let dashboard: any = {
+        let url = getDashboardUrl({
+          host: this.context.config.mproveCliHost,
+          orgId: getProjectResp.payload.project.orgId,
+          projectId: this.projectId,
+          repoId: getRepoResp.payload.repo.repoId,
+          branch: this.branch,
+          env: this.env,
           dashboardId: x.dashboardId
+        });
+
+        let dashboard: any = {
+          dashboardId: x.dashboardId,
+          url: url
         };
-
-        if (this.getUrls) {
-          let url = getDashboardUrl({
-            host: this.context.config.mproveCliHost,
-            orgId: getProjectResp.payload.project.orgId,
-            projectId: this.projectId,
-            repoId: getRepoResp.payload.repo.repoId,
-            branch: this.branch,
-            env: this.env,
-            dashboardId: x.dashboardId
-          });
-
-          dashboard.url = url;
-        }
 
         return dashboard;
       });
@@ -228,23 +218,20 @@ export class GetRepoCommand extends CustomCommand {
 
     if (this.getModels === true) {
       log.models = getModelsResp.payload.models.map(x => {
-        let model: any = {
+        let url = getModelUrl({
+          host: this.context.config.mproveCliHost,
+          orgId: getProjectResp.payload.project.orgId,
+          projectId: this.projectId,
+          repoId: getRepoResp.payload.repo.repoId,
+          branch: this.branch,
+          env: this.env,
           modelId: x.modelId
+        });
+
+        let model: any = {
+          modelId: x.modelId,
+          url: url
         };
-
-        if (this.getUrls) {
-          let url = getModelUrl({
-            host: this.context.config.mproveCliHost,
-            orgId: getProjectResp.payload.project.orgId,
-            projectId: this.projectId,
-            repoId: getRepoResp.payload.repo.repoId,
-            branch: this.branch,
-            env: this.env,
-            modelId: x.modelId
-          });
-
-          model.url = url;
-        }
 
         return model;
       });

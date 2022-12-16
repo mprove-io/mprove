@@ -4,20 +4,24 @@ import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
+import { getDashboardUrl } from '~mcli/functions/get-dashboard-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';
+import { getVisualizationUrl } from '~mcli/functions/get-visualization-url';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
 interface VizPartQ {
-  vizId: string;
   title: string;
+  vizId: string;
+  url: string;
   query: QueryPartQ;
 }
 
 interface DashboardPartQ {
   title: string;
   dashboardId: string;
+  url: string;
   reports: ReportPartQ[];
 }
 
@@ -62,7 +66,7 @@ export class GetQueryCommand extends CustomCommand {
       ],
       [
         'Get query for Dev repo visualization',
-        'mprove get-query -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --visualization-id v1'
+        'mprove get-query -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --viz-id v1'
       ]
     ]
   });
@@ -89,7 +93,7 @@ export class GetQueryCommand extends CustomCommand {
   });
 
   dashboardId = Option.String('--dashboard-id', {
-    description: '(dashboardId or visualizationId required) Dashboard Id (name)'
+    description: '(dashboardId or vizId required) Dashboard Id (name)'
   });
 
   reportIndex = Option.String('--report-index', {
@@ -97,9 +101,8 @@ export class GetQueryCommand extends CustomCommand {
     description: '(optional) Dashboard Report Index starting with 0'
   });
 
-  visualizationId = Option.String('--visualization-id', {
-    description:
-      '(dashboardId or visualizationId required) Visualization Id (name)'
+  vizId = Option.String('--viz-id', {
+    description: '(dashboardId or vizId required) Visualization Id (name)'
   });
 
   getSql = Option.Boolean('--get-sql', false, {
@@ -121,11 +124,10 @@ export class GetQueryCommand extends CustomCommand {
 
     if (
       common.isUndefined(this.dashboardId) &&
-      common.isUndefined(this.visualizationId)
+      common.isUndefined(this.vizId)
     ) {
       let serverError = new common.ServerError({
-        message:
-          common.ErEnum.MCLI_DASHBOARD_ID_AND_VISUALIZATION_ID_ARE_NOT_DEFINED,
+        message: common.ErEnum.MCLI_DASHBOARD_ID_AND_VIZ_ID_ARE_NOT_DEFINED,
         originalError: null
       });
       throw serverError;
@@ -135,15 +137,42 @@ export class GetQueryCommand extends CustomCommand {
 
     let loginToken = await getLoginToken(this.context);
 
+    let getProjectReqPayload: apiToBackend.ToBackendGetProjectRequestPayload = {
+      projectId: this.projectId
+    };
+
+    let getProjectResp = await mreq<apiToBackend.ToBackendGetProjectResponse>({
+      loginToken: loginToken,
+      pathInfoName:
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject,
+      payload: getProjectReqPayload,
+      host: this.context.config.mproveCliHost
+    });
+
+    let getRepoReqPayload: apiToBackend.ToBackendGetRepoRequestPayload = {
+      projectId: this.projectId,
+      isRepoProd: isRepoProd,
+      branchId: this.branch,
+      envId: this.env,
+      isFetch: true
+    };
+
+    let getRepoResp = await mreq<apiToBackend.ToBackendGetRepoResponse>({
+      loginToken: loginToken,
+      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRepo,
+      payload: getRepoReqPayload,
+      host: this.context.config.mproveCliHost
+    });
+
     let vizPartQ: VizPartQ;
 
-    if (common.isDefined(this.visualizationId)) {
+    if (common.isDefined(this.vizId)) {
       let getVizReqPayload: apiToBackend.ToBackendGetVizRequestPayload = {
         projectId: this.projectId,
         isRepoProd: isRepoProd,
         branchId: this.branch,
         envId: this.env,
-        vizId: this.visualizationId
+        vizId: this.vizId
       };
 
       let getVizResp = await mreq<apiToBackend.ToBackendGetVizResponse>({
@@ -183,9 +212,20 @@ export class GetQueryCommand extends CustomCommand {
         queryPartQ.sqlArray = sqlArray;
       }
 
+      let url = getVisualizationUrl({
+        host: this.context.config.mproveCliHost,
+        orgId: getProjectResp.payload.project.orgId,
+        projectId: this.projectId,
+        repoId: getRepoResp.payload.repo.repoId,
+        branch: this.branch,
+        env: this.env,
+        vizId: vizX.vizId
+      });
+
       vizPartQ = {
-        vizId: vizX.vizId,
         title: reportX.mconfig.chart.title,
+        vizId: vizX.vizId,
+        url: url,
         query: queryPartQ
       };
     }
@@ -257,9 +297,20 @@ export class GetQueryCommand extends CustomCommand {
           return reportPartQ;
         });
 
+      let url = getDashboardUrl({
+        host: this.context.config.mproveCliHost,
+        orgId: getProjectResp.payload.project.orgId,
+        projectId: this.projectId,
+        repoId: getRepoResp.payload.repo.repoId,
+        branch: this.branch,
+        env: this.env,
+        dashboardId: dashboardX.dashboardId
+      });
+
       dashboardPartQ = {
-        dashboardId: dashboardX.dashboardId,
         title: dashboardX.title,
+        dashboardId: dashboardX.dashboardId,
+        url: url,
         reports: reportPartQs
       };
     }
@@ -270,7 +321,7 @@ export class GetQueryCommand extends CustomCommand {
       log.dashboard = dashboardPartQ;
     }
 
-    if (common.isDefined(this.visualizationId)) {
+    if (common.isDefined(this.vizId)) {
       log.visualization = vizPartQ;
     }
 
