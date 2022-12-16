@@ -15,7 +15,7 @@ test('1', async t => {
   let defaultBranch = common.BRANCH_MASTER;
 
   let projectId = common.makeId();
-  let commandLine = `get-repo -p ${projectId} --repo dev --branch ${defaultBranch} --env prod --get-model-ids`;
+  let commandLine = `get-repo -p ${projectId} --repo dev --branch ${defaultBranch} --env prod --get-nodes --get-dashboards --get-visualizations --get-models --get-urls`;
 
   let userId = common.makeId();
   let email = `${testId}@example.com`;

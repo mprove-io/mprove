@@ -4,7 +4,10 @@ import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
+import { getDashboardUrl } from '~mcli/functions/get-dashboard-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';
+import { getModelnUrl as getModelUrl } from '~mcli/functions/get-model-url';
+import { getVisualizationUrl } from '~mcli/functions/get-visualization-url';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
@@ -16,12 +19,12 @@ export class GetRepoCommand extends CustomCommand {
     description: 'Get repo status for selected branch',
     examples: [
       [
-        'Get Dev repo status',
-        'mprove get-repo -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --get-model-ids'
+        'Get Dev repo with nodes',
+        'mprove get-repo -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --get-nodes'
       ],
       [
-        'Get Production repo status',
-        'mprove get-repo -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --get-dashboard-ids'
+        'Get Production repo models, dashboards and visualizations (with urls)',
+        'mprove get-repo -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --get-models --get-dashboards --get-visualizations --get-urls'
       ]
     ]
   });
@@ -51,16 +54,20 @@ export class GetRepoCommand extends CustomCommand {
     description: '(default false), show repo nodes in output'
   });
 
-  getModelIds = Option.Boolean('--get-model-ids', false, {
+  getModels = Option.Boolean('--get-models', false, {
     description: '(default false), show modelIds in output'
   });
 
-  getDashboardIds = Option.Boolean('--get-dashboard-ids', false, {
+  getDashboards = Option.Boolean('--get-dashboards', false, {
     description: '(default false), show dashboardIds in output'
   });
 
-  getVisualizationIds = Option.Boolean('--get-visualization-ids', false, {
+  getVisualizations = Option.Boolean('--get-visualizations', false, {
     description: '(default false), show visualizationIds in output'
+  });
+
+  getUrls = Option.Boolean('--get-urls', false, {
+    description: '(default false), show urls in output'
   });
 
   json = Option.Boolean('--json', false, {
@@ -75,6 +82,18 @@ export class GetRepoCommand extends CustomCommand {
     let isRepoProd = this.repo === 'production' ? true : false;
 
     let loginToken = await getLoginToken(this.context);
+
+    let getProjectReqPayload: apiToBackend.ToBackendGetProjectRequestPayload = {
+      projectId: this.projectId
+    };
+
+    let getProjectResp = await mreq<apiToBackend.ToBackendGetProjectResponse>({
+      loginToken: loginToken,
+      pathInfoName:
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject,
+      payload: getProjectReqPayload,
+      host: this.context.config.mproveCliHost
+    });
 
     let getRepoReqPayload: apiToBackend.ToBackendGetRepoRequestPayload = {
       projectId: this.projectId,
@@ -159,18 +178,76 @@ export class GetRepoCommand extends CustomCommand {
       log.struct.errors = getRepoResp.payload.struct.errors;
     }
 
-    if (this.getModelIds === true) {
-      log.modelIds = getModelsResp.payload.models.map(x => x.modelId);
+    if (this.getVisualizations === true) {
+      log.visualizations = getVizsResp.payload.vizs.map(x => {
+        let visualization: any = {
+          vizId: x.vizId
+        };
+
+        if (this.getUrls) {
+          let url = getVisualizationUrl({
+            host: this.context.config.mproveCliHost,
+            orgId: getProjectResp.payload.project.orgId,
+            projectId: this.projectId,
+            repoId: getRepoResp.payload.repo.repoId,
+            branch: this.branch,
+            env: this.env,
+            vizId: x.vizId
+          });
+
+          visualization.url = url;
+        }
+
+        return visualization;
+      });
     }
 
-    if (this.getDashboardIds === true) {
-      log.dashboardIds = getDashboardsResp.payload.dashboards.map(
-        x => x.dashboardId
-      );
+    if (this.getDashboards === true) {
+      log.dashboards = getDashboardsResp.payload.dashboards.map(x => {
+        let dashboard: any = {
+          dashboardId: x.dashboardId
+        };
+
+        if (this.getUrls) {
+          let url = getDashboardUrl({
+            host: this.context.config.mproveCliHost,
+            orgId: getProjectResp.payload.project.orgId,
+            projectId: this.projectId,
+            repoId: getRepoResp.payload.repo.repoId,
+            branch: this.branch,
+            env: this.env,
+            dashboardId: x.dashboardId
+          });
+
+          dashboard.url = url;
+        }
+
+        return dashboard;
+      });
     }
 
-    if (this.getVisualizationIds === true) {
-      log.visualizationIds = getVizsResp.payload.vizs.map(x => x.vizId);
+    if (this.getModels === true) {
+      log.models = getModelsResp.payload.models.map(x => {
+        let model: any = {
+          modelId: x.modelId
+        };
+
+        if (this.getUrls) {
+          let url = getModelUrl({
+            host: this.context.config.mproveCliHost,
+            orgId: getProjectResp.payload.project.orgId,
+            projectId: this.projectId,
+            repoId: getRepoResp.payload.repo.repoId,
+            branch: this.branch,
+            env: this.env,
+            modelId: x.modelId
+          });
+
+          model.url = url;
+        }
+
+        return model;
+      });
     }
 
     logToConsoleMcli({
