@@ -47,10 +47,6 @@ export class CreateBranchCommand extends CustomCommand {
     description: '(required) From Branch name'
   });
 
-  // verbose = Option.Boolean('--verbose', false, {
-  //   description: '(default false)'
-  // });
-
   json = Option.Boolean('--json', false, {
     description: '(default false)'
   });
@@ -84,10 +80,6 @@ export class CreateBranchCommand extends CustomCommand {
     let log: any = {
       message: `Created branch "${this.newBranch}"`
     };
-
-    // if (this.verbose === true) {
-    //   log.struct.errors = createBranchResp.payload.struct.errors;
-    // }
 
     logToConsoleMcli({
       log: log,

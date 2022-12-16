@@ -37,11 +37,6 @@ export class GetBranchesCommand extends CustomCommand {
     description: `(required, "${enums.RepoEnum.Dev}" or "${enums.RepoEnum.Production}")`
   });
 
-  // verbose = Option.Boolean('--verbose', false, {
-  //   description:
-  //     '(default false), set flag to show modelIds, dashboardIds, visualizationIds'
-  // });
-
   json = Option.Boolean('--json', false, {
     description: '(default false)'
   });

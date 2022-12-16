@@ -50,8 +50,8 @@ export class SyncCommand extends CustomCommand {
       '(default false) if set, then the previous sync timestamp is ignored'
   });
 
-  verbose = Option.Boolean('--verbose', false, {
-    description: '(default false)'
+  getErrors = Option.Boolean('--get-errors', false, {
+    description: '(default false), show validation errors in output'
   });
 
   json = Option.Boolean('--json', false, {
@@ -185,7 +185,7 @@ export class SyncCommand extends CustomCommand {
       respTimeDiff: localRespReceiveTime - syncRepoResp.payload.devRespSentTime
     };
 
-    if (this.verbose === true) {
+    if (this.getErrors === true) {
       log.struct.errors = syncRepoResp.payload.struct.errors;
     }
 

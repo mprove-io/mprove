@@ -96,8 +96,12 @@ export class RunCommand extends CustomCommand {
     description: '(default 3) Sleep time between attempts to get results'
   });
 
-  verbose = Option.Boolean('--verbose', false, {
-    description: '(default false)'
+  getDashboards = Option.Boolean('--get-dashboards', false, {
+    description: '(default false), show dashboards in output'
+  });
+
+  getVisualizations = Option.Boolean('--get-visualizations', false, {
+    description: '(default false), show visualizations in output'
   });
 
   json = Option.Boolean('--json', false, {
@@ -395,9 +399,12 @@ export class RunCommand extends CustomCommand {
       log.errorDashboards = errorDashboards;
     }
 
-    if (this.verbose === true) {
-      log.visualizations = vizParts;
+    if (this.getDashboards === true) {
       log.dashboards = dashboardParts;
+    }
+
+    if (this.getVisualizations === true) {
+      log.visualizations = vizParts;
     }
 
     logToConsoleMcli({

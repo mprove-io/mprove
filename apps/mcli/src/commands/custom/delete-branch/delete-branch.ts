@@ -42,10 +42,6 @@ export class DeleteBranchCommand extends CustomCommand {
     description: '(required) Branch name'
   });
 
-  // verbose = Option.Boolean('--verbose', false, {
-  //   description: '(default false)'
-  // });
-
   json = Option.Boolean('--json', false, {
     description: '(default false)'
   });
@@ -78,10 +74,6 @@ export class DeleteBranchCommand extends CustomCommand {
     let log: any = {
       message: `Deleted branch "${this.branch}"`
     };
-
-    // if (this.verbose === true) {
-    //   log.struct.errors = deleteBranchResp.payload.struct.errors;
-    // }
 
     logToConsoleMcli({
       log: log,

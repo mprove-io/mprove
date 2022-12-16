@@ -43,9 +43,9 @@ export class CommitCommand extends CustomCommand {
     description: '(required) Commit message'
   });
 
-  // verbose = Option.Boolean('--verbose', false, {
-  //   description: '(default false)'
-  // });
+  getNodes = Option.Boolean('--get-nodes', false, {
+    description: '(default false), show repo nodes in output'
+  });
 
   json = Option.Boolean('--json', false, {
     description: '(default false)'
@@ -77,7 +77,9 @@ export class CommitCommand extends CustomCommand {
 
     let repo = commitRepoResp.payload.repo;
 
-    repo.nodes = undefined;
+    if (this.getNodes === false) {
+      repo.nodes = undefined;
+    }
 
     let log: any = {
       repo: repo

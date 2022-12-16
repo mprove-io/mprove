@@ -17,11 +17,11 @@ export class GetStatusCommand extends CustomCommand {
     examples: [
       [
         'Get Dev repo status',
-        'mprove get-status -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --verbose'
+        'mprove get-status -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --get-model-ids'
       ],
       [
         'Get Production repo status',
-        'mprove get-status -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --verbose'
+        'mprove get-status -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --get-dashboard-ids'
       ]
     ]
   });
@@ -47,9 +47,16 @@ export class GetStatusCommand extends CustomCommand {
     description: '(required) Environment'
   });
 
-  verbose = Option.Boolean('--verbose', false, {
-    description:
-      '(default false), set flag to show modelIds, dashboardIds, visualizationIds'
+  getModelIds = Option.Boolean('--get-model-ids', false, {
+    description: '(default false), show modelIds in output'
+  });
+
+  getDashboardIds = Option.Boolean('--get-dashboard-ids', false, {
+    description: '(default false), show dashboardIds in output'
+  });
+
+  getVisualizationIds = Option.Boolean('--get-visualization-ids', false, {
+    description: '(default false), show visualizationIds in output'
   });
 
   json = Option.Boolean('--json', false, {
@@ -146,11 +153,17 @@ export class GetStatusCommand extends CustomCommand {
       log.struct.errors = getRepoResp.payload.struct.errors;
     }
 
-    if (this.verbose === true) {
+    if (this.getModelIds === true) {
       log.modelIds = getModelsResp.payload.models.map(x => x.modelId);
+    }
+
+    if (this.getDashboardIds === true) {
       log.dashboardIds = getDashboardsResp.payload.dashboards.map(
         x => x.dashboardId
       );
+    }
+
+    if (this.getVisualizationIds === true) {
       log.visualizationIds = getVizsResp.payload.vizs.map(x => x.vizId);
     }
 

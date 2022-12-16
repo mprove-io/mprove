@@ -41,8 +41,8 @@ export class MergeCommand extends CustomCommand {
     description: '(required) Environment'
   });
 
-  verbose = Option.Boolean('--verbose', false, {
-    description: '(default false)'
+  getErrors = Option.Boolean('--get-errors', false, {
+    description: '(default false), show validation errors in output'
   });
 
   json = Option.Boolean('--json', false, {
@@ -77,7 +77,7 @@ export class MergeCommand extends CustomCommand {
       }
     };
 
-    if (this.verbose === true) {
+    if (this.getErrors === true) {
       log.struct.errors = mergeRepoResp.payload.struct.errors;
     }
 
