@@ -9,19 +9,19 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
-export class GetStatusCommand extends CustomCommand {
-  static paths = [['get-status']];
+export class GetRepoCommand extends CustomCommand {
+  static paths = [['get-repo']];
 
   static usage = Command.Usage({
     description: 'Get repo status for selected branch',
     examples: [
       [
         'Get Dev repo status',
-        'mprove get-status -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --get-model-ids'
+        'mprove get-repo -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --get-model-ids'
       ],
       [
         'Get Production repo status',
-        'mprove get-status -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --get-dashboard-ids'
+        'mprove get-repo -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --get-dashboard-ids'
       ]
     ]
   });
@@ -45,6 +45,10 @@ export class GetStatusCommand extends CustomCommand {
   env = Option.String('--env', {
     required: true,
     description: '(required) Environment'
+  });
+
+  getNodes = Option.Boolean('--get-nodes', false, {
+    description: '(default false), show repo nodes in output'
   });
 
   getModelIds = Option.Boolean('--get-model-ids', false, {
@@ -135,7 +139,9 @@ export class GetStatusCommand extends CustomCommand {
 
     let repo = getRepoResp.payload.repo;
 
-    repo.nodes = undefined;
+    if (this.getNodes === false) {
+      repo.nodes = undefined;
+    }
 
     let log: any = {
       needValidate: getRepoResp.payload.needValidate,

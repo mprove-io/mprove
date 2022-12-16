@@ -5,16 +5,16 @@ import { getConfig } from '~mcli/config/get.config';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
-import { GetStatusCommand } from '../get-status';
+import { GetRepoCommand } from '../get-repo';
 
-let testId = 'mcli__get-status__ok';
+let testId = 'mcli__get-repo__ok';
 
 test('1', async t => {
   let context: CustomContext;
   let code: number;
 
   let projectId = common.makeId();
-  let commandLine = `get-status -p ${projectId} --repo dev --branch main --env prod --get-model-ids`;
+  let commandLine = `get-repo -p ${projectId} --repo dev --branch main --env prod --get-model-ids`;
 
   let userId = common.makeId();
   let email = `${testId}@example.com`;
@@ -29,7 +29,7 @@ test('1', async t => {
 
   try {
     let { cli, mockContext } = await prepareTest({
-      command: GetStatusCommand,
+      command: GetRepoCommand,
       config: config,
       deletePack: {
         emails: [email],

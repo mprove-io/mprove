@@ -9,7 +9,7 @@ import { CommitCommand } from './commands/custom/commit/commit';
 import { CreateBranchCommand } from './commands/custom/create-branch/create-branch';
 import { DeleteBranchCommand } from './commands/custom/delete-branch/delete-branch';
 import { GetBranchesCommand } from './commands/custom/get-branches/get-branches';
-import { GetStatusCommand } from './commands/custom/get-status/get-status';
+import { GetRepoCommand } from './commands/custom/get-repo/get-repo';
 import { MergeCommand } from './commands/custom/merge/merge';
 import { PullCommand } from './commands/custom/pull/pull';
 import { PushCommand } from './commands/custom/push/push';
@@ -38,7 +38,7 @@ let appCommands = [
   CreateBranchCommand,
   DeleteBranchCommand,
   GetBranchesCommand,
-  GetStatusCommand,
+  GetRepoCommand,
   MergeCommand,
   PullCommand,
   PushCommand,
