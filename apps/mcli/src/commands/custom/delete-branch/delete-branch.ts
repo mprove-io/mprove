@@ -13,14 +13,14 @@ export class DeleteBranchCommand extends CustomCommand {
   static paths = [['delete-branch']];
 
   static usage = Command.Usage({
-    description: 'Delete git branch',
+    description: 'Delete branch',
     examples: [
       [
-        'Delete git branch for Dev repo',
+        'Delete branch for Dev repo',
         'mprove delete-branch -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch b1'
       ],
       [
-        'Delete git branch for Production repo',
+        'Delete branch for Production repo',
         'mprove delete-branch -p DXYE72ODCP5LWPWH2EXQ --repo production --branch b1'
       ]
     ]

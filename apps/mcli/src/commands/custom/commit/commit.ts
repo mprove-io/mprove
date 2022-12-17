@@ -13,7 +13,7 @@ export class CommitCommand extends CustomCommand {
   static paths = [['commit']];
 
   static usage = Command.Usage({
-    description: 'Commit changes for repo',
+    description: 'Commit changes',
     examples: [
       [
         'Commit changes for Dev repo',

@@ -16,14 +16,15 @@ export class GetStateCommand extends CustomCommand {
   static paths = [['get-state']];
 
   static usage = Command.Usage({
-    description: 'Get models, dashboards, visualizations, errors, nodes',
+    description:
+      'Get state (models, dashboards, visualizations, errors, repo nodes)',
     examples: [
       [
-        'Get Dev repo with nodes',
+        'Get Dev repo state',
         'mprove get-state -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --get-nodes'
       ],
       [
-        'Get Production repo models, dashboards and visualizations',
+        'Get Production repo state',
         'mprove get-state -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --get-models --get-dashboards --get-vizs'
       ]
     ]

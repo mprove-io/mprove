@@ -14,7 +14,7 @@ export class PullCommand extends CustomCommand {
 
   static usage = Command.Usage({
     description:
-      'Pull committed changes from Remote to selected repo, validate BlockML for selected env',
+      'Pull committed changes from Remote to repo, validate BlockML for selected env',
     examples: [
       [
         'Pull committed changes from Remote to Dev repo, validate BlockML for env prod',

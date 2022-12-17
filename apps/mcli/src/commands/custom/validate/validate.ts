@@ -13,7 +13,7 @@ export class ValidateCommand extends CustomCommand {
   static paths = [['validate']];
 
   static usage = Command.Usage({
-    description: 'Validate (rebuild struct) BlockML for selected env',
+    description: 'Validate (rebuild Struct) BlockML for selected env',
     examples: [
       [
         'Validate BlockML for Dev repo, env prod',

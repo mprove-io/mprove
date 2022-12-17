@@ -13,7 +13,7 @@ export class GetBranchesCommand extends CustomCommand {
   static paths = [['get-branches']];
 
   static usage = Command.Usage({
-    description: 'Get git branches for repo',
+    description: 'Get branches',
     examples: [
       [
         'Get Dev repo branches',

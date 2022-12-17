@@ -19,7 +19,7 @@ export class RevertCommand extends CustomCommand {
 
   static usage = Command.Usage({
     description:
-      'Revert repo to the state of a last commit or Remote repo, validate BlockML for selected env',
+      'Revert (reset) repo to the state of a last commit or Remote repo, validate BlockML for selected env',
     examples: [
       [
         'Revert Dev repo to the state of Remote repo, validate BlockML for env prod',

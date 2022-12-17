@@ -13,14 +13,14 @@ export class CreateBranchCommand extends CustomCommand {
   static paths = [['create-branch']];
 
   static usage = Command.Usage({
-    description: 'Create git branch',
+    description: 'Create branch',
     examples: [
       [
-        'Create git branch for Dev repo',
+        'Create branch for Dev repo',
         'mprove create-branch -p DXYE72ODCP5LWPWH2EXQ --repo dev --new-branch b1 --from-branch main'
       ],
       [
-        'Create git branch for Production repo',
+        'Create branch for Production repo',
         'mprove create-branch -p DXYE72ODCP5LWPWH2EXQ --repo production --new-branch b1 --from-branch main'
       ]
     ]
