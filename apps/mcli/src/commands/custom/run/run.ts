@@ -78,12 +78,13 @@ export class RunCommand extends CustomCommand {
     description: '(optional) Max number of concurrent queries'
   });
 
-  noDashboards = Option.Boolean('--no-dashboards', false, {
-    description: '(default false) Do not run dashboards'
+  waitResults = Option.Boolean('--wait-results', false, {
+    description: '(default false) Wait for completion'
   });
 
-  noVizs = Option.Boolean('--no-vizs', false, {
-    description: '(default false) Do not run visualizations'
+  sleepSeconds = Option.String('--sleep-seconds', {
+    validator: t.isNumber(),
+    description: '(default 3) Sleep time between queries status check'
   });
 
   dashboardIds = Option.String('--dashboard-ids', {
@@ -96,21 +97,20 @@ export class RunCommand extends CustomCommand {
       '(optional) Filter visualizations to run by visualization names, separated by comma'
   });
 
+  noDashboards = Option.Boolean('--no-dashboards', false, {
+    description: '(default false) Do not run dashboards'
+  });
+
+  noVizs = Option.Boolean('--no-vizs', false, {
+    description: '(default false) Do not run visualizations'
+  });
+
   getDashboards = Option.Boolean('--get-dashboards', false, {
     description: '(default false), show dashboards in output'
   });
 
   getVizs = Option.Boolean('--get-vizs', false, {
     description: '(default false), show visualizations in output'
-  });
-
-  wait = Option.Boolean('--wait', false, {
-    description: '(default false) Wait for completion'
-  });
-
-  sleepSeconds = Option.String('--sleep-seconds', {
-    validator: t.isNumber(),
-    description: '(default 3) Sleep time between attempts to get results'
   });
 
   json = Option.Boolean('--json', false, {
@@ -158,7 +158,7 @@ export class RunCommand extends CustomCommand {
       throw serverError;
     }
 
-    if (common.isDefined(this.sleepSeconds) && this.wait === false) {
+    if (common.isDefined(this.sleepSeconds) && this.waitResults === false) {
       let serverError = new common.ServerError({
         message: common.ErEnum.MCLI_SLEEP_SECONDS_DOES_NOT_WORK_WITHOUT_WAIT,
         originalError: null
@@ -349,6 +349,28 @@ export class RunCommand extends CustomCommand {
 
     let uniqueQueryIds = [...new Set(queryIdsWithDuplicates)];
 
+    //
+    let getQueriesReqPayloadStart: apiToBackend.ToBackendGetQueriesRequestPayload =
+      {
+        projectId: this.projectId,
+        isRepoProd: isRepoProd,
+        branchId: this.branch,
+        envId: this.env,
+        queryIds: uniqueQueryIds
+      };
+
+    let getQueriesRespStart =
+      await mreq<apiToBackend.ToBackendGetQueriesResponse>({
+        loginToken: loginToken,
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQueries,
+        payload: getQueriesReqPayloadStart,
+        host: this.context.config.mproveCliHost
+      });
+
+    let queriesStart = getQueriesRespStart.payload.queries;
+    //
+
     let runQueriesReqPayload: apiToBackend.ToBackendRunQueriesRequestPayload = {
       projectId: this.projectId,
       queryIds: uniqueQueryIds,
@@ -363,7 +385,7 @@ export class RunCommand extends CustomCommand {
       host: this.context.config.mproveCliHost
     });
 
-    if (this.noVizs === false) {
+    if (this.noVizs === false && common.isUndefined(this.poolSize)) {
       vizParts.forEach(v => {
         let query = runQueriesResp.payload.runningQueries.find(
           q => q.queryId === v.query.queryId
@@ -372,7 +394,7 @@ export class RunCommand extends CustomCommand {
       });
     }
 
-    if (this.noDashboards === false) {
+    if (this.noDashboards === false && common.isUndefined(this.poolSize)) {
       dashboardParts.forEach(dashboardPart => {
         dashboardPart.reports.forEach(reportPart => {
           let query = runQueriesResp.payload.runningQueries.find(
@@ -385,7 +407,9 @@ export class RunCommand extends CustomCommand {
 
     let queryIdsToGet: string[] = [...uniqueQueryIds];
 
-    if (this.wait === true) {
+    let waitQueries: common.Query[] = [];
+
+    if (this.waitResults === true) {
       this.sleepSeconds = this.sleepSeconds || 3;
 
       await common.sleep(this.sleepSeconds * 1000);
@@ -397,7 +421,7 @@ export class RunCommand extends CustomCommand {
             isRepoProd: isRepoProd,
             branchId: this.branch,
             envId: this.env,
-            queryIds: uniqueQueryIds
+            queryIds: queryIdsToGet
           };
 
         let getQueriesResp =
@@ -410,7 +434,14 @@ export class RunCommand extends CustomCommand {
           });
 
         getQueriesResp.payload.queries.forEach(query => {
-          if (query.status !== common.QueryStatusEnum.Running) {
+          let queryStart = queriesStart.find(y => y.queryId === query.queryId);
+
+          if (
+            query.status !== common.QueryStatusEnum.Running &&
+            query.serverTs > queryStart.serverTs
+          ) {
+            waitQueries.push(query);
+
             if (this.noVizs === false) {
               vizParts
                 .filter(vizPart => vizPart.query.queryId === query.queryId)
@@ -437,20 +468,16 @@ export class RunCommand extends CustomCommand {
       }
     }
 
-    let reportParts = [].concat(...dashboardParts.map(dp => dp.reports));
-
-    let queries = uniqueQueryIds.map(x => {
-      let vizPart = vizParts.find(vp => vp.query.queryId === x);
-
-      if (common.isDefined(vizPart)) {
-        return vizPart.query;
-      } else {
-        let reportPart = reportParts.find(rp => rp.query.queryId === x);
-        return reportPart.query;
-      }
+    let queriesStats = queriesToStats({
+      queries:
+        this.waitResults === true
+          ? waitQueries
+          : runQueriesResp.payload.runningQueries,
+      started:
+        this.waitResults === true
+          ? 0
+          : runQueriesResp.payload.startedQueryIds.length
     });
-
-    let queriesStats = queriesToStats(queries);
 
     let errorVisualizations: VizPart[] =
       queriesStats.error === 0
@@ -494,17 +521,7 @@ export class RunCommand extends CustomCommand {
                 }))
             }));
 
-    let log: any = {
-      queriesStats: queriesStats
-    };
-
-    if (errorVisualizations.length > 0) {
-      log.errorVisualizations = errorVisualizations;
-    }
-
-    if (errorDashboards.length > 0) {
-      log.errorDashboards = errorDashboards;
-    }
+    let log: any = {};
 
     if (this.getDashboards === true) {
       log.dashboards = dashboardParts;
@@ -513,6 +530,10 @@ export class RunCommand extends CustomCommand {
     if (this.getVizs === true) {
       log.visualizations = vizParts;
     }
+
+    log.errorVisualizations = errorVisualizations;
+    log.errorDashboards = errorDashboards;
+    log.queriesStats = queriesStats;
 
     logToConsoleMcli({
       log: log,

@@ -40,12 +40,12 @@ export class RunQueriesController {
     let { projectId, queryIds, poolSize } = reqValid.payload;
 
     let runningQueries: entities.QueryEntity[] = [];
-    let poolQueryIds: string[] = [];
+    let startedQueryIds: string[] = [];
 
     let pSize = 1;
 
     if (common.isDefined(poolSize)) {
-      poolQueryIds = queryIds;
+      startedQueryIds = queryIds;
       pSize = Number(poolSize);
 
       asyncPool(pSize, queryIds, async queryId => {
@@ -198,7 +198,7 @@ export class RunQueriesController {
         delete x.sql;
         return wrapper.wrapToApiQuery(x);
       }),
-      poolQueryIds: poolQueryIds
+      startedQueryIds: startedQueryIds
     };
 
     return payload;

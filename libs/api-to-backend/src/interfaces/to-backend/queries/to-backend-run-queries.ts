@@ -36,7 +36,7 @@ export class ToBackendRunQueriesResponsePayload {
   runningQueries: common.Query[];
 
   @IsString({ each: true })
-  poolQueryIds: string[];
+  startedQueryIds: string[];
 }
 
 export class ToBackendRunQueriesResponse extends common.MyResponse {
