@@ -21,4 +21,7 @@ export class Config {
 
   @IsString()
   mproveCliTestPublicKeyPath?: string;
+
+  @IsString()
+  mproveCliTestDwhPostgresPassword?: string;
 }

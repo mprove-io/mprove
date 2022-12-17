@@ -73,18 +73,18 @@ export class RunCommand extends CustomCommand {
     description: '(required) Environment'
   });
 
-  poolSize = Option.String('--pool-size', {
+  concurrency = Option.String('--concurrency', {
     validator: t.isNumber(),
     description: '(optional) Max number of concurrent queries'
   });
 
-  waitResults = Option.Boolean('--wait-results', false, {
-    description: '(default false) Wait for completion'
+  wait = Option.Boolean('--wait', false, {
+    description: '(default false) Wait for queries completion'
   });
 
-  sleepSeconds = Option.String('--sleep-seconds', {
+  sleep = Option.String('--sleep', {
     validator: t.isNumber(),
-    description: '(default 3) Sleep time between queries status check'
+    description: '(default 3) Sleep time between queries status check, seconds'
   });
 
   dashboardIds = Option.String('--dashboard-ids', {
@@ -158,7 +158,7 @@ export class RunCommand extends CustomCommand {
       throw serverError;
     }
 
-    if (common.isDefined(this.sleepSeconds) && this.waitResults === false) {
+    if (common.isDefined(this.sleep) && this.wait === false) {
       let serverError = new common.ServerError({
         message: common.ErEnum.MCLI_SLEEP_SECONDS_DOES_NOT_WORK_WITHOUT_WAIT,
         originalError: null
@@ -374,7 +374,7 @@ export class RunCommand extends CustomCommand {
     let runQueriesReqPayload: apiToBackend.ToBackendRunQueriesRequestPayload = {
       projectId: this.projectId,
       queryIds: uniqueQueryIds,
-      poolSize: this.poolSize
+      poolSize: this.concurrency
     };
 
     let runQueriesResp = await mreq<apiToBackend.ToBackendRunQueriesResponse>({
@@ -385,7 +385,7 @@ export class RunCommand extends CustomCommand {
       host: this.context.config.mproveCliHost
     });
 
-    if (this.noVizs === false && common.isUndefined(this.poolSize)) {
+    if (this.noVizs === false && common.isUndefined(this.concurrency)) {
       vizParts.forEach(v => {
         let query = runQueriesResp.payload.runningQueries.find(
           q => q.queryId === v.query.queryId
@@ -394,7 +394,7 @@ export class RunCommand extends CustomCommand {
       });
     }
 
-    if (this.noDashboards === false && common.isUndefined(this.poolSize)) {
+    if (this.noDashboards === false && common.isUndefined(this.concurrency)) {
       dashboardParts.forEach(dashboardPart => {
         dashboardPart.reports.forEach(reportPart => {
           let query = runQueriesResp.payload.runningQueries.find(
@@ -409,10 +409,10 @@ export class RunCommand extends CustomCommand {
 
     let waitQueries: common.Query[] = [];
 
-    if (this.waitResults === true) {
-      this.sleepSeconds = this.sleepSeconds || 3;
+    if (this.wait === true) {
+      this.sleep = this.sleep || 3;
 
-      await common.sleep(this.sleepSeconds * 1000);
+      await common.sleep(this.sleep * 1000);
 
       while (queryIdsToGet.length > 0) {
         let getQueriesReqPayload: apiToBackend.ToBackendGetQueriesRequestPayload =
@@ -463,20 +463,18 @@ export class RunCommand extends CustomCommand {
         });
 
         if (queryIdsToGet.length > 0) {
-          await common.sleep(this.sleepSeconds * 1000);
+          await common.sleep(this.sleep * 1000);
         }
       }
     }
 
     let queriesStats = queriesToStats({
       queries:
-        this.waitResults === true
+        this.wait === true
           ? waitQueries
           : runQueriesResp.payload.runningQueries,
       started:
-        this.waitResults === true
-          ? 0
-          : runQueriesResp.payload.startedQueryIds.length
+        this.wait === true ? 0 : runQueriesResp.payload.startedQueryIds.length
     });
 
     let errorVisualizations: VizPart[] =

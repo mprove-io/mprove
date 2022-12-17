@@ -1,4 +1,5 @@
 import { common } from '~mcli/barrels/common';
+import { interfaces } from '~mcli/barrels/interfaces';
 
 export function queriesToStats(item: {
   queries: common.Query[];
@@ -6,7 +7,7 @@ export function queriesToStats(item: {
 }) {
   let { queries, started } = item;
 
-  return {
+  let queriesStats: interfaces.QueriesStats = {
     started: started,
     running: queries.filter(q => q.status === common.QueryStatusEnum.Running)
       .length,
@@ -18,4 +19,6 @@ export function queriesToStats(item: {
     canceled: queries.filter(q => q.status === common.QueryStatusEnum.Canceled)
       .length
   };
+
+  return queriesStats;
 }

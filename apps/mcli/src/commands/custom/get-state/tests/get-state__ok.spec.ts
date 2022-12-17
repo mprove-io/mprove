@@ -1,13 +1,12 @@
 import test from 'ava';
 import { common } from '~mcli/barrels/common';
-import { interfaces } from '~mcli/barrels/interfaces';
 import { getConfig } from '~mcli/config/get.config';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
-import { RunCommand } from '../run';
+import { GetStateCommand } from '../get-state';
 
-let testId = 'mcli__run__ok';
+let testId = 'mcli__get-state__ok';
 
 test('1', async t => {
   let context: CustomContext;
@@ -16,13 +15,7 @@ test('1', async t => {
   let defaultBranch = common.BRANCH_MASTER;
 
   let projectId = common.makeId();
-  let commandLine = `run -p ${projectId} \
---json \
---repo production \
---branch ${defaultBranch} \
---env prod \
---dashboard-ids ec1_d1 \
---viz-ids 4K9SNSMG0IQPQZ9CL23U,4V3KWMRA9MSH21EQZCJQ`;
+  let commandLine = `get-state -p ${projectId} --repo dev --branch ${defaultBranch} --env prod --get-nodes --get-dashboards --get-vizs --get-models`;
 
   let userId = common.makeId();
   let email = `${testId}@example.com`;
@@ -37,7 +30,7 @@ test('1', async t => {
 
   try {
     let { cli, mockContext } = await prepareTest({
-      command: RunCommand,
+      command: GetStateCommand,
       config: config,
       deletePack: {
         emails: [email],
@@ -83,19 +76,6 @@ test('1', async t => {
             isEditor: common.BoolEnum.TRUE,
             isExplorer: common.BoolEnum.TRUE
           }
-        ],
-        connections: [
-          {
-            projectId: projectId,
-            connectionId: 'c1_postgres',
-            envId: common.PROJECT_ENV_PROD,
-            type: common.ConnectionTypeEnum.PostgreSQL,
-            host: 'dwh-postgres',
-            port: 5432,
-            database: 'p_db',
-            username: 'postgres',
-            password: config.mproveCliTestDwhPostgresPassword
-          }
         ]
       },
       loginEmail: email,
@@ -113,29 +93,7 @@ test('1', async t => {
     });
   }
 
-  let parsedOutput: any;
-
-  try {
-    parsedOutput = JSON.parse(context.stdout.toString());
-  } catch (e) {
-    logToConsoleMcli({
-      log: e,
-      logLevel: common.LogLevelEnum.Error,
-      context: context,
-      isJson: true
-    });
-  }
-
-  let queriesStats: interfaces.QueriesStats = parsedOutput?.queriesStats;
-
-  let isPass =
-    code === 0 &&
-    common.isDefined(queriesStats) &&
-    queriesStats.started === 0 &&
-    queriesStats.running === 15 &&
-    queriesStats.completed === 0 &&
-    queriesStats.error === 0 &&
-    queriesStats.canceled === 0;
+  let isPass = code === 0 && context.stdout.toString().includes('errorsTotal');
 
   if (isPass === false) {
     console.log(context.stdout.toString());
@@ -143,10 +101,5 @@ test('1', async t => {
   }
 
   t.is(code, 0);
-  t.is(common.isDefined(queriesStats), true);
-  t.is(queriesStats.started === 0, true);
-  t.is(queriesStats.running === 15, true);
-  t.is(queriesStats.completed === 0, true);
-  t.is(queriesStats.error === 0, true);
-  t.is(queriesStats.canceled === 0, true);
+  t.is(context.stdout.toString().includes('errorsTotal'), true);
 });

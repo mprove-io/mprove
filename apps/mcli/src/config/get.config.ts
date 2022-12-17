@@ -33,7 +33,11 @@ export function getConfig() {
 
     mproveCliTestPublicKeyPath:
       process.env.MPROVE_CLI_TEST_PUBLIC_KEY_PATH ||
-      envFile.MPROVE_CLI_TEST_PUBLIC_KEY_PATH
+      envFile.MPROVE_CLI_TEST_PUBLIC_KEY_PATH,
+
+    mproveCliTestDwhPostgresPassword:
+      process.env.MPROVE_CLI_TEST_DWH_POSTGRES_PASSWORD ||
+      envFile.MPROVE_CLI_TEST_DWH_POSTGRES_PASSWORD
   };
 
   let validatedConfig = transformValidSyncMcli({

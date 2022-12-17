@@ -7,7 +7,7 @@ import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
 import { RunCommand } from '../run';
 
-let testId = 'mcli__run__ok';
+let testId = 'mcli__run__ok-concurrency';
 
 test('1', async t => {
   let context: CustomContext;
@@ -17,6 +17,9 @@ test('1', async t => {
 
   let projectId = common.makeId();
   let commandLine = `run -p ${projectId} \
+--concurrency 2 \
+--get-dashboards \
+--get-vizs \
 --json \
 --repo production \
 --branch ${defaultBranch} \
@@ -131,8 +134,8 @@ test('1', async t => {
   let isPass =
     code === 0 &&
     common.isDefined(queriesStats) &&
-    queriesStats.started === 0 &&
-    queriesStats.running === 15 &&
+    queriesStats.started === 15 &&
+    queriesStats.running === 0 &&
     queriesStats.completed === 0 &&
     queriesStats.error === 0 &&
     queriesStats.canceled === 0;
@@ -144,8 +147,8 @@ test('1', async t => {
 
   t.is(code, 0);
   t.is(common.isDefined(queriesStats), true);
-  t.is(queriesStats.started === 0, true);
-  t.is(queriesStats.running === 15, true);
+  t.is(queriesStats.started === 15, true);
+  t.is(queriesStats.running === 0, true);
   t.is(queriesStats.completed === 0, true);
   t.is(queriesStats.error === 0, true);
   t.is(queriesStats.canceled === 0, true);

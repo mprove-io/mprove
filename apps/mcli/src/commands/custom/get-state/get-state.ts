@@ -12,19 +12,19 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
-export class GetRepoCommand extends CustomCommand {
-  static paths = [['get-repo']];
+export class GetStateCommand extends CustomCommand {
+  static paths = [['get-state']];
 
   static usage = Command.Usage({
-    description: 'Get repo status for selected branch',
+    description: 'Get models, dashboards, visualizations, errors, nodes',
     examples: [
       [
         'Get Dev repo with nodes',
-        'mprove get-repo -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --get-nodes'
+        'mprove get-state -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --get-nodes'
       ],
       [
         'Get Production repo models, dashboards and visualizations',
-        'mprove get-repo -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --get-models --get-dashboards --get-vizs'
+        'mprove get-state -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --get-models --get-dashboards --get-vizs'
       ]
     ]
   });
