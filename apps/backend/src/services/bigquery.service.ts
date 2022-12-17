@@ -53,13 +53,6 @@ export class BigQueryService {
       query.bigquery_query_job_id = queryJob.id;
     }
 
-    await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        queries: [query]
-      }
-    });
-
     return query;
   }
 

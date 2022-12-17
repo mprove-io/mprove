@@ -73,6 +73,11 @@ export class RunCommand extends CustomCommand {
     description: '(required) Environment'
   });
 
+  poolSize = Option.String('--pool-size', {
+    validator: t.isNumber(),
+    description: '(optional) Max number of concurrent queries'
+  });
+
   noDashboards = Option.Boolean('--no-dashboards', false, {
     description: '(default false) Do not run dashboards'
   });
@@ -103,7 +108,7 @@ export class RunCommand extends CustomCommand {
     description: '(default false) Wait for completion'
   });
 
-  sleepSeconds = Option.String('--sleep-seconds', '3', {
+  sleepSeconds = Option.String('--sleep-seconds', {
     validator: t.isNumber(),
     description: '(default 3) Sleep time between attempts to get results'
   });
@@ -346,7 +351,8 @@ export class RunCommand extends CustomCommand {
 
     let runQueriesReqPayload: apiToBackend.ToBackendRunQueriesRequestPayload = {
       projectId: this.projectId,
-      queryIds: uniqueQueryIds
+      queryIds: uniqueQueryIds,
+      poolSize: this.poolSize
     };
 
     let runQueriesResp = await mreq<apiToBackend.ToBackendRunQueriesResponse>({
@@ -380,6 +386,8 @@ export class RunCommand extends CustomCommand {
     let queryIdsToGet: string[] = [...uniqueQueryIds];
 
     if (this.wait === true) {
+      this.sleepSeconds = this.sleepSeconds || 3;
+
       await common.sleep(this.sleepSeconds * 1000);
 
       while (queryIdsToGet.length > 0) {

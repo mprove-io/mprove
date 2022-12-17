@@ -15,11 +15,12 @@ export class PgService {
   ) {}
 
   async runQuery(item: {
-    userId: string;
-    query: entities.QueryEntity;
     connection: entities.ConnectionEntity;
+    queryJobId: string;
+    queryId: string;
+    querySql: string;
   }) {
-    let { query, userId, connection } = item;
+    let { connection, queryJobId, queryId, querySql } = item;
 
     let cn: pg.IConnectionParameters<pg.IClient> = {
       host: connection.host,
@@ -35,29 +36,15 @@ export class PgService {
           : false
     };
 
-    let queryJobId = common.makeId();
-
-    query.status = common.QueryStatusEnum.Running;
-    query.query_job_id = queryJobId;
-    query.last_run_by = userId;
-    query.last_run_ts = helper.makeTs();
-
-    await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        queries: [query]
-      }
-    });
-
     let pgp = pgPromise({ noWarnings: true });
     let pgDb = pgp(cn);
 
-    pgDb
-      .any(query.sql)
+    await pgDb
+      .any(querySql)
       .then(async (data: any) => {
         let q = await this.queriesRepository.findOne({
           where: {
-            query_id: query.query_id,
+            query_id: queryId,
             query_job_id: queryJobId
           }
         });
@@ -82,7 +69,7 @@ export class PgService {
       .catch(async e => {
         let q = await this.queriesRepository.findOne({
           where: {
-            query_id: query.query_id,
+            query_id: queryId,
             query_job_id: queryJobId
           }
         });
@@ -102,7 +89,5 @@ export class PgService {
           });
         }
       });
-
-    return query;
   }
 }

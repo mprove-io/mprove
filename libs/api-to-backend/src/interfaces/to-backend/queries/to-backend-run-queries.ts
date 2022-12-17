@@ -1,5 +1,12 @@
 import { Type } from 'class-transformer';
-import { ArrayNotEmpty, IsString, ValidateNested } from 'class-validator';
+import {
+  ArrayNotEmpty,
+  IsInt,
+  IsOptional,
+  IsPositive,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
@@ -10,6 +17,11 @@ export class ToBackendRunQueriesRequestPayload {
   @ArrayNotEmpty()
   @IsString({ each: true })
   queryIds: string[];
+
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  poolSize?: number;
 }
 
 export class ToBackendRunQueriesRequest extends ToBackendRequest {
@@ -22,6 +34,9 @@ export class ToBackendRunQueriesResponsePayload {
   @ValidateNested()
   @Type(() => common.Query)
   runningQueries: common.Query[];
+
+  @IsString({ each: true })
+  poolQueryIds: string[];
 }
 
 export class ToBackendRunQueriesResponse extends common.MyResponse {

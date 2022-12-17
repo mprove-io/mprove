@@ -18,25 +18,12 @@ export class ClickHouseService {
   ) {}
 
   async runQuery(item: {
-    userId: string;
-    query: entities.QueryEntity;
     connection: entities.ConnectionEntity;
+    queryJobId: string;
+    queryId: string;
+    querySql: string;
   }) {
-    let { query, userId, connection } = item;
-
-    let queryJobId = common.makeId();
-
-    query.status = common.QueryStatusEnum.Running;
-    query.query_job_id = queryJobId;
-    query.last_run_by = userId;
-    query.last_run_ts = helper.makeTs();
-
-    await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        queries: [query]
-      }
-    });
+    let { connection, queryJobId, queryId, querySql } = item;
 
     let options: ClickHouseClientOptions = {
       protocol:
@@ -51,80 +38,86 @@ export class ClickHouseService {
 
     let clickhouse = new ClickHouseClient(options);
 
-    this.runQ({
+    await this.runQ({
       clickhouse: clickhouse,
-      query: query,
-      queryJobId: queryJobId
+      queryJobId: queryJobId,
+      queryId: queryId,
+      querySql: querySql
     });
-
-    return query;
   }
 
   private async runQ(item: {
     clickhouse: ClickHouseClient;
-    query: entities.QueryEntity;
     queryJobId: string;
+    queryId: string;
+    querySql: string;
   }) {
-    let { clickhouse, query, queryJobId } = item;
+    let { clickhouse, queryJobId, queryId, querySql } = item;
 
-    let data: any = [];
+    return new Promise<void>((resolve, reject) => {
+      let data: any = [];
 
-    clickhouse.query(query.sql).subscribe({
-      next: (row: any) => {
-        // called for each row
+      clickhouse.query(querySql).subscribe({
+        next: (row: any) => {
+          // called for each row
 
-        data.push(row);
-      },
-      complete: async () => {
-        let q = await this.queriesRepository.findOne({
-          where: {
-            query_id: query.query_id,
-            query_job_id: queryJobId
-          }
-        });
-
-        if (common.isDefined(q)) {
-          q.status = common.QueryStatusEnum.Completed;
-          q.query_job_id = null;
-          q.data = data;
-          q.last_complete_ts = helper.makeTs();
-          q.last_complete_duration = Math.floor(
-            (Number(q.last_complete_ts) - Number(q.last_run_ts)) / 1000
-          ).toString();
-
-          await this.dbService.writeRecords({
-            modify: true,
-            records: {
-              queries: [q]
+          data.push(row);
+        },
+        complete: async () => {
+          let q = await this.queriesRepository.findOne({
+            where: {
+              query_id: queryId,
+              query_job_id: queryJobId
             }
           });
-        }
-      },
-      error: async (e: any) => {
-        let q = await this.queriesRepository.findOne({
-          where: {
-            query_id: query.query_id,
-            query_job_id: queryJobId
+
+          if (common.isDefined(q)) {
+            q.status = common.QueryStatusEnum.Completed;
+            q.query_job_id = null;
+            q.data = data;
+            q.last_complete_ts = helper.makeTs();
+            q.last_complete_duration = Math.floor(
+              (Number(q.last_complete_ts) - Number(q.last_run_ts)) / 1000
+            ).toString();
+
+            await this.dbService.writeRecords({
+              modify: true,
+              records: {
+                queries: [q]
+              }
+            });
+
+            resolve();
           }
-        });
-
-        if (common.isDefined(q)) {
-          q.status = common.QueryStatusEnum.Error;
-          q.data = [];
-          q.query_job_id = null;
-          q.last_error_message = e.message
-            ? e.message
-            : JSON.stringify(e, Object.getOwnPropertyNames(e));
-          q.last_error_ts = helper.makeTs();
-
-          await this.dbService.writeRecords({
-            modify: true,
-            records: {
-              queries: [q]
+        },
+        error: async (e: any) => {
+          let q = await this.queriesRepository.findOne({
+            where: {
+              query_id: queryId,
+              query_job_id: queryJobId
             }
           });
+
+          if (common.isDefined(q)) {
+            q.status = common.QueryStatusEnum.Error;
+            q.data = [];
+            q.query_job_id = null;
+            q.last_error_message = e.message
+              ? e.message
+              : JSON.stringify(e, Object.getOwnPropertyNames(e));
+            q.last_error_ts = helper.makeTs();
+
+            await this.dbService.writeRecords({
+              modify: true,
+              records: {
+                queries: [q]
+              }
+            });
+
+            resolve();
+          }
         }
-      }
+      });
     });
   }
 }
