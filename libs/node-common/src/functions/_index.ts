@@ -1,3 +1,4 @@
+export * from './get-changes-to-commit';
 export * from './get-constraints-recursive';
 export * from './get-logger-options';
 export * from './get-mprove-dir';
