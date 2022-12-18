@@ -71,7 +71,8 @@ function updateTarget(tPath: string, s: any, t: any) {
     //
     'module-alias',
     '@nestjs/common',
-    'rxjs'
+    'rxjs',
+    'deep-equal'
   ];
 
   Object.keys(s.dependencies)
