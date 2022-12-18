@@ -175,7 +175,7 @@ test('1', async t => {
     parsedOutput.repo.changesToCommit.length === 1 &&
     parsedOutput.repo.changesToCommit[0].fileName === fileName &&
     parsedOutput.repo.changesToCommit[0].status ===
-      common.FileStatusEnum.Modified &&
+      common.FileStatusEnum.Deleted &&
     deepEqual(localChangesToCommit, parsedOutput.repo.changesToCommit);
 
   if (isPass === false) {
@@ -188,7 +188,7 @@ test('1', async t => {
   t.is(parsedOutput.repo.changesToCommit[0].fileName === fileName, true);
   t.is(
     parsedOutput.repo.changesToCommit[0].status ===
-      common.FileStatusEnum.Modified,
+      common.FileStatusEnum.Deleted,
     true
   );
   t.deepEqual(localChangesToCommit, parsedOutput.repo.changesToCommit);
