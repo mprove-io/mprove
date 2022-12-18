@@ -1,8 +1,8 @@
 import * as nodegit from 'nodegit';
-import { nodeCommon } from '~backend/barrels/node-common';
 import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { interfaces } from '~disk/barrels/interfaces';
+import { nodeCommon } from '~disk/barrels/node-common';
 import { isRemoteBranchExist } from './is-remote-branch-exist';
 
 export async function getRepoStatus(item: {
