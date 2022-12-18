@@ -19,11 +19,11 @@ export class VersionCommand extends Command {
 
     let log =
       this.json === false
-        ? `Mprove CLI version: ${
+        ? `version Mprove CLI: ${
             common.isDefined(version) ? version : 'unknown'
           }`
         : {
-            mproveCliVersion: common.isDefined(version) ? version : 'unknown'
+            versionMproveCLI: common.isDefined(version) ? version : 'unknown'
           };
 
     logToConsoleMcli({

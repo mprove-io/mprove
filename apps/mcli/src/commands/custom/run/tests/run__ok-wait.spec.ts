@@ -16,14 +16,16 @@ test('1', async t => {
   let defaultBranch = common.BRANCH_MASTER;
 
   let projectId = common.makeId();
-  let commandLine = `run -p ${projectId} \
+
+  let commandLine = `run \
+-p ${projectId} \
 --wait --sleep 2 \
---json \
 --repo production \
 --branch ${defaultBranch} \
 --env prod \
 --dashboard-ids ec1_d1 \
---viz-ids 4K9SNSMG0IQPQZ9CL23U,4V3KWMRA9MSH21EQZCJQ`;
+--viz-ids 4K9SNSMG0IQPQZ9CL23U,4V3KWMRA9MSH21EQZCJQ \
+--json`;
 
   let userId = common.makeId();
   let email = `${testId}@example.com`;
@@ -104,7 +106,7 @@ test('1', async t => {
     });
 
     context = mockContext as any;
-    code = await cli.run([...commandLine.split(' ')], context);
+    code = await cli.run(commandLine.split(' '), context);
   } catch (e) {
     logToConsoleMcli({
       log: e,

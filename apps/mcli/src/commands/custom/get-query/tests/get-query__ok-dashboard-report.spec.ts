@@ -15,8 +15,15 @@ test('1', async t => {
   let defaultBranch = common.BRANCH_MASTER;
 
   let projectId = common.makeId();
-  let commandLine = `get-query -p ${projectId} --repo dev --branch ${defaultBranch} \
---env prod --dashboard-id ec1_d1 --report-index 0 --get-sql`;
+  let commandLine = `get-query \
+-p ${projectId} \
+--repo dev \
+--branch ${defaultBranch} \
+--env prod \
+--dashboard-id ec1_d1 \
+--report-index 0 \
+--get-sql \
+--json`;
 
   let userId = common.makeId();
   let email = `${testId}@example.com`;
@@ -84,11 +91,11 @@ test('1', async t => {
             connectionId: 'c1_postgres',
             envId: common.PROJECT_ENV_PROD,
             type: common.ConnectionTypeEnum.PostgreSQL,
-            host: '0.0.0.0',
+            host: 'dwh-postgres',
             port: 5432,
             database: 'p_db',
-            username: 'p_user',
-            password: 'p_pass'
+            username: 'postgres',
+            password: config.mproveCliTestDwhPostgresPassword
           }
         ]
       },
@@ -97,7 +104,20 @@ test('1', async t => {
     });
 
     context = mockContext as any;
-    code = await cli.run([...commandLine.split(' ')], context);
+    code = await cli.run(commandLine.split(' '), context);
+  } catch (e) {
+    logToConsoleMcli({
+      log: e,
+      logLevel: common.LogLevelEnum.Error,
+      context: context,
+      isJson: true
+    });
+  }
+
+  let parsedOutput: any;
+
+  try {
+    parsedOutput = JSON.parse(context.stdout.toString());
   } catch (e) {
     logToConsoleMcli({
       log: e,

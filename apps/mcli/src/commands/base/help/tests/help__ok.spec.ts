@@ -4,11 +4,13 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
 import { HelpCommand } from '../help';
-let testId = 'help';
+let testId = 'help__ok';
 
 test('1', async t => {
   let context: CustomContext;
   let code: number;
+
+  let commandLine = `help`;
 
   try {
     let { cli, mockContext } = await prepareTest({
@@ -18,7 +20,7 @@ test('1', async t => {
 
     context = mockContext as any;
 
-    code = await cli.run([testId], context);
+    code = await cli.run(commandLine.split(' '), context);
   } catch (e) {
     logToConsoleMcli({
       log: e,

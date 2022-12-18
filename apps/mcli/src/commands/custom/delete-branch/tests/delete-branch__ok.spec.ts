@@ -21,7 +21,11 @@ test('1', async t => {
 
   let projectId = common.makeId();
 
-  let commandLine = `delete-branch -p ${projectId} --repo ${repo} --branch ${branch}`;
+  let commandLine = `delete-branch \
+-p ${projectId} \
+--repo ${repo} \
+--branch ${branch} \
+--json`;
 
   let userId = common.makeId();
   let email = `${testId}@example.com`;
@@ -108,7 +112,20 @@ test('1', async t => {
         host: config.mproveCliHost
       });
 
-    code = await cli.run([...commandLine.split(' ')], context);
+    code = await cli.run(commandLine.split(' '), context);
+  } catch (e) {
+    logToConsoleMcli({
+      log: e,
+      logLevel: common.LogLevelEnum.Error,
+      context: context,
+      isJson: true
+    });
+  }
+
+  let parsedOutput: any;
+
+  try {
+    parsedOutput = JSON.parse(context.stdout.toString());
   } catch (e) {
     logToConsoleMcli({
       log: e,

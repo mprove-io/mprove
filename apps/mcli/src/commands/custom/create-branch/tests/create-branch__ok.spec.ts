@@ -15,7 +15,12 @@ test('1', async t => {
   let defaultBranch = common.BRANCH_MASTER;
 
   let projectId = common.makeId();
-  let commandLine = `create-branch -p ${projectId} --repo dev --new-branch b1 --from-branch ${defaultBranch}`;
+  let commandLine = `create-branch \
+-p ${projectId} \
+--repo dev \
+--new-branch b1 \
+--from-branch ${defaultBranch} \
+--json`;
 
   let userId = common.makeId();
   let email = `${testId}@example.com`;
@@ -82,7 +87,20 @@ test('1', async t => {
     });
 
     context = mockContext as any;
-    code = await cli.run([...commandLine.split(' ')], context);
+    code = await cli.run(commandLine.split(' '), context);
+  } catch (e) {
+    logToConsoleMcli({
+      log: e,
+      logLevel: common.LogLevelEnum.Error,
+      context: context,
+      isJson: true
+    });
+  }
+
+  let parsedOutput: any;
+
+  try {
+    parsedOutput = JSON.parse(context.stdout.toString());
   } catch (e) {
     logToConsoleMcli({
       log: e,
