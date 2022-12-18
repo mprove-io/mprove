@@ -6,6 +6,7 @@ import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { nodeCommon } from '~mcli/barrels/node-common';
 import { getConfig } from '~mcli/config/get.config';
+import { getFilesUrl } from '~mcli/functions/get-files-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
@@ -48,6 +49,10 @@ export class SyncCommand extends CustomCommand {
   firstSync = Option.Boolean('--first-sync', false, {
     description:
       '(default false) if set, then the previous sync timestamp is ignored'
+  });
+
+  getNodes = Option.Boolean('--get-nodes', false, {
+    description: '(default false), show repo nodes in output'
   });
 
   getErrors = Option.Boolean('--get-errors', false, {
@@ -176,7 +181,24 @@ export class SyncCommand extends CustomCommand {
     let syncJson = JSON.stringify(sync, null, 2);
     await fse.writeFile(syncFilePath, syncJson);
 
+    let filesUrl = getFilesUrl({
+      host: this.context.config.mproveCliHost,
+      orgId: syncRepoResp.payload.repo.orgId,
+      projectId: this.projectId,
+      repoId: syncRepoResp.payload.repo.repoId,
+      branch: currentBranchName,
+      env: this.env
+    });
+
+    if (this.getNodes === false) {
+      syncRepoResp.payload.repo.nodes = undefined;
+    }
+
     let log: any = {
+      url: filesUrl,
+      needValidate: syncRepoResp.payload.needValidate,
+      repo: syncRepoResp.payload.repo,
+      structId: syncRepoResp.payload.struct.structId,
       errorsTotal: syncRepoResp.payload.struct.errors.length,
       syncTime: sync.syncTime,
       reqTimeDiff: syncRepoResp.payload.devReqReceiveTime - localReqSentTime,

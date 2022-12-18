@@ -81,18 +81,6 @@ export class GetStateCommand extends CustomCommand {
 
     let loginToken = await getLoginToken(this.context);
 
-    let getProjectReqPayload: apiToBackend.ToBackendGetProjectRequestPayload = {
-      projectId: this.projectId
-    };
-
-    let getProjectResp = await mreq<apiToBackend.ToBackendGetProjectResponse>({
-      loginToken: loginToken,
-      pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject,
-      payload: getProjectReqPayload,
-      host: this.context.config.mproveCliHost
-    });
-
     let getRepoReqPayload: apiToBackend.ToBackendGetRepoRequestPayload = {
       projectId: this.projectId,
       isRepoProd: isRepoProd,
@@ -154,15 +142,13 @@ export class GetStateCommand extends CustomCommand {
         host: this.context.config.mproveCliHost
       });
 
-    let repo = getRepoResp.payload.repo;
-
     if (this.getNodes === false) {
-      repo.nodes = undefined;
+      getRepoResp.payload.repo.nodes = undefined;
     }
 
     let filesUrl = getFilesUrl({
       host: this.context.config.mproveCliHost,
-      orgId: getProjectResp.payload.project.orgId,
+      orgId: getRepoResp.payload.repo.orgId,
       projectId: this.projectId,
       repoId: getRepoResp.payload.repo.repoId,
       branch: this.branch,
@@ -172,7 +158,7 @@ export class GetStateCommand extends CustomCommand {
     let log: any = {
       url: filesUrl,
       needValidate: getRepoResp.payload.needValidate,
-      repo: repo,
+      repo: getRepoResp.payload.repo,
       structId: getRepoResp.payload.struct.structId,
       errorsTotal: getRepoResp.payload.struct.errors.length,
       modelsTotal: getModelsResp.payload.models.length,
@@ -188,7 +174,7 @@ export class GetStateCommand extends CustomCommand {
       log.visualizations = getVizsResp.payload.vizs.map(x => {
         let url = getVisualizationUrl({
           host: this.context.config.mproveCliHost,
-          orgId: getProjectResp.payload.project.orgId,
+          orgId: getRepoResp.payload.repo.orgId,
           projectId: this.projectId,
           repoId: getRepoResp.payload.repo.repoId,
           branch: this.branch,
@@ -209,7 +195,7 @@ export class GetStateCommand extends CustomCommand {
       log.dashboards = getDashboardsResp.payload.dashboards.map(x => {
         let url = getDashboardUrl({
           host: this.context.config.mproveCliHost,
-          orgId: getProjectResp.payload.project.orgId,
+          orgId: getRepoResp.payload.repo.orgId,
           projectId: this.projectId,
           repoId: getRepoResp.payload.repo.repoId,
           branch: this.branch,
@@ -230,7 +216,7 @@ export class GetStateCommand extends CustomCommand {
       log.models = getModelsResp.payload.models.map(x => {
         let url = getModelUrl({
           host: this.context.config.mproveCliHost,
-          orgId: getProjectResp.payload.project.orgId,
+          orgId: getRepoResp.payload.repo.orgId,
           projectId: this.projectId,
           repoId: getRepoResp.payload.repo.repoId,
           branch: this.branch,

@@ -47,6 +47,10 @@ export class ToBackendSyncRepoResponsePayload {
   needValidate: boolean;
 
   @ValidateNested()
+  @Type(() => common.Repo)
+  repo: common.Repo;
+
+  @ValidateNested()
   @Type(() => common.Struct)
   struct: common.Struct;
 
