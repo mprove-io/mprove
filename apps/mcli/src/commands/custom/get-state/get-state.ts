@@ -5,8 +5,9 @@ import { common } from '~mcli/barrels/common';
 import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
 import { getDashboardUrl } from '~mcli/functions/get-dashboard-url';
+import { getFilesUrl } from '~mcli/functions/get-files-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';
-import { getModelnUrl as getModelUrl } from '~mcli/functions/get-model-url';
+import { getModelUrl } from '~mcli/functions/get-model-url';
 import { getVisualizationUrl } from '~mcli/functions/get-visualization-url';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
@@ -159,7 +160,17 @@ export class GetStateCommand extends CustomCommand {
       repo.nodes = undefined;
     }
 
+    let filesUrl = getFilesUrl({
+      host: this.context.config.mproveCliHost,
+      orgId: getProjectResp.payload.project.orgId,
+      projectId: this.projectId,
+      repoId: getRepoResp.payload.repo.repoId,
+      branch: this.branch,
+      env: this.env
+    });
+
     let log: any = {
+      url: filesUrl,
       needValidate: getRepoResp.payload.needValidate,
       repo: repo,
       structId: getRepoResp.payload.struct.structId,

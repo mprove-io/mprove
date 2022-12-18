@@ -1,4 +1,4 @@
-export function getModelnUrl(item: {
+export function getModelUrl(item: {
   host: string;
   orgId: string;
   projectId: string;
