@@ -135,7 +135,7 @@ test('1', async t => {
     });
   }
 
-  let isPass = code === 0 && common.isDefined(parsedOutput?.errorsTotal);
+  let isPass = code === 0 && parsedOutput.repo.changesToCommit.length === 0;
 
   if (isPass === false) {
     console.log(context.stdout.toString());
@@ -143,5 +143,5 @@ test('1', async t => {
   }
 
   t.is(code, 0);
-  t.is(common.isDefined(parsedOutput?.errorsTotal), true);
+  t.is(parsedOutput.repo.changesToCommit.length === 0, true);
 });

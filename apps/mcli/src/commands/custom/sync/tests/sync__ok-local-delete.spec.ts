@@ -41,6 +41,8 @@ test('1', async t => {
 
   let projectName = testId;
 
+  let fileName = 'README.md';
+
   try {
     let { cli, mockContext } = await prepareTest({
       command: SyncCommand,
@@ -111,7 +113,7 @@ test('1', async t => {
       loginPassword: password
     });
 
-    let filePath = `${repoPath}/README.md`;
+    let filePath = `${repoPath}/${fileName}`;
     await fse.remove(filePath);
 
     context = mockContext as any;
@@ -138,9 +140,12 @@ test('1', async t => {
     });
   }
 
-  console.log(parsedOutput);
-
-  let isPass = code === 0 && common.isDefined(parsedOutput?.errorsTotal);
+  let isPass =
+    code === 0 &&
+    parsedOutput.repo.changesToCommit.length === 1 &&
+    parsedOutput.repo.changesToCommit[0].fileName === fileName &&
+    parsedOutput.repo.changesToCommit[0].status ===
+      common.FileStatusEnum.Deleted;
 
   if (isPass === false) {
     console.log(context.stdout.toString());
@@ -148,5 +153,11 @@ test('1', async t => {
   }
 
   t.is(code, 0);
-  t.is(common.isDefined(parsedOutput?.errorsTotal), true);
+  t.is(parsedOutput.repo.changesToCommit.length === 1, true);
+  t.is(parsedOutput.repo.changesToCommit[0].fileName === fileName, true);
+  t.is(
+    parsedOutput.repo.changesToCommit[0].status ===
+      common.FileStatusEnum.Deleted,
+    true
+  );
 });
