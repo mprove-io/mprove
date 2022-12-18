@@ -135,8 +135,7 @@ test('1', async t => {
     });
   }
 
-  let isPass =
-    code === 0 && context.stdout.toString().includes('Deleted branch');
+  let isPass = code === 0 && parsedOutput?.message?.includes('Deleted branch');
 
   if (isPass === false) {
     console.log(context.stdout.toString());
@@ -144,5 +143,5 @@ test('1', async t => {
   }
 
   t.is(code, 0);
-  t.is(context.stdout.toString().includes('Deleted branch'), true);
+  t.is(parsedOutput?.message?.includes('Deleted branch'), true);
 });

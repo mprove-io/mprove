@@ -112,7 +112,7 @@ test('1', async t => {
     });
   }
 
-  let isPass = code === 0 && context.stdout.toString().includes('errorsTotal');
+  let isPass = code === 0 && common.isDefined(parsedOutput?.errorsTotal);
 
   if (isPass === false) {
     console.log(context.stdout.toString());
@@ -120,5 +120,5 @@ test('1', async t => {
   }
 
   t.is(code, 0);
-  t.is(context.stdout.toString().includes('errorsTotal'), true);
+  t.is(common.isDefined(parsedOutput?.errorsTotal), true);
 });

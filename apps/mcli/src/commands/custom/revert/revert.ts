@@ -116,13 +116,11 @@ export class RevertCommand extends CustomCommand {
     }
 
     let log: any = {
-      struct: {
-        errorsTotal: resp.payload.struct.errors.length
-      }
+      errorsTotal: resp.payload.struct.errors.length
     };
 
     if (this.getErrors === true) {
-      log.struct.errors = resp.payload.struct.errors;
+      log.errors = resp.payload.struct.errors;
     }
 
     logToConsoleMcli({

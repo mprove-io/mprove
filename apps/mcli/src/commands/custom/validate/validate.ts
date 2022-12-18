@@ -82,13 +82,11 @@ export class ValidateCommand extends CustomCommand {
       });
 
     let log: any = {
-      struct: {
-        errorsTotal: validateFilesResp.payload.struct.errors.length
-      }
+      errorsTotal: validateFilesResp.payload.struct.errors.length
     };
 
     if (this.getErrors === true) {
-      log.struct.errors = validateFilesResp.payload.struct.errors;
+      log.errors = validateFilesResp.payload.struct.errors;
     }
 
     logToConsoleMcli({

@@ -80,13 +80,11 @@ export class PullCommand extends CustomCommand {
     });
 
     let log: any = {
-      struct: {
-        errorsTotal: pullRepoResp.payload.struct.errors.length
-      }
+      errorsTotal: pullRepoResp.payload.struct.errors.length
     };
 
     if (this.getErrors === true) {
-      log.struct.errors = pullRepoResp.payload.struct.errors;
+      log.errors = pullRepoResp.payload.struct.errors;
     }
 
     logToConsoleMcli({

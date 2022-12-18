@@ -162,17 +162,15 @@ export class GetStateCommand extends CustomCommand {
     let log: any = {
       needValidate: getRepoResp.payload.needValidate,
       repo: repo,
-      struct: {
-        structId: getRepoResp.payload.struct.structId,
-        errorsTotal: getRepoResp.payload.struct.errors.length
-      },
+      structId: getRepoResp.payload.struct.structId,
+      errorsTotal: getRepoResp.payload.struct.errors.length,
       modelsTotal: getModelsResp.payload.models.length,
       dashboardsTotal: getDashboardsResp.payload.dashboards.length,
       visualizationsTotal: getVizsResp.payload.vizs.length
     };
 
     if (getRepoResp.payload.struct.errors.length > 0) {
-      log.struct.errors = getRepoResp.payload.struct.errors;
+      log.errors = getRepoResp.payload.struct.errors;
     }
 
     if (this.getVizs === true) {

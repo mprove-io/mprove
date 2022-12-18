@@ -72,13 +72,11 @@ export class MergeCommand extends CustomCommand {
     });
 
     let log: any = {
-      struct: {
-        errorsTotal: mergeRepoResp.payload.struct.errors.length
-      }
+      errorsTotal: mergeRepoResp.payload.struct.errors.length
     };
 
     if (this.getErrors === true) {
-      log.struct.errors = mergeRepoResp.payload.struct.errors;
+      log.errors = mergeRepoResp.payload.struct.errors;
     }
 
     logToConsoleMcli({

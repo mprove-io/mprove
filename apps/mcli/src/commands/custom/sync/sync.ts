@@ -177,16 +177,14 @@ export class SyncCommand extends CustomCommand {
     await fse.writeFile(syncFilePath, syncJson);
 
     let log: any = {
-      struct: {
-        errorsTotal: syncRepoResp.payload.struct.errors.length
-      },
+      errorsTotal: syncRepoResp.payload.struct.errors.length,
       syncTime: sync.syncTime,
       reqTimeDiff: syncRepoResp.payload.devReqReceiveTime - localReqSentTime,
       respTimeDiff: localRespReceiveTime - syncRepoResp.payload.devRespSentTime
     };
 
     if (this.getErrors === true) {
-      log.struct.errors = syncRepoResp.payload.struct.errors;
+      log.errors = syncRepoResp.payload.struct.errors;
     }
 
     logToConsoleMcli({

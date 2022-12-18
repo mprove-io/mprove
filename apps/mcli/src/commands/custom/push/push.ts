@@ -76,13 +76,11 @@ export class PushCommand extends CustomCommand {
     });
 
     let log: any = {
-      struct: {
-        errorsTotal: pushRepoResp.payload.struct.errors.length
-      }
+      errorsTotal: pushRepoResp.payload.struct.errors.length
     };
 
     if (this.getErrors === true) {
-      log.struct.errors = pushRepoResp.payload.struct.errors;
+      log.errors = pushRepoResp.payload.struct.errors;
     }
 
     logToConsoleMcli({

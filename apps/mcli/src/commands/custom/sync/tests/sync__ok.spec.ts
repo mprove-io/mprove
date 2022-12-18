@@ -135,7 +135,7 @@ test('1', async t => {
     });
   }
 
-  let isPass = code === 0 && context.stdout.toString().includes('struct');
+  let isPass = code === 0 && common.isDefined(parsedOutput?.errorsTotal);
 
   if (isPass === false) {
     console.log(context.stdout.toString());
@@ -143,5 +143,5 @@ test('1', async t => {
   }
 
   t.is(code, 0);
-  t.is(context.stdout.toString().includes('struct'), true);
+  t.is(common.isDefined(parsedOutput?.errorsTotal), true);
 });
