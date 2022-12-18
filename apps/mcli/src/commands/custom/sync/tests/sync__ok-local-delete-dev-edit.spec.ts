@@ -39,7 +39,8 @@ test('1', async t => {
 -p ${projectId} \
 --env ${env} \
 --local-path ${repoPath} \
---json`;
+--json \
+--debug`;
 
   let userId = common.makeId();
   let email = `${testId}@example.com`;

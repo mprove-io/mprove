@@ -51,6 +51,10 @@ export class SyncCommand extends CustomCommand {
       '(default false) if set, then the previous sync timestamp is ignored'
   });
 
+  debug = Option.Boolean('--debug', false, {
+    description: '(default false) add debug to output'
+  });
+
   getNodes = Option.Boolean('--get-nodes', false, {
     description: '(default false), show repo nodes in output'
   });
@@ -204,6 +208,15 @@ export class SyncCommand extends CustomCommand {
       reqTimeDiff: syncRepoResp.payload.devReqReceiveTime - localReqSentTime,
       respTimeDiff: localRespReceiveTime - syncRepoResp.payload.devRespSentTime
     };
+
+    if (this.debug === true) {
+      log.debug = {
+        localChangedFiles: localChangedFiles,
+        localDeletedFiles: localDeletedFiles,
+        restChangedFiles: syncRepoResp.payload.restChangedFiles,
+        restDeletedFiles: syncRepoResp.payload.restDeletedFiles
+      };
+    }
 
     if (this.getErrors === true) {
       log.errors = syncRepoResp.payload.struct.errors;
