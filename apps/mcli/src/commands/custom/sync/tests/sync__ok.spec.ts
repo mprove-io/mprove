@@ -15,7 +15,7 @@ test('1', async t => {
   let code: number;
   let config = getConfig();
 
-  let repoPath = `${config.mproveCliReposPath}/${testId}`;
+  let repoPath = `${config.mproveCliTestReposPath}/${testId}`;
 
   await cloneRepo({
     repoPath: repoPath,

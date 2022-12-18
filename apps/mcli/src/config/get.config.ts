@@ -21,8 +21,9 @@ export function getConfig() {
     mproveCliPassword:
       process.env.MPROVE_CLI_PASSWORD || envFile.MPROVE_CLI_PASSWORD,
 
-    mproveCliReposPath:
-      process.env.MPROVE_CLI_REPOS_PATH || envFile.MPROVE_CLI_REPOS_PATH,
+    mproveCliTestReposPath:
+      process.env.MPROVE_CLI_TEST_REPOS_PATH ||
+      envFile.MPROVE_CLI_TEST_REPOS_PATH,
 
     mproveCliTestGitUrl:
       process.env.MPROVE_CLI_TEST_GIT_URL || envFile.MPROVE_CLI_TEST_GIT_URL,
