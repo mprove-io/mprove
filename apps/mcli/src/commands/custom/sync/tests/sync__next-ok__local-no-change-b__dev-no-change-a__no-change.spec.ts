@@ -11,7 +11,8 @@ import { CustomContext } from '~mcli/models/custom-command';
 import { SyncCommand } from '../sync';
 let deepEqual = require('deep-equal');
 
-let testId = 'mcli__sync__next-ok__local-no-change__dev-no-change__no-change';
+let testId =
+  'mcli__sync__next-ok__local-no-change-b__dev-no-change-a__no-change';
 
 test('1', async t => {
   let context: CustomContext;
@@ -48,6 +49,8 @@ test('1', async t => {
   let projectName = testId;
 
   try {
+    let syncTime = Date.now();
+
     let { cli, mockContext } = await prepareTest({
       command: SyncCommand,
       config: config,
@@ -119,7 +122,10 @@ test('1', async t => {
 
     context = mockContext as any;
 
-    let syncConfig = await writeSyncConfig({ repoPath: repoPath });
+    let syncConfig = await writeSyncConfig({
+      repoPath: repoPath,
+      syncTime: syncTime
+    });
 
     code = await cli.run(commandLine.split(' '), context);
 
