@@ -4,18 +4,15 @@ import * as nodegit from 'nodegit';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
+import { interfaces } from '~mcli/barrels/interfaces';
 import { nodeCommon } from '~mcli/barrels/node-common';
 import { getConfig } from '~mcli/config/get.config';
 import { getFilesUrl } from '~mcli/functions/get-files-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
+import { writeSyncConfig } from '~mcli/functions/write-sync-config';
 import { CustomCommand } from '~mcli/models/custom-command';
-
-interface Sync {
-  syncTime: number;
-  isFirstSync: boolean;
-}
 
 export class SyncCommand extends CustomCommand {
   static paths = [['sync']];
@@ -106,7 +103,7 @@ export class SyncCommand extends CustomCommand {
       syncFileContent = content;
     }
 
-    let syncFile: Sync = isSyncFileExist
+    let syncFile: interfaces.SyncConfig = isSyncFileExist
       ? JSON.parse(syncFileContent)
       : undefined;
 
@@ -175,15 +172,7 @@ export class SyncCommand extends CustomCommand {
 
     //
 
-    await fse.ensureDir(syncParentPath);
-
-    let sync: Sync = {
-      syncTime: Date.now(),
-      isFirstSync: lastSyncTime === 0
-    };
-
-    let syncJson = JSON.stringify(sync, null, 2);
-    await fse.writeFile(syncFilePath, syncJson);
+    let syncConfig = await writeSyncConfig({ repoPath: repoDir });
 
     let filesUrl = getFilesUrl({
       host: this.context.config.mproveCliHost,
@@ -204,7 +193,7 @@ export class SyncCommand extends CustomCommand {
       repo: syncRepoResp.payload.repo,
       structId: syncRepoResp.payload.struct.structId,
       errorsTotal: syncRepoResp.payload.struct.errors.length,
-      syncTime: sync.syncTime,
+      syncTime: syncConfig.syncTime,
       reqTimeDiff: syncRepoResp.payload.devReqReceiveTime - localReqSentTime,
       respTimeDiff: localRespReceiveTime - syncRepoResp.payload.devRespSentTime
     };
