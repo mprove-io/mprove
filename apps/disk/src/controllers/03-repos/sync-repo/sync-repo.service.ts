@@ -225,17 +225,19 @@ export class SyncRepoService {
           x => x.path === localDeletedFile.path
         );
 
-        if (lastSyncTime === 0 && common.isUndefined(devChangedFile)) {
-          await deleteFile(filePath);
+        if (lastSyncTime === 0 && common.isDefined(devChangedFile)) {
+          return;
         }
 
         if (
           lastSyncTime > 0 &&
           common.isDefined(devChangedFile) &&
-          devChangedFile.modifiedTime < lastSyncTime
+          devChangedFile.modifiedTime > lastSyncTime
         ) {
-          await deleteFile(filePath);
+          return;
         }
+
+        await deleteFile(filePath);
       }
     );
 
