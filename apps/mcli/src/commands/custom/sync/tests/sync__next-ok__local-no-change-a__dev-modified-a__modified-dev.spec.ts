@@ -13,7 +13,8 @@ import { CustomContext } from '~mcli/models/custom-command';
 import { SyncCommand } from '../sync';
 let deepEqual = require('deep-equal');
 
-let testId = 'mcli__sync__next-ok__local-no-change-b__dev-modified-a__modified';
+let testId =
+  'mcli__sync__next-ok__local-no-change-a__dev-modified-a__modified-dev';
 
 test('1', async t => {
   let context: CustomContext;
@@ -26,13 +27,6 @@ test('1', async t => {
   let repoPath = `${config.mproveCliTestReposPath}/${testId}`;
 
   let localChangesToCommit: common.DiskFileChange[];
-
-  await cloneRepo({
-    repoPath: repoPath,
-    gitUrl: config.mproveCliTestGitUrl,
-    publicKeyPath: config.mproveCliTestPublicKeyPath,
-    privateKeyPath: config.mproveCliTestPrivateKeyPath
-  });
 
   let projectId = common.makeId();
 
@@ -58,8 +52,6 @@ test('1', async t => {
   let localFileResultContent;
 
   try {
-    let syncTime = Date.now();
-
     let { cli, mockContext } = await prepareTest({
       command: SyncCommand,
       config: config,
@@ -130,6 +122,15 @@ test('1', async t => {
     });
 
     context = mockContext as any;
+
+    let syncTime = Date.now();
+
+    await cloneRepo({
+      repoPath: repoPath,
+      gitUrl: config.mproveCliTestGitUrl,
+      publicKeyPath: config.mproveCliTestPublicKeyPath,
+      privateKeyPath: config.mproveCliTestPrivateKeyPath
+    });
 
     let syncConfig = await writeSyncConfig({
       repoPath: repoPath,

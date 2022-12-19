@@ -12,7 +12,8 @@ import { CustomContext } from '~mcli/models/custom-command';
 import { SyncCommand } from '../sync';
 let deepEqual = require('deep-equal');
 
-let testId = 'mcli__sync__first-ok__local-modified__dev-deleted__modified';
+let testId =
+  'mcli__sync__first-ok__local-no-change__dev-modified__modified-dev';
 
 test('1', async t => {
   let context: CustomContext;
@@ -84,7 +85,7 @@ test('1', async t => {
             orgId,
             projectId,
             name: projectName,
-            defaultBranch: common.BRANCH_MAIN,
+            defaultBranch: defaultBranch,
             remoteType: common.ProjectRemoteTypeEnum.GitClone,
             gitUrl: config.mproveCliTestGitUrl,
             publicKey: fse
@@ -127,20 +128,20 @@ test('1', async t => {
 
     let filePath = `${repoPath}/${fileName}`;
 
-    await fse.writeFile(filePath, '1');
+    await fse.remove(filePath);
 
-    let deleteFileReqPayload: apiToBackend.ToBackendDeleteFileRequestPayload = {
+    let saveFileReqPayload: apiToBackend.ToBackendSaveFileRequestPayload = {
       projectId: projectId,
       branchId: defaultBranch,
       envId: env,
-      fileNodeId: `${projectId}/${fileName}`
+      fileNodeId: `${projectId}/${fileName}`,
+      content: '1'
     };
 
-    await mreq<apiToBackend.ToBackendDeleteFileResponse>({
+    await mreq<apiToBackend.ToBackendSaveFileResponse>({
       loginToken: context.loginToken,
-      pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFile,
-      payload: deleteFileReqPayload,
+      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveFile,
+      payload: saveFileReqPayload,
       host: context.config.mproveCliHost
     });
 
