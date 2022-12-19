@@ -118,10 +118,12 @@ test('1', async t => {
       loginPassword: password
     });
 
+    context = mockContext as any;
+
     let filePath = `${repoPath}/${fileName}`;
+
     await fse.remove(filePath);
 
-    context = mockContext as any;
     code = await cli.run(commandLine.split(' '), context);
 
     localChangesToCommit = await nodeCommon.getChangesToCommit({

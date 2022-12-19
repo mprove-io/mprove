@@ -181,9 +181,13 @@ export class SyncRepoService {
           return false;
         }
 
+        if (lastSyncTime === 0 && common.isDefined(localChangedFile)) {
+          return false;
+        }
+
         if (
-          common.isDefined(localChangedFile) &&
           lastSyncTime > 0 &&
+          common.isDefined(localChangedFile) &&
           localChangedFile.modifiedTime > lastSyncTime
         ) {
           return false;

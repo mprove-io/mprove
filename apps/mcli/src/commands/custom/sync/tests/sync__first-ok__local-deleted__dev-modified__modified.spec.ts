@@ -123,17 +123,18 @@ test('1', async t => {
       loginPassword: password
     });
 
-    let filePath = `${repoPath}/${fileName}`;
-    await fse.remove(filePath);
-
     context = mockContext as any;
+
+    let filePath = `${repoPath}/${fileName}`;
+
+    await fse.remove(filePath);
 
     let saveFileReqPayload: apiToBackend.ToBackendSaveFileRequestPayload = {
       projectId: projectId,
       branchId: defaultBranch,
       envId: env,
       fileNodeId: `${projectId}/${fileName}`,
-      content: '123'
+      content: '1'
     };
 
     await mreq<apiToBackend.ToBackendSaveFileResponse>({

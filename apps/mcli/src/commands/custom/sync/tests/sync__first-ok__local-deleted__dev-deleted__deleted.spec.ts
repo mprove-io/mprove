@@ -123,10 +123,11 @@ test('1', async t => {
       loginPassword: password
     });
 
-    let filePath = `${repoPath}/${fileName}`;
-    await fse.remove(filePath);
-
     context = mockContext as any;
+
+    let filePath = `${repoPath}/${fileName}`;
+
+    await fse.remove(filePath);
 
     let deleteFileReqPayload: apiToBackend.ToBackendDeleteFileRequestPayload = {
       projectId: projectId,
