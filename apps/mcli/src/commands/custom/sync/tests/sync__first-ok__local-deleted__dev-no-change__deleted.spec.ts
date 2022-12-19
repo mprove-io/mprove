@@ -10,7 +10,7 @@ import { CustomContext } from '~mcli/models/custom-command';
 import { SyncCommand } from '../sync';
 let deepEqual = require('deep-equal');
 
-let testId = 'mcli__sync__ok-first';
+let testId = 'mcli__sync__first-ok__local-deleted__dev-no-change__deleted';
 
 test('1', async t => {
   let context: CustomContext;
@@ -45,6 +45,8 @@ test('1', async t => {
   let orgName = testId;
 
   let projectName = testId;
+
+  let fileName = 'README.md';
 
   try {
     let { cli, mockContext } = await prepareTest({
@@ -116,6 +118,9 @@ test('1', async t => {
       loginPassword: password
     });
 
+    let filePath = `${repoPath}/${fileName}`;
+    await fse.remove(filePath);
+
     context = mockContext as any;
     code = await cli.run(commandLine.split(' '), context);
 
@@ -146,7 +151,10 @@ test('1', async t => {
 
   let isPass =
     code === 0 &&
-    parsedOutput.repo.changesToCommit.length === 0 &&
+    parsedOutput.repo.changesToCommit.length === 1 &&
+    parsedOutput.repo.changesToCommit[0].fileName === fileName &&
+    parsedOutput.repo.changesToCommit[0].status ===
+      common.FileStatusEnum.Deleted &&
     deepEqual(localChangesToCommit, parsedOutput.repo.changesToCommit);
 
   if (isPass === false) {
@@ -155,6 +163,12 @@ test('1', async t => {
   }
 
   t.is(code, 0);
-  t.is(parsedOutput.repo.changesToCommit.length === 0, true);
+  t.is(parsedOutput.repo.changesToCommit.length === 1, true);
+  t.is(parsedOutput.repo.changesToCommit[0].fileName === fileName, true);
+  t.is(
+    parsedOutput.repo.changesToCommit[0].status ===
+      common.FileStatusEnum.Deleted,
+    true
+  );
   t.deepEqual(localChangesToCommit, parsedOutput.repo.changesToCommit);
 });
