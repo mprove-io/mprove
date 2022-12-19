@@ -144,10 +144,6 @@ export class SyncRepoService {
           x => x.path === devChangedFile.path
         );
 
-        if (common.isDefined(localDeletedFile) && lastSyncTime === 0) {
-          return false;
-        }
-
         if (
           common.isDefined(localChangedFile) &&
           localChangedFile.modifiedTime > devChangedFile.modifiedTime
@@ -161,6 +157,10 @@ export class SyncRepoService {
           devChangedFile.modifiedTime < lastSyncTime
         ) {
           return false;
+        }
+
+        if (common.isDefined(localDeletedFile) && lastSyncTime === 0) {
+          return true;
         }
 
         return true;
@@ -207,10 +207,7 @@ export class SyncRepoService {
           devChangedFile.modifiedTime < lastSyncTime &&
           common.isUndefined(localChangedFile)
         ) {
-          let isFileExist = await disk.isPathExist(filePath);
-          if (isFileExist === true) {
-            await disk.removePath(filePath);
-          }
+          await deleteFile(filePath);
         }
       }
     );
@@ -218,21 +215,22 @@ export class SyncRepoService {
     await forEachSeries(
       localDeletedFiles,
       async (localDeletedFile: common.DiskSyncFile) => {
+        let filePath = `${repoDir}/${localDeletedFile.path}`;
+
         let devChangedFile = devChangedFiles.find(
           x => x.path === localDeletedFile.path
         );
 
+        if (lastSyncTime === 0 && common.isUndefined(devChangedFile)) {
+          await deleteFile(filePath);
+        }
+
         if (
-          lastSyncTime === 0 ||
-          common.isUndefined(devChangedFile) ||
+          lastSyncTime > 0 &&
+          common.isDefined(devChangedFile) &&
           devChangedFile.modifiedTime < lastSyncTime
         ) {
-          let filePath = `${repoDir}/${localDeletedFile.path}`;
-
-          let isFileExist = await disk.isPathExist(filePath);
-          if (isFileExist === true) {
-            await disk.removePath(filePath);
-          }
+          await deleteFile(filePath);
         }
       }
     );
@@ -352,5 +350,12 @@ export class SyncRepoService {
     };
 
     return payload;
+  }
+}
+
+async function deleteFile(filePath: string) {
+  let isFileExist = await disk.isPathExist(filePath);
+  if (isFileExist === true) {
+    await disk.removePath(filePath);
   }
 }

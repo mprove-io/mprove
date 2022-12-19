@@ -1,26 +1,21 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
-import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { nodeCommon } from '~mcli/barrels/node-common';
 import { getConfig } from '~mcli/config/get.config';
 import { cloneRepo } from '~mcli/functions/clone-repo';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
-import { mreq } from '~mcli/functions/mreq';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
 import { SyncCommand } from '../sync';
 let deepEqual = require('deep-equal');
 
-let testId = 'mcli__sync__ok-local-delete-dev-edit';
+let testId = 'mcli__sync__ok-first-local-delete';
 
 test('1', async t => {
   let context: CustomContext;
   let code: number;
   let config = getConfig();
-
-  let defaultBranch = common.BRANCH_MAIN;
-  let env = common.PROJECT_ENV_PROD;
 
   let repoPath = `${config.mproveCliTestReposPath}/${testId}`;
 
@@ -37,7 +32,7 @@ test('1', async t => {
 
   let commandLine = `sync \
 -p ${projectId} \
---env ${env} \
+--env prod \
 --local-path ${repoPath} \
 --json \
 --debug`;
@@ -84,7 +79,7 @@ test('1', async t => {
             orgId,
             projectId,
             name: projectName,
-            defaultBranch: defaultBranch,
+            defaultBranch: common.BRANCH_MAIN,
             remoteType: common.ProjectRemoteTypeEnum.GitClone,
             gitUrl: config.mproveCliTestGitUrl,
             publicKey: fse
@@ -127,22 +122,6 @@ test('1', async t => {
     await fse.remove(filePath);
 
     context = mockContext as any;
-
-    let saveFileReqPayload: apiToBackend.ToBackendSaveFileRequestPayload = {
-      projectId: projectId,
-      branchId: defaultBranch,
-      envId: env,
-      fileNodeId: `${projectId}/${fileName}`,
-      content: '123'
-    };
-
-    await mreq<apiToBackend.ToBackendSaveFileResponse>({
-      loginToken: context.loginToken,
-      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveFile,
-      payload: saveFileReqPayload,
-      host: context.config.mproveCliHost
-    });
-
     code = await cli.run(commandLine.split(' '), context);
 
     localChangesToCommit = await nodeCommon.getChangesToCommit({
