@@ -154,13 +154,18 @@ export class SyncRepoService {
         if (
           common.isUndefined(localChangedFile) &&
           lastSyncTime > 0 &&
-          devChangedFile.modifiedTime < lastSyncTime
+          devChangedFile.modifiedTime < lastSyncTime &&
+          devChangedFile.status === common.FileStatusEnum.New
         ) {
           return false;
         }
 
-        if (common.isDefined(localDeletedFile) && lastSyncTime === 0) {
-          return true;
+        if (
+          common.isDefined(localDeletedFile) &&
+          lastSyncTime > 0 &&
+          devChangedFile.modifiedTime < lastSyncTime
+        ) {
+          return false;
         }
 
         return true;
@@ -209,7 +214,8 @@ export class SyncRepoService {
         if (
           lastSyncTime > 0 &&
           devChangedFile.modifiedTime < lastSyncTime &&
-          common.isUndefined(localChangedFile)
+          common.isUndefined(localChangedFile) &&
+          devChangedFile.status === common.FileStatusEnum.New
         ) {
           await deleteFile(filePath);
         }
@@ -255,11 +261,13 @@ export class SyncRepoService {
         if (
           lastSyncTime > 0 &&
           localChangedFile.modifiedTime < lastSyncTime &&
-          common.isUndefined(devChangedFile)
+          common.isUndefined(devChangedFile) &&
+          localChangedFile.status === common.FileStatusEnum.New
         ) {
           let restDeletedFile = restDeletedFiles.find(
             f => f.path === localChangedFile.path
           );
+
           if (common.isUndefined(restDeletedFile)) {
             let file: DiskSyncFile = {
               path: localChangedFile.path,
@@ -270,19 +278,14 @@ export class SyncRepoService {
 
             restDeletedFiles.push(file);
           }
+
+          return;
         }
 
         if (
           lastSyncTime > 0 &&
           localChangedFile.modifiedTime < lastSyncTime &&
           common.isDefined(devDeletedFile)
-        ) {
-          return;
-        }
-
-        if (
-          common.isUndefined(devChangedFile) &&
-          localChangedFile.modifiedTime < lastSyncTime
         ) {
           return;
         }
