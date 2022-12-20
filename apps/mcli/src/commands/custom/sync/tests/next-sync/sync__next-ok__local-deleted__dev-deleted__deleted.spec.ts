@@ -8,11 +8,12 @@ import { cloneRepo } from '~mcli/functions/clone-repo';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { prepareTest } from '~mcli/functions/prepare-test';
+import { writeSyncConfig } from '~mcli/functions/write-sync-config';
 import { CustomContext } from '~mcli/models/custom-command';
-import { SyncCommand } from '../sync';
+import { SyncCommand } from '../../sync';
 let deepEqual = require('deep-equal');
 
-let testId = 'mcli__sync__first-ok__local-no-change__dev-deleted__deleted';
+let testId = 'mcli__sync__next-ok__local-deleted__dev-deleted__deleted';
 
 test('1', async t => {
   let context: CustomContext;
@@ -24,14 +25,14 @@ test('1', async t => {
 
   let repoPath = `${config.mproveCliTestReposPath}/${testId}`;
 
-  let localChangesToCommit: common.DiskFileChange[];
-
   await cloneRepo({
     repoPath: repoPath,
     gitUrl: config.mproveCliTestGitUrl,
     publicKeyPath: config.mproveCliTestPublicKeyPath,
     privateKeyPath: config.mproveCliTestPrivateKeyPath
   });
+
+  let localChangesToCommit: common.DiskFileChange[];
 
   let projectId = common.makeId();
 
@@ -84,7 +85,7 @@ test('1', async t => {
             orgId,
             projectId,
             name: projectName,
-            defaultBranch: defaultBranch,
+            defaultBranch: common.BRANCH_MAIN,
             remoteType: common.ProjectRemoteTypeEnum.GitClone,
             gitUrl: config.mproveCliTestGitUrl,
             publicKey: fse
@@ -124,6 +125,17 @@ test('1', async t => {
     });
 
     context = mockContext as any;
+
+    let syncTime = Date.now();
+
+    let filePath = `${repoPath}/${fileName}`;
+
+    await fse.remove(filePath);
+
+    let syncConfig = await writeSyncConfig({
+      repoPath: repoPath,
+      syncTime: syncTime
+    });
 
     let deleteFileReqPayload: apiToBackend.ToBackendDeleteFileRequestPayload = {
       projectId: projectId,

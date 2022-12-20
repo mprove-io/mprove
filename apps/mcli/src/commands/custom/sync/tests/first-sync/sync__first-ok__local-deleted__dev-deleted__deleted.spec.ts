@@ -8,12 +8,11 @@ import { cloneRepo } from '~mcli/functions/clone-repo';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { prepareTest } from '~mcli/functions/prepare-test';
-import { writeSyncConfig } from '~mcli/functions/write-sync-config';
 import { CustomContext } from '~mcli/models/custom-command';
-import { SyncCommand } from '../sync';
+import { SyncCommand } from '../../sync';
 let deepEqual = require('deep-equal');
 
-let testId = 'mcli__sync__next-ok__local-no-change-b__dev-deleted__deleted';
+let testId = 'mcli__sync__first-ok__local-deleted__dev-deleted__deleted';
 
 test('1', async t => {
   let context: CustomContext;
@@ -55,8 +54,6 @@ test('1', async t => {
   let fileName = 'README.md';
 
   try {
-    let syncTime = Date.now();
-
     let { cli, mockContext } = await prepareTest({
       command: SyncCommand,
       config: config,
@@ -128,10 +125,9 @@ test('1', async t => {
 
     context = mockContext as any;
 
-    let syncConfig = await writeSyncConfig({
-      repoPath: repoPath,
-      syncTime: syncTime
-    });
+    let filePath = `${repoPath}/${fileName}`;
+
+    await fse.remove(filePath);
 
     let deleteFileReqPayload: apiToBackend.ToBackendDeleteFileRequestPayload = {
       projectId: projectId,

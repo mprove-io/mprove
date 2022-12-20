@@ -8,12 +8,12 @@ import { cloneRepo } from '~mcli/functions/clone-repo';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { prepareTest } from '~mcli/functions/prepare-test';
-import { writeSyncConfig } from '~mcli/functions/write-sync-config';
 import { CustomContext } from '~mcli/models/custom-command';
-import { SyncCommand } from '../sync';
+import { SyncCommand } from '../../sync';
 let deepEqual = require('deep-equal');
 
-let testId = 'mcli__sync__next-ok__local-deleted__dev-modified-b__deleted';
+let testId =
+  'mcli__sync__first-ok__local-modified__dev-deleted__modified-local';
 
 test('1', async t => {
   let context: CustomContext;
@@ -25,14 +25,14 @@ test('1', async t => {
 
   let repoPath = `${config.mproveCliTestReposPath}/${testId}`;
 
+  let localChangesToCommit: common.DiskFileChange[];
+
   await cloneRepo({
     repoPath: repoPath,
     gitUrl: config.mproveCliTestGitUrl,
     publicKeyPath: config.mproveCliTestPublicKeyPath,
     privateKeyPath: config.mproveCliTestPrivateKeyPath
   });
-
-  let localChangesToCommit: common.DiskFileChange[];
 
   let projectId = common.makeId();
 
@@ -128,28 +128,21 @@ test('1', async t => {
 
     let filePath = `${repoPath}/${fileName}`;
 
-    await fse.remove(filePath);
+    await fse.writeFile(filePath, '1');
 
-    let saveFileReqPayload: apiToBackend.ToBackendSaveFileRequestPayload = {
+    let deleteFileReqPayload: apiToBackend.ToBackendDeleteFileRequestPayload = {
       projectId: projectId,
       branchId: defaultBranch,
       envId: env,
-      fileNodeId: `${projectId}/${fileName}`,
-      content: '2'
+      fileNodeId: `${projectId}/${fileName}`
     };
 
-    await mreq<apiToBackend.ToBackendSaveFileResponse>({
+    await mreq<apiToBackend.ToBackendDeleteFileResponse>({
       loginToken: context.loginToken,
-      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveFile,
-      payload: saveFileReqPayload,
+      pathInfoName:
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFile,
+      payload: deleteFileReqPayload,
       host: context.config.mproveCliHost
-    });
-
-    let syncTime = Date.now();
-
-    let syncConfig = await writeSyncConfig({
-      repoPath: repoPath,
-      syncTime: syncTime
     });
 
     code = await cli.run(commandLine.split(' '), context);
@@ -184,7 +177,7 @@ test('1', async t => {
     parsedOutput.repo.changesToCommit.length === 1 &&
     parsedOutput.repo.changesToCommit[0].fileName === fileName &&
     parsedOutput.repo.changesToCommit[0].status ===
-      common.FileStatusEnum.Deleted &&
+      common.FileStatusEnum.Modified &&
     deepEqual(localChangesToCommit, parsedOutput.repo.changesToCommit);
 
   if (isPass === false) {
@@ -197,7 +190,7 @@ test('1', async t => {
   t.is(parsedOutput.repo.changesToCommit[0].fileName === fileName, true);
   t.is(
     parsedOutput.repo.changesToCommit[0].status ===
-      common.FileStatusEnum.Deleted,
+      common.FileStatusEnum.Modified,
     true
   );
   t.deepEqual(localChangesToCommit, parsedOutput.repo.changesToCommit);

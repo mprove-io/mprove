@@ -8,11 +8,13 @@ import { cloneRepo } from '~mcli/functions/clone-repo';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { prepareTest } from '~mcli/functions/prepare-test';
+import { writeSyncConfig } from '~mcli/functions/write-sync-config';
 import { CustomContext } from '~mcli/models/custom-command';
-import { SyncCommand } from '../sync';
+import { SyncCommand } from '../../sync';
 let deepEqual = require('deep-equal');
 
-let testId = 'mcli__sync__first-ok__local-deleted__dev-deleted__deleted';
+let testId =
+  'mcli__sync__next-ok__local-no-change-a__dev-modified-b__no-change';
 
 test('1', async t => {
   let context: CustomContext;
@@ -25,13 +27,6 @@ test('1', async t => {
   let repoPath = `${config.mproveCliTestReposPath}/${testId}`;
 
   let localChangesToCommit: common.DiskFileChange[];
-
-  await cloneRepo({
-    repoPath: repoPath,
-    gitUrl: config.mproveCliTestGitUrl,
-    publicKeyPath: config.mproveCliTestPublicKeyPath,
-    privateKeyPath: config.mproveCliTestPrivateKeyPath
-  });
 
   let projectId = common.makeId();
 
@@ -52,6 +47,9 @@ test('1', async t => {
   let projectName = testId;
 
   let fileName = 'README.md';
+
+  let getFileResp: apiToBackend.ToBackendGetFileResponse;
+  let localFileResultContent;
 
   try {
     let { cli, mockContext } = await prepareTest({
@@ -127,24 +125,54 @@ test('1', async t => {
 
     let filePath = `${repoPath}/${fileName}`;
 
-    await fse.remove(filePath);
-
-    let deleteFileReqPayload: apiToBackend.ToBackendDeleteFileRequestPayload = {
+    let saveFileReqPayload: apiToBackend.ToBackendSaveFileRequestPayload = {
       projectId: projectId,
       branchId: defaultBranch,
       envId: env,
-      fileNodeId: `${projectId}/${fileName}`
+      fileNodeId: `${projectId}/${fileName}`,
+      content: '2'
     };
 
-    await mreq<apiToBackend.ToBackendDeleteFileResponse>({
+    await mreq<apiToBackend.ToBackendSaveFileResponse>({
       loginToken: context.loginToken,
-      pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFile,
-      payload: deleteFileReqPayload,
+      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveFile,
+      payload: saveFileReqPayload,
       host: context.config.mproveCliHost
     });
 
+    let syncTime = Date.now();
+
+    await cloneRepo({
+      repoPath: repoPath,
+      gitUrl: config.mproveCliTestGitUrl,
+      publicKeyPath: config.mproveCliTestPublicKeyPath,
+      privateKeyPath: config.mproveCliTestPrivateKeyPath
+    });
+
+    let syncConfig = await writeSyncConfig({
+      repoPath: repoPath,
+      syncTime: syncTime
+    });
+
     code = await cli.run(commandLine.split(' '), context);
+
+    let getFileReqPayload: apiToBackend.ToBackendGetFileRequestPayload = {
+      projectId: projectId,
+      isRepoProd: false,
+      branchId: defaultBranch,
+      envId: env,
+      fileNodeId: `${projectId}/${fileName}`,
+      panel: common.PanelEnum.Tree
+    };
+
+    getFileResp = await mreq<apiToBackend.ToBackendGetFileResponse>({
+      loginToken: context.loginToken,
+      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetFile,
+      payload: getFileReqPayload,
+      host: context.config.mproveCliHost
+    });
+
+    localFileResultContent = fse.readFileSync(filePath).toString();
 
     localChangesToCommit = await nodeCommon.getChangesToCommit({
       repoDir: repoPath
@@ -173,10 +201,7 @@ test('1', async t => {
 
   let isPass =
     code === 0 &&
-    parsedOutput.repo.changesToCommit.length === 1 &&
-    parsedOutput.repo.changesToCommit[0].fileName === fileName &&
-    parsedOutput.repo.changesToCommit[0].status ===
-      common.FileStatusEnum.Deleted &&
+    parsedOutput.repo.changesToCommit.length === 0 &&
     deepEqual(localChangesToCommit, parsedOutput.repo.changesToCommit);
 
   if (isPass === false) {
@@ -185,12 +210,6 @@ test('1', async t => {
   }
 
   t.is(code, 0);
-  t.is(parsedOutput.repo.changesToCommit.length === 1, true);
-  t.is(parsedOutput.repo.changesToCommit[0].fileName === fileName, true);
-  t.is(
-    parsedOutput.repo.changesToCommit[0].status ===
-      common.FileStatusEnum.Deleted,
-    true
-  );
+  t.is(parsedOutput.repo.changesToCommit.length === 0, true);
   t.deepEqual(localChangesToCommit, parsedOutput.repo.changesToCommit);
 });

@@ -1,24 +1,30 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
+import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { nodeCommon } from '~mcli/barrels/node-common';
 import { getConfig } from '~mcli/config/get.config';
 import { cloneRepo } from '~mcli/functions/clone-repo';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
+import { mreq } from '~mcli/functions/mreq';
 import { prepareTest } from '~mcli/functions/prepare-test';
-import { writeSyncConfig } from '~mcli/functions/write-sync-config';
 import { CustomContext } from '~mcli/models/custom-command';
-import { SyncCommand } from '../sync';
+import { SyncCommand } from '../../sync';
 let deepEqual = require('deep-equal');
 
-let testId = 'mcli__sync__next-ok__local-deleted__dev-no-change-a__no-change';
+let testId = 'mcli__sync__first-ok__local-no-change__dev-deleted__deleted';
 
 test('1', async t => {
   let context: CustomContext;
   let code: number;
   let config = getConfig();
 
+  let defaultBranch = common.BRANCH_MAIN;
+  let env = common.PROJECT_ENV_PROD;
+
   let repoPath = `${config.mproveCliTestReposPath}/${testId}`;
+
+  let localChangesToCommit: common.DiskFileChange[];
 
   await cloneRepo({
     repoPath: repoPath,
@@ -27,13 +33,11 @@ test('1', async t => {
     privateKeyPath: config.mproveCliTestPrivateKeyPath
   });
 
-  let localChangesToCommit: common.DiskFileChange[];
-
   let projectId = common.makeId();
 
   let commandLine = `sync \
 -p ${projectId} \
---env prod \
+--env ${env} \
 --local-path ${repoPath} \
 --json \
 --debug`;
@@ -48,8 +52,6 @@ test('1', async t => {
   let projectName = testId;
 
   let fileName = 'README.md';
-
-  let syncTime = Date.now();
 
   try {
     let { cli, mockContext } = await prepareTest({
@@ -82,7 +84,7 @@ test('1', async t => {
             orgId,
             projectId,
             name: projectName,
-            defaultBranch: common.BRANCH_MAIN,
+            defaultBranch: defaultBranch,
             remoteType: common.ProjectRemoteTypeEnum.GitClone,
             gitUrl: config.mproveCliTestGitUrl,
             publicKey: fse
@@ -123,13 +125,19 @@ test('1', async t => {
 
     context = mockContext as any;
 
-    let filePath = `${repoPath}/${fileName}`;
+    let deleteFileReqPayload: apiToBackend.ToBackendDeleteFileRequestPayload = {
+      projectId: projectId,
+      branchId: defaultBranch,
+      envId: env,
+      fileNodeId: `${projectId}/${fileName}`
+    };
 
-    await fse.remove(filePath);
-
-    let syncConfig = await writeSyncConfig({
-      repoPath: repoPath,
-      syncTime: syncTime
+    await mreq<apiToBackend.ToBackendDeleteFileResponse>({
+      loginToken: context.loginToken,
+      pathInfoName:
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFile,
+      payload: deleteFileReqPayload,
+      host: context.config.mproveCliHost
     });
 
     code = await cli.run(commandLine.split(' '), context);
@@ -161,7 +169,10 @@ test('1', async t => {
 
   let isPass =
     code === 0 &&
-    parsedOutput.repo.changesToCommit.length === 0 &&
+    parsedOutput.repo.changesToCommit.length === 1 &&
+    parsedOutput.repo.changesToCommit[0].fileName === fileName &&
+    parsedOutput.repo.changesToCommit[0].status ===
+      common.FileStatusEnum.Deleted &&
     deepEqual(localChangesToCommit, parsedOutput.repo.changesToCommit);
 
   if (isPass === false) {
@@ -170,6 +181,12 @@ test('1', async t => {
   }
 
   t.is(code, 0);
-  t.is(parsedOutput.repo.changesToCommit.length === 0, true);
+  t.is(parsedOutput.repo.changesToCommit.length === 1, true);
+  t.is(parsedOutput.repo.changesToCommit[0].fileName === fileName, true);
+  t.is(
+    parsedOutput.repo.changesToCommit[0].status ===
+      common.FileStatusEnum.Deleted,
+    true
+  );
   t.deepEqual(localChangesToCommit, parsedOutput.repo.changesToCommit);
 });

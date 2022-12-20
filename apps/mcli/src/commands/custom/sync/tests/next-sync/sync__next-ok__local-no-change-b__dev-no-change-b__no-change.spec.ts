@@ -8,11 +8,11 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { writeSyncConfig } from '~mcli/functions/write-sync-config';
 import { CustomContext } from '~mcli/models/custom-command';
-import { SyncCommand } from '../sync';
+import { SyncCommand } from '../../sync';
 let deepEqual = require('deep-equal');
 
 let testId =
-  'mcli__sync__next-ok__local-no-change-b__dev-no-change-a__no-change';
+  'mcli__sync__next-ok__local-no-change-b__dev-no-change-b__no-change';
 
 test('1', async t => {
   let context: CustomContext;
@@ -49,8 +49,6 @@ test('1', async t => {
   let projectName = testId;
 
   try {
-    let syncTime = Date.now();
-
     let { cli, mockContext } = await prepareTest({
       command: SyncCommand,
       config: config,
@@ -121,6 +119,8 @@ test('1', async t => {
     });
 
     context = mockContext as any;
+
+    let syncTime = Date.now();
 
     let syncConfig = await writeSyncConfig({
       repoPath: repoPath,

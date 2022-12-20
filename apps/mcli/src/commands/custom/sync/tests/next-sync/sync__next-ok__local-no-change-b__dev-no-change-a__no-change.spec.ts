@@ -1,38 +1,40 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
-import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { nodeCommon } from '~mcli/barrels/node-common';
 import { getConfig } from '~mcli/config/get.config';
 import { cloneRepo } from '~mcli/functions/clone-repo';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
-import { mreq } from '~mcli/functions/mreq';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { writeSyncConfig } from '~mcli/functions/write-sync-config';
 import { CustomContext } from '~mcli/models/custom-command';
-import { SyncCommand } from '../sync';
+import { SyncCommand } from '../../sync';
 let deepEqual = require('deep-equal');
 
 let testId =
-  'mcli__sync__next-ok__local-no-change-a__dev-modified-a__no-change';
+  'mcli__sync__next-ok__local-no-change-b__dev-no-change-a__no-change';
 
 test('1', async t => {
   let context: CustomContext;
   let code: number;
   let config = getConfig();
 
-  let defaultBranch = common.BRANCH_MAIN;
-  let env = common.PROJECT_ENV_PROD;
-
   let repoPath = `${config.mproveCliTestReposPath}/${testId}`;
 
   let localChangesToCommit: common.DiskFileChange[];
+
+  await cloneRepo({
+    repoPath: repoPath,
+    gitUrl: config.mproveCliTestGitUrl,
+    publicKeyPath: config.mproveCliTestPublicKeyPath,
+    privateKeyPath: config.mproveCliTestPrivateKeyPath
+  });
 
   let projectId = common.makeId();
 
   let commandLine = `sync \
 -p ${projectId} \
---env ${env} \
+--env prod \
 --local-path ${repoPath} \
 --json \
 --debug`;
@@ -46,12 +48,9 @@ test('1', async t => {
 
   let projectName = testId;
 
-  let fileName = 'README.md';
-
-  let getFileResp: apiToBackend.ToBackendGetFileResponse;
-  let localFileResultContent;
-
   try {
+    let syncTime = Date.now();
+
     let { cli, mockContext } = await prepareTest({
       command: SyncCommand,
       config: config,
@@ -123,56 +122,12 @@ test('1', async t => {
 
     context = mockContext as any;
 
-    let syncTime = Date.now();
-
-    let filePath = `${repoPath}/${fileName}`;
-
-    let saveFileReqPayload: apiToBackend.ToBackendSaveFileRequestPayload = {
-      projectId: projectId,
-      branchId: defaultBranch,
-      envId: env,
-      fileNodeId: `${projectId}/${fileName}`,
-      content: '2'
-    };
-
-    await mreq<apiToBackend.ToBackendSaveFileResponse>({
-      loginToken: context.loginToken,
-      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveFile,
-      payload: saveFileReqPayload,
-      host: context.config.mproveCliHost
-    });
-
-    await cloneRepo({
-      repoPath: repoPath,
-      gitUrl: config.mproveCliTestGitUrl,
-      publicKeyPath: config.mproveCliTestPublicKeyPath,
-      privateKeyPath: config.mproveCliTestPrivateKeyPath
-    });
-
     let syncConfig = await writeSyncConfig({
       repoPath: repoPath,
       syncTime: syncTime
     });
 
     code = await cli.run(commandLine.split(' '), context);
-
-    let getFileReqPayload: apiToBackend.ToBackendGetFileRequestPayload = {
-      projectId: projectId,
-      isRepoProd: false,
-      branchId: defaultBranch,
-      envId: env,
-      fileNodeId: `${projectId}/${fileName}`,
-      panel: common.PanelEnum.Tree
-    };
-
-    getFileResp = await mreq<apiToBackend.ToBackendGetFileResponse>({
-      loginToken: context.loginToken,
-      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetFile,
-      payload: getFileReqPayload,
-      host: context.config.mproveCliHost
-    });
-
-    localFileResultContent = fse.readFileSync(filePath).toString();
 
     localChangesToCommit = await nodeCommon.getChangesToCommit({
       repoDir: repoPath
