@@ -11,7 +11,7 @@
   },
   "bin": "./main.js",
   "scripts": {
-    "ava:mcli": "ava --config=ava-js.config.js dist/tests/mcli/apps/mcli/**/*.spec.js"
+    "ava:mcli": "ava --config=ava-js.config.js dist/tests/mcli/apps/mcli/**/*.spec.js --concurrency 4"
   },
   "dependencies": {
     "@nestjs/common": "9.1.6",

@@ -193,6 +193,7 @@ export class SyncCommand extends CustomCommand {
       repo: syncRepoResp.payload.repo,
       structId: syncRepoResp.payload.struct.structId,
       errorsTotal: syncRepoResp.payload.struct.errors.length,
+      lastSyncTime: lastSyncTime,
       syncTime: syncConfig.syncTime,
       reqTimeDiff: syncRepoResp.payload.devReqReceiveTime - localReqSentTime,
       respTimeDiff: localRespReceiveTime - syncRepoResp.payload.devRespSentTime
