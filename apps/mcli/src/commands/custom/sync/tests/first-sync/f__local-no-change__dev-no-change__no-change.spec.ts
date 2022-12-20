@@ -10,7 +10,7 @@ import { CustomContext } from '~mcli/models/custom-command';
 import { SyncCommand } from '../../sync';
 let deepEqual = require('deep-equal');
 
-let testId = 'mcli__sync__first-ok__local-no-change__dev-no-change__no-change';
+let testId = 'mcli_f__local-no-change__dev-no-change__no-change';
 
 test('1', async t => {
   let context: CustomContext;
