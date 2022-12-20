@@ -20,6 +20,13 @@ test('1', async t => {
 
   let repoPath = `${config.mproveCliTestReposPath}/${testId}`;
 
+  await cloneRepo({
+    repoPath: repoPath,
+    gitUrl: config.mproveCliTestGitUrl,
+    publicKeyPath: config.mproveCliTestPublicKeyPath,
+    privateKeyPath: config.mproveCliTestPrivateKeyPath
+  });
+
   let localChangesToCommit: common.DiskFileChange[];
 
   let projectId = common.makeId();
@@ -115,13 +122,6 @@ test('1', async t => {
     context = mockContext as any;
 
     let syncTime = Date.now();
-
-    await cloneRepo({
-      repoPath: repoPath,
-      gitUrl: config.mproveCliTestGitUrl,
-      publicKeyPath: config.mproveCliTestPublicKeyPath,
-      privateKeyPath: config.mproveCliTestPrivateKeyPath
-    });
 
     let filePath = `${repoPath}/${fileName}`;
 
