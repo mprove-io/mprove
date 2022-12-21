@@ -240,6 +240,12 @@ services:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
         target: $ENV_FILE_TARGET_PATH      
+      - type: bind
+        source: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PRIVATE_KEY_SOURCE_PATH
+        target: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PRIVATE_KEY_PATH
+      - type: bind
+        source: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PUBLIC_KEY_SOURCE_PATH
+        target: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PUBLIC_KEY_PATH        
 
   x11-bridge:
     image: jare/x11-bridge
