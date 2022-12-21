@@ -14,14 +14,16 @@ export class Config {
   mproveCliTestReposPath?: string;
 
   @IsString()
-  mproveCliTestGitUrl?: string;
+  mproveCliTestLocalSourceGitUrl?: string;
+
+  @IsString()
+  mproveCliTestDevSourceGitUrl?: string;
 
   @IsString()
   mproveCliTestPrivateKeyPath?: string;
 
   @IsString()
   mproveCliTestPublicKeyPath?: string;
-
   @IsString()
   mproveCliTestDwhPostgresPassword?: string;
 }

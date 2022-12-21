@@ -25,8 +25,13 @@ export function getConfig() {
       process.env.MPROVE_CLI_TEST_REPOS_PATH ||
       envFile.MPROVE_CLI_TEST_REPOS_PATH,
 
-    mproveCliTestGitUrl:
-      process.env.MPROVE_CLI_TEST_GIT_URL || envFile.MPROVE_CLI_TEST_GIT_URL,
+    mproveCliTestLocalSourceGitUrl:
+      process.env.MPROVE_CLI_TEST_LOCAL_SOURCE_GIT_URL ||
+      envFile.MPROVE_CLI_TEST_LOCAL_SOURCE_GIT_URL,
+
+    mproveCliTestDevSourceGitUrl:
+      process.env.MPROVE_CLI_TEST_DEV_SOURCE_GIT_URL ||
+      envFile.MPROVE_CLI_TEST_DEV_SOURCE_GIT_URL,
 
     mproveCliTestPrivateKeyPath:
       process.env.MPROVE_CLI_TEST_PRIVATE_KEY_PATH ||
@@ -35,7 +40,6 @@ export function getConfig() {
     mproveCliTestPublicKeyPath:
       process.env.MPROVE_CLI_TEST_PUBLIC_KEY_PATH ||
       envFile.MPROVE_CLI_TEST_PUBLIC_KEY_PATH,
-
     mproveCliTestDwhPostgresPassword:
       process.env.MPROVE_CLI_TEST_DWH_POSTGRES_PASSWORD ||
       envFile.MPROVE_CLI_TEST_DWH_POSTGRES_PASSWORD

@@ -27,9 +27,7 @@ test('1', async t => {
 
   await cloneRepo({
     repoPath: repoPath,
-    gitUrl: config.mproveCliTestGitUrl,
-    publicKeyPath: config.mproveCliTestPublicKeyPath,
-    privateKeyPath: config.mproveCliTestPrivateKeyPath
+    gitUrl: config.mproveCliTestLocalSourceGitUrl
   });
 
   let localChangesToCommit: common.DiskFileChange[];
@@ -87,7 +85,7 @@ test('1', async t => {
             name: projectName,
             defaultBranch: common.BRANCH_MAIN,
             remoteType: common.ProjectRemoteTypeEnum.GitClone,
-            gitUrl: config.mproveCliTestGitUrl,
+            gitUrl: config.mproveCliTestDevSourceGitUrl,
             publicKey: fse
               .readFileSync(config.mproveCliTestPublicKeyPath)
               .toString(),
