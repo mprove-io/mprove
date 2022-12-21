@@ -6,11 +6,13 @@ import { nodeCommon } from '~mcli/barrels/node-common';
 import { getConfig } from '~mcli/config/get.config';
 import { cloneRepo } from '~mcli/functions/clone-repo';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
+import { makeSyncTime } from '~mcli/functions/make-sync-time';
 import { mreq } from '~mcli/functions/mreq';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { writeSyncConfig } from '~mcli/functions/write-sync-config';
 import { CustomContext } from '~mcli/models/custom-command';
 import { SyncCommand } from '../../sync';
+
 let deepEqual = require('deep-equal');
 
 let testId = 'mcli_n__local-modified-a__dev-modified-a__modified-dev';
@@ -127,7 +129,7 @@ test('1', async t => {
 
     context = mockContext as any;
 
-    let syncTime = Date.now();
+    let syncTime = await makeSyncTime();
 
     let filePath = `${repoPath}/${fileName}`;
 
@@ -150,7 +152,8 @@ test('1', async t => {
 
     let syncConfig = await writeSyncConfig({
       repoPath: repoPath,
-      syncTime: syncTime
+      syncTime: syncTime,
+      lastSyncTime: 0
     });
 
     code = await cli.run(commandLine.split(' '), context);

@@ -10,6 +10,7 @@ import { getConfig } from '~mcli/config/get.config';
 import { getFilesUrl } from '~mcli/functions/get-files-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
+import { makeSyncTime } from '~mcli/functions/make-sync-time';
 import { mreq } from '~mcli/functions/mreq';
 import { writeSyncConfig } from '~mcli/functions/write-sync-config';
 import { CustomCommand } from '~mcli/models/custom-command';
@@ -172,7 +173,13 @@ export class SyncCommand extends CustomCommand {
 
     //
 
-    let syncConfig = await writeSyncConfig({ repoPath: repoDir });
+    let syncTime = await makeSyncTime();
+
+    let syncConfig = await writeSyncConfig({
+      repoPath: repoDir,
+      syncTime: syncTime,
+      lastSyncTime: lastSyncTime
+    });
 
     let filesUrl = getFilesUrl({
       host: this.context.config.mproveCliHost,

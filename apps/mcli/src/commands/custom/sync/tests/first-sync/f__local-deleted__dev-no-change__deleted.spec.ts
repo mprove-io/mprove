@@ -8,6 +8,7 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
 import { SyncCommand } from '../../sync';
+
 let deepEqual = require('deep-equal');
 
 let testId = 'mcli_f__local-deleted__dev-no-change__deleted';
