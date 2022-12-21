@@ -1,7 +1,6 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~mcli/barrels/common';
-import { nodeCommon } from '~mcli/barrels/node-common';
 import { getConfig } from '~mcli/config/get.config';
 import { cloneRepo } from '~mcli/functions/clone-repo';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
@@ -10,8 +9,6 @@ import { prepareTest } from '~mcli/functions/prepare-test';
 import { writeSyncConfig } from '~mcli/functions/write-sync-config';
 import { CustomContext } from '~mcli/models/custom-command';
 import { SyncCommand } from '../../sync';
-
-let deepEqual = require('deep-equal');
 
 let testId = 'mcli_n__local-deleted__dev-no-change-a__no-change';
 
@@ -26,8 +23,6 @@ test('1', async t => {
     repoPath: repoPath,
     gitUrl: config.mproveCliTestLocalSourceGitUrl
   });
-
-  let localChangesToCommit: common.DiskFileChange[];
 
   let projectId = common.makeId();
 
@@ -134,10 +129,6 @@ test('1', async t => {
     });
 
     code = await cli.run(commandLine.split(' '), context);
-
-    localChangesToCommit = await nodeCommon.getChangesToCommit({
-      repoDir: repoPath
-    });
   } catch (e) {
     logToConsoleMcli({
       log: e,
@@ -161,9 +152,7 @@ test('1', async t => {
   }
 
   let isPass =
-    code === 0 &&
-    parsedOutput.repo.changesToCommit.length === 0 &&
-    deepEqual(localChangesToCommit, parsedOutput.repo.changesToCommit);
+    code === 0 && parsedOutput.debug.localChangesToCommit.length === 0;
 
   if (isPass === false) {
     console.log(context.stdout.toString());
@@ -171,6 +160,5 @@ test('1', async t => {
   }
 
   t.is(code, 0);
-  t.is(parsedOutput.repo.changesToCommit.length === 0, true);
-  t.deepEqual(localChangesToCommit, parsedOutput.repo.changesToCommit);
+  t.is(parsedOutput.debug.localChangesToCommit.length === 0, true);
 });

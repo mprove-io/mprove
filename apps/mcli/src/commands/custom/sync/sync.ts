@@ -15,6 +15,8 @@ import { mreq } from '~mcli/functions/mreq';
 import { writeSyncConfig } from '~mcli/functions/write-sync-config';
 import { CustomCommand } from '~mcli/models/custom-command';
 
+let deepEqual = require('deep-equal');
+
 export class SyncCommand extends CustomCommand {
   static paths = [['sync']];
 
@@ -173,6 +175,32 @@ export class SyncCommand extends CustomCommand {
 
     //
 
+    let localChangesToCommit = await nodeCommon.getChangesToCommit({
+      repoDir: repoDir,
+      addContent: true
+    });
+
+    let devChangesToCommit = syncRepoResp.payload.repo.changesToCommit;
+
+    let syncSuccess = deepEqual(localChangesToCommit, devChangesToCommit);
+
+    if (syncSuccess === false) {
+      logToConsoleMcli({
+        log: {
+          localChangesToCommit: localChangesToCommit,
+          devChangesToCommit: devChangesToCommit
+        },
+        logLevel: common.LogLevelEnum.Info,
+        context: this.context,
+        isJson: this.json
+      });
+
+      let serverError = new common.ServerError({
+        message: common.ErEnum.MCLI_SYNC_FAILED
+      });
+      throw serverError;
+    }
+
     let syncTime = await makeSyncTime();
 
     let syncConfig = await writeSyncConfig({
@@ -190,28 +218,37 @@ export class SyncCommand extends CustomCommand {
       env: this.env
     });
 
+    let repo = syncRepoResp.payload.repo;
+
     if (this.getNodes === false) {
-      syncRepoResp.payload.repo.nodes = undefined;
+      repo.nodes = undefined;
     }
 
+    delete repo.changesToCommit;
+    delete repo.changesToPush;
+
     let log: any = {
+      syncSuccess: syncSuccess,
       url: filesUrl,
       needValidate: syncRepoResp.payload.needValidate,
-      repo: syncRepoResp.payload.repo,
+      repo: repo,
       structId: syncRepoResp.payload.struct.structId,
-      errorsTotal: syncRepoResp.payload.struct.errors.length,
-      lastSyncTime: lastSyncTime,
-      syncTime: syncConfig.syncTime,
-      reqTimeDiff: syncRepoResp.payload.devReqReceiveTime - localReqSentTime,
-      respTimeDiff: localRespReceiveTime - syncRepoResp.payload.devRespSentTime
+      errorsTotal: syncRepoResp.payload.struct.errors.length
     };
 
     if (this.debug === true) {
       log.debug = {
+        lastSyncTime: lastSyncTime,
+        syncTime: syncConfig.syncTime,
+        reqTimeDiff: syncRepoResp.payload.devReqReceiveTime - localReqSentTime,
+        respTimeDiff:
+          localRespReceiveTime - syncRepoResp.payload.devRespSentTime,
         localChangedFiles: localChangedFiles,
         localDeletedFiles: localDeletedFiles,
         restChangedFiles: syncRepoResp.payload.restChangedFiles,
-        restDeletedFiles: syncRepoResp.payload.restDeletedFiles
+        restDeletedFiles: syncRepoResp.payload.restDeletedFiles,
+        localChangesToCommit: localChangesToCommit,
+        devChangesToCommit: devChangesToCommit
       };
     }
 

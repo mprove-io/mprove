@@ -81,6 +81,9 @@ export class CommitCommand extends CustomCommand {
       repo.nodes = undefined;
     }
 
+    delete repo.changesToCommit;
+    delete repo.changesToPush;
+
     let log: any = {
       repo: repo
     };

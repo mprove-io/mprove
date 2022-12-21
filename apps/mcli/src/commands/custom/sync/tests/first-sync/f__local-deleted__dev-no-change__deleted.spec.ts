@@ -1,15 +1,12 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~mcli/barrels/common';
-import { nodeCommon } from '~mcli/barrels/node-common';
 import { getConfig } from '~mcli/config/get.config';
 import { cloneRepo } from '~mcli/functions/clone-repo';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
 import { SyncCommand } from '../../sync';
-
-let deepEqual = require('deep-equal');
 
 let testId = 'mcli_f__local-deleted__dev-no-change__deleted';
 
@@ -19,8 +16,6 @@ test('1', async t => {
   let config = getConfig();
 
   let repoPath = `${config.mproveCliTestReposPath}/${testId}`;
-
-  let localChangesToCommit: common.DiskFileChange[];
 
   await cloneRepo({
     repoPath: repoPath,
@@ -124,10 +119,6 @@ test('1', async t => {
     await fse.remove(filePath);
 
     code = await cli.run(commandLine.split(' '), context);
-
-    localChangesToCommit = await nodeCommon.getChangesToCommit({
-      repoDir: repoPath
-    });
   } catch (e) {
     logToConsoleMcli({
       log: e,
@@ -152,11 +143,10 @@ test('1', async t => {
 
   let isPass =
     code === 0 &&
-    parsedOutput.repo.changesToCommit.length === 1 &&
-    parsedOutput.repo.changesToCommit[0].fileName === fileName &&
-    parsedOutput.repo.changesToCommit[0].status ===
-      common.FileStatusEnum.Deleted &&
-    deepEqual(localChangesToCommit, parsedOutput.repo.changesToCommit);
+    parsedOutput.debug.localChangesToCommit.length === 1 &&
+    parsedOutput.debug.localChangesToCommit[0].fileName === fileName &&
+    parsedOutput.debug.localChangesToCommit[0].status ===
+      common.FileStatusEnum.Deleted;
 
   if (isPass === false) {
     console.log(context.stdout.toString());
@@ -164,12 +154,11 @@ test('1', async t => {
   }
 
   t.is(code, 0);
-  t.is(parsedOutput.repo.changesToCommit.length === 1, true);
-  t.is(parsedOutput.repo.changesToCommit[0].fileName === fileName, true);
+  t.is(parsedOutput.debug.localChangesToCommit.length === 1, true);
+  t.is(parsedOutput.debug.localChangesToCommit[0].fileName === fileName, true);
   t.is(
-    parsedOutput.repo.changesToCommit[0].status ===
+    parsedOutput.debug.localChangesToCommit[0].status ===
       common.FileStatusEnum.Deleted,
     true
   );
-  t.deepEqual(localChangesToCommit, parsedOutput.repo.changesToCommit);
 });

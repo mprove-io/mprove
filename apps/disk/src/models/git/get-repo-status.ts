@@ -13,6 +13,7 @@ export async function getRepoStatus(item: {
   fetchOptions: nodegit.FetchOptions;
   isFetch: boolean;
   isCheckConflicts: boolean;
+  addContent?: boolean;
 }): Promise<interfaces.ItemStatus> {
   // priorities order:
   // NeedSave (frontend only)
@@ -27,7 +28,10 @@ export async function getRepoStatus(item: {
   let gitRepo = <nodegit.Repository>await nodegit.Repository.open(item.repoDir);
 
   let changesToCommit: common.DiskFileChange[] =
-    await nodeCommon.getChangesToCommit({ repoDir: item.repoDir });
+    await nodeCommon.getChangesToCommit({
+      repoDir: item.repoDir,
+      addContent: item.addContent
+    });
 
   let currentBranchRef = await gitRepo.getCurrentBranch();
   let currentBranchName = await nodegit.Branch.name(currentBranchRef);

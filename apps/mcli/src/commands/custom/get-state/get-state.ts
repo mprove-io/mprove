@@ -142,9 +142,14 @@ export class GetStateCommand extends CustomCommand {
         host: this.context.config.mproveCliHost
       });
 
+    let repo = getRepoResp.payload.repo;
+
     if (this.getNodes === false) {
-      getRepoResp.payload.repo.nodes = undefined;
+      repo.nodes = undefined;
     }
+
+    delete repo.changesToCommit;
+    delete repo.changesToPush;
 
     let filesUrl = getFilesUrl({
       host: this.context.config.mproveCliHost,
@@ -158,7 +163,7 @@ export class GetStateCommand extends CustomCommand {
     let log: any = {
       url: filesUrl,
       needValidate: getRepoResp.payload.needValidate,
-      repo: getRepoResp.payload.repo,
+      repo: repo,
       structId: getRepoResp.payload.struct.structId,
       errorsTotal: getRepoResp.payload.struct.errors.length,
       modelsTotal: getModelsResp.payload.models.length,

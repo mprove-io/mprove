@@ -325,7 +325,8 @@ export class SyncRepoService {
       repoDir: repoDir,
       fetchOptions: fetchOptions,
       isFetch: true,
-      isCheckConflicts: true
+      isCheckConflicts: true,
+      addContent: true
     });
 
     let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({

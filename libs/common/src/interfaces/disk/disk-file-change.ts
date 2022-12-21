@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 import { enums } from '~common/barrels/enums';
 
 export class DiskFileChange {
@@ -13,4 +13,8 @@ export class DiskFileChange {
 
   @IsString()
   status: enums.FileStatusEnum;
+
+  @IsOptional()
+  @IsString()
+  content?: string;
 }
