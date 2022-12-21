@@ -41,7 +41,7 @@ function updateTarget(tPath: string, s: any, t: any) {
     .filter(key => !allowedTop.includes(key))
     .forEach(key => delete s[key]);
 
-  let allowedScripts: string[] = ['ava:mcli'];
+  let allowedScripts: string[] = ['ava:mcli', 'clean:mcli-repos', 'clone:mcli'];
 
   Object.keys(s.scripts)
     .filter(key => !allowedScripts.includes(key))

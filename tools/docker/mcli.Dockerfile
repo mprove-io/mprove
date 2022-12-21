@@ -18,7 +18,6 @@ COPY package.cli.json .
 
 RUN yarn build:mcli
 RUN yarn build-tests:mcli
-RUN yarn clone:mcli
 
 RUN rm -rf node_modules
 

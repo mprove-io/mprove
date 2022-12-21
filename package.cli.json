@@ -11,7 +11,9 @@
   },
   "bin": "./main.js",
   "scripts": {
-    "ava:mcli": "ava --config=ava-js.config.js dist/tests/mcli/apps/mcli/**/*.spec.js --concurrency 4"
+    "ava:mcli": "yarn clean:mcli-repos && yarn clone:mcli && ava --config=ava-js.config.js dist/tests/mcli/apps/mcli/**/*.spec.js --concurrency 4",
+    "clone:mcli": "git clone $MPROVE_CLI_TEST_REMOTE_GIT_URL $MPROVE_CLI_TEST_DESTINATION_URL",
+    "clean:mcli-repos": "rm -rf ~/mprove_data/mcli-repos/*"
   },
   "dependencies": {
     "@nestjs/common": "9.1.6",

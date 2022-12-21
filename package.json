@@ -31,7 +31,7 @@
     "nx": "nx",
     "build:mcli": "nx build mcli && yarn pjc-to-dist && (shx echo '#!/usr/bin/env node' && shx cat dist/apps/mcli/main.js) > tempfile && shx mv tempfile dist/apps/mcli/main.js",
     "build-tests:mcli": "nx build-tests mcli && yarn pjc-to-tests",
-    "ava:mcli": "ava --config=ava-js.config.js dist/tests/mcli/apps/mcli/**/*.spec.js --concurrency 4",
+    "ava:mcli": "yarn clean:mcli-repos && yarn clone:mcli && ava --config=ava-js.config.js dist/tests/mcli/apps/mcli/**/*.spec.js --concurrency 4",
     "clone:mcli": "git clone $MPROVE_CLI_TEST_REMOTE_GIT_URL $MPROVE_CLI_TEST_DESTINATION_URL",
     "build:prod": "nx run-many --target=build -c production --all",
     "build:backend:prod": "nx build backend -c production",
