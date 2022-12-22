@@ -1,11 +1,14 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Logger, Post, Req, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BigQueryService } from '~backend/services/bigquery.service';
 import { ClickHouseService } from '~backend/services/clickhouse.service';
@@ -27,7 +30,9 @@ export class RunQueriesController {
     private pgService: PgService,
     private clickhouseService: ClickHouseService,
     private bigqueryService: BigQueryService,
-    private snowflakeService: SnowFlakeService
+    private snowflakeService: SnowFlakeService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries)
@@ -116,6 +121,16 @@ export class RunQueriesController {
             });
           }
         }
+      }).catch(e => {
+        logToConsoleBackend({
+          log: new common.ServerError({
+            message: common.ErEnum.BACKEND_RUN_QUERIES_POOL_ERROR,
+            originalError: e
+          }),
+          logLevel: common.LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
       });
     } else {
       await asyncPool(1, queryIds, async queryId => {
@@ -168,26 +183,62 @@ export class RunQueriesController {
           runningQueries.push(records.queries[0]);
 
           if (connection.type === common.ConnectionTypeEnum.SnowFlake) {
-            this.snowflakeService.runQuery({
-              connection: connection,
-              queryId: query.query_id,
-              queryJobId: query.query_job_id,
-              querySql: query.sql
-            });
+            this.snowflakeService
+              .runQuery({
+                connection: connection,
+                queryId: query.query_id,
+                queryJobId: query.query_job_id,
+                querySql: query.sql
+              })
+              .catch(e => {
+                logToConsoleBackend({
+                  log: new common.ServerError({
+                    message: common.ErEnum.BACKEND_RUN_QUERY_SNOWFLAKE_ERROR,
+                    originalError: e
+                  }),
+                  logLevel: common.LogLevelEnum.Error,
+                  logger: this.logger,
+                  cs: this.cs
+                });
+              });
           } else if (connection.type === common.ConnectionTypeEnum.ClickHouse) {
-            this.clickhouseService.runQuery({
-              connection: connection,
-              queryId: query.query_id,
-              queryJobId: query.query_job_id,
-              querySql: query.sql
-            });
+            this.clickhouseService
+              .runQuery({
+                connection: connection,
+                queryId: query.query_id,
+                queryJobId: query.query_job_id,
+                querySql: query.sql
+              })
+              .catch(e => {
+                logToConsoleBackend({
+                  log: new common.ServerError({
+                    message: common.ErEnum.BACKEND_RUN_QUERY_CLICKHOUSE_ERROR,
+                    originalError: e
+                  }),
+                  logLevel: common.LogLevelEnum.Error,
+                  logger: this.logger,
+                  cs: this.cs
+                });
+              });
           } else if (connection.type === common.ConnectionTypeEnum.PostgreSQL) {
-            this.pgService.runQuery({
-              connection: connection,
-              queryId: query.query_id,
-              queryJobId: query.query_job_id,
-              querySql: query.sql
-            });
+            this.pgService
+              .runQuery({
+                connection: connection,
+                queryId: query.query_id,
+                queryJobId: query.query_job_id,
+                querySql: query.sql
+              })
+              .catch(e => {
+                logToConsoleBackend({
+                  log: new common.ServerError({
+                    message: common.ErEnum.BACKEND_RUN_QUERY_POSTGRES_ERROR,
+                    originalError: e
+                  }),
+                  logLevel: common.LogLevelEnum.Error,
+                  logger: this.logger,
+                  cs: this.cs
+                });
+              });
           }
         }
       });
