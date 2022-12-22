@@ -1,167 +1,185 @@
 import test from 'ava';
 import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
+import { constants } from '~mcli/barrels/constants';
 import { getConfig } from '~mcli/config/get.config';
+import { checkIsTrue } from '~mcli/functions/check-is-true';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
 import { MergeCommand } from '../merge';
+let retry = require('async-retry');
 
 let testId = 'mcli__merge__ok';
 
 test('1', async t => {
-  let context: CustomContext;
   let code: number;
+  let isPass: boolean;
+  let parsedOutput: any;
+  let context: CustomContext;
 
-  let theirBranch = 'b1';
-  let defaultBranch = common.BRANCH_MASTER;
+  await retry(async (bail: any) => {
+    let theirBranch = 'b1';
+    let defaultBranch = common.BRANCH_MASTER;
 
-  let projectId = common.makeId();
-  let commandLine = `merge \
+    let projectId = common.makeId();
+    let commandLine = `merge \
 -p ${projectId} \
 --their-branch ${theirBranch} \
 --branch ${defaultBranch} \
 --env prod \
 --json`;
 
-  let userId = common.makeId();
-  let email = `${testId}@example.com`;
-  let password = '123123';
+    let userId = common.makeId();
+    let email = `${testId}@example.com`;
+    let password = '123123';
 
-  let orgId = 't' + testId;
-  let orgName = testId;
+    let orgId = 't' + testId;
+    let orgName = testId;
 
-  let projectName = testId;
+    let projectName = testId;
 
-  let config = getConfig();
+    let config = getConfig();
 
-  try {
-    let { cli, mockContext } = await prepareTest({
-      command: MergeCommand,
-      config: config,
-      deletePack: {
-        emails: [email],
-        orgIds: [orgId],
-        projectIds: [projectId],
-        projectNames: [projectName]
-      },
-      seedPack: {
-        users: [
-          {
-            userId,
-            email: email,
-            password: password,
-            isEmailVerified: common.BoolEnum.TRUE
-          }
-        ],
-        orgs: [
-          {
-            orgId: orgId,
-            ownerEmail: email,
-            name: orgName
-          }
-        ],
-        projects: [
-          {
-            orgId,
-            projectId,
-            name: projectName,
-            defaultBranch: defaultBranch,
-            remoteType: common.ProjectRemoteTypeEnum.Managed,
-            gitUrl: undefined,
-            publicKey: undefined,
-            privateKey: undefined
-          }
-        ],
-        members: [
-          {
-            memberId: userId,
-            email,
-            projectId,
-            isAdmin: common.BoolEnum.TRUE,
-            isEditor: common.BoolEnum.TRUE,
-            isExplorer: common.BoolEnum.TRUE
-          }
-        ]
-      },
-      loginEmail: email,
-      loginPassword: password
-    });
+    try {
+      let { cli, mockContext } = await prepareTest({
+        command: MergeCommand,
+        config: config,
+        deletePack: {
+          emails: [email],
+          orgIds: [orgId],
+          projectIds: [projectId],
+          projectNames: [projectName]
+        },
+        seedPack: {
+          users: [
+            {
+              userId,
+              email: email,
+              password: password,
+              isEmailVerified: common.BoolEnum.TRUE
+            }
+          ],
+          orgs: [
+            {
+              orgId: orgId,
+              ownerEmail: email,
+              name: orgName
+            }
+          ],
+          projects: [
+            {
+              orgId,
+              projectId,
+              name: projectName,
+              defaultBranch: defaultBranch,
+              remoteType: common.ProjectRemoteTypeEnum.Managed,
+              gitUrl: undefined,
+              publicKey: undefined,
+              privateKey: undefined
+            }
+          ],
+          members: [
+            {
+              memberId: userId,
+              email,
+              projectId,
+              isAdmin: common.BoolEnum.TRUE,
+              isEditor: common.BoolEnum.TRUE,
+              isExplorer: common.BoolEnum.TRUE
+            }
+          ]
+        },
+        loginEmail: email,
+        loginPassword: password
+      });
 
-    context = mockContext as any;
+      context = mockContext as any;
 
-    let createBranchReqPayload: apiToBackend.ToBackendCreateBranchRequestPayload =
-      {
+      let createBranchReqPayload: apiToBackend.ToBackendCreateBranchRequestPayload =
+        {
+          projectId: projectId,
+          isRepoProd: false,
+          newBranchId: theirBranch,
+          fromBranchId: defaultBranch
+        };
+
+      let createBranchResp =
+        await mreq<apiToBackend.ToBackendCreateBranchResponse>({
+          loginToken: context.loginToken,
+          pathInfoName:
+            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
+          payload: createBranchReqPayload,
+          host: config.mproveCliHost
+        });
+
+      let saveFileReqPayload: apiToBackend.ToBackendSaveFileRequestPayload = {
         projectId: projectId,
-        isRepoProd: false,
-        newBranchId: theirBranch,
-        fromBranchId: defaultBranch
+        branchId: theirBranch,
+        envId: 'prod',
+        fileNodeId: `${projectId}/readme.md`,
+        content: '123'
       };
 
-    let createBranchResp =
-      await mreq<apiToBackend.ToBackendCreateBranchResponse>({
+      let saveFileResp = await mreq<apiToBackend.ToBackendSaveFileResponse>({
         loginToken: context.loginToken,
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
-        payload: createBranchReqPayload,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveFile,
+        payload: saveFileReqPayload,
         host: config.mproveCliHost
       });
 
-    let saveFileReqPayload: apiToBackend.ToBackendSaveFileRequestPayload = {
-      projectId: projectId,
-      branchId: theirBranch,
-      envId: 'prod',
-      fileNodeId: `${projectId}/readme.md`,
-      content: '123'
-    };
+      let commitRepoReqPayload: apiToBackend.ToBackendCommitRepoRequestPayload =
+        {
+          projectId: projectId,
+          isRepoProd: false,
+          branchId: theirBranch,
+          commitMessage: 'm1'
+        };
 
-    let saveFileResp = await mreq<apiToBackend.ToBackendSaveFileResponse>({
-      loginToken: context.loginToken,
-      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveFile,
-      payload: saveFileReqPayload,
-      host: config.mproveCliHost
-    });
+      let commitRepoResp = await mreq<apiToBackend.ToBackendCommitRepoResponse>(
+        {
+          loginToken: context.loginToken,
+          pathInfoName:
+            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
+          payload: commitRepoReqPayload,
+          host: config.mproveCliHost
+        }
+      );
 
-    let commitRepoReqPayload: apiToBackend.ToBackendCommitRepoRequestPayload = {
-      projectId: projectId,
-      isRepoProd: false,
-      branchId: theirBranch,
-      commitMessage: 'm1'
-    };
+      code = await cli.run(commandLine.split(' '), context);
+    } catch (e) {
+      logToConsoleMcli({
+        log: e,
+        logLevel: common.LogLevelEnum.Error,
+        context: context,
+        isJson: true
+      });
+    }
 
-    let commitRepoResp = await mreq<apiToBackend.ToBackendCommitRepoResponse>({
-      loginToken: context.loginToken,
-      pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
-      payload: commitRepoReqPayload,
-      host: config.mproveCliHost
-    });
+    try {
+      parsedOutput = JSON.parse(context.stdout.toString());
+    } catch (e) {
+      logToConsoleMcli({
+        log: e,
+        logLevel: common.LogLevelEnum.Error,
+        context: context,
+        isJson: true
+      });
+    }
 
-    code = await cli.run(commandLine.split(' '), context);
-  } catch (e) {
+    isPass = checkIsTrue(
+      code === 0 && common.isDefined(parsedOutput?.errorsTotal)
+    );
+  }, constants.RETRY_OPTIONS).catch((er: any) => {
     logToConsoleMcli({
-      log: e,
+      log: er,
       logLevel: common.LogLevelEnum.Error,
-      context: context,
-      isJson: true
+      context: undefined,
+      isJson: false
     });
-  }
-
-  let parsedOutput: any;
-
-  try {
-    parsedOutput = JSON.parse(context.stdout.toString());
-  } catch (e) {
-    logToConsoleMcli({
-      log: e,
-      logLevel: common.LogLevelEnum.Error,
-      context: context,
-      isJson: true
-    });
-  }
-
-  let isPass = code === 0 && common.isDefined(parsedOutput?.errorsTotal);
+  });
 
   if (isPass === false) {
     console.log(context.stdout.toString());

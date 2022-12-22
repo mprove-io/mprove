@@ -1,21 +1,27 @@
 import test from 'ava';
 import { common } from '~mcli/barrels/common';
+import { constants } from '~mcli/barrels/constants';
 import { getConfig } from '~mcli/config/get.config';
+import { checkIsTrue } from '~mcli/functions/check-is-true';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
 import { GetStateCommand } from '../get-state';
+let retry = require('async-retry');
 
 let testId = 'mcli__get-state__ok';
 
 test('1', async t => {
-  let context: CustomContext;
   let code: number;
+  let isPass: boolean;
+  let parsedOutput: any;
+  let context: CustomContext;
 
-  let defaultBranch = common.BRANCH_MASTER;
+  await retry(async (bail: any) => {
+    let defaultBranch = common.BRANCH_MASTER;
 
-  let projectId = common.makeId();
-  let commandLine = `get-state \
+    let projectId = common.makeId();
+    let commandLine = `get-state \
 -p ${projectId} \
 --repo dev \
 --branch ${defaultBranch} \
@@ -26,96 +32,104 @@ test('1', async t => {
 --get-models \
 --json`;
 
-  let userId = common.makeId();
-  let email = `${testId}@example.com`;
-  let password = '123123';
+    let userId = common.makeId();
+    let email = `${testId}@example.com`;
+    let password = '123123';
 
-  let orgId = 't' + testId;
-  let orgName = testId;
+    let orgId = 't' + testId;
+    let orgName = testId;
 
-  let projectName = testId;
+    let projectName = testId;
 
-  let config = getConfig();
+    let config = getConfig();
 
-  try {
-    let { cli, mockContext } = await prepareTest({
-      command: GetStateCommand,
-      config: config,
-      deletePack: {
-        emails: [email],
-        orgIds: [orgId],
-        projectIds: [projectId],
-        projectNames: [projectName]
-      },
-      seedPack: {
-        users: [
-          {
-            userId,
-            email: email,
-            password: password,
-            isEmailVerified: common.BoolEnum.TRUE
-          }
-        ],
-        orgs: [
-          {
-            orgId: orgId,
-            ownerEmail: email,
-            name: orgName
-          }
-        ],
-        projects: [
-          {
-            orgId,
-            projectId,
-            name: projectName,
-            testProjectId: 'first-project',
-            defaultBranch: defaultBranch,
-            remoteType: common.ProjectRemoteTypeEnum.Managed,
-            gitUrl: undefined,
-            publicKey: undefined,
-            privateKey: undefined
-          }
-        ],
-        members: [
-          {
-            memberId: userId,
-            email,
-            projectId,
-            isAdmin: common.BoolEnum.TRUE,
-            isEditor: common.BoolEnum.TRUE,
-            isExplorer: common.BoolEnum.TRUE
-          }
-        ]
-      },
-      loginEmail: email,
-      loginPassword: password
-    });
+    try {
+      let { cli, mockContext } = await prepareTest({
+        command: GetStateCommand,
+        config: config,
+        deletePack: {
+          emails: [email],
+          orgIds: [orgId],
+          projectIds: [projectId],
+          projectNames: [projectName]
+        },
+        seedPack: {
+          users: [
+            {
+              userId,
+              email: email,
+              password: password,
+              isEmailVerified: common.BoolEnum.TRUE
+            }
+          ],
+          orgs: [
+            {
+              orgId: orgId,
+              ownerEmail: email,
+              name: orgName
+            }
+          ],
+          projects: [
+            {
+              orgId,
+              projectId,
+              name: projectName,
+              testProjectId: 'first-project',
+              defaultBranch: defaultBranch,
+              remoteType: common.ProjectRemoteTypeEnum.Managed,
+              gitUrl: undefined,
+              publicKey: undefined,
+              privateKey: undefined
+            }
+          ],
+          members: [
+            {
+              memberId: userId,
+              email,
+              projectId,
+              isAdmin: common.BoolEnum.TRUE,
+              isEditor: common.BoolEnum.TRUE,
+              isExplorer: common.BoolEnum.TRUE
+            }
+          ]
+        },
+        loginEmail: email,
+        loginPassword: password
+      });
 
-    context = mockContext as any;
-    code = await cli.run(commandLine.split(' '), context);
-  } catch (e) {
+      context = mockContext as any;
+      code = await cli.run(commandLine.split(' '), context);
+    } catch (e) {
+      logToConsoleMcli({
+        log: e,
+        logLevel: common.LogLevelEnum.Error,
+        context: context,
+        isJson: true
+      });
+    }
+
+    try {
+      parsedOutput = JSON.parse(context.stdout.toString());
+    } catch (e) {
+      logToConsoleMcli({
+        log: e,
+        logLevel: common.LogLevelEnum.Error,
+        context: context,
+        isJson: true
+      });
+    }
+
+    isPass = checkIsTrue(
+      code === 0 && common.isDefined(parsedOutput?.errorsTotal)
+    );
+  }, constants.RETRY_OPTIONS).catch((er: any) => {
     logToConsoleMcli({
-      log: e,
+      log: er,
       logLevel: common.LogLevelEnum.Error,
-      context: context,
-      isJson: true
+      context: undefined,
+      isJson: false
     });
-  }
-
-  let parsedOutput: any;
-
-  try {
-    parsedOutput = JSON.parse(context.stdout.toString());
-  } catch (e) {
-    logToConsoleMcli({
-      log: e,
-      logLevel: common.LogLevelEnum.Error,
-      context: context,
-      isJson: true
-    });
-  }
-
-  let isPass = code === 0 && common.isDefined(parsedOutput?.errorsTotal);
+  });
 
   if (isPass === false) {
     console.log(context.stdout.toString());
