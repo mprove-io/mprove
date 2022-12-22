@@ -50,7 +50,7 @@
       "options": {
         "commands": [
           "nx build-tests mcli --with-deps",
-          "ava --config=ava-js.config.js dist/tests/mcli/apps/mcli/**/*.spec.js --concurrency 4"
+          "ava --config=ava-js.config.js dist/tests/mcli/apps/mcli/**/*.spec.js"
         ],
         "parallel": false
       }
