@@ -1,6 +1,7 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~mcli/barrels/common';
+import { constants } from '~mcli/barrels/constants';
 import { getConfig } from '~mcli/config/get.config';
 import { cloneRepo } from '~mcli/functions/clone-repo';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
@@ -52,6 +53,8 @@ test('1', async t => {
   let filePath = `${repoPath}/${fileName}`;
 
   await fse.writeFile(filePath, '1');
+
+  await common.sleep(constants.POSSIBLE_TIME_DIFF_MS);
 
   try {
     let { cli, mockContext } = await prepareTest({

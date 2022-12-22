@@ -2,6 +2,7 @@ import test from 'ava';
 import * as fse from 'fs-extra';
 import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
+import { constants } from '~mcli/barrels/constants';
 import { getConfig } from '~mcli/config/get.config';
 import { cloneRepo } from '~mcli/functions/clone-repo';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
@@ -125,6 +126,8 @@ test('1', async t => {
     });
 
     context = mockContext as any;
+
+    await common.sleep(constants.POSSIBLE_TIME_DIFF_MS);
 
     await fse.writeFile(filePath, '1');
 

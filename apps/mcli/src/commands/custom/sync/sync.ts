@@ -4,6 +4,7 @@ import * as nodegit from 'nodegit';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
+import { constants } from '~mcli/barrels/constants';
 import { interfaces } from '~mcli/barrels/interfaces';
 import { nodeCommon } from '~mcli/barrels/node-common';
 import { getConfig } from '~mcli/config/get.config';
@@ -201,7 +202,9 @@ export class SyncCommand extends CustomCommand {
       throw serverError;
     }
 
-    let syncTime = await makeSyncTime();
+    await common.sleep(constants.POSSIBLE_TIME_DIFF_MS);
+
+    let syncTime = await makeSyncTime({ skipDelay: true });
 
     let syncConfig = await writeSyncConfig({
       repoPath: repoDir,
