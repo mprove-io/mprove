@@ -11,7 +11,6 @@ import { mreq } from '~mcli/functions/mreq';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
 import { SyncCommand } from '../../sync';
-
 let retry = require('async-retry');
 
 let testId = 'mcli_f__local-deleted__dev-deleted__deleted';
