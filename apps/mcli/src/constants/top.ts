@@ -1,6 +1,3 @@
-import { common } from '~mcli/barrels/common';
-import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
-
 export const APP_NAME_MCLI = 'MCLI';
 
 export const POSSIBLE_TIME_DIFF_MS = 1000;
@@ -11,14 +8,14 @@ export const RETRY_OPTIONS = {
   factor: 1, // (default 2)
   randomize: true, // 1 to 2 (default true)
   onRetry: (e: any) => {
-    logToConsoleMcli({
-      log: new common.ServerError({
-        message: common.ErEnum.MCLI_TEST_RETRY,
-        originalError: e
-      }),
-      logLevel: common.LogLevelEnum.Error,
-      context: undefined,
-      isJson: false
-    });
+    // logToConsoleMcli({
+    //   log: new common.ServerError({
+    //     message: common.ErEnum.MCLI_TEST_RETRY,
+    //     originalError: e
+    //   }),
+    //   logLevel: common.LogLevelEnum.Error,
+    //   context: undefined,
+    //   isJson: false
+    // });
   }
 };
