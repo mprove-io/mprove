@@ -1,12 +1,10 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
-import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { getConfig } from '~mcli/config/get.config';
 import { cloneRepo } from '~mcli/functions/clone-repo';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { makeSyncTime } from '~mcli/functions/make-sync-time';
-import { mreq } from '~mcli/functions/mreq';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { writeSyncConfig } from '~mcli/functions/write-sync-config';
 import { CustomContext } from '~mcli/models/custom-command';
@@ -49,7 +47,6 @@ test('1', async t => {
 
   let fileName = 'README.md';
 
-  let getFileResp: apiToBackend.ToBackendGetFileResponse;
   let localFileResultContent;
 
   try {
@@ -138,22 +135,6 @@ test('1', async t => {
 
     code = await cli.run(commandLine.split(' '), context);
 
-    let getFileReqPayload: apiToBackend.ToBackendGetFileRequestPayload = {
-      projectId: projectId,
-      isRepoProd: false,
-      branchId: defaultBranch,
-      envId: env,
-      fileNodeId: `${projectId}/${fileName}`,
-      panel: common.PanelEnum.Tree
-    };
-
-    getFileResp = await mreq<apiToBackend.ToBackendGetFileResponse>({
-      loginToken: context.loginToken,
-      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetFile,
-      payload: getFileReqPayload,
-      host: context.config.mproveCliHost
-    });
-
     localFileResultContent = fse.readFileSync(filePath).toString();
   } catch (e) {
     logToConsoleMcli({
@@ -183,7 +164,6 @@ test('1', async t => {
     parsedOutput.debug.localChangesToCommit[0].fileName === fileName &&
     parsedOutput.debug.localChangesToCommit[0].status ===
       common.FileStatusEnum.Modified &&
-    localFileResultContent === getFileResp.payload.content &&
     localFileResultContent === '1';
 
   if (isPass === false) {
@@ -199,6 +179,5 @@ test('1', async t => {
       common.FileStatusEnum.Modified,
     true
   );
-  t.is(localFileResultContent === getFileResp.payload.content, true);
   t.is(localFileResultContent === '1', true);
 });

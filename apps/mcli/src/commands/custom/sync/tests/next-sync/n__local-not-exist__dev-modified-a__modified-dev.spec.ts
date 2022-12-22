@@ -51,7 +51,6 @@ test('1', async t => {
 
   let fileName = 'test.md';
 
-  let getFileResp: apiToBackend.ToBackendGetFileResponse;
   let localFileResultContent;
 
   try {
@@ -169,22 +168,6 @@ test('1', async t => {
 
     code = await cli.run(commandLine.split(' '), context);
 
-    let getFileReqPayload: apiToBackend.ToBackendGetFileRequestPayload = {
-      projectId: projectId,
-      isRepoProd: false,
-      branchId: defaultBranch,
-      envId: env,
-      fileNodeId: `${projectId}/${fileName}`,
-      panel: common.PanelEnum.Tree
-    };
-
-    getFileResp = await mreq<apiToBackend.ToBackendGetFileResponse>({
-      loginToken: context.loginToken,
-      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetFile,
-      payload: getFileReqPayload,
-      host: context.config.mproveCliHost
-    });
-
     localFileResultContent = fse.readFileSync(filePath).toString();
   } catch (e) {
     logToConsoleMcli({
@@ -214,7 +197,6 @@ test('1', async t => {
     parsedOutput.debug.localChangesToCommit[0].fileName === fileName &&
     parsedOutput.debug.localChangesToCommit[0].status ===
       common.FileStatusEnum.New &&
-    localFileResultContent === getFileResp.payload.content &&
     localFileResultContent === resultFileContent;
 
   if (isPass === false) {
@@ -230,6 +212,5 @@ test('1', async t => {
       common.FileStatusEnum.New,
     true
   );
-  t.is(localFileResultContent === getFileResp.payload.content, true);
   t.is(localFileResultContent === resultFileContent, true);
 });
