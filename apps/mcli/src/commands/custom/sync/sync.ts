@@ -16,7 +16,7 @@ import { mreq } from '~mcli/functions/mreq';
 import { writeSyncConfig } from '~mcli/functions/write-sync-config';
 import { CustomCommand } from '~mcli/models/custom-command';
 
-let deepEqual = require('deep-equal');
+let deepEqual = require('fast-deep-equal');
 
 export class SyncCommand extends CustomCommand {
   static paths = [['sync']];

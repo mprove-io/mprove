@@ -1,6 +1,6 @@
 import * as fse from 'fs-extra';
 import { exit } from 'process';
-let deepEqual = require('deep-equal');
+let deepEqual = require('fast-deep-equal');
 
 let sourcePath = './package.json';
 let targetPath = './package.docker.json';

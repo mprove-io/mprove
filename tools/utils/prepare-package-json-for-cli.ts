@@ -1,6 +1,6 @@
 import * as fse from 'fs-extra';
 import { exit } from 'process';
-let deepEqual = require('deep-equal');
+let deepEqual = require('fast-deep-equal');
 
 let sourcePath = './package.json';
 let targetPath = './package.cli.json';
@@ -72,7 +72,7 @@ function updateTarget(tPath: string, s: any, t: any) {
     'module-alias',
     '@nestjs/common',
     'rxjs',
-    'deep-equal',
+    'fast-deep-equal',
     'async-retry'
   ];
 

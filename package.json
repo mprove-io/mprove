@@ -71,7 +71,8 @@
     "clean:nx": "rm -rf ./node_modules/.cache/nx",
     "clean:cypress": "rm -rf ~/.cache/Cypress/*",
     "clean:node_modules": "rm -rf ./node_modules/*",
-    "x11": "docker-compose up -d --force-recreate x11-bridge"
+    "x11": "docker-compose up -d --force-recreate x11-bridge",
+    "pkg:1": "rm -rf dist/bin/mp1 && pkg dist/apps/mcli/main.js --output dist/bin/mp1"
   },
   "dependencies": {
     "@angular/animations": "13.3.11",
@@ -116,8 +117,8 @@
     "clone-regexp": "^2.2.0",
     "d3-format": "^1.4.5",
     "d3-shape": "^3.0.1",
-    "deep-equal": "^2.0.5",
     "dotenv": "^8.2.0",
+    "fast-deep-equal": "^3.1.3",
     "fs-extra": "^9.0.1",
     "fuzzy-search": "^3.2.1",
     "got": "11.8.5",
@@ -226,6 +227,7 @@
     "madge": "4.0.0",
     "monaco-editor-webpack-plugin": "7.0.1",
     "nx": "14.1.9",
+    "pkg": "^5.8.0",
     "postcss": "^8.4.6",
     "prettier": "2.7.1",
     "prettier-plugin-organize-imports": "^1.1.1",
