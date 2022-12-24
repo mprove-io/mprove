@@ -2,7 +2,7 @@ name: werf-converge
 on:
   push:
     branches:
-      - test
+      - test-converge
 jobs:
   converge:
     runs-on: ubuntu-latest

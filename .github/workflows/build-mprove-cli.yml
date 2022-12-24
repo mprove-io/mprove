@@ -41,11 +41,11 @@ jobs:
       - name: build mcli
         run: yarn build:mcli
 
-      - name: remove node_modules
-        run: yarn shx rm -rf node_modules
-
       - name: replace package.json
         run: yarn shx cp package.cli.json package.json
+
+      - name: remove node_modules
+        run: yarn shx rm -rf node_modules
 
       - name: install using package.cli.json
         run: yarn install --frozen-lockfile  
