@@ -27,7 +27,7 @@ export class SyncCommand extends CustomCommand {
     examples: [
       [
         'Synchronize files (uncommitted changes) between Local and Dev repo, validate BlockML for selected env',
-        'mprove sync -p DXYE72ODCP5LWPWH2EXQ --env prod'
+        'mprove sync --project-id DXYE72ODCP5LWPWH2EXQ --env prod'
       ]
     ]
   });
@@ -37,7 +37,7 @@ export class SyncCommand extends CustomCommand {
       '(optional, if not specified then the current working directory is used) Absolute path of local git repository'
   });
 
-  projectId = Option.String('-p', {
+  projectId = Option.String('--project-id', {
     required: true,
     description: '(required) Project Id'
   });

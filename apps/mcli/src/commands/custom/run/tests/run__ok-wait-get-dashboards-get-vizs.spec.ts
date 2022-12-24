@@ -26,7 +26,7 @@ test('1', async t => {
     let projectId = common.makeId();
 
     let commandLine = `run \
--p ${projectId} \
+--project-id ${projectId} \
 --wait --sleep 2 \
 --get-dashboards \
 --get-vizs \

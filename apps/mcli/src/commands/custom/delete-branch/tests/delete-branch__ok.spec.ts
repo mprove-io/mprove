@@ -28,7 +28,7 @@ test('1', async t => {
     let projectId = common.makeId();
 
     let commandLine = `delete-branch \
--p ${projectId} \
+--project-id ${projectId} \
 --repo ${repo} \
 --branch ${branch} \
 --json`;

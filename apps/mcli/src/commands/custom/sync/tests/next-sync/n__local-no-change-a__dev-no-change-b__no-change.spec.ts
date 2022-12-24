@@ -28,7 +28,7 @@ test('1', async t => {
     let projectId = common.makeId();
 
     let commandLine = `sync \
--p ${projectId} \
+--project-id ${projectId} \
 --env prod \
 --local-path ${repoPath} \
 --json \

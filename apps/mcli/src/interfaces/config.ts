@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class Config {
   @IsString()
@@ -11,19 +11,26 @@ export class Config {
   mproveCliPassword?: string;
 
   @IsString()
+  @IsOptional()
   mproveCliTestReposPath?: string;
 
   @IsString()
+  @IsOptional()
   mproveCliTestLocalSourceGitUrl?: string;
 
   @IsString()
+  @IsOptional()
   mproveCliTestDevSourceGitUrl?: string;
 
   @IsString()
+  @IsOptional()
   mproveCliTestPrivateKeyPath?: string;
 
   @IsString()
+  @IsOptional()
   mproveCliTestPublicKeyPath?: string;
+
   @IsString()
+  @IsOptional()
   mproveCliTestDwhPostgresPassword?: string;
 }

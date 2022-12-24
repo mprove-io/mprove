@@ -26,7 +26,7 @@ test('1', async t => {
 
     let projectId = common.makeId();
     let commandLine = `push \
--p ${projectId} \
+--project-id ${projectId} \
 --repo ${repo} \
 --branch ${branch} \
 --env prod \

@@ -16,12 +16,12 @@ export class MergeCommand extends CustomCommand {
     examples: [
       [
         'Merge their-branch to branch for Dev repo, validate BlockML for env prod',
-        'mprove merge -p DXYE72ODCP5LWPWH2EXQ --their-branch b1 --branch main --env prod'
+        'mprove merge --project-id DXYE72ODCP5LWPWH2EXQ --their-branch b1 --branch main --env prod'
       ]
     ]
   });
 
-  projectId = Option.String('-p', {
+  projectId = Option.String('--project-id', {
     required: true,
     description: '(required) Project Id'
   });

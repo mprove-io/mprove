@@ -71,6 +71,7 @@
     "clean:nx": "rm -rf ./node_modules/.cache/nx",
     "clean:cypress": "rm -rf ~/.cache/Cypress/*",
     "clean:node_modules": "rm -rf ./node_modules/*",
+    "clean:npm": "npm cache clean --force",
     "x11": "docker-compose up -d --force-recreate x11-bridge",
     "c:mcli": "caxa --input dist/apps/mcli --output dist/bin/mp -- \"{{caxa}}/node_modules/.bin/node\" \"{{caxa}}/main.js\""
   },

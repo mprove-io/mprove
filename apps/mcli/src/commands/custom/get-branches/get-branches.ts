@@ -17,16 +17,16 @@ export class GetBranchesCommand extends CustomCommand {
     examples: [
       [
         'Get Dev repo branches',
-        'mprove get-branches -p DXYE72ODCP5LWPWH2EXQ --repo dev'
+        'mprove get-branches --project-id DXYE72ODCP5LWPWH2EXQ --repo dev'
       ],
       [
         'Get Production repo branches',
-        'mprove get-branches -p DXYE72ODCP5LWPWH2EXQ --repo production'
+        'mprove get-branches --project-id DXYE72ODCP5LWPWH2EXQ --repo production'
       ]
     ]
   });
 
-  projectId = Option.String('-p', {
+  projectId = Option.String('--project-id', {
     required: true,
     description: '(required) Project Id'
   });

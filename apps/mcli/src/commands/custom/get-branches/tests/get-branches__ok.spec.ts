@@ -22,7 +22,7 @@ test('1', async t => {
 
     let projectId = common.makeId();
     let commandLine = `get-branches \
--p ${projectId} \
+--project-id ${projectId} \
 --repo dev \
 --json`;
 

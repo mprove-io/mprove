@@ -18,16 +18,16 @@ export class PullCommand extends CustomCommand {
     examples: [
       [
         'Pull committed changes from Remote to Dev repo, validate BlockML for env prod',
-        'mprove pull -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
+        'mprove pull --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
       ],
       [
         'Pull committed changes from Remote to Production repo, validate BlockML for env prod',
-        'mprove pull -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
+        'mprove pull --project-id DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
       ]
     ]
   });
 
-  projectId = Option.String('-p', {
+  projectId = Option.String('--project-id', {
     required: true,
     description: '(required) Project Id'
   });

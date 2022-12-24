@@ -17,12 +17,12 @@ export class CommitCommand extends CustomCommand {
     examples: [
       [
         'Commit changes for Dev repo',
-        'mprove commit -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main'
+        'mprove commit --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main'
       ]
     ]
   });
 
-  projectId = Option.String('-p', {
+  projectId = Option.String('--project-id', {
     required: true,
     description: '(required) Project Id'
   });

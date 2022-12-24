@@ -22,7 +22,7 @@ test('1', async t => {
 
     let projectId = common.makeId();
     let commandLine = `get-state \
--p ${projectId} \
+--project-id ${projectId} \
 --repo dev \
 --branch ${defaultBranch} \
 --env prod \

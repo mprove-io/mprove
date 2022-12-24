@@ -22,7 +22,7 @@ test('1', async t => {
 
     let projectId = common.makeId();
     let commandLine = `create-branch \
--p ${projectId} \
+--project-id ${projectId} \
 --repo dev \
 --new-branch b1 \
 --from-branch ${defaultBranch} \

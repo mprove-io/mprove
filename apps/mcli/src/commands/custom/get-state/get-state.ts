@@ -22,16 +22,16 @@ export class GetStateCommand extends CustomCommand {
     examples: [
       [
         'Get Dev repo state',
-        'mprove get-state -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --get-nodes'
+        'mprove get-state --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --get-nodes'
       ],
       [
         'Get Production repo state',
-        'mprove get-state -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --get-models --get-dashboards --get-vizs'
+        'mprove get-state --project-id DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --get-models --get-dashboards --get-vizs'
       ]
     ]
   });
 
-  projectId = Option.String('-p', {
+  projectId = Option.String('--project-id', {
     required: true,
     description: '(required) Project Id'
   });

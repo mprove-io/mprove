@@ -39,20 +39,20 @@ export class RunCommand extends CustomCommand {
     examples: [
       [
         'Run for Dev repo and wait for completion',
-        'mprove run -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --wait --get-dashboards --get-vizs'
+        'mprove run --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --wait --get-dashboards --get-vizs'
       ],
       [
         'Run dashboards d1 and d2 for Dev repo',
-        'mprove run -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --no-vizs --dashboard-ids d1,d2'
+        'mprove run --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --no-vizs --dashboard-ids d1,d2'
       ],
       [
         'Run for Production repo',
-        'mprove run -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
+        'mprove run --project-id DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
       ]
     ]
   });
 
-  projectId = Option.String('-p', {
+  projectId = Option.String('--project-id', {
     required: true,
     description: '(required) Project Id'
   });

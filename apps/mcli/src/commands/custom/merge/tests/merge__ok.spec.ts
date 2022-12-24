@@ -25,7 +25,7 @@ test('1', async t => {
 
     let projectId = common.makeId();
     let commandLine = `merge \
--p ${projectId} \
+--project-id ${projectId} \
 --their-branch ${theirBranch} \
 --branch ${defaultBranch} \
 --env prod \

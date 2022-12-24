@@ -17,16 +17,16 @@ export class CreateBranchCommand extends CustomCommand {
     examples: [
       [
         'Create branch for Dev repo',
-        'mprove create-branch -p DXYE72ODCP5LWPWH2EXQ --repo dev --new-branch b1 --from-branch main'
+        'mprove create-branch --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --new-branch b1 --from-branch main'
       ],
       [
         'Create branch for Production repo',
-        'mprove create-branch -p DXYE72ODCP5LWPWH2EXQ --repo production --new-branch b1 --from-branch main'
+        'mprove create-branch --project-id DXYE72ODCP5LWPWH2EXQ --repo production --new-branch b1 --from-branch main'
       ]
     ]
   });
 
-  projectId = Option.String('-p', {
+  projectId = Option.String('--project-id', {
     required: true,
     description: '(required) Project Id'
   });

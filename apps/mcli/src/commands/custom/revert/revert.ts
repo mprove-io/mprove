@@ -23,11 +23,11 @@ export class RevertCommand extends CustomCommand {
     examples: [
       [
         'Revert Dev repo to the state of Remote repo, validate BlockML for env prod',
-        'mprove revert --to remote -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
+        'mprove revert --to remote --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
       ],
       [
         'Revert Production repo to the state of a last commit, validate BlockML for env prod',
-        'mprove revert --to last-commit -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
+        'mprove revert --to last-commit --project-id DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
       ]
     ]
   });
@@ -38,7 +38,7 @@ export class RevertCommand extends CustomCommand {
     description: `(required, "${ToEnum.LastCommit}" or "${ToEnum.Remote}")`
   });
 
-  projectId = Option.String('-p', {
+  projectId = Option.String('--project-id', {
     required: true,
     description: '(required) Project Id'
   });

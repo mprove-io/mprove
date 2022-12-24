@@ -17,16 +17,16 @@ export class DeleteBranchCommand extends CustomCommand {
     examples: [
       [
         'Delete branch for Dev repo',
-        'mprove delete-branch -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch b1'
+        'mprove delete-branch --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch b1'
       ],
       [
         'Delete branch for Production repo',
-        'mprove delete-branch -p DXYE72ODCP5LWPWH2EXQ --repo production --branch b1'
+        'mprove delete-branch --project-id DXYE72ODCP5LWPWH2EXQ --repo production --branch b1'
       ]
     ]
   });
 
-  projectId = Option.String('-p', {
+  projectId = Option.String('--project-id', {
     required: true,
     description: '(required) Project Id'
   });

@@ -18,12 +18,12 @@ export class PushCommand extends CustomCommand {
     examples: [
       [
         'Push committed changes from Dev to Remote, validate BlockML for env prod',
-        'mprove push -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
+        'mprove push --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
       ]
     ]
   });
 
-  projectId = Option.String('-p', {
+  projectId = Option.String('--project-id', {
     required: true,
     description: '(required) Project Id'
   });

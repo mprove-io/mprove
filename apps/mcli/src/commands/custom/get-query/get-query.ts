@@ -62,16 +62,16 @@ export class GetQueryCommand extends CustomCommand {
     examples: [
       [
         'Get query for Dev repo visualization',
-        'mprove get-query -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --viz-id v1 --get-sql --get-data'
+        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --viz-id v1 --get-sql --get-data'
       ],
       [
         'Get query for Dev repo dashboard',
-        'mprove get-query -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --dashboard-id d1 --get-sql --get-data'
+        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --dashboard-id d1 --get-sql --get-data'
       ]
     ]
   });
 
-  projectId = Option.String('-p', {
+  projectId = Option.String('--project-id', {
     required: true,
     description: '(required) Project Id'
   });

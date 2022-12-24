@@ -24,7 +24,7 @@ test('1', async t => {
 
     let projectId = common.makeId();
     let commandLine = `commit \
--p ${projectId} \
+--project-id ${projectId} \
 --repo dev \
 --branch ${branch} \
 --commit-message m1 \

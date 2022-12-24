@@ -17,16 +17,16 @@ export class ValidateCommand extends CustomCommand {
     examples: [
       [
         'Validate BlockML for Dev repo, env prod',
-        'mprove validate -p DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
+        'mprove validate --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
       ],
       [
         'Validate BlockML for Production repo, env prod',
-        'mprove validate -p DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
+        'mprove validate --project-id DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
       ]
     ]
   });
 
-  projectId = Option.String('-p', {
+  projectId = Option.String('--project-id', {
     required: true,
     description: '(required) Project Id'
   });
