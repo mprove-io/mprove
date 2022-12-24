@@ -41,7 +41,13 @@ function updateTarget(tPath: string, s: any, t: any) {
     .filter(key => !allowedTop.includes(key))
     .forEach(key => delete s[key]);
 
-  let allowedScripts: string[] = ['ava:mcli', 'clean:mcli-repos', 'clone:mcli'];
+  let allowedScripts: string[] = [
+    'ava:mcli',
+    'clean:mcli-repos',
+    'clone:mcli',
+    'pacx:mcli',
+    'pacx:mcli:win'
+  ];
 
   Object.keys(s.scripts)
     .filter(key => !allowedScripts.includes(key))
@@ -80,7 +86,7 @@ function updateTarget(tPath: string, s: any, t: any) {
     .filter(key => !allowedDependencies.includes(key))
     .forEach(key => delete s.dependencies[key]);
 
-  let allowedDevDependencies: string[] = ['ava'];
+  let allowedDevDependencies: string[] = ['ava', 'shx', 'caxa'];
 
   Object.keys(s.devDependencies)
     .filter(key => !allowedDevDependencies.includes(key))

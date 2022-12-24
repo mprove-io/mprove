@@ -1,6 +1,9 @@
 name: build-mprove-cli
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - test  
 jobs:
   build:
     strategy:
@@ -8,20 +11,20 @@ jobs:
         os: [windows, macos, ubuntu]
         include:
         - os: ubuntu
-          pack: |
-            yarn pack:mcli
+          pacx: |
+            yarn pacx:mcli
             yarn shx mv dist/bin/mp mprove
             tar czf "mprove-linux-${{ github.sha }}.tgz" "mprove"
           artifact: mprove-linux-${{ github.sha }}.tgz
         - os: macos
-          pack: |
-            yarn pack:mcli
+          pacx: |
+            yarn pacx:mcli
             yarn shx mv dist/bin/mp mprove
             tar czf "mprove-macos-${{ github.sha }}.tgz" "mprove"          
           artifact: mprove-macos-${{ github.sha }}.tgz            
         - os: windows
-          pack: |
-            yarn pack:mcli:win
+          pacx: |
+            yarn pacx:mcli:win
             yarn shx dist/bin/mp.exe mprove-windows-${{ github.sha }}.exe
           artifact: mprove-windows-${{ github.sha }}.exe
     runs-on: ${{ matrix.os }}-latest
@@ -39,16 +42,16 @@ jobs:
         run: yarn build:mcli
 
       - name: remove node_modules
-        run: rm -rf node_modules
+        run: yarn shx rm -rf node_modules
 
       - name: replace package.json
-        run: cp package.cli.json package.json
+        run: yarn shx cp package.cli.json package.json
 
       - name: install using package.cli.json
         run: yarn install --frozen-lockfile  
 
-      - name: pack
-        run: ${{ matrix.pack }}      
+      - name: pacx
+        run: ${{ matrix.pacx }}      
 
       - uses: actions/upload-artifact@v3
         with:

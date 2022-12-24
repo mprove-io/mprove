@@ -1,6 +1,6 @@
 {
   "name": "mprove",
-  "version": "0.0.39",
+  "version": "0.0.40",
   "author": "Alexander Kalitenya <akalitenya@mprove.io>",
   "license": "Apache-2.0",
   "private": false,
@@ -13,7 +13,9 @@
   "scripts": {
     "ava:mcli": "yarn clean:mcli-repos && yarn clone:mcli && ava --config=ava-js.config.js dist/tests/mcli/apps/mcli/**/*.spec.js",
     "clone:mcli": "git clone $MPROVE_CLI_TEST_REMOTE_GIT_URL $MPROVE_CLI_TEST_DESTINATION_URL",
-    "clean:mcli-repos": "rm -rf ~/mprove_data/mcli-repos/*"
+    "clean:mcli-repos": "rm -rf ~/mprove_data/mcli-repos/*",
+    "pacx:mcli": "caxa --input dist/apps/mcli --output dist/bin/mp -- \"{{caxa}}/node_modules/.bin/node\" \"{{caxa}}/main.js\"",
+    "pacx:mcli:win": "caxa --input dist/apps/mcli --output dist/bin/mp.exe -- \"{{caxa}}/node_modules/.bin/node\" \"{{caxa}}/main.js\""
   },
   "dependencies": {
     "@nestjs/common": "9.1.6",
@@ -40,7 +42,9 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
-    "ava": "^3.15.0"
+    "ava": "^3.15.0",
+    "caxa": "^3.0.1",
+    "shx": "^0.3.4"
   },
   "_moduleAliases": {
     "~backend": "dist/tests/backend/apps/backend/src",
