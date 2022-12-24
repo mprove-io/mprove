@@ -25,7 +25,7 @@ jobs:
         - os: windows
           pacx: |
             yarn pacx:mcli:win
-            yarn shx dist/bin/mp.exe mprove-windows-${{ github.sha }}.exe
+            yarn shx mv dist/bin/mp.exe mprove-windows-${{ github.sha }}.exe
           artifact: mprove-windows-${{ github.sha }}.exe
     runs-on: ${{ matrix.os }}-latest
     steps:
