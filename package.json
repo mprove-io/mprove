@@ -1,6 +1,6 @@
 {
   "name": "mprove",
-  "version": "0.0.39",
+  "version": "0.0.40",
   "author": "Alexander Kalitenya <akalitenya@mprove.io>",
   "license": "Apache-2.0",
   "private": false,
@@ -73,7 +73,8 @@
     "clean:node_modules": "rm -rf ./node_modules/*",
     "clean:npm": "npm cache clean --force",
     "x11": "docker-compose up -d --force-recreate x11-bridge",
-    "c:mcli": "caxa --input dist/apps/mcli --output dist/bin/mp -- \"{{caxa}}/node_modules/.bin/node\" \"{{caxa}}/main.js\""
+    "pack:mcli": "caxa --input dist/apps/mcli --output dist/bin/mp -- \"{{caxa}}/node_modules/.bin/node\" \"{{caxa}}/main.js\"",
+    "pack:mcli:win": "caxa --input dist/apps/mcli --output dist/bin/mp.exe -- \"{{caxa}}/node_modules/.bin/node\" \"{{caxa}}/main.js\""
   },
   "dependencies": {
     "@angular/animations": "13.3.11",
