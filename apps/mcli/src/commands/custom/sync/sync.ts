@@ -107,12 +107,12 @@ export class SyncCommand extends CustomCommand {
       syncFileContent = content;
     }
 
-    let syncFile: interfaces.SyncConfig = isSyncFileExist
+    let syncConfig: interfaces.SyncConfig = isSyncFileExist
       ? JSON.parse(syncFileContent)
       : undefined;
 
-    let lastSyncTime = common.isDefined(syncFile?.syncTime)
-      ? Number(syncFile.syncTime)
+    let lastSyncTime = common.isDefined(syncConfig?.lastSyncTime)
+      ? Number(syncConfig.lastSyncTime)
       : 0;
 
     let { changedFiles, deletedFiles } = await nodeCommon.getSyncFiles({
@@ -206,10 +206,9 @@ export class SyncCommand extends CustomCommand {
 
     let syncTime = await makeSyncTime({ skipDelay: true });
 
-    let syncConfig = await writeSyncConfig({
+    let newSyncConfig = await writeSyncConfig({
       repoPath: repoDir,
-      syncTime: syncTime,
-      lastSyncTime: lastSyncTime
+      syncTime: syncTime
     });
 
     let filesUrl = getFilesUrl({
@@ -242,7 +241,7 @@ export class SyncCommand extends CustomCommand {
     if (this.debug === true) {
       log.debug = {
         lastSyncTime: lastSyncTime,
-        syncTime: syncConfig.syncTime,
+        syncTime: newSyncConfig.lastSyncTime,
         reqTimeDiff: syncRepoResp.payload.devReqReceiveTime - localReqSentTime,
         respTimeDiff:
           localRespReceiveTime - syncRepoResp.payload.devRespSentTime,

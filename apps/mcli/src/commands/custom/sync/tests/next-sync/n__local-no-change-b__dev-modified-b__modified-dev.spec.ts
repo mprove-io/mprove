@@ -153,8 +153,7 @@ test('1', async t => {
 
       let syncConfig = await writeSyncConfig({
         repoPath: repoPath,
-        syncTime: syncTime,
-        lastSyncTime: 0
+        syncTime: syncTime
       });
 
       code = await cli.run(commandLine.split(' '), context);

@@ -54,7 +54,7 @@
     "serve:front:dev": "nx serve front -c development",
     "serve:front:dev:host": "nx serve front -c development --host 0.0.0.0 --disable-host-check",
     "test": "nx run-many --target=test --all",
-    "test:mcli": "nx test mcli --verbose",
+    "test:mcli": "yarn clean:mcli-repos && yarn clone:mcli && nx test mcli --verbose",
     "test:disk": "nx test disk --verbose",
     "test:blockml": "nx test blockml --verbose",
     "e2e": "nx run-many --target=e2e --all",

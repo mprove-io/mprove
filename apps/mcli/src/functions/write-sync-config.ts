@@ -5,7 +5,6 @@ import { interfaces } from '~mcli/barrels/interfaces';
 export async function writeSyncConfig(item: {
   repoPath: string;
   syncTime: number;
-  lastSyncTime: number;
 }) {
   let syncParentPath = `${item.repoPath}/${common.MPROVE_CACHE_DIR}`;
   await fse.ensureDir(syncParentPath);
@@ -13,8 +12,7 @@ export async function writeSyncConfig(item: {
   let syncFilePath = `${syncParentPath}/${common.MPROVE_SYNC_FILENAME}`;
 
   let sync: interfaces.SyncConfig = {
-    syncTime: item.syncTime,
-    isFirstSync: item.lastSyncTime === 0
+    lastSyncTime: item.syncTime
   };
 
   let syncJson = JSON.stringify(sync, null, 2);
