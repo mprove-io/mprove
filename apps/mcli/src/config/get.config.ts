@@ -31,6 +31,9 @@ export function getConfig(envPath?: string) {
     mproveCliPassword:
       process.env.MPROVE_CLI_PASSWORD || envFile.MPROVE_CLI_PASSWORD,
 
+    mproveCliProjectId:
+      process.env.MPROVE_CLI_PROJECT_ID || envFile.MPROVE_CLI_PROJECT_ID,
+
     mproveCliTestReposPath:
       process.env.MPROVE_CLI_TEST_REPOS_PATH ||
       envFile.MPROVE_CLI_TEST_REPOS_PATH,
@@ -50,6 +53,7 @@ export function getConfig(envPath?: string) {
     mproveCliTestPublicKeyPath:
       process.env.MPROVE_CLI_TEST_PUBLIC_KEY_PATH ||
       envFile.MPROVE_CLI_TEST_PUBLIC_KEY_PATH,
+
     mproveCliTestDwhPostgresPassword:
       process.env.MPROVE_CLI_TEST_DWH_POSTGRES_PASSWORD ||
       envFile.MPROVE_CLI_TEST_DWH_POSTGRES_PASSWORD

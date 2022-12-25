@@ -38,7 +38,6 @@ export class SyncCommand extends CustomCommand {
   });
 
   projectId = Option.String('--project-id', {
-    required: true,
     description: '(required) Project Id'
   });
 
@@ -76,6 +75,8 @@ export class SyncCommand extends CustomCommand {
     if (common.isUndefined(this.context.config)) {
       this.context.config = getConfig(this.envFilePath);
     }
+
+    this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
     let repoDir = common.isDefined(this.localPath)
       ? this.localPath

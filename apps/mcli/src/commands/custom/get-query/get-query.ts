@@ -72,7 +72,6 @@ export class GetQueryCommand extends CustomCommand {
   });
 
   projectId = Option.String('--project-id', {
-    required: true,
     description: '(required) Project Id'
   });
 
@@ -125,6 +124,8 @@ export class GetQueryCommand extends CustomCommand {
     if (common.isUndefined(this.context.config)) {
       this.context.config = getConfig(this.envFilePath);
     }
+
+    this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
     if (common.isDefined(this.dashboardId) && common.isDefined(this.vizId)) {
       let serverError = new common.ServerError({

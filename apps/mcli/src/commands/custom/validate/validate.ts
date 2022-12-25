@@ -27,7 +27,6 @@ export class ValidateCommand extends CustomCommand {
   });
 
   projectId = Option.String('--project-id', {
-    required: true,
     description: '(required) Project Id'
   });
 
@@ -63,6 +62,8 @@ export class ValidateCommand extends CustomCommand {
     if (common.isUndefined(this.context.config)) {
       this.context.config = getConfig(this.envFilePath);
     }
+
+    this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
     let isRepoProd = this.repo === 'production' ? true : false;
 
