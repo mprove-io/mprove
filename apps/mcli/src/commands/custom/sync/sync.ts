@@ -68,9 +68,13 @@ export class SyncCommand extends CustomCommand {
     description: '(default false)'
   });
 
+  envFilePath = Option.String('--env-file-path', {
+    description: '(optional) Path to ".env" file'
+  });
+
   async execute() {
     if (common.isUndefined(this.context.config)) {
-      this.context.config = getConfig();
+      this.context.config = getConfig(this.envFilePath);
     }
 
     let repoDir = common.isDefined(this.localPath)
@@ -223,14 +227,13 @@ export class SyncCommand extends CustomCommand {
     let repo = syncRepoResp.payload.repo;
 
     if (this.getNodes === false) {
-      repo.nodes = undefined;
+      delete repo.nodes;
     }
 
     delete repo.changesToCommit;
     delete repo.changesToPush;
 
     let log: any = {
-      syncSuccess: syncSuccess,
       url: filesUrl,
       needValidate: syncRepoResp.payload.needValidate,
       repo: repo,

@@ -4,13 +4,23 @@ import { common } from '~mcli/barrels/common';
 import { interfaces } from '~mcli/barrels/interfaces';
 import { transformValidSyncMcli } from '~mcli/functions/transform-valid-sync-mcli';
 
-export function getConfig() {
-  let envFilePath = process.env.ENV_FILE_PATH;
+export function getConfig(envPath?: string) {
+  let envFilePath = common.isDefined(envPath)
+    ? envPath
+    : common.isDefined(process.env.ENV_FILE_PATH)
+    ? process.env.ENV_FILE_PATH
+    : '.env';
 
   let envFile: any = {};
 
   if (common.isDefined(envFilePath)) {
-    envFile = parse(fse.readFileSync(envFilePath));
+    let isPathExist = fse.pathExistsSync(envFilePath);
+    if (isPathExist === true) {
+      let stat = fse.statSync(envFilePath);
+      if (stat.isFile() === true) {
+        envFile = parse(fse.readFileSync(envFilePath));
+      }
+    }
   }
 
   let config: interfaces.Config = {

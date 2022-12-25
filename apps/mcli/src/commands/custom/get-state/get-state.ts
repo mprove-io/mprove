@@ -72,9 +72,13 @@ export class GetStateCommand extends CustomCommand {
     description: '(default false)'
   });
 
+  envFilePath = Option.String('--env-file-path', {
+    description: '(optional) Path to ".env" file'
+  });
+
   async execute() {
     if (common.isUndefined(this.context.config)) {
-      this.context.config = getConfig();
+      this.context.config = getConfig(this.envFilePath);
     }
 
     let isRepoProd = this.repo === 'production' ? true : false;
@@ -145,7 +149,7 @@ export class GetStateCommand extends CustomCommand {
     let repo = getRepoResp.payload.repo;
 
     if (this.getNodes === false) {
-      repo.nodes = undefined;
+      delete repo.nodes;
     }
 
     delete repo.changesToCommit;
