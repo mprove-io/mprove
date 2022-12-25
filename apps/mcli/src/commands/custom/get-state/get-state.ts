@@ -167,13 +167,13 @@ export class GetStateCommand extends CustomCommand {
 
     let log: any = {
       url: filesUrl,
-      needValidate: getRepoResp.payload.needValidate,
-      repo: repo,
-      structId: getRepoResp.payload.struct.structId,
       errorsTotal: getRepoResp.payload.struct.errors.length,
       modelsTotal: getModelsResp.payload.models.length,
       dashboardsTotal: getDashboardsResp.payload.dashboards.length,
-      visualizationsTotal: getVizsResp.payload.vizs.length
+      visualizationsTotal: getVizsResp.payload.vizs.length,
+      repo: repo,
+      needValidate: getRepoResp.payload.needValidate,
+      structId: getRepoResp.payload.struct.structId
     };
 
     if (getRepoResp.payload.struct.errors.length > 0) {

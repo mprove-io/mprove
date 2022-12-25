@@ -236,25 +236,25 @@ export class SyncCommand extends CustomCommand {
 
     let log: any = {
       url: filesUrl,
-      needValidate: syncRepoResp.payload.needValidate,
-      repo: repo,
-      structId: syncRepoResp.payload.struct.structId,
       errorsTotal: syncRepoResp.payload.struct.errors.length
     };
 
     if (this.debug === true) {
       log.debug = {
-        lastSyncTime: lastSyncTime,
-        syncTime: newSyncConfig.lastSyncTime,
-        reqTimeDiff: syncRepoResp.payload.devReqReceiveTime - localReqSentTime,
-        respTimeDiff:
-          localRespReceiveTime - syncRepoResp.payload.devRespSentTime,
         localChangedFiles: localChangedFiles,
         localDeletedFiles: localDeletedFiles,
         restChangedFiles: syncRepoResp.payload.restChangedFiles,
         restDeletedFiles: syncRepoResp.payload.restDeletedFiles,
         localChangesToCommit: localChangesToCommit,
-        devChangesToCommit: devChangesToCommit
+        devChangesToCommit: devChangesToCommit,
+        repo: repo,
+        needValidate: syncRepoResp.payload.needValidate,
+        structId: syncRepoResp.payload.struct.structId,
+        lastSyncTime: lastSyncTime,
+        syncTime: newSyncConfig.lastSyncTime,
+        reqTimeDiff: syncRepoResp.payload.devReqReceiveTime - localReqSentTime,
+        respTimeDiff:
+          localRespReceiveTime - syncRepoResp.payload.devRespSentTime
       };
     }
 
