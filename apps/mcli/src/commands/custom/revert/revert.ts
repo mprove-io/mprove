@@ -4,6 +4,7 @@ import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
+import { getFilesUrl } from '~mcli/functions/get-files-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
@@ -62,6 +63,10 @@ export class RevertCommand extends CustomCommand {
     description: '(default false), show validation errors in output'
   });
 
+  getRepo = Option.Boolean('--get-repo', false, {
+    description: '(default false), show repo in output'
+  });
+
   json = Option.Boolean('--json', false, {
     description: '(default false)'
   });
@@ -81,7 +86,7 @@ export class RevertCommand extends CustomCommand {
 
     let loginToken = await getLoginToken(this.context);
 
-    let resp:
+    let revertRepoResp:
       | apiToBackend.ToBackendRevertRepoToLastCommitResponse
       | apiToBackend.ToBackendRevertRepoToRemoteResponse;
 
@@ -94,14 +99,15 @@ export class RevertCommand extends CustomCommand {
           envId: this.env
         };
 
-      resp = await mreq<apiToBackend.ToBackendRevertRepoToLastCommitResponse>({
-        loginToken: loginToken,
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendRevertRepoToLastCommit,
-        payload: revertRepoToLastCommitReqPayload,
-        host: this.context.config.mproveCliHost
-      });
+      revertRepoResp =
+        await mreq<apiToBackend.ToBackendRevertRepoToLastCommitResponse>({
+          loginToken: loginToken,
+          pathInfoName:
+            apiToBackend.ToBackendRequestInfoNameEnum
+              .ToBackendRevertRepoToLastCommit,
+          payload: revertRepoToLastCommitReqPayload,
+          host: this.context.config.mproveCliHost
+        });
     } else {
       let revertRepoToRemoteReqPayload: apiToBackend.ToBackendRevertRepoToRemoteRequestPayload =
         {
@@ -111,21 +117,44 @@ export class RevertCommand extends CustomCommand {
           envId: this.env
         };
 
-      resp = await mreq<apiToBackend.ToBackendRevertRepoToRemoteResponse>({
-        loginToken: loginToken,
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote,
-        payload: revertRepoToRemoteReqPayload,
-        host: this.context.config.mproveCliHost
-      });
+      revertRepoResp =
+        await mreq<apiToBackend.ToBackendRevertRepoToRemoteResponse>({
+          loginToken: loginToken,
+          pathInfoName:
+            apiToBackend.ToBackendRequestInfoNameEnum
+              .ToBackendRevertRepoToRemote,
+          payload: revertRepoToRemoteReqPayload,
+          host: this.context.config.mproveCliHost
+        });
     }
 
+    let filesUrl = getFilesUrl({
+      host: this.context.config.mproveCliHost,
+      orgId: revertRepoResp.payload.repo.orgId,
+      projectId: this.projectId,
+      repoId: revertRepoResp.payload.repo.repoId,
+      branch: this.branch,
+      env: this.env
+    });
+
     let log: any = {
-      errorsTotal: resp.payload.struct.errors.length
+      message: `Reverted repo state to ${this.to}`,
+      url: filesUrl,
+      validationErrorsTotal: revertRepoResp.payload.struct.errors.length
     };
 
+    if (this.getRepo === true) {
+      let repo = revertRepoResp.payload.repo;
+
+      delete repo.nodes;
+      delete repo.changesToCommit;
+      delete repo.changesToPush;
+
+      log.repo = repo;
+    }
+
     if (this.getErrors === true) {
-      log.errors = resp.payload.struct.errors;
+      log.validationErrors = revertRepoResp.payload.struct.errors;
     }
 
     logToConsoleMcli({

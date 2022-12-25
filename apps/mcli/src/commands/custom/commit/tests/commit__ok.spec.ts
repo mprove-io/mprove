@@ -133,7 +133,7 @@ test('1', async t => {
       });
     }
 
-    isPass = checkIsTrue(code === 0 && common.isDefined(parsedOutput?.repo));
+    isPass = checkIsTrue(code === 0 && common.isDefined(parsedOutput?.url));
   }, constants.RETRY_OPTIONS).catch((er: any) => {
     logToConsoleMcli({
       log: er,
@@ -149,5 +149,5 @@ test('1', async t => {
   }
 
   t.is(code, 0);
-  t.is(common.isDefined(parsedOutput?.repo), true);
+  t.is(common.isDefined(parsedOutput?.url), true);
 });

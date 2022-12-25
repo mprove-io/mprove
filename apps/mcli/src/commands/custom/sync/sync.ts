@@ -55,12 +55,16 @@ export class SyncCommand extends CustomCommand {
     description: '(default false) add debug to output'
   });
 
-  getNodes = Option.Boolean('--get-nodes', false, {
+  getRepoNodes = Option.Boolean('--get-repo-nodes', false, {
     description: '(default false), show repo nodes in output'
   });
 
   getErrors = Option.Boolean('--get-errors', false, {
     description: '(default false), show validation errors in output'
+  });
+
+  getRepo = Option.Boolean('--get-repo', false, {
+    description: '(default false), show repo in output'
   });
 
   json = Option.Boolean('--json', false, {
@@ -225,19 +229,28 @@ export class SyncCommand extends CustomCommand {
       env: this.env
     });
 
-    let repo = syncRepoResp.payload.repo;
+    let log: any = {
+      message: `Sync completed`,
+      url: filesUrl,
+      validationErrorsTotal: syncRepoResp.payload.struct.errors.length
+    };
 
-    if (this.getNodes === false) {
-      delete repo.nodes;
+    if (this.getRepo === true) {
+      let repo = syncRepoResp.payload.repo;
+
+      if (this.getRepoNodes === false) {
+        delete repo.nodes;
+      }
+
+      delete repo.changesToCommit;
+      delete repo.changesToPush;
+
+      log.repo = repo;
     }
 
-    delete repo.changesToCommit;
-    delete repo.changesToPush;
-
-    let log: any = {
-      url: filesUrl,
-      errorsTotal: syncRepoResp.payload.struct.errors.length
-    };
+    if (this.getErrors === true) {
+      log.validationErrors = syncRepoResp.payload.struct.errors;
+    }
 
     if (this.debug === true) {
       log.debug = {
@@ -247,7 +260,6 @@ export class SyncCommand extends CustomCommand {
         restDeletedFiles: syncRepoResp.payload.restDeletedFiles,
         localChangesToCommit: localChangesToCommit,
         devChangesToCommit: devChangesToCommit,
-        repo: repo,
         needValidate: syncRepoResp.payload.needValidate,
         structId: syncRepoResp.payload.struct.structId,
         lastSyncTime: lastSyncTime,
@@ -256,10 +268,6 @@ export class SyncCommand extends CustomCommand {
         respTimeDiff:
           localRespReceiveTime - syncRepoResp.payload.devRespSentTime
       };
-    }
-
-    if (this.getErrors === true) {
-      log.errors = syncRepoResp.payload.struct.errors;
     }
 
     logToConsoleMcli({

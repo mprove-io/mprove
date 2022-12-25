@@ -117,7 +117,7 @@ test('1', async t => {
     }
 
     isPass = checkIsTrue(
-      code === 0 && common.isDefined(parsedOutput?.errorsTotal)
+      code === 0 && common.isDefined(parsedOutput?.validationErrorsTotal)
     );
   }, constants.RETRY_OPTIONS).catch((er: any) => {
     logToConsoleMcli({
@@ -134,5 +134,5 @@ test('1', async t => {
   }
 
   t.is(code, 0);
-  t.is(common.isDefined(parsedOutput?.errorsTotal), true);
+  t.is(common.isDefined(parsedOutput?.validationErrorsTotal), true);
 });

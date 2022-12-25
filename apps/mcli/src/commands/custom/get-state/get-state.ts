@@ -51,7 +51,15 @@ export class GetStateCommand extends CustomCommand {
     description: '(required) Environment'
   });
 
-  getNodes = Option.Boolean('--get-nodes', false, {
+  getErrors = Option.Boolean('--get-errors', false, {
+    description: '(default false), show validation errors in output'
+  });
+
+  getRepo = Option.Boolean('--get-repo', false, {
+    description: '(default false), show repo in output'
+  });
+
+  getRepoNodes = Option.Boolean('--get-repo-nodes', false, {
     description: '(default false), show repo nodes in output'
   });
 
@@ -147,15 +155,6 @@ export class GetStateCommand extends CustomCommand {
         host: this.context.config.mproveCliHost
       });
 
-    let repo = getRepoResp.payload.repo;
-
-    if (this.getNodes === false) {
-      delete repo.nodes;
-    }
-
-    delete repo.changesToCommit;
-    delete repo.changesToPush;
-
     let filesUrl = getFilesUrl({
       host: this.context.config.mproveCliHost,
       orgId: getRepoResp.payload.repo.orgId,
@@ -167,18 +166,13 @@ export class GetStateCommand extends CustomCommand {
 
     let log: any = {
       url: filesUrl,
-      errorsTotal: getRepoResp.payload.struct.errors.length,
+      validationErrorsTotal: getRepoResp.payload.struct.errors.length,
       modelsTotal: getModelsResp.payload.models.length,
       dashboardsTotal: getDashboardsResp.payload.dashboards.length,
       visualizationsTotal: getVizsResp.payload.vizs.length,
-      repo: repo,
       needValidate: getRepoResp.payload.needValidate,
       structId: getRepoResp.payload.struct.structId
     };
-
-    if (getRepoResp.payload.struct.errors.length > 0) {
-      log.errors = getRepoResp.payload.struct.errors;
-    }
 
     if (this.getVizs === true) {
       log.visualizations = getVizsResp.payload.vizs.map(x => {
@@ -241,6 +235,23 @@ export class GetStateCommand extends CustomCommand {
 
         return model;
       });
+    }
+
+    if (this.getRepo === true) {
+      let repo = getRepoResp.payload.repo;
+
+      if (this.getRepoNodes === false) {
+        delete repo.nodes;
+      }
+
+      delete repo.changesToCommit;
+      delete repo.changesToPush;
+
+      log.repo = repo;
+    }
+
+    if (this.getErrors === true) {
+      log.validationErrors = getRepoResp.payload.struct.errors;
     }
 
     logToConsoleMcli({

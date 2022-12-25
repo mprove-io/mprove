@@ -4,6 +4,7 @@ import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
+import { getFilesUrl } from '~mcli/functions/get-files-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
@@ -42,8 +43,8 @@ export class CommitCommand extends CustomCommand {
     description: '(required) Commit message'
   });
 
-  getNodes = Option.Boolean('--get-nodes', false, {
-    description: '(default false), show repo nodes in output'
+  getRepo = Option.Boolean('--get-repo', false, {
+    description: '(default false), show repo in output'
   });
 
   json = Option.Boolean('--json', false, {
@@ -80,18 +81,29 @@ export class CommitCommand extends CustomCommand {
       host: this.context.config.mproveCliHost
     });
 
-    let repo = commitRepoResp.payload.repo;
-
-    if (this.getNodes === false) {
-      delete repo.nodes;
-    }
-
-    delete repo.changesToCommit;
-    delete repo.changesToPush;
+    let filesUrl = getFilesUrl({
+      host: this.context.config.mproveCliHost,
+      orgId: commitRepoResp.payload.repo.orgId,
+      projectId: this.projectId,
+      repoId: commitRepoResp.payload.repo.repoId,
+      branch: this.branch,
+      env: common.PROJECT_ENV_PROD
+    });
 
     let log: any = {
-      repo: repo
+      message: `Created commit "${this.commitMessage}"`,
+      url: filesUrl
     };
+
+    if (this.getRepo === true) {
+      let repo = commitRepoResp.payload.repo;
+
+      delete repo.nodes;
+      delete repo.changesToCommit;
+      delete repo.changesToPush;
+
+      log.repo = repo;
+    }
 
     logToConsoleMcli({
       log: log,

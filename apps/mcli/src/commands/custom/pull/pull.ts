@@ -4,6 +4,7 @@ import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
+import { getFilesUrl } from '~mcli/functions/get-files-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
@@ -51,6 +52,10 @@ export class PullCommand extends CustomCommand {
     description: '(default false), show validation errors in output'
   });
 
+  getRepo = Option.Boolean('--get-repo', false, {
+    description: '(default false), show repo in output'
+  });
+
   json = Option.Boolean('--json', false, {
     description: '(default false)'
   });
@@ -84,12 +89,33 @@ export class PullCommand extends CustomCommand {
       host: this.context.config.mproveCliHost
     });
 
+    let filesUrl = getFilesUrl({
+      host: this.context.config.mproveCliHost,
+      orgId: pullRepoResp.payload.repo.orgId,
+      projectId: this.projectId,
+      repoId: pullRepoResp.payload.repo.repoId,
+      branch: this.branch,
+      env: this.env
+    });
+
     let log: any = {
-      errorsTotal: pullRepoResp.payload.struct.errors.length
+      message: `Pulled changes from Remote`,
+      url: filesUrl,
+      validationErrorsTotal: pullRepoResp.payload.struct.errors.length
     };
 
+    if (this.getRepo === true) {
+      let repo = pullRepoResp.payload.repo;
+
+      delete repo.nodes;
+      delete repo.changesToCommit;
+      delete repo.changesToPush;
+
+      log.repo = repo;
+    }
+
     if (this.getErrors === true) {
-      log.errors = pullRepoResp.payload.struct.errors;
+      log.validationErrors = pullRepoResp.payload.struct.errors;
     }
 
     logToConsoleMcli({
