@@ -11,6 +11,7 @@ export class Config {
   mproveCliPassword?: string;
 
   @IsString()
+  @IsOptional()
   mproveCliProjectId?: string;
 
   @IsString()

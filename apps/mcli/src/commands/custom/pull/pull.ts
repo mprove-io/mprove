@@ -71,6 +71,14 @@ export class PullCommand extends CustomCommand {
 
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
+    if (common.isUndefined(this.projectId)) {
+      let serverError = new common.ServerError({
+        message: common.ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+        originalError: null
+      });
+      throw serverError;
+    }
+
     let isRepoProd = this.repo === 'production' ? true : false;
 
     let loginToken = await getLoginToken(this.context);
@@ -100,7 +108,6 @@ export class PullCommand extends CustomCommand {
 
     let log: any = {
       message: `Pulled changes from Remote`,
-      url: filesUrl,
       validationErrorsTotal: pullRepoResp.payload.struct.errors.length
     };
 
@@ -117,6 +124,8 @@ export class PullCommand extends CustomCommand {
     if (this.getErrors === true) {
       log.validationErrors = pullRepoResp.payload.struct.errors;
     }
+
+    log.url = filesUrl;
 
     logToConsoleMcli({
       log: log,

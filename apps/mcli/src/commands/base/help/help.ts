@@ -18,7 +18,7 @@ export class HelpCommand extends Command {
       logLevel: common.LogLevelEnum.Info,
       context: this.context,
       isJson: false,
-      isInspect: false
+      isPretty: false
     });
   }
 }

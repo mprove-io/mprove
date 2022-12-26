@@ -67,6 +67,14 @@ export class PushCommand extends CustomCommand {
 
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
+    if (common.isUndefined(this.projectId)) {
+      let serverError = new common.ServerError({
+        message: common.ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+        originalError: null
+      });
+      throw serverError;
+    }
+
     let isRepoProd = this.repo === 'production' ? true : false;
 
     let loginToken = await getLoginToken(this.context);
@@ -96,7 +104,6 @@ export class PushCommand extends CustomCommand {
 
     let log: any = {
       message: `Pushed changes to Remote`,
-      url: filesUrl,
       validationErrorsTotal: pushRepoResp.payload.struct.errors.length
     };
 
@@ -113,6 +120,8 @@ export class PushCommand extends CustomCommand {
     if (this.getErrors === true) {
       log.validationErrors = pushRepoResp.payload.struct.errors;
     }
+
+    log.url = filesUrl;
 
     logToConsoleMcli({
       log: log,

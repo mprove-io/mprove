@@ -17,21 +17,15 @@ export class VersionCommand extends Command {
   async execute() {
     let version = this.cli.binaryVersion;
 
-    let log =
-      this.json === false
-        ? `version Mprove CLI: ${
-            common.isDefined(version) ? version : 'unknown'
-          }`
-        : {
-            versionMproveCLI: common.isDefined(version) ? version : 'unknown'
-          };
+    let log = {
+      mproveCLI: common.isDefined(version) ? version : 'unknown'
+    };
 
     logToConsoleMcli({
       log: log,
       logLevel: common.LogLevelEnum.Info,
       context: this.context,
-      isJson: this.json,
-      isInspect: false
+      isJson: this.json
     });
   }
 }

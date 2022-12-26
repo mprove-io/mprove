@@ -70,6 +70,14 @@ export class ValidateCommand extends CustomCommand {
 
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
+    if (common.isUndefined(this.projectId)) {
+      let serverError = new common.ServerError({
+        message: common.ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+        originalError: null
+      });
+      throw serverError;
+    }
+
     let isRepoProd = this.repo === 'production' ? true : false;
 
     let loginToken = await getLoginToken(this.context);
@@ -102,7 +110,6 @@ export class ValidateCommand extends CustomCommand {
 
     let log: any = {
       message: `Validation completed`,
-      url: filesUrl,
       validationErrorsTotal: validateFilesResp.payload.struct.errors.length
     };
 
@@ -119,6 +126,8 @@ export class ValidateCommand extends CustomCommand {
     if (this.getErrors === true) {
       log.validationErrors = validateFilesResp.payload.struct.errors;
     }
+
+    log.url = filesUrl;
 
     logToConsoleMcli({
       log: log,

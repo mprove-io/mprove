@@ -127,6 +127,14 @@ export class RunCommand extends CustomCommand {
 
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
+    if (common.isUndefined(this.projectId)) {
+      let serverError = new common.ServerError({
+        message: common.ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+        originalError: null
+      });
+      throw serverError;
+    }
+
     if (this.noDashboards === true && this.getDashboards === true) {
       let serverError = new common.ServerError({
         message: common.ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,

@@ -62,6 +62,14 @@ export class CommitCommand extends CustomCommand {
 
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
+    if (common.isUndefined(this.projectId)) {
+      let serverError = new common.ServerError({
+        message: common.ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+        originalError: null
+      });
+      throw serverError;
+    }
+
     let isRepoProd = this.repo === 'production' ? true : false;
 
     let loginToken = await getLoginToken(this.context);
@@ -91,8 +99,7 @@ export class CommitCommand extends CustomCommand {
     });
 
     let log: any = {
-      message: `Created commit "${this.commitMessage}"`,
-      url: filesUrl
+      message: `Created commit "${this.commitMessage}"`
     };
 
     if (this.getRepo === true) {
@@ -104,6 +111,8 @@ export class CommitCommand extends CustomCommand {
 
       log.repo = repo;
     }
+
+    log.url = filesUrl;
 
     logToConsoleMcli({
       log: log,

@@ -82,6 +82,14 @@ export class SyncCommand extends CustomCommand {
 
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
+    if (common.isUndefined(this.projectId)) {
+      let serverError = new common.ServerError({
+        message: common.ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+        originalError: null
+      });
+      throw serverError;
+    }
+
     let repoDir = common.isDefined(this.localPath)
       ? this.localPath
       : process.cwd();
@@ -231,7 +239,6 @@ export class SyncCommand extends CustomCommand {
 
     let log: any = {
       message: `Sync completed`,
-      url: filesUrl,
       validationErrorsTotal: syncRepoResp.payload.struct.errors.length
     };
 
@@ -269,6 +276,8 @@ export class SyncCommand extends CustomCommand {
           localRespReceiveTime - syncRepoResp.payload.devRespSentTime
       };
     }
+
+    log.url = filesUrl;
 
     logToConsoleMcli({
       log: log,

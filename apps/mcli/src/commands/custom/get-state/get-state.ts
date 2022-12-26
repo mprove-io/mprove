@@ -90,6 +90,14 @@ export class GetStateCommand extends CustomCommand {
 
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
+    if (common.isUndefined(this.projectId)) {
+      let serverError = new common.ServerError({
+        message: common.ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+        originalError: null
+      });
+      throw serverError;
+    }
+
     let isRepoProd = this.repo === 'production' ? true : false;
 
     let loginToken = await getLoginToken(this.context);
@@ -165,7 +173,6 @@ export class GetStateCommand extends CustomCommand {
     });
 
     let log: any = {
-      url: filesUrl,
       validationErrorsTotal: getRepoResp.payload.struct.errors.length,
       modelsTotal: getModelsResp.payload.models.length,
       dashboardsTotal: getDashboardsResp.payload.dashboards.length,
@@ -253,6 +260,8 @@ export class GetStateCommand extends CustomCommand {
     if (this.getErrors === true) {
       log.validationErrors = getRepoResp.payload.struct.errors;
     }
+
+    log.url = filesUrl;
 
     logToConsoleMcli({
       log: log,

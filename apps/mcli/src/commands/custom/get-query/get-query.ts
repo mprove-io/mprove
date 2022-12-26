@@ -127,6 +127,14 @@ export class GetQueryCommand extends CustomCommand {
 
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
+    if (common.isUndefined(this.projectId)) {
+      let serverError = new common.ServerError({
+        message: common.ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+        originalError: null
+      });
+      throw serverError;
+    }
+
     if (common.isDefined(this.dashboardId) && common.isDefined(this.vizId)) {
       let serverError = new common.ServerError({
         message: common.ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
@@ -233,9 +241,7 @@ export class GetQueryCommand extends CustomCommand {
       }
 
       if (this.getSql) {
-        let sqlArray = reportX.query.sql.split('\n');
-        queryPartQ.sql = sqlArray.join('');
-        queryPartQ.sqlArray = sqlArray;
+        queryPartQ.sql = reportX.query.sql;
       }
 
       let url = getVisualizationUrl({
@@ -310,9 +316,7 @@ export class GetQueryCommand extends CustomCommand {
           }
 
           if (this.getSql) {
-            let sqlArray = reportX.query.sql.split('\n');
-            queryPartQ.sql = sqlArray.join('');
-            queryPartQ.sqlArray = sqlArray;
+            queryPartQ.sql = reportX.query.sql;
           }
 
           let reportPartQ: ReportPartQ = {

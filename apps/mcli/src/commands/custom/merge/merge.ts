@@ -64,6 +64,14 @@ export class MergeCommand extends CustomCommand {
 
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
+    if (common.isUndefined(this.projectId)) {
+      let serverError = new common.ServerError({
+        message: common.ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+        originalError: null
+      });
+      throw serverError;
+    }
+
     let loginToken = await getLoginToken(this.context);
 
     let mergeRepoReqPayload: apiToBackend.ToBackendMergeRepoRequestPayload = {
@@ -92,7 +100,6 @@ export class MergeCommand extends CustomCommand {
 
     let log: any = {
       message: `Merged branch "${this.theirBranch}" to "${this.branch}"`,
-      url: filesUrl,
       validationErrorsTotal: mergeRepoResp.payload.struct.errors.length
     };
 
@@ -109,6 +116,8 @@ export class MergeCommand extends CustomCommand {
     if (this.getErrors === true) {
       log.validationErrors = mergeRepoResp.payload.struct.errors;
     }
+
+    log.url = filesUrl;
 
     logToConsoleMcli({
       log: log,

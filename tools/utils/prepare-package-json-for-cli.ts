@@ -79,7 +79,8 @@ function updateTarget(tPath: string, s: any, t: any) {
     '@nestjs/common',
     'rxjs',
     'fast-deep-equal',
-    'async-retry'
+    'async-retry',
+    'prettyjson'
   ];
 
   Object.keys(s.dependencies)

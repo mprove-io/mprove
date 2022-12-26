@@ -51,9 +51,9 @@ test('1', async t => {
 
     assert.equal(code === 0, true, `code === 0`);
     assert.equal(
-      common.isDefined(parsedOutput?.versionMproveCLI),
+      common.isDefined(parsedOutput?.mproveCLI),
       true,
-      `common.isDefined(parsedOutput?.versionMproveCLI)`
+      `common.isDefined(parsedOutput?.mproveCLI)`
     );
 
     isPass = true;
