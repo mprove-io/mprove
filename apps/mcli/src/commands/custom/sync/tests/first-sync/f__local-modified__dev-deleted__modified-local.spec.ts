@@ -11,6 +11,7 @@ import { mreq } from '~mcli/functions/mreq';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
 import { SyncCommand } from '../../sync';
+let assert = require('node:assert/strict');
 let retry = require('async-retry');
 
 let testId = 'mcli_f__local-modified__dev-deleted__modified-local';

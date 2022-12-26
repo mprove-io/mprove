@@ -4,6 +4,7 @@ import { constants } from '~mcli/barrels/constants';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
+let assert = require('node:assert/strict');
 let retry = require('async-retry');
 
 let testId = 'unk__error';
@@ -35,10 +36,18 @@ test('1', async t => {
       });
     }
 
-    isPass =
-      code === 1 &&
-      context.stdout.toString().includes('Command not found') === true;
+    assert.equal(code === 1, true, `code === 1`);
+    assert.equal(
+      context.stdout.toString().includes('Command not found') === true,
+      true,
+      `context.stdout.toString().includes('Command not found') === true`
+    );
+
+    isPass = true;
   }, constants.RETRY_OPTIONS).catch((er: any) => {
+    console.log(context.stdout.toString());
+    console.log(context.stderr.toString());
+
     logToConsoleMcli({
       log: er,
       logLevel: common.LogLevelEnum.Error,
@@ -47,11 +56,5 @@ test('1', async t => {
     });
   });
 
-  if (isPass === false) {
-    console.log(context.stdout.toString());
-    console.log(context.stderr.toString());
-  }
-
-  t.is(code, 1);
-  t.is(context.stdout.toString().includes('Command not found'), true);
+  t.is(isPass, true);
 });

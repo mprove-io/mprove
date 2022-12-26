@@ -13,6 +13,7 @@ import { prepareTest } from '~mcli/functions/prepare-test';
 import { writeSyncConfig } from '~mcli/functions/write-sync-config';
 import { CustomContext } from '~mcli/models/custom-command';
 import { SyncCommand } from '../../sync';
+let assert = require('node:assert/strict');
 let retry = require('async-retry');
 
 let testId = 'mcli_n__local-modified-a__dev-modified-a__modified-local';

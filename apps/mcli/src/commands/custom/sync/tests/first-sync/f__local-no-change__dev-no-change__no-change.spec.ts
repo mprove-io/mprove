@@ -9,6 +9,7 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
 import { SyncCommand } from '../../sync';
+let assert = require('node:assert/strict');
 let retry = require('async-retry');
 
 let testId = 'mcli_f__local-no-change__dev-no-change__no-change';

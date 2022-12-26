@@ -2,11 +2,11 @@ import test from 'ava';
 import { common } from '~mcli/barrels/common';
 import { constants } from '~mcli/barrels/constants';
 import { getConfig } from '~mcli/config/get.config';
-import { checkIsTrue } from '~mcli/functions/check-is-true';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
 import { GetStateCommand } from '../get-state';
+let assert = require('node:assert/strict');
 let retry = require('async-retry');
 
 let testId = 'mcli__get-state__ok';
@@ -121,10 +121,18 @@ test('1', async t => {
       });
     }
 
-    isPass = checkIsTrue(
-      code === 0 && common.isDefined(parsedOutput?.validationErrorsTotal)
+    assert.equal(code === 0, true, `code === 0`);
+    assert.equal(
+      common.isDefined(parsedOutput?.validationErrorsTotal),
+      true,
+      `common.isDefined(parsedOutput?.validationErrorsTotal)`
     );
+
+    isPass = true;
   }, constants.RETRY_OPTIONS).catch((er: any) => {
+    console.log(context.stdout.toString());
+    console.log(context.stderr.toString());
+
     logToConsoleMcli({
       log: er,
       logLevel: common.LogLevelEnum.Error,
@@ -133,11 +141,5 @@ test('1', async t => {
     });
   });
 
-  if (isPass === false) {
-    console.log(context.stdout.toString());
-    console.log(context.stderr.toString());
-  }
-
-  t.is(code, 0);
-  t.is(common.isDefined(parsedOutput?.validationErrorsTotal), true);
+  t.is(isPass, true);
 });

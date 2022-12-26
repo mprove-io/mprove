@@ -9,6 +9,7 @@ import { mreq } from '~mcli/functions/mreq';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
 import { CommitCommand } from '../commit';
+let assert = require('node:assert/strict');
 let retry = require('async-retry');
 
 let testId = 'mcli__commit__ok';
