@@ -27,10 +27,11 @@ test('1', async t => {
 
     let commandLine = `run \
 --project-id ${projectId} \
---wait --sleep 2 \
 --repo production \
 --branch ${defaultBranch} \
 --env prod \
+--wait \
+--sleep 2 \
 --dashboard-ids ec1_d1 \
 --viz-ids 4K9SNSMG0IQPQZ9CL23U,4V3KWMRA9MSH21EQZCJQ \
 --json`;

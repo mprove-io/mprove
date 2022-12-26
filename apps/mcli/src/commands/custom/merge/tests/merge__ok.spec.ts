@@ -29,6 +29,8 @@ test('1', async t => {
 --their-branch ${theirBranch} \
 --branch ${defaultBranch} \
 --env prod \
+--get-errors \
+--get-repo \
 --json`;
 
     let userId = common.makeId();

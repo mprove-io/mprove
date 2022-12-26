@@ -35,6 +35,10 @@ test('1', async t => {
 --project-id ${projectId} \
 --env prod \
 --local-path ${repoPath} \
+--first-sync \
+--get-repo \
+--get-repo-nodes \
+--get-errors \
 --json \
 --debug`;
 

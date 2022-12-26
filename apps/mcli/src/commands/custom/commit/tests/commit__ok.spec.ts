@@ -28,6 +28,7 @@ test('1', async t => {
 --repo dev \
 --branch ${branch} \
 --commit-message m1 \
+--get-repo \
 --json`;
 
     let userId = common.makeId();

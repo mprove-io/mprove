@@ -29,6 +29,7 @@ test('1', async t => {
 --dashboard-id ec1_d1 \
 --report-index 0 \
 --get-sql \
+--get-data \
 --json`;
 
     let userId = common.makeId();

@@ -32,11 +32,6 @@ export class SyncCommand extends CustomCommand {
     ]
   });
 
-  localPath = Option.String('--local-path', {
-    description:
-      '(optional, if not specified then the current working directory is used) Absolute path of local git repository'
-  });
-
   projectId = Option.String('--project-id', {
     description: '(required) Project Id'
   });
@@ -46,13 +41,18 @@ export class SyncCommand extends CustomCommand {
     description: '(required) Environment'
   });
 
+  localPath = Option.String('--local-path', {
+    description:
+      '(optional, if not specified then the current working directory is used) Absolute path of local git repository'
+  });
+
   firstSync = Option.Boolean('--first-sync', false, {
     description:
       '(default false) if set, then the previous sync timestamp is ignored'
   });
 
-  debug = Option.Boolean('--debug', false, {
-    description: '(default false) add debug to output'
+  getRepo = Option.Boolean('--get-repo', false, {
+    description: '(default false), show repo in output'
   });
 
   getRepoNodes = Option.Boolean('--get-repo-nodes', false, {
@@ -63,12 +63,12 @@ export class SyncCommand extends CustomCommand {
     description: '(default false), show validation errors in output'
   });
 
-  getRepo = Option.Boolean('--get-repo', false, {
-    description: '(default false), show repo in output'
-  });
-
   json = Option.Boolean('--json', false, {
     description: '(default false)'
+  });
+
+  debug = Option.Boolean('--debug', false, {
+    description: '(default false) add debug to output'
   });
 
   envFilePath = Option.String('--env-file-path', {

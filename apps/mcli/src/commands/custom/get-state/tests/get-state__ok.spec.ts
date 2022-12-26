@@ -26,6 +26,8 @@ test('1', async t => {
 --repo dev \
 --branch ${defaultBranch} \
 --env prod \
+--get-errors \
+--get-repo \
 --get-repo-nodes \
 --get-dashboards \
 --get-vizs \
