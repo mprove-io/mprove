@@ -3,7 +3,6 @@ import * as fse from 'fs-extra';
 import { common } from '~mcli/barrels/common';
 import { constants } from '~mcli/barrels/constants';
 import { getConfig } from '~mcli/config/get.config';
-import { checkIsTrue } from '~mcli/functions/check-is-true';
 import { cloneRepo } from '~mcli/functions/clone-repo';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { makeSyncTime } from '~mcli/functions/make-sync-time';
@@ -151,10 +150,18 @@ test('1', async t => {
       });
     }
 
-    isPass = code === 0 && parsedOutput.debug.localChangesToCommit.length === 0;
+    assert.equal(code === 0, true, `code === 0`);
+    assert.equal(
+      parsedOutput.debug.localChangesToCommit.length === 0,
+      true,
+      `parsedOutput.debug.localChangesToCommit.length === 0`
+    );
 
-    checkIsTrue(isPass);
+    isPass = true;
   }, constants.RETRY_OPTIONS).catch((er: any) => {
+    console.log(context.stdout.toString());
+    console.log(context.stderr.toString());
+
     logToConsoleMcli({
       log: er,
       logLevel: common.LogLevelEnum.Error,
@@ -163,11 +170,5 @@ test('1', async t => {
     });
   });
 
-  if (isPass === false) {
-    console.log(context.stdout.toString());
-    console.log(context.stderr.toString());
-  }
-
-  t.is(code, 0);
-  t.is(parsedOutput.debug.localChangesToCommit.length === 0, true);
+  t.is(isPass, true);
 });
