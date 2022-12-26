@@ -3,7 +3,6 @@ import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { constants } from '~mcli/barrels/constants';
 import { getConfig } from '~mcli/config/get.config';
-import { checkIsTrue } from '~mcli/functions/check-is-true';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { prepareTest } from '~mcli/functions/prepare-test';
@@ -140,10 +139,18 @@ test('1', async t => {
       });
     }
 
-    isPass = checkIsTrue(
-      code === 0 && parsedOutput?.message?.includes('Deleted branch')
+    assert.equal(code === 0, true, `code === 0`);
+    assert.equal(
+      parsedOutput?.message?.includes('Deleted branch'),
+      true,
+      `parsedOutput?.message?.includes('Deleted branch')`
     );
+
+    isPass = true;
   }, constants.RETRY_OPTIONS).catch((er: any) => {
+    console.log(context.stdout.toString());
+    console.log(context.stderr.toString());
+
     logToConsoleMcli({
       log: er,
       logLevel: common.LogLevelEnum.Error,
@@ -152,11 +159,5 @@ test('1', async t => {
     });
   });
 
-  if (isPass === false) {
-    console.log(context.stdout.toString());
-    console.log(context.stderr.toString());
-  }
-
-  t.is(code, 0);
-  t.is(parsedOutput?.message?.includes('Deleted branch'), true);
+  t.is(isPass, true);
 });

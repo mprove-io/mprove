@@ -4,7 +4,6 @@ import { common } from '~mcli/barrels/common';
 import { constants } from '~mcli/barrels/constants';
 import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
-import { checkIsTrue } from '~mcli/functions/check-is-true';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { prepareTest } from '~mcli/functions/prepare-test';
@@ -156,10 +155,18 @@ test('1', async t => {
       });
     }
 
-    isPass = checkIsTrue(
-      code === 0 && common.isDefined(parsedOutput?.validationErrorsTotal)
+    assert.equal(code === 0, true, `code === 0`);
+    assert.equal(
+      common.isDefined(parsedOutput?.validationErrorsTotal),
+      true,
+      `common.isDefined(parsedOutput?.validationErrorsTotal)`
     );
+
+    isPass = true;
   }, constants.RETRY_OPTIONS).catch((er: any) => {
+    console.log(context.stdout.toString());
+    console.log(context.stderr.toString());
+
     logToConsoleMcli({
       log: er,
       logLevel: common.LogLevelEnum.Error,
@@ -168,11 +175,5 @@ test('1', async t => {
     });
   });
 
-  if (isPass === false) {
-    console.log(context.stdout.toString());
-    console.log(context.stderr.toString());
-  }
-
-  t.is(code, 0);
-  t.is(common.isDefined(parsedOutput?.validationErrorsTotal), true);
+  t.is(isPass, true);
 });

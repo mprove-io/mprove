@@ -3,7 +3,6 @@ import { common } from '~mcli/barrels/common';
 import { constants } from '~mcli/barrels/constants';
 import { interfaces } from '~mcli/barrels/interfaces';
 import { getConfig } from '~mcli/config/get.config';
-import { checkIsTrue } from '~mcli/functions/check-is-true';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
@@ -137,16 +136,39 @@ test('1', async t => {
 
     queriesStats = parsedOutput?.queriesStats;
 
-    isPass = checkIsTrue(
-      code === 0 &&
-        common.isDefined(queriesStats) &&
-        queriesStats.started === 0 &&
-        queriesStats.running === 15 &&
-        queriesStats.completed === 0 &&
-        queriesStats.error === 0 &&
-        queriesStats.canceled === 0
+    assert.equal(code === 0, true, `code === 0`);
+    assert.equal(
+      common.isDefined(queriesStats),
+      true,
+      `common.isDefined(queriesStats)`
     );
+    assert.equal(
+      queriesStats.started === 0,
+      true,
+      `queriesStats.started === 0`
+    );
+    assert.equal(
+      queriesStats.running === 15,
+      true,
+      `queriesStats.running === 15`
+    );
+    assert.equal(
+      queriesStats.completed === 0,
+      true,
+      `queriesStats.completed === 0`
+    );
+    assert.equal(queriesStats.error === 0, true, `queriesStats.error === 0`);
+    assert.equal(
+      queriesStats.canceled === 0,
+      true,
+      `queriesStats.canceled === 0`
+    );
+
+    isPass = true;
   }, constants.RETRY_OPTIONS).catch((er: any) => {
+    console.log(context.stdout.toString());
+    console.log(context.stderr.toString());
+
     logToConsoleMcli({
       log: er,
       logLevel: common.LogLevelEnum.Error,
@@ -155,16 +177,5 @@ test('1', async t => {
     });
   });
 
-  if (isPass === false) {
-    console.log(context.stdout.toString());
-    console.log(context.stderr.toString());
-  }
-
-  t.is(code, 0);
-  t.is(common.isDefined(queriesStats), true);
-  t.is(queriesStats.started === 0, true);
-  t.is(queriesStats.running === 15, true);
-  t.is(queriesStats.completed === 0, true);
-  t.is(queriesStats.error === 0, true);
-  t.is(queriesStats.canceled === 0, true);
+  t.is(isPass, true);
 });
