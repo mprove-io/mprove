@@ -1,0 +1,27 @@
+name: release-mprove-cli
+on:
+  push:
+    tags:
+      - v*
+jobs:
+  upload-files:
+    needs: [build]
+    runs-on: ubuntu-latest
+    env:
+      COMMIT_VAR: ${{ contains(github.event.head_commit.message, '[commit var]') }}
+    steps:
+      - uses: actions/checkout@v3    
+
+      - name: Set env
+        run: echo "COMMIT_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV   
+
+      - uses: carlosperate/download-file-action@v2
+        with:
+          file-url: https://github.com/mprove-io/mprove-files/releases/download/t-${{ COMMIT_SHORT }}/mprove-linux-${{ github.sha }}.tgz
+
+      - uses: softprops/action-gh-release@v1
+        with:
+          repository: mprove-io/mprove-files
+          token: ${{ secrets.MPROVE_FILES_GITHUB_TOKEN }}
+          files: |
+            mprove-linux-${{ github.sha }}.tgz
