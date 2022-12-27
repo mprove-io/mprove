@@ -1,6 +1,5 @@
 name: upload-mprove-cli
 on:
-  workflow_dispatch:
   push:
     branches:
       - test-upload 
