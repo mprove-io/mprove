@@ -7,17 +7,19 @@ jobs:
   upload-files:
     needs: [build]
     runs-on: ubuntu-latest
-    env:
-      COMMIT_VAR: ${{ contains(github.event.head_commit.message, '[commit var]') }}
     steps:
       - uses: actions/checkout@v3    
 
       - name: Set env
-        run: echo "COMMIT_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV   
+        run: echo "COMMIT_SHORT=$(git log --pretty=format:'%h' -n 1)" >> $GITHUB_ENV   
+
+      - name: echo
+        run: echo ${{ COMMIT_SHORT }} 
 
       - uses: carlosperate/download-file-action@v2
         with:
-          file-url: https://github.com/mprove-io/mprove-files/releases/download/t-${{ COMMIT_SHORT }}/mprove-linux-${{ github.sha }}.tgz
+          file-url: https://github.com/mprove-io/mprove-files/releases/download/t-9110dd80c/mprove-linux-${{ github.sha }}.tgz
+          # file-url: https://github.com/mprove-io/mprove-files/releases/download/t-${{ COMMIT_SHORT }}/mprove-linux-${{ github.sha }}.tgz
 
       - uses: softprops/action-gh-release@v1
         with:
