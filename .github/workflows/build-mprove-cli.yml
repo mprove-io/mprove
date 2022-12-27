@@ -86,7 +86,7 @@ jobs:
       - uses: softprops/action-gh-release@v1
         with:
           repository: mprove-io/mprove-files
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.MPROVE_FILES_GITHUB_TOKEN }}
           files: |
             f1.txt
           # files: |
