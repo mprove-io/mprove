@@ -10,18 +10,28 @@ jobs:
       - uses: actions/checkout@v3    
 
       - name: Set env
-        run: echo "COMMIT_SHORT=$(echo $GITHUB_SHA | cut -c 1-8)" >> $GITHUB_ENV   
-
-      - name: echo
-        run: echo $COMMIT_SHORT
+        run: echo "SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-9)" >> $GITHUB_ENV   
 
       - uses: carlosperate/download-file-action@v2
         with:
-          file-url: https://github.com/mprove-io/mprove-files/releases/download/t-${{ env.COMMIT_SHORT }}/mprove-linux-${{ github.sha }}.tgz
+          file-url: https://github.com/mprove-io/mprove-files/releases/download/t-${{ env.SHA_SHORT }}/mprove-linux-${{ github.sha }}.tgz
+      - run: mv mprove-linux-${{ github.sha }}.tgz mprove-linux-${{ github.ref_name }}.tgz
+
+      - uses: carlosperate/download-file-action@v2
+        with:
+          file-url: https://github.com/mprove-io/mprove-files/releases/download/t-${{ env.SHA_SHORT }}/mprove-macos-${{ github.sha }}.tgz
+      - run: mv mprove-macos-${{ github.sha }}.tgz mprove-macos-${{ github.ref_name }}.tgz
+
+      - uses: carlosperate/download-file-action@v2
+        with:
+          file-url: https://github.com/mprove-io/mprove-files/releases/download/t-${{ env.SHA_SHORT }}/mprove-windows-${{ github.sha }}.exe
+      - run: mv mprove-windows-${{ github.sha }}.exe mprove-windows-${{ github.ref_name }}.exe      
 
       - uses: softprops/action-gh-release@v1
         with:
           repository: mprove-io/mprove-files
           token: ${{ secrets.MPROVE_FILES_GITHUB_TOKEN }}
           files: |
-            mprove-linux-${{ github.sha }}.tgz
+            mprove-linux-${{ github.ref_name }}.tgz
+            mprove-macos-${{ github.ref_name }}.tgz
+            mprove-windows-${{ github.ref_name }}.exe
