@@ -81,6 +81,7 @@ jobs:
       - uses: softprops/action-gh-release@v1
         with:
           repository: mprove-io/mprove-files
+          tag_name: ${{ github.sha }}
           files: |
             mprove-linux-${{ github.sha }}.tgz
             mprove-macos-${{ github.sha }}.tgz
