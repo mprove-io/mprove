@@ -14,7 +14,7 @@ jobs:
         run: echo "COMMIT_SHORT=$(git log --pretty=format:'%h' -n 1)" >> $GITHUB_ENV   
 
       - name: echo
-        run: echo ${{ COMMIT_SHORT }} 
+        run: echo $COMMIT_SHORT
 
       - uses: carlosperate/download-file-action@v2
         with:
