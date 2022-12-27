@@ -2,7 +2,7 @@ name: build-mprove-cli
 on:
   push:
     tags:
-      - test* 
+      - t-* 
 jobs:
   # build:
   #   strategy:
@@ -87,6 +87,6 @@ jobs:
           #   mprove-linux-${{ github.sha }}.tgz
           #   mprove-macos-${{ github.sha }}.tgz
           #   mprove-windows-${{ github.sha }}.exe        
-            
+
 
 
