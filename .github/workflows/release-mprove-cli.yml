@@ -17,7 +17,7 @@ jobs:
 
       - uses: carlosperate/download-file-action@v2
         with:
-          file-url: https://github.com/mprove-io/mprove-files/releases/download/t-${{ COMMIT_SHORT }}/mprove-linux-${{ github.sha }}.tgz
+          file-url: https://github.com/mprove-io/mprove-files/releases/download/t-${{ $COMMIT_SHORT }}/mprove-linux-${{ github.sha }}.tgz
 
       - uses: softprops/action-gh-release@v1
         with:
