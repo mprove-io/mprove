@@ -3,10 +3,6 @@ on:
   push:
     tags:
       - test* 
-
-permissions:
-  contents: write
-
 jobs:
   # build:
   #   strategy:
@@ -65,8 +61,6 @@ jobs:
   #         path: ${{ matrix.artifact }}
 
   upload-files:
-    permissions:
-      contents: write
     # needs: [build]
     runs-on: ubuntu-latest
     steps:
