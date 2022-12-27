@@ -1,6 +1,4 @@
 name: build-mprove-cli
-permissions:
-  contents: write
 on:
   push:
     tags:
@@ -63,12 +61,14 @@ jobs:
   #         path: ${{ matrix.artifact }}
 
   upload-files:
+    permissions:
+      contents: write
     # needs: [build]
     runs-on: ubuntu-latest
     steps:
       - name: f1
         run: echo 123 > f1.txt
-        
+
       # - uses: actions/download-artifact@v3
       #   with:
       #     name: mprove-linux-${{ github.sha }}.tgz      
