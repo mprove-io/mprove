@@ -27,9 +27,9 @@ export function logToConsoleMcli(item: {
     log = JSON.stringify(log, null, 2);
   } else if (isPretty === true) {
     log = prettyjson.render(log, {
-      keysColor: 'green',
-      dashColor: 'magenta',
-      stringColor: 'white',
+      keysColor: 'white',
+      dashColor: 'gray',
+      stringColor: 'green',
       numberColor: 'yellow',
       multilineStringColor: 'cyan'
     });
