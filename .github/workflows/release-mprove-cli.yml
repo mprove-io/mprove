@@ -27,10 +27,17 @@ jobs:
           file-url: https://github.com/mprove-io/mprove-files/releases/download/t-${{ env.SHA_SHORT }}/mprove-cli-windows-${{ github.sha }}.exe
       - run: mv mprove-cli-windows-${{ github.sha }}.exe mprove-cli-windows-${{ github.ref_name }}.exe      
 
+      - name: Compute checksums
+        run: |
+          sha256sum mprove-cli-linux-${{ github.ref_name }}.tgz >> checksums.md
+          sha256sum mprove-cli-macos-${{ github.ref_name }}.tgz >> checksums.md
+          sha256sum mprove-cli-windows-${{ github.ref_name }}.exe >> checksums.md
+
       - uses: softprops/action-gh-release@v1
         with:
           repository: mprove-io/mprove-files
           token: ${{ secrets.MPROVE_FILES_GITHUB_TOKEN }}
+          body_path: checksums.md
           files: |
             mprove-cli-linux-${{ github.ref_name }}.tgz
             mprove-cli-macos-${{ github.ref_name }}.tgz
