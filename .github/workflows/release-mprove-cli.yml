@@ -2,7 +2,7 @@ name: release-mprove-cli
 on:
   push:
     tags:
-      - v*
+      - v-*
 jobs:
   upload-files:
     runs-on: ubuntu-latest
