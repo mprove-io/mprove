@@ -22,7 +22,7 @@ export class GetStateCommand extends CustomCommand {
     examples: [
       [
         'Get Dev repo state',
-        'mprove get-state --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --get-nodes'
+        'mprove get-state --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --get-repo --get-repo-nodes'
       ],
       [
         'Get Production repo state',
