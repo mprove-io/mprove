@@ -131,6 +131,7 @@
           "*.dashboard": "yaml",
           "*.vis": "yaml",
           "*.udf": "yaml",
+          "*.metric": "yaml",
           "*.config": "yaml"
         },
         "gitlens.hovers.enabled": false,
