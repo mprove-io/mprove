@@ -3,10 +3,9 @@ import { NavigationEnd, Router } from '@angular/router';
 import { filter, map, take, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
-import { UserQuery } from '~front/app/queries/user.query';
+import { UserQuery, UserState } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavState } from '~front/app/stores/nav.store';
-import { UserState } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 

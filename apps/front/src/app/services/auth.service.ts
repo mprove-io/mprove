@@ -3,21 +3,14 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { interval as observableInterval, Subscription } from 'rxjs';
-import { UserStore } from '~front/app/stores/user.store';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
-import { UserQuery } from '../queries/user.query';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private checkAuthSubscription: Subscription;
 
-  constructor(
-    private router: Router,
-    private userStore: UserStore,
-    private location: Location,
-    private userQuery: UserQuery
-  ) {}
+  constructor(private router: Router, private location: Location) {}
 
   authenticated() {
     let jwtHelperService = new JwtHelperService();

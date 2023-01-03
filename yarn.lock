@@ -2133,6 +2133,11 @@
   dependencies:
     tslib "2.3.1"
 
+"@ngneat/elf@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@ngneat/elf/-/elf-2.3.0.tgz#c046b0344b05ffdd2e0735122a31dfa2d67c6794"
+  integrity sha512-uGoKOHu1T4KPKJSAf6y1VHi43eWaYe8Tx+J+o4R8Wki8gpeQUGlQz04qZoPllysLbqetDVXTMmMbQdostgG8Og==
+
 "@ngneat/helipopper@5.1.4":
   version "5.1.4"
   resolved "https://registry.yarnpkg.com/@ngneat/helipopper/-/helipopper-5.1.4.tgz#9bee78806988d27d10731d9f4129374c7799373a"

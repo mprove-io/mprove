@@ -3,10 +3,10 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { UserStore } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -23,7 +23,7 @@ export class ConfirmEmailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
-    private userStore: UserStore,
+    private userQuery: UserQuery,
     private authService: AuthService,
     private spinner: NgxSpinnerService,
     private router: Router,
@@ -40,9 +40,8 @@ export class ConfirmEmailComponent implements OnInit {
     // console.log('stopWatch from ConfirmEmailComponent');
     this.authService.stopWatch();
 
-    this.emailConfirmationToken = this.route.snapshot.queryParamMap.get(
-      'token'
-    );
+    this.emailConfirmationToken =
+      this.route.snapshot.queryParamMap.get('token');
 
     this.apiService
       .req({
@@ -61,7 +60,7 @@ export class ConfirmEmailComponent implements OnInit {
             if (common.isDefined(user) && common.isDefined(token)) {
               // first email verification
               this.myDialogService.showEmailConfirmed();
-              this.userStore.update(user);
+              this.userQuery.update(user);
               // console.log('stopWatch from ConfirmEmailComponent - 2');
               this.authService.stopWatch();
               localStorage.setItem(constants.LOCAL_STORAGE_TOKEN, token);

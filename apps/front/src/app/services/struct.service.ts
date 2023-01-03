@@ -4,10 +4,9 @@ import { common } from '~front/barrels/common';
 import { ModelQuery } from '../queries/model.query';
 import { MqQuery } from '../queries/mq.query';
 import { StructQuery } from '../queries/struct.query';
-import { UserQuery } from '../queries/user.query';
+import { UserQuery, UserState } from '../queries/user.query';
 import { ModelState } from '../stores/model.store';
 import { StructState } from '../stores/struct.store';
-import { UserState } from '../stores/user.store';
 
 @Injectable({ providedIn: 'root' })
 export class StructService {

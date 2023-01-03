@@ -4,9 +4,8 @@ import { filter, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { OrgQuery } from '~front/app/queries/org.query';
 import { UiQuery } from '~front/app/queries/ui.query';
-import { UserQuery } from '~front/app/queries/user.query';
+import { UserQuery, UserState } from '~front/app/queries/user.query';
 import { NavState } from '~front/app/stores/nav.store';
-import { UserState } from '~front/app/stores/user.store';
 import { common } from '~front/barrels/common';
 
 @Component({

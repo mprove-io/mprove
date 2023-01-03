@@ -1,29 +1,45 @@
 import { Injectable } from '@angular/core';
-import { Query } from '@datorama/akita';
-import { UserState, UserStore } from '~front/app/stores/user.store';
+import { createStore, select, withProps } from '@ngneat/elf';
+import { common } from '~front/barrels/common';
 import { getFullName } from '../functions/get-full-name';
 import { makeInitials } from '../functions/make-initials';
+import { BaseQuery } from './base.query';
+
+export class UserState extends common.User {}
+
+let userState: UserState = {
+  userId: undefined,
+  email: undefined,
+  alias: undefined,
+  firstName: undefined,
+  lastName: undefined,
+  timezone: undefined,
+  isEmailVerified: undefined,
+  serverTs: 1
+};
 
 @Injectable({ providedIn: 'root' })
-export class UserQuery extends Query<UserState> {
-  initials$ = this.select(state => {
-    let initials = makeInitials({
-      firstName: state.firstName,
-      lastName: state.lastName,
-      alias: state.alias
-    });
+export class UserQuery extends BaseQuery<UserState> {
+  initials$ = this.store.pipe(
+    select(state => {
+      let initials = makeInitials({
+        firstName: state.firstName,
+        lastName: state.lastName,
+        alias: state.alias
+      });
 
-    return initials;
-  });
+      return initials;
+    })
+  );
 
-  fullName$ = this.select(state => getFullName(state));
+  fullName$ = this.store.pipe(select(state => getFullName(state)));
 
-  email$ = this.select(state => state.email);
-  alias$ = this.select(state => state.alias);
-  userId$ = this.select(state => state.userId);
-  timezone$ = this.select(state => state.timezone);
+  email$ = this.store.pipe(select(state => state.email));
+  alias$ = this.store.pipe(select(state => state.alias));
+  userId$ = this.store.pipe(select(state => state.userId));
+  timezone$ = this.store.pipe(select(state => state.timezone));
 
-  constructor(protected store: UserStore) {
-    super(store);
+  constructor() {
+    super(createStore({ name: 'user' }, withProps<UserState>(userState)));
   }
 }

@@ -41,6 +41,7 @@
     "@nestjs/typeorm": "9.0.1",
     "@ng-select/ng-select": "8.3.0",
     "@ngneat/dialog": "2.1.1",
+    "@ngneat/elf": "^2.3.0",
     "@ngneat/helipopper": "5.1.4",
     "@ngneat/overview": "3.0.4",
     "@swimlane/ngx-charts": "20.1.0",

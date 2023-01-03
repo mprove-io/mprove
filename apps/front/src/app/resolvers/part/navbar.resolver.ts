@@ -17,7 +17,6 @@ import { MemberStore } from '../../stores/member.store';
 import { NavState, NavStore } from '../../stores/nav.store';
 import { RepoStore } from '../../stores/repo.store';
 import { StructStore } from '../../stores/struct.store';
-import { UserStore } from '../../stores/user.store';
 
 @Injectable({ providedIn: 'root' })
 export class NavBarResolver implements Resolve<Observable<boolean>> {
@@ -30,7 +29,6 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
     private router: Router,
     private authService: AuthService,
     private userQuery: UserQuery,
-    private userStore: UserStore,
     private memberStore: MemberStore,
     private repoStore: RepoStore,
     private structStore: StructStore,
@@ -134,7 +132,7 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
             };
 
             this.navStore.update(nav);
-            this.userStore.update(user);
+            this.userQuery.update(user);
 
             if (common.isDefined(userMember)) {
               this.memberStore.update(resp.payload.userMember);

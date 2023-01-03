@@ -4,7 +4,6 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
-import { UserStore } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -27,7 +26,6 @@ export class EditNameDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<EditNameDialogData>,
     private fb: FormBuilder,
-    private userStore: UserStore,
     private userQuery: UserQuery
   ) {}
 
@@ -83,7 +81,7 @@ export class EditNameDialogComponent implements OnInit {
         tap((resp: apiToBackend.ToBackendSetUserNameResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let user = resp.payload.user;
-            this.userStore.update(user);
+            this.userQuery.update(user);
           }
         }),
         take(1)

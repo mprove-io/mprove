@@ -4,9 +4,9 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
-import { UserStore } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -34,7 +34,7 @@ export class LoginComponent implements OnInit {
     private route: ActivatedRoute,
     private apiService: ApiService,
     private router: Router,
-    private userStore: UserStore,
+    private userQuery: UserQuery,
     private spinner: NgxSpinnerService,
     private authService: AuthService,
     private title: Title
@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
 
-    this.userStore.reset();
+    this.userQuery.reset();
     // console.log('startWatch from LoginComponent');
     this.authService.startWatch();
 
@@ -82,7 +82,7 @@ export class LoginComponent implements OnInit {
             let user = resp.payload.user;
             let token = resp.payload.token;
 
-            this.userStore.update(user);
+            this.userQuery.update(user);
 
             if (user.isEmailVerified === true) {
               // console.log('stopWatch from LoginComponent');
