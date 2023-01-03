@@ -1,16 +1,28 @@
 import { Injectable } from '@angular/core';
-import { Query } from '@datorama/akita';
-import {
-  EnvironmentsState,
-  EnvironmentsStore
-} from '../stores/environments.store';
+import { createStore, select, withProps } from '@ngneat/elf';
+import { common } from '~front/barrels/common';
+import { BaseQuery } from './base.query';
+
+export class EnvironmentsState {
+  environments: common.Env[];
+  total: number;
+}
+let environmentsState: EnvironmentsState = {
+  environments: [],
+  total: 0
+};
 
 @Injectable({ providedIn: 'root' })
-export class EnvironmentsQuery extends Query<EnvironmentsState> {
-  environments$ = this.select(state => state.environments);
-  total$ = this.select(state => state.total);
+export class EnvironmentsQuery extends BaseQuery<EnvironmentsState> {
+  environments$ = this.store.pipe(select(state => state.environments));
+  total$ = this.store.pipe(select(state => state.total));
 
-  constructor(protected store: EnvironmentsStore) {
-    super(store);
+  constructor() {
+    super(
+      createStore(
+        { name: 'environments' },
+        withProps<EnvironmentsState>(environmentsState)
+      )
+    );
   }
 }

@@ -1,12 +1,32 @@
 import { Injectable } from '@angular/core';
-import { Query } from '@datorama/akita';
-import { ModelState, ModelStore } from '../stores/model.store';
+import { createStore, select, withProps } from '@ngneat/elf';
+import { common } from '~front/barrels/common';
+import { BaseQuery } from './base.query';
+
+export class ModelState extends common.Model {}
+
+let modelState: ModelState = {
+  structId: undefined,
+  modelId: undefined,
+  connectionId: undefined,
+  filePath: undefined,
+  content: undefined,
+  accessUsers: [],
+  accessRoles: [],
+  label: undefined,
+  gr: undefined,
+  hidden: false,
+  fields: [],
+  nodes: [],
+  description: undefined,
+  serverTs: undefined
+};
 
 @Injectable({ providedIn: 'root' })
-export class ModelQuery extends Query<ModelState> {
-  fields$ = this.select(state => state.fields);
+export class ModelQuery extends BaseQuery<ModelState> {
+  fields$ = this.store.pipe(select(state => state.fields));
 
-  constructor(protected store: ModelStore) {
-    super(store);
+  constructor() {
+    super(createStore({ name: 'model' }, withProps<ModelState>(modelState)));
   }
 }

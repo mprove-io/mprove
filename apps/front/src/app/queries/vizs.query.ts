@@ -1,12 +1,21 @@
 import { Injectable } from '@angular/core';
-import { Query } from '@datorama/akita';
-import { VizsState, VizsStore } from '../stores/vizs.store';
+import { createStore, select, withProps } from '@ngneat/elf';
+import { common } from '~front/barrels/common';
+import { BaseQuery } from './base.query';
+
+export class VizsState {
+  vizs: common.VizX[];
+}
+
+let vizsState: VizsState = {
+  vizs: []
+};
 
 @Injectable({ providedIn: 'root' })
-export class VizsQuery extends Query<VizsState> {
-  vizs$ = this.select(state => state.vizs);
+export class VizsQuery extends BaseQuery<VizsState> {
+  vizs$ = this.store.pipe(select(state => state.vizs));
 
-  constructor(protected store: VizsStore) {
-    super(store);
+  constructor() {
+    super(createStore({ name: 'vizs' }, withProps<VizsState>(vizsState)));
   }
 }

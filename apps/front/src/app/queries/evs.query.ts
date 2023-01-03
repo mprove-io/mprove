@@ -1,12 +1,21 @@
 import { Injectable } from '@angular/core';
-import { Query } from '@datorama/akita';
-import { EvsState, EvsStore } from '../stores/evs.store';
+import { createStore, select, withProps } from '@ngneat/elf';
+import { common } from '~front/barrels/common';
+import { BaseQuery } from './base.query';
+
+export class EvsState {
+  evs: common.Ev[];
+}
+
+let evsState: EvsState = {
+  evs: []
+};
 
 @Injectable({ providedIn: 'root' })
-export class EvsQuery extends Query<EvsState> {
-  evs$ = this.select(state => state.evs);
+export class EvsQuery extends BaseQuery<EvsState> {
+  evs$ = this.store.pipe(select(state => state.evs));
 
-  constructor(protected store: EvsStore) {
-    super(store);
+  constructor() {
+    super(createStore({ name: 'evs' }, withProps<EvsState>(evsState)));
   }
 }

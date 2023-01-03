@@ -1,16 +1,29 @@
 import { Injectable } from '@angular/core';
-import { Query } from '@datorama/akita';
-import {
-  ConnectionsState,
-  ConnectionsStore
-} from '../stores/connections.store';
+import { createStore, select, withProps } from '@ngneat/elf';
+import { common } from '~front/barrels/common';
+import { BaseQuery } from './base.query';
+
+export class ConnectionsState {
+  connections: common.Connection[];
+  total: number;
+}
+
+let connectionsState: ConnectionsState = {
+  connections: [],
+  total: 0
+};
 
 @Injectable({ providedIn: 'root' })
-export class ConnectionsQuery extends Query<ConnectionsState> {
-  connections$ = this.select(state => state.connections);
-  total$ = this.select(state => state.total);
+export class ConnectionsQuery extends BaseQuery<ConnectionsState> {
+  connections$ = this.store.pipe(select(state => state.connections));
+  total$ = this.store.pipe(select(state => state.total));
 
-  constructor(protected store: ConnectionsStore) {
-    super(store);
+  constructor() {
+    super(
+      createStore(
+        { name: 'connections' },
+        withProps<ConnectionsState>(connectionsState)
+      )
+    );
   }
 }

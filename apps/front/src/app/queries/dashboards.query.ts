@@ -1,12 +1,26 @@
 import { Injectable } from '@angular/core';
-import { Query } from '@datorama/akita';
-import { DashboardsState, DashboardsStore } from '../stores/dashboards.store';
+import { createStore, select, withProps } from '@ngneat/elf';
+import { common } from '~front/barrels/common';
+import { BaseQuery } from './base.query';
+
+export class DashboardsState {
+  dashboards: common.DashboardX[];
+}
+
+let dashboardsState: DashboardsState = {
+  dashboards: []
+};
 
 @Injectable({ providedIn: 'root' })
-export class DashboardsQuery extends Query<DashboardsState> {
-  dashboards$ = this.select(state => state.dashboards);
+export class DashboardsQuery extends BaseQuery<DashboardsState> {
+  dashboards$ = this.store.pipe(select(state => state.dashboards));
 
-  constructor(protected store: DashboardsStore) {
-    super(store);
+  constructor() {
+    super(
+      createStore(
+        { name: 'dashboards' },
+        withProps<DashboardsState>(dashboardsState)
+      )
+    );
   }
 }

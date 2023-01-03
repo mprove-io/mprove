@@ -15,10 +15,9 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { tap } from 'rxjs/operators';
-import { NavQuery } from '~front/app/queries/nav.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { DashboardService } from '~front/app/services/dashboard.service';
-import { NavState } from '~front/app/stores/nav.store';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 

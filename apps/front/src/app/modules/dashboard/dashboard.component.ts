@@ -23,15 +23,13 @@ import {
 } from 'rxjs/operators';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery } from '~front/app/queries/nav.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DashboardService } from '~front/app/services/dashboard.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { DashboardStore } from '~front/app/stores/dashboard.store';
-import { NavState } from '~front/app/stores/nav.store';
 import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
 import { ChartRepComponent } from '../shared/chart-rep/chart-rep.component';
@@ -202,7 +200,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private spinner: NgxSpinnerService,
     private apiService: ApiService,
     private navQuery: NavQuery,
-    private dashboardStore: DashboardStore,
     private cd: ChangeDetectorRef // @Inject(DOCUMENT) private _document: HTMLDocument,
   ) {}
 
@@ -279,7 +276,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onResizeEnded(event: any) {
-    this.dashboardStore.update(
+    this.dashboardQuery.update(
       Object.assign({}, this.dashboard, {
         temp: true
       })
@@ -287,7 +284,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   reportDeleted() {
-    this.dashboardStore.update(
+    this.dashboardQuery.update(
       Object.assign({}, this.dashboard, {
         temp: true
       })
@@ -300,7 +297,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onDragEnded(event: any) {
     // this.preventCollision = false;
-    this.dashboardStore.update(
+    this.dashboardQuery.update(
       Object.assign({}, this.dashboard, {
         temp: true
       })
@@ -322,7 +319,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       })
     });
 
-    this.dashboardStore.update(newDashboard);
+    this.dashboardQuery.update(newDashboard);
 
     this.refreshShow();
   }
@@ -401,7 +398,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   canDeactivate(): Promise<boolean> | boolean {
     // console.log('canDeactivateDashboard')
-    this.dashboardStore.reset();
+    this.dashboardQuery.reset();
     return true;
   }
 

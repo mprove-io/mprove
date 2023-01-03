@@ -1,12 +1,30 @@
 import { Injectable } from '@angular/core';
-import { Query } from '@datorama/akita';
-import { FileState, FileStore } from '../stores/file.store';
+import { createStore, select, withProps } from '@ngneat/elf';
+import { BaseQuery } from './base.query';
+
+export class FileState {
+  originalContent: string;
+  content: string;
+  name: string;
+  fileId: string;
+  fileNodeId: string;
+  isExist: boolean;
+}
+
+let fileState: FileState = {
+  originalContent: undefined,
+  content: undefined,
+  name: undefined,
+  fileId: undefined,
+  fileNodeId: undefined,
+  isExist: false
+};
 
 @Injectable({ providedIn: 'root' })
-export class FileQuery extends Query<FileState> {
-  fileId$ = this.select(state => state.fileId);
+export class FileQuery extends BaseQuery<FileState> {
+  fileId$ = this.store.pipe(select(state => state.fileId));
 
-  constructor(protected store: FileStore) {
-    super(store);
+  constructor() {
+    super(createStore({ name: 'file' }, withProps<FileState>(fileState)));
   }
 }

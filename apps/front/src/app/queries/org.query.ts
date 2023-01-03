@@ -1,21 +1,31 @@
 import { Injectable } from '@angular/core';
-import { Query } from '@datorama/akita';
-import { combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { OrgState, OrgStore } from '../stores/org.store';
+import { createStore, select, withProps } from '@ngneat/elf';
+import { combineLatest, map } from 'rxjs';
+import { common } from '~front/barrels/common';
+import { BaseQuery } from './base.query';
 import { UserQuery } from './user.query';
 
+export class OrgState extends common.Org {}
+
+let orgState: OrgState = {
+  orgId: undefined,
+  name: undefined,
+  ownerId: undefined,
+  ownerEmail: undefined,
+  serverTs: 1
+};
+
 @Injectable({ providedIn: 'root' })
-export class OrgQuery extends Query<OrgState> {
-  name$ = this.select(state => state.name);
-  orgId$ = this.select(state => state.orgId);
-  ownerEmail$ = this.select(state => state.ownerEmail);
+export class OrgQuery extends BaseQuery<OrgState> {
+  name$ = this.store.pipe(select(state => state.name));
+  orgId$ = this.store.pipe(select(state => state.orgId));
+  ownerEmail$ = this.store.pipe(select(state => state.ownerEmail));
 
   isOrgOwner$ = combineLatest([this.userQuery.email$, this.ownerEmail$]).pipe(
     map(([userEmail, ownerEmail]: [string, string]) => userEmail === ownerEmail)
   );
 
-  constructor(protected store: OrgStore, private userQuery: UserQuery) {
-    super(store);
+  constructor(private userQuery: UserQuery) {
+    super(createStore({ name: 'org' }, withProps<OrgState>(orgState)));
   }
 }

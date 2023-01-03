@@ -1,7 +1,7 @@
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { common } from '~front/barrels/common';
-import { NavState } from '../stores/nav.store';
+import { NavState } from '../queries/nav.query';
 
 export function checkNavOrgProject(item: {
   nav: NavState;

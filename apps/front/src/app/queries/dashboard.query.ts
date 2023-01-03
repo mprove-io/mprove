@@ -1,11 +1,38 @@
 import { Injectable } from '@angular/core';
-import { Query } from '@datorama/akita';
+import { createStore, withProps } from '@ngneat/elf';
 import { common } from '~front/barrels/common';
-import { DashboardStore } from '../stores/dashboard.store';
+import { BaseQuery } from './base.query';
+
+export class DashboardState extends common.DashboardX {}
+
+let dashboardState: DashboardState = {
+  structId: undefined,
+  dashboardId: undefined,
+  filePath: undefined,
+  content: undefined,
+  accessUsers: [],
+  accessRoles: [],
+  title: undefined,
+  gr: undefined,
+  temp: true,
+  hidden: false,
+  extendedFilters: [],
+  fields: [],
+  reports: [],
+  description: undefined,
+  serverTs: undefined,
+  author: undefined,
+  canEditOrDeleteDashboard: undefined
+};
 
 @Injectable({ providedIn: 'root' })
-export class DashboardQuery extends Query<common.DashboardX> {
-  constructor(protected store: DashboardStore) {
-    super(store);
+export class DashboardQuery extends BaseQuery<common.DashboardX> {
+  constructor() {
+    super(
+      createStore(
+        { name: 'dashboard' },
+        withProps<DashboardState>(dashboardState)
+      )
+    );
   }
 }

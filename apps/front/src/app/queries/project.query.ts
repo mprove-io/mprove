@@ -1,14 +1,30 @@
 import { Injectable } from '@angular/core';
-import { Query } from '@datorama/akita';
-import { ProjectState, ProjectStore } from '../stores/project.store';
+import { createStore, select, withProps } from '@ngneat/elf';
+import { common } from '~front/barrels/common';
+import { BaseQuery } from './base.query';
+
+export class ProjectState extends common.Project {}
+
+let projectState: ProjectState = {
+  orgId: undefined,
+  projectId: undefined,
+  name: undefined,
+  defaultBranch: undefined,
+  remoteType: undefined,
+  gitUrl: undefined,
+  publicKey: undefined,
+  serverTs: 1
+};
 
 @Injectable({ providedIn: 'root' })
-export class ProjectQuery extends Query<ProjectState> {
-  orgId$ = this.select(state => state.orgId);
-  projectId$ = this.select(state => state.projectId);
-  name$ = this.select(state => state.name);
+export class ProjectQuery extends BaseQuery<ProjectState> {
+  orgId$ = this.store.pipe(select(state => state.orgId));
+  projectId$ = this.store.pipe(select(state => state.projectId));
+  name$ = this.store.pipe(select(state => state.name));
 
-  constructor(protected store: ProjectStore) {
-    super(store);
+  constructor() {
+    super(
+      createStore({ name: 'project' }, withProps<ProjectState>(projectState))
+    );
   }
 }
