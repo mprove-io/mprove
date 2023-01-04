@@ -34,7 +34,7 @@
           "projects": "dependencies"
         }
       ],
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "rimraf \"./dist/tests/mcli\"",
@@ -46,17 +46,17 @@
       }
     },
     "test": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "nx build-tests mcli --with-deps",
+          "nx build-tests mcli",
           "ava --config=ava-js.config.js dist/tests/mcli/apps/mcli/**/*.spec.js"
         ],
         "parallel": false
       }
     },
     "fm": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "prettier \"apps/mcli/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js"
@@ -65,7 +65,7 @@
       }
     },
     "circular": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": ["madge --circular apps/mcli"],
         "parallel": false

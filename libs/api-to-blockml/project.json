@@ -10,7 +10,7 @@
       }
     },
     "build-tests": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "rimraf \"./dist/tests/api-to-blockml\"",
@@ -21,7 +21,7 @@
       }
     },
     "fm": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "prettier \"libs/api-to-blockml/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js"
@@ -30,7 +30,7 @@
       }
     },
     "circular": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": ["madge --circular libs/api-to-blockml"],
         "parallel": false

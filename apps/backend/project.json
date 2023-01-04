@@ -38,7 +38,7 @@
       }
     },
     "build-tests": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "rimraf \"./dist/tests/backend\"",
@@ -55,17 +55,17 @@
           "projects": "dependencies"
         }
       ],
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "nx build-tests backend --with-deps",
+          "nx build-tests backend",
           "ava --config=ava-js-e2e.config.js dist/tests/backend/apps/backend/**/*.e2e-spec.js"
         ],
         "parallel": false
       }
     },
     "fm": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "prettier \"apps/backend/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js"
@@ -74,14 +74,14 @@
       }
     },
     "circular": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": ["madge --circular apps/backend"],
         "parallel": false
       }
     },
     "compose-up-build": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "cwd": "tools/deploy/base-dev",
         "commands": [
@@ -92,7 +92,7 @@
       }
     },
     "compose-build": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "cwd": "./",
         "commands": ["docker-compose build backend"],

@@ -44,7 +44,7 @@
           "projects": "dependencies"
         }
       ],
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "rimraf \"./dist/tests/disk\"",
@@ -55,17 +55,17 @@
       }
     },
     "test": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "nx build-tests disk --with-deps",
+          "nx build-tests disk",
           "ava --config=ava-js.config.js dist/tests/disk/apps/disk/**/*.spec.js"
         ],
         "parallel": false
       }
     },
     "fm": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "prettier \"apps/disk/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js"
@@ -74,14 +74,14 @@
       }
     },
     "circular": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": ["madge --circular apps/disk"],
         "parallel": false
       }
     },
     "compose-up-build": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "cwd": "tools/deploy/base-dev",
         "commands": ["docker-compose up --detach --build disk"],
@@ -89,7 +89,7 @@
       }
     },
     "compose-build": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "cwd": "./",
         "commands": ["docker-compose build disk"],

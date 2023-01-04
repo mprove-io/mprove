@@ -170,7 +170,7 @@
       }
     },
     "fm": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "prettier \"apps/front/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js"
@@ -179,14 +179,14 @@
       }
     },
     "circular": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": ["madge --circular apps/front"],
         "parallel": false
       }
     },
     "compose-up-build": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "cwd": "tools/deploy/base-dev",
         "commands": ["docker-compose up --detach --build front"],
@@ -194,7 +194,7 @@
       }
     },
     "compose-build": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "cwd": "./",
         "commands": ["docker-compose build front"],
