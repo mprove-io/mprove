@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { RepoStore } from '~front/app/stores/repo.store';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -14,10 +13,7 @@ export class ChartOptionsComponent {
   @Input()
   mconfig: common.MconfigX;
 
-  constructor(
-    public repoStore: RepoStore,
-    public myDialogService: MyDialogService
-  ) {}
+  constructor(public myDialogService: MyDialogService) {}
 
   viewBlockML(event?: MouseEvent) {
     event.stopPropagation();

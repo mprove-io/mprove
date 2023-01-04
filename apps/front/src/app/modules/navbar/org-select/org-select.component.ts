@@ -6,7 +6,6 @@ import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -44,7 +43,6 @@ export class OrgSelectComponent {
 
   constructor(
     private navQuery: NavQuery,
-    private navStore: NavStore,
     private userQuery: UserQuery,
     private uiQuery: UiQuery,
     private apiService: ApiService,
@@ -92,17 +90,15 @@ export class OrgSelectComponent {
       common.PATH_ACCOUNT
     ]);
 
-    this.navStore.update(state =>
-      Object.assign({}, state, <NavState>{
-        projectId: undefined,
-        projectName: undefined,
-        projectDefaultBranch: undefined,
-        isRepoProd: undefined,
-        branchId: undefined,
-        envId: common.PROJECT_ENV_PROD,
-        needValidate: false
-      })
-    );
+    this.navQuery.updatePart({
+      projectId: undefined,
+      projectName: undefined,
+      projectDefaultBranch: undefined,
+      isRepoProd: undefined,
+      branchId: undefined,
+      envId: common.PROJECT_ENV_PROD,
+      needValidate: false
+    });
 
     localStorage.removeItem(constants.LOCAL_STORAGE_PROJECT_ID);
   }

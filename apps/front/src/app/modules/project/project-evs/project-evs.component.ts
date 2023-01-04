@@ -4,11 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { EvsQuery } from '~front/app/queries/evs.query';
 import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery } from '~front/app/queries/nav.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { EvsStore } from '~front/app/stores/evs.store';
-import { NavState } from '~front/app/stores/nav.store';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
@@ -46,7 +44,6 @@ export class ProjectEvsComponent implements OnInit {
   );
 
   constructor(
-    public evsStore: EvsStore,
     public memberQuery: MemberQuery,
     public navQuery: NavQuery,
     public evsQuery: EvsQuery,
@@ -61,9 +58,8 @@ export class ProjectEvsComponent implements OnInit {
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
 
-    this.environmentId = this.route.snapshot.params[
-      common.PARAMETER_ENVIRONMENT_ID
-    ];
+    this.environmentId =
+      this.route.snapshot.params[common.PARAMETER_ENVIRONMENT_ID];
   }
 
   navToEnvironments() {

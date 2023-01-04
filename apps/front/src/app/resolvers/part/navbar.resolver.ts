@@ -7,16 +7,16 @@ import {
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
+import { MemberQuery } from '~front/app/queries/member.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { RepoQuery } from '~front/app/queries/repo.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { AuthService } from '~front/app/services/auth.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { UserQuery } from '../../queries/user.query';
 import { ApiService } from '../../services/api.service';
-import { MemberStore } from '../../stores/member.store';
-import { NavState, NavStore } from '../../stores/nav.store';
-import { RepoStore } from '../../stores/repo.store';
-import { StructStore } from '../../stores/struct.store';
 
 @Injectable({ providedIn: 'root' })
 export class NavBarResolver implements Resolve<Observable<boolean>> {
@@ -29,10 +29,10 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
     private router: Router,
     private authService: AuthService,
     private userQuery: UserQuery,
-    private memberStore: MemberStore,
-    private repoStore: RepoStore,
-    private structStore: StructStore,
-    private navStore: NavStore,
+    private memberQuery: MemberQuery,
+    private repoQuery: RepoQuery,
+    private structQuery: StructQuery,
+    private navQuery: NavQuery,
     private apiService: ApiService
   ) {}
 
@@ -131,17 +131,17 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
               serverTimeDiff: Date.now() - serverNowTs
             };
 
-            this.navStore.update(nav);
+            this.navQuery.update(nav);
             this.userQuery.update(user);
 
             if (common.isDefined(userMember)) {
-              this.memberStore.update(resp.payload.userMember);
+              this.memberQuery.update(resp.payload.userMember);
             }
             if (common.isDefined(struct)) {
-              this.structStore.update(resp.payload.struct);
+              this.structQuery.update(resp.payload.struct);
             }
             if (common.isDefined(repo)) {
-              this.repoStore.update(resp.payload.repo);
+              this.repoQuery.update(resp.payload.repo);
             }
 
             if (user.isEmailVerified === true) {

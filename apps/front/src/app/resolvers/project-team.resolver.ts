@@ -11,11 +11,10 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
-import { NavQuery } from '../queries/nav.query';
+import { MemberQuery } from '../queries/member.query';
+import { NavQuery, NavState } from '../queries/nav.query';
+import { TeamQuery } from '../queries/team.query';
 import { ApiService } from '../services/api.service';
-import { MemberStore } from '../stores/member.store';
-import { NavState } from '../stores/nav.store';
-import { TeamStore } from '../stores/team.store';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectTeamResolver implements Resolve<Observable<boolean>> {
@@ -23,8 +22,8 @@ export class ProjectTeamResolver implements Resolve<Observable<boolean>> {
     private navQuery: NavQuery,
     private router: Router,
     private apiService: ApiService,
-    private memberStore: MemberStore,
-    private teamStore: TeamStore
+    private memberQuery: MemberQuery,
+    private teamQuery: TeamQuery
   ) {}
 
   resolve(
@@ -69,9 +68,9 @@ export class ProjectTeamResolver implements Resolve<Observable<boolean>> {
       .pipe(
         map((resp: apiToBackend.ToBackendGetMembersResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.memberStore.update(resp.payload.userMember);
+            this.memberQuery.update(resp.payload.userMember);
 
-            this.teamStore.update(resp.payload);
+            this.teamQuery.update(resp.payload);
             return true;
           } else {
             return false;

@@ -11,10 +11,9 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { checkNavOrg } from '../functions/check-nav-org';
-import { NavQuery } from '../queries/nav.query';
+import { NavQuery, NavState } from '../queries/nav.query';
+import { UsersQuery } from '../queries/users.query';
 import { ApiService } from '../services/api.service';
-import { NavState } from '../stores/nav.store';
-import { UsersStore } from '../stores/users.store';
 
 @Injectable({ providedIn: 'root' })
 export class OrgUsersResolver implements Resolve<Observable<boolean>> {
@@ -22,7 +21,7 @@ export class OrgUsersResolver implements Resolve<Observable<boolean>> {
     private navQuery: NavQuery,
     private router: Router,
     private apiService: ApiService,
-    private usersStore: UsersStore
+    private usersQuery: UsersQuery
   ) {}
 
   resolve(
@@ -67,7 +66,7 @@ export class OrgUsersResolver implements Resolve<Observable<boolean>> {
       .pipe(
         map((resp: apiToBackend.ToBackendGetOrgUsersResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.usersStore.update({
+            this.usersQuery.update({
               users: resp.payload.orgUsersList,
               total: resp.payload.total
             });

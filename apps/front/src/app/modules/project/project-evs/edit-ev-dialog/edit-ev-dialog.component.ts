@@ -2,8 +2,8 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { EvsQuery } from '~front/app/queries/evs.query';
 import { ApiService } from '~front/app/services/api.service';
-import { EvsState, EvsStore } from '~front/app/stores/evs.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -30,7 +30,7 @@ export class EditEvDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<EditEvDialogData>,
     private fb: FormBuilder,
-    private evsStore: EvsStore
+    private evsQuery: EvsQuery
   ) {}
 
   ngOnInit() {
@@ -73,12 +73,10 @@ export class EditEvDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendEditEvResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.evsStore.update(state => {
-              state.evs[this.dataItem.i] = resp.payload.ev;
-
-              return <EvsState>{
-                evs: [...state.evs]
-              };
+            let evsState = this.evsQuery.getValue();
+            evsState.evs[this.dataItem.i] = resp.payload.ev;
+            this.evsQuery.update({
+              evs: [...evsState.evs]
             });
           }
         }),

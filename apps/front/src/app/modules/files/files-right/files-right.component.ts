@@ -2,13 +2,10 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
 import { FileQuery } from '~front/app/queries/file.query';
 import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { RepoQuery } from '~front/app/queries/repo.query';
-import { StructQuery } from '~front/app/queries/struct.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
+import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { ApiService } from '~front/app/services/api.service';
-import { NavState, NavStore } from '~front/app/stores/nav.store';
-import { RepoState, RepoStore } from '~front/app/stores/repo.store';
-import { StructState, StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -56,10 +53,7 @@ export class FilesRightComponent {
     public memberQuery: MemberQuery,
     public navQuery: NavQuery,
     private cd: ChangeDetectorRef,
-    private apiService: ApiService,
-    private structStore: StructStore,
-    private repoStore: RepoStore,
-    private navStore: NavStore
+    private apiService: ApiService
   ) {}
 
   validate() {
@@ -80,13 +74,11 @@ export class FilesRightComponent {
       .pipe(
         tap((resp: apiToBackend.ToBackendValidateFilesResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.repoStore.update(resp.payload.repo);
-            this.structStore.update(resp.payload.struct);
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                needValidate: resp.payload.needValidate
-              })
-            );
+            this.repoQuery.update(resp.payload.repo);
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              needValidate: resp.payload.needValidate
+            });
           }
         }),
         take(1)

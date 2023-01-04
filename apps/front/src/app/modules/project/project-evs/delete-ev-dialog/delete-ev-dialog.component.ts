@@ -1,8 +1,8 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { EvsQuery } from '~front/app/queries/evs.query';
 import { ApiService } from '~front/app/services/api.service';
-import { EvsState, EvsStore } from '~front/app/stores/evs.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -25,7 +25,7 @@ export class DeleteEvDialogComponent implements OnInit {
 
   constructor(
     public ref: DialogRef<DeleteEvDialogData>,
-    private evsStore: EvsStore
+    private evsQuery: EvsQuery
   ) {}
 
   ngOnInit(): void {
@@ -55,17 +55,16 @@ export class DeleteEvDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteEvResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.evsStore.update(
-              state =>
-                <EvsState>{
-                  evs: state.evs.filter(
-                    x =>
-                      x.projectId !== this.dataItem.ev.projectId ||
-                      x.envId !== this.dataItem.ev.envId ||
-                      x.evId !== this.dataItem.ev.evId
-                  )
-                }
-            );
+            let evsState = this.evsQuery.getValue();
+
+            this.evsQuery.update({
+              evs: evsState.evs.filter(
+                x =>
+                  x.projectId !== this.dataItem.ev.projectId ||
+                  x.envId !== this.dataItem.ev.envId ||
+                  x.evId !== this.dataItem.ev.evId
+              )
+            });
           }
         }),
         take(1)

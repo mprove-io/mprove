@@ -2,11 +2,11 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { NavQuery } from '~front/app/queries/nav.query';
+import { RepoQuery } from '~front/app/queries/repo.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { NavState, NavStore } from '~front/app/stores/nav.store';
-import { RepoStore } from '~front/app/stores/repo.store';
-import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -31,11 +31,11 @@ export class DeleteFolderDialogComponent implements OnInit {
 
   constructor(
     public ref: DialogRef<DeleteFolderDialogData>,
-    private repoStore: RepoStore,
+    private repoQuery: RepoQuery,
     private navigateService: NavigateService,
-    private navStore: NavStore,
+    private navQuery: NavQuery,
     private spinner: NgxSpinnerService,
-    public structStore: StructStore
+    public structQuery: StructQuery
   ) {}
 
   ngOnInit(): void {
@@ -66,13 +66,11 @@ export class DeleteFolderDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteFolderResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.repoStore.update(resp.payload.repo);
-            this.structStore.update(resp.payload.struct);
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                needValidate: resp.payload.needValidate
-              })
-            );
+            this.repoQuery.update(resp.payload.repo);
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              needValidate: resp.payload.needValidate
+            });
 
             this.navigateService.navigateToFiles();
           }

@@ -12,17 +12,14 @@ import {
 } from '@bugsplat/angular-tree-component';
 import { Subscription } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
-import { FileQuery } from '~front/app/queries/file.query';
-import { NavQuery } from '~front/app/queries/nav.query';
+import { FileQuery, FileState } from '~front/app/queries/file.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ProjectQuery } from '~front/app/queries/project.query';
-import { RepoQuery } from '~front/app/queries/repo.query';
+import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { FileState } from '~front/app/stores/file.store';
-import { NavState, NavStore } from '~front/app/stores/nav.store';
-import { RepoState, RepoStore } from '~front/app/stores/repo.store';
-import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -129,12 +126,10 @@ export class FilesTreeComponent implements OnDestroy {
     public projectQuery: ProjectQuery,
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
+    private structQuery: StructQuery,
     private uiQuery: UiQuery,
     private fileQuery: FileQuery,
     private apiService: ApiService,
-    private repoStore: RepoStore,
-    private navStore: NavStore,
-    public structStore: StructStore,
     private navigateService: NavigateService
   ) {}
 
@@ -252,13 +247,11 @@ export class FilesTreeComponent implements OnDestroy {
       .pipe(
         tap((resp: apiToBackend.ToBackendMoveCatalogNodeResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.repoStore.update(resp.payload.repo);
-            this.structStore.update(resp.payload.struct);
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                needValidate: resp.payload.needValidate
-              })
-            );
+            this.repoQuery.update(resp.payload.repo);
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              needValidate: resp.payload.needValidate
+            });
 
             this.cd.reattach();
           }

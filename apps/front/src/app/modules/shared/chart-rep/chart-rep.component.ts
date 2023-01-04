@@ -13,14 +13,13 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { interval, of, Subscription } from 'rxjs';
 import { startWith, switchMap, take, tap } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
+import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery } from '~front/app/queries/nav.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService, RData } from '~front/app/services/query.service';
-import { DashboardStore } from '~front/app/stores/dashboard.store';
-import { NavState } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { ChartViewComponent } from '../chart-view/chart-view.component';
@@ -92,7 +91,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private myDialogService: MyDialogService,
     private spinner: NgxSpinnerService,
-    private dashboardStore: DashboardStore
+    private dashboardQuery: DashboardQuery
   ) {}
 
   async ngOnInit() {
@@ -240,12 +239,10 @@ export class ChartRepComponent implements OnInit, OnDestroy {
 
     this.repDeleted.emit();
 
-    this.dashboardStore.update(
-      Object.assign({}, this.dashboard, {
-        reports: newReports,
-        temp: true
-      })
-    );
+    this.dashboardQuery.updatePart({
+      reports: newReports,
+      temp: true
+    });
   }
 
   showChart() {

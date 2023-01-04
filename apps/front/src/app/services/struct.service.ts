@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { common } from '~front/barrels/common';
-import { ModelQuery } from '../queries/model.query';
+import { ModelQuery, ModelState } from '../queries/model.query';
 import { MqQuery } from '../queries/mq.query';
-import { StructQuery } from '../queries/struct.query';
+import { StructQuery, StructState } from '../queries/struct.query';
 import { UserQuery, UserState } from '../queries/user.query';
-import { ModelState } from '../stores/model.store';
-import { StructState } from '../stores/struct.store';
 
 @Injectable({ providedIn: 'root' })
 export class StructService {

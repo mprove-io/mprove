@@ -13,17 +13,10 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { checkNavOrgProjectRepoBranchEnv } from '../../functions/check-nav-org-project-repo-branch-env';
-import { MqQuery } from '../../queries/mq.query';
-import { NavQuery } from '../../queries/nav.query';
+import { emptyMconfig, emptyQuery, MqQuery } from '../../queries/mq.query';
+import { NavQuery, NavState } from '../../queries/nav.query';
 import { UserQuery } from '../../queries/user.query';
 import { ApiService } from '../../services/api.service';
-import {
-  emptyMconfig,
-  emptyQuery,
-  MqState,
-  MqStore
-} from '../../stores/mq.store';
-import { NavState } from '../../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
 export class MconfigResolver implements Resolve<Observable<boolean>> {
@@ -34,8 +27,7 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
     private navQuery: NavQuery,
     private userQuery: UserQuery,
     private modelQuery: ModelQuery,
-    private router: Router,
-    private mqStore: MqStore
+    private router: Router
   ) {}
 
   resolve(
@@ -104,9 +96,7 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
 
     if (parametersMconfigId === common.EMPTY) {
       if (mconfig.mconfigId !== common.EMPTY) {
-        this.mqStore.update(state =>
-          Object.assign({}, state, { mconfig: emptyMconfig, query: emptyQuery })
-        );
+        this.mqQuery.updatePart({ mconfig: emptyMconfig, query: emptyQuery });
       }
 
       return of(true);
@@ -132,11 +122,9 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
         .pipe(
           map((resp: apiToBackend.ToBackendGetMconfigResponse) => {
             if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-              this.mqStore.update(state =>
-                Object.assign({}, state, <MqState>{
-                  mconfig: resp.payload.mconfig
-                })
-              );
+              this.mqQuery.updatePart({
+                mconfig: resp.payload.mconfig
+              });
               return true;
             } else {
               return false;

@@ -5,22 +5,20 @@ import { map, take } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
-import { NavQuery } from '../queries/nav.query';
+import { MemberQuery } from '../queries/member.query';
+import { NavQuery, NavState } from '../queries/nav.query';
+import { RepoQuery } from '../queries/repo.query';
+import { StructQuery } from '../queries/struct.query';
 import { ApiService } from '../services/api.service';
-import { MemberStore } from '../stores/member.store';
-import { NavState, NavStore } from '../stores/nav.store';
-import { RepoStore } from '../stores/repo.store';
-import { StructStore } from '../stores/struct.store';
 
 @Injectable({ providedIn: 'root' })
 export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
   constructor(
     private navQuery: NavQuery,
     private apiService: ApiService,
-    private memberStore: MemberStore,
-    private repoStore: RepoStore,
-    private structStore: StructStore,
-    private navStore: NavStore,
+    private memberQuery: MemberQuery,
+    private repoQuery: RepoQuery,
+    private structQuery: StructQuery,
     private router: Router
   ) {}
 
@@ -59,17 +57,15 @@ export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
       .pipe(
         map((resp: apiToBackend.ToBackendGetRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.memberStore.update(resp.payload.userMember);
+            this.memberQuery.update(resp.payload.userMember);
 
-            this.structStore.update(resp.payload.struct);
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                branchId: branchId,
-                envId: envId,
-                needValidate: resp.payload.needValidate
-              })
-            );
-            this.repoStore.update(resp.payload.repo);
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              branchId: branchId,
+              envId: envId,
+              needValidate: resp.payload.needValidate
+            });
+            this.repoQuery.update(resp.payload.repo);
 
             return true;
           } else if (

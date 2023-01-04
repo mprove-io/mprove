@@ -7,13 +7,12 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { common } from '~front/barrels/common';
 import { checkNavOrgProjectRepoBranchEnv } from '../../functions/check-nav-org-project-repo-branch-env';
-import { NavQuery } from '../../queries/nav.query';
+import { NavQuery, NavState } from '../../queries/nav.query';
 import { UserQuery } from '../../queries/user.query';
 import { FileService } from '../../services/file.service';
-import { NavState } from '../../stores/nav.store';
-import { UiState, UiStore } from '../../stores/ui.store';
 
 @Injectable({ providedIn: 'root' })
 export class FileResolver implements Resolve<Observable<boolean>> {
@@ -21,7 +20,7 @@ export class FileResolver implements Resolve<Observable<boolean>> {
     private fileService: FileService,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
-    private uiStore: UiStore,
+    private uiQuery: UiQuery,
     private router: Router
   ) {}
 
@@ -55,11 +54,9 @@ export class FileResolver implements Resolve<Observable<boolean>> {
     let fileId: string = route.params[common.PARAMETER_FILE_ID];
     let panel: common.PanelEnum = route.queryParams?.panel;
 
-    this.uiStore.update(state =>
-      Object.assign({}, state, <UiState>{
-        panel: panel || common.PanelEnum.Tree
-      })
-    );
+    this.uiQuery.updatePart({
+      panel: panel || common.PanelEnum.Tree
+    });
 
     return this.fileService
       .getFile({ fileId: fileId, panel: panel })

@@ -2,8 +2,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { MonacoEditorOptions, MonacoProviderService } from 'ng-monaco-editor';
 import { take, tap } from 'rxjs/operators';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { StructState } from '~front/app/stores/struct.store';
+import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 

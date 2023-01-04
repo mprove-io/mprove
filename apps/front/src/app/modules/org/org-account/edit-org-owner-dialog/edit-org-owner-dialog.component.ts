@@ -3,9 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { NavQuery } from '~front/app/queries/nav.query';
+import { OrgQuery } from '~front/app/queries/org.query';
 import { ApiService } from '~front/app/services/api.service';
-import { NavStore } from '~front/app/stores/nav.store';
-import { OrgStore } from '~front/app/stores/org.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -33,9 +33,9 @@ export class EditOrgOwnerDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<EditOrgOwnerDialogData>,
     private fb: FormBuilder,
-    private orgStore: OrgStore,
+    private orgQuery: OrgQuery,
     private router: Router,
-    private navStore: NavStore
+    private navQuery: NavQuery
   ) {}
 
   ngOnInit() {
@@ -89,8 +89,8 @@ export class EditOrgOwnerDialogComponent implements OnInit {
               newOwnerEmail
             );
             this.router.navigate([common.PATH_ORG_OWNER_CHANGED]);
-            this.orgStore.reset();
-            this.navStore.clearOrgAndDeps();
+            this.orgQuery.reset();
+            this.navQuery.clearOrgAndDeps();
           }
         }),
         take(1)

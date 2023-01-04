@@ -6,9 +6,8 @@ import {
   Output
 } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { ModelQuery } from '~front/app/queries/model.query';
+import { ModelQuery, ModelState } from '~front/app/queries/model.query';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { ModelState } from '~front/app/stores/model.store';
 
 @Component({
   selector: 'm-query-options',

@@ -1,11 +1,10 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
-import { NavQuery } from '~front/app/queries/nav.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { OrgQuery } from '~front/app/queries/org.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery, UserState } from '~front/app/queries/user.query';
-import { NavState } from '~front/app/stores/nav.store';
 import { common } from '~front/barrels/common';
 
 @Component({

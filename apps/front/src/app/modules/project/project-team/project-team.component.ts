@@ -8,8 +8,6 @@ import { TeamQuery } from '~front/app/queries/team.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { MemberStore } from '~front/app/stores/member.store';
-import { TeamState, TeamStore } from '~front/app/stores/team.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -79,8 +77,6 @@ export class ProjectTeamComponent implements OnInit {
 
   constructor(
     public teamQuery: TeamQuery,
-    public teamStore: TeamStore,
-    public memberStore: MemberStore,
     public memberQuery: MemberQuery,
     public navQuery: NavQuery,
     public userQuery: UserQuery,
@@ -110,7 +106,7 @@ export class ProjectTeamComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendGetMembersResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.teamStore.update(resp.payload);
+            this.teamQuery.update(resp.payload);
             this.currentPage = pageNum;
           }
         }),
@@ -217,17 +213,15 @@ export class ProjectTeamComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendEditMemberResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.teamStore.update(state => {
-              state.members[i] = resp.payload.member;
-
-              return <TeamState>{
-                members: [...state.members],
-                total: state.total
-              };
+            let teamState = this.teamQuery.getValue();
+            teamState.members[i] = resp.payload.member;
+            this.teamQuery.update({
+              members: [...teamState.members],
+              total: teamState.total
             });
 
             if (resp.payload.member.memberId === this.userId) {
-              this.memberStore.update(resp.payload.member);
+              this.memberQuery.update(resp.payload.member);
             }
           }
         }),
@@ -276,13 +270,12 @@ export class ProjectTeamComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendEditMemberResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.teamStore.update(state => {
-              state.members[i] = resp.payload.member;
+            let teamState = this.teamQuery.getValue();
+            teamState.members[i] = resp.payload.member;
 
-              return <TeamState>{
-                members: [...state.members],
-                total: state.total
-              };
+            this.teamQuery.update({
+              members: [...teamState.members],
+              total: teamState.total
             });
           }
         }),
@@ -315,13 +308,13 @@ export class ProjectTeamComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendEditMemberResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.teamStore.update(state => {
-              state.members[i] = resp.payload.member;
+            let teamState = this.teamQuery.getValue();
 
-              return <TeamState>{
-                members: [...state.members],
-                total: state.total
-              };
+            teamState.members[i] = resp.payload.member;
+
+            this.teamQuery.update({
+              members: [...teamState.members],
+              total: teamState.total
             });
           }
         }),

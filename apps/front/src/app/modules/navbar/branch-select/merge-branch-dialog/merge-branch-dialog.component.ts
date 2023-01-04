@@ -9,12 +9,12 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { BranchItem } from '~front/app/interfaces/branch-item';
+import { NavQuery } from '~front/app/queries/nav.query';
+import { RepoQuery } from '~front/app/queries/repo.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { NavState, NavStore } from '~front/app/stores/nav.store';
-import { RepoStore } from '~front/app/stores/repo.store';
-import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
@@ -51,11 +51,11 @@ export class MergeBranchDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<MergeBranchDialogData>,
     private fb: FormBuilder,
-    private repoStore: RepoStore,
+    private repoQuery: RepoQuery,
     private navigateService: NavigateService,
-    private navStore: NavStore,
+    private navQuery: NavQuery,
     private spinner: NgxSpinnerService,
-    public structStore: StructStore,
+    public structQuery: StructQuery,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -108,13 +108,11 @@ export class MergeBranchDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendMergeRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.repoStore.update(resp.payload.repo);
-            this.structStore.update(resp.payload.struct);
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                needValidate: resp.payload.needValidate
-              })
-            );
+            this.repoQuery.update(resp.payload.repo);
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              needValidate: resp.payload.needValidate
+            });
 
             this.navigateService.navigateToFiles();
           }

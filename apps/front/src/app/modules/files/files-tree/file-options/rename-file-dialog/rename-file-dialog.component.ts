@@ -10,12 +10,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { NavQuery } from '~front/app/queries/nav.query';
+import { RepoQuery } from '~front/app/queries/repo.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { ValidationService } from '~front/app/services/validation.service';
-import { NavState, NavStore } from '~front/app/stores/nav.store';
-import { RepoStore } from '~front/app/stores/repo.store';
-import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -46,10 +46,10 @@ export class RenameFileDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<RenameFileDialogData>,
     private fb: FormBuilder,
-    private repoStore: RepoStore,
-    private navStore: NavStore,
+    private repoQuery: RepoQuery,
+    private navQuery: NavQuery,
     private navigateService: NavigateService,
-    public structStore: StructStore,
+    public structQuery: StructQuery,
     private spinner: NgxSpinnerService,
     private cd: ChangeDetectorRef
   ) {}
@@ -108,13 +108,11 @@ export class RenameFileDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendRenameCatalogNodeResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.repoStore.update(resp.payload.repo);
-            this.structStore.update(resp.payload.struct);
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                needValidate: resp.payload.needValidate
-              })
-            );
+            this.repoQuery.update(resp.payload.repo);
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              needValidate: resp.payload.needValidate
+            });
 
             let fIdAr = this.ref.data.nodeId.split('/');
             fIdAr.shift();

@@ -2,9 +2,9 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { EvsQuery } from '~front/app/queries/evs.query';
 import { ApiService } from '~front/app/services/api.service';
 import { ValidationService } from '~front/app/services/validation.service';
-import { EvsState, EvsStore } from '~front/app/stores/evs.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -31,7 +31,7 @@ export class AddEvDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<AddEvDialogData>,
     private fb: FormBuilder,
-    private evsStore: EvsStore
+    private evsQuery: EvsQuery
   ) {}
 
   ngOnInit() {
@@ -82,12 +82,10 @@ export class AddEvDialogComponent implements OnInit {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let ev = resp.payload.ev;
 
-            this.evsStore.update(
-              state =>
-                <EvsState>{
-                  evs: [...state.evs, ev]
-                }
-            );
+            let evsState = this.evsQuery.getValue();
+            this.evsQuery.updatePart({
+              evs: [...evsState.evs, ev]
+            });
           }
         }),
         take(1)

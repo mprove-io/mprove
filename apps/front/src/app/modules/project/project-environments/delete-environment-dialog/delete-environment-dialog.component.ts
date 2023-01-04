@@ -1,11 +1,8 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { EnvironmentsQuery } from '~front/app/queries/environments.query';
 import { ApiService } from '~front/app/services/api.service';
-import {
-  EnvironmentsState,
-  EnvironmentsStore
-} from '~front/app/stores/environments.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -31,7 +28,7 @@ export class DeleteEnvironmentDialogComponent implements OnInit {
 
   constructor(
     public ref: DialogRef<DeleteEnvironmentDialogData>,
-    private environmentsStore: EnvironmentsStore
+    private environmentsQuery: EnvironmentsQuery
   ) {}
 
   ngOnInit(): void {
@@ -61,18 +58,19 @@ export class DeleteEnvironmentDialogComponent implements OnInit {
         tap((resp: apiToBackend.ToBackendDeleteEnvResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             // this.dataItem.getEnvsPageFn(this.dataItem.pageNum);
-            this.environmentsStore.update(
-              state =>
-                <EnvironmentsState>{
-                  environments: state.environments.filter(
-                    x =>
-                      !(
-                        x.projectId === this.dataItem.projectId &&
-                        x.envId === this.dataItem.envId
-                      )
+
+            let environmentsState = this.environmentsQuery.getValue();
+
+            this.environmentsQuery.update({
+              environments: environmentsState.environments.filter(
+                x =>
+                  !(
+                    x.projectId === this.dataItem.projectId &&
+                    x.envId === this.dataItem.envId
                   )
-                }
-            );
+              ),
+              total: environmentsState.total
+            });
           }
         }),
         take(1)

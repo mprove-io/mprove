@@ -3,16 +3,12 @@ import { NavigationEnd, Router } from '@angular/router';
 import { filter, take, tap } from 'rxjs/operators';
 import { constants } from '~common/barrels/constants';
 import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { RepoQuery } from '~front/app/queries/repo.query';
-import { StructQuery } from '~front/app/queries/struct.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
+import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { NavState } from '~front/app/stores/nav.store';
-import { RepoState } from '~front/app/stores/repo.store';
-import { StructState } from '~front/app/stores/struct.store';
-import { UiState, UiStore } from '~front/app/stores/ui.store';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -74,7 +70,6 @@ export class NavbarComponent implements OnInit {
     public structQuery: StructQuery,
     private navigateService: NavigateService,
     public uiQuery: UiQuery,
-    private uiStore: UiStore,
     public userQuery: UserQuery,
     public memberQuery: MemberQuery,
     private cd: ChangeDetectorRef
@@ -97,9 +92,7 @@ export class NavbarComponent implements OnInit {
   navigateFiles() {
     this.navigateService.navigateToFiles();
 
-    this.uiStore.update(state =>
-      Object.assign({}, state, <UiState>{ panel: common.PanelEnum.Tree })
-    );
+    this.uiQuery.updatePart({ panel: common.PanelEnum.Tree });
   }
 
   navigateVisualizations() {

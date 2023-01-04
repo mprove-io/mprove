@@ -8,9 +8,9 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { NavQuery } from '~front/app/queries/nav.query';
+import { OrgQuery } from '~front/app/queries/org.query';
 import { ApiService } from '~front/app/services/api.service';
-import { NavState, NavStore } from '~front/app/stores/nav.store';
-import { OrgStore } from '~front/app/stores/org.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -39,8 +39,8 @@ export class EditOrgNameDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<EditOrgNameDialogData>,
     private fb: FormBuilder,
-    private orgStore: OrgStore,
-    private navStore: NavStore
+    private orgQuery: OrgQuery,
+    private navQuery: NavQuery
   ) {}
 
   ngOnInit() {
@@ -80,14 +80,12 @@ export class EditOrgNameDialogComponent implements OnInit {
         tap((resp: apiToBackend.ToBackendSetOrgInfoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let org = resp.payload.org;
-            this.orgStore.update(org);
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                orgId: org.orgId,
-                orgName: org.name,
-                orgOwnerId: org.ownerId
-              })
-            );
+            this.orgQuery.update(org);
+            this.navQuery.updatePart({
+              orgId: org.orgId,
+              orgName: org.name,
+              orgOwnerId: org.ownerId
+            });
           }
         }),
         take(1)

@@ -10,16 +10,15 @@ import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { checkNavOrg } from '../functions/check-nav-org';
-import { NavQuery } from '../queries/nav.query';
+import { NavQuery, NavState } from '../queries/nav.query';
+import { OrgQuery } from '../queries/org.query';
 import { ApiService } from '../services/api.service';
-import { NavState } from '../stores/nav.store';
-import { OrgStore } from '../stores/org.store';
 
 @Injectable({ providedIn: 'root' })
 export class OrgAccountResolver implements Resolve<Observable<boolean>> {
   constructor(
     private navQuery: NavQuery,
-    private orgStore: OrgStore,
+    private orgQuery: OrgQuery,
     private apiService: ApiService,
     private router: Router
   ) {}
@@ -58,7 +57,7 @@ export class OrgAccountResolver implements Resolve<Observable<boolean>> {
         map((resp: apiToBackend.ToBackendGetOrgResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let org = resp.payload.org;
-            this.orgStore.update(org);
+            this.orgQuery.update(org);
             return true;
           } else {
             return false;

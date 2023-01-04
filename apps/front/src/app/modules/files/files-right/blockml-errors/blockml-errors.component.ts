@@ -15,9 +15,8 @@ import { getFileExtension } from '~front/app/functions/get-file-extension';
 import { transformBlockmlErrorTitle } from '~front/app/functions/transform-blockml-error-title';
 import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
-import { StructQuery } from '~front/app/queries/struct.query';
+import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { StructState } from '~front/app/stores/struct.store';
 import { common } from '~front/barrels/common';
 
 export class BmlErrorExtra extends common.BmlError {

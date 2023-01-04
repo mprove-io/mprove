@@ -17,9 +17,9 @@ import {
 import { constants } from '~common/barrels/constants';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { setChartFields } from '~front/app/functions/set-chart-fields';
-import { ModelQuery } from '~front/app/queries/model.query';
+import { ModelQuery, ModelState } from '~front/app/queries/model.query';
 import { MqQuery } from '~front/app/queries/mq.query';
-import { NavQuery } from '~front/app/queries/nav.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { UserQuery } from '~front/app/queries/user.query';
@@ -33,11 +33,6 @@ import { QueryService, RData } from '~front/app/services/query.service';
 import { StructService } from '~front/app/services/struct.service';
 import { TimeService } from '~front/app/services/time.service';
 import { ValidationService } from '~front/app/services/validation.service';
-import { ModelState, ModelStore } from '~front/app/stores/model.store';
-import { MqState, MqStore } from '~front/app/stores/mq.store';
-import { NavState } from '~front/app/stores/nav.store';
-import { RepoStore } from '~front/app/stores/repo.store';
-import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
@@ -407,22 +402,18 @@ export class ModelComponent implements OnInit, OnDestroy {
     private userQuery: UserQuery,
     private mqQuery: MqQuery,
     public repoQuery: RepoQuery,
-    public repoStore: RepoStore,
     private apiService: ApiService,
-    public structStore: StructStore,
+    public structQuery: StructQuery,
     public fileService: FileService,
     public navigateService: NavigateService,
-    private mqStore: MqStore,
     private structService: StructService,
     private spinner: NgxSpinnerService,
     private timeService: TimeService,
     private mconfigService: MconfigService,
-    private structQuery: StructQuery,
     private dataSizeService: DataSizeService,
     private queryService: QueryService,
     public myDialogService: MyDialogService,
-    private title: Title,
-    private modelStore: ModelStore
+    private title: Title
   ) {}
 
   ngOnInit() {
@@ -466,9 +457,7 @@ export class ModelComponent implements OnInit, OnDestroy {
                     resp.info?.status === common.ResponseInfoStatusEnum.Ok &&
                     this.isQueryIdTheSameAndServerTsChanged(resp.payload.query)
                   ) {
-                    this.mqStore.update((state: MqState) =>
-                      Object.assign({}, state, { query: resp.payload.query })
-                    );
+                    this.mqQuery.updatePart({ query: resp.payload.query });
                   }
                 })
               );
@@ -614,9 +603,7 @@ export class ModelComponent implements OnInit, OnDestroy {
                 data: this.query.data
               });
 
-              this.mqStore.update((state: MqState) =>
-                Object.assign({}, state, { query: query })
-              );
+              this.mqQuery.updatePart({ query: query });
             }
           }
         }),
@@ -659,9 +646,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
             if (errorQueries.length > 0) {
               if (this.isQueryIdTheSameAndServerTsChanged(errorQueries[0])) {
-                this.mqStore.update((state: MqState) =>
-                  Object.assign({}, state, { query: errorQueries[0] })
-                );
+                this.mqQuery.updatePart({ query: errorQueries[0] });
               }
             } else {
               this.dryDataSize = this.dataSizeService.getSize(
@@ -709,9 +694,7 @@ export class ModelComponent implements OnInit, OnDestroy {
               queries.length > 0 &&
               this.isQueryIdTheSameAndServerTsChanged(queries[0])
             ) {
-              this.mqStore.update((state: MqState) =>
-                Object.assign({}, state, { query: queries[0] })
-              );
+              this.mqQuery.updatePart({ query: queries[0] });
             }
           }
         }),
@@ -848,8 +831,8 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   canDeactivate(): Promise<boolean> | boolean {
     // console.log('canDeactivateModel')
-    this.mqStore.reset();
-    this.modelStore.reset();
+    this.mqQuery.reset();
+    this.modelQuery.reset();
     return true;
   }
 

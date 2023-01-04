@@ -8,11 +8,8 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { EnvironmentsQuery } from '~front/app/queries/environments.query';
 import { ApiService } from '~front/app/services/api.service';
-import {
-  EnvironmentsState,
-  EnvironmentsStore
-} from '~front/app/stores/environments.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -40,7 +37,7 @@ export class AddEnvironmentDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<AddEnvironmentDialogData>,
     private fb: FormBuilder,
-    private environmentsStore: EnvironmentsStore
+    private environmentsQuery: EnvironmentsQuery
   ) {}
 
   ngOnInit() {
@@ -81,13 +78,12 @@ export class AddEnvironmentDialogComponent implements OnInit {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let environment = resp.payload.env;
 
-            this.environmentsStore.update(
-              state =>
-                <EnvironmentsState>{
-                  environments: [...state.environments, environment],
-                  total: state.total
-                }
-            );
+            let environmentsState = this.environmentsQuery.getValue();
+
+            this.environmentsQuery.update({
+              environments: [...environmentsState.environments, environment],
+              total: environmentsState.total
+            });
           }
         }),
         take(1)

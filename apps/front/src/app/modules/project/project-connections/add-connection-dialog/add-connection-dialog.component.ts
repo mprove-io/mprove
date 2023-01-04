@@ -3,12 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { map, take, tap } from 'rxjs/operators';
 import { conditionalValidator } from '~front/app/functions/conditional-validator';
+import { ConnectionsQuery } from '~front/app/queries/connections.query';
 import { ApiService } from '~front/app/services/api.service';
 import { ValidationService } from '~front/app/services/validation.service';
-import {
-  ConnectionsState,
-  ConnectionsStore
-} from '~front/app/stores/connections.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -50,7 +47,7 @@ export class AddConnectionDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<AddConnectionDialogData>,
     private fb: FormBuilder,
-    private connectionsStore: ConnectionsStore
+    private connectionsQuery: ConnectionsQuery
   ) {}
 
   ngOnInit() {
@@ -318,13 +315,11 @@ export class AddConnectionDialogComponent implements OnInit {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let connection = resp.payload.connection;
 
-            this.connectionsStore.update(
-              state =>
-                <ConnectionsState>{
-                  connections: [...state.connections, connection],
-                  total: state.total
-                }
-            );
+            let connectionsState = this.connectionsQuery.getValue();
+            this.connectionsQuery.update({
+              connections: [...connectionsState.connections, connection],
+              total: connectionsState.total
+            });
           }
         }),
         take(1)

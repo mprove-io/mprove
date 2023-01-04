@@ -90,7 +90,6 @@
     "@angular/router": "13.3.11",
     "@auth0/angular-jwt": "5.1.0",
     "@bugsplat/angular-tree-component": "13.0.1",
-    "@datorama/akita": "7.1.1",
     "@depyronick/clickhouse-client": "^1.0.5",
     "@golevelup/nestjs-rabbitmq": "3.3.0",
     "@google-cloud/bigquery": "^5.5.0",

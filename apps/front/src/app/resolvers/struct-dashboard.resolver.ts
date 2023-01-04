@@ -10,14 +10,13 @@ import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
-import { NavQuery } from '../queries/nav.query';
+import { DashboardQuery } from '../queries/dashboard.query';
+import { MemberQuery } from '../queries/member.query';
+import { NavQuery, NavState } from '../queries/nav.query';
+import { StructQuery } from '../queries/struct.query';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
 import { MyDialogService } from '../services/my-dialog.service';
-import { DashboardStore } from '../stores/dashboard.store';
-import { MemberStore } from '../stores/member.store';
-import { NavState, NavStore } from '../stores/nav.store';
-import { StructStore } from '../stores/struct.store';
 
 @Injectable({ providedIn: 'root' })
 export class StructDashboardResolver implements Resolve<Observable<boolean>> {
@@ -25,11 +24,10 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
     private apiService: ApiService,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
-    private dashboardStore: DashboardStore,
-    private structStore: StructStore,
-    private memberStore: MemberStore,
+    private dashboardQuery: DashboardQuery,
+    private structQuery: StructQuery,
+    private memberQuery: MemberQuery,
     private myDialogService: MyDialogService,
-    private navStore: NavStore,
     private router: Router
   ) {}
 
@@ -79,15 +77,13 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
       .pipe(
         map((resp: apiToBackend.ToBackendGetDashboardResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.memberStore.update(resp.payload.userMember);
+            this.memberQuery.update(resp.payload.userMember);
 
-            this.structStore.update(resp.payload.struct);
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                needValidate: resp.payload.needValidate
-              })
-            );
-            this.dashboardStore.update(resp.payload.dashboard);
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              needValidate: resp.payload.needValidate
+            });
+            this.dashboardQuery.update(resp.payload.dashboard);
 
             return true;
           } else if (

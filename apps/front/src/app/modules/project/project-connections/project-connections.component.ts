@@ -7,7 +7,6 @@ import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { ConnectionsStore } from '~front/app/stores/connections.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -58,7 +57,6 @@ export class ProjectConnectionsComponent implements OnInit {
 
   constructor(
     public connectionsQuery: ConnectionsQuery,
-    public connectionsStore: ConnectionsStore,
     public memberQuery: MemberQuery,
     public navQuery: NavQuery,
     public userQuery: UserQuery,
@@ -88,7 +86,7 @@ export class ProjectConnectionsComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendGetConnectionsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.connectionsStore.update(resp.payload);
+            this.connectionsQuery.update(resp.payload);
             this.currentPage = pageNum;
           }
         }),

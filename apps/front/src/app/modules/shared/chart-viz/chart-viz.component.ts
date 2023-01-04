@@ -10,13 +10,11 @@ import { interval, of, Subscription } from 'rxjs';
 import { startWith, switchMap, take, tap } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery } from '~front/app/queries/nav.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService, RData } from '~front/app/services/query.service';
-import { MemberStore } from '~front/app/stores/member.store';
-import { NavState } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -72,7 +70,6 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     private navQuery: NavQuery,
     private queryService: QueryService,
     private memberQuery: MemberQuery,
-    private memberStore: MemberStore,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
     private myDialogService: MyDialogService,
@@ -110,7 +107,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       .pipe(
         tap((resp: apiToBackend.ToBackendGetVizResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.memberStore.update(resp.payload.userMember);
+            this.memberQuery.update(resp.payload.userMember);
 
             query = resp.payload.viz.reports[0].query;
             mconfig = resp.payload.viz.reports[0].mconfig;

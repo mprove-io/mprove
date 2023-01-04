@@ -8,9 +8,8 @@ import {
 import { NgxSpinnerService } from 'ngx-spinner';
 import { interval } from 'rxjs';
 import { startWith, tap } from 'rxjs/operators';
-import { NavQuery } from '~front/app/queries/nav.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { TimeService } from '~front/app/services/time.service';
-import { NavState } from '~front/app/stores/nav.store';
 import { common } from '~front/barrels/common';
 
 @Component({

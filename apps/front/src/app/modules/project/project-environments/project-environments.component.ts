@@ -4,11 +4,9 @@ import { Router } from '@angular/router';
 import { take, tap } from 'rxjs/operators';
 import { EnvironmentsQuery } from '~front/app/queries/environments.query';
 import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery } from '~front/app/queries/nav.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { EnvironmentsStore } from '~front/app/stores/environments.store';
-import { NavState } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -68,7 +66,6 @@ export class ProjectEnvironmentsComponent implements OnInit {
   constructor(
     private cd: ChangeDetectorRef,
     private environmentsQuery: EnvironmentsQuery,
-    private environmentsStore: EnvironmentsStore,
     private myDialogService: MyDialogService,
     private apiService: ApiService,
     private router: Router,
@@ -97,7 +94,7 @@ export class ProjectEnvironmentsComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendGetEnvsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.environmentsStore.update({
+            this.environmentsQuery.update({
               environments: resp.payload.envs,
               total: resp.payload.total
             });

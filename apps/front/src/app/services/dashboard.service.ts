@@ -4,8 +4,7 @@ import { take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
-import { NavQuery } from '../queries/nav.query';
-import { NavState } from '../stores/nav.store';
+import { NavQuery, NavState } from '../queries/nav.query';
 import { ApiService } from './api.service';
 import { NavigateService } from './navigate.service';
 

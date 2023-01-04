@@ -5,15 +5,13 @@ import { take, tap } from 'rxjs/operators';
 import { common } from '~front/barrels/common';
 import { enums } from '~front/barrels/enums';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
-import { NavQuery } from '../queries/nav.query';
+import { NavQuery, NavState } from '../queries/nav.query';
 import { UserQuery } from '../queries/user.query';
 import { MyDialogService } from '../services/my-dialog.service';
-import { NavState, NavStore } from '../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
 export class RepoIdResolver implements Resolve<Observable<boolean>> {
   constructor(
-    private navStore: NavStore,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
     private myDialogService: MyDialogService,
@@ -64,11 +62,9 @@ export class RepoIdResolver implements Resolve<Observable<boolean>> {
       return of(false);
     }
 
-    this.navStore.update(state =>
-      Object.assign({}, state, <NavState>{
-        isRepoProd: repoId === common.PROD_REPO_ID
-      })
-    );
+    this.navQuery.updatePart({
+      isRepoProd: repoId === common.PROD_REPO_ID
+    });
 
     return of(false);
   }

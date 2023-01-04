@@ -2,14 +2,11 @@ import { Injectable } from '@angular/core';
 import { map, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { FileQuery } from '../queries/file.query';
-import { NavQuery } from '../queries/nav.query';
-import { UiQuery } from '../queries/ui.query';
-import { FileState, FileStore } from '../stores/file.store';
-import { NavState, NavStore } from '../stores/nav.store';
-import { RepoState, RepoStore } from '../stores/repo.store';
-import { StructStore } from '../stores/struct.store';
-import { UiState, UiStore } from '../stores/ui.store';
+import { FileQuery, FileState } from '../queries/file.query';
+import { NavQuery, NavState } from '../queries/nav.query';
+import { RepoQuery, RepoState } from '../queries/repo.query';
+import { StructQuery } from '../queries/struct.query';
+import { UiQuery, UiState } from '../queries/ui.query';
 import { ApiService } from './api.service';
 
 @Injectable({ providedIn: 'root' })
@@ -38,12 +35,9 @@ export class FileService {
   constructor(
     public fileQuery: FileQuery,
     public uiQuery: UiQuery,
-    public repoStore: RepoStore,
-    public structStore: StructStore,
-    public fileStore: FileStore,
-    public uiStore: UiStore,
+    public repoQuery: RepoQuery,
+    public structQuery: StructQuery,
     public navQuery: NavQuery,
-    private navStore: NavStore,
     private apiService: ApiService
   ) {
     this.file$.subscribe();
@@ -82,20 +76,20 @@ export class FileService {
       .pipe(
         map((resp: apiToBackend.ToBackendGetFileResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.repoStore.update(state =>
-              Object.assign(resp.payload.repo, <RepoState>{
-                conflicts: state.conflicts, // getFile does not check for conflicts
-                repoStatus: state.repoStatus // getFile does not use git fetch
-              })
-            );
-            this.structStore.update(resp.payload.struct);
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                needValidate: resp.payload.needValidate
-              })
-            );
+            let repoState = this.repoQuery.getValue();
+            let newRepoState: RepoState = Object.assign(resp.payload.repo, <
+              RepoState
+            >{
+              conflicts: repoState.conflicts, // getFile does not check for conflicts
+              repoStatus: repoState.repoStatus // getFile does not use git fetch
+            });
+            this.repoQuery.update(newRepoState);
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              needValidate: resp.payload.needValidate
+            });
 
-            this.fileStore.update({
+            this.fileQuery.update({
               originalContent: resp.payload.originalContent,
               content: resp.payload.content,
               name: fileName,

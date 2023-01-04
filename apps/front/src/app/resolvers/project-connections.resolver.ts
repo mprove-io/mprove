@@ -11,11 +11,10 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
-import { NavQuery } from '../queries/nav.query';
+import { ConnectionsQuery } from '../queries/connections.query';
+import { MemberQuery } from '../queries/member.query';
+import { NavQuery, NavState } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
-import { ConnectionsStore } from '../stores/connections.store';
-import { MemberStore } from '../stores/member.store';
-import { NavState } from '../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectConnectionsResolver
@@ -24,9 +23,9 @@ export class ProjectConnectionsResolver
   constructor(
     private navQuery: NavQuery,
     private apiService: ApiService,
-    private memberStore: MemberStore,
+    private memberQuery: MemberQuery,
     private router: Router,
-    private connectionsStore: ConnectionsStore
+    private connectionsQuery: ConnectionsQuery
   ) {}
 
   resolve(
@@ -71,9 +70,9 @@ export class ProjectConnectionsResolver
       .pipe(
         map((resp: apiToBackend.ToBackendGetConnectionsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.memberStore.update(resp.payload.userMember);
+            this.memberQuery.update(resp.payload.userMember);
 
-            this.connectionsStore.update({
+            this.connectionsQuery.update({
               connections: resp.payload.connections,
               total: resp.payload.total
             });

@@ -8,9 +8,9 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { NavQuery } from '~front/app/queries/nav.query';
+import { ProjectQuery } from '~front/app/queries/project.query';
 import { ApiService } from '~front/app/services/api.service';
-import { NavState, NavStore } from '~front/app/stores/nav.store';
-import { ProjectStore } from '~front/app/stores/project.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -39,8 +39,8 @@ export class EditProjectNameDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<EditProjectNameDialogData>,
     private fb: FormBuilder,
-    private projectStore: ProjectStore,
-    private navStore: NavStore
+    private projectQuery: ProjectQuery,
+    private navQuery: NavQuery
   ) {}
 
   ngOnInit() {
@@ -80,13 +80,11 @@ export class EditProjectNameDialogComponent implements OnInit {
         tap((resp: apiToBackend.ToBackendSetProjectInfoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let project = resp.payload.project;
-            this.projectStore.update(project);
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                projectId: project.projectId,
-                projectName: project.name
-              })
-            );
+            this.projectQuery.update(project);
+            this.navQuery.updatePart({
+              projectId: project.projectId,
+              projectName: project.name
+            });
           }
         }),
         take(1)

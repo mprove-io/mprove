@@ -3,9 +3,9 @@ import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { NavQuery } from '~front/app/queries/nav.query';
+import { OrgQuery } from '~front/app/queries/org.query';
 import { ApiService } from '~front/app/services/api.service';
-import { NavStore } from '~front/app/stores/nav.store';
-import { OrgStore } from '~front/app/stores/org.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -29,9 +29,9 @@ export class DeleteOrgDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<DeleteOrgDialogData>,
     private router: Router,
-    private orgStore: OrgStore,
+    private orgQuery: OrgQuery,
     private spinner: NgxSpinnerService,
-    private navStore: NavStore
+    private navQuery: NavQuery
   ) {}
 
   ngOnInit(): void {
@@ -65,8 +65,8 @@ export class DeleteOrgDialogComponent implements OnInit {
               this.ref.data.orgName
             );
             this.router.navigate([common.PATH_ORG_DELETED]);
-            this.navStore.clearOrgAndDeps();
-            this.orgStore.reset();
+            this.navQuery.clearOrgAndDeps();
+            this.orgQuery.reset();
           }
         }),
         take(1)

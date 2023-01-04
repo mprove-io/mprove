@@ -14,12 +14,10 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { checkNavOrgProjectRepoBranchEnv } from '../../functions/check-nav-org-project-repo-branch-env';
-import { MqQuery } from '../../queries/mq.query';
-import { NavQuery } from '../../queries/nav.query';
+import { emptyQuery, MqQuery } from '../../queries/mq.query';
+import { NavQuery, NavState } from '../../queries/nav.query';
 import { UserQuery } from '../../queries/user.query';
 import { ApiService } from '../../services/api.service';
-import { emptyQuery, MqStore } from '../../stores/mq.store';
-import { NavState } from '../../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
 export class QueryResolver implements Resolve<Observable<boolean>> {
@@ -30,7 +28,6 @@ export class QueryResolver implements Resolve<Observable<boolean>> {
     private userQuery: UserQuery,
     private modelQuery: ModelQuery,
     private mqQuery: MqQuery,
-    private mqStore: MqStore,
     private router: Router
   ) {}
 
@@ -107,9 +104,7 @@ export class QueryResolver implements Resolve<Observable<boolean>> {
 
     if (parametersQueryId === common.EMPTY) {
       if (query.queryId !== common.EMPTY) {
-        this.mqStore.update(state =>
-          Object.assign({}, state, { query: emptyQuery })
-        );
+        this.mqQuery.updatePart({ query: emptyQuery });
       }
 
       return of(true);
@@ -136,9 +131,7 @@ export class QueryResolver implements Resolve<Observable<boolean>> {
         .pipe(
           map((resp: apiToBackend.ToBackendGetQueryResponse) => {
             if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-              this.mqStore.update(state =>
-                Object.assign({}, state, { query: resp.payload.query })
-              );
+              this.mqQuery.updatePart({ query: resp.payload.query });
               return true;
             } else {
               return false;

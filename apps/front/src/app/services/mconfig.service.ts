@@ -5,10 +5,9 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { ModelQuery } from '../queries/model.query';
-import { NavQuery } from '../queries/nav.query';
-import { MqState, MqStore } from '../stores/mq.store';
-import { NavState } from '../stores/nav.store';
-import { StructStore } from '../stores/struct.store';
+import { MqQuery } from '../queries/mq.query';
+import { NavQuery, NavState } from '../queries/nav.query';
+import { StructQuery } from '../queries/struct.query';
 import { ApiService } from './api.service';
 import { NavigateService } from './navigate.service';
 
@@ -24,10 +23,10 @@ export class MconfigService {
   constructor(
     public modelQuery: ModelQuery,
     private apiService: ApiService,
-    private mqStore: MqStore,
+    private mqQuery: MqQuery,
     private spinner: NgxSpinnerService,
     public navQuery: NavQuery,
-    public structStore: StructStore,
+    public structQuery: StructQuery,
     private navigateService: NavigateService
   ) {
     this.nav$.subscribe();
@@ -141,13 +140,14 @@ export class MconfigService {
   navCreateMconfigAndQuery(newMconfig: common.MconfigX) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload = {
-      projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
-      branchId: this.nav.branchId,
-      envId: this.nav.envId,
-      mconfig: newMconfig
-    };
+    let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload =
+      {
+        projectId: this.nav.projectId,
+        isRepoProd: this.nav.isRepoProd,
+        branchId: this.nav.branchId,
+        envId: this.nav.envId,
+        mconfig: newMconfig
+      };
 
     this.apiService
       .req({
@@ -161,7 +161,7 @@ export class MconfigService {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let { mconfig, query } = resp.payload;
 
-            this.mqStore.update({ mconfig: mconfig, query: query });
+            this.mqQuery.update({ mconfig: mconfig, query: query });
 
             this.navigateService.navigateMconfigQuery({
               mconfigId: mconfig.mconfigId,
@@ -182,24 +182,24 @@ export class MconfigService {
 
     let { newMconfig, queryId } = item;
 
-    let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload = {
-      projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
-      branchId: this.nav.branchId,
-      envId: this.nav.envId,
-      mconfig: newMconfig
-    };
+    let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload =
+      {
+        projectId: this.nav.projectId,
+        isRepoProd: this.nav.isRepoProd,
+        branchId: this.nav.branchId,
+        envId: this.nav.envId,
+        mconfig: newMconfig
+      };
 
     let optMconfig = common.makeCopy(newMconfig);
 
     optMconfig.queryId = queryId;
 
-    this.mqStore.update((state: MqState) =>
-      Object.assign({}, state, {
-        mconfig: optMconfig,
-        query: state.query
-      })
-    );
+    let mqState = this.mqQuery.getValue();
+    this.mqQuery.updatePart({
+      mconfig: optMconfig,
+      query: mqState.query
+    });
 
     this.navigateService.navigateMconfigQuery({
       mconfigId: optMconfig.mconfigId,

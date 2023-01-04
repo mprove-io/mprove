@@ -4,21 +4,17 @@ import { NavigationEnd, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { filter, map, switchMap, take, tap } from 'rxjs/operators';
-import { FileQuery } from '~front/app/queries/file.query';
+import { FileQuery, FileState } from '~front/app/queries/file.query';
 import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { RepoQuery } from '~front/app/queries/repo.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery, UserState } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { FileState, FileStore } from '~front/app/stores/file.store';
-import { NavState, NavStore } from '~front/app/stores/nav.store';
-import { RepoState, RepoStore } from '~front/app/stores/repo.store';
-import { StructStore } from '~front/app/stores/struct.store';
-import { UiState, UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -106,18 +102,14 @@ export class FilesComponent implements OnInit {
     private fileQuery: FileQuery,
     private spinner: NgxSpinnerService,
     public repoQuery: RepoQuery,
-    public repoStore: RepoStore,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
     private navigateService: NavigateService,
-    public structStore: StructStore,
-    public navStore: NavStore,
     public fileService: FileService,
     private title: Title,
     private memberQuery: MemberQuery,
-    private userQuery: UserQuery,
-    private uiStore: UiStore,
-    private fileStore: FileStore
+    private structQuery: StructQuery,
+    private userQuery: UserQuery
   ) {}
 
   ngOnInit() {
@@ -152,9 +144,7 @@ export class FilesComponent implements OnInit {
       common.PATH_FILES
     ]);
 
-    this.uiStore.update(state =>
-      Object.assign({}, state, <UiState>{ panel: x })
-    );
+    this.uiQuery.updatePart({ panel: x });
   }
 
   commit() {
@@ -187,13 +177,11 @@ export class FilesComponent implements OnInit {
       .pipe(
         map((resp: apiToBackend.ToBackendPushRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.repoStore.update(resp.payload.repo);
-            this.structStore.update(resp.payload.struct);
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                needValidate: resp.payload.needValidate
-              })
-            );
+            this.repoQuery.update(resp.payload.repo);
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              needValidate: resp.payload.needValidate
+            });
 
             return true;
           } else {
@@ -233,13 +221,11 @@ export class FilesComponent implements OnInit {
       .pipe(
         map((resp: apiToBackend.ToBackendPullRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.repoStore.update(resp.payload.repo);
-            this.structStore.update(resp.payload.struct);
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                needValidate: resp.payload.needValidate
-              })
-            );
+            this.repoQuery.update(resp.payload.repo);
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              needValidate: resp.payload.needValidate
+            });
 
             return true;
           } else {
@@ -280,13 +266,11 @@ export class FilesComponent implements OnInit {
       .pipe(
         map((resp: apiToBackend.ToBackendGetRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.repoStore.update(resp.payload.repo);
-            this.structStore.update(resp.payload.struct);
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                needValidate: resp.payload.needValidate
-              })
-            );
+            this.repoQuery.update(resp.payload.repo);
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              needValidate: resp.payload.needValidate
+            });
 
             return true;
           } else {

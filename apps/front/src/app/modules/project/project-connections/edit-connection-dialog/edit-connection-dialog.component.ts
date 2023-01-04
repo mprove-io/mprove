@@ -3,12 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { conditionalValidator } from '~front/app/functions/conditional-validator';
+import { ConnectionsQuery } from '~front/app/queries/connections.query';
 import { ApiService } from '~front/app/services/api.service';
 import { ValidationService } from '~front/app/services/validation.service';
-import {
-  ConnectionsState,
-  ConnectionsStore
-} from '~front/app/stores/connections.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -49,7 +46,7 @@ export class EditConnectionDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<EditConnectionDialogData>,
     private fb: FormBuilder,
-    private connectionsStore: ConnectionsStore
+    private connectionsQuery: ConnectionsQuery
   ) {}
 
   ngOnInit() {
@@ -281,13 +278,14 @@ export class EditConnectionDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendEditConnectionResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.connectionsStore.update(state => {
-              state.connections[this.dataItem.i] = resp.payload.connection;
+            let connectionsState = this.connectionsQuery.getValue();
 
-              return <ConnectionsState>{
-                connections: [...state.connections],
-                total: state.total
-              };
+            connectionsState.connections[this.dataItem.i] =
+              resp.payload.connection;
+
+            this.connectionsQuery.update({
+              connections: [...connectionsState.connections],
+              total: connectionsState.total
             });
           }
         }),

@@ -10,8 +10,8 @@ import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
-import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -38,7 +38,7 @@ export class CreateOrgDialogComponent implements OnInit {
     public ref: DialogRef<CreateOrgDialogData>,
     private fb: FormBuilder,
     private spinner: NgxSpinnerService,
-    private navStore: NavStore,
+    private navQuery: NavQuery,
     private router: Router
   ) {}
 
@@ -86,17 +86,15 @@ export class CreateOrgDialogComponent implements OnInit {
               common.PATH_ACCOUNT
             ]);
 
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                projectId: undefined,
-                projectName: undefined,
-                projectDefaultBranch: undefined,
-                isRepoProd: true,
-                branchId: undefined,
-                envId: common.PROJECT_ENV_PROD,
-                needValidate: false
-              })
-            );
+            this.navQuery.updatePart({
+              projectId: undefined,
+              projectName: undefined,
+              projectDefaultBranch: undefined,
+              isRepoProd: true,
+              branchId: undefined,
+              envId: common.PROJECT_ENV_PROD,
+              needValidate: false
+            });
 
             localStorage.removeItem(constants.LOCAL_STORAGE_PROJECT_ID);
           }

@@ -1,10 +1,9 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { TreeNode } from '@bugsplat/angular-tree-component';
 import { tap } from 'rxjs/operators';
-import { NavQuery } from '~front/app/queries/nav.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { NavState } from '~front/app/stores/nav.store';
 
 @Component({
   selector: 'm-folder-options',

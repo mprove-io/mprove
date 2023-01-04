@@ -10,19 +10,18 @@ import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
-import { NavQuery } from '../queries/nav.query';
+import { MemberQuery } from '../queries/member.query';
+import { NavQuery, NavState } from '../queries/nav.query';
+import { ProjectQuery } from '../queries/project.query';
 import { ApiService } from '../services/api.service';
-import { MemberStore } from '../stores/member.store';
-import { NavState } from '../stores/nav.store';
-import { ProjectStore } from '../stores/project.store';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectSettingsResolver implements Resolve<Observable<boolean>> {
   constructor(
-    private projectStore: ProjectStore,
+    private projectQuery: ProjectQuery,
     private navQuery: NavQuery,
     private router: Router,
-    private memberStore: MemberStore,
+    private memberQuery: MemberQuery,
     private apiService: ApiService
   ) {}
 
@@ -66,9 +65,9 @@ export class ProjectSettingsResolver implements Resolve<Observable<boolean>> {
       .pipe(
         map((resp: apiToBackend.ToBackendGetProjectResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.memberStore.update(resp.payload.userMember);
+            this.memberQuery.update(resp.payload.userMember);
 
-            this.projectStore.update(resp.payload.project);
+            this.projectQuery.update(resp.payload.project);
             return true;
           } else {
             return false;

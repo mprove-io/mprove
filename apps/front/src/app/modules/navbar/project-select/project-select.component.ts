@@ -1,13 +1,12 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, take, tap } from 'rxjs/operators';
-import { NavQuery } from '~front/app/queries/nav.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery, UserState } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -66,8 +65,7 @@ export class ProjectSelectComponent {
     private myDialogService: MyDialogService,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
-    private router: Router,
-    private navStore: NavStore
+    private router: Router
   ) {}
 
   openProjectSelect() {

@@ -2,8 +2,8 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { take, tap } from 'rxjs/operators';
+import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
-import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -28,7 +28,7 @@ export class EditPhotoDialogComponent implements OnInit {
 
   constructor(
     public ref: DialogRef<EditPhotoDialogData>,
-    private navStore: NavStore,
+    private navQuery: NavQuery,
     private imageCompressService: NgxImageCompressService
   ) {}
 
@@ -94,12 +94,10 @@ export class EditPhotoDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendSetAvatarResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                avatarSmall: resp.payload.avatarSmall,
-                avatarBig: resp.payload.avatarBig
-              })
-            );
+            this.navQuery.updatePart({
+              avatarSmall: resp.payload.avatarSmall,
+              avatarBig: resp.payload.avatarBig
+            });
           }
         }),
         take(1)

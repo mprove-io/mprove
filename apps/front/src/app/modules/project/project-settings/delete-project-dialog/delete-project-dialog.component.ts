@@ -3,9 +3,9 @@ import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { NavQuery } from '~front/app/queries/nav.query';
+import { ProjectQuery } from '~front/app/queries/project.query';
 import { ApiService } from '~front/app/services/api.service';
-import { NavStore } from '~front/app/stores/nav.store';
-import { ProjectStore } from '~front/app/stores/project.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -29,9 +29,9 @@ export class DeleteProjectDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<DeleteProjectDialogData>,
     private router: Router,
-    private projectStore: ProjectStore,
+    private projectQuery: ProjectQuery,
     private spinner: NgxSpinnerService,
-    private navStore: NavStore
+    private navQuery: NavQuery
   ) {}
 
   ngOnInit(): void {
@@ -65,8 +65,8 @@ export class DeleteProjectDialogComponent implements OnInit {
               this.ref.data.projectName
             );
             this.router.navigate([common.PATH_PROJECT_DELETED]);
-            this.navStore.clearProjectAndDeps();
-            this.projectStore.reset();
+            this.navQuery.clearProjectAndDeps();
+            this.projectQuery.reset();
           }
         }),
         take(1)

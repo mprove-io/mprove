@@ -6,20 +6,15 @@ import { MarkerSeverity } from 'monaco-editor';
 import { setDiagnosticsOptions } from 'monaco-yaml';
 import { MonacoEditorOptions, MonacoProviderService } from 'ng-monaco-editor';
 import { filter, take, tap } from 'rxjs/operators';
-import { FileQuery } from '~front/app/queries/file.query';
+import { FileQuery, FileState } from '~front/app/queries/file.query';
 import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { RepoQuery } from '~front/app/queries/repo.query';
-import { StructQuery } from '~front/app/queries/struct.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
+import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { ConfirmService } from '~front/app/services/confirm.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { FileState, FileStore } from '~front/app/stores/file.store';
-import { NavState, NavStore } from '~front/app/stores/nav.store';
-import { RepoState, RepoStore } from '~front/app/stores/repo.store';
-import { StructState, StructStore } from '~front/app/stores/struct.store';
-import { UiState, UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -150,11 +145,6 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     private apiService: ApiService,
     private confirmService: ConfirmService,
     private navigateService: NavigateService,
-    private repoStore: RepoStore,
-    private fileStore: FileStore,
-    private navStore: NavStore,
-    public structStore: StructStore,
-    private uiStore: UiStore,
     private route: ActivatedRoute,
     private monacoService: MonacoProviderService
   ) {}
@@ -459,13 +449,9 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     }
 
     if (!this.needSave && this.content !== this.startText) {
-      this.uiStore.update(state =>
-        Object.assign({}, state, <UiState>{ needSave: true })
-      );
+      this.uiQuery.updatePart({ needSave: true });
     } else if (this.needSave && this.content === this.startText) {
-      this.uiStore.update(state =>
-        Object.assign({}, state, <UiState>{ needSave: false })
-      );
+      this.uiQuery.updatePart({ needSave: false });
     }
   }
 
@@ -491,22 +477,18 @@ export class FileEditorComponent implements OnInit, OnDestroy {
       .pipe(
         tap((resp: apiToBackend.ToBackendSaveFileResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.repoStore.update(resp.payload.repo);
-            this.structStore.update(resp.payload.struct);
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                needValidate: resp.payload.needValidate
-              })
-            );
+            this.repoQuery.update(resp.payload.repo);
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              needValidate: resp.payload.needValidate
+            });
 
             this.startText = this.content;
 
-            this.uiStore.update(state =>
-              Object.assign({}, state, <UiState>{
-                needSave: false,
-                panel: common.PanelEnum.Tree
-              })
-            );
+            this.uiQuery.updatePart({
+              needSave: false,
+              panel: common.PanelEnum.Tree
+            });
 
             this.cd.detectChanges();
           }
@@ -518,9 +500,8 @@ export class FileEditorComponent implements OnInit, OnDestroy {
 
   cancel() {
     this.content = this.startText;
-    this.uiStore.update(state =>
-      Object.assign({}, state, <UiState>{ needSave: false })
-    );
+
+    this.uiQuery.updatePart({ needSave: false });
   }
 
   async moveToLine(line: number) {
@@ -559,9 +540,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
 
     return this.confirmService.confirm('Discard changes?').then(answer => {
       if (answer === true) {
-        this.uiStore.update(state =>
-          Object.assign({}, state, <UiState>{ needSave: false })
-        );
+        this.uiQuery.updatePart({ needSave: false });
 
         return true;
       } else {
@@ -571,6 +550,6 @@ export class FileEditorComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.fileStore.reset();
+    this.fileQuery.reset();
   }
 }

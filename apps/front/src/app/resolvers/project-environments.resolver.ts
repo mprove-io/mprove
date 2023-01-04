@@ -11,11 +11,10 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
-import { NavQuery } from '../queries/nav.query';
+import { EnvironmentsQuery } from '../queries/environments.query';
+import { MemberQuery } from '../queries/member.query';
+import { NavQuery, NavState } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
-import { EnvironmentsStore } from '../stores/environments.store';
-import { MemberStore } from '../stores/member.store';
-import { NavState } from '../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectEnvironmentsResolver
@@ -25,8 +24,8 @@ export class ProjectEnvironmentsResolver
     private navQuery: NavQuery,
     private router: Router,
     private apiService: ApiService,
-    private memberStore: MemberStore,
-    private environmentsStore: EnvironmentsStore
+    private memberQuery: MemberQuery,
+    private environmentsQuery: EnvironmentsQuery
   ) {}
 
   resolve(
@@ -71,9 +70,9 @@ export class ProjectEnvironmentsResolver
       .pipe(
         map((resp: apiToBackend.ToBackendGetEnvsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.memberStore.update(resp.payload.userMember);
+            this.memberQuery.update(resp.payload.userMember);
 
-            this.environmentsStore.update({
+            this.environmentsQuery.update({
               environments: resp.payload.envs,
               total: resp.payload.total
             });

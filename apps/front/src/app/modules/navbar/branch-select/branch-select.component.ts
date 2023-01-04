@@ -4,20 +4,16 @@ import { filter, take, tap } from 'rxjs/operators';
 import { constants } from '~common/barrels/constants';
 import { makeBranchExtraId } from '~front/app/functions/make-branch-extra-id';
 import { makeBranchExtraName } from '~front/app/functions/make-branch-extra-name';
-import { FileQuery } from '~front/app/queries/file.query';
+import { FileQuery, FileState } from '~front/app/queries/file.query';
 import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { RepoQuery } from '~front/app/queries/repo.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery, UserState } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { FileState } from '~front/app/stores/file.store';
-import { MemberStore } from '~front/app/stores/member.store';
-import { NavState } from '~front/app/stores/nav.store';
-import { RepoState } from '~front/app/stores/repo.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
@@ -122,7 +118,6 @@ export class BranchSelectComponent {
     private userQuery: UserQuery,
     private uiQuery: UiQuery,
     private memberQuery: MemberQuery,
-    private memberStore: MemberStore,
     private navQuery: NavQuery,
     private fileQuery: FileQuery,
     private repoQuery: RepoQuery,
@@ -170,7 +165,7 @@ export class BranchSelectComponent {
       .pipe(
         tap((resp: apiToBackend.ToBackendGetBranchesListResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.memberStore.update(resp.payload.userMember);
+            this.memberQuery.update(resp.payload.userMember);
 
             let x = resp.payload.branchesList;
 

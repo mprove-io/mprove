@@ -2,10 +2,9 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
-import { RepoQuery } from '~front/app/queries/repo.query';
+import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { RepoState } from '~front/app/stores/repo.store';
 import { common } from '~front/barrels/common';
 
 @Component({

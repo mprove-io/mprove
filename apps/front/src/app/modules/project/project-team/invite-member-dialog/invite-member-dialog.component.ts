@@ -8,8 +8,8 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { TeamQuery } from '~front/app/queries/team.query';
 import { ApiService } from '~front/app/services/api.service';
-import { TeamState, TeamStore } from '~front/app/stores/team.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -35,7 +35,7 @@ export class InviteMemberDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<InviteMemberDialogData>,
     private fb: FormBuilder,
-    private teamStore: TeamStore
+    private teamQuery: TeamQuery
   ) {}
 
   ngOnInit() {
@@ -78,13 +78,12 @@ export class InviteMemberDialogComponent implements OnInit {
         tap((resp: apiToBackend.ToBackendCreateMemberResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let member = resp.payload.member;
-            this.teamStore.update(
-              state =>
-                <TeamState>{
-                  members: [...state.members, member],
-                  total: state.total
-                }
-            );
+            let teamState = this.teamQuery.getValue();
+
+            this.teamQuery.update({
+              members: [...teamState.members, member],
+              total: teamState.total
+            });
           }
         }),
         take(1)

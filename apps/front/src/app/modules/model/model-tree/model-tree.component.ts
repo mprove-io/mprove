@@ -16,14 +16,11 @@ import { ModelNode } from '~common/_index';
 import { setChartFields } from '~front/app/functions/set-chart-fields';
 import { setChartTitleOnSelectChange } from '~front/app/functions/set-chart-title-on-select-change';
 import { sortChartFieldsOnSelectChange } from '~front/app/functions/sort-chart-fields-on-select-change';
-import { ModelQuery } from '~front/app/queries/model.query';
+import { ModelQuery, ModelState } from '~front/app/queries/model.query';
 import { MqQuery } from '~front/app/queries/mq.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { StructService } from '~front/app/services/struct.service';
-import { ModelState } from '~front/app/stores/model.store';
-import { MqStore } from '~front/app/stores/mq.store';
-import { StructStore } from '~front/app/stores/struct.store';
 import { common } from '~front/barrels/common';
 
 export class ModelNodeExtra extends common.ModelNode {
@@ -104,13 +101,11 @@ export class ModelTreeComponent implements AfterViewInit {
   @ViewChild('itemsTree') itemsTree: TreeComponent;
 
   constructor(
-    public modelQuery: ModelQuery,
+    private modelQuery: ModelQuery,
     private cd: ChangeDetectorRef,
     private mqQuery: MqQuery,
     private structService: StructService,
     private mconfigService: MconfigService,
-    private mqStore: MqStore,
-    public structStore: StructStore,
     private navigateService: NavigateService
   ) {}
 

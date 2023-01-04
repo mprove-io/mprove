@@ -11,6 +11,12 @@ export class BaseQuery<T> {
     this.store.update(setProps(state));
   }
 
+  updatePart(part: Partial<T>) {
+    let state = this.store.getValue();
+    let newState = Object.assign(<T>{}, state, part);
+    this.store.update(setProps(newState));
+  }
+
   reset() {
     this.store.reset();
   }

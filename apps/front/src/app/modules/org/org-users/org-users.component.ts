@@ -7,7 +7,6 @@ import { OrgQuery } from '~front/app/queries/org.query';
 import { UsersQuery } from '~front/app/queries/users.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { UsersStore } from '~front/app/stores/users.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -60,7 +59,6 @@ export class OrgUsersComponent implements OnInit {
 
   constructor(
     public usersQuery: UsersQuery,
-    public usersStore: UsersStore,
     public navQuery: NavQuery,
     public orgQuery: OrgQuery,
     private apiService: ApiService,
@@ -89,7 +87,7 @@ export class OrgUsersComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendGetOrgUsersResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.usersStore.update({
+            this.usersQuery.update({
               users: resp.payload.orgUsersList,
               total: resp.payload.total
             });

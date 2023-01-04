@@ -2,11 +2,9 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { take, tap } from 'rxjs/operators';
 import { common } from '~front/barrels/common';
-import { ModelQuery } from '../queries/model.query';
-import { NavQuery } from '../queries/nav.query';
+import { ModelQuery, ModelState } from '../queries/model.query';
+import { NavQuery, NavState } from '../queries/nav.query';
 import { UserQuery } from '../queries/user.query';
-import { ModelState } from '../stores/model.store';
-import { NavState } from '../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
 export class NavigateService {

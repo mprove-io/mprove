@@ -5,14 +5,13 @@ import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
-import { NavQuery } from '../queries/nav.query';
+import { MemberQuery } from '../queries/member.query';
+import { ModelsQuery } from '../queries/models.query';
+import { NavQuery, NavState } from '../queries/nav.query';
+import { StructQuery } from '../queries/struct.query';
 import { UserQuery } from '../queries/user.query';
+import { VizsQuery } from '../queries/vizs.query';
 import { ApiService } from '../services/api.service';
-import { MemberStore } from '../stores/member.store';
-import { ModelsStore } from '../stores/models.store';
-import { NavState, NavStore } from '../stores/nav.store';
-import { StructStore } from '../stores/struct.store';
-import { VizsStore } from '../stores/vizs.store';
 
 @Injectable({ providedIn: 'root' })
 export class StructVizsResolver implements Resolve<Observable<boolean>> {
@@ -20,11 +19,10 @@ export class StructVizsResolver implements Resolve<Observable<boolean>> {
     private navQuery: NavQuery,
     private userQuery: UserQuery,
     private apiService: ApiService,
-    private vizsStore: VizsStore,
-    private modelsStore: ModelsStore,
-    private structStore: StructStore,
-    private memberStore: MemberStore,
-    private navStore: NavStore,
+    private vizsQuery: VizsQuery,
+    private modelsQuery: ModelsQuery,
+    private structQuery: StructQuery,
+    private memberQuery: MemberQuery,
     private router: Router
   ) {}
 
@@ -68,17 +66,15 @@ export class StructVizsResolver implements Resolve<Observable<boolean>> {
       .pipe(
         map((resp: apiToBackend.ToBackendGetVizsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.memberStore.update(resp.payload.userMember);
+            this.memberQuery.update(resp.payload.userMember);
 
-            this.structStore.update(resp.payload.struct);
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                needValidate: resp.payload.needValidate
-              })
-            );
-            this.modelsStore.update({ models: resp.payload.models });
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              needValidate: resp.payload.needValidate
+            });
+            this.modelsQuery.update({ models: resp.payload.models });
 
-            this.vizsStore.update({ vizs: resp.payload.vizs });
+            this.vizsQuery.update({ vizs: resp.payload.vizs });
 
             return true;
           } else if (

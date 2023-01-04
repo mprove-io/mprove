@@ -9,12 +9,12 @@ import { map } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
-import { NavState, NavStore } from '../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
 export class OrgResolver implements Resolve<Observable<boolean>> {
-  constructor(private navStore: NavStore, private apiService: ApiService) {}
+  constructor(private navQuery: NavQuery, private apiService: ApiService) {}
 
   resolve(
     route: ActivatedRouteSnapshot,
@@ -34,13 +34,11 @@ export class OrgResolver implements Resolve<Observable<boolean>> {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let org = resp.payload.org;
 
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                orgId: org.orgId,
-                orgName: org.name,
-                orgOwnerId: org.ownerId
-              })
-            );
+            this.navQuery.updatePart({
+              orgId: org.orgId,
+              orgName: org.name,
+              orgOwnerId: org.ownerId
+            });
 
             localStorage.setItem(constants.LOCAL_STORAGE_ORG_ID, org.orgId);
 

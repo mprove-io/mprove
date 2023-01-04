@@ -3,18 +3,14 @@ import { TreeNode } from '@bugsplat/angular-tree-component';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
-import { FileQuery } from '~front/app/queries/file.query';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { RepoQuery } from '~front/app/queries/repo.query';
+import { FileQuery, FileState } from '~front/app/queries/file.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { FileState, FileStore } from '~front/app/stores/file.store';
-import { NavState, NavStore } from '~front/app/stores/nav.store';
-import { RepoState, RepoStore } from '~front/app/stores/repo.store';
-import { StructStore } from '~front/app/stores/struct.store';
-import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -62,16 +58,12 @@ export class RepoOptionsComponent {
   constructor(
     public uiQuery: UiQuery,
     public fileQuery: FileQuery,
-    public repoStore: RepoStore,
-    public navStore: NavStore,
-    public uiStore: UiStore,
-    public fileStore: FileStore,
     public repoQuery: RepoQuery,
+    public navQuery: NavQuery,
+    public structQuery: StructQuery,
     public fileService: FileService,
     private spinner: NgxSpinnerService,
-    public navQuery: NavQuery,
     private navigateService: NavigateService,
-    public structStore: StructStore,
     private cd: ChangeDetectorRef,
     private apiService: ApiService
   ) {}
@@ -98,13 +90,11 @@ export class RepoOptionsComponent {
       .pipe(
         map((resp: apiToBackend.ToBackendRevertRepoToLastCommitResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.repoStore.update(resp.payload.repo);
-            this.structStore.update(resp.payload.struct);
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                needValidate: resp.payload.needValidate
-              })
-            );
+            this.repoQuery.update(resp.payload.repo);
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              needValidate: resp.payload.needValidate
+            });
 
             return true;
           } else {
@@ -146,13 +136,11 @@ export class RepoOptionsComponent {
       .pipe(
         map((resp: apiToBackend.ToBackendRevertRepoToRemoteResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.repoStore.update(resp.payload.repo);
-            this.structStore.update(resp.payload.struct);
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                needValidate: resp.payload.needValidate
-              })
-            );
+            this.repoQuery.update(resp.payload.repo);
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              needValidate: resp.payload.needValidate
+            });
 
             return true;
           } else {
@@ -195,13 +183,11 @@ export class RepoOptionsComponent {
       .pipe(
         map((resp: apiToBackend.ToBackendGetRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.repoStore.update(resp.payload.repo);
-            this.structStore.update(resp.payload.struct);
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                needValidate: resp.payload.needValidate
-              })
-            );
+            this.repoQuery.update(resp.payload.repo);
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              needValidate: resp.payload.needValidate
+            });
 
             return true;
           } else {
@@ -243,13 +229,11 @@ export class RepoOptionsComponent {
       .pipe(
         map((resp: apiToBackend.ToBackendPullRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.repoStore.update(resp.payload.repo);
-            this.structStore.update(resp.payload.struct);
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                needValidate: resp.payload.needValidate
-              })
-            );
+            this.repoQuery.update(resp.payload.repo);
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              needValidate: resp.payload.needValidate
+            });
 
             return true;
           } else {
@@ -291,13 +275,11 @@ export class RepoOptionsComponent {
       .pipe(
         map((resp: apiToBackend.ToBackendValidateFilesResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.repoStore.update(resp.payload.repo);
-            this.structStore.update(resp.payload.struct);
-            this.navStore.update(state =>
-              Object.assign({}, state, <NavState>{
-                needValidate: resp.payload.needValidate
-              })
-            );
+            this.repoQuery.update(resp.payload.repo);
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              needValidate: resp.payload.needValidate
+            });
 
             return true;
           } else {

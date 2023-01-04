@@ -10,12 +10,10 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
+import { RepoQuery } from '~front/app/queries/repo.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { RepoStore } from '~front/app/stores/repo.store';
-import { StructStore } from '~front/app/stores/struct.store';
-import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -49,9 +47,7 @@ export class CommitDialogComponent implements OnInit {
     private navigateService: NavigateService,
     private spinner: NgxSpinnerService,
     private fileService: FileService,
-    public repoStore: RepoStore,
-    public uiStore: UiStore,
-    public structStore: StructStore
+    public repoQuery: RepoQuery
   ) {}
 
   ngOnInit() {
@@ -95,7 +91,7 @@ export class CommitDialogComponent implements OnInit {
       .pipe(
         map((resp: apiToBackend.ToBackendCommitRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.repoStore.update(resp.payload.repo);
+            this.repoQuery.update(resp.payload.repo);
 
             return true;
           } else {
