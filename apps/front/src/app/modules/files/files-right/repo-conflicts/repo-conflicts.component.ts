@@ -21,10 +21,10 @@ export class RepoConflictsComponent {
   );
 
   constructor(
-    public fileQuery: FileQuery,
-    public structQuery: StructQuery,
-    public repoQuery: RepoQuery,
-    public navQuery: NavQuery,
+    private fileQuery: FileQuery,
+    private structQuery: StructQuery,
+    private repoQuery: RepoQuery,
+    private navQuery: NavQuery,
     private cd: ChangeDetectorRef,
     private navigateService: NavigateService
   ) {}

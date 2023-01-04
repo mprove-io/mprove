@@ -401,18 +401,18 @@ export class ModelComponent implements OnInit, OnDestroy {
     private modelQuery: ModelQuery,
     private userQuery: UserQuery,
     private mqQuery: MqQuery,
-    public repoQuery: RepoQuery,
+    private repoQuery: RepoQuery,
     private apiService: ApiService,
-    public structQuery: StructQuery,
-    public fileService: FileService,
-    public navigateService: NavigateService,
+    private structQuery: StructQuery,
+    private fileService: FileService,
+    private navigateService: NavigateService,
     private structService: StructService,
     private spinner: NgxSpinnerService,
     private timeService: TimeService,
     private mconfigService: MconfigService,
     private dataSizeService: DataSizeService,
     private queryService: QueryService,
-    public myDialogService: MyDialogService,
+    private myDialogService: MyDialogService,
     private title: Title
   ) {}
 

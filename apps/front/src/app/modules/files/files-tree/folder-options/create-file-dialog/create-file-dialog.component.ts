@@ -44,7 +44,7 @@ export class CreateFileDialogComponent implements OnInit {
     public ref: DialogRef<CreateFileDialogData>,
     private fb: FormBuilder,
     private repoQuery: RepoQuery,
-    public structQuery: StructQuery,
+    private structQuery: StructQuery,
     private navigateService: NavigateService,
     private navQuery: NavQuery,
     private cd: ChangeDetectorRef

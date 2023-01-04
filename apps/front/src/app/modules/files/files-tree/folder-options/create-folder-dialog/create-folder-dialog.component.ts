@@ -41,7 +41,7 @@ export class CreateFolderDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<CreateFolderDialogData>,
     private fb: FormBuilder,
-    public structQuery: StructQuery,
+    private structQuery: StructQuery,
     private repoQuery: RepoQuery,
     private navQuery: NavQuery
   ) {}

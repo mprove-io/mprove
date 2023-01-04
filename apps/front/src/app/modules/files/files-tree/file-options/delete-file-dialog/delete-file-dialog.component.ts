@@ -35,7 +35,7 @@ export class DeleteFileDialogComponent implements OnInit {
     private navigateService: NavigateService,
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
-    public structQuery: StructQuery
+    private structQuery: StructQuery
   ) {}
 
   ngOnInit(): void {

@@ -76,10 +76,10 @@ export class ProjectTeamComponent implements OnInit {
   );
 
   constructor(
-    public teamQuery: TeamQuery,
-    public memberQuery: MemberQuery,
-    public navQuery: NavQuery,
-    public userQuery: UserQuery,
+    private teamQuery: TeamQuery,
+    private memberQuery: MemberQuery,
+    private navQuery: NavQuery,
+    private userQuery: UserQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,

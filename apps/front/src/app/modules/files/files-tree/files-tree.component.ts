@@ -122,8 +122,8 @@ export class FilesTreeComponent implements OnDestroy {
   @ViewChild('itemsTree') itemsTree: TreeComponent;
 
   constructor(
-    public repoQuery: RepoQuery,
-    public projectQuery: ProjectQuery,
+    private repoQuery: RepoQuery,
+    private projectQuery: ProjectQuery,
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
     private structQuery: StructQuery,

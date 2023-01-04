@@ -35,7 +35,7 @@ export class DeleteFolderDialogComponent implements OnInit {
     private navigateService: NavigateService,
     private navQuery: NavQuery,
     private spinner: NgxSpinnerService,
-    public structQuery: StructQuery
+    private structQuery: StructQuery
   ) {}
 
   ngOnInit(): void {

@@ -7,7 +7,6 @@ import { getTimezoneLabelByValue } from '~common/_index';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
-import { AuthService } from '~front/app/services/auth.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -42,7 +41,6 @@ export class ProfileComponent implements OnInit {
   constructor(
     public userQuery: UserQuery,
     public navQuery: NavQuery,
-    private authService: AuthService,
     private apiService: ApiService,
     private spinner: NgxSpinnerService,
     private router: Router,

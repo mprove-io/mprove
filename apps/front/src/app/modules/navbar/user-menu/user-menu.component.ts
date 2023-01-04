@@ -29,7 +29,7 @@ export class UserMenuComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    public uiQuery: UiQuery,
+    private uiQuery: UiQuery,
     public navQuery: NavQuery,
     public userQuery: UserQuery
   ) {}

@@ -29,7 +29,7 @@ export class QueryOptionsComponent {
   );
 
   constructor(
-    public modelQuery: ModelQuery,
+    private modelQuery: ModelQuery,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef
   ) {}

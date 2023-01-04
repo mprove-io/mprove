@@ -13,7 +13,7 @@ export class FieldOptionsComponent {
   node: TreeNode;
 
   constructor(
-    public navQuery: NavQuery,
+    private navQuery: NavQuery,
     private navigateService: NavigateService
   ) {}
 

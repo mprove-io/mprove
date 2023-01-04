@@ -65,13 +65,13 @@ export class NavbarComponent implements OnInit {
 
   constructor(
     private router: Router,
-    public navQuery: NavQuery,
-    public repoQuery: RepoQuery,
-    public structQuery: StructQuery,
+    private navQuery: NavQuery,
+    private repoQuery: RepoQuery,
+    private structQuery: StructQuery,
     private navigateService: NavigateService,
-    public uiQuery: UiQuery,
-    public userQuery: UserQuery,
-    public memberQuery: MemberQuery,
+    private uiQuery: UiQuery,
+    private userQuery: UserQuery,
+    private memberQuery: MemberQuery,
     private cd: ChangeDetectorRef
   ) {}
 

@@ -58,9 +58,9 @@ export class OrgUsersComponent implements OnInit {
   );
 
   constructor(
-    public usersQuery: UsersQuery,
-    public navQuery: NavQuery,
-    public orgQuery: OrgQuery,
+    private usersQuery: UsersQuery,
+    private navQuery: NavQuery,
+    private orgQuery: OrgQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,

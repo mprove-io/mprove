@@ -21,7 +21,7 @@ export class DashboardService {
     private apiService: ApiService,
     private spinner: NgxSpinnerService,
     private navigateService: NavigateService,
-    public navQuery: NavQuery
+    private navQuery: NavQuery
   ) {
     this.nav$.subscribe();
   }

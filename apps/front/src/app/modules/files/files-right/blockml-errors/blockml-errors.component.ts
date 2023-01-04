@@ -166,10 +166,10 @@ export class BlockmlErrorsComponent implements OnDestroy {
   );
 
   constructor(
-    public fileQuery: FileQuery,
-    public structQuery: StructQuery,
-    public navigateService: NavigateService,
-    public navQuery: NavQuery,
+    private fileQuery: FileQuery,
+    private structQuery: StructQuery,
+    private navigateService: NavigateService,
+    private navQuery: NavQuery,
     private cd: ChangeDetectorRef
   ) {}
 

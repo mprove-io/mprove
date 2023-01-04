@@ -28,7 +28,7 @@ export class FileOptionsComponent {
   }
 
   constructor(
-    public navQuery: NavQuery,
+    private navQuery: NavQuery,
     private authService: AuthService,
     private router: Router,
     private cd: ChangeDetectorRef,

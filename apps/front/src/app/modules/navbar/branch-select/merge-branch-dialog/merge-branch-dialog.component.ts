@@ -55,7 +55,7 @@ export class MergeBranchDialogComponent implements OnInit {
     private navigateService: NavigateService,
     private navQuery: NavQuery,
     private spinner: NgxSpinnerService,
-    public structQuery: StructQuery,
+    private structQuery: StructQuery,
     private cd: ChangeDetectorRef
   ) {}
 

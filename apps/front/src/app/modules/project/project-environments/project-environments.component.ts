@@ -69,7 +69,7 @@ export class ProjectEnvironmentsComponent implements OnInit {
     private myDialogService: MyDialogService,
     private apiService: ApiService,
     private router: Router,
-    public navQuery: NavQuery,
+    private navQuery: NavQuery,
     private memberQuery: MemberQuery,
     private title: Title
   ) {}

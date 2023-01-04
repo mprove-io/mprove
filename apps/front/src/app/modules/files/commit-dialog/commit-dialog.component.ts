@@ -47,7 +47,7 @@ export class CommitDialogComponent implements OnInit {
     private navigateService: NavigateService,
     private spinner: NgxSpinnerService,
     private fileService: FileService,
-    public repoQuery: RepoQuery
+    private repoQuery: RepoQuery
   ) {}
 
   ngOnInit() {

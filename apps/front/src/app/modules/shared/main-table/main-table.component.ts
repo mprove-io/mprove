@@ -44,9 +44,9 @@ export class MainTableComponent {
   // );
 
   constructor(
-    public mqQuery: MqQuery,
-    public modelQuery: ModelQuery,
-    public mconfigService: MconfigService,
+    private mqQuery: MqQuery,
+    private modelQuery: ModelQuery,
+    private mconfigService: MconfigService,
     private structService: StructService,
     private cd: ChangeDetectorRef
   ) {}

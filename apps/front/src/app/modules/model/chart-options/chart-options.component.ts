@@ -13,7 +13,7 @@ export class ChartOptionsComponent {
   @Input()
   mconfig: common.MconfigX;
 
-  constructor(public myDialogService: MyDialogService) {}
+  constructor(private myDialogService: MyDialogService) {}
 
   viewBlockML(event?: MouseEvent) {
     event.stopPropagation();

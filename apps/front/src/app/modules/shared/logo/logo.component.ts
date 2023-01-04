@@ -8,7 +8,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 })
 export class LogoComponent {
   constructor(
-    public navigateService: NavigateService,
+    private navigateService: NavigateService,
     private auth: AuthService
   ) {}
 

@@ -44,9 +44,9 @@ export class ProjectEvsComponent implements OnInit {
   );
 
   constructor(
-    public memberQuery: MemberQuery,
-    public navQuery: NavQuery,
-    public evsQuery: EvsQuery,
+    private memberQuery: MemberQuery,
+    private navQuery: NavQuery,
+    private evsQuery: EvsQuery,
     private apiService: ApiService,
     private router: Router,
     private route: ActivatedRoute,

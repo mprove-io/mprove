@@ -47,10 +47,10 @@ export class OrgMenuComponent implements OnInit {
   );
 
   constructor(
-    public uiQuery: UiQuery,
-    public orgQuery: OrgQuery,
-    public userQuery: UserQuery,
-    public navQuery: NavQuery,
+    private uiQuery: UiQuery,
+    private orgQuery: OrgQuery,
+    private userQuery: UserQuery,
+    private navQuery: NavQuery,
     private router: Router,
     private cd: ChangeDetectorRef
   ) {}

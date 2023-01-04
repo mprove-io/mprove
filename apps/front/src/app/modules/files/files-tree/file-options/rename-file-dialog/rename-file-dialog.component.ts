@@ -49,7 +49,7 @@ export class RenameFileDialogComponent implements OnInit {
     private repoQuery: RepoQuery,
     private navQuery: NavQuery,
     private navigateService: NavigateService,
-    public structQuery: StructQuery,
+    private structQuery: StructQuery,
     private spinner: NgxSpinnerService,
     private cd: ChangeDetectorRef
   ) {}

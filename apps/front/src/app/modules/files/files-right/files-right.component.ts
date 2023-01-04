@@ -47,11 +47,11 @@ export class FilesRightComponent {
   );
 
   constructor(
-    public fileQuery: FileQuery,
-    public structQuery: StructQuery,
-    public repoQuery: RepoQuery,
-    public memberQuery: MemberQuery,
-    public navQuery: NavQuery,
+    private fileQuery: FileQuery,
+    private structQuery: StructQuery,
+    private repoQuery: RepoQuery,
+    private memberQuery: MemberQuery,
+    private navQuery: NavQuery,
     private cd: ChangeDetectorRef,
     private apiService: ApiService
   ) {}

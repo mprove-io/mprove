@@ -122,7 +122,7 @@ export class BranchSelectComponent {
     private fileQuery: FileQuery,
     private repoQuery: RepoQuery,
     private apiService: ApiService,
-    public navigateService: NavigateService,
+    private navigateService: NavigateService,
     private fileService: FileService,
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,

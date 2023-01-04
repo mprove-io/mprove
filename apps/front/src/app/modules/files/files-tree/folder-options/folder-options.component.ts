@@ -22,7 +22,7 @@ export class FolderOptionsComponent {
   );
 
   constructor(
-    public navQuery: NavQuery,
+    private navQuery: NavQuery,
     private cd: ChangeDetectorRef,
     private myDialogService: MyDialogService,
     private apiService: ApiService

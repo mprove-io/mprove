@@ -32,8 +32,8 @@ export class OrgAccountComponent implements OnInit {
   );
 
   constructor(
-    public orgQuery: OrgQuery,
-    public navQuery: NavQuery,
+    private orgQuery: OrgQuery,
+    private navQuery: NavQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,

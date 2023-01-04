@@ -56,10 +56,10 @@ export class ProjectConnectionsComponent implements OnInit {
   );
 
   constructor(
-    public connectionsQuery: ConnectionsQuery,
-    public memberQuery: MemberQuery,
-    public navQuery: NavQuery,
-    public userQuery: UserQuery,
+    private connectionsQuery: ConnectionsQuery,
+    private memberQuery: MemberQuery,
+    private navQuery: NavQuery,
+    private userQuery: UserQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,

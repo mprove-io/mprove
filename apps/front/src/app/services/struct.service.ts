@@ -38,7 +38,7 @@ export class StructService {
 
   constructor(
     private userQuery: UserQuery,
-    public structQuery: StructQuery,
+    private structQuery: StructQuery,
     private modelQuery: ModelQuery,
     private mqQuery: MqQuery
   ) {

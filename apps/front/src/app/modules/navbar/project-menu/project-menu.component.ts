@@ -68,11 +68,11 @@ export class ProjectMenuComponent implements OnInit {
   );
 
   constructor(
-    public uiQuery: UiQuery,
-    public orgQuery: OrgQuery,
+    private uiQuery: UiQuery,
+    private orgQuery: OrgQuery,
     private userQuery: UserQuery,
     private memberQuery: MemberQuery,
-    public navQuery: NavQuery,
+    private navQuery: NavQuery,
     private router: Router,
     private cd: ChangeDetectorRef
   ) {}

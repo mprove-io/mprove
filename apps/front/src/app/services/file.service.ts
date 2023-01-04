@@ -33,11 +33,11 @@ export class FileService {
   );
 
   constructor(
-    public fileQuery: FileQuery,
-    public uiQuery: UiQuery,
-    public repoQuery: RepoQuery,
-    public structQuery: StructQuery,
-    public navQuery: NavQuery,
+    private fileQuery: FileQuery,
+    private uiQuery: UiQuery,
+    private repoQuery: RepoQuery,
+    private structQuery: StructQuery,
+    private navQuery: NavQuery,
     private apiService: ApiService
   ) {
     this.file$.subscribe();

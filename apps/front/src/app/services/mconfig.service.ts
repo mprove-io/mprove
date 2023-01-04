@@ -21,12 +21,12 @@ export class MconfigService {
   );
 
   constructor(
-    public modelQuery: ModelQuery,
+    private modelQuery: ModelQuery,
     private apiService: ApiService,
     private mqQuery: MqQuery,
     private spinner: NgxSpinnerService,
-    public navQuery: NavQuery,
-    public structQuery: StructQuery,
+    private navQuery: NavQuery,
+    private structQuery: StructQuery,
     private navigateService: NavigateService
   ) {
     this.nav$.subscribe();

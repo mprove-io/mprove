@@ -33,9 +33,9 @@ export class ProjectSettingsComponent implements OnInit {
   );
 
   constructor(
-    public projectQuery: ProjectQuery,
-    public memberQuery: MemberQuery,
-    public navQuery: NavQuery,
+    private projectQuery: ProjectQuery,
+    private memberQuery: MemberQuery,
+    private navQuery: NavQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,

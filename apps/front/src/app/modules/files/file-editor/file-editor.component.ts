@@ -135,12 +135,12 @@ export class FileEditorComponent implements OnInit, OnDestroy {
   );
 
   constructor(
-    public fileQuery: FileQuery,
-    public structQuery: StructQuery,
-    public uiQuery: UiQuery,
-    public navQuery: NavQuery,
-    public repoQuery: RepoQuery,
-    public memberQuery: MemberQuery,
+    private fileQuery: FileQuery,
+    private structQuery: StructQuery,
+    private uiQuery: UiQuery,
+    private navQuery: NavQuery,
+    private repoQuery: RepoQuery,
+    private memberQuery: MemberQuery,
     private cd: ChangeDetectorRef,
     private apiService: ApiService,
     private confirmService: ConfirmService,

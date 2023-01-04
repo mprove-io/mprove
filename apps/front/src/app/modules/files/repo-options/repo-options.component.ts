@@ -56,12 +56,12 @@ export class RepoOptionsComponent {
   );
 
   constructor(
-    public uiQuery: UiQuery,
-    public fileQuery: FileQuery,
-    public repoQuery: RepoQuery,
-    public navQuery: NavQuery,
-    public structQuery: StructQuery,
-    public fileService: FileService,
+    private uiQuery: UiQuery,
+    private fileQuery: FileQuery,
+    private repoQuery: RepoQuery,
+    private navQuery: NavQuery,
+    private structQuery: StructQuery,
+    private fileService: FileService,
     private spinner: NgxSpinnerService,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
