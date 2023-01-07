@@ -28,6 +28,18 @@ services:
       - 5672:5672
       - 15672:15672
 
+  grist:
+    image: gristlabs/grist:1.0.6
+    environment:
+      - GRIST_SESSION_SECRET=$COMPOSE_GRIST_SESSION_SECRET
+      - GRIST_SANDBOX_FLAVOR=$COMPOSE_GRIST_SANDBOX_FLAVOR
+    ports:
+      - 8484:8484
+    volumes:
+      - type: bind
+        source: $COMPOSE_GRIST_SOURCE_PATH
+        target: /persist      
+
   disk:
     build:
       context: ./

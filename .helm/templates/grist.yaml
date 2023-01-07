@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: grist
+  labels:
+    app: grist
+spec:
+  serviceName: grist
+  selector:
+    matchLabels:
+      app: grist
+  template:
+    metadata:
+      labels:
+        app: grist
+      annotations:
+        # sidecar.istio.io/proxyCPU: "100m"    
+        checksum/secret-grist-envs: '{{ include (print $.Template.BasePath "/secret-grist-envs.yaml") . | sha256sum }}'        
+    spec:
+      containers:
+      - name: grist
+        # resources:
+        #   requests:
+        #     cpu: "100m"      
+        image: gristlabs/grist:1.0.6
+        envFrom:
+        - secretRef:
+            name: grist-envs          
+        ports:
+        - containerPort: 8484
+          name: grist
+        volumeMounts:
+        - name: grist-persistent-storage
+          mountPath: /persist
+      volumes:
+      - name: grist-persistent-storage
+        persistentVolumeClaim:
+          claimName: grist-pvc
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grist-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grist
+  labels:
+    app: grist
+spec:
+  selector:
+    app: grist
+  type: NodePort
+  ports:
+  - port: 8484
+    targetPort: 8484
