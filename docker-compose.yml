@@ -31,14 +31,15 @@ services:
   grist:
     image: gristlabs/grist:1.0.6
     environment:
-      - GRIST_SESSION_SECRET=$COMPOSE_GRIST_SESSION_SECRET
       - GRIST_SANDBOX_FLAVOR=$COMPOSE_GRIST_SANDBOX_FLAVOR
+      - GRIST_SESSION_SECRET=$COMPOSE_GRIST_SESSION_SECRET
+      - COOKIE_MAX_AGE=$COMPOSE_GRIST_COOKIE_MAX_AGE
     ports:
       - 8484:8484
     volumes:
       - type: bind
         source: $COMPOSE_GRIST_SOURCE_PATH
-        target: /persist      
+        target: /persist     
 
   disk:
     build:
