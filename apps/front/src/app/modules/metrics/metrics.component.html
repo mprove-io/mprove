@@ -1,0 +1,56 @@
+<div class="bg-blue1 flex h-full cursor-default flex-col">
+  <div class="flex h-full flex-row">
+    <div class="mx-6 mb-6 mt-8 flex min-w-[2px] flex-grow flex-col">
+      <div class="flex h-11 flex-row items-center justify-between">
+        <div class="flex w-full flex-row items-center">
+          <div class="flex flex-row items-center space-x-5">
+            <div
+              data-cy="modelTitle"
+              class="text-gray1 flex items-center self-center text-2xl font-semibold"
+            >
+              {{ pageTitle }}
+            </div>
+          </div>
+
+          <div class="flex-grow"></div>
+
+          <div class="text-gray1 flex flex-row items-center text-base">
+            <!-- <div *ngIf="isRunningDry === true">Calculating ... </div> -->
+            <!-- <div *ngIf="isRunning === true">Running ... </div> -->
+            <!-- <div *ngIf="isCanceling === true">Canceling ... </div> -->
+
+            <!-- <div *ngIf="!!dryQueryEstimate"
+              >Estimate - {{ dryDataSize }} - {{ dryTimeAgo$ | async }}
+            </div>
+
+            <m-query-status
+              *ngIf="!dryQueryEstimate"
+              [query]="query"
+            ></m-query-status>
+
+            <ui-switch
+              class="ml-5"
+              [checked]="isAutoRun"
+              (change)="toggleAutoRun()"
+            ></ui-switch> -->
+          </div>
+        </div>
+
+        <div class="mt-6 flex flex-grow flex-row">
+          <!-- <m-model-tree
+          class="flex w-1/4 flex-shrink-0"
+          (expandFilters)="expandFiltersPanel()"
+          (expandData)="expandDataPanel()"
+        ></m-model-tree> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div *ngIf="routerEvents$ | async"></div>
+<div *ngIf="nav$ | async"></div>
+<div *ngIf="model$ | async"></div>
+<div *ngIf="mq$ | async"></div>
+<div *ngIf="struct$ | async"></div>
+<div *ngIf="alias$ | async"></div> -->
+</div>

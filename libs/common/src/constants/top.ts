@@ -67,6 +67,7 @@ export const PATH_MODEL = 'model';
 export const PATH_DASHBOARD = 'dashboard';
 export const PATH_MCONFIG = 'mconfig';
 export const PATH_QUERY = 'query';
+export const PATH_METRICS = 'metrics';
 
 export const PATH_ORG = 'org';
 export const PATH_ACCOUNT = 'account';
@@ -88,6 +89,7 @@ export const PARAMETER_MODEL_ID = 'modelId';
 export const PARAMETER_DASHBOARD_ID = 'dashboardId';
 export const PARAMETER_MCONFIG_ID = 'mconfigId';
 export const PARAMETER_QUERY_ID = 'queryId';
+export const PARAMETER_REP_ID = 'repId';
 
 export const EMPTY = 'empty';
 

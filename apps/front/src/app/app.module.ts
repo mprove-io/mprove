@@ -20,6 +20,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { DashboardsModule } from './modules/dashboards/dashboards.module';
 import { FilesModule } from './modules/files/files.module';
+import { MetricsModule } from './modules/metrics/metrics.module';
 import { ModelModule } from './modules/model/model.module';
 import { ModelsModule } from './modules/models/models.module';
 import { NavModule } from './modules/nav/nav.module';
@@ -97,6 +98,7 @@ registerLocaleData(en);
     VisualizationsModule,
     DashboardsModule,
     ModelsModule,
+    MetricsModule,
     UiSwitchModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

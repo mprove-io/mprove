@@ -17,6 +17,7 @@ import { DashboardComponent } from './modules/dashboard/dashboard.component';
 import { DashboardsComponent } from './modules/dashboards/dashboards.component';
 import { FileEditorComponent } from './modules/files/file-editor/file-editor.component';
 import { FilesComponent } from './modules/files/files.component';
+import { MetricsComponent } from './modules/metrics/metrics.component';
 import { MconfigComponent } from './modules/model/mconfig/mconfig.component';
 import { ModelComponent } from './modules/model/model.component';
 import { QueryComponent } from './modules/model/query/query.component';
@@ -257,6 +258,17 @@ const routes: Routes = [
                                   }
                                 ]
                               }
+                            ]
+                          },
+                          {
+                            component: MetricsComponent,
+                            canDeactivate: [DeactivateGuard],
+                            path:
+                              common.PATH_METRICS +
+                              `/:${common.PARAMETER_REP_ID}`,
+                            resolve: [
+                              StructModelsResolver
+                              // , StructRepResolver
                             ]
                           },
                           {

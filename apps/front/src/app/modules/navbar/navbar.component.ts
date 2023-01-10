@@ -39,6 +39,7 @@ export class NavbarComponent implements OnInit {
   isVizsRouteActive: boolean;
   isDashboardsRouteActive: boolean;
   isModelsRouteActive: boolean;
+  isMetricsRouteActive: boolean;
 
   routerEvents$ = this.router.events.pipe(
     filter(ev => ev instanceof NavigationEnd),
@@ -86,6 +87,7 @@ export class NavbarComponent implements OnInit {
     this.isDashboardsRouteActive =
       url.split('/')[11] === constants.PATH_DASHBOARDS;
     this.isModelsRouteActive = url.split('/')[11] === constants.PATH_MODELS;
+    this.isMetricsRouteActive = url.split('/')[11] === constants.PATH_METRICS;
     this.cd.detectChanges();
   }
 
@@ -170,6 +172,33 @@ export class NavbarComponent implements OnInit {
       common.PATH_ENV,
       this.nav.envId,
       common.PATH_MODELS
+    ]);
+  }
+
+  navigateMetrics() {
+    let userId;
+    this.userQuery.userId$
+      .pipe(
+        tap(x => (userId = x)),
+        take(1)
+      )
+      .subscribe();
+
+    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
+
+    this.router.navigate([
+      common.PATH_ORG,
+      this.nav.orgId,
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_REPO,
+      repoId,
+      common.PATH_BRANCH,
+      this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
+      common.PATH_METRICS,
+      common.EMPTY
     ]);
   }
 }

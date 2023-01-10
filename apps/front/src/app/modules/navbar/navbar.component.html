@@ -47,15 +47,27 @@
       class="flex flex-row items-center space-x-5"
     >
       <button
-        class="text-gray1 block flex h-10 w-[130px] items-center justify-center text-left text-base focus:outline-none"
+        class="text-gray1 block flex h-10 w-[90px] items-center justify-center text-left text-base focus:outline-none"
         [ngClass]="{
           'cursor-default text-gray-400':
             !nav || !nav.projectId || needSave === true,
-          'font-semibold': isVizsRouteActive === true
+          'font-semibold': isMetricsRouteActive === true
         }"
-        (click)="navigateVisualizations()"
+        (click)="navigateMetrics()"
         [disabled]="!nav || !nav.projectId || needSave === true"
-        >Visualizations</button
+        >Metrics</button
+      >
+
+      <button
+        class="text-gray1 block flex h-10 w-[90px] items-center justify-center text-left text-base focus:outline-none"
+        [ngClass]="{
+          'cursor-default text-gray-400':
+            !nav || !nav.projectId || needSave === true,
+          'font-semibold': isModelsRouteActive === true
+        }"
+        (click)="navigateModels()"
+        [disabled]="!nav || !nav.projectId || needSave === true"
+        >Models</button
       >
 
       <button
@@ -71,15 +83,15 @@
       >
 
       <button
-        class="text-gray1 block flex h-10 w-[90px] items-center justify-center text-left text-base focus:outline-none"
+        class="text-gray1 block flex h-10 w-[130px] items-center justify-center text-left text-base focus:outline-none"
         [ngClass]="{
           'cursor-default text-gray-400':
             !nav || !nav.projectId || needSave === true,
-          'font-semibold': isModelsRouteActive === true
+          'font-semibold': isVizsRouteActive === true
         }"
-        (click)="navigateModels()"
+        (click)="navigateVisualizations()"
         [disabled]="!nav || !nav.projectId || needSave === true"
-        >Models</button
+        >Visualizations</button
       >
     </div>
 
