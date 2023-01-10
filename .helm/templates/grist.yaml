@@ -17,12 +17,14 @@ spec:
         # sidecar.istio.io/proxyCPU: "100m"    
         checksum/secret-grist-envs: '{{ include (print $.Template.BasePath "/secret-grist-envs.yaml") . | sha256sum }}'        
     spec:
+      imagePullSecrets:
+      - name: registrysecret     
       containers:
       - name: grist
         # resources:
         #   requests:
         #     cpu: "100m"      
-        image: gristlabs/grist:1.0.6
+        image: {{ .Values.werf.image.grist }}
         envFrom:
         - secretRef:
             name: grist-envs          

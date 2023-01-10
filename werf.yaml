@@ -29,3 +29,7 @@ dockerfile: tools/docker/integra.Dockerfile
 image: mcli
 dockerfile: tools/docker/mcli.Dockerfile
 
+---
+image: grist
+dockerfile: tools/docker/grist.Dockerfile
+
