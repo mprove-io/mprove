@@ -39,6 +39,7 @@ RUN sudo install devspace /usr/local/bin;
 
 # direnv
 RUN apt-get install -y direnv
+RUN apt-get install -y sqlite3
 
 RUN chsh -s /bin/zsh root \
   && chsh -s /bin/zsh node    

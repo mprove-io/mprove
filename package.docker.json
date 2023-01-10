@@ -47,6 +47,7 @@
     "@tweenjs/tween.js": "^18.6.4",
     "@types/d3-shape": "^3.0.1",
     "async-retry": "^1.3.1",
+    "axios": "^1.2.2",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "class-transformer": "0.3.1",
