@@ -115,6 +115,8 @@ export function checkTopUnknownParameters(
                 enums.ParameterEnum.SqlAlwaysWhereCalc.toString(),
                 enums.ParameterEnum.Udfs.toString(),
                 enums.ParameterEnum.Joins.toString(),
+                enums.ParameterEnum.CreateMetricsBy.toString(),
+                enums.ParameterEnum.MetricsSkip.toString(),
                 enums.ParameterEnum.Fields.toString()
               ].indexOf(parameter) < 0
             ) {

@@ -10,6 +10,7 @@ export enum LogTypeEnum {
   FilesAny = 'out_filesAny.log',
   Udfs = 'out_udfs.log',
   Models = 'out_models.log',
+  Metrics = 'out_metrics.log',
   Ds = 'out_dashboards.log',
   Vizs = 'out_vizs.log',
   Confs = 'out_confs.log',

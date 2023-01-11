@@ -4,13 +4,13 @@ import { enums } from '~common/barrels/enums';
 import { TimeData } from '../time-data';
 import { BaseMetric } from './base-metric';
 
-export class DataMetric extends BaseMetric {
+export class EntryMetric extends BaseMetric {
   @IsEnum(enums.TimeSpecEnum)
-  timeSpec: enums.TimeSpecEnum;
+  timeSpec?: enums.TimeSpecEnum;
 
   @ValidateNested()
   @Type(() => TimeData)
-  entries: TimeData[];
+  entries?: TimeData[];
 
   // @ValidateNested()
   // @Type(() => Filter)

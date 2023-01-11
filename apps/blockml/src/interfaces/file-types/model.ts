@@ -3,6 +3,7 @@ import { FieldAny } from '~blockml/interfaces/field/field-any';
 import { FileBasic } from '~blockml/interfaces/file/file-basic';
 import { FilterBricksDictionary } from '~blockml/interfaces/filter-bricks-dictionary';
 import { Join } from '~blockml/interfaces/join';
+import { MetricsByElement } from '../metrics-by-element';
 
 export interface Model extends FileBasic {
   model?: string;
@@ -40,6 +41,12 @@ export interface Model extends FileBasic {
 
   joins?: Join[];
   joins_line_num?: number;
+
+  create_metrics_by: MetricsByElement[];
+  create_metrics_by_line_num?: number;
+
+  metrics_skip: string[];
+  metrics_skip_line_num?: number;
 
   fields?: FieldAny[];
   fields_line_num?: number;

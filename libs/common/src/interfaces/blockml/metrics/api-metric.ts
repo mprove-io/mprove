@@ -3,7 +3,7 @@ import { BaseMetric } from './base-metric';
 
 export class ApiMetric extends BaseMetric {
   @IsString()
-  apiId: string;
+  apiId?: string;
 
   // @ValidateNested()
   // @Type(() => Filter)

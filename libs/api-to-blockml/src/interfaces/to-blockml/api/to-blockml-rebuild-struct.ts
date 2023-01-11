@@ -91,6 +91,8 @@ export class ToBlockmlRebuildStructResponsePayload {
   @Type(() => common.Viz)
   vizs: common.Viz[];
 
+  metrics: common.MetricAny[];
+
   @ValidateNested()
   @Type(() => common.Mconfig)
   mconfigs: common.Mconfig[];

@@ -3,10 +3,10 @@ import { BaseMetric } from './base-metric';
 
 export class SqlMetric extends BaseMetric {
   @IsString()
-  connection: string;
+  connection?: string;
 
   @IsString()
-  sql: string;
+  sql?: string;
 
   // @ValidateNested()
   // @Type(() => Filter)

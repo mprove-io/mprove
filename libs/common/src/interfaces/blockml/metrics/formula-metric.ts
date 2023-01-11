@@ -3,7 +3,7 @@ import { BaseMetric } from './base-metric';
 
 export class FormulaMetric extends BaseMetric {
   @IsString()
-  formula: string;
+  formula?: string;
 
   // @ValidateNested()
   // @Type(() => Filter)

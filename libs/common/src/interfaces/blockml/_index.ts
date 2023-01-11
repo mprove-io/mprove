@@ -10,6 +10,7 @@ export * from './metrics/api-metric';
 export * from './metrics/base-metric';
 export * from './metrics/entry-metric';
 export * from './metrics/formula-metric';
+export * from './metrics/metric-any';
 export * from './metrics/model-metric';
 export * from './metrics/sql-metric';
 export * from './model';

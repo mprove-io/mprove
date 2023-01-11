@@ -9,24 +9,24 @@ import { enums } from '~common/barrels/enums';
 
 export class BaseMetric {
   @IsString()
-  structId: string;
+  structId?: string;
 
   @IsEnum(enums.MetricTypeEnum)
-  type: enums.MetricTypeEnum;
+  type?: enums.MetricTypeEnum;
 
   @IsString()
-  metricId: string;
+  metricId?: string;
 
   @IsString()
-  label: string;
+  label?: string;
 
   @IsBoolean()
-  hidden: boolean;
+  hidden?: boolean;
 
   @IsOptional()
   @IsString()
   description?: string;
 
   @IsInt()
-  serverTs: number;
+  serverTs?: number;
 }

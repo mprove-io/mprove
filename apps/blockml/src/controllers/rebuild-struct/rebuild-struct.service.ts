@@ -60,6 +60,7 @@ export class RebuildStructService {
       models,
       dashboards,
       vizs,
+      metrics,
       mproveDirValue,
       weekStart,
       allowTimezones,
@@ -115,6 +116,7 @@ export class RebuildStructService {
       models: apiModels,
       dashboards: apiDashboards,
       vizs: apiVizs,
+      metrics: metrics,
       mconfigs: mconfigs,
       queries: queries,
       mproveDirValue: mproveDirValue,
@@ -192,6 +194,7 @@ export class RebuildStructService {
     let models: interfaces.Model[];
     let dashboards: interfaces.Dashboard[];
     let vizs: interfaces.Viz[];
+    let metrics: common.MetricAny[];
     let projectConfig: interfaces.ProjectConf;
 
     let yamlBuildItem = barBuilder.buildYaml(
@@ -220,6 +223,7 @@ export class RebuildStructService {
         models: [],
         dashboards: [],
         vizs: [],
+        metrics: [],
         mproveDirValue: undefined,
         weekStart: constants.PROJECT_CONFIG_WEEK_START,
         allowTimezones: helper.toBooleanFromLowercaseString(
@@ -435,6 +439,16 @@ export class RebuildStructService {
       this.cs
     );
 
+    metrics = barBuilder.buildMetric(
+      {
+        models: models,
+        structId: item.structId,
+        errors: errors,
+        caller: enums.CallerEnum.BuildMetric
+      },
+      this.cs
+    );
+
     barSpecial.logStruct(
       {
         errors: errors,
@@ -456,6 +470,7 @@ export class RebuildStructService {
       models: models,
       dashboards: dashboards,
       vizs: vizs,
+      metrics: metrics,
       mproveDirValue: projectConfig.mprove_dir,
       weekStart: projectConfig.week_start,
       allowTimezones: helper.toBooleanFromLowercaseString(

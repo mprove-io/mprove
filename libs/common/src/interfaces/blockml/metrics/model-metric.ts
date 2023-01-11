@@ -5,15 +5,15 @@ import { BaseMetric } from './base-metric';
 
 export class ModelMetric extends BaseMetric {
   @IsString()
-  modelId: string;
+  modelId?: string;
 
   @IsString()
-  fieldId: string;
+  fieldId?: string;
 
   @IsString()
-  timeId: string;
+  timestampId?: string;
 
   @ValidateNested()
   @Type(() => Filter)
-  fixedParameters: Filter[];
+  fixedParameters?: Filter[];
 }

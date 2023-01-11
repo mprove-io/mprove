@@ -24,6 +24,7 @@ export * from './filter-bricks-dictionary';
 export * from './gen-sql-item';
 export * from './gen-sql-pro-outcome';
 export * from './join';
+export * from './metrics-by-element';
 export * from './report';
 export * from './vars-sql';
 export * from './vars-sql-step';
