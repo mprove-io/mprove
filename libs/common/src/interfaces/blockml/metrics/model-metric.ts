@@ -11,7 +11,7 @@ export class ModelMetric extends BaseMetric {
   fieldId?: string;
 
   @IsString()
-  timestampId?: string;
+  timeFieldId?: string;
 
   @ValidateNested()
   @Type(() => Filter)

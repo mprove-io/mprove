@@ -21,17 +21,67 @@ export function createModelMetrics(
 
   let modelMetrics: common.ModelMetric[] = [];
 
-  item.models.forEach(x => {
+  item.models.forEach(model => {
     let errorsOnStart = item.errors.length;
 
-    x.fields.forEach(fields => {});
-    x.joins.forEach(join => {});
-
-    let modelMetric: common.ModelMetric;
-
-    if (errorsOnStart === item.errors.length) {
-      modelMetrics.push(modelMetric);
+    if (
+      common.isUndefined(model.create_metrics_by) ||
+      model.create_metrics_by.length === 0
+    ) {
+      return;
     }
+
+    model.create_metrics_by.forEach(element => {
+      model.fields
+        .filter(
+          y =>
+            [
+              common.FieldClassEnum.Measure,
+              common.FieldClassEnum.Calculation
+            ].indexOf(y.fieldClass) > -1
+        )
+        .forEach(modelField => {
+          let modelMetric: common.ModelMetric = {
+            metricId: `${model.name}_model_fields_${modelField.name}`,
+            modelId: model.name,
+            fieldId: `mf.${modelField.name}`,
+            timeFieldId: element.time,
+            fixedParameters: undefined,
+            structId: structId,
+            type: common.MetricTypeEnum.Model,
+            label: `${model.label} Model Fields ${modelField.label}`,
+            hidden: helper.toBooleanFromLowercaseString(modelField.hidden),
+            description: modelField.description,
+            serverTs: 1
+          };
+
+          if (errorsOnStart === item.errors.length) {
+            modelMetrics.push(modelMetric);
+          }
+        });
+
+      model.joins.forEach(join => {
+        join.view.fields.forEach(viewField => {
+          let modelMetric: common.ModelMetric = {
+            metricId: `${model.name}_${join.as}_${viewField.name}`,
+            modelId: model.name,
+            fieldId: `${join.as}.${viewField.name}`,
+            timeFieldId: element.time,
+            fixedParameters: undefined,
+            structId: structId,
+            type: common.MetricTypeEnum.Model,
+            label: `${model.label} ${join.label} ${viewField.label}`,
+            hidden: helper.toBooleanFromLowercaseString(viewField.hidden),
+            description: viewField.description,
+            serverTs: 1
+          };
+
+          if (errorsOnStart === item.errors.length) {
+            modelMetrics.push(modelMetric);
+          }
+        });
+      });
+    });
   });
 
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
