@@ -5,7 +5,7 @@
         <div class="flex w-full flex-row items-center">
           <div class="flex flex-row items-center space-x-5">
             <div
-              data-cy="modelTitle"
+              data-cy="metricsTitle"
               class="text-gray1 flex items-center self-center text-2xl font-semibold"
             >
               {{ pageTitle }}
@@ -35,22 +35,25 @@
             ></ui-switch> -->
           </div>
         </div>
+      </div>
 
-        <div class="mt-6 flex flex-grow flex-row">
-          <!-- <m-model-tree
-          class="flex w-1/4 flex-shrink-0"
-          (expandFilters)="expandFiltersPanel()"
-          (expandData)="expandDataPanel()"
-        ></m-model-tree> -->
+      <div class="mt-6 flex flex-grow flex-row">
+        <m-metrics-tree class="flex w-1/4 flex-shrink-0"></m-metrics-tree>
+
+        <div
+          class="ml-6 flex min-w-[2px] flex-grow flex-col space-y-6"
+          *ngIf="isShow === true"
+        >
+          <!-- ... -->
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- <div *ngIf="routerEvents$ | async"></div>
+<!-- <div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="model$ | async"></div>
 <div *ngIf="mq$ | async"></div>
 <div *ngIf="struct$ | async"></div>
 <div *ngIf="alias$ | async"></div> -->
-</div>

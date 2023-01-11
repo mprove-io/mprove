@@ -9,10 +9,11 @@ import { MonacoEditorModule } from 'ng-monaco-editor';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
+import { MetricsTreeComponent } from './metrics-tree/metrics-tree.component';
 import { MetricsComponent } from './metrics.component';
 
 @NgModule({
-  declarations: [MetricsComponent],
+  declarations: [MetricsComponent, MetricsTreeComponent],
   imports: [
     CommonModule,
     FormsModule,

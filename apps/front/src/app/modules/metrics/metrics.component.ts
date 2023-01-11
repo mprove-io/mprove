@@ -27,6 +27,8 @@ import { constants as frontConstants } from '~front/barrels/constants';
 export class MetricsComponent implements OnInit {
   pageTitle = frontConstants.METRICS_PAGE_TITLE;
 
+  isShow = true;
+
   constructor(
     private router: Router,
     private fb: FormBuilder,
