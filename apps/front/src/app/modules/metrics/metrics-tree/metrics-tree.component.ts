@@ -22,7 +22,9 @@ import { common } from '~front/barrels/common';
 export class MetricNode {
   id: string;
   isTop: boolean;
+  topLabel: string;
   isField: boolean;
+  isSelected: boolean;
   metric: common.MetricAny;
   children: MetricNode[];
 }
@@ -57,7 +59,9 @@ export class MetricsTreeComponent implements AfterViewInit {
         let metricNode: MetricNode = {
           id: metric.metricId,
           isTop: false,
+          topLabel: metric.topLabel,
           isField: true,
+          isSelected: false,
           metric: metric,
           children: []
         };
@@ -72,7 +76,9 @@ export class MetricsTreeComponent implements AfterViewInit {
           topNode = {
             id: metric.topNode,
             isTop: true,
+            topLabel: metric.topLabel,
             isField: false,
+            isSelected: false,
             metric: undefined,
             children: [metricNode]
           };

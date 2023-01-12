@@ -13,7 +13,9 @@ export function wrapToApiMetric(item: {
   return {
     structId: metric.struct_id,
     metricId: metric.metric_id,
+    partId: metric.part_id,
     topNode: metric.top_node,
+    topLabel: metric.top_label,
     // metric.type === common.MetricTypeEnum.Model
     //   ? metric.model_id
     //   : metric.type === common.MetricTypeEnum.Api
@@ -32,6 +34,7 @@ export function wrapToApiMetric(item: {
     // accessUsers: metric.access_users,
     // accessRoles: metric.access_roles,
     fieldId: metric.field_id,
+    fieldClass: metric.field_class,
     timeFieldId: metric.timefield_id,
     apiId: metric.api_id,
     timeSpec: metric.timespec,
@@ -40,6 +43,7 @@ export function wrapToApiMetric(item: {
     sql: metric.sql,
     connection: metric.connection_id,
     label: metric.label,
+    partLabel: metric.partLabel,
     hidden: common.enumToBoolean(metric.hidden),
     description: metric.description,
     serverTs: Number(metric.server_ts)

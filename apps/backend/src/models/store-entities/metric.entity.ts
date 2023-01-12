@@ -11,7 +11,13 @@ export class MetricEntity {
   metric_id: string; // name
 
   @Column({ type: constants.VARCHAR })
+  part_id: string;
+
+  @Column({ type: constants.VARCHAR })
   top_node: string;
+
+  @Column({ type: constants.VARCHAR })
+  top_label: string;
 
   // @Column({ type: constants.VARCHAR, nullable: true })
   // mid_node: string
@@ -27,6 +33,9 @@ export class MetricEntity {
 
   @Column({ type: constants.VARCHAR, nullable: true })
   field_id: string;
+
+  @Column({ type: constants.VARCHAR, nullable: true })
+  field_class: common.FieldClassEnum;
 
   @Column({ type: constants.VARCHAR, nullable: true })
   timefield_id: string;
@@ -57,6 +66,9 @@ export class MetricEntity {
 
   @Column({ type: constants.VARCHAR })
   label: string;
+
+  @Column({ type: constants.VARCHAR })
+  partLabel: string;
 
   // @Column({ type: constants.VARCHAR, nullable: true })
   // gr: string;

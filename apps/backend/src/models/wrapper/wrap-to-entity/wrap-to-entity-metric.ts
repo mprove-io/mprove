@@ -5,11 +5,14 @@ export function wrapToEntityMetric(x: common.MetricAny): entities.MetricEntity {
   return {
     struct_id: x.structId,
     metric_id: x.metricId,
+    part_id: x.partId,
     top_node: x.topNode,
+    top_label: x.topLabel,
     type: x.type,
     fixed_parameters: x.fixedParameters,
     model_id: x.modelId,
     field_id: x.fieldId,
+    field_class: x.fieldClass,
     timefield_id: x.timeFieldId,
     api_id: x.apiId,
     timespec: x.timeSpec,
@@ -18,6 +21,7 @@ export function wrapToEntityMetric(x: common.MetricAny): entities.MetricEntity {
     sql: x.sql,
     connection_id: x.connection,
     label: x.label,
+    partLabel: x.partLabel,
     hidden: common.booleanToEnum(x.hidden),
     description: x.description,
     server_ts: x.serverTs.toString()

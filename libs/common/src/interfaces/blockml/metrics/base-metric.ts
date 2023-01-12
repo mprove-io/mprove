@@ -18,13 +18,22 @@ export class BaseMetric {
   metricId?: string;
 
   @IsString()
+  partId?: string;
+
+  @IsString()
   topNode?: string;
+
+  @IsString()
+  topLabel?: string;
 
   // @IsString()
   // midNode?: string;
 
   @IsString()
   label?: string;
+
+  @IsString()
+  partLabel?: string;
 
   @IsBoolean()
   hidden?: boolean;

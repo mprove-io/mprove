@@ -36,21 +36,28 @@ export function createModelMetrics(
         .filter(
           y =>
             [
-              common.FieldClassEnum.Measure,
-              common.FieldClassEnum.Calculation
+              common.FieldClassEnum.Measure
+              // common.FieldClassEnum.Calculation
             ].indexOf(y.fieldClass) > -1
         )
         .forEach(modelField => {
+          let partId = `model_fields_${modelField.name}`;
+          let partLabel = `Model Fields ${modelField.label}`;
+
           let modelMetric: common.ModelMetric = {
-            metricId: `${model.name}_model_fields_${modelField.name}`,
+            metricId: `${model.name}_${partId}`,
+            partId: partId,
             modelId: model.name,
             topNode: model.name,
+            topLabel: model.label,
             fieldId: `mf.${modelField.name}`,
+            fieldClass: modelField.fieldClass,
             timeFieldId: element.time,
             fixedParameters: [],
             structId: structId,
             type: common.MetricTypeEnum.Model,
-            label: `${model.label} Model Fields ${modelField.label}`,
+            label: `${model.label} ${partLabel}`,
+            partLabel: partLabel,
             hidden: helper.toBooleanFromLowercaseString(modelField.hidden),
             description: modelField.description,
             serverTs: 1
@@ -62,26 +69,41 @@ export function createModelMetrics(
         });
 
       model.joins.forEach(join => {
-        join.view.fields.forEach(viewField => {
-          let modelMetric: common.ModelMetric = {
-            metricId: `${model.name}_${join.as}_${viewField.name}`,
-            modelId: model.name,
-            topNode: model.name,
-            fieldId: `${join.as}.${viewField.name}`,
-            timeFieldId: element.time,
-            fixedParameters: [],
-            structId: structId,
-            type: common.MetricTypeEnum.Model,
-            label: `${model.label} ${join.label} ${viewField.label}`,
-            hidden: helper.toBooleanFromLowercaseString(viewField.hidden),
-            description: viewField.description,
-            serverTs: 1
-          };
+        join.view.fields
+          .filter(
+            y =>
+              [
+                common.FieldClassEnum.Measure
+                // common.FieldClassEnum.Calculation
+              ].indexOf(y.fieldClass) > -1
+          )
+          .forEach(viewField => {
+            let partId = `${join.as}_${viewField.name}`;
+            let partLabel = `${join.label} ${viewField.label}`;
 
-          if (errorsOnStart === item.errors.length) {
-            modelMetrics.push(modelMetric);
-          }
-        });
+            let modelMetric: common.ModelMetric = {
+              metricId: `${model.name}_${partId}`,
+              partId: partId,
+              modelId: model.name,
+              topNode: model.name,
+              topLabel: model.label,
+              fieldId: `${join.as}.${viewField.name}`,
+              fieldClass: viewField.fieldClass,
+              timeFieldId: element.time,
+              fixedParameters: [],
+              structId: structId,
+              type: common.MetricTypeEnum.Model,
+              label: `${model.label} ${partLabel}`,
+              partLabel: partLabel,
+              hidden: helper.toBooleanFromLowercaseString(viewField.hidden),
+              description: viewField.description,
+              serverTs: 1
+            };
+
+            if (errorsOnStart === item.errors.length) {
+              modelMetrics.push(modelMetric);
+            }
+          });
       });
     });
   });

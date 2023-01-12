@@ -16,40 +16,20 @@
       >
         <div
           data-cy="metricsTreeItem"
-          class="flex w-full select-none flex-row pr-5"
+          class="flex w-full cursor-pointer select-none flex-row pr-5"
           [ngClass]="{
-            'cursor-pointer':
-              node.data.nodeClass !== nodeClassInfo &&
-              node.data.nodeClass !== nodeClassFilter,
-            'bg-blue2': node.data.nodeClass === nodeClassDimension,
-            'hover:bg-blue5':
-              node.data.nodeClass === nodeClassDimension && node.data.isField,
-            'bg-purple-100 hover:bg-purple-200':
-              node.data.nodeClass === nodeClassMeasure,
-            'bg-gray-100 hover:bg-gray-200':
-              node.data.nodeClass === nodeClassFilter,
-            'bg-green2 hover:bg-green1':
-              node.data.nodeClass === nodeClassCalculation,
-            'px-5': !node.data.isField
+            'hover:bg-blue2': node.data.isField === true,
+            'px-5': node.data.isField === false
           }"
           (click)="nodeOnClick(node)"
         >
           <div class="relative flex w-full flex-row items-center">
             <div class="flex min-w-[2px] flex-row items-center">
               <div
-                *ngIf="
-                  !node.data.isField && node.data.nodeClass !== nodeClassInfo
-                "
+                *ngIf="node.data.isField === false"
                 class="flex flex-row items-center space-x-1"
               >
-                <div
-                  class="flex items-center"
-                  [ngClass]="{
-                    'ml-2':
-                      node.data.nodeClass === nodeClassDimension &&
-                      node.data.isField === false
-                  }"
-                >
+                <div class="flex items-center">
                   <m-chevron-right-icon
                     *ngIf="!node.isExpanded && node.hasChildren"
                   ></m-chevron-right-icon>
@@ -64,10 +44,7 @@
                 *ngIf="node.data.isField === true"
                 class="mr-3 flex h-2 items-center"
                 [ngClass]="{
-                  'ml-4':
-                    !node.hasChildren &&
-                    node.parent?.data.nodeClass !== nodeClassDimension,
-                  'ml-10': node.parent?.data.nodeClass === nodeClassDimension
+                  'ml-4': node.hasChildren === false
                 }"
               >
                 <div
@@ -84,70 +61,22 @@
 
               <div class="text-gray1 ml-0 flex-grow truncate">
                 <span
-                  class="truncate"
-                  *ngIf="node.data.nodeClass === nodeClassInfo"
-                  class="ml-9 font-semibold"
-                >
-                  {{ node.data.metric?.label | uppercase }}
-                </span>
-
-                <span
                   class="truncate text-base"
-                  *ngIf="node.data.nodeClass !== nodeClassInfo"
                   [ngClass]="{
-                    ' font-semibold': node.data.fieldResult === fieldResultTs,
-                    'ml-3':
-                      node.hasChildren &&
-                      node.data.nodeClass !== nodeClassDimension,
-                    'ml-2':
-                      node.hasChildren &&
-                      node.data.nodeClass === nodeClassDimension
+                    'ml-3': node.hasChildren === true,
+                    'ml-5': node.hasChildren === false
                   }"
                 >
-                  {{ node.data.metric?.label | capitalize }}
+                  {{
+                    node.data.isField === true
+                      ? node.data.metric.partLabel
+                      : node.data.topLabel
+                  }}
                 </span>
               </div>
             </div>
 
             <div class="flex flex-grow"></div>
-
-            <button
-              *ngIf="node.data.isField === true"
-              type="button"
-              data-cy="filesTreeFilterButton"
-              class="group invisible ml-3 flex h-10 w-28 items-center justify-center rounded focus:outline-none [.group-bar:hover_&]:visible"
-              [ngClass]="{
-                'text-blue3': node.data.isFiltered === true,
-                'text-gray1': node.data.isFiltered === false
-              }"
-              (click)="filterField(node, $event)"
-            >
-              <div
-                class="flex h-8 flex-row items-center justify-start space-x-2 rounded px-3 group-hover:bg-white"
-              >
-                <div
-                  class="invisible flex w-[76px] flex-shrink-0 justify-start text-sm [.group-bar:hover_&]:visible"
-                  [ngClass]="{
-                    'text-blue3': node.data.isFiltered === true,
-                    'text-gray-400': node.data.isFiltered === false
-                  }"
-                  >{{ node.data.fieldResult | result }}</div
-                >
-
-                <m-filter-icon
-                  [ngClass]="{
-                    visible: node.data.isFiltered === true
-                  }"
-                ></m-filter-icon>
-              </div>
-            </button>
-
-            <!-- <div
-              *ngIf="node.data.isField === true"
-              class="invisible ml-2 flex [.group-bar:hover_&]:visible"
-            >
-              <m-field-options [node]="node"></m-field-options>
-            </div> -->
           </div>
         </div>
       </div>
