@@ -43,6 +43,8 @@ export const appControllers = [
   controllers.EditMemberController,
   controllers.GetMembersController,
 
+  controllers.GetMetricsController,
+
   controllers.GetModelController,
   controllers.GetModelsController,
 
