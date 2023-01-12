@@ -100,6 +100,7 @@ export class DbService {
         vizs,
         queries,
         models,
+        metrics,
         mconfigs,
         dashboards,
         notes
@@ -153,6 +154,10 @@ export class DbService {
 
       if (common.isDefined(models) && models.length > 0) {
         await manager.getRepository(entities.ModelEntity).insert(models);
+      }
+
+      if (common.isDefined(metrics) && metrics.length > 0) {
+        await manager.getRepository(entities.MetricEntity).insert(metrics);
       }
 
       if (common.isDefined(mconfigs) && mconfigs.length > 0) {
@@ -238,6 +243,7 @@ export class DbService {
         vizs,
         queries,
         models,
+        metrics,
         mconfigs,
         dashboards,
         notes
@@ -291,6 +297,10 @@ export class DbService {
 
       if (common.isDefined(models) && models.length > 0) {
         await manager.getRepository(entities.ModelEntity).save(models);
+      }
+
+      if (common.isDefined(metrics) && metrics.length > 0) {
+        await manager.getRepository(entities.MetricEntity).save(metrics);
       }
 
       if (common.isDefined(mconfigs) && mconfigs.length > 0) {

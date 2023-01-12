@@ -20,6 +20,7 @@ export * from './project-connection';
 export * from './query';
 export * from './report';
 export * from './sorting';
+export * from './time-data';
 export * from './udfs-dict';
 export * from './view';
 export * from './viz';

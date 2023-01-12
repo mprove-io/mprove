@@ -21,6 +21,7 @@ export class DeleteRecordsController {
     private dashboardsRepository: repositories.DashboardsRepository,
     private mconfigsRepository: repositories.MconfigsRepository,
     private modelsRepository: repositories.ModelsRepository,
+    private metricsRepository: repositories.MetricsRepository,
     private queriesRepository: repositories.QueriesRepository,
     private structsRepository: repositories.StructsRepository,
     private vizsRepository: repositories.VizsRepository,
@@ -160,11 +161,8 @@ export class DeleteRecordsController {
     }
     if (structIds.length > 0) {
       await this.modelsRepository.delete({ struct_id: In(structIds) });
-    }
-    if (structIds.length > 0) {
+      await this.metricsRepository.delete({ struct_id: In(structIds) });
       await this.mconfigsRepository.delete({ struct_id: In(structIds) });
-    }
-    if (structIds.length > 0) {
       await this.dashboardsRepository.delete({ struct_id: In(structIds) });
     }
     if (userIds.length > 0) {

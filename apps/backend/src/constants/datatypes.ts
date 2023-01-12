@@ -2,6 +2,7 @@ export const DASHBOARD_ID_VARCHAR = 'varchar';
 export const ERROR_ID_VARCHAR = 'varchar';
 export const MCONFIG_ID_VARCHAR = 'varchar';
 export const MODEL_ID_VARCHAR = 'varchar';
+export const METRIC_ID_VARCHAR = 'varchar';
 export const QUERY_ID_VARCHAR = 'varchar';
 export const STRUCT_ID_VARCHAR = 'varchar';
 export const VIEW_ID_VARCHAR = 'varchar';

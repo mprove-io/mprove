@@ -56,6 +56,7 @@ export class SeedRecordsController {
     let vizs: entities.VizEntity[] = [];
     let queries: entities.QueryEntity[] = [];
     let models: entities.ModelEntity[] = [];
+    let metrics: entities.MetricEntity[] = [];
     let mconfigs: entities.MconfigEntity[] = [];
     let dashboards: entities.DashboardEntity[] = [];
 
@@ -291,7 +292,8 @@ export class SeedRecordsController {
             mconfigs: mconfigsApi,
             queries: queriesApi,
             dashboards: dashboardsApi,
-            models: modelsApi
+            models: modelsApi,
+            metrics: metricsApi
           } = blockmlRebuildStructResponse.payload;
 
           let struct = maker.makeStruct({
@@ -354,6 +356,11 @@ export class SeedRecordsController {
           models = [
             ...models,
             ...modelsApi.map(z => wrapper.wrapToEntityModel(z))
+          ];
+
+          metrics = [
+            ...metrics,
+            ...metricsApi.map(z => wrapper.wrapToEntityMetric(z))
           ];
 
           queries = [
@@ -428,6 +435,7 @@ export class SeedRecordsController {
         vizs: vizs,
         queries: queries,
         models: models,
+        metrics: metrics,
         mconfigs: mconfigs,
         dashboards: dashboards
       }

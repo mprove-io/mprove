@@ -8,6 +8,7 @@ export * from './ev.entity';
 export * from './idemp.entity';
 export * from './mconfig.entity';
 export * from './member.entity';
+export * from './metric.entity';
 export * from './model.entity';
 export * from './note.entity';
 export * from './org.entity';
