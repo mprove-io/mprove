@@ -11,6 +11,12 @@ export class MetricEntity {
   metric_id: string; // name
 
   @Column({ type: constants.VARCHAR })
+  top_node: string;
+
+  // @Column({ type: constants.VARCHAR, nullable: true })
+  // mid_node: string
+
+  @Column({ type: constants.VARCHAR })
   type: common.MetricTypeEnum;
 
   @Column({ type: constants.JSON })

@@ -5,6 +5,7 @@ export function wrapToEntityMetric(x: common.MetricAny): entities.MetricEntity {
   return {
     struct_id: x.structId,
     metric_id: x.metricId,
+    top_node: x.topNode,
     type: x.type,
     fixed_parameters: x.fixedParameters,
     model_id: x.modelId,

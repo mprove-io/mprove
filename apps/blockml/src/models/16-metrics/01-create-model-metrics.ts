@@ -44,6 +44,7 @@ export function createModelMetrics(
           let modelMetric: common.ModelMetric = {
             metricId: `${model.name}_model_fields_${modelField.name}`,
             modelId: model.name,
+            topNode: model.name,
             fieldId: `mf.${modelField.name}`,
             timeFieldId: element.time,
             fixedParameters: undefined,
@@ -65,6 +66,7 @@ export function createModelMetrics(
           let modelMetric: common.ModelMetric = {
             metricId: `${model.name}_${join.as}_${viewField.name}`,
             modelId: model.name,
+            topNode: model.name,
             fieldId: `${join.as}.${viewField.name}`,
             timeFieldId: element.time,
             fixedParameters: undefined,

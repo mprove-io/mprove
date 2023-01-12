@@ -18,6 +18,12 @@ export class BaseMetric {
   metricId?: string;
 
   @IsString()
+  topNode?: string;
+
+  // @IsString()
+  // midNode?: string;
+
+  @IsString()
   label?: string;
 
   @IsBoolean()

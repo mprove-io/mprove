@@ -13,6 +13,18 @@ export function wrapToApiMetric(item: {
   return {
     structId: metric.struct_id,
     metricId: metric.metric_id,
+    topNode: metric.top_node,
+    // metric.type === common.MetricTypeEnum.Model
+    //   ? metric.model_id
+    //   : metric.type === common.MetricTypeEnum.Api
+    //   ? metric.api_id
+    //   : metric.type === common.MetricTypeEnum.Formula
+    //   ? 'Formula'
+    //   : metric.type === common.MetricTypeEnum.Entry
+    //   ? 'Entry'
+    //   : metric.type === common.MetricTypeEnum.Sql
+    //   ? 'Sql'
+    //   : undefined,
     // hasAccess: hasAccess,
     type: metric.type,
     fixedParameters: metric.fixed_parameters,
