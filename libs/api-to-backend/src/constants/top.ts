@@ -162,6 +162,9 @@ export const nameToClass = {
   [enums.ToBackendRequestInfoNameEnum.ToBackendValidateFiles]:
     interfaces.ToBackendValidateFilesRequest,
   //
+  [enums.ToBackendRequestInfoNameEnum.ToBackendGetMetrics]:
+    interfaces.ToBackendGetMetricsRequest,
+  //
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetModels]:
     interfaces.ToBackendGetModelsRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetModel]:
