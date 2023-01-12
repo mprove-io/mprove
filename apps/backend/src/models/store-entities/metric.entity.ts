@@ -7,7 +7,7 @@ export class MetricEntity {
   @PrimaryColumn({ type: constants.STRUCT_ID_VARCHAR, length: 32 })
   struct_id: string; // composite
 
-  @PrimaryColumn({ type: constants.METRIC_ID_VARCHAR, length: 32 })
+  @PrimaryColumn({ type: constants.METRIC_ID_VARCHAR, length: 128 })
   metric_id: string; // name
 
   @Column({ type: constants.VARCHAR })

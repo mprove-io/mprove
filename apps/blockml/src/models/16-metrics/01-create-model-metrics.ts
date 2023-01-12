@@ -25,13 +25,13 @@ export function createModelMetrics(
     let errorsOnStart = item.errors.length;
 
     if (
-      common.isUndefined(model.create_metrics_by) ||
-      model.create_metrics_by.length === 0
+      common.isUndefined(model.build_metrics) ||
+      model.build_metrics.length === 0
     ) {
       return;
     }
 
-    model.create_metrics_by.forEach(element => {
+    model.build_metrics.forEach(element => {
       model.fields
         .filter(
           y =>
@@ -47,7 +47,7 @@ export function createModelMetrics(
             topNode: model.name,
             fieldId: `mf.${modelField.name}`,
             timeFieldId: element.time,
-            fixedParameters: undefined,
+            fixedParameters: [],
             structId: structId,
             type: common.MetricTypeEnum.Model,
             label: `${model.label} Model Fields ${modelField.label}`,
@@ -69,7 +69,7 @@ export function createModelMetrics(
             topNode: model.name,
             fieldId: `${join.as}.${viewField.name}`,
             timeFieldId: element.time,
-            fixedParameters: undefined,
+            fixedParameters: [],
             structId: structId,
             type: common.MetricTypeEnum.Model,
             label: `${model.label} ${join.label} ${viewField.label}`,

@@ -2,7 +2,7 @@
   <tree-root
     class="mt-4 h-2 w-full"
     #itemsTree
-    [nodes]="nodesExtra"
+    [nodes]="nodes"
     [options]="treeOptions"
     (initialized)="treeOnInitialized()"
     (updateData)="treeOnUpdateData()"
@@ -11,15 +11,11 @@
       <div
         class="group-bar flex h-11 w-full flex-row"
         [ngClass]="{
-          'pl-6 pr-5':
-            node.data.nodeClass === nodeClassDimension ||
-            node.data.nodeClass === nodeClassMeasure ||
-            node.data.nodeClass === nodeClassCalculation ||
-            node.data.nodeClass === nodeClassFilter
+          'pl-6 pr-5': node.data.isField === true
         }"
       >
         <div
-          data-cy="modelTreeItem"
+          data-cy="metricsTreeItem"
           class="flex w-full select-none flex-row pr-5"
           [ngClass]="{
             'cursor-pointer':
@@ -92,7 +88,7 @@
                   *ngIf="node.data.nodeClass === nodeClassInfo"
                   class="ml-9 font-semibold"
                 >
-                  {{ node.data.label | uppercase }}
+                  {{ node.data.metric?.label | uppercase }}
                 </span>
 
                 <span
@@ -108,7 +104,7 @@
                       node.data.nodeClass === nodeClassDimension
                   }"
                 >
-                  {{ node.data.label | capitalize }}
+                  {{ node.data.metric?.label | capitalize }}
                 </span>
               </div>
             </div>
@@ -159,5 +155,5 @@
   </tree-root>
 </div>
 
-<!-- <div *ngIf="model$ | async"></div> -->
+<div *ngIf="metrics$ | async"></div>
 <!-- <div *ngIf="mconfig$ | async"></div> -->

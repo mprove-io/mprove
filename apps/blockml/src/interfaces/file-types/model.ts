@@ -42,11 +42,11 @@ export interface Model extends FileBasic {
   joins?: Join[];
   joins_line_num?: number;
 
-  create_metrics_by?: MetricsByElement[];
-  create_metrics_by_line_num?: number;
+  build_metrics?: MetricsByElement[];
+  build_metrics_line_num?: number;
 
-  metrics_skip?: string[];
-  metrics_skip_line_num?: number;
+  skip_metrics?: string[];
+  skip_metrics_line_num?: number;
 
   fields?: FieldAny[];
   fields_line_num?: number;

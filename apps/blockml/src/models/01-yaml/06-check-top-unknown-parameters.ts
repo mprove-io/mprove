@@ -244,6 +244,8 @@ export function checkTopUnknownParameters(
             enums.ParameterEnum.Udfs.toString(),
             enums.ParameterEnum.Fields.toString(),
             enums.ParameterEnum.Reports.toString(),
+            enums.ParameterEnum.BuildMetrics.toString(),
+            enums.ParameterEnum.SkipMetrics.toString(),
             enums.ParameterEnum.Joins.toString(),
             enums.ParameterEnum.AccessUsers.toString(),
             enums.ParameterEnum.AccessRoles.toString()

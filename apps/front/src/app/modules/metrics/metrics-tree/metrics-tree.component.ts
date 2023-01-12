@@ -11,20 +11,20 @@ import {
   TreeComponent,
   TreeNode
 } from '@bugsplat/angular-tree-component';
-import { take, tap } from 'rxjs/operators';
-import { setChartFields } from '~front/app/functions/set-chart-fields';
-import { setChartTitleOnSelectChange } from '~front/app/functions/set-chart-title-on-select-change';
-import { sortChartFieldsOnSelectChange } from '~front/app/functions/sort-chart-fields-on-select-change';
-import { ModelQuery } from '~front/app/queries/model.query';
+import { tap } from 'rxjs/operators';
+import { MetricsQuery, MetricsState } from '~front/app/queries/metrics.query';
 import { MqQuery } from '~front/app/queries/mq.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { StructService } from '~front/app/services/struct.service';
 import { common } from '~front/barrels/common';
 
-export class MetricsNodeExtra extends common.ModelNode {
-  isSelected: boolean;
-  isFiltered: boolean;
+export class MetricNode {
+  id: string;
+  isTop: boolean;
+  isField: boolean;
+  metric: common.MetricAny;
+  children: MetricNode[];
 }
 
 @Component({
@@ -40,7 +40,7 @@ export class MetricsTreeComponent implements AfterViewInit {
   nodeClassFilter = common.FieldClassEnum.Filter;
   fieldResultTs = common.FieldResultEnum.Ts;
 
-  nodesExtra: MetricsNodeExtra[] = [];
+  nodes: MetricNode[] = [];
 
   @Output()
   expandFilters = new EventEmitter();
@@ -48,14 +48,43 @@ export class MetricsTreeComponent implements AfterViewInit {
   @Output()
   expandData = new EventEmitter();
 
-  // model: ModelState;
-  // model$ = this.modelQuery.select().pipe(
-  //   tap(x => {
-  //     this.model = x;
-  //     this.makeNodesExtra();
-  //     this.cd.detectChanges();
-  //   })
-  // );
+  metrics: MetricsState;
+  metrics$ = this.metricsQuery.select().pipe(
+    tap(x => {
+      let nodes: MetricNode[] = [];
+
+      x.metrics.forEach(metric => {
+        let metricNode: MetricNode = {
+          id: metric.metricId,
+          isTop: false,
+          isField: true,
+          metric: metric,
+          children: []
+        };
+
+        let topNode: MetricNode = nodes.find(
+          (node: any) => node.id === metric.topNode
+        );
+
+        if (common.isDefined(topNode)) {
+          topNode.children.push(metricNode);
+        } else {
+          topNode = {
+            id: metric.topNode,
+            isTop: true,
+            isField: false,
+            metric: undefined,
+            children: [metricNode]
+          };
+
+          nodes.push(topNode);
+        }
+      });
+
+      this.nodes = nodes;
+      this.cd.detectChanges();
+    })
+  );
 
   // mconfig: common.MconfigX;
   // mconfig$ = this.mqQuery.mconfig$.pipe(
@@ -79,7 +108,7 @@ export class MetricsTreeComponent implements AfterViewInit {
   @ViewChild('itemsTree') itemsTree: TreeComponent;
 
   constructor(
-    private modelQuery: ModelQuery,
+    private metricsQuery: MetricsQuery,
     private cd: ChangeDetectorRef,
     private mqQuery: MqQuery,
     private structService: StructService,
@@ -120,43 +149,36 @@ export class MetricsTreeComponent implements AfterViewInit {
   }
 
   selectField(node: TreeNode) {
-    let newMconfig = this.structService.makeMconfig();
-
-    if (node.data.isSelected === true) {
-      newMconfig = this.mconfigService.removeField({
-        newMconfig,
-        fieldId: node.data.id
-      });
-    } else {
-      newMconfig.select = [...newMconfig.select, node.data.id];
-    }
-
-    this.expandData.emit();
-
-    let fields: common.ModelField[];
-    this.modelQuery.fields$
-      .pipe(
-        tap(x => (fields = x)),
-        take(1)
-      )
-      .subscribe();
-
-    newMconfig = setChartTitleOnSelectChange({
-      newMconfig: newMconfig,
-      fields: fields
-    });
-
-    newMconfig = setChartFields({
-      newMconfig: newMconfig,
-      fields: fields
-    });
-
-    newMconfig = sortChartFieldsOnSelectChange({
-      newMconfig: newMconfig,
-      fields: fields
-    });
-
-    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+    // let newMconfig = this.structService.makeMconfig();
+    // if (node.data.isSelected === true) {
+    //   newMconfig = this.mconfigService.removeField({
+    //     newMconfig,
+    //     fieldId: node.data.id
+    //   });
+    // } else {
+    //   newMconfig.select = [...newMconfig.select, node.data.id];
+    // }
+    // this.expandData.emit();
+    // let fields: common.ModelField[];
+    // this.modelQuery.fields$
+    //   .pipe(
+    //     tap(x => (fields = x)),
+    //     take(1)
+    //   )
+    //   .subscribe();
+    // newMconfig = setChartTitleOnSelectChange({
+    //   newMconfig: newMconfig,
+    //   fields: fields
+    // });
+    // newMconfig = setChartFields({
+    //   newMconfig: newMconfig,
+    //   fields: fields
+    // });
+    // newMconfig = sortChartFieldsOnSelectChange({
+    //   newMconfig: newMconfig,
+    //   fields: fields
+    // });
+    // this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 
   filterField(node: TreeNode, event: MouseEvent) {

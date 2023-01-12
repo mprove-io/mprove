@@ -57,6 +57,7 @@ import { RepoStructFilesResolver } from './resolvers/repo-struct-files.resolver'
 import { RepoStructResolver } from './resolvers/repo-struct.resolver';
 import { StructDashboardResolver } from './resolvers/struct-dashboard.resolver';
 import { StructDashboardsResolver } from './resolvers/struct-dashboards.resolver';
+import { StructMetricsResolver } from './resolvers/struct-metrics.resolver';
 import { StructModelResolver } from './resolvers/struct-model.resolver';
 import { StructModelsResolver } from './resolvers/struct-models.resolver';
 import { StructVizsResolver } from './resolvers/struct-vizs.resolver';
@@ -267,7 +268,7 @@ const routes: Routes = [
                               common.PATH_METRICS +
                               `/:${common.PARAMETER_REP_ID}`,
                             resolve: [
-                              StructModelsResolver
+                              StructMetricsResolver
                               // , StructRepResolver
                             ]
                           },
