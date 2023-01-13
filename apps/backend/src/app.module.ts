@@ -278,6 +278,11 @@ export class AppModule implements OnModuleInit {
         let firstProjectId =
           this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
+        let firstProjectName =
+          this.cs.get<interfaces.Config['firstProjectName']>(
+            'firstProjectName'
+          );
+
         let firstProjectSeedConnections = this.cs.get<
           interfaces.Config['firstProjectSeedConnections']
         >('firstProjectSeedConnections');
@@ -513,7 +518,7 @@ export class AppModule implements OnModuleInit {
 
             firstProject = await this.projectsService.addProject({
               orgId: firstOrg.org_id,
-              name: common.FIRST_PROJECT_NAME,
+              name: firstProjectName,
               user: firstUser,
               traceId: common.makeId(),
               projectId: firstProjectId,

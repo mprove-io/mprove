@@ -27,7 +27,6 @@ export const NODEGIT_PATH_NOT_EXIST_IN_TREE =
   'does not exist in the given tree';
 
 export const FIRST_ORG_NAME = 'demo';
-export const FIRST_PROJECT_NAME = 'p1';
 export const RESTRICTED_USER_ALIAS = 'demo-user';
 
 export const README_FILE_NAME = 'readme.md';

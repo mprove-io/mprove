@@ -33,6 +33,9 @@ export class Config {
   @IsString()
   firstProjectId?: string;
 
+  @IsString()
+  firstProjectName?: string;
+
   @IsEnum(common.ProjectRemoteTypeEnum)
   firstProjectRemoteType?: common.ProjectRemoteTypeEnum;
 

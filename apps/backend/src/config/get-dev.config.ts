@@ -46,6 +46,10 @@ export function getDevConfig(envFilePath: any) {
     firstProjectId:
       process.env.BACKEND_FIRST_PROJECT_ID || envFile.BACKEND_FIRST_PROJECT_ID,
 
+    firstProjectName:
+      process.env.BACKEND_FIRST_PROJECT_NAME ||
+      envFile.BACKEND_FIRST_PROJECT_NAME,
+
     firstProjectRemoteType: <common.ProjectRemoteTypeEnum>(
       (process.env.BACKEND_FIRST_PROJECT_REMOTE_TYPE ||
         envFile.BACKEND_FIRST_PROJECT_REMOTE_TYPE)
