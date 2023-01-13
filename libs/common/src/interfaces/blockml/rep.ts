@@ -11,15 +11,15 @@ export class Rep {
   @IsString()
   title: string;
 
-  @IsEnum(enums.TimeSpecEnum)
-  timeSpec: enums.TimeSpecEnum;
-
   @IsString()
   timezone: string;
 
+  @IsEnum(enums.TimeSpecEnum)
+  timeSpec: enums.TimeSpecEnum;
+
   @ValidateNested()
   @Type(() => Fraction)
-  timeFilterFraction: Fraction;
+  timeRange: Fraction;
 
   @ValidateNested()
   @Type(() => Row)

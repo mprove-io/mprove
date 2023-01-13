@@ -4,14 +4,14 @@ import { Filter } from './filter';
 
 export class Row {
   @IsString()
-  recId: string;
+  rowId: string;
+
+  @IsString()
+  metricId: string;
 
   @ValidateNested()
   @Type(() => Filter)
   params: Filter[];
-
-  @IsString()
-  metricId: string;
 
   // @ValidateNested()
   // @Type(() => TimeData)
