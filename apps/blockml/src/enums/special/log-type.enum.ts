@@ -12,6 +12,8 @@ export enum LogTypeEnum {
   Models = 'out_models.log',
   Metrics = 'out_metrics.log',
   Ds = 'out_dashboards.log',
+  Reps = 'out_reps.log',
+  Apis = 'out_apis.log',
   Vizs = 'out_vizs.log',
   Confs = 'out_confs.log',
   ProjectConf = 'out_project_conf.log',

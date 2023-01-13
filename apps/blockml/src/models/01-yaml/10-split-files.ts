@@ -23,6 +23,9 @@ export function splitFiles(
   let views: interfaces.View[] = [];
   let models: interfaces.Model[] = [];
   let dashboards: interfaces.Dashboard[] = [];
+  let reps: interfaces.Rep[] = [];
+  let metrics: interfaces.Metric[] = [];
+  let apis: interfaces.Api[] = [];
   let vizs: interfaces.Viz[] = [];
   let confs: interfaces.ProjectConf[] = [];
 
@@ -174,6 +177,102 @@ export function splitFiles(
         break;
       }
 
+      case common.FileExtensionEnum.Rep: {
+        if (file.name === file.report + common.FileExtensionEnum.Rep) {
+          delete file.ext;
+          delete file.name;
+          delete file.path;
+
+          let newRepOptions: interfaces.Rep = {
+            name: file.report,
+            fileName: fileName,
+            filePath: filePath,
+            fileExt: fileExt
+          };
+
+          reps.push(Object.assign(file, newRepOptions));
+        } else {
+          item.errors.push(
+            new BmError({
+              title: enums.ErTitleEnum.WRONG_REP_NAME,
+              message: `filename ${file.name} does not match "report: ${file.report}"`,
+              lines: [
+                {
+                  line: file.report_line_num,
+                  name: file.name,
+                  path: file.path
+                }
+              ]
+            })
+          );
+        }
+        break;
+      }
+
+      case common.FileExtensionEnum.Api: {
+        if (file.name === file.api + common.FileExtensionEnum.Api) {
+          delete file.ext;
+          delete file.name;
+          delete file.path;
+
+          let newApiOptions: interfaces.Api = {
+            name: file.api,
+            fileName: fileName,
+            filePath: filePath,
+            fileExt: fileExt
+          };
+
+          apis.push(Object.assign(file, newApiOptions));
+        } else {
+          item.errors.push(
+            new BmError({
+              title: enums.ErTitleEnum.WRONG_API_NAME,
+              message: `filename ${file.name} does not match "api: ${file.api}"`,
+              lines: [
+                {
+                  line: file.api_line_num,
+                  name: file.name,
+                  path: file.path
+                }
+              ]
+            })
+          );
+        }
+        break;
+      }
+
+      case common.FileExtensionEnum.Metric: {
+        if (file.name === file.metric + common.FileExtensionEnum.Metric) {
+          delete file.ext;
+          delete file.name;
+          delete file.path;
+
+          let newMetricOptions: interfaces.Metric = {
+            name: file.metric,
+            fileName: fileName,
+            filePath: filePath,
+            fileExt: fileExt
+          };
+
+          metrics.push(Object.assign(file, newMetricOptions));
+        } else {
+          item.errors.push(
+            new BmError({
+              title: enums.ErTitleEnum.WRONG_METRIC_NAME,
+              message: `filename ${file.name} does not match "metric: ${file.metric}"`,
+              lines: [
+                {
+                  line: file.metric_line_num,
+                  name: file.name,
+                  path: file.path
+                }
+              ]
+            })
+          );
+        }
+        break;
+      }
+
       case common.FileExtensionEnum.Vis: {
         if (file.name === file.vis + common.FileExtensionEnum.Vis) {
           delete file.ext;
@@ -228,20 +327,26 @@ export function splitFiles(
     }
   });
 
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Apis, apis);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Ds, dashboards);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Confs, confs);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Metrics, metrics);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Models, models);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Reps, reps);
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Udfs, udfs);
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Views, views);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Models, models);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Ds, dashboards);
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Vizs, vizs);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Confs, confs);
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
 
   return {
+    apis: apis,
+    dashboards: dashboards,
+    confs: confs,
+    metrics: metrics,
+    models: models,
+    reps: reps,
     udfs: udfs,
     views: views,
-    models: models,
-    dashboards: dashboards,
-    vizs: vizs,
-    confs: confs
+    vizs: vizs
   };
 }

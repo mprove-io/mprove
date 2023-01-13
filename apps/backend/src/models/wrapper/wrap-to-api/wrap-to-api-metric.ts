@@ -12,24 +12,14 @@ export function wrapToApiMetric(item: {
 
   return {
     structId: metric.struct_id,
+    type: metric.type,
+    filePath: metric.file_path,
     metricId: metric.metric_id,
     partId: metric.part_id,
     topNode: metric.top_node,
     topLabel: metric.top_label,
-    // metric.type === common.MetricTypeEnum.Model
-    //   ? metric.model_id
-    //   : metric.type === common.MetricTypeEnum.Api
-    //   ? metric.api_id
-    //   : metric.type === common.MetricTypeEnum.Formula
-    //   ? 'Formula'
-    //   : metric.type === common.MetricTypeEnum.Entry
-    //   ? 'Entry'
-    //   : metric.type === common.MetricTypeEnum.Sql
-    //   ? 'Sql'
-    //   : undefined,
     // hasAccess: hasAccess,
-    type: metric.type,
-    fixedParameters: metric.fixed_parameters,
+    params: metric.params,
     modelId: metric.model_id,
     // accessUsers: metric.access_users,
     // accessRoles: metric.access_roles,
@@ -43,8 +33,7 @@ export function wrapToApiMetric(item: {
     sql: metric.sql,
     connection: metric.connection_id,
     label: metric.label,
-    partLabel: metric.partLabel,
-    hidden: common.enumToBoolean(metric.hidden),
+    partLabel: metric.part_label,
     description: metric.description,
     serverTs: Number(metric.server_ts)
   };

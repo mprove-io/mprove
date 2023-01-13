@@ -1,6 +1,4 @@
-import { Type } from 'class-transformer';
-import { IsString, ValidateNested } from 'class-validator';
-import { Filter } from './filter';
+import { IsString } from 'class-validator';
 
 export class Row {
   @IsString()
@@ -9,9 +7,7 @@ export class Row {
   @IsString()
   metricId: string;
 
-  @ValidateNested()
-  @Type(() => Filter)
-  params: Filter[];
+  params: any[];
 
   // @ValidateNested()
   // @Type(() => TimeData)

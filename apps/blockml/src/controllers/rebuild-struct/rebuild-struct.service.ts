@@ -55,12 +55,14 @@ export class RebuildStructService {
 
     let {
       errors,
+      apis,
+      dashboards,
+      metrics,
+      models,
+      reps,
       udfsDict,
       views,
-      models,
-      dashboards,
       vizs,
-      metrics,
       mproveDirValue,
       weekStart,
       allowTimezones,
@@ -81,6 +83,8 @@ export class RebuildStructService {
     let apiErrors = barWrapper.wrapErrors({ errors: errors });
 
     let apiViews = barWrapper.wrapViews({ views: views });
+    let apiReps = barWrapper.wrapReps({ reps: reps });
+    let apiApis = barWrapper.wrapApis({ apis: apis });
 
     let apiModels = barWrapper.wrapModels({
       structId: structId,
@@ -115,6 +119,8 @@ export class RebuildStructService {
       views: apiViews,
       models: apiModels,
       dashboards: apiDashboards,
+      apis: apiApis,
+      reps: apiReps,
       vizs: apiVizs,
       metrics: metrics,
       mconfigs: mconfigs,
@@ -189,12 +195,14 @@ export class RebuildStructService {
   }) {
     //
     let errors: BmError[] = [];
+    let apis: interfaces.Api[];
+    let dashboards: interfaces.Dashboard[];
+    let metrics: interfaces.Metric[];
+    let models: interfaces.Model[];
+    let reps: interfaces.Rep[];
     let udfs: interfaces.Udf[];
     let views: interfaces.View[];
-    let models: interfaces.Model[];
-    let dashboards: interfaces.Dashboard[];
     let vizs: interfaces.Viz[];
-    let metrics: common.MetricAny[];
     let projectConfig: interfaces.ProjectConf;
 
     let yamlBuildItem = barBuilder.buildYaml(
@@ -208,22 +216,27 @@ export class RebuildStructService {
       },
       this.cs
     );
+    apis = yamlBuildItem.apis;
+    dashboards = yamlBuildItem.dashboards;
+    metrics = yamlBuildItem.metrics;
+    models = yamlBuildItem.models;
+    reps = yamlBuildItem.reps;
     udfs = yamlBuildItem.udfs;
     views = yamlBuildItem.views;
-    models = yamlBuildItem.models;
-    dashboards = yamlBuildItem.dashboards;
     vizs = yamlBuildItem.vizs;
     projectConfig = yamlBuildItem.projectConfig;
 
     if (common.isUndefined(projectConfig)) {
       return {
         errors: errors,
+        apis: [],
+        dashboards: [],
+        metrics: [],
+        models: [],
+        reps: [],
         udfsDict: {},
         views: [],
-        models: [],
-        dashboards: [],
         vizs: [],
-        metrics: [],
         mproveDirValue: undefined,
         weekStart: constants.PROJECT_CONFIG_WEEK_START,
         allowTimezones: helper.toBooleanFromLowercaseString(
@@ -439,8 +452,9 @@ export class RebuildStructService {
       this.cs
     );
 
-    metrics = barBuilder.buildMetric(
+    let commonMetrics = barBuilder.buildMetric(
       {
+        metrics: metrics,
         models: models,
         structId: item.structId,
         errors: errors,
@@ -453,9 +467,12 @@ export class RebuildStructService {
       {
         errors: errors,
         udfsDict: udfsDict,
+        apis: apis,
         views: views,
         models: models,
+        metrics: commonMetrics,
         dashboards: dashboards,
+        reps: reps,
         vizs: vizs,
         structId: item.structId,
         caller: enums.CallerEnum.RebuildStruct
@@ -465,12 +482,14 @@ export class RebuildStructService {
 
     return {
       errors: errors,
-      udfsDict: udfsDict,
-      views: views,
-      models: models,
+      apis: apis,
       dashboards: dashboards,
-      vizs: vizs,
       metrics: metrics,
+      models: models,
+      udfsDict: udfsDict,
+      reps: reps,
+      views: views,
+      vizs: vizs,
       mproveDirValue: projectConfig.mprove_dir,
       weekStart: projectConfig.week_start,
       allowTimezones: helper.toBooleanFromLowercaseString(

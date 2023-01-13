@@ -7,5 +7,5 @@ export class FormulaMetric extends BaseMetric {
 
   // @ValidateNested()
   // @Type(() => Filter)
-  // fixedParameters: Filter[];
+  // params: Filter[];
 }

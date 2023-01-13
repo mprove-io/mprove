@@ -7,29 +7,41 @@ export class MetricEntity {
   @PrimaryColumn({ type: constants.STRUCT_ID_VARCHAR, length: 32 })
   struct_id: string; // composite
 
-  @PrimaryColumn({ type: constants.METRIC_ID_VARCHAR, length: 128 })
-  metric_id: string; // name
+  @Column({ type: constants.TEXT })
+  file_path: string;
 
   @Column({ type: constants.VARCHAR })
-  part_id: string;
+  type: common.MetricTypeEnum;
+
+  @PrimaryColumn({ type: constants.METRIC_ID_VARCHAR, length: 128 })
+  metric_id: string; // name
 
   @Column({ type: constants.VARCHAR })
   top_node: string;
 
   @Column({ type: constants.VARCHAR })
-  top_label: string;
-
-  // @Column({ type: constants.VARCHAR, nullable: true })
-  // mid_node: string
+  part_id: string;
 
   @Column({ type: constants.VARCHAR })
-  type: common.MetricTypeEnum;
+  label: string;
+
+  @Column({ type: constants.VARCHAR })
+  top_label: string;
+
+  @Column({ type: constants.VARCHAR })
+  part_label: string;
+
+  @Column({ type: constants.VARCHAR, nullable: true })
+  timespec: common.TimeSpecEnum;
 
   @Column({ type: constants.JSON })
-  fixed_parameters: any;
+  params: any[];
 
   @Column({ type: constants.VARCHAR, nullable: true })
   model_id: string;
+
+  @Column({ type: constants.VARCHAR, nullable: true })
+  timefield_id: string;
 
   @Column({ type: constants.VARCHAR, nullable: true })
   field_id: string;
@@ -38,13 +50,7 @@ export class MetricEntity {
   field_class: common.FieldClassEnum;
 
   @Column({ type: constants.VARCHAR, nullable: true })
-  timefield_id: string;
-
-  @Column({ type: constants.VARCHAR, nullable: true })
   api_id: string;
-
-  @Column({ type: constants.VARCHAR, nullable: true })
-  timespec: common.TimeSpecEnum;
 
   @Column({ type: constants.JSON, nullable: true })
   entries: common.TimeData[];
@@ -57,24 +63,6 @@ export class MetricEntity {
 
   @Column({ type: constants.VARCHAR, nullable: true })
   connection_id: string;
-
-  // @Column({ type: constants.JSON })
-  // access_users: string[];
-
-  // @Column({ type: constants.JSON })
-  // access_roles: string[];
-
-  @Column({ type: constants.VARCHAR })
-  label: string;
-
-  @Column({ type: constants.VARCHAR })
-  partLabel: string;
-
-  // @Column({ type: constants.VARCHAR, nullable: true })
-  // gr: string;
-
-  @Column({ type: constants.VARCHAR })
-  hidden: common.BoolEnum;
 
   @Column({ type: constants.TEXT, nullable: true })
   description: string;

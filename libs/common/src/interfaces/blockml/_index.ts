@@ -1,3 +1,4 @@
+export * from './api';
 export * from './bml-error';
 export * from './bml-file';
 export * from './chart';
@@ -18,7 +19,9 @@ export * from './model-field';
 export * from './model-node';
 export * from './project-connection';
 export * from './query';
+export * from './rep';
 export * from './report';
+export * from './row';
 export * from './sorting';
 export * from './time-data';
 export * from './udfs-dict';

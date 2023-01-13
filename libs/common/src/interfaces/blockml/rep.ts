@@ -1,12 +1,14 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import { enums } from '~common/barrels/enums';
-import { Fraction } from './fraction';
 import { Row } from './row';
 
 export class Rep {
   @IsString()
   repId: string;
+
+  @IsString()
+  filePath: string;
 
   @IsString()
   title: string;
@@ -17,9 +19,8 @@ export class Rep {
   @IsEnum(enums.TimeSpecEnum)
   timeSpec: enums.TimeSpecEnum;
 
-  @ValidateNested()
-  @Type(() => Fraction)
-  timeRange: Fraction;
+  @IsString()
+  timeRange: string;
 
   @ValidateNested()
   @Type(() => Row)

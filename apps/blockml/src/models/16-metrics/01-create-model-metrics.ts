@@ -46,6 +46,7 @@ export function createModelMetrics(
 
           let modelMetric: common.ModelMetric = {
             metricId: `${model.name}_${partId}`,
+            filePath: model.filePath,
             partId: partId,
             modelId: model.name,
             topNode: model.name,
@@ -53,12 +54,11 @@ export function createModelMetrics(
             fieldId: `mf.${modelField.name}`,
             fieldClass: modelField.fieldClass,
             timeFieldId: element.time,
-            fixedParameters: [],
+            params: [],
             structId: structId,
             type: common.MetricTypeEnum.Model,
             label: `${model.label} ${partLabel}`,
             partLabel: partLabel,
-            hidden: helper.toBooleanFromLowercaseString(modelField.hidden),
             description: modelField.description,
             serverTs: 1
           };
@@ -83,6 +83,7 @@ export function createModelMetrics(
 
             let modelMetric: common.ModelMetric = {
               metricId: `${model.name}_${partId}`,
+              filePath: join.view.filePath,
               partId: partId,
               modelId: model.name,
               topNode: model.name,
@@ -90,12 +91,11 @@ export function createModelMetrics(
               fieldId: `${join.as}.${viewField.name}`,
               fieldClass: viewField.fieldClass,
               timeFieldId: element.time,
-              fixedParameters: [],
+              params: [],
               structId: structId,
               type: common.MetricTypeEnum.Model,
               label: `${model.label} ${partLabel}`,
               partLabel: partLabel,
-              hidden: helper.toBooleanFromLowercaseString(viewField.hidden),
               description: viewField.description,
               serverTs: 1
             };

@@ -7,5 +7,5 @@ export class ApiMetric extends BaseMetric {
 
   // @ValidateNested()
   // @Type(() => Filter)
-  // fixedParameters: Filter[];
+  // params: Filter[];
 }

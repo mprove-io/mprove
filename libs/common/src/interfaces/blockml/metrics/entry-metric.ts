@@ -14,5 +14,5 @@ export class EntryMetric extends BaseMetric {
 
   // @ValidateNested()
   // @Type(() => Filter)
-  // fixedParameters: Filter[];   // for info only?
+  // params: Filter[];   // for info only?
 }

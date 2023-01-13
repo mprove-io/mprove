@@ -4,12 +4,13 @@ import { entities } from '~backend/barrels/entities';
 export function wrapToEntityMetric(x: common.MetricAny): entities.MetricEntity {
   return {
     struct_id: x.structId,
+    type: x.type,
+    file_path: x.filePath,
     metric_id: x.metricId,
     part_id: x.partId,
     top_node: x.topNode,
     top_label: x.topLabel,
-    type: x.type,
-    fixed_parameters: x.fixedParameters,
+    params: x.params,
     model_id: x.modelId,
     field_id: x.fieldId,
     field_class: x.fieldClass,
@@ -21,8 +22,7 @@ export function wrapToEntityMetric(x: common.MetricAny): entities.MetricEntity {
     sql: x.sql,
     connection_id: x.connection,
     label: x.label,
-    partLabel: x.partLabel,
-    hidden: common.booleanToEnum(x.hidden),
+    part_label: x.partLabel,
     description: x.description,
     server_ts: x.serverTs.toString()
   };

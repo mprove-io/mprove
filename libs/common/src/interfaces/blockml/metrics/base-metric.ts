@@ -1,15 +1,12 @@
-import {
-  IsBoolean,
-  IsEnum,
-  IsInt,
-  IsOptional,
-  IsString
-} from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 import { enums } from '~common/barrels/enums';
 
 export class BaseMetric {
   @IsString()
   structId?: string;
+
+  @IsString()
+  filePath: string;
 
   @IsEnum(enums.MetricTypeEnum)
   type?: enums.MetricTypeEnum;
@@ -18,25 +15,19 @@ export class BaseMetric {
   metricId?: string;
 
   @IsString()
-  partId?: string;
-
-  @IsString()
   topNode?: string;
 
   @IsString()
-  topLabel?: string;
-
-  // @IsString()
-  // midNode?: string;
+  partId?: string;
 
   @IsString()
   label?: string;
 
   @IsString()
-  partLabel?: string;
+  topLabel?: string;
 
-  @IsBoolean()
-  hidden?: boolean;
+  @IsString()
+  partLabel?: string;
 
   @IsOptional()
   @IsString()

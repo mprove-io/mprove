@@ -34,12 +34,15 @@ export function removeWrongExt(
 
     if (
       [
-        common.FileExtensionEnum.View,
-        common.FileExtensionEnum.Model,
+        common.FileExtensionEnum.Api,
         common.FileExtensionEnum.Dashboard,
-        common.FileExtensionEnum.Vis,
-        common.FileExtensionEnum.Udf,
         common.FileExtensionEnum.Md,
+        common.FileExtensionEnum.Metric,
+        common.FileExtensionEnum.Model,
+        common.FileExtensionEnum.Rep,
+        common.FileExtensionEnum.Udf,
+        common.FileExtensionEnum.View,
+        common.FileExtensionEnum.Vis,
         common.FileExtensionEnum.Yml
       ].indexOf(ext) > -1
     ) {

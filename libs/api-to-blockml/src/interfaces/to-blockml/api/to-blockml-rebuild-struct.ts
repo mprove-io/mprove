@@ -88,6 +88,14 @@ export class ToBlockmlRebuildStructResponsePayload {
   dashboards: common.Dashboard[];
 
   @ValidateNested()
+  @Type(() => common.Rep)
+  reps: common.Rep[];
+
+  @ValidateNested()
+  @Type(() => common.Api)
+  apis: common.Api[];
+
+  @ValidateNested()
   @Type(() => common.Viz)
   vizs: common.Viz[];
 

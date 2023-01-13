@@ -205,6 +205,107 @@ export function checkTopUnknownParameters(
             break;
           }
 
+          case common.FileExtensionEnum.Rep: {
+            if (
+              [
+                enums.ParameterEnum.Report.toString(),
+                enums.ParameterEnum.Title.toString(),
+                enums.ParameterEnum.Timezone.toString(),
+                enums.ParameterEnum.TimeSpec.toString(),
+                enums.ParameterEnum.TimeRange.toString(),
+                enums.ParameterEnum.Rows.toString()
+              ].indexOf(parameter) < 0
+            ) {
+              item.errors.push(
+                new BmError({
+                  title: enums.ErTitleEnum.UNKNOWN_REP_PARAMETER,
+                  message:
+                    `parameter "${parameter}" can not be used on top level of ` +
+                    `${common.FileExtensionEnum.Rep} file`,
+                  lines: [
+                    {
+                      line: file[parameter + constants.LINE_NUM],
+                      name: file.name,
+                      path: file.path
+                    }
+                  ]
+                })
+              );
+              return;
+            }
+            break;
+          }
+
+          case common.FileExtensionEnum.Api: {
+            if (
+              [
+                enums.ParameterEnum.Api.toString(),
+                enums.ParameterEnum.Label.toString(),
+                enums.ParameterEnum.Https.toString(),
+                enums.ParameterEnum.Host.toString(),
+                enums.ParameterEnum.Headers.toString(),
+                enums.ParameterEnum.Steps.toString()
+              ].indexOf(parameter) < 0
+            ) {
+              item.errors.push(
+                new BmError({
+                  title: enums.ErTitleEnum.UNKNOWN_API_PARAMETER,
+                  message:
+                    `parameter "${parameter}" can not be used on top level of ` +
+                    `${common.FileExtensionEnum.Api} file`,
+                  lines: [
+                    {
+                      line: file[parameter + constants.LINE_NUM],
+                      name: file.name,
+                      path: file.path
+                    }
+                  ]
+                })
+              );
+              return;
+            }
+            break;
+          }
+
+          case common.FileExtensionEnum.Metric: {
+            if (
+              [
+                enums.ParameterEnum.Metric.toString(),
+                enums.ParameterEnum.Type.toString(),
+                enums.ParameterEnum.Label.toString(),
+                enums.ParameterEnum.TimeSpec.toString(),
+                enums.ParameterEnum.Model.toString(),
+                enums.ParameterEnum.Time.toString(),
+                enums.ParameterEnum.Field.toString(),
+                enums.ParameterEnum.Api.toString(),
+                enums.ParameterEnum.Formula.toString(),
+                enums.ParameterEnum.Sql.toString(),
+                enums.ParameterEnum.Connection.toString(),
+                enums.ParameterEnum.Description.toString(),
+                enums.ParameterEnum.Params.toString(),
+                enums.ParameterEnum.Entries.toString()
+              ].indexOf(parameter) < 0
+            ) {
+              item.errors.push(
+                new BmError({
+                  title: enums.ErTitleEnum.UNKNOWN_METRIC_PARAMETER,
+                  message:
+                    `parameter "${parameter}" can not be used on top level of ` +
+                    `${common.FileExtensionEnum.Metric} file`,
+                  lines: [
+                    {
+                      line: file[parameter + constants.LINE_NUM],
+                      name: file.name,
+                      path: file.path
+                    }
+                  ]
+                })
+              );
+              return;
+            }
+            break;
+          }
+
           case common.FileExtensionEnum.Yml: {
             if (
               [
@@ -246,6 +347,11 @@ export function checkTopUnknownParameters(
             enums.ParameterEnum.Reports.toString(),
             enums.ParameterEnum.BuildMetrics.toString(),
             enums.ParameterEnum.SkipMetrics.toString(),
+            enums.ParameterEnum.Rows.toString(),
+            enums.ParameterEnum.Params.toString(),
+            enums.ParameterEnum.Entries.toString(),
+            enums.ParameterEnum.Headers.toString(),
+            enums.ParameterEnum.Steps.toString(),
             enums.ParameterEnum.Joins.toString(),
             enums.ParameterEnum.AccessUsers.toString(),
             enums.ParameterEnum.AccessRoles.toString()
@@ -290,6 +396,13 @@ export function checkTopUnknownParameters(
             enums.ParameterEnum.Udfs.toString(),
             enums.ParameterEnum.Fields.toString(),
             enums.ParameterEnum.Reports.toString(),
+            enums.ParameterEnum.BuildMetrics.toString(),
+            enums.ParameterEnum.SkipMetrics.toString(),
+            enums.ParameterEnum.Rows.toString(),
+            enums.ParameterEnum.Params.toString(),
+            enums.ParameterEnum.Entries.toString(),
+            enums.ParameterEnum.Headers.toString(),
+            enums.ParameterEnum.Steps.toString(),
             enums.ParameterEnum.Joins.toString(),
             enums.ParameterEnum.AccessUsers.toString(),
             enums.ParameterEnum.AccessRoles.toString()

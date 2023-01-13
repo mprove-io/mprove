@@ -20,6 +20,9 @@ export function buildYaml(
   let views: interfaces.View[];
   let models: interfaces.Model[];
   let dashboards: interfaces.Dashboard[];
+  let reps: interfaces.Rep[];
+  let metrics: interfaces.Metric[];
+  let apis: interfaces.Api[];
   let vizs: interfaces.Viz[];
   let confs: interfaces.ProjectConf[];
 
@@ -48,12 +51,15 @@ export function buildYaml(
       file3s: file3s.filter(
         x =>
           [
-            common.FileExtensionEnum.Yml,
+            common.FileExtensionEnum.Api,
+            common.FileExtensionEnum.Dashboard,
+            common.FileExtensionEnum.Metric,
+            common.FileExtensionEnum.Model,
+            common.FileExtensionEnum.Rep,
             common.FileExtensionEnum.Udf,
             common.FileExtensionEnum.View,
-            common.FileExtensionEnum.Model,
             common.FileExtensionEnum.Vis,
-            common.FileExtensionEnum.Dashboard
+            common.FileExtensionEnum.Yml
           ].indexOf(x.ext) > -1
       ),
       structId: item.structId,
@@ -124,12 +130,15 @@ export function buildYaml(
     cs
   );
 
+  apis = splitFilesResult.apis;
+  confs = splitFilesResult.confs;
+  dashboards = splitFilesResult.dashboards;
+  metrics = splitFilesResult.metrics;
+  models = splitFilesResult.models;
+  reps = splitFilesResult.reps;
   udfs = splitFilesResult.udfs;
   views = splitFilesResult.views;
-  models = splitFilesResult.models;
-  dashboards = splitFilesResult.dashboards;
   vizs = splitFilesResult.vizs;
-  confs = splitFilesResult.confs;
 
   let projectConfig = barYaml.checkProjectConfig(
     {
@@ -143,11 +152,14 @@ export function buildYaml(
   );
 
   return {
+    apis: apis,
+    dashboards: dashboards,
+    projectConfig: projectConfig,
+    metrics: metrics,
+    models: models,
+    reps: reps,
     udfs: udfs,
     views: views,
-    models: models,
-    dashboards: dashboards,
-    vizs: vizs,
-    projectConfig: projectConfig
+    vizs: vizs
   };
 }

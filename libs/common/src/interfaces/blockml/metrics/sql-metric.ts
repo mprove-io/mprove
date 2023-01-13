@@ -10,5 +10,5 @@ export class SqlMetric extends BaseMetric {
 
   // @ValidateNested()
   // @Type(() => Filter)
-  // fixedParameters: Filter[];
+  // params: Filter[];
 }

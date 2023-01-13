@@ -9,10 +9,13 @@ let func = enums.FuncEnum.LogStruct;
 
 export async function logStruct(
   item: {
+    apis: interfaces.Api[];
+    dashboards: interfaces.Dashboard[];
+    metrics: common.MetricAny[];
+    models: interfaces.Model[];
+    reps: interfaces.Rep[];
     udfsDict: common.UdfsDict;
     views: interfaces.View[];
-    models: interfaces.Model[];
-    dashboards: interfaces.Dashboard[];
     vizs: interfaces.Viz[];
     structId: string;
     errors: BmError[];
@@ -20,12 +23,26 @@ export async function logStruct(
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let { udfsDict, views, models, dashboards, vizs, structId, caller } = item;
+  let {
+    udfsDict,
+    views,
+    models,
+    reps,
+    metrics,
+    apis,
+    dashboards,
+    vizs,
+    structId,
+    caller
+  } = item;
 
   log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, enums.LogTypeEnum.Apis, apis);
+  log(cs, caller, func, structId, enums.LogTypeEnum.Ds, dashboards);
+  log(cs, caller, func, structId, enums.LogTypeEnum.Metrics, metrics);
+  log(cs, caller, func, structId, enums.LogTypeEnum.Models, models);
+  log(cs, caller, func, structId, enums.LogTypeEnum.Reps, reps);
   log(cs, caller, func, structId, enums.LogTypeEnum.UdfsDict, udfsDict);
   log(cs, caller, func, structId, enums.LogTypeEnum.Views, views);
-  log(cs, caller, func, structId, enums.LogTypeEnum.Models, models);
-  log(cs, caller, func, structId, enums.LogTypeEnum.Ds, dashboards);
   log(cs, caller, func, structId, enums.LogTypeEnum.Vizs, vizs);
 }
