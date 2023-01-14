@@ -3,7 +3,7 @@ import { IsBoolean, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
-export class ToBackendGetMetricsRequestPayload {
+export class ToBackendGetRepRequestPayload {
   @IsString()
   projectId: string;
 
@@ -15,15 +15,18 @@ export class ToBackendGetMetricsRequestPayload {
 
   @IsString()
   envId: string;
+
+  @IsString()
+  repId: string;
 }
 
-export class ToBackendGetMetricsRequest extends ToBackendRequest {
+export class ToBackendGetRepRequest extends ToBackendRequest {
   @ValidateNested()
-  @Type(() => ToBackendGetMetricsRequestPayload)
-  payload: ToBackendGetMetricsRequestPayload;
+  @Type(() => ToBackendGetRepRequestPayload)
+  payload: ToBackendGetRepRequestPayload;
 }
 
-export class ToBackendGetMetricsResponsePayload {
+export class ToBackendGetRepResponsePayload {
   @IsBoolean()
   needValidate: boolean;
 
@@ -36,14 +39,12 @@ export class ToBackendGetMetricsResponsePayload {
   userMember: common.Member;
 
   @ValidateNested()
-  metrics: common.MetricAny[];
-
-  @ValidateNested()
-  reps: common.Rep[];
+  @Type(() => common.Rep)
+  rep: common.Rep;
 }
 
-export class ToBackendGetMetricsResponse extends common.MyResponse {
+export class ToBackendGetRepResponse extends common.MyResponse {
   @ValidateNested()
-  @Type(() => ToBackendGetMetricsResponsePayload)
-  payload: ToBackendGetMetricsResponsePayload;
+  @Type(() => ToBackendGetRepResponsePayload)
+  payload: ToBackendGetRepResponsePayload;
 }

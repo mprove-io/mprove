@@ -45,6 +45,8 @@ export const appControllers = [
 
   controllers.GetMetricsController,
 
+  controllers.GetRepController,
+
   controllers.GetModelController,
   controllers.GetModelsController,
 

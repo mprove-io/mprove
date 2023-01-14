@@ -198,6 +198,7 @@ export class NavbarComponent implements OnInit {
       common.PATH_ENV,
       this.nav.envId,
       common.PATH_METRICS,
+      common.PATH_REPORT,
       common.EMPTY
     ]);
   }

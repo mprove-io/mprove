@@ -5,31 +5,27 @@ import {
   Router,
   RouterStateSnapshot
 } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { MemberQuery } from '../queries/member.query';
-import { MetricsQuery } from '../queries/metrics.query';
 import { NavQuery, NavState } from '../queries/nav.query';
-import { RepsQuery } from '../queries/reps.query';
+import { emptyRep, RepQuery } from '../queries/rep.query';
 import { StructQuery } from '../queries/struct.query';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
-import { MyDialogService } from '../services/my-dialog.service';
 
 @Injectable({ providedIn: 'root' })
-export class StructMetricsResolver implements Resolve<Observable<boolean>> {
+export class StructRepResolver implements Resolve<Observable<boolean>> {
   constructor(
     private navQuery: NavQuery,
     private userQuery: UserQuery,
     private apiService: ApiService,
-    private metricsQuery: MetricsQuery,
-    private repsQuery: RepsQuery,
+    private repQuery: RepQuery,
     private structQuery: StructQuery,
     private memberQuery: MemberQuery,
-    private myDialogService: MyDialogService,
     private router: Router
   ) {}
 
@@ -44,6 +40,17 @@ export class StructMetricsResolver implements Resolve<Observable<boolean>> {
       .subscribe(x => {
         nav = x;
       });
+
+    let rep: common.Rep;
+    this.repQuery
+      .select()
+      .pipe(
+        tap(x => {
+          rep = x;
+        }),
+        take(1)
+      )
+      .subscribe();
 
     let userId;
     this.userQuery.userId$
@@ -60,21 +67,35 @@ export class StructMetricsResolver implements Resolve<Observable<boolean>> {
       userId: userId
     });
 
-    let payload: apiToBackend.ToBackendGetMetricsRequestPayload = {
+    let parametersRepId = route.params[common.PARAMETER_REP_ID];
+
+    if (rep.repId === parametersRepId) {
+      return of(true);
+    }
+
+    if (parametersRepId === common.EMPTY) {
+      if (rep.repId !== common.EMPTY) {
+        this.repQuery.update(emptyRep);
+      }
+
+      return of(true);
+    }
+
+    let payload: apiToBackend.ToBackendGetRepRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
-      envId: nav.envId
+      envId: nav.envId,
+      repId: parametersRepId
     };
 
     return this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMetrics,
+        pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRep,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetMetricsResponse) => {
+        map((resp: apiToBackend.ToBackendGetRepResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
@@ -83,13 +104,7 @@ export class StructMetricsResolver implements Resolve<Observable<boolean>> {
               needValidate: resp.payload.needValidate
             });
 
-            this.metricsQuery.update({
-              metrics: resp.payload.metrics
-            });
-
-            this.repsQuery.update({
-              reps: resp.payload.reps
-            });
+            this.repQuery.update(resp.payload.rep);
 
             return true;
           } else if (

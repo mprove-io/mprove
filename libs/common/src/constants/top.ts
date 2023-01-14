@@ -67,6 +67,7 @@ export const PATH_DASHBOARD = 'dashboard';
 export const PATH_MCONFIG = 'mconfig';
 export const PATH_QUERY = 'query';
 export const PATH_METRICS = 'metrics';
+export const PATH_REPORT = 'report';
 
 export const PATH_ORG = 'org';
 export const PATH_ACCOUNT = 'account';

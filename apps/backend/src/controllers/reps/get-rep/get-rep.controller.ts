@@ -15,7 +15,7 @@ import { StructsService } from '~backend/services/structs.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
-export class GetMetricsController {
+export class GetRepController {
   constructor(
     private membersService: MembersService,
     private projectsService: ProjectsService,
@@ -27,14 +27,14 @@ export class GetMetricsController {
     private envsService: EnvsService
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMetrics)
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRep)
   async getModels(
     @AttachUser() user: entities.UserEntity,
     @Req() request: any
   ) {
-    let reqValid: apiToBackend.ToBackendGetMetricsRequest = request.body;
+    let reqValid: apiToBackend.ToBackendGetRepRequest = request.body;
 
-    let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
+    let { projectId, isRepoProd, branchId, envId, repId } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -64,12 +64,11 @@ export class GetMetricsController {
       envId: envId
     });
 
-    let metrics = await this.metricsRepository.find({
-      where: { struct_id: bridge.struct_id }
-    });
-
-    let reps = await this.repsRepository.find({
-      where: { struct_id: bridge.struct_id }
+    let rep = await this.repsRepository.findOne({
+      where: {
+        struct_id: bridge.struct_id,
+        rep_id: repId
+      }
     });
 
     let struct = await this.structsService.getStructCheckExists({
@@ -79,12 +78,11 @@ export class GetMetricsController {
 
     let apiMember = wrapper.wrapToApiMember(userMember);
 
-    let payload: apiToBackend.ToBackendGetMetricsResponsePayload = {
+    let payload: apiToBackend.ToBackendGetRepResponsePayload = {
       needValidate: common.enumToBoolean(bridge.need_validate),
       struct: wrapper.wrapToApiStruct(struct),
       userMember: apiMember,
-      metrics: metrics.map(x => wrapper.wrapToApiMetric({ metric: x })),
-      reps: reps.map(x => wrapper.wrapToApiRep({ rep: x }))
+      rep: wrapper.wrapToApiRep({ rep: rep })
     };
 
     return payload;

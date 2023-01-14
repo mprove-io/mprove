@@ -18,6 +18,7 @@ import { DashboardsComponent } from './modules/dashboards/dashboards.component';
 import { FileEditorComponent } from './modules/files/file-editor/file-editor.component';
 import { FilesComponent } from './modules/files/files.component';
 import { MetricsComponent } from './modules/metrics/metrics.component';
+import { RepComponent } from './modules/metrics/rep/rep.component';
 import { MconfigComponent } from './modules/model/mconfig/mconfig.component';
 import { ModelComponent } from './modules/model/model.component';
 import { QueryComponent } from './modules/model/query/query.component';
@@ -60,6 +61,7 @@ import { StructDashboardsResolver } from './resolvers/struct-dashboards.resolver
 import { StructMetricsResolver } from './resolvers/struct-metrics.resolver';
 import { StructModelResolver } from './resolvers/struct-model.resolver';
 import { StructModelsResolver } from './resolvers/struct-models.resolver';
+import { StructRepResolver } from './resolvers/struct-rep.resolver';
 import { StructVizsResolver } from './resolvers/struct-vizs.resolver';
 
 const routes: Routes = [
@@ -264,12 +266,16 @@ const routes: Routes = [
                           {
                             component: MetricsComponent,
                             canDeactivate: [DeactivateGuard],
-                            path:
-                              common.PATH_METRICS +
-                              `/:${common.PARAMETER_REP_ID}`,
-                            resolve: [
-                              StructMetricsResolver
-                              // , StructRepResolver
+                            path: common.PATH_METRICS,
+                            resolve: [StructMetricsResolver],
+                            children: [
+                              {
+                                component: RepComponent,
+                                path:
+                                  common.PATH_REPORT +
+                                  `/:${common.PARAMETER_REP_ID}`,
+                                resolve: [StructRepResolver]
+                              }
                             ]
                           },
                           {

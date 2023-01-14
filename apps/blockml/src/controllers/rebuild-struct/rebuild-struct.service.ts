@@ -484,7 +484,7 @@ export class RebuildStructService {
       errors: errors,
       apis: apis,
       dashboards: dashboards,
-      metrics: metrics,
+      metrics: commonMetrics,
       models: models,
       udfsDict: udfsDict,
       reps: reps,
