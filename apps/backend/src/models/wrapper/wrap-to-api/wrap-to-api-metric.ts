@@ -27,7 +27,7 @@ export function wrapToApiMetric(item: {
     fieldClass: metric.field_class,
     timeFieldId: metric.timefield_id,
     apiId: metric.api_id,
-    timeSpec: metric.timespec,
+    timeSpec: metric.time_spec,
     entries: metric.entries,
     formula: metric.formula,
     sql: metric.sql,

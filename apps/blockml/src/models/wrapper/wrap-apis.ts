@@ -1,21 +1,19 @@
 import { common } from '~blockml/barrels/common';
-import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 
-export function wrapApis(item: { apis: interfaces.Api[] }) {
-  let { apis } = item;
+export function wrapApis(item: { structId: string; apis: interfaces.Api[] }) {
+  let { structId, apis } = item;
 
   let apiApis: common.Api[] = apis.map(x => {
-    let rep: common.Api = {
+    let api: common.Api = {
+      structId: structId,
       apiId: x.name,
       filePath: x.filePath,
       label: x.label,
-      https: helper.toBooleanFromLowercaseString(x.https),
-      host: x.host,
-      headers: x.headers,
-      steps: x.steps
+      steps: x.steps,
+      serverTs: 1
     };
-    return rep;
+    return api;
   });
 
   return apiApis;

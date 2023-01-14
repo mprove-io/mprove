@@ -1,11 +1,12 @@
 import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
 
-export function wrapReps(item: { reps: interfaces.Rep[] }) {
-  let { reps } = item;
+export function wrapReps(item: { structId: string; reps: interfaces.Rep[] }) {
+  let { structId, reps } = item;
 
   let apiReps: common.Rep[] = reps.map(x => {
     let rep: common.Rep = {
+      structId: structId,
       repId: x.name,
       filePath: x.filePath,
       title: x.title,
@@ -19,7 +20,8 @@ export function wrapReps(item: { reps: interfaces.Rep[] }) {
           params: y.params
         };
         return row;
-      })
+      }),
+      serverTs: 1
     };
     return rep;
   });

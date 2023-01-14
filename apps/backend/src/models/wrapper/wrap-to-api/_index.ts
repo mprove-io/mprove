@@ -1,3 +1,4 @@
+export * from './wrap-to-api-api';
 export * from './wrap-to-api-connection';
 export * from './wrap-to-api-dashboard';
 export * from './wrap-to-api-env';
@@ -12,6 +13,7 @@ export * from './wrap-to-api-orgs-item';
 export * from './wrap-to-api-project';
 export * from './wrap-to-api-projects-item';
 export * from './wrap-to-api-query';
+export * from './wrap-to-api-rep';
 export * from './wrap-to-api-struct';
 export * from './wrap-to-api-user';
 export * from './wrap-to-api-viz';

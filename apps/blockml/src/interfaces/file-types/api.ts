@@ -7,15 +7,6 @@ export interface Api extends FileBasic {
   label?: string;
   label_line_num?: number;
 
-  https?: string; // boolean
-  https_line_num?: number;
-
-  host?: string;
-  host_line_num?: number;
-
-  headers?: any[];
-  headers_line_num?: number;
-
   steps?: any[];
   steps_line_num?: number;
 }

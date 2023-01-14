@@ -6,7 +6,7 @@ export class BaseMetric {
   structId?: string;
 
   @IsString()
-  filePath: string;
+  filePath?: string;
 
   @IsEnum(enums.MetricTypeEnum)
   type?: enums.MetricTypeEnum;

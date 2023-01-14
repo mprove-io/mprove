@@ -5,6 +5,8 @@ export const appEntities = [
   entities.MconfigEntity,
   entities.ModelEntity,
   entities.MetricEntity,
+  entities.RepEntity,
+  entities.ApiEntity,
   entities.QueryEntity,
   entities.StructEntity,
   entities.VizEntity,

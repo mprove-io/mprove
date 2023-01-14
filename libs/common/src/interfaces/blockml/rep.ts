@@ -1,9 +1,12 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsString, ValidateNested } from 'class-validator';
+import { IsEnum, IsInt, IsString, ValidateNested } from 'class-validator';
 import { enums } from '~common/barrels/enums';
 import { Row } from './row';
 
 export class Rep {
+  @IsString()
+  structId: string;
+
   @IsString()
   repId: string;
 
@@ -25,4 +28,7 @@ export class Rep {
   @ValidateNested()
   @Type(() => Row)
   rows: Row[];
+
+  @IsInt()
+  serverTs: number;
 }

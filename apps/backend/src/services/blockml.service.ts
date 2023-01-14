@@ -89,6 +89,8 @@ export class BlockmlService {
       udfsDict,
       vizs,
       metrics,
+      reps,
+      apis,
       mconfigs,
       queries,
       dashboards,
@@ -119,6 +121,8 @@ export class BlockmlService {
           queries: queries.map(x => wrapper.wrapToEntityQuery(x)),
           models: models.map(x => wrapper.wrapToEntityModel(x)),
           metrics: metrics.map(x => wrapper.wrapToEntityMetric(x)),
+          reps: reps.map(x => wrapper.wrapToEntityRep(x)),
+          apis: apis.map(x => wrapper.wrapToEntityApi(x)),
           mconfigs: mconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
           dashboards: dashboards.map(x => wrapper.wrapToEntityDashboard(x))
         }
@@ -127,11 +131,14 @@ export class BlockmlService {
 
     return {
       struct: struct,
-      vizs: vizs,
-      queries: queries,
       models: models,
+      metrics: metrics,
+      apis: apis,
+      reps: reps,
+      vizs: vizs,
+      dashboards: dashboards,
       mconfigs: mconfigs,
-      dashboards: dashboards
+      queries: queries
     };
   }
 }

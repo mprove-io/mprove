@@ -101,6 +101,8 @@ export class DbService {
         queries,
         models,
         metrics,
+        reps,
+        apis,
         mconfigs,
         dashboards,
         notes
@@ -158,6 +160,14 @@ export class DbService {
 
       if (common.isDefined(metrics) && metrics.length > 0) {
         await manager.getRepository(entities.MetricEntity).insert(metrics);
+      }
+
+      if (common.isDefined(reps) && reps.length > 0) {
+        await manager.getRepository(entities.RepEntity).insert(reps);
+      }
+
+      if (common.isDefined(apis) && apis.length > 0) {
+        await manager.getRepository(entities.ApiEntity).insert(apis);
       }
 
       if (common.isDefined(mconfigs) && mconfigs.length > 0) {
@@ -244,6 +254,8 @@ export class DbService {
         queries,
         models,
         metrics,
+        reps,
+        apis,
         mconfigs,
         dashboards,
         notes
@@ -301,6 +313,14 @@ export class DbService {
 
       if (common.isDefined(metrics) && metrics.length > 0) {
         await manager.getRepository(entities.MetricEntity).save(metrics);
+      }
+
+      if (common.isDefined(reps) && reps.length > 0) {
+        await manager.getRepository(entities.RepEntity).save(reps);
+      }
+
+      if (common.isDefined(apis) && apis.length > 0) {
+        await manager.getRepository(entities.ApiEntity).save(apis);
       }
 
       if (common.isDefined(mconfigs) && mconfigs.length > 0) {

@@ -7,12 +7,6 @@ export class MetricEntity {
   @PrimaryColumn({ type: constants.STRUCT_ID_VARCHAR, length: 32 })
   struct_id: string; // composite
 
-  @Column({ type: constants.TEXT })
-  file_path: string;
-
-  @Column({ type: constants.VARCHAR })
-  type: common.MetricTypeEnum;
-
   @PrimaryColumn({ type: constants.METRIC_ID_VARCHAR, length: 128 })
   metric_id: string; // name
 
@@ -21,6 +15,12 @@ export class MetricEntity {
 
   @Column({ type: constants.VARCHAR })
   part_id: string;
+
+  @Column({ type: constants.TEXT })
+  file_path: string;
+
+  @Column({ type: constants.VARCHAR })
+  type: common.MetricTypeEnum;
 
   @Column({ type: constants.VARCHAR })
   label: string;
@@ -32,7 +32,7 @@ export class MetricEntity {
   part_label: string;
 
   @Column({ type: constants.VARCHAR, nullable: true })
-  timespec: common.TimeSpecEnum;
+  time_spec: common.TimeSpecEnum;
 
   @Column({ type: constants.JSON })
   params: any[];

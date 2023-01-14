@@ -1,3 +1,4 @@
+export * from './api.entity';
 export * from './avatar.entity';
 export * from './branch.entity';
 export * from './bridge.entity';
@@ -14,6 +15,7 @@ export * from './note.entity';
 export * from './org.entity';
 export * from './project.entity';
 export * from './query.entity';
+export * from './rep.entity';
 export * from './struct.entity';
 export * from './user.entity';
 export * from './viz.entity';
