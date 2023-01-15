@@ -14,26 +14,7 @@
 
           <div class="flex-grow"></div>
 
-          <div class="text-gray1 flex flex-row items-center text-base">
-            <!-- <div *ngIf="isRunningDry === true">Calculating ... </div> -->
-            <!-- <div *ngIf="isRunning === true">Running ... </div> -->
-            <!-- <div *ngIf="isCanceling === true">Canceling ... </div> -->
-
-            <!-- <div *ngIf="!!dryQueryEstimate"
-              >Estimate - {{ dryDataSize }} - {{ dryTimeAgo$ | async }}
-            </div>
-
-            <m-query-status
-              *ngIf="!dryQueryEstimate"
-              [query]="query"
-            ></m-query-status>
-
-            <ui-switch
-              class="ml-5"
-              [checked]="isAutoRun"
-              (change)="toggleAutoRun()"
-            ></ui-switch> -->
-          </div>
+          <div class="text-gray1 flex flex-row items-center text-base"> </div>
         </div>
       </div>
 
@@ -45,15 +26,15 @@
                 <div class="ml-5 mb-3 flex text-lg font-semibold">REPORTS</div>
                 <div class="mb-5 flex h-2 flex-grow flex-col overflow-y-auto">
                   <div
-                    *ngFor="let rep of reps"
+                    *ngFor="let r of reps"
                     class="ml-6 mr-5 flex flex-row rounded py-2 px-4 hover:cursor-pointer"
                     [ngClass]="{
-                      'bg-blue-100': repId === rep.repId,
-                      'hover:bg-blue2': repId !== rep.repId
+                      'hover:bg-blue2': r.repId !== rep.repId
                     }"
+                    (click)="navToRep(r.repId)"
                   >
                     <div class="text-gray1 truncate">
-                      {{ rep.title | capitalize }}
+                      {{ r.title | capitalize }}
                     </div>
                   </div>
                 </div>
@@ -69,11 +50,19 @@
             </div>
           </div>
         </div>
+
+        <div
+          class="ml-6 flex min-w-[2px] flex-grow flex-col space-y-6"
+          *ngIf="isShow === true"
+        >
+          <div class="w-full rounded bg-white shadow-md">
+            <router-outlet></router-outlet>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- <div *ngIf="routerEvents$ | async"></div> -->
-<!-- <div *ngIf="nav$ | async"></div> -->
+<div *ngIf="rep$ | async"></div>
 <div *ngIf="reps$ | async"></div>

@@ -9,7 +9,7 @@ export const emptyRep: RepState = {
   structId: undefined,
   repId: common.EMPTY,
   filePath: undefined,
-  title: undefined,
+  title: 'Empty',
   timezone: undefined,
   timeSpec: undefined,
   timeRange: undefined,
@@ -17,11 +17,9 @@ export const emptyRep: RepState = {
   serverTs: undefined
 };
 
-let repState: RepState = emptyRep;
-
 @Injectable({ providedIn: 'root' })
 export class RepQuery extends BaseQuery<common.Rep> {
   constructor() {
-    super(createStore({ name: 'rep' }, withProps<RepState>(repState)));
+    super(createStore({ name: 'rep' }, withProps<RepState>(emptyRep)));
   }
 }

@@ -340,4 +340,27 @@ export class NavigateService {
     //   this.router.navigate(ar);
     // }
   }
+
+  navigateToMetricsRep(item: { repId: string }) {
+    let repoId =
+      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
+
+    let navTo = [
+      common.PATH_ORG,
+      this.nav.orgId,
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_REPO,
+      repoId,
+      common.PATH_BRANCH,
+      this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
+      common.PATH_METRICS,
+      common.PATH_REPORT,
+      item.repId
+    ];
+
+    this.router.navigate(navTo);
+  }
 }

@@ -7,6 +7,7 @@ import { tap } from 'rxjs';
 import { ModelQuery } from '~front/app/queries/model.query';
 import { MqQuery } from '~front/app/queries/mq.query';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { emptyRep, RepQuery } from '~front/app/queries/rep.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { RepsQuery } from '~front/app/queries/reps.query';
 import { StructQuery } from '~front/app/queries/struct.query';
@@ -32,12 +33,20 @@ export class MetricsComponent implements OnInit {
 
   isShow = true;
 
-  repId = '1';
+  emptyRepId = common.EMPTY;
+
+  rep: common.Rep;
+  rep$ = this.repQuery.select().pipe(
+    tap(x => {
+      this.rep = x;
+      this.cd.detectChanges();
+    })
+  );
 
   reps: common.Rep[];
   reps$ = this.repsQuery.select().pipe(
     tap(x => {
-      this.reps = x.reps;
+      this.reps = [emptyRep, ...x.reps];
       // this.reps.push(x.reps[0])
       // this.reps.push(x.reps[0])
       // this.reps.push(x.reps[0])
@@ -78,6 +87,7 @@ export class MetricsComponent implements OnInit {
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
     private repsQuery: RepsQuery,
+    private repQuery: RepQuery,
     private navQuery: NavQuery,
     private modelQuery: ModelQuery,
     private userQuery: UserQuery,
@@ -96,6 +106,10 @@ export class MetricsComponent implements OnInit {
     private myDialogService: MyDialogService,
     private title: Title
   ) {}
+
+  navToRep(repId: string) {
+    this.navigateService.navigateToMetricsRep({ repId: repId });
+  }
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);

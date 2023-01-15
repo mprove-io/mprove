@@ -1,1 +1,21 @@
-<router-outlet></router-outlet>
+<div>{{ rep?.repId }}</div>
+<div class="flex flex-col">
+  <div class="mr-5 flex min-h-[95px] flex-shrink-0 flex-grow flex-row">
+    <!-- <div
+      (click)="toggleFiltersPanel()"
+      class="text-gray1 mt-5 flex cursor-pointer select-none flex-row items-start space-x-2 py-3 px-5 text-2xl font-semibold"
+    >
+      <div class="flex flex-row items-center space-x-2">
+        <div> Filters </div>
+        <m-chevron-right-icon
+          *ngIf="!filtersIsExpanded"
+        ></m-chevron-right-icon>
+        <m-chevron-down-icon
+          *ngIf="filtersIsExpanded"
+        ></m-chevron-down-icon>
+      </div>
+    </div>         -->
+  </div>
+</div>
+
+<div *ngIf="rep$ | async"></div>
