@@ -1,6 +1,6 @@
-<div class="flex w-full flex-grow overflow-y-auto rounded bg-white shadow-lg">
+<div class="flex w-full flex-grow overflow-y-auto">
   <tree-root
-    class="mt-4 h-2 w-full"
+    class="h-2 w-full"
     #itemsTree
     [nodes]="nodes"
     [options]="treeOptions"
@@ -16,7 +16,7 @@
       >
         <div
           data-cy="metricsTreeItem"
-          class="flex w-full cursor-pointer select-none flex-row pr-5"
+          class="flex w-full cursor-pointer select-none flex-row rounded pr-5"
           [ngClass]="{
             'hover:bg-blue2': node.data.isField === true,
             'px-5': node.data.isField === false

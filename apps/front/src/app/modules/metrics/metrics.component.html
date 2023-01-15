@@ -38,22 +38,42 @@
       </div>
 
       <div class="mt-6 flex flex-grow flex-row">
-        <m-metrics-tree class="flex w-1/4 flex-shrink-0"></m-metrics-tree>
+        <div class="flex w-1/4 flex-shrink-0">
+          <div class="flex w-full flex-grow rounded bg-white shadow-lg">
+            <div class="text-gray1 mr-5 mt-6 flex w-full flex-col text-base">
+              <div class="flex flex-1 flex-col">
+                <div class="ml-5 mb-3 flex text-lg font-semibold">REPORTS</div>
+                <div class="mb-5 flex h-2 flex-grow flex-col overflow-y-auto">
+                  <div
+                    *ngFor="let rep of reps"
+                    class="ml-6 mr-5 flex flex-row rounded py-2 px-4 hover:cursor-pointer"
+                    [ngClass]="{
+                      'bg-blue-100': repId === rep.repId,
+                      'hover:bg-blue2': repId !== rep.repId
+                    }"
+                  >
+                    <div class="text-gray1 truncate">
+                      {{ rep.title | capitalize }}
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-        <div
-          class="ml-6 flex min-w-[2px] flex-grow flex-col space-y-6"
-          *ngIf="isShow === true"
-        >
-          <!-- ... -->
+              <div class="flex flex-1 flex-col">
+                <div class="ml-5 mb-3 flex text-lg font-semibold">METRICS</div>
+
+                <m-metrics-tree
+                  class="flex w-full flex-1 flex-shrink-0"
+                ></m-metrics-tree>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- <div *ngIf="routerEvents$ | async"></div>
-<div *ngIf="nav$ | async"></div>
-<div *ngIf="model$ | async"></div>
-<div *ngIf="mq$ | async"></div>
-<div *ngIf="struct$ | async"></div>
-<div *ngIf="alias$ | async"></div> -->
+<!-- <div *ngIf="routerEvents$ | async"></div> -->
+<!-- <div *ngIf="nav$ | async"></div> -->
+<div *ngIf="reps$ | async"></div>
