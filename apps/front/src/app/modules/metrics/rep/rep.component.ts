@@ -8,6 +8,7 @@ import { exampleData } from './example-data';
 
 @Component({
   selector: 'm-rep',
+  styleUrls: ['rep.component.scss'],
   templateUrl: './rep.component.html'
 })
 export class RepComponent {
@@ -21,11 +22,21 @@ export class RepComponent {
 
   // Each Column Definition results in one Column.
   columnDefs: ColDef[] = [
-    { field: 'idx', rowDrag: true },
-    { field: 'parameters' },
-    { field: 'metric' },
-    { field: 'jan2023' },
-    { field: 'feb2023' }
+    {
+      field: 'idx',
+      rowDrag: true,
+      editable: false,
+      pinned: 'left',
+      width: 90,
+      minWidth: 90,
+      maxWidth: 90
+    },
+    { field: 'parameters', pinned: 'left', width: 400 },
+    { field: 'metric', pinned: 'left', width: 400 },
+    { field: 'jan2023', headerName: 'Jan 2023' },
+    { field: 'feb2023' },
+    { field: 'mar2023' },
+    { field: 'apr2023' }
   ];
 
   // DefaultColDef sets props common to all Columns
@@ -33,6 +44,7 @@ export class RepComponent {
     // sortable: true,
     // filter: true,
     suppressMovable: true,
+    resizable: true,
     editable: true
   };
 
