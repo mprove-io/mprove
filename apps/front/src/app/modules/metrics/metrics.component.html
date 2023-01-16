@@ -27,10 +27,7 @@
                 <div class="mb-5 flex h-2 flex-grow flex-col overflow-y-auto">
                   <div
                     *ngFor="let r of reps"
-                    class="ml-6 mr-5 flex flex-row rounded py-2 px-4 hover:cursor-pointer"
-                    [ngClass]="{
-                      'hover:bg-blue2': r.repId !== rep.repId
-                    }"
+                    class="hover:bg-blue2 ml-6 mr-5 flex flex-row rounded py-2 px-4 hover:cursor-pointer"
                     (click)="navToRep(r.repId)"
                   >
                     <div class="text-gray1 truncate">
@@ -55,7 +52,7 @@
           class="ml-6 flex min-w-[2px] flex-grow flex-col space-y-6"
           *ngIf="isShow === true"
         >
-          <div class="w-full rounded bg-white shadow-md">
+          <div class="h-full w-full rounded bg-white shadow-md">
             <router-outlet></router-outlet>
           </div>
         </div>
