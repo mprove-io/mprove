@@ -1,6 +1,6 @@
 export const exampleData = [
   {
-    idx: 'AA',
+    idx: 'A',
     parameters: '',
     metric: 'count_users',
     jan2023: 72000,
@@ -9,7 +9,7 @@ export const exampleData = [
     apr2023: 72000
   },
   {
-    idx: 'AB',
+    idx: 'B',
     parameters: '',
     metric: 'count_users',
     jan2023: 72000,
@@ -18,7 +18,7 @@ export const exampleData = [
     apr2023: 72000
   },
   {
-    idx: 'AC',
+    idx: 'C',
     parameters: '',
     metric: 'count_users',
     jan2023: 72000,
@@ -27,7 +27,7 @@ export const exampleData = [
     apr2023: 72000
   },
   {
-    idx: 'AD',
+    idx: 'D',
     parameters: '',
     metric: 'count_users',
     jan2023: 72000,
@@ -36,7 +36,7 @@ export const exampleData = [
     apr2023: 72000
   },
   {
-    idx: 'AE',
+    idx: 'E',
     parameters: '',
     metric: 'count_users',
     jan2023: 72000,

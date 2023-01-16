@@ -25,11 +25,13 @@
     [defaultColDef]="defaultColDef"
     [rowDragManaged]="true"
     [rowDragMultiRow]="true"
+    [suppressRowClickSelection]="true"
     [rowData]="rowData$ | async"
     [rowSelection]="'multiple'"
     [animateRows]="true"
     (gridReady)="onGridReady($event)"
     (cellClicked)="onCellClicked($event)"
+    (rowDragEnd)="rowDragEndHandle($event)"
   ></ag-grid-angular>
   <div>{{ rep?.repId }}</div>
 </div>
