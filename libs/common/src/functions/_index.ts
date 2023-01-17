@@ -10,6 +10,7 @@ export * from './is-undefined';
 export * from './is-undefined-or-empty';
 export * from './make-copy';
 export * from './make-id';
+export * from './number-to-letter';
 export * from './prepare-report';
 export * from './sleep';
 export * from './to-yaml';
