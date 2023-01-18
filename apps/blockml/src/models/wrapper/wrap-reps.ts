@@ -17,7 +17,8 @@ export function wrapReps(item: { structId: string; reps: interfaces.Rep[] }) {
         let row: common.Row = {
           rowId: y.id,
           metricId: y.metric,
-          params: y.params
+          params: y.params,
+          records: []
         };
         return row;
       }),

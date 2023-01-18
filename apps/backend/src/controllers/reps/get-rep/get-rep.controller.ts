@@ -8,6 +8,7 @@ import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
+import { DocService } from '~backend/services/doc.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -18,6 +19,7 @@ import { StructsService } from '~backend/services/structs.service';
 export class GetRepController {
   constructor(
     private membersService: MembersService,
+    private docService: DocService,
     private projectsService: ProjectsService,
     private metricsRepository: repositories.MetricsRepository,
     private repsRepository: repositories.RepsRepository,
@@ -71,6 +73,10 @@ export class GetRepController {
       }
     });
 
+    let repApi = wrapper.wrapToApiRep({ rep: rep });
+
+    repApi = await this.docService.getData({ rep: repApi });
+
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.struct_id,
       projectId: projectId
@@ -82,7 +88,7 @@ export class GetRepController {
       needValidate: common.enumToBoolean(bridge.need_validate),
       struct: wrapper.wrapToApiStruct(struct),
       userMember: apiMember,
-      rep: wrapper.wrapToApiRep({ rep: rep })
+      rep: repApi
     };
 
     return payload;

@@ -9,6 +9,8 @@ export class Row {
 
   params: any[];
 
+  records: any[];
+
   // @ValidateNested()
   // @Type(() => TimeData)
   // data: TimeData[];

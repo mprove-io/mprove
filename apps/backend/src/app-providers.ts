@@ -13,6 +13,7 @@ import { ClickHouseService } from './services/clickhouse.service';
 import { ConnectionsService } from './services/connections.service';
 import { DashboardsService } from './services/dashboards.service';
 import { DbService } from './services/db.service';
+import { DocService } from './services/doc.service';
 import { EmailService } from './services/email.service';
 import { EnvsService } from './services/envs.service';
 import { EvsService } from './services/evs.service';
@@ -53,6 +54,7 @@ export const appProviders = [
   MembersService,
   EnvsService,
   EvsService,
+  DocService,
   BridgesService,
   {
     provide: TasksService,
