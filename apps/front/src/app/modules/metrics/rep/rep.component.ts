@@ -20,8 +20,7 @@ export class RepComponent {
     })
   );
 
-  // Each Column Definition results in one Column.
-  columnDefs: ColDef[] = [
+  columns: ColDef[] = [
     {
       field: 'idx',
       rowDrag: true,
@@ -33,11 +32,12 @@ export class RepComponent {
       maxWidth: 90
     },
     { field: 'metric', suppressMovable: false, pinned: 'left', width: 400 },
-    { field: 'parameters', suppressMovable: false, pinned: 'left', width: 400 },
-    { field: 'jan2023', headerName: 'Jan 2023' },
-    { field: 'feb2023' },
-    { field: 'mar2023' },
-    { field: 'apr2023' }
+    { field: 'parameters', suppressMovable: false, pinned: 'left', width: 400 }
+  ];
+
+  columnDefs: ColDef[] = [
+    ...this.columns
+    // { field: 'jan2023', headerName: 'Jan 2023' },
   ];
 
   // DefaultColDef sets props common to all Columns
@@ -51,6 +51,12 @@ export class RepComponent {
 
   // Data that gets displayed in the grid
   rowData$ = this.repQuery.select().pipe(
+    tap(x => {
+      this.columnDefs = [
+        ...this.columns,
+        ...x.columns.map(key => ({ field: `${key}` }))
+      ];
+    }),
     map(x => {
       let metrics = this.metricsQuery.getValue();
 
@@ -60,15 +66,16 @@ export class RepComponent {
 
         let metric = metrics.metrics.find(m => m.metricId === row.metricId);
 
-        let dataRow = {
+        let dataRow: any = {
           idx: row.rowId,
           parameters: '',
-          metric: metric?.label || row.metricId,
-          jan2023: 72000,
-          feb2023: 72000,
-          mar2023: 72000,
-          apr2023: 72000
+          metric: metric?.label || row.metricId
         };
+
+        row.records.forEach(record => {
+          dataRow[record.key] = record.value;
+        });
+
         return dataRow;
       });
 
@@ -76,7 +83,6 @@ export class RepComponent {
     })
   );
 
-  // For accessing the Grid's API
   @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
 
   constructor(
@@ -85,7 +91,7 @@ export class RepComponent {
     private metricsQuery: MetricsQuery
   ) {}
 
-  // Example load data from sever
+  // Example load data from server
   onGridReady(params: GridReadyEvent) {
     // let metrics = this.metricsQuery.getValue();
     // let rep = this.repQuery.getValue();

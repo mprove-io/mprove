@@ -14,6 +14,7 @@ export const emptyRep: RepState = {
   timeSpec: undefined,
   timeRange: undefined,
   rows: [],
+  columns: [],
   serverTs: undefined
 };
 

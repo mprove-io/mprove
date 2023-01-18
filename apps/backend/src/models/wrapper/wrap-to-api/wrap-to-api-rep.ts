@@ -13,6 +13,7 @@ export function wrapToApiRep(item: { rep: entities.RepEntity }): common.Rep {
     timeSpec: rep.time_spec,
     timeRange: rep.time_range,
     rows: rep.rows,
+    columns: [],
     serverTs: Number(rep.server_ts)
   };
 }

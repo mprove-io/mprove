@@ -13,6 +13,7 @@ export function wrapReps(item: { structId: string; reps: interfaces.Rep[] }) {
       timezone: x.timezone,
       timeSpec: x.time_spec,
       timeRange: x.time_range,
+      columns: [],
       rows: x.rows.map(y => {
         let row: common.Row = {
           rowId: y.id,

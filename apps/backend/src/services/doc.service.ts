@@ -53,13 +53,13 @@ export class DocService {
                 // label: 'timestamp'
               }
             },
-            {
-              id: 'utc',
-              fields: {
-                type: 'Int',
-                isFormula: false
-              }
-            },
+            // {
+            //   id: 'utc',
+            //   fields: {
+            //     type: 'Int',
+            //     isFormula: false
+            //   }
+            // },
             ...rep.rows.map(x => ({
               id: x.rowId,
               fields: {
@@ -77,18 +77,19 @@ export class DocService {
       {}
     );
 
-    const result = eachDayOfInterval({
+    let columns = eachDayOfInterval({
       start: new Date(2023, 1, 6),
       end: new Date(2023, 1, 10)
-    });
+    }).map(x => getUnixTime(x));
 
     let createRecords = {
-      records: result.map((x, i) => {
+      records: columns.map((x, i) => {
         let record = {
           id: i + 1,
           fields: {
-            timestamp: getUnixTime(x),
-            utc: x.getUTCSeconds()
+            timestamp: x
+            // ,
+            // utc: x.getUTCSeconds()
           }
         };
 
@@ -107,6 +108,7 @@ export class DocService {
       {}
     );
 
+    rep.columns = columns;
     rep.rows.forEach(x => {
       x.records = getRecordsResp.data.records.map((y: any) => ({
         id: y.id,

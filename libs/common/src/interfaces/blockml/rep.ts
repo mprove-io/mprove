@@ -25,6 +25,9 @@ export class Rep {
   @IsString()
   timeRange: string;
 
+  @IsString()
+  columns: number[];
+
   @ValidateNested()
   @Type(() => Row)
   rows: Row[];
