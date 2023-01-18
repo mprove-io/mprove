@@ -3,7 +3,7 @@
     <div class="mx-6 mb-6 mt-8 flex min-w-[2px] flex-grow flex-col">
       <div class="flex h-11 flex-row items-center justify-between">
         <div class="flex w-full flex-row items-center">
-          <div class="flex flex-row items-center space-x-5">
+          <div class="flex w-1/4 flex-row items-center space-x-5">
             <div
               data-cy="metricsTitle"
               class="text-gray1 flex items-center self-center text-2xl font-semibold"
@@ -11,6 +11,16 @@
               {{ pageTitle }}
             </div>
           </div>
+
+          <div class="text-gray1 ml-6 text-base">Time Range</div>
+
+          <m-fraction-ts
+            class="ml-3 pt-6"
+            [fraction]="fraction"
+            [isFirst]="true"
+            [fractionIndex]="0"
+            (fractionUpdate)="fractionUpdate($event)"
+          ></m-fraction-ts>
 
           <div class="flex-grow"></div>
 

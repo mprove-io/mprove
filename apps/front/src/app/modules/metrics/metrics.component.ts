@@ -43,6 +43,12 @@ export class MetricsComponent implements OnInit {
     })
   );
 
+  fraction: common.Fraction = {
+    brick: 'any',
+    operator: common.FractionOperatorEnum.Or,
+    type: common.FractionTypeEnum.TsIsAnyValue
+  };
+
   reps: common.Rep[];
   reps$ = this.repsQuery.select().pipe(
     tap(x => {
@@ -109,6 +115,10 @@ export class MetricsComponent implements OnInit {
 
   navToRep(repId: string) {
     this.navigateService.navigateToMetricsRep({ repId: repId });
+  }
+
+  fractionUpdate(event$: any) {
+    console.log(event$);
   }
 
   ngOnInit() {
