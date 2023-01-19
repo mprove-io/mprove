@@ -10,9 +10,35 @@
             >
               {{ pageTitle }}
             </div>
+            <div class="flex-grow"></div>
+
+            <div class="text-gray1 ml-6 text-base">Timezone</div>
+
+            <form [formGroup]="timezoneForm">
+              <ng-select
+                #timezoneSelect
+                data-cy="timezoneSelect"
+                class="custom w-[260px] text-base focus:outline-none"
+                [items]="timezones"
+                [clearable]="false"
+                (change)="timezoneChange()"
+                appendTo="body"
+                bindLabel="label"
+                bindValue="value"
+                formControlName="timezone"
+              >
+                <ng-template ng-label-tmp let-item="item">
+                  <div class="truncate">{{ item.label }}</div>
+                </ng-template>
+
+                <ng-template ng-option-tmp let-item="item">
+                  <div class="truncate">{{ item.label }}</div>
+                </ng-template>
+              </ng-select>
+            </form>
           </div>
 
-          <div class="text-gr ay1 ml-6 text-base">Time Spec</div>
+          <div class="text-gray1 ml-6 text-base">Time Spec</div>
 
           <form class="ml-5" [formGroup]="timeSpecForm">
             <ng-select

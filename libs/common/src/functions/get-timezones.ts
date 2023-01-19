@@ -21,7 +21,7 @@ export function getTimezones() {
     group.zones.forEach(zone => {
       tzs.push({
         value: zone.value,
-        label: `${group.group} - ${zone.name}`
+        label: `${zone.name} - ${group.group}`
       });
     });
   });

@@ -4,6 +4,7 @@ import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { tap } from 'rxjs';
+import { constants } from '~common/barrels/constants';
 import { ModelQuery } from '~front/app/queries/model.query';
 import { MqQuery } from '~front/app/queries/mq.query';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -79,6 +80,14 @@ export class MetricsComponent implements OnInit {
     ]
   });
 
+  timezoneForm = this.fb.group({
+    timezone: [
+      {
+        value: undefined
+      }
+    ]
+  });
+
   timeSpecList: TimeSpecItem[] = [
     {
       label: 'Years',
@@ -110,6 +119,10 @@ export class MetricsComponent implements OnInit {
     }
   ];
 
+  timezones = common
+    .getTimezones()
+    .filter(x => x.value !== constants.USE_PROJECT_TIMEZONE_VALUE);
+
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -124,8 +137,8 @@ export class MetricsComponent implements OnInit {
     private apiService: ApiService,
     private structQuery: StructQuery,
     private fileService: FileService,
-    private navigateService: NavigateService,
     private structService: StructService,
+    private navigateService: NavigateService,
     private spinner: NgxSpinnerService,
     private timeService: TimeService,
     private mconfigService: MconfigService,
@@ -135,20 +148,27 @@ export class MetricsComponent implements OnInit {
     private title: Title
   ) {}
 
-  timeSpecChange() {
-    let timeSpec = this.timeSpecForm.controls['timeSpec'].value;
+  ngOnInit() {
+    this.title.setTitle(this.pageTitle);
+    this.timeSpecForm.controls['timeSpec'].setValue(common.TimeSpecEnum.Months);
+
+    let timezone = this.structService.getTimezone();
+    this.timezoneForm.controls['timezone'].setValue(timezone);
   }
 
   navToRep(repId: string) {
     this.navigateService.navigateToMetricsRep({ repId: repId });
   }
 
-  fractionUpdate(event$: any) {
-    console.log(event$);
+  timeSpecChange() {
+    let timeSpec = this.timeSpecForm.controls['timeSpec'].value;
   }
 
-  ngOnInit() {
-    this.title.setTitle(this.pageTitle);
-    this.timeSpecForm.controls['timeSpec'].setValue(common.TimeSpecEnum.Months);
+  timezoneChange() {
+    let timezone = this.timezoneForm.controls['timezone'].value;
+  }
+
+  fractionUpdate(event$: any) {
+    console.log(event$);
   }
 }

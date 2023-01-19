@@ -48,6 +48,13 @@ export class StructService {
     this.mconfig$.subscribe();
   }
 
+  getTimezone() {
+    return this.struct.allowTimezones === true &&
+      this.user.timezone !== common.USE_PROJECT_TIMEZONE_VALUE
+      ? this.user.timezone
+      : this.struct.defaultTimezone;
+  }
+
   makeMconfig(): common.MconfigX {
     let newMconfigId = common.makeId();
     let newQueryId = common.makeId();
@@ -62,11 +69,7 @@ export class StructService {
       sortings: [],
       fields: [],
       sorts: null,
-      timezone:
-        this.struct.allowTimezones === true &&
-        this.user.timezone !== common.USE_PROJECT_TIMEZONE_VALUE
-          ? this.user.timezone
-          : this.struct.defaultTimezone,
+      timezone: this.getTimezone(),
       limit: 500,
       filters: [],
       extendedFilters: [],
