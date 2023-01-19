@@ -5,12 +5,26 @@ export const PASSWORD_RESET_EMAIL = 'PASSWORD_RESET_EMAIL';
 export const MIN_TIME_TO_SPIN = 0;
 
 export const LOCAL_STORAGE_TOKEN = 'token';
+export const LOCAL_STORAGE_TIMEZONE = 'timezone';
+export const LOCAL_STORAGE_TIME_SPEC = 'time_spec';
+export const LOCAL_STORAGE_TIME_RANGE_FRACTION = 'time_range_fraction';
 export const LOCAL_STORAGE_ORG_ID = 'orgId';
 export const LOCAL_STORAGE_PROJECT_ID = 'projectId';
 export const LOCAL_STORAGE_DELETED_ORG_NAME = 'deletedOrgName';
 export const LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME = 'changedOwnerOrgName';
 export const LOCAL_STORAGE_DELETED_PROJECT_NAME = 'deletedProjectName';
 export const LOCAL_STORAGE_NEW_ORG_OWNER = 'newOrgOwner';
+
+export const DEFAULT_TIME_SPEC = common.TimeSpecEnum.Days;
+
+export const DEFAULT_TIME_RANGE_FRACTION: common.Fraction = {
+  brick: 'last 5 days',
+  operator: common.FractionOperatorEnum.Or,
+  tsLastCompleteOption: common.FractionTsLastCompleteOptionEnum.Incomplete,
+  tsLastUnit: common.FractionTsLastUnitEnum.Days,
+  tsLastValue: 5,
+  type: common.FractionTypeEnum.TsIsInLast
+};
 
 export const MEMBERS_PER_PAGE = 10;
 export const USERS_PER_PAGE = 10;

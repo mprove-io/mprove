@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
@@ -18,6 +18,19 @@ export class ToBackendGetRepRequestPayload {
 
   @IsString()
   repId: string;
+
+  @IsBoolean()
+  withData: boolean;
+
+  @IsString()
+  timezone: string;
+
+  @IsEnum(common.TimeSpecEnum)
+  timeSpec: common.TimeSpecEnum;
+
+  @ValidateNested()
+  @Type(() => common.Fraction)
+  timeRangeFraction: common.Fraction;
 }
 
 export class ToBackendGetRepRequest extends ToBackendRequest {

@@ -9,6 +9,7 @@ import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -16,6 +17,7 @@ import { emptyRep, RepQuery } from '../queries/rep.query';
 import { StructQuery } from '../queries/struct.query';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
+import { StructService } from '../services/struct.service';
 
 @Injectable({ providedIn: 'root' })
 export class StructRepResolver implements Resolve<Observable<boolean>> {
@@ -23,6 +25,7 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
     private navQuery: NavQuery,
     private userQuery: UserQuery,
     private apiService: ApiService,
+    private structService: StructService,
     private repQuery: RepQuery,
     private structQuery: StructQuery,
     private memberQuery: MemberQuery,
@@ -81,12 +84,33 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
       return of(true);
     }
 
+    let timezone =
+      localStorage.getItem(constants.LOCAL_STORAGE_TIMEZONE) ||
+      this.structService.getTimezone();
+
+    let timeSpec =
+      (localStorage.getItem(
+        constants.LOCAL_STORAGE_TIME_SPEC
+      ) as common.TimeSpecEnum) || constants.DEFAULT_TIME_SPEC;
+
+    let timeRangeFractionStr = localStorage.getItem(
+      constants.LOCAL_STORAGE_TIME_RANGE_FRACTION
+    );
+
+    let timeRangeFraction = common.isDefined(timeRangeFractionStr)
+      ? JSON.parse(timeRangeFractionStr)
+      : constants.DEFAULT_TIME_RANGE_FRACTION;
+
     let payload: apiToBackend.ToBackendGetRepRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
       envId: nav.envId,
-      repId: parametersRepId
+      repId: parametersRepId,
+      withData: false,
+      timezone: timezone,
+      timeSpec: timeSpec,
+      timeRangeFraction: timeRangeFraction
     };
 
     return this.apiService

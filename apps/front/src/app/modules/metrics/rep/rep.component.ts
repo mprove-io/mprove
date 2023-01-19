@@ -61,8 +61,8 @@ export class RepComponent {
       let metrics = this.metricsQuery.getValue();
 
       let data = x.rows.map(row => {
-        console.log(row);
-        console.log(metrics.metrics);
+        // console.log(row);
+        // console.log(metrics.metrics);
 
         let metric = metrics.metrics.find(m => m.metricId === row.metricId);
 

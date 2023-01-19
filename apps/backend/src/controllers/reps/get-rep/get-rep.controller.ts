@@ -36,7 +36,17 @@ export class GetRepController {
   ) {
     let reqValid: apiToBackend.ToBackendGetRepRequest = request.body;
 
-    let { projectId, isRepoProd, branchId, envId, repId } = reqValid.payload;
+    let {
+      projectId,
+      isRepoProd,
+      branchId,
+      envId,
+      repId,
+      withData,
+      timeRangeFraction,
+      timeSpec,
+      timezone
+    } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -75,7 +85,9 @@ export class GetRepController {
 
     let repApi = wrapper.wrapToApiRep({ rep: rep });
 
-    repApi = await this.docService.getData({ rep: repApi });
+    if (withData === true) {
+      repApi = await this.docService.getData({ rep: repApi });
+    }
 
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.struct_id,

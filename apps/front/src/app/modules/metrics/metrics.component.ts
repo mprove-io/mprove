@@ -4,7 +4,6 @@ import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { tap } from 'rxjs';
-import { constants } from '~common/barrels/constants';
 import { ModelQuery } from '~front/app/queries/model.query';
 import { MqQuery } from '~front/app/queries/mq.query';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -23,7 +22,10 @@ import { QueryService } from '~front/app/services/query.service';
 import { StructService } from '~front/app/services/struct.service';
 import { TimeService } from '~front/app/services/time.service';
 import { common } from '~front/barrels/common';
-import { constants as frontConstants } from '~front/barrels/constants';
+import {
+  constants,
+  constants as frontConstants
+} from '~front/barrels/constants';
 
 export class TimeSpecItem {
   label: string;
@@ -50,17 +52,7 @@ export class MetricsComponent implements OnInit {
     })
   );
 
-  fraction: common.Fraction = {
-    brick: 'last 5 months',
-    operator: common.FractionOperatorEnum.Or,
-    tsLastCompleteOption: common.FractionTsLastCompleteOptionEnum.Incomplete,
-    tsLastUnit: common.FractionTsLastUnitEnum.Months,
-    tsLastValue: 5,
-    type: common.FractionTypeEnum.TsIsInLast
-    // brick: 'any',
-    // operator: common.FractionOperatorEnum.Or,
-    // type: common.FractionTypeEnum.TsIsAnyValue,
-  };
+  fraction: common.Fraction;
 
   reps: common.Rep[];
   reps$ = this.repsQuery.select().pipe(
@@ -121,7 +113,7 @@ export class MetricsComponent implements OnInit {
 
   timezones = common
     .getTimezones()
-    .filter(x => x.value !== constants.USE_PROJECT_TIMEZONE_VALUE);
+    .filter(x => x.value !== common.USE_PROJECT_TIMEZONE_VALUE);
 
   constructor(
     private router: Router,
@@ -150,10 +142,26 @@ export class MetricsComponent implements OnInit {
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
-    this.timeSpecForm.controls['timeSpec'].setValue(common.TimeSpecEnum.Months);
 
-    let timezone = this.structService.getTimezone();
+    let timezone =
+      localStorage.getItem(constants.LOCAL_STORAGE_TIMEZONE) ||
+      this.structService.getTimezone();
+
     this.timezoneForm.controls['timezone'].setValue(timezone);
+
+    let timeSpec =
+      localStorage.getItem(constants.LOCAL_STORAGE_TIME_SPEC) ||
+      constants.DEFAULT_TIME_SPEC;
+
+    this.timeSpecForm.controls['timeSpec'].setValue(timeSpec);
+
+    let timeRangeFractionStr = localStorage.getItem(
+      constants.LOCAL_STORAGE_TIME_RANGE_FRACTION
+    );
+
+    this.fraction = common.isDefined(timeRangeFractionStr)
+      ? JSON.parse(timeRangeFractionStr)
+      : constants.DEFAULT_TIME_RANGE_FRACTION;
   }
 
   navToRep(repId: string) {
@@ -162,13 +170,20 @@ export class MetricsComponent implements OnInit {
 
   timeSpecChange() {
     let timeSpec = this.timeSpecForm.controls['timeSpec'].value;
+    localStorage.setItem(constants.LOCAL_STORAGE_TIME_SPEC, timeSpec);
   }
 
   timezoneChange() {
     let timezone = this.timezoneForm.controls['timezone'].value;
+    localStorage.setItem(constants.LOCAL_STORAGE_TIMEZONE, timezone);
   }
 
   fractionUpdate(event$: any) {
     console.log(event$);
+
+    localStorage.setItem(
+      constants.LOCAL_STORAGE_TIME_RANGE_FRACTION,
+      JSON.stringify(event$.fraction)
+    );
   }
 }

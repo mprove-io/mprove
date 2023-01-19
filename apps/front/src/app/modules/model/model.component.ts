@@ -14,7 +14,6 @@ import {
   take,
   tap
 } from 'rxjs/operators';
-import { constants } from '~common/barrels/constants';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { setChartFields } from '~front/app/functions/set-chart-fields';
 import { ModelQuery, ModelState } from '~front/app/queries/model.query';
@@ -252,7 +251,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   timezones = common
     .getTimezones()
-    .filter(x => x.value !== constants.USE_PROJECT_TIMEZONE_VALUE);
+    .filter(x => x.value !== common.USE_PROJECT_TIMEZONE_VALUE);
 
   timeDiff: number;
 
