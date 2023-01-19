@@ -24,8 +24,14 @@ import { TimeService } from '~front/app/services/time.service';
 import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
 
+export class TimeSpecItem {
+  label: string;
+  value: common.TimeSpecEnum;
+}
+
 @Component({
   selector: 'm-metrics',
+  styleUrls: ['metrics.component.scss'],
   templateUrl: './metrics.component.html'
 })
 export class MetricsComponent implements OnInit {
@@ -44,9 +50,15 @@ export class MetricsComponent implements OnInit {
   );
 
   fraction: common.Fraction = {
-    brick: 'any',
+    brick: 'last 5 months',
     operator: common.FractionOperatorEnum.Or,
-    type: common.FractionTypeEnum.TsIsAnyValue
+    tsLastCompleteOption: common.FractionTsLastCompleteOptionEnum.Incomplete,
+    tsLastUnit: common.FractionTsLastUnitEnum.Months,
+    tsLastValue: 5,
+    type: common.FractionTypeEnum.TsIsInLast
+    // brick: 'any',
+    // operator: common.FractionOperatorEnum.Or,
+    // type: common.FractionTypeEnum.TsIsAnyValue,
   };
 
   reps: common.Rep[];
@@ -54,39 +66,49 @@ export class MetricsComponent implements OnInit {
     tap(x => {
       this.reps = [emptyRep, ...x.reps];
       // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
-      // this.reps.push(x.reps[0])
 
       this.cd.detectChanges();
     })
   );
+
+  timeSpecForm = this.fb.group({
+    timeSpec: [
+      {
+        value: undefined
+      }
+    ]
+  });
+
+  timeSpecList: TimeSpecItem[] = [
+    {
+      label: 'Years',
+      value: common.TimeSpecEnum.Years
+    },
+    {
+      label: 'Quarters',
+      value: common.TimeSpecEnum.Quarters
+    },
+    {
+      label: 'Months',
+      value: common.TimeSpecEnum.Months
+    },
+    {
+      label: 'Weeks',
+      value: common.TimeSpecEnum.Weeks
+    },
+    {
+      label: 'Days',
+      value: common.TimeSpecEnum.Days
+    },
+    {
+      label: 'Hours',
+      value: common.TimeSpecEnum.Hours
+    },
+    {
+      label: 'Minutes',
+      value: common.TimeSpecEnum.Minutes
+    }
+  ];
 
   constructor(
     private router: Router,
@@ -113,6 +135,10 @@ export class MetricsComponent implements OnInit {
     private title: Title
   ) {}
 
+  timeSpecChange() {
+    let timeSpec = this.timeSpecForm.controls['timeSpec'].value;
+  }
+
   navToRep(repId: string) {
     this.navigateService.navigateToMetricsRep({ repId: repId });
   }
@@ -123,5 +149,6 @@ export class MetricsComponent implements OnInit {
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
+    this.timeSpecForm.controls['timeSpec'].setValue(common.TimeSpecEnum.Months);
   }
 }

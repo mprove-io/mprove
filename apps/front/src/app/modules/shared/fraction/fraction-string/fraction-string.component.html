@@ -3,7 +3,7 @@
     <ng-select
       #fractionStringTypeSelect
       data-cy="fractionStringTypeSelect"
-      class="custom w-48 focus:outline-none"
+      class="custom popup-55 w-48 focus:outline-none"
       [items]="fractionStringTypesList"
       [clearable]="false"
       [searchable]="false"
@@ -45,7 +45,7 @@
     <input
       spellcheck="false"
       data-cy="fractionStringValueInput"
-      class="form-input h-[36px] w-[404px] rounded border-gray3 focus:border-blue3"
+      class="form-input border-gray3 focus:border-blue3 h-[36px] w-[404px] rounded"
       [ngClass]="{
         'border-red-600':
           fractionForm.controls['stringValue'].invalid &&

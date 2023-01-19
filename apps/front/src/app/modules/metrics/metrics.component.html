@@ -12,12 +12,39 @@
             </div>
           </div>
 
+          <div class="text-gr ay1 ml-6 text-base">Time Spec</div>
+
+          <form class="ml-5" [formGroup]="timeSpecForm">
+            <ng-select
+              #timeSpecSelect
+              data-cy="timeSpecSelect"
+              class="custom popup-55 w-32 focus:outline-none"
+              [items]="timeSpecList"
+              [clearable]="false"
+              [searchable]="false"
+              (change)="timeSpecChange()"
+              appendTo="body"
+              bindLabel="label"
+              bindValue="value"
+              formControlName="timeSpec"
+            >
+              <ng-template ng-label-tmp let-item="item">
+                <div class="ml-1 truncate">{{ item.label }}</div>
+              </ng-template>
+
+              <ng-template ng-option-tmp let-item="item">
+                <div class="ml-1 truncate">{{ item.label }}</div>
+              </ng-template>
+            </ng-select>
+          </form>
+
           <div class="text-gray1 ml-6 text-base">Time Range</div>
 
           <m-fraction-ts
             class="ml-3 pt-6"
             [fraction]="fraction"
             [isFirst]="true"
+            [isMetrics]="true"
             [fractionIndex]="0"
             (fractionUpdate)="fractionUpdate($event)"
           ></m-fraction-ts>

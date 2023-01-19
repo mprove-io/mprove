@@ -40,6 +40,7 @@ export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() fraction: common.Fraction;
   @Input() fractionIndex: number;
   @Input() isFirst: boolean;
+  @Input() isMetrics: boolean;
 
   @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
 
@@ -80,6 +81,14 @@ export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
       value: common.FractionTypeEnum.TsIsAnyValue
     },
     {
+      label: 'is in last',
+      value: common.FractionTypeEnum.TsIsInLast
+    },
+    {
+      label: 'is in range',
+      value: common.FractionTypeEnum.TsIsInRange
+    },
+    {
       label: 'is on Year',
       value: common.FractionTypeEnum.TsIsOnYear
     },
@@ -100,10 +109,6 @@ export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
       value: common.FractionTypeEnum.TsIsOnMinute
     },
     {
-      label: 'is in range',
-      value: common.FractionTypeEnum.TsIsInRange
-    },
-    {
       label: 'is before',
       value: common.FractionTypeEnum.TsIsBeforeDate
     },
@@ -119,10 +124,7 @@ export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
       label: 'is after (relative)',
       value: common.FractionTypeEnum.TsIsAfterRelative
     },
-    {
-      label: 'is in last',
-      value: common.FractionTypeEnum.TsIsInLast
-    },
+
     {
       label: 'is null',
       value: common.FractionTypeEnum.TsIsNull
@@ -164,16 +166,17 @@ export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
     }
   ];
 
-  fractionTsRelativeCompleteOptionsList: FractionTsRelativeCompleteOptionItem[] = [
-    {
-      label: 'complete',
-      value: common.FractionTsRelativeCompleteOptionEnum.Complete
-    },
-    {
-      label: 'incomplete',
-      value: common.FractionTsRelativeCompleteOptionEnum.Incomplete
-    }
-  ];
+  fractionTsRelativeCompleteOptionsList: FractionTsRelativeCompleteOptionItem[] =
+    [
+      {
+        label: 'complete',
+        value: common.FractionTsRelativeCompleteOptionEnum.Complete
+      },
+      {
+        label: 'incomplete',
+        value: common.FractionTsRelativeCompleteOptionEnum.Incomplete
+      }
+    ];
 
   fractionTsRelativeWhenOptionsList: FractionTsRelativeWhenOptionItem[] = [
     {
@@ -301,6 +304,20 @@ export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
 
   ngOnInit() {
     this.i18n.setLocale(en_US);
+
+    this.fractionTsTypesList = this.fractionTsTypesList.filter(x => {
+      if (this.isMetrics === true) {
+        return (
+          [
+            common.FractionTypeEnum.TsIsAnyValue,
+            common.FractionTypeEnum.TsIsNull,
+            common.FractionTypeEnum.TsIsNotNull
+          ].indexOf(x.value) < 0
+        );
+      } else {
+        return true;
+      }
+    });
 
     this.resetDateUsingFraction();
     this.resetDateToUsingFraction();
@@ -1210,8 +1227,8 @@ export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   relativeTsCompleteOptionChange() {
-    let value = this.tsRelativeCompleteForm.controls['tsRelativeCompleteOption']
-      .value;
+    let value =
+      this.tsRelativeCompleteForm.controls['tsRelativeCompleteOption'].value;
 
     if (value !== this.fraction.tsRelativeCompleteOption) {
       this.fraction.tsRelativeCompleteOption = value;
@@ -1338,9 +1355,8 @@ export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   tsLastCompleteOptionChange() {
-    this.fraction.tsLastCompleteOption = this.tsLastCompleteOptionForm.controls[
-      'tsLastCompleteOption'
-    ].value;
+    this.fraction.tsLastCompleteOption =
+      this.tsLastCompleteOptionForm.controls['tsLastCompleteOption'].value;
 
     this.buildFractionLast();
 
