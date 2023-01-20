@@ -84,7 +84,14 @@ export class GetMetricsController {
       struct: wrapper.wrapToApiStruct(struct),
       userMember: apiMember,
       metrics: metrics.map(x => wrapper.wrapToApiMetric({ metric: x })),
-      reps: reps.map(x => wrapper.wrapToApiRep({ rep: x }))
+      reps: reps.map(x =>
+        wrapper.wrapToApiRep({
+          rep: x,
+          timezone: undefined,
+          timeSpec: undefined,
+          timeRangeFraction: undefined
+        })
+      )
     };
 
     return payload;
