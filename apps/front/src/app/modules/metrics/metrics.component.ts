@@ -11,6 +11,7 @@ import { emptyRep, RepQuery } from '~front/app/queries/rep.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { RepsQuery } from '~front/app/queries/reps.query';
 import { StructQuery } from '~front/app/queries/struct.query';
+import { TimeQuery } from '~front/app/queries/time.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DataSizeService } from '~front/app/services/data-size.service';
@@ -48,25 +49,9 @@ export class MetricsComponent implements OnInit {
   rep$ = this.repQuery.select().pipe(
     tap(x => {
       this.rep = x;
-      console.log('x.timeRangeFraction');
+      // console.log(x);
+      // console.log('x.timeRangeFraction');
       console.log(x.timeRangeFraction);
-      // if (common.isDefined(x.timeSpec)) {
-      //   localStorage.setItem(constants.LOCAL_STORAGE_TIME_SPEC, x.timeSpec);
-      //   this.timeSpecForm.controls['timeSpec'].setValue(x.timeSpec);
-      // }
-
-      // if (common.isDefined(x.timezone)) {
-      //   localStorage.setItem(constants.LOCAL_STORAGE_TIMEZONE, x.timezone);
-      //   this.timezoneForm.controls['timezone'].setValue(x.timezone);
-      // }
-
-      // if (common.isDefined(x.timeRangeFraction)) {
-      //   localStorage.setItem(
-      //     constants.LOCAL_STORAGE_TIME_RANGE_FRACTION,
-      //     JSON.stringify(x.timeRangeFraction)
-      //   );
-      //   this.fraction = x.timeRangeFraction;
-      // }
 
       this.cd.detectChanges();
     })
@@ -141,6 +126,7 @@ export class MetricsComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private repsQuery: RepsQuery,
     private repQuery: RepQuery,
+    private timeQuery: TimeQuery,
     private navQuery: NavQuery,
     private modelQuery: ModelQuery,
     private userQuery: UserQuery,
@@ -163,25 +149,11 @@ export class MetricsComponent implements OnInit {
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
 
-    let timezone =
-      localStorage.getItem(constants.LOCAL_STORAGE_TIMEZONE) ||
-      this.structService.getTimezone();
+    let timeState = this.timeQuery.getValue();
 
-    this.timezoneForm.controls['timezone'].setValue(timezone);
-
-    let timeSpec =
-      localStorage.getItem(constants.LOCAL_STORAGE_TIME_SPEC) ||
-      constants.DEFAULT_TIME_SPEC;
-
-    this.timeSpecForm.controls['timeSpec'].setValue(timeSpec);
-
-    let timeRangeFractionStr = localStorage.getItem(
-      constants.LOCAL_STORAGE_TIME_RANGE_FRACTION
-    );
-
-    this.fraction = common.isDefined(timeRangeFractionStr)
-      ? JSON.parse(timeRangeFractionStr)
-      : constants.DEFAULT_TIME_RANGE_FRACTION;
+    this.timezoneForm.controls['timezone'].setValue(timeState.timezone);
+    this.timeSpecForm.controls['timeSpec'].setValue(timeState.timeSpec);
+    this.fraction = timeState.timeRangeFraction;
   }
 
   navToRep(repId: string) {
@@ -191,11 +163,13 @@ export class MetricsComponent implements OnInit {
   timeSpecChange() {
     let timeSpec = this.timeSpecForm.controls['timeSpec'].value;
     localStorage.setItem(constants.LOCAL_STORAGE_TIME_SPEC, timeSpec);
+    this.timeQuery.updatePart({ timeSpec: timeSpec });
   }
 
   timezoneChange() {
     let timezone = this.timezoneForm.controls['timezone'].value;
     localStorage.setItem(constants.LOCAL_STORAGE_TIMEZONE, timezone);
+    this.timeQuery.updatePart({ timezone: timezone });
   }
 
   fractionUpdate(event$: any) {
@@ -205,5 +179,6 @@ export class MetricsComponent implements OnInit {
       constants.LOCAL_STORAGE_TIME_RANGE_FRACTION,
       JSON.stringify(event$.fraction)
     );
+    this.timeQuery.updatePart({ timeRangeFraction: event$.fraction });
   }
 }

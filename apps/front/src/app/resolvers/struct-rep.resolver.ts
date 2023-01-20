@@ -9,12 +9,12 @@ import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { emptyRep, RepQuery } from '../queries/rep.query';
 import { StructQuery } from '../queries/struct.query';
+import { TimeQuery } from '../queries/time.query';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
 import { StructService } from '../services/struct.service';
@@ -23,6 +23,7 @@ import { StructService } from '../services/struct.service';
 export class StructRepResolver implements Resolve<Observable<boolean>> {
   constructor(
     private navQuery: NavQuery,
+    private timeQuery: TimeQuery,
     private userQuery: UserQuery,
     private apiService: ApiService,
     private structService: StructService,
@@ -84,22 +85,7 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
       return of(true);
     }
 
-    let timezone =
-      localStorage.getItem(constants.LOCAL_STORAGE_TIMEZONE) ||
-      this.structService.getTimezone();
-
-    let timeSpec =
-      (localStorage.getItem(
-        constants.LOCAL_STORAGE_TIME_SPEC
-      ) as common.TimeSpecEnum) || constants.DEFAULT_TIME_SPEC;
-
-    let timeRangeFractionStr = localStorage.getItem(
-      constants.LOCAL_STORAGE_TIME_RANGE_FRACTION
-    );
-
-    let timeRangeFraction = common.isDefined(timeRangeFractionStr)
-      ? JSON.parse(timeRangeFractionStr)
-      : constants.DEFAULT_TIME_RANGE_FRACTION;
+    let timeState = this.timeQuery.getValue();
 
     let payload: apiToBackend.ToBackendGetRepRequestPayload = {
       projectId: nav.projectId,
@@ -108,9 +94,9 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
       envId: nav.envId,
       repId: parametersRepId,
       withData: false,
-      timezone: timezone,
-      timeSpec: timeSpec,
-      timeRangeFraction: timeRangeFraction
+      timezone: timeState.timezone,
+      timeSpec: timeState.timeSpec,
+      timeRangeFraction: timeState.timeRangeFraction
     };
 
     return this.apiService
