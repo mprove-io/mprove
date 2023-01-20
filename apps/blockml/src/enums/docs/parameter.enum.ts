@@ -71,7 +71,6 @@ export enum ParameterEnum {
   Timeframes = 'timeframes',
   Timezone = 'timezone',
   TimeSpec = 'time_spec',
-  TimeRange = 'time_range',
   Title = 'title',
   Type = 'type',
   Udf = 'udf',

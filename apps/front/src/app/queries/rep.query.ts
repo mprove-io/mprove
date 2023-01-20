@@ -12,7 +12,7 @@ export const emptyRep: RepState = {
   title: 'Empty',
   timezone: undefined,
   timeSpec: undefined,
-  timeRange: undefined,
+  timeRangeFraction: undefined,
   rows: [],
   columns: [],
   serverTs: undefined

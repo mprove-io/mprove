@@ -10,9 +10,9 @@ export function wrapReps(item: { structId: string; reps: interfaces.Rep[] }) {
       repId: x.name,
       filePath: x.filePath,
       title: x.title,
-      timezone: x.timezone,
-      timeSpec: x.time_spec,
-      timeRange: x.time_range,
+      timezone: undefined,
+      timeSpec: undefined,
+      timeRangeFraction: undefined,
       columns: [],
       rows: x.rows.map(y => {
         let row: common.Row = {

@@ -16,15 +16,6 @@ export class RepEntity {
   @Column({ type: constants.VARCHAR })
   title: string;
 
-  @Column({ type: constants.TIMEZONE_VARCHAR })
-  timezone: string;
-
-  @Column({ type: constants.VARCHAR })
-  time_spec: common.TimeSpecEnum;
-
-  @Column({ type: constants.TIMEZONE_VARCHAR })
-  time_range: string;
-
   @Column({ type: constants.JSON })
   rows: common.Row[];
 

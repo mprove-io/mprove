@@ -210,9 +210,6 @@ export function checkTopUnknownParameters(
               [
                 enums.ParameterEnum.Report.toString(),
                 enums.ParameterEnum.Title.toString(),
-                enums.ParameterEnum.Timezone.toString(),
-                enums.ParameterEnum.TimeSpec.toString(),
-                enums.ParameterEnum.TimeRange.toString(),
                 enums.ParameterEnum.Rows.toString()
               ].indexOf(parameter) < 0
             ) {

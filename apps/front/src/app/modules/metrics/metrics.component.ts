@@ -48,6 +48,26 @@ export class MetricsComponent implements OnInit {
   rep$ = this.repQuery.select().pipe(
     tap(x => {
       this.rep = x;
+      console.log('x.timeRangeFraction');
+      console.log(x.timeRangeFraction);
+      // if (common.isDefined(x.timeSpec)) {
+      //   localStorage.setItem(constants.LOCAL_STORAGE_TIME_SPEC, x.timeSpec);
+      //   this.timeSpecForm.controls['timeSpec'].setValue(x.timeSpec);
+      // }
+
+      // if (common.isDefined(x.timezone)) {
+      //   localStorage.setItem(constants.LOCAL_STORAGE_TIMEZONE, x.timezone);
+      //   this.timezoneForm.controls['timezone'].setValue(x.timezone);
+      // }
+
+      // if (common.isDefined(x.timeRangeFraction)) {
+      //   localStorage.setItem(
+      //     constants.LOCAL_STORAGE_TIME_RANGE_FRACTION,
+      //     JSON.stringify(x.timeRangeFraction)
+      //   );
+      //   this.fraction = x.timeRangeFraction;
+      // }
+
       this.cd.detectChanges();
     })
   );

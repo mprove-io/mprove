@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsInt, IsString, ValidateNested } from 'class-validator';
 import { enums } from '~common/barrels/enums';
+import { Fraction } from './fraction';
 import { Row } from './row';
 
 export class Rep {
@@ -22,8 +23,9 @@ export class Rep {
   @IsEnum(enums.TimeSpecEnum)
   timeSpec: enums.TimeSpecEnum;
 
-  @IsString()
-  timeRange: string;
+  @ValidateNested()
+  @Type(() => Fraction)
+  timeRangeFraction: Fraction;
 
   @IsString()
   columns: number[];

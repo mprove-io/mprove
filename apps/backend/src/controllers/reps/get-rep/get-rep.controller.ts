@@ -83,7 +83,12 @@ export class GetRepController {
       }
     });
 
-    let repApi = wrapper.wrapToApiRep({ rep: rep });
+    let repApi = wrapper.wrapToApiRep({
+      rep: rep,
+      timezone: timezone,
+      timeSpec: timeSpec,
+      timeRangeFraction: timeRangeFraction
+    });
 
     if (withData === true) {
       repApi = await this.docService.getData({ rep: repApi });
