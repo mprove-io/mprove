@@ -1,3 +1,4 @@
+import { fromUnixTime, getUnixTime } from 'date-fns';
 import { barTimestamp } from '~blockml/barrels/bar-timestamp';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
@@ -54,8 +55,8 @@ export function processFilter(item: {
     }
   }
 
-  let rangeOpen = 1672617600;
-  let rangeClose = 1673136000;
+  let rangeOpen: Date;
+  let rangeClose: Date;
 
   weekStart = common.isDefined(weekStart)
     ? weekStart
@@ -622,7 +623,8 @@ export function processFilter(item: {
       } = barTimestamp.makeTimestampsCurrent({
         timezone: timezone,
         weekStart: weekStart,
-        connection: connection
+        connection: connection,
+        getTimeRange: getTimeRange
       });
 
       let way;
@@ -668,15 +670,20 @@ export function processFilter(item: {
         let two;
 
         if (year) {
-          open = barTimestamp.makeTimestampOpenFromDateParts({
-            year: year,
-            month: month,
-            day: day,
-            hour: hour,
-            minute: minute,
-            connection: connection,
-            timezone: timezone
-          });
+          let { sqlOpen, rgOpen } = barTimestamp.makeTimestampOpenFromDateParts(
+            {
+              year: year,
+              month: month,
+              day: day,
+              hour: hour,
+              minute: minute,
+              connection: connection,
+              timezone: timezone,
+              getTimeRange: getTimeRange
+            }
+          );
+          open = sqlOpen;
+          rangeOpen = rgOpen;
 
           switch (true) {
             case way === 'after': {
@@ -696,70 +703,90 @@ export function processFilter(item: {
             (way.match(/^last$/) && complete) ||
             (way.match(/^before|after$/) && when.match(/^ago$/) && complete)
           ) {
-            open = barTimestamp.makeTimestampOpenLastBeforeAfterComplete({
-              unit: unit,
-              integer: Number(integerStr),
-              currentYearTs: currentYearTs,
-              currentQuarterTs: currentQuarterTs,
-              currentMonthTs: currentMonthTs,
-              currentWeekStartTs: currentWeekStartTs,
-              currentDateTs: currentDateTs,
-              currentHourTs: currentHourTs,
-              currentMinuteTs: currentMinuteTs,
-              connection: connection
-            });
+            let { sqlOpen, rgOpen } =
+              barTimestamp.makeTimestampOpenLastBeforeAfterComplete({
+                unit: unit,
+                integer: Number(integerStr),
+                currentYearTs: currentYearTs,
+                currentQuarterTs: currentQuarterTs,
+                currentMonthTs: currentMonthTs,
+                currentWeekStartTs: currentWeekStartTs,
+                currentDateTs: currentDateTs,
+                currentHourTs: currentHourTs,
+                currentMinuteTs: currentMinuteTs,
+                connection: connection,
+                getTimeRange: getTimeRange
+              });
+            open = sqlOpen;
+            rangeOpen = rgOpen;
           } else if (
             way.match(/^last$/) ||
             (way.match(/^before|after$/) && when.match(/^ago$/))
           ) {
-            open = barTimestamp.makeTimestampOpenLastBeforeAfter({
-              unit: unit,
-              integer: Number(integerStr),
-              currentTs: currentTs,
-              connection: connection
-            });
+            let { sqlOpen, rgOpen } =
+              barTimestamp.makeTimestampOpenLastBeforeAfter({
+                unit: unit,
+                integer: Number(integerStr),
+                currentTs: currentTs,
+                connection: connection,
+                getTimeRange: getTimeRange
+              });
+            open = sqlOpen;
+            rangeOpen = rgOpen;
           } else if (
             way.match(/^before|after$/) &&
             when.match(/^in\s+future$/) &&
             complete
           ) {
-            open = barTimestamp.makeTimestampOpenBeforeAfterInFutureComplete({
-              unit: unit,
-              integer: Number(integerStr),
-              currentYearTs: currentYearTs,
-              currentQuarterTs: currentQuarterTs,
-              currentMonthTs: currentMonthTs,
-              currentWeekStartTs: currentWeekStartTs,
-              currentDateTs: currentDateTs,
-              currentHourTs: currentHourTs,
-              currentMinuteTs: currentMinuteTs,
-              connection: connection
-            });
+            let { sqlOpen, rgOpen } =
+              barTimestamp.makeTimestampOpenBeforeAfterInFutureComplete({
+                unit: unit,
+                integer: Number(integerStr),
+                currentYearTs: currentYearTs,
+                currentQuarterTs: currentQuarterTs,
+                currentMonthTs: currentMonthTs,
+                currentWeekStartTs: currentWeekStartTs,
+                currentDateTs: currentDateTs,
+                currentHourTs: currentHourTs,
+                currentMinuteTs: currentMinuteTs,
+                connection: connection,
+                getTimeRange: getTimeRange
+              });
+            open = sqlOpen;
+            rangeOpen = rgOpen;
           } else if (
             way.match(/^before|after$/) &&
             when.match(/^in\s+future$/)
           ) {
-            open = barTimestamp.makeTimestampOpenBeforeAfterInFuture({
-              unit: unit,
-              integer: Number(integerStr),
-              currentTs: currentTs,
-              connection: connection
-            });
+            let { sqlOpen, rgOpen } =
+              barTimestamp.makeTimestampOpenBeforeAfterInFuture({
+                unit: unit,
+                integer: Number(integerStr),
+                currentTs: currentTs,
+                connection: connection,
+                getTimeRange: getTimeRange
+              });
+            open = sqlOpen;
+            rangeOpen = rgOpen;
           }
 
           // CLOSE INTERVAL
           if (way.match(/^last$/) && complete && plusCurrent) {
-            close = barTimestamp.makeTimestampCloseLastCompletePlusCurrent({
-              unit: unit,
-              currentYearTs: currentYearTs,
-              currentQuarterTs: currentQuarterTs,
-              currentMonthTs: currentMonthTs,
-              currentWeekStartTs: currentWeekStartTs,
-              currentDateTs: currentDateTs,
-              currentHourTs: currentHourTs,
-              currentMinuteTs: currentMinuteTs,
-              connection: connection
-            });
+            let { sqlClose, rgClose } =
+              barTimestamp.makeTimestampCloseLastCompletePlusCurrent({
+                unit: unit,
+                currentYearTs: currentYearTs,
+                currentQuarterTs: currentQuarterTs,
+                currentMonthTs: currentMonthTs,
+                currentWeekStartTs: currentWeekStartTs,
+                currentDateTs: currentDateTs,
+                currentHourTs: currentHourTs,
+                currentMinuteTs: currentMinuteTs,
+                connection: connection,
+                getTimeRange: getTimeRange
+              });
+            close = sqlClose;
+            rangeClose = rgClose;
           } else if (way.match(/^last$/) && complete) {
             close =
               unit === enums.FractionUnitEnum.Minutes
@@ -777,8 +804,26 @@ export function processFilter(item: {
                 : unit === enums.FractionUnitEnum.Years
                 ? currentYearTs
                 : undefined;
+
+            rangeClose =
+              unit === enums.FractionUnitEnum.Minutes
+                ? fromUnixTime(Number(currentMinuteTs))
+                : unit === enums.FractionUnitEnum.Hours
+                ? fromUnixTime(Number(currentHourTs))
+                : unit === enums.FractionUnitEnum.Days
+                ? fromUnixTime(Number(currentDateTs))
+                : unit === enums.FractionUnitEnum.Weeks
+                ? fromUnixTime(Number(currentWeekStartTs))
+                : unit === enums.FractionUnitEnum.Months
+                ? fromUnixTime(Number(currentMonthTs))
+                : unit === enums.FractionUnitEnum.Quarters
+                ? fromUnixTime(Number(currentQuarterTs))
+                : unit === enums.FractionUnitEnum.Years
+                ? fromUnixTime(Number(currentYearTs))
+                : undefined;
           } else if (way.match(/^last$/)) {
             close = currentTs;
+            rangeClose = fromUnixTime(Number(currentTs));
           }
         }
 
@@ -787,12 +832,17 @@ export function processFilter(item: {
             ? `${forIntegerStr}`
             : `-${forIntegerStr}`;
 
-          close = barTimestamp.makeTimestampCloseBeforeAfterForUnit({
-            open: open,
-            forUnit: forUnit,
-            sInteger: Number(sIntegerStr),
-            connection: connection
-          });
+          let { sqlClose, rgClose } =
+            barTimestamp.makeTimestampCloseBeforeAfterForUnit({
+              open: open,
+              forUnit: forUnit,
+              sInteger: Number(sIntegerStr),
+              connection: connection,
+              getTimeRange: getTimeRange,
+              rangeOpen: rangeOpen
+            });
+          close = sqlClose;
+          rangeClose = rgClose;
         }
 
         if (way.match(/^last|after$/)) {
@@ -924,37 +974,47 @@ export function processFilter(item: {
         let open;
         let close;
 
-        open = barTimestamp.makeTimestampOpenFromDateParts({
+        let { sqlOpen, rgOpen } = barTimestamp.makeTimestampOpenFromDateParts({
           year: year,
           month: month,
           day: day,
           hour: hour,
           minute: minute,
           connection: connection,
-          timezone: timezone
+          timezone: timezone,
+          getTimeRange: getTimeRange
         });
+        open = sqlOpen;
+        rangeOpen = rgOpen;
 
         if (common.isUndefined(toYear)) {
-          close = barTimestamp.makeTimestampCloseBetween({
+          let { sqlClose, rgClose } = barTimestamp.makeTimestampCloseBetween({
             open: open,
             year: year,
             month: month,
             day: day,
             hour: hour,
             minute: minute,
-            connection: connection
+            connection: connection,
+            getTimeRange: getTimeRange,
+            rangeOpen: rangeOpen
           });
+          close = sqlClose;
+          rangeClose = rgClose;
         } else {
           // to
-          close = barTimestamp.makeTimestampCloseBetweenTo({
+          let { sqlClose, rgClose } = barTimestamp.makeTimestampCloseBetweenTo({
             toYear: toYear,
             toMonth: toMonth,
             toDay: toDay,
             toHour: toHour,
             toMinute: toMinute,
             connection: connection,
-            timezone: timezone
+            timezone: timezone,
+            getTimeRange: getTimeRange
           });
+          close = sqlClose;
+          rangeClose = rgClose;
         }
 
         ors.push(`(${sqlTsSelect} >= ${open} AND ${sqlTsSelect} < ${close})`);
@@ -1406,8 +1466,12 @@ export function processFilter(item: {
   if (getTimeRange === true) {
     return {
       valid: 1,
-      rangeOpen: rangeOpen,
-      rangeClose: rangeClose
+      rangeOpen: common.isDefined(rangeOpen)
+        ? getUnixTime(rangeOpen)
+        : undefined,
+      rangeClose: common.isDefined(rangeClose)
+        ? getUnixTime(rangeClose)
+        : undefined
     };
   }
 

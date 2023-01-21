@@ -1,36 +1,48 @@
+import {
+  getUnixTime,
+  startOfDay,
+  startOfHour,
+  startOfMinute,
+  startOfMonth,
+  startOfQuarter,
+  startOfWeek,
+  startOfYear
+} from 'date-fns';
 import { common } from '~blockml/barrels/common';
 
 export function makeTimestampsCurrent(item: {
   connection: common.ProjectConnection;
   timezone: any;
   weekStart: any;
-  getTimeRange?: boolean;
+  getTimeRange: boolean;
 }) {
   let { connection, timezone, weekStart, getTimeRange } = item;
 
-  let currentTimestamp;
-  let currentMinuteTimestamp;
-  let currentHourTimestamp;
-  let currentDateTimestamp;
-  let currentWeekStartTimestamp;
-  let currentMonthTimestamp;
-  let currentQuarterTimestamp;
-  let currentYearTimestamp;
+  let currentTimestamp: string;
+  let currentMinuteTimestamp: string;
+  let currentHourTimestamp: string;
+  let currentDateTimestamp: string;
+  let currentWeekStartTimestamp: string;
+  let currentMonthTimestamp: string;
+  let currentQuarterTimestamp: string;
+  let currentYearTimestamp: string;
 
   if (getTimeRange === true) {
-    // currentDate = new Date();
-    // currentTimestamp = getUnixTime(currentDate);
-    // currentMinuteTimestamp = getUnixTime(startOfMinute(currentDate));
-    // currentHourTimestamp = getUnixTime(startOfHour(currentDate));
-    // currentDateTimestampp = getUnixTime(startOfDay(currentDate));
-    // currentWeekStartTimestamp = getUnixTime(
-    //   startOfWeek(currentDate, {
-    //     weekStartsOn: weekStart === common.ProjectWeekStartEnum.Sunday ? 0 : 1
-    //   })
-    // );
-    // currentMonthTimestamp = getUnixTime(startOfMonth(currentDate));
-    // currentQuarterTimestamp = getUnixTime(startOfQuarter(currentDate));
-    // currentYearTimestamp = getUnixTime(startOfYear(currentDate));
+    let currentDate = new Date();
+    currentTimestamp = getUnixTime(currentDate).toString();
+    currentMinuteTimestamp = getUnixTime(startOfMinute(currentDate)).toString();
+    currentHourTimestamp = getUnixTime(startOfHour(currentDate)).toString();
+    currentDateTimestamp = getUnixTime(startOfDay(currentDate)).toString();
+    currentWeekStartTimestamp = getUnixTime(
+      startOfWeek(currentDate, {
+        weekStartsOn: weekStart === common.ProjectWeekStartEnum.Sunday ? 0 : 1
+      })
+    ).toString();
+    currentMonthTimestamp = getUnixTime(startOfMonth(currentDate)).toString();
+    currentQuarterTimestamp = getUnixTime(
+      startOfQuarter(currentDate)
+    ).toString();
+    currentYearTimestamp = getUnixTime(startOfYear(currentDate)).toString();
   } else {
     switch (connection.type) {
       case common.ConnectionTypeEnum.BigQuery: {
