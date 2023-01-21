@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
-import { eachDayOfInterval, getUnixTime } from 'date-fns';
 import { common } from '~backend/barrels/common';
 import { interfaces } from '~backend/barrels/interfaces';
 
@@ -77,13 +76,8 @@ export class DocService {
       {}
     );
 
-    let columns = eachDayOfInterval({
-      start: new Date(2023, 1, 6),
-      end: new Date(2023, 1, 10)
-    }).map(x => getUnixTime(x));
-
     let createRecords = {
-      records: columns.map((x, i) => {
+      records: rep.columns.map((x, i) => {
         let record = {
           id: i + 1,
           fields: {
@@ -108,7 +102,6 @@ export class DocService {
       {}
     );
 
-    rep.columns = columns;
     rep.rows.forEach(x => {
       x.records = getRecordsResp.data.records.map((y: any) => ({
         id: y.id,

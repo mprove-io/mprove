@@ -4,8 +4,9 @@ export function makeTimestampsCurrent(item: {
   connection: common.ProjectConnection;
   timezone: any;
   weekStart: any;
+  getTimeRange?: boolean;
 }) {
-  let { connection, timezone, weekStart } = item;
+  let { connection, timezone, weekStart, getTimeRange } = item;
 
   let currentTimestamp;
   let currentMinuteTimestamp;
@@ -16,87 +17,103 @@ export function makeTimestampsCurrent(item: {
   let currentQuarterTimestamp;
   let currentYearTimestamp;
 
-  switch (connection.type) {
-    case common.ConnectionTypeEnum.BigQuery: {
-      currentTimestamp =
-        timezone === common.UTC
-          ? 'CURRENT_TIMESTAMP()'
-          : `TIMESTAMP(FORMAT_TIMESTAMP('%F %T', CURRENT_TIMESTAMP(), '${timezone}'))`;
+  if (getTimeRange === true) {
+    // currentDate = new Date();
+    // currentTimestamp = getUnixTime(currentDate);
+    // currentMinuteTimestamp = getUnixTime(startOfMinute(currentDate));
+    // currentHourTimestamp = getUnixTime(startOfHour(currentDate));
+    // currentDateTimestampp = getUnixTime(startOfDay(currentDate));
+    // currentWeekStartTimestamp = getUnixTime(
+    //   startOfWeek(currentDate, {
+    //     weekStartsOn: weekStart === common.ProjectWeekStartEnum.Sunday ? 0 : 1
+    //   })
+    // );
+    // currentMonthTimestamp = getUnixTime(startOfMonth(currentDate));
+    // currentQuarterTimestamp = getUnixTime(startOfQuarter(currentDate));
+    // currentYearTimestamp = getUnixTime(startOfYear(currentDate));
+  } else {
+    switch (connection.type) {
+      case common.ConnectionTypeEnum.BigQuery: {
+        currentTimestamp =
+          timezone === common.UTC
+            ? 'CURRENT_TIMESTAMP()'
+            : `TIMESTAMP(FORMAT_TIMESTAMP('%F %T', CURRENT_TIMESTAMP(), '${timezone}'))`;
 
-      currentMinuteTimestamp = `TIMESTAMP_TRUNC(${currentTimestamp}, MINUTE)`;
-      currentHourTimestamp = `TIMESTAMP_TRUNC(${currentTimestamp}, HOUR)`;
-      currentDateTimestamp = `TIMESTAMP_TRUNC(${currentTimestamp}, DAY)`;
+        currentMinuteTimestamp = `TIMESTAMP_TRUNC(${currentTimestamp}, MINUTE)`;
+        currentHourTimestamp = `TIMESTAMP_TRUNC(${currentTimestamp}, HOUR)`;
+        currentDateTimestamp = `TIMESTAMP_TRUNC(${currentTimestamp}, DAY)`;
 
-      currentWeekStartTimestamp =
-        weekStart === common.ProjectWeekStartEnum.Sunday
-          ? `TIMESTAMP_TRUNC(${currentTimestamp}, WEEK)`
-          : `TIMESTAMP_ADD(TIMESTAMP_TRUNC(${currentTimestamp}, WEEK), INTERVAL 1 DAY)`;
+        currentWeekStartTimestamp =
+          weekStart === common.ProjectWeekStartEnum.Sunday
+            ? `TIMESTAMP_TRUNC(${currentTimestamp}, WEEK)`
+            : `TIMESTAMP_ADD(TIMESTAMP_TRUNC(${currentTimestamp}, WEEK), INTERVAL 1 DAY)`;
 
-      currentMonthTimestamp = `TIMESTAMP_TRUNC(${currentTimestamp}, MONTH)`;
-      currentQuarterTimestamp = `TIMESTAMP_TRUNC(${currentTimestamp}, QUARTER)`;
-      currentYearTimestamp = `TIMESTAMP_TRUNC(${currentTimestamp}, YEAR)`;
-      break;
-    }
+        currentMonthTimestamp = `TIMESTAMP_TRUNC(${currentTimestamp}, MONTH)`;
+        currentQuarterTimestamp = `TIMESTAMP_TRUNC(${currentTimestamp}, QUARTER)`;
+        currentYearTimestamp = `TIMESTAMP_TRUNC(${currentTimestamp}, YEAR)`;
+        break;
+      }
 
-    case common.ConnectionTypeEnum.PostgreSQL: {
-      currentTimestamp =
-        timezone === common.UTC
-          ? 'CURRENT_TIMESTAMP'
-          : `TIMEZONE('${timezone}', CURRENT_TIMESTAMP::TIMESTAMPTZ)`;
+      case common.ConnectionTypeEnum.PostgreSQL: {
+        currentTimestamp =
+          timezone === common.UTC
+            ? 'CURRENT_TIMESTAMP'
+            : `TIMEZONE('${timezone}', CURRENT_TIMESTAMP::TIMESTAMPTZ)`;
 
-      currentMinuteTimestamp = `DATE_TRUNC('minute', ${currentTimestamp})`;
-      currentHourTimestamp = `DATE_TRUNC('hour', ${currentTimestamp})`;
-      currentDateTimestamp = `DATE_TRUNC('day', ${currentTimestamp})`;
+        currentMinuteTimestamp = `DATE_TRUNC('minute', ${currentTimestamp})`;
+        currentHourTimestamp = `DATE_TRUNC('hour', ${currentTimestamp})`;
+        currentDateTimestamp = `DATE_TRUNC('day', ${currentTimestamp})`;
 
-      currentWeekStartTimestamp =
-        weekStart === common.ProjectWeekStartEnum.Sunday
-          ? `DATE_TRUNC('week', ${currentTimestamp}) + INTERVAL '-1 day'`
-          : `DATE_TRUNC('week', ${currentTimestamp})`;
+        currentWeekStartTimestamp =
+          weekStart === common.ProjectWeekStartEnum.Sunday
+            ? `DATE_TRUNC('week', ${currentTimestamp}) + INTERVAL '-1 day'`
+            : `DATE_TRUNC('week', ${currentTimestamp})`;
 
-      currentMonthTimestamp = `DATE_TRUNC('month', ${currentTimestamp})`;
-      currentQuarterTimestamp = `DATE_TRUNC('quarter', ${currentTimestamp})`;
-      currentYearTimestamp = `DATE_TRUNC('year', ${currentTimestamp})`;
-      break;
-    }
+        currentMonthTimestamp = `DATE_TRUNC('month', ${currentTimestamp})`;
+        currentQuarterTimestamp = `DATE_TRUNC('quarter', ${currentTimestamp})`;
+        currentYearTimestamp = `DATE_TRUNC('year', ${currentTimestamp})`;
+        break;
+      }
 
-    case common.ConnectionTypeEnum.ClickHouse: {
-      currentTimestamp =
-        timezone === common.UTC ? 'now()' : `now('${timezone}')`;
+      case common.ConnectionTypeEnum.ClickHouse: {
+        currentTimestamp =
+          timezone === common.UTC ? 'now()' : `now('${timezone}')`;
 
-      currentMinuteTimestamp = `toStartOfMinute(${currentTimestamp})`;
-      currentHourTimestamp = `toStartOfHour(${currentTimestamp})`;
-      currentDateTimestamp = `toStartOfDay(${currentTimestamp})`;
+        currentMinuteTimestamp = `toStartOfMinute(${currentTimestamp})`;
+        currentHourTimestamp = `toStartOfHour(${currentTimestamp})`;
+        currentDateTimestamp = `toStartOfDay(${currentTimestamp})`;
 
-      currentWeekStartTimestamp =
-        weekStart === common.ProjectWeekStartEnum.Sunday
-          ? `toStartOfWeek(${currentTimestamp}, 6)`
-          : `toStartOfWeek(${currentTimestamp}, 3)`;
+        currentWeekStartTimestamp =
+          weekStart === common.ProjectWeekStartEnum.Sunday
+            ? `toStartOfWeek(${currentTimestamp}, 6)`
+            : `toStartOfWeek(${currentTimestamp}, 3)`;
 
-      currentMonthTimestamp = `toStartOfMonth(${currentTimestamp})`;
-      currentQuarterTimestamp = `toStartOfQuarter(${currentTimestamp})`;
-      currentYearTimestamp = `toStartOfYear(${currentTimestamp})`;
-      break;
-    }
+        currentMonthTimestamp = `toStartOfMonth(${currentTimestamp})`;
+        currentQuarterTimestamp = `toStartOfQuarter(${currentTimestamp})`;
+        currentYearTimestamp = `toStartOfYear(${currentTimestamp})`;
+        break;
+      }
 
-    case common.ConnectionTypeEnum.SnowFlake: {
-      currentTimestamp =
-        timezone === common.UTC
-          ? 'CAST(CURRENT_TIMESTAMP() AS TIMESTAMP_NTZ)'
-          : `CONVERT_TIMEZONE('UTC', '${timezone}',  CAST(CURRENT_TIMESTAMP() AS TIMESTAMP_NTZ))`;
+      case common.ConnectionTypeEnum.SnowFlake: {
+        currentTimestamp =
+          timezone === common.UTC
+            ? 'CAST(CURRENT_TIMESTAMP() AS TIMESTAMP_NTZ)'
+            : `CONVERT_TIMEZONE('UTC', '${timezone}',  CAST(CURRENT_TIMESTAMP() AS TIMESTAMP_NTZ))`;
 
-      currentMinuteTimestamp = `DATE_TRUNC('minute', ${currentTimestamp})`;
-      currentHourTimestamp = `DATE_TRUNC('hour', ${currentTimestamp})`;
-      currentDateTimestamp = `DATE_TRUNC('day', ${currentTimestamp})`;
+        currentMinuteTimestamp = `DATE_TRUNC('minute', ${currentTimestamp})`;
+        currentHourTimestamp = `DATE_TRUNC('hour', ${currentTimestamp})`;
+        currentDateTimestamp = `DATE_TRUNC('day', ${currentTimestamp})`;
 
-      currentWeekStartTimestamp =
-        weekStart === common.ProjectWeekStartEnum.Sunday
-          ? `DATE_TRUNC('week', ${currentTimestamp}) + INTERVAL '-1 day'`
-          : `DATE_TRUNC('week', ${currentTimestamp})`;
+        currentWeekStartTimestamp =
+          weekStart === common.ProjectWeekStartEnum.Sunday
+            ? `DATE_TRUNC('week', ${currentTimestamp}) + INTERVAL '-1 day'`
+            : `DATE_TRUNC('week', ${currentTimestamp})`;
 
-      currentMonthTimestamp = `DATE_TRUNC('month', ${currentTimestamp})`;
-      currentQuarterTimestamp = `DATE_TRUNC('quarter', ${currentTimestamp})`;
-      currentYearTimestamp = `DATE_TRUNC('year', ${currentTimestamp})`;
-      break;
+        currentMonthTimestamp = `DATE_TRUNC('month', ${currentTimestamp})`;
+        currentQuarterTimestamp = `DATE_TRUNC('quarter', ${currentTimestamp})`;
+        currentYearTimestamp = `DATE_TRUNC('year', ${currentTimestamp})`;
+        break;
+      }
     }
   }
 

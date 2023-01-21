@@ -17,7 +17,13 @@ export function processFilter(item: {
   ins?: string[];
   notIns?: string[];
   fractions?: common.Fraction[];
-}): { valid: number; brick?: string } {
+  getTimeRange?: boolean;
+}): {
+  valid: number;
+  brick?: string;
+  rangeOpen?: number;
+  rangeClose?: number;
+} {
   let {
     filterBricks,
     result,
@@ -30,8 +36,26 @@ export function processFilter(item: {
     nots,
     ins,
     notIns,
-    fractions
+    fractions,
+    getTimeRange
   } = item;
+
+  if (getTimeRange === true) {
+    if (filterBricks.length !== 1) {
+      throw new common.ServerError({
+        message: common.ErEnum.BLOCKML_WRONG_TIME_RANGE_BRICKS_LENGTH
+      });
+    }
+
+    if (result !== common.FieldResultEnum.Ts) {
+      throw new common.ServerError({
+        message: common.ErEnum.BLOCKML_WRONG_TIME_RANGE_FIELD_RESULT
+      });
+    }
+  }
+
+  let rangeOpen = 1672617600;
+  let rangeClose = 1673136000;
 
   weekStart = common.isDefined(weekStart)
     ? weekStart
@@ -128,9 +152,8 @@ export function processFilter(item: {
 
         // IS GREATER THAN OR EQUAL TO
       } else if (
-        (r = common.MyRegex.BRICK_NUMBER_IS_GREATER_THAN_OR_EQUAL_TO().exec(
-          brick
-        ))
+        (r =
+          common.MyRegex.BRICK_NUMBER_IS_GREATER_THAN_OR_EQUAL_TO().exec(brick))
       ) {
         value = r[1];
 
@@ -232,9 +255,8 @@ export function processFilter(item: {
           // [,)
           // not [,)
         } else if (
-          (r = common.MyRegex.BRICK_NUMBER_IS_BETWEEN_LEFT_INCLUSIVE().exec(
-            brick
-          ))
+          (r =
+            common.MyRegex.BRICK_NUMBER_IS_BETWEEN_LEFT_INCLUSIVE().exec(brick))
         ) {
           not = r[1];
           value1 = r[2];
@@ -267,9 +289,10 @@ export function processFilter(item: {
           // (,]
           // not (,]
         } else if (
-          (r = common.MyRegex.BRICK_NUMBER_IS_BETWEEN_RIGHT_INCLUSIVE().exec(
-            brick
-          ))
+          (r =
+            common.MyRegex.BRICK_NUMBER_IS_BETWEEN_RIGHT_INCLUSIVE().exec(
+              brick
+            ))
         ) {
           not = r[1];
           value1 = r[2];
@@ -1378,6 +1401,14 @@ export function processFilter(item: {
 
   if (answerError) {
     return answerError;
+  }
+
+  if (getTimeRange === true) {
+    return {
+      valid: 1,
+      rangeOpen: rangeOpen,
+      rangeClose: rangeClose
+    };
   }
 
   return { valid: 1 };

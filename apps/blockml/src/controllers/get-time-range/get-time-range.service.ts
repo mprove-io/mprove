@@ -1,0 +1,54 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
+import { interfaces } from '~blockml/barrels/interfaces';
+import { nodeCommon } from '~blockml/barrels/node-common';
+import { processFilter } from '~blockml/models/special/process-filter';
+
+@Injectable()
+export class GetTimeRangeService {
+  constructor(
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger
+  ) {}
+
+  async get(request: any) {
+    if (
+      request.info?.name !==
+      apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlGetTimeRange
+    ) {
+      throw new common.ServerError({
+        message: common.ErEnum.BLOCKML_WRONG_REQUEST_INFO_NAME
+      });
+    }
+
+    let reqValid = nodeCommon.transformValidSync({
+      classType: apiToBlockml.ToBlockmlGetTimeRangeRequest,
+      object: request,
+      errorMessage: common.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS,
+      logIsJson:
+        this.cs.get<interfaces.Config['blockmlLogIsJson']>('blockmlLogIsJson'),
+      logger: this.logger
+    });
+
+    let { fraction } = reqValid.payload;
+
+    let fractions: common.Fraction[] = [];
+
+    let p = processFilter({
+      filterBricks: [fraction.brick],
+      result: common.FieldResultEnum.Ts,
+      fractions: fractions,
+      getTimeRange: true
+    });
+
+    let payload: apiToBlockml.ToBlockmlGetTimeRangeResponsePayload = {
+      isValid: p.valid === 1,
+      rangeOpen: p.rangeOpen,
+      rangeClose: p.rangeClose
+    };
+
+    return payload;
+  }
+}

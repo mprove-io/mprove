@@ -4,6 +4,7 @@ import { common } from './barrels/common';
 import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
 import { GenSqlService } from './controllers/gen-sql/gen-sql.service';
+import { GetTimeRangeService } from './controllers/get-time-range/get-time-range.service';
 import { ProcessQueryService } from './controllers/process-query/process-query.service';
 import { RebuildStructService } from './controllers/rebuild-struct/rebuild-struct.service';
 import { ConsumerMainService } from './services/consumer-main.service';
@@ -38,19 +39,37 @@ export const appServices = [
     inject: [ConfigService, RabbitService]
   },
   {
+    provide: GetTimeRangeService,
+    useFactory: (cs: ConfigService<interfaces.Config>, logger: Logger) =>
+      helper.isSingleOrMain(cs) ? new GetTimeRangeService(cs, logger) : {},
+    inject: [ConfigService]
+  },
+  {
     provide: ConsumerMainService,
     useFactory: (
       cs: ConfigService<interfaces.Config>,
       structService: RebuildStructService,
-      queryService: ProcessQueryService,
+      processQueryService: ProcessQueryService,
+      getTimeRangeService: GetTimeRangeService,
       logger: Logger
     ) => {
       let result = helper.isSingleOrMain(cs)
-        ? new ConsumerMainService(cs, structService, queryService, logger)
+        ? new ConsumerMainService(
+            cs,
+            structService,
+            processQueryService,
+            getTimeRangeService,
+            logger
+          )
         : {};
       return result;
     },
-    inject: [ConfigService, RebuildStructService, ProcessQueryService]
+    inject: [
+      ConfigService,
+      RebuildStructService,
+      ProcessQueryService,
+      GetTimeRangeService
+    ]
   },
   {
     provide: ConsumerWorkerService,
