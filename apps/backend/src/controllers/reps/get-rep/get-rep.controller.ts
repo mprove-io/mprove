@@ -16,7 +16,6 @@ import {
   eachWeekOfInterval,
   eachYearOfInterval,
   format,
-  fromUnixTime,
   getUnixTime,
   startOfDay,
   startOfHour,
@@ -24,8 +23,7 @@ import {
   startOfMonth,
   startOfQuarter,
   startOfWeek,
-  startOfYear,
-  sub
+  startOfYear
 } from 'date-fns';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
@@ -120,6 +118,8 @@ export class GetRepController {
       }
     });
 
+    let timeColumnsLimit = constants.TIME_COLUMNS_LIMIT;
+
     let toBlockmlGetTimeRangeRequest: apiToBlockml.ToBlockmlGetTimeRangeRequest =
       {
         info: {
@@ -127,7 +127,9 @@ export class GetRepController {
           traceId: traceId
         },
         payload: {
-          fraction: timeRangeFraction
+          fraction: timeRangeFraction,
+          timeColumnsLimit: timeColumnsLimit,
+          timeSpec: timeSpec
         }
       };
 
@@ -140,94 +142,11 @@ export class GetRepController {
         }
       );
 
-    let rangeOpen = blockmlGetTimeRangeResponse.payload.rangeOpen;
-    let rangeClose = blockmlGetTimeRangeResponse.payload.rangeClose;
+    let rangeStart = blockmlGetTimeRangeResponse.payload.rangeStart;
+    let rangeEnd = blockmlGetTimeRangeResponse.payload.rangeEnd;
 
-    // console.log(blockmlGetTimeRangeResponse.payload);
-    // console.log(rangeOpen);
-    // console.log(rangeClose);
-
-    // let columns = eachDayOfInterval({
-    //   start: new Date(2023, 1, 6),
-    //   end: new Date(2023, 1, 10)
-    // }).map(x => getUnixTime(x));
-
-    let timeColumnsLimit = constants.TIME_COLUMNS_LIMIT;
-
-    let start =
-      common.isDefined(rangeOpen) && common.isDefined(rangeClose)
-        ? Math.min(rangeOpen, rangeClose)
-        : common.isUndefined(rangeOpen)
-        ? undefined
-        : [
-            common.FractionTypeEnum.TsIsBeforeDate,
-            common.FractionTypeEnum.TsIsBeforeRelative
-          ].indexOf(timeRangeFraction.type) > -1
-        ? getUnixTime(
-            sub(
-              fromUnixTime(rangeOpen),
-              timeSpec === common.TimeSpecEnum.Years
-                ? { years: timeColumnsLimit }
-                : timeSpec === common.TimeSpecEnum.Quarters
-                ? { months: timeColumnsLimit * 3 }
-                : timeSpec === common.TimeSpecEnum.Months
-                ? { months: timeColumnsLimit }
-                : timeSpec === common.TimeSpecEnum.Weeks
-                ? { days: timeColumnsLimit * 7 }
-                : timeSpec === common.TimeSpecEnum.Days
-                ? { days: timeColumnsLimit }
-                : timeSpec === common.TimeSpecEnum.Hours
-                ? { hours: timeColumnsLimit }
-                : timeSpec === common.TimeSpecEnum.Minutes
-                ? { minutes: timeColumnsLimit }
-                : {}
-            )
-          )
-        : [
-            common.FractionTypeEnum.TsIsAfterDate,
-            common.FractionTypeEnum.TsIsAfterRelative
-          ].indexOf(timeRangeFraction.type) > -1
-        ? rangeOpen
-        : undefined;
-
-    let end =
-      common.isDefined(rangeOpen) && common.isDefined(rangeClose)
-        ? Math.max(rangeOpen, rangeClose)
-        : common.isUndefined(rangeOpen)
-        ? undefined
-        : [
-            common.FractionTypeEnum.TsIsBeforeDate,
-            common.FractionTypeEnum.TsIsBeforeRelative
-          ].indexOf(timeRangeFraction.type) > -1
-        ? rangeOpen
-        : [
-            common.FractionTypeEnum.TsIsAfterDate,
-            common.FractionTypeEnum.TsIsAfterRelative
-          ].indexOf(timeRangeFraction.type) > -1
-        ? getUnixTime(
-            add(
-              fromUnixTime(rangeOpen),
-              timeSpec === common.TimeSpecEnum.Years
-                ? { years: timeColumnsLimit }
-                : timeSpec === common.TimeSpecEnum.Quarters
-                ? { months: timeColumnsLimit * 3 }
-                : timeSpec === common.TimeSpecEnum.Months
-                ? { months: timeColumnsLimit }
-                : timeSpec === common.TimeSpecEnum.Weeks
-                ? { days: timeColumnsLimit * 7 }
-                : timeSpec === common.TimeSpecEnum.Days
-                ? { days: timeColumnsLimit }
-                : timeSpec === common.TimeSpecEnum.Hours
-                ? { hours: timeColumnsLimit }
-                : timeSpec === common.TimeSpecEnum.Minutes
-                ? { minutes: timeColumnsLimit }
-                : {}
-            )
-          )
-        : undefined;
-
-    let startDate = new Date(start * 1000);
-    let endDate = new Date(end * 1000);
+    let startDate = new Date(rangeStart * 1000);
+    let endDate = new Date(rangeEnd * 1000);
 
     let diffColumnsLength =
       timeSpec === common.TimeSpecEnum.Years
@@ -334,6 +253,13 @@ export class GetRepController {
           })
         : undefined;
 
+    if (
+      timeColumns.length > 1 &&
+      getUnixTime(timeColumns[timeColumns.length - 1]) === getUnixTime(endDate)
+    ) {
+      timeColumns.pop();
+    }
+
     let repApi = wrapper.wrapToApiRep({
       rep: rep,
       timezone: timezone,
@@ -385,11 +311,4 @@ export class GetRepController {
 
     return payload;
   }
-}
-function getHour(startDate: Date) {
-  throw new Error('Function not implemented.');
-}
-
-function getMinute(startDate: Date) {
-  throw new Error('Function not implemented.');
 }

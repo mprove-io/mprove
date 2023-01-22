@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { add, fromUnixTime, getUnixTime, sub } from 'date-fns';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -32,7 +33,7 @@ export class GetTimeRangeService {
       logger: this.logger
     });
 
-    let { fraction } = reqValid.payload;
+    let { fraction, timeColumnsLimit, timeSpec } = reqValid.payload;
 
     let fractions: common.Fraction[] = [];
 
@@ -43,10 +44,95 @@ export class GetTimeRangeService {
       getTimeRange: true
     });
 
+    if (p.valid !== 1) {
+      let payload: apiToBlockml.ToBlockmlGetTimeRangeResponsePayload = {
+        isValid: false,
+        rangeStart: undefined,
+        rangeEnd: undefined
+      };
+
+      return payload;
+    }
+
+    let rangeOpen = p.rangeOpen;
+    let rangeClose = p.rangeClose;
+
+    let start =
+      common.isDefined(rangeOpen) && common.isDefined(rangeClose)
+        ? Math.min(rangeOpen, rangeClose)
+        : common.isUndefined(rangeOpen)
+        ? undefined
+        : [
+            common.FractionTypeEnum.TsIsBeforeDate,
+            common.FractionTypeEnum.TsIsBeforeRelative
+          ].indexOf(fraction.type) > -1
+        ? getUnixTime(
+            sub(
+              fromUnixTime(rangeOpen),
+              timeSpec === common.TimeSpecEnum.Years
+                ? { years: timeColumnsLimit }
+                : timeSpec === common.TimeSpecEnum.Quarters
+                ? { months: timeColumnsLimit * 3 }
+                : timeSpec === common.TimeSpecEnum.Months
+                ? { months: timeColumnsLimit }
+                : timeSpec === common.TimeSpecEnum.Weeks
+                ? { days: timeColumnsLimit * 7 }
+                : timeSpec === common.TimeSpecEnum.Days
+                ? { days: timeColumnsLimit }
+                : timeSpec === common.TimeSpecEnum.Hours
+                ? { hours: timeColumnsLimit }
+                : timeSpec === common.TimeSpecEnum.Minutes
+                ? { minutes: timeColumnsLimit }
+                : {}
+            )
+          )
+        : [
+            common.FractionTypeEnum.TsIsAfterDate,
+            common.FractionTypeEnum.TsIsAfterRelative
+          ].indexOf(fraction.type) > -1
+        ? rangeOpen
+        : undefined;
+
+    let end =
+      common.isDefined(rangeOpen) && common.isDefined(rangeClose)
+        ? Math.max(rangeOpen, rangeClose)
+        : common.isUndefined(rangeOpen)
+        ? undefined
+        : [
+            common.FractionTypeEnum.TsIsBeforeDate,
+            common.FractionTypeEnum.TsIsBeforeRelative
+          ].indexOf(fraction.type) > -1
+        ? rangeOpen
+        : [
+            common.FractionTypeEnum.TsIsAfterDate,
+            common.FractionTypeEnum.TsIsAfterRelative
+          ].indexOf(fraction.type) > -1
+        ? getUnixTime(
+            add(
+              fromUnixTime(rangeOpen),
+              timeSpec === common.TimeSpecEnum.Years
+                ? { years: timeColumnsLimit }
+                : timeSpec === common.TimeSpecEnum.Quarters
+                ? { months: timeColumnsLimit * 3 }
+                : timeSpec === common.TimeSpecEnum.Months
+                ? { months: timeColumnsLimit }
+                : timeSpec === common.TimeSpecEnum.Weeks
+                ? { days: timeColumnsLimit * 7 }
+                : timeSpec === common.TimeSpecEnum.Days
+                ? { days: timeColumnsLimit }
+                : timeSpec === common.TimeSpecEnum.Hours
+                ? { hours: timeColumnsLimit }
+                : timeSpec === common.TimeSpecEnum.Minutes
+                ? { minutes: timeColumnsLimit }
+                : {}
+            )
+          )
+        : undefined;
+
     let payload: apiToBlockml.ToBlockmlGetTimeRangeResponsePayload = {
       isValid: p.valid === 1,
-      rangeOpen: p.rangeOpen,
-      rangeClose: p.rangeClose
+      rangeStart: start,
+      rangeEnd: end
     };
 
     return payload;
