@@ -15,6 +15,7 @@ import {
   eachQuarterOfInterval,
   eachWeekOfInterval,
   eachYearOfInterval,
+  format,
   fromUnixTime,
   getUnixTime,
   startOfDay,
@@ -342,7 +343,32 @@ export class GetRepController {
       timeColumnsLength: timeColumns.length
     });
 
-    repApi.columns = timeColumns.map(x => getUnixTime(x));
+    repApi.columns = timeColumns.map(x => {
+      let unixTime = getUnixTime(x);
+
+      let column: common.Column = {
+        columnId: unixTime,
+        label:
+          timeSpec === common.TimeSpecEnum.Years
+            ? format(x, 'yyyy')
+            : timeSpec === common.TimeSpecEnum.Quarters
+            ? format(x, 'QQQ yyyy')
+            : timeSpec === common.TimeSpecEnum.Months
+            ? format(x, 'MMM yyyy')
+            : timeSpec === common.TimeSpecEnum.Weeks
+            ? format(x, 'dd MMM yyyy')
+            : timeSpec === common.TimeSpecEnum.Days
+            ? format(x, 'dd MMM yyyy')
+            : timeSpec === common.TimeSpecEnum.Hours
+            ? format(x, 'HH:mm dd MMM yyyy')
+            : timeSpec === common.TimeSpecEnum.Minutes
+            ? format(x, 'HH:mm dd MMM yyyy')
+            : `${unixTime}`
+        // 'yyyy-MM-dd'
+      };
+
+      return column;
+    });
 
     if (withData === true) {
       repApi = await this.docService.getData({ rep: repApi });

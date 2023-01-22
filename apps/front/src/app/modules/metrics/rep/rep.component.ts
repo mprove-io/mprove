@@ -4,6 +4,7 @@ import { CellClickedEvent, ColDef, GridReadyEvent } from 'ag-grid-community';
 import { map, tap } from 'rxjs';
 import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { RepQuery } from '~front/app/queries/rep.query';
+import { TimeQuery } from '~front/app/queries/time.query';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -52,9 +53,15 @@ export class RepComponent {
   // Data that gets displayed in the grid
   rowData$ = this.repQuery.select().pipe(
     tap(x => {
+      let timeState = this.timeQuery.getValue();
+      let timeSpec = timeState.timeSpec;
+
       this.columnDefs = [
         ...this.columns,
-        ...x.columns.map(key => ({ field: `${key}` }))
+        ...x.columns.map(column => ({
+          field: `${column.columnId}`,
+          headerName: column.label
+        }))
       ];
     }),
     map(x => {
@@ -88,6 +95,7 @@ export class RepComponent {
   constructor(
     private cd: ChangeDetectorRef,
     private repQuery: RepQuery,
+    private timeQuery: TimeQuery,
     private metricsQuery: MetricsQuery
   ) {}
 

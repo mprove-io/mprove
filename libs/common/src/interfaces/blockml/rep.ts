@@ -7,6 +7,7 @@ import {
   ValidateNested
 } from 'class-validator';
 import { enums } from '~common/barrels/enums';
+import { Column } from './column';
 import { Fraction } from './fraction';
 import { Row } from './row';
 
@@ -33,8 +34,9 @@ export class Rep {
   @Type(() => Fraction)
   timeRangeFraction: Fraction;
 
-  @IsInt({ each: true })
-  columns: number[];
+  @ValidateNested()
+  @Type(() => Column)
+  columns: Column[];
 
   @ValidateNested()
   @Type(() => Row)

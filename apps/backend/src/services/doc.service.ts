@@ -81,7 +81,7 @@ export class DocService {
         let record = {
           id: i + 1,
           fields: {
-            timestamp: x
+            timestamp: x.columnId
             // ,
             // utc: x.getUTCSeconds()
           }

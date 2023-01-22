@@ -2,6 +2,7 @@ export * from './api';
 export * from './bml-error';
 export * from './bml-file';
 export * from './chart';
+export * from './column';
 export * from './dashboard';
 export * from './dashboard-field';
 export * from './filter';
