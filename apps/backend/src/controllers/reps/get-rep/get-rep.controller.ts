@@ -15,6 +15,7 @@ import {
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
+import { constants } from '~backend/barrels/constants';
 import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
@@ -138,7 +139,7 @@ export class GetRepController {
     //   end: new Date(2023, 1, 10)
     // }).map(x => getUnixTime(x));
 
-    let rangeLength = 100;
+    let timeColumnsLimit = constants.TIME_COLUMNS_LIMIT;
 
     let start =
       common.isDefined(rangeOpen) && common.isDefined(rangeClose)
@@ -153,19 +154,19 @@ export class GetRepController {
             sub(
               fromUnixTime(rangeOpen),
               timeSpec === common.TimeSpecEnum.Years
-                ? { years: rangeLength }
+                ? { years: timeColumnsLimit }
                 : timeSpec === common.TimeSpecEnum.Quarters
-                ? { months: rangeLength * 3 }
+                ? { months: timeColumnsLimit * 3 }
                 : timeSpec === common.TimeSpecEnum.Months
-                ? { months: rangeLength }
+                ? { months: timeColumnsLimit }
                 : timeSpec === common.TimeSpecEnum.Weeks
-                ? { days: rangeLength * 7 }
+                ? { days: timeColumnsLimit * 7 }
                 : timeSpec === common.TimeSpecEnum.Days
-                ? { days: rangeLength }
+                ? { days: timeColumnsLimit }
                 : timeSpec === common.TimeSpecEnum.Hours
-                ? { hours: rangeLength }
+                ? { hours: timeColumnsLimit }
                 : timeSpec === common.TimeSpecEnum.Minutes
-                ? { minutes: rangeLength }
+                ? { minutes: timeColumnsLimit }
                 : {}
             )
           )
@@ -194,19 +195,19 @@ export class GetRepController {
             add(
               fromUnixTime(rangeOpen),
               timeSpec === common.TimeSpecEnum.Years
-                ? { years: rangeLength }
+                ? { years: timeColumnsLimit }
                 : timeSpec === common.TimeSpecEnum.Quarters
-                ? { months: rangeLength * 3 }
+                ? { months: timeColumnsLimit * 3 }
                 : timeSpec === common.TimeSpecEnum.Months
-                ? { months: rangeLength }
+                ? { months: timeColumnsLimit }
                 : timeSpec === common.TimeSpecEnum.Weeks
-                ? { days: rangeLength * 7 }
+                ? { days: timeColumnsLimit * 7 }
                 : timeSpec === common.TimeSpecEnum.Days
-                ? { days: rangeLength }
+                ? { days: timeColumnsLimit }
                 : timeSpec === common.TimeSpecEnum.Hours
-                ? { hours: rangeLength }
+                ? { hours: timeColumnsLimit }
                 : timeSpec === common.TimeSpecEnum.Minutes
-                ? { minutes: rangeLength }
+                ? { minutes: timeColumnsLimit }
                 : {}
             )
           )
@@ -253,7 +254,7 @@ export class GetRepController {
           })
         : undefined;
 
-    timeInterval = timeInterval.slice(0, 50);
+    timeInterval = timeInterval.slice(0, timeColumnsLimit);
 
     repApi.columns = timeInterval.map(x => getUnixTime(x));
 
