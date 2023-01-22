@@ -1,5 +1,17 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-import { eachDayOfInterval, getUnixTime } from 'date-fns';
+import {
+  add,
+  eachDayOfInterval,
+  eachHourOfInterval,
+  eachMinuteOfInterval,
+  eachMonthOfInterval,
+  eachQuarterOfInterval,
+  eachWeekOfInterval,
+  eachYearOfInterval,
+  fromUnixTime,
+  getUnixTime,
+  sub
+} from 'date-fns';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
@@ -126,10 +138,124 @@ export class GetRepController {
     //   end: new Date(2023, 1, 10)
     // }).map(x => getUnixTime(x));
 
-    repApi.columns = eachDayOfInterval({
-      start: new Date(rangeOpen * 1000),
-      end: new Date(rangeClose * 1000)
-    }).map(x => getUnixTime(x));
+    let rangeLength = 100;
+
+    let start =
+      common.isDefined(rangeOpen) && common.isDefined(rangeClose)
+        ? Math.min(rangeOpen, rangeClose)
+        : common.isUndefined(rangeOpen)
+        ? undefined
+        : [
+            common.FractionTypeEnum.TsIsBeforeDate,
+            common.FractionTypeEnum.TsIsBeforeRelative
+          ].indexOf(timeRangeFraction.type) > -1
+        ? getUnixTime(
+            sub(
+              fromUnixTime(rangeOpen),
+              timeSpec === common.TimeSpecEnum.Years
+                ? { years: rangeLength }
+                : timeSpec === common.TimeSpecEnum.Quarters
+                ? { months: rangeLength * 3 }
+                : timeSpec === common.TimeSpecEnum.Months
+                ? { months: rangeLength }
+                : timeSpec === common.TimeSpecEnum.Weeks
+                ? { days: rangeLength * 7 }
+                : timeSpec === common.TimeSpecEnum.Days
+                ? { days: rangeLength }
+                : timeSpec === common.TimeSpecEnum.Hours
+                ? { hours: rangeLength }
+                : timeSpec === common.TimeSpecEnum.Minutes
+                ? { minutes: rangeLength }
+                : {}
+            )
+          )
+        : [
+            common.FractionTypeEnum.TsIsAfterDate,
+            common.FractionTypeEnum.TsIsAfterRelative
+          ].indexOf(timeRangeFraction.type) > -1
+        ? rangeOpen
+        : undefined;
+
+    let end =
+      common.isDefined(rangeOpen) && common.isDefined(rangeClose)
+        ? Math.max(rangeOpen, rangeClose)
+        : common.isUndefined(rangeOpen)
+        ? undefined
+        : [
+            common.FractionTypeEnum.TsIsBeforeDate,
+            common.FractionTypeEnum.TsIsBeforeRelative
+          ].indexOf(timeRangeFraction.type) > -1
+        ? rangeOpen
+        : [
+            common.FractionTypeEnum.TsIsAfterDate,
+            common.FractionTypeEnum.TsIsAfterRelative
+          ].indexOf(timeRangeFraction.type) > -1
+        ? getUnixTime(
+            add(
+              fromUnixTime(rangeOpen),
+              timeSpec === common.TimeSpecEnum.Years
+                ? { years: rangeLength }
+                : timeSpec === common.TimeSpecEnum.Quarters
+                ? { months: rangeLength * 3 }
+                : timeSpec === common.TimeSpecEnum.Months
+                ? { months: rangeLength }
+                : timeSpec === common.TimeSpecEnum.Weeks
+                ? { days: rangeLength * 7 }
+                : timeSpec === common.TimeSpecEnum.Days
+                ? { days: rangeLength }
+                : timeSpec === common.TimeSpecEnum.Hours
+                ? { hours: rangeLength }
+                : timeSpec === common.TimeSpecEnum.Minutes
+                ? { minutes: rangeLength }
+                : {}
+            )
+          )
+        : undefined;
+
+    let startDate = new Date(start * 1000);
+    let endDate = new Date(end * 1000);
+
+    let timeInterval =
+      timeSpec === common.TimeSpecEnum.Years
+        ? eachYearOfInterval({
+            start: startDate,
+            end: endDate
+          })
+        : timeSpec === common.TimeSpecEnum.Quarters
+        ? eachQuarterOfInterval({
+            start: startDate,
+            end: endDate
+          })
+        : timeSpec === common.TimeSpecEnum.Months
+        ? eachMonthOfInterval({
+            start: startDate,
+            end: endDate
+          })
+        : timeSpec === common.TimeSpecEnum.Weeks
+        ? eachWeekOfInterval({
+            start: startDate,
+            end: endDate
+          })
+        : timeSpec === common.TimeSpecEnum.Days
+        ? eachDayOfInterval({
+            start: startDate,
+            end: endDate
+          })
+        : timeSpec === common.TimeSpecEnum.Hours
+        ? eachHourOfInterval({
+            start: startDate,
+            end: endDate
+          })
+        : timeSpec === common.TimeSpecEnum.Minutes
+        ? eachMinuteOfInterval({
+            start: startDate,
+            end: endDate
+          })
+        : undefined;
+
+    timeInterval = timeInterval.slice(0, 50);
+
+    repApi.columns = timeInterval.map(x => getUnixTime(x));
 
     if (withData === true) {
       repApi = await this.docService.getData({ rep: repApi });
