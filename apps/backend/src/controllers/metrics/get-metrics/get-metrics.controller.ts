@@ -89,7 +89,9 @@ export class GetMetricsController {
           rep: x,
           timezone: undefined,
           timeSpec: undefined,
-          timeRangeFraction: undefined
+          timeRangeFraction: undefined,
+          timeColumnsLimit: undefined,
+          timeColumnsLength: undefined
         })
       )
     };

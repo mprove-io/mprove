@@ -1,6 +1,13 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import {
   add,
+  differenceInDays,
+  differenceInHours,
+  differenceInMinutes,
+  differenceInMonths,
+  differenceInQuarters,
+  differenceInWeeks,
+  differenceInYears,
   eachDayOfInterval,
   eachHourOfInterval,
   eachMinuteOfInterval,
@@ -10,6 +17,13 @@ import {
   eachYearOfInterval,
   fromUnixTime,
   getUnixTime,
+  startOfDay,
+  startOfHour,
+  startOfMinute,
+  startOfMonth,
+  startOfQuarter,
+  startOfWeek,
+  startOfYear,
   sub
 } from 'date-fns';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
@@ -93,18 +107,16 @@ export class GetRepController {
       envId: envId
     });
 
+    let struct = await this.structsService.getStructCheckExists({
+      structId: bridge.struct_id,
+      projectId: projectId
+    });
+
     let rep = await this.repsRepository.findOne({
       where: {
         struct_id: bridge.struct_id,
         rep_id: repId
       }
-    });
-
-    let repApi = wrapper.wrapToApiRep({
-      rep: rep,
-      timezone: timezone,
-      timeSpec: timeSpec,
-      timeRangeFraction: timeRangeFraction
     });
 
     let toBlockmlGetTimeRangeRequest: apiToBlockml.ToBlockmlGetTimeRangeRequest =
@@ -216,8 +228,69 @@ export class GetRepController {
     let startDate = new Date(start * 1000);
     let endDate = new Date(end * 1000);
 
-    let timeInterval =
+    let diffColumnsLength =
       timeSpec === common.TimeSpecEnum.Years
+        ? differenceInYears(endDate, startDate)
+        : timeSpec === common.TimeSpecEnum.Quarters
+        ? differenceInQuarters(endDate, startDate)
+        : timeSpec === common.TimeSpecEnum.Months
+        ? differenceInMonths(endDate, startDate)
+        : timeSpec === common.TimeSpecEnum.Weeks
+        ? differenceInWeeks(endDate, startDate)
+        : timeSpec === common.TimeSpecEnum.Days
+        ? differenceInDays(endDate, startDate)
+        : timeSpec === common.TimeSpecEnum.Hours
+        ? differenceInHours(endDate, startDate)
+        : timeSpec === common.TimeSpecEnum.Minutes
+        ? differenceInMinutes(endDate, startDate)
+        : undefined;
+
+    if (diffColumnsLength > timeColumnsLimit) {
+      endDate = add(
+        startDate,
+        timeSpec === common.TimeSpecEnum.Years
+          ? { years: timeColumnsLimit }
+          : timeSpec === common.TimeSpecEnum.Quarters
+          ? { months: timeColumnsLimit * 3 }
+          : timeSpec === common.TimeSpecEnum.Months
+          ? { months: timeColumnsLimit }
+          : timeSpec === common.TimeSpecEnum.Weeks
+          ? { days: timeColumnsLimit * 7 }
+          : timeSpec === common.TimeSpecEnum.Days
+          ? { days: timeColumnsLimit }
+          : timeSpec === common.TimeSpecEnum.Hours
+          ? { hours: timeColumnsLimit }
+          : timeSpec === common.TimeSpecEnum.Minutes
+          ? { minutes: timeColumnsLimit }
+          : {}
+      );
+    }
+
+    let timeColumns =
+      getUnixTime(startDate) === getUnixTime(endDate)
+        ? timeSpec === common.TimeSpecEnum.Years
+          ? [startOfYear(startDate)]
+          : timeSpec === common.TimeSpecEnum.Quarters
+          ? [startOfQuarter(startDate)]
+          : timeSpec === common.TimeSpecEnum.Months
+          ? [startOfMonth(startDate)]
+          : timeSpec === common.TimeSpecEnum.Weeks
+          ? [
+              startOfWeek(startDate, {
+                weekStartsOn:
+                  struct.week_start === common.ProjectWeekStartEnum.Sunday
+                    ? 0
+                    : 1
+              })
+            ]
+          : timeSpec === common.TimeSpecEnum.Days
+          ? [startOfDay(startDate)]
+          : timeSpec === common.TimeSpecEnum.Hours
+          ? [startOfHour(startDate)]
+          : timeSpec === common.TimeSpecEnum.Minutes
+          ? [startOfMinute(startDate)]
+          : undefined
+        : timeSpec === common.TimeSpecEnum.Years
         ? eachYearOfInterval({
             start: startDate,
             end: endDate
@@ -233,10 +306,16 @@ export class GetRepController {
             end: endDate
           })
         : timeSpec === common.TimeSpecEnum.Weeks
-        ? eachWeekOfInterval({
-            start: startDate,
-            end: endDate
-          })
+        ? eachWeekOfInterval(
+            {
+              start: startDate,
+              end: endDate
+            },
+            {
+              weekStartsOn:
+                struct.week_start === common.ProjectWeekStartEnum.Sunday ? 0 : 1
+            }
+          )
         : timeSpec === common.TimeSpecEnum.Days
         ? eachDayOfInterval({
             start: startDate,
@@ -254,18 +333,20 @@ export class GetRepController {
           })
         : undefined;
 
-    timeInterval = timeInterval.slice(0, timeColumnsLimit);
+    let repApi = wrapper.wrapToApiRep({
+      rep: rep,
+      timezone: timezone,
+      timeSpec: timeSpec,
+      timeRangeFraction: timeRangeFraction,
+      timeColumnsLimit: timeColumnsLimit,
+      timeColumnsLength: timeColumns.length
+    });
 
-    repApi.columns = timeInterval.map(x => getUnixTime(x));
+    repApi.columns = timeColumns.map(x => getUnixTime(x));
 
     if (withData === true) {
       repApi = await this.docService.getData({ rep: repApi });
     }
-
-    let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.struct_id,
-      projectId: projectId
-    });
 
     let apiMember = wrapper.wrapToApiMember(userMember);
 
@@ -278,4 +359,11 @@ export class GetRepController {
 
     return payload;
   }
+}
+function getHour(startDate: Date) {
+  throw new Error('Function not implemented.');
+}
+
+function getMinute(startDate: Date) {
+  throw new Error('Function not implemented.');
 }

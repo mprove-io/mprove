@@ -23,6 +23,9 @@ export function wrapReps(item: { structId: string; reps: interfaces.Rep[] }) {
         };
         return row;
       }),
+      timeColumnsLength: undefined,
+      timeColumnsLimit: undefined,
+      isTimeColumnsLimitReached: false,
       serverTs: 1
     };
     return rep;

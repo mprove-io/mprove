@@ -49,8 +49,7 @@ export class MetricsComponent implements OnInit {
   rep$ = this.repQuery.select().pipe(
     tap(x => {
       this.rep = x;
-      // console.log(x);
-      // console.log('x.timeRangeFraction');
+      console.log(x);
       console.log(x.timeRangeFraction);
 
       this.cd.detectChanges();

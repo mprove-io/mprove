@@ -6,8 +6,17 @@ export function wrapToApiRep(item: {
   timezone: string;
   timeSpec: common.TimeSpecEnum;
   timeRangeFraction: common.Fraction;
+  timeColumnsLimit: number;
+  timeColumnsLength: number;
 }): common.Rep {
-  let { rep, timezone, timeSpec, timeRangeFraction } = item;
+  let {
+    rep,
+    timezone,
+    timeSpec,
+    timeRangeFraction,
+    timeColumnsLimit,
+    timeColumnsLength
+  } = item;
 
   return {
     structId: rep.struct_id,
@@ -19,6 +28,12 @@ export function wrapToApiRep(item: {
     timeRangeFraction: timeRangeFraction,
     rows: rep.rows,
     columns: [],
+    timeColumnsLimit: timeColumnsLimit,
+    timeColumnsLength: timeColumnsLength,
+    isTimeColumnsLimitReached:
+      common.isDefined(timeColumnsLimit) && common.isDefined(timeColumnsLength)
+        ? timeColumnsLength >= timeColumnsLimit
+        : false,
     serverTs: Number(rep.server_ts)
   };
 }
