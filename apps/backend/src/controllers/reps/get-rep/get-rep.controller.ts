@@ -260,6 +260,10 @@ export class GetRepController {
       timeColumns.pop();
     }
 
+    if (timeColumns.length > timeColumnsLimit) {
+      timeColumns.pop();
+    }
+
     let repApi = wrapper.wrapToApiRep({
       rep: rep,
       timezone: timezone,
