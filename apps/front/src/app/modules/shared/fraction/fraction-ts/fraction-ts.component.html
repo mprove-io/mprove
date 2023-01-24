@@ -256,6 +256,24 @@
       [(ngModel)]="date"
       (nzOpenChange)="beforeOpenClose()"
     ></nz-time-picker> -->
+
+    <vaadin-date-picker
+      #datePickerBefore
+      class="py-0"
+      required
+      [value]="dateStr"
+      [i18n]="beforeDateI18n"
+      (value-changed)="beforeDateValueChanged($event)"
+    ></vaadin-date-picker>
+
+    <vaadin-time-picker
+      #timePickerBefore
+      class="py-0"
+      required
+      [value]="timeStr"
+      (value-changed)="beforeTimeValueChanged($event)"
+      (opened-changed)="beforeTimeOpenedChanged($event)"
+    ></vaadin-time-picker>
   </div>
 
   <!-- is after -->
@@ -283,6 +301,24 @@
       [(ngModel)]="date"
       (nzOpenChange)="afterOpenClose()"
     ></nz-time-picker> -->
+
+    <vaadin-date-picker
+      #datePickerAfter
+      class="py-0"
+      required
+      [value]="dateStr"
+      [i18n]="afterDateI18n"
+      (value-changed)="afterDateValueChanged($event)"
+    ></vaadin-date-picker>
+
+    <vaadin-time-picker
+      #timePickerAfter
+      class="py-0"
+      required
+      [value]="timeStr"
+      (value-changed)="afterTimeValueChanged($event)"
+      (opened-changed)="afterTimeOpenedChanged($event)"
+    ></vaadin-time-picker>
   </div>
 
   <!-- relative -->
