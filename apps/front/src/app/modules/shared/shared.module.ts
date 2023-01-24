@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyModule } from '@ngneat/helipopper';
@@ -155,6 +155,7 @@ let sharedComponents = [
     NgxSpinnerModule,
     TippyModule
   ],
-  exports: [...sharedComponents, ...pipesArray]
+  exports: [...sharedComponents, ...pipesArray],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {}

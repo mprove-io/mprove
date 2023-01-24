@@ -64,7 +64,7 @@
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnHour"
     class="flex flex-row space-x-5"
   >
-    <nz-date-picker
+    <!-- <nz-date-picker
       class="h-[36px]"
       data-cy="fractionTsDate"
       nzMode="date"
@@ -85,7 +85,24 @@
       [nzDisabledSeconds]="disabledSeconds"
       [(ngModel)]="date"
       (ngModelChange)="hourOpenClose()"
-    ></nz-time-picker>
+    ></nz-time-picker> -->
+
+    <vaadin-date-picker
+      #vDatePickerOnHour
+      class="py-0"
+      required
+      [value]="dateStr"
+      (value-changed)="hourDateValueChanged($event)"
+    ></vaadin-date-picker>
+
+    <vaadin-time-picker
+      #vTimePickerOnHour
+      class="py-0"
+      required
+      [value]="timeStr"
+      (value-changed)="hourTimeValueChanged($event)"
+      (opened-changed)="hourTimeOpenedChanged($event)"
+    ></vaadin-time-picker>
   </div>
 
   <!-- on minute -->
@@ -231,7 +248,7 @@
       <input
         spellcheck="false"
         data-cy="fractionTsRelativeValueInput"
-        class="form-input h-[36px] w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-[36px] w-32 rounded"
         [ngClass]="{
           'border-red-600':
             tsRelativeValueForm.controls['tsRelativeValue'].invalid &&
@@ -360,7 +377,7 @@
       <input
         spellcheck="false"
         data-cy="fractionTsForValueInput"
-        class="form-input h-[36px] w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-[36px] w-32 rounded"
         [ngClass]="{
           'border-red-600':
             tsForValueForm.controls['tsForValue'].invalid &&
@@ -412,7 +429,7 @@
       <input
         spellcheck="false"
         data-cy="fractionTsLastValueInput"
-        class="form-input h-[36px] w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-[36px] w-32 rounded"
         [ngClass]="{
           'border-red-600':
             tsLastValueForm.controls['tsLastValue'].invalid &&
