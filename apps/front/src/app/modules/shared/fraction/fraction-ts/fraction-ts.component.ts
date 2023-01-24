@@ -67,6 +67,14 @@ export class FractionTsComponent implements OnInit {
   @ViewChild('datePickerAfter') datePickerAfter: ElementRef<DatePicker>;
   @ViewChild('timePickerAfter') timePickerAfter: ElementRef<TimePicker>;
 
+  @ViewChild('datePickerInRangeFrom')
+  datePickerInRangeFrom: ElementRef<DatePicker>;
+  @ViewChild('timePickerInRangeFrom')
+  timePickerInRangeFrom: ElementRef<TimePicker>;
+
+  @ViewChild('datePickerInRangeTo') datePickerInRangeTo: ElementRef<DatePicker>;
+  @ViewChild('timePickerInRangeTo') timePickerInRangeTo: ElementRef<TimePicker>;
+
   // @ViewChild('timePickerOnHour') timePickerOnHour: NzTimePickerComponent;
   // @ViewChild('timePickerOnMinute') timePickerOnMinute: NzTimePickerComponent;
   // @ViewChild('timePickerInRangeFrom')
@@ -368,9 +376,14 @@ export class FractionTsComponent implements OnInit {
   onMinuteDateI18n = Object.assign({}, this.commonI18n);
   beforeDateI18n = Object.assign({}, this.commonI18n);
   afterDateI18n = Object.assign({}, this.commonI18n);
+  inRangeFromDateI18n = Object.assign({}, this.commonI18n);
+  inRangeToDateI18n = Object.assign({}, this.commonI18n);
 
   dateStr: string;
+  dateToStr: string;
+
   timeStr: string;
+  timeToStr: string;
 
   constructor(
     private fb: FormBuilder,
@@ -442,6 +455,8 @@ export class FractionTsComponent implements OnInit {
     this.onMinuteDateI18n.firstDayOfWeek = firstDayOfWeek;
     this.beforeDateI18n.firstDayOfWeek = firstDayOfWeek;
     this.afterDateI18n.firstDayOfWeek = firstDayOfWeek;
+    this.inRangeFromDateI18n.firstDayOfWeek = firstDayOfWeek;
+    this.inRangeToDateI18n.firstDayOfWeek = firstDayOfWeek;
   }
 
   // ngOnChanges(changes: SimpleChanges): void {
@@ -579,7 +594,7 @@ export class FractionTsComponent implements OnInit {
     this.dateStr = `${year}-${monthD}-${dayD}`;
     this.timeStr = `${hourD}:${minuteD}:${secondD}`;
 
-    console.log('reset');
+    console.log('reset Date');
     console.log(this.dateStr);
     console.log(this.timeStr);
   }
@@ -614,6 +629,21 @@ export class FractionTsComponent implements OnInit {
     );
 
     this.dateTo.setFullYear(year);
+
+    let month = this.fraction.tsDateToMonth || 1;
+    let dayD = day.toString().length === 1 ? `0${day}` : `${day}`;
+
+    let monthD = month.toString().length === 1 ? `0${month}` : `${month}`;
+    let hourD = hour.toString().length === 1 ? `0${hour}` : `${hour}`;
+    let minuteD = minute.toString().length === 1 ? `0${minute}` : `${minute}`;
+    let secondD = second.toString().length === 1 ? `0${second}` : `${second}`;
+
+    this.dateToStr = `${year}-${monthD}-${dayD}`;
+    this.timeToStr = `${hourD}:${minuteD}:${secondD}`;
+
+    console.log('reset DateTo');
+    console.log(this.dateToStr);
+    console.log(this.timeToStr);
   }
 
   updateRelativeControls() {
@@ -795,7 +825,12 @@ export class FractionTsComponent implements OnInit {
         this.date.setSeconds(0);
         this.dateTo.setSeconds(0);
 
-        this.buildFractionRange();
+        this.buildFractionRange({
+          dateValue: this.dateStr,
+          timeValue: this.timeStr,
+          dateToValue: this.dateToStr,
+          timeToValue: this.timeToStr
+        });
 
         this.emitFractionUpdate();
         break;
@@ -1062,24 +1097,51 @@ export class FractionTsComponent implements OnInit {
 
   //
 
-  buildFractionRange() {
+  buildFractionRange(item: {
+    dateValue: string;
+    timeValue: string;
+    dateToValue: string;
+    timeToValue: string;
+  }) {
+    let { dateValue, timeValue, dateToValue, timeToValue } = item;
+
+    let minuteStr = this.getMinuteStr({
+      dateValue: dateValue,
+      timeValue: timeValue
+    });
+
+    let minuteToStr = this.getMinuteStr({
+      dateValue: dateToValue,
+      timeValue: timeToValue
+    });
+
     this.fraction = {
-      brick: `on ${this.getMinuteString(this.date)} to ${this.getMinuteString(
-        this.dateTo
-      )}`,
+      brick: `on ${minuteStr} to ${minuteToStr}`,
       operator: common.FractionOperatorEnum.Or,
       type: common.FractionTypeEnum.TsIsInRange,
-      tsDateYear: this.date.getFullYear(),
-      tsDateMonth: this.date.getMonth() + 1,
-      tsDateDay: this.date.getDate(),
-      tsDateHour: this.date.getHours(),
-      tsDateMinute: this.date.getMinutes(),
+      tsDateYear: Number(dateValue.split('-')[0]),
+      tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
+      tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
+      tsDateHour: Number(timeValue.split(':')[0].replace(/^0+/, '')),
+      tsDateMinute: Number(timeValue.split(':')[1].replace(/^0+/, '')),
 
-      tsDateToYear: this.dateTo.getFullYear(),
-      tsDateToMonth: this.dateTo.getMonth() + 1,
-      tsDateToDay: this.dateTo.getDate(),
-      tsDateToHour: this.dateTo.getHours(),
-      tsDateToMinute: this.dateTo.getMinutes()
+      tsDateToYear: Number(dateToValue.split('-')[0]),
+      tsDateToMonth: Number(dateToValue.split('-')[1].replace(/^0+/, '')),
+      tsDateToDay: Number(dateToValue.split('-')[2].replace(/^0+/, '')),
+      tsDateToHour: Number(timeToValue.split(':')[0].replace(/^0+/, '')),
+      tsDateToMinute: Number(timeToValue.split(':')[1].replace(/^0+/, ''))
+
+      // tsDateYear: this.date.getFullYear(),
+      // tsDateMonth: this.date.getMonth() + 1,
+      // tsDateDay: this.date.getDate(),
+      // tsDateHour: this.date.getHours(),
+      // tsDateMinute: this.date.getMinutes(),
+
+      // tsDateToYear: this.dateTo.getFullYear(),
+      // tsDateToMonth: this.dateTo.getMonth() + 1,
+      // tsDateToDay: this.dateTo.getDate(),
+      // tsDateToHour: this.dateTo.getHours(),
+      // tsDateToMinute: this.dateTo.getMinutes()
     };
   }
 
@@ -1592,21 +1654,161 @@ export class FractionTsComponent implements OnInit {
     );
   }
 
-  rangeFromOpenClose() {
-    if (this.isDateNotEqualFractionDateZeroSeconds()) {
-      this.buildFractionRange();
+  inRangeFromDateValueChanged(x: any) {
+    let datePickerInRangeFrom = this.datePickerInRangeFrom?.nativeElement;
+    if (common.isDefined(datePickerInRangeFrom)) {
+      let value = datePickerInRangeFrom.value;
+      console.log('value');
+      console.log(value);
 
-      this.emitFractionUpdate();
+      if (common.isDefinedAndNotEmpty(value)) {
+        this.dateStr = value;
+
+        //   if (this.isDateNotEqualFractionDateZeroSeconds()) {
+        this.buildFractionRange({
+          dateValue: value,
+          timeValue: this.timeStr,
+          dateToValue: this.dateToStr,
+          timeToValue: this.timeToStr
+        });
+
+        console.log(this.fraction);
+        this.emitFractionUpdate();
+        // }
+
+        setTimeout(() => {
+          datePickerInRangeFrom.blur();
+        }, 1);
+      }
     }
   }
 
-  rangeToOpenClose() {
-    if (this.isDateToNotEqualFractionDateToZeroSeconds()) {
-      this.buildFractionRange();
+  inRangeFromTimeValueChanged(x: any) {
+    let timePickerInRangeFrom = this.timePickerInRangeFrom?.nativeElement;
+    if (common.isDefined(timePickerInRangeFrom)) {
+      let value = timePickerInRangeFrom.value;
+      console.log('value');
+      console.log(value);
 
-      this.emitFractionUpdate();
+      if (common.isDefinedAndNotEmpty(value)) {
+        this.timeStr = value;
+
+        //   if (this.isDateNotEqualFractionDateZeroSeconds()) {
+        this.buildFractionRange({
+          dateValue: this.dateStr,
+          timeValue: value,
+          dateToValue: this.dateToStr,
+          timeToValue: this.timeToStr
+        });
+
+        console.log(this.fraction);
+        this.emitFractionUpdate();
+        // }
+
+        setTimeout(() => {
+          timePickerInRangeFrom.blur();
+        }, 1);
+      }
     }
   }
+
+  inRangeFromTimeOpenedChanged(x: any) {
+    setTimeout(() => {
+      let timePickerInRangeFrom = this.timePickerInRangeFrom?.nativeElement;
+      if (
+        common.isDefined(timePickerInRangeFrom) &&
+        timePickerInRangeFrom.opened === false
+      ) {
+        timePickerInRangeFrom.blur();
+      }
+    }, 1);
+  }
+
+  // rangeFromOpenClose() {
+  //   if (this.isDateNotEqualFractionDateZeroSeconds()) {
+  //     this.buildFractionRange();
+
+  //     this.emitFractionUpdate();
+  //   }
+  // }
+
+  inRangeToDateValueChanged(x: any) {
+    let datePickerInRangeTo = this.datePickerInRangeTo?.nativeElement;
+    if (common.isDefined(datePickerInRangeTo)) {
+      let value = datePickerInRangeTo.value;
+      console.log('value');
+      console.log(value);
+
+      if (common.isDefinedAndNotEmpty(value)) {
+        this.dateToStr = value;
+
+        //   if (this.isDateNotEqualFractionDateZeroSeconds()) {
+        this.buildFractionRange({
+          dateValue: this.dateStr,
+          timeValue: this.timeStr,
+          dateToValue: value,
+          timeToValue: this.timeToStr
+        });
+
+        console.log(this.fraction);
+        this.emitFractionUpdate();
+        // }
+
+        setTimeout(() => {
+          datePickerInRangeTo.blur();
+        }, 1);
+      }
+    }
+  }
+
+  inRangeToTimeValueChanged(x: any) {
+    let timePickerInRangeTo = this.timePickerInRangeTo?.nativeElement;
+    if (common.isDefined(timePickerInRangeTo)) {
+      let value = timePickerInRangeTo.value;
+      console.log('value');
+      console.log(value);
+
+      if (common.isDefinedAndNotEmpty(value)) {
+        this.timeToStr = value;
+
+        //   if (this.isDateToNotEqualFractionDateToZeroSeconds()) {
+        this.buildFractionRange({
+          dateValue: this.dateStr,
+          timeValue: this.timeStr,
+          dateToValue: this.dateToStr,
+          timeToValue: value
+        });
+
+        console.log(this.fraction);
+        this.emitFractionUpdate();
+        // }
+
+        setTimeout(() => {
+          timePickerInRangeTo.blur();
+        }, 1);
+      }
+    }
+  }
+
+  inRangeToTimeOpenedChanged(x: any) {
+    setTimeout(() => {
+      let timePickerInRangeTo = this.timePickerInRangeTo?.nativeElement;
+      if (
+        common.isDefined(timePickerInRangeTo) &&
+        timePickerInRangeTo.opened === false
+      ) {
+        timePickerInRangeTo.blur();
+      }
+    }, 1);
+  }
+
+  // rangeToOpenClose() {
+  //   if (this.isDateToNotEqualFractionDateToZeroSeconds()) {
+  //     this.buildFractionRange();
+
+  //     this.emitFractionUpdate();
+  //   }
+  // }
 
   // disabledMinutes() {
   //   return [0];

@@ -207,6 +207,24 @@
       (nzOpenChange)="rangeFromOpenClose()"
     ></nz-time-picker> -->
 
+    <vaadin-date-picker
+      #datePickerInRangeFrom
+      class="py-0"
+      required
+      [value]="dateStr"
+      [i18n]="inRangeFromDateI18n"
+      (value-changed)="inRangeFromDateValueChanged($event)"
+    ></vaadin-date-picker>
+
+    <vaadin-time-picker
+      #timePickerInRangeFrom
+      class="py-0"
+      required
+      [value]="timeStr"
+      (value-changed)="inRangeFromTimeValueChanged($event)"
+      (opened-changed)="inRangeFromTimeOpenedChanged($event)"
+    ></vaadin-time-picker>
+
     <div class="flex h-[36px] items-center justify-center">to</div>
 
     <!-- <nz-date-picker
@@ -229,6 +247,24 @@
       [(ngModel)]="dateTo"
       (nzOpenChange)="rangeToOpenClose()"
     ></nz-time-picker> -->
+
+    <vaadin-date-picker
+      #datePickerInRangeTo
+      class="py-0"
+      required
+      [value]="dateToStr"
+      [i18n]="inRangeToDateI18n"
+      (value-changed)="inRangeToDateValueChanged($event)"
+    ></vaadin-date-picker>
+
+    <vaadin-time-picker
+      #timePickerInRangeTo
+      class="py-0"
+      required
+      [value]="timeToStr"
+      (value-changed)="inRangeToTimeValueChanged($event)"
+      (opened-changed)="inRangeToTimeOpenedChanged($event)"
+    ></vaadin-time-picker>
   </div>
 
   <!-- is before -->
