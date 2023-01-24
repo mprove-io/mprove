@@ -24,7 +24,7 @@
   </form>
 
   <!-- on year -->
-  <nz-date-picker
+  <!-- <nz-date-picker
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnYear"
     class="h-[36px]"
     data-cy="fractionTsDate"
@@ -33,10 +33,10 @@
     nzInputReadOnly="true"
     [(ngModel)]="date"
     (nzOnOpenChange)="yearOpenClose()"
-  ></nz-date-picker>
+  ></nz-date-picker> -->
 
   <!-- on month -->
-  <nz-date-picker
+  <!-- <nz-date-picker
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnMonth"
     class="h-[36px]"
     data-cy="fractionTsDate"
@@ -45,10 +45,10 @@
     nzInputReadOnly="true"
     [(ngModel)]="date"
     (nzOnOpenChange)="monthOpenClose()"
-  ></nz-date-picker>
+  ></nz-date-picker> -->
 
   <!-- on day -->
-  <nz-date-picker
+  <!-- <nz-date-picker
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnDay"
     class="h-[36px]"
     data-cy="fractionTsDate"
@@ -57,7 +57,17 @@
     nzInputReadOnly="true"
     [(ngModel)]="date"
     (nzOnOpenChange)="dayOpenClose()"
-  ></nz-date-picker>
+  ></nz-date-picker> -->
+
+  <vaadin-date-picker
+    *ngIf="fraction.type === fractionTypeEnum.TsIsOnDay"
+    #datePickerOnDay
+    class="py-0"
+    required
+    [value]="dateStr"
+    [i18n]="onDayDateI18n"
+    (value-changed)="dayDateValueChanged($event)"
+  ></vaadin-date-picker>
 
   <!-- on hour -->
   <div
@@ -88,15 +98,16 @@
     ></nz-time-picker> -->
 
     <vaadin-date-picker
-      #vDatePickerOnHour
+      #datePickerOnHour
       class="py-0"
       required
       [value]="dateStr"
+      [i18n]="onHourDateI18n"
       (value-changed)="hourDateValueChanged($event)"
     ></vaadin-date-picker>
 
     <vaadin-time-picker
-      #vTimePickerOnHour
+      #timePickerOnHour
       class="py-0"
       required
       [value]="timeStr"
@@ -110,7 +121,7 @@
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnMinute"
     class="flex flex-row space-x-5"
   >
-    <nz-date-picker
+    <!-- <nz-date-picker
       class="h-[36px]"
       data-cy="fractionTsDate"
       nzMode="date"
@@ -129,7 +140,25 @@
       [nzDisabledSeconds]="disabledSeconds"
       [(ngModel)]="date"
       (nzOpenChange)="minuteOpenClose()"
-    ></nz-time-picker>
+    ></nz-time-picker> -->
+
+    <vaadin-date-picker
+      #datePickerOnMinute
+      class="py-0"
+      required
+      [value]="dateStr"
+      [i18n]="onMinuteDateI18n"
+      (value-changed)="minuteDateValueChanged($event)"
+    ></vaadin-date-picker>
+
+    <vaadin-time-picker
+      #timePickerOnMinute
+      class="py-0"
+      required
+      [value]="timeStr"
+      (value-changed)="minuteTimeValueChanged($event)"
+      (opened-changed)="minuteTimeOpenedChanged($event)"
+    ></vaadin-time-picker>
   </div>
 
   <!-- in range -->
@@ -137,7 +166,7 @@
     *ngIf="fraction.type === fractionTypeEnum.TsIsInRange"
     class="flex flex-row space-x-5"
   >
-    <nz-date-picker
+    <!-- <nz-date-picker
       class="h-[36px]"
       data-cy="fractionTsDate"
       nzMode="date"
@@ -156,11 +185,11 @@
       [nzDisabledSeconds]="disabledSeconds"
       [(ngModel)]="date"
       (nzOpenChange)="rangeFromOpenClose()"
-    ></nz-time-picker>
+    ></nz-time-picker> -->
 
     <div class="flex h-[36px] items-center justify-center">to</div>
 
-    <nz-date-picker
+    <!-- <nz-date-picker
       class="h-[36px]"
       data-cy="fractionTsDateTo"
       nzMode="date"
@@ -179,7 +208,7 @@
       [nzDisabledSeconds]="disabledSeconds"
       [(ngModel)]="dateTo"
       (nzOpenChange)="rangeToOpenClose()"
-    ></nz-time-picker>
+    ></nz-time-picker> -->
   </div>
 
   <!-- is before -->
@@ -187,7 +216,7 @@
     *ngIf="fraction.type === fractionTypeEnum.TsIsBeforeDate"
     class="flex flex-row space-x-5"
   >
-    <nz-date-picker
+    <!-- <nz-date-picker
       class="h-[36px]"
       data-cy="fractionTsDate"
       nzMode="date"
@@ -206,7 +235,7 @@
       [nzDisabledSeconds]="disabledSeconds"
       [(ngModel)]="date"
       (nzOpenChange)="beforeOpenClose()"
-    ></nz-time-picker>
+    ></nz-time-picker> -->
   </div>
 
   <!-- is after -->
@@ -214,7 +243,7 @@
     *ngIf="fraction.type === fractionTypeEnum.TsIsAfterDate"
     class="flex flex-row space-x-5"
   >
-    <nz-date-picker
+    <!-- <nz-date-picker
       class="h-[36px]"
       data-cy="fractionTsDate"
       nzMode="date"
@@ -233,7 +262,7 @@
       [nzDisabledSeconds]="disabledSeconds"
       [(ngModel)]="date"
       (nzOpenChange)="afterOpenClose()"
-    ></nz-time-picker>
+    ></nz-time-picker> -->
   </div>
 
   <!-- relative -->

@@ -1,24 +1,21 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
   Input,
-  OnChanges,
   OnInit,
   Output,
-  SimpleChanges,
   ViewChild
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import '@vaadin/date-picker';
-import { DatePicker } from '@vaadin/date-picker';
+import { DatePicker, DatePickerI18n } from '@vaadin/date-picker';
 import '@vaadin/time-picker';
 import { TimePicker } from '@vaadin/time-picker';
 import { en_US, NzI18nService } from 'ng-zorro-antd/i18n';
-import { NzTimePickerComponent } from 'ng-zorro-antd/time-picker';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
@@ -38,7 +35,9 @@ import {
   templateUrl: 'fraction-ts.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
+// ,
+// OnChanges, AfterViewInit
+export class FractionTsComponent implements OnInit {
   fractionTypeEnum = common.FractionTypeEnum;
   fractionTsForOptionEnum = common.FractionTsForOptionEnum;
 
@@ -48,17 +47,22 @@ export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
 
-  @ViewChild('vDatePickerOnHour') vDatePickerOnHour: ElementRef<DatePicker>;
-  @ViewChild('vTimePickerOnHour') vTimePickerOnHour: ElementRef<TimePicker>;
+  @ViewChild('datePickerOnDay') datePickerOnDay: ElementRef<DatePicker>;
 
-  @ViewChild('timePickerOnHour') timePickerOnHour: NzTimePickerComponent;
-  @ViewChild('timePickerOnMinute') timePickerOnMinute: NzTimePickerComponent;
-  @ViewChild('timePickerInRangeFrom')
-  timePickerInRangeFrom: NzTimePickerComponent;
-  @ViewChild('timePickerInRangeTo') timePickerInRangeTo: NzTimePickerComponent;
-  @ViewChild('timePickerBeforeDate')
-  timePickerBeforeDate: NzTimePickerComponent;
-  @ViewChild('timePickerAfterDate') timePickerAfterDate: NzTimePickerComponent;
+  @ViewChild('datePickerOnHour') datePickerOnHour: ElementRef<DatePicker>;
+  @ViewChild('timePickerOnHour') timePickerOnHour: ElementRef<TimePicker>;
+
+  @ViewChild('datePickerOnMinute') datePickerOnMinute: ElementRef<DatePicker>;
+  @ViewChild('timePickerOnMinute') timePickerOnMinute: ElementRef<TimePicker>;
+
+  // @ViewChild('timePickerOnHour') timePickerOnHour: NzTimePickerComponent;
+  // @ViewChild('timePickerOnMinute') timePickerOnMinute: NzTimePickerComponent;
+  // @ViewChild('timePickerInRangeFrom')
+  // timePickerInRangeFrom: NzTimePickerComponent;
+  // @ViewChild('timePickerInRangeTo') timePickerInRangeTo: NzTimePickerComponent;
+  // @ViewChild('timePickerBeforeDate')
+  // timePickerBeforeDate: NzTimePickerComponent;
+  // @ViewChild('timePickerAfterDate') timePickerAfterDate: NzTimePickerComponent;
 
   date: Date;
   dateTo: Date;
@@ -79,8 +83,8 @@ export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
   tsLastUnitForm: FormGroup;
   tsLastCompleteOptionForm: FormGroup;
 
-  nzMinuteStep = 60;
-  nzSecondStep = 60;
+  // nzMinuteStep = 60;
+  // nzSecondStep = 60;
 
   fractionTsTypesList: FractionTypeItem[] = [
     {
@@ -283,33 +287,102 @@ export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
     }
   ];
 
+  commonI18n: DatePickerI18n = {
+    monthNames: [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ],
+    weekdays: [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday'
+    ],
+    weekdaysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    // An integer indicating the first day of the week
+    // (0 = Sunday, 1 = Monday, etc.).
+    firstDayOfWeek: 0,
+    week: 'Week',
+    calendar: 'Calendar',
+    today: 'Today',
+    cancel: 'Cancel',
+    // Used for adjusting the year value when parsing dates with short years.
+    // The year values between 0 and 99 are evaluated and adjusted.
+    // Example: for a referenceDate of 1970-10-30;
+    //   dateToBeParsed: 40-10-30, result: 1940-10-30
+    //   dateToBeParsed: 80-10-30, result: 1980-10-30
+    //   dateToBeParsed: 10-10-30, result: 2010-10-30
+    // Supported date format: ISO 8601 `"YYYY-MM-DD"` (default)
+    // The default value is the current date.
+    referenceDate: '',
+    formatDate: (d: any) => {
+      let monthIndex = d.month + 1;
+      let month =
+        monthIndex.toString().length === 1 ? `0${monthIndex}` : `${monthIndex}`;
+
+      let dayIndex = d.day;
+      let day =
+        dayIndex.toString().length === 1 ? `0${dayIndex}` : `${dayIndex}`;
+
+      return `${d.year}-${month}-${day}`;
+    },
+    // A function to parse the given text to an `Object` in the format `{ day: ..., month: ..., year: ... }`.
+    // Must properly parse (at least) text formatted by `formatDate`.
+    // Setting the property to null will disable keyboard input feature.
+    // Note: The argument month is 0-based. This means that January = 0 and December = 11.
+    parseDate: null,
+    // parseDate: text => {
+    // //   // Parses a string in 'MM/DD/YY', 'MM/DD' or 'DD' -format to
+    // //   // an `Object` in the format `{ day: ..., month: ..., year: ... }`.
+    // },
+    formatTitle: (monthName: any, fullYear: any) => monthName + ' ' + fullYear
+  };
+
+  onDayDateI18n = this.commonI18n;
+  onHourDateI18n = this.commonI18n;
+  onMinuteDateI18n = this.commonI18n;
+
   dateStr: string;
   timeStr: string;
 
   constructor(
     private fb: FormBuilder,
     private i18n: NzI18nService,
+    private structQuery: StructQuery,
     private cd: ChangeDetectorRef
   ) {}
 
-  ngAfterViewInit(): void {
-    this.makeTimepickerReadonly();
-  }
+  // ngAfterViewInit(): void {
+  //   this.makeTimepickerReadonly();
+  // }
 
-  makeTimepickerReadonly() {
-    [
-      this.timePickerOnHour,
-      this.timePickerOnMinute,
-      this.timePickerInRangeFrom,
-      this.timePickerInRangeTo,
-      this.timePickerBeforeDate,
-      this.timePickerAfterDate
-    ]
-      .filter(x => common.isDefined(x))
-      .forEach(x => {
-        x.inputRef.nativeElement.setAttribute('readonly', 'true');
-      });
-  }
+  // makeTimepickerReadonly() {
+  // [
+  //   this.timePickerOnHour,
+  //   this.timePickerOnMinute,
+  //   this.timePickerInRangeFrom,
+  //   this.timePickerInRangeTo,
+  //   this.timePickerBeforeDate,
+  //   this.timePickerAfterDate
+  // ]
+  //   .filter(x => common.isDefined(x))
+  //   .forEach(x => {
+  //     x.inputRef.nativeElement.setAttribute('readonly', 'true');
+  //   });
+  // }
 
   ngOnInit() {
     this.i18n.setLocale(en_US);
@@ -332,85 +405,22 @@ export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
     this.buildTsLastUnitForm();
     this.buildTsLastCompleteOptionForm();
 
-    this.makeTimepickerReadonly();
+    // this.makeTimepickerReadonly();
 
-    setTimeout(() => {
-      if (common.isDefined(this.vDatePickerOnHour?.nativeElement)) {
-        this.vDatePickerOnHour.nativeElement.i18n = {
-          monthNames: [
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-            'June',
-            'July',
-            'August',
-            'September',
-            'October',
-            'November',
-            'December'
-          ],
-          weekdays: [
-            'Sunday',
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday',
-            'Saturday'
-          ],
-          weekdaysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-          // An integer indicating the first day of the week
-          // (0 = Sunday, 1 = Monday, etc.).
-          firstDayOfWeek: 0,
-          week: 'Week',
-          calendar: 'Calendar',
-          today: 'Today',
-          cancel: 'Cancel',
-          // Used for adjusting the year value when parsing dates with short years.
-          // The year values between 0 and 99 are evaluated and adjusted.
-          // Example: for a referenceDate of 1970-10-30;
-          //   dateToBeParsed: 40-10-30, result: 1940-10-30
-          //   dateToBeParsed: 80-10-30, result: 1980-10-30
-          //   dateToBeParsed: 10-10-30, result: 2010-10-30
-          // Supported date format: ISO 8601 `"YYYY-MM-DD"` (default)
-          // The default value is the current date.
-          referenceDate: '',
-          formatDate: (d: any) => {
-            let monthIndex = d.month + 1;
-            let month =
-              monthIndex.toString().length === 1
-                ? `0${monthIndex}`
-                : `${monthIndex}`;
+    let structState = this.structQuery.getValue();
+    let firstDayOfWeek =
+      structState.weekStart === common.ProjectWeekStartEnum.Monday ? 1 : 0;
 
-            let dayIndex = d.day;
-            let day =
-              dayIndex.toString().length === 1 ? `0${dayIndex}` : `${dayIndex}`;
-
-            return `${d.year}-${month}-${day}`;
-          },
-          // A function to parse the given text to an `Object` in the format `{ day: ..., month: ..., year: ... }`.
-          // Must properly parse (at least) text formatted by `formatDate`.
-          // Setting the property to null will disable keyboard input feature.
-          // Note: The argument month is 0-based. This means that January = 0 and December = 11.
-          parseDate: text => null,
-          // parseDate: text => {
-          // //   // Parses a string in 'MM/DD/YY', 'MM/DD' or 'DD' -format to
-          // //   // an `Object` in the format `{ day: ..., month: ..., year: ... }`.
-          // },
-          formatTitle: (monthName: any, fullYear: any) =>
-            monthName + ' ' + fullYear
-        };
-      }
-    }, 1);
+    this.onDayDateI18n.firstDayOfWeek = firstDayOfWeek;
+    this.onHourDateI18n.firstDayOfWeek = firstDayOfWeek;
+    this.onMinuteDateI18n.firstDayOfWeek = firstDayOfWeek;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    // this.resetDateUsingFraction();
-    // this.resetDateToUsingFraction();
-    this.makeTimepickerReadonly();
-  }
+  // ngOnChanges(changes: SimpleChanges): void {
+  // this.resetDateUsingFraction();
+  // this.resetDateToUsingFraction();
+  // this.makeTimepickerReadonly();
+  // }
 
   buildFractionTypeForm() {
     this.fractionTypeForm = this.fb.group({
@@ -908,11 +918,25 @@ export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
     return `${year}/${month}/${day}`;
   }
 
+  getOnDayStr(item: { dateValue: string }) {
+    let date = item.dateValue.split('-').join('/');
+
+    return `${date}`;
+  }
+
   getOnHourStr(item: { dateValue: string; timeValue: string }) {
     let date = item.dateValue.split('-').join('/');
     let hour = item.timeValue.split(':')[0];
 
     return `${date} ${hour}`;
+  }
+
+  getOnMinuteStr(item: { dateValue: string; timeValue: string }) {
+    let date = item.dateValue.split('-').join('/');
+    let hour = item.timeValue.split(':')[0];
+    let minute = item.timeValue.split(':')[1];
+
+    return `${date} ${hour}:${minute}`;
   }
 
   getHourString(date: Date) {
@@ -1156,27 +1180,60 @@ export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
     }
   }
 
-  dayOpenClose() {
-    if (
-      this.date.getFullYear() !== this.fraction.tsDateYear ||
-      this.date.getMonth() + 1 !== this.fraction.tsDateMonth ||
-      this.date.getDate() !== this.fraction.tsDateDay
-    ) {
-      this.fraction = {
-        brick: `on ${this.getDayString(this.date)}`,
-        operator: this.fraction.operator,
-        type: this.fraction.type,
-        tsDateYear: this.date.getFullYear(),
-        tsDateMonth: this.date.getMonth() + 1,
-        tsDateDay: this.date.getDate()
-      };
+  dayDateValueChanged(x: any) {
+    let datePickerOnDay = this.datePickerOnDay?.nativeElement;
+    if (common.isDefined(datePickerOnDay)) {
+      let value = datePickerOnDay.value;
+      console.log('value');
+      console.log(value);
 
-      this.emitFractionUpdate();
+      if (common.isDefinedAndNotEmpty(value)) {
+        this.dateStr = value;
+
+        let onDayStr = this.getOnDayStr({
+          dateValue: value
+        });
+
+        this.fraction = {
+          brick: `on ${onDayStr}`,
+          operator: this.fraction.operator,
+          type: this.fraction.type,
+          tsDateYear: Number(value.split('-')[0]),
+          tsDateMonth: Number(value.split('-')[1].replace(/^0+/, '')),
+          tsDateDay: Number(value.split('-')[2].replace(/^0+/, ''))
+        };
+
+        console.log(this.fraction);
+        this.emitFractionUpdate();
+
+        setTimeout(() => {
+          datePickerOnDay.blur();
+        }, 1);
+      }
     }
   }
 
+  // dayOpenClose() {
+  //   if (
+  //     this.date.getFullYear() !== this.fraction.tsDateYear ||
+  //     this.date.getMonth() + 1 !== this.fraction.tsDateMonth ||
+  //     this.date.getDate() !== this.fraction.tsDateDay
+  //   ) {
+  //     this.fraction = {
+  //       brick: `on ${this.getDayString(this.date)}`,
+  //       operator: this.fraction.operator,
+  //       type: this.fraction.type,
+  //       tsDateYear: this.date.getFullYear(),
+  //       tsDateMonth: this.date.getMonth() + 1,
+  //       tsDateDay: this.date.getDate()
+  //     };
+
+  //     this.emitFractionUpdate();
+  //   }
+  // }
+
   hourDateValueChanged(x: any) {
-    let datePickerOnHour = this.vDatePickerOnHour?.nativeElement;
+    let datePickerOnHour = this.datePickerOnHour?.nativeElement;
     if (common.isDefined(datePickerOnHour)) {
       let value = datePickerOnHour.value;
       console.log('value');
@@ -1211,7 +1268,7 @@ export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   hourTimeValueChanged(x: any) {
-    let timePickerOnHour = this.vTimePickerOnHour?.nativeElement;
+    let timePickerOnHour = this.timePickerOnHour?.nativeElement;
     if (common.isDefined(timePickerOnHour)) {
       let value = timePickerOnHour.value;
       console.log('value');
@@ -1245,7 +1302,7 @@ export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
 
   hourTimeOpenedChanged(x: any) {
     setTimeout(() => {
-      let timePickerOnHour = this.vTimePickerOnHour?.nativeElement;
+      let timePickerOnHour = this.timePickerOnHour?.nativeElement;
       if (
         common.isDefined(timePickerOnHour) &&
         timePickerOnHour.opened === false
@@ -1278,22 +1335,103 @@ export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
   //   }
   // }
 
-  minuteOpenClose() {
-    if (this.isDateNotEqualFractionDateZeroSeconds()) {
-      this.fraction = {
-        brick: `on ${this.getMinuteString(this.date)}`,
-        operator: common.FractionOperatorEnum.Or,
-        type: common.FractionTypeEnum.TsIsOnMinute,
-        tsDateYear: this.date.getFullYear(),
-        tsDateMonth: this.date.getMonth() + 1,
-        tsDateDay: this.date.getDate(),
-        tsDateHour: this.date.getHours(),
-        tsDateMinute: this.date.getMinutes()
-      };
+  minuteDateValueChanged(x: any) {
+    let datePickerOnMinute = this.datePickerOnMinute?.nativeElement;
+    if (common.isDefined(datePickerOnMinute)) {
+      let value = datePickerOnMinute.value;
+      console.log('value');
+      console.log(value);
 
-      this.emitFractionUpdate();
+      if (common.isDefinedAndNotEmpty(value)) {
+        this.dateStr = value;
+
+        let onMinuteStr = this.getOnMinuteStr({
+          dateValue: value,
+          timeValue: this.timeStr
+        });
+
+        this.fraction = {
+          brick: `on ${onMinuteStr}`,
+          operator: this.fraction.operator,
+          type: this.fraction.type,
+          tsDateYear: Number(value.split('-')[0]),
+          tsDateMonth: Number(value.split('-')[1].replace(/^0+/, '')),
+          tsDateDay: Number(value.split('-')[2].replace(/^0+/, '')),
+          tsDateHour: Number(this.timeStr.split(':')[0].replace(/^0+/, ''))
+        };
+
+        console.log(this.fraction);
+        this.emitFractionUpdate();
+
+        setTimeout(() => {
+          datePickerOnMinute.blur();
+        }, 1);
+      }
     }
   }
+
+  minuteTimeValueChanged(x: any) {
+    let timePickerOnMinute = this.timePickerOnMinute?.nativeElement;
+    if (common.isDefined(timePickerOnMinute)) {
+      let value = timePickerOnMinute.value;
+      console.log('value');
+      console.log(value);
+
+      if (common.isDefinedAndNotEmpty(value)) {
+        let onMinuteStr = this.getOnMinuteStr({
+          dateValue: this.dateStr,
+          timeValue: value
+        });
+
+        this.fraction = {
+          brick: `on ${onMinuteStr}`,
+          operator: this.fraction.operator,
+          type: this.fraction.type,
+          tsDateYear: Number(this.dateStr.split('-')[0]),
+          tsDateMonth: Number(this.dateStr.split('-')[1].replace(/^0+/, '')),
+          tsDateDay: Number(this.dateStr.split('-')[2].replace(/^0+/, '')),
+          tsDateHour: Number(value.split(':')[0].replace(/^0+/, '')),
+          tsDateMinute: Number(value.split(':')[1].replace(/^0+/, ''))
+        };
+
+        console.log(this.fraction);
+        this.emitFractionUpdate();
+
+        setTimeout(() => {
+          timePickerOnMinute.blur();
+        }, 1);
+      }
+    }
+  }
+
+  minuteTimeOpenedChanged(x: any) {
+    setTimeout(() => {
+      let timePickerOnMinute = this.timePickerOnMinute?.nativeElement;
+      if (
+        common.isDefined(timePickerOnMinute) &&
+        timePickerOnMinute.opened === false
+      ) {
+        timePickerOnMinute.blur();
+      }
+    }, 1);
+  }
+
+  // minuteOpenClose() {
+  //   if (this.isDateNotEqualFractionDateZeroSeconds()) {
+  //     this.fraction = {
+  //       brick: `on ${this.getMinuteString(this.date)}`,
+  //       operator: common.FractionOperatorEnum.Or,
+  //       type: common.FractionTypeEnum.TsIsOnMinute,
+  //       tsDateYear: this.date.getFullYear(),
+  //       tsDateMonth: this.date.getMonth() + 1,
+  //       tsDateDay: this.date.getDate(),
+  //       tsDateHour: this.date.getHours(),
+  //       tsDateMinute: this.date.getMinutes()
+  //     };
+
+  //     this.emitFractionUpdate();
+  //   }
+  // }
 
   isDateNotEqualFractionDateZeroSeconds(): boolean {
     return (
@@ -1333,13 +1471,13 @@ export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
     }
   }
 
-  disabledMinutes() {
-    return [0];
-  }
+  // disabledMinutes() {
+  //   return [0];
+  // }
 
-  disabledSeconds() {
-    return [0];
-  }
+  // disabledSeconds() {
+  //   return [0];
+  // }
 
   beforeOpenClose() {
     if (this.isDateNotEqualFractionDateZeroSeconds()) {
@@ -1367,13 +1505,6 @@ export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
         this.emitFractionUpdate();
       }
     }
-  }
-
-  emitFractionUpdate() {
-    this.fractionUpdate.emit({
-      fraction: this.fraction,
-      fractionIndex: this.fractionIndex
-    });
   }
 
   relativeValueBlur() {
@@ -1550,5 +1681,12 @@ export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
       tsLastUnit: this.fraction.tsLastUnit,
       tsLastCompleteOption: this.fraction.tsLastCompleteOption
     };
+  }
+
+  emitFractionUpdate() {
+    this.fractionUpdate.emit({
+      fraction: this.fraction,
+      fractionIndex: this.fractionIndex
+    });
   }
 }
