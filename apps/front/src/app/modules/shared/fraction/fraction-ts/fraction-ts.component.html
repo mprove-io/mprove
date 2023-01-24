@@ -35,6 +35,16 @@
     (nzOnOpenChange)="yearOpenClose()"
   ></nz-date-picker> -->
 
+  <vaadin-date-picker
+    *ngIf="fraction.type === fractionTypeEnum.TsIsOnYear"
+    #datePickerOnYear
+    class="py-0"
+    required
+    [value]="dateStr"
+    [i18n]="onYearDateI18n"
+    (value-changed)="yearDateValueChanged($event)"
+  ></vaadin-date-picker>
+
   <!-- on month -->
   <!-- <nz-date-picker
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnMonth"
@@ -46,6 +56,16 @@
     [(ngModel)]="date"
     (nzOnOpenChange)="monthOpenClose()"
   ></nz-date-picker> -->
+
+  <vaadin-date-picker
+    *ngIf="fraction.type === fractionTypeEnum.TsIsOnMonth"
+    #datePickerOnMonth
+    class="py-0"
+    required
+    [value]="dateStr"
+    [i18n]="onMonthDateI18n"
+    (value-changed)="monthDateValueChanged($event)"
+  ></vaadin-date-picker>
 
   <!-- on day -->
   <!-- <nz-date-picker

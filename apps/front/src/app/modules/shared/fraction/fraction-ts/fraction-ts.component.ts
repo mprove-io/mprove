@@ -11,7 +11,11 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import '@vaadin/date-picker';
-import { DatePicker, DatePickerI18n } from '@vaadin/date-picker';
+import {
+  DatePicker,
+  DatePickerDate,
+  DatePickerI18n
+} from '@vaadin/date-picker';
 import '@vaadin/time-picker';
 import { TimePicker } from '@vaadin/time-picker';
 import { en_US, NzI18nService } from 'ng-zorro-antd/i18n';
@@ -47,6 +51,8 @@ export class FractionTsComponent implements OnInit {
 
   @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
 
+  @ViewChild('datePickerOnYear') datePickerOnYear: ElementRef<DatePicker>;
+  @ViewChild('datePickerOnMonth') datePickerOnMonth: ElementRef<DatePicker>;
   @ViewChild('datePickerOnDay') datePickerOnDay: ElementRef<DatePicker>;
 
   @ViewChild('datePickerOnHour') datePickerOnHour: ElementRef<DatePicker>;
@@ -328,14 +334,12 @@ export class FractionTsComponent implements OnInit {
     // Supported date format: ISO 8601 `"YYYY-MM-DD"` (default)
     // The default value is the current date.
     referenceDate: '',
-    formatDate: (d: any) => {
+    formatDate: (d: DatePickerDate) => {
       let monthIndex = d.month + 1;
       let month =
         monthIndex.toString().length === 1 ? `0${monthIndex}` : `${monthIndex}`;
 
-      let dayIndex = d.day;
-      let day =
-        dayIndex.toString().length === 1 ? `0${dayIndex}` : `${dayIndex}`;
+      let day = d.day.toString().length === 1 ? `0${d.day}` : `${d.day}`;
 
       return `${d.year}-${month}-${day}`;
     },
@@ -348,12 +352,14 @@ export class FractionTsComponent implements OnInit {
     // //   // Parses a string in 'MM/DD/YY', 'MM/DD' or 'DD' -format to
     // //   // an `Object` in the format `{ day: ..., month: ..., year: ... }`.
     // },
-    formatTitle: (monthName: any, fullYear: any) => monthName + ' ' + fullYear
+    formatTitle: (monthName: any, fullYear: any) => monthName + '  ' + fullYear
   };
 
-  onDayDateI18n = this.commonI18n;
-  onHourDateI18n = this.commonI18n;
-  onMinuteDateI18n = this.commonI18n;
+  onYearDateI18n = Object.assign({}, this.commonI18n);
+  onMonthDateI18n = Object.assign({}, this.commonI18n);
+  onDayDateI18n = Object.assign({}, this.commonI18n);
+  onHourDateI18n = Object.assign({}, this.commonI18n);
+  onMinuteDateI18n = Object.assign({}, this.commonI18n);
 
   dateStr: string;
   timeStr: string;
@@ -410,6 +416,18 @@ export class FractionTsComponent implements OnInit {
     let structState = this.structQuery.getValue();
     let firstDayOfWeek =
       structState.weekStart === common.ProjectWeekStartEnum.Monday ? 1 : 0;
+
+    this.onYearDateI18n.firstDayOfWeek = firstDayOfWeek;
+    this.onYearDateI18n.formatDate = (d: DatePickerDate) => `${d.year}`;
+
+    this.onMonthDateI18n.firstDayOfWeek = firstDayOfWeek;
+    this.onMonthDateI18n.formatDate = (d: DatePickerDate) => {
+      let monthIndex = d.month + 1;
+      let month =
+        monthIndex.toString().length === 1 ? `0${monthIndex}` : `${monthIndex}`;
+
+      return `${d.year}-${month}`;
+    };
 
     this.onDayDateI18n.firstDayOfWeek = firstDayOfWeek;
     this.onHourDateI18n.firstDayOfWeek = firstDayOfWeek;
@@ -903,9 +921,22 @@ export class FractionTsComponent implements OnInit {
     return `${year}`;
   }
 
+  getOnYearStr(item: { dateValue: string }) {
+    let year = item.dateValue.split('-')[0];
+
+    return `${year}`;
+  }
+
   getMonthString(date: Date) {
     let year = this.getYearPart(date);
     let month = this.getMonthPart(date);
+
+    return `${year}/${month}`;
+  }
+
+  getOnMonthStr(item: { dateValue: string }) {
+    let year = item.dateValue.split('-')[0];
+    let month = item.dateValue.split('-')[1];
 
     return `${year}/${month}`;
   }
@@ -1150,35 +1181,99 @@ export class FractionTsComponent implements OnInit {
     };
   }
 
-  yearOpenClose() {
-    if (this.date.getFullYear() !== this.fraction.tsDateYear) {
-      this.fraction = {
-        brick: `on ${this.getYearString(this.date)}`,
-        operator: this.fraction.operator,
-        type: this.fraction.type,
-        tsDateYear: this.date.getFullYear()
-      };
+  yearDateValueChanged(x: any) {
+    let datePickerOnYear = this.datePickerOnYear?.nativeElement;
+    if (common.isDefined(datePickerOnYear)) {
+      let value = datePickerOnYear.value;
+      console.log('value');
+      console.log(value);
 
-      this.emitFractionUpdate();
+      if (common.isDefinedAndNotEmpty(value)) {
+        this.dateStr = value;
+
+        let onYearStr = this.getOnYearStr({
+          dateValue: value
+        });
+
+        this.fraction = {
+          brick: `on ${onYearStr}`,
+          operator: this.fraction.operator,
+          type: this.fraction.type,
+          tsDateYear: Number(value.split('-')[0]),
+          tsDateMonth: Number(value.split('-')[1].replace(/^0+/, ''))
+        };
+
+        console.log(this.fraction);
+        this.emitFractionUpdate();
+
+        setTimeout(() => {
+          datePickerOnYear.blur();
+        }, 1);
+      }
     }
   }
 
-  monthOpenClose() {
-    if (
-      this.date.getFullYear() !== this.fraction.tsDateYear ||
-      this.date.getMonth() + 1 !== this.fraction.tsDateMonth
-    ) {
-      this.fraction = {
-        brick: `on ${this.getMonthString(this.date)}`,
-        operator: this.fraction.operator,
-        type: this.fraction.type,
-        tsDateYear: this.date.getFullYear(),
-        tsDateMonth: this.date.getMonth() + 1
-      };
+  // yearOpenClose() {
+  //   if (this.date.getFullYear() !== this.fraction.tsDateYear) {
+  //     this.fraction = {
+  //       brick: `on ${this.getYearString(this.date)}`,
+  //       operator: this.fraction.operator,
+  //       type: this.fraction.type,
+  //       tsDateYear: this.date.getFullYear()
+  //     };
 
-      this.emitFractionUpdate();
+  //     this.emitFractionUpdate();
+  //   }
+  // }
+
+  monthDateValueChanged(x: any) {
+    let datePickerOnMonth = this.datePickerOnMonth?.nativeElement;
+    if (common.isDefined(datePickerOnMonth)) {
+      let value = datePickerOnMonth.value;
+      console.log('value');
+      console.log(value);
+
+      if (common.isDefinedAndNotEmpty(value)) {
+        this.dateStr = value;
+
+        let onMonthStr = this.getOnMonthStr({
+          dateValue: value
+        });
+
+        this.fraction = {
+          brick: `on ${onMonthStr}`,
+          operator: this.fraction.operator,
+          type: this.fraction.type,
+          tsDateYear: Number(value.split('-')[0]),
+          tsDateMonth: Number(value.split('-')[1].replace(/^0+/, ''))
+        };
+
+        console.log(this.fraction);
+        this.emitFractionUpdate();
+
+        setTimeout(() => {
+          datePickerOnMonth.blur();
+        }, 1);
+      }
     }
   }
+
+  // monthOpenClose() {
+  //   if (
+  //     this.date.getFullYear() !== this.fraction.tsDateYear ||
+  //     this.date.getMonth() + 1 !== this.fraction.tsDateMonth
+  //   ) {
+  //     this.fraction = {
+  //       brick: `on ${this.getMonthString(this.date)}`,
+  //       operator: this.fraction.operator,
+  //       type: this.fraction.type,
+  //       tsDateYear: this.date.getFullYear(),
+  //       tsDateMonth: this.date.getMonth() + 1
+  //     };
+
+  //     this.emitFractionUpdate();
+  //   }
+  // }
 
   dayDateValueChanged(x: any) {
     let datePickerOnDay = this.datePickerOnDay?.nativeElement;
