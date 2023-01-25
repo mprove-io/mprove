@@ -36,6 +36,7 @@ import {
 @Component({
   selector: 'm-fraction-ts',
   templateUrl: 'fraction-ts.component.html',
+  styleUrls: ['fraction-ts.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FractionTsComponent implements OnInit {

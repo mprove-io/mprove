@@ -1,0 +1,11 @@
+vaadin-date-picker {
+  --vaadin-field-default-width: 192px;
+}
+
+vaadin-time-picker {
+  --vaadin-field-default-width: 128px;
+}
+
+::ng-deep * {
+  --lumo-font-family: 'Montserrat';
+}
