@@ -205,7 +205,7 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/cdk@14.2.7", "@angular/cdk@^14.1.0":
+"@angular/cdk@14.2.7":
   version "14.2.7"
   resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-14.2.7.tgz#65eb6fbbeed6120fad4e3913aa66f8b74c853ac3"
   integrity sha512-/tEsYaUbDSnfEmKVvAMramIptmhI67O+9STjOV0i+74XR2NospeK0fkbywIANu1n3w6AHGMotvRWJrjmbCElFg==
@@ -283,21 +283,6 @@
   integrity sha512-r5tVus5RJDNc4U2v0jMtjPiAS1xDsVsJ70lS313DgZmBDHIVZP1cWIehdxwgNlGwQQtAA36eG7toBwqUU3gb/A==
   dependencies:
     tslib "^2.3.0"
-
-"@ant-design/colors@^5.0.0":
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/@ant-design/colors/-/colors-5.1.1.tgz#800b2186b1e27e66432e67d03ed96af3e21d8940"
-  integrity sha512-Txy4KpHrp3q4XZdfgOBqLl+lkQIc3tEvHXOimRN1giX1AEC7mGtyrO9p8iRGJ3FLuVMGa2gNEzQyghVymLttKQ==
-  dependencies:
-    "@ctrl/tinycolor" "^3.3.1"
-
-"@ant-design/icons-angular@^14.1.0":
-  version "14.1.0"
-  resolved "https://registry.yarnpkg.com/@ant-design/icons-angular/-/icons-angular-14.1.0.tgz#7612507aae28872ce3ccd139857452426cc30be3"
-  integrity sha512-SvWi8p4L+cCfTGtezeUq1s8kahZEO1UVf7ZR615Fix3c2l9OnAJi+niDkq2fZHjpiarFrt8HoZ2EhMAMN7jfbg==
-  dependencies:
-    "@ant-design/colors" "^5.0.0"
-    tslib "^2.0.0"
 
 "@assemblyscript/loader@^0.10.1":
   version "0.10.1"
@@ -1655,7 +1640,7 @@
   resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-2.0.2.tgz#1bfafe4b7ed0f3e4105837e056e0a89b108ebe36"
   integrity sha512-IkpVW/ehM1hWKln4fCA3NzJU8KwD+kIOvPZA4cqxoJHtE21CCzjyp+Kxbu0i5I4tBNOlXPL9mjwnWlL0VEG4Fg==
 
-"@ctrl/tinycolor@^3.3.1", "@ctrl/tinycolor@^3.4.1":
+"@ctrl/tinycolor@^3.4.1":
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/@ctrl/tinycolor/-/tinycolor-3.5.0.tgz#6e52b3d1c38d13130101771821e09cdd414a16bc"
   integrity sha512-tlJpwF40DEQcfR/QF+wNMVyGMaO9FQp6Z1Wahj4Gk3CJQYHwA2xVG7iKDFdW6zuxZY9XWOpGcfNCTsX4McOsOg==
@@ -6432,7 +6417,7 @@ date-fns@^1.27.2:
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.30.1.tgz#2e71bf0b119153dbb4cc4e88d9ea5acfb50dc05c"
   integrity sha512-hBSVCvSmWC+QypYObzwGOd9wqdDpOt+0wl0KbU+R+uuZBS1jN8VsD1ss3irQDknRj5NvxiTF6oj/nDRnN/UQNw==
 
-date-fns@^2.16.1, date-fns@^2.28.0:
+date-fns@^2.28.0:
   version "2.29.3"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.29.3.tgz#27402d2fc67eb442b511b70bbdf98e6411cd68a8"
   integrity sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==
@@ -12072,16 +12057,6 @@ ng-monaco-editor@5.0.3:
   resolved "https://registry.yarnpkg.com/ng-monaco-editor/-/ng-monaco-editor-5.0.3.tgz#662ee32797e73f6cd2f17cc872462bd2d26ae5b4"
   integrity sha512-ekk6rXR+z/KvBBg361m/fILfCaJvH7NEh3pNZglpclkOwyZ4QUfTLmuQ0UVmQC2N8iCiilmkbiSgwt4Py2khEA==
   dependencies:
-    tslib "^2.3.0"
-
-ng-zorro-antd@14.3.0:
-  version "14.3.0"
-  resolved "https://registry.yarnpkg.com/ng-zorro-antd/-/ng-zorro-antd-14.3.0.tgz#0cc5a406b62f4dcbcda2eea4d8d654c27c323dae"
-  integrity sha512-mGVok0DggrvVYTYWpbJJVekBs6j19kAkxB7PdZp0bvYRedpOVWKSEDX1Cigy7txnGw5UsSuzRSn3h6oZcBUmTA==
-  dependencies:
-    "@angular/cdk" "^14.1.0"
-    "@ant-design/icons-angular" "^14.1.0"
-    date-fns "^2.16.1"
     tslib "^2.3.0"
 
 ngx-color@8.0.3:
