@@ -1,10 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  Resolve,
-  Router,
-  RouterStateSnapshot
-} from '@angular/router';
+import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -33,10 +28,7 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
     private router: Router
   ) {}
 
-  resolve(
-    route: ActivatedRouteSnapshot,
-    routerStateSnapshot: RouterStateSnapshot
-  ): Observable<boolean> {
+  resolve(route: ActivatedRouteSnapshot): Observable<boolean> {
     let nav: NavState;
     this.navQuery
       .select()
@@ -72,10 +64,6 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
     });
 
     let parametersRepId = route.params[common.PARAMETER_REP_ID];
-
-    if (rep.repId === parametersRepId) {
-      return of(true);
-    }
 
     if (parametersRepId === common.EMPTY) {
       if (rep.repId !== common.EMPTY) {
