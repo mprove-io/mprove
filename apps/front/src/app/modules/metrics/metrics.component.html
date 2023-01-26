@@ -66,14 +66,19 @@
 
           <div class="text-gray1 ml-6 text-base">Time Range</div>
 
-          <m-fraction-ts
-            class="ml-3 pt-6"
-            [fraction]="fraction"
-            [isFirst]="true"
-            [isMetrics]="true"
-            [fractionIndex]="0"
-            (fractionUpdate)="fractionUpdate($event)"
-          ></m-fraction-ts>
+          <div
+            class="flex flex-row items-start justify-start"
+            *ngFor="let fraction of fractions"
+          >
+            <m-fraction-ts
+              class="ml-3 pt-6"
+              [fraction]="fraction"
+              [isFirst]="true"
+              [isMetrics]="true"
+              [fractionIndex]="0"
+              (fractionUpdate)="fractionUpdate($event)"
+            ></m-fraction-ts>
+          </div>
 
           <div class="flex-grow"></div>
 
@@ -126,3 +131,4 @@
 
 <div *ngIf="rep$ | async"></div>
 <div *ngIf="reps$ | async"></div>
+<div *ngIf="timeQuery$ | async"></div>

@@ -49,14 +49,20 @@ export class MetricsComponent implements OnInit {
   rep$ = this.repQuery.select().pipe(
     tap(x => {
       this.rep = x;
-      console.log(x);
-      console.log(x.timeRangeFraction);
+      // console.log(x);
+      // console.log(x.timeRangeFraction);
 
       this.cd.detectChanges();
     })
   );
 
-  fraction: common.Fraction;
+  fractions: common.Fraction[] = [];
+  timeQuery$ = this.timeQuery.select().pipe(
+    tap(x => {
+      this.fractions = [x.timeRangeFraction];
+      this.cd.detectChanges();
+    })
+  );
 
   reps: common.Rep[];
   reps$ = this.repsQuery.select().pipe(
@@ -152,7 +158,7 @@ export class MetricsComponent implements OnInit {
 
     this.timezoneForm.controls['timezone'].setValue(timeState.timezone);
     this.timeSpecForm.controls['timeSpec'].setValue(timeState.timeSpec);
-    this.fraction = timeState.timeRangeFraction;
+    this.fractions = [timeState.timeRangeFraction];
   }
 
   navToRep(repId: string) {
@@ -172,7 +178,7 @@ export class MetricsComponent implements OnInit {
   }
 
   fractionUpdate(event$: any) {
-    console.log(event$);
+    // console.log(event$);
 
     localStorage.setItem(
       constants.LOCAL_STORAGE_TIME_RANGE_FRACTION,
