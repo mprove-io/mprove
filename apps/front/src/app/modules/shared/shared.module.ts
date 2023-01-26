@@ -1,11 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyModule } from '@ngneat/helipopper';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
-import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { ColorSketchModule } from 'ngx-color/sketch';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { AvatarComponent } from './avatar/avatar.component';
@@ -148,13 +146,12 @@ let sharedComponents = [
     ReactiveFormsModule,
     FormsModule,
     NgSelectModule,
-    NzDatePickerModule,
-    NzTimePickerModule,
     NgxChartsModule,
     ColorSketchModule,
     NgxSpinnerModule,
     TippyModule
   ],
-  exports: [...sharedComponents, ...pipesArray]
+  exports: [...sharedComponents, ...pipesArray],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {}

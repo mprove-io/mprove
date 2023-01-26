@@ -1,11 +1,12 @@
-// @tailwind base;
-// @tailwind components;
-// @tailwind utilities;
-
-// @import '~ng-zorro-antd/style/index.min.css';
-// @import '~ng-zorro-antd/date-picker/style/index.min.css';
-// @import '~ng-zorro-antd/time-picker/style/index.min.css';
-@import '~ng-zorro-antd/ng-zorro-antd.min.css';
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+body {
+  color: rgba(0, 0, 0, 0.85);
+  font-feature-settings: 'tnum';
+}
 
 // @import '~ngx-ui-switch/ui-switch.component.scss';
 
@@ -13,7 +14,6 @@
   outline: none;
 }
 
-/* You can add global styles to this file, and also import other style files */
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
