@@ -23,7 +23,8 @@ import {
   startOfMonth,
   startOfQuarter,
   startOfWeek,
-  startOfYear
+  startOfYear,
+  sub
 } from 'date-fns';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
@@ -178,26 +179,52 @@ export class GetRepController {
         : undefined;
 
     if (diffColumnsLength > timeColumnsLimit) {
-      endDate = add(
-        startDate,
-        timeSpec === common.TimeSpecEnum.Years
-          ? { years: timeColumnsLimit }
-          : timeSpec === common.TimeSpecEnum.Quarters
-          ? { months: timeColumnsLimit * 3 }
-          : timeSpec === common.TimeSpecEnum.Months
-          ? { months: timeColumnsLimit }
-          : timeSpec === common.TimeSpecEnum.Weeks
-          ? { days: timeColumnsLimit * 7 }
-          : timeSpec === common.TimeSpecEnum.Days
-          ? { days: timeColumnsLimit }
-          : timeSpec === common.TimeSpecEnum.Hours
-          ? { hours: timeColumnsLimit }
-          : timeSpec === common.TimeSpecEnum.Minutes
-          ? { minutes: timeColumnsLimit }
-          : {}
-      );
+      if (
+        [
+          common.FractionTypeEnum.TsIsInLast,
+          common.FractionTypeEnum.TsIsBeforeDate,
+          common.FractionTypeEnum.TsIsBeforeRelative
+        ].indexOf(timeRangeFraction.type) > -1
+      ) {
+        startDate = sub(
+          endDate,
+          timeSpec === common.TimeSpecEnum.Years
+            ? { years: timeColumnsLimit }
+            : timeSpec === common.TimeSpecEnum.Quarters
+            ? { months: timeColumnsLimit * 3 }
+            : timeSpec === common.TimeSpecEnum.Months
+            ? { months: timeColumnsLimit }
+            : timeSpec === common.TimeSpecEnum.Weeks
+            ? { days: timeColumnsLimit * 7 }
+            : timeSpec === common.TimeSpecEnum.Days
+            ? { days: timeColumnsLimit }
+            : timeSpec === common.TimeSpecEnum.Hours
+            ? { hours: timeColumnsLimit }
+            : timeSpec === common.TimeSpecEnum.Minutes
+            ? { minutes: timeColumnsLimit }
+            : {}
+        );
+      } else {
+        endDate = add(
+          startDate,
+          timeSpec === common.TimeSpecEnum.Years
+            ? { years: timeColumnsLimit }
+            : timeSpec === common.TimeSpecEnum.Quarters
+            ? { months: timeColumnsLimit * 3 }
+            : timeSpec === common.TimeSpecEnum.Months
+            ? { months: timeColumnsLimit }
+            : timeSpec === common.TimeSpecEnum.Weeks
+            ? { days: timeColumnsLimit * 7 }
+            : timeSpec === common.TimeSpecEnum.Days
+            ? { days: timeColumnsLimit }
+            : timeSpec === common.TimeSpecEnum.Hours
+            ? { hours: timeColumnsLimit }
+            : timeSpec === common.TimeSpecEnum.Minutes
+            ? { minutes: timeColumnsLimit }
+            : {}
+        );
+      }
     }
-
     let timeColumns =
       getUnixTime(startDate) === getUnixTime(endDate)
         ? timeSpec === common.TimeSpecEnum.Years
@@ -273,7 +300,17 @@ export class GetRepController {
     }
 
     if (timeColumns.length > timeColumnsLimit) {
-      timeColumns.pop();
+      if (
+        [
+          common.FractionTypeEnum.TsIsInLast,
+          common.FractionTypeEnum.TsIsBeforeDate,
+          common.FractionTypeEnum.TsIsBeforeRelative
+        ].indexOf(timeRangeFraction.type) > -1
+      ) {
+        timeColumns.shift();
+      } else {
+        timeColumns.pop();
+      }
     }
 
     let repApi = wrapper.wrapToApiRep({
