@@ -178,7 +178,10 @@ export class GetRepController {
         ? differenceInMinutes(endDate, startDate)
         : undefined;
 
+    let isTimeColumnsLimitExceeded = false;
+
     if (diffColumnsLength > timeColumnsLimit) {
+      isTimeColumnsLimitExceeded = true;
       if (
         [
           common.FractionTypeEnum.TsIsInLast,
@@ -319,7 +322,8 @@ export class GetRepController {
       timeSpec: timeSpec,
       timeRangeFraction: timeRangeFraction,
       timeColumnsLimit: timeColumnsLimit,
-      timeColumnsLength: timeColumns.length
+      timeColumnsLength: timeColumns.length,
+      isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded
     });
 
     repApi.columns = timeColumns.map(x => {

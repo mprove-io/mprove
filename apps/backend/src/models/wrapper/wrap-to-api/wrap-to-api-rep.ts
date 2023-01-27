@@ -8,6 +8,7 @@ export function wrapToApiRep(item: {
   timeRangeFraction: common.Fraction;
   timeColumnsLimit: number;
   timeColumnsLength: number;
+  isTimeColumnsLimitExceeded: boolean;
 }): common.Rep {
   let {
     rep,
@@ -15,7 +16,8 @@ export function wrapToApiRep(item: {
     timeSpec,
     timeRangeFraction,
     timeColumnsLimit,
-    timeColumnsLength
+    timeColumnsLength,
+    isTimeColumnsLimitExceeded
   } = item;
 
   return {
@@ -30,10 +32,7 @@ export function wrapToApiRep(item: {
     columns: [],
     timeColumnsLimit: timeColumnsLimit,
     timeColumnsLength: timeColumnsLength,
-    isTimeColumnsLimitReached:
-      common.isDefined(timeColumnsLimit) && common.isDefined(timeColumnsLength)
-        ? timeColumnsLength >= timeColumnsLimit
-        : false,
+    isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded,
     serverTs: Number(rep.server_ts)
   };
 }

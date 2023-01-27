@@ -15,7 +15,7 @@ export const emptyRep: RepState = {
   timeRangeFraction: undefined,
   timeColumnsLength: undefined,
   timeColumnsLimit: undefined,
-  isTimeColumnsLimitReached: false,
+  isTimeColumnsLimitExceeded: false,
   rows: [],
   columns: [],
   serverTs: undefined

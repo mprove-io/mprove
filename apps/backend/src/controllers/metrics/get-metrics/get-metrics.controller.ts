@@ -91,7 +91,8 @@ export class GetMetricsController {
           timeSpec: undefined,
           timeRangeFraction: undefined,
           timeColumnsLimit: undefined,
-          timeColumnsLength: undefined
+          timeColumnsLength: undefined,
+          isTimeColumnsLimitExceeded: false
         })
       )
     };

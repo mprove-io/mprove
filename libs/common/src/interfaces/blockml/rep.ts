@@ -43,7 +43,7 @@ export class Rep {
   rows: Row[];
 
   @IsBoolean()
-  isTimeColumnsLimitReached: boolean;
+  isTimeColumnsLimitExceeded: boolean;
 
   @IsInt()
   timeColumnsLimit: number;
