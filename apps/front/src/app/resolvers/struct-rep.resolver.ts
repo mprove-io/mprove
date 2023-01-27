@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
-import { emptyRep, RepQuery } from '../queries/rep.query';
+import { RepQuery } from '../queries/rep.query';
 import { StructQuery } from '../queries/struct.query';
 import { TimeQuery } from '../queries/time.query';
 import { UserQuery } from '../queries/user.query';
@@ -73,14 +73,6 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
     });
 
     let parametersRepId = route.params[common.PARAMETER_REP_ID];
-
-    if (parametersRepId === common.EMPTY) {
-      if (rep.repId !== common.EMPTY) {
-        this.repQuery.update(emptyRep);
-      }
-
-      return of(true);
-    }
 
     let timeState = this.timeQuery.getValue();
 

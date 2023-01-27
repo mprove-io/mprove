@@ -111,12 +111,24 @@ export class GetRepController {
       projectId: projectId
     });
 
-    let rep = await this.repsRepository.findOne({
-      where: {
-        struct_id: bridge.struct_id,
-        rep_id: repId
-      }
-    });
+    let emptyRep: entities.RepEntity = {
+      struct_id: struct.struct_id,
+      rep_id: repId,
+      file_path: undefined,
+      title: repId,
+      rows: [],
+      server_ts: undefined
+    };
+
+    let rep =
+      repId === common.EMPTY
+        ? emptyRep
+        : await this.repsRepository.findOne({
+            where: {
+              struct_id: bridge.struct_id,
+              rep_id: repId
+            }
+          });
 
     let timeColumnsLimit = constants.TIME_COLUMNS_LIMIT;
 
