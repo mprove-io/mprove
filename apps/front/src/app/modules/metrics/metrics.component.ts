@@ -168,16 +168,30 @@ export class MetricsComponent implements OnInit {
     this.navigateService.navigateToMetricsRep({ repId: repId });
   }
 
-  timeSpecChange() {
-    let timeSpec = this.timeSpecForm.controls['timeSpec'].value;
-    localStorage.setItem(constants.LOCAL_STORAGE_TIME_SPEC, timeSpec);
-    this.timeQuery.updatePart({ timeSpec: timeSpec });
-  }
-
   timezoneChange() {
     let timezone = this.timezoneForm.controls['timezone'].value;
     localStorage.setItem(constants.LOCAL_STORAGE_TIMEZONE, timezone);
     this.timeQuery.updatePart({ timezone: timezone });
+    this.structRepResolver
+      .resolveRoute({
+        route: this.route.children[0].snapshot,
+        showSpinner: true
+      })
+      .pipe(take(1))
+      .subscribe();
+  }
+
+  timeSpecChange() {
+    let timeSpec = this.timeSpecForm.controls['timeSpec'].value;
+    localStorage.setItem(constants.LOCAL_STORAGE_TIME_SPEC, timeSpec);
+    this.timeQuery.updatePart({ timeSpec: timeSpec });
+    this.structRepResolver
+      .resolveRoute({
+        route: this.route.children[0].snapshot,
+        showSpinner: true
+      })
+      .pipe(take(1))
+      .subscribe();
   }
 
   fractionUpdate(event$: any) {
@@ -189,7 +203,10 @@ export class MetricsComponent implements OnInit {
     this.timeQuery.updatePart({ timeRangeFraction: event$.fraction });
 
     this.structRepResolver
-      .resolve(this.route.children[0].snapshot)
+      .resolveRoute({
+        route: this.route.children[0].snapshot,
+        showSpinner: true
+      })
       .pipe(take(1))
       .subscribe();
   }

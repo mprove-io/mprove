@@ -29,6 +29,15 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
   ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<boolean> {
+    return this.resolveRoute({ route: route, showSpinner: false });
+  }
+
+  resolveRoute(item: {
+    route: ActivatedRouteSnapshot;
+    showSpinner: boolean;
+  }): Observable<boolean> {
+    let { route, showSpinner } = item;
+
     let nav: NavState;
     this.navQuery
       .select()
@@ -90,7 +99,8 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
     return this.apiService
       .req({
         pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRep,
-        payload: payload
+        payload: payload,
+        showSpinner: showSpinner
       })
       .pipe(
         map((resp: apiToBackend.ToBackendGetRepResponse) => {
