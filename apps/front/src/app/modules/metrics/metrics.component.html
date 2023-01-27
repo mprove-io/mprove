@@ -80,6 +80,14 @@
             ></m-fraction-ts>
           </div>
 
+          <div
+            class="ml-4 flex h-8 w-8 flex-shrink-0 text-amber-500"
+            tippy="Exceeded time columns limit ({{ rep.timeColumnsLimit }})"
+            *ngIf="rep?.isTimeColumnsLimitExceeded === true"
+          >
+            <m-exclamation-icon></m-exclamation-icon>
+          </div>
+
           <div class="flex-grow"></div>
 
           <div class="text-gray1 flex flex-row items-center text-base"> </div>
