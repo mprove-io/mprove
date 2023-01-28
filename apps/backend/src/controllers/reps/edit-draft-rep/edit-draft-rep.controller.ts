@@ -6,8 +6,10 @@ import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
+import { DbService } from '~backend/services/db.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -15,11 +17,12 @@ import { StructsService } from '~backend/services/structs.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
-export class GetMetricsController {
+export class EditDraftRepController {
   constructor(
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private metricsRepository: repositories.MetricsRepository,
+    private blockmlService: BlockmlService,
+    private dbService: DbService,
     private repsRepository: repositories.RepsRepository,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
@@ -27,14 +30,25 @@ export class GetMetricsController {
     private envsService: EnvsService
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMetrics)
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditDraftRep)
   async getModels(
     @AttachUser() user: entities.UserEntity,
     @Req() request: any
   ) {
-    let reqValid: apiToBackend.ToBackendGetMetricsRequest = request.body;
+    let reqValid: apiToBackend.ToBackendEditDraftRepRequest = request.body;
 
-    let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
+    let { traceId } = reqValid.info;
+    let {
+      projectId,
+      isRepoProd,
+      branchId,
+      envId,
+      repId,
+      rows,
+      timeSpec,
+      timezone,
+      timeRangeFraction
+    } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -64,51 +78,55 @@ export class GetMetricsController {
       envId: envId
     });
 
-    let metrics = await this.metricsRepository.find({
-      where: { struct_id: bridge.struct_id }
-    });
-
-    let draftReps = await this.repsRepository.find({
-      where: {
-        draft: common.BoolEnum.TRUE,
-        creator_id: user.user_id
-      }
-    });
-
-    let structReps = await this.repsRepository.find({
-      where: {
-        draft: common.BoolEnum.FALSE,
-        struct_id: bridge.struct_id
-      }
-    });
-
-    let reps = [...draftReps, ...structReps];
-
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.struct_id,
       projectId: projectId
     });
 
+    let rep = await this.repsRepository.findOne({
+      where: {
+        rep_id: repId,
+        draft: common.BoolEnum.TRUE,
+        creator_id: user.user_id
+      }
+    });
+
+    rep.rows = rows;
+
+    let { columns, isTimeColumnsLimitExceeded, timeColumnsLimit } =
+      await this.blockmlService.getTimeColumns({
+        traceId: traceId,
+        timeSpec: timeSpec,
+        timeRangeFraction: timeRangeFraction,
+        projectWeekStart: struct.week_start
+      });
+
+    let repApi = wrapper.wrapToApiRep({
+      rep: rep,
+      columns: columns,
+      timezone: timezone,
+      timeSpec: timeSpec,
+      timeRangeFraction: timeRangeFraction,
+      timeColumnsLimit: timeColumnsLimit,
+      timeColumnsLength: columns.length,
+      isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded
+    });
+
     let apiMember = wrapper.wrapToApiMember(userMember);
 
-    let payload: apiToBackend.ToBackendGetMetricsResponsePayload = {
+    let payload: apiToBackend.ToBackendEditDraftRepResponsePayload = {
       needValidate: common.enumToBoolean(bridge.need_validate),
       struct: wrapper.wrapToApiStruct(struct),
       userMember: apiMember,
-      metrics: metrics.map(x => wrapper.wrapToApiMetric({ metric: x })),
-      reps: reps.map(x =>
-        wrapper.wrapToApiRep({
-          rep: x,
-          columns: [],
-          timezone: undefined,
-          timeSpec: undefined,
-          timeRangeFraction: undefined,
-          timeColumnsLimit: undefined,
-          timeColumnsLength: undefined,
-          isTimeColumnsLimitExceeded: false
-        })
-      )
+      rep: repApi
     };
+
+    await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        reps: [rep]
+      }
+    });
 
     return payload;
   }

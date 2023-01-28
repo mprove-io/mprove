@@ -7,11 +7,13 @@ export function wrapToApiRep(item: {
   timeSpec: common.TimeSpecEnum;
   timeRangeFraction: common.Fraction;
   timeColumnsLimit: number;
+  columns: common.Column[];
   timeColumnsLength: number;
   isTimeColumnsLimitExceeded: boolean;
 }): common.Rep {
   let {
     rep,
+    columns,
     timezone,
     timeSpec,
     timeRangeFraction,
@@ -31,7 +33,7 @@ export function wrapToApiRep(item: {
     timeSpec: timeSpec,
     timeRangeFraction: timeRangeFraction,
     rows: rep.rows,
-    columns: [],
+    columns: columns,
     timeColumnsLimit: timeColumnsLimit,
     timeColumnsLength: timeColumnsLength,
     isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded,

@@ -103,6 +103,7 @@ export class CreateDraftRepController {
 
     let repApi = wrapper.wrapToApiRep({
       rep: rep,
+      columns: columns,
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFraction: timeRangeFraction,

@@ -124,6 +124,7 @@ export class GetRepController {
 
     let repApi = wrapper.wrapToApiRep({
       rep: rep,
+      columns: columns,
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFraction: timeRangeFraction,
@@ -131,8 +132,6 @@ export class GetRepController {
       timeColumnsLength: columns.length,
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded
     });
-
-    repApi.columns = columns;
 
     if (withData === true) {
       repApi = await this.docService.getData({ rep: repApi });
