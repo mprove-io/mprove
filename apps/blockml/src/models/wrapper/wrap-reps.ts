@@ -8,6 +8,8 @@ export function wrapReps(item: { structId: string; reps: interfaces.Rep[] }) {
     let rep: common.Rep = {
       structId: structId,
       repId: x.name,
+      draft: false,
+      creatorId: undefined,
       filePath: x.filePath,
       title: x.title,
       timezone: undefined,

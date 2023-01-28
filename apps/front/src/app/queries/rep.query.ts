@@ -8,6 +8,8 @@ export class RepState extends common.Rep {}
 export const emptyRep: RepState = {
   structId: undefined,
   repId: common.EMPTY,
+  draft: true,
+  creatorId: undefined,
   filePath: undefined,
   title: 'Empty',
   timezone: undefined,

@@ -18,6 +18,12 @@ export class Rep {
   @IsString()
   repId: string;
 
+  @IsBoolean()
+  draft: boolean;
+
+  @IsString()
+  creatorId: string;
+
   @IsString()
   filePath: string;
 

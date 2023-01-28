@@ -10,6 +10,12 @@ export class RepEntity {
   @PrimaryColumn({ type: constants.REP_ID_VARCHAR, length: 64 })
   rep_id: string; // name
 
+  @Column({ type: constants.VARCHAR })
+  draft: common.BoolEnum;
+
+  @Column({ type: constants.USER_ID_VARCHAR, length: 32 })
+  creator_id: string; // user_id
+
   @Column({ type: constants.TEXT })
   file_path: string;
 

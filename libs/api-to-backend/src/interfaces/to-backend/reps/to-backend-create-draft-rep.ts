@@ -3,7 +3,7 @@ import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
-export class ToBackendGetRepRequestPayload {
+export class ToBackendCreateDraftRepRequestPayload {
   @IsString()
   projectId: string;
 
@@ -16,14 +16,9 @@ export class ToBackendGetRepRequestPayload {
   @IsString()
   envId: string;
 
-  @IsString()
-  repId: string;
-
-  @IsBoolean()
-  draft: boolean;
-
-  @IsBoolean()
-  withData: boolean;
+  @ValidateNested()
+  @Type(() => common.Row)
+  rows: common.Row[];
 
   @IsString()
   timezone: string;
@@ -36,13 +31,13 @@ export class ToBackendGetRepRequestPayload {
   timeRangeFraction: common.Fraction;
 }
 
-export class ToBackendGetRepRequest extends ToBackendRequest {
+export class ToBackendCreateDraftRepRequest extends ToBackendRequest {
   @ValidateNested()
-  @Type(() => ToBackendGetRepRequestPayload)
-  payload: ToBackendGetRepRequestPayload;
+  @Type(() => ToBackendCreateDraftRepRequestPayload)
+  payload: ToBackendCreateDraftRepRequestPayload;
 }
 
-export class ToBackendGetRepResponsePayload {
+export class ToBackendCreateDraftRepResponsePayload {
   @IsBoolean()
   needValidate: boolean;
 
@@ -59,8 +54,8 @@ export class ToBackendGetRepResponsePayload {
   rep: common.Rep;
 }
 
-export class ToBackendGetRepResponse extends common.MyResponse {
+export class ToBackendCreateDraftRepResponse extends common.MyResponse {
   @ValidateNested()
-  @Type(() => ToBackendGetRepResponsePayload)
-  payload: ToBackendGetRepResponsePayload;
+  @Type(() => ToBackendCreateDraftRepResponsePayload)
+  payload: ToBackendCreateDraftRepResponsePayload;
 }

@@ -89,6 +89,12 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendValidateFiles = 'api/ToBackendValidateFiles',
   //
   ToBackendGetRep = 'api/ToBackendGetRep',
+  ToBackendCreateDraftRep = 'api/ToBackendCreateDraftRep',
+  ToBackendEditDraftRep = 'api/ToBackendEditDraftRep',
+  ToBackendDeleteDraftRep = 'api/ToBackendDeleteDraftRep',
+  ToBackendSaveCreateRep = 'api/ToBackendSaveCreateRep',
+  ToBackendSaveModifyRep = 'api/ToBackendSaveModifyRep',
+  ToBackendDeleteRep = 'api/ToBackendDeleteRep',
   //
   ToBackendGetMetrics = 'api/ToBackendGetMetrics',
   //

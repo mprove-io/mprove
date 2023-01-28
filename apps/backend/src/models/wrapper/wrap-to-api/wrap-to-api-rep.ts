@@ -23,6 +23,8 @@ export function wrapToApiRep(item: {
   return {
     structId: rep.struct_id,
     repId: rep.rep_id,
+    draft: common.enumToBoolean(rep.draft),
+    creatorId: rep.creator_id,
     filePath: rep.file_path,
     title: rep.title,
     timezone: timezone,

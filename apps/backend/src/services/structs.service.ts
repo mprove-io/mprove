@@ -12,6 +12,7 @@ export class StructsService {
     private mconfigsRepository: repositories.MconfigsRepository,
     private modelsRepository: repositories.ModelsRepository,
     private metricsRepository: repositories.MetricsRepository,
+    private repsRepository: repositories.RepsRepository,
     private vizsRepository: repositories.VizsRepository,
     private dataSource: DataSource
   ) {}
@@ -76,6 +77,7 @@ WHERE c.branch_id is NULL AND s.server_ts < (NOW() - INTERVAL 10 MINUTE)
       await this.vizsRepository.delete({ struct_id: In(orphanedStructIds) });
       await this.modelsRepository.delete({ struct_id: In(orphanedStructIds) });
       await this.metricsRepository.delete({ struct_id: In(orphanedStructIds) });
+      await this.repsRepository.delete({ struct_id: In(orphanedStructIds) });
       await this.mconfigsRepository.delete({
         struct_id: In(orphanedStructIds)
       });

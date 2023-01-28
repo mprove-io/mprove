@@ -6,6 +6,8 @@ export function wrapToEntityRep(x: common.Rep): entities.RepEntity {
     struct_id: x.structId,
     rep_id: x.repId,
     file_path: x.filePath,
+    draft: common.booleanToEnum(x.draft),
+    creator_id: x.creatorId,
     title: x.title,
     rows: x.rows,
     server_ts: x.serverTs.toString()
