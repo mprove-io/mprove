@@ -85,6 +85,7 @@ export class EditDraftRepController {
 
     let rep = await this.repsRepository.findOne({
       where: {
+        project_id: projectId,
         rep_id: repId,
         draft: common.BoolEnum.TRUE,
         creator_id: user.user_id

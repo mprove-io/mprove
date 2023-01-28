@@ -167,6 +167,18 @@ export const nameToClass = {
   //
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetRep]:
     interfaces.ToBackendGetRepRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendCreateDraftRep]:
+    interfaces.ToBackendCreateDraftRepRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendEditDraftRep]:
+    interfaces.ToBackendEditDraftRepRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftRep]:
+    interfaces.ToBackendDeleteDraftRepRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendSaveCreateRep]:
+    interfaces.ToBackendSaveCreateRepRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendSaveModifyRep]:
+    interfaces.ToBackendSaveModifyRepRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteRep]:
+    interfaces.ToBackendDeleteRepRequest,
   //
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetModels]:
     interfaces.ToBackendGetModelsRequest,

@@ -83,6 +83,7 @@ export class CreateDraftRepController {
     let repId = common.makeId();
 
     let rep: entities.RepEntity = {
+      project_id: projectId,
       struct_id: undefined,
       rep_id: repId,
       draft: common.BoolEnum.TRUE,

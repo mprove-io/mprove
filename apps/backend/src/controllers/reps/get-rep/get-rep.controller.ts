@@ -85,7 +85,8 @@ export class GetRepController {
     });
 
     let emptyRep: entities.RepEntity = {
-      struct_id: struct.struct_id,
+      project_id: projectId,
+      struct_id: undefined,
       rep_id: repId,
       creator_id: undefined,
       draft: common.BoolEnum.TRUE,
@@ -102,6 +103,7 @@ export class GetRepController {
         ? await this.repsRepository.findOne({
             where: {
               rep_id: repId,
+              project_id: projectId,
               draft: common.BoolEnum.TRUE,
               creator_id: user.user_id
             }
@@ -109,6 +111,7 @@ export class GetRepController {
         : await this.repsRepository.findOne({
             where: {
               rep_id: repId,
+              project_id: projectId,
               draft: common.BoolEnum.FALSE,
               struct_id: bridge.struct_id
             }

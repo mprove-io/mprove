@@ -23,6 +23,7 @@ export function wrapToApiRep(item: {
   } = item;
 
   return {
+    projectId: rep.project_id,
     structId: rep.struct_id,
     repId: rep.rep_id,
     draft: common.enumToBoolean(rep.draft),

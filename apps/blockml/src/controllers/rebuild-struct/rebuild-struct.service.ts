@@ -83,7 +83,11 @@ export class RebuildStructService {
     let apiErrors = barWrapper.wrapErrors({ errors: errors });
 
     let apiViews = barWrapper.wrapViews({ views: views });
-    let apiReps = barWrapper.wrapReps({ structId: structId, reps: reps });
+    let apiReps = barWrapper.wrapReps({
+      projectId: projectId,
+      structId: structId,
+      reps: reps
+    });
     let apiApis = barWrapper.wrapApis({ structId: structId, apis: apis });
 
     let apiModels = barWrapper.wrapModels({

@@ -13,6 +13,9 @@ import { Row } from './row';
 
 export class Rep {
   @IsString()
+  projectId: string;
+
+  @IsString()
   structId: string;
 
   @IsString()

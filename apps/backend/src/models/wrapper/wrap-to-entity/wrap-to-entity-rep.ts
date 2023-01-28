@@ -3,6 +3,7 @@ import { entities } from '~backend/barrels/entities';
 
 export function wrapToEntityRep(x: common.Rep): entities.RepEntity {
   return {
+    project_id: x.projectId,
     struct_id: x.structId,
     rep_id: x.repId,
     file_path: x.filePath,

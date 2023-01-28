@@ -6,6 +6,7 @@ import { BaseQuery } from './base.query';
 export class RepState extends common.Rep {}
 
 export const emptyRep: RepState = {
+  projectId: undefined,
   structId: undefined,
   repId: common.EMPTY,
   draft: true,

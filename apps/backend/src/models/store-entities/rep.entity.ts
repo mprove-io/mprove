@@ -4,6 +4,9 @@ import { constants } from '~backend/barrels/constants';
 
 @Entity('reps')
 export class RepEntity {
+  @PrimaryColumn({ type: constants.PROJECT_ID_VARCHAR, length: 32 })
+  project_id: string; // composite
+
   @PrimaryColumn({ type: constants.STRUCT_ID_VARCHAR, length: 32 })
   struct_id: string; // composite
 

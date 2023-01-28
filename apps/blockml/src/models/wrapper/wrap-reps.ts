@@ -1,11 +1,16 @@
 import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
 
-export function wrapReps(item: { structId: string; reps: interfaces.Rep[] }) {
-  let { structId, reps } = item;
+export function wrapReps(item: {
+  projectId: string;
+  structId: string;
+  reps: interfaces.Rep[];
+}) {
+  let { projectId, structId, reps } = item;
 
   let apiReps: common.Rep[] = reps.map(x => {
     let rep: common.Rep = {
+      projectId: projectId,
       structId: structId,
       repId: x.name,
       draft: false,
