@@ -105,7 +105,7 @@ export class GetRepController {
               rep_id: repId,
               project_id: projectId,
               draft: common.BoolEnum.TRUE,
-              creator_id: user.user_id
+              struct_id: common.DRAFT_STRUCT_ID
             }
           })
         : await this.repsRepository.findOne({
@@ -116,6 +116,12 @@ export class GetRepController {
               struct_id: bridge.struct_id
             }
           });
+
+    if (rep.draft === common.BoolEnum.TRUE && rep.creator_id !== user.user_id) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_DRAFT_REP_CREATOR_MISMATCH
+      });
+    }
 
     let { columns, isTimeColumnsLimitExceeded, timeColumnsLimit } =
       await this.blockmlService.getTimeColumns({

@@ -1,6 +1,7 @@
 export * from './bool.enum';
 export * from './chart/_index';
 export * from './connection-type.enum';
+export * from './draft.enum';
 export * from './er.enum';
 export * from './error-story.enum';
 export * from './field-class.enum';
