@@ -51,6 +51,7 @@ export const appControllers = [
   controllers.DeleteDraftRepController,
   controllers.DeleteRepController,
   controllers.SaveCreateRepController,
+  controllers.SaveModifyRepController,
 
   controllers.GetModelController,
   controllers.GetModelsController,
