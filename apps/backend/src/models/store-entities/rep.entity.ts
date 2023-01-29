@@ -16,7 +16,7 @@ export class RepEntity {
   @Column({ type: constants.VARCHAR })
   draft: common.BoolEnum;
 
-  @Column({ type: constants.USER_ID_VARCHAR, length: 32 })
+  @Column({ type: constants.USER_ID_VARCHAR, length: 32, nullable: true })
   creator_id: string; // user_id
 
   @Column({ type: constants.TEXT })
