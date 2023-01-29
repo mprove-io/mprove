@@ -9,7 +9,7 @@ export const emptyRep: RepState = {
   projectId: undefined,
   structId: undefined,
   repId: common.EMPTY,
-  draft: true,
+  draft: false,
   creatorId: undefined,
   filePath: undefined,
   title: 'Empty',

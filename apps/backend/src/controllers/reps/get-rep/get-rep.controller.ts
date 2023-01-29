@@ -89,7 +89,7 @@ export class GetRepController {
       struct_id: undefined,
       rep_id: repId,
       creator_id: undefined,
-      draft: common.BoolEnum.TRUE,
+      draft: common.BoolEnum.FALSE,
       file_path: undefined,
       title: repId,
       rows: [],
@@ -117,7 +117,17 @@ export class GetRepController {
             }
           });
 
-    if (rep.draft === common.BoolEnum.TRUE && rep.creator_id !== user.user_id) {
+    if (common.isUndefined(rep)) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_REP_NOT_FOUND
+      });
+    }
+
+    if (
+      repId !== common.EMPTY &&
+      rep.draft === common.BoolEnum.TRUE &&
+      rep.creator_id !== user.user_id
+    ) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_DRAFT_REP_CREATOR_MISMATCH
       });
