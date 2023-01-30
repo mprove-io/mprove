@@ -19,7 +19,7 @@ export class RepEntity {
   @Column({ type: constants.USER_ID_VARCHAR, length: 32, nullable: true })
   creator_id: string; // user_id
 
-  @Column({ type: constants.TEXT })
+  @Column({ type: constants.TEXT, nullable: true })
   file_path: string;
 
   @Column({ type: constants.VARCHAR })

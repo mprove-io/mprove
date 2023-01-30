@@ -164,8 +164,11 @@ export class MetricsComponent implements OnInit {
     this.fractions = [timeState.timeRangeFraction];
   }
 
-  navToRep(repId: string) {
-    this.navigateService.navigateToMetricsRep({ repId: repId });
+  navToRep(rep: common.Rep) {
+    this.navigateService.navigateToMetricsRep({
+      repId: rep.repId,
+      draft: rep.draft
+    });
   }
 
   timezoneChange() {

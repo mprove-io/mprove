@@ -104,7 +104,7 @@
                   <div
                     *ngFor="let r of reps"
                     class="hover:bg-blue2 ml-6 mr-5 flex flex-row rounded py-2 px-4 hover:cursor-pointer"
-                    (click)="navToRep(r.repId)"
+                    (click)="navToRep(r)"
                   >
                     <div class="text-gray1 truncate">
                       {{ r.title | capitalize }}

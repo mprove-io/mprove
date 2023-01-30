@@ -341,7 +341,7 @@ export class NavigateService {
     // }
   }
 
-  navigateToMetricsRep(item: { repId: string }) {
+  navigateToMetricsRep(item: { repId: string; draft: boolean }) {
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
 
@@ -361,6 +361,12 @@ export class NavigateService {
       item.repId
     ];
 
-    this.router.navigate(navTo);
+    if (item.draft === true) {
+      this.router.navigate(navTo, {
+        queryParams: { draft: common.DraftEnum.Yes }
+      });
+    } else {
+      this.router.navigate(navTo);
+    }
   }
 }

@@ -19,6 +19,8 @@ export const PASS_PHRASE = '';
 export const EMPTY_STRUCT_ID = 'EMPTY_STRUCT_ID';
 export const DRAFT_STRUCT_ID = 'DRAFT_STRUCT_ID';
 
+export const IDX_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
 export const NODEGIT_REMOTE_BRANCH_NOT_FOUND =
   'cannot locate remote-tracking branch';
 

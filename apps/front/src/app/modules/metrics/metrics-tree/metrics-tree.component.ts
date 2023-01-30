@@ -13,10 +13,9 @@ import {
 } from '@bugsplat/angular-tree-component';
 import { tap } from 'rxjs/operators';
 import { MetricsQuery, MetricsState } from '~front/app/queries/metrics.query';
-import { MqQuery } from '~front/app/queries/mq.query';
-import { MconfigService } from '~front/app/services/mconfig.service';
+import { RepQuery } from '~front/app/queries/rep.query';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { StructService } from '~front/app/services/struct.service';
+import { RepService } from '~front/app/services/rep.service';
 import { common } from '~front/barrels/common';
 
 export class MetricNode {
@@ -116,9 +115,8 @@ export class MetricsTreeComponent implements AfterViewInit {
   constructor(
     private metricsQuery: MetricsQuery,
     private cd: ChangeDetectorRef,
-    private mqQuery: MqQuery,
-    private structService: StructService,
-    private mconfigService: MconfigService,
+    private repQuery: RepQuery,
+    private repService: RepService,
     private navigateService: NavigateService
   ) {}
 
@@ -150,94 +148,30 @@ export class MetricsTreeComponent implements AfterViewInit {
         node.toggleExpanded();
       }
     } else {
-      this.selectField(node);
+      this.addMetricToRep(node);
     }
   }
 
-  selectField(node: TreeNode) {
-    // let newMconfig = this.structService.makeMconfig();
-    // if (node.data.isSelected === true) {
-    //   newMconfig = this.mconfigService.removeField({
-    //     newMconfig,
-    //     fieldId: node.data.id
-    //   });
-    // } else {
-    //   newMconfig.select = [...newMconfig.select, node.data.id];
-    // }
-    // this.expandData.emit();
-    // let fields: common.ModelField[];
-    // this.modelQuery.fields$
-    //   .pipe(
-    //     tap(x => (fields = x)),
-    //     take(1)
-    //   )
-    //   .subscribe();
-    // newMconfig = setChartTitleOnSelectChange({
-    //   newMconfig: newMconfig,
-    //   fields: fields
-    // });
-    // newMconfig = setChartFields({
-    //   newMconfig: newMconfig,
-    //   fields: fields
-    // });
-    // newMconfig = sortChartFieldsOnSelectChange({
-    //   newMconfig: newMconfig,
-    //   fields: fields
-    // });
-    // this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  addMetricToRep(node: any) {
+    let rep = this.repQuery.getValue();
+
+    let idxs = rep.rows.map(x => common.idxLetterToNumber(x.rowId));
+
+    let maxIdx = idxs.length > 0 ? Math.max(...idxs) : undefined;
+
+    let idxNum = common.isDefined(maxIdx) ? maxIdx + 1 : 0;
+
+    let newRow: common.Row = {
+      rowId: common.idxNumberToLetter(idxNum),
+      metricId: node.data.metric.metricId,
+      params: [],
+      records: []
+    };
+
+    this.repService.navCreateDraftRep({
+      rows: [...rep.rows, newRow]
+    });
   }
-
-  filterField(node: TreeNode, event: MouseEvent) {
-    // event.stopPropagation();
-    // let newMconfig = this.structService.makeMconfig();
-    // if (node.data.isFiltered === true) {
-    //   let filterIndex = newMconfig.filters.findIndex(
-    //     filt => filt.fieldId === node.data.id
-    //   );
-    //   newMconfig.filters = [
-    //     ...newMconfig.filters.slice(0, filterIndex),
-    //     ...newMconfig.filters.slice(filterIndex + 1)
-    //   ];
-    // } else {
-    //   let newFraction: common.Fraction = {
-    //     brick: 'any',
-    //     operator: common.FractionOperatorEnum.Or,
-    //     type: common.getFractionTypeForAny(node.data.fieldResult)
-    //   };
-    //   let newFilter: common.Filter = {
-    //     fieldId: node.data.id,
-    //     fractions: [newFraction]
-    //   };
-    //   newMconfig.filters = [...newMconfig.filters, newFilter];
-    //   this.expandFilters.emit();
-    // }
-    // this.mconfigService.navCreateMconfigAndQuery(newMconfig);
-  }
-
-  // makeNodesExtra() {
-  //   this.nodesExtra = this.model.nodes.map(topNode => {
-  //     topNode.children.map(middleNode => {
-  //       middleNode.children.map(leafNode => this.updateNodeExtra(leafNode));
-  //       return this.updateNodeExtra(middleNode);
-  //     });
-  //     return this.updateNodeExtra(topNode);
-  //   });
-  // }
-
-  // updateNodeExtra(node: ModelNode): MetricsNodeExtra {
-  //   return Object.assign(node, <MetricsNodeExtra>{
-  //     isSelected:
-  //       common.isDefined(this.mconfig?.structId) && node.isField === true
-  //         ? this.mconfig.select.findIndex(x => x === node.id) > -1
-  //         : false,
-  //     isFiltered:
-  //       common.isDefined(this.mconfig?.structId) && node.isField === true
-  //         ? this.mconfig.filters.findIndex(
-  //             filter => filter.fieldId === node.id
-  //           ) > -1
-  //         : false
-  //   });
-  // }
 
   goToFileLine(
     event: MouseEvent,
