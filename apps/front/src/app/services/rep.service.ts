@@ -4,7 +4,10 @@ import { take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
+import { RepQuery } from '../queries/rep.query';
+import { StructQuery } from '../queries/struct.query';
 import { TimeQuery } from '../queries/time.query';
 import { ApiService } from './api.service';
 import { NavigateService } from './navigate.service';
@@ -23,7 +26,10 @@ export class RepService {
     private timeQuery: TimeQuery,
     private spinner: NgxSpinnerService,
     private navigateService: NavigateService,
-    private navQuery: NavQuery
+    private navQuery: NavQuery,
+    private memberQuery: MemberQuery,
+    private structQuery: StructQuery,
+    private repQuery: RepQuery
   ) {
     this.nav$.subscribe();
   }
@@ -60,6 +66,50 @@ export class RepService {
               repId: rep.repId,
               draft: rep.draft
             });
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  editDraftRep(item: { rows: common.Row[]; repId: string }) {
+    let { rows, repId } = item;
+
+    let timeState = this.timeQuery.getValue();
+
+    let payload: apiToBackend.ToBackendEditDraftRepRequestPayload = {
+      projectId: this.nav.projectId,
+      isRepoProd: this.nav.isRepoProd,
+      branchId: this.nav.branchId,
+      envId: this.nav.envId,
+      repId: repId,
+      rows: rows,
+      timezone: timeState.timezone,
+      timeSpec: timeState.timeSpec,
+      timeRangeFraction: timeState.timeRangeFraction
+    };
+
+    this.apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditDraftRep,
+        payload: payload,
+        showSpinner: true
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendCreateDraftRepResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.memberQuery.update(resp.payload.userMember);
+
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              needValidate: resp.payload.needValidate
+            });
+
+            this.repQuery.update(resp.payload.rep);
+
+            return true;
           }
         }),
         take(1)

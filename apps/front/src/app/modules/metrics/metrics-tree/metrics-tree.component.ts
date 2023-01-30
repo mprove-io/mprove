@@ -168,9 +168,18 @@ export class MetricsTreeComponent implements AfterViewInit {
       records: []
     };
 
-    this.repService.navCreateDraftRep({
-      rows: [...rep.rows, newRow]
-    });
+    let rows = [...rep.rows, newRow];
+
+    if (rep.draft === true) {
+      this.repService.editDraftRep({
+        repId: rep.repId,
+        rows: rows
+      });
+    } else {
+      this.repService.navCreateDraftRep({
+        rows: rows
+      });
+    }
   }
 
   goToFileLine(
