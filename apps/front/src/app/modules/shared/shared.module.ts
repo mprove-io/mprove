@@ -51,6 +51,7 @@ import { RefreshIconComponent } from './icons/refresh-icon/refresh-icon.componen
 import { ResizeIconComponent } from './icons/resize-icon/resize-icon.component';
 import { SearchIconComponent } from './icons/search-icon/search-icon.component';
 import { SettingsIconComponent } from './icons/settings-icon/settings-icon.component';
+import { TrashIconComponent } from './icons/trash-icon/trash-icon.component';
 import { UserIconComponent } from './icons/user-icon/user-icon.component';
 import { ViewGridIconComponent } from './icons/view-grid-icon/view-grid-icon.component';
 import { ViewListIconComponent } from './icons/view-list-icon/view-list-icon.component';
@@ -92,6 +93,7 @@ let sharedComponents = [
   //
   SettingsIconComponent,
   DeleteIconComponent,
+  TrashIconComponent,
   CheckIconComponent,
   AddIconComponent,
   ChevronLeftIconComponent,

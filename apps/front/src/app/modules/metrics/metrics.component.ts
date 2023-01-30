@@ -1,28 +1,14 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { ActivatedRoute } from '@angular/router';
 import { take, tap } from 'rxjs';
-import { ModelQuery } from '~front/app/queries/model.query';
-import { MqQuery } from '~front/app/queries/mq.query';
-import { NavQuery } from '~front/app/queries/nav.query';
 import { emptyRep, RepQuery } from '~front/app/queries/rep.query';
-import { RepoQuery } from '~front/app/queries/repo.query';
 import { RepsQuery } from '~front/app/queries/reps.query';
-import { StructQuery } from '~front/app/queries/struct.query';
 import { TimeQuery } from '~front/app/queries/time.query';
-import { UserQuery } from '~front/app/queries/user.query';
 import { StructRepResolver } from '~front/app/resolvers/struct-rep.resolver';
-import { ApiService } from '~front/app/services/api.service';
-import { DataSizeService } from '~front/app/services/data-size.service';
-import { FileService } from '~front/app/services/file.service';
-import { MconfigService } from '~front/app/services/mconfig.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { QueryService } from '~front/app/services/query.service';
-import { StructService } from '~front/app/services/struct.service';
-import { TimeService } from '~front/app/services/time.service';
+import { RepService } from '~front/app/services/rep.service';
 import { common } from '~front/barrels/common';
 import {
   constants,
@@ -127,30 +113,15 @@ export class MetricsComponent implements OnInit {
     .filter(x => x.value !== common.USE_PROJECT_TIMEZONE_VALUE);
 
   constructor(
-    private router: Router,
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
     private repsQuery: RepsQuery,
     private repQuery: RepQuery,
     private timeQuery: TimeQuery,
-    private navQuery: NavQuery,
-    private modelQuery: ModelQuery,
-    private userQuery: UserQuery,
-    private mqQuery: MqQuery,
-    private repoQuery: RepoQuery,
     private route: ActivatedRoute,
-    private apiService: ApiService,
-    private structQuery: StructQuery,
-    private fileService: FileService,
-    private structService: StructService,
+    private repService: RepService,
     private navigateService: NavigateService,
     private structRepResolver: StructRepResolver,
-    private spinner: NgxSpinnerService,
-    private timeService: TimeService,
-    private mconfigService: MconfigService,
-    private dataSizeService: DataSizeService,
-    private queryService: QueryService,
-    private myDialogService: MyDialogService,
     private title: Title
   ) {}
 
@@ -212,5 +183,10 @@ export class MetricsComponent implements OnInit {
       })
       .pipe(take(1))
       .subscribe();
+  }
+
+  deleteRep(event: any, rep: common.Rep) {
+    event.stopPropagation();
+    this.repService.deleteRep({ repId: rep.repId });
   }
 }

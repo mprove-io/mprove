@@ -7,6 +7,7 @@ import { constants } from '~front/barrels/constants';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { RepQuery } from '../queries/rep.query';
+import { RepsQuery } from '../queries/reps.query';
 import { StructQuery } from '../queries/struct.query';
 import { TimeQuery } from '../queries/time.query';
 import { ApiService } from './api.service';
@@ -29,7 +30,8 @@ export class RepService {
     private navQuery: NavQuery,
     private memberQuery: MemberQuery,
     private structQuery: StructQuery,
-    private repQuery: RepQuery
+    private repQuery: RepQuery,
+    private repsQuery: RepsQuery
   ) {
     this.nav$.subscribe();
   }
@@ -62,6 +64,11 @@ export class RepService {
         tap((resp: apiToBackend.ToBackendCreateDraftRepResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let rep = resp.payload.rep;
+
+            let reps = this.repsQuery.getValue().reps;
+            let newReps = [rep, ...reps];
+            this.repsQuery.update({ reps: newReps });
+
             this.navigateService.navigateToMetricsRep({
               repId: rep.repId,
               draft: rep.draft
@@ -108,6 +115,52 @@ export class RepService {
             });
 
             this.repQuery.update(resp.payload.rep);
+
+            return true;
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  deleteRep(item: { repId: string }) {
+    let { repId } = item;
+
+    let rep = this.repQuery.getValue();
+
+    let payload: apiToBackend.ToBackendDeleteDraftRepRequestPayload = {
+      projectId: this.nav.projectId,
+      repId: repId
+    };
+
+    this.apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftRep,
+        payload: payload,
+        showSpinner: true
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendCreateDraftRepResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let reps = this.repsQuery.getValue().reps;
+
+            let repIndex = reps.findIndex(x => x.repId === repId);
+
+            let newReps = [
+              ...reps.slice(0, repIndex),
+              ...reps.slice(repIndex + 1)
+            ];
+
+            this.repsQuery.update({ reps: newReps });
+
+            if (rep.repId === repId) {
+              this.navigateService.navigateToMetricsRep({
+                repId: common.EMPTY,
+                draft: false
+              });
+            }
 
             return true;
           }
