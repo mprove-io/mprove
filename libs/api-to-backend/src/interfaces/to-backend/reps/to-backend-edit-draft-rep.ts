@@ -54,7 +54,7 @@ export class ToBackendEditDraftRepResponsePayload {
 
   @ValidateNested()
   @Type(() => common.Rep)
-  rep: common.Rep;
+  rep: common.RepX;
 }
 
 export class ToBackendEditDraftRepResponse extends common.MyResponse {

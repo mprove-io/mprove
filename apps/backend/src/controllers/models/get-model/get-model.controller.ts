@@ -82,7 +82,7 @@ export class GetModelController {
         hasAccess: helper.checkAccess({
           userAlias: user.alias,
           member: userMember,
-          vmd: model
+          entity: model
         })
       })
     };

@@ -114,18 +114,18 @@ export class GetQueryController {
       ? helper.checkAccess({
           userAlias: user.alias,
           member: member,
-          vmd: viz
+          entity: viz
         })
       : common.isDefined(dashboard)
       ? helper.checkAccess({
           userAlias: user.alias,
           member: member,
-          vmd: dashboard
+          entity: dashboard
         })
       : helper.checkAccess({
           userAlias: user.alias,
           member: member,
-          vmd: model
+          entity: model
         });
 
     if (isAccessGranted === false) {

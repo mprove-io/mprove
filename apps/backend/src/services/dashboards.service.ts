@@ -56,7 +56,7 @@ export class DashboardsService {
     let isAccessGranted = helper.checkAccess({
       userAlias: user.alias,
       member: member,
-      vmd: dashboard
+      entity: dashboard
     });
 
     if (isAccessGranted === false) {
@@ -97,7 +97,7 @@ export class DashboardsService {
         hasAccess: helper.checkAccess({
           userAlias: user.alias,
           member: member,
-          vmd: model
+          entity: model
         })
       })
     );

@@ -3,7 +3,7 @@ import { createStore, withProps } from '@ngneat/elf';
 import { common } from '~front/barrels/common';
 import { BaseQuery } from './base.query';
 
-export class RepState extends common.Rep {}
+export class RepState extends common.RepX {}
 
 export const emptyRep: RepState = {
   projectId: undefined,
@@ -13,6 +13,8 @@ export const emptyRep: RepState = {
   creatorId: undefined,
   filePath: undefined,
   title: 'Empty',
+  accessRoles: [],
+  accessUsers: [],
   timezone: undefined,
   timeSpec: undefined,
   timeRangeFraction: undefined,
@@ -21,11 +23,13 @@ export const emptyRep: RepState = {
   isTimeColumnsLimitExceeded: false,
   rows: [],
   columns: [],
-  serverTs: undefined
+  serverTs: undefined,
+  canEditOrDeleteRep: undefined,
+  author: undefined
 };
 
 @Injectable({ providedIn: 'root' })
-export class RepQuery extends BaseQuery<common.Rep> {
+export class RepQuery extends BaseQuery<RepState> {
   constructor() {
     super(createStore({ name: 'rep' }, withProps<RepState>(emptyRep)));
   }

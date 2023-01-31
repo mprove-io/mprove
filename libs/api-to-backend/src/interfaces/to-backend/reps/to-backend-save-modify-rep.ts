@@ -22,6 +22,12 @@ export class ToBackendSaveModifyRepRequestPayload {
   @IsString()
   title: string;
 
+  @IsString({ each: true })
+  accessRoles: string[];
+
+  @IsString({ each: true })
+  accessUsers: string[];
+
   @ValidateNested()
   @Type(() => common.Row)
   rows: common.Row[];
@@ -57,7 +63,7 @@ export class ToBackendSaveModifyRepResponsePayload {
 
   @ValidateNested()
   @Type(() => common.Rep)
-  rep: common.Rep;
+  rep: common.RepX;
 }
 
 export class ToBackendSaveModifyRepResponse extends common.MyResponse {

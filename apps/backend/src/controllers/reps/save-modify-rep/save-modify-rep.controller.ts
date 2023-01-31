@@ -60,6 +60,8 @@ export class SaveModifyRepController {
       branchId,
       envId,
       repId,
+      accessRoles,
+      accessUsers,
       rows,
       title,
       timeSpec,
@@ -133,7 +135,9 @@ export class SaveModifyRepController {
     let repFileText = makeRepFileText({
       repId: repId,
       title: title,
-      rows: rows
+      rows: rows,
+      accessRoles: accessRoles,
+      accessUsers: accessUsers
     });
 
     let toDiskSaveFileRequest: apiToDisk.ToDiskSaveFileRequest = {
@@ -215,9 +219,12 @@ export class SaveModifyRepController {
         projectWeekStart: struct.week_start
       });
 
+    let apiMember = wrapper.wrapToApiMember(userMember);
+
     let repApi = common.isDefined(records.reps)
       ? wrapper.wrapToApiRep({
           rep: records.reps[0],
+          member: apiMember,
           columns: columns,
           timezone: timezone,
           timeSpec: timeSpec,
@@ -227,8 +234,6 @@ export class SaveModifyRepController {
           isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded
         })
       : undefined;
-
-    let apiMember = wrapper.wrapToApiMember(userMember);
 
     let payload: apiToBackend.ToBackendGetRepResponsePayload = {
       needValidate: common.enumToBoolean(bridge.need_validate),

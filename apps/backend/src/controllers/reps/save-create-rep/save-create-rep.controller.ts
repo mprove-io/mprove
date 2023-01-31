@@ -56,6 +56,8 @@ export class SaveCreateRepController {
       branchId,
       envId,
       repId,
+      accessRoles,
+      accessUsers,
       rows,
       title,
       timeSpec,
@@ -113,6 +115,8 @@ export class SaveCreateRepController {
 
     let repFileText = makeRepFileText({
       repId: repId,
+      accessRoles: accessRoles,
+      accessUsers: accessUsers,
       title: title,
       rows: rows
     });
@@ -216,8 +220,11 @@ export class SaveCreateRepController {
         projectWeekStart: struct.week_start
       });
 
+    let apiMember = wrapper.wrapToApiMember(userMember);
+
     let repApi = wrapper.wrapToApiRep({
       rep: records.reps[0],
+      member: apiMember,
       columns: columns,
       timezone: timezone,
       timeSpec: timeSpec,
@@ -226,8 +233,6 @@ export class SaveCreateRepController {
       timeColumnsLength: columns.length,
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded
     });
-
-    let apiMember = wrapper.wrapToApiMember(userMember);
 
     let payload: apiToBackend.ToBackendGetRepResponsePayload = {
       needValidate: common.enumToBoolean(bridge.need_validate),

@@ -5,12 +5,16 @@ import { MemberEntity } from '~backend/models/store-entities/_index';
 export function checkAccess(item: {
   userAlias: string;
   member: MemberEntity;
-  vmd: entities.VizEntity | entities.ModelEntity | entities.DashboardEntity;
+  entity:
+    | entities.VizEntity
+    | entities.ModelEntity
+    | entities.DashboardEntity
+    | entities.RepEntity;
 }): boolean {
-  let { userAlias, member, vmd } = item;
+  let { userAlias, member, entity } = item;
 
   if (
-    common.isDefined((vmd as entities.ModelEntity).connection_id) && // only models have connection_id
+    common.isDefined((entity as entities.ModelEntity).connection_id) && // only models have connection_id
     member.is_explorer === common.BoolEnum.FALSE
   ) {
     return false;
@@ -23,13 +27,13 @@ export function checkAccess(item: {
     return true;
   }
 
-  if (vmd.access_roles.length === 0 && vmd.access_users.length === 0) {
+  if (entity.access_roles.length === 0 && entity.access_users.length === 0) {
     return true;
   }
 
   if (
-    vmd.access_users.indexOf(userAlias) < 0 &&
-    !vmd.access_roles.some(x => member.roles.includes(x))
+    entity.access_users.indexOf(userAlias) < 0 &&
+    !entity.access_roles.some(x => member.roles.includes(x))
   ) {
     return false;
   }

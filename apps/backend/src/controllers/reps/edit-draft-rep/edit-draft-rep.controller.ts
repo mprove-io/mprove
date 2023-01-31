@@ -102,8 +102,11 @@ export class EditDraftRepController {
         projectWeekStart: struct.week_start
       });
 
+    let apiMember = wrapper.wrapToApiMember(userMember);
+
     let repApi = wrapper.wrapToApiRep({
       rep: rep,
+      member: apiMember,
       columns: columns,
       timezone: timezone,
       timeSpec: timeSpec,
@@ -112,8 +115,6 @@ export class EditDraftRepController {
       timeColumnsLength: columns.length,
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded
     });
-
-    let apiMember = wrapper.wrapToApiMember(userMember);
 
     let payload: apiToBackend.ToBackendEditDraftRepResponsePayload = {
       needValidate: common.enumToBoolean(bridge.need_validate),

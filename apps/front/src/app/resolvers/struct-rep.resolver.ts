@@ -46,7 +46,7 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
         nav = x;
       });
 
-    let rep: common.Rep;
+    let rep: common.RepX;
     this.repQuery
       .select()
       .pipe(

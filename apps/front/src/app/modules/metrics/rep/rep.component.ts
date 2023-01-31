@@ -13,7 +13,7 @@ import { common } from '~front/barrels/common';
   templateUrl: './rep.component.html'
 })
 export class RepComponent {
-  rep: common.Rep;
+  rep: common.RepX;
   rep$ = this.repQuery.select().pipe(
     tap(x => {
       this.rep = x;

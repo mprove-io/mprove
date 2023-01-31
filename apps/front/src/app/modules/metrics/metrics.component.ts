@@ -32,7 +32,7 @@ export class MetricsComponent implements OnInit {
 
   emptyRepId = common.EMPTY;
 
-  rep: common.Rep;
+  rep: common.RepX;
   rep$ = this.repQuery.select().pipe(
     tap(x => {
       this.rep = x;
@@ -51,7 +51,7 @@ export class MetricsComponent implements OnInit {
     })
   );
 
-  reps: common.Rep[];
+  reps: common.RepX[];
   reps$ = this.repsQuery.select().pipe(
     tap(x => {
       this.reps = [emptyRep, ...x.reps];
@@ -135,7 +135,7 @@ export class MetricsComponent implements OnInit {
     this.fractions = [timeState.timeRangeFraction];
   }
 
-  navToRep(rep: common.Rep) {
+  navToRep(rep: common.RepX) {
     this.navigateService.navigateToMetricsRep({
       repId: rep.repId,
       draft: rep.draft
@@ -185,12 +185,12 @@ export class MetricsComponent implements OnInit {
       .subscribe();
   }
 
-  deleteRep(event: any, rep: common.Rep) {
+  deleteRep(event: any, rep: common.RepX) {
     event.stopPropagation();
     this.repService.deleteRep({ repId: rep.repId });
   }
 
-  repSaveAs(event: any, rep: common.Rep) {
+  repSaveAs(event: any, rep: common.RepX) {
     event.stopPropagation();
     // this.repService.deleteRep({ repId: rep.repId });
   }

@@ -3,6 +3,7 @@ import { entities } from '~backend/barrels/entities';
 
 export function wrapToApiRep(item: {
   rep: entities.RepEntity;
+  member: common.Member;
   timezone: string;
   timeSpec: common.TimeSpecEnum;
   timeRangeFraction: common.Fraction;
@@ -10,9 +11,10 @@ export function wrapToApiRep(item: {
   columns: common.Column[];
   timeColumnsLength: number;
   isTimeColumnsLimitExceeded: boolean;
-}): common.Rep {
+}): common.RepX {
   let {
     rep,
+    member,
     columns,
     timezone,
     timeSpec,
@@ -22,10 +24,26 @@ export function wrapToApiRep(item: {
     isTimeColumnsLimitExceeded
   } = item;
 
+  let filePathArray = rep.file_path.split('/');
+
+  let usersFolderIndex = filePathArray.findIndex(
+    x => x === common.MPROVE_USERS_FOLDER
+  );
+
+  let author =
+    usersFolderIndex > -1 && filePathArray.length > usersFolderIndex + 1
+      ? filePathArray[usersFolderIndex + 1]
+      : undefined;
+
+  let canEditOrDeleteRep =
+    member.isEditor || member.isAdmin || author === member.alias;
+
   return {
     projectId: rep.project_id,
     structId: rep.struct_id,
     repId: rep.rep_id,
+    canEditOrDeleteRep: canEditOrDeleteRep,
+    author: author,
     draft: common.enumToBoolean(rep.draft),
     creatorId: rep.creator_id,
     filePath: rep.file_path,

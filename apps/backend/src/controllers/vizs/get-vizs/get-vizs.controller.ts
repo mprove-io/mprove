@@ -74,7 +74,7 @@ export class GetVizsController {
       helper.checkAccess({
         userAlias: user.alias,
         member: userMember,
-        vmd: x
+        entity: x
       })
     );
 
@@ -113,7 +113,7 @@ export class GetVizsController {
             hasAccess: helper.checkAccess({
               userAlias: user.alias,
               member: userMember,
-              vmd: model
+              entity: model
             })
           })
         )
@@ -130,7 +130,7 @@ export class GetVizsController {
               hasAccess: helper.checkAccess({
                 userAlias: user.alias,
                 member: userMember,
-                vmd: model
+                entity: model
               })
             })
           ),

@@ -87,7 +87,7 @@ export class GetDashboardsController {
       helper.checkAccess({
         userAlias: user.alias,
         member: userMember,
-        vmd: x
+        entity: x
       })
     );
 
@@ -126,7 +126,7 @@ export class GetDashboardsController {
             hasAccess: helper.checkAccess({
               userAlias: user.alias,
               member: userMember,
-              vmd: model
+              entity: model
             })
           })
         )
@@ -143,7 +143,7 @@ export class GetDashboardsController {
               hasAccess: helper.checkAccess({
                 userAlias: user.alias,
                 member: userMember,
-                vmd: model
+                entity: model
               })
             })
           ),

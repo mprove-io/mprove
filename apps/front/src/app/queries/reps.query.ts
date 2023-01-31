@@ -4,7 +4,7 @@ import { common } from '~front/barrels/common';
 import { BaseQuery } from './base.query';
 
 export class RepsState {
-  reps: common.Rep[];
+  reps: common.RepX[];
 }
 
 let repsState: RepsState = {

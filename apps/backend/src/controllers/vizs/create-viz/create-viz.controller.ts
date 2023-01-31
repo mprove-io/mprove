@@ -128,7 +128,7 @@ export class CreateVizController {
     let isAccessGranted = helper.checkAccess({
       userAlias: user.alias,
       member: member,
-      vmd: mconfigModel
+      entity: mconfigModel
     });
 
     if (isAccessGranted === false) {
@@ -261,7 +261,7 @@ export class CreateVizController {
             hasAccess: helper.checkAccess({
               userAlias: user.alias,
               member: member,
-              vmd: model
+              entity: model
             })
           })
         ),

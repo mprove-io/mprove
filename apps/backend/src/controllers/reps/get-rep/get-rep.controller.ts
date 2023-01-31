@@ -2,6 +2,7 @@ import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
+import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
@@ -92,6 +93,8 @@ export class GetRepController {
       draft: common.BoolEnum.FALSE,
       file_path: undefined,
       title: repId,
+      access_roles: [],
+      access_users: [],
       rows: [],
       server_ts: undefined
     };
@@ -133,6 +136,20 @@ export class GetRepController {
       });
     }
 
+    if (rep.draft === common.BoolEnum.FALSE) {
+      let isAccessGranted = helper.checkAccess({
+        userAlias: user.alias,
+        member: userMember,
+        entity: rep
+      });
+
+      if (isAccessGranted === false) {
+        throw new common.ServerError({
+          message: common.ErEnum.BACKEND_FORBIDDEN_REP
+        });
+      }
+    }
+
     let { columns, isTimeColumnsLimitExceeded, timeColumnsLimit } =
       await this.blockmlService.getTimeColumns({
         traceId: traceId,
@@ -141,8 +158,11 @@ export class GetRepController {
         projectWeekStart: struct.week_start
       });
 
+    let apiMember = wrapper.wrapToApiMember(userMember);
+
     let repApi = wrapper.wrapToApiRep({
       rep: rep,
+      member: apiMember,
       columns: columns,
       timezone: timezone,
       timeSpec: timeSpec,
@@ -155,8 +175,6 @@ export class GetRepController {
     if (withData === true) {
       repApi = await this.docService.getData({ rep: repApi });
     }
-
-    let apiMember = wrapper.wrapToApiMember(userMember);
 
     let payload: apiToBackend.ToBackendGetRepResponsePayload = {
       needValidate: common.enumToBoolean(bridge.need_validate),

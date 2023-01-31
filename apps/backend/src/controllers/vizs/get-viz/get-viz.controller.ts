@@ -80,7 +80,7 @@ export class GetVizController {
     let isAccessGranted = helper.checkAccess({
       userAlias: user.alias,
       member: userMember,
-      vmd: viz
+      entity: viz
     });
 
     if (isAccessGranted === false) {
@@ -116,14 +116,14 @@ export class GetVizController {
           })
         ],
         queries: [wrapper.wrapToApiQuery(query)],
-        member: wrapper.wrapToApiMember(userMember),
+        member: apiMember,
         models: [
           wrapper.wrapToApiModel({
             model: model,
             hasAccess: helper.checkAccess({
               userAlias: user.alias,
               member: userMember,
-              vmd: model
+              entity: model
             })
           })
         ],

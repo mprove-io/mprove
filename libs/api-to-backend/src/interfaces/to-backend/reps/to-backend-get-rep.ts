@@ -56,7 +56,7 @@ export class ToBackendGetRepResponsePayload {
 
   @ValidateNested()
   @Type(() => common.Rep)
-  rep: common.Rep;
+  rep: common.RepX;
 }
 
 export class ToBackendGetRepResponse extends common.MyResponse {

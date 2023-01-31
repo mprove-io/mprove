@@ -87,6 +87,8 @@ export class CreateDraftRepController {
       struct_id: common.DRAFT_STRUCT_ID,
       rep_id: repId,
       draft: common.BoolEnum.TRUE,
+      access_roles: [],
+      access_users: [],
       creator_id: user.user_id,
       file_path: undefined,
       title: repId,
@@ -102,8 +104,11 @@ export class CreateDraftRepController {
         projectWeekStart: struct.week_start
       });
 
+    let apiMember = wrapper.wrapToApiMember(userMember);
+
     let repApi = wrapper.wrapToApiRep({
       rep: rep,
+      member: apiMember,
       columns: columns,
       timezone: timezone,
       timeSpec: timeSpec,
@@ -112,8 +117,6 @@ export class CreateDraftRepController {
       timeColumnsLength: columns.length,
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded
     });
-
-    let apiMember = wrapper.wrapToApiMember(userMember);
 
     let payload: apiToBackend.ToBackendCreateDraftRepResponsePayload = {
       needValidate: common.enumToBoolean(bridge.need_validate),

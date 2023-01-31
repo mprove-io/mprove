@@ -39,7 +39,7 @@ export class ToBackendGetMetricsResponsePayload {
   metrics: common.MetricAny[];
 
   @ValidateNested()
-  reps: common.Rep[];
+  reps: common.RepX[];
 }
 
 export class ToBackendGetMetricsResponse extends common.MyResponse {

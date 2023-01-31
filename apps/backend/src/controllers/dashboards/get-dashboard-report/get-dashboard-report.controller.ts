@@ -85,7 +85,7 @@ export class GetDashboardReportController {
     let isAccessGranted = helper.checkAccess({
       userAlias: user.alias,
       member: userMember,
-      vmd: dashboard
+      entity: dashboard
     });
 
     if (isAccessGranted === false) {

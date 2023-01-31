@@ -8,7 +8,7 @@ import { interfaces } from '~backend/barrels/interfaces';
 export class DocService {
   constructor(private cs: ConfigService<interfaces.Config>) {}
 
-  async getData(item: { rep: common.Rep }) {
+  async getData(item: { rep: common.RepX }) {
     let { rep } = item;
 
     let sender = axios.create({ baseURL: 'http://grist:8484/' });

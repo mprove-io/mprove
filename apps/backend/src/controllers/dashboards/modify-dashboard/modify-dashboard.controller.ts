@@ -173,7 +173,7 @@ export class ModifyDashboardController {
       let isAccessGranted = helper.checkAccess({
         userAlias: user.alias,
         member: member,
-        vmd: mconfigModel
+        entity: mconfigModel
       });
 
       if (isAccessGranted === false) {

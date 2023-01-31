@@ -2,6 +2,7 @@ import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
+import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
@@ -82,7 +83,15 @@ export class GetMetricsController {
       }
     });
 
-    let reps = [...draftReps, ...structReps];
+    let repsGrantedAccess = structReps.filter(x =>
+      helper.checkAccess({
+        userAlias: user.alias,
+        member: userMember,
+        entity: x
+      })
+    );
+
+    let reps = [...draftReps, ...repsGrantedAccess];
 
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.struct_id,
@@ -99,6 +108,7 @@ export class GetMetricsController {
       reps: reps.map(x =>
         wrapper.wrapToApiRep({
           rep: x,
+          member: apiMember,
           columns: [],
           timezone: undefined,
           timeSpec: undefined,
