@@ -29,6 +29,8 @@ export function wrapToApiRep(item: {
     draft: common.enumToBoolean(rep.draft),
     creatorId: rep.creator_id,
     filePath: rep.file_path,
+    accessUsers: rep.access_users,
+    accessRoles: rep.access_roles,
     title: rep.title,
     timezone: timezone,
     timeSpec: timeSpec,

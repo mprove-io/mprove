@@ -124,9 +124,11 @@ export enum FuncEnum {
   CheckChartOptionsParameters = '15-chart/05-check-chart-options-parameters',
   CheckChartTileParameters = '15-chart/06-check-chart-tile-parameters',
 
-  CreateModelMetrics = '16-metrics/01-create-model-metrics',
+  CreateModelMetrics = '16-metric/01-create-model-metrics',
 
-  CheckMdzAccess = 'special/check-mdz-access',
+  CheckRepAccess = '17-rep/01-check-rep-access',
+
+  CheckAccess = 'special/check-access',
   CheckVmdFilterDefaults = 'special/check-vmd-filter-defaults',
   LogStruct = 'special/log-struct',
 

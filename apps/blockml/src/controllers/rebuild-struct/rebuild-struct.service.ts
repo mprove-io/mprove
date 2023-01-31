@@ -467,6 +467,16 @@ export class RebuildStructService {
       this.cs
     );
 
+    reps = barBuilder.buildRep(
+      {
+        reps: reps,
+        structId: item.structId,
+        errors: errors,
+        caller: enums.CallerEnum.BuildRep
+      },
+      this.cs
+    );
+
     barSpecial.logStruct(
       {
         errors: errors,

@@ -16,6 +16,8 @@ export function wrapReps(item: {
       draft: false,
       creatorId: undefined,
       filePath: x.filePath,
+      accessUsers: x.access_users || [],
+      accessRoles: x.access_roles || [],
       title: x.title,
       timezone: undefined,
       timeSpec: undefined,

@@ -6,9 +6,9 @@ import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckMdzAccess;
+let func = enums.FuncEnum.CheckAccess;
 
-export function checkMdzAccess<T extends types.mdzType>(
+export function checkAccess<T extends types.accessType>(
   item: {
     entities: T[];
     errors: BmError[];

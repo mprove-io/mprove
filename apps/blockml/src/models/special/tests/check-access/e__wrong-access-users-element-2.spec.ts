@@ -8,13 +8,13 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = enums.CallerEnum.BuildViz;
-let func = enums.FuncEnum.CheckMdzAccess;
-let testId = 'e__wrong-access-users-element-3';
+let caller = enums.CallerEnum.BuildDashboard;
+let func = enums.FuncEnum.CheckAccess;
+let testId = 'e__wrong-access-users-element-2';
 
 test('1', async t => {
   let errors: BmError[];
-  let entVizs: interfaces.Viz[];
+  let entDashboards: interfaces.Dashboard[];
 
   let wLogger;
   let configService;
@@ -48,7 +48,7 @@ test('1', async t => {
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    entVizs = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    entDashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -62,7 +62,7 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(entVizs.length, 0);
+  t.is(entDashboards.length, 0);
 
   t.is(errors[0].title, enums.ErTitleEnum.WRONG_ACCESS_USERS_ELEMENT);
   t.is(errors[0].lines[0].line, 2);

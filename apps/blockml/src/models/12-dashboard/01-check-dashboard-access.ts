@@ -19,7 +19,7 @@ export function checkDashboardAccess(
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
-  let newDashboards = barSpecial.checkMdzAccess(
+  let newDashboards = barSpecial.checkAccess(
     {
       entities: item.dashboards,
       errors: item.errors,

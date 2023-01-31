@@ -22,6 +22,12 @@ export class RepEntity {
   @Column({ type: constants.TEXT, nullable: true })
   file_path: string;
 
+  @Column({ type: constants.JSON })
+  access_users: string[];
+
+  @Column({ type: constants.JSON })
+  access_roles: string[];
+
   @Column({ type: constants.VARCHAR })
   title: string;
 

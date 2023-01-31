@@ -9,6 +9,8 @@ export function wrapToEntityRep(x: common.Rep): entities.RepEntity {
     file_path: x.filePath,
     draft: common.booleanToEnum(x.draft),
     creator_id: x.creatorId,
+    access_users: x.accessUsers,
+    access_roles: x.accessRoles,
     title: x.title,
     rows: x.rows,
     server_ts: x.serverTs.toString()

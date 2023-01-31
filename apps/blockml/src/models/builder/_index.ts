@@ -14,3 +14,4 @@ export * from './13-build-viz';
 export * from './14-build-report';
 export * from './15-build-chart';
 export * from './16-build-metric';
+export * from './17-build-rep';

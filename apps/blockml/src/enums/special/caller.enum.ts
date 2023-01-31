@@ -25,6 +25,8 @@ export enum CallerEnum {
 
   BuildMetric = '16-BuildMetric',
 
+  BuildRep = '17-BuildRep',
+
   RebuildStruct = 'RebuildStruct',
   ProcessQuery = 'ProcessQuery'
 }

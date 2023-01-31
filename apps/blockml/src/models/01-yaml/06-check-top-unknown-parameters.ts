@@ -210,6 +210,8 @@ export function checkTopUnknownParameters(
               [
                 enums.ParameterEnum.Report.toString(),
                 enums.ParameterEnum.Title.toString(),
+                enums.ParameterEnum.AccessUsers.toString(),
+                enums.ParameterEnum.AccessRoles.toString(),
                 enums.ParameterEnum.Rows.toString()
               ].indexOf(parameter) < 0
             ) {

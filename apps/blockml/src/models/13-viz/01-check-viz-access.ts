@@ -19,7 +19,7 @@ export function checkVizAccess(
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
-  let newVizs = barSpecial.checkMdzAccess(
+  let newVizs = barSpecial.checkAccess(
     {
       entities: item.vizs,
       errors: item.errors,

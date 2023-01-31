@@ -5,11 +5,11 @@ import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckModelAccess;
+let func = enums.FuncEnum.CheckRepAccess;
 
-export function checkModelAccess(
+export function checkRepAccess(
   item: {
-    models: interfaces.Model[];
+    reps: interfaces.Rep[];
     errors: BmError[];
     structId: string;
     caller: enums.CallerEnum;
@@ -19,9 +19,9 @@ export function checkModelAccess(
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
-  let newModels = barSpecial.checkAccess(
+  let newReps = barSpecial.checkAccess(
     {
-      entities: item.models,
+      entities: item.reps,
       errors: item.errors,
       structId: item.structId,
       caller: item.caller
@@ -30,7 +30,7 @@ export function checkModelAccess(
   );
 
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Models, newModels);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Reps, newReps);
 
-  return newModels;
+  return newReps;
 }
