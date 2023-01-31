@@ -35,5 +35,8 @@ export class RepEntity {
   rows: common.Row[];
 
   @Column({ type: constants.BIGINT })
+  draft_created_ts: string;
+
+  @Column({ type: constants.BIGINT })
   server_ts: string;
 }

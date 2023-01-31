@@ -23,6 +23,7 @@ export const emptyRep: RepState = {
   isTimeColumnsLimitExceeded: false,
   rows: [],
   columns: [],
+  draftCreatedTs: undefined,
   serverTs: undefined,
   canEditOrDeleteRep: undefined,
   author: undefined

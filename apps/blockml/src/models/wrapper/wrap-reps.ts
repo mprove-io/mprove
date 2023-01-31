@@ -35,6 +35,7 @@ export function wrapReps(item: {
       timeColumnsLength: undefined,
       timeColumnsLimit: undefined,
       isTimeColumnsLimitExceeded: false,
+      draftCreatedTs: 1,
       serverTs: 1
     };
     return rep;

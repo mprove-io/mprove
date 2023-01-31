@@ -13,6 +13,7 @@ export function wrapToEntityRep(x: common.Rep): entities.RepEntity {
     access_roles: x.accessRoles,
     title: x.title,
     rows: x.rows,
+    draft_created_ts: x.draftCreatedTs.toString(),
     server_ts: x.serverTs.toString()
   };
 }

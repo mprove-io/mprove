@@ -76,6 +76,16 @@ export class GetMetricsController {
       }
     });
 
+    draftReps = [...draftReps]
+      .sort((a, b) =>
+        Number(a.draft_created_ts) > Number(b.draft_created_ts)
+          ? 1
+          : Number(b.draft_created_ts) > Number(a.draft_created_ts)
+          ? -1
+          : 0
+      )
+      .reverse();
+
     let structReps = await this.repsRepository.find({
       where: {
         draft: common.BoolEnum.FALSE,

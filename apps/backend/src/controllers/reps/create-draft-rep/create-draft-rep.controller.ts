@@ -2,6 +2,7 @@ import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
+import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -93,6 +94,7 @@ export class CreateDraftRepController {
       file_path: undefined,
       title: repId,
       rows: rows,
+      draft_created_ts: helper.makeTs(),
       server_ts: undefined
     };
 

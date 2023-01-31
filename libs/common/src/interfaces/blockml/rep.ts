@@ -67,5 +67,8 @@ export class Rep {
   timeColumnsLength: number;
 
   @IsInt()
+  draftCreatedTs: number;
+
+  @IsInt()
   serverTs: number;
 }

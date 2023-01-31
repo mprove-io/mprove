@@ -96,6 +96,7 @@ export class GetRepController {
       access_roles: [],
       access_users: [],
       rows: [],
+      draft_created_ts: undefined,
       server_ts: undefined
     };
 

@@ -58,6 +58,7 @@ export function wrapToApiRep(item: {
     timeColumnsLimit: timeColumnsLimit,
     timeColumnsLength: timeColumnsLength,
     isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded,
+    draftCreatedTs: Number(rep.draft_created_ts),
     serverTs: Number(rep.server_ts)
   };
 }
