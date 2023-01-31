@@ -130,7 +130,25 @@
 
                       <button
                         *ngIf="r.draft === true"
-                        class="invisible ml-5 flex h-9 w-9 items-center justify-center rounded hover:bg-white focus:outline-none group-hover:visible"
+                        type="button"
+                        data-cy="repSaveAsButton"
+                        class="group-bar invisible ml-3 flex h-10 w-28 items-center justify-center rounded focus:outline-none group-hover:visible"
+                        (click)="repSaveAs($event, r)"
+                      >
+                        <div
+                          class="flex h-8 flex-row items-center justify-start space-x-2 rounded px-3 hover:bg-white"
+                        >
+                          <div
+                            class="invisible flex w-[60px] flex-shrink-0 justify-start text-sm text-gray-500 [.group-bar:hover_&]:visible"
+                            >Save As</div
+                          >
+                          <m-save-icon class="text-gray-500"></m-save-icon>
+                        </div>
+                      </button>
+
+                      <button
+                        *ngIf="r.draft === true"
+                        class="invisible ml-3 flex h-9 w-9 items-center justify-center rounded text-gray-500 hover:bg-white focus:outline-none group-hover:visible"
                         (click)="deleteRep($event, r)"
                       >
                         <m-trash-icon></m-trash-icon>

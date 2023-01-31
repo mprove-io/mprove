@@ -49,6 +49,7 @@ import { LockClosedIconComponent } from './icons/lock-closed-icon/lock-closed-ic
 import { MinusSmIconComponent } from './icons/minus-sm-icon/minus-sm-icon.component';
 import { RefreshIconComponent } from './icons/refresh-icon/refresh-icon.component';
 import { ResizeIconComponent } from './icons/resize-icon/resize-icon.component';
+import { SaveIconComponent } from './icons/save-icon/save-icon.component';
 import { SearchIconComponent } from './icons/search-icon/search-icon.component';
 import { SettingsIconComponent } from './icons/settings-icon/settings-icon.component';
 import { TrashIconComponent } from './icons/trash-icon/trash-icon.component';
@@ -94,6 +95,7 @@ let sharedComponents = [
   SettingsIconComponent,
   DeleteIconComponent,
   TrashIconComponent,
+  SaveIconComponent,
   CheckIconComponent,
   AddIconComponent,
   ChevronLeftIconComponent,
