@@ -24,16 +24,19 @@ export function wrapToApiRep(item: {
     isTimeColumnsLimitExceeded
   } = item;
 
-  let filePathArray = rep.file_path.split('/');
+  let author;
+  if (common.isDefined(rep.file_path)) {
+    let filePathArray = rep.file_path.split('/');
 
-  let usersFolderIndex = filePathArray.findIndex(
-    x => x === common.MPROVE_USERS_FOLDER
-  );
+    let usersFolderIndex = filePathArray.findIndex(
+      x => x === common.MPROVE_USERS_FOLDER
+    );
 
-  let author =
-    usersFolderIndex > -1 && filePathArray.length > usersFolderIndex + 1
-      ? filePathArray[usersFolderIndex + 1]
-      : undefined;
+    author =
+      usersFolderIndex > -1 && filePathArray.length > usersFolderIndex + 1
+        ? filePathArray[usersFolderIndex + 1]
+        : undefined;
+  }
 
   let canEditOrDeleteRep =
     member.isEditor || member.isAdmin || author === member.alias;
