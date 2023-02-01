@@ -32,7 +32,7 @@ export class RepComponent {
       minWidth: 90,
       maxWidth: 90
     },
-    { field: 'metric', suppressMovable: false, pinned: 'left', width: 400 },
+    { field: 'metric', suppressMovable: false, pinned: 'left', width: 600 },
     { field: 'parameters', suppressMovable: false, pinned: 'left', width: 400 }
   ];
 
@@ -101,6 +101,7 @@ export class RepComponent {
 
   // Example load data from server
   onGridReady(params: GridReadyEvent) {
+    // this.agGrid.api.sizeColumnsToFit();
     // let metrics = this.metricsQuery.getValue();
     // let rep = this.repQuery.getValue();
     // let data = rep.rows.map(row => {

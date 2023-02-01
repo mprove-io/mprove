@@ -10,6 +10,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { RepQuery } from '~front/app/queries/rep.query';
 import { RepsQuery } from '~front/app/queries/reps.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { TimeQuery } from '~front/app/queries/time.query';
@@ -101,6 +102,7 @@ export class RepSaveAsDialogComponent implements OnInit {
     private fb: FormBuilder,
     private userQuery: UserQuery,
     private navQuery: NavQuery,
+    private repQuery: RepQuery,
     private repsQuery: RepsQuery,
     private timeQuery: TimeQuery,
     private structQuery: StructQuery,
@@ -246,6 +248,7 @@ export class RepSaveAsDialogComponent implements OnInit {
             ];
 
             this.repsQuery.update({ reps: newReps });
+            this.repQuery.update(resp.payload.rep);
 
             this.navigateService.navigateToMetricsRep({
               repId: resp.payload.rep.repId,
