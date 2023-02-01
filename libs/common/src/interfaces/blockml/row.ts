@@ -9,9 +9,7 @@ export class Row {
 
   params: any[];
 
-  records: any[];
+  formula: string;
 
-  // @ValidateNested()
-  // @Type(() => TimeData)
-  // data: TimeData[];
+  records: any[];
 }

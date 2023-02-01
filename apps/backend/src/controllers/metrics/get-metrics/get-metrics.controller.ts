@@ -101,9 +101,12 @@ export class GetMetricsController {
             : 0
         )
         .reverse(),
-      ...repsGrantedAccess.sort((a, b) =>
-        a.title > b.title ? 1 : b.title > a.title ? -1 : 0
-      )
+      ...repsGrantedAccess.sort((a, b) => {
+        let aTitle = a.title.toLowerCase() || a.rep_id.toLowerCase();
+        let bTitle = b.title.toLowerCase() || a.rep_id.toLowerCase();
+
+        return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
+      })
     ];
 
     let struct = await this.structsService.getStructCheckExists({

@@ -23,7 +23,8 @@ export function makeRepFileText(item: {
         params:
           common.isDefined(x.params) && x.params.length > 0
             ? x.params
-            : undefined
+            : undefined,
+        formula: common.isDefined(x.formula) ? x.formula : undefined
       };
 
       return row;

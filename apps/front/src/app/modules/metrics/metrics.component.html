@@ -99,7 +99,30 @@
           <div class="flex w-full flex-grow rounded bg-white shadow-lg">
             <div class="text-gray1 mr-5 mt-6 flex w-full flex-col text-base">
               <div class="flex flex-1 flex-col">
-                <div class="ml-5 mb-3 flex text-lg font-semibold">REPORTS</div>
+                <div class="ml-5 mb-3 flex flex-row">
+                  <div class="flex text-lg font-semibold">REPORTS</div>
+
+                  <!-- <div class="flex flex-grow"></div>
+
+                  <button
+                    *ngIf="rep?.draft === true"
+                    type="button"
+                    data-cy="repSaveAsButton"
+                    class="ml-3 flex h-10 w-28 items-center justify-center rounded focus:outline-none"
+                    (click)="repSaveAs($event, rep)"
+                  >
+                    <div
+                      class="flex h-8 flex-row items-center justify-start space-x-2 rounded px-3 hover:bg-white"
+                    >
+                      <div
+                        class="flex w-[60px] flex-shrink-0 justify-start text-sm text-gray-500"
+                        >Save As</div
+                      >
+                      <m-save-icon class="text-gray-500"></m-save-icon>
+                    </div>
+                  </button> -->
+                </div>
+
                 <div class="mb-5 flex h-2 flex-grow flex-col overflow-y-auto">
                   <div *ngFor="let r of reps" (click)="navToRep(r)">
                     <div
@@ -129,17 +152,17 @@
                       ></div>
 
                       <button
-                        *ngIf="r.draft === true"
+                        *ngIf="rep.draft === true && r.repId === rep.repId"
                         type="button"
                         data-cy="repSaveAsButton"
-                        class="group-bar invisible ml-3 flex h-10 w-28 items-center justify-center rounded focus:outline-none group-hover:visible"
-                        (click)="repSaveAs($event, r)"
+                        class="group-bar ml-3 flex h-10 w-28 items-center justify-center rounded focus:outline-none"
+                        (click)="repSaveAs($event)"
                       >
                         <div
                           class="flex h-8 flex-row items-center justify-start space-x-2 rounded px-3 hover:bg-white"
                         >
                           <div
-                            class="invisible flex w-[60px] flex-shrink-0 justify-start text-sm text-gray-500 [.group-bar:hover_&]:visible"
+                            class="flex w-[60px] flex-shrink-0 justify-start text-sm text-gray-500"
                             >Save As</div
                           >
                           <m-save-icon class="text-gray-500"></m-save-icon>
@@ -147,8 +170,8 @@
                       </button>
 
                       <button
-                        *ngIf="r.draft === true"
-                        class="invisible ml-3 flex h-9 w-9 items-center justify-center rounded text-gray-500 hover:bg-white focus:outline-none group-hover:visible"
+                        *ngIf="rep.draft === true && r.repId === rep.repId"
+                        class="ml-3 flex h-9 w-9 items-center justify-center rounded text-gray-500 hover:bg-white focus:outline-none"
                         (click)="deleteRep($event, r)"
                       >
                         <m-trash-icon></m-trash-icon>

@@ -27,6 +27,7 @@ export function wrapReps(item: {
         let row: common.Row = {
           rowId: y.id,
           metricId: y.metric,
+          formula: y.formula,
           params: y.params,
           records: []
         };

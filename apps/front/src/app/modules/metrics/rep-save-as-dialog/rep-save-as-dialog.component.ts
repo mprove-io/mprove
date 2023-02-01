@@ -112,6 +112,8 @@ export class RepSaveAsDialogComponent implements OnInit {
   ngOnInit() {
     this.rep = this.ref.data.rep;
 
+    console.log(this.rep.rows);
+
     this.draftRepId = this.ref.data.rep.repId;
 
     this.newRepId = this.ref.data.rep.repId;
@@ -235,9 +237,12 @@ export class RepSaveAsDialogComponent implements OnInit {
 
             newReps = [
               ...draftReps,
-              ...structReps.sort((a, b) =>
-                a.title > b.title ? 1 : b.title > a.title ? -1 : 0
-              )
+              ...structReps.sort((a, b) => {
+                let aTitle = a.title.toLowerCase() || a.repId.toLowerCase();
+                let bTitle = b.title.toLowerCase() || a.repId.toLowerCase();
+
+                return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
+              })
             ];
 
             this.repsQuery.update({ reps: newReps });
@@ -297,12 +302,40 @@ export class RepSaveAsDialogComponent implements OnInit {
               x => x.repId === this.draftRepId && x.draft === true
             );
 
-            let newReps = [
+            let newRepsA = [
               ...reps.slice(0, draftRepIndex),
               ...reps.slice(draftRepIndex + 1)
             ];
 
-            this.repsQuery.update({ reps: newReps });
+            let modRepIndex = newRepsA.findIndex(
+              x => x.repId === this.selectedRepId && x.draft === false
+            );
+
+            let modRep = newRepsA[modRepIndex];
+            let modRepWithTitle = Object.assign({}, modRep, {
+              title: newTitle
+            });
+
+            let newRepsB = [
+              ...newRepsA.slice(0, modRepIndex),
+              modRepWithTitle,
+              ...newRepsA.slice(modRepIndex + 1)
+            ];
+
+            let draftReps = newRepsB.filter(x => x.draft === true);
+            let structReps = newRepsB.filter(x => x.draft === false);
+
+            let newRepsC = [
+              ...draftReps,
+              ...structReps.sort((a, b) => {
+                let aTitle = a.title.toLowerCase() || a.repId.toLowerCase();
+                let bTitle = b.title.toLowerCase() || a.repId.toLowerCase();
+
+                return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
+              })
+            ];
+
+            this.repsQuery.update({ reps: newRepsC });
 
             this.navigateService.navigateToMetricsRep({
               repId: resp.payload.rep.repId,

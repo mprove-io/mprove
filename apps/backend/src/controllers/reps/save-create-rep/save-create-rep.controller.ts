@@ -187,6 +187,20 @@ export class SaveCreateRepController {
 
     let rep = reps.find(x => x.repId === repId);
 
+    await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        structs: [struct]
+      }
+    });
+
+    await this.repsRepository.delete({
+      project_id: projectId,
+      rep_id: draftRepId,
+      draft: common.BoolEnum.TRUE,
+      creator_id: user.user_id
+    });
+
     if (common.isUndefined(rep)) {
       let fileId = `${parentNodeId}/${fileName}`;
       let fileIdAr = fileId.split('/');
@@ -201,25 +215,11 @@ export class SaveCreateRepController {
       });
     }
 
-    await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        structs: [struct]
-      }
-    });
-
     let records = await this.dbService.writeRecords({
       modify: false,
       records: {
         reps: [wrapper.wrapToEntityRep(rep)]
       }
-    });
-
-    await this.repsRepository.delete({
-      project_id: projectId,
-      rep_id: draftRepId,
-      draft: common.BoolEnum.TRUE,
-      creator_id: user.user_id
     });
 
     let { columns, isTimeColumnsLimitExceeded, timeColumnsLimit } =

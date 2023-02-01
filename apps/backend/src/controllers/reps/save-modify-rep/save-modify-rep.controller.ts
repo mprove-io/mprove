@@ -184,6 +184,23 @@ export class SaveModifyRepController {
 
     let rep = reps.find(x => x.repId === repId);
 
+    let records = await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        reps: common.isDefined(rep)
+          ? [wrapper.wrapToEntityRep(rep)]
+          : undefined,
+        structs: [struct]
+      }
+    });
+
+    await this.repsRepository.delete({
+      project_id: projectId,
+      rep_id: draftRepId,
+      draft: common.BoolEnum.TRUE,
+      creator_id: user.user_id
+    });
+
     if (common.isUndefined(rep)) {
       await this.repsRepository.delete({
         rep_id: repId,
@@ -201,23 +218,6 @@ export class SaveModifyRepController {
         }
       });
     }
-
-    let records = await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        reps: common.isDefined(rep)
-          ? [wrapper.wrapToEntityRep(rep)]
-          : undefined,
-        structs: [struct]
-      }
-    });
-
-    await this.repsRepository.delete({
-      project_id: projectId,
-      rep_id: draftRepId,
-      draft: common.BoolEnum.TRUE,
-      creator_id: user.user_id
-    });
 
     let { columns, isTimeColumnsLimitExceeded, timeColumnsLimit } =
       await this.blockmlService.getTimeColumns({

@@ -194,7 +194,7 @@ export class MetricsComponent implements OnInit {
     this.repService.deleteRep({ repId: rep.repId });
   }
 
-  repSaveAs(event: any, rep: common.RepX) {
+  repSaveAs(event: any) {
     event.stopPropagation();
 
     this.myDialogService.showRepSaveAs({
@@ -202,7 +202,7 @@ export class MetricsComponent implements OnInit {
       reps: this.reps.filter(
         x => x.draft === false && x.repId !== common.EMPTY
       ),
-      rep: rep
+      rep: this.rep
     });
   }
 }

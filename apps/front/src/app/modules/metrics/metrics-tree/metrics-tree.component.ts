@@ -165,6 +165,7 @@ export class MetricsTreeComponent implements AfterViewInit {
       rowId: common.idxNumberToLetter(idxNum),
       metricId: node.data.metric.metricId,
       params: [],
+      formula: node.data.metric.formula,
       records: []
     };
 

@@ -252,7 +252,9 @@ export class ApiService {
           common.ErEnum.BACKEND_CREATE_DASHBOARD_FAIL,
           common.ErEnum.BACKEND_MODIFY_DASHBOARD_FAIL,
           common.ErEnum.BACKEND_CREATE_VIS_FAIL,
-          common.ErEnum.BACKEND_MODIFY_VIS_FAIL
+          common.ErEnum.BACKEND_MODIFY_VIS_FAIL,
+          common.ErEnum.BACKEND_CREATE_REP_FAIL,
+          common.ErEnum.BACKEND_MODIFY_REP_FAIL
         ].indexOf(infoErrorMessage) > -1
       ) {
         errorData.description = `The changes were saved to the file, but it failed the BlockML validation. It's probably a bug.`;
