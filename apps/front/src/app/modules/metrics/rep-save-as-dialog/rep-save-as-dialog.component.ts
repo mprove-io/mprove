@@ -1,340 +1,348 @@
-// import {
-//   ChangeDetectorRef,
-//   Component,
-//   HostListener,
-//   OnInit
-// } from '@angular/core';
-// import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-// import { DialogRef } from '@ngneat/dialog';
-// import { NgxSpinnerService } from 'ngx-spinner';
-// import { take, tap } from 'rxjs/operators';
-// import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
-// import { NavQuery, NavState } from '~front/app/queries/nav.query';
-// import { StructQuery, StructState } from '~front/app/queries/struct.query';
-// import { UserQuery } from '~front/app/queries/user.query';
-// import { ApiService } from '~front/app/services/api.service';
-// import { NavigateService } from '~front/app/services/navigate.service';
-// import { apiToBackend } from '~front/barrels/api-to-backend';
-// import { common } from '~front/barrels/common';
-// import { constants } from '~front/barrels/constants';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  OnInit
+} from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DialogRef } from '@ngneat/dialog';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { take, tap } from 'rxjs/operators';
+import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { RepsQuery } from '~front/app/queries/reps.query';
+import { StructQuery, StructState } from '~front/app/queries/struct.query';
+import { TimeQuery } from '~front/app/queries/time.query';
+import { UserQuery } from '~front/app/queries/user.query';
+import { ApiService } from '~front/app/services/api.service';
+import { NavigateService } from '~front/app/services/navigate.service';
+import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
-// enum DashboardSaveAsEnum {
-//   NEW_DASHBOARD = 'NEW_DASHBOARD',
-//   REPLACE_EXISTING_DASHBOARD = 'REPLACE_EXISTING_DASHBOARD'
-// }
+enum RepSaveAsEnum {
+  NEW_REP = 'NEW_REP',
+  REPLACE_EXISTING_REP = 'REPLACE_EXISTING_REP'
+}
 
-// export interface DashboardSaveAsDialogData {
-//   apiService: ApiService;
-//   dashboard: common.Dashboard;
-// }
+export interface RepSaveAsDialogData {
+  apiService: ApiService;
+  reps: common.RepX[];
+  rep: common.RepX;
+}
 
-// @Component({
-//   selector: 'm-dashboard-save-as-dialog',
-//   templateUrl: './dashboard-save-as-dialog.component.html'
-// })
-// export class DashboardSaveAsDialogComponent implements OnInit {
-//   @HostListener('window:keyup.esc')
-//   onEscKeyUp() {
-//     this.ref.close();
-//   }
+@Component({
+  selector: 'm-rep-save-as-dialog',
+  templateUrl: './rep-save-as-dialog.component.html'
+})
+export class RepSaveAsDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
 
-//   usersFolder = common.MPROVE_USERS_FOLDER;
+  usersFolder = common.MPROVE_USERS_FOLDER;
 
-//   dashboardSaveAsEnum = DashboardSaveAsEnum;
+  repSaveAsEnum = RepSaveAsEnum;
 
-//   spinnerName = 'dashboardSaveAs';
+  spinnerName = 'repSaveAs';
 
-//   dashboard: common.DashboardX;
+  rep: common.RepX;
 
-//   titleForm: FormGroup = this.fb.group({
-//     title: [undefined, [Validators.maxLength(255)]]
-//   });
+  titleForm: FormGroup = this.fb.group({
+    title: [undefined, [Validators.required, Validators.maxLength(255)]]
+  });
 
-//   rolesForm: FormGroup = this.fb.group({
-//     roles: [undefined, [Validators.maxLength(255)]]
-//   });
+  rolesForm: FormGroup = this.fb.group({
+    roles: [undefined, [Validators.maxLength(255)]]
+  });
 
-//   usersForm: FormGroup = this.fb.group({
-//     users: [undefined, [Validators.maxLength(255)]]
-//   });
+  usersForm: FormGroup = this.fb.group({
+    users: [undefined, [Validators.maxLength(255)]]
+  });
 
-//   saveAs: DashboardSaveAsEnum = DashboardSaveAsEnum.NEW_DASHBOARD;
+  saveAs: RepSaveAsEnum = RepSaveAsEnum.NEW_REP;
 
-//   newDashboardId = common.makeId();
+  newRepId: string;
 
-//   alias: string;
-//   alias$ = this.userQuery.alias$.pipe(
-//     tap(x => {
-//       this.alias = x;
-//       this.cd.detectChanges();
-//     })
-//   );
+  alias: string;
+  alias$ = this.userQuery.alias$.pipe(
+    tap(x => {
+      this.alias = x;
+      this.cd.detectChanges();
+    })
+  );
 
-//   selectedDashboardId: string;
-//   selectedDashboardPath: string;
+  draftRepId: string;
 
-//   dashboards: common.DashboardX[];
+  selectedRepId: string;
+  selectedRepPath: string;
 
-//   nav: NavState;
-//   nav$ = this.navQuery.select().pipe(
-//     tap(x => {
-//       this.nav = x;
-//       this.cd.detectChanges();
-//     })
-//   );
+  reps: common.RepX[];
 
-//   struct: StructState;
-//   struct$ = this.structQuery.select().pipe(
-//     tap(x => {
-//       this.struct = x;
-//       this.cd.detectChanges();
-//     })
-//   );
+  nav: NavState;
+  nav$ = this.navQuery.select().pipe(
+    tap(x => {
+      this.nav = x;
+      this.cd.detectChanges();
+    })
+  );
 
-//   constructor(
-//     public ref: DialogRef<DashboardSaveAsDialogData>,
-//     private fb: FormBuilder,
-//     private userQuery: UserQuery,
-//     private navQuery: NavQuery,
-//     private structQuery: StructQuery,
-//     private navigateService: NavigateService,
-//     private spinner: NgxSpinnerService,
-//     private cd: ChangeDetectorRef
-//   ) {}
+  struct: StructState;
+  struct$ = this.structQuery.select().pipe(
+    tap(x => {
+      this.struct = x;
+      this.cd.detectChanges();
+    })
+  );
 
-//   ngOnInit() {
-//     this.dashboard = this.ref.data.dashboard as common.DashboardX;
+  constructor(
+    public ref: DialogRef<RepSaveAsDialogData>,
+    private fb: FormBuilder,
+    private userQuery: UserQuery,
+    private navQuery: NavQuery,
+    private repsQuery: RepsQuery,
+    private timeQuery: TimeQuery,
+    private structQuery: StructQuery,
+    private navigateService: NavigateService,
+    private spinner: NgxSpinnerService,
+    private cd: ChangeDetectorRef
+  ) {}
 
-//     this.selectedDashboardId =
-//       this.dashboard.temp === false &&
-//       this.dashboard.canEditOrDeleteDashboard === true
-//         ? this.dashboard.dashboardId
-//         : undefined;
+  ngOnInit() {
+    this.rep = this.ref.data.rep;
 
-//     setValueAndMark({
-//       control: this.titleForm.controls['title'],
-//       value: this.dashboard.title
-//     });
-//     setValueAndMark({
-//       control: this.rolesForm.controls['roles'],
-//       value: this.dashboard.accessRoles?.join(', ')
-//     });
-//     setValueAndMark({
-//       control: this.usersForm.controls['users'],
-//       value: this.dashboard.accessUsers?.join(', ')
-//     });
+    this.draftRepId = this.ref.data.rep.repId;
 
-//     let nav: NavState;
-//     this.navQuery
-//       .select()
-//       .pipe(
-//         tap(x => {
-//           nav = x;
-//         }),
-//         take(1)
-//       )
-//       .subscribe();
+    this.newRepId = this.ref.data.rep.repId;
 
-//     let payload: apiToBackend.ToBackendGetDashboardsRequestPayload = {
-//       projectId: nav.projectId,
-//       branchId: nav.branchId,
-//       isRepoProd: nav.isRepoProd,
-//       envId: nav.envId
-//     };
+    setValueAndMark({
+      control: this.titleForm.controls['title'],
+      value: this.rep.title
+    });
 
-//     let apiService: ApiService = this.ref.data.apiService;
+    setValueAndMark({
+      control: this.rolesForm.controls['roles'],
+      value: this.rep.accessRoles?.join(', ')
+    });
 
-//     this.spinner.show(this.spinnerName);
+    setValueAndMark({
+      control: this.usersForm.controls['users'],
+      value: this.rep.accessUsers?.join(', ')
+    });
 
-//     apiService
-//       .req({
-//         pathInfoName:
-//           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
-//         payload: payload
-//       })
-//       .pipe(
-//         tap((resp: apiToBackend.ToBackendGetDashboardsResponse) => {
-//           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-//             this.dashboards = resp.payload.dashboards.map(z => {
-//               (z as any).disabled = !z.canEditOrDeleteDashboard;
-//               return z;
-//             });
+    this.reps = this.ref.data.reps.map(x => {
+      (x as any).disabled = !x.canEditOrDeleteRep;
+      return x;
+    });
 
-//             this.makePath();
+    this.makePath();
 
-//             this.spinner.hide(this.spinnerName);
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
+  }
 
-//             this.cd.detectChanges();
-//           }
-//         })
-//       )
-//       .toPromise();
+  save() {
+    if (
+      this.titleForm.controls['title'].valid &&
+      this.rolesForm.controls['roles'].valid &&
+      this.usersForm.controls['users'].valid
+    ) {
+      this.ref.close();
 
-//     setTimeout(() => {
-//       (document.activeElement as HTMLElement).blur();
-//     }, 0);
-//   }
+      let newTitle = this.titleForm.controls['title'].value;
+      let roles = this.rolesForm.controls['roles'].value;
+      let users = this.usersForm.controls['users'].value;
 
-//   save() {
-//     if (
-//       this.titleForm.controls['title'].valid &&
-//       this.rolesForm.controls['roles'].valid &&
-//       this.usersForm.controls['users'].valid
-//     ) {
-//       this.ref.close();
+      if (this.saveAs === RepSaveAsEnum.NEW_REP) {
+        this.saveAsNewRep({
+          newTitle: newTitle,
+          roles: roles,
+          users: users
+        });
+      } else if (this.saveAs === RepSaveAsEnum.REPLACE_EXISTING_REP) {
+        this.saveAsExistingRep({
+          newTitle: newTitle,
+          roles: roles,
+          users: users
+        });
+      }
+    }
+  }
 
-//       let newTitle = this.titleForm.controls['title'].value;
-//       let roles = this.rolesForm.controls['roles'].value;
-//       let users = this.usersForm.controls['users'].value;
+  newRepOnClick() {
+    this.saveAs = RepSaveAsEnum.NEW_REP;
+  }
 
-//       if (this.saveAs === DashboardSaveAsEnum.NEW_DASHBOARD) {
-//         this.saveAsNewDashboard({
-//           newTitle: newTitle,
-//           roles: roles,
-//           users: users
-//         });
-//       } else if (
-//         this.saveAs === DashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD
-//       ) {
-//         this.saveAsExistingDashboard({
-//           newTitle: newTitle,
-//           roles: roles,
-//           users: users
-//         });
-//       }
-//     }
-//   }
+  existingRepOnClick() {
+    this.saveAs = RepSaveAsEnum.REPLACE_EXISTING_REP;
+  }
 
-//   newDashboardOnClick() {
-//     this.saveAs = DashboardSaveAsEnum.NEW_DASHBOARD;
-//   }
+  saveAsNewRep(item: { newTitle: string; roles: string; users: string }) {
+    let { newTitle, roles, users } = item;
 
-//   existingDashboardOnClick() {
-//     this.saveAs = DashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD;
-//   }
+    let timeQuery = this.timeQuery.getValue();
 
-//   saveAsNewDashboard(item: { newTitle: string; roles: string; users: string }) {
-//     this.spinner.show(constants.APP_SPINNER_NAME);
+    let payload: apiToBackend.ToBackendSaveCreateRepRequestPayload = {
+      projectId: this.nav.projectId,
+      isRepoProd: this.nav.isRepoProd,
+      branchId: this.nav.branchId,
+      envId: this.nav.envId,
+      repId: this.newRepId,
+      draftRepId: this.draftRepId,
+      title: newTitle,
+      accessRoles: common.isDefinedAndNotEmpty(roles?.trim())
+        ? roles.split(',')
+        : [],
+      accessUsers: common.isDefinedAndNotEmpty(users?.trim())
+        ? users.split(',')
+        : [],
+      rows: this.rep.rows,
+      timezone: timeQuery.timezone,
+      timeSpec: timeQuery.timeSpec,
+      timeRangeFraction: timeQuery.timeRangeFraction
+    };
 
-//     let { newTitle, roles, users } = item;
+    let apiService: ApiService = this.ref.data.apiService;
 
-//     let payload: apiToBackend.ToBackendCreateDashboardRequestPayload = {
-//       projectId: this.nav.projectId,
-//       branchId: this.nav.branchId,
-//       envId: this.nav.envId,
-//       isRepoProd: this.nav.isRepoProd,
-//       newDashboardId: this.newDashboardId,
-//       fromDashboardId: this.dashboard.dashboardId,
-//       accessRoles: roles,
-//       accessUsers: users,
-//       dashboardTitle: newTitle,
-//       reportsGrid: this.dashboard.reports.map(x => {
-//         let z = common.makeCopy(x);
-//         delete z.mconfig;
-//         delete z.query;
-//         return z;
-//       })
-//     };
+    this.spinner.show(constants.APP_SPINNER_NAME);
 
-//     let apiService: ApiService = this.ref.data.apiService;
+    apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveCreateRep,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendSaveCreateRepResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let reps = this.repsQuery.getValue().reps;
 
-//     apiService
-//       .req({
-//         pathInfoName:
-//           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDashboard,
-//         payload: payload
-//       })
-//       .pipe(
-//         tap((resp: apiToBackend.ToBackendCreateDashboardResponse) => {
-//           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-//             this.navigateService.navigateToDashboards({
-//               extra: {
-//                 queryParams: { search: this.newDashboardId }
-//               }
-//             });
-//           }
-//         }),
-//         take(1)
-//       )
-//       .subscribe();
-//   }
+            let draftRepIndex = reps.findIndex(
+              x => x.repId === this.draftRepId && x.draft === true
+            );
 
-//   saveAsExistingDashboard(item: {
-//     newTitle: string;
-//     roles: string;
-//     users: string;
-//   }) {
-//     this.spinner.show(constants.APP_SPINNER_NAME);
+            let newReps = [
+              ...reps.slice(0, draftRepIndex),
+              ...reps.slice(draftRepIndex + 1)
+            ];
 
-//     let { newTitle, roles, users } = item;
+            newReps.push(resp.payload.rep);
 
-//     let payload: apiToBackend.ToBackendModifyDashboardRequestPayload = {
-//       projectId: this.nav.projectId,
-//       branchId: this.nav.branchId,
-//       envId: this.nav.envId,
-//       isRepoProd: this.nav.isRepoProd,
-//       toDashboardId: this.selectedDashboardId,
-//       fromDashboardId: this.dashboard.dashboardId,
-//       accessRoles: roles,
-//       accessUsers: users,
-//       dashboardTitle: newTitle,
-//       reportsGrid: this.dashboard.reports.map(x => {
-//         let z = common.makeCopy(x);
-//         delete z.mconfig;
-//         delete z.query;
-//         return z;
-//       })
-//     };
+            let draftReps = newReps.filter(x => x.draft === true);
+            let structReps = newReps.filter(x => x.draft === false);
 
-//     let apiService: ApiService = this.ref.data.apiService;
+            newReps = [
+              ...draftReps,
+              ...structReps.sort((a, b) =>
+                a.title > b.title ? 1 : b.title > a.title ? -1 : 0
+              )
+            ];
 
-//     apiService
-//       .req({
-//         pathInfoName:
-//           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyDashboard,
-//         payload: payload
-//       })
-//       .pipe(
-//         tap((resp: apiToBackend.ToBackendModifyDashboardResponse) => {
-//           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-//             this.navigateService.navigateToDashboards({
-//               extra: {
-//                 queryParams: { search: this.selectedDashboardId }
-//               }
-//             });
-//           }
-//         }),
-//         take(1)
-//       )
-//       .subscribe();
-//   }
+            this.repsQuery.update({ reps: newReps });
 
-//   selectedChange() {
-//     this.makePath();
-//   }
+            this.navigateService.navigateToMetricsRep({
+              repId: resp.payload.rep.repId,
+              draft: false
+            });
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
 
-//   makePath() {
-//     if (
-//       common.isUndefined(this.selectedDashboardId) ||
-//       common.isUndefined(this.dashboards)
-//     ) {
-//       return;
-//     }
+  saveAsExistingRep(item: { newTitle: string; roles: string; users: string }) {
+    let { newTitle, roles, users } = item;
 
-//     let selectedDashboard = this.dashboards.find(
-//       x => x.dashboardId === this.selectedDashboardId
-//     );
+    let timeQuery = this.timeQuery.getValue();
 
-//     if (common.isDefined(selectedDashboard)) {
-//       let parts = selectedDashboard.filePath.split('/');
+    this.spinner.show(constants.APP_SPINNER_NAME);
 
-//       parts.shift();
+    let payload: apiToBackend.ToBackendSaveModifyRepRequestPayload = {
+      projectId: this.nav.projectId,
+      isRepoProd: this.nav.isRepoProd,
+      branchId: this.nav.branchId,
+      envId: this.nav.envId,
+      repId: this.selectedRepId,
+      draftRepId: this.draftRepId,
+      title: newTitle,
+      accessRoles: common.isDefinedAndNotEmpty(roles?.trim())
+        ? roles.split(',').map(x => x.trim())
+        : [],
+      accessUsers: common.isDefinedAndNotEmpty(users?.trim())
+        ? users.split(',').map(x => x.trim())
+        : [],
+      rows: this.rep.rows,
+      timezone: timeQuery.timezone,
+      timeSpec: timeQuery.timeSpec,
+      timeRangeFraction: timeQuery.timeRangeFraction
+    };
 
-//       this.selectedDashboardPath = parts.join(' / ');
-//     }
-//   }
+    let apiService: ApiService = this.ref.data.apiService;
 
-//   cancel() {
-//     this.ref.close();
-//   }
-// }
+    apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveModifyRep,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendSaveModifyRepResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let reps = this.repsQuery.getValue().reps;
+
+            let draftRepIndex = reps.findIndex(
+              x => x.repId === this.draftRepId && x.draft === true
+            );
+
+            let newReps = [
+              ...reps.slice(0, draftRepIndex),
+              ...reps.slice(draftRepIndex + 1)
+            ];
+
+            this.repsQuery.update({ reps: newReps });
+
+            this.navigateService.navigateToMetricsRep({
+              repId: resp.payload.rep.repId,
+              draft: false
+            });
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  selectedChange() {
+    this.makePath();
+    if (common.isDefined(this.selectedRepId)) {
+      let selectedRep = this.reps.find(x => x.repId === this.selectedRepId);
+      this.titleForm.controls['title'].setValue(selectedRep.title);
+    }
+  }
+
+  makePath() {
+    if (
+      common.isUndefined(this.selectedRepId) ||
+      common.isUndefined(this.reps)
+    ) {
+      return;
+    }
+
+    let selectedRep = this.reps.find(x => x.repId === this.selectedRepId);
+
+    if (common.isDefined(selectedRep)) {
+      let parts = selectedRep.filePath.split('/');
+
+      parts.shift();
+
+      this.selectedRepPath = parts.join(' / ');
+    }
+  }
+
+  cancel() {
+    this.ref.close();
+  }
+}

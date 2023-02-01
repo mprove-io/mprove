@@ -16,7 +16,18 @@ export function makeRepFileText(item: {
       accessRoles.length > 0 ? accessRoles.map(x => x.trim()) : undefined,
     access_users:
       accessUsers.length > 0 ? accessUsers.map(x => x.trim()) : undefined,
-    rows: rows
+    rows: rows.map(x => {
+      let row = {
+        id: x.rowId,
+        metric: x.metricId,
+        params:
+          common.isDefined(x.params) && x.params.length > 0
+            ? x.params
+            : undefined
+      };
+
+      return row;
+    })
   });
 
   return repFileText;

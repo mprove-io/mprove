@@ -17,6 +17,9 @@ export class ToBackendSaveModifyRepRequestPayload {
   envId: string;
 
   @IsString()
+  draftRepId: string;
+
+  @IsString()
   repId: string;
 
   @IsString()

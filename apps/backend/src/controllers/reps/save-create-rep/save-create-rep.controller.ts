@@ -6,6 +6,7 @@ import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
 import { makeRepFileText } from '~backend/functions/make-rep-file-text';
@@ -31,6 +32,7 @@ export class SaveCreateRepController {
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
     private dbService: DbService,
+    private repsRepository: repositories.RepsRepository,
     private cs: ConfigService<interfaces.Config>,
     private envsService: EnvsService,
     private bridgesService: BridgesService
@@ -56,6 +58,7 @@ export class SaveCreateRepController {
       branchId,
       envId,
       repId,
+      draftRepId,
       accessRoles,
       accessUsers,
       rows,
@@ -210,6 +213,13 @@ export class SaveCreateRepController {
       records: {
         reps: [wrapper.wrapToEntityRep(rep)]
       }
+    });
+
+    await this.repsRepository.delete({
+      project_id: projectId,
+      rep_id: draftRepId,
+      draft: common.BoolEnum.TRUE,
+      creator_id: user.user_id
     });
 
     let { columns, isTimeColumnsLimitExceeded, timeColumnsLimit } =

@@ -60,6 +60,7 @@ export class SaveModifyRepController {
       branchId,
       envId,
       repId,
+      draftRepId,
       accessRoles,
       accessUsers,
       rows,
@@ -209,6 +210,13 @@ export class SaveModifyRepController {
           : undefined,
         structs: [struct]
       }
+    });
+
+    await this.repsRepository.delete({
+      project_id: projectId,
+      rep_id: draftRepId,
+      draft: common.BoolEnum.TRUE,
+      creator_id: user.user_id
     });
 
     let { columns, isTimeColumnsLimitExceeded, timeColumnsLimit } =

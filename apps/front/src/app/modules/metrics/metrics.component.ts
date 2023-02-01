@@ -7,6 +7,8 @@ import { emptyRep, RepQuery } from '~front/app/queries/rep.query';
 import { RepsQuery } from '~front/app/queries/reps.query';
 import { TimeQuery } from '~front/app/queries/time.query';
 import { StructRepResolver } from '~front/app/resolvers/struct-rep.resolver';
+import { ApiService } from '~front/app/services/api.service';
+import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { RepService } from '~front/app/services/rep.service';
 import { common } from '~front/barrels/common';
@@ -121,6 +123,8 @@ export class MetricsComponent implements OnInit {
     private route: ActivatedRoute,
     private repService: RepService,
     private navigateService: NavigateService,
+    private myDialogService: MyDialogService,
+    private apiService: ApiService,
     private structRepResolver: StructRepResolver,
     private title: Title
   ) {}
@@ -192,6 +196,13 @@ export class MetricsComponent implements OnInit {
 
   repSaveAs(event: any, rep: common.RepX) {
     event.stopPropagation();
-    // this.repService.deleteRep({ repId: rep.repId });
+
+    this.myDialogService.showRepSaveAs({
+      apiService: this.apiService,
+      reps: this.reps.filter(
+        x => x.draft === false && x.repId !== common.EMPTY
+      ),
+      rep: rep
+    });
   }
 }

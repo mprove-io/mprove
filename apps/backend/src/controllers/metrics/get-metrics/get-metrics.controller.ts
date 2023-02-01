@@ -76,16 +76,6 @@ export class GetMetricsController {
       }
     });
 
-    draftReps = [...draftReps]
-      .sort((a, b) =>
-        Number(a.draft_created_ts) > Number(b.draft_created_ts)
-          ? 1
-          : Number(b.draft_created_ts) > Number(a.draft_created_ts)
-          ? -1
-          : 0
-      )
-      .reverse();
-
     let structReps = await this.repsRepository.find({
       where: {
         draft: common.BoolEnum.FALSE,
@@ -101,7 +91,20 @@ export class GetMetricsController {
       })
     );
 
-    let reps = [...draftReps, ...repsGrantedAccess];
+    let reps = [
+      ...draftReps
+        .sort((a, b) =>
+          Number(a.draft_created_ts) > Number(b.draft_created_ts)
+            ? 1
+            : Number(b.draft_created_ts) > Number(a.draft_created_ts)
+            ? -1
+            : 0
+        )
+        .reverse(),
+      ...repsGrantedAccess.sort((a, b) =>
+        a.title > b.title ? 1 : b.title > a.title ? -1 : 0
+      )
+    ];
 
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.struct_id,

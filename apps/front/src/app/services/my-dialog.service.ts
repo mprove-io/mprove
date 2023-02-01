@@ -52,6 +52,10 @@ import {
   RenameFolderDialogData
 } from '../modules/files/files-tree/folder-options/rename-folder-dialog/rename-folder-dialog.component';
 import {
+  RepSaveAsDialogComponent,
+  RepSaveAsDialogData
+} from '../modules/metrics/rep-save-as-dialog/rep-save-as-dialog.component';
+import {
   ChartSaveAsDialogComponent,
   ChartSaveAsDialogData
 } from '../modules/model/chart-save-as-dialog/chart-save-as-dialog.component';
@@ -325,6 +329,15 @@ export class MyDialogService {
 
   showDashboardSaveAs(item: DashboardSaveAsDialogData): void {
     this.dialogService.open(DashboardSaveAsDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item,
+      width: 900
+    });
+  }
+
+  showRepSaveAs(item: RepSaveAsDialogData): void {
+    this.dialogService.open(RepSaveAsDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item,

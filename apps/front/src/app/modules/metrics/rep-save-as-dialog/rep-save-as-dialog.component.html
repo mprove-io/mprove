@@ -1,60 +1,61 @@
-<!-- <div class="flex flex-col bg-white p-9">
+<div class="flex flex-col bg-white p-9">
   <div
-    data-cy="dashboardSaveAsDialogTitle"
-    class="text-gray2 mt-5 mb-9 flex-grow text-left text-2xl font-semibold"
-    >Save As</div
+    data-cy="repSaveAsDialogTitle"
+    class="text-gray2 mt-5 flex-grow text-left text-base font-semibold"
+    >Draft {{ draftRepId }}</div
   >
 
   <div
-    data-cy="dashboardSaveAsDialogNewDashboardCheckbox"
+    data-cy="repSaveAsDialogTitle"
+    class="text-gray2 mt-5 mb-9 flex-grow text-left text-2xl font-semibold"
+    >Save As
+  </div>
+
+  <div
+    data-cy="repSaveAsDialogNewRepCheckbox"
     class="flex h-9 cursor-pointer flex-row items-center"
-    (click)="newDashboardOnClick()"
+    (click)="newRepOnClick()"
   >
     <div
       class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
       [ngClass]="{
-        'bg-blue3 ': saveAs === dashboardSaveAsEnum.NEW_DASHBOARD
+        'bg-blue3 ': saveAs === repSaveAsEnum.NEW_REP
       }"
     >
-      <m-check-icon
-        *ngIf="saveAs === dashboardSaveAsEnum.NEW_DASHBOARD"
-      ></m-check-icon>
+      <m-check-icon *ngIf="saveAs === repSaveAsEnum.NEW_REP"></m-check-icon>
     </div>
 
-    <div class="ml-5 text-base">New Dashboard</div>
+    <div class="ml-5 text-base">New Report</div>
   </div>
 
   <div
-    data-cy="dashboardSaveAsDialogExistingDashboardCheckbox"
+    data-cy="repSaveAsDialogExistingRepCheckbox"
     class="mt-5 flex h-9 cursor-pointer flex-row items-center"
-    (click)="existingDashboardOnClick()"
+    (click)="existingRepOnClick()"
   >
     <button
       class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
       [ngClass]="{
-        'bg-blue3 ': saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD
+        'bg-blue3 ': saveAs === repSaveAsEnum.REPLACE_EXISTING_REP
       }"
     >
       <m-check-icon
-        *ngIf="saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD"
+        *ngIf="saveAs === repSaveAsEnum.REPLACE_EXISTING_REP"
       ></m-check-icon>
     </button>
 
     <div class="flex flex-row items-center">
       <div class="ml-5 mr-5 flex flex-shrink-0 text-base"
-        >Replace Existing Dashboard</div
+        >Replace Existing Report</div
       >
 
       <div
         class="relative mx-5 flex h-2 w-9 flex-shrink-0"
-        *ngIf="
-          !dashboards &&
-          saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD
-        "
+        *ngIf="!reps && saveAs === repSaveAsEnum.REPLACE_EXISTING_REP"
       >
         <ngx-spinner
           [ngClass]="{
-            invisible: saveAs !== dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD
+            invisible: saveAs !== repSaveAsEnum.REPLACE_EXISTING_REP
           }"
           class="invisible"
           [name]="spinnerName"
@@ -70,32 +71,29 @@
       </div>
 
       <ng-select
-        data-cy="dashboardSaveAsDialogExistingDashboardSelect"
-        *ngIf="
-          !!dashboards &&
-          saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD
-        "
+        data-cy="repSaveAsDialogExistingRepSelect"
+        *ngIf="!!reps && saveAs === repSaveAsEnum.REPLACE_EXISTING_REP"
         class="custom w-[500px] flex-shrink-0 text-base focus:outline-none"
-        [items]="dashboards"
+        [items]="reps"
         [searchable]="false"
         [clearable]="false"
         (change)="selectedChange()"
-        [(ngModel)]="selectedDashboardId"
+        [(ngModel)]="selectedRepId"
         (keyup.esc)="$event.stopImmediatePropagation()"
         (keyup.enter)="$event.stopImmediatePropagation()"
         appendTo="body"
         bindLabel="title"
-        bindValue="dashboardId"
+        bindValue="repId"
       >
         <ng-template ng-label-tmp ng-option-tmp let-item="item">
           <div
             class="ml-1 flex flex-row"
-            [isEnabled]="item.canEditOrDeleteDashboard === false"
-            tippy="Dashboard can be modified by author and project members with ProjectAdmin or FilesEditor role. Try to save dashboard as new to become an author."
+            [isEnabled]="item.canEditOrDeleteRep === false"
+            tippy="Report can be modified by author and project members with ProjectAdmin or FilesEditor role. Try to save report as new to become an author."
           >
             <div class="flex truncate">
               <div class="truncate">
-                {{ item.title || item.dashboardId }}
+                {{ item.title || item.repId }}
               </div>
             </div>
             <div class="flex flex-grow"></div>
@@ -109,24 +107,18 @@
   </div>
 
   <div class="mt-9 h-7 text-base text-gray-400">
-    <div *ngIf="saveAs === dashboardSaveAsEnum.NEW_DASHBOARD"
+    <div *ngIf="saveAs === repSaveAsEnum.NEW_REP"
       >{{ struct?.mproveDirValue | mproveDir | capitalize }} /
-      {{ usersFolder }} / {{ alias }} / {{ newDashboardId }}.dashboard</div
+      {{ usersFolder }} / {{ alias }} / {{ newRepId }}.report</div
     >
 
     <div
-      *ngIf="
-        saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD &&
-        !!selectedDashboardId
-      "
-      >{{ selectedDashboardPath | capitalize }}</div
+      *ngIf="saveAs === repSaveAsEnum.REPLACE_EXISTING_REP && !!selectedRepId"
+      >{{ selectedRepPath | capitalize }}</div
     >
 
     <div
-      *ngIf="
-        saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD &&
-        !selectedDashboardId
-      "
+      *ngIf="saveAs === repSaveAsEnum.REPLACE_EXISTING_REP && !selectedRepId"
     ></div>
   </div>
 
@@ -140,7 +132,7 @@
     <div [formGroup]="titleForm" class="ml-5 flex flex-col items-start">
       <input
         spellcheck="false"
-        data-cy="dashboardSaveAsDialogTitleInput"
+        data-cy="repSaveAsDialogTitleInput"
         class="form-input border-gray3 focus:border-blue3 h-9 w-96 rounded"
         [ngClass]="{
           'border-red-600':
@@ -163,7 +155,7 @@
     <div [formGroup]="rolesForm" class="ml-5 flex flex-col items-start">
       <input
         spellcheck="false"
-        data-cy="dashboardSaveAsDialogRolesInput"
+        data-cy="repSaveAsDialogRolesInput"
         class="form-input border-gray3 focus:border-blue3 h-9 w-96 rounded"
         [ngClass]="{
           'border-red-600':
@@ -186,7 +178,7 @@
     <div [formGroup]="usersForm" class="ml-5 flex flex-col items-start">
       <input
         spellcheck="false"
-        data-cy="dashboardSaveAsDialogUsersInput"
+        data-cy="repSaveAsDialogUsersInput"
         class="form-input border-gray3 focus:border-blue3 h-9 w-96 rounded"
         [ngClass]="{
           'border-red-600':
@@ -201,26 +193,25 @@
 
   <div class="mt-9">
     <button
-      data-cy="dashboardSaveAsDialogCreateButton"
+      data-cy="repSaveAsDialogCreateButton"
       class="bg-blue3 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
       type="button"
       [ngClass]="{
-        'bg-blue3':
-          saveAs === dashboardSaveAsEnum.NEW_DASHBOARD || !!selectedDashboardId,
+        'bg-blue3': saveAs === repSaveAsEnum.NEW_REP || !!selectedRepId,
         'cursor-default bg-gray-400':
-          saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD &&
-          selectedDashboardId === undefined
+          saveAs === repSaveAsEnum.REPLACE_EXISTING_REP &&
+          selectedRepId === undefined
       }"
       (click)="save()"
       [disabled]="
-        saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD &&
-        selectedDashboardId === undefined
+        saveAs === repSaveAsEnum.REPLACE_EXISTING_REP &&
+        selectedRepId === undefined
       "
       >Save</button
     >
 
     <button
-      data-cy="dashboardSaveAsDialogCancelButton"
+      data-cy="repSaveAsDialogCancelButton"
       class="border-blue3 text-blue3 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
       type="button"
       (click)="cancel()"
@@ -231,4 +222,4 @@
 
 <div *ngIf="alias$ | async"></div>
 <div *ngIf="nav$ | async"></div>
-<div *ngIf="struct$ | async"></div> -->
+<div *ngIf="struct$ | async"></div>

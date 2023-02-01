@@ -161,8 +161,6 @@ export class RepService {
                 draft: false
               });
             }
-
-            return true;
           }
         }),
         take(1)
