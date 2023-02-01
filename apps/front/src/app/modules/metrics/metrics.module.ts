@@ -12,10 +12,16 @@ import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
 import { MetricsTreeComponent } from './metrics-tree/metrics-tree.component';
 import { MetricsComponent } from './metrics.component';
+import { RepOptionsComponent } from './rep-options/rep-options.component';
 import { RepComponent } from './rep/rep.component';
 
 @NgModule({
-  declarations: [MetricsComponent, MetricsTreeComponent, RepComponent],
+  declarations: [
+    MetricsComponent,
+    MetricsTreeComponent,
+    RepComponent,
+    RepOptionsComponent
+  ],
   imports: [
     CommonModule,
     FormsModule,

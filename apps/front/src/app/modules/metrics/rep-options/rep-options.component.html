@@ -1,8 +1,8 @@
 <button
-  data-cy="fieldOptionsMenuButton"
+  data-cy="repOptionsMenuButton"
   class="ml-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded hover:bg-white focus:outline-none"
   #t1="tippy"
-  [tippy]="templateFieldOptions"
+  [tippy]="templateRepOptions"
   [hideOnEscape]="true"
   variation="menu"
   className="my-menu"
@@ -12,13 +12,13 @@
   <m-dots-vertical-icon></m-dots-vertical-icon>
 </button>
 
-<ng-template #templateFieldOptions>
+<ng-template #templateRepOptions>
   <div class="border-gray4 w-48 rounded-md border-2 bg-white shadow-xl">
     <button
-      data-cy="fieldOptionsGoToFileLineButton"
+      data-cy="repOptionsGoToFileButton"
       class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
       (click)="t1.hide(); goToFileLine($event)"
-      >Go to File Line</button
+      >Go to File</button
     >
   </div>
 </ng-template>
