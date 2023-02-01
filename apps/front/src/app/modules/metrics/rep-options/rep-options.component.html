@@ -20,5 +20,16 @@
       (click)="t1.hide(); goToFileLine($event)"
       >Go to File</button
     >
+
+    <button
+      data-cy="repOptionsDelete"
+      class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
+      [ngClass]="{
+        'cursor-default text-gray-400': rep.canEditOrDeleteRep === false
+      }"
+      (click)="t1.hide(); deleteRep($event)"
+      [disabled]="rep.canEditOrDeleteRep === false"
+      >Delete</button
+    >
   </div>
 </ng-template>

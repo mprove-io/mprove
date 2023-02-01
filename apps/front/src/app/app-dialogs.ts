@@ -11,6 +11,7 @@ import { CreateFileDialogComponent } from './modules/files/files-tree/folder-opt
 import { CreateFolderDialogComponent } from './modules/files/files-tree/folder-options/create-folder-dialog/create-folder-dialog.component';
 import { DeleteFolderDialogComponent } from './modules/files/files-tree/folder-options/delete-folder-dialog/delete-folder-dialog.component';
 import { RenameFolderDialogComponent } from './modules/files/files-tree/folder-options/rename-folder-dialog/rename-folder-dialog.component';
+import { DeleteRepDialogComponent } from './modules/metrics/delete-rep-dialog/delete-rep-dialog.component';
 import { RepSaveAsDialogComponent } from './modules/metrics/rep-save-as-dialog/rep-save-as-dialog.component';
 import { ChartSaveAsDialogComponent } from './modules/model/chart-save-as-dialog/chart-save-as-dialog.component';
 import { ViewBlockmlDialogComponent } from './modules/model/view-blockml-dialog/view-blockml-dialog.component';
@@ -96,6 +97,7 @@ export const appDialogs = [
   CommitDialogComponent,
   // metrics
   RepSaveAsDialogComponent,
+  DeleteRepDialogComponent,
   // model
   ViewBlockmlDialogComponent,
   ChartSaveAsDialogComponent,

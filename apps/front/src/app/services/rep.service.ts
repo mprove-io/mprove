@@ -142,7 +142,7 @@ export class RepService {
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateDraftRepResponse) => {
+        tap((resp: apiToBackend.ToBackendDeleteDraftRepResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let reps = this.repsQuery.getValue().reps;
 

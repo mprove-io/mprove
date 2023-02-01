@@ -52,6 +52,10 @@ import {
   RenameFolderDialogData
 } from '../modules/files/files-tree/folder-options/rename-folder-dialog/rename-folder-dialog.component';
 import {
+  DeleteRepDialogComponent,
+  DeleteRepDialogData
+} from '../modules/metrics/delete-rep-dialog/delete-rep-dialog.component';
+import {
   RepSaveAsDialogComponent,
   RepSaveAsDialogData
 } from '../modules/metrics/rep-save-as-dialog/rep-save-as-dialog.component';
@@ -409,6 +413,14 @@ export class MyDialogService {
 
   showDeleteDashboard(item: DeleteDashboardDialogData): void {
     this.dialogService.open(DeleteDashboardDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item
+    });
+  }
+
+  showDeleteRep(item: DeleteRepDialogData): void {
+    this.dialogService.open(DeleteRepDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item
