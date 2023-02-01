@@ -106,7 +106,17 @@
                 </div>
 
                 <div class="mb-5 flex h-2 flex-grow flex-col overflow-y-auto">
-                  <div *ngFor="let r of reps" (click)="navToRep(r)">
+                  <div
+                    *ngFor="let r of reps; let i = index"
+                    (click)="navToRep(r)"
+                  >
+                    <div
+                      *ngIf="draftsLength >= 0 && i === draftsLength + 1"
+                      class="ml-[25px] mr-[20px] divide-y divide-gray-300"
+                    >
+                      <div></div>
+                      <div></div>
+                    </div>
                     <div
                       class="hover:bg-blue2 group ml-6 mr-5 flex h-11 flex-row items-center rounded px-4 hover:cursor-pointer"
                     >
@@ -128,10 +138,6 @@
                       </div>
 
                       <div class="flex flex-grow"></div>
-
-                      <div
-                        class="ml-5 flex h-9 w-9 items-center justify-center rounded focus:outline-none"
-                      ></div>
 
                       <button
                         *ngIf="rep.draft === true && r.repId === rep.repId"
@@ -158,6 +164,13 @@
                       >
                         <m-trash-icon></m-trash-icon>
                       </button>
+
+                      <div
+                        *ngIf="r.draft === true"
+                        class="ml-5 flex items-center justify-center focus:outline-none"
+                      >
+                        Draft</div
+                      >
                     </div>
                   </div>
                 </div>

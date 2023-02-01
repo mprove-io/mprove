@@ -53,11 +53,13 @@ export class MetricsComponent implements OnInit {
     })
   );
 
+  draftsLength: number;
+
   reps: common.RepX[];
   reps$ = this.repsQuery.select().pipe(
     tap(x => {
       this.reps = [emptyRep, ...x.reps];
-      // this.reps.push(x.reps[0])
+      this.draftsLength = this.reps.filter(y => y.draft === true).length;
 
       this.cd.detectChanges();
     })
