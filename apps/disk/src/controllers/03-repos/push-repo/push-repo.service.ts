@@ -152,13 +152,23 @@ export class PushRepoService {
       isCheckConflicts: true
     });
 
-    let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
+    let repoItemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
-      readFiles: true,
+      readFiles: false,
       isRootMproveDir: false
     });
+
+    let productionItemCatalog = <interfaces.ItemCatalog>(
+      await disk.getNodesAndFiles({
+        projectId: projectId,
+        projectDir: projectDir,
+        repoId: common.PROD_REPO_ID,
+        readFiles: true,
+        isRootMproveDir: false
+      })
+    );
 
     let payload: apiToDisk.ToDiskPushRepoResponsePayload = {
       repo: {
@@ -168,12 +178,12 @@ export class PushRepoService {
         repoStatus: repoStatus,
         currentBranchId: currentBranch,
         conflicts: conflicts,
-        nodes: itemCatalog.nodes,
+        nodes: repoItemCatalog.nodes,
         changesToCommit: changesToCommit,
         changesToPush: changesToPush
       },
-      files: itemCatalog.files,
-      mproveDir: itemCatalog.mproveDir
+      productionFiles: productionItemCatalog.files,
+      productionMproveDir: productionItemCatalog.mproveDir
     };
 
     return payload;

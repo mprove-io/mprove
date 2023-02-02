@@ -80,16 +80,17 @@ export class ProjectsService {
       }
     };
 
-    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateProjectResponse>(
-      {
-        routingKey: helper.makeRoutingKeyToDisk({
-          orgId: orgId,
-          projectId: projectId
-        }),
-        message: toDiskCreateProjectRequest,
-        checkIsOk: true
-      }
-    );
+    let diskResponse =
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateProjectResponse>(
+        {
+          routingKey: helper.makeRoutingKeyToDisk({
+            orgId: orgId,
+            projectId: projectId
+          }),
+          message: toDiskCreateProjectRequest,
+          checkIsOk: true
+        }
+      );
 
     let newProject = maker.makeProject({
       orgId: orgId,
@@ -115,7 +116,8 @@ export class ProjectsService {
       isExplorer: common.BoolEnum.TRUE
     });
 
-    let structId = common.makeId();
+    let devStructId = common.makeId();
+    let prodStructId = common.makeId();
 
     let prodBranch = maker.makeBranch({
       projectId: newProject.project_id,
@@ -134,7 +136,7 @@ export class ProjectsService {
       repoId: prodBranch.repo_id,
       branchId: prodBranch.branch_id,
       envId: prodEnv.env_id,
-      structId: structId,
+      structId: prodStructId,
       needValidate: common.BoolEnum.FALSE
     });
 
@@ -143,7 +145,7 @@ export class ProjectsService {
       repoId: devBranch.repo_id,
       branchId: devBranch.branch_id,
       envId: prodEnv.env_id,
-      structId: structId,
+      structId: devStructId,
       needValidate: common.BoolEnum.FALSE
     });
 
@@ -151,7 +153,17 @@ export class ProjectsService {
       traceId,
       orgId: newProject.org_id,
       projectId: newProject.project_id,
-      structId,
+      structId: prodStructId,
+      diskFiles: diskResponse.payload.prodFiles,
+      mproveDir: diskResponse.payload.mproveDir,
+      envId: common.PROJECT_ENV_PROD
+    });
+
+    await this.blockmlService.rebuildStruct({
+      traceId,
+      orgId: newProject.org_id,
+      projectId: newProject.project_id,
+      structId: devStructId,
       diskFiles: diskResponse.payload.prodFiles,
       mproveDir: diskResponse.payload.mproveDir,
       envId: common.PROJECT_ENV_PROD

@@ -54,23 +54,40 @@ export class BlockmlService {
     diskFiles: common.DiskCatalogFile[];
     mproveDir: string;
     skipDb?: boolean;
+    connections?: common.ProjectConnection[];
+    evs?: common.Ev[];
   }) {
-    let { traceId, structId, orgId, projectId, envId, diskFiles, skipDb } =
-      item;
+    let {
+      traceId,
+      structId,
+      orgId,
+      projectId,
+      envId,
+      diskFiles,
+      skipDb,
+      connections,
+      evs
+    } = item;
 
-    let connections = await this.connectionsRepository.find({
-      where: {
-        project_id: projectId,
-        env_id: envId
-      }
-    });
+    let connectionsEntities;
+    if (common.isUndefined(connections)) {
+      connectionsEntities = await this.connectionsRepository.find({
+        where: {
+          project_id: projectId,
+          env_id: envId
+        }
+      });
+    }
 
-    let evs = await this.evsRepository.find({
-      where: {
-        project_id: projectId,
-        env_id: envId
-      }
-    });
+    let evsEntities;
+    if (common.isUndefined(evs)) {
+      evsEntities = await this.evsRepository.find({
+        where: {
+          project_id: projectId,
+          env_id: envId
+        }
+      });
+    }
 
     let toBlockmlRebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest =
       {
@@ -84,14 +101,16 @@ export class BlockmlService {
           orgId: orgId,
           projectId: projectId,
           envId: envId,
-          evs: evs.map(x => wrapper.wrapToApiEv(x)),
+          evs: evs || evsEntities.map(x => wrapper.wrapToApiEv(x)),
           mproveDir: item.mproveDir,
           files: helper.diskFilesToBlockmlFiles(diskFiles),
-          connections: connections.map(x => ({
-            connectionId: x.connection_id,
-            type: x.type,
-            bigqueryProject: x.bigquery_project
-          }))
+          connections:
+            connections ||
+            connectionsEntities.map(x => ({
+              connectionId: x.connection_id,
+              type: x.type,
+              bigqueryProject: x.bigquery_project
+            }))
         }
       };
 

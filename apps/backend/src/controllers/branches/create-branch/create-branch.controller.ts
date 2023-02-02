@@ -1,4 +1,5 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
@@ -8,6 +9,7 @@ import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
@@ -23,6 +25,7 @@ export class CreateBranchController {
     private branchesService: BranchesService,
     private bridgesRepository: repositories.BridgesRepository,
     private membersService: MembersService,
+    private blockmlService: BlockmlService,
     private dbService: DbService
   ) {}
 
@@ -33,6 +36,7 @@ export class CreateBranchController {
   ) {
     let reqValid: apiToBackend.ToBackendCreateBranchRequest = request.body;
 
+    let { traceId } = reqValid.info;
     let { projectId, newBranchId, fromBranchId, isRepoProd } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
@@ -61,7 +65,7 @@ export class CreateBranchController {
     let toDiskCreateBranchRequest: apiToDisk.ToDiskCreateBranchRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateBranch,
-        traceId: reqValid.info.traceId
+        traceId: traceId
       },
       payload: {
         orgId: project.org_id,
@@ -111,11 +115,32 @@ export class CreateBranchController {
         repoId: newBranch.repo_id,
         branchId: newBranch.branch_id,
         envId: x.env_id,
-        structId: x.struct_id,
-        needValidate: x.need_validate
+        structId: common.EMPTY_STRUCT_ID,
+        needValidate: common.BoolEnum.TRUE
       });
 
       newBranchBridges.push(newBranchBridge);
+    });
+
+    await forEachSeries(newBranchBridges, async x => {
+      if (x.env_id === common.PROJECT_ENV_PROD) {
+        let structId = common.makeId();
+
+        await this.blockmlService.rebuildStruct({
+          traceId,
+          orgId: project.org_id,
+          projectId,
+          structId,
+          diskFiles: diskResponse.payload.files,
+          mproveDir: diskResponse.payload.mproveDir,
+          envId: x.env_id
+        });
+
+        x.struct_id = structId;
+        x.need_validate = common.BoolEnum.FALSE;
+      } else {
+        x.need_validate = common.BoolEnum.TRUE;
+      }
     });
 
     await this.dbService.writeRecords({

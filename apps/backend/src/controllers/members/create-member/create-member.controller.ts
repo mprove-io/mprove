@@ -1,6 +1,7 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
@@ -12,6 +13,7 @@ import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { BlockmlService } from '~backend/services/blockml.service';
 import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -30,6 +32,7 @@ export class CreateMemberController {
     private bridgesRepository: repositories.BridgesRepository,
     private usersRepository: repositories.UsersRepository,
     private projectsService: ProjectsService,
+    private blockmlService: BlockmlService,
     private usersService: UsersService,
     private membersService: MembersService,
     private mailerService: MailerService,
@@ -102,14 +105,17 @@ export class CreateMemberController {
       }
     };
 
-    await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateDevRepoResponse>({
-      routingKey: helper.makeRoutingKeyToDisk({
-        orgId: project.org_id,
-        projectId: projectId
-      }),
-      message: toDiskCreateDevRepoRequest,
-      checkIsOk: true
-    });
+    let diskResponse =
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateDevRepoResponse>(
+        {
+          routingKey: helper.makeRoutingKeyToDisk({
+            orgId: project.org_id,
+            projectId: projectId
+          }),
+          message: toDiskCreateDevRepoRequest,
+          checkIsOk: true
+        }
+      );
 
     let prodBranch = await this.branchesRepository.findOne({
       where: {
@@ -141,11 +147,32 @@ export class CreateMemberController {
         repoId: devBranch.repo_id,
         branchId: devBranch.branch_id,
         envId: x.env_id,
-        structId: x.struct_id,
-        needValidate: x.need_validate
+        structId: common.EMPTY_STRUCT_ID,
+        needValidate: common.BoolEnum.TRUE
       });
 
       devBranchBridges.push(devBranchBridge);
+    });
+
+    await forEachSeries(devBranchBridges, async x => {
+      if (x.env_id === common.PROJECT_ENV_PROD) {
+        let structId = common.makeId();
+
+        await this.blockmlService.rebuildStruct({
+          traceId,
+          orgId: project.org_id,
+          projectId,
+          structId,
+          diskFiles: diskResponse.payload.files,
+          mproveDir: diskResponse.payload.mproveDir,
+          envId: x.env_id
+        });
+
+        x.struct_id = structId;
+        x.need_validate = common.BoolEnum.FALSE;
+      } else {
+        x.need_validate = common.BoolEnum.TRUE;
+      }
     });
 
     await this.dbService.writeRecords({
