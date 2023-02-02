@@ -26,6 +26,8 @@ export class BlockmlService {
     diskFiles: common.DiskCatalogFile[];
     mproveDir: string;
     skipDb?: boolean;
+    connections?: common.ProjectConnection[];
+    evs?: common.Ev[];
   }) {
     let {
       traceId,
@@ -34,51 +36,64 @@ export class BlockmlService {
       projectId,
       envId,
       diskFiles,
-      skipDb
+      skipDb,
+      connections,
+      evs
     } = item;
 
-    let connections = await this.connectionsRepository.find({
-      where: {
-        project_id: projectId,
-        env_id: envId
-      }
-    });
+    let connectionsEntities;
+    if (common.isUndefined(connections)) {
+      connectionsEntities = await this.connectionsRepository.find({
+        where: {
+          project_id: projectId,
+          env_id: envId
+        }
+      });
+    }
 
-    let evs = await this.evsRepository.find({
-      where: {
-        project_id: projectId,
-        env_id: envId
-      }
-    });
+    let evsEntities;
+    if (common.isUndefined(evs)) {
+      evsEntities = await this.evsRepository.find({
+        where: {
+          project_id: projectId,
+          env_id: envId
+        }
+      });
+    }
 
-    let toBlockmlRebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest = {
-      info: {
-        name: apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct,
-        traceId: traceId
-      },
-      payload: {
-        structId: structId,
-        orgId: orgId,
-        projectId: projectId,
-        envId: envId,
-        evs: evs.map(x => wrapper.wrapToApiEv(x)),
-        mproveDir: item.mproveDir,
-        files: helper.diskFilesToBlockmlFiles(diskFiles),
-        connections: connections.map(x => ({
-          connectionId: x.connection_id,
-          type: x.type,
-          bigqueryProject: x.bigquery_project
-        }))
-      }
-    };
-
-    let blockmlRebuildStructResponse = await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlRebuildStructResponse>(
+    let toBlockmlRebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest =
       {
-        routingKey: common.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
-        message: toBlockmlRebuildStructRequest,
-        checkIsOk: true
-      }
-    );
+        info: {
+          name: apiToBlockml.ToBlockmlRequestInfoNameEnum
+            .ToBlockmlRebuildStruct,
+          traceId: traceId
+        },
+        payload: {
+          structId: structId,
+          orgId: orgId,
+          projectId: projectId,
+          envId: envId,
+          evs: evs || evsEntities.map(x => wrapper.wrapToApiEv(x)),
+          mproveDir: item.mproveDir,
+          files: helper.diskFilesToBlockmlFiles(diskFiles),
+          connections:
+            connections ||
+            connectionsEntities.map(x => ({
+              connectionId: x.connection_id,
+              type: x.type,
+              bigqueryProject: x.bigquery_project
+            }))
+        }
+      };
+
+    let blockmlRebuildStructResponse =
+      await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlRebuildStructResponse>(
+        {
+          routingKey: common.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
+          message: toBlockmlRebuildStructRequest,
+          checkIsOk: true
+        }
+      );
 
     let {
       mproveDirValue,

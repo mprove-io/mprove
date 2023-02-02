@@ -109,7 +109,7 @@ export class CreateDevRepoService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: devRepoId,
-      readFiles: false,
+      readFiles: true,
       isRootMproveDir: false
     });
 
@@ -124,7 +124,9 @@ export class CreateDevRepoService {
         nodes: itemCatalog.nodes,
         changesToCommit: changesToCommit,
         changesToPush: changesToPush
-      }
+      },
+      files: itemCatalog.files,
+      mproveDir: itemCatalog.mproveDir
     };
 
     return payload;

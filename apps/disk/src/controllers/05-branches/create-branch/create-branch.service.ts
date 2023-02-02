@@ -109,6 +109,16 @@ export class CreateBranchService {
       });
     }
 
+    await git.checkoutBranch({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: repoId,
+      repoDir: repoDir,
+      branchName: fromBranch,
+      fetchOptions: fetchOptions,
+      isFetch: true
+    });
+
     //
 
     await git.createBranch({
@@ -138,7 +148,7 @@ export class CreateBranchService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
-      readFiles: false,
+      readFiles: true,
       isRootMproveDir: false
     });
 
@@ -153,7 +163,9 @@ export class CreateBranchService {
         nodes: itemCatalog.nodes,
         changesToCommit: changesToCommit,
         changesToPush: changesToPush
-      }
+      },
+      files: itemCatalog.files,
+      mproveDir: itemCatalog.mproveDir
     };
 
     return payload;

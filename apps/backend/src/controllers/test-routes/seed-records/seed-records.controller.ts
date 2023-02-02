@@ -1,7 +1,6 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import asyncPool from 'tiny-async-pool';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
@@ -12,6 +11,7 @@ import { wrapper } from '~backend/barrels/wrapper';
 import { SkipJwtCheck } from '~backend/decorators/_index';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { BlockmlService } from '~backend/services/blockml.service';
 import { DbService } from '~backend/services/db.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { UsersService } from '~backend/services/users.service';
@@ -24,6 +24,7 @@ export class SeedRecordsController {
   constructor(
     private rabbitService: RabbitService,
     private usersService: UsersService,
+    private blockmlService: BlockmlService,
     private dbService: DbService
   ) {}
 
@@ -232,87 +233,63 @@ export class SeedRecordsController {
               }
             );
 
-          let structId = common.makeId();
+          let devStructId = common.makeId();
+          let prodStructId = common.makeId();
 
-          let toBlockmlRebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest =
-            {
-              info: {
-                name: apiToBlockml.ToBlockmlRequestInfoNameEnum
-                  .ToBlockmlRebuildStruct,
-                traceId: reqValid.info.traceId
-              },
-              payload: {
-                structId: structId,
-                orgId: newProject.org_id,
-                projectId: newProject.project_id,
-                envId: prodEnv.env_id,
-                evs: evs
-                  .map(evEntity => wrapper.wrapToApiEv(evEntity))
-                  .filter(ev => ev.envId === prodEnv.env_id),
-                mproveDir: diskResponse.payload.mproveDir,
-                files: helper.diskFilesToBlockmlFiles(
-                  diskResponse.payload.files
-                ),
-                connections: connections
-                  .filter(
-                    z =>
-                      z.project_id === newProject.project_id &&
-                      z.env_id === prodEnv.env_id
-                  )
-                  .map(c => ({
-                    connectionId: c.connection_id,
-                    type: c.type
-                  }))
-              }
-            };
-
-          let blockmlRebuildStructResponse =
-            await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlRebuildStructResponse>(
-              {
-                routingKey:
-                  common.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
-                message: toBlockmlRebuildStructRequest,
-                checkIsOk: true
-              }
-            );
+          let projectConnections = connections
+            .filter(
+              z =>
+                z.project_id === newProject.project_id &&
+                z.env_id === prodEnv.env_id
+            )
+            .map(c => ({
+              connectionId: c.connection_id,
+              type: c.type,
+              bigqueryProject: c.bigquery_project
+            }));
 
           let {
-            mproveDirValue,
-            weekStart,
-            allowTimezones,
-            defaultTimezone,
-            formatNumber,
-            currencyPrefix,
-            currencySuffix,
-            errors,
-            views,
-            udfsDict,
-            vizs: vizsApi,
-            mconfigs: mconfigsApi,
-            queries: queriesApi,
-            dashboards: dashboardsApi,
-            models: modelsApi
-          } = blockmlRebuildStructResponse.payload;
-
-          let struct = maker.makeStruct({
+            struct: devStruct,
+            vizs: devVizsApi,
+            mconfigs: devMconfigsApi,
+            queries: devQueriesApi,
+            dashboards: devDashboardsApi,
+            models: devModelsApi
+          } = await this.blockmlService.rebuildStruct({
+            traceId: reqValid.info.traceId,
+            orgId: newProject.org_id,
             projectId: newProject.project_id,
-            structId: structId,
-            mproveDirValue: mproveDirValue,
-            weekStart: weekStart,
-            allowTimezones: common.booleanToEnum(allowTimezones),
-            defaultTimezone: defaultTimezone,
-            formatNumber: formatNumber,
-            currencyPrefix: currencyPrefix,
-            currencySuffix: currencySuffix,
-            errors: errors,
-            views: views,
-            udfsDict: udfsDict
+            structId: devStructId,
+            diskFiles: diskResponse.payload.files,
+            mproveDir: diskResponse.payload.mproveDir,
+            envId: prodEnv.env_id,
+            skipDb: true,
+            connections: projectConnections,
+            evs: evs
+              .map(evEntity => wrapper.wrapToApiEv(evEntity))
+              .filter(ev => ev.envId === prodEnv.env_id)
           });
 
-          let prodBranch = maker.makeBranch({
+          let {
+            struct: prodStruct,
+            vizs: prodVizsApi,
+            mconfigs: prodMconfigsApi,
+            queries: prodQueriesApi,
+            dashboards: prodDashboardsApi,
+            models: prodModelsApi
+          } = await this.blockmlService.rebuildStruct({
+            traceId: reqValid.info.traceId,
+            orgId: newProject.org_id,
             projectId: newProject.project_id,
-            repoId: common.PROD_REPO_ID,
-            branchId: newProject.default_branch
+            structId: prodStructId,
+            diskFiles: diskResponse.payload.files,
+            mproveDir: diskResponse.payload.mproveDir,
+            envId: prodEnv.env_id,
+            skipDb: true,
+            connections: projectConnections,
+            evs: evs
+              .map(evEntity => wrapper.wrapToApiEv(evEntity))
+              .filter(ev => ev.envId === prodEnv.env_id)
           });
 
           let devBranch = maker.makeBranch({
@@ -321,13 +298,10 @@ export class SeedRecordsController {
             branchId: newProject.default_branch
           });
 
-          let prodBranchBridgeProdEnv = maker.makeBridge({
-            projectId: prodBranch.project_id,
-            repoId: prodBranch.repo_id,
-            branchId: prodBranch.branch_id,
-            envId: prodEnv.env_id,
-            structId: structId,
-            needValidate: common.BoolEnum.FALSE
+          let prodBranch = maker.makeBranch({
+            projectId: newProject.project_id,
+            repoId: common.PROD_REPO_ID,
+            branchId: newProject.default_branch
           });
 
           let devBranchBridgeProdEnv = maker.makeBridge({
@@ -335,40 +309,60 @@ export class SeedRecordsController {
             repoId: devBranch.repo_id,
             branchId: devBranch.branch_id,
             envId: prodEnv.env_id,
-            structId: structId,
+            structId: devStructId,
+            needValidate: common.BoolEnum.FALSE
+          });
+
+          let prodBranchBridgeProdEnv = maker.makeBridge({
+            projectId: prodBranch.project_id,
+            repoId: prodBranch.repo_id,
+            branchId: prodBranch.branch_id,
+            envId: prodEnv.env_id,
+            structId: prodStructId,
             needValidate: common.BoolEnum.FALSE
           });
 
           projects.push(newProject);
           envs.push(prodEnv);
-          structs.push(struct);
-          branches = [...branches, prodBranch, devBranch];
+
+          structs = [...structs, devStruct, prodStruct];
+
+          branches = [...branches, devBranch, prodBranch];
+
           bridges = [
             ...bridges,
-            prodBranchBridgeProdEnv,
-            devBranchBridgeProdEnv
+            devBranchBridgeProdEnv,
+            prodBranchBridgeProdEnv
           ];
 
-          vizs = [...vizs, ...vizsApi.map(z => wrapper.wrapToEntityViz(z))];
+          vizs = [
+            ...vizs,
+            ...devVizsApi.map(z => wrapper.wrapToEntityViz(z)),
+            ...prodVizsApi.map(z => wrapper.wrapToEntityViz(z))
+          ];
 
           models = [
             ...models,
-            ...modelsApi.map(z => wrapper.wrapToEntityModel(z))
+            ...devModelsApi.map(z => wrapper.wrapToEntityModel(z)),
+            ...prodModelsApi.map(z => wrapper.wrapToEntityModel(z))
           ];
 
           queries = [
             ...queries,
-            ...queriesApi.map(z => wrapper.wrapToEntityQuery(z))
+            ...devQueriesApi.map(z => wrapper.wrapToEntityQuery(z)),
+            ...prodQueriesApi.map(z => wrapper.wrapToEntityQuery(z))
           ];
 
           dashboards = [
             ...dashboards,
-            ...dashboardsApi.map(z => wrapper.wrapToEntityDashboard(z))
+            ...devDashboardsApi.map(z => wrapper.wrapToEntityDashboard(z)),
+            ...prodDashboardsApi.map(z => wrapper.wrapToEntityDashboard(z))
           ];
 
           mconfigs = [
             ...mconfigs,
-            ...mconfigsApi.map(z => wrapper.wrapToEntityMconfig(z))
+            ...devMconfigsApi.map(z => wrapper.wrapToEntityMconfig(z)),
+            ...prodMconfigsApi.map(z => wrapper.wrapToEntityMconfig(z))
           ];
         }
       );

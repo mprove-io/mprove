@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { forEachSeries } from 'p-iteration';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
@@ -8,6 +9,7 @@ import { interfaces } from '~backend/barrels/interfaces';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { UserEntity } from '~backend/models/store-entities/_index';
+import { BlockmlService } from './blockml.service';
 import { DbService } from './db.service';
 import { RabbitService } from './rabbit.service';
 
@@ -20,6 +22,7 @@ export class MembersService {
     private projectsRepository: repositories.ProjectsRepository,
     private bridgesRepository: repositories.BridgesRepository,
     private rabbitService: RabbitService,
+    private blockmlService: BlockmlService,
     private dbService: DbService
   ) {}
 
@@ -141,9 +144,8 @@ export class MembersService {
   async addMemberToFirstProject(item: { user: UserEntity; traceId: string }) {
     let { user, traceId } = item;
 
-    let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
-      'firstProjectId'
-    );
+    let firstProjectId =
+      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
     if (common.isDefined(firstProjectId)) {
       let project = await this.projectsRepository.findOne({
@@ -169,32 +171,34 @@ export class MembersService {
             isExplorer: common.BoolEnum.TRUE
           });
 
-          let toDiskCreateDevRepoRequest: apiToDisk.ToDiskCreateDevRepoRequest = {
-            info: {
-              name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo,
-              traceId: traceId
-            },
-            payload: {
-              orgId: project.org_id,
-              projectId: firstProjectId,
-              devRepoId: newMember.member_id,
-              remoteType: project.remote_type,
-              gitUrl: project.git_url,
-              privateKey: project.private_key,
-              publicKey: project.public_key
-            }
-          };
-
-          await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateDevRepoResponse>(
+          let toDiskCreateDevRepoRequest: apiToDisk.ToDiskCreateDevRepoRequest =
             {
-              routingKey: helper.makeRoutingKeyToDisk({
+              info: {
+                name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo,
+                traceId: traceId
+              },
+              payload: {
                 orgId: project.org_id,
-                projectId: firstProjectId
-              }),
-              message: toDiskCreateDevRepoRequest,
-              checkIsOk: true
-            }
-          );
+                projectId: firstProjectId,
+                devRepoId: newMember.member_id,
+                remoteType: project.remote_type,
+                gitUrl: project.git_url,
+                privateKey: project.private_key,
+                publicKey: project.public_key
+              }
+            };
+
+          let diskResponse =
+            await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateDevRepoResponse>(
+              {
+                routingKey: helper.makeRoutingKeyToDisk({
+                  orgId: project.org_id,
+                  projectId: firstProjectId
+                }),
+                message: toDiskCreateDevRepoRequest,
+                checkIsOk: true
+              }
+            );
 
           let prodBranch = await this.branchesRepository.findOne({
             where: {
@@ -226,11 +230,32 @@ export class MembersService {
               repoId: devBranch.repo_id,
               branchId: devBranch.branch_id,
               envId: x.env_id,
-              structId: x.struct_id,
-              needValidate: x.need_validate
+              structId: common.EMPTY_STRUCT_ID,
+              needValidate: common.BoolEnum.TRUE
             });
 
             devBranchBridges.push(devBranchBridge);
+          });
+
+          await forEachSeries(devBranchBridges, async x => {
+            if (x.env_id === common.PROJECT_ENV_PROD) {
+              let structId = common.makeId();
+
+              await this.blockmlService.rebuildStruct({
+                traceId,
+                orgId: project.org_id,
+                projectId: firstProjectId,
+                structId,
+                diskFiles: diskResponse.payload.files,
+                mproveDir: diskResponse.payload.mproveDir,
+                envId: x.env_id
+              });
+
+              x.struct_id = structId;
+              x.need_validate = common.BoolEnum.FALSE;
+            } else {
+              x.need_validate = common.BoolEnum.TRUE;
+            }
           });
 
           await this.dbService.writeRecords({

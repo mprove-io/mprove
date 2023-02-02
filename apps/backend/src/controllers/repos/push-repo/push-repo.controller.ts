@@ -34,6 +34,7 @@ export class PushRepoController {
     private blockmlService: BlockmlService,
     private cs: ConfigService<interfaces.Config>,
     private bridgesRepository: repositories.BridgesRepository,
+    private branchesRepository: repositories.BranchesRepository,
     private envsService: EnvsService
   ) {}
 
@@ -115,7 +116,44 @@ export class PushRepoController {
       }
     });
 
-    await forEachSeries(branchBridges, async x => {
+    let prodBranch = await this.branchesRepository.findOne({
+      where: {
+        project_id: projectId,
+        repo_id: common.PROD_REPO_ID,
+        branch_id: branchId
+      }
+    });
+
+    let prodBranchBridges = await this.bridgesRepository.find({
+      where: {
+        project_id: branch.project_id,
+        repo_id: common.PROD_REPO_ID,
+        branch_id: branch.branch_id
+      }
+    });
+
+    if (common.isUndefined(prodBranch)) {
+      prodBranch = maker.makeBranch({
+        projectId: projectId,
+        repoId: common.PROD_REPO_ID,
+        branchId: branchId
+      });
+
+      branchBridges.forEach(x => {
+        let prodBranchBridge = maker.makeBridge({
+          projectId: branch.project_id,
+          repoId: common.PROD_REPO_ID,
+          branchId: branch.branch_id,
+          envId: x.env_id,
+          structId: common.EMPTY_STRUCT_ID,
+          needValidate: common.BoolEnum.TRUE
+        });
+
+        prodBranchBridges.push(prodBranchBridge);
+      });
+    }
+
+    await forEachSeries(prodBranchBridges, async x => {
       if (x.env_id === envId) {
         let structId = common.makeId();
 
@@ -124,42 +162,23 @@ export class PushRepoController {
           orgId: project.org_id,
           projectId,
           structId,
-          diskFiles: diskResponse.payload.files,
-          mproveDir: diskResponse.payload.mproveDir,
+          diskFiles: diskResponse.payload.productionFiles,
+          mproveDir: diskResponse.payload.productionMproveDir,
           envId: x.env_id
         });
 
         x.struct_id = structId;
         x.need_validate = common.BoolEnum.FALSE;
+      } else {
+        x.need_validate = common.BoolEnum.TRUE;
       }
-    });
-
-    let prodBranchBridges: entities.BridgeEntity[] = [];
-
-    branchBridges.forEach(x => {
-      let prodBranchBridge = maker.makeBridge({
-        projectId: branch.project_id,
-        repoId: common.PROD_REPO_ID,
-        branchId: branch.branch_id,
-        envId: x.env_id,
-        structId: x.struct_id,
-        needValidate: x.need_validate
-      });
-
-      prodBranchBridges.push(prodBranchBridge);
-    });
-
-    let prodBranch = maker.makeBranch({
-      projectId: projectId,
-      repoId: common.PROD_REPO_ID,
-      branchId: branchId
     });
 
     await this.dbService.writeRecords({
       modify: true,
       records: {
         branches: [prodBranch],
-        bridges: [...branchBridges, ...prodBranchBridges]
+        bridges: [...prodBranchBridges]
       }
     });
 
