@@ -82,10 +82,12 @@ export class LoginSuccessComponent implements OnInit, OnDestroy {
               branchId,
               common.PATH_ENV,
               envId,
-              common.PATH_VISUALIZATIONS
+              common.PATH_METRICS,
+              common.PATH_REPORT,
+              common.EMPTY
             ];
 
-            this.navigateService.navigateToVizs({ navParts: navParts });
+            this.navigateService.navigateTo({ navParts: navParts });
           }
         }),
         take(1)

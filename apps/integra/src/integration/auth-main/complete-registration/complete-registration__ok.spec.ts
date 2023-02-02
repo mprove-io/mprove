@@ -22,7 +22,7 @@ describe('integra', () => {
     cy.get('[data-cy=completeRegistrationPasswordInput]').type(password);
     cy.get('[data-cy=completeRegistrationSignUpButton]').click();
     cy.loading();
-    cy.url().should('include', common.PATH_VISUALIZATIONS);
+    cy.url().should('include', common.PATH_METRICS);
     cy.get('[data-cy=emailIsConfirmedDialogTitle]');
   });
 });

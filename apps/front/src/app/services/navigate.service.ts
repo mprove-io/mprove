@@ -139,7 +139,7 @@ export class NavigateService {
     ]);
   }
 
-  navigateToProdDefaultBranchVizs() {
+  navigateToProductionDefaultBranchProdMetrics() {
     if (
       common.isDefined(this.nav.orgId) &&
       common.isDefined(this.nav.projectId)
@@ -154,12 +154,19 @@ export class NavigateService {
         common.PATH_BRANCH,
         this.nav.projectDefaultBranch,
         common.PATH_ENV,
-        this.nav.envId,
-        common.PATH_VISUALIZATIONS
+        common.PROJECT_ENV_PROD,
+        common.PATH_METRICS,
+        common.PATH_REPORT,
+        common.EMPTY
       ];
 
       this.router.navigate(navTo);
     }
+  }
+
+  navigateTo(item: { navParts: string[] }) {
+    let { navParts } = item;
+    this.router.navigate(navParts);
   }
 
   navigateToVizs(item?: { navParts?: string[]; extra?: any }) {
@@ -339,6 +346,29 @@ export class NavigateService {
     // } else {
     //   this.router.navigate(ar);
     // }
+  }
+
+  navigateToMetricsEmptyRep() {
+    let repoId =
+      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
+
+    let navTo = [
+      common.PATH_ORG,
+      this.nav.orgId,
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_REPO,
+      repoId,
+      common.PATH_BRANCH,
+      this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
+      common.PATH_METRICS,
+      common.PATH_REPORT,
+      common.EMPTY
+    ];
+
+    this.router.navigate(navTo);
   }
 
   navigateToMetricsRep(item: { repId: string; draft: boolean }) {

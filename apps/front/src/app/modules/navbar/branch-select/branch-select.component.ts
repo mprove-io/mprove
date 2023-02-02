@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, take, tap } from 'rxjs/operators';
-import { constants } from '~common/barrels/constants';
 import { makeBranchExtraId } from '~front/app/functions/make-branch-extra-id';
 import { makeBranchExtraName } from '~front/app/functions/make-branch-extra-name';
 import { FileQuery, FileState } from '~front/app/queries/file.query';
@@ -308,18 +307,22 @@ export class BranchSelectComponent {
       this.nav.envId
     ];
 
-    if (urlParts[11] === constants.PATH_VISUALIZATIONS) {
-      navArray.push(common.PATH_VISUALIZATIONS);
+    if (urlParts[11] === common.PATH_METRICS) {
+      navArray.push(common.PATH_METRICS);
+      navArray.push(common.PATH_REPORT);
+      navArray.push(common.EMPTY);
     } else if (
-      urlParts[11] === constants.PATH_MODELS ||
-      urlParts[11] === constants.PATH_MODEL
+      urlParts[11] === common.PATH_MODELS ||
+      urlParts[11] === common.PATH_MODEL
     ) {
       navArray.push(common.PATH_MODELS);
     } else if (
-      urlParts[11] === constants.PATH_DASHBOARDS ||
-      urlParts[11] === constants.PATH_DASHBOARD
+      urlParts[11] === common.PATH_DASHBOARDS ||
+      urlParts[11] === common.PATH_DASHBOARD
     ) {
       navArray.push(common.PATH_DASHBOARDS);
+    } else if (urlParts[11] === common.PATH_VISUALIZATIONS) {
+      navArray.push(common.PATH_VISUALIZATIONS);
     } else {
       navArray.push(common.PATH_FILES);
     }

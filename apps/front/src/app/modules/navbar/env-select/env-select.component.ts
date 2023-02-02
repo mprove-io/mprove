@@ -121,8 +121,10 @@ export class EnvSelectComponent {
       this.selectedEnvId
     ];
 
-    if (urlParts[11] === common.PATH_VISUALIZATIONS) {
-      navArray.push(common.PATH_VISUALIZATIONS);
+    if (urlParts[11] === common.PATH_METRICS) {
+      navArray.push(common.PATH_METRICS);
+      navArray.push(common.PATH_REPORT);
+      navArray.push(common.EMPTY);
     } else if (
       urlParts[11] === common.PATH_MODELS ||
       urlParts[11] === common.PATH_MODEL
@@ -133,6 +135,8 @@ export class EnvSelectComponent {
       urlParts[11] === common.PATH_DASHBOARD
     ) {
       navArray.push(common.PATH_DASHBOARDS);
+    } else if (urlParts[11] === common.PATH_VISUALIZATIONS) {
+      navArray.push(common.PATH_VISUALIZATIONS);
     } else {
       navArray.push(common.PATH_FILES);
     }

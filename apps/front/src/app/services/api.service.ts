@@ -200,11 +200,17 @@ export class ApiService {
         errorData.buttonText = 'Ok, get changes';
         errorData.onClickFnBindThis = (() => {
           if (
-            [common.ErEnum.BACKEND_VIS_DOES_NOT_EXIST].indexOf(
+            [common.ErEnum.BACKEND_REP_DOES_NOT_EXIST].indexOf(
               infoErrorMessage
             ) > -1
           ) {
-            this.navigateService.navigateToVizs();
+            this.navigateService.navigateToMetricsEmptyRep();
+          } else if (
+            [common.ErEnum.BACKEND_MODEL_DOES_NOT_EXIST].indexOf(
+              infoErrorMessage
+            ) > -1
+          ) {
+            this.navigateService.navigateToModels();
           } else if (
             [common.ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST].indexOf(
               infoErrorMessage
@@ -212,11 +218,11 @@ export class ApiService {
           ) {
             this.navigateService.navigateToDashboards();
           } else if (
-            [common.ErEnum.BACKEND_MODEL_DOES_NOT_EXIST].indexOf(
+            [common.ErEnum.BACKEND_VIS_DOES_NOT_EXIST].indexOf(
               infoErrorMessage
             ) > -1
           ) {
-            this.navigateService.navigateToModels();
+            this.navigateService.navigateToVizs();
           } else if (
             [
               common.ErEnum.BACKEND_MCONFIG_DOES_NOT_EXIST,

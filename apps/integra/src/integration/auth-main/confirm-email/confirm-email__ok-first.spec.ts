@@ -21,7 +21,7 @@ describe('integra', () => {
     });
     cy.visit(common.PATH_CONFIRM_EMAIL + '?token=' + emailVerificationToken);
     cy.loading();
-    cy.url().should('include', common.PATH_VISUALIZATIONS);
+    cy.url().should('include', common.PATH_METRICS);
     cy.get('[data-cy=emailIsConfirmedDialogTitle]');
   });
 });

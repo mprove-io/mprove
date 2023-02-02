@@ -19,7 +19,6 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { UsersService } from '~backend/services/users.service';
-import { constants } from '~common/barrels/constants';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -200,17 +199,19 @@ export class CreateMemberController {
     ) {
       let urlProjectVizs = [
         hostUrl,
-        constants.PATH_ORG,
+        common.PATH_ORG,
         project.org_id,
-        constants.PATH_PROJECT,
+        common.PATH_PROJECT,
         projectId,
-        constants.PATH_REPO,
-        constants.PROD_REPO_ID,
-        constants.PATH_BRANCH,
+        common.PATH_REPO,
+        common.PROD_REPO_ID,
+        common.PATH_BRANCH,
         project.default_branch,
-        constants.PATH_ENV,
+        common.PATH_ENV,
         common.PROJECT_ENV_PROD,
-        constants.PATH_VISUALIZATIONS
+        common.PATH_METRICS,
+        common.PATH_REPORT,
+        common.EMPTY
       ].join('/');
 
       await this.mailerService.sendMail({
