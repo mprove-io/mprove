@@ -1,11 +1,13 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
 import { makeDashboardFileText } from '~backend/functions/make-dashboard-file-text';
@@ -32,6 +34,7 @@ export class CreateDashboardController {
     private projectsService: ProjectsService,
     private dashboardsService: DashboardsService,
     private blockmlService: BlockmlService,
+    private bridgesRepository: repositories.BridgesRepository,
     private dbService: DbService,
     private cs: ConfigService<interfaces.Config>,
     private envsService: EnvsService,
@@ -241,7 +244,21 @@ export class CreateDashboardController {
         checkIsOk: true
       });
 
-    let { dashboards, vizs, mconfigs, queries, models, struct } =
+    let branchBridges = await this.bridgesRepository.find({
+      where: {
+        project_id: branch.project_id,
+        repo_id: branch.repo_id,
+        branch_id: branch.branch_id
+      }
+    });
+
+    await forEachSeries(branchBridges, async x => {
+      if (x.env_id !== envId) {
+        x.need_validate = common.BoolEnum.TRUE;
+      }
+    });
+
+    let { dashboards, mconfigs, queries, struct } =
       await this.blockmlService.rebuildStruct({
         traceId,
         orgId: project.org_id,
@@ -258,7 +275,8 @@ export class CreateDashboardController {
     await this.dbService.writeRecords({
       modify: true,
       records: {
-        structs: [struct]
+        structs: [struct],
+        bridges: [...branchBridges]
       }
     });
 

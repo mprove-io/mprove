@@ -1,5 +1,6 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
@@ -32,6 +33,7 @@ export class CreateVizController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private modelsRepository: repositories.ModelsRepository,
+    private bridgesRepository: repositories.BridgesRepository,
     private blockmlService: BlockmlService,
     private modelsService: ModelsService,
     private dbService: DbService,
@@ -196,7 +198,21 @@ export class CreateVizController {
         checkIsOk: true
       });
 
-    let { dashboards, vizs, mconfigs, queries, models, struct } =
+    let branchBridges = await this.bridgesRepository.find({
+      where: {
+        project_id: branch.project_id,
+        repo_id: branch.repo_id,
+        branch_id: branch.branch_id
+      }
+    });
+
+    await forEachSeries(branchBridges, async x => {
+      if (x.env_id !== envId) {
+        x.need_validate = common.BoolEnum.TRUE;
+      }
+    });
+
+    let { vizs, mconfigs, queries, struct } =
       await this.blockmlService.rebuildStruct({
         traceId,
         orgId: project.org_id,
@@ -213,7 +229,8 @@ export class CreateVizController {
     await this.dbService.writeRecords({
       modify: true,
       records: {
-        structs: [struct]
+        structs: [struct],
+        bridges: [...branchBridges]
       }
     });
 

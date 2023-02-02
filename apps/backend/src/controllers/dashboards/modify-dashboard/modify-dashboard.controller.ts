@@ -1,11 +1,13 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
 import { makeDashboardFileText } from '~backend/functions/make-dashboard-file-text';
@@ -37,6 +39,7 @@ export class ModifyDashboardController {
     private dashboardsRepository: DashboardsRepository,
     private dbService: DbService,
     private dashboardsService: DashboardsService,
+    private bridgesRepository: repositories.BridgesRepository,
     private cs: ConfigService<interfaces.Config>,
     private envsService: EnvsService,
     private bridgesService: BridgesService
@@ -276,7 +279,21 @@ export class ModifyDashboardController {
         checkIsOk: true
       });
 
-    let { struct, dashboards, vizs, mconfigs, queries, models } =
+    let branchBridges = await this.bridgesRepository.find({
+      where: {
+        project_id: branch.project_id,
+        repo_id: branch.repo_id,
+        branch_id: branch.branch_id
+      }
+    });
+
+    await forEachSeries(branchBridges, async x => {
+      if (x.env_id !== envId) {
+        x.need_validate = common.BoolEnum.TRUE;
+      }
+    });
+
+    let { struct, dashboards, mconfigs, queries } =
       await this.blockmlService.rebuildStruct({
         traceId,
         orgId: project.org_id,
@@ -296,7 +313,8 @@ export class ModifyDashboardController {
         dashboards: common.isDefined(newDashboard)
           ? [wrapper.wrapToEntityDashboard(newDashboard)]
           : undefined,
-        structs: [struct]
+        structs: [struct],
+        bridges: [...branchBridges]
       }
     });
 

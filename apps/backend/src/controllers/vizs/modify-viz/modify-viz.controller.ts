@@ -1,11 +1,13 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
 import { makeVizFileText } from '~backend/functions/make-viz-file-text';
@@ -34,6 +36,7 @@ export class ModifyVizController {
     private projectsService: ProjectsService,
     private vizsService: VizsService,
     private modelsService: ModelsService,
+    private bridgesRepository: repositories.BridgesRepository,
     private blockmlService: BlockmlService,
     private vizsRepository: VizsRepository,
     private dbService: DbService,
@@ -193,7 +196,21 @@ export class ModifyVizController {
         checkIsOk: true
       });
 
-    let { struct, dashboards, vizs, mconfigs, queries, models } =
+    let branchBridges = await this.bridgesRepository.find({
+      where: {
+        project_id: branch.project_id,
+        repo_id: branch.repo_id,
+        branch_id: branch.branch_id
+      }
+    });
+
+    await forEachSeries(branchBridges, async x => {
+      if (x.env_id !== envId) {
+        x.need_validate = common.BoolEnum.TRUE;
+      }
+    });
+
+    let { struct, vizs, mconfigs, queries } =
       await this.blockmlService.rebuildStruct({
         traceId,
         orgId: project.org_id,
@@ -213,7 +230,8 @@ export class ModifyVizController {
         vizs: common.isDefined(viz)
           ? [wrapper.wrapToEntityViz(viz)]
           : undefined,
-        structs: [struct]
+        structs: [struct],
+        bridges: [...branchBridges]
       }
     });
 

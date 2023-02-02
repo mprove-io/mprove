@@ -1,5 +1,6 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
@@ -27,6 +28,7 @@ export class DeleteRepController {
     private projectsService: ProjectsService,
     private repsService: RepsService,
     private repsRepository: repositories.RepsRepository,
+    private bridgesRepository: repositories.BridgesRepository,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
@@ -133,6 +135,20 @@ export class DeleteRepController {
         checkIsOk: true
       });
 
+    let branchBridges = await this.bridgesRepository.find({
+      where: {
+        project_id: branch.project_id,
+        repo_id: branch.repo_id,
+        branch_id: branch.branch_id
+      }
+    });
+
+    await forEachSeries(branchBridges, async x => {
+      if (x.env_id !== envId) {
+        x.need_validate = common.BoolEnum.TRUE;
+      }
+    });
+
     let { struct } = await this.blockmlService.rebuildStruct({
       traceId,
       orgId: project.org_id,
@@ -152,7 +168,8 @@ export class DeleteRepController {
     await this.dbService.writeRecords({
       modify: true,
       records: {
-        structs: [struct]
+        structs: [struct],
+        bridges: [...branchBridges]
       }
     });
 

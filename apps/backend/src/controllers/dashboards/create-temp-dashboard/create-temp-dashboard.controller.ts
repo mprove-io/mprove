@@ -213,7 +213,7 @@ export class CreateTempDashboardController {
       })
     ];
 
-    let { struct, dashboards, vizs, mconfigs, queries, models } =
+    let { struct, dashboards, mconfigs, queries } =
       await this.blockmlService.rebuildStruct({
         traceId,
         orgId: project.org_id,
