@@ -72,7 +72,8 @@ export class GetMetricsController {
     let draftReps = await this.repsRepository.find({
       where: {
         draft: common.BoolEnum.TRUE,
-        creator_id: user.user_id
+        creator_id: user.user_id,
+        struct_id: bridge.struct_id
       }
     });
 

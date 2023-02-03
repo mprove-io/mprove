@@ -85,7 +85,7 @@ export class CreateDraftRepController {
 
     let rep: entities.RepEntity = {
       project_id: projectId,
-      struct_id: common.DRAFT_STRUCT_ID,
+      struct_id: bridge.struct_id,
       rep_id: repId,
       draft: common.BoolEnum.TRUE,
       access_roles: [],

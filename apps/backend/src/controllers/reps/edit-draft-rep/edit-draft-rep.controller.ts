@@ -88,7 +88,8 @@ export class EditDraftRepController {
         project_id: projectId,
         rep_id: repId,
         draft: common.BoolEnum.TRUE,
-        creator_id: user.user_id
+        creator_id: user.user_id,
+        struct_id: bridge.struct_id
       }
     });
 

@@ -73,7 +73,7 @@ WHERE c.branch_id is NULL AND s.server_ts < (NOW() - INTERVAL 10 MINUTE)
       rawData?.map((x: any) => x.struct_id) || [];
 
     orphanedStructIds = orphanedStructIds.filter(
-      x => [common.DRAFT_STRUCT_ID, common.EMPTY_STRUCT_ID].indexOf(x) < 0
+      x => [common.EMPTY_STRUCT_ID].indexOf(x) < 0
     );
 
     if (orphanedStructIds.length > 0) {

@@ -109,7 +109,7 @@ export class GetRepController {
               rep_id: repId,
               project_id: projectId,
               draft: common.BoolEnum.TRUE,
-              struct_id: common.DRAFT_STRUCT_ID
+              struct_id: bridge.struct_id
             }
           })
         : await this.repsRepository.findOne({
