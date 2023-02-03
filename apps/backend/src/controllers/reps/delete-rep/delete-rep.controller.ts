@@ -145,6 +145,7 @@ export class DeleteRepController {
 
     await forEachSeries(branchBridges, async x => {
       if (x.env_id !== envId) {
+        x.struct_id = common.EMPTY_STRUCT_ID;
         x.need_validate = common.BoolEnum.TRUE;
       }
     });

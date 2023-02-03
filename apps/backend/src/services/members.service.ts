@@ -254,6 +254,7 @@ export class MembersService {
               x.struct_id = structId;
               x.need_validate = common.BoolEnum.FALSE;
             } else {
+              x.struct_id = common.EMPTY_STRUCT_ID;
               x.need_validate = common.BoolEnum.TRUE;
             }
           });

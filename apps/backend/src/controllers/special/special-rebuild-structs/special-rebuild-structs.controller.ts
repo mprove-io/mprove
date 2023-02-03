@@ -155,6 +155,7 @@ export class SpecialRebuildStructsController {
         bridge.struct_id = structId;
         bridge.need_validate = common.BoolEnum.FALSE;
       } else {
+        bridge.struct_id = common.EMPTY_STRUCT_ID;
         bridge.need_validate = common.BoolEnum.TRUE;
       }
 
