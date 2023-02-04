@@ -32,8 +32,15 @@ export class RepComponent {
       minWidth: 90,
       maxWidth: 90
     },
+    {
+      field: 'opt',
+      suppressMovable: false,
+      pinned: 'left',
+      resizable: false,
+      width: 150
+    },
     { field: 'metric', suppressMovable: false, pinned: 'left', width: 600 },
-    { field: 'parameters', suppressMovable: false, pinned: 'left', width: 400 }
+    { field: 'parameters', suppressMovable: false, pinned: 'left', width: 200 }
   ];
 
   columnDefs: ColDef[] = [
