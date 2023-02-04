@@ -113,7 +113,8 @@ export class GetDashboardReportController {
     });
 
     let query = await this.queriesService.getQueryCheckExists({
-      queryId: mconfig.query_id
+      queryId: mconfig.query_id,
+      projectId: projectId
     });
 
     let apiMember = wrapper.wrapToApiMember(userMember);

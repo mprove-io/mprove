@@ -66,12 +66,13 @@ export class QueriesService {
     return query;
   }
 
-  async getQueryCheckExists(item: { queryId: string }) {
-    let { queryId: queryId } = item;
+  async getQueryCheckExists(item: { queryId: string; projectId: string }) {
+    let { queryId, projectId } = item;
 
     let query = await this.queriesRepository.findOne({
       where: {
-        query_id: queryId
+        query_id: queryId,
+        project_id: projectId
       }
     });
 

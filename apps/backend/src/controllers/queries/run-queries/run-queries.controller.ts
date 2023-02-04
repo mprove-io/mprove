@@ -103,21 +103,24 @@ export class RunQueriesController {
               connection: connection,
               queryId: query.query_id,
               queryJobId: query.query_job_id,
-              querySql: query.sql
+              querySql: query.sql,
+              projectId: projectId
             });
           } else if (connection.type === common.ConnectionTypeEnum.ClickHouse) {
             await this.clickhouseService.runQuery({
               connection: connection,
               queryId: query.query_id,
               queryJobId: query.query_job_id,
-              querySql: query.sql
+              querySql: query.sql,
+              projectId: projectId
             });
           } else if (connection.type === common.ConnectionTypeEnum.PostgreSQL) {
             await this.pgService.runQuery({
               connection: connection,
               queryId: query.query_id,
               queryJobId: query.query_job_id,
-              querySql: query.sql
+              querySql: query.sql,
+              projectId: projectId
             });
           }
         }
@@ -188,7 +191,8 @@ export class RunQueriesController {
                 connection: connection,
                 queryId: query.query_id,
                 queryJobId: query.query_job_id,
-                querySql: query.sql
+                querySql: query.sql,
+                projectId: projectId
               })
               .catch(e => {
                 logToConsoleBackend({
@@ -207,7 +211,8 @@ export class RunQueriesController {
                 connection: connection,
                 queryId: query.query_id,
                 queryJobId: query.query_job_id,
-                querySql: query.sql
+                querySql: query.sql,
+                projectId: projectId
               })
               .catch(e => {
                 logToConsoleBackend({
@@ -226,7 +231,8 @@ export class RunQueriesController {
                 connection: connection,
                 queryId: query.query_id,
                 queryJobId: query.query_job_id,
-                querySql: query.sql
+                querySql: query.sql,
+                projectId: projectId
               })
               .catch(e => {
                 logToConsoleBackend({

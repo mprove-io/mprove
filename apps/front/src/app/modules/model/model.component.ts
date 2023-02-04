@@ -101,6 +101,8 @@ export class ModelComponent implements OnInit, OnDestroy {
       this.mconfig = x.mconfig;
       this.query = x.query;
 
+      // console.log(this.mconfig);
+
       this.filtersIsExpanded =
         this.filtersIsExpanded === false
           ? false

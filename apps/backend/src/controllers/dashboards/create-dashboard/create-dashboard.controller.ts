@@ -136,7 +136,8 @@ export class CreateDashboardController {
           user: user,
           member: member,
           dashboard: fromDashboardEntity,
-          bridge: bridge
+          bridge: bridge,
+          projectId: projectId
         }
       );
 

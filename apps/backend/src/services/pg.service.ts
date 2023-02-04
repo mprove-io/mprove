@@ -18,9 +18,10 @@ export class PgService {
     connection: entities.ConnectionEntity;
     queryJobId: string;
     queryId: string;
+    projectId: string;
     querySql: string;
   }) {
-    let { connection, queryJobId, queryId, querySql } = item;
+    let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let cn: pg.IConnectionParameters<pg.IClient> = {
       host: connection.host,
@@ -45,7 +46,8 @@ export class PgService {
         let q = await this.queriesRepository.findOne({
           where: {
             query_id: queryId,
-            query_job_id: queryJobId
+            query_job_id: queryJobId,
+            project_id: projectId
           }
         });
 
@@ -70,7 +72,8 @@ export class PgService {
         let q = await this.queriesRepository.findOne({
           where: {
             query_id: queryId,
-            query_job_id: queryJobId
+            query_job_id: queryJobId,
+            project_id: projectId
           }
         });
 

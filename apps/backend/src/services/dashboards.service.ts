@@ -46,12 +46,13 @@ export class DashboardsService {
   }
 
   async getDashboardXCheckAccess(item: {
+    projectId: string;
     dashboard: entities.DashboardEntity;
     member: entities.MemberEntity;
     user: entities.UserEntity;
     bridge: entities.BridgeEntity;
   }) {
-    let { dashboard, member, user, bridge } = item;
+    let { projectId, dashboard, member, user, bridge } = item;
 
     let isAccessGranted = helper.checkAccess({
       userAlias: user.alias,
@@ -81,7 +82,8 @@ export class DashboardsService {
         ? []
         : await this.queriesRepository.find({
             where: {
-              query_id: In(queryIds)
+              query_id: In(queryIds),
+              project_id: projectId
             }
           });
 

@@ -2,6 +2,7 @@ import { ChartColorSchemeEnum } from '~common/enums/chart/chart-color-scheme.enu
 import { ChartInterpolationEnum } from '~common/enums/chart/chart-interpolation.enum';
 import { ChartSchemeTypeEnum } from '~common/enums/chart/chart-scheme-type.enum';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { Chart } from '~common/interfaces/blockml/chart';
 
 export const CHART_DEFAULT_TYPE = ChartTypeEnum.Table;
 export const CHART_DEFAULT_TITLE = 'Title';
@@ -62,3 +63,74 @@ export const CHART_DEFAULT_FORMAT_NUMBER_VALUE: string = undefined;
 export const CHART_DEFAULT_FORMAT_AXIS_TICK: string = undefined;
 export const CHART_DEFAULT_FORMAT_Y_AXIS_TICK: string = undefined;
 export const CHART_DEFAULT_FORMAT_X_AXIS_TICK: string = undefined;
+
+export const DEFAULT_CHART: Chart = {
+  isValid: true,
+  type: CHART_DEFAULT_TYPE,
+  title: CHART_DEFAULT_TITLE,
+
+  xField: null,
+  yField: null,
+  yFields: [],
+  hideColumns: [],
+  multiField: null,
+  valueField: null,
+  previousValueField: null,
+
+  interpolation: CHART_DEFAULT_INTERPOLATION,
+  colorScheme: CHART_DEFAULT_COLOR_SCHEME,
+  schemeType: CHART_DEFAULT_SCHEME_TYPE,
+
+  cardColor: CHART_DEFAULT_CARD_COLOR,
+  emptyColor: CHART_DEFAULT_EMPTY_COLOR,
+  bandColor: CHART_DEFAULT_BAND_COLOR,
+  textColor: CHART_DEFAULT_TEXT_COLOR,
+
+  xAxisLabel: CHART_DEFAULT_X_AXIS_LABEL,
+  yAxisLabel: CHART_DEFAULT_Y_AXIS_LABEL,
+  legendTitle: CHART_DEFAULT_LEGEND_TITLE,
+  units: CHART_DEFAULT_UNITS,
+
+  pageSize: CHART_DEFAULT_PAGE_SIZE,
+  arcWidth: CHART_DEFAULT_ARC_WIDTH,
+  barPadding: CHART_DEFAULT_BAR_PADDING,
+  groupPadding: CHART_DEFAULT_GROUP_PADDING,
+  innerPadding: CHART_DEFAULT_INNER_PADDING,
+  rangeFillOpacity: CHART_DEFAULT_RANGE_FILL_OPACITY,
+  angleSpan: CHART_DEFAULT_ANGLE_SPAN,
+  startAngle: CHART_DEFAULT_START_ANGLE,
+  bigSegments: CHART_DEFAULT_BIG_SEGMENTS,
+  smallSegments: CHART_DEFAULT_SMALL_SEGMENTS,
+  min: CHART_DEFAULT_MIN,
+  max: CHART_DEFAULT_MAX,
+  yScaleMin: CHART_DEFAULT_Y_SCALE_MIN,
+  yScaleMax: CHART_DEFAULT_Y_SCALE_MAX,
+  xScaleMax: CHART_DEFAULT_X_SCALE_MAX,
+
+  timeline: CHART_DEFAULT_TIMELINE,
+  showAxis: CHART_DEFAULT_SHOW_AXIS,
+
+  labels: CHART_DEFAULT_LABELS,
+  showDataLabel: CHART_DEFAULT_SHOW_DATA_LABEL,
+  format: CHART_DEFAULT_FORMAT,
+  autoScale: CHART_DEFAULT_AUTO_SCALE,
+  legend: CHART_DEFAULT_LEGEND,
+  doughnut: CHART_DEFAULT_DOUGHNUT,
+  explodeSlices: CHART_DEFAULT_EXPLODE_SLICES,
+  xAxis: CHART_DEFAULT_X_AXIS,
+  yAxis: CHART_DEFAULT_Y_AXIS,
+  showXAxisLabel: CHART_DEFAULT_SHOW_X_AXIS_LABEL,
+  showYAxisLabel: CHART_DEFAULT_SHOW_Y_AXIS_LABEL,
+  roundDomains: CHART_DEFAULT_ROUND_DOMAINS,
+  showGridLines: CHART_DEFAULT_SHOW_GRID_LINES,
+  roundEdges: CHART_DEFAULT_ROUND_EDGES,
+  tooltipDisabled: CHART_DEFAULT_TOOLTIP_DISABLED,
+  gradient: CHART_DEFAULT_GRADIENT,
+  animations: CHART_DEFAULT_ANIMATIONS,
+
+  formatNumberDataLabel: CHART_DEFAULT_FORMAT_NUMBER_DATA_LABEL,
+  formatNumberValue: CHART_DEFAULT_FORMAT_NUMBER_VALUE,
+  formatNumberAxisTick: CHART_DEFAULT_FORMAT_AXIS_TICK,
+  formatNumberYAxisTick: CHART_DEFAULT_FORMAT_Y_AXIS_TICK,
+  formatNumberXAxisTick: CHART_DEFAULT_FORMAT_X_AXIS_TICK
+};

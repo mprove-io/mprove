@@ -100,7 +100,8 @@ export class CreateTempDashboardController {
       user: user,
       member: member,
       dashboard: fromDashboardEntity,
-      bridge: bridge
+      bridge: bridge,
+      projectId: projectId
     });
 
     let zReports: common.ReportX[] = [];

@@ -139,7 +139,8 @@ export class GetQueryController {
     }
 
     let query = await this.queriesService.getQueryCheckExists({
-      queryId: queryId
+      queryId: queryId,
+      projectId: projectId
     });
 
     let payload: apiToBackend.ToBackendGetQueryResponsePayload = {

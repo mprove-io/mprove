@@ -136,7 +136,8 @@ export class CreateTempMconfigAndQueryController {
 
     let query = await this.queriesRepository.findOne({
       where: {
-        query_id: newQuery.queryId
+        query_id: newQuery.queryId,
+        project_id: newQuery.projectId
       }
     });
 

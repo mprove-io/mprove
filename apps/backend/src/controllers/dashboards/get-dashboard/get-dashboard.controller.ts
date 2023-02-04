@@ -73,7 +73,8 @@ export class GetDashboardController {
       user: user,
       member: userMember,
       dashboard: dashboard,
-      bridge: bridge
+      bridge: bridge,
+      projectId: projectId
     });
 
     let struct = await this.structsService.getStructCheckExists({

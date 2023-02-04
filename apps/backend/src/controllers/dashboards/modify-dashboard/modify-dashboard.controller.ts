@@ -139,7 +139,8 @@ export class ModifyDashboardController {
       user: user,
       member: member,
       dashboard: fromDashboardEntity,
-      bridge: bridge
+      bridge: bridge,
+      projectId: projectId
     });
 
     let toDashboardEntity =
@@ -162,7 +163,8 @@ export class ModifyDashboardController {
     //   user: user,
     //   member: member,
     //   dashboard: toDashboardEntity,
-    //   bridge: bridge
+    //   bridge: bridge,
+    //   projectId: projectId
     // });
 
     let dashboardFileText: string;

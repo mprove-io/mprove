@@ -23,8 +23,9 @@ export class SnowFlakeService {
     queryJobId: string;
     queryId: string;
     querySql: string;
+    projectId: string;
   }) {
-    let { connection, queryJobId, queryId, querySql } = item;
+    let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let options: snowflake.ConnectionOptions = {
       account: connection.account,
@@ -99,7 +100,8 @@ export class SnowFlakeService {
         let q = await this.queriesRepository.findOne({
           where: {
             query_id: queryId,
-            query_job_id: queryJobId
+            query_job_id: queryJobId,
+            project_id: projectId
           }
         });
 
@@ -125,7 +127,8 @@ export class SnowFlakeService {
         let q = await this.queriesRepository.findOne({
           where: {
             query_id: queryId,
-            query_job_id: queryJobId
+            query_job_id: queryJobId,
+            project_id: projectId
           }
         });
 
