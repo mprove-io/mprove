@@ -20,8 +20,8 @@ export class ToBackendEditDraftRepRequestPayload {
   repId: string;
 
   @ValidateNested()
-  @Type(() => common.Row)
-  rows: common.Row[];
+  @Type(() => common.RowChange)
+  rowChanges: common.RowChange[];
 
   @IsString()
   timezone: string;

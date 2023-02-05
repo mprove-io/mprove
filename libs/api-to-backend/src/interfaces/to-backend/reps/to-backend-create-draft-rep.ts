@@ -16,9 +16,15 @@ export class ToBackendCreateDraftRepRequestPayload {
   @IsString()
   envId: string;
 
+  @IsString()
+  fromRepId: string;
+
+  @IsBoolean()
+  fromDraft: boolean;
+
   @ValidateNested()
-  @Type(() => common.Row)
-  rows: common.Row[];
+  @Type(() => common.RowChange)
+  rowChanges: common.RowChange[];
 
   @IsString()
   timezone: string;

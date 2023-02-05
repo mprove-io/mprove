@@ -155,33 +155,23 @@ export class MetricsTreeComponent implements AfterViewInit {
   addMetricToRep(node: any) {
     let rep = this.repQuery.getValue();
 
-    let idxs = rep.rows.map(x => common.idxLetterToNumber(x.rowId));
-
-    let maxIdx = idxs.length > 0 ? Math.max(...idxs) : undefined;
-
-    let idxNum = common.isDefined(maxIdx) ? maxIdx + 1 : 0;
-
-    let newRow: common.Row = {
-      rowId: common.idxNumberToLetter(idxNum),
-      metricId: node.data.metric.metricId,
-      rqs: [],
-      mconfig: undefined,
-      query: undefined,
-      params: [],
-      formula: node.data.metric.formula,
-      records: []
+    let rowChange: common.RowChange = {
+      // rowId: common.idxNumberToLetter(idxNum),
+      metricId: node.data.metric.metricId
+      // params: [],
+      // formula: node.data.metric.formula
     };
-
-    let rows = [...rep.rows, newRow];
 
     if (rep.draft === true) {
       this.repService.editDraftRep({
         repId: rep.repId,
-        rows: rows
+        rowChanges: [rowChange]
       });
     } else {
       this.repService.navCreateDraftRep({
-        rows: rows
+        fromRepId: rep.repId,
+        fromDraft: rep.draft,
+        rowChanges: [rowChange]
       });
     }
   }

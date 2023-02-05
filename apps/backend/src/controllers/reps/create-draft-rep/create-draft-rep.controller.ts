@@ -13,6 +13,7 @@ import { DbService } from '~backend/services/db.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
+import { RepsService } from '~backend/services/reps.service';
 import { StructsService } from '~backend/services/structs.service';
 
 @UseGuards(ValidateRequestGuard)
@@ -22,6 +23,7 @@ export class CreateDraftRepController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private blockmlService: BlockmlService,
+    private repsService: RepsService,
     private dbService: DbService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
@@ -42,7 +44,9 @@ export class CreateDraftRepController {
       isRepoProd,
       branchId,
       envId,
-      rows,
+      fromRepId,
+      fromDraft,
+      rowChanges,
       timeSpec,
       timezone,
       timeRangeFraction
@@ -81,7 +85,61 @@ export class CreateDraftRepController {
       projectId: projectId
     });
 
+    let fromRep = await this.repsService.getRep({
+      projectId: projectId,
+      repId: fromRepId,
+      draft: fromDraft,
+      structId: bridge.struct_id,
+      userId: user.user_id
+    });
+
+    if (common.isUndefined(fromRep)) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_REP_NOT_FOUND
+      });
+    }
+
+    if (fromRep.draft === common.BoolEnum.FALSE) {
+      let isAccessGranted = helper.checkAccess({
+        userAlias: user.alias,
+        member: userMember,
+        entity: fromRep
+      });
+
+      if (isAccessGranted === false) {
+        throw new common.ServerError({
+          message: common.ErEnum.BACKEND_FORBIDDEN_REP
+        });
+      }
+    }
+
     let repId = common.makeId();
+
+    let rows: common.Row[] = fromRep.rows;
+
+    rowChanges
+      .filter(x => common.isUndefined(x.rowId))
+      .forEach(x => {
+        let idxs = rows.map(y => common.idxLetterToNumber(y.rowId));
+        let maxIdx = idxs.length > 0 ? Math.max(...idxs) : undefined;
+        let idxNum = common.isDefined(maxIdx) ? maxIdx + 1 : 0;
+
+        let newRow: common.Row = {
+          rowId: common.idxNumberToLetter(idxNum),
+          metricId: x.metricId,
+          params: x.params || [],
+          formula: x.formula,
+          rqs: [],
+          mconfig: undefined,
+          query: undefined,
+          records: []
+        };
+
+        rows.push(newRow);
+      });
+
+    // rowChanges
+    //   .filter(x => common.isDefined(x.rowId))
 
     let rep: entities.RepEntity = {
       project_id: projectId,

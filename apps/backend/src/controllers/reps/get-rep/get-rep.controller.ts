@@ -20,6 +20,7 @@ import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { RepsService } from '~backend/services/reps.service';
 import { StructsService } from '~backend/services/structs.service';
 
 @UseGuards(ValidateRequestGuard)
@@ -30,6 +31,7 @@ export class GetRepController {
     private docService: DocService,
     private projectsService: ProjectsService,
     private rabbitService: RabbitService,
+    private repsService: RepsService,
     private repsRepository: repositories.RepsRepository,
     private modelsRepository: repositories.ModelsRepository,
     private metricsRepository: repositories.MetricsRepository,
@@ -94,41 +96,13 @@ export class GetRepController {
       projectId: projectId
     });
 
-    let emptyRep: entities.RepEntity = {
-      project_id: projectId,
-      struct_id: undefined,
-      rep_id: repId,
-      creator_id: undefined,
-      draft: common.BoolEnum.FALSE,
-      file_path: undefined,
-      title: repId,
-      access_roles: [],
-      access_users: [],
-      rows: [],
-      draft_created_ts: undefined,
-      server_ts: undefined
-    };
-
-    let rep =
-      repId === common.EMPTY
-        ? emptyRep
-        : draft === true
-        ? await this.repsRepository.findOne({
-            where: {
-              rep_id: repId,
-              project_id: projectId,
-              draft: common.BoolEnum.TRUE,
-              struct_id: bridge.struct_id
-            }
-          })
-        : await this.repsRepository.findOne({
-            where: {
-              rep_id: repId,
-              project_id: projectId,
-              draft: common.BoolEnum.FALSE,
-              struct_id: bridge.struct_id
-            }
-          });
+    let rep = await this.repsService.getRep({
+      projectId: projectId,
+      repId: repId,
+      draft: draft,
+      structId: bridge.struct_id,
+      userId: user.user_id
+    });
 
     if (common.isUndefined(rep)) {
       throw new common.ServerError({

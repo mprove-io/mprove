@@ -2,7 +2,7 @@ import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
-import { repositories } from '~backend/barrels/repositories';
+import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -13,6 +13,7 @@ import { DbService } from '~backend/services/db.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
+import { RepsService } from '~backend/services/reps.service';
 import { StructsService } from '~backend/services/structs.service';
 
 @UseGuards(ValidateRequestGuard)
@@ -23,7 +24,7 @@ export class EditDraftRepController {
     private projectsService: ProjectsService,
     private blockmlService: BlockmlService,
     private dbService: DbService,
-    private repsRepository: repositories.RepsRepository,
+    private repsService: RepsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,
@@ -44,7 +45,7 @@ export class EditDraftRepController {
       branchId,
       envId,
       repId,
-      rows,
+      rowChanges,
       timeSpec,
       timezone,
       timeRangeFraction
@@ -83,17 +84,56 @@ export class EditDraftRepController {
       projectId: projectId
     });
 
-    let rep = await this.repsRepository.findOne({
-      where: {
-        project_id: projectId,
-        rep_id: repId,
-        draft: common.BoolEnum.TRUE,
-        creator_id: user.user_id,
-        struct_id: bridge.struct_id
-      }
+    let rep = await this.repsService.getRep({
+      projectId: projectId,
+      repId: repId,
+      draft: true,
+      structId: bridge.struct_id,
+      userId: user.user_id
     });
 
-    rep.rows = rows;
+    if (common.isUndefined(rep)) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_REP_NOT_FOUND
+      });
+    }
+
+    if (rep.draft === common.BoolEnum.FALSE) {
+      let isAccessGranted = helper.checkAccess({
+        userAlias: user.alias,
+        member: userMember,
+        entity: rep
+      });
+
+      if (isAccessGranted === false) {
+        throw new common.ServerError({
+          message: common.ErEnum.BACKEND_FORBIDDEN_REP
+        });
+      }
+    }
+
+    let rows: common.Row[] = rep.rows;
+
+    rowChanges
+      .filter(x => common.isUndefined(x.rowId))
+      .forEach(x => {
+        let idxs = rows.map(y => common.idxLetterToNumber(y.rowId));
+        let maxIdx = idxs.length > 0 ? Math.max(...idxs) : undefined;
+        let idxNum = common.isDefined(maxIdx) ? maxIdx + 1 : 0;
+
+        let newRow: common.Row = {
+          rowId: common.idxNumberToLetter(idxNum),
+          metricId: x.metricId,
+          params: x.params || [],
+          formula: x.formula,
+          rqs: [],
+          mconfig: undefined,
+          query: undefined,
+          records: []
+        };
+
+        rows.push(newRow);
+      });
 
     let { columns, isTimeColumnsLimitExceeded, timeColumnsLimit } =
       await this.blockmlService.getTimeColumns({
