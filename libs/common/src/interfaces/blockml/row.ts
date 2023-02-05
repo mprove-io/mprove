@@ -1,7 +1,8 @@
 import { Type } from 'class-transformer';
-import { IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsString, ValidateNested } from 'class-validator';
 import { Mconfig } from './mconfig';
 import { Query } from './query';
+import { Rq } from './rq';
 
 export class Row {
   @IsString()
@@ -10,15 +11,17 @@ export class Row {
   @IsString()
   metricId: string;
 
-  @IsOptional()
+  @ValidateNested()
+  @Type(() => Rq)
+  rqs: Rq[];
+
   @ValidateNested()
   @Type(() => Mconfig)
-  mconfig?: Mconfig;
+  mconfig: Mconfig;
 
-  @IsOptional()
   @ValidateNested()
   @Type(() => Query)
-  query?: Query;
+  query: Query;
 
   params: any[];
 

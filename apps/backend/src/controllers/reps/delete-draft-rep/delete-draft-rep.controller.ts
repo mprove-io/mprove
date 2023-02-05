@@ -24,7 +24,7 @@ export class DeleteDraftRepController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftRep)
-  async getModels(
+  async deleteDraftRep(
     @AttachUser() user: entities.UserEntity,
     @Req() request: any
   ) {

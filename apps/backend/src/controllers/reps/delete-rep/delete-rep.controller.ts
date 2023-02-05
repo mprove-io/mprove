@@ -39,7 +39,7 @@ export class DeleteRepController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRep)
-  async getModels(
+  async deleteRep(
     @AttachUser() user: entities.UserEntity,
     @Req() request: any
   ) {

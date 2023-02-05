@@ -29,7 +29,7 @@ export class GetMetricsController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMetrics)
-  async getModels(
+  async getMetrics(
     @AttachUser() user: entities.UserEntity,
     @Req() request: any
   ) {

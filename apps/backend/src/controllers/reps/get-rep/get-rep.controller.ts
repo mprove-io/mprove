@@ -34,6 +34,7 @@ export class GetRepController {
     private modelsRepository: repositories.ModelsRepository,
     private metricsRepository: repositories.MetricsRepository,
     private queriesRepository: repositories.QueriesRepository,
+    private mconfigsRepository: repositories.MconfigsRepository,
     private branchesService: BranchesService,
     private dbService: DbService,
     private bridgesService: BridgesService,
@@ -43,10 +44,7 @@ export class GetRepController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRep)
-  async getModels(
-    @AttachUser() user: entities.UserEntity,
-    @Req() request: any
-  ) {
+  async getRep(@AttachUser() user: entities.UserEntity, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetRepRequest = request.body;
 
     let { traceId } = reqValid.info;
@@ -193,116 +191,174 @@ export class GetRepController {
     let newQueries: common.Query[] = [];
     let newMconfigs: common.Mconfig[] = [];
 
+    let queryIds: string[] = [];
+    let mconfigIds: string[] = [];
+
     await forEachSeries(rep.rows, async x => {
-      let newMconfigId = common.makeId();
-      let newQueryId = common.makeId();
+      let rq = x.rqs.find(y => y.fractionBrick === timeRangeFraction.brick);
 
-      let metric: MetricEntity = metrics.find(m => m.metric_id === x.metricId);
-      let model = models.find(ml => ml.model_id === metric.model_id);
+      if (common.isDefined(rq)) {
+        queryIds.push(rq.queryId);
+        mconfigIds.push(rq.mconfigId);
+      } else {
+        let newMconfigId = common.makeId();
+        let newQueryId = common.makeId();
 
-      let timeSpecWord =
-        timeSpec === common.TimeSpecEnum.Years
-          ? 'year'
-          : timeSpec === common.TimeSpecEnum.Quarters
-          ? 'quarter'
-          : timeSpec === common.TimeSpecEnum.Months
-          ? 'month'
-          : timeSpec === common.TimeSpecEnum.Weeks
-          ? 'week'
-          : timeSpec === common.TimeSpecEnum.Days
-          ? 'date'
-          : timeSpec === common.TimeSpecEnum.Hours
-          ? 'hour'
-          : timeSpec === common.TimeSpecEnum.Minutes
-          ? 'minute'
-          : undefined;
+        let metric: MetricEntity = metrics.find(
+          m => m.metric_id === x.metricId
+        );
+        let model = models.find(ml => ml.model_id === metric.model_id);
 
-      let timeFieldIdSpec = `${metric.timefield_id}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
+        let timeSpecWord =
+          timeSpec === common.TimeSpecEnum.Years
+            ? 'year'
+            : timeSpec === common.TimeSpecEnum.Quarters
+            ? 'quarter'
+            : timeSpec === common.TimeSpecEnum.Months
+            ? 'month'
+            : timeSpec === common.TimeSpecEnum.Weeks
+            ? 'week'
+            : timeSpec === common.TimeSpecEnum.Days
+            ? 'date'
+            : timeSpec === common.TimeSpecEnum.Hours
+            ? 'hour'
+            : timeSpec === common.TimeSpecEnum.Minutes
+            ? 'minute'
+            : undefined;
 
-      let timeFilter: common.Filter = {
-        fieldId: timeFieldIdSpec,
-        fractions: [timeRangeFraction]
-      };
+        let timeFieldIdSpec = `${metric.timefield_id}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
-      let timeSorting: common.Sorting = {
-        desc: false,
-        fieldId: timeFieldIdSpec
-      };
-
-      let mconfig: common.Mconfig = {
-        structId: bridge.struct_id,
-        mconfigId: newMconfigId,
-        queryId: newQueryId,
-        modelId: model.model_id,
-        modelLabel: model.label,
-        select: [timeFieldIdSpec, metric.field_id],
-        sortings: [timeSorting],
-        sorts: timeFieldIdSpec,
-        timezone: timezone,
-        limit: timeColumnsLimit,
-        filters: [timeFilter],
-        chart: common.DEFAULT_CHART,
-        temp: true,
-        serverTs: 1
-        // fields: [],
-        // extendedFilters: [],
-      };
-
-      let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
-        {
-          info: {
-            name: apiToBlockml.ToBlockmlRequestInfoNameEnum
-              .ToBlockmlProcessQuery,
-            traceId: traceId
-          },
-          payload: {
-            orgId: project.org_id,
-            projectId: project.project_id,
-            weekStart: struct.week_start,
-            udfsDict: struct.udfs_dict,
-            mconfig: mconfig,
-            modelContent: model.content,
-            envId: envId
-          }
+        let timeFilter: common.Filter = {
+          fieldId: timeFieldIdSpec,
+          fractions: [timeRangeFraction]
         };
 
-      let blockmlProcessQueryResponse =
-        await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlProcessQueryResponse>(
+        let timeSorting: common.Sorting = {
+          desc: false,
+          fieldId: timeFieldIdSpec
+        };
+
+        let mconfig: common.Mconfig = {
+          structId: bridge.struct_id,
+          mconfigId: newMconfigId,
+          queryId: newQueryId,
+          modelId: model.model_id,
+          modelLabel: model.label,
+          select: [timeFieldIdSpec, metric.field_id],
+          sortings: [timeSorting],
+          sorts: timeFieldIdSpec,
+          timezone: timezone,
+          limit: timeColumnsLimit,
+          filters: [timeFilter],
+          chart: common.DEFAULT_CHART,
+          temp: true,
+          serverTs: 1
+          // fields: [],
+          // extendedFilters: [],
+        };
+
+        let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
           {
-            routingKey: common.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
-            message: toBlockmlProcessQueryRequest,
-            checkIsOk: true
-          }
-        );
+            info: {
+              name: apiToBlockml.ToBlockmlRequestInfoNameEnum
+                .ToBlockmlProcessQuery,
+              traceId: traceId
+            },
+            payload: {
+              orgId: project.org_id,
+              projectId: project.project_id,
+              weekStart: struct.week_start,
+              udfsDict: struct.udfs_dict,
+              mconfig: mconfig,
+              modelContent: model.content,
+              envId: envId
+            }
+          };
 
-      let newMconfig = blockmlProcessQueryResponse.payload.mconfig;
-      let newQuery = blockmlProcessQueryResponse.payload.query;
+        let blockmlProcessQueryResponse =
+          await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlProcessQueryResponse>(
+            {
+              routingKey:
+                common.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
+              message: toBlockmlProcessQueryRequest,
+              checkIsOk: true
+            }
+          );
 
-      x.mconfig = newMconfig;
-      x.query = newQuery;
+        let newMconfig = blockmlProcessQueryResponse.payload.mconfig;
+        let newQuery = blockmlProcessQueryResponse.payload.query;
 
-      newMconfigs.push(newMconfig);
-      newQueries.push(newQuery);
-    });
+        newMconfig.queryId = newQueryId;
+        newQuery.queryId = newQueryId;
 
-    let newQueriesIds = newQueries.map(q => q.queryId);
-    let dbQueries = await this.queriesRepository.find({
-      where: {
-        query_id: In(newQueriesIds),
-        project_id: projectId
+        let newRq: common.Rq = {
+          fractionBrick: timeRangeFraction.brick,
+          mconfigId: newMconfig.mconfigId,
+          queryId: newMconfig.queryId
+        };
+
+        x.rqs.push(newRq);
+
+        newMconfigs.push(newMconfig);
+        newQueries.push(newQuery);
       }
     });
-    let dbQueriesIds = dbQueries.map(x => x.query_id);
 
-    let newQs = newQueries.filter(x => dbQueriesIds.indexOf(x.queryId) < 0);
+    let mconfigs: entities.MconfigEntity[] = [];
+    if (mconfigIds.length > 0) {
+      mconfigs = await this.mconfigsRepository.find({
+        where: {
+          mconfig_id: In(mconfigIds),
+          struct_id: bridge.struct_id
+        }
+      });
+    }
+    let mconfigsApi = mconfigs.map(x =>
+      wrapper.wrapToApiMconfig({
+        mconfig: x,
+        modelFields: models.find(m => m.model_id === x.model_id).fields
+      })
+    );
 
-    let records = await this.dbService.writeRecords({
-      modify: false,
-      records: {
-        mconfigs: newMconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
-        queries: newQs.map(x => wrapper.wrapToEntityQuery(x))
-      }
+    let queries: entities.QueryEntity[] = [];
+    if (queryIds.length > 0) {
+      queries = await this.queriesRepository.find({
+        where: {
+          query_id: In(queryIds),
+          project_id: projectId
+        }
+      });
+    }
+    let queriesApi = queries.map(x => wrapper.wrapToApiQuery(x));
+
+    rep.rows.forEach(x => {
+      let rq = x.rqs.find(y => y.fractionBrick === timeRangeFraction.brick);
+
+      x.mconfig = [...mconfigsApi, ...newMconfigs].find(
+        y => y.mconfigId === rq.mconfigId
+      );
+
+      x.query = queriesApi.find(y => y.queryId === rq.queryId);
     });
+
+    if (newMconfigs.length > 0 || newQueries.length > 0) {
+      let records = await this.dbService.writeRecords({
+        modify: false,
+        records: {
+          mconfigs: newMconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
+          queries: newQueries.map(x => wrapper.wrapToEntityQuery(x))
+        }
+      });
+    }
+
+    if (rep.rep_id !== common.EMPTY) {
+      let records = await this.dbService.writeRecords({
+        modify: true,
+        records: {
+          reps: [rep]
+        }
+      });
+    }
 
     let apiMember = wrapper.wrapToApiMember(userMember);
 

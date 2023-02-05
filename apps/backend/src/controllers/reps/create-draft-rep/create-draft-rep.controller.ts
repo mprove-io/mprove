@@ -30,7 +30,7 @@ export class CreateDraftRepController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDraftRep)
-  async getModels(
+  async createDraftRep(
     @AttachUser() user: entities.UserEntity,
     @Req() request: any
   ) {

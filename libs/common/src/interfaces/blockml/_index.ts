@@ -23,6 +23,7 @@ export * from './query';
 export * from './rep';
 export * from './report';
 export * from './row';
+export * from './rq';
 export * from './sorting';
 export * from './time-data';
 export * from './udfs-dict';

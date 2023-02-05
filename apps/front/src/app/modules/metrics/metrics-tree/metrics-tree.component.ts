@@ -164,6 +164,9 @@ export class MetricsTreeComponent implements AfterViewInit {
     let newRow: common.Row = {
       rowId: common.idxNumberToLetter(idxNum),
       metricId: node.data.metric.metricId,
+      rqs: [],
+      mconfig: undefined,
+      query: undefined,
       params: [],
       formula: node.data.metric.formula,
       records: []

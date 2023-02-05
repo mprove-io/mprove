@@ -28,6 +28,9 @@ export function wrapReps(item: {
           rowId: y.id,
           metricId: y.metric,
           formula: y.formula,
+          rqs: [],
+          query: undefined,
+          mconfig: undefined,
           params: y.params,
           records: []
         };

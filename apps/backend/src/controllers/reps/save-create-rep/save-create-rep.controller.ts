@@ -41,7 +41,7 @@ export class SaveCreateRepController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveCreateRep)
-  async getModels(
+  async saveCreateRep(
     @AttachUser() user: entities.UserEntity,
     @Req() request: any
   ) {

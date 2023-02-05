@@ -43,7 +43,7 @@ export class SaveModifyRepController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveModifyRep)
-  async getModels(
+  async saveModifyRep(
     @AttachUser() user: entities.UserEntity,
     @Req() request: any
   ) {

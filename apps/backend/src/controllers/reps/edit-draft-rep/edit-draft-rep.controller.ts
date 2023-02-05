@@ -31,7 +31,7 @@ export class EditDraftRepController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditDraftRep)
-  async getModels(
+  async editDraftRep(
     @AttachUser() user: entities.UserEntity,
     @Req() request: any
   ) {
