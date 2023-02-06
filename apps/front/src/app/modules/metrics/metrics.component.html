@@ -90,6 +90,38 @@
 
           <div class="flex-grow"></div>
 
+          <button
+            type="button"
+            data-cy="metricsRunButton"
+            class="ml-5 mr-9 flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
+            [ngClass]="{
+              'bg-blue3': rep?.rows.length > 0,
+              'cursor-default':
+                rep?.rows.length === 0 || isRunButtonPressed === true,
+              'bg-gray-400': rep?.rows.length === 0
+            }"
+            (click)="run()"
+            [disabled]="rep?.rows.length === 0 || isRunButtonPressed === true"
+          >
+            <div *ngIf="isRunButtonPressed === false">Run</div>
+            <div
+              *ngIf="isRunButtonPressed === true"
+              class="relative flex h-9 w-9 flex-shrink-0"
+            >
+              <ngx-spinner
+                [name]="metricsRunButtonSpinnerName"
+                color="rgba(255, 255, 255, 1)"
+                bdColor="rgba(0, 0, 0, 0)"
+                size="default"
+                type="ball-clip-rotate"
+                [fullScreen]="false"
+                [disableAnimation]="true"
+                [zIndex]="99998"
+              >
+              </ngx-spinner>
+            </div>
+          </button>
+
           <div class="text-gray1 flex flex-row items-center text-base"> </div>
         </div>
       </div>

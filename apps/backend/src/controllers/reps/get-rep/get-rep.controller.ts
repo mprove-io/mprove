@@ -31,7 +31,6 @@ export class GetRepController {
     private projectsService: ProjectsService,
     private rabbitService: RabbitService,
     private repsService: RepsService,
-    private repsRepository: repositories.RepsRepository,
     private modelsRepository: repositories.ModelsRepository,
     private metricsRepository: repositories.MetricsRepository,
     private queriesRepository: repositories.QueriesRepository,
@@ -250,22 +249,6 @@ export class GetRepController {
       }
     });
 
-    let mconfigs: entities.MconfigEntity[] = [];
-    if (mconfigIds.length > 0) {
-      mconfigs = await this.mconfigsRepository.find({
-        where: {
-          mconfig_id: In(mconfigIds),
-          struct_id: bridge.struct_id
-        }
-      });
-    }
-    let mconfigsApi = mconfigs.map(x =>
-      wrapper.wrapToApiMconfig({
-        mconfig: x,
-        modelFields: models.find(m => m.model_id === x.model_id).fields
-      })
-    );
-
     let queries: entities.QueryEntity[] = [];
     if (queryIds.length > 0) {
       queries = await this.queriesRepository.find({
@@ -275,17 +258,24 @@ export class GetRepController {
         }
       });
     }
+
+    let mconfigs: entities.MconfigEntity[] = [];
+    if (mconfigIds.length > 0) {
+      mconfigs = await this.mconfigsRepository.find({
+        where: {
+          mconfig_id: In(mconfigIds),
+          struct_id: bridge.struct_id
+        }
+      });
+    }
+
     let queriesApi = queries.map(x => wrapper.wrapToApiQuery(x));
-
-    rep.rows.forEach(x => {
-      let rq = x.rqs.find(y => y.fractionBrick === timeRangeFraction.brick);
-
-      x.mconfig = [...mconfigsApi, ...newMconfigs].find(
-        y => y.mconfigId === rq.mconfigId
-      );
-
-      x.query = queriesApi.find(y => y.queryId === rq.queryId);
-    });
+    let mconfigsApi = mconfigs.map(x =>
+      wrapper.wrapToApiMconfig({
+        mconfig: x,
+        modelFields: models.find(m => m.model_id === x.model_id).fields
+      })
+    );
 
     if (newMconfigs.length > 0 || newQueries.length > 0) {
       let records = await this.dbService.writeRecords({
@@ -295,15 +285,15 @@ export class GetRepController {
           queries: newQueries.map(x => wrapper.wrapToEntityQuery(x))
         }
       });
-    }
 
-    if (rep.rep_id !== common.EMPTY) {
-      let records = await this.dbService.writeRecords({
-        modify: true,
-        records: {
-          reps: [rep]
-        }
-      });
+      if (rep.rep_id !== common.EMPTY) {
+        let recs = await this.dbService.writeRecords({
+          modify: true,
+          records: {
+            reps: [rep]
+          }
+        });
+      }
     }
 
     let apiMember = wrapper.wrapToApiMember(userMember);
@@ -318,6 +308,18 @@ export class GetRepController {
       timeColumnsLimit: timeColumnsLimit,
       timeColumnsLength: columns.length,
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded
+    });
+
+    repApi.rows.forEach(x => {
+      let rq = x.rqs.find(y => y.fractionBrick === timeRangeFraction.brick);
+
+      x.mconfig = [...mconfigsApi, ...newMconfigs].find(
+        y => y.mconfigId === rq.mconfigId
+      );
+
+      x.query = [...queriesApi, ...newQueries].find(
+        y => y.queryId === rq.queryId
+      );
     });
 
     if (withData === true) {

@@ -56,7 +56,7 @@ export function wrapToApiRep(item: {
     timezone: timezone,
     timeSpec: timeSpec,
     timeRangeFraction: timeRangeFraction,
-    rows: rep.rows,
+    rows: common.makeCopy(rep.rows),
     columns: columns,
     timeColumnsLimit: timeColumnsLimit,
     timeColumnsLength: timeColumnsLength,
