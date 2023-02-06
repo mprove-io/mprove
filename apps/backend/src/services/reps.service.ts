@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
+import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 
 @Injectable()
@@ -39,9 +40,21 @@ export class RepsService {
     repId: string;
     draft: boolean;
     structId: string;
-    userId: string;
+    user: entities.UserEntity;
+    userMember: entities.MemberEntity;
+    checkExist: boolean;
+    checkAccess: boolean;
   }) {
-    let { projectId, repId, draft, structId, userId } = item;
+    let {
+      projectId,
+      repId,
+      draft,
+      structId,
+      checkExist,
+      checkAccess,
+      user,
+      userMember
+    } = item;
 
     let emptyRep: entities.RepEntity = {
       project_id: projectId,
@@ -68,7 +81,7 @@ export class RepsService {
               project_id: projectId,
               draft: common.BoolEnum.TRUE,
               struct_id: structId,
-              creator_id: userId
+              creator_id: user.user_id
             }
           })
         : await this.repsRepository.findOne({
@@ -79,6 +92,36 @@ export class RepsService {
               struct_id: structId
             }
           });
+
+    if (checkExist === true && common.isUndefined(rep)) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_REP_NOT_FOUND
+      });
+    }
+
+    if (
+      repId !== common.EMPTY &&
+      rep.draft === common.BoolEnum.TRUE &&
+      rep.creator_id !== user.user_id
+    ) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_DRAFT_REP_CREATOR_MISMATCH
+      });
+    }
+
+    if (checkAccess === true && rep.draft === common.BoolEnum.FALSE) {
+      let isAccessGranted = helper.checkAccess({
+        userAlias: user.alias,
+        member: userMember,
+        entity: rep
+      });
+
+      if (isAccessGranted === false) {
+        throw new common.ServerError({
+          message: common.ErEnum.BACKEND_FORBIDDEN_REP
+        });
+      }
+    }
 
     return rep;
   }

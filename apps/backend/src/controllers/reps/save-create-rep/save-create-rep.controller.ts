@@ -20,6 +20,7 @@ import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { RepsService } from '~backend/services/reps.service';
 import { StructsService } from '~backend/services/structs.service';
 
 @UseGuards(ValidateRequestGuard)
@@ -32,6 +33,7 @@ export class SaveCreateRepController {
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
+    private repsService: RepsService,
     private dbService: DbService,
     private repsRepository: repositories.RepsRepository,
     private bridgesRepository: repositories.BridgesRepository,
@@ -59,11 +61,11 @@ export class SaveCreateRepController {
       isRepoProd,
       branchId,
       envId,
-      repId,
-      draftRepId,
+      newRepId,
+      fromRepId,
+      fromDraft,
       accessRoles,
       accessUsers,
-      rows,
       title,
       timeSpec,
       timeRangeFraction,
@@ -118,12 +120,23 @@ export class SaveCreateRepController {
       });
     }
 
+    let fromRep = await this.repsService.getRep({
+      projectId: projectId,
+      repId: fromRepId,
+      draft: fromDraft,
+      structId: bridge.struct_id,
+      checkExist: true,
+      checkAccess: true,
+      user: user,
+      userMember: userMember
+    });
+
     let repFileText = makeRepFileText({
-      repId: repId,
+      repId: newRepId,
       accessRoles: accessRoles,
       accessUsers: accessUsers,
       title: title,
-      rows: rows
+      rows: fromRep.rows
     });
 
     let mdir = currentStruct.mprove_dir_value;
@@ -143,7 +156,7 @@ export class SaveCreateRepController {
         ? `${projectId}/${common.MPROVE_USERS_FOLDER}/${user.alias}`
         : `${projectId}/${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}`;
 
-    let fileName = `${repId}${common.FileExtensionEnum.Rep}`;
+    let fileName = `${newRepId}${common.FileExtensionEnum.Rep}`;
 
     let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
       info: {
@@ -202,7 +215,7 @@ export class SaveCreateRepController {
       envId: envId
     });
 
-    let rep = reps.find(x => x.repId === repId);
+    let rep = reps.find(x => x.repId === newRepId);
 
     await this.dbService.writeRecords({
       modify: true,
@@ -212,12 +225,14 @@ export class SaveCreateRepController {
       }
     });
 
-    await this.repsRepository.delete({
-      project_id: projectId,
-      rep_id: draftRepId,
-      draft: common.BoolEnum.TRUE,
-      creator_id: user.user_id
-    });
+    if (fromDraft === true) {
+      await this.repsRepository.delete({
+        project_id: projectId,
+        rep_id: fromRepId,
+        draft: common.BoolEnum.TRUE,
+        creator_id: user.user_id
+      });
+    }
 
     if (common.isUndefined(rep)) {
       let fileId = `${parentNodeId}/${fileName}`;

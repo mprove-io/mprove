@@ -61,11 +61,11 @@ export class SaveModifyRepController {
       isRepoProd,
       branchId,
       envId,
-      repId,
-      draftRepId,
+      modRepId,
+      fromRepId,
+      fromDraft,
       accessRoles,
       accessUsers,
-      rows,
       title,
       timeSpec,
       timeRangeFraction,
@@ -120,9 +120,9 @@ export class SaveModifyRepController {
       });
     }
 
-    let existingRep = await this.repsService.getRepCheckExists({
+    let existingModRep = await this.repsService.getRepCheckExists({
       structId: bridge.struct_id,
-      repId: repId
+      repId: modRepId
     });
 
     if (
@@ -131,14 +131,25 @@ export class SaveModifyRepController {
     ) {
       this.repsService.checkRepPath({
         userAlias: user.alias,
-        filePath: existingRep.file_path
+        filePath: existingModRep.file_path
       });
     }
 
+    let fromRep = await this.repsService.getRep({
+      projectId: projectId,
+      repId: fromRepId,
+      draft: fromDraft,
+      structId: bridge.struct_id,
+      checkExist: true,
+      checkAccess: true,
+      user: user,
+      userMember: userMember
+    });
+
     let repFileText = makeRepFileText({
-      repId: repId,
+      repId: modRepId,
       title: title,
-      rows: rows,
+      rows: fromRep.rows,
       accessRoles: accessRoles,
       accessUsers: accessUsers
     });
@@ -153,7 +164,7 @@ export class SaveModifyRepController {
         projectId: projectId,
         repoId: repoId,
         branch: branchId,
-        fileNodeId: existingRep.file_path,
+        fileNodeId: existingModRep.file_path,
         userAlias: user.alias,
         content: repFileText,
         remoteType: project.remote_type,
@@ -199,7 +210,7 @@ export class SaveModifyRepController {
       envId: envId
     });
 
-    let rep = reps.find(x => x.repId === repId);
+    let rep = reps.find(x => x.repId === modRepId);
 
     let records = await this.dbService.writeRecords({
       modify: true,
@@ -212,20 +223,22 @@ export class SaveModifyRepController {
       }
     });
 
-    await this.repsRepository.delete({
-      project_id: projectId,
-      rep_id: draftRepId,
-      draft: common.BoolEnum.TRUE,
-      creator_id: user.user_id
-    });
+    if (fromDraft === true) {
+      await this.repsRepository.delete({
+        project_id: projectId,
+        rep_id: fromRepId,
+        draft: common.BoolEnum.TRUE,
+        creator_id: user.user_id
+      });
+    }
 
     if (common.isUndefined(rep)) {
       await this.repsRepository.delete({
-        rep_id: repId,
+        rep_id: modRepId,
         struct_id: bridge.struct_id
       });
 
-      let fileIdAr = existingRep.file_path.split('/');
+      let fileIdAr = existingModRep.file_path.split('/');
       fileIdAr.shift();
       let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
 

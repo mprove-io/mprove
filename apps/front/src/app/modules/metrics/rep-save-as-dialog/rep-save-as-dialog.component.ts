@@ -74,7 +74,8 @@ export class RepSaveAsDialogComponent implements OnInit {
     })
   );
 
-  draftRepId: string;
+  fromRepId: string;
+  fromDraft: boolean;
 
   selectedRepId: string;
   selectedRepPath: string;
@@ -114,10 +115,8 @@ export class RepSaveAsDialogComponent implements OnInit {
   ngOnInit() {
     this.rep = this.ref.data.rep;
 
-    console.log(this.rep.rows);
-
-    this.draftRepId = this.ref.data.rep.repId;
-
+    this.fromRepId = this.ref.data.rep.repId;
+    this.fromDraft = this.ref.data.rep.draft;
     this.newRepId = this.ref.data.rep.repId;
 
     setValueAndMark({
@@ -193,8 +192,9 @@ export class RepSaveAsDialogComponent implements OnInit {
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
-      repId: this.newRepId,
-      draftRepId: this.draftRepId,
+      newRepId: this.newRepId,
+      fromRepId: this.fromRepId,
+      fromDraft: this.fromDraft,
       title: newTitle,
       accessRoles: common.isDefinedAndNotEmpty(roles?.trim())
         ? roles.split(',')
@@ -202,7 +202,6 @@ export class RepSaveAsDialogComponent implements OnInit {
       accessUsers: common.isDefinedAndNotEmpty(users?.trim())
         ? users.split(',')
         : [],
-      rows: this.rep.rows,
       timezone: timeQuery.timezone,
       timeSpec: timeQuery.timeSpec,
       timeRangeFraction: timeQuery.timeRangeFraction
@@ -224,7 +223,7 @@ export class RepSaveAsDialogComponent implements OnInit {
             let reps = this.repsQuery.getValue().reps;
 
             let draftRepIndex = reps.findIndex(
-              x => x.repId === this.draftRepId && x.draft === true
+              x => x.repId === this.fromRepId && x.draft === true
             );
 
             let newReps = [
@@ -273,8 +272,9 @@ export class RepSaveAsDialogComponent implements OnInit {
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
-      repId: this.selectedRepId,
-      draftRepId: this.draftRepId,
+      modRepId: this.selectedRepId,
+      fromRepId: this.fromRepId,
+      fromDraft: this.fromDraft,
       title: newTitle,
       accessRoles: common.isDefinedAndNotEmpty(roles?.trim())
         ? roles.split(',').map(x => x.trim())
@@ -282,7 +282,6 @@ export class RepSaveAsDialogComponent implements OnInit {
       accessUsers: common.isDefinedAndNotEmpty(users?.trim())
         ? users.split(',').map(x => x.trim())
         : [],
-      rows: this.rep.rows,
       timezone: timeQuery.timezone,
       timeSpec: timeQuery.timeSpec,
       timeRangeFraction: timeQuery.timeRangeFraction
@@ -302,7 +301,7 @@ export class RepSaveAsDialogComponent implements OnInit {
             let reps = this.repsQuery.getValue().reps;
 
             let draftRepIndex = reps.findIndex(
-              x => x.repId === this.draftRepId && x.draft === true
+              x => x.repId === this.fromRepId && x.draft === true
             );
 
             let newRepsA = [

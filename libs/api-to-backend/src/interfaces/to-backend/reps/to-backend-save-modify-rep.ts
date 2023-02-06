@@ -17,10 +17,13 @@ export class ToBackendSaveModifyRepRequestPayload {
   envId: string;
 
   @IsString()
-  draftRepId: string;
+  fromRepId: string;
+
+  @IsBoolean()
+  fromDraft: boolean;
 
   @IsString()
-  repId: string;
+  modRepId: string;
 
   @IsString()
   title: string;
@@ -30,10 +33,6 @@ export class ToBackendSaveModifyRepRequestPayload {
 
   @IsString({ each: true })
   accessUsers: string[];
-
-  @ValidateNested()
-  @Type(() => common.Row)
-  rows: common.Row[];
 
   @IsString()
   timezone: string;

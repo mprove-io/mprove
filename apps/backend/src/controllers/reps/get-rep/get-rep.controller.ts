@@ -5,7 +5,6 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
-import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
@@ -101,38 +100,11 @@ export class GetRepController {
       repId: repId,
       draft: draft,
       structId: bridge.struct_id,
-      userId: user.user_id
+      checkExist: true,
+      checkAccess: true,
+      user: user,
+      userMember: userMember
     });
-
-    if (common.isUndefined(rep)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_REP_NOT_FOUND
-      });
-    }
-
-    if (
-      repId !== common.EMPTY &&
-      rep.draft === common.BoolEnum.TRUE &&
-      rep.creator_id !== user.user_id
-    ) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_DRAFT_REP_CREATOR_MISMATCH
-      });
-    }
-
-    if (rep.draft === common.BoolEnum.FALSE) {
-      let isAccessGranted = helper.checkAccess({
-        userAlias: user.alias,
-        member: userMember,
-        entity: rep
-      });
-
-      if (isAccessGranted === false) {
-        throw new common.ServerError({
-          message: common.ErEnum.BACKEND_FORBIDDEN_REP
-        });
-      }
-    }
 
     let { columns, isTimeColumnsLimitExceeded, timeColumnsLimit } =
       await this.blockmlService.getTimeColumns({

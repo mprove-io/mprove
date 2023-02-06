@@ -90,28 +90,11 @@ export class CreateDraftRepController {
       repId: fromRepId,
       draft: fromDraft,
       structId: bridge.struct_id,
-      userId: user.user_id
+      checkExist: true,
+      checkAccess: true,
+      user: user,
+      userMember: userMember
     });
-
-    if (common.isUndefined(fromRep)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_REP_NOT_FOUND
-      });
-    }
-
-    if (fromRep.draft === common.BoolEnum.FALSE) {
-      let isAccessGranted = helper.checkAccess({
-        userAlias: user.alias,
-        member: userMember,
-        entity: fromRep
-      });
-
-      if (isAccessGranted === false) {
-        throw new common.ServerError({
-          message: common.ErEnum.BACKEND_FORBIDDEN_REP
-        });
-      }
-    }
 
     let repId = common.makeId();
 
