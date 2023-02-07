@@ -1,0 +1,16 @@
+<div class="flex flex-row">
+  <div class="relative h-5 w-9 flex-shrink-0">
+    <ngx-spinner
+      [name]="spinnerName"
+      color="rgba(54, 94, 224, 100)"
+      bdColor="rgba(0, 0, 0, 0)"
+      size="small"
+      type="ball-pulse"
+      [fullScreen]="false"
+      [disableAnimation]="true"
+      [zIndex]="99998"
+    >
+    </ngx-spinner>
+  </div>
+  <div>{{ params.value }}</div>
+</div>

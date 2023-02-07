@@ -14,13 +14,17 @@ import { MetricsTreeComponent } from './metrics-tree/metrics-tree.component';
 import { MetricsComponent } from './metrics.component';
 import { RepOptionsComponent } from './rep-options/rep-options.component';
 import { RepComponent } from './rep/rep.component';
+import { StatusHeaderComponent } from './status-header/status-header.component';
+import { StatusRendererComponent } from './status-renderer/status-renderer.component';
 
 @NgModule({
   declarations: [
     MetricsComponent,
     MetricsTreeComponent,
     RepComponent,
-    RepOptionsComponent
+    RepOptionsComponent,
+    StatusRendererComponent,
+    StatusHeaderComponent
   ],
   imports: [
     CommonModule,

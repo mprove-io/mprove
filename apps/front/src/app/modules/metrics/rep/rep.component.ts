@@ -6,6 +6,8 @@ import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { RepQuery } from '~front/app/queries/rep.query';
 import { TimeQuery } from '~front/app/queries/time.query';
 import { common } from '~front/barrels/common';
+import { StatusHeaderComponent } from '../status-header/status-header.component';
+import { StatusRendererComponent } from '../status-renderer/status-renderer.component';
 
 @Component({
   selector: 'm-rep',
@@ -32,15 +34,30 @@ export class RepComponent {
       minWidth: 90,
       maxWidth: 90
     },
+
     {
-      field: 'opt',
-      suppressMovable: false,
+      field: 'metric',
+      // suppressMovable: false,
+      pinned: 'left',
+      width: 600
+    },
+    {
+      field: 'parameters',
+      // suppressMovable: false,
+      pinned: 'left',
+      width: 200
+    },
+    {
+      field: 'status',
       pinned: 'left',
       resizable: false,
-      width: 150
-    },
-    { field: 'metric', suppressMovable: false, pinned: 'left', width: 600 },
-    { field: 'parameters', suppressMovable: false, pinned: 'left', width: 200 }
+      width: 70,
+      cellRenderer: StatusRendererComponent,
+      headerComponent: StatusHeaderComponent
+      // cellRendererParams: {
+      //    color: 'guinnessBlack'
+      // }
+    }
   ];
 
   columnDefs: ColDef[] = [
@@ -74,7 +91,7 @@ export class RepComponent {
     map(x => {
       let metrics = this.metricsQuery.getValue();
 
-      let data = x.rows.map(row => {
+      let data = x.rows.map((row: common.Row) => {
         // console.log(row);
         // console.log(metrics.metrics);
 
@@ -83,7 +100,8 @@ export class RepComponent {
         let dataRow: any = {
           idx: row.rowId,
           parameters: '',
-          metric: metric?.label || row.metricId
+          metric: metric?.label || row.metricId,
+          query: row.query
         };
 
         row.records.forEach(record => {
