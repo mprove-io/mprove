@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
+import { fromUnixTime, getYear } from 'date-fns';
 import { common } from '~backend/barrels/common';
 import { interfaces } from '~backend/barrels/interfaces';
 
@@ -8,8 +9,8 @@ import { interfaces } from '~backend/barrels/interfaces';
 export class DocService {
   constructor(private cs: ConfigService<interfaces.Config>) {}
 
-  async getData(item: { rep: common.RepX }) {
-    let { rep } = item;
+  async getData(item: { rep: common.RepX; timeSpec: common.TimeSpecEnum }) {
+    let { rep, timeSpec } = item;
 
     let sender = axios.create({ baseURL: 'http://grist:8484/' });
 
@@ -24,7 +25,7 @@ export class DocService {
 
     let createDoc = {
       // name: common.makeId()
-      name: rep.repId
+      name: `${rep.repId}-${rep.structId}`
     };
 
     let createDocResp = await sender.post(
@@ -78,7 +79,7 @@ export class DocService {
 
     let createRecords = {
       records: rep.columns.map((x, i) => {
-        let record = {
+        let record: any = {
           id: i + 1,
           fields: {
             timestamp: x.columnId
@@ -86,6 +87,25 @@ export class DocService {
             // utc: x.getUTCSeconds()
           }
         };
+
+        let tsDate = fromUnixTime(x.columnId);
+
+        let timeValue =
+          timeSpec === common.TimeSpecEnum.Years ? getYear(tsDate) : undefined;
+
+        rep.rows.forEach((row: common.Row) => {
+          let timeFieldId = row.mconfig.select[0].split('.').join('_');
+
+          let fieldId = row.mconfig.select[1].split('.').join('_');
+
+          let dataRow = row.query.data.find(
+            (r: any) => r[timeFieldId] === timeValue
+          );
+
+          if (common.isDefined(dataRow)) {
+            record.fields[row.rowId] = dataRow[fieldId];
+          }
+        });
 
         return record;
       })

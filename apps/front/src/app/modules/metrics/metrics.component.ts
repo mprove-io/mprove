@@ -197,7 +197,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
       envId: nav.envId,
       repId: this.rep.repId,
       draft: this.rep.draft,
-      withData: false,
+      withData: true,
       timezone: timeState.timezone,
       timeSpec: timeState.timeSpec,
       timeRangeFraction: timeState.timeRangeFraction

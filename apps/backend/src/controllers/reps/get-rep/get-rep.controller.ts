@@ -323,7 +323,10 @@ export class GetRepController {
     });
 
     if (withData === true) {
-      repApi = await this.docService.getData({ rep: repApi });
+      repApi = await this.docService.getData({
+        rep: repApi,
+        timeSpec: timeSpec
+      });
     }
 
     let payload: apiToBackend.ToBackendGetRepResponsePayload = {
