@@ -111,7 +111,7 @@ export class RepService {
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateDraftRepResponse) => {
+        tap((resp: apiToBackend.ToBackendEditDraftRepResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 

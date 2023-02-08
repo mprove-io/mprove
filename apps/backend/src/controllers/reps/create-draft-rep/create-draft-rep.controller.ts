@@ -6,10 +6,8 @@ import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
-import { DbService } from '~backend/services/db.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -22,9 +20,7 @@ export class CreateDraftRepController {
   constructor(
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private blockmlService: BlockmlService,
     private repsService: RepsService,
-    private dbService: DbService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,
@@ -52,7 +48,7 @@ export class CreateDraftRepController {
       timeRangeFraction
     } = reqValid.payload;
 
-    await this.projectsService.getProjectCheckExists({
+    let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
     });
 
@@ -139,41 +135,26 @@ export class CreateDraftRepController {
       server_ts: undefined
     };
 
-    let { columns, isTimeColumnsLimitExceeded, timeColumnsLimit } =
-      await this.blockmlService.getTimeColumns({
-        traceId: traceId,
-        timeSpec: timeSpec,
-        timeRangeFraction: timeRangeFraction,
-        projectWeekStart: struct.week_start
-      });
+    let userMemberApi = wrapper.wrapToApiMember(userMember);
 
-    let apiMember = wrapper.wrapToApiMember(userMember);
-
-    let repApi = wrapper.wrapToApiRep({
+    let repApi = await this.repsService.getRepData({
       rep: rep,
-      member: apiMember,
-      columns: columns,
-      timezone: timezone,
+      traceId: traceId,
+      project: project,
+      userMember: userMemberApi,
+      envId: envId,
+      struct: struct,
       timeSpec: timeSpec,
       timeRangeFraction: timeRangeFraction,
-      timeColumnsLimit: timeColumnsLimit,
-      timeColumnsLength: columns.length,
-      isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded
+      timezone: timezone
     });
 
     let payload: apiToBackend.ToBackendCreateDraftRepResponsePayload = {
       needValidate: common.enumToBoolean(bridge.need_validate),
       struct: wrapper.wrapToApiStruct(struct),
-      userMember: apiMember,
+      userMember: userMemberApi,
       rep: repApi
     };
-
-    await this.dbService.writeRecords({
-      modify: false,
-      records: {
-        reps: [rep]
-      }
-    });
 
     return payload;
   }

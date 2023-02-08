@@ -212,6 +212,10 @@ export class SaveModifyRepController {
 
     let rep = reps.find(x => x.repId === modRepId);
 
+    rep.rows.forEach(x => {
+      x.rqs = fromRep.rows.find(row => row.rowId === x.rowId).rqs;
+    });
+
     let records = await this.dbService.writeRecords({
       modify: true,
       records: {
@@ -250,34 +254,24 @@ export class SaveModifyRepController {
       });
     }
 
-    let { columns, isTimeColumnsLimitExceeded, timeColumnsLimit } =
-      await this.blockmlService.getTimeColumns({
-        traceId: traceId,
-        timeSpec: timeSpec,
-        timeRangeFraction: timeRangeFraction,
-        projectWeekStart: struct.week_start
-      });
+    let userMemberApi = wrapper.wrapToApiMember(userMember);
 
-    let apiMember = wrapper.wrapToApiMember(userMember);
-
-    let repApi = common.isDefined(records.reps)
-      ? wrapper.wrapToApiRep({
-          rep: records.reps[0],
-          member: apiMember,
-          columns: columns,
-          timezone: timezone,
-          timeSpec: timeSpec,
-          timeRangeFraction: timeRangeFraction,
-          timeColumnsLimit: timeColumnsLimit,
-          timeColumnsLength: columns.length,
-          isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded
-        })
-      : undefined;
+    let repApi = await this.repsService.getRepData({
+      rep: records.reps[0],
+      traceId: traceId,
+      project: project,
+      userMember: userMemberApi,
+      envId: envId,
+      struct: struct,
+      timeSpec: timeSpec,
+      timeRangeFraction: timeRangeFraction,
+      timezone: timezone
+    });
 
     let payload: apiToBackend.ToBackendGetRepResponsePayload = {
       needValidate: common.enumToBoolean(bridge.need_validate),
       struct: wrapper.wrapToApiStruct(struct),
-      userMember: apiMember,
+      userMember: userMemberApi,
       rep: repApi
     };
 

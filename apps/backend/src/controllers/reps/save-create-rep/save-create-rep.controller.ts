@@ -217,6 +217,10 @@ export class SaveCreateRepController {
 
     let rep = reps.find(x => x.repId === newRepId);
 
+    rep.rows.forEach(x => {
+      x.rqs = fromRep.rows.find(row => row.rowId === x.rowId).rqs;
+    });
+
     await this.dbService.writeRecords({
       modify: true,
       records: {
@@ -255,32 +259,24 @@ export class SaveCreateRepController {
       }
     });
 
-    let { columns, isTimeColumnsLimitExceeded, timeColumnsLimit } =
-      await this.blockmlService.getTimeColumns({
-        traceId: traceId,
-        timeSpec: timeSpec,
-        timeRangeFraction: timeRangeFraction,
-        projectWeekStart: struct.week_start
-      });
+    let userMemberApi = wrapper.wrapToApiMember(userMember);
 
-    let apiMember = wrapper.wrapToApiMember(userMember);
-
-    let repApi = wrapper.wrapToApiRep({
+    let repApi = await this.repsService.getRepData({
       rep: records.reps[0],
-      member: apiMember,
-      columns: columns,
-      timezone: timezone,
+      traceId: traceId,
+      project: project,
+      userMember: userMemberApi,
+      envId: envId,
+      struct: struct,
       timeSpec: timeSpec,
       timeRangeFraction: timeRangeFraction,
-      timeColumnsLimit: timeColumnsLimit,
-      timeColumnsLength: columns.length,
-      isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded
+      timezone: timezone
     });
 
-    let payload: apiToBackend.ToBackendGetRepResponsePayload = {
+    let payload: apiToBackend.ToBackendSaveCreateRepResponsePayload = {
       needValidate: common.enumToBoolean(bridge.need_validate),
       struct: wrapper.wrapToApiStruct(struct),
-      userMember: apiMember,
+      userMember: userMemberApi,
       rep: repApi
     };
 
