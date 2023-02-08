@@ -3,15 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import {
-  interval,
-  of,
-  startWith,
-  Subscription,
-  switchMap,
-  take,
-  tap
-} from 'rxjs';
+import { concatMap, interval, of, Subscription, take, tap } from 'rxjs';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { emptyRep, RepQuery } from '~front/app/queries/rep.query';
@@ -169,11 +161,9 @@ export class MetricsComponent implements OnInit, OnDestroy {
   }
 
   startCheckRunning() {
-    this.checkRunning$ = interval(3000)
+    this.checkRunning$ = interval(2000)
       .pipe(
-        startWith(0),
-        // tap(x => console.log(x)),
-        switchMap(() => {
+        concatMap(() => {
           if (
             this.rep?.rows
               .map(row => row.query.status)
@@ -282,11 +272,9 @@ export class MetricsComponent implements OnInit, OnDestroy {
           this.spinner.hide(this.metricsRunButtonSpinnerName);
           this.isRunButtonPressed = false;
           this.cd.detectChanges();
-
-          common.sleep(1000);
-
-          this.startCheckRunning();
         }),
+        // delay(1000),
+        tap(() => this.startCheckRunning()),
         take(1)
       )
       .subscribe();

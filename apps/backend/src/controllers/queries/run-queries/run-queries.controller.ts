@@ -136,7 +136,7 @@ export class RunQueriesController {
         });
       });
     } else {
-      await asyncPool(1, queryIds, async queryId => {
+      await asyncPool(8, queryIds, async queryId => {
         let query = await this.queriesService.getQueryCheckExistsSkipData({
           projectId: projectId,
           queryId: queryId

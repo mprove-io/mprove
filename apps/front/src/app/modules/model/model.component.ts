@@ -10,7 +10,6 @@ import {
   filter,
   map,
   startWith,
-  switchMap,
   take,
   tap
 } from 'rxjs/operators';
@@ -433,9 +432,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
     this.checkRunning$ = interval(3000)
       .pipe(
-        startWith(0),
-        // tap(x => console.log(x)),
-        switchMap(() => {
+        concatMap(() => {
           if (this.query?.status === common.QueryStatusEnum.Running) {
             let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
               projectId: nav.projectId,

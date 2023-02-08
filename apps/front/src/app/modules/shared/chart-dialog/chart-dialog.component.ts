@@ -8,14 +8,7 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { from, interval, of, Subscription } from 'rxjs';
-import {
-  concatMap,
-  delay,
-  startWith,
-  switchMap,
-  take,
-  tap
-} from 'rxjs/operators';
+import { concatMap, delay, startWith, take, tap } from 'rxjs/operators';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -110,8 +103,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
     this.checkRunning$ = interval(3000)
       .pipe(
-        startWith(0),
-        switchMap(() => {
+        concatMap(() => {
           if (this.query?.status === common.QueryStatusEnum.Running) {
             let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
               projectId: nav.projectId,

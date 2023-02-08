@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { interval, of, Subscription } from 'rxjs';
-import { startWith, switchMap, take, tap } from 'rxjs/operators';
+import { concatMap, take, tap } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -118,8 +118,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
 
     this.checkRunning$ = interval(3000)
       .pipe(
-        startWith(0),
-        switchMap(() => {
+        concatMap(() => {
           if (this.query?.status === common.QueryStatusEnum.Running) {
             let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
               projectId: nav.projectId,
