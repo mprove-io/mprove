@@ -165,8 +165,10 @@ export class MetricsComponent implements OnInit, OnDestroy {
     this.timeSpecForm.controls['timeSpec'].setValue(timeState.timeSpec);
     this.fractions = [timeState.timeRangeFraction];
 
-    let nav = this.navQuery.getValue();
+    this.startCheckRunning();
+  }
 
+  startCheckRunning() {
     this.checkRunning$ = interval(3000)
       .pipe(
         startWith(0),
@@ -186,6 +188,12 @@ export class MetricsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
+  stopCheckRunning() {
+    if (common.isDefined(this.checkRunning$)) {
+      this.checkRunning$?.unsubscribe();
+    }
+  }
+
   getRepObservable() {
     let timeState = this.timeQuery.getValue();
     let nav = this.navQuery.getValue();
@@ -197,7 +205,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
       envId: nav.envId,
       repId: this.rep.repId,
       draft: this.rep.draft,
-      withData: true,
       timezone: timeState.timezone,
       timeSpec: timeState.timeSpec,
       timeRangeFraction: timeState.timeRangeFraction
@@ -225,7 +232,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
   }
 
   run() {
-    // this.startRunButtonTimer();
+    this.stopCheckRunning();
+
     this.isRunButtonPressed = true;
     this.spinner.show(this.metricsRunButtonSpinnerName);
     this.cd.detectChanges();
@@ -274,31 +282,15 @@ export class MetricsComponent implements OnInit, OnDestroy {
           this.spinner.hide(this.metricsRunButtonSpinnerName);
           this.isRunButtonPressed = false;
           this.cd.detectChanges();
+
+          common.sleep(1000);
+
+          this.startCheckRunning();
         }),
         take(1)
       )
       .subscribe();
   }
-
-  // startRunButtonTimer() {
-  //   this.isRunButtonPressed = true;
-  //   this.spinner.show(this.metricsRunButtonSpinnerName);
-  //   this.cd.detectChanges();
-
-  //   this.runButtonTimerSubscription = from([0])
-  //     .pipe(
-  //       concatMap(v => of(v).pipe(delay(1000))),
-  //       startWith(1),
-  //       tap(x => {
-  //         if (x === 0) {
-  //           this.spinner.hide(this.metricsRunButtonSpinnerName);
-  //           this.isRunButtonPressed = false;
-  //           this.cd.detectChanges();
-  //         }
-  //       })
-  //     )
-  //     .subscribe();
-  // }
 
   navToRep(rep: common.RepX) {
     this.navigateService.navigateToMetricsRep({
@@ -368,8 +360,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (common.isDefined(this.checkRunning$)) {
-      this.checkRunning$?.unsubscribe();
-    }
+    this.stopCheckRunning();
   }
 }

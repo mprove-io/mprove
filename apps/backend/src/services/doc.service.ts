@@ -9,8 +9,12 @@ import { interfaces } from '~backend/barrels/interfaces';
 export class DocService {
   constructor(private cs: ConfigService<interfaces.Config>) {}
 
-  async getData(item: { rep: common.RepX; timeSpec: common.TimeSpecEnum }) {
-    let { rep, timeSpec } = item;
+  async getData(item: {
+    rep: common.RepX;
+    timeSpec: common.TimeSpecEnum;
+    timeRangeFraction: common.Fraction;
+  }) {
+    let { rep, timeSpec, timeRangeFraction } = item;
 
     let sender = axios.create({ baseURL: 'http://grist:8484/' });
 
@@ -132,6 +136,11 @@ export class DocService {
             ? y.fields.errors[x.rowId]
             : y.fields[x.rowId]
       }));
+
+      let rq = x.rqs.find(y => y.fractionBrick === timeRangeFraction.brick);
+
+      rq.records = x.records;
+      rq.lastCompleteTsCalculated = x.query.lastCompleteTs;
     });
 
     return rep;

@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsInt, IsOptional, IsString } from 'class-validator';
 
 export class Rq {
   @IsString()
@@ -9,4 +9,10 @@ export class Rq {
 
   @IsString()
   queryId: string;
+
+  @IsOptional()
+  @IsInt()
+  lastCompleteTsCalculated: number;
+
+  records: any[];
 }

@@ -22,9 +22,6 @@ export class ToBackendGetRepRequestPayload {
   @IsBoolean()
   draft: boolean;
 
-  @IsBoolean()
-  withData: boolean;
-
   @IsString()
   timezone: string;
 

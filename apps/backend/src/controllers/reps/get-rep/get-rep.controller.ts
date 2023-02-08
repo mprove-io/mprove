@@ -55,7 +55,6 @@ export class GetRepController {
       envId,
       repId,
       draft,
-      withData,
       timeRangeFraction,
       timeSpec,
       timezone
@@ -239,7 +238,9 @@ export class GetRepController {
         let newRq: common.Rq = {
           fractionBrick: timeRangeFraction.brick,
           mconfigId: newMconfig.mconfigId,
-          queryId: newMconfig.queryId
+          queryId: newMconfig.queryId,
+          records: [],
+          lastCompleteTsCalculated: 0
         };
 
         x.rqs.push(newRq);
@@ -277,25 +278,6 @@ export class GetRepController {
       })
     );
 
-    if (newMconfigs.length > 0 || newQueries.length > 0) {
-      let records = await this.dbService.writeRecords({
-        modify: false,
-        records: {
-          mconfigs: newMconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
-          queries: newQueries.map(x => wrapper.wrapToEntityQuery(x))
-        }
-      });
-
-      if (rep.rep_id !== common.EMPTY) {
-        let recs = await this.dbService.writeRecords({
-          modify: true,
-          records: {
-            reps: [rep]
-          }
-        });
-      }
-    }
-
     let apiMember = wrapper.wrapToApiMember(userMember);
 
     let repApi = wrapper.wrapToApiRep({
@@ -322,10 +304,65 @@ export class GetRepController {
       );
     });
 
-    if (withData === true) {
+    let completedRowsLength = repApi.rows
+      .map(row => row.query.status)
+      .filter(s => s === common.QueryStatusEnum.Completed).length;
+
+    let calculatedRowsLength = repApi.rows.filter(row => {
+      let rq = row.rqs.find(y => y.fractionBrick === timeRangeFraction.brick);
+
+      return rq.lastCompleteTsCalculated === row.query.lastCompleteTs;
+    }).length;
+
+    let isCalculate =
+      rep.rep_id !== common.EMPTY &&
+      repApi.rows.length === completedRowsLength &&
+      repApi.rows.length !== calculatedRowsLength;
+
+    if (isCalculate === true) {
+      // console.log('req data');
       repApi = await this.docService.getData({
         rep: repApi,
-        timeSpec: timeSpec
+        timeSpec: timeSpec,
+        timeRangeFraction: timeRangeFraction
+      });
+    } else {
+      // console.log('no req data');
+      repApi.rows.forEach(x => {
+        let rq = x.rqs.find(y => y.fractionBrick === timeRangeFraction.brick);
+        x.records = rq.records;
+      });
+    }
+
+    if (newMconfigs.length > 0 || newQueries.length > 0) {
+      await this.dbService.writeRecords({
+        modify: false,
+        records: {
+          mconfigs: newMconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
+          queries: newQueries.map(x => wrapper.wrapToEntityQuery(x))
+        }
+      });
+    }
+
+    if (
+      isCalculate === true ||
+      newMconfigs.length > 0 ||
+      newQueries.length > 0
+    ) {
+      let dbRows = common.makeCopy(rep.rows);
+
+      dbRows.forEach(x => {
+        delete x.mconfig;
+        delete x.query;
+      });
+
+      rep.rows = dbRows;
+
+      await this.dbService.writeRecords({
+        modify: true,
+        records: {
+          reps: [rep]
+        }
       });
     }
 

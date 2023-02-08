@@ -84,7 +84,6 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
       envId: nav.envId,
       repId: parametersRepId,
       draft: draftParam === common.DraftEnum.Yes,
-      withData: false,
       timezone: timeState.timezone,
       timeSpec: timeState.timeSpec,
       timeRangeFraction: timeState.timeRangeFraction

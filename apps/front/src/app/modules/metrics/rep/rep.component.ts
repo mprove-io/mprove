@@ -51,7 +51,7 @@ export class RepComponent {
       field: 'status',
       pinned: 'left',
       resizable: false,
-      width: 70,
+      width: 80,
       cellRenderer: StatusRendererComponent,
       headerComponent: StatusHeaderComponent
       // cellRendererParams: {
