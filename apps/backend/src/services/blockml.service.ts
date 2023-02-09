@@ -404,7 +404,6 @@ export class BlockmlService {
             : timeSpec === common.TimeSpecEnum.Minutes
             ? format(x, 'HH:mm dd MMM yyyy')
             : `${unixTime}`
-        // 'yyyy-MM-dd'
       };
 
       return column;

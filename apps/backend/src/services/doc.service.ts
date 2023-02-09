@@ -1,16 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
-import {
-  fromUnixTime,
-  getDay,
-  getHours,
-  getMinutes,
-  getMonth,
-  getQuarter,
-  getWeek,
-  getYear
-} from 'date-fns';
+import { format, fromUnixTime } from 'date-fns';
 import { common } from '~backend/barrels/common';
 import { interfaces } from '~backend/barrels/interfaces';
 
@@ -138,33 +129,31 @@ export class DocService {
     let { rep, timeSpec } = item;
 
     return rep.columns.map((x, i) => {
-      let record: any = {
-        id: i + 1,
-        fields: {
-          timestamp: x.columnId
-          // ,
-          // utc: x.getUTCSeconds()
-        }
-      };
-
       let tsDate = fromUnixTime(x.columnId);
 
       let timeValue =
         timeSpec === common.TimeSpecEnum.Years
-          ? getYear(tsDate)
-          : common.TimeSpecEnum.Quarters
-          ? getQuarter(tsDate)
-          : common.TimeSpecEnum.Months
-          ? getMonth(tsDate)
-          : common.TimeSpecEnum.Weeks
-          ? getWeek(tsDate)
-          : common.TimeSpecEnum.Days
-          ? getDay(tsDate)
-          : common.TimeSpecEnum.Hours
-          ? getHours(tsDate)
-          : common.TimeSpecEnum.Minutes
-          ? getMinutes(tsDate)
+          ? format(tsDate, 'yyyy')
+          : timeSpec === common.TimeSpecEnum.Quarters
+          ? format(tsDate, 'yyyy-MM')
+          : timeSpec === common.TimeSpecEnum.Months
+          ? format(tsDate, 'yyyy-MM')
+          : timeSpec === common.TimeSpecEnum.Weeks
+          ? format(tsDate, 'yyyy-MM-dd')
+          : timeSpec === common.TimeSpecEnum.Days
+          ? format(tsDate, 'yyyy-MM-dd')
+          : timeSpec === common.TimeSpecEnum.Hours
+          ? format(tsDate, 'yyyy-MM-dd HH')
+          : timeSpec === common.TimeSpecEnum.Minutes
+          ? format(tsDate, 'yyyy-MM-dd HH:mm')
           : undefined;
+
+      let record: any = {
+        id: i + 1,
+        fields: {
+          timestamp: x.columnId
+        }
+      };
 
       rep.rows
         .filter(
@@ -176,7 +165,7 @@ export class DocService {
           let fieldId = row.mconfig.select[1].split('.').join('_');
 
           let dataRow = row.query.data.find(
-            (r: any) => r[timeFieldId] === timeValue
+            (r: any) => r[timeFieldId]?.toString() === timeValue
           );
 
           if (common.isDefined(dataRow)) {
