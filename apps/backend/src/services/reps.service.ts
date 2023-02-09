@@ -202,7 +202,12 @@ export class RepsService {
     let mconfigIds: string[] = [];
 
     await forEachSeries(rep.rows, async x => {
-      let rq = x.rqs.find(y => y.fractionBrick === timeRangeFraction.brick);
+      let rq = x.rqs.find(
+        y =>
+          y.fractionBrick === timeRangeFraction.brick &&
+          y.timeSpec === timeSpec &&
+          y.timezone === timezone
+      );
 
       if (common.isDefined(rq)) {
         queryIds.push(rq.queryId);
@@ -300,10 +305,12 @@ export class RepsService {
 
         let newRq: common.Rq = {
           fractionBrick: timeRangeFraction.brick,
+          timeSpec: timeSpec,
+          timezone: timezone,
           mconfigId: newMconfig.mconfigId,
           queryId: newMconfig.queryId,
           records: [],
-          lastCompleteTsCalculated: 0
+          lastCalculatedTs: 0
         };
 
         x.rqs.push(newRq);
@@ -354,7 +361,12 @@ export class RepsService {
     });
 
     repApi.rows.forEach(x => {
-      let rq = x.rqs.find(y => y.fractionBrick === timeRangeFraction.brick);
+      let rq = x.rqs.find(
+        y =>
+          y.fractionBrick === timeRangeFraction.brick &&
+          y.timeSpec === timeSpec &&
+          y.timezone === timezone
+      );
 
       x.mconfig = [...mconfigsApi, ...newMconfigs].find(
         y => y.mconfigId === rq.mconfigId
@@ -370,9 +382,14 @@ export class RepsService {
       .filter(s => s === common.QueryStatusEnum.Completed).length;
 
     let calculatedRowsLength = repApi.rows.filter(row => {
-      let rq = row.rqs.find(y => y.fractionBrick === timeRangeFraction.brick);
+      let rq = row.rqs.find(
+        y =>
+          y.fractionBrick === timeRangeFraction.brick &&
+          y.timeSpec === timeSpec &&
+          y.timezone === timezone
+      );
 
-      return rq.lastCompleteTsCalculated === row.query.lastCompleteTs;
+      return rq.lastCalculatedTs === row.query.lastCompleteTs;
     }).length;
 
     let isCalculate =
@@ -384,13 +401,37 @@ export class RepsService {
       // console.log('req data');
       repApi = await this.docService.getData({
         rep: repApi,
+        timezone: timezone,
         timeSpec: timeSpec,
         timeRangeFraction: timeRangeFraction
       });
     } else {
+      let dataRecords = this.docService.makeDataRecords({
+        rep: repApi,
+        timeSpec: timeSpec
+      });
+
       // console.log('no req data');
       repApi.rows.forEach(x => {
-        let rq = x.rqs.find(y => y.fractionBrick === timeRangeFraction.brick);
+        let rq = x.rqs.find(
+          y =>
+            y.fractionBrick === timeRangeFraction.brick &&
+            y.timeSpec === timeSpec &&
+            y.timezone === timezone
+        );
+
+        if (rq.lastCalculatedTs !== x.query.lastCompleteTs) {
+          rq.records = dataRecords.map((y: any) => ({
+            id: y.id,
+            key: y.fields.timestamp,
+            value:
+              common.isDefined(y.fields.errors) &&
+              common.isDefined(y.fields.errors[x.rowId])
+                ? y.fields.errors[x.rowId]
+                : y.fields[x.rowId]
+          }));
+        }
+
         x.records = rq.records;
       });
     }

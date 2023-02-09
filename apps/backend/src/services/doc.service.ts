@@ -1,7 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
-import { fromUnixTime, getYear } from 'date-fns';
+import {
+  fromUnixTime,
+  getDay,
+  getHours,
+  getMinutes,
+  getMonth,
+  getQuarter,
+  getWeek,
+  getYear
+} from 'date-fns';
 import { common } from '~backend/barrels/common';
 import { interfaces } from '~backend/barrels/interfaces';
 
@@ -11,10 +20,11 @@ export class DocService {
 
   async getData(item: {
     rep: common.RepX;
+    timezone: string;
     timeSpec: common.TimeSpecEnum;
     timeRangeFraction: common.Fraction;
   }) {
-    let { rep, timeSpec, timeRangeFraction } = item;
+    let { rep, timeSpec, timeRangeFraction, timezone } = item;
 
     let sender = axios.create({ baseURL: 'http://grist:8484/' });
 
@@ -81,43 +91,16 @@ export class DocService {
       {}
     );
 
-    let createRecords = {
-      records: rep.columns.map((x, i) => {
-        let record: any = {
-          id: i + 1,
-          fields: {
-            timestamp: x.columnId
-            // ,
-            // utc: x.getUTCSeconds()
-          }
-        };
-
-        let tsDate = fromUnixTime(x.columnId);
-
-        let timeValue =
-          timeSpec === common.TimeSpecEnum.Years ? getYear(tsDate) : undefined;
-
-        rep.rows.forEach((row: common.Row) => {
-          let timeFieldId = row.mconfig.select[0].split('.').join('_');
-
-          let fieldId = row.mconfig.select[1].split('.').join('_');
-
-          let dataRow = row.query.data.find(
-            (r: any) => r[timeFieldId] === timeValue
-          );
-
-          if (common.isDefined(dataRow)) {
-            record.fields[row.rowId] = dataRow[fieldId];
-          }
-        });
-
-        return record;
-      })
-    };
+    let dataRecords = this.makeDataRecords({
+      rep: rep,
+      timeSpec: timeSpec
+    });
 
     let createRecordsResp = await sender.post(
       `api/docs/${docId}/tables/${metricsTableId}/records`,
-      createRecords,
+      {
+        records: dataRecords
+      },
       {}
     );
 
@@ -137,12 +120,71 @@ export class DocService {
             : y.fields[x.rowId]
       }));
 
-      let rq = x.rqs.find(y => y.fractionBrick === timeRangeFraction.brick);
+      let rq = x.rqs.find(
+        y =>
+          y.fractionBrick === timeRangeFraction.brick &&
+          y.timeSpec === timeSpec &&
+          y.timezone === timezone
+      );
 
       rq.records = x.records;
-      rq.lastCompleteTsCalculated = x.query.lastCompleteTs;
+      rq.lastCalculatedTs = x.query.lastCompleteTs;
     });
 
     return rep;
+  }
+
+  makeDataRecords(item: { rep: common.RepX; timeSpec: common.TimeSpecEnum }) {
+    let { rep, timeSpec } = item;
+
+    return rep.columns.map((x, i) => {
+      let record: any = {
+        id: i + 1,
+        fields: {
+          timestamp: x.columnId
+          // ,
+          // utc: x.getUTCSeconds()
+        }
+      };
+
+      let tsDate = fromUnixTime(x.columnId);
+
+      let timeValue =
+        timeSpec === common.TimeSpecEnum.Years
+          ? getYear(tsDate)
+          : common.TimeSpecEnum.Quarters
+          ? getQuarter(tsDate)
+          : common.TimeSpecEnum.Months
+          ? getMonth(tsDate)
+          : common.TimeSpecEnum.Weeks
+          ? getWeek(tsDate)
+          : common.TimeSpecEnum.Days
+          ? getDay(tsDate)
+          : common.TimeSpecEnum.Hours
+          ? getHours(tsDate)
+          : common.TimeSpecEnum.Minutes
+          ? getMinutes(tsDate)
+          : undefined;
+
+      rep.rows
+        .filter(
+          y => common.isDefined(y.mconfig) && common.isDefined(y.query?.data)
+        )
+        .forEach((row: common.Row) => {
+          let timeFieldId = row.mconfig.select[0].split('.').join('_');
+
+          let fieldId = row.mconfig.select[1].split('.').join('_');
+
+          let dataRow = row.query.data.find(
+            (r: any) => r[timeFieldId] === timeValue
+          );
+
+          if (common.isDefined(dataRow)) {
+            record.fields[row.rowId] = dataRow[fieldId];
+          }
+        });
+
+      return record;
+    });
   }
 }
