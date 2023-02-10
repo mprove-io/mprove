@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
+import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -33,13 +34,70 @@ export function createModelMetrics(
 
     model.build_metrics.forEach(element => {
       model.fields
-        .filter(
-          y =>
-            [
-              common.FieldClassEnum.Measure,
-              common.FieldClassEnum.Calculation
-            ].indexOf(y.fieldClass) > -1
-        )
+        .filter(y => {
+          if (y.fieldClass === common.FieldClassEnum.Measure) {
+            return true;
+          } else if (y.fieldClass === common.FieldClassEnum.Calculation) {
+            let depDimensions: {
+              [as: string]: { [fieldName: string]: number };
+            } = {};
+
+            let asName = constants.MF;
+            let fieldName = y.name;
+
+            Object.keys(model.fieldsDepsAfterSingles[fieldName]).forEach(
+              depName => {
+                let depModelField = model.fields.find(
+                  mField => mField.name === depName
+                );
+
+                if (
+                  depModelField.fieldClass === common.FieldClassEnum.Dimension
+                ) {
+                  if (common.isUndefined(depDimensions[asName])) {
+                    depDimensions[asName] = {};
+                  }
+                  depDimensions[asName][depName] = 1;
+                }
+              }
+            );
+
+            Object.keys(model.fieldsDoubleDepsAfterSingles[fieldName]).forEach(
+              alias => {
+                Object.keys(
+                  model.fieldsDoubleDepsAfterSingles[fieldName][alias]
+                ).forEach(depName => {
+                  let join = model.joins.find(j => j.as === alias);
+
+                  let depViewField = join.view.fields.find(
+                    vField => vField.name === depName
+                  );
+
+                  if (
+                    depViewField.fieldClass === common.FieldClassEnum.Dimension
+                  ) {
+                    if (common.isUndefined(depDimensions[alias])) {
+                      depDimensions[alias] = {};
+                    }
+                    depDimensions[alias][depName] = 1;
+                  }
+                });
+              }
+            );
+
+            let depDimensionsCounter = 0;
+
+            Object.keys(depDimensions).forEach(key => {
+              Object.keys(depDimensions[key]).forEach(subKey => {
+                depDimensionsCounter++;
+              });
+            });
+
+            return depDimensionsCounter === 0;
+          } else {
+            return false;
+          }
+        })
         .forEach(modelField => {
           let partId = `model_fields_${modelField.name}`;
           let partLabel = `Model Fields ${modelField.label}`;
@@ -70,13 +128,47 @@ export function createModelMetrics(
 
       model.joins.forEach(join => {
         join.view.fields
-          .filter(
-            y =>
-              [
-                common.FieldClassEnum.Measure,
-                common.FieldClassEnum.Calculation
-              ].indexOf(y.fieldClass) > -1
-          )
+          .filter(y => {
+            if (y.fieldClass === common.FieldClassEnum.Measure) {
+              return true;
+            } else if (y.fieldClass === common.FieldClassEnum.Calculation) {
+              let depDimensions: {
+                [as: string]: { [fieldName: string]: number };
+              } = {};
+
+              let asName = join.as;
+              let fieldName = y.name;
+
+              Object.keys(join.view.fieldsDepsAfterSingles[fieldName]).forEach(
+                depName => {
+                  let depViewField = join.view.fields.find(
+                    vField => vField.name === depName
+                  );
+
+                  if (
+                    depViewField.fieldClass === common.FieldClassEnum.Dimension
+                  ) {
+                    if (common.isUndefined(depDimensions[asName])) {
+                      depDimensions[asName] = {};
+                    }
+                    depDimensions[asName][depName] = 1;
+                  }
+                }
+              );
+
+              let depDimensionsCounter = 0;
+
+              Object.keys(depDimensions).forEach(key => {
+                Object.keys(depDimensions[key]).forEach(subKey => {
+                  depDimensionsCounter++;
+                });
+              });
+
+              return depDimensionsCounter === 0;
+            } else {
+              return false;
+            }
+          })
           .forEach(viewField => {
             let partId = `${join.as}_${viewField.name}`;
             let partLabel = `${join.label} ${viewField.label}`;
