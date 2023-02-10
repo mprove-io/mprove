@@ -36,8 +36,8 @@ export function createModelMetrics(
         .filter(
           y =>
             [
-              common.FieldClassEnum.Measure
-              // common.FieldClassEnum.Calculation
+              common.FieldClassEnum.Measure,
+              common.FieldClassEnum.Calculation
             ].indexOf(y.fieldClass) > -1
         )
         .forEach(modelField => {
@@ -73,8 +73,8 @@ export function createModelMetrics(
           .filter(
             y =>
               [
-                common.FieldClassEnum.Measure
-                // common.FieldClassEnum.Calculation
+                common.FieldClassEnum.Measure,
+                common.FieldClassEnum.Calculation
               ].indexOf(y.fieldClass) > -1
           )
           .forEach(viewField => {
