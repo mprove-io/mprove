@@ -188,7 +188,7 @@ export class FractionTsComponent implements OnInit {
         value: common.FractionTsRelativeCompleteOptionEnum.Complete
       },
       {
-        label: 'incomplete',
+        label: 'not complete',
         value: common.FractionTsRelativeCompleteOptionEnum.Incomplete
       }
     ];
@@ -287,7 +287,7 @@ export class FractionTsComponent implements OnInit {
       value: common.FractionTsLastCompleteOptionEnum.CompletePlusCurrent
     },
     {
-      label: 'incomplete',
+      label: 'not complete',
       value: common.FractionTsLastCompleteOptionEnum.Incomplete
     }
   ];
@@ -816,10 +816,10 @@ export class FractionTsComponent implements OnInit {
       }
 
       case this.fractionTypeEnum.TsIsInLast: {
-        this.fraction.tsLastValue = 1;
-        this.fraction.tsLastUnit = common.FractionTsLastUnitEnum.Weeks;
+        this.fraction.tsLastValue = 5;
+        this.fraction.tsLastUnit = common.FractionTsLastUnitEnum.Days;
         this.fraction.tsLastCompleteOption =
-          common.FractionTsLastCompleteOptionEnum.Incomplete;
+          common.FractionTsLastCompleteOptionEnum.CompletePlusCurrent;
 
         this.buildFractionLast();
 
