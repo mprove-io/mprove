@@ -22,6 +22,9 @@ export class ToBackendCreateDraftRepRequestPayload {
   @IsBoolean()
   fromDraft: boolean;
 
+  @IsEnum(common.ChangeTypeEnum)
+  changeType: common.ChangeTypeEnum;
+
   @ValidateNested()
   @Type(() => common.RowChange)
   rowChanges: common.RowChange[];

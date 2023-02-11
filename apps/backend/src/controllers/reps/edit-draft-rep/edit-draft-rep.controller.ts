@@ -40,6 +40,7 @@ export class EditDraftRepController {
       branchId,
       envId,
       repId,
+      changeType,
       rowChanges,
       timeSpec,
       timezone,
@@ -90,26 +91,13 @@ export class EditDraftRepController {
       userMember: userMember
     });
 
-    rowChanges
-      .filter(x => common.isUndefined(x.rowId))
-      .forEach(x => {
-        let idxs = rep.rows.map(y => common.idxLetterToNumber(y.rowId));
-        let maxIdx = idxs.length > 0 ? Math.max(...idxs) : undefined;
-        let idxNum = common.isDefined(maxIdx) ? maxIdx + 1 : 0;
+    let processedRows = this.repsService.getProcessedRows({
+      rows: rep.rows,
+      rowChanges: rowChanges,
+      changeType: changeType
+    });
 
-        let newRow: common.Row = {
-          rowId: common.idxNumberToLetter(idxNum),
-          metricId: x.metricId,
-          params: x.params || [],
-          formula: x.formula,
-          rqs: [],
-          mconfig: undefined,
-          query: undefined,
-          records: []
-        };
-
-        rep.rows.push(newRow);
-      });
+    rep.rows = processedRows;
 
     let userMemberApi = wrapper.wrapToApiMember(userMember);
 

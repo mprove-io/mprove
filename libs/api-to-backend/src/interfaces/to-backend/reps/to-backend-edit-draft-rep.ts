@@ -19,6 +19,9 @@ export class ToBackendEditDraftRepRequestPayload {
   @IsString()
   repId: string;
 
+  @IsEnum(common.ChangeTypeEnum)
+  changeType: common.ChangeTypeEnum;
+
   @ValidateNested()
   @Type(() => common.RowChange)
   rowChanges: common.RowChange[];

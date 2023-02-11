@@ -42,6 +42,7 @@ export class CreateDraftRepController {
       envId,
       fromRepId,
       fromDraft,
+      changeType,
       rowChanges,
       timeSpec,
       timezone,
@@ -94,31 +95,11 @@ export class CreateDraftRepController {
 
     let repId = common.makeId();
 
-    let rows: common.Row[] = fromRep.rows;
-
-    rowChanges
-      .filter(x => common.isUndefined(x.rowId))
-      .forEach(x => {
-        let idxs = rows.map(y => common.idxLetterToNumber(y.rowId));
-        let maxIdx = idxs.length > 0 ? Math.max(...idxs) : undefined;
-        let idxNum = common.isDefined(maxIdx) ? maxIdx + 1 : 0;
-
-        let newRow: common.Row = {
-          rowId: common.idxNumberToLetter(idxNum),
-          metricId: x.metricId,
-          params: x.params || [],
-          formula: x.formula,
-          rqs: [],
-          mconfig: undefined,
-          query: undefined,
-          records: []
-        };
-
-        rows.push(newRow);
-      });
-
-    // rowChanges
-    //   .filter(x => common.isDefined(x.rowId))
+    let processedRows = this.repsService.getProcessedRows({
+      rows: fromRep.rows,
+      rowChanges: rowChanges,
+      changeType: changeType
+    });
 
     let rep: entities.RepEntity = {
       project_id: projectId,
@@ -130,7 +111,7 @@ export class CreateDraftRepController {
       creator_id: user.user_id,
       file_path: undefined,
       title: repId,
-      rows: rows,
+      rows: processedRows,
       draft_created_ts: helper.makeTs(),
       server_ts: undefined
     };

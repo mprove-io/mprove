@@ -470,4 +470,46 @@ export class RepsService {
 
     return repApi;
   }
+
+  getProcessedRows(item: {
+    rowChanges: common.RowChange[];
+    rows: common.Row[];
+    changeType: common.ChangeTypeEnum;
+  }) {
+    let { rows, rowChanges, changeType } = item;
+
+    let processedRows = [...rows];
+
+    rowChanges
+      .filter(x => common.isUndefined(x.rowId))
+      .forEach(x => {
+        if (changeType === common.ChangeTypeEnum.Add) {
+          let idxs = processedRows.map(y => common.idxLetterToNumber(y.rowId));
+          let maxIdx = idxs.length > 0 ? Math.max(...idxs) : undefined;
+          let idxNum = common.isDefined(maxIdx) ? maxIdx + 1 : 0;
+
+          let newRow: common.Row = {
+            rowId: common.idxNumberToLetter(idxNum),
+            metricId: x.metricId,
+            params: x.params || [],
+            formula: x.formula,
+            rqs: [],
+            mconfig: undefined,
+            query: undefined,
+            records: []
+          };
+
+          processedRows.push(newRow);
+        }
+      });
+
+    if (changeType === common.ChangeTypeEnum.Delete) {
+      processedRows = processedRows.filter(
+        row =>
+          rowChanges.map(rowChange => rowChange.rowId).indexOf(row.rowId) < 0
+      );
+    }
+
+    return processedRows;
+  }
 }

@@ -165,13 +165,15 @@ export class MetricsTreeComponent implements AfterViewInit {
     if (rep.draft === true) {
       this.repService.editDraftRep({
         repId: rep.repId,
+        changeType: common.ChangeTypeEnum.Add,
         rowChanges: [rowChange]
       });
     } else {
       this.repService.navCreateDraftRep({
         fromRepId: rep.repId,
         fromDraft: rep.draft,
-        rowChanges: [rowChange]
+        rowChanges: [rowChange],
+        changeType: common.ChangeTypeEnum.Add
       });
     }
   }

@@ -1,4 +1,5 @@
 export * from './bool.enum';
+export * from './change-type.enum';
 export * from './chart/_index';
 export * from './connection-type.enum';
 export * from './draft.enum';

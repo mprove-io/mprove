@@ -37,13 +37,14 @@ export class RepService {
   }
 
   navCreateDraftRep(item: {
+    changeType: common.ChangeTypeEnum;
     rowChanges: common.RowChange[];
     fromRepId: string;
     fromDraft: boolean;
   }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { rowChanges, fromRepId, fromDraft } = item;
+    let { rowChanges, fromRepId, fromDraft, changeType } = item;
 
     let timeState = this.timeQuery.getValue();
 
@@ -55,6 +56,7 @@ export class RepService {
       fromRepId: fromRepId,
       fromDraft: fromDraft,
       rowChanges: rowChanges,
+      changeType: changeType,
       timezone: timeState.timezone,
       timeSpec: timeState.timeSpec,
       timeRangeFraction: timeState.timeRangeFraction
@@ -86,8 +88,12 @@ export class RepService {
       .subscribe();
   }
 
-  editDraftRep(item: { rowChanges: common.RowChange[]; repId: string }) {
-    let { rowChanges, repId } = item;
+  editDraftRep(item: {
+    changeType: common.ChangeTypeEnum;
+    rowChanges: common.RowChange[];
+    repId: string;
+  }) {
+    let { rowChanges, repId, changeType } = item;
 
     let timeState = this.timeQuery.getValue();
 
@@ -97,6 +103,7 @@ export class RepService {
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       repId: repId,
+      changeType: changeType,
       rowChanges: rowChanges,
       timezone: timeState.timezone,
       timeSpec: timeState.timeSpec,
