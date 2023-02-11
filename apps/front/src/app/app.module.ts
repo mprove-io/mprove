@@ -83,6 +83,16 @@ registerLocaleData(en);
           appendTo: 'parent',
           arrow: false,
           offset: [0, 7]
+        },
+        menuGrid: {
+          theme: null,
+          placement: 'bottom-end',
+          animation: null,
+          trigger: 'click manual',
+          interactive: true,
+          appendTo: (ref: Element) => document.body,
+          arrow: false,
+          offset: [0, 7]
         }
       }
     }),

@@ -10,10 +10,12 @@ import { MonacoEditorModule } from 'ng-monaco-editor';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
+import { MetricRendererComponent } from './metric-renderer/metric-renderer.component';
 import { MetricsTreeComponent } from './metrics-tree/metrics-tree.component';
 import { MetricsComponent } from './metrics.component';
 import { RepOptionsComponent } from './rep-options/rep-options.component';
 import { RepComponent } from './rep/rep.component';
+import { RowOptionsComponent } from './row-options/row-options.component';
 import { StatusHeaderComponent } from './status-header/status-header.component';
 import { StatusRendererComponent } from './status-renderer/status-renderer.component';
 
@@ -23,6 +25,8 @@ import { StatusRendererComponent } from './status-renderer/status-renderer.compo
     MetricsTreeComponent,
     RepComponent,
     RepOptionsComponent,
+    RowOptionsComponent,
+    MetricRendererComponent,
     StatusRendererComponent,
     StatusHeaderComponent
   ],

@@ -11,6 +11,7 @@ import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { RepQuery } from '~front/app/queries/rep.query';
 import { TimeQuery } from '~front/app/queries/time.query';
 import { common } from '~front/barrels/common';
+import { MetricRendererComponent } from '../metric-renderer/metric-renderer.component';
 import { StatusHeaderComponent } from '../status-header/status-header.component';
 import { StatusRendererComponent } from '../status-renderer/status-renderer.component';
 
@@ -47,7 +48,8 @@ export class RepComponent {
     {
       field: 'metric',
       pinned: 'left',
-      width: 600
+      width: 600,
+      cellRenderer: MetricRendererComponent
     },
     {
       field: 'parameters',
