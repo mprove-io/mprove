@@ -127,7 +127,8 @@ export class CreateDraftRepController {
       struct: struct,
       timeSpec: timeSpec,
       timeRangeFraction: timeRangeFraction,
-      timezone: timezone
+      timezone: timezone,
+      isSaveToDb: changeType === common.ChangeTypeEnum.Delete
     });
 
     let payload: apiToBackend.ToBackendCreateDraftRepResponsePayload = {
