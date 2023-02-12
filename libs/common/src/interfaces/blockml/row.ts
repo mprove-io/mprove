@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsString, ValidateNested } from 'class-validator';
 import { Mconfig } from './mconfig';
 import { Query } from './query';
 import { Rq } from './rq';
@@ -18,6 +18,9 @@ export class Row {
   @ValidateNested()
   @Type(() => Mconfig)
   mconfig: Mconfig;
+
+  @IsBoolean()
+  hasAccessToModel: boolean;
 
   @ValidateNested()
   @Type(() => Query)

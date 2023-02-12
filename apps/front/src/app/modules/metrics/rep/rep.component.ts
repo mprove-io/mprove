@@ -15,6 +15,13 @@ import { MetricRendererComponent } from './metric-renderer/metric-renderer.compo
 import { StatusHeaderComponent } from './status-header/status-header.component';
 import { StatusRendererComponent } from './status-renderer/status-renderer.component';
 
+export interface RowData extends common.Row {
+  idx: string;
+  metric: string;
+  parameters: string;
+  [record: string]: any;
+}
+
 @Component({
   selector: 'm-rep',
   styleUrls: ['rep.component.scss'],
@@ -34,7 +41,7 @@ export class RepComponent {
     })
   );
 
-  columns: ColDef[] = [
+  columns: ColDef<RowData>[] = [
     {
       field: 'idx',
       rowDrag: true,
@@ -69,12 +76,12 @@ export class RepComponent {
     }
   ];
 
-  columnDefs: ColDef[] = [
+  columnDefs: ColDef<RowData>[] = [
     ...this.columns
     // { field: 'jan2023', headerName: 'Jan 2023' },
   ];
 
-  defaultColDef: ColDef = {
+  defaultColDef: ColDef<RowData> = {
     // sortable: true,
     // filter: true,
     suppressMovable: true,
@@ -106,25 +113,33 @@ export class RepComponent {
 
         let metric = metrics.metrics.find(m => m.metricId === row.metricId);
 
-        let dataRow: any = {
-          idx: row.rowId,
+        let rowData: RowData = {
+          rowId: row.rowId,
           parameters: '',
           metric: metric?.label || row.metricId,
-          query: row.query
+          idx: row.rowId,
+          query: row.query,
+          metricId: row.metricId,
+          mconfig: row.mconfig,
+          hasAccessToModel: row.hasAccessToModel,
+          formula: row.formula,
+          params: row.params,
+          records: row.records,
+          rqs: row.rqs
         };
 
         row.records.forEach(record => {
-          dataRow[record.key] = record.value;
+          rowData[record.key] = record.value;
         });
 
-        return dataRow;
+        return rowData;
       });
 
       return data;
     })
   );
 
-  @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
+  @ViewChild(AgGridAngular) agGrid!: AgGridAngular<RowData>;
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -133,11 +148,11 @@ export class RepComponent {
     private metricsQuery: MetricsQuery
   ) {}
 
-  onGridReady(params: GridReadyEvent) {
+  onGridReady(params: GridReadyEvent<RowData>) {
     // this.agGrid.api.sizeColumnsToFit();
   }
 
-  onCellClicked(e: CellClickedEvent): void {
+  onCellClicked(e: CellClickedEvent<RowData>): void {
     // console.log('cellClicked', e);
   }
 

@@ -31,6 +31,7 @@ export function wrapReps(item: {
           rqs: [],
           query: undefined,
           mconfig: undefined,
+          hasAccessToModel: false,
           params: y.params,
           records: []
         };

@@ -1,8 +1,10 @@
 import { Component, Input } from '@angular/core';
 import { ICellRendererParams } from 'ag-grid-community';
 import { RepQuery } from '~front/app/queries/rep.query';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { RepService } from '~front/app/services/rep.service';
 import { common } from '~front/barrels/common';
+import { RowData } from '../../rep.component';
 
 @Component({
   selector: 'm-row-options',
@@ -10,9 +12,13 @@ import { common } from '~front/barrels/common';
 })
 export class RowOptionsComponent {
   @Input()
-  params: ICellRendererParams;
+  params: ICellRendererParams<RowData>;
 
-  constructor(private repService: RepService, private repQuery: RepQuery) {}
+  constructor(
+    private repService: RepService,
+    private repQuery: RepQuery,
+    private navigateService: NavigateService
+  ) {}
 
   clickMenu(event: MouseEvent) {
     event.stopPropagation();
@@ -43,6 +49,20 @@ export class RowOptionsComponent {
         fromDraft: selectedRep.draft,
         rowChanges: [rowChange],
         changeType: common.ChangeTypeEnum.Delete
+      });
+    }
+  }
+
+  explore(event: MouseEvent) {
+    event.stopPropagation();
+
+    let mconfig = this.params.data.mconfig;
+
+    if (this.params.data.hasAccessToModel === true) {
+      this.navigateService.navigateMconfigQuery({
+        modelId: mconfig.modelId,
+        mconfigId: mconfig.mconfigId,
+        queryId: mconfig.queryId
       });
     }
   }

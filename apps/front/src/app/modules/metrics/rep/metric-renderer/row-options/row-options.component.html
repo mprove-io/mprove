@@ -1,6 +1,6 @@
 <button
   data-cy="rowOptionsMenuButton"
-  class="ml-3 mb-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded hover:bg-white focus:outline-none"
+  class="ml-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded hover:bg-white focus:outline-none"
   #t1="tippy"
   [tippy]="templateRowOptions"
   [hideOnEscape]="true"
@@ -14,6 +14,17 @@
 
 <ng-template #templateRowOptions>
   <div class="border-gray4 w-48 rounded-md border-2 bg-white shadow-xl">
+    <button
+      data-cy="rowOptionsExplore"
+      class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
+      [ngClass]="{
+        'cursor-default text-gray-400': params.data.hasAccessToModel === false
+      }"
+      (click)="t1.hide(); explore($event)"
+      [disabled]="params.data.hasAccessToModel === false"
+      >Explore</button
+    >
+
     <button
       data-cy="rowOptionsDelete"
       class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"

@@ -1,4 +1,5 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
@@ -21,6 +22,7 @@ export class GetMetricsController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private metricsRepository: repositories.MetricsRepository,
+    private modelsRepository: repositories.ModelsRepository,
     private repsRepository: repositories.RepsRepository,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
@@ -115,6 +117,17 @@ export class GetMetricsController {
       projectId: projectId
     });
 
+    let modelIds = metrics
+      .filter(m => common.isDefined(m.model_id))
+      .map(x => x.model_id);
+
+    let models = await this.modelsRepository.find({
+      where: {
+        model_id: In(modelIds),
+        struct_id: struct.struct_id
+      }
+    });
+
     let apiMember = wrapper.wrapToApiMember(userMember);
 
     let payload: apiToBackend.ToBackendGetMetricsResponsePayload = {
@@ -127,6 +140,16 @@ export class GetMetricsController {
           rep: x,
           member: apiMember,
           columns: [],
+          models: models.map(model =>
+            wrapper.wrapToApiModel({
+              model: model,
+              hasAccess: helper.checkAccess({
+                userAlias: user.alias,
+                member: userMember,
+                entity: model
+              })
+            })
+          ),
           timezone: undefined,
           timeSpec: undefined,
           timeRangeFraction: undefined,

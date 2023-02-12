@@ -78,6 +78,7 @@ export class RepsService {
             rqs: [],
             mconfig: undefined,
             query: undefined,
+            hasAccessToModel: false,
             records: []
           };
 
@@ -195,7 +196,9 @@ export class RepsService {
     timezone: string;
     project: entities.ProjectEntity;
     envId: string;
-    userMember: common.Member;
+    userMemberApi: common.Member;
+    userMember: entities.MemberEntity;
+    user: entities.UserEntity;
     isSaveToDb?: boolean;
   }) {
     let {
@@ -207,6 +210,8 @@ export class RepsService {
       timezone,
       project,
       envId,
+      user,
+      userMemberApi,
       userMember,
       isSaveToDb
     } = item;
@@ -392,19 +397,7 @@ export class RepsService {
       })
     );
 
-    let repApi = wrapper.wrapToApiRep({
-      rep: rep,
-      member: userMember,
-      columns: columns,
-      timezone: timezone,
-      timeSpec: timeSpec,
-      timeRangeFraction: timeRangeFraction,
-      timeColumnsLimit: timeColumnsLimit,
-      timeColumnsLength: columns.length,
-      isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded
-    });
-
-    repApi.rows.forEach(x => {
+    rep.rows.forEach(x => {
       let rq = x.rqs.find(
         y =>
           y.fractionBrick === timeRangeFraction.brick &&
@@ -419,6 +412,28 @@ export class RepsService {
       x.query = [...queriesApi, ...newQueries].find(
         y => y.queryId === rq.queryId
       );
+    });
+
+    let repApi = wrapper.wrapToApiRep({
+      rep: rep,
+      models: models.map(model =>
+        wrapper.wrapToApiModel({
+          model: model,
+          hasAccess: helper.checkAccess({
+            userAlias: user.alias,
+            member: userMember,
+            entity: model
+          })
+        })
+      ),
+      member: userMemberApi,
+      columns: columns,
+      timezone: timezone,
+      timeSpec: timeSpec,
+      timeRangeFraction: timeRangeFraction,
+      timeColumnsLimit: timeColumnsLimit,
+      timeColumnsLength: columns.length,
+      isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded
     });
 
     let completedRowsLength = repApi.rows

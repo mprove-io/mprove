@@ -3,25 +3,26 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { common } from '~front/barrels/common';
+import { RowData } from '../rep.component';
 
 @Component({
   selector: 'm-status-renderer',
   templateUrl: './status-renderer.component.html'
 })
 export class StatusRendererComponent implements ICellRendererAngularComp {
-  params: ICellRendererParams;
+  params: ICellRendererParams<RowData>;
 
   spinnerName = common.makeId();
   queryStatusEnum = common.QueryStatusEnum;
 
-  agInit(params: ICellRendererParams) {
+  agInit(params: ICellRendererParams<RowData>) {
     // console.log('agInit');
     this.params = params;
     // console.log(params);
     this.updateSpinner();
   }
 
-  refresh(params: ICellRendererParams) {
+  refresh(params: ICellRendererParams<RowData>) {
     // console.log('refresh');
     this.params = params;
     this.updateSpinner();

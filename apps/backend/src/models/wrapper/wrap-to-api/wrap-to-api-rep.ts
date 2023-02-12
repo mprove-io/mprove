@@ -4,6 +4,7 @@ import { entities } from '~backend/barrels/entities';
 export function wrapToApiRep(item: {
   rep: entities.RepEntity;
   member: common.Member;
+  models: common.ModelX[];
   timezone: string;
   timeSpec: common.TimeSpecEnum;
   timeRangeFraction: common.Fraction;
@@ -18,6 +19,7 @@ export function wrapToApiRep(item: {
     columns,
     timezone,
     timeSpec,
+    models,
     timeRangeFraction,
     timeColumnsLimit,
     timeColumnsLength,
@@ -56,7 +58,12 @@ export function wrapToApiRep(item: {
     timezone: timezone,
     timeSpec: timeSpec,
     timeRangeFraction: timeRangeFraction,
-    rows: rep.rows,
+    rows: rep.rows.map(x => {
+      x.hasAccessToModel = common.isDefined(x.mconfig)
+        ? models.find(m => m.modelId === x.mconfig.modelId).hasAccess
+        : false;
+      return x;
+    }),
     columns: columns,
     timeColumnsLimit: timeColumnsLimit,
     timeColumnsLength: timeColumnsLength,
