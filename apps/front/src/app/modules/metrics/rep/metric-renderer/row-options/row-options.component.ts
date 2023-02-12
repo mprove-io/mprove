@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { ICellRendererParams } from 'ag-grid-community';
 import { RepQuery } from '~front/app/queries/rep.query';
 import { RepService } from '~front/app/services/rep.service';
 import { common } from '~front/barrels/common';
@@ -9,13 +10,16 @@ import { common } from '~front/barrels/common';
 })
 export class RowOptionsComponent {
   @Input()
-  data: any;
+  params: ICellRendererParams;
 
   constructor(private repService: RepService, private repQuery: RepQuery) {}
 
   clickMenu(event: MouseEvent) {
     event.stopPropagation();
-    console.log(this.data);
+    console.log(this.params.data);
+    let gridApi = this.params.api;
+    gridApi.deselectAll();
+    this.params.node.setSelected(true);
   }
 
   deleteRow(event: MouseEvent) {
@@ -24,7 +28,7 @@ export class RowOptionsComponent {
     let selectedRep = this.repQuery.getValue();
 
     let rowChange: common.RowChange = {
-      rowId: this.data.idx
+      rowId: this.params.data.idx
     };
 
     if (selectedRep.draft === true) {
