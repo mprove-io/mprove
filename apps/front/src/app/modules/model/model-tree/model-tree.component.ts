@@ -211,7 +211,7 @@ export class ModelTreeComponent implements AfterViewInit {
       fields: fields
     });
 
-    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+    this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
   }
 
   filterField(node: TreeNode, event: MouseEvent) {
@@ -245,7 +245,7 @@ export class ModelTreeComponent implements AfterViewInit {
       this.expandFilters.emit();
     }
 
-    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+    this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
   }
 
   makeNodesExtra() {

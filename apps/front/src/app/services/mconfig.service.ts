@@ -137,7 +137,7 @@ export class MconfigService {
     return newMconfig;
   }
 
-  navCreateMconfigAndQuery(newMconfig: common.MconfigX) {
+  navCreateTempMconfigAndQuery(newMconfig: common.MconfigX) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
     let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload =
@@ -174,7 +174,7 @@ export class MconfigService {
       .subscribe();
   }
 
-  optimisticNavCreateMconfigAndQuery(item: {
+  optimisticNavCreateTempMconfigAndQuery(item: {
     newMconfig: common.MconfigX;
     queryId: string;
   }) {
@@ -218,6 +218,44 @@ export class MconfigService {
         map(
           (resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse) => {}
         ),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  navDuplicateMconfigAndQuery(item: { oldMconfigId: string }) {
+    let { oldMconfigId } = item;
+
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
+    let payload: apiToBackend.ToBackendDuplicateMconfigAndQueryRequestPayload =
+      {
+        projectId: this.nav.projectId,
+        isRepoProd: this.nav.isRepoProd,
+        branchId: this.nav.branchId,
+        envId: this.nav.envId,
+        oldMconfigId: oldMconfigId
+      };
+
+    this.apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum
+            .ToBackendDuplicateMconfigAndQuery,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendDuplicateMconfigAndQueryResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let { mconfig, query } = resp.payload;
+
+            this.navigateService.navigateMconfigQuery({
+              mconfigId: mconfig.mconfigId,
+              queryId: mconfig.queryId,
+              modelId: mconfig.modelId
+            });
+          }
+        }),
         take(1)
       )
       .subscribe();

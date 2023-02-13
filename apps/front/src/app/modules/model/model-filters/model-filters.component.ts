@@ -51,7 +51,7 @@ export class ModelFiltersComponent {
       ...newMconfig.filters.slice(filterIndex + 1)
     ];
 
-    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+    this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
   }
 
   addFraction(filterExtended: common.FilterX, filterIndex: number) {
@@ -77,7 +77,7 @@ export class ModelFiltersComponent {
       ...newMconfig.filters.slice(filterIndex + 1)
     ];
 
-    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+    this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
   }
 
   deleteFraction(
@@ -111,6 +111,6 @@ export class ModelFiltersComponent {
       ];
     }
 
-    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+    this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
   }
 }

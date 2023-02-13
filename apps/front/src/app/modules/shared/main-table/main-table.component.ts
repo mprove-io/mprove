@@ -110,7 +110,7 @@ export class MainTableComponent {
     newMconfig.sorts =
       newMconfig.sortings.length > 0 ? newSorts.join(', ') : null;
 
-    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+    this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
   }
 
   remove(columnId: string) {
@@ -146,7 +146,7 @@ export class MainTableComponent {
       fields: fields
     });
 
-    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+    this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
   }
 
   moveLeft(columnId: string) {
@@ -164,7 +164,7 @@ export class MainTableComponent {
 
     newMconfig.select = newColumnsOrder;
 
-    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+    this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
   }
 
   moveRight(columnId: string) {
@@ -182,6 +182,6 @@ export class MainTableComponent {
 
     newMconfig.select = newColumnsOrder;
 
-    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+    this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
   }
 }

@@ -552,7 +552,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
     newMconfig.limit = Number(limit.value);
 
-    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+    this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
   }
 
   timezoneChange() {
@@ -562,7 +562,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
     newMconfig.timezone = timezone;
 
-    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+    this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
   }
 
   run() {
@@ -721,7 +721,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
     newMconfig.chart.type = chartType;
 
-    this.mconfigService.optimisticNavCreateMconfigAndQuery({
+    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
       newMconfig: newMconfig,
       queryId: this.mconfig.queryId
     });
@@ -763,7 +763,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
     newMconfig.chart.title = chartTitle;
 
-    this.mconfigService.optimisticNavCreateMconfigAndQuery({
+    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
       newMconfig: newMconfig,
       queryId: this.mconfig.queryId
     });

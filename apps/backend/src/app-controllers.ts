@@ -36,6 +36,7 @@ export const appControllers = [
 
   controllers.CreateTempMconfigController,
   controllers.CreateTempMconfigAndQueryController,
+  controllers.DuplicateMconfigAndQueryController,
   controllers.GetMconfigController,
 
   controllers.CreateMemberController,

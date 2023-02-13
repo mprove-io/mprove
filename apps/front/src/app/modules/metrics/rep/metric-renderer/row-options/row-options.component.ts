@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ICellRendererParams } from 'ag-grid-community';
 import { RepQuery } from '~front/app/queries/rep.query';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { MconfigService } from '~front/app/services/mconfig.service';
 import { RepService } from '~front/app/services/rep.service';
 import { common } from '~front/barrels/common';
 import { RowData } from '../../rep.component';
@@ -17,7 +17,7 @@ export class RowOptionsComponent {
   constructor(
     private repService: RepService,
     private repQuery: RepQuery,
-    private navigateService: NavigateService
+    private mconfigService: MconfigService
   ) {}
 
   clickMenu(event: MouseEvent) {
@@ -59,10 +59,8 @@ export class RowOptionsComponent {
     let mconfig = this.params.data.mconfig;
 
     if (this.params.data.hasAccessToModel === true) {
-      this.navigateService.navigateMconfigQuery({
-        modelId: mconfig.modelId,
-        mconfigId: mconfig.mconfigId,
-        queryId: mconfig.queryId
+      this.mconfigService.navDuplicateMconfigAndQuery({
+        oldMconfigId: mconfig.mconfigId
       });
     }
   }

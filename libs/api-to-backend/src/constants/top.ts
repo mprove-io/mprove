@@ -220,6 +220,8 @@ export const nameToClass = {
     interfaces.ToBackendCreateTempMconfigRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfigAndQuery]:
     interfaces.ToBackendCreateTempMconfigAndQueryRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendDuplicateMconfigAndQuery]:
+    interfaces.ToBackendDuplicateMconfigAndQueryRequest,
   //
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetQueries]:
     interfaces.ToBackendGetQueriesRequest,
