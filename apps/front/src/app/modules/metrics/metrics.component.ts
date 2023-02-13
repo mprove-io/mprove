@@ -39,10 +39,15 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   emptyRepId = common.EMPTY;
 
+  queriesLength = 0;
+
   rep: common.RepX;
   rep$ = this.repQuery.select().pipe(
     tap(x => {
       this.rep = x;
+      this.queriesLength = this.rep.rows.filter(row =>
+        common.isDefined(row.query)
+      ).length;
       console.log(x);
       // console.log(x.timeRangeFraction);
 
@@ -166,6 +171,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
         concatMap(() => {
           if (
             this.rep?.rows
+              .filter(row => common.isDefined(row.query))
               .map(row => row.query.status)
               .indexOf(common.QueryStatusEnum.Running) > -1
           ) {
@@ -232,7 +238,9 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
     let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
       projectId: nav.projectId,
-      queryIds: this.rep.rows.map(row => row.query.queryId)
+      queryIds: this.rep.rows
+        .filter(row => common.isDefined(row.query))
+        .map(row => row.query.queryId)
     };
 
     this.apiService
@@ -249,20 +257,25 @@ export class MetricsComponent implements OnInit, OnDestroy {
               runningQueries
                 .map(y => y.queryId)
                 .some(qId =>
-                  this.rep.rows.map(r => r.query.queryId).includes(qId)
+                  this.rep.rows
+                    .filter(r => common.isDefined(r.query))
+                    .map(r => r.query.queryId)
+                    .includes(qId)
                 )
             ) {
               let tRep = common.makeCopy(this.rep);
 
-              tRep.rows.forEach(row => {
-                let runningQuery = runningQueries.find(
-                  q => q.queryId === row.query.queryId
-                );
+              tRep.rows
+                .filter(row => common.isDefined(row.query))
+                .forEach(row => {
+                  let runningQuery = runningQueries.find(
+                    q => q.queryId === row.query.queryId
+                  );
 
-                if (common.isDefined(runningQuery)) {
-                  row.query = runningQuery;
-                }
-              });
+                  if (common.isDefined(runningQuery)) {
+                    row.query = runningQuery;
+                  }
+                });
 
               this.repQuery.update(tRep);
             } else {

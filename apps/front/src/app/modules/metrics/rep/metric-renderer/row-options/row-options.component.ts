@@ -53,6 +53,31 @@ export class RowOptionsComponent {
     }
   }
 
+  clearRow(event: MouseEvent) {
+    event.stopPropagation();
+
+    let selectedRep = this.repQuery.getValue();
+
+    let rowChange: common.RowChange = {
+      rowId: this.params.data.idx
+    };
+
+    if (selectedRep.draft === true) {
+      this.repService.editDraftRep({
+        repId: selectedRep.repId,
+        rowChanges: [rowChange],
+        changeType: common.ChangeTypeEnum.Clear
+      });
+    } else {
+      this.repService.navCreateDraftRep({
+        fromRepId: selectedRep.repId,
+        fromDraft: selectedRep.draft,
+        rowChanges: [rowChange],
+        changeType: common.ChangeTypeEnum.Clear
+      });
+    }
+  }
+
   explore(event: MouseEvent) {
     event.stopPropagation();
 

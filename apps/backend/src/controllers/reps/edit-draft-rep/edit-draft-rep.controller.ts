@@ -113,7 +113,9 @@ export class EditDraftRepController {
       timeSpec: timeSpec,
       timeRangeFraction: timeRangeFraction,
       timezone: timezone,
-      isSaveToDb: changeType === common.ChangeTypeEnum.Delete
+      isSaveToDb:
+        changeType === common.ChangeTypeEnum.Delete ||
+        changeType === common.ChangeTypeEnum.Clear
     });
 
     let payload: apiToBackend.ToBackendEditDraftRepResponsePayload = {

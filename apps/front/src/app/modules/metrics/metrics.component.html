@@ -95,13 +95,13 @@
             data-cy="metricsRunButton"
             class="ml-5 mr-9 flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
             [ngClass]="{
-              'bg-blue3': rep?.rows.length > 0,
+              'bg-blue3': queriesLength > 0,
               'cursor-default':
-                rep?.rows.length === 0 || isRunButtonPressed === true,
-              'bg-gray-400': rep?.rows.length === 0
+                queriesLength === 0 || isRunButtonPressed === true,
+              'bg-gray-400': queriesLength === 0
             }"
             (click)="run()"
-            [disabled]="rep?.rows.length === 0 || isRunButtonPressed === true"
+            [disabled]="queriesLength === 0 || isRunButtonPressed === true"
           >
             <div *ngIf="isRunButtonPressed === false">Run</div>
             <div

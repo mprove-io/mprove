@@ -1,6 +1,6 @@
 <div class="flex h-full flex-row items-center justify-center">
   <div
-    *ngIf="params.data.query.status === queryStatusEnum.Running"
+    *ngIf="params.data.query?.status === queryStatusEnum.Running"
     class="relative h-9 w-9"
   >
     <ngx-spinner
@@ -17,9 +17,9 @@
   </div>
 
   <div
-    *ngIf="params.data.query.status === queryStatusEnum.Error"
+    *ngIf="params.data.query?.status === queryStatusEnum.Error"
     class="text-red1 flex h-8 w-8 flex-shrink-0"
-    tippy="Query Error: {{ params.data.query.lastErrorMessage }}"
+    tippy="Query Error: {{ params.data.query?.lastErrorMessage }}"
   >
     <m-exclamation-icon></m-exclamation-icon>
   </div>

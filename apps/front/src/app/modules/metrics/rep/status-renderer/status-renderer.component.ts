@@ -32,7 +32,7 @@ export class StatusRendererComponent implements ICellRendererAngularComp {
   }
 
   updateSpinner() {
-    if (this.params.data.query.status === common.QueryStatusEnum.Running) {
+    if (this.params.data.query?.status === common.QueryStatusEnum.Running) {
       // if (this.params.data.query.status === common.QueryStatusEnum.Completed) {
       this.spinner.show(this.spinnerName);
     } else {
