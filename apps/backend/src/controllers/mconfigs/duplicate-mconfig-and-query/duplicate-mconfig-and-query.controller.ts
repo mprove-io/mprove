@@ -122,60 +122,10 @@ export class DuplicateMconfigAndQueryController {
     let newMconfigId = common.makeId();
     let newQueryId = common.makeId();
 
-    // let mconfig: common.Mconfig = {
-    //   structId: struct.struct_id,
-    //   mconfigId: newMconfigId,
-    //   queryId: newQueryId,
-    //   modelId: model.model_id,
-    //   modelLabel: model.label,
-    //   select: oldMconfig.select,
-    //   sortings: oldMconfig.sortings,
-    //   sorts: oldMconfig.sorts,
-    //   timezone: oldMconfig.timezone,
-    //   limit: oldMconfig.limit,
-    //   filters: oldMconfig.filters,
-    //   chart: common.DEFAULT_CHART,
-    //   temp: true,
-    //   serverTs: 1
-    //   // fields: [],
-    //   // extendedFilters: [],
-    // };
-
-    // let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
-    //   {
-    //     info: {
-    //       name: apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlProcessQuery,
-    //       traceId: traceId
-    //     },
-    //     payload: {
-    //       orgId: project.org_id,
-    //       projectId: project.project_id,
-    //       weekStart: struct.week_start,
-    //       udfsDict: struct.udfs_dict,
-    //       mconfig: mconfig,
-    //       modelContent: model.content,
-    //       envId: envId
-    //     }
-    //   };
-
-    // let blockmlProcessQueryResponse =
-    //   await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlProcessQueryResponse>(
-    //     {
-    //       routingKey: common.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
-    //       message: toBlockmlProcessQueryRequest,
-    //       checkIsOk: true
-    //     }
-    //   );
-
-    // let newMconfig = blockmlProcessQueryResponse.payload.mconfig;
-    // let newQuery = blockmlProcessQueryResponse.payload.query;
-
-    // newMconfig.queryId = newQueryId;
-    // newQuery.queryId = newQueryId;
-
     let newMconfig = Object.assign({}, oldMconfig, <entities.MconfigEntity>{
       mconfig_id: newMconfigId,
-      query_id: newQueryId
+      query_id: newQueryId,
+      temp: common.BoolEnum.TRUE
     });
 
     let newQuery = Object.assign({}, oldQuery, <entities.QueryEntity>{
