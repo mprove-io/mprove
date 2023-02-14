@@ -5,11 +5,17 @@ import {
   ViewChild
 } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
-import { CellClickedEvent, ColDef, GridReadyEvent } from 'ag-grid-community';
+import {
+  CellClickedEvent,
+  ColDef,
+  GridReadyEvent,
+  SelectionChangedEvent
+} from 'ag-grid-community';
 import { map, tap } from 'rxjs';
 import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { RepQuery } from '~front/app/queries/rep.query';
 import { TimeQuery } from '~front/app/queries/time.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { common } from '~front/barrels/common';
 import { MetricRendererComponent } from './metric-renderer/metric-renderer.component';
 import { StatusHeaderComponent } from './status-header/status-header.component';
@@ -51,7 +57,6 @@ export class RepComponent {
       minWidth: 90,
       maxWidth: 90
     },
-
     {
       field: 'metric',
       pinned: 'left',
@@ -145,8 +150,15 @@ export class RepComponent {
     private cd: ChangeDetectorRef,
     private repQuery: RepQuery,
     private timeQuery: TimeQuery,
+    private uiQuery: UiQuery,
     private metricsQuery: MetricsQuery
   ) {}
+
+  onSelectionChanged(event: SelectionChangedEvent) {
+    let repSelectedNodes = event.api.getSelectedNodes();
+    this.uiQuery.updatePart({ repSelectedNodes: repSelectedNodes });
+    // console.log(selectedNodes);
+  }
 
   onGridReady(params: GridReadyEvent<RowData>) {
     // this.agGrid.api.sizeColumnsToFit();

@@ -29,6 +29,7 @@
     [suppressCellFocus]="true"
     [animateRows]="true"
     [rowSelection]="'multiple'"
+    (selectionChanged)="onSelectionChanged($event)"
     (gridReady)="onGridReady($event)"
     (cellClicked)="onCellClicked($event)"
     (rowDragEnd)="rowDragEndHandle($event)"

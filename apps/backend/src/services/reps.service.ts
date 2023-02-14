@@ -62,29 +62,44 @@ export class RepsService {
 
     let processedRows = [...rows];
 
-    rowChanges
-      .filter(x => common.isUndefined(x.rowId))
-      .forEach(x => {
-        if (changeType === common.ChangeTypeEnum.Add) {
+    rowChanges.forEach(x => {
+      if (changeType === common.ChangeTypeEnum.Add) {
+        let rowId = x.rowId;
+
+        if (common.isUndefined(rowId)) {
           let idxs = processedRows.map(y => common.idxLetterToNumber(y.rowId));
           let maxIdx = idxs.length > 0 ? Math.max(...idxs) : undefined;
           let idxNum = common.isDefined(maxIdx) ? maxIdx + 1 : 0;
+          rowId = common.idxNumberToLetter(idxNum);
+        }
 
-          let newRow: common.Row = {
-            rowId: common.idxNumberToLetter(idxNum),
-            metricId: x.metricId,
-            params: x.params || [],
-            formula: x.formula,
-            rqs: [],
-            mconfig: undefined,
-            query: undefined,
-            hasAccessToModel: false,
-            records: []
-          };
+        let newRow: common.Row = {
+          rowId: rowId,
+          metricId: x.metricId,
+          params: x.params || [],
+          formula: x.formula,
+          rqs: [],
+          mconfig: undefined,
+          query: undefined,
+          hasAccessToModel: false,
+          records: []
+        };
 
+        if (common.isDefined(x.rowId)) {
+          let rowIndex = processedRows.findIndex(r => r.rowId === x.rowId);
+
+          let newProcessedRows = [
+            ...processedRows.slice(0, rowIndex),
+            newRow,
+            ...processedRows.slice(rowIndex + 1)
+          ];
+
+          processedRows = newProcessedRows;
+        } else {
           processedRows.push(newRow);
         }
-      });
+      }
+    });
 
     if (changeType === common.ChangeTypeEnum.Clear) {
       processedRows = processedRows.map(row => {

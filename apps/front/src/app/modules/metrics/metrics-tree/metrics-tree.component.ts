@@ -14,6 +14,7 @@ import {
 import { tap } from 'rxjs/operators';
 import { MetricsQuery, MetricsState } from '~front/app/queries/metrics.query';
 import { RepQuery } from '~front/app/queries/rep.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { RepService } from '~front/app/services/rep.service';
 import { common } from '~front/barrels/common';
@@ -116,6 +117,7 @@ export class MetricsTreeComponent implements AfterViewInit {
     private metricsQuery: MetricsQuery,
     private cd: ChangeDetectorRef,
     private repQuery: RepQuery,
+    private uiQuery: UiQuery,
     private repService: RepService,
     private navigateService: NavigateService
   ) {}
@@ -153,10 +155,15 @@ export class MetricsTreeComponent implements AfterViewInit {
   }
 
   addMetricToRep(node: any) {
+    let repSelectedNodes = this.uiQuery.getValue().repSelectedNodes;
+
     let rep = this.repQuery.getValue();
 
     let rowChange: common.RowChange = {
-      // rowId: common.idxNumberToLetter(idxNum),
+      rowId:
+        repSelectedNodes.length === 1
+          ? repSelectedNodes[0].data.rowId
+          : undefined,
       metricId: node.data.metric.metricId
       // params: [],
       // formula: node.data.metric.formula
