@@ -1,5 +1,7 @@
 <div class="flex h-full flex-row items-center">
   <div class="truncate">{{ params.value }}</div>
   <div class="flex flex-grow"></div>
-  <m-row-options [params]="params"></m-row-options>
+  <div class="invisible group-hover:visible">
+    <m-row-options [params]="params"></m-row-options>
+  </div>
 </div>

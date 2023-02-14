@@ -39,6 +39,8 @@ export class RepComponent {
     this.agGrid.api.deselectAll();
   }
 
+  rowCssClasses = ['group'];
+
   rep: common.RepX;
   rep$ = this.repQuery.select().pipe(
     tap(x => {

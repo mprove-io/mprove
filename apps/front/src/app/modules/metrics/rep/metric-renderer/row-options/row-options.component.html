@@ -28,15 +28,15 @@
     <button
       data-cy="rowOptionsDelete"
       class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
-      (click)="t1.hide(); deleteRow($event)"
-      >Delete row</button
+      (click)="t1.hide(); clearRow($event)"
+      >Clear row</button
     >
 
     <button
       data-cy="rowOptionsDelete"
       class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
-      (click)="t1.hide(); clearRow($event)"
-      >Clear row</button
+      (click)="t1.hide(); deleteRow($event)"
+      >Delete row</button
     >
   </div>
 </ng-template>

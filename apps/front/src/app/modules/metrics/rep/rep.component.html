@@ -22,6 +22,7 @@
     style="width: 100%; height: 100%"
     class="ag-theme-alpine mt-5 mb-5"
     [rowData]="rowData$ | async"
+    [rowClass]="rowCssClasses"
     [columnDefs]="columnDefs"
     [defaultColDef]="defaultColDef"
     [rowDragManaged]="true"
