@@ -113,7 +113,10 @@ export class RepsService {
             mconfig: undefined,
             query: undefined,
             hasAccessToModel: false,
-            records: []
+            records: [],
+            formatNumber: undefined,
+            currencyPrefix: undefined,
+            currencySuffix: undefined
           };
 
           return emptyRow;
