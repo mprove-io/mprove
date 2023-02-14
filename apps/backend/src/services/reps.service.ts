@@ -82,7 +82,10 @@ export class RepsService {
           mconfig: undefined,
           query: undefined,
           hasAccessToModel: false,
-          records: []
+          records: [],
+          formatNumber: undefined,
+          currencyPrefix: undefined,
+          currencySuffix: undefined
         };
 
         if (common.isDefined(x.rowId)) {
