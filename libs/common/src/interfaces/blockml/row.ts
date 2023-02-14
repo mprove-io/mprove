@@ -31,4 +31,13 @@ export class Row {
   formula: string;
 
   records: any[];
+
+  @IsString()
+  formatNumber: string;
+
+  @IsString()
+  currencyPrefix: string;
+
+  @IsString()
+  currencySuffix: string;
 }

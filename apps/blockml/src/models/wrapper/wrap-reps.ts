@@ -5,8 +5,9 @@ export function wrapReps(item: {
   projectId: string;
   structId: string;
   reps: interfaces.Rep[];
+  metrics: common.MetricAny[];
 }) {
-  let { projectId, structId, reps } = item;
+  let { projectId, structId, reps, metrics } = item;
 
   let apiReps: common.Rep[] = reps.map(x => {
     let rep: common.Rep = {
@@ -23,19 +24,24 @@ export function wrapReps(item: {
       timeSpec: undefined,
       timeRangeFraction: undefined,
       columns: [],
-      rows: x.rows.map(y => {
-        let row: common.Row = {
-          rowId: y.id,
-          metricId: y.metric,
-          formula: y.formula,
+      rows: x.rows.map(row => {
+        let metric = metrics.find(m => m.metricId === row.metric);
+
+        let rowApi: common.Row = {
+          rowId: row.id,
+          metricId: row.metric,
+          formula: row.formula,
           rqs: [],
           query: undefined,
           mconfig: undefined,
           hasAccessToModel: false,
-          params: y.params,
-          records: []
+          params: row.params,
+          records: [],
+          formatNumber: metric.formatNumber,
+          currencyPrefix: metric.currencyPrefix,
+          currencySuffix: metric.currencySuffix
         };
-        return row;
+        return rowApi;
       }),
       timeColumnsLength: undefined,
       timeColumnsLimit: undefined,

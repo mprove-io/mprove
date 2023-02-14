@@ -67,6 +67,15 @@ export class MetricEntity {
   @Column({ type: constants.TEXT, nullable: true })
   description: string;
 
+  @Column({ type: constants.VARCHAR, nullable: true })
+  format_number: string;
+
+  @Column({ type: constants.VARCHAR, nullable: true })
+  currency_prefix: string;
+
+  @Column({ type: constants.VARCHAR, nullable: true })
+  currency_suffix: string;
+
   @Column({ type: constants.BIGINT })
   server_ts: string;
 }

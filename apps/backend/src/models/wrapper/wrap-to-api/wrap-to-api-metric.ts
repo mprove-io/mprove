@@ -35,6 +35,9 @@ export function wrapToApiMetric(item: {
     label: metric.label,
     partLabel: metric.part_label,
     description: metric.description,
+    formatNumber: metric.format_number,
+    currencyPrefix: metric.currency_prefix,
+    currencySuffix: metric.currency_suffix,
     serverTs: Number(metric.server_ts)
   };
 }

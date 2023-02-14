@@ -1,6 +1,6 @@
 .ag-theme-alpine {
+  font-family: monospace;
   --ag-font-size: 16px;
-  --ag-font-family: monospace;
 
   --ag-selected-row-background-color: rgb(255, 224, 129);
   --ag-row-hover-color: rgb(231, 242, 253);
@@ -14,4 +14,12 @@
   // --ag-header-column-resize-handle-color: rgb(126, 46, 132);
 
   // --ag-foreground-color: rgb(253, 132, 19);
+}
+
+::ng-deep .ag-header {
+  font-size: 17px;
+}
+
+::ng-deep .ag-theme-alpine .ag-right-aligned-cell {
+  font-family: 'Montserrat';
 }

@@ -24,6 +24,9 @@ export function wrapToEntityMetric(x: common.MetricAny): entities.MetricEntity {
     label: x.label,
     part_label: x.partLabel,
     description: x.description,
+    format_number: x.formatNumber,
+    currency_prefix: x.currencyPrefix,
+    currency_suffix: x.currencySuffix,
     server_ts: x.serverTs.toString()
   };
 }

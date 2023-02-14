@@ -16,6 +16,7 @@ import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { RepQuery } from '~front/app/queries/rep.query';
 import { TimeQuery } from '~front/app/queries/time.query';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { QueryService } from '~front/app/services/query.service';
 import { common } from '~front/barrels/common';
 import { MetricRendererComponent } from './metric-renderer/metric-renderer.component';
 import { StatusHeaderComponent } from './status-header/status-header.component';
@@ -100,15 +101,27 @@ export class RepComponent {
 
   rowData$ = this.repQuery.select().pipe(
     tap(x => {
-      let timeState = this.timeQuery.getValue();
-      let timeSpec = timeState.timeSpec;
-
       this.columnDefs = [
         ...this.columns,
-        ...x.columns.map(column => ({
-          field: `${column.columnId}`,
-          headerName: column.label
-        }))
+        ...x.columns.map(column => {
+          let columnDef: ColDef<RowData> = {
+            field: `${column.columnId}`,
+            headerName: column.label,
+            type: 'numericColumn',
+            valueFormatter: params =>
+              common.isDefined(params.value)
+                ? this.queryService.formatValue({
+                    value: params.value,
+                    formatNumber: params.data.formatNumber,
+                    fieldResult: common.FieldResultEnum.Number,
+                    currencyPrefix: params.data.currencyPrefix,
+                    currencySuffix: params.data.currencySuffix
+                  })
+                : undefined
+          };
+
+          return columnDef;
+        })
       ];
     }),
     map(x => {
@@ -132,7 +145,10 @@ export class RepComponent {
           formula: row.formula,
           params: row.params,
           records: row.records,
-          rqs: row.rqs
+          rqs: row.rqs,
+          currencyPrefix: metric.currencyPrefix,
+          currencySuffix: metric.currencySuffix,
+          formatNumber: metric.formatNumber
         };
 
         row.records.forEach(record => {
@@ -152,6 +168,7 @@ export class RepComponent {
     private cd: ChangeDetectorRef,
     private repQuery: RepQuery,
     private timeQuery: TimeQuery,
+    private queryService: QueryService,
     private uiQuery: UiQuery,
     private metricsQuery: MetricsQuery
   ) {}

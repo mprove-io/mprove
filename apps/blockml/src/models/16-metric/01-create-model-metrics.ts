@@ -118,6 +118,9 @@ export function createModelMetrics(
             label: `${model.label} ${partLabel}`,
             partLabel: partLabel,
             description: modelField.description,
+            formatNumber: modelField.format_number,
+            currencyPrefix: modelField.currency_prefix,
+            currencySuffix: modelField.currency_suffix,
             serverTs: 1
           };
 
@@ -189,6 +192,9 @@ export function createModelMetrics(
               label: `${model.label} ${partLabel}`,
               partLabel: partLabel,
               description: viewField.description,
+              formatNumber: viewField.format_number,
+              currencyPrefix: viewField.currency_prefix,
+              currencySuffix: viewField.currency_suffix,
               serverTs: 1
             };
 

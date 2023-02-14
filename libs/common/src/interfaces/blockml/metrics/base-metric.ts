@@ -33,6 +33,18 @@ export class BaseMetric {
   @IsString()
   description?: string;
 
+  @IsOptional()
+  @IsString()
+  formatNumber?: string;
+
+  @IsOptional()
+  @IsString()
+  currencyPrefix?: string;
+
+  @IsOptional()
+  @IsString()
+  currencySuffix?: string;
+
   @IsInt()
   serverTs?: number;
 }
