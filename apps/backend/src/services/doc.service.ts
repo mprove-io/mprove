@@ -99,9 +99,8 @@ export class DocService {
         id: y.id,
         key: y.fields.timestamp,
         value:
-          common.isDefined(y.fields.errors) &&
-          common.isDefined(y.fields.errors[x.rowId])
-            ? y.fields.errors[x.rowId]
+          common.isDefined(y.errors) && common.isDefined(y.errors[x.rowId])
+            ? y.errors[x.rowId]
             : y.fields[x.rowId]
       }));
 

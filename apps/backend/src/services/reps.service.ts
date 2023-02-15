@@ -489,6 +489,25 @@ export class RepsService {
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded
     });
 
+    let rowsWithNotCalculatedFormulas = repApi.rows.filter(row => {
+      if (common.isUndefined(row.formula)) {
+        return false;
+      }
+
+      let rq = row.rqs.find(
+        y =>
+          y.fractionBrick === timeRangeFraction.brick &&
+          y.timeSpec === timeSpec &&
+          y.timezone === timezone
+      );
+
+      if (common.isUndefined(rq)) {
+        return true;
+      } else {
+        return rq.lastCalculatedTs === 0;
+      }
+    });
+
     let rowsWithQueries = repApi.rows.filter(row =>
       common.isDefined(row.query)
     );
@@ -511,7 +530,8 @@ export class RepsService {
     let isCalculate =
       rep.rep_id !== common.EMPTY &&
       rowsWithQueries.length === completedRows.length &&
-      completedRows.length !== calculatedRows.length;
+      (completedRows.length !== calculatedRows.length ||
+        rowsWithNotCalculatedFormulas.length > 0);
 
     if (isCalculate === true) {
       // console.log('req data');
@@ -529,28 +549,28 @@ export class RepsService {
 
       // console.log('no req data');
       repApi.rows.forEach(x => {
-        if (common.isDefined(x.query)) {
-          let rq = x.rqs.find(
-            y =>
-              y.fractionBrick === timeRangeFraction.brick &&
-              y.timeSpec === timeSpec &&
-              y.timezone === timezone
-          );
+        let rq = x.rqs.find(
+          y =>
+            y.fractionBrick === timeRangeFraction.brick &&
+            y.timeSpec === timeSpec &&
+            y.timezone === timezone
+        );
 
+        if (common.isDefined(x.query)) {
           if (rq.lastCalculatedTs !== x.query.lastCompleteTs) {
             rq.records = dataRecords.map((y: any) => ({
               id: y.id,
               key: y.fields.timestamp,
               value:
-                common.isDefined(y.fields.errors) &&
-                common.isDefined(y.fields.errors[x.rowId])
-                  ? y.fields.errors[x.rowId]
+                common.isDefined(y.errors) &&
+                common.isDefined(y.errors[x.rowId])
+                  ? y.errors[x.rowId]
                   : y.fields[x.rowId]
             }));
           }
-
-          x.records = rq.records;
         }
+
+        x.records = rq.records;
       });
     }
 

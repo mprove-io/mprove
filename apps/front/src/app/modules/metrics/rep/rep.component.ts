@@ -18,6 +18,7 @@ import { TimeQuery } from '~front/app/queries/time.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { QueryService } from '~front/app/services/query.service';
 import { common } from '~front/barrels/common';
+import { DataRendererComponent } from './data-renderer/data-renderer.component';
 import { MetricRendererComponent } from './metric-renderer/metric-renderer.component';
 import { StatusHeaderComponent } from './status-header/status-header.component';
 import { StatusRendererComponent } from './status-renderer/status-renderer.component';
@@ -107,21 +108,8 @@ export class RepComponent {
           let columnDef: ColDef<RowData> = {
             field: `${column.columnId}`,
             headerName: column.label,
-            type: 'numericColumn',
-            valueFormatter: params => {
-              // console.log(params);
-              let formattedValue = common.isDefined(params.value)
-                ? this.queryService.formatValue({
-                    value: params.value,
-                    formatNumber: params.data.formatNumber,
-                    fieldResult: common.FieldResultEnum.Number,
-                    currencyPrefix: params.data.currencyPrefix,
-                    currencySuffix: params.data.currencySuffix
-                  })
-                : undefined;
-
-              return formattedValue;
-            }
+            cellRenderer: DataRendererComponent,
+            type: 'numericColumn'
           };
 
           return columnDef;

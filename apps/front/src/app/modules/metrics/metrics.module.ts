@@ -13,6 +13,7 @@ import { SharedModule } from '../shared/shared.module';
 import { MetricsTreeComponent } from './metrics-tree/metrics-tree.component';
 import { MetricsComponent } from './metrics.component';
 import { RepOptionsComponent } from './rep-options/rep-options.component';
+import { DataRendererComponent } from './rep/data-renderer/data-renderer.component';
 import { MetricRendererComponent } from './rep/metric-renderer/metric-renderer.component';
 import { RowOptionsComponent } from './rep/metric-renderer/row-options/row-options.component';
 import { RepComponent } from './rep/rep.component';
@@ -28,6 +29,7 @@ import { StatusRendererComponent } from './rep/status-renderer/status-renderer.c
     RowOptionsComponent,
     MetricRendererComponent,
     StatusRendererComponent,
+    DataRendererComponent,
     StatusHeaderComponent
   ],
   imports: [
