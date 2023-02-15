@@ -88,7 +88,10 @@ export class RebuildStructService {
       projectId: projectId,
       structId: structId,
       reps: reps,
-      metrics: metrics
+      metrics: metrics,
+      formatNumber: formatNumber,
+      currencyPrefix: currencyPrefix,
+      currencySuffix: currencySuffix
     });
 
     let apiApis = barWrapper.wrapApis({ structId: structId, apis: apis });

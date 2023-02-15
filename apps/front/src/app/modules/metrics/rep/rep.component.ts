@@ -108,8 +108,9 @@ export class RepComponent {
             field: `${column.columnId}`,
             headerName: column.label,
             type: 'numericColumn',
-            valueFormatter: params =>
-              common.isDefined(params.value)
+            valueFormatter: params => {
+              // console.log(params);
+              let formattedValue = common.isDefined(params.value)
                 ? this.queryService.formatValue({
                     value: params.value,
                     formatNumber: params.data.formatNumber,
@@ -117,7 +118,10 @@ export class RepComponent {
                     currencyPrefix: params.data.currencyPrefix,
                     currencySuffix: params.data.currencySuffix
                   })
-                : undefined
+                : undefined;
+
+              return formattedValue;
+            }
           };
 
           return columnDef;
@@ -146,9 +150,9 @@ export class RepComponent {
           params: row.params,
           records: row.records,
           rqs: row.rqs,
-          currencyPrefix: metric.currencyPrefix,
-          currencySuffix: metric.currencySuffix,
-          formatNumber: metric.formatNumber
+          currencyPrefix: metric?.currencyPrefix || row.currencyPrefix,
+          currencySuffix: metric?.currencySuffix || row.currencySuffix,
+          formatNumber: metric?.formatNumber || row.formatNumber
         };
 
         row.records.forEach(record => {

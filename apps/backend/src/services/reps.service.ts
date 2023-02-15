@@ -294,7 +294,7 @@ export class RepsService {
     let mconfigIds: string[] = [];
 
     await forEachSeries(
-      rep.rows.filter(y => common.isDefined(y.metricId)),
+      rep.rows.filter(x => common.isDefined(x.metricId)),
       async x => {
         let rq = x.rqs.find(
           y =>
@@ -307,110 +307,115 @@ export class RepsService {
           queryIds.push(rq.queryId);
           mconfigIds.push(rq.mconfigId);
         } else {
-          let newMconfigId = common.makeId();
-          let newQueryId = common.makeId();
+          let newMconfig;
+          let newQuery;
 
-          let metric: entities.MetricEntity = metrics.find(
-            m => m.metric_id === x.metricId
-          );
-          let model = models.find(ml => ml.model_id === metric.model_id);
+          if (common.isUndefined(x.formula)) {
+            let newMconfigId = common.makeId();
+            let newQueryId = common.makeId();
 
-          let timeSpecWord =
-            timeSpec === common.TimeSpecEnum.Years
-              ? 'year'
-              : timeSpec === common.TimeSpecEnum.Quarters
-              ? 'quarter'
-              : timeSpec === common.TimeSpecEnum.Months
-              ? 'month'
-              : timeSpec === common.TimeSpecEnum.Weeks
-              ? 'week'
-              : timeSpec === common.TimeSpecEnum.Days
-              ? 'date'
-              : timeSpec === common.TimeSpecEnum.Hours
-              ? 'hour'
-              : timeSpec === common.TimeSpecEnum.Minutes
-              ? 'minute'
-              : undefined;
+            let metric: entities.MetricEntity = metrics.find(
+              m => m.metric_id === x.metricId
+            );
+            let model = models.find(ml => ml.model_id === metric.model_id);
 
-          let timeFieldIdSpec = `${metric.timefield_id}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
+            let timeSpecWord =
+              timeSpec === common.TimeSpecEnum.Years
+                ? 'year'
+                : timeSpec === common.TimeSpecEnum.Quarters
+                ? 'quarter'
+                : timeSpec === common.TimeSpecEnum.Months
+                ? 'month'
+                : timeSpec === common.TimeSpecEnum.Weeks
+                ? 'week'
+                : timeSpec === common.TimeSpecEnum.Days
+                ? 'date'
+                : timeSpec === common.TimeSpecEnum.Hours
+                ? 'hour'
+                : timeSpec === common.TimeSpecEnum.Minutes
+                ? 'minute'
+                : undefined;
 
-          let timeFilter: common.Filter = {
-            fieldId: timeFieldIdSpec,
-            fractions: [timeRangeFraction]
-          };
+            let timeFieldIdSpec = `${metric.timefield_id}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
-          let timeSorting: common.Sorting = {
-            desc: false,
-            fieldId: timeFieldIdSpec
-          };
-
-          let mconfig: common.Mconfig = {
-            structId: struct.struct_id,
-            mconfigId: newMconfigId,
-            queryId: newQueryId,
-            modelId: model.model_id,
-            modelLabel: model.label,
-            select: [timeFieldIdSpec, metric.field_id],
-            sortings: [timeSorting],
-            sorts: timeFieldIdSpec,
-            timezone: timezone,
-            limit: timeColumnsLimit,
-            filters: [timeFilter],
-            chart: common.DEFAULT_CHART,
-            temp: true,
-            serverTs: 1
-            // fields: [],
-            // extendedFilters: [],
-          };
-
-          let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
-            {
-              info: {
-                name: apiToBlockml.ToBlockmlRequestInfoNameEnum
-                  .ToBlockmlProcessQuery,
-                traceId: traceId
-              },
-              payload: {
-                orgId: project.org_id,
-                projectId: project.project_id,
-                weekStart: struct.week_start,
-                udfsDict: struct.udfs_dict,
-                mconfig: mconfig,
-                modelContent: model.content,
-                envId: envId
-              }
+            let timeFilter: common.Filter = {
+              fieldId: timeFieldIdSpec,
+              fractions: [timeRangeFraction]
             };
 
-          let blockmlProcessQueryResponse =
-            await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlProcessQueryResponse>(
+            let timeSorting: common.Sorting = {
+              desc: false,
+              fieldId: timeFieldIdSpec
+            };
+
+            let mconfig: common.Mconfig = {
+              structId: struct.struct_id,
+              mconfigId: newMconfigId,
+              queryId: newQueryId,
+              modelId: model.model_id,
+              modelLabel: model.label,
+              select: [timeFieldIdSpec, metric.field_id],
+              sortings: [timeSorting],
+              sorts: timeFieldIdSpec,
+              timezone: timezone,
+              limit: timeColumnsLimit,
+              filters: [timeFilter],
+              chart: common.DEFAULT_CHART,
+              temp: true,
+              serverTs: 1
+              // fields: [],
+              // extendedFilters: [],
+            };
+
+            let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
               {
-                routingKey:
-                  common.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
-                message: toBlockmlProcessQueryRequest,
-                checkIsOk: true
-              }
-            );
+                info: {
+                  name: apiToBlockml.ToBlockmlRequestInfoNameEnum
+                    .ToBlockmlProcessQuery,
+                  traceId: traceId
+                },
+                payload: {
+                  orgId: project.org_id,
+                  projectId: project.project_id,
+                  weekStart: struct.week_start,
+                  udfsDict: struct.udfs_dict,
+                  mconfig: mconfig,
+                  modelContent: model.content,
+                  envId: envId
+                }
+              };
 
-          let newMconfig = blockmlProcessQueryResponse.payload.mconfig;
-          let newQuery = blockmlProcessQueryResponse.payload.query;
+            let blockmlProcessQueryResponse =
+              await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlProcessQueryResponse>(
+                {
+                  routingKey:
+                    common.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
+                  message: toBlockmlProcessQueryRequest,
+                  checkIsOk: true
+                }
+              );
 
-          newMconfig.queryId = newQueryId;
-          newQuery.queryId = newQueryId;
+            newMconfig = blockmlProcessQueryResponse.payload.mconfig;
+            newQuery = blockmlProcessQueryResponse.payload.query;
+
+            newMconfig.queryId = newQueryId;
+            newQuery.queryId = newQueryId;
+
+            newMconfigs.push(newMconfig);
+            newQueries.push(newQuery);
+          }
 
           let newRq: common.Rq = {
             fractionBrick: timeRangeFraction.brick,
             timeSpec: timeSpec,
             timezone: timezone,
-            mconfigId: newMconfig.mconfigId,
-            queryId: newMconfig.queryId,
+            mconfigId: newMconfig?.mconfigId,
+            queryId: newMconfig?.queryId,
             records: [],
             lastCalculatedTs: 0
           };
 
           x.rqs.push(newRq);
-
-          newMconfigs.push(newMconfig);
-          newQueries.push(newQuery);
         }
       }
     );
@@ -451,7 +456,7 @@ export class RepsService {
           y.timezone === timezone
       );
 
-      if (common.isDefined(rq)) {
+      if (common.isDefined(rq) && common.isUndefined(x.formula)) {
         x.mconfig = [...mconfigsApi, ...newMconfigs].find(
           y => y.mconfigId === rq.mconfigId
         );
@@ -484,29 +489,29 @@ export class RepsService {
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded
     });
 
-    let completedRowsLength = repApi.rows.filter(
-      row => row.query?.status === common.QueryStatusEnum.Completed
-    ).length;
+    let rowsWithQueries = repApi.rows.filter(row =>
+      common.isDefined(row.query)
+    );
 
-    let calculatedRowsLength = repApi.rows.filter(row => {
-      if (common.isDefined(row.query)) {
-        let rq = row.rqs.find(
-          y =>
-            y.fractionBrick === timeRangeFraction.brick &&
-            y.timeSpec === timeSpec &&
-            y.timezone === timezone
-        );
+    let completedRows = rowsWithQueries.filter(
+      row => row.query.status === common.QueryStatusEnum.Completed
+    );
 
-        return rq.lastCalculatedTs === row.query.lastCompleteTs;
-      } else {
-        return false;
-      }
-    }).length;
+    let calculatedRows = completedRows.filter(row => {
+      let rq = row.rqs.find(
+        y =>
+          y.fractionBrick === timeRangeFraction.brick &&
+          y.timeSpec === timeSpec &&
+          y.timezone === timezone
+      );
+
+      return rq.lastCalculatedTs === row.query.lastCompleteTs;
+    });
 
     let isCalculate =
       rep.rep_id !== common.EMPTY &&
-      repApi.rows.length === completedRowsLength &&
-      repApi.rows.length !== calculatedRowsLength;
+      rowsWithQueries.length === completedRows.length &&
+      completedRows.length !== calculatedRows.length;
 
     if (isCalculate === true) {
       // console.log('req data');

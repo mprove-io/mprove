@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { format, fromUnixTime } from 'date-fns';
 import { common } from '~backend/barrels/common';
+import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 
 @Injectable()
@@ -54,21 +55,14 @@ export class DocService {
                 // widgetOptions:
                 //   '{"widget":"TextBox","dateFormat":"YYYY-MM-DD","timeFormat":"h:mma","isCustomDateFormat":false,"isCustomTimeFormat":false,"alignment":"left","decimals":0}',
                 isFormula: false
-                // formula: ''
-                // label: 'timestamp'
               }
             },
-            // {
-            //   id: 'utc',
-            //   fields: {
-            //     type: 'Int',
-            //     isFormula: false
-            //   }
-            // },
             ...rep.rows.map(x => ({
               id: x.rowId,
               fields: {
-                type: 'Numeric'
+                type: 'Numeric',
+                isFormula: common.isDefined(x.formula),
+                formula: x.formula
               }
             }))
           ]
@@ -119,7 +113,9 @@ export class DocService {
       );
 
       rq.records = x.records;
-      rq.lastCalculatedTs = x.query.lastCompleteTs;
+      rq.lastCalculatedTs = common.isDefined(x.query)
+        ? x.query.lastCompleteTs
+        : Number(helper.makeTs());
     });
 
     return rep;

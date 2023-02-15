@@ -6,8 +6,19 @@ export function wrapReps(item: {
   structId: string;
   reps: interfaces.Rep[];
   metrics: common.MetricAny[];
+  formatNumber: string;
+  currencyPrefix: string;
+  currencySuffix: string;
 }) {
-  let { projectId, structId, reps, metrics } = item;
+  let {
+    projectId,
+    structId,
+    reps,
+    metrics,
+    currencyPrefix,
+    currencySuffix,
+    formatNumber
+  } = item;
 
   let apiReps: common.Rep[] = reps.map(x => {
     let rep: common.Rep = {
@@ -37,9 +48,9 @@ export function wrapReps(item: {
           hasAccessToModel: false,
           params: row.params,
           records: [],
-          formatNumber: metric.formatNumber,
-          currencyPrefix: metric.currencyPrefix,
-          currencySuffix: metric.currencySuffix
+          formatNumber: metric?.formatNumber || formatNumber,
+          currencyPrefix: metric?.currencyPrefix || currencyPrefix,
+          currencySuffix: metric?.currencySuffix || currencySuffix
         };
         return rowApi;
       }),
