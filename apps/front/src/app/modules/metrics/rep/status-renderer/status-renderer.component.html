@@ -24,5 +24,13 @@
     <m-exclamation-icon></m-exclamation-icon>
   </div>
 
+  <div
+    *ngIf="typeErrorsLength > 0"
+    class="text-red1 flex h-8 w-8 flex-shrink-0"
+    tippy="Formula TypeErrors ({{ typeErrorsLength }})"
+  >
+    <m-exclamation-icon></m-exclamation-icon>
+  </div>
+
   <!-- <div>{{ params.value }}</div> -->
 </div>

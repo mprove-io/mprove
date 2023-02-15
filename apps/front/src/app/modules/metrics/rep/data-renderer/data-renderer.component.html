@@ -1,1 +1,6 @@
-<div>{{ formattedValue }}</div>
+<div
+  [ngClass]="{
+    'text-red1': formattedValue === 'TypeError'
+  }"
+  >{{ formattedValue }}</div
+>

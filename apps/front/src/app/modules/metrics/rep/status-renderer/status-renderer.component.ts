@@ -15,25 +15,28 @@ export class StatusRendererComponent implements ICellRendererAngularComp {
   spinnerName = common.makeId();
   queryStatusEnum = common.QueryStatusEnum;
 
+  typeErrorsLength = 0;
+
   agInit(params: ICellRendererParams<RowData>) {
-    // console.log('agInit');
-    this.params = params;
-    // console.log(params);
+    this.setTypeErrors(params);
     this.updateSpinner();
   }
 
   refresh(params: ICellRendererParams<RowData>) {
-    // console.log('refresh');
-    this.params = params;
+    this.setTypeErrors(params);
     this.updateSpinner();
-    // As we have updated the params we return true to let AG Grid know we have handled the refresh.
-    // So AG Grid will not recreate the cell renderer from scratch.
     return true;
+  }
+
+  setTypeErrors(params: ICellRendererParams<RowData>) {
+    this.params = params;
+    this.typeErrorsLength = params.data.records
+      .map(x => x.value)
+      .filter(value => value === 'TypeError').length;
   }
 
   updateSpinner() {
     if (this.params.data.query?.status === common.QueryStatusEnum.Running) {
-      // if (this.params.data.query.status === common.QueryStatusEnum.Completed) {
       this.spinner.show(this.spinnerName);
     } else {
       this.spinner.hide(this.spinnerName);
