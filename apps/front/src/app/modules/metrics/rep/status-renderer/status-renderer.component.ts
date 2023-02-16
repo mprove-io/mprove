@@ -15,7 +15,7 @@ export class StatusRendererComponent implements ICellRendererAngularComp {
   spinnerName = common.makeId();
   queryStatusEnum = common.QueryStatusEnum;
 
-  typeErrorsLength = 0;
+  formulaErrorsLength = 0;
 
   agInit(params: ICellRendererParams<RowData>) {
     this.setTypeErrors(params);
@@ -30,9 +30,9 @@ export class StatusRendererComponent implements ICellRendererAngularComp {
 
   setTypeErrors(params: ICellRendererParams<RowData>) {
     this.params = params;
-    this.typeErrorsLength = params.data.records
-      .map(x => x.value)
-      .filter(value => value === 'TypeError').length;
+    this.formulaErrorsLength = params.data.records.filter(x =>
+      common.isDefined(x.error)
+    ).length;
   }
 
   updateSpinner() {

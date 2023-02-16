@@ -98,10 +98,8 @@ export class DocService {
       x.records = getRecordsResp.data.records.map((y: any) => ({
         id: y.id,
         key: y.fields.timestamp,
-        value:
-          common.isDefined(y.errors) && common.isDefined(y.errors[x.rowId])
-            ? y.errors[x.rowId]
-            : y.fields[x.rowId]
+        value: common.isDefined(y.fields) ? y.fields[x.rowId] : undefined,
+        error: common.isDefined(y.errors) ? y.errors[x.rowId] : undefined
       }));
 
       let rq = x.rqs.find(

@@ -561,11 +561,8 @@ export class RepsService {
             rq.records = dataRecords.map((y: any) => ({
               id: y.id,
               key: y.fields.timestamp,
-              value:
-                common.isDefined(y.errors) &&
-                common.isDefined(y.errors[x.rowId])
-                  ? y.errors[x.rowId]
-                  : y.fields[x.rowId]
+              value: common.isDefined(y.fields) ? y.fields[x.rowId] : undefined,
+              error: common.isDefined(y.errors) ? y.errors[x.rowId] : undefined
             }));
           }
         }

@@ -11,7 +11,9 @@ import { RowData } from '../rep.component';
 })
 export class DataRendererComponent implements ICellRendererAngularComp {
   params: ICellRendererParams<RowData>;
+
   formattedValue: string;
+  isError = false;
 
   agInit(params: ICellRendererParams<RowData>) {
     this.applyFormat(params);
@@ -24,16 +26,24 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
   applyFormat(params: ICellRendererParams<RowData>) {
     this.params = params;
-    // console.log(params);
-    this.formattedValue = common.isDefined(params.value)
-      ? this.queryService.formatValue({
-          value: params.value,
-          formatNumber: params.data.formatNumber,
-          fieldResult: common.FieldResultEnum.Number,
-          currencyPrefix: params.data.currencyPrefix,
-          currencySuffix: params.data.currencySuffix
-        })
-      : undefined;
+    let rowDataRecord = params.data.records.find(
+      x => x.key === Number(params.colDef.field)
+    );
+
+    this.isError = common.isDefined(rowDataRecord.error);
+
+    this.formattedValue =
+      this.isError === false && common.isDefined(params.value)
+        ? this.queryService.formatValue({
+            value: params.value,
+            formatNumber: params.data.formatNumber,
+            fieldResult: common.FieldResultEnum.Number,
+            currencyPrefix: params.data.currencyPrefix,
+            currencySuffix: params.data.currencySuffix
+          })
+        : this.isError === true
+        ? rowDataRecord.error
+        : undefined;
   }
 
   constructor(

@@ -1,6 +1,7 @@
 <div
+  class="truncate"
   [ngClass]="{
-    'text-red1': formattedValue === 'TypeError'
+    'text-red1': isError === true
   }"
   >{{ formattedValue }}</div
 >
