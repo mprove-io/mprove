@@ -33,6 +33,7 @@ import { helper } from '~backend/barrels/helper';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
+import { moveRowIds } from '~backend/functions/move-row-ids';
 import { DbService } from '~backend/services/db.service';
 import { RabbitService } from './rabbit.service';
 
@@ -168,7 +169,22 @@ export class BlockmlService {
           queries: queries.map(x => wrapper.wrapToEntityQuery(x)),
           models: models.map(x => wrapper.wrapToEntityModel(x)),
           metrics: metrics.map(x => wrapper.wrapToEntityMetric(x)),
-          reps: reps.map(x => wrapper.wrapToEntityRep(x)),
+          reps: reps.map(rep => {
+            let rowChanges: common.RowChange[] = [];
+
+            rep.rows.forEach(row => {
+              let rowChange: common.RowChange = {
+                rowId: row.rowId
+              };
+              rowChanges.push(rowChange);
+            });
+
+            let tRows = moveRowIds({ rows: rep.rows, rowChanges: rowChanges });
+
+            rep.rows = tRows;
+
+            return wrapper.wrapToEntityRep(rep);
+          }),
           apis: apis.map(x => wrapper.wrapToEntityApi(x)),
           mconfigs: mconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
           dashboards: dashboards.map(x => wrapper.wrapToEntityDashboard(x))

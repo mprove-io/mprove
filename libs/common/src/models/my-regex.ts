@@ -1,3 +1,5 @@
+import { constants } from '~common/barrels/constants';
+
 /* eslint-disable @typescript-eslint/naming-convention */
 const cloneRegexp = require('clone-regexp');
 
@@ -176,6 +178,9 @@ export class MyRegex {
   }
   static CAPTURE_ENV_REF_G(): RegExp {
     return cloneRegexp(/\$\{env\.(\w+)\}/g);
+  }
+  static CAPTURE_ROW_REF(): RegExp {
+    return cloneRegexp(/\$([A-Z]+)/);
   }
   static WORD_CHARACTERS(): RegExp {
     return cloneRegexp(/^(?:\w+)$/);
@@ -420,6 +425,10 @@ export class MyRegex {
 
   static replaceEnvRefs(input: string, ref: string, val: string): string {
     return input.split(`\$\{env.${ref}\}`).join(`${val}`);
+  }
+
+  static replaceRowIds(input: string, ref: string, val: string): string {
+    return input.split(`\$${ref}`).join(`\$${constants.QUAD_UNDERSCORE}${val}`);
   }
 
   // static replacePdtTableId(input: string, ref: string, val: string): string {

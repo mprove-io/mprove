@@ -30,7 +30,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
       x => x.key === Number(params.colDef.field)
     );
 
-    this.isError = common.isDefined(rowDataRecord.error);
+    this.isError = common.isDefined(rowDataRecord?.error);
 
     this.formattedValue =
       this.isError === false && common.isDefined(params.value)

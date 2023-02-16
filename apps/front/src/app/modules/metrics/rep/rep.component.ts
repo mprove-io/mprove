@@ -180,7 +180,7 @@ export class RepComponent {
   }
 
   rowDragEndHandle(e: any): void {
-    // console.log('rowDragEndHandle', e);
+    console.log('rowDragEndHandle', e);
     // console.log(this.agGrid.api.getDisplayedRowAtIndex(0));
   }
 }

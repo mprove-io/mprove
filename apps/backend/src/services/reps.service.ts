@@ -7,6 +7,7 @@ import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
+import { moveRowIds } from '~backend/functions/move-row-ids';
 import { BlockmlService } from './blockml.service';
 import { DbService } from './db.service';
 import { DocService } from './doc.service';
@@ -60,9 +61,13 @@ export class RepsService {
   }) {
     let { rows, rowChanges, changeType } = item;
 
-    let processedRows = [...rows];
+    let processedRows = rows.map(row => Object.assign({}, row));
 
     rowChanges.forEach(x => {
+      if (changeType === common.ChangeTypeEnum.Move) {
+        processedRows = moveRowIds({ rows: rows, rowChanges: rowChanges });
+      }
+
       if (changeType === common.ChangeTypeEnum.Add) {
         let rowId = x.rowId;
 
