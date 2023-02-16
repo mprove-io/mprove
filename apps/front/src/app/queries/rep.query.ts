@@ -8,11 +8,11 @@ export class RepState extends common.RepX {}
 export const emptyRep: RepState = {
   projectId: undefined,
   structId: undefined,
-  repId: common.EMPTY,
+  repId: common.EMPTY_REP_ID,
   draft: false,
   creatorId: undefined,
   filePath: undefined,
-  title: 'Empty',
+  title: 'New Report',
   accessRoles: [],
   accessUsers: [],
   timezone: undefined,

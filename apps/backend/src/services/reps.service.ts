@@ -176,7 +176,7 @@ export class RepsService {
     };
 
     let rep =
-      repId === common.EMPTY
+      repId === common.EMPTY_REP_ID
         ? emptyRep
         : draft === true
         ? await this.repsRepository.findOne({
@@ -204,7 +204,7 @@ export class RepsService {
     }
 
     if (
-      repId !== common.EMPTY &&
+      repId !== common.EMPTY_REP_ID &&
       rep.draft === common.BoolEnum.TRUE &&
       rep.creator_id !== user.user_id
     ) {
@@ -528,7 +528,7 @@ export class RepsService {
     });
 
     let isCalculate =
-      rep.rep_id !== common.EMPTY &&
+      rep.rep_id !== common.EMPTY_REP_ID &&
       rowsWithQueries.length === completedRows.length &&
       (completedRows.length !== calculatedRows.length ||
         rowsWithNotCalculatedFormulas.length > 0);

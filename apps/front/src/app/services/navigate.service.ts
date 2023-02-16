@@ -94,9 +94,9 @@ export class NavigateService {
       common.PATH_MODEL,
       toModelId,
       common.PATH_MCONFIG,
-      common.EMPTY,
+      common.EMPTY_REP_ID,
       common.PATH_QUERY,
-      common.EMPTY
+      common.EMPTY_REP_ID
     ]);
   }
 
@@ -157,7 +157,7 @@ export class NavigateService {
         common.PROJECT_ENV_PROD,
         common.PATH_METRICS,
         common.PATH_REPORT,
-        common.EMPTY
+        common.EMPTY_REP_ID
       ];
 
       this.router.navigate(navTo);
@@ -365,7 +365,7 @@ export class NavigateService {
       this.nav.envId,
       common.PATH_METRICS,
       common.PATH_REPORT,
-      common.EMPTY
+      common.EMPTY_REP_ID
     ];
 
     this.router.navigate(navTo);

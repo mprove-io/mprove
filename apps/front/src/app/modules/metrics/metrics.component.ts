@@ -37,7 +37,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   isShow = true;
 
-  emptyRepId = common.EMPTY;
+  emptyRepId = common.EMPTY_REP_ID;
 
   queriesLength = 0;
 
@@ -354,7 +354,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
     this.myDialogService.showRepSaveAs({
       apiService: this.apiService,
       reps: this.reps.filter(
-        x => x.draft === false && x.repId !== common.EMPTY
+        x => x.draft === false && x.repId !== common.EMPTY_REP_ID
       ),
       rep: this.rep
     });

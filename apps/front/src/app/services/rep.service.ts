@@ -173,7 +173,7 @@ export class RepService {
 
             if (rep.repId === repId) {
               this.navigateService.navigateToMetricsRep({
-                repId: common.EMPTY,
+                repId: common.EMPTY_REP_ID,
                 draft: false
               });
             }

@@ -199,7 +199,7 @@ export class NavbarComponent implements OnInit {
       this.nav.envId,
       common.PATH_METRICS,
       common.PATH_REPORT,
-      common.EMPTY
+      common.EMPTY_REP_ID
     ]);
   }
 }

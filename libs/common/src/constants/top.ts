@@ -93,7 +93,7 @@ export const PARAMETER_MCONFIG_ID = 'mconfigId';
 export const PARAMETER_QUERY_ID = 'queryId';
 export const PARAMETER_REP_ID = 'repId';
 
-export const EMPTY = 'empty';
+export const EMPTY_REP_ID = 'new';
 
 export const PATH_PROJECT = 'project';
 export const PATH_REPO = 'repo';
