@@ -63,12 +63,8 @@ export class RepsService {
 
     let processedRows = rows.map(row => Object.assign({}, row));
 
-    rowChanges.forEach(x => {
-      if (changeType === common.ChangeTypeEnum.Move) {
-        processedRows = moveRowIds({ rows: rows, rowChanges: rowChanges });
-      }
-
-      if (changeType === common.ChangeTypeEnum.Add) {
+    if (changeType === common.ChangeTypeEnum.Add) {
+      rowChanges.forEach(x => {
         let rowId = x.rowId;
 
         if (common.isUndefined(rowId)) {
@@ -106,8 +102,8 @@ export class RepsService {
         } else {
           processedRows.push(newRow);
         }
-      }
-    });
+      });
+    }
 
     if (changeType === common.ChangeTypeEnum.Clear) {
       processedRows = processedRows.map(row => {
@@ -139,6 +135,10 @@ export class RepsService {
         row =>
           rowChanges.map(rowChange => rowChange.rowId).indexOf(row.rowId) < 0
       );
+    }
+
+    if (changeType === common.ChangeTypeEnum.Move) {
+      processedRows = moveRowIds({ rows: rows, rowChanges: rowChanges });
     }
 
     return processedRows;

@@ -9,14 +9,14 @@ import {
   CellClickedEvent,
   ColDef,
   GridReadyEvent,
+  RowDragEndEvent,
   SelectionChangedEvent
 } from 'ag-grid-community';
 import { map, tap } from 'rxjs';
 import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { RepQuery } from '~front/app/queries/rep.query';
-import { TimeQuery } from '~front/app/queries/time.query';
 import { UiQuery } from '~front/app/queries/ui.query';
-import { QueryService } from '~front/app/services/query.service';
+import { RepService } from '~front/app/services/rep.service';
 import { common } from '~front/barrels/common';
 import { DataRendererComponent } from './data-renderer/data-renderer.component';
 import { MetricRendererComponent } from './metric-renderer/metric-renderer.component';
@@ -85,14 +85,9 @@ export class RepComponent {
     }
   ];
 
-  columnDefs: ColDef<RowData>[] = [
-    ...this.columns
-    // { field: 'jan2023', headerName: 'Jan 2023' },
-  ];
+  columnDefs: ColDef<RowData>[] = [...this.columns];
 
   defaultColDef: ColDef<RowData> = {
-    // sortable: true,
-    // filter: true,
     suppressMovable: true,
     resizable: true,
     editable: false,
@@ -159,8 +154,7 @@ export class RepComponent {
   constructor(
     private cd: ChangeDetectorRef,
     private repQuery: RepQuery,
-    private timeQuery: TimeQuery,
-    private queryService: QueryService,
+    private repService: RepService,
     private uiQuery: UiQuery,
     private metricsQuery: MetricsQuery
   ) {}
@@ -179,8 +173,39 @@ export class RepComponent {
     // console.log('cellClicked', e);
   }
 
-  rowDragEndHandle(e: any): void {
-    console.log('rowDragEndHandle', e);
-    // console.log(this.agGrid.api.getDisplayedRowAtIndex(0));
+  rowDragEndHandle(event: RowDragEndEvent<RowData>): void {
+    // console.log(event);
+    let gridApi = event.api;
+
+    let rowIds = [];
+    let displayedRowsCount = gridApi.getDisplayedRowCount();
+    for (let i = 0; i < displayedRowsCount; i++) {
+      let rowNode = gridApi.getDisplayedRowAtIndex(i);
+      rowIds.push(rowNode.data.rowId);
+    }
+
+    let rowChanges: common.RowChange[] = rowIds.map(rowId => {
+      let rowChange: common.RowChange = {
+        rowId: rowId
+      };
+      return rowChange;
+    });
+
+    let selectedRep = this.repQuery.getValue();
+
+    if (selectedRep.draft === true) {
+      this.repService.editDraftRep({
+        repId: selectedRep.repId,
+        rowChanges: rowChanges,
+        changeType: common.ChangeTypeEnum.Move
+      });
+    } else {
+      this.repService.navCreateDraftRep({
+        fromRepId: selectedRep.repId,
+        fromDraft: selectedRep.draft,
+        rowChanges: rowChanges,
+        changeType: common.ChangeTypeEnum.Move
+      });
+    }
   }
 }

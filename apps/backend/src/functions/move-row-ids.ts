@@ -16,8 +16,6 @@ export function moveRowIds(item: {
     targets[rowId] = common.idxNumberToLetter(rowChangeIndex);
   });
 
-  // console.log(targets);
-
   rows
     .map(row => {
       row.rowId = targets[row.rowId];
