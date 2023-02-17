@@ -94,7 +94,10 @@ export class EditDraftRepController {
     let processedRows = this.repsService.getProcessedRows({
       rows: rep.rows,
       rowChanges: rowChanges,
-      changeType: changeType
+      changeType: changeType,
+      timezone: timezone,
+      timeSpec: timeSpec,
+      timeRangeFraction: timeRangeFraction
     });
 
     rep.rows = processedRows;
@@ -110,9 +113,9 @@ export class EditDraftRepController {
       user: user,
       envId: envId,
       struct: struct,
+      timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFraction: timeRangeFraction,
-      timezone: timezone,
       isSaveToDb: true
     });
 

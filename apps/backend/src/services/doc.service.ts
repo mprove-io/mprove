@@ -109,10 +109,12 @@ export class DocService {
           y.timezone === timezone
       );
 
-      rq.records = x.records;
-      rq.lastCalculatedTs = common.isDefined(x.query)
-        ? x.query.lastCompleteTs
-        : Number(helper.makeTs());
+      if (common.isDefined(rq)) {
+        rq.records = x.records;
+        rq.lastCalculatedTs = common.isDefined(x.query)
+          ? x.query.lastCompleteTs
+          : Number(helper.makeTs());
+      }
     });
 
     return rep;
@@ -121,8 +123,15 @@ export class DocService {
   makeDataRecords(item: { rep: common.RepX; timeSpec: common.TimeSpecEnum }) {
     let { rep, timeSpec } = item;
 
-    return rep.columns.map((x, i) => {
-      let tsDate = fromUnixTime(x.columnId);
+    let specialColumnId = 0;
+
+    let specialColumn: common.Column = {
+      columnId: specialColumnId,
+      label: 'Special'
+    };
+
+    let dataRecords = [specialColumn, ...rep.columns].map((column, i) => {
+      let tsDate = fromUnixTime(column.columnId);
 
       let timeValue =
         timeSpec === common.TimeSpecEnum.Years
@@ -144,29 +153,33 @@ export class DocService {
       let record: any = {
         id: i + 1,
         fields: {
-          timestamp: x.columnId
+          timestamp: column.columnId
         }
       };
 
       rep.rows
-        .filter(
-          y => common.isDefined(y.mconfig) && common.isDefined(y.query?.data)
-        )
+        .filter(row => common.isUndefined(row.formula))
         .forEach((row: common.Row) => {
-          let timeFieldId = row.mconfig.select[0].split('.').join('_');
+          if (column.columnId === specialColumnId) {
+            record.fields[row.rowId] = 0;
+          } else {
+            let timeFieldId = row.mconfig?.select[0].split('.').join('_');
 
-          let fieldId = row.mconfig.select[1].split('.').join('_');
+            let fieldId = row.mconfig?.select[1].split('.').join('_');
 
-          let dataRow = row.query.data.find(
-            (r: any) => r[timeFieldId]?.toString() === timeValue
-          );
+            let dataRow = row.query?.data?.find(
+              (r: any) => r[timeFieldId]?.toString() === timeValue
+            );
 
-          if (common.isDefined(dataRow)) {
-            record.fields[row.rowId] = dataRow[fieldId];
+            if (common.isDefined(dataRow)) {
+              record.fields[row.rowId] = dataRow[fieldId];
+            }
           }
         });
 
       return record;
     });
+
+    return dataRecords;
   }
 }

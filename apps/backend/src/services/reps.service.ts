@@ -58,8 +58,18 @@ export class RepsService {
     rowChanges: common.RowChange[];
     rows: common.Row[];
     changeType: common.ChangeTypeEnum;
+    timezone: string;
+    timeSpec: common.TimeSpecEnum;
+    timeRangeFraction: common.Fraction;
   }) {
-    let { rows, rowChanges, changeType } = item;
+    let {
+      rows,
+      rowChanges,
+      changeType,
+      timezone,
+      timeSpec,
+      timeRangeFraction
+    } = item;
 
     let processedRows = rows.map(row => Object.assign({}, row));
 
@@ -107,6 +117,17 @@ export class RepsService {
 
     if (changeType === common.ChangeTypeEnum.Clear) {
       processedRows = processedRows.map(row => {
+        if (common.isDefined(row.formula)) {
+          let rq = row.rqs.find(
+            y =>
+              y.fractionBrick === timeRangeFraction.brick &&
+              y.timeSpec === timeSpec &&
+              y.timezone === timezone
+          );
+
+          rq.lastCalculatedTs = 0;
+        }
+
         if (rowChanges.map(rc => rc.rowId).indexOf(row.rowId) > -1) {
           let emptyRow: common.Row = {
             rowId: row.rowId,
@@ -237,11 +258,11 @@ export class RepsService {
 
   async getRepData(item: {
     traceId: string;
+    timezone: string;
     timeSpec: common.TimeSpecEnum;
     timeRangeFraction: common.Fraction;
     struct: entities.StructEntity;
     rep: entities.RepEntity;
-    timezone: string;
     project: entities.ProjectEntity;
     envId: string;
     userMemberApi: common.Member;
@@ -572,7 +593,7 @@ export class RepsService {
           }
         }
 
-        x.records = rq.records;
+        x.records = rq?.records || [];
       });
     }
 

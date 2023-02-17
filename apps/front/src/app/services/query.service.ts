@@ -63,18 +63,13 @@ export class QueryService {
     currencyPrefix: string;
     currencySuffix: string;
   }) {
-    let {
-      value,
-      formatNumber,
-      fieldResult,
-      currencyPrefix,
-      currencySuffix
-    } = item;
+    let { value, formatNumber, fieldResult, currencyPrefix, currencySuffix } =
+      item;
 
     if (
       !isNaN(value) &&
       fieldResult === common.FieldResultEnum.Number &&
-      formatNumber !== null
+      common.isDefined(formatNumber)
     ) {
       let locale = formatLocale({
         decimal: constants.FORMAT_NUMBER_DECIMAL,

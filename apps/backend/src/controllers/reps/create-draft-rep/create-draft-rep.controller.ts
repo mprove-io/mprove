@@ -98,7 +98,10 @@ export class CreateDraftRepController {
     let processedRows = this.repsService.getProcessedRows({
       rows: fromRep.rows,
       rowChanges: rowChanges,
-      changeType: changeType
+      changeType: changeType,
+      timezone: timezone,
+      timeSpec: timeSpec,
+      timeRangeFraction: timeRangeFraction
     });
 
     let rep: entities.RepEntity = {
@@ -127,9 +130,9 @@ export class CreateDraftRepController {
       user: user,
       envId: envId,
       struct: struct,
+      timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFraction: timeRangeFraction,
-      timezone: timezone,
       isSaveToDb: true
     });
 
