@@ -42,6 +42,7 @@ export function wrapReps(item: {
           rowId: row.id,
           metricId: row.metric,
           formula: row.formula,
+          formula_deps: undefined,
           rqs: [],
           query: undefined,
           mconfig: undefined,
