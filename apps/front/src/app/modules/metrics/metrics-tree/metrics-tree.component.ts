@@ -161,12 +161,12 @@ export class MetricsTreeComponent implements AfterViewInit {
 
     let rowChange: common.RowChange = {
       rowId:
-        repSelectedNodes.length === 1
+        repSelectedNodes.length === 1 &&
+        common.isUndefined(repSelectedNodes[0].data.metricId) &&
+        common.isUndefined(repSelectedNodes[0].data.formula)
           ? repSelectedNodes[0].data.rowId
           : undefined,
       metricId: node.data.metric.metricId
-      // params: [],
-      // formula: node.data.metric.formula
     };
 
     if (rep.draft === true) {

@@ -33,7 +33,7 @@ import { helper } from '~backend/barrels/helper';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { moveRowIds } from '~backend/functions/move-row-ids';
+import { processRowIds } from '~backend/functions/process-row-ids';
 import { DbService } from '~backend/services/db.service';
 import { RabbitService } from './rabbit.service';
 
@@ -179,7 +179,10 @@ export class BlockmlService {
               rowChanges.push(rowChange);
             });
 
-            let tRows = moveRowIds({ rows: rep.rows, rowChanges: rowChanges });
+            let tRows = processRowIds({
+              rows: rep.rows,
+              rowChanges: rowChanges
+            });
 
             rep.rows = tRows;
 

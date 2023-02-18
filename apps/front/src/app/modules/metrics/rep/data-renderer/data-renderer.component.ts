@@ -3,28 +3,28 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 import { QueryService } from '~front/app/services/query.service';
 import { common } from '~front/barrels/common';
-import { RowData } from '../rep.component';
+import { DataRow } from '../rep.component';
 
 @Component({
   selector: 'm-data-renderer',
   templateUrl: './data-renderer.component.html'
 })
 export class DataRendererComponent implements ICellRendererAngularComp {
-  params: ICellRendererParams<RowData>;
+  params: ICellRendererParams<DataRow>;
 
   formattedValue: string;
   isError = false;
 
-  agInit(params: ICellRendererParams<RowData>) {
+  agInit(params: ICellRendererParams<DataRow>) {
     this.applyFormat(params);
   }
 
-  refresh(params: ICellRendererParams<RowData>) {
+  refresh(params: ICellRendererParams<DataRow>) {
     this.applyFormat(params);
     return true;
   }
 
-  applyFormat(params: ICellRendererParams<RowData>) {
+  applyFormat(params: ICellRendererParams<DataRow>) {
     this.params = params;
     let rowDataRecord = params.data.records.find(
       x => x.key === Number(params.colDef.field)

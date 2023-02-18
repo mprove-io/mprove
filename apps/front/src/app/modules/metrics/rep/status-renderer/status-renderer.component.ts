@@ -3,32 +3,32 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { common } from '~front/barrels/common';
-import { RowData } from '../rep.component';
+import { DataRow } from '../rep.component';
 
 @Component({
   selector: 'm-status-renderer',
   templateUrl: './status-renderer.component.html'
 })
 export class StatusRendererComponent implements ICellRendererAngularComp {
-  params: ICellRendererParams<RowData>;
+  params: ICellRendererParams<DataRow>;
 
   spinnerName = common.makeId();
   queryStatusEnum = common.QueryStatusEnum;
 
   formulaErrorsLength = 0;
 
-  agInit(params: ICellRendererParams<RowData>) {
+  agInit(params: ICellRendererParams<DataRow>) {
     this.setTypeErrors(params);
     this.updateSpinner();
   }
 
-  refresh(params: ICellRendererParams<RowData>) {
+  refresh(params: ICellRendererParams<DataRow>) {
     this.setTypeErrors(params);
     this.updateSpinner();
     return true;
   }
 
-  setTypeErrors(params: ICellRendererParams<RowData>) {
+  setTypeErrors(params: ICellRendererParams<DataRow>) {
     this.params = params;
     this.formulaErrorsLength = params.data.records.filter(x =>
       common.isDefined(x.error)

@@ -6,13 +6,14 @@ import {
 } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import {
-  CellClickedEvent,
   ColDef,
+  GridApi,
   GridReadyEvent,
+  RangeSelectionChangedEvent,
   RowDragEndEvent,
   SelectionChangedEvent
 } from 'ag-grid-community';
-import { map, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { RepQuery } from '~front/app/queries/rep.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -23,7 +24,7 @@ import { MetricRendererComponent } from './metric-renderer/metric-renderer.compo
 import { StatusHeaderComponent } from './status-header/status-header.component';
 import { StatusRendererComponent } from './status-renderer/status-renderer.component';
 
-export interface RowData extends common.Row {
+export interface DataRow extends common.Row {
   idx: string;
   metric: string;
   parameters: string;
@@ -43,15 +44,9 @@ export class RepComponent {
 
   rowCssClasses = ['group'];
 
-  rep: common.RepX;
-  rep$ = this.repQuery.select().pipe(
-    tap(x => {
-      this.rep = x;
-      this.cd.detectChanges();
-    })
-  );
+  data: DataRow[];
 
-  columns: ColDef<RowData>[] = [
+  columns: ColDef<DataRow>[] = [
     {
       field: 'idx',
       rowDrag: true,
@@ -79,15 +74,12 @@ export class RepComponent {
       width: 80,
       cellRenderer: StatusRendererComponent,
       headerComponent: StatusHeaderComponent
-      // cellRendererParams: {
-      //    color: 'guinnessBlack'
-      // }
     }
   ];
 
-  columnDefs: ColDef<RowData>[] = [...this.columns];
+  columnDefs: ColDef<DataRow>[] = [...this.columns];
 
-  defaultColDef: ColDef<RowData> = {
+  defaultColDef: ColDef<DataRow> = {
     suppressMovable: true,
     resizable: true,
     editable: false,
@@ -95,12 +87,39 @@ export class RepComponent {
     suppressKeyboardEvent: params => true
   };
 
-  rowData$ = this.repQuery.select().pipe(
+  agGridApi: GridApi<DataRow>;
+  prevRepId: string;
+
+  rep: common.RepX;
+  rep$ = this.repQuery.select().pipe(
     tap(x => {
+      this.rep = x;
+
+      if (common.isDefined(this.agGridApi)) {
+        if (
+          common.isDefined(this.prevRepId) &&
+          this.rep.repId !== this.prevRepId
+        ) {
+          this.agGridApi.deselectAll();
+        } else {
+          setTimeout(() => {
+            this.uiQuery.getValue().repSelectedNodes.forEach(node => {
+              let rowNode = this.agGridApi.getRowNode(node.id);
+              if (common.isDefined(rowNode)) {
+                rowNode.setSelected(true);
+              }
+              this.cd.detectChanges();
+            });
+          }, 0);
+        }
+      }
+
+      this.prevRepId = this.rep.repId;
+
       this.columnDefs = [
         ...this.columns,
         ...x.columns.map(column => {
-          let columnDef: ColDef<RowData> = {
+          let columnDef: ColDef<DataRow> = {
             field: `${column.columnId}`,
             headerName: column.label,
             cellRenderer: DataRendererComponent,
@@ -110,17 +129,13 @@ export class RepComponent {
           return columnDef;
         })
       ];
-    }),
-    map(x => {
+
       let metrics = this.metricsQuery.getValue();
 
-      let data = x.rows.map((row: common.Row) => {
-        // console.log(row);
-        // console.log(metrics.metrics);
-
+      this.data = x.rows.map((row: common.Row) => {
         let metric = metrics.metrics.find(m => m.metricId === row.metricId);
 
-        let rowData: RowData = {
+        let dataRow: DataRow = {
           rowId: row.rowId,
           parameters: '',
           metric: metric?.label || row.metricId,
@@ -130,6 +145,7 @@ export class RepComponent {
           mconfig: row.mconfig,
           hasAccessToModel: row.hasAccessToModel,
           formula: row.formula,
+          formula_deps: row.formula_deps,
           params: row.params,
           records: row.records,
           rqs: row.rqs,
@@ -139,17 +155,17 @@ export class RepComponent {
         };
 
         row.records.forEach(record => {
-          rowData[record.key] = record.value;
+          dataRow[record.key] = record.value;
         });
 
-        return rowData;
+        return dataRow;
       });
 
-      return data;
+      this.cd.detectChanges();
     })
   );
 
-  @ViewChild(AgGridAngular) agGrid!: AgGridAngular<RowData>;
+  @ViewChild(AgGridAngular) agGrid: AgGridAngular<DataRow>;
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -159,22 +175,22 @@ export class RepComponent {
     private metricsQuery: MetricsQuery
   ) {}
 
-  onSelectionChanged(event: SelectionChangedEvent) {
+  onSelectionChanged(event: SelectionChangedEvent<DataRow>) {
     let repSelectedNodes = event.api.getSelectedNodes();
     this.uiQuery.updatePart({ repSelectedNodes: repSelectedNodes });
-    // console.log(selectedNodes);
+    console.log('onSelectionChanged', repSelectedNodes);
   }
 
-  onGridReady(params: GridReadyEvent<RowData>) {
-    // this.agGrid.api.sizeColumnsToFit();
+  onRangeSelectionChanged(event: RangeSelectionChangedEvent<DataRow>) {
+    console.log('onRangeSelectionChanged');
   }
 
-  onCellClicked(e: CellClickedEvent<RowData>): void {
-    // console.log('cellClicked', e);
+  onGridReady(params: GridReadyEvent<DataRow>) {
+    this.agGridApi = this.agGrid.api;
+    this.agGridApi.deselectAll();
   }
 
-  rowDragEndHandle(event: RowDragEndEvent<RowData>): void {
-    // console.log(event);
+  rowDragEndHandle(event: RowDragEndEvent<DataRow>): void {
     let gridApi = event.api;
 
     let rowIds = [];
@@ -192,6 +208,8 @@ export class RepComponent {
     });
 
     let selectedRep = this.repQuery.getValue();
+
+    this.agGridApi.deselectAll();
 
     if (selectedRep.draft === true) {
       this.repService.editDraftRep({

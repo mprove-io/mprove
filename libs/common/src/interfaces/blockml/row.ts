@@ -30,6 +30,8 @@ export class Row {
 
   formula: string;
 
+  formula_deps: string[];
+
   records: any[];
 
   @IsString()

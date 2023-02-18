@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
 import { IRowNode } from 'ag-grid-community';
 import { common } from '~front/barrels/common';
-import { RowData } from '../modules/metrics/rep/rep.component';
+import { DataRow } from '../modules/metrics/rep/rep.component';
 import { BaseQuery } from './base.query';
 
 export class UiState {
   panel: common.PanelEnum;
   needSave: boolean;
-  repSelectedNodes: IRowNode<RowData>[];
+  repSelectedNodes: IRowNode<DataRow>[];
 }
 
 let uiState: UiState = {

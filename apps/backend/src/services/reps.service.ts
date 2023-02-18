@@ -7,7 +7,7 @@ import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { moveRowIds } from '~backend/functions/move-row-ids';
+import { processRowIds } from '~backend/functions/process-row-ids';
 import { BlockmlService } from './blockml.service';
 import { DbService } from './db.service';
 import { DocService } from './doc.service';
@@ -74,23 +74,31 @@ export class RepsService {
     let processedRows = rows.map(row => Object.assign({}, row));
 
     if (changeType === common.ChangeTypeEnum.Add) {
-      // if (rowChanges.filter(rowChange => rowChange.rowId).length > 0) {
-      //   processedRows.forEach(row => {
-      //     if (common.isDefined(row.formula)) {
-      //       let rq = row.rqs.find(
-      //         y =>
-      //           y.fractionBrick === timeRangeFraction.brick &&
-      //           y.timeSpec === timeSpec &&
-      //           y.timezone === timezone
-      //       );
+      rowChanges.forEach(rowChange => {
+        let isClearFormulasData =
+          processedRows.filter(
+            row =>
+              common.isDefined(row.formula) &&
+              row.formula_deps.findIndex(dep => dep === rowChange.rowId) > -1
+          ).length > 0;
 
-      //       rq.lastCalculatedTs = 0;
-      //     }
-      //   });
-      // }
+        if (isClearFormulasData === true) {
+          processedRows
+            .filter(row => common.isDefined(row.formula))
+            .forEach(row => {
+              let rq = row.rqs.find(
+                y =>
+                  y.fractionBrick === timeRangeFraction.brick &&
+                  y.timeSpec === timeSpec &&
+                  y.timezone === timezone
+              );
+              if (common.isDefined(rq)) {
+                rq.records = [];
+              }
+            });
+        }
 
-      rowChanges.forEach(x => {
-        let rowId = x.rowId;
+        let rowId = rowChange.rowId;
 
         if (common.isUndefined(rowId)) {
           let idxs = processedRows.map(y => common.idxLetterToNumber(y.rowId));
@@ -101,9 +109,10 @@ export class RepsService {
 
         let newRow: common.Row = {
           rowId: rowId,
-          metricId: x.metricId,
-          params: x.params || [],
-          formula: x.formula,
+          metricId: rowChange.metricId,
+          params: rowChange.params || [],
+          formula: rowChange.formula,
+          formula_deps: undefined,
           rqs: [],
           mconfig: undefined,
           query: undefined,
@@ -114,8 +123,10 @@ export class RepsService {
           currencySuffix: undefined
         };
 
-        if (common.isDefined(x.rowId)) {
-          let rowIndex = processedRows.findIndex(r => r.rowId === x.rowId);
+        if (common.isDefined(rowChange.rowId)) {
+          let rowIndex = processedRows.findIndex(
+            r => r.rowId === rowChange.rowId
+          );
 
           let newProcessedRows = [
             ...processedRows.slice(0, rowIndex),
@@ -128,20 +139,31 @@ export class RepsService {
           processedRows.push(newRow);
         }
       });
-    }
 
-    if (changeType === common.ChangeTypeEnum.Clear) {
-      processedRows.forEach(row => {
-        if (common.isDefined(row.formula)) {
-          let rq = row.rqs.find(
-            y =>
-              y.fractionBrick === timeRangeFraction.brick &&
-              y.timeSpec === timeSpec &&
-              y.timezone === timezone
-          );
+      processedRows = processRowIds({
+        rows: processedRows,
+        rowChanges: processedRows.map(pRow => {
+          let rowChange: common.RowChange = { rowId: pRow.rowId };
+          return rowChange;
+        })
+      });
+    } else if (changeType === common.ChangeTypeEnum.Clear) {
+      rowChanges.forEach(rowChange => {
+        processedRows.forEach(row => {
+          if (
+            common.isDefined(row.formula) &&
+            row.formula_deps.findIndex(dep => dep === rowChange.rowId) > -1
+          ) {
+            let rq = row.rqs.find(
+              y =>
+                y.fractionBrick === timeRangeFraction.brick &&
+                y.timeSpec === timeSpec &&
+                y.timezone === timezone
+            );
 
-          rq.lastCalculatedTs = 0;
-        }
+            rq.lastCalculatedTs = 0;
+          }
+        });
       });
 
       processedRows = processedRows.map(row => {
@@ -151,6 +173,7 @@ export class RepsService {
             metricId: undefined,
             params: [],
             formula: undefined,
+            formula_deps: undefined,
             rqs: [],
             mconfig: undefined,
             query: undefined,
@@ -166,30 +189,42 @@ export class RepsService {
           return row;
         }
       });
-    }
+    } else if (changeType === common.ChangeTypeEnum.Delete) {
+      rowChanges.forEach(rowChange => {
+        processedRows.forEach(row => {
+          if (
+            common.isDefined(row.formula) &&
+            row.formula_deps.findIndex(dep => dep === rowChange.rowId) > -1
+          ) {
+            let rq = row.rqs.find(
+              y =>
+                y.fractionBrick === timeRangeFraction.brick &&
+                y.timeSpec === timeSpec &&
+                y.timezone === timezone
+            );
 
-    if (changeType === common.ChangeTypeEnum.Delete) {
-      processedRows.forEach(row => {
-        if (common.isDefined(row.formula)) {
-          let rq = row.rqs.find(
-            y =>
-              y.fractionBrick === timeRangeFraction.brick &&
-              y.timeSpec === timeSpec &&
-              y.timezone === timezone
-          );
-
-          rq.lastCalculatedTs = 0;
-        }
+            rq.lastCalculatedTs = 0;
+          }
+        });
       });
 
       processedRows = processedRows.filter(
         row =>
           rowChanges.map(rowChange => rowChange.rowId).indexOf(row.rowId) < 0
       );
-    }
 
-    if (changeType === common.ChangeTypeEnum.Move) {
-      processedRows = moveRowIds({ rows: rows, rowChanges: rowChanges });
+      processedRows = processRowIds({
+        rows: processedRows,
+        rowChanges: processedRows.map(pRow => {
+          let rowChange: common.RowChange = { rowId: pRow.rowId };
+          return rowChange;
+        })
+      });
+    } else if (changeType === common.ChangeTypeEnum.Move) {
+      processedRows = processRowIds({
+        rows: processedRows,
+        rowChanges: rowChanges
+      });
     }
 
     return processedRows;
@@ -590,7 +625,8 @@ export class RepsService {
         rowsWithNotCalculatedFormulas.length > 0);
 
     if (isCalculate === true) {
-      // console.log('req data');
+      console.log('isCalculate true');
+
       repApi = await this.docService.getData({
         rep: repApi,
         timezone: timezone,
@@ -598,12 +634,13 @@ export class RepsService {
         timeRangeFraction: timeRangeFraction
       });
     } else {
+      console.log('isCalculate false');
+
       let dataRecords = this.docService.makeDataRecords({
         rep: repApi,
         timeSpec: timeSpec
       });
 
-      // console.log('no req data');
       repApi.rows.forEach(x => {
         let rq = x.rqs.find(
           y =>

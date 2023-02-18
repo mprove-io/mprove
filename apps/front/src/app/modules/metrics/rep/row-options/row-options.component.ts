@@ -4,7 +4,7 @@ import { RepQuery } from '~front/app/queries/rep.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { RepService } from '~front/app/services/rep.service';
 import { common } from '~front/barrels/common';
-import { RowData } from '../../rep.component';
+import { DataRow } from '../rep.component';
 
 @Component({
   selector: 'm-row-options',
@@ -12,7 +12,7 @@ import { RowData } from '../../rep.component';
 })
 export class RowOptionsComponent {
   @Input()
-  params: ICellRendererParams<RowData>;
+  params: ICellRendererParams<DataRow>;
 
   constructor(
     private repService: RepService,
@@ -32,6 +32,8 @@ export class RowOptionsComponent {
     event.stopPropagation();
 
     let selectedRep = this.repQuery.getValue();
+
+    this.params.api.deselectAll();
 
     let rowChange: common.RowChange = {
       rowId: this.params.data.idx

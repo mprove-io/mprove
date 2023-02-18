@@ -1,6 +1,6 @@
 import { common } from '~api-to-backend/barrels/common';
 
-export function moveRowIds(item: {
+export function processRowIds(item: {
   rows: common.Row[];
   rowChanges: common.RowChange[];
 }) {
@@ -24,23 +24,30 @@ export function moveRowIds(item: {
     .filter(row => common.isDefined(row.formula))
     .forEach(row => {
       let newFormula = row.formula;
+      let formulaDeps: string[] = [];
       let reg = common.MyRegex.CAPTURE_ROW_REF();
       let r;
 
       while ((r = reg.exec(newFormula))) {
         let reference = r[1];
-        let targetTo = targets[reference];
+
+        let targetTo = common.isDefined(targets[reference])
+          ? targets[reference]
+          : common.UNDEF;
 
         newFormula = common.MyRegex.replaceRowIds(
           newFormula,
           reference,
           targetTo
         );
+
+        formulaDeps.push(targetTo);
       }
 
       newFormula = newFormula.split(common.QUAD_UNDERSCORE).join('');
 
       row.formula = newFormula;
+      row.formula_deps = formulaDeps;
     });
 
   let newRows = rows.sort((a, b) =>

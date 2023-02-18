@@ -21,7 +21,7 @@
   <ag-grid-angular
     style="width: 100%; height: 100%"
     class="ag-theme-alpine mt-5 mb-5"
-    [rowData]="rowData$ | async"
+    [rowData]="data"
     [rowClass]="rowCssClasses"
     [columnDefs]="columnDefs"
     [defaultColDef]="defaultColDef"
@@ -31,8 +31,8 @@
     [animateRows]="true"
     [rowSelection]="'multiple'"
     (selectionChanged)="onSelectionChanged($event)"
+    (rangeSelectionChanged)="onRangeSelectionChanged($event)"
     (gridReady)="onGridReady($event)"
-    (cellClicked)="onCellClicked($event)"
     (rowDragEnd)="rowDragEndHandle($event)"
   ></ag-grid-angular>
   <!-- <div>{{ rep?.repId }}</div> -->
