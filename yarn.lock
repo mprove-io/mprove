@@ -3939,6 +3939,18 @@ adjust-sourcemap-loader@^4.0.0:
     loader-utils "^2.0.0"
     regex-parser "^2.2.11"
 
+ag-charts-angular@7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/ag-charts-angular/-/ag-charts-angular-7.1.0.tgz#c58dd63abecb47e289d18df8c73935f811a7363f"
+  integrity sha512-q8LwVNoxmFgEwJ5f9mTj8DC2k0sTvGNu451t2oKj+48/prx+0Uw7XG63LVqog8Q96rbIKklpK/F+N4rRp9geNw==
+  dependencies:
+    tslib "^2.3.0"
+
+ag-charts-community@7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/ag-charts-community/-/ag-charts-community-7.1.0.tgz#2123c68df639e436f55ddd6108485b7b993e1093"
+  integrity sha512-XLf80Lx6g8tf0QcixvgDONnAdtQyXYVXGtGhVXGA8IFOhnyF6DvXbphTIX4XgHpnD7YBVm16X+jXyc0OzUhF5w==
+
 ag-grid-angular@29.0.0:
   version "29.0.0"
   resolved "https://registry.yarnpkg.com/ag-grid-angular/-/ag-grid-angular-29.0.0.tgz#5f8000308933dbe478079f211c50d7b7846bc7eb"

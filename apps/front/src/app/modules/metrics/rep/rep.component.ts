@@ -161,6 +161,8 @@ export class RepComponent {
         return dataRow;
       });
 
+      this.uiQuery.updatePart({ repChartData: this.data });
+
       this.cd.detectChanges();
     })
   );

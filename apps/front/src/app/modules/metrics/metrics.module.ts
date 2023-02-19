@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { TreeModule } from '@bugsplat/angular-tree-component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyModule } from '@ngneat/helipopper';
+import { AgChartsAngularModule } from 'ag-charts-angular';
 import { AgGridModule } from 'ag-grid-angular';
 import { MonacoEditorModule } from 'ng-monaco-editor';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -44,7 +45,8 @@ import { StatusRendererComponent } from './rep/status-renderer/status-renderer.c
     NgxSpinnerModule,
     TippyModule,
     MonacoEditorModule,
-    AgGridModule
+    AgGridModule,
+    AgChartsAngularModule
   ]
 })
 export class MetricsModule {}

@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
+import { AgChartOptions } from 'ag-charts-community';
 import { IRowNode } from 'ag-grid-community';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { concatMap, interval, of, Subscription, take, tap } from 'rxjs';
@@ -19,6 +20,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { RepService } from '~front/app/services/rep.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+
 import {
   constants,
   constants as frontConstants
@@ -39,8 +41,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
   pageTitle = frontConstants.METRICS_PAGE_TITLE;
 
   isShow = true;
+  rowIsExpanded = false;
   chartIsExpanded = true;
-  rowIsExpanded = true;
 
   emptyRepId = common.EMPTY_REP_ID;
 
@@ -135,6 +137,49 @@ export class MetricsComponent implements OnInit, OnDestroy {
   repSelectedNodes$ = this.uiQuery.repSelectedNodes$.pipe(
     tap(x => {
       this.repSelectedNode = x.length === 1 ? x[0] : undefined;
+    })
+  );
+
+  chartOptions: AgChartOptions;
+
+  repChartData$ = this.uiQuery.repChartData$.pipe(
+    tap(x => {
+      console.log(x);
+
+      let data: any[] = [];
+      if (x.length > 0) {
+        let yKeys = x[0].records.map(record => record.key);
+
+        data = yKeys
+          .filter(yKey => yKey !== 0)
+          .map(yKey => {
+            let dataPoint: any = {
+              period: yKey
+            };
+
+            x.forEach(row => {
+              let record = row.records.find(rec => rec.key === yKey);
+
+              dataPoint[row.metric] = record.value;
+            });
+
+            return dataPoint;
+          });
+      }
+
+      let series = x.map(row => ({
+        type: 'line',
+        xKey: 'period',
+        yKey: row.metric,
+        yName: row.metric
+      }));
+
+      console.log(data);
+      console.log(series);
+
+      this.chartOptions = { data: data, series: series as any };
+
+      this.cd.detectChanges();
     })
   );
 
@@ -384,10 +429,11 @@ export class MetricsComponent implements OnInit, OnDestroy {
   }
 
   refreshShow() {
-    // this.isShow = false;
-    // setTimeout(() => {
-    //   this.isShow = true;
-    // });
+    this.isShow = false;
+    setTimeout(() => {
+      this.isShow = true;
+      this.cd.detectChanges();
+    });
   }
 
   ngOnDestroy() {

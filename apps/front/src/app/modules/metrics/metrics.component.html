@@ -226,11 +226,8 @@
           </div>
         </div>
 
-        <div
-          class="ml-6 flex min-w-[2px] flex-grow flex-col space-y-6"
-          *ngIf="isShow === true"
-        >
-          <div class="h-full w-full rounded bg-white shadow-md">
+        <div class="ml-6 flex min-w-[2px] flex-grow flex-col space-y-6">
+          <div class="w-full flex-1 rounded bg-white shadow-md">
             <router-outlet></router-outlet>
           </div>
 
@@ -259,6 +256,10 @@
                   </div>
                 </div>
               </div>
+
+              <div *ngIf="rowIsExpanded === true">{{
+                repSelectedNode?.data?.rowId
+              }}</div>
             </div>
           </div>
 
@@ -285,6 +286,26 @@
                   </div>
                 </div>
               </div>
+
+              <div
+                *ngIf="
+                  chartIsExpanded === true &&
+                  isShow === true &&
+                  chartOptions?.data.length === 0
+                "
+                class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+                >No selected rows</div
+              >
+
+              <ag-charts-angular
+                *ngIf="
+                  chartIsExpanded === true &&
+                  isShow === true &&
+                  chartOptions?.data.length > 0
+                "
+                style="height: 100%"
+                [options]="chartOptions"
+              ></ag-charts-angular>
             </div>
           </div>
         </div>
@@ -297,3 +318,4 @@
 <div *ngIf="reps$ | async"></div>
 <div *ngIf="timeQuery$ | async"></div>
 <div *ngIf="repSelectedNodes$ | async"></div>
+<div *ngIf="repChartData$ | async"></div>
