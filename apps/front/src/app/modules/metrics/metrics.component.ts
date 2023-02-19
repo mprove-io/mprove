@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
+import { IRowNode } from 'ag-grid-community';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { concatMap, interval, of, Subscription, take, tap } from 'rxjs';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -10,6 +11,7 @@ import { emptyRep, RepQuery } from '~front/app/queries/rep.query';
 import { RepsQuery } from '~front/app/queries/reps.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { TimeQuery } from '~front/app/queries/time.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { StructRepResolver } from '~front/app/resolvers/struct-rep.resolver';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
@@ -21,6 +23,7 @@ import {
   constants,
   constants as frontConstants
 } from '~front/barrels/constants';
+import { DataRow } from './rep/rep.component';
 
 export class TimeSpecItem {
   label: string;
@@ -36,6 +39,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
   pageTitle = frontConstants.METRICS_PAGE_TITLE;
 
   isShow = true;
+  chartIsExpanded = true;
+  rowIsExpanded = true;
 
   emptyRepId = common.EMPTY_REP_ID;
 
@@ -126,6 +131,13 @@ export class MetricsComponent implements OnInit, OnDestroy {
     .getTimezones()
     .filter(x => x.value !== common.USE_PROJECT_TIMEZONE_VALUE);
 
+  repSelectedNode: IRowNode<DataRow>;
+  repSelectedNodes$ = this.uiQuery.repSelectedNodes$.pipe(
+    tap(x => {
+      this.repSelectedNode = x.length === 1 ? x[0] : undefined;
+    })
+  );
+
   checkRunning$: Subscription;
 
   isRunButtonPressed = false;
@@ -139,6 +151,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private repsQuery: RepsQuery,
     private repQuery: RepQuery,
+    private uiQuery: UiQuery,
     private memberQuery: MemberQuery,
     private structQuery: StructQuery,
     private navQuery: NavQuery,
@@ -358,6 +371,23 @@ export class MetricsComponent implements OnInit, OnDestroy {
       ),
       rep: this.rep
     });
+  }
+
+  toggleRowPanel() {
+    this.rowIsExpanded = !this.rowIsExpanded;
+    this.refreshShow();
+  }
+
+  toggleChartPanel() {
+    this.chartIsExpanded = !this.chartIsExpanded;
+    this.refreshShow();
+  }
+
+  refreshShow() {
+    // this.isShow = false;
+    // setTimeout(() => {
+    //   this.isShow = true;
+    // });
   }
 
   ngOnDestroy() {

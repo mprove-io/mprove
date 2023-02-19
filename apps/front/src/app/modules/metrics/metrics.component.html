@@ -233,6 +233,60 @@
           <div class="h-full w-full rounded bg-white shadow-md">
             <router-outlet></router-outlet>
           </div>
+
+          <div
+            class="w-full rounded bg-white shadow-md"
+            [ngClass]="{
+              'flex-1': rowIsExpanded
+            }"
+          >
+            <div class="flex h-full flex-col">
+              <div class="mr-5 flex h-20 flex-shrink-0 flex-row items-center">
+                <div
+                  (click)="toggleRowPanel()"
+                  class="text-gray1 flex cursor-pointer select-none flex-row items-center space-x-2 py-3 px-5 text-2xl font-semibold"
+                >
+                  <div class="flex flex-row items-center space-x-2">
+                    <div> Row </div>
+                    <m-chevron-right-icon
+                      *ngIf="!rowIsExpanded"
+                    ></m-chevron-right-icon>
+                    <m-chevron-down-icon
+                      *ngIf="rowIsExpanded"
+                    ></m-chevron-down-icon>
+
+                    <div>{{ repSelectedNode?.data?.rowId }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="w-full rounded bg-white shadow-md"
+            [ngClass]="{
+              'flex-1': chartIsExpanded
+            }"
+          >
+            <div class="flex h-full flex-col">
+              <div class="mr-5 flex h-20 flex-shrink-0 flex-row items-center">
+                <div
+                  (click)="toggleChartPanel()"
+                  class="text-gray1 flex cursor-pointer select-none flex-row items-center space-x-2 py-3 px-5 text-2xl font-semibold"
+                >
+                  <div class="flex flex-row items-center space-x-2">
+                    <div> Chart </div>
+                    <m-chevron-right-icon
+                      *ngIf="!chartIsExpanded"
+                    ></m-chevron-right-icon>
+                    <m-chevron-down-icon
+                      *ngIf="chartIsExpanded"
+                    ></m-chevron-down-icon>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -242,3 +296,4 @@
 <div *ngIf="rep$ | async"></div>
 <div *ngIf="reps$ | async"></div>
 <div *ngIf="timeQuery$ | async"></div>
+<div *ngIf="repSelectedNodes$ | async"></div>
