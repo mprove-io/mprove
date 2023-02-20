@@ -56,6 +56,7 @@ export class RepsService {
 
   getProcessedRows(item: {
     rowChanges: common.RowChange[];
+    metrics: entities.MetricEntity[];
     rows: common.Row[];
     changeType: common.ChangeTypeEnum;
     timezone: string;
@@ -68,7 +69,8 @@ export class RepsService {
       changeType,
       timezone,
       timeSpec,
-      timeRangeFraction
+      timeRangeFraction,
+      metrics
     } = item;
 
     let processedRows = rows.map(row => Object.assign({}, row));
@@ -107,6 +109,8 @@ export class RepsService {
           rowId = common.idxNumberToLetter(idxNum);
         }
 
+        let metric = metrics.find(m => m.metric_id === rowChange.metricId);
+
         let newRow: common.Row = {
           rowId: rowId,
           metricId: rowChange.metricId,
@@ -118,9 +122,9 @@ export class RepsService {
           query: undefined,
           hasAccessToModel: false,
           records: [],
-          formatNumber: undefined,
-          currencyPrefix: undefined,
-          currencySuffix: undefined
+          formatNumber: metric.format_number,
+          currencyPrefix: metric.currency_prefix,
+          currencySuffix: metric.currency_suffix
         };
 
         if (common.isDefined(rowChange.rowId)) {

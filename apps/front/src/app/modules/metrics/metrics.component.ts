@@ -22,6 +22,7 @@ import { StructRepResolver } from '~front/app/resolvers/struct-rep.resolver';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
+import { QueryService } from '~front/app/services/query.service';
 import { RepService } from '~front/app/services/rep.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -178,7 +179,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
       }
 
       this.recordsWithValuesLength = recordsWithValuesLength;
-      // console.log(recordsWithValuesLength);
 
       let series = x.rows
         .filter(row => common.isDefined(row.metric))
@@ -196,15 +196,27 @@ export class MetricsComponent implements OnInit, OnDestroy {
                 unixTime: params.xValue
               });
 
+              let formattedValue = common.isDefined(params.yValue)
+                ? this.queryService.formatValue({
+                    value: params.yValue,
+                    formatNumber: row.formatNumber,
+                    fieldResult: common.FieldResultEnum.Number,
+                    currencyPrefix: row.currencyPrefix,
+                    currencySuffix: row.currencySuffix
+                  })
+                : 'undefined';
+
               let result: AgTooltipRendererResult = {
                 title: params.title,
-                content: `${columnLabel}: ${params.yValue}`
+                content: `${columnLabel}: ${formattedValue}`
               };
 
               return result;
             }
           }
         }));
+
+      let structState = this.structQuery.getValue();
 
       this.chartOptions = {
         data: dataPoints,
@@ -226,7 +238,22 @@ export class MetricsComponent implements OnInit, OnDestroy {
           },
           {
             type: 'number',
-            position: 'left'
+            position: 'left',
+            label: {
+              formatter: (params: AgAxisLabelFormatterParams) => {
+                let formattedValue = common.isDefined(params.value)
+                  ? this.queryService.formatValue({
+                      value: params.value,
+                      formatNumber: structState.formatNumber,
+                      fieldResult: common.FieldResultEnum.Number,
+                      currencyPrefix: structState.currencyPrefix,
+                      currencySuffix: structState.currencySuffix
+                    })
+                  : 'undefined';
+
+                return formattedValue;
+              }
+            }
           }
         ]
         // ,
@@ -260,6 +287,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private spinner: NgxSpinnerService,
     private repService: RepService,
+    private queryService: QueryService,
     private navigateService: NavigateService,
     private myDialogService: MyDialogService,
     private apiService: ApiService,

@@ -1,8 +1,10 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -24,7 +26,8 @@ export class CreateDraftRepController {
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,
-    private envsService: EnvsService
+    private envsService: EnvsService,
+    private metricsRepository: repositories.MetricsRepository
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDraftRep)
@@ -95,13 +98,24 @@ export class CreateDraftRepController {
 
     let repId = common.makeId();
 
+    let metrics =
+      changeType === common.ChangeTypeEnum.Add
+        ? await this.metricsRepository.find({
+            where: {
+              struct_id: bridge.struct_id,
+              metric_id: In(rowChanges.map(rowChange => rowChange.metricId))
+            }
+          })
+        : [];
+
     let processedRows = this.repsService.getProcessedRows({
       rows: fromRep.rows,
       rowChanges: rowChanges,
       changeType: changeType,
       timezone: timezone,
       timeSpec: timeSpec,
-      timeRangeFraction: timeRangeFraction
+      timeRangeFraction: timeRangeFraction,
+      metrics: metrics
     });
 
     let rep: entities.RepEntity = {
