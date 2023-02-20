@@ -297,11 +297,23 @@
                 >No selected rows</div
               >
 
+              <div
+                *ngIf="
+                  chartIsExpanded === true &&
+                  isShow === true &&
+                  chartOptions?.data.length > 0 &&
+                  recordsWithValuesLength === 0
+                "
+                class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+                >Run queries to get data</div
+              >
+
               <ag-charts-angular
                 *ngIf="
                   chartIsExpanded === true &&
                   isShow === true &&
-                  chartOptions?.data.length > 0
+                  chartOptions?.data.length > 0 &&
+                  recordsWithValuesLength > 0
                 "
                 style="height: 100%"
                 [options]="chartOptions"

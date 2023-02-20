@@ -2,7 +2,12 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { AgChartOptions } from 'ag-charts-community';
+import {
+  AgAxisLabelFormatterParams,
+  AgCartesianSeriesTooltipRendererParams,
+  AgChartOptions,
+  AgTooltipRendererResult
+} from 'ag-charts-community';
 import { IRowNode } from 'ag-grid-community';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { concatMap, interval, of, Subscription, take, tap } from 'rxjs';
@@ -52,11 +57,12 @@ export class MetricsComponent implements OnInit, OnDestroy {
   rep$ = this.repQuery.select().pipe(
     tap(x => {
       this.rep = x;
+
+      console.log(x);
+
       this.queriesLength = this.rep.rows.filter(row =>
         common.isDefined(row.query)
       ).length;
-      console.log(x);
-      // console.log(x.timeRangeFraction);
 
       this.cd.detectChanges();
     })
@@ -142,42 +148,92 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   chartOptions: AgChartOptions;
 
+  recordsWithValuesLength = 0;
+
   repChartData$ = this.uiQuery.repChartData$.pipe(
     tap(x => {
-      console.log(x);
+      let dataPoints: any[] = [];
 
-      let data: any[] = [];
-      if (x.length > 0) {
-        let yKeys = x[0].records.map(record => record.key);
+      let recordsWithValuesLength = 0;
 
-        data = yKeys
-          .filter(yKey => yKey !== 0)
-          .map(yKey => {
+      if (x.rows.length > 0) {
+        dataPoints = x.columns
+          .filter(column => column.columnId !== 0)
+          .map(column => {
             let dataPoint: any = {
-              period: yKey
+              columnId: column.columnId,
+              columnLabel: column.label
             };
 
-            x.forEach(row => {
-              let record = row.records.find(rec => rec.key === yKey);
-
-              dataPoint[row.metric] = record.value;
+            x.rows.forEach(row => {
+              let record = row.records.find(rec => rec.key === column.columnId);
+              dataPoint[row.metric] = record?.value;
+              if (common.isDefined(record?.value)) {
+                recordsWithValuesLength++;
+              }
             });
 
             return dataPoint;
           });
       }
 
-      let series = x.map(row => ({
-        type: 'line',
-        xKey: 'period',
-        yKey: row.metric,
-        yName: row.metric
-      }));
+      this.recordsWithValuesLength = recordsWithValuesLength;
+      // console.log(recordsWithValuesLength);
 
-      console.log(data);
-      console.log(series);
+      let series = x.rows
+        .filter(row => common.isDefined(row.metric))
+        .map(row => ({
+          type: 'line',
+          xKey: 'columnId',
+          yKey: row.metric,
+          yName: row.metric,
+          tooltip: {
+            renderer: (params: AgCartesianSeriesTooltipRendererParams) => {
+              let timeSpec = this.timeQuery.getValue().timeSpec;
 
-      this.chartOptions = { data: data, series: series as any };
+              let columnLabel = common.formatTs({
+                timeSpec: timeSpec,
+                unixTime: params.xValue
+              });
+
+              let result: AgTooltipRendererResult = {
+                title: params.title,
+                content: `${columnLabel}: ${params.yValue}`
+              };
+
+              return result;
+            }
+          }
+        }));
+
+      this.chartOptions = {
+        data: dataPoints,
+        series: series as any,
+        axes: [
+          {
+            type: 'category',
+            position: 'bottom',
+            label: {
+              formatter: (params: AgAxisLabelFormatterParams) => {
+                let timeSpec = this.timeQuery.getValue().timeSpec;
+
+                return common.formatTs({
+                  timeSpec: timeSpec,
+                  unixTime: params.value
+                });
+              }
+            }
+          },
+          {
+            type: 'number',
+            position: 'left'
+          }
+        ]
+        // ,
+        // navigator: {
+        //   enabled: true
+        // }
+      };
 
       this.cd.detectChanges();
     })

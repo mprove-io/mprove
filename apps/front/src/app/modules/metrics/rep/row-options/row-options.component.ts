@@ -22,9 +22,13 @@ export class RowOptionsComponent {
 
   clickMenu(event: MouseEvent) {
     event.stopPropagation();
+
     console.log(this.params.data);
+
     let gridApi = this.params.api;
+
     gridApi.deselectAll();
+
     this.params.node.setSelected(true);
   }
 

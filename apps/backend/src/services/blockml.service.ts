@@ -15,7 +15,6 @@ import {
   eachQuarterOfInterval,
   eachWeekOfInterval,
   eachYearOfInterval,
-  format,
   getUnixTime,
   startOfDay,
   startOfHour,
@@ -407,22 +406,10 @@ export class BlockmlService {
 
       let column: common.Column = {
         columnId: unixTime,
-        label:
-          timeSpec === common.TimeSpecEnum.Years
-            ? format(x, 'yyyy')
-            : timeSpec === common.TimeSpecEnum.Quarters
-            ? format(x, 'QQQ yyyy')
-            : timeSpec === common.TimeSpecEnum.Months
-            ? format(x, 'MMM yyyy')
-            : timeSpec === common.TimeSpecEnum.Weeks
-            ? format(x, 'dd MMM yyyy')
-            : timeSpec === common.TimeSpecEnum.Days
-            ? format(x, 'dd MMM yyyy')
-            : timeSpec === common.TimeSpecEnum.Hours
-            ? format(x, 'HH:mm dd MMM yyyy')
-            : timeSpec === common.TimeSpecEnum.Minutes
-            ? format(x, 'HH:mm dd MMM yyyy')
-            : `${unixTime}`
+        label: common.formatTs({
+          timeSpec: timeSpec,
+          unixTime: unixTime
+        })
       };
 
       return column;

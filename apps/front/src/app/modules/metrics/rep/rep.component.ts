@@ -154,14 +154,23 @@ export class RepComponent {
           formatNumber: metric?.formatNumber || row.formatNumber
         };
 
-        row.records.forEach(record => {
-          dataRow[record.key] = record.value;
-        });
+        row.records
+          .filter(record => record.key !== 0)
+          .forEach(record => {
+            dataRow[record.key] = record.value;
+            let column = x.columns.find(c => c.columnId === record.key);
+            record.columnLabel = column.label;
+          });
 
         return dataRow;
       });
 
-      this.uiQuery.updatePart({ repChartData: this.data });
+      this.uiQuery.updatePart({
+        repChartData: {
+          rows: this.data,
+          columns: x.columns
+        }
+      });
 
       this.cd.detectChanges();
     })
@@ -180,11 +189,11 @@ export class RepComponent {
   onSelectionChanged(event: SelectionChangedEvent<DataRow>) {
     let repSelectedNodes = event.api.getSelectedNodes();
     this.uiQuery.updatePart({ repSelectedNodes: repSelectedNodes });
-    console.log('onSelectionChanged', repSelectedNodes);
+    // console.log('onSelectionChanged', repSelectedNodes);
   }
 
   onRangeSelectionChanged(event: RangeSelectionChangedEvent<DataRow>) {
-    console.log('onRangeSelectionChanged');
+    // console.log('onRangeSelectionChanged');
   }
 
   onGridReady(params: GridReadyEvent<DataRow>) {

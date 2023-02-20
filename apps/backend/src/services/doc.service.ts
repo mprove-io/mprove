@@ -123,14 +123,14 @@ export class DocService {
   makeDataRecords(item: { rep: common.RepX; timeSpec: common.TimeSpecEnum }) {
     let { rep, timeSpec } = item;
 
-    let specialColumnId = 0;
+    let zeroColumnId = 0;
 
-    let specialColumn: common.Column = {
-      columnId: specialColumnId,
-      label: 'Special'
+    let zeroColumn: common.Column = {
+      columnId: zeroColumnId,
+      label: 'ZeroColumn'
     };
 
-    let dataRecords = [specialColumn, ...rep.columns].map((column, i) => {
+    let dataRecords = [zeroColumn, ...rep.columns].map((column, i) => {
       let tsDate = fromUnixTime(column.columnId);
 
       let timeValue =
@@ -160,7 +160,7 @@ export class DocService {
       rep.rows
         .filter(row => common.isUndefined(row.formula))
         .forEach((row: common.Row) => {
-          if (column.columnId === specialColumnId) {
+          if (column.columnId === zeroColumnId) {
             record.fields[row.rowId] = 0;
           } else {
             let timeFieldId = row.mconfig?.select[0].split('.').join('_');

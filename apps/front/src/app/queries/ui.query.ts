@@ -9,14 +9,20 @@ export class UiState {
   panel: common.PanelEnum;
   needSave: boolean;
   repSelectedNodes: IRowNode<DataRow>[];
-  repChartData: DataRow[];
+  repChartData: {
+    rows: DataRow[];
+    columns: common.Column[];
+  };
 }
 
 let uiState: UiState = {
   panel: common.PanelEnum.Tree,
   needSave: false,
   repSelectedNodes: [],
-  repChartData: []
+  repChartData: {
+    rows: [],
+    columns: []
+  }
 };
 
 @Injectable({ providedIn: 'root' })
