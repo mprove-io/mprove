@@ -220,6 +220,9 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
       this.chartOptions = {
         data: dataPoints,
+        legend: {
+          position: 'right'
+        },
         series: series as any,
         axes: [
           {
@@ -239,6 +242,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
           {
             type: 'number',
             position: 'left',
+            min: 0,
             label: {
               formatter: (params: AgAxisLabelFormatterParams) => {
                 let formattedValue = common.isDefined(params.value)

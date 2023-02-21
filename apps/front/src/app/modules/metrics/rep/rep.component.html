@@ -1,23 +1,4 @@
 <div class="ml-5 mr-5 flex h-full flex-1 flex-col">
-  <!-- <div>{{ rep?.repId }}</div> -->
-  <!-- <div
-      (click)="toggleFiltersPanel()"
-      class="text-gray1 mt-5 flex cursor-pointer select-none flex-row items-start space-x-2 py-3 px-5 text-2xl font-semibold"
-    >
-      <div class="flex flex-row items-center space-x-2">
-        <div> Filters </div>
-        <m-chevron-right-icon
-          *ngIf="!filtersIsExpanded"
-        ></m-chevron-right-icon>
-        <m-chevron-down-icon
-          *ngIf="filtersIsExpanded"
-        ></m-chevron-down-icon>
-      </div>
-    </div>         -->
-
-  <!-- Button to clear selection -->
-  <!-- <button (click)="clearSelection()">Clear Selection</button> -->
-  <!-- AG Grid Angular Component -->
   <ag-grid-angular
     style="width: 100%; height: 100%"
     class="ag-theme-alpine mt-5 mb-5"
@@ -26,6 +7,7 @@
     [columnDefs]="columnDefs"
     [defaultColDef]="defaultColDef"
     [rowDragManaged]="true"
+    [suppressColumnVirtualisation]="true"
     [rowDragMultiRow]="true"
     [suppressCellFocus]="true"
     [animateRows]="true"
@@ -35,7 +17,9 @@
     (gridReady)="onGridReady($event)"
     (rowDragEnd)="rowDragEndHandle($event)"
   ></ag-grid-angular>
-  <!-- <div>{{ rep?.repId }}</div> -->
+
+  <div>{{ repSelectedNode?.data?.rowId }}</div>
 </div>
 
 <div *ngIf="rep$ | async"></div>
+<div *ngIf="repSelectedNodes$ | async"></div>

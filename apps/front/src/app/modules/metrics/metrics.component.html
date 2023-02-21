@@ -231,7 +231,7 @@
             <router-outlet></router-outlet>
           </div>
 
-          <div
+          <!-- <div
             class="w-full rounded bg-white shadow-md"
             [ngClass]="{
               'flex-1': rowIsExpanded
@@ -261,7 +261,7 @@
                 repSelectedNode?.data?.rowId
               }}</div>
             </div>
-          </div>
+          </div> -->
 
           <div
             class="w-full rounded bg-white shadow-md"
@@ -270,7 +270,7 @@
             }"
           >
             <div class="flex h-full flex-col">
-              <div class="mr-5 flex h-20 flex-shrink-0 flex-row items-center">
+              <!-- <div class="mr-5 flex h-20 flex-shrink-0 flex-row items-center">
                 <div
                   (click)="toggleChartPanel()"
                   class="text-gray1 flex cursor-pointer select-none flex-row items-center space-x-2 py-3 px-5 text-2xl font-semibold"
@@ -285,7 +285,7 @@
                     ></m-chevron-down-icon>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
               <div
                 *ngIf="
@@ -309,13 +309,14 @@
               >
 
               <ag-charts-angular
+                class="ml-5 mr-5 mt-5 mb-2"
+                style="height: 100%"
                 *ngIf="
                   chartIsExpanded === true &&
                   isShow === true &&
                   chartOptions?.data.length > 0 &&
                   recordsWithValuesLength > 0
                 "
-                style="height: 100%"
                 [options]="chartOptions"
               ></ag-charts-angular>
             </div>

@@ -9,6 +9,7 @@ import {
   ColDef,
   GridApi,
   GridReadyEvent,
+  IRowNode,
   RangeSelectionChangedEvent,
   RowDragEndEvent,
   SelectionChangedEvent
@@ -78,6 +79,7 @@ export class RepComponent {
   ];
 
   columnDefs: ColDef<DataRow>[] = [...this.columns];
+  timeColumns: ColDef<DataRow>[] = [];
 
   defaultColDef: ColDef<DataRow> = {
     suppressMovable: true,
@@ -116,19 +118,18 @@ export class RepComponent {
 
       this.prevRepId = this.rep.repId;
 
-      this.columnDefs = [
-        ...this.columns,
-        ...x.columns.map(column => {
-          let columnDef: ColDef<DataRow> = {
-            field: `${column.columnId}`,
-            headerName: column.label,
-            cellRenderer: DataRendererComponent,
-            type: 'numericColumn'
-          };
+      this.timeColumns = x.columns.map(column => {
+        let columnDef: ColDef<DataRow> = {
+          field: `${column.columnId}`,
+          headerName: column.label,
+          cellRenderer: DataRendererComponent,
+          type: 'numericColumn'
+        };
 
-          return columnDef;
-        })
-      ];
+        return columnDef;
+      });
+
+      this.columnDefs = [...this.columns, ...this.timeColumns];
 
       let metrics = this.metricsQuery.getValue();
 
@@ -165,14 +166,33 @@ export class RepComponent {
         return dataRow;
       });
 
+      let sNodes = this.uiQuery.getValue().repSelectedNodes;
+
+      // console.log(sNodes);
+
       this.uiQuery.updatePart({
         repChartData: {
-          rows: this.data,
+          rows:
+            sNodes.length > 1
+              ? []
+              : sNodes.length === 0
+              ? this.data
+              : this.data.filter(
+                  row =>
+                    sNodes.map(node => node.data.rowId).indexOf(row.rowId) > -1
+                ),
           columns: x.columns
         }
       });
 
       this.cd.detectChanges();
+    })
+  );
+
+  repSelectedNode: IRowNode<DataRow>;
+  repSelectedNodes$ = this.uiQuery.repSelectedNodes$.pipe(
+    tap(x => {
+      this.repSelectedNode = x.length === 1 ? x[0] : undefined;
     })
   );
 
@@ -187,9 +207,24 @@ export class RepComponent {
   ) {}
 
   onSelectionChanged(event: SelectionChangedEvent<DataRow>) {
-    let repSelectedNodes = event.api.getSelectedNodes();
-    this.uiQuery.updatePart({ repSelectedNodes: repSelectedNodes });
-    // console.log('onSelectionChanged', repSelectedNodes);
+    let sNodes = event.api.getSelectedNodes();
+
+    this.uiQuery.updatePart({
+      repSelectedNodes: sNodes,
+      repChartData: {
+        rows:
+          sNodes.length > 1
+            ? []
+            : sNodes.length === 0
+            ? this.data
+            : this.data.filter(
+                row =>
+                  sNodes.map(node => node.data.rowId).indexOf(row.rowId) > -1
+              ),
+        columns: this.rep.columns
+      }
+    });
+    // console.log('onSelectionChanged', sNodes);
   }
 
   onRangeSelectionChanged(event: RangeSelectionChangedEvent<DataRow>) {
