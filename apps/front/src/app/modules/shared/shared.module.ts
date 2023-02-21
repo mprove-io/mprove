@@ -29,6 +29,7 @@ import { ArrowLeftIconComponent } from './icons/arrow-left-icon/arrow-left-icon.
 import { ArrowNarrowRightIconComponent } from './icons/arrow-narrow-right-icon/arrow-narrow-right-icon.component';
 import { ArrowRightIconComponent } from './icons/arrow-right-icon/arrow-right-icon.component';
 import { AscIconComponent } from './icons/asc-icon/asc-icon.component';
+import { ChartIconComponent } from './icons/chart-icon/chart-icon.component';
 import { CheckIconComponent } from './icons/check-icon/check-icon.component';
 import { ChevronDownIconComponent } from './icons/chevron-down-icon/chevron-down-icon.component';
 import { ChevronLeftIconComponent } from './icons/chevron-left-icon/chevron-left-icon.component';
@@ -56,6 +57,7 @@ import { TrashIconComponent } from './icons/trash-icon/trash-icon.component';
 import { UserIconComponent } from './icons/user-icon/user-icon.component';
 import { ViewGridIconComponent } from './icons/view-grid-icon/view-grid-icon.component';
 import { ViewListIconComponent } from './icons/view-list-icon/view-list-icon.component';
+import { WrenchIconComponent } from './icons/wrench-icon/wrench-icon.component';
 import { LogoComponent } from './logo/logo.component';
 import { MainTableComponent } from './main-table/main-table.component';
 import { CapitalizeWordsPipe } from './pipes/capitalize-words.pipe';
@@ -140,7 +142,9 @@ let sharedComponents = [
   ResizeIconComponent,
   ViewGridIconComponent,
   ViewListIconComponent,
-  UserIconComponent
+  UserIconComponent,
+  ChartIconComponent,
+  WrenchIconComponent
 ];
 
 @NgModule({

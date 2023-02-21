@@ -1,0 +1,10 @@
+<div class="flex h-full flex-row items-center justify-center">
+  <m-chart-icon
+    class="cursor-pointer"
+    [ngClass]="{
+      'text-blue-500': showChart === true,
+      'text-gray-400': showChart === false
+    }"
+    (click)="toggleShowChart($event)"
+  ></m-chart-icon>
+</div>

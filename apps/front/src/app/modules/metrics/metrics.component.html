@@ -231,75 +231,47 @@
             <router-outlet></router-outlet>
           </div>
 
-          <!-- <div
-            class="w-full rounded bg-white shadow-md"
-            [ngClass]="{
-              'flex-1': rowIsExpanded
-            }"
+          <div
+            class="h-2 w-full flex-1 flex-row rounded bg-white shadow-md"
+            *ngIf="showMetricsChart === true"
           >
-            <div class="flex h-full flex-col">
-              <div class="mr-5 flex h-20 flex-shrink-0 flex-row items-center">
+            <div class="h-full flex-1 flex-grow flex-col">
+              <div
+                class="flex h-full flex-1 flex-row space-x-5 pl-5 pr-5 pt-5 pb-2"
+                *ngIf="
+                  isShow === true &&
+                  chartOptions?.data.length > 0 &&
+                  recordsWithValuesLength > 0
+                "
+              >
                 <div
-                  (click)="toggleRowPanel()"
-                  class="text-gray1 flex cursor-pointer select-none flex-row items-center space-x-2 py-3 px-5 text-2xl font-semibold"
+                  class="flex h-full flex-col"
+                  [ngClass]="{
+                    'w-2/3': showMetricsChartSettings === true,
+                    'w-full': showMetricsChartSettings === false
+                  }"
                 >
-                  <div class="flex flex-row items-center space-x-2">
-                    <div> Row </div>
-                    <m-chevron-right-icon
-                      *ngIf="!rowIsExpanded"
-                    ></m-chevron-right-icon>
-                    <m-chevron-down-icon
-                      *ngIf="rowIsExpanded"
-                    ></m-chevron-down-icon>
-
-                    <div>{{ repSelectedNode?.data?.rowId }}</div>
-                  </div>
+                  <ag-charts-angular
+                    style="height: 100%"
+                    [options]="chartOptions"
+                  ></ag-charts-angular>
                 </div>
+
+                <div
+                  class="flex w-1/3 flex-col bg-yellow-400"
+                  *ngIf="showMetricsChartSettings === true"
+                  >Chart Settings</div
+                >
               </div>
 
-              <div *ngIf="rowIsExpanded === true">{{
-                repSelectedNode?.data?.rowId
-              }}</div>
-            </div>
-          </div> -->
-
-          <div
-            class="w-full rounded bg-white shadow-md"
-            [ngClass]="{
-              'flex-1': chartIsExpanded
-            }"
-          >
-            <div class="flex h-full flex-col">
-              <!-- <div class="mr-5 flex h-20 flex-shrink-0 flex-row items-center">
-                <div
-                  (click)="toggleChartPanel()"
-                  class="text-gray1 flex cursor-pointer select-none flex-row items-center space-x-2 py-3 px-5 text-2xl font-semibold"
-                >
-                  <div class="flex flex-row items-center space-x-2">
-                    <div> Chart </div>
-                    <m-chevron-right-icon
-                      *ngIf="!chartIsExpanded"
-                    ></m-chevron-right-icon>
-                    <m-chevron-down-icon
-                      *ngIf="chartIsExpanded"
-                    ></m-chevron-down-icon>
-                  </div>
-                </div>
-              </div> -->
-
               <div
-                *ngIf="
-                  chartIsExpanded === true &&
-                  isShow === true &&
-                  chartOptions?.data.length === 0
-                "
+                *ngIf="isShow === true && chartOptions?.data.length === 0"
                 class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
                 >No selected rows</div
               >
 
               <div
                 *ngIf="
-                  chartIsExpanded === true &&
                   isShow === true &&
                   chartOptions?.data.length > 0 &&
                   recordsWithValuesLength === 0
@@ -307,18 +279,6 @@
                 class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
                 >Run queries to get data</div
               >
-
-              <ag-charts-angular
-                class="ml-5 mr-5 mt-5 mb-2"
-                style="height: 100%"
-                *ngIf="
-                  chartIsExpanded === true &&
-                  isShow === true &&
-                  chartOptions?.data.length > 0 &&
-                  recordsWithValuesLength > 0
-                "
-                [options]="chartOptions"
-              ></ag-charts-angular>
             </div>
           </div>
         </div>
@@ -330,5 +290,5 @@
 <div *ngIf="rep$ | async"></div>
 <div *ngIf="reps$ | async"></div>
 <div *ngIf="timeQuery$ | async"></div>
-<div *ngIf="repSelectedNodes$ | async"></div>
+<div *ngIf="uiQuery$ | async"></div>
 <div *ngIf="repChartData$ | async"></div>

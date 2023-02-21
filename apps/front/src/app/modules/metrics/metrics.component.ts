@@ -8,7 +8,6 @@ import {
   AgChartOptions,
   AgTooltipRendererResult
 } from 'ag-charts-community';
-import { IRowNode } from 'ag-grid-community';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { concatMap, interval, of, Subscription, take, tap } from 'rxjs';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -31,7 +30,6 @@ import {
   constants,
   constants as frontConstants
 } from '~front/barrels/constants';
-import { DataRow } from './rep/rep.component';
 
 export class TimeSpecItem {
   label: string;
@@ -47,8 +45,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
   pageTitle = frontConstants.METRICS_PAGE_TITLE;
 
   isShow = true;
-  rowIsExpanded = false;
-  chartIsExpanded = true;
 
   emptyRepId = common.EMPTY_REP_ID;
 
@@ -140,13 +136,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
     .getTimezones()
     .filter(x => x.value !== common.USE_PROJECT_TIMEZONE_VALUE);
 
-  repSelectedNode: IRowNode<DataRow>;
-  repSelectedNodes$ = this.uiQuery.repSelectedNodes$.pipe(
-    tap(x => {
-      this.repSelectedNode = x.length === 1 ? x[0] : undefined;
-    })
-  );
-
   chartOptions: AgChartOptions;
 
   recordsWithValuesLength = 0;
@@ -221,7 +210,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
       this.chartOptions = {
         data: dataPoints,
         legend: {
-          position: 'right'
+          position: 'left'
         },
         series: series as any,
         axes: [
@@ -267,6 +256,16 @@ export class MetricsComponent implements OnInit, OnDestroy {
       };
 
       this.cd.detectChanges();
+    })
+  );
+
+  showMetricsChartSettings = false;
+  showMetricsChart = false;
+
+  uiQuery$ = this.uiQuery.select().pipe(
+    tap(x => {
+      this.showMetricsChart = x.showMetricsChart;
+      this.showMetricsChartSettings = x.showMetricsChartSettings;
     })
   );
 
@@ -504,16 +503,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
       ),
       rep: this.rep
     });
-  }
-
-  toggleRowPanel() {
-    this.rowIsExpanded = !this.rowIsExpanded;
-    this.refreshShow();
-  }
-
-  toggleChartPanel() {
-    this.chartIsExpanded = !this.chartIsExpanded;
-    this.refreshShow();
   }
 
   refreshShow() {

@@ -14,7 +14,10 @@ import { SharedModule } from '../shared/shared.module';
 import { MetricsTreeComponent } from './metrics-tree/metrics-tree.component';
 import { MetricsComponent } from './metrics.component';
 import { RepOptionsComponent } from './rep-options/rep-options.component';
+import { ChartHeaderComponent } from './rep/chart-header/chart-header.component';
+import { ChartRendererComponent } from './rep/chart-renderer/chart-renderer.component';
 import { DataRendererComponent } from './rep/data-renderer/data-renderer.component';
+import { MetricHeaderComponent } from './rep/metric-header/metric-header.component';
 import { MetricRendererComponent } from './rep/metric-renderer/metric-renderer.component';
 import { RepComponent } from './rep/rep.component';
 import { RowOptionsComponent } from './rep/row-options/row-options.component';
@@ -31,7 +34,10 @@ import { StatusRendererComponent } from './rep/status-renderer/status-renderer.c
     MetricRendererComponent,
     StatusRendererComponent,
     DataRendererComponent,
-    StatusHeaderComponent
+    StatusHeaderComponent,
+    MetricHeaderComponent,
+    ChartHeaderComponent,
+    ChartRendererComponent
   ],
   imports: [
     CommonModule,

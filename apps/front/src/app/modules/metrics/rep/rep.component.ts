@@ -20,7 +20,10 @@ import { RepQuery } from '~front/app/queries/rep.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { RepService } from '~front/app/services/rep.service';
 import { common } from '~front/barrels/common';
+import { ChartHeaderComponent } from './chart-header/chart-header.component';
+import { ChartRendererComponent } from './chart-renderer/chart-renderer.component';
 import { DataRendererComponent } from './data-renderer/data-renderer.component';
+import { MetricHeaderComponent } from './metric-header/metric-header.component';
 import { MetricRendererComponent } from './metric-renderer/metric-renderer.component';
 import { StatusHeaderComponent } from './status-header/status-header.component';
 import { StatusRendererComponent } from './status-renderer/status-renderer.component';
@@ -60,7 +63,8 @@ export class RepComponent {
     {
       field: 'metric',
       pinned: 'left',
-      width: 600,
+      width: 500,
+      headerComponent: MetricHeaderComponent,
       cellRenderer: MetricRendererComponent
     },
     {
@@ -69,12 +73,20 @@ export class RepComponent {
       width: 200
     },
     {
+      field: 'chart',
+      pinned: 'right',
+      resizable: false,
+      width: 110,
+      headerComponent: ChartHeaderComponent,
+      cellRenderer: ChartRendererComponent
+    },
+    {
       field: 'status',
       pinned: 'left',
       resizable: false,
       width: 80,
-      cellRenderer: StatusRendererComponent,
-      headerComponent: StatusHeaderComponent
+      headerComponent: StatusHeaderComponent,
+      cellRenderer: StatusRendererComponent
     }
   ];
 

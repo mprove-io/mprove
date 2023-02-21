@@ -8,6 +8,8 @@ import { BaseQuery } from './base.query';
 export class UiState {
   panel: common.PanelEnum;
   needSave: boolean;
+  showMetricsChart: boolean;
+  showMetricsChartSettings: boolean;
   repSelectedNodes: IRowNode<DataRow>[];
   repChartData: {
     rows: DataRow[];
@@ -16,21 +18,30 @@ export class UiState {
 }
 
 let uiState: UiState = {
-  panel: common.PanelEnum.Tree,
   needSave: false,
+  panel: common.PanelEnum.Tree,
   repSelectedNodes: [],
   repChartData: {
     rows: [],
     columns: []
-  }
+  },
+  showMetricsChart: true,
+  showMetricsChartSettings: false
 };
 
 @Injectable({ providedIn: 'root' })
 export class UiQuery extends BaseQuery<UiState> {
   needSave$ = this.store.pipe(select(state => state.needSave));
+
   panel$ = this.store.pipe(select(state => state.panel));
+
   repSelectedNodes$ = this.store.pipe(select(state => state.repSelectedNodes));
   repChartData$ = this.store.pipe(select(state => state.repChartData));
+
+  showMetricsChart$ = this.store.pipe(select(state => state.showMetricsChart));
+  showMetricsChartSettings$ = this.store.pipe(
+    select(state => state.showMetricsChartSettings)
+  );
 
   constructor() {
     super(createStore({ name: 'ui' }, withProps<UiState>(uiState)));
