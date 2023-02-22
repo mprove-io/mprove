@@ -513,6 +513,12 @@ export class MetricsComponent implements OnInit, OnDestroy {
     });
   }
 
+  toggleShowMetricsChartSettings() {
+    this.uiQuery.updatePart({
+      showMetricsChartSettings: !this.showMetricsChartSettings
+    });
+  }
+
   ngOnDestroy() {
     this.stopCheckRunning();
   }

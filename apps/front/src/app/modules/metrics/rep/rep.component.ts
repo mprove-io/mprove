@@ -73,20 +73,20 @@ export class RepComponent {
       width: 200
     },
     {
-      field: 'chart',
-      pinned: 'right',
-      resizable: false,
-      width: 110,
-      headerComponent: ChartHeaderComponent,
-      cellRenderer: ChartRendererComponent
-    },
-    {
       field: 'status',
       pinned: 'left',
       resizable: false,
       width: 80,
       headerComponent: StatusHeaderComponent,
       cellRenderer: StatusRendererComponent
+    },
+    {
+      field: 'chart',
+      pinned: 'left',
+      resizable: false,
+      width: 60,
+      headerComponent: ChartHeaderComponent,
+      cellRenderer: ChartRendererComponent
     }
   ];
 

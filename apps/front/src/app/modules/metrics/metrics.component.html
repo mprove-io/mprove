@@ -262,6 +262,14 @@
                   *ngIf="showMetricsChartSettings === true"
                   >Chart Settings</div
                 >
+
+                <div
+                  class="flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
+                >
+                  <m-wrench-icon
+                    (click)="toggleShowMetricsChartSettings()"
+                  ></m-wrench-icon>
+                </div>
               </div>
 
               <div

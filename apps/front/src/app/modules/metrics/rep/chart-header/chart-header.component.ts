@@ -12,12 +12,10 @@ export class ChartHeaderComponent implements IHeaderAngularComp {
   params: IHeaderParams;
 
   showMetricsChart = false;
-  showMetricsChartSettings = false;
 
   uiQuery$ = this.uiQuery.select().pipe(
     tap(x => {
       this.showMetricsChart = x.showMetricsChart;
-      this.showMetricsChartSettings = x.showMetricsChartSettings;
     })
   );
 
@@ -36,13 +34,5 @@ export class ChartHeaderComponent implements IHeaderAngularComp {
     this.uiQuery.updatePart({
       showMetricsChart: !this.showMetricsChart
     });
-  }
-
-  toggleShowMetricsChartSettings() {
-    if (this.showMetricsChart === true) {
-      this.uiQuery.updatePart({
-        showMetricsChartSettings: !this.showMetricsChartSettings
-      });
-    }
   }
 }

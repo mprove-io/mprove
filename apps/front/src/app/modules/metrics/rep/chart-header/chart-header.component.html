@@ -1,22 +1,10 @@
-<div class="flex flex-row items-center space-x-5">
-  <m-wrench-icon
-    [ngClass]="{
-      'cursor-pointer': showMetricsChart === true,
-      'text-blue-500':
-        showMetricsChart === true && showMetricsChartSettings === true,
-      'cursor-default text-gray-400': showMetricsChart === false
-    }"
-    (click)="toggleShowMetricsChartSettings()"
-  ></m-wrench-icon>
-
-  <m-chart-icon
-    class="cursor-pointer"
-    [ngClass]="{
-      'text-blue-500': showMetricsChart === true,
-      'text-gray-400': showMetricsChart === false
-    }"
-    (click)="toggleShowMetricsChart()"
-  ></m-chart-icon>
-</div>
+<m-chart-icon
+  class="cursor-pointer"
+  [ngClass]="{
+    'text-blue-500': showMetricsChart === true,
+    'text-gray-400': showMetricsChart === false
+  }"
+  (click)="toggleShowMetricsChart()"
+></m-chart-icon>
 
 <div *ngIf="uiQuery$ | async"></div>
