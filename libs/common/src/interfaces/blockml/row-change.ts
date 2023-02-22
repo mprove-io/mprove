@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class RowChange {
   @IsOptional()
@@ -10,8 +10,13 @@ export class RowChange {
   metricId?: string;
 
   @IsOptional()
-  params?: any[];
+  @IsString()
+  formula?: string;
 
   @IsOptional()
-  formula?: string;
+  @IsBoolean()
+  showChart?: boolean;
+
+  @IsOptional()
+  params?: any[];
 }

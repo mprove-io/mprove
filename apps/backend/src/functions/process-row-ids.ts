@@ -47,7 +47,7 @@ export function processRowIds(item: {
       newFormula = newFormula.split(common.QUAD_UNDERSCORE).join('');
 
       row.formula = newFormula;
-      row.formula_deps = formulaDeps;
+      row.formulaDeps = formulaDeps;
     });
 
   let newRows = rows.sort((a, b) =>

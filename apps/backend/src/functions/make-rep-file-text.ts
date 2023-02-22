@@ -24,7 +24,12 @@ export function makeRepFileText(item: {
           common.isDefined(x.params) && x.params.length > 0
             ? x.params
             : undefined,
-        formula: common.isDefined(x.formula) ? x.formula : undefined
+        formula: common.isDefined(x.formula) ? x.formula : undefined,
+        show_chart:
+          common.isDefined(x.showChart) &&
+          x.showChart !== common.REP_ROW_DEFAULT_SHOW_CHART
+            ? x.showChart
+            : undefined
       };
 
       return row;

@@ -55,6 +55,7 @@ export enum ParameterEnum {
   Result = 'result',
   Rows = 'rows',
   Select = 'select',
+  ShowChart = 'show_chart',
   ShowFields = 'show_fields',
   SkipMetrics = 'skip_metrics',
   Sorts = 'sorts',

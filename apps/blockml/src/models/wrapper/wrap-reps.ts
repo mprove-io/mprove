@@ -1,4 +1,5 @@
 import { common } from '~blockml/barrels/common';
+import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 
 export function wrapReps(item: {
@@ -41,8 +42,9 @@ export function wrapReps(item: {
         let rowApi: common.Row = {
           rowId: row.id,
           metricId: row.metric,
+          showChart: helper.toBooleanFromLowercaseString(row.show_chart),
           formula: row.formula,
-          formula_deps: undefined,
+          formulaDeps: undefined,
           rqs: [],
           query: undefined,
           mconfig: undefined,

@@ -81,7 +81,7 @@ export class RepsService {
           processedRows.filter(
             row =>
               common.isDefined(row.formula) &&
-              row.formula_deps.findIndex(dep => dep === rowChange.rowId) > -1
+              row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
           ).length > 0;
 
         if (isClearFormulasData === true) {
@@ -114,9 +114,10 @@ export class RepsService {
         let newRow: common.Row = {
           rowId: rowId,
           metricId: rowChange.metricId,
+          showChart: rowChange.showChart,
           params: rowChange.params || [],
           formula: rowChange.formula,
-          formula_deps: undefined,
+          formulaDeps: undefined,
           rqs: [],
           mconfig: undefined,
           query: undefined,
@@ -156,7 +157,7 @@ export class RepsService {
         processedRows.forEach(row => {
           if (
             common.isDefined(row.formula) &&
-            row.formula_deps.findIndex(dep => dep === rowChange.rowId) > -1
+            row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
           ) {
             let rq = row.rqs.find(
               y =>
@@ -175,9 +176,10 @@ export class RepsService {
           let emptyRow: common.Row = {
             rowId: row.rowId,
             metricId: undefined,
+            showChart: false,
             params: [],
             formula: undefined,
-            formula_deps: undefined,
+            formulaDeps: undefined,
             rqs: [],
             mconfig: undefined,
             query: undefined,
@@ -193,12 +195,102 @@ export class RepsService {
           return row;
         }
       });
+    } else if (changeType === common.ChangeTypeEnum.Edit) {
+      // rowChanges.forEach(rowChange => {
+      //   processedRows.forEach(row => {
+      //     if (
+      //       common.isDefined(row.formula) &&
+      //       row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
+      //     ) {
+      //       let rq = row.rqs.find(
+      //         y =>
+      //           y.fractionBrick === timeRangeFraction.brick &&
+      //           y.timeSpec === timeSpec &&
+      //           y.timezone === timezone
+      //       );
+
+      //       rq.lastCalculatedTs = 0;
+      //     }
+      //   });
+      // });
+
+      let rowChange = rowChanges[0];
+
+      let pRow = processedRows.find(r => r.rowId === rowChange.rowId);
+
+      let isProcessRowIds = false;
+
+      let editRow: common.Row;
+
+      if (common.isDefined(pRow.formula)) {
+        editRow = {
+          rowId: pRow.rowId,
+          metricId: pRow.metricId,
+          showChart: rowChange.showChart,
+          params: pRow.params || [],
+          formula: rowChange.formula,
+          formulaDeps:
+            pRow.formula === rowChange.formula ? pRow.formulaDeps : undefined,
+          rqs: pRow.formula === rowChange.formula ? pRow.rqs : [],
+          mconfig: undefined,
+          query: undefined,
+          hasAccessToModel: false,
+          records: pRow.formula === rowChange.formula ? pRow.records : [],
+          formatNumber: pRow.formatNumber,
+          currencyPrefix: pRow.currencyPrefix,
+          currencySuffix: pRow.currencySuffix
+        };
+
+        isProcessRowIds = pRow.formula !== rowChange.formula;
+      } else if (common.isUndefined(pRow.formula)) {
+        let metric = metrics.find(m => m.metric_id === rowChange.metricId);
+
+        editRow = {
+          rowId: pRow.rowId,
+          metricId: pRow.metricId,
+          showChart: rowChange.showChart,
+          params: rowChange.params,
+          formula: undefined,
+          formulaDeps: undefined,
+          rqs:
+            common.isDefined(pRow.params) && pRow.params !== rowChange.params
+              ? []
+              : pRow.rqs,
+          mconfig:
+            common.isDefined(pRow.params) && pRow.params !== rowChange.params
+              ? undefined
+              : pRow.mconfig,
+          query:
+            common.isDefined(pRow.params) && pRow.params !== rowChange.params
+              ? undefined
+              : pRow.query,
+          hasAccessToModel: false,
+          records:
+            common.isDefined(pRow.params) && pRow.params !== rowChange.params
+              ? []
+              : pRow.records,
+          formatNumber: pRow.formatNumber,
+          currencyPrefix: pRow.currencyPrefix,
+          currencySuffix: pRow.currencySuffix
+        };
+      }
+
+      processedRows = processedRows.map(r =>
+        r.rowId === editRow.rowId ? editRow : r
+      );
+
+      if (isProcessRowIds === true) {
+        processedRows = processRowIds({
+          rows: processedRows,
+          rowChanges: rowChanges
+        });
+      }
     } else if (changeType === common.ChangeTypeEnum.Delete) {
       rowChanges.forEach(rowChange => {
         processedRows.forEach(row => {
           if (
             common.isDefined(row.formula) &&
-            row.formula_deps.findIndex(dep => dep === rowChange.rowId) > -1
+            row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
           ) {
             let rq = row.rqs.find(
               y =>

@@ -152,13 +152,14 @@ export class RepComponent {
           rowId: row.rowId,
           parameters: '',
           metric: metric?.label || row.metricId,
+          showChart: row.showChart,
           idx: row.rowId,
           query: row.query,
           metricId: row.metricId,
           mconfig: row.mconfig,
           hasAccessToModel: row.hasAccessToModel,
           formula: row.formula,
-          formula_deps: row.formula_deps,
+          formulaDeps: row.formulaDeps,
           params: row.params,
           records: row.records,
           rqs: row.rqs,
@@ -182,20 +183,7 @@ export class RepComponent {
 
       // console.log(sNodes);
 
-      this.uiQuery.updatePart({
-        repChartData: {
-          rows:
-            sNodes.length > 1
-              ? []
-              : sNodes.length === 0
-              ? this.data
-              : this.data.filter(
-                  row =>
-                    sNodes.map(node => node.data.rowId).indexOf(row.rowId) > -1
-                ),
-          columns: x.columns
-        }
-      });
+      this.updateRepChartData(sNodes);
 
       this.cd.detectChanges();
     })
@@ -220,23 +208,29 @@ export class RepComponent {
 
   onSelectionChanged(event: SelectionChangedEvent<DataRow>) {
     let sNodes = event.api.getSelectedNodes();
+    this.updateRepChartData(sNodes);
 
+    // console.log('onSelectionChanged', sNodes);
+  }
+
+  updateRepChartData(sNodes: IRowNode<DataRow>[]) {
     this.uiQuery.updatePart({
-      repSelectedNodes: sNodes,
       repChartData: {
         rows:
-          sNodes.length > 1
-            ? []
-            : sNodes.length === 0
-            ? this.data
-            : this.data.filter(
+          sNodes.length === 1
+            ? this.data.filter(
                 row =>
                   sNodes.map(node => node.data.rowId).indexOf(row.rowId) > -1
-              ),
+              )
+            : sNodes.length > 1
+            ? []
+            : // : this.data.filter(row => row.showChart === false).length ===
+              //   this.data.length
+              // ? this.data
+              this.data.filter(row => row.showChart === true),
         columns: this.rep.columns
       }
     });
-    // console.log('onSelectionChanged', sNodes);
   }
 
   onRangeSelectionChanged(event: RangeSelectionChangedEvent<DataRow>) {

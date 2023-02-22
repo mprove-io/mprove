@@ -5,6 +5,9 @@ export interface RepRow {
   metric: string;
   metric_line_num: number;
 
+  show_chart?: string; // boolean
+  show_chart_line_num?: number;
+
   formula: string;
   formula_line_num: number;
 

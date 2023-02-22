@@ -2,8 +2,8 @@
   <m-chart-icon
     class="cursor-pointer"
     [ngClass]="{
-      'text-blue-500': showChart === true,
-      'text-gray-400': showChart === false
+      'text-blue-500': params.data.showChart === true,
+      'text-gray-400': params.data.showChart === false
     }"
     (click)="toggleShowChart($event)"
   ></m-chart-icon>

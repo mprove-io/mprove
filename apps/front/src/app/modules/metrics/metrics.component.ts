@@ -210,7 +210,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
       this.chartOptions = {
         data: dataPoints,
         legend: {
-          position: 'left'
+          position: 'top'
         },
         series: series as any,
         axes: [

@@ -30,7 +30,9 @@ export class Row {
 
   formula: string;
 
-  formula_deps: string[];
+  formulaDeps: string[];
+
+  showChart: boolean;
 
   records: any[];
 
