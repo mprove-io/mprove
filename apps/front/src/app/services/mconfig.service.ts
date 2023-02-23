@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { map, take, tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -174,7 +174,7 @@ export class MconfigService {
       .subscribe();
   }
 
-  optimisticNavCreateTempMconfig(item: { newMconfig: common.MconfigX }) {
+  navCreateTempMconfig(item: { newMconfig: common.MconfigX }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
     let { newMconfig } = item;
@@ -190,15 +190,6 @@ export class MconfigService {
       mconfig: newMconfig
     };
 
-    this.mqQuery.updatePart({
-      mconfig: newMconfig
-    });
-
-    this.navigateService.navigateMconfigQuery({
-      mconfigId: newMconfig.mconfigId,
-      queryId: newMconfig.queryId
-    });
-
     this.apiService
       .req({
         pathInfoName:
@@ -206,7 +197,18 @@ export class MconfigService {
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendCreateTempMconfigResponse) => {}),
+        tap((resp: apiToBackend.ToBackendCreateTempMconfigResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let { mconfig } = resp.payload;
+
+            this.mqQuery.updatePart({ mconfig: mconfig });
+
+            this.navigateService.navigateMconfigQuery({
+              mconfigId: mconfig.mconfigId,
+              queryId: mconfig.queryId
+            });
+          }
+        }),
         take(1)
       )
       .subscribe();

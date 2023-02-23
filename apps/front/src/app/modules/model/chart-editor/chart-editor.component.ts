@@ -913,7 +913,7 @@ export class ChartEditorComponent implements OnChanges {
     if (isValid === true) {
       newMconfig.chart.isValid = true;
 
-      this.mconfigService.optimisticNavCreateTempMconfig({
+      this.mconfigService.navCreateTempMconfig({
         newMconfig: newMconfig
       });
     }
@@ -1408,7 +1408,7 @@ export class ChartEditorComponent implements OnChanges {
     }
 
     newMconfig.chart.xField = xField;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1417,7 +1417,7 @@ export class ChartEditorComponent implements OnChanges {
     let yField = this.yFieldForm.controls['yField'].value;
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.yField = yField;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1437,7 +1437,7 @@ export class ChartEditorComponent implements OnChanges {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.multiField = multiField;
     newMconfig.chart.xField = newXFieldValue;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1446,7 +1446,7 @@ export class ChartEditorComponent implements OnChanges {
     let valueField = this.valueFieldForm.controls['valueField'].value;
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.valueField = valueField;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1456,7 +1456,7 @@ export class ChartEditorComponent implements OnChanges {
       this.previousValueFieldForm.controls['previousValueField'].value;
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.previousValueField = previousValueField;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1481,7 +1481,7 @@ export class ChartEditorComponent implements OnChanges {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.colorScheme = colorScheme;
     newMconfig.chart.schemeType = newSchemeTypeValue;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1490,7 +1490,7 @@ export class ChartEditorComponent implements OnChanges {
     let schemeType = this.schemeTypeForm.controls['schemeType'].value;
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.schemeType = schemeType;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1499,7 +1499,7 @@ export class ChartEditorComponent implements OnChanges {
     let interpolation = this.interpolationForm.controls['interpolation'].value;
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.interpolation = interpolation;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1507,7 +1507,7 @@ export class ChartEditorComponent implements OnChanges {
   bandColorChange($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.bandColor = $event.color;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1515,7 +1515,7 @@ export class ChartEditorComponent implements OnChanges {
   cardColorChange($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.cardColor = $event.color;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1523,7 +1523,7 @@ export class ChartEditorComponent implements OnChanges {
   textColorChange($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.textColor = $event.color;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1531,7 +1531,7 @@ export class ChartEditorComponent implements OnChanges {
   emptyColorChange($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.emptyColor = $event.color;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1539,7 +1539,7 @@ export class ChartEditorComponent implements OnChanges {
   toggleXAxis($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.xAxis = $event;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1547,7 +1547,7 @@ export class ChartEditorComponent implements OnChanges {
   toggleYAxis($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.yAxis = $event;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1555,7 +1555,7 @@ export class ChartEditorComponent implements OnChanges {
   toggleShowXAxisLabel($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.showXAxisLabel = $event;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1563,7 +1563,7 @@ export class ChartEditorComponent implements OnChanges {
   toggleShowYAxisLabel($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.showYAxisLabel = $event;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1571,7 +1571,7 @@ export class ChartEditorComponent implements OnChanges {
   toggleShowAxis($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.showAxis = $event;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1579,7 +1579,7 @@ export class ChartEditorComponent implements OnChanges {
   toggleAnimations($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.animations = $event;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1587,7 +1587,7 @@ export class ChartEditorComponent implements OnChanges {
   toggleGradient($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.gradient = $event;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1595,7 +1595,7 @@ export class ChartEditorComponent implements OnChanges {
   toggleLegend($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.legend = $event;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1603,7 +1603,7 @@ export class ChartEditorComponent implements OnChanges {
   toggleTooltipDisabled($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.tooltipDisabled = $event;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1611,7 +1611,7 @@ export class ChartEditorComponent implements OnChanges {
   toggleRoundEdges($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.roundEdges = $event;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1619,7 +1619,7 @@ export class ChartEditorComponent implements OnChanges {
   toggleRoundDomains($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.roundDomains = $event;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1627,7 +1627,7 @@ export class ChartEditorComponent implements OnChanges {
   toggleShowGridLines($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.showGridLines = $event;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1635,7 +1635,7 @@ export class ChartEditorComponent implements OnChanges {
   toggleTimeline($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.timeline = $event;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1655,7 +1655,7 @@ export class ChartEditorComponent implements OnChanges {
     newMconfig.chart.autoScale = $event;
     newMconfig.chart.yScaleMin = null;
     newMconfig.chart.yScaleMax = null;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1663,7 +1663,7 @@ export class ChartEditorComponent implements OnChanges {
   toggleDoughnut($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.doughnut = $event;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1671,7 +1671,7 @@ export class ChartEditorComponent implements OnChanges {
   toggleExplodeSlices($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.explodeSlices = $event;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1679,7 +1679,7 @@ export class ChartEditorComponent implements OnChanges {
   toggleLabels($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.labels = $event;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1687,7 +1687,7 @@ export class ChartEditorComponent implements OnChanges {
   toggleShowDataLabel($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.showDataLabel = $event;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -1695,7 +1695,7 @@ export class ChartEditorComponent implements OnChanges {
   toggleFormat($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.format = $event;
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }

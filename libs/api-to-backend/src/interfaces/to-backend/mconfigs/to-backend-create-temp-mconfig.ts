@@ -30,6 +30,14 @@ export class ToBackendCreateTempMconfigRequest extends ToBackendRequest {
   payload: ToBackendCreateTempMconfigRequestPayload;
 }
 
+export class ToBackendCreateTempMconfigResponsePayload {
+  @ValidateNested()
+  @Type(() => common.MconfigX)
+  mconfig: common.MconfigX;
+}
+
 export class ToBackendCreateTempMconfigResponse extends common.MyResponse {
-  payload: { [k in any]: never };
+  @ValidateNested()
+  @Type(() => ToBackendCreateTempMconfigResponsePayload)
+  payload: ToBackendCreateTempMconfigResponsePayload;
 }

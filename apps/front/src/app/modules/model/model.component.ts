@@ -721,7 +721,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
     newMconfig.chart.type = chartType;
 
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }
@@ -762,7 +762,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
     newMconfig.chart.title = chartTitle;
 
-    this.mconfigService.optimisticNavCreateTempMconfig({
+    this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });
   }

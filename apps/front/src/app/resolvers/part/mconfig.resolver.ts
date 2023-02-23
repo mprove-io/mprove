@@ -110,27 +110,23 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
       mconfigId: parametersMconfigId
     };
 
-    if (mconfig.mconfigId === parametersMconfigId) {
-      return of(true);
-    } else {
-      return this.apiService
-        .req({
-          pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
-          payload: payload
+    return this.apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
+        payload: payload
+      })
+      .pipe(
+        map((resp: apiToBackend.ToBackendGetMconfigResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.mqQuery.updatePart({
+              mconfig: resp.payload.mconfig
+            });
+            return true;
+          } else {
+            return false;
+          }
         })
-        .pipe(
-          map((resp: apiToBackend.ToBackendGetMconfigResponse) => {
-            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-              this.mqQuery.updatePart({
-                mconfig: resp.payload.mconfig
-              });
-              return true;
-            } else {
-              return false;
-            }
-          })
-        );
-    }
+      );
   }
 }

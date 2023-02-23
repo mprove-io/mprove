@@ -115,14 +115,19 @@ export class CreateTempMconfigController {
 
     mconfig.temp = true;
 
-    await this.dbService.writeRecords({
+    let records = await this.dbService.writeRecords({
       modify: false,
       records: {
         mconfigs: [wrapper.wrapToEntityMconfig(mconfig)]
       }
     });
 
-    let payload = {};
+    let payload: apiToBackend.ToBackendCreateTempMconfigResponsePayload = {
+      mconfig: wrapper.wrapToApiMconfig({
+        mconfig: records.mconfigs[0],
+        modelFields: model.fields
+      })
+    };
 
     return payload;
   }
