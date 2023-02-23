@@ -14,6 +14,7 @@ import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
+import { StructsService } from '~backend/services/structs.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -23,6 +24,7 @@ export class CreateTempMconfigController {
     private modelsService: ModelsService,
     private mconfigsService: MconfigsService,
     private membersService: MembersService,
+    private structsService: StructsService,
     private branchesService: BranchesService,
     private projectsService: ProjectsService,
     private bridgesService: BridgesService,
@@ -69,25 +71,21 @@ export class CreateTempMconfigController {
       envId: envId
     });
 
-    let oldMconfig = await this.mconfigsService.getMconfigCheckExists({
+    let struct = await this.structsService.getStructCheckExists({
       structId: bridge.struct_id,
-      mconfigId: oldMconfigId
+      projectId: projectId
     });
-
-    if (
-      oldMconfig.query_id !== mconfig.queryId ||
-      oldMconfig.model_id !== mconfig.modelId ||
-      oldMconfig.struct_id !== mconfig.structId
-    ) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_OLD_MCONFIG_MISMATCH
-      });
-    }
 
     let model = await this.modelsService.getModelCheckExists({
       structId: bridge.struct_id,
       modelId: mconfig.modelId
     });
+
+    if (mconfig.structId !== bridge.struct_id) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_STRUCT_ID_CHANGED
+      });
+    }
 
     let isAccessGranted = helper.checkAccess({
       userAlias: user.alias,
@@ -98,6 +96,20 @@ export class CreateTempMconfigController {
     if (isAccessGranted === false) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_FORBIDDEN_MODEL
+      });
+    }
+
+    let oldMconfig = await this.mconfigsService.getMconfigCheckExists({
+      structId: bridge.struct_id,
+      mconfigId: oldMconfigId
+    });
+
+    if (
+      oldMconfig.query_id !== mconfig.queryId ||
+      oldMconfig.model_id !== mconfig.modelId
+    ) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_OLD_MCONFIG_MISMATCH
       });
     }
 

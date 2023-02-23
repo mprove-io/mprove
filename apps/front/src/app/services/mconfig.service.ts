@@ -174,50 +174,39 @@ export class MconfigService {
       .subscribe();
   }
 
-  optimisticNavCreateTempMconfigAndQuery(item: {
-    newMconfig: common.MconfigX;
-    queryId: string;
-  }) {
+  optimisticNavCreateTempMconfig(item: { newMconfig: common.MconfigX }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { newMconfig, queryId } = item;
+    let { newMconfig } = item;
 
-    let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload =
-      {
-        projectId: this.nav.projectId,
-        isRepoProd: this.nav.isRepoProd,
-        branchId: this.nav.branchId,
-        envId: this.nav.envId,
-        mconfig: newMconfig
-      };
+    newMconfig.queryId = this.mqQuery.getValue().query.queryId;
 
-    let optMconfig = common.makeCopy(newMconfig);
+    let payload: apiToBackend.ToBackendCreateTempMconfigRequestPayload = {
+      projectId: this.nav.projectId,
+      isRepoProd: this.nav.isRepoProd,
+      branchId: this.nav.branchId,
+      envId: this.nav.envId,
+      oldMconfigId: this.mqQuery.getValue().mconfig.mconfigId,
+      mconfig: newMconfig
+    };
 
-    optMconfig.queryId = queryId;
-
-    let mqState = this.mqQuery.getValue();
     this.mqQuery.updatePart({
-      mconfig: optMconfig,
-      query: mqState.query
+      mconfig: newMconfig
     });
 
     this.navigateService.navigateMconfigQuery({
-      mconfigId: optMconfig.mconfigId,
-      queryId: queryId
+      mconfigId: newMconfig.mconfigId,
+      queryId: newMconfig.queryId
     });
 
-    // is required to check that structId is still valid
     this.apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendCreateTempMconfigAndQuery,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfig,
         payload: payload
       })
       .pipe(
-        map(
-          (resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse) => {}
-        ),
+        map((resp: apiToBackend.ToBackendCreateTempMconfigResponse) => {}),
         take(1)
       )
       .subscribe();

@@ -913,9 +913,8 @@ export class ChartEditorComponent implements OnChanges {
     if (isValid === true) {
       newMconfig.chart.isValid = true;
 
-      this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-        newMconfig: newMconfig,
-        queryId: this.queryId
+      this.mconfigService.optimisticNavCreateTempMconfig({
+        newMconfig: newMconfig
       });
     }
   }
@@ -1409,9 +1408,8 @@ export class ChartEditorComponent implements OnChanges {
     }
 
     newMconfig.chart.xField = xField;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
@@ -1419,9 +1417,8 @@ export class ChartEditorComponent implements OnChanges {
     let yField = this.yFieldForm.controls['yField'].value;
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.yField = yField;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
@@ -1440,9 +1437,8 @@ export class ChartEditorComponent implements OnChanges {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.multiField = multiField;
     newMconfig.chart.xField = newXFieldValue;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
@@ -1450,9 +1446,8 @@ export class ChartEditorComponent implements OnChanges {
     let valueField = this.valueFieldForm.controls['valueField'].value;
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.valueField = valueField;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
@@ -1461,9 +1456,8 @@ export class ChartEditorComponent implements OnChanges {
       this.previousValueFieldForm.controls['previousValueField'].value;
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.previousValueField = previousValueField;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
@@ -1487,9 +1481,8 @@ export class ChartEditorComponent implements OnChanges {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.colorScheme = colorScheme;
     newMconfig.chart.schemeType = newSchemeTypeValue;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
@@ -1497,9 +1490,8 @@ export class ChartEditorComponent implements OnChanges {
     let schemeType = this.schemeTypeForm.controls['schemeType'].value;
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.schemeType = schemeType;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
@@ -1507,162 +1499,144 @@ export class ChartEditorComponent implements OnChanges {
     let interpolation = this.interpolationForm.controls['interpolation'].value;
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.interpolation = interpolation;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   bandColorChange($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.bandColor = $event.color;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   cardColorChange($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.cardColor = $event.color;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   textColorChange($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.textColor = $event.color;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   emptyColorChange($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.emptyColor = $event.color;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   toggleXAxis($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.xAxis = $event;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   toggleYAxis($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.yAxis = $event;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   toggleShowXAxisLabel($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.showXAxisLabel = $event;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   toggleShowYAxisLabel($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.showYAxisLabel = $event;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   toggleShowAxis($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.showAxis = $event;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   toggleAnimations($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.animations = $event;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   toggleGradient($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.gradient = $event;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   toggleLegend($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.legend = $event;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   toggleTooltipDisabled($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.tooltipDisabled = $event;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   toggleRoundEdges($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.roundEdges = $event;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   toggleRoundDomains($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.roundDomains = $event;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   toggleShowGridLines($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.showGridLines = $event;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   toggleTimeline($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.timeline = $event;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
@@ -1681,54 +1655,48 @@ export class ChartEditorComponent implements OnChanges {
     newMconfig.chart.autoScale = $event;
     newMconfig.chart.yScaleMin = null;
     newMconfig.chart.yScaleMax = null;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   toggleDoughnut($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.doughnut = $event;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   toggleExplodeSlices($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.explodeSlices = $event;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   toggleLabels($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.labels = $event;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   toggleShowDataLabel($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.showDataLabel = $event;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 
   toggleFormat($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.format = $event;
-    this.mconfigService.optimisticNavCreateTempMconfigAndQuery({
-      newMconfig: newMconfig,
-      queryId: this.queryId
+    this.mconfigService.optimisticNavCreateTempMconfig({
+      newMconfig: newMconfig
     });
   }
 }
