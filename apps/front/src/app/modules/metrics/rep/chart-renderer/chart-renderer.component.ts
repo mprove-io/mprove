@@ -27,6 +27,8 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
   toggleShowChart(event?: MouseEvent) {
     event.stopPropagation();
 
+    this.params.api.deselectAll();
+
     let rep = this.repQuery.getValue();
 
     let rowChange: common.RowChange = {

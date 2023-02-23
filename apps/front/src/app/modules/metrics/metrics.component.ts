@@ -261,11 +261,15 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   showMetricsChartSettings = false;
   showMetricsChart = false;
+  showChartForSelectedRow = false;
+  repSelectedNodes: any[] = [];
 
   uiQuery$ = this.uiQuery.select().pipe(
     tap(x => {
       this.showMetricsChart = x.showMetricsChart;
       this.showMetricsChartSettings = x.showMetricsChartSettings;
+      this.repSelectedNodes = x.repSelectedNodes;
+      this.showChartForSelectedRow = x.showChartForSelectedRow;
     })
   );
 

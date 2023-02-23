@@ -16,6 +16,7 @@ import { MetricsComponent } from './metrics.component';
 import { RepOptionsComponent } from './rep-options/rep-options.component';
 import { ChartHeaderComponent } from './rep/chart-header/chart-header.component';
 import { ChartRendererComponent } from './rep/chart-renderer/chart-renderer.component';
+import { ChartSettingsComponent } from './rep/chart-settings/chart-settings.component';
 import { DataRendererComponent } from './rep/data-renderer/data-renderer.component';
 import { MetricHeaderComponent } from './rep/metric-header/metric-header.component';
 import { MetricRendererComponent } from './rep/metric-renderer/metric-renderer.component';
@@ -37,7 +38,8 @@ import { StatusRendererComponent } from './rep/status-renderer/status-renderer.c
     StatusHeaderComponent,
     MetricHeaderComponent,
     ChartHeaderComponent,
-    ChartRendererComponent
+    ChartRendererComponent,
+    ChartSettingsComponent
   ],
   imports: [
     CommonModule,

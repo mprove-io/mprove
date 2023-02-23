@@ -166,6 +166,7 @@ export class MetricsTreeComponent implements AfterViewInit {
         common.isUndefined(repSelectedNodes[0].data.formula)
           ? repSelectedNodes[0].data.rowId
           : undefined,
+      showChart: false,
       metricId: node.data.metric.metricId
     };
 

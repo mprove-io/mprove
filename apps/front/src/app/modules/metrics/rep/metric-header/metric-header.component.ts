@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { IHeaderAngularComp } from 'ag-grid-angular';
-import { IHeaderParams } from 'ag-grid-community';
+import { IHeaderParams, IRowNode } from 'ag-grid-community';
+import { tap } from 'rxjs';
+import { UiQuery } from '~front/app/queries/ui.query';
+import { DataRow } from '../rep.component';
 
 @Component({
   selector: 'm-metric-header',
@@ -17,4 +20,18 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
     this.params = params;
     return true;
   }
+
+  clearSelection() {
+    this.params.api.deselectAll();
+  }
+
+  repSelectedNodes: IRowNode<DataRow>[] = [];
+  repSelectedNodes$ = this.uiQuery.repSelectedNodes$.pipe(
+    tap(x => {
+      this.repSelectedNodes = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  constructor(private uiQuery: UiQuery, private cd: ChangeDetectorRef) {}
 }

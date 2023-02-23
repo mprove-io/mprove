@@ -214,20 +214,22 @@ export class RepComponent {
   }
 
   updateRepChartData(sNodes: IRowNode<DataRow>[]) {
+    let showChartForSelectedRow =
+      this.uiQuery.getValue().showChartForSelectedRow;
+
     this.uiQuery.updatePart({
+      repSelectedNodes: sNodes,
+      gridData: this.data,
       repChartData: {
         rows:
-          sNodes.length === 1
+          showChartForSelectedRow === true && sNodes.length === 1
             ? this.data.filter(
                 row =>
                   sNodes.map(node => node.data.rowId).indexOf(row.rowId) > -1
               )
-            : sNodes.length > 1
+            : showChartForSelectedRow === true && sNodes.length > 1
             ? []
-            : // : this.data.filter(row => row.showChart === false).length ===
-              //   this.data.length
-              // ? this.data
-              this.data.filter(row => row.showChart === true),
+            : this.data.filter(row => row.showChart === true),
         columns: this.rep.columns
       }
     });

@@ -8,25 +8,29 @@ import { BaseQuery } from './base.query';
 export class UiState {
   panel: common.PanelEnum;
   needSave: boolean;
-  showMetricsChart: boolean;
-  showMetricsChartSettings: boolean;
-  repSelectedNodes: IRowNode<DataRow>[];
+  gridData: DataRow[];
   repChartData: {
     rows: DataRow[];
     columns: common.Column[];
   };
+  repSelectedNodes: IRowNode<DataRow>[];
+  showMetricsChart: boolean;
+  showMetricsChartSettings: boolean;
+  showChartForSelectedRow: boolean;
 }
 
 let uiState: UiState = {
   needSave: false,
   panel: common.PanelEnum.Tree,
-  repSelectedNodes: [],
+  gridData: [],
   repChartData: {
     rows: [],
     columns: []
   },
+  repSelectedNodes: [],
   showMetricsChart: true,
-  showMetricsChartSettings: false
+  showMetricsChartSettings: false,
+  showChartForSelectedRow: true
 };
 
 @Injectable({ providedIn: 'root' })

@@ -1,0 +1,13 @@
+<div class="ml-5 mb-5 flex flex-row items-center">
+  <div class="text-gray1 flex h-9 select-none items-center text-base"
+    >Show Chart for Selected Row</div
+  >
+
+  <ui-switch
+    class="ml-5"
+    [checked]="showChartForSelectedRow === true"
+    (change)="toggleShowChartForSelectedRow()"
+  ></ui-switch>
+</div>
+
+<div *ngIf="uiQuery$ | async"></div>
