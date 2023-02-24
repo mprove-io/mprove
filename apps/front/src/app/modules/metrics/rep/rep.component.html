@@ -18,7 +18,47 @@
     (rowDragEnd)="rowDragEndHandle($event)"
   ></ag-grid-angular>
 
-  <div>{{ repSelectedNode?.data?.rowId }}</div>
+  <div
+    *ngIf="!!repSelectedNode"
+    class="mb-5 flex flex-row items-start space-x-10"
+  >
+    <div class="flex flex-row items-start space-x-5">
+      <div class="text-gray1 flex h-9 select-none items-center font-semibold"
+        >Row</div
+      >
+
+      <div class="flex h-9 w-[26px] items-center">{{
+        repSelectedNode?.data?.rowId
+      }}</div>
+    </div>
+
+    <div
+      *ngIf="!!repSelectedNode?.data?.formula"
+      class="flex flex-row items-start space-x-5"
+    >
+      <div class="text-gray1 flex h-9 select-none items-center font-semibold"
+        >Formula</div
+      >
+
+      <div [formGroup]="formulaForm">
+        <textarea
+          rows="5"
+          data-cy="formulaInput"
+          class="form-input border-gray3 focus:border-blue3 w-96 resize-none rounded"
+          [ngClass]="{
+            'border-red-600':
+              formulaForm.controls['formula'].invalid &&
+              formulaForm.controls['formula'].touched
+          }"
+          formControlName="formula"
+          placeholder="$A + $B"
+        ></textarea>
+        <m-validation
+          [control]="formulaForm.controls['formula']"
+        ></m-validation>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div *ngIf="rep$ | async"></div>

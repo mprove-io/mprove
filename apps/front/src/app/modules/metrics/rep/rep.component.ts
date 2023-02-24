@@ -4,6 +4,7 @@ import {
   HostListener,
   ViewChild
 } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AgGridAngular } from 'ag-grid-angular';
 import {
   ColDef,
@@ -15,6 +16,7 @@ import {
   SelectionChangedEvent
 } from 'ag-grid-community';
 import { tap } from 'rxjs';
+import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { RepQuery } from '~front/app/queries/rep.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -189,10 +191,24 @@ export class RepComponent {
     })
   );
 
+  formulaForm: FormGroup = this.fb.group({
+    formula: [undefined, [Validators.required]]
+  });
+
   repSelectedNode: IRowNode<DataRow>;
   repSelectedNodes$ = this.uiQuery.repSelectedNodes$.pipe(
     tap(x => {
       this.repSelectedNode = x.length === 1 ? x[0] : undefined;
+
+      if (
+        common.isDefined(this.repSelectedNode) &&
+        common.isDefined(this.repSelectedNode.data.formula)
+      ) {
+        setValueAndMark({
+          control: this.formulaForm.controls['formula'],
+          value: this.repSelectedNode.data.formula
+        });
+      }
     })
   );
 
@@ -203,6 +219,7 @@ export class RepComponent {
     private repQuery: RepQuery,
     private repService: RepService,
     private uiQuery: UiQuery,
+    private fb: FormBuilder,
     private metricsQuery: MetricsQuery
   ) {}
 
