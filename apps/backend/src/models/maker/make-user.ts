@@ -1,4 +1,5 @@
 import { common } from '~backend/barrels/common';
+import { constants } from '~backend/barrels/constants';
 import { entities } from '~backend/barrels/entities';
 
 export function makeUser(item: {
@@ -27,6 +28,7 @@ export function makeUser(item: {
     first_name: null,
     last_name: null,
     timezone: common.USE_PROJECT_TIMEZONE_VALUE,
+    ui: constants.DEFAULT_UI,
     server_ts: undefined
   };
   return userEntity;

@@ -1,6 +1,7 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
+import { Ui } from '~common/interfaces/backend/ui';
 
 @Entity('users')
 export class UserEntity {
@@ -42,6 +43,9 @@ export class UserEntity {
 
   @Column({ type: constants.TIMEZONE_VARCHAR })
   timezone: string;
+
+  @Column({ type: constants.JSON, nullable: true })
+  ui: Ui;
 
   @Column({ type: constants.BIGINT })
   server_ts: string;

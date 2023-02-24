@@ -15,6 +15,7 @@ import { MetricsQuery } from '../queries/metrics.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { RepsQuery } from '../queries/reps.query';
 import { StructQuery } from '../queries/struct.query';
+import { UiQuery } from '../queries/ui.query';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
 import { MyDialogService } from '../services/my-dialog.service';
@@ -26,6 +27,7 @@ export class StructMetricsResolver implements Resolve<Observable<boolean>> {
     private userQuery: UserQuery,
     private apiService: ApiService,
     private metricsQuery: MetricsQuery,
+    private uiQuery: UiQuery,
     private repsQuery: RepsQuery,
     private structQuery: StructQuery,
     private memberQuery: MemberQuery,
@@ -79,6 +81,18 @@ export class StructMetricsResolver implements Resolve<Observable<boolean>> {
             this.memberQuery.update(resp.payload.userMember);
 
             this.structQuery.update(resp.payload.struct);
+
+            this.uiQuery.updatePart({
+              showChartForSelectedRow:
+                resp.payload.user.ui.showChartForSelectedRow,
+              showMetricsChartSettings:
+                resp.payload.user.ui.showMetricsChartSettings,
+              showMetricsChart: resp.payload.user.ui.showMetricsChart,
+              timezone: resp.payload.user.ui.timezone,
+              timeSpec: resp.payload.user.ui.timeSpec,
+              timeRangeFraction: resp.payload.user.ui.timeRangeFraction
+            });
+
             this.navQuery.updatePart({
               needValidate: resp.payload.needValidate
             });

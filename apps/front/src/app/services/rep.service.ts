@@ -9,7 +9,7 @@ import { NavQuery, NavState } from '../queries/nav.query';
 import { RepQuery } from '../queries/rep.query';
 import { RepsQuery } from '../queries/reps.query';
 import { StructQuery } from '../queries/struct.query';
-import { TimeQuery } from '../queries/time.query';
+import { UiQuery } from '../queries/ui.query';
 import { ApiService } from './api.service';
 import { NavigateService } from './navigate.service';
 
@@ -24,7 +24,7 @@ export class RepService {
 
   constructor(
     private apiService: ApiService,
-    private timeQuery: TimeQuery,
+    private uiQuery: UiQuery,
     private spinner: NgxSpinnerService,
     private navigateService: NavigateService,
     private navQuery: NavQuery,
@@ -46,7 +46,7 @@ export class RepService {
 
     let { rowChanges, fromRepId, fromDraft, changeType } = item;
 
-    let timeState = this.timeQuery.getValue();
+    let uiState = this.uiQuery.getValue();
 
     let payload: apiToBackend.ToBackendCreateDraftRepRequestPayload = {
       projectId: this.nav.projectId,
@@ -57,9 +57,9 @@ export class RepService {
       fromDraft: fromDraft,
       rowChanges: rowChanges,
       changeType: changeType,
-      timezone: timeState.timezone,
-      timeSpec: timeState.timeSpec,
-      timeRangeFraction: timeState.timeRangeFraction
+      timezone: uiState.timezone,
+      timeSpec: uiState.timeSpec,
+      timeRangeFraction: uiState.timeRangeFraction
     };
 
     this.apiService
@@ -95,7 +95,7 @@ export class RepService {
   }) {
     let { rowChanges, repId, changeType } = item;
 
-    let timeState = this.timeQuery.getValue();
+    let uiState = this.uiQuery.getValue();
 
     let payload: apiToBackend.ToBackendEditDraftRepRequestPayload = {
       projectId: this.nav.projectId,
@@ -105,9 +105,9 @@ export class RepService {
       repId: repId,
       changeType: changeType,
       rowChanges: rowChanges,
-      timezone: timeState.timezone,
-      timeSpec: timeState.timeSpec,
-      timeRangeFraction: timeState.timeRangeFraction
+      timezone: uiState.timezone,
+      timeSpec: uiState.timeSpec,
+      timeRangeFraction: uiState.timeRangeFraction
     };
 
     this.apiService

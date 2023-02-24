@@ -9,4 +9,5 @@ export * from './resend-user-email/resend-user-email.controller';
 export * from './reset-user-password/reset-user-password.controller';
 export * from './set-user-name/set-user-name.controller';
 export * from './set-user-timezone/set-user-timezone.controller';
+export * from './set-user-ui/set-user-ui.controller';
 export * from './update-user-password/update-user-password.controller';

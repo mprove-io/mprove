@@ -17,6 +17,9 @@ export class UiState {
   showMetricsChart: boolean;
   showMetricsChartSettings: boolean;
   showChartForSelectedRow: boolean;
+  timezone: string;
+  timeSpec: common.TimeSpecEnum;
+  timeRangeFraction: common.Fraction;
 }
 
 let uiState: UiState = {
@@ -28,9 +31,12 @@ let uiState: UiState = {
     columns: []
   },
   repSelectedNodes: [],
-  showMetricsChart: true,
-  showMetricsChartSettings: false,
-  showChartForSelectedRow: true
+  showMetricsChart: undefined,
+  showMetricsChartSettings: undefined,
+  showChartForSelectedRow: undefined,
+  timezone: undefined,
+  timeSpec: undefined,
+  timeRangeFraction: undefined
 };
 
 @Injectable({ providedIn: 'root' })

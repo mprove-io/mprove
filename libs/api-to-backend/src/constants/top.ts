@@ -28,6 +28,8 @@ export const nameToClass = {
     interfaces.ToBackendResendUserEmailRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendSetUserName]:
     interfaces.ToBackendSetUserNameRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendSetUserUi]:
+    interfaces.ToBackendSetUserUiRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendSetUserTimezone]:
     interfaces.ToBackendSetUserTimezoneRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendResetUserPassword]:

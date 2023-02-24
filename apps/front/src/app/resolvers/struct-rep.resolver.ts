@@ -9,19 +9,17 @@ import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { RepQuery } from '../queries/rep.query';
 import { StructQuery } from '../queries/struct.query';
-import { TimeQuery } from '../queries/time.query';
+import { UiQuery } from '../queries/ui.query';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
-import { StructService } from '../services/struct.service';
 
 @Injectable({ providedIn: 'root' })
 export class StructRepResolver implements Resolve<Observable<boolean>> {
   constructor(
     private navQuery: NavQuery,
-    private timeQuery: TimeQuery,
+    private uiQuery: UiQuery,
     private userQuery: UserQuery,
     private apiService: ApiService,
-    private structService: StructService,
     private repQuery: RepQuery,
     private structQuery: StructQuery,
     private memberQuery: MemberQuery,
@@ -75,7 +73,7 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
     let parametersRepId = route.params[common.PARAMETER_REP_ID];
     let draftParam: common.DraftEnum = route.queryParams?.draft;
 
-    let timeState = this.timeQuery.getValue();
+    let uiState = this.uiQuery.getValue();
 
     let payload: apiToBackend.ToBackendGetRepRequestPayload = {
       projectId: nav.projectId,
@@ -84,9 +82,9 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
       envId: nav.envId,
       repId: parametersRepId,
       draft: draftParam === common.DraftEnum.Yes,
-      timezone: timeState.timezone,
-      timeSpec: timeState.timeSpec,
-      timeRangeFraction: timeState.timeRangeFraction
+      timezone: uiState.timezone,
+      timeSpec: uiState.timeSpec,
+      timeRangeFraction: uiState.timeRangeFraction
     };
 
     return this.apiService

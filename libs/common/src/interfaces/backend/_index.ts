@@ -16,5 +16,6 @@ export * from './query-estimate';
 export * from './rep-x';
 export * from './report-x';
 export * from './struct';
+export * from './ui';
 export * from './user';
 export * from './viz-x';

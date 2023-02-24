@@ -1,4 +1,6 @@
-import { IsBoolean, IsInt, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsBoolean, IsInt, IsString, ValidateNested } from 'class-validator';
+import { Ui } from './ui';
 
 export class User {
   @IsString()
@@ -21,6 +23,10 @@ export class User {
 
   @IsBoolean()
   isEmailVerified: boolean;
+
+  @ValidateNested()
+  @Type(() => Ui)
+  ui: Ui;
 
   @IsInt()
   serverTs: number;

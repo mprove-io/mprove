@@ -1,12 +1,14 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
+import { constants } from '~backend/barrels/constants';
 import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
+import { DbService } from '~backend/services/db.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -20,6 +22,7 @@ export class GetRepController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private repsService: RepsService,
+    private dbService: DbService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,
@@ -102,6 +105,18 @@ export class GetRepController {
       timeSpec: timeSpec,
       timeRangeFraction: timeRangeFraction,
       timezone: timezone
+    });
+
+    user.ui = user.ui || constants.DEFAULT_UI;
+    user.ui.timezone = timezone;
+    user.ui.timeSpec = timeSpec;
+    user.ui.timeRangeFraction = timeRangeFraction;
+
+    await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        users: [user]
+      }
     });
 
     let payload: apiToBackend.ToBackendGetRepResponsePayload = {

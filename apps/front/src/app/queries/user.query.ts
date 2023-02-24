@@ -15,6 +15,7 @@ let userState: UserState = {
   lastName: undefined,
   timezone: undefined,
   isEmailVerified: undefined,
+  ui: undefined,
   serverTs: 1
 };
 

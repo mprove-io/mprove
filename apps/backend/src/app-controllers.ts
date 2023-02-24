@@ -120,6 +120,7 @@ export const appControllers = [
   controllers.ResendUserEmailController,
   controllers.ResetUserPasswordController,
   controllers.SetUserNameController,
+  controllers.SetUserUiController,
   controllers.SetUserTimezoneController,
   controllers.UpdateUserPasswordController,
 

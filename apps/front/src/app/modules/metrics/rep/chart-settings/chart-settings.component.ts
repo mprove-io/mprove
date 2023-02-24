@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs';
 import { RepQuery } from '~front/app/queries/rep.query';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { UiService } from '~front/app/services/ui.service';
 
 @Component({
   selector: 'm-chart-settings',
@@ -21,6 +22,7 @@ export class ChartSettingsComponent {
   constructor(
     private cd: ChangeDetectorRef,
     private uiQuery: UiQuery,
+    private uiService: UiService,
     private repQuery: RepQuery
   ) {}
 
@@ -45,6 +47,10 @@ export class ChartSettingsComponent {
             : gridData.filter(row => row.showChart === true),
         columns: rep.columns
       }
+    });
+
+    this.uiService.setUserUi({
+      showChartForSelectedRow: showChartForSelectedRow
     });
   }
 }

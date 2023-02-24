@@ -5,9 +5,6 @@ export const PASSWORD_RESET_EMAIL = 'PASSWORD_RESET_EMAIL';
 export const MIN_TIME_TO_SPIN = 0;
 
 export const LOCAL_STORAGE_TOKEN = 'token';
-export const LOCAL_STORAGE_TIMEZONE = 'timezone';
-export const LOCAL_STORAGE_TIME_SPEC = 'time_spec';
-export const LOCAL_STORAGE_TIME_RANGE_FRACTION = 'time_range_fraction';
 export const LOCAL_STORAGE_ORG_ID = 'orgId';
 export const LOCAL_STORAGE_PROJECT_ID = 'projectId';
 export const LOCAL_STORAGE_DELETED_ORG_NAME = 'deletedOrgName';

@@ -15,7 +15,6 @@ import { NavQuery } from '~front/app/queries/nav.query';
 import { emptyRep, RepQuery } from '~front/app/queries/rep.query';
 import { RepsQuery } from '~front/app/queries/reps.query';
 import { StructQuery } from '~front/app/queries/struct.query';
-import { TimeQuery } from '~front/app/queries/time.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { StructRepResolver } from '~front/app/resolvers/struct-rep.resolver';
 import { ApiService } from '~front/app/services/api.service';
@@ -23,13 +22,11 @@ import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService } from '~front/app/services/query.service';
 import { RepService } from '~front/app/services/rep.service';
+import { UiService } from '~front/app/services/ui.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-import {
-  constants,
-  constants as frontConstants
-} from '~front/barrels/constants';
+import { constants as frontConstants } from '~front/barrels/constants';
 
 export class TimeSpecItem {
   label: string;
@@ -61,14 +58,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
         common.isDefined(row.query)
       ).length;
 
-      this.cd.detectChanges();
-    })
-  );
-
-  fractions: common.Fraction[] = [];
-  timeQuery$ = this.timeQuery.select().pipe(
-    tap(x => {
-      this.fractions = [x.timeRangeFraction];
       this.cd.detectChanges();
     })
   );
@@ -178,7 +167,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
           yName: row.metric,
           tooltip: {
             renderer: (params: AgCartesianSeriesTooltipRendererParams) => {
-              let timeSpec = this.timeQuery.getValue().timeSpec;
+              let timeSpec = this.uiQuery.getValue().timeSpec;
 
               let columnLabel = common.formatTs({
                 timeSpec: timeSpec,
@@ -219,7 +208,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
             position: 'bottom',
             label: {
               formatter: (params: AgAxisLabelFormatterParams) => {
-                let timeSpec = this.timeQuery.getValue().timeSpec;
+                let timeSpec = this.uiQuery.getValue().timeSpec;
 
                 return common.formatTs({
                   timeSpec: timeSpec,
@@ -259,17 +248,21 @@ export class MetricsComponent implements OnInit, OnDestroy {
     })
   );
 
-  showMetricsChartSettings = false;
+  fractions: common.Fraction[] = [];
   showMetricsChart = false;
+  showMetricsChartSettings = false;
   showChartForSelectedRow = false;
   repSelectedNodes: any[] = [];
 
   uiQuery$ = this.uiQuery.select().pipe(
     tap(x => {
+      this.fractions = [x.timeRangeFraction];
+
       this.showMetricsChart = x.showMetricsChart;
       this.showMetricsChartSettings = x.showMetricsChartSettings;
       this.repSelectedNodes = x.repSelectedNodes;
       this.showChartForSelectedRow = x.showChartForSelectedRow;
+      this.cd.detectChanges();
     })
   );
 
@@ -290,9 +283,9 @@ export class MetricsComponent implements OnInit, OnDestroy {
     private memberQuery: MemberQuery,
     private structQuery: StructQuery,
     private navQuery: NavQuery,
-    private timeQuery: TimeQuery,
     private route: ActivatedRoute,
     private spinner: NgxSpinnerService,
+    private uiService: UiService,
     private repService: RepService,
     private queryService: QueryService,
     private navigateService: NavigateService,
@@ -305,11 +298,11 @@ export class MetricsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
 
-    let timeState = this.timeQuery.getValue();
+    let uiState = this.uiQuery.getValue();
 
-    this.timezoneForm.controls['timezone'].setValue(timeState.timezone);
-    this.timeSpecForm.controls['timeSpec'].setValue(timeState.timeSpec);
-    this.fractions = [timeState.timeRangeFraction];
+    this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
+    this.timeSpecForm.controls['timeSpec'].setValue(uiState.timeSpec);
+    this.fractions = [uiState.timeRangeFraction];
 
     this.startCheckRunning();
   }
@@ -340,7 +333,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
   }
 
   getRepObservable() {
-    let timeState = this.timeQuery.getValue();
+    let uiState = this.uiQuery.getValue();
     let nav = this.navQuery.getValue();
 
     let payload: apiToBackend.ToBackendGetRepRequestPayload = {
@@ -350,9 +343,9 @@ export class MetricsComponent implements OnInit, OnDestroy {
       envId: nav.envId,
       repId: this.rep.repId,
       draft: this.rep.draft,
-      timezone: timeState.timezone,
-      timeSpec: timeState.timeSpec,
-      timeRangeFraction: timeState.timeRangeFraction
+      timezone: uiState.timezone,
+      timeSpec: uiState.timeSpec,
+      timeRangeFraction: uiState.timeRangeFraction
     };
 
     return this.apiService
@@ -451,8 +444,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   timezoneChange() {
     let timezone = this.timezoneForm.controls['timezone'].value;
-    localStorage.setItem(constants.LOCAL_STORAGE_TIMEZONE, timezone);
-    this.timeQuery.updatePart({ timezone: timezone });
+    this.uiQuery.updatePart({ timezone: timezone });
     this.structRepResolver
       .resolveRoute({
         route: this.route.children[0].snapshot,
@@ -464,8 +456,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   timeSpecChange() {
     let timeSpec = this.timeSpecForm.controls['timeSpec'].value;
-    localStorage.setItem(constants.LOCAL_STORAGE_TIME_SPEC, timeSpec);
-    this.timeQuery.updatePart({ timeSpec: timeSpec });
+    this.uiQuery.updatePart({ timeSpec: timeSpec });
     this.structRepResolver
       .resolveRoute({
         route: this.route.children[0].snapshot,
@@ -476,12 +467,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
   }
 
   fractionUpdate(event$: any) {
-    localStorage.setItem(
-      constants.LOCAL_STORAGE_TIME_RANGE_FRACTION,
-      JSON.stringify(event$.fraction)
-    );
-
-    this.timeQuery.updatePart({ timeRangeFraction: event$.fraction });
+    this.uiQuery.updatePart({ timeRangeFraction: event$.fraction });
 
     this.structRepResolver
       .resolveRoute({
@@ -518,8 +504,14 @@ export class MetricsComponent implements OnInit, OnDestroy {
   }
 
   toggleShowMetricsChartSettings() {
+    let showMetricsChartSettings = !this.showMetricsChartSettings;
+
     this.uiQuery.updatePart({
-      showMetricsChartSettings: !this.showMetricsChartSettings
+      showMetricsChartSettings: showMetricsChartSettings
+    });
+
+    this.uiService.setUserUi({
+      showMetricsChartSettings: showMetricsChartSettings
     });
   }
 

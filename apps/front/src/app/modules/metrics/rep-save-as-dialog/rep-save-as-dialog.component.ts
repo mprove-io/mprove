@@ -13,7 +13,7 @@ import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { RepQuery } from '~front/app/queries/rep.query';
 import { RepsQuery } from '~front/app/queries/reps.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
-import { TimeQuery } from '~front/app/queries/time.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -105,7 +105,7 @@ export class RepSaveAsDialogComponent implements OnInit {
     private navQuery: NavQuery,
     private repQuery: RepQuery,
     private repsQuery: RepsQuery,
-    private timeQuery: TimeQuery,
+    private uiQuery: UiQuery,
     private structQuery: StructQuery,
     private navigateService: NavigateService,
     private spinner: NgxSpinnerService,
@@ -185,7 +185,7 @@ export class RepSaveAsDialogComponent implements OnInit {
   saveAsNewRep(item: { newTitle: string; roles: string; users: string }) {
     let { newTitle, roles, users } = item;
 
-    let timeQuery = this.timeQuery.getValue();
+    let uiState = this.uiQuery.getValue();
 
     let payload: apiToBackend.ToBackendSaveCreateRepRequestPayload = {
       projectId: this.nav.projectId,
@@ -202,9 +202,9 @@ export class RepSaveAsDialogComponent implements OnInit {
       accessUsers: common.isDefinedAndNotEmpty(users?.trim())
         ? users.split(',')
         : [],
-      timezone: timeQuery.timezone,
-      timeSpec: timeQuery.timeSpec,
-      timeRangeFraction: timeQuery.timeRangeFraction
+      timezone: uiState.timezone,
+      timeSpec: uiState.timeSpec,
+      timeRangeFraction: uiState.timeRangeFraction
     };
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -263,7 +263,7 @@ export class RepSaveAsDialogComponent implements OnInit {
   saveAsExistingRep(item: { newTitle: string; roles: string; users: string }) {
     let { newTitle, roles, users } = item;
 
-    let timeQuery = this.timeQuery.getValue();
+    let uiState = this.uiQuery.getValue();
 
     this.spinner.show(constants.APP_SPINNER_NAME);
 
@@ -282,9 +282,9 @@ export class RepSaveAsDialogComponent implements OnInit {
       accessUsers: common.isDefinedAndNotEmpty(users?.trim())
         ? users.split(',').map(x => x.trim())
         : [],
-      timezone: timeQuery.timezone,
-      timeSpec: timeQuery.timeSpec,
-      timeRangeFraction: timeQuery.timeRangeFraction
+      timezone: uiState.timezone,
+      timeSpec: uiState.timeSpec,
+      timeRangeFraction: uiState.timeRangeFraction
     };
 
     let apiService: ApiService = this.ref.data.apiService;

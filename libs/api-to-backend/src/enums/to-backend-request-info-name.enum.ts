@@ -14,6 +14,7 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendRegisterUser = 'api/ToBackendRegisterUser',
   ToBackendResendUserEmail = 'api/ToBackendResendUserEmail',
   ToBackendSetUserName = 'api/ToBackendSetUserName',
+  ToBackendSetUserUi = 'api/ToBackendSetUserUi',
   ToBackendSetUserTimezone = 'api/ToBackendSetUserTimezone',
   ToBackendResetUserPassword = 'api/ToBackendResetUserPassword',
   ToBackendUpdateUserPassword = 'api/ToBackendUpdateUserPassword',
