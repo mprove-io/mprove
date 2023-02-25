@@ -52,6 +52,7 @@
           }"
           formControlName="formula"
           placeholder="$A + $B"
+          (blur)="formulaBlur()"
         ></textarea>
         <m-validation
           [control]="formulaForm.controls['formula']"

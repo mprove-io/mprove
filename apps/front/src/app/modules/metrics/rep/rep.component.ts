@@ -297,4 +297,37 @@ export class RepComponent {
       });
     }
   }
+
+  formulaBlur() {
+    let value = this.formulaForm.controls['formula'].value;
+
+    if (
+      !this.formulaForm.valid ||
+      this.repSelectedNode.data.formula === value
+    ) {
+      return;
+    }
+
+    let rep = this.repQuery.getValue();
+
+    let rowChange: common.RowChange = {
+      rowId: this.repSelectedNode.data.rowId,
+      formula: value
+    };
+
+    if (rep.draft === true) {
+      this.repService.editDraftRep({
+        repId: rep.repId,
+        changeType: common.ChangeTypeEnum.EditFormula,
+        rowChanges: [rowChange]
+      });
+    } else {
+      this.repService.navCreateDraftRep({
+        fromRepId: rep.repId,
+        fromDraft: rep.draft,
+        rowChanges: [rowChange],
+        changeType: common.ChangeTypeEnum.EditFormula
+      });
+    }
+  }
 }

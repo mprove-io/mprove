@@ -2,18 +2,18 @@ import { common } from '~api-to-backend/barrels/common';
 
 export function processRowIds(item: {
   rows: common.Row[];
-  rowChanges: common.RowChange[];
+  targetRowIds: string[];
 }) {
-  let { rows, rowChanges } = item;
+  let { rows, targetRowIds } = item;
 
   let targets: { [from: string]: string } = {};
 
   rows.forEach(row => {
     let rowId = row.rowId;
-    let rowChangeIndex = rowChanges.findIndex(
-      rowChange => rowChange.rowId === rowId
+    let targetIndex = targetRowIds.findIndex(
+      targetRowId => targetRowId === rowId
     );
-    targets[rowId] = common.idxNumberToLetter(rowChangeIndex);
+    targets[rowId] = common.idxNumberToLetter(targetIndex);
   });
 
   rows

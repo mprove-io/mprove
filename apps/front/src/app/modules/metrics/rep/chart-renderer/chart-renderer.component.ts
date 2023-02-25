@@ -42,7 +42,7 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
     if (rep.draft === true) {
       this.repService.editDraftRep({
         repId: rep.repId,
-        changeType: common.ChangeTypeEnum.Edit,
+        changeType: common.ChangeTypeEnum.EditInfo,
         rowChanges: [rowChange]
       });
     } else {
@@ -50,7 +50,7 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
         fromRepId: rep.repId,
         fromDraft: rep.draft,
         rowChanges: [rowChange],
-        changeType: common.ChangeTypeEnum.Edit
+        changeType: common.ChangeTypeEnum.EditInfo
       });
     }
   }

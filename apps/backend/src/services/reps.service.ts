@@ -147,10 +147,7 @@ export class RepsService {
 
       processedRows = processRowIds({
         rows: processedRows,
-        rowChanges: processedRows.map(pRow => {
-          let rowChange: common.RowChange = { rowId: pRow.rowId };
-          return rowChange;
-        })
+        targetRowIds: processedRows.map(pRow => pRow.rowId)
       });
     } else if (changeType === common.ChangeTypeEnum.Clear) {
       rowChanges.forEach(rowChange => {
@@ -195,96 +192,88 @@ export class RepsService {
           return row;
         }
       });
-    } else if (changeType === common.ChangeTypeEnum.Edit) {
-      // rowChanges.forEach(rowChange => {
-      //   processedRows.forEach(row => {
-      //     if (
-      //       common.isDefined(row.formula) &&
-      //       row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
-      //     ) {
-      //       let rq = row.rqs.find(
-      //         y =>
-      //           y.fractionBrick === timeRangeFraction.brick &&
-      //           y.timeSpec === timeSpec &&
-      //           y.timezone === timezone
-      //       );
+    } else if (changeType === common.ChangeTypeEnum.EditInfo) {
+      let rowChange = rowChanges[0];
 
-      //       rq.lastCalculatedTs = 0;
-      //     }
-      //   });
-      // });
+      let pRow = processedRows.find(row => row.rowId === rowChange.rowId);
 
+      let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
+        showChart: rowChange.showChart
+      });
+
+      processedRows = processedRows.map(row =>
+        row.rowId === editRow.rowId ? editRow : row
+      );
+    } else if (changeType === common.ChangeTypeEnum.EditFormula) {
       let rowChange = rowChanges[0];
 
       let pRow = processedRows.find(r => r.rowId === rowChange.rowId);
 
-      let isProcessRowIds = false;
+      processedRows.forEach(row => {
+        if (
+          common.isDefined(row.formula) &&
+          row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
+        ) {
+          let rq = row.rqs.find(
+            y =>
+              y.fractionBrick === timeRangeFraction.brick &&
+              y.timeSpec === timeSpec &&
+              y.timezone === timezone
+          );
 
-      let editRow: common.Row;
+          rq.lastCalculatedTs = 0;
+        }
+      });
 
-      if (common.isDefined(pRow.formula)) {
-        editRow = {
-          rowId: pRow.rowId,
-          metricId: pRow.metricId,
-          showChart: rowChange.showChart,
-          params: pRow.params || [],
-          formula: rowChange.formula,
-          formulaDeps:
-            pRow.formula === rowChange.formula ? pRow.formulaDeps : undefined,
-          rqs: pRow.formula === rowChange.formula ? pRow.rqs : [],
-          mconfig: undefined,
-          query: undefined,
-          hasAccessToModel: false,
-          records: pRow.formula === rowChange.formula ? pRow.records : [],
-          formatNumber: pRow.formatNumber,
-          currencyPrefix: pRow.currencyPrefix,
-          currencySuffix: pRow.currencySuffix
-        };
+      let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
+        formula: rowChange.formula,
+        formulaDeps: undefined,
+        rqs: [],
+        records: []
+      });
 
-        isProcessRowIds = pRow.formula !== rowChange.formula;
-      } else if (common.isUndefined(pRow.formula)) {
-        let metric = metrics.find(m => m.metric_id === rowChange.metricId);
-
-        editRow = {
-          rowId: pRow.rowId,
-          metricId: pRow.metricId,
-          showChart: rowChange.showChart,
-          params: rowChange.params,
-          formula: undefined,
-          formulaDeps: undefined,
-          rqs:
-            common.isDefined(pRow.params) && pRow.params !== rowChange.params
-              ? []
-              : pRow.rqs,
-          mconfig:
-            common.isDefined(pRow.params) && pRow.params !== rowChange.params
-              ? undefined
-              : pRow.mconfig,
-          query:
-            common.isDefined(pRow.params) && pRow.params !== rowChange.params
-              ? undefined
-              : pRow.query,
-          hasAccessToModel: false,
-          records:
-            common.isDefined(pRow.params) && pRow.params !== rowChange.params
-              ? []
-              : pRow.records,
-          formatNumber: pRow.formatNumber,
-          currencyPrefix: pRow.currencyPrefix,
-          currencySuffix: pRow.currencySuffix
-        };
-      }
-
-      processedRows = processedRows.map(r =>
-        r.rowId === editRow.rowId ? editRow : r
+      processedRows = processedRows.map(row =>
+        row.rowId === editRow.rowId ? editRow : row
       );
 
-      if (isProcessRowIds === true) {
-        processedRows = processRowIds({
-          rows: processedRows,
-          rowChanges: rowChanges
-        });
-      }
+      processedRows = processRowIds({
+        rows: processedRows,
+        targetRowIds: processedRows.map(pr => pr.rowId)
+      });
+    } else if (changeType === common.ChangeTypeEnum.EditParams) {
+      let rowChange = rowChanges[0];
+
+      let pRow = processedRows.find(r => r.rowId === rowChange.rowId);
+
+      processedRows.forEach(row => {
+        if (
+          common.isDefined(row.formula) &&
+          row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
+        ) {
+          let rq = row.rqs.find(
+            y =>
+              y.fractionBrick === timeRangeFraction.brick &&
+              y.timeSpec === timeSpec &&
+              y.timezone === timezone
+          );
+
+          rq.lastCalculatedTs = 0;
+        }
+      });
+
+      let metric = metrics.find(m => m.metric_id === rowChange.metricId);
+
+      let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
+        params: rowChange.params,
+        rqs: [],
+        records: [],
+        mconfig: undefined,
+        query: undefined
+      });
+
+      processedRows = processedRows.map(row =>
+        row.rowId === editRow.rowId ? editRow : row
+      );
     } else if (changeType === common.ChangeTypeEnum.Delete) {
       rowChanges.forEach(rowChange => {
         processedRows.forEach(row => {
@@ -311,15 +300,12 @@ export class RepsService {
 
       processedRows = processRowIds({
         rows: processedRows,
-        rowChanges: processedRows.map(pRow => {
-          let rowChange: common.RowChange = { rowId: pRow.rowId };
-          return rowChange;
-        })
+        targetRowIds: processedRows.map(pRow => pRow.rowId)
       });
     } else if (changeType === common.ChangeTypeEnum.Move) {
       processedRows = processRowIds({
         rows: processedRows,
-        rowChanges: rowChanges
+        targetRowIds: rowChanges.map(rc => rc.rowId)
       });
     }
 

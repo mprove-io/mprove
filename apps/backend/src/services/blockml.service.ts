@@ -180,7 +180,7 @@ export class BlockmlService {
 
             let tRows = processRowIds({
               rows: rep.rows,
-              rowChanges: rowChanges
+              targetRowIds: rowChanges.map(rc => rc.rowId)
             });
 
             rep.rows = tRows;
