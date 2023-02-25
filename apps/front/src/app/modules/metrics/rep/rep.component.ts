@@ -209,14 +209,13 @@ export class RepComponent {
 
   queryParams$ = this.route.queryParams.pipe(
     tap(queryParams => {
-      let nodeIdsValue = queryParams['nodeIds'];
+      let selectNodes = queryParams['selectNodes'];
 
-      let nodeIds: string[] = common.isDefined(nodeIdsValue)
-        ? nodeIdsValue.split('-')
+      let nodeIds: string[] = common.isDefined(selectNodes)
+        ? selectNodes.split('-')
         : [];
 
       setTimeout(() => {
-        // console.log('setTimeout queryParams');
         // console.log('this.agGridApi', this.agGridApi);
         if (common.isDefined(this.agGridApi)) {
           if (nodeIds.length > 0) {
@@ -253,16 +252,15 @@ export class RepComponent {
     let sNodes = event.api.getSelectedNodes();
     this.updateRepChartData(sNodes);
 
-    // console.log('onSelectionChanged', sNodes);
-
     let nodeIds = sNodes.map(node => node.id);
+    // console.log('onSelectionChanged', nodeIds);
 
     const url = this.router
       .createUrlTree([], {
         relativeTo: this.route,
         queryParams: {
           draft: this.rep.draft === true ? common.DraftEnum.Yes : undefined,
-          nodeIds: nodeIds.length > 0 ? nodeIds.join('-') : undefined
+          selectNodes: nodeIds.length > 0 ? nodeIds.join('-') : undefined
         }
       })
       .toString();

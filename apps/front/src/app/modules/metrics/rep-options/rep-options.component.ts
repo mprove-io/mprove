@@ -75,7 +75,7 @@ export class RepOptionsComponent {
       this.navigateService.navigateToMetricsRep({
         repId: common.EMPTY_REP_ID,
         draft: false,
-        nodeIds: []
+        selectNodes: []
       });
     }
   }
