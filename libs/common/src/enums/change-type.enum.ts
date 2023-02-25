@@ -1,6 +1,5 @@
 export enum ChangeTypeEnum {
   Add = 'Add',
-  Edit = 'Edit',
   EditInfo = 'EditInfo',
   EditFormula = 'EditFormula',
   EditParams = 'EditParams',

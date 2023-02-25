@@ -251,7 +251,8 @@ export class RepSaveAsDialogComponent implements OnInit {
 
             this.navigateService.navigateToMetricsRep({
               repId: resp.payload.rep.repId,
-              draft: false
+              draft: false,
+              nodeIds: []
             });
           }
         }),
@@ -341,7 +342,8 @@ export class RepSaveAsDialogComponent implements OnInit {
 
             this.navigateService.navigateToMetricsRep({
               repId: resp.payload.rep.repId,
-              draft: false
+              draft: false,
+              nodeIds: []
             });
           }
         }),

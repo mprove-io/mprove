@@ -338,14 +338,6 @@ export class NavigateService {
         line: lineNumber
       }
     });
-
-    // if (common.isDefined(lineNumber) && lineNumber !== 0) {
-    //   this.router.navigate(ar, {
-    //     queryParams: { line: lineNumber }
-    //   });
-    // } else {
-    //   this.router.navigate(ar);
-    // }
   }
 
   navigateToMetricsEmptyRep() {
@@ -371,7 +363,13 @@ export class NavigateService {
     this.router.navigate(navTo);
   }
 
-  navigateToMetricsRep(item: { repId: string; draft: boolean }) {
+  navigateToMetricsRep(item: {
+    repId: string;
+    draft: boolean;
+    nodeIds: string[];
+  }) {
+    let { repId, draft, nodeIds } = item;
+
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
 
@@ -388,15 +386,14 @@ export class NavigateService {
       this.nav.envId,
       common.PATH_METRICS,
       common.PATH_REPORT,
-      item.repId
+      repId
     ];
 
-    if (item.draft === true) {
-      this.router.navigate(navTo, {
-        queryParams: { draft: common.DraftEnum.Yes }
-      });
-    } else {
-      this.router.navigate(navTo);
-    }
+    this.router.navigate(navTo, {
+      queryParams: {
+        draft: draft === true ? common.DraftEnum.Yes : undefined,
+        nodeIds: nodeIds.length > 0 ? nodeIds.join('-') : undefined
+      }
+    });
   }
 }

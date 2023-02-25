@@ -438,7 +438,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
   navToRep(rep: common.RepX) {
     this.navigateService.navigateToMetricsRep({
       repId: rep.repId,
-      draft: rep.draft
+      draft: rep.draft,
+      nodeIds: []
     });
   }
 

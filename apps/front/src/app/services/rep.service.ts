@@ -54,7 +54,12 @@ export class RepService {
         fromRepId: rep.repId,
         fromDraft: rep.draft,
         changeType: changeType,
-        rowChanges: rowChanges
+        rowChanges: rowChanges,
+        nodeIds:
+          changeType !== common.ChangeTypeEnum.Move &&
+          changeType !== common.ChangeTypeEnum.Delete
+            ? this.uiQuery.getValue().repSelectedNodes.map(node => node.id)
+            : []
       });
     }
   }
@@ -64,10 +69,11 @@ export class RepService {
     rowChanges: common.RowChange[];
     fromRepId: string;
     fromDraft: boolean;
+    nodeIds: string[];
   }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { rowChanges, fromRepId, fromDraft, changeType } = item;
+    let { rowChanges, fromRepId, fromDraft, changeType, nodeIds } = item;
 
     let uiState = this.uiQuery.getValue();
 
@@ -102,7 +108,8 @@ export class RepService {
 
             this.navigateService.navigateToMetricsRep({
               repId: rep.repId,
-              draft: rep.draft
+              draft: rep.draft,
+              nodeIds: nodeIds
             });
           }
         }),
@@ -197,7 +204,8 @@ export class RepService {
             if (rep.repId === repId) {
               this.navigateService.navigateToMetricsRep({
                 repId: common.EMPTY_REP_ID,
-                draft: false
+                draft: false,
+                nodeIds: []
               });
             }
           }

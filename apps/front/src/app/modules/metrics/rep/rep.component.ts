@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -5,6 +6,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AgGridAngular } from 'ag-grid-angular';
 import {
   ColDef,
@@ -106,31 +108,31 @@ export class RepComponent {
   agGridApi: GridApi<DataRow>;
   prevRepId: string;
 
+  formulaForm: FormGroup = this.fb.group({
+    formula: [undefined, [Validators.required]]
+  });
+
+  repSelectedNode: IRowNode<DataRow>;
+  repSelectedNodes$ = this.uiQuery.repSelectedNodes$.pipe(
+    tap(x => {
+      this.repSelectedNode = x.length === 1 ? x[0] : undefined;
+
+      if (
+        common.isDefined(this.repSelectedNode) &&
+        common.isDefined(this.repSelectedNode.data.formula)
+      ) {
+        setValueAndMark({
+          control: this.formulaForm.controls['formula'],
+          value: this.repSelectedNode.data.formula
+        });
+      }
+    })
+  );
+
   rep: common.RepX;
   rep$ = this.repQuery.select().pipe(
     tap(x => {
       this.rep = x;
-
-      if (common.isDefined(this.agGridApi)) {
-        if (
-          common.isDefined(this.prevRepId) &&
-          this.rep.repId !== this.prevRepId
-        ) {
-          this.agGridApi.deselectAll();
-        } else {
-          setTimeout(() => {
-            this.uiQuery.getValue().repSelectedNodes.forEach(node => {
-              let rowNode = this.agGridApi.getRowNode(node.id);
-              if (common.isDefined(rowNode)) {
-                rowNode.setSelected(true);
-              }
-              this.cd.detectChanges();
-            });
-          }, 0);
-        }
-      }
-
-      this.prevRepId = this.rep.repId;
 
       this.timeColumns = x.columns.map(column => {
         let columnDef: ColDef<DataRow> = {
@@ -183,32 +185,53 @@ export class RepComponent {
 
       let sNodes = this.uiQuery.getValue().repSelectedNodes;
 
-      // console.log(sNodes);
-
       this.updateRepChartData(sNodes);
+
+      if (
+        common.isDefined(this.prevRepId) &&
+        this.rep.repId === this.prevRepId
+      ) {
+        if (common.isDefined(this.agGridApi)) {
+          this.uiQuery.getValue().repSelectedNodes.forEach(node => {
+            let rowNode = this.agGridApi.getRowNode(node.id);
+            if (common.isDefined(rowNode)) {
+              rowNode.setSelected(true);
+            }
+          });
+        }
+      }
+
+      this.prevRepId = this.rep.repId;
 
       this.cd.detectChanges();
     })
   );
 
-  formulaForm: FormGroup = this.fb.group({
-    formula: [undefined, [Validators.required]]
-  });
+  queryParams$ = this.route.queryParams.pipe(
+    tap(queryParams => {
+      let nodeIdsValue = queryParams['nodeIds'];
 
-  repSelectedNode: IRowNode<DataRow>;
-  repSelectedNodes$ = this.uiQuery.repSelectedNodes$.pipe(
-    tap(x => {
-      this.repSelectedNode = x.length === 1 ? x[0] : undefined;
+      let nodeIds: string[] = common.isDefined(nodeIdsValue)
+        ? nodeIdsValue.split('-')
+        : [];
 
-      if (
-        common.isDefined(this.repSelectedNode) &&
-        common.isDefined(this.repSelectedNode.data.formula)
-      ) {
-        setValueAndMark({
-          control: this.formulaForm.controls['formula'],
-          value: this.repSelectedNode.data.formula
-        });
-      }
+      setTimeout(() => {
+        // console.log('setTimeout queryParams');
+        // console.log('this.agGridApi', this.agGridApi);
+        if (common.isDefined(this.agGridApi)) {
+          if (nodeIds.length > 0) {
+            nodeIds.forEach(nodeId => {
+              let rowNode = this.agGridApi.getRowNode(nodeId);
+              if (common.isDefined(rowNode)) {
+                rowNode.setSelected(true);
+              }
+            });
+          } else {
+            this.agGridApi.deselectAll();
+          }
+          this.cd.detectChanges();
+        }
+      }, 1);
     })
   );
 
@@ -217,6 +240,9 @@ export class RepComponent {
   constructor(
     private cd: ChangeDetectorRef,
     private repQuery: RepQuery,
+    private router: Router,
+    private route: ActivatedRoute,
+    private location: Location,
     private repService: RepService,
     private uiQuery: UiQuery,
     private fb: FormBuilder,
@@ -228,6 +254,20 @@ export class RepComponent {
     this.updateRepChartData(sNodes);
 
     // console.log('onSelectionChanged', sNodes);
+
+    let nodeIds = sNodes.map(node => node.id);
+
+    const url = this.router
+      .createUrlTree([], {
+        relativeTo: this.route,
+        queryParams: {
+          draft: this.rep.draft === true ? common.DraftEnum.Yes : undefined,
+          nodeIds: nodeIds.length > 0 ? nodeIds.join('-') : undefined
+        }
+      })
+      .toString();
+
+    this.location.go(url);
   }
 
   updateRepChartData(sNodes: IRowNode<DataRow>[]) {
