@@ -36,6 +36,29 @@ export class RepService {
     this.nav$.subscribe();
   }
 
+  changeRows(item: {
+    rep: common.RepX;
+    changeType: common.ChangeTypeEnum;
+    rowChanges: common.RowChange[];
+  }) {
+    let { rep, changeType, rowChanges } = item;
+
+    if (rep.draft === true) {
+      this.editDraftRep({
+        repId: rep.repId,
+        changeType: changeType,
+        rowChanges: rowChanges
+      });
+    } else {
+      this.navCreateDraftRep({
+        fromRepId: rep.repId,
+        fromDraft: rep.draft,
+        changeType: changeType,
+        rowChanges: rowChanges
+      });
+    }
+  }
+
   navCreateDraftRep(item: {
     changeType: common.ChangeTypeEnum;
     rowChanges: common.RowChange[];

@@ -43,20 +43,11 @@ export class RowOptionsComponent {
       rowId: this.params.data.idx
     };
 
-    if (selectedRep.draft === true) {
-      this.repService.editDraftRep({
-        repId: selectedRep.repId,
-        rowChanges: [rowChange],
-        changeType: common.ChangeTypeEnum.Delete
-      });
-    } else {
-      this.repService.navCreateDraftRep({
-        fromRepId: selectedRep.repId,
-        fromDraft: selectedRep.draft,
-        rowChanges: [rowChange],
-        changeType: common.ChangeTypeEnum.Delete
-      });
-    }
+    this.repService.changeRows({
+      rep: selectedRep,
+      changeType: common.ChangeTypeEnum.Delete,
+      rowChanges: [rowChange]
+    });
   }
 
   clearRow(event: MouseEvent) {
@@ -68,20 +59,11 @@ export class RowOptionsComponent {
       rowId: this.params.data.idx
     };
 
-    if (selectedRep.draft === true) {
-      this.repService.editDraftRep({
-        repId: selectedRep.repId,
-        rowChanges: [rowChange],
-        changeType: common.ChangeTypeEnum.Clear
-      });
-    } else {
-      this.repService.navCreateDraftRep({
-        fromRepId: selectedRep.repId,
-        fromDraft: selectedRep.draft,
-        rowChanges: [rowChange],
-        changeType: common.ChangeTypeEnum.Clear
-      });
-    }
+    this.repService.changeRows({
+      rep: selectedRep,
+      changeType: common.ChangeTypeEnum.Clear,
+      rowChanges: [rowChange]
+    });
   }
 
   explore(event: MouseEvent) {

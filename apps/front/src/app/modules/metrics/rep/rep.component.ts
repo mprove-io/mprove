@@ -282,20 +282,11 @@ export class RepComponent {
 
     this.agGridApi.deselectAll();
 
-    if (selectedRep.draft === true) {
-      this.repService.editDraftRep({
-        repId: selectedRep.repId,
-        rowChanges: rowChanges,
-        changeType: common.ChangeTypeEnum.Move
-      });
-    } else {
-      this.repService.navCreateDraftRep({
-        fromRepId: selectedRep.repId,
-        fromDraft: selectedRep.draft,
-        rowChanges: rowChanges,
-        changeType: common.ChangeTypeEnum.Move
-      });
-    }
+    this.repService.changeRows({
+      rep: selectedRep,
+      changeType: common.ChangeTypeEnum.Move,
+      rowChanges: rowChanges
+    });
   }
 
   formulaBlur() {
@@ -315,19 +306,10 @@ export class RepComponent {
       formula: value
     };
 
-    if (rep.draft === true) {
-      this.repService.editDraftRep({
-        repId: rep.repId,
-        changeType: common.ChangeTypeEnum.EditFormula,
-        rowChanges: [rowChange]
-      });
-    } else {
-      this.repService.navCreateDraftRep({
-        fromRepId: rep.repId,
-        fromDraft: rep.draft,
-        rowChanges: [rowChange],
-        changeType: common.ChangeTypeEnum.EditFormula
-      });
-    }
+    this.repService.changeRows({
+      rep: rep,
+      changeType: common.ChangeTypeEnum.EditFormula,
+      rowChanges: [rowChange]
+    });
   }
 }

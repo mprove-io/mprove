@@ -39,19 +39,10 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
       showChart: !this.params.data.showChart
     };
 
-    if (rep.draft === true) {
-      this.repService.editDraftRep({
-        repId: rep.repId,
-        changeType: common.ChangeTypeEnum.EditInfo,
-        rowChanges: [rowChange]
-      });
-    } else {
-      this.repService.navCreateDraftRep({
-        fromRepId: rep.repId,
-        fromDraft: rep.draft,
-        rowChanges: [rowChange],
-        changeType: common.ChangeTypeEnum.EditInfo
-      });
-    }
+    this.repService.changeRows({
+      rep: rep,
+      changeType: common.ChangeTypeEnum.EditInfo,
+      rowChanges: [rowChange]
+    });
   }
 }

@@ -170,20 +170,11 @@ export class MetricsTreeComponent implements AfterViewInit {
       metricId: node.data.metric.metricId
     };
 
-    if (rep.draft === true) {
-      this.repService.editDraftRep({
-        repId: rep.repId,
-        changeType: common.ChangeTypeEnum.Add,
-        rowChanges: [rowChange]
-      });
-    } else {
-      this.repService.navCreateDraftRep({
-        fromRepId: rep.repId,
-        fromDraft: rep.draft,
-        rowChanges: [rowChange],
-        changeType: common.ChangeTypeEnum.Add
-      });
-    }
+    this.repService.changeRows({
+      rep: rep,
+      changeType: common.ChangeTypeEnum.Add,
+      rowChanges: [rowChange]
+    });
   }
 
   goToFileLine(
