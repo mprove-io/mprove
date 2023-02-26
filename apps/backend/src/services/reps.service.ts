@@ -540,6 +540,18 @@ export class RepsService {
               // extendedFilters: [],
             };
 
+            mconfig.chart.type = common.ChartTypeEnum.Line;
+
+            mconfig = common.setChartTitleOnSelectChange({
+              mconfig: mconfig,
+              fields: model.fields
+            });
+
+            mconfig = common.setChartFields({
+              mconfig: mconfig,
+              fields: model.fields
+            });
+
             let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
               {
                 info: {

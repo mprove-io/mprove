@@ -14,7 +14,6 @@ import {
   tap
 } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
-import { setChartFields } from '~front/app/functions/set-chart-fields';
 import { ModelQuery, ModelState } from '~front/app/queries/model.query';
 import { MqQuery } from '~front/app/queries/mq.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
@@ -714,8 +713,8 @@ export class ModelComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    newMconfig = setChartFields({
-      newMconfig: newMconfig,
+    newMconfig = common.setChartFields({
+      mconfig: newMconfig,
       fields: fields
     });
 

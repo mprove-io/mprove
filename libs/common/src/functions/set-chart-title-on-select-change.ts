@@ -1,19 +1,20 @@
-import { common } from '~front/barrels/common';
+import { enums } from '~common/barrels/enums';
+import { isDefined, Mconfig, ModelField } from '~common/_index';
 
-export function setChartTitleOnSelectChange(item: {
-  newMconfig: common.MconfigX;
-  fields: common.ModelField[];
+export function setChartTitleOnSelectChange<T extends Mconfig>(item: {
+  mconfig: T;
+  fields: ModelField[];
 }) {
-  let { newMconfig, fields } = item;
+  let { mconfig, fields } = item;
 
-  if (newMconfig.select.length > 0) {
-    let fieldsSelectedDimensions: common.ModelField[] = [];
-    let fieldsSelectedMeasuresAndCalculations: common.ModelField[] = [];
+  if (mconfig.select.length > 0) {
+    let fieldsSelectedDimensions: ModelField[] = [];
+    let fieldsSelectedMeasuresAndCalculations: ModelField[] = [];
 
-    newMconfig.select.forEach((fieldId: string) => {
+    mconfig.select.forEach((fieldId: string) => {
       let field = fields.find(f => f.id === fieldId);
 
-      if (field.fieldClass === common.FieldClassEnum.Dimension) {
+      if (field.fieldClass === enums.FieldClassEnum.Dimension) {
         fieldsSelectedDimensions.push(field);
       } else {
         fieldsSelectedMeasuresAndCalculations.push(field);
@@ -40,19 +41,17 @@ export function setChartTitleOnSelectChange(item: {
       });
     }
 
-    newMconfig.chart.title = newTitle;
+    mconfig.chart.title = newTitle;
   }
 
-  return newMconfig;
+  return mconfig;
 }
 
-function getCompLabel(x: common.ModelField) {
+function getCompLabel(x: ModelField) {
   let topLabelPrefix =
-    x.topLabel === common.ModelNodeLabelEnum.ModelFields
-      ? ''
-      : `${x.topLabel} `;
+    x.topLabel === enums.ModelNodeLabelEnum.ModelFields ? '' : `${x.topLabel} `;
 
-  let groupLabel = common.isDefined(x.groupLabel) ? `${x.groupLabel} ` : '';
+  let groupLabel = isDefined(x.groupLabel) ? `${x.groupLabel} ` : '';
 
   let compLabel = `${topLabelPrefix}${groupLabel}${x.label}`;
 

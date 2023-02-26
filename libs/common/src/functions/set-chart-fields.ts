@@ -1,35 +1,36 @@
-import { common } from '~front/barrels/common';
+import { enums } from '~common/barrels/enums';
+import { Chart, isDefined, Mconfig, ModelField } from '~common/_index';
 
-export function setChartFields(item: {
-  newMconfig: common.MconfigX;
-  fields: common.ModelField[];
+export function setChartFields<T extends Mconfig>(item: {
+  mconfig: T;
+  fields: ModelField[];
 }) {
-  let { newMconfig, fields } = item;
+  let { mconfig, fields } = item;
 
-  if (newMconfig.select.length > 0) {
+  if (mconfig.select.length > 0) {
     let selectedDimensionsResultIsNumberOrTs: string[] = [];
     let selectedDimensionsResultIsNotNumberOrTs: string[] = [];
 
     let selectedMCsResultIsNumber: string[] = [];
     let selectedMCsResultIsNotNumber: string[] = [];
 
-    newMconfig.select.forEach((fieldId: string) => {
+    mconfig.select.forEach((fieldId: string) => {
       let field = fields.find(f => f.id === fieldId);
 
-      if (field.fieldClass === common.FieldClassEnum.Dimension) {
+      if (field.fieldClass === enums.FieldClassEnum.Dimension) {
         if (
-          field.result === common.FieldResultEnum.Number ||
-          field.result === common.FieldResultEnum.Ts
+          field.result === enums.FieldResultEnum.Number ||
+          field.result === enums.FieldResultEnum.Ts
         ) {
           selectedDimensionsResultIsNumberOrTs.push(field.id);
         } else {
           selectedDimensionsResultIsNotNumberOrTs.push(field.id);
         }
       } else if (
-        field.fieldClass === common.FieldClassEnum.Measure ||
-        field.fieldClass === common.FieldClassEnum.Calculation
+        field.fieldClass === enums.FieldClassEnum.Measure ||
+        field.fieldClass === enums.FieldClassEnum.Calculation
       ) {
-        if (field.result === common.FieldResultEnum.Number) {
+        if (field.result === enums.FieldResultEnum.Number) {
           selectedMCsResultIsNumber.push(field.id);
         } else {
           selectedMCsResultIsNotNumber.push(field.id);
@@ -48,9 +49,9 @@ export function setChartFields(item: {
     ];
 
     let xField =
-      common.isDefined(newMconfig.chart.xField) &&
-      newMconfig.select.indexOf(newMconfig.chart.xField) > -1
-        ? newMconfig.chart.xField
+      isDefined(mconfig.chart.xField) &&
+      mconfig.select.indexOf(mconfig.chart.xField) > -1
+        ? mconfig.chart.xField
         : selectedDimensionsResultIsNumberOrTs.length > 0
         ? selectedDimensionsResultIsNumberOrTs[0]
         : selectedDimensionsResultIsNotNumberOrTs.length > 0
@@ -58,9 +59,9 @@ export function setChartFields(item: {
         : undefined;
 
     let yField =
-      common.isDefined(newMconfig.chart.yField) &&
-      newMconfig.select.indexOf(newMconfig.chart.yField) > -1
-        ? newMconfig.chart.yField
+      isDefined(mconfig.chart.yField) &&
+      mconfig.select.indexOf(mconfig.chart.yField) > -1
+        ? mconfig.chart.yField
         : selectedMCsResultIsNumber.length > 0
         ? selectedMCsResultIsNumber[0]
         : selectedMCsResultIsNotNumber.length > 0
@@ -68,24 +69,24 @@ export function setChartFields(item: {
         : undefined;
 
     let yFields =
-      newMconfig.chart.yFields?.length > 0 &&
-      newMconfig.chart.yFields.every(x => newMconfig.select.includes(x))
-        ? newMconfig.chart.yFields
+      mconfig.chart.yFields?.length > 0 &&
+      mconfig.chart.yFields.every(x => mconfig.select.includes(x))
+        ? mconfig.chart.yFields
         : selectedMCsResultIsNumber;
 
     let multiField =
-      common.isDefined(newMconfig.chart.multiField) &&
-      newMconfig.select.indexOf(newMconfig.chart.multiField) > -1 &&
-      newMconfig.chart.multiField !== xField
-        ? newMconfig.chart.multiField
+      isDefined(mconfig.chart.multiField) &&
+      mconfig.select.indexOf(mconfig.chart.multiField) > -1 &&
+      mconfig.chart.multiField !== xField
+        ? mconfig.chart.multiField
         : selectedDimensions.length === 2
         ? selectedDimensions.filter(x => x !== xField)[0]
         : undefined;
 
     let valueField =
-      common.isDefined(newMconfig.chart.valueField) &&
-      newMconfig.select.indexOf(newMconfig.chart.valueField) > -1
-        ? newMconfig.chart.valueField
+      isDefined(mconfig.chart.valueField) &&
+      mconfig.select.indexOf(mconfig.chart.valueField) > -1
+        ? mconfig.chart.valueField
         : selectedMCsResultIsNumber.length > 0
         ? selectedMCsResultIsNumber[0]
         : selectedMCsResultIsNotNumber.length > 0
@@ -93,12 +94,12 @@ export function setChartFields(item: {
         : undefined;
 
     let previousValueField =
-      common.isDefined(newMconfig.chart.previousValueField) &&
-      newMconfig.select.indexOf(newMconfig.chart.previousValueField) > -1
-        ? newMconfig.chart.previousValueField
+      isDefined(mconfig.chart.previousValueField) &&
+      mconfig.select.indexOf(mconfig.chart.previousValueField) > -1
+        ? mconfig.chart.previousValueField
         : undefined;
 
-    newMconfig.chart = Object.assign({}, newMconfig.chart, <common.Chart>{
+    mconfig.chart = Object.assign({}, mconfig.chart, <Chart>{
       xField: xField,
       yField: yField,
       yFields: yFields,
@@ -108,5 +109,5 @@ export function setChartFields(item: {
     });
   }
 
-  return newMconfig;
+  return mconfig;
 }

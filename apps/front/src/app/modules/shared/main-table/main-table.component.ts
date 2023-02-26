@@ -1,8 +1,5 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
-import { setChartFields } from '~front/app/functions/set-chart-fields';
-import { setChartTitleOnSelectChange } from '~front/app/functions/set-chart-title-on-select-change';
-import { sortChartFieldsOnSelectChange } from '~front/app/functions/sort-chart-fields-on-select-change';
 import { ModelQuery } from '~front/app/queries/model.query';
 import { MqQuery } from '~front/app/queries/mq.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
@@ -131,18 +128,18 @@ export class MainTableComponent {
       )
       .subscribe();
 
-    newMconfig = setChartTitleOnSelectChange({
-      newMconfig: newMconfig,
+    newMconfig = common.setChartTitleOnSelectChange({
+      mconfig: newMconfig,
       fields: fields
     });
 
-    newMconfig = setChartFields({
-      newMconfig: newMconfig,
+    newMconfig = common.setChartFields({
+      mconfig: newMconfig,
       fields: fields
     });
 
-    newMconfig = sortChartFieldsOnSelectChange({
-      newMconfig: newMconfig,
+    newMconfig = common.sortChartFieldsOnSelectChange({
+      mconfig: newMconfig,
       fields: fields
     });
 

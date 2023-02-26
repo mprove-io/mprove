@@ -13,9 +13,6 @@ import {
 } from '@bugsplat/angular-tree-component';
 import { take, tap } from 'rxjs/operators';
 import { ModelNode } from '~common/_index';
-import { setChartFields } from '~front/app/functions/set-chart-fields';
-import { setChartTitleOnSelectChange } from '~front/app/functions/set-chart-title-on-select-change';
-import { sortChartFieldsOnSelectChange } from '~front/app/functions/sort-chart-fields-on-select-change';
 import { ModelQuery, ModelState } from '~front/app/queries/model.query';
 import { MqQuery } from '~front/app/queries/mq.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
@@ -196,18 +193,18 @@ export class ModelTreeComponent implements AfterViewInit {
       )
       .subscribe();
 
-    newMconfig = setChartTitleOnSelectChange({
-      newMconfig: newMconfig,
+    newMconfig = common.setChartTitleOnSelectChange({
+      mconfig: newMconfig,
       fields: fields
     });
 
-    newMconfig = setChartFields({
-      newMconfig: newMconfig,
+    newMconfig = common.setChartFields({
+      mconfig: newMconfig,
       fields: fields
     });
 
-    newMconfig = sortChartFieldsOnSelectChange({
-      newMconfig: newMconfig,
+    newMconfig = common.sortChartFieldsOnSelectChange({
+      mconfig: newMconfig,
       fields: fields
     });
 
