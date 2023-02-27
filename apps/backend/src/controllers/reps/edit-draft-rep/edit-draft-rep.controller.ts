@@ -95,7 +95,7 @@ export class EditDraftRepController {
     });
 
     let metrics =
-      changeType === common.ChangeTypeEnum.Add ||
+      changeType === common.ChangeTypeEnum.AddMetric ||
       changeType === common.ChangeTypeEnum.EditParams
         ? await this.metricsRepository.find({
             where: {

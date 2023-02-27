@@ -1,6 +1,7 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { forEachSeries } from 'p-iteration';
+import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
@@ -33,6 +34,7 @@ export class SaveModifyRepController {
     private repsService: RepsService,
     private repsRepository: repositories.RepsRepository,
     private bridgesRepository: repositories.BridgesRepository,
+    private metricsRepository: repositories.MetricsRepository,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
@@ -146,12 +148,28 @@ export class SaveModifyRepController {
       userMember: userMember
     });
 
+    let metricRows = fromRep.rows.filter(
+      row => row.rowType === common.RowTypeEnum.Metric
+    );
+
+    let metrics =
+      metricRows.length > 0
+        ? await this.metricsRepository.find({
+            where: {
+              struct_id: bridge.struct_id,
+              metric_id: In(metricRows.map(row => row.metricId))
+            }
+          })
+        : [];
+
     let repFileText = makeRepFileText({
       repId: modRepId,
       title: title,
       rows: fromRep.rows,
       accessRoles: accessRoles,
-      accessUsers: accessUsers
+      accessUsers: accessUsers,
+      metrics: metrics,
+      struct: currentStruct
     });
 
     let toDiskSaveFileRequest: apiToDisk.ToDiskSaveFileRequest = {

@@ -146,7 +146,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
             x.rows.forEach(row => {
               let record = row.records.find(rec => rec.key === column.columnId);
-              dataPoint[row.metric] = record?.value;
+              dataPoint[row.name] = record?.value;
               if (common.isDefined(record?.value)) {
                 recordsWithValuesLength++;
               }
@@ -159,12 +159,12 @@ export class MetricsComponent implements OnInit, OnDestroy {
       this.recordsWithValuesLength = recordsWithValuesLength;
 
       let series = x.rows
-        .filter(row => common.isDefined(row.metric))
+        .filter(row => common.isDefined(row.name))
         .map(row => ({
           type: 'line',
           xKey: 'columnId',
-          yKey: row.metric,
-          yName: row.metric,
+          yKey: row.name,
+          yName: row.name,
           tooltip: {
             renderer: (params: AgCartesianSeriesTooltipRendererParams) => {
               let timeSpec = this.uiQuery.getValue().timeSpec;

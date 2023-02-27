@@ -40,7 +40,7 @@ export class RowOptionsComponent {
     this.params.api.deselectAll();
 
     let rowChange: common.RowChange = {
-      rowId: this.params.data.idx
+      rowId: this.params.data.rowId
     };
 
     this.repService.changeRows({
@@ -56,7 +56,7 @@ export class RowOptionsComponent {
     let selectedRep = this.repQuery.getValue();
 
     let rowChange: common.RowChange = {
-      rowId: this.params.data.idx
+      rowId: this.params.data.rowId
     };
 
     this.repService.changeRows({

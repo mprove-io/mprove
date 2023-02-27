@@ -1,2 +1,15 @@
-<!-- <div class="ml-[36px]">{{ params.displayName }}</div> -->
-<div></div>
+<div class="ml-[6px] flex h-full flex-row items-center justify-center">
+  <div *ngIf="isRunning === true" class="relative h-9 w-9">
+    <ngx-spinner
+      [name]="spinnerName"
+      color="rgba(54, 94, 224, 100)"
+      bdColor="rgba(0, 0, 0, 0)"
+      size="default"
+      type="ball-pulse"
+      [fullScreen]="false"
+      [disableAnimation]="true"
+      [zIndex]="99998"
+    >
+    </ngx-spinner>
+  </div>
+</div>

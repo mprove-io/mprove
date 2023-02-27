@@ -1,9 +1,9 @@
 import { constants } from '~common/barrels/constants';
 
-let alphabet = constants.IDX_ALPHABET;
+let alphabet = constants.ROW_ID_ALPHABET;
 let base = alphabet.length;
 
-export function idxNumberToLetter(n: number) {
+export function rowIdNumberToLetter(n: number) {
   let digits = [];
 
   do {

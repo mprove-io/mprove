@@ -29,14 +29,14 @@ import { ChartRendererComponent } from './chart-renderer/chart-renderer.componen
 import { DataRendererComponent } from './data-renderer/data-renderer.component';
 import { MetricHeaderComponent } from './metric-header/metric-header.component';
 import { MetricRendererComponent } from './metric-renderer/metric-renderer.component';
+import { RowIdHeaderComponent } from './row-id-header/row-id-header.component';
+import { RowIdRendererComponent } from './row-id-renderer/row-id-renderer.component';
 import { StatusHeaderComponent } from './status-header/status-header.component';
 import { StatusRendererComponent } from './status-renderer/status-renderer.component';
 
 export interface DataRow extends common.Row {
-  idx: string;
-  metric: string;
   parameters: string;
-  [record: string]: any;
+  // [col: string]: any;
 }
 
 @Component({
@@ -56,16 +56,18 @@ export class RepComponent {
 
   columns: ColDef<DataRow>[] = [
     {
-      field: 'idx',
+      field: 'rowId',
       rowDrag: true,
       resizable: false,
       pinned: 'left',
       width: 90,
       minWidth: 90,
-      maxWidth: 90
+      maxWidth: 90,
+      headerComponent: RowIdHeaderComponent,
+      cellRenderer: RowIdRendererComponent
     },
     {
-      field: 'metric',
+      field: 'name',
       pinned: 'left',
       width: 500,
       headerComponent: MetricHeaderComponent,
@@ -80,7 +82,7 @@ export class RepComponent {
       field: 'status',
       pinned: 'left',
       resizable: false,
-      width: 80,
+      width: 84,
       headerComponent: StatusHeaderComponent,
       cellRenderer: StatusRendererComponent
     },
@@ -93,6 +95,10 @@ export class RepComponent {
       cellRenderer: ChartRendererComponent
     }
   ];
+
+  columnTypes = {
+    running: {}
+  };
 
   columnDefs: ColDef<DataRow>[] = [...this.columns];
   timeColumns: ColDef<DataRow>[] = [];
@@ -145,6 +151,15 @@ export class RepComponent {
         return columnDef;
       });
 
+      let runningQueriesLength = this.rep.rows
+        .filter(row => common.isDefined(row.query))
+        .map(row => row.query.status)
+        .filter(status => status === common.QueryStatusEnum.Running).length;
+
+      let statusColumn = this.columns.find(c => c.field === 'status');
+
+      statusColumn.type = runningQueriesLength > 0 ? 'running' : undefined;
+
       this.columnDefs = [...this.columns, ...this.timeColumns];
 
       let metrics = this.metricsQuery.getValue();
@@ -154,10 +169,12 @@ export class RepComponent {
 
         let dataRow: DataRow = {
           rowId: row.rowId,
-          parameters: '',
-          metric: metric?.label || row.metricId,
+          rowType: row.rowType,
+          name: row.name,
+          parameters: common.isDefined(row.params)
+            ? JSON.stringify(row.params)
+            : '',
           showChart: row.showChart,
-          idx: row.rowId,
           query: row.query,
           metricId: row.metricId,
           mconfig: row.mconfig,
@@ -175,7 +192,7 @@ export class RepComponent {
         row.records
           .filter(record => record.key !== 0)
           .forEach(record => {
-            dataRow[record.key] = record.value;
+            (dataRow as any)[record.key] = record.value;
             let column = x.columns.find(c => c.columnId === record.key);
             record.columnLabel = column.label;
           });

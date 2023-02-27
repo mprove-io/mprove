@@ -75,7 +75,7 @@ export class RepsService {
 
     let processedRows = rows.map(row => Object.assign({}, row));
 
-    if (changeType === common.ChangeTypeEnum.Add) {
+    if (changeType === common.ChangeTypeEnum.AddMetric) {
       rowChanges.forEach(rowChange => {
         let isClearFormulasData =
           processedRows.filter(
@@ -103,20 +103,27 @@ export class RepsService {
         let rowId = rowChange.rowId;
 
         if (common.isUndefined(rowId)) {
-          let idxs = processedRows.map(y => common.idxLetterToNumber(y.rowId));
-          let maxIdx = idxs.length > 0 ? Math.max(...idxs) : undefined;
-          let idxNum = common.isDefined(maxIdx) ? maxIdx + 1 : 0;
-          rowId = common.idxNumberToLetter(idxNum);
+          let rowIdsNumbers = processedRows.map(y =>
+            common.rowIdLetterToNumber(y.rowId)
+          );
+          let maxRowIdNumber =
+            rowIdsNumbers.length > 0 ? Math.max(...rowIdsNumbers) : undefined;
+          let rowIdNumber = common.isDefined(maxRowIdNumber)
+            ? maxRowIdNumber + 1
+            : 0;
+          rowId = common.rowIdNumberToLetter(rowIdNumber);
         }
 
         let metric = metrics.find(m => m.metric_id === rowChange.metricId);
 
         let newRow: common.Row = {
           rowId: rowId,
+          rowType: rowChange.rowType,
+          name: metric.label,
           metricId: rowChange.metricId,
           showChart: rowChange.showChart,
           params: rowChange.params || [],
-          formula: rowChange.formula,
+          formula: undefined,
           formulaDeps: undefined,
           rqs: [],
           mconfig: undefined,
@@ -172,6 +179,8 @@ export class RepsService {
         if (rowChanges.map(rc => rc.rowId).indexOf(row.rowId) > -1) {
           let emptyRow: common.Row = {
             rowId: row.rowId,
+            rowType: common.RowTypeEnum.Empty,
+            name: undefined,
             metricId: undefined,
             showChart: false,
             params: [],

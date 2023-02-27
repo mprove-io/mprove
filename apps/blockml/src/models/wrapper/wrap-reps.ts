@@ -41,6 +41,12 @@ export function wrapReps(item: {
 
         let rowApi: common.Row = {
           rowId: row.id,
+          rowType: row.type,
+          name: common.isDefined(row.name)
+            ? row.name
+            : row.type === common.RowTypeEnum.Metric
+            ? metric.label
+            : '',
           metricId: row.metric,
           showChart: helper.toBooleanFromLowercaseString(row.show_chart),
           formula: row.formula,
@@ -51,9 +57,21 @@ export function wrapReps(item: {
           hasAccessToModel: false,
           params: row.params,
           records: [],
-          formatNumber: metric?.formatNumber || formatNumber,
-          currencyPrefix: metric?.currencyPrefix || currencyPrefix,
-          currencySuffix: metric?.currencySuffix || currencySuffix
+          formatNumber: common.isDefined(row.format_number)
+            ? row.format_number
+            : row.type === common.RowTypeEnum.Metric
+            ? metric.formatNumber
+            : formatNumber,
+          currencyPrefix: common.isDefined(row.currency_prefix)
+            ? row.currency_prefix
+            : row.type === common.RowTypeEnum.Metric
+            ? metric.currencyPrefix
+            : currencyPrefix,
+          currencySuffix: common.isDefined(row.currency_suffix)
+            ? row.currency_suffix
+            : row.type === common.RowTypeEnum.Metric
+            ? metric.currencySuffix
+            : currencySuffix
         };
         return rowApi;
       }),

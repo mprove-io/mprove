@@ -166,13 +166,14 @@ export class MetricsTreeComponent implements AfterViewInit {
         common.isUndefined(repSelectedNodes[0].data.formula)
           ? repSelectedNodes[0].data.rowId
           : undefined,
-      showChart: false,
-      metricId: node.data.metric.metricId
+      rowType: common.RowTypeEnum.Metric,
+      metricId: node.data.metric.metricId,
+      showChart: false
     };
 
     this.repService.changeRows({
       rep: rep,
-      changeType: common.ChangeTypeEnum.Add,
+      changeType: common.ChangeTypeEnum.AddMetric,
       rowChanges: [rowChange]
     });
   }

@@ -13,7 +13,7 @@ export function processRowIds(item: {
     let targetIndex = targetRowIds.findIndex(
       targetRowId => targetRowId === rowId
     );
-    targets[rowId] = common.idxNumberToLetter(targetIndex);
+    targets[rowId] = common.rowIdNumberToLetter(targetIndex);
   });
 
   rows
@@ -51,9 +51,10 @@ export function processRowIds(item: {
     });
 
   let newRows = rows.sort((a, b) =>
-    common.idxLetterToNumber(a.rowId) > common.idxLetterToNumber(b.rowId)
+    common.rowIdLetterToNumber(a.rowId) > common.rowIdLetterToNumber(b.rowId)
       ? 1
-      : common.idxLetterToNumber(b.rowId) > common.idxLetterToNumber(a.rowId)
+      : common.rowIdLetterToNumber(b.rowId) >
+        common.rowIdLetterToNumber(a.rowId)
       ? -1
       : 0
   );

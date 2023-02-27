@@ -99,7 +99,7 @@ export class CreateDraftRepController {
     let repId = common.makeId();
 
     let metrics =
-      changeType === common.ChangeTypeEnum.Add ||
+      changeType === common.ChangeTypeEnum.AddMetric ||
       changeType === common.ChangeTypeEnum.EditParams
         ? await this.metricsRepository.find({
             where: {
