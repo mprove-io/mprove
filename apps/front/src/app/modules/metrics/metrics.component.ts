@@ -44,6 +44,11 @@ export class TimeSpecItem {
 export class MetricsComponent implements OnInit, OnDestroy {
   pageTitle = frontConstants.METRICS_PAGE_TITLE;
 
+  rowTypeFormula = common.RowTypeEnum.Formula;
+  rowTypeMetric = common.RowTypeEnum.Metric;
+  rowTypeHeader = common.RowTypeEnum.Header;
+  rowTypeEmpty = common.RowTypeEnum.Empty;
+
   isShow = true;
 
   emptyRepId = common.EMPTY_REP_ID;
@@ -263,6 +268,10 @@ export class MetricsComponent implements OnInit, OnDestroy {
     formula: [undefined, [Validators.required]]
   });
 
+  nameForm: FormGroup = this.fb.group({
+    name: [undefined]
+  });
+
   uiQuery$ = this.uiQuery.select().pipe(
     tap(x => {
       this.fractions = [x.timeRangeFraction];
@@ -275,14 +284,20 @@ export class MetricsComponent implements OnInit, OnDestroy {
       this.repSelectedNode =
         x.repSelectedNodes.length === 1 ? x.repSelectedNodes[0] : undefined;
 
-      if (
-        common.isDefined(this.repSelectedNode) &&
-        common.isDefined(this.repSelectedNode.data.formula)
-      ) {
-        setValueAndMark({
-          control: this.formulaForm.controls['formula'],
-          value: this.repSelectedNode.data.formula
-        });
+      if (common.isDefined(this.repSelectedNode)) {
+        if (this.repSelectedNode.data.rowType === common.RowTypeEnum.Formula) {
+          setValueAndMark({
+            control: this.formulaForm.controls['formula'],
+            value: this.repSelectedNode.data.formula
+          });
+        }
+
+        if (this.repSelectedNode.data.rowType !== common.RowTypeEnum.Empty) {
+          setValueAndMark({
+            control: this.nameForm.controls['name'],
+            value: this.repSelectedNode.data.name
+          });
+        }
       }
 
       this.cd.detectChanges();
@@ -559,6 +574,27 @@ export class MetricsComponent implements OnInit, OnDestroy {
     this.repService.changeRows({
       rep: rep,
       changeType: common.ChangeTypeEnum.EditFormula,
+      rowChanges: [rowChange]
+    });
+  }
+
+  nameBlur() {
+    let value = this.nameForm.controls['name'].value;
+
+    if (!this.nameForm.valid || this.repSelectedNode.data.name === value) {
+      return;
+    }
+
+    let rep = this.repQuery.getValue();
+
+    let rowChange: common.RowChange = {
+      rowId: this.repSelectedNode.data.rowId,
+      name: value
+    };
+
+    this.repService.changeRows({
+      rep: rep,
+      changeType: common.ChangeTypeEnum.EditInfo,
       rowChanges: [rowChange]
     });
   }

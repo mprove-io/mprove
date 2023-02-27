@@ -253,8 +253,33 @@
                 }}</div>
               </div>
 
+              <div class="flex flex-row items-start space-x-5">
+                <div
+                  class="text-gray1 flex h-9 select-none items-center font-semibold"
+                  >Type</div
+                >
+
+                <div class="flex h-9 items-center">{{
+                  repSelectedNode?.data?.rowType | capitalize
+                }}</div>
+              </div>
+
               <div
-                *ngIf="!!repSelectedNode?.data?.formula"
+                class="flex flex-row items-start space-x-5"
+                *ngIf="repSelectedNode?.data?.rowType === rowTypeMetric"
+              >
+                <div
+                  class="text-gray1 flex h-9 select-none items-center font-semibold"
+                  >Metric Id</div
+                >
+
+                <div class="flex h-9 items-center">{{
+                  repSelectedNode?.data?.metricId
+                }}</div>
+              </div>
+
+              <div
+                *ngIf="repSelectedNode?.data?.rowType === rowTypeFormula"
                 class="flex flex-row items-start space-x-5"
               >
                 <div
@@ -262,7 +287,7 @@
                   >Formula</div
                 >
 
-                <div [formGroup]="formulaForm">
+                <div [formGroup]="formulaForm" class="relative">
                   <textarea
                     rows="5"
                     data-cy="formulaInput"
@@ -277,7 +302,37 @@
                     (blur)="formulaBlur()"
                   ></textarea>
                   <m-validation
+                    class="absolute -bottom-5 left-0"
                     [control]="formulaForm.controls['formula']"
+                  ></m-validation>
+                </div>
+              </div>
+
+              <div
+                *ngIf="repSelectedNode?.data?.rowType !== rowTypeEmpty"
+                class="flex flex-row items-start space-x-5"
+              >
+                <div
+                  class="text-gray1 flex h-9 select-none items-center font-semibold"
+                  >Name</div
+                >
+
+                <div [formGroup]="nameForm" class="relative">
+                  <input
+                    data-cy="nameInput"
+                    class="form-input border-gray3 focus:border-blue3 w-96 resize-none rounded"
+                    [ngClass]="{
+                      'border-red-600':
+                        nameForm.controls['name'].invalid &&
+                        nameForm.controls['name'].touched
+                    }"
+                    formControlName="name"
+                    placeholder=""
+                    (blur)="nameBlur()"
+                  />
+                  <m-validation
+                    class="absolute -bottom-5 left-0"
+                    [control]="nameForm.controls['name']"
                   ></m-validation>
                 </div>
               </div>
