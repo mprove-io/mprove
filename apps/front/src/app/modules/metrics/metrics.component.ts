@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -8,8 +8,10 @@ import {
   AgChartOptions,
   AgTooltipRendererResult
 } from 'ag-charts-community';
+import { IRowNode } from 'ag-grid-community';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { concatMap, interval, of, Subscription, take, tap } from 'rxjs';
+import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { emptyRep, RepQuery } from '~front/app/queries/rep.query';
@@ -27,6 +29,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
 import { constants as frontConstants } from '~front/barrels/constants';
+import { DataRow } from './rep/rep.component';
 
 export class TimeSpecItem {
   label: string;
@@ -252,7 +255,13 @@ export class MetricsComponent implements OnInit, OnDestroy {
   showMetricsChart = false;
   showMetricsChartSettings = false;
   showChartForSelectedRow = false;
+
   repSelectedNodes: any[] = [];
+  repSelectedNode: IRowNode<DataRow>;
+
+  formulaForm: FormGroup = this.fb.group({
+    formula: [undefined, [Validators.required]]
+  });
 
   uiQuery$ = this.uiQuery.select().pipe(
     tap(x => {
@@ -260,8 +269,22 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
       this.showMetricsChart = x.showMetricsChart;
       this.showMetricsChartSettings = x.showMetricsChartSettings;
-      this.repSelectedNodes = x.repSelectedNodes;
       this.showChartForSelectedRow = x.showChartForSelectedRow;
+      this.repSelectedNodes = x.repSelectedNodes;
+
+      this.repSelectedNode =
+        x.repSelectedNodes.length === 1 ? x.repSelectedNodes[0] : undefined;
+
+      if (
+        common.isDefined(this.repSelectedNode) &&
+        common.isDefined(this.repSelectedNode.data.formula)
+      ) {
+        setValueAndMark({
+          control: this.formulaForm.controls['formula'],
+          value: this.repSelectedNode.data.formula
+        });
+      }
+
       this.cd.detectChanges();
     })
   );
@@ -513,6 +536,30 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
     this.uiService.setUserUi({
       showMetricsChartSettings: showMetricsChartSettings
+    });
+  }
+
+  formulaBlur() {
+    let value = this.formulaForm.controls['formula'].value;
+
+    if (
+      !this.formulaForm.valid ||
+      this.repSelectedNode.data.formula === value
+    ) {
+      return;
+    }
+
+    let rep = this.repQuery.getValue();
+
+    let rowChange: common.RowChange = {
+      rowId: this.repSelectedNode.data.rowId,
+      formula: value
+    };
+
+    this.repService.changeRows({
+      rep: rep,
+      changeType: common.ChangeTypeEnum.EditFormula,
+      rowChanges: [rowChange]
     });
   }
 

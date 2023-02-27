@@ -227,76 +227,129 @@
         </div>
 
         <div class="ml-6 flex min-w-[2px] flex-grow flex-col space-y-6">
-          <div class="w-full flex-1 rounded bg-white shadow-md">
+          <div class="w-full flex-1 flex-shrink-0 rounded bg-white shadow-md">
             <router-outlet></router-outlet>
           </div>
 
           <div
-            class="relative h-2 w-full flex-1 flex-row rounded bg-white shadow-md"
-            *ngIf="showMetricsChart === true"
+            class="flex flex-col"
+            *ngIf="showMetricsChart === true || !!repSelectedNode"
+            [ngClass]="{
+              'h-[55%]': showMetricsChart === true
+            }"
           >
-            <div class="h-full flex-1 flex-grow flex-col">
+            <div
+              *ngIf="!!repSelectedNode"
+              class="mb-5 flex flex-row items-start space-x-10"
+            >
+              <div class="flex flex-row items-start space-x-5">
+                <div
+                  class="text-gray1 flex h-9 select-none items-center font-semibold"
+                  >Row</div
+                >
+
+                <div class="flex h-9 w-[26px] items-center">{{
+                  repSelectedNode?.data?.rowId
+                }}</div>
+              </div>
+
               <div
-                class="flex h-full flex-1 flex-row space-x-5 pl-5 pr-5 pt-5 pb-2"
+                *ngIf="!!repSelectedNode?.data?.formula"
+                class="flex flex-row items-start space-x-5"
               >
                 <div
-                  class="flex h-full flex-col"
-                  [ngClass]="{
-                    'w-2/3': showMetricsChartSettings === true,
-                    'w-full': showMetricsChartSettings === false
-                  }"
+                  class="text-gray1 flex h-9 select-none items-center font-semibold"
+                  >Formula</div
                 >
-                  <ag-charts-angular
-                    *ngIf="
-                      chartOptions?.data.length > 0 &&
-                      recordsWithValuesLength > 0
-                    "
-                    style="height: 100%"
-                    [options]="chartOptions"
-                  ></ag-charts-angular>
 
+                <div [formGroup]="formulaForm">
+                  <textarea
+                    rows="5"
+                    data-cy="formulaInput"
+                    class="form-input border-gray3 focus:border-blue3 w-96 resize-none rounded"
+                    [ngClass]="{
+                      'border-red-600':
+                        formulaForm.controls['formula'].invalid &&
+                        formulaForm.controls['formula'].touched
+                    }"
+                    formControlName="formula"
+                    placeholder="$A + $B"
+                    (blur)="formulaBlur()"
+                  ></textarea>
+                  <m-validation
+                    [control]="formulaForm.controls['formula']"
+                  ></m-validation>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="relative h-2 w-full flex-grow flex-row rounded bg-white shadow-md"
+              *ngIf="showMetricsChart === true"
+            >
+              <div class="h-full flex-1 flex-grow flex-col">
+                <div
+                  class="flex h-full flex-1 flex-row space-x-5 pl-5 pr-5 pt-5 pb-2"
+                >
                   <div
-                    *ngIf="
-                      chartOptions?.data.length > 0 &&
-                      recordsWithValuesLength === 0
-                    "
-                    class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
-                    >Run queries to get data</div
+                    class="flex h-full flex-col"
+                    [ngClass]="{
+                      'w-2/3': showMetricsChartSettings === true,
+                      'w-full': showMetricsChartSettings === false
+                    }"
                   >
+                    <ag-charts-angular
+                      *ngIf="
+                        chartOptions?.data.length > 0 &&
+                        recordsWithValuesLength > 0
+                      "
+                      style="height: 100%"
+                      [options]="chartOptions"
+                    ></ag-charts-angular>
 
-                  <div
-                    *ngIf="
-                      chartOptions?.data.length === 0 &&
-                      showChartForSelectedRow === true &&
-                      repSelectedNodes.length > 1
-                    "
-                    class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
-                    >Select one row or delesect all</div
-                  >
+                    <div
+                      *ngIf="
+                        chartOptions?.data.length > 0 &&
+                        recordsWithValuesLength === 0
+                      "
+                      class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+                      >Run queries to get data</div
+                    >
 
-                  <div
-                    *ngIf="
-                      chartOptions?.data.length === 0 &&
-                      !(
+                    <div
+                      *ngIf="
+                        chartOptions?.data.length === 0 &&
                         showChartForSelectedRow === true &&
                         repSelectedNodes.length > 1
-                      )
-                    "
-                    class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
-                    >No rows to display</div
+                      "
+                      class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+                      >Select one row or delesect all</div
+                    >
+
+                    <div
+                      *ngIf="
+                        chartOptions?.data.length === 0 &&
+                        !(
+                          showChartForSelectedRow === true &&
+                          repSelectedNodes.length > 1
+                        )
+                      "
+                      class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+                      >No rows to display</div
+                    >
+                  </div>
+
+                  <m-chart-settings
+                    class="flex w-1/3 flex-col border-l border-gray-300"
+                    *ngIf="showMetricsChartSettings === true"
+                  ></m-chart-settings>
+
+                  <div
+                    class="absolute top-5 right-5 flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
+                    (click)="toggleShowMetricsChartSettings()"
                   >
-                </div>
-
-                <m-chart-settings
-                  class="flex w-1/3 flex-col border-l border-gray-300"
-                  *ngIf="showMetricsChartSettings === true"
-                ></m-chart-settings>
-
-                <div
-                  class="absolute top-5 right-5 flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
-                  (click)="toggleShowMetricsChartSettings()"
-                >
-                  <m-wrench-icon></m-wrench-icon>
+                    <m-wrench-icon></m-wrench-icon>
+                  </div>
                 </div>
               </div>
             </div>
