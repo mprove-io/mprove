@@ -1,7 +1,14 @@
-<div class="flex h-full flex-row items-center">
-  <div class="truncate">{{ params.value }}</div>
+<div
+  class="truncate"
+  [ngClass]="{
+    'font-semibold': params.data.rowType === rowTypeHeader
+  }"
+  >{{ params.value | capitalize }}</div
+>
+<!-- <div class="flex h-full flex-row items-center">
+  <div class="truncate">{{ params.value | capitalize }}</div>
   <div class="flex flex-grow"></div>
   <div class="invisible group-hover:visible">
     <m-row-options [params]="params"></m-row-options>
   </div>
-</div>
+</div> -->

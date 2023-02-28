@@ -13,6 +13,9 @@ import { DataRow } from '../rep.component';
 export class ChartRendererComponent implements ICellRendererAngularComp {
   params: ICellRendererParams<DataRow>;
 
+  rowTypeHeader = common.RowTypeEnum.Header;
+  rowTypeEmpty = common.RowTypeEnum.Empty;
+
   constructor(private repQuery: RepQuery, private repService: RepService) {}
 
   agInit(params: ICellRendererParams<DataRow>) {

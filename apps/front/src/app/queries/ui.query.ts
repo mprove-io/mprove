@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import { IRowNode } from 'ag-grid-community';
+import { GridApi, IRowNode } from 'ag-grid-community';
 import { common } from '~front/barrels/common';
 import { DataRow } from '../modules/metrics/rep/rep.component';
 import { BaseQuery } from './base.query';
@@ -9,6 +9,7 @@ export class UiState {
   panel: common.PanelEnum;
   needSave: boolean;
   gridData: DataRow[];
+  gridApi: GridApi<DataRow>;
   repChartData: {
     rows: DataRow[];
     columns: common.Column[];
@@ -26,6 +27,7 @@ let uiState: UiState = {
   needSave: false,
   panel: common.PanelEnum.Tree,
   gridData: [],
+  gridApi: undefined,
   repChartData: {
     rows: [],
     columns: []

@@ -207,7 +207,10 @@ export class RepsService {
       let pRow = processedRows.find(row => row.rowId === rowChange.rowId);
 
       let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
-        showChart: rowChange.showChart
+        showChart: common.isDefined(rowChange.showChart)
+          ? rowChange.showChart
+          : pRow.showChart,
+        name: common.isDefined(rowChange.name) ? rowChange.name : pRow.name
       });
 
       processedRows = processedRows.map(row =>

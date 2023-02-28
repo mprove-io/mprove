@@ -289,6 +289,7 @@ export class RepComponent {
 
   onGridReady(params: GridReadyEvent<DataRow>) {
     this.agGridApi = this.agGrid.api;
+    this.uiQuery.updatePart({ gridApi: this.agGridApi });
     this.agGridApi.deselectAll();
   }
 

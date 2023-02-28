@@ -1,4 +1,10 @@
-<div class="flex h-full flex-row items-center justify-center">
+<div
+  class="flex h-full flex-row items-center justify-center"
+  *ngIf="
+    params.data.rowType !== rowTypeEmpty &&
+    params.data.rowType !== rowTypeHeader
+  "
+>
   <m-chart-icon
     class="cursor-pointer"
     [ngClass]="{

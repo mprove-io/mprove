@@ -20,6 +20,7 @@ import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { StructRepResolver } from '~front/app/resolvers/struct-rep.resolver';
 import { ApiService } from '~front/app/services/api.service';
+import { MconfigService } from '~front/app/services/mconfig.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService } from '~front/app/services/query.service';
@@ -269,7 +270,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
   });
 
   nameForm: FormGroup = this.fb.group({
-    name: [undefined]
+    name: [undefined, [Validators.required]]
   });
 
   uiQuery$ = this.uiQuery.select().pipe(
@@ -325,6 +326,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
     private spinner: NgxSpinnerService,
     private uiService: UiService,
     private repService: RepService,
+    private mconfigService: MconfigService,
     private queryService: QueryService,
     private navigateService: NavigateService,
     private myDialogService: MyDialogService,
@@ -597,6 +599,40 @@ export class MetricsComponent implements OnInit, OnDestroy {
       changeType: common.ChangeTypeEnum.EditInfo,
       rowChanges: [rowChange]
     });
+  }
+
+  deleteRow() {
+    this.uiQuery.getValue().gridApi.deselectAll();
+
+    let rowChange: common.RowChange = {
+      rowId: this.repSelectedNode.data.rowId
+    };
+
+    this.repService.changeRows({
+      rep: this.rep,
+      changeType: common.ChangeTypeEnum.Delete,
+      rowChanges: [rowChange]
+    });
+  }
+
+  clearRow() {
+    let rowChange: common.RowChange = {
+      rowId: this.repSelectedNode.data.rowId
+    };
+
+    this.repService.changeRows({
+      rep: this.rep,
+      changeType: common.ChangeTypeEnum.Clear,
+      rowChanges: [rowChange]
+    });
+  }
+
+  explore() {
+    if (this.repSelectedNode.data.hasAccessToModel === true) {
+      this.mconfigService.navDuplicateMconfigAndQuery({
+        oldMconfigId: this.repSelectedNode.data.mconfig.mconfigId
+      });
+    }
   }
 
   ngOnDestroy() {
