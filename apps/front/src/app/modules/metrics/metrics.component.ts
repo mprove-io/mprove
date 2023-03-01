@@ -313,6 +313,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   runButtonTimerSubscription: Subscription;
 
+  isFormatButtonPressed = false;
+
   constructor(
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
@@ -554,85 +556,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
     this.uiService.setUserUi({
       showMetricsChartSettings: showMetricsChartSettings
     });
-  }
-
-  formulaBlur() {
-    let value = this.formulaForm.controls['formula'].value;
-
-    if (
-      !this.formulaForm.valid ||
-      this.repSelectedNode.data.formula === value
-    ) {
-      return;
-    }
-
-    let rep = this.repQuery.getValue();
-
-    let rowChange: common.RowChange = {
-      rowId: this.repSelectedNode.data.rowId,
-      formula: value
-    };
-
-    this.repService.changeRows({
-      rep: rep,
-      changeType: common.ChangeTypeEnum.EditFormula,
-      rowChanges: [rowChange]
-    });
-  }
-
-  nameBlur() {
-    let value = this.nameForm.controls['name'].value;
-
-    if (!this.nameForm.valid || this.repSelectedNode.data.name === value) {
-      return;
-    }
-
-    let rep = this.repQuery.getValue();
-
-    let rowChange: common.RowChange = {
-      rowId: this.repSelectedNode.data.rowId,
-      name: value
-    };
-
-    this.repService.changeRows({
-      rep: rep,
-      changeType: common.ChangeTypeEnum.EditInfo,
-      rowChanges: [rowChange]
-    });
-  }
-
-  deleteRow() {
-    this.uiQuery.getValue().gridApi.deselectAll();
-
-    let rowChange: common.RowChange = {
-      rowId: this.repSelectedNode.data.rowId
-    };
-
-    this.repService.changeRows({
-      rep: this.rep,
-      changeType: common.ChangeTypeEnum.Delete,
-      rowChanges: [rowChange]
-    });
-  }
-
-  clearRow() {
-    let rowChange: common.RowChange = {
-      rowId: this.repSelectedNode.data.rowId
-    };
-
-    this.repService.changeRows({
-      rep: this.rep,
-      changeType: common.ChangeTypeEnum.Clear,
-      rowChanges: [rowChange]
-    });
-  }
-
-  explore() {
-    if (this.repSelectedNode.data.hasAccessToModel === true) {
-      this.mconfigService.navDuplicateMconfigAndQuery({
-        oldMconfigId: this.repSelectedNode.data.mconfig.mconfigId
-      });
-    }
   }
 
   ngOnDestroy() {

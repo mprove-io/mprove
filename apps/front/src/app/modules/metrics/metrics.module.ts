@@ -26,12 +26,14 @@ import { RowIdRendererComponent } from './rep/row-id-renderer/row-id-renderer.co
 import { RowOptionsComponent } from './rep/row-options/row-options.component';
 import { StatusHeaderComponent } from './rep/status-header/status-header.component';
 import { StatusRendererComponent } from './rep/status-renderer/status-renderer.component';
+import { RowComponent } from './row/row.component';
 
 @NgModule({
   declarations: [
     MetricsComponent,
     MetricsTreeComponent,
     RepComponent,
+    RowComponent,
     RepOptionsComponent,
     RowOptionsComponent,
     MetricRendererComponent,
