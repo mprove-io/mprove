@@ -313,8 +313,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   runButtonTimerSubscription: Subscription;
 
-  isFormatButtonPressed = false;
-
   constructor(
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,

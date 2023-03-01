@@ -15,9 +15,6 @@ import { DataRow } from '../rep/rep.component';
   templateUrl: './row.component.html'
 })
 export class RowComponent {
-  repSelectedNodes: any[] = [];
-  repSelectedNode: IRowNode<DataRow>;
-
   rowTypeFormula = common.RowTypeEnum.Formula;
   rowTypeMetric = common.RowTypeEnum.Metric;
   rowTypeHeader = common.RowTypeEnum.Header;
@@ -31,30 +28,21 @@ export class RowComponent {
     name: [undefined, [Validators.required]]
   });
 
+  isShowFormatOptions = false;
+
   rep: common.RepX;
   rep$ = this.repQuery.select().pipe(
     tap(x => {
       this.rep = x;
 
-      // console.log(x);
-
-      // this.queriesLength = this.rep.rows.filter(row =>
-      //   common.isDefined(row.query)
-      // ).length;
-
       this.cd.detectChanges();
     })
   );
 
+  repSelectedNode: IRowNode<DataRow>;
+
   uiQuery$ = this.uiQuery.select().pipe(
     tap(x => {
-      // this.fractions = [x.timeRangeFraction];
-
-      // this.showMetricsChart = x.showMetricsChart;
-      // this.showMetricsChartSettings = x.showMetricsChartSettings;
-      // this.showChartForSelectedRow = x.showChartForSelectedRow;
-      // this.repSelectedNodes = x.repSelectedNodes;
-
       this.repSelectedNode =
         x.repSelectedNodes.length === 1 ? x.repSelectedNodes[0] : undefined;
 
@@ -164,5 +152,10 @@ export class RowComponent {
         oldMconfigId: this.repSelectedNode.data.mconfig.mconfigId
       });
     }
+  }
+
+  toggleShowFormatOptions() {
+    this.isShowFormatOptions = !this.isShowFormatOptions;
+    this.cd.detectChanges();
   }
 }
