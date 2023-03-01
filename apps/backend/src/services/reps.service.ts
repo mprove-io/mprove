@@ -210,7 +210,16 @@ export class RepsService {
         showChart: common.isDefined(rowChange.showChart)
           ? rowChange.showChart
           : pRow.showChart,
-        name: common.isDefined(rowChange.name) ? rowChange.name : pRow.name
+        name: common.isDefined(rowChange.name) ? rowChange.name : pRow.name,
+        formatNumber: common.isDefined(rowChange.formatNumber)
+          ? rowChange.formatNumber
+          : pRow.formatNumber,
+        currencyPrefix: common.isDefined(rowChange.currencyPrefix)
+          ? rowChange.currencyPrefix
+          : pRow.currencyPrefix,
+        currencySuffix: common.isDefined(rowChange.currencySuffix)
+          ? rowChange.currencySuffix
+          : pRow.currencySuffix
       });
 
       processedRows = processedRows.map(row =>

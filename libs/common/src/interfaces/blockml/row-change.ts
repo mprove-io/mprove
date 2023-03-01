@@ -28,4 +28,16 @@ export class RowChange {
 
   @IsOptional()
   params?: any[];
+
+  @IsOptional()
+  @IsString()
+  formatNumber?: string;
+
+  @IsOptional()
+  @IsString()
+  currencyPrefix?: string;
+
+  @IsOptional()
+  @IsString()
+  currencySuffix?: string;
 }

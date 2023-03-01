@@ -7,6 +7,7 @@ import { RepQuery } from '~front/app/queries/rep.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { RepService } from '~front/app/services/rep.service';
+import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
 import { DataRow } from '../rep/rep.component';
 
@@ -26,6 +27,13 @@ export class RowComponent {
 
   nameForm: FormGroup = this.fb.group({
     name: [undefined, [Validators.required]]
+  });
+
+  formatNumberForm: FormGroup = this.fb.group({
+    formatNumber: [
+      undefined,
+      [ValidationService.formatNumberValidator, Validators.maxLength(255)]
+    ]
   });
 
   isShowFormatOptions = false;
@@ -58,6 +66,16 @@ export class RowComponent {
           setValueAndMark({
             control: this.nameForm.controls['name'],
             value: this.repSelectedNode.data.name
+          });
+        }
+
+        if (
+          this.repSelectedNode.data.rowType !== common.RowTypeEnum.Empty &&
+          this.repSelectedNode.data.rowType !== common.RowTypeEnum.Header
+        ) {
+          setValueAndMark({
+            control: this.formatNumberForm.controls['formatNumber'],
+            value: this.repSelectedNode.data.formatNumber
           });
         }
       }
@@ -111,6 +129,30 @@ export class RowComponent {
     let rowChange: common.RowChange = {
       rowId: this.repSelectedNode.data.rowId,
       name: value
+    };
+
+    this.repService.changeRows({
+      rep: rep,
+      changeType: common.ChangeTypeEnum.EditInfo,
+      rowChanges: [rowChange]
+    });
+  }
+
+  formatNumberBlur() {
+    let value = this.formatNumberForm.controls['formatNumber'].value;
+
+    if (
+      !this.formatNumberForm.valid ||
+      this.repSelectedNode.data.formatNumber === value
+    ) {
+      return;
+    }
+
+    let rep = this.repQuery.getValue();
+
+    let rowChange: common.RowChange = {
+      rowId: this.repSelectedNode.data.rowId,
+      formatNumber: value
     };
 
     this.repService.changeRows({
