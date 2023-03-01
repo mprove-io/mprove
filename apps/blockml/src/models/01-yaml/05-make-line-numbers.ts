@@ -4,6 +4,7 @@ import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
+import { ParameterEnum } from '~blockml/enums/_index';
 import { BmError } from '~blockml/models/bm-error';
 
 let func = enums.FuncEnum.MakeLineNumbers;
@@ -157,7 +158,13 @@ export function processLineNumbersRecursive(item: {
       let npReg2 = common.MyRegex.BETWEEN_LINE_NUM_G();
       item.hash[newPar] = item.hash[newPar].toString().replace(npReg2, '');
       // remove whitespaces
-      let reg3 = common.MyRegex.CAPTURE_WITHOUT_EDGE_WHITESPACES();
+      let reg3 =
+        [
+          ParameterEnum.CurrencyPrefix.toString(),
+          ParameterEnum.CurrencySuffix.toString()
+        ].indexOf(newPar) > -1
+          ? common.MyRegex.CAPTURE_WITH_EDGE_WHITESPACES()
+          : common.MyRegex.CAPTURE_WITHOUT_EDGE_WHITESPACES();
       let r3 = reg3.exec(item.hash[newPar]);
       item.hash[newPar] = r3 ? r3[1] : item.hash[newPar];
     }

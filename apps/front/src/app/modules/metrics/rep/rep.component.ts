@@ -139,32 +139,16 @@ export class RepComponent {
 
       this.columnDefs = [...this.columns, ...this.timeColumns];
 
-      let metrics = this.metricsQuery.getValue();
+      // let metrics = this.metricsQuery.getValue();
 
       this.data = x.rows.map((row: common.Row) => {
-        let metric = metrics.metrics.find(m => m.metricId === row.metricId);
+        // let metric = metrics.metrics.find(m => m.metricId === row.metricId);
 
-        let dataRow: DataRow = {
-          rowId: row.rowId,
-          rowType: row.rowType,
-          name: row.name,
+        let dataRow: DataRow = Object.assign({}, row, {
           parameters: common.isDefined(row.params)
             ? JSON.stringify(row.params)
-            : '',
-          showChart: row.showChart,
-          query: row.query,
-          metricId: row.metricId,
-          mconfig: row.mconfig,
-          hasAccessToModel: row.hasAccessToModel,
-          formula: row.formula,
-          formulaDeps: row.formulaDeps,
-          params: row.params,
-          records: row.records,
-          rqs: row.rqs,
-          currencyPrefix: metric?.currencyPrefix || row.currencyPrefix,
-          currencySuffix: metric?.currencySuffix || row.currencySuffix,
-          formatNumber: metric?.formatNumber || row.formatNumber
-        };
+            : ''
+        });
 
         row.records
           .filter(record => record.key !== 0)

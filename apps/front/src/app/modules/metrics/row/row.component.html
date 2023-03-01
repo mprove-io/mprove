@@ -55,11 +55,14 @@
       class="flex h-11 flex-row items-center space-x-5"
       *ngIf="repSelectedNode.data.rowType === rowTypeMetric"
     >
-      <div class="text-gray1 flex select-none items-center font-semibold"
+      <div
+        class="text-gray1 flex flex-shrink-0 select-none items-center font-semibold"
         >Metric Id</div
       >
 
-      <div class="flex items-center">{{ repSelectedNode.data.metricId }}</div>
+      <div class="flex items-center truncate">
+        <div class="truncate">{{ repSelectedNode.data.metricId }}</div>
+      </div>
     </div>
 
     <div
@@ -101,7 +104,7 @@
       <div [formGroup]="nameForm" class="relative flex w-full">
         <input
           data-cy="nameInput"
-          class="form-input border-gray3 focus:border-blue3 w-full resize-none rounded"
+          class="form-input border-gray3 focus:border-blue3 w-full min-w-[100px] resize-none rounded"
           [ngClass]="{
             'border-red-600':
               nameForm.controls['name'].invalid &&
@@ -151,7 +154,7 @@
         repSelectedNode.data.rowType !== rowTypeEmpty &&
         repSelectedNode.data.rowType !== rowTypeHeader
       "
-      class="flex h-11 flex-1 flex-row items-center space-x-5"
+      class="flex h-11 flex-row items-center space-x-5"
     >
       <div
         class="text-gray1 flex flex-shrink-0 select-none items-center font-semibold"
@@ -174,6 +177,70 @@
         <m-validation
           class="absolute -bottom-5 left-0"
           [control]="formatNumberForm.controls['formatNumber']"
+        ></m-validation>
+      </div>
+    </div>
+
+    <div
+      *ngIf="
+        repSelectedNode.data.rowType !== rowTypeEmpty &&
+        repSelectedNode.data.rowType !== rowTypeHeader
+      "
+      class="flex h-11 flex-row items-center space-x-5"
+    >
+      <div
+        class="text-gray1 flex flex-shrink-0 select-none items-center font-semibold"
+        >Currency Prefix</div
+      >
+
+      <div [formGroup]="currencyPrefixForm" class="relative flex w-32">
+        <input
+          data-cy="currencyPrefixInput"
+          class="form-input border-gray3 focus:border-blue3 w-full resize-none rounded"
+          [ngClass]="{
+            'border-red-600':
+              currencyPrefixForm.controls['currencyPrefix'].invalid &&
+              currencyPrefixForm.controls['currencyPrefix'].touched
+          }"
+          formControlName="currencyPrefix"
+          placeholder=""
+          (blur)="currencyPrefixBlur()"
+        />
+        <m-validation
+          class="absolute -bottom-5 left-0"
+          [control]="currencyPrefixForm.controls['currencyPrefix']"
+        ></m-validation>
+      </div>
+    </div>
+
+    <div
+      *ngIf="
+        repSelectedNode.data.rowType !== rowTypeEmpty &&
+        repSelectedNode.data.rowType !== rowTypeHeader
+      "
+      class="flex h-11 flex-row items-center space-x-5"
+    >
+      <div
+        class="text-gray1 flex flex-shrink-0 select-none items-center font-semibold"
+        >Currency Suffix</div
+      >
+
+      <div [formGroup]="currencySuffixForm" class="relative flex w-32">
+        <input
+          data-cy="currencySuffixInput"
+          class="form-input border-gray3 focus:border-blue3 w-full resize-none rounded"
+          [ngClass]="{
+            'border-red-600':
+              currencySuffixForm.controls['currencySuffix'].invalid &&
+              currencySuffixForm.controls['currencySuffix'].touched
+          }"
+          formControlName="currencySuffix"
+          placeholder=""
+          (blur)="currencySuffixBlur()"
+        />
+        <m-validation
+          class="absolute -bottom-5 left-0"
+          [control]="currencySuffixForm.controls['currencySuffix']"
         ></m-validation>
       </div>
     </div>

@@ -93,6 +93,9 @@ export class MyRegex {
   static BETWEEN_LINE_NUM_G(): RegExp {
     return cloneRegexp(/_line_num___.+?___line_num_/g);
   }
+  static CAPTURE_WITH_EDGE_WHITESPACES(): RegExp {
+    return cloneRegexp(/^([\s\S]+?)$/);
+  }
   static CAPTURE_WITHOUT_EDGE_WHITESPACES(): RegExp {
     return cloneRegexp(/^\s*([\s\S]+?)\s*$/);
   }

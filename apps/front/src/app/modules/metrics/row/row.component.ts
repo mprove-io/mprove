@@ -36,6 +36,14 @@ export class RowComponent {
     ]
   });
 
+  currencyPrefixForm: FormGroup = this.fb.group({
+    currencyPrefix: [undefined, [Validators.maxLength(255)]]
+  });
+
+  currencySuffixForm: FormGroup = this.fb.group({
+    currencySuffix: [undefined, [Validators.maxLength(255)]]
+  });
+
   isShowFormatOptions = false;
 
   rep: common.RepX;
@@ -76,6 +84,16 @@ export class RowComponent {
           setValueAndMark({
             control: this.formatNumberForm.controls['formatNumber'],
             value: this.repSelectedNode.data.formatNumber
+          });
+
+          setValueAndMark({
+            control: this.currencyPrefixForm.controls['currencyPrefix'],
+            value: this.repSelectedNode.data.currencyPrefix
+          });
+
+          setValueAndMark({
+            control: this.currencySuffixForm.controls['currencySuffix'],
+            value: this.repSelectedNode.data.currencySuffix
           });
         }
       }
@@ -153,6 +171,54 @@ export class RowComponent {
     let rowChange: common.RowChange = {
       rowId: this.repSelectedNode.data.rowId,
       formatNumber: value
+    };
+
+    this.repService.changeRows({
+      rep: rep,
+      changeType: common.ChangeTypeEnum.EditInfo,
+      rowChanges: [rowChange]
+    });
+  }
+
+  currencyPrefixBlur() {
+    let value = this.currencyPrefixForm.controls['currencyPrefix'].value;
+
+    if (
+      !this.currencyPrefixForm.valid ||
+      this.repSelectedNode.data.currencyPrefix === value
+    ) {
+      return;
+    }
+
+    let rep = this.repQuery.getValue();
+
+    let rowChange: common.RowChange = {
+      rowId: this.repSelectedNode.data.rowId,
+      currencyPrefix: value
+    };
+
+    this.repService.changeRows({
+      rep: rep,
+      changeType: common.ChangeTypeEnum.EditInfo,
+      rowChanges: [rowChange]
+    });
+  }
+
+  currencySuffixBlur() {
+    let value = this.currencySuffixForm.controls['currencySuffix'].value;
+
+    if (
+      !this.currencySuffixForm.valid ||
+      this.repSelectedNode.data.currencySuffix === value
+    ) {
+      return;
+    }
+
+    let rep = this.repQuery.getValue();
+
+    let rowChange: common.RowChange = {
+      rowId: this.repSelectedNode.data.rowId,
+      currencySuffix: value
     };
 
     this.repService.changeRows({
