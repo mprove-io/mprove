@@ -158,7 +158,7 @@ export class DocService {
       };
 
       rep.rows
-        .filter(row => common.isUndefined(row.formula))
+        .filter(row => row.rowType === common.RowTypeEnum.Metric)
         .forEach((row: common.Row) => {
           if (column.columnId === zeroColumnId) {
             record.fields[row.rowId] = 0;

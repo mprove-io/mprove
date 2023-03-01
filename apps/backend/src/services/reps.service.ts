@@ -695,11 +695,11 @@ export class RepsService {
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded
     });
 
-    let rowsWithNotCalculatedFormulas = repApi.rows.filter(row => {
-      if (common.isUndefined(row.formula)) {
-        return false;
-      }
+    let formulaRows = repApi.rows.filter(
+      row => row.rowType === common.RowTypeEnum.Formula
+    );
 
+    let formulaRowsCalculated = formulaRows.filter(row => {
       let rq = row.rqs.find(
         y =>
           y.fractionBrick === timeRangeFraction.brick &&
@@ -707,22 +707,18 @@ export class RepsService {
           y.timezone === timezone
       );
 
-      if (common.isUndefined(rq)) {
-        return true;
-      } else {
-        return rq.lastCalculatedTs === 0;
-      }
+      return common.isDefined(rq) && rq.lastCalculatedTs > 0;
     });
 
-    let rowsWithQueries = repApi.rows.filter(row =>
-      common.isDefined(row.query)
+    let queryRows = repApi.rows.filter(
+      row => row.rowType === common.RowTypeEnum.Metric
     );
 
-    let completedRows = rowsWithQueries.filter(
+    let queryRowsCompleted = queryRows.filter(
       row => row.query.status === common.QueryStatusEnum.Completed
     );
 
-    let calculatedRows = completedRows.filter(row => {
+    let queryRowsCompletedCalculated = queryRowsCompleted.filter(row => {
       let rq = row.rqs.find(
         y =>
           y.fractionBrick === timeRangeFraction.brick &&
@@ -730,14 +726,16 @@ export class RepsService {
           y.timezone === timezone
       );
 
-      return rq.lastCalculatedTs === row.query.lastCompleteTs;
+      return (
+        common.isDefined(rq) && rq.lastCalculatedTs === row.query.lastCompleteTs
+      );
     });
 
     let isCalculate =
       rep.rep_id !== common.EMPTY_REP_ID &&
-      rowsWithQueries.length === completedRows.length &&
-      (completedRows.length !== calculatedRows.length ||
-        rowsWithNotCalculatedFormulas.length > 0);
+      queryRows.length === queryRowsCompleted.length &&
+      (queryRowsCompleted.length !== queryRowsCompletedCalculated.length ||
+        formulaRows.length !== formulaRowsCalculated.length);
 
     if (isCalculate === true) {
       console.log('isCalculate true');
