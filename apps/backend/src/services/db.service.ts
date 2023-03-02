@@ -104,6 +104,7 @@ export class DbService {
         reps,
         apis,
         mconfigs,
+        kits,
         dashboards,
         notes
       } = records;
@@ -172,6 +173,10 @@ export class DbService {
 
       if (common.isDefined(mconfigs) && mconfigs.length > 0) {
         await manager.getRepository(entities.MconfigEntity).insert(mconfigs);
+      }
+
+      if (common.isDefined(kits) && kits.length > 0) {
+        await manager.getRepository(entities.KitEntity).insert(kits);
       }
 
       if (common.isDefined(dashboards) && dashboards.length > 0) {
@@ -257,6 +262,7 @@ export class DbService {
         reps,
         apis,
         mconfigs,
+        kits,
         dashboards,
         notes
       } = records;
@@ -325,6 +331,10 @@ export class DbService {
 
       if (common.isDefined(mconfigs) && mconfigs.length > 0) {
         await manager.getRepository(entities.MconfigEntity).save(mconfigs);
+      }
+
+      if (common.isDefined(kits) && kits.length > 0) {
+        await manager.getRepository(entities.KitEntity).save(kits);
       }
 
       if (common.isDefined(dashboards) && dashboards.length > 0) {

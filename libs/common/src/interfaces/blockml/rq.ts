@@ -17,9 +17,10 @@ export class Rq {
   @IsString()
   queryId: string;
 
+  @IsString()
+  kitId: string;
+
   @IsOptional()
   @IsInt()
   lastCalculatedTs: number;
-
-  records: any[];
 }

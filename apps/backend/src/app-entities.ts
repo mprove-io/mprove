@@ -8,6 +8,7 @@ export const appEntities = [
   entities.RepEntity,
   entities.ApiEntity,
   entities.QueryEntity,
+  entities.KitEntity,
   entities.StructEntity,
   entities.VizEntity,
   entities.AvatarEntity,

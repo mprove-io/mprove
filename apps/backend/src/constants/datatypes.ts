@@ -6,6 +6,7 @@ export const REP_ID_VARCHAR = 'varchar';
 export const API_ID_VARCHAR = 'varchar';
 export const METRIC_ID_VARCHAR = 'varchar';
 export const QUERY_ID_VARCHAR = 'varchar';
+export const KIT_ID_VARCHAR = 'varchar';
 export const STRUCT_ID_VARCHAR = 'varchar';
 export const VIEW_ID_VARCHAR = 'varchar';
 export const VISUALIZATION_ID_VARCHAR = 'varchar';

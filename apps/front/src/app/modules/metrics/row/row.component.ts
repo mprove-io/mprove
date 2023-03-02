@@ -62,6 +62,8 @@ export class RowComponent {
       this.repSelectedNode =
         x.repSelectedNodes.length === 1 ? x.repSelectedNodes[0] : undefined;
 
+      console.log(this.repSelectedNode);
+
       if (common.isDefined(this.repSelectedNode)) {
         if (this.repSelectedNode.data.rowType === common.RowTypeEnum.Formula) {
           setValueAndMark({

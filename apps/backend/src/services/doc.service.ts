@@ -3,14 +3,19 @@ import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { format, fromUnixTime } from 'date-fns';
 import { common } from '~backend/barrels/common';
+import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { DbService } from './db.service';
 
 @Injectable()
 export class DocService {
-  constructor(private cs: ConfigService<interfaces.Config>) {}
+  constructor(
+    private cs: ConfigService<interfaces.Config>,
+    private dbService: DbService
+  ) {}
 
-  async getData(item: {
+  async calculateData(item: {
     rep: common.RepX;
     timezone: string;
     timeSpec: common.TimeSpecEnum;
@@ -61,7 +66,7 @@ export class DocService {
               id: x.rowId,
               fields: {
                 type: 'Numeric',
-                isFormula: common.isDefined(x.formula),
+                isFormula: x.rowType === common.RowTypeEnum.Formula,
                 formula: x.formula
               }
             }))
@@ -76,7 +81,7 @@ export class DocService {
       {}
     );
 
-    let dataRecords = this.makeDataRecords({
+    let recordsByColumn = this.makeRecordsByColumn({
       rep: rep,
       timeSpec: timeSpec
     });
@@ -84,7 +89,7 @@ export class DocService {
     let createRecordsResp = await sender.post(
       `api/docs/${docId}/tables/${metricsTableId}/records`,
       {
-        records: dataRecords
+        records: recordsByColumn
       },
       {}
     );
@@ -94,33 +99,64 @@ export class DocService {
       {}
     );
 
-    rep.rows.forEach(x => {
-      x.records = getRecordsResp.data.records.map((y: any) => ({
-        id: y.id,
-        key: y.fields.timestamp,
-        value: common.isDefined(y.fields) ? y.fields[x.rowId] : undefined,
-        error: common.isDefined(y.errors) ? y.errors[x.rowId] : undefined
-      }));
+    let lastCalculatedTs = Number(helper.makeTs());
 
-      let rq = x.rqs.find(
-        y =>
-          y.fractionBrick === timeRangeFraction.brick &&
-          y.timeSpec === timeSpec &&
-          y.timezone === timezone
-      );
+    let newKits: entities.KitEntity[] = [];
 
-      if (common.isDefined(rq)) {
-        rq.records = x.records;
-        rq.lastCalculatedTs = common.isDefined(x.query)
-          ? x.query.lastCompleteTs
-          : Number(helper.makeTs());
-      }
-    });
+    rep.rows
+      .filter(
+        row =>
+          row.rowType === common.RowTypeEnum.Metric ||
+          row.rowType === common.RowTypeEnum.Formula
+      )
+      .forEach(row => {
+        row.records = getRecordsResp.data.records.map((y: any) => ({
+          id: y.id,
+          key: y.fields.timestamp,
+          value: common.isDefined(y.fields) ? y.fields[row.rowId] : undefined,
+          error: common.isDefined(y.errors) ? y.errors[row.rowId] : undefined
+        }));
+
+        let rq = row.rqs.find(
+          y =>
+            y.fractionBrick === timeRangeFraction.brick &&
+            y.timeSpec === timeSpec &&
+            y.timezone === timezone
+        );
+
+        if (row.rowType === common.RowTypeEnum.Formula) {
+          rq.kitId = common.makeId();
+
+          let newKit: entities.KitEntity = {
+            struct_id: rep.structId,
+            kit_id: rq.kitId,
+            rep_id: rep.repId,
+            data: row.records,
+            server_ts: undefined
+          };
+
+          newKits.push(newKit);
+        }
+
+        rq.lastCalculatedTs = lastCalculatedTs;
+      });
+
+    if (newKits.length > 0) {
+      await this.dbService.writeRecords({
+        modify: false,
+        records: {
+          kits: newKits
+        }
+      });
+    }
 
     return rep;
   }
 
-  makeDataRecords(item: { rep: common.RepX; timeSpec: common.TimeSpecEnum }) {
+  makeRecordsByColumn(item: {
+    rep: common.RepX;
+    timeSpec: common.TimeSpecEnum;
+  }) {
     let { rep, timeSpec } = item;
 
     let zeroColumnId = 0;
@@ -130,7 +166,7 @@ export class DocService {
       label: 'ZeroColumn'
     };
 
-    let dataRecords = [zeroColumn, ...rep.columns].map((column, i) => {
+    let recordsByColumn = [zeroColumn, ...rep.columns].map((column, i) => {
       let tsDate = fromUnixTime(column.columnId);
 
       let timeValue =
@@ -172,7 +208,11 @@ export class DocService {
             );
 
             if (common.isDefined(dataRow)) {
-              record.fields[row.rowId] = dataRow[fieldId];
+              record.fields[row.rowId] = common.isUndefined(dataRow[fieldId])
+                ? undefined
+                : isNaN(dataRow[fieldId]) === false
+                ? Number(dataRow[fieldId])
+                : dataRow[fieldId];
             }
           }
         });
@@ -180,6 +220,6 @@ export class DocService {
       return record;
     });
 
-    return dataRecords;
+    return recordsByColumn;
   }
 }

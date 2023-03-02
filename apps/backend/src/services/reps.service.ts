@@ -22,6 +22,7 @@ export class RepsService {
     private modelsRepository: repositories.ModelsRepository,
     private metricsRepository: repositories.MetricsRepository,
     private queriesRepository: repositories.QueriesRepository,
+    private kitsRepository: repositories.KitsRepository,
     private mconfigsRepository: repositories.MconfigsRepository,
     private dbService: DbService,
     private blockmlService: BlockmlService
@@ -86,7 +87,7 @@ export class RepsService {
 
         if (isClearFormulasData === true) {
           processedRows
-            .filter(row => common.isDefined(row.formula))
+            .filter(row => row.rowType === common.RowTypeEnum.Formula)
             .forEach(row => {
               let rq = row.rqs.find(
                 y =>
@@ -94,9 +95,8 @@ export class RepsService {
                   y.timeSpec === timeSpec &&
                   y.timezone === timezone
               );
-              if (common.isDefined(rq)) {
-                rq.records = [];
-              }
+              rq.kitId = undefined;
+              rq.lastCalculatedTs = 0;
             });
         }
 
@@ -160,7 +160,7 @@ export class RepsService {
       rowChanges.forEach(rowChange => {
         processedRows.forEach(row => {
           if (
-            common.isDefined(row.formula) &&
+            row.rowType === common.RowTypeEnum.Formula &&
             row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
           ) {
             let rq = row.rqs.find(
@@ -170,6 +170,7 @@ export class RepsService {
                 y.timezone === timezone
             );
 
+            rq.kitId = undefined;
             rq.lastCalculatedTs = 0;
           }
         });
@@ -232,7 +233,7 @@ export class RepsService {
 
       processedRows.forEach(row => {
         if (
-          common.isDefined(row.formula) &&
+          row.rowType === common.RowTypeEnum.Formula &&
           row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
         ) {
           let rq = row.rqs.find(
@@ -242,6 +243,7 @@ export class RepsService {
               y.timezone === timezone
           );
 
+          rq.kitId = undefined;
           rq.lastCalculatedTs = 0;
         }
       });
@@ -268,7 +270,7 @@ export class RepsService {
 
       processedRows.forEach(row => {
         if (
-          common.isDefined(row.formula) &&
+          row.rowType === common.RowTypeEnum.Formula &&
           row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
         ) {
           let rq = row.rqs.find(
@@ -278,11 +280,12 @@ export class RepsService {
               y.timezone === timezone
           );
 
+          rq.kitId = undefined;
           rq.lastCalculatedTs = 0;
         }
       });
 
-      let metric = metrics.find(m => m.metric_id === rowChange.metricId);
+      // let metric = metrics.find(m => m.metric_id === rowChange.metricId);
 
       let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
         params: rowChange.params,
@@ -299,7 +302,7 @@ export class RepsService {
       rowChanges.forEach(rowChange => {
         processedRows.forEach(row => {
           if (
-            common.isDefined(row.formula) &&
+            row.rowType === common.RowTypeEnum.Formula &&
             row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
           ) {
             let rq = row.rqs.find(
@@ -309,6 +312,7 @@ export class RepsService {
                 y.timezone === timezone
             );
 
+            rq.kitId = undefined;
             rq.lastCalculatedTs = 0;
           }
         });
@@ -481,150 +485,163 @@ export class RepsService {
       }
     });
 
-    let newQueries: common.Query[] = [];
     let newMconfigs: common.Mconfig[] = [];
+    let newQueries: common.Query[] = [];
 
-    let queryIds: string[] = [];
     let mconfigIds: string[] = [];
+    let queryIds: string[] = [];
+    let kitIds: string[] = [];
 
-    await forEachSeries(
-      rep.rows.filter(x => common.isDefined(x.metricId)),
-      async x => {
-        let rq = x.rqs.find(
-          y =>
-            y.fractionBrick === timeRangeFraction.brick &&
-            y.timeSpec === timeSpec &&
-            y.timezone === timezone
-        );
+    await forEachSeries(rep.rows, async x => {
+      let rq = x.rqs.find(
+        y =>
+          y.fractionBrick === timeRangeFraction.brick &&
+          y.timeSpec === timeSpec &&
+          y.timezone === timezone
+      );
 
-        if (common.isDefined(rq)) {
+      if (common.isDefined(rq)) {
+        if (x.rowType === common.RowTypeEnum.Metric) {
           queryIds.push(rq.queryId);
           mconfigIds.push(rq.mconfigId);
-        } else {
-          let newMconfig;
-          let newQuery;
+        } else if (x.rowType === common.RowTypeEnum.Formula) {
+          kitIds.push(rq.kitId);
+        }
+      } else {
+        let newMconfig: common.Mconfig;
+        let newQuery: common.Query;
 
-          if (common.isUndefined(x.formula)) {
-            let newMconfigId = common.makeId();
-            let newQueryId = common.makeId();
+        if (x.rowType === common.RowTypeEnum.Metric) {
+          let newMconfigId = common.makeId();
+          let newQueryId = common.makeId();
 
-            let metric: entities.MetricEntity = metrics.find(
-              m => m.metric_id === x.metricId
-            );
-            let model = models.find(ml => ml.model_id === metric.model_id);
+          let metric: entities.MetricEntity = metrics.find(
+            m => m.metric_id === x.metricId
+          );
 
-            let timeSpecWord =
-              timeSpec === common.TimeSpecEnum.Years
-                ? 'year'
-                : timeSpec === common.TimeSpecEnum.Quarters
-                ? 'quarter'
-                : timeSpec === common.TimeSpecEnum.Months
-                ? 'month'
-                : timeSpec === common.TimeSpecEnum.Weeks
-                ? 'week'
-                : timeSpec === common.TimeSpecEnum.Days
-                ? 'date'
-                : timeSpec === common.TimeSpecEnum.Hours
-                ? 'hour'
-                : timeSpec === common.TimeSpecEnum.Minutes
-                ? 'minute'
-                : undefined;
+          let model = models.find(ml => ml.model_id === metric.model_id);
 
-            let timeFieldIdSpec = `${metric.timefield_id}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
+          let timeSpecWord =
+            timeSpec === common.TimeSpecEnum.Years
+              ? 'year'
+              : timeSpec === common.TimeSpecEnum.Quarters
+              ? 'quarter'
+              : timeSpec === common.TimeSpecEnum.Months
+              ? 'month'
+              : timeSpec === common.TimeSpecEnum.Weeks
+              ? 'week'
+              : timeSpec === common.TimeSpecEnum.Days
+              ? 'date'
+              : timeSpec === common.TimeSpecEnum.Hours
+              ? 'hour'
+              : timeSpec === common.TimeSpecEnum.Minutes
+              ? 'minute'
+              : undefined;
 
-            let timeFilter: common.Filter = {
-              fieldId: timeFieldIdSpec,
-              fractions: [timeRangeFraction]
-            };
+          let timeFieldIdSpec = `${metric.timefield_id}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
-            let timeSorting: common.Sorting = {
-              desc: false,
-              fieldId: timeFieldIdSpec
-            };
-
-            let mconfig: common.Mconfig = {
-              structId: struct.struct_id,
-              mconfigId: newMconfigId,
-              queryId: newQueryId,
-              modelId: model.model_id,
-              modelLabel: model.label,
-              select: [timeFieldIdSpec, metric.field_id],
-              sortings: [timeSorting],
-              sorts: timeFieldIdSpec,
-              timezone: timezone,
-              limit: timeColumnsLimit,
-              filters: [timeFilter],
-              chart: common.DEFAULT_CHART,
-              temp: true,
-              serverTs: 1
-              // fields: [],
-              // extendedFilters: [],
-            };
-
-            mconfig.chart.type = common.ChartTypeEnum.Line;
-
-            mconfig = common.setChartTitleOnSelectChange({
-              mconfig: mconfig,
-              fields: model.fields
-            });
-
-            mconfig = common.setChartFields({
-              mconfig: mconfig,
-              fields: model.fields
-            });
-
-            let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
-              {
-                info: {
-                  name: apiToBlockml.ToBlockmlRequestInfoNameEnum
-                    .ToBlockmlProcessQuery,
-                  traceId: traceId
-                },
-                payload: {
-                  orgId: project.org_id,
-                  projectId: project.project_id,
-                  weekStart: struct.week_start,
-                  udfsDict: struct.udfs_dict,
-                  mconfig: mconfig,
-                  modelContent: model.content,
-                  envId: envId
-                }
-              };
-
-            let blockmlProcessQueryResponse =
-              await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlProcessQueryResponse>(
-                {
-                  routingKey:
-                    common.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
-                  message: toBlockmlProcessQueryRequest,
-                  checkIsOk: true
-                }
-              );
-
-            newMconfig = blockmlProcessQueryResponse.payload.mconfig;
-            newQuery = blockmlProcessQueryResponse.payload.query;
-
-            newMconfig.queryId = newQueryId;
-            newQuery.queryId = newQueryId;
-
-            newMconfigs.push(newMconfig);
-            newQueries.push(newQuery);
-          }
-
-          let newRq: common.Rq = {
-            fractionBrick: timeRangeFraction.brick,
-            timeSpec: timeSpec,
-            timezone: timezone,
-            mconfigId: newMconfig?.mconfigId,
-            queryId: newMconfig?.queryId,
-            records: [],
-            lastCalculatedTs: 0
+          let timeFilter: common.Filter = {
+            fieldId: timeFieldIdSpec,
+            fractions: [timeRangeFraction]
           };
 
-          x.rqs.push(newRq);
+          let timeSorting: common.Sorting = {
+            desc: false,
+            fieldId: timeFieldIdSpec
+          };
+
+          let mconfig: common.Mconfig = {
+            structId: struct.struct_id,
+            mconfigId: newMconfigId,
+            queryId: newQueryId,
+            modelId: model.model_id,
+            modelLabel: model.label,
+            select: [timeFieldIdSpec, metric.field_id],
+            sortings: [timeSorting],
+            sorts: timeFieldIdSpec,
+            timezone: timezone,
+            limit: timeColumnsLimit,
+            filters: [timeFilter],
+            chart: common.DEFAULT_CHART,
+            temp: true,
+            serverTs: 1
+            // fields: [],
+            // extendedFilters: [],
+          };
+
+          mconfig.chart.type = common.ChartTypeEnum.Line;
+
+          mconfig = common.setChartTitleOnSelectChange({
+            mconfig: mconfig,
+            fields: model.fields
+          });
+
+          mconfig = common.setChartFields({
+            mconfig: mconfig,
+            fields: model.fields
+          });
+
+          let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
+            {
+              info: {
+                name: apiToBlockml.ToBlockmlRequestInfoNameEnum
+                  .ToBlockmlProcessQuery,
+                traceId: traceId
+              },
+              payload: {
+                orgId: project.org_id,
+                projectId: project.project_id,
+                weekStart: struct.week_start,
+                udfsDict: struct.udfs_dict,
+                mconfig: mconfig,
+                modelContent: model.content,
+                envId: envId
+              }
+            };
+
+          let blockmlProcessQueryResponse =
+            await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlProcessQueryResponse>(
+              {
+                routingKey:
+                  common.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
+                message: toBlockmlProcessQueryRequest,
+                checkIsOk: true
+              }
+            );
+
+          newMconfig = blockmlProcessQueryResponse.payload.mconfig;
+          newQuery = blockmlProcessQueryResponse.payload.query;
+
+          newMconfig.queryId = newQueryId;
+          newQuery.queryId = newQueryId;
+
+          newMconfigs.push(newMconfig);
+          newQueries.push(newQuery);
         }
+
+        let newRq: common.Rq = {
+          fractionBrick: timeRangeFraction.brick,
+          timeSpec: timeSpec,
+          timezone: timezone,
+          mconfigId: newMconfig?.mconfigId,
+          queryId: newMconfig?.queryId,
+          kitId: undefined,
+          lastCalculatedTs: 0
+        };
+
+        x.rqs.push(newRq);
       }
-    );
+    });
+
+    let mconfigs: entities.MconfigEntity[] = [];
+    if (mconfigIds.length > 0) {
+      mconfigs = await this.mconfigsRepository.find({
+        where: {
+          mconfig_id: In(mconfigIds),
+          struct_id: struct.struct_id
+        }
+      });
+    }
 
     let queries: entities.QueryEntity[] = [];
     if (queryIds.length > 0) {
@@ -636,12 +653,12 @@ export class RepsService {
       });
     }
 
-    let mconfigs: entities.MconfigEntity[] = [];
-    if (mconfigIds.length > 0) {
-      mconfigs = await this.mconfigsRepository.find({
+    let kits: entities.KitEntity[] = [];
+    if (kitIds.length > 0) {
+      kits = await this.kitsRepository.find({
         where: {
-          mconfig_id: In(mconfigIds),
-          struct_id: struct.struct_id
+          kit_id: In(kitIds),
+          struct_id: rep.struct_id
         }
       });
     }
@@ -662,7 +679,7 @@ export class RepsService {
           y.timezone === timezone
       );
 
-      if (common.isDefined(rq) && common.isUndefined(x.formula)) {
+      if (x.rowType === common.RowTypeEnum.Metric) {
         x.mconfig = [...mconfigsApi, ...newMconfigs].find(
           y => y.mconfigId === rq.mconfigId
         );
@@ -727,7 +744,7 @@ export class RepsService {
       );
 
       return (
-        common.isDefined(rq) && rq.lastCalculatedTs === row.query.lastCompleteTs
+        common.isDefined(rq) && rq.lastCalculatedTs > row.query.lastCompleteTs
       );
     });
 
@@ -740,7 +757,7 @@ export class RepsService {
     if (isCalculate === true) {
       console.log('isCalculate true');
 
-      repApi = await this.docService.getData({
+      repApi = await this.docService.calculateData({
         rep: repApi,
         timezone: timezone,
         timeSpec: timeSpec,
@@ -749,31 +766,33 @@ export class RepsService {
     } else {
       console.log('isCalculate false');
 
-      let dataRecords = this.docService.makeDataRecords({
+      let recordsByColumn = this.docService.makeRecordsByColumn({
         rep: repApi,
         timeSpec: timeSpec
       });
 
-      repApi.rows.forEach(x => {
-        let rq = x.rqs.find(
+      repApi.rows.forEach(row => {
+        let rq = row.rqs.find(
           y =>
             y.fractionBrick === timeRangeFraction.brick &&
             y.timeSpec === timeSpec &&
             y.timezone === timezone
         );
 
-        if (common.isDefined(x.query)) {
-          if (rq.lastCalculatedTs !== x.query.lastCompleteTs) {
-            rq.records = dataRecords.map((y: any) => ({
+        row.records = common.isDefined(row.query)
+          ? recordsByColumn.map((y: any) => ({
               id: y.id,
               key: y.fields.timestamp,
-              value: common.isDefined(y.fields) ? y.fields[x.rowId] : undefined,
-              error: common.isDefined(y.errors) ? y.errors[x.rowId] : undefined
-            }));
-          }
-        }
-
-        x.records = rq?.records || [];
+              value: common.isDefined(y.fields)
+                ? y.fields[row.rowId]
+                : undefined,
+              error: common.isDefined(y.errors)
+                ? y.errors[row.rowId]
+                : undefined
+            }))
+          : common.isDefined(rq.kitId)
+          ? kits.find(k => k.kit_id === rq.kitId).data
+          : [];
       });
     }
 

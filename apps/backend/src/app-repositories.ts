@@ -8,6 +8,7 @@ export const appRepositories = [
   repositories.RepsRepository,
   repositories.ApisRepository,
   repositories.QueriesRepository,
+  repositories.KitsRepository,
   repositories.StructsRepository,
   repositories.VizsRepository,
   repositories.AvatarsRepository,

@@ -5,6 +5,7 @@ export * from './connections.repository';
 export * from './envs.repository';
 export * from './evs.repository';
 export * from './idemps.repository';
+export * from './kits.repository';
 export * from './members.repository';
 export * from './notes.repository';
 export * from './orgs.repository';
