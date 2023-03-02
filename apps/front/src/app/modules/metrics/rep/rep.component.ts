@@ -187,7 +187,10 @@ export class RepComponent {
 
   queryParams$ = this.route.queryParams.pipe(
     tap(queryParams => {
+      // console.log('queryParams tap');
+
       let selectNodes = queryParams['selectNodes'];
+      // console.log('selectNodes', selectNodes);
 
       let nodeIds: string[] = common.isDefined(selectNodes)
         ? selectNodes.split('-')
@@ -275,6 +278,7 @@ export class RepComponent {
     this.agGridApi = this.agGrid.api;
     this.uiQuery.updatePart({ gridApi: this.agGridApi });
     this.agGridApi.deselectAll();
+    this.cd.detectChanges();
   }
 
   rowDragEndHandle(event: RowDragEndEvent<DataRow>): void {

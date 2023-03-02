@@ -23,7 +23,6 @@ import { MetricRendererComponent } from './rep/metric-renderer/metric-renderer.c
 import { RepComponent } from './rep/rep.component';
 import { RowIdHeaderComponent } from './rep/row-id-header/row-id-header.component';
 import { RowIdRendererComponent } from './rep/row-id-renderer/row-id-renderer.component';
-import { RowOptionsComponent } from './rep/row-options/row-options.component';
 import { StatusHeaderComponent } from './rep/status-header/status-header.component';
 import { StatusRendererComponent } from './rep/status-renderer/status-renderer.component';
 import { RowComponent } from './row/row.component';
@@ -35,7 +34,6 @@ import { RowComponent } from './row/row.component';
     RepComponent,
     RowComponent,
     RepOptionsComponent,
-    RowOptionsComponent,
     MetricRendererComponent,
     StatusRendererComponent,
     DataRendererComponent,

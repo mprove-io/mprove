@@ -21,7 +21,7 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
     return true;
   }
 
-  clearSelection() {
+  esc() {
     this.params.api.deselectAll();
   }
 

@@ -476,6 +476,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
   }
 
   navToRep(rep: common.RepX) {
+    this.uiQuery.getValue().gridApi.deselectAll();
+
     this.navigateService.navigateToMetricsRep({
       repId: rep.repId,
       draft: rep.draft,
