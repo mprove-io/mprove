@@ -479,7 +479,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
     this.navigateService.navigateToMetricsRep({
       repId: rep.repId,
-      selectNodes: []
+      selectRows: []
     });
   }
 

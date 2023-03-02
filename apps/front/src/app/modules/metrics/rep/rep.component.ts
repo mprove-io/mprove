@@ -189,11 +189,11 @@ export class RepComponent {
     tap(queryParams => {
       // console.log('queryParams tap');
 
-      let selectNodes = queryParams['selectNodes'];
-      // console.log('selectNodes', selectNodes);
+      let selectRows = queryParams['selectRows'];
+      // console.log('selectRows', selectRows);
 
-      let nodeIds: string[] = common.isDefined(selectNodes)
-        ? selectNodes.split('-')
+      let nodeIds: string[] = common.isDefined(selectRows)
+        ? selectRows.split('-')
         : [];
 
       setTimeout(() => {
@@ -239,7 +239,7 @@ export class RepComponent {
       .createUrlTree([], {
         relativeTo: this.route,
         queryParams: {
-          selectNodes: nodeIds.length > 0 ? nodeIds.join('-') : undefined
+          selectRows: nodeIds.length > 0 ? nodeIds.join('-') : undefined
         }
       })
       .toString();
