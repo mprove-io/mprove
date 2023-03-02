@@ -71,7 +71,7 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
     });
 
     let parametersRepId = route.params[common.PARAMETER_REP_ID];
-    let draftParam: common.DraftEnum = route.queryParams?.draft;
+    // let draftParam: common.DraftEnum = route.queryParams?.draft;
 
     let uiState = this.uiQuery.getValue();
 
@@ -81,7 +81,6 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
       branchId: nav.branchId,
       envId: nav.envId,
       repId: parametersRepId,
-      draft: draftParam === common.DraftEnum.Yes,
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
       timeRangeFraction: uiState.timeRangeFraction

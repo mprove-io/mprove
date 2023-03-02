@@ -340,7 +340,6 @@ export class RepsService {
   async getRep(item: {
     projectId: string;
     repId: string;
-    draft: boolean;
     structId: string;
     user: entities.UserEntity;
     userMember: entities.MemberEntity;
@@ -350,7 +349,6 @@ export class RepsService {
     let {
       projectId,
       repId,
-      draft,
       structId,
       checkExist,
       checkAccess,
@@ -376,25 +374,13 @@ export class RepsService {
     let rep =
       repId === common.EMPTY_REP_ID
         ? emptyRep
-        : draft === true
-        ? await this.repsRepository.findOne({
-            where: {
-              rep_id: repId,
-              project_id: projectId,
-              draft: common.BoolEnum.TRUE,
-              struct_id: structId,
-              creator_id: user.user_id
-            }
-          })
         : await this.repsRepository.findOne({
             where: {
-              rep_id: repId,
               project_id: projectId,
-              draft: common.BoolEnum.FALSE,
-              struct_id: structId
+              struct_id: structId,
+              rep_id: repId
             }
           });
-
     if (checkExist === true && common.isUndefined(rep)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_REP_NOT_FOUND
@@ -407,7 +393,8 @@ export class RepsService {
       rep.creator_id !== user.user_id
     ) {
       throw new common.ServerError({
-        message: common.ErEnum.BACKEND_DRAFT_REP_CREATOR_MISMATCH
+        message:
+          common.ErEnum.BACKEND_DRAFT_REPORT_IS_AVAILABLE_ONLY_TO_ITS_CREATOR
       });
     }
 

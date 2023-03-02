@@ -65,7 +65,6 @@ export class SaveCreateRepController {
       envId,
       newRepId,
       fromRepId,
-      fromDraft,
       accessRoles,
       accessUsers,
       title,
@@ -125,7 +124,6 @@ export class SaveCreateRepController {
     let fromRep = await this.repsService.getRep({
       projectId: projectId,
       repId: fromRepId,
-      draft: fromDraft,
       structId: bridge.struct_id,
       checkExist: true,
       checkAccess: true,
@@ -247,7 +245,7 @@ export class SaveCreateRepController {
       }
     });
 
-    if (fromDraft === true) {
+    if (fromRep.draft === common.BoolEnum.TRUE) {
       await this.repsRepository.delete({
         project_id: projectId,
         rep_id: fromRepId,

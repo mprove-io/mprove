@@ -75,7 +75,6 @@ export class RepSaveAsDialogComponent implements OnInit {
   );
 
   fromRepId: string;
-  fromDraft: boolean;
 
   selectedRepId: string;
   selectedRepPath: string;
@@ -116,7 +115,6 @@ export class RepSaveAsDialogComponent implements OnInit {
     this.rep = this.ref.data.rep;
 
     this.fromRepId = this.ref.data.rep.repId;
-    this.fromDraft = this.ref.data.rep.draft;
     this.newRepId = this.ref.data.rep.repId;
 
     setValueAndMark({
@@ -194,7 +192,6 @@ export class RepSaveAsDialogComponent implements OnInit {
       envId: this.nav.envId,
       newRepId: this.newRepId,
       fromRepId: this.fromRepId,
-      fromDraft: this.fromDraft,
       title: newTitle,
       accessRoles: common.isDefinedAndNotEmpty(roles?.trim())
         ? roles.split(',')
@@ -251,7 +248,6 @@ export class RepSaveAsDialogComponent implements OnInit {
 
             this.navigateService.navigateToMetricsRep({
               repId: resp.payload.rep.repId,
-              draft: false,
               selectNodes: []
             });
           }
@@ -275,7 +271,6 @@ export class RepSaveAsDialogComponent implements OnInit {
       envId: this.nav.envId,
       modRepId: this.selectedRepId,
       fromRepId: this.fromRepId,
-      fromDraft: this.fromDraft,
       title: newTitle,
       accessRoles: common.isDefinedAndNotEmpty(roles?.trim())
         ? roles.split(',').map(x => x.trim())
@@ -342,7 +337,6 @@ export class RepSaveAsDialogComponent implements OnInit {
 
             this.navigateService.navigateToMetricsRep({
               repId: resp.payload.rep.repId,
-              draft: false,
               selectNodes: []
             });
           }

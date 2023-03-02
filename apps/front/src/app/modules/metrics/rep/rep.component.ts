@@ -239,7 +239,6 @@ export class RepComponent {
       .createUrlTree([], {
         relativeTo: this.route,
         queryParams: {
-          draft: this.rep.draft === true ? common.DraftEnum.Yes : undefined,
           selectNodes: nodeIds.length > 0 ? nodeIds.join('-') : undefined
         }
       })

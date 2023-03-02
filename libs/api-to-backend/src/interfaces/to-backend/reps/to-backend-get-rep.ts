@@ -19,9 +19,6 @@ export class ToBackendGetRepRequestPayload {
   @IsString()
   repId: string;
 
-  @IsBoolean()
-  draft: boolean;
-
   @IsString()
   timezone: string;
 

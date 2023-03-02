@@ -41,7 +41,6 @@ export class GetRepController {
       branchId,
       envId,
       repId,
-      draft,
       timeRangeFraction,
       timeSpec,
       timezone
@@ -83,7 +82,6 @@ export class GetRepController {
     let rep = await this.repsService.getRep({
       projectId: projectId,
       repId: repId,
-      draft: draft,
       structId: bridge.struct_id,
       checkExist: true,
       checkAccess: true,

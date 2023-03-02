@@ -19,9 +19,6 @@ export class ToBackendCreateDraftRepRequestPayload {
   @IsString()
   fromRepId: string;
 
-  @IsBoolean()
-  fromDraft: boolean;
-
   @IsEnum(common.ChangeTypeEnum)
   changeType: common.ChangeTypeEnum;
 

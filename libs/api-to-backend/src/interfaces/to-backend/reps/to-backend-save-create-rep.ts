@@ -19,9 +19,6 @@ export class ToBackendSaveCreateRepRequestPayload {
   @IsString()
   fromRepId: string;
 
-  @IsBoolean()
-  fromDraft: boolean;
-
   @IsString()
   newRepId: string;
 

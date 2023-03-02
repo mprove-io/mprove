@@ -86,7 +86,6 @@ export class EditDraftRepController {
     let rep = await this.repsService.getRep({
       projectId: projectId,
       repId: repId,
-      draft: true,
       structId: bridge.struct_id,
       checkExist: true,
       checkAccess: true,

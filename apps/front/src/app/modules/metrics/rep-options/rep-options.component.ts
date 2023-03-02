@@ -74,7 +74,6 @@ export class RepOptionsComponent {
     if (selectedRep.repId === deletedRepId) {
       this.navigateService.navigateToMetricsRep({
         repId: common.EMPTY_REP_ID,
-        draft: false,
         selectNodes: []
       });
     }

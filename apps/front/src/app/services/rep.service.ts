@@ -52,7 +52,6 @@ export class RepService {
     } else {
       this.navCreateDraftRep({
         fromRepId: rep.repId,
-        fromDraft: rep.draft,
         changeType: changeType,
         rowChanges: rowChanges,
         selectNodes:
@@ -68,12 +67,11 @@ export class RepService {
     changeType: common.ChangeTypeEnum;
     rowChanges: common.RowChange[];
     fromRepId: string;
-    fromDraft: boolean;
     selectNodes: string[];
   }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { rowChanges, fromRepId, fromDraft, changeType, selectNodes } = item;
+    let { rowChanges, fromRepId, changeType, selectNodes } = item;
 
     let uiState = this.uiQuery.getValue();
 
@@ -83,7 +81,6 @@ export class RepService {
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       fromRepId: fromRepId,
-      fromDraft: fromDraft,
       rowChanges: rowChanges,
       changeType: changeType,
       timezone: uiState.timezone,
@@ -108,7 +105,6 @@ export class RepService {
 
             this.navigateService.navigateToMetricsRep({
               repId: rep.repId,
-              draft: rep.draft,
               selectNodes: selectNodes
             });
           }
@@ -204,7 +200,6 @@ export class RepService {
             if (rep.repId === repId) {
               this.navigateService.navigateToMetricsRep({
                 repId: common.EMPTY_REP_ID,
-                draft: false,
                 selectNodes: []
               });
             }

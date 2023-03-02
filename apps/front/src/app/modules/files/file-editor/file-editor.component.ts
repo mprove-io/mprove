@@ -526,7 +526,6 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     } else if (dotExt === common.FileExtensionEnum.Rep) {
       this.navigateService.navigateToMetricsRep({
         repId: id,
-        draft: false,
         selectNodes: []
       });
     } else if (dotExt === common.FileExtensionEnum.Vis) {

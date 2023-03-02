@@ -44,7 +44,6 @@ export class CreateDraftRepController {
       branchId,
       envId,
       fromRepId,
-      fromDraft,
       changeType,
       rowChanges,
       timeSpec,
@@ -88,7 +87,6 @@ export class CreateDraftRepController {
     let fromRep = await this.repsService.getRep({
       projectId: projectId,
       repId: fromRepId,
-      draft: fromDraft,
       structId: bridge.struct_id,
       checkExist: true,
       checkAccess: true,

@@ -363,12 +363,8 @@ export class NavigateService {
     this.router.navigate(navTo);
   }
 
-  navigateToMetricsRep(item: {
-    repId: string;
-    draft: boolean;
-    selectNodes: string[];
-  }) {
-    let { repId, draft, selectNodes } = item;
+  navigateToMetricsRep(item: { repId: string; selectNodes: string[] }) {
+    let { repId, selectNodes } = item;
 
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
@@ -391,7 +387,6 @@ export class NavigateService {
 
     this.router.navigate(navTo, {
       queryParams: {
-        draft: draft === true ? common.DraftEnum.Yes : undefined,
         selectNodes: selectNodes.length > 0 ? selectNodes.join('-') : undefined
       }
     });

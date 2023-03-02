@@ -382,7 +382,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
       branchId: nav.branchId,
       envId: nav.envId,
       repId: this.rep.repId,
-      draft: this.rep.draft,
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
       timeRangeFraction: uiState.timeRangeFraction
@@ -480,7 +479,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
     this.navigateService.navigateToMetricsRep({
       repId: rep.repId,
-      draft: rep.draft,
       selectNodes: []
     });
   }
