@@ -180,22 +180,10 @@ export class NavbarComponent implements OnInit {
       return;
     }
 
-    let userId;
-    this.userQuery.userId$
-      .pipe(
-        tap(x => (userId = x)),
-        take(1)
-      )
-      .subscribe();
-
-    let uiState = this.uiQuery.getValue();
-
     this.navigateService.navigateToMetricsRep({
       repId: common.EMPTY_REP_ID,
-      selectRows: [],
-      timezone: uiState.timezone,
-      timeSpec: uiState.timeSpec,
-      timeRangeFraction: uiState.timeRangeFraction
+      selectRowsNodeIds: [],
+      skipDeselect: true
     });
   }
 }

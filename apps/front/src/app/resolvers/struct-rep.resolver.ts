@@ -27,14 +27,27 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
   ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<boolean> {
-    return this.resolveRoute({ route: route, showSpinner: false });
+    let timeSpecParam: common.TimeSpecEnum = route.queryParams?.timeSpec;
+
+    let uiState = this.uiQuery.getValue();
+
+    return this.resolveRoute({
+      route: route,
+      showSpinner: false,
+      timezone: uiState.timezone,
+      timeSpec: timeSpecParam,
+      timeRangeFraction: uiState.timeRangeFraction
+    });
   }
 
   resolveRoute(item: {
     route: ActivatedRouteSnapshot;
     showSpinner: boolean;
+    timeSpec: common.TimeSpecEnum;
+    timezone: string;
+    timeRangeFraction: common.Fraction;
   }): Observable<boolean> {
-    let { route, showSpinner } = item;
+    let { route, showSpinner, timezone, timeSpec, timeRangeFraction } = item;
 
     let nav: NavState;
     this.navQuery
@@ -71,9 +84,6 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
     });
 
     let parametersRepId = route.params[common.PARAMETER_REP_ID];
-    // let draftParam: common.DraftEnum = route.queryParams?.draft;
-
-    let uiState = this.uiQuery.getValue();
 
     let payload: apiToBackend.ToBackendGetRepRequestPayload = {
       projectId: nav.projectId,
@@ -81,9 +91,9 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
       branchId: nav.branchId,
       envId: nav.envId,
       repId: parametersRepId,
-      timezone: uiState.timezone,
-      timeSpec: uiState.timeSpec,
-      timeRangeFraction: uiState.timeRangeFraction
+      timezone: timezone,
+      timeSpec: timeSpec,
+      timeRangeFraction: timeRangeFraction
     };
 
     return this.apiService
@@ -103,6 +113,8 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
             });
 
             this.repQuery.update(resp.payload.rep);
+
+            this.uiQuery.updatePart({ timeSpec: resp.payload.rep.timeSpec });
 
             return true;
           } else if (

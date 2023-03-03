@@ -1,7 +1,8 @@
+import { Location } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   AgAxisLabelFormatterParams,
   AgCartesianSeriesTooltipRendererParams,
@@ -11,6 +12,7 @@ import {
 import { IRowNode } from 'ag-grid-community';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { concatMap, interval, of, Subscription, take, tap } from 'rxjs';
+import { makeRepQueryParams } from '~front/app/functions/make-query-params';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -20,7 +22,6 @@ import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { StructRepResolver } from '~front/app/resolvers/struct-rep.resolver';
 import { ApiService } from '~front/app/services/api.service';
-import { MconfigService } from '~front/app/services/mconfig.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService } from '~front/app/services/query.service';
@@ -321,12 +322,13 @@ export class MetricsComponent implements OnInit, OnDestroy {
     private uiQuery: UiQuery,
     private memberQuery: MemberQuery,
     private structQuery: StructQuery,
+    private location: Location,
+    private router: Router,
     private navQuery: NavQuery,
     private route: ActivatedRoute,
     private spinner: NgxSpinnerService,
     private uiService: UiService,
     private repService: RepService,
-    private mconfigService: MconfigService,
     private queryService: QueryService,
     private navigateService: NavigateService,
     private myDialogService: MyDialogService,
@@ -474,49 +476,64 @@ export class MetricsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  navToRep(rep: common.RepX) {
-    this.uiQuery.getValue().gridApi.deselectAll();
-
-    this.navigateService.navigateToMetricsRep({
-      repId: rep.repId,
-      selectRows: []
-    });
-  }
-
   timezoneChange() {
     let timezone = this.timezoneForm.controls['timezone'].value;
     this.uiQuery.updatePart({ timezone: timezone });
-    this.structRepResolver
-      .resolveRoute({
-        route: this.route.children[0].snapshot,
-        showSpinner: true
-      })
-      .pipe(take(1))
-      .subscribe();
+    this.getRep();
   }
 
   timeSpecChange() {
     let timeSpec = this.timeSpecForm.controls['timeSpec'].value;
     this.uiQuery.updatePart({ timeSpec: timeSpec });
-    this.structRepResolver
-      .resolveRoute({
-        route: this.route.children[0].snapshot,
-        showSpinner: true
-      })
-      .pipe(take(1))
-      .subscribe();
+    this.getRep();
   }
 
   fractionUpdate(event$: any) {
     this.uiQuery.updatePart({ timeRangeFraction: event$.fraction });
+    this.getRep();
+  }
+
+  getRep() {
+    let uiState = this.uiQuery.getValue();
 
     this.structRepResolver
       .resolveRoute({
         route: this.route.children[0].snapshot,
-        showSpinner: true
+        showSpinner: true,
+        timezone: uiState.timezone,
+        timeSpec: uiState.timeSpec,
+        timeRangeFraction: uiState.timeRangeFraction
       })
-      .pipe(take(1))
+      .pipe(
+        tap(x => {
+          let uiStateB = this.uiQuery.getValue();
+
+          const url = this.router
+            .createUrlTree([], {
+              relativeTo: this.route,
+              queryParams: makeRepQueryParams({
+                timezone: uiStateB.timezone,
+                timeSpec: uiStateB.timeSpec,
+                timeRangeFraction: uiStateB.timeRangeFraction,
+                selectRowsNodeIds: uiStateB.repSelectedNodes.map(
+                  node => node.id
+                )
+              })
+            })
+            .toString();
+
+          this.location.go(url);
+        }),
+        take(1)
+      )
       .subscribe();
+  }
+
+  navToRep(rep: common.RepX) {
+    this.navigateService.navigateToMetricsRep({
+      repId: rep.repId,
+      selectRowsNodeIds: []
+    });
   }
 
   deleteRep(event: any, rep: common.RepX) {

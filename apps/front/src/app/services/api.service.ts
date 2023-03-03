@@ -234,10 +234,7 @@ export class ApiService {
                 tap(x => {
                   this.navigateService.navigateToMetricsRep({
                     repId: common.EMPTY_REP_ID,
-                    selectRows: [],
-                    timezone: uiState.timezone,
-                    timeSpec: uiState.timeSpec,
-                    timeRangeFraction: uiState.timeRangeFraction
+                    selectRowsNodeIds: []
                   });
                 }),
                 take(1)

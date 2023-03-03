@@ -105,10 +105,7 @@ export class RepService {
 
             this.navigateService.navigateToMetricsRep({
               repId: rep.repId,
-              selectRows: selectRows,
-              timezone: uiState.timezone,
-              timeSpec: uiState.timeSpec,
-              timeRangeFraction: uiState.timeRangeFraction
+              selectRowsNodeIds: selectRows
             });
           }
         }),
@@ -205,10 +202,7 @@ export class RepService {
             if (rep.repId === repId) {
               this.navigateService.navigateToMetricsRep({
                 repId: common.EMPTY_REP_ID,
-                selectRows: [],
-                timezone: uiState.timezone,
-                timeSpec: uiState.timeSpec,
-                timeRangeFraction: uiState.timeRangeFraction
+                selectRowsNodeIds: []
               });
             }
           }

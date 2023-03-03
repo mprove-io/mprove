@@ -17,7 +17,7 @@ import {
   SelectionChangedEvent
 } from 'ag-grid-community';
 import { tap } from 'rxjs';
-import { MetricsQuery } from '~front/app/queries/metrics.query';
+import { makeRepQueryParams } from '~front/app/functions/make-query-params';
 import { RepQuery } from '~front/app/queries/rep.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { RepService } from '~front/app/services/rep.service';
@@ -198,19 +198,20 @@ export class RepComponent {
 
       setTimeout(() => {
         // console.log('this.agGridApi', this.agGridApi);
-        if (common.isDefined(this.agGridApi)) {
-          if (nodeIds.length > 0) {
-            nodeIds.forEach(nodeId => {
-              let rowNode = this.agGridApi.getRowNode(nodeId);
-              if (common.isDefined(rowNode)) {
-                rowNode.setSelected(true);
-              }
-            });
-          } else {
-            this.agGridApi.deselectAll();
-          }
-          this.cd.detectChanges();
+        if (common.isUndefined(this.agGridApi)) {
+          return;
         }
+        if (nodeIds.length > 0) {
+          nodeIds.forEach(nodeId => {
+            let rowNode = this.agGridApi.getRowNode(nodeId);
+            if (common.isDefined(rowNode)) {
+              rowNode.setSelected(true);
+            }
+          });
+        } else {
+          this.agGridApi.deselectAll();
+        }
+        this.cd.detectChanges();
       }, 1);
     })
   );
@@ -224,8 +225,7 @@ export class RepComponent {
     private route: ActivatedRoute,
     private location: Location,
     private repService: RepService,
-    private uiQuery: UiQuery,
-    private metricsQuery: MetricsQuery
+    private uiQuery: UiQuery
   ) {}
 
   onSelectionChanged(event: SelectionChangedEvent<DataRow>) {
@@ -235,12 +235,17 @@ export class RepComponent {
     let nodeIds = sNodes.map(node => node.id);
     // console.log('onSelectionChanged', nodeIds);
 
+    let uiState = this.uiQuery.getValue();
+
     const url = this.router
       .createUrlTree([], {
         relativeTo: this.route,
-        queryParams: {
-          selectRows: nodeIds.length > 0 ? nodeIds.join('-') : undefined
-        }
+        queryParams: makeRepQueryParams({
+          timezone: uiState.timezone,
+          timeSpec: uiState.timeSpec,
+          timeRangeFraction: uiState.timeRangeFraction,
+          selectRowsNodeIds: nodeIds
+        })
       })
       .toString();
 

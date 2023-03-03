@@ -248,10 +248,7 @@ export class RepSaveAsDialogComponent implements OnInit {
 
             this.navigateService.navigateToMetricsRep({
               repId: resp.payload.rep.repId,
-              selectRows: [],
-              timezone: uiState.timezone,
-              timeSpec: uiState.timeSpec,
-              timeRangeFraction: uiState.timeRangeFraction
+              selectRowsNodeIds: []
             });
           }
         }),
@@ -340,10 +337,7 @@ export class RepSaveAsDialogComponent implements OnInit {
 
             this.navigateService.navigateToMetricsRep({
               repId: resp.payload.rep.repId,
-              selectRows: [],
-              timezone: uiState.timezone,
-              timeSpec: uiState.timeSpec,
-              timeRangeFraction: uiState.timeRangeFraction
+              selectRowsNodeIds: []
             });
           }
         }),

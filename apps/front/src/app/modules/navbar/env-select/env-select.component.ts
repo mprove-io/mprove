@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, map, take, tap } from 'rxjs/operators';
+import { makeRepQueryParams } from '~front/app/functions/make-query-params';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery, UserState } from '~front/app/queries/user.query';
@@ -141,6 +142,20 @@ export class EnvSelectComponent {
       navArray.push(common.PATH_FILES);
     }
 
-    this.router.navigate(navArray);
+    if (urlParts[11] === common.PATH_METRICS) {
+      let uiState = this.uiQuery.getValue();
+      uiState.gridApi.deselectAll();
+
+      this.router.navigate(navArray, {
+        queryParams: makeRepQueryParams({
+          timezone: uiState.timezone,
+          timeSpec: uiState.timeSpec,
+          timeRangeFraction: uiState.timeRangeFraction,
+          selectRowsNodeIds: []
+        })
+      });
+    } else {
+      this.router.navigate(navArray);
+    }
   }
 }

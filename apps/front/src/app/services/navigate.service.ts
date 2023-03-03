@@ -2,8 +2,10 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { take, tap } from 'rxjs/operators';
 import { common } from '~front/barrels/common';
+import { makeRepQueryParams } from '../functions/make-query-params';
 import { ModelQuery, ModelState } from '../queries/model.query';
 import { NavQuery, NavState } from '../queries/nav.query';
+import { UiQuery } from '../queries/ui.query';
 import { UserQuery } from '../queries/user.query';
 
 @Injectable({ providedIn: 'root' })
@@ -31,6 +33,7 @@ export class NavigateService {
 
   constructor(
     private navQuery: NavQuery,
+    private uiQuery: UiQuery,
     private modelQuery: ModelQuery,
     private userQuery: UserQuery,
     private router: Router
@@ -340,31 +343,22 @@ export class NavigateService {
     });
   }
 
-  navigateToMetricsEmptyRep() {
-    let repoId =
-      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
+  navigateToMetricsRep(item: {
+    repId: string;
+    selectRowsNodeIds: string[];
+    skipDeselect?: boolean;
+  }) {
+    let { repId, selectRowsNodeIds, skipDeselect } = item;
 
-    let navTo = [
-      common.PATH_ORG,
-      this.nav.orgId,
-      common.PATH_PROJECT,
-      this.nav.projectId,
-      common.PATH_REPO,
-      repoId,
-      common.PATH_BRANCH,
-      this.nav.branchId,
-      common.PATH_ENV,
-      this.nav.envId,
-      common.PATH_METRICS,
-      common.PATH_REPORT,
-      common.EMPTY_REP_ID
-    ];
+    let uiState = this.uiQuery.getValue();
 
-    this.router.navigate(navTo);
-  }
-
-  navigateToMetricsRep(item: { repId: string; selectRows: string[] }) {
-    let { repId, selectRows } = item;
+    if (
+      selectRowsNodeIds.length === 0 &&
+      skipDeselect === false &&
+      common.isDefined(uiState.gridApi)
+    ) {
+      uiState.gridApi.deselectAll();
+    }
 
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
@@ -386,9 +380,12 @@ export class NavigateService {
     ];
 
     this.router.navigate(navTo, {
-      queryParams: {
-        selectRows: selectRows.length > 0 ? selectRows.join('-') : undefined
-      }
+      queryParams: makeRepQueryParams({
+        timezone: uiState.timezone,
+        timeSpec: uiState.timeSpec,
+        timeRangeFraction: uiState.timeRangeFraction,
+        selectRowsNodeIds: selectRowsNodeIds
+      })
     });
   }
 }

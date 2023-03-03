@@ -3,6 +3,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { filter, take, tap } from 'rxjs/operators';
 import { makeBranchExtraId } from '~front/app/functions/make-branch-extra-id';
 import { makeBranchExtraName } from '~front/app/functions/make-branch-extra-name';
+import { makeRepQueryParams } from '~front/app/functions/make-query-params';
 import { FileQuery, FileState } from '~front/app/queries/file.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
@@ -327,7 +328,21 @@ export class BranchSelectComponent {
       navArray.push(common.PATH_FILES);
     }
 
-    this.router.navigate(navArray);
+    if (urlParts[11] === common.PATH_METRICS) {
+      let uiState = this.uiQuery.getValue();
+      uiState.gridApi.deselectAll();
+
+      this.router.navigate(navArray, {
+        queryParams: makeRepQueryParams({
+          timezone: uiState.timezone,
+          timeSpec: uiState.timeSpec,
+          timeRangeFraction: uiState.timeRangeFraction,
+          selectRowsNodeIds: []
+        })
+      });
+    } else {
+      this.router.navigate(navArray);
+    }
   }
 
   makeBranchItem(item: {
