@@ -39,6 +39,10 @@ export class ToBackendGetRepoResponsePayload {
   userMember: common.Member;
 
   @ValidateNested()
+  @Type(() => common.User)
+  user: common.User;
+
+  @ValidateNested()
   @Type(() => common.Repo)
   repo: common.Repo;
 }

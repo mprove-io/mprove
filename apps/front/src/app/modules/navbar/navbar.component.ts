@@ -176,6 +176,10 @@ export class NavbarComponent implements OnInit {
   }
 
   navigateMetrics() {
+    if (this.isMetricsRouteActive === true) {
+      return;
+    }
+
     let userId;
     this.userQuery.userId$
       .pipe(
@@ -184,22 +188,14 @@ export class NavbarComponent implements OnInit {
       )
       .subscribe();
 
-    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
+    let uiState = this.uiQuery.getValue();
 
-    this.router.navigate([
-      common.PATH_ORG,
-      this.nav.orgId,
-      common.PATH_PROJECT,
-      this.nav.projectId,
-      common.PATH_REPO,
-      repoId,
-      common.PATH_BRANCH,
-      this.nav.branchId,
-      common.PATH_ENV,
-      this.nav.envId,
-      common.PATH_METRICS,
-      common.PATH_REPORT,
-      common.EMPTY_REP_ID
-    ]);
+    this.navigateService.navigateToMetricsRep({
+      repId: common.EMPTY_REP_ID,
+      selectRows: [],
+      timezone: uiState.timezone,
+      timeSpec: uiState.timeSpec,
+      timeRangeFraction: uiState.timeRangeFraction
+    });
   }
 }

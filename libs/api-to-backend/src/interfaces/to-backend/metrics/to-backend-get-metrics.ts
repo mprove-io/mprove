@@ -36,10 +36,6 @@ export class ToBackendGetMetricsResponsePayload {
   userMember: common.Member;
 
   @ValidateNested()
-  @Type(() => common.User)
-  user: common.User;
-
-  @ValidateNested()
   metrics: common.MetricAny[];
 
   @ValidateNested()

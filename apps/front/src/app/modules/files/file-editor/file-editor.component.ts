@@ -524,9 +524,14 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     } else if (dotExt === common.FileExtensionEnum.Dashboard) {
       this.navigateService.navigateToDashboard(id);
     } else if (dotExt === common.FileExtensionEnum.Rep) {
+      let uiState = this.uiQuery.getValue();
+
       this.navigateService.navigateToMetricsRep({
         repId: id,
-        selectRows: []
+        selectRows: [],
+        timezone: uiState.timezone,
+        timeSpec: uiState.timeSpec,
+        timeRangeFraction: uiState.timeRangeFraction
       });
     } else if (dotExt === common.FileExtensionEnum.Vis) {
       this.navigateService.navigateToVizs({

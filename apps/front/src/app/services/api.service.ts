@@ -4,15 +4,22 @@ import {
   HttpHeaders
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { combineLatest, EMPTY, Observable, TimeoutError, timer } from 'rxjs';
-import { catchError, finalize, map } from 'rxjs/operators';
+import { catchError, finalize, map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { enums } from '~front/barrels/enums';
 import { interfaces } from '~front/barrels/interfaces';
 import { environment } from '~front/environments/environment';
+import { MemberQuery } from '../queries/member.query';
+import { MetricsQuery } from '../queries/metrics.query';
+import { NavQuery, NavState } from '../queries/nav.query';
+import { RepsQuery } from '../queries/reps.query';
+import { StructQuery } from '../queries/struct.query';
+import { UiQuery } from '../queries/ui.query';
 import { AuthService } from './auth.service';
 import { MyDialogService } from './my-dialog.service';
 import { NavigateService } from './navigate.service';
@@ -20,11 +27,18 @@ import { NavigateService } from './navigate.service';
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   constructor(
+    private router: Router,
+    private navQuery: NavQuery,
     private authHttpClient: HttpClient,
     private authService: AuthService,
     private spinner: NgxSpinnerService,
+    private uiQuery: UiQuery,
     private myDialogService: MyDialogService,
-    private navigateService: NavigateService
+    private navigateService: NavigateService,
+    private metricsQuery: MetricsQuery,
+    private repsQuery: RepsQuery,
+    private structQuery: StructQuery,
+    private memberQuery: MemberQuery
   ) {}
 
   req(item: {
@@ -193,18 +207,42 @@ export class ApiService {
           common.ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST,
           common.ErEnum.BACKEND_STRUCT_ID_CHANGED,
           common.ErEnum.BACKEND_STRUCT_DOES_NOT_EXIST,
-          common.ErEnum.BACKEND_QUERY_DOES_NOT_EXIST
+          common.ErEnum.BACKEND_QUERY_DOES_NOT_EXIST,
+          common.ErEnum.BACKEND_REP_DOES_NOT_EXIST,
+          common.ErEnum.BACKEND_REP_NOT_FOUND
         ].indexOf(infoErrorMessage) > -1
       ) {
         errorData.description = `Don't worry, most likely the Project Editor has recently made new changes to the files of the current branch.`;
         errorData.buttonText = 'Ok, get changes';
         errorData.onClickFnBindThis = (() => {
           if (
-            [common.ErEnum.BACKEND_REP_DOES_NOT_EXIST].indexOf(
-              infoErrorMessage
-            ) > -1
+            [
+              common.ErEnum.BACKEND_REP_DOES_NOT_EXIST,
+              common.ErEnum.BACKEND_REP_NOT_FOUND
+            ].indexOf(infoErrorMessage) > -1
           ) {
-            this.navigateService.navigateToMetricsEmptyRep();
+            let uiState = this.uiQuery.getValue();
+
+            if (common.isDefined(uiState.gridApi)) {
+              uiState.gridApi.deselectAll();
+            }
+
+            this.resolveMetricsRoute({
+              showSpinner: true
+            })
+              .pipe(
+                tap(x => {
+                  this.navigateService.navigateToMetricsRep({
+                    repId: common.EMPTY_REP_ID,
+                    selectRows: [],
+                    timezone: uiState.timezone,
+                    timeSpec: uiState.timeSpec,
+                    timeRangeFraction: uiState.timeRangeFraction
+                  });
+                }),
+                take(1)
+              )
+              .subscribe();
           } else if (
             [common.ErEnum.BACKEND_MODEL_DOES_NOT_EXIST].indexOf(
               infoErrorMessage
@@ -309,5 +347,69 @@ export class ApiService {
     this.myDialogService.showError({ errorData, isThrow: false });
 
     return EMPTY;
+  }
+
+  resolveMetricsRoute(item: { showSpinner: boolean }): Observable<boolean> {
+    let { showSpinner } = item;
+
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(take(1))
+      .subscribe(x => {
+        nav = x;
+      });
+
+    let payload: apiToBackend.ToBackendGetMetricsRequestPayload = {
+      projectId: nav.projectId,
+      isRepoProd: nav.isRepoProd,
+      branchId: nav.branchId,
+      envId: nav.envId
+    };
+
+    return this.req({
+      pathInfoName:
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMetrics,
+      payload: payload,
+      showSpinner: showSpinner
+    }).pipe(
+      map((resp: apiToBackend.ToBackendGetMetricsResponse) => {
+        if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+          this.memberQuery.update(resp.payload.userMember);
+
+          this.structQuery.update(resp.payload.struct);
+
+          this.navQuery.updatePart({
+            needValidate: resp.payload.needValidate
+          });
+
+          this.metricsQuery.update({
+            metrics: resp.payload.metrics
+          });
+
+          this.repsQuery.update({
+            reps: resp.payload.reps
+          });
+
+          return true;
+        } else if (
+          resp.info?.status === common.ResponseInfoStatusEnum.Error &&
+          resp.info.error.message ===
+            common.ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+        ) {
+          this.router.navigate([
+            common.PATH_ORG,
+            nav.orgId,
+            common.PATH_PROJECT,
+            nav.projectId,
+            common.PATH_SETTINGS
+          ]);
+
+          return false;
+        } else {
+          return false;
+        }
+      })
+    );
   }
 }

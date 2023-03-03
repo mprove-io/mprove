@@ -9,6 +9,7 @@ import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { RepoQuery } from '../queries/repo.query';
 import { StructQuery } from '../queries/struct.query';
+import { UiQuery } from '../queries/ui.query';
 import { ApiService } from '../services/api.service';
 
 @Injectable({ providedIn: 'root' })
@@ -17,6 +18,7 @@ export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
     private navQuery: NavQuery,
     private apiService: ApiService,
     private memberQuery: MemberQuery,
+    private uiQuery: UiQuery,
     private repoQuery: RepoQuery,
     private structQuery: StructQuery,
     private router: Router
@@ -58,6 +60,17 @@ export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
         map((resp: apiToBackend.ToBackendGetRepoResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
+
+            this.uiQuery.updatePart({
+              showChartForSelectedRow:
+                resp.payload.user.ui.showChartForSelectedRow,
+              showMetricsChartSettings:
+                resp.payload.user.ui.showMetricsChartSettings,
+              showMetricsChart: resp.payload.user.ui.showMetricsChart,
+              timezone: resp.payload.user.ui.timezone,
+              timeSpec: resp.payload.user.ui.timeSpec,
+              timeRangeFraction: resp.payload.user.ui.timeRangeFraction
+            });
 
             this.structQuery.update(resp.payload.struct);
             this.navQuery.updatePart({

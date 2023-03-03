@@ -134,7 +134,6 @@ export class GetMetricsController {
       needValidate: common.enumToBoolean(bridge.need_validate),
       struct: wrapper.wrapToApiStruct(struct),
       userMember: apiMember,
-      user: wrapper.wrapToApiUser(user),
       metrics: metrics.map(x => wrapper.wrapToApiMetric({ metric: x })),
       reps: reps.map(x =>
         wrapper.wrapToApiRep({

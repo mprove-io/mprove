@@ -1,44 +1,22 @@
 import { Injectable } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  Resolve,
-  Router,
-  RouterStateSnapshot
-} from '@angular/router';
+import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { map, take, tap } from 'rxjs/operators';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
+import { take, tap } from 'rxjs/operators';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
-import { MemberQuery } from '../queries/member.query';
-import { MetricsQuery } from '../queries/metrics.query';
 import { NavQuery, NavState } from '../queries/nav.query';
-import { RepsQuery } from '../queries/reps.query';
-import { StructQuery } from '../queries/struct.query';
-import { UiQuery } from '../queries/ui.query';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
-import { MyDialogService } from '../services/my-dialog.service';
 
 @Injectable({ providedIn: 'root' })
 export class StructMetricsResolver implements Resolve<Observable<boolean>> {
   constructor(
+    private router: Router,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
-    private apiService: ApiService,
-    private metricsQuery: MetricsQuery,
-    private uiQuery: UiQuery,
-    private repsQuery: RepsQuery,
-    private structQuery: StructQuery,
-    private memberQuery: MemberQuery,
-    private myDialogService: MyDialogService,
-    private router: Router
+    private apiService: ApiService
   ) {}
 
-  resolve(
-    route: ActivatedRouteSnapshot,
-    routerStateSnapshot: RouterStateSnapshot
-  ): Observable<boolean> {
+  resolve(route: ActivatedRouteSnapshot): Observable<boolean> {
     let nav: NavState;
     this.navQuery
       .select()
@@ -62,68 +40,8 @@ export class StructMetricsResolver implements Resolve<Observable<boolean>> {
       userId: userId
     });
 
-    let payload: apiToBackend.ToBackendGetMetricsRequestPayload = {
-      projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
-      branchId: nav.branchId,
-      envId: nav.envId
-    };
-
-    return this.apiService
-      .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMetrics,
-        payload: payload
-      })
-      .pipe(
-        map((resp: apiToBackend.ToBackendGetMetricsResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
-
-            this.structQuery.update(resp.payload.struct);
-
-            this.uiQuery.updatePart({
-              showChartForSelectedRow:
-                resp.payload.user.ui.showChartForSelectedRow,
-              showMetricsChartSettings:
-                resp.payload.user.ui.showMetricsChartSettings,
-              showMetricsChart: resp.payload.user.ui.showMetricsChart,
-              timezone: resp.payload.user.ui.timezone,
-              timeSpec: resp.payload.user.ui.timeSpec,
-              timeRangeFraction: resp.payload.user.ui.timeRangeFraction
-            });
-
-            this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
-            });
-
-            this.metricsQuery.update({
-              metrics: resp.payload.metrics
-            });
-
-            this.repsQuery.update({
-              reps: resp.payload.reps
-            });
-
-            return true;
-          } else if (
-            resp.info?.status === common.ResponseInfoStatusEnum.Error &&
-            resp.info.error.message ===
-              common.ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
-          ) {
-            this.router.navigate([
-              common.PATH_ORG,
-              nav.orgId,
-              common.PATH_PROJECT,
-              nav.projectId,
-              common.PATH_SETTINGS
-            ]);
-
-            return false;
-          } else {
-            return false;
-          }
-        })
-      );
+    return this.apiService.resolveMetricsRoute({
+      showSpinner: false
+    });
   }
 }

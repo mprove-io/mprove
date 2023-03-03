@@ -105,7 +105,10 @@ export class RepService {
 
             this.navigateService.navigateToMetricsRep({
               repId: rep.repId,
-              selectRows: selectRows
+              selectRows: selectRows,
+              timezone: uiState.timezone,
+              timeSpec: uiState.timeSpec,
+              timeRangeFraction: uiState.timeRangeFraction
             });
           }
         }),
@@ -166,6 +169,8 @@ export class RepService {
   deleteRep(item: { repId: string }) {
     let { repId } = item;
 
+    let uiState = this.uiQuery.getValue();
+
     let rep = this.repQuery.getValue();
 
     let payload: apiToBackend.ToBackendDeleteDraftRepRequestPayload = {
@@ -200,7 +205,10 @@ export class RepService {
             if (rep.repId === repId) {
               this.navigateService.navigateToMetricsRep({
                 repId: common.EMPTY_REP_ID,
-                selectRows: []
+                selectRows: [],
+                timezone: uiState.timezone,
+                timeSpec: uiState.timeSpec,
+                timeRangeFraction: uiState.timeRangeFraction
               });
             }
           }

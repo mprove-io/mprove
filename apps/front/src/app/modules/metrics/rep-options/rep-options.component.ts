@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepQuery } from '~front/app/queries/rep.query';
 import { RepsQuery } from '~front/app/queries/reps.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -22,6 +23,7 @@ export class RepOptionsComponent {
     private apiService: ApiService,
     private repQuery: RepQuery,
     private repsQuery: RepsQuery,
+    private uiQuery: UiQuery,
     private navQuery: NavQuery,
     private myDialogService: MyDialogService
   ) {}
@@ -71,10 +73,17 @@ export class RepOptionsComponent {
 
     this.repsQuery.update({ reps: newReps });
 
+    let uiState = this.uiQuery.getValue();
+
     if (selectedRep.repId === deletedRepId) {
+      uiState.gridApi.deselectAll();
+
       this.navigateService.navigateToMetricsRep({
         repId: common.EMPTY_REP_ID,
-        selectRows: []
+        selectRows: [],
+        timezone: uiState.timezone,
+        timeSpec: uiState.timeSpec,
+        timeRangeFraction: uiState.timeRangeFraction
       });
     }
   }
