@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsInt, IsString, ValidateNested } from 'class-validator';
+import { IsUserTimezone } from '~common/functions/is-user-timezone';
 import { Ui } from './ui';
 
 export class User {
@@ -18,7 +19,7 @@ export class User {
   @IsString()
   lastName: string;
 
-  @IsString()
+  @IsUserTimezone()
   timezone: string;
 
   @IsBoolean()

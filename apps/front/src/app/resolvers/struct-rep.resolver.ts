@@ -27,16 +27,30 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
   ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<boolean> {
+    let timezoneParam: common.TimeSpecEnum = route.queryParams?.timezone;
     let timeSpecParam: common.TimeSpecEnum = route.queryParams?.timeSpec;
+    let timeRangeParam: common.TimeSpecEnum = route.queryParams?.timeRange;
 
     let uiState = this.uiQuery.getValue();
 
     return this.resolveRoute({
       route: route,
       showSpinner: false,
-      timezone: uiState.timezone,
-      timeSpec: timeSpecParam,
-      timeRangeFraction: uiState.timeRangeFraction
+      timezone: common.isDefined(timezoneParam)
+        ? timezoneParam.split('-').join('/')
+        : uiState.timezone,
+      timeSpec: common.isDefined(timeSpecParam)
+        ? timeSpecParam
+        : uiState.timeSpec,
+      timeRangeFractionBrick: common.isDefined(timeRangeParam)
+        ? timeRangeParam
+            .split('-')
+            .join('/')
+            .split('_')
+            .join(' ')
+            .split('~')
+            .join(':')
+        : uiState.timeRangeFraction.brick
     });
   }
 
@@ -45,9 +59,10 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
     showSpinner: boolean;
     timeSpec: common.TimeSpecEnum;
     timezone: string;
-    timeRangeFraction: common.Fraction;
+    timeRangeFractionBrick: string;
   }): Observable<boolean> {
-    let { route, showSpinner, timezone, timeSpec, timeRangeFraction } = item;
+    let { route, showSpinner, timezone, timeSpec, timeRangeFractionBrick } =
+      item;
 
     let nav: NavState;
     this.navQuery
@@ -93,7 +108,7 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
       repId: parametersRepId,
       timezone: timezone,
       timeSpec: timeSpec,
-      timeRangeFraction: timeRangeFraction
+      timeRangeFractionBrick: timeRangeFractionBrick
     };
 
     return this.apiService
@@ -114,7 +129,11 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
 
             this.repQuery.update(resp.payload.rep);
 
-            this.uiQuery.updatePart({ timeSpec: resp.payload.rep.timeSpec });
+            this.uiQuery.updatePart({
+              timezone: resp.payload.rep.timezone,
+              timeSpec: resp.payload.rep.timeSpec,
+              timeRangeFraction: resp.payload.rep.timeRangeFraction
+            });
 
             return true;
           } else if (

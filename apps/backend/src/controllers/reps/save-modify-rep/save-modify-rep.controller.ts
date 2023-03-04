@@ -69,7 +69,7 @@ export class SaveModifyRepController {
       accessUsers,
       title,
       timeSpec,
-      timeRangeFraction,
+      timeRangeFractionBrick,
       timezone
     } = reqValid.payload;
 
@@ -282,7 +282,7 @@ export class SaveModifyRepController {
       envId: envId,
       struct: struct,
       timeSpec: timeSpec,
-      timeRangeFraction: timeRangeFraction,
+      timeRangeFractionBrick: timeRangeFractionBrick,
       timezone: timezone
     });
 

@@ -62,7 +62,7 @@ export class RepsService {
     changeType: common.ChangeTypeEnum;
     timezone: string;
     timeSpec: common.TimeSpecEnum;
-    timeRangeFraction: common.Fraction;
+    timeRangeFractionBrick: string;
   }) {
     let {
       rows,
@@ -70,7 +70,7 @@ export class RepsService {
       changeType,
       timezone,
       timeSpec,
-      timeRangeFraction,
+      timeRangeFractionBrick,
       metrics
     } = item;
 
@@ -91,7 +91,7 @@ export class RepsService {
             .forEach(row => {
               let rq = row.rqs.find(
                 y =>
-                  y.fractionBrick === timeRangeFraction.brick &&
+                  y.fractionBrick === timeRangeFractionBrick &&
                   y.timeSpec === timeSpec &&
                   y.timezone === timezone
               );
@@ -165,7 +165,7 @@ export class RepsService {
           ) {
             let rq = row.rqs.find(
               y =>
-                y.fractionBrick === timeRangeFraction.brick &&
+                y.fractionBrick === timeRangeFractionBrick &&
                 y.timeSpec === timeSpec &&
                 y.timezone === timezone
             );
@@ -238,7 +238,7 @@ export class RepsService {
         ) {
           let rq = row.rqs.find(
             y =>
-              y.fractionBrick === timeRangeFraction.brick &&
+              y.fractionBrick === timeRangeFractionBrick &&
               y.timeSpec === timeSpec &&
               y.timezone === timezone
           );
@@ -275,7 +275,7 @@ export class RepsService {
         ) {
           let rq = row.rqs.find(
             y =>
-              y.fractionBrick === timeRangeFraction.brick &&
+              y.fractionBrick === timeRangeFractionBrick &&
               y.timeSpec === timeSpec &&
               y.timezone === timezone
           );
@@ -307,7 +307,7 @@ export class RepsService {
           ) {
             let rq = row.rqs.find(
               y =>
-                y.fractionBrick === timeRangeFraction.brick &&
+                y.fractionBrick === timeRangeFractionBrick &&
                 y.timeSpec === timeSpec &&
                 y.timezone === timezone
             );
@@ -419,7 +419,7 @@ export class RepsService {
     traceId: string;
     timezone: string;
     timeSpec: common.TimeSpecEnum;
-    timeRangeFraction: common.Fraction;
+    timeRangeFractionBrick: string;
     struct: entities.StructEntity;
     rep: entities.RepEntity;
     project: entities.ProjectEntity;
@@ -432,7 +432,7 @@ export class RepsService {
     let {
       traceId,
       timeSpec,
-      timeRangeFraction,
+      timeRangeFractionBrick,
       struct,
       rep,
       timezone,
@@ -444,13 +444,17 @@ export class RepsService {
       isSaveToDb
     } = item;
 
-    let { columns, isTimeColumnsLimitExceeded, timeColumnsLimit } =
-      await this.blockmlService.getTimeColumns({
-        traceId: traceId,
-        timeSpec: timeSpec,
-        timeRangeFraction: timeRangeFraction,
-        projectWeekStart: struct.week_start
-      });
+    let {
+      columns,
+      isTimeColumnsLimitExceeded,
+      timeColumnsLimit,
+      timeRangeFraction
+    } = await this.blockmlService.getTimeColumns({
+      traceId: traceId,
+      timeSpec: timeSpec,
+      timeRangeFractionBrick: timeRangeFractionBrick,
+      projectWeekStart: struct.week_start
+    });
 
     let metricIds = rep.rows.map(x => x.metricId);
 

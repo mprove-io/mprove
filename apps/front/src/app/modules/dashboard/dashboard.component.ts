@@ -92,9 +92,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     ]
   });
 
-  timezones = common
-    .getTimezones()
-    .filter(x => x.value !== common.USE_PROJECT_TIMEZONE_VALUE);
+  timezones = common.getTimezones();
 
   dashboard: common.DashboardX;
   dashboard$ = this.dashboardQuery.select().pipe(

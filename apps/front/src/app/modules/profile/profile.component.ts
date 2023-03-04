@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { getTimezoneLabelByValue } from '~common/_index';
+import { getUserTimezoneLabelByValue } from '~common/_index';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -25,7 +25,7 @@ export class ProfileComponent implements OnInit {
 
   userTimezone$ = this.userQuery.timezone$.pipe(
     tap(x => {
-      this.userTimezoneLabel = getTimezoneLabelByValue(x);
+      this.userTimezoneLabel = getUserTimezoneLabelByValue(x);
       this.cd.detectChanges();
     })
   );
@@ -117,8 +117,8 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  editTimezone() {
-    this.myDialogService.showEditTimezone({
+  editUserTimezone() {
+    this.myDialogService.showEditUserTimezone({
       apiService: this.apiService
     });
   }

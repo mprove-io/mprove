@@ -131,9 +131,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
     }
   ];
 
-  timezones = common
-    .getTimezones()
-    .filter(x => x.value !== common.USE_PROJECT_TIMEZONE_VALUE);
+  timezones = common.getTimezones();
 
   chartOptions: AgChartOptions;
 
@@ -386,7 +384,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
       repId: this.rep.repId,
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
-      timeRangeFraction: uiState.timeRangeFraction
+      timeRangeFractionBrick: uiState.timeRangeFraction.brick
     };
 
     return this.apiService
@@ -502,7 +500,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
         showSpinner: true,
         timezone: uiState.timezone,
         timeSpec: uiState.timeSpec,
-        timeRangeFraction: uiState.timeRangeFraction
+        timeRangeFractionBrick: uiState.timeRangeFraction.brick
       })
       .pipe(
         tap(x => {

@@ -31,7 +31,7 @@ export function checkTimezone<T extends types.dzType>(
         return;
       }
 
-      if (helper.isTimezoneValid(report.timezone) === false) {
+      if (common.isTimezoneValid(report.timezone) === false) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.REPORT_WRONG_TIMEZONE,

@@ -33,22 +33,26 @@ export class GetTimeRangeService {
       logger: this.logger
     });
 
-    let { fraction, timeColumnsLimit, timeSpec } = reqValid.payload;
+    let { timeRangeFractionBrick, timeColumnsLimit, timeSpec } =
+      reqValid.payload;
 
     let fractions: common.Fraction[] = [];
 
     let p = processFilter({
-      filterBricks: [fraction.brick],
+      filterBricks: [timeRangeFractionBrick],
       result: common.FieldResultEnum.Ts,
       fractions: fractions,
       getTimeRange: true
     });
 
+    let timeRangeFraction = fractions[0];
+
     if (p.valid !== 1) {
       let payload: apiToBlockml.ToBlockmlGetTimeRangeResponsePayload = {
         isValid: false,
         rangeStart: undefined,
-        rangeEnd: undefined
+        rangeEnd: undefined,
+        timeRangeFraction: undefined
       };
 
       return payload;
@@ -65,7 +69,7 @@ export class GetTimeRangeService {
         : [
             common.FractionTypeEnum.TsIsBeforeDate,
             common.FractionTypeEnum.TsIsBeforeRelative
-          ].indexOf(fraction.type) > -1
+          ].indexOf(timeRangeFraction.type) > -1
         ? getUnixTime(
             sub(
               fromUnixTime(rangeOpen),
@@ -89,7 +93,7 @@ export class GetTimeRangeService {
         : [
             common.FractionTypeEnum.TsIsAfterDate,
             common.FractionTypeEnum.TsIsAfterRelative
-          ].indexOf(fraction.type) > -1
+          ].indexOf(timeRangeFraction.type) > -1
         ? rangeOpen
         : undefined;
 
@@ -101,12 +105,12 @@ export class GetTimeRangeService {
         : [
             common.FractionTypeEnum.TsIsBeforeDate,
             common.FractionTypeEnum.TsIsBeforeRelative
-          ].indexOf(fraction.type) > -1
+          ].indexOf(timeRangeFraction.type) > -1
         ? rangeOpen
         : [
             common.FractionTypeEnum.TsIsAfterDate,
             common.FractionTypeEnum.TsIsAfterRelative
-          ].indexOf(fraction.type) > -1
+          ].indexOf(timeRangeFraction.type) > -1
         ? getUnixTime(
             add(
               fromUnixTime(rangeOpen),
@@ -132,7 +136,8 @@ export class GetTimeRangeService {
     let payload: apiToBlockml.ToBlockmlGetTimeRangeResponsePayload = {
       isValid: p.valid === 1,
       rangeStart: start,
-      rangeEnd: end
+      rangeEnd: end,
+      timeRangeFraction: timeRangeFraction
     };
 
     return payload;

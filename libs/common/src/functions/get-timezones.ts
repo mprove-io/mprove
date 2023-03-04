@@ -1,16 +1,8 @@
 import { timezones } from '~common/constants/timezones';
-import {
-  USE_PROJECT_TIMEZONE_LABEL,
-  USE_PROJECT_TIMEZONE_VALUE,
-  UTC
-} from '~common/constants/top';
+import { UTC } from '~common/_index';
 
 export function getTimezones() {
   let tzs: { value: string; label: string }[] = [
-    {
-      value: USE_PROJECT_TIMEZONE_VALUE,
-      label: USE_PROJECT_TIMEZONE_LABEL
-    },
     {
       value: UTC,
       label: UTC

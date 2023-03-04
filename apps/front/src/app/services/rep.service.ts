@@ -85,7 +85,7 @@ export class RepService {
       changeType: changeType,
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
-      timeRangeFraction: uiState.timeRangeFraction
+      timeRangeFractionBrick: uiState.timeRangeFraction.brick
     };
 
     this.apiService
@@ -133,7 +133,7 @@ export class RepService {
       rowChanges: rowChanges,
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
-      timeRangeFraction: uiState.timeRangeFraction
+      timeRangeFractionBrick: uiState.timeRangeFraction.brick
     };
 
     this.apiService

@@ -1,9 +1,9 @@
-import { getTimezones } from './get-timezones';
+import { getUserTimezones } from './get-user-timezones';
 
-export function getTimezoneLabelByValue(value: string) {
-  let timezones = getTimezones();
+export function getUserTimezoneLabelByValue(value: string) {
+  let userTimezones = getUserTimezones();
 
-  let timezone = timezones.find(x => x.value === value);
+  let userTimezone = userTimezones.find(x => x.value === value);
 
-  return timezone.label;
+  return userTimezone.label;
 }

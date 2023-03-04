@@ -1,10 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsString, ValidateNested } from 'class-validator';
+import { ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
+import { IsUserTimezone } from '~common/functions/is-user-timezone';
 
 export class ToBackendSetUserTimezoneRequestPayload {
-  @IsString()
+  @IsUserTimezone()
   timezone: string;
 }
 

@@ -170,7 +170,7 @@ export function checkProjectConfig(
 
       if (
         parameter === enums.ParameterEnum.DefaultTimezone.toString() &&
-        helper.isTimezoneValid(
+        common.isTimezoneValid(
           conf[parameter as keyof interfaces.ProjectConf].toString()
         ) === false
       ) {

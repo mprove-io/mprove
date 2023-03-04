@@ -1,12 +1,17 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsEnum, IsInt, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsInt,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { common } from '~api-to-blockml/barrels/common';
 import { ToBlockmlRequest } from '~api-to-blockml/interfaces/to-blockml/to-blockml-request';
 
 export class ToBlockmlGetTimeRangeRequestPayload {
-  @ValidateNested()
-  @Type(() => common.Fraction)
-  fraction: common.Fraction;
+  @IsString()
+  timeRangeFractionBrick: string;
 
   @IsInt()
   timeColumnsLimit: number;
@@ -30,6 +35,10 @@ export class ToBlockmlGetTimeRangeResponsePayload {
 
   @IsInt()
   rangeEnd: number;
+
+  @ValidateNested()
+  @Type(() => common.Fraction)
+  timeRangeFraction: common.Fraction;
 }
 
 export class ToBlockmlGetTimeRangeResponse extends common.MyResponse {

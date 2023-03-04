@@ -7,6 +7,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
+import { IsTimezone } from '~common/functions/is-timezone';
 import { Chart } from './chart';
 import { Filter } from './filter';
 import { Sorting } from './sorting';
@@ -38,7 +39,7 @@ export class Mconfig {
   @IsString()
   sorts: string;
 
-  @IsString()
+  @IsTimezone()
   timezone: string;
 
   @IsNumber()

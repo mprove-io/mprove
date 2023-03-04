@@ -27,7 +27,7 @@ import { ApiKeyDialogComponent } from './modules/profile/api-key-dialog/api-key-
 import { DeleteUserDialogComponent } from './modules/profile/delete-user-dialog/delete-user-dialog.component';
 import { EditNameDialogComponent } from './modules/profile/edit-name-dialog/edit-name-dialog.component';
 import { EditPhotoDialogComponent } from './modules/profile/edit-photo-dialog/edit-photo-dialog.component';
-import { EditTimezoneDialogComponent } from './modules/profile/edit-timezone-dialog/edit-timezone-dialog.component';
+import { EditUserTimezoneDialogComponent } from './modules/profile/edit-user-timezone-dialog/edit-user-timezone-dialog.component';
 import { AddConnectionDialogComponent } from './modules/project/project-connections/add-connection-dialog/add-connection-dialog.component';
 import { DeleteConnectionDialogComponent } from './modules/project/project-connections/delete-connection-dialog/delete-connection-dialog.component';
 import { EditConnectionDialogComponent } from './modules/project/project-connections/edit-connection-dialog/edit-connection-dialog.component';
@@ -60,7 +60,7 @@ export const appDialogs = [
   // profile
   EditPhotoDialogComponent,
   EditNameDialogComponent,
-  EditTimezoneDialogComponent,
+  EditUserTimezoneDialogComponent,
   DeleteUserDialogComponent,
   ApiKeyDialogComponent,
   // org-account

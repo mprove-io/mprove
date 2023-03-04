@@ -41,7 +41,7 @@ export class GetRepController {
       branchId,
       envId,
       repId,
-      timeRangeFraction,
+      timeRangeFractionBrick,
       timeSpec,
       timezone
     } = reqValid.payload;
@@ -101,14 +101,14 @@ export class GetRepController {
       envId: envId,
       struct: struct,
       timeSpec: timeSpec,
-      timeRangeFraction: timeRangeFraction,
+      timeRangeFractionBrick: timeRangeFractionBrick,
       timezone: timezone
     });
 
     user.ui = user.ui || constants.DEFAULT_UI;
     user.ui.timezone = timezone;
     user.ui.timeSpec = timeSpec;
-    user.ui.timeRangeFraction = timeRangeFraction;
+    user.ui.timeRangeFraction = repApi.timeRangeFraction;
 
     await this.dbService.writeRecords({
       modify: true,

@@ -201,7 +201,7 @@ export class RepSaveAsDialogComponent implements OnInit {
         : [],
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
-      timeRangeFraction: uiState.timeRangeFraction
+      timeRangeFractionBrick: uiState.timeRangeFraction.brick
     };
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -280,7 +280,7 @@ export class RepSaveAsDialogComponent implements OnInit {
         : [],
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
-      timeRangeFraction: uiState.timeRangeFraction
+      timeRangeFractionBrick: uiState.timeRangeFraction.brick
     };
 
     let apiService: ApiService = this.ref.data.apiService;

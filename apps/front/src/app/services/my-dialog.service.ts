@@ -113,9 +113,9 @@ import {
   EditPhotoDialogData
 } from '../modules/profile/edit-photo-dialog/edit-photo-dialog.component';
 import {
-  EditTimezoneDialogComponent,
-  EditTimezoneDialogData
-} from '../modules/profile/edit-timezone-dialog/edit-timezone-dialog.component';
+  EditUserTimezoneDialogComponent,
+  EditUserTimezoneDialogData
+} from '../modules/profile/edit-user-timezone-dialog/edit-user-timezone-dialog.component';
 import {
   AddConnectionDialogComponent,
   AddConnectionDialogData
@@ -255,8 +255,8 @@ export class MyDialogService {
     });
   }
 
-  showEditTimezone(item: EditTimezoneDialogData): void {
-    this.dialogService.open(EditTimezoneDialogComponent, {
+  showEditUserTimezone(item: EditUserTimezoneDialogData): void {
+    this.dialogService.open(EditUserTimezoneDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item

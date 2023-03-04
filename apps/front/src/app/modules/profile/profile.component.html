@@ -205,14 +205,14 @@
                 [isEnabled]="alias === restrictedUserAlias"
               >
                 <button
-                  data-cy="profileEditTimezoneButton"
+                  data-cy="profileEditUserTimezoneButton"
                   class="rounded border py-2 px-3 text-base font-medium leading-3 shadow-sm focus:outline-none"
                   [ngClass]="{
                     'cursor-default text-gray-400':
                       alias === restrictedUserAlias,
                     'border-gray3 text-gray1': alias !== restrictedUserAlias
                   }"
-                  (click)="editTimezone()"
+                  (click)="editUserTimezone()"
                   [disabled]="alias === restrictedUserAlias"
                   >Edit</button
                 ></div

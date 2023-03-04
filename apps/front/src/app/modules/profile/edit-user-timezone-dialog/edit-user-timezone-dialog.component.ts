@@ -11,15 +11,15 @@ import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface EditTimezoneDialogData {
+export interface EditUserTimezoneDialogData {
   apiService: ApiService;
 }
 
 @Component({
-  selector: 'm-edit-timezone-dialog',
-  templateUrl: './edit-timezone-dialog.component.html'
+  selector: 'm-edit-user-timezone-dialog',
+  templateUrl: './edit-user-timezone-dialog.component.html'
 })
-export class EditTimezoneDialogComponent implements OnInit {
+export class EditUserTimezoneDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.ref.close();
@@ -27,7 +27,7 @@ export class EditTimezoneDialogComponent implements OnInit {
 
   timezone: string;
 
-  timezones = common.getTimezones();
+  timezones = common.getUserTimezones();
 
   timezone$ = this.userQuery.timezone$.pipe(
     tap(x => {
@@ -37,7 +37,7 @@ export class EditTimezoneDialogComponent implements OnInit {
   );
 
   constructor(
-    public ref: DialogRef<EditTimezoneDialogData>,
+    public ref: DialogRef<EditUserTimezoneDialogData>,
     private userQuery: UserQuery,
     private cd: ChangeDetectorRef
   ) {}

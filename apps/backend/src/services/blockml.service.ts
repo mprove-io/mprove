@@ -210,10 +210,10 @@ export class BlockmlService {
   async getTimeColumns(item: {
     traceId: string;
     timeSpec: common.TimeSpecEnum;
-    timeRangeFraction: common.Fraction;
+    timeRangeFractionBrick: string;
     projectWeekStart: common.ProjectWeekStartEnum;
   }) {
-    let { traceId, timeSpec, timeRangeFraction, projectWeekStart } = item;
+    let { traceId, timeSpec, timeRangeFractionBrick, projectWeekStart } = item;
 
     let timeColumnsLimit = constants.TIME_COLUMNS_LIMIT;
 
@@ -224,7 +224,7 @@ export class BlockmlService {
           traceId: traceId
         },
         payload: {
-          fraction: timeRangeFraction,
+          timeRangeFractionBrick: timeRangeFractionBrick,
           timeColumnsLimit: timeColumnsLimit,
           timeSpec: timeSpec
         }
@@ -238,6 +238,15 @@ export class BlockmlService {
           checkIsOk: true
         }
       );
+
+    if (blockmlGetTimeRangeResponse.payload.isValid === false) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_WRONG_TIME_RANGE
+      });
+    }
+
+    let timeRangeFraction =
+      blockmlGetTimeRangeResponse.payload.timeRangeFraction;
 
     let rangeStart = blockmlGetTimeRangeResponse.payload.rangeStart;
     let rangeEnd = blockmlGetTimeRangeResponse.payload.rangeEnd;
@@ -418,7 +427,8 @@ export class BlockmlService {
     return {
       columns: columns,
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded,
-      timeColumnsLimit: timeColumnsLimit
+      timeColumnsLimit: timeColumnsLimit,
+      timeRangeFraction: timeRangeFraction
     };
   }
 }

@@ -249,9 +249,7 @@ export class ModelComponent implements OnInit, OnDestroy {
     ]
   });
 
-  timezones = common
-    .getTimezones()
-    .filter(x => x.value !== common.USE_PROJECT_TIMEZONE_VALUE);
+  timezones = common.getTimezones();
 
   timeDiff: number;
 

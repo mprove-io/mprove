@@ -1,4 +1,5 @@
 import { IsNumber, IsString } from 'class-validator';
+import { IsTimezone } from '~common/functions/is-timezone';
 
 export class Report {
   @IsString()
@@ -10,7 +11,7 @@ export class Report {
   @IsString()
   mconfigId: string;
 
-  @IsString()
+  @IsTimezone()
   timezone: string;
 
   @IsString()

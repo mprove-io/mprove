@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsEnum, ValidateNested } from 'class-validator';
 import { enums } from '~common/barrels/enums';
+import { IsTimezone } from '~common/functions/is-timezone';
 import { Fraction } from '../blockml/fraction';
 
 export class Ui {
@@ -13,7 +14,7 @@ export class Ui {
   @IsBoolean()
   showChartForSelectedRow: boolean;
 
-  @IsString()
+  @IsTimezone()
   timezone: string;
 
   @IsEnum(enums.TimeSpecEnum)

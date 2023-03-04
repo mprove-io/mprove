@@ -2,12 +2,13 @@ import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
+import { IsTimezone } from '~common/functions/is-timezone';
 
 export class ToBackendSetProjectTimezoneRequestPayload {
   @IsString()
   projectId: string;
 
-  @IsString()
+  @IsTimezone()
   timezone: string;
 }
 

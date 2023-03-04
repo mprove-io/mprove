@@ -8,6 +8,7 @@ import {
 } from 'class-validator';
 import { common } from '~api-to-blockml/barrels/common';
 import { ToBlockmlRequest } from '~api-to-blockml/interfaces/to-blockml/to-blockml-request';
+import { IsTimezone } from '~common/functions/is-timezone';
 
 export class ToBlockmlRebuildStructRequestPayload {
   @IsString()
@@ -52,7 +53,7 @@ export class ToBlockmlRebuildStructResponsePayload {
   @IsEnum(common.ProjectWeekStartEnum)
   weekStart: common.ProjectWeekStartEnum;
 
-  @IsString()
+  @IsTimezone()
   defaultTimezone: string;
 
   @IsBoolean()

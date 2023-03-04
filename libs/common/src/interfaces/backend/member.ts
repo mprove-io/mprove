@@ -1,4 +1,5 @@
 import { IsBoolean, IsInt, IsString } from 'class-validator';
+import { IsUserTimezone } from '~common/functions/is-user-timezone';
 
 export class Member {
   @IsString()
@@ -25,7 +26,7 @@ export class Member {
   @IsString()
   avatarSmall: string;
 
-  @IsString()
+  @IsUserTimezone()
   timezone: string;
 
   @IsString({ each: true })

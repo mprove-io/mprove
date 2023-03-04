@@ -69,7 +69,7 @@ export class SaveCreateRepController {
       accessUsers,
       title,
       timeSpec,
-      timeRangeFraction,
+      timeRangeFractionBrick,
       timezone
     } = reqValid.payload;
 
@@ -287,7 +287,7 @@ export class SaveCreateRepController {
       envId: envId,
       struct: struct,
       timeSpec: timeSpec,
-      timeRangeFraction: timeRangeFraction,
+      timeRangeFractionBrick: timeRangeFractionBrick,
       timezone: timezone
     });
 

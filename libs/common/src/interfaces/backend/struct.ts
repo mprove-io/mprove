@@ -7,6 +7,7 @@ import {
   ValidateNested
 } from 'class-validator';
 import { enums } from '~common/barrels/enums';
+import { IsTimezone } from '~common/functions/is-timezone';
 import { BmlError } from '../blockml/bml-error';
 import { UdfsDict } from '../blockml/udfs-dict';
 import { View } from '../blockml/view';
@@ -27,7 +28,7 @@ export class Struct {
   @IsBoolean()
   allowTimezones: boolean;
 
-  @IsString()
+  @IsTimezone()
   defaultTimezone: string;
 
   @IsString()

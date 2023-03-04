@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
+import { IsTimezone } from '~common/functions/is-timezone';
 
 export class ToBackendSaveModifyRepRequestPayload {
   @IsString()
@@ -31,15 +32,14 @@ export class ToBackendSaveModifyRepRequestPayload {
   @IsString({ each: true })
   accessUsers: string[];
 
-  @IsString()
+  @IsTimezone()
   timezone: string;
 
   @IsEnum(common.TimeSpecEnum)
   timeSpec: common.TimeSpecEnum;
 
-  @ValidateNested()
-  @Type(() => common.Fraction)
-  timeRangeFraction: common.Fraction;
+  @IsString()
+  timeRangeFractionBrick: string;
 }
 
 export class ToBackendSaveModifyRepRequest extends ToBackendRequest {

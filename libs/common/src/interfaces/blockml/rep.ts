@@ -7,6 +7,7 @@ import {
   ValidateNested
 } from 'class-validator';
 import { enums } from '~common/barrels/enums';
+import { IsTimezone } from '~common/functions/is-timezone';
 import { Column } from './column';
 import { Fraction } from './fraction';
 import { Row } from './row';
@@ -39,7 +40,7 @@ export class Rep {
   @IsString()
   title: string;
 
-  @IsString()
+  @IsTimezone()
   timezone: string;
 
   @IsEnum(enums.TimeSpecEnum)

@@ -48,7 +48,7 @@ export class CreateDraftRepController {
       rowChanges,
       timeSpec,
       timezone,
-      timeRangeFraction
+      timeRangeFractionBrick
     } = reqValid.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
@@ -113,7 +113,7 @@ export class CreateDraftRepController {
       changeType: changeType,
       timezone: timezone,
       timeSpec: timeSpec,
-      timeRangeFraction: timeRangeFraction,
+      timeRangeFractionBrick: timeRangeFractionBrick,
       metrics: metrics
     });
 
@@ -145,7 +145,7 @@ export class CreateDraftRepController {
       struct: struct,
       timezone: timezone,
       timeSpec: timeSpec,
-      timeRangeFraction: timeRangeFraction,
+      timeRangeFractionBrick: timeRangeFractionBrick,
       isSaveToDb: true
     });
 
