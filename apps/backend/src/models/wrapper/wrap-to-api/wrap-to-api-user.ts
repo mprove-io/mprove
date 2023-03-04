@@ -16,6 +16,14 @@ export function wrapToApiUser(user: entities.UserEntity): common.User {
       timeSpec: user.ui?.timeSpec || constants.DEFAULT_UI.timeSpec,
       timeRangeFraction:
         user.ui?.timeRangeFraction || constants.DEFAULT_UI.timeRangeFraction,
+      showMetricsModelName: common.isDefined(user.ui?.showMetricsModelName)
+        ? user.ui?.showMetricsModelName
+        : constants.DEFAULT_UI.showMetricsModelName,
+      showMetricsTimeFieldName: common.isDefined(
+        user.ui?.showMetricsTimeFieldName
+      )
+        ? user.ui?.showMetricsTimeFieldName
+        : constants.DEFAULT_UI.showMetricsTimeFieldName,
       showMetricsChart: common.isDefined(user.ui?.showMetricsChart)
         ? user.ui?.showMetricsChart
         : constants.DEFAULT_UI.showMetricsChart,

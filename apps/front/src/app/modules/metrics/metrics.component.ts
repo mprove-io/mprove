@@ -257,6 +257,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
   );
 
   fractions: common.Fraction[] = [];
+  showMetricsModelName = false;
+  showMetricsTimeFieldName = false;
   showMetricsChart = false;
   showMetricsChartSettings = false;
   showChartForSelectedRow = false;
@@ -276,6 +278,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.fractions = [x.timeRangeFraction];
 
+      this.showMetricsModelName = x.showMetricsModelName;
+      this.showMetricsTimeFieldName = x.showMetricsTimeFieldName;
       this.showMetricsChart = x.showMetricsChart;
       this.showMetricsChartSettings = x.showMetricsChartSettings;
       this.showChartForSelectedRow = x.showChartForSelectedRow;

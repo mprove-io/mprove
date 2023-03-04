@@ -3,6 +3,7 @@ import { IHeaderAngularComp } from 'ag-grid-angular';
 import { IHeaderParams, IRowNode } from 'ag-grid-community';
 import { tap } from 'rxjs';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { UiService } from '~front/app/services/ui.service';
 import { DataRow } from '../rep.component';
 
 @Component({
@@ -33,5 +34,45 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
     })
   );
 
-  constructor(private uiQuery: UiQuery, private cd: ChangeDetectorRef) {}
+  showMetricsModelName = false;
+  showMetricsTimeFieldName = false;
+
+  uiQuery$ = this.uiQuery.select().pipe(
+    tap(x => {
+      this.showMetricsModelName = x.showMetricsModelName;
+      this.showMetricsTimeFieldName = x.showMetricsTimeFieldName;
+
+      this.cd.detectChanges();
+    })
+  );
+
+  constructor(
+    private uiQuery: UiQuery,
+    private uiService: UiService,
+    private cd: ChangeDetectorRef
+  ) {}
+
+  toggleShowMetricsModelName() {
+    let showMetricsModelName = !this.showMetricsModelName;
+
+    this.uiQuery.updatePart({
+      showMetricsModelName: showMetricsModelName
+    });
+
+    this.uiService.setUserUi({
+      showMetricsModelName: showMetricsModelName
+    });
+  }
+
+  toggleShowMetricsTimeFieldName() {
+    let showMetricsTimeFieldName = !this.showMetricsTimeFieldName;
+
+    this.uiQuery.updatePart({
+      showMetricsTimeFieldName: showMetricsTimeFieldName
+    });
+
+    this.uiService.setUserUi({
+      showMetricsTimeFieldName: showMetricsTimeFieldName
+    });
+  }
 }

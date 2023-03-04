@@ -3,10 +3,34 @@
 
   <!-- <div class="flex flex-grow"></div> -->
 
+  <div class="ml-10 flex flex-row items-center">
+    <div
+      class="flex h-9 cursor-pointer select-none items-center text-gray-500"
+      [ngClass]="{
+        'font-semibold': showMetricsModelName === true,
+        'font-normal': showMetricsModelName === false
+      }"
+      (click)="toggleShowMetricsModelName()"
+      >Model</div
+    >
+  </div>
+
+  <div class="ml-5 flex flex-row items-center">
+    <div
+      class="flex h-9 cursor-pointer select-none items-center text-gray-500"
+      [ngClass]="{
+        'font-semibold': showMetricsTimeFieldName === true,
+        'font-normal': showMetricsTimeFieldName === false
+      }"
+      (click)="toggleShowMetricsTimeFieldName()"
+      >TimeField</div
+    >
+  </div>
+
   <button
     *ngIf="repSelectedNodes.length > 0"
     data-cy="metricsEscButton"
-    class="ml-10 w-[60px] rounded border border-gray-400 py-1 text-gray-500 hover:bg-white focus:outline-none"
+    class="ml-5 w-[60px] rounded border border-gray-400 py-1 text-gray-500 hover:bg-white focus:outline-none"
     type="button"
     (click)="esc()"
     >ESC</button
@@ -14,3 +38,4 @@
 </div>
 
 <div *ngIf="repSelectedNodes$ | async"></div>
+<div *ngIf="uiQuery$ | async"></div>

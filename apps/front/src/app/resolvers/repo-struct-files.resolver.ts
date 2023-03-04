@@ -62,6 +62,9 @@ export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
             this.memberQuery.update(resp.payload.userMember);
 
             this.uiQuery.updatePart({
+              showMetricsModelName: resp.payload.user.ui.showMetricsModelName,
+              showMetricsTimeFieldName:
+                resp.payload.user.ui.showMetricsTimeFieldName,
               showChartForSelectedRow:
                 resp.payload.user.ui.showChartForSelectedRow,
               showMetricsChartSettings:

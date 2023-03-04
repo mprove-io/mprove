@@ -6,6 +6,12 @@ import { Fraction } from '../blockml/fraction';
 
 export class Ui {
   @IsBoolean()
+  showMetricsModelName: boolean;
+
+  @IsBoolean()
+  showMetricsTimeFieldName: boolean;
+
+  @IsBoolean()
   showMetricsChart: boolean;
 
   @IsBoolean()

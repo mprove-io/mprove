@@ -22,7 +22,7 @@ export function makeRepQueryParams(item: {
       selectRowsNodeIds.length > 0 ? selectRowsNodeIds.join('-') : undefined
   };
 
-  console.log('makeRepQueryParams', queryParams);
+  // console.log('makeRepQueryParams', queryParams);
 
   return queryParams;
 }

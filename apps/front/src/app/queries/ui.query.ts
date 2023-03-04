@@ -15,6 +15,8 @@ export class UiState {
     columns: common.Column[];
   };
   repSelectedNodes: IRowNode<DataRow>[];
+  showMetricsModelName: boolean;
+  showMetricsTimeFieldName: boolean;
   showMetricsChart: boolean;
   showMetricsChartSettings: boolean;
   showChartForSelectedRow: boolean;
@@ -33,6 +35,8 @@ let uiState: UiState = {
     columns: []
   },
   repSelectedNodes: [],
+  showMetricsModelName: undefined,
+  showMetricsTimeFieldName: undefined,
   showMetricsChart: undefined,
   showMetricsChartSettings: undefined,
   showChartForSelectedRow: undefined,

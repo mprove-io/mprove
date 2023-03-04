@@ -17,6 +17,7 @@ export class ChartHeaderComponent implements IHeaderAngularComp {
   uiQuery$ = this.uiQuery.select().pipe(
     tap(x => {
       this.showMetricsChart = x.showMetricsChart;
+      this.cd.detectChanges();
     })
   );
 

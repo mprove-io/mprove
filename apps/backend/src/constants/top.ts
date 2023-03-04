@@ -24,6 +24,8 @@ export const DEFAULT_UI: common.Ui = {
     tsLastValue: 5,
     type: common.FractionTypeEnum.TsIsInLast
   },
+  showMetricsModelName: false,
+  showMetricsTimeFieldName: false,
   showMetricsChart: true,
   showMetricsChartSettings: false,
   showChartForSelectedRow: true

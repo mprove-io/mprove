@@ -15,11 +15,15 @@ export class UiService {
   ) {}
 
   async setUserUi(item: {
+    showMetricsModelName?: boolean;
+    showMetricsTimeFieldName?: boolean;
     showMetricsChart?: boolean;
     showMetricsChartSettings?: boolean;
     showChartForSelectedRow?: boolean;
   }) {
     let {
+      showMetricsModelName,
+      showMetricsTimeFieldName,
       showMetricsChart,
       showMetricsChartSettings,
       showChartForSelectedRow
@@ -28,6 +32,12 @@ export class UiService {
     let uiState = this.uiQuery.getValue();
 
     let ui: common.Ui = {
+      showMetricsModelName: common.isDefined(showMetricsModelName)
+        ? showMetricsModelName
+        : uiState.showMetricsModelName,
+      showMetricsTimeFieldName: common.isDefined(showMetricsTimeFieldName)
+        ? showMetricsTimeFieldName
+        : uiState.showMetricsTimeFieldName,
       showMetricsChart: common.isDefined(showMetricsChart)
         ? showMetricsChart
         : uiState.showMetricsChart,
