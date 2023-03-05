@@ -67,11 +67,21 @@
                     'ml-5': node.hasChildren === false
                   }"
                 >
-                  {{
-                    node.data.isField === true
-                      ? node.data.metric.partLabel
-                      : node.data.topLabelByTime
-                  }}
+                  <span *ngIf="node.data.isField === true">{{
+                    node.data.metric.partLabel
+                  }}</span>
+
+                  <span class="">
+                    <span class="" *ngIf="node.data.isField === false">{{
+                      node.data.topLabel
+                    }}</span>
+
+                    <span
+                      class="ml-3 font-semibold text-gray-400"
+                      *ngIf="node.data.isField === false"
+                      >by {{ node.data.timeLabel }}</span
+                    >
+                  </span>
                 </span>
               </div>
             </div>

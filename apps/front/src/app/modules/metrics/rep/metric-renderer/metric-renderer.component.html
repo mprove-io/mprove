@@ -1,14 +1,52 @@
 <div
   class="truncate"
+  *ngIf="params.data.rowType !== rowTypeMetric"
   [ngClass]="{
     'font-semibold': params.data.rowType === rowTypeHeader
   }"
   >{{ params.value | capitalize }}</div
 >
+
+<div *ngIf="params.data.rowType === rowTypeMetric">
+  <div
+    class="truncate"
+    *ngIf="showMetricsModelName === false && showMetricsTimeFieldName === false"
+    >{{ params.data.partLabel | capitalize }}</div
+  >
+
+  <div
+    class="truncate"
+    *ngIf="showMetricsModelName === true && showMetricsTimeFieldName === true"
+    >{{
+      params.data.topLabel +
+        ' ' +
+        params.data.partLabel +
+        ' by ' +
+        params.data.timeLabel | capitalize
+    }}</div
+  >
+
+  <div
+    class="truncate"
+    *ngIf="showMetricsModelName === true && showMetricsTimeFieldName === false"
+    >{{ params.data.topLabel + ' ' + params.data.partLabel | capitalize }}</div
+  >
+
+  <div
+    class="truncate"
+    *ngIf="showMetricsModelName === false && showMetricsTimeFieldName === true"
+    >{{
+      params.data.partLabel + ' by ' + params.data.timeLabel | capitalize
+    }}</div
+  >
+</div>
+
 <!-- <div class="flex h-full flex-row items-center">
-  <div class="truncate">{{ params.value | capitalize }}</div>
-  <div class="flex flex-grow"></div>
-  <div class="invisible group-hover:visible">
-    <m-row-options [params]="params"></m-row-options>
-  </div>
-</div> -->
+    <div class="truncate">{{ params.value | capitalize }}</div>
+    <div class="flex flex-grow"></div>
+    <div class="invisible group-hover:visible">
+      <m-row-options [params]="params"></m-row-options>
+    </div>
+  </div> -->
+
+<div *ngIf="uiQuery$ | async"></div>
