@@ -11,7 +11,15 @@ import {
 } from 'ag-charts-community';
 import { IRowNode } from 'ag-grid-community';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { concatMap, interval, of, Subscription, take, tap } from 'rxjs';
+import {
+  combineLatest,
+  concatMap,
+  interval,
+  of,
+  Subscription,
+  take,
+  tap
+} from 'rxjs';
 import { makeRepQueryParams } from '~front/app/functions/make-query-params';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -19,7 +27,7 @@ import { NavQuery } from '~front/app/queries/nav.query';
 import { emptyRep, RepQuery } from '~front/app/queries/rep.query';
 import { RepsQuery } from '~front/app/queries/reps.query';
 import { StructQuery } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
+import { RepChartData, UiQuery } from '~front/app/queries/ui.query';
 import { StructRepResolver } from '~front/app/resolvers/struct-rep.resolver';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
@@ -137,123 +145,156 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   recordsWithValuesLength = 0;
 
-  repChartData$ = this.uiQuery.repChartData$.pipe(
-    tap(x => {
-      let dataPoints: any[] = [];
+  repChartData$ = combineLatest([
+    this.uiQuery.repChartData$,
+    this.uiQuery.showMetricsModelName$,
+    this.uiQuery.showMetricsTimeFieldName$
+  ]).pipe(
+    tap(
+      ([x, showMetricsModelName, showMetricsTimeFieldName]: [
+        RepChartData,
+        boolean,
+        boolean
+      ]) => {
+        let dataPoints: any[] = [];
 
-      let recordsWithValuesLength = 0;
+        let recordsWithValuesLength = 0;
 
-      if (x.rows.length > 0) {
-        dataPoints = x.columns
-          .filter(column => column.columnId !== 0)
-          .map(column => {
-            let dataPoint: any = {
-              columnId: column.columnId,
-              columnLabel: column.label
-            };
-
-            x.rows.forEach(row => {
-              let record = row.records.find(rec => rec.key === column.columnId);
-              dataPoint[row.name] = record?.value;
-              if (common.isDefined(record?.value)) {
-                recordsWithValuesLength++;
-              }
-            });
-
-            return dataPoint;
-          });
-      }
-
-      this.recordsWithValuesLength = recordsWithValuesLength;
-
-      let series = x.rows
-        .filter(row => common.isDefined(row.name))
-        .map(row => ({
-          type: 'line',
-          xKey: 'columnId',
-          yKey: row.name,
-          yName: row.name,
-          tooltip: {
-            renderer: (params: AgCartesianSeriesTooltipRendererParams) => {
-              let timeSpec = this.uiQuery.getValue().timeSpec;
-
-              let columnLabel = common.formatTs({
-                timeSpec: timeSpec,
-                unixTime: params.xValue
-              });
-
-              let formattedValue = common.isDefined(params.yValue)
-                ? this.queryService.formatValue({
-                    value: params.yValue,
-                    formatNumber: row.formatNumber,
-                    fieldResult: common.FieldResultEnum.Number,
-                    currencyPrefix: row.currencyPrefix,
-                    currencySuffix: row.currencySuffix
-                  })
-                : 'undefined';
-
-              let result: AgTooltipRendererResult = {
-                title: params.title,
-                content: `${columnLabel}: ${formattedValue}`
+        if (x.rows.length > 0) {
+          dataPoints = x.columns
+            .filter(column => column.columnId !== 0)
+            .map(column => {
+              let dataPoint: any = {
+                columnId: column.columnId,
+                columnLabel: column.label
               };
 
-              return result;
-            }
-          }
-        }));
-
-      let structState = this.structQuery.getValue();
-
-      this.chartOptions = {
-        data: dataPoints,
-        legend: {
-          position: 'top'
-        },
-        series: series as any,
-        axes: [
-          {
-            type: 'category',
-            position: 'bottom',
-            label: {
-              formatter: (params: AgAxisLabelFormatterParams) => {
-                let timeSpec = this.uiQuery.getValue().timeSpec;
-
-                return common.formatTs({
-                  timeSpec: timeSpec,
-                  unixTime: params.value
+              x.rows.forEach(row => {
+                let rowName = this.makeRowName({
+                  row: row,
+                  showMetricsModelName: showMetricsModelName,
+                  showMetricsTimeFieldName: showMetricsTimeFieldName
                 });
+
+                let record = row.records.find(
+                  rec => rec.key === column.columnId
+                );
+                dataPoint[rowName] = record?.value;
+                if (common.isDefined(record?.value)) {
+                  recordsWithValuesLength++;
+                }
+              });
+
+              return dataPoint;
+            });
+        }
+
+        this.recordsWithValuesLength = recordsWithValuesLength;
+
+        let series = x.rows
+          .filter(
+            row =>
+              [common.RowTypeEnum.Metric, common.RowTypeEnum.Formula].indexOf(
+                row.rowType
+              ) > -1
+          )
+          .map(row => {
+            let rowName = this.makeRowName({
+              row: row,
+              showMetricsModelName: showMetricsModelName,
+              showMetricsTimeFieldName: showMetricsTimeFieldName
+            });
+
+            let srs = {
+              type: 'line',
+              xKey: 'columnId',
+              yKey: rowName,
+              yName: rowName,
+              tooltip: {
+                renderer: (params: AgCartesianSeriesTooltipRendererParams) => {
+                  let timeSpec = this.uiQuery.getValue().timeSpec;
+
+                  let columnLabel = common.formatTs({
+                    timeSpec: timeSpec,
+                    unixTime: params.xValue
+                  });
+
+                  let formattedValue = common.isDefined(params.yValue)
+                    ? this.queryService.formatValue({
+                        value: params.yValue,
+                        formatNumber: row.formatNumber,
+                        fieldResult: common.FieldResultEnum.Number,
+                        currencyPrefix: row.currencyPrefix,
+                        currencySuffix: row.currencySuffix
+                      })
+                    : 'undefined';
+
+                  let result: AgTooltipRendererResult = {
+                    title: params.title,
+                    content: `${columnLabel}: ${formattedValue}`
+                  };
+
+                  return result;
+                }
               }
-            }
+            };
+
+            return srs;
+          });
+
+        let structState = this.structQuery.getValue();
+
+        this.chartOptions = {
+          data: dataPoints,
+          legend: {
+            position: 'top'
           },
-          {
-            type: 'number',
-            position: 'left',
-            min: 0,
-            label: {
-              formatter: (params: AgAxisLabelFormatterParams) => {
-                let formattedValue = common.isDefined(params.value)
-                  ? this.queryService.formatValue({
-                      value: params.value,
-                      formatNumber: structState.formatNumber,
-                      fieldResult: common.FieldResultEnum.Number,
-                      currencyPrefix: structState.currencyPrefix,
-                      currencySuffix: structState.currencySuffix
-                    })
-                  : 'undefined';
+          series: series as any,
+          axes: [
+            {
+              type: 'category',
+              position: 'bottom',
+              label: {
+                formatter: (params: AgAxisLabelFormatterParams) => {
+                  let timeSpec = this.uiQuery.getValue().timeSpec;
 
-                return formattedValue;
+                  return common.formatTs({
+                    timeSpec: timeSpec,
+                    unixTime: params.value
+                  });
+                }
+              }
+            },
+            {
+              type: 'number',
+              position: 'left',
+              min: 0,
+              label: {
+                formatter: (params: AgAxisLabelFormatterParams) => {
+                  let formattedValue = common.isDefined(params.value)
+                    ? this.queryService.formatValue({
+                        value: params.value,
+                        formatNumber: structState.formatNumber,
+                        fieldResult: common.FieldResultEnum.Number,
+                        currencyPrefix: structState.currencyPrefix,
+                        currencySuffix: structState.currencySuffix
+                      })
+                    : 'undefined';
+
+                  return formattedValue;
+                }
               }
             }
-          }
-        ]
-        // ,
-        // navigator: {
-        //   enabled: true
-        // }
-      };
+          ]
+          // ,
+          // navigator: {
+          //   enabled: true
+          // }
+        };
 
-      this.cd.detectChanges();
-    })
+        this.cd.detectChanges();
+      }
+    )
   );
 
   fractions: common.Fraction[] = [];
@@ -575,6 +616,31 @@ export class MetricsComponent implements OnInit, OnDestroy {
     this.uiService.setUserUi({
       showMetricsChartSettings: showMetricsChartSettings
     });
+  }
+
+  makeRowName(item: {
+    row: DataRow;
+    showMetricsModelName: boolean;
+    showMetricsTimeFieldName: boolean;
+  }) {
+    let { row, showMetricsModelName, showMetricsTimeFieldName } = item;
+    let { partLabel, topLabel, timeLabel } = item.row;
+
+    if (row.rowType !== common.RowTypeEnum.Metric) {
+      return row.name;
+    }
+
+    let name = partLabel;
+
+    if (showMetricsModelName === true) {
+      name = `${topLabel} ${name}`;
+    }
+
+    if (showMetricsTimeFieldName === true) {
+      name = `${name} by ${timeLabel}`;
+    }
+
+    return name;
   }
 
   ngOnDestroy() {

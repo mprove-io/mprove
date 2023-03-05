@@ -5,15 +5,17 @@ import { common } from '~front/barrels/common';
 import { DataRow } from '../modules/metrics/rep/rep.component';
 import { BaseQuery } from './base.query';
 
+export interface RepChartData {
+  rows: DataRow[];
+  columns: common.Column[];
+}
+
 export class UiState {
   panel: common.PanelEnum;
   needSave: boolean;
   gridData: DataRow[];
   gridApi: GridApi<DataRow>;
-  repChartData: {
-    rows: DataRow[];
-    columns: common.Column[];
-  };
+  repChartData: RepChartData;
   repSelectedNodes: IRowNode<DataRow>[];
   showMetricsModelName: boolean;
   showMetricsTimeFieldName: boolean;
@@ -50,6 +52,14 @@ export class UiQuery extends BaseQuery<UiState> {
   needSave$ = this.store.pipe(select(state => state.needSave));
 
   panel$ = this.store.pipe(select(state => state.panel));
+
+  showMetricsModelName$ = this.store.pipe(
+    select(state => state.showMetricsModelName)
+  );
+
+  showMetricsTimeFieldName$ = this.store.pipe(
+    select(state => state.showMetricsTimeFieldName)
+  );
 
   repSelectedNodes$ = this.store.pipe(select(state => state.repSelectedNodes));
   repChartData$ = this.store.pipe(select(state => state.repChartData));
