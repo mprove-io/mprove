@@ -22,7 +22,7 @@ import { common } from '~front/barrels/common';
 export class MetricNode {
   id: string;
   isTop: boolean;
-  topLabel: string;
+  topLabelByTime: string;
   isField: boolean;
   isSelected: boolean;
   metric: common.MetricAny;
@@ -59,24 +59,27 @@ export class MetricsTreeComponent implements AfterViewInit {
         let metricNode: MetricNode = {
           id: metric.metricId,
           isTop: false,
-          topLabel: metric.topLabel,
+          topLabelByTime: `${metric.topLabel} by ${metric.timeLabel}`,
           isField: true,
           isSelected: false,
           metric: metric,
           children: []
         };
 
+        let timeId = metric.timeFieldId.split('.').join('_');
+        let topNodeId = `${metric.topNode}_by_${timeId}`;
+
         let topNode: MetricNode = nodes.find(
-          (node: any) => node.id === metric.topNode
+          (node: any) => node.id === topNodeId
         );
 
         if (common.isDefined(topNode)) {
           topNode.children.push(metricNode);
         } else {
           topNode = {
-            id: metric.topNode,
+            id: topNodeId,
             isTop: true,
-            topLabel: metric.topLabel,
+            topLabelByTime: `${metric.topLabel} by ${metric.timeLabel}`,
             isField: false,
             isSelected: false,
             metric: undefined,

@@ -34,6 +34,7 @@ export function wrapToApiMetric(item: {
     connection: metric.connection_id,
     label: metric.label,
     partLabel: metric.part_label,
+    timeLabel: metric.time_label,
     description: metric.description,
     formatNumber: metric.format_number,
     currencyPrefix: metric.currency_prefix,

@@ -18,6 +18,15 @@ export class Row {
   @IsString()
   metricId: string;
 
+  @IsString()
+  topLabel: string;
+
+  @IsString()
+  partLabel: string;
+
+  @IsString()
+  timeLabel: string;
+
   params: any[];
 
   @IsBoolean()

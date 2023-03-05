@@ -33,6 +33,30 @@ export function createModelMetrics(
     }
 
     model.build_metrics.forEach(element => {
+      let timeId = element.time.split('.').join('_');
+
+      let timeAr = element.time.split('.');
+      let timeAsName = timeAr[0];
+      let timeFieldName = timeAr[1];
+
+      let timeLabel: string;
+
+      if (timeAsName === constants.MF) {
+        let timeFields: interfaces.FieldAny[] = model.fields.filter(
+          mField => mField.groupId === timeFieldName
+        );
+
+        timeLabel = `Model Fields  ${timeFields[0].group_label}`;
+      } else {
+        let join = model.joins.find(j => j.as === timeAsName);
+
+        let timeFields: interfaces.FieldAny[] = join.view.fields.filter(
+          vField => vField.groupId === timeFieldName
+        );
+
+        timeLabel = `${join.label} ${timeFields[0].group_label}`;
+      }
+
       model.fields
         .filter(y => {
           if (y.fieldClass === common.FieldClassEnum.Measure) {
@@ -103,7 +127,7 @@ export function createModelMetrics(
           let partLabel = `Model Fields ${modelField.label}`;
 
           let modelMetric: common.ModelMetric = {
-            metricId: `${model.name}_${partId}`,
+            metricId: `${model.name}_${partId}_by_${timeId}`,
             filePath: model.filePath,
             partId: partId,
             modelId: model.name,
@@ -112,6 +136,7 @@ export function createModelMetrics(
             fieldId: `mf.${modelField.name}`,
             fieldClass: modelField.fieldClass,
             timeFieldId: element.time,
+            timeLabel: timeLabel,
             params: [],
             structId: structId,
             type: common.MetricTypeEnum.Model,
@@ -177,7 +202,7 @@ export function createModelMetrics(
             let partLabel = `${join.label} ${viewField.label}`;
 
             let modelMetric: common.ModelMetric = {
-              metricId: `${model.name}_${partId}`,
+              metricId: `${model.name}_${partId}_by_${timeId}`,
               filePath: join.view.filePath,
               partId: partId,
               modelId: model.name,
@@ -186,6 +211,7 @@ export function createModelMetrics(
               fieldId: `${join.as}.${viewField.name}`,
               fieldClass: viewField.fieldClass,
               timeFieldId: element.time,
+              timeLabel: timeLabel,
               params: [],
               structId: structId,
               type: common.MetricTypeEnum.Model,

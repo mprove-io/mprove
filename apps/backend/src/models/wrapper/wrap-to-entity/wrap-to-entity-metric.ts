@@ -23,6 +23,7 @@ export function wrapToEntityMetric(x: common.MetricAny): entities.MetricEntity {
     connection_id: x.connection,
     label: x.label,
     part_label: x.partLabel,
+    time_label: x.timeLabel,
     description: x.description,
     format_number: x.formatNumber,
     currency_prefix: x.currencyPrefix,

@@ -37,7 +37,9 @@ export function wrapReps(item: {
       timeRangeFraction: undefined,
       columns: [],
       rows: x.rows.map(row => {
-        let metric = metrics.find(m => m.metricId === row.metric);
+        let metric: common.MetricAny = metrics.find(
+          m => m.metricId === row.metric
+        );
 
         let rowApi: common.Row = {
           rowId: row.id,
@@ -47,6 +49,18 @@ export function wrapReps(item: {
             : row.type === common.RowTypeEnum.Metric
             ? metric.label
             : '',
+          topLabel:
+            row.type === common.RowTypeEnum.Metric
+              ? metric.topLabel
+              : undefined,
+          partLabel:
+            row.type === common.RowTypeEnum.Metric
+              ? metric.partLabel
+              : undefined,
+          timeLabel:
+            row.type === common.RowTypeEnum.Metric
+              ? metric.timeLabel
+              : undefined,
           metricId: row.metric,
           showChart: helper.toBooleanFromLowercaseString(row.show_chart),
           formula: row.formula,

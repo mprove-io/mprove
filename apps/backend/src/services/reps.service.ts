@@ -114,13 +114,18 @@ export class RepsService {
           rowId = common.rowIdNumberToLetter(rowIdNumber);
         }
 
-        let metric = metrics.find(m => m.metric_id === rowChange.metricId);
+        let metric: entities.MetricEntity = metrics.find(
+          m => m.metric_id === rowChange.metricId
+        );
 
         let newRow: common.Row = {
           rowId: rowId,
           rowType: rowChange.rowType,
           name: metric.label,
           metricId: rowChange.metricId,
+          topLabel: metric.top_label,
+          partLabel: metric.part_label,
+          timeLabel: metric.time_label,
           showChart: rowChange.showChart,
           params: rowChange.params || [],
           formula: undefined,
@@ -183,6 +188,9 @@ export class RepsService {
             rowType: common.RowTypeEnum.Empty,
             name: undefined,
             metricId: undefined,
+            topLabel: undefined,
+            partLabel: undefined,
+            timeLabel: undefined,
             showChart: false,
             params: [],
             formula: undefined,

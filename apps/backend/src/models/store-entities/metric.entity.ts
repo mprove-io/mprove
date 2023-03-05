@@ -31,6 +31,9 @@ export class MetricEntity {
   @Column({ type: constants.VARCHAR })
   part_label: string;
 
+  @Column({ type: constants.VARCHAR })
+  time_label: string;
+
   @Column({ type: constants.VARCHAR, nullable: true })
   time_spec: common.TimeSpecEnum;
 

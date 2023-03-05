@@ -29,6 +29,9 @@ export class BaseMetric {
   @IsString()
   partLabel?: string;
 
+  @IsString()
+  timeLabel?: string;
+
   @IsOptional()
   @IsString()
   description?: string;
