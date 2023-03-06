@@ -121,7 +121,7 @@ export class RepsService {
         let newRow: common.Row = {
           rowId: rowId,
           rowType: rowChange.rowType,
-          name: metric.label,
+          name: undefined,
           metricId: rowChange.metricId,
           topLabel: metric.top_label,
           partLabel: metric.part_label,

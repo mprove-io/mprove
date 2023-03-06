@@ -44,11 +44,7 @@ export function wrapReps(item: {
         let rowApi: common.Row = {
           rowId: row.id,
           rowType: row.type,
-          name: common.isDefined(row.name)
-            ? row.name
-            : row.type === common.RowTypeEnum.Metric
-            ? metric.label
-            : '',
+          name: row.name,
           topLabel:
             row.type === common.RowTypeEnum.Metric
               ? metric.topLabel

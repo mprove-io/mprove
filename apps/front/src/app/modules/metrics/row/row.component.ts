@@ -72,7 +72,10 @@ export class RowComponent {
           });
         }
 
-        if (this.repSelectedNode.data.rowType !== common.RowTypeEnum.Empty) {
+        if (
+          this.repSelectedNode.data.rowType !== common.RowTypeEnum.Empty &&
+          this.repSelectedNode.data.rowType !== common.RowTypeEnum.Metric
+        ) {
           setValueAndMark({
             control: this.nameForm.controls['name'],
             value: this.repSelectedNode.data.name

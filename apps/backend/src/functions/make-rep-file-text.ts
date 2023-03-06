@@ -29,9 +29,8 @@ export function makeRepFileText(item: {
         id: x.rowId,
         type: x.rowType,
         name:
-          x.rowType === common.RowTypeEnum.Empty
-            ? undefined
-            : x.rowType === common.RowTypeEnum.Metric && metric.label === x.name
+          x.rowType === common.RowTypeEnum.Empty ||
+          x.rowType === common.RowTypeEnum.Metric
             ? undefined
             : x.name,
         metric: x.metricId,

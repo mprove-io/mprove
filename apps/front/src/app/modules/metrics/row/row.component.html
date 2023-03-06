@@ -51,6 +51,28 @@
       }}</div>
     </div>
 
+    <button
+      *ngIf="repSelectedNode.data.rowType === rowTypeMetric"
+      type="button"
+      data-cy="metricsExploreButton"
+      class="ml-5 flex h-11 flex-shrink-0 items-center justify-center rounded px-6 text-base font-medium text-white focus:outline-none"
+      [ngClass]="{
+        'bg-blue3':
+          repSelectedNode.data.rowType === rowTypeMetric &&
+          repSelectedNode.data.hasAccessToModel === true,
+        'cursor-default bg-gray-400':
+          repSelectedNode.data.rowType !== rowTypeMetric ||
+          repSelectedNode.data.hasAccessToModel !== true
+      }"
+      (click)="explore()"
+      [disabled]="
+        repSelectedNode.data.rowType !== rowTypeMetric &&
+        repSelectedNode.data.hasAccessToModel === true
+      "
+    >
+      Explore
+    </button>
+
     <div
       class="flex h-11 flex-row items-center space-x-5"
       *ngIf="repSelectedNode.data.rowType === rowTypeMetric"
@@ -94,7 +116,10 @@
     </div>
 
     <div
-      *ngIf="repSelectedNode.data.rowType !== rowTypeEmpty"
+      *ngIf="
+        repSelectedNode.data.rowType !== rowTypeEmpty &&
+        repSelectedNode.data.rowType !== rowTypeMetric
+      "
       class="flex h-11 flex-1 flex-row items-center space-x-5"
     >
       <div class="text-gray1 flex select-none items-center font-semibold"
@@ -121,28 +146,6 @@
         ></m-validation>
       </div>
     </div>
-
-    <button
-      *ngIf="repSelectedNode.data.rowType === rowTypeMetric"
-      type="button"
-      data-cy="metricsExploreButton"
-      class="ml-5 flex h-11 flex-shrink-0 items-center justify-center rounded px-6 text-base font-medium text-white focus:outline-none"
-      [ngClass]="{
-        'bg-blue3':
-          repSelectedNode.data.rowType === rowTypeMetric &&
-          repSelectedNode.data.hasAccessToModel === true,
-        'cursor-default bg-gray-400':
-          repSelectedNode.data.rowType !== rowTypeMetric ||
-          repSelectedNode.data.hasAccessToModel !== true
-      }"
-      (click)="explore()"
-      [disabled]="
-        repSelectedNode.data.rowType !== rowTypeMetric &&
-        repSelectedNode.data.hasAccessToModel === true
-      "
-    >
-      Explore
-    </button>
   </div>
 
   <div
