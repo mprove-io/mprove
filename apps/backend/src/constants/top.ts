@@ -28,5 +28,7 @@ export const DEFAULT_UI: common.Ui = {
   showMetricsTimeFieldName: false,
   showMetricsChart: true,
   showMetricsChartSettings: false,
-  showChartForSelectedRow: true
+  showChartForSelectedRow: true,
+  metricsColumnNameWidth: 500,
+  metricsColumnParametersWidth: 200
 };

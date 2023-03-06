@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -8,13 +7,11 @@ import { ApiService } from './api.service';
 
 @Injectable({ providedIn: 'root' })
 export class UiService {
-  constructor(
-    private apiService: ApiService,
-    private uiQuery: UiQuery,
-    private spinner: NgxSpinnerService
-  ) {}
+  constructor(private apiService: ApiService, private uiQuery: UiQuery) {}
 
   async setUserUi(item: {
+    metricsColumnNameWidth?: number;
+    metricsColumnParametersWidth?: number;
     showMetricsModelName?: boolean;
     showMetricsTimeFieldName?: boolean;
     showMetricsChart?: boolean;
@@ -22,6 +19,8 @@ export class UiService {
     showChartForSelectedRow?: boolean;
   }) {
     let {
+      metricsColumnNameWidth,
+      metricsColumnParametersWidth,
       showMetricsModelName,
       showMetricsTimeFieldName,
       showMetricsChart,
@@ -32,6 +31,14 @@ export class UiService {
     let uiState = this.uiQuery.getValue();
 
     let ui: common.Ui = {
+      metricsColumnNameWidth: common.isDefined(metricsColumnNameWidth)
+        ? metricsColumnNameWidth
+        : uiState.metricsColumnNameWidth,
+      metricsColumnParametersWidth: common.isDefined(
+        metricsColumnParametersWidth
+      )
+        ? metricsColumnParametersWidth
+        : uiState.metricsColumnParametersWidth,
       showMetricsModelName: common.isDefined(showMetricsModelName)
         ? showMetricsModelName
         : uiState.showMetricsModelName,

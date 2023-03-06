@@ -1,10 +1,16 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsEnum, ValidateNested } from 'class-validator';
+import { IsBoolean, IsEnum, IsInt, ValidateNested } from 'class-validator';
 import { enums } from '~common/barrels/enums';
 import { IsTimezone } from '~common/functions/is-timezone';
 import { Fraction } from '../blockml/fraction';
 
 export class Ui {
+  @IsInt()
+  metricsColumnNameWidth: number;
+
+  @IsInt()
+  metricsColumnParametersWidth: number;
+
   @IsBoolean()
   showMetricsModelName: boolean;
 

@@ -9,6 +9,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AgGridAngular } from 'ag-grid-angular';
 import {
   ColDef,
+  ColumnApi,
+  ColumnResizedEvent,
   GridApi,
   GridReadyEvent,
   IRowNode,
@@ -17,10 +19,12 @@ import {
   SelectionChangedEvent
 } from 'ag-grid-community';
 import { tap } from 'rxjs';
+import { debounce } from 'throttle-debounce';
 import { makeRepQueryParams } from '~front/app/functions/make-query-params';
 import { RepQuery } from '~front/app/queries/rep.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { RepService } from '~front/app/services/rep.service';
+import { UiService } from '~front/app/services/ui.service';
 import { common } from '~front/barrels/common';
 import { ChartHeaderComponent } from './chart-header/chart-header.component';
 import { ChartRendererComponent } from './chart-renderer/chart-renderer.component';
@@ -48,6 +52,32 @@ export class RepComponent {
     this.agGrid.api.deselectAll();
   }
 
+  updateColumnSizes = debounce(
+    1000,
+    paramsColumn => {
+      // console.log('paramsColumn:', paramsColumn);
+
+      if (common.isDefined(this.agGridColumnApi)) {
+        let columns = this.agGridColumnApi.getColumns();
+        let nameColumn = columns.find(x => x.getColId() === 'name');
+        let parametersColumn = columns.find(x => x.getColId() === 'parameters');
+
+        this.uiQuery.updatePart({
+          metricsColumnNameWidth: nameColumn.getActualWidth(),
+          metricsColumnParametersWidth: parametersColumn.getActualWidth()
+        });
+
+        let uiState = this.uiQuery.getValue();
+
+        this.uiService.setUserUi({
+          metricsColumnNameWidth: uiState.metricsColumnNameWidth,
+          metricsColumnParametersWidth: uiState.metricsColumnParametersWidth
+        });
+      }
+    },
+    { atBegin: false }
+  );
+
   rowCssClasses = ['group'];
 
   data: DataRow[];
@@ -59,22 +89,23 @@ export class RepComponent {
       resizable: false,
       pinned: 'left',
       width: 90,
-      minWidth: 90,
-      maxWidth: 90,
       headerComponent: RowIdHeaderComponent,
-      cellRenderer: RowIdRendererComponent
+      cellRenderer: RowIdRendererComponent,
+      suppressAutoSize: true
     },
     {
       field: 'name',
       pinned: 'left',
       width: 500,
       headerComponent: MetricHeaderComponent,
-      cellRenderer: MetricRendererComponent
+      cellRenderer: MetricRendererComponent,
+      suppressAutoSize: true
     },
     {
       field: 'parameters',
       pinned: 'left',
-      width: 200
+      width: 200,
+      suppressAutoSize: true
     },
     {
       field: 'status',
@@ -82,7 +113,8 @@ export class RepComponent {
       resizable: false,
       width: 84,
       headerComponent: StatusHeaderComponent,
-      cellRenderer: StatusRendererComponent
+      cellRenderer: StatusRendererComponent,
+      suppressAutoSize: true
     },
     {
       field: 'chart',
@@ -90,7 +122,8 @@ export class RepComponent {
       resizable: false,
       width: 60,
       headerComponent: ChartHeaderComponent,
-      cellRenderer: ChartRendererComponent
+      cellRenderer: ChartRendererComponent,
+      suppressAutoSize: true
     }
   ];
 
@@ -110,6 +143,8 @@ export class RepComponent {
   };
 
   agGridApi: GridApi<DataRow>;
+  agGridColumnApi: ColumnApi;
+
   prevRepId: string;
 
   rep: common.RepX;
@@ -117,12 +152,23 @@ export class RepComponent {
     tap(x => {
       this.rep = x;
 
+      let uiState = this.uiQuery.getValue();
+
+      let nameColumn = this.columns.find(c => c.field === 'name');
+      let parametersColumn = this.columns.find(c => c.field === 'parameters');
+
+      nameColumn.width = uiState.metricsColumnNameWidth;
+      parametersColumn.width = uiState.metricsColumnParametersWidth;
+
       this.timeColumns = x.columns.map(column => {
         let columnDef: ColDef<DataRow> = {
           field: `${column.columnId}`,
           headerName: column.label,
           cellRenderer: DataRendererComponent,
-          type: 'numericColumn'
+          type: 'numericColumn',
+          minWidth: 200,
+          maxWidth: 300,
+          resizable: false
         };
 
         return columnDef;
@@ -181,6 +227,8 @@ export class RepComponent {
 
       this.prevRepId = this.rep.repId;
 
+      this.gridAutoSize();
+
       this.cd.detectChanges();
     })
   );
@@ -225,7 +273,8 @@ export class RepComponent {
     private route: ActivatedRoute,
     private location: Location,
     private repService: RepService,
-    private uiQuery: UiQuery
+    private uiQuery: UiQuery,
+    private uiService: UiService
   ) {}
 
   onSelectionChanged(event: SelectionChangedEvent<DataRow>) {
@@ -250,6 +299,25 @@ export class RepComponent {
       .toString();
 
     this.location.go(url);
+  }
+
+  gridAutoSize() {
+    if (common.isDefined(this.agGridColumnApi)) {
+      let skipHeader = false;
+      let allColumnIds: string[] = [];
+
+      this.agGridColumnApi.getColumns().forEach(column => {
+        allColumnIds.push(column.getId());
+      });
+
+      let columnIds = allColumnIds.filter(
+        columnId =>
+          ['rowId', 'name', 'parameters', 'status', 'chart'].indexOf(columnId) <
+          0
+      );
+
+      this.agGridColumnApi.autoSizeColumns(columnIds, skipHeader);
+    }
   }
 
   updateRepChartData(sNodes: IRowNode<DataRow>[]) {
@@ -279,10 +347,25 @@ export class RepComponent {
   }
 
   onGridReady(params: GridReadyEvent<DataRow>) {
-    this.agGridApi = this.agGrid.api;
+    this.agGridApi = params.api;
+    this.agGridColumnApi = params.columnApi;
+
     this.uiQuery.updatePart({ gridApi: this.agGridApi });
     this.agGridApi.deselectAll();
+
+    this.gridAutoSize();
+
     this.cd.detectChanges();
+  }
+
+  onColumnResized(params: ColumnResizedEvent<DataRow>) {
+    if (common.isDefined(params.column)) {
+      let colId = params.column.getColId();
+
+      if (['name', 'parameters'].indexOf(colId) > -1) {
+        this.updateColumnSizes(params.column);
+      }
+    }
   }
 
   rowDragEndHandle(event: RowDragEndEvent<DataRow>): void {

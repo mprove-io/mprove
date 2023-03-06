@@ -62,6 +62,10 @@ export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
             this.memberQuery.update(resp.payload.userMember);
 
             this.uiQuery.updatePart({
+              timezone: resp.payload.user.ui.timezone,
+              timeSpec: resp.payload.user.ui.timeSpec,
+              timeRangeFraction: resp.payload.user.ui.timeRangeFraction,
+
               showMetricsModelName: resp.payload.user.ui.showMetricsModelName,
               showMetricsTimeFieldName:
                 resp.payload.user.ui.showMetricsTimeFieldName,
@@ -70,9 +74,10 @@ export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
               showMetricsChartSettings:
                 resp.payload.user.ui.showMetricsChartSettings,
               showMetricsChart: resp.payload.user.ui.showMetricsChart,
-              timezone: resp.payload.user.ui.timezone,
-              timeSpec: resp.payload.user.ui.timeSpec,
-              timeRangeFraction: resp.payload.user.ui.timeRangeFraction
+              metricsColumnNameWidth:
+                resp.payload.user.ui.metricsColumnNameWidth,
+              metricsColumnParametersWidth:
+                resp.payload.user.ui.metricsColumnParametersWidth
             });
 
             this.structQuery.update(resp.payload.struct);

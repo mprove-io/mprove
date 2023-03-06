@@ -17,6 +17,8 @@ export class UiState {
   gridApi: GridApi<DataRow>;
   repChartData: RepChartData;
   repSelectedNodes: IRowNode<DataRow>[];
+  metricsColumnNameWidth: number;
+  metricsColumnParametersWidth: number;
   showMetricsModelName: boolean;
   showMetricsTimeFieldName: boolean;
   showMetricsChart: boolean;
@@ -37,6 +39,8 @@ let uiState: UiState = {
     columns: []
   },
   repSelectedNodes: [],
+  metricsColumnNameWidth: undefined,
+  metricsColumnParametersWidth: undefined,
   showMetricsModelName: undefined,
   showMetricsTimeFieldName: undefined,
   showMetricsChart: undefined,
