@@ -522,19 +522,19 @@ export class RepsService {
 
           let timeSpecWord =
             timeSpec === common.TimeSpecEnum.Years
-              ? 'year'
+              ? common.TimeframeEnum.Year
               : timeSpec === common.TimeSpecEnum.Quarters
-              ? 'quarter'
+              ? common.TimeframeEnum.Quarter
               : timeSpec === common.TimeSpecEnum.Months
-              ? 'month'
+              ? common.TimeframeEnum.Month
               : timeSpec === common.TimeSpecEnum.Weeks
-              ? 'week'
+              ? common.TimeframeEnum.Week
               : timeSpec === common.TimeSpecEnum.Days
-              ? 'date'
+              ? common.TimeframeEnum.Date
               : timeSpec === common.TimeSpecEnum.Hours
-              ? 'hour'
+              ? common.TimeframeEnum.Hour
               : timeSpec === common.TimeSpecEnum.Minutes
-              ? 'minute'
+              ? common.TimeframeEnum.Minute
               : undefined;
 
           let timeFieldIdSpec = `${metric.timefield_id}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;

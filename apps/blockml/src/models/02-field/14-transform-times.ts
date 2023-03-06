@@ -67,6 +67,20 @@ export function transformTimes<T extends types.vmType>(
         field.timeframes_line_num = 0;
       }
 
+      [
+        common.TimeframeEnum.Year,
+        common.TimeframeEnum.Quarter,
+        common.TimeframeEnum.Month,
+        common.TimeframeEnum.Week,
+        common.TimeframeEnum.Date,
+        common.TimeframeEnum.Hour,
+        common.TimeframeEnum.Minute
+      ].forEach(timeframe => {
+        if (field.timeframes.findIndex(t => t === timeframe) < 0) {
+          field.timeframes.push(timeframe);
+        }
+      });
+
       let groupLabel = field.group_label;
 
       if (common.isUndefined(groupLabel)) {
