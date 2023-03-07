@@ -17,6 +17,7 @@ export class UiService {
     showMetricsChart?: boolean;
     showMetricsChartSettings?: boolean;
     showChartForSelectedRow?: boolean;
+    modelTreeLevels?: common.ModelTreeLevelsEnum;
   }) {
     let {
       metricsColumnNameWidth,
@@ -25,7 +26,8 @@ export class UiService {
       showMetricsTimeFieldName,
       showMetricsChart,
       showMetricsChartSettings,
-      showChartForSelectedRow
+      showChartForSelectedRow,
+      modelTreeLevels
     } = item;
 
     let uiState = this.uiQuery.getValue();
@@ -54,6 +56,9 @@ export class UiService {
       showChartForSelectedRow: common.isDefined(showChartForSelectedRow)
         ? showChartForSelectedRow
         : uiState.showChartForSelectedRow,
+      modelTreeLevels: common.isDefined(modelTreeLevels)
+        ? modelTreeLevels
+        : uiState.modelTreeLevels,
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
       timeRangeFraction: uiState.timeRangeFraction

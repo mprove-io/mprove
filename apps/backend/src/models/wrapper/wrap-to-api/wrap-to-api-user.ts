@@ -44,7 +44,10 @@ export function wrapToApiUser(user: entities.UserEntity): common.User {
         user.ui?.showChartForSelectedRow
       )
         ? user.ui?.showChartForSelectedRow
-        : constants.DEFAULT_UI.showChartForSelectedRow
+        : constants.DEFAULT_UI.showChartForSelectedRow,
+      modelTreeLevels: common.isDefined(user.ui?.modelTreeLevels)
+        ? user.ui?.modelTreeLevels
+        : constants.DEFAULT_UI.modelTreeLevels
     },
     serverTs: Number(user.server_ts)
   };

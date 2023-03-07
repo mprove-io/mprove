@@ -22,7 +22,7 @@ export class ResultPipe implements PipeTransform {
     } else if (value === common.FieldResultEnum.String) {
       return 'STRING';
     } else if (value === common.FieldResultEnum.Ts) {
-      return 'TS';
+      return 'TIMESTAMP';
     } else if (value === common.FieldResultEnum.Yesno) {
       return 'YES-NO';
     }

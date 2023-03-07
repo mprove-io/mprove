@@ -1,4 +1,35 @@
-<div class="flex w-full flex-grow overflow-y-auto rounded bg-white shadow-lg">
+<div
+  class="flex w-full flex-grow flex-col overflow-y-auto rounded bg-white shadow-lg"
+>
+  <div class="ml-[56px] mt-7 flex flex-row items-center space-x-3">
+    <div
+      class="w-[40px] cursor-pointer select-none"
+      [ngClass]="{
+        'font-semibold': modelTreeLevels === modelTreeLevelsFlat
+      }"
+      (click)="setModelTreeLevels(modelTreeLevelsFlat)"
+      >Flat</div
+    >
+
+    <div
+      class="w-[40px] cursor-pointer select-none"
+      [ngClass]="{
+        'font-semibold': modelTreeLevels === modelTreeLevelsMid
+      }"
+      (click)="setModelTreeLevels(modelTreeLevelsMid)"
+      >Mid</div
+    >
+
+    <div
+      class="w-[62px] cursor-pointer select-none"
+      [ngClass]="{
+        'font-semibold': modelTreeLevels === modelTreeLevelsNested
+      }"
+      (click)="setModelTreeLevels(modelTreeLevelsNested)"
+      >Nested</div
+    >
+  </div>
+
   <tree-root
     class="mt-4 h-2 w-full"
     #itemsTree
@@ -97,9 +128,43 @@
 
                 <span
                   class="truncate text-base"
+                  *ngIf="
+                    node.data.nodeClass !== nodeClassInfo &&
+                    modelTreeLevels === modelTreeLevelsFlat
+                  "
+                  [ngClass]="{
+                    'ml-3':
+                      node.hasChildren &&
+                      node.data.nodeClass !== nodeClassDimension,
+                    'ml-2':
+                      node.hasChildren &&
+                      node.data.nodeClass === nodeClassDimension
+                  }"
+                >
+                  {{ node.data.joinLabel | capitalize }}
+                </span>
+
+                <span
+                  class="truncate text-base"
+                  *ngIf="
+                    node.data.nodeClass !== nodeClassInfo &&
+                    (modelTreeLevels === modelTreeLevelsFlat ||
+                      modelTreeLevels === modelTreeLevelsMid)
+                  "
+                  [ngClass]="{
+                    'font-semibold': modelTreeLevels === modelTreeLevelsFlat
+                  }"
+                >
+                  {{ node.data.timeLabel | capitalize }}
+                </span>
+
+                <span
+                  class="truncate text-base"
                   *ngIf="node.data.nodeClass !== nodeClassInfo"
                   [ngClass]="{
-                    ' font-semibold': node.data.fieldResult === fieldResultTs,
+                    'font-semibold':
+                      node.data.children.length === 0 &&
+                      modelTreeLevels === modelTreeLevelsFlat,
                     'ml-3':
                       node.hasChildren &&
                       node.data.nodeClass !== nodeClassDimension,
@@ -118,8 +183,9 @@
             <button
               *ngIf="node.data.isField === true"
               type="button"
+              tippy="{{ node.data.fieldResult | result }}"
               data-cy="filesTreeFilterButton"
-              class="group invisible ml-3 flex h-10 w-28 items-center justify-center rounded focus:outline-none [.group-bar:hover_&]:visible"
+              class="group invisible ml-3 flex h-10 flex-shrink-0 items-center justify-center rounded focus:outline-none [.group-bar:hover_&]:visible"
               [ngClass]="{
                 'text-blue3': node.data.isFiltered === true,
                 'text-gray1': node.data.isFiltered === false
@@ -127,16 +193,16 @@
               (click)="filterField(node, $event)"
             >
               <div
-                class="flex h-8 flex-row items-center justify-start space-x-2 rounded px-3 group-hover:bg-white"
+                class="flex h-8 w-9 flex-shrink-0 flex-row items-center justify-center space-x-2 rounded group-hover:bg-white"
               >
-                <div
+                <!-- <div
                   class="invisible flex w-[76px] flex-shrink-0 justify-start text-sm [.group-bar:hover_&]:visible"
                   [ngClass]="{
                     'text-blue3': node.data.isFiltered === true,
                     'text-gray-400': node.data.isFiltered === false
                   }"
                   >{{ node.data.fieldResult | result }}</div
-                >
+                > -->
 
                 <m-filter-icon
                   [ngClass]="{
@@ -159,6 +225,4 @@
   </tree-root>
 </div>
 
-<div *ngIf="model$ | async"></div>
-<div *ngIf="mconfig$ | async"></div>
-<!-- <div *ngIf="nav$ | async"></div> -->
+<div *ngIf="nodesExtra$ | async"></div>

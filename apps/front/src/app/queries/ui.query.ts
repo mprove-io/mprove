@@ -24,6 +24,7 @@ export class UiState {
   showMetricsChart: boolean;
   showMetricsChartSettings: boolean;
   showChartForSelectedRow: boolean;
+  modelTreeLevels: common.ModelTreeLevelsEnum;
   timezone: string;
   timeSpec: common.TimeSpecEnum;
   timeRangeFraction: common.Fraction;
@@ -46,6 +47,7 @@ let uiState: UiState = {
   showMetricsChart: undefined,
   showMetricsChartSettings: undefined,
   showChartForSelectedRow: undefined,
+  modelTreeLevels: undefined,
   timezone: undefined,
   timeSpec: undefined,
   timeRangeFraction: undefined
@@ -72,6 +74,8 @@ export class UiQuery extends BaseQuery<UiState> {
   showMetricsChartSettings$ = this.store.pipe(
     select(state => state.showMetricsChartSettings)
   );
+
+  modelTreeLevels$ = this.store.pipe(select(state => state.modelTreeLevels));
 
   constructor() {
     super(createStore({ name: 'ui' }, withProps<UiState>(uiState)));

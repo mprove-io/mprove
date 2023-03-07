@@ -30,5 +30,6 @@ export const DEFAULT_UI: common.Ui = {
   showMetricsChartSettings: false,
   showChartForSelectedRow: true,
   metricsColumnNameWidth: 500,
-  metricsColumnParametersWidth: 200
+  metricsColumnParametersWidth: 200,
+  modelTreeLevels: common.ModelTreeLevelsEnum.Flat
 };

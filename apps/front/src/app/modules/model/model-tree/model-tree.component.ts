@@ -11,18 +11,24 @@ import {
   TreeComponent,
   TreeNode
 } from '@bugsplat/angular-tree-component';
+import { combineLatest } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { ModelNode } from '~common/_index';
 import { ModelQuery, ModelState } from '~front/app/queries/model.query';
 import { MqQuery } from '~front/app/queries/mq.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { StructService } from '~front/app/services/struct.service';
+import { UiService } from '~front/app/services/ui.service';
 import { common } from '~front/barrels/common';
 
 export class ModelNodeExtra extends common.ModelNode {
   isSelected: boolean;
   isFiltered: boolean;
+  children?: ModelNodeExtra[];
+  joinLabel?: string;
+  timeLabel?: string;
 }
 
 @Component({
@@ -39,6 +45,10 @@ export class ModelTreeComponent implements AfterViewInit {
   nodeClassFilter = common.FieldClassEnum.Filter;
   fieldResultTs = common.FieldResultEnum.Ts;
 
+  modelTreeLevelsNested = common.ModelTreeLevelsEnum.Nested;
+  modelTreeLevelsMid = common.ModelTreeLevelsEnum.Mid;
+  modelTreeLevelsFlat = common.ModelTreeLevelsEnum.Flat;
+
   nodesExtra: ModelNodeExtra[] = [];
 
   @Output()
@@ -48,25 +58,28 @@ export class ModelTreeComponent implements AfterViewInit {
   expandData = new EventEmitter();
 
   model: ModelState;
-  model$ = this.modelQuery.select().pipe(
-    tap(x => {
-      this.model = x;
-      this.makeNodesExtra();
-      // console.log(this.nodesExtra);
-      this.cd.detectChanges();
-    })
-  );
-
   mconfig: common.MconfigX;
-  mconfig$ = this.mqQuery.mconfig$.pipe(
-    tap(x => {
-      this.mconfig = x;
+  modelTreeLevels = common.ModelTreeLevelsEnum.Flat;
 
-      // console.log(x);
+  nodesExtra$ = combineLatest([
+    this.modelQuery.select(),
+    this.mqQuery.mconfig$,
+    this.uiQuery.modelTreeLevels$
+  ]).pipe(
+    tap(
+      ([model, mconfig, modelTreeLevels]: [
+        ModelState,
+        common.MconfigX,
+        common.ModelTreeLevelsEnum
+      ]) => {
+        this.model = model;
+        this.mconfig = mconfig;
+        this.modelTreeLevels = modelTreeLevels;
 
-      this.makeNodesExtra();
-      this.cd.detectChanges();
-    })
+        this.makeNodesExtra();
+        this.cd.detectChanges();
+      }
+    )
   );
 
   actionMapping: IActionMapping = {
@@ -101,6 +114,8 @@ export class ModelTreeComponent implements AfterViewInit {
     private modelQuery: ModelQuery,
     private cd: ChangeDetectorRef,
     private mqQuery: MqQuery,
+    private uiQuery: UiQuery,
+    private uiService: UiService,
     private structService: StructService,
     private mconfigService: MconfigService,
     private navigateService: NavigateService
@@ -246,13 +261,140 @@ export class ModelTreeComponent implements AfterViewInit {
   }
 
   makeNodesExtra() {
-    this.nodesExtra = this.model.nodes.map(topNode => {
+    // console.log('this.model.nodes', this.model.nodes);
+    let nestedNodes = this.model.nodes.map(topNode => {
       topNode.children.map(middleNode => {
         middleNode.children.map(leafNode => this.updateNodeExtra(leafNode));
         return this.updateNodeExtra(middleNode);
       });
       return this.updateNodeExtra(topNode);
     });
+
+    // console.log('nodesExtra', nodesExtra);
+
+    let flatNodes: ModelNodeExtra[] = [];
+
+    let flatNodesDimensions: ModelNodeExtra[] = [];
+    let flatNodesMeasures: ModelNodeExtra[] = [];
+    let flatNodesCalculations: ModelNodeExtra[] = [];
+
+    if (this.modelTreeLevels === common.ModelTreeLevelsEnum.Flat) {
+      nestedNodes.forEach(topNode => {
+        topNode.children.forEach(middleNode => {
+          middleNode.joinLabel = topNode.label;
+
+          if (middleNode.children.length > 0) {
+            middleNode.children.forEach(leafNode => {
+              leafNode.joinLabel = topNode.label;
+              leafNode.timeLabel = middleNode.label;
+
+              if (leafNode.nodeClass === common.FieldClassEnum.Dimension) {
+                flatNodesDimensions.push(leafNode);
+              } else if (leafNode.nodeClass === common.FieldClassEnum.Measure) {
+                flatNodesMeasures.push(leafNode);
+              } else if (
+                leafNode.nodeClass === common.FieldClassEnum.Calculation
+              ) {
+                flatNodesCalculations.push(leafNode);
+              }
+            });
+          } else {
+            if (middleNode.nodeClass === common.FieldClassEnum.Dimension) {
+              flatNodesDimensions.push(middleNode);
+            } else if (middleNode.nodeClass === common.FieldClassEnum.Measure) {
+              flatNodesMeasures.push(middleNode);
+            } else if (
+              middleNode.nodeClass === common.FieldClassEnum.Calculation
+            ) {
+              flatNodesCalculations.push(middleNode);
+            }
+          }
+        });
+      });
+
+      if (flatNodesDimensions.length > 0) {
+        flatNodes.push({
+          id: `${common.ModelNodeIdSuffixEnum.Dimensions}`,
+          label: common.ModelNodeLabelEnum.Dimensions,
+          description: undefined,
+          hidden: false,
+          isField: false,
+          children: [],
+          nodeClass: common.FieldClassEnum.Info,
+          isSelected: false,
+          isFiltered: false
+        });
+
+        flatNodes = [...flatNodes, ...flatNodesDimensions];
+      }
+
+      if (flatNodesDimensions.length > 0) {
+        flatNodes.push({
+          id: `${common.ModelNodeIdSuffixEnum.Measures}`,
+          label: common.ModelNodeLabelEnum.Measures,
+          description: undefined,
+          hidden: false,
+          isField: false,
+          children: [],
+          nodeClass: common.FieldClassEnum.Info,
+          isSelected: false,
+          isFiltered: false
+        });
+
+        flatNodes = [...flatNodes, ...flatNodesMeasures];
+      }
+
+      if (flatNodesDimensions.length > 0) {
+        flatNodes.push({
+          id: `${common.ModelNodeIdSuffixEnum.Calculations}`,
+          label: common.ModelNodeLabelEnum.Calculations,
+          description: undefined,
+          hidden: false,
+          isField: false,
+          children: [],
+          nodeClass: common.FieldClassEnum.Info,
+          isSelected: false,
+          isFiltered: false
+        });
+
+        flatNodes = [...flatNodes, ...flatNodesCalculations];
+      }
+    }
+
+    let midNodes: ModelNodeExtra[];
+
+    if (this.modelTreeLevels === common.ModelTreeLevelsEnum.Mid) {
+      midNodes = common.makeCopy(nestedNodes);
+
+      midNodes.forEach(topNode => {
+        let newTopNodeChildren: ModelNodeExtra[] = [];
+
+        topNode.children.forEach(middleNode => {
+          // middleNode.joinLabel = topNode.label;
+
+          if (middleNode.children.length > 0) {
+            middleNode.children.forEach(leafNode => {
+              // leafNode.joinLabel = topNode.label;
+
+              leafNode.timeLabel = middleNode.label;
+
+              newTopNodeChildren.push(leafNode);
+            });
+          } else {
+            newTopNodeChildren.push(middleNode);
+          }
+
+          topNode.children = newTopNodeChildren;
+        });
+      });
+    }
+
+    this.nodesExtra =
+      this.modelTreeLevels === common.ModelTreeLevelsEnum.Flat
+        ? flatNodes
+        : this.modelTreeLevels === common.ModelTreeLevelsEnum.Mid
+        ? midNodes
+        : nestedNodes;
   }
 
   updateNodeExtra(node: ModelNode): ModelNodeExtra {
@@ -299,6 +441,16 @@ export class ModelTreeComponent implements AfterViewInit {
           : node.data.hidden;
 
       node.setIsHidden(isHidden);
+    });
+  }
+
+  setModelTreeLevels(modelTreeLevels: common.ModelTreeLevelsEnum) {
+    this.uiQuery.updatePart({
+      modelTreeLevels: modelTreeLevels
+    });
+
+    this.uiService.setUserUi({
+      modelTreeLevels: modelTreeLevels
     });
   }
 

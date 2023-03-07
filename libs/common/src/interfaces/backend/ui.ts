@@ -26,6 +26,9 @@ export class Ui {
   @IsBoolean()
   showChartForSelectedRow: boolean;
 
+  @IsEnum(enums.ModelTreeLevelsEnum)
+  modelTreeLevels: enums.ModelTreeLevelsEnum;
+
   @IsTimezone()
   timezone: string;
 

@@ -65,7 +65,6 @@ export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
               timezone: resp.payload.user.ui.timezone,
               timeSpec: resp.payload.user.ui.timeSpec,
               timeRangeFraction: resp.payload.user.ui.timeRangeFraction,
-
               showMetricsModelName: resp.payload.user.ui.showMetricsModelName,
               showMetricsTimeFieldName:
                 resp.payload.user.ui.showMetricsTimeFieldName,
@@ -77,7 +76,8 @@ export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
               metricsColumnNameWidth:
                 resp.payload.user.ui.metricsColumnNameWidth,
               metricsColumnParametersWidth:
-                resp.payload.user.ui.metricsColumnParametersWidth
+                resp.payload.user.ui.metricsColumnParametersWidth,
+              modelTreeLevels: resp.payload.user.ui.modelTreeLevels
             });
 
             this.structQuery.update(resp.payload.struct);
