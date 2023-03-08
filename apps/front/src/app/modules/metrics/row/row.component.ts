@@ -62,7 +62,7 @@ export class RowComponent {
       this.repSelectedNode =
         x.repSelectedNodes.length === 1 ? x.repSelectedNodes[0] : undefined;
 
-      console.log('uiQuery tap x.repSelectedNodes', x.repSelectedNodes);
+      console.log('selectedRowNode', this.repSelectedNode);
 
       if (common.isDefined(this.repSelectedNode)) {
         if (this.repSelectedNode.data.rowType === common.RowTypeEnum.Formula) {

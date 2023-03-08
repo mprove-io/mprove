@@ -3,6 +3,8 @@ import { IHeaderAngularComp } from 'ag-grid-angular';
 import { IHeaderParams, IRowNode } from 'ag-grid-community';
 import { tap } from 'rxjs';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { ApiService } from '~front/app/services/api.service';
+import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { UiService } from '~front/app/services/ui.service';
 import { DataRow } from '../rep.component';
 
@@ -12,19 +14,6 @@ import { DataRow } from '../rep.component';
 })
 export class MetricHeaderComponent implements IHeaderAngularComp {
   params: IHeaderParams;
-
-  agInit(params: IHeaderParams) {
-    this.params = params;
-  }
-
-  refresh(params: IHeaderParams) {
-    this.params = params;
-    return true;
-  }
-
-  esc() {
-    this.params.api.deselectAll();
-  }
 
   repSelectedNodes: IRowNode<DataRow>[] = [];
   repSelectedNodes$ = this.uiQuery.repSelectedNodes$.pipe(
@@ -49,8 +38,23 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
   constructor(
     private uiQuery: UiQuery,
     private uiService: UiService,
+    private myDialogService: MyDialogService,
+    private apiService: ApiService,
     private cd: ChangeDetectorRef
   ) {}
+
+  agInit(params: IHeaderParams) {
+    this.params = params;
+  }
+
+  refresh(params: IHeaderParams) {
+    this.params = params;
+    return true;
+  }
+
+  esc() {
+    this.params.api.deselectAll();
+  }
 
   toggleShowMetricsModelName() {
     let showMetricsModelName = !this.showMetricsModelName;
@@ -73,6 +77,17 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
 
     this.uiService.setUserUi({
       showMetricsTimeFieldName: showMetricsTimeFieldName
+    });
+  }
+
+  addRow() {
+    this.myDialogService.showAddRow({
+      apiService: this.apiService
+      // ,
+      // reps: this.reps.filter(
+      //   x => x.draft === false && x.repId !== common.EMPTY_REP_ID
+      // ),
+      // rep: this.rep
     });
   }
 }

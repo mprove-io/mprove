@@ -70,7 +70,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.rep = x;
 
-      console.log(x);
+      console.log('rep', x);
 
       this.queriesLength = this.rep.rows.filter(row =>
         common.isDefined(row.query)

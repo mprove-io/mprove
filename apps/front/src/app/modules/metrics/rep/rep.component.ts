@@ -109,7 +109,7 @@ export class RepComponent {
     },
     {
       field: 'status',
-      pinned: 'left',
+      pinned: 'right',
       resizable: false,
       width: 84,
       headerComponent: StatusHeaderComponent,
@@ -166,8 +166,14 @@ export class RepComponent {
           headerName: column.label,
           cellRenderer: DataRendererComponent,
           type: 'numericColumn',
-          minWidth: 200,
-          maxWidth: 300,
+          width:
+            [common.TimeSpecEnum.Minutes, common.TimeSpecEnum.Hours].indexOf(
+              uiState.timeSpec
+            ) > -1
+              ? 220
+              : 210,
+          // minWidth: 200,
+          // maxWidth: 300,
           resizable: false
         };
 
@@ -227,7 +233,7 @@ export class RepComponent {
 
       this.prevRepId = this.rep.repId;
 
-      this.gridAutoSize();
+      // this.gridAutoSize();
 
       this.cd.detectChanges();
     })
@@ -301,24 +307,24 @@ export class RepComponent {
     this.location.go(url);
   }
 
-  gridAutoSize() {
-    if (common.isDefined(this.agGridColumnApi)) {
-      let skipHeader = false;
-      let allColumnIds: string[] = [];
+  // gridAutoSize() {
+  //   if (common.isDefined(this.agGridColumnApi)) {
+  //     let skipHeader = false;
+  //     let allColumnIds: string[] = [];
 
-      this.agGridColumnApi.getColumns().forEach(column => {
-        allColumnIds.push(column.getId());
-      });
+  //     this.agGridColumnApi.getColumns().forEach(column => {
+  //       allColumnIds.push(column.getId());
+  //     });
 
-      let columnIds = allColumnIds.filter(
-        columnId =>
-          ['rowId', 'name', 'parameters', 'status', 'chart'].indexOf(columnId) <
-          0
-      );
+  //     let columnIds = allColumnIds.filter(
+  //       columnId =>
+  //         ['rowId', 'name', 'parameters', 'status', 'chart'].indexOf(columnId) <
+  //         0
+  //     );
 
-      this.agGridColumnApi.autoSizeColumns(columnIds, skipHeader);
-    }
-  }
+  //     this.agGridColumnApi.autoSizeColumns(columnIds, skipHeader);
+  //   }
+  // }
 
   updateRepChartData(sNodes: IRowNode<DataRow>[]) {
     let showChartForSelectedRow =
@@ -353,7 +359,7 @@ export class RepComponent {
     this.uiQuery.updatePart({ gridApi: this.agGridApi });
     this.agGridApi.deselectAll();
 
-    this.gridAutoSize();
+    // this.gridAutoSize();
 
     this.cd.detectChanges();
   }
