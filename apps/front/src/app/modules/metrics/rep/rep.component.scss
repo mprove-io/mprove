@@ -1,3 +1,11 @@
+@use 'ag-grid-community/styles' as ag;
+@include ag.grid-styles(
+  (
+    theme: alpine,
+    --ag-cell-horizontal-border: solid #dde2eb
+  )
+);
+
 .ag-theme-alpine {
   font-family: monospace;
   --ag-font-size: 16px;
@@ -20,6 +28,10 @@
   font-size: 17px;
 }
 
-::ng-deep .ag-theme-alpine .ag-right-aligned-cell {
+::ng-deep .ag-header-cell {
+  border-right: 1px solid #dde2eb;
+}
+
+::ng-deep .ag-right-aligned-cell {
   font-family: 'Montserrat';
 }
