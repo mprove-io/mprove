@@ -2,10 +2,11 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { IHeaderAngularComp } from 'ag-grid-angular';
 import { IHeaderParams, IRowNode } from 'ag-grid-community';
 import { tap } from 'rxjs';
+import { RepQuery } from '~front/app/queries/rep.query';
 import { UiQuery } from '~front/app/queries/ui.query';
-import { ApiService } from '~front/app/services/api.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { RepService } from '~front/app/services/rep.service';
 import { UiService } from '~front/app/services/ui.service';
+import { common } from '~front/barrels/common';
 import { DataRow } from '../rep.component';
 
 @Component({
@@ -38,8 +39,8 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
   constructor(
     private uiQuery: UiQuery,
     private uiService: UiService,
-    private myDialogService: MyDialogService,
-    private apiService: ApiService,
+    private repService: RepService,
+    private repQuery: RepQuery,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -81,13 +82,18 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
   }
 
   addRow() {
-    this.myDialogService.showAddRow({
-      apiService: this.apiService
-      // ,
-      // reps: this.reps.filter(
-      //   x => x.draft === false && x.repId !== common.EMPTY_REP_ID
-      // ),
-      // rep: this.rep
+    let rep = this.repQuery.getValue();
+
+    let rowChange: common.RowChange = {
+      rowId: undefined,
+      rowType: common.RowTypeEnum.Empty,
+      showChart: false
+    };
+
+    this.repService.changeRows({
+      rep: rep,
+      changeType: common.ChangeTypeEnum.AddEmpty,
+      rowChanges: [rowChange]
     });
   }
 }

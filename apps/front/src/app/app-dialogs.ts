@@ -13,7 +13,6 @@ import { DeleteFolderDialogComponent } from './modules/files/files-tree/folder-o
 import { RenameFolderDialogComponent } from './modules/files/files-tree/folder-options/rename-folder-dialog/rename-folder-dialog.component';
 import { DeleteRepDialogComponent } from './modules/metrics/delete-rep-dialog/delete-rep-dialog.component';
 import { RepSaveAsDialogComponent } from './modules/metrics/rep-save-as-dialog/rep-save-as-dialog.component';
-import { AddRowDialogComponent } from './modules/metrics/rep/add-row-dialog/add-row-dialog.component';
 import { ChartSaveAsDialogComponent } from './modules/model/chart-save-as-dialog/chart-save-as-dialog.component';
 import { ViewBlockmlDialogComponent } from './modules/model/view-blockml-dialog/view-blockml-dialog.component';
 import { CreateBranchDialogComponent } from './modules/navbar/branch-select/create-branch-dialog/create-branch-dialog.component';
@@ -99,7 +98,6 @@ export const appDialogs = [
   // metrics
   RepSaveAsDialogComponent,
   DeleteRepDialogComponent,
-  AddRowDialogComponent,
   // model
   ViewBlockmlDialogComponent,
   ChartSaveAsDialogComponent,

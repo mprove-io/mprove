@@ -1,4 +1,5 @@
 export enum ChangeTypeEnum {
+  AddEmpty = 'AddEmpty',
   AddMetric = 'AddMetric',
   EditInfo = 'EditInfo',
   EditFormula = 'EditFormula',

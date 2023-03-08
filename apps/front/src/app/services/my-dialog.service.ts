@@ -60,10 +60,6 @@ import {
   RepSaveAsDialogData
 } from '../modules/metrics/rep-save-as-dialog/rep-save-as-dialog.component';
 import {
-  AddRowDialogComponent,
-  AddRowDialogData
-} from '../modules/metrics/rep/add-row-dialog/add-row-dialog.component';
-import {
   ChartSaveAsDialogComponent,
   ChartSaveAsDialogData
 } from '../modules/model/chart-save-as-dialog/chart-save-as-dialog.component';
@@ -346,15 +342,6 @@ export class MyDialogService {
 
   showRepSaveAs(item: RepSaveAsDialogData): void {
     this.dialogService.open(RepSaveAsDialogComponent, {
-      enableClose: false,
-      closeButton: false,
-      data: item,
-      width: 900
-    });
-  }
-
-  showAddRow(item: AddRowDialogData): void {
-    this.dialogService.open(AddRowDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item,

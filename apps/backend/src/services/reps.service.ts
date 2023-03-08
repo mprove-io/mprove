@@ -76,7 +76,52 @@ export class RepsService {
 
     let processedRows = rows.map(row => Object.assign({}, row));
 
-    if (changeType === common.ChangeTypeEnum.AddMetric) {
+    if (changeType === common.ChangeTypeEnum.AddEmpty) {
+      rowChanges.forEach(rowChange => {
+        let rowId = rowChange.rowId;
+
+        if (common.isUndefined(rowId)) {
+          let rowIdsNumbers = processedRows.map(y =>
+            common.rowIdLetterToNumber(y.rowId)
+          );
+          let maxRowIdNumber =
+            rowIdsNumbers.length > 0 ? Math.max(...rowIdsNumbers) : undefined;
+          let rowIdNumber = common.isDefined(maxRowIdNumber)
+            ? maxRowIdNumber + 1
+            : 0;
+          rowId = common.rowIdNumberToLetter(rowIdNumber);
+        }
+
+        let newRow: common.Row = {
+          rowId: rowId,
+          rowType: common.RowTypeEnum.Empty,
+          name: undefined,
+          metricId: undefined,
+          topLabel: undefined,
+          partLabel: undefined,
+          timeLabel: undefined,
+          showChart: false,
+          params: [],
+          formula: undefined,
+          formulaDeps: undefined,
+          rqs: [],
+          mconfig: undefined,
+          query: undefined,
+          hasAccessToModel: false,
+          records: [],
+          formatNumber: undefined,
+          currencyPrefix: undefined,
+          currencySuffix: undefined
+        };
+
+        processedRows.push(newRow);
+      });
+
+      processedRows = processRowIds({
+        rows: processedRows,
+        targetRowIds: processedRows.map(pRow => pRow.rowId)
+      });
+    } else if (changeType === common.ChangeTypeEnum.AddMetric) {
       rowChanges.forEach(rowChange => {
         let isClearFormulasData =
           processedRows.filter(
