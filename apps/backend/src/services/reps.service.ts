@@ -77,49 +77,67 @@ export class RepsService {
     let processedRows = rows.map(row => Object.assign({}, row));
 
     if (changeType === common.ChangeTypeEnum.AddEmpty) {
-      rowChanges.forEach(rowChange => {
-        let rowId = rowChange.rowId;
+      let targetIndex: number;
 
-        if (common.isUndefined(rowId)) {
-          let rowIdsNumbers = processedRows.map(y =>
-            common.rowIdLetterToNumber(y.rowId)
-          );
-          let maxRowIdNumber =
-            rowIdsNumbers.length > 0 ? Math.max(...rowIdsNumbers) : undefined;
-          let rowIdNumber = common.isDefined(maxRowIdNumber)
-            ? maxRowIdNumber + 1
-            : 0;
-          rowId = common.rowIdNumberToLetter(rowIdNumber);
-        }
+      let rowChange = rowChanges[0];
 
-        let newRow: common.Row = {
-          rowId: rowId,
-          rowType: common.RowTypeEnum.Empty,
-          name: undefined,
-          metricId: undefined,
-          topLabel: undefined,
-          partLabel: undefined,
-          timeLabel: undefined,
-          showChart: false,
-          params: [],
-          formula: undefined,
-          formulaDeps: undefined,
-          rqs: [],
-          mconfig: undefined,
-          query: undefined,
-          hasAccessToModel: false,
-          records: [],
-          formatNumber: undefined,
-          currencyPrefix: undefined,
-          currencySuffix: undefined
-        };
+      if (common.isDefined(rowChange.rowId)) {
+        targetIndex = processedRows.findIndex(
+          pRow => pRow.rowId === rowChange.rowId
+        );
+      }
 
-        processedRows.push(newRow);
-      });
+      let rowIdsNumbers = processedRows.map(y =>
+        common.rowIdLetterToNumber(y.rowId)
+      );
+      let maxRowIdNumber =
+        rowIdsNumbers.length > 0 ? Math.max(...rowIdsNumbers) : undefined;
+      let rowIdNumber = common.isDefined(maxRowIdNumber)
+        ? maxRowIdNumber + 1
+        : 0;
+      let rowId = common.rowIdNumberToLetter(rowIdNumber);
+
+      let newRow: common.Row = {
+        rowId: rowId,
+        rowType: common.RowTypeEnum.Empty,
+        name: undefined,
+        metricId: undefined,
+        topLabel: undefined,
+        partLabel: undefined,
+        timeLabel: undefined,
+        showChart: false,
+        params: [],
+        formula: undefined,
+        formulaDeps: undefined,
+        rqs: [],
+        mconfig: undefined,
+        query: undefined,
+        hasAccessToModel: false,
+        records: [],
+        formatNumber: undefined,
+        currencyPrefix: undefined,
+        currencySuffix: undefined
+      };
+
+      processedRows.push(newRow);
+
+      let targetRows: common.Row[] = [];
+
+      if (common.isDefined(targetIndex)) {
+        targetRows = [
+          ...processedRows.slice(0, targetIndex + 1),
+          newRow,
+          ...processedRows.slice(targetIndex + 1, processedRows.length)
+        ];
+
+        targetRows.pop();
+      }
 
       processedRows = processRowIds({
-        rows: processedRows,
-        targetRowIds: processedRows.map(pRow => pRow.rowId)
+        rows: common.isDefined(targetIndex) ? targetRows : processedRows,
+        targetRowIds: common.isDefined(targetIndex)
+          ? targetRows.map(pRow => pRow.rowId)
+          : processedRows.map(pRow => pRow.rowId)
       });
     } else if (changeType === common.ChangeTypeEnum.AddMetric) {
       rowChanges.forEach(rowChange => {

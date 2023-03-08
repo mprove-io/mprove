@@ -82,10 +82,15 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
   }
 
   addRow() {
+    let repSelectedNodes = this.uiQuery.getValue().repSelectedNodes;
+
     let rep = this.repQuery.getValue();
 
     let rowChange: common.RowChange = {
-      rowId: undefined,
+      rowId:
+        repSelectedNodes.length === 1
+          ? repSelectedNodes[0].data.rowId
+          : undefined,
       rowType: common.RowTypeEnum.Empty,
       showChart: false
     };
