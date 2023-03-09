@@ -46,6 +46,12 @@ export class RowComponent {
 
   isShowFormatOptions = false;
 
+  isToHeader = false;
+  isToFormula = false;
+  isToMetric = false;
+
+  isValid = false;
+
   rep: common.RepX;
   rep$ = this.repQuery.select().pipe(
     tap(x => {
@@ -257,6 +263,28 @@ export class RowComponent {
       changeType: common.ChangeTypeEnum.Clear,
       rowChanges: [rowChange]
     });
+  }
+
+  toHeader() {
+    this.isToHeader = true;
+  }
+
+  toFormula() {
+    this.isToFormula = true;
+  }
+
+  toMetric() {
+    this.isToMetric = true;
+  }
+
+  cancel() {
+    this.isToHeader = false;
+    this.isToFormula = false;
+    this.isToMetric = false;
+  }
+
+  apply() {
+    // this.isToHeader = false;
   }
 
   explore() {

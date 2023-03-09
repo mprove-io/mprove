@@ -13,8 +13,9 @@
 
             <div class="ml-10 flex flex-row items-center space-x-5">
               <m-desktop-icon
-                class="flex-shrink-0 cursor-pointer"
+                class="flex-shrink-0 cursor-pointer text-gray-500"
                 [ngClass]="{
+                  'text-gray-500': isShowLeft === true,
                   'text-blue-500': isShowLeft === false
                 }"
                 (click)="toggleShowLeft()"

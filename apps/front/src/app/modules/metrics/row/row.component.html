@@ -52,6 +52,80 @@
       }}</div>
     </div>
 
+    <div
+      class="flex h-11 flex-row items-center space-x-5"
+      *ngIf="repSelectedNode.data.rowType === rowTypeEmpty"
+    >
+      <div class="text-gray1 flex select-none items-center font-semibold"
+        >Convert to</div
+      >
+
+      <button
+        *ngIf="
+          isToHeader === false && isToFormula === false && isToMetric === false
+        "
+        type="button"
+        data-cy="rowToHeaderButton"
+        class="ml-5 flex rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
+        (click)="toHeader()"
+      >
+        Header
+      </button>
+
+      <button
+        *ngIf="
+          isToHeader === false && isToFormula === false && isToMetric === false
+        "
+        type="button"
+        data-cy="rowToFormulaButton"
+        class="ml-5 flex rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
+        (click)="toFormula()"
+      >
+        Formula
+      </button>
+
+      <button
+        *ngIf="
+          isToHeader === false && isToFormula === false && isToMetric === false
+        "
+        type="button"
+        data-cy="rowToMetricButton"
+        class="ml-5 flex rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
+        (click)="toMetric()"
+      >
+        Metric
+      </button>
+
+      <div
+        class="flex flex-row"
+        *ngIf="
+          isToHeader === true || isToFormula === true || isToMetric === true
+        "
+      >
+        <button
+          data-cy="rowApplyButton"
+          class="bg-blue3 rounded px-4 py-2 font-medium text-white focus:outline-none"
+          type="button"
+          [ngClass]="{
+            'bg-blue3': isValid === true,
+            'cursor-default bg-gray-400': isValid === false
+          }"
+          (click)="apply()"
+          [disabled]="isValid === false"
+          >Apply</button
+        >
+
+        <button
+          type="button"
+          data-cy="rowCancelButton"
+          class="border-blue3 text-blue3 ml-5 flex rounded border px-4 py-2 font-medium focus:outline-none"
+          (click)="cancel()"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+
     <button
       *ngIf="repSelectedNode.data.rowType === rowTypeMetric"
       type="button"
