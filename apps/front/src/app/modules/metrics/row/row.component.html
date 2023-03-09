@@ -19,6 +19,7 @@
       </button>
 
       <button
+        *ngIf="repSelectedNode.data.rowType !== rowTypeEmpty"
         class="ml-3 flex h-9 w-9 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
         (click)="clearRow()"
       >
