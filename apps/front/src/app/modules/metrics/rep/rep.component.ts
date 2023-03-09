@@ -1,10 +1,5 @@
 import { Location } from '@angular/common';
-import {
-  ChangeDetectorRef,
-  Component,
-  HostListener,
-  ViewChild
-} from '@angular/core';
+import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AgGridAngular } from 'ag-grid-angular';
 import {
@@ -47,10 +42,10 @@ export interface DataRow extends common.Row {
   templateUrl: './rep.component.html'
 })
 export class RepComponent {
-  @HostListener('window:keyup.esc')
-  onEscKeyUp() {
-    this.agGrid.api.deselectAll();
-  }
+  // @HostListener('window:keyup.esc')
+  // onEscKeyUp() {
+  //   this.agGrid.api.deselectAll();
+  // }
 
   updateColumnSizes = debounce(
     1000,
@@ -96,6 +91,7 @@ export class RepComponent {
     {
       field: 'name',
       pinned: 'left',
+      minWidth: 500,
       width: 500,
       headerComponent: MetricHeaderComponent,
       cellRenderer: MetricRendererComponent,
@@ -104,7 +100,8 @@ export class RepComponent {
     {
       field: 'parameters',
       pinned: 'left',
-      width: 200,
+      minWidth: 150,
+      width: 150,
       suppressAutoSize: true
     },
     {

@@ -23,7 +23,7 @@
         'font-normal': showMetricsTimeFieldName === false
       }"
       (click)="toggleShowMetricsTimeFieldName()"
-      >TimeField</div
+      >Time</div
     >
   </div>
 
@@ -32,16 +32,22 @@
     class="ml-5 rounded border border-gray-400 py-1 px-4 text-gray-500 hover:bg-white focus:outline-none"
     type="button"
     (click)="addRow()"
-    >Add Row</button
+    >Add</button
   >
 
   <button
-    *ngIf="repSelectedNodes.length > 0"
-    data-cy="metricsEscButton"
-    class="ml-5 rounded border border-gray-400 px-4 py-1 text-gray-500 hover:bg-white focus:outline-none"
+    data-cy="metricsSelectionButton"
+    class="ml-5 rounded border px-4 py-1 focus:outline-none"
+    [ngClass]="{
+      'border-gray-400 text-gray-500 hover:bg-white':
+        repSelectedNodes.length > 0,
+      'cursor-default border-gray-300 text-gray-400':
+        repSelectedNodes.length === 0
+    }"
     type="button"
-    (click)="esc()"
-    >ESC</button
+    (click)="selection()"
+    [disabled]="repSelectedNodes.length === 0"
+    >Selection</button
   >
 </div>
 
