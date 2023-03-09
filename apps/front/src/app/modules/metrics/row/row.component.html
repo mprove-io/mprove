@@ -121,7 +121,7 @@
         repSelectedNode.data.rowType !== rowTypeEmpty &&
         repSelectedNode.data.rowType !== rowTypeMetric
       "
-      class="flex h-11 flex-1 flex-row items-center space-x-5"
+      class="flex h-11 max-w-[600px] flex-1 flex-row items-center space-x-5"
     >
       <div class="text-gray1 flex select-none items-center font-semibold"
         >Name</div
@@ -134,8 +134,7 @@
           [ngClass]="{
             'border-red-600':
               nameForm.controls['name'].invalid &&
-              nameForm.controls['name'].touched,
-            'max-w-[500px]': repSelectedNode.data.rowType === rowTypeHeader
+              nameForm.controls['name'].touched
           }"
           formControlName="name"
           placeholder=""
