@@ -10,6 +10,17 @@
             >
               {{ pageTitle }}
             </div>
+
+            <div class="ml-10 flex flex-row items-center space-x-5">
+              <m-desktop-icon
+                class="flex-shrink-0 cursor-pointer"
+                [ngClass]="{
+                  'text-blue-500': isShowLeft === false
+                }"
+                (click)="toggleShowLeft()"
+              ></m-desktop-icon>
+            </div>
+
             <div class="flex-grow"></div>
 
             <div class="text-gray1 ml-6 text-base">Timezone</div>
@@ -126,8 +137,8 @@
         </div>
       </div>
 
-      <div class="mt-6 flex flex-grow flex-row">
-        <div class="flex w-1/4 flex-shrink-0">
+      <div class="mt-6 flex flex-grow flex-row space-x-6">
+        <div class="flex w-1/4 flex-shrink-0" *ngIf="isShowLeft === true">
           <div class="flex w-full flex-grow rounded bg-white shadow-lg">
             <div class="text-gray1 mr-5 mt-6 flex w-full flex-col text-base">
               <div class="flex flex-1 flex-col">
@@ -226,7 +237,7 @@
           </div>
         </div>
 
-        <div class="ml-6 flex min-w-[2px] flex-grow flex-col space-y-6">
+        <div class="flex min-w-[2px] flex-grow flex-col space-y-6">
           <div class="w-full flex-1 flex-shrink-0 rounded bg-white shadow-md">
             <router-outlet></router-outlet>
           </div>

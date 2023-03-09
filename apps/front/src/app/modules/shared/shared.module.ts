@@ -39,6 +39,7 @@ import { ChevronUpIconComponent } from './icons/chevron-up-icon/chevron-up-icon.
 import { CurrencyDollarIconComponent } from './icons/currency-dollar-icon/currency-dollar-icon.component';
 import { DeleteIconComponent } from './icons/delete-icon/delete-icon.component';
 import { DescIconComponent } from './icons/desc-icon/desc-icon.component';
+import { DesktopIconComponent } from './icons/desktop-icon/desktop-icon.component';
 import { DocumentIconComponent } from './icons/document-icon/document-icon.component';
 import { DotsVerticalIconComponent } from './icons/dots-vertical-icon/dots-vertical-icon.component';
 import { DragIconComponent } from './icons/drag-icon/drag-icon.component';
@@ -135,6 +136,7 @@ let sharedComponents = [
   MinusSmIconComponent,
   QueryStatusComponent,
   FullScreenIconComponent,
+  DesktopIconComponent,
   SearchIconComponent,
   RefreshIconComponent,
   LockClosedIconComponent,

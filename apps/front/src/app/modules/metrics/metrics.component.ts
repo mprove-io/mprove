@@ -61,6 +61,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   isShow = true;
 
+  isShowLeft = true;
+
   emptyRepId = common.EMPTY_REP_ID;
 
   queriesLength = 0;
@@ -599,6 +601,10 @@ export class MetricsComponent implements OnInit, OnDestroy {
       ),
       rep: this.rep
     });
+  }
+
+  toggleShowLeft() {
+    this.isShowLeft = !this.isShowLeft;
   }
 
   refreshShow() {
