@@ -29,6 +29,14 @@ export class RowComponent {
     name: [undefined, [Validators.required]]
   });
 
+  newNameForm: FormGroup = this.fb.group({
+    name: [undefined, [Validators.required]]
+  });
+
+  newFormulaForm: FormGroup = this.fb.group({
+    formula: [undefined, [Validators.required]]
+  });
+
   formatNumberForm: FormGroup = this.fb.group({
     formatNumber: [
       undefined,
@@ -55,6 +63,7 @@ export class RowComponent {
   rep: common.RepX;
   rep$ = this.repQuery.select().pipe(
     tap(x => {
+      this.cancelConvert();
       this.rep = x;
 
       this.cd.detectChanges();
@@ -65,6 +74,19 @@ export class RowComponent {
 
   uiQuery$ = this.uiQuery.select().pipe(
     tap(x => {
+      if (
+        (this.isToHeader === true ||
+          this.isToFormula === true ||
+          this.isToMetric === true) &&
+        (x.repSelectedNodes.length === 0 ||
+          x.repSelectedNodes.length > 1 ||
+          (x.repSelectedNodes.length === 1 &&
+            x.repSelectedNodes[0].data.rowId !==
+              this.repSelectedNode.data.rowId))
+      ) {
+        this.cancelConvert();
+      }
+
       this.repSelectedNode =
         x.repSelectedNodes.length === 1 ? x.repSelectedNodes[0] : undefined;
 
@@ -79,8 +101,8 @@ export class RowComponent {
         }
 
         if (
-          this.repSelectedNode.data.rowType !== common.RowTypeEnum.Empty &&
-          this.repSelectedNode.data.rowType !== common.RowTypeEnum.Metric
+          this.repSelectedNode.data.rowType === common.RowTypeEnum.Header ||
+          this.repSelectedNode.data.rowType === common.RowTypeEnum.Formula
         ) {
           setValueAndMark({
             control: this.nameForm.controls['name'],
@@ -89,8 +111,8 @@ export class RowComponent {
         }
 
         if (
-          this.repSelectedNode.data.rowType !== common.RowTypeEnum.Empty &&
-          this.repSelectedNode.data.rowType !== common.RowTypeEnum.Header
+          this.repSelectedNode.data.rowType === common.RowTypeEnum.Formula ||
+          this.repSelectedNode.data.rowType === common.RowTypeEnum.Metric
         ) {
           setValueAndMark({
             control: this.formatNumberForm.controls['formatNumber'],
@@ -266,10 +288,19 @@ export class RowComponent {
   }
 
   toHeader() {
+    this.newNameForm.controls['name'].setValue(undefined);
+    this.newNameForm.controls['name'].markAsUntouched();
+
     this.isToHeader = true;
   }
 
   toFormula() {
+    this.newFormulaForm.controls['formula'].setValue(undefined);
+    this.newFormulaForm.controls['formula'].markAsUntouched();
+
+    this.newNameForm.controls['name'].setValue(undefined);
+    this.newNameForm.controls['name'].markAsUntouched();
+
     this.isToFormula = true;
   }
 
@@ -277,7 +308,13 @@ export class RowComponent {
     this.isToMetric = true;
   }
 
-  cancel() {
+  cancelConvert() {
+    this.newNameForm.controls['name'].setValue(undefined);
+    this.newNameForm.controls['name'].markAsUntouched();
+
+    this.newFormulaForm.controls['formula'].setValue(undefined);
+    this.newFormulaForm.controls['formula'].markAsUntouched();
+
     this.isToHeader = false;
     this.isToFormula = false;
     this.isToMetric = false;
@@ -285,6 +322,15 @@ export class RowComponent {
 
   apply() {
     // this.isToHeader = false;
+
+    if (this.isToHeader === true) {
+      this.newNameForm.controls['name'].markAsTouched();
+    }
+
+    if (this.isToFormula === true) {
+      this.newNameForm.controls['name'].markAsTouched();
+      this.newFormulaForm.controls['formula'].markAsTouched();
+    }
   }
 
   explore() {

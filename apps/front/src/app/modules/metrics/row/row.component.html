@@ -48,53 +48,111 @@
       >
 
       <div class="flex items-center">{{
-        repSelectedNode.data.rowType | capitalize
+        isToHeader === true
+          ? (rowTypeHeader | capitalize)
+          : isToFormula === true
+          ? (rowTypeFormula | capitalize)
+          : isToMetric === true
+          ? (rowTypeMetric | capitalize)
+          : (repSelectedNode.data.rowType | capitalize)
       }}</div>
     </div>
 
     <div
-      class="flex h-11 flex-row items-center space-x-5"
+      class="flex flex-1 flex-row items-start space-x-5"
       *ngIf="repSelectedNode.data.rowType === rowTypeEmpty"
     >
-      <div class="text-gray1 flex select-none items-center font-semibold"
-        >Convert to</div
-      >
-
-      <button
+      <div
+        class="flex flex-row"
         *ngIf="
           isToHeader === false && isToFormula === false && isToMetric === false
         "
-        type="button"
-        data-cy="rowToHeaderButton"
-        class="ml-5 flex rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
-        (click)="toHeader()"
       >
-        Header
-      </button>
+        <div class="text-gray1 flex select-none items-center font-semibold"
+          >Convert to</div
+        >
 
-      <button
-        *ngIf="
-          isToHeader === false && isToFormula === false && isToMetric === false
-        "
-        type="button"
-        data-cy="rowToFormulaButton"
-        class="ml-5 flex rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
-        (click)="toFormula()"
-      >
-        Formula
-      </button>
+        <button
+          type="button"
+          data-cy="rowToHeaderButton"
+          class="ml-5 flex rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
+          (click)="toHeader()"
+        >
+          Header
+        </button>
 
-      <button
-        *ngIf="
-          isToHeader === false && isToFormula === false && isToMetric === false
-        "
-        type="button"
-        data-cy="rowToMetricButton"
-        class="ml-5 flex rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
-        (click)="toMetric()"
+        <button
+          type="button"
+          data-cy="rowToFormulaButton"
+          class="ml-5 flex rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
+          (click)="toFormula()"
+        >
+          Formula
+        </button>
+
+        <button
+          type="button"
+          data-cy="rowToMetricButton"
+          class="ml-5 flex rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
+          (click)="toMetric()"
+        >
+          Metric
+        </button>
+      </div>
+
+      <div
+        *ngIf="isToFormula === true"
+        class="flex flex-1 flex-row items-start space-x-5"
       >
-        Metric
-      </button>
+        <div class="text-gray1 mt-3 flex select-none items-center font-semibold"
+          >Formula</div
+        >
+
+        <div [formGroup]="newFormulaForm" class="relative flex w-full">
+          <textarea
+            data-cy="formulaInput"
+            class="form-input border-gray3 focus:border-blue3 max-h-[180px] min-h-[90px] w-full resize-y rounded"
+            [ngClass]="{
+              'border-red-600':
+                newFormulaForm.controls['formula'].invalid &&
+                newFormulaForm.controls['formula'].touched
+            }"
+            formControlName="formula"
+            placeholder="$A + $B"
+          ></textarea>
+          <m-validation
+            class="absolute -bottom-[22px] left-0"
+            [control]="newFormulaForm.controls['formula']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div
+        *ngIf="isToHeader === true || isToFormula === true"
+        class="flex h-11 max-w-[600px] flex-1 flex-row items-center space-x-5"
+      >
+        <div class="text-gray1 flex select-none items-center font-semibold"
+          >Name</div
+        >
+
+        <div [formGroup]="newNameForm" class="relative flex w-full">
+          <input
+            data-cy="newNameInput"
+            class="form-input border-gray3 focus:border-blue3 w-full min-w-[100px] resize-none rounded"
+            [ngClass]="{
+              'border-red-600':
+                newNameForm.controls['name'].invalid &&
+                newNameForm.controls['name'].touched
+            }"
+            formControlName="name"
+            placeholder=""
+          />
+          <m-validation
+            class="absolute -bottom-[22px] left-0"
+            [control]="newNameForm.controls['name']"
+          ></m-validation>
+        </div>
+      </div>
 
       <div
         class="flex flex-row"
@@ -104,14 +162,9 @@
       >
         <button
           data-cy="rowApplyButton"
-          class="bg-blue3 rounded px-4 py-2 font-medium text-white focus:outline-none"
+          class="bg-blue3 bg-blue3 rounded px-4 py-2 font-medium text-white focus:outline-none"
           type="button"
-          [ngClass]="{
-            'bg-blue3': isValid === true,
-            'cursor-default bg-gray-400': isValid === false
-          }"
           (click)="apply()"
-          [disabled]="isValid === false"
           >Apply</button
         >
 
@@ -119,7 +172,7 @@
           type="button"
           data-cy="rowCancelButton"
           class="border-blue3 text-blue3 ml-5 flex rounded border px-4 py-2 font-medium focus:outline-none"
-          (click)="cancel()"
+          (click)="cancelConvert()"
         >
           Cancel
         </button>
@@ -184,7 +237,7 @@
           (blur)="formulaBlur()"
         ></textarea>
         <m-validation
-          class="absolute -bottom-5 left-0"
+          class="absolute -bottom-[22px] left-0"
           [control]="formulaForm.controls['formula']"
         ></m-validation>
       </div>
@@ -215,7 +268,7 @@
           (blur)="nameBlur()"
         />
         <m-validation
-          class="absolute -bottom-5 left-0"
+          class="absolute -bottom-[22px] left-0"
           [control]="nameForm.controls['name']"
         ></m-validation>
       </div>
@@ -252,7 +305,7 @@
           (blur)="formatNumberBlur()"
         />
         <m-validation
-          class="absolute -bottom-5 left-0"
+          class="absolute -bottom-[22px] left-0"
           [control]="formatNumberForm.controls['formatNumber']"
         ></m-validation>
       </div>
@@ -284,7 +337,7 @@
           (blur)="currencyPrefixBlur()"
         />
         <m-validation
-          class="absolute -bottom-5 left-0"
+          class="absolute -bottom-[22px] left-0"
           [control]="currencyPrefixForm.controls['currencyPrefix']"
         ></m-validation>
       </div>
@@ -316,7 +369,7 @@
           (blur)="currencySuffixBlur()"
         />
         <m-validation
-          class="absolute -bottom-5 left-0"
+          class="absolute -bottom-[22px] left-0"
           [control]="currencySuffixForm.controls['currencySuffix']"
         ></m-validation>
       </div>
