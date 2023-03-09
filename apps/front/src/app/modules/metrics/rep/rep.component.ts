@@ -13,7 +13,7 @@ import {
   RowDragEndEvent,
   SelectionChangedEvent
 } from 'ag-grid-community';
-import { tap } from 'rxjs';
+import { combineLatest, tap } from 'rxjs';
 import { debounce } from 'throttle-debounce';
 import { makeRepQueryParams } from '~front/app/functions/make-query-params';
 import { RepQuery } from '~front/app/queries/rep.query';
@@ -48,25 +48,46 @@ export class RepComponent {
   // }
 
   updateColumnSizes = debounce(
-    1000,
+    300,
     paramsColumn => {
-      // console.log('paramsColumn:', paramsColumn);
-
       if (common.isDefined(this.agGridColumnApi)) {
         let columns = this.agGridColumnApi.getColumns();
+
         let nameColumn = columns.find(x => x.getColId() === 'name');
         let parametersColumn = columns.find(x => x.getColId() === 'parameters');
 
+        let uiState = this.uiQuery.getValue();
+
         this.uiQuery.updatePart({
           metricsColumnNameWidth: nameColumn.getActualWidth(),
-          metricsColumnParametersWidth: parametersColumn.getActualWidth()
+          metricsColumnParametersWidth: parametersColumn.getActualWidth(),
+          metricsTimeColumnsNarrowWidth:
+            ['name', 'parameters'].indexOf(paramsColumn.colId) > -1
+              ? uiState.metricsTimeColumnsNarrowWidth
+              : [
+                  common.TimeSpecEnum.Hours,
+                  common.TimeSpecEnum.Minutes
+                ].indexOf(uiState.timeSpec) > -1
+              ? uiState.metricsTimeColumnsNarrowWidth
+              : paramsColumn.getActualWidth(),
+          metricsTimeColumnsWideWidth:
+            ['name', 'parameters'].indexOf(paramsColumn.colId) > -1
+              ? uiState.metricsTimeColumnsWideWidth
+              : [
+                  common.TimeSpecEnum.Hours,
+                  common.TimeSpecEnum.Minutes
+                ].indexOf(uiState.timeSpec) > -1
+              ? paramsColumn.getActualWidth()
+              : uiState.metricsTimeColumnsWideWidth
         });
 
-        let uiState = this.uiQuery.getValue();
+        uiState = this.uiQuery.getValue();
 
         this.uiService.setUserUi({
           metricsColumnNameWidth: uiState.metricsColumnNameWidth,
-          metricsColumnParametersWidth: uiState.metricsColumnParametersWidth
+          metricsColumnParametersWidth: uiState.metricsColumnParametersWidth,
+          metricsTimeColumnsNarrowWidth: uiState.metricsTimeColumnsNarrowWidth,
+          metricsTimeColumnsWideWidth: uiState.metricsTimeColumnsWideWidth
         });
       }
     },
@@ -85,24 +106,19 @@ export class RepComponent {
       pinned: 'left',
       width: 90,
       headerComponent: RowIdHeaderComponent,
-      cellRenderer: RowIdRendererComponent,
-      suppressAutoSize: true
+      cellRenderer: RowIdRendererComponent
     },
     {
       field: 'name',
       pinned: 'left',
-      minWidth: 500,
-      width: 500,
+      minWidth: 314,
       headerComponent: MetricHeaderComponent,
-      cellRenderer: MetricRendererComponent,
-      suppressAutoSize: true
+      cellRenderer: MetricRendererComponent
     },
     {
       field: 'parameters',
       pinned: 'left',
-      minWidth: 150,
-      width: 150,
-      suppressAutoSize: true
+      minWidth: 60
     },
     {
       field: 'status',
@@ -110,8 +126,7 @@ export class RepComponent {
       resizable: false,
       width: 84,
       headerComponent: StatusHeaderComponent,
-      cellRenderer: StatusRendererComponent,
-      suppressAutoSize: true
+      cellRenderer: StatusRendererComponent
     },
     {
       field: 'chart',
@@ -119,8 +134,7 @@ export class RepComponent {
       resizable: false,
       width: 60,
       headerComponent: ChartHeaderComponent,
-      cellRenderer: ChartRendererComponent,
-      suppressAutoSize: true
+      cellRenderer: ChartRendererComponent
     }
   ];
 
@@ -145,95 +159,111 @@ export class RepComponent {
   prevRepId: string;
 
   rep: common.RepX;
-  rep$ = this.repQuery.select().pipe(
-    tap(x => {
-      this.rep = x;
+  rep$ = combineLatest([
+    this.repQuery.select(),
+    this.uiQuery.timeColumnsNarrowWidth$,
+    this.uiQuery.timeColumnsWideWidth$
+  ]).pipe(
+    tap(
+      ([rep, timeColumnsNarrowWidth, timeColumnsWideWidth]: [
+        common.RepX,
+        number,
+        number
+      ]) => {
+        this.rep = rep;
 
-      let uiState = this.uiQuery.getValue();
+        let uiState = this.uiQuery.getValue();
 
-      let nameColumn = this.columns.find(c => c.field === 'name');
-      let parametersColumn = this.columns.find(c => c.field === 'parameters');
+        let nameColumn = this.columns.find(c => c.field === 'name');
+        let parametersColumn = this.columns.find(c => c.field === 'parameters');
 
-      nameColumn.width = uiState.metricsColumnNameWidth;
-      parametersColumn.width = uiState.metricsColumnParametersWidth;
+        nameColumn.width = uiState.metricsColumnNameWidth;
 
-      this.timeColumns = x.columns.map(column => {
-        let columnDef: ColDef<DataRow> = {
-          field: `${column.columnId}`,
-          headerName: column.label,
-          cellRenderer: DataRendererComponent,
-          type: 'numericColumn',
-          width:
-            [common.TimeSpecEnum.Minutes, common.TimeSpecEnum.Hours].indexOf(
-              uiState.timeSpec
-            ) > -1
-              ? 220
-              : 210,
-          // minWidth: 200,
-          // maxWidth: 300,
-          resizable: false
-        };
+        parametersColumn.width = uiState.metricsColumnParametersWidth;
 
-        return columnDef;
-      });
+        this.timeColumns = this.rep.columns.map(column => {
+          let columnDef: ColDef<DataRow> = {
+            field: `${column.columnId}`,
+            headerName: column.label,
+            cellRenderer: DataRendererComponent,
+            type: 'numericColumn',
+            width:
+              [common.TimeSpecEnum.Minutes, common.TimeSpecEnum.Hours].indexOf(
+                uiState.timeSpec
+              ) > -1
+                ? Math.max(220, timeColumnsWideWidth)
+                : Math.max(155, timeColumnsNarrowWidth),
+            minWidth:
+              [common.TimeSpecEnum.Minutes, common.TimeSpecEnum.Hours].indexOf(
+                uiState.timeSpec
+              ) > -1
+                ? 220
+                : 155,
+            maxWidth: 300,
+            resizable: true
+          };
 
-      let runningQueriesLength = this.rep.rows
-        .filter(row => common.isDefined(row.query))
-        .map(row => row.query.status)
-        .filter(status => status === common.QueryStatusEnum.Running).length;
-
-      let statusColumn = this.columns.find(c => c.field === 'status');
-
-      statusColumn.type = runningQueriesLength > 0 ? 'running' : undefined;
-
-      this.columnDefs = [...this.columns, ...this.timeColumns];
-
-      // let metrics = this.metricsQuery.getValue();
-
-      this.data = x.rows.map((row: common.Row) => {
-        // let metric = metrics.metrics.find(m => m.metricId === row.metricId);
-
-        let dataRow: DataRow = Object.assign({}, row, {
-          parameters: common.isDefined(row.params)
-            ? JSON.stringify(row.params)
-            : ''
+          return columnDef;
         });
 
-        row.records
-          .filter(record => record.key !== 0)
-          .forEach(record => {
-            (dataRow as any)[record.key] = record.value;
-            let column = x.columns.find(c => c.columnId === record.key);
-            record.columnLabel = column.label;
+        let runningQueriesLength = this.rep.rows
+          .filter(row => common.isDefined(row.query))
+          .map(row => row.query.status)
+          .filter(status => status === common.QueryStatusEnum.Running).length;
+
+        let statusColumn = this.columns.find(c => c.field === 'status');
+
+        statusColumn.type = runningQueriesLength > 0 ? 'running' : undefined;
+
+        this.columnDefs = [...this.columns, ...this.timeColumns];
+
+        // let metrics = this.metricsQuery.getValue();
+
+        this.data = this.rep.rows.map((row: common.Row) => {
+          // let metric = metrics.metrics.find(m => m.metricId === row.metricId);
+
+          let dataRow: DataRow = Object.assign({}, row, {
+            parameters: common.isDefined(row.params)
+              ? JSON.stringify(row.params)
+              : ''
           });
 
-        return dataRow;
-      });
+          row.records
+            .filter(record => record.key !== 0)
+            .forEach(record => {
+              (dataRow as any)[record.key] = record.value;
+              let column = this.rep.columns.find(
+                c => c.columnId === record.key
+              );
+              record.columnLabel = column.label;
+            });
 
-      let sNodes = this.uiQuery.getValue().repSelectedNodes;
+          return dataRow;
+        });
 
-      this.updateRepChartData(sNodes);
+        let sNodes = this.uiQuery.getValue().repSelectedNodes;
 
-      if (
-        common.isDefined(this.prevRepId) &&
-        this.rep.repId === this.prevRepId
-      ) {
-        if (common.isDefined(this.agGridApi)) {
-          this.uiQuery.getValue().repSelectedNodes.forEach(node => {
-            let rowNode = this.agGridApi.getRowNode(node.id);
-            if (common.isDefined(rowNode)) {
-              rowNode.setSelected(true);
-            }
-          });
+        this.updateRepChartData(sNodes);
+
+        if (
+          common.isDefined(this.prevRepId) &&
+          this.rep.repId === this.prevRepId
+        ) {
+          if (common.isDefined(this.agGridApi)) {
+            this.uiQuery.getValue().repSelectedNodes.forEach(node => {
+              let rowNode = this.agGridApi.getRowNode(node.id);
+              if (common.isDefined(rowNode)) {
+                rowNode.setSelected(true);
+              }
+            });
+          }
         }
+
+        this.prevRepId = this.rep.repId;
+
+        this.cd.detectChanges();
       }
-
-      this.prevRepId = this.rep.repId;
-
-      // this.gridAutoSize();
-
-      this.cd.detectChanges();
-    })
+    )
   );
 
   queryParams$ = this.route.queryParams.pipe(
@@ -304,25 +334,6 @@ export class RepComponent {
     this.location.go(url);
   }
 
-  // gridAutoSize() {
-  //   if (common.isDefined(this.agGridColumnApi)) {
-  //     let skipHeader = false;
-  //     let allColumnIds: string[] = [];
-
-  //     this.agGridColumnApi.getColumns().forEach(column => {
-  //       allColumnIds.push(column.getId());
-  //     });
-
-  //     let columnIds = allColumnIds.filter(
-  //       columnId =>
-  //         ['rowId', 'name', 'parameters', 'status', 'chart'].indexOf(columnId) <
-  //         0
-  //     );
-
-  //     this.agGridColumnApi.autoSizeColumns(columnIds, skipHeader);
-  //   }
-  // }
-
   updateRepChartData(sNodes: IRowNode<DataRow>[]) {
     let showChartForSelectedRow =
       this.uiQuery.getValue().showChartForSelectedRow;
@@ -356,18 +367,14 @@ export class RepComponent {
     this.uiQuery.updatePart({ gridApi: this.agGridApi });
     this.agGridApi.deselectAll();
 
-    // this.gridAutoSize();
-
     this.cd.detectChanges();
   }
 
   onColumnResized(params: ColumnResizedEvent<DataRow>) {
     if (common.isDefined(params.column)) {
-      let colId = params.column.getColId();
+      // console.log(params.column.getActualWidth());
 
-      if (['name', 'parameters'].indexOf(colId) > -1) {
-        this.updateColumnSizes(params.column);
-      }
+      this.updateColumnSizes(params.column);
     }
   }
 

@@ -12,6 +12,8 @@ export class UiService {
   async setUserUi(item: {
     metricsColumnNameWidth?: number;
     metricsColumnParametersWidth?: number;
+    metricsTimeColumnsNarrowWidth?: number;
+    metricsTimeColumnsWideWidth?: number;
     showMetricsModelName?: boolean;
     showMetricsTimeFieldName?: boolean;
     showMetricsChart?: boolean;
@@ -22,6 +24,8 @@ export class UiService {
     let {
       metricsColumnNameWidth,
       metricsColumnParametersWidth,
+      metricsTimeColumnsNarrowWidth,
+      metricsTimeColumnsWideWidth,
       showMetricsModelName,
       showMetricsTimeFieldName,
       showMetricsChart,
@@ -41,6 +45,14 @@ export class UiService {
       )
         ? metricsColumnParametersWidth
         : uiState.metricsColumnParametersWidth,
+      metricsTimeColumnsNarrowWidth: common.isDefined(
+        metricsTimeColumnsNarrowWidth
+      )
+        ? metricsTimeColumnsNarrowWidth
+        : uiState.metricsTimeColumnsNarrowWidth,
+      metricsTimeColumnsWideWidth: common.isDefined(metricsTimeColumnsWideWidth)
+        ? metricsTimeColumnsWideWidth
+        : uiState.metricsTimeColumnsWideWidth,
       showMetricsModelName: common.isDefined(showMetricsModelName)
         ? showMetricsModelName
         : uiState.showMetricsModelName,

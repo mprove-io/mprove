@@ -53,7 +53,7 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
     return true;
   }
 
-  selection() {
+  esc() {
     this.params.api.deselectAll();
   }
 

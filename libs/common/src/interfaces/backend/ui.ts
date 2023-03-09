@@ -11,6 +11,12 @@ export class Ui {
   @IsInt()
   metricsColumnParametersWidth: number;
 
+  @IsInt()
+  metricsTimeColumnsNarrowWidth: number;
+
+  @IsInt()
+  metricsTimeColumnsWideWidth: number;
+
   @IsBoolean()
   showMetricsModelName: boolean;
 

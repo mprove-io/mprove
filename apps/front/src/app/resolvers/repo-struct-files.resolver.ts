@@ -77,6 +77,10 @@ export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
                 resp.payload.user.ui.metricsColumnNameWidth,
               metricsColumnParametersWidth:
                 resp.payload.user.ui.metricsColumnParametersWidth,
+              metricsTimeColumnsNarrowWidth:
+                resp.payload.user.ui.metricsTimeColumnsNarrowWidth,
+              metricsTimeColumnsWideWidth:
+                resp.payload.user.ui.metricsTimeColumnsWideWidth,
               modelTreeLevels: resp.payload.user.ui.modelTreeLevels
             });
 

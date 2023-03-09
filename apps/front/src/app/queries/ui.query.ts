@@ -19,6 +19,8 @@ export class UiState {
   repSelectedNodes: IRowNode<DataRow>[];
   metricsColumnNameWidth: number;
   metricsColumnParametersWidth: number;
+  metricsTimeColumnsNarrowWidth: number;
+  metricsTimeColumnsWideWidth: number;
   showMetricsModelName: boolean;
   showMetricsTimeFieldName: boolean;
   showMetricsChart: boolean;
@@ -42,6 +44,8 @@ let uiState: UiState = {
   repSelectedNodes: [],
   metricsColumnNameWidth: undefined,
   metricsColumnParametersWidth: undefined,
+  metricsTimeColumnsNarrowWidth: undefined,
+  metricsTimeColumnsWideWidth: undefined,
   showMetricsModelName: undefined,
   showMetricsTimeFieldName: undefined,
   showMetricsChart: undefined,
@@ -56,6 +60,13 @@ let uiState: UiState = {
 @Injectable({ providedIn: 'root' })
 export class UiQuery extends BaseQuery<UiState> {
   needSave$ = this.store.pipe(select(state => state.needSave));
+
+  timeColumnsNarrowWidth$ = this.store.pipe(
+    select(state => state.metricsTimeColumnsNarrowWidth)
+  );
+  timeColumnsWideWidth$ = this.store.pipe(
+    select(state => state.metricsTimeColumnsWideWidth)
+  );
 
   panel$ = this.store.pipe(select(state => state.panel));
 
