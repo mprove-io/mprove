@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IRowNode } from 'ag-grid-community';
 import { tap } from 'rxjs/operators';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
+import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { RepQuery } from '~front/app/queries/rep.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
@@ -63,7 +64,7 @@ export class RowComponent {
   rep: common.RepX;
   rep$ = this.repQuery.select().pipe(
     tap(x => {
-      this.cancelConvert();
+      this.resetInputs();
       this.rep = x;
 
       this.cd.detectChanges();
@@ -84,7 +85,7 @@ export class RowComponent {
             x.repSelectedNodes[0].data.rowId !==
               this.repSelectedNode.data.rowId))
       ) {
-        this.cancelConvert();
+        this.resetInputs();
       }
 
       this.repSelectedNode =
@@ -135,9 +136,20 @@ export class RowComponent {
     })
   );
 
+  newMetricId: string;
+
+  metrics: common.MetricAny[];
+  metrics$ = this.metricsQuery.select().pipe(
+    tap(x => {
+      this.metrics = x.metrics;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     private cd: ChangeDetectorRef,
     private uiQuery: UiQuery,
+    private metricsQuery: MetricsQuery,
     private fb: FormBuilder,
     private repService: RepService,
     private repQuery: RepQuery,
@@ -308,28 +320,47 @@ export class RowComponent {
     this.isToMetric = true;
   }
 
-  cancelConvert() {
+  resetInputs() {
     this.newNameForm.controls['name'].setValue(undefined);
     this.newNameForm.controls['name'].markAsUntouched();
 
     this.newFormulaForm.controls['formula'].setValue(undefined);
     this.newFormulaForm.controls['formula'].markAsUntouched();
 
+    this.newMetricId = undefined;
+
     this.isToHeader = false;
     this.isToFormula = false;
     this.isToMetric = false;
   }
 
-  apply() {
-    // this.isToHeader = false;
+  cancelConvert() {
+    this.resetInputs();
+  }
 
+  apply() {
     if (this.isToHeader === true) {
       this.newNameForm.controls['name'].markAsTouched();
+
+      if (this.newNameForm.valid === false) {
+        return;
+      }
     }
 
     if (this.isToFormula === true) {
       this.newNameForm.controls['name'].markAsTouched();
       this.newFormulaForm.controls['formula'].markAsTouched();
+
+      if (
+        this.newNameForm.valid === false ||
+        this.newFormulaForm.valid === false
+      ) {
+        return;
+      }
+    }
+
+    if (this.isToMetric && common.isUndefined(this.newMetricId)) {
+      return;
     }
   }
 

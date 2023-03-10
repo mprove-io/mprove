@@ -155,6 +155,31 @@
       </div>
 
       <div
+        *ngIf="isToMetric === true"
+        class="flex h-11 flex-1 flex-row items-center space-x-5"
+      >
+        <div
+          class="text-gray1 flex flex-shrink-0 select-none items-center font-semibold"
+          >Metric</div
+        >
+
+        <ng-select
+          data-cy="newMetricSelect"
+          class="custom w-full text-base focus:outline-none"
+          [items]="metrics"
+          [searchable]="true"
+          [clearable]="false"
+          [(ngModel)]="newMetricId"
+          (keyup.esc)="$event.stopImmediatePropagation()"
+          (keyup.enter)="$event.stopImmediatePropagation()"
+          appendTo="body"
+          bindLabel="label"
+          bindValue="metricId"
+        >
+        </ng-select>
+      </div>
+
+      <div
         class="flex flex-row"
         *ngIf="
           isToHeader === true || isToFormula === true || isToMetric === true
@@ -378,4 +403,5 @@
 </div>
 
 <div *ngIf="uiQuery$ | async"></div>
+<div *ngIf="metrics$ | async"></div>
 <div *ngIf="rep$ | async"></div>

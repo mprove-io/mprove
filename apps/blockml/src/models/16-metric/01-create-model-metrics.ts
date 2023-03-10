@@ -123,6 +123,8 @@ export function createModelMetrics(
           }
         })
         .forEach(modelField => {
+          let topLabel = model.label;
+
           let partId = `model_fields_${modelField.name}`;
           let partLabel = `Model Fields ${modelField.label}`;
 
@@ -132,7 +134,7 @@ export function createModelMetrics(
             partId: partId,
             modelId: model.name,
             topNode: model.name,
-            topLabel: model.label,
+            topLabel: topLabel,
             fieldId: `mf.${modelField.name}`,
             fieldClass: modelField.fieldClass,
             timeFieldId: element.time,
@@ -140,7 +142,7 @@ export function createModelMetrics(
             params: [],
             structId: structId,
             type: common.MetricTypeEnum.Model,
-            label: `${model.label} ${partLabel}`,
+            label: `${topLabel} ${partLabel} by ${timeLabel}`,
             partLabel: partLabel,
             description: modelField.description,
             formatNumber: modelField.format_number,
@@ -198,6 +200,8 @@ export function createModelMetrics(
             }
           })
           .forEach(viewField => {
+            let topLabel = model.label;
+
             let partId = `${join.as}_${viewField.name}`;
             let partLabel = `${join.label} ${viewField.label}`;
 
@@ -207,7 +211,7 @@ export function createModelMetrics(
               partId: partId,
               modelId: model.name,
               topNode: model.name,
-              topLabel: model.label,
+              topLabel: topLabel,
               fieldId: `${join.as}.${viewField.name}`,
               fieldClass: viewField.fieldClass,
               timeFieldId: element.time,
@@ -215,7 +219,7 @@ export function createModelMetrics(
               params: [],
               structId: structId,
               type: common.MetricTypeEnum.Model,
-              label: `${model.label} ${partLabel}`,
+              label: `${topLabel} ${partLabel} by ${timeLabel}`,
               partLabel: partLabel,
               description: viewField.description,
               formatNumber: viewField.format_number,
