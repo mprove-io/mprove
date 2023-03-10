@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
 import { GridApi, IRowNode } from 'ag-grid-community';
+import equal from 'fast-deep-equal';
+import { distinctUntilChanged, map } from 'rxjs/operators';
 import { common } from '~front/barrels/common';
 import { DataRow } from '../modules/metrics/rep/rep.component';
 import { BaseQuery } from './base.query';
@@ -79,6 +81,12 @@ export class UiQuery extends BaseQuery<UiState> {
   );
 
   repSelectedNodes$ = this.store.pipe(select(state => state.repSelectedNodes));
+
+  repSelectedRowIdsDistinct$ = this.store.pipe(
+    map(x => x.repSelectedNodes.map(node => node.data.rowId)),
+    distinctUntilChanged((prev, curr) => equal(prev, curr))
+  );
+
   repChartData$ = this.store.pipe(select(state => state.repChartData));
 
   showMetricsChart$ = this.store.pipe(select(state => state.showMetricsChart));

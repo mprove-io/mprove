@@ -107,6 +107,8 @@ export class RepComponent {
       width: 90,
       headerComponent: RowIdHeaderComponent,
       cellRenderer: RowIdRendererComponent
+      // ,
+      // cellStyle: { backgroundColor: '#f8f8f8' }
     },
     {
       field: 'name',
@@ -157,6 +159,24 @@ export class RepComponent {
   agGridColumnApi: ColumnApi;
 
   prevRepId: string;
+
+  // repSelectedRowIdsDistinct$ = this.uiQuery.repSelectedRowIdsDistinct$.pipe(
+  //   tap(x => {
+  //     if (common.isDefined(this.agGridApi)) {
+  //       let rowIdColDef = this.agGridColumnApi.getColumn('rowId').getColDef();
+
+  //       let newColDef = Object.assign({}, rowIdColDef, {
+  //         cellStyle: (params: CellClassParams<any, any>) => x.indexOf(params.data.rowId) > -1
+  //             ? { backgroundColor: 'rgb(255, 224, 129)' }
+  //             : { backgroundColor: '#f8f8f8' }
+  //       });
+
+  //       this.agGridColumnApi
+  //         .getColumn('rowId')
+  //         .setColDef(newColDef, { field: 'rowId' });
+  //     }
+  //   })
+  // );
 
   rep: common.RepX;
   rep$ = combineLatest([

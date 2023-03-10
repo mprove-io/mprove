@@ -12,6 +12,7 @@
           "path": "apps/front/webpack.config.js"
         },
         "allowedCommonJsDependencies": [
+          "fast-deep-equal",
           "validator",
           "class-transformer-validator",
           "class-transformer",
@@ -131,8 +132,8 @@
             },
             {
               "type": "anyComponentStyle",
-              "maximumWarning": "300kb",
-              "maximumError": "500kb"
+              "maximumWarning": "6kb",
+              "maximumError": "10kb"
             }
           ]
         },
