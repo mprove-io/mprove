@@ -62,6 +62,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
   isShow = true;
 
   isShowLeft = true;
+  isShowTable = true;
 
   emptyRepId = common.EMPTY_REP_ID;
 
@@ -94,16 +95,10 @@ export class MetricsComponent implements OnInit, OnDestroy {
     })
   );
 
+  timezone: string;
+
   timeSpecForm = this.fb.group({
     timeSpec: [
-      {
-        value: undefined
-      }
-    ]
-  });
-
-  timezoneForm = this.fb.group({
-    timezone: [
       {
         value: undefined
       }
@@ -390,7 +385,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
     let uiState = this.uiQuery.getValue();
 
-    this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
+    this.timezone = uiState.timezone;
     this.timeSpecForm.controls['timeSpec'].setValue(uiState.timeSpec);
     this.fractions = [uiState.timeRangeFraction];
 
@@ -525,8 +520,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
   }
 
   timezoneChange() {
-    let timezone = this.timezoneForm.controls['timezone'].value;
-    this.uiQuery.updatePart({ timezone: timezone });
+    this.uiQuery.updatePart({ timezone: this.timezone });
     this.getRep();
   }
 
@@ -607,11 +601,27 @@ export class MetricsComponent implements OnInit, OnDestroy {
     this.isShowLeft = !this.isShowLeft;
   }
 
+  toggleShowTable() {
+    this.isShowTable = !this.isShowTable;
+  }
+
   refreshShow() {
     this.isShow = false;
     setTimeout(() => {
       this.isShow = true;
       this.cd.detectChanges();
+    });
+  }
+
+  toggleShowMetricsChart() {
+    let showMetricsChart = !this.showMetricsChart;
+
+    this.uiQuery.updatePart({
+      showMetricsChart: showMetricsChart
+    });
+
+    this.uiService.setUserUi({
+      showMetricsChart: showMetricsChart
     });
   }
 

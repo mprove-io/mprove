@@ -3,60 +3,82 @@
     <div class="mx-6 mb-6 mt-8 flex min-w-[2px] flex-grow flex-col">
       <div class="flex h-11 flex-row items-center justify-between">
         <div class="flex w-full flex-row items-center">
-          <div class="flex w-1/4 flex-row items-center space-x-5">
-            <div
-              data-cy="metricsTitle"
-              class="text-gray1 flex items-center self-center text-2xl font-semibold"
-            >
-              {{ pageTitle }}
-            </div>
-
-            <div class="ml-10 flex flex-row items-center space-x-5">
-              <m-desktop-icon
-                class="flex-shrink-0 cursor-pointer text-gray-500"
-                [ngClass]="{
-                  'text-gray-500': isShowLeft === true,
-                  'text-blue-500': isShowLeft === false
-                }"
-                (click)="toggleShowLeft()"
-              ></m-desktop-icon>
-            </div>
-
-            <div class="flex-grow"></div>
-
-            <div class="text-gray1 ml-6 text-base">Timezone</div>
-
-            <form [formGroup]="timezoneForm">
-              <ng-select
-                #timezoneSelect
-                data-cy="timezoneSelect"
-                class="custom w-[260px] text-base focus:outline-none"
-                [items]="timezones"
-                [clearable]="false"
-                (change)="timezoneChange()"
-                appendTo="body"
-                bindLabel="label"
-                bindValue="value"
-                formControlName="timezone"
+          <div class="flex w-1/4 flex-row items-center justify-between">
+            <div class="flex flex-row">
+              <div
+                data-cy="metricsTitle"
+                class="text-gray1 flex items-center self-center text-2xl font-semibold"
               >
-                <ng-template ng-label-tmp let-item="item">
-                  <div class="truncate">{{ item.label }}</div>
-                </ng-template>
+                {{ pageTitle }}
+              </div>
 
-                <ng-template ng-option-tmp let-item="item">
-                  <div class="truncate">{{ item.label }}</div>
-                </ng-template>
-              </ng-select>
-            </form>
+              <div class="ml-10 flex flex-row items-center space-x-5">
+                <m-desktop-icon
+                  class="flex-shrink-0 cursor-pointer"
+                  [ngClass]="{
+                    'text-gray-500': isShowLeft === true,
+                    'text-blue-500': isShowLeft === false
+                  }"
+                  (click)="toggleShowLeft()"
+                ></m-desktop-icon>
+
+                <m-table-cells-icon
+                  class="flex-shrink-0 cursor-pointer"
+                  [ngClass]="{
+                    'text-blue-500': isShowTable === true,
+                    'text-gray-500': isShowTable === false
+                  }"
+                  (click)="toggleShowTable()"
+                ></m-table-cells-icon>
+
+                <m-insights-icon
+                  class="flex-shrink-0 cursor-pointer"
+                  [ngClass]="{
+                    'text-blue-500': showMetricsChart === true,
+                    'text-gray-400': showMetricsChart === false
+                  }"
+                  (click)="toggleShowMetricsChart()"
+                ></m-insights-icon>
+              </div>
+            </div>
+
+            <div
+              class="flex flex-1 flex-row items-center justify-end space-x-5"
+            >
+              <div class="text-gray1 ml-6 select-none text-base">TZ</div>
+
+              <div class="flex max-w-[260px] flex-1">
+                <ng-select
+                  #timezoneSelect
+                  data-cy="timezoneSelect"
+                  class="custom w-full select-none text-base focus:outline-none"
+                  [items]="timezones"
+                  [(ngModel)]="timezone"
+                  [clearable]="false"
+                  (change)="timezoneChange()"
+                  appendTo="body"
+                  bindLabel="label"
+                  bindValue="value"
+                >
+                  <ng-template ng-label-tmp let-item="item">
+                    <div class="truncate">{{ item.label }}</div>
+                  </ng-template>
+
+                  <ng-template ng-option-tmp let-item="item">
+                    <div class="truncate">{{ item.label }}</div>
+                  </ng-template>
+                </ng-select>
+              </div>
+            </div>
           </div>
 
-          <div class="text-gray1 ml-6 text-base">Spec</div>
+          <div class="text-gray1 ml-6 select-none text-base">Spec</div>
 
           <form class="ml-5" [formGroup]="timeSpecForm">
             <ng-select
               #timeSpecSelect
               data-cy="timeSpecSelect"
-              class="custom popup-55 w-32 focus:outline-none"
+              class="custom popup-55 w-32 select-none focus:outline-none"
               [items]="timeSpecList"
               [clearable]="false"
               [searchable]="false"
@@ -76,7 +98,7 @@
             </ng-select>
           </form>
 
-          <div class="text-gray1 ml-6 text-base">Time</div>
+          <div class="text-gray1 ml-6 select-none text-base">Time</div>
 
           <div
             class="flex flex-row items-start justify-start"
@@ -239,18 +261,23 @@
         </div>
 
         <div class="flex min-w-[2px] flex-grow flex-col space-y-6">
-          <div class="w-full flex-1 flex-shrink-0 rounded bg-white shadow-md">
+          <div
+            *ngIf="isShowTable === true"
+            class="w-full flex-1 flex-shrink-0 rounded bg-white shadow-md"
+          >
             <router-outlet></router-outlet>
           </div>
 
           <div
             class="flex flex-col"
-            *ngIf="showMetricsChart === true || !!repSelectedNode"
             [ngClass]="{
-              'h-[55%]': showMetricsChart === true
+              'h-[55%]': showMetricsChart === true && isShowTable === true,
+              'h-full': showMetricsChart === true && isShowTable === false
             }"
           >
-            <m-row></m-row>
+            <m-row
+              *ngIf="isShowTable === true || showMetricsChart === true"
+            ></m-row>
 
             <div
               class="relative h-2 w-full flex-grow flex-row rounded bg-white shadow-md"

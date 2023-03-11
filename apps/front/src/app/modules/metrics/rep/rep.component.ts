@@ -363,14 +363,14 @@ export class RepComponent {
       gridData: this.data,
       repChartData: {
         rows:
-          showChartForSelectedRow === true && sNodes.length === 1
+          showChartForSelectedRow === true && sNodes.length > 0
             ? this.data.filter(
                 row =>
                   sNodes.map(node => node.data.rowId).indexOf(row.rowId) > -1
               )
-            : showChartForSelectedRow === true && sNodes.length > 1
-            ? []
-            : this.data.filter(row => row.showChart === true),
+            : // : showChartForSelectedRow === true && sNodes.length > 1
+              // ? []
+              this.data.filter(row => row.showChart === true),
         columns: this.rep.columns
       }
     });

@@ -48,6 +48,7 @@ import { FilterIconComponent } from './icons/filter-icon/filter-icon.component';
 import { FolderClosedIconComponent } from './icons/folder-closed-icon/folder-closed-icon.component';
 import { FolderOpenIconComponent } from './icons/folder-open-icon/folder-open-icon.component';
 import { FullScreenIconComponent } from './icons/full-screen-icon/full-screen-icon.component';
+import { InsightsIconComponent } from './icons/insights-icon/insights-icon.component';
 import { LockClosedIconComponent } from './icons/lock-closed-icon/lock-closed-icon.component';
 import { MinusSmIconComponent } from './icons/minus-sm-icon/minus-sm-icon.component';
 import { RefreshIconComponent } from './icons/refresh-icon/refresh-icon.component';
@@ -55,6 +56,7 @@ import { ResizeIconComponent } from './icons/resize-icon/resize-icon.component';
 import { SaveIconComponent } from './icons/save-icon/save-icon.component';
 import { SearchIconComponent } from './icons/search-icon/search-icon.component';
 import { SettingsIconComponent } from './icons/settings-icon/settings-icon.component';
+import { TableCellsIconComponent } from './icons/table-cells-icon/table-cells-icon.component';
 import { TrashIconComponent } from './icons/trash-icon/trash-icon.component';
 import { UserIconComponent } from './icons/user-icon/user-icon.component';
 import { ViewGridIconComponent } from './icons/view-grid-icon/view-grid-icon.component';
@@ -148,7 +150,9 @@ let sharedComponents = [
   UserIconComponent,
   ChartIconComponent,
   WrenchIconComponent,
-  AdjustmentsIconComponent
+  AdjustmentsIconComponent,
+  TableCellsIconComponent,
+  InsightsIconComponent
 ];
 
 @NgModule({
