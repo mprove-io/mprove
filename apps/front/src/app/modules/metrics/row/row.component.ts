@@ -72,6 +72,7 @@ export class RowComponent {
   );
 
   repSelectedNode: IRowNode<DataRow>;
+  repSelectedNodes: IRowNode<DataRow>[] = [];
 
   uiQuery$ = this.uiQuery.select().pipe(
     tap(x => {
@@ -88,8 +89,12 @@ export class RowComponent {
         this.resetInputs();
       }
 
+      this.repSelectedNodes = x.repSelectedNodes;
+
       this.repSelectedNode =
-        x.repSelectedNodes.length === 1 ? x.repSelectedNodes[0] : undefined;
+        this.repSelectedNodes.length === 1
+          ? this.repSelectedNodes[0]
+          : undefined;
 
       console.log('selectedRowNode', this.repSelectedNode);
 

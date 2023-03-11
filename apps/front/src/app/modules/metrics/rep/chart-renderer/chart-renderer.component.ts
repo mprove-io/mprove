@@ -31,21 +31,22 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
     event.stopPropagation();
 
     this.params.api.deselectAll();
+    setTimeout(() => {
+      let rep = this.repQuery.getValue();
 
-    let rep = this.repQuery.getValue();
+      let rowChange: common.RowChange = {
+        rowId: this.params.data.rowId,
+        formula: this.params.data.formula,
+        params: this.params.data.params,
+        metricId: this.params.data.metricId,
+        showChart: !this.params.data.showChart
+      };
 
-    let rowChange: common.RowChange = {
-      rowId: this.params.data.rowId,
-      formula: this.params.data.formula,
-      params: this.params.data.params,
-      metricId: this.params.data.metricId,
-      showChart: !this.params.data.showChart
-    };
-
-    this.repService.changeRows({
-      rep: rep,
-      changeType: common.ChangeTypeEnum.EditInfo,
-      rowChanges: [rowChange]
-    });
+      this.repService.changeRows({
+        rep: rep,
+        changeType: common.ChangeTypeEnum.EditInfo,
+        rowChanges: [rowChange]
+      });
+    }, 0);
   }
 }

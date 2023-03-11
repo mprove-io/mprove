@@ -18,7 +18,7 @@ export class UiService {
     showMetricsTimeFieldName?: boolean;
     showMetricsChart?: boolean;
     showMetricsChartSettings?: boolean;
-    showChartForSelectedRow?: boolean;
+    showChartForSelectedRows?: boolean;
     modelTreeLevels?: common.ModelTreeLevelsEnum;
   }) {
     let {
@@ -30,7 +30,7 @@ export class UiService {
       showMetricsTimeFieldName,
       showMetricsChart,
       showMetricsChartSettings,
-      showChartForSelectedRow,
+      showChartForSelectedRows,
       modelTreeLevels
     } = item;
 
@@ -65,9 +65,9 @@ export class UiService {
       showMetricsChartSettings: common.isDefined(showMetricsChartSettings)
         ? showMetricsChartSettings
         : uiState.showMetricsChartSettings,
-      showChartForSelectedRow: common.isDefined(showChartForSelectedRow)
-        ? showChartForSelectedRow
-        : uiState.showChartForSelectedRow,
+      showChartForSelectedRows: common.isDefined(showChartForSelectedRows)
+        ? showChartForSelectedRows
+        : uiState.showChartForSelectedRows,
       modelTreeLevels: common.isDefined(modelTreeLevels)
         ? modelTreeLevels
         : uiState.modelTreeLevels,

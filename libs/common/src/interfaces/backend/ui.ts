@@ -30,7 +30,7 @@ export class Ui {
   showMetricsChartSettings: boolean;
 
   @IsBoolean()
-  showChartForSelectedRow: boolean;
+  showChartForSelectedRows: boolean;
 
   @IsEnum(enums.ModelTreeLevelsEnum)
   modelTreeLevels: enums.ModelTreeLevelsEnum;

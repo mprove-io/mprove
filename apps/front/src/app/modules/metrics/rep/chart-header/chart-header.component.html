@@ -1,10 +1,12 @@
-<m-chart-icon
+<m-chart-icon class="text-gray-400"></m-chart-icon>
+
+<!-- <m-chart-icon
   class="cursor-pointer"
   [ngClass]="{
     'text-blue-500': showMetricsChart === true,
     'text-gray-400': showMetricsChart === false
   }"
   (click)="toggleShowMetricsChart()"
-></m-chart-icon>
+></m-chart-icon> -->
 
 <div *ngIf="uiQuery$ | async"></div>

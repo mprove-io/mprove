@@ -182,14 +182,16 @@ export class RepComponent {
   rep$ = combineLatest([
     this.repQuery.select(),
     this.uiQuery.timeColumnsNarrowWidth$,
-    this.uiQuery.timeColumnsWideWidth$
+    this.uiQuery.timeColumnsWideWidth$,
+    this.uiQuery.showChartForSelectedRows$
   ]).pipe(
     tap(
-      ([rep, timeColumnsNarrowWidth, timeColumnsWideWidth]: [
-        common.RepX,
-        number,
-        number
-      ]) => {
+      ([
+        rep,
+        timeColumnsNarrowWidth,
+        timeColumnsWideWidth,
+        showChartForSelectedRows
+      ]: [common.RepX, number, number, boolean]) => {
         this.rep = rep;
 
         let uiState = this.uiQuery.getValue();
@@ -355,20 +357,20 @@ export class RepComponent {
   }
 
   updateRepChartData(sNodes: IRowNode<DataRow>[]) {
-    let showChartForSelectedRow =
-      this.uiQuery.getValue().showChartForSelectedRow;
+    let showChartForSelectedRows =
+      this.uiQuery.getValue().showChartForSelectedRows;
 
     this.uiQuery.updatePart({
       repSelectedNodes: sNodes,
       gridData: this.data,
       repChartData: {
         rows:
-          showChartForSelectedRow === true && sNodes.length > 0
+          showChartForSelectedRows === true && sNodes.length > 0
             ? this.data.filter(
                 row =>
                   sNodes.map(node => node.data.rowId).indexOf(row.rowId) > -1
               )
-            : // : showChartForSelectedRow === true && sNodes.length > 1
+            : // : showChartForSelectedRows === true && sNodes.length > 1
               // ? []
               this.data.filter(row => row.showChart === true),
         columns: this.rep.columns

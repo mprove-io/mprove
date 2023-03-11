@@ -50,6 +50,7 @@ import { FolderOpenIconComponent } from './icons/folder-open-icon/folder-open-ic
 import { FullScreenIconComponent } from './icons/full-screen-icon/full-screen-icon.component';
 import { InsightsIconComponent } from './icons/insights-icon/insights-icon.component';
 import { LockClosedIconComponent } from './icons/lock-closed-icon/lock-closed-icon.component';
+import { MenuBookIconComponent } from './icons/menu-book-icon/menu-book-icon.component';
 import { MinusSmIconComponent } from './icons/minus-sm-icon/minus-sm-icon.component';
 import { RefreshIconComponent } from './icons/refresh-icon/refresh-icon.component';
 import { ResizeIconComponent } from './icons/resize-icon/resize-icon.component';
@@ -152,7 +153,8 @@ let sharedComponents = [
   WrenchIconComponent,
   AdjustmentsIconComponent,
   TableCellsIconComponent,
-  InsightsIconComponent
+  InsightsIconComponent,
+  MenuBookIconComponent
 ];
 
 @NgModule({

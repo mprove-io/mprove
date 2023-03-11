@@ -68,8 +68,8 @@ export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
               showMetricsModelName: resp.payload.user.ui.showMetricsModelName,
               showMetricsTimeFieldName:
                 resp.payload.user.ui.showMetricsTimeFieldName,
-              showChartForSelectedRow:
-                resp.payload.user.ui.showChartForSelectedRow,
+              showChartForSelectedRows:
+                resp.payload.user.ui.showChartForSelectedRows,
               showMetricsChartSettings:
                 resp.payload.user.ui.showMetricsChartSettings,
               showMetricsChart: resp.payload.user.ui.showMetricsChart,

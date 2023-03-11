@@ -59,11 +59,11 @@ export function wrapToApiUser(user: entities.UserEntity): common.User {
         ? user.ui?.showMetricsChartSettings
         : constants.DEFAULT_UI.showMetricsChartSettings,
 
-      showChartForSelectedRow: common.isDefined(
-        user.ui?.showChartForSelectedRow
+      showChartForSelectedRows: common.isDefined(
+        user.ui?.showChartForSelectedRows
       )
-        ? user.ui?.showChartForSelectedRow
-        : constants.DEFAULT_UI.showChartForSelectedRow,
+        ? user.ui?.showChartForSelectedRows
+        : constants.DEFAULT_UI.showChartForSelectedRows,
 
       modelTreeLevels: common.isDefined(user.ui?.modelTreeLevels)
         ? user.ui?.modelTreeLevels

@@ -13,20 +13,20 @@
               </div>
 
               <div class="ml-10 flex flex-row items-center space-x-5">
-                <m-desktop-icon
+                <m-menu-book-icon
                   class="flex-shrink-0 cursor-pointer"
                   [ngClass]="{
                     'text-gray-500': isShowLeft === true,
-                    'text-blue-500': isShowLeft === false
+                    'text-gray-400': isShowLeft === false
                   }"
                   (click)="toggleShowLeft()"
-                ></m-desktop-icon>
+                ></m-menu-book-icon>
 
                 <m-table-cells-icon
                   class="flex-shrink-0 cursor-pointer"
                   [ngClass]="{
-                    'text-blue-500': isShowTable === true,
-                    'text-gray-500': isShowTable === false
+                    'text-gray-500': isShowTable === true,
+                    'text-gray-400': isShowTable === false
                   }"
                   (click)="toggleShowTable()"
                 ></m-table-cells-icon>
@@ -34,7 +34,7 @@
                 <m-insights-icon
                   class="flex-shrink-0 cursor-pointer"
                   [ngClass]="{
-                    'text-blue-500': showMetricsChart === true,
+                    'text-gray-500': showMetricsChart === true,
                     'text-gray-400': showMetricsChart === false
                   }"
                   (click)="toggleShowMetricsChart()"
@@ -315,18 +315,8 @@
                     <div
                       *ngIf="
                         chartOptions?.data.length === 0 &&
-                        showChartForSelectedRow === true &&
-                        repSelectedNodes.length > 1
-                      "
-                      class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
-                      >Select one row or delesect all</div
-                    >
-
-                    <div
-                      *ngIf="
-                        chartOptions?.data.length === 0 &&
                         !(
-                          showChartForSelectedRow === true &&
+                          showChartForSelectedRows === true &&
                           repSelectedNodes.length > 1
                         )
                       "

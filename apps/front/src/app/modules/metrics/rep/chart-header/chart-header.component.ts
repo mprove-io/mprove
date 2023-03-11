@@ -36,15 +36,15 @@ export class ChartHeaderComponent implements IHeaderAngularComp {
     return true;
   }
 
-  toggleShowMetricsChart() {
-    let showMetricsChart = !this.showMetricsChart;
+  // toggleShowMetricsChart() {
+  //   let showMetricsChart = !this.showMetricsChart;
 
-    this.uiQuery.updatePart({
-      showMetricsChart: showMetricsChart
-    });
+  //   this.uiQuery.updatePart({
+  //     showMetricsChart: showMetricsChart
+  //   });
 
-    this.uiService.setUserUi({
-      showMetricsChart: showMetricsChart
-    });
-  }
+  //   this.uiService.setUserUi({
+  //     showMetricsChart: showMetricsChart
+  //   });
+  // }
 }

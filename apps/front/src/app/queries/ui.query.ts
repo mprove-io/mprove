@@ -27,7 +27,7 @@ export class UiState {
   showMetricsTimeFieldName: boolean;
   showMetricsChart: boolean;
   showMetricsChartSettings: boolean;
-  showChartForSelectedRow: boolean;
+  showChartForSelectedRows: boolean;
   modelTreeLevels: common.ModelTreeLevelsEnum;
   timezone: string;
   timeSpec: common.TimeSpecEnum;
@@ -52,7 +52,7 @@ let uiState: UiState = {
   showMetricsTimeFieldName: undefined,
   showMetricsChart: undefined,
   showMetricsChartSettings: undefined,
-  showChartForSelectedRow: undefined,
+  showChartForSelectedRows: undefined,
   modelTreeLevels: undefined,
   timezone: undefined,
   timeSpec: undefined,
@@ -90,6 +90,11 @@ export class UiQuery extends BaseQuery<UiState> {
   repChartData$ = this.store.pipe(select(state => state.repChartData));
 
   showMetricsChart$ = this.store.pipe(select(state => state.showMetricsChart));
+
+  showChartForSelectedRows$ = this.store.pipe(
+    select(state => state.showChartForSelectedRows)
+  );
+
   showMetricsChartSettings$ = this.store.pipe(
     select(state => state.showMetricsChartSettings)
   );

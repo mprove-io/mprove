@@ -299,7 +299,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
   showMetricsTimeFieldName = false;
   showMetricsChart = false;
   showMetricsChartSettings = false;
-  showChartForSelectedRow = false;
+  showChartForSelectedRows = false;
 
   repSelectedNodes: any[] = [];
   repSelectedNode: IRowNode<DataRow>;
@@ -320,7 +320,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
       this.showMetricsTimeFieldName = x.showMetricsTimeFieldName;
       this.showMetricsChart = x.showMetricsChart;
       this.showMetricsChartSettings = x.showMetricsChartSettings;
-      this.showChartForSelectedRow = x.showChartForSelectedRow;
+      this.showChartForSelectedRows = x.showChartForSelectedRows;
       this.repSelectedNodes = x.repSelectedNodes;
 
       this.repSelectedNode =
