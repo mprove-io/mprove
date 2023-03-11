@@ -306,6 +306,16 @@
                     <div
                       *ngIf="
                         chartOptions?.data.length > 0 &&
+                        selectedRowsWithQueriesLength === 0
+                      "
+                      class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+                      >No data rows selected</div
+                    >
+
+                    <div
+                      *ngIf="
+                        chartOptions?.data.length > 0 &&
+                        selectedRowsWithQueriesLength > 0 &&
                         recordsWithValuesLength === 0
                       "
                       class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"

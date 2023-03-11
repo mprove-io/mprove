@@ -1,4 +1,6 @@
 <div class="ml-[6px] flex h-full flex-row items-center justify-center">
+  <div *ngIf="isRunning === false"> Info </div>
+
   <div *ngIf="isRunning === true" class="relative h-9 w-9">
     <ngx-spinner
       [name]="spinnerName"

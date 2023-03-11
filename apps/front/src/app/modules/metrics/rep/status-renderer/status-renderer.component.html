@@ -1,8 +1,5 @@
 <div class="flex h-full flex-row items-center justify-center">
-  <div
-    *ngIf="params.data.query?.status === queryStatusEnum.Running"
-    class="relative h-9 w-9"
-  >
+  <div *ngIf="isRunning === true" class="relative h-9 w-9">
     <ngx-spinner
       [name]="spinnerName"
       color="rgb(59, 130, 246)"
@@ -17,7 +14,9 @@
   </div>
 
   <div
-    *ngIf="params.data.query?.status === queryStatusEnum.Error"
+    *ngIf="
+      isRunning === false && params.data.query?.status === queryStatusEnum.Error
+    "
     class="text-red1 flex h-8 w-8 flex-shrink-0"
     tippy="Query Error: {{ params.data.query?.lastErrorMessage }}"
   >
@@ -25,7 +24,7 @@
   </div>
 
   <div
-    *ngIf="formulaErrorsLength > 0"
+    *ngIf="isRunning === false && formulaErrorsLength > 0"
     class="text-red1 flex h-8 w-8 flex-shrink-0"
     tippy="Formula Errors ({{ formulaErrorsLength }})"
   >

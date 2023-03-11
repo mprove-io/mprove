@@ -141,6 +141,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
   chartOptions: AgChartOptions;
 
   recordsWithValuesLength = 0;
+  selectedRowsWithQueriesLength = 0;
 
   repChartData$ = combineLatest([
     this.uiQuery.repChartData$,
@@ -187,6 +188,13 @@ export class MetricsComponent implements OnInit, OnDestroy {
         }
 
         this.recordsWithValuesLength = recordsWithValuesLength;
+
+        this.selectedRowsWithQueriesLength = x.rows.filter(
+          row =>
+            [common.RowTypeEnum.Metric, common.RowTypeEnum.Formula].indexOf(
+              row.rowType
+            ) > -1
+        ).length;
 
         let series = x.rows
           .filter(
