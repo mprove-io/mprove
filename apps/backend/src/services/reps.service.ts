@@ -63,6 +63,7 @@ export class RepsService {
     timezone: string;
     timeSpec: common.TimeSpecEnum;
     timeRangeFractionBrick: string;
+    struct: entities.StructEntity;
   }) {
     let {
       rows,
@@ -71,7 +72,8 @@ export class RepsService {
       timezone,
       timeSpec,
       timeRangeFractionBrick,
-      metrics
+      metrics,
+      struct
     } = item;
 
     let processedRows = rows.map(row => Object.assign({}, row));
@@ -297,6 +299,89 @@ export class RepsService {
       processedRows = processedRows.map(row =>
         row.rowId === editRow.rowId ? editRow : row
       );
+    } else if (changeType === common.ChangeTypeEnum.ConvertToHeader) {
+      let rowChange = rowChanges[0];
+
+      let pRow = processedRows.find(row => row.rowId === rowChange.rowId);
+
+      let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
+        rowType: common.RowTypeEnum.Header,
+        name: rowChange.name
+      });
+
+      processedRows = processedRows.map(row =>
+        row.rowId === editRow.rowId ? editRow : row
+      );
+    } else if (changeType === common.ChangeTypeEnum.ConvertToFormula) {
+      let rowChange = rowChanges[0];
+
+      let editRow: common.Row = {
+        rowId: rowChange.rowId,
+        rowType: common.RowTypeEnum.Formula,
+        name: rowChange.name,
+        metricId: undefined,
+        topLabel: undefined,
+        partLabel: undefined,
+        timeLabel: undefined,
+        showChart: false,
+        params: undefined,
+        formula: rowChange.formula,
+        formulaDeps: undefined,
+        rqs: [],
+        mconfig: undefined,
+        query: undefined,
+        hasAccessToModel: false,
+        records: [],
+        formatNumber: struct.format_number,
+        currencyPrefix: struct.currency_prefix,
+        currencySuffix: struct.currency_suffix
+      };
+
+      processedRows = processedRows.map(row =>
+        row.rowId === editRow.rowId ? editRow : row
+      );
+
+      processedRows = processRowIds({
+        rows: processedRows,
+        targetRowIds: processedRows.map(pr => pr.rowId)
+      });
+    } else if (changeType === common.ChangeTypeEnum.ConvertToMetric) {
+      let rowChange = rowChanges[0];
+
+      let metric: entities.MetricEntity = metrics.find(
+        m => m.metric_id === rowChange.metricId
+      );
+
+      let editRow: common.Row = {
+        rowId: rowChange.rowId,
+        rowType: common.RowTypeEnum.Metric,
+        name: undefined,
+        metricId: metric.metric_id,
+        topLabel: metric.top_label,
+        partLabel: metric.part_label,
+        timeLabel: metric.time_label,
+        showChart: false,
+        params: [],
+        formula: undefined,
+        formulaDeps: undefined,
+        rqs: [],
+        mconfig: undefined,
+        query: undefined,
+        hasAccessToModel: false,
+        records: [],
+        formatNumber: metric.format_number,
+        currencyPrefix: metric.currency_prefix,
+        currencySuffix: metric.currency_suffix
+      };
+
+      processedRows = processedRows.map(row =>
+        row.rowId === editRow.rowId ? editRow : row
+      );
+
+      processedRows = processRowIds({
+        rows: processedRows,
+        targetRowIds: processedRows.map(pr => pr.rowId)
+      });
     } else if (changeType === common.ChangeTypeEnum.EditFormula) {
       let rowChange = rowChanges[0];
 

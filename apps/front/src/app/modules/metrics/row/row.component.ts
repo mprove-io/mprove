@@ -350,6 +350,17 @@ export class RowComponent {
       if (this.newNameForm.valid === false) {
         return;
       }
+
+      let rowChange: common.RowChange = {
+        rowId: this.repSelectedNode.data.rowId,
+        name: this.newNameForm.controls['name'].value
+      };
+
+      this.repService.changeRows({
+        rep: this.rep,
+        changeType: common.ChangeTypeEnum.ConvertToHeader,
+        rowChanges: [rowChange]
+      });
     }
 
     if (this.isToFormula === true) {
@@ -362,10 +373,35 @@ export class RowComponent {
       ) {
         return;
       }
+
+      let rowChange: common.RowChange = {
+        rowId: this.repSelectedNode.data.rowId,
+        name: this.newNameForm.controls['name'].value,
+        formula: this.newFormulaForm.controls['formula'].value
+      };
+
+      this.repService.changeRows({
+        rep: this.rep,
+        changeType: common.ChangeTypeEnum.ConvertToFormula,
+        rowChanges: [rowChange]
+      });
     }
 
-    if (this.isToMetric && common.isUndefined(this.newMetricId)) {
-      return;
+    if (this.isToMetric) {
+      if (common.isUndefined(this.newMetricId)) {
+        return;
+      }
+
+      let rowChange: common.RowChange = {
+        rowId: this.repSelectedNode.data.rowId,
+        metricId: this.newMetricId
+      };
+
+      this.repService.changeRows({
+        rep: this.rep,
+        changeType: common.ChangeTypeEnum.ConvertToMetric,
+        rowChanges: [rowChange]
+      });
     }
   }
 

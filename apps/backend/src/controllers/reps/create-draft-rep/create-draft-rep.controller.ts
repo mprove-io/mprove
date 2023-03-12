@@ -97,8 +97,11 @@ export class CreateDraftRepController {
     let repId = common.makeId();
 
     let metrics =
-      changeType === common.ChangeTypeEnum.AddMetric ||
-      changeType === common.ChangeTypeEnum.EditParams
+      [
+        common.ChangeTypeEnum.AddMetric,
+        common.ChangeTypeEnum.EditParams,
+        common.ChangeTypeEnum.ConvertToMetric
+      ].indexOf(changeType) > -1
         ? await this.metricsRepository.find({
             where: {
               struct_id: bridge.struct_id,
@@ -114,7 +117,8 @@ export class CreateDraftRepController {
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
-      metrics: metrics
+      metrics: metrics,
+      struct: struct
     });
 
     let rep: entities.RepEntity = {

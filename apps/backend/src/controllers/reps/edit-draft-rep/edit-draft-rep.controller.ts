@@ -94,8 +94,11 @@ export class EditDraftRepController {
     });
 
     let metrics =
-      changeType === common.ChangeTypeEnum.AddMetric ||
-      changeType === common.ChangeTypeEnum.EditParams
+      [
+        common.ChangeTypeEnum.AddMetric,
+        common.ChangeTypeEnum.EditParams,
+        common.ChangeTypeEnum.ConvertToMetric
+      ].indexOf(changeType) > -1
         ? await this.metricsRepository.find({
             where: {
               struct_id: bridge.struct_id,
@@ -111,7 +114,8 @@ export class EditDraftRepController {
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
-      metrics: metrics
+      metrics: metrics,
+      struct: struct
     });
 
     rep.rows = processedRows;
