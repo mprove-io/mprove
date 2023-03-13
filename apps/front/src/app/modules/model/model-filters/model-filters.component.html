@@ -5,7 +5,7 @@
   >
     <div class="flex flex-row items-start justify-center">
       <button
-        class="flex h-9 w-9 items-center justify-center rounded hover:bg-blue2 focus:outline-none"
+        class="flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
         (click)="addFraction(filter, filterIndex)"
       >
         <m-add-icon></m-add-icon>
@@ -31,7 +31,7 @@
 
     <div>
       <div
-        class="group flex flex-row items-start justify-start"
+        class="flex flex-row items-start justify-start"
         *ngFor="
           let fraction of filter.fractions;
           let isFirst = first;
@@ -48,7 +48,7 @@
         </m-fraction>
 
         <button
-          class="invisible ml-5 flex h-9 w-9 items-center justify-center rounded hover:bg-blue2 focus:outline-none group-hover:visible"
+          class="ml-5 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
           (click)="deleteFraction(filter, filterIndex, fractionIndex)"
         >
           <m-delete-icon></m-delete-icon>
