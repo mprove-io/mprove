@@ -147,7 +147,7 @@
           *ngIf="isShow === true"
         >
           <div
-            class="w-full rounded bg-white shadow-md"
+            class="w-full rounded bg-white shadow"
             [ngClass]="{
               'flex-1': dataIsExpanded
             }"
@@ -264,6 +264,14 @@
               </div>
 
               <div
+                class="ml-6 mr-5 flex flex-col divide-y divide-gray-300"
+                *ngIf="dataIsExpanded"
+              >
+                <div class="flex flex-row"></div>
+                <div class="flex flex-row"></div>
+              </div>
+
+              <div
                 class="mx-5 mt-5 mb-5 flex h-2 flex-grow"
                 *ngIf="dataIsExpanded"
               >
@@ -347,7 +355,7 @@
           </div>
 
           <div
-            class="w-full rounded bg-white shadow-md"
+            class="w-full rounded bg-white shadow"
             [ngClass]="{
               'flex-1': chartIsExpanded
             }"
@@ -519,6 +527,14 @@
                     "
                   ></m-chart-options>
                 </div>
+              </div>
+
+              <div
+                class="ml-6 mr-5 flex flex-col divide-y divide-gray-300"
+                *ngIf="chartIsExpanded"
+              >
+                <div class="flex flex-row"></div>
+                <div class="flex flex-row"></div>
               </div>
 
               <div

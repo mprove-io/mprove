@@ -162,7 +162,7 @@
 
       <div class="mt-6 flex flex-grow flex-row space-x-6">
         <div class="flex w-1/4 flex-shrink-0" *ngIf="isShowLeft === true">
-          <div class="flex w-full flex-grow rounded bg-white shadow-lg">
+          <div class="flex w-full flex-grow rounded bg-white shadow">
             <div class="text-gray1 mr-5 mt-6 flex w-full flex-col text-base">
               <div class="flex flex-1 flex-col">
                 <div class="ml-5 mb-3 mr-5 flex h-11 flex-row items-center">
@@ -275,7 +275,7 @@
         <div class="flex min-w-[2px] flex-grow flex-col space-y-6">
           <div
             *ngIf="isShowTable === true"
-            class="w-full flex-1 flex-shrink-0 rounded bg-white shadow-md"
+            class="w-full flex-1 flex-shrink-0 rounded bg-white shadow"
           >
             <router-outlet></router-outlet>
           </div>
@@ -292,7 +292,7 @@
             ></m-row>
 
             <div
-              class="relative h-2 w-full flex-grow flex-row rounded bg-white shadow-md"
+              class="relative h-2 w-full flex-grow flex-row rounded bg-white shadow"
               *ngIf="showMetricsChart === true"
             >
               <div class="h-full flex-1 flex-grow flex-col">
