@@ -13,12 +13,20 @@
 </button>
 
 <ng-template #templateFieldOptions>
-  <div class="border-gray4 w-48 rounded-md border-2 bg-white shadow-xl">
+  <div
+    class="border-gray4 flex w-48 flex-col rounded-md border-2 bg-white shadow-xl"
+  >
     <button
       data-cy="fieldOptionsGoToFileLineButton"
       class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
       (click)="t1.hide(); goToFileLine($event)"
       >Go to File Line</button
+    >
+
+    <div
+      class="flex w-full cursor-default px-4 py-2 text-base text-base text-gray-400 focus:outline-none"
+      (click)="$event.stopImmediatePropagation()"
+      >Result: {{ node.data.fieldResult | result }}</div
     >
   </div>
 </ng-template>
