@@ -180,7 +180,8 @@ export class MetricsTreeComponent implements AfterViewInit {
     this.repService.changeRows({
       rep: rep,
       changeType: common.ChangeTypeEnum.AddMetric,
-      rowChanges: [rowChange]
+      rowChange: rowChange,
+      rowIds: undefined
     });
   }
 

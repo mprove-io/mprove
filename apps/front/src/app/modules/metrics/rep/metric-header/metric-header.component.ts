@@ -98,7 +98,8 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
     this.repService.changeRows({
       rep: rep,
       changeType: common.ChangeTypeEnum.AddEmpty,
-      rowChanges: [rowChange]
+      rowChange: rowChange,
+      rowIds: undefined
     });
   }
 }

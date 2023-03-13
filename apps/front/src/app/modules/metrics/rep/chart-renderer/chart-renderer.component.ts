@@ -45,7 +45,8 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
       this.repService.changeRows({
         rep: rep,
         changeType: common.ChangeTypeEnum.EditInfo,
-        rowChanges: [rowChange]
+        rowChange: rowChange,
+        rowIds: undefined
       });
     }, 0);
   }

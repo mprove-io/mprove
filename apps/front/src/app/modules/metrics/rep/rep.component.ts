@@ -410,13 +410,6 @@ export class RepComponent {
       rowIds.push(rowNode.data.rowId);
     }
 
-    let rowChanges: common.RowChange[] = rowIds.map(rowId => {
-      let rowChange: common.RowChange = {
-        rowId: rowId
-      };
-      return rowChange;
-    });
-
     let selectedRep = this.repQuery.getValue();
 
     this.agGridApi.deselectAll();
@@ -424,7 +417,8 @@ export class RepComponent {
     this.repService.changeRows({
       rep: selectedRep,
       changeType: common.ChangeTypeEnum.Move,
-      rowChanges: rowChanges
+      rowChange: undefined,
+      rowIds: rowIds
     });
   }
 }

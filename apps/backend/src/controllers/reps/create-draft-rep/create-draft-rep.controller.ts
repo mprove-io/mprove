@@ -1,5 +1,4 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
@@ -45,7 +44,8 @@ export class CreateDraftRepController {
       envId,
       fromRepId,
       changeType,
-      rowChanges,
+      rowChange,
+      rowIds,
       timeSpec,
       timezone,
       timeRangeFractionBrick
@@ -105,14 +105,15 @@ export class CreateDraftRepController {
         ? await this.metricsRepository.find({
             where: {
               struct_id: bridge.struct_id,
-              metric_id: In(rowChanges.map(rowChange => rowChange.metricId))
+              metric_id: rowChange.metricId
             }
           })
         : [];
 
     let processedRows = this.repsService.getProcessedRows({
       rows: fromRep.rows,
-      rowChanges: rowChanges,
+      rowChange: rowChange,
+      rowIds: rowIds,
       changeType: changeType,
       timezone: timezone,
       timeSpec: timeSpec,

@@ -181,7 +181,8 @@ export class RowComponent {
     this.repService.changeRows({
       rep: rep,
       changeType: common.ChangeTypeEnum.EditFormula,
-      rowChanges: [rowChange]
+      rowChange: rowChange,
+      rowIds: undefined
     });
   }
 
@@ -202,7 +203,8 @@ export class RowComponent {
     this.repService.changeRows({
       rep: rep,
       changeType: common.ChangeTypeEnum.EditInfo,
-      rowChanges: [rowChange]
+      rowChange: rowChange,
+      rowIds: undefined
     });
   }
 
@@ -226,7 +228,8 @@ export class RowComponent {
     this.repService.changeRows({
       rep: rep,
       changeType: common.ChangeTypeEnum.EditInfo,
-      rowChanges: [rowChange]
+      rowChange: rowChange,
+      rowIds: undefined
     });
   }
 
@@ -250,7 +253,8 @@ export class RowComponent {
     this.repService.changeRows({
       rep: rep,
       changeType: common.ChangeTypeEnum.EditInfo,
-      rowChanges: [rowChange]
+      rowChange: rowChange,
+      rowIds: undefined
     });
   }
 
@@ -274,33 +278,28 @@ export class RowComponent {
     this.repService.changeRows({
       rep: rep,
       changeType: common.ChangeTypeEnum.EditInfo,
-      rowChanges: [rowChange]
+      rowChange: rowChange,
+      rowIds: undefined
     });
   }
 
   deleteRow() {
     this.uiQuery.getValue().gridApi.deselectAll();
 
-    let rowChange: common.RowChange = {
-      rowId: this.repSelectedNode.data.rowId
-    };
-
     this.repService.changeRows({
       rep: this.rep,
       changeType: common.ChangeTypeEnum.Delete,
-      rowChanges: [rowChange]
+      rowChange: undefined,
+      rowIds: [this.repSelectedNode.data.rowId]
     });
   }
 
   clearRow() {
-    let rowChange: common.RowChange = {
-      rowId: this.repSelectedNode.data.rowId
-    };
-
     this.repService.changeRows({
       rep: this.rep,
       changeType: common.ChangeTypeEnum.Clear,
-      rowChanges: [rowChange]
+      rowChange: undefined,
+      rowIds: [this.repSelectedNode.data.rowId]
     });
   }
 
@@ -359,7 +358,8 @@ export class RowComponent {
       this.repService.changeRows({
         rep: this.rep,
         changeType: common.ChangeTypeEnum.ConvertToHeader,
-        rowChanges: [rowChange]
+        rowChange: rowChange,
+        rowIds: undefined
       });
     }
 
@@ -383,7 +383,8 @@ export class RowComponent {
       this.repService.changeRows({
         rep: this.rep,
         changeType: common.ChangeTypeEnum.ConvertToFormula,
-        rowChanges: [rowChange]
+        rowChange: rowChange,
+        rowIds: undefined
       });
     }
 
@@ -400,7 +401,8 @@ export class RowComponent {
       this.repService.changeRows({
         rep: this.rep,
         changeType: common.ChangeTypeEnum.ConvertToMetric,
-        rowChanges: [rowChange]
+        rowChange: rowChange,
+        rowIds: undefined
       });
     }
   }

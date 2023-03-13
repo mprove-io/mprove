@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 import { IsTimezone } from '~common/functions/is-timezone';
@@ -23,9 +29,14 @@ export class ToBackendEditDraftRepRequestPayload {
   @IsEnum(common.ChangeTypeEnum)
   changeType: common.ChangeTypeEnum;
 
+  @IsOptional()
   @ValidateNested()
   @Type(() => common.RowChange)
-  rowChanges: common.RowChange[];
+  rowChange: common.RowChange;
+
+  @IsOptional()
+  @IsString({ each: true })
+  rowIds: string[];
 
   @IsTimezone()
   timezone: string;

@@ -39,21 +39,24 @@ export class RepService {
   changeRows(item: {
     rep: common.RepX;
     changeType: common.ChangeTypeEnum;
-    rowChanges: common.RowChange[];
+    rowChange: common.RowChange;
+    rowIds: string[];
   }) {
-    let { rep, changeType, rowChanges } = item;
+    let { rep, changeType, rowChange, rowIds } = item;
 
     if (rep.draft === true) {
       this.editDraftRep({
         repId: rep.repId,
         changeType: changeType,
-        rowChanges: rowChanges
+        rowIds: rowIds,
+        rowChange: rowChange
       });
     } else {
       this.navCreateDraftRep({
         fromRepId: rep.repId,
         changeType: changeType,
-        rowChanges: rowChanges,
+        rowChange: rowChange,
+        rowIds: rowIds,
         selectRows:
           changeType !== common.ChangeTypeEnum.Move &&
           changeType !== common.ChangeTypeEnum.Delete
@@ -65,13 +68,14 @@ export class RepService {
 
   navCreateDraftRep(item: {
     changeType: common.ChangeTypeEnum;
-    rowChanges: common.RowChange[];
+    rowChange: common.RowChange;
+    rowIds: string[];
     fromRepId: string;
     selectRows: string[];
   }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { rowChanges, fromRepId, changeType, selectRows } = item;
+    let { rowChange, rowIds, fromRepId, changeType, selectRows } = item;
 
     let uiState = this.uiQuery.getValue();
 
@@ -81,7 +85,8 @@ export class RepService {
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       fromRepId: fromRepId,
-      rowChanges: rowChanges,
+      rowChange: rowChange,
+      rowIds: rowIds,
       changeType: changeType,
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
@@ -116,10 +121,11 @@ export class RepService {
 
   editDraftRep(item: {
     changeType: common.ChangeTypeEnum;
-    rowChanges: common.RowChange[];
+    rowChange: common.RowChange;
+    rowIds: string[];
     repId: string;
   }) {
-    let { rowChanges, repId, changeType } = item;
+    let { rowChange, rowIds, repId, changeType } = item;
 
     let uiState = this.uiQuery.getValue();
 
@@ -130,7 +136,8 @@ export class RepService {
       envId: this.nav.envId,
       repId: repId,
       changeType: changeType,
-      rowChanges: rowChanges,
+      rowChange: rowChange,
+      rowIds: rowIds,
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
       timeRangeFractionBrick: uiState.timeRangeFraction.brick

@@ -56,7 +56,8 @@ export class RepsService {
   }
 
   getProcessedRows(item: {
-    rowChanges: common.RowChange[];
+    rowChange: common.RowChange;
+    rowIds: string[];
     metrics: entities.MetricEntity[];
     rows: common.Row[];
     changeType: common.ChangeTypeEnum;
@@ -67,7 +68,8 @@ export class RepsService {
   }) {
     let {
       rows,
-      rowChanges,
+      rowChange,
+      rowIds,
       changeType,
       timezone,
       timeSpec,
@@ -80,8 +82,6 @@ export class RepsService {
 
     if (changeType === common.ChangeTypeEnum.AddEmpty) {
       let targetIndex: number;
-
-      let rowChange = rowChanges[0];
 
       if (common.isDefined(rowChange.rowId)) {
         targetIndex = processedRows.findIndex(
@@ -142,96 +142,97 @@ export class RepsService {
           : processedRows.map(pRow => pRow.rowId)
       });
     } else if (changeType === common.ChangeTypeEnum.AddMetric) {
-      rowChanges.forEach(rowChange => {
-        let isClearFormulasData =
-          processedRows.filter(
-            row =>
-              common.isDefined(row.formula) &&
-              row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
-          ).length > 0;
+      let isClearFormulasData =
+        processedRows.filter(
+          row =>
+            common.isDefined(row.formula) &&
+            row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
+        ).length > 0;
 
-        if (isClearFormulasData === true) {
-          processedRows
-            .filter(row => row.rowType === common.RowTypeEnum.Formula)
-            .forEach(row => {
-              let rq = row.rqs.find(
-                y =>
-                  y.fractionBrick === timeRangeFractionBrick &&
-                  y.timeSpec === timeSpec &&
-                  y.timezone === timezone
-              );
-              rq.kitId = undefined;
-              rq.lastCalculatedTs = 0;
-            });
-        }
+      if (isClearFormulasData === true) {
+        processedRows
+          .filter(row => row.rowType === common.RowTypeEnum.Formula)
+          .forEach(row => {
+            let rq = row.rqs.find(
+              y =>
+                y.fractionBrick === timeRangeFractionBrick &&
+                y.timeSpec === timeSpec &&
+                y.timezone === timezone
+            );
+            rq.kitId = undefined;
+            rq.lastCalculatedTs = 0;
+          });
+      }
 
-        let rowId = rowChange.rowId;
+      let rowId = rowChange.rowId;
 
-        if (common.isUndefined(rowId)) {
-          let rowIdsNumbers = processedRows.map(y =>
-            common.rowIdLetterToNumber(y.rowId)
-          );
-          let maxRowIdNumber =
-            rowIdsNumbers.length > 0 ? Math.max(...rowIdsNumbers) : undefined;
-          let rowIdNumber = common.isDefined(maxRowIdNumber)
-            ? maxRowIdNumber + 1
-            : 0;
-          rowId = common.rowIdNumberToLetter(rowIdNumber);
-        }
-
-        let metric: entities.MetricEntity = metrics.find(
-          m => m.metric_id === rowChange.metricId
+      if (common.isUndefined(rowId)) {
+        let rowIdsNumbers = processedRows.map(y =>
+          common.rowIdLetterToNumber(y.rowId)
         );
 
-        let newRow: common.Row = {
-          rowId: rowId,
-          rowType: rowChange.rowType,
-          name: undefined,
-          metricId: rowChange.metricId,
-          topLabel: metric.top_label,
-          partLabel: metric.part_label,
-          timeLabel: metric.time_label,
-          showChart: rowChange.showChart,
-          params: rowChange.params || [],
-          formula: undefined,
-          formulaDeps: undefined,
-          rqs: [],
-          mconfig: undefined,
-          query: undefined,
-          hasAccessToModel: false,
-          records: [],
-          formatNumber: metric.format_number,
-          currencyPrefix: metric.currency_prefix,
-          currencySuffix: metric.currency_suffix
-        };
+        let maxRowIdNumber =
+          rowIdsNumbers.length > 0 ? Math.max(...rowIdsNumbers) : undefined;
 
-        if (common.isDefined(rowChange.rowId)) {
-          let rowIndex = processedRows.findIndex(
-            r => r.rowId === rowChange.rowId
-          );
+        let rowIdNumber = common.isDefined(maxRowIdNumber)
+          ? maxRowIdNumber + 1
+          : 0;
 
-          let newProcessedRows = [
-            ...processedRows.slice(0, rowIndex),
-            newRow,
-            ...processedRows.slice(rowIndex + 1)
-          ];
+        rowId = common.rowIdNumberToLetter(rowIdNumber);
+      }
 
-          processedRows = newProcessedRows;
-        } else {
-          processedRows.push(newRow);
-        }
-      });
+      let metric: entities.MetricEntity = metrics.find(
+        m => m.metric_id === rowChange.metricId
+      );
+
+      let newRow: common.Row = {
+        rowId: rowId,
+        rowType: rowChange.rowType,
+        name: undefined,
+        metricId: rowChange.metricId,
+        topLabel: metric.top_label,
+        partLabel: metric.part_label,
+        timeLabel: metric.time_label,
+        showChart: rowChange.showChart,
+        params: rowChange.params || [],
+        formula: undefined,
+        formulaDeps: undefined,
+        rqs: [],
+        mconfig: undefined,
+        query: undefined,
+        hasAccessToModel: false,
+        records: [],
+        formatNumber: metric.format_number,
+        currencyPrefix: metric.currency_prefix,
+        currencySuffix: metric.currency_suffix
+      };
+
+      if (common.isDefined(rowChange.rowId)) {
+        let rowIndex = processedRows.findIndex(
+          r => r.rowId === rowChange.rowId
+        );
+
+        let newProcessedRows = [
+          ...processedRows.slice(0, rowIndex),
+          newRow,
+          ...processedRows.slice(rowIndex + 1)
+        ];
+
+        processedRows = newProcessedRows;
+      } else {
+        processedRows.push(newRow);
+      }
 
       processedRows = processRowIds({
         rows: processedRows,
         targetRowIds: processedRows.map(pRow => pRow.rowId)
       });
     } else if (changeType === common.ChangeTypeEnum.Clear) {
-      rowChanges.forEach(rowChange => {
+      rowIds.forEach(rowId => {
         processedRows.forEach(row => {
           if (
             row.rowType === common.RowTypeEnum.Formula &&
-            row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
+            row.formulaDeps.findIndex(dep => dep === rowId) > -1
           ) {
             let rq = row.rqs.find(
               y =>
@@ -247,7 +248,7 @@ export class RepsService {
       });
 
       processedRows = processedRows.map(row => {
-        if (rowChanges.map(rc => rc.rowId).indexOf(row.rowId) > -1) {
+        if (rowIds.indexOf(row.rowId) > -1) {
           let emptyRow: common.Row = {
             rowId: row.rowId,
             rowType: common.RowTypeEnum.Empty,
@@ -276,8 +277,6 @@ export class RepsService {
         }
       });
     } else if (changeType === common.ChangeTypeEnum.EditInfo) {
-      let rowChange = rowChanges[0];
-
       let pRow = processedRows.find(row => row.rowId === rowChange.rowId);
 
       let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
@@ -300,8 +299,6 @@ export class RepsService {
         row.rowId === editRow.rowId ? editRow : row
       );
     } else if (changeType === common.ChangeTypeEnum.ConvertToHeader) {
-      let rowChange = rowChanges[0];
-
       let pRow = processedRows.find(row => row.rowId === rowChange.rowId);
 
       let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
@@ -313,8 +310,6 @@ export class RepsService {
         row.rowId === editRow.rowId ? editRow : row
       );
     } else if (changeType === common.ChangeTypeEnum.ConvertToFormula) {
-      let rowChange = rowChanges[0];
-
       let editRow: common.Row = {
         rowId: rowChange.rowId,
         rowType: common.RowTypeEnum.Formula,
@@ -346,8 +341,6 @@ export class RepsService {
         targetRowIds: processedRows.map(pr => pr.rowId)
       });
     } else if (changeType === common.ChangeTypeEnum.ConvertToMetric) {
-      let rowChange = rowChanges[0];
-
       let metric: entities.MetricEntity = metrics.find(
         m => m.metric_id === rowChange.metricId
       );
@@ -383,8 +376,6 @@ export class RepsService {
         targetRowIds: processedRows.map(pr => pr.rowId)
       });
     } else if (changeType === common.ChangeTypeEnum.EditFormula) {
-      let rowChange = rowChanges[0];
-
       let pRow = processedRows.find(r => r.rowId === rowChange.rowId);
 
       processedRows.forEach(row => {
@@ -420,8 +411,6 @@ export class RepsService {
         targetRowIds: processedRows.map(pr => pr.rowId)
       });
     } else if (changeType === common.ChangeTypeEnum.EditParams) {
-      let rowChange = rowChanges[0];
-
       let pRow = processedRows.find(r => r.rowId === rowChange.rowId);
 
       processedRows.forEach(row => {
@@ -455,11 +444,11 @@ export class RepsService {
         row.rowId === editRow.rowId ? editRow : row
       );
     } else if (changeType === common.ChangeTypeEnum.Delete) {
-      rowChanges.forEach(rowChange => {
+      rowIds.forEach(rowId => {
         processedRows.forEach(row => {
           if (
             row.rowType === common.RowTypeEnum.Formula &&
-            row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
+            row.formulaDeps.findIndex(dep => dep === rowId) > -1
           ) {
             let rq = row.rqs.find(
               y =>
@@ -475,8 +464,7 @@ export class RepsService {
       });
 
       processedRows = processedRows.filter(
-        row =>
-          rowChanges.map(rowChange => rowChange.rowId).indexOf(row.rowId) < 0
+        row => rowIds.indexOf(row.rowId) < 0
       );
 
       processedRows = processRowIds({
@@ -486,7 +474,7 @@ export class RepsService {
     } else if (changeType === common.ChangeTypeEnum.Move) {
       processedRows = processRowIds({
         rows: processedRows,
-        targetRowIds: rowChanges.map(rc => rc.rowId)
+        targetRowIds: rowIds
       });
     }
 
