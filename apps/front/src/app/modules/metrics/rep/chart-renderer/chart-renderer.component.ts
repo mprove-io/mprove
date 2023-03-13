@@ -42,7 +42,7 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
         showChart: !this.params.data.showChart
       };
 
-      this.repService.changeRows({
+      this.repService.modifyRows({
         rep: rep,
         changeType: common.ChangeTypeEnum.EditInfo,
         rowChange: rowChange,

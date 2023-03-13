@@ -36,7 +36,7 @@ export class RepService {
     this.nav$.subscribe();
   }
 
-  changeRows(item: {
+  modifyRows(item: {
     rep: common.RepX;
     changeType: common.ChangeTypeEnum;
     rowChange: common.RowChange;

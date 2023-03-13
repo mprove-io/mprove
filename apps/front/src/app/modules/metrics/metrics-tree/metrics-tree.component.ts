@@ -177,7 +177,7 @@ export class MetricsTreeComponent implements AfterViewInit {
       showChart: false
     };
 
-    this.repService.changeRows({
+    this.repService.modifyRows({
       rep: rep,
       changeType: common.ChangeTypeEnum.AddMetric,
       rowChange: rowChange,

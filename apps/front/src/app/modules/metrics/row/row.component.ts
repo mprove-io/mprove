@@ -178,7 +178,7 @@ export class RowComponent {
       formula: value
     };
 
-    this.repService.changeRows({
+    this.repService.modifyRows({
       rep: rep,
       changeType: common.ChangeTypeEnum.EditFormula,
       rowChange: rowChange,
@@ -200,7 +200,7 @@ export class RowComponent {
       name: value
     };
 
-    this.repService.changeRows({
+    this.repService.modifyRows({
       rep: rep,
       changeType: common.ChangeTypeEnum.EditInfo,
       rowChange: rowChange,
@@ -225,7 +225,7 @@ export class RowComponent {
       formatNumber: value
     };
 
-    this.repService.changeRows({
+    this.repService.modifyRows({
       rep: rep,
       changeType: common.ChangeTypeEnum.EditInfo,
       rowChange: rowChange,
@@ -250,7 +250,7 @@ export class RowComponent {
       currencyPrefix: value
     };
 
-    this.repService.changeRows({
+    this.repService.modifyRows({
       rep: rep,
       changeType: common.ChangeTypeEnum.EditInfo,
       rowChange: rowChange,
@@ -275,7 +275,7 @@ export class RowComponent {
       currencySuffix: value
     };
 
-    this.repService.changeRows({
+    this.repService.modifyRows({
       rep: rep,
       changeType: common.ChangeTypeEnum.EditInfo,
       rowChange: rowChange,
@@ -286,7 +286,7 @@ export class RowComponent {
   deleteRow() {
     this.uiQuery.getValue().gridApi.deselectAll();
 
-    this.repService.changeRows({
+    this.repService.modifyRows({
       rep: this.rep,
       changeType: common.ChangeTypeEnum.Delete,
       rowChange: undefined,
@@ -294,12 +294,32 @@ export class RowComponent {
     });
   }
 
+  deleteRows() {
+    this.uiQuery.getValue().gridApi.deselectAll();
+
+    this.repService.modifyRows({
+      rep: this.rep,
+      changeType: common.ChangeTypeEnum.Delete,
+      rowChange: undefined,
+      rowIds: this.repSelectedNodes.map(node => node.data.rowId)
+    });
+  }
+
   clearRow() {
-    this.repService.changeRows({
+    this.repService.modifyRows({
       rep: this.rep,
       changeType: common.ChangeTypeEnum.Clear,
       rowChange: undefined,
       rowIds: [this.repSelectedNode.data.rowId]
+    });
+  }
+
+  clearRows() {
+    this.repService.modifyRows({
+      rep: this.rep,
+      changeType: common.ChangeTypeEnum.Clear,
+      rowChange: undefined,
+      rowIds: this.repSelectedNodes.map(node => node.data.rowId)
     });
   }
 
@@ -355,7 +375,7 @@ export class RowComponent {
         name: this.newNameForm.controls['name'].value
       };
 
-      this.repService.changeRows({
+      this.repService.modifyRows({
         rep: this.rep,
         changeType: common.ChangeTypeEnum.ConvertToHeader,
         rowChange: rowChange,
@@ -380,7 +400,7 @@ export class RowComponent {
         formula: this.newFormulaForm.controls['formula'].value
       };
 
-      this.repService.changeRows({
+      this.repService.modifyRows({
         rep: this.rep,
         changeType: common.ChangeTypeEnum.ConvertToFormula,
         rowChange: rowChange,
@@ -398,7 +418,7 @@ export class RowComponent {
         metricId: this.newMetricId
       };
 
-      this.repService.changeRows({
+      this.repService.modifyRows({
         rep: this.rep,
         changeType: common.ChangeTypeEnum.ConvertToMetric,
         rowChange: rowChange,

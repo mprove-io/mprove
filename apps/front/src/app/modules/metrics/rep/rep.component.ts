@@ -414,7 +414,7 @@ export class RepComponent {
 
     this.agGridApi.deselectAll();
 
-    this.repService.changeRows({
+    this.repService.modifyRows({
       rep: selectedRep,
       changeType: common.ChangeTypeEnum.Move,
       rowChange: undefined,

@@ -95,7 +95,7 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
       showChart: false
     };
 
-    this.repService.changeRows({
+    this.repService.modifyRows({
       rep: rep,
       changeType: common.ChangeTypeEnum.AddEmpty,
       rowChange: rowChange,

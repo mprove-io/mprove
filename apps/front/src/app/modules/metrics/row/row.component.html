@@ -9,7 +9,27 @@
   class="mb-5 mr-9 flex h-11 flex-row items-center"
   *ngIf="repSelectedNodes.length > 1"
 >
-  Multiple rows selected
+  <div> Multiple rows selected </div>
+
+  <button
+    type="button"
+    data-cy="deleteRowsButton"
+    class="ml-5 flex flex flex-row items-center rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
+    (click)="deleteRows()"
+  >
+    <m-trash-icon></m-trash-icon>
+    <div class="ml-3"> Delete Rows </div>
+  </button>
+
+  <button
+    type="button"
+    data-cy="clearRowsButton"
+    class="ml-5 flex rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
+    (click)="clearRows()"
+  >
+    <m-delete-icon></m-delete-icon>
+    <div class="ml-3"> Clear Rows </div>
+  </button>
 </div>
 
 <div class="mb-5 mr-9 flex flex-col space-y-5" *ngIf="!!repSelectedNode">
