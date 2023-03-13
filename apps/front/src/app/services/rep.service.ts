@@ -170,43 +170,45 @@ export class RepService {
       .subscribe();
   }
 
-  deleteRep(item: { repId: string }) {
-    let { repId } = item;
-
-    let uiState = this.uiQuery.getValue();
+  deleteDraftReps(item: { repIds: string[] }) {
+    let { repIds } = item;
 
     let rep = this.repQuery.getValue();
 
-    let payload: apiToBackend.ToBackendDeleteDraftRepRequestPayload = {
+    let payload: apiToBackend.ToBackendDeleteDraftRepsRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
-      repId: repId
+      repIds: repIds
     };
 
     this.apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftRep,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftReps,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendDeleteDraftRepResponse) => {
+        tap((resp: apiToBackend.ToBackendDeleteDraftRepsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let reps = this.repsQuery.getValue().reps;
 
-            let repIndex = reps.findIndex(x => x.repId === repId);
+            let newReps = [...reps];
 
-            let newReps = [
-              ...reps.slice(0, repIndex),
-              ...reps.slice(repIndex + 1)
-            ];
+            repIds.forEach(repId => {
+              let repIndex = newReps.findIndex(x => x.repId === repId);
+
+              newReps = [
+                ...newReps.slice(0, repIndex),
+                ...newReps.slice(repIndex + 1)
+              ];
+            });
 
             this.repsQuery.update({ reps: newReps });
 
-            if (rep.repId === repId) {
+            if (repIds.indexOf(rep.repId) > -1) {
               this.navigateService.navigateToMetricsRep({
                 repId: common.EMPTY_REP_ID,
                 selectRowsNodeIds: []

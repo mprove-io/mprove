@@ -173,8 +173,8 @@ export const nameToClass = {
     interfaces.ToBackendCreateDraftRepRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendEditDraftRep]:
     interfaces.ToBackendEditDraftRepRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftRep]:
-    interfaces.ToBackendDeleteDraftRepRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftReps]:
+    interfaces.ToBackendDeleteDraftRepsRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendSaveCreateRep]:
     interfaces.ToBackendSaveCreateRepRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendSaveModifyRep]:

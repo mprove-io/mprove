@@ -49,7 +49,7 @@ export const appControllers = [
   controllers.GetRepController,
   controllers.CreateDraftRepController,
   controllers.EditDraftRepController,
-  controllers.DeleteDraftRepController,
+  controllers.DeleteDraftRepsController,
   controllers.DeleteRepController,
   controllers.SaveCreateRepController,
   controllers.SaveModifyRepController,

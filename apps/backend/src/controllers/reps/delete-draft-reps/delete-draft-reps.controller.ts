@@ -1,4 +1,5 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { In } from 'typeorm/find-options/operator/In';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
@@ -13,7 +14,7 @@ import { ProjectsService } from '~backend/services/projects.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
-export class DeleteDraftRepController {
+export class DeleteDraftRepsController {
   constructor(
     private membersService: MembersService,
     private projectsService: ProjectsService,
@@ -23,15 +24,15 @@ export class DeleteDraftRepController {
     private repsRepository: repositories.RepsRepository
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftRep)
-  async deleteDraftRep(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftReps)
+  async deleteDraftReps(
     @AttachUser() user: entities.UserEntity,
     @Req() request: any
   ) {
-    let reqValid: apiToBackend.ToBackendDeleteDraftRepRequest = request.body;
+    let reqValid: apiToBackend.ToBackendDeleteDraftRepsRequest = request.body;
 
     let { traceId } = reqValid.info;
-    let { projectId, isRepoProd, branchId, envId, repId } = reqValid.payload;
+    let { projectId, isRepoProd, branchId, envId, repIds } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 
@@ -64,7 +65,7 @@ export class DeleteDraftRepController {
     });
 
     await this.repsRepository.delete({
-      rep_id: repId,
+      rep_id: In(repIds),
       project_id: projectId,
       draft: common.BoolEnum.TRUE,
       creator_id: user.user_id,

@@ -588,9 +588,15 @@ export class MetricsComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteRep(event: any, rep: common.RepX) {
+  deleteDrafts() {
+    this.repService.deleteDraftReps({
+      repIds: this.reps.filter(rep => rep.draft === true).map(rep => rep.repId)
+    });
+  }
+
+  deleteDraftRep(event: any, rep: common.RepX) {
     event.stopPropagation();
-    this.repService.deleteRep({ repId: rep.repId });
+    this.repService.deleteDraftReps({ repIds: [rep.repId] });
   }
 
   repSaveAs(event: any) {

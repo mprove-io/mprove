@@ -165,10 +165,19 @@
           <div class="flex w-full flex-grow rounded bg-white shadow-lg">
             <div class="text-gray1 mr-5 mt-6 flex w-full flex-col text-base">
               <div class="flex flex-1 flex-col">
-                <div class="ml-5 mb-3 flex flex-row">
+                <div class="ml-5 mb-3 mr-5 flex h-11 flex-row items-center">
                   <div class="flex text-lg font-semibold">REPORTS</div>
 
                   <!-- <div class="flex flex-grow"></div> -->
+
+                  <button
+                    *ngIf="draftsLength > 0"
+                    class="ml-5 flex flex flex-row items-center rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-gray-100 focus:outline-none"
+                    (click)="deleteDrafts()"
+                  >
+                    <m-trash-icon></m-trash-icon>
+                    <div class="ml-3">Drafts</div>
+                  </button>
                 </div>
 
                 <div class="mb-5 flex h-2 flex-grow flex-col overflow-y-auto">
@@ -226,7 +235,7 @@
                       <button
                         *ngIf="rep.draft === true && r.repId === rep.repId"
                         class="ml-3 flex h-9 w-9 items-center justify-center rounded text-gray-500 hover:bg-white focus:outline-none"
-                        (click)="deleteRep($event, r)"
+                        (click)="deleteDraftRep($event, r)"
                       >
                         <m-trash-icon></m-trash-icon>
                       </button>
@@ -250,7 +259,10 @@
               </div>
 
               <div class="flex flex-1 flex-col">
-                <div class="ml-5 mb-3 flex text-lg font-semibold">METRICS</div>
+                <div class="ml-5 mb-3 mr-5 flex h-11 flex-row items-center">
+                  <div class="flex text-lg font-semibold">METRICS</div>
+                  <div class="flex flex-grow"></div>
+                </div>
 
                 <m-metrics-tree
                   class="flex w-full flex-1 flex-shrink-0"
