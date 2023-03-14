@@ -229,10 +229,10 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       accessUsers: users,
       dashboardTitle: newTitle,
       reportsGrid: this.dashboard.reports.map(x => {
-        let z = common.makeCopy(x);
-        delete z.mconfig;
-        delete z.query;
-        return z;
+        let y = common.makeCopy(x);
+        delete y.mconfig;
+        delete y.query;
+        return y;
       })
     };
 
@@ -279,10 +279,10 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       accessUsers: users,
       dashboardTitle: newTitle,
       reportsGrid: this.dashboard.reports.map(x => {
-        let z = common.makeCopy(x);
-        delete z.mconfig;
-        delete z.query;
-        return z;
+        let y = common.makeCopy(x);
+        delete y.mconfig;
+        delete y.query;
+        return y;
       })
     };
 

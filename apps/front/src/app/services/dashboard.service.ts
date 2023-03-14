@@ -39,10 +39,10 @@ export class DashboardService {
     let newReports: common.ReportX[] = [];
 
     reports.forEach(x => {
-      let z: any = common.makeCopy(x);
-      delete z.query;
-      delete z.mconfig;
-      newReports.push(z);
+      let y: any = common.makeCopy(x);
+      delete y.query;
+      delete y.mconfig;
+      newReports.push(y);
     });
 
     let payload: apiToBackend.ToBackendCreateTempDashboardRequestPayload = {

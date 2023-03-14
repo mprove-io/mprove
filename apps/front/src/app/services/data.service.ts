@@ -430,6 +430,6 @@ export class DataService {
 
 function convertToNumberOrZero(x: any) {
   let xNum = common.isDefined(x) ? Number(x) : 0;
-  let z = Number.isNaN(xNum) === false ? xNum : 0;
-  return z;
+  let y = Number.isNaN(xNum) === false ? xNum : 0;
+  return y;
 }

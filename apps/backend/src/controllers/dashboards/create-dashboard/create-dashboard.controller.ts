@@ -141,22 +141,22 @@ export class CreateDashboardController {
         }
       );
 
-      let zReports: common.ReportX[] = [];
+      let yReports: common.ReportX[] = [];
 
       reportsGrid.forEach(freshReport => {
-        let zReport = fromDashboard.reports.find(
+        let yReport = fromDashboard.reports.find(
           y => freshReport.title === y.title
         );
 
-        zReport.tileX = freshReport.tileX;
-        zReport.tileY = freshReport.tileY;
-        zReport.tileWidth = freshReport.tileWidth;
-        zReport.tileHeight = freshReport.tileHeight;
+        yReport.tileX = freshReport.tileX;
+        yReport.tileY = freshReport.tileY;
+        yReport.tileWidth = freshReport.tileWidth;
+        yReport.tileHeight = freshReport.tileHeight;
 
-        zReports.push(zReport);
+        yReports.push(yReport);
       });
 
-      fromDashboard.reports = zReports;
+      fromDashboard.reports = yReports;
 
       dashboardFileText = makeDashboardFileText({
         dashboard: fromDashboard,
