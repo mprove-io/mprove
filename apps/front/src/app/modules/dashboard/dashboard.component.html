@@ -208,7 +208,7 @@
               <button
                 type="button"
                 data-cy="dashboardAddFilterButton"
-                class="mt-7 ml-5 h-11 flex-shrink-0 rounded border border-gray-400 py-2 px-4 text-base font-medium text-gray-500 hover:bg-white focus:outline-none"
+                class="mt-6 ml-5 h-11 flex-shrink-0 rounded border border-gray-400 py-2 px-4 text-base font-medium text-gray-500 hover:bg-white focus:outline-none"
                 (click)="addFilter()"
                 >Add Filter</button
               >
@@ -224,7 +224,7 @@
                   dashboard?.reports.length === 0 ||
                   dashboard?.fields.length === 0
                 "
-                class="mt-7 ml-5 h-12 flex-shrink-0"
+                class="mt-6 ml-5 h-12 flex-shrink-0"
               >
                 <button
                   type="button"
@@ -262,16 +262,17 @@
 
               <div
                 (click)="toggleFiltersPanel()"
-                class="text-gray1 mt-5 ml-5 flex cursor-pointer select-none flex-row items-start space-x-2 py-3 px-5 text-2xl font-semibold"
+                class="text-gray1 mt-4 ml-5 flex cursor-pointer select-none flex-row items-start space-x-2 py-3 px-5 text-2xl font-semibold"
               >
                 <div class="flex flex-row items-center space-x-2">
-                  <div> Filters </div>
                   <m-chevron-right-icon
                     *ngIf="!filtersIsExpanded"
                   ></m-chevron-right-icon>
                   <m-chevron-down-icon
                     *ngIf="filtersIsExpanded"
                   ></m-chevron-down-icon>
+
+                  <div> Filters </div>
                 </div>
               </div>
 
@@ -294,7 +295,7 @@
               >
 
               <div
-                class="mt-2 max-h-96 w-2 flex-1 overflow-auto"
+                class="mt-1 max-h-96 w-2 flex-1 overflow-auto"
                 *ngIf="filtersIsExpanded && dashboard?.fields.length > 0"
               >
                 <m-dashboard-filters
