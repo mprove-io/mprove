@@ -1,9 +1,9 @@
-<div class="flex h-full cursor-default flex-col bg-blue1">
+<div class="bg-blue1 flex h-full cursor-default flex-col">
   <div class="mx-6 mb-6 mt-8 flex h-2 flex-grow flex-col">
     <div class="flex h-11 flex-row items-center justify-between">
       <div
         data-cy="projectConnectionsTitle"
-        class="flex text-2xl font-semibold text-gray1"
+        class="text-gray1 flex text-2xl font-semibold"
         >{{ pageTitle }}
       </div>
 
@@ -23,8 +23,8 @@
       </div>
     </div>
 
-    <div class="mt-6 mb-4 flex-grow overflow-auto rounded bg-white shadow-lg">
-      <div class="mx-5 mt-8 text-gray1" *ngIf="connections?.length > 0">
+    <div class="mt-6 mb-4 flex-grow overflow-auto rounded bg-white shadow">
+      <div class="text-gray1 mx-5 mt-8" *ngIf="connections?.length > 0">
         <table class="min-w-full divide-y divide-gray-500">
           <thead>
             <tr class="h-12 text-sm">
@@ -164,7 +164,7 @@
       </div>
 
       <div
-        class="flex h-full w-full select-none items-center justify-center text-xl text-gray1"
+        class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
         *ngIf="connections?.length === 0"
         >No connections</div
       >
