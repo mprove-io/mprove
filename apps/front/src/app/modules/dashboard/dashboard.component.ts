@@ -180,6 +180,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     })
   );
 
+  deleteFilterFnBindThis = this.deleteFilterFn.bind(this);
+
   runButtonTimerSubscription: Subscription;
 
   private resizeSubscription: Subscription;
@@ -392,6 +394,31 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         })
       )
       .subscribe();
+  }
+
+  deleteFilterFn(filterFieldId: string) {
+    console.log('deleteFilterFn', filterFieldId);
+
+    this.dashboard.reports.forEach(x => {
+      // let newListen: { [a: string]: string } = {};
+      // Object.keys(x.mconfigListenSwap).forEach(dashboardFieldId => {
+      //   x.mconfigListenSwap[dashboardFieldId]
+      //     .filter(y => common.isDefined(y))
+      //     .forEach(modelFieldId => {
+      //       newListen[modelFieldId] = dashboardFieldId;
+      //     });
+      // });
+      // x.listen = newListen;
+      // delete x.mconfigListenSwap;
+      // delete x.modelFields;
+    });
+
+    this.dashboardService.navCreateTempDashboard({
+      reports: this.dashboard.reports,
+      oldDashboardId: this.dashboard.dashboardId,
+      newDashboardId: common.makeId(),
+      newDashboardFields: this.dashboard.fields
+    });
   }
 
   canDeactivate(): Promise<boolean> | boolean {

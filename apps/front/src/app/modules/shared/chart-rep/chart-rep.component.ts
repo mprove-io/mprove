@@ -39,6 +39,9 @@ export class ChartRepComponent implements OnInit, OnDestroy {
   report: common.ReportX;
 
   @Input()
+  deleteFilterFn: (filterFieldId: string) => any;
+
+  @Input()
   title: string;
 
   @Input()
@@ -81,8 +84,6 @@ export class ChartRepComponent implements OnInit, OnDestroy {
       this.cd.detectChanges();
     })
   );
-
-  deleteFilterFnBindThis = this.deleteFilterFn.bind(this);
 
   constructor(
     private apiService: ApiService,
@@ -282,10 +283,6 @@ export class ChartRepComponent implements OnInit, OnDestroy {
         : [];
 
     this.cd.detectChanges();
-  }
-
-  deleteFilterFn(filterFieldId: string) {
-    console.log('deleteFilterFn', filterFieldId);
   }
 
   ngOnDestroy() {

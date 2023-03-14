@@ -97,7 +97,7 @@
         *ngIf="showBricks === true && mconfig?.filters.length > 0"
         [extendedFilters]="mconfig.extendedFilters"
         [listen]="report.listen"
-        [deleteFilterFn]="deleteFilterFnBindThis"
+        [deleteFilterFn]="deleteFilterFn"
       ></m-bricks>
 
       <div
