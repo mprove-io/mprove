@@ -13,7 +13,9 @@ export function makeVizFileText(item: {
   let rep = common.prepareReport({
     isForDashboard: false,
     mconfig: mconfig,
-    defaultTimezone: defaultTimezone
+    defaultTimezone: defaultTimezone,
+    deleteFilterFieldId: undefined,
+    deleteFilterMconfigId: undefined
   });
 
   rep.title = reportTitle;

@@ -31,10 +31,19 @@ export class DashboardService {
     oldDashboardId: string;
     newDashboardId: string;
     newDashboardFields: common.DashboardField[];
+    deleteFilterFieldId: string;
+    deleteFilterMconfigId: string;
   }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { reports, oldDashboardId, newDashboardId, newDashboardFields } = item;
+    let {
+      reports,
+      oldDashboardId,
+      newDashboardId,
+      newDashboardFields,
+      deleteFilterFieldId,
+      deleteFilterMconfigId
+    } = item;
 
     let newReports: common.ReportX[] = [];
 
@@ -53,7 +62,9 @@ export class DashboardService {
       oldDashboardId: oldDashboardId,
       newDashboardId: newDashboardId,
       newDashboardFields: newDashboardFields,
-      reports: newReports
+      reports: newReports,
+      deleteFilterFieldId: deleteFilterFieldId,
+      deleteFilterMconfigId: deleteFilterMconfigId
     };
 
     this.apiService

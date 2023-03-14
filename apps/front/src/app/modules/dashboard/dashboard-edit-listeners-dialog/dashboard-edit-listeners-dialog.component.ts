@@ -201,7 +201,9 @@ export class DashboardEditListenersDialogComponent implements OnInit {
       reports: this.dashboard.reports,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
-      newDashboardFields: this.dashboard.fields
+      newDashboardFields: this.dashboard.fields,
+      deleteFilterFieldId: undefined,
+      deleteFilterMconfigId: undefined
     });
   }
 

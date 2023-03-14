@@ -220,7 +220,9 @@ export class ModifyDashboardController {
         newTitle: fromDashboard.title,
         roles: fromDashboard.accessRoles.join(', '),
         users: fromDashboard.accessUsers.join(', '),
-        defaultTimezone: currentStruct.default_timezone
+        defaultTimezone: currentStruct.default_timezone,
+        deleteFilterFieldId: undefined,
+        deleteFilterMconfigId: undefined
       });
     } else {
       // dashboard save as - replace existing
@@ -247,7 +249,9 @@ export class ModifyDashboardController {
         newTitle: dashboardTitle,
         roles: accessRoles,
         users: accessUsers,
-        defaultTimezone: currentStruct.default_timezone
+        defaultTimezone: currentStruct.default_timezone,
+        deleteFilterFieldId: undefined,
+        deleteFilterMconfigId: undefined
       });
     }
 

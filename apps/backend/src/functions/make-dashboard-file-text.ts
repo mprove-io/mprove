@@ -8,9 +8,19 @@ export function makeDashboardFileText(item: {
   roles: string;
   users: string;
   defaultTimezone: string;
+  deleteFilterFieldId: string;
+  deleteFilterMconfigId: string;
 }) {
-  let { dashboard, newDashboardId, newTitle, roles, users, defaultTimezone } =
-    item;
+  let {
+    dashboard,
+    newDashboardId,
+    newTitle,
+    roles,
+    users,
+    defaultTimezone,
+    deleteFilterFieldId,
+    deleteFilterMconfigId
+  } = item;
 
   let fields = dashboard.fields.map(field => ({
     filter: field.id,
@@ -53,7 +63,9 @@ export function makeDashboardFileText(item: {
       report: x,
       isForDashboard: true,
       mconfig: newMconfig,
-      defaultTimezone: defaultTimezone
+      defaultTimezone: defaultTimezone,
+      deleteFilterFieldId: deleteFilterFieldId,
+      deleteFilterMconfigId: deleteFilterMconfigId
     });
   });
 

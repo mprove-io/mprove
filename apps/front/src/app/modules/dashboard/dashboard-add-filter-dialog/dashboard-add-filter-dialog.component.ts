@@ -152,7 +152,9 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       reports: this.dashboard.reports,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
-      newDashboardFields: [...this.dashboard.fields, field]
+      newDashboardFields: [...this.dashboard.fields, field],
+      deleteFilterFieldId: undefined,
+      deleteFilterMconfigId: undefined
     });
   }
 

@@ -51,7 +51,9 @@ export class ViewBlockmlDialogComponent implements OnInit {
     let rep = common.prepareReport({
       isForDashboard: false,
       mconfig: this.ref.data.mconfig,
-      defaultTimezone: struct.defaultTimezone
+      defaultTimezone: struct.defaultTimezone,
+      deleteFilterFieldId: undefined,
+      deleteFilterMconfigId: undefined
     });
 
     this.reportYaml = common.toYaml({ reports: [rep] });

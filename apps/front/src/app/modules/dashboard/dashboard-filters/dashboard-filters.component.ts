@@ -40,7 +40,9 @@ export class DashboardFiltersComponent {
       reports: this.dashboard.reports,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
-      newDashboardFields: newDashboardFields
+      newDashboardFields: newDashboardFields,
+      deleteFilterFieldId: undefined,
+      deleteFilterMconfigId: undefined
     });
   }
 
@@ -69,7 +71,9 @@ export class DashboardFiltersComponent {
       reports: this.dashboard.reports,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
-      newDashboardFields: newDashboardFields
+      newDashboardFields: newDashboardFields,
+      deleteFilterFieldId: undefined,
+      deleteFilterMconfigId: undefined
     });
   }
 
@@ -116,7 +120,9 @@ export class DashboardFiltersComponent {
       reports: this.dashboard.reports,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
-      newDashboardFields: newDashboardFields
+      newDashboardFields: newDashboardFields,
+      deleteFilterFieldId: undefined,
+      deleteFilterMconfigId: undefined
     });
   }
 }

@@ -164,7 +164,9 @@ export class CreateDashboardController {
         newTitle: dashboardTitle,
         roles: accessRoles,
         users: accessUsers,
-        defaultTimezone: currentStruct.default_timezone
+        defaultTimezone: currentStruct.default_timezone,
+        deleteFilterFieldId: undefined,
+        deleteFilterMconfigId: undefined
       });
     } else {
       let newDashboard: common.DashboardX = {
@@ -191,7 +193,9 @@ export class CreateDashboardController {
         newTitle: dashboardTitle,
         roles: accessRoles,
         users: accessUsers,
-        defaultTimezone: currentStruct.default_timezone
+        defaultTimezone: currentStruct.default_timezone,
+        deleteFilterFieldId: undefined,
+        deleteFilterMconfigId: undefined
       });
     }
 

@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { common } from '~front/barrels/common';
+import { DeleteFilterFnItem } from '../../dashboard/dashboard.component';
 
 @Component({
   selector: 'm-bricks',
@@ -13,13 +14,19 @@ export class BricksComponent {
   listen: { [a: string]: string };
 
   @Input()
-  deleteFilterFn: (filterFieldId: string) => any;
+  mconfigId: string;
+
+  @Input()
+  deleteFilterFn: (item: DeleteFilterFnItem) => void;
 
   fractionOperatorEnum = common.FractionOperatorEnum;
 
   constructor() {}
 
   deleteFilter(filterFieldId: string) {
-    this.deleteFilterFn(filterFieldId);
+    this.deleteFilterFn({
+      filterFieldId: filterFieldId,
+      mconfigId: this.mconfigId
+    });
   }
 }

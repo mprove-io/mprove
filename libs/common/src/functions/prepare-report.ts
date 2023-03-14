@@ -8,8 +8,17 @@ export function prepareReport(item: {
   mconfig: MconfigX;
   isForDashboard: boolean;
   defaultTimezone: string;
+  deleteFilterFieldId: string;
+  deleteFilterMconfigId: string;
 }) {
-  let { report, mconfig, isForDashboard, defaultTimezone } = item;
+  let {
+    report,
+    mconfig,
+    isForDashboard,
+    defaultTimezone,
+    deleteFilterFieldId,
+    deleteFilterMconfigId
+  } = item;
 
   let chart = mconfig.chart;
 
@@ -19,7 +28,13 @@ export function prepareReport(item: {
     mconfig.filters.forEach(x => {
       let bricks: string[] = [];
       x.fractions.forEach(fraction => bricks.push(fraction.brick));
-      defaultFilters[x.fieldId] = bricks;
+
+      if (
+        mconfig.mconfigId !== deleteFilterMconfigId ||
+        x.fieldId !== deleteFilterFieldId
+      ) {
+        defaultFilters[x.fieldId] = bricks;
+      }
     });
   }
 
@@ -32,14 +47,19 @@ export function prepareReport(item: {
     Object.keys(report.listen).length > 0
   ) {
     Object.keys(report.listen).forEach(x => {
-      let dashboardFieldName = report.listen[x];
+      if (
+        mconfig.mconfigId !== deleteFilterMconfigId ||
+        x !== deleteFilterFieldId
+      ) {
+        let dashboardFieldName = report.listen[x];
 
-      if (isDefined(listenFilters[dashboardFieldName])) {
-        listenFilters[dashboardFieldName] = listenFilters[
-          dashboardFieldName
-        ].concat(`, ${x}`);
-      } else {
-        listenFilters[dashboardFieldName] = x;
+        if (isDefined(listenFilters[dashboardFieldName])) {
+          listenFilters[dashboardFieldName] = listenFilters[
+            dashboardFieldName
+          ].concat(`, ${x}`);
+        } else {
+          listenFilters[dashboardFieldName] = x;
+        }
       }
     });
 

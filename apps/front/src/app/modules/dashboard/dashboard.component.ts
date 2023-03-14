@@ -43,6 +43,11 @@ class LayoutItem {
   report: common.ReportX;
 }
 
+export interface DeleteFilterFnItem {
+  filterFieldId: string;
+  mconfigId: string;
+}
+
 @Component({
   selector: 'm-dashboard',
   templateUrl: './dashboard.component.html',
@@ -335,7 +340,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       reports: this.dashboard.reports,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
-      newDashboardFields: this.dashboard.fields
+      newDashboardFields: this.dashboard.fields,
+      deleteFilterFieldId: undefined,
+      deleteFilterMconfigId: undefined
     });
   }
 
@@ -396,28 +403,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe();
   }
 
-  deleteFilterFn(filterFieldId: string) {
-    console.log('deleteFilterFn', filterFieldId);
-
-    this.dashboard.reports.forEach(x => {
-      // let newListen: { [a: string]: string } = {};
-      // Object.keys(x.mconfigListenSwap).forEach(dashboardFieldId => {
-      //   x.mconfigListenSwap[dashboardFieldId]
-      //     .filter(y => common.isDefined(y))
-      //     .forEach(modelFieldId => {
-      //       newListen[modelFieldId] = dashboardFieldId;
-      //     });
-      // });
-      // x.listen = newListen;
-      // delete x.mconfigListenSwap;
-      // delete x.modelFields;
-    });
+  deleteFilterFn(item: DeleteFilterFnItem) {
+    let { filterFieldId, mconfigId } = item;
 
     this.dashboardService.navCreateTempDashboard({
       reports: this.dashboard.reports,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
-      newDashboardFields: this.dashboard.fields
+      newDashboardFields: this.dashboard.fields,
+      deleteFilterFieldId: filterFieldId,
+      deleteFilterMconfigId: mconfigId
     });
   }
 

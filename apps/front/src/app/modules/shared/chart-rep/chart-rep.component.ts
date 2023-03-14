@@ -22,6 +22,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService, RData } from '~front/app/services/query.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { DeleteFilterFnItem } from '../../dashboard/dashboard.component';
 import { ChartViewComponent } from '../chart-view/chart-view.component';
 
 @Component({
@@ -39,7 +40,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
   report: common.ReportX;
 
   @Input()
-  deleteFilterFn: (filterFieldId: string) => any;
+  deleteFilterFn: (item: DeleteFilterFnItem) => void;
 
   @Input()
   title: string;
