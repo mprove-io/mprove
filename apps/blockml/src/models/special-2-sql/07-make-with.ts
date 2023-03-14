@@ -46,17 +46,19 @@ export function makeWith(item: {
   // prepare filters for ___timestamp
   let filt: { [s: string]: { [f: string]: number } } = {};
 
-  Object.keys(filters).forEach(element => {
-    let r =
-      common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(element);
-    let asName = r[1];
-    let fieldName = r[2];
+  Object.keys(filters)
+    .sort((a, b) => (a > b ? 1 : b > a ? -1 : 0))
+    .forEach(element => {
+      let r =
+        common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(element);
+      let asName = r[1];
+      let fieldName = r[2];
 
-    if (common.isUndefined(filt[asName])) {
-      filt[asName] = {};
-    }
-    filt[asName][fieldName] = 1;
-  });
+      if (common.isUndefined(filt[asName])) {
+        filt[asName] = {};
+      }
+      filt[asName][fieldName] = 1;
+    });
   // end of prepare
 
   model.joinsSorted

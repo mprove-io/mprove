@@ -14,14 +14,8 @@ export function makeMainText(item: {
   varsSqlSteps: interfaces.Report['varsSqlSteps'];
   model: interfaces.Model;
 }) {
-  let {
-    select,
-    filters,
-    depMeasures,
-    depDimensions,
-    model,
-    varsSqlSteps
-  } = item;
+  let { select, filters, depMeasures, depDimensions, model, varsSqlSteps } =
+    item;
 
   let connection = model.connection;
 
@@ -65,26 +59,28 @@ export function makeMainText(item: {
     });
   });
 
-  Object.keys(filters).forEach(element => {
-    let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
-    let r = reg.exec(element);
+  Object.keys(filters)
+    .sort((a, b) => (a > b ? 1 : b > a ? -1 : 0))
+    .forEach(element => {
+      let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
+      let r = reg.exec(element);
 
-    let asName = r[1];
-    let fieldName = r[2];
+      let asName = r[1];
+      let fieldName = r[2];
 
-    let fieldClass: common.FieldClassEnum =
-      asName === constants.MF
-        ? model.fields.find(mField => mField.name === fieldName).fieldClass
-        : model.joins
-            .find(j => j.as === asName)
-            .view.fields.find(vField => vField.name === fieldName).fieldClass;
+      let fieldClass: common.FieldClassEnum =
+        asName === constants.MF
+          ? model.fields.find(mField => mField.name === fieldName).fieldClass
+          : model.joins
+              .find(j => j.as === asName)
+              .view.fields.find(vField => vField.name === fieldName).fieldClass;
 
-    filtered[element] = { asName: asName, fieldName: fieldName };
+      filtered[element] = { asName: asName, fieldName: fieldName };
 
-    if (fieldClass === common.FieldClassEnum.Measure) {
-      selected[element] = { asName: asName, fieldName: fieldName };
-    }
-  });
+      if (fieldClass === common.FieldClassEnum.Measure) {
+        selected[element] = { asName: asName, fieldName: fieldName };
+      }
+    });
 
   let els = Object.assign({}, selected, filtered);
 

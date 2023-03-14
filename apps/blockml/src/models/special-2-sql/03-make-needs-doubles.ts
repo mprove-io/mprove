@@ -54,7 +54,7 @@ export function makeNeedsDoubles(item: {
   let elements = [
     ...new Set([
       ...Object.keys(selected),
-      ...Object.keys(filters),
+      ...Object.keys(filters).sort((a, b) => (a > b ? 1 : b > a ? -1 : 0)),
       ...Object.keys(whereDoubleDeps),
       ...Object.keys(whereCalcDoubleDeps),
       ...Object.keys(whereCalcDeps)

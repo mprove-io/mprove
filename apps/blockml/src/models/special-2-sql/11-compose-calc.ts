@@ -51,9 +51,8 @@ export function composeCalc(item: {
   }
 
   select.forEach(element => {
-    let r = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(
-      element
-    );
+    let r =
+      common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(element);
 
     let asName = r[1];
     let fieldName = r[2];
@@ -88,13 +87,15 @@ export function composeCalc(item: {
     sql.push(`${constants.WHERE}`);
 
     if (common.isDefined(model.sqlAlwaysWhereCalcReal)) {
-      let sqlAlwaysWhereCalcFinal = common.MyRegex.removeBracketsOnCalculationSinglesMf(
-        model.sqlAlwaysWhereCalcReal
-      );
+      let sqlAlwaysWhereCalcFinal =
+        common.MyRegex.removeBracketsOnCalculationSinglesMf(
+          model.sqlAlwaysWhereCalcReal
+        );
 
-      sqlAlwaysWhereCalcFinal = common.MyRegex.removeBracketsOnCalculationDoubles(
-        sqlAlwaysWhereCalcFinal
-      );
+      sqlAlwaysWhereCalcFinal =
+        common.MyRegex.removeBracketsOnCalculationDoubles(
+          sqlAlwaysWhereCalcFinal
+        );
 
       sqlAlwaysWhereCalcFinal = applyFilter({
         filterFieldsConditions: filterFieldsConditions,
@@ -106,12 +107,14 @@ export function composeCalc(item: {
       sql.push(`  ${constants.AND}`);
     }
 
-    Object.keys(whereCalc).forEach(element => {
-      if (whereCalc[element].length > 0) {
-        sql = sql.concat(whereCalc[element]);
-        sql.push(`  ${constants.AND}`);
-      }
-    });
+    Object.keys(whereCalc)
+      .sort((a, b) => (a > b ? 1 : b > a ? -1 : 0))
+      .forEach(element => {
+        if (whereCalc[element].length > 0) {
+          sql = sql.concat(whereCalc[element]);
+          sql.push(`  ${constants.AND}`);
+        }
+      });
 
     sql.pop();
   }

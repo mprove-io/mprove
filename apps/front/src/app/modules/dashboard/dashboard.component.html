@@ -244,7 +244,17 @@
                     dashboard?.fields.length === 0
                   "
                 >
-                  <m-link-icon class="text-gray-500"></m-link-icon>
+                  <m-link-icon
+                    class="text-gray-500"
+                    [ngClass]="{
+                      'text-gray-500':
+                        dashboard?.reports.length > 0 &&
+                        dashboard?.fields.length > 0,
+                      'text-gray-400':
+                        dashboard?.reports.length === 0 ||
+                        dashboard?.fields.length === 0
+                    }"
+                  ></m-link-icon>
 
                   <div class="ml-3"> Edit Listeners </div>
                 </button>

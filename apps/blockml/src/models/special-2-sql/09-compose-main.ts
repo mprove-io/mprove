@@ -102,12 +102,14 @@ export function composeMain(item: {
       mainQuery.push(`      ${constants.AND}`);
     }
 
-    Object.keys(whereMain).forEach(element => {
-      if (whereMain[element].length > 0) {
-        mainQuery = mainQuery.concat(whereMain[element].map(s => `    ${s}`));
-        mainQuery.push(`      ${constants.AND}`);
-      }
-    });
+    Object.keys(whereMain)
+      .sort((a, b) => (a > b ? 1 : b > a ? -1 : 0))
+      .forEach(element => {
+        if (whereMain[element].length > 0) {
+          mainQuery = mainQuery.concat(whereMain[element].map(s => `    ${s}`));
+          mainQuery.push(`      ${constants.AND}`);
+        }
+      });
 
     mainQuery.pop();
   }

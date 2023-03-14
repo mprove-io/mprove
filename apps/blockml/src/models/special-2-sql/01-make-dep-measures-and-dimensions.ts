@@ -71,7 +71,10 @@ export function makeDepMeasuresAndDimensions(item: {
     );
   }
 
-  [...select, ...Object.keys(filters)].forEach(element => {
+  [
+    ...select,
+    ...Object.keys(filters).sort((a, b) => (a > b ? 1 : b > a ? -1 : 0))
+  ].forEach(element => {
     let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
     let r = reg.exec(element);
 

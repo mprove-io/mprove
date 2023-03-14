@@ -278,7 +278,9 @@ export function wrapReports(item: {
       sorts: report.sorts,
       timezone: report.timezone,
       limit: report.limit ? Number(report.limit) : undefined,
-      filters: filters,
+      filters: filters.sort((a, b) =>
+        a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
+      ),
       chart: chart,
       temp: false,
       serverTs: 1
