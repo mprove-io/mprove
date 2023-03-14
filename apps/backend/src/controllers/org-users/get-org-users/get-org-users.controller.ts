@@ -107,28 +107,28 @@ export class GetOrgUsersController {
         adminProjects: userMembers
           .filter(m => m.is_admin === common.BoolEnum.TRUE)
           .map(m => m.project_id)
-          .map(z => {
-            let project = projects.find(p => p.project_id === z);
+          .map(y => {
+            let project = projects.find(p => p.project_id === y);
             return project.name;
           }),
         editorProjects: userMembers
           .filter(m => m.is_editor === common.BoolEnum.TRUE)
           .map(m => m.project_id)
-          .map(z => {
-            let project = projects.find(p => p.project_id === z);
+          .map(y => {
+            let project = projects.find(p => p.project_id === y);
             return project.name;
           }),
         explorerProjects: userMembers
           .filter(m => m.is_explorer === common.BoolEnum.TRUE)
           .map(m => m.project_id)
-          .map(z => {
-            let project = projects.find(p => p.project_id === z);
+          .map(y => {
+            let project = projects.find(p => p.project_id === y);
             return project.name;
           }),
         projectUserProjects: userMembers
           .map(m => m.project_id)
-          .map(z => {
-            let project = projects.find(p => p.project_id === z);
+          .map(y => {
+            let project = projects.find(p => p.project_id === y);
             return project.name;
           })
       };

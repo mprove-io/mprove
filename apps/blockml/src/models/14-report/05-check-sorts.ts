@@ -58,7 +58,7 @@ export function checkSorts<T extends types.dzType>(
         let sorter = r[1];
         let desc = r[2];
 
-        if (report.select.findIndex(z => z === sorter) < 0) {
+        if (report.select.findIndex(y => y === sorter) < 0) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.REPORT_SORTS_REFS_UNSELECTED_FIELD,

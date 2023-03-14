@@ -99,7 +99,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     let id = common.MyRegex.replaceSpacesWithUnderscores(label).toLowerCase();
 
     let labels = this.dashboard.extendedFilters
-      .filter(z => !!z.field.label)
+      .filter(y => !!y.field.label)
       .map(x => x.field.label.toLowerCase());
 
     let ids = this.dashboard.extendedFilters.map(x => x.fieldId.toLowerCase());

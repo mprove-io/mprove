@@ -62,7 +62,7 @@ export class BranchSelectComponent {
       this.userQuery
         .select()
         .pipe(
-          tap(z => (user = z)),
+          tap(y => (user = y)),
           take(1)
         )
         .subscribe();
@@ -134,7 +134,7 @@ export class BranchSelectComponent {
     this.userQuery
       .select()
       .pipe(
-        tap(z => (user = z)),
+        tap(x => (user = x)),
         take(1)
       )
       .subscribe();
@@ -167,12 +167,10 @@ export class BranchSelectComponent {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
-            let x = resp.payload.branchesList;
-
-            this.branchesList = x.map(z =>
+            this.branchesList = resp.payload.branchesList.map(y =>
               this.makeBranchItem({
-                branchId: z.branchId,
-                isRepoProd: z.isRepoProd,
+                branchId: y.branchId,
+                isRepoProd: y.isRepoProd,
                 alias: user.alias,
                 userId: user.userId
               })
@@ -204,7 +202,7 @@ export class BranchSelectComponent {
                   ]
                 : [...prodBranchesDefault, ...prodBranchesNotDefault];
 
-            this.branchesListLength = x.length;
+            this.branchesListLength = this.branchesList.length;
             this.branchesListLoading = false;
           }
         }),

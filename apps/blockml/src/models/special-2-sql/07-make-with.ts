@@ -60,7 +60,7 @@ export function makeWith(item: {
   // end of prepare
 
   model.joinsSorted
-    .filter(z => common.isDefined(joins[z]))
+    .filter(y => common.isDefined(joins[y]))
     .forEach(asName => {
       let join = model.joins.find(j => j.as === asName);
 

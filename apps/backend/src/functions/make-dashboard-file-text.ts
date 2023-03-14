@@ -9,14 +9,8 @@ export function makeDashboardFileText(item: {
   users: string;
   defaultTimezone: string;
 }) {
-  let {
-    dashboard,
-    newDashboardId,
-    newTitle,
-    roles,
-    users,
-    defaultTimezone
-  } = item;
+  let { dashboard, newDashboardId, newTitle, roles, users, defaultTimezone } =
+    item;
 
   let fields = dashboard.fields.map(field => ({
     filter: field.id,
@@ -46,11 +40,11 @@ export function makeDashboardFileText(item: {
     let newMconfig = common.makeCopy(x.mconfig);
 
     // if (common.isDefined(x.listen)) {
-    //   Object.keys(x.listen).forEach(z => {
-    //     let dashboardFieldName = x.listen[z];
+    //   Object.keys(x.listen).forEach(y => {
+    //     let dashboardFieldName = x.listen[y];
 
     //     if (fields.findIndex(f => f.filter === dashboardFieldName) < 0) {
-    //       delete x.listen[z];
+    //       delete x.listen[y];
     //     }
     //   });
     // }

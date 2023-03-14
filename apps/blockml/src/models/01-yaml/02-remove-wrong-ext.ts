@@ -46,7 +46,7 @@ export function removeWrongExt(
         common.FileExtensionEnum.Yml
       ].indexOf(ext) > -1
     ) {
-      let f: interfaces.File2 = file2s.find(z => z.name === x.name);
+      let f: interfaces.File2 = file2s.find(y => y.name === x.name);
 
       if (f) {
         f.pathContents.push(fp);

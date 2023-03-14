@@ -104,25 +104,25 @@ export class CreateTempDashboardController {
       projectId: projectId
     });
 
-    let zReports: common.ReportX[] = [];
+    let yReports: common.ReportX[] = [];
 
     reports.forEach(freshReport => {
-      let zReport = fromDashboard.reports.find(
+      let yReport = fromDashboard.reports.find(
         y => freshReport.title === y.title
       );
 
-      zReport.tileX = freshReport.tileX;
-      zReport.tileY = freshReport.tileY;
-      zReport.tileWidth = freshReport.tileWidth;
-      zReport.tileHeight = freshReport.tileHeight;
+      yReport.tileX = freshReport.tileX;
+      yReport.tileY = freshReport.tileY;
+      yReport.tileWidth = freshReport.tileWidth;
+      yReport.tileHeight = freshReport.tileHeight;
 
-      zReport.listen = freshReport.listen;
-      zReport.timezone = freshReport.timezone;
+      yReport.listen = freshReport.listen;
+      yReport.timezone = freshReport.timezone;
 
-      zReports.push(zReport);
+      yReports.push(yReport);
     });
 
-    fromDashboard.reports = zReports;
+    fromDashboard.reports = yReports;
     fromDashboard.fields = newDashboardFields;
 
     let dashboardFileText = makeDashboardFileText({

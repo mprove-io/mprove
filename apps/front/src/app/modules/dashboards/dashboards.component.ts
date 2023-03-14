@@ -85,15 +85,15 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         .subscribe(ml => {
           this.hasAccessModels = ml.models.filter(m => m.hasAccess === true);
 
-          this.dashboardsModels = ml.models.map(z =>
-            Object.assign({}, z, <ModelXWithTotalDashboards>{
+          this.dashboardsModels = ml.models.map(y =>
+            Object.assign({}, y, <ModelXWithTotalDashboards>{
               totalDashboards: this.dashboards.filter(
-                v => v.reports.map(rp => rp.modelId).indexOf(z.modelId) > -1
+                v => v.reports.map(rp => rp.modelId).indexOf(y.modelId) > -1
               ).length
             })
           );
 
-          // let allGroups = this.vizs.map(z => z.gr);
+          // let allGroups = this.vizs.map(v => v.gr);
           // let definedGroups = allGroups.filter(y => common.isDefined(y));
           // this.groups = [...new Set(definedGroups)];
 
@@ -207,10 +207,10 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     });
 
     this.dashboardsModels = this.dashboardsModels
-      .map(z =>
-        Object.assign({}, z, {
+      .map(x =>
+        Object.assign({}, x, {
           totalDashboards: this.dashboardsFilteredByWord.filter(
-            d => d.reports.map(rp => rp.modelId).indexOf(z.modelId) > -1
+            d => d.reports.map(rp => rp.modelId).indexOf(x.modelId) > -1
           ).length
         })
       )

@@ -174,7 +174,7 @@ export class ModelComponent implements OnInit, OnDestroy {
         } else {
           oldMconfig.extendedFilters.forEach(oldExtendedFilter => {
             let newExtendedFilter = this.mconfig.extendedFilters.find(
-              z => z.fieldId === oldExtendedFilter.fieldId
+              y => y.fieldId === oldExtendedFilter.fieldId
             );
 
             if (common.isUndefined(newExtendedFilter)) {

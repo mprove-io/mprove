@@ -73,7 +73,7 @@ export class AddEnvDialogComponent implements OnInit {
             resp.payload.envsList
         ),
         tap(x => {
-          this.envsList = x.filter(z => z.envId !== common.PROJECT_ENV_PROD);
+          this.envsList = x.filter(y => y.envId !== common.PROJECT_ENV_PROD);
           this.envsListLoading = false;
           this.envsListLength = x.length - 1;
         }),

@@ -183,7 +183,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
 
       Object.keys(x.mconfigListenSwap).forEach(dashboardFieldId => {
         x.mconfigListenSwap[dashboardFieldId]
-          .filter(z => common.isDefined(z))
+          .filter(y => common.isDefined(y))
           .forEach(modelFieldId => {
             newListen[modelFieldId] = dashboardFieldId;
           });

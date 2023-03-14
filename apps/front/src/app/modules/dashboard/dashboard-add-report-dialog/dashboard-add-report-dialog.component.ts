@@ -74,7 +74,7 @@ export class DashboardAddReportDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendGetModelsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.models = resp.payload.models.filter(z => z.hasAccess === true);
+            this.models = resp.payload.models.filter(y => y.hasAccess === true);
 
             this.spinner.hide(this.spinnerName);
 

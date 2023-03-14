@@ -43,9 +43,9 @@ export function checkFieldNameDuplicates<T extends types.vmdType>(
 
     // process field names
 
-    fieldNames.forEach(z => {
-      if (z.lineNumbers.length > 1) {
-        let lines: interfaces.BmErrorLine[] = z.lineNumbers.map(y => ({
+    fieldNames.forEach(n => {
+      if (n.lineNumbers.length > 1) {
+        let lines: interfaces.BmErrorLine[] = n.lineNumbers.map(y => ({
           line: y,
           name: x.fileName,
           path: x.filePath

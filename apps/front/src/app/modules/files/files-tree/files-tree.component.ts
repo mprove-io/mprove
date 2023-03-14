@@ -105,8 +105,8 @@ export class FilesTreeComponent implements OnDestroy {
       this.navQuery
         .select()
         .pipe(
-          tap(z => {
-            projectId = z.projectId;
+          tap(y => {
+            projectId = y.projectId;
           }),
           take(1)
         )
@@ -153,8 +153,8 @@ export class FilesTreeComponent implements OnDestroy {
             let projectId: string;
             this.navQuery.projectId$
               .pipe(
-                tap(z => {
-                  projectId = z;
+                tap(y => {
+                  projectId = y;
                 }),
                 take(1)
               )

@@ -58,7 +58,7 @@ export class GetOrgsListController {
     let orgs = [...userOrgs];
 
     ownerOrgs.forEach(x => {
-      if (orgs.map(z => z.org_id).indexOf(x.org_id) < 0) {
+      if (orgs.map(y => y.org_id).indexOf(x.org_id) < 0) {
         orgs.push(x);
       }
     });

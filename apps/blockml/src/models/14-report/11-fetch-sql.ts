@@ -30,13 +30,12 @@ export async function fetchSql<T extends types.dzType>(
 
   let reports: interfaces.Report[] = [];
 
-  item.entities.forEach(z => {
-    reports = [...reports, ...z.reports];
+  item.entities.forEach(x => {
+    reports = [...reports, ...x.reports];
   });
 
-  let concurrencyLimit = cs.get<interfaces.Config['concurrencyLimit']>(
-    'concurrencyLimit'
-  );
+  let concurrencyLimit =
+    cs.get<interfaces.Config['concurrencyLimit']>('concurrencyLimit');
 
   await asyncPool(
     concurrencyLimit,

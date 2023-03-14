@@ -18,7 +18,7 @@ export function prepareReport(item: {
   if (isDefined(mconfig.filters) && mconfig.filters.length > 0) {
     mconfig.filters.forEach(x => {
       let bricks: string[] = [];
-      x.fractions.forEach(z => bricks.push(z.brick));
+      x.fractions.forEach(fraction => bricks.push(fraction.brick));
       defaultFilters[x.fieldId] = bricks;
     });
   }
@@ -35,15 +35,17 @@ export function prepareReport(item: {
       let dashboardFieldName = report.listen[x];
 
       if (isDefined(listenFilters[dashboardFieldName])) {
-        listenFilters[dashboardFieldName].concat(`, ${x}`);
+        listenFilters[dashboardFieldName] = listenFilters[
+          dashboardFieldName
+        ].concat(`, ${x}`);
       } else {
         listenFilters[dashboardFieldName] = x;
       }
     });
 
-    Object.keys(defaultFilters).forEach(z => {
-      if (isDefined(report.listen[z])) {
-        delete defaultFilters[z];
+    Object.keys(defaultFilters).forEach(y => {
+      if (isDefined(report.listen[y])) {
+        delete defaultFilters[y];
       }
     });
   }

@@ -96,7 +96,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   dashboard: common.DashboardX;
   dashboard$ = this.dashboardQuery.select().pipe(
-    filter(z => common.isDefined(z.dashboardId)),
+    filter(x => common.isDefined(x.dashboardId)),
     tap(x => {
       this.dashboard = x;
 
@@ -109,7 +109,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
         if (
           common.isDefined(mconfigTimezone) &&
-          usedTimezones.findIndex(z => mconfigTimezone === z) < 0
+          usedTimezones.findIndex(t => mconfigTimezone === t) < 0
         ) {
           usedTimezones.push(mconfigTimezone);
         }

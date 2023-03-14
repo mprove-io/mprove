@@ -91,13 +91,13 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
         .subscribe(y => {
           this.hasAccessModels = y.models.filter(m => m.hasAccess === true);
 
-          this.vizsModels = y.models.map(z =>
-            Object.assign({}, z, <ModelXWithTotalVizs>{
-              totalVizs: this.vizs.filter(v => v.modelId === z.modelId).length
+          this.vizsModels = y.models.map(m =>
+            Object.assign({}, m, <ModelXWithTotalVizs>{
+              totalVizs: this.vizs.filter(v => v.modelId === m.modelId).length
             })
           );
 
-          // let allGroups = this.vizs.map(z => z.gr);
+          // let allGroups = this.vizs.map(v => v.gr);
           // let definedGroups = allGroups.filter(y => common.isDefined(y));
           // this.groups = [...new Set(definedGroups)];
 
@@ -225,10 +225,10 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     });
 
     this.vizsModels = this.vizsModels
-      .map(z =>
-        Object.assign({}, z, {
+      .map(x =>
+        Object.assign({}, x, {
           totalVizs: this.vizsFilteredByWord.filter(
-            v => v.modelId === z.modelId
+            v => v.modelId === x.modelId
           ).length
         })
       )

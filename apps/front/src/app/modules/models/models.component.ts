@@ -41,7 +41,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     tap(ml => {
       this.models = ml.models;
 
-      // let allGroups = this.vizs.map(z => z.gr);
+      // let allGroups = this.vizs.map(v => v.gr);
       // let definedGroups = allGroups.filter(y => common.isDefined(y));
       // this.groups = [...new Set(definedGroups)];
 

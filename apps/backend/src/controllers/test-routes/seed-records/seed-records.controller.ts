@@ -241,9 +241,9 @@ export class SeedRecordsController {
 
           let projectConnections = connections
             .filter(
-              z =>
-                z.project_id === newProject.project_id &&
-                z.env_id === prodEnv.env_id
+              y =>
+                y.project_id === newProject.project_id &&
+                y.env_id === prodEnv.env_id
             )
             .map(c => ({
               connectionId: c.connection_id,
@@ -346,50 +346,50 @@ export class SeedRecordsController {
 
           vizs = [
             ...vizs,
-            ...devVizsApi.map(z => wrapper.wrapToEntityViz(z)),
-            ...prodVizsApi.map(z => wrapper.wrapToEntityViz(z))
+            ...devVizsApi.map(y => wrapper.wrapToEntityViz(y)),
+            ...prodVizsApi.map(y => wrapper.wrapToEntityViz(y))
           ];
 
           models = [
             ...models,
-            ...devModelsApi.map(z => wrapper.wrapToEntityModel(z)),
-            ...prodModelsApi.map(z => wrapper.wrapToEntityModel(z))
+            ...devModelsApi.map(y => wrapper.wrapToEntityModel(y)),
+            ...prodModelsApi.map(y => wrapper.wrapToEntityModel(y))
           ];
 
           metrics = [
             ...metrics,
-            ...devMetricsApi.map(z => wrapper.wrapToEntityMetric(z)),
-            ...prodMetricsApi.map(z => wrapper.wrapToEntityMetric(z))
+            ...devMetricsApi.map(y => wrapper.wrapToEntityMetric(y)),
+            ...prodMetricsApi.map(y => wrapper.wrapToEntityMetric(y))
           ];
 
           reps = [
             ...reps,
-            ...devRepsApi.map(z => wrapper.wrapToEntityRep(z)),
-            ...prodRepsApi.map(z => wrapper.wrapToEntityRep(z))
+            ...devRepsApi.map(y => wrapper.wrapToEntityRep(y)),
+            ...prodRepsApi.map(y => wrapper.wrapToEntityRep(y))
           ];
 
           apis = [
             ...apis,
-            ...devApisApi.map(z => wrapper.wrapToEntityApi(z)),
-            ...prodApisApi.map(z => wrapper.wrapToEntityApi(z))
+            ...devApisApi.map(y => wrapper.wrapToEntityApi(y)),
+            ...prodApisApi.map(y => wrapper.wrapToEntityApi(y))
           ];
 
           queries = [
             ...queries,
-            ...devQueriesApi.map(z => wrapper.wrapToEntityQuery(z)),
-            ...prodQueriesApi.map(z => wrapper.wrapToEntityQuery(z))
+            ...devQueriesApi.map(y => wrapper.wrapToEntityQuery(y)),
+            ...prodQueriesApi.map(y => wrapper.wrapToEntityQuery(y))
           ];
 
           dashboards = [
             ...dashboards,
-            ...devDashboardsApi.map(z => wrapper.wrapToEntityDashboard(z)),
-            ...prodDashboardsApi.map(z => wrapper.wrapToEntityDashboard(z))
+            ...devDashboardsApi.map(y => wrapper.wrapToEntityDashboard(y)),
+            ...prodDashboardsApi.map(y => wrapper.wrapToEntityDashboard(y))
           ];
 
           mconfigs = [
             ...mconfigs,
-            ...devMconfigsApi.map(z => wrapper.wrapToEntityMconfig(z)),
-            ...prodMconfigsApi.map(z => wrapper.wrapToEntityMconfig(z))
+            ...devMconfigsApi.map(y => wrapper.wrapToEntityMconfig(y)),
+            ...prodMconfigsApi.map(y => wrapper.wrapToEntityMconfig(y))
           ];
         }
       );
