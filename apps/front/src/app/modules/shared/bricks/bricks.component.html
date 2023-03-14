@@ -1,11 +1,17 @@
 <div class="h-full w-full overflow-auto rounded bg-gray-200 py-1 px-5">
   <table>
     <tbody class="divide-y divide-gray-300">
-      <tr *ngFor="let filter of extendedFilters; let filterIndex = index">
+      <tr
+        *ngFor="let filter of extendedFilters; let filterIndex = index"
+        class="group-link"
+      >
         <td class="py-1 align-top">
           <div class="flex flex-col items-start justify-start">
             <div class="flex flex-row items-center">
-              <div *ngIf="!!listen" class="mr-2 flex-shrink-0 text-gray-500">
+              <div
+                *ngIf="!!listen"
+                class="mr-2 flex flex-shrink-0 flex-row items-center space-x-5 text-gray-500"
+              >
                 <m-link-icon
                   tippy="Listens to dashboard filter {{
                     listen[filter.fieldId].split('_').join(' ')
@@ -24,6 +30,12 @@
                 [column]="filter.field"
                 class="flex text-sm"
               ></m-field-label>
+
+              <m-trash-icon
+                *ngIf="!!deleteFilterFn"
+                class="invisible ml-5 cursor-pointer text-gray-500 hover:text-blue-500 [.group-link:hover_&]:visible"
+                (click)="deleteFilter(filter.fieldId)"
+              ></m-trash-icon>
             </div> </div
         ></td>
 

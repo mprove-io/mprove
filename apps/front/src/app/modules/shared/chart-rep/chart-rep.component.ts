@@ -82,6 +82,8 @@ export class ChartRepComponent implements OnInit, OnDestroy {
     })
   );
 
+  deleteFilterFnBindThis = this.deleteFilterFn.bind(this);
+
   constructor(
     private apiService: ApiService,
     private navQuery: NavQuery,
@@ -280,6 +282,10 @@ export class ChartRepComponent implements OnInit, OnDestroy {
         : [];
 
     this.cd.detectChanges();
+  }
+
+  deleteFilterFn(filterFieldId: string) {
+    console.log('deleteFilterFn', filterFieldId);
   }
 
   ngOnDestroy() {

@@ -12,7 +12,14 @@ export class BricksComponent {
   @Input()
   listen: { [a: string]: string };
 
+  @Input()
+  deleteFilterFn: (filterFieldId: string) => any;
+
   fractionOperatorEnum = common.FractionOperatorEnum;
 
   constructor() {}
+
+  deleteFilter(filterFieldId: string) {
+    this.deleteFilterFn(filterFieldId);
+  }
 }

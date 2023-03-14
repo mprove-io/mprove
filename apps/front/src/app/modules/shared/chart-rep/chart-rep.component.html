@@ -1,4 +1,4 @@
-<div class="group h-full w-full rounded border border-white bg-white shadow-md">
+<div class="group h-full w-full rounded border border-white bg-white shadow">
   <div class="mx-5 h-full">
     <div class="flex h-full w-full flex-col">
       <div
@@ -97,6 +97,7 @@
         *ngIf="showBricks === true && mconfig?.filters.length > 0"
         [extendedFilters]="mconfig.extendedFilters"
         [listen]="report.listen"
+        [deleteFilterFn]="deleteFilterFnBindThis"
       ></m-bricks>
 
       <div
