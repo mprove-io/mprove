@@ -92,6 +92,7 @@
     class="mb-10 flex max-h-[20%] max-w-max"
     *ngIf="isShow === true && mconfig?.filters.length > 0"
     [extendedFilters]="mconfig.extendedFilters"
+    [listen]="ref.data.listen"
   ></m-bricks>
 
   <div

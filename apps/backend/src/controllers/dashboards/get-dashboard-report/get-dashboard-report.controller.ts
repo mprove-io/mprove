@@ -2,7 +2,6 @@ import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
-import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -10,11 +9,8 @@ import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { DashboardsService } from '~backend/services/dashboards.service';
 import { EnvsService } from '~backend/services/envs.service';
-import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
-import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
-import { QueriesService } from '~backend/services/queries.service';
 import { StructsService } from '~backend/services/structs.service';
 
 @UseGuards(ValidateRequestGuard)
@@ -23,9 +19,6 @@ export class GetDashboardReportController {
   constructor(
     private branchesService: BranchesService,
     private membersService: MembersService,
-    private modelsService: ModelsService,
-    private mconfigsService: MconfigsService,
-    private queriesService: QueriesService,
     private structsService: StructsService,
     private dashboardsService: DashboardsService,
     private projectsService: ProjectsService,
@@ -82,17 +75,13 @@ export class GetDashboardReportController {
       dashboardId: dashboardId
     });
 
-    let isAccessGranted = helper.checkAccess({
-      userAlias: user.alias,
+    let dashboardX = await this.dashboardsService.getDashboardXCheckAccess({
+      user: user,
       member: userMember,
-      entity: dashboard
+      dashboard: dashboard,
+      bridge: bridge,
+      projectId: projectId
     });
-
-    if (isAccessGranted === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_FORBIDDEN_DASHBOARD
-      });
-    }
 
     if (
       dashboard.reports.map(report => report.mconfigId).indexOf(mconfigId) < 0
@@ -102,30 +91,11 @@ export class GetDashboardReportController {
       });
     }
 
-    let mconfig = await this.mconfigsService.getMconfigCheckExists({
-      structId: bridge.struct_id,
-      mconfigId: mconfigId
-    });
-
-    let model = await this.modelsService.getModelCheckExists({
-      structId: bridge.struct_id,
-      modelId: mconfig.model_id
-    });
-
-    let query = await this.queriesService.getQueryCheckExists({
-      queryId: mconfig.query_id,
-      projectId: projectId
-    });
-
     let apiMember = wrapper.wrapToApiMember(userMember);
 
     let payload: apiToBackend.ToBackendGetDashboardReportResponsePayload = {
       userMember: apiMember,
-      query: wrapper.wrapToApiQuery(query),
-      mconfig: wrapper.wrapToApiMconfig({
-        mconfig: mconfig,
-        modelFields: model.fields
-      })
+      report: dashboardX.reports.find(report => report.mconfigId === mconfigId)
     };
 
     return payload;

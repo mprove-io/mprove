@@ -35,12 +35,8 @@ export class ToBackendGetDashboardReportResponsePayload {
   userMember: common.Member;
 
   @ValidateNested()
-  @Type(() => common.MconfigX)
-  mconfig: common.MconfigX;
-
-  @ValidateNested()
-  @Type(() => common.Query)
-  query: common.Query;
+  @Type(() => common.ReportX)
+  report: common.ReportX;
 }
 
 export class ToBackendGetDashboardReportResponse extends common.MyResponse {

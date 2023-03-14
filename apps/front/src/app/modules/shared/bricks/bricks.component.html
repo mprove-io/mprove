@@ -4,10 +4,24 @@
       <tr *ngFor="let filter of extendedFilters; let filterIndex = index">
         <td class="py-1 align-top">
           <div class="flex flex-col items-start justify-start">
-            <m-field-label
-              [column]="filter.field"
-              class="flex text-sm"
-            ></m-field-label> </div
+            <div class="flex flex-row items-center">
+              <div *ngIf="!!listen" class="mr-2 flex-shrink-0 text-gray-500">
+                <m-link-icon
+                  tippy="Report filter listens to dashboard filter"
+                  *ngIf="!!listen[filter.fieldId] === true"
+                ></m-link-icon>
+
+                <m-link-off-icon
+                  tippy="Report filter does not listen to dashboard filter"
+                  *ngIf="!!listen[filter.fieldId] === false"
+                ></m-link-off-icon>
+              </div>
+
+              <m-field-label
+                [column]="filter.field"
+                class="flex text-sm"
+              ></m-field-label>
+            </div> </div
         ></td>
 
         <!-- <td class="align-top py-1">

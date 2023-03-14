@@ -255,7 +255,8 @@ export class ChartRepComponent implements OnInit, OnDestroy {
       showNav: true,
       isSelectValid: this.isSelectValid,
       dashboardId: this.dashboard.dashboardId,
-      vizId: undefined
+      vizId: undefined,
+      listen: this.report.listen
     });
   }
 

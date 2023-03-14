@@ -27,6 +27,7 @@ export interface ChartDialogData {
   isSelectValid: boolean;
   vizId: string;
   dashboardId: string;
+  listen?: { [a: string]: string };
   updateQueryFn?: any;
 }
 

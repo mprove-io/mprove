@@ -276,6 +276,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   async showChart(report: common.ReportX, dashboardId: string) {
     this.spinner.show(report.mconfigId);
 
+    let reportX: common.ReportX;
+
     let payloadGetDashboardReport: apiToBackend.ToBackendGetDashboardReportRequestPayload =
       {
         projectId: this.nav.projectId,
@@ -301,8 +303,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
-            query = resp.payload.query;
-            mconfig = resp.payload.mconfig;
+            reportX = resp.payload.report;
+            query = resp.payload.report.query;
+            mconfig = resp.payload.report.mconfig;
           }
         })
       )
@@ -333,11 +336,12 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       mconfig: mconfig,
       query: query,
       qData: qData,
-      canAccessModel: report.hasAccessToModel,
+      canAccessModel: reportX.hasAccessToModel,
       showNav: true,
       isSelectValid: isSelectValid,
       dashboardId: dashboardId,
-      vizId: undefined
+      vizId: undefined,
+      listen: reportX.listen
     });
   }
 
