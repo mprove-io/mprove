@@ -252,7 +252,9 @@ export class ModelTreeComponent implements AfterViewInit {
         fractions: [newFraction]
       };
 
-      newMconfig.filters = [...newMconfig.filters, newFilter];
+      newMconfig.filters = [...newMconfig.filters, newFilter].sort((a, b) =>
+        a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
+      );
 
       this.expandFilters.emit();
     }

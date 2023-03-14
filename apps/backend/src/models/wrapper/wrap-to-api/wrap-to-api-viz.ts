@@ -44,7 +44,8 @@ export function wrapToApiViz(item: {
       mconfigs: mconfigs,
       queries: queries,
       isAddMconfigAndQuery: isAddMconfigAndQuery,
-      models: models
+      models: models,
+      dashboardExtendedFilters: undefined
     }),
     serverTs: Number(viz.server_ts)
   };

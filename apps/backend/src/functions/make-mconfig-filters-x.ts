@@ -26,5 +26,7 @@ export function makeMconfigFiltersX(item: {
     });
   }
 
-  return filtersX;
+  return filtersX.sort((a, b) =>
+    a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
+  );
 }

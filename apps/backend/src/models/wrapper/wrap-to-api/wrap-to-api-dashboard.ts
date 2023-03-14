@@ -11,14 +11,8 @@ export function wrapToApiDashboard(item: {
   isAddMconfigAndQuery: boolean;
   models: common.ModelX[];
 }): common.DashboardX {
-  let {
-    dashboard,
-    mconfigs,
-    queries,
-    isAddMconfigAndQuery,
-    member,
-    models
-  } = item;
+  let { dashboard, mconfigs, queries, isAddMconfigAndQuery, member, models } =
+    item;
 
   let filePathArray = dashboard.file_path.split('/');
 
@@ -34,6 +28,8 @@ export function wrapToApiDashboard(item: {
   let canEditOrDeleteDashboard =
     member.isEditor || member.isAdmin || author === member.alias;
 
+  let dashboardExtendedFilters = makeDashboardFiltersX(dashboard);
+
   return {
     structId: dashboard.struct_id,
     dashboardId: dashboard.dashboard_id,
@@ -47,14 +43,15 @@ export function wrapToApiDashboard(item: {
     gr: dashboard.gr,
     hidden: common.enumToBoolean(dashboard.hidden),
     fields: dashboard.fields,
-    extendedFilters: makeDashboardFiltersX(dashboard),
+    extendedFilters: dashboardExtendedFilters,
     description: dashboard.description,
     reports: makeReportsX({
       reports: dashboard.reports,
       mconfigs: mconfigs,
       queries: queries,
       isAddMconfigAndQuery: isAddMconfigAndQuery,
-      models: models
+      models: models,
+      dashboardExtendedFilters: dashboardExtendedFilters
     }),
     temp: common.enumToBoolean(dashboard.temp),
     serverTs: Number(dashboard.server_ts)
