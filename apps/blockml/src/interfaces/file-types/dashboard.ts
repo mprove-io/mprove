@@ -1,9 +1,9 @@
+import { common } from '~blockml/barrels/common';
 import { FieldAny } from '~blockml/interfaces/field/field-any';
-import { FileBasic } from '~blockml/interfaces/file/file-basic';
 import { FilterBricksDictionary } from '~blockml/interfaces/filter-bricks-dictionary';
 import { Report } from '~blockml/interfaces/report';
 
-export interface Dashboard extends FileBasic {
+export interface Dashboard extends common.FileBasic {
   dashboard?: string;
   dashboard_line_num?: number;
 

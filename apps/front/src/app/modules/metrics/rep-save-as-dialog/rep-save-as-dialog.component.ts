@@ -246,9 +246,11 @@ export class RepSaveAsDialogComponent implements OnInit {
             this.repsQuery.update({ reps: newReps });
             this.repQuery.update(resp.payload.rep);
 
+            this.spinner.hide(constants.APP_SPINNER_NAME); // route params do not change
+
             this.navigateService.navigateToMetricsRep({
               repId: resp.payload.rep.repId,
-              selectRowsNodeIds: []
+              selectRowsNodeIds: uiState.repSelectedNodes.map(node => node.id)
             });
           }
         }),
@@ -337,7 +339,7 @@ export class RepSaveAsDialogComponent implements OnInit {
 
             this.navigateService.navigateToMetricsRep({
               repId: resp.payload.rep.repId,
-              selectRowsNodeIds: []
+              selectRowsNodeIds: uiState.repSelectedNodes.map(node => node.id)
             });
           }
         }),

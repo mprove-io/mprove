@@ -18,6 +18,7 @@ export * from './model-node-id-suffix.enum';
 export * from './model-node-label.enum';
 export * from './model-tree-levels-enum.enum';
 export * from './panel.enum';
+export * from './parameter-type.enum';
 export * from './project-remote-type.enum';
 export * from './project-week-start.enum';
 export * from './query-status.enum';

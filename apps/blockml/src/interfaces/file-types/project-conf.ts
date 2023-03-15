@@ -1,7 +1,6 @@
 import { common } from '~blockml/barrels/common';
-import { FileBasic } from '~blockml/interfaces/file/file-basic';
 
-export interface ProjectConf extends FileBasic {
+export interface ProjectConf extends common.FileBasic {
   mprove_dir?: string;
   mprove_dir_line_num?: number;
 

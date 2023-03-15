@@ -12,7 +12,11 @@ export function makeRepFileText(item: {
 }) {
   let { repId, title, rows, accessRoles, accessUsers, metrics, struct } = item;
 
-  let repFileText = common.toYaml({
+  let rep: common.FileRep = {
+    fileName: undefined,
+    fileExt: undefined,
+    filePath: undefined,
+    name: undefined,
     report: repId,
     title: title,
     access_roles:
@@ -25,7 +29,7 @@ export function makeRepFileText(item: {
           ? metrics.find(m => m.metric_id === x.metricId)
           : undefined;
 
-      let row = {
+      let row: common.FileRepRow = {
         id: x.rowId,
         type: x.rowType,
         name:
@@ -34,15 +38,11 @@ export function makeRepFileText(item: {
             ? undefined
             : x.name,
         metric: x.metricId,
-        params:
-          common.isDefined(x.params) && x.params.length > 0
-            ? x.params
-            : undefined,
         formula: common.isDefined(x.formula) ? x.formula : undefined,
         show_chart:
           common.isDefined(x.showChart) &&
           x.showChart !== common.REP_ROW_DEFAULT_SHOW_CHART
-            ? x.showChart
+            ? <any>x.showChart
             : undefined,
         format_number:
           x.rowType === common.RowTypeEnum.Metric &&
@@ -64,12 +64,30 @@ export function makeRepFileText(item: {
             ? undefined
             : struct.currency_suffix === x.currencySuffix
             ? undefined
-            : x.currencySuffix
+            : x.currencySuffix,
+        parameters:
+          common.isDefined(x.parameters) && x.parameters.length > 0
+            ? x.parameters.map(parameter => {
+                let p: common.FileRepRowParameter = {
+                  id: parameter.parameterId,
+                  type: parameter.parameterType,
+                  field: parameter.fieldId,
+                  result: parameter.result,
+                  formula: parameter.formula,
+                  conditions: parameter.conditions,
+                  value: parameter.value
+                };
+
+                return p;
+              })
+            : undefined
       };
 
       return row;
     })
-  });
+  };
+
+  let repFileText = common.toYaml(rep);
 
   return repFileText;
 }

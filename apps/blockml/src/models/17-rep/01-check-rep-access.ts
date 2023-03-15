@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { barSpecial } from '~blockml/barrels/bar-special';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -9,7 +10,7 @@ let func = enums.FuncEnum.CheckRepAccess;
 
 export function checkRepAccess(
   item: {
-    reps: interfaces.Rep[];
+    reps: common.FileRep[];
     errors: BmError[];
     structId: string;
     caller: enums.CallerEnum;

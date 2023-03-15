@@ -1,7 +1,7 @@
-import { FileBasic } from '~blockml/interfaces/file/file-basic';
+import { common } from '~blockml/barrels/common';
 import { Report } from '~blockml/interfaces/report';
 
-export interface Viz extends FileBasic {
+export interface Viz extends common.FileBasic {
   vis?: string;
   vis_line_num?: number;
 

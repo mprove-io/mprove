@@ -32,7 +32,7 @@ import { StatusHeaderComponent } from './status-header/status-header.component';
 import { StatusRendererComponent } from './status-renderer/status-renderer.component';
 
 export interface DataRow extends common.Row {
-  parameters: string;
+  strParameters: string;
   // [col: string]: any;
 }
 
@@ -120,7 +120,8 @@ export class RepComponent {
     {
       field: 'parameters',
       pinned: 'left',
-      minWidth: 60
+      minWidth: 60,
+      valueGetter: params => params.data?.strParameters
     },
     {
       field: 'status',
@@ -244,9 +245,9 @@ export class RepComponent {
         this.data = this.rep.rows.map((row: common.Row) => {
           // let metric = metrics.metrics.find(m => m.metricId === row.metricId);
 
-          let dataRow: DataRow = Object.assign({}, row, {
-            parameters: common.isDefined(row.params)
-              ? JSON.stringify(row.params)
+          let dataRow: DataRow = Object.assign({}, row, <DataRow>{
+            strParameters: common.isDefined(row.parameters)
+              ? JSON.stringify(row.parameters)
               : ''
           });
 

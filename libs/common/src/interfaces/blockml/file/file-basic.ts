@@ -1,8 +1,8 @@
-import { common } from '~blockml/barrels/common';
+import { enums } from '~common/barrels/enums';
 
 export interface FileBasic {
   fileName: string;
-  fileExt: common.FileExtensionEnum;
+  fileExt: enums.FileExtensionEnum;
   filePath: string;
 
   name: string;

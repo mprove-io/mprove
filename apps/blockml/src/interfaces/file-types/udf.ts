@@ -1,6 +1,6 @@
-import { FileBasic } from '~blockml/interfaces/file/file-basic';
+import { common } from '~blockml/barrels/common';
 
-export interface Udf extends FileBasic {
+export interface Udf extends common.FileBasic {
   sql?: string;
   sql_line_num?: string;
 

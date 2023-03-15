@@ -13,7 +13,7 @@ export async function logStruct(
     dashboards: interfaces.Dashboard[];
     metrics: common.MetricAny[];
     models: interfaces.Model[];
-    reps: interfaces.Rep[];
+    reps: common.FileRep[];
     udfsDict: common.UdfsDict;
     views: interfaces.View[];
     vizs: interfaces.Viz[];

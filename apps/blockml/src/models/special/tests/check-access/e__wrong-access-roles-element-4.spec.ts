@@ -3,7 +3,6 @@ import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
@@ -14,7 +13,7 @@ let testId = 'e__wrong-access-roles-element-4';
 
 test('1', async t => {
   let errors: BmError[];
-  let entReps: interfaces.Rep[];
+  let entReps: common.FileRep[];
 
   let wLogger;
   let configService;

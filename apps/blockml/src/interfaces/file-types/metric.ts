@@ -1,8 +1,7 @@
 import { common } from '~blockml/barrels/common';
-import { FileBasic } from '~blockml/interfaces/file/file-basic';
 import { TimeData } from '../time-data';
 
-export interface Metric extends FileBasic {
+export interface Metric extends common.FileBasic {
   metric?: string;
   metric_line_num?: number;
 

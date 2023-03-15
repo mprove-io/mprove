@@ -84,22 +84,23 @@ export class RebuildStructService {
 
     let apiViews = barWrapper.wrapViews({ views: views });
 
+    let apiModels = barWrapper.wrapModels({
+      structId: structId,
+      models: models
+    });
+
     let apiReps = barWrapper.wrapReps({
       projectId: projectId,
       structId: structId,
       reps: reps,
       metrics: metrics,
+      models: apiModels,
       formatNumber: formatNumber,
       currencyPrefix: currencyPrefix,
       currencySuffix: currencySuffix
     });
 
     let apiApis = barWrapper.wrapApis({ structId: structId, apis: apis });
-
-    let apiModels = barWrapper.wrapModels({
-      structId: structId,
-      models: models
-    });
 
     let { apiDashboards, dashMconfigs, dashQueries } =
       barWrapper.wrapDashboards({
@@ -209,7 +210,7 @@ export class RebuildStructService {
     let dashboards: interfaces.Dashboard[];
     let metrics: interfaces.Metric[];
     let models: interfaces.Model[];
-    let reps: interfaces.Rep[];
+    let reps: common.FileRep[];
     let udfs: interfaces.Udf[];
     let views: interfaces.View[];
     let vizs: interfaces.Viz[];

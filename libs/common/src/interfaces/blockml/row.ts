@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
 import { enums } from '~common/barrels/enums';
 import { Mconfig } from './mconfig';
+import { Parameter } from './parameter';
 import { Query } from './query';
 import { Rq } from './rq';
 
@@ -27,7 +28,12 @@ export class Row {
   @IsString()
   timeLabel: string;
 
-  params: any[];
+  @ValidateNested()
+  @Type(() => Parameter)
+  parameters: Parameter[];
+
+  @IsString()
+  parametersFormula: string;
 
   @IsBoolean()
   hasAccessToModel: boolean;

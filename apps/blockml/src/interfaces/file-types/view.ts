@@ -1,10 +1,9 @@
 import { common } from '~blockml/barrels/common';
 import { FieldAny } from '~blockml/interfaces/field/field-any';
-import { FileBasic } from '~blockml/interfaces/file/file-basic';
 import { FilterBricksDictionary } from '~blockml/interfaces/filter-bricks-dictionary';
 import { ViewPart } from '~blockml/interfaces/view-part';
 
-export interface View extends FileBasic {
+export interface View extends common.FileBasic {
   view?: string;
   view_line_num?: number;
 

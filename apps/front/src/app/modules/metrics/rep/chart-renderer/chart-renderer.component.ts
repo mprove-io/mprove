@@ -37,7 +37,7 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
       let rowChange: common.RowChange = {
         rowId: this.params.data.rowId,
         formula: this.params.data.formula,
-        params: this.params.data.params,
+        parameters: this.params.data.parameters,
         metricId: this.params.data.metricId,
         showChart: !this.params.data.showChart
       };

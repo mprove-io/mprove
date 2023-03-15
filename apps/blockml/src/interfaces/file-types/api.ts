@@ -1,6 +1,6 @@
-import { FileBasic } from '~blockml/interfaces/file/file-basic';
+import { common } from '~blockml/barrels/common';
 
-export interface Api extends FileBasic {
+export interface Api extends common.FileBasic {
   api?: string;
   api_line_num?: number;
 

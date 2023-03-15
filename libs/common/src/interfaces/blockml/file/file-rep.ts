@@ -1,7 +1,7 @@
-import { FileBasic } from '~blockml/interfaces/file/file-basic';
-import { RepRow } from '../rep-row';
+import { FileBasic } from './file-basic';
+import { FileRepRow } from './file-rep-row';
 
-export interface Rep extends FileBasic {
+export interface FileRep extends FileBasic {
   report?: string;
   report_line_num?: number;
 
@@ -14,6 +14,6 @@ export interface Rep extends FileBasic {
   access_roles?: string[];
   access_roles_line_num?: number;
 
-  rows?: RepRow[];
+  rows?: FileRepRow[];
   rows_line_num?: number;
 }

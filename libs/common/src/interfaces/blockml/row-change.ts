@@ -27,7 +27,7 @@ export class RowChange {
   showChart?: boolean;
 
   @IsOptional()
-  params?: any[];
+  parameters?: any[];
 
   @IsOptional()
   @IsString()

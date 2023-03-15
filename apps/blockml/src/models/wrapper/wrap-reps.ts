@@ -1,12 +1,12 @@
 import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 
 export function wrapReps(item: {
   projectId: string;
   structId: string;
-  reps: interfaces.Rep[];
+  reps: common.FileRep[];
   metrics: common.MetricAny[];
+  models: common.Model[];
   formatNumber: string;
   currencyPrefix: string;
   currencySuffix: string;
@@ -16,6 +16,7 @@ export function wrapReps(item: {
     structId,
     reps,
     metrics,
+    models,
     currencyPrefix,
     currencySuffix,
     formatNumber
@@ -65,7 +66,28 @@ export function wrapReps(item: {
           query: undefined,
           mconfig: undefined,
           hasAccessToModel: false,
-          params: row.params,
+          parameters: row.parameters?.map(parameter => {
+            let result: common.FieldResultEnum;
+
+            if (row.type === common.RowTypeEnum.Metric) {
+              result = models
+                .find(model => model.modelId === metric.modelId)
+                .fields.find(field => field.id === parameter.field).result;
+            }
+
+            let parameterApi: common.Parameter = {
+              parameterId: parameter.id,
+              parameterType: parameter.type,
+              fieldId: parameter.field,
+              result: result,
+              formula: parameter.formula,
+              conditions: parameter.conditions,
+              value: parameter.value
+            };
+
+            return parameterApi;
+          }),
+          parametersFormula: row.parameters_formula,
           records: [],
           formatNumber: common.isDefined(row.format_number)
             ? row.format_number

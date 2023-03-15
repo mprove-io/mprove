@@ -1,11 +1,10 @@
 import { common } from '~blockml/barrels/common';
 import { FieldAny } from '~blockml/interfaces/field/field-any';
-import { FileBasic } from '~blockml/interfaces/file/file-basic';
 import { FilterBricksDictionary } from '~blockml/interfaces/filter-bricks-dictionary';
 import { Join } from '~blockml/interfaces/join';
 import { MetricsByElement } from '../metrics-by-element';
 
-export interface Model extends FileBasic {
+export interface Model extends common.FileBasic {
   model?: string;
   model_line_num?: number;
 
