@@ -8,66 +8,66 @@ import { FileChartOptions } from './file-chart-options';
 import { FileChartTile } from './file-chart-tile';
 
 export interface FilePartReport {
-  title: string;
-  title_line_num: number;
+  title?: string;
+  title_line_num?: number;
 
-  description: string;
-  description_line_num: number;
+  description?: string;
+  description_line_num?: number;
 
-  model: string;
-  model_line_num: number;
+  model?: string;
+  model_line_num?: number;
 
-  select: string[];
-  select_line_num: number;
+  select?: string[];
+  select_line_num?: number;
 
-  sorts: string;
-  sorts_line_num: number;
+  sorts?: string;
+  sorts_line_num?: number;
 
-  timezone: string;
-  timezone_line_num: number;
+  timezone?: string;
+  timezone_line_num?: number;
 
-  limit: string; // string
-  limit_line_num: number;
+  limit?: string; // string
+  limit_line_num?: number;
 
-  type: enums.ChartTypeEnum;
-  type_line_num: number;
+  type?: enums.ChartTypeEnum;
+  type_line_num?: number;
 
-  data: FileChartData;
-  data_line_num: number;
+  data?: FileChartData;
+  data_line_num?: number;
 
-  axis: FileChartAxis;
-  axis_line_num: number;
+  axis?: FileChartAxis;
+  axis_line_num?: number;
 
-  options: FileChartOptions;
-  options_line_num: number;
+  options?: FileChartOptions;
+  options_line_num?: number;
 
-  tile: FileChartTile;
-  tile_line_num: number;
+  tile?: FileChartTile;
+  tile_line_num?: number;
 
-  listen_filters: {
+  listen_filters?: {
     [dashboardFilterName: string]: string;
   };
-  listen_filters_line_num: number;
+  listen_filters_line_num?: number;
 
-  default_filters: FilterBricksDictionary;
-  default_filters_line_num: number;
+  default_filters?: FilterBricksDictionary;
+  default_filters_line_num?: number;
 
   //
 
-  sortingsAry: {
-    fieldId: string;
-    desc: boolean;
+  sortingsAry?: {
+    fieldId?: string;
+    desc?: boolean;
   }[];
 
-  listen: { [a: string]: string };
+  listen?: { [a: string]: string };
 
-  combinedFilters: FilterBricksDictionary;
+  combinedFilters?: FilterBricksDictionary;
 
-  filtersFractions: {
+  filtersFractions?: {
     [s: string]: Fraction[];
   };
 
-  sql: string[];
+  sql?: string[];
 
-  varsSqlSteps: VarsSqlStep[];
+  varsSqlSteps?: VarsSqlStep[];
 }

@@ -48,7 +48,7 @@ export class ViewBlockmlDialogComponent implements OnInit {
       )
       .subscribe();
 
-    let rep = common.prepareReport({
+    let filePartReport: common.FilePartReport = common.prepareReport({
       isForDashboard: false,
       mconfig: this.ref.data.mconfig,
       defaultTimezone: struct.defaultTimezone,
@@ -56,7 +56,7 @@ export class ViewBlockmlDialogComponent implements OnInit {
       deleteFilterMconfigId: undefined
     });
 
-    this.reportYaml = common.toYaml({ reports: [rep] });
+    this.reportYaml = common.toYaml({ reports: [filePartReport] });
 
     let monaco = await this.monacoService.initMonaco();
     monaco.languages.setMonarchTokensProvider(

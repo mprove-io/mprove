@@ -1,6 +1,7 @@
 import { constants } from '~common/barrels/constants';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
 import { ReportX } from '~common/interfaces/backend/report-x';
+import { FilePartReport } from '~common/_index';
 import { isDefined } from './is-defined';
 
 export function prepareReport(item: {
@@ -10,7 +11,7 @@ export function prepareReport(item: {
   defaultTimezone: string;
   deleteFilterFieldId: string;
   deleteFilterMconfigId: string;
-}) {
+}): FilePartReport {
   let {
     report,
     mconfig,
@@ -70,7 +71,7 @@ export function prepareReport(item: {
     });
   }
 
-  let rep: any = {
+  let filePartReport: FilePartReport = {
     title: chart.title,
     description: isDefined(chart.description) ? chart.description : undefined,
     model: mconfig.modelId,
@@ -88,7 +89,7 @@ export function prepareReport(item: {
     limit:
       isDefined(mconfig.limit) &&
       mconfig.limit !== Number(constants.DEFAULT_LIMIT)
-        ? mconfig.limit
+        ? <any>mconfig.limit
         : undefined,
     default_filters:
       Object.keys(defaultFilters).length > 0 ? defaultFilters : undefined,
@@ -153,31 +154,31 @@ export function prepareReport(item: {
         constants.showXAxisLabelChartTypes.indexOf(chart.type) > -1 &&
         chart.showXAxisLabel !== constants.CHART_DEFAULT_SHOW_X_AXIS_LABEL &&
         isDefined(chart.showXAxisLabel)
-          ? chart.showXAxisLabel
+          ? <any>chart.showXAxisLabel
           : undefined,
       show_y_axis_label:
         constants.showYAxisLabelChartTypes.indexOf(chart.type) > -1 &&
         chart.showYAxisLabel !== constants.CHART_DEFAULT_SHOW_Y_AXIS_LABEL &&
         isDefined(chart.showYAxisLabel)
-          ? chart.showYAxisLabel
+          ? <any>chart.showYAxisLabel
           : undefined,
       x_axis:
         constants.xAxisChartTypes.indexOf(chart.type) > -1 &&
         chart.xAxis !== constants.CHART_DEFAULT_X_AXIS &&
         isDefined(chart.xAxis)
-          ? chart.xAxis
+          ? <any>chart.xAxis
           : undefined,
       y_axis:
         constants.yAxisChartTypes.indexOf(chart.type) > -1 &&
         chart.yAxis !== constants.CHART_DEFAULT_Y_AXIS &&
         isDefined(chart.yAxis)
-          ? chart.yAxis
+          ? <any>chart.yAxis
           : undefined,
       show_axis:
         constants.showAxisChartTypes.indexOf(chart.type) > -1 &&
         chart.showAxis !== constants.CHART_DEFAULT_SHOW_AXIS &&
         isDefined(chart.showAxis)
-          ? chart.showAxis
+          ? <any>chart.showAxis
           : undefined
     },
     options: {
@@ -239,164 +240,164 @@ export function prepareReport(item: {
         constants.legendChartTypes.indexOf(chart.type) > -1 &&
         chart.legend !== constants.CHART_DEFAULT_LEGEND &&
         isDefined(chart.legend)
-          ? chart.legend
+          ? <any>chart.legend
           : undefined,
       labels:
         constants.labelsChartTypes.indexOf(chart.type) > -1 &&
         chart.labels !== constants.CHART_DEFAULT_LABELS &&
         isDefined(chart.labels)
-          ? chart.labels
+          ? <any>chart.labels
           : undefined,
       show_data_label:
         constants.showDataLabelChartTypes.indexOf(chart.type) > -1 &&
         chart.showDataLabel !== constants.CHART_DEFAULT_SHOW_DATA_LABEL &&
         isDefined(chart.showDataLabel)
-          ? chart.showDataLabel
+          ? <any>chart.showDataLabel
           : undefined,
       format:
         constants.formatChartTypes.indexOf(chart.type) > -1 &&
         chart.format !== constants.CHART_DEFAULT_FORMAT &&
         isDefined(chart.format)
-          ? chart.format
+          ? <any>chart.format
           : undefined,
       tooltip_disabled:
         constants.tooltipDisabledChartTypes.indexOf(chart.type) > -1 &&
         chart.tooltipDisabled !== constants.CHART_DEFAULT_TOOLTIP_DISABLED &&
         isDefined(chart.tooltipDisabled)
-          ? chart.tooltipDisabled
+          ? <any>chart.tooltipDisabled
           : undefined,
       round_edges:
         constants.roundEdgesChartTypes.indexOf(chart.type) > -1 &&
         chart.roundEdges !== constants.CHART_DEFAULT_ROUND_EDGES &&
         isDefined(chart.roundEdges)
-          ? chart.roundEdges
+          ? <any>chart.roundEdges
           : undefined,
       round_domains:
         constants.roundDomainsChartTypes.indexOf(chart.type) > -1 &&
         chart.roundDomains !== constants.CHART_DEFAULT_ROUND_DOMAINS &&
         isDefined(chart.roundDomains)
-          ? chart.roundDomains
+          ? <any>chart.roundDomains
           : undefined,
       show_grid_lines:
         constants.showGridLinesChartTypes.indexOf(chart.type) > -1 &&
         chart.showGridLines !== constants.CHART_DEFAULT_SHOW_GRID_LINES &&
         isDefined(chart.showGridLines)
-          ? chart.showGridLines
+          ? <any>chart.showGridLines
           : undefined,
       auto_scale:
         constants.autoScaleChartTypes.indexOf(chart.type) > -1 &&
         chart.autoScale !== constants.CHART_DEFAULT_AUTO_SCALE &&
         isDefined(chart.autoScale)
-          ? chart.autoScale
+          ? <any>chart.autoScale
           : undefined,
       doughnut:
         constants.doughnutChartTypes.indexOf(chart.type) > -1 &&
         chart.doughnut !== constants.CHART_DEFAULT_DOUGHNUT &&
         isDefined(chart.doughnut)
-          ? chart.doughnut
+          ? <any>chart.doughnut
           : undefined,
       explode_slices:
         constants.explodeSlicesChartTypes.indexOf(chart.type) > -1 &&
         chart.explodeSlices !== constants.CHART_DEFAULT_EXPLODE_SLICES &&
         isDefined(chart.explodeSlices)
-          ? chart.explodeSlices
+          ? <any>chart.explodeSlices
           : undefined,
       gradient:
         constants.gradientChartTypes.indexOf(chart.type) > -1 &&
         chart.gradient !== constants.CHART_DEFAULT_GRADIENT &&
         isDefined(chart.gradient)
-          ? chart.gradient
+          ? <any>chart.gradient
           : undefined,
       animations:
         constants.animationsChartTypes.indexOf(chart.type) > -1 &&
         chart.animations !== constants.CHART_DEFAULT_ANIMATIONS &&
         isDefined(chart.animations)
-          ? chart.animations
+          ? <any>chart.animations
           : undefined,
       page_size:
         constants.pageSizeChartTypes.indexOf(chart.type) > -1 &&
         chart.pageSize !== constants.CHART_DEFAULT_PAGE_SIZE &&
         isDefined(chart.pageSize)
-          ? chart.pageSize
+          ? <any>chart.pageSize
           : undefined,
       arc_width:
         constants.arcWidthChartTypes.indexOf(chart.type) > -1 &&
         chart.arcWidth !== constants.CHART_DEFAULT_ARC_WIDTH &&
         isDefined(chart.arcWidth)
-          ? chart.arcWidth
+          ? <any>chart.arcWidth
           : undefined,
       bar_padding:
         constants.barPaddingChartTypes.indexOf(chart.type) > -1 &&
         chart.barPadding !== constants.CHART_DEFAULT_BAR_PADDING &&
         isDefined(chart.barPadding)
-          ? chart.barPadding
+          ? <any>chart.barPadding
           : undefined,
       group_padding:
         constants.groupPaddingChartTypes.indexOf(chart.type) > -1 &&
         chart.groupPadding !== constants.CHART_DEFAULT_GROUP_PADDING &&
         isDefined(chart.groupPadding)
-          ? chart.groupPadding
+          ? <any>chart.groupPadding
           : undefined,
       inner_padding:
         constants.innerPaddingChartTypes.indexOf(chart.type) > -1 &&
         chart.innerPadding !== constants.CHART_DEFAULT_INNER_PADDING &&
         isDefined(chart.innerPadding)
-          ? chart.innerPadding
+          ? <any>chart.innerPadding
           : undefined,
       angle_span:
         constants.angleSpanChartTypes.indexOf(chart.type) > -1 &&
         chart.angleSpan !== constants.CHART_DEFAULT_ANGLE_SPAN &&
         isDefined(chart.angleSpan)
-          ? chart.angleSpan
+          ? <any>chart.angleSpan
           : undefined,
       start_angle:
         constants.startAngleChartTypes.indexOf(chart.type) > -1 &&
         chart.startAngle !== constants.CHART_DEFAULT_START_ANGLE &&
         isDefined(chart.startAngle)
-          ? chart.startAngle
+          ? <any>chart.startAngle
           : undefined,
       big_segments:
         constants.bigSegmentsChartTypes.indexOf(chart.type) > -1 &&
         chart.bigSegments !== constants.CHART_DEFAULT_BIG_SEGMENTS &&
         isDefined(chart.bigSegments)
-          ? chart.bigSegments
+          ? <any>chart.bigSegments
           : undefined,
       small_segments:
         constants.smallSegmentsChartTypes.indexOf(chart.type) > -1 &&
         chart.smallSegments !== constants.CHART_DEFAULT_SMALL_SEGMENTS &&
         isDefined(chart.smallSegments)
-          ? chart.smallSegments
+          ? <any>chart.smallSegments
           : undefined,
       min:
         constants.minChartTypes.indexOf(chart.type) > -1 &&
         chart.min !== constants.CHART_DEFAULT_MIN &&
         isDefined(chart.min)
-          ? chart.min
+          ? <any>chart.min
           : undefined,
       max:
         constants.maxChartTypes.indexOf(chart.type) > -1 &&
         chart.max !== constants.CHART_DEFAULT_MAX &&
         isDefined(chart.max)
-          ? chart.max
+          ? <any>chart.max
           : undefined,
 
       y_scale_min:
         constants.yScaleMinChartTypes.indexOf(chart.type) > -1 &&
         chart.yScaleMin !== constants.CHART_DEFAULT_Y_SCALE_MIN &&
         isDefined(chart.yScaleMin)
-          ? chart.yScaleMin
+          ? <any>chart.yScaleMin
           : undefined,
       y_scale_max:
         constants.yScaleMaxChartTypes.indexOf(chart.type) > -1 &&
         chart.yScaleMax !== constants.CHART_DEFAULT_Y_SCALE_MAX &&
         isDefined(chart.yScaleMax)
-          ? chart.yScaleMax
+          ? <any>chart.yScaleMax
           : undefined,
       x_scale_max:
         constants.xScaleMaxChartTypes.indexOf(chart.type) > -1 &&
         chart.xScaleMax !== constants.CHART_DEFAULT_X_SCALE_MAX &&
         isDefined(chart.xScaleMax)
-          ? chart.xScaleMax
+          ? <any>chart.xScaleMax
           : undefined,
 
       format_number_data_label:
@@ -446,64 +447,64 @@ export function prepareReport(item: {
   };
 
   if (isForDashboard === true && isDefined(report)) {
-    rep.tile = {
+    filePartReport.tile = {
       tile_width:
         // report.tileWidth !== constants.REPORT_DEFAULT_TILE_WIDTH &&
-        isDefined(report.tileWidth) ? report.tileWidth : undefined,
+        isDefined(report.tileWidth) ? <any>report.tileWidth : undefined,
 
       tile_height:
         // report.tileHeight !== constants.REPORT_DEFAULT_TILE_HEIGHT &&
-        isDefined(report.tileHeight) ? report.tileHeight : undefined,
+        isDefined(report.tileHeight) ? <any>report.tileHeight : undefined,
 
       tile_x:
         // report.tileX !== constants.REPORT_DEFAULT_TILE_X &&
-        isDefined(report.tileX) ? report.tileX : undefined,
+        isDefined(report.tileX) ? <any>report.tileX : undefined,
 
       tile_y:
         // report.tileY !== constants.REPORT_DEFAULT_TILE_Y &&
-        isDefined(report.tileY) ? report.tileY : undefined
+        isDefined(report.tileY) ? <any>report.tileY : undefined
     };
   }
 
   let keepData = false;
-  Object.keys(rep.data).forEach((x: any) => {
-    if (isDefined((<any>rep.data)[x])) {
+  Object.keys(filePartReport.data).forEach((x: any) => {
+    if (isDefined((<any>filePartReport.data)[x])) {
       keepData = true;
     }
   });
   if (keepData === false) {
-    delete rep.data;
+    delete filePartReport.data;
   }
 
   let keepAxis = false;
-  Object.keys(rep.axis).forEach((x: any) => {
-    if (isDefined((<any>rep.axis)[x])) {
+  Object.keys(filePartReport.axis).forEach((x: any) => {
+    if (isDefined((<any>filePartReport.axis)[x])) {
       keepAxis = true;
     }
   });
   if (keepAxis === false) {
-    delete rep.axis;
+    delete filePartReport.axis;
   }
 
   let keepOptions = false;
-  Object.keys(rep.options).forEach((x: any) => {
-    if (isDefined((<any>rep.options)[x])) {
+  Object.keys(filePartReport.options).forEach((x: any) => {
+    if (isDefined((<any>filePartReport.options)[x])) {
       keepOptions = true;
     }
   });
   if (keepOptions === false) {
-    delete rep.options;
+    delete filePartReport.options;
   }
 
   let keepTile = false;
-  Object.keys(rep.tile).forEach((x: any) => {
-    if (isDefined((<any>rep.tile)[x])) {
+  Object.keys(filePartReport.tile).forEach((x: any) => {
+    if (isDefined((<any>filePartReport.tile)[x])) {
       keepTile = true;
     }
   });
   if (keepTile === false) {
-    delete rep.tile;
+    delete filePartReport.tile;
   }
 
-  return rep;
+  return filePartReport;
 }

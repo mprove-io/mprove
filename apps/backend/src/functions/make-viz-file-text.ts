@@ -10,7 +10,7 @@ export function makeVizFileText(item: {
 }) {
   let { mconfig, vizId, reportTitle, roles, users, defaultTimezone } = item;
 
-  let rep = common.prepareReport({
+  let filePartReport: common.FilePartReport = common.prepareReport({
     isForDashboard: false,
     mconfig: mconfig,
     defaultTimezone: defaultTimezone,
@@ -18,7 +18,7 @@ export function makeVizFileText(item: {
     deleteFilterMconfigId: undefined
   });
 
-  rep.title = reportTitle;
+  filePartReport.title = reportTitle;
 
   let vizFileText = common.toYaml({
     vis: vizId,
@@ -30,7 +30,7 @@ export function makeVizFileText(item: {
       common.isDefined(users) && users.trim().length > 0
         ? users.split(',').map(x => x.trim())
         : undefined,
-    reports: [rep]
+    reports: [filePartReport]
   });
 
   return vizFileText;
