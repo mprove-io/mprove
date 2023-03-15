@@ -1,5 +1,4 @@
 import { enums } from '~common/barrels/enums';
-import { TimeData } from '../time-data';
 import { FileBasic } from './file-basic';
 
 export interface FileMetric extends FileBasic {
@@ -41,7 +40,4 @@ export interface FileMetric extends FileBasic {
 
   params?: any[];
   params_line_num?: number;
-
-  entries?: TimeData[];
-  entries_line_num?: number;
 }

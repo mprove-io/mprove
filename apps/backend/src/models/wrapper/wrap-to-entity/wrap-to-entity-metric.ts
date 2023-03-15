@@ -16,8 +16,6 @@ export function wrapToEntityMetric(x: common.MetricAny): entities.MetricEntity {
     field_class: x.fieldClass,
     timefield_id: x.timeFieldId,
     api_id: x.apiId,
-    time_spec: x.timeSpec,
-    entries: x.entries,
     formula: x.formula,
     sql: x.sql,
     connection_id: x.connection,

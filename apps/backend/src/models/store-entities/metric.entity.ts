@@ -34,9 +34,6 @@ export class MetricEntity {
   @Column({ type: constants.VARCHAR })
   time_label: string;
 
-  @Column({ type: constants.VARCHAR, nullable: true })
-  time_spec: common.TimeSpecEnum;
-
   @Column({ type: constants.JSON })
   params: any[];
 
@@ -54,9 +51,6 @@ export class MetricEntity {
 
   @Column({ type: constants.VARCHAR, nullable: true })
   api_id: string;
-
-  @Column({ type: constants.JSON, nullable: true })
-  entries: common.TimeData[];
 
   @Column({ type: constants.MEDIUMTEXT, nullable: true })
   formula: string;
