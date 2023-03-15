@@ -1,6 +1,6 @@
 import { enums } from '~common/barrels/enums';
 
-export interface Time {
+export interface FieldTime {
   hidden?: string; // boolean
   hidden_line_num?: number;
 

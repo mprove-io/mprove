@@ -38,7 +38,7 @@ export function checkCycles<T extends types.vmType>(
     });
 
     if (g.hasCycle()) {
-      let lines: common.BmErrorLine[] = [];
+      let lines: common.FileErrorLine[] = [];
 
       let cycles: any[] = g.getCycles();
 

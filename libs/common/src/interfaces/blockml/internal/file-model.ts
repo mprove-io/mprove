@@ -2,7 +2,7 @@ import { FilterBricksDictionary } from '../filter-bricks-dictionary';
 import { ProjectConnection } from '../project-connection';
 import { FieldAny } from './field-any';
 import { FileBasic } from './file-basic';
-import { Join } from './file-join';
+import { FileJoin } from './file-join';
 
 export interface FileModel extends FileBasic {
   model?: string;
@@ -38,7 +38,7 @@ export interface FileModel extends FileBasic {
   udfs?: string[];
   udfs_line_num?: number;
 
-  joins?: Join[];
+  joins?: FileJoin[];
   joins_line_num?: number;
 
   build_metrics?: {

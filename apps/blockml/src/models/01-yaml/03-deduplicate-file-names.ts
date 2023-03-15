@@ -22,7 +22,7 @@ export function deduplicateFileNames(
 
   item.file2s.forEach((x: common.File2) => {
     if (x.pathContents.length > 1) {
-      let lines: common.BmErrorLine[] = x.pathContents.map(fp => ({
+      let lines: common.FileErrorLine[] = x.pathContents.map(fp => ({
         line: 0,
         name: x.name,
         path: fp.path

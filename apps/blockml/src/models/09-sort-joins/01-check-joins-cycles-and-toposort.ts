@@ -42,7 +42,7 @@ export function checkJoinsCyclesAndToposort(
       cycles.forEach(cycle => {
         let cycledNames: string[] = cycle.map((c: any) => c.name);
 
-        let lines: common.BmErrorLine[] = [];
+        let lines: common.FileErrorLine[] = [];
 
         cycledNames.forEach(cName => {
           let cycledJoin = x.joins.find(j => j.as === cName);

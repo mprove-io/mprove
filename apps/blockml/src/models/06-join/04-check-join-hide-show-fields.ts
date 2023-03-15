@@ -28,7 +28,7 @@ export function checkJoinHideShowFields(
       let hideFieldsErrorLine = {
         line: join[
           (common.ParameterEnum.HideFields +
-            constants.LINE_NUM) as keyof common.Join
+            constants.LINE_NUM) as keyof common.FileJoin
         ] as number,
         name: x.fileName,
         path: x.filePath
@@ -37,7 +37,7 @@ export function checkJoinHideShowFields(
       let showFieldsErrorLine = {
         line: join[
           (common.ParameterEnum.ShowFields +
-            constants.LINE_NUM) as keyof common.Join
+            constants.LINE_NUM) as keyof common.FileJoin
         ] as number,
         name: x.fileName,
         path: x.filePath

@@ -32,7 +32,7 @@ export function substituteSingleRefs<T extends types.vmType>(
       switch (true) {
         // process dimensions (they can reference only dimensions - already checked)
         case field.fieldClass === common.FieldClassEnum.Dimension: {
-          let dimension: common.Dimension = field;
+          let dimension: common.FieldDimension = field;
 
           // sqlReal
           let sqlReal = field.sql; // init
@@ -79,7 +79,7 @@ export function substituteSingleRefs<T extends types.vmType>(
         // process measures of Models (they can reference only dimensions - already checked)
         case field.fieldClass === common.FieldClassEnum.Measure &&
           x.fileExt === common.FileExtensionEnum.Model: {
-          let measure: common.Measure = field;
+          let measure: common.FieldMeasure = field;
 
           // sqlReal
           let sqlReal = field.sql; // init
@@ -133,7 +133,7 @@ export function substituteSingleRefs<T extends types.vmType>(
         // process measures of Views (they can reference only dimensions - already checked)
         case field.fieldClass === common.FieldClassEnum.Measure &&
           x.fileExt === common.FileExtensionEnum.View: {
-          let measure: common.Measure = field;
+          let measure: common.FieldMeasure = field;
 
           // sqlReal
           let sqlReal = field.sql; // init
@@ -180,7 +180,7 @@ export function substituteSingleRefs<T extends types.vmType>(
 
         // process calculations (they can reference anything - already checked)
         case field.fieldClass === common.FieldClassEnum.Calculation: {
-          let calculation: common.Calculation = field;
+          let calculation: common.FieldCalculation = field;
 
           // sqlReal
           let sqlReal = field.sql; // init

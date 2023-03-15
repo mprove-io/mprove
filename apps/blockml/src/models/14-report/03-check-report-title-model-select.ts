@@ -113,7 +113,7 @@ export function checkReportTitleModelSelect<T extends types.dzType>(
 
     Object.keys(titles).forEach(title => {
       if (titles[title].length > 1) {
-        let lines: common.BmErrorLine[] = titles[title].map(lineNum => ({
+        let lines: common.FileErrorLine[] = titles[title].map(lineNum => ({
           line: lineNum,
           name: x.fileName,
           path: x.filePath

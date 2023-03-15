@@ -1,6 +1,6 @@
 import { enums } from '~common/barrels/enums';
 
-export interface Calculation {
+export interface FieldCalculation {
   hidden?: string; // boolean
   hidden_line_num?: number;
 

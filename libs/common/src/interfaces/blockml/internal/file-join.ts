@@ -1,7 +1,7 @@
 import { enums } from '~common/barrels/enums';
 import { FileView } from './file-view';
 
-export interface Join {
+export interface FileJoin {
   from_view: string;
   from_view_line_num: number;
 

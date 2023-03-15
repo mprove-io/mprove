@@ -1,6 +1,6 @@
 import { enums } from '~common/barrels/enums';
 
-export interface Measure {
+export interface FieldMeasure {
   hidden?: string; // boolean
   hidden_line_num?: number;
 

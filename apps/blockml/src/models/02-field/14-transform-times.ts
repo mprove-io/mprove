@@ -452,7 +452,7 @@ export function transformTimes<T extends types.vmType>(
           }
         }
 
-        let newDimension: common.Dimension = {
+        let newDimension: common.FieldDimension = {
           hidden: field.hidden,
           hidden_line_num: 0,
 

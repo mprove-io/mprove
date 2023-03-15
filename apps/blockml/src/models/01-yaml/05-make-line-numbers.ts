@@ -183,7 +183,7 @@ export function processLineNumbersRecursive(item: {
       let p = r[1];
 
       if (item.hash[par].length > 1) {
-        let lines: common.BmErrorLine[] = item.hash[par].map((l: number) => ({
+        let lines: common.FileErrorLine[] = item.hash[par].map((l: number) => ({
           line: l,
           name: item.fileName,
           path: item.filePath

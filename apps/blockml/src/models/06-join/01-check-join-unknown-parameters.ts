@@ -34,7 +34,7 @@ export function checkJoinUnknownParameters(
         .forEach(parameter => {
           if (
             parameter === common.ParameterEnum.Hidden.toString() &&
-            !join[parameter as keyof common.Join]
+            !join[parameter as keyof common.FileJoin]
               .toString()
               .match(common.MyRegex.TRUE_FALSE())
           ) {
@@ -45,7 +45,7 @@ export function checkJoinUnknownParameters(
                 lines: [
                   {
                     line: join[
-                      (parameter + constants.LINE_NUM) as keyof common.Join
+                      (parameter + constants.LINE_NUM) as keyof common.FileJoin
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -77,7 +77,7 @@ export function checkJoinUnknownParameters(
                 lines: [
                   {
                     line: join[
-                      (parameter + constants.LINE_NUM) as keyof common.Join
+                      (parameter + constants.LINE_NUM) as keyof common.FileJoin
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -112,7 +112,7 @@ export function checkJoinUnknownParameters(
                 lines: [
                   {
                     line: join[
-                      (parameter + constants.LINE_NUM) as keyof common.Join
+                      (parameter + constants.LINE_NUM) as keyof common.FileJoin
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -124,7 +124,7 @@ export function checkJoinUnknownParameters(
           }
 
           if (
-            Array.isArray(join[parameter as keyof common.Join]) &&
+            Array.isArray(join[parameter as keyof common.FileJoin]) &&
             [
               common.ParameterEnum.HideFields.toString(),
               common.ParameterEnum.ShowFields.toString()
@@ -137,26 +137,7 @@ export function checkJoinUnknownParameters(
                 lines: [
                   {
                     line: join[
-                      (parameter + constants.LINE_NUM) as keyof common.Join
-                    ] as number,
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
-
-          if (join[parameter as keyof common.Join]?.constructor === Object) {
-            item.errors.push(
-              new BmError({
-                title: common.ErTitleEnum.JOIN_UNEXPECTED_DICTIONARY,
-                message: `parameter '${parameter}' must have a single value`,
-                lines: [
-                  {
-                    line: join[
-                      (parameter + constants.LINE_NUM) as keyof common.Join
+                      (parameter + constants.LINE_NUM) as keyof common.FileJoin
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -168,7 +149,28 @@ export function checkJoinUnknownParameters(
           }
 
           if (
-            !Array.isArray(join[parameter as keyof common.Join]) &&
+            join[parameter as keyof common.FileJoin]?.constructor === Object
+          ) {
+            item.errors.push(
+              new BmError({
+                title: common.ErTitleEnum.JOIN_UNEXPECTED_DICTIONARY,
+                message: `parameter '${parameter}' must have a single value`,
+                lines: [
+                  {
+                    line: join[
+                      (parameter + constants.LINE_NUM) as keyof common.FileJoin
+                    ] as number,
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+
+          if (
+            !Array.isArray(join[parameter as keyof common.FileJoin]) &&
             [
               common.ParameterEnum.HideFields.toString(),
               common.ParameterEnum.ShowFields.toString()
@@ -181,7 +183,7 @@ export function checkJoinUnknownParameters(
                 lines: [
                   {
                     line: join[
-                      (parameter + constants.LINE_NUM) as keyof common.Join
+                      (parameter + constants.LINE_NUM) as keyof common.FileJoin
                     ] as number,
                     name: x.fileName,
                     path: x.filePath

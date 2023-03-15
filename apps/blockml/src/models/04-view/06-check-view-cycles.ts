@@ -37,7 +37,7 @@ export function checkViewCycles(
     cycles.forEach(cycle => {
       let cycledNames: string[] = cycle.map((c: any) => c.name);
 
-      let lines: common.BmErrorLine[] = [];
+      let lines: common.FileErrorLine[] = [];
 
       cycledNames.forEach(cName => {
         let cycledView = item.views.find(v => v.name === cName);

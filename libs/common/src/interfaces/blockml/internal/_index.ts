@@ -1,4 +1,3 @@
-export * from './bm-error-line';
 export * from './field-any';
 export * from './field-calculation';
 export * from './field-dimension';
@@ -15,6 +14,7 @@ export * from './file-chart-data';
 export * from './file-chart-options';
 export * from './file-chart-tile';
 export * from './file-dashboard';
+export * from './file-error-line';
 export * from './file-join';
 export * from './file-metric';
 export * from './file-model';

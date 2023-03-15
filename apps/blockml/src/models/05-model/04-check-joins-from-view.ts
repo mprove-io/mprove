@@ -52,7 +52,7 @@ export function checkJoinsFromView(
         let lineNums: number[] = [];
         Object.keys(j)
           .filter(p => p.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-          .forEach(l => lineNums.push(j[l as keyof common.Join] as number));
+          .forEach(l => lineNums.push(j[l as keyof common.FileJoin] as number));
 
         item.errors.push(
           new BmError({
@@ -94,7 +94,7 @@ export function checkJoinsFromView(
       }
 
       if (froms.length > 1) {
-        let lines: common.BmErrorLine[] = froms.map(num => ({
+        let lines: common.FileErrorLine[] = froms.map(num => ({
           line: num,
           name: x.fileName,
           path: x.filePath
