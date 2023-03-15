@@ -2,20 +2,20 @@ import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 
 export function wrapField(item: {
-  wrappedFields: common.FileModelField[];
+  wrappedFields: common.ModelField[];
   field: common.FieldAny;
   alias: string;
   fileName: string;
   filePath: string;
-  children: common.FileModelNode[];
-  node: common.FileModelNode;
+  children: common.ModelNode[];
+  node: common.ModelNode;
 }) {
   let { wrappedFields, field, alias, fileName, filePath, children, node } =
     item;
 
   let fieldHidden = helper.toBooleanFromLowercaseString(field.hidden);
 
-  let modelField: common.FileModelField = {
+  let modelField: common.ModelField = {
     id: `${alias}.${field.name}`,
     hidden: fieldHidden,
     label: field.label,
@@ -36,7 +36,7 @@ export function wrapField(item: {
 
   wrappedFields.push(modelField);
 
-  let fieldNode: common.FileModelNode = {
+  let fieldNode: common.ModelNode = {
     id: `${alias}.${field.name}`,
     label: field.label,
     description: field.description,
@@ -56,7 +56,7 @@ export function wrapField(item: {
     if (common.isDefined(groupNode)) {
       groupNode.children.push(fieldNode);
     } else {
-      let newGroupNode: common.FileModelNode = {
+      let newGroupNode: common.ModelNode = {
         id: `${alias}.${field.groupId}`,
         label: field.group_label,
         description: field.group_description,

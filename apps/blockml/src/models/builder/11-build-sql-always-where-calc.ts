@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { barSqlAlwaysWhereCalc } from '~blockml/barrels/bar-sql-always-where-calc';
+import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 

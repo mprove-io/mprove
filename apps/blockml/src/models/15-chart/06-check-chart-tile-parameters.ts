@@ -51,7 +51,7 @@ export function checkChartTileParameters<T extends types.dzType>(
                   {
                     line: report.tile[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartTile
+                        constants.LINE_NUM) as keyof common.FileChartTile
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -64,7 +64,7 @@ export function checkChartTileParameters<T extends types.dzType>(
 
           if (
             Array.isArray(
-              report.tile[parameter as keyof common.FileReportChartTile] as any
+              report.tile[parameter as keyof common.FileChartTile] as any
             )
           ) {
             item.errors.push(
@@ -75,7 +75,7 @@ export function checkChartTileParameters<T extends types.dzType>(
                   {
                     line: report.tile[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartTile
+                        constants.LINE_NUM) as keyof common.FileChartTile
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -87,7 +87,7 @@ export function checkChartTileParameters<T extends types.dzType>(
           }
 
           if (
-            (report.tile[parameter as keyof common.FileReportChartTile] as any)
+            (report.tile[parameter as keyof common.FileChartTile] as any)
               ?.constructor === Object
           ) {
             item.errors.push(
@@ -98,7 +98,7 @@ export function checkChartTileParameters<T extends types.dzType>(
                   {
                     line: report.tile[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartTile
+                        constants.LINE_NUM) as keyof common.FileChartTile
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -117,7 +117,7 @@ export function checkChartTileParameters<T extends types.dzType>(
               common.ParameterEnum.TileY.toString()
             ].indexOf(parameter) > -1 &&
             !(
-              report.tile[parameter as keyof common.FileReportChartTile] as any
+              report.tile[parameter as keyof common.FileChartTile] as any
             ).match(common.MyRegex.CAPTURE_DIGITS_START_TO_END_G())
           ) {
             item.errors.push(
@@ -127,15 +127,13 @@ export function checkChartTileParameters<T extends types.dzType>(
                     .REPORT_TILE_PARAMETER_MUST_BE_A_POSITIVE_INTEGER,
                 message:
                   `"${
-                    report.tile[
-                      parameter as keyof common.FileReportChartTile
-                    ] as any
+                    report.tile[parameter as keyof common.FileChartTile] as any
                   }" is not valid ` + `${parameter} value`,
                 lines: [
                   {
                     line: report.tile[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartTile
+                        constants.LINE_NUM) as keyof common.FileChartTile
                     ] as number,
                     name: x.fileName,
                     path: x.filePath

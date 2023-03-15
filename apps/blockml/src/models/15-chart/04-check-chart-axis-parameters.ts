@@ -54,7 +54,7 @@ export function checkChartAxisParameters<T extends types.dzType>(
                   {
                     line: report.axis[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartAxis
+                        constants.LINE_NUM) as keyof common.FileChartAxis
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -67,7 +67,7 @@ export function checkChartAxisParameters<T extends types.dzType>(
 
           if (
             Array.isArray(
-              report.axis[parameter as keyof common.FileReportChartAxis] as any
+              report.axis[parameter as keyof common.FileChartAxis] as any
             )
           ) {
             item.errors.push(
@@ -78,7 +78,7 @@ export function checkChartAxisParameters<T extends types.dzType>(
                   {
                     line: report.axis[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartAxis
+                        constants.LINE_NUM) as keyof common.FileChartAxis
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -90,7 +90,7 @@ export function checkChartAxisParameters<T extends types.dzType>(
           }
 
           if (
-            (report.axis[parameter as keyof common.FileReportChartAxis] as any)
+            (report.axis[parameter as keyof common.FileChartAxis] as any)
               ?.constructor === Object
           ) {
             item.errors.push(
@@ -101,7 +101,7 @@ export function checkChartAxisParameters<T extends types.dzType>(
                   {
                     line: report.axis[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartAxis
+                        constants.LINE_NUM) as keyof common.FileChartAxis
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -120,7 +120,7 @@ export function checkChartAxisParameters<T extends types.dzType>(
               common.ParameterEnum.ShowYAxisLabel.toString(),
               common.ParameterEnum.ShowAxis.toString()
             ].indexOf(parameter) > -1 &&
-            !(report.axis[parameter as keyof common.FileReportChartAxis] as any)
+            !(report.axis[parameter as keyof common.FileChartAxis] as any)
               .toString()
               .match(common.MyRegex.TRUE_FALSE())
           ) {
@@ -134,7 +134,7 @@ export function checkChartAxisParameters<T extends types.dzType>(
                   {
                     line: report.axis[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartAxis
+                        constants.LINE_NUM) as keyof common.FileChartAxis
                     ] as number,
                     name: x.fileName,
                     path: x.filePath

@@ -6,22 +6,22 @@ import { wrapField } from './wrap-field';
 export function wrapModels(item: {
   structId: string;
   models: common.FileModel[];
-}): common.FileModel[] {
+}): common.Model[] {
   let { structId, models } = item;
 
-  let apiModels: common.FileModel[] = [];
+  let apiModels: common.Model[] = [];
 
   models.forEach(x => {
-    let apiFields: common.FileModelField[] = [];
-    let nodes: common.FileModelNode[] = [];
+    let apiFields: common.ModelField[] = [];
+    let nodes: common.ModelNode[] = [];
 
     {
       // model fields scope
-      let children: common.FileModelNode[] = [];
+      let children: common.ModelNode[] = [];
 
-      let node: common.FileModelNode = {
+      let node: common.ModelNode = {
         id: constants.MF,
-        label: common.FileModelNodeLabelEnum.ModelFields,
+        label: common.ModelNodeLabelEnum.ModelFields,
         description: undefined,
         hidden: false,
         isField: false,
@@ -48,10 +48,10 @@ export function wrapModels(item: {
 
     x.joins.forEach(join => {
       // join fields scope
-      let children: common.FileModelNode[] = [];
+      let children: common.ModelNode[] = [];
       let joinHidden = helper.toBooleanFromLowercaseString(join.hidden);
 
-      let node: common.FileModelNode = {
+      let node: common.ModelNode = {
         id: join.as,
         label: join.label,
         description: join.description,
@@ -82,10 +82,10 @@ export function wrapModels(item: {
 
     nodes.forEach(node => {
       if (common.isDefined(node.children)) {
-        let filters: common.FileModelNode[] = [];
-        let dimensions: common.FileModelNode[] = [];
-        let measures: common.FileModelNode[] = [];
-        let calculations: common.FileModelNode[] = [];
+        let filters: common.ModelNode[] = [];
+        let dimensions: common.ModelNode[] = [];
+        let measures: common.ModelNode[] = [];
+        let calculations: common.ModelNode[] = [];
 
         node.children.forEach(n => {
           switch (true) {
@@ -135,12 +135,12 @@ export function wrapModels(item: {
           return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
         });
 
-        let sortedChildren: common.FileModelNode[] = [];
+        let sortedChildren: common.ModelNode[] = [];
 
         if (sortedDimensions.length > 0) {
           sortedChildren.push({
-            id: `${node.id}.${common.FileModelNodeIdSuffixEnum.Dimensions}`,
-            label: common.FileModelNodeLabelEnum.Dimensions,
+            id: `${node.id}.${common.ModelNodeIdSuffixEnum.Dimensions}`,
+            label: common.ModelNodeLabelEnum.Dimensions,
             description: undefined,
             hidden: false,
             isField: false,
@@ -153,8 +153,8 @@ export function wrapModels(item: {
 
         if (sortedMeasures.length > 0) {
           sortedChildren.push({
-            id: `${node.id}.${common.FileModelNodeIdSuffixEnum.Measures}`,
-            label: common.FileModelNodeLabelEnum.Measures,
+            id: `${node.id}.${common.ModelNodeIdSuffixEnum.Measures}`,
+            label: common.ModelNodeLabelEnum.Measures,
             description: undefined,
             hidden: false,
             isField: false,
@@ -167,8 +167,8 @@ export function wrapModels(item: {
 
         if (sortedCalculations.length > 0) {
           sortedChildren.push({
-            id: `${node.id}.${common.FileModelNodeIdSuffixEnum.Calculations}`,
-            label: common.FileModelNodeLabelEnum.Calculations,
+            id: `${node.id}.${common.ModelNodeIdSuffixEnum.Calculations}`,
+            label: common.ModelNodeLabelEnum.Calculations,
             description: undefined,
             hidden: false,
             isField: false,
@@ -181,8 +181,8 @@ export function wrapModels(item: {
 
         if (sortedFilters.length > 0) {
           sortedChildren.push({
-            id: `${node.id}.${common.FileModelNodeIdSuffixEnum.Filters}`,
-            label: common.FileModelNodeLabelEnum.FilterOnlyFields,
+            id: `${node.id}.${common.ModelNodeIdSuffixEnum.Filters}`,
+            label: common.ModelNodeLabelEnum.FilterOnlyFields,
             description: undefined,
             hidden: false,
             isField: false,

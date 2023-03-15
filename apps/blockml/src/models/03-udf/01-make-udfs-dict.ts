@@ -19,7 +19,7 @@ export function makeUdfsDict(
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let udfsDict: common.FileUdfsDict = {};
+  let udfsDict: common.UdfsDict = {};
 
   item.udfsUser.forEach(u => {
     udfsDict[u.name] = u.sql;

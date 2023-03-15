@@ -6,7 +6,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 export function buildMetric(
   item: {
-    metrics: common.Metric[];
+    metrics: common.FileMetric[];
     models: common.FileModel[];
     errors: BmError[];
     structId: string;
@@ -14,7 +14,7 @@ export function buildMetric(
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let genMetrics: common.FileModelMetric[] = barMetric.createModelMetrics(
+  let genMetrics: common.ModelMetric[] = barMetric.createModelMetrics(
     {
       models: item.models,
       structId: item.structId,

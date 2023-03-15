@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { barDashboard } from '~blockml/barrels/bar-dashboard';
+import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 

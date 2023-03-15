@@ -48,7 +48,7 @@ export function checkListenFilters<T extends types.dzType>(
               {
                 line: report[
                   (common.ParameterEnum.ListenFilters +
-                    constants.LINE_NUM) as keyof common.FileReport
+                    constants.LINE_NUM) as keyof common.FilePartReport
                 ] as number,
                 name: x.fileName,
                 path: x.filePath

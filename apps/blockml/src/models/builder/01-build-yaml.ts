@@ -20,8 +20,8 @@ export function buildYaml(
   let models: common.FileModel[];
   let dashboards: common.FileDashboard[];
   let reps: common.FileRep[];
-  let metrics: common.Metric[];
-  let apis: common.Api[];
+  let metrics: common.FileMetric[];
+  let apis: common.FileApi[];
   let vizs: common.FileVis[];
   let confs: common.FileProjectConf[];
 

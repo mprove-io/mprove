@@ -1,14 +1,14 @@
-import { BmErrorLine } from '~blockml/interfaces/bm-error-line';
+import { common } from '~blockml/barrels/common';
 
 export class BmError {
   title: common.ErTitleEnum;
   message: string;
-  lines: BmErrorLine[];
+  lines: common.BmErrorLine[];
 
   constructor(item: {
     title: common.ErTitleEnum;
     message: string;
-    lines: BmErrorLine[];
+    lines: common.BmErrorLine[];
   }) {
     this.title = item.title;
     this.message = item.message;

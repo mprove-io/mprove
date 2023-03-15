@@ -13,7 +13,7 @@ export function buildUdf(
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let udfsDict: common.FileUdfsDict = barUdf.makeUdfsDict(
+  let udfsDict: common.UdfsDict = barUdf.makeUdfsDict(
     {
       udfsUser: item.udfs,
       structId: item.structId,

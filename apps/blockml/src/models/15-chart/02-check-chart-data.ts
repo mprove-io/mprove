@@ -54,7 +54,7 @@ export function checkChartData<T extends types.dzType>(
                   {
                     line: report.data[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartData
+                        constants.LINE_NUM) as keyof common.FileChartData
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -67,7 +67,7 @@ export function checkChartData<T extends types.dzType>(
 
           if (
             Array.isArray(
-              report.data[parameter as keyof common.FileReportChartData] as any
+              report.data[parameter as keyof common.FileChartData] as any
             ) &&
             [
               common.ParameterEnum.YFields.toString(),
@@ -82,7 +82,7 @@ export function checkChartData<T extends types.dzType>(
                   {
                     line: report.data[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartData
+                        constants.LINE_NUM) as keyof common.FileChartData
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -94,7 +94,7 @@ export function checkChartData<T extends types.dzType>(
           }
 
           if (
-            (report.data[parameter as keyof common.FileReportChartData] as any)
+            (report.data[parameter as keyof common.FileChartData] as any)
               ?.constructor === Object
           ) {
             item.errors.push(
@@ -105,7 +105,7 @@ export function checkChartData<T extends types.dzType>(
                   {
                     line: report.data[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartData
+                        constants.LINE_NUM) as keyof common.FileChartData
                     ] as number,
                     name: x.fileName,
                     path: x.filePath

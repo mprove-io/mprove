@@ -10,9 +10,9 @@ export function makeTop(item: {
   withParts: common.VarsSql['withParts'];
   withDerivedTables: common.VarsSql['withDerivedTables'];
   withViews: common.VarsSql['withViews'];
-  varsSqlSteps: common.FileReport['varsSqlSteps'];
+  varsSqlSteps: common.FilePartReport['varsSqlSteps'];
   model: common.FileModel;
-  udfsDict: common.FileUdfsDict;
+  udfsDict: common.UdfsDict;
 }) {
   let {
     mainUdfs,

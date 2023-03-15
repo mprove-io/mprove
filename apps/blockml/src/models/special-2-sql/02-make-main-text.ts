@@ -9,7 +9,7 @@ export function makeMainText(item: {
   depMeasures: common.VarsSql['depMeasures'];
   depDimensions: common.VarsSql['depDimensions'];
   filters: common.VarsSql['filters'];
-  varsSqlSteps: common.FileReport['varsSqlSteps'];
+  varsSqlSteps: common.FilePartReport['varsSqlSteps'];
   model: common.FileModel;
 }) {
   let { select, filters, depMeasures, depDimensions, model, varsSqlSteps } =

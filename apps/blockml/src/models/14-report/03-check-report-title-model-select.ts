@@ -34,7 +34,7 @@ export function checkReportTitleModelSelect<T extends types.dzType>(
         Object.keys(report)
           .filter(p => p.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
           .forEach(l =>
-            lineNums.push(report[l as keyof common.FileReport] as number)
+            lineNums.push(report[l as keyof common.FilePartReport] as number)
           );
 
         item.errors.push(

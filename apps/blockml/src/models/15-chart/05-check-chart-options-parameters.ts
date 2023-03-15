@@ -91,7 +91,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
                   {
                     line: report.options[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartOptions
+                        constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -104,9 +104,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
 
           if (
             Array.isArray(
-              report.options[
-                parameter as keyof common.FileReportChartOptions
-              ] as any
+              report.options[parameter as keyof common.FileChartOptions] as any
             )
           ) {
             item.errors.push(
@@ -117,7 +115,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
                   {
                     line: report.options[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartOptions
+                        constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -129,11 +127,8 @@ export function checkChartOptionsParameters<T extends types.dzType>(
           }
 
           if (
-            (
-              report.options[
-                parameter as keyof common.FileReportChartOptions
-              ] as any
-            )?.constructor === Object
+            (report.options[parameter as keyof common.FileChartOptions] as any)
+              ?.constructor === Object
           ) {
             item.errors.push(
               new BmError({
@@ -143,7 +138,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
                   {
                     line: report.options[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartOptions
+                        constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -171,11 +166,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               common.ParameterEnum.ExplodeSlices.toString(),
               common.ParameterEnum.Labels.toString()
             ].indexOf(parameter) > -1 &&
-            !(
-              report.options[
-                parameter as keyof common.FileReportChartOptions
-              ] as any
-            )
+            !(report.options[parameter as keyof common.FileChartOptions] as any)
               .toString()
               .match(common.MyRegex.TRUE_FALSE())
           ) {
@@ -189,7 +180,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
                   {
                     line: report.options[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartOptions
+                        constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -203,9 +194,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
           if (
             parameter === common.ParameterEnum.Interpolation &&
             common.CHART_INTERPOLATION_VALUES.indexOf(
-              report.options[
-                parameter as keyof common.FileReportChartOptions
-              ] as any
+              report.options[parameter as keyof common.FileChartOptions] as any
             ) < 0
           ) {
             item.errors.push(
@@ -214,14 +203,14 @@ export function checkChartOptionsParameters<T extends types.dzType>(
                 message:
                   `"${
                     report.options[
-                      parameter as keyof common.FileReportChartOptions
+                      parameter as keyof common.FileChartOptions
                     ] as any
                   }" is not valid ` + `"${parameter}" value`,
                 lines: [
                   {
                     line: report.options[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartOptions
+                        constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -235,9 +224,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
           if (
             parameter === common.ParameterEnum.ColorScheme &&
             common.CHART_COLOR_SCHEME_VALUES.indexOf(
-              report.options[
-                parameter as keyof common.FileReportChartOptions
-              ] as any
+              report.options[parameter as keyof common.FileChartOptions] as any
             ) < 0
           ) {
             item.errors.push(
@@ -246,14 +233,14 @@ export function checkChartOptionsParameters<T extends types.dzType>(
                 message:
                   `"${
                     report.options[
-                      parameter as keyof common.FileReportChartOptions
+                      parameter as keyof common.FileChartOptions
                     ] as any
                   }" is not valid ` + `"${parameter}" value`,
                 lines: [
                   {
                     line: report.options[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartOptions
+                        constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -267,9 +254,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
           if (
             parameter === common.ParameterEnum.SchemeType &&
             common.CHART_SCHEME_TYPE_VALUES.indexOf(
-              report.options[
-                parameter as keyof common.FileReportChartOptions
-              ] as any
+              report.options[parameter as keyof common.FileChartOptions] as any
             ) < 0
           ) {
             item.errors.push(
@@ -278,14 +263,14 @@ export function checkChartOptionsParameters<T extends types.dzType>(
                 message:
                   `"${
                     report.options[
-                      parameter as keyof common.FileReportChartOptions
+                      parameter as keyof common.FileChartOptions
                     ] as any
                   }" is not valid ` + `"${parameter}" value`,
                 lines: [
                   {
                     line: report.options[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartOptions
+                        constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -309,9 +294,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               common.ParameterEnum.Max.toString()
             ].indexOf(parameter) > -1 &&
             !(
-              report.options[
-                parameter as keyof common.FileReportChartOptions
-              ] as any
+              report.options[parameter as keyof common.FileChartOptions] as any
             ).match(common.MyRegex.CAPTURE_DIGITS_START_TO_END_G())
           ) {
             item.errors.push(
@@ -322,14 +305,14 @@ export function checkChartOptionsParameters<T extends types.dzType>(
                 message:
                   `"${
                     report.options[
-                      parameter as keyof common.FileReportChartOptions
+                      parameter as keyof common.FileChartOptions
                     ] as any
                   }" is not valid ` + `"${parameter}" value`,
                 lines: [
                   {
                     line: report.options[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartOptions
+                        constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -346,9 +329,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               common.ParameterEnum.RangeFillOpacity.toString()
             ].indexOf(parameter) > -1 &&
             !(
-              report.options[
-                parameter as keyof common.FileReportChartOptions
-              ] as any
+              report.options[parameter as keyof common.FileChartOptions] as any
             ).match(common.MyRegex.CAPTURE_FLOAT_START_TO_END_G())
           ) {
             item.errors.push(
@@ -358,14 +339,14 @@ export function checkChartOptionsParameters<T extends types.dzType>(
                 message:
                   `"${
                     report.options[
-                      parameter as keyof common.FileReportChartOptions
+                      parameter as keyof common.FileChartOptions
                     ] as any
                   }" is not valid ` + `"${parameter}" value`,
                 lines: [
                   {
                     line: report.options[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartOptions
+                        constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -384,9 +365,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               common.ParameterEnum.YScaleMax.toString()
             ].indexOf(parameter) > -1 &&
             !(
-              report.options[
-                parameter as keyof common.FileReportChartOptions
-              ] as any
+              report.options[parameter as keyof common.FileChartOptions] as any
             ).match(common.MyRegex.CAPTURE_MINUS_DIGITS_START_TO_END_G())
           ) {
             item.errors.push(
@@ -397,14 +376,14 @@ export function checkChartOptionsParameters<T extends types.dzType>(
                 message:
                   `"${
                     report.options[
-                      parameter as keyof common.FileReportChartOptions
+                      parameter as keyof common.FileChartOptions
                     ] as any
                   }" is not valid ` + `"${parameter}" value`,
                 lines: [
                   {
                     line: report.options[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartOptions
+                        constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -423,14 +402,10 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               common.ParameterEnum.EmptyColor.toString()
             ].indexOf(parameter) > -1 &&
             !(
-              report.options[
-                parameter as keyof common.FileReportChartOptions
-              ] as any
+              report.options[parameter as keyof common.FileChartOptions] as any
             ).match(common.MyRegex.CAPTURE_RGB_SPLIT_G()) &&
             !(
-              report.options[
-                parameter as keyof common.FileReportChartOptions
-              ] as any
+              report.options[parameter as keyof common.FileChartOptions] as any
             ).match(common.MyRegex.CAPTURE_RGBA_SPLIT_G())
           ) {
             item.errors.push(
@@ -439,14 +414,14 @@ export function checkChartOptionsParameters<T extends types.dzType>(
                 message:
                   `"${
                     report.options[
-                      parameter as keyof common.FileReportChartOptions
+                      parameter as keyof common.FileChartOptions
                     ] as any
                   }" is not valid ` + `"${parameter}" value`,
                 lines: [
                   {
                     line: report.options[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReportChartOptions
+                        constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -467,7 +442,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
             ].indexOf(parameter) > -1
           ) {
             let value = report.options[
-              parameter as keyof common.FileReportChartOptions
+              parameter as keyof common.FileChartOptions
             ] as any;
             try {
               formatSpecifier(value);
@@ -480,7 +455,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
                     {
                       line: report.options[
                         (parameter +
-                          constants.LINE_NUM) as keyof common.FileReportChartOptions
+                          constants.LINE_NUM) as keyof common.FileChartOptions
                       ] as number,
                       name: x.fileName,
                       path: x.filePath

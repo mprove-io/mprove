@@ -10,7 +10,7 @@ export function makeFilters(item: {
   weekStart: common.VarsSql['weekStart'];
   processedFields: common.VarsSql['processedFields'];
   timezone: common.VarsSql['timezone'];
-  varsSqlSteps: common.FileReport['varsSqlSteps'];
+  varsSqlSteps: common.FilePartReport['varsSqlSteps'];
   model: common.FileModel;
 }) {
   let {

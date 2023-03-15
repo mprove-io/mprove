@@ -10,7 +10,7 @@ let func = common.FuncEnum.ProcessViewRefs;
 export function processViewRefs(
   item: {
     views: common.FileView[];
-    udfsDict: common.FileUdfsDict;
+    udfsDict: common.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;
     errors: BmError[];
     structId: string;

@@ -70,8 +70,8 @@ WITH
   view__v1__a AS (
     SELECT
       d1 as dim1,
-      CASE WHEN ((d2)) IS NOT NULL THEN 'Yes' ELSE 'No' END as time1___yesno_has_value,
-      CASE WHEN ((d3)) IS TRUE THEN 'Yes' ELSE 'No' END as dim4
+      CASE WHEN ((d3)) IS TRUE THEN 'Yes' ELSE 'No' END as dim4,
+      CASE WHEN ((d2)) IS NOT NULL THEN 'Yes' ELSE 'No' END as time1___yesno_has_value
     FROM derived__v1__a
   ),
   main AS (
@@ -79,12 +79,12 @@ WITH
       a.dim1 as a_dim1
     FROM view__v1__a as a
     WHERE
-      (a.time1___yesno_has_value = 'Yes'
-      OR a.time1___yesno_has_value = 'No'
-      OR 'any' = 'any')
-      AND
       (a.dim4 = 'Yes'
       OR a.dim4 = 'No'
+      OR 'any' = 'any')
+      AND
+      (a.time1___yesno_has_value = 'Yes'
+      OR a.time1___yesno_has_value = 'No'
       OR 'any' = 'any')
     GROUP BY 1
   )
@@ -157,8 +157,8 @@ test('2', async t => {
   view__v1__a AS (
     SELECT
       d1 as dim1,
-      CASE WHEN ((d2)) IS NOT NULL THEN 'Yes' ELSE 'No' END as time1___yesno_has_value,
-      CASE WHEN ((d3)) IS TRUE THEN 'Yes' ELSE 'No' END as dim4
+      CASE WHEN ((d3)) IS TRUE THEN 'Yes' ELSE 'No' END as dim4,
+      CASE WHEN ((d2)) IS NOT NULL THEN 'Yes' ELSE 'No' END as time1___yesno_has_value
     FROM derived__v1__a
   ),
   main AS (
@@ -166,12 +166,12 @@ test('2', async t => {
       a.dim1 as a_dim1
     FROM view__v1__a as a
     WHERE
-      (a.time1___yesno_has_value = 'Yes'
-      OR a.time1___yesno_has_value = 'No'
-      OR 'any' = 'any')
-      AND
       (a.dim4 = 'Yes'
       OR a.dim4 = 'No'
+      OR 'any' = 'any')
+      AND
+      (a.time1___yesno_has_value = 'Yes'
+      OR a.time1___yesno_has_value = 'No'
       OR 'any' = 'any')
     GROUP BY 1
   )

@@ -8,7 +8,7 @@ export function buildView(
   item: {
     views: common.FileView[];
     udfs: common.FileUdf[];
-    udfsDict: common.FileUdfsDict;
+    udfsDict: common.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;
     errors: BmError[];
     structId: string;

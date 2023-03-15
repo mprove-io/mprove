@@ -55,7 +55,7 @@ export function checkReportUnknownParameters<T extends types.dzType>(
                   {
                     line: report[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReport
+                        constants.LINE_NUM) as keyof common.FilePartReport
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -68,7 +68,7 @@ export function checkReportUnknownParameters<T extends types.dzType>(
 
           if (
             [common.ParameterEnum.Select.toString()].indexOf(parameter) < 0 &&
-            Array.isArray(report[parameter as keyof common.FileReport])
+            Array.isArray(report[parameter as keyof common.FilePartReport])
           ) {
             item.errors.push(
               new BmError({
@@ -78,7 +78,7 @@ export function checkReportUnknownParameters<T extends types.dzType>(
                   {
                     line: report[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReport
+                        constants.LINE_NUM) as keyof common.FilePartReport
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -90,7 +90,7 @@ export function checkReportUnknownParameters<T extends types.dzType>(
           }
 
           if (
-            report[parameter as keyof common.FileReport]?.constructor ===
+            report[parameter as keyof common.FilePartReport]?.constructor ===
               Object &&
             [
               common.ParameterEnum.DefaultFilters.toString(),
@@ -110,7 +110,7 @@ export function checkReportUnknownParameters<T extends types.dzType>(
                   {
                     line: report[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReport
+                        constants.LINE_NUM) as keyof common.FilePartReport
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -123,7 +123,7 @@ export function checkReportUnknownParameters<T extends types.dzType>(
 
           if (
             [common.ParameterEnum.Select.toString()].indexOf(parameter) > -1 &&
-            !Array.isArray(report[parameter as keyof common.FileReport])
+            !Array.isArray(report[parameter as keyof common.FilePartReport])
           ) {
             item.errors.push(
               new BmError({
@@ -133,7 +133,7 @@ export function checkReportUnknownParameters<T extends types.dzType>(
                   {
                     line: report[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReport
+                        constants.LINE_NUM) as keyof common.FilePartReport
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -145,8 +145,10 @@ export function checkReportUnknownParameters<T extends types.dzType>(
           }
 
           if (
-            common.isDefined(report[parameter as keyof common.FileReport]) &&
-            report[parameter as keyof common.FileReport].constructor !==
+            common.isDefined(
+              report[parameter as keyof common.FilePartReport]
+            ) &&
+            report[parameter as keyof common.FilePartReport].constructor !==
               Object &&
             [
               common.ParameterEnum.DefaultFilters.toString(),
@@ -165,7 +167,7 @@ export function checkReportUnknownParameters<T extends types.dzType>(
                   {
                     line: report[
                       (parameter +
-                        constants.LINE_NUM) as keyof common.FileReport
+                        constants.LINE_NUM) as keyof common.FilePartReport
                     ] as number,
                     name: x.fileName,
                     path: x.filePath

@@ -11,7 +11,7 @@ export async function buildReport<T extends types.dzType>(
     traceId: string;
     entities: T[];
     models: common.FileModel[];
-    udfsDict: common.FileUdfsDict;
+    udfsDict: common.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;
     errors: BmError[];
     structId: string;

@@ -15,7 +15,7 @@ export async function fetchSql<T extends types.dzType>(
     traceId: string;
     entities: T[];
     models: common.FileModel[];
-    udfsDict: common.FileUdfsDict;
+    udfsDict: common.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;
     errors: BmError[];
     structId: string;
@@ -27,7 +27,7 @@ export async function fetchSql<T extends types.dzType>(
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let reports: common.FileReport[] = [];
+  let reports: common.FilePartReport[] = [];
 
   item.entities.forEach(x => {
     reports = [...reports, ...x.reports];
@@ -39,7 +39,7 @@ export async function fetchSql<T extends types.dzType>(
   await asyncPool(
     concurrencyLimit,
     reports,
-    async (report: common.FileReport) => {
+    async (report: common.FilePartReport) => {
       let model = item.models.find(m => m.name === report.model);
 
       let filters: common.FilterBricksDictionary = {};

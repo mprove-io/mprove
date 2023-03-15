@@ -6,7 +6,7 @@ let func = common.FuncEnum.MakeDepMeasuresAndDimensions;
 export function makeDepMeasuresAndDimensions(item: {
   select: common.VarsSql['select'];
   filters: common.VarsSql['filters'];
-  varsSqlSteps: common.FileReport['varsSqlSteps'];
+  varsSqlSteps: common.FilePartReport['varsSqlSteps'];
   model: common.FileModel;
 }) {
   let { select, filters, varsSqlSteps, model } = item;

@@ -8,12 +8,12 @@ let func = common.FuncEnum.LogStruct;
 
 export async function logStruct(
   item: {
-    apis: common.Api[];
+    apis: common.FileApi[];
     dashboards: common.FileDashboard[];
     metrics: common.MetricAny[];
     models: common.FileModel[];
     reps: common.FileRep[];
-    udfsDict: common.FileUdfsDict;
+    udfsDict: common.UdfsDict;
     views: common.FileView[];
     vizs: common.FileVis[];
     structId: string;

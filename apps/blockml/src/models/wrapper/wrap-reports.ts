@@ -6,7 +6,7 @@ export function wrapReports(item: {
   orgId: string;
   projectId: string;
   envId: string;
-  reports: common.FileReport[];
+  reports: common.FilePartReport[];
   models: common.FileModel[];
 }) {
   let { structId, orgId, projectId, models, reports, envId } = item;

@@ -19,7 +19,7 @@ export function createModelMetrics(
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let modelMetrics: common.FileModelMetric[] = [];
+  let modelMetrics: common.ModelMetric[] = [];
 
   item.models.forEach(model => {
     let errorsOnStart = item.errors.length;
@@ -127,7 +127,7 @@ export function createModelMetrics(
           let partId = `model_fields_${modelField.name}`;
           let partLabel = `Model Fields ${modelField.label}`;
 
-          let modelMetric: common.FileModelMetric = {
+          let modelMetric: common.ModelMetric = {
             metricId: `${model.name}_${partId}_by_${timeId}`,
             filePath: model.filePath,
             partId: partId,
@@ -204,7 +204,7 @@ export function createModelMetrics(
             let partId = `${join.as}_${viewField.name}`;
             let partLabel = `${join.label} ${viewField.label}`;
 
-            let modelMetric: common.FileModelMetric = {
+            let modelMetric: common.ModelMetric = {
               metricId: `${model.name}_${partId}_by_${timeId}`,
               filePath: join.view.filePath,
               partId: partId,
