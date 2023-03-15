@@ -1,35 +1,27 @@
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 
-let func = enums.FuncEnum.SubComposeCalc;
+let func = common.FuncEnum.SubComposeCalc;
 
 export function subComposeCalc(item: {
-  mainQuery: interfaces.VarsSub['mainQuery'];
-  select: interfaces.VarsSub['select'];
-  processedFields: interfaces.VarsSub['processedFields'];
-  varsSubSteps: interfaces.ViewPart['varsSubSteps'];
-  view: interfaces.View;
+  mainQuery: common.VarsSub['mainQuery'];
+  select: common.VarsSub['select'];
+  processedFields: common.VarsSub['processedFields'];
+  varsSubSteps: common.FileViewPart['varsSubSteps'];
+  view: common.FileView;
   viewPartName: string;
 }) {
-  let {
-    mainQuery,
-    select,
-    processedFields,
-    varsSubSteps,
-    view,
-    viewPartName
-  } = item;
+  let { mainQuery, select, processedFields, varsSubSteps, view, viewPartName } =
+    item;
 
-  let varsInput = common.makeCopy<interfaces.VarsSub>({
+  let varsInput = common.makeCopy<common.VarsSub>({
     mainQuery,
     select,
     processedFields
   });
 
-  let sub: interfaces.VarsSub['sub'] = [];
+  let sub: common.VarsSub['sub'] = [];
 
   sub.push(`${viewPartName} AS (`);
   sub = sub.concat(mainQuery.map((s: string) => `  ${s}`));
@@ -62,7 +54,7 @@ export function subComposeCalc(item: {
   sub = sub.map(s => `  ${s}`);
   sub = sub.map(x => x.trimRight());
 
-  let varsOutput: interfaces.VarsSub = { sub };
+  let varsOutput: common.VarsSub = { sub };
 
   varsSubSteps.push({ func, varsInput, varsOutput });
 

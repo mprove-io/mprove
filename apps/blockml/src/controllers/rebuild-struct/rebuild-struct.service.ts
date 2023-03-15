@@ -7,7 +7,6 @@ import { barWrapper } from '~blockml/barrels/bar-wrapper';
 import { barYaml } from '~blockml/barrels/bar-yaml';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { nodeCommon } from '~blockml/barrels/node-common';
@@ -170,7 +169,7 @@ export class RebuildStructService {
         {
           dir: mproveDir,
           structId: item.structId,
-          caller: enums.CallerEnum.RebuildStruct
+          caller: common.CallerEnum.RebuildStruct
         },
         this.cs
       );
@@ -206,15 +205,15 @@ export class RebuildStructService {
   }) {
     //
     let errors: BmError[] = [];
-    let apis: interfaces.Api[];
-    let dashboards: interfaces.Dashboard[];
-    let metrics: interfaces.Metric[];
-    let models: interfaces.Model[];
+    let apis: common.FileApi[];
+    let dashboards: common.FileDashboard[];
+    let metrics: common.FileMetric[];
+    let models: common.FileModel[];
     let reps: common.FileRep[];
-    let udfs: interfaces.Udf[];
-    let views: interfaces.View[];
-    let vizs: interfaces.Viz[];
-    let projectConfig: interfaces.ProjectConf;
+    let udfs: common.FileUdf[];
+    let views: common.FileView[];
+    let vizs: common.FileVis[];
+    let projectConfig: common.FileProjectConf;
 
     let yamlBuildItem = barBuilder.buildYaml(
       {
@@ -223,7 +222,7 @@ export class RebuildStructService {
         mproveDir: item.mproveDir,
         structId: item.structId,
         errors: errors,
-        caller: enums.CallerEnum.BuildYaml
+        caller: common.CallerEnum.BuildYaml
       },
       this.cs
     );
@@ -266,7 +265,7 @@ export class RebuildStructService {
         projectConfig: projectConfig,
         structId: item.structId,
         errors: errors,
-        caller: enums.CallerEnum.BuildViewField
+        caller: common.CallerEnum.BuildViewField
       },
       this.cs
     );
@@ -277,7 +276,7 @@ export class RebuildStructService {
         projectConfig: projectConfig,
         structId: item.structId,
         errors: errors,
-        caller: enums.CallerEnum.BuildModelField
+        caller: common.CallerEnum.BuildModelField
       },
       this.cs
     );
@@ -288,7 +287,7 @@ export class RebuildStructService {
         projectConfig: projectConfig,
         structId: item.structId,
         errors: errors,
-        caller: enums.CallerEnum.BuildDashboardField
+        caller: common.CallerEnum.BuildDashboardField
       },
       this.cs
     );
@@ -298,7 +297,7 @@ export class RebuildStructService {
         udfs: udfs,
         structId: item.structId,
         errors: errors,
-        caller: enums.CallerEnum.BuildUdf
+        caller: common.CallerEnum.BuildUdf
       },
       this.cs
     );
@@ -313,7 +312,7 @@ export class RebuildStructService {
         envId: item.envId,
         evs: item.evs,
         errors: errors,
-        caller: enums.CallerEnum.BuildView
+        caller: common.CallerEnum.BuildView
       },
       this.cs
     );
@@ -325,7 +324,7 @@ export class RebuildStructService {
         udfs: udfs,
         structId: item.structId,
         errors: errors,
-        caller: enums.CallerEnum.BuildModel
+        caller: common.CallerEnum.BuildModel
       },
       this.cs
     );
@@ -335,7 +334,7 @@ export class RebuildStructService {
         models: models,
         structId: item.structId,
         errors: errors,
-        caller: enums.CallerEnum.BuildJoin
+        caller: common.CallerEnum.BuildJoin
       },
       this.cs
     );
@@ -345,7 +344,7 @@ export class RebuildStructService {
         models: models,
         structId: item.structId,
         errors: errors,
-        caller: enums.CallerEnum.BuildJoinSqlOn
+        caller: common.CallerEnum.BuildJoinSqlOn
       },
       this.cs
     );
@@ -355,7 +354,7 @@ export class RebuildStructService {
         models: models,
         structId: item.structId,
         errors: errors,
-        caller: enums.CallerEnum.BuildJoinSqlWhere
+        caller: common.CallerEnum.BuildJoinSqlWhere
       },
       this.cs
     );
@@ -365,7 +364,7 @@ export class RebuildStructService {
         models: models,
         structId: item.structId,
         errors: errors,
-        caller: enums.CallerEnum.BuildSortJoins
+        caller: common.CallerEnum.BuildSortJoins
       },
       this.cs
     );
@@ -375,7 +374,7 @@ export class RebuildStructService {
         models: models,
         structId: item.structId,
         errors: errors,
-        caller: enums.CallerEnum.BuildSqlAlwaysWhere
+        caller: common.CallerEnum.BuildSqlAlwaysWhere
       },
       this.cs
     );
@@ -385,7 +384,7 @@ export class RebuildStructService {
         models: models,
         structId: item.structId,
         errors: errors,
-        caller: enums.CallerEnum.BuildSqlAlwaysWhereCalc
+        caller: common.CallerEnum.BuildSqlAlwaysWhereCalc
       },
       this.cs
     );
@@ -395,7 +394,7 @@ export class RebuildStructService {
         dashboards: dashboards,
         structId: item.structId,
         errors: errors,
-        caller: enums.CallerEnum.BuildDashboard
+        caller: common.CallerEnum.BuildDashboard
       },
       this.cs
     );
@@ -405,7 +404,7 @@ export class RebuildStructService {
         vizs: vizs,
         structId: item.structId,
         errors: errors,
-        caller: enums.CallerEnum.BuildViz
+        caller: common.CallerEnum.BuildViz
       },
       this.cs
     );
@@ -420,7 +419,7 @@ export class RebuildStructService {
         weekStart: projectConfig.week_start,
         structId: item.structId,
         errors: errors,
-        caller: enums.CallerEnum.BuildDashboardReport
+        caller: common.CallerEnum.BuildDashboardReport
       },
       this.cs,
       this.rabbitService
@@ -435,7 +434,7 @@ export class RebuildStructService {
         weekStart: projectConfig.week_start,
         structId: item.structId,
         errors: errors,
-        caller: enums.CallerEnum.BuildVizReport
+        caller: common.CallerEnum.BuildVizReport
       },
       this.cs,
       this.rabbitService
@@ -447,7 +446,7 @@ export class RebuildStructService {
         models: models,
         structId: item.structId,
         errors: errors,
-        caller: enums.CallerEnum.BuildDashboardChart
+        caller: common.CallerEnum.BuildDashboardChart
       },
       this.cs
     );
@@ -458,7 +457,7 @@ export class RebuildStructService {
         models: models,
         structId: item.structId,
         errors: errors,
-        caller: enums.CallerEnum.BuildVizChart
+        caller: common.CallerEnum.BuildVizChart
       },
       this.cs
     );
@@ -469,7 +468,7 @@ export class RebuildStructService {
         models: models,
         structId: item.structId,
         errors: errors,
-        caller: enums.CallerEnum.BuildMetric
+        caller: common.CallerEnum.BuildMetric
       },
       this.cs
     );
@@ -479,7 +478,7 @@ export class RebuildStructService {
         reps: reps,
         structId: item.structId,
         errors: errors,
-        caller: enums.CallerEnum.BuildRep
+        caller: common.CallerEnum.BuildRep
       },
       this.cs
     );
@@ -496,7 +495,7 @@ export class RebuildStructService {
         reps: reps,
         vizs: vizs,
         structId: item.structId,
-        caller: enums.CallerEnum.RebuildStruct
+        caller: common.CallerEnum.RebuildStruct
       },
       this.cs
     );

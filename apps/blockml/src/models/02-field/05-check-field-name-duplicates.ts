@@ -1,23 +1,22 @@
 import { ConfigService } from '@nestjs/config';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckFieldNameDuplicates;
+let func = common.FuncEnum.CheckFieldNameDuplicates;
 
 export function checkFieldNameDuplicates<T extends types.vmdType>(
   item: {
     entities: T[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -45,7 +44,7 @@ export function checkFieldNameDuplicates<T extends types.vmdType>(
 
     fieldNames.forEach(n => {
       if (n.lineNumbers.length > 1) {
-        let lines: interfaces.BmErrorLine[] = n.lineNumbers.map(y => ({
+        let lines: common.BmErrorLine[] = n.lineNumbers.map(y => ({
           line: y,
           name: x.fileName,
           path: x.filePath
@@ -53,7 +52,7 @@ export function checkFieldNameDuplicates<T extends types.vmdType>(
 
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.DUPLICATE_FIELD_NAMES,
+            title: common.ErTitleEnum.DUPLICATE_FIELD_NAMES,
             message: 'Fields must have unique names',
             lines: lines
           })
@@ -67,13 +66,20 @@ export function checkFieldNameDuplicates<T extends types.vmdType>(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     newEntities
   );
 

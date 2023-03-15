@@ -1,25 +1,24 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.MakeViewAsDeps;
+let func = common.FuncEnum.MakeViewAsDeps;
 
 export function makeViewAsDeps(
   item: {
-    views: interfaces.View[];
+    views: common.FileView[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newViews: interfaces.View[] = [];
+  let newViews: common.FileView[] = [];
 
   item.views.forEach(x => {
     let errorsOnStart = item.errors.length;
@@ -41,8 +40,8 @@ export function makeViewAsDeps(
         if (view === x.name) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.DERIVED_TABLE_VIEW_SELF_REFERENCE,
-              message: `${enums.ParameterEnum.DerivedTable} contains reference to "${view}"`,
+              title: common.ErTitleEnum.DERIVED_TABLE_VIEW_SELF_REFERENCE,
+              message: `${common.ParameterEnum.DerivedTable} contains reference to "${view}"`,
               lines: [
                 {
                   line: x.derived_table_line_num,
@@ -61,9 +60,9 @@ export function makeViewAsDeps(
           item.errors.push(
             new BmError({
               title:
-                enums.ErTitleEnum.DERIVED_TABLE_SAME_ALIAS_FOR_DIFFERENT_VIEWS,
+                common.ErTitleEnum.DERIVED_TABLE_SAME_ALIAS_FOR_DIFFERENT_VIEWS,
               message:
-                `${enums.ParameterEnum.DerivedTable} references different views ` +
+                `${common.ParameterEnum.DerivedTable} references different views ` +
                 `using same alias "${alias}"`,
               lines: [
                 {
@@ -89,9 +88,9 @@ export function makeViewAsDeps(
         if (common.isUndefined(x.asDeps[as])) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.DERIVED_TABLE_NO_VIEW_REFERENCE,
+              title: common.ErTitleEnum.DERIVED_TABLE_NO_VIEW_REFERENCE,
               message:
-                `${enums.ParameterEnum.DerivedTable} references field $\{${as}.${dep}\} but ` +
+                `${common.ParameterEnum.DerivedTable} references field $\{${as}.${dep}\} but ` +
                 `no View reference found for alias "${as}"`,
               lines: [
                 {
@@ -122,8 +121,15 @@ export function makeViewAsDeps(
     x.viewDeps = viewDeps;
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Views, newViews);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Views, newViews);
 
   return newViews;
 }

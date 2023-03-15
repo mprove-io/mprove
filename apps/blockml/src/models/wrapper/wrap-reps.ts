@@ -6,7 +6,7 @@ export function wrapReps(item: {
   structId: string;
   reps: common.FileRep[];
   metrics: common.MetricAny[];
-  models: common.Model[];
+  models: common.FileModel[];
   formatNumber: string;
   currencyPrefix: string;
   currencySuffix: string;

@@ -1,26 +1,25 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckSelectElements;
+let func = common.FuncEnum.CheckSelectElements;
 
 export function checkSelectElements<T extends types.dzType>(
   item: {
     entities: T[];
-    models: interfaces.Model[];
+    models: common.FileModel[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -37,7 +36,7 @@ export function checkSelectElements<T extends types.dzType>(
         if (common.isUndefined(r)) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.REPORT_WRONG_SELECT_ELEMENT,
+              title: common.ErTitleEnum.REPORT_WRONG_SELECT_ELEMENT,
               message: `found element "${element}" that can not be parsed as "alias.field_name"`,
               lines: [
                 {
@@ -62,7 +61,7 @@ export function checkSelectElements<T extends types.dzType>(
           if (common.isUndefined(modelField)) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.REPORT_WRONG_SELECT_MODEL_FIELD,
+                title: common.ErTitleEnum.REPORT_WRONG_SELECT_MODEL_FIELD,
                 message:
                   `found element "${element}" references missing or not valid field ` +
                   `"${fieldName}" of model "${model.name}" fields section`,
@@ -83,7 +82,7 @@ export function checkSelectElements<T extends types.dzType>(
           if (common.isUndefined(join)) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.REPORT_WRONG_SELECT_ALIAS,
+                title: common.ErTitleEnum.REPORT_WRONG_SELECT_ALIAS,
                 message:
                   `found element "${element}" references missing alias ` +
                   `"${asName}" of model "${model.name}" joins section `,
@@ -104,7 +103,7 @@ export function checkSelectElements<T extends types.dzType>(
           if (common.isUndefined(viewField)) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.REPORT_WRONG_SELECT_VIEW_FIELD,
+                title: common.ErTitleEnum.REPORT_WRONG_SELECT_VIEW_FIELD,
                 message:
                   `found element "${element}" references missing or not valid field ` +
                   `"${fieldName}" of view "${join.view.name}" fields section. ` +
@@ -129,13 +128,20 @@ export function checkSelectElements<T extends types.dzType>(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     newEntities
   );
 

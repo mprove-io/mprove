@@ -1,21 +1,19 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = enums.CallerEnum.BuildDashboardReport;
-let func = enums.FuncEnum.FetchSql;
+let caller = common.CallerEnum.BuildDashboardReport;
+let func = common.FuncEnum.FetchSql;
 let testId =
   'groups/filter-model-refs-model/v__filter-model-calc-refs-model-calc';
 
 test('1', async t => {
   let errors: BmError[];
-  let entDashboards: interfaces.Dashboard[];
+  let entDashboards: common.FileDashboard[];
 
   let wLogger;
   let configService;
@@ -48,8 +46,8 @@ test('1', async t => {
       connections: [connection]
     });
 
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    entDashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
+    entDashboards = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -96,7 +94,7 @@ LIMIT 500`;
 
 test('2', async t => {
   let errors: BmError[];
-  let entDashboards: interfaces.Dashboard[];
+  let entDashboards: common.FileDashboard[];
 
   let wLogger;
   let configService;
@@ -129,8 +127,8 @@ test('2', async t => {
       connections: [connection]
     });
 
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    entDashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
+    entDashboards = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }

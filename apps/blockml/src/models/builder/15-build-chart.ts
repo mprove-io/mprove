@@ -1,6 +1,5 @@
 import { ConfigService } from '@nestjs/config';
 import { barChart } from '~blockml/barrels/bar-chart';
-import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
@@ -8,10 +7,10 @@ import { BmError } from '~blockml/models/bm-error';
 export function buildChart<T extends types.dzType>(
   item: {
     entities: T[];
-    models: interfaces.Model[];
+    models: common.FileModel[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {

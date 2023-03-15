@@ -2,7 +2,6 @@ import { fromUnixTime, getUnixTime } from 'date-fns';
 import { barTimestamp } from '~blockml/barrels/bar-timestamp';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 
 export function processFilter(item: {
   filterBricks: string[];
@@ -789,36 +788,36 @@ export function processFilter(item: {
             rangeClose = rgClose;
           } else if (way.match(/^last$/) && complete) {
             close =
-              unit === enums.FractionUnitEnum.Minutes
+              unit === common.FractionUnitEnum.Minutes
                 ? currentMinuteTs
-                : unit === enums.FractionUnitEnum.Hours
+                : unit === common.FractionUnitEnum.Hours
                 ? currentHourTs
-                : unit === enums.FractionUnitEnum.Days
+                : unit === common.FractionUnitEnum.Days
                 ? currentDateTs
-                : unit === enums.FractionUnitEnum.Weeks
+                : unit === common.FractionUnitEnum.Weeks
                 ? currentWeekStartTs
-                : unit === enums.FractionUnitEnum.Months
+                : unit === common.FractionUnitEnum.Months
                 ? currentMonthTs
-                : unit === enums.FractionUnitEnum.Quarters
+                : unit === common.FractionUnitEnum.Quarters
                 ? currentQuarterTs
-                : unit === enums.FractionUnitEnum.Years
+                : unit === common.FractionUnitEnum.Years
                 ? currentYearTs
                 : undefined;
 
             rangeClose =
-              unit === enums.FractionUnitEnum.Minutes
+              unit === common.FractionUnitEnum.Minutes
                 ? fromUnixTime(Number(currentMinuteTs))
-                : unit === enums.FractionUnitEnum.Hours
+                : unit === common.FractionUnitEnum.Hours
                 ? fromUnixTime(Number(currentHourTs))
-                : unit === enums.FractionUnitEnum.Days
+                : unit === common.FractionUnitEnum.Days
                 ? fromUnixTime(Number(currentDateTs))
-                : unit === enums.FractionUnitEnum.Weeks
+                : unit === common.FractionUnitEnum.Weeks
                 ? fromUnixTime(Number(currentWeekStartTs))
-                : unit === enums.FractionUnitEnum.Months
+                : unit === common.FractionUnitEnum.Months
                 ? fromUnixTime(Number(currentMonthTs))
-                : unit === enums.FractionUnitEnum.Quarters
+                : unit === common.FractionUnitEnum.Quarters
                 ? fromUnixTime(Number(currentQuarterTs))
-                : unit === enums.FractionUnitEnum.Years
+                : unit === common.FractionUnitEnum.Years
                 ? fromUnixTime(Number(currentYearTs))
                 : undefined;
           } else if (way.match(/^last$/)) {

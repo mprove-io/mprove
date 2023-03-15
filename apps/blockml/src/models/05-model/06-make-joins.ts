@@ -1,26 +1,25 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.MakeJoins;
+let func = common.FuncEnum.MakeJoins;
 
 export function makeJoins(
   item: {
-    models: interfaces.Model[];
-    views: interfaces.View[];
+    models: common.FileModel[];
+    views: common.FileView[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newModels: interfaces.Model[] = [];
+  let newModels: common.FileModel[] = [];
 
   item.models.forEach(x => {
     let errorsOnStart = item.errors.length;
@@ -36,7 +35,7 @@ export function makeJoins(
       if (common.isUndefined(view)) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.JOIN_CALLS_MISSING_VIEW,
+            title: common.ErTitleEnum.JOIN_CALLS_MISSING_VIEW,
             message: `${common.FileExtensionEnum.View} "${viewName}" is missing or not valid`,
             lines: [
               {
@@ -54,7 +53,7 @@ export function makeJoins(
         item.errors.push(
           new BmError({
             title:
-              enums.ErTitleEnum.JOIN_REFERENCED_VIEW_HAS_DIFFERENT_CONNECTION,
+              common.ErTitleEnum.JOIN_REFERENCED_VIEW_HAS_DIFFERENT_CONNECTION,
             message:
               `The ${common.FileExtensionEnum.Model} can refer to views ` +
               `with the same connection name. Model "${x.name}" with connection ` +
@@ -97,8 +96,15 @@ export function makeJoins(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Models, newModels);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Models, newModels);
 
   return newModels;
 }

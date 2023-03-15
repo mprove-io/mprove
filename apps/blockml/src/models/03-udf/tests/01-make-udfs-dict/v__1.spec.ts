@@ -1,14 +1,13 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = enums.CallerEnum.BuildUdf;
-let func = enums.FuncEnum.MakeUdfsDict;
+let caller = common.CallerEnum.BuildUdf;
+let func = common.FuncEnum.MakeUdfsDict;
 let testId = 'v__1';
 
 test('1', async t => {
@@ -46,8 +45,8 @@ test('1', async t => {
       connections: [connection]
     });
 
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    udfsDict = await helper.readLog(fromDir, enums.LogTypeEnum.UdfsDict);
+    errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
+    udfsDict = await helper.readLog(fromDir, common.LogTypeEnum.UdfsDict);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }

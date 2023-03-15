@@ -18,7 +18,7 @@ export function getDevConfig(envFilePath: any) {
     logIO: <common.BoolEnum>(
       (process.env.BLOCKML_LOG_IO || envFile.BLOCKML_LOG_IO)
     ),
-    logFunc: <enums.FuncEnum>(
+    logFunc: <common.FuncEnum>(
       (process.env.BLOCKML_LOG_FUNC || envFile.BLOCKML_LOG_FUNC)
     ),
     copyLogsToModels: <common.BoolEnum>(

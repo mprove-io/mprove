@@ -1,14 +1,13 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = enums.CallerEnum.BuildYaml;
-let func = enums.FuncEnum.CheckConnections;
+let caller = common.CallerEnum.BuildYaml;
+let func = common.FuncEnum.CheckConnections;
 let testId = 'e__connection-not-found';
 
 test('1', async t => {
@@ -41,8 +40,8 @@ test('1', async t => {
       connections: []
     });
 
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    filesAny = await helper.readLog(fromDir, enums.LogTypeEnum.FilesAny);
+    errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
+    filesAny = await helper.readLog(fromDir, common.LogTypeEnum.FilesAny);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -58,8 +57,8 @@ test('1', async t => {
   t.is(errors.length, 2);
   t.is(filesAny.length, 1);
 
-  t.is(errors[0].title, enums.ErTitleEnum.CONNECTION_NOT_FOUND);
+  t.is(errors[0].title, common.ErTitleEnum.CONNECTION_NOT_FOUND);
   t.is(errors[0].lines[0].line, 2);
-  t.is(errors[1].title, enums.ErTitleEnum.CONNECTION_NOT_FOUND);
+  t.is(errors[1].title, common.ErTitleEnum.CONNECTION_NOT_FOUND);
   t.is(errors[1].lines[0].line, 2);
 });

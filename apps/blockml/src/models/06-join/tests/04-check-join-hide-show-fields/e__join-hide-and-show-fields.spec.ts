@@ -1,20 +1,18 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = enums.CallerEnum.BuildJoin;
-let func = enums.FuncEnum.CheckJoinHideShowFields;
+let caller = common.CallerEnum.BuildJoin;
+let func = common.FuncEnum.CheckJoinHideShowFields;
 let testId = 'e__join-hide-and-show-fields';
 
 test('1', async t => {
   let errors: BmError[];
-  let models: interfaces.Model[];
+  let models: common.FileModel[];
 
   let wLogger;
   let configService;
@@ -47,8 +45,8 @@ test('1', async t => {
       connections: [connection]
     });
 
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    models = await helper.readLog(fromDir, enums.LogTypeEnum.Models);
+    errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
+    models = await helper.readLog(fromDir, common.LogTypeEnum.Models);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -64,7 +62,7 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(models.length, 0);
 
-  t.is(errors[0].title, enums.ErTitleEnum.JOIN_HIDE_AND_SHOW_FIELDS);
+  t.is(errors[0].title, common.ErTitleEnum.JOIN_HIDE_AND_SHOW_FIELDS);
   t.is(errors[0].lines.length, 2);
   t.is(errors[0].lines[0].line, 6);
   t.is(errors[0].lines[1].line, 8);

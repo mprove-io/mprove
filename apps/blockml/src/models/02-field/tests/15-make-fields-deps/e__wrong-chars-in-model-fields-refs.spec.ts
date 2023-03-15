@@ -1,20 +1,18 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = enums.CallerEnum.BuildModelField;
-let func = enums.FuncEnum.MakeFieldsDeps;
+let caller = common.CallerEnum.BuildModelField;
+let func = common.FuncEnum.MakeFieldsDeps;
 let testId = 'e__wrong-chars-in-model-fields-refs';
 
 test('1', async t => {
   let errors: BmError[];
-  let entModels: interfaces.Model[];
+  let entModels: common.FileModel[];
 
   let wLogger;
   let configService;
@@ -47,8 +45,8 @@ test('1', async t => {
       connections: [connection]
     });
 
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    entModels = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
+    entModels = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -64,6 +62,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entModels.length, 0);
 
-  t.is(errors[0].title, enums.ErTitleEnum.WRONG_CHARS_IN_MODEL_FIELDS_REFS);
+  t.is(errors[0].title, common.ErTitleEnum.WRONG_CHARS_IN_MODEL_FIELDS_REFS);
   t.is(errors[0].lines[0].line, 5);
 });

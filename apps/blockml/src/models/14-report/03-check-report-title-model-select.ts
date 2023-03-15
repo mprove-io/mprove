@@ -1,25 +1,24 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckReportTitleModelSelect;
+let func = common.FuncEnum.CheckReportTitleModelSelect;
 
 export function checkReportTitleModelSelect<T extends types.dzType>(
   item: {
     entities: T[];
-    models: interfaces.Model[];
+    models: common.FileModel[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -35,13 +34,13 @@ export function checkReportTitleModelSelect<T extends types.dzType>(
         Object.keys(report)
           .filter(p => p.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
           .forEach(l =>
-            lineNums.push(report[l as keyof interfaces.Report] as number)
+            lineNums.push(report[l as keyof common.FileReport] as number)
           );
 
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.MISSING_REPORT_TITLE,
-            message: `report must have ${enums.ParameterEnum.Title} parameter`,
+            title: common.ErTitleEnum.MISSING_REPORT_TITLE,
+            message: `report must have ${common.ParameterEnum.Title} parameter`,
             lines: [
               {
                 line: Math.min(...lineNums),
@@ -61,8 +60,8 @@ export function checkReportTitleModelSelect<T extends types.dzType>(
       if (common.isUndefined(report.model)) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.MISSING_REPORT_MODEL,
-            message: `report must have ${enums.ParameterEnum.Model} parameter`,
+            title: common.ErTitleEnum.MISSING_REPORT_MODEL,
+            message: `report must have ${common.ParameterEnum.Model} parameter`,
             lines: [
               {
                 line: report.title_line_num,
@@ -80,7 +79,7 @@ export function checkReportTitleModelSelect<T extends types.dzType>(
       if (common.isUndefined(model)) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.WRONG_REPORT_MODEL,
+            title: common.ErTitleEnum.WRONG_REPORT_MODEL,
             message: `model "${report.model}" is missing or not valid`,
             lines: [
               {
@@ -97,8 +96,8 @@ export function checkReportTitleModelSelect<T extends types.dzType>(
       if (common.isUndefined(report.select)) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.MISSING_REPORT_SELECT,
-            message: `report must have "${enums.ParameterEnum.Select}" parameter`,
+            title: common.ErTitleEnum.MISSING_REPORT_SELECT,
+            message: `report must have "${common.ParameterEnum.Select}" parameter`,
             lines: [
               {
                 line: report.title_line_num,
@@ -114,7 +113,7 @@ export function checkReportTitleModelSelect<T extends types.dzType>(
 
     Object.keys(titles).forEach(title => {
       if (titles[title].length > 1) {
-        let lines: interfaces.BmErrorLine[] = titles[title].map(lineNum => ({
+        let lines: common.BmErrorLine[] = titles[title].map(lineNum => ({
           line: lineNum,
           name: x.fileName,
           path: x.filePath
@@ -122,7 +121,7 @@ export function checkReportTitleModelSelect<T extends types.dzType>(
 
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.DUPLICATE_REPORT_TITLE,
+            title: common.ErTitleEnum.DUPLICATE_REPORT_TITLE,
             message:
               'Report titles must be unique for dashboard. ' +
               `Found duplicate "${title.toLocaleLowerCase()}" title`,
@@ -137,13 +136,20 @@ export function checkReportTitleModelSelect<T extends types.dzType>(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     newEntities
   );
 

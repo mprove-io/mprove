@@ -1,20 +1,18 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = enums.CallerEnum.BuildView;
-let func = enums.FuncEnum.ProcessViewRefs;
+let caller = common.CallerEnum.BuildView;
+let func = common.FuncEnum.ProcessViewRefs;
 let testId = 'v__select-mea';
 
 test('1', async t => {
   let errors: BmError[];
-  let views: interfaces.View[];
+  let views: common.FileView[];
 
   let wLogger;
   let configService;
@@ -47,8 +45,8 @@ test('1', async t => {
       connections: [connection]
     });
 
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    views = await helper.readLog(fromDir, enums.LogTypeEnum.Views);
+    errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
+    views = await helper.readLog(fromDir, common.LogTypeEnum.Views);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -90,7 +88,7 @@ test('1', async t => {
 
 test('2', async t => {
   let errors: BmError[];
-  let views: interfaces.View[];
+  let views: common.FileView[];
 
   let wLogger;
   let configService;
@@ -123,8 +121,8 @@ test('2', async t => {
       connections: [connection]
     });
 
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    views = await helper.readLog(fromDir, enums.LogTypeEnum.Views);
+    errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
+    views = await helper.readLog(fromDir, common.LogTypeEnum.Views);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }

@@ -1,24 +1,23 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.MakeFieldsDeps;
+let func = common.FuncEnum.MakeFieldsDeps;
 
 export function makeFieldsDeps<T extends types.vmType>(
   item: {
     entities: T[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ): T[] {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -90,13 +89,20 @@ export function makeFieldsDeps<T extends types.vmType>(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     newEntities
   );
 
@@ -138,7 +144,7 @@ export function checkCharsInFieldRefs<T extends types.vmType>(item: {
 
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.WRONG_CHARS_IN_VIEW_FIELDS_REFS,
+            title: common.ErTitleEnum.WRONG_CHARS_IN_VIEW_FIELDS_REFS,
             message: `characters "${viewWrongCharsString}" can not be used inside \${} of view (only snake_case "a...z0...9_" is allowed)`,
             lines: [
               {
@@ -172,7 +178,7 @@ export function checkCharsInFieldRefs<T extends types.vmType>(item: {
         modelWrongCharsString = [...new Set(modelWrongChars)].join(', '); // unique
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.WRONG_CHARS_IN_MODEL_FIELDS_REFS,
+            title: common.ErTitleEnum.WRONG_CHARS_IN_MODEL_FIELDS_REFS,
             message: `characters "${modelWrongCharsString}" can not be used inside \${} of model (only snake_case "a...z0...9_" is allowed)`,
             lines: [
               {

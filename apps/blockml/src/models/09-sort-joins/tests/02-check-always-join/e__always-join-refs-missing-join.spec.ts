@@ -1,14 +1,13 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = enums.CallerEnum.BuildSortJoins;
-let func = enums.FuncEnum.CheckAlwaysJoin;
+let caller = common.CallerEnum.BuildSortJoins;
+let func = common.FuncEnum.CheckAlwaysJoin;
 let testId = 'e__always-join-refs-missing-join';
 
 test('1', async t => {
@@ -46,8 +45,8 @@ test('1', async t => {
       connections: [connection]
     });
 
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    models = await helper.readLog(fromDir, enums.LogTypeEnum.Models);
+    errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
+    models = await helper.readLog(fromDir, common.LogTypeEnum.Models);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -63,6 +62,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(models.length, 0);
 
-  t.is(errors[0].title, enums.ErTitleEnum.ALWAYS_JOIN_REFS_MISSING_JOIN);
+  t.is(errors[0].title, common.ErTitleEnum.ALWAYS_JOIN_REFS_MISSING_JOIN);
   t.is(errors[0].lines[0].line, 3);
 });

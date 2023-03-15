@@ -1,20 +1,18 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = enums.CallerEnum.BuildViewField;
-let func = enums.FuncEnum.CheckFieldUnknownParameters;
+let caller = common.CallerEnum.BuildViewField;
+let func = common.FuncEnum.CheckFieldUnknownParameters;
 let testId = 'e__unexpected-dictionary-in-field-parameters';
 
 test('1', async t => {
   let errors: BmError[];
-  let entViews: interfaces.View[];
+  let entViews: common.FileView[];
 
   let wLogger;
   let configService;
@@ -47,8 +45,8 @@ test('1', async t => {
       connections: [connection]
     });
 
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    entViews = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
+    entViews = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -66,7 +64,7 @@ test('1', async t => {
 
   t.is(
     errors[0].title,
-    enums.ErTitleEnum.UNEXPECTED_DICTIONARY_IN_FIELD_PARAMETERS
+    common.ErTitleEnum.UNEXPECTED_DICTIONARY_IN_FIELD_PARAMETERS
   );
   t.is(errors[0].lines[0].line, 6);
 });

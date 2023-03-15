@@ -2,26 +2,25 @@ import { ConfigService } from '@nestjs/config';
 import { barSpecial } from '~blockml/barrels/bar-special';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckDefaultFilters;
+let func = common.FuncEnum.CheckDefaultFilters;
 
 export function checkDefaultFilters<T extends types.dzType>(
   item: {
     entities: T[];
-    models: interfaces.Model[];
+    models: common.FileModel[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -39,13 +38,14 @@ export function checkDefaultFilters<T extends types.dzType>(
       Object.keys(report.default_filters)
         .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(defaultFilter => {
-          let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
+          let reg =
+            common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
           let r = reg.exec(defaultFilter);
 
           if (common.isUndefined(r)) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.REPORT_DEFAULT_FILTER_WRONG_REFERENCE,
+                title: common.ErTitleEnum.REPORT_DEFAULT_FILTER_WRONG_REFERENCE,
                 message: 'default filter must be in form "alias.field_name"',
                 lines: [
                   {
@@ -73,7 +73,7 @@ export function checkDefaultFilters<T extends types.dzType>(
               item.errors.push(
                 new BmError({
                   title:
-                    enums.ErTitleEnum
+                    common.ErTitleEnum
                       .REPORT_DEFAULT_FILTER_REFS_MISSING_MODEL_FIELD,
                   message:
                     `"${defaultFilter}" references missing or not valid field ` +
@@ -98,7 +98,7 @@ export function checkDefaultFilters<T extends types.dzType>(
               item.errors.push(
                 new BmError({
                   title:
-                    enums.ErTitleEnum.REPORT_DEFAULT_FILTER_REFS_MISSING_ALIAS,
+                    common.ErTitleEnum.REPORT_DEFAULT_FILTER_REFS_MISSING_ALIAS,
                   message:
                     `"${defaultFilter}" references missing alias ` +
                     `"${asName}" of model "${model.name}" joins section`,
@@ -124,7 +124,7 @@ export function checkDefaultFilters<T extends types.dzType>(
               item.errors.push(
                 new BmError({
                   title:
-                    enums.ErTitleEnum
+                    common.ErTitleEnum
                       .REPORT_DEFAULT_FILTER_REFS_MISSING_VIEW_FIELD,
                   message:
                     `"${defaultFilter}" references missing or not valid field ` +
@@ -149,7 +149,7 @@ export function checkDefaultFilters<T extends types.dzType>(
             item.errors.push(
               new BmError({
                 title:
-                  enums.ErTitleEnum
+                  common.ErTitleEnum
                     .REPORT_SAME_FIELD_IN_DEFAULT_AND_LISTEN_FILTERS,
                 message:
                   `found "${defaultFilter}" in default and listen filters ` +
@@ -171,7 +171,7 @@ export function checkDefaultFilters<T extends types.dzType>(
           if (!Array.isArray(report.default_filters[defaultFilter])) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.REPORT_DEFAULT_FILTER_MUST_BE_A_LIST,
+                title: common.ErTitleEnum.REPORT_DEFAULT_FILTER_MUST_BE_A_LIST,
                 message:
                   `default filter ${defaultFilter} must be a list of ` +
                   'filter expressions',
@@ -205,11 +205,11 @@ export function checkDefaultFilters<T extends types.dzType>(
             item.errors.push(
               new BmError({
                 title:
-                  enums.ErTitleEnum
+                  common.ErTitleEnum
                     .REPORT_DEFAULT_FILTER_WRONG_FILTER_EXPRESSION,
                 message:
                   `wrong expression "${p.brick}" of filter "${defaultFilter}" ` +
-                  `for ${enums.ParameterEnum.Result} "${result}" `,
+                  `for ${common.ParameterEnum.Result} "${result}" `,
                 lines: [
                   {
                     line: (<any>report.default_filters)[
@@ -231,13 +231,20 @@ export function checkDefaultFilters<T extends types.dzType>(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     newEntities
   );
 

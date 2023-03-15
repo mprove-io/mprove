@@ -1,33 +1,32 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.SplitFiles;
+let func = common.FuncEnum.SplitFiles;
 
 export function splitFiles(
   item: {
     filesAny: any[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let udfs: interfaces.Udf[] = [];
-  let views: interfaces.View[] = [];
-  let models: interfaces.Model[] = [];
-  let dashboards: interfaces.Dashboard[] = [];
+  let udfs: common.FileUdf[] = [];
+  let views: common.FileView[] = [];
+  let models: common.FileModel[] = [];
+  let dashboards: common.FileDashboard[] = [];
   let reps: common.FileRep[] = [];
-  let metrics: interfaces.Metric[] = [];
-  let apis: interfaces.Api[] = [];
-  let vizs: interfaces.Viz[] = [];
-  let confs: interfaces.ProjectConf[] = [];
+  let metrics: common.FileMetric[] = [];
+  let apis: common.FileApi[] = [];
+  let vizs: common.FileVis[] = [];
+  let confs: common.FileProjectConf[] = [];
 
   item.filesAny.forEach(file => {
     let fileExt = file.ext;
@@ -41,7 +40,7 @@ export function splitFiles(
           delete file.name;
           delete file.path;
 
-          let newUdfOptions: interfaces.Udf = {
+          let newUdfOptions: common.FileUdf = {
             name: file.udf,
             fileName: fileName,
             filePath: filePath,
@@ -52,7 +51,7 @@ export function splitFiles(
         } else {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.WRONG_UDF_NAME,
+              title: common.ErTitleEnum.WRONG_UDF_NAME,
               message: `filename ${file.name} does not match "udf: ${file.udf}"`,
               lines: [
                 {
@@ -78,7 +77,7 @@ export function splitFiles(
           delete file.name;
           delete file.path;
 
-          let newViewOptions: interfaces.View = {
+          let newViewOptions: common.FileView = {
             name: file.view,
             fileName: fileName,
             filePath: filePath,
@@ -91,7 +90,7 @@ export function splitFiles(
         } else {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.WRONG_VIEW_NAME,
+              title: common.ErTitleEnum.WRONG_VIEW_NAME,
               message: `filename ${file.name} does not match "view: ${file.view}"`,
               lines: [
                 {
@@ -117,7 +116,7 @@ export function splitFiles(
           delete file.name;
           delete file.path;
 
-          let newModelOptions: interfaces.Model = {
+          let newModelOptions: common.FileModel = {
             name: file.model,
             fileName: fileName,
             filePath: filePath,
@@ -130,7 +129,7 @@ export function splitFiles(
         } else {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.WRONG_MODEL_NAME,
+              title: common.ErTitleEnum.WRONG_MODEL_NAME,
               message: `filename ${file.name} does not match "model: ${file.model}"`,
               lines: [
                 {
@@ -151,7 +150,7 @@ export function splitFiles(
           delete file.name;
           delete file.path;
 
-          let newDashboardOptions: interfaces.Dashboard = {
+          let newDashboardOptions: common.FileDashboard = {
             name: file.dashboard,
             fileName: fileName,
             filePath: filePath,
@@ -162,7 +161,7 @@ export function splitFiles(
         } else {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.WRONG_DASHBOARD_NAME,
+              title: common.ErTitleEnum.WRONG_DASHBOARD_NAME,
               message: `filename ${file.name} does not match "dashboard: ${file.dashboard}"`,
               lines: [
                 {
@@ -194,7 +193,7 @@ export function splitFiles(
         } else {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.WRONG_REP_NAME,
+              title: common.ErTitleEnum.WRONG_REP_NAME,
               message: `filename ${file.name} does not match "report: ${file.report}"`,
               lines: [
                 {
@@ -215,7 +214,7 @@ export function splitFiles(
           delete file.name;
           delete file.path;
 
-          let newApiOptions: interfaces.Api = {
+          let newApiOptions: common.FileApi = {
             name: file.api,
             fileName: fileName,
             filePath: filePath,
@@ -226,7 +225,7 @@ export function splitFiles(
         } else {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.WRONG_API_NAME,
+              title: common.ErTitleEnum.WRONG_API_NAME,
               message: `filename ${file.name} does not match "api: ${file.api}"`,
               lines: [
                 {
@@ -247,7 +246,7 @@ export function splitFiles(
           delete file.name;
           delete file.path;
 
-          let newMetricOptions: interfaces.Metric = {
+          let newMetricOptions: common.FileMetric = {
             name: file.metric,
             fileName: fileName,
             filePath: filePath,
@@ -258,7 +257,7 @@ export function splitFiles(
         } else {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.WRONG_METRIC_NAME,
+              title: common.ErTitleEnum.WRONG_METRIC_NAME,
               message: `filename ${file.name} does not match "metric: ${file.metric}"`,
               lines: [
                 {
@@ -279,7 +278,7 @@ export function splitFiles(
           delete file.name;
           delete file.path;
 
-          let newVizOptions: interfaces.Viz = {
+          let newVizOptions: common.FileVis = {
             name: file.vis,
             fileName: fileName,
             filePath: filePath,
@@ -290,8 +289,8 @@ export function splitFiles(
         } else {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.WRONG_VIS_NAME,
-              message: `filename ${file.name} does not match "${enums.ParameterEnum.Vis}: ${file.vis}"`,
+              title: common.ErTitleEnum.WRONG_VIS_NAME,
+              message: `filename ${file.name} does not match "${common.ParameterEnum.Vis}: ${file.vis}"`,
               lines: [
                 {
                   line: file.vis_line_num,
@@ -311,7 +310,7 @@ export function splitFiles(
           delete file.name;
           delete file.path;
 
-          let newConfOptions: interfaces.ProjectConf = {
+          let newConfOptions: common.FileProjectConf = {
             name: common.MPROVE_CONFIG_NAME,
             fileName: fileName,
             filePath: filePath,
@@ -327,16 +326,23 @@ export function splitFiles(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Apis, apis);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Ds, dashboards);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Confs, confs);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Metrics, metrics);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Models, models);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Reps, reps);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Udfs, udfs);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Views, views);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Vizs, vizs);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Apis, apis);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Ds, dashboards);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Confs, confs);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Metrics, metrics);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Models, models);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Reps, reps);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Udfs, udfs);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Views, views);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Vizs, vizs);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
 
   return {
     apis: apis,

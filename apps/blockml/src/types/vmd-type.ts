@@ -1,3 +1,3 @@
-import { interfaces } from '~blockml/barrels/interfaces';
+import { common } from '~blockml/barrels/common';
 
-export type vmdType = interfaces.View | interfaces.Model | interfaces.Dashboard;
+export type vmdType = common.FileView | common.FileModel | common.FileDashboard;

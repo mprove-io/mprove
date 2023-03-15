@@ -1,37 +1,35 @@
 import { barMeasure } from '~blockml/barrels/bar-measure';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
-import { interfaces } from '~blockml/barrels/interfaces';
 
-let func = enums.FuncEnum.MakeMainText;
+let func = common.FuncEnum.MakeMainText;
 
 export function makeMainText(item: {
-  select: interfaces.VarsSql['select'];
-  depMeasures: interfaces.VarsSql['depMeasures'];
-  depDimensions: interfaces.VarsSql['depDimensions'];
-  filters: interfaces.VarsSql['filters'];
-  varsSqlSteps: interfaces.Report['varsSqlSteps'];
-  model: interfaces.Model;
+  select: common.VarsSql['select'];
+  depMeasures: common.VarsSql['depMeasures'];
+  depDimensions: common.VarsSql['depDimensions'];
+  filters: common.VarsSql['filters'];
+  varsSqlSteps: common.FileReport['varsSqlSteps'];
+  model: common.FileModel;
 }) {
   let { select, filters, depMeasures, depDimensions, model, varsSqlSteps } =
     item;
 
   let connection = model.connection;
 
-  let varsInput = common.makeCopy<interfaces.VarsSql>({
+  let varsInput = common.makeCopy<common.VarsSql>({
     select,
     filters,
     depMeasures,
     depDimensions
   });
 
-  let mainUdfs: interfaces.VarsSql['mainUdfs'] = {};
-  let mainText: interfaces.VarsSql['mainText'] = [];
-  let groupMainBy: interfaces.VarsSql['groupMainBy'] = [];
-  let selected: interfaces.VarsSql['selected'] = {};
-  let filtered: interfaces.VarsSql['filtered'] = {};
-  let processedFields: interfaces.VarsSql['processedFields'] = {};
+  let mainUdfs: common.VarsSql['mainUdfs'] = {};
+  let mainText: common.VarsSql['mainText'] = [];
+  let groupMainBy: common.VarsSql['groupMainBy'] = [];
+  let selected: common.VarsSql['selected'] = {};
+  let filtered: common.VarsSql['filtered'] = {};
+  let processedFields: common.VarsSql['processedFields'] = {};
 
   let i = 0;
 
@@ -302,7 +300,7 @@ export function makeMainText(item: {
     processedFields[element] = sqlSelect;
   });
 
-  let varsOutput: interfaces.VarsSql = {
+  let varsOutput: common.VarsSql = {
     mainUdfs,
     mainText,
     groupMainBy,

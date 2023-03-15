@@ -1,26 +1,25 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckViewAsDeps;
+let func = common.FuncEnum.CheckViewAsDeps;
 
 export function checkViewAsDeps(
   item: {
-    views: interfaces.View[];
+    views: common.FileView[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newViews: interfaces.View[] = [];
+  let newViews: common.FileView[] = [];
 
   item.views.forEach(x => {
     let errorsOnStart = item.errors.length;
@@ -36,9 +35,9 @@ export function checkViewAsDeps(
         if (common.isUndefined(referencedView)) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.DERIVED_TABLE_REFERENCES_MISSING_VIEW,
+              title: common.ErTitleEnum.DERIVED_TABLE_REFERENCES_MISSING_VIEW,
               message:
-                `${enums.ParameterEnum.DerivedTable} has reference to missing ` +
+                `${common.ParameterEnum.DerivedTable} has reference to missing ` +
                 `view "${referencedViewName}"`,
               lines: [
                 {
@@ -58,7 +57,7 @@ export function checkViewAsDeps(
           item.errors.push(
             new BmError({
               title:
-                enums.ErTitleEnum
+                common.ErTitleEnum
                   .DERIVED_TABLE_REFERENCED_VIEW_HAS_DIFFERENT_CONNECTION,
               message:
                 `The ${common.FileExtensionEnum.View} can refer to other views ` +
@@ -87,10 +86,10 @@ export function checkViewAsDeps(
             item.errors.push(
               new BmError({
                 title:
-                  enums.ErTitleEnum
+                  common.ErTitleEnum
                     .DERIVED_TABLE_REFERENCED_VIEW_HAS_APPLY_FILTER,
                 message:
-                  `${enums.ParameterEnum.DerivedTable} can not reference views that ` +
+                  `${common.ParameterEnum.DerivedTable} can not reference views that ` +
                   `have ${constants.APPLY_FILTER}. Found reference of view "${referencedViewName}"`,
                 lines: [
                   {
@@ -111,7 +110,8 @@ export function checkViewAsDeps(
           if (common.isUndefined(field)) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.DERIVED_TABLE_REFERENCES_MISSING_FIELD,
+                title:
+                  common.ErTitleEnum.DERIVED_TABLE_REFERENCES_MISSING_FIELD,
                 message: `Found referencing field "${fieldName}" of view "${referencedView.name}"`,
                 lines: [
                   {
@@ -126,10 +126,10 @@ export function checkViewAsDeps(
           } else if (field.fieldClass === common.FieldClassEnum.Filter) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.DERIVED_TABLE_REFERENCES_FILTER,
+                title: common.ErTitleEnum.DERIVED_TABLE_REFERENCES_FILTER,
                 message:
                   `Found referencing Filter "${fieldName}" of view "${referencedView.name}".` +
-                  `${enums.ParameterEnum.DerivedTable} can not reference Filter fields`,
+                  `${common.ParameterEnum.DerivedTable} can not reference Filter fields`,
                 lines: [
                   {
                     line: x.derived_table_line_num,
@@ -161,8 +161,15 @@ export function checkViewAsDeps(
   // return zero views if at least 1 error found (no restart needed)
   newViews = item.views.length === newViews.length ? newViews : [];
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Views, newViews);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Views, newViews);
 
   return newViews;
 }

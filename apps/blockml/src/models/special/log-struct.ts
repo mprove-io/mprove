@@ -1,25 +1,24 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { log } from '~blockml/helper/_index';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.LogStruct;
+let func = common.FuncEnum.LogStruct;
 
 export async function logStruct(
   item: {
-    apis: interfaces.Api[];
-    dashboards: interfaces.Dashboard[];
+    apis: common.Api[];
+    dashboards: common.FileDashboard[];
     metrics: common.MetricAny[];
-    models: interfaces.Model[];
+    models: common.FileModel[];
     reps: common.FileRep[];
-    udfsDict: common.UdfsDict;
-    views: interfaces.View[];
-    vizs: interfaces.Viz[];
+    udfsDict: common.FileUdfsDict;
+    views: common.FileView[];
+    vizs: common.FileVis[];
     structId: string;
     errors: BmError[];
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
@@ -36,13 +35,13 @@ export async function logStruct(
     caller
   } = item;
 
-  log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  log(cs, caller, func, structId, enums.LogTypeEnum.Apis, apis);
-  log(cs, caller, func, structId, enums.LogTypeEnum.Ds, dashboards);
-  log(cs, caller, func, structId, enums.LogTypeEnum.Metrics, metrics);
-  log(cs, caller, func, structId, enums.LogTypeEnum.Models, models);
-  log(cs, caller, func, structId, enums.LogTypeEnum.Reps, reps);
-  log(cs, caller, func, structId, enums.LogTypeEnum.UdfsDict, udfsDict);
-  log(cs, caller, func, structId, enums.LogTypeEnum.Views, views);
-  log(cs, caller, func, structId, enums.LogTypeEnum.Vizs, vizs);
+  log(cs, caller, func, structId, common.LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, common.LogTypeEnum.Apis, apis);
+  log(cs, caller, func, structId, common.LogTypeEnum.Ds, dashboards);
+  log(cs, caller, func, structId, common.LogTypeEnum.Metrics, metrics);
+  log(cs, caller, func, structId, common.LogTypeEnum.Models, models);
+  log(cs, caller, func, structId, common.LogTypeEnum.Reps, reps);
+  log(cs, caller, func, structId, common.LogTypeEnum.UdfsDict, udfsDict);
+  log(cs, caller, func, structId, common.LogTypeEnum.Views, views);
+  log(cs, caller, func, structId, common.LogTypeEnum.Vizs, vizs);
 }

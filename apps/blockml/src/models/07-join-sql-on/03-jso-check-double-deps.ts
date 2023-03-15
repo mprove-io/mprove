@@ -1,25 +1,24 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.JsoCheckDoubleDeps;
+let func = common.FuncEnum.JsoCheckDoubleDeps;
 
 export function jsoCheckDoubleDeps(
   item: {
-    models: interfaces.Model[];
+    models: common.FileModel[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newModels: interfaces.Model[] = [];
+  let newModels: common.FileModel[] = [];
 
   item.models.forEach(x => {
     let errorsOnStart = item.errors.length;
@@ -33,10 +32,10 @@ export function jsoCheckDoubleDeps(
           if (common.isUndefined(depJoin)) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.JOIN_WRONG_ALIAS_IN_SQL_ON_REFERENCE,
+                title: common.ErTitleEnum.JOIN_WRONG_ALIAS_IN_SQL_ON_REFERENCE,
                 message:
                   `found reference using alias "${depAs}" that is ` +
-                  `missing in joins elements. Check "${enums.ParameterEnum.As}" values.`,
+                  `missing in joins elements. Check "${common.ParameterEnum.As}" values.`,
                 lines: [
                   {
                     line: join.sql_on_line_num,
@@ -56,7 +55,7 @@ export function jsoCheckDoubleDeps(
             if (common.isUndefined(depField)) {
               item.errors.push(
                 new BmError({
-                  title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_MISSING_FIELD,
+                  title: common.ErTitleEnum.JOIN_SQL_ON_REFS_MISSING_FIELD,
                   message:
                     `found referencing to field "${depFieldName}" of ` +
                     `view "${depJoin.view.name}" as "${depAs}"`,
@@ -75,9 +74,9 @@ export function jsoCheckDoubleDeps(
             if (depField.fieldClass === common.FieldClassEnum.Filter) {
               item.errors.push(
                 new BmError({
-                  title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_FILTER,
+                  title: common.ErTitleEnum.JOIN_SQL_ON_REFS_FILTER,
                   message:
-                    `"${enums.ParameterEnum.SqlOn}" can not reference filters. ` +
+                    `"${common.ParameterEnum.SqlOn}" can not reference filters. ` +
                     `found referencing filter "${depFieldName}" of ` +
                     `view "${depJoin.view.name}" as "${depAs}"`,
                   lines: [
@@ -95,9 +94,9 @@ export function jsoCheckDoubleDeps(
             if (depField.fieldClass === common.FieldClassEnum.Measure) {
               item.errors.push(
                 new BmError({
-                  title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_MEASURE,
+                  title: common.ErTitleEnum.JOIN_SQL_ON_REFS_MEASURE,
                   message:
-                    `"${enums.ParameterEnum.SqlOn}" can not reference measures. ` +
+                    `"${common.ParameterEnum.SqlOn}" can not reference measures. ` +
                     `found referencing measure "${depFieldName}" of ` +
                     `view "${depJoin.view.name}" as "${depAs}"`,
                   lines: [
@@ -115,9 +114,9 @@ export function jsoCheckDoubleDeps(
             if (depField.fieldClass === common.FieldClassEnum.Calculation) {
               item.errors.push(
                 new BmError({
-                  title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_CALCULATION,
+                  title: common.ErTitleEnum.JOIN_SQL_ON_REFS_CALCULATION,
                   message:
-                    `"${enums.ParameterEnum.SqlOn}" can not reference calculations. ` +
+                    `"${common.ParameterEnum.SqlOn}" can not reference calculations. ` +
                     `found referencing calculation "${depFieldName}" ` +
                     `of view "${depJoin.view.name}" as "${depAs}"`,
                   lines: [
@@ -140,8 +139,15 @@ export function jsoCheckDoubleDeps(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Models, newModels);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Models, newModels);
 
   return newModels;
 }

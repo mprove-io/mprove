@@ -1,23 +1,21 @@
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
-import { interfaces } from '~blockml/barrels/interfaces';
 
-let func = enums.FuncEnum.ProcessTimezone;
+let func = common.FuncEnum.ProcessTimezone;
 
 export function processTimezone(item: {
-  mainQuery: interfaces.VarsSql['mainQuery'];
-  timezone: interfaces.VarsSql['timezone'];
-  varsSqlSteps: interfaces.Report['varsSqlSteps'];
-  model: interfaces.Model;
+  mainQuery: common.VarsSql['mainQuery'];
+  timezone: common.VarsSql['timezone'];
+  varsSqlSteps: common.FileReport['varsSqlSteps'];
+  model: common.FileModel;
 }) {
   let { mainQuery, timezone, varsSqlSteps, model } = item;
 
-  let varsInput = common.makeCopy<interfaces.VarsSql>({
+  let varsInput = common.makeCopy<common.VarsSql>({
     mainQuery,
     timezone
   });
 
-  let mainQueryProcessed: interfaces.VarsSql['mainQueryProcessed'] = [];
+  let mainQueryProcessed: common.VarsSql['mainQueryProcessed'] = [];
 
   mainQueryProcessed = mainQuery.map(x => {
     let reg = common.MyRegex.TIMESTAMP_START_END();
@@ -56,7 +54,7 @@ export function processTimezone(item: {
     return x;
   });
 
-  let varsOutput: interfaces.VarsSql = { mainQueryProcessed };
+  let varsOutput: common.VarsSql = { mainQueryProcessed };
 
   varsSqlSteps.push({ func, varsInput, varsOutput });
 

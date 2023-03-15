@@ -1,20 +1,18 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = enums.CallerEnum.BuildView;
-let func = enums.FuncEnum.CheckViewCycles;
+let caller = common.CallerEnum.BuildView;
+let func = common.FuncEnum.CheckViewCycles;
 let testId = 'e__derived-table-cycle-in-view-references';
 
 test('1', async t => {
   let errors: BmError[];
-  let views: interfaces.View[];
+  let views: common.FileView[];
 
   let wLogger;
   let configService;
@@ -47,8 +45,8 @@ test('1', async t => {
       connections: [connection]
     });
 
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    views = await helper.readLog(fromDir, enums.LogTypeEnum.Views);
+    errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
+    views = await helper.readLog(fromDir, common.LogTypeEnum.Views);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -66,7 +64,7 @@ test('1', async t => {
 
   t.is(
     errors[0].title,
-    enums.ErTitleEnum.DERIVED_TABLE_CYCLE_IN_VIEW_REFERENCES
+    common.ErTitleEnum.DERIVED_TABLE_CYCLE_IN_VIEW_REFERENCES
   );
   t.is(errors[0].lines.length, 3);
   t.is(errors[0].lines[0].line, 3);

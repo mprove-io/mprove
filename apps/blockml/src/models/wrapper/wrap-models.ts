@@ -1,28 +1,27 @@
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 import { wrapField } from './wrap-field';
 
 export function wrapModels(item: {
   structId: string;
-  models: interfaces.Model[];
-}): common.Model[] {
+  models: common.FileModel[];
+}): common.FileModel[] {
   let { structId, models } = item;
 
-  let apiModels: common.Model[] = [];
+  let apiModels: common.FileModel[] = [];
 
   models.forEach(x => {
-    let apiFields: common.ModelField[] = [];
-    let nodes: common.ModelNode[] = [];
+    let apiFields: common.FileModelField[] = [];
+    let nodes: common.FileModelNode[] = [];
 
     {
       // model fields scope
-      let children: common.ModelNode[] = [];
+      let children: common.FileModelNode[] = [];
 
-      let node: common.ModelNode = {
+      let node: common.FileModelNode = {
         id: constants.MF,
-        label: common.ModelNodeLabelEnum.ModelFields,
+        label: common.FileModelNodeLabelEnum.ModelFields,
         description: undefined,
         hidden: false,
         isField: false,
@@ -49,10 +48,10 @@ export function wrapModels(item: {
 
     x.joins.forEach(join => {
       // join fields scope
-      let children: common.ModelNode[] = [];
+      let children: common.FileModelNode[] = [];
       let joinHidden = helper.toBooleanFromLowercaseString(join.hidden);
 
-      let node: common.ModelNode = {
+      let node: common.FileModelNode = {
         id: join.as,
         label: join.label,
         description: join.description,
@@ -83,10 +82,10 @@ export function wrapModels(item: {
 
     nodes.forEach(node => {
       if (common.isDefined(node.children)) {
-        let filters: common.ModelNode[] = [];
-        let dimensions: common.ModelNode[] = [];
-        let measures: common.ModelNode[] = [];
-        let calculations: common.ModelNode[] = [];
+        let filters: common.FileModelNode[] = [];
+        let dimensions: common.FileModelNode[] = [];
+        let measures: common.FileModelNode[] = [];
+        let calculations: common.FileModelNode[] = [];
 
         node.children.forEach(n => {
           switch (true) {
@@ -136,12 +135,12 @@ export function wrapModels(item: {
           return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
         });
 
-        let sortedChildren: common.ModelNode[] = [];
+        let sortedChildren: common.FileModelNode[] = [];
 
         if (sortedDimensions.length > 0) {
           sortedChildren.push({
-            id: `${node.id}.${common.ModelNodeIdSuffixEnum.Dimensions}`,
-            label: common.ModelNodeLabelEnum.Dimensions,
+            id: `${node.id}.${common.FileModelNodeIdSuffixEnum.Dimensions}`,
+            label: common.FileModelNodeLabelEnum.Dimensions,
             description: undefined,
             hidden: false,
             isField: false,
@@ -154,8 +153,8 @@ export function wrapModels(item: {
 
         if (sortedMeasures.length > 0) {
           sortedChildren.push({
-            id: `${node.id}.${common.ModelNodeIdSuffixEnum.Measures}`,
-            label: common.ModelNodeLabelEnum.Measures,
+            id: `${node.id}.${common.FileModelNodeIdSuffixEnum.Measures}`,
+            label: common.FileModelNodeLabelEnum.Measures,
             description: undefined,
             hidden: false,
             isField: false,
@@ -168,8 +167,8 @@ export function wrapModels(item: {
 
         if (sortedCalculations.length > 0) {
           sortedChildren.push({
-            id: `${node.id}.${common.ModelNodeIdSuffixEnum.Calculations}`,
-            label: common.ModelNodeLabelEnum.Calculations,
+            id: `${node.id}.${common.FileModelNodeIdSuffixEnum.Calculations}`,
+            label: common.FileModelNodeLabelEnum.Calculations,
             description: undefined,
             hidden: false,
             isField: false,
@@ -182,8 +181,8 @@ export function wrapModels(item: {
 
         if (sortedFilters.length > 0) {
           sortedChildren.push({
-            id: `${node.id}.${common.ModelNodeIdSuffixEnum.Filters}`,
-            label: common.ModelNodeLabelEnum.FilterOnlyFields,
+            id: `${node.id}.${common.FileModelNodeIdSuffixEnum.Filters}`,
+            label: common.FileModelNodeLabelEnum.FilterOnlyFields,
             description: undefined,
             hidden: false,
             isField: false,

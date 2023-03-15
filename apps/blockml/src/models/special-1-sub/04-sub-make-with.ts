@@ -1,22 +1,20 @@
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 
-let func = enums.FuncEnum.SubMakeWith;
+let func = common.FuncEnum.SubMakeWith;
 
 export function subMakeWith(item: {
-  needsAll: interfaces.VarsSub['needsAll'];
-  varsSubSteps: interfaces.ViewPart['varsSubSteps'];
-  view: interfaces.View;
+  needsAll: common.VarsSub['needsAll'];
+  varsSubSteps: common.FileViewPart['varsSubSteps'];
+  view: common.FileView;
 }) {
   let { needsAll, varsSubSteps, view } = item;
 
-  let varsInput = common.makeCopy<interfaces.VarsSub>({ needsAll });
+  let varsInput = common.makeCopy<common.VarsSub>({ needsAll });
 
   let connection = view.connection;
-  let myWith: interfaces.VarsSub['myWith'] = [];
+  let myWith: common.VarsSub['myWith'] = [];
   let table: string;
 
   if (common.isDefined(view.table)) {
@@ -75,7 +73,7 @@ export function subMakeWith(item: {
 
   myWith.push('  ),');
 
-  let varsOutput: interfaces.VarsSub = { myWith };
+  let varsOutput: common.VarsSub = { myWith };
 
   varsSubSteps.push({ func, varsInput, varsOutput });
 

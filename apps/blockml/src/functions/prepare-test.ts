@@ -6,7 +6,6 @@ import { WinstonModule } from 'nest-winston';
 import { appServices } from '~blockml/app-services';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { nodeCommon } from '~blockml/barrels/node-common';
 import { getConfig } from '~blockml/config/get.config';
@@ -16,8 +15,8 @@ import { ConsumerWorkerService } from '~blockml/services/consumer-worker.service
 import { RabbitService } from '~blockml/services/rabbit.service';
 
 export async function prepareTest(
-  caller: enums.CallerEnum,
-  func: enums.FuncEnum,
+  caller: common.CallerEnum,
+  func: common.FuncEnum,
   testId: string,
   connection?: common.ProjectConnection,
   overrideConfigOptions?: interfaces.Config

@@ -1,20 +1,18 @@
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
-import { interfaces } from '~blockml/barrels/interfaces';
 
-let func = enums.FuncEnum.FindJoinsUsingJoinsDeps;
+let func = common.FuncEnum.FindJoinsUsingJoinsDeps;
 
 export function findJoinsUsingJoinsDeps(item: {
-  needsDoubles: interfaces.VarsSql['needsDoubles'];
-  varsSqlSteps: interfaces.Report['varsSqlSteps'];
-  model: interfaces.Model;
+  needsDoubles: common.VarsSql['needsDoubles'];
+  varsSqlSteps: common.FileReport['varsSqlSteps'];
+  model: common.FileModel;
 }) {
   let { needsDoubles, varsSqlSteps, model } = item;
 
-  let varsInput = common.makeCopy<interfaces.VarsSql>({ needsDoubles });
+  let varsInput = common.makeCopy<common.VarsSql>({ needsDoubles });
 
-  let joins: interfaces.VarsSql['joins'] = {};
+  let joins: common.VarsSql['joins'] = {};
 
   [...Object.keys(needsDoubles), ...Object.keys(model.alwaysJoinUnique)]
     .filter(asName => asName !== model.fromAs && asName !== constants.MF)
@@ -41,7 +39,7 @@ export function findJoinsUsingJoinsDeps(item: {
 
   joins[model.fromAs] = 1;
 
-  let varsOutput: interfaces.VarsSql = { joins };
+  let varsOutput: common.VarsSql = { joins };
 
   varsSqlSteps.push({ func, varsInput, varsOutput });
 

@@ -1,26 +1,25 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CreateModelMetrics;
+let func = common.FuncEnum.CreateModelMetrics;
 
 export function createModelMetrics(
   item: {
-    models: interfaces.Model[];
+    models: common.FileModel[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let modelMetrics: common.ModelMetric[] = [];
+  let modelMetrics: common.FileModelMetric[] = [];
 
   item.models.forEach(model => {
     let errorsOnStart = item.errors.length;
@@ -42,7 +41,7 @@ export function createModelMetrics(
       let timeLabel: string;
 
       if (timeAsName === constants.MF) {
-        let timeFields: interfaces.FieldAny[] = model.fields.filter(
+        let timeFields: common.FieldAny[] = model.fields.filter(
           mField => mField.groupId === timeFieldName
         );
 
@@ -50,7 +49,7 @@ export function createModelMetrics(
       } else {
         let join = model.joins.find(j => j.as === timeAsName);
 
-        let timeFields: interfaces.FieldAny[] = join.view.fields.filter(
+        let timeFields: common.FieldAny[] = join.view.fields.filter(
           vField => vField.groupId === timeFieldName
         );
 
@@ -128,7 +127,7 @@ export function createModelMetrics(
           let partId = `model_fields_${modelField.name}`;
           let partLabel = `Model Fields ${modelField.label}`;
 
-          let modelMetric: common.ModelMetric = {
+          let modelMetric: common.FileModelMetric = {
             metricId: `${model.name}_${partId}_by_${timeId}`,
             filePath: model.filePath,
             partId: partId,
@@ -205,7 +204,7 @@ export function createModelMetrics(
             let partId = `${join.as}_${viewField.name}`;
             let partLabel = `${join.label} ${viewField.label}`;
 
-            let modelMetric: common.ModelMetric = {
+            let modelMetric: common.FileModelMetric = {
               metricId: `${model.name}_${partId}_by_${timeId}`,
               filePath: join.view.filePath,
               partId: partId,
@@ -236,13 +235,20 @@ export function createModelMetrics(
     });
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Metrics,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Metrics,
     modelMetrics
   );
 

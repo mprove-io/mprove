@@ -1,24 +1,23 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.SubstituteSingleRefs;
+let func = common.FuncEnum.SubstituteSingleRefs;
 
 export function substituteSingleRefs<T extends types.vmType>(
   item: {
     errors: BmError[];
     entities: T[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ): T[] {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   item.entities.forEach(x => {
     if (x.fileExt === common.FileExtensionEnum.Dashboard) {
@@ -33,7 +32,7 @@ export function substituteSingleRefs<T extends types.vmType>(
       switch (true) {
         // process dimensions (they can reference only dimensions - already checked)
         case field.fieldClass === common.FieldClassEnum.Dimension: {
-          let dimension: interfaces.Dimension = field;
+          let dimension: common.Dimension = field;
 
           // sqlReal
           let sqlReal = field.sql; // init
@@ -80,7 +79,7 @@ export function substituteSingleRefs<T extends types.vmType>(
         // process measures of Models (they can reference only dimensions - already checked)
         case field.fieldClass === common.FieldClassEnum.Measure &&
           x.fileExt === common.FileExtensionEnum.Model: {
-          let measure: interfaces.Measure = field;
+          let measure: common.Measure = field;
 
           // sqlReal
           let sqlReal = field.sql; // init
@@ -134,7 +133,7 @@ export function substituteSingleRefs<T extends types.vmType>(
         // process measures of Views (they can reference only dimensions - already checked)
         case field.fieldClass === common.FieldClassEnum.Measure &&
           x.fileExt === common.FileExtensionEnum.View: {
-          let measure: interfaces.Measure = field;
+          let measure: common.Measure = field;
 
           // sqlReal
           let sqlReal = field.sql; // init
@@ -181,7 +180,7 @@ export function substituteSingleRefs<T extends types.vmType>(
 
         // process calculations (they can reference anything - already checked)
         case field.fieldClass === common.FieldClassEnum.Calculation: {
-          let calculation: interfaces.Calculation = field;
+          let calculation: common.Calculation = field;
 
           // sqlReal
           let sqlReal = field.sql; // init
@@ -253,13 +252,20 @@ export function substituteSingleRefs<T extends types.vmType>(
     });
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     item.entities
   );
 

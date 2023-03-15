@@ -1,21 +1,19 @@
 import { barMeasure } from '~blockml/barrels/bar-measure';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
-import { interfaces } from '~blockml/barrels/interfaces';
 
-let func = enums.FuncEnum.SubMakeMainText;
+let func = common.FuncEnum.SubMakeMainText;
 
 export function subMakeMainText(item: {
-  select: interfaces.VarsSub['select'];
-  depMeasures: interfaces.VarsSub['depMeasures'];
-  depDimensions: interfaces.VarsSub['depDimensions'];
-  varsSubSteps: interfaces.ViewPart['varsSubSteps'];
-  view: interfaces.View;
+  select: common.VarsSub['select'];
+  depMeasures: common.VarsSub['depMeasures'];
+  depDimensions: common.VarsSub['depDimensions'];
+  varsSubSteps: common.FileViewPart['varsSubSteps'];
+  view: common.FileView;
 }) {
   let { select, depMeasures, depDimensions, varsSubSteps, view } = item;
 
-  let varsInput = common.makeCopy<interfaces.VarsSub>({
+  let varsInput = common.makeCopy<common.VarsSub>({
     select,
     depMeasures,
     depDimensions
@@ -23,11 +21,11 @@ export function subMakeMainText(item: {
 
   let connection = view.connection;
 
-  let selected: interfaces.VarsSub['selected'] = {};
-  let extraUdfs: interfaces.VarsSub['extraUdfs'] = {};
-  let processedFields: interfaces.VarsSub['processedFields'] = {};
-  let mainText: interfaces.VarsSub['mainText'] = [];
-  let groupMainBy: interfaces.VarsSub['groupMainBy'] = [];
+  let selected: common.VarsSub['selected'] = {};
+  let extraUdfs: common.VarsSub['extraUdfs'] = {};
+  let processedFields: common.VarsSub['processedFields'] = {};
+  let mainText: common.VarsSub['mainText'] = [];
+  let groupMainBy: common.VarsSub['groupMainBy'] = [];
 
   [
     ...select,
@@ -207,7 +205,7 @@ export function subMakeMainText(item: {
     processedFields[fieldName] = sqlSelect;
   });
 
-  let varsOutput: interfaces.VarsSub = {
+  let varsOutput: common.VarsSub = {
     mainText,
     groupMainBy,
     selected,

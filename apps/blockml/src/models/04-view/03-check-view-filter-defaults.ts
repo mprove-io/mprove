@@ -1,23 +1,22 @@
 import { ConfigService } from '@nestjs/config';
 import { barSpecial } from '~blockml/barrels/bar-special';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckViewFilterDefaults;
+let func = common.FuncEnum.CheckViewFilterDefaults;
 
 export function checkViewFilterDefaults(
   item: {
-    views: interfaces.View[];
+    views: common.FileView[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newViews = barSpecial.checkVmdFilterDefaults(
     {
@@ -29,8 +28,15 @@ export function checkViewFilterDefaults(
     cs
   );
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Views, newViews);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Views, newViews);
 
   return newViews;
 }

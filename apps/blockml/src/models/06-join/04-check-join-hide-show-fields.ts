@@ -1,26 +1,25 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckJoinHideShowFields;
+let func = common.FuncEnum.CheckJoinHideShowFields;
 
 export function checkJoinHideShowFields(
   item: {
-    models: interfaces.Model[];
+    models: common.FileModel[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newModels: interfaces.Model[] = [];
+  let newModels: common.FileModel[] = [];
 
   item.models.forEach(x => {
     let errorsOnStart = item.errors.length;
@@ -28,8 +27,8 @@ export function checkJoinHideShowFields(
     x.joins.forEach(join => {
       let hideFieldsErrorLine = {
         line: join[
-          (enums.ParameterEnum.HideFields +
-            constants.LINE_NUM) as keyof interfaces.Join
+          (common.ParameterEnum.HideFields +
+            constants.LINE_NUM) as keyof common.Join
         ] as number,
         name: x.fileName,
         path: x.filePath
@@ -37,41 +36,42 @@ export function checkJoinHideShowFields(
 
       let showFieldsErrorLine = {
         line: join[
-          (enums.ParameterEnum.ShowFields +
-            constants.LINE_NUM) as keyof interfaces.Join
+          (common.ParameterEnum.ShowFields +
+            constants.LINE_NUM) as keyof common.Join
         ] as number,
         name: x.fileName,
         path: x.filePath
       };
 
       if (
-        common.isDefined(join[enums.ParameterEnum.HideFields]) &&
-        common.isDefined(join[enums.ParameterEnum.ShowFields])
+        common.isDefined(join[common.ParameterEnum.HideFields]) &&
+        common.isDefined(join[common.ParameterEnum.ShowFields])
       ) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.JOIN_HIDE_AND_SHOW_FIELDS,
+            title: common.ErTitleEnum.JOIN_HIDE_AND_SHOW_FIELDS,
             message:
-              `parameters "${enums.ParameterEnum.ShowFields}" ` +
-              `and "${enums.ParameterEnum.HideFields}" can not be specified at the same time`,
+              `parameters "${common.ParameterEnum.ShowFields}" ` +
+              `and "${common.ParameterEnum.HideFields}" can not be specified at the same time`,
             lines: [hideFieldsErrorLine, showFieldsErrorLine]
           })
         );
         return;
       }
 
-      if (common.isDefined(join[enums.ParameterEnum.HideFields])) {
-        join[enums.ParameterEnum.HideFields]
+      if (common.isDefined(join[common.ParameterEnum.HideFields])) {
+        join[common.ParameterEnum.HideFields]
           .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
           .forEach(asFieldName => {
-            let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
+            let reg =
+              common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
             let r = reg.exec(asFieldName);
 
             if (common.isUndefined(r)) {
               item.errors.push(
                 new BmError({
                   title:
-                    enums.ErTitleEnum
+                    common.ErTitleEnum
                       .JOIN_HIDE_FIELDS_ELEMENT_HAS_WRONG_REFERENCE,
                   message:
                     `found field reference ${asFieldName} that is not ` +
@@ -89,10 +89,10 @@ export function checkJoinHideShowFields(
               item.errors.push(
                 new BmError({
                   title:
-                    enums.ErTitleEnum.JOIN_HIDE_FIELDS_ELEMENT_HAS_WRONG_ALIAS,
+                    common.ErTitleEnum.JOIN_HIDE_FIELDS_ELEMENT_HAS_WRONG_ALIAS,
                   message:
                     `"${asFieldName}" alias "${asName}" must match` +
-                    `join "${enums.ParameterEnum.As}" parameter value`,
+                    `join "${common.ParameterEnum.As}" parameter value`,
                   lines: [hideFieldsErrorLine]
                 })
               );
@@ -119,7 +119,7 @@ export function checkJoinHideShowFields(
                 item.errors.push(
                   new BmError({
                     title:
-                      enums.ErTitleEnum
+                      common.ErTitleEnum
                         .JOIN_HIDE_FIELDS_ELEMENT_REFS_MISSING_VIEW_FIELD,
                     message:
                       `"${asFieldName}" references missing or not valid field ` +
@@ -134,18 +134,19 @@ export function checkJoinHideShowFields(
           });
       }
 
-      if (common.isDefined(join[enums.ParameterEnum.ShowFields])) {
-        join[enums.ParameterEnum.ShowFields]
+      if (common.isDefined(join[common.ParameterEnum.ShowFields])) {
+        join[common.ParameterEnum.ShowFields]
           .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
           .forEach(asFieldName => {
-            let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
+            let reg =
+              common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
             let r = reg.exec(asFieldName);
 
             if (common.isUndefined(r)) {
               item.errors.push(
                 new BmError({
                   title:
-                    enums.ErTitleEnum
+                    common.ErTitleEnum
                       .JOIN_SHOW_FIELDS_ELEMENT_HAS_WRONG_REFERENCE,
                   message:
                     `found field reference ${asFieldName} that is not ` +
@@ -163,10 +164,10 @@ export function checkJoinHideShowFields(
               item.errors.push(
                 new BmError({
                   title:
-                    enums.ErTitleEnum.JOIN_SHOW_FIELDS_ELEMENT_HAS_WRONG_ALIAS,
+                    common.ErTitleEnum.JOIN_SHOW_FIELDS_ELEMENT_HAS_WRONG_ALIAS,
                   message:
                     `"${asFieldName}" alias "${asName}" must match` +
-                    `join "${enums.ParameterEnum.As}" parameter value`,
+                    `join "${common.ParameterEnum.As}" parameter value`,
                   lines: [showFieldsErrorLine]
                 })
               );
@@ -193,7 +194,7 @@ export function checkJoinHideShowFields(
                 item.errors.push(
                   new BmError({
                     title:
-                      enums.ErTitleEnum
+                      common.ErTitleEnum
                         .JOIN_SHOW_FIELDS_ELEMENT_REFS_MISSING_VIEW_FIELD,
                     message:
                       `"${asFieldName}" references missing or not valid field ` +
@@ -214,8 +215,15 @@ export function checkJoinHideShowFields(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Models, newModels);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Models, newModels);
 
   return newModels;
 }

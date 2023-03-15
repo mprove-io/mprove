@@ -1,18 +1,16 @@
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
-import { interfaces } from '~blockml/barrels/interfaces';
 
-let func = enums.FuncEnum.MakeNeedsAll;
+let func = common.FuncEnum.MakeNeedsAll;
 
 export function makeNeedsAll(item: {
-  needsDoubles: interfaces.VarsSql['needsDoubles'];
-  joins: interfaces.VarsSql['joins'];
-  varsSqlSteps: interfaces.Report['varsSqlSteps'];
-  model: interfaces.Model;
+  needsDoubles: common.VarsSql['needsDoubles'];
+  joins: common.VarsSql['joins'];
+  varsSqlSteps: common.FileReport['varsSqlSteps'];
+  model: common.FileModel;
 }) {
   let { needsDoubles, joins, varsSqlSteps, model } = item;
 
-  let varsInput = common.makeCopy<interfaces.VarsSql>({
+  let varsInput = common.makeCopy<common.VarsSql>({
     needsDoubles,
     joins
   });
@@ -34,7 +32,7 @@ export function makeNeedsAll(item: {
       });
     });
 
-  let varsOutput: interfaces.VarsSql = { needsAll };
+  let varsOutput: common.VarsSql = { needsAll };
 
   varsSqlSteps.push({ func, varsInput, varsOutput });
 

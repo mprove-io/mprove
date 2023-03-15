@@ -1,7 +1,6 @@
 import { common } from '~blockml/barrels/common';
-import { interfaces } from '~blockml/barrels/interfaces';
 
-export function wrapApis(item: { structId: string; apis: interfaces.Api[] }) {
+export function wrapApis(item: { structId: string; apis: common.Api[] }) {
   let { structId, apis } = item;
 
   let apiApis: common.Api[] = apis.map(x => {

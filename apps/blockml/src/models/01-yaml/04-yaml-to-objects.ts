@@ -2,32 +2,31 @@ import { ConfigService } from '@nestjs/config';
 import { load } from 'js-yaml';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.YamlToObjects;
+let func = common.FuncEnum.YamlToObjects;
 
 export function yamlToObjects(
   item: {
-    file3s: interfaces.File3[];
+    file3s: common.File3[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ): any[] {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let filesAny: any[] = [];
 
-  item.file3s.forEach((x: interfaces.File3) => {
+  item.file3s.forEach((x: common.File3) => {
     if (x.content === '') {
       item.errors.push(
         new BmError({
-          title: enums.ErTitleEnum.FILE_IS_EMPTY,
+          title: common.ErTitleEnum.FILE_IS_EMPTY,
           message: `file must not be empty`,
           lines: [
             {
@@ -50,7 +49,7 @@ export function yamlToObjects(
     } catch (e: any) {
       item.errors.push(
         new BmError({
-          title: enums.ErTitleEnum.FILE_CONTENT_IS_NOT_YAML,
+          title: common.ErTitleEnum.FILE_CONTENT_IS_NOT_YAML,
           message: `${e.message}`,
           lines: [
             {
@@ -107,7 +106,7 @@ export function yamlToObjects(
     } catch (e) {
       item.errors.push(
         new BmError({
-          title: enums.ErTitleEnum.PROCESSED_CONTENT_IS_NOT_YAML,
+          title: common.ErTitleEnum.PROCESSED_CONTENT_IS_NOT_YAML,
           message: 'please contact support',
           lines: [
             {
@@ -127,7 +126,7 @@ export function yamlToObjects(
     if (common.isUndefined(parsedYaml)) {
       item.errors.push(
         new BmError({
-          title: enums.ErTitleEnum.PARSED_YAML_IS_EMPTY,
+          title: common.ErTitleEnum.PARSED_YAML_IS_EMPTY,
           message: `file content must be valid yaml`,
           lines: [
             {
@@ -142,7 +141,7 @@ export function yamlToObjects(
     } else if (parsedYaml.constructor !== Object) {
       item.errors.push(
         new BmError({
-          title: enums.ErTitleEnum.TOP_LEVEL_IS_NOT_DICTIONARY,
+          title: common.ErTitleEnum.TOP_LEVEL_IS_NOT_DICTIONARY,
           message: 'Top level of BlockML file must have key/value pairs',
           lines: [
             {
@@ -164,8 +163,15 @@ export function yamlToObjects(
     filesAny.push(parsedYaml);
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.FilesAny, filesAny);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.FilesAny, filesAny);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
 
   return filesAny;
 }

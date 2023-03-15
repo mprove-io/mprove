@@ -1,15 +1,14 @@
 import { ConfigService } from '@nestjs/config';
 import { barJoin } from '~blockml/barrels/bar-join';
-import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
 export function buildJoin(
   item: {
-    models: interfaces.Model[];
+    models: common.FileModel[];
     structId: string;
     errors: BmError[];
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {

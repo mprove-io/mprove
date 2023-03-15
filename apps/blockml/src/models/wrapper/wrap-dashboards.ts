@@ -1,14 +1,13 @@
 import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 import { wrapReports } from './wrap-reports';
 
 export function wrapDashboards(item: {
   structId: string;
   orgId: string;
   projectId: string;
-  dashboards: interfaces.Dashboard[];
-  models: interfaces.Model[];
+  dashboards: common.FileDashboard[];
+  models: common.FileModel[];
   envId: string;
 }) {
   let { structId, orgId, projectId, models, dashboards, envId } = item;

@@ -1,25 +1,24 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.JswCheckSingleRefs;
+let func = common.FuncEnum.JswCheckSingleRefs;
 
 export function jswCheckSingleRefs(
   item: {
-    models: interfaces.Model[];
+    models: common.FileModel[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newModels: interfaces.Model[] = [];
+  let newModels: common.FileModel[] = [];
 
   item.models.forEach(x => {
     let errorsOnStart = item.errors.length;
@@ -47,7 +46,7 @@ export function jswCheckSingleRefs(
             item.errors.push(
               new BmError({
                 title:
-                  enums.ErTitleEnum.JOIN_SQL_WHERE_REFS_MODEL_MISSING_FIELD,
+                  common.ErTitleEnum.JOIN_SQL_WHERE_REFS_MODEL_MISSING_FIELD,
                 message: `field "${reference}" is missing or not valid`,
                 lines: [
                   {
@@ -64,9 +63,9 @@ export function jswCheckSingleRefs(
           if (referenceField.fieldClass === common.FieldClassEnum.Filter) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.JOIN_SQL_WHERE_REFS_MODEL_FILTER,
+                title: common.ErTitleEnum.JOIN_SQL_WHERE_REFS_MODEL_FILTER,
                 message:
-                  `"${enums.ParameterEnum.SqlWhere}" can not reference filters. ` +
+                  `"${common.ParameterEnum.SqlWhere}" can not reference filters. ` +
                   `Found referencing "${reference}".`,
                 lines: [
                   {
@@ -83,9 +82,9 @@ export function jswCheckSingleRefs(
           if (referenceField.fieldClass === common.FieldClassEnum.Measure) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.JOIN_SQL_WHERE_REFS_MODEL_MEASURE,
+                title: common.ErTitleEnum.JOIN_SQL_WHERE_REFS_MODEL_MEASURE,
                 message:
-                  `"${enums.ParameterEnum.SqlWhere}" can not reference measures. ` +
+                  `"${common.ParameterEnum.SqlWhere}" can not reference measures. ` +
                   `Found referencing "${reference}".`,
                 lines: [
                   {
@@ -102,9 +101,9 @@ export function jswCheckSingleRefs(
           if (referenceField.fieldClass === common.FieldClassEnum.Calculation) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.JOIN_SQL_WHERE_REFS_MODEL_CALCULATION,
+                title: common.ErTitleEnum.JOIN_SQL_WHERE_REFS_MODEL_CALCULATION,
                 message:
-                  `"${enums.ParameterEnum.SqlWhere}" can not reference calculations. ` +
+                  `"${common.ParameterEnum.SqlWhere}" can not reference calculations. ` +
                   `Found referencing "${reference}".`,
                 lines: [
                   {
@@ -125,8 +124,15 @@ export function jswCheckSingleRefs(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Models, newModels);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Models, newModels);
 
   return newModels;
 }

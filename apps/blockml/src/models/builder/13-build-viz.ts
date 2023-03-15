@@ -1,15 +1,14 @@
 import { ConfigService } from '@nestjs/config';
 import { barViz } from '~blockml/barrels/bar-viz';
-import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
 export function buildViz(
   item: {
-    vizs: interfaces.Viz[];
+    vizs: common.FileVis[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {

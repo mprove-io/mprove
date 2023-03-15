@@ -1,19 +1,17 @@
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
-import { interfaces } from '~blockml/barrels/interfaces';
 import { processFilter } from '~blockml/models/special/process-filter';
 
-let func = enums.FuncEnum.MakeFilters;
+let func = common.FuncEnum.MakeFilters;
 
 export function makeFilters(item: {
-  joins: interfaces.VarsSql['joins'];
-  filters: interfaces.VarsSql['filters'];
-  weekStart: interfaces.VarsSql['weekStart'];
-  processedFields: interfaces.VarsSql['processedFields'];
-  timezone: interfaces.VarsSql['timezone'];
-  varsSqlSteps: interfaces.Report['varsSqlSteps'];
-  model: interfaces.Model;
+  joins: common.VarsSql['joins'];
+  filters: common.VarsSql['filters'];
+  weekStart: common.VarsSql['weekStart'];
+  processedFields: common.VarsSql['processedFields'];
+  timezone: common.VarsSql['timezone'];
+  varsSqlSteps: common.FileReport['varsSqlSteps'];
+  model: common.FileModel;
 }) {
   let {
     joins,
@@ -25,7 +23,7 @@ export function makeFilters(item: {
     model
   } = item;
 
-  let varsInput = common.makeCopy<interfaces.VarsSql>({
+  let varsInput = common.makeCopy<common.VarsSql>({
     joins,
     filters,
     weekStart,
@@ -33,15 +31,15 @@ export function makeFilters(item: {
     timezone
   });
 
-  let filtersFractions: interfaces.VarsSql['filtersFractions'] = {};
-  let whereCalc: interfaces.VarsSql['whereCalc'] = {};
-  let havingMain: interfaces.VarsSql['havingMain'] = {};
-  let whereMain: interfaces.VarsSql['whereMain'] = {};
-  let filterFieldsConditions: interfaces.VarsSql['filterFieldsConditions'] = {};
+  let filtersFractions: common.VarsSql['filtersFractions'] = {};
+  let whereCalc: common.VarsSql['whereCalc'] = {};
+  let havingMain: common.VarsSql['havingMain'] = {};
+  let whereMain: common.VarsSql['whereMain'] = {};
+  let filterFieldsConditions: common.VarsSql['filterFieldsConditions'] = {};
 
   // prepare model and view filters defaults that is not in report default
   // they will populate fractions
-  let untouchedFilters: interfaces.FilterBricksDictionary = {};
+  let untouchedFilters: common.FilterBricksDictionary = {};
 
   Object.keys(model.filters).forEach(modelFilter => {
     let modelFilterName = `${constants.MF}.${modelFilter}`;
@@ -70,9 +68,8 @@ export function makeFilters(item: {
   Object.keys(allFilters).forEach(element => {
     let filterBricks = allFilters[element];
 
-    let r = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(
-      element
-    );
+    let r =
+      common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(element);
     let asName = r[1];
     let fieldName = r[2];
 
@@ -268,7 +265,7 @@ export function makeFilters(item: {
     }
   });
 
-  let varsOutput: interfaces.VarsSql = {
+  let varsOutput: common.VarsSql = {
     filtersFractions,
     whereCalc,
     havingMain,

@@ -1,27 +1,26 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 let Graph = require('tarjan-graph');
 let toposort = require('toposort');
 
-let func = enums.FuncEnum.CheckJoinsCyclesAndToposort;
+let func = common.FuncEnum.CheckJoinsCyclesAndToposort;
 
 export function checkJoinsCyclesAndToposort(
   item: {
-    models: interfaces.Model[];
+    models: common.FileModel[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newModels: interfaces.Model[] = [];
+  let newModels: common.FileModel[] = [];
 
   item.models.forEach(x => {
     let errorsOnStart = item.errors.length;
@@ -43,7 +42,7 @@ export function checkJoinsCyclesAndToposort(
       cycles.forEach(cycle => {
         let cycledNames: string[] = cycle.map((c: any) => c.name);
 
-        let lines: interfaces.BmErrorLine[] = [];
+        let lines: common.BmErrorLine[] = [];
 
         cycledNames.forEach(cName => {
           let cycledJoin = x.joins.find(j => j.as === cName);
@@ -66,7 +65,7 @@ export function checkJoinsCyclesAndToposort(
         let cycledNamesString: string = cycledNames.join('", "');
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.CYCLE_IN_JOINS_SQL_ON_OR_SQL_WHERE,
+            title: common.ErTitleEnum.CYCLE_IN_JOINS_SQL_ON_OR_SQL_WHERE,
             message: `Joins "${cycledNamesString}" references each other by cycle.`,
             lines: lines
           })
@@ -108,8 +107,15 @@ export function checkJoinsCyclesAndToposort(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Models, newModels);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Models, newModels);
 
   return newModels;
 }

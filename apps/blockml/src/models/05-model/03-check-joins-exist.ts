@@ -1,25 +1,24 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckJoinsExist;
+let func = common.FuncEnum.CheckJoinsExist;
 
 export function checkJoinsExist(
   item: {
-    models: interfaces.Model[];
+    models: common.FileModel[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newModels: interfaces.Model[] = [];
+  let newModels: common.FileModel[] = [];
 
   item.models.forEach(x => {
     let errorsOnStart = item.errors.length;
@@ -27,8 +26,8 @@ export function checkJoinsExist(
     if (common.isUndefined(x.joins)) {
       item.errors.push(
         new BmError({
-          title: enums.ErTitleEnum.MISSING_JOINS,
-          message: `${common.FileExtensionEnum.Model} must have "${enums.ParameterEnum.Joins}" parameter`,
+          title: common.ErTitleEnum.MISSING_JOINS,
+          message: `${common.FileExtensionEnum.Model} must have "${common.ParameterEnum.Joins}" parameter`,
           lines: [
             {
               line: x.model_line_num,
@@ -46,8 +45,15 @@ export function checkJoinsExist(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Models, newModels);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Models, newModels);
 
   return newModels;
 }

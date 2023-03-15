@@ -1,25 +1,24 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckFieldDeclaration;
+let func = common.FuncEnum.CheckFieldDeclaration;
 
 export function checkFieldDeclaration<T extends types.vmdType>(
   item: {
     entities: T[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -30,23 +29,23 @@ export function checkFieldDeclaration<T extends types.vmdType>(
       let declarations: string[] = Object.keys(field).filter(
         d =>
           [
-            enums.ParameterEnum.Dimension.toString(),
-            enums.ParameterEnum.Time.toString(),
-            enums.ParameterEnum.Measure.toString(),
-            enums.ParameterEnum.Calculation.toString(),
-            enums.ParameterEnum.Filter.toString()
+            common.ParameterEnum.Dimension.toString(),
+            common.ParameterEnum.Time.toString(),
+            common.ParameterEnum.Measure.toString(),
+            common.ParameterEnum.Calculation.toString(),
+            common.ParameterEnum.Filter.toString()
           ].indexOf(d) > -1
       );
 
       let fieldKeysLineNums: number[] = Object.keys(field)
         .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-        .map(y => field[y as keyof interfaces.FieldAny] as number);
+        .map(y => field[y as keyof common.FieldAny] as number);
 
       if (declarations.length === 0) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.MISSING_FIELD_DECLARATION,
-            message: `field must contain one of parameters: ${enums.ParameterEnum.Dimension}, ${enums.ParameterEnum.Time}, ${enums.ParameterEnum.Measure}, ${enums.ParameterEnum.Calculation}, ${enums.ParameterEnum.Filter}`,
+            title: common.ErTitleEnum.MISSING_FIELD_DECLARATION,
+            message: `field must contain one of parameters: ${common.ParameterEnum.Dimension}, ${common.ParameterEnum.Time}, ${common.ParameterEnum.Measure}, ${common.ParameterEnum.Calculation}, ${common.ParameterEnum.Filter}`,
             lines: [
               {
                 line: Math.min(...fieldKeysLineNums),
@@ -62,8 +61,8 @@ export function checkFieldDeclaration<T extends types.vmdType>(
       if (declarations.length > 1) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.TOO_MANY_DECLARATIONS_FOR_ONE_FIELD,
-            message: `field must contain only one of parameters: ${enums.ParameterEnum.Dimension}, ${enums.ParameterEnum.Time}, ${enums.ParameterEnum.Measure}, ${enums.ParameterEnum.Calculation}, ${enums.ParameterEnum.Filter}`,
+            title: common.ErTitleEnum.TOO_MANY_DECLARATIONS_FOR_ONE_FIELD,
+            message: `field must contain only one of parameters: ${common.ParameterEnum.Dimension}, ${common.ParameterEnum.Time}, ${common.ParameterEnum.Measure}, ${common.ParameterEnum.Calculation}, ${common.ParameterEnum.Filter}`,
             lines: [
               {
                 line: Math.min(...fieldKeysLineNums),
@@ -79,19 +78,18 @@ export function checkFieldDeclaration<T extends types.vmdType>(
       let declaration = declarations[0];
 
       if (
-        (field[declaration as keyof interfaces.FieldAny] as any).match(
+        (field[declaration as keyof common.FieldAny] as any).match(
           common.MyRegex.CAPTURE_NOT_ALLOWED_FIELD_CHARS_G()
         )
       ) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.FIELD_DECLARATION_WRONG_VALUE,
+            title: common.ErTitleEnum.FIELD_DECLARATION_WRONG_VALUE,
             message: `parameter "${declaration}" contains wrong characters or whitespace (only snake_case "a...z0...9_" is allowed)`,
             lines: [
               {
                 line: field[
-                  (declaration +
-                    constants.LINE_NUM) as keyof interfaces.FieldAny
+                  (declaration + constants.LINE_NUM) as keyof common.FieldAny
                 ] as number,
                 name: x.fileName,
                 path: x.filePath
@@ -103,7 +101,7 @@ export function checkFieldDeclaration<T extends types.vmdType>(
       }
 
       let fieldClass = declaration;
-      let fieldName = field[fieldClass as keyof interfaces.FieldAny] as string;
+      let fieldName = field[fieldClass as keyof common.FieldAny] as string;
 
       if (
         x.fileExt === common.FileExtensionEnum.Dashboard &&
@@ -111,13 +109,12 @@ export function checkFieldDeclaration<T extends types.vmdType>(
       ) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.DASHBOARD_FIELD_MUST_BE_A_FILTER,
+            title: common.ErTitleEnum.DASHBOARD_FIELD_MUST_BE_A_FILTER,
             message: `Found field '${fieldName}' that is ${fieldClass}`,
             lines: [
               {
                 line: field[
-                  (declaration +
-                    constants.LINE_NUM) as keyof interfaces.FieldAny
+                  (declaration + constants.LINE_NUM) as keyof common.FieldAny
                 ] as number,
                 name: x.fileName,
                 path: x.filePath
@@ -129,15 +126,13 @@ export function checkFieldDeclaration<T extends types.vmdType>(
       }
 
       let fieldNameLineNum = field[
-        (fieldClass + constants.LINE_NUM) as keyof interfaces.FieldAny
+        (fieldClass + constants.LINE_NUM) as keyof common.FieldAny
       ] as number;
 
-      delete field[fieldClass as keyof interfaces.FieldAny];
-      delete field[
-        (fieldClass + constants.LINE_NUM) as keyof interfaces.FieldAny
-      ];
+      delete field[fieldClass as keyof common.FieldAny];
+      delete field[(fieldClass + constants.LINE_NUM) as keyof common.FieldAny];
 
-      let newFieldProps: interfaces.FieldAny = {
+      let newFieldProps: common.FieldAny = {
         name: fieldName,
         name_line_num: fieldNameLineNum,
         fieldClass: <common.FieldClassEnum>fieldClass
@@ -150,13 +145,20 @@ export function checkFieldDeclaration<T extends types.vmdType>(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     newEntities
   );
 

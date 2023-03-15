@@ -1,6 +1,5 @@
 import { fromUnixTime, sub } from 'date-fns';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 
 export function makeTimestampOpenLastBeforeAfter(item: {
   connection: common.ProjectConnection;
@@ -16,40 +15,40 @@ export function makeTimestampOpenLastBeforeAfter(item: {
 
   if (getTimeRange === true) {
     rgOpen =
-      unit === enums.FractionUnitEnum.Minutes
+      unit === common.FractionUnitEnum.Minutes
         ? sub(fromUnixTime(Number(currentTs)), { minutes: integer })
-        : unit === enums.FractionUnitEnum.Hours
+        : unit === common.FractionUnitEnum.Hours
         ? sub(fromUnixTime(Number(currentTs)), { hours: integer })
-        : unit === enums.FractionUnitEnum.Days
+        : unit === common.FractionUnitEnum.Days
         ? sub(fromUnixTime(Number(currentTs)), { days: integer })
-        : unit === enums.FractionUnitEnum.Weeks
+        : unit === common.FractionUnitEnum.Weeks
         ? sub(fromUnixTime(Number(currentTs)), { days: integer * 7 })
-        : unit === enums.FractionUnitEnum.Months
+        : unit === common.FractionUnitEnum.Months
         ? sub(fromUnixTime(Number(currentTs)), { months: integer })
-        : unit === enums.FractionUnitEnum.Quarters
+        : unit === common.FractionUnitEnum.Quarters
         ? sub(fromUnixTime(Number(currentTs)), { months: integer * 3 })
-        : unit === enums.FractionUnitEnum.Years
+        : unit === common.FractionUnitEnum.Years
         ? sub(fromUnixTime(Number(currentTs)), { years: integer })
         : undefined;
   } else {
     switch (connection.type) {
       case common.ConnectionTypeEnum.BigQuery: {
         sqlOpen =
-          unit === enums.FractionUnitEnum.Minutes
+          unit === common.FractionUnitEnum.Minutes
             ? `TIMESTAMP_ADD(${currentTs}, INTERVAL -${integer} MINUTE)`
-            : unit === enums.FractionUnitEnum.Hours
+            : unit === common.FractionUnitEnum.Hours
             ? `TIMESTAMP_ADD(${currentTs}, INTERVAL -${integer} HOUR)`
-            : unit === enums.FractionUnitEnum.Days
+            : unit === common.FractionUnitEnum.Days
             ? `TIMESTAMP_ADD(${currentTs}, INTERVAL -${integer} DAY)`
-            : unit === enums.FractionUnitEnum.Weeks
+            : unit === common.FractionUnitEnum.Weeks
             ? `TIMESTAMP_ADD(${currentTs}, INTERVAL -${integer}*7 DAY)`
-            : unit === enums.FractionUnitEnum.Months
+            : unit === common.FractionUnitEnum.Months
             ? `CAST(DATE_ADD(CAST(${currentTs} AS DATE), ` +
               `INTERVAL -${integer} MONTH) AS TIMESTAMP)`
-            : unit === enums.FractionUnitEnum.Quarters
+            : unit === common.FractionUnitEnum.Quarters
             ? `CAST(DATE_ADD(CAST(${currentTs} AS DATE), ` +
               `INTERVAL -${integer} QUARTER) AS TIMESTAMP)`
-            : unit === enums.FractionUnitEnum.Years
+            : unit === common.FractionUnitEnum.Years
             ? `CAST(DATE_ADD(CAST(${currentTs} AS DATE), ` +
               `INTERVAL -${integer} YEAR) AS TIMESTAMP)`
             : undefined;
@@ -58,19 +57,19 @@ export function makeTimestampOpenLastBeforeAfter(item: {
 
       case common.ConnectionTypeEnum.PostgreSQL: {
         sqlOpen =
-          unit === enums.FractionUnitEnum.Minutes
+          unit === common.FractionUnitEnum.Minutes
             ? `${currentTs} + INTERVAL '-${integer} minute'`
-            : unit === enums.FractionUnitEnum.Hours
+            : unit === common.FractionUnitEnum.Hours
             ? `${currentTs} + INTERVAL '-${integer} hour'`
-            : unit === enums.FractionUnitEnum.Days
+            : unit === common.FractionUnitEnum.Days
             ? `${currentTs} + INTERVAL '-${integer} day'`
-            : unit === enums.FractionUnitEnum.Weeks
+            : unit === common.FractionUnitEnum.Weeks
             ? `${currentTs} + INTERVAL '-${integer * 7} day'`
-            : unit === enums.FractionUnitEnum.Months
+            : unit === common.FractionUnitEnum.Months
             ? `${currentTs} + INTERVAL '-${integer} month'`
-            : unit === enums.FractionUnitEnum.Quarters
+            : unit === common.FractionUnitEnum.Quarters
             ? `${currentTs} + INTERVAL '-${integer * 3} month'`
-            : unit === enums.FractionUnitEnum.Years
+            : unit === common.FractionUnitEnum.Years
             ? `${currentTs} + INTERVAL '-${integer} year'`
             : undefined;
         break;
@@ -78,19 +77,19 @@ export function makeTimestampOpenLastBeforeAfter(item: {
 
       case common.ConnectionTypeEnum.ClickHouse: {
         sqlOpen =
-          unit === enums.FractionUnitEnum.Minutes
+          unit === common.FractionUnitEnum.Minutes
             ? `subtractMinutes(${currentTs}, ${integer})`
-            : unit === enums.FractionUnitEnum.Hours
+            : unit === common.FractionUnitEnum.Hours
             ? `subtractHours(${currentTs}, ${integer})`
-            : unit === enums.FractionUnitEnum.Days
+            : unit === common.FractionUnitEnum.Days
             ? `subtractDays(${currentTs}, ${integer})`
-            : unit === enums.FractionUnitEnum.Weeks
+            : unit === common.FractionUnitEnum.Weeks
             ? `subtractDays(${currentTs}, ${integer * 7})`
-            : unit === enums.FractionUnitEnum.Months
+            : unit === common.FractionUnitEnum.Months
             ? `subtractMonths(${currentTs}, ${integer})`
-            : unit === enums.FractionUnitEnum.Quarters
+            : unit === common.FractionUnitEnum.Quarters
             ? `subtractMonths(${currentTs}, ${integer * 3})`
-            : unit === enums.FractionUnitEnum.Years
+            : unit === common.FractionUnitEnum.Years
             ? `subtractYears(${currentTs}, ${integer})`
             : undefined;
         break;
@@ -98,19 +97,19 @@ export function makeTimestampOpenLastBeforeAfter(item: {
 
       case common.ConnectionTypeEnum.SnowFlake: {
         sqlOpen =
-          unit === enums.FractionUnitEnum.Minutes
+          unit === common.FractionUnitEnum.Minutes
             ? `${currentTs} + INTERVAL '-${integer} minute'`
-            : unit === enums.FractionUnitEnum.Hours
+            : unit === common.FractionUnitEnum.Hours
             ? `${currentTs} + INTERVAL '-${integer} hour'`
-            : unit === enums.FractionUnitEnum.Days
+            : unit === common.FractionUnitEnum.Days
             ? `${currentTs} + INTERVAL '-${integer} day'`
-            : unit === enums.FractionUnitEnum.Weeks
+            : unit === common.FractionUnitEnum.Weeks
             ? `${currentTs} + INTERVAL '-${integer * 7} day'`
-            : unit === enums.FractionUnitEnum.Months
+            : unit === common.FractionUnitEnum.Months
             ? `${currentTs} + INTERVAL '-${integer} month'`
-            : unit === enums.FractionUnitEnum.Quarters
+            : unit === common.FractionUnitEnum.Quarters
             ? `${currentTs} + INTERVAL '-${integer * 3} month'`
-            : unit === enums.FractionUnitEnum.Years
+            : unit === common.FractionUnitEnum.Years
             ? `${currentTs} + INTERVAL '-${integer} year'`
             : undefined;
         break;

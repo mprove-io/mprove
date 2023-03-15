@@ -1,25 +1,23 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
-import { ParameterEnum } from '~blockml/enums/_index';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.MakeLineNumbers;
+let func = common.FuncEnum.MakeLineNumbers;
 
 export function makeLineNumbers(
   item: {
     filesAny: any[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ): any[] {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newFilesAny: any[] = [];
 
@@ -42,10 +40,17 @@ export function makeLineNumbers(
     caller,
     func,
     structId,
-    enums.LogTypeEnum.FilesAny,
+    common.LogTypeEnum.FilesAny,
     newFilesAny
   );
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
 
   return newFilesAny;
 }
@@ -68,7 +73,7 @@ export function processLineNumbersRecursive(item: {
     if (common.isUndefined(item.hash[oldPar])) {
       item.errors.push(
         new BmError({
-          title: enums.ErTitleEnum.UNDEFINED_VALUE,
+          title: common.ErTitleEnum.UNDEFINED_VALUE,
           message:
             'if parameters are specified, they can not have undefined values',
           lines: [
@@ -103,7 +108,7 @@ export function processLineNumbersRecursive(item: {
         if (element === null) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.ARRAY_ELEMENT_IS_NULL,
+              title: common.ErTitleEnum.ARRAY_ELEMENT_IS_NULL,
               message: 'array element can not be empty',
               lines: [
                 {
@@ -160,8 +165,8 @@ export function processLineNumbersRecursive(item: {
       // remove whitespaces
       let reg3 =
         [
-          ParameterEnum.CurrencyPrefix.toString(),
-          ParameterEnum.CurrencySuffix.toString()
+          common.ParameterEnum.CurrencyPrefix.toString(),
+          common.ParameterEnum.CurrencySuffix.toString()
         ].indexOf(newPar) > -1
           ? common.MyRegex.CAPTURE_WITH_EDGE_WHITESPACES()
           : common.MyRegex.CAPTURE_WITHOUT_EDGE_WHITESPACES();
@@ -178,17 +183,15 @@ export function processLineNumbersRecursive(item: {
       let p = r[1];
 
       if (item.hash[par].length > 1) {
-        let lines: interfaces.BmErrorLine[] = item.hash[par].map(
-          (l: number) => ({
-            line: l,
-            name: item.fileName,
-            path: item.filePath
-          })
-        );
+        let lines: common.BmErrorLine[] = item.hash[par].map((l: number) => ({
+          line: l,
+          name: item.fileName,
+          path: item.filePath
+        }));
 
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.DUPLICATE_PARAMETERS,
+            title: common.ErTitleEnum.DUPLICATE_PARAMETERS,
             message: `found duplicate "${p}:" parameters`,
             lines: lines
           })

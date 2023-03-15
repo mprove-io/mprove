@@ -1,13 +1,12 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 
-let caller = enums.CallerEnum.RebuildStruct;
-let func = enums.FuncEnum.CollectFiles;
+let caller = common.CallerEnum.RebuildStruct;
+let func = common.FuncEnum.CollectFiles;
 let testId = 'v__files-length';
 
 test('1', async t => {
@@ -40,7 +39,7 @@ test('1', async t => {
       connections: []
     });
 
-    files = await helper.readLog(fromDir, enums.LogTypeEnum.Files);
+    files = await helper.readLog(fromDir, common.LogTypeEnum.Files);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }

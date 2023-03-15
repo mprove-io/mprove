@@ -1,16 +1,15 @@
 import { barSub } from '~blockml/barrels/bar-sub';
-import { interfaces } from '~blockml/barrels/interfaces';
 
 export function genSub(item: {
   select: string[];
-  view: interfaces.View;
+  view: common.FileView;
   viewPartName: string;
 }) {
   let { select, view, viewPartName } = item;
 
   select = [...select].sort((a, b) => (a > b ? 1 : b > a ? -1 : 0));
 
-  let varsSubSteps: interfaces.ViewPart['varsSubSteps'] = [];
+  let varsSubSteps: common.FileViewPart['varsSubSteps'] = [];
 
   let { depMeasures, depDimensions } = barSub.subMakeDepMeasuresAndDimensions({
     select,
@@ -18,19 +17,14 @@ export function genSub(item: {
     view
   });
 
-  let {
-    mainText,
-    groupMainBy,
-    selected,
-    processedFields,
-    extraUdfs
-  } = barSub.subMakeMainText({
-    select,
-    depMeasures,
-    depDimensions,
-    varsSubSteps,
-    view
-  });
+  let { mainText, groupMainBy, selected, processedFields, extraUdfs } =
+    barSub.subMakeMainText({
+      select,
+      depMeasures,
+      depDimensions,
+      varsSubSteps,
+      view
+    });
 
   let { needsAll } = barSub.subMakeNeedsAll({
     selected,

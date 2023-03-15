@@ -1,24 +1,22 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = enums.CallerEnum.BuildYaml;
-let func = enums.FuncEnum.SplitFiles;
+let caller = common.CallerEnum.BuildYaml;
+let func = common.FuncEnum.SplitFiles;
 let testId = 'e__wrong-viz-name';
 
 test('1', async t => {
   let errors: BmError[];
-  let udfs: interfaces.Udf[];
-  let views: interfaces.View[];
-  let models: interfaces.Model[];
-  let dashboards: interfaces.Dashboard[];
-  let vizs: interfaces.Viz[];
+  let udfs: common.FileUdf[];
+  let views: common.FileView[];
+  let models: common.FileModel[];
+  let dashboards: common.FileDashboard[];
+  let vizs: common.FileVis[];
 
   let wLogger;
   let configService;
@@ -51,12 +49,12 @@ test('1', async t => {
       connections: [connection]
     });
 
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    udfs = await helper.readLog(fromDir, enums.LogTypeEnum.Udfs);
-    views = await helper.readLog(fromDir, enums.LogTypeEnum.Views);
-    models = await helper.readLog(fromDir, enums.LogTypeEnum.Models);
-    dashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Ds);
-    vizs = await helper.readLog(fromDir, enums.LogTypeEnum.Vizs);
+    errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
+    udfs = await helper.readLog(fromDir, common.LogTypeEnum.Udfs);
+    views = await helper.readLog(fromDir, common.LogTypeEnum.Views);
+    models = await helper.readLog(fromDir, common.LogTypeEnum.Models);
+    dashboards = await helper.readLog(fromDir, common.LogTypeEnum.Ds);
+    vizs = await helper.readLog(fromDir, common.LogTypeEnum.Vizs);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -76,6 +74,6 @@ test('1', async t => {
   t.is(dashboards.length, 0);
   t.is(vizs.length, 0);
 
-  t.is(errors[0].title, enums.ErTitleEnum.WRONG_VIS_NAME);
+  t.is(errors[0].title, common.ErTitleEnum.WRONG_VIS_NAME);
   t.is(errors[0].lines[0].line, 1);
 });

@@ -1,27 +1,25 @@
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 
-let func = enums.FuncEnum.SubComposeMain;
+let func = common.FuncEnum.SubComposeMain;
 
 export function subComposeMain(item: {
-  myWith: interfaces.VarsSub['myWith'];
-  mainText: interfaces.VarsSub['mainText'];
-  groupMainBy: interfaces.VarsSub['groupMainBy'];
-  varsSubSteps: interfaces.ViewPart['varsSubSteps'];
-  view: interfaces.View;
+  myWith: common.VarsSub['myWith'];
+  mainText: common.VarsSub['mainText'];
+  groupMainBy: common.VarsSub['groupMainBy'];
+  varsSubSteps: common.FileViewPart['varsSubSteps'];
+  view: common.FileView;
 }) {
   let { myWith, mainText, groupMainBy, varsSubSteps, view } = item;
 
-  let varsInput = common.makeCopy<interfaces.VarsSub>({
+  let varsInput = common.makeCopy<common.VarsSub>({
     myWith,
     mainText,
     groupMainBy
   });
 
-  let mainQuery: interfaces.VarsSub['mainQuery'] = [];
+  let mainQuery: common.VarsSub['mainQuery'] = [];
 
   mainQuery.push(`${constants.WITH}`);
   mainQuery = mainQuery.concat(myWith);
@@ -46,7 +44,7 @@ export function subComposeMain(item: {
 
   mainQuery.push('  )');
 
-  let varsOutput: interfaces.VarsSub = { mainQuery };
+  let varsOutput: common.VarsSub = { mainQuery };
 
   varsSubSteps.push({ func, varsInput, varsOutput });
 

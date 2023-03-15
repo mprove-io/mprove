@@ -1,6 +1,5 @@
 import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 import { wrapReports } from './wrap-reports';
 
 export function wrapVizs(item: {
@@ -8,8 +7,8 @@ export function wrapVizs(item: {
   orgId: string;
   projectId: string;
   envId: string;
-  models: interfaces.Model[];
-  vizs: interfaces.Viz[];
+  models: common.FileModel[];
+  vizs: common.FileVis[];
 }) {
   let { structId, orgId, projectId, models, vizs, envId } = item;
 

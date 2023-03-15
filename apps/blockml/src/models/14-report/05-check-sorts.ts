@@ -1,24 +1,23 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckSorts;
+let func = common.FuncEnum.CheckSorts;
 
 export function checkSorts<T extends types.dzType>(
   item: {
     entities: T[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -39,9 +38,9 @@ export function checkSorts<T extends types.dzType>(
         if (common.isUndefined(r)) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.REPORT_WRONG_SORTS_SYNTAX,
+              title: common.ErTitleEnum.REPORT_WRONG_SORTS_SYNTAX,
               message:
-                `"${enums.ParameterEnum.Sorts}" can contain selected ` +
+                `"${common.ParameterEnum.Sorts}" can contain selected ` +
                 'fields in form of "alias.field_name [desc]" separated by comma',
               lines: [
                 {
@@ -61,11 +60,11 @@ export function checkSorts<T extends types.dzType>(
         if (report.select.findIndex(y => y === sorter) < 0) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.REPORT_SORTS_REFS_UNSELECTED_FIELD,
+              title: common.ErTitleEnum.REPORT_SORTS_REFS_UNSELECTED_FIELD,
               message:
                 'We can sort only selected fields.' +
-                `Found field "${sorter}" in "${enums.ParameterEnum.Sorts}" that ` +
-                `is not in "${enums.ParameterEnum.Select}". `,
+                `Found field "${sorter}" in "${common.ParameterEnum.Sorts}" that ` +
+                `is not in "${common.ParameterEnum.Select}". `,
               lines: [
                 {
                   line: report.sorts_line_num,
@@ -90,13 +89,20 @@ export function checkSorts<T extends types.dzType>(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     newEntities
   );
 

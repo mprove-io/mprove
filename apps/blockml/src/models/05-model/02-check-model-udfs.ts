@@ -1,26 +1,25 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckModelUdfs;
+let func = common.FuncEnum.CheckModelUdfs;
 
 export function checkModelUdfs(
   item: {
-    models: interfaces.Model[];
-    udfs: interfaces.Udf[];
+    models: common.FileModel[];
+    udfs: common.FileUdf[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newModels: interfaces.Model[] = [];
+  let newModels: common.FileModel[] = [];
 
   item.models.forEach(x => {
     let errorsOnStart = item.errors.length;
@@ -30,8 +29,8 @@ export function checkModelUdfs(
         if (item.udfs.findIndex(udf => udf.name === u) < 0) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.WRONG_MODEL_UDF,
-              message: `found element "- ${u}" references missing or not valid ${enums.ParameterEnum.Udf}`,
+              title: common.ErTitleEnum.WRONG_MODEL_UDF,
+              message: `found element "- ${u}" references missing or not valid ${common.ParameterEnum.Udf}`,
               lines: [
                 {
                   line: x.udfs_line_num,
@@ -51,8 +50,15 @@ export function checkModelUdfs(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Models, newModels);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Models, newModels);
 
   return newModels;
 }

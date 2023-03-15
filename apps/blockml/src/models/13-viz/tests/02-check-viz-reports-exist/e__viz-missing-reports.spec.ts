@@ -1,20 +1,18 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = enums.CallerEnum.BuildViz;
-let func = enums.FuncEnum.CheckVizReportsExist;
+let caller = common.CallerEnum.BuildViz;
+let func = common.FuncEnum.CheckVizReportsExist;
 let testId = 'e__viz-missing-reports';
 
 test('1', async t => {
   let errors: BmError[];
-  let vizs: interfaces.Viz[];
+  let vizs: common.FileVis[];
 
   let wLogger;
   let configService;
@@ -47,8 +45,8 @@ test('1', async t => {
       connections: [connection]
     });
 
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    vizs = await helper.readLog(fromDir, enums.LogTypeEnum.Vizs);
+    errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
+    vizs = await helper.readLog(fromDir, common.LogTypeEnum.Vizs);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -64,6 +62,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(vizs.length, 0);
 
-  t.is(errors[0].title, enums.ErTitleEnum.VIS_MISSING_REPORTS);
+  t.is(errors[0].title, common.ErTitleEnum.VIS_MISSING_REPORTS);
   t.is(errors[0].lines[0].line, 1);
 });

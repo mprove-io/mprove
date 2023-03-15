@@ -1,22 +1,20 @@
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 import { applyFilter } from './apply-filter';
 
-let func = enums.FuncEnum.ComposeCalc;
+let func = common.FuncEnum.ComposeCalc;
 
 export function composeCalc(item: {
-  filterFieldsConditions: interfaces.VarsSql['filterFieldsConditions'];
-  mainQueryProcessed: interfaces.VarsSql['mainQueryProcessed'];
-  select: interfaces.VarsSql['select'];
-  processedFields: interfaces.VarsSql['processedFields'];
-  whereCalc: interfaces.VarsSql['whereCalc'];
-  sorts: interfaces.VarsSql['sorts'];
-  limit: interfaces.VarsSql['limit'];
-  varsSqlSteps: interfaces.Report['varsSqlSteps'];
-  model: interfaces.Model;
+  filterFieldsConditions: common.VarsSql['filterFieldsConditions'];
+  mainQueryProcessed: common.VarsSql['mainQueryProcessed'];
+  select: common.VarsSql['select'];
+  processedFields: common.VarsSql['processedFields'];
+  whereCalc: common.VarsSql['whereCalc'];
+  sorts: common.VarsSql['sorts'];
+  limit: common.VarsSql['limit'];
+  varsSqlSteps: common.FileReport['varsSqlSteps'];
+  model: common.FileModel;
 }) {
   let {
     filterFieldsConditions,
@@ -30,7 +28,7 @@ export function composeCalc(item: {
     model
   } = item;
 
-  let varsInput = common.makeCopy<interfaces.VarsSql>({
+  let varsInput = common.makeCopy<common.VarsSql>({
     filterFieldsConditions,
     mainQueryProcessed,
     select,
@@ -40,7 +38,7 @@ export function composeCalc(item: {
     limit
   });
 
-  let sql: interfaces.VarsSql['sql'] = [];
+  let sql: common.VarsSql['sql'] = [];
 
   sql = sql.concat(mainQueryProcessed);
 
@@ -156,7 +154,7 @@ export function composeCalc(item: {
 
   sql = sql.map(x => x.trimRight());
 
-  let varsOutput: interfaces.VarsSql = { sql };
+  let varsOutput: common.VarsSql = { sql };
 
   varsSqlSteps.push({ func, varsInput, varsOutput });
 

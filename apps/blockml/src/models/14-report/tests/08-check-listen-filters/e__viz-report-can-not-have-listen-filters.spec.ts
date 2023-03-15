@@ -1,20 +1,18 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = enums.CallerEnum.BuildVizReport;
-let func = enums.FuncEnum.CheckListenFilters;
+let caller = common.CallerEnum.BuildVizReport;
+let func = common.FuncEnum.CheckListenFilters;
 let testId = 'e__viz-report-can-not-have-listen-filters';
 
 test('1', async t => {
   let errors: BmError[];
-  let entVizs: interfaces.Viz[];
+  let entVizs: common.FileVis[];
 
   let wLogger;
   let configService;
@@ -47,8 +45,8 @@ test('1', async t => {
       connections: [connection]
     });
 
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    entVizs = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
+    entVizs = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -66,7 +64,7 @@ test('1', async t => {
 
   t.is(
     errors[0].title,
-    enums.ErTitleEnum.VIS_REPORT_CAN_NOT_HAVE_LISTEN_FILTERS
+    common.ErTitleEnum.VIS_REPORT_CAN_NOT_HAVE_LISTEN_FILTERS
   );
   t.is(errors[0].lines[0].line, 7);
 });

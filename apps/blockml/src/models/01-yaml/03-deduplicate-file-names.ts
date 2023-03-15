@@ -1,28 +1,28 @@
 import { ConfigService } from '@nestjs/config';
-import { enums } from '~blockml/barrels/enums';
+import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.DeduplicateFileNames;
+let func = common.FuncEnum.DeduplicateFileNames;
 
 export function deduplicateFileNames(
   item: {
-    file2s: interfaces.File2[];
+    file2s: common.File2[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
-): interfaces.File3[] {
+): common.File3[] {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let file3s: interfaces.File3[] = [];
+  let file3s: common.File3[] = [];
 
-  item.file2s.forEach((x: interfaces.File2) => {
+  item.file2s.forEach((x: common.File2) => {
     if (x.pathContents.length > 1) {
-      let lines: interfaces.BmErrorLine[] = x.pathContents.map(fp => ({
+      let lines: common.BmErrorLine[] = x.pathContents.map(fp => ({
         line: 0,
         name: x.name,
         path: fp.path
@@ -30,7 +30,7 @@ export function deduplicateFileNames(
 
       item.errors.push(
         new BmError({
-          title: enums.ErTitleEnum.DUPLICATE_FILE_NAMES,
+          title: common.ErTitleEnum.DUPLICATE_FILE_NAMES,
           message:
             'BlockML file names should be unique across all folders. ' +
             `Found duplicate ${x.name} files`,
@@ -47,8 +47,15 @@ export function deduplicateFileNames(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.File3s, file3s);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.File3s, file3s);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
 
   return file3s;
 }

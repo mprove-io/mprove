@@ -1,14 +1,13 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = enums.CallerEnum.BuildRep;
-let func = enums.FuncEnum.CheckAccess;
+let caller = common.CallerEnum.BuildRep;
+let func = common.FuncEnum.CheckAccess;
 let testId = 'e__wrong-access-users-element-4';
 
 test('1', async t => {
@@ -46,8 +45,8 @@ test('1', async t => {
       connections: [connection]
     });
 
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    entReps = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
+    entReps = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -63,6 +62,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entReps.length, 0);
 
-  t.is(errors[0].title, enums.ErTitleEnum.WRONG_ACCESS_USERS_ELEMENT);
+  t.is(errors[0].title, common.ErTitleEnum.WRONG_ACCESS_USERS_ELEMENT);
   t.is(errors[0].lines[0].line, 2);
 });

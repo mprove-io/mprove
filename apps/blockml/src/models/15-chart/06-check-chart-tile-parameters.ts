@@ -1,25 +1,24 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckChartTileParameters;
+let func = common.FuncEnum.CheckChartTileParameters;
 
 export function checkChartTileParameters<T extends types.dzType>(
   item: {
     entities: T[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -36,15 +35,15 @@ export function checkChartTileParameters<T extends types.dzType>(
         .forEach(parameter => {
           if (
             [
-              enums.ParameterEnum.TileWidth.toString(),
-              enums.ParameterEnum.TileHeight.toString(),
-              enums.ParameterEnum.TileX.toString(),
-              enums.ParameterEnum.TileY.toString()
+              common.ParameterEnum.TileWidth.toString(),
+              common.ParameterEnum.TileHeight.toString(),
+              common.ParameterEnum.TileX.toString(),
+              common.ParameterEnum.TileY.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.REPORT_TILE_UNKNOWN_PARAMETER,
+                title: common.ErTitleEnum.REPORT_TILE_UNKNOWN_PARAMETER,
                 message:
                   `parameter "${parameter}" can not be used ` +
                   'inside Report tile',
@@ -52,7 +51,7 @@ export function checkChartTileParameters<T extends types.dzType>(
                   {
                     line: report.tile[
                       (parameter +
-                        constants.LINE_NUM) as keyof interfaces.ChartTile
+                        constants.LINE_NUM) as keyof common.FileReportChartTile
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -65,18 +64,18 @@ export function checkChartTileParameters<T extends types.dzType>(
 
           if (
             Array.isArray(
-              report.tile[parameter as keyof interfaces.ChartTile] as any
+              report.tile[parameter as keyof common.FileReportChartTile] as any
             )
           ) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.REPORT_TILE_UNEXPECTED_LIST,
+                title: common.ErTitleEnum.REPORT_TILE_UNEXPECTED_LIST,
                 message: `parameter "${parameter}" can not be a list`,
                 lines: [
                   {
                     line: report.tile[
                       (parameter +
-                        constants.LINE_NUM) as keyof interfaces.ChartTile
+                        constants.LINE_NUM) as keyof common.FileReportChartTile
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -88,18 +87,18 @@ export function checkChartTileParameters<T extends types.dzType>(
           }
 
           if (
-            (report.tile[parameter as keyof interfaces.ChartTile] as any)
+            (report.tile[parameter as keyof common.FileReportChartTile] as any)
               ?.constructor === Object
           ) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.REPORT_TILE_UNEXPECTED_DICTIONARY,
+                title: common.ErTitleEnum.REPORT_TILE_UNEXPECTED_DICTIONARY,
                 message: `parameter "${parameter}" can not be a dictionary`,
                 lines: [
                   {
                     line: report.tile[
                       (parameter +
-                        constants.LINE_NUM) as keyof interfaces.ChartTile
+                        constants.LINE_NUM) as keyof common.FileReportChartTile
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -112,29 +111,31 @@ export function checkChartTileParameters<T extends types.dzType>(
 
           if (
             [
-              enums.ParameterEnum.TileWidth.toString(),
-              enums.ParameterEnum.TileHeight.toString(),
-              enums.ParameterEnum.TileX.toString(),
-              enums.ParameterEnum.TileY.toString()
+              common.ParameterEnum.TileWidth.toString(),
+              common.ParameterEnum.TileHeight.toString(),
+              common.ParameterEnum.TileX.toString(),
+              common.ParameterEnum.TileY.toString()
             ].indexOf(parameter) > -1 &&
-            !(report.tile[
-              parameter as keyof interfaces.ChartTile
-            ] as any).match(common.MyRegex.CAPTURE_DIGITS_START_TO_END_G())
+            !(
+              report.tile[parameter as keyof common.FileReportChartTile] as any
+            ).match(common.MyRegex.CAPTURE_DIGITS_START_TO_END_G())
           ) {
             item.errors.push(
               new BmError({
                 title:
-                  enums.ErTitleEnum
+                  common.ErTitleEnum
                     .REPORT_TILE_PARAMETER_MUST_BE_A_POSITIVE_INTEGER,
                 message:
                   `"${
-                    report.tile[parameter as keyof interfaces.ChartTile] as any
+                    report.tile[
+                      parameter as keyof common.FileReportChartTile
+                    ] as any
                   }" is not valid ` + `${parameter} value`,
                 lines: [
                   {
                     line: report.tile[
                       (parameter +
-                        constants.LINE_NUM) as keyof interfaces.ChartTile
+                        constants.LINE_NUM) as keyof common.FileReportChartTile
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -152,13 +153,20 @@ export function checkChartTileParameters<T extends types.dzType>(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     newEntities
   );
 

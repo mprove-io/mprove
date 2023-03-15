@@ -1,21 +1,20 @@
 import { ConfigService } from '@nestjs/config';
 import { barView } from '~blockml/barrels/bar-view';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
 export function buildView(
   item: {
-    views: interfaces.View[];
-    udfs: interfaces.Udf[];
-    udfsDict: common.UdfsDict;
+    views: common.FileView[];
+    udfs: common.FileUdf[];
+    udfsDict: common.FileUdfsDict;
     weekStart: common.ProjectWeekStartEnum;
     errors: BmError[];
     structId: string;
     envId: string;
     evs: common.Ev[];
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {

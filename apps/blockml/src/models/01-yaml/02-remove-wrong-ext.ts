@@ -1,25 +1,24 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.RemoveWrongExt;
+let func = common.FuncEnum.RemoveWrongExt;
 
 export function removeWrongExt(
   item: {
     files: common.BmlFile[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
-): interfaces.File2[] {
+): common.File2[] {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let file2s: interfaces.File2[] = [];
+  let file2s: common.File2[] = [];
 
   item.files.forEach((x: common.BmlFile) => {
     let fp = {
@@ -46,7 +45,7 @@ export function removeWrongExt(
         common.FileExtensionEnum.Yml
       ].indexOf(ext) > -1
     ) {
-      let f: interfaces.File2 = file2s.find(y => y.name === x.name);
+      let f: common.File2 = file2s.find(y => y.name === x.name);
 
       if (f) {
         f.pathContents.push(fp);
@@ -62,8 +61,15 @@ export function removeWrongExt(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.File2s, file2s);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.File2s, file2s);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
 
   return file2s;
 }

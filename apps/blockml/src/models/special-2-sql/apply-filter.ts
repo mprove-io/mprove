@@ -1,8 +1,7 @@
 import { common } from '~blockml/barrels/common';
-import { interfaces } from '~blockml/barrels/interfaces';
 
 export function applyFilter(item: {
-  filterFieldsConditions: interfaces.VarsSql['filterFieldsConditions'];
+  filterFieldsConditions: common.VarsSql['filterFieldsConditions'];
   as: string;
   input: string;
 }) {

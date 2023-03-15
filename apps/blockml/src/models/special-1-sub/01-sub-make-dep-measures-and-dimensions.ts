@@ -1,20 +1,18 @@
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
-import { interfaces } from '~blockml/barrels/interfaces';
 
-let func = enums.FuncEnum.SubMakeDepMeasuresAndDimensions;
+let func = common.FuncEnum.SubMakeDepMeasuresAndDimensions;
 
 export function subMakeDepMeasuresAndDimensions(item: {
-  select: interfaces.VarsSub['select'];
-  varsSubSteps: interfaces.ViewPart['varsSubSteps'];
-  view: interfaces.View;
+  select: common.VarsSub['select'];
+  varsSubSteps: common.FileViewPart['varsSubSteps'];
+  view: common.FileView;
 }) {
   let { select, varsSubSteps, view } = item;
 
-  let varsInput = common.makeCopy<interfaces.VarsSub>({ select });
+  let varsInput = common.makeCopy<common.VarsSub>({ select });
 
-  let depMeasures: interfaces.VarsSub['depMeasures'] = {};
-  let depDimensions: interfaces.VarsSub['depDimensions'] = {};
+  let depMeasures: common.VarsSub['depMeasures'] = {};
+  let depDimensions: common.VarsSub['depDimensions'] = {};
 
   select.forEach(fieldName => {
     let field = view.fields.find(vField => vField.name === fieldName);
@@ -36,7 +34,7 @@ export function subMakeDepMeasuresAndDimensions(item: {
     });
   });
 
-  let varsOutput: interfaces.VarsSub = { depMeasures, depDimensions };
+  let varsOutput: common.VarsSub = { depMeasures, depDimensions };
 
   varsSubSteps.push({ func, varsInput, varsOutput });
 

@@ -1,24 +1,22 @@
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
-import { interfaces } from '~blockml/barrels/interfaces';
 
-let func = enums.FuncEnum.MakeNeedsDoubles;
+let func = common.FuncEnum.MakeNeedsDoubles;
 
 export function makeNeedsDoubles(item: {
-  selected: interfaces.VarsSql['selected'];
-  filters: interfaces.VarsSql['filters'];
-  varsSqlSteps: interfaces.Report['varsSqlSteps'];
-  model: interfaces.Model;
+  selected: common.VarsSql['selected'];
+  filters: common.VarsSql['filters'];
+  varsSqlSteps: common.FileReport['varsSqlSteps'];
+  model: common.FileModel;
 }) {
   let { selected, filters, varsSqlSteps, model } = item;
 
-  let varsInput = common.makeCopy<interfaces.VarsSql>({
+  let varsInput = common.makeCopy<common.VarsSql>({
     selected,
     filters
   });
 
-  let needsDoubles: interfaces.VarsSql['needsDoubles'] = {};
+  let needsDoubles: common.VarsSql['needsDoubles'] = {};
 
   let whereDoubleDeps: { [s: string]: number } = {};
   let whereCalcDoubleDeps: { [s: string]: number } = {};
@@ -114,7 +112,7 @@ export function makeNeedsDoubles(item: {
       });
     });
 
-  let varsOutput: interfaces.VarsSql = { needsDoubles };
+  let varsOutput: common.VarsSql = { needsDoubles };
 
   varsSqlSteps.push({ func, varsInput, varsOutput });
 

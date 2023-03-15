@@ -1,25 +1,24 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckVizReportsExist;
+let func = common.FuncEnum.CheckVizReportsExist;
 
 export function checkVizReportsExist(
   item: {
-    vizs: interfaces.Viz[];
+    vizs: common.FileVis[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newVizs: interfaces.Viz[] = [];
+  let newVizs: common.FileVis[] = [];
 
   item.vizs.forEach(x => {
     let errorsOnStart = item.errors.length;
@@ -27,10 +26,10 @@ export function checkVizReportsExist(
     if (common.isUndefined(x.reports)) {
       item.errors.push(
         new BmError({
-          title: enums.ErTitleEnum.VIS_MISSING_REPORTS,
+          title: common.ErTitleEnum.VIS_MISSING_REPORTS,
           message:
             `${common.FileExtensionEnum.Vis} must have ` +
-            `"${enums.ParameterEnum.Reports}" parameter`,
+            `"${common.ParameterEnum.Reports}" parameter`,
           lines: [
             {
               line: x.vis_line_num,
@@ -46,7 +45,7 @@ export function checkVizReportsExist(
     if (x.reports.length > 1) {
       item.errors.push(
         new BmError({
-          title: enums.ErTitleEnum.VIS_TOO_MANY_REPORTS,
+          title: common.ErTitleEnum.VIS_TOO_MANY_REPORTS,
           message: `${common.FileExtensionEnum.Vis} must have exactly one report`,
           lines: [
             {
@@ -65,8 +64,15 @@ export function checkVizReportsExist(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Vizs, newVizs);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Vizs, newVizs);
 
   return newVizs;
 }

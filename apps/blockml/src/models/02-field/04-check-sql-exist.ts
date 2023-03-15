@@ -1,24 +1,23 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckSqlExist;
+let func = common.FuncEnum.CheckSqlExist;
 
 export function checkSqlExist<T extends types.vmdType>(
   item: {
     entities: T[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -30,8 +29,8 @@ export function checkSqlExist<T extends types.vmdType>(
         if (common.isDefined(field.sql)) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.UNEXPECTED_SQL_IN_FILTER,
-              message: `parameter "${enums.ParameterEnum.Sql}" can not be used with ${common.FieldClassEnum.Filter} field`,
+              title: common.ErTitleEnum.UNEXPECTED_SQL_IN_FILTER,
+              message: `parameter "${common.ParameterEnum.Sql}" can not be used with ${common.FieldClassEnum.Filter} field`,
               lines: [
                 {
                   line: field.sql_line_num,
@@ -54,8 +53,8 @@ export function checkSqlExist<T extends types.vmdType>(
       ) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.MISSING_SQL,
-            message: `parameter "${enums.ParameterEnum.Sql}" is required for "${field.fieldClass}"`,
+            title: common.ErTitleEnum.MISSING_SQL,
+            message: `parameter "${common.ParameterEnum.Sql}" is required for "${field.fieldClass}"`,
             lines: [
               {
                 line: field.name_line_num,
@@ -74,13 +73,20 @@ export function checkSqlExist<T extends types.vmdType>(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     newEntities
   );
 

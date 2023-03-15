@@ -1,25 +1,24 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 import { processFilter } from './process-filter';
 
-let func = enums.FuncEnum.CheckVmdFilterDefaults;
+let func = common.FuncEnum.CheckVmdFilterDefaults;
 
 export function checkVmdFilterDefaults<T extends types.vmdType>(
   item: {
     entities: T[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -48,7 +47,7 @@ export function checkVmdFilterDefaults<T extends types.vmdType>(
       if (p.valid === 0) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.WRONG_FILTER_EXPRESSION,
+            title: common.ErTitleEnum.WRONG_FILTER_EXPRESSION,
             message:
               `found expression "${p.brick}" for result "${field.result}" of ` +
               `filter "${field.name}"`,
@@ -72,13 +71,20 @@ export function checkVmdFilterDefaults<T extends types.vmdType>(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     newEntities
   );
 

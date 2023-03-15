@@ -1,27 +1,26 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckTableEnvRefs;
+let func = common.FuncEnum.CheckTableEnvRefs;
 
 export function checkTableEnvRefs(
   item: {
-    views: interfaces.View[];
+    views: common.FileView[];
     errors: BmError[];
     structId: string;
     envId: string;
     evs: common.Ev[];
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newViews: interfaces.View[] = [];
+  let newViews: common.FileView[] = [];
 
   item.views.forEach(x => {
     let errorsOnStart = item.errors.length;
@@ -46,7 +45,7 @@ export function checkTableEnvRefs(
       if (common.isUndefined(referenceEv)) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.TABLE_REFERENCES_MISSING_ENV_VAR,
+            title: common.ErTitleEnum.TABLE_REFERENCES_MISSING_ENV_VAR,
             message: `variable "${reference}" is missing for env "${item.envId}"`,
             lines: [
               {
@@ -80,8 +79,15 @@ export function checkTableEnvRefs(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Views, newViews);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Views, newViews);
 
   return newViews;
 }

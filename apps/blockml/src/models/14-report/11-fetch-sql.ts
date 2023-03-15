@@ -2,33 +2,32 @@ import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
 import { barSpecial } from '~blockml/barrels/bar-special';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 import { RabbitService } from '~blockml/services/rabbit.service';
 
-let func = enums.FuncEnum.FetchSql;
+let func = common.FuncEnum.FetchSql;
 
 export async function fetchSql<T extends types.dzType>(
   item: {
     traceId: string;
     entities: T[];
-    models: interfaces.Model[];
-    udfsDict: common.UdfsDict;
+    models: common.FileModel[];
+    udfsDict: common.FileUdfsDict;
     weekStart: common.ProjectWeekStartEnum;
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   rabbitService: RabbitService,
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let reports: interfaces.Report[] = [];
+  let reports: common.FileReport[] = [];
 
   item.entities.forEach(x => {
     reports = [...reports, ...x.reports];
@@ -40,10 +39,10 @@ export async function fetchSql<T extends types.dzType>(
   await asyncPool(
     concurrencyLimit,
     reports,
-    async (report: interfaces.Report) => {
+    async (report: common.FileReport) => {
       let model = item.models.find(m => m.name === report.model);
 
-      let filters: interfaces.FilterBricksDictionary = {};
+      let filters: common.FilterBricksDictionary = {};
 
       if (common.isDefined(report.combinedFilters)) {
         Object.keys(report.combinedFilters).forEach(filter => {
@@ -78,16 +77,30 @@ export async function fetchSql<T extends types.dzType>(
     }
   );
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     item.entities
   );
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Models, item.models);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Models,
+    item.models
+  );
 
   return item.entities;
 }

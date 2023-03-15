@@ -1,26 +1,25 @@
 import { ConfigService } from '@nestjs/config';
 import { formatSpecifier } from 'd3-format';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckAndSetImplicitFormatNumber;
+let func = common.FuncEnum.CheckAndSetImplicitFormatNumber;
 
 export function checkAndSetImplicitFormatNumber<T extends types.vmdType>(
   item: {
     entities: T[];
     errors: BmError[];
     structId: string;
-    projectConfig: interfaces.ProjectConf;
-    caller: enums.CallerEnum;
+    projectConfig: common.FileProjectConf;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -42,8 +41,8 @@ export function checkAndSetImplicitFormatNumber<T extends types.vmdType>(
           } catch (e) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.WRONG_FORMAT_NUMBER,
-                message: ` ${enums.ParameterEnum.FormatNumber} value "${field.format_number}" is not valid`,
+                title: common.ErTitleEnum.WRONG_FORMAT_NUMBER,
+                message: ` ${common.ParameterEnum.FormatNumber} value "${field.format_number}" is not valid`,
                 lines: [
                   {
                     line: field.format_number_line_num,
@@ -70,10 +69,10 @@ export function checkAndSetImplicitFormatNumber<T extends types.vmdType>(
         if (common.isDefined(field.format_number)) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.MISUSE_OF_FORMAT_NUMBER,
+              title: common.ErTitleEnum.MISUSE_OF_FORMAT_NUMBER,
               message:
-                `${enums.ParameterEnum.FormatNumber} can only be used with fields where ${enums.ParameterEnum.Result} is "${common.FieldResultEnum.Number}". ` +
-                `Found field ${enums.ParameterEnum.Result} "${field.result}".`,
+                `${common.ParameterEnum.FormatNumber} can only be used with fields where ${common.ParameterEnum.Result} is "${common.FieldResultEnum.Number}". ` +
+                `Found field ${common.ParameterEnum.Result} "${field.result}".`,
               lines: [
                 {
                   line: field.format_number_line_num,
@@ -89,10 +88,10 @@ export function checkAndSetImplicitFormatNumber<T extends types.vmdType>(
         if (common.isDefined(field.currency_prefix)) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.MISUSE_OF_CURRENCY_PREFIX,
+              title: common.ErTitleEnum.MISUSE_OF_CURRENCY_PREFIX,
               message:
-                `${enums.ParameterEnum.CurrencyPrefix} can only be used with fields where ${enums.ParameterEnum.Result} is "${common.FieldResultEnum.Number}". ` +
-                `Found field ${enums.ParameterEnum.Result} "${field.result}".`,
+                `${common.ParameterEnum.CurrencyPrefix} can only be used with fields where ${common.ParameterEnum.Result} is "${common.FieldResultEnum.Number}". ` +
+                `Found field ${common.ParameterEnum.Result} "${field.result}".`,
               lines: [
                 {
                   line: field.currency_prefix_line_num,
@@ -108,10 +107,10 @@ export function checkAndSetImplicitFormatNumber<T extends types.vmdType>(
         if (common.isDefined(field.currency_suffix)) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.MISUSE_OF_CURRENCY_SUFFIX,
+              title: common.ErTitleEnum.MISUSE_OF_CURRENCY_SUFFIX,
               message:
-                `${enums.ParameterEnum.CurrencySuffix} can only be used with fields where ${enums.ParameterEnum.Result} is "${common.FieldResultEnum.Number}". ` +
-                `Found field ${enums.ParameterEnum.Result} "${field.result}".`,
+                `${common.ParameterEnum.CurrencySuffix} can only be used with fields where ${common.ParameterEnum.Result} is "${common.FieldResultEnum.Number}". ` +
+                `Found field ${common.ParameterEnum.Result} "${field.result}".`,
               lines: [
                 {
                   line: field.currency_suffix_line_num,
@@ -131,13 +130,20 @@ export function checkAndSetImplicitFormatNumber<T extends types.vmdType>(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     newEntities
   );
 

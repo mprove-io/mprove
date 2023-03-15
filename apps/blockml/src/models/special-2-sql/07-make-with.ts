@@ -1,21 +1,19 @@
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 import { applyFilter } from './apply-filter';
 
-let func = enums.FuncEnum.MakeWith;
+let func = common.FuncEnum.MakeWith;
 
 export function makeWith(item: {
-  filterFieldsConditions: interfaces.VarsSql['filterFieldsConditions'];
-  mainText: interfaces.VarsSql['mainText'];
-  joins: interfaces.VarsSql['joins'];
-  filters: interfaces.VarsSql['filters'];
-  needsAll: interfaces.VarsSql['needsAll'];
-  mainUdfs: interfaces.VarsSql['mainUdfs'];
-  varsSqlSteps: interfaces.Report['varsSqlSteps'];
-  model: interfaces.Model;
+  filterFieldsConditions: common.VarsSql['filterFieldsConditions'];
+  mainText: common.VarsSql['mainText'];
+  joins: common.VarsSql['joins'];
+  filters: common.VarsSql['filters'];
+  needsAll: common.VarsSql['needsAll'];
+  mainUdfs: common.VarsSql['mainUdfs'];
+  varsSqlSteps: common.FileReport['varsSqlSteps'];
+  model: common.FileModel;
 }) {
   let {
     filterFieldsConditions,
@@ -28,7 +26,7 @@ export function makeWith(item: {
     model
   } = item;
 
-  let varsInput = common.makeCopy<interfaces.VarsSql>({
+  let varsInput = common.makeCopy<common.VarsSql>({
     filterFieldsConditions,
     mainText,
     joins,
@@ -37,9 +35,9 @@ export function makeWith(item: {
     mainUdfs
   });
 
-  let withParts: interfaces.VarsSql['withParts'] = {};
-  let withDerivedTables: interfaces.VarsSql['withDerivedTables'] = [];
-  let withViews: interfaces.VarsSql['withViews'] = [];
+  let withParts: common.VarsSql['withParts'] = {};
+  let withDerivedTables: common.VarsSql['withDerivedTables'] = [];
+  let withViews: common.VarsSql['withViews'] = [];
 
   let contents: string[] = [];
 
@@ -210,7 +208,7 @@ export function makeWith(item: {
 
   withViews = withViews.concat(contents.map(s => `    ${s}`));
 
-  let varsOutput: interfaces.VarsSql = {
+  let varsOutput: common.VarsSql = {
     withParts,
     withDerivedTables,
     withViews

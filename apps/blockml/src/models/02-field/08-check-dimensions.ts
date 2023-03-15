@@ -1,24 +1,23 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckDimensions;
+let func = common.FuncEnum.CheckDimensions;
 
 export function checkDimensions<T extends types.vmType>(
   item: {
     entities: T[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -41,7 +40,7 @@ export function checkDimensions<T extends types.vmType>(
       } else if (common.DIMENSION_TYPE_VALUES.indexOf(field.type) < 0) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.WRONG_DIMENSION_TYPE,
+            title: common.ErTitleEnum.WRONG_DIMENSION_TYPE,
             message: `"${field.type}" is not valid type for ${common.FieldClassEnum.Dimension}`,
             lines: [
               {
@@ -59,8 +58,8 @@ export function checkDimensions<T extends types.vmType>(
         if (common.isDefined(field.unnest)) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.UNNEST_IS_NOT_SUPPORTED_FOR_CONNECTION,
-              message: `parameter "${enums.ParameterEnum.Unnest}" can not be used with ${x.connection.type}`,
+              title: common.ErTitleEnum.UNNEST_IS_NOT_SUPPORTED_FOR_CONNECTION,
+              message: `parameter "${common.ParameterEnum.Unnest}" can not be used with ${x.connection.type}`,
               lines: [
                 {
                   line: field.unnest_line_num,
@@ -80,13 +79,20 @@ export function checkDimensions<T extends types.vmType>(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     newEntities
   );
 

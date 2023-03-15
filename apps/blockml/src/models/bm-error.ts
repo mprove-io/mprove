@@ -1,13 +1,12 @@
-import { enums } from '~blockml/barrels/enums';
 import { BmErrorLine } from '~blockml/interfaces/bm-error-line';
 
 export class BmError {
-  title: enums.ErTitleEnum;
+  title: common.ErTitleEnum;
   message: string;
   lines: BmErrorLine[];
 
   constructor(item: {
-    title: enums.ErTitleEnum;
+    title: common.ErTitleEnum;
     message: string;
     lines: BmErrorLine[];
   }) {

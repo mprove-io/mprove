@@ -2,13 +2,12 @@ import { ConfigService } from '@nestjs/config';
 import { barTimeframe } from '~blockml/barrels/bar-timeframe';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.TransformTimes;
+let func = common.FuncEnum.TransformTimes;
 
 export function transformTimes<T extends types.vmType>(
   item: {
@@ -16,12 +15,12 @@ export function transformTimes<T extends types.vmType>(
     weekStart: common.ProjectWeekStartEnum;
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ): T[] {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -33,7 +32,7 @@ export function transformTimes<T extends types.vmType>(
       return;
     }
 
-    let newFields: interfaces.FieldAny[] = [];
+    let newFields: common.FieldAny[] = [];
 
     x.fields.forEach(field => {
       if (field.fieldClass !== common.FieldClassEnum.Time) {
@@ -113,8 +112,8 @@ export function transformTimes<T extends types.vmType>(
       } else {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.WRONG_TIME_SOURCE,
-            message: `possible values for "${enums.ParameterEnum.Source}" of time field are: "${common.TimeSourceEnum.Timestamp}", "${common.TimeSourceEnum.Epoch}", "${common.TimeSourceEnum.YYYYMMDD}"`,
+            title: common.ErTitleEnum.WRONG_TIME_SOURCE,
+            message: `possible values for "${common.ParameterEnum.Source}" of time field are: "${common.TimeSourceEnum.Timestamp}", "${common.TimeSourceEnum.Epoch}", "${common.TimeSourceEnum.YYYYMMDD}"`,
             lines: [
               {
                 line: field.source_line_num,
@@ -139,7 +138,7 @@ export function transformTimes<T extends types.vmType>(
           case timeframe === common.TimeframeEnum.DayOfWeek: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
 
-            label = enums.TimeLabelEnum.DayOfWeek;
+            label = common.TimeLabelEnum.DayOfWeek;
 
             sqlTransformed = barTimeframe.makeTimeframeDayOfWeek({
               sqlTimestamp: sqlTimestamp,
@@ -152,7 +151,7 @@ export function transformTimes<T extends types.vmType>(
 
           case timeframe === common.TimeframeEnum.DayOfWeekIndex: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
-            label = enums.TimeLabelEnum.DayOfWeekIndex;
+            label = common.TimeLabelEnum.DayOfWeekIndex;
 
             sqlTransformed = barTimeframe.makeTimeframeDayOfWeekIndex({
               sqlTimestamp: sqlTimestamp,
@@ -166,7 +165,7 @@ export function transformTimes<T extends types.vmType>(
 
           case timeframe === common.TimeframeEnum.DayOfYear: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
-            label = enums.TimeLabelEnum.DayOfYear;
+            label = common.TimeLabelEnum.DayOfYear;
 
             // no need for weekStart
             sqlTransformed = barTimeframe.makeTimeframeDayOfYear({
@@ -180,7 +179,7 @@ export function transformTimes<T extends types.vmType>(
 
           case timeframe === common.TimeframeEnum.Week: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
-            label = enums.TimeLabelEnum.Week;
+            label = common.TimeLabelEnum.Week;
 
             sqlTransformed = barTimeframe.makeTimeframeWeek({
               sqlTimestamp: sqlTimestamp,
@@ -194,7 +193,7 @@ export function transformTimes<T extends types.vmType>(
 
           case timeframe === common.TimeframeEnum.WeekOfYear: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
-            label = enums.TimeLabelEnum.WeekOfYear;
+            label = common.TimeLabelEnum.WeekOfYear;
 
             sqlTransformed = barTimeframe.makeTimeframeWeekOfYear({
               sqlTimestamp: sqlTimestamp,
@@ -208,7 +207,7 @@ export function transformTimes<T extends types.vmType>(
 
           case timeframe === common.TimeframeEnum.Date: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
-            label = enums.TimeLabelEnum.Date;
+            label = common.TimeLabelEnum.Date;
 
             sqlTransformed = barTimeframe.makeTimeframeDate({
               sqlTimestamp: sqlTimestamp,
@@ -221,7 +220,7 @@ export function transformTimes<T extends types.vmType>(
 
           case timeframe === common.TimeframeEnum.DayOfMonth: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
-            label = enums.TimeLabelEnum.DayOfMonth;
+            label = common.TimeLabelEnum.DayOfMonth;
 
             sqlTransformed = barTimeframe.makeTimeframeDayOfMonth({
               sqlTimestamp: sqlTimestamp,
@@ -234,7 +233,7 @@ export function transformTimes<T extends types.vmType>(
 
           case timeframe === common.TimeframeEnum.Hour: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
-            label = enums.TimeLabelEnum.Hour;
+            label = common.TimeLabelEnum.Hour;
 
             sqlTransformed = barTimeframe.makeTimeframeHour({
               sqlTimestamp: sqlTimestamp,
@@ -247,7 +246,7 @@ export function transformTimes<T extends types.vmType>(
 
           case timeframe === common.TimeframeEnum.HourOfDay: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
-            label = enums.TimeLabelEnum.HourOfDay;
+            label = common.TimeLabelEnum.HourOfDay;
 
             sqlTransformed = barTimeframe.makeTimeframeHourOfDay({
               sqlTimestamp: sqlTimestamp,
@@ -284,7 +283,7 @@ export function transformTimes<T extends types.vmType>(
 
           case timeframe === common.TimeframeEnum.Minute: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
-            label = enums.TimeLabelEnum.Minute;
+            label = common.TimeLabelEnum.Minute;
 
             sqlTransformed = barTimeframe.makeTimeframeMinute({
               sqlTimestamp: sqlTimestamp,
@@ -320,7 +319,7 @@ export function transformTimes<T extends types.vmType>(
 
           case timeframe === common.TimeframeEnum.Month: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
-            label = enums.TimeLabelEnum.Month;
+            label = common.TimeLabelEnum.Month;
 
             sqlTransformed = barTimeframe.makeTimeframeMonth({
               sqlTimestamp: sqlTimestamp,
@@ -333,7 +332,7 @@ export function transformTimes<T extends types.vmType>(
 
           case timeframe === common.TimeframeEnum.MonthName: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
-            label = enums.TimeLabelEnum.MonthName;
+            label = common.TimeLabelEnum.MonthName;
 
             sqlTransformed = barTimeframe.makeTimeframeMonthName({
               sqlTimestamp: sqlTimestamp,
@@ -346,7 +345,7 @@ export function transformTimes<T extends types.vmType>(
 
           case timeframe === common.TimeframeEnum.MonthNum: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
-            label = enums.TimeLabelEnum.MonthNum;
+            label = common.TimeLabelEnum.MonthNum;
 
             sqlTransformed = barTimeframe.makeTimeframeMonthNum({
               sqlTimestamp: sqlTimestamp,
@@ -359,7 +358,7 @@ export function transformTimes<T extends types.vmType>(
 
           case timeframe === common.TimeframeEnum.Quarter: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
-            label = enums.TimeLabelEnum.Quarter;
+            label = common.TimeLabelEnum.Quarter;
 
             sqlTransformed = barTimeframe.makeTimeframeQuarter({
               sqlTimestamp: sqlTimestamp,
@@ -372,7 +371,7 @@ export function transformTimes<T extends types.vmType>(
 
           case timeframe === common.TimeframeEnum.QuarterOfYear: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
-            label = enums.TimeLabelEnum.QuarterOfYear;
+            label = common.TimeLabelEnum.QuarterOfYear;
 
             sqlTransformed = barTimeframe.makeTimeframeQuarterOfYear({
               sqlTimestamp: sqlTimestamp,
@@ -385,7 +384,7 @@ export function transformTimes<T extends types.vmType>(
 
           case timeframe === common.TimeframeEnum.Time: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
-            label = enums.TimeLabelEnum.Time;
+            label = common.TimeLabelEnum.Time;
 
             sqlTransformed = barTimeframe.makeTimeframeTime({
               sqlTimestamp: sqlTimestamp,
@@ -398,7 +397,7 @@ export function transformTimes<T extends types.vmType>(
 
           case timeframe === common.TimeframeEnum.TimeOfDay: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
-            label = enums.TimeLabelEnum.TimeOfDay;
+            label = common.TimeLabelEnum.TimeOfDay;
 
             sqlTransformed = barTimeframe.makeTimeframeTimeOfDay({
               sqlTimestamp: sqlTimestamp,
@@ -411,7 +410,7 @@ export function transformTimes<T extends types.vmType>(
 
           case timeframe === common.TimeframeEnum.Year: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
-            label = enums.TimeLabelEnum.Year;
+            label = common.TimeLabelEnum.Year;
 
             sqlTransformed = barTimeframe.makeTimeframeYear({
               sqlTimestamp: sqlTimestamp,
@@ -424,7 +423,7 @@ export function transformTimes<T extends types.vmType>(
 
           case timeframe === common.TimeframeEnum.YesNoHasValue: {
             name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
-            label = enums.TimeLabelEnum.YesNoHasValue;
+            label = common.TimeLabelEnum.YesNoHasValue;
 
             sqlTransformed = barTimeframe.makeTimeframeYesNoHasValue({
               sqlTimestamp: sqlTimestamp,
@@ -438,7 +437,7 @@ export function transformTimes<T extends types.vmType>(
           default: {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.WRONG_TIMEFRAMES_ELEMENT,
+                title: common.ErTitleEnum.WRONG_TIMEFRAMES_ELEMENT,
                 message: `Element "${timeframe}" is wrong`,
                 lines: [
                   {
@@ -453,7 +452,7 @@ export function transformTimes<T extends types.vmType>(
           }
         }
 
-        let newDimension: interfaces.Dimension = {
+        let newDimension: common.Dimension = {
           hidden: field.hidden,
           hidden_line_num: 0,
 
@@ -519,13 +518,20 @@ export function transformTimes<T extends types.vmType>(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     newEntities
   );
 

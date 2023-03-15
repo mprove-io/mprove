@@ -1,25 +1,23 @@
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
-import { interfaces } from '~blockml/barrels/interfaces';
 
-let func = enums.FuncEnum.MakeDepMeasuresAndDimensions;
+let func = common.FuncEnum.MakeDepMeasuresAndDimensions;
 
 export function makeDepMeasuresAndDimensions(item: {
-  select: interfaces.VarsSql['select'];
-  filters: interfaces.VarsSql['filters'];
-  varsSqlSteps: interfaces.Report['varsSqlSteps'];
-  model: interfaces.Model;
+  select: common.VarsSql['select'];
+  filters: common.VarsSql['filters'];
+  varsSqlSteps: common.FileReport['varsSqlSteps'];
+  model: common.FileModel;
 }) {
   let { select, filters, varsSqlSteps, model } = item;
 
-  let varsInput = common.makeCopy<interfaces.VarsSql>({
+  let varsInput = common.makeCopy<common.VarsSql>({
     select,
     filters
   });
 
-  let depMeasures: interfaces.VarsSql['depMeasures'] = {};
-  let depDimensions: interfaces.VarsSql['depDimensions'] = {};
+  let depMeasures: common.VarsSql['depMeasures'] = {};
+  let depDimensions: common.VarsSql['depDimensions'] = {};
 
   if (common.isDefined(model.sqlAlwaysWhereCalcDepsAfterSingles)) {
     Object.keys(model.sqlAlwaysWhereCalcDepsAfterSingles).forEach(depName => {
@@ -167,7 +165,7 @@ export function makeDepMeasuresAndDimensions(item: {
     }
   });
 
-  let varsOutput: interfaces.VarsSql = { depMeasures, depDimensions };
+  let varsOutput: common.VarsSql = { depMeasures, depDimensions };
 
   varsSqlSteps.push({ func, varsInput, varsOutput });
 

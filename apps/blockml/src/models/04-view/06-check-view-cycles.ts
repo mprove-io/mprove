@@ -1,23 +1,22 @@
 import { ConfigService } from '@nestjs/config';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 let Graph = require('tarjan-graph');
 
-let func = enums.FuncEnum.CheckViewCycles;
+let func = common.FuncEnum.CheckViewCycles;
 
 export function checkViewCycles(
   item: {
-    views: interfaces.View[];
+    views: common.FileView[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let g = new Graph();
 
@@ -37,7 +36,7 @@ export function checkViewCycles(
     cycles.forEach(cycle => {
       let cycledNames: string[] = cycle.map((c: any) => c.name);
 
-      let lines: interfaces.BmErrorLine[] = [];
+      let lines: common.BmErrorLine[] = [];
 
       cycledNames.forEach(cName => {
         let cycledView = item.views.find(v => v.name === cName);
@@ -52,7 +51,7 @@ export function checkViewCycles(
       let cycledNamesString: string = cycledNames.join('", "');
       item.errors.push(
         new BmError({
-          title: enums.ErTitleEnum.DERIVED_TABLE_CYCLE_IN_VIEW_REFERENCES,
+          title: common.ErTitleEnum.DERIVED_TABLE_CYCLE_IN_VIEW_REFERENCES,
           message: `Views "${cycledNamesString}" references each other by cycle`,
           lines: lines
         })
@@ -66,7 +65,7 @@ export function checkViewCycles(
 
   errorViewNames = [...new Set(errorViewNames)];
 
-  let newViews: interfaces.View[] = [];
+  let newViews: common.FileView[] = [];
 
   item.views.forEach(view => {
     if (errorViewNames.indexOf(view.name) < 0) {
@@ -74,8 +73,15 @@ export function checkViewCycles(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Views, newViews);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Views, newViews);
 
   return newViews;
 }

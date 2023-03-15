@@ -1,25 +1,24 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckChartData;
+let func = common.FuncEnum.CheckChartData;
 
 export function checkChartData<T extends types.dzType>(
   item: {
     entities: T[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -36,18 +35,18 @@ export function checkChartData<T extends types.dzType>(
         .forEach(parameter => {
           if (
             [
-              enums.ParameterEnum.XField.toString(),
-              enums.ParameterEnum.YField.toString(),
-              enums.ParameterEnum.YFields.toString(),
-              enums.ParameterEnum.HideColumns.toString(),
-              enums.ParameterEnum.MultiField.toString(),
-              enums.ParameterEnum.ValueField.toString(),
-              enums.ParameterEnum.PreviousValueField.toString()
+              common.ParameterEnum.XField.toString(),
+              common.ParameterEnum.YField.toString(),
+              common.ParameterEnum.YFields.toString(),
+              common.ParameterEnum.HideColumns.toString(),
+              common.ParameterEnum.MultiField.toString(),
+              common.ParameterEnum.ValueField.toString(),
+              common.ParameterEnum.PreviousValueField.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.REPORT_DATA_UNKNOWN_PARAMETER,
+                title: common.ErTitleEnum.REPORT_DATA_UNKNOWN_PARAMETER,
                 message:
                   `parameter "${parameter}" can not be used ` +
                   'inside Report Data',
@@ -55,7 +54,7 @@ export function checkChartData<T extends types.dzType>(
                   {
                     line: report.data[
                       (parameter +
-                        constants.LINE_NUM) as keyof interfaces.ChartData
+                        constants.LINE_NUM) as keyof common.FileReportChartData
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -68,22 +67,22 @@ export function checkChartData<T extends types.dzType>(
 
           if (
             Array.isArray(
-              report.data[parameter as keyof interfaces.ChartData] as any
+              report.data[parameter as keyof common.FileReportChartData] as any
             ) &&
             [
-              enums.ParameterEnum.YFields.toString(),
-              enums.ParameterEnum.HideColumns.toString()
+              common.ParameterEnum.YFields.toString(),
+              common.ParameterEnum.HideColumns.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.REPORT_DATA_UNEXPECTED_LIST,
+                title: common.ErTitleEnum.REPORT_DATA_UNEXPECTED_LIST,
                 message: `parameter "${parameter}" can not be a List`,
                 lines: [
                   {
                     line: report.data[
                       (parameter +
-                        constants.LINE_NUM) as keyof interfaces.ChartData
+                        constants.LINE_NUM) as keyof common.FileReportChartData
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -95,18 +94,18 @@ export function checkChartData<T extends types.dzType>(
           }
 
           if (
-            (report.data[parameter as keyof interfaces.ChartData] as any)
+            (report.data[parameter as keyof common.FileReportChartData] as any)
               ?.constructor === Object
           ) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.REPORT_DATA_UNEXPECTED_DICTIONARY,
+                title: common.ErTitleEnum.REPORT_DATA_UNEXPECTED_DICTIONARY,
                 message: `parameter "${parameter}" can not be a Dictionary`,
                 lines: [
                   {
                     line: report.data[
                       (parameter +
-                        constants.LINE_NUM) as keyof interfaces.ChartData
+                        constants.LINE_NUM) as keyof common.FileReportChartData
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -124,13 +123,20 @@ export function checkChartData<T extends types.dzType>(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     newEntities
   );
 

@@ -1,20 +1,18 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = enums.CallerEnum.BuildSqlAlwaysWhere;
-let func = enums.FuncEnum.SawCheckDoubleDeps;
+let caller = common.CallerEnum.BuildSqlAlwaysWhere;
+let func = common.FuncEnum.SawCheckDoubleDeps;
 let testId = 'e__sql-always-where-refs-calculation';
 
 test('1', async t => {
   let errors: BmError[];
-  let models: interfaces.Model[];
+  let models: common.FileModel[];
 
   let wLogger;
   let configService;
@@ -47,8 +45,8 @@ test('1', async t => {
       connections: [connection]
     });
 
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    models = await helper.readLog(fromDir, enums.LogTypeEnum.Models);
+    errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
+    models = await helper.readLog(fromDir, common.LogTypeEnum.Models);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -64,6 +62,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(models.length, 0);
 
-  t.is(errors[0].title, enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_CALCULATION);
+  t.is(errors[0].title, common.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_CALCULATION);
   t.is(errors[0].lines[0].line, 3);
 });

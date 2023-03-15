@@ -1,24 +1,23 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckAndSetImplicitResult;
+let func = common.FuncEnum.CheckAndSetImplicitResult;
 
 export function checkAndSetImplicitResult<T extends types.vmdType>(
   item: {
     entities: T[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -59,8 +58,8 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(
           case common.FieldClassEnum.Filter: {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.MISSING_FILTER_RESULT,
-                message: `parameter ${enums.ParameterEnum.Result} is required for filters`,
+                title: common.ErTitleEnum.MISSING_FILTER_RESULT,
+                message: `parameter ${common.ParameterEnum.Result} is required for filters`,
                 lines: [
                   {
                     line: field.name_line_num,
@@ -79,7 +78,7 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(
             if (common.DIMENSION_RESULT_VALUES.indexOf(field.result) < 0) {
               item.errors.push(
                 new BmError({
-                  title: enums.ErTitleEnum.WRONG_DIMENSION_RESULT,
+                  title: common.ErTitleEnum.WRONG_DIMENSION_RESULT,
                   message: `"${field.result}" is not valid result for ${common.FieldClassEnum.Dimension}`,
                   lines: [
                     {
@@ -99,7 +98,7 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(
             if (common.MEASURE_RESULT_VALUES.indexOf(field.result) < 0) {
               item.errors.push(
                 new BmError({
-                  title: enums.ErTitleEnum.WRONG_MEASURE_RESULT,
+                  title: common.ErTitleEnum.WRONG_MEASURE_RESULT,
                   message: `"${field.result}" is not valid result for ${common.FieldClassEnum.Measure}`,
                   lines: [
                     {
@@ -119,7 +118,7 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(
             if (common.CALCULATION_RESULT_VALUES.indexOf(field.result) < 0) {
               item.errors.push(
                 new BmError({
-                  title: enums.ErTitleEnum.WRONG_CALCULATION_RESULT,
+                  title: common.ErTitleEnum.WRONG_CALCULATION_RESULT,
                   message: `"${field.result}" is not valid result for ${common.FieldClassEnum.Calculation}`,
                   lines: [
                     {
@@ -139,7 +138,7 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(
             if (common.FILTER_RESULT_VALUES.indexOf(field.result) < 0) {
               item.errors.push(
                 new BmError({
-                  title: enums.ErTitleEnum.WRONG_FILTER_RESULT,
+                  title: common.ErTitleEnum.WRONG_FILTER_RESULT,
                   message: `"${field.result}" is not valid result for ${common.FieldClassEnum.Filter}`,
                   lines: [
                     {
@@ -164,13 +163,20 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     newEntities
   );
 

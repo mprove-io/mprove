@@ -2,30 +2,29 @@ import { ConfigService } from '@nestjs/config';
 import { formatSpecifier } from 'd3-format';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 import { capitalizeFirstLetter } from '~common/_index';
 
-let func = enums.FuncEnum.CheckProjectConfig;
+let func = common.FuncEnum.CheckProjectConfig;
 
 export function checkProjectConfig(
   item: {
-    confs: interfaces.ProjectConf[];
+    confs: common.FileProjectConf[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
     mproveDir: string;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let errorsOnStart = item.errors.length;
 
-  let projectConfig: interfaces.ProjectConf = {
+  let projectConfig: common.FileProjectConf = {
     allow_timezones: constants.PROJECT_CONFIG_ALLOW_TIMEZONES,
     default_timezone: constants.PROJECT_CONFIG_DEFAULT_TIMEZONE,
     week_start: constants.PROJECT_CONFIG_WEEK_START,
@@ -45,11 +44,11 @@ export function checkProjectConfig(
       x => !x.toString().match(common.MyRegex.ENDS_WITH_LINE_NUM())
     );
 
-    if (parameters.indexOf(enums.ParameterEnum.MproveDir.toString()) < 0) {
+    if (parameters.indexOf(common.ParameterEnum.MproveDir.toString()) < 0) {
       item.errors.push(
         new BmError({
-          title: enums.ErTitleEnum.MISSING_MPROVE_DIR,
-          message: `parameter "${enums.ParameterEnum.MproveDir}" must be specified`,
+          title: common.ErTitleEnum.MISSING_MPROVE_DIR,
+          message: `parameter "${common.ParameterEnum.MproveDir}" must be specified`,
           lines: [
             {
               line: 0,
@@ -60,7 +59,7 @@ export function checkProjectConfig(
         })
       );
     } else if (common.isUndefined(item.mproveDir)) {
-      let mdir = conf[enums.ParameterEnum.MproveDir].toString();
+      let mdir = conf[common.ParameterEnum.MproveDir].toString();
 
       if (
         mdir.length > 2 &&
@@ -72,7 +71,7 @@ export function checkProjectConfig(
       if (mdir.match(common.MyRegex.CONTAINS_DOT())) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.MPROVE_DIR_FOLDER_NAME_HAS_A_DOT,
+            title: common.ErTitleEnum.MPROVE_DIR_FOLDER_NAME_HAS_A_DOT,
             message: `relative path "${mdir}" must not have a dot in folder names`,
             lines: [
               {
@@ -86,7 +85,7 @@ export function checkProjectConfig(
       } else {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.MPROVE_DIR_PATH_DOES_NOT_EXIST,
+            title: common.ErTitleEnum.MPROVE_DIR_PATH_DOES_NOT_EXIST,
             message: `relative path "${mdir}" does not exist or is not a directory`,
             lines: [
               {
@@ -103,29 +102,29 @@ export function checkProjectConfig(
     parameters.forEach(parameter => {
       if (
         [
-          enums.ParameterEnum.Path.toString(),
-          enums.ParameterEnum.Ext.toString(),
-          enums.ParameterEnum.Name.toString()
+          common.ParameterEnum.Path.toString(),
+          common.ParameterEnum.Ext.toString(),
+          common.ParameterEnum.Name.toString()
         ].indexOf(parameter) > -1
       ) {
         return;
       }
 
       if (
-        parameter === enums.ParameterEnum.AllowTimezones.toString() &&
-        !conf[parameter as keyof interfaces.ProjectConf]
+        parameter === common.ParameterEnum.AllowTimezones.toString() &&
+        !conf[parameter as keyof common.FileProjectConf]
           .toString()
           .match(common.MyRegex.TRUE_FALSE())
       ) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.WRONG_ALLOW_TIMEZONES,
+            title: common.ErTitleEnum.WRONG_ALLOW_TIMEZONES,
             message: `parameter "${parameter}:" must be "true" or "false" if specified`,
             lines: [
               {
                 line: conf[
                   (parameter +
-                    constants.LINE_NUM) as keyof interfaces.ProjectConf
+                    constants.LINE_NUM) as keyof common.FileProjectConf
                 ] as number,
                 name: conf.fileName,
                 path: conf.filePath
@@ -137,25 +136,25 @@ export function checkProjectConfig(
         return;
       }
 
-      if (parameter === enums.ParameterEnum.WeekStart.toString()) {
+      if (parameter === common.ParameterEnum.WeekStart.toString()) {
         let lowerCaseWeekStart = conf.week_start.toLowerCase();
 
         (<any>conf).week_start = capitalizeFirstLetter(lowerCaseWeekStart);
 
         if (
           common.PROJECT_WEEK_START_VALUES.map(x => x.toString()).indexOf(
-            conf[parameter as keyof interfaces.ProjectConf].toString()
+            conf[parameter as keyof common.FileProjectConf].toString()
           ) < 0
         ) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.WRONG_WEEK_START,
+              title: common.ErTitleEnum.WRONG_WEEK_START,
               message: `parameter "${parameter}:" must be "Sunday" or "Monday" if specified`,
               lines: [
                 {
                   line: conf[
                     (parameter +
-                      constants.LINE_NUM) as keyof interfaces.ProjectConf
+                      constants.LINE_NUM) as keyof common.FileProjectConf
                   ] as number,
                   name: conf.fileName,
                   path: conf.filePath
@@ -169,20 +168,20 @@ export function checkProjectConfig(
       }
 
       if (
-        parameter === enums.ParameterEnum.DefaultTimezone.toString() &&
+        parameter === common.ParameterEnum.DefaultTimezone.toString() &&
         common.isTimezoneValid(
-          conf[parameter as keyof interfaces.ProjectConf].toString()
+          conf[parameter as keyof common.FileProjectConf].toString()
         ) === false
       ) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.WRONG_DEFAULT_TIMEZONE,
-            message: `wrong ${enums.ParameterEnum.DefaultTimezone} value`,
+            title: common.ErTitleEnum.WRONG_DEFAULT_TIMEZONE,
+            message: `wrong ${common.ParameterEnum.DefaultTimezone} value`,
             lines: [
               {
                 line: conf[
                   (parameter +
-                    constants.LINE_NUM) as keyof interfaces.ProjectConf
+                    constants.LINE_NUM) as keyof common.FileProjectConf
                 ] as number,
                 name: conf.fileName,
                 path: conf.filePath
@@ -194,20 +193,20 @@ export function checkProjectConfig(
         return;
       }
 
-      if (parameter === enums.ParameterEnum.FormatNumber.toString()) {
-        let value = conf[parameter as keyof interfaces.ProjectConf].toString();
+      if (parameter === common.ParameterEnum.FormatNumber.toString()) {
+        let value = conf[parameter as keyof common.FileProjectConf].toString();
         try {
           formatSpecifier(value);
         } catch (e) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.WRONG_FORMAT_NUMBER,
-              message: ` ${enums.ParameterEnum.FormatNumber} value "${value}" is not valid`,
+              title: common.ErTitleEnum.WRONG_FORMAT_NUMBER,
+              message: ` ${common.ParameterEnum.FormatNumber} value "${value}" is not valid`,
               lines: [
                 {
                   line: conf[
                     (parameter +
-                      constants.LINE_NUM) as keyof interfaces.ProjectConf
+                      constants.LINE_NUM) as keyof common.FileProjectConf
                   ] as number,
                   name: conf.fileName,
                   path: conf.filePath
@@ -230,7 +229,7 @@ export function checkProjectConfig(
   ) {
     item.errors.push(
       new BmError({
-        title: enums.ErTitleEnum.MPROVE_CONFIG_NOT_FOUND,
+        title: common.ErTitleEnum.MPROVE_CONFIG_NOT_FOUND,
         message: `project must have ./${common.MPROVE_CONFIG_FILENAME} file`,
         lines: []
       })
@@ -242,13 +241,20 @@ export function checkProjectConfig(
     // already checked by "duplicate file names" and "wrong extension"
   }
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.ProjectConf,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.ProjectConf,
     errorsOnStart === item.errors.length ? projectConfig : ''
   );
 

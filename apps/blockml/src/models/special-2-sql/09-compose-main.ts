@@ -1,20 +1,18 @@
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
-import { interfaces } from '~blockml/barrels/interfaces';
 import { applyFilter } from './apply-filter';
 
-let func = enums.FuncEnum.ComposeMain;
+let func = common.FuncEnum.ComposeMain;
 
 export function composeMain(item: {
-  top: interfaces.VarsSql['top'];
-  joins: interfaces.VarsSql['joins'];
-  whereMain: interfaces.VarsSql['whereMain'];
-  groupMainBy: interfaces.VarsSql['groupMainBy'];
-  havingMain: interfaces.VarsSql['havingMain'];
-  filterFieldsConditions: interfaces.VarsSql['filterFieldsConditions'];
-  varsSqlSteps: interfaces.Report['varsSqlSteps'];
-  model: interfaces.Model;
+  top: common.VarsSql['top'];
+  joins: common.VarsSql['joins'];
+  whereMain: common.VarsSql['whereMain'];
+  groupMainBy: common.VarsSql['groupMainBy'];
+  havingMain: common.VarsSql['havingMain'];
+  filterFieldsConditions: common.VarsSql['filterFieldsConditions'];
+  varsSqlSteps: common.FileReport['varsSqlSteps'];
+  model: common.FileModel;
 }) {
   let {
     top,
@@ -27,7 +25,7 @@ export function composeMain(item: {
     model
   } = item;
 
-  let varsInput = common.makeCopy<interfaces.VarsSql>({
+  let varsInput = common.makeCopy<common.VarsSql>({
     top,
     joins,
     whereMain,
@@ -36,7 +34,7 @@ export function composeMain(item: {
     filterFieldsConditions
   });
 
-  let mainQuery: interfaces.VarsSql['mainQuery'] = [];
+  let mainQuery: common.VarsSql['mainQuery'] = [];
 
   mainQuery = mainQuery.concat(top);
 
@@ -133,7 +131,7 @@ export function composeMain(item: {
 
   mainQuery.push('  )');
 
-  let varsOutput: interfaces.VarsSql = { mainQuery };
+  let varsOutput: common.VarsSql = { mainQuery };
 
   varsSqlSteps.push({ func, varsInput, varsOutput });
 

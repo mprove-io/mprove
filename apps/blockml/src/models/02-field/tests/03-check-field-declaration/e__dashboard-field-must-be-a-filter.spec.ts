@@ -1,20 +1,18 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = enums.CallerEnum.BuildDashboardField;
-let func = enums.FuncEnum.CheckFieldDeclaration;
+let caller = common.CallerEnum.BuildDashboardField;
+let func = common.FuncEnum.CheckFieldDeclaration;
 let testId = 'e__dashboard-field-must-be-a-filter';
 
 test('1', async t => {
   let errors: BmError[];
-  let entDashboards: interfaces.Dashboard[];
+  let entDashboards: common.FileDashboard[];
 
   let wLogger;
   let configService;
@@ -47,8 +45,8 @@ test('1', async t => {
       connections: [connection]
     });
 
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    entDashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
+    entDashboards = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -64,6 +62,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entDashboards.length, 0);
 
-  t.is(errors[0].title, enums.ErTitleEnum.DASHBOARD_FIELD_MUST_BE_A_FILTER);
+  t.is(errors[0].title, common.ErTitleEnum.DASHBOARD_FIELD_MUST_BE_A_FILTER);
   t.is(errors[0].lines[0].line, 3);
 });

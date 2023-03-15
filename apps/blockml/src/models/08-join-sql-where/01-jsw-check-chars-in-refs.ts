@@ -1,25 +1,24 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.JswCheckCharsInRefs;
+let func = common.FuncEnum.JswCheckCharsInRefs;
 
 export function jswCheckCharsInRefs(
   item: {
-    models: interfaces.Model[];
+    models: common.FileModel[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newModels: interfaces.Model[] = [];
+  let newModels: common.FileModel[] = [];
 
   item.models.forEach(x => {
     let errorsOnStart = item.errors.length;
@@ -53,7 +52,7 @@ export function jswCheckCharsInRefs(
         if (jswWrongChars.length > 0) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.JOIN_WRONG_CHARS_IN_SQL_WHERE_REFS,
+              title: common.ErTitleEnum.JOIN_WRONG_CHARS_IN_SQL_WHERE_REFS,
               message:
                 `characters "${jswWrongCharsString}" can not be used ` +
                 `inside \$\{\} of ${common.FileExtensionEnum.Model} (only snake_case "a...z0...9_" is allowed)`,
@@ -75,8 +74,15 @@ export function jswCheckCharsInRefs(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Models, newModels);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Models, newModels);
 
   return newModels;
 }

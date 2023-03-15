@@ -1,14 +1,13 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = enums.CallerEnum.BuildYaml;
-let func = enums.FuncEnum.CheckProjectConfig;
+let caller = common.CallerEnum.BuildYaml;
+let func = common.FuncEnum.CheckProjectConfig;
 let testId = 'e__wrong-week-start';
 
 test('1', async t => {
@@ -45,7 +44,7 @@ test('1', async t => {
       connections: [connection]
     });
 
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
+    errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -60,6 +59,6 @@ test('1', async t => {
 
   t.is(errors.length, 1);
 
-  t.is(errors[0].title, enums.ErTitleEnum.WRONG_WEEK_START);
+  t.is(errors[0].title, common.ErTitleEnum.WRONG_WEEK_START);
   t.is(errors[0].lines[0].line, 4);
 });

@@ -1,26 +1,25 @@
 import { ConfigService } from '@nestjs/config';
 import { barSpecial } from '~blockml/barrels/bar-special';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.ProcessViewRefs;
+let func = common.FuncEnum.ProcessViewRefs;
 
 export function processViewRefs(
   item: {
-    views: interfaces.View[];
-    udfsDict: common.UdfsDict;
+    views: common.FileView[];
+    udfsDict: common.FileUdfsDict;
     weekStart: common.ProjectWeekStartEnum;
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   item.views
     .filter(x => common.isDefined(x.derived_table))
@@ -37,14 +36,21 @@ export function processViewRefs(
       }
     });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Views, item.views);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.UdfsDict,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Views, item.views);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.UdfsDict,
     item.udfsDict
   );
 
@@ -52,10 +58,10 @@ export function processViewRefs(
 }
 
 function substituteViewRefsRecursive(item: {
-  topView: interfaces.View;
-  view: interfaces.View;
-  partDeps: interfaces.ViewPart['deps'];
-  views: interfaces.View[];
+  topView: common.FileView;
+  view: common.FileView;
+  partDeps: common.FileViewPart['deps'];
+  views: common.FileView[];
 }) {
   Object.keys(item.view.asDeps).forEach(as => {
     let depView = item.views.find(
@@ -76,7 +82,7 @@ function substituteViewRefsRecursive(item: {
       }
     });
 
-    let viewPart: interfaces.ViewPart = {
+    let viewPart: common.FileViewPart = {
       viewName: depView.name,
       deps: {},
       sub: sub,

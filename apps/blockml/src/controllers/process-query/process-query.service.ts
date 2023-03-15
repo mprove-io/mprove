@@ -47,7 +47,7 @@ export class ProcessQueryService {
 
     let { select, sorts, timezone, limit, filters } = mconfig;
 
-    let newFilters: interfaces.FilterBricksDictionary = {};
+    let newFilters: common.FilterBricksDictionary = {};
 
     filters.forEach(f => {
       let fieldId = f.fieldId;

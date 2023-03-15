@@ -1,26 +1,25 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckListenFilters;
+let func = common.FuncEnum.CheckListenFilters;
 
 export function checkListenFilters<T extends types.dzType>(
   item: {
     entities: T[];
-    models: interfaces.Model[];
+    models: common.FileModel[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -41,15 +40,15 @@ export function checkListenFilters<T extends types.dzType>(
       ) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.VIS_REPORT_CAN_NOT_HAVE_LISTEN_FILTERS,
+            title: common.ErTitleEnum.VIS_REPORT_CAN_NOT_HAVE_LISTEN_FILTERS,
             message:
               `${common.FileExtensionEnum.Vis} does not support ` +
-              `"${enums.ParameterEnum.ListenFilters}" parameter for reports`,
+              `"${common.ParameterEnum.ListenFilters}" parameter for reports`,
             lines: [
               {
                 line: report[
-                  (enums.ParameterEnum.ListenFilters +
-                    constants.LINE_NUM) as keyof interfaces.Report
+                  (common.ParameterEnum.ListenFilters +
+                    constants.LINE_NUM) as keyof common.FileReport
                 ] as number,
                 name: x.fileName,
                 path: x.filePath
@@ -65,7 +64,7 @@ export function checkListenFilters<T extends types.dzType>(
       Object.keys(report.listen_filters)
         .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(filterName => {
-          let dashboardField = (<interfaces.Dashboard>x).fields.find(
+          let dashboardField = (<common.FileDashboard>x).fields.find(
             f => f.name === filterName
           );
 
@@ -73,7 +72,7 @@ export function checkListenFilters<T extends types.dzType>(
             item.errors.push(
               new BmError({
                 title:
-                  enums.ErTitleEnum.REPORT_LISTENS_MISSING_DASHBOARD_FILTER,
+                  common.ErTitleEnum.REPORT_LISTENS_MISSING_DASHBOARD_FILTER,
                 message:
                   `report listens ${common.FileExtensionEnum.Dashboard} filter "${filterName}" ` +
                   'that is missing or not valid',
@@ -92,13 +91,14 @@ export function checkListenFilters<T extends types.dzType>(
           }
 
           report.listen_filters[filterName].split(',').forEach(part => {
-            let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
+            let reg =
+              common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
             let r = reg.exec(part);
 
             if (common.isUndefined(r)) {
               item.errors.push(
                 new BmError({
-                  title: enums.ErTitleEnum.REPORT_WRONG_LISTENER,
+                  title: common.ErTitleEnum.REPORT_WRONG_LISTENER,
                   message:
                     `Listener "${part}" is not valid.` +
                     'Listeners must be in form "alias.field_name" ' +
@@ -129,7 +129,7 @@ export function checkListenFilters<T extends types.dzType>(
               if (common.isUndefined(modelField)) {
                 item.errors.push(
                   new BmError({
-                    title: enums.ErTitleEnum.REPORT_WRONG_LISTENER_MODEL_FIELD,
+                    title: common.ErTitleEnum.REPORT_WRONG_LISTENER_MODEL_FIELD,
                     message:
                       `found listener "${listener}" references missing or not valid ` +
                       `field "${fieldName}" of model "${model.name}" fields section`,
@@ -151,7 +151,7 @@ export function checkListenFilters<T extends types.dzType>(
                 item.errors.push(
                   new BmError({
                     title:
-                      enums.ErTitleEnum
+                      common.ErTitleEnum
                         .REPORT_MODEL_FIELD_LISTENS_MORE_THAN_ONE_FILTER,
                     message: `listener "${listener}" can not listen more than one filter`,
                     lines: [
@@ -170,7 +170,7 @@ export function checkListenFilters<T extends types.dzType>(
                 item.errors.push(
                   new BmError({
                     title:
-                      enums.ErTitleEnum
+                      common.ErTitleEnum
                         .REPORT_FILTER_AND_MODEL_FIELD_RESULTS_MISMATCH,
                     message:
                       `"${filterName}" filter result "${dashboardField.result}" does not match ` +
@@ -194,7 +194,7 @@ export function checkListenFilters<T extends types.dzType>(
               if (common.isUndefined(join)) {
                 item.errors.push(
                   new BmError({
-                    title: enums.ErTitleEnum.REPORT_WRONG_LISTENER_ALIAS,
+                    title: common.ErTitleEnum.REPORT_WRONG_LISTENER_ALIAS,
                     message:
                       `found listener "${listener}" references missing alias ` +
                       `"${asName}" in joins section of model "${model.name}"`,
@@ -219,7 +219,7 @@ export function checkListenFilters<T extends types.dzType>(
               if (common.isUndefined(viewField)) {
                 item.errors.push(
                   new BmError({
-                    title: enums.ErTitleEnum.REPORT_WRONG_LISTENER_VIEW_FIELD,
+                    title: common.ErTitleEnum.REPORT_WRONG_LISTENER_VIEW_FIELD,
                     message:
                       `found listener "${listener}" references missing or not valid ` +
                       `field "${fieldName}" of view "${join.view.name}" fields section. ` +
@@ -242,7 +242,7 @@ export function checkListenFilters<T extends types.dzType>(
                 item.errors.push(
                   new BmError({
                     title:
-                      enums.ErTitleEnum
+                      common.ErTitleEnum
                         .REPORT_VIEW_FIELD_LISTENS_MORE_THAN_ONE_FILTER,
                     message: `listener "${listener}" can not listen more than one filter`,
                     lines: [
@@ -261,7 +261,7 @@ export function checkListenFilters<T extends types.dzType>(
                 item.errors.push(
                   new BmError({
                     title:
-                      enums.ErTitleEnum
+                      common.ErTitleEnum
                         .REPORT_FILTER_AND_VIEW_FIELD_RESULTS_MISMATCH,
                     message:
                       `"${filterName}" filter result "${dashboardField.result}" does not match ` +
@@ -291,13 +291,20 @@ export function checkListenFilters<T extends types.dzType>(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     newEntities
   );
 

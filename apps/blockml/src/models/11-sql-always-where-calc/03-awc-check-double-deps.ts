@@ -1,25 +1,24 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.AwcCheckDoubleDeps;
+let func = common.FuncEnum.AwcCheckDoubleDeps;
 
 export function awcCheckDoubleDeps(
   item: {
-    models: interfaces.Model[];
+    models: common.FileModel[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newModels: interfaces.Model[] = [];
+  let newModels: common.FileModel[] = [];
 
   item.models.forEach(x => {
     let errorsOnStart = item.errors.length;
@@ -36,10 +35,10 @@ export function awcCheckDoubleDeps(
         item.errors.push(
           new BmError({
             title:
-              enums.ErTitleEnum.WRONG_ALIAS_IN_SQL_ALWAYS_WHERE_CALC_REFERENCE,
+              common.ErTitleEnum.WRONG_ALIAS_IN_SQL_ALWAYS_WHERE_CALC_REFERENCE,
             message:
               `found referencing on alias "${depAs}" that is ` +
-              `missing in joins elements. Check "${enums.ParameterEnum.As}" values.`,
+              `missing in joins elements. Check "${common.ParameterEnum.As}" values.`,
             lines: [
               {
                 line: x.sql_always_where_calc_line_num,
@@ -60,7 +59,7 @@ export function awcCheckDoubleDeps(
             item.errors.push(
               new BmError({
                 title:
-                  enums.ErTitleEnum.SQL_ALWAYS_WHERE_CALC_REFS_MISSING_FIELD,
+                  common.ErTitleEnum.SQL_ALWAYS_WHERE_CALC_REFS_MISSING_FIELD,
                 message:
                   `found referencing to field "${depFieldName}" of ` +
                   `view "${depJoin.view.name}" as "${depAs}"`,
@@ -79,9 +78,9 @@ export function awcCheckDoubleDeps(
           if (depField.fieldClass === common.FieldClassEnum.Filter) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_CALC_REFS_FILTER,
+                title: common.ErTitleEnum.SQL_ALWAYS_WHERE_CALC_REFS_FILTER,
                 message:
-                  `"${enums.ParameterEnum.SqlAlwaysWhereCalc}" can not reference filters. ` +
+                  `"${common.ParameterEnum.SqlAlwaysWhereCalc}" can not reference filters. ` +
                   `Found referencing filter "${depFieldName}" of ` +
                   `view "${depJoin.view.name}" as "${depAs}"`,
                 lines: [
@@ -104,8 +103,15 @@ export function awcCheckDoubleDeps(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Models, newModels);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Models, newModels);
 
   return newModels;
 }

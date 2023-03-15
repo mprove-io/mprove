@@ -1,11 +1,10 @@
 import { common } from '~blockml/barrels/common';
-import { interfaces } from '~blockml/barrels/interfaces';
 
-export function wrapViews(item: { views: interfaces.View[] }) {
+export function wrapViews(item: { views: common.FileView[] }) {
   let { views } = item;
 
-  let apiViews: common.View[] = views.map(x => {
-    let view: common.View = {
+  let apiViews: common.FileView[] = views.map(x => {
+    let view: common.FileView = {
       viewId: x.name,
       filePath: x.filePath,
       viewDeps: x.viewDeps

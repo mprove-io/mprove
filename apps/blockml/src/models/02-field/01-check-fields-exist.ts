@@ -1,24 +1,23 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckFieldsExist;
+let func = common.FuncEnum.CheckFieldsExist;
 
 export function checkFieldsExist<T extends types.vmdType>(
   item: {
     entities: T[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -31,8 +30,8 @@ export function checkFieldsExist<T extends types.vmdType>(
     ) {
       item.errors.push(
         new BmError({
-          title: enums.ErTitleEnum.MISSING_FIELDS,
-          message: `parameter "${enums.ParameterEnum.Fields}" is required for ${x.fileExt} file`,
+          title: common.ErTitleEnum.MISSING_FIELDS,
+          message: `parameter "${common.ParameterEnum.Fields}" is required for ${x.fileExt} file`,
           lines: [
             {
               line: 0,
@@ -54,13 +53,20 @@ export function checkFieldsExist<T extends types.vmdType>(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     newEntities
   );
 

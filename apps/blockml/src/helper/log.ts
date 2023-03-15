@@ -1,15 +1,14 @@
 import { ConfigService } from '@nestjs/config';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
 
 export function log(
   cs: ConfigService<interfaces.Config>,
-  caller: enums.CallerEnum,
-  func: enums.FuncEnum,
+  caller: common.CallerEnum,
+  func: common.FuncEnum,
   structId: string,
-  logType: enums.LogTypeEnum,
+  logType: common.LogTypeEnum,
   content: any
 ) {
   let logIO = cs.get<interfaces.Config['logIO']>('logIO');
@@ -18,7 +17,7 @@ export function log(
   }
 
   let logFunc = cs.get<interfaces.Config['logFunc']>('logFunc');
-  if (logFunc !== enums.FuncEnum.ALL && logFunc !== func) {
+  if (logFunc !== common.FuncEnum.ALL && logFunc !== func) {
     return;
   }
 

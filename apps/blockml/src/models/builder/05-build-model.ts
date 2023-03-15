@@ -1,17 +1,16 @@
 import { ConfigService } from '@nestjs/config';
 import { barModel } from '~blockml/barrels/bar-model';
-import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
 export function buildModel(
   item: {
-    models: interfaces.Model[];
-    views: interfaces.View[];
-    udfs: interfaces.Udf[];
+    models: common.FileModel[];
+    views: common.FileView[];
+    udfs: common.FileUdf[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {

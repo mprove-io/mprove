@@ -1,24 +1,23 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckSupportUdfs;
+let func = common.FuncEnum.CheckSupportUdfs;
 
 export function checkSupportUdfs(
   item: {
     filesAny: any[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ): any[] {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newFilesAny: any[] = [];
 
@@ -32,19 +31,18 @@ export function checkSupportUdfs(
     ) {
       let udfsParameter = Object.keys(file)
         .filter(x => !x.toString().match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-        .find(p => p === enums.ParameterEnum.Udfs.toString());
+        .find(p => p === common.ParameterEnum.Udfs.toString());
 
       if (common.isDefined(udfsParameter)) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.UDFS_ARE_NOT_SUPPORTED_FOR_CONNECTION,
+            title: common.ErTitleEnum.UDFS_ARE_NOT_SUPPORTED_FOR_CONNECTION,
             message: `parameter "udfs" can not be used for connection type "${file.connection.type}"`,
             lines: [
               {
-                line:
-                  file[
-                    enums.ParameterEnum.Udfs.toString() + constants.LINE_NUM
-                  ],
+                line: file[
+                  common.ParameterEnum.Udfs.toString() + constants.LINE_NUM
+                ],
                 name: file.name,
                 path: file.path
               }
@@ -63,10 +61,17 @@ export function checkSupportUdfs(
     caller,
     func,
     structId,
-    enums.LogTypeEnum.FilesAny,
+    common.LogTypeEnum.FilesAny,
     newFilesAny
   );
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
 
   return newFilesAny;
 }

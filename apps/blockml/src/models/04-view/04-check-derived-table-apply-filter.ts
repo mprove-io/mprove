@@ -1,25 +1,24 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckDerivedTableApplyFilter;
+let func = common.FuncEnum.CheckDerivedTableApplyFilter;
 
 export function checkDerivedTableApplyFilter(
   item: {
-    views: interfaces.View[];
+    views: common.FileView[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newViews: interfaces.View[] = [];
+  let newViews: common.FileView[] = [];
 
   item.views.forEach(x => {
     let errorsOnStart = item.errors.length;
@@ -45,7 +44,7 @@ export function checkDerivedTableApplyFilter(
       if (common.isUndefined(field)) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.APPLY_FILTER_REFS_MISSING_FILTER,
+            title: common.ErTitleEnum.APPLY_FILTER_REFS_MISSING_FILTER,
             message: `Filter '${fieldName}' is missing or not valid`,
             lines: [
               {
@@ -62,7 +61,7 @@ export function checkDerivedTableApplyFilter(
       if (field.fieldClass !== common.FieldClassEnum.Filter) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.APPLY_FILTER_MUST_REFERENCE_A_FILTER,
+            title: common.ErTitleEnum.APPLY_FILTER_MUST_REFERENCE_A_FILTER,
             message: `Found field '${fieldName}' that is ${field.fieldClass}`,
             lines: [
               {
@@ -84,8 +83,15 @@ export function checkDerivedTableApplyFilter(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Views, newViews);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Views, newViews);
 
   return newViews;
 }

@@ -9,13 +9,13 @@ export async function genSql(
   rabbitService: RabbitService,
   cs: ConfigService<interfaces.Config>,
   traceId: string,
-  genSqlItem: interfaces.GenSqlItem
+  genSqlItem: common.GenSqlItem
 ) {
   genSqlItem.select = [...genSqlItem.select].sort((a, b) =>
     a > b ? 1 : b > a ? -1 : 0
   );
 
-  let outcome: interfaces.GenSqlProOutcome;
+  let outcome: common.GenSqlProOutcome;
 
   let isSingle = cs.get<interfaces.Config['isSingle']>('isSingle');
 
@@ -24,8 +24,8 @@ export async function genSql(
   } else {
     let genSqlRequest: apiToBlockml.ToBlockmlWorkerGenSqlRequest = {
       info: {
-        name:
-          apiToBlockml.ToBlockmlWorkerRequestInfoNameEnum.ToBlockmlWorkerGenSql,
+        name: apiToBlockml.ToBlockmlWorkerRequestInfoNameEnum
+          .ToBlockmlWorkerGenSql,
         traceId: traceId
       },
       payload: genSqlItem
@@ -50,21 +50,11 @@ export async function genSql(
   return outcome;
 }
 
-export function genSqlPro(
-  item: interfaces.GenSqlItem
-): interfaces.GenSqlProOutcome {
-  let {
-    weekStart,
-    timezone,
-    select,
-    sorts,
-    limit,
-    filters,
-    model,
-    udfsDict
-  } = item;
+export function genSqlPro(item: common.GenSqlItem): common.GenSqlProOutcome {
+  let { weekStart, timezone, select, sorts, limit, filters, model, udfsDict } =
+    item;
 
-  let varsSqlSteps: interfaces.VarsSqlStep[] = [];
+  let varsSqlSteps: common.VarsSqlStep[] = [];
 
   let { depMeasures, depDimensions } = barSql.makeDepMeasuresAndDimensions({
     select,
@@ -73,20 +63,15 @@ export function genSqlPro(
     varsSqlSteps
   });
 
-  let {
-    mainUdfs,
-    mainText,
-    groupMainBy,
-    selected,
-    processedFields
-  } = barSql.makeMainText({
-    select,
-    filters,
-    depMeasures,
-    depDimensions,
-    varsSqlSteps,
-    model
-  });
+  let { mainUdfs, mainText, groupMainBy, selected, processedFields } =
+    barSql.makeMainText({
+      select,
+      filters,
+      depMeasures,
+      depDimensions,
+      varsSqlSteps,
+      model
+    });
 
   let { needsDoubles } = barSql.makeNeedsDoubles({
     selected,

@@ -1,25 +1,24 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckChartAxisParameters;
+let func = common.FuncEnum.CheckChartAxisParameters;
 
 export function checkChartAxisParameters<T extends types.dzType>(
   item: {
     entities: T[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -36,18 +35,18 @@ export function checkChartAxisParameters<T extends types.dzType>(
         .forEach(parameter => {
           if (
             [
-              enums.ParameterEnum.XAxis.toString(),
-              enums.ParameterEnum.ShowXAxisLabel.toString(),
-              enums.ParameterEnum.XAxisLabel.toString(),
-              enums.ParameterEnum.YAxis.toString(),
-              enums.ParameterEnum.ShowYAxisLabel.toString(),
-              enums.ParameterEnum.YAxisLabel.toString(),
-              enums.ParameterEnum.ShowAxis.toString()
+              common.ParameterEnum.XAxis.toString(),
+              common.ParameterEnum.ShowXAxisLabel.toString(),
+              common.ParameterEnum.XAxisLabel.toString(),
+              common.ParameterEnum.YAxis.toString(),
+              common.ParameterEnum.ShowYAxisLabel.toString(),
+              common.ParameterEnum.YAxisLabel.toString(),
+              common.ParameterEnum.ShowAxis.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.REPORT_AXIS_UNKNOWN_PARAMETER,
+                title: common.ErTitleEnum.REPORT_AXIS_UNKNOWN_PARAMETER,
                 message:
                   `parameter "${parameter}" can not be used  ` +
                   'inside Report Axis',
@@ -55,7 +54,7 @@ export function checkChartAxisParameters<T extends types.dzType>(
                   {
                     line: report.axis[
                       (parameter +
-                        constants.LINE_NUM) as keyof interfaces.ChartAxis
+                        constants.LINE_NUM) as keyof common.FileReportChartAxis
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -68,18 +67,18 @@ export function checkChartAxisParameters<T extends types.dzType>(
 
           if (
             Array.isArray(
-              report.axis[parameter as keyof interfaces.ChartAxis] as any
+              report.axis[parameter as keyof common.FileReportChartAxis] as any
             )
           ) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.REPORT_AXIS_UNEXPECTED_LIST,
+                title: common.ErTitleEnum.REPORT_AXIS_UNEXPECTED_LIST,
                 message: `parameter "${parameter}" can not be a List`,
                 lines: [
                   {
                     line: report.axis[
                       (parameter +
-                        constants.LINE_NUM) as keyof interfaces.ChartAxis
+                        constants.LINE_NUM) as keyof common.FileReportChartAxis
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -91,18 +90,18 @@ export function checkChartAxisParameters<T extends types.dzType>(
           }
 
           if (
-            (report.axis[parameter as keyof interfaces.ChartAxis] as any)
+            (report.axis[parameter as keyof common.FileReportChartAxis] as any)
               ?.constructor === Object
           ) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.REPORT_AXIS_UNEXPECTED_DICTIONARY,
+                title: common.ErTitleEnum.REPORT_AXIS_UNEXPECTED_DICTIONARY,
                 message: `parameter "${parameter}" can not be a Dictionary`,
                 lines: [
                   {
                     line: report.axis[
                       (parameter +
-                        constants.LINE_NUM) as keyof interfaces.ChartAxis
+                        constants.LINE_NUM) as keyof common.FileReportChartAxis
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -115,19 +114,19 @@ export function checkChartAxisParameters<T extends types.dzType>(
 
           if (
             [
-              enums.ParameterEnum.XAxis.toString(),
-              enums.ParameterEnum.ShowXAxisLabel.toString(),
-              enums.ParameterEnum.YAxis.toString(),
-              enums.ParameterEnum.ShowYAxisLabel.toString(),
-              enums.ParameterEnum.ShowAxis.toString()
+              common.ParameterEnum.XAxis.toString(),
+              common.ParameterEnum.ShowXAxisLabel.toString(),
+              common.ParameterEnum.YAxis.toString(),
+              common.ParameterEnum.ShowYAxisLabel.toString(),
+              common.ParameterEnum.ShowAxis.toString()
             ].indexOf(parameter) > -1 &&
-            !(report.axis[parameter as keyof interfaces.ChartAxis] as any)
+            !(report.axis[parameter as keyof common.FileReportChartAxis] as any)
               .toString()
               .match(common.MyRegex.TRUE_FALSE())
           ) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.REPORT_AXIS_WRONG_PARAMETER_VALUE,
+                title: common.ErTitleEnum.REPORT_AXIS_WRONG_PARAMETER_VALUE,
                 message:
                   `parameter "${parameter}" value must be ` +
                   '"true" or "false" if specified',
@@ -135,7 +134,7 @@ export function checkChartAxisParameters<T extends types.dzType>(
                   {
                     line: report.axis[
                       (parameter +
-                        constants.LINE_NUM) as keyof interfaces.ChartAxis
+                        constants.LINE_NUM) as keyof common.FileReportChartAxis
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -153,13 +152,20 @@ export function checkChartAxisParameters<T extends types.dzType>(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     newEntities
   );
 

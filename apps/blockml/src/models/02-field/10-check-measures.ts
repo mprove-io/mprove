@@ -1,24 +1,23 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckMeasures;
+let func = common.FuncEnum.CheckMeasures;
 
 export function checkMeasures<T extends types.vmType>(
   item: {
     entities: T[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -38,8 +37,8 @@ export function checkMeasures<T extends types.vmType>(
       if (common.isUndefined(field.type)) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.MISSING_TYPE_FOR_MEASURE,
-            message: `parameter "${enums.ParameterEnum.Type}" is required for measures`,
+            title: common.ErTitleEnum.MISSING_TYPE_FOR_MEASURE,
+            message: `parameter "${common.ParameterEnum.Type}" is required for measures`,
             lines: [
               {
                 line: field.name_line_num,
@@ -53,8 +52,8 @@ export function checkMeasures<T extends types.vmType>(
       } else if (common.MEASURE_TYPE_VALUES.indexOf(field.type) < 0) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.WRONG_MEASURE_TYPE,
-            message: `"${field.type}" value is not valid ${enums.ParameterEnum.Type} for measure`,
+            title: common.ErTitleEnum.WRONG_MEASURE_TYPE,
+            message: `"${field.type}" value is not valid ${common.ParameterEnum.Type} for measure`,
             lines: [
               {
                 line: field.type_line_num,
@@ -76,8 +75,8 @@ export function checkMeasures<T extends types.vmType>(
       ) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.MISSING_SQL_KEY,
-            message: `parameter "${enums.ParameterEnum.SqlKey}" is required for measure of type "${field.type}"`,
+            title: common.ErTitleEnum.MISSING_SQL_KEY,
+            message: `parameter "${common.ParameterEnum.SqlKey}" is required for measure of type "${field.type}"`,
             lines: [
               {
                 line: field.name_line_num,
@@ -100,9 +99,9 @@ export function checkMeasures<T extends types.vmType>(
         item.errors.push(
           new BmError({
             title:
-              enums.ErTitleEnum.MEASURE_TYPE_IS_NOT_SUPPORTED_FOR_CONNECTION,
+              common.ErTitleEnum.MEASURE_TYPE_IS_NOT_SUPPORTED_FOR_CONNECTION,
             message:
-              `${enums.ParameterEnum.Measure} type "${field.type}" is not supported for ` +
+              `${common.ParameterEnum.Measure} type "${field.type}" is not supported for ` +
               `"${x.connection.type}". Consider using a "${common.FieldTypeEnum.Custom}" type.`,
             lines: [
               {
@@ -128,9 +127,9 @@ export function checkMeasures<T extends types.vmType>(
         item.errors.push(
           new BmError({
             title:
-              enums.ErTitleEnum.MEASURE_TYPE_IS_NOT_SUPPORTED_FOR_CONNECTION,
+              common.ErTitleEnum.MEASURE_TYPE_IS_NOT_SUPPORTED_FOR_CONNECTION,
             message:
-              `${enums.ParameterEnum.Measure} type "${field.type}" is not supported for ` +
+              `${common.ParameterEnum.Measure} type "${field.type}" is not supported for ` +
               `"${x.connection.type}". Consider using a "${common.FieldTypeEnum.Custom}" type.`,
             lines: [
               {
@@ -154,9 +153,9 @@ export function checkMeasures<T extends types.vmType>(
         item.errors.push(
           new BmError({
             title:
-              enums.ErTitleEnum.MEASURE_TYPE_IS_NOT_SUPPORTED_FOR_CONNECTION,
+              common.ErTitleEnum.MEASURE_TYPE_IS_NOT_SUPPORTED_FOR_CONNECTION,
             message:
-              `${enums.ParameterEnum.Measure} type "${field.type}" is not supported for ` +
+              `${common.ParameterEnum.Measure} type "${field.type}" is not supported for ` +
               `"${x.connection.type}". Consider using a "${common.FieldTypeEnum.Custom}" type.`,
             lines: [
               {
@@ -180,8 +179,9 @@ export function checkMeasures<T extends types.vmType>(
       ) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.PERCENTILE_IS_NOT_SUPPORTED_FOR_CONNECTION,
-            message: `consider using a "${common.FieldTypeEnum.Custom}" type for ${enums.ParameterEnum.Measure}`,
+            title:
+              common.ErTitleEnum.PERCENTILE_IS_NOT_SUPPORTED_FOR_CONNECTION,
+            message: `consider using a "${common.FieldTypeEnum.Custom}" type for ${common.ParameterEnum.Measure}`,
             lines: [
               {
                 line: field.percentile_line_num,
@@ -198,8 +198,8 @@ export function checkMeasures<T extends types.vmType>(
         if (common.isUndefined(field.percentile)) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.MISSING_PERCENTILE,
-              message: `parameter "${enums.ParameterEnum.Percentile}" is required for ${enums.ParameterEnum.Measure} of type ${field.type}`,
+              title: common.ErTitleEnum.MISSING_PERCENTILE,
+              message: `parameter "${common.ParameterEnum.Percentile}" is required for ${common.ParameterEnum.Measure} of type ${field.type}`,
               lines: [
                 {
                   line: field.name_line_num,
@@ -218,8 +218,8 @@ export function checkMeasures<T extends types.vmType>(
           if (common.isUndefined(r)) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.WRONG_PERCENTILE,
-                message: `${enums.ParameterEnum.Percentile} value must be integer between 1 and 99`,
+                title: common.ErTitleEnum.WRONG_PERCENTILE,
+                message: `${common.ParameterEnum.Percentile} value must be integer between 1 and 99`,
                 lines: [
                   {
                     line: field.percentile_line_num,
@@ -240,8 +240,8 @@ export function checkMeasures<T extends types.vmType>(
       ) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.MEASURE_SQL_MISSING_BLOCKML_REFERENCE,
-            message: `${common.FieldClassEnum.Measure} ${enums.ParameterEnum.Sql} must have a BlockML reference to ${common.FieldClassEnum.Dimension}`,
+            title: common.ErTitleEnum.MEASURE_SQL_MISSING_BLOCKML_REFERENCE,
+            message: `${common.FieldClassEnum.Measure} ${common.ParameterEnum.Sql} must have a BlockML reference to ${common.FieldClassEnum.Dimension}`,
             lines: [
               {
                 line: field.sql_line_num,
@@ -260,8 +260,8 @@ export function checkMeasures<T extends types.vmType>(
       ) {
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.MEASURE_SQL_KEY_MISSING_BLOCKML_REFERENCE,
-            message: `${common.FieldClassEnum.Measure} ${enums.ParameterEnum.SqlKey} must have a BlockML reference to ${common.FieldClassEnum.Dimension}`,
+            title: common.ErTitleEnum.MEASURE_SQL_KEY_MISSING_BLOCKML_REFERENCE,
+            message: `${common.FieldClassEnum.Measure} ${common.ParameterEnum.SqlKey} must have a BlockML reference to ${common.FieldClassEnum.Dimension}`,
             lines: [
               {
                 line: field.sql_key_line_num,
@@ -280,13 +280,20 @@ export function checkMeasures<T extends types.vmType>(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     newEntities
   );
 

@@ -1,24 +1,23 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckTopValues;
+let func = common.FuncEnum.CheckTopValues;
 
 export function checkTopValues(
   item: {
     filesAny: any[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ): any[] {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newFilesAny: any[] = [];
 
@@ -30,21 +29,21 @@ export function checkTopValues(
       .forEach(parameter => {
         if (
           [
-            enums.ParameterEnum.Path.toString(),
-            enums.ParameterEnum.Ext.toString(),
-            enums.ParameterEnum.Name.toString()
+            common.ParameterEnum.Path.toString(),
+            common.ParameterEnum.Ext.toString(),
+            common.ParameterEnum.Name.toString()
           ].indexOf(parameter) > -1
         ) {
           return;
         }
 
         if (
-          parameter === enums.ParameterEnum.Hidden.toString() &&
+          parameter === common.ParameterEnum.Hidden.toString() &&
           !file[parameter].toString().match(common.MyRegex.TRUE_FALSE())
         ) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.WRONG_HIDDEN,
+              title: common.ErTitleEnum.WRONG_HIDDEN,
               message:
                 'parameter "hidden:" must be "true" or "false" if specified',
               lines: [
@@ -62,14 +61,14 @@ export function checkTopValues(
 
         if (
           [
-            enums.ParameterEnum.Api.toString(),
-            enums.ParameterEnum.Dashboard.toString(),
-            enums.ParameterEnum.Metric.toString(),
-            enums.ParameterEnum.Model.toString(),
-            enums.ParameterEnum.Report.toString(),
-            enums.ParameterEnum.Udf.toString(),
-            enums.ParameterEnum.View.toString(),
-            enums.ParameterEnum.Vis.toString()
+            common.ParameterEnum.Api.toString(),
+            common.ParameterEnum.Dashboard.toString(),
+            common.ParameterEnum.Metric.toString(),
+            common.ParameterEnum.Model.toString(),
+            common.ParameterEnum.Report.toString(),
+            common.ParameterEnum.Udf.toString(),
+            common.ParameterEnum.View.toString(),
+            common.ParameterEnum.Vis.toString()
           ].indexOf(parameter) > -1 &&
           file[parameter]
             .toString()
@@ -79,7 +78,7 @@ export function checkTopValues(
         ) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.WRONG_CHAR_IN_PARAMETER_VALUE,
+              title: common.ErTitleEnum.WRONG_CHAR_IN_PARAMETER_VALUE,
               message: `parameter "${parameter}" contains wrong characters or whitespace (only snake_case "a...zA...Z0...9_" is allowed)`,
               lines: [
                 {
@@ -105,10 +104,17 @@ export function checkTopValues(
     caller,
     func,
     structId,
-    enums.LogTypeEnum.FilesAny,
+    common.LogTypeEnum.FilesAny,
     newFilesAny
   );
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
 
   return newFilesAny;
 }

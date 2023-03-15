@@ -1,20 +1,18 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
-import { interfaces } from '~blockml/barrels/interfaces';
 import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = enums.CallerEnum.BuildDashboard;
-let func = enums.FuncEnum.CheckDashboardReportsExist;
+let caller = common.CallerEnum.BuildDashboard;
+let func = common.FuncEnum.CheckDashboardReportsExist;
 let testId = 'v__1';
 
 test('1', async t => {
   let errors: BmError[];
-  let dashboards: interfaces.Dashboard[];
+  let dashboards: common.FileDashboard[];
 
   let wLogger;
   let configService;
@@ -47,8 +45,8 @@ test('1', async t => {
       connections: [connection]
     });
 
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    dashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Ds);
+    errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
+    dashboards = await helper.readLog(fromDir, common.LogTypeEnum.Ds);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }

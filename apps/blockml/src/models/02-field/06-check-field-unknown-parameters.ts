@@ -1,25 +1,24 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckFieldUnknownParameters;
+let func = common.FuncEnum.CheckFieldUnknownParameters;
 
 export function checkFieldUnknownParameters<T extends types.vmdType>(
   item: {
     entities: T[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -32,24 +31,23 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
           k =>
             !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()) &&
             [
-              enums.ParameterEnum.Name.toString(),
-              enums.ParameterEnum.FieldClass.toString()
+              common.ParameterEnum.Name.toString(),
+              common.ParameterEnum.FieldClass.toString()
             ].indexOf(k) < 0
         )
         .forEach(parameter => {
           if (
-            parameter === enums.ParameterEnum.Hidden &&
+            parameter === common.ParameterEnum.Hidden &&
             !field[parameter].match(common.MyRegex.TRUE_FALSE())
           ) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.WRONG_FIELD_HIDDEN,
-                message: `parameter "${enums.ParameterEnum.Hidden}" must be 'true' or 'false' if specified`,
+                title: common.ErTitleEnum.WRONG_FIELD_HIDDEN,
+                message: `parameter "${common.ParameterEnum.Hidden}" must be 'true' or 'false' if specified`,
                 lines: [
                   {
                     line: field[
-                      (parameter +
-                        constants.LINE_NUM) as keyof interfaces.FieldAny
+                      (parameter + constants.LINE_NUM) as keyof common.FieldAny
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -64,28 +62,28 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
             case common.FieldClassEnum.Dimension: {
               if (
                 [
-                  enums.ParameterEnum.Dimension.toString(),
-                  enums.ParameterEnum.Hidden.toString(),
-                  enums.ParameterEnum.Label.toString(),
-                  enums.ParameterEnum.Description.toString(),
-                  enums.ParameterEnum.Unnest.toString(),
-                  enums.ParameterEnum.Type.toString(),
-                  enums.ParameterEnum.Sql.toString(),
-                  enums.ParameterEnum.Result.toString(),
-                  enums.ParameterEnum.FormatNumber.toString(),
-                  enums.ParameterEnum.CurrencyPrefix.toString(),
-                  enums.ParameterEnum.CurrencySuffix.toString()
+                  common.ParameterEnum.Dimension.toString(),
+                  common.ParameterEnum.Hidden.toString(),
+                  common.ParameterEnum.Label.toString(),
+                  common.ParameterEnum.Description.toString(),
+                  common.ParameterEnum.Unnest.toString(),
+                  common.ParameterEnum.Type.toString(),
+                  common.ParameterEnum.Sql.toString(),
+                  common.ParameterEnum.Result.toString(),
+                  common.ParameterEnum.FormatNumber.toString(),
+                  common.ParameterEnum.CurrencyPrefix.toString(),
+                  common.ParameterEnum.CurrencySuffix.toString()
                 ].indexOf(parameter) < 0
               ) {
                 item.errors.push(
                   new BmError({
-                    title: enums.ErTitleEnum.UNKNOWN_DIMENSION_PARAMETER,
+                    title: common.ErTitleEnum.UNKNOWN_DIMENSION_PARAMETER,
                     message: `parameter "${parameter}" can not be used with ${common.FieldClassEnum.Dimension}`,
                     lines: [
                       {
                         line: field[
                           (parameter +
-                            constants.LINE_NUM) as keyof interfaces.FieldAny
+                            constants.LINE_NUM) as keyof common.FieldAny
                         ] as number,
                         name: x.fileName,
                         path: x.filePath
@@ -101,25 +99,25 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
             case common.FieldClassEnum.Time: {
               if (
                 [
-                  enums.ParameterEnum.Time.toString(),
-                  enums.ParameterEnum.Hidden.toString(),
-                  enums.ParameterEnum.GroupLabel.toString(),
-                  enums.ParameterEnum.GroupDescription.toString(),
-                  enums.ParameterEnum.Unnest.toString(),
-                  enums.ParameterEnum.Source.toString(),
-                  enums.ParameterEnum.Sql.toString(),
-                  enums.ParameterEnum.Timeframes.toString()
+                  common.ParameterEnum.Time.toString(),
+                  common.ParameterEnum.Hidden.toString(),
+                  common.ParameterEnum.GroupLabel.toString(),
+                  common.ParameterEnum.GroupDescription.toString(),
+                  common.ParameterEnum.Unnest.toString(),
+                  common.ParameterEnum.Source.toString(),
+                  common.ParameterEnum.Sql.toString(),
+                  common.ParameterEnum.Timeframes.toString()
                 ].indexOf(parameter) < 0
               ) {
                 item.errors.push(
                   new BmError({
-                    title: enums.ErTitleEnum.UNKNOWN_TIME_PARAMETER,
+                    title: common.ErTitleEnum.UNKNOWN_TIME_PARAMETER,
                     message: `parameter "${parameter}" can not be used with ${common.FieldClassEnum.Time}`,
                     lines: [
                       {
                         line: field[
                           (parameter +
-                            constants.LINE_NUM) as keyof interfaces.FieldAny
+                            constants.LINE_NUM) as keyof common.FieldAny
                         ] as number,
                         name: x.fileName,
                         path: x.filePath
@@ -135,29 +133,29 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
             case common.FieldClassEnum.Measure: {
               if (
                 [
-                  enums.ParameterEnum.Measure.toString(),
-                  enums.ParameterEnum.Hidden.toString(),
-                  enums.ParameterEnum.Label.toString(),
-                  enums.ParameterEnum.Description.toString(),
-                  enums.ParameterEnum.Type.toString(),
-                  enums.ParameterEnum.Result.toString(),
-                  enums.ParameterEnum.Sql.toString(),
-                  enums.ParameterEnum.SqlKey.toString(),
-                  enums.ParameterEnum.Percentile.toString(),
-                  enums.ParameterEnum.FormatNumber.toString(),
-                  enums.ParameterEnum.CurrencyPrefix.toString(),
-                  enums.ParameterEnum.CurrencySuffix.toString()
+                  common.ParameterEnum.Measure.toString(),
+                  common.ParameterEnum.Hidden.toString(),
+                  common.ParameterEnum.Label.toString(),
+                  common.ParameterEnum.Description.toString(),
+                  common.ParameterEnum.Type.toString(),
+                  common.ParameterEnum.Result.toString(),
+                  common.ParameterEnum.Sql.toString(),
+                  common.ParameterEnum.SqlKey.toString(),
+                  common.ParameterEnum.Percentile.toString(),
+                  common.ParameterEnum.FormatNumber.toString(),
+                  common.ParameterEnum.CurrencyPrefix.toString(),
+                  common.ParameterEnum.CurrencySuffix.toString()
                 ].indexOf(parameter) < 0
               ) {
                 item.errors.push(
                   new BmError({
-                    title: enums.ErTitleEnum.UNKNOWN_MEASURE_PARAMETER,
+                    title: common.ErTitleEnum.UNKNOWN_MEASURE_PARAMETER,
                     message: `parameter "${parameter}" can not be used with ${common.FieldClassEnum.Measure}`,
                     lines: [
                       {
                         line: field[
                           (parameter +
-                            constants.LINE_NUM) as keyof interfaces.FieldAny
+                            constants.LINE_NUM) as keyof common.FieldAny
                         ] as number,
                         name: x.fileName,
                         path: x.filePath
@@ -173,26 +171,26 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
             case common.FieldClassEnum.Calculation: {
               if (
                 [
-                  enums.ParameterEnum.Calculation.toString(),
-                  enums.ParameterEnum.Hidden.toString(),
-                  enums.ParameterEnum.Label.toString(),
-                  enums.ParameterEnum.Description.toString(),
-                  enums.ParameterEnum.Sql.toString(),
-                  enums.ParameterEnum.Result.toString(),
-                  enums.ParameterEnum.FormatNumber.toString(),
-                  enums.ParameterEnum.CurrencyPrefix.toString(),
-                  enums.ParameterEnum.CurrencySuffix.toString()
+                  common.ParameterEnum.Calculation.toString(),
+                  common.ParameterEnum.Hidden.toString(),
+                  common.ParameterEnum.Label.toString(),
+                  common.ParameterEnum.Description.toString(),
+                  common.ParameterEnum.Sql.toString(),
+                  common.ParameterEnum.Result.toString(),
+                  common.ParameterEnum.FormatNumber.toString(),
+                  common.ParameterEnum.CurrencyPrefix.toString(),
+                  common.ParameterEnum.CurrencySuffix.toString()
                 ].indexOf(parameter) < 0
               ) {
                 item.errors.push(
                   new BmError({
-                    title: enums.ErTitleEnum.UNKNOWN_CALCULATION_PARAMETER,
+                    title: common.ErTitleEnum.UNKNOWN_CALCULATION_PARAMETER,
                     message: `parameter "${parameter}" can not be used with ${common.FieldClassEnum.Calculation}`,
                     lines: [
                       {
                         line: field[
                           (parameter +
-                            constants.LINE_NUM) as keyof interfaces.FieldAny
+                            constants.LINE_NUM) as keyof common.FieldAny
                         ] as number,
                         name: x.fileName,
                         path: x.filePath
@@ -208,23 +206,23 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
             case common.FieldClassEnum.Filter: {
               if (
                 [
-                  enums.ParameterEnum.Filter.toString(),
-                  enums.ParameterEnum.Hidden.toString(),
-                  enums.ParameterEnum.Label.toString(),
-                  enums.ParameterEnum.Description.toString(),
-                  enums.ParameterEnum.Result.toString(),
-                  enums.ParameterEnum.Default.toString()
+                  common.ParameterEnum.Filter.toString(),
+                  common.ParameterEnum.Hidden.toString(),
+                  common.ParameterEnum.Label.toString(),
+                  common.ParameterEnum.Description.toString(),
+                  common.ParameterEnum.Result.toString(),
+                  common.ParameterEnum.Default.toString()
                 ].indexOf(parameter) < 0
               ) {
                 item.errors.push(
                   new BmError({
-                    title: enums.ErTitleEnum.UNKNOWN_FILTER_PARAMETER,
+                    title: common.ErTitleEnum.UNKNOWN_FILTER_PARAMETER,
                     message: `parameter "${parameter}" can not be used with ${common.FieldClassEnum.Filter}`,
                     lines: [
                       {
                         line: field[
                           (parameter +
-                            constants.LINE_NUM) as keyof interfaces.FieldAny
+                            constants.LINE_NUM) as keyof common.FieldAny
                         ] as number,
                         name: x.fileName,
                         path: x.filePath
@@ -239,21 +237,20 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
           }
 
           if (
-            Array.isArray(field[parameter as keyof interfaces.FieldAny]) &&
+            Array.isArray(field[parameter as keyof common.FieldAny]) &&
             [
-              enums.ParameterEnum.Timeframes.toString(),
-              enums.ParameterEnum.Default.toString()
+              common.ParameterEnum.Timeframes.toString(),
+              common.ParameterEnum.Default.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.UNEXPECTED_LIST_IN_FIELD_PARAMETERS,
+                title: common.ErTitleEnum.UNEXPECTED_LIST_IN_FIELD_PARAMETERS,
                 message: `parameter "${parameter}" must have a single value`,
                 lines: [
                   {
                     line: field[
-                      (parameter +
-                        constants.LINE_NUM) as keyof interfaces.FieldAny
+                      (parameter + constants.LINE_NUM) as keyof common.FieldAny
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -265,19 +262,17 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
           }
 
           if (
-            field[parameter as keyof interfaces.FieldAny]?.constructor ===
-            Object
+            field[parameter as keyof common.FieldAny]?.constructor === Object
           ) {
             item.errors.push(
               new BmError({
                 title:
-                  enums.ErTitleEnum.UNEXPECTED_DICTIONARY_IN_FIELD_PARAMETERS,
+                  common.ErTitleEnum.UNEXPECTED_DICTIONARY_IN_FIELD_PARAMETERS,
                 message: `parameter "${parameter}" must have a single value`,
                 lines: [
                   {
                     line: field[
-                      (parameter +
-                        constants.LINE_NUM) as keyof interfaces.FieldAny
+                      (parameter + constants.LINE_NUM) as keyof common.FieldAny
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -289,21 +284,20 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
           }
 
           if (
-            !Array.isArray(field[parameter as keyof interfaces.FieldAny]) &&
+            !Array.isArray(field[parameter as keyof common.FieldAny]) &&
             [
-              enums.ParameterEnum.Default.toString(),
-              enums.ParameterEnum.Timeframes.toString()
+              common.ParameterEnum.Default.toString(),
+              common.ParameterEnum.Timeframes.toString()
             ].indexOf(parameter) > -1
           ) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.FIELD_PARAMETER_IS_NOT_A_LIST,
+                title: common.ErTitleEnum.FIELD_PARAMETER_IS_NOT_A_LIST,
                 message: `parameter "${parameter}" must be a List`,
                 lines: [
                   {
                     line: field[
-                      (parameter +
-                        constants.LINE_NUM) as keyof interfaces.FieldAny
+                      (parameter + constants.LINE_NUM) as keyof common.FieldAny
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -321,13 +315,20 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
     cs,
     caller,
     func,
     structId,
-    enums.LogTypeEnum.Entities,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
     newEntities
   );
 

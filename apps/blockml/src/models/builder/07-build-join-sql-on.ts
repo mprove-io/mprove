@@ -1,15 +1,14 @@
 import { ConfigService } from '@nestjs/config';
 import { barJoinSqlOn } from '~blockml/barrels/bar-join-sql-on';
-import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
 export function buildJoinSqlOn(
   item: {
-    models: interfaces.Model[];
+    models: common.FileModel[];
     structId: string;
     errors: BmError[];
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {

@@ -1,15 +1,14 @@
 import { ConfigService } from '@nestjs/config';
 import { barDashboard } from '~blockml/barrels/bar-dashboard';
-import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
 export function buildDashboard(
   item: {
-    dashboards: interfaces.Dashboard[];
+    dashboards: common.FileDashboard[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {

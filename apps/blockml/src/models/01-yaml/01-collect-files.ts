@@ -1,23 +1,22 @@
 import { ConfigService } from '@nestjs/config';
 import * as walk from 'walk';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { nodeCommon } from '~blockml/barrels/node-common';
 
-let func = enums.FuncEnum.CollectFiles;
+let func = common.FuncEnum.CollectFiles;
 
 export async function collectFiles(
   item: {
     dir: string;
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ): Promise<common.BmlFile[]> {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   return new Promise((resolve, reject) => {
     let files: common.BmlFile[] = [];
@@ -55,8 +54,8 @@ export async function collectFiles(
     });
 
     walker.on('end', () => {
-      helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, []);
-      helper.log(cs, caller, func, structId, enums.LogTypeEnum.Files, files);
+      helper.log(cs, caller, func, structId, common.LogTypeEnum.Errors, []);
+      helper.log(cs, caller, func, structId, common.LogTypeEnum.Files, files);
       resolve(files);
     });
   });

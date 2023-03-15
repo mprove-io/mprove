@@ -1,7 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { barYaml } from '~blockml/barrels/bar-yaml';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
@@ -12,21 +11,21 @@ export function buildYaml(
     structId: string;
     connections: common.ProjectConnection[];
     mproveDir: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let udfs: interfaces.Udf[];
-  let views: interfaces.View[];
-  let models: interfaces.Model[];
-  let dashboards: interfaces.Dashboard[];
+  let udfs: common.FileUdf[];
+  let views: common.FileView[];
+  let models: common.FileModel[];
+  let dashboards: common.FileDashboard[];
   let reps: common.FileRep[];
-  let metrics: interfaces.Metric[];
-  let apis: interfaces.Api[];
-  let vizs: interfaces.Viz[];
-  let confs: interfaces.ProjectConf[];
+  let metrics: common.Metric[];
+  let apis: common.Api[];
+  let vizs: common.FileVis[];
+  let confs: common.FileProjectConf[];
 
-  let file2s: interfaces.File2[] = barYaml.removeWrongExt(
+  let file2s: common.File2[] = barYaml.removeWrongExt(
     {
       files: item.files,
       structId: item.structId,
@@ -36,7 +35,7 @@ export function buildYaml(
     cs
   );
 
-  let file3s: interfaces.File3[] = barYaml.deduplicateFileNames(
+  let file3s: common.File3[] = barYaml.deduplicateFileNames(
     {
       file2s: file2s,
       structId: item.structId,

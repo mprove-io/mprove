@@ -1,25 +1,24 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.CheckAliases;
+let func = common.FuncEnum.CheckAliases;
 
 export function checkAliases(
   item: {
-    models: interfaces.Model[];
+    models: common.FileModel[];
     errors: BmError[];
     structId: string;
-    caller: enums.CallerEnum;
+    caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newModels: interfaces.Model[] = [];
+  let newModels: common.FileModel[] = [];
 
   item.models.forEach(x => {
     let errorsOnStart = item.errors.length;
@@ -31,12 +30,12 @@ export function checkAliases(
         let lineNums: number[] = [];
         Object.keys(j)
           .filter(p => p.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-          .forEach(l => lineNums.push(j[l as keyof interfaces.Join] as number));
+          .forEach(l => lineNums.push(j[l as keyof common.Join] as number));
 
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.MISSING_AS,
-            message: `parameter "${enums.ParameterEnum.As}" required for each element of joins list`,
+            title: common.ErTitleEnum.MISSING_AS,
+            message: `parameter "${common.ParameterEnum.As}" required for each element of joins list`,
             lines: [
               {
                 line: Math.min(...lineNums),
@@ -67,8 +66,8 @@ export function checkAliases(
         if (alias.asLineNums.length > 1) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.DUPLICATE_ALIASES,
-              message: `"${enums.ParameterEnum.As}" value must be unique across joins elements`,
+              title: common.ErTitleEnum.DUPLICATE_ALIASES,
+              message: `"${common.ParameterEnum.As}" value must be unique across joins elements`,
               lines: alias.asLineNums.map(l => ({
                 line: l,
                 name: x.fileName,
@@ -97,7 +96,7 @@ export function checkAliases(
 
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.WRONG_CHARS_IN_ALIAS,
+              title: common.ErTitleEnum.WRONG_CHARS_IN_ALIAS,
               message: `Characters "${aliasWrongCharsString}" can not be used for alias (only snake_case "a...z0...9_" is allowed)`,
               lines: [
                 {
@@ -120,8 +119,15 @@ export function checkAliases(
     }
   });
 
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Models, newModels);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Errors,
+    item.errors
+  );
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Models, newModels);
 
   return newModels;
 }

@@ -1,20 +1,18 @@
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { enums } from '~blockml/barrels/enums';
-import { interfaces } from '~blockml/barrels/interfaces';
 
 let toposort = require('toposort');
 
-let func = enums.FuncEnum.MakeTop;
+let func = common.FuncEnum.MakeTop;
 
 export function makeTop(item: {
-  mainUdfs: interfaces.VarsSql['mainUdfs'];
-  withParts: interfaces.VarsSql['withParts'];
-  withDerivedTables: interfaces.VarsSql['withDerivedTables'];
-  withViews: interfaces.VarsSql['withViews'];
-  varsSqlSteps: interfaces.Report['varsSqlSteps'];
-  model: interfaces.Model;
-  udfsDict: common.UdfsDict;
+  mainUdfs: common.VarsSql['mainUdfs'];
+  withParts: common.VarsSql['withParts'];
+  withDerivedTables: common.VarsSql['withDerivedTables'];
+  withViews: common.VarsSql['withViews'];
+  varsSqlSteps: common.FileReport['varsSqlSteps'];
+  model: common.FileModel;
+  udfsDict: common.FileUdfsDict;
 }) {
   let {
     mainUdfs,
@@ -26,14 +24,14 @@ export function makeTop(item: {
     udfsDict
   } = item;
 
-  let varsInput = common.makeCopy<interfaces.VarsSql>({
+  let varsInput = common.makeCopy<common.VarsSql>({
     mainUdfs,
     withParts,
     withDerivedTables,
     withViews
   });
 
-  let top: interfaces.VarsSql['top'] = [];
+  let top: common.VarsSql['top'] = [];
 
   if (model.connection.type === common.ConnectionTypeEnum.BigQuery) {
     top.push(`${constants.STANDARD_SQL}`);
@@ -87,7 +85,7 @@ export function makeTop(item: {
   top = top.concat(withDerivedTables);
   top = top.concat(withViews);
 
-  let varsOutput: interfaces.VarsSql = { top };
+  let varsOutput: common.VarsSql = { top };
 
   varsSqlSteps.push({ func, varsInput, varsOutput });
 

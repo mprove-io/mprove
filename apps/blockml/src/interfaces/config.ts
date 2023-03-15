@@ -9,8 +9,8 @@ export class Config {
   @IsEnum(common.BoolEnum)
   logIO?: common.BoolEnum;
 
-  @IsEnum(enums.FuncEnum)
-  logFunc?: enums.FuncEnum;
+  @IsEnum(common.FuncEnum)
+  logFunc?: common.FuncEnum;
 
   @IsEnum(common.BoolEnum)
   copyLogsToModels?: common.BoolEnum;
