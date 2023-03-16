@@ -32,9 +32,9 @@
   </button>
 </div>
 
-<div class="mb-5 mr-9 flex flex-col space-y-5" *ngIf="!!repSelectedNode">
+<div class="mb-5 mr-9 flex flex-col space-y-7" *ngIf="!!repSelectedNode">
   <div class="flex flex-row items-start space-x-10">
-    <div class="flex h-11 flex-row items-center space-x-5">
+    <div class="flex h-11 flex-row items-center space-x-5 text-lg">
       <div class="text-gray1 flex select-none items-center font-semibold"
         >Row</div
       >
@@ -145,7 +145,7 @@
         <div [formGroup]="newFormulaForm" class="relative flex w-full">
           <textarea
             data-cy="formulaInput"
-            class="form-input border-gray3 focus:border-blue3 max-h-[180px] min-h-[90px] w-full resize-y rounded"
+            class="form-input border-gray3 focus:border-blue3 h-[140px] w-full resize-y rounded"
             [ngClass]="{
               'border-red-600':
                 newFormulaForm.controls['formula'].invalid &&
@@ -285,7 +285,7 @@
       <div [formGroup]="formulaForm" class="relative flex w-full">
         <textarea
           data-cy="formulaInput"
-          class="form-input border-gray3 focus:border-blue3 max-h-[180px] min-h-[90px] w-full resize-y rounded"
+          class="form-input border-gray3 focus:border-blue3 h-[140px] w-full resize-y rounded"
           [ngClass]="{
             'border-red-600':
               formulaForm.controls['formula'].invalid &&
@@ -418,6 +418,48 @@
           [control]="currencySuffixForm.controls['currencySuffix']"
         ></m-validation>
       </div>
+    </div>
+  </div>
+
+  <div
+    class="mr-5 flex min-h-[44px] flex-shrink-0 flex-grow flex-row"
+    *ngIf="repSelectedNode.data.rowType === rowTypeMetric"
+  >
+    <div
+      (click)="toggleParametersPanel()"
+      class="text-gray1 min-h-11 flex cursor-pointer select-none flex-row items-start space-x-2 text-lg font-semibold"
+    >
+      <div class="flex h-11 flex-row items-center space-x-2">
+        <m-chevron-right-icon
+          *ngIf="!parametersIsExpanded"
+        ></m-chevron-right-icon>
+        <m-chevron-down-icon *ngIf="parametersIsExpanded"></m-chevron-down-icon>
+
+        <div> Parameters </div>
+      </div>
+    </div>
+
+    <div class="ml-10 flex min-h-[68px] flex-row items-start">
+      <div class="min-h-11 flex flex-row items-end">
+        <m-bricks
+          class="mr-5 flex max-h-[150px] max-w-max flex-row items-end justify-start overflow-auto"
+          *ngIf="!parametersIsExpanded && mconfig?.filters.length > 0"
+          [extendedFilters]="mconfig.extendedFilters"
+        ></m-bricks>
+      </div>
+    </div>
+
+    <div
+      class="text-gray1 mt-9 mr-36 flex h-full w-full select-none items-center justify-center text-xl"
+      *ngIf="parametersIsExpanded && mconfig?.filters.length === 0"
+      >No filters</div
+    >
+
+    <div
+      class="mt-1 max-h-96 w-2 flex-1 overflow-auto"
+      *ngIf="parametersIsExpanded && mconfig?.filters.length > 0"
+    >
+      <m-row-filters></m-row-filters>
     </div>
   </div>
 </div>

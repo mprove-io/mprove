@@ -1,0 +1,64 @@
+<div class="flex flex-col divide-y divide-gray-300" *ngIf="!!mconfig">
+  <div
+    *ngFor="let filter of mconfig.extendedFilters; let filterIndex = index"
+    class="flex flex-row items-start justify-start"
+    [ngClass]="{
+      'pt-6': filterIndex !== 0
+    }"
+  >
+    <div class="flex flex-row items-start justify-center">
+      <button
+        class="flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
+        (click)="addFraction(filter, filterIndex)"
+      >
+        <m-add-icon></m-add-icon>
+      </button>
+
+      <div class="ml-3 mb-5 flex w-56 flex-col items-start justify-start">
+        <div class="truncate text-sm font-normal">{{
+          filter.field.topLabel | capitalize
+        }}</div>
+
+        <div class="flex flex-row text-left font-semibold">
+          <div *ngIf="filter.field.groupLabel"
+            >{{ filter.field.groupLabel | capitalize }} -
+            {{ filter.field.label | capitalize }}</div
+          >
+
+          <div *ngIf="!filter.field.groupLabel">{{
+            filter.field.label | capitalize
+          }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div
+        class="flex flex-row items-start justify-start"
+        *ngFor="
+          let fraction of filter.fractions;
+          let isFirst = first;
+          let fractionIndex = index
+        "
+      >
+        <m-fraction
+          [fieldResult]="filter.field.result"
+          [fraction]="fraction"
+          [fractionIndex]="fractionIndex"
+          [isFirst]="isFirst"
+          (fractionUpdate)="fractionUpdate(filter, filterIndex, $event)"
+        >
+        </m-fraction>
+
+        <button
+          class="ml-5 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
+          (click)="deleteFraction(filter, filterIndex, fractionIndex)"
+        >
+          <m-delete-icon></m-delete-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="uiQuery$ | async"></div>

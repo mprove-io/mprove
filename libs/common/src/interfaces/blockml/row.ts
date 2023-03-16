@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
 import { enums } from '~common/barrels/enums';
-import { Mconfig } from './mconfig';
+import { MconfigX } from '../backend/mconfig-x';
 import { Parameter } from './parameter';
 import { Query } from './query';
 import { Rq } from './rq';
@@ -39,8 +39,8 @@ export class Row {
   hasAccessToModel: boolean;
 
   @ValidateNested()
-  @Type(() => Mconfig)
-  mconfig: Mconfig;
+  @Type(() => MconfigX)
+  mconfig: MconfigX;
 
   @ValidateNested()
   @Type(() => Query)

@@ -858,6 +858,17 @@ export class RepsService {
       })
     );
 
+    let modelsApi = models.map(model =>
+      wrapper.wrapToApiModel({
+        model: model,
+        hasAccess: helper.checkAccess({
+          userAlias: user.alias,
+          member: userMember,
+          entity: model
+        })
+      })
+    );
+
     rep.rows.forEach(x => {
       let rq = x.rqs.find(
         y =>
@@ -867,7 +878,18 @@ export class RepsService {
       );
 
       if (x.rowType === common.RowTypeEnum.Metric) {
-        x.mconfig = [...mconfigsApi, ...newMconfigs].find(
+        let newMconfigsEntities = newMconfigs.map(m =>
+          wrapper.wrapToEntityMconfig(m)
+        );
+
+        let newMconfigsApi = newMconfigsEntities.map(y =>
+          wrapper.wrapToApiMconfig({
+            mconfig: y,
+            modelFields: modelsApi.find(m => m.modelId === y.model_id).fields
+          })
+        );
+
+        x.mconfig = [...mconfigsApi, ...newMconfigsApi].find(
           y => y.mconfigId === rq.mconfigId
         );
 
@@ -879,16 +901,7 @@ export class RepsService {
 
     let repApi = wrapper.wrapToApiRep({
       rep: rep,
-      models: models.map(model =>
-        wrapper.wrapToApiModel({
-          model: model,
-          hasAccess: helper.checkAccess({
-            userAlias: user.alias,
-            member: userMember,
-            entity: model
-          })
-        })
-      ),
+      models: modelsApi,
       member: userMemberApi,
       columns: columns,
       timezone: timezone,

@@ -71,6 +71,10 @@ export class RowComponent {
     })
   );
 
+  parametersIsExpanded = true;
+
+  mconfig: common.MconfigX;
+
   repSelectedNode: IRowNode<DataRow>;
   repSelectedNodes: IRowNode<DataRow>[] = [];
 
@@ -95,6 +99,13 @@ export class RowComponent {
         this.repSelectedNodes.length === 1
           ? this.repSelectedNodes[0]
           : undefined;
+
+      if (
+        common.isDefined(this.repSelectedNode) &&
+        this.repSelectedNode.data.rowType === common.RowTypeEnum.Metric
+      ) {
+        this.mconfig = this.repSelectedNode.data.mconfig;
+      }
 
       console.log('selectedRowNode', this.repSelectedNode);
 
@@ -437,6 +448,11 @@ export class RowComponent {
 
   toggleShowFormatOptions() {
     this.isShowFormatOptions = !this.isShowFormatOptions;
+    this.cd.detectChanges();
+  }
+
+  toggleParametersPanel() {
+    this.parametersIsExpanded = !this.parametersIsExpanded;
     this.cd.detectChanges();
   }
 }

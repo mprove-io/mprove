@@ -25,6 +25,7 @@ import { RowIdHeaderComponent } from './rep/row-id-header/row-id-header.componen
 import { RowIdRendererComponent } from './rep/row-id-renderer/row-id-renderer.component';
 import { StatusHeaderComponent } from './rep/status-header/status-header.component';
 import { StatusRendererComponent } from './rep/status-renderer/status-renderer.component';
+import { RowFiltersComponent } from './row-filters/row-filters.component';
 import { RowComponent } from './row/row.component';
 
 @NgModule({
@@ -43,7 +44,8 @@ import { RowComponent } from './row/row.component';
     ChartRendererComponent,
     ChartSettingsComponent,
     RowIdHeaderComponent,
-    RowIdRendererComponent
+    RowIdRendererComponent,
+    RowFiltersComponent
   ],
   imports: [
     CommonModule,
