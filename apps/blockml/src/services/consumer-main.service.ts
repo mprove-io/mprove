@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
+import { GetFractionsService } from '~blockml/controllers/get-fractions/get-fractions.service';
 import { GetTimeRangeService } from '~blockml/controllers/get-time-range/get-time-range.service';
 import { ProcessQueryService } from '~blockml/controllers/process-query/process-query.service';
 import { RebuildStructService } from '~blockml/controllers/rebuild-struct/rebuild-struct.service';
@@ -11,6 +12,8 @@ import { makeOkResponseBlockml } from '~blockml/functions/make-ok-response-block
 
 let pathProcessQuery = common.RabbitBlockmlRoutingEnum.ProcessQuery.toString();
 let pathGetTimeRange = common.RabbitBlockmlRoutingEnum.GetTimeRange.toString();
+let pathGetFractions = common.RabbitBlockmlRoutingEnum.GetFractions.toString();
+
 let pathRebuildStruct =
   common.RabbitBlockmlRoutingEnum.RebuildStruct.toString();
 
@@ -21,6 +24,7 @@ export class ConsumerMainService {
     private rebuildStructService: RebuildStructService,
     private processQueryService: ProcessQueryService,
     private getTimeRangeService: GetTimeRangeService,
+    private getFractionsService: GetFractionsService,
     private logger: Logger
   ) {}
 
@@ -112,6 +116,38 @@ export class ConsumerMainService {
         body: request,
         e: e,
         path: pathGetTimeRange,
+        method: common.METHOD_RABBIT,
+        duration: Date.now() - startTs,
+        cs: this.cs,
+        logger: this.logger
+      });
+    }
+  }
+
+  @RabbitRPC({
+    exchange: common.RabbitExchangesEnum.Blockml.toString(),
+    routingKey: pathGetFractions,
+    queue: pathGetFractions
+  })
+  async getFractions(request: any, context: any) {
+    let startTs = Date.now();
+    try {
+      let payload = await this.getFractionsService.get(request);
+
+      return makeOkResponseBlockml({
+        body: request,
+        payload: payload,
+        path: pathGetFractions,
+        method: common.METHOD_RABBIT,
+        duration: Date.now() - startTs,
+        cs: this.cs,
+        logger: this.logger
+      });
+    } catch (e) {
+      return makeErrorResponseBlockml({
+        body: request,
+        e: e,
+        path: pathGetFractions,
         method: common.METHOD_RABBIT,
         duration: Date.now() - startTs,
         cs: this.cs,

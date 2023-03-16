@@ -1,5 +1,6 @@
 export enum ToBlockmlRequestInfoNameEnum {
   ToBlockmlRebuildStruct = 'ToBlockmlRebuildStruct',
   ToBlockmlProcessQuery = 'ToBlockmlProcessQuery',
-  ToBlockmlGetTimeRange = 'ToBlockmlGetTimeRange'
+  ToBlockmlGetTimeRange = 'ToBlockmlGetTimeRange',
+  ToBlockmlGetFractions = 'ToBlockmlGetFractions'
 }

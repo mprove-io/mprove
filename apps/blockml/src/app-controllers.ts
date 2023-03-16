@@ -4,5 +4,6 @@ export const appControllers = [
   controllers.GenSqlController,
   controllers.ProcessQueryController,
   controllers.RebuildStructController,
-  controllers.GetTimeRangeController
+  controllers.GetTimeRangeController,
+  controllers.GetFractionsController
 ];

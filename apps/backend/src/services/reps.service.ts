@@ -680,15 +680,62 @@ export class RepsService {
 
           let timeFieldIdSpec = `${metric.timefield_id}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
+          let timeSorting: common.Sorting = {
+            desc: false,
+            fieldId: timeFieldIdSpec
+          };
+
           let timeFilter: common.Filter = {
             fieldId: timeFieldIdSpec,
             fractions: [timeRangeFraction]
           };
 
-          let timeSorting: common.Sorting = {
-            desc: false,
-            fieldId: timeFieldIdSpec
-          };
+          let filters: common.Filter[] = [timeFilter];
+
+          if (
+            metric.type === common.MetricTypeEnum.Model &&
+            common.isDefined(x.parameters)
+          ) {
+            await forEachSeries(x.parameters, async parameter => {
+              if (
+                common.isDefined(
+                  parameter.conditions && parameter.conditions.length > 0
+                )
+              ) {
+                let toBlockmlGetFractionsRequest: apiToBlockml.ToBlockmlGetFractionsRequest =
+                  {
+                    info: {
+                      name: apiToBlockml.ToBlockmlRequestInfoNameEnum
+                        .ToBlockmlGetFractions,
+                      traceId: traceId
+                    },
+                    payload: {
+                      bricks: parameter.conditions,
+                      result: parameter.result
+                    }
+                  };
+
+                console.log(toBlockmlGetFractionsRequest.payload);
+
+                let blockmlGetFractionsResponse =
+                  await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlGetFractionsResponse>(
+                    {
+                      routingKey:
+                        common.RabbitBlockmlRoutingEnum.GetFractions.toString(),
+                      message: toBlockmlGetFractionsRequest,
+                      checkIsOk: true
+                    }
+                  );
+
+                let filter: common.Filter = {
+                  fieldId: parameter.fieldId,
+                  fractions: blockmlGetFractionsResponse.payload.fractions
+                };
+
+                filters.push(filter);
+              }
+            });
+          }
 
           let mconfig: common.Mconfig = {
             structId: struct.struct_id,
@@ -701,7 +748,7 @@ export class RepsService {
             sorts: timeFieldIdSpec,
             timezone: timezone,
             limit: timeColumnsLimit,
-            filters: [timeFilter],
+            filters: filters,
             chart: common.DEFAULT_CHART,
             temp: true,
             serverTs: 1

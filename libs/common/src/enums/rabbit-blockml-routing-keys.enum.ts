@@ -1,5 +1,6 @@
 export enum RabbitBlockmlRoutingEnum {
   RebuildStruct = 'RebuildStruct',
   ProcessQuery = 'ProcessQuery',
-  GetTimeRange = 'GetTimeRange'
+  GetTimeRange = 'GetTimeRange',
+  GetFractions = 'GetFractions'
 }

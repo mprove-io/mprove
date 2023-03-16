@@ -4,6 +4,7 @@ import { common } from './barrels/common';
 import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
 import { GenSqlService } from './controllers/gen-sql/gen-sql.service';
+import { GetFractionsService } from './controllers/get-fractions/get-fractions.service';
 import { GetTimeRangeService } from './controllers/get-time-range/get-time-range.service';
 import { ProcessQueryService } from './controllers/process-query/process-query.service';
 import { RebuildStructService } from './controllers/rebuild-struct/rebuild-struct.service';
@@ -45,12 +46,19 @@ export const appServices = [
     inject: [ConfigService]
   },
   {
+    provide: GetFractionsService,
+    useFactory: (cs: ConfigService<interfaces.Config>, logger: Logger) =>
+      helper.isSingleOrMain(cs) ? new GetFractionsService(cs, logger) : {},
+    inject: [ConfigService]
+  },
+  {
     provide: ConsumerMainService,
     useFactory: (
       cs: ConfigService<interfaces.Config>,
       structService: RebuildStructService,
       processQueryService: ProcessQueryService,
       getTimeRangeService: GetTimeRangeService,
+      getFractionsService: GetFractionsService,
       logger: Logger
     ) => {
       let result = helper.isSingleOrMain(cs)
@@ -59,6 +67,7 @@ export const appServices = [
             structService,
             processQueryService,
             getTimeRangeService,
+            getFractionsService,
             logger
           )
         : {};
@@ -68,7 +77,8 @@ export const appServices = [
       ConfigService,
       RebuildStructService,
       ProcessQueryService,
-      GetTimeRangeService
+      GetTimeRangeService,
+      GetFractionsService
     ]
   },
   {
