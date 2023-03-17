@@ -447,7 +447,10 @@ export class MetricsComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendGetRepResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+          if (
+            resp.info?.status === common.ResponseInfoStatusEnum.Ok &&
+            this.rep.repId === resp.payload.rep.repId
+          ) {
             this.memberQuery.update(resp.payload.userMember);
 
             this.structQuery.update(resp.payload.struct);
