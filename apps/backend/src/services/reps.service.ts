@@ -78,7 +78,7 @@ export class RepsService {
       struct
     } = item;
 
-    let processedRows = rows.map(row => Object.assign({}, row));
+    let processedRows: common.Row[] = rows.map(row => Object.assign({}, row));
 
     if (changeType === common.ChangeTypeEnum.AddEmpty) {
       let targetIndex: number;

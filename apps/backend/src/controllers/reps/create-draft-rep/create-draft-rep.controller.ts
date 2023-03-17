@@ -1,4 +1,5 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
@@ -9,6 +10,7 @@ import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
+import { DbService } from '~backend/services/db.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -26,7 +28,11 @@ export class CreateDraftRepController {
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private envsService: EnvsService,
-    private metricsRepository: repositories.MetricsRepository
+    private dbService: DbService,
+    private metricsRepository: repositories.MetricsRepository,
+    private queriesRepository: repositories.QueriesRepository,
+    private mconfigsRepository: repositories.MconfigsRepository,
+    private kitsRepository: repositories.KitsRepository
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDraftRep)
@@ -84,7 +90,7 @@ export class CreateDraftRepController {
       projectId: projectId
     });
 
-    let fromRep = await this.repsService.getRep({
+    let fromRep: entities.RepEntity = await this.repsService.getRep({
       projectId: projectId,
       repId: fromRepId,
       structId: bridge.struct_id,
@@ -95,6 +101,129 @@ export class CreateDraftRepController {
     });
 
     let repId = common.makeId();
+
+    let copyMconfigsMap: { fromMconfigId: string; toMconfigId: string }[] = [];
+    let copyQueriesMap: { fromQueryId: string; toQueryId: string }[] = [];
+    let copyKitsMap: { fromKitId: string; toKitId: string }[] = [];
+
+    fromRep.rows.forEach(row => {
+      if (
+        row.rowType === common.RowTypeEnum.Metric ||
+        row.rowType === common.RowTypeEnum.Formula
+      ) {
+        let rq: common.Rq = row.rqs.find(
+          y =>
+            y.fractionBrick === timeRangeFractionBrick &&
+            y.timeSpec === timeSpec &&
+            y.timezone === timezone
+        );
+
+        if (common.isDefined(rq)) {
+          if (
+            row.rowType === common.RowTypeEnum.Metric &&
+            common.isDefined(rq.mconfigId)
+          ) {
+            let newMconfigId = common.makeId();
+            let newQueryId = common.makeId();
+
+            copyMconfigsMap.push({
+              fromMconfigId: rq.mconfigId,
+              toMconfigId: newMconfigId
+            });
+
+            rq.mconfigId = newMconfigId;
+
+            if (common.isDefined(rq.queryId)) {
+              copyQueriesMap.push({
+                fromQueryId: rq.queryId,
+                toQueryId: newQueryId
+              });
+
+              rq.queryId = newQueryId;
+            }
+          }
+
+          if (
+            row.rowType === common.RowTypeEnum.Formula &&
+            common.isDefined(rq.kitId)
+          ) {
+            let newKitId = common.makeId();
+
+            copyKitsMap.push({
+              fromKitId: rq.kitId,
+              toKitId: newKitId
+            });
+
+            rq.kitId = newKitId;
+          }
+
+          row.rqs = [rq];
+        } else {
+          row.rqs = [];
+        }
+      }
+    });
+
+    let fromCopyQueryIds = copyQueriesMap.map(x => x.fromQueryId);
+    let fromCopyMconfigIds = copyMconfigsMap.map(x => x.fromMconfigId);
+    let fromCopyKitIds = copyKitsMap.map(x => x.fromKitId);
+
+    let copyQueries: entities.QueryEntity[] = await this.queriesRepository.find(
+      {
+        where: {
+          query_id: In(fromCopyQueryIds),
+          project_id: projectId
+        }
+      }
+    );
+
+    let copyMconfigs: entities.MconfigEntity[] =
+      await this.mconfigsRepository.find({
+        where: {
+          mconfig_id: In(fromCopyMconfigIds),
+          struct_id: struct.struct_id
+        }
+      });
+
+    let copyKits: entities.KitEntity[] = await this.kitsRepository.find({
+      where: {
+        kit_id: In(fromCopyKitIds),
+        struct_id: struct.struct_id,
+        rep_id: fromRepId
+      }
+    });
+
+    copyQueries.forEach(x => {
+      x.query_id = copyQueriesMap.find(
+        y => y.fromQueryId === x.query_id
+      ).toQueryId;
+    });
+
+    copyMconfigs.forEach(x => {
+      x.mconfig_id = copyMconfigsMap.find(
+        y => y.fromMconfigId === x.mconfig_id
+      ).toMconfigId;
+
+      x.query_id = copyQueriesMap.find(
+        y => y.fromQueryId === x.query_id
+      ).toQueryId;
+
+      x.temp = common.BoolEnum.TRUE;
+    });
+
+    copyKits.forEach(x => {
+      x.kit_id = copyKitsMap.find(y => y.fromKitId === x.kit_id).toKitId;
+      x.rep_id = repId;
+    });
+
+    let records = await this.dbService.writeRecords({
+      modify: false,
+      records: {
+        queries: copyQueries,
+        mconfigs: copyMconfigs,
+        kits: copyKits
+      }
+    });
 
     let metrics =
       [
@@ -110,7 +239,7 @@ export class CreateDraftRepController {
           })
         : [];
 
-    let processedRows = this.repsService.getProcessedRows({
+    let processedRows: common.Row[] = this.repsService.getProcessedRows({
       rows: fromRep.rows,
       rowChange: rowChange,
       rowIds: rowIds,
