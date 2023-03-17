@@ -1,6 +1,6 @@
 <div class="flex flex-col divide-y divide-gray-300" *ngIf="!!mconfig">
   <div
-    *ngFor="let filter of mconfig.extendedFilters; let filterIndex = index"
+    *ngFor="let filter of parametersFilters; let filterIndex = index"
     class="flex flex-row items-start justify-start"
     [ngClass]="{
       'pt-6': filterIndex !== 0

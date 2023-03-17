@@ -73,10 +73,11 @@ export class RowComponent {
 
   parametersIsExpanded = true;
 
-  mconfig: common.MconfigX;
-
-  repSelectedNode: IRowNode<DataRow>;
   repSelectedNodes: IRowNode<DataRow>[] = [];
+  repSelectedNode: IRowNode<DataRow>;
+
+  mconfig: common.MconfigX;
+  parametersFilters: common.FilterX[] = [];
 
   uiQuery$ = this.uiQuery.select().pipe(
     tap(x => {
@@ -100,14 +101,44 @@ export class RowComponent {
           ? this.repSelectedNodes[0]
           : undefined;
 
+      console.log('selectedRowNode', this.repSelectedNode);
+
       if (
         common.isDefined(this.repSelectedNode) &&
         this.repSelectedNode.data.rowType === common.RowTypeEnum.Metric
       ) {
         this.mconfig = this.repSelectedNode.data.mconfig;
-      }
 
-      console.log('selectedRowNode', this.repSelectedNode);
+        let metric = this.metricsQuery
+          .getValue()
+          .metrics.find(y => y.metricId === this.repSelectedNode.data.metricId);
+
+        let timeSpec = this.repQuery.getValue().timeSpec;
+
+        let timeSpecWord =
+          timeSpec === common.TimeSpecEnum.Years
+            ? common.TimeframeEnum.Year
+            : timeSpec === common.TimeSpecEnum.Quarters
+            ? common.TimeframeEnum.Quarter
+            : timeSpec === common.TimeSpecEnum.Months
+            ? common.TimeframeEnum.Month
+            : timeSpec === common.TimeSpecEnum.Weeks
+            ? common.TimeframeEnum.Week
+            : timeSpec === common.TimeSpecEnum.Days
+            ? common.TimeframeEnum.Date
+            : timeSpec === common.TimeSpecEnum.Hours
+            ? common.TimeframeEnum.Hour
+            : timeSpec === common.TimeSpecEnum.Minutes
+            ? common.TimeframeEnum.Minute
+            : undefined;
+
+        let timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
+
+        this.parametersFilters =
+          this.repSelectedNode.data.mconfig.extendedFilters.filter(
+            filter => filter.fieldId !== timeFieldIdSpec
+          );
+      }
 
       if (common.isDefined(this.repSelectedNode)) {
         if (this.repSelectedNode.data.rowType === common.RowTypeEnum.Formula) {

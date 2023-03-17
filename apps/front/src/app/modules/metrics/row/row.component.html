@@ -443,23 +443,27 @@
       <div class="min-h-11 flex flex-row items-end">
         <m-bricks
           class="mr-5 flex max-h-[150px] max-w-max flex-row items-end justify-start overflow-auto"
-          *ngIf="!parametersIsExpanded && mconfig?.filters.length > 0"
-          [extendedFilters]="mconfig.extendedFilters"
+          *ngIf="!parametersIsExpanded && parametersFilters.length > 0"
+          [extendedFilters]="parametersFilters"
         ></m-bricks>
       </div>
     </div>
 
     <div
-      class="text-gray1 mt-9 mr-36 flex h-full w-full select-none items-center justify-center text-xl"
-      *ngIf="parametersIsExpanded && mconfig?.filters.length === 0"
-      >No filters</div
+      class="text-gray1 flex h-11 w-full select-none items-center justify-start text-lg"
+      *ngIf="!parametersIsExpanded && parametersFilters.length === 0"
+      >No parameters</div
     >
 
     <div
       class="mt-1 max-h-96 w-2 flex-1 overflow-auto"
-      *ngIf="parametersIsExpanded && mconfig?.filters.length > 0"
+      *ngIf="parametersIsExpanded && parametersFilters.length > 0"
     >
-      <m-row-filters></m-row-filters>
+      <m-row-filters
+        [repSelectedNode]="repSelectedNode"
+        [mconfig]="mconfig"
+        [parametersFilters]="parametersFilters"
+      ></m-row-filters>
     </div>
   </div>
 </div>

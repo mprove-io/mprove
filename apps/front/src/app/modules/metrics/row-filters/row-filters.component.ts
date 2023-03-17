@@ -1,7 +1,8 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { IRowNode } from 'ag-grid-community';
 import { tap } from 'rxjs/operators';
-import { MqQuery } from '~front/app/queries/mq.query';
+import { MetricsQuery } from '~front/app/queries/metrics.query';
+import { RepQuery } from '~front/app/queries/rep.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { StructService } from '~front/app/services/struct.service';
@@ -14,28 +15,27 @@ import { DataRow } from '../rep/rep.component';
   templateUrl: './row-filters.component.html'
 })
 export class RowFiltersComponent {
+  @Input()
   repSelectedNode: IRowNode<DataRow>;
+
+  @Input()
   mconfig: common.MconfigX;
+
+  @Input()
+  parametersFilters: common.FilterX[];
 
   uiQuery$ = this.uiQuery.select().pipe(
     tap(x => {
-      this.repSelectedNode =
-        x.repSelectedNodes.length === 1 ? x.repSelectedNodes[0] : undefined;
-
-      if (
-        common.isDefined(this.repSelectedNode) &&
-        this.repSelectedNode.data.rowType === common.RowTypeEnum.Metric
-      ) {
-        this.mconfig = this.repSelectedNode.data.mconfig;
-      }
-
-      this.cd.detectChanges();
+      //     // this.repSelectedNode =
+      //     //   x.repSelectedNodes.length === 1 ? x.repSelectedNodes[0] : undefined;
+      //     this.cd.detectChanges();
     })
   );
 
   constructor(
     private uiQuery: UiQuery,
-    private mqQuery: MqQuery,
+    private metricsQuery: MetricsQuery,
+    private repQuery: RepQuery,
     private cd: ChangeDetectorRef,
     private structService: StructService,
     private mconfigService: MconfigService
