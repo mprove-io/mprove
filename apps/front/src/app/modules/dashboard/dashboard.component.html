@@ -1,7 +1,7 @@
 <div class="bg-blue1 flex h-full cursor-default flex-col">
   <div class="flex h-full flex-row" *ngIf="!!dashboard">
-    <div class="mx-6 mb-6 mt-8 flex min-w-[2px] flex-grow flex-col">
-      <div class="flex h-11 flex-row items-center justify-between">
+    <div class="mt-9 flex min-w-[2px] flex-grow flex-col">
+      <div class="flex h-11 flex-row items-center justify-between px-6">
         <div class="flex w-full flex-row items-center">
           <div class="flex flex-row items-center space-x-5">
             <div
@@ -12,7 +12,7 @@
             </div>
 
             <div class="text-gray1 text-xl">{{
-              (dashboard?.title ? dashboard?.title : dashboard?.dashboardId)
+              (dashboard.title ? dashboard.title : dashboard.dashboardId)
                 | capitalize
             }}</div>
           </div>
@@ -32,15 +32,15 @@
           <ng-template #templateAddReport>
             <div *ngIf="isExplorer === false">Explorer role required</div>
 
-            <div *ngIf="isExplorer === true && dashboard?.temp === true"
+            <div *ngIf="isExplorer === true && dashboard.temp === true"
               >Save changes to be able to add reports</div
             >
 
             <div
               *ngIf="
                 isExplorer === true &&
-                dashboard?.temp === false &&
-                dashboard?.canEditOrDeleteDashboard === false
+                dashboard.temp === false &&
+                dashboard.canEditOrDeleteDashboard === false
               "
               >Only the dashboard author, project editors, and administrators
               can edit this dashboard. Try saving this dashboard as a new one to
@@ -52,8 +52,8 @@
             [tippy]="templateAddReport"
             [isEnabled]="
               isExplorer === false ||
-              dashboard?.temp === true ||
-              dashboard?.canEditOrDeleteDashboard === false
+              dashboard.temp === true ||
+              dashboard.canEditOrDeleteDashboard === false
             "
             class="ml-5 flex flex-shrink-0"
           >
@@ -64,18 +64,18 @@
               [ngClass]="{
                 'bg-blue3':
                   isExplorer === true &&
-                  dashboard?.temp === false &&
-                  dashboard?.canEditOrDeleteDashboard === true,
+                  dashboard.temp === false &&
+                  dashboard.canEditOrDeleteDashboard === true,
                 'cursor-default bg-gray-400':
                   isExplorer === false ||
-                  dashboard?.temp === true ||
-                  dashboard?.canEditOrDeleteDashboard === false
+                  dashboard.temp === true ||
+                  dashboard.canEditOrDeleteDashboard === false
               }"
               (click)="addReport()"
               [disabled]="
                 isExplorer === false ||
-                dashboard?.temp === true ||
-                dashboard?.canEditOrDeleteDashboard === false
+                dashboard.temp === true ||
+                dashboard.canEditOrDeleteDashboard === false
               "
               >Add Report</button
             >
@@ -138,11 +138,11 @@
                 [ngClass]="{
                   'text-blue3 border-2':
                     isExplorer === true &&
-                    dashboard?.temp === false &&
+                    dashboard.temp === false &&
                     alias !== restrictedUserAlias,
                   'bg-pink-500':
                     isExplorer === true &&
-                    dashboard?.temp === true &&
+                    dashboard.temp === true &&
                     alias !== restrictedUserAlias,
                   'cursor-default bg-gray-400':
                     isExplorer === false || alias === restrictedUserAlias
@@ -160,15 +160,14 @@
               data-cy="dashboardRunButton"
               class="ml-5 flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
               [ngClass]="{
-                'bg-blue3': dashboard?.reports.length > 0,
+                'bg-blue3': dashboard.reports.length > 0,
                 'cursor-default':
-                  dashboard?.reports.length === 0 ||
-                  isRunButtonPressed === true,
-                'bg-gray-400': dashboard?.reports.length === 0
+                  dashboard.reports.length === 0 || isRunButtonPressed === true,
+                'bg-gray-400': dashboard.reports.length === 0
               }"
               (click)="run()"
               [disabled]="
-                dashboard?.reports.length === 0 || isRunButtonPressed === true
+                dashboard.reports.length === 0 || isRunButtonPressed === true
               "
             >
               <div *ngIf="isRunButtonPressed === false">Run</div>
@@ -199,117 +198,113 @@
         </div>
       </div>
 
-      <div class="mt-6 flex min-w-[2px] flex-grow flex-col space-y-6">
-        <div class="w-full">
-          <div class="flex flex-col">
+      <div class="mt-7 w-full px-6 shadow-md">
+        <div class="flex flex-col">
+          <div class="mr-5 flex min-h-[44px] flex-shrink-0 flex-grow flex-row">
+            <ng-template #templateEditListeners>
+              <div *ngIf="dashboard.reports.length === 0">No reports</div>
+              <div *ngIf="dashboard.fields.length === 0">No filters</div>
+            </ng-template>
+
             <div
-              class="mr-5 flex min-h-[95px] flex-shrink-0 flex-grow flex-row"
+              [tippy]="templateEditListeners"
+              [isEnabled]="
+                dashboard.reports.length === 0 || dashboard.fields.length === 0
+              "
+              class="h-11 flex-shrink-0"
             >
               <button
                 type="button"
-                data-cy="dashboardAddFilterButton"
-                class="mt-6 ml-5 h-11 flex-shrink-0 rounded border border-gray-400 py-2 px-4 text-base font-medium text-gray-500 hover:bg-white focus:outline-none"
-                (click)="addFilter()"
-                >Add Filter</button
-              >
-
-              <ng-template #templateEditListeners>
-                <div *ngIf="dashboard?.reports.length === 0">No reports</div>
-                <div *ngIf="dashboard?.fields.length === 0">No filters</div>
-              </ng-template>
-
-              <div
-                [tippy]="templateEditListeners"
-                [isEnabled]="
-                  dashboard?.reports.length === 0 ||
-                  dashboard?.fields.length === 0
-                "
-                class="mt-6 ml-5 h-12 flex-shrink-0"
-              >
-                <button
-                  type="button"
-                  data-cy="dashboardEditListenButton"
-                  class="flex h-11 flex-row items-center rounded border py-2 px-4 text-base font-medium focus:outline-none"
-                  (click)="editListeners()"
-                  [ngClass]="{
-                    'border-gray-400 text-gray-500 hover:bg-white':
-                      dashboard?.reports.length > 0 &&
-                      dashboard?.fields.length > 0,
-                    'cursor-default  border-gray-300 text-gray-400':
-                      dashboard?.reports.length === 0 ||
-                      dashboard?.fields.length === 0
-                  }"
-                  [disabled]="
-                    dashboard?.reports.length === 0 ||
-                    dashboard?.fields.length === 0
-                  "
-                >
-                  <m-link-icon
-                    class="text-gray-500"
-                    [ngClass]="{
-                      'text-gray-500':
-                        dashboard?.reports.length > 0 &&
-                        dashboard?.fields.length > 0,
-                      'text-gray-400':
-                        dashboard?.reports.length === 0 ||
-                        dashboard?.fields.length === 0
-                    }"
-                  ></m-link-icon>
-
-                  <div class="ml-3"> Edit Listeners </div>
-                </button>
-              </div>
-
-              <div
-                (click)="toggleFiltersPanel()"
-                class="text-gray1 mt-4 ml-5 flex cursor-pointer select-none flex-row items-start space-x-2 py-3 px-5 text-2xl font-semibold"
-              >
-                <div class="flex flex-row items-center space-x-2">
-                  <m-chevron-right-icon
-                    *ngIf="!filtersIsExpanded"
-                  ></m-chevron-right-icon>
-                  <m-chevron-down-icon
-                    *ngIf="filtersIsExpanded"
-                  ></m-chevron-down-icon>
-
-                  <div> Filters </div>
-                </div>
-              </div>
-
-              <div
+                data-cy="dashboardEditListenButton"
+                class="flex h-11 flex-row items-center rounded border py-2 px-4 text-base font-medium focus:outline-none"
+                (click)="editListeners()"
                 [ngClass]="{
-                  'mt-4': dashboard?.extendedFilters.length === 1
+                  'border-gray-400 text-gray-500 hover:bg-white':
+                    dashboard.reports.length > 0 && dashboard.fields.length > 0,
+                  'cursor-default  border-gray-300 text-gray-400':
+                    dashboard.reports.length === 0 ||
+                    dashboard.fields.length === 0
                 }"
+                [disabled]="
+                  dashboard.reports.length === 0 ||
+                  dashboard.fields.length === 0
+                "
               >
-                <m-bricks
-                  class="my-3 mr-5 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"
-                  *ngIf="!filtersIsExpanded && dashboard?.fields.length > 0"
-                  [extendedFilters]="dashboard.extendedFilters"
-                ></m-bricks>
-              </div>
+                <m-link-icon
+                  class="text-gray-500"
+                  [ngClass]="{
+                    'text-gray-500':
+                      dashboard.reports.length > 0 &&
+                      dashboard.fields.length > 0,
+                    'text-gray-400':
+                      dashboard.reports.length === 0 ||
+                      dashboard.fields.length === 0
+                  }"
+                ></m-link-icon>
 
-              <div
-                *ngIf="filtersIsExpanded && dashboard?.fields.length === 0"
-                class="text-gray1 mt-9 flex h-full w-full select-none items-center justify-center text-xl"
-                >No filters</div
-              >
+                <div class="ml-3"> Edit Listeners </div>
+              </button>
+            </div>
 
-              <div
-                class="mt-1 max-h-96 w-2 flex-1 overflow-auto"
-                *ngIf="filtersIsExpanded && dashboard?.fields.length > 0"
-              >
-                <m-dashboard-filters
-                  [dashboard]="dashboard"
-                ></m-dashboard-filters>
+            <div
+              (click)="toggleFiltersPanel()"
+              class="text-gray1 mt-1 ml-3 flex min-h-[64px] cursor-pointer select-none flex-row items-start space-x-2 px-5 text-2xl font-semibold"
+            >
+              <div class="flex flex-row items-center space-x-2">
+                <m-chevron-right-icon
+                  *ngIf="!filtersIsExpanded && dashboard.fields.length > 0"
+                ></m-chevron-right-icon>
+                <m-chevron-down-icon
+                  *ngIf="filtersIsExpanded && dashboard.fields.length > 0"
+                ></m-chevron-down-icon>
+
+                <div
+                  class="h-6 w-6"
+                  *ngIf="dashboard.fields.length === 0"
+                ></div>
+
+                <div> Filters </div>
               </div>
+            </div>
+
+            <button
+              type="button"
+              data-cy="dashboardAddFilterButton"
+              class="ml-4 h-11 flex-shrink-0 rounded border border-gray-400 py-2 px-4 text-base font-medium text-gray-500 hover:bg-white focus:outline-none"
+              (click)="addFilter()"
+              >Add</button
+            >
+
+            <div
+              class="mt-1 ml-7 mr-5 flex min-h-[64px] flex-row items-start"
+              *ngIf="!filtersIsExpanded && dashboard.fields.length > 0"
+            >
+              <m-bricks
+                class="mb-5 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"
+                [extendedFilters]="dashboard.extendedFilters"
+              ></m-bricks>
+            </div>
+
+            <div
+              class="mt-1 ml-7 max-h-96 w-2 flex-1 overflow-auto"
+              *ngIf="filtersIsExpanded && dashboard.fields.length > 0"
+            >
+              <m-dashboard-filters
+                [dashboard]="dashboard"
+              ></m-dashboard-filters>
             </div>
           </div>
         </div>
+      </div>
 
-        <div #scrollable class="mt-6 flex h-2 flex-grow flex-row overflow-auto">
+      <div class="flex min-w-[2px] flex-grow flex-col">
+        <div
+          #scrollable
+          class="mt-1 mr-6 flex h-2 flex-grow flex-row overflow-auto pl-6 pt-6"
+        >
           <ktd-grid
             class="w-[97vw]"
-            *ngIf="dashboard?.reports"
+            *ngIf="dashboard.reports"
             [compactType]="compactType"
             [preventCollision]="preventCollision"
             [cols]="cols"

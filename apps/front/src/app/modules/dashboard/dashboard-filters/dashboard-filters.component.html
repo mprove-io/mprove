@@ -1,7 +1,10 @@
 <div class="flex flex-col divide-y divide-gray-300">
   <div
     *ngFor="let filter of dashboard.fields; let filterIndex = index"
-    class="flex flex-row items-start justify-start pt-6"
+    class="flex flex-row items-start justify-start"
+    [ngClass]="{
+      'pt-6': filterIndex !== 0
+    }"
   >
     <div class="flex flex-row items-start justify-center">
       <button
