@@ -9,7 +9,7 @@
     <div class="flex flex-row items-start justify-center">
       <button
         class="flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
-        (click)="addFraction(filter, filterIndex)"
+        (click)="addFraction(filter)"
       >
         <m-add-icon></m-add-icon>
       </button>
@@ -46,13 +46,13 @@
           [fraction]="fraction"
           [fractionIndex]="fractionIndex"
           [isFirst]="isFirst"
-          (fractionUpdate)="fractionUpdate(filter, filterIndex, $event)"
+          (fractionUpdate)="fractionUpdate(filter, $event)"
         >
         </m-fraction>
 
         <button
           class="ml-5 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
-          (click)="deleteFraction(filter, filterIndex, fractionIndex)"
+          (click)="deleteFraction(filter, fractionIndex)"
         >
           <m-delete-icon></m-delete-icon>
         </button>
@@ -61,4 +61,4 @@
   </div>
 </div>
 
-<div *ngIf="uiQuery$ | async"></div>
+<!-- <div *ngIf="uiQuery$ | async"></div> -->

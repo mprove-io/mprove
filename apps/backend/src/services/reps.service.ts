@@ -415,7 +415,7 @@ export class RepsService {
         rows: processedRows,
         targetRowIds: processedRows.map(pr => pr.rowId)
       });
-    } else if (changeType === common.ChangeTypeEnum.EditParams) {
+    } else if (changeType === common.ChangeTypeEnum.EditParameters) {
       let pRow = processedRows.find(r => r.rowId === rowChange.rowId);
 
       processedRows.forEach(row => {

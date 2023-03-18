@@ -6,7 +6,7 @@ export enum ChangeTypeEnum {
   AddMetric = 'AddMetric',
   EditInfo = 'EditInfo',
   EditFormula = 'EditFormula',
-  EditParams = 'EditParams',
+  EditParameters = 'EditParameters',
   Delete = 'Delete',
   Clear = 'Clear',
   Move = 'Move'

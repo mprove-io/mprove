@@ -1,5 +1,6 @@
 import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
 import { enums } from '~common/barrels/enums';
+import { Parameter } from './parameter';
 
 export class RowChange {
   @IsOptional()
@@ -27,7 +28,7 @@ export class RowChange {
   showChart?: boolean;
 
   @IsOptional()
-  parameters?: any[];
+  parameters?: Parameter[];
 
   @IsOptional()
   @IsString()

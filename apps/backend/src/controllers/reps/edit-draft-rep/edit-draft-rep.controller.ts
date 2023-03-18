@@ -96,7 +96,7 @@ export class EditDraftRepController {
     let metrics =
       [
         common.ChangeTypeEnum.AddMetric,
-        common.ChangeTypeEnum.EditParams,
+        common.ChangeTypeEnum.EditParameters,
         common.ChangeTypeEnum.ConvertToMetric
       ].indexOf(changeType) > -1
         ? await this.metricsRepository.find({
