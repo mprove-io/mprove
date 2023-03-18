@@ -1,4 +1,7 @@
-<div class="flex flex-col divide-y divide-gray-300" *ngIf="!!mconfig">
+<div
+  class="flex max-h-[285px] flex-col divide-y divide-gray-300 overflow-auto"
+  *ngIf="!!mconfig"
+>
   <div
     *ngFor="let filter of parametersFilters; let filterIndex = index"
     class="flex flex-row items-start justify-start"

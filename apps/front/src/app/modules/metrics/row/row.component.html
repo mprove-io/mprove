@@ -221,7 +221,7 @@
       >
         <button
           data-cy="rowApplyButton"
-          class="bg-blue3 bg-blue3 rounded px-4 py-2 font-medium text-white focus:outline-none"
+          class="bg-blue3 bg-blue3 select-none rounded px-4 py-2 font-medium text-white focus:outline-none"
           type="button"
           (click)="apply()"
           >Apply</button
@@ -230,7 +230,7 @@
         <button
           type="button"
           data-cy="rowCancelButton"
-          class="border-blue3 text-blue3 ml-5 flex rounded border px-4 py-2 font-medium focus:outline-none"
+          class="border-blue3 text-blue3 ml-5 select-none rounded border px-4 py-2 font-medium focus:outline-none"
           (click)="cancelConvert()"
         >
           Cancel
@@ -463,11 +463,58 @@
       </div>
     </div>
 
-    <div
-      class="mt-1 max-h-96 w-2 flex-1 overflow-auto"
-      *ngIf="parametersIsExpanded && parametersFilters.length > 0"
-    >
+    <div class="mt-1 w-2 flex-1" *ngIf="parametersIsExpanded">
+      <div
+        class="flex flex-row"
+        *ngIf="isAddParameter === true"
+        [ngClass]="{
+          'mb-10': parametersFilters.length > 0
+        }"
+      >
+        <div
+          class="flex h-11 max-w-[600px] flex-1 flex-row items-center space-x-5"
+        >
+          <div
+            class="text-gray1 flex flex-shrink-0 select-none items-center font-semibold"
+            >Filter by</div
+          >
+
+          <!-- <ng-select
+            data-cy="newMetricSelect"
+            class="custom w-full text-base focus:outline-none"
+            [items]="metrics"
+            [searchable]="true"
+            [clearable]="false"
+            [(ngModel)]="newMetricId"
+            (keyup.esc)="$event.stopImmediatePropagation()"
+            (keyup.enter)="$event.stopImmediatePropagation()"
+            appendTo="body"
+            bindLabel="partLabel"
+            bindValue="metricId"
+          >
+          </ng-select> -->
+        </div>
+
+        <button
+          data-cy="rowApplyAddParameterButton"
+          class="bg-blue3 bg-blue3 ml-5 select-none rounded px-4 py-2 font-medium text-white focus:outline-none"
+          type="button"
+          (click)="applyAddParameter()"
+          >Apply</button
+        >
+
+        <button
+          type="button"
+          data-cy="rowCancelAddParameterButton"
+          class="border-blue3 text-blue3 ml-5 select-none rounded border px-4 py-2 font-medium focus:outline-none"
+          (click)="cancelAddParameter()"
+        >
+          Cancel
+        </button>
+      </div>
+
       <m-row-filters
+        *ngIf="parametersFilters.length > 0"
         [repSelectedNode]="repSelectedNode"
         [mconfig]="mconfig"
         [parametersFilters]="parametersFilters"

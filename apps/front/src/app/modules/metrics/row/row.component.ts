@@ -59,6 +59,8 @@ export class RowComponent {
   isToFormula = false;
   isToMetric = false;
 
+  isAddParameter = true;
+
   isValid = false;
 
   rep: common.RepX;
@@ -84,7 +86,8 @@ export class RowComponent {
       if (
         (this.isToHeader === true ||
           this.isToFormula === true ||
-          this.isToMetric === true) &&
+          this.isToMetric === true ||
+          this.isAddParameter === true) &&
         (x.repSelectedNodes.length === 0 ||
           x.repSelectedNodes.length > 1 ||
           (x.repSelectedNodes.length === 1 &&
@@ -398,6 +401,8 @@ export class RowComponent {
     this.isToHeader = false;
     this.isToFormula = false;
     this.isToMetric = false;
+
+    this.isAddParameter = false;
   }
 
   cancelConvert() {
@@ -469,6 +474,12 @@ export class RowComponent {
     }
   }
 
+  cancelAddParameter() {
+    this.resetInputs();
+  }
+
+  applyAddParameter() {}
+
   explore() {
     if (this.repSelectedNode.data.hasAccessToModel === true) {
       this.mconfigService.navDuplicateMconfigAndQuery({
@@ -483,9 +494,12 @@ export class RowComponent {
   }
 
   toggleParametersPanel() {
+    this.resetInputs();
     this.parametersIsExpanded = !this.parametersIsExpanded;
     this.cd.detectChanges();
   }
 
-  addParameter() {}
+  addParameter() {
+    this.isAddParameter = true;
+  }
 }
