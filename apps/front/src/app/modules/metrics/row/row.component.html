@@ -204,8 +204,6 @@
           [searchable]="true"
           [clearable]="false"
           [(ngModel)]="newMetricId"
-          (keyup.esc)="$event.stopImmediatePropagation()"
-          (keyup.enter)="$event.stopImmediatePropagation()"
           appendTo="body"
           bindLabel="label"
           bindValue="metricId"
@@ -422,20 +420,23 @@
   </div>
 
   <div
-    class="mr-5 flex min-h-[44px] flex-shrink-0 flex-grow flex-row"
+    class="flex min-h-[44px] flex-shrink-0 flex-grow flex-row"
     *ngIf="repSelectedNode.data.rowType === rowTypeMetric"
   >
     <div
       (click)="toggleParametersPanel()"
-      class="text-gray1 min-h-11 flex cursor-pointer select-none flex-row items-start space-x-2 text-lg font-semibold"
+      class="text-gray1 min-h-11 flex select-none flex-row items-start space-x-2 text-lg font-semibold"
+      [ngClass]="{
+        'cursor-pointer': parametersFilters.length > 0
+      }"
     >
       <div class="flex h-11 flex-row items-center space-x-2">
         <m-chevron-right-icon
-          *ngIf="!parametersIsExpanded && parametersFilters.length > 0"
+          *ngIf="!isExpandedParameters && parametersFilters.length > 0"
         ></m-chevron-right-icon>
 
         <m-chevron-down-icon
-          *ngIf="parametersIsExpanded && parametersFilters.length > 0"
+          *ngIf="isExpandedParameters && parametersFilters.length > 0"
         ></m-chevron-down-icon>
 
         <div class="h-6 w-6" *ngIf="parametersFilters.length === 0"></div>
@@ -457,42 +458,40 @@
       <div class="min-h-11 flex flex-row items-end">
         <m-bricks
           class="flex max-h-[150px] max-w-max flex-row items-end justify-start overflow-auto"
-          *ngIf="!parametersIsExpanded && parametersFilters.length > 0"
+          *ngIf="!isExpandedParameters && parametersFilters.length > 0"
           [extendedFilters]="parametersFilters"
         ></m-bricks>
       </div>
     </div>
 
-    <div class="mt-1 w-2 flex-1" *ngIf="parametersIsExpanded">
+    <div class="mt-1 w-2 flex-1" *ngIf="isExpandedParameters">
       <div
         class="flex flex-row"
         *ngIf="isAddParameter === true"
         [ngClass]="{
-          'mb-10': parametersFilters.length > 0
+          'mb-5 border-b border-gray-300 pb-5': parametersFilters.length > 0
         }"
       >
         <div
-          class="flex h-11 max-w-[600px] flex-1 flex-row items-center space-x-5"
+          class="flex h-11 max-w-[700px] flex-1 flex-row items-center space-x-5"
         >
           <div
             class="text-gray1 flex flex-shrink-0 select-none items-center font-semibold"
-            >Filter by</div
+            >Filter Metric by</div
           >
 
-          <!-- <ng-select
-            data-cy="newMetricSelect"
+          <ng-select
+            data-cy="addParameterSelect"
             class="custom w-full text-base focus:outline-none"
             [items]="metrics"
             [searchable]="true"
             [clearable]="false"
-            [(ngModel)]="newMetricId"
-            (keyup.esc)="$event.stopImmediatePropagation()"
-            (keyup.enter)="$event.stopImmediatePropagation()"
+            [(ngModel)]="newParameterId"
             appendTo="body"
             bindLabel="partLabel"
             bindValue="metricId"
           >
-          </ng-select> -->
+          </ng-select>
         </div>
 
         <button

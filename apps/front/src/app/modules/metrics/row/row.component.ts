@@ -73,7 +73,7 @@ export class RowComponent {
     })
   );
 
-  parametersIsExpanded = true;
+  isExpandedParameters = true;
 
   repSelectedNodes: IRowNode<DataRow>[] = [];
   repSelectedNode: IRowNode<DataRow>;
@@ -187,6 +187,7 @@ export class RowComponent {
   );
 
   newMetricId: string;
+  newParameterId: string;
 
   metrics: common.MetricAny[];
   metrics$ = this.metricsQuery.select().pipe(
@@ -494,12 +495,15 @@ export class RowComponent {
   }
 
   toggleParametersPanel() {
-    this.resetInputs();
-    this.parametersIsExpanded = !this.parametersIsExpanded;
-    this.cd.detectChanges();
+    if (this.parametersFilters.length > 0) {
+      this.resetInputs();
+      this.isExpandedParameters = !this.isExpandedParameters;
+      this.cd.detectChanges();
+    }
   }
 
   addParameter() {
+    this.isExpandedParameters = true;
     this.isAddParameter = true;
   }
 }
