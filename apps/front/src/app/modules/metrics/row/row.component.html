@@ -1,5 +1,5 @@
 <div
-  class="mb-5 mr-9 flex h-11 flex-row items-center"
+  class="mb-5 mr-9 flex h-11 flex-row items-center text-lg"
   *ngIf="repSelectedNodes.length === 0"
 >
   No rows selected
@@ -9,12 +9,12 @@
   class="mb-5 mr-9 flex h-11 flex-row items-center"
   *ngIf="repSelectedNodes.length > 1"
 >
-  <div> Multiple rows selected </div>
+  <div class="text-lg"> Multiple rows selected </div>
 
   <button
     type="button"
     data-cy="deleteRowsButton"
-    class="ml-5 flex flex flex-row items-center rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
+    class="ml-7 flex flex flex-row items-center rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
     (click)="deleteRows()"
   >
     <m-trash-icon></m-trash-icon>
@@ -24,7 +24,7 @@
   <button
     type="button"
     data-cy="clearRowsButton"
-    class="ml-5 flex rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
+    class="ml-5 flex flex-row items-center rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
     (click)="clearRows()"
   >
     <m-delete-icon></m-delete-icon>
@@ -431,15 +431,29 @@
     >
       <div class="flex h-11 flex-row items-center space-x-2">
         <m-chevron-right-icon
-          *ngIf="!parametersIsExpanded"
+          *ngIf="!parametersIsExpanded && parametersFilters.length > 0"
         ></m-chevron-right-icon>
-        <m-chevron-down-icon *ngIf="parametersIsExpanded"></m-chevron-down-icon>
+
+        <m-chevron-down-icon
+          *ngIf="parametersIsExpanded && parametersFilters.length > 0"
+        ></m-chevron-down-icon>
+
+        <div class="h-6 w-6" *ngIf="parametersFilters.length === 0"></div>
 
         <div> Parameters </div>
       </div>
     </div>
 
-    <div class="ml-10 flex min-h-[68px] flex-row items-start">
+    <button
+      type="button"
+      data-cy="rowAddParameterButton"
+      class="ml-7 h-11 rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
+      (click)="addParameter()"
+    >
+      Add
+    </button>
+
+    <div class="ml-7 flex min-h-[68px] flex-row items-start">
       <div class="min-h-11 flex flex-row items-end">
         <m-bricks
           class="mr-5 flex max-h-[150px] max-w-max flex-row items-end justify-start overflow-auto"
@@ -448,12 +462,6 @@
         ></m-bricks>
       </div>
     </div>
-
-    <div
-      class="text-gray1 flex h-11 w-full select-none items-center justify-start text-lg"
-      *ngIf="!parametersIsExpanded && parametersFilters.length === 0"
-      >No parameters</div
-    >
 
     <div
       class="mt-1 max-h-96 w-2 flex-1 overflow-auto"

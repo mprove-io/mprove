@@ -308,48 +308,57 @@
 
           <div class="w-full">
             <div class="flex flex-col">
-              <div
-                class="mr-5 flex min-h-[98px] flex-shrink-0 flex-grow flex-row"
-              >
+              <div class="mr-5 flex flex-shrink-0 flex-grow flex-row">
                 <div
-                  (click)="toggleFiltersPanel()"
-                  class="text-gray1 mt-5 flex cursor-pointer select-none flex-row items-start space-x-2 py-3 px-5 text-2xl font-semibold"
-                >
-                  <div class="flex flex-row items-center space-x-2">
-                    <m-chevron-right-icon
-                      *ngIf="!filtersIsExpanded"
-                    ></m-chevron-right-icon>
-                    <m-chevron-down-icon
-                      *ngIf="filtersIsExpanded"
-                    ></m-chevron-down-icon>
-
-                    <div> Filters </div>
-                  </div>
-                </div>
-
-                <div
-                  [ngClass]="{
-                    'mt-4': mconfig?.extendedFilters.length === 1
-                  }"
-                >
-                  <m-bricks
-                    class="my-3 mr-5 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"
-                    *ngIf="!filtersIsExpanded && mconfig?.filters.length > 0"
-                    [extendedFilters]="mconfig.extendedFilters"
-                  ></m-bricks>
-                </div>
-
-                <div
-                  class="text-gray1 mt-9 mr-36 flex h-full w-full select-none items-center justify-center text-xl"
-                  *ngIf="filtersIsExpanded && mconfig?.filters.length === 0"
+                  class="text-gray1 mt-4 ml-6 flex h-full min-h-[76px] w-full flex-shrink-0 select-none pt-4 text-xl"
+                  *ngIf="mconfig?.extendedFilters.length === 0"
                   >No filters</div
                 >
 
                 <div
-                  class="mt-2 max-h-96 w-2 flex-1 overflow-auto"
-                  *ngIf="filtersIsExpanded && mconfig?.filters.length > 0"
+                  class="mt-4 flex min-h-[76px] flex-shrink-0 flex-grow flex-row"
+                  *ngIf="mconfig?.extendedFilters.length > 0"
                 >
-                  <m-model-filters></m-model-filters>
+                  <div
+                    (click)="toggleFiltersPanel()"
+                    class="text-gray1 flex cursor-pointer select-none flex-row items-start space-x-2 py-3 px-5 text-2xl font-semibold"
+                  >
+                    <div class="flex flex-row items-center space-x-2">
+                      <m-chevron-right-icon
+                        *ngIf="
+                          !filtersIsExpanded &&
+                          mconfig?.extendedFilters.length > 0
+                        "
+                      ></m-chevron-right-icon>
+
+                      <m-chevron-down-icon
+                        *ngIf="
+                          filtersIsExpanded &&
+                          mconfig?.extendedFilters.length > 0
+                        "
+                      ></m-chevron-down-icon>
+
+                      <div
+                        class="h-6 w-6"
+                        *ngIf="mconfig?.extendedFilters.length === 0"
+                      ></div>
+
+                      <div> Filters </div>
+                    </div>
+                  </div>
+
+                  <m-bricks
+                    class="my-3 ml-3 mr-5 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"
+                    *ngIf="!filtersIsExpanded"
+                    [extendedFilters]="mconfig.extendedFilters"
+                  ></m-bricks>
+
+                  <div
+                    class="ml-3 max-h-96 w-2 flex-1 overflow-auto"
+                    *ngIf="filtersIsExpanded"
+                  >
+                    <m-model-filters></m-model-filters>
+                  </div>
                 </div>
               </div>
             </div>

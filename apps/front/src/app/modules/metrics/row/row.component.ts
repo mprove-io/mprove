@@ -486,4 +486,6 @@ export class RowComponent {
     this.parametersIsExpanded = !this.parametersIsExpanded;
     this.cd.detectChanges();
   }
+
+  addParameter() {}
 }

@@ -501,7 +501,10 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   expandFiltersPanel() {
     if (this.filtersIsExpanded === false) {
-      this.toggleFiltersPanel();
+      this.filtersIsExpanded = true;
+      if (this.mconfig.extendedFilters.length !== 0) {
+        this.refreshShow();
+      }
     }
   }
 
@@ -512,8 +515,8 @@ export class ModelComponent implements OnInit, OnDestroy {
   }
 
   toggleFiltersPanel() {
-    this.filtersIsExpanded = !this.filtersIsExpanded;
-    if (this.mconfig.extendedFilters.length !== 0) {
+    if (this.mconfig.extendedFilters.length > 0) {
+      this.filtersIsExpanded = !this.filtersIsExpanded;
       this.refreshShow();
     }
   }
