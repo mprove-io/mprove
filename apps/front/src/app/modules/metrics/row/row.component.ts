@@ -197,6 +197,7 @@ export class RowComponent {
 
   newMetricId: string;
   newParameterId: string;
+  newParameterModel: common.Model;
 
   metrics: common.MetricAny[];
   metrics$ = this.metricsQuery.select().pipe(
@@ -419,13 +420,14 @@ export class RowComponent {
 
     this.isAddParameter = false;
     this.newParameterId = undefined;
+    this.newParameterModel = undefined;
   }
 
   cancelConvert() {
     this.resetInputs();
   }
 
-  apply() {
+  applyConvert() {
     if (this.isToHeader === true) {
       this.newNameForm.controls['name'].markAsTouched();
 
@@ -490,28 +492,6 @@ export class RowComponent {
     }
   }
 
-  cancelAddParameter() {
-    this.resetInputs();
-  }
-
-  applyAddParameter() {
-    // let newMconfig = this.structService.makeMconfig();
-    // let newFraction: common.Fraction = {
-    //   brick: 'any',
-    //   operator: common.FractionOperatorEnum.Or,
-    //   type: common.getFractionTypeForAny(node.data.fieldResult)
-    // };
-    // let newFilter: common.Filter = {
-    //   fieldId: node.data.id,
-    //   fractions: [newFraction]
-    // };
-    // newMconfig.filters = [...newMconfig.filters, newFilter].sort((a, b) =>
-    //   a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
-    // );
-    // this.expandFilters.emit();
-    // this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
-  }
-
   explore() {
     if (this.repSelectedNode.data.hasAccessToModel === true) {
       this.mconfigService.navDuplicateMconfigAndQuery({
@@ -564,15 +544,24 @@ export class RowComponent {
       .pipe(
         tap((resp: apiToBackend.ToBackendGetModelResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.fieldsList = resp.payload.model.fields.map(x =>
-              Object.assign({}, x, {
-                partLabel: common.isDefined(x.groupLabel)
-                  ? `${x.topLabel} ${x.groupLabel} ${x.label}`
-                  : `${x.topLabel} ${x.label}`
-              } as ModelFieldY)
-            );
+            this.fieldsList = resp.payload.model.fields
+              .map(x =>
+                Object.assign({}, x, {
+                  partLabel: common.isDefined(x.groupLabel)
+                    ? `${x.topLabel} ${x.groupLabel} ${x.label}`
+                    : `${x.topLabel} ${x.label}`
+                } as ModelFieldY)
+              )
+              .sort((a, b) =>
+                a.partLabel > b.partLabel
+                  ? 1
+                  : b.partLabel > a.partLabel
+                  ? -1
+                  : 0
+              );
 
             // console.log(this.fieldsList[0]);
+            this.newParameterModel = resp.payload.model;
 
             this.fieldsListLoading = false;
           }
@@ -583,8 +572,6 @@ export class RowComponent {
   }
 
   addParameterChange() {
-    console.log(this.newParameterId);
-
     let metric = this.metricsQuery
       .getValue()
       .metrics.find(y => y.metricId === this.repSelectedNode.data.metricId);
@@ -616,5 +603,47 @@ export class RowComponent {
       this.repSelectedNode.data.mconfig.extendedFilters
         .map(filter => filter.fieldId)
         .indexOf(this.newParameterId) > -1;
+  }
+
+  cancelAddParameter() {
+    this.resetInputs();
+  }
+
+  applyAddParameter() {
+    if (common.isUndefined(this.newParameterId)) {
+      return;
+    }
+
+    let newParameters = [...this.repSelectedNode.data.parameters];
+
+    let field = this.newParameterModel.fields.find(
+      x => x.id === this.newParameterId
+    );
+
+    let newParameter: common.Parameter = {
+      parameterId: common.makeId(),
+      parameterType: common.ParameterTypeEnum.Field,
+      fieldId: field.id,
+      result: field.result,
+      formula: undefined,
+      conditions: ['any'],
+      value: undefined
+    };
+
+    newParameters = [...newParameters, newParameter];
+
+    let rep = this.repQuery.getValue();
+
+    let rowChange: common.RowChange = {
+      rowId: this.repSelectedNode.data.rowId,
+      parameters: newParameters
+    };
+
+    this.repService.modifyRows({
+      rep: rep,
+      changeType: common.ChangeTypeEnum.EditParameters,
+      rowChange: rowChange,
+      rowIds: undefined
+    });
   }
 }

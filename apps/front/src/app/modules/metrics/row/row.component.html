@@ -221,7 +221,7 @@
           data-cy="rowApplyButton"
           class="bg-blue3 select-none rounded px-4 py-2 font-medium text-white focus:outline-none"
           type="button"
-          (click)="apply()"
+          (click)="applyConvert()"
           >Apply</button
         >
 
@@ -451,20 +451,22 @@
       class="ml-7 h-11 select-none rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
       (click)="addParameter()"
     >
-      Add Filter
+      Add
     </button>
 
-    <div class="ml-7 mr-5 flex min-h-[68px] flex-row items-start">
+    <div
+      class="ml-7 mr-5 flex min-h-[68px] flex-row items-start"
+      *ngIf="!isExpandedParameters && parametersFilters.length > 0"
+    >
       <div class="min-h-11 flex flex-row items-end">
         <m-bricks
           class="flex max-h-[150px] max-w-max flex-row items-end justify-start overflow-auto"
-          *ngIf="!isExpandedParameters && parametersFilters.length > 0"
           [extendedFilters]="parametersFilters"
         ></m-bricks>
       </div>
     </div>
 
-    <div class="w-2 flex-1" *ngIf="isExpandedParameters">
+    <div class="ml-7 w-2 flex-1" *ngIf="isExpandedParameters">
       <div
         class="flex flex-row"
         *ngIf="isAddParameter === true"
