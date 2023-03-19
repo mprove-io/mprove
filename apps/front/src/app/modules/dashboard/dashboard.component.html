@@ -248,7 +248,7 @@
 
             <div
               (click)="toggleFiltersPanel()"
-              class="text-gray1 mt-1 ml-3 flex min-h-[64px] cursor-pointer select-none flex-row items-start space-x-2 px-5 text-2xl font-semibold"
+              class="text-gray1 mt-1 ml-3 flex h-11 cursor-pointer select-none flex-row items-start space-x-2 px-5 text-2xl font-semibold"
             >
               <div class="flex flex-row items-center space-x-2">
                 <m-chevron-right-icon
@@ -270,13 +270,15 @@
             <button
               type="button"
               data-cy="dashboardAddFilterButton"
-              class="ml-4 h-11 flex-shrink-0 rounded border border-gray-400 py-2 px-4 text-base font-medium text-gray-500 hover:bg-white focus:outline-none"
+              class="ml-4 h-11 flex-shrink-0 select-none rounded border border-gray-400 py-2 px-4 text-base font-medium text-gray-500 hover:bg-white focus:outline-none"
               (click)="addFilter()"
               >Add</button
             >
 
+            <div class="min-h-[68px]"></div>
+
             <div
-              class="mt-1 ml-7 mr-5 flex min-h-[64px] flex-row items-start"
+              class="mt-1 ml-7 mr-5 flex flex-row items-start"
               *ngIf="!filtersIsExpanded && dashboard.fields.length > 0"
             >
               <m-bricks

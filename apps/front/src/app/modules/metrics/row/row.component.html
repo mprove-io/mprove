@@ -145,7 +145,7 @@
         <div [formGroup]="newFormulaForm" class="relative flex w-full">
           <textarea
             data-cy="formulaInput"
-            class="form-input border-gray3 focus:border-blue3 h-[140px] w-full resize-y rounded"
+            class="form-input border-gray3 focus:border-blue3 h-[140px] w-full resize-none rounded"
             [ngClass]="{
               'border-red-600':
                 newFormulaForm.controls['formula'].invalid &&
@@ -283,7 +283,7 @@
       <div [formGroup]="formulaForm" class="relative flex w-full">
         <textarea
           data-cy="formulaInput"
-          class="form-input border-gray3 focus:border-blue3 h-[140px] w-full resize-y rounded"
+          class="form-input border-gray3 focus:border-blue3 h-[140px] w-full resize-none rounded"
           [ngClass]="{
             'border-red-600':
               formulaForm.controls['formula'].invalid &&
@@ -454,8 +454,10 @@
       Add
     </button>
 
+    <div class="min-h-[68px]"></div>
+
     <div
-      class="ml-7 mr-5 flex min-h-[68px] flex-row items-start"
+      class="ml-7 mr-5 flex flex-row items-start"
       *ngIf="!isExpandedParameters && parametersFilters.length > 0"
     >
       <div class="min-h-11 flex flex-row items-end">
