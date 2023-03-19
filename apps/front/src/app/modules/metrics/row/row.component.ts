@@ -1,16 +1,23 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IRowNode } from 'ag-grid-community';
-import { tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { MetricsQuery } from '~front/app/queries/metrics.query';
+import { NavQuery } from '~front/app/queries/nav.query';
 import { RepQuery } from '~front/app/queries/rep.query';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { ApiService } from '~front/app/services/api.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { RepService } from '~front/app/services/rep.service';
 import { ValidationService } from '~front/app/services/validation.service';
+import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { DataRow } from '../rep/rep.component';
+
+interface ModelFieldY extends common.ModelField {
+  partLabel: string;
+}
 
 @Component({
   selector: 'm-row',
@@ -59,7 +66,8 @@ export class RowComponent {
   isToFormula = false;
   isToMetric = false;
 
-  isAddParameter = true;
+  isAddParameter = false;
+  isDisabledApplyForAddParameter = false;
 
   isValid = false;
 
@@ -197,6 +205,9 @@ export class RowComponent {
     })
   );
 
+  fieldsList: ModelFieldY[] = [];
+  fieldsListLoading = false;
+
   constructor(
     private cd: ChangeDetectorRef,
     private uiQuery: UiQuery,
@@ -204,6 +215,8 @@ export class RowComponent {
     private fb: FormBuilder,
     private repService: RepService,
     private repQuery: RepQuery,
+    private apiService: ApiService,
+    private navQuery: NavQuery,
     private mconfigService: MconfigService
   ) {}
 
@@ -505,5 +518,81 @@ export class RowComponent {
   addParameter() {
     this.isExpandedParameters = true;
     this.isAddParameter = true;
+  }
+
+  openAddParameterSelect() {
+    let nav = this.navQuery.getValue();
+
+    let metric = this.metricsQuery
+      .getValue()
+      .metrics.find(y => y.metricId === this.repSelectedNode.data.metricId);
+
+    this.fieldsListLoading = true;
+
+    let payload: apiToBackend.ToBackendGetModelRequestPayload = {
+      projectId: nav.projectId,
+      isRepoProd: nav.isRepoProd,
+      branchId: nav.branchId,
+      envId: nav.envId,
+      modelId: metric.modelId
+    };
+
+    this.apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendGetModelResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.fieldsList = resp.payload.model.fields.map(x =>
+              Object.assign({}, x, {
+                partLabel: common.isDefined(x.groupLabel)
+                  ? `${x.topLabel} ${x.groupLabel} ${x.label}`
+                  : `${x.topLabel} ${x.label}`
+              } as ModelFieldY)
+            );
+
+            // console.log(this.fieldsList[0]);
+
+            this.fieldsListLoading = false;
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  addParameterChange() {
+    console.log(this.newParameterId);
+
+    let metric = this.metricsQuery
+      .getValue()
+      .metrics.find(y => y.metricId === this.repSelectedNode.data.metricId);
+
+    let timeSpec = this.repQuery.getValue().timeSpec;
+
+    let timeSpecWord =
+      timeSpec === common.TimeSpecEnum.Years
+        ? common.TimeframeEnum.Year
+        : timeSpec === common.TimeSpecEnum.Quarters
+        ? common.TimeframeEnum.Quarter
+        : timeSpec === common.TimeSpecEnum.Months
+        ? common.TimeframeEnum.Month
+        : timeSpec === common.TimeSpecEnum.Weeks
+        ? common.TimeframeEnum.Week
+        : timeSpec === common.TimeSpecEnum.Days
+        ? common.TimeframeEnum.Date
+        : timeSpec === common.TimeSpecEnum.Hours
+        ? common.TimeframeEnum.Hour
+        : timeSpec === common.TimeSpecEnum.Minutes
+        ? common.TimeframeEnum.Minute
+        : undefined;
+
+    let timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
+
+    this.isDisabledApplyForAddParameter =
+      this.newParameterId === timeFieldIdSpec;
   }
 }

@@ -219,7 +219,7 @@
       >
         <button
           data-cy="rowApplyButton"
-          class="bg-blue3 bg-blue3 select-none rounded px-4 py-2 font-medium text-white focus:outline-none"
+          class="bg-blue3 select-none rounded px-4 py-2 font-medium text-white focus:outline-none"
           type="button"
           (click)="apply()"
           >Apply</button
@@ -451,7 +451,7 @@
       class="ml-7 h-11 select-none rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
       (click)="addParameter()"
     >
-      Add
+      Add Filter
     </button>
 
     <div class="ml-7 mr-5 flex min-h-[68px] flex-row items-start">
@@ -483,22 +483,32 @@
           <ng-select
             data-cy="addParameterSelect"
             class="custom w-full text-base focus:outline-none"
-            [items]="metrics"
+            [items]="fieldsList"
+            (open)="openAddParameterSelect()"
+            [loading]="fieldsListLoading"
             [searchable]="true"
             [clearable]="false"
             [(ngModel)]="newParameterId"
+            (change)="addParameterChange()"
             appendTo="body"
+            placeholder="Field"
             bindLabel="partLabel"
-            bindValue="metricId"
+            bindValue="id"
           >
           </ng-select>
         </div>
 
         <button
           data-cy="rowApplyAddParameterButton"
-          class="bg-blue3 bg-blue3 ml-5 select-none rounded px-4 py-2 font-medium text-white focus:outline-none"
+          class="bg-blue3 ml-5 select-none rounded px-4 py-2 font-medium text-white focus:outline-none"
+          [ngClass]="{
+            'bg-blue3': isDisabledApplyForAddParameter === false,
+            'cursor-default bg-gray-400':
+              isDisabledApplyForAddParameter === true
+          }"
           type="button"
           (click)="applyAddParameter()"
+          [disabled]="isDisabledApplyForAddParameter === true"
           >Apply</button
         >
 
