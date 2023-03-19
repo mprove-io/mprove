@@ -67,7 +67,8 @@ export class RowComponent {
   isToMetric = false;
 
   isAddParameter = false;
-  isDisabledApplyForAddParameter = false;
+  isDisabledApplyTimeField = false;
+  isDisabledApplyAlreadyFiltered = false;
 
   isValid = false;
 
@@ -417,6 +418,7 @@ export class RowComponent {
     this.isToMetric = false;
 
     this.isAddParameter = false;
+    this.newParameterId = undefined;
   }
 
   cancelConvert() {
@@ -492,7 +494,23 @@ export class RowComponent {
     this.resetInputs();
   }
 
-  applyAddParameter() {}
+  applyAddParameter() {
+    // let newMconfig = this.structService.makeMconfig();
+    // let newFraction: common.Fraction = {
+    //   brick: 'any',
+    //   operator: common.FractionOperatorEnum.Or,
+    //   type: common.getFractionTypeForAny(node.data.fieldResult)
+    // };
+    // let newFilter: common.Filter = {
+    //   fieldId: node.data.id,
+    //   fractions: [newFraction]
+    // };
+    // newMconfig.filters = [...newMconfig.filters, newFilter].sort((a, b) =>
+    //   a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
+    // );
+    // this.expandFilters.emit();
+    // this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
+  }
 
   explore() {
     if (this.repSelectedNode.data.hasAccessToModel === true) {
@@ -592,7 +610,11 @@ export class RowComponent {
 
     let timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
-    this.isDisabledApplyForAddParameter =
-      this.newParameterId === timeFieldIdSpec;
+    this.isDisabledApplyTimeField = this.newParameterId === timeFieldIdSpec;
+
+    this.isDisabledApplyAlreadyFiltered =
+      this.repSelectedNode.data.mconfig.extendedFilters
+        .map(filter => filter.fieldId)
+        .indexOf(this.newParameterId) > -1;
   }
 }

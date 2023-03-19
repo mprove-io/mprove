@@ -464,7 +464,7 @@
       </div>
     </div>
 
-    <div class="mt-1 w-2 flex-1" *ngIf="isExpandedParameters">
+    <div class="w-2 flex-1" *ngIf="isExpandedParameters">
       <div
         class="flex flex-row"
         *ngIf="isAddParameter === true"
@@ -482,7 +482,7 @@
 
           <ng-select
             data-cy="addParameterSelect"
-            class="custom w-full text-base focus:outline-none"
+            class="custom mt-1 w-full text-base focus:outline-none"
             [items]="fieldsList"
             (open)="openAddParameterSelect()"
             [loading]="fieldsListLoading"
@@ -498,19 +498,52 @@
           </ng-select>
         </div>
 
-        <button
-          data-cy="rowApplyAddParameterButton"
-          class="bg-blue3 ml-5 select-none rounded px-4 py-2 font-medium text-white focus:outline-none"
-          [ngClass]="{
-            'bg-blue3': isDisabledApplyForAddParameter === false,
-            'cursor-default bg-gray-400':
-              isDisabledApplyForAddParameter === true
-          }"
-          type="button"
-          (click)="applyAddParameter()"
-          [disabled]="isDisabledApplyForAddParameter === true"
-          >Apply</button
+        <ng-template #templateApplyAddFilter>
+          <div *ngIf="isDisabledApplyTimeField === true"
+            >The time field related to this metric is filtered by the time
+            filter located at the top of this page. But you can select another
+            field to specify additional time filtering within the main time
+            range.</div
+          >
+
+          <div
+            *ngIf="
+              isDisabledApplyTimeField === false &&
+              isDisabledApplyAlreadyFiltered === true
+            "
+            >This field is already filtered. Click on + to add new filter
+            conditions.</div
+          >
+        </ng-template>
+
+        <div
+          class="flex"
+          [isEnabled]="
+            isDisabledApplyTimeField === true ||
+            isDisabledApplyAlreadyFiltered === true
+          "
+          [tippy]="templateApplyAddFilter"
         >
+          <button
+            data-cy="rowApplyAddParameterButton"
+            class="bg-blue3 ml-5 select-none rounded px-4 py-2 font-medium text-white focus:outline-none"
+            [ngClass]="{
+              'bg-blue3':
+                isDisabledApplyTimeField === false &&
+                isDisabledApplyAlreadyFiltered === false,
+              'cursor-default bg-gray-400':
+                isDisabledApplyTimeField === true ||
+                isDisabledApplyAlreadyFiltered === true
+            }"
+            type="button"
+            (click)="applyAddParameter()"
+            [disabled]="
+              isDisabledApplyTimeField === true ||
+              isDisabledApplyAlreadyFiltered === true
+            "
+            >Apply</button
+          >
+        </div>
 
         <button
           type="button"
