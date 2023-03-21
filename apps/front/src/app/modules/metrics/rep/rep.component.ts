@@ -26,6 +26,7 @@ import { ChartRendererComponent } from './chart-renderer/chart-renderer.componen
 import { DataRendererComponent } from './data-renderer/data-renderer.component';
 import { MetricHeaderComponent } from './metric-header/metric-header.component';
 import { MetricRendererComponent } from './metric-renderer/metric-renderer.component';
+import { ParametersRendererComponent } from './parameters-renderer/parameters-renderer.component';
 import { RowIdHeaderComponent } from './row-id-header/row-id-header.component';
 import { RowIdRendererComponent } from './row-id-renderer/row-id-renderer.component';
 import { StatusHeaderComponent } from './status-header/status-header.component';
@@ -119,9 +120,10 @@ export class RepComponent {
     },
     {
       field: 'parameters',
+      autoHeight: true,
       pinned: 'left',
       minWidth: 60,
-      valueGetter: params => params.data?.strParameters
+      cellRenderer: ParametersRendererComponent
     },
     {
       field: 'status',

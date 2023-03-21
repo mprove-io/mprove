@@ -1,4 +1,9 @@
-<div class="h-full w-full overflow-auto rounded bg-gray-200 py-1 px-5">
+<div
+  class="font-ms h-full w-full overflow-auto rounded py-1 text-base"
+  [ngClass]="{
+    'bg-gray-200 px-5': isKeepBackgroundColor === false
+  }"
+>
   <table>
     <tbody class="divide-y divide-gray-300">
       <tr

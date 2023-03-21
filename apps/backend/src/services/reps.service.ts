@@ -661,22 +661,7 @@ export class RepsService {
 
           let model = models.find(ml => ml.model_id === metric.model_id);
 
-          let timeSpecWord =
-            timeSpec === common.TimeSpecEnum.Years
-              ? common.TimeframeEnum.Year
-              : timeSpec === common.TimeSpecEnum.Quarters
-              ? common.TimeframeEnum.Quarter
-              : timeSpec === common.TimeSpecEnum.Months
-              ? common.TimeframeEnum.Month
-              : timeSpec === common.TimeSpecEnum.Weeks
-              ? common.TimeframeEnum.Week
-              : timeSpec === common.TimeSpecEnum.Days
-              ? common.TimeframeEnum.Date
-              : timeSpec === common.TimeSpecEnum.Hours
-              ? common.TimeframeEnum.Hour
-              : timeSpec === common.TimeSpecEnum.Minutes
-              ? common.TimeframeEnum.Minute
-              : undefined;
+          let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
 
           let timeFieldIdSpec = `${metric.timefield_id}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
 

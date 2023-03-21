@@ -127,6 +127,7 @@
         class="mx-7 mb-5 flex max-h-[120px] max-w-max flex-shrink-0 flex-row items-start justify-start overflow-auto"
         *ngIf="showBricks === true && mconfig?.filters.length > 0"
         [extendedFilters]="mconfig.extendedFilters"
+        [isKeepBackgroundColor]="false"
       ></m-bricks>
 
       <div

@@ -1,0 +1,25 @@
+<div
+  class="truncate"
+  *ngIf="
+    params.data.rowType === rowTypeMetric &&
+    metric.type === metricTypeModel &&
+    parametersFilters.length > 0
+  "
+>
+  <div class="flex flex-shrink-0">
+    <m-bricks
+      class="flex max-h-[150px] max-w-max flex-shrink-0 flex-row items-end justify-start overflow-auto"
+      [extendedFilters]="parametersFilters"
+      [isKeepBackgroundColor]="true"
+    ></m-bricks>
+  </div>
+</div>
+
+<div
+  class="truncate"
+  *ngIf="
+    params.data.rowType === rowTypeMetric && metric.type !== metricTypeModel
+  "
+>
+  {{ params.data.strParameters | capitalize }}
+</div>

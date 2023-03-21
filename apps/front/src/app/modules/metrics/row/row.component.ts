@@ -127,22 +127,7 @@ export class RowComponent {
 
         let timeSpec = this.repQuery.getValue().timeSpec;
 
-        let timeSpecWord =
-          timeSpec === common.TimeSpecEnum.Years
-            ? common.TimeframeEnum.Year
-            : timeSpec === common.TimeSpecEnum.Quarters
-            ? common.TimeframeEnum.Quarter
-            : timeSpec === common.TimeSpecEnum.Months
-            ? common.TimeframeEnum.Month
-            : timeSpec === common.TimeSpecEnum.Weeks
-            ? common.TimeframeEnum.Week
-            : timeSpec === common.TimeSpecEnum.Days
-            ? common.TimeframeEnum.Date
-            : timeSpec === common.TimeSpecEnum.Hours
-            ? common.TimeframeEnum.Hour
-            : timeSpec === common.TimeSpecEnum.Minutes
-            ? common.TimeframeEnum.Minute
-            : undefined;
+        let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
 
         let timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
@@ -578,22 +563,7 @@ export class RowComponent {
 
     let timeSpec = this.repQuery.getValue().timeSpec;
 
-    let timeSpecWord =
-      timeSpec === common.TimeSpecEnum.Years
-        ? common.TimeframeEnum.Year
-        : timeSpec === common.TimeSpecEnum.Quarters
-        ? common.TimeframeEnum.Quarter
-        : timeSpec === common.TimeSpecEnum.Months
-        ? common.TimeframeEnum.Month
-        : timeSpec === common.TimeSpecEnum.Weeks
-        ? common.TimeframeEnum.Week
-        : timeSpec === common.TimeSpecEnum.Days
-        ? common.TimeframeEnum.Date
-        : timeSpec === common.TimeSpecEnum.Hours
-        ? common.TimeframeEnum.Hour
-        : timeSpec === common.TimeSpecEnum.Minutes
-        ? common.TimeframeEnum.Minute
-        : undefined;
+    let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
 
     let timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
 

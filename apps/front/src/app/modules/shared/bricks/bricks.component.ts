@@ -19,6 +19,9 @@ export class BricksComponent {
   @Input()
   deleteFilterFn: (item: DeleteFilterFnItem) => void;
 
+  @Input()
+  isKeepBackgroundColor: boolean;
+
   fractionOperatorEnum = common.FractionOperatorEnum;
 
   constructor() {}

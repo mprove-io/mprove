@@ -24,60 +24,67 @@
   </form>
 
   <!-- on year -->
-  <vaadin-date-picker
-    *ngIf="fraction.type === fractionTypeEnum.TsIsOnYear"
-    #datePickerOnYear
-    class="py-0"
-    required
-    [value]="dateStr"
-    [i18n]="onYearDateI18n"
-    (value-changed)="yearDateValueChanged($event)"
-  ></vaadin-date-picker>
+  <div *ngIf="fraction.type === fractionTypeEnum.TsIsOnYear">
+    <vaadin-date-picker
+      #datePickerOnYear
+      class="py-0"
+      required
+      [value]="dateStr"
+      [i18n]="onYearDateI18n"
+      (value-changed)="yearDateValueChanged($event)"
+    ></vaadin-date-picker>
+  </div>
 
   <!-- on month -->
-  <vaadin-date-picker
-    *ngIf="fraction.type === fractionTypeEnum.TsIsOnMonth"
-    #datePickerOnMonth
-    class="py-0"
-    required
-    [value]="dateStr"
-    [i18n]="onMonthDateI18n"
-    (value-changed)="monthDateValueChanged($event)"
-  ></vaadin-date-picker>
+  <div *ngIf="fraction.type === fractionTypeEnum.TsIsOnMonth">
+    <vaadin-date-picker
+      #datePickerOnMonth
+      class="py-0"
+      required
+      [value]="dateStr"
+      [i18n]="onMonthDateI18n"
+      (value-changed)="monthDateValueChanged($event)"
+    ></vaadin-date-picker>
+  </div>
 
   <!-- on day -->
-  <vaadin-date-picker
-    *ngIf="fraction.type === fractionTypeEnum.TsIsOnDay"
-    #datePickerOnDay
-    class="py-0"
-    required
-    [value]="dateStr"
-    [i18n]="onDayDateI18n"
-    (value-changed)="dayDateValueChanged($event)"
-  ></vaadin-date-picker>
+  <div *ngIf="fraction.type === fractionTypeEnum.TsIsOnDay">
+    <vaadin-date-picker
+      #datePickerOnDay
+      class="py-0"
+      required
+      [value]="dateStr"
+      [i18n]="onDayDateI18n"
+      (value-changed)="dayDateValueChanged($event)"
+    ></vaadin-date-picker>
+  </div>
 
   <!-- on hour -->
   <div
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnHour"
     class="flex flex-row space-x-5"
   >
-    <vaadin-date-picker
-      #datePickerOnHour
-      class="py-0"
-      required
-      [value]="dateStr"
-      [i18n]="onHourDateI18n"
-      (value-changed)="hourDateValueChanged($event)"
-    ></vaadin-date-picker>
+    <div>
+      <vaadin-date-picker
+        #datePickerOnHour
+        class="py-0"
+        required
+        [value]="dateStr"
+        [i18n]="onHourDateI18n"
+        (value-changed)="hourDateValueChanged($event)"
+      ></vaadin-date-picker>
+    </div>
 
-    <vaadin-time-picker
-      #timePickerOnHour
-      class="py-0"
-      required
-      [value]="timeStr"
-      (value-changed)="hourTimeValueChanged($event)"
-      (opened-changed)="hourTimeOpenedChanged($event)"
-    ></vaadin-time-picker>
+    <div>
+      <vaadin-time-picker
+        #timePickerOnHour
+        class="py-0"
+        required
+        [value]="timeStr"
+        (value-changed)="hourTimeValueChanged($event)"
+        (opened-changed)="hourTimeOpenedChanged($event)"
+      ></vaadin-time-picker>
+    </div>
   </div>
 
   <!-- on minute -->
@@ -85,23 +92,27 @@
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnMinute"
     class="flex flex-row space-x-5"
   >
-    <vaadin-date-picker
-      #datePickerOnMinute
-      class="py-0"
-      required
-      [value]="dateStr"
-      [i18n]="onMinuteDateI18n"
-      (value-changed)="minuteDateValueChanged($event)"
-    ></vaadin-date-picker>
+    <div>
+      <vaadin-date-picker
+        #datePickerOnMinute
+        class="py-0"
+        required
+        [value]="dateStr"
+        [i18n]="onMinuteDateI18n"
+        (value-changed)="minuteDateValueChanged($event)"
+      ></vaadin-date-picker>
+    </div>
 
-    <vaadin-time-picker
-      #timePickerOnMinute
-      class="py-0"
-      required
-      [value]="timeStr"
-      (value-changed)="minuteTimeValueChanged($event)"
-      (opened-changed)="minuteTimeOpenedChanged($event)"
-    ></vaadin-time-picker>
+    <div>
+      <vaadin-time-picker
+        #timePickerOnMinute
+        class="py-0"
+        required
+        [value]="timeStr"
+        (value-changed)="minuteTimeValueChanged($event)"
+        (opened-changed)="minuteTimeOpenedChanged($event)"
+      ></vaadin-time-picker>
+    </div>
   </div>
 
   <!-- in range -->
@@ -109,43 +120,51 @@
     *ngIf="fraction.type === fractionTypeEnum.TsIsInRange"
     class="flex flex-row space-x-5"
   >
-    <vaadin-date-picker
-      #datePickerInRangeFrom
-      class="py-0"
-      required
-      [value]="dateStr"
-      [i18n]="inRangeFromDateI18n"
-      (value-changed)="inRangeFromDateValueChanged($event)"
-    ></vaadin-date-picker>
+    <div>
+      <vaadin-date-picker
+        #datePickerInRangeFrom
+        class="py-0"
+        required
+        [value]="dateStr"
+        [i18n]="inRangeFromDateI18n"
+        (value-changed)="inRangeFromDateValueChanged($event)"
+      ></vaadin-date-picker>
+    </div>
 
-    <vaadin-time-picker
-      #timePickerInRangeFrom
-      class="py-0"
-      required
-      [value]="timeStr"
-      (value-changed)="inRangeFromTimeValueChanged($event)"
-      (opened-changed)="inRangeFromTimeOpenedChanged($event)"
-    ></vaadin-time-picker>
+    <div>
+      <vaadin-time-picker
+        #timePickerInRangeFrom
+        class="py-0"
+        required
+        [value]="timeStr"
+        (value-changed)="inRangeFromTimeValueChanged($event)"
+        (opened-changed)="inRangeFromTimeOpenedChanged($event)"
+      ></vaadin-time-picker>
+    </div>
 
     <div class="flex h-[36px] items-center justify-center">to</div>
 
-    <vaadin-date-picker
-      #datePickerInRangeTo
-      class="py-0"
-      required
-      [value]="dateToStr"
-      [i18n]="inRangeToDateI18n"
-      (value-changed)="inRangeToDateValueChanged($event)"
-    ></vaadin-date-picker>
+    <div>
+      <vaadin-date-picker
+        #datePickerInRangeTo
+        class="py-0"
+        required
+        [value]="dateToStr"
+        [i18n]="inRangeToDateI18n"
+        (value-changed)="inRangeToDateValueChanged($event)"
+      ></vaadin-date-picker>
+    </div>
 
-    <vaadin-time-picker
-      #timePickerInRangeTo
-      class="py-0"
-      required
-      [value]="timeToStr"
-      (value-changed)="inRangeToTimeValueChanged($event)"
-      (opened-changed)="inRangeToTimeOpenedChanged($event)"
-    ></vaadin-time-picker>
+    <div>
+      <vaadin-time-picker
+        #timePickerInRangeTo
+        class="py-0"
+        required
+        [value]="timeToStr"
+        (value-changed)="inRangeToTimeValueChanged($event)"
+        (opened-changed)="inRangeToTimeOpenedChanged($event)"
+      ></vaadin-time-picker>
+    </div>
   </div>
 
   <!-- is before -->
@@ -153,23 +172,27 @@
     *ngIf="fraction.type === fractionTypeEnum.TsIsBeforeDate"
     class="flex flex-row space-x-5"
   >
-    <vaadin-date-picker
-      #datePickerBefore
-      class="py-0"
-      required
-      [value]="dateStr"
-      [i18n]="beforeDateI18n"
-      (value-changed)="beforeDateValueChanged($event)"
-    ></vaadin-date-picker>
+    <div>
+      <vaadin-date-picker
+        #datePickerBefore
+        class="py-0"
+        required
+        [value]="dateStr"
+        [i18n]="beforeDateI18n"
+        (value-changed)="beforeDateValueChanged($event)"
+      ></vaadin-date-picker>
+    </div>
 
-    <vaadin-time-picker
-      #timePickerBefore
-      class="py-0"
-      required
-      [value]="timeStr"
-      (value-changed)="beforeTimeValueChanged($event)"
-      (opened-changed)="beforeTimeOpenedChanged($event)"
-    ></vaadin-time-picker>
+    <div>
+      <vaadin-time-picker
+        #timePickerBefore
+        class="py-0"
+        required
+        [value]="timeStr"
+        (value-changed)="beforeTimeValueChanged($event)"
+        (opened-changed)="beforeTimeOpenedChanged($event)"
+      ></vaadin-time-picker>
+    </div>
   </div>
 
   <!-- is after -->
@@ -177,23 +200,27 @@
     *ngIf="fraction.type === fractionTypeEnum.TsIsAfterDate"
     class="flex flex-row space-x-5"
   >
-    <vaadin-date-picker
-      #datePickerAfter
-      class="py-0"
-      required
-      [value]="dateStr"
-      [i18n]="afterDateI18n"
-      (value-changed)="afterDateValueChanged($event)"
-    ></vaadin-date-picker>
+    <div>
+      <vaadin-date-picker
+        #datePickerAfter
+        class="py-0"
+        required
+        [value]="dateStr"
+        [i18n]="afterDateI18n"
+        (value-changed)="afterDateValueChanged($event)"
+      ></vaadin-date-picker>
+    </div>
 
-    <vaadin-time-picker
-      #timePickerAfter
-      class="py-0"
-      required
-      [value]="timeStr"
-      (value-changed)="afterTimeValueChanged($event)"
-      (opened-changed)="afterTimeOpenedChanged($event)"
-    ></vaadin-time-picker>
+    <div>
+      <vaadin-time-picker
+        #timePickerAfter
+        class="py-0"
+        required
+        [value]="timeStr"
+        (value-changed)="afterTimeValueChanged($event)"
+        (opened-changed)="afterTimeOpenedChanged($event)"
+      ></vaadin-time-picker>
+    </div>
   </div>
 
   <!-- relative -->
