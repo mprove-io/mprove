@@ -584,7 +584,9 @@ export class RowComponent {
       return;
     }
 
-    let newParameters = [...this.repSelectedNode.data.parameters];
+    let newParameters = common.isDefined(this.repSelectedNode.data.parameters)
+      ? [...this.repSelectedNode.data.parameters]
+      : [];
 
     let field = this.newParameterModel.fields.find(
       x => x.id === this.newParameterId

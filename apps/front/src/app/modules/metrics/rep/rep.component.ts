@@ -11,6 +11,7 @@ import {
   IRowNode,
   RangeSelectionChangedEvent,
   RowDragEndEvent,
+  RowHeightParams,
   SelectionChangedEvent
 } from 'ag-grid-community';
 import { combineLatest, tap } from 'rxjs';
@@ -120,7 +121,6 @@ export class RepComponent {
     },
     {
       field: 'parameters',
-      autoHeight: true,
       pinned: 'left',
       minWidth: 60,
       cellRenderer: ParametersRendererComponent
@@ -423,5 +423,37 @@ export class RepComponent {
       rowChange: undefined,
       rowIds: rowIds
     });
+  }
+
+  getRowHeight(params: RowHeightParams<DataRow>): number | undefined | null {
+    let rowHeight = 0;
+
+    if (common.isDefined(params.data.mconfig)) {
+      let totalFractions = 0;
+      let totalFilters = 0;
+
+      params.data.mconfig.extendedFilters.forEach(x => {
+        x.fractions.forEach(y => (totalFractions = totalFractions + 1));
+        totalFilters = totalFilters + 1;
+      });
+
+      if (totalFractions > 1) {
+        params.data.mconfig.extendedFilters.forEach(x => {
+          x.fractions.forEach(y => {
+            rowHeight = rowHeight + 25;
+          });
+
+          rowHeight = rowHeight + 8;
+        });
+
+        rowHeight = rowHeight - (25 + 8) + 9;
+
+        if (totalFractions > 2) {
+          rowHeight = rowHeight + 6;
+        }
+      }
+    }
+
+    return Math.max(rowHeight, 42);
   }
 }
