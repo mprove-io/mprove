@@ -47,6 +47,7 @@ import { ExclamationIconComponent } from './icons/exclamation-icon/exclamation-i
 import { FilterIconComponent } from './icons/filter-icon/filter-icon.component';
 import { FolderClosedIconComponent } from './icons/folder-closed-icon/folder-closed-icon.component';
 import { FolderOpenIconComponent } from './icons/folder-open-icon/folder-open-icon.component';
+import { FormulaIconComponent } from './icons/formula-icon/formula-icon.component';
 import { FullScreenIconComponent } from './icons/full-screen-icon/full-screen-icon.component';
 import { InsightsIconComponent } from './icons/insights-icon/insights-icon.component';
 import { LinkIconComponent } from './icons/link-icon/link-icon.component';
@@ -158,7 +159,8 @@ let sharedComponents = [
   InsightsIconComponent,
   MenuBookIconComponent,
   LinkIconComponent,
-  LinkOffIconComponent
+  LinkOffIconComponent,
+  FormulaIconComponent
 ];
 
 @NgModule({

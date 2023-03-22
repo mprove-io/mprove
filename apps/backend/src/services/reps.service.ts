@@ -683,9 +683,11 @@ export class RepsService {
           ) {
             await forEachSeries(x.parameters, async parameter => {
               if (
-                common.isDefined(
-                  parameter.conditions && parameter.conditions.length > 0
-                )
+                // parameter.parameterType === common.ParameterTypeEnum.Field &&
+                (common.isDefined(parameter.conditions) &&
+                  parameter.conditions.length > 0) ||
+                // parameter.parameterType === common.ParameterTypeEnum.Formula &&
+                common.isDefined(parameter.formula)
               ) {
                 let toBlockmlGetFractionsRequest: apiToBlockml.ToBlockmlGetFractionsRequest =
                   {
@@ -695,7 +697,12 @@ export class RepsService {
                       traceId: traceId
                     },
                     payload: {
-                      bricks: parameter.conditions,
+                      bricks:
+                        // parameter.parameterType ===
+                        // common.ParameterTypeEnum.Formula
+                        common.isDefined(parameter.formula)
+                          ? ['any']
+                          : parameter.conditions,
                       result: parameter.result
                     }
                   };

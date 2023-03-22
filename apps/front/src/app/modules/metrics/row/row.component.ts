@@ -45,6 +45,10 @@ export class RowComponent {
     formula: [undefined, [Validators.required]]
   });
 
+  parametersFormulaForm: FormGroup = this.fb.group({
+    formula: [undefined, [Validators.required]]
+  });
+
   formatNumberForm: FormGroup = this.fb.group({
     formatNumber: [
       undefined,
@@ -138,6 +142,13 @@ export class RowComponent {
       }
 
       if (common.isDefined(this.repSelectedNode)) {
+        if (this.repSelectedNode.data.rowType === common.RowTypeEnum.Metric) {
+          setValueAndMark({
+            control: this.parametersFormulaForm.controls['formula'],
+            value: this.repSelectedNode.data.parametersFormula
+          });
+        }
+
         if (this.repSelectedNode.data.rowType === common.RowTypeEnum.Formula) {
           setValueAndMark({
             control: this.formulaForm.controls['formula'],
@@ -252,6 +263,27 @@ export class RowComponent {
       rowChange: rowChange,
       rowIds: undefined
     });
+  }
+
+  parametersFormulaBlur() {
+    // let value = this.formulaForm.controls['formula'].value;
+    // if (
+    //   !this.formulaForm.valid ||
+    //   this.repSelectedNode.data.formula === value
+    // ) {
+    //   return;
+    // }
+    // let rep = this.repQuery.getValue();
+    // let rowChange: common.RowChange = {
+    //   rowId: this.repSelectedNode.data.rowId,
+    //   formula: value
+    // };
+    // this.repService.modifyRows({
+    //   rep: rep,
+    //   changeType: common.ChangeTypeEnum.EditFormula,
+    //   rowChange: rowChange,
+    //   rowIds: undefined
+    // });
   }
 
   formatNumberBlur() {
@@ -592,8 +624,12 @@ export class RowComponent {
       x => x.id === this.newParameterId
     );
 
+    let parameterId = [this.repSelectedNode.data.rowId, ...field.id.split('.')]
+      .join('_')
+      .toUpperCase();
+
     let newParameter: common.Parameter = {
-      parameterId: common.makeId(),
+      parameterId: parameterId,
       parameterType: common.ParameterTypeEnum.Field,
       fieldId: field.id,
       result: field.result,
@@ -618,4 +654,6 @@ export class RowComponent {
       rowIds: undefined
     });
   }
+
+  toggleParametersFormula() {}
 }
