@@ -655,5 +655,30 @@ export class RowComponent {
     });
   }
 
-  toggleParametersFormula() {}
+  toggleParametersFormula() {
+    let rep = this.repQuery.getValue();
+
+    let rowChange: common.RowChange;
+
+    if (common.isDefined(this.repSelectedNode.data.parametersFormula)) {
+      rowChange = {
+        rowId: this.repSelectedNode.data.rowId,
+        parameters: [],
+        parametersFormula: undefined
+      };
+    } else {
+      rowChange = {
+        rowId: this.repSelectedNode.data.rowId,
+        parameters: undefined,
+        parametersFormula: 'return []'
+      };
+    }
+
+    this.repService.modifyRows({
+      rep: rep,
+      changeType: common.ChangeTypeEnum.EditParameters,
+      rowChange: rowChange,
+      rowIds: undefined
+    });
+  }
 }

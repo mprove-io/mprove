@@ -439,6 +439,7 @@ export class RepsService {
 
       let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
         parameters: rowChange.parameters,
+        parametersFormula: rowChange.parametersFormula,
         rqs: [],
         records: [],
         mconfig: undefined,

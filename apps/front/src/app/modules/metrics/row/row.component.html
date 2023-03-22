@@ -287,7 +287,11 @@
         (change)="toggleParametersFormula()"
       ></ui-switch>
 
-      <div [formGroup]="parametersFormulaForm" class="relative flex flex-grow">
+      <div
+        *ngIf="!!repSelectedNode.data.parametersFormula"
+        [formGroup]="parametersFormulaForm"
+        class="relative flex flex-grow"
+      >
         <textarea
           data-cy="parametersFormulaInput"
           class="form-input border-gray3 focus:border-blue3 h-11 max-h-[100px] min-h-[44px] w-full min-w-[300px] resize-y rounded"
@@ -300,6 +304,7 @@
           placeholder="$ROW_"
           (blur)="parametersFormulaBlur()"
         ></textarea>
+
         <m-validation
           class="absolute -bottom-[22px] left-0"
           [control]="parametersFormulaForm.controls['formula']"
