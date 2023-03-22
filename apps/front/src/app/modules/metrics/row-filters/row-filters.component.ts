@@ -163,4 +163,33 @@ export class RowFiltersComponent {
       rowIds: undefined
     });
   }
+
+  deleteFilter(filterExtended: common.FilterX) {
+    let newParameters = [...this.repSelectedNode.data.parameters];
+
+    let parametersIndex = newParameters.findIndex(
+      p => p.fieldId === filterExtended.fieldId
+    );
+
+    newParameters = [
+      ...newParameters.slice(0, parametersIndex),
+      ...newParameters.slice(parametersIndex + 1)
+    ];
+
+    let rep = this.repQuery.getValue();
+
+    let rowChange: common.RowChange = {
+      rowId: this.repSelectedNode.data.rowId,
+      parameters: newParameters
+    };
+
+    this.repService.modifyRows({
+      rep: rep,
+      changeType: common.ChangeTypeEnum.EditParameters,
+      rowChange: rowChange,
+      rowIds: undefined
+    });
+  }
+
+  toggleParameterFormula(filterExtended: common.FilterX) {}
 }

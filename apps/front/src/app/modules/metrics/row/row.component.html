@@ -465,7 +465,7 @@
   </div>
 
   <div
-    class="flex min-h-[44px] flex-shrink-0 flex-grow flex-row"
+    class="flex min-h-[44px] flex-grow flex-row"
     *ngIf="repSelectedNode.data.rowType === rowTypeMetric"
   >
     <div
@@ -486,7 +486,7 @@
 
         <div class="h-6 w-6" *ngIf="parametersFilters.length === 0"></div>
 
-        <div> Parameters </div>
+        <div class="truncate"> Parameters </div>
       </div>
     </div>
 
@@ -530,22 +530,25 @@
             >Filter Metric by</div
           >
 
-          <ng-select
-            data-cy="addParameterSelect"
-            class="custom mt-1 w-full text-base focus:outline-none"
-            [items]="fieldsList"
-            (open)="openAddParameterSelect()"
-            [loading]="fieldsListLoading"
-            [searchable]="true"
-            [clearable]="false"
-            [(ngModel)]="newParameterId"
-            (change)="addParameterChange()"
-            appendTo="body"
-            placeholder="Field"
-            bindLabel="partLabel"
-            bindValue="id"
-          >
-          </ng-select>
+          <div class="w-full">
+            <ng-select
+              data-cy="addParameterSelect"
+              class="custom mt-1 w-full text-base focus:outline-none"
+              [items]="fieldsList"
+              (open)="openAddParameterSelect()"
+              [loading]="fieldsListLoading"
+              [searchable]="true"
+              [clearable]="false"
+              [(ngModel)]="newParameterId"
+              (change)="addParameterChange()"
+              [dropdownPosition]="showMetricsChart === true ? 'bottom' : 'top'"
+              appendTo="body"
+              placeholder="Field"
+              bindLabel="partLabel"
+              bindValue="id"
+            >
+            </ng-select>
+          </div>
         </div>
 
         <ng-template #templateApplyAddFilter>

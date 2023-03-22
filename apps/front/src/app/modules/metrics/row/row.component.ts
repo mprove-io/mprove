@@ -94,6 +94,8 @@ export class RowComponent {
   mconfig: common.MconfigX;
   parametersFilters: common.FilterX[] = [];
 
+  showMetricsChart: boolean;
+
   uiQuery$ = this.uiQuery.select().pipe(
     tap(x => {
       if (
@@ -109,6 +111,8 @@ export class RowComponent {
       ) {
         this.resetInputs();
       }
+
+      this.showMetricsChart = x.showMetricsChart;
 
       this.repSelectedNodes = x.repSelectedNodes;
 
