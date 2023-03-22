@@ -113,4 +113,14 @@ export class ModelFiltersComponent {
 
     this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
   }
+
+  deleteFilter(filterExtended: common.FilterX) {
+    let newMconfig = this.structService.makeMconfig();
+
+    newMconfig.filters = newMconfig.filters.filter(
+      x => x.fieldId !== filterExtended.fieldId
+    );
+
+    this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
+  }
 }

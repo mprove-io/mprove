@@ -77,7 +77,9 @@ export function wrapReps(item: {
 
             let parameterApi: common.Parameter = {
               parameterId: parameter.id,
-              parameterType: parameter.type,
+              parameterType: common.isDefined(parameter.formula)
+                ? common.ParameterTypeEnum.Formula
+                : common.ParameterTypeEnum.Field,
               fieldId: parameter.field,
               result: result,
               formula: parameter.formula,

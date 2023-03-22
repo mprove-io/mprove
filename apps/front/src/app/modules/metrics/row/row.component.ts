@@ -15,6 +15,10 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { DataRow } from '../rep/rep.component';
 
+export interface ParameterFilter extends common.FilterX {
+  parameterType: common.ParameterTypeEnum;
+}
+
 interface ModelFieldY extends common.ModelField {
   partLabel: string;
 }
@@ -92,7 +96,7 @@ export class RowComponent {
   repSelectedNode: IRowNode<DataRow>;
 
   mconfig: common.MconfigX;
-  parametersFilters: common.FilterX[] = [];
+  parametersFilters: ParameterFilter[] = [];
 
   showMetricsChart: boolean;
 
@@ -140,9 +144,15 @@ export class RowComponent {
         let timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
         this.parametersFilters =
-          this.repSelectedNode.data.mconfig.extendedFilters.filter(
-            filter => filter.fieldId !== timeFieldIdSpec
-          );
+          this.repSelectedNode.data.mconfig.extendedFilters
+            .filter(filter => filter.fieldId !== timeFieldIdSpec)
+            .map(filter =>
+              Object.assign({}, filter, {
+                parameterType: this.repSelectedNode.data.parameters.find(
+                  y => y.fieldId === filter.fieldId
+                ).parameterType
+              } as ParameterFilter)
+            );
       }
 
       if (common.isDefined(this.repSelectedNode)) {

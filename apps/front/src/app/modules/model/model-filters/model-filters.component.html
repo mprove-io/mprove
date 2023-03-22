@@ -9,13 +9,20 @@
   >
     <div class="flex flex-row items-start justify-center">
       <button
-        class="flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
+        class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
+        (click)="deleteFilter(filter)"
+      >
+        <m-trash-icon></m-trash-icon>
+      </button>
+
+      <button
+        class="ml-3 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
         (click)="addFraction(filter, filterIndex)"
       >
         <m-add-icon></m-add-icon>
       </button>
 
-      <div class="ml-3 mb-5 flex flex-col items-start justify-start">
+      <div class="ml-5 mb-5 flex flex-col items-start justify-start">
         <div class="truncate text-sm font-normal">{{
           filter.field.topLabel | capitalize
         }}</div>

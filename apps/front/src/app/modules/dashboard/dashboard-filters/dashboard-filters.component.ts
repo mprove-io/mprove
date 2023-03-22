@@ -125,4 +125,27 @@ export class DashboardFiltersComponent {
       deleteFilterMconfigId: undefined
     });
   }
+
+  deleteFilter(dashboardField: common.DashboardField) {
+    let newDashboardFields = this.dashboard.fields.filter(
+      x => x.id !== dashboardField.id
+    );
+
+    this.dashboard.reports.forEach(report => {
+      Object.keys(report.listen).forEach(key => {
+        if (report.listen[key] === dashboardField.id) {
+          delete report.listen[key];
+        }
+      });
+    });
+
+    this.dashboardService.navCreateTempDashboard({
+      reports: this.dashboard.reports,
+      oldDashboardId: this.dashboard.dashboardId,
+      newDashboardId: common.makeId(),
+      newDashboardFields: newDashboardFields,
+      deleteFilterFieldId: undefined,
+      deleteFilterMconfigId: undefined
+    });
+  }
 }

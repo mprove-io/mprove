@@ -273,7 +273,7 @@
     </div>
 
     <div
-      class="flex flex-grow flex-row items-start space-x-5"
+      class="flex flex-grow flex-row items-start"
       *ngIf="repSelectedNode.data.rowType === rowTypeMetric"
     >
       <div
@@ -281,16 +281,21 @@
         >Parameters Formula</div
       >
 
-      <ui-switch
-        class="ml-5 pt-1"
-        [checked]="!!repSelectedNode.data.parametersFormula"
-        (change)="toggleParametersFormula()"
-      ></ui-switch>
+      <button
+        class="ml-3 mt-1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
+        (click)="toggleParametersFormula()"
+      >
+        <m-formula-icon
+          [ngClass]="{
+            'text-blue-500': !!repSelectedNode.data.parametersFormula
+          }"
+        ></m-formula-icon>
+      </button>
 
       <div
         *ngIf="!!repSelectedNode.data.parametersFormula"
         [formGroup]="parametersFormulaForm"
-        class="relative flex flex-grow"
+        class="relative ml-5 flex flex-grow"
       >
         <textarea
           data-cy="parametersFormulaInput"
@@ -310,11 +315,6 @@
           [control]="parametersFormulaForm.controls['formula']"
         ></m-validation>
       </div>
-
-      <!-- <m-formula-icon
-        class="text-blue-200"
-        *ngIf="!!repSelectedNode.data.parametersFormula"
-      ></m-formula-icon> -->
     </div>
 
     <div

@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IRowNode } from 'ag-grid-community';
 import { RepQuery } from '~front/app/queries/rep.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -6,12 +7,20 @@ import { RepService } from '~front/app/services/rep.service';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 import { DataRow } from '../rep/rep.component';
+import { ParameterFilter } from '../row/row.component';
 
 @Component({
   selector: 'm-row-filters',
   templateUrl: './row-filters.component.html'
 })
+// implements OnChanges
 export class RowFiltersComponent {
+  parameterTypeFormula = common.ParameterTypeEnum.Formula;
+
+  parFormulaForm: FormGroup = this.fb.group({
+    formula: [undefined, [Validators.required]]
+  });
+
   @Input()
   repSelectedNode: IRowNode<DataRow>;
 
@@ -19,7 +28,7 @@ export class RowFiltersComponent {
   mconfig: common.MconfigX;
 
   @Input()
-  parametersFilters: common.FilterX[];
+  parametersFilters: ParameterFilter[];
 
   // uiQuery$ = this.uiQuery.select().pipe(
   //   tap(x => {
@@ -28,10 +37,20 @@ export class RowFiltersComponent {
 
   constructor(
     private uiQuery: UiQuery,
+    private fb: FormBuilder,
     private repQuery: RepQuery,
     private repService: RepService,
     private cd: ChangeDetectorRef
   ) {}
+
+  // ngOnChanges(changes: SimpleChanges) {
+  // if (this.repSelectedNode.data.rowType === common.RowTypeEnum.Metric) {
+  //   setValueAndMark({
+  //     // control: this.parFormulaForm.controls['formula'],
+  //     // value: this.repSelectedNode.data.parametersFormula
+  //   });
+  // }
+  // }
 
   fractionUpdate(
     filterExtended: common.FilterX,
@@ -191,5 +210,53 @@ export class RowFiltersComponent {
     });
   }
 
-  toggleParameterFormula(filterExtended: common.FilterX) {}
+  toggleParFormula(filterExtended: common.FilterX) {
+    let rep = this.repQuery.getValue();
+
+    let newParameters = [...this.repSelectedNode.data.parameters];
+
+    let parameterIndex = this.repSelectedNode.data.parameters.findIndex(
+      x => x.fieldId === filterExtended.fieldId
+    );
+
+    let parameter = this.repSelectedNode.data.parameters.find(
+      x => x.fieldId === filterExtended.fieldId
+    );
+
+    let newParameter;
+
+    if (parameter.parameterType === common.ParameterTypeEnum.Formula) {
+      newParameter = Object.assign({}, parameter, {
+        parameterType: common.ParameterTypeEnum.Field,
+        conditions: ['any'],
+        formula: undefined
+      } as common.Parameter);
+    } else {
+      newParameter = Object.assign({}, parameter, {
+        parameterType: common.ParameterTypeEnum.Formula,
+        conditions: ['any'],
+        formula: `return ['any']`
+      } as common.Parameter);
+    }
+
+    newParameters = [
+      ...newParameters.slice(0, parameterIndex),
+      newParameter,
+      ...newParameters.slice(parameterIndex + 1)
+    ];
+
+    let rowChange: common.RowChange = {
+      rowId: this.repSelectedNode.data.rowId,
+      parameters: newParameters
+    };
+
+    this.repService.modifyRows({
+      rep: rep,
+      changeType: common.ChangeTypeEnum.EditParameters,
+      rowChange: rowChange,
+      rowIds: undefined
+    });
+  }
+
+  parFormulaFormBlur() {}
 }
