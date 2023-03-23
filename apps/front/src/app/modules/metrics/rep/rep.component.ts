@@ -257,6 +257,9 @@ export class RepComponent {
             .filter(record => record.key !== 0)
             .forEach(record => {
               (dataRow as any)[record.key] = record.value;
+              // console.log('this.rep.columns', this.rep.columns);
+              // console.log('record', record);
+              // console.log('record.key', record.key);
               let column = this.rep.columns.find(
                 c => c.columnId === record.key
               );

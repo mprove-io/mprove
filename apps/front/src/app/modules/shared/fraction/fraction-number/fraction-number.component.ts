@@ -27,13 +27,12 @@ export class FractionNumberComponent implements OnInit {
 
   fractionTypeEnum = common.FractionTypeEnum;
 
+  @Input() isDisabled: boolean;
   @Input() fraction: common.Fraction;
   @Input() fractionIndex: number;
   @Input() isFirst: boolean;
 
   @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
-
-  fractionTypeForm: FormGroup;
 
   numberValuesForm: FormGroup;
   numberSingleValueForm: FormGroup;
@@ -110,17 +109,10 @@ export class FractionNumberComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
-    this.buildFractionTypeForm();
     this.buildNumberValuesForm();
     this.buildNumberSingleValueForm();
     this.buildNumberBetweenForm();
     this.buildNumberBetweenOptionsForm();
-  }
-
-  buildFractionTypeForm() {
-    this.fractionTypeForm = this.fb.group({
-      fractionType: [this.fraction.type]
-    });
   }
 
   buildNumberValuesForm() {
@@ -513,8 +505,8 @@ export class FractionNumberComponent implements OnInit {
   }
 
   numberBetweenFirstValueBlur() {
-    let value = this.numberBetweenForm.controls['numberBetweenFirstValue']
-      .value;
+    let value =
+      this.numberBetweenForm.controls['numberBetweenFirstValue'].value;
 
     if (value === this.fraction.numberValue1) {
       return;
@@ -542,8 +534,8 @@ export class FractionNumberComponent implements OnInit {
   }
 
   numberBetweenSecondValueBlur() {
-    let value = this.numberBetweenForm.controls['numberBetweenSecondValue']
-      .value;
+    let value =
+      this.numberBetweenForm.controls['numberBetweenSecondValue'].value;
 
     if (value === this.fraction.numberValue2) {
       return;

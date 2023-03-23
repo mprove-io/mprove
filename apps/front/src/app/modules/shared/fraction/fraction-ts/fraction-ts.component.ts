@@ -43,6 +43,7 @@ export class FractionTsComponent implements OnInit {
   fractionTypeEnum = common.FractionTypeEnum;
   fractionTsForOptionEnum = common.FractionTsForOptionEnum;
 
+  @Input() isDisabled: boolean;
   @Input() fraction: common.Fraction;
   @Input() fractionIndex: number;
   @Input() isFirst: boolean;
@@ -73,8 +74,6 @@ export class FractionTsComponent implements OnInit {
 
   @ViewChild('datePickerInRangeTo') datePickerInRangeTo: ElementRef<DatePicker>;
   @ViewChild('timePickerInRangeTo') timePickerInRangeTo: ElementRef<TimePicker>;
-
-  fractionTypeForm: FormGroup;
 
   tsRelativeValueForm: FormGroup;
 
@@ -376,8 +375,6 @@ export class FractionTsComponent implements OnInit {
     this.resetDateUsingFraction();
     this.resetDateToUsingFraction();
 
-    this.buildFractionTypeForm();
-
     this.buildTsRelativeValueForm();
     this.buildTsRelativeUnitForm();
     this.buildTsRelativeCompleteForm();
@@ -414,12 +411,6 @@ export class FractionTsComponent implements OnInit {
     this.afterDateI18n.firstDayOfWeek = firstDayOfWeek;
     this.inRangeFromDateI18n.firstDayOfWeek = firstDayOfWeek;
     this.inRangeToDateI18n.firstDayOfWeek = firstDayOfWeek;
-  }
-
-  buildFractionTypeForm() {
-    this.fractionTypeForm = this.fb.group({
-      fractionType: [this.fraction.type]
-    });
   }
 
   buildTsRelativeValueForm() {

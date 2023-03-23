@@ -22,13 +22,13 @@ import {
 export class FractionQuarterOfYearComponent implements OnInit {
   fractionTypeEnum = common.FractionTypeEnum;
 
+  @Input() isDisabled: boolean;
   @Input() fraction: common.Fraction;
   @Input() fractionIndex: number;
   @Input() isFirst: boolean;
 
   @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
 
-  fractionTypeForm: FormGroup;
   fractionForm: FormGroup;
 
   fractionQuarterOfYearTypesList: FractionTypeItem[] = [
@@ -76,14 +76,7 @@ export class FractionQuarterOfYearComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
-    this.buildFractionTypeForm();
     this.buildFractionForm();
-  }
-
-  buildFractionTypeForm() {
-    this.fractionTypeForm = this.fb.group({
-      fractionType: [this.fraction.type]
-    });
   }
 
   buildFractionForm() {

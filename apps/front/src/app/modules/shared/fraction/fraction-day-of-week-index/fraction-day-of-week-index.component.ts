@@ -22,13 +22,12 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
 
   fractionTypeEnum = common.FractionTypeEnum;
 
+  @Input() isDisabled: boolean;
   @Input() fraction: common.Fraction;
   @Input() fractionIndex: number;
   @Input() isFirst: boolean;
 
   @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
-
-  fractionTypeForm: FormGroup;
 
   dayOfWeekIndexValuesForm: FormGroup;
 
@@ -58,14 +57,7 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
-    this.buildFractionTypeForm();
     this.buildDayOfWeekIndexValuesForm();
-  }
-
-  buildFractionTypeForm() {
-    this.fractionTypeForm = this.fb.group({
-      fractionType: [this.fraction.type]
-    });
   }
 
   buildDayOfWeekIndexValuesForm() {
@@ -172,8 +164,8 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
   }
 
   dayOfWeekIndexValuesBlur() {
-    let value = this.dayOfWeekIndexValuesForm.controls['dayOfWeekIndexValues']
-      .value;
+    let value =
+      this.dayOfWeekIndexValuesForm.controls['dayOfWeekIndexValues'].value;
 
     if (value !== this.fraction.dayOfWeekIndexValues) {
       let newBrick = this.getDayOfWeekIndexBrick(this.fraction.type, value);

@@ -22,13 +22,13 @@ import {
 export class FractionMonthNameComponent implements OnInit {
   fractionTypeEnum = common.FractionTypeEnum;
 
+  @Input() isDisabled: boolean;
   @Input() fraction: common.Fraction;
   @Input() fractionIndex: number;
   @Input() isFirst: boolean;
 
   @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
 
-  fractionTypeForm: FormGroup;
   fractionForm: FormGroup;
 
   fractionMonthNameTypesList: FractionTypeItem[] = [
@@ -108,14 +108,7 @@ export class FractionMonthNameComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
-    this.buildFractionTypeForm();
     this.buildFractionForm();
-  }
-
-  buildFractionTypeForm() {
-    this.fractionTypeForm = this.fb.group({
-      fractionType: [this.fraction.type]
-    });
   }
 
   buildFractionForm() {
