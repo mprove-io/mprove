@@ -31,6 +31,52 @@
     </ng-select>
   </div>
 
+  <div
+    *ngIf="
+      fraction.type === fractionTypeEnum.TsIsInRange ||
+      fraction.type === fractionTypeEnum.TsIsBeforeDate ||
+      fraction.type === fractionTypeEnum.TsIsAfterDate
+    "
+    tippy="Disabled if time is not 00:00"
+    [isEnabled]="
+      timeStr !== zeroHoursMinutes ||
+      (fraction.type === fractionTypeEnum.TsIsInRange &&
+        timeToStr !== zeroHoursMinutes)
+    "
+  >
+    <button
+      class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+      [ngClass]="{
+        'cursor-pointer hover:bg-blue-200':
+          timeStr === zeroHoursMinutes &&
+          (fraction.type !== fractionTypeEnum.TsIsInRange ||
+            timeToStr === zeroHoursMinutes),
+        'text-blue-500 ':
+          showHours === true &&
+          timeStr === zeroHoursMinutes &&
+          (fraction.type !== fractionTypeEnum.TsIsInRange ||
+            timeToStr === zeroHoursMinutes),
+        'text-gray-500':
+          showHours === false &&
+          timeStr === zeroHoursMinutes &&
+          (fraction.type !== fractionTypeEnum.TsIsInRange ||
+            timeToStr === zeroHoursMinutes),
+        'cursor-default text-gray-300':
+          timeStr !== zeroHoursMinutes ||
+          (fraction.type === fractionTypeEnum.TsIsInRange &&
+            timeToStr !== zeroHoursMinutes)
+      }"
+      [disabled]="
+        timeStr !== zeroHoursMinutes ||
+        (fraction.type === fractionTypeEnum.TsIsInRange &&
+          timeToStr !== zeroHoursMinutes)
+      "
+      (click)="toggleShowHours()"
+    >
+      <m-clock-icon></m-clock-icon>
+    </button>
+  </div>
+
   <!-- on year -->
   <div *ngIf="fraction.type === fractionTypeEnum.TsIsOnYear">
     <vaadin-date-picker
@@ -139,7 +185,13 @@
       ></vaadin-date-picker>
     </div>
 
-    <div>
+    <div
+      *ngIf="
+        showHours === true ||
+        timeStr !== zeroHoursMinutes ||
+        timeToStr !== zeroHoursMinutes
+      "
+    >
       <vaadin-time-picker
         #timePickerInRangeFrom
         class="py-0"
@@ -163,7 +215,13 @@
       ></vaadin-date-picker>
     </div>
 
-    <div>
+    <div
+      *ngIf="
+        showHours === true ||
+        timeStr !== zeroHoursMinutes ||
+        timeToStr !== zeroHoursMinutes
+      "
+    >
       <vaadin-time-picker
         #timePickerInRangeTo
         class="py-0"
@@ -191,7 +249,7 @@
       ></vaadin-date-picker>
     </div>
 
-    <div>
+    <div *ngIf="showHours === true || timeStr !== zeroHoursMinutes">
       <vaadin-time-picker
         #timePickerBefore
         class="py-0"
@@ -219,7 +277,7 @@
       ></vaadin-date-picker>
     </div>
 
-    <div>
+    <div *ngIf="showHours === true || timeStr !== zeroHoursMinutes">
       <vaadin-time-picker
         #timePickerAfter
         class="py-0"
@@ -488,3 +546,5 @@
     </form>
   </div>
 </div>
+
+<div *ngIf="showHours$ | async"></div>

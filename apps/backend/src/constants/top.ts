@@ -29,6 +29,7 @@ export const DEFAULT_UI: common.Ui = {
   showMetricsChart: true,
   showMetricsChartSettings: true,
   showChartForSelectedRows: true,
+  showHours: false,
   metricsColumnNameWidth: 450,
   metricsColumnParametersWidth: 150,
   metricsTimeColumnsNarrowWidth: 165,

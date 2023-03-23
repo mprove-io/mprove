@@ -36,6 +36,7 @@ import { ChevronDownIconComponent } from './icons/chevron-down-icon/chevron-down
 import { ChevronLeftIconComponent } from './icons/chevron-left-icon/chevron-left-icon.component';
 import { ChevronRightIconComponent } from './icons/chevron-right-icon/chevron-right-icon.component';
 import { ChevronUpIconComponent } from './icons/chevron-up-icon/chevron-up-icon.component';
+import { ClockIconComponent } from './icons/clock-icon/clock-icon.component';
 import { CurrencyDollarIconComponent } from './icons/currency-dollar-icon/currency-dollar-icon.component';
 import { DeleteIconComponent } from './icons/delete-icon/delete-icon.component';
 import { DescIconComponent } from './icons/desc-icon/desc-icon.component';
@@ -160,7 +161,8 @@ let sharedComponents = [
   MenuBookIconComponent,
   LinkIconComponent,
   LinkOffIconComponent,
-  FormulaIconComponent
+  FormulaIconComponent,
+  ClockIconComponent
 ];
 
 @NgModule({

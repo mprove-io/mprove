@@ -61,28 +61,7 @@ export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
-            this.uiQuery.updatePart({
-              timezone: resp.payload.user.ui.timezone,
-              timeSpec: resp.payload.user.ui.timeSpec,
-              timeRangeFraction: resp.payload.user.ui.timeRangeFraction,
-              showMetricsModelName: resp.payload.user.ui.showMetricsModelName,
-              showMetricsTimeFieldName:
-                resp.payload.user.ui.showMetricsTimeFieldName,
-              showChartForSelectedRows:
-                resp.payload.user.ui.showChartForSelectedRows,
-              showMetricsChartSettings:
-                resp.payload.user.ui.showMetricsChartSettings,
-              showMetricsChart: resp.payload.user.ui.showMetricsChart,
-              metricsColumnNameWidth:
-                resp.payload.user.ui.metricsColumnNameWidth,
-              metricsColumnParametersWidth:
-                resp.payload.user.ui.metricsColumnParametersWidth,
-              metricsTimeColumnsNarrowWidth:
-                resp.payload.user.ui.metricsTimeColumnsNarrowWidth,
-              metricsTimeColumnsWideWidth:
-                resp.payload.user.ui.metricsTimeColumnsWideWidth,
-              modelTreeLevels: resp.payload.user.ui.modelTreeLevels
-            });
+            this.uiQuery.updatePart({ ...resp.payload.user.ui });
 
             this.structQuery.update(resp.payload.struct);
             this.navQuery.updatePart({

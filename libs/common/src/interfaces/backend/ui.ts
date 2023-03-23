@@ -32,6 +32,9 @@ export class Ui {
   @IsBoolean()
   showChartForSelectedRows: boolean;
 
+  @IsBoolean()
+  showHours: boolean;
+
   @IsEnum(enums.ModelTreeLevelsEnum)
   modelTreeLevels: enums.ModelTreeLevelsEnum;
 

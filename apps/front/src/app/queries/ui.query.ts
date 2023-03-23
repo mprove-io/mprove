@@ -32,6 +32,7 @@ export class UiState {
   timezone: string;
   timeSpec: common.TimeSpecEnum;
   timeRangeFraction: common.Fraction;
+  showHours: boolean;
 }
 
 let uiState: UiState = {
@@ -56,7 +57,8 @@ let uiState: UiState = {
   modelTreeLevels: undefined,
   timezone: undefined,
   timeSpec: undefined,
-  timeRangeFraction: undefined
+  timeRangeFraction: undefined,
+  showHours: undefined
 };
 
 @Injectable({ providedIn: 'root' })
@@ -71,6 +73,8 @@ export class UiQuery extends BaseQuery<UiState> {
   );
 
   panel$ = this.store.pipe(select(state => state.panel));
+
+  showHours$ = this.store.pipe(select(state => state.showHours));
 
   showMetricsModelName$ = this.store.pipe(
     select(state => state.showMetricsModelName)
