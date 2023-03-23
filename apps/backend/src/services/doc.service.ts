@@ -112,7 +112,7 @@ export class DocService {
       .forEach(row => {
         row.records = getRecordsResp.data.records.map((y: any) => ({
           id: y.id,
-          key: y.fields.timestamp,
+          key: Number(y.fields.timestamp.toString().split('.')[0]),
           value: common.isDefined(y.fields) ? y.fields[row.rowId] : undefined,
           error: common.isDefined(y.errors) ? y.errors[row.rowId] : undefined
         }));
@@ -204,7 +204,7 @@ export class DocService {
             let fieldId = row.mconfig?.select[1].split('.').join('_');
 
             let dataRow = row.query?.data?.find(
-              (r: any) => r[timeFieldId]?.toString() === timeValue
+              (r: any) => r[timeFieldId]?.toString().split('.')[0] === timeValue
             );
 
             if (common.isDefined(dataRow)) {

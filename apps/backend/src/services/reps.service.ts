@@ -975,7 +975,7 @@ export class RepsService {
         row.records = common.isDefined(row.query)
           ? recordsByColumn.map((y: any) => ({
               id: y.id,
-              key: y.fields.timestamp,
+              key: Number(y.fields.timestamp.toString().split('.')[0]),
               value: common.isDefined(y.fields)
                 ? y.fields[row.rowId]
                 : undefined,
