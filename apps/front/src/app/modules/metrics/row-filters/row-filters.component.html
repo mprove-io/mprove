@@ -52,12 +52,24 @@
         ></m-validation>
       </div>
 
-      <button
-        class="ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
-        (click)="addFraction(filter)"
+      <div
+        tippy="Disabled because the formula is used"
+        [isEnabled]="filter.parameterType === parameterTypeFormula"
       >
-        <m-add-icon></m-add-icon>
-      </button>
+        <button
+          class="ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+          (click)="addFraction(filter)"
+          [ngClass]="{
+            'text-gray-500 hover:bg-blue-200':
+              filter.parameterType !== parameterTypeFormula,
+            'cursor-default text-gray-400':
+              filter.parameterType === parameterTypeFormula
+          }"
+          [disabled]="filter.parameterType === parameterTypeFormula"
+        >
+          <m-add-icon></m-add-icon>
+        </button>
+      </div>
 
       <div class="ml-5 mb-5 flex flex-col items-start justify-start">
         <div class="truncate text-sm font-normal">{{
@@ -95,12 +107,24 @@
         >
         </m-fraction>
 
-        <button
-          class="ml-5 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
-          (click)="deleteFraction(filter, fractionIndex)"
+        <div
+          tippy="Disabled because the formula is used"
+          [isEnabled]="filter.parameterType === parameterTypeFormula"
         >
-          <m-delete-icon></m-delete-icon>
-        </button>
+          <button
+            class="ml-5 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
+            (click)="deleteFraction(filter, fractionIndex)"
+            [ngClass]="{
+              'text-gray-500 hover:bg-blue-200':
+                filter.parameterType !== parameterTypeFormula,
+              'cursor-default text-gray-400':
+                filter.parameterType === parameterTypeFormula
+            }"
+            [disabled]="filter.parameterType === parameterTypeFormula"
+          >
+            <m-delete-icon></m-delete-icon>
+          </button>
+        </div>
       </div>
     </div>
   </div>
