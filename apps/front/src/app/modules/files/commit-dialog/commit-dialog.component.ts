@@ -51,10 +51,8 @@ export class CommitDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    let message: string;
-
     this.commitForm = this.fb.group({
-      message: [message, [Validators.required, Validators.maxLength(255)]]
+      message: [undefined, [Validators.required, Validators.maxLength(255)]]
     });
 
     setTimeout(() => {
