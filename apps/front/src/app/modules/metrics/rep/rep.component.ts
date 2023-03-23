@@ -161,7 +161,7 @@ export class RepComponent {
   agGridApi: GridApi<DataRow>;
   agGridColumnApi: ColumnApi;
 
-  prevRepId: string;
+  // prevRepId: string;
 
   // repSelectedRowIdsDistinct$ = this.uiQuery.repSelectedRowIdsDistinct$.pipe(
   //   tap(x => {
@@ -270,21 +270,25 @@ export class RepComponent {
 
         this.updateRepChartData(sNodes);
 
-        if (
-          common.isDefined(this.prevRepId) &&
-          this.rep.repId === this.prevRepId
-        ) {
-          if (common.isDefined(this.agGridApi)) {
-            this.uiQuery.getValue().repSelectedNodes.forEach(node => {
-              let rowNode = this.agGridApi.getRowNode(node.id);
-              if (common.isDefined(rowNode)) {
-                rowNode.setSelected(true);
-              }
-            });
-          }
-        }
+        // console.log('rep$ combined - tap');
 
-        this.prevRepId = this.rep.repId;
+        // if (
+        //   common.isDefined(this.prevRepId) &&
+        //   this.rep.repId === this.prevRepId
+        //   ) {
+        // console.log('rep$ combined - prev repId is the same');
+        if (common.isDefined(this.agGridApi)) {
+          this.uiQuery.getValue().repSelectedNodes.forEach(node => {
+            let rowNode = this.agGridApi.getRowNode(node.id);
+            if (common.isDefined(rowNode)) {
+              // console.log('rep$ combined - set select node');
+              rowNode.setSelected(true);
+            }
+          });
+        }
+        // }
+
+        // this.prevRepId = this.rep.repId;
 
         this.cd.detectChanges();
       }
@@ -293,17 +297,15 @@ export class RepComponent {
 
   queryParams$ = this.route.queryParams.pipe(
     tap(queryParams => {
-      // console.log('queryParams tap');
+      // console.log('queryParams - tap')
 
       let selectRows = queryParams['selectRows'];
-      // console.log('selectRows', selectRows);
 
       let nodeIds: string[] = common.isDefined(selectRows)
         ? selectRows.split('-')
         : [];
 
       setTimeout(() => {
-        // console.log('this.agGridApi', this.agGridApi);
         if (common.isUndefined(this.agGridApi)) {
           return;
         }
@@ -311,10 +313,12 @@ export class RepComponent {
           nodeIds.forEach(nodeId => {
             let rowNode = this.agGridApi.getRowNode(nodeId);
             if (common.isDefined(rowNode)) {
+              // console.log('queryParams - set select node')
               rowNode.setSelected(true);
             }
           });
         } else {
+          // console.log('queryParams - deselect', nodeIds);
           this.agGridApi.deselectAll();
         }
         this.cd.detectChanges();

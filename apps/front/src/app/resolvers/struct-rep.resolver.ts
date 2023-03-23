@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
+import equal from 'fast-deep-equal';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -129,11 +130,22 @@ export class StructRepResolver implements Resolve<Observable<boolean>> {
 
             this.repQuery.update(resp.payload.rep);
 
-            this.uiQuery.updatePart({
-              timezone: resp.payload.rep.timezone,
-              timeSpec: resp.payload.rep.timeSpec,
-              timeRangeFraction: resp.payload.rep.timeRangeFraction
-            });
+            let uiState = this.uiQuery.getValue();
+
+            if (
+              uiState.timezone !== resp.payload.rep.timezone ||
+              uiState.timeSpec !== resp.payload.rep.timeSpec ||
+              !equal(
+                uiState.timeRangeFraction,
+                resp.payload.rep.timeRangeFraction
+              )
+            ) {
+              this.uiQuery.updatePart({
+                timezone: resp.payload.rep.timezone,
+                timeSpec: resp.payload.rep.timeSpec,
+                timeRangeFraction: resp.payload.rep.timeRangeFraction
+              });
+            }
 
             return true;
           } else if (
