@@ -76,6 +76,7 @@ export class FractionComponent {
 
   fieldResultEnum = common.FieldResultEnum;
 
+  @Input() isDisabled: boolean;
   @Input() fieldResult: common.FieldResultEnum;
 
   @Input() fraction: common.Fraction;

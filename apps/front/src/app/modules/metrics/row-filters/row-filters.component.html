@@ -102,6 +102,7 @@
           [fieldResult]="filter.field.result"
           [fraction]="fraction"
           [fractionIndex]="fractionIndex"
+          [isDisabled]="filter.parameterType === parameterTypeFormula"
           [isFirst]="isFirst"
           (fractionUpdate)="fractionUpdate(filter, $event)"
         >

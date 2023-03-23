@@ -18,16 +18,15 @@ import { FractionTypeItem } from '../fraction.component';
 })
 export class FractionStringComponent implements OnInit {
   defaultStringValue = 'abc';
-
   fractionTypeEnum = common.FractionTypeEnum;
 
+  @Input() isDisabled: boolean;
   @Input() fraction: common.Fraction;
   @Input() fractionIndex: number;
   @Input() isFirst: boolean;
 
   @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
 
-  fractionTypeForm: FormGroup;
   fractionForm: FormGroup;
 
   fractionStringTypesList: FractionTypeItem[] = [
@@ -88,14 +87,7 @@ export class FractionStringComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
-    this.buildFractionTypeForm();
     this.buildFractionForm();
-  }
-
-  buildFractionTypeForm() {
-    this.fractionTypeForm = this.fb.group({
-      fractionType: [this.fraction.type]
-    });
   }
 
   buildFractionForm() {
