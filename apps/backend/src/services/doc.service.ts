@@ -15,13 +15,25 @@ export class DocService {
     private dbService: DbService
   ) {}
 
-  async calculateData(item: {
-    rep: common.RepX;
+  async calculateParameters(item: {
+    // rep: common.RepX;
+    repId: string;
+    structId: string;
+    rows: common.Row[];
     timezone: string;
     timeSpec: common.TimeSpecEnum;
     timeRangeFraction: common.Fraction;
+    traceId: string;
   }) {
-    let { rep, timeSpec, timeRangeFraction, timezone } = item;
+    let {
+      repId,
+      structId,
+      rows,
+      timeSpec,
+      timeRangeFraction,
+      timezone,
+      traceId
+    } = item;
 
     let sender = axios.create({ baseURL: 'http://grist:8484/' });
 
@@ -36,7 +48,273 @@ export class DocService {
 
     let createDoc = {
       // name: common.makeId()
-      name: `${rep.repId}-${rep.structId}`
+      name: `parameters - traceId - ${traceId} - repId - ${repId} - structId - ${structId}`
+    };
+
+    let createDocResp = await sender.post(
+      `api/workspaces/2/docs`,
+      createDoc,
+      {}
+    );
+
+    let docId = createDocResp.data;
+
+    let parametersTableId = 'Parameters';
+
+    let rowParValueColumns: common.Parameter[] = [];
+
+    let valueColumns: any[] = [];
+    let stringColumns: any[] = [];
+    let jsonColumns: any[] = [];
+
+    let record: any = {
+      id: 1,
+      fields: {}
+    };
+
+    rows
+      .filter(row => row.rowType === common.RowTypeEnum.Metric)
+      .forEach(row => {
+        let rowParColumns: any[] = [];
+
+        if (common.isDefined(row.parameters)) {
+          row.parameters.forEach(parameter => {
+            let columnValue: any;
+            let columnString: any;
+            let columnJson: any;
+
+            if (
+              parameter.parameterType === common.ParameterTypeEnum.Formula &&
+              common.isDefined(parameter.formula)
+            ) {
+              columnValue = {
+                id: parameter.parameterId,
+                fields: {
+                  type: 'Text',
+                  isFormula: true,
+                  formula: parameter.formula
+                }
+              };
+
+              columnString = {
+                id: `STRING_${parameter.parameterId}`,
+                fields: {
+                  type: 'Text',
+                  isFormula: true,
+                  formula: `str($${parameter.parameterId})`
+                }
+              };
+
+              columnJson = {
+                id: `JSON_${parameter.parameterId}`,
+                fields: {
+                  type: 'Text',
+                  isFormula: true,
+                  formula: `import json
+return json.dumps($STRING_${parameter.parameterId})`
+                }
+              };
+            } else {
+              columnValue = {
+                id: parameter.parameterId,
+                fields: {
+                  type: 'Text',
+                  isFormula: false
+                }
+              };
+
+              record.fields[`${parameter.parameterId}`] =
+                JSON.stringify(parameter);
+
+              columnString = {
+                id: `STRING_${parameter.parameterId}`,
+                fields: {
+                  type: 'Text',
+                  isFormula: true,
+                  formula: `str($${parameter.parameterId})`
+                }
+              };
+
+              columnJson = {
+                id: `JSON_${parameter.parameterId}`,
+                fields: {
+                  type: 'Text',
+                  isFormula: true,
+                  formula: `import json
+return json.dumps($STRING_${parameter.parameterId})`
+                }
+              };
+            }
+
+            rowParColumns.push(columnValue);
+
+            valueColumns.push(columnValue);
+            stringColumns.push(columnString);
+            jsonColumns.push(columnJson);
+          });
+        }
+
+        let parametersColumnValue = {
+          id: `${row.rowId}_PARAMETERS`,
+          fields: {
+            type: 'Text',
+            isFormula: true,
+            formula: `import json
+return json.loads($JSON_${row.rowId}_PARAMETERS)`
+          }
+        };
+
+        let str = rowParColumns
+          .map(column => `$${column.id}`)
+          .join(' + ", " + ');
+
+        let parametersColumnString = {
+          id: `STRING_${row.rowId}_PARAMETERS`,
+          fields: {
+            type: 'Text',
+            isFormula: true,
+            formula: common.isDefined(row.parametersFormula)
+              ? row.parametersFormula
+              : `"[" + ${str} + "]"`
+          }
+        };
+
+        let parametersColumnJson = {
+          id: `JSON_${row.rowId}_PARAMETERS`,
+          fields: {
+            type: 'Text',
+            isFormula: true,
+            formula: `import json
+return json.dumps($STRING_${row.rowId}_PARAMETERS)`
+          }
+        };
+
+        console.log(parametersColumnValue);
+        console.log(parametersColumnString);
+        console.log(parametersColumnJson);
+
+        valueColumns.push(parametersColumnValue);
+        stringColumns.push(parametersColumnString);
+        jsonColumns.push(parametersColumnJson);
+      });
+
+    let columns: any[] = [...valueColumns, ...stringColumns, ...jsonColumns];
+
+    // console.log(columns);
+
+    let createTables = {
+      tables: [
+        {
+          id: parametersTableId,
+          columns: columns
+        }
+      ]
+    };
+
+    let createTablesResp = await sender.post(
+      `api/docs/${docId}/tables`,
+      createTables,
+      {}
+    );
+
+    let createRecordsResp = await sender.post(
+      `api/docs/${docId}/tables/${parametersTableId}/records`,
+      { records: [record] },
+      {}
+    );
+
+    let getRecordsResp = await sender.get(
+      `api/docs/${docId}/tables/${parametersTableId}/records`,
+      {}
+    );
+
+    let lastCalculatedTs = Number(helper.makeTs());
+
+    let newKits: entities.KitEntity[] = [];
+
+    let firstRecord = getRecordsResp.data.records[0];
+
+    console.log('firstRecord', firstRecord);
+
+    rows
+      .filter(row => row.rowType === common.RowTypeEnum.Metric)
+      .forEach(row => {
+        if (common.isDefined(row.parametersFormula)) {
+          row.parameters = common.isDefined(
+            firstRecord.fields?.[`STRING_${row.rowId}_PARAMETERS`]
+          )
+            ? JSON.parse(firstRecord.fields[`STRING_${row.rowId}_PARAMETERS`])
+            : ['any'];
+        } else {
+          row.parameters.forEach(p => {
+            if (
+              p.parameterType === common.ParameterTypeEnum.Formula ||
+              common.isDefined(p.formula)
+            ) {
+              p.conditions = common.isDefined(firstRecord.fields)
+                ? JSON.parse(firstRecord.fields[`STRING_${p.parameterId}`])
+                    .conditions
+                : ['any'];
+            }
+          });
+        }
+
+        let rc = row.rcs.find(
+          y =>
+            y.fractionBrick === timeRangeFraction.brick &&
+            y.timeSpec === timeSpec &&
+            y.timezone === timezone
+        );
+
+        rc.kitId = common.makeId();
+
+        let newKit: entities.KitEntity = {
+          struct_id: structId,
+          kit_id: rc.kitId,
+          rep_id: repId,
+          data: row.parameters,
+          server_ts: undefined
+        };
+        newKits.push(newKit);
+
+        rc.lastCalculatedTs = lastCalculatedTs;
+      });
+
+    if (newKits.length > 0) {
+      await this.dbService.writeRecords({
+        modify: false,
+        records: {
+          kits: newKits
+        }
+      });
+    }
+
+    return rows;
+  }
+
+  async calculateData(item: {
+    rep: common.RepX;
+    timezone: string;
+    timeSpec: common.TimeSpecEnum;
+    timeRangeFraction: common.Fraction;
+    traceId: string;
+  }) {
+    let { rep, timeSpec, timeRangeFraction, timezone, traceId } = item;
+
+    let sender = axios.create({ baseURL: 'http://grist:8484/' });
+
+    axios.defaults.withCredentials = true;
+
+    let backendGristApiKey =
+      this.cs.get<interfaces.Config['backendGristApiKey']>(
+        'backendGristApiKey'
+      );
+
+    sender.defaults.headers['Authorization'] = `Bearer ${backendGristApiKey}`;
+
+    let createDoc = {
+      // name: common.makeId()
+      name: `data - traceId - ${traceId} - repId - ${rep.repId} - structId - ${rep.structId}`
     };
 
     let createDocResp = await sender.post(

@@ -62,6 +62,7 @@ export function wrapReps(item: {
           showChart: helper.toBooleanFromLowercaseString(row.show_chart),
           formula: row.formula,
           formulaDeps: undefined,
+          rcs: [],
           rqs: [],
           query: undefined,
           mconfig: undefined,

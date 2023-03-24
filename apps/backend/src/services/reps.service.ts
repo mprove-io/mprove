@@ -113,6 +113,7 @@ export class RepsService {
         formula: undefined,
         formulaDeps: undefined,
         rqs: [],
+        rcs: [],
         mconfig: undefined,
         query: undefined,
         hasAccessToModel: false,
@@ -200,6 +201,7 @@ export class RepsService {
         formula: undefined,
         formulaDeps: undefined,
         rqs: [],
+        rcs: [],
         mconfig: undefined,
         query: undefined,
         hasAccessToModel: false,
@@ -265,6 +267,7 @@ export class RepsService {
             formula: undefined,
             formulaDeps: undefined,
             rqs: [],
+            rcs: [],
             mconfig: undefined,
             query: undefined,
             hasAccessToModel: false,
@@ -327,6 +330,7 @@ export class RepsService {
         formula: rowChange.formula,
         formulaDeps: undefined,
         rqs: [],
+        rcs: [],
         mconfig: undefined,
         query: undefined,
         hasAccessToModel: false,
@@ -363,6 +367,7 @@ export class RepsService {
         formula: undefined,
         formulaDeps: undefined,
         rqs: [],
+        rcs: [],
         mconfig: undefined,
         query: undefined,
         hasAccessToModel: false,
@@ -626,6 +631,74 @@ export class RepsService {
       }
     });
 
+    let parKitIds: string[] = [];
+
+    await forEachSeries(rep.rows, async x => {
+      let rc = x.rcs.find(
+        y =>
+          y.fractionBrick === timeRangeFraction.brick &&
+          y.timeSpec === timeSpec &&
+          y.timezone === timezone
+      );
+
+      if (common.isDefined(rc)) {
+        parKitIds.push(rc.kitId);
+      } else {
+        let newRc: common.Rc = {
+          fractionBrick: timeRangeFraction.brick,
+          timeSpec: timeSpec,
+          timezone: timezone,
+          kitId: undefined,
+          lastCalculatedTs: 0
+        };
+
+        x.rcs.push(newRc);
+      }
+    });
+
+    let parKits: entities.KitEntity[] = [];
+    if (parKitIds.length > 0) {
+      parKits = await this.kitsRepository.find({
+        where: {
+          kit_id: In(parKitIds),
+          struct_id: rep.struct_id
+        }
+      });
+    }
+
+    rep.rows.forEach(row => {
+      let rc = row.rcs.find(
+        y =>
+          y.fractionBrick === timeRangeFraction.brick &&
+          y.timeSpec === timeSpec &&
+          y.timezone === timezone
+      );
+
+      row.parameters = common.isDefined(rc.kitId)
+        ? parKits.find(k => k.kit_id === rc.kitId).data
+        : common.isDefined(row.parameters)
+        ? row.parameters
+        : [];
+    });
+
+    let isCalculateParameters = rep.rows.length > 0;
+
+    if (isCalculateParameters === true) {
+      console.log('isCalculateParameters true');
+
+      rep.rows = await this.docService.calculateParameters({
+        repId: rep.rep_id,
+        structId: rep.struct_id,
+        rows: rep.rows,
+        timezone: timezone,
+        timeSpec: timeSpec,
+        timeRangeFraction: timeRangeFraction,
+        traceId: traceId
+      });
+    } else {
+      console.log('isCalculateParameters false');
+    }
+
     let newMconfigs: common.Mconfig[] = [];
     let newQueries: common.Query[] = [];
 
@@ -690,6 +763,9 @@ export class RepsService {
                 // parameter.parameterType === common.ParameterTypeEnum.Formula &&
                 common.isDefined(parameter.formula)
               ) {
+                // console.log('parameter');
+                // console.log(parameter);
+
                 let toBlockmlGetFractionsRequest: apiToBlockml.ToBlockmlGetFractionsRequest =
                   {
                     info: {
@@ -701,9 +777,11 @@ export class RepsService {
                       bricks:
                         // parameter.parameterType ===
                         // common.ParameterTypeEnum.Formula
-                        common.isDefined(parameter.formula)
-                          ? ['any']
-                          : parameter.conditions,
+
+                        // common.isDefined(parameter.formula)
+                        //   ? ['any']
+                        //   :
+                        parameter.conditions,
                       result: parameter.result
                     }
                   };
@@ -941,23 +1019,24 @@ export class RepsService {
       );
     });
 
-    let isCalculate =
+    let isCalculateData =
       rep.rep_id !== common.EMPTY_REP_ID &&
       queryRows.length === queryRowsCompleted.length &&
       (queryRowsCompleted.length !== queryRowsCompletedCalculated.length ||
         formulaRows.length !== formulaRowsCalculated.length);
 
-    if (isCalculate === true) {
-      console.log('isCalculate true');
+    if (isCalculateData === true) {
+      console.log('isCalculateData true');
 
       repApi = await this.docService.calculateData({
         rep: repApi,
         timezone: timezone,
         timeSpec: timeSpec,
-        timeRangeFraction: timeRangeFraction
+        timeRangeFraction: timeRangeFraction,
+        traceId: traceId
       });
     } else {
-      console.log('isCalculate false');
+      console.log('isCalculateData false');
 
       let recordsByColumn = this.docService.makeRecordsByColumn({
         rep: repApi,
@@ -1001,7 +1080,7 @@ export class RepsService {
 
     if (
       isSaveToDb === true ||
-      isCalculate === true ||
+      isCalculateData === true ||
       newMconfigs.length > 0 ||
       newQueries.length > 0
     ) {

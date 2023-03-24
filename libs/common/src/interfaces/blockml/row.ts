@@ -4,6 +4,7 @@ import { enums } from '~common/barrels/enums';
 import { MconfigX } from '../backend/mconfig-x';
 import { Parameter } from './parameter';
 import { Query } from './query';
+import { Rc } from './rc';
 import { Rq } from './rq';
 
 export class Row {
@@ -51,6 +52,10 @@ export class Row {
   formulaDeps: string[];
 
   showChart: boolean;
+
+  @ValidateNested()
+  @Type(() => Rc)
+  rcs: Rc[];
 
   @ValidateNested()
   @Type(() => Rq)
