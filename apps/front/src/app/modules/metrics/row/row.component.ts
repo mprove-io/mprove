@@ -17,6 +17,7 @@ import { DataRow } from '../rep/rep.component';
 
 export interface ParameterFilter extends common.FilterX {
   parameterType: common.ParameterTypeEnum;
+  formula: string;
 }
 
 interface ModelFieldY extends common.ModelField {
@@ -146,13 +147,16 @@ export class RowComponent {
         this.parametersFilters =
           this.repSelectedNode.data.mconfig.extendedFilters
             .filter(filter => filter.fieldId !== timeFieldIdSpec)
-            .map(filter =>
-              Object.assign({}, filter, {
-                parameterType: this.repSelectedNode.data.parameters.find(
-                  y => y.fieldId === filter.fieldId
-                ).parameterType
-              } as ParameterFilter)
-            );
+            .map(filter => {
+              let parameter = this.repSelectedNode.data.parameters.find(
+                y => y.fieldId === filter.fieldId
+              );
+
+              return Object.assign({}, filter, {
+                parameterType: parameter.parameterType,
+                formula: parameter.formula
+              } as ParameterFilter);
+            });
       }
 
       if (common.isDefined(this.repSelectedNode)) {

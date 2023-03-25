@@ -13,6 +13,7 @@ import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
 import { MetricsTreeComponent } from './metrics-tree/metrics-tree.component';
 import { MetricsComponent } from './metrics.component';
+import { ParameterFormulaComponent } from './parameter-formula/parameter-formula.component';
 import { RepOptionsComponent } from './rep-options/rep-options.component';
 import { ChartHeaderComponent } from './rep/chart-header/chart-header.component';
 import { ChartRendererComponent } from './rep/chart-renderer/chart-renderer.component';
@@ -47,7 +48,8 @@ import { RowComponent } from './row/row.component';
     ChartSettingsComponent,
     RowIdHeaderComponent,
     RowIdRendererComponent,
-    RowFiltersComponent
+    RowFiltersComponent,
+    ParameterFormulaComponent
   ],
   imports: [
     CommonModule,

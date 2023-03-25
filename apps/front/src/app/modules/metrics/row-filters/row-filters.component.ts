@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { IRowNode } from 'ag-grid-community';
 import { RepQuery } from '~front/app/queries/rep.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -16,10 +16,6 @@ import { ParameterFilter } from '../row/row.component';
 // implements OnChanges
 export class RowFiltersComponent {
   parameterTypeFormula = common.ParameterTypeEnum.Formula;
-
-  parFormulaForm: FormGroup = this.fb.group({
-    formula: [undefined, [Validators.required]]
-  });
 
   @Input()
   repSelectedNode: IRowNode<DataRow>;
@@ -258,5 +254,38 @@ export class RowFiltersComponent {
     });
   }
 
-  parFormulaFormBlur() {}
+  parameterFormulaUpdate(
+    eventParameterFormulaUpdate: interfaces.EventParameterFormulaUpdate,
+    filterExtended: common.FilterX
+  ) {
+    let newParameters = [...this.repSelectedNode.data.parameters];
+
+    let parametersIndex = newParameters.findIndex(
+      p => p.fieldId === filterExtended.fieldId
+    );
+
+    let newParameter = Object.assign({}, newParameters[parametersIndex], {
+      formula: eventParameterFormulaUpdate.formula
+    } as common.Parameter);
+
+    newParameters = [
+      ...newParameters.slice(0, parametersIndex),
+      newParameter,
+      ...newParameters.slice(parametersIndex + 1)
+    ];
+
+    let rep = this.repQuery.getValue();
+
+    let rowChange: common.RowChange = {
+      rowId: this.repSelectedNode.data.rowId,
+      parameters: newParameters
+    };
+
+    this.repService.modifyRows({
+      rep: rep,
+      changeType: common.ChangeTypeEnum.EditParameters,
+      rowChange: rowChange,
+      rowIds: undefined
+    });
+  }
 }

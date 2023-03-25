@@ -28,28 +28,12 @@
         ></m-formula-icon>
       </button>
 
-      <div
-        *ngIf="filter.parameterType === parameterTypeFormula"
-        [formGroup]="parFormulaForm"
-        class="relative ml-5 flex flex-grow"
-      >
-        <textarea
-          data-cy="parFormulaInput"
-          class="form-input border-gray3 focus:border-blue3 h-11 max-h-[100px] min-h-[44px] w-full min-w-[300px] resize-y rounded"
-          [ngClass]="{
-            'border-red-600':
-              parFormulaForm.controls['formula'].invalid &&
-              parFormulaForm.controls['formula'].touched
-          }"
-          formControlName="formula"
-          placeholder="$ROW_PARAMETER_"
-          (blur)="parFormulaFormBlur()"
-        ></textarea>
-
-        <m-validation
-          class="absolute -bottom-[22px] left-0"
-          [control]="parFormulaForm.controls['formula']"
-        ></m-validation>
+      <div *ngIf="filter.parameterType === parameterTypeFormula">
+        <m-parameter-formula
+          [parameterFilter]="filter"
+          [isDisabled]="filter.parameterType === parameterTypeFormula"
+          (parameterFormulaUpdate)="parameterFormulaUpdate($event, filter)"
+        ></m-parameter-formula>
       </div>
 
       <div

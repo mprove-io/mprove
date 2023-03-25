@@ -1,0 +1,19 @@
+<div [formGroup]="parameterFormulaForm" class="relative ml-5 flex flex-grow">
+  <textarea
+    data-cy="parameterFormulaInput"
+    class="form-input border-gray3 focus:border-blue3 h-11 max-h-[100px] min-h-[44px] w-full min-w-[300px] resize-y rounded"
+    [ngClass]="{
+      'border-red-600':
+        parameterFormulaForm.controls['formula'].invalid &&
+        parameterFormulaForm.controls['formula'].touched
+    }"
+    formControlName="formula"
+    placeholder="$ROW_PARAMETER_"
+    (blur)="parameterFormulaBlur()"
+  ></textarea>
+
+  <m-validation
+    class="absolute -bottom-[22px] left-0"
+    [control]="parameterFormulaForm.controls['formula']"
+  ></m-validation>
+</div>
