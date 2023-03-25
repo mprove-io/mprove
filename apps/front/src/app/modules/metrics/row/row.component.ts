@@ -284,24 +284,28 @@ export class RowComponent {
   }
 
   parametersFormulaBlur() {
-    // let value = this.formulaForm.controls['formula'].value;
-    // if (
-    //   !this.formulaForm.valid ||
-    //   this.repSelectedNode.data.formula === value
-    // ) {
-    //   return;
-    // }
-    // let rep = this.repQuery.getValue();
-    // let rowChange: common.RowChange = {
-    //   rowId: this.repSelectedNode.data.rowId,
-    //   formula: value
-    // };
-    // this.repService.modifyRows({
-    //   rep: rep,
-    //   changeType: common.ChangeTypeEnum.EditFormula,
-    //   rowChange: rowChange,
-    //   rowIds: undefined
-    // });
+    let value = this.parametersFormulaForm.controls['formula'].value;
+
+    if (
+      !this.parametersFormulaForm.valid ||
+      this.repSelectedNode.data.parametersFormula === value
+    ) {
+      return;
+    }
+
+    let rep = this.repQuery.getValue();
+
+    let rowChange: common.RowChange = {
+      rowId: this.repSelectedNode.data.rowId,
+      parametersFormula: value
+    };
+
+    this.repService.modifyRows({
+      rep: rep,
+      changeType: common.ChangeTypeEnum.EditParameters,
+      rowChange: rowChange,
+      rowIds: undefined
+    });
   }
 
   formatNumberBlur() {

@@ -446,6 +446,7 @@ export class RepsService {
         parameters: rowChange.parameters,
         parametersFormula: rowChange.parametersFormula,
         rqs: [],
+        rcs: [],
         records: [],
         mconfig: undefined,
         query: undefined
