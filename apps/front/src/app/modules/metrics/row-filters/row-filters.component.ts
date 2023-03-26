@@ -231,7 +231,8 @@ export class RowFiltersComponent {
       newParameter = Object.assign({}, parameter, {
         parameterType: common.ParameterTypeEnum.Formula,
         conditions: ['any'],
-        formula: `return ['any']`
+        formula: `import json
+return json.dumps({"conditions":["any"]})`
       } as common.Parameter);
     }
 
