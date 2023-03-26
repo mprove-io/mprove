@@ -77,7 +77,10 @@ export class DocService {
       .forEach(row => {
         let rowParColumns: any[] = [];
 
-        if (common.isDefined(row.parameters)) {
+        if (
+          common.isUndefined(row.parametersFormula) &&
+          common.isDefined(row.parameters)
+        ) {
           row.parameters.forEach(parameter => {
             let columnValue: any;
             let columnString: any;
@@ -200,6 +203,9 @@ return json.dumps($STRING_${row.rowId}_PARAMETERS)`
 
     let columns: any[] = [...valueColumns, ...stringColumns, ...jsonColumns];
 
+    console.log('columns');
+
+    columns.forEach(c => console.log(c));
     // console.log(columns);
 
     let createTables = {
@@ -211,17 +217,26 @@ return json.dumps($STRING_${row.rowId}_PARAMETERS)`
       ]
     };
 
+    console.log('createTables');
+
     let createTablesResp = await sender.post(
       `api/docs/${docId}/tables`,
       createTables,
       {}
     );
 
+    console.log('createRecords');
+
+    console.log('record');
+    console.log([record]);
+
     let createRecordsResp = await sender.post(
       `api/docs/${docId}/tables/${parametersTableId}/records`,
       { records: [record] },
       {}
     );
+
+    console.log('getRecords');
 
     let getRecordsResp = await sender.get(
       `api/docs/${docId}/tables/${parametersTableId}/records`,
