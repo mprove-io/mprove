@@ -63,7 +63,6 @@ export class DocService {
 
     let valueColumns: any[] = [];
     let stringColumns: any[] = [];
-    let jsonColumns: any[] = [];
 
     let record: any = {
       id: 1,
@@ -107,16 +106,6 @@ export class DocService {
                   formula: `str($${parameter.parameterId})`
                 }
               };
-
-              columnJson = {
-                id: `JSON_${parameter.parameterId}`,
-                fields: {
-                  type: 'Text',
-                  isFormula: true,
-                  formula: `import json
-return json.dumps($STRING_${parameter.parameterId})`
-                }
-              };
             } else {
               columnValue = {
                 id: parameter.parameterId,
@@ -139,23 +128,12 @@ return json.dumps($STRING_${parameter.parameterId})`
                   formula: `str($${parameter.parameterId})`
                 }
               };
-
-              columnJson = {
-                id: `JSON_${parameter.parameterId}`,
-                fields: {
-                  type: 'Text',
-                  isFormula: true,
-                  formula: `import json
-return json.dumps($STRING_${parameter.parameterId})`
-                }
-              };
             }
 
             rowParColumns.push(columnValue);
 
             valueColumns.push(columnValue);
             stringColumns.push(columnString);
-            jsonColumns.push(columnJson);
           });
         }
 
@@ -164,46 +142,32 @@ return json.dumps($STRING_${parameter.parameterId})`
           fields: {
             type: 'Text',
             isFormula: true,
-            formula: `import json
-return json.loads($JSON_${row.rowId}_PARAMETERS)`
+            formula: common.isDefined(row.parametersFormula)
+              ? row.parametersFormula
+              : `import json
+return json.dumps([${rowParColumns
+                  .map(column => `json.loads($${column.id})`)
+                  .join(', ')}])`
           }
         };
-
-        let str = rowParColumns
-          .map(column => `$${column.id}`)
-          .join(' + ", " + ');
 
         let parametersColumnString = {
           id: `STRING_${row.rowId}_PARAMETERS`,
           fields: {
             type: 'Text',
             isFormula: true,
-            formula: common.isDefined(row.parametersFormula)
-              ? row.parametersFormula
-              : `"[" + ${str} + "]"`
-          }
-        };
-
-        let parametersColumnJson = {
-          id: `JSON_${row.rowId}_PARAMETERS`,
-          fields: {
-            type: 'Text',
-            isFormula: true,
-            formula: `import json
-return json.dumps($STRING_${row.rowId}_PARAMETERS)`
+            formula: `str($${row.rowId}_PARAMETERS)`
           }
         };
 
         // console.log(parametersColumnValue);
         // console.log(parametersColumnString);
-        // console.log(parametersColumnJson);
 
         valueColumns.push(parametersColumnValue);
         stringColumns.push(parametersColumnString);
-        jsonColumns.push(parametersColumnJson);
       });
 
-    let columns: any[] = [...valueColumns, ...stringColumns, ...jsonColumns];
+    let columns: any[] = [...valueColumns, ...stringColumns];
 
     // columns.forEach(c => console.log(c));
 
