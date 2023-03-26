@@ -239,6 +239,8 @@ return json.dumps($STRING_${row.rowId}_PARAMETERS)`
     rows
       .filter(row => row.rowType === common.RowTypeEnum.Metric)
       .forEach(row => {
+        // console.log('row.rowId');
+        // console.log(row.rowId);
         if (common.isDefined(row.parametersFormula)) {
           row.parameters = common.isDefined(
             firstRecord.fields?.[`STRING_${row.rowId}_PARAMETERS`]
@@ -247,6 +249,8 @@ return json.dumps($STRING_${row.rowId}_PARAMETERS)`
             : ['any'];
         } else {
           row.parameters.forEach(p => {
+            // console.log('p');
+            // console.log(p);
             if (
               p.parameterType === common.ParameterTypeEnum.Formula ||
               common.isDefined(p.formula)
@@ -256,6 +260,7 @@ return json.dumps($STRING_${row.rowId}_PARAMETERS)`
                     .conditions
                 : ['any'];
             }
+            // console.log(p.conditions);
           });
         }
 

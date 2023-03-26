@@ -438,6 +438,28 @@ export class RepsService {
           rq.kitId = undefined;
           rq.lastCalculatedTs = 0;
         }
+
+        if (
+          row.rowType === common.RowTypeEnum.Metric
+          //  &&
+          // row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
+        ) {
+          let rq = row.rqs.find(
+            y =>
+              y.fractionBrick === timeRangeFractionBrick &&
+              y.timeSpec === timeSpec &&
+              y.timezone === timezone
+          );
+
+          rq.kitId = undefined;
+          rq.lastCalculatedTs = 0;
+
+          row.rqs = [];
+          row.rcs = [];
+          row.records = [];
+          row.mconfig = undefined;
+          row.query = undefined;
+        }
       });
 
       // let metric = metrics.find(m => m.metric_id === rowChange.metricId);
@@ -675,11 +697,11 @@ export class RepsService {
           y.timezone === timezone
       );
 
-      row.parameters = common.isDefined(rc.kitId)
-        ? parKits.find(k => k.kit_id === rc.kitId).data
-        : common.isDefined(row.parameters)
-        ? row.parameters
-        : [];
+      row.parameters =
+        // common.isDefined(rc.kitId)
+        //   ? parKits.find(k => k.kit_id === rc.kitId).data
+        //   :
+        common.isDefined(row.parameters) ? row.parameters : [];
     });
 
     let isCalculateParameters = rep.rows.length > 0;
