@@ -1,19 +1,26 @@
-<div [formGroup]="parameterFormulaForm" class="relative ml-5 flex flex-grow">
-  <textarea
-    data-cy="parameterFormulaInput"
-    class="form-input border-gray3 focus:border-blue3 h-11 max-h-[100px] min-h-[44px] w-full min-w-[300px] resize-y rounded"
-    [ngClass]="{
-      'border-red-600':
-        parameterFormulaForm.controls['formula'].invalid &&
-        parameterFormulaForm.controls['formula'].touched
-    }"
-    formControlName="formula"
-    placeholder="$ROW_PARAMETER_"
-    (blur)="parameterFormulaBlur()"
-  ></textarea>
+<div
+  [formGroup]="parameterFormulaForm"
+  class="relative ml-5 mr-5 flex flex-1 flex-row"
+>
+  <div class="flex w-2/3">
+    <textarea
+      data-cy="parameterFormulaInput"
+      class="form-input border-gray3 focus:border-blue3 flex max-h-[100px] min-h-[100px] w-full resize-y rounded"
+      [ngClass]="{
+        'border-red-600':
+          parameterFormulaForm.controls['formula'].invalid &&
+          parameterFormulaForm.controls['formula'].touched
+      }"
+      formControlName="formula"
+      placeholder="Formula to calculate a parameter based on the parameters related to any row in the report"
+      (blur)="parameterFormulaBlur()"
+    ></textarea>
 
-  <m-validation
-    class="absolute -bottom-[22px] left-0"
-    [control]="parameterFormulaForm.controls['formula']"
-  ></m-validation>
+    <m-validation
+      class="absolute -bottom-[22px] left-0"
+      [control]="parameterFormulaForm.controls['formula']"
+    ></m-validation>
+  </div>
+
+  <!-- <div class="flex flex-1"></div> -->
 </div>

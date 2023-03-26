@@ -17,25 +17,6 @@
         <m-trash-icon></m-trash-icon>
       </button>
 
-      <button
-        class="ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
-        (click)="toggleParFormula(filter)"
-      >
-        <m-formula-icon
-          [ngClass]="{
-            'text-blue-500': filter.parameterType === parameterTypeFormula
-          }"
-        ></m-formula-icon>
-      </button>
-
-      <div *ngIf="filter.parameterType === parameterTypeFormula">
-        <m-parameter-formula
-          [parameterFilter]="filter"
-          [isDisabled]="filter.parameterType === parameterTypeFormula"
-          (parameterFormulaUpdate)="parameterFormulaUpdate($event, filter)"
-        ></m-parameter-formula>
-      </div>
-
       <div
         tippy="Disabled because the formula is used"
         [isEnabled]="filter.parameterType === parameterTypeFormula"
@@ -71,9 +52,32 @@
           }}</div>
         </div>
       </div>
+
+      <button
+        class="ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
+        (click)="toggleParFormula(filter)"
+      >
+        <m-formula-icon
+          [ngClass]="{
+            'text-blue-500': filter.parameterType === parameterTypeFormula
+          }"
+        ></m-formula-icon>
+      </button>
     </div>
 
-    <div>
+    <div class="flex w-full flex-col">
+      <div
+        *ngIf="filter.parameterType === parameterTypeFormula"
+        class="mb-6 flex flex-grow flex-row"
+      >
+        <m-parameter-formula
+          class="w-full"
+          [parameterFilter]="filter"
+          [isDisabled]="filter.parameterType === parameterTypeFormula"
+          (parameterFormulaUpdate)="parameterFormulaUpdate($event, filter)"
+        ></m-parameter-formula>
+      </div>
+
       <div
         class="flex flex-row items-start justify-start"
         *ngFor="
