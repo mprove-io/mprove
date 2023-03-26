@@ -61,8 +61,6 @@ export class DocService {
 
     let parametersTableId = 'Parameters';
 
-    let rowParValueColumns: common.Parameter[] = [];
-
     let valueColumns: any[] = [];
     let stringColumns: any[] = [];
     let jsonColumns: any[] = [];
@@ -81,6 +79,8 @@ export class DocService {
           common.isUndefined(row.parametersFormula) &&
           common.isDefined(row.parameters)
         ) {
+          // console.log('--- rowID');
+          // console.log(row.rowId);
           row.parameters.forEach(parameter => {
             let columnValue: any;
             let columnString: any;
@@ -125,6 +125,8 @@ return json.dumps($STRING_${parameter.parameterId})`
                   isFormula: false
                 }
               };
+
+              // console.log('add field')
 
               record.fields[`${parameter.parameterId}`] =
                 JSON.stringify(parameter);
@@ -192,9 +194,9 @@ return json.dumps($STRING_${row.rowId}_PARAMETERS)`
           }
         };
 
-        console.log(parametersColumnValue);
-        console.log(parametersColumnString);
-        console.log(parametersColumnJson);
+        // console.log(parametersColumnValue);
+        // console.log(parametersColumnString);
+        // console.log(parametersColumnJson);
 
         valueColumns.push(parametersColumnValue);
         stringColumns.push(parametersColumnString);
@@ -203,10 +205,7 @@ return json.dumps($STRING_${row.rowId}_PARAMETERS)`
 
     let columns: any[] = [...valueColumns, ...stringColumns, ...jsonColumns];
 
-    console.log('columns');
-
-    columns.forEach(c => console.log(c));
-    // console.log(columns);
+    // columns.forEach(c => console.log(c));
 
     let createTables = {
       tables: [

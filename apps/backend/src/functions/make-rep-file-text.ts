@@ -65,8 +65,13 @@ export function makeRepFileText(item: {
             : struct.currency_suffix === x.currencySuffix
             ? undefined
             : x.currencySuffix,
+        parameters_formula: common.isDefined(x.parametersFormula)
+          ? x.parametersFormula
+          : undefined,
         parameters:
-          common.isDefined(x.parameters) && x.parameters.length > 0
+          common.isUndefined(x.parametersFormula) &&
+          common.isDefined(x.parameters) &&
+          x.parameters.length > 0
             ? x.parameters.map(parameter => {
                 let p: common.FileRepRowParameter = {
                   id: parameter.parameterId,
@@ -74,7 +79,9 @@ export function makeRepFileText(item: {
                   field: parameter.fieldId,
                   result: parameter.result,
                   formula: parameter.formula,
-                  conditions: parameter.conditions,
+                  conditions: common.isUndefined(parameter.formula)
+                    ? parameter.conditions
+                    : undefined,
                   value: parameter.value
                 };
 

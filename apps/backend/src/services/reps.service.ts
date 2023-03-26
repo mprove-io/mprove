@@ -809,7 +809,7 @@ export class RepsService {
                     }
                   };
 
-                console.log(toBlockmlGetFractionsRequest.payload);
+                // console.log(toBlockmlGetFractionsRequest.payload);
 
                 let blockmlGetFractionsResponse =
                   await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlGetFractionsResponse>(
