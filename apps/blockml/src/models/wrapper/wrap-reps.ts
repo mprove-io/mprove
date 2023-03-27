@@ -43,7 +43,7 @@ export function wrapReps(item: {
         );
 
         let rowApi: common.Row = {
-          rowId: row.id,
+          rowId: row.row_id,
           rowType: row.type,
           name: row.name,
           topLabel:

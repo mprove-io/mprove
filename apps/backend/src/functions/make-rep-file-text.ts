@@ -30,7 +30,7 @@ export function makeRepFileText(item: {
           : undefined;
 
       let row: common.FileRepRow = {
-        id: x.rowId,
+        row_id: x.rowId,
         type: x.rowType,
         name:
           x.rowType === common.RowTypeEnum.Empty ||

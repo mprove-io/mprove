@@ -2,8 +2,8 @@ import { enums } from '~common/barrels/enums';
 import { FileRepRowParameter } from './file-rep-row-parameter';
 
 export interface FileRepRow {
-  id?: string;
-  id_line_num?: number;
+  row_id?: string;
+  row_id_line_num?: number;
 
   name?: string;
   name_line_num?: number;
