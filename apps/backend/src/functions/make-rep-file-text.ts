@@ -75,9 +75,9 @@ export function makeRepFileText(item: {
             ? x.parameters.map(parameter => {
                 let p: common.FileRepRowParameter = {
                   id: parameter.parameterId,
-                  type: parameter.parameterType,
+                  // type: parameter.parameterType,
                   field: parameter.fieldId,
-                  result: parameter.result,
+                  // result: parameter.result,
                   formula: parameter.formula,
                   conditions: common.isUndefined(parameter.formula)
                     ? parameter.conditions

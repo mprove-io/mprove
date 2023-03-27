@@ -83,7 +83,6 @@ export class DocService {
           row.parameters.forEach(parameter => {
             let columnValue: any;
             let columnString: any;
-            let columnJson: any;
 
             if (
               parameter.parameterType === common.ParameterTypeEnum.Formula &&
@@ -115,10 +114,13 @@ export class DocService {
                 }
               };
 
-              // console.log('add field')
+              let prep = {
+                fieldId: parameter.fieldId,
+                conditions: parameter.conditions,
+                result: parameter.result
+              };
 
-              record.fields[`${parameter.parameterId}`] =
-                JSON.stringify(parameter);
+              record.fields[`${parameter.parameterId}`] = JSON.stringify(prep);
 
               columnString = {
                 id: `STRING_${parameter.parameterId}`,
@@ -220,26 +222,43 @@ return json.dumps([${rowParColumns
         // console.log('row.rowId');
         // console.log(row.rowId);
         if (common.isDefined(row.parametersFormula)) {
-          row.parameters = common.isDefined(
-            firstRecord.fields?.[`STRING_${row.rowId}_PARAMETERS`]
-          )
-            ? JSON.parse(firstRecord.fields[`STRING_${row.rowId}_PARAMETERS`])
-            : ['any'];
-        } else {
-          row.parameters.forEach(p => {
-            // console.log('p');
-            // console.log(p);
-            if (
-              p.parameterType === common.ParameterTypeEnum.Formula ||
-              common.isDefined(p.formula)
-            ) {
-              p.conditions = common.isDefined(firstRecord.fields)
-                ? JSON.parse(firstRecord.fields[`STRING_${p.parameterId}`])
-                    .conditions
-                : ['any'];
-            }
-            // console.log(p.conditions);
+          let str = `STRING_${row.rowId}_PARAMETERS`;
+
+          let parsedParameters = common.isDefined(firstRecord.fields?.[str])
+            ? JSON.parse(firstRecord.fields[str])
+            : [];
+
+          parsedParameters.forEach((x: common.Parameter) => {
+            let fieldId = x.fieldId.split('.').join('_').toUpperCase();
+            let parameterId = `${row.rowId}_${fieldId}`;
+            x.parameterId = parameterId;
           });
+
+          return parsedParameters;
+        } else {
+          row.parameters
+            .filter(
+              p =>
+                p.parameterType === common.ParameterTypeEnum.Formula ||
+                common.isDefined(p.formula)
+            )
+            .forEach(p => {
+              // console.log('p');
+              // console.log(p);
+              if (common.isDefined(firstRecord.fields)) {
+                let str = `STRING_${p.parameterId}`;
+
+                let parsedParameter = JSON.parse(firstRecord.fields[str]);
+
+                // TODO: check result match
+
+                p.conditions = common.isDefined(parsedParameter)
+                  ? parsedParameter.conditions
+                  : ['any'];
+              } else {
+                p.conditions = ['any'];
+              }
+            });
         }
 
         let rc = row.rcs.find(
