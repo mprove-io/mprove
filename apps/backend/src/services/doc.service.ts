@@ -234,7 +234,7 @@ return json.dumps([${rowParColumns
             x.parameterId = parameterId;
           });
 
-          return parsedParameters;
+          row.parameters = parsedParameters;
         } else {
           row.parameters
             .filter(
