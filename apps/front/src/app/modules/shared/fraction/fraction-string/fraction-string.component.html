@@ -1,6 +1,6 @@
 <div class="ml-2 flex h-16 flex-row space-x-5">
   <div
-    tippy="Disabled because the formula is used"
+    tippy="Turn off formula to activate control"
     [isEnabled]="isDisabled === true"
   >
     <ng-select
@@ -50,18 +50,25 @@
     <!-- StringIsNotNull -->
     <!-- StringIsNotBlank -->
 
-    <input
-      spellcheck="false"
-      data-cy="fractionStringValueInput"
-      class="form-input border-gray3 focus:border-blue3 h-[36px] w-[404px] rounded"
-      [ngClass]="{
-        'border-red-600':
-          fractionForm.controls['stringValue'].invalid &&
-          fractionForm.controls['stringValue'].touched
-      }"
-      formControlName="stringValue"
-      (blur)="stringValueBlur()"
-    />
+    <div
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
+    >
+      <fieldset [disabled]="isDisabled === true">
+        <input
+          spellcheck="false"
+          data-cy="fractionStringValueInput"
+          class="form-input border-gray3 focus:border-blue3 h-[36px] w-[404px] rounded"
+          [ngClass]="{
+            'border-red-600':
+              fractionForm.controls['stringValue'].invalid &&
+              fractionForm.controls['stringValue'].touched
+          }"
+          formControlName="stringValue"
+          (blur)="stringValueBlur()"
+        />
+      </fieldset>
+    </div>
 
     <m-validation
       [control]="fractionForm.controls['stringValue']"

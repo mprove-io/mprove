@@ -1,6 +1,6 @@
 <div class="ml-2 flex h-16 flex-row space-x-5">
   <div
-    tippy="Disabled because the formula is used"
+    tippy="Turn off formula to activate control"
     [isEnabled]="isDisabled === true"
   >
     <ng-select
@@ -38,21 +38,28 @@
       fraction.type === fractionTypeEnum.NumberIsNotEqualTo
     "
   >
-    <input
-      spellcheck="false"
-      data-cy="fractionNumberValuesInput"
-      class="rows form-input border-gray3 focus:border-blue3 h-[36px] w-[404px] resize-none rounded"
-      [ngClass]="{
-        'border-red-600':
-          numberValuesForm.controls['numberValues'].invalid &&
-          numberValuesForm.controls['numberValues'].touched
-      }"
-      formControlName="numberValues"
-      (blur)="numberValuesBlur()"
-    />
-    <m-validation
-      [control]="numberValuesForm.controls['numberValues']"
-    ></m-validation>
+    <div
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
+    >
+      <fieldset [disabled]="isDisabled === true">
+        <input
+          spellcheck="false"
+          data-cy="fractionNumberValuesInput"
+          class="rows form-input border-gray3 focus:border-blue3 h-[36px] w-[404px] resize-none rounded"
+          [ngClass]="{
+            'border-red-600':
+              numberValuesForm.controls['numberValues'].invalid &&
+              numberValuesForm.controls['numberValues'].touched
+          }"
+          formControlName="numberValues"
+          (blur)="numberValuesBlur()"
+        />
+        <m-validation
+          [control]="numberValuesForm.controls['numberValues']"
+        ></m-validation>
+      </fieldset>
+    </div>
   </form>
 
   <form
@@ -64,22 +71,29 @@
       fraction.type === fractionTypeEnum.NumberIsLessThanOrEqualTo
     "
   >
-    <input
-      spellcheck="false"
-      data-cy="fractionNumberSingleValueInput"
-      class="form-input border-gray3 focus:border-blue3 h-[36px] w-48 rounded"
-      [ngClass]="{
-        'border-red-600':
-          numberSingleValueForm.controls['numberValue1'].invalid &&
-          numberSingleValueForm.controls['numberValue1'].touched
-      }"
-      formControlName="numberValue1"
-      (blur)="numberSingleValueBlur()"
-    />
+    <div
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
+    >
+      <fieldset [disabled]="isDisabled === true">
+        <input
+          spellcheck="false"
+          data-cy="fractionNumberSingleValueInput"
+          class="form-input border-gray3 focus:border-blue3 h-[36px] w-48 rounded"
+          [ngClass]="{
+            'border-red-600':
+              numberSingleValueForm.controls['numberValue1'].invalid &&
+              numberSingleValueForm.controls['numberValue1'].touched
+          }"
+          formControlName="numberValue1"
+          (blur)="numberSingleValueBlur()"
+        />
 
-    <m-validation
-      [control]="numberSingleValueForm.controls['numberValue1']"
-    ></m-validation>
+        <m-validation
+          [control]="numberSingleValueForm.controls['numberValue1']"
+        ></m-validation>
+      </fieldset>
+    </div>
   </form>
 
   <form
@@ -121,18 +135,25 @@
     class="flex flex-row space-x-5"
   >
     <div>
-      <input
-        spellcheck="false"
-        data-cy="fractionNumberBetweenFirstValueInput"
-        class="form-input border-gray3 focus:border-blue3 h-[36px] w-48 rounded"
-        [ngClass]="{
-          'border-red-600':
-            numberBetweenForm.controls['numberBetweenFirstValue'].invalid &&
-            numberBetweenForm.controls['numberBetweenFirstValue'].touched
-        }"
-        formControlName="numberBetweenFirstValue"
-        (blur)="numberBetweenFirstValueBlur()"
-      />
+      <div
+        tippy="Turn off formula to activate control"
+        [isEnabled]="isDisabled === true"
+      >
+        <fieldset [disabled]="isDisabled === true">
+          <input
+            spellcheck="false"
+            data-cy="fractionNumberBetweenFirstValueInput"
+            class="form-input border-gray3 focus:border-blue3 h-[36px] w-48 rounded"
+            [ngClass]="{
+              'border-red-600':
+                numberBetweenForm.controls['numberBetweenFirstValue'].invalid &&
+                numberBetweenForm.controls['numberBetweenFirstValue'].touched
+            }"
+            formControlName="numberBetweenFirstValue"
+            (blur)="numberBetweenFirstValueBlur()"
+          />
+        </fieldset>
+      </div>
 
       <m-validation
         [control]="numberBetweenForm.controls['numberBetweenFirstValue']"
@@ -140,18 +161,26 @@
     </div>
 
     <div>
-      <input
-        spellcheck="false"
-        data-cy="fractionNumberBetweenSecondValueInput"
-        class="form-input border-gray3 focus:border-blue3 h-[36px] w-48 rounded"
-        [ngClass]="{
-          'border-red-600':
-            numberBetweenForm.controls['numberBetweenSecondValue'].invalid &&
-            numberBetweenForm.controls['numberBetweenSecondValue'].touched
-        }"
-        formControlName="numberBetweenSecondValue"
-        (blur)="numberBetweenSecondValueBlur()"
-      />
+      <div
+        tippy="Turn off formula to activate control"
+        [isEnabled]="isDisabled === true"
+      >
+        <fieldset [disabled]="isDisabled === true">
+          <input
+            spellcheck="false"
+            data-cy="fractionNumberBetweenSecondValueInput"
+            class="form-input border-gray3 focus:border-blue3 h-[36px] w-48 rounded"
+            [ngClass]="{
+              'border-red-600':
+                numberBetweenForm.controls['numberBetweenSecondValue']
+                  .invalid &&
+                numberBetweenForm.controls['numberBetweenSecondValue'].touched
+            }"
+            formControlName="numberBetweenSecondValue"
+            (blur)="numberBetweenSecondValueBlur()"
+          />
+        </fieldset>
+      </div>
 
       <m-validation
         [control]="numberBetweenForm.controls['numberBetweenSecondValue']"

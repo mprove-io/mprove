@@ -215,7 +215,7 @@ export class RowFiltersComponent {
       x => x.fieldId === filterExtended.fieldId
     );
 
-    let parameter = this.repSelectedNode.data.parameters.find(
+    let parameter: common.Parameter = this.repSelectedNode.data.parameters.find(
       x => x.fieldId === filterExtended.fieldId
     );
 

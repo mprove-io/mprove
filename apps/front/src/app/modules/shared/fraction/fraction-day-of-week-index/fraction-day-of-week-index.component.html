@@ -1,6 +1,6 @@
 <div class="ml-2 flex h-16 flex-row space-x-5">
   <div
-    tippy="Disabled because the formula is used"
+    tippy="Turn off formula to activate control"
     [isEnabled]="isDisabled === true"
   >
     <ng-select
@@ -38,18 +38,27 @@
       fraction.type === fractionTypeEnum.DayOfWeekIndexIsNotEqualTo
     "
   >
-    <input
-      spellcheck="false"
-      data-cy="fractionDayOfWeekIndexValuesInput"
-      class="rows form-input border-gray3 focus:border-blue3 h-[36px] w-[404px] resize-none rounded"
-      [ngClass]="{
-        'border-red-600':
-          dayOfWeekIndexValuesForm.controls['dayOfWeekIndexValues'].invalid &&
-          dayOfWeekIndexValuesForm.controls['dayOfWeekIndexValues'].touched
-      }"
-      formControlName="dayOfWeekIndexValues"
-      (blur)="dayOfWeekIndexValuesBlur()"
-    />
+    <div
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
+    >
+      <fieldset [disabled]="isDisabled === true">
+        <input
+          spellcheck="false"
+          data-cy="fractionDayOfWeekIndexValuesInput"
+          class="rows form-input border-gray3 focus:border-blue3 h-[36px] w-[404px] resize-none rounded"
+          [ngClass]="{
+            'border-red-600':
+              dayOfWeekIndexValuesForm.controls['dayOfWeekIndexValues']
+                .invalid &&
+              dayOfWeekIndexValuesForm.controls['dayOfWeekIndexValues'].touched
+          }"
+          formControlName="dayOfWeekIndexValues"
+          (blur)="dayOfWeekIndexValuesBlur()"
+        />
+      </fieldset>
+    </div>
+
     <m-validation
       [control]="dayOfWeekIndexValuesForm.controls['dayOfWeekIndexValues']"
     ></m-validation>
