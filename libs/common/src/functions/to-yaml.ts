@@ -11,7 +11,7 @@ export function toYaml(x: any) {
       s
         .replace(/^[-]\sfilter:/g, '\n- filter:')
         .replace(/^[-]\stitle:/g, '\n- title:')
-        .replace(/^[-]\sid:/g, '\n- id:')
+        .replace(/^[-]\srow_id:/g, '\n- row_id:')
         .replace(/^\s\s[-]\sid:/g, '\n  - id:')
         .replace(/'''/g, `'`)
     )
