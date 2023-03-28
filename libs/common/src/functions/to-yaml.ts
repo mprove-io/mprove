@@ -9,10 +9,10 @@ export function toYaml(x: any) {
     .split('\n')
     .map(s =>
       s
-        .replace(/^[-]\sfilter:/g, '\n- filter:')
         .replace(/^[-]\stitle:/g, '\n- title:')
         .replace(/^[-]\srow_id:/g, '\n- row_id:')
-        .replace(/^\s\s[-]\sid:/g, '\n  - id:')
+        .replace(/^[-]\sfilter:/g, '\n- filter:')
+        .replace(/^\s\s[-]\sfilter:/g, '\n  - filter:')
         .replace(/'''/g, `'`)
     )
     .join('\n')
