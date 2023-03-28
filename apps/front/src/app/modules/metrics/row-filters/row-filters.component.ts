@@ -55,7 +55,7 @@ export class RowFiltersComponent {
     let newParameters = [...this.repSelectedNode.data.parameters];
 
     let parametersIndex = newParameters.findIndex(
-      p => p.fieldId === filterExtended.fieldId
+      p => p.filter === filterExtended.fieldId
     );
 
     let fractions = filterExtended.fractions;
@@ -95,7 +95,7 @@ export class RowFiltersComponent {
     let newParameters = [...this.repSelectedNode.data.parameters];
 
     let parametersIndex = newParameters.findIndex(
-      p => p.fieldId === filterExtended.fieldId
+      p => p.filter === filterExtended.fieldId
     );
 
     let fractions = filterExtended.fractions;
@@ -137,7 +137,7 @@ export class RowFiltersComponent {
     let newParameters = [...this.repSelectedNode.data.parameters];
 
     let parametersIndex = newParameters.findIndex(
-      p => p.fieldId === filterExtended.fieldId
+      p => p.filter === filterExtended.fieldId
     );
 
     let fractions = filterExtended.fractions;
@@ -183,7 +183,7 @@ export class RowFiltersComponent {
     let newParameters = [...this.repSelectedNode.data.parameters];
 
     let parametersIndex = newParameters.findIndex(
-      p => p.fieldId === filterExtended.fieldId
+      p => p.filter === filterExtended.fieldId
     );
 
     newParameters = [
@@ -212,11 +212,11 @@ export class RowFiltersComponent {
     let newParameters = [...this.repSelectedNode.data.parameters];
 
     let parameterIndex = this.repSelectedNode.data.parameters.findIndex(
-      x => x.fieldId === filterExtended.fieldId
+      x => x.filter === filterExtended.fieldId
     );
 
     let parameter: common.Parameter = this.repSelectedNode.data.parameters.find(
-      x => x.fieldId === filterExtended.fieldId
+      x => x.filter === filterExtended.fieldId
     );
 
     let newParameter;
@@ -262,7 +262,7 @@ return json.dumps({"conditions":["any"]})`
     let newParameters = [...this.repSelectedNode.data.parameters];
 
     let parametersIndex = newParameters.findIndex(
-      p => p.fieldId === filterExtended.fieldId
+      p => p.filter === filterExtended.fieldId
     );
 
     let newParameter = Object.assign({}, newParameters[parametersIndex], {

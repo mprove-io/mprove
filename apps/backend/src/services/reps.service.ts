@@ -822,7 +822,7 @@ export class RepsService {
                   );
 
                 let filter: common.Filter = {
-                  fieldId: parameter.fieldId,
+                  fieldId: parameter.filter,
                   fractions: blockmlGetFractionsResponse.payload.fractions
                 };
 

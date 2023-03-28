@@ -149,7 +149,7 @@ export class RowComponent {
             .filter(filter => filter.fieldId !== timeFieldIdSpec)
             .map(filter => {
               let parameter = this.repSelectedNode.data.parameters.find(
-                y => y.fieldId === filter.fieldId
+                y => y.filter === filter.fieldId
               );
 
               return Object.assign({}, filter, {
@@ -651,7 +651,7 @@ export class RowComponent {
         .join('_')
         .toUpperCase(),
       parameterType: common.ParameterTypeEnum.Field,
-      fieldId: field.id,
+      filter: field.id,
       result: field.result,
       formula: undefined,
       conditions: ['any'],

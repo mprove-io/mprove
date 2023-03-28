@@ -115,7 +115,7 @@ export class DocService {
               };
 
               let prep = {
-                fieldId: parameter.fieldId,
+                filter: parameter.filter,
                 conditions: parameter.conditions,
                 result: parameter.result
               };
@@ -229,7 +229,7 @@ return json.dumps([${rowParColumns
             : [];
 
           parsedParameters.forEach((x: common.Parameter) => {
-            let fieldId = x.fieldId.split('.').join('_').toUpperCase();
+            let fieldId = x.filter.split('.').join('_').toUpperCase();
             let parameterId = `${row.rowId}_${fieldId}`;
             x.parameterId = parameterId;
           });

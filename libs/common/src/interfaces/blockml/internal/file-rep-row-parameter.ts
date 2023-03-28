@@ -4,8 +4,8 @@ export interface FileRepRowParameter {
   type?: enums.ParameterTypeEnum;
   type_line_num?: number;
 
-  field?: string;
-  field_line_num?: number;
+  filter?: string;
+  filter_line_num?: number;
 
   result?: enums.FieldResultEnum;
   result_line_num?: number;

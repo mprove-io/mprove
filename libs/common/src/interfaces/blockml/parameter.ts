@@ -9,7 +9,7 @@ export class Parameter {
   parameterType: enums.ParameterTypeEnum;
 
   @IsString()
-  fieldId: string;
+  filter: string;
 
   @IsEnum(enums.FieldResultEnum)
   result: enums.FieldResultEnum;

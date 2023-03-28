@@ -73,17 +73,17 @@ export function wrapReps(item: {
             if (row.type === common.RowTypeEnum.Metric) {
               result = models
                 .find(model => model.modelId === metric.modelId)
-                .fields.find(field => field.id === parameter.field).result;
+                .fields.find(field => field.id === parameter.filter).result;
             }
 
             let parameterApi: common.Parameter = {
-              parameterId: [row.row_id, ...parameter.field.split('.')]
+              parameterId: [row.row_id, ...parameter.filter.split('.')]
                 .join('_')
                 .toUpperCase(),
               parameterType: common.isDefined(parameter.formula)
                 ? common.ParameterTypeEnum.Formula
                 : common.ParameterTypeEnum.Field,
-              fieldId: parameter.field,
+              filter: parameter.filter,
               result: result,
               formula: parameter.formula,
               conditions: parameter.conditions,
