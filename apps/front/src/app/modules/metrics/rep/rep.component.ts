@@ -27,6 +27,7 @@ import { ChartRendererComponent } from './chart-renderer/chart-renderer.componen
 import { DataRendererComponent } from './data-renderer/data-renderer.component';
 import { MetricHeaderComponent } from './metric-header/metric-header.component';
 import { MetricRendererComponent } from './metric-renderer/metric-renderer.component';
+import { ParametersHeaderComponent } from './parameters-header/parameters-header.component';
 import { ParametersRendererComponent } from './parameters-renderer/parameters-renderer.component';
 import { RowIdHeaderComponent } from './row-id-header/row-id-header.component';
 import { RowIdRendererComponent } from './row-id-renderer/row-id-renderer.component';
@@ -124,6 +125,7 @@ export class RepComponent {
       field: 'parameters',
       pinned: 'left',
       minWidth: 60,
+      headerComponent: ParametersHeaderComponent,
       cellRenderer: ParametersRendererComponent
     },
     {
@@ -476,12 +478,5 @@ export class RepComponent {
         : 42;
 
     return Math.max(rowHeight, minRowHeight);
-  }
-
-  toggleShowParametersJson() {
-    let showParametersJson = !this.uiQuery.getValue().showParametersJson;
-
-    this.uiQuery.updatePart({ showParametersJson: showParametersJson });
-    this.uiService.setUserUi({ showParametersJson: showParametersJson });
   }
 }

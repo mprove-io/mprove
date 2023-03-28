@@ -1,0 +1,17 @@
+<div class="flex flex-row items-center">
+  <div>Parameters</div>
+
+  <div class="ml-5 flex flex-row items-center">
+    <div
+      class="flex h-9 cursor-pointer select-none items-center text-gray-500"
+      [ngClass]="{
+        'font-semibold': showParametersJson === true,
+        'font-normal': showParametersJson === false
+      }"
+      (click)="toggleShowParametersJson()"
+      >JSON</div
+    >
+  </div>
+</div>
+
+<div *ngIf="uiQuery$ | async"></div>
