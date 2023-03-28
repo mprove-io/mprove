@@ -646,12 +646,10 @@ export class RowComponent {
       x => x.id === this.newParameterId
     );
 
-    let parameterId = [this.repSelectedNode.data.rowId, ...field.id.split('.')]
-      .join('_')
-      .toUpperCase();
-
     let newParameter: common.Parameter = {
-      parameterId: parameterId,
+      parameterId: [this.repSelectedNode.data.rowId, ...field.id.split('.')]
+        .join('_')
+        .toUpperCase(),
       parameterType: common.ParameterTypeEnum.Field,
       fieldId: field.id,
       result: field.result,

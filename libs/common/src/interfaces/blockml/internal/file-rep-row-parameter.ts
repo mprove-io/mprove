@@ -1,9 +1,6 @@
 import { enums } from '~common/barrels/enums';
 
 export interface FileRepRowParameter {
-  id?: string;
-  id_line_num?: number;
-
   type?: enums.ParameterTypeEnum;
   type_line_num?: number;
 
