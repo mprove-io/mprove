@@ -109,6 +109,7 @@ export class RepsService {
         timeLabel: undefined,
         showChart: false,
         parameters: [],
+        parametersJson: undefined,
         parametersFormula: undefined,
         formula: undefined,
         formulaDeps: undefined,
@@ -197,6 +198,7 @@ export class RepsService {
         timeLabel: metric.time_label,
         showChart: rowChange.showChart,
         parameters: rowChange.parameters || [],
+        parametersJson: undefined,
         parametersFormula: undefined,
         formula: undefined,
         formulaDeps: undefined,
@@ -263,6 +265,7 @@ export class RepsService {
             timeLabel: undefined,
             showChart: false,
             parameters: [],
+            parametersJson: undefined,
             parametersFormula: undefined,
             formula: undefined,
             formulaDeps: undefined,
@@ -326,6 +329,7 @@ export class RepsService {
         timeLabel: undefined,
         showChart: false,
         parameters: undefined,
+        parametersJson: undefined,
         parametersFormula: undefined,
         formula: rowChange.formula,
         formulaDeps: undefined,
@@ -363,6 +367,7 @@ export class RepsService {
         timeLabel: metric.time_label,
         showChart: false,
         parameters: [],
+        parametersJson: undefined,
         parametersFormula: undefined,
         formula: undefined,
         formulaDeps: undefined,
@@ -716,6 +721,8 @@ export class RepsService {
         timezone: timezone,
         timeSpec: timeSpec,
         timeRangeFraction: timeRangeFraction,
+        models: models,
+        metrics: metrics,
         traceId: traceId
       });
     } else {

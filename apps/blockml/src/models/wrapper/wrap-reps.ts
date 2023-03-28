@@ -92,6 +92,7 @@ export function wrapReps(item: {
 
             return parameterApi;
           }),
+          parametersJson: undefined,
           parametersFormula: row.parameters_formula,
           records: [],
           formatNumber: common.isDefined(row.format_number)

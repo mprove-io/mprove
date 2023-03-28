@@ -4,7 +4,10 @@
     'bg-gray-200 px-5': isKeepBackgroundColor === false
   }"
 >
-  <div *ngIf="showJson === true" class="mr-5 h-[185px] w-[500px] overflow-auto">
+  <div
+    *ngIf="showJson === true"
+    class="mr-5 mt-1 mb-1 h-[180px] w-[400px] min-w-min overflow-auto bg-cyan-100 text-sm"
+  >
     <pre [innerHtml]="json | prettyJson : [true, 3]"></pre>
   </div>
 

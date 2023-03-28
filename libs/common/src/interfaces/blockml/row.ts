@@ -31,6 +31,10 @@ export class Row {
 
   @ValidateNested()
   @Type(() => Parameter)
+  parametersJson: Parameter[];
+
+  @ValidateNested()
+  @Type(() => Parameter)
   parameters: Parameter[];
 
   @IsString()
