@@ -4,8 +4,8 @@
     'bg-gray-200 px-5': isKeepBackgroundColor === false
   }"
 >
-  <div *ngIf="showJson === true" class="max-h-[190px] w-[500px] overflow-auto">
-    <pre class="bg-blue-100" [innerHtml]="json | prettyJson : [true, 3]"></pre>
+  <div *ngIf="showJson === true" class="mr-5 h-[185px] w-[500px] overflow-auto">
+    <pre [innerHtml]="json | prettyJson : [true, 3]"></pre>
   </div>
 
   <table>
