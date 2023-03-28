@@ -34,6 +34,7 @@ import { StatusHeaderComponent } from './status-header/status-header.component';
 import { StatusRendererComponent } from './status-renderer/status-renderer.component';
 
 export interface DataRow extends common.Row {
+  showParametersJson: boolean;
   strParameters: string;
   // [col: string]: any;
 }
@@ -186,15 +187,17 @@ export class RepComponent {
     this.repQuery.select(),
     this.uiQuery.timeColumnsNarrowWidth$,
     this.uiQuery.timeColumnsWideWidth$,
-    this.uiQuery.showChartForSelectedRows$
+    this.uiQuery.showChartForSelectedRows$,
+    this.uiQuery.showParametersJson$
   ]).pipe(
     tap(
       ([
         rep,
         timeColumnsNarrowWidth,
         timeColumnsWideWidth,
-        showChartForSelectedRows
-      ]: [common.RepX, number, number, boolean]) => {
+        showChartForSelectedRows,
+        showParametersJson
+      ]: [common.RepX, number, number, boolean, boolean]) => {
         this.rep = rep;
 
         let uiState = this.uiQuery.getValue();
@@ -248,6 +251,7 @@ export class RepComponent {
           // let metric = metrics.metrics.find(m => m.metricId === row.metricId);
 
           let dataRow: DataRow = Object.assign({}, row, <DataRow>{
+            showParametersJson: showParametersJson,
             strParameters: common.isDefined(row.parameters)
               ? JSON.stringify(row.parameters)
               : ''
@@ -463,6 +467,21 @@ export class RepComponent {
       }
     }
 
-    return Math.max(rowHeight, 42);
+    let minRowHeight =
+      params.data.rowType === common.RowTypeEnum.Metric &&
+      params.data.showParametersJson === true &&
+      common.isDefined(params.data.parameters) &&
+      params.data.parameters.length > 0
+        ? 200
+        : 42;
+
+    return Math.max(rowHeight, minRowHeight);
+  }
+
+  toggleShowParametersJson() {
+    let showParametersJson = !this.uiQuery.getValue().showParametersJson;
+
+    this.uiQuery.updatePart({ showParametersJson: showParametersJson });
+    this.uiService.setUserUi({ showParametersJson: showParametersJson });
   }
 }

@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { RepQuery } from '~front/app/queries/rep.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { common } from '~front/barrels/common';
 import { DataRow } from '../rep.component';
 
@@ -21,6 +21,8 @@ export class ParametersRendererComponent implements ICellRendererAngularComp {
   metricTypeModel = common.MetricTypeEnum.Model;
 
   parametersFilters: common.FilterX[] = [];
+
+  showJson = false;
 
   agInit(params: ICellRendererParams<DataRow>) {
     this.params = params;
@@ -54,12 +56,14 @@ export class ParametersRendererComponent implements ICellRendererAngularComp {
           );
       }
     }
+
+    this.showJson = this.uiQuery.getValue().showParametersJson;
   }
 
   constructor(
     private cd: ChangeDetectorRef,
-    private spinner: NgxSpinnerService,
     private metricsQuery: MetricsQuery,
+    private uiQuery: UiQuery,
     private repQuery: RepQuery
   ) {}
 }

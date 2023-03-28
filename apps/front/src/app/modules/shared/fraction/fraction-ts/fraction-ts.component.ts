@@ -21,6 +21,7 @@ import { TimePicker } from '@vaadin/time-picker';
 import { tap } from 'rxjs';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { UiService } from '~front/app/services/ui.service';
 import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
@@ -363,6 +364,7 @@ export class FractionTsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private uiQuery: UiQuery,
+    private uiService: UiService,
     private structQuery: StructQuery,
     private cd: ChangeDetectorRef
   ) {}
@@ -1730,6 +1732,9 @@ export class FractionTsComponent implements OnInit {
   }
 
   toggleShowHours() {
-    this.uiQuery.updatePart({ showHours: !this.showHours });
+    let showHours = !this.showHours;
+
+    this.uiQuery.updatePart({ showHours: showHours });
+    this.uiService.setUserUi({ showHours: showHours });
   }
 }

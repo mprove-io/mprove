@@ -74,6 +74,7 @@ import { CapitalizePipe } from './pipes/capitalize.pipe';
 import { ExtensionPipe } from './pipes/extension.pipe';
 import { HideColumnsPipe } from './pipes/hide-columns.pipe';
 import { MproveDirPipe } from './pipes/mprove-dir.pipe';
+import { PrettyJsonPipe } from './pipes/pretty-json.pipe';
 import { ResultPipe } from './pipes/result.pipe';
 import { QueryStatusComponent } from './query-status/query-status.component';
 import { AlertRingComponent } from './rings/alert-ring/alert-ring.component';
@@ -88,7 +89,8 @@ let pipesArray = [
   MproveDirPipe,
   CapitalizeWordsPipe,
   HideColumnsPipe,
-  ResultPipe
+  ResultPipe,
+  PrettyJsonPipe
 ];
 
 let sharedComponents = [

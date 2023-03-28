@@ -1,9 +1,13 @@
 <div
-  class="font-ms h-full w-full overflow-auto rounded py-1 text-base"
+  class="font-ms flex h-full w-full flex-row overflow-auto rounded py-1 text-base"
   [ngClass]="{
     'bg-gray-200 px-5': isKeepBackgroundColor === false
   }"
 >
+  <div *ngIf="showJson === true" class="max-h-[190px] w-[500px] overflow-auto">
+    <pre class="bg-blue-100" [innerHtml]="json | prettyJson : [true, 3]"></pre>
+  </div>
+
   <table>
     <tbody class="divide-y divide-gray-300">
       <tr
@@ -43,12 +47,6 @@
               ></m-trash-icon>
             </div> </div
         ></td>
-
-        <!-- <td class="align-top py-1">
-          <div class="ml-5 w-[68px] text-gray1 text-sm">{{
-            filter.field.result | result
-          }}</div></td
-        > -->
 
         <td class="py-1 align-top">
           <div

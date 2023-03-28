@@ -14,6 +14,12 @@ export class BricksComponent {
   listen: { [a: string]: string };
 
   @Input()
+  json?: any;
+
+  @Input()
+  showJson?: boolean;
+
+  @Input()
   mconfigId: string;
 
   @Input()
