@@ -231,8 +231,8 @@ return json.dumps([${rowParColumns
         // console.log(row.rowId);
         let stringParametersColumn = `STRING_${row.rowId}_PARAMETERS`;
 
-        let isValid = common.isDefined(
-          firstRecord.fields?.[stringParametersColumn]
+        let isValid = common.isUndefined(
+          firstRecord.errors?.[stringParametersColumn]
         );
 
         let parsedParameters: common.Parameter[] =
@@ -241,6 +241,9 @@ return json.dumps([${rowParColumns
             : common.isDefined(firstRecord.errors?.[stringParametersColumn])
             ? firstRecord.errors?.[stringParametersColumn]
             : [];
+
+        // console.log(row.rowId);
+        // console.log(parsedParameters);
 
         row.parametersJson = common.makeCopy(parsedParameters);
 

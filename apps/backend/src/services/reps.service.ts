@@ -737,6 +737,9 @@ export class RepsService {
     let kitIds: string[] = [];
 
     await forEachSeries(rep.rows, async x => {
+      // console.log('getFractions rowId');
+      // console.log(x.rowId);
+
       let rq = x.rqs.find(
         y =>
           y.fractionBrick === timeRangeFraction.brick &&
@@ -811,7 +814,9 @@ export class RepsService {
                         // common.isDefined(parameter.formula)
                         //   ? ['any']
                         //   :
-                        parameter.conditions,
+                        common.isDefined(parameter.conditions)
+                          ? parameter.conditions
+                          : ['any'],
                       result: parameter.result
                     }
                   };

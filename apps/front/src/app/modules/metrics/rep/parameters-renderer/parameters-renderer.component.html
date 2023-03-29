@@ -1,9 +1,7 @@
 <div
   class="truncate"
   *ngIf="
-    params.data.rowType === rowTypeMetric &&
-    metric.type === metricTypeModel &&
-    parametersFilters.length > 0
+    params.data.rowType === rowTypeMetric && metric.type === metricTypeModel
   "
 >
   <div class="flex flex-shrink-0">

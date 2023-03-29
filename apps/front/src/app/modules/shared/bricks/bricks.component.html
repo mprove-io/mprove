@@ -6,7 +6,11 @@
 >
   <div
     *ngIf="showJson === true"
-    class="mr-5 mt-1 mb-1 h-[180px] w-[400px] min-w-min overflow-auto bg-cyan-100 text-sm"
+    class="mr-5 mt-1 mb-1 w-[400px] min-w-min overflow-auto bg-cyan-100 text-sm"
+    [ngClass]="{
+      'h-[180px]': json.length > 0,
+      'pb-1': json.length === 0
+    }"
   >
     <pre [innerHtml]="json | prettyJson : [true, 3]"></pre>
   </div>

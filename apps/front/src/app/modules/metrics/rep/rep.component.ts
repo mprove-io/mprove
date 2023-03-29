@@ -472,8 +472,7 @@ export class RepComponent {
     let minRowHeight =
       params.data.rowType === common.RowTypeEnum.Metric &&
       params.data.showParametersJson === true &&
-      common.isDefined(params.data.parameters) &&
-      params.data.parameters.length > 0
+      params.data.parametersJson.length !== 0
         ? 200
         : 42;
 
