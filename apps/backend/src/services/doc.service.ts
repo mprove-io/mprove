@@ -231,15 +231,15 @@ return json.dumps([${rowParColumns
         // console.log(row.rowId);
         let stringParametersColumn = `STRING_${row.rowId}_PARAMETERS`;
 
-        let isValid = common.isUndefined(
+        row.isParamsCalcValid = common.isUndefined(
           firstRecord.errors?.[stringParametersColumn]
         );
 
         let parsedParameters: common.Parameter[] =
-          isValid === true
+          row.isParamsCalcValid === true
             ? JSON.parse(firstRecord.fields[stringParametersColumn])
             : common.isDefined(firstRecord.errors?.[stringParametersColumn])
-            ? firstRecord.errors?.[stringParametersColumn]
+            ? firstRecord.errors[stringParametersColumn]
             : [];
 
         // console.log(row.rowId);
@@ -247,48 +247,47 @@ return json.dumps([${rowParColumns
 
         row.parametersJson = common.makeCopy(parsedParameters);
 
-        if (isValid === true) {
-          parsedParameters.forEach(x => {
-            let metric = metrics.find(m => m.metric_id === row.metricId);
-            let model = models.find(ml => ml.model_id === metric.model_id);
-            let field = model.fields.find(f => f.id === x.filter);
-            x.result = field.result;
-          });
-
+        if (row.isParamsCalcValid === true) {
           if (common.isDefined(row.parametersFormula)) {
-            parsedParameters.forEach((x: common.Parameter) => {
+            row.parameters = parsedParameters.map((x: common.Parameter) => {
               let fieldId = x.filter.split('.').join('_').toUpperCase();
               let parameterId = `${row.rowId}_${fieldId}`;
               x.parameterId = parameterId;
+
+              let metric = metrics.find(m => m.metric_id === row.metricId);
+              let model = models.find(ml => ml.model_id === metric.model_id);
+              let field = model.fields.find(f => f.id === x.filter);
+              x.result = field.result;
+
+              return x;
             });
-
-            row.parameters = parsedParameters;
-          } else {
-            row.parameters
-              .filter(
-                p =>
-                  p.parameterType === common.ParameterTypeEnum.Formula ||
-                  common.isDefined(p.formula)
-              )
-              .forEach(p => {
-                // console.log('p');
-                // console.log(p);
-                if (common.isDefined(firstRecord.fields)) {
-                  let parStr = `STRING_${p.parameterId}`;
-
-                  let parsedParameter = JSON.parse(firstRecord.fields[parStr]);
-
-                  // TODO: check result match
-
-                  p.conditions = common.isDefined(parsedParameter)
-                    ? parsedParameter.conditions
-                    : ['any'];
-                } else {
-                  p.conditions = ['any'];
-                }
-              });
           }
+        } else if (common.isDefined(row.parametersFormula)) {
+          row.parameters = [];
         }
+
+        row.parameters
+          .filter(
+            p =>
+              p.parameterType === common.ParameterTypeEnum.Formula ||
+              common.isDefined(p.formula)
+          )
+          .forEach(p => {
+            // console.log('p');
+            // console.log(p);
+            let parStr = `STRING_${p.parameterId}`;
+
+            p.isCalcValid = common.isUndefined(firstRecord.errors?.[parStr]);
+
+            if (p.isCalcValid === true) {
+              // TODO: check result match
+              let parsedParameter = JSON.parse(firstRecord.fields[parStr]);
+
+              p.conditions = parsedParameter.conditions;
+            } else {
+              p.conditions = ['any'];
+            }
+          });
 
         let rc = row.rcs.find(
           y =>

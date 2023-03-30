@@ -29,6 +29,9 @@ export class Row {
   @IsString()
   timeLabel: string;
 
+  @IsBoolean()
+  isParamsCalcValid?: boolean;
+
   @ValidateNested()
   @Type(() => Parameter)
   parametersJson: Parameter[];

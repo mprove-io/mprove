@@ -1,4 +1,4 @@
-import { IsEnum, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsString } from 'class-validator';
 import { enums } from '~common/barrels/enums';
 
 export class Parameter {
@@ -16,6 +16,9 @@ export class Parameter {
 
   @IsString()
   formula: string;
+
+  @IsBoolean()
+  isCalcValid?: boolean;
 
   @IsString({ each: true })
   conditions: string[];
