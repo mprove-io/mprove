@@ -14,13 +14,19 @@ export class BricksComponent {
   listen: { [a: string]: string };
 
   @Input()
-  json?: any;
+  mconfigId: string;
 
   @Input()
   showJson?: boolean;
 
   @Input()
-  mconfigId: string;
+  parametersJson?: any;
+
+  @Input()
+  isParamsCalcValid?: boolean;
+
+  @Input()
+  finalRowHeight?: number;
 
   @Input()
   deleteFilterFn: (item: DeleteFilterFnItem) => void;

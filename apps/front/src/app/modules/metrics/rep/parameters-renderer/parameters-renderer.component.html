@@ -9,7 +9,9 @@
       class="flex max-w-max flex-shrink-0 flex-row items-end justify-start overflow-auto"
       [extendedFilters]="parametersFilters"
       [isKeepBackgroundColor]="true"
-      [json]="params.data.parametersJson"
+      [parametersJson]="params.data.parametersJson"
+      [isParamsCalcValid]="params.data.isParamsCalcValid"
+      [finalRowHeight]="params.data.finalRowHeight"
       [showJson]="showJson"
     ></m-bricks>
   </div>

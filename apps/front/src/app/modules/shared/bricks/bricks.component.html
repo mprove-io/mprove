@@ -1,87 +1,91 @@
 <div
-  class="font-ms flex h-full w-full flex-row overflow-auto rounded py-1 text-base"
+  class="font-ms flex h-full w-full flex-row rounded text-base"
   [ngClass]="{
     'bg-gray-200 px-5': isKeepBackgroundColor === false
   }"
 >
   <div
     *ngIf="showJson === true"
-    class="mr-5 mt-1 mb-1 w-[400px] min-w-min overflow-auto bg-cyan-100 text-sm"
-    [ngClass]="{
-      'h-[180px]': json.length > 0,
-      'pb-1': json.length === 0
-    }"
+    [style.max-height.px]="
+      isParamsCalcValid === true && parametersJson.length > 0
+        ? finalRowHeight - 16
+        : finalRowHeight - 8
+    "
+    class="my-1 mr-5 w-[400px] min-w-min overflow-auto bg-cyan-100 py-1 pl-3 pr-5 text-sm"
   >
-    <pre [innerHtml]="json | prettyJson : [true, 3]"></pre>
+    <pre [innerHtml]="parametersJson | prettyJson : [true, 3]"></pre>
   </div>
 
-  <table>
-    <tbody class="divide-y divide-gray-300">
-      <tr
-        *ngFor="let filter of extendedFilters; let filterIndex = index"
-        class="group-link"
-      >
-        <td class="py-1 align-top">
-          <div class="flex flex-col items-start justify-start">
-            <div class="flex flex-row items-center">
-              <div
-                *ngIf="!!listen"
-                class="mr-2 flex flex-shrink-0 flex-row items-center space-x-5 text-gray-500"
-              >
-                <m-link-icon
-                  tippy="Listens to dashboard filter {{
-                    listen[filter.fieldId].split('_').join(' ')
-                      | capitalizeWords
-                  }}"
-                  *ngIf="!!listen[filter.fieldId] === true"
-                ></m-link-icon>
+  <div class="pt-1">
+    <table>
+      <tbody class="divide-y divide-gray-300">
+        <tr
+          *ngFor="let filter of extendedFilters; let filterIndex = index"
+          class="group-link"
+        >
+          <td class="py-1 align-top">
+            <div class="flex flex-col items-start justify-start">
+              <div class="flex flex-row items-center">
+                <div
+                  *ngIf="!!listen"
+                  class="mr-2 flex flex-shrink-0 flex-row items-center space-x-5 text-gray-500"
+                >
+                  <m-link-icon
+                    tippy="Listens to dashboard filter {{
+                      listen[filter.fieldId].split('_').join(' ')
+                        | capitalizeWords
+                    }}"
+                    *ngIf="!!listen[filter.fieldId] === true"
+                  ></m-link-icon>
 
-                <m-link-off-icon
-                  tippy="Does not listen to dashboard filter"
-                  *ngIf="!!listen[filter.fieldId] === false"
-                ></m-link-off-icon>
+                  <m-link-off-icon
+                    tippy="Does not listen to dashboard filter"
+                    *ngIf="!!listen[filter.fieldId] === false"
+                  ></m-link-off-icon>
+                </div>
+
+                <m-field-label
+                  [column]="filter.field"
+                  class="flex text-sm"
+                ></m-field-label>
+
+                <m-trash-icon
+                  *ngIf="!!deleteFilterFn"
+                  class="invisible ml-5 cursor-pointer text-gray-500 hover:text-blue-500 [.group-link:hover_&]:visible"
+                  (click)="deleteFilter(filter.fieldId)"
+                ></m-trash-icon>
+              </div> </div
+          ></td>
+
+          <td class="py-1 align-top">
+            <div
+              class="ml-5 flex flex-row items-start justify-start"
+              *ngFor="
+                let fraction of filter.fractions;
+                let isFirst = first;
+                let fractionIndex = index
+              "
+            >
+              <div class="flex w-9 flex-shrink-0">
+                <div *ngIf="isFirst === true"></div>
+                <div *ngIf="isFirst === false">
+                  {{
+                    fraction.operator === fractionOperatorEnum.Or
+                      ? 'OR'
+                      : !isFirst &&
+                        fraction.operator === fractionOperatorEnum.And
+                      ? 'AND'
+                      : ''
+                  }}
+                </div>
               </div>
-
-              <m-field-label
-                [column]="filter.field"
-                class="flex text-sm"
-              ></m-field-label>
-
-              <m-trash-icon
-                *ngIf="!!deleteFilterFn"
-                class="invisible ml-5 cursor-pointer text-gray-500 hover:text-blue-500 [.group-link:hover_&]:visible"
-                (click)="deleteFilter(filter.fieldId)"
-              ></m-trash-icon>
-            </div> </div
-        ></td>
-
-        <td class="py-1 align-top">
-          <div
-            class="ml-5 flex flex-row items-start justify-start"
-            *ngFor="
-              let fraction of filter.fractions;
-              let isFirst = first;
-              let fractionIndex = index
-            "
-          >
-            <div class="flex w-9 flex-shrink-0">
-              <div *ngIf="isFirst === true"></div>
-              <div *ngIf="isFirst === false">
-                {{
-                  fraction.operator === fractionOperatorEnum.Or
-                    ? 'OR'
-                    : !isFirst && fraction.operator === fractionOperatorEnum.And
-                    ? 'AND'
-                    : ''
-                }}
-              </div>
+              <div class="ml-5 flex max-w-[450px] flex-shrink-0 px-5">{{
+                fraction.brick
+              }}</div>
             </div>
-            <div class="ml-5 flex max-w-[450px] flex-shrink-0 px-5">{{
-              fraction.brick
-            }}</div>
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

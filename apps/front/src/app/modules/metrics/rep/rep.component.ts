@@ -37,6 +37,7 @@ import { StatusRendererComponent } from './status-renderer/status-renderer.compo
 export interface DataRow extends common.Row {
   showParametersJson: boolean;
   strParameters: string;
+  finalRowHeight: number;
   // [col: string]: any;
 }
 
@@ -444,38 +445,37 @@ export class RepComponent {
     let rowHeight = 0;
 
     if (common.isDefined(params.data.mconfig)) {
-      let totalFractions = 0;
-      let totalFilters = 0;
+      let totalConditions = 0;
 
-      params.data.mconfig.extendedFilters.forEach(x => {
-        x.fractions.forEach(y => (totalFractions = totalFractions + 1));
-        totalFilters = totalFilters + 1;
+      params.data.parameters.forEach(x => {
+        x.conditions.forEach(y => (totalConditions = totalConditions + 1));
       });
 
-      if (totalFractions > 1) {
-        params.data.mconfig.extendedFilters.forEach(x => {
-          x.fractions.forEach(y => {
+      if (totalConditions > 1) {
+        params.data.parameters.forEach(x => {
+          x.conditions.forEach(y => {
             rowHeight = rowHeight + 25;
           });
 
           rowHeight = rowHeight + 8;
         });
 
-        rowHeight = rowHeight - (25 + 8) + 9;
-
-        if (totalFractions > 2) {
-          rowHeight = rowHeight + 6;
-        }
+        rowHeight = rowHeight + 9;
       }
     }
 
     let minRowHeight =
       params.data.rowType === common.RowTypeEnum.Metric &&
       params.data.showParametersJson === true &&
-      params.data.parametersJson.length !== 0
-        ? 200
+      params.data.isParamsCalcValid === true &&
+      params.data.parameters.length > 0
+        ? 190
         : 42;
 
-    return Math.max(rowHeight, minRowHeight);
+    let finalRowHeight = Math.max(rowHeight, minRowHeight);
+
+    params.data.finalRowHeight = finalRowHeight;
+
+    return finalRowHeight;
   }
 }
