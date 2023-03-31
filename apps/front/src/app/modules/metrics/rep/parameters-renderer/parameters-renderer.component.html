@@ -1,19 +1,32 @@
 <div
-  class="truncate"
+  class="flex flex-row"
   *ngIf="
     params.data.rowType === rowTypeMetric && metric.type === metricTypeModel
   "
 >
-  <div class="flex flex-shrink-0">
-    <m-bricks
-      class="flex max-w-max flex-shrink-0 flex-row items-end justify-start overflow-auto"
-      [extendedFilters]="parametersFilters"
-      [isKeepBackgroundColor]="true"
-      [parametersJson]="params.data.parametersJson"
-      [isParamsCalcValid]="params.data.isParamsCalcValid"
-      [finalRowHeight]="params.data.finalRowHeight"
-      [showJson]="showJson"
-    ></m-bricks>
+  <div
+    *ngIf="params.data.isRepParamsErrors === true"
+    class="text-red1 mr-5 mt-1 flex h-8 w-8 flex-shrink-0"
+    tippy="Parameters Error"
+    [isEnabled]="params.data.isParamsCalcValid !== true"
+  >
+    <m-exclamation-icon
+      *ngIf="params.data.isParamsCalcValid !== true"
+    ></m-exclamation-icon>
+  </div>
+
+  <div class="truncate">
+    <div class="flex flex-shrink-0">
+      <m-bricks
+        class="flex max-w-max flex-shrink-0 flex-row items-end justify-start overflow-auto"
+        [extendedFilters]="parametersFilters"
+        [isKeepBackgroundColor]="true"
+        [parametersJson]="params.data.parametersJson"
+        [isParamsCalcValid]="params.data.isParamsCalcValid"
+        [finalRowHeight]="params.data.finalRowHeight"
+        [showJson]="showJson"
+      ></m-bricks>
+    </div>
   </div>
 </div>
 
