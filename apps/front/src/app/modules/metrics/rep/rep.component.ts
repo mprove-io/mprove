@@ -469,7 +469,8 @@ export class RepComponent {
       params.data.showParametersJson === true &&
       params.data.isParamsCalcValid === true &&
       params.data.parameters.length > 0
-        ? 190
+        ? // ? 190 : 42
+          countLines({ input: params.data.parametersJson, lines: 1 }) * 20 + 8
         : 42;
 
     let finalRowHeight = Math.max(rowHeight, minRowHeight);
@@ -478,4 +479,33 @@ export class RepComponent {
 
     return finalRowHeight;
   }
+}
+
+function countLines(item: { input: any; lines: number }) {
+  let { input, lines } = item;
+  if (Array.isArray(input)) {
+    //
+    input.forEach((x: any) => {
+      lines = countLines({ input: x, lines: lines });
+    });
+
+    if (input.length > 0) {
+      lines = lines + 2;
+    } else {
+      lines = lines + 1;
+    }
+  } else if (input.constructor === Object) {
+    //
+    Object.keys(input).forEach((y: any) => {
+      lines = countLines({ input: input[y], lines: lines });
+    });
+    if (Object.keys(input).length > 0) {
+      lines = lines + 2;
+    } else {
+      lines = lines + 1;
+    }
+  } else {
+    lines = lines + 1;
+  }
+  return lines;
 }
