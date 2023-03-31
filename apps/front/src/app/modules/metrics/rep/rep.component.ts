@@ -481,6 +481,12 @@ export class RepComponent {
 
     let finalRowHeight = Math.max(rowHeight, minRowHeight);
 
+    let heightLimit = 600;
+
+    if (finalRowHeight > heightLimit) {
+      finalRowHeight = heightLimit;
+    }
+
     params.data.finalRowHeight = finalRowHeight;
 
     return finalRowHeight;
