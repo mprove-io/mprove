@@ -292,28 +292,41 @@
         ></m-formula-icon>
       </button>
 
-      <div
-        *ngIf="!!repSelectedNode.data.parametersFormula"
-        [formGroup]="parametersFormulaForm"
-        class="relative ml-5 flex flex-grow"
-      >
-        <textarea
-          data-cy="parametersFormulaInput"
-          class="form-input border-gray3 focus:border-blue3 max-h-[70px] min-h-[70px] w-full min-w-[300px] resize-none rounded"
-          [ngClass]="{
-            'border-red-600':
-              parametersFormulaForm.controls['formula'].invalid &&
-              parametersFormulaForm.controls['formula'].touched
-          }"
-          formControlName="formula"
-          placeholder="$ROW_"
-          (blur)="parametersFormulaBlur()"
-        ></textarea>
+      <div class="flex flex-grow flex-row">
+        <div
+          *ngIf="!!repSelectedNode.data.parametersFormula"
+          [formGroup]="parametersFormulaForm"
+          class="relative ml-5 flex flex-grow"
+        >
+          <textarea
+            data-cy="parametersFormulaInput"
+            class="form-input border-gray3 focus:border-blue3 max-h-[70px] min-h-[70px] w-full min-w-[300px] resize-none rounded"
+            [ngClass]="{
+              'border-red-600':
+                parametersFormulaForm.controls['formula'].invalid &&
+                parametersFormulaForm.controls['formula'].touched
+            }"
+            formControlName="formula"
+            placeholder="Formula to calculate parameters"
+            (blur)="parametersFormulaBlur()"
+          ></textarea>
 
-        <m-validation
-          class="absolute -bottom-[22px] left-0"
-          [control]="parametersFormulaForm.controls['formula']"
-        ></m-validation>
+          <m-validation
+            class="absolute -bottom-[22px] left-0"
+            [control]="parametersFormulaForm.controls['formula']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div
+        *ngIf="
+          !!repSelectedNode.data.parametersFormula &&
+          repSelectedNode.data.isParamsCalcValid !== true
+        "
+        class="text-red1 ml-5 mt-1 flex h-8 w-8 flex-shrink-0"
+        tippy="Failed to calculate row parameters. Check this formula and its dependences."
+      >
+        <m-exclamation-icon></m-exclamation-icon>
       </div>
     </div>
 
