@@ -22,5 +22,13 @@
     ></m-validation>
   </div>
 
+  <div
+    *ngIf="parameterFilter.isCalcValid !== true"
+    class="text-red1 ml-5 mt-1 flex h-8 w-8 flex-shrink-0"
+    tippy="Failed to calculate parameter. Check this formula and its dependences."
+  >
+    <m-exclamation-icon></m-exclamation-icon>
+  </div>
+
   <!-- <div class="flex flex-1"></div> -->
 </div>

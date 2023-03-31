@@ -17,6 +17,7 @@ import { DataRow } from '../rep/rep.component';
 
 export interface ParameterFilter extends common.FilterX {
   parameterType: common.ParameterTypeEnum;
+  isCalcValid: boolean;
   formula: string;
 }
 
@@ -154,7 +155,8 @@ export class RowComponent {
 
               return Object.assign({}, filter, {
                 parameterType: parameter.parameterType,
-                formula: parameter.formula
+                formula: parameter.formula,
+                isCalcValid: parameter.isCalcValid
               } as ParameterFilter);
             });
       }
