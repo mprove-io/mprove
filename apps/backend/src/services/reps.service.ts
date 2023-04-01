@@ -113,6 +113,7 @@ export class RepsService {
         parametersFormula: undefined,
         formula: undefined,
         formulaDeps: undefined,
+        parametersFormulaDeps: undefined,
         rqs: [],
         rcs: [],
         mconfig: undefined,
@@ -202,6 +203,7 @@ export class RepsService {
         parametersFormula: undefined,
         formula: undefined,
         formulaDeps: undefined,
+        parametersFormulaDeps: undefined,
         rqs: [],
         rcs: [],
         mconfig: undefined,
@@ -269,6 +271,7 @@ export class RepsService {
             parametersFormula: undefined,
             formula: undefined,
             formulaDeps: undefined,
+            parametersFormulaDeps: undefined,
             rqs: [],
             rcs: [],
             mconfig: undefined,
@@ -331,6 +334,7 @@ export class RepsService {
         parameters: undefined,
         parametersJson: undefined,
         parametersFormula: undefined,
+        parametersFormulaDeps: undefined,
         formula: rowChange.formula,
         formulaDeps: undefined,
         rqs: [],
@@ -371,6 +375,7 @@ export class RepsService {
         parametersFormula: undefined,
         formula: undefined,
         formulaDeps: undefined,
+        parametersFormulaDeps: undefined,
         rqs: [],
         rcs: [],
         mconfig: undefined,
@@ -472,6 +477,7 @@ export class RepsService {
       let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
         parameters: rowChange.parameters,
         parametersFormula: rowChange.parametersFormula,
+        parametersFormulaDeps: undefined,
         rqs: [],
         rcs: [],
         records: [],
@@ -482,6 +488,11 @@ export class RepsService {
       processedRows = processedRows.map(row =>
         row.rowId === editRow.rowId ? editRow : row
       );
+
+      processedRows = processRowIds({
+        rows: processedRows,
+        targetRowIds: processedRows.map(pr => pr.rowId)
+      });
     } else if (changeType === common.ChangeTypeEnum.Delete) {
       rowIds.forEach(rowId => {
         processedRows.forEach(row => {

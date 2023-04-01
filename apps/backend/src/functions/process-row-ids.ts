@@ -21,33 +21,115 @@ export function processRowIds(item: {
       row.rowId = targets[row.rowId];
       return row;
     })
-    .filter(row => common.isDefined(row.formula))
     .forEach(row => {
-      let newFormula = row.formula;
-      let formulaDeps: string[] = [];
-      let reg = common.MyRegex.CAPTURE_ROW_REF();
-      let r;
+      if (common.isDefined(row.formula)) {
+        //
+        let newFormula = row.formula;
+        let formulaDeps: string[] = [];
+        let reg = common.MyRegex.CAPTURE_ROW_REF();
+        let r;
 
-      while ((r = reg.exec(newFormula))) {
-        let reference = r[1];
+        while ((r = reg.exec(newFormula))) {
+          let reference = r[1];
 
-        let targetTo = common.isDefined(targets[reference])
-          ? targets[reference]
-          : common.UNDEF;
+          let targetTo = common.isDefined(targets[reference])
+            ? targets[reference]
+            : common.UNDEF;
 
-        newFormula = common.MyRegex.replaceRowIds(
-          newFormula,
-          reference,
-          targetTo
-        );
+          newFormula = common.MyRegex.replaceRowIds(
+            newFormula,
+            reference,
+            targetTo
+          );
 
-        formulaDeps.push(targetTo);
+          formulaDeps.push(targetTo);
+        }
+
+        newFormula = newFormula.split(common.QUAD_UNDERSCORE).join('');
+
+        row.formula = newFormula;
+        row.formulaDeps = formulaDeps;
+      } else if (common.isDefined(row.parametersFormula)) {
+        //
+        let newParametersFormula = row.parametersFormula;
+        let parametersFormulaDeps: string[] = [];
+        let reg = common.MyRegex.CAPTURE_ROW_REF();
+        let r;
+
+        while ((r = reg.exec(newParametersFormula))) {
+          let reference = r[1];
+
+          let targetTo = common.isDefined(targets[reference])
+            ? targets[reference]
+            : common.UNDEF;
+
+          newParametersFormula = common.MyRegex.replaceRowIds(
+            newParametersFormula,
+            reference,
+            targetTo
+          );
+
+          parametersFormulaDeps.push(targetTo);
+        }
+
+        newParametersFormula = newParametersFormula
+          .split(common.QUAD_UNDERSCORE)
+          .join('');
+
+        row.parametersFormula = newParametersFormula;
+        row.parametersFormulaDeps = parametersFormulaDeps;
+      } else if (common.isDefined(row.parameters)) {
+        //
+        row.parameters.forEach(p => {
+          let newParId = `$${p.parameterId}`;
+          let reg1 = common.MyRegex.CAPTURE_ROW_REF();
+          let r1;
+
+          while ((r1 = reg1.exec(newParId))) {
+            let ref = r1[1];
+
+            let targetTo = common.isDefined(targets[ref])
+              ? targets[ref]
+              : common.UNDEF;
+
+            newParId = common.MyRegex.replaceRowIds(newParId, ref, targetTo);
+          }
+
+          newParId = newParId.split(common.QUAD_UNDERSCORE).join('');
+
+          p.parameterId = newParId.split('$')[1];
+
+          if (common.isDefined(p.formula)) {
+            let newParFormula = p.formula;
+            let parFormulaDeps: string[] = [];
+            let reg = common.MyRegex.CAPTURE_ROW_REF();
+            let r;
+
+            while ((r = reg.exec(newParFormula))) {
+              let reference = r[1];
+
+              let targetTo = common.isDefined(targets[reference])
+                ? targets[reference]
+                : common.UNDEF;
+
+              newParFormula = common.MyRegex.replaceRowIds(
+                newParFormula,
+                reference,
+                targetTo
+              );
+
+              parFormulaDeps.push(targetTo);
+            }
+
+            newParFormula = newParFormula
+              .split(common.QUAD_UNDERSCORE)
+              .join('');
+
+            p.formula = newParFormula;
+            p.formulaDeps = parFormulaDeps;
+          }
+        });
       }
-
-      newFormula = newFormula.split(common.QUAD_UNDERSCORE).join('');
-
-      row.formula = newFormula;
-      row.formulaDeps = formulaDeps;
     });
 
   let newRows = rows.sort((a, b) =>

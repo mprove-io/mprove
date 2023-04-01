@@ -225,14 +225,16 @@ export class RowFiltersComponent {
       newParameter = Object.assign({}, parameter, {
         parameterType: common.ParameterTypeEnum.Field,
         conditions: ['any'],
-        formula: undefined
+        formula: undefined,
+        formulaDeps: undefined
       } as common.Parameter);
     } else {
       newParameter = Object.assign({}, parameter, {
         parameterType: common.ParameterTypeEnum.Formula,
         conditions: ['any'],
         formula: `import json
-return json.dumps({"conditions":["any"]})`
+return json.dumps({"conditions":["any"]})`,
+        formulaDeps: undefined
       } as common.Parameter);
     }
 
@@ -266,7 +268,8 @@ return json.dumps({"conditions":["any"]})`
     );
 
     let newParameter = Object.assign({}, newParameters[parametersIndex], {
-      formula: eventParameterFormulaUpdate.formula
+      formula: eventParameterFormulaUpdate.formula,
+      formulaDeps: undefined
     } as common.Parameter);
 
     newParameters = [
