@@ -234,7 +234,9 @@ export class SaveCreateRepController {
     let rep = reps.find(x => x.repId === newRepId);
 
     rep.rows.forEach(x => {
-      x.rqs = fromRep.rows.find(row => row.rowId === x.rowId).rqs;
+      let fromRow = fromRep.rows.find(row => row.rowId === x.rowId);
+      x.rqs = fromRow.rqs;
+      x.rcs = fromRow.rcs;
     });
 
     await this.dbService.writeRecords({

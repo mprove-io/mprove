@@ -159,6 +159,15 @@ export class BlockmlService {
       udfsDict: udfsDict
     });
 
+    reps.forEach(rep => {
+      let newRows = processRowIds({
+        rows: rep.rows,
+        targetRowIds: rep.rows.map(r => r.rowId)
+      });
+
+      rep.rows = newRows;
+    });
+
     if (common.isUndefined(skipDb) || skipDb === false) {
       await this.dbService.writeRecords({
         modify: false,
@@ -168,31 +177,25 @@ export class BlockmlService {
           queries: queries.map(x => wrapper.wrapToEntityQuery(x)),
           models: models.map(x => wrapper.wrapToEntityModel(x)),
           metrics: metrics.map(x => wrapper.wrapToEntityMetric(x)),
-          reps: reps.map(rep => {
-            let rowChanges: common.RowChange[] = [];
-
-            rep.rows.forEach(row => {
-              let rowChange: common.RowChange = {
-                rowId: row.rowId
-              };
-              rowChanges.push(rowChange);
-            });
-
-            let tRows = processRowIds({
-              rows: rep.rows,
-              targetRowIds: rowChanges.map(rc => rc.rowId)
-            });
-
-            rep.rows = tRows;
-
-            return wrapper.wrapToEntityRep(rep);
-          }),
+          reps: reps.map(rep => wrapper.wrapToEntityRep(rep)),
           apis: apis.map(x => wrapper.wrapToEntityApi(x)),
           mconfigs: mconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
           dashboards: dashboards.map(x => wrapper.wrapToEntityDashboard(x))
         }
       });
     }
+    // else {
+    //   let modifiedStruct = Object.assign({}, oldStruct, {
+    //     errors: struct.errors
+    //   });
+
+    //   await this.dbService.writeRecords({
+    //     modify: true,
+    //     records: {
+    //       structs: [modifiedStruct]
+    //     }
+    //   });
+    // }
 
     return {
       struct: struct,
