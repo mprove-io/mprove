@@ -3,10 +3,9 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnInit,
   Output
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 import {
@@ -19,7 +18,7 @@ import {
   templateUrl: 'fraction-day-of-week.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FractionDayOfWeekComponent implements OnInit {
+export class FractionDayOfWeekComponent {
   fractionTypeEnum = common.FractionTypeEnum;
 
   @Input() isDisabled: boolean;
@@ -28,8 +27,6 @@ export class FractionDayOfWeekComponent implements OnInit {
   @Input() isFirst: boolean;
 
   @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
-
-  fractionForm: FormGroup;
 
   fractionDayOfWeekTypesList: FractionTypeItem[] = [
     {
@@ -87,22 +84,6 @@ export class FractionDayOfWeekComponent implements OnInit {
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit() {
-    this.buildFractionForm();
-  }
-
-  buildFractionForm() {
-    this.fractionForm = this.fb.group({
-      dayOfWeekValue: [this.fraction.dayOfWeekValue]
-    });
-  }
-
-  updateControlFractionFormDayOfWeekValueFromFraction() {
-    this.fractionForm.controls['dayOfWeekValue'].setValue(
-      this.fraction.dayOfWeekValue
-    );
-  }
-
   emitFractionUpdate() {
     this.fractionUpdate.emit({
       fraction: this.fraction,
@@ -135,7 +116,6 @@ export class FractionDayOfWeekComponent implements OnInit {
           brick: `${newDayOfWeekValue}`
         };
 
-        this.updateControlFractionFormDayOfWeekValueFromFraction();
         this.emitFractionUpdate();
 
         break;
@@ -163,7 +143,6 @@ export class FractionDayOfWeekComponent implements OnInit {
           brick: `not ${newDayOfWeekValue}`
         };
 
-        this.updateControlFractionFormDayOfWeekValueFromFraction();
         this.emitFractionUpdate();
 
         break;
