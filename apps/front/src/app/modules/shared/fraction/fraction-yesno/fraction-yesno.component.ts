@@ -3,10 +3,9 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnInit,
   Output
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 import {
@@ -19,7 +18,7 @@ import {
   templateUrl: 'fraction-yesno.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FractionYesnoComponent implements OnInit {
+export class FractionYesnoComponent {
   fractionTypeEnum = common.FractionTypeEnum;
 
   @Input() isDisabled: boolean;
@@ -28,8 +27,6 @@ export class FractionYesnoComponent implements OnInit {
   @Input() isFirst: boolean;
 
   @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
-
-  fractionForm: FormGroup;
 
   fractionYesnoTypesList: FractionTypeItem[] = [
     {
@@ -54,20 +51,6 @@ export class FractionYesnoComponent implements OnInit {
   ];
 
   constructor(private fb: FormBuilder) {}
-
-  ngOnInit() {
-    this.buildFractionForm();
-  }
-
-  buildFractionForm() {
-    this.fractionForm = this.fb.group({
-      yesnoValue: [this.fraction.yesnoValue]
-    });
-  }
-
-  updateControlFractionFormYesnoValueFromFraction() {
-    this.fractionForm.controls['yesnoValue'].setValue(this.fraction.yesnoValue);
-  }
 
   emitFractionUpdate() {
     this.fractionUpdate.emit({
@@ -101,7 +84,6 @@ export class FractionYesnoComponent implements OnInit {
           yesnoValue: newYesnoValue
         };
 
-        this.updateControlFractionFormYesnoValueFromFraction();
         this.emitFractionUpdate();
 
         break;
