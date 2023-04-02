@@ -3,10 +3,9 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnInit,
   Output
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 import {
@@ -19,7 +18,7 @@ import {
   templateUrl: 'fraction-month-name.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FractionMonthNameComponent implements OnInit {
+export class FractionMonthNameComponent {
   fractionTypeEnum = common.FractionTypeEnum;
 
   @Input() isDisabled: boolean;
@@ -28,8 +27,6 @@ export class FractionMonthNameComponent implements OnInit {
   @Input() isFirst: boolean;
 
   @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
-
-  fractionForm: FormGroup;
 
   fractionMonthNameTypesList: FractionTypeItem[] = [
     {
@@ -107,22 +104,6 @@ export class FractionMonthNameComponent implements OnInit {
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit() {
-    this.buildFractionForm();
-  }
-
-  buildFractionForm() {
-    this.fractionForm = this.fb.group({
-      monthNameValue: [this.fraction.monthNameValue]
-    });
-  }
-
-  updateControlFractionFormMonthNameValueFromFraction() {
-    this.fractionForm.controls['monthNameValue'].setValue(
-      this.fraction.monthNameValue
-    );
-  }
-
   emitFractionUpdate() {
     this.fractionUpdate.emit({
       fraction: this.fraction,
@@ -155,7 +136,6 @@ export class FractionMonthNameComponent implements OnInit {
           brick: `${newMonthNameValue}`
         };
 
-        this.updateControlFractionFormMonthNameValueFromFraction();
         this.emitFractionUpdate();
 
         break;
@@ -183,7 +163,6 @@ export class FractionMonthNameComponent implements OnInit {
           brick: `not ${newMonthNameValue}`
         };
 
-        this.updateControlFractionFormMonthNameValueFromFraction();
         this.emitFractionUpdate();
 
         break;

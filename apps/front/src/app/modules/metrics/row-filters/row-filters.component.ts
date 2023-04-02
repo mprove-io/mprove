@@ -233,7 +233,10 @@ export class RowFiltersComponent {
         parameterType: common.ParameterTypeEnum.Formula,
         conditions: ['any'],
         formula: `import json
-return json.dumps({"conditions":["any"]})`,
+a = {"filter": "${
+          parameter.filter
+        }", "conditions": ["${parameter.conditions.join(', ')}"]};        
+return json.dumps(a)`,
         formulaDeps: undefined
       } as common.Parameter);
     }
