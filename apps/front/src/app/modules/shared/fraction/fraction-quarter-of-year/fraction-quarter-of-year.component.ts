@@ -3,10 +3,9 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnInit,
   Output
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 import {
@@ -19,7 +18,7 @@ import {
   templateUrl: 'fraction-quarter-of-year.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FractionQuarterOfYearComponent implements OnInit {
+export class FractionQuarterOfYearComponent {
   fractionTypeEnum = common.FractionTypeEnum;
 
   @Input() isDisabled: boolean;
@@ -28,8 +27,6 @@ export class FractionQuarterOfYearComponent implements OnInit {
   @Input() isFirst: boolean;
 
   @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
-
-  fractionForm: FormGroup;
 
   fractionQuarterOfYearTypesList: FractionTypeItem[] = [
     {
@@ -75,22 +72,6 @@ export class FractionQuarterOfYearComponent implements OnInit {
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit() {
-    this.buildFractionForm();
-  }
-
-  buildFractionForm() {
-    this.fractionForm = this.fb.group({
-      quarterOfYearValue: [this.fraction.quarterOfYearValue]
-    });
-  }
-
-  updateControlFractionFormQuarterOfYearValueFromFraction() {
-    this.fractionForm.controls['quarterOfYearValue'].setValue(
-      this.fraction.quarterOfYearValue
-    );
-  }
-
   emitFractionUpdate() {
     this.fractionUpdate.emit({
       fraction: this.fraction,
@@ -123,7 +104,6 @@ export class FractionQuarterOfYearComponent implements OnInit {
           brick: `${newQuarterOfYearValue}`
         };
 
-        this.updateControlFractionFormQuarterOfYearValueFromFraction();
         this.emitFractionUpdate();
 
         break;
@@ -151,7 +131,6 @@ export class FractionQuarterOfYearComponent implements OnInit {
           brick: `not ${newQuarterOfYearValue}`
         };
 
-        this.updateControlFractionFormQuarterOfYearValueFromFraction();
         this.emitFractionUpdate();
 
         break;

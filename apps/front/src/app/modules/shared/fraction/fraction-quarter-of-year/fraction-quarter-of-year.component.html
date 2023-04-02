@@ -31,25 +31,31 @@
     </ng-select>
   </div>
 
-  <form
-    [formGroup]="fractionForm"
+  <div
     *ngIf="
       fraction.type === fractionTypeEnum.QuarterOfYearIs ||
       fraction.type === fractionTypeEnum.QuarterOfYearIsNot
     "
+    tippy="Turn off formula to activate control"
+    [isEnabled]="isDisabled === true"
   >
     <ng-select
       #fractionQuarterOfYearValueSelect
       data-cy="fractionQuarterOfYearValueSelect"
-      class="custom popup-55 w-48 focus:outline-none"
+      class="popup-55 w-48 focus:outline-none"
+      [ngClass]="{
+        custom: isDisabled !== true,
+        'cursor-default': isDisabled === true
+      }"
       [items]="fractionQuarterOfYearValuesList"
       [clearable]="false"
       [searchable]="false"
+      [disabled]="isDisabled === true"
+      [(ngModel)]="fraction.quarterOfYearValue"
       (change)="quarterOfYearValueChange($event)"
       appendTo="body"
       bindLabel="label"
       bindValue="value"
-      formControlName="quarterOfYearValue"
     >
       <ng-template ng-label-tmp let-item="item">
         <div class="ml-1 truncate">{{ item.label }}</div>
@@ -59,5 +65,5 @@
         <div class="ml-1 truncate">{{ item.label }}</div>
       </ng-template>
     </ng-select>
-  </form>
+  </div>
 </div>
