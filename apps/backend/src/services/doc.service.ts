@@ -280,7 +280,6 @@ return json.dumps([${rowParColumns
             p.isCalcValid = common.isUndefined(firstRecord.errors?.[parStr]);
 
             if (p.isCalcValid === true) {
-              // TODO: check result match
               let parsedParameter = JSON.parse(firstRecord.fields[parStr]);
 
               p.conditions = parsedParameter.conditions;
