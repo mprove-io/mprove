@@ -38,8 +38,6 @@ export class FractionNumberComponent implements OnInit {
   numberSingleValueForm: FormGroup;
   numberBetweenForm: FormGroup;
 
-  numberBetweenOptionsForm: FormGroup;
-
   fractionNumberTypesList: FractionTypeItem[] = [
     {
       label: 'is any value',
@@ -112,7 +110,6 @@ export class FractionNumberComponent implements OnInit {
     this.buildNumberValuesForm();
     this.buildNumberSingleValueForm();
     this.buildNumberBetweenForm();
-    this.buildNumberBetweenOptionsForm();
   }
 
   buildNumberValuesForm() {
@@ -159,12 +156,6 @@ export class FractionNumberComponent implements OnInit {
           Validators.maxLength(255)
         ])
       ]
-    });
-  }
-
-  buildNumberBetweenOptionsForm() {
-    this.numberBetweenOptionsForm = this.fb.group({
-      numberBetweenOption: [this.fraction.numberBetweenOption]
     });
   }
 
@@ -242,12 +233,6 @@ export class FractionNumberComponent implements OnInit {
   updateControlBetweenFormSecondValueFromFraction() {
     this.numberBetweenForm.controls['numberBetweenSecondValue'].setValue(
       this.fraction.numberValue2
-    );
-  }
-
-  updateControlBetweenOptionsFormBetweenOptionFromFraction() {
-    this.numberBetweenOptionsForm.controls['numberBetweenOption'].setValue(
-      this.fraction.numberBetweenOption
     );
   }
 
@@ -373,7 +358,6 @@ export class FractionNumberComponent implements OnInit {
           numberValue2: newNumberValue2
         };
 
-        this.updateControlBetweenOptionsFormBetweenOptionFromFraction();
         this.updateControlBetweenFormFirstValueFromFraction();
         this.updateControlBetweenFormSecondValueFromFraction();
         this.emitFractionUpdate();
@@ -417,7 +401,6 @@ export class FractionNumberComponent implements OnInit {
           numberValue2: newNumberValue2
         };
 
-        this.updateControlBetweenOptionsFormBetweenOptionFromFraction();
         this.updateControlBetweenFormFirstValueFromFraction();
         this.updateControlBetweenFormSecondValueFromFraction();
         this.emitFractionUpdate();

@@ -96,25 +96,31 @@
     </div>
   </form>
 
-  <form
-    [formGroup]="numberBetweenOptionsForm"
+  <div
     *ngIf="
       fraction.type === fractionTypeEnum.NumberIsBetween ||
       fraction.type === fractionTypeEnum.NumberIsNotBetween
     "
+    tippy="Turn off formula to activate control"
+    [isEnabled]="isDisabled === true"
   >
     <ng-select
       #fractionBetweenOptionSelect
       data-cy="fractionBetweenOptionSelect"
-      class="custom popup-55 w-48 focus:outline-none"
+      class="popup-55 w-48 focus:outline-none"
+      [ngClass]="{
+        custom: isDisabled !== true,
+        'cursor-default': isDisabled === true
+      }"
       [items]="fractionNumberBetweenOptionsList"
       [clearable]="false"
       [searchable]="false"
+      [disabled]="isDisabled === true"
+      [(ngModel)]="fraction.numberBetweenOption"
       (change)="betweenOptionChange($event)"
       appendTo="body"
       bindLabel="label"
       bindValue="value"
-      formControlName="numberBetweenOption"
     >
       <ng-template ng-label-tmp let-item="item">
         <div class="ml-1 truncate">{{ item.label }}</div>
@@ -124,7 +130,7 @@
         <div class="ml-1 truncate">{{ item.label }}</div>
       </ng-template>
     </ng-select>
-  </form>
+  </div>
 
   <form
     [formGroup]="numberBetweenForm"
