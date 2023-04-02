@@ -22,6 +22,9 @@ export class Parameter {
   @IsBoolean()
   isCalcValid?: boolean;
 
+  @IsBoolean()
+  isConditionsValid?: boolean;
+
   @IsString({ each: true })
   conditions: string[];
 

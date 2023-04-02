@@ -844,6 +844,10 @@ export class RepsService {
                     }
                   );
 
+                parameter.isConditionsValid =
+                  common.isDefined(parameter.conditions) &&
+                  blockmlGetFractionsResponse.payload.isValid === true;
+
                 let filter: common.Filter = {
                   fieldId: parameter.filter,
                   fractions: blockmlGetFractionsResponse.payload.fractions

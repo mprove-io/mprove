@@ -44,9 +44,15 @@ export class GetFractionsService {
     });
 
     if (p.valid !== 1) {
+      let fractionAny: common.Fraction = {
+        brick: 'any',
+        operator: common.FractionOperatorEnum.Or,
+        type: common.getFractionTypeForAny(result)
+      };
+
       let payload: apiToBlockml.ToBlockmlGetFractionsResponsePayload = {
         isValid: false,
-        fractions: undefined
+        fractions: [fractionAny]
       };
 
       return payload;
