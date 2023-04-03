@@ -224,7 +224,7 @@ export class RowFiltersComponent {
     if (parameter.parameterType === common.ParameterTypeEnum.Formula) {
       newParameter = Object.assign({}, parameter, {
         parameterType: common.ParameterTypeEnum.Field,
-        conditions: ['any'],
+        // conditions: ['any'],
         formula: undefined,
         formulaDeps: undefined
       } as common.Parameter);
