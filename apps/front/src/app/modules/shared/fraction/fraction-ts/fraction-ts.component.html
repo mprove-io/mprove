@@ -298,18 +298,25 @@
     class="flex flex-row space-x-5"
   >
     <form [formGroup]="tsRelativeValueForm">
-      <input
-        spellcheck="false"
-        data-cy="fractionTsRelativeValueInput"
-        class="form-input border-gray3 focus:border-blue3 h-[36px] w-16 rounded"
-        [ngClass]="{
-          'border-red-600':
-            tsRelativeValueForm.controls['tsRelativeValue'].invalid &&
-            tsRelativeValueForm.controls['tsRelativeValue'].touched
-        }"
-        formControlName="tsRelativeValue"
-        (blur)="relativeValueBlur()"
-      />
+      <div
+        tippy="Turn off formula to activate control"
+        [isEnabled]="isDisabled === true"
+      >
+        <fieldset [disabled]="isDisabled === true">
+          <input
+            spellcheck="false"
+            data-cy="fractionTsRelativeValueInput"
+            class="form-input border-gray3 focus:border-blue3 h-[36px] w-16 rounded"
+            [ngClass]="{
+              'border-red-600':
+                tsRelativeValueForm.controls['tsRelativeValue'].invalid &&
+                tsRelativeValueForm.controls['tsRelativeValue'].touched
+            }"
+            formControlName="tsRelativeValue"
+            (blur)="relativeValueBlur()"
+          />
+        </fieldset>
+      </div>
 
       <m-validation
         [control]="tsRelativeValueForm.controls['tsRelativeValue']"
@@ -459,18 +466,25 @@
       *ngIf="fraction.tsForOption === fractionTsForOptionEnum.For"
       [formGroup]="tsForValueForm"
     >
-      <input
-        spellcheck="false"
-        data-cy="fractionTsForValueInput"
-        class="form-input border-gray3 focus:border-blue3 h-[36px] w-16 rounded"
-        [ngClass]="{
-          'border-red-600':
-            tsForValueForm.controls['tsForValue'].invalid &&
-            tsForValueForm.controls['tsForValue'].touched
-        }"
-        formControlName="tsForValue"
-        (blur)="forValueBlur()"
-      />
+      <div
+        tippy="Turn off formula to activate control"
+        [isEnabled]="isDisabled === true"
+      >
+        <fieldset [disabled]="isDisabled === true">
+          <input
+            spellcheck="false"
+            data-cy="fractionTsForValueInput"
+            class="form-input border-gray3 focus:border-blue3 h-[36px] w-16 rounded"
+            [ngClass]="{
+              'border-red-600':
+                tsForValueForm.controls['tsForValue'].invalid &&
+                tsForValueForm.controls['tsForValue'].touched
+            }"
+            formControlName="tsForValue"
+            (blur)="forValueBlur()"
+          />
+        </fieldset>
+      </div>
 
       <m-validation
         [control]="tsForValueForm.controls['tsForValue']"
@@ -517,18 +531,25 @@
     class="flex flex-row space-x-5"
   >
     <form [formGroup]="tsLastValueForm">
-      <input
-        spellcheck="false"
-        data-cy="fractionTsLastValueInput"
-        class="form-input border-gray3 focus:border-blue3 h-[36px] w-16 rounded"
-        [ngClass]="{
-          'border-red-600':
-            tsLastValueForm.controls['tsLastValue'].invalid &&
-            tsLastValueForm.controls['tsLastValue'].touched
-        }"
-        formControlName="tsLastValue"
-        (blur)="tsLastValueBlur()"
-      />
+      <div
+        tippy="Turn off formula to activate control"
+        [isEnabled]="isDisabled === true"
+      >
+        <fieldset [disabled]="isDisabled === true">
+          <input
+            spellcheck="false"
+            data-cy="fractionTsLastValueInput"
+            class="form-input border-gray3 focus:border-blue3 h-[36px] w-16 rounded"
+            [ngClass]="{
+              'border-red-600':
+                tsLastValueForm.controls['tsLastValue'].invalid &&
+                tsLastValueForm.controls['tsLastValue'].touched
+            }"
+            formControlName="tsLastValue"
+            (blur)="tsLastValueBlur()"
+          />
+        </fieldset>
+      </div>
 
       <m-validation
         [control]="tsLastValueForm.controls['tsLastValue']"
