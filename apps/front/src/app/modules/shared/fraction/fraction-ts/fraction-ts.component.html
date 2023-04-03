@@ -316,19 +316,27 @@
       ></m-validation>
     </form>
 
-    <form [formGroup]="tsRelativeUnitForm">
+    <div
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
+    >
       <ng-select
         #tsRelativeUnitSelect
         data-cy="tsRelativeUnitSelect"
-        class="custom popup-55 w-32 focus:outline-none"
+        class="popup-55 w-32 focus:outline-none"
+        [ngClass]="{
+          custom: isDisabled !== true,
+          'cursor-default': isDisabled === true
+        }"
         [items]="fractionTsRelativeUnitsList"
         [clearable]="false"
         [searchable]="false"
+        [disabled]="isDisabled === true"
+        [(ngModel)]="fraction.tsRelativeUnit"
         (change)="relativeTsUnitOptionChange()"
         appendTo="body"
         bindLabel="label"
         bindValue="value"
-        formControlName="tsRelativeUnit"
       >
         <ng-template ng-label-tmp let-item="item">
           <div class="ml-1 truncate">{{ item.label }}</div>
@@ -338,21 +346,29 @@
           <div class="ml-1 truncate">{{ item.label }}</div>
         </ng-template>
       </ng-select>
-    </form>
+    </div>
 
-    <form [formGroup]="tsRelativeCompleteForm">
+    <div
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
+    >
       <ng-select
         #tsRelativeCompleteOptionsSelect
         data-cy="tsRelativeCompleteOptionsSelect"
-        class="custom popup-55 w-[165px] focus:outline-none"
+        class="popup-55 w-[165px] focus:outline-none"
+        [ngClass]="{
+          custom: isDisabled !== true,
+          'cursor-default': isDisabled === true
+        }"
         [items]="fractionTsRelativeCompleteOptionsList"
         [clearable]="false"
         [searchable]="false"
+        [disabled]="isDisabled === true"
+        [(ngModel)]="fraction.tsRelativeCompleteOption"
         (change)="relativeTsCompleteOptionChange()"
         appendTo="body"
         bindLabel="label"
         bindValue="value"
-        formControlName="tsRelativeCompleteOption"
       >
         <ng-template ng-label-tmp let-item="item">
           <div class="ml-1 truncate">{{ item.label }}</div>
@@ -362,21 +378,29 @@
           <div class="ml-1 truncate">{{ item.label }}</div>
         </ng-template>
       </ng-select>
-    </form>
+    </div>
 
-    <form [formGroup]="tsRelativeWhenForm">
+    <div
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
+    >
       <ng-select
         #tsRelativeWhenOptionsSelect
         data-cy="tsRelativeWhenOptionsSelect"
-        class="custom popup-55 w-32 focus:outline-none"
+        class="popup-55 w-32 focus:outline-none"
+        [ngClass]="{
+          custom: isDisabled !== true,
+          'cursor-default': isDisabled === true
+        }"
         [items]="fractionTsRelativeWhenOptionsList"
         [clearable]="false"
         [searchable]="false"
+        [disabled]="isDisabled === true"
+        [(ngModel)]="fraction.tsRelativeWhenOption"
         (change)="relativeTsWhenOptionChange()"
         appendTo="body"
         bindLabel="label"
         bindValue="value"
-        formControlName="tsRelativeWhenOption"
       >
         <ng-template ng-label-tmp let-item="item">
           <div class="ml-1 truncate">{{ item.label }}</div>
@@ -386,7 +410,7 @@
           <div class="ml-1 truncate">{{ item.label }}</div>
         </ng-template>
       </ng-select>
-    </form>
+    </div>
   </div>
 
   <!-- for -->
@@ -399,19 +423,27 @@
     "
     class="flex flex-row space-x-5"
   >
-    <form [formGroup]="tsForForm">
+    <div
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
+    >
       <ng-select
         #tsForOptionsSelect
         data-cy="tsForOptionsSelect"
-        class="custom popup-55 w-[140px] focus:outline-none"
+        class="popup-55 w-[140px] focus:outline-none"
+        [ngClass]="{
+          custom: isDisabled !== true,
+          'cursor-default': isDisabled === true
+        }"
         [items]="fractionTsForOptionsList"
         [clearable]="false"
         [searchable]="false"
+        [disabled]="isDisabled === true"
+        [(ngModel)]="fraction.tsForOption"
         (change)="tsForOptionChange()"
         appendTo="body"
         bindLabel="label"
         bindValue="value"
-        formControlName="tsForOption"
       >
         <ng-template ng-label-tmp let-item="item">
           <div class="ml-1 truncate">{{ item.label }}</div>
@@ -421,7 +453,7 @@
           <div class="ml-1 truncate">{{ item.label }}</div>
         </ng-template>
       </ng-select>
-    </form>
+    </div>
 
     <form
       *ngIf="fraction.tsForOption === fractionTsForOptionEnum.For"
@@ -445,22 +477,28 @@
       ></m-validation>
     </form>
 
-    <form
+    <div
       *ngIf="fraction.tsForOption === fractionTsForOptionEnum.For"
-      [formGroup]="tsForUnitForm"
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
     >
       <ng-select
         #tsForUnitsSelect
         data-cy="tsForUnitsSelect"
-        class="custom popup-55 w-32 focus:outline-none"
+        class="popup-55 w-32 focus:outline-none"
+        [ngClass]="{
+          custom: isDisabled !== true,
+          'cursor-default': isDisabled === true
+        }"
         [items]="fractionTsForUnitsList"
         [clearable]="false"
         [searchable]="false"
+        [disabled]="isDisabled === true"
+        [(ngModel)]="fraction.tsForUnit"
         (change)="tsForUnitChange()"
         appendTo="body"
         bindLabel="label"
         bindValue="value"
-        formControlName="tsForUnit"
       >
         <ng-template ng-label-tmp let-item="item">
           <div class="ml-1 truncate">{{ item.label }}</div>
@@ -470,7 +508,7 @@
           <div class="ml-1 truncate">{{ item.label }}</div>
         </ng-template>
       </ng-select>
-    </form>
+    </div>
   </div>
 
   <!-- in last -->
@@ -497,19 +535,27 @@
       ></m-validation>
     </form>
 
-    <form [formGroup]="tsLastUnitForm">
+    <div
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
+    >
       <ng-select
         #tsLastUnitsSelect
         data-cy="tsLastUnitsSelect"
-        class="custom popup-55 w-32 focus:outline-none"
+        class="popup-55 w-32 focus:outline-none"
+        [ngClass]="{
+          custom: isDisabled !== true,
+          'cursor-default': isDisabled === true
+        }"
         [items]="fractionTsLastUnitsList"
         [clearable]="false"
         [searchable]="false"
+        [disabled]="isDisabled === true"
+        [(ngModel)]="fraction.tsLastUnit"
         (change)="tsLastUnitChange()"
         appendTo="body"
         bindLabel="label"
         bindValue="value"
-        formControlName="tsLastUnit"
       >
         <ng-template ng-label-tmp let-item="item">
           <div class="ml-1 truncate">{{ item.label }}</div>
@@ -519,21 +565,29 @@
           <div class="ml-1 truncate">{{ item.label }}</div>
         </ng-template>
       </ng-select>
-    </form>
+    </div>
 
-    <form [formGroup]="tsLastCompleteOptionForm">
+    <div
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
+    >
       <ng-select
         #tsLastCompleteOptionsSelect
         data-cy="tsLastCompleteOptionsSelect"
-        class="custom popup-55 w-56 focus:outline-none"
+        class="popup-55 w-56 focus:outline-none"
+        [ngClass]="{
+          custom: isDisabled !== true,
+          'cursor-default': isDisabled === true
+        }"
         [items]="fractionTsLastCompleteOptionsList"
         [clearable]="false"
         [searchable]="false"
+        [disabled]="isDisabled === true"
+        [(ngModel)]="fraction.tsLastCompleteOption"
         (change)="tsLastCompleteOptionChange()"
         appendTo="body"
         bindLabel="label"
         bindValue="value"
-        formControlName="tsLastCompleteOption"
       >
         <ng-template ng-label-tmp let-item="item">
           <div class="ml-1 truncate">{{ item.label }}</div>
@@ -543,7 +597,7 @@
           <div class="ml-1 truncate">{{ item.label }}</div>
         </ng-template>
       </ng-select>
-    </form>
+    </div>
   </div>
 </div>
 

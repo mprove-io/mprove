@@ -79,18 +79,8 @@ export class FractionTsComponent implements OnInit {
   @ViewChild('timePickerInRangeTo') timePickerInRangeTo: ElementRef<TimePicker>;
 
   tsRelativeValueForm: FormGroup;
-
-  tsRelativeUnitForm: FormGroup;
-  tsRelativeCompleteForm: FormGroup;
-  tsRelativeWhenForm: FormGroup;
-
-  tsForForm: FormGroup;
   tsForValueForm: FormGroup;
-  tsForUnitForm: FormGroup;
-
   tsLastValueForm: FormGroup;
-  tsLastUnitForm: FormGroup;
-  tsLastCompleteOptionForm: FormGroup;
 
   fractionTsTypesList: FractionTypeItem[] = [
     {
@@ -389,17 +379,8 @@ export class FractionTsComponent implements OnInit {
     this.resetDateToUsingFraction();
 
     this.buildTsRelativeValueForm();
-    this.buildTsRelativeUnitForm();
-    this.buildTsRelativeCompleteForm();
-    this.buildTsRelativeWhenForm();
-
-    this.buildTsForForm();
     this.buildTsForValueForm();
-    this.buildTsForUnitForm();
-
     this.buildTsLastValueForm();
-    this.buildTsLastUnitForm();
-    this.buildTsLastCompleteOptionForm();
 
     let structState = this.structQuery.getValue();
     let firstDayOfWeek =
@@ -439,30 +420,6 @@ export class FractionTsComponent implements OnInit {
     });
   }
 
-  buildTsRelativeUnitForm() {
-    this.tsRelativeUnitForm = this.fb.group({
-      tsRelativeUnit: [this.fraction.tsRelativeUnit]
-    });
-  }
-
-  buildTsRelativeCompleteForm() {
-    this.tsRelativeCompleteForm = this.fb.group({
-      tsRelativeCompleteOption: [this.fraction.tsRelativeCompleteOption]
-    });
-  }
-
-  buildTsRelativeWhenForm() {
-    this.tsRelativeWhenForm = this.fb.group({
-      tsRelativeWhenOption: [this.fraction.tsRelativeWhenOption]
-    });
-  }
-
-  buildTsForForm() {
-    this.tsForForm = this.fb.group({
-      tsForOption: [this.fraction.tsForOption]
-    });
-  }
-
   buildTsForValueForm() {
     this.tsForValueForm = this.fb.group({
       tsForValue: [
@@ -476,12 +433,6 @@ export class FractionTsComponent implements OnInit {
     });
   }
 
-  buildTsForUnitForm() {
-    this.tsForUnitForm = this.fb.group({
-      tsForUnit: [this.fraction.tsForUnit]
-    });
-  }
-
   buildTsLastValueForm() {
     this.tsLastValueForm = this.fb.group({
       tsLastValue: [
@@ -492,18 +443,6 @@ export class FractionTsComponent implements OnInit {
           Validators.min(0)
         ]
       ]
-    });
-  }
-
-  buildTsLastUnitForm() {
-    this.tsLastUnitForm = this.fb.group({
-      tsLastUnit: [this.fraction.tsLastUnit]
-    });
-  }
-
-  buildTsLastCompleteOptionForm() {
-    this.tsLastCompleteOptionForm = this.fb.group({
-      tsLastCompleteOption: [this.fraction.tsLastCompleteOption]
     });
   }
 
@@ -561,9 +500,6 @@ export class FractionTsComponent implements OnInit {
 
   updateRelativeControls() {
     this.updateControlTsRelativeValueFromFraction();
-    this.updateControlTsRelativeUnitFromFraction();
-    this.updateControlTsRelativeCompleteOptionFromFraction();
-    this.updateControlTsRelativeWhenOptionFromFraction();
   }
 
   updateControlTsRelativeValueFromFraction() {
@@ -572,32 +508,8 @@ export class FractionTsComponent implements OnInit {
     );
   }
 
-  updateControlTsRelativeUnitFromFraction() {
-    this.tsRelativeUnitForm.controls['tsRelativeUnit'].setValue(
-      this.fraction.tsRelativeUnit
-    );
-  }
-
-  updateControlTsRelativeCompleteOptionFromFraction() {
-    this.tsRelativeCompleteForm.controls['tsRelativeCompleteOption'].setValue(
-      this.fraction.tsRelativeCompleteOption
-    );
-  }
-
-  updateControlTsRelativeWhenOptionFromFraction() {
-    this.tsRelativeWhenForm.controls['tsRelativeWhenOption'].setValue(
-      this.fraction.tsRelativeWhenOption
-    );
-  }
-
   updateForControls() {
-    this.updateControlForOptionFromFraction();
     this.updateControlForValueFromFraction();
-    this.updateControlForUnitFromFraction();
-  }
-
-  updateControlForOptionFromFraction() {
-    this.tsForForm.controls['tsForOption'].setValue(this.fraction.tsForOption);
   }
 
   updateControlForValueFromFraction() {
@@ -606,30 +518,13 @@ export class FractionTsComponent implements OnInit {
     );
   }
 
-  updateControlForUnitFromFraction() {
-    this.tsForUnitForm.controls['tsForUnit'].setValue(this.fraction.tsForUnit);
-  }
-
   updateLastControls() {
     this.updateControlLastValueFromFraction();
-    this.updateControlLastUnitFromFraction();
-    this.updateControlLastCompleteOptionFromFraction();
   }
 
   updateControlLastValueFromFraction() {
     this.tsLastValueForm.controls['tsLastValue'].setValue(
       this.fraction.tsLastValue
-    );
-  }
-
-  updateControlLastUnitFromFraction() {
-    this.tsLastUnitForm.controls['tsLastUnit'].setValue(
-      this.fraction.tsLastUnit
-    );
-  }
-  updateControlLastCompleteOptionFromFraction() {
-    this.tsLastCompleteOptionForm.controls['tsLastCompleteOption'].setValue(
-      this.fraction.tsLastCompleteOption
     );
   }
 
@@ -1553,35 +1448,19 @@ export class FractionTsComponent implements OnInit {
   }
 
   relativeTsUnitOptionChange() {
-    let value = this.tsRelativeUnitForm.controls['tsRelativeUnit'].value;
-
-    if (value !== this.fraction.tsRelativeUnit) {
-      this.fraction.tsRelativeUnit = value;
-      this.buildRelative();
-    }
+    this.buildRelative();
   }
 
   relativeTsCompleteOptionChange() {
-    let value =
-      this.tsRelativeCompleteForm.controls['tsRelativeCompleteOption'].value;
-
-    if (value !== this.fraction.tsRelativeCompleteOption) {
-      this.fraction.tsRelativeCompleteOption = value;
-      this.buildRelative();
-    }
+    this.buildRelative();
   }
 
   relativeTsWhenOptionChange() {
-    let value = this.tsRelativeWhenForm.controls['tsRelativeWhenOption'].value;
-
-    if (value !== this.fraction.tsRelativeWhenOption) {
-      this.fraction.tsRelativeWhenOption = value;
-      this.buildRelative();
-    }
+    this.buildRelative();
   }
 
   tsForOptionChange() {
-    let value = this.tsForForm.controls['tsForOption'].value;
+    let value = this.fraction.tsForOption;
 
     if (value === common.FractionTsForOptionEnum.For) {
       this.fraction = Object.assign({}, this.fraction, {
@@ -1610,7 +1489,6 @@ export class FractionTsComponent implements OnInit {
   }
 
   tsForUnitChange() {
-    this.fraction.tsForUnit = this.tsForUnitForm.controls['tsForUnit'].value;
     this.buildEmitFor();
   }
 
@@ -1686,8 +1564,6 @@ export class FractionTsComponent implements OnInit {
   }
 
   tsLastUnitChange() {
-    this.fraction.tsLastUnit = this.tsLastUnitForm.controls['tsLastUnit'].value;
-
     this.buildFractionLast();
 
     if (this.tsLastValueForm.valid) {
@@ -1696,9 +1572,6 @@ export class FractionTsComponent implements OnInit {
   }
 
   tsLastCompleteOptionChange() {
-    this.fraction.tsLastCompleteOption =
-      this.tsLastCompleteOptionForm.controls['tsLastCompleteOption'].value;
-
     this.buildFractionLast();
 
     if (this.tsLastValueForm.valid) {

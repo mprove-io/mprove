@@ -235,7 +235,7 @@ export class RowFiltersComponent {
         formula: `import json
 a = {"filter": "${
           parameter.filter
-        }", "conditions": ["${parameter.conditions.join(', ')}"]};        
+        }", "conditions": ["${parameter.conditions.join('", "')}"]};        
 return json.dumps(a)`,
         formulaDeps: undefined
       } as common.Parameter);
