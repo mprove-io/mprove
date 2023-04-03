@@ -222,20 +222,26 @@ export class RowFiltersComponent {
     let newParameter;
 
     if (parameter.parameterType === common.ParameterTypeEnum.Formula) {
+      // let newConditions = ['any'];
+      let newConditions = parameter.conditions;
+
       newParameter = Object.assign({}, parameter, {
         parameterType: common.ParameterTypeEnum.Field,
-        // conditions: ['any'],
+        conditions: newConditions,
         formula: undefined,
         formulaDeps: undefined
       } as common.Parameter);
     } else {
+      let newConditions = ['any'];
+      // let newConditions = parameter.conditions;
+
+      let newConditionsStr = newConditions.join('", "');
+
       newParameter = Object.assign({}, parameter, {
         parameterType: common.ParameterTypeEnum.Formula,
-        conditions: ['any'],
+        conditions: newConditions,
         formula: `import json
-a = {"filter": "${
-          parameter.filter
-        }", "conditions": ["${parameter.conditions.join('", "')}"]};        
+a = {"filter": "${parameter.filter}", "conditions": ["${newConditionsStr}"]};
 return json.dumps(a)`,
         formulaDeps: undefined
       } as common.Parameter);

@@ -78,7 +78,11 @@
   </div>
 
   <!-- on year -->
-  <div *ngIf="fraction.type === fractionTypeEnum.TsIsOnYear">
+  <div
+    *ngIf="fraction.type === fractionTypeEnum.TsIsOnYear"
+    tippy="Turn off formula to activate control"
+    [isEnabled]="isDisabled === true"
+  >
     <vaadin-date-picker
       #datePickerOnYear
       class="py-0"
@@ -86,11 +90,16 @@
       [value]="dateStr"
       [i18n]="onYearDateI18n"
       (value-changed)="yearDateValueChanged($event)"
+      [disabled]="isDisabled === true"
     ></vaadin-date-picker>
   </div>
 
   <!-- on month -->
-  <div *ngIf="fraction.type === fractionTypeEnum.TsIsOnMonth">
+  <div
+    *ngIf="fraction.type === fractionTypeEnum.TsIsOnMonth"
+    tippy="Turn off formula to activate control"
+    [isEnabled]="isDisabled === true"
+  >
     <vaadin-date-picker
       #datePickerOnMonth
       class="py-0"
@@ -98,11 +107,16 @@
       [value]="dateStr"
       [i18n]="onMonthDateI18n"
       (value-changed)="monthDateValueChanged($event)"
+      [disabled]="isDisabled === true"
     ></vaadin-date-picker>
   </div>
 
   <!-- on day -->
-  <div *ngIf="fraction.type === fractionTypeEnum.TsIsOnDay">
+  <div
+    *ngIf="fraction.type === fractionTypeEnum.TsIsOnDay"
+    tippy="Turn off formula to activate control"
+    [isEnabled]="isDisabled === true"
+  >
     <vaadin-date-picker
       #datePickerOnDay
       class="py-0"
@@ -110,6 +124,7 @@
       [value]="dateStr"
       [i18n]="onDayDateI18n"
       (value-changed)="dayDateValueChanged($event)"
+      [disabled]="isDisabled === true"
     ></vaadin-date-picker>
   </div>
 
@@ -118,7 +133,10 @@
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnHour"
     class="flex flex-row space-x-5"
   >
-    <div>
+    <div
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
+    >
       <vaadin-date-picker
         #datePickerOnHour
         class="py-0"
@@ -126,10 +144,14 @@
         [value]="dateStr"
         [i18n]="onHourDateI18n"
         (value-changed)="hourDateValueChanged($event)"
+        [disabled]="isDisabled === true"
       ></vaadin-date-picker>
     </div>
 
-    <div>
+    <div
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
+    >
       <vaadin-time-picker
         #timePickerOnHour
         class="py-0"
@@ -137,6 +159,7 @@
         [value]="timeStr"
         (value-changed)="hourTimeValueChanged($event)"
         (opened-changed)="hourTimeOpenedChanged($event)"
+        [disabled]="isDisabled === true"
       ></vaadin-time-picker>
     </div>
   </div>
@@ -146,7 +169,10 @@
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnMinute"
     class="flex flex-row space-x-5"
   >
-    <div>
+    <div
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
+    >
       <vaadin-date-picker
         #datePickerOnMinute
         class="py-0"
@@ -154,10 +180,14 @@
         [value]="dateStr"
         [i18n]="onMinuteDateI18n"
         (value-changed)="minuteDateValueChanged($event)"
+        [disabled]="isDisabled === true"
       ></vaadin-date-picker>
     </div>
 
-    <div>
+    <div
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
+    >
       <vaadin-time-picker
         #timePickerOnMinute
         class="py-0"
@@ -165,6 +195,7 @@
         [value]="timeStr"
         (value-changed)="minuteTimeValueChanged($event)"
         (opened-changed)="minuteTimeOpenedChanged($event)"
+        [disabled]="isDisabled === true"
       ></vaadin-time-picker>
     </div>
   </div>
@@ -174,7 +205,10 @@
     *ngIf="fraction.type === fractionTypeEnum.TsIsInRange"
     class="flex flex-row space-x-5"
   >
-    <div>
+    <div
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
+    >
       <vaadin-date-picker
         #datePickerInRangeFrom
         class="py-0"
@@ -182,6 +216,7 @@
         [value]="dateStr"
         [i18n]="inRangeFromDateI18n"
         (value-changed)="inRangeFromDateValueChanged($event)"
+        [disabled]="isDisabled === true"
       ></vaadin-date-picker>
     </div>
 
@@ -191,6 +226,8 @@
         timeStr !== zeroHoursMinutes ||
         timeToStr !== zeroHoursMinutes
       "
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
     >
       <vaadin-time-picker
         #timePickerInRangeFrom
@@ -199,12 +236,16 @@
         [value]="timeStr"
         (value-changed)="inRangeFromTimeValueChanged($event)"
         (opened-changed)="inRangeFromTimeOpenedChanged($event)"
+        [disabled]="isDisabled === true"
       ></vaadin-time-picker>
     </div>
 
     <div class="flex h-[36px] items-center justify-center">to</div>
 
-    <div>
+    <div
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
+    >
       <vaadin-date-picker
         #datePickerInRangeTo
         class="py-0"
@@ -212,6 +253,7 @@
         [value]="dateToStr"
         [i18n]="inRangeToDateI18n"
         (value-changed)="inRangeToDateValueChanged($event)"
+        [disabled]="isDisabled === true"
       ></vaadin-date-picker>
     </div>
 
@@ -221,6 +263,8 @@
         timeStr !== zeroHoursMinutes ||
         timeToStr !== zeroHoursMinutes
       "
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
     >
       <vaadin-time-picker
         #timePickerInRangeTo
@@ -229,6 +273,7 @@
         [value]="timeToStr"
         (value-changed)="inRangeToTimeValueChanged($event)"
         (opened-changed)="inRangeToTimeOpenedChanged($event)"
+        [disabled]="isDisabled === true"
       ></vaadin-time-picker>
     </div>
   </div>
@@ -238,7 +283,10 @@
     *ngIf="fraction.type === fractionTypeEnum.TsIsBeforeDate"
     class="flex flex-row space-x-5"
   >
-    <div>
+    <div
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
+    >
       <vaadin-date-picker
         #datePickerBefore
         class="py-0"
@@ -246,10 +294,15 @@
         [value]="dateStr"
         [i18n]="beforeDateI18n"
         (value-changed)="beforeDateValueChanged($event)"
+        [disabled]="isDisabled === true"
       ></vaadin-date-picker>
     </div>
 
-    <div *ngIf="showHours === true || timeStr !== zeroHoursMinutes">
+    <div
+      *ngIf="showHours === true || timeStr !== zeroHoursMinutes"
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
+    >
       <vaadin-time-picker
         #timePickerBefore
         class="py-0"
@@ -257,6 +310,7 @@
         [value]="timeStr"
         (value-changed)="beforeTimeValueChanged($event)"
         (opened-changed)="beforeTimeOpenedChanged($event)"
+        [disabled]="isDisabled === true"
       ></vaadin-time-picker>
     </div>
   </div>
@@ -266,7 +320,10 @@
     *ngIf="fraction.type === fractionTypeEnum.TsIsAfterDate"
     class="flex flex-row space-x-5"
   >
-    <div>
+    <div
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
+    >
       <vaadin-date-picker
         #datePickerAfter
         class="py-0"
@@ -274,10 +331,15 @@
         [value]="dateStr"
         [i18n]="afterDateI18n"
         (value-changed)="afterDateValueChanged($event)"
+        [disabled]="isDisabled === true"
       ></vaadin-date-picker>
     </div>
 
-    <div *ngIf="showHours === true || timeStr !== zeroHoursMinutes">
+    <div
+      *ngIf="showHours === true || timeStr !== zeroHoursMinutes"
+      tippy="Turn off formula to activate control"
+      [isEnabled]="isDisabled === true"
+    >
       <vaadin-time-picker
         #timePickerAfter
         class="py-0"
@@ -285,6 +347,7 @@
         [value]="timeStr"
         (value-changed)="afterTimeValueChanged($event)"
         (opened-changed)="afterTimeOpenedChanged($event)"
+        [disabled]="isDisabled === true"
       ></vaadin-time-picker>
     </div>
   </div>
