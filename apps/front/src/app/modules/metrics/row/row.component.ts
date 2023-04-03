@@ -688,7 +688,7 @@ export class RowComponent {
     if (common.isDefined(this.repSelectedNode.data.parametersFormula)) {
       rowChange = {
         rowId: this.repSelectedNode.data.rowId,
-        parameters: [],
+        parameters: this.repSelectedNode.data.parameters,
         parametersFormula: undefined
       };
     } else {
