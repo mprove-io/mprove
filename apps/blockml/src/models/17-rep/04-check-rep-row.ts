@@ -107,7 +107,29 @@ export function checkRepRow(
         item.errors.push(
           new BmError({
             title: common.ErTitleEnum.MISSING_ROW_PARAMETERS,
-            message: `parameter "${common.ParameterEnum.Parameters}" or "${common.ParameterEnum.ParametersFormula}" is required for a row of "${row.type}"`,
+            message:
+              `one of parameters "${common.ParameterEnum.Parameters}", ` +
+              `"${common.ParameterEnum.ParametersFormula}" is required for a row of type "${row.type}"`,
+            lines: [
+              {
+                line: row.row_id_line_num,
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
+      if (
+        [common.RowTypeEnum.Formula].indexOf(row.type) > -1 &&
+        common.isUndefined(row.formula)
+      ) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.MISSING_ROW_FORMULA,
+            message: `parameter "${common.ParameterEnum.Formula}" is required for a row of type "${row.type}"`,
             lines: [
               {
                 line: row.row_id_line_num,
