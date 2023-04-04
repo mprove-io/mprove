@@ -46,7 +46,7 @@ export enum ParameterEnum {
   Limit = 'limit',
   ListenFilters = 'listen_filters',
   Measure = 'measure',
-  Metric = 'metric',
+
   Model = 'model',
   MproveDir = 'mprove_dir',
   Percentile = 'percentile',
@@ -55,7 +55,7 @@ export enum ParameterEnum {
   Result = 'result',
   Rows = 'rows',
   Select = 'select',
-  ShowChart = 'show_chart',
+
   ShowFields = 'show_fields',
   SkipMetrics = 'skip_metrics',
   Sorts = 'sorts',
@@ -79,6 +79,12 @@ export enum ParameterEnum {
   Unnest = 'unnest',
   View = 'view',
   Vis = 'vis',
+  // row
+  Parameters = 'parameters',
+  ParametersFormula = 'parameters_formula',
+  RowId = 'row_id',
+  Metric = 'metric',
+  ShowChart = 'show_chart',
   // chart axis
   Axis = 'axis',
   Data = 'data',
