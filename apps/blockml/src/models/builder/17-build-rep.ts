@@ -35,5 +35,15 @@ export function buildRep(
     cs
   );
 
+  reps = barRep.checkRepRowUnknownParams(
+    {
+      reps: reps,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
   return reps;
 }

@@ -85,6 +85,8 @@ export enum ParameterEnum {
   RowId = 'row_id',
   Metric = 'metric',
   ShowChart = 'show_chart',
+  // parameter
+  Conditions = 'conditions',
   // chart axis
   Axis = 'axis',
   Data = 'data',
