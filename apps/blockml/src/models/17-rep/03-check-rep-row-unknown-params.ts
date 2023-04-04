@@ -166,11 +166,11 @@ export function checkRepRowUnknownParams(
               // }
             });
         });
-
-        if (errorsOnStart === item.errors.length) {
-          newReps.push(x);
-        }
       });
+
+    if (errorsOnStart === item.errors.length) {
+      newReps.push(x);
+    }
   });
 
   helper.log(
