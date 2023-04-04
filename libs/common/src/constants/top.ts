@@ -302,3 +302,10 @@ export const CHART_INTERPOLATION_VALUES = [
   enums.ChartInterpolationEnum.StepAfter,
   enums.ChartInterpolationEnum.StepBefore
 ];
+
+export const ROW_TYPE_VALUES = [
+  enums.RowTypeEnum.Empty,
+  enums.RowTypeEnum.Header,
+  enums.RowTypeEnum.Metric,
+  enums.RowTypeEnum.Formula
+];

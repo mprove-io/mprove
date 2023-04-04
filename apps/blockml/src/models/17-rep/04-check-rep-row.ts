@@ -60,46 +60,65 @@ export function checkRepRow(
           })
         );
         return;
+      } else if (common.ROW_TYPE_VALUES.indexOf(row.type) < 0) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.WRONG_ROW_TYPE,
+            message: `"${row.type}" value is not valid ${common.ParameterEnum.Type} for a row`,
+            lines: [
+              {
+                line: row.type_line_num,
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
       }
-      //  else if (common.MEASURE_TYPE_VALUES.indexOf(field.type) < 0) {
-      //   item.errors.push(
-      //     new BmError({
-      //       title: common.ErTitleEnum.WRONG_MEASURE_TYPE,
-      //       message: `"${field.type}" value is not valid ${common.ParameterEnum.Type} for measure`,
-      //       lines: [
-      //         {
-      //           line: field.type_line_num,
-      //           name: x.fileName,
-      //           path: x.filePath
-      //         }
-      //       ]
-      //     })
-      //   );
-      //   return;
-      // } else if (
-      //   !field.sql_key &&
-      //   [
-      //     common.FieldTypeEnum.SumByKey,
-      //     common.FieldTypeEnum.AverageByKey,
-      //     common.FieldTypeEnum.MedianByKey,
-      //     common.FieldTypeEnum.PercentileByKey
-      //   ].indexOf(field.type) > -1
-      // ) {
-      //   item.errors.push(
-      //     new BmError({
-      //       title: common.ErTitleEnum.MISSING_SQL_KEY,
-      //       message: `parameter "${common.ParameterEnum.SqlKey}" is required for measure of type "${field.type}"`,
-      //       lines: [
-      //         {
-      //           line: field.name_line_num,
-      //           name: x.fileName,
-      //           path: x.filePath
-      //         }
-      //       ]
-      //     })
-      //   );
-      //   return;
-      // }
+
+      if (
+        [common.RowTypeEnum.Header, common.RowTypeEnum.Formula].indexOf(
+          row.type
+        ) > -1 &&
+        common.isUndefined(row.name)
+      ) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.MISSING_ROW_NAME,
+            message: `parameter "${common.ParameterEnum.Name}" is required for a row of type "${row.type}"`,
+            lines: [
+              {
+                line: row.row_id_line_num,
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
+      if (
+        [common.RowTypeEnum.Metric].indexOf(row.type) > -1 &&
+        common.isUndefined(row.parameters) &&
+        common.isUndefined(row.parameters_formula)
+      ) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.MISSING_ROW_PARAMETERS,
+            message: `parameter "${common.ParameterEnum.Parameters}" or "${common.ParameterEnum.ParametersFormula}" is required for a row of "${row.type}"`,
+            lines: [
+              {
+                line: row.row_id_line_num,
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
     });
 
     if (errorsOnStart === item.errors.length) {
