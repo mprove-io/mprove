@@ -141,6 +141,29 @@ export function checkRepRow(
         );
         return;
       }
+
+      row.parameters.forEach(p => {
+        if (common.isUndefined(p.filter)) {
+          let pKeysLineNums: number[] = Object.keys(p)
+            .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
+            .map(y => p[y as keyof common.FileRepRowParameter] as number);
+
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.MISSING_FILTER,
+              message: `parameter "${common.ParameterEnum.Filter}" is required`,
+              lines: [
+                {
+                  line: Math.min(...pKeysLineNums),
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
+      });
     });
 
     if (errorsOnStart === item.errors.length) {
