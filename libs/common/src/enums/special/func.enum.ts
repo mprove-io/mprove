@@ -130,6 +130,7 @@ export enum FuncEnum {
   CheckRepRowUnknownParameters = '17-rep/02-check-rep-row-unknown-parameters',
   CheckRepRowUnknownParams = '17-rep/03-check-rep-row-unknown-params',
   CheckRepRow = '17-rep/04-check-rep-row',
+  CheckRepRowIds = '17-rep/05-check-rep-row-ids',
 
   CheckAccess = 'special/check-access',
   CheckVmdFilterDefaults = 'special/check-vmd-filter-defaults',

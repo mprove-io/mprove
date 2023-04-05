@@ -1,0 +1,9 @@
+report: r1
+rows:  
+- row_id: A
+  type: empty
+
+- row_id: A
+  type: empty
+
+

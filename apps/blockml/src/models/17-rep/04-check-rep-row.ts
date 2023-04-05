@@ -142,47 +142,52 @@ export function checkRepRow(
         return;
       }
 
-      row.parameters.forEach(p => {
-        let pKeysLineNums: number[] = Object.keys(p)
-          .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-          .map(y => p[y as keyof common.FileRepRowParameter] as number);
+      if (common.isDefined(row.parameters)) {
+        row.parameters.forEach(p => {
+          let pKeysLineNums: number[] = Object.keys(p)
+            .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
+            .map(y => p[y as keyof common.FileRepRowParameter] as number);
 
-        if (common.isUndefined(p.filter)) {
-          item.errors.push(
-            new BmError({
-              title: common.ErTitleEnum.MISSING_FILTER,
-              message: `parameter "${common.ParameterEnum.Filter}" is required`,
-              lines: [
-                {
-                  line: Math.min(...pKeysLineNums),
-                  name: x.fileName,
-                  path: x.filePath
-                }
-              ]
-            })
-          );
-          return;
-        }
+          if (common.isUndefined(p.filter)) {
+            item.errors.push(
+              new BmError({
+                title: common.ErTitleEnum.MISSING_FILTER,
+                message: `parameter "${common.ParameterEnum.Filter}" is required`,
+                lines: [
+                  {
+                    line: Math.min(...pKeysLineNums),
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
 
-        if (common.isUndefined(p.conditions) && common.isUndefined(p.formula)) {
-          item.errors.push(
-            new BmError({
-              title: common.ErTitleEnum.MISSING_CONDITIONS_OR_FORMULA,
-              message:
-                `one of parameters "${common.ParameterEnum.Conditions}", ` +
-                `"${common.ParameterEnum.Formula}" is required for a parameter`,
-              lines: [
-                {
-                  line: Math.min(...pKeysLineNums),
-                  name: x.fileName,
-                  path: x.filePath
-                }
-              ]
-            })
-          );
-          return;
-        }
-      });
+          if (
+            common.isUndefined(p.conditions) &&
+            common.isUndefined(p.formula)
+          ) {
+            item.errors.push(
+              new BmError({
+                title: common.ErTitleEnum.MISSING_CONDITIONS_OR_FORMULA,
+                message:
+                  `one of parameters "${common.ParameterEnum.Conditions}", ` +
+                  `"${common.ParameterEnum.Formula}" is required for a parameter`,
+                lines: [
+                  {
+                    line: Math.min(...pKeysLineNums),
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+        });
+      }
     });
 
     if (errorsOnStart === item.errors.length) {
