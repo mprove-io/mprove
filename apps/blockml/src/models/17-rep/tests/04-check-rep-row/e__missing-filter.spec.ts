@@ -63,5 +63,5 @@ test('1', async t => {
   t.is(entReps.length, 0);
 
   t.is(errors[0].title, common.ErTitleEnum.MISSING_FILTER);
-  t.is(errors[0].lines[0].line, 6);
+  t.is(errors[0].lines[0].line, 7);
 });

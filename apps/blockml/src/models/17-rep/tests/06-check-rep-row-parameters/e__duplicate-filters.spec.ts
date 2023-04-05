@@ -64,6 +64,6 @@ test('1', async t => {
 
   t.is(errors[0].title, common.ErTitleEnum.DUPLICATE_FILTERS);
   t.is(errors[0].lines.length, 2);
-  t.is(errors[0].lines[0].line, 6);
-  t.is(errors[0].lines[1].line, 10);
+  t.is(errors[0].lines[0].line, 7);
+  t.is(errors[0].lines[1].line, 11);
 });
