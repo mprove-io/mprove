@@ -173,37 +173,56 @@ export function checkRepRowParameters(
                 }
               }
 
-              let result =
-                asName === constants.MF
-                  ? model.fields.find(mField => mField.name === fieldName)
-                      .result
-                  : model.joins
-                      .find(j => j.as === asName)
-                      .view.fields.find(vField => vField.name === fieldName)
-                      .result;
+              if (common.isDefined(p.conditions)) {
+                if (p.conditions.length === 0) {
+                  item.errors.push(
+                    new BmError({
+                      title: common.ErTitleEnum.ROW_FILTER_CONDITIONS_IS_EMPTY,
+                      message: `filter contidions can not be empty`,
+                      lines: [
+                        {
+                          line: p.conditions_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        }
+                      ]
+                    })
+                  );
+                  return;
+                } else {
+                  let result =
+                    asName === constants.MF
+                      ? model.fields.find(mField => mField.name === fieldName)
+                          .result
+                      : model.joins
+                          .find(j => j.as === asName)
+                          .view.fields.find(vField => vField.name === fieldName)
+                          .result;
 
-              let pf = barSpecial.processFilter({
-                filterBricks: p.conditions,
-                result: result
-              });
+                  let pf = barSpecial.processFilter({
+                    filterBricks: p.conditions,
+                    result: result
+                  });
 
-              if (pf.valid === 0) {
-                item.errors.push(
-                  new BmError({
-                    title: common.ErTitleEnum.ROW_FILTER_WRONG_CONDITIONS,
-                    message:
-                      `wrong expression "${pf.brick}" of filter "${p.filter}" ` +
-                      `for ${common.ParameterEnum.Result} "${result}" `,
-                    lines: [
-                      {
-                        line: p.conditions_line_num,
-                        name: x.fileName,
-                        path: x.filePath
-                      }
-                    ]
-                  })
-                );
-                return;
+                  if (pf.valid === 0) {
+                    item.errors.push(
+                      new BmError({
+                        title: common.ErTitleEnum.ROW_FILTER_WRONG_CONDITIONS,
+                        message:
+                          `wrong expression "${pf.brick}" of filter "${p.filter}" ` +
+                          `for ${common.ParameterEnum.Result} "${result}" `,
+                        lines: [
+                          {
+                            line: p.conditions_line_num,
+                            name: x.fileName,
+                            path: x.filePath
+                          }
+                        ]
+                      })
+                    );
+                    return;
+                  }
+                }
               }
             });
         });
