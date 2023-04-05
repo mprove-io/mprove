@@ -124,62 +124,56 @@ export function checkRepRowParameters(
                   );
                   return;
                 }
+              } else {
+                let join = model.joins.find(j => j.as === asName);
+
+                if (common.isUndefined(join)) {
+                  item.errors.push(
+                    new BmError({
+                      title: common.ErTitleEnum.ROW_FILTER_REFS_MISSING_ALIAS,
+                      message:
+                        `"${p.filter}" references missing alias ` +
+                        `"${asName}" of model "${model.name}" joins section`,
+                      lines: [
+                        {
+                          line: p.filter_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        }
+                      ]
+                    })
+                  );
+                  return;
+                }
+
+                //   let viewField = join.view.fields.find(
+                //     vField => vField.name === fieldName
+                //   );
+
+                //   if (common.isUndefined(viewField)) {
+                //     item.errors.push(
+                //       new BmError({
+                //         title:
+                //           common.ErTitleEnum
+                //             .REPORT_DEFAULT_FILTER_REFS_MISSING_VIEW_FIELD,
+                //         message:
+                //           `"${defaultFilter}" references missing or not valid field ` +
+                //           `"${fieldName}" of view "${join.view.name}". ` +
+                //           `View has "${asName}" alias in "${model.name}" model.`,
+                //         lines: [
+                //           {
+                //             line: (<any>report.default_filters)[
+                //               defaultFilter + constants.LINE_NUM
+                //             ],
+                //             name: x.fileName,
+                //             path: x.filePath
+                //           }
+                //         ]
+                //       })
+                //     );
+                //     return;
+                //   }
               }
-
-              // else {
-              //   let join = model.joins.find(j => j.as === asName);
-
-              //   if (common.isUndefined(join)) {
-              //     item.errors.push(
-              //       new BmError({
-              //         title:
-              //           common.ErTitleEnum
-              //             .REPORT_DEFAULT_FILTER_REFS_MISSING_ALIAS,
-              //         message:
-              //           `"${defaultFilter}" references missing alias ` +
-              //           `"${asName}" of model "${model.name}" joins section`,
-              //         lines: [
-              //           {
-              //             line: (<any>report.default_filters)[
-              //               defaultFilter + constants.LINE_NUM
-              //             ],
-              //             name: x.fileName,
-              //             path: x.filePath
-              //           }
-              //         ]
-              //       })
-              //     );
-              //     return;
-              //   }
-
-              //   let viewField = join.view.fields.find(
-              //     vField => vField.name === fieldName
-              //   );
-
-              //   if (common.isUndefined(viewField)) {
-              //     item.errors.push(
-              //       new BmError({
-              //         title:
-              //           common.ErTitleEnum
-              //             .REPORT_DEFAULT_FILTER_REFS_MISSING_VIEW_FIELD,
-              //         message:
-              //           `"${defaultFilter}" references missing or not valid field ` +
-              //           `"${fieldName}" of view "${join.view.name}". ` +
-              //           `View has "${asName}" alias in "${model.name}" model.`,
-              //         lines: [
-              //           {
-              //             line: (<any>report.default_filters)[
-              //               defaultFilter + constants.LINE_NUM
-              //             ],
-              //             name: x.fileName,
-              //             path: x.filePath
-              //           }
-              //         ]
-              //       })
-              //     );
-              //     return;
-              //   }
-              // }
             });
         });
     }
