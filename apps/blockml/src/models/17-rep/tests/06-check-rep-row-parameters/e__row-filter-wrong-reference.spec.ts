@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildRep;
 let func = common.FuncEnum.CheckRepRowParameters;
-let testId = 'e__wrong-parameter-filter';
+let testId = 'e__row-filter-wrong-reference';
 
 test('1', async t => {
   let errors: BmError[];
@@ -62,6 +62,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entReps.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.WRONG_PARAMETER_FILTER);
+  t.is(errors[0].title, common.ErTitleEnum.ROW_FILTER_WRONG_REFERENCE);
   t.is(errors[0].lines[0].line, 6);
 });

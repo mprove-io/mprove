@@ -64,6 +64,37 @@ export function checkRepRowParameters(
       });
 
     if (errorsOnStart === item.errors.length) {
+      x.rows
+        .filter(row => common.isDefined(row.parameters))
+        .forEach(row => {
+          row.parameters
+            .filter(p => common.isDefined(p.filter))
+            .forEach(p => {
+              let reg =
+                common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
+              let r = reg.exec(p.filter);
+
+              if (common.isUndefined(r)) {
+                item.errors.push(
+                  new BmError({
+                    title: common.ErTitleEnum.ROW_FILTER_WRONG_REFERENCE,
+                    message: 'row filter must be in form "alias.field_name"',
+                    lines: [
+                      {
+                        line: p.filter_line_num,
+                        name: x.fileName,
+                        path: x.filePath
+                      }
+                    ]
+                  })
+                );
+                return;
+              }
+            });
+        });
+    }
+
+    if (errorsOnStart === item.errors.length) {
       newReps.push(x);
     }
   });
