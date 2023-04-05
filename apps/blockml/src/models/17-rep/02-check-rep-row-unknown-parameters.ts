@@ -134,31 +134,33 @@ export function checkRepRowUnknownParameters(
             return;
           }
 
-          // if (
-          //   common.isDefined(row[parameter as keyof common.FileRepRow]) &&
-          //   row[parameter as keyof common.FileRepRow].constructor !== Object &&
-          //   [
-          //     common.ParameterEnum.Axis.toString()
-          //   ].indexOf(parameter) > -1
-          // ) {
-          //   item.errors.push(
-          //     new BmError({
-          //       title: common.ErTitleEnum.ROW_PARAMETER_MUST_BE_A_DICTIONARY,
-          //       message: `parameter "${parameter}" must be a dictionary`,
-          //       lines: [
-          //         {
-          //           line: row[
-          //             (parameter +
-          //               constants.LINE_NUM) as keyof common.FileRepRow
-          //           ] as number,
-          //           name: x.fileName,
-          //           path: x.filePath
-          //         }
-          //       ]
-          //     })
-          //   );
-          //   return;
-          // }
+          if (
+            [common.ParameterEnum.ShowChart.toString()].indexOf(parameter) >
+              -1 &&
+            !(row[parameter as keyof common.FileRepRow] as any)
+              .toString()
+              .match(common.MyRegex.TRUE_FALSE())
+          ) {
+            item.errors.push(
+              new BmError({
+                title: common.ErTitleEnum.ROW_WRONG_PARAMETER_VALUE,
+                message:
+                  `parameter "${parameter}" value must be ` +
+                  '"true" or "false" if specified',
+                lines: [
+                  {
+                    line: row[
+                      (parameter +
+                        constants.LINE_NUM) as keyof common.FileRepRow
+                    ] as number,
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
         });
     });
 

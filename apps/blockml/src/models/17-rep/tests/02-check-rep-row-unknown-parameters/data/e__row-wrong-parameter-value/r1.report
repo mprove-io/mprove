@@ -1,0 +1,8 @@
+report: r1
+rows:  
+- row_id: A
+  type: formula
+  formula: 1
+  show_chart: unk
+
+
