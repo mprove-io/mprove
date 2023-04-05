@@ -476,6 +476,8 @@ export class RebuildStructService {
     reps = barBuilder.buildRep(
       {
         reps: reps,
+        metrics: commonMetrics,
+        models: models,
         structId: item.structId,
         errors: errors,
         caller: common.CallerEnum.BuildRep

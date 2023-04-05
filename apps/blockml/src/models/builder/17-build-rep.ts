@@ -7,6 +7,8 @@ import { BmError } from '~blockml/models/bm-error';
 export function buildRep(
   item: {
     reps: common.FileRep[];
+    metrics: common.MetricAny[];
+    models: common.FileModel[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
@@ -68,6 +70,8 @@ export function buildRep(
   reps = barRep.checkRepRowParameters(
     {
       reps: reps,
+      metrics: item.metrics,
+      models: item.models,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller

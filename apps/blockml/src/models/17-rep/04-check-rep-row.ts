@@ -99,27 +99,45 @@ export function checkRepRow(
         return;
       }
 
-      if (
-        [common.RowTypeEnum.Metric].indexOf(row.type) > -1 &&
-        common.isUndefined(row.parameters) &&
-        common.isUndefined(row.parameters_formula)
-      ) {
-        item.errors.push(
-          new BmError({
-            title: common.ErTitleEnum.MISSING_ROW_PARAMETERS,
-            message:
-              `one of parameters "${common.ParameterEnum.Parameters}", ` +
-              `"${common.ParameterEnum.ParametersFormula}" is required for a row of type "${row.type}"`,
-            lines: [
-              {
-                line: row.row_id_line_num,
-                name: x.fileName,
-                path: x.filePath
-              }
-            ]
-          })
-        );
-        return;
+      if (row.type === common.RowTypeEnum.Metric) {
+        if (common.isUndefined(row.metric)) {
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.MISSING_ROW_METRIC,
+              message: `parameter "${common.ParameterEnum.Metric}" is required for a row of type "${row.type}"`,
+              lines: [
+                {
+                  line: row.row_id_line_num,
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
+
+        if (
+          common.isUndefined(row.parameters) &&
+          common.isUndefined(row.parameters_formula)
+        ) {
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.MISSING_ROW_PARAMETERS,
+              message:
+                `one of parameters "${common.ParameterEnum.Parameters}", ` +
+                `"${common.ParameterEnum.ParametersFormula}" is required for a row of type "${row.type}"`,
+              lines: [
+                {
+                  line: row.row_id_line_num,
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
       }
 
       if (
