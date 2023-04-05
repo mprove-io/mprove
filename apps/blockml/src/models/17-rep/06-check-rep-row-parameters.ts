@@ -146,33 +146,30 @@ export function checkRepRowParameters(
                   return;
                 }
 
-                //   let viewField = join.view.fields.find(
-                //     vField => vField.name === fieldName
-                //   );
+                let viewField = join.view.fields.find(
+                  vField => vField.name === fieldName
+                );
 
-                //   if (common.isUndefined(viewField)) {
-                //     item.errors.push(
-                //       new BmError({
-                //         title:
-                //           common.ErTitleEnum
-                //             .REPORT_DEFAULT_FILTER_REFS_MISSING_VIEW_FIELD,
-                //         message:
-                //           `"${defaultFilter}" references missing or not valid field ` +
-                //           `"${fieldName}" of view "${join.view.name}". ` +
-                //           `View has "${asName}" alias in "${model.name}" model.`,
-                //         lines: [
-                //           {
-                //             line: (<any>report.default_filters)[
-                //               defaultFilter + constants.LINE_NUM
-                //             ],
-                //             name: x.fileName,
-                //             path: x.filePath
-                //           }
-                //         ]
-                //       })
-                //     );
-                //     return;
-                //   }
+                if (common.isUndefined(viewField)) {
+                  item.errors.push(
+                    new BmError({
+                      title:
+                        common.ErTitleEnum.ROW_FILTER_REFS_MISSING_VIEW_FIELD,
+                      message:
+                        `"${p.filter}" references missing or not valid field ` +
+                        `"${fieldName}" of view "${join.view.name}". ` +
+                        `View has "${asName}" alias in "${model.name}" model.`,
+                      lines: [
+                        {
+                          line: p.filter_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        }
+                      ]
+                    })
+                  );
+                  return;
+                }
               }
             });
         });
