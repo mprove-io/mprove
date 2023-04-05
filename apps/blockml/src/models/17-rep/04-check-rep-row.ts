@@ -9,13 +9,14 @@ let func = common.FuncEnum.CheckRepRow;
 export function checkRepRow(
   item: {
     reps: common.FileRep[];
+    metrics: common.MetricAny[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId } = item;
+  let { caller, structId, metrics } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newReps: common.FileRep[] = [];
@@ -108,6 +109,25 @@ export function checkRepRow(
               lines: [
                 {
                   line: row.row_id_line_num,
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
+
+        let metric = metrics.find(m => m.metricId === row.metric);
+
+        if (common.isUndefined(metric)) {
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.ROW_REFS_MISSING_METRIC,
+              message: `metric "${row.metric}" is missing or not valid`,
+              lines: [
+                {
+                  line: row.metric_line_num,
                   name: x.fileName,
                   path: x.filePath
                 }

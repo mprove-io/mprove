@@ -50,6 +50,7 @@ export function buildRep(
   reps = barRep.checkRepRow(
     {
       reps: reps,
+      metrics: item.metrics,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller
