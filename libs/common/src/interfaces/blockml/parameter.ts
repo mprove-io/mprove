@@ -27,7 +27,4 @@ export class Parameter {
 
   @IsString({ each: true })
   conditions: string[];
-
-  @IsString()
-  value: string;
 }

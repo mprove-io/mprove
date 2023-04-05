@@ -87,8 +87,7 @@ export function wrapReps(item: {
               result: result,
               formula: parameter.formula,
               formulaDeps: undefined,
-              conditions: parameter.conditions,
-              value: parameter.value
+              conditions: parameter.conditions
             };
 
             return parameterApi;

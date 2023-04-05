@@ -80,8 +80,7 @@ export function makeRepFileText(item: {
                   formula: parameter.formula,
                   conditions: common.isUndefined(parameter.formula)
                     ? parameter.conditions
-                    : undefined,
-                  value: parameter.value
+                    : undefined
                 };
 
                 return p;

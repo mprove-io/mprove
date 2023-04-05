@@ -659,8 +659,7 @@ export class RowComponent {
       result: field.result,
       formula: undefined,
       formulaDeps: undefined,
-      conditions: ['any'],
-      value: undefined
+      conditions: ['any']
     };
 
     newParameters = [...newParameters, newParameter];
