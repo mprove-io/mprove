@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
+import { constants } from '~blockml/barrels/constants';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
@@ -9,15 +10,15 @@ let func = common.FuncEnum.CheckRepRowParameters;
 export function checkRepRowParameters(
   item: {
     reps: common.FileRep[];
-    models: common.FileModel[];
     metrics: common.MetricAny[];
+    models: common.FileModel[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId, models } = item;
+  let { caller, structId, metrics, models } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newReps: common.FileRep[] = [];
@@ -69,6 +70,9 @@ export function checkRepRowParameters(
       x.rows
         .filter(row => common.isDefined(row.parameters))
         .forEach(row => {
+          let metric = metrics.find(m => m.metricId === row.metric);
+          let model = models.find(y => y.model === metric.modelId);
+
           row.parameters
             .filter(p => common.isDefined(p.filter))
             .forEach(p => {
@@ -96,34 +100,31 @@ export function checkRepRowParameters(
               let asName = r[1];
               let fieldName = r[2];
 
-              // if (asName === constants.MF) {
-              //   let modelField = model.fields.find(
-              //     mField => mField.name === fieldName
-              //   );
+              if (asName === constants.MF) {
+                let modelField = model.fields.find(
+                  mField => mField.name === fieldName
+                );
 
-              //   if (common.isUndefined(modelField)) {
-              //     item.errors.push(
-              //       new BmError({
-              //         title:
-              //           common.ErTitleEnum
-              //             .REPORT_DEFAULT_FILTER_REFS_MISSING_MODEL_FIELD,
-              //         message:
-              //           `"${defaultFilter}" references missing or not valid field ` +
-              //           `"${fieldName}" of model "${model.name}" fields section`,
-              //         lines: [
-              //           {
-              //             line: (<any>report.default_filters)[
-              //               defaultFilter + constants.LINE_NUM
-              //             ],
-              //             name: x.fileName,
-              //             path: x.filePath
-              //           }
-              //         ]
-              //       })
-              //     );
-              //     return;
-              //   }
-              // }
+                if (common.isUndefined(modelField)) {
+                  item.errors.push(
+                    new BmError({
+                      title:
+                        common.ErTitleEnum.ROW_FILTER_REFS_MISSING_MODEL_FIELD,
+                      message:
+                        `"${p.filter}" references missing or not valid field ` +
+                        `"${fieldName}" of model "${model.name}" fields section`,
+                      lines: [
+                        {
+                          line: p.filter_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        }
+                      ]
+                    })
+                  );
+                  return;
+                }
+              }
 
               // else {
               //   let join = model.joins.find(j => j.as === asName);
