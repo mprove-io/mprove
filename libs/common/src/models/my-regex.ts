@@ -556,4 +556,8 @@ export class MyRegex {
   static IS_NUMBER(): RegExp {
     return cloneRegexp(/^[-]?\d+(?:\.\d+)?$/);
   }
+
+  static CONTAINS_A_to_Z(): RegExp {
+    return cloneRegexp(/^[A-Z]+$/);
+  }
 }

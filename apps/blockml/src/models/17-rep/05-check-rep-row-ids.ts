@@ -26,6 +26,23 @@ export function checkRepRowIds(
     let rowIds: Array<{ rowId: string; lineNumbers: number[] }> = [];
 
     x.rows.forEach(row => {
+      if (!!row.row_id.match(common.MyRegex.CONTAINS_A_to_Z()) === false) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.WRONG_CHARS_IN_ROW_ID,
+            message: `parameter "${common.ParameterEnum.RowId}" must consist of characters A-Z`,
+            lines: [
+              {
+                line: row.row_id_line_num,
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
       let fName = rowIds.find(element => element.rowId === row.row_id);
 
       if (fName) {
