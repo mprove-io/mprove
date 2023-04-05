@@ -65,5 +65,15 @@ export function buildRep(
     cs
   );
 
+  reps = barRep.checkRepRowParameters(
+    {
+      reps: reps,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
   return reps;
 }

@@ -23,8 +23,6 @@ export function checkRepRowIds(
   item.reps.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    let rowIds: Array<{ rowId: string; lineNumbers: number[] }> = [];
-
     x.rows.forEach(row => {
       if (!!row.row_id.match(common.MyRegex.CONTAINS_A_to_Z()) === false) {
         item.errors.push(
@@ -42,20 +40,24 @@ export function checkRepRowIds(
         );
         return;
       }
+    });
 
-      let fName = rowIds.find(element => element.rowId === row.row_id);
+    let rowIdMaps: Array<{ rowId: string; lineNumbers: number[] }> = [];
 
-      if (fName) {
-        fName.lineNumbers.push(row.row_id_line_num);
+    x.rows.forEach(row => {
+      let rowIdMap = rowIdMaps.find(element => element.rowId === row.row_id);
+
+      if (rowIdMap) {
+        rowIdMap.lineNumbers.push(row.row_id_line_num);
       } else {
-        rowIds.push({
+        rowIdMaps.push({
           rowId: row.row_id,
           lineNumbers: [row.row_id_line_num]
         });
       }
     });
 
-    rowIds.forEach(n => {
+    rowIdMaps.forEach(n => {
       if (n.lineNumbers.length > 1) {
         let lines: common.FileErrorLine[] = n.lineNumbers.map(y => ({
           line: y,
