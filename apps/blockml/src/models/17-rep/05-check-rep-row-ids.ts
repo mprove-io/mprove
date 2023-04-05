@@ -42,39 +42,41 @@ export function checkRepRowIds(
       }
     });
 
-    let rowIdMaps: Array<{ rowId: string; lineNumbers: number[] }> = [];
+    if (item.errors.length === errorsOnStart) {
+      let rowIdMaps: Array<{ rowId: string; lineNumbers: number[] }> = [];
 
-    x.rows.forEach(row => {
-      let rowIdMap = rowIdMaps.find(element => element.rowId === row.row_id);
+      x.rows.forEach(row => {
+        let rowIdMap = rowIdMaps.find(element => element.rowId === row.row_id);
 
-      if (rowIdMap) {
-        rowIdMap.lineNumbers.push(row.row_id_line_num);
-      } else {
-        rowIdMaps.push({
-          rowId: row.row_id,
-          lineNumbers: [row.row_id_line_num]
-        });
-      }
-    });
+        if (rowIdMap) {
+          rowIdMap.lineNumbers.push(row.row_id_line_num);
+        } else {
+          rowIdMaps.push({
+            rowId: row.row_id,
+            lineNumbers: [row.row_id_line_num]
+          });
+        }
+      });
 
-    rowIdMaps.forEach(n => {
-      if (n.lineNumbers.length > 1) {
-        let lines: common.FileErrorLine[] = n.lineNumbers.map(y => ({
-          line: y,
-          name: x.fileName,
-          path: x.filePath
-        }));
+      rowIdMaps.forEach(n => {
+        if (n.lineNumbers.length > 1) {
+          let lines: common.FileErrorLine[] = n.lineNumbers.map(y => ({
+            line: y,
+            name: x.fileName,
+            path: x.filePath
+          }));
 
-        item.errors.push(
-          new BmError({
-            title: common.ErTitleEnum.DUPLICATE_ROW_IDS,
-            message: 'Each row must have a unique row_id',
-            lines: lines
-          })
-        );
-        return;
-      }
-    });
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.DUPLICATE_ROW_IDS,
+              message: 'Each row must have a unique row_id',
+              lines: lines
+            })
+          );
+          return;
+        }
+      });
+    }
 
     if (errorsOnStart === item.errors.length) {
       newReps.push(x);
