@@ -79,6 +79,19 @@ export const MODEL_SCHEMA: JSONSchema7 = {
     description: {
       type: 'string'
     },
+    build_metrics: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          time: {
+            type: 'string'
+          }
+        },
+        required: ['time']
+      }
+    },
     access_roles: {
       type: 'array',
       items: {

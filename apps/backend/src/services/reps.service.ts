@@ -720,7 +720,9 @@ export class RepsService {
         common.isDefined(row.parameters) ? row.parameters : [];
     });
 
-    let isCalculateParameters = rep.rows.length > 0;
+    let isCalculateParameters =
+      rep.rows.filter(row => row.rowType === common.RowTypeEnum.Metric).length >
+      0;
 
     if (isCalculateParameters === true) {
       console.log('isCalculateParameters true');

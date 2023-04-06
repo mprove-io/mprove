@@ -57,7 +57,6 @@ export enum ParameterEnum {
   Select = 'select',
 
   ShowFields = 'show_fields',
-  SkipMetrics = 'skip_metrics',
   Sorts = 'sorts',
   Source = 'source',
   Sql = 'sql',
