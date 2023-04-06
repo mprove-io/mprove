@@ -69,7 +69,8 @@ export const BLOCKML_LANGUAGE_DATA: languagesType.IMonarchLanguage = {
 
       // Key:Value pair
       [
-        /(".*?"|'.*?'|.*?)([ \t]*)(:)( |$)/,
+        // /(".*?"|'.*?'|.*?)([ \t]*)(:)( |$)/,
+        /(".*?"|'.*?'|\w*?)([ \t]*)(:)( |$)/,
         ['type', 'white', 'operators', 'white']
       ],
 
