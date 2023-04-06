@@ -6,6 +6,10 @@ export const BLOCKML_THEME_DATA: editorType.IStandaloneThemeData = {
   rules: [
     {
       foreground: '#BE185D',
+      token: 'blockmlFormulaRef'
+    },
+    {
+      foreground: '#BE185D',
       token: 'blockmlRefBrackets'
     },
     {

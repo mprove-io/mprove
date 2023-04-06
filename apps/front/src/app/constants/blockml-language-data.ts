@@ -50,6 +50,7 @@ export const BLOCKML_LANGUAGE_DATA: languagesType.IMonarchLanguage = {
       { include: '@anchor' },
       { include: '@tagHandle' },
 
+      { include: '@blockmlFormula' },
       { include: '@blockmlRef' },
       { include: '@blockmlApplyFilterStartRef' },
       { include: '@blockmlApplyFilterEndRef' },
@@ -218,6 +219,8 @@ export const BLOCKML_LANGUAGE_DATA: languagesType.IMonarchLanguage = {
     tagHandle: [[/\![^ ]*/, 'tag']],
 
     anchor: [[/[&*][^ ]+/, 'namespace']],
+
+    blockmlFormula: [[/(\$\w+)/, 'blockmlFormulaRef']],
 
     blockmlRef: [
       [
