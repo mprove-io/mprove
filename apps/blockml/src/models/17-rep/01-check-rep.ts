@@ -40,6 +40,23 @@ export function checkRep(
       return;
     }
 
+    if (common.isUndefined(x.rows)) {
+      item.errors.push(
+        new BmError({
+          title: common.ErTitleEnum.MISSING_REP_ROWS,
+          message: `parameter "${common.ParameterEnum.Rows}" is required for report`,
+          lines: [
+            {
+              line: x.report_line_num,
+              name: x.fileName,
+              path: x.filePath
+            }
+          ]
+        })
+      );
+      return;
+    }
+
     if (errorsOnStart === item.errors.length) {
       newReps.push(x);
     }
