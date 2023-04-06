@@ -63,5 +63,5 @@ test('1', async t => {
   t.is(entReps.length, 0);
 
   t.is(errors[0].title, common.ErTitleEnum.WRONG_ACCESS_ROLES_ELEMENT);
-  t.is(errors[0].lines[0].line, 2);
+  t.is(errors[0].lines[0].line, 3);
 });

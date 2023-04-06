@@ -7,8 +7,8 @@ import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildRep;
-let func = common.FuncEnum.CheckAccess;
-let testId = 'e__wrong-access-users-element-4';
+let func = common.FuncEnum.CheckRepRowIds;
+let testId = 'e__duplicate-row-ids';
 
 test('1', async t => {
   let errors: BmError[];
@@ -62,6 +62,8 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entReps.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.WRONG_ACCESS_USERS_ELEMENT);
-  t.is(errors[0].lines[0].line, 3);
+  t.is(errors[0].title, common.ErTitleEnum.DUPLICATE_ROW_IDS);
+  t.is(errors[0].lines.length, 2);
+  t.is(errors[0].lines[0].line, 4);
+  t.is(errors[0].lines[1].line, 7);
 });

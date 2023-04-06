@@ -17,6 +17,16 @@ export function buildRep(
 ) {
   let reps = item.reps;
 
+  reps = barRep.checkRep(
+    {
+      reps: reps,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
   reps = barRep.checkRepAccess(
     {
       reps: reps,

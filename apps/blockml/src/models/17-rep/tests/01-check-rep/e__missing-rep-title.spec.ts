@@ -7,12 +7,12 @@ import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildRep;
-let func = common.FuncEnum.CheckAccess;
-let testId = 'e__wrong-access-users-element-4';
+let func = common.FuncEnum.CheckRep;
+let testId = 'e__missing-rep-title';
 
 test('1', async t => {
   let errors: BmError[];
-  let entReps: common.FileRep[];
+  let reps: common.FileRep[];
 
   let wLogger;
   let configService;
@@ -46,7 +46,7 @@ test('1', async t => {
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
-    entReps = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
+    reps = await helper.readLog(fromDir, common.LogTypeEnum.Reps);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -60,8 +60,8 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(entReps.length, 0);
+  t.is(reps.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.WRONG_ACCESS_USERS_ELEMENT);
-  t.is(errors[0].lines[0].line, 3);
+  t.is(errors[0].title, common.ErTitleEnum.MISSING_REP_TITLE);
+  t.is(errors[0].lines[0].line, 1);
 });

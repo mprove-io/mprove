@@ -126,12 +126,13 @@ export enum FuncEnum {
 
   CreateModelMetrics = '16-metric/01-create-model-metrics',
 
-  CheckRepAccess = '17-rep/01-check-rep-access',
-  CheckRepRowUnknownParameters = '17-rep/02-check-rep-row-unknown-parameters',
-  CheckRepRowUnknownParams = '17-rep/03-check-rep-row-unknown-params',
-  CheckRepRow = '17-rep/04-check-rep-row',
-  CheckRepRowIds = '17-rep/05-check-rep-row-ids',
-  CheckRepRowParameters = '17-rep/06-check-rep-row-parameters',
+  CheckRep = '17-rep/01-check-rep',
+  CheckRepAccess = '17-rep/02-check-rep-access',
+  CheckRepRowUnknownParameters = '17-rep/03-check-rep-row-unknown-parameters',
+  CheckRepRowUnknownParams = '17-rep/04-check-rep-row-unknown-params',
+  CheckRepRow = '17-rep/05-check-rep-row',
+  CheckRepRowIds = '17-rep/06-check-rep-row-ids',
+  CheckRepRowParameters = '17-rep/07-check-rep-row-parameters',
 
   CheckAccess = 'special/check-access',
   CheckVmdFilterDefaults = 'special/check-vmd-filter-defaults',

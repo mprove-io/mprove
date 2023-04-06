@@ -1,7 +1,0 @@
-report: r1
-rows:  
-- parameters:
-  - filter:
-      a: b
-
-
