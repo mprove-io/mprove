@@ -58,7 +58,10 @@ export function createModelMetrics(
 
       model.fields
         .filter(y => {
-          if (y.fieldClass === common.FieldClassEnum.Measure) {
+          if (
+            y.fieldClass === common.FieldClassEnum.Measure &&
+            y.type !== common.FieldTypeEnum.List
+          ) {
             return true;
           } else if (y.fieldClass === common.FieldClassEnum.Calculation) {
             let depDimensions: {
