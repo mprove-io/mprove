@@ -247,24 +247,34 @@ return json.dumps([${rowParColumns
 
         row.parametersJson = common.makeCopy(parsedParameters);
 
-        if (row.isParamsCalcValid === true) {
-          if (common.isDefined(row.parametersFormula)) {
-            row.parameters = parsedParameters.map((x: common.Parameter) => {
-              let fieldId = x.filter.split('.').join('_').toUpperCase();
-              let parameterId = `${row.rowId}_${fieldId}`;
-              x.parameterId = parameterId;
+        let isParamsSchemaValid = true;
 
-              let metric = metrics.find(m => m.metric_id === row.metricId);
-              let model = models.find(ml => ml.model_id === metric.model_id);
-              let field = model.fields.find(f => f.id === x.filter);
-              x.result = field.result;
+        if (common.isDefined(row.parametersFormula)) {
+          if (row.isParamsCalcValid === true) {
+            if (!Array.isArray(parsedParameters)) {
+              isParamsSchemaValid = false;
+            }
 
-              return x;
-            });
+            if (isParamsSchemaValid === true) {
+              row.parameters = parsedParameters.map((x: common.Parameter) => {
+                let fieldId = x.filter.split('.').join('_').toUpperCase();
+                let parameterId = `${row.rowId}_${fieldId}`;
+                x.parameterId = parameterId;
+
+                let metric = metrics.find(m => m.metric_id === row.metricId);
+                let model = models.find(ml => ml.model_id === metric.model_id);
+                let field = model.fields.find(f => f.id === x.filter);
+                x.result = field.result;
+
+                return x;
+              });
+            } else {
+              row.parameters = [];
+            }
           }
-        } else if (common.isDefined(row.parametersFormula)) {
-          row.parameters = [];
         }
+
+        row.isParamsSchemaValid = isParamsSchemaValid;
 
         row.parameters
           .filter(

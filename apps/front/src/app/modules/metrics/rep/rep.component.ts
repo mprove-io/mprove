@@ -252,8 +252,11 @@ export class RepComponent {
         // let metrics = this.metricsQuery.getValue();
 
         let isRepParamsErrors =
-          this.rep.rows.filter(row => row.isParamsCalcValid === false).length >
-          0;
+          this.rep.rows.filter(
+            row =>
+              row.isParamsCalcValid === false ||
+              row.isParamsSchemaValid === false
+          ).length > 0;
 
         this.data = this.rep.rows.map((row: common.Row) => {
           // let metric = metrics.metrics.find(m => m.metricId === row.metricId);

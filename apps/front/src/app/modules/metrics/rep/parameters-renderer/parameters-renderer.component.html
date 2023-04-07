@@ -8,10 +8,16 @@
     *ngIf="params.data.isRepParamsErrors === true"
     class="text-red1 mr-5 mt-1 flex h-8 w-8 flex-shrink-0"
     tippy="Parameters Error"
-    [isEnabled]="params.data.isParamsCalcValid !== true"
+    [isEnabled]="
+      params.data.isParamsCalcValid === false ||
+      params.data.isParamsSchemaValid === false
+    "
   >
     <m-exclamation-icon
-      *ngIf="params.data.isParamsCalcValid !== true"
+      *ngIf="
+        params.data.isParamsCalcValid === false ||
+        params.data.isParamsSchemaValid === false
+      "
     ></m-exclamation-icon>
   </div>
 
@@ -23,6 +29,7 @@
         [isKeepBackgroundColor]="true"
         [parametersJson]="params.data.parametersJson"
         [isParamsCalcValid]="params.data.isParamsCalcValid"
+        [isParamsSchemaValid]="params.data.isParamsSchemaValid"
         [finalRowHeight]="params.data.finalRowHeight"
         [showJson]="showJson"
       ></m-bricks>

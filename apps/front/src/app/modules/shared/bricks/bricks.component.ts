@@ -26,6 +26,9 @@ export class BricksComponent {
   isParamsCalcValid?: boolean;
 
   @Input()
+  isParamsSchemaValid?: boolean;
+
+  @Input()
   finalRowHeight?: number;
 
   @Input()

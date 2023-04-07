@@ -318,13 +318,29 @@
         </div>
       </div>
 
+      <ng-template #templateErrors>
+        <div *ngIf="repSelectedNode.data.isParamsCalcValid === false"
+          >Failed to calculate row parameters. Check formula and its
+          dependences.</div
+        >
+
+        <div
+          *ngIf="
+            repSelectedNode.data.isParamsCalcValid === true &&
+            repSelectedNode.data.isParamsSchemaValid === false
+          "
+          >Paramters formula must return an array of valid parameters</div
+        >
+      </ng-template>
+
       <div
         *ngIf="
           !!repSelectedNode.data.parametersFormula &&
-          repSelectedNode.data.isParamsCalcValid !== true
+          (repSelectedNode.data.isParamsCalcValid === false ||
+            repSelectedNode.data.isParamsSchemaValid === false)
         "
         class="text-red1 ml-5 mt-1 flex h-8 w-8 flex-shrink-0"
-        tippy="Failed to calculate row parameters. Check formula and its dependences."
+        [tippy]="templateErrors"
       >
         <m-exclamation-icon></m-exclamation-icon>
       </div>
