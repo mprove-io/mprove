@@ -5,18 +5,20 @@
   "
 >
   <div
-    *ngIf="params.data.isRepParamsErrors === true"
+    *ngIf="params.data.isRepParametersHaveError === true"
     class="text-red1 mr-5 mt-1 flex h-8 w-8 flex-shrink-0"
-    tippy="Parameters Error"
+    tippy="Parameters have an error"
     [isEnabled]="
       params.data.isParamsCalcValid === false ||
-      params.data.isParamsSchemaValid === false
+      params.data.isParamsSchemaValid === false ||
+      params.data.isParamsConditionsValid === false
     "
   >
     <m-exclamation-icon
       *ngIf="
         params.data.isParamsCalcValid === false ||
-        params.data.isParamsSchemaValid === false
+        params.data.isParamsSchemaValid === false ||
+        params.data.isParamsConditionsValid === false
       "
     ></m-exclamation-icon>
   </div>

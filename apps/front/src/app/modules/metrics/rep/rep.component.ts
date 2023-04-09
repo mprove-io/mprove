@@ -36,7 +36,7 @@ import { StatusRendererComponent } from './status-renderer/status-renderer.compo
 
 export interface DataRow extends common.Row {
   showParametersJson: boolean;
-  isRepParamsErrors: boolean;
+  isRepParametersHaveError: boolean;
   strParameters: string;
   finalRowHeight: number;
   // [col: string]: any;
@@ -251,11 +251,12 @@ export class RepComponent {
 
         // let metrics = this.metricsQuery.getValue();
 
-        let isRepParamsErrors =
+        let isRepParametersHaveError =
           this.rep.rows.filter(
             row =>
               row.isParamsCalcValid === false ||
-              row.isParamsSchemaValid === false
+              row.isParamsSchemaValid === false ||
+              row.isParamsConditionsValid === false
           ).length > 0;
 
         this.data = this.rep.rows.map((row: common.Row) => {
@@ -263,7 +264,7 @@ export class RepComponent {
 
           let dataRow: DataRow = Object.assign({}, row, <DataRow>{
             showParametersJson: showParametersJson,
-            isRepParamsErrors: isRepParamsErrors,
+            isRepParametersHaveError: isRepParametersHaveError,
             strParameters: common.isDefined(row.parameters)
               ? JSON.stringify(row.parameters)
               : ''

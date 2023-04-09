@@ -38,6 +38,9 @@ export class Row {
   @IsString()
   paramsSchemaError?: string;
 
+  @IsBoolean()
+  isParamsConditionsValid?: boolean;
+
   @ValidateNested()
   @Type(() => Parameter)
   parametersJson: Parameter[];

@@ -801,20 +801,22 @@ export class RepsService {
             metric.type === common.MetricTypeEnum.Model &&
             common.isDefined(x.parameters)
           ) {
+            x.isParamsConditionsValid = true;
+
             await forEachSeries(x.parameters, async parameter => {
               let isConditionsStartValid = true;
               let conditionsError;
 
               if (common.isUndefined(parameter.conditions)) {
                 isConditionsStartValid = false;
-                conditionsError = 'parameter conditions must be defined';
+                conditionsError = 'Parameter conditions must be defined';
               } else if (!Array.isArray(parameter.conditions)) {
                 isConditionsStartValid = false;
-                conditionsError = 'parameter conditions must be an array';
+                conditionsError = 'Parameter conditions must be an array';
               } else if (parameter.conditions.length === 0) {
                 isConditionsStartValid = false;
                 conditionsError =
-                  'parameter conditions must have at least one element';
+                  'Parameter conditions must have at least one element';
               }
 
               if (isConditionsStartValid === false) {
@@ -853,12 +855,16 @@ export class RepsService {
                 isConditionsStartValid === true &&
                 blockmlGetFractionsResponse.payload.isValid === true;
 
+              if (parameter.isConditionsValid === false) {
+                x.isParamsConditionsValid = false;
+              }
+
               if (
                 isConditionsStartValid === true &&
                 blockmlGetFractionsResponse.payload.isValid === false
               ) {
                 conditionsError =
-                  'parameter.conditions are not valid for filter result';
+                  'Parameter conditions are not valid for filter result';
               }
 
               parameter.conditionsError = conditionsError;
