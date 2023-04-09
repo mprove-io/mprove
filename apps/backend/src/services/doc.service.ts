@@ -248,11 +248,13 @@ return json.dumps([${rowParColumns
         row.parametersJson = common.makeCopy(parsedParameters);
 
         let isParamsSchemaValid = true;
+        let paramsSchemaError;
 
         if (common.isDefined(row.parametersFormula)) {
           if (row.isParamsCalcValid === true) {
             if (!Array.isArray(parsedParameters)) {
               isParamsSchemaValid = false;
+              paramsSchemaError = 'Parameters formula must return an array';
             }
 
             if (isParamsSchemaValid === true) {
@@ -275,6 +277,7 @@ return json.dumps([${rowParColumns
         }
 
         row.isParamsSchemaValid = isParamsSchemaValid;
+        row.paramsSchemaError = paramsSchemaError;
 
         row.parameters
           .filter(
