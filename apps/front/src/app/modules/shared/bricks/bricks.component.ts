@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { common } from '~front/barrels/common';
 import { DeleteFilterFnItem } from '../../dashboard/dashboard.component';
+import { DataRow } from '../../metrics/rep/rep.component';
 
 @Component({
   selector: 'm-bricks',
@@ -20,16 +21,7 @@ export class BricksComponent {
   showJson?: boolean;
 
   @Input()
-  parametersJson?: any;
-
-  @Input()
-  isParamsCalcValid?: boolean;
-
-  @Input()
-  isParamsSchemaValid?: boolean;
-
-  @Input()
-  finalRowHeight?: number;
+  rData?: DataRow;
 
   @Input()
   deleteFilterFn: (item: DeleteFilterFnItem) => void;

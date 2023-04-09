@@ -7,13 +7,13 @@
   <div
     *ngIf="showJson === true"
     [style.max-height.px]="
-      isParamsCalcValid === true && parametersJson.length > 0
-        ? finalRowHeight - 16
-        : finalRowHeight - 8
+      rData?.isParamsCalcValid === true && rData?.parametersJson.length > 0
+        ? rData?.finalRowHeight - 16
+        : rData?.finalRowHeight - 8
     "
     class="my-1 mr-5 w-[400px] min-w-min overflow-auto bg-gray-200 py-1 pl-3 pr-5 text-sm"
   >
-    <pre [innerHtml]="parametersJson | prettyJson : [true, 3]"></pre>
+    <pre [innerHtml]="rData?.parametersJson | prettyJson : [true, 3]"></pre>
   </div>
 
   <div class="pt-1">
