@@ -25,6 +25,9 @@ export class Parameter {
   @IsBoolean()
   isConditionsValid?: boolean;
 
+  @IsString()
+  conditionsError?: string;
+
   @IsString({ each: true })
   conditions: string[];
 }

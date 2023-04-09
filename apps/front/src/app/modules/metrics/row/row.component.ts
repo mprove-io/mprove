@@ -19,6 +19,7 @@ export interface ParameterFilter extends common.FilterX {
   parameterType: common.ParameterTypeEnum;
   isCalcValid: boolean;
   isConditionsValid: boolean;
+  conditionsError: string;
   formula: string;
 }
 
@@ -158,7 +159,8 @@ export class RowComponent {
                 parameterType: parameter.parameterType,
                 formula: parameter.formula,
                 isCalcValid: parameter.isCalcValid,
-                isConditionsValid: parameter.isConditionsValid
+                isConditionsValid: parameter.isConditionsValid,
+                conditionsError: parameter.conditionsError
               } as ParameterFilter);
             });
       }

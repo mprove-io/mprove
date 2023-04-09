@@ -457,14 +457,18 @@ export class RepComponent {
       let totalConditions = 0;
 
       params.data.parameters.forEach(x => {
-        x.conditions.forEach(y => (totalConditions = totalConditions + 1));
+        if (common.isDefined(x.conditions)) {
+          x.conditions.forEach(y => (totalConditions = totalConditions + 1));
+        }
       });
 
       if (totalConditions > 1) {
         params.data.parameters.forEach(x => {
-          x.conditions.forEach(y => {
-            rowHeight = rowHeight + 25;
-          });
+          if (common.isDefined(x.conditions)) {
+            x.conditions.forEach(y => {
+              rowHeight = rowHeight + 25;
+            });
+          }
 
           rowHeight = rowHeight + 8;
         });
@@ -498,7 +502,9 @@ export class RepComponent {
 
 function countLines(item: { input: any; lines: number }) {
   let { input, lines } = item;
-  if (Array.isArray(input)) {
+  if (common.isUndefined(input)) {
+    lines = lines + 1;
+  } else if (Array.isArray(input)) {
     //
     input.forEach((x: any) => {
       lines = countLines({ input: x, lines: lines });

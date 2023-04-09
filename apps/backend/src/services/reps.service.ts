@@ -802,61 +802,73 @@ export class RepsService {
             common.isDefined(x.parameters)
           ) {
             await forEachSeries(x.parameters, async parameter => {
-              if (
-                // parameter.parameterType === common.ParameterTypeEnum.Field &&
-                (common.isDefined(parameter.conditions) &&
-                  parameter.conditions.length > 0) ||
-                // parameter.parameterType === common.ParameterTypeEnum.Formula &&
-                common.isDefined(parameter.formula)
-              ) {
-                // console.log('parameter');
-                // console.log(parameter);
+              let isConditionsStartValid = true;
+              let conditionsError;
 
-                let toBlockmlGetFractionsRequest: apiToBlockml.ToBlockmlGetFractionsRequest =
-                  {
-                    info: {
-                      name: apiToBlockml.ToBlockmlRequestInfoNameEnum
-                        .ToBlockmlGetFractions,
-                      traceId: traceId
-                    },
-                    payload: {
-                      bricks:
-                        // parameter.parameterType ===
-                        // common.ParameterTypeEnum.Formula
+              if (common.isUndefined(parameter.conditions)) {
+                isConditionsStartValid = false;
+                conditionsError = 'parameter conditions must be defined';
+              } else if (!Array.isArray(parameter.conditions)) {
+                isConditionsStartValid = false;
+                conditionsError = 'parameter conditions must be an array';
+              } else if (parameter.conditions.length === 0) {
+                isConditionsStartValid = false;
+                conditionsError =
+                  'parameter conditions must have at least one element';
+              }
 
-                        // common.isDefined(parameter.formula)
-                        //   ? ['any']
-                        //   :
-                        common.isDefined(parameter.conditions)
-                          ? parameter.conditions
-                          : ['any'],
-                      result: parameter.result
-                    }
-                  };
+              if (isConditionsStartValid === false) {
+                parameter.conditions = ['any'];
+              }
 
-                // console.log(toBlockmlGetFractionsRequest.payload);
+              // console.log('parameter');
+              // console.log(parameter);
 
-                let blockmlGetFractionsResponse =
-                  await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlGetFractionsResponse>(
-                    {
-                      routingKey:
-                        common.RabbitBlockmlRoutingEnum.GetFractions.toString(),
-                      message: toBlockmlGetFractionsRequest,
-                      checkIsOk: true
-                    }
-                  );
-
-                parameter.isConditionsValid =
-                  common.isDefined(parameter.conditions) &&
-                  blockmlGetFractionsResponse.payload.isValid === true;
-
-                let filter: common.Filter = {
-                  fieldId: parameter.filter,
-                  fractions: blockmlGetFractionsResponse.payload.fractions
+              let toBlockmlGetFractionsRequest: apiToBlockml.ToBlockmlGetFractionsRequest =
+                {
+                  info: {
+                    name: apiToBlockml.ToBlockmlRequestInfoNameEnum
+                      .ToBlockmlGetFractions,
+                    traceId: traceId
+                  },
+                  payload: {
+                    bricks: parameter.conditions,
+                    result: parameter.result
+                  }
                 };
 
-                filters.push(filter);
+              // console.log(toBlockmlGetFractionsRequest.payload);
+
+              let blockmlGetFractionsResponse =
+                await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlGetFractionsResponse>(
+                  {
+                    routingKey:
+                      common.RabbitBlockmlRoutingEnum.GetFractions.toString(),
+                    message: toBlockmlGetFractionsRequest,
+                    checkIsOk: true
+                  }
+                );
+
+              parameter.isConditionsValid =
+                isConditionsStartValid === true &&
+                blockmlGetFractionsResponse.payload.isValid === true;
+
+              if (
+                isConditionsStartValid === true &&
+                blockmlGetFractionsResponse.payload.isValid === false
+              ) {
+                conditionsError =
+                  'parameter.conditions are not valid for filter result';
               }
+
+              parameter.conditionsError = conditionsError;
+
+              let filter: common.Filter = {
+                fieldId: parameter.filter,
+                fractions: blockmlGetFractionsResponse.payload.fractions
+              };
+
+              filters.push(filter);
             });
           }
 
