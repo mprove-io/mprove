@@ -817,6 +817,18 @@ export class RepsService {
                 isConditionsStartValid = false;
                 conditionsError =
                   'Parameter conditions must have at least one element';
+              } else {
+                parameter.conditions.forEach(c => {
+                  if (
+                    common.isUndefined(c) ||
+                    Array.isArray(c) ||
+                    c.constructor === Object
+                  ) {
+                    isConditionsStartValid = false;
+                    conditionsError =
+                      'Parameter conditions must be an array of strings';
+                  }
+                });
               }
 
               if (isConditionsStartValid === false) {
