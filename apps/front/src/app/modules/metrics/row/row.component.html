@@ -327,18 +327,18 @@
         <div
           *ngIf="
             repSelectedNode.data.isParamsCalcValid === true &&
-            repSelectedNode.data.isParamsSchemaValid === false
+            repSelectedNode.data.isParamsJsonValid === false
           "
-          >{{ repSelectedNode.data.paramsSchemaError }}</div
+          >JSON is not valid</div
         >
 
         <div
           *ngIf="
             repSelectedNode.data.isParamsCalcValid === true &&
-            repSelectedNode.data.isParamsSchemaValid === true &&
-            repSelectedNode.data.isParamsConditionsValid === false
+            repSelectedNode.data.isParamsJsonValid === true &&
+            repSelectedNode.data.isParamsSchemaValid === false
           "
-          >Conditions are not valid</div
+          >{{ repSelectedNode.data.paramsSchemaError }}</div
         >
       </ng-template>
 
@@ -346,8 +346,8 @@
         *ngIf="
           !!repSelectedNode.data.parametersFormula &&
           (repSelectedNode.data.isParamsCalcValid === false ||
-            repSelectedNode.data.isParamsSchemaValid === false ||
-            repSelectedNode.data.isParamsConditionsValid === false)
+            repSelectedNode.data.isParamsJsonValid === false ||
+            repSelectedNode.data.isParamsSchemaValid === false)
         "
         class="text-red1 ml-5 mt-1 flex h-8 w-8 flex-shrink-0"
         [tippy]="templateErrors"

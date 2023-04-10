@@ -10,15 +10,15 @@
     tippy="Parameters have an error"
     [isEnabled]="
       params.data.isParamsCalcValid === false ||
-      params.data.isParamsSchemaValid === false ||
-      params.data.isParamsConditionsValid === false
+      params.data.isParamsJsonValid === false ||
+      params.data.isParamsSchemaValid === false
     "
   >
     <m-exclamation-icon
       *ngIf="
         params.data.isParamsCalcValid === false ||
-        params.data.isParamsSchemaValid === false ||
-        params.data.isParamsConditionsValid === false
+        params.data.isParamsJsonValid === false ||
+        params.data.isParamsSchemaValid === false
       "
     ></m-exclamation-icon>
   </div>

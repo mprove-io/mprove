@@ -2,16 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { format, fromUnixTime } from 'date-fns';
+import { forEachSeries } from 'p-iteration';
+import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { DbService } from './db.service';
+import { RabbitService } from './rabbit.service';
 
 @Injectable()
 export class DocService {
   constructor(
     private cs: ConfigService<interfaces.Config>,
+    private rabbitService: RabbitService,
     private dbService: DbService
   ) {}
 
@@ -224,9 +228,9 @@ return json.dumps([${rowParColumns
 
     console.log('firstRecord', firstRecord);
 
-    rows
-      .filter(row => row.rowType === common.RowTypeEnum.Metric)
-      .forEach(row => {
+    await forEachSeries(
+      rows.filter(row => row.rowType === common.RowTypeEnum.Metric),
+      async row => {
         // console.log('row.rowId');
         // console.log(row.rowId);
         let stringParametersColumn = `STRING_${row.rowId}_PARAMETERS`;
@@ -327,6 +331,102 @@ return json.dumps([${rowParColumns
             }
           });
 
+        let filters: common.Filter[] = [];
+
+        // if (
+        //   // metric.type === common.MetricTypeEnum.Model &&
+        //   // common.isDefined(x.parameters)
+        // ) {
+
+        await forEachSeries(row.parameters, async parameter => {
+          let isConditionsStartValid = true;
+          let conditionsError;
+
+          if (common.isUndefined(parameter.conditions)) {
+            isConditionsStartValid = false;
+            conditionsError = 'Parameter conditions must be defined';
+          } else if (!Array.isArray(parameter.conditions)) {
+            isConditionsStartValid = false;
+            conditionsError = 'Parameter conditions must be an array';
+          } else if (parameter.conditions.length === 0) {
+            isConditionsStartValid = false;
+            conditionsError =
+              'Parameter conditions must have at least one element';
+          } else {
+            parameter.conditions.forEach(c => {
+              if (
+                common.isUndefined(c) ||
+                Array.isArray(c) ||
+                c.constructor === Object
+              ) {
+                isConditionsStartValid = false;
+                conditionsError =
+                  'Parameter conditions must be an array of strings';
+              }
+            });
+          }
+
+          if (isConditionsStartValid === false) {
+            parameter.conditions = ['any'];
+          }
+
+          // console.log('parameter');
+          // console.log(parameter);
+
+          let toBlockmlGetFractionsRequest: apiToBlockml.ToBlockmlGetFractionsRequest =
+            {
+              info: {
+                name: apiToBlockml.ToBlockmlRequestInfoNameEnum
+                  .ToBlockmlGetFractions,
+                traceId: traceId
+              },
+              payload: {
+                bricks: parameter.conditions,
+                result: parameter.result
+              }
+            };
+
+          // console.log(toBlockmlGetFractionsRequest.payload);
+
+          let blockmlGetFractionsResponse =
+            await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlGetFractionsResponse>(
+              {
+                routingKey:
+                  common.RabbitBlockmlRoutingEnum.GetFractions.toString(),
+                message: toBlockmlGetFractionsRequest,
+                checkIsOk: true
+              }
+            );
+
+          parameter.isConditionsValid =
+            isConditionsStartValid === true &&
+            blockmlGetFractionsResponse.payload.isValid === true;
+
+          if (parameter.isConditionsValid === false) {
+            row.isParamsSchemaValid = false;
+          }
+
+          if (
+            isConditionsStartValid === true &&
+            blockmlGetFractionsResponse.payload.isValid === false
+          ) {
+            conditionsError =
+              'Parameter conditions are not valid for filter result';
+          }
+
+          parameter.conditionsError = conditionsError;
+
+          let filter: common.Filter = {
+            fieldId: parameter.filter,
+            fractions: blockmlGetFractionsResponse.payload.fractions
+          };
+
+          filters.push(filter);
+        });
+        // }
+
+        row.paramsFiltersWithExcludedTime = filters;
+
         let rc = row.rcs.find(
           y =>
             y.fractionBrick === timeRangeFraction.brick &&
@@ -340,13 +440,14 @@ return json.dumps([${rowParColumns
           struct_id: structId,
           kit_id: rc.kitId,
           rep_id: repId,
-          data: row.parameters,
+          data: row,
           server_ts: undefined
         };
         newKits.push(newKit);
 
         rc.lastCalculatedTs = lastCalculatedTs;
-      });
+      }
+    );
 
     if (newKits.length > 0) {
       await this.dbService.writeRecords({

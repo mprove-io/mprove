@@ -255,8 +255,8 @@ export class RepComponent {
           this.rep.rows.filter(
             row =>
               row.isParamsCalcValid === false ||
-              row.isParamsSchemaValid === false ||
-              row.isParamsConditionsValid === false
+              row.isParamsJsonValid === false ||
+              row.isParamsSchemaValid === false
           ).length > 0;
 
         this.data = this.rep.rows.map((row: common.Row) => {

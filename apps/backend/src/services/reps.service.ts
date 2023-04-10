@@ -715,7 +715,7 @@ export class RepsService {
 
       row.parameters =
         // common.isDefined(rc.kitId)
-        //   ? parKits.find(k => k.kit_id === rc.kitId).data
+        //   ? parKits.find(k => k.kit_id === rc.kitId).data.parameters //paramsFiltersWithExcludedTime
         //   :
         common.isDefined(row.parameters) ? row.parameters : [];
     });
@@ -795,100 +795,10 @@ export class RepsService {
             fractions: [timeRangeFraction]
           };
 
-          let filters: common.Filter[] = [timeFilter];
-
-          if (
-            metric.type === common.MetricTypeEnum.Model &&
-            common.isDefined(x.parameters)
-          ) {
-            x.isParamsConditionsValid = true;
-
-            await forEachSeries(x.parameters, async parameter => {
-              let isConditionsStartValid = true;
-              let conditionsError;
-
-              if (common.isUndefined(parameter.conditions)) {
-                isConditionsStartValid = false;
-                conditionsError = 'Parameter conditions must be defined';
-              } else if (!Array.isArray(parameter.conditions)) {
-                isConditionsStartValid = false;
-                conditionsError = 'Parameter conditions must be an array';
-              } else if (parameter.conditions.length === 0) {
-                isConditionsStartValid = false;
-                conditionsError =
-                  'Parameter conditions must have at least one element';
-              } else {
-                parameter.conditions.forEach(c => {
-                  if (
-                    common.isUndefined(c) ||
-                    Array.isArray(c) ||
-                    c.constructor === Object
-                  ) {
-                    isConditionsStartValid = false;
-                    conditionsError =
-                      'Parameter conditions must be an array of strings';
-                  }
-                });
-              }
-
-              if (isConditionsStartValid === false) {
-                parameter.conditions = ['any'];
-              }
-
-              // console.log('parameter');
-              // console.log(parameter);
-
-              let toBlockmlGetFractionsRequest: apiToBlockml.ToBlockmlGetFractionsRequest =
-                {
-                  info: {
-                    name: apiToBlockml.ToBlockmlRequestInfoNameEnum
-                      .ToBlockmlGetFractions,
-                    traceId: traceId
-                  },
-                  payload: {
-                    bricks: parameter.conditions,
-                    result: parameter.result
-                  }
-                };
-
-              // console.log(toBlockmlGetFractionsRequest.payload);
-
-              let blockmlGetFractionsResponse =
-                await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlGetFractionsResponse>(
-                  {
-                    routingKey:
-                      common.RabbitBlockmlRoutingEnum.GetFractions.toString(),
-                    message: toBlockmlGetFractionsRequest,
-                    checkIsOk: true
-                  }
-                );
-
-              parameter.isConditionsValid =
-                isConditionsStartValid === true &&
-                blockmlGetFractionsResponse.payload.isValid === true;
-
-              if (parameter.isConditionsValid === false) {
-                x.isParamsConditionsValid = false;
-              }
-
-              if (
-                isConditionsStartValid === true &&
-                blockmlGetFractionsResponse.payload.isValid === false
-              ) {
-                conditionsError =
-                  'Parameter conditions are not valid for filter result';
-              }
-
-              parameter.conditionsError = conditionsError;
-
-              let filter: common.Filter = {
-                fieldId: parameter.filter,
-                fractions: blockmlGetFractionsResponse.payload.fractions
-              };
-
-              filters.push(filter);
-            });
-          }
+          let filters: common.Filter[] = [
+            timeFilter,
+            ...x.paramsFiltersWithExcludedTime
+          ];
 
           let mconfig: common.Mconfig = {
             structId: struct.struct_id,

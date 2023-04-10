@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
 import { enums } from '~common/barrels/enums';
 import { MconfigX } from '../backend/mconfig-x';
+import { Filter } from './filter';
 import { Parameter } from './parameter';
 import { Query } from './query';
 import { Rc } from './rc';
@@ -41,8 +42,9 @@ export class Row {
   @IsString()
   paramsSchemaError?: string;
 
-  @IsBoolean()
-  isParamsConditionsValid?: boolean;
+  @ValidateNested()
+  @Type(() => Filter)
+  paramsFiltersWithExcludedTime?: Filter[];
 
   @ValidateNested()
   @Type(() => Parameter)
