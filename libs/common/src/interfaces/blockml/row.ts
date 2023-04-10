@@ -33,6 +33,9 @@ export class Row {
   isParamsCalcValid?: boolean;
 
   @IsBoolean()
+  isParamsJsonValid?: boolean;
+
+  @IsBoolean()
   isParamsSchemaValid?: boolean;
 
   @IsString()

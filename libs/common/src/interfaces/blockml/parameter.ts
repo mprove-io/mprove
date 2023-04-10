@@ -23,6 +23,9 @@ export class Parameter {
   isCalcValid?: boolean;
 
   @IsBoolean()
+  isJsonValid?: boolean;
+
+  @IsBoolean()
   isConditionsValid?: boolean;
 
   @IsString()

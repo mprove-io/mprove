@@ -231,12 +231,21 @@ return json.dumps([${rowParColumns
         // console.log(row.rowId);
         let stringParametersColumn = `STRING_${row.rowId}_PARAMETERS`;
 
-        row.isParamsCalcValid = common.isUndefined(
+        let isParamsCalcValid = common.isUndefined(
           firstRecord.errors?.[stringParametersColumn]
         );
 
+        let isParamsJsonValid = true;
+        if (isParamsCalcValid === true) {
+          try {
+            JSON.parse(firstRecord.fields[stringParametersColumn]);
+          } catch (e) {
+            isParamsJsonValid = false;
+          }
+        }
+
         let parsedParameters: common.Parameter[] =
-          row.isParamsCalcValid === true
+          isParamsCalcValid === true && isParamsJsonValid === true
             ? JSON.parse(firstRecord.fields[stringParametersColumn])
             : common.isDefined(firstRecord.errors?.[stringParametersColumn])
             ? firstRecord.errors[stringParametersColumn]
@@ -245,13 +254,18 @@ return json.dumps([${rowParColumns
         // console.log(row.rowId);
         // console.log(parsedParameters);
 
+        row.isParamsCalcValid = isParamsCalcValid;
+        row.isParamsJsonValid = isParamsJsonValid;
         row.parametersJson = common.makeCopy(parsedParameters);
 
         let isParamsSchemaValid = true;
         let paramsSchemaError;
 
         if (common.isDefined(row.parametersFormula)) {
-          if (row.isParamsCalcValid === true) {
+          if (
+            row.isParamsCalcValid === true &&
+            row.isParamsJsonValid === true
+          ) {
             if (!Array.isArray(parsedParameters)) {
               isParamsSchemaValid = false;
               paramsSchemaError = 'Parameters formula must return an array';
@@ -290,9 +304,21 @@ return json.dumps([${rowParColumns
             // console.log(p);
             let parStr = `STRING_${p.parameterId}`;
 
-            p.isCalcValid = common.isUndefined(firstRecord.errors?.[parStr]);
+            let isCalcValid = common.isUndefined(firstRecord.errors?.[parStr]);
 
-            if (p.isCalcValid === true) {
+            let isJsonValid = true;
+            if (isCalcValid === true) {
+              try {
+                JSON.parse(firstRecord.fields[parStr]);
+              } catch (e) {
+                isJsonValid = false;
+              }
+            }
+
+            p.isCalcValid = isCalcValid;
+            p.isJsonValid = isJsonValid;
+
+            if (p.isCalcValid === true && p.isJsonValid === true) {
               let parsedParameter = JSON.parse(firstRecord.fields[parStr]);
 
               p.conditions = parsedParameter.conditions;

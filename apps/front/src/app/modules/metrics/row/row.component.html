@@ -300,7 +300,7 @@
         >
           <textarea
             data-cy="parametersFormulaInput"
-            class="form-input border-gray3 focus:border-blue3 max-h-[70px] min-h-[70px] w-full min-w-[300px] resize-none rounded font-mono"
+            class="form-input border-gray3 focus:border-blue3 max-h-[115px] min-h-[70px] w-full min-w-[300px] resize-y rounded font-mono"
             [ngClass]="{
               'border-red-600':
                 parametersFormulaForm.controls['formula'].invalid &&
@@ -331,13 +331,23 @@
           "
           >{{ repSelectedNode.data.paramsSchemaError }}</div
         >
+
+        <div
+          *ngIf="
+            repSelectedNode.data.isParamsCalcValid === true &&
+            repSelectedNode.data.isParamsSchemaValid === true &&
+            repSelectedNode.data.isParamsConditionsValid === false
+          "
+          >Conditions are not valid</div
+        >
       </ng-template>
 
       <div
         *ngIf="
           !!repSelectedNode.data.parametersFormula &&
           (repSelectedNode.data.isParamsCalcValid === false ||
-            repSelectedNode.data.isParamsSchemaValid === false)
+            repSelectedNode.data.isParamsSchemaValid === false ||
+            repSelectedNode.data.isParamsConditionsValid === false)
         "
         class="text-red1 ml-5 mt-1 flex h-8 w-8 flex-shrink-0"
         [tippy]="templateErrors"
