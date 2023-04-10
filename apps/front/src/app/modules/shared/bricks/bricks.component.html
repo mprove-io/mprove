@@ -11,7 +11,7 @@
         ? rData?.finalRowHeight - 16
         : rData?.finalRowHeight - 8
     "
-    class="my-1 mr-5 w-[400px] min-w-min overflow-auto bg-gray-200 py-1 pl-3 pr-5 text-sm"
+    class="my-1 mr-5 w-[400px] min-w-min select-text overflow-auto bg-gray-200 py-1 pl-3 pr-5 text-sm"
   >
     <pre [innerHtml]="rData?.parametersJson | prettyJson : [true, 3]"></pre>
   </div>
