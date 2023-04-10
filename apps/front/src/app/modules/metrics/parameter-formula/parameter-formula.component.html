@@ -23,23 +23,33 @@
   </div>
 
   <ng-template #templateParameterFormula>
-    <div *ngIf="parameterFilter.isCalcValid !== true"
+    <div *ngIf="parameterFilter.isCalcValid === false"
       >Failed to calculate parameter. Check formula and its dependences.</div
     >
 
     <div
       *ngIf="
         parameterFilter.isCalcValid === true &&
-        parameterFilter.isConditionsValid === false
+        parameterFilter.isJsonValid === false
       "
-      >{{ parameterFilter.conditionsError }}</div
+      >JSON is not valid</div
+    >
+
+    <div
+      *ngIf="
+        parameterFilter.isCalcValid === true &&
+        parameterFilter.isJsonValid === true &&
+        parameterFilter.isSchemaValid === false
+      "
+      >{{ parameterFilter.schemaError }}</div
     >
   </ng-template>
 
   <div
     *ngIf="
-      parameterFilter.isCalcValid !== true ||
-      parameterFilter.isConditionsValid === false
+      parameterFilter.isCalcValid === false ||
+      parameterFilter.isJsonValid === false ||
+      parameterFilter.isSchemaValid === false
     "
     class="text-red1 ml-5 mt-1 flex h-8 w-8 flex-shrink-0"
     [tippy]="templateParameterFormula"

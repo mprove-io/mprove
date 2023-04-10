@@ -14,6 +14,9 @@ export class Parameter {
   @IsEnum(enums.FieldResultEnum)
   result: enums.FieldResultEnum;
 
+  @IsString({ each: true })
+  conditions: string[];
+
   @IsString()
   formula: string;
 
@@ -26,11 +29,8 @@ export class Parameter {
   isJsonValid?: boolean;
 
   @IsBoolean()
-  isConditionsValid?: boolean;
+  isSchemaValid?: boolean;
 
   @IsString()
-  conditionsError?: string;
-
-  @IsString({ each: true })
-  conditions: string[];
+  schemaError?: string;
 }

@@ -18,8 +18,9 @@ import { DataRow } from '../rep/rep.component';
 export interface ParameterFilter extends common.FilterX {
   parameterType: common.ParameterTypeEnum;
   isCalcValid: boolean;
-  isConditionsValid: boolean;
-  conditionsError: string;
+  isJsonValid: boolean;
+  isSchemaValid: boolean;
+  schemaError: string;
   formula: string;
 }
 
@@ -159,8 +160,9 @@ export class RowComponent {
                 parameterType: parameter.parameterType,
                 formula: parameter.formula,
                 isCalcValid: parameter.isCalcValid,
-                isConditionsValid: parameter.isConditionsValid,
-                conditionsError: parameter.conditionsError
+                isJsonValid: parameter.isJsonValid,
+                isSchemaValid: parameter.isSchemaValid,
+                schemaError: parameter.schemaError
               } as ParameterFilter);
             });
       }

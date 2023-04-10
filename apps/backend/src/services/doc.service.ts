@@ -249,10 +249,10 @@ return json.dumps([${rowParColumns
         }
 
         let parsedParameters: common.Parameter[] =
-          isParamsCalcValid === true && isParamsJsonValid === true
-            ? JSON.parse(firstRecord.fields[stringParametersColumn])
-            : common.isDefined(firstRecord.errors?.[stringParametersColumn])
+          isParamsCalcValid === false
             ? firstRecord.errors[stringParametersColumn]
+            : isParamsJsonValid === true
+            ? JSON.parse(firstRecord.fields[stringParametersColumn])
             : [];
 
         // console.log(row.rowId);
@@ -278,8 +278,7 @@ return json.dumps([${rowParColumns
             if (isParamsSchemaValid === true) {
               row.parameters = parsedParameters.map((x: common.Parameter) => {
                 let fieldId = x.filter.split('.').join('_').toUpperCase();
-                let parameterId = `${row.rowId}_${fieldId}`;
-                x.parameterId = parameterId;
+                x.parameterId = `${row.rowId}_${fieldId}`;
 
                 let metric = metrics.find(m => m.metric_id === row.metricId);
                 let model = models.find(ml => ml.model_id === metric.model_id);
@@ -333,40 +332,34 @@ return json.dumps([${rowParColumns
 
         let filters: common.Filter[] = [];
 
-        // if (
-        //   // metric.type === common.MetricTypeEnum.Model &&
-        //   // common.isDefined(x.parameters)
-        // ) {
-
         await forEachSeries(row.parameters, async parameter => {
-          let isConditionsStartValid = true;
-          let conditionsError;
+          let isConditionsValid = true;
+          let schemaError;
 
           if (common.isUndefined(parameter.conditions)) {
-            isConditionsStartValid = false;
-            conditionsError = 'Parameter conditions must be defined';
+            isConditionsValid = false;
+            schemaError = 'Parameter conditions must be defined';
           } else if (!Array.isArray(parameter.conditions)) {
-            isConditionsStartValid = false;
-            conditionsError = 'Parameter conditions must be an array';
+            isConditionsValid = false;
+            schemaError = 'Parameter conditions must be an array';
           } else if (parameter.conditions.length === 0) {
-            isConditionsStartValid = false;
-            conditionsError =
-              'Parameter conditions must have at least one element';
+            isConditionsValid = false;
+            schemaError = 'Parameter conditions must have at least one element';
           } else {
-            parameter.conditions.forEach(c => {
+            parameter.conditions.forEach(y => {
               if (
-                common.isUndefined(c) ||
-                Array.isArray(c) ||
-                c.constructor === Object
+                common.isUndefined(y) ||
+                Array.isArray(y) ||
+                y.constructor === Object
               ) {
-                isConditionsStartValid = false;
-                conditionsError =
+                isConditionsValid = false;
+                schemaError =
                   'Parameter conditions must be an array of strings';
               }
             });
           }
 
-          if (isConditionsStartValid === false) {
+          if (isConditionsValid === false) {
             parameter.conditions = ['any'];
           }
 
@@ -398,23 +391,23 @@ return json.dumps([${rowParColumns
               }
             );
 
-          parameter.isConditionsValid =
-            isConditionsStartValid === true &&
+          parameter.isSchemaValid =
+            isConditionsValid === true &&
             blockmlGetFractionsResponse.payload.isValid === true;
 
-          if (parameter.isConditionsValid === false) {
-            row.isParamsSchemaValid = false;
-          }
-
           if (
-            isConditionsStartValid === true &&
+            isConditionsValid === true &&
             blockmlGetFractionsResponse.payload.isValid === false
           ) {
-            conditionsError =
+            schemaError =
               'Parameter conditions are not valid for filter result';
           }
 
-          parameter.conditionsError = conditionsError;
+          parameter.schemaError = schemaError;
+
+          if (parameter.isSchemaValid === false) {
+            row.isParamsSchemaValid = false;
+          }
 
           let filter: common.Filter = {
             fieldId: parameter.filter,
@@ -423,7 +416,6 @@ return json.dumps([${rowParColumns
 
           filters.push(filter);
         });
-        // }
 
         row.paramsFiltersWithExcludedTime = filters;
 
