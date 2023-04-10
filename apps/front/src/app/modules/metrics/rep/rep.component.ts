@@ -482,9 +482,8 @@ export class RepComponent {
       params.data.rowType === common.RowTypeEnum.Metric &&
       params.data.showParametersJson === true &&
       params.data.isParamsCalcValid === true &&
-      params.data.parameters.length > 0
-        ? // ? 190 : 42
-          countLines({ input: params.data.parametersJson, lines: 1 }) * 20 + 8
+      params.data.isParamsJsonValid === true
+        ? countLines({ input: params.data.parametersJson, lines: 1 }) * 20 + 8
         : 42;
 
     let finalRowHeight = Math.max(rowHeight, minRowHeight);

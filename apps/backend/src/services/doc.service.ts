@@ -239,7 +239,8 @@ return json.dumps([${rowParColumns
           firstRecord.errors?.[stringParametersColumn]
         );
 
-        let isParamsJsonValid = true;
+        let isParamsJsonValid = isParamsCalcValid === false ? false : true;
+
         if (isParamsCalcValid === true) {
           try {
             JSON.parse(firstRecord.fields[stringParametersColumn]);
@@ -276,6 +277,29 @@ return json.dumps([${rowParColumns
             }
 
             if (isParamsSchemaValid === true) {
+              parsedParameters.forEach((x: common.Parameter) => {
+                if (common.isUndefined(x)) {
+                  isParamsSchemaValid = false;
+                  paramsSchemaError = 'Each of parameters must be defined';
+                } else if (x.constructor !== Object) {
+                  isParamsSchemaValid = false;
+                  paramsSchemaError = 'Each of parameters must be an object';
+                } else if (common.isUndefined(x.filter)) {
+                  isParamsSchemaValid = false;
+                  paramsSchemaError =
+                    'Each of parameters must have a "filter" property';
+                } else if (
+                  Array.isArray(x.filter) ||
+                  x.filter.constructor === Object
+                ) {
+                  isParamsSchemaValid = false;
+                  paramsSchemaError =
+                    'parameter filter must be a string in a form of "alias.field_id"';
+                }
+              });
+            }
+
+            if (isParamsSchemaValid === true) {
               row.parameters = parsedParameters.map((x: common.Parameter) => {
                 let fieldId = x.filter.split('.').join('_').toUpperCase();
                 x.parameterId = `${row.rowId}_${fieldId}`;
@@ -309,7 +333,7 @@ return json.dumps([${rowParColumns
 
             let isCalcValid = common.isUndefined(firstRecord.errors?.[parStr]);
 
-            let isJsonValid = true;
+            let isJsonValid = isCalcValid === false ? false : true;
             if (isCalcValid === true) {
               try {
                 JSON.parse(firstRecord.fields[parStr]);
@@ -319,7 +343,14 @@ return json.dumps([${rowParColumns
             }
 
             p.isCalcValid = isCalcValid;
+            if (p.isCalcValid === false) {
+              row.isParamsCalcValid = false;
+            }
+
             p.isJsonValid = isJsonValid;
+            if (p.isJsonValid === false) {
+              row.isParamsJsonValid = false;
+            }
 
             if (p.isCalcValid === true && p.isJsonValid === true) {
               let parsedParameter = JSON.parse(firstRecord.fields[parStr]);
