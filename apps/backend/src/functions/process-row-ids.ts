@@ -22,7 +22,7 @@ export function processRowIds(item: {
       return row;
     })
     .forEach(row => {
-      if (common.isDefined(row.formula)) {
+      if (row.rowType === common.RowTypeEnum.Formula) {
         //
         let newFormula = row.formula;
         let formulaDeps: string[] = [];

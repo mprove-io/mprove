@@ -150,7 +150,7 @@ export class RepsService {
       let isClearFormulasData =
         processedRows.filter(
           row =>
-            common.isDefined(row.formula) &&
+            row.rowType === common.RowTypeEnum.Formula &&
             row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
         ).length > 0;
 

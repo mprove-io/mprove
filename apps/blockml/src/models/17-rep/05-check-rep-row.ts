@@ -161,7 +161,7 @@ export function checkRepRow(
       }
 
       if (
-        [common.RowTypeEnum.Formula].indexOf(row.type) > -1 &&
+        row.type === common.RowTypeEnum.Formula &&
         common.isUndefined(row.formula)
       ) {
         item.errors.push(
