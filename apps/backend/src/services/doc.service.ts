@@ -59,10 +59,17 @@ export class DocService {
       name: `parameters - traceId - ${traceId} - repId - ${repId} - structId - ${structId}`
     };
 
+    let createDocStartTs = Date.now();
+
     let createDocResp = await sender.post(
       `api/workspaces/2/docs`,
       createDoc,
       {}
+    );
+
+    console.log(
+      'parameters createDoc - duration: ',
+      Date.now() - createDocStartTs
     );
 
     let docId = createDocResp.data;
@@ -86,8 +93,6 @@ export class DocService {
           common.isUndefined(row.parametersFormula) &&
           common.isDefined(row.parameters)
         ) {
-          // console.log('--- rowID');
-          // console.log(row.rowId);
           row.parameters
             .sort((a, b) =>
               a.filter > b.filter ? 1 : b.filter > a.filter ? -1 : 0
@@ -173,16 +178,11 @@ return json.dumps([${rowParColumns
           }
         };
 
-        // console.log(parametersColumnValue);
-        // console.log(parametersColumnString);
-
         valueColumns.push(parametersColumnValue);
         stringColumns.push(parametersColumnString);
       });
 
     let columns: any[] = [...valueColumns, ...stringColumns];
-
-    // columns.forEach(c => console.log(c));
 
     let createTables = {
       tables: [
@@ -193,7 +193,7 @@ return json.dumps([${rowParColumns
       ]
     };
 
-    console.log('createTables');
+    let createTablesStartTs = Date.now();
 
     let createTablesResp = await sender.post(
       `api/docs/${docId}/tables`,
@@ -201,10 +201,15 @@ return json.dumps([${rowParColumns
       {}
     );
 
-    console.log('createRecords');
+    console.log(
+      'parameters createTables - duration: ',
+      Date.now() - createTablesStartTs
+    );
 
-    console.log('record');
-    console.log([record]);
+    // console.log('record');
+    // console.log([record]);
+
+    let createRecordsStartTs = Date.now();
 
     let createRecordsResp = await sender.post(
       `api/docs/${docId}/tables/${parametersTableId}/records`,
@@ -212,11 +217,23 @@ return json.dumps([${rowParColumns
       {}
     );
 
-    console.log('getRecords');
+    console.log(
+      'parameters createRecords - duration: ',
+      Date.now() - createRecordsStartTs
+    );
+
+    // console.log('getRecords');
+
+    let getRecordsStartTs = Date.now();
 
     let getRecordsResp = await sender.get(
       `api/docs/${docId}/tables/${parametersTableId}/records`,
       {}
+    );
+
+    console.log(
+      'parameters getRecordsDuration - duration: ',
+      Date.now() - getRecordsStartTs
     );
 
     let lastCalculatedTs = Number(helper.makeTs());
@@ -225,7 +242,7 @@ return json.dumps([${rowParColumns
 
     let firstRecord = getRecordsResp.data.records[0];
 
-    console.log('firstRecord', firstRecord);
+    // console.log('firstRecord', firstRecord);
 
     await forEachSeries(
       rows.filter(row => row.rowType === common.RowTypeEnum.Metric),
@@ -284,8 +301,6 @@ return json.dumps([${rowParColumns
         let filters: common.Filter[] = [];
 
         await forEachSeries(row.parameters, async parameter => {
-          // console.log('row', row.rowId);
-          // console.log('parameter', parameter);
           let parsedParameter;
 
           if (parameter.parameterType === common.ParameterTypeEnum.Formula) {
@@ -513,11 +528,15 @@ return json.dumps([${rowParColumns
       name: `data - traceId - ${traceId} - repId - ${rep.repId} - structId - ${rep.structId}`
     };
 
+    let createDocStartTs = Date.now();
+
     let createDocResp = await sender.post(
       `api/workspaces/2/docs`,
       createDoc,
       {}
     );
+
+    console.log('data createDoc - duration: ', Date.now() - createDocStartTs);
 
     let docId = createDocResp.data;
     let metricsTableId = 'Metrics';
@@ -549,16 +568,25 @@ return json.dumps([${rowParColumns
       ]
     };
 
+    let createTablesStartTs = Date.now();
+
     let createTablesResp = await sender.post(
       `api/docs/${docId}/tables`,
       createTables,
       {}
     );
 
+    console.log(
+      'data createTables - duration: ',
+      Date.now() - createTablesStartTs
+    );
+
     let recordsByColumn = this.makeRecordsByColumn({
       rep: rep,
       timeSpec: timeSpec
     });
+
+    let createRecordsStartTs = Date.now();
 
     let createRecordsResp = await sender.post(
       `api/docs/${docId}/tables/${metricsTableId}/records`,
@@ -568,10 +596,19 @@ return json.dumps([${rowParColumns
       {}
     );
 
+    console.log(
+      'data createRecords - duration: ',
+      Date.now() - createRecordsStartTs
+    );
+
+    let getRecordsStartTs = Date.now();
+
     let getRecordsResp = await sender.get(
       `api/docs/${docId}/tables/${metricsTableId}/records`,
       {}
     );
+
+    console.log('data getRecords - duration: ', Date.now() - getRecordsStartTs);
 
     let lastCalculatedTs = Number(helper.makeTs());
 
