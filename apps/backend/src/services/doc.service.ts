@@ -97,8 +97,7 @@ export class DocService {
               let columnString: any;
 
               if (
-                parameter.parameterType === common.ParameterTypeEnum.Formula &&
-                common.isDefined(parameter.formula)
+                parameter.parameterType === common.ParameterTypeEnum.Formula
               ) {
                 columnValue = {
                   id: parameter.parameterId,
@@ -231,8 +230,6 @@ return json.dumps([${rowParColumns
     await forEachSeries(
       rows.filter(row => row.rowType === common.RowTypeEnum.Metric),
       async row => {
-        // console.log('row.rowId');
-        // console.log(row.rowId);
         let stringParametersColumn = `STRING_${row.rowId}_PARAMETERS`;
 
         let isParamsCalcValid = common.isUndefined(
@@ -256,9 +253,6 @@ return json.dumps([${rowParColumns
             ? JSON.parse(firstRecord.fields[stringParametersColumn])
             : [];
 
-        // console.log(row.rowId);
-        // console.log(parsedParameters);
-
         row.isParamsCalcValid = isParamsCalcValid;
         row.isParamsJsonValid = isParamsJsonValid;
         row.parametersJson = common.makeCopy(parsedParameters);
@@ -277,40 +271,7 @@ return json.dumps([${rowParColumns
             }
 
             if (isParamsSchemaValid === true) {
-              parsedParameters.forEach((x: common.Parameter) => {
-                if (common.isUndefined(x)) {
-                  isParamsSchemaValid = false;
-                  paramsSchemaError = 'Each of parameters must be defined';
-                } else if (x.constructor !== Object) {
-                  isParamsSchemaValid = false;
-                  paramsSchemaError = 'Each of parameters must be an object';
-                } else if (common.isUndefined(x.filter)) {
-                  isParamsSchemaValid = false;
-                  paramsSchemaError =
-                    'Each of parameters must have a "filter" property';
-                } else if (
-                  Array.isArray(x.filter) ||
-                  x.filter.constructor === Object
-                ) {
-                  isParamsSchemaValid = false;
-                  paramsSchemaError =
-                    'parameter filter must be a string in a form of "alias.field_id"';
-                }
-              });
-            }
-
-            if (isParamsSchemaValid === true) {
-              row.parameters = parsedParameters.map((x: common.Parameter) => {
-                let fieldId = x.filter.split('.').join('_').toUpperCase();
-                x.parameterId = `${row.rowId}_${fieldId}`;
-
-                let metric = metrics.find(m => m.metric_id === row.metricId);
-                let model = models.find(ml => ml.model_id === metric.model_id);
-                let field = model.fields.find(f => f.id === x.filter);
-                x.result = field.result;
-
-                return x;
-              });
+              row.parameters = parsedParameters;
             } else {
               row.parameters = [];
             }
@@ -320,16 +281,13 @@ return json.dumps([${rowParColumns
         row.isParamsSchemaValid = isParamsSchemaValid;
         row.paramsSchemaError = paramsSchemaError;
 
-        row.parameters
-          .filter(
-            p =>
-              p.parameterType === common.ParameterTypeEnum.Formula ||
-              common.isDefined(p.formula)
-          )
-          .forEach(p => {
-            // console.log('p');
-            // console.log(p);
-            let parStr = `STRING_${p.parameterId}`;
+        let filters: common.Filter[] = [];
+
+        await forEachSeries(row.parameters, async parameter => {
+          let parsedParameter;
+
+          if (parameter.parameterType === common.ParameterTypeEnum.Formula) {
+            let parStr = `STRING_${parameter.parameterId}`;
 
             let isCalcValid = common.isUndefined(firstRecord.errors?.[parStr]);
 
@@ -342,40 +300,83 @@ return json.dumps([${rowParColumns
               }
             }
 
-            p.isCalcValid = isCalcValid;
-            if (p.isCalcValid === false) {
+            parameter.isCalcValid = isCalcValid;
+            if (parameter.isCalcValid === false) {
               row.isParamsCalcValid = false;
             }
 
-            p.isJsonValid = isJsonValid;
-            if (p.isJsonValid === false) {
+            parameter.isJsonValid = isJsonValid;
+            if (parameter.isJsonValid === false) {
               row.isParamsJsonValid = false;
             }
 
-            if (p.isCalcValid === true && p.isJsonValid === true) {
-              let parsedParameter = JSON.parse(firstRecord.fields[parStr]);
-
-              p.conditions = parsedParameter.conditions;
+            if (
+              parameter.isCalcValid === true &&
+              parameter.isJsonValid === true
+            ) {
+              parsedParameter = JSON.parse(firstRecord.fields[parStr]);
+              parameter.conditions = parsedParameter.conditions;
             } else {
-              p.conditions = ['any'];
+              parameter.conditions = ['any'];
             }
-          });
+          }
 
-        let filters: common.Filter[] = [];
-
-        await forEachSeries(row.parameters, async parameter => {
-          let isConditionsValid = true;
           let schemaError;
+          let isSchemaValid = true;
+
+          if (common.isUndefined(parameter)) {
+            schemaError = 'Parameter must be defined';
+            isSchemaValid = false;
+          } else if (parameter.constructor !== Object) {
+            schemaError = 'Parameter must be an object';
+            isSchemaValid = false;
+          } else if (common.isUndefined(parameter.filter)) {
+            schemaError = 'Parameter must have a "filter" property';
+            isSchemaValid = false;
+          } else if (
+            Array.isArray(parameter.filter) ||
+            parameter.filter.constructor === Object
+          ) {
+            schemaError =
+              'Parameter filter must be a string in a form of "alias.field_id"';
+            isSchemaValid = false;
+          } else if (common.isDefined(row.parametersFormula)) {
+            let fieldId = parameter.filter.split('.').join('_').toUpperCase();
+            parameter.parameterId = `${row.rowId}_${fieldId}`;
+
+            let metric = metrics.find(m => m.metric_id === row.metricId);
+            let model = models.find(ml => ml.model_id === metric.model_id);
+            let field = model.fields.find(f => f.id === parameter.filter);
+
+            if (common.isDefined(field)) {
+              parameter.result = field.result;
+            } else {
+              schemaError =
+                'Wrong parameter filter value. Model field is not found.';
+              isSchemaValid = false;
+            }
+          }
+
+          if (isSchemaValid === false) {
+            parameter.schemaError = schemaError;
+            parameter.isSchemaValid = false;
+
+            row.paramsSchemaError = schemaError;
+            row.isParamsSchemaValid = false;
+            return;
+          }
+
+          // schema is valid
 
           if (common.isUndefined(parameter.conditions)) {
-            isConditionsValid = false;
             schemaError = 'Parameter conditions must be defined';
+            isSchemaValid = false;
           } else if (!Array.isArray(parameter.conditions)) {
-            isConditionsValid = false;
             schemaError = 'Parameter conditions must be an array';
+            isSchemaValid = false;
           } else if (parameter.conditions.length === 0) {
-            isConditionsValid = false;
             schemaError = 'Parameter conditions must have at least one element';
+            isSchemaValid = false;
           } else {
             parameter.conditions.forEach(y => {
               if (
@@ -383,19 +384,16 @@ return json.dumps([${rowParColumns
                 Array.isArray(y) ||
                 y.constructor === Object
               ) {
-                isConditionsValid = false;
                 schemaError =
-                  'Parameter conditions must be an array of strings';
+                  'Parameter conditions must be an array of filter expressions';
+                isSchemaValid = false;
               }
             });
           }
 
-          if (isConditionsValid === false) {
+          if (isSchemaValid === false) {
             parameter.conditions = ['any'];
           }
-
-          // console.log('parameter');
-          // console.log(parameter);
 
           let toBlockmlGetFractionsRequest: apiToBlockml.ToBlockmlGetFractionsRequest =
             {
@@ -410,8 +408,6 @@ return json.dumps([${rowParColumns
               }
             };
 
-          // console.log(toBlockmlGetFractionsRequest.payload);
-
           let blockmlGetFractionsResponse =
             await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlGetFractionsResponse>(
               {
@@ -422,22 +418,9 @@ return json.dumps([${rowParColumns
               }
             );
 
-          parameter.isSchemaValid =
-            isConditionsValid === true &&
-            blockmlGetFractionsResponse.payload.isValid === true;
-
-          if (
-            isConditionsValid === true &&
-            blockmlGetFractionsResponse.payload.isValid === false
-          ) {
-            schemaError =
-              'Parameter conditions are not valid for filter result';
-          }
-
-          parameter.schemaError = schemaError;
-
-          if (parameter.isSchemaValid === false) {
-            row.isParamsSchemaValid = false;
+          if (blockmlGetFractionsResponse.payload.isValid === false) {
+            schemaError = `Parameter conditions are not valid for filter result "${parameter.result}"`;
+            isSchemaValid = false;
           }
 
           let filter: common.Filter = {
@@ -446,6 +429,24 @@ return json.dumps([${rowParColumns
           };
 
           filters.push(filter);
+
+          if (isSchemaValid === true && common.isDefined(parsedParameter)) {
+            if (common.isUndefined(parsedParameter.filter)) {
+              schemaError = `Parameter "${parameter.filter}" must have a "filter" property`;
+              isSchemaValid = false;
+            } else if (parameter.filter !== parsedParameter.filter) {
+              schemaError = `parameter filter "${parameter.filter}" does not match "${parsedParameter.filter}"`;
+              isSchemaValid = false;
+            }
+          }
+
+          parameter.schemaError = schemaError;
+          parameter.isSchemaValid = isSchemaValid;
+
+          if (parameter.isSchemaValid === false) {
+            row.paramsSchemaError = schemaError;
+            row.isParamsSchemaValid = false;
+          }
         });
 
         row.paramsFiltersWithExcludedTime = filters;
