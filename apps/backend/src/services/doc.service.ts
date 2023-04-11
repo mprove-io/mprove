@@ -284,6 +284,8 @@ return json.dumps([${rowParColumns
         let filters: common.Filter[] = [];
 
         await forEachSeries(row.parameters, async parameter => {
+          // console.log('row', row.rowId);
+          // console.log('parameter', parameter);
           let parsedParameter;
 
           if (parameter.parameterType === common.ParameterTypeEnum.Formula) {
@@ -358,6 +360,7 @@ return json.dumps([${rowParColumns
           }
 
           if (isSchemaValid === false) {
+            parameter = {} as any;
             parameter.schemaError = schemaError;
             parameter.isSchemaValid = false;
 
