@@ -92,6 +92,7 @@ export function wrapReps(item: {
 
             return parameterApi;
           }),
+          paramsFiltersWithExcludedTime: [],
           parametersJson: undefined,
           parametersFormula: row.parameters_formula,
           parametersFormulaDeps: undefined,

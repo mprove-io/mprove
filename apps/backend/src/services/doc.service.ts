@@ -482,7 +482,10 @@ return json.dumps([${rowParColumns
           struct_id: structId,
           kit_id: rc.kitId,
           rep_id: repId,
-          data: row,
+          data: {
+            parameters: row.parameters,
+            paramsFiltersWithExcludedTime: row.paramsFiltersWithExcludedTime
+          },
           server_ts: undefined
         };
         newKits.push(newKit);

@@ -109,6 +109,7 @@ export class RepsService {
         timeLabel: undefined,
         showChart: false,
         parameters: [],
+        paramsFiltersWithExcludedTime: [],
         parametersJson: undefined,
         parametersFormula: undefined,
         formula: undefined,
@@ -199,6 +200,7 @@ export class RepsService {
         timeLabel: metric.time_label,
         showChart: rowChange.showChart,
         parameters: rowChange.parameters || [],
+        paramsFiltersWithExcludedTime: [],
         parametersJson: undefined,
         parametersFormula: undefined,
         formula: undefined,
@@ -267,6 +269,7 @@ export class RepsService {
             timeLabel: undefined,
             showChart: false,
             parameters: [],
+            paramsFiltersWithExcludedTime: [],
             parametersJson: undefined,
             parametersFormula: undefined,
             formula: undefined,
@@ -332,6 +335,7 @@ export class RepsService {
         timeLabel: undefined,
         showChart: false,
         parameters: undefined,
+        paramsFiltersWithExcludedTime: undefined,
         parametersJson: undefined,
         parametersFormula: undefined,
         parametersFormulaDeps: undefined,
@@ -371,6 +375,7 @@ export class RepsService {
         timeLabel: metric.time_label,
         showChart: false,
         parameters: [],
+        paramsFiltersWithExcludedTime: [],
         parametersJson: undefined,
         parametersFormula: undefined,
         formula: undefined,
@@ -705,24 +710,22 @@ export class RepsService {
       });
     }
 
-    rep.rows.forEach(row => {
-      let rc = row.rcs.find(
-        y =>
-          y.fractionBrick === timeRangeFraction.brick &&
-          y.timeSpec === timeSpec &&
-          y.timezone === timezone
-      );
+    let isCalculateParameters;
 
-      row.parameters =
-        // common.isDefined(rc.kitId)
-        //   ? parKits.find(k => k.kit_id === rc.kitId).data.parameters //paramsFiltersWithExcludedTime
-        //   :
-        common.isDefined(row.parameters) ? row.parameters : [];
-    });
+    rep.rows
+      .filter(row => row.rowType === common.RowTypeEnum.Metric)
+      .forEach(row => {
+        let rc = row.rcs.find(
+          y =>
+            y.fractionBrick === timeRangeFraction.brick &&
+            y.timeSpec === timeSpec &&
+            y.timezone === timezone
+        );
 
-    let isCalculateParameters =
-      rep.rows.filter(row => row.rowType === common.RowTypeEnum.Metric).length >
-      0;
+        if (common.isUndefined(rc.kitId)) {
+          isCalculateParameters = true;
+        }
+      });
 
     if (isCalculateParameters === true) {
       console.log('isCalculateParameters true');
@@ -740,6 +743,29 @@ export class RepsService {
       });
     } else {
       console.log('isCalculateParameters false');
+
+      rep.rows
+        .filter(row => row.rowType === common.RowTypeEnum.Metric)
+        .forEach(row => {
+          let rc = row.rcs.find(
+            y =>
+              y.fractionBrick === timeRangeFraction.brick &&
+              y.timeSpec === timeSpec &&
+              y.timezone === timezone
+          );
+
+          let parKit = parKits.find(k => k.kit_id === rc.kitId);
+
+          row.parameters =
+            common.isDefined(rc.kitId) && common.isDefined(parKit)
+              ? parKit.data.parameters
+              : [];
+
+          row.paramsFiltersWithExcludedTime =
+            common.isDefined(rc.kitId) && common.isDefined(parKit)
+              ? parKit.data.paramsFiltersWithExcludedTime
+              : [];
+        });
     }
 
     let newMconfigs: common.Mconfig[] = [];

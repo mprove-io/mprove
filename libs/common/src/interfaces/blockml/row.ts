@@ -43,16 +43,16 @@ export class Row {
   paramsSchemaError?: string;
 
   @ValidateNested()
-  @Type(() => Filter)
-  paramsFiltersWithExcludedTime?: Filter[];
-
-  @ValidateNested()
   @Type(() => Parameter)
   parametersJson: Parameter[];
 
   @ValidateNested()
   @Type(() => Parameter)
   parameters: Parameter[];
+
+  @ValidateNested()
+  @Type(() => Filter)
+  paramsFiltersWithExcludedTime: Filter[];
 
   @IsString()
   parametersFormula: string;
