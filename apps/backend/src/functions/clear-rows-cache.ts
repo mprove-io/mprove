@@ -20,8 +20,8 @@ export function clearRowsCache(item: {
   processedRows
     .filter(row => row.rowType === common.RowTypeEnum.Metric)
     .forEach(row => {
-      // console.log('row.parametersFormulaDeps');
-      // console.log(row.parametersFormulaDeps);
+      console.log('row.rowId ', row.rowId);
+      console.log('row.parametersFormulaDeps ', row.parametersFormulaDeps);
 
       let isMatch =
         (common.isDefined(row.parametersFormula) &&
@@ -36,28 +36,28 @@ export function clearRowsCache(item: {
                 dep => changedRowIds.indexOf(dep) > -1
               ) > -1;
 
-            // console.log('parameter.formulaDeps');
-            // console.log(parameter.formulaDeps);
+            console.log('parameter.formulaDeps ', parameter.formulaDeps);
 
             return parIsMatch;
           }).length > 0);
 
-      // console.log('isMatch');
-      // console.log(isMatch);
+      console.log('isMatch ', isMatch);
 
       if (isMatch === true) {
         row.isCalculateParameters = true;
         row.parametersFiltersWithExcludedTime = [];
 
-        let rq = row.rqs.find(
+        let currentRqIndex = row.rqs.findIndex(
           y =>
             y.fractionBrick === timeRangeFractionBrick &&
             y.timeSpec === timeSpec &&
             y.timezone === timezone
         );
 
-        rq.kitId = undefined;
-        rq.lastCalculatedTs = 0;
+        row.rqs = [
+          ...row.rqs.slice(0, currentRqIndex),
+          ...row.rqs.slice(currentRqIndex + 1)
+        ];
 
         row.records = [];
         row.mconfig = undefined;

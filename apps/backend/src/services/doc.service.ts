@@ -292,6 +292,8 @@ return json.dumps([${rowParColumns
             } else {
               row.parameters = [];
             }
+          } else {
+            row.parameters = [];
           }
         }
 
