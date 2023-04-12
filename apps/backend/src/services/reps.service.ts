@@ -273,28 +273,6 @@ export class RepsService {
         targetRowIds: processedRows.map(pr => pr.rowId)
       });
     } else if (changeType === common.ChangeTypeEnum.AddMetric) {
-      // let isClearFormulasData =
-      //   processedRows.filter(
-      //     row =>
-      //       row.rowType === common.RowTypeEnum.Formula &&
-      //       row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
-      //   ).length > 0;
-
-      // if (isClearFormulasData === true) {
-      //   processedRows
-      //     .filter(row => row.rowType === common.RowTypeEnum.Formula)
-      //     .forEach(row => {
-      //       let rq = row.rqs.find(
-      //         y =>
-      //           y.fractionBrick === timeRangeFractionBrick &&
-      //           y.timeSpec === timeSpec &&
-      //           y.timezone === timezone
-      //       );
-      //       rq.kitId = undefined;
-      //       rq.lastCalculatedTs = 0;
-      //     });
-      // }
-
       clearRowsCache({
         processedRows: processedRows,
         changedRowIds: [rowChange.rowId],
@@ -372,23 +350,6 @@ export class RepsService {
         targetRowIds: processedRows.map(pRow => pRow.rowId)
       });
     } else if (changeType === common.ChangeTypeEnum.EditFormula) {
-      // processedRows.forEach(row => {
-      //   if (
-      //     row.rowType === common.RowTypeEnum.Formula &&
-      //     row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
-      //   ) {
-      //     let rq = row.rqs.find(
-      //       y =>
-      //         y.fractionBrick === timeRangeFractionBrick &&
-      //         y.timeSpec === timeSpec &&
-      //         y.timezone === timezone
-      //     );
-
-      //     rq.kitId = undefined;
-      //     rq.lastCalculatedTs = 0;
-      //   }
-      // });
-
       clearRowsCache({
         processedRows: processedRows,
         changedRowIds: [rowChange.rowId],
@@ -415,45 +376,6 @@ export class RepsService {
         targetRowIds: processedRows.map(pr => pr.rowId)
       });
     } else if (changeType === common.ChangeTypeEnum.EditParameters) {
-      // processedRows.forEach(row => {
-      //   if (
-      //     row.rowType === common.RowTypeEnum.Formula &&
-      //     row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
-      //   ) {
-      //     let rq = row.rqs.find(
-      //       y =>
-      //         y.fractionBrick === timeRangeFractionBrick &&
-      //         y.timeSpec === timeSpec &&
-      //         y.timezone === timezone
-      //     );
-
-      //     rq.kitId = undefined;
-      //     rq.lastCalculatedTs = 0;
-      //   }
-
-      //   if (
-      //     row.rowType === common.RowTypeEnum.Metric
-      //     //  &&
-      //     // row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
-      //   ) {
-      //     let rq = row.rqs.find(
-      //       y =>
-      //         y.fractionBrick === timeRangeFractionBrick &&
-      //         y.timeSpec === timeSpec &&
-      //         y.timezone === timezone
-      //     );
-
-      //     rq.kitId = undefined;
-      //     rq.lastCalculatedTs = 0;
-
-      //     row.rqs = [];
-      //     row.rcs = [];
-      //     row.records = [];
-      //     row.mconfig = undefined;
-      //     row.query = undefined;
-      //   }
-      // });
-
       // let metric = metrics.find(m => m.metric_id === rowChange.metricId);
 
       clearRowsCache({
@@ -486,25 +408,6 @@ export class RepsService {
         targetRowIds: processedRows.map(pr => pr.rowId)
       });
     } else if (changeType === common.ChangeTypeEnum.Clear) {
-      // rowIds.forEach(rowId => {
-      //   processedRows.forEach(row => {
-      //     if (
-      //       row.rowType === common.RowTypeEnum.Formula &&
-      //       row.formulaDeps.findIndex(dep => dep === rowId) > -1
-      //     ) {
-      //       let rq = row.rqs.find(
-      //         y =>
-      //           y.fractionBrick === timeRangeFractionBrick &&
-      //           y.timeSpec === timeSpec &&
-      //           y.timezone === timezone
-      //       );
-
-      //       rq.kitId = undefined;
-      //       rq.lastCalculatedTs = 0;
-      //     }
-      //   });
-      // });
-
       clearRowsCache({
         processedRows: processedRows,
         changedRowIds: rowIds,
@@ -548,25 +451,6 @@ export class RepsService {
         }
       });
     } else if (changeType === common.ChangeTypeEnum.Delete) {
-      // rowIds.forEach(rowId => {
-      //   processedRows.forEach(row => {
-      //     if (
-      //       row.rowType === common.RowTypeEnum.Formula &&
-      //       row.formulaDeps.findIndex(dep => dep === rowId) > -1
-      //     ) {
-      //       let rq = row.rqs.find(
-      //         y =>
-      //           y.fractionBrick === timeRangeFractionBrick &&
-      //           y.timeSpec === timeSpec &&
-      //           y.timezone === timezone
-      //       );
-
-      //       rq.kitId = undefined;
-      //       rq.lastCalculatedTs = 0;
-      //     }
-      //   });
-      // });
-
       clearRowsCache({
         processedRows: processedRows,
         changedRowIds: rowIds,

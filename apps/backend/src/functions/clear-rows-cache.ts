@@ -30,7 +30,7 @@ export function clearRowsCache(item: {
           ) > -1) ||
         (common.isUndefined(row.parametersFormula) &&
           row.parameters.filter(parameter => {
-            let isPass =
+            let parIsMatch =
               parameter.parameterType === common.ParameterTypeEnum.Formula &&
               parameter.formulaDeps.findIndex(
                 dep => changedRowIds.indexOf(dep) > -1
@@ -39,7 +39,7 @@ export function clearRowsCache(item: {
             // console.log('parameter.formulaDeps');
             // console.log(parameter.formulaDeps);
 
-            return isPass;
+            return parIsMatch;
           }).length > 0);
 
       // console.log('isMatch');
