@@ -5,7 +5,6 @@ import { MconfigX } from '../backend/mconfig-x';
 import { Filter } from './filter';
 import { Parameter } from './parameter';
 import { Query } from './query';
-import { Rc } from './rc';
 import { Rq } from './rq';
 
 export class Row {
@@ -50,9 +49,12 @@ export class Row {
   @Type(() => Parameter)
   parameters: Parameter[];
 
+  @IsBoolean()
+  isCalculateParameters: boolean;
+
   @ValidateNested()
   @Type(() => Filter)
-  paramsFiltersWithExcludedTime: Filter[];
+  parametersFiltersWithExcludedTime: Filter[];
 
   @IsString()
   parametersFormula: string;
@@ -75,10 +77,6 @@ export class Row {
   formulaDeps: string[];
 
   showChart: boolean;
-
-  @ValidateNested()
-  @Type(() => Rc)
-  rcs: Rc[];
 
   @ValidateNested()
   @Type(() => Rq)

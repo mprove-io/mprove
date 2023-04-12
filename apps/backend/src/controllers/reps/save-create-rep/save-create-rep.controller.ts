@@ -236,7 +236,11 @@ export class SaveCreateRepController {
     rep.rows.forEach(x => {
       let fromRow = fromRep.rows.find(row => row.rowId === x.rowId);
       x.rqs = fromRow.rqs;
-      x.rcs = fromRow.rcs;
+
+      x.isCalculateParameters = fromRow.isCalculateParameters;
+
+      x.parametersFiltersWithExcludedTime =
+        fromRow.parametersFiltersWithExcludedTime;
     });
 
     await this.dbService.writeRecords({

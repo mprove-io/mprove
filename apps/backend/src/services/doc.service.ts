@@ -467,41 +467,10 @@ return json.dumps([${rowParColumns
           }
         });
 
-        row.paramsFiltersWithExcludedTime = filters;
-
-        let rc = row.rcs.find(
-          y =>
-            y.fractionBrick === timeRangeFraction.brick &&
-            y.timeSpec === timeSpec &&
-            y.timezone === timezone
-        );
-
-        rc.kitId = common.makeId();
-
-        let newKit: entities.KitEntity = {
-          struct_id: structId,
-          kit_id: rc.kitId,
-          rep_id: repId,
-          data: {
-            parameters: row.parameters,
-            paramsFiltersWithExcludedTime: row.paramsFiltersWithExcludedTime
-          },
-          server_ts: undefined
-        };
-        newKits.push(newKit);
-
-        rc.lastCalculatedTs = lastCalculatedTs;
+        row.parametersFiltersWithExcludedTime = filters;
+        row.isCalculateParameters = false;
       }
     );
-
-    if (newKits.length > 0) {
-      await this.dbService.writeRecords({
-        modify: false,
-        records: {
-          kits: newKits
-        }
-      });
-    }
 
     return rows;
   }

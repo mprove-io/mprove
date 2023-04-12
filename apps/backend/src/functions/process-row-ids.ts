@@ -100,6 +100,12 @@ export function processRowIds(item: {
           p.parameterId = newParId.split('$')[1];
 
           if (common.isDefined(p.formula)) {
+            // console.log('p.parameterId');
+            // console.log(p.parameterId);
+
+            // console.log('p.formula');
+            // console.log(p.formula);
+
             let newParFormula = p.formula;
             let parFormulaDeps: string[] = [];
             let reg = common.MyRegex.CAPTURE_ROW_REF();
@@ -127,6 +133,9 @@ export function processRowIds(item: {
 
             p.formula = newParFormula;
             p.formulaDeps = parFormulaDeps;
+
+            // console.log('newParFormula');
+            // console.log(newParFormula);
           }
         });
       }

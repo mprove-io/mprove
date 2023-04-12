@@ -7,6 +7,7 @@ import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
+import { clearRowsCache } from '~backend/functions/clear-rows-cache';
 import { processRowIds } from '~backend/functions/process-row-ids';
 import { BlockmlService } from './blockml.service';
 import { DbService } from './db.service';
@@ -109,14 +110,14 @@ export class RepsService {
         timeLabel: undefined,
         showChart: false,
         parameters: [],
-        paramsFiltersWithExcludedTime: [],
+        parametersFiltersWithExcludedTime: [],
         parametersJson: undefined,
         parametersFormula: undefined,
         formula: undefined,
         formulaDeps: undefined,
         parametersFormulaDeps: undefined,
         rqs: [],
-        rcs: [],
+        isCalculateParameters: false,
         mconfig: undefined,
         query: undefined,
         hasAccessToModel: false,
@@ -145,151 +146,6 @@ export class RepsService {
         targetRowIds: common.isDefined(targetIndex)
           ? targetRows.map(pRow => pRow.rowId)
           : processedRows.map(pRow => pRow.rowId)
-      });
-    } else if (changeType === common.ChangeTypeEnum.AddMetric) {
-      let isClearFormulasData =
-        processedRows.filter(
-          row =>
-            row.rowType === common.RowTypeEnum.Formula &&
-            row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
-        ).length > 0;
-
-      if (isClearFormulasData === true) {
-        processedRows
-          .filter(row => row.rowType === common.RowTypeEnum.Formula)
-          .forEach(row => {
-            let rq = row.rqs.find(
-              y =>
-                y.fractionBrick === timeRangeFractionBrick &&
-                y.timeSpec === timeSpec &&
-                y.timezone === timezone
-            );
-            rq.kitId = undefined;
-            rq.lastCalculatedTs = 0;
-          });
-      }
-
-      let rowId = rowChange.rowId;
-
-      if (common.isUndefined(rowId)) {
-        let rowIdsNumbers = processedRows.map(y =>
-          common.rowIdLetterToNumber(y.rowId)
-        );
-
-        let maxRowIdNumber =
-          rowIdsNumbers.length > 0 ? Math.max(...rowIdsNumbers) : undefined;
-
-        let rowIdNumber = common.isDefined(maxRowIdNumber)
-          ? maxRowIdNumber + 1
-          : 0;
-
-        rowId = common.rowIdNumberToLetter(rowIdNumber);
-      }
-
-      let metric: entities.MetricEntity = metrics.find(
-        m => m.metric_id === rowChange.metricId
-      );
-
-      let newRow: common.Row = {
-        rowId: rowId,
-        rowType: rowChange.rowType,
-        name: undefined,
-        metricId: rowChange.metricId,
-        topLabel: metric.top_label,
-        partLabel: metric.part_label,
-        timeLabel: metric.time_label,
-        showChart: rowChange.showChart,
-        parameters: rowChange.parameters || [],
-        paramsFiltersWithExcludedTime: [],
-        parametersJson: undefined,
-        parametersFormula: undefined,
-        formula: undefined,
-        formulaDeps: undefined,
-        parametersFormulaDeps: undefined,
-        rqs: [],
-        rcs: [],
-        mconfig: undefined,
-        query: undefined,
-        hasAccessToModel: false,
-        records: [],
-        formatNumber: metric.format_number,
-        currencyPrefix: metric.currency_prefix,
-        currencySuffix: metric.currency_suffix
-      };
-
-      if (common.isDefined(rowChange.rowId)) {
-        let rowIndex = processedRows.findIndex(
-          r => r.rowId === rowChange.rowId
-        );
-
-        let newProcessedRows = [
-          ...processedRows.slice(0, rowIndex),
-          newRow,
-          ...processedRows.slice(rowIndex + 1)
-        ];
-
-        processedRows = newProcessedRows;
-      } else {
-        processedRows.push(newRow);
-      }
-
-      processedRows = processRowIds({
-        rows: processedRows,
-        targetRowIds: processedRows.map(pRow => pRow.rowId)
-      });
-    } else if (changeType === common.ChangeTypeEnum.Clear) {
-      rowIds.forEach(rowId => {
-        processedRows.forEach(row => {
-          if (
-            row.rowType === common.RowTypeEnum.Formula &&
-            row.formulaDeps.findIndex(dep => dep === rowId) > -1
-          ) {
-            let rq = row.rqs.find(
-              y =>
-                y.fractionBrick === timeRangeFractionBrick &&
-                y.timeSpec === timeSpec &&
-                y.timezone === timezone
-            );
-
-            rq.kitId = undefined;
-            rq.lastCalculatedTs = 0;
-          }
-        });
-      });
-
-      processedRows = processedRows.map(row => {
-        if (rowIds.indexOf(row.rowId) > -1) {
-          let emptyRow: common.Row = {
-            rowId: row.rowId,
-            rowType: common.RowTypeEnum.Empty,
-            name: undefined,
-            metricId: undefined,
-            topLabel: undefined,
-            partLabel: undefined,
-            timeLabel: undefined,
-            showChart: false,
-            parameters: [],
-            paramsFiltersWithExcludedTime: [],
-            parametersJson: undefined,
-            parametersFormula: undefined,
-            formula: undefined,
-            formulaDeps: undefined,
-            parametersFormulaDeps: undefined,
-            rqs: [],
-            rcs: [],
-            mconfig: undefined,
-            query: undefined,
-            hasAccessToModel: false,
-            records: [],
-            formatNumber: undefined,
-            currencyPrefix: undefined,
-            currencySuffix: undefined
-          };
-
-          return emptyRow;
-        } else {
-          return row;
-        }
       });
     } else if (changeType === common.ChangeTypeEnum.EditInfo) {
       let pRow = processedRows.find(row => row.rowId === rowChange.rowId);
@@ -324,43 +180,15 @@ export class RepsService {
       processedRows = processedRows.map(row =>
         row.rowId === editRow.rowId ? editRow : row
       );
-    } else if (changeType === common.ChangeTypeEnum.ConvertToFormula) {
-      let editRow: common.Row = {
-        rowId: rowChange.rowId,
-        rowType: common.RowTypeEnum.Formula,
-        name: rowChange.name,
-        metricId: undefined,
-        topLabel: undefined,
-        partLabel: undefined,
-        timeLabel: undefined,
-        showChart: false,
-        parameters: undefined,
-        paramsFiltersWithExcludedTime: undefined,
-        parametersJson: undefined,
-        parametersFormula: undefined,
-        parametersFormulaDeps: undefined,
-        formula: rowChange.formula,
-        formulaDeps: undefined,
-        rqs: [],
-        rcs: [],
-        mconfig: undefined,
-        query: undefined,
-        hasAccessToModel: false,
-        records: [],
-        formatNumber: struct.format_number,
-        currencyPrefix: struct.currency_prefix,
-        currencySuffix: struct.currency_suffix
-      };
-
-      processedRows = processedRows.map(row =>
-        row.rowId === editRow.rowId ? editRow : row
-      );
-
-      processedRows = processRowIds({
-        rows: processedRows,
-        targetRowIds: processedRows.map(pr => pr.rowId)
-      });
     } else if (changeType === common.ChangeTypeEnum.ConvertToMetric) {
+      clearRowsCache({
+        processedRows: processedRows,
+        changedRowIds: [rowChange.rowId],
+        timezone: timezone,
+        timeSpec: timeSpec,
+        timeRangeFractionBrick: timeRangeFractionBrick
+      });
+
       let metric: entities.MetricEntity = metrics.find(
         m => m.metric_id === rowChange.metricId
       );
@@ -375,14 +203,14 @@ export class RepsService {
         timeLabel: metric.time_label,
         showChart: false,
         parameters: [],
-        paramsFiltersWithExcludedTime: [],
+        parametersFiltersWithExcludedTime: [],
         parametersJson: undefined,
         parametersFormula: undefined,
         formula: undefined,
         formulaDeps: undefined,
         parametersFormulaDeps: undefined,
         rqs: [],
-        rcs: [],
+        isCalculateParameters: false,
         mconfig: undefined,
         query: undefined,
         hasAccessToModel: false,
@@ -400,25 +228,176 @@ export class RepsService {
         rows: processedRows,
         targetRowIds: processedRows.map(pr => pr.rowId)
       });
-    } else if (changeType === common.ChangeTypeEnum.EditFormula) {
-      let pRow = processedRows.find(r => r.rowId === rowChange.rowId);
-
-      processedRows.forEach(row => {
-        if (
-          row.rowType === common.RowTypeEnum.Formula &&
-          row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
-        ) {
-          let rq = row.rqs.find(
-            y =>
-              y.fractionBrick === timeRangeFractionBrick &&
-              y.timeSpec === timeSpec &&
-              y.timezone === timezone
-          );
-
-          rq.kitId = undefined;
-          rq.lastCalculatedTs = 0;
-        }
+    } else if (changeType === common.ChangeTypeEnum.ConvertToFormula) {
+      clearRowsCache({
+        processedRows: processedRows,
+        changedRowIds: [rowChange.rowId],
+        timezone: timezone,
+        timeSpec: timeSpec,
+        timeRangeFractionBrick: timeRangeFractionBrick
       });
+
+      let editRow: common.Row = {
+        rowId: rowChange.rowId,
+        rowType: common.RowTypeEnum.Formula,
+        name: rowChange.name,
+        metricId: undefined,
+        topLabel: undefined,
+        partLabel: undefined,
+        timeLabel: undefined,
+        showChart: false,
+        parameters: undefined,
+        parametersFiltersWithExcludedTime: [],
+        parametersJson: undefined,
+        parametersFormula: undefined,
+        parametersFormulaDeps: undefined,
+        formula: rowChange.formula,
+        formulaDeps: undefined,
+        rqs: [],
+        isCalculateParameters: false,
+        mconfig: undefined,
+        query: undefined,
+        hasAccessToModel: false,
+        records: [],
+        formatNumber: struct.format_number,
+        currencyPrefix: struct.currency_prefix,
+        currencySuffix: struct.currency_suffix
+      };
+
+      processedRows = processedRows.map(row =>
+        row.rowId === editRow.rowId ? editRow : row
+      );
+
+      processedRows = processRowIds({
+        rows: processedRows,
+        targetRowIds: processedRows.map(pr => pr.rowId)
+      });
+    } else if (changeType === common.ChangeTypeEnum.AddMetric) {
+      // let isClearFormulasData =
+      //   processedRows.filter(
+      //     row =>
+      //       row.rowType === common.RowTypeEnum.Formula &&
+      //       row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
+      //   ).length > 0;
+
+      // if (isClearFormulasData === true) {
+      //   processedRows
+      //     .filter(row => row.rowType === common.RowTypeEnum.Formula)
+      //     .forEach(row => {
+      //       let rq = row.rqs.find(
+      //         y =>
+      //           y.fractionBrick === timeRangeFractionBrick &&
+      //           y.timeSpec === timeSpec &&
+      //           y.timezone === timezone
+      //       );
+      //       rq.kitId = undefined;
+      //       rq.lastCalculatedTs = 0;
+      //     });
+      // }
+
+      clearRowsCache({
+        processedRows: processedRows,
+        changedRowIds: [rowChange.rowId],
+        timezone: timezone,
+        timeSpec: timeSpec,
+        timeRangeFractionBrick: timeRangeFractionBrick
+      });
+
+      let rowId = rowChange.rowId;
+
+      if (common.isUndefined(rowId)) {
+        let rowIdsNumbers = processedRows.map(y =>
+          common.rowIdLetterToNumber(y.rowId)
+        );
+
+        let maxRowIdNumber =
+          rowIdsNumbers.length > 0 ? Math.max(...rowIdsNumbers) : undefined;
+
+        let rowIdNumber = common.isDefined(maxRowIdNumber)
+          ? maxRowIdNumber + 1
+          : 0;
+
+        rowId = common.rowIdNumberToLetter(rowIdNumber);
+      }
+
+      let metric: entities.MetricEntity = metrics.find(
+        m => m.metric_id === rowChange.metricId
+      );
+
+      let newRow: common.Row = {
+        rowId: rowId,
+        rowType: rowChange.rowType,
+        name: undefined,
+        metricId: rowChange.metricId,
+        topLabel: metric.top_label,
+        partLabel: metric.part_label,
+        timeLabel: metric.time_label,
+        showChart: rowChange.showChart,
+        parameters: rowChange.parameters || [],
+        parametersFiltersWithExcludedTime: [],
+        parametersJson: undefined,
+        parametersFormula: undefined,
+        formula: undefined,
+        formulaDeps: undefined,
+        parametersFormulaDeps: undefined,
+        rqs: [],
+        isCalculateParameters: false,
+        mconfig: undefined,
+        query: undefined,
+        hasAccessToModel: false,
+        records: [],
+        formatNumber: metric.format_number,
+        currencyPrefix: metric.currency_prefix,
+        currencySuffix: metric.currency_suffix
+      };
+
+      if (common.isDefined(rowChange.rowId)) {
+        let rowIndex = processedRows.findIndex(
+          r => r.rowId === rowChange.rowId
+        );
+
+        let newProcessedRows = [
+          ...processedRows.slice(0, rowIndex),
+          newRow,
+          ...processedRows.slice(rowIndex + 1)
+        ];
+
+        processedRows = newProcessedRows;
+      } else {
+        processedRows.push(newRow);
+      }
+
+      processedRows = processRowIds({
+        rows: processedRows,
+        targetRowIds: processedRows.map(pRow => pRow.rowId)
+      });
+    } else if (changeType === common.ChangeTypeEnum.EditFormula) {
+      // processedRows.forEach(row => {
+      //   if (
+      //     row.rowType === common.RowTypeEnum.Formula &&
+      //     row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
+      //   ) {
+      //     let rq = row.rqs.find(
+      //       y =>
+      //         y.fractionBrick === timeRangeFractionBrick &&
+      //         y.timeSpec === timeSpec &&
+      //         y.timezone === timezone
+      //     );
+
+      //     rq.kitId = undefined;
+      //     rq.lastCalculatedTs = 0;
+      //   }
+      // });
+
+      clearRowsCache({
+        processedRows: processedRows,
+        changedRowIds: [rowChange.rowId],
+        timezone: timezone,
+        timeSpec: timeSpec,
+        timeRangeFractionBrick: timeRangeFractionBrick
+      });
+
+      let pRow = processedRows.find(r => r.rowId === rowChange.rowId);
 
       let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
         formula: rowChange.formula,
@@ -436,55 +415,63 @@ export class RepsService {
         targetRowIds: processedRows.map(pr => pr.rowId)
       });
     } else if (changeType === common.ChangeTypeEnum.EditParameters) {
-      let pRow = processedRows.find(r => r.rowId === rowChange.rowId);
+      // processedRows.forEach(row => {
+      //   if (
+      //     row.rowType === common.RowTypeEnum.Formula &&
+      //     row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
+      //   ) {
+      //     let rq = row.rqs.find(
+      //       y =>
+      //         y.fractionBrick === timeRangeFractionBrick &&
+      //         y.timeSpec === timeSpec &&
+      //         y.timezone === timezone
+      //     );
 
-      processedRows.forEach(row => {
-        if (
-          row.rowType === common.RowTypeEnum.Formula &&
-          row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
-        ) {
-          let rq = row.rqs.find(
-            y =>
-              y.fractionBrick === timeRangeFractionBrick &&
-              y.timeSpec === timeSpec &&
-              y.timezone === timezone
-          );
+      //     rq.kitId = undefined;
+      //     rq.lastCalculatedTs = 0;
+      //   }
 
-          rq.kitId = undefined;
-          rq.lastCalculatedTs = 0;
-        }
+      //   if (
+      //     row.rowType === common.RowTypeEnum.Metric
+      //     //  &&
+      //     // row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
+      //   ) {
+      //     let rq = row.rqs.find(
+      //       y =>
+      //         y.fractionBrick === timeRangeFractionBrick &&
+      //         y.timeSpec === timeSpec &&
+      //         y.timezone === timezone
+      //     );
 
-        if (
-          row.rowType === common.RowTypeEnum.Metric
-          //  &&
-          // row.formulaDeps.findIndex(dep => dep === rowChange.rowId) > -1
-        ) {
-          let rq = row.rqs.find(
-            y =>
-              y.fractionBrick === timeRangeFractionBrick &&
-              y.timeSpec === timeSpec &&
-              y.timezone === timezone
-          );
+      //     rq.kitId = undefined;
+      //     rq.lastCalculatedTs = 0;
 
-          rq.kitId = undefined;
-          rq.lastCalculatedTs = 0;
-
-          row.rqs = [];
-          row.rcs = [];
-          row.records = [];
-          row.mconfig = undefined;
-          row.query = undefined;
-        }
-      });
+      //     row.rqs = [];
+      //     row.rcs = [];
+      //     row.records = [];
+      //     row.mconfig = undefined;
+      //     row.query = undefined;
+      //   }
+      // });
 
       // let metric = metrics.find(m => m.metric_id === rowChange.metricId);
+
+      clearRowsCache({
+        processedRows: processedRows,
+        changedRowIds: [rowChange.rowId],
+        timezone: timezone,
+        timeSpec: timeSpec,
+        timeRangeFractionBrick: timeRangeFractionBrick
+      });
+
+      let pRow = processedRows.find(r => r.rowId === rowChange.rowId);
 
       let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
         parameters: rowChange.parameters,
         parametersFormula: rowChange.parametersFormula,
         parametersFormulaDeps: undefined,
         rqs: [],
-        rcs: [],
+        isCalculateParameters: true,
         records: [],
         mconfig: undefined,
         query: undefined
@@ -498,24 +485,94 @@ export class RepsService {
         rows: processedRows,
         targetRowIds: processedRows.map(pr => pr.rowId)
       });
-    } else if (changeType === common.ChangeTypeEnum.Delete) {
-      rowIds.forEach(rowId => {
-        processedRows.forEach(row => {
-          if (
-            row.rowType === common.RowTypeEnum.Formula &&
-            row.formulaDeps.findIndex(dep => dep === rowId) > -1
-          ) {
-            let rq = row.rqs.find(
-              y =>
-                y.fractionBrick === timeRangeFractionBrick &&
-                y.timeSpec === timeSpec &&
-                y.timezone === timezone
-            );
+    } else if (changeType === common.ChangeTypeEnum.Clear) {
+      // rowIds.forEach(rowId => {
+      //   processedRows.forEach(row => {
+      //     if (
+      //       row.rowType === common.RowTypeEnum.Formula &&
+      //       row.formulaDeps.findIndex(dep => dep === rowId) > -1
+      //     ) {
+      //       let rq = row.rqs.find(
+      //         y =>
+      //           y.fractionBrick === timeRangeFractionBrick &&
+      //           y.timeSpec === timeSpec &&
+      //           y.timezone === timezone
+      //       );
 
-            rq.kitId = undefined;
-            rq.lastCalculatedTs = 0;
-          }
-        });
+      //       rq.kitId = undefined;
+      //       rq.lastCalculatedTs = 0;
+      //     }
+      //   });
+      // });
+
+      clearRowsCache({
+        processedRows: processedRows,
+        changedRowIds: rowIds,
+        timezone: timezone,
+        timeSpec: timeSpec,
+        timeRangeFractionBrick: timeRangeFractionBrick
+      });
+
+      processedRows = processedRows.map(row => {
+        if (rowIds.indexOf(row.rowId) > -1) {
+          let emptyRow: common.Row = {
+            rowId: row.rowId,
+            rowType: common.RowTypeEnum.Empty,
+            name: undefined,
+            metricId: undefined,
+            topLabel: undefined,
+            partLabel: undefined,
+            timeLabel: undefined,
+            showChart: false,
+            parameters: [],
+            parametersFiltersWithExcludedTime: [],
+            parametersJson: undefined,
+            parametersFormula: undefined,
+            formula: undefined,
+            formulaDeps: undefined,
+            parametersFormulaDeps: undefined,
+            rqs: [],
+            isCalculateParameters: false,
+            mconfig: undefined,
+            query: undefined,
+            hasAccessToModel: false,
+            records: [],
+            formatNumber: undefined,
+            currencyPrefix: undefined,
+            currencySuffix: undefined
+          };
+
+          return emptyRow;
+        } else {
+          return row;
+        }
+      });
+    } else if (changeType === common.ChangeTypeEnum.Delete) {
+      // rowIds.forEach(rowId => {
+      //   processedRows.forEach(row => {
+      //     if (
+      //       row.rowType === common.RowTypeEnum.Formula &&
+      //       row.formulaDeps.findIndex(dep => dep === rowId) > -1
+      //     ) {
+      //       let rq = row.rqs.find(
+      //         y =>
+      //           y.fractionBrick === timeRangeFractionBrick &&
+      //           y.timeSpec === timeSpec &&
+      //           y.timezone === timezone
+      //       );
+
+      //       rq.kitId = undefined;
+      //       rq.lastCalculatedTs = 0;
+      //     }
+      //   });
+      // });
+
+      clearRowsCache({
+        processedRows: processedRows,
+        changedRowIds: rowIds,
+        timezone: timezone,
+        timeSpec: timeSpec,
+        timeRangeFractionBrick: timeRangeFractionBrick
       });
 
       processedRows = processedRows.filter(
@@ -675,59 +732,13 @@ export class RepsService {
       }
     });
 
-    let parKitIds: string[] = [];
-
-    await forEachSeries(rep.rows, async x => {
-      let rc = x.rcs.find(
-        y =>
-          y.fractionBrick === timeRangeFraction.brick &&
-          y.timeSpec === timeSpec &&
-          y.timezone === timezone
-      );
-
-      if (common.isDefined(rc)) {
-        parKitIds.push(rc.kitId);
-      } else {
-        let newRc: common.Rc = {
-          fractionBrick: timeRangeFraction.brick,
-          timeSpec: timeSpec,
-          timezone: timezone,
-          kitId: undefined,
-          lastCalculatedTs: 0
-        };
-
-        x.rcs.push(newRc);
-      }
-    });
-
-    let parKits: entities.KitEntity[] = [];
-    if (parKitIds.length > 0) {
-      parKits = await this.kitsRepository.find({
-        where: {
-          kit_id: In(parKitIds),
-          struct_id: rep.struct_id
-        }
-      });
-    }
-
-    let isCalculateParameters;
-
-    rep.rows
-      .filter(row => row.rowType === common.RowTypeEnum.Metric)
-      .forEach(row => {
-        let rc = row.rcs.find(
-          y =>
-            y.fractionBrick === timeRangeFraction.brick &&
-            y.timeSpec === timeSpec &&
-            y.timezone === timezone
-        );
-
-        if (common.isUndefined(rc.kitId)) {
-          isCalculateParameters = true;
-        }
-      });
-
-    if (isCalculateParameters === true) {
+    if (
+      rep.rows.filter(
+        row =>
+          row.rowType === common.RowTypeEnum.Metric &&
+          row.isCalculateParameters === true
+      ).length > 0
+    ) {
       console.log('isCalculateParameters true');
 
       rep.rows = await this.docService.calculateParameters({
@@ -743,29 +754,6 @@ export class RepsService {
       });
     } else {
       console.log('isCalculateParameters false');
-
-      rep.rows
-        .filter(row => row.rowType === common.RowTypeEnum.Metric)
-        .forEach(row => {
-          let rc = row.rcs.find(
-            y =>
-              y.fractionBrick === timeRangeFraction.brick &&
-              y.timeSpec === timeSpec &&
-              y.timezone === timezone
-          );
-
-          let parKit = parKits.find(k => k.kit_id === rc.kitId);
-
-          row.parameters =
-            common.isDefined(rc.kitId) && common.isDefined(parKit)
-              ? parKit.data.parameters
-              : [];
-
-          row.paramsFiltersWithExcludedTime =
-            common.isDefined(rc.kitId) && common.isDefined(parKit)
-              ? parKit.data.paramsFiltersWithExcludedTime
-              : [];
-        });
     }
 
     let newMconfigs: common.Mconfig[] = [];
@@ -823,7 +811,7 @@ export class RepsService {
 
           let filters: common.Filter[] = [
             timeFilter,
-            ...x.paramsFiltersWithExcludedTime
+            ...x.parametersFiltersWithExcludedTime
           ];
 
           let mconfig: common.Mconfig = {
