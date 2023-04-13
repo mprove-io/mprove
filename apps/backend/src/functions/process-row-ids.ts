@@ -49,7 +49,6 @@ export function processRowIds(item: {
         newFormula = newFormula.split(common.QUAD_UNDERSCORE).join('');
 
         row.formula = newFormula;
-        row.formulaDeps = formulaDeps;
         row.deps = [...row.deps, ...formulaDeps];
       } else if (common.isDefined(row.parametersFormula)) {
         //
@@ -79,7 +78,6 @@ export function processRowIds(item: {
           .join('');
 
         row.parametersFormula = newParametersFormula;
-        row.parametersFormulaDeps = parametersFormulaDeps;
         row.deps = [...row.deps, ...parametersFormulaDeps];
       } else if (common.isDefined(row.parameters)) {
         //
@@ -135,7 +133,6 @@ export function processRowIds(item: {
               .join('');
 
             p.formula = newParFormula;
-            p.formulaDeps = parFormulaDeps;
             row.deps = [...row.deps, ...parFormulaDeps];
             // console.log('newParFormula');
             // console.log(newParFormula);
@@ -144,7 +141,17 @@ export function processRowIds(item: {
       }
     });
 
-  rows.forEach(row => {
+  let newRows = rows.sort((a, b) =>
+    common.rowIdLetterToNumber(a.rowId) > common.rowIdLetterToNumber(b.rowId)
+      ? 1
+      : common.rowIdLetterToNumber(b.rowId) >
+        common.rowIdLetterToNumber(a.rowId)
+      ? -1
+      : 0
+  );
+
+  newRows.forEach(row => {
+    console.log('rowId ', row.rowId);
     let startDeps = [...row.deps];
     let endDeps: string[] = [];
 
@@ -172,16 +179,8 @@ export function processRowIds(item: {
     }
 
     row.deps = endDeps;
+    console.log('deps ', row.deps);
   });
-
-  let newRows = rows.sort((a, b) =>
-    common.rowIdLetterToNumber(a.rowId) > common.rowIdLetterToNumber(b.rowId)
-      ? 1
-      : common.rowIdLetterToNumber(b.rowId) >
-        common.rowIdLetterToNumber(a.rowId)
-      ? -1
-      : 0
-  );
 
   return newRows;
 }

@@ -20,8 +20,6 @@ export class Parameter {
   @IsString()
   formula: string;
 
-  formulaDeps: string[];
-
   @IsBoolean()
   isCalcValid?: boolean;
 

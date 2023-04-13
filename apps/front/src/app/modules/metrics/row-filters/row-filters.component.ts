@@ -228,8 +228,7 @@ export class RowFiltersComponent {
       newParameter = Object.assign({}, parameter, {
         parameterType: common.ParameterTypeEnum.Field,
         conditions: newConditions,
-        formula: undefined,
-        formulaDeps: undefined
+        formula: undefined
       } as common.Parameter);
     } else {
       let newConditions = ['any'];
@@ -242,8 +241,7 @@ export class RowFiltersComponent {
         conditions: newConditions,
         formula: `import json
 a = {"filter": "${parameter.filter}", "conditions": ["${newConditionsStr}"]};
-return json.dumps(a)`,
-        formulaDeps: undefined
+return json.dumps(a)`
       } as common.Parameter);
     }
 
@@ -277,8 +275,7 @@ return json.dumps(a)`,
     );
 
     let newParameter = Object.assign({}, newParameters[parametersIndex], {
-      formula: eventParameterFormulaUpdate.formula,
-      formulaDeps: undefined
+      formula: eventParameterFormulaUpdate.formula
     } as common.Parameter);
 
     newParameters = [

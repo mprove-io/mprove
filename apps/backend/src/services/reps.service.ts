@@ -114,8 +114,6 @@ export class RepsService {
         parametersJson: undefined,
         parametersFormula: undefined,
         formula: undefined,
-        formulaDeps: undefined,
-        parametersFormulaDeps: undefined,
         deps: undefined,
         rqs: [],
         isCalculateParameters: false,
@@ -182,14 +180,6 @@ export class RepsService {
         row.rowId === editRow.rowId ? editRow : row
       );
     } else if (changeType === common.ChangeTypeEnum.ConvertToMetric) {
-      clearRowsCache({
-        processedRows: processedRows,
-        changedRowIds: [rowChange.rowId],
-        timezone: timezone,
-        timeSpec: timeSpec,
-        timeRangeFractionBrick: timeRangeFractionBrick
-      });
-
       let metric: entities.MetricEntity = metrics.find(
         m => m.metric_id === rowChange.metricId
       );
@@ -208,9 +198,7 @@ export class RepsService {
         parametersJson: undefined,
         parametersFormula: undefined,
         formula: undefined,
-        formulaDeps: undefined,
         deps: undefined,
-        parametersFormulaDeps: undefined,
         rqs: [],
         isCalculateParameters: false,
         mconfig: undefined,
@@ -231,14 +219,6 @@ export class RepsService {
         targetRowIds: processedRows.map(pr => pr.rowId)
       });
     } else if (changeType === common.ChangeTypeEnum.ConvertToFormula) {
-      clearRowsCache({
-        processedRows: processedRows,
-        changedRowIds: [rowChange.rowId],
-        timezone: timezone,
-        timeSpec: timeSpec,
-        timeRangeFractionBrick: timeRangeFractionBrick
-      });
-
       let editRow: common.Row = {
         rowId: rowChange.rowId,
         rowType: common.RowTypeEnum.Formula,
@@ -252,10 +232,8 @@ export class RepsService {
         parametersFiltersWithExcludedTime: [],
         parametersJson: undefined,
         parametersFormula: undefined,
-        parametersFormulaDeps: undefined,
         deps: undefined,
         formula: rowChange.formula,
-        formulaDeps: undefined,
         rqs: [],
         isCalculateParameters: false,
         mconfig: undefined,
@@ -276,14 +254,6 @@ export class RepsService {
         targetRowIds: processedRows.map(pr => pr.rowId)
       });
     } else if (changeType === common.ChangeTypeEnum.AddMetric) {
-      clearRowsCache({
-        processedRows: processedRows,
-        changedRowIds: [rowChange.rowId],
-        timezone: timezone,
-        timeSpec: timeSpec,
-        timeRangeFractionBrick: timeRangeFractionBrick
-      });
-
       let rowId = rowChange.rowId;
 
       if (common.isUndefined(rowId)) {
@@ -319,8 +289,6 @@ export class RepsService {
         parametersJson: undefined,
         parametersFormula: undefined,
         formula: undefined,
-        formulaDeps: undefined,
-        parametersFormulaDeps: undefined,
         deps: undefined,
         rqs: [],
         isCalculateParameters: false,
@@ -366,7 +334,6 @@ export class RepsService {
 
       let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
         formula: rowChange.formula,
-        formulaDeps: undefined,
         rqs: [],
         records: []
       });
@@ -393,7 +360,6 @@ export class RepsService {
       let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
         parameters: rowChange.parameters,
         parametersFormula: rowChange.parametersFormula,
-        parametersFormulaDeps: undefined,
         rqs: [],
         isCalculateParameters: true,
         records: [],
@@ -434,8 +400,6 @@ export class RepsService {
             parametersJson: undefined,
             parametersFormula: undefined,
             formula: undefined,
-            formulaDeps: undefined,
-            parametersFormulaDeps: undefined,
             deps: undefined,
             rqs: [],
             isCalculateParameters: false,

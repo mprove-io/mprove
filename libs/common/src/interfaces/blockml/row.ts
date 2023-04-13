@@ -59,8 +59,6 @@ export class Row {
   @IsString()
   parametersFormula: string;
 
-  parametersFormulaDeps: string[];
-
   deps: string[];
 
   @IsBoolean()
@@ -75,8 +73,6 @@ export class Row {
   query: Query;
 
   formula: string;
-
-  formulaDeps: string[];
 
   showChart: boolean;
 

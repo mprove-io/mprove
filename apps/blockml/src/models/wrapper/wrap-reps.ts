@@ -61,7 +61,6 @@ export function wrapReps(item: {
           metricId: row.metric,
           showChart: helper.toBooleanFromLowercaseString(row.show_chart),
           formula: row.formula,
-          formulaDeps: undefined,
           rqs: [],
           query: undefined,
           mconfig: undefined,
@@ -85,7 +84,6 @@ export function wrapReps(item: {
               filter: parameter.filter,
               result: result,
               formula: parameter.formula,
-              formulaDeps: undefined,
               conditions: parameter.conditions
             };
 
@@ -95,7 +93,6 @@ export function wrapReps(item: {
           parametersFiltersWithExcludedTime: [],
           parametersJson: undefined,
           parametersFormula: row.parameters_formula,
-          parametersFormulaDeps: undefined,
           deps: undefined,
           records: [],
           formatNumber: common.isDefined(row.format_number)

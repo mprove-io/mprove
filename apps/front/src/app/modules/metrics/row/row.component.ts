@@ -662,7 +662,6 @@ export class RowComponent {
       filter: field.id,
       result: field.result,
       formula: undefined,
-      formulaDeps: undefined,
       conditions: ['any']
     };
 
