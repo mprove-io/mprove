@@ -41,9 +41,9 @@ export function processRowIds(item: {
         }
 
         let targetTo =
-          (common.isDefined(targetRow) &&
-            targetRow.rowType === common.RowTypeEnum.Formula) ||
-          targetRow.rowType === common.RowTypeEnum.Metric
+          common.isDefined(targetRow) &&
+          (targetRow.rowType === common.RowTypeEnum.Formula ||
+            targetRow.rowType === common.RowTypeEnum.Metric)
             ? targets[reference]
             : common.UNDEF;
 
