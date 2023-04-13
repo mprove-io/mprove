@@ -1,4 +1,5 @@
 import { common } from '~backend/barrels/common';
+import { processRowIds } from './process-row-ids';
 
 export function clearRowsCache(item: {
   processedRows: common.Row[];
@@ -15,38 +16,22 @@ export function clearRowsCache(item: {
     timeRangeFractionBrick
   } = item;
 
-  let extraRowIds = [...changedRowIds];
+  // console.log('changedRowIds ', changedRowIds);
 
-  processedRows
-    .filter(row => row.rowType === common.RowTypeEnum.Metric)
-    .forEach(row => {
-      console.log('row.rowId ', row.rowId);
-      console.log('row.parametersFormulaDeps ', row.parametersFormulaDeps);
+  processedRows = processRowIds({
+    rows: processedRows,
+    targetRowIds: processedRows.map(pRow => pRow.rowId)
+  });
 
-      let isMatch =
-        (common.isDefined(row.parametersFormula) &&
-          row.parametersFormulaDeps.findIndex(
-            dep => changedRowIds.indexOf(dep) > -1
-          ) > -1) ||
-        (common.isUndefined(row.parametersFormula) &&
-          row.parameters.filter(parameter => {
-            let parIsMatch =
-              parameter.parameterType === common.ParameterTypeEnum.Formula &&
-              parameter.formulaDeps.findIndex(
-                dep => changedRowIds.indexOf(dep) > -1
-              ) > -1;
+  processedRows.forEach(row => {
+    // console.log('rowId ', row.rowId);
+    // console.log('deps ', row.deps);
 
-            console.log('parameter.formulaDeps ', parameter.formulaDeps);
-
-            return parIsMatch;
-          }).length > 0);
-
-      console.log('isMatch ', isMatch);
-
-      if (isMatch === true) {
-        row.isCalculateParameters = true;
-        row.parametersFiltersWithExcludedTime = [];
-
+    if (row.deps.findIndex(dep => changedRowIds.indexOf(dep) > -1) > -1) {
+      if (
+        row.rowType === common.RowTypeEnum.Formula ||
+        row.rowType === common.RowTypeEnum.Metric
+      ) {
         let currentRqIndex = row.rqs.findIndex(
           y =>
             y.fractionBrick === timeRangeFractionBrick &&
@@ -59,30 +44,15 @@ export function clearRowsCache(item: {
           ...row.rqs.slice(currentRqIndex + 1)
         ];
 
-        row.records = [];
-        row.mconfig = undefined;
-        row.query = undefined;
+        if (row.rowType === common.RowTypeEnum.Metric) {
+          row.isCalculateParameters = true;
+          row.parametersFiltersWithExcludedTime = [];
 
-        if (extraRowIds.indexOf(row.rowId) < 0) {
-          extraRowIds.push(row.rowId);
+          row.records = [];
+          row.mconfig = undefined;
+          row.query = undefined;
         }
       }
-    });
-
-  processedRows.forEach(row => {
-    if (
-      row.rowType === common.RowTypeEnum.Formula &&
-      row.formulaDeps.findIndex(dep => extraRowIds.indexOf(dep) > -1) > -1
-    ) {
-      let rq = row.rqs.find(
-        y =>
-          y.fractionBrick === timeRangeFractionBrick &&
-          y.timeSpec === timeSpec &&
-          y.timezone === timezone
-      );
-
-      rq.kitId = undefined;
-      rq.lastCalculatedTs = 0;
     }
   });
 

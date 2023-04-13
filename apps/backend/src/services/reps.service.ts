@@ -116,6 +116,7 @@ export class RepsService {
         formula: undefined,
         formulaDeps: undefined,
         parametersFormulaDeps: undefined,
+        deps: undefined,
         rqs: [],
         isCalculateParameters: false,
         mconfig: undefined,
@@ -208,6 +209,7 @@ export class RepsService {
         parametersFormula: undefined,
         formula: undefined,
         formulaDeps: undefined,
+        deps: undefined,
         parametersFormulaDeps: undefined,
         rqs: [],
         isCalculateParameters: false,
@@ -251,6 +253,7 @@ export class RepsService {
         parametersJson: undefined,
         parametersFormula: undefined,
         parametersFormulaDeps: undefined,
+        deps: undefined,
         formula: rowChange.formula,
         formulaDeps: undefined,
         rqs: [],
@@ -318,6 +321,7 @@ export class RepsService {
         formula: undefined,
         formulaDeps: undefined,
         parametersFormulaDeps: undefined,
+        deps: undefined,
         rqs: [],
         isCalculateParameters: false,
         mconfig: undefined,
@@ -376,8 +380,6 @@ export class RepsService {
         targetRowIds: processedRows.map(pr => pr.rowId)
       });
     } else if (changeType === common.ChangeTypeEnum.EditParameters) {
-      // let metric = metrics.find(m => m.metric_id === rowChange.metricId);
-
       clearRowsCache({
         processedRows: processedRows,
         changedRowIds: [rowChange.rowId],
@@ -434,6 +436,7 @@ export class RepsService {
             formula: undefined,
             formulaDeps: undefined,
             parametersFormulaDeps: undefined,
+            deps: undefined,
             rqs: [],
             isCalculateParameters: false,
             mconfig: undefined,

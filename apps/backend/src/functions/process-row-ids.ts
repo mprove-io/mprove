@@ -19,6 +19,7 @@ export function processRowIds(item: {
   rows
     .map(row => {
       row.rowId = targets[row.rowId];
+      row.deps = [];
       return row;
     })
     .forEach(row => {
@@ -49,6 +50,7 @@ export function processRowIds(item: {
 
         row.formula = newFormula;
         row.formulaDeps = formulaDeps;
+        row.deps = [...row.deps, ...formulaDeps];
       } else if (common.isDefined(row.parametersFormula)) {
         //
         let newParametersFormula = row.parametersFormula;
@@ -78,6 +80,7 @@ export function processRowIds(item: {
 
         row.parametersFormula = newParametersFormula;
         row.parametersFormulaDeps = parametersFormulaDeps;
+        row.deps = [...row.deps, ...parametersFormulaDeps];
       } else if (common.isDefined(row.parameters)) {
         //
         row.parameters.forEach(p => {
@@ -133,13 +136,43 @@ export function processRowIds(item: {
 
             p.formula = newParFormula;
             p.formulaDeps = parFormulaDeps;
-
+            row.deps = [...row.deps, ...parFormulaDeps];
             // console.log('newParFormula');
             // console.log(newParFormula);
           }
         });
       }
     });
+
+  rows.forEach(row => {
+    let startDeps = [...row.deps];
+    let endDeps: string[] = [];
+
+    while (startDeps.length !== endDeps.length) {
+      startDeps.forEach(x => {
+        if (endDeps.indexOf(x) < 0) {
+          endDeps.push(x);
+        }
+      });
+
+      endDeps.forEach(x => {
+        if (startDeps.indexOf(x) < 0) {
+          startDeps.push(x);
+        }
+
+        let depRow = rows.find(r => r.rowId === x);
+        if (common.isDefined(depRow)) {
+          depRow.deps.forEach(d => {
+            if (endDeps.indexOf(d) < 0) {
+              endDeps.push(d);
+            }
+          });
+        }
+      });
+    }
+
+    row.deps = endDeps;
+  });
 
   let newRows = rows.sort((a, b) =>
     common.rowIdLetterToNumber(a.rowId) > common.rowIdLetterToNumber(b.rowId)

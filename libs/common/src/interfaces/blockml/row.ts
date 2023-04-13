@@ -61,6 +61,8 @@ export class Row {
 
   parametersFormulaDeps: string[];
 
+  deps: string[];
+
   @IsBoolean()
   hasAccessToModel: boolean;
 
