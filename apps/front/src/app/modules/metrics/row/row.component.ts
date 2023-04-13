@@ -138,19 +138,24 @@ export class RowComponent {
       ) {
         this.mconfig = this.repSelectedNode.data.mconfig;
 
-        let metric = this.metricsQuery
-          .getValue()
-          .metrics.find(y => y.metricId === this.repSelectedNode.data.metricId);
+        // let metric = this.metricsQuery
+        //   .getValue()
+        //   .metrics.find(y => y.metricId === this.repSelectedNode.data.metricId);
 
-        let timeSpec = this.repQuery.getValue().timeSpec;
+        // let timeSpec = this.repQuery.getValue().timeSpec;
 
-        let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
+        // let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
 
-        let timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
+        // let timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
         this.parametersFilters =
           this.repSelectedNode.data.mconfig.extendedFilters
-            .filter(filter => filter.fieldId !== timeFieldIdSpec)
+            .filter(
+              filter =>
+                this.repSelectedNode.data.parametersFiltersWithExcludedTime
+                  .map(f => f.fieldId)
+                  .indexOf(filter.fieldId) > -1
+            )
             .map(filter => {
               let parameter = this.repSelectedNode.data.parameters.find(
                 y => y.filter === filter.fieldId
