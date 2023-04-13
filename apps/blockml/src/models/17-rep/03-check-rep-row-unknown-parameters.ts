@@ -37,7 +37,10 @@ export function checkRepRowUnknownParameters(
               common.ParameterEnum.ShowChart.toString(),
               common.ParameterEnum.Formula.toString(),
               common.ParameterEnum.Parameters.toString(),
-              common.ParameterEnum.ParametersFormula.toString()
+              common.ParameterEnum.ParametersFormula.toString(),
+              common.ParameterEnum.FormatNumber.toString(),
+              common.ParameterEnum.CurrencyPrefix.toString(),
+              common.ParameterEnum.CurrencySuffix.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(

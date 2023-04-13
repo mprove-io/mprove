@@ -289,6 +289,9 @@ return json.dumps([${rowParColumns
 
             if (isParamsSchemaValid === true) {
               row.parameters = parsedParameters;
+              row.parameters.forEach(x => {
+                x.parameterType = common.ParameterTypeEnum.Field;
+              });
             } else {
               row.parameters = [];
             }
