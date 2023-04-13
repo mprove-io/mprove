@@ -417,6 +417,11 @@ export class RepsService {
           return row;
         }
       });
+
+      processedRows = processRowIds({
+        rows: processedRows,
+        targetRowIds: processedRows.map(pRow => pRow.rowId)
+      });
     } else if (changeType === common.ChangeTypeEnum.Delete) {
       clearRowsCache({
         processedRows: processedRows,
@@ -615,9 +620,6 @@ export class RepsService {
     let kitIds: string[] = [];
 
     await forEachSeries(rep.rows, async x => {
-      // console.log('getFractions rowId');
-      // console.log(x.rowId);
-
       let rq = x.rqs.find(
         y =>
           y.fractionBrick === timeRangeFraction.brick &&

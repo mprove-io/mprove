@@ -13,133 +13,178 @@ export function processRowIds(item: {
     let targetIndex = targetRowIds.findIndex(
       targetRowId => targetRowId === rowId
     );
+
     targets[rowId] = common.rowIdNumberToLetter(targetIndex);
   });
 
-  rows
-    .map(row => {
-      row.rowId = targets[row.rowId];
-      row.deps = [];
-      return row;
-    })
-    .forEach(row => {
-      if (row.rowType === common.RowTypeEnum.Formula) {
-        //
-        let newFormula = row.formula;
-        let formulaDeps: string[] = [];
-        let reg = common.MyRegex.CAPTURE_ROW_REF();
-        let r;
+  rows = rows.map(row => {
+    row.rowId = targets[row.rowId];
+    row.deps = [];
+    return row;
+  });
 
-        while ((r = reg.exec(newFormula))) {
-          let reference = r[1];
+  rows.forEach(row => {
+    if (row.rowType === common.RowTypeEnum.Formula) {
+      //
+      let newFormula = row.formula;
+      let formulaDeps: string[] = [];
+      let reg = common.MyRegex.CAPTURE_ROW_REF();
+      let r;
 
-          let targetTo = common.isDefined(targets[reference])
+      while ((r = reg.exec(newFormula))) {
+        let reference = r[1];
+
+        let targetRow;
+
+        if (common.isDefined(targets[reference])) {
+          targetRow = rows.find(y => y.rowId === targets[reference]);
+        }
+
+        let targetTo =
+          (common.isDefined(targetRow) &&
+            targetRow.rowType === common.RowTypeEnum.Formula) ||
+          targetRow.rowType === common.RowTypeEnum.Metric
             ? targets[reference]
             : common.UNDEF;
 
-          newFormula = common.MyRegex.replaceRowIds(
-            newFormula,
-            reference,
-            targetTo
-          );
+        newFormula = common.MyRegex.replaceRowIds(
+          newFormula,
+          reference,
+          targetTo
+        );
 
+        if (formulaDeps.indexOf(targetTo) < 0) {
           formulaDeps.push(targetTo);
         }
+      }
 
-        newFormula = newFormula.split(common.QUAD_UNDERSCORE).join('');
+      newFormula = newFormula.split(common.QUAD_UNDERSCORE).join('');
 
-        row.formula = newFormula;
-        row.deps = [...row.deps, ...formulaDeps];
-      } else if (common.isDefined(row.parametersFormula)) {
-        //
-        let newParametersFormula = row.parametersFormula;
-        let parametersFormulaDeps: string[] = [];
-        let reg = common.MyRegex.CAPTURE_ROW_REF();
-        let r;
+      row.formula = newFormula;
 
-        while ((r = reg.exec(newParametersFormula))) {
-          let reference = r[1];
+      formulaDeps.forEach(x => {
+        if (row.deps.indexOf(x) < 0) {
+          row.deps.push(x);
+        }
+      });
+    } else if (common.isDefined(row.parametersFormula)) {
+      //
+      let newParametersFormula = row.parametersFormula;
+      let parametersFormulaDeps: string[] = [];
+      let reg = common.MyRegex.CAPTURE_ROW_REF();
+      let r;
 
-          let targetTo = common.isDefined(targets[reference])
+      while ((r = reg.exec(newParametersFormula))) {
+        let reference = r[1];
+
+        let targetRow;
+
+        if (common.isDefined(targets[reference])) {
+          targetRow = rows.find(y => y.rowId === targets[reference]);
+        }
+
+        let targetTo =
+          common.isDefined(targetRow) &&
+          targetRow.rowType === common.RowTypeEnum.Metric
             ? targets[reference]
             : common.UNDEF;
 
-          newParametersFormula = common.MyRegex.replaceRowIds(
-            newParametersFormula,
-            reference,
-            targetTo
-          );
+        newParametersFormula = common.MyRegex.replaceRowIds(
+          newParametersFormula,
+          reference,
+          targetTo
+        );
 
+        if (parametersFormulaDeps.indexOf(targetTo) < 0) {
           parametersFormulaDeps.push(targetTo);
         }
+      }
 
-        newParametersFormula = newParametersFormula
-          .split(common.QUAD_UNDERSCORE)
-          .join('');
+      newParametersFormula = newParametersFormula
+        .split(common.QUAD_UNDERSCORE)
+        .join('');
 
-        row.parametersFormula = newParametersFormula;
-        row.deps = [...row.deps, ...parametersFormulaDeps];
-      } else if (common.isDefined(row.parameters)) {
-        //
-        row.parameters.forEach(p => {
-          let newParId = `$${p.parameterId}`;
-          let reg1 = common.MyRegex.CAPTURE_ROW_REF();
-          let r1;
+      row.parametersFormula = newParametersFormula;
 
-          while ((r1 = reg1.exec(newParId))) {
-            let ref = r1[1];
+      parametersFormulaDeps.forEach(x => {
+        if (row.deps.indexOf(x) < 0) {
+          row.deps.push(x);
+        }
+      });
+    } else if (common.isDefined(row.parameters)) {
+      //
+      row.parameters.forEach(p => {
+        let newParId = `$${p.parameterId}`;
+        let reg1 = common.MyRegex.CAPTURE_ROW_REF();
+        let r1;
 
-            let targetTo = common.isDefined(targets[ref])
+        while ((r1 = reg1.exec(newParId))) {
+          let ref = r1[1];
+
+          let targetRow;
+
+          if (common.isDefined(targets[ref])) {
+            targetRow = rows.find(y => y.rowId === targets[ref]);
+          }
+
+          let targetTo =
+            common.isDefined(targetRow) &&
+            targetRow.rowType === common.RowTypeEnum.Metric
               ? targets[ref]
               : common.UNDEF;
 
-            newParId = common.MyRegex.replaceRowIds(newParId, ref, targetTo);
-          }
+          newParId = common.MyRegex.replaceRowIds(newParId, ref, targetTo);
+        }
 
-          newParId = newParId.split(common.QUAD_UNDERSCORE).join('');
+        newParId = newParId.split(common.QUAD_UNDERSCORE).join('');
 
-          p.parameterId = newParId.split('$')[1];
+        p.parameterId = newParId.split('$')[1];
 
-          if (common.isDefined(p.formula)) {
-            // console.log('p.parameterId');
-            // console.log(p.parameterId);
+        if (common.isDefined(p.formula)) {
+          let newParFormula = p.formula;
+          let parFormulaDeps: string[] = [];
+          let reg = common.MyRegex.CAPTURE_ROW_REF();
+          let r;
 
-            // console.log('p.formula');
-            // console.log(p.formula);
+          while ((r = reg.exec(newParFormula))) {
+            let reference = r[1];
 
-            let newParFormula = p.formula;
-            let parFormulaDeps: string[] = [];
-            let reg = common.MyRegex.CAPTURE_ROW_REF();
-            let r;
+            let targetRow;
 
-            while ((r = reg.exec(newParFormula))) {
-              let reference = r[1];
+            if (common.isDefined(targets[reference])) {
+              targetRow = rows.find(y => y.rowId === targets[reference]);
+            }
 
-              let targetTo = common.isDefined(targets[reference])
+            let targetTo =
+              common.isDefined(targetRow) &&
+              targetRow.rowType === common.RowTypeEnum.Metric
                 ? targets[reference]
                 : common.UNDEF;
 
-              newParFormula = common.MyRegex.replaceRowIds(
-                newParFormula,
-                reference,
-                targetTo
-              );
+            newParFormula = common.MyRegex.replaceRowIds(
+              newParFormula,
+              reference,
+              targetTo
+            );
 
+            if (parFormulaDeps.indexOf(targetTo) < 0) {
               parFormulaDeps.push(targetTo);
             }
-
-            newParFormula = newParFormula
-              .split(common.QUAD_UNDERSCORE)
-              .join('');
-
-            p.formula = newParFormula;
-            row.deps = [...row.deps, ...parFormulaDeps];
-            // console.log('newParFormula');
-            // console.log(newParFormula);
           }
-        });
-      }
-    });
+
+          newParFormula = newParFormula.split(common.QUAD_UNDERSCORE).join('');
+
+          p.formula = newParFormula;
+
+          parFormulaDeps.forEach(x => {
+            if (row.deps.indexOf(x) < 0) {
+              row.deps.push(x);
+            }
+          });
+        }
+      });
+    }
+  });
 
   let newRows = rows.sort((a, b) =>
     common.rowIdLetterToNumber(a.rowId) > common.rowIdLetterToNumber(b.rowId)
@@ -151,7 +196,6 @@ export function processRowIds(item: {
   );
 
   newRows.forEach(row => {
-    console.log('rowId ', row.rowId);
     let startDeps = [...row.deps];
     let endDeps: string[] = [];
 
@@ -179,7 +223,6 @@ export function processRowIds(item: {
     }
 
     row.deps = endDeps;
-    console.log('deps ', row.deps);
   });
 
   return newRows;

@@ -1,5 +1,4 @@
 import { common } from '~backend/barrels/common';
-import { processRowIds } from './process-row-ids';
 
 export function clearRowsCache(item: {
   processedRows: common.Row[];
@@ -16,17 +15,12 @@ export function clearRowsCache(item: {
     timeRangeFractionBrick
   } = item;
 
-  // console.log('changedRowIds ', changedRowIds);
-
-  processedRows = processRowIds({
-    rows: processedRows,
-    targetRowIds: processedRows.map(pRow => pRow.rowId)
-  });
+  // processedRows = processRowIds({
+  //   rows: processedRows,
+  //   targetRowIds: processedRows.map(pRow => pRow.rowId)
+  // });
 
   processedRows.forEach(row => {
-    // console.log('rowId ', row.rowId);
-    // console.log('deps ', row.deps);
-
     if (row.deps.findIndex(dep => changedRowIds.indexOf(dep) > -1) > -1) {
       if (
         row.rowType === common.RowTypeEnum.Formula ||
