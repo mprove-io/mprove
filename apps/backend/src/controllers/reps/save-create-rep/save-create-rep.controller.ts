@@ -231,18 +231,6 @@ export class SaveCreateRepController {
       envId: envId
     });
 
-    let rep = reps.find(x => x.repId === newRepId);
-
-    rep.rows.forEach(x => {
-      let fromRow = fromRep.rows.find(row => row.rowId === x.rowId);
-      x.rqs = fromRow.rqs;
-
-      x.isCalculateParameters = fromRow.isCalculateParameters;
-
-      x.parametersFiltersWithExcludedTime =
-        fromRow.parametersFiltersWithExcludedTime;
-    });
-
     await this.dbService.writeRecords({
       modify: true,
       records: {
@@ -260,6 +248,8 @@ export class SaveCreateRepController {
       });
     }
 
+    let rep = reps.find(x => x.repId === newRepId);
+
     if (common.isUndefined(rep)) {
       let fileId = `${parentNodeId}/${fileName}`;
       let fileIdAr = fileId.split('/');
@@ -273,6 +263,8 @@ export class SaveCreateRepController {
         }
       });
     }
+
+    rep.rows = fromRep.rows;
 
     let records = await this.dbService.writeRecords({
       modify: false,

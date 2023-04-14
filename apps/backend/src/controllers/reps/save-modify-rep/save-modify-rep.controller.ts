@@ -226,18 +226,9 @@ export class SaveModifyRepController {
       envId: envId
     });
 
-    let rep = reps.find(x => x.repId === modRepId);
-
-    rep.rows.forEach(x => {
-      x.rqs = fromRep.rows.find(row => row.rowId === x.rowId).rqs;
-    });
-
-    let records = await this.dbService.writeRecords({
+    await this.dbService.writeRecords({
       modify: true,
       records: {
-        reps: common.isDefined(rep)
-          ? [wrapper.wrapToEntityRep(rep)]
-          : undefined,
         structs: [struct],
         bridges: [...branchBridges]
       }
@@ -251,6 +242,8 @@ export class SaveModifyRepController {
         creator_id: user.user_id
       });
     }
+
+    let rep = reps.find(x => x.repId === modRepId);
 
     if (common.isUndefined(rep)) {
       await this.repsRepository.delete({
@@ -269,6 +262,15 @@ export class SaveModifyRepController {
         }
       });
     }
+
+    rep.rows = fromRep.rows;
+
+    let records = await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        reps: [wrapper.wrapToEntityRep(rep)]
+      }
+    });
 
     let userMemberApi = wrapper.wrapToApiMember(userMember);
 
