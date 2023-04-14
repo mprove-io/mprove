@@ -60,6 +60,7 @@ function updateTarget(tPath: string, s: any, t: any) {
     'class-transformer-validator',
     'class-validator',
     'clipanion',
+    'date-fns',
     'clone-regexp',
     'dotenv',
     'fs-extra',
