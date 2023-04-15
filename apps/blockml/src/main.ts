@@ -18,7 +18,7 @@ async function bootstrap() {
 
   let config = getConfig();
 
-  const app = await NestFactory.create(AppModule, {
+  let app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger(
       nodeCommon.getLoggerOptions({
         appName: constants.APP_NAME_BLOCKML,
