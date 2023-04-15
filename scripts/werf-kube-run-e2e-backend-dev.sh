@@ -12,7 +12,11 @@ werf kube-run --repo ghcr.io/mprove-io/mprove --overrides='{
           {
             "name": "BACKEND_FIRST_PROJECT_REMOTE_TYPE",
             "value": "Managed"
-          }
+          },
+          {
+            "name": "BACKEND_IS_SCHEDULER",
+            "value": "FALSE"
+          }          
         ],
         "envFrom": [
           {
