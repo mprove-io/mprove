@@ -24,7 +24,7 @@ spec:
         # resources:
         #   requests:
         #     cpu: "100m"
-        image: ghcr.io/mprove-io/mprove-lab-dwh-postgres:9.0.6
+        image: ghcr.io/mprove-io/mprove-lab-dwh-postgres:9.0.8
         envFrom:
         - secretRef:
             name: dwh-postgres-envs          
