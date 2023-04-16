@@ -24,7 +24,7 @@ spec:
         # resources:
         #   requests:
         #     cpu: "100m"
-        image: ghcr.io/mprove-io/mprove-dwh-clickhouse:3.3.1
+        image: ghcr.io/mprove-io/mprove-lab-dwh-clickhouse:9.0.4
         envFrom:
         - secretRef:
             name: dwh-clickhouse-envs          
