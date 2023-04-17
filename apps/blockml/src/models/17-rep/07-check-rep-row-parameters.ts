@@ -69,7 +69,11 @@ export function checkRepRowParameters(
 
     if (errorsOnStart === item.errors.length) {
       x.rows
-        .filter(row => common.isDefined(row.parameters))
+        .filter(
+          row =>
+            row.type === common.RowTypeEnum.Metric &&
+            common.isDefined(row.parameters)
+        )
         .forEach(row => {
           let metric = metrics.find(m => m.metricId === row.metric);
           let model = models.find(y => y.model === metric.modelId);

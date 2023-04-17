@@ -69,9 +69,11 @@ export function makeRepFileText(item: {
           ? x.parametersFormula
           : undefined,
         parameters:
-          common.isUndefined(x.parametersFormula) &&
-          common.isDefined(x.parameters) &&
-          x.parameters.length > 0
+          [common.RowTypeEnum.Metric].indexOf(x.rowType) < 0
+            ? undefined
+            : common.isDefined(x.parametersFormula)
+            ? undefined
+            : common.isDefined(x.parameters)
             ? x.parameters.map(parameter => {
                 let p: common.FileRepRowParameter = {
                   // type: parameter.parameterType,
@@ -85,7 +87,7 @@ export function makeRepFileText(item: {
 
                 return p;
               })
-            : undefined
+            : []
       };
 
       return row;
