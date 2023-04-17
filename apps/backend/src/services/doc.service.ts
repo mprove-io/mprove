@@ -687,9 +687,24 @@ return json.dumps([${rowParColumns
           if (column.columnId === zeroColumnId) {
             record.fields[row.rowId] = 0;
           } else {
-            let timeFieldId = row.mconfig?.select[0].split('.').join('_');
+            let timeFieldId = row.mconfig?.select[0]
+              .split('.')
+              .join('_')
+              .toLowerCase();
 
-            let fieldId = row.mconfig?.select[1].split('.').join('_');
+            let fieldId = row.mconfig?.select[1]
+              .split('.')
+              .join('_')
+              .toLowerCase();
+
+            if (common.isDefined(row.query?.data)) {
+              row.query.data = row.query.data.map((x: any) =>
+                Object.keys(x).reduce((destination: any, key) => {
+                  destination[key.toLowerCase()] = x[key];
+                  return destination;
+                }, {})
+              );
+            }
 
             let dataRow = row.query?.data?.find(
               (r: any) => r[timeFieldId]?.toString().split('.')[0] === timeValue
