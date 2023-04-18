@@ -662,21 +662,23 @@ export class MetricsComponent implements OnInit, OnDestroy {
     let { row, showMetricsModelName, showMetricsTimeFieldName } = item;
     let { partLabel, topLabel, timeLabel } = item.row;
 
+    let name;
+
     if (row.rowType !== common.RowTypeEnum.Metric) {
-      return row.name;
+      name = row.name;
+    } else {
+      name = partLabel;
+
+      if (showMetricsModelName === true) {
+        name = `${topLabel} ${name}`;
+      }
+
+      if (showMetricsTimeFieldName === true) {
+        name = `${name} by ${timeLabel}`;
+      }
     }
 
-    let name = partLabel;
-
-    if (showMetricsModelName === true) {
-      name = `${topLabel} ${name}`;
-    }
-
-    if (showMetricsTimeFieldName === true) {
-      name = `${name} by ${timeLabel}`;
-    }
-
-    return name;
+    return `(${row.rowId}) ${name}`;
   }
 
   ngOnDestroy() {
