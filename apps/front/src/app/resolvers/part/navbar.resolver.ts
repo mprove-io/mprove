@@ -11,6 +11,7 @@ import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { AuthService } from '~front/app/services/auth.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -29,6 +30,7 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
     private router: Router,
     private authService: AuthService,
     private userQuery: UserQuery,
+    private uiQuery: UiQuery,
     private memberQuery: MemberQuery,
     private repoQuery: RepoQuery,
     private structQuery: StructQuery,
@@ -133,6 +135,7 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
 
             this.navQuery.update(nav);
             this.userQuery.update(user);
+            this.uiQuery.updatePart({ ...resp.payload.user.ui });
 
             if (common.isDefined(userMember)) {
               this.memberQuery.update(resp.payload.userMember);
