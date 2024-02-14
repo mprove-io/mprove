@@ -434,6 +434,22 @@ export class MyRegex {
     return input.split(`\$${ref}`).join(`\$${constants.QUAD_UNDERSCORE}${val}`);
   }
 
+  static replaceRowIdsFinalAddPars(
+    input: string,
+    ref: string,
+    val: string
+  ): string {
+    return input.split(`\$${ref}`).join(`(${val})`);
+  }
+
+  static replaceRowIdsFinalNoPars(
+    input: string,
+    ref: string,
+    val: string
+  ): string {
+    return input.split(`\$${ref}`).join(`${val}`);
+  }
+
   // static replacePdtTableId(input: string, ref: string, val: string): string {
   //   return input.split(`\$\{${ref}.PDT_TABLE_ID\}`).join(`${val}`);
   // }

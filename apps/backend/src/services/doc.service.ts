@@ -3,6 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { format, fromUnixTime } from 'date-fns';
 import { forEachSeries } from 'p-iteration';
+import * as pgPromise from 'pg-promise';
+import pg from 'pg-promise/typescript/pg-subset';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
@@ -42,6 +44,8 @@ export class DocService {
       metrics,
       traceId
     } = item;
+
+    let parametersGristStartTs = Date.now();
 
     let gristHost =
       this.cs.get<interfaces.Config['backendGristHost']>('backendGristHost');
@@ -480,6 +484,11 @@ return json.dumps([${rowParColumns
       }
     );
 
+    console.log(
+      'parameters grist Total - duration: ',
+      Date.now() - parametersGristStartTs
+    );
+
     return rows;
   }
 
@@ -492,106 +501,122 @@ return json.dumps([${rowParColumns
   }) {
     let { rep, timeSpec, timeRangeFraction, timezone, traceId } = item;
 
-    let gristHost =
-      this.cs.get<interfaces.Config['backendGristHost']>('backendGristHost');
+    let pgStartTs = Date.now();
 
-    let sender = axios.create({ baseURL: `http://${gristHost}:8484/` });
-
-    axios.defaults.withCredentials = true;
-
-    let backendGristApiKey =
-      this.cs.get<interfaces.Config['backendGristApiKey']>(
-        'backendGristApiKey'
-      );
-
-    sender.defaults.headers['Authorization'] = `Bearer ${backendGristApiKey}`;
-
-    let createDoc = {
-      // name: common.makeId()
-      name: `data - traceId - ${traceId} - repId - ${rep.repId} - structId - ${rep.structId}`
+    let cn: pg.IConnectionParameters<pg.IClient> = {
+      host: this.cs.get<interfaces.Config['firstProjectDwhPostgresHost']>(
+        'firstProjectDwhPostgresHost'
+      ),
+      port: 5432,
+      database: 'p_db',
+      user: 'postgres',
+      password: this.cs.get<
+        interfaces.Config['firstProjectDwhPostgresPassword']
+      >('firstProjectDwhPostgresPassword'),
+      ssl: false
     };
-
-    let createDocStartTs = Date.now();
-
-    let createDocResp = await sender.post(
-      `api/workspaces/2/docs`,
-      createDoc,
-      {}
-    );
-
-    console.log('data createDoc - duration: ', Date.now() - createDocStartTs);
-
-    let docId = createDocResp.data;
-    let metricsTableId = 'Metrics';
-
-    let createTables = {
-      tables: [
-        {
-          id: metricsTableId,
-          columns: [
-            {
-              id: 'timestamp',
-              fields: {
-                type: 'Int',
-                // widgetOptions:
-                //   '{"widget":"TextBox","dateFormat":"YYYY-MM-DD","timeFormat":"h:mma","isCustomDateFormat":false,"isCustomTimeFormat":false,"alignment":"left","decimals":0}',
-                isFormula: false
-              }
-            },
-            ...rep.rows.map(x => ({
-              id: x.rowId,
-              fields: {
-                type: 'Numeric',
-                isFormula: x.rowType === common.RowTypeEnum.Formula,
-                formula: x.formula
-              }
-            }))
-          ]
-        }
-      ]
-    };
-
-    let createTablesStartTs = Date.now();
-
-    let createTablesResp = await sender.post(
-      `api/docs/${docId}/tables`,
-      createTables,
-      {}
-    );
-
-    console.log(
-      'data createTables - duration: ',
-      Date.now() - createTablesStartTs
-    );
 
     let recordsByColumn = this.makeRecordsByColumn({
       rep: rep,
       timeSpec: timeSpec
     });
 
-    let createRecordsStartTs = Date.now();
+    console.log('recordsByColumn:');
+    console.log(recordsByColumn);
 
-    let createRecordsResp = await sender.post(
-      `api/docs/${docId}/tables/${metricsTableId}/records`,
-      {
-        records: recordsByColumn
-      },
-      {}
-    );
+    let timestampValues = recordsByColumn.map(x => x.fields['timestamp']);
 
-    console.log(
-      'data createRecords - duration: ',
-      Date.now() - createRecordsStartTs
-    );
+    let mainSelect = [
+      `unnest(ARRAY[${timestampValues}]) as timestamp`,
+      ...rep.rows
+        .filter(row => row.rowType === common.RowTypeEnum.Metric)
+        .map(row => {
+          let values = recordsByColumn.map(r => r.fields[row.rowId] || 'NULL');
+          let str = `    unnest(ARRAY[${values}]) as ${row.rowId}`;
+          return str;
+        })
+    ];
 
-    let getRecordsStartTs = Date.now();
+    let mainSelectReady = mainSelect.join(',\n');
 
-    let getRecordsResp = await sender.get(
-      `api/docs/${docId}/tables/${metricsTableId}/records`,
-      {}
-    );
+    let outerSelect = [
+      `  main.timestamp as timestamp`,
+      ...rep.rows
+        .filter(row => row.rowType === common.RowTypeEnum.Metric)
+        .map(x => `  main.${x.rowId} as ${x.rowId}`),
+      ...rep.rows
+        .filter(row => row.rowType === common.RowTypeEnum.Formula)
+        .map(row => {
+          let newFormula = row.formula;
+          let reg = common.MyRegex.CAPTURE_ROW_REF();
+          let r;
 
-    console.log('data getRecords - duration: ', Date.now() - getRecordsStartTs);
+          while ((r = reg.exec(newFormula))) {
+            let reference = r[1];
+
+            let targetRow = rep.rows.find(y => y.rowId === reference);
+
+            let targetTo =
+              targetRow.rowType === common.RowTypeEnum.Formula
+                ? targetRow.formula
+                : targetRow.rowType === common.RowTypeEnum.Metric
+                ? `main.${targetRow.rowId}`
+                : common.UNDEF;
+
+            newFormula =
+              targetRow.rowType === common.RowTypeEnum.Metric
+                ? common.MyRegex.replaceRowIdsFinalNoPars(
+                    newFormula,
+                    reference,
+                    targetTo
+                  )
+                : common.MyRegex.replaceRowIdsFinalAddPars(
+                    newFormula,
+                    reference,
+                    targetTo
+                  );
+          }
+
+          let str = `  ${newFormula} as ${row.rowId}`;
+
+          return str;
+        })
+    ];
+
+    let outerSelectReady = outerSelect.join(',\n');
+
+    let querySql = `WITH main AS (
+  SELECT
+    ${mainSelectReady}
+)
+SELECT
+${outerSelectReady}
+FROM main;`;
+
+    console.log('');
+    console.log('querySql:');
+    console.log(querySql);
+
+    let pgp = pgPromise({ noWarnings: true });
+    let pgDb = pgp(cn);
+
+    let queryData: any[] = [];
+
+    await pgDb
+      .any(querySql)
+      .then(async (data: any) => {
+        queryData = data;
+        console.log('data:');
+        console.log(data);
+      })
+      .catch(async (e: any) => {
+        console.log('query error:');
+        console.log(e);
+      });
+
+    console.log('Total pg - duration: ', Date.now() - pgStartTs);
+
+    //
 
     let lastCalculatedTs = Number(helper.makeTs());
 
@@ -604,11 +629,11 @@ return json.dumps([${rowParColumns
           row.rowType === common.RowTypeEnum.Formula
       )
       .forEach(row => {
-        row.records = getRecordsResp.data.records.map((y: any) => ({
-          id: y.id,
-          key: Number(y.fields.timestamp.toString().split('.')[0]),
-          value: common.isDefined(y.fields) ? y.fields[row.rowId] : undefined,
-          error: common.isDefined(y.errors) ? y.errors[row.rowId] : undefined
+        row.records = queryData.map((y: any, index) => ({
+          id: index + 1,
+          key: Number(y.timestamp.toString().split('.')[0]),
+          value: y[row.rowId.toLowerCase()],
+          error: undefined
         }));
 
         let rq = row.rqs.find(
@@ -731,4 +756,175 @@ return json.dumps([${rowParColumns
 
     return recordsByColumn;
   }
+
+  // async calculateDataOld(item: {
+  //   rep: common.RepX;
+  //   timezone: string;
+  //   timeSpec: common.TimeSpecEnum;
+  //   timeRangeFraction: common.Fraction;
+  //   traceId: string;
+  // }) {
+  //   let { rep, timeSpec, timeRangeFraction, timezone, traceId } = item;
+
+  //   let gristStartTs = Date.now();
+
+  //   let gristHost =
+  //     this.cs.get<interfaces.Config['backendGristHost']>('backendGristHost');
+
+  //   let sender = axios.create({ baseURL: `http://${gristHost}:8484/` });
+
+  //   axios.defaults.withCredentials = true;
+
+  //   let backendGristApiKey =
+  //     this.cs.get<interfaces.Config['backendGristApiKey']>(
+  //       'backendGristApiKey'
+  //     );
+
+  //   sender.defaults.headers['Authorization'] = `Bearer ${backendGristApiKey}`;
+
+  //   let createDoc = {
+  //     // name: common.makeId()
+  //     name: `data - traceId - ${traceId} - repId - ${rep.repId} - structId - ${rep.structId}`
+  //   };
+
+  //   let createDocStartTs = Date.now();
+
+  //   let createDocResp = await sender.post(
+  //     `api/workspaces/2/docs`,
+  //     createDoc,
+  //     {}
+  //   );
+
+  //   console.log('data createDoc - duration: ', Date.now() - createDocStartTs);
+
+  //   let docId = createDocResp.data;
+  //   let metricsTableId = 'Metrics';
+
+  //   let createTables = {
+  //     tables: [
+  //       {
+  //         id: metricsTableId,
+  //         columns: [
+  //           {
+  //             id: 'timestamp',
+  //             fields: {
+  //               type: 'Int',
+  //               // widgetOptions:
+  //               //   '{"widget":"TextBox","dateFormat":"YYYY-MM-DD","timeFormat":"h:mma","isCustomDateFormat":false,"isCustomTimeFormat":false,"alignment":"left","decimals":0}',
+  //               isFormula: false
+  //             }
+  //           },
+  //           ...rep.rows.map(x => ({
+  //             id: x.rowId,
+  //             fields: {
+  //               type: 'Numeric',
+  //               isFormula: x.rowType === common.RowTypeEnum.Formula,
+  //               formula: x.formula
+  //             }
+  //           }))
+  //         ]
+  //       }
+  //     ]
+  //   };
+
+  //   let createTablesStartTs = Date.now();
+
+  //   let createTablesResp = await sender.post(
+  //     `api/docs/${docId}/tables`,
+  //     createTables,
+  //     {}
+  //   );
+
+  //   console.log(
+  //     'data createTables - duration: ',
+  //     Date.now() - createTablesStartTs
+  //   );
+
+  //   let recordsByColumn = this.makeRecordsByColumn({
+  //     rep: rep,
+  //     timeSpec: timeSpec
+  //   });
+
+  //   console.log('recordsByColumn:');
+  //   console.log(recordsByColumn);
+
+  //   let createRecordsStartTs = Date.now();
+
+  //   let createRecordsResp = await sender.post(
+  //     `api/docs/${docId}/tables/${metricsTableId}/records`,
+  //     {
+  //       records: recordsByColumn
+  //     },
+  //     {}
+  //   );
+
+  //   console.log(
+  //     'data createRecords - duration: ',
+  //     Date.now() - createRecordsStartTs
+  //   );
+
+  //   let getRecordsStartTs = Date.now();
+
+  //   let getRecordsResp = await sender.get(
+  //     `api/docs/${docId}/tables/${metricsTableId}/records`,
+  //     {}
+  //   );
+
+  //   console.log('data getRecords - duration: ', Date.now() - getRecordsStartTs);
+
+  //   console.log('Total grist - duration: ', Date.now() - gristStartTs);
+
+  //   let lastCalculatedTs = Number(helper.makeTs());
+
+  //   let newKits: entities.KitEntity[] = [];
+
+  //   rep.rows
+  //     .filter(
+  //       row =>
+  //         row.rowType === common.RowTypeEnum.Metric ||
+  //         row.rowType === common.RowTypeEnum.Formula
+  //     )
+  //     .forEach(row => {
+  //       row.records = getRecordsResp.data.records.map((y: any) => ({
+  //         id: y.id,
+  //         key: Number(y.fields.timestamp.toString().split('.')[0]),
+  //         value: common.isDefined(y.fields) ? y.fields[row.rowId] : undefined,
+  //         error: common.isDefined(y.errors) ? y.errors[row.rowId] : undefined
+  //       }));
+
+  //       let rq = row.rqs.find(
+  //         y =>
+  //           y.fractionBrick === timeRangeFraction.brick &&
+  //           y.timeSpec === timeSpec &&
+  //           y.timezone === timezone
+  //       );
+
+  //       if (row.rowType === common.RowTypeEnum.Formula) {
+  //         rq.kitId = common.makeId();
+
+  //         let newKit: entities.KitEntity = {
+  //           struct_id: rep.structId,
+  //           kit_id: rq.kitId,
+  //           rep_id: rep.repId,
+  //           data: row.records,
+  //           server_ts: undefined
+  //         };
+
+  //         newKits.push(newKit);
+  //       }
+
+  //       rq.lastCalculatedTs = lastCalculatedTs;
+  //     });
+
+  //   if (newKits.length > 0) {
+  //     await this.dbService.writeRecords({
+  //       modify: false,
+  //       records: {
+  //         kits: newKits
+  //       }
+  //     });
+  //   }
+
+  //   return rep;
+  // }
 }
