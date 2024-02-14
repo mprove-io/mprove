@@ -72,6 +72,10 @@ export function getDevConfig(envFilePath: any) {
         envFile.BACKEND_FIRST_PROJECT_SEED_CONNECTIONS)
     ),
 
+    firstProjectDwhPostgresHost:
+      process.env.BACKEND_FIRST_PROJECT_DWH_POSTGRES_HOST ||
+      envFile.BACKEND_FIRST_PROJECT_DWH_POSTGRES_HOST,
+
     firstProjectDwhPostgresPassword:
       process.env.BACKEND_FIRST_PROJECT_DWH_POSTGRES_PASSWORD ||
       envFile.BACKEND_FIRST_PROJECT_DWH_POSTGRES_PASSWORD,
@@ -179,6 +183,9 @@ export function getDevConfig(envFilePath: any) {
 
     backendMysqlDatabase:
       process.env.BACKEND_MYSQL_DATABASE || envFile.BACKEND_MYSQL_DATABASE,
+
+    backendGristHost:
+      process.env.BACKEND_GRIST_HOST || envFile.BACKEND_GRIST_HOST,
 
     backendGristApiKey:
       process.env.BACKEND_GRIST_API_KEY || envFile.BACKEND_GRIST_API_KEY,

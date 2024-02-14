@@ -43,7 +43,10 @@ export class DocService {
       traceId
     } = item;
 
-    let sender = axios.create({ baseURL: 'http://grist:8484/' });
+    let gristHost =
+      this.cs.get<interfaces.Config['backendGristHost']>('backendGristHost');
+
+    let sender = axios.create({ baseURL: `http://${gristHost}:8484/` });
 
     axios.defaults.withCredentials = true;
 
@@ -489,7 +492,10 @@ return json.dumps([${rowParColumns
   }) {
     let { rep, timeSpec, timeRangeFraction, timezone, traceId } = item;
 
-    let sender = axios.create({ baseURL: 'http://grist:8484/' });
+    let gristHost =
+      this.cs.get<interfaces.Config['backendGristHost']>('backendGristHost');
+
+    let sender = axios.create({ baseURL: `http://${gristHost}:8484/` });
 
     axios.defaults.withCredentials = true;
 

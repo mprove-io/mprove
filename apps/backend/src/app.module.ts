@@ -326,7 +326,9 @@ export class AppModule implements OnModuleInit {
                 envId: common.PROJECT_ENV_PROD,
                 connectionId: 'c1_postgres',
                 type: common.ConnectionTypeEnum.PostgreSQL,
-                host: 'dwh-postgres',
+                host: this.cs.get<
+                  interfaces.Config['firstProjectDwhPostgresHost']
+                >('firstProjectDwhPostgresHost'),
                 port: 5432,
                 database: 'p_db',
                 username: 'postgres',

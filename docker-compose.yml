@@ -72,6 +72,8 @@ services:
       - $ENV_FILE_PATH
     environment:
       BACKEND_IS_SCHEDULER: 'FALSE'
+      BACKEND_GRIST_HOST: grist
+      BACKEND_FIRST_PROJECT_DWH_POSTGRES_HOST: dwh-postgres
     ports:
       - 3000:3000
     depends_on:
@@ -95,6 +97,8 @@ services:
       - $ENV_FILE_PATH
     environment:
       BACKEND_IS_SCHEDULER: 'TRUE'
+      BACKEND_GRIST_HOST: grist
+      BACKEND_FIRST_PROJECT_DWH_POSTGRES_HOST: dwh-postgres
     depends_on:
       - db
       - rabbit

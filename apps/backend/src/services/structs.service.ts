@@ -61,13 +61,23 @@ export class StructsService {
     await this.dataSource.transaction(async manager => {
       rawData = await manager.query(`
 SELECT 
-  s.struct_id
+  s.struct_id,
+  b.project_id,
+  b.repo_id,
+  b.branch_id,
+  b.env_id
 FROM structs as s 
 LEFT JOIN bridges as b ON s.struct_id=b.struct_id 
 LEFT JOIN branches as c ON b.branch_id=c.branch_id 
-WHERE c.branch_id is NULL AND s.server_ts < (NOW() - INTERVAL 10 MINUTE)
+WHERE c.branch_id is NULL
 `);
     });
+
+    // WHERE c.branch_id is NULL AND s.server_ts < (NOW() - INTERVAL 10 MINUTE)
+
+    console.log(Date.now());
+    console.log('orphanedRawData: ');
+    console.log(rawData);
 
     let orphanedStructIds: string[] =
       rawData?.map((x: any) => x.struct_id) || [];

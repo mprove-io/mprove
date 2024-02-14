@@ -49,7 +49,7 @@ export class TasksService {
     }
   }
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_10_SECONDS)
   async loopRemoveOrphans() {
     if (this.isRunningLoopRemoveOrphans === false) {
       this.isRunningLoopRemoveOrphans = true;

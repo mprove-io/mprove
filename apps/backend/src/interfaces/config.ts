@@ -52,6 +52,9 @@ export class Config {
   firstProjectSeedConnections?: common.BoolEnum;
 
   @IsString()
+  firstProjectDwhPostgresHost?: string;
+
+  @IsString()
   firstProjectDwhPostgresPassword?: string;
 
   @IsString()
@@ -145,6 +148,9 @@ export class Config {
 
   @IsString()
   backendMysqlDatabase?: string;
+
+  @IsString()
+  backendGristHost?: string;
 
   @IsString()
   backendGristApiKey?: string;
