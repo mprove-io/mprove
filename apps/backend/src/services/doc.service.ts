@@ -91,9 +91,15 @@ export class DocService {
       fields: {}
     };
 
+    // console.log('rows:');
+    // console.log(rows);
+
     rows
       .filter(row => row.rowType === common.RowTypeEnum.Metric)
       .forEach(row => {
+        // console.log('row:');
+        // console.log(row);
+
         let rowParColumns: any[] = [];
 
         if (
@@ -527,12 +533,12 @@ return json.dumps([${rowParColumns
     let timestampValues = recordsByColumn.map(x => x.fields['timestamp']);
 
     let mainSelect = [
-      `unnest(ARRAY[${timestampValues}]) as timestamp`,
+      `unnest(ARRAY[${timestampValues}]) AS timestamp`,
       ...rep.rows
         .filter(row => row.rowType === common.RowTypeEnum.Metric)
         .map(row => {
           let values = recordsByColumn.map(r => r.fields[row.rowId] || 'NULL');
-          let str = `    unnest(ARRAY[${values}]) as ${row.rowId}`;
+          let str = `    unnest(ARRAY[${values}]) AS ${row.rowId}`;
           return str;
         })
     ];
@@ -543,7 +549,8 @@ return json.dumps([${rowParColumns
       `  main.timestamp as timestamp`,
       ...rep.rows
         .filter(row => row.rowType === common.RowTypeEnum.Metric)
-        .map(x => `  main.${x.rowId} as ${x.rowId}`),
+        // .map(x => `  CAST(main.${x.rowId} AS numeric) AS ${x.rowId}`),
+        .map(x => `  main.${x.rowId} AS ${x.rowId}`),
       ...rep.rows
         .filter(row => row.rowType === common.RowTypeEnum.Formula)
         .map(row => {
@@ -593,23 +600,35 @@ SELECT
 ${outerSelectReady}
 FROM main;`;
 
-    console.log('');
-    console.log('querySql:');
-    console.log(querySql);
+    // console.log('');
+    // console.log('querySql:');
+    // console.log(querySql);
 
     let pgp = pgPromise({ noWarnings: true });
     let pgDb = pgp(cn);
 
     let queryData: any[] = [];
+    let queryError: any;
 
     await pgDb
       .any(querySql)
       .then(async (data: any) => {
-        queryData = data;
-        console.log('data:');
-        console.log(data);
+        // console.log('data:');
+        // console.log(data);
+        queryData = data.map((r: any) => {
+          Object.keys(r)
+            .filter(y => y !== 'timestamp')
+            .forEach(x => {
+              r[x] = common.isDefined(r[x]) ? Number(r[x]) : undefined;
+            });
+
+          return r;
+        });
+        // console.log('queryData:');
+        // console.log(queryData);
       })
       .catch(async (e: any) => {
+        queryError = e;
         console.log('query error:');
         console.log(e);
       });
@@ -629,12 +648,36 @@ FROM main;`;
           row.rowType === common.RowTypeEnum.Formula
       )
       .forEach(row => {
-        row.records = queryData.map((y: any, index) => ({
-          id: index + 1,
-          key: Number(y.timestamp.toString().split('.')[0]),
-          value: y[row.rowId.toLowerCase()],
-          error: undefined
-        }));
+        if (
+          common.isDefined(queryError) &&
+          row.rowType === common.RowTypeEnum.Formula
+        ) {
+          row.records = [
+            {
+              id: 1,
+              key: 0,
+              value: undefined,
+              error: queryError.message
+            }
+          ];
+        } else if (
+          common.isDefined(queryError) &&
+          row.rowType === common.RowTypeEnum.Metric
+        ) {
+          row.records = recordsByColumn.map((y: any, index) => ({
+            id: index + 1,
+            key: Number(y.fields['timestamp'].toString().split('.')[0]),
+            value: y.fields[row.rowId] || 'NULL',
+            error: undefined
+          }));
+        } else if (common.isUndefined(queryError)) {
+          row.records = queryData.map((y: any, index) => ({
+            id: index + 1,
+            key: Number(y.timestamp.toString().split('.')[0]),
+            value: y[row.rowId.toLowerCase()],
+            error: undefined
+          }));
+        }
 
         let rq = row.rqs.find(
           y =>
@@ -845,8 +888,8 @@ FROM main;`;
   //     timeSpec: timeSpec
   //   });
 
-  //   console.log('recordsByColumn:');
-  //   console.log(recordsByColumn);
+  //   // console.log('recordsByColumn:');
+  //   // console.log(recordsByColumn);
 
   //   let createRecordsStartTs = Date.now();
 
@@ -877,6 +920,9 @@ FROM main;`;
   //   let lastCalculatedTs = Number(helper.makeTs());
 
   //   let newKits: entities.KitEntity[] = [];
+
+  //   console.log('getRecordsResp.data.records[1].fields:');
+  //   console.log(getRecordsResp.data.records[1].fields);
 
   //   rep.rows
   //     .filter(
