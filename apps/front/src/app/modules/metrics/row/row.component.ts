@@ -557,13 +557,13 @@ export class RowComponent {
     this.cd.detectChanges();
   }
 
-  toggleParametersPanel() {
-    if (this.parametersFilters.length > 0) {
-      this.resetInputs();
-      this.isExpandedParameters = !this.isExpandedParameters;
-      this.cd.detectChanges();
-    }
-  }
+  // toggleParametersPanel() {
+  //   if (this.parametersFilters.length > 0) {
+  //     this.resetInputs();
+  //     this.isExpandedParameters = !this.isExpandedParameters;
+  //     this.cd.detectChanges();
+  //   }
+  // }
 
   addParameter() {
     this.isExpandedParameters = true;

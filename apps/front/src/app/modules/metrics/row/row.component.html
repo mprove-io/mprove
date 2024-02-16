@@ -1,9 +1,9 @@
-<div
+<!-- <div
   class="mb-5 mr-9 flex h-11 flex-row items-center text-lg"
   *ngIf="repSelectedNodes.length === 0"
 >
   No rows selected
-</div>
+</div> -->
 
 <div
   class="mb-5 mr-9 flex h-11 flex-row items-center"
@@ -509,7 +509,7 @@
     class="flex min-h-[44px] flex-grow flex-row"
     *ngIf="repSelectedNode.data.rowType === rowTypeMetric"
   >
-    <div
+    <!-- <div
       (click)="toggleParametersPanel()"
       class="text-gray1 flex h-11 select-none flex-row items-start space-x-2 text-lg font-semibold"
       [ngClass]="{
@@ -526,6 +526,24 @@
         ></m-chevron-down-icon>
 
         <div class="h-6 w-6" *ngIf="parametersFilters.length === 0"></div>
+
+        <div class="truncate"> Parameters </div>
+      </div>
+    </div> -->
+
+    <div
+      class="text-gray1 flex h-11 select-none flex-row items-start space-x-2 text-lg font-semibold"
+    >
+      <div class="flex h-11 flex-row items-center space-x-2">
+        <!-- <m-chevron-right-icon
+          *ngIf="!isExpandedParameters && parametersFilters.length > 0"
+        ></m-chevron-right-icon>
+
+        <m-chevron-down-icon
+          *ngIf="isExpandedParameters && parametersFilters.length > 0"
+        ></m-chevron-down-icon> -->
+
+        <!-- <div class="h-6 w-6" *ngIf="parametersFilters.length === 0"></div> -->
 
         <div class="truncate"> Parameters </div>
       </div>
