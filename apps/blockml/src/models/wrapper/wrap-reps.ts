@@ -84,6 +84,7 @@ export function wrapReps(item: {
               filter: parameter.filter,
               result: result,
               formula: parameter.formula,
+              xDeps: undefined,
               conditions: parameter.conditions
             };
 
@@ -94,6 +95,7 @@ export function wrapReps(item: {
           parametersJson: undefined,
           parametersFormula: row.parameters_formula,
           deps: undefined,
+          xDeps: undefined,
           records: [],
           formatNumber: common.isDefined(row.format_number)
             ? row.format_number

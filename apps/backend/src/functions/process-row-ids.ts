@@ -68,7 +68,8 @@ export function processRowIds(item: {
         }
       });
     } else if (common.isDefined(row.parametersFormula)) {
-      //
+      row.xDeps = [];
+
       let newParametersFormula = row.parametersFormula;
       let parametersFormulaDeps: string[] = [];
       let reg = common.MyRegex.CAPTURE_ROW_REF();
@@ -111,8 +112,20 @@ export function processRowIds(item: {
           row.deps.push(x);
         }
       });
-    } else if (common.isDefined(row.parameters)) {
+
       //
+
+      let parametersFormulaReg = common.MyRegex.CAPTURE_X_REF_G();
+      let parametersFormulaR;
+
+      while (
+        (parametersFormulaR = parametersFormulaReg.exec(row.parametersFormula))
+      ) {
+        row.xDeps.push(parametersFormulaR[1]);
+      }
+    } else if (common.isDefined(row.parameters)) {
+      row.xDeps = [];
+
       row.parameters.forEach(p => {
         let newParId = `$${p.parameterId}`;
         let reg1 = common.MyRegex.CAPTURE_ROW_REF();
@@ -139,6 +152,8 @@ export function processRowIds(item: {
         newParId = newParId.split(common.QUAD_UNDERSCORE).join('');
 
         p.parameterId = newParId.split('$')[1];
+
+        row.xDeps.push(p.parameterId);
 
         if (common.isDefined(p.formula)) {
           let newParFormula = p.formula;
@@ -181,6 +196,17 @@ export function processRowIds(item: {
               row.deps.push(x);
             }
           });
+
+          //
+
+          p.xDeps = [];
+
+          let pFormulaReg = common.MyRegex.CAPTURE_X_REF_G();
+          let pFormulaR;
+
+          while ((pFormulaR = pFormulaReg.exec(p.formula))) {
+            p.xDeps.push(pFormulaR[1]);
+          }
         }
       });
     }
@@ -223,6 +249,12 @@ export function processRowIds(item: {
     }
 
     row.deps = endDeps;
+
+    console.log('row:');
+    console.log(row);
+
+    // console.log('row.parameters:');
+    // console.log(row.parameters);
   });
 
   return newRows;

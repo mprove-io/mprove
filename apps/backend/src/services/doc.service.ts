@@ -13,6 +13,7 @@ import { interfaces } from '~backend/barrels/interfaces';
 import { DbService } from './db.service';
 import { RabbitService } from './rabbit.service';
 import { UserCodeService } from './user-code.service';
+let toposort = require('toposort');
 
 @Injectable()
 export class DocService {
@@ -22,31 +23,6 @@ export class DocService {
     private dbService: DbService,
     private userCodeService: UserCodeService
   ) {}
-
-  // async calculateParametersNew(item: {
-  //   // rep: common.RepX;
-  //   metrics: entities.MetricEntity[];
-  //   models: entities.ModelEntity[];
-  //   repId: string;
-  //   structId: string;
-  //   rows: common.Row[];
-  //   timezone: string;
-  //   timeSpec: common.TimeSpecEnum;
-  //   timeRangeFraction: common.Fraction;
-  //   traceId: string;
-  // }) {
-  //   let {
-  //     repId,
-  //     structId,
-  //     rows,
-  //     timeSpec,
-  //     timeRangeFraction,
-  //     timezone,
-  //     models,
-  //     metrics,
-  //     traceId
-  //   } = item;
-  // }
 
   async calculateParameters(item: {
     // rep: common.RepX;
@@ -125,6 +101,8 @@ export class DocService {
 
     let parametersTableId = 'Parameters';
 
+    let xColumns: { id: string; str: any; xDeps: string[] }[] = [];
+
     let valueColumns: any[] = [];
     let stringColumns: any[] = [];
 
@@ -142,6 +120,8 @@ export class DocService {
         // console.log('row:');
         // console.log(row);
 
+        let xColumnsRow: { id: string; str: any; xDeps: string[] }[] = [];
+
         let rowParColumns: any[] = [];
 
         if (
@@ -153,12 +133,19 @@ export class DocService {
               a.filter > b.filter ? 1 : b.filter > a.filter ? -1 : 0
             )
             .forEach(parameter => {
+              let columnX: { id: string; str: any; xDeps: string[] };
               let columnValue: any;
               let columnString: any;
 
               if (
                 parameter.parameterType === common.ParameterTypeEnum.Formula
               ) {
+                columnX = {
+                  id: parameter.parameterId,
+                  str: parameter.formula,
+                  xDeps: parameter.xDeps
+                };
+
                 columnValue = {
                   id: parameter.parameterId,
                   fields: {
@@ -177,17 +164,23 @@ export class DocService {
                   }
                 };
               } else {
+                let prep = {
+                  filter: parameter.filter,
+                  conditions: parameter.conditions
+                };
+
+                columnX = {
+                  id: parameter.parameterId,
+                  str: JSON.stringify(prep),
+                  xDeps: parameter.xDeps || []
+                };
+
                 columnValue = {
                   id: parameter.parameterId,
                   fields: {
                     type: 'Text',
                     isFormula: false
                   }
-                };
-
-                let prep = {
-                  filter: parameter.filter,
-                  conditions: parameter.conditions
                 };
 
                 record.fields[`${parameter.parameterId}`] =
@@ -202,6 +195,8 @@ export class DocService {
                   }
                 };
               }
+              xColumns.push(columnX);
+              xColumnsRow.push(columnX);
 
               rowParColumns.push(columnValue);
 
@@ -209,6 +204,14 @@ export class DocService {
               stringColumns.push(columnString);
             });
         }
+
+        let parametersColumnX: { id: string; str: any; xDeps: string[] } = {
+          id: `${row.rowId}_PARAMETERS`,
+          str: common.isDefined(row.parametersFormula)
+            ? row.parametersFormula
+            : `[${xColumnsRow.map(x => `$${x.id}`).join(', ')}]`,
+          xDeps: row.xDeps
+        };
 
         let parametersColumnValue = {
           id: `${row.rowId}_PARAMETERS`,
@@ -233,9 +236,41 @@ return json.dumps([${rowParColumns
           }
         };
 
+        xColumns.push(parametersColumnX);
+
         valueColumns.push(parametersColumnValue);
         stringColumns.push(parametersColumnString);
       });
+
+    console.log('xColumns:');
+    console.log(xColumns);
+
+    let xColumnsZeroDeps: string[] = [];
+
+    let graph: any[] = [];
+
+    xColumns.forEach(xColumn => {
+      if (common.isDefined(xColumn.xDeps) && xColumn.xDeps.length > 0) {
+        xColumn.xDeps.forEach(xDep => {
+          graph.push([xColumn.id, xDep]);
+        });
+      } else {
+        xColumnsZeroDeps.push(xColumn.id);
+      }
+    });
+
+    // console.log('xColumnsZeroDeps:');
+    // console.log(xColumnsZeroDeps);
+
+    let xColumnsWithDeps = toposort(graph).reverse();
+
+    let idsSorted = [
+      ...xColumnsZeroDeps.filter(x => xColumnsWithDeps.indexOf(x) < 0),
+      ...xColumnsWithDeps
+    ];
+
+    console.log('idsSorted:');
+    console.log(idsSorted);
 
     let columns: any[] = [...valueColumns, ...stringColumns];
 

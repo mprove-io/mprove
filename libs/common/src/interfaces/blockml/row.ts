@@ -59,6 +59,8 @@ export class Row {
   @IsString()
   parametersFormula: string;
 
+  xDeps: string[];
+
   deps: string[];
 
   @IsBoolean()

@@ -185,6 +185,9 @@ export class MyRegex {
   static CAPTURE_ROW_REF(): RegExp {
     return cloneRegexp(/\$([A-Z]+)/);
   }
+  static CAPTURE_X_REF_G(): RegExp {
+    return cloneRegexp(/\$([A-Z_]+)/g);
+  }
   static WORD_CHARACTERS(): RegExp {
     return cloneRegexp(/^(?:\w+)$/);
   }
