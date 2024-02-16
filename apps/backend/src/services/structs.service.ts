@@ -75,9 +75,9 @@ WHERE c.branch_id is NULL
 
     // WHERE c.branch_id is NULL AND s.server_ts < (NOW() - INTERVAL 10 MINUTE)
 
-    console.log(Date.now());
-    console.log('orphanedRawData: ');
-    console.log(rawData);
+    // console.log(Date.now());
+    // console.log('orphanedRawData: ');
+    // console.log(rawData);
 
     let orphanedStructIds: string[] =
       rawData?.map((x: any) => x.struct_id) || [];

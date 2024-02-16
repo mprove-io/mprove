@@ -12,14 +12,41 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { DbService } from './db.service';
 import { RabbitService } from './rabbit.service';
+import { UserCodeService } from './user-code.service';
 
 @Injectable()
 export class DocService {
   constructor(
     private cs: ConfigService<interfaces.Config>,
     private rabbitService: RabbitService,
-    private dbService: DbService
+    private dbService: DbService,
+    private userCodeService: UserCodeService
   ) {}
+
+  // async calculateParametersNew(item: {
+  //   // rep: common.RepX;
+  //   metrics: entities.MetricEntity[];
+  //   models: entities.ModelEntity[];
+  //   repId: string;
+  //   structId: string;
+  //   rows: common.Row[];
+  //   timezone: string;
+  //   timeSpec: common.TimeSpecEnum;
+  //   timeRangeFraction: common.Fraction;
+  //   traceId: string;
+  // }) {
+  //   let {
+  //     repId,
+  //     structId,
+  //     rows,
+  //     timeSpec,
+  //     timeRangeFraction,
+  //     timezone,
+  //     models,
+  //     metrics,
+  //     traceId
+  //   } = item;
+  // }
 
   async calculateParameters(item: {
     // rep: common.RepX;
@@ -44,6 +71,21 @@ export class DocService {
       metrics,
       traceId
     } = item;
+
+    let codeStartTs = Date.now();
+
+    let rs = await this.userCodeService.run({
+      data: { k: 1 },
+      userCode: `return Object.assign(data, { m: 1+2 });`
+    });
+
+    console.log(
+      'parameters codeStartTs - duration: ',
+      Date.now() - codeStartTs
+    );
+
+    console.log('rs:');
+    console.log(rs);
 
     let parametersGristStartTs = Date.now();
 

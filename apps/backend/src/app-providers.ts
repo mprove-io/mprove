@@ -29,6 +29,7 @@ import { RepsService } from './services/reps.service';
 import { SnowFlakeService } from './services/snowflake.service';
 import { StructsService } from './services/structs.service';
 import { TasksService } from './services/tasks.service';
+import { UserCodeService } from './services/user-code.service';
 import { UsersService } from './services/users.service';
 import { VizsService } from './services/vizs.service';
 
@@ -37,6 +38,7 @@ export const appProviders = [
   DbService,
   EmailService,
   BlockmlService,
+  UserCodeService,
   UsersService,
   OrgsService,
   ProjectsService,
