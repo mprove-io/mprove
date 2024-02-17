@@ -185,6 +185,9 @@ export class MyRegex {
   static CAPTURE_ROW_REF(): RegExp {
     return cloneRegexp(/\$([A-Z]+)/);
   }
+  static CAPTURE_X_REF(): RegExp {
+    return cloneRegexp(/\$([A-Z_]+)/);
+  }
   static CAPTURE_X_REF_G(): RegExp {
     return cloneRegexp(/\$([A-Z_]+)/g);
   }
@@ -450,6 +453,10 @@ export class MyRegex {
     ref: string,
     val: string
   ): string {
+    return input.split(`\$${ref}`).join(`${val}`);
+  }
+
+  static replaceXRefs(input: string, ref: string, val: string): string {
     return input.split(`\$${ref}`).join(`${val}`);
   }
 

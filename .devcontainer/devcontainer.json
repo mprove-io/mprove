@@ -59,7 +59,7 @@
         "k--kato.intellij-idea-keybindings",
         "wayou.vscode-todo-highlight",
         "PKief.material-icon-theme",
-        "rvest.vs-code-prettier-eslint",
+        "rvest.vs-code-prettier-eslint@5.1.0",
         "ms-kubernetes-tools.vscode-kubernetes-tools"
       ],
       "settings": {

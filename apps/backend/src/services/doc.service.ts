@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import axios from 'axios';
 import { format, fromUnixTime } from 'date-fns';
 import { forEachSeries } from 'p-iteration';
 import * as pgPromise from 'pg-promise';
@@ -13,7 +12,17 @@ import { interfaces } from '~backend/barrels/interfaces';
 import { DbService } from './db.service';
 import { RabbitService } from './rabbit.service';
 import { UserCodeService } from './user-code.service';
+let Graph = require('tarjan-graph');
 let toposort = require('toposort');
+
+interface XColumn {
+  id: string;
+  xDeps: string[];
+  input: string;
+  inputSub: string;
+  outputValue: string;
+  outputError: string;
+}
 
 @Injectable()
 export class DocService {
@@ -48,60 +57,45 @@ export class DocService {
       traceId
     } = item;
 
-    let codeStartTs = Date.now();
+    let parametersStartTs = Date.now();
 
-    let rs = await this.userCodeService.run({
-      data: { k: 1 },
-      userCode: `return Object.assign(data, { m: 1+2 });`
-    });
+    // let gristHost =
+    //   this.cs.get<interfaces.Config['backendGristHost']>('backendGristHost');
 
-    console.log(
-      'parameters codeStartTs - duration: ',
-      Date.now() - codeStartTs
-    );
+    // let sender = axios.create({ baseURL: `http://${gristHost}:8484/` });
 
-    console.log('rs:');
-    console.log(rs);
+    // axios.defaults.withCredentials = true;
 
-    let parametersGristStartTs = Date.now();
+    // let backendGristApiKey =
+    //   this.cs.get<interfaces.Config['backendGristApiKey']>(
+    //     'backendGristApiKey'
+    //   );
 
-    let gristHost =
-      this.cs.get<interfaces.Config['backendGristHost']>('backendGristHost');
+    // sender.defaults.headers['Authorization'] = `Bearer ${backendGristApiKey}`;
 
-    let sender = axios.create({ baseURL: `http://${gristHost}:8484/` });
+    // let createDoc = {
+    //   // name: common.makeId()
+    //   name: `parameters - traceId - ${traceId} - repId - ${repId} - structId - ${structId}`
+    // };
 
-    axios.defaults.withCredentials = true;
+    // let createDocStartTs = Date.now();
 
-    let backendGristApiKey =
-      this.cs.get<interfaces.Config['backendGristApiKey']>(
-        'backendGristApiKey'
-      );
+    // let createDocResp = await sender.post(
+    //   `api/workspaces/2/docs`,
+    //   createDoc,
+    //   {}
+    // );
 
-    sender.defaults.headers['Authorization'] = `Bearer ${backendGristApiKey}`;
+    // console.log(
+    //   'parameters createDoc - duration: ',
+    //   Date.now() - createDocStartTs
+    // );
 
-    let createDoc = {
-      // name: common.makeId()
-      name: `parameters - traceId - ${traceId} - repId - ${repId} - structId - ${structId}`
-    };
+    // let docId = createDocResp.data;
 
-    let createDocStartTs = Date.now();
+    // let parametersTableId = 'Parameters';
 
-    let createDocResp = await sender.post(
-      `api/workspaces/2/docs`,
-      createDoc,
-      {}
-    );
-
-    console.log(
-      'parameters createDoc - duration: ',
-      Date.now() - createDocStartTs
-    );
-
-    let docId = createDocResp.data;
-
-    let parametersTableId = 'Parameters';
-
-    let xColumns: { id: string; str: any; xDeps: string[] }[] = [];
+    let xColumns: XColumn[] = [];
 
     let valueColumns: any[] = [];
     let stringColumns: any[] = [];
@@ -120,7 +114,7 @@ export class DocService {
         // console.log('row:');
         // console.log(row);
 
-        let xColumnsRow: { id: string; str: any; xDeps: string[] }[] = [];
+        let xColumnsRow: XColumn[] = [];
 
         let rowParColumns: any[] = [];
 
@@ -133,7 +127,7 @@ export class DocService {
               a.filter > b.filter ? 1 : b.filter > a.filter ? -1 : 0
             )
             .forEach(parameter => {
-              let columnX: { id: string; str: any; xDeps: string[] };
+              let columnX: XColumn;
               let columnValue: any;
               let columnString: any;
 
@@ -142,8 +136,11 @@ export class DocService {
               ) {
                 columnX = {
                   id: parameter.parameterId,
-                  str: parameter.formula,
-                  xDeps: parameter.xDeps
+                  xDeps: parameter.xDeps,
+                  input: parameter.formula,
+                  inputSub: undefined,
+                  outputValue: undefined,
+                  outputError: undefined
                 };
 
                 columnValue = {
@@ -171,8 +168,11 @@ export class DocService {
 
                 columnX = {
                   id: parameter.parameterId,
-                  str: JSON.stringify(prep),
-                  xDeps: parameter.xDeps || []
+                  xDeps: parameter.xDeps || [],
+                  input: JSON.stringify(prep),
+                  inputSub: undefined,
+                  outputValue: undefined,
+                  outputError: undefined
                 };
 
                 columnValue = {
@@ -205,12 +205,15 @@ export class DocService {
             });
         }
 
-        let parametersColumnX: { id: string; str: any; xDeps: string[] } = {
+        let parametersColumnX: XColumn = {
           id: `${row.rowId}_PARAMETERS`,
-          str: common.isDefined(row.parametersFormula)
+          xDeps: row.xDeps,
+          input: common.isDefined(row.parametersFormula)
             ? row.parametersFormula
             : `[${xColumnsRow.map(x => `$${x.id}`).join(', ')}]`,
-          xDeps: row.xDeps
+          inputSub: undefined,
+          outputValue: undefined,
+          outputError: undefined
         };
 
         let parametersColumnValue = {
@@ -247,131 +250,236 @@ return json.dumps([${rowParColumns
 
     let xColumnsZeroDeps: string[] = [];
 
-    let graph: any[] = [];
+    // check for cycles - tarjan graph
+    let g = new Graph();
+    // graph for toposort
+    let gr: string[][] = [];
 
     xColumns.forEach(xColumn => {
       if (common.isDefined(xColumn.xDeps) && xColumn.xDeps.length > 0) {
         xColumn.xDeps.forEach(xDep => {
-          graph.push([xColumn.id, xDep]);
+          g.add(xColumn.id, [xDep]);
+          gr.push([xColumn.id, xDep]);
         });
       } else {
         xColumnsZeroDeps.push(xColumn.id);
       }
     });
 
-    // console.log('xColumnsZeroDeps:');
-    // console.log(xColumnsZeroDeps);
+    let processedXColumns: XColumn[] = [];
+    let cycledNames: string[] = [];
 
-    let xColumnsWithDeps = toposort(graph).reverse();
+    if (g.hasCycle() === true) {
+      let cycles: any[] = g.getCycles();
 
-    let idsSorted = [
-      ...xColumnsZeroDeps.filter(x => xColumnsWithDeps.indexOf(x) < 0),
-      ...xColumnsWithDeps
-    ];
+      cycledNames = cycles[0].map((c: any) => c.name);
 
-    console.log('idsSorted:');
-    console.log(idsSorted);
+      let cycledNamesStr = cycledNames.join(', ');
 
-    let columns: any[] = [...valueColumns, ...stringColumns];
+      processedXColumns = [
+        ...xColumns
+          .filter(k => cycledNames.indexOf(k.id) > -1)
+          .map(x => {
+            x.outputError = `Cycle in formula references of parameters: ${cycledNamesStr}`;
+            return x;
+          }),
+        ...xColumns.filter(k => cycledNames.indexOf(k.id) < 0)
+      ];
+    } else {
+      // console.log('xColumnsZeroDeps:');
+      // console.log(xColumnsZeroDeps);
 
-    let createTables = {
-      tables: [
-        {
-          id: parametersTableId,
-          columns: columns
+      let xColumnsWithDeps = toposort(gr).reverse();
+
+      let idsSorted = [
+        ...xColumnsZeroDeps.filter(x => xColumnsWithDeps.indexOf(x) < 0),
+        ...xColumnsWithDeps
+      ];
+
+      console.log('idsSorted:');
+      console.log(idsSorted);
+
+      await forEachSeries(idsSorted, async x => {
+        let xColumn = xColumns.find(y => y.id === x);
+
+        console.log('xColumn:');
+        console.log(xColumn);
+
+        let inputSub = xColumn.input;
+
+        let reg = common.MyRegex.CAPTURE_X_REF();
+        let r;
+
+        while ((r = reg.exec(inputSub))) {
+          let reference = r[1];
+
+          console.log('reference:');
+          console.log(reference);
+
+          let targetXColumn = processedXColumns.find(k => k.id === reference);
+
+          console.log('targetXColumn:');
+          console.log(targetXColumn);
+
+          let repValue = targetXColumn.outputValue || '';
+
+          console.log('inputSubBefore:');
+          console.log(inputSub);
+          inputSub = common.MyRegex.replaceXRefs(inputSub, reference, repValue);
+          console.log('inputSubAfter:');
+          console.log(inputSub);
         }
-      ]
-    };
 
-    let createTablesStartTs = Date.now();
+        let userCode = `JSON.stringify((function() {
+${inputSub};
+})())`;
 
-    let createTablesResp = await sender.post(
-      `api/docs/${docId}/tables`,
-      createTables,
-      {}
-    );
+        console.log('userCodeService.runOnly start');
+        let rs = await this.userCodeService.runOnly({
+          userCode: userCode
+        });
+        console.log('rs:');
+        console.log(rs);
+        console.log('userCodeService.runOnly end');
 
-    console.log(
-      'parameters createTables - duration: ',
-      Date.now() - createTablesStartTs
-    );
+        xColumn.outputValue = rs.outValue || 'Error';
+        xColumn.outputError = rs.outErr;
 
-    // console.log('record');
-    // console.log([record]);
+        processedXColumns.push(xColumn);
+      });
+    }
 
-    let createRecordsStartTs = Date.now();
+    // let codeStartTs = Date.now();
 
-    let createRecordsResp = await sender.post(
-      `api/docs/${docId}/tables/${parametersTableId}/records`,
-      { records: [record] },
-      {}
-    );
+    // let rs = await this.userCodeService.run({
+    //   data: { k: 1 },
+    //   userCode: `return Object.assign(data, { m: 1+2 });`
+    // });
 
-    console.log(
-      'parameters createRecords - duration: ',
-      Date.now() - createRecordsStartTs
-    );
+    // console.log(
+    //   'parameters codeStartTs - duration: ',
+    //   Date.now() - codeStartTs
+    // );
 
-    // console.log('getRecords');
+    // console.log('rs:');
+    // console.log(rs);
 
-    let getRecordsStartTs = Date.now();
+    // let columns: any[] = [...valueColumns, ...stringColumns];
 
-    let getRecordsResp = await sender.get(
-      `api/docs/${docId}/tables/${parametersTableId}/records`,
-      {}
-    );
+    // let createTables = {
+    //   tables: [
+    //     {
+    //       id: parametersTableId,
+    //       columns: columns
+    //     }
+    //   ]
+    // };
 
-    console.log(
-      'parameters getRecordsDuration - duration: ',
-      Date.now() - getRecordsStartTs
-    );
+    // let createTablesStartTs = Date.now();
 
-    let lastCalculatedTs = Number(helper.makeTs());
+    // let createTablesResp = await sender.post(
+    //   `api/docs/${docId}/tables`,
+    //   createTables,
+    //   {}
+    // );
 
-    let newKits: entities.KitEntity[] = [];
+    // console.log(
+    //   'parameters createTables - duration: ',
+    //   Date.now() - createTablesStartTs
+    // );
 
-    let firstRecord = getRecordsResp.data.records[0];
+    // // console.log('record');
+    // // console.log([record]);
+
+    // let createRecordsStartTs = Date.now();
+
+    // let createRecordsResp = await sender.post(
+    //   `api/docs/${docId}/tables/${parametersTableId}/records`,
+    //   { records: [record] },
+    //   {}
+    // );
+
+    // console.log(
+    //   'parameters createRecords - duration: ',
+    //   Date.now() - createRecordsStartTs
+    // );
+
+    // // console.log('getRecords');
+
+    // let getRecordsStartTs = Date.now();
+
+    // let getRecordsResp = await sender.get(
+    //   `api/docs/${docId}/tables/${parametersTableId}/records`,
+    //   {}
+    // );
+
+    // console.log(
+    //   'parameters getRecordsDuration - duration: ',
+    //   Date.now() - getRecordsStartTs
+    // );
+
+    // let lastCalculatedTs = Number(helper.makeTs());
+
+    // let newKits: entities.KitEntity[] = [];
+
+    // let firstRecord = getRecordsResp.data.records[0];
 
     // console.log('firstRecord', firstRecord);
+
+    console.log('start forEachSeries rows');
 
     await forEachSeries(
       rows.filter(row => row.rowType === common.RowTypeEnum.Metric),
       async row => {
-        let stringParametersColumn = `STRING_${row.rowId}_PARAMETERS`;
+        //
+        // let stringParametersColumn = `STRING_${row.rowId}_PARAMETERS`;
 
-        let isParamsCalcValid = common.isUndefined(
-          firstRecord.errors?.[stringParametersColumn]
+        let parametersXColumn = processedXColumns.find(
+          x => x.id === `${row.rowId}_PARAMETERS`
         );
 
-        let isParamsJsonValid = isParamsCalcValid === false ? false : true;
+        // let isParamsCalcValid = common.isUndefined(
+        //   firstRecord.errors?.[stringParametersColumn]
+        // );
+
+        let isParamsCalcValid = common.isUndefined(
+          parametersXColumn.outputError
+        );
+
+        let isParamsJsonValid = false;
 
         if (isParamsCalcValid === true) {
           try {
-            JSON.parse(firstRecord.fields[stringParametersColumn]);
+            // JSON.parse(firstRecord.fields[stringParametersColumn]);
+            JSON.parse(parametersXColumn.outputValue);
+            isParamsJsonValid = true;
           } catch (e) {
             isParamsJsonValid = false;
           }
         }
 
         let parsedParameters: common.Parameter[] =
-          isParamsCalcValid === false
-            ? firstRecord.errors[stringParametersColumn]
-            : isParamsJsonValid === true
-            ? JSON.parse(firstRecord.fields[stringParametersColumn])
-            : [];
+          // isParamsCalcValid === false
+          // ? firstRecord.errors[stringParametersColumn]
+          isParamsJsonValid === true
+            ? JSON.parse(parametersXColumn.outputValue)
+            : // ? JSON.parse(firstRecord.fields[stringParametersColumn])
+              [];
 
         row.isParamsCalcValid = isParamsCalcValid;
         row.isParamsJsonValid = isParamsJsonValid;
         row.parametersJson = common.makeCopy(parsedParameters);
 
-        let isParamsSchemaValid = true;
         let paramsSchemaError;
+        let isParamsSchemaValid = true;
+
+        if (isParamsJsonValid === false) {
+          paramsSchemaError = 'Parameters is not JSON';
+          isParamsSchemaValid = false;
+        }
 
         if (common.isDefined(row.parametersFormula)) {
-          if (
-            row.isParamsCalcValid === true &&
-            row.isParamsJsonValid === true
-          ) {
+          if (row.isParamsJsonValid === true) {
             if (!Array.isArray(parsedParameters)) {
               isParamsSchemaValid = false;
               paramsSchemaError = 'Parameters formula must return an array';
@@ -396,37 +504,44 @@ return json.dumps([${rowParColumns
         let filters: common.Filter[] = [];
 
         await forEachSeries(row.parameters, async parameter => {
+          let parXColumn = processedXColumns.find(
+            x => x.id === parameter.parameterId
+          );
+
           let parsedParameter;
 
           if (parameter.parameterType === common.ParameterTypeEnum.Formula) {
-            let parStr = `STRING_${parameter.parameterId}`;
+            // let parStr = `STRING_${parameter.parameterId}`;
 
-            let isCalcValid = common.isUndefined(firstRecord.errors?.[parStr]);
+            // let isCalcValid = common.isUndefined(firstRecord.errors?.[parStr]);
+            let isCalcValid = common.isUndefined(parXColumn.outputError);
 
-            let isJsonValid = isCalcValid === false ? false : true;
+            let isJsonValid = false;
+
             if (isCalcValid === true) {
               try {
-                JSON.parse(firstRecord.fields[parStr]);
+                JSON.parse(parXColumn.outputValue);
+                isJsonValid = true;
               } catch (e) {
                 isJsonValid = false;
               }
             }
 
             parameter.isCalcValid = isCalcValid;
-            if (parameter.isCalcValid === false) {
-              row.isParamsCalcValid = false;
-            }
+
+            // if (parameter.isCalcValid === false) {
+            //   row.isParamsCalcValid = false;
+            // }
 
             parameter.isJsonValid = isJsonValid;
-            if (parameter.isJsonValid === false) {
-              row.isParamsJsonValid = false;
-            }
 
-            if (
-              parameter.isCalcValid === true &&
-              parameter.isJsonValid === true
-            ) {
-              parsedParameter = JSON.parse(firstRecord.fields[parStr]);
+            // if (parameter.isJsonValid === false) {
+            //   row.isParamsJsonValid = false;
+            // }
+
+            if (parameter.isJsonValid === true) {
+              // parsedParameter = JSON.parse(firstRecord.fields[parStr]);
+              parsedParameter = JSON.parse(parXColumn.outputValue);
               parameter.conditions = parsedParameter.conditions;
             } else {
               parameter.conditions = ['any'];
@@ -434,24 +549,25 @@ return json.dumps([${rowParColumns
           }
 
           let schemaError;
-          let isSchemaValid = true;
+          // let isSchemaValid = true;
 
-          if (common.isUndefined(parameter)) {
-            schemaError = 'Parameter must be defined';
-            isSchemaValid = false;
-          } else if (parameter.constructor !== Object) {
+          // if (common.isUndefined(parameter)) {
+          //   schemaError = 'Parameter must be defined';
+          //   isSchemaValid = false;
+          // } else
+          if (parameter.constructor !== Object) {
             schemaError = 'Parameter must be an object';
-            isSchemaValid = false;
+            // isSchemaValid = false;
           } else if (common.isUndefined(parameter.filter)) {
             schemaError = 'Parameter must have a "filter" property';
-            isSchemaValid = false;
+            // isSchemaValid = false;
           } else if (
             Array.isArray(parameter.filter) ||
             parameter.filter.constructor === Object
           ) {
             schemaError =
               'Parameter filter must be a string in a form of "alias.field_id"';
-            isSchemaValid = false;
+            // isSchemaValid = false;
           } else if (common.isDefined(row.parametersFormula)) {
             let fieldId = parameter.filter.split('.').join('_').toUpperCase();
             parameter.parameterId = `${row.rowId}_${fieldId}`;
@@ -465,31 +581,31 @@ return json.dumps([${rowParColumns
             } else {
               schemaError =
                 'Wrong parameter filter value. Model field is not found.';
-              isSchemaValid = false;
+              // isSchemaValid = false;
             }
           }
 
-          if (isSchemaValid === false) {
+          if (common.isDefined(schemaError)) {
             parameter = {} as any;
             parameter.schemaError = schemaError;
             parameter.isSchemaValid = false;
 
-            row.paramsSchemaError = schemaError;
+            row.paramsSchemaError = row.paramsSchemaError || schemaError;
             row.isParamsSchemaValid = false;
             return;
           }
 
-          // schema is valid
+          // schemaError is undefined
 
           if (common.isUndefined(parameter.conditions)) {
             schemaError = 'Parameter conditions must be defined';
-            isSchemaValid = false;
+            // isSchemaValid = false;
           } else if (!Array.isArray(parameter.conditions)) {
             schemaError = 'Parameter conditions must be an array';
-            isSchemaValid = false;
+            // isSchemaValid = false;
           } else if (parameter.conditions.length === 0) {
             schemaError = 'Parameter conditions must have at least one element';
-            isSchemaValid = false;
+            // isSchemaValid = false;
           } else {
             parameter.conditions.forEach(y => {
               if (
@@ -499,12 +615,12 @@ return json.dumps([${rowParColumns
               ) {
                 schemaError =
                   'Parameter conditions must be an array of filter expressions';
-                isSchemaValid = false;
+                // isSchemaValid = false;
               }
             });
           }
 
-          if (isSchemaValid === false) {
+          if (common.isDefined(schemaError)) {
             parameter.conditions = ['any'];
           }
 
@@ -533,7 +649,7 @@ return json.dumps([${rowParColumns
 
           if (blockmlGetFractionsResponse.payload.isValid === false) {
             schemaError = `Parameter conditions are not valid for filter result "${parameter.result}"`;
-            isSchemaValid = false;
+            // isSchemaValid = false;
           }
 
           let filter: common.Filter = {
@@ -543,21 +659,24 @@ return json.dumps([${rowParColumns
 
           filters.push(filter);
 
-          if (isSchemaValid === true && common.isDefined(parsedParameter)) {
+          if (
+            common.isUndefined(schemaError) &&
+            common.isDefined(parsedParameter)
+          ) {
             if (common.isUndefined(parsedParameter.filter)) {
               schemaError = `Parameter "${parameter.filter}" must have a "filter" property`;
-              isSchemaValid = false;
+              // isSchemaValid = false;
             } else if (parameter.filter !== parsedParameter.filter) {
               schemaError = `parameter filter "${parameter.filter}" does not match "${parsedParameter.filter}"`;
-              isSchemaValid = false;
+              // isSchemaValid = false;
             }
           }
 
-          parameter.schemaError = schemaError;
-          parameter.isSchemaValid = isSchemaValid;
+          parameter.isSchemaValid = common.isUndefined(schemaError);
 
           if (parameter.isSchemaValid === false) {
-            row.paramsSchemaError = schemaError;
+            parameter.schemaError = schemaError;
+            row.paramsSchemaError = row.paramsSchemaError || schemaError;
             row.isParamsSchemaValid = false;
           }
         });
@@ -569,7 +688,7 @@ return json.dumps([${rowParColumns
 
     console.log(
       'parameters grist Total - duration: ',
-      Date.now() - parametersGristStartTs
+      Date.now() - parametersStartTs
     );
 
     return rows;

@@ -5,26 +5,44 @@ const ivm = require('isolated-vm');
 export class UserCodeService {
   constructor() {}
 
-  async run(item: { data: any; userCode: string }): Promise<any> {
-    let { data, userCode } = item;
+  async runOnly(item: { userCode: string }): Promise<any> {
+    let { userCode } = item;
 
     let isolate = new ivm.Isolate({ memoryLimit: 8 });
     let context = await isolate.createContext();
 
-    let code = `JSON.stringify((function() {
-let data = ${JSON.stringify(data)};
-${userCode};
-})())`;
-
     try {
-      let script = await isolate.compileScript(code);
-      let result = await script.run(context);
-      return result;
+      let timeoutMs = 500;
+      let script = await isolate.compileScript(userCode);
+      let result = await script.run(context, { timeout: timeoutMs });
+      return { outValue: result };
     } catch (error: any) {
-      throw new Error(`Error executing user code: ${error.message}`);
+      return { outError: error.message };
     } finally {
-      // Dispose the isolate to free up memory
       isolate.dispose();
     }
   }
+
+  //   async run(item: { data: any; userCode: string }): Promise<any> {
+  //     let { data, userCode } = item;
+
+  //     let isolate = new ivm.Isolate({ memoryLimit: 8 });
+  //     let context = await isolate.createContext();
+
+  //     let code = `JSON.stringify((function() {
+  // let data = ${JSON.stringify(data)};
+  // ${userCode};
+  // })())`;
+
+  //     try {
+  //       let script = await isolate.compileScript(code);
+  //       let result = await script.run(context);
+  //       return result;
+  //     } catch (error: any) {
+  //       throw new Error(`Error executing user code: ${error.message}`);
+  //     } finally {
+  //       // Dispose the isolate to free up memory
+  //       isolate.dispose();
+  //     }
+  //   }
 }
