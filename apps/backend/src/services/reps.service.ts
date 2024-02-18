@@ -603,12 +603,7 @@ export class RepsService {
       console.log('isCalculateParameters true');
 
       rep.rows = await this.docService.calculateParameters({
-        repId: rep.rep_id,
-        structId: rep.struct_id,
         rows: rep.rows,
-        timezone: timezone,
-        timeSpec: timeSpec,
-        timeRangeFraction: timeRangeFraction,
         models: models,
         metrics: metrics,
         traceId: traceId

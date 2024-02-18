@@ -28,23 +28,6 @@ services:
       - 5672:5672
       - 15672:15672
 
-  grist:
-    build:
-      context: ./
-      dockerfile: tools/docker/grist.Dockerfile
-    image: ghcr.io/mprove-io/mprove-grist:$MPROVE_RELEASE_TAG
-    environment:
-      - GRIST_SANDBOX_FLAVOR=$COMPOSE_GRIST_SANDBOX_FLAVOR
-      - GRIST_SESSION_SECRET=$COMPOSE_GRIST_SESSION_SECRET
-      - COOKIE_MAX_AGE=$COMPOSE_GRIST_COOKIE_MAX_AGE
-      - MPROVE_GRIST_API_KEY=$COMPOSE_MPROVE_GRIST_API_KEY
-    ports:
-      - 8484:8484
-    volumes:
-      - type: bind
-        source: $COMPOSE_GRIST_SOURCE_PATH
-        target: /persist 
-
   disk:
     build:
       context: ./
@@ -72,7 +55,6 @@ services:
       - $ENV_FILE_PATH
     environment:
       BACKEND_IS_SCHEDULER: 'FALSE'
-      BACKEND_GRIST_HOST: grist
       BACKEND_FIRST_PROJECT_DWH_POSTGRES_HOST: dwh-postgres
     ports:
       - 3000:3000
@@ -97,7 +79,6 @@ services:
       - $ENV_FILE_PATH
     environment:
       BACKEND_IS_SCHEDULER: 'TRUE'
-      BACKEND_GRIST_HOST: grist
       BACKEND_FIRST_PROJECT_DWH_POSTGRES_HOST: dwh-postgres
     depends_on:
       - db

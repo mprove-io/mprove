@@ -34,89 +34,21 @@ export class DocService {
   ) {}
 
   async calculateParameters(item: {
-    // rep: common.RepX;
     metrics: entities.MetricEntity[];
     models: entities.ModelEntity[];
-    repId: string;
-    structId: string;
     rows: common.Row[];
-    timezone: string;
-    timeSpec: common.TimeSpecEnum;
-    timeRangeFraction: common.Fraction;
     traceId: string;
   }) {
-    let {
-      repId,
-      structId,
-      rows,
-      timeSpec,
-      timeRangeFraction,
-      timezone,
-      models,
-      metrics,
-      traceId
-    } = item;
+    let { rows, models, metrics, traceId } = item;
 
-    let parametersStartTs = Date.now();
-
-    // let gristHost =
-    //   this.cs.get<interfaces.Config['backendGristHost']>('backendGristHost');
-
-    // let sender = axios.create({ baseURL: `http://${gristHost}:8484/` });
-
-    // axios.defaults.withCredentials = true;
-
-    // let backendGristApiKey =
-    //   this.cs.get<interfaces.Config['backendGristApiKey']>(
-    //     'backendGristApiKey'
-    //   );
-
-    // sender.defaults.headers['Authorization'] = `Bearer ${backendGristApiKey}`;
-
-    // let createDoc = {
-    //   // name: common.makeId()
-    //   name: `parameters - traceId - ${traceId} - repId - ${repId} - structId - ${structId}`
-    // };
-
-    // let createDocStartTs = Date.now();
-
-    // let createDocResp = await sender.post(
-    //   `api/workspaces/2/docs`,
-    //   createDoc,
-    //   {}
-    // );
-
-    // console.log(
-    //   'parameters createDoc - duration: ',
-    //   Date.now() - createDocStartTs
-    // );
-
-    // let docId = createDocResp.data;
-
-    // let parametersTableId = 'Parameters';
+    // let parametersStartTs = Date.now();
 
     let xColumns: XColumn[] = [];
-
-    let valueColumns: any[] = [];
-    let stringColumns: any[] = [];
-
-    let record: any = {
-      id: 1,
-      fields: {}
-    };
-
-    // console.log('rows:');
-    // console.log(rows);
 
     rows
       .filter(row => row.rowType === common.RowTypeEnum.Metric)
       .forEach(row => {
-        // console.log('row:');
-        // console.log(row);
-
         let xColumnsRow: XColumn[] = [];
-
-        let rowParColumns: any[] = [];
 
         if (
           common.isUndefined(row.parametersFormula) &&
@@ -128,8 +60,6 @@ export class DocService {
             )
             .forEach(parameter => {
               let columnX: XColumn;
-              let columnValue: any;
-              let columnString: any;
 
               if (
                 parameter.parameterType === common.ParameterTypeEnum.Formula
@@ -142,24 +72,6 @@ export class DocService {
                   outputValue: undefined,
                   outputError: undefined
                 };
-
-                columnValue = {
-                  id: parameter.parameterId,
-                  fields: {
-                    type: 'Text',
-                    isFormula: true,
-                    formula: parameter.formula
-                  }
-                };
-
-                columnString = {
-                  id: `STRING_${parameter.parameterId}`,
-                  fields: {
-                    type: 'Text',
-                    isFormula: true,
-                    formula: `str($${parameter.parameterId})`
-                  }
-                };
               } else {
                 let prep = {
                   filter: parameter.filter,
@@ -170,39 +82,13 @@ export class DocService {
                   id: parameter.parameterId,
                   xDeps: parameter.xDeps || [],
                   input: undefined,
-                  // input: `return ${JSON.stringify(prep)};`,
                   inputSub: undefined,
                   outputValue: JSON.stringify(prep),
                   outputError: undefined
                 };
-
-                columnValue = {
-                  id: parameter.parameterId,
-                  fields: {
-                    type: 'Text',
-                    isFormula: false
-                  }
-                };
-
-                record.fields[`${parameter.parameterId}`] =
-                  JSON.stringify(prep);
-
-                columnString = {
-                  id: `STRING_${parameter.parameterId}`,
-                  fields: {
-                    type: 'Text',
-                    isFormula: true,
-                    formula: `str($${parameter.parameterId})`
-                  }
-                };
               }
               xColumns.push(columnX);
               xColumnsRow.push(columnX);
-
-              rowParColumns.push(columnValue);
-
-              valueColumns.push(columnValue);
-              stringColumns.push(columnString);
             });
         }
 
@@ -235,37 +121,11 @@ export class DocService {
           outputError: undefined
         };
 
-        //         let parametersColumnValue = {
-        //           id: `${row.rowId}_PARAMETERS`,
-        //           fields: {
-        //             type: 'Text',
-        //             isFormula: true,
-        //             formula: common.isDefined(row.parametersFormula)
-        //               ? row.parametersFormula
-        //               : `import json
-        // return json.dumps([${rowParColumns
-        //                   .map(column => `json.loads($${column.id})`)
-        //                   .join(', ')}])`
-        //           }
-        //         };
-
-        // let parametersColumnString = {
-        //   id: `STRING_${row.rowId}_PARAMETERS`,
-        //   fields: {
-        //     type: 'Text',
-        //     isFormula: true,
-        //     formula: `str($${row.rowId}_PARAMETERS)`
-        //   }
-        // };
-
         xColumns.push(parametersColumnX);
-
-        // valueColumns.push(parametersColumnValue);
-        // stringColumns.push(parametersColumnString);
       });
 
-    console.log('xColumns:');
-    console.log(xColumns);
+    // console.log('xColumns:');
+    // console.log(xColumns);
 
     let xColumnsZeroDeps: string[] = [];
 
@@ -305,9 +165,6 @@ export class DocService {
         ...xColumns.filter(k => cycledNames.indexOf(k.id) < 0)
       ];
     } else {
-      // console.log('xColumnsZeroDeps:');
-      // console.log(xColumnsZeroDeps);
-
       let xColumnsWithDeps = toposort(gr).reverse();
 
       let idsSorted = [
@@ -315,18 +172,18 @@ export class DocService {
         ...xColumnsWithDeps
       ];
 
-      console.log('idsSorted:');
-      console.log(idsSorted);
+      // console.log('idsSorted:');
+      // console.log(idsSorted);
 
       await forEachSeries(idsSorted, async x => {
         let xColumn = xColumns.find(y => y.id === x);
 
-        console.log('xColumn:');
-        console.log(xColumn);
+        // console.log('xColumn:');
+        // console.log(xColumn);
 
         if (common.isDefined(xColumn.outputValue)) {
           processedXColumns.push(xColumn);
-          console.log('skip');
+          // console.log('skip');
         } else {
           let inputSub = xColumn.input;
 
@@ -336,18 +193,18 @@ export class DocService {
           while ((r = reg.exec(inputSub))) {
             let reference = r[1];
 
-            console.log('reference:');
-            console.log(reference);
+            // console.log('reference:');
+            // console.log(reference);
 
             let targetXColumn = processedXColumns.find(k => k.id === reference);
 
-            console.log('targetXColumn:');
-            console.log(targetXColumn);
+            // console.log('targetXColumn:');
+            // console.log(targetXColumn);
 
             let repValue = targetXColumn?.outputValue || 'ErrorRefNotFound';
 
-            console.log('inputSubBefore:');
-            console.log(inputSub);
+            // console.log('inputSubBefore:');
+            // console.log(inputSub);
 
             inputSub = common.MyRegex.replaceXRefs(
               inputSub,
@@ -355,21 +212,22 @@ export class DocService {
               repValue
             );
 
-            console.log('inputSubAfter:');
-            console.log(inputSub);
+            // console.log('inputSubAfter:');
+            // console.log(inputSub);
           }
 
           let userCode = `JSON.stringify((function() {
 ${inputSub};
 })())`;
 
-          console.log('userCodeService.runOnly start');
+          // console.log('userCodeService.runOnly start');
           let rs = await this.userCodeService.runOnly({
             userCode: userCode
           });
-          console.log('rs:');
-          console.log(rs);
-          console.log('userCodeService.runOnly end');
+          // console.log('rs:');
+          // console.log(rs);
+
+          // console.log('userCodeService.runOnly end');
 
           xColumn.outputValue = rs.outValue || 'Error';
           xColumn.outputError = rs.outErr;
@@ -379,98 +237,12 @@ ${inputSub};
       });
     }
 
-    // let codeStartTs = Date.now();
-
-    // let rs = await this.userCodeService.run({
-    //   data: { k: 1 },
-    //   userCode: `return Object.assign(data, { m: 1+2 });`
-    // });
-
-    // console.log(
-    //   'parameters codeStartTs - duration: ',
-    //   Date.now() - codeStartTs
-    // );
-
-    // console.log('rs:');
-    // console.log(rs);
-
-    // let columns: any[] = [...valueColumns, ...stringColumns];
-
-    // let createTables = {
-    //   tables: [
-    //     {
-    //       id: parametersTableId,
-    //       columns: columns
-    //     }
-    //   ]
-    // };
-
-    // let createTablesStartTs = Date.now();
-
-    // let createTablesResp = await sender.post(
-    //   `api/docs/${docId}/tables`,
-    //   createTables,
-    //   {}
-    // );
-
-    // console.log(
-    //   'parameters createTables - duration: ',
-    //   Date.now() - createTablesStartTs
-    // );
-
-    // // console.log('record');
-    // // console.log([record]);
-
-    // let createRecordsStartTs = Date.now();
-
-    // let createRecordsResp = await sender.post(
-    //   `api/docs/${docId}/tables/${parametersTableId}/records`,
-    //   { records: [record] },
-    //   {}
-    // );
-
-    // console.log(
-    //   'parameters createRecords - duration: ',
-    //   Date.now() - createRecordsStartTs
-    // );
-
-    // // console.log('getRecords');
-
-    // let getRecordsStartTs = Date.now();
-
-    // let getRecordsResp = await sender.get(
-    //   `api/docs/${docId}/tables/${parametersTableId}/records`,
-    //   {}
-    // );
-
-    // console.log(
-    //   'parameters getRecordsDuration - duration: ',
-    //   Date.now() - getRecordsStartTs
-    // );
-
-    // let lastCalculatedTs = Number(helper.makeTs());
-
-    // let newKits: entities.KitEntity[] = [];
-
-    // let firstRecord = getRecordsResp.data.records[0];
-
-    // console.log('firstRecord', firstRecord);
-
-    console.log('start forEachSeries rows');
-
     await forEachSeries(
       rows.filter(row => row.rowType === common.RowTypeEnum.Metric),
       async row => {
-        //
-        // let stringParametersColumn = `STRING_${row.rowId}_PARAMETERS`;
-
         let parametersXColumn = processedXColumns.find(
           x => x.id === `${row.rowId}_PARAMETERS`
         );
-
-        // let isParamsCalcValid = common.isUndefined(
-        //   firstRecord.errors?.[stringParametersColumn]
-        // );
 
         let isParamsCalcValid = common.isUndefined(
           parametersXColumn.outputError
@@ -480,7 +252,6 @@ ${inputSub};
 
         if (isParamsCalcValid === true) {
           try {
-            // JSON.parse(firstRecord.fields[stringParametersColumn]);
             JSON.parse(parametersXColumn.outputValue);
             isParamsJsonValid = true;
           } catch (e) {
@@ -489,12 +260,9 @@ ${inputSub};
         }
 
         let parsedParameters: common.Parameter[] =
-          // isParamsCalcValid === false
-          // ? firstRecord.errors[stringParametersColumn]
           isParamsJsonValid === true
             ? JSON.parse(parametersXColumn.outputValue)
-            : // ? JSON.parse(firstRecord.fields[stringParametersColumn])
-              [];
+            : [];
 
         row.isParamsCalcValid = isParamsCalcValid;
         row.isParamsJsonValid = isParamsJsonValid;
@@ -541,9 +309,6 @@ ${inputSub};
           let parsedParameter;
 
           if (parameter.parameterType === common.ParameterTypeEnum.Formula) {
-            // let parStr = `STRING_${parameter.parameterId}`;
-
-            // let isCalcValid = common.isUndefined(firstRecord.errors?.[parStr]);
             let isCalcValid = common.isUndefined(parXColumn.outputError);
 
             let isJsonValid = false;
@@ -558,19 +323,9 @@ ${inputSub};
             }
 
             parameter.isCalcValid = isCalcValid;
-
-            // if (parameter.isCalcValid === false) {
-            //   row.isParamsCalcValid = false;
-            // }
-
             parameter.isJsonValid = isJsonValid;
 
-            // if (parameter.isJsonValid === false) {
-            //   row.isParamsJsonValid = false;
-            // }
-
             if (parameter.isJsonValid === true) {
-              // parsedParameter = JSON.parse(firstRecord.fields[parStr]);
               parsedParameter = JSON.parse(parXColumn.outputValue);
               parameter.conditions = parsedParameter.conditions;
             } else {
@@ -579,7 +334,6 @@ ${inputSub};
           }
 
           let schemaError;
-          // let isSchemaValid = true;
 
           // if (common.isUndefined(parameter)) {
           //   schemaError = 'Parameter must be defined';
@@ -587,17 +341,14 @@ ${inputSub};
           // } else
           if (parameter.constructor !== Object) {
             schemaError = 'Parameter must be an object';
-            // isSchemaValid = false;
           } else if (common.isUndefined(parameter.filter)) {
             schemaError = 'Parameter must have a "filter" property';
-            // isSchemaValid = false;
           } else if (
             Array.isArray(parameter.filter) ||
             parameter.filter.constructor === Object
           ) {
             schemaError =
               'Parameter filter must be a string in a form of "alias.field_id"';
-            // isSchemaValid = false;
           } else if (common.isDefined(row.parametersFormula)) {
             let fieldId = parameter.filter.split('.').join('_').toUpperCase();
             parameter.parameterId = `${row.rowId}_${fieldId}`;
@@ -611,7 +362,6 @@ ${inputSub};
             } else {
               schemaError =
                 'Wrong parameter filter value. Model field is not found.';
-              // isSchemaValid = false;
             }
           }
 
@@ -629,13 +379,10 @@ ${inputSub};
 
           if (common.isUndefined(parameter.conditions)) {
             schemaError = 'Parameter conditions must be defined';
-            // isSchemaValid = false;
           } else if (!Array.isArray(parameter.conditions)) {
             schemaError = 'Parameter conditions must be an array';
-            // isSchemaValid = false;
           } else if (parameter.conditions.length === 0) {
             schemaError = 'Parameter conditions must have at least one element';
-            // isSchemaValid = false;
           } else {
             parameter.conditions.forEach(y => {
               if (
@@ -645,7 +392,6 @@ ${inputSub};
               ) {
                 schemaError =
                   'Parameter conditions must be an array of filter expressions';
-                // isSchemaValid = false;
               }
             });
           }
@@ -679,7 +425,6 @@ ${inputSub};
 
           if (blockmlGetFractionsResponse.payload.isValid === false) {
             schemaError = `Parameter conditions are not valid for filter result "${parameter.result}"`;
-            // isSchemaValid = false;
           }
 
           let filter: common.Filter = {
@@ -695,10 +440,8 @@ ${inputSub};
           ) {
             if (common.isUndefined(parsedParameter.filter)) {
               schemaError = `Parameter "${parameter.filter}" must have a "filter" property`;
-              // isSchemaValid = false;
             } else if (parameter.filter !== parsedParameter.filter) {
               schemaError = `parameter filter "${parameter.filter}" does not match "${parsedParameter.filter}"`;
-              // isSchemaValid = false;
             }
           }
 
@@ -716,10 +459,10 @@ ${inputSub};
       }
     );
 
-    console.log(
-      'parameters grist Total - duration: ',
-      Date.now() - parametersStartTs
-    );
+    // console.log(
+    //   'calculateParameters - duration: ',
+    //   Date.now() - parametersStartTs
+    // );
 
     return rows;
   }
@@ -753,8 +496,8 @@ ${inputSub};
       timeSpec: timeSpec
     });
 
-    console.log('recordsByColumn:');
-    console.log(recordsByColumn);
+    // console.log('recordsByColumn:');
+    // console.log(recordsByColumn);
 
     let timestampValues = recordsByColumn.map(x => x.fields['timestamp']);
 
@@ -775,7 +518,6 @@ ${inputSub};
       `  main.timestamp as timestamp`,
       ...rep.rows
         .filter(row => row.rowType === common.RowTypeEnum.Metric)
-        // .map(x => `  CAST(main.${x.rowId} AS numeric) AS ${x.rowId}`),
         .map(x => `  main.${x.rowId} AS ${x.rowId}`),
       ...rep.rows
         .filter(row => row.rowType === common.RowTypeEnum.Formula)
@@ -1025,178 +767,4 @@ FROM main;`;
 
     return recordsByColumn;
   }
-
-  // async calculateDataOld(item: {
-  //   rep: common.RepX;
-  //   timezone: string;
-  //   timeSpec: common.TimeSpecEnum;
-  //   timeRangeFraction: common.Fraction;
-  //   traceId: string;
-  // }) {
-  //   let { rep, timeSpec, timeRangeFraction, timezone, traceId } = item;
-
-  //   let gristStartTs = Date.now();
-
-  //   let gristHost =
-  //     this.cs.get<interfaces.Config['backendGristHost']>('backendGristHost');
-
-  //   let sender = axios.create({ baseURL: `http://${gristHost}:8484/` });
-
-  //   axios.defaults.withCredentials = true;
-
-  //   let backendGristApiKey =
-  //     this.cs.get<interfaces.Config['backendGristApiKey']>(
-  //       'backendGristApiKey'
-  //     );
-
-  //   sender.defaults.headers['Authorization'] = `Bearer ${backendGristApiKey}`;
-
-  //   let createDoc = {
-  //     // name: common.makeId()
-  //     name: `data - traceId - ${traceId} - repId - ${rep.repId} - structId - ${rep.structId}`
-  //   };
-
-  //   let createDocStartTs = Date.now();
-
-  //   let createDocResp = await sender.post(
-  //     `api/workspaces/2/docs`,
-  //     createDoc,
-  //     {}
-  //   );
-
-  //   console.log('data createDoc - duration: ', Date.now() - createDocStartTs);
-
-  //   let docId = createDocResp.data;
-  //   let metricsTableId = 'Metrics';
-
-  //   let createTables = {
-  //     tables: [
-  //       {
-  //         id: metricsTableId,
-  //         columns: [
-  //           {
-  //             id: 'timestamp',
-  //             fields: {
-  //               type: 'Int',
-  //               // widgetOptions:
-  //               //   '{"widget":"TextBox","dateFormat":"YYYY-MM-DD","timeFormat":"h:mma","isCustomDateFormat":false,"isCustomTimeFormat":false,"alignment":"left","decimals":0}',
-  //               isFormula: false
-  //             }
-  //           },
-  //           ...rep.rows.map(x => ({
-  //             id: x.rowId,
-  //             fields: {
-  //               type: 'Numeric',
-  //               isFormula: x.rowType === common.RowTypeEnum.Formula,
-  //               formula: x.formula
-  //             }
-  //           }))
-  //         ]
-  //       }
-  //     ]
-  //   };
-
-  //   let createTablesStartTs = Date.now();
-
-  //   let createTablesResp = await sender.post(
-  //     `api/docs/${docId}/tables`,
-  //     createTables,
-  //     {}
-  //   );
-
-  //   console.log(
-  //     'data createTables - duration: ',
-  //     Date.now() - createTablesStartTs
-  //   );
-
-  //   let recordsByColumn = this.makeRecordsByColumn({
-  //     rep: rep,
-  //     timeSpec: timeSpec
-  //   });
-
-  //   // console.log('recordsByColumn:');
-  //   // console.log(recordsByColumn);
-
-  //   let createRecordsStartTs = Date.now();
-
-  //   let createRecordsResp = await sender.post(
-  //     `api/docs/${docId}/tables/${metricsTableId}/records`,
-  //     {
-  //       records: recordsByColumn
-  //     },
-  //     {}
-  //   );
-
-  //   console.log(
-  //     'data createRecords - duration: ',
-  //     Date.now() - createRecordsStartTs
-  //   );
-
-  //   let getRecordsStartTs = Date.now();
-
-  //   let getRecordsResp = await sender.get(
-  //     `api/docs/${docId}/tables/${metricsTableId}/records`,
-  //     {}
-  //   );
-
-  //   console.log('data getRecords - duration: ', Date.now() - getRecordsStartTs);
-
-  //   console.log('Total grist - duration: ', Date.now() - gristStartTs);
-
-  //   let lastCalculatedTs = Number(helper.makeTs());
-
-  //   let newKits: entities.KitEntity[] = [];
-
-  //   console.log('getRecordsResp.data.records[1].fields:');
-  //   console.log(getRecordsResp.data.records[1].fields);
-
-  //   rep.rows
-  //     .filter(
-  //       row =>
-  //         row.rowType === common.RowTypeEnum.Metric ||
-  //         row.rowType === common.RowTypeEnum.Formula
-  //     )
-  //     .forEach(row => {
-  //       row.records = getRecordsResp.data.records.map((y: any) => ({
-  //         id: y.id,
-  //         key: Number(y.fields.timestamp.toString().split('.')[0]),
-  //         value: common.isDefined(y.fields) ? y.fields[row.rowId] : undefined,
-  //         error: common.isDefined(y.errors) ? y.errors[row.rowId] : undefined
-  //       }));
-
-  //       let rq = row.rqs.find(
-  //         y =>
-  //           y.fractionBrick === timeRangeFraction.brick &&
-  //           y.timeSpec === timeSpec &&
-  //           y.timezone === timezone
-  //       );
-
-  //       if (row.rowType === common.RowTypeEnum.Formula) {
-  //         rq.kitId = common.makeId();
-
-  //         let newKit: entities.KitEntity = {
-  //           struct_id: rep.structId,
-  //           kit_id: rq.kitId,
-  //           rep_id: rep.repId,
-  //           data: row.records,
-  //           server_ts: undefined
-  //         };
-
-  //         newKits.push(newKit);
-  //       }
-
-  //       rq.lastCalculatedTs = lastCalculatedTs;
-  //     });
-
-  //   if (newKits.length > 0) {
-  //     await this.dbService.writeRecords({
-  //       modify: false,
-  //       records: {
-  //         kits: newKits
-  //       }
-  //     });
-  //   }
-
-  //   return rep;
-  // }
 }

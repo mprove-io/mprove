@@ -149,12 +149,6 @@ export class Config {
   @IsString()
   backendMysqlDatabase?: string;
 
-  @IsString()
-  backendGristHost?: string;
-
-  @IsString()
-  backendGristApiKey?: string;
-
   @IsEnum(common.BoolEnum)
   backendLogIsJson?: common.BoolEnum;
 
