@@ -239,9 +239,7 @@ export class RowFiltersComponent {
       newParameter = Object.assign({}, parameter, {
         parameterType: common.ParameterTypeEnum.Formula,
         conditions: newConditions,
-        formula: `import json
-a = {"filter": "${parameter.filter}", "conditions": ["${newConditionsStr}"]};
-return json.dumps(a)`
+        formula: `return {"filter": "${parameter.filter}", "conditions": ["${newConditionsStr}"]}`
       } as common.Parameter);
     }
 

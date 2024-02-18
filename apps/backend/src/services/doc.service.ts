@@ -181,10 +181,10 @@ export class DocService {
         // console.log('xColumn:');
         // console.log(xColumn);
 
-        if (common.isDefined(xColumn.outputValue)) {
+        if (common.isDefined(xColumn?.outputValue)) {
           processedXColumns.push(xColumn);
           // console.log('skip');
-        } else {
+        } else if (common.isDefined(xColumn)) {
           let inputSub = xColumn.input;
 
           let reg = common.MyRegex.CAPTURE_X_REF();

@@ -703,8 +703,7 @@ export class RowComponent {
       rowChange = {
         rowId: this.repSelectedNode.data.rowId,
         parameters: undefined,
-        parametersFormula: `import json
-return json.dumps([])`
+        parametersFormula: `return []`
       };
     }
 
