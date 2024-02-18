@@ -7,9 +7,7 @@
   <div
     *ngIf="showJson === true"
     [style.max-height.px]="
-      rData?.isParamsCalcValid === true &&
-      rData?.isParamsJsonValid === true &&
-      rData?.parametersJson.length > 0
+      rData?.isParamsJsonValid === true && rData?.parametersJson.length > 0
         ? rData?.finalRowHeight - 16
         : rData?.finalRowHeight - 8
     "

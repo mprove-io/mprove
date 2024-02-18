@@ -244,19 +244,20 @@ ${inputSub};
           x => x.id === `${row.rowId}_PARAMETERS`
         );
 
-        let isParamsCalcValid = common.isUndefined(
-          parametersXColumn.outputError
-        );
-
+        let paramsSchemaError;
         let isParamsJsonValid = false;
 
-        if (isParamsCalcValid === true) {
+        if (common.isUndefined(parametersXColumn.outputError)) {
           try {
             JSON.parse(parametersXColumn.outputValue);
             isParamsJsonValid = true;
           } catch (e) {
             isParamsJsonValid = false;
+            paramsSchemaError =
+              'Failed to calculate row parameters. Check parameters formula and its dependences. Formula must return a valid JSON (array of parameters).';
           }
+        } else {
+          paramsSchemaError = parametersXColumn.outputError;
         }
 
         let parsedParameters: common.Parameter[] =
@@ -264,40 +265,26 @@ ${inputSub};
             ? JSON.parse(parametersXColumn.outputValue)
             : [];
 
-        row.isParamsCalcValid = isParamsCalcValid;
         row.isParamsJsonValid = isParamsJsonValid;
         row.parametersJson = common.makeCopy(parsedParameters);
 
-        let paramsSchemaError;
-        let isParamsSchemaValid = true;
-
-        if (isParamsJsonValid === false) {
-          paramsSchemaError = 'Parameters is not JSON';
-          isParamsSchemaValid = false;
-        }
-
         if (common.isDefined(row.parametersFormula)) {
-          if (row.isParamsJsonValid === true) {
-            if (!Array.isArray(parsedParameters)) {
-              isParamsSchemaValid = false;
-              paramsSchemaError = 'Parameters formula must return an array';
-            }
+          if (!Array.isArray(parsedParameters)) {
+            paramsSchemaError = 'Parameters formula must return an array';
+          }
 
-            if (isParamsSchemaValid === true) {
-              row.parameters = parsedParameters;
-              row.parameters.forEach(x => {
-                x.parameterType = common.ParameterTypeEnum.Field;
-              });
-            } else {
-              row.parameters = [];
-            }
-          } else {
+          if (common.isDefined(paramsSchemaError)) {
             row.parameters = [];
+          } else {
+            row.parameters = parsedParameters;
+            row.parameters.forEach(x => {
+              x.parameterType = common.ParameterTypeEnum.Field;
+            });
           }
         }
 
-        row.isParamsSchemaValid = isParamsSchemaValid;
         row.paramsSchemaError = paramsSchemaError;
+        row.isParamsSchemaValid = common.isUndefined(paramsSchemaError);
 
         let filters: common.Filter[] = [];
 
@@ -307,6 +294,8 @@ ${inputSub};
           );
 
           let parsedParameter;
+
+          let schemaError;
 
           if (parameter.parameterType === common.ParameterTypeEnum.Formula) {
             let isCalcValid = common.isUndefined(parXColumn.outputError);
@@ -319,6 +308,7 @@ ${inputSub};
                 isJsonValid = true;
               } catch (e) {
                 isJsonValid = false;
+                schemaError = 'Parameter is not JSON';
               }
             }
 
@@ -333,12 +323,6 @@ ${inputSub};
             }
           }
 
-          let schemaError;
-
-          // if (common.isUndefined(parameter)) {
-          //   schemaError = 'Parameter must be defined';
-          //   isSchemaValid = false;
-          // } else
           if (parameter.constructor !== Object) {
             schemaError = 'Parameter must be an object';
           } else if (common.isUndefined(parameter.filter)) {

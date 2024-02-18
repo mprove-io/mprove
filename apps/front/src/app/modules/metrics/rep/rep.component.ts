@@ -254,7 +254,6 @@ export class RepComponent {
         let isRepParametersHaveError =
           this.rep.rows.filter(
             row =>
-              row.isParamsCalcValid === false ||
               row.isParamsJsonValid === false ||
               row.isParamsSchemaValid === false
           ).length > 0;
@@ -481,7 +480,6 @@ export class RepComponent {
     let minRowHeight =
       params.data.rowType === common.RowTypeEnum.Metric &&
       params.data.showParametersJson === true &&
-      params.data.isParamsCalcValid === true &&
       params.data.isParamsJsonValid === true
         ? countLines({ input: params.data.parametersJson, lines: 1 }) * 20 + 8
         : 42;

@@ -9,14 +9,12 @@
     class="text-red1 mr-5 mt-1 flex h-8 w-8 flex-shrink-0"
     tippy="Parameters have an error"
     [isEnabled]="
-      params.data.isParamsCalcValid === false ||
       params.data.isParamsJsonValid === false ||
       params.data.isParamsSchemaValid === false
     "
   >
     <m-exclamation-icon
       *ngIf="
-        params.data.isParamsCalcValid === false ||
         params.data.isParamsJsonValid === false ||
         params.data.isParamsSchemaValid === false
       "

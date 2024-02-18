@@ -30,9 +30,6 @@ export class Row {
   timeLabel: string;
 
   @IsBoolean()
-  isParamsCalcValid?: boolean;
-
-  @IsBoolean()
   isParamsJsonValid?: boolean;
 
   @IsBoolean()
