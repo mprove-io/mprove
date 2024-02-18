@@ -169,9 +169,10 @@ export class DocService {
                 columnX = {
                   id: parameter.parameterId,
                   xDeps: parameter.xDeps || [],
-                  input: JSON.stringify(prep),
+                  input: undefined,
+                  // input: `return ${JSON.stringify(prep)};`,
                   inputSub: undefined,
-                  outputValue: undefined,
+                  outputValue: JSON.stringify(prep),
                   outputError: undefined
                 };
 
@@ -210,39 +211,57 @@ export class DocService {
           xDeps: row.xDeps,
           input: common.isDefined(row.parametersFormula)
             ? row.parametersFormula
-            : `[${xColumnsRow.map(x => `$${x.id}`).join(', ')}]`,
+            : row.parameters.filter(
+                x => x.parameterType === common.ParameterTypeEnum.Formula
+              ).length > 0
+            ? `return [${xColumnsRow.map(x => `$${x.id}`).join(', ')}]`
+            : undefined,
           inputSub: undefined,
-          outputValue: undefined,
+          outputValue:
+            common.isDefined(row.parametersFormula) ||
+            row.parameters.filter(
+              x => x.parameterType === common.ParameterTypeEnum.Formula
+            ).length > 0
+              ? undefined
+              : JSON.stringify(
+                  row.parameters.map(x => {
+                    let prep = {
+                      filter: x.filter,
+                      conditions: x.conditions
+                    };
+                    return prep;
+                  })
+                ),
           outputError: undefined
         };
 
-        let parametersColumnValue = {
-          id: `${row.rowId}_PARAMETERS`,
-          fields: {
-            type: 'Text',
-            isFormula: true,
-            formula: common.isDefined(row.parametersFormula)
-              ? row.parametersFormula
-              : `import json
-return json.dumps([${rowParColumns
-                  .map(column => `json.loads($${column.id})`)
-                  .join(', ')}])`
-          }
-        };
+        //         let parametersColumnValue = {
+        //           id: `${row.rowId}_PARAMETERS`,
+        //           fields: {
+        //             type: 'Text',
+        //             isFormula: true,
+        //             formula: common.isDefined(row.parametersFormula)
+        //               ? row.parametersFormula
+        //               : `import json
+        // return json.dumps([${rowParColumns
+        //                   .map(column => `json.loads($${column.id})`)
+        //                   .join(', ')}])`
+        //           }
+        //         };
 
-        let parametersColumnString = {
-          id: `STRING_${row.rowId}_PARAMETERS`,
-          fields: {
-            type: 'Text',
-            isFormula: true,
-            formula: `str($${row.rowId}_PARAMETERS)`
-          }
-        };
+        // let parametersColumnString = {
+        //   id: `STRING_${row.rowId}_PARAMETERS`,
+        //   fields: {
+        //     type: 'Text',
+        //     isFormula: true,
+        //     formula: `str($${row.rowId}_PARAMETERS)`
+        //   }
+        // };
 
         xColumns.push(parametersColumnX);
 
-        valueColumns.push(parametersColumnValue);
-        stringColumns.push(parametersColumnString);
+        // valueColumns.push(parametersColumnValue);
+        // stringColumns.push(parametersColumnString);
       });
 
     console.log('xColumns:');
@@ -305,47 +324,58 @@ return json.dumps([${rowParColumns
         console.log('xColumn:');
         console.log(xColumn);
 
-        let inputSub = xColumn.input;
+        if (common.isDefined(xColumn.outputValue)) {
+          processedXColumns.push(xColumn);
+          console.log('skip');
+        } else {
+          let inputSub = xColumn.input;
 
-        let reg = common.MyRegex.CAPTURE_X_REF();
-        let r;
+          let reg = common.MyRegex.CAPTURE_X_REF();
+          let r;
 
-        while ((r = reg.exec(inputSub))) {
-          let reference = r[1];
+          while ((r = reg.exec(inputSub))) {
+            let reference = r[1];
 
-          console.log('reference:');
-          console.log(reference);
+            console.log('reference:');
+            console.log(reference);
 
-          let targetXColumn = processedXColumns.find(k => k.id === reference);
+            let targetXColumn = processedXColumns.find(k => k.id === reference);
 
-          console.log('targetXColumn:');
-          console.log(targetXColumn);
+            console.log('targetXColumn:');
+            console.log(targetXColumn);
 
-          let repValue = targetXColumn.outputValue || '';
+            let repValue = targetXColumn?.outputValue || 'ErrorRefNotFound';
 
-          console.log('inputSubBefore:');
-          console.log(inputSub);
-          inputSub = common.MyRegex.replaceXRefs(inputSub, reference, repValue);
-          console.log('inputSubAfter:');
-          console.log(inputSub);
-        }
+            console.log('inputSubBefore:');
+            console.log(inputSub);
 
-        let userCode = `JSON.stringify((function() {
+            inputSub = common.MyRegex.replaceXRefs(
+              inputSub,
+              reference,
+              repValue
+            );
+
+            console.log('inputSubAfter:');
+            console.log(inputSub);
+          }
+
+          let userCode = `JSON.stringify((function() {
 ${inputSub};
 })())`;
 
-        console.log('userCodeService.runOnly start');
-        let rs = await this.userCodeService.runOnly({
-          userCode: userCode
-        });
-        console.log('rs:');
-        console.log(rs);
-        console.log('userCodeService.runOnly end');
+          console.log('userCodeService.runOnly start');
+          let rs = await this.userCodeService.runOnly({
+            userCode: userCode
+          });
+          console.log('rs:');
+          console.log(rs);
+          console.log('userCodeService.runOnly end');
 
-        xColumn.outputValue = rs.outValue || 'Error';
-        xColumn.outputError = rs.outErr;
+          xColumn.outputValue = rs.outValue || 'Error';
+          xColumn.outputError = rs.outErr;
 
-        processedXColumns.push(xColumn);
+          processedXColumns.push(xColumn);
+        }
       });
     }
 
