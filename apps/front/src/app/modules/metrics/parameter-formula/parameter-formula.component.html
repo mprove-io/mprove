@@ -23,31 +23,13 @@
   </div>
 
   <ng-template #templateParameterFormula>
-    <div *ngIf="parameterFilter.isCalcValid === false"
-      >Failed to calculate parameter. Check formula and its dependences.</div
-    >
-
-    <div
-      *ngIf="
-        parameterFilter.isCalcValid === true &&
-        parameterFilter.isJsonValid === false
-      "
-      >{{ 'Formula must return a valid JSON object (parameter)' }}</div
-    >
-
-    <div
-      *ngIf="
-        parameterFilter.isCalcValid === true &&
-        parameterFilter.isJsonValid === true &&
-        parameterFilter.isSchemaValid === false
-      "
-      >{{ parameterFilter.schemaError }}</div
-    >
+    <div *ngIf="parameterFilter.isSchemaValid === false">{{
+      parameterFilter.schemaError
+    }}</div>
   </ng-template>
 
   <div
     *ngIf="
-      parameterFilter.isCalcValid === false ||
       parameterFilter.isJsonValid === false ||
       parameterFilter.isSchemaValid === false
     "

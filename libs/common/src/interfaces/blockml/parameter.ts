@@ -24,9 +24,6 @@ export class Parameter {
   xDeps: string[];
 
   @IsBoolean()
-  isCalcValid?: boolean;
-
-  @IsBoolean()
   isJsonValid?: boolean;
 
   @IsBoolean()

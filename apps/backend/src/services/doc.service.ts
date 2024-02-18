@@ -178,8 +178,8 @@ export class DocService {
       await forEachSeries(idsSorted, async x => {
         let xColumn = xColumns.find(y => y.id === x);
 
-        // console.log('xColumn:');
-        // console.log(xColumn);
+        console.log('xColumn:');
+        console.log(xColumn);
 
         if (common.isDefined(xColumn?.outputValue)) {
           processedXColumns.push(xColumn);
@@ -190,47 +190,42 @@ export class DocService {
           let reg = common.MyRegex.CAPTURE_X_REF();
           let r;
 
+          let refError;
+
           while ((r = reg.exec(inputSub))) {
             let reference = r[1];
 
-            // console.log('reference:');
-            // console.log(reference);
-
             let targetXColumn = processedXColumns.find(k => k.id === reference);
 
-            // console.log('targetXColumn:');
-            // console.log(targetXColumn);
-
-            let repValue = targetXColumn?.outputValue || 'ErrorRefNotFound';
-
-            // console.log('inputSubBefore:');
-            // console.log(inputSub);
+            if (common.isUndefined(targetXColumn)) {
+              refError = `Reference ${reference} not found`;
+              break;
+            } else if (common.isDefined(targetXColumn.outputError)) {
+              refError = `Referenced parameter ${reference} has error`;
+              break;
+            }
 
             inputSub = common.MyRegex.replaceXRefs(
               inputSub,
               reference,
-              repValue
+              targetXColumn.outputValue
             );
-
-            // console.log('inputSubAfter:');
-            // console.log(inputSub);
           }
 
-          let userCode = `JSON.stringify((function() {
-${inputSub};
-})())`;
+          if (common.isDefined(refError)) {
+            xColumn.outputValue = 'Error';
+            xColumn.outputError = refError;
+          } else {
+            let userCode = `JSON.stringify((function() {
+${inputSub};})())`;
 
-          // console.log('userCodeService.runOnly start');
-          let rs = await this.userCodeService.runOnly({
-            userCode: userCode
-          });
-          // console.log('rs:');
-          // console.log(rs);
+            let rs = await this.userCodeService.runOnly({
+              userCode: userCode
+            });
 
-          // console.log('userCodeService.runOnly end');
-
-          xColumn.outputValue = rs.outValue || 'Error';
-          xColumn.outputError = rs.outErr;
+            xColumn.outputValue = rs.outValue || 'Error';
+            xColumn.outputError = rs.outError;
+          }
 
           processedXColumns.push(xColumn);
         }
@@ -244,6 +239,9 @@ ${inputSub};
           x => x.id === `${row.rowId}_PARAMETERS`
         );
 
+        console.log('parametersXColumn:');
+        console.log(parametersXColumn);
+
         let paramsSchemaError;
         let isParamsJsonValid = false;
 
@@ -253,8 +251,9 @@ ${inputSub};
             isParamsJsonValid = true;
           } catch (e) {
             isParamsJsonValid = false;
-            paramsSchemaError =
-              'Failed to calculate row parameters. Check parameters formula and its dependences. Formula must return a valid JSON (array of parameters).';
+            paramsSchemaError = `Failed to calculate row parameters. 
+Check parameters formula and its dependences. 
+Formula must return a valid JSON (array of parameters).`;
           }
         } else {
           paramsSchemaError = parametersXColumn.outputError;
@@ -284,7 +283,6 @@ ${inputSub};
         }
 
         row.paramsSchemaError = paramsSchemaError;
-        row.isParamsSchemaValid = common.isUndefined(paramsSchemaError);
 
         let filters: common.Filter[] = [];
 
@@ -293,26 +291,29 @@ ${inputSub};
             x => x.id === parameter.parameterId
           );
 
-          let parsedParameter;
+          console.log('parXColumn:');
+          console.log(parXColumn);
 
           let schemaError;
+          let isJsonValid = false;
+
+          let parsedParameter;
 
           if (parameter.parameterType === common.ParameterTypeEnum.Formula) {
-            let isCalcValid = common.isUndefined(parXColumn.outputError);
-
-            let isJsonValid = false;
-
-            if (isCalcValid === true) {
+            if (common.isUndefined(parXColumn.outputError)) {
               try {
                 JSON.parse(parXColumn.outputValue);
                 isJsonValid = true;
               } catch (e) {
                 isJsonValid = false;
-                schemaError = 'Parameter is not JSON';
+                schemaError = `Failed to calculate parameter. 
+Check parameter formula and its dependences. 
+Formula must return a valid JSON object.`;
               }
+            } else {
+              schemaError = parXColumn.outputError;
             }
 
-            parameter.isCalcValid = isCalcValid;
             parameter.isJsonValid = isJsonValid;
 
             if (parameter.isJsonValid === true) {
@@ -350,16 +351,8 @@ ${inputSub};
           }
 
           if (common.isDefined(schemaError)) {
-            parameter = {} as any;
-            parameter.schemaError = schemaError;
-            parameter.isSchemaValid = false;
-
-            row.paramsSchemaError = row.paramsSchemaError || schemaError;
-            row.isParamsSchemaValid = false;
-            return;
+            parameter.conditions = ['any'];
           }
-
-          // schemaError is undefined
 
           if (common.isUndefined(parameter.conditions)) {
             schemaError = 'Parameter conditions must be defined';
@@ -429,14 +422,12 @@ ${inputSub};
             }
           }
 
+          parameter.schemaError = schemaError;
           parameter.isSchemaValid = common.isUndefined(schemaError);
-
-          if (parameter.isSchemaValid === false) {
-            parameter.schemaError = schemaError;
-            row.paramsSchemaError = row.paramsSchemaError || schemaError;
-            row.isParamsSchemaValid = false;
-          }
+          row.paramsSchemaError = row.paramsSchemaError || schemaError;
         });
+
+        row.isParamsSchemaValid = common.isUndefined(row.paramsSchemaError);
 
         row.parametersFiltersWithExcludedTime = filters;
         row.isCalculateParameters = false;

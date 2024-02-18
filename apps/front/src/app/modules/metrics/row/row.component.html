@@ -319,17 +319,9 @@
       </div>
 
       <ng-template #templateErrors>
-        <div *ngIf="repSelectedNode.data.isParamsJsonValid === false">{{
-          'Failed to calculate row parameters. Check formula and its dependences. Formula must return a valid JSON (array of parameters).'
+        <div *ngIf="repSelectedNode.data.isParamsSchemaValid === false">{{
+          repSelectedNode.data.paramsSchemaError
         }}</div>
-
-        <div
-          *ngIf="
-            repSelectedNode.data.isParamsJsonValid === true &&
-            repSelectedNode.data.isParamsSchemaValid === false
-          "
-          >{{ repSelectedNode.data.paramsSchemaError }}</div
-        >
       </ng-template>
 
       <div

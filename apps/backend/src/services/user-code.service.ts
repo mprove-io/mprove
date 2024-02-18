@@ -17,6 +17,10 @@ export class UserCodeService {
       let result = await script.run(context, { timeout: timeoutMs });
       return { outValue: result };
     } catch (error: any) {
+      // console.log('error:');
+      // console.log(error);
+      // console.log('error.message:');
+      // console.log(error.message);
       return { outError: error.message };
     } finally {
       isolate.dispose();
