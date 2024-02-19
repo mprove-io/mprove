@@ -217,7 +217,8 @@ export class DocService {
             xColumn.outputError = refError;
           } else {
             let userCode = `JSON.stringify((function() {
-${inputSub};})())`;
+${inputSub}
+})())`;
 
             let rs = await this.userCodeService.runOnly({
               userCode: userCode
@@ -264,9 +265,6 @@ Formula must return a valid JSON (array of parameters).`;
             ? JSON.parse(parametersXColumn.outputValue)
             : [];
 
-        row.isParamsJsonValid = isParamsJsonValid;
-        row.parametersJson = common.makeCopy(parsedParameters);
-
         if (common.isDefined(row.parametersFormula)) {
           if (!Array.isArray(parsedParameters)) {
             paramsSchemaError = 'Parameters formula must return an array';
@@ -275,7 +273,7 @@ Formula must return a valid JSON (array of parameters).`;
           if (common.isDefined(paramsSchemaError)) {
             row.parameters = [];
           } else {
-            row.parameters = parsedParameters;
+            row.parameters = common.makeCopy(parsedParameters);
             row.parameters.forEach(x => {
               x.parameterType = common.ParameterTypeEnum.Field;
             });
@@ -291,8 +289,8 @@ Formula must return a valid JSON (array of parameters).`;
             x => x.id === parameter.parameterId
           );
 
-          console.log('parXColumn:');
-          console.log(parXColumn);
+          // console.log('parXColumn:');
+          // console.log(parXColumn);
 
           let schemaError;
           let isJsonValid = false;
@@ -426,6 +424,23 @@ Formula must return a valid JSON object.`;
           parameter.isSchemaValid = common.isUndefined(schemaError);
           row.paramsSchemaError = row.paramsSchemaError || schemaError;
         });
+
+        row.isParamsJsonValid = isParamsJsonValid;
+
+        row.parametersJson =
+          isParamsJsonValid === true
+            ? common.makeCopy(parsedParameters)
+            : common.isDefined(row.parametersFormula)
+            ? common.makeCopy(parsedParameters)
+            : common.makeCopy(
+                row.parameters.map(x => {
+                  let p = common.makeCopy({
+                    filter: x.filter,
+                    conditions: x.conditions
+                  });
+                  return p;
+                })
+              );
 
         row.isParamsSchemaValid = common.isUndefined(row.paramsSchemaError);
 

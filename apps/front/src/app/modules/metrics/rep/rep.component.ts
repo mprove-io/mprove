@@ -479,8 +479,7 @@ export class RepComponent {
 
     let minRowHeight =
       params.data.rowType === common.RowTypeEnum.Metric &&
-      params.data.showParametersJson === true &&
-      params.data.isParamsJsonValid === true
+      params.data.showParametersJson === true
         ? countLines({ input: params.data.parametersJson, lines: 1 }) * 20 + 8
         : 42;
 
