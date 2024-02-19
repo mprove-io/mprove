@@ -178,8 +178,8 @@ export class DocService {
       await forEachSeries(idsSorted, async x => {
         let xColumn = xColumns.find(y => y.id === x);
 
-        console.log('xColumn:');
-        console.log(xColumn);
+        // console.log('xColumn:');
+        // console.log(xColumn);
 
         if (common.isDefined(xColumn?.outputValue)) {
           processedXColumns.push(xColumn);
@@ -240,8 +240,8 @@ ${inputSub}
           x => x.id === `${row.rowId}_PARAMETERS`
         );
 
-        console.log('parametersXColumn:');
-        console.log(parametersXColumn);
+        // console.log('parametersXColumn:');
+        // console.log(parametersXColumn);
 
         let paramsSchemaError;
         let isParamsJsonValid = false;
@@ -587,11 +587,11 @@ FROM main;`;
       })
       .catch(async (e: any) => {
         queryError = e;
-        console.log('query error:');
-        console.log(e);
+        // console.log('query error:');
+        // console.log(e);
       });
 
-    console.log('Total pg - duration: ', Date.now() - pgStartTs);
+    // console.log('Total pg - duration: ', Date.now() - pgStartTs);
 
     //
 
