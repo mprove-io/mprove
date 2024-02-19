@@ -38,6 +38,12 @@ export class Row {
   @IsString()
   paramsSchemaError?: string;
 
+  @IsString()
+  formulaError?: string;
+
+  @IsString()
+  topQueryError?: string;
+
   parametersJson: any[];
 
   @ValidateNested()
@@ -55,6 +61,8 @@ export class Row {
   parametersFormula: string;
 
   xDeps: string[];
+
+  formulaDeps: string[];
 
   deps: string[];
 

@@ -41,9 +41,13 @@ export class DocService {
   }) {
     let { rows, models, metrics, traceId } = item;
 
-    // let parametersStartTs = Date.now();
-
     let xColumns: XColumn[] = [];
+
+    rows
+      .filter(row => row.rowType === common.RowTypeEnum.Formula)
+      .forEach(row => {
+        row.formulaError = undefined;
+      });
 
     rows
       .filter(row => row.rowType === common.RowTypeEnum.Metric)
@@ -124,9 +128,6 @@ export class DocService {
         xColumns.push(parametersColumnX);
       });
 
-    // console.log('xColumns:');
-    // console.log(xColumns);
-
     let xColumnsZeroDeps: string[] = [];
 
     // check for cycles - tarjan graph
@@ -172,18 +173,11 @@ export class DocService {
         ...xColumnsWithDeps
       ];
 
-      // console.log('idsSorted:');
-      // console.log(idsSorted);
-
       await forEachSeries(idsSorted, async x => {
         let xColumn = xColumns.find(y => y.id === x);
 
-        // console.log('xColumn:');
-        // console.log(xColumn);
-
         if (common.isDefined(xColumn?.outputValue)) {
           processedXColumns.push(xColumn);
-          // console.log('skip');
         } else if (common.isDefined(xColumn)) {
           let inputSub = xColumn.input;
 
@@ -240,9 +234,6 @@ ${inputSub}
           x => x.id === `${row.rowId}_PARAMETERS`
         );
 
-        // console.log('parametersXColumn:');
-        // console.log(parametersXColumn);
-
         let paramsSchemaError;
         let isParamsJsonValid = false;
 
@@ -288,9 +279,6 @@ Formula must return a valid JSON (array of parameters).`;
           let parXColumn = processedXColumns.find(
             x => x.id === parameter.parameterId
           );
-
-          // console.log('parXColumn:');
-          // console.log(parXColumn);
 
           let schemaError;
           let isJsonValid = false;
@@ -449,11 +437,6 @@ Formula must return a valid JSON object.`;
       }
     );
 
-    // console.log(
-    //   'calculateParameters - duration: ',
-    //   Date.now() - parametersStartTs
-    // );
-
     return rows;
   }
 
@@ -466,91 +449,140 @@ Formula must return a valid JSON object.`;
   }) {
     let { rep, timeSpec, timeRangeFraction, timezone, traceId } = item;
 
-    let pgStartTs = Date.now();
+    // check for cycles - tarjan graph
+    let g = new Graph();
+    // graph for toposort
+    let gr: string[][] = [];
 
-    let cn: pg.IConnectionParameters<pg.IClient> = {
-      host: this.cs.get<interfaces.Config['firstProjectDwhPostgresHost']>(
-        'firstProjectDwhPostgresHost'
-      ),
-      port: 5432,
-      database: 'p_db',
-      user: 'postgres',
-      password: this.cs.get<
-        interfaces.Config['firstProjectDwhPostgresPassword']
-      >('firstProjectDwhPostgresPassword'),
-      ssl: false
-    };
+    rep.rows.forEach(x => {
+      x.formulaError = undefined;
+
+      if (common.isDefined(x.formulaDeps) && x.formulaDeps.length > 0) {
+        let wrongReferences: string[] = [];
+
+        x.formulaDeps.forEach(dep => {
+          if (rep.rows.map(r => r.rowId).indexOf(dep) < 0) {
+            wrongReferences.push(dep);
+          }
+          g.add(x.rowId, [dep]);
+          gr.push([x.rowId, dep]);
+        });
+
+        if (wrongReferences.length > 0) {
+          x.formulaError = `Formula references not valid rows: ${wrongReferences.join(
+            ', '
+          )}`;
+        }
+      }
+    });
+
+    let cycledNames: string[] = [];
+
+    if (g.hasCycle() === true) {
+      let cycles: any[] = g.getCycles();
+
+      cycledNames = cycles[0].map((c: any) => c.name);
+
+      let cycledNamesStr = cycledNames.join(', ');
+
+      rep.rows
+        .filter(k => cycledNames.indexOf(k.rowId) > -1)
+        .forEach(x => {
+          if (common.isUndefined(x.formulaError)) {
+            x.formulaError = `Cycle in formula references of rows: ${cycledNamesStr}`;
+          }
+          return x;
+        });
+    }
 
     let recordsByColumn = this.makeRecordsByColumn({
       rep: rep,
       timeSpec: timeSpec
     });
 
-    // console.log('recordsByColumn:');
-    // console.log(recordsByColumn);
+    let topQueryData: any[] = [];
+    let topQueryError: any;
 
-    let timestampValues = recordsByColumn.map(x => x.fields['timestamp']);
+    if (rep.rows.filter(x => common.isDefined(x.formulaError)).length > 0) {
+      topQueryError = common.SOME_ROWS_HAVE_FORMULA_ERRORS;
+    } else {
+      let cn: pg.IConnectionParameters<pg.IClient> = {
+        host: this.cs.get<interfaces.Config['firstProjectDwhPostgresHost']>(
+          'firstProjectDwhPostgresHost'
+        ),
+        port: 5432,
+        database: 'p_db',
+        user: 'postgres',
+        password: this.cs.get<
+          interfaces.Config['firstProjectDwhPostgresPassword']
+        >('firstProjectDwhPostgresPassword'),
+        ssl: false
+      };
 
-    let mainSelect = [
-      `unnest(ARRAY[${timestampValues}]) AS timestamp`,
-      ...rep.rows
-        .filter(row => row.rowType === common.RowTypeEnum.Metric)
-        .map(row => {
-          let values = recordsByColumn.map(r => r.fields[row.rowId] || 'NULL');
-          let str = `    unnest(ARRAY[${values}]) AS ${row.rowId}`;
-          return str;
-        })
-    ];
+      let timestampValues = recordsByColumn.map(x => x.fields['timestamp']);
 
-    let mainSelectReady = mainSelect.join(',\n');
+      let mainSelect = [
+        `unnest(ARRAY[${timestampValues}]) AS timestamp`,
+        ...rep.rows
+          .filter(row => row.rowType === common.RowTypeEnum.Metric)
+          .map(row => {
+            let values = recordsByColumn.map(
+              r => r.fields[row.rowId] || 'NULL'
+            );
+            let str = `    unnest(ARRAY[${values}]) AS ${row.rowId}`;
+            return str;
+          })
+      ];
 
-    let outerSelect = [
-      `  main.timestamp as timestamp`,
-      ...rep.rows
-        .filter(row => row.rowType === common.RowTypeEnum.Metric)
-        .map(x => `  main.${x.rowId} AS ${x.rowId}`),
-      ...rep.rows
-        .filter(row => row.rowType === common.RowTypeEnum.Formula)
-        .map(row => {
-          let newFormula = row.formula;
-          let reg = common.MyRegex.CAPTURE_ROW_REF();
-          let r;
+      let mainSelectReady = mainSelect.join(',\n');
 
-          while ((r = reg.exec(newFormula))) {
-            let reference = r[1];
+      let outerSelect = [
+        `  main.timestamp as timestamp`,
+        ...rep.rows
+          .filter(row => row.rowType === common.RowTypeEnum.Metric)
+          .map(x => `  main.${x.rowId} AS ${x.rowId}`),
+        ...rep.rows
+          .filter(row => row.rowType === common.RowTypeEnum.Formula)
+          .map(row => {
+            let newFormula = row.formula;
+            let reg = common.MyRegex.CAPTURE_ROW_REF();
+            let r;
 
-            let targetRow = rep.rows.find(y => y.rowId === reference);
+            while ((r = reg.exec(newFormula))) {
+              let reference = r[1];
 
-            let targetTo =
-              targetRow.rowType === common.RowTypeEnum.Formula
-                ? targetRow.formula
-                : targetRow.rowType === common.RowTypeEnum.Metric
-                ? `main.${targetRow.rowId}`
-                : common.UNDEF;
+              let targetRow = rep.rows.find(y => y.rowId === reference);
 
-            newFormula =
-              targetRow.rowType === common.RowTypeEnum.Metric
-                ? common.MyRegex.replaceRowIdsFinalNoPars(
-                    newFormula,
-                    reference,
-                    targetTo
-                  )
-                : common.MyRegex.replaceRowIdsFinalAddPars(
-                    newFormula,
-                    reference,
-                    targetTo
-                  );
-          }
+              let targetTo =
+                targetRow.rowType === common.RowTypeEnum.Formula
+                  ? targetRow.formula
+                  : targetRow.rowType === common.RowTypeEnum.Metric
+                  ? `main.${targetRow.rowId}`
+                  : reference;
 
-          let str = `  ${newFormula} as ${row.rowId}`;
+              newFormula =
+                targetRow.rowType === common.RowTypeEnum.Metric
+                  ? common.MyRegex.replaceRowIdsFinalNoPars(
+                      newFormula,
+                      reference,
+                      targetTo
+                    )
+                  : common.MyRegex.replaceRowIdsFinalAddPars(
+                      newFormula,
+                      reference,
+                      targetTo
+                    );
+            }
 
-          return str;
-        })
-    ];
+            let str = `  ${newFormula} as ${row.rowId}`;
 
-    let outerSelectReady = outerSelect.join(',\n');
+            return str;
+          })
+      ];
 
-    let querySql = `WITH main AS (
+      let outerSelectReady = outerSelect.join(',\n');
+
+      let querySql = `WITH main AS (
   SELECT
     ${mainSelectReady}
 )
@@ -558,42 +590,26 @@ SELECT
 ${outerSelectReady}
 FROM main;`;
 
-    // console.log('');
-    // console.log('querySql:');
-    // console.log(querySql);
+      let pgp = pgPromise({ noWarnings: true });
+      let pgDb = pgp(cn);
 
-    let pgp = pgPromise({ noWarnings: true });
-    let pgDb = pgp(cn);
+      await pgDb
+        .any(querySql)
+        .then(async (data: any) => {
+          topQueryData = data.map((r: any) => {
+            Object.keys(r)
+              .filter(y => y !== 'timestamp')
+              .forEach(x => {
+                r[x] = common.isDefined(r[x]) ? Number(r[x]) : undefined;
+              });
 
-    let queryData: any[] = [];
-    let queryError: any;
-
-    await pgDb
-      .any(querySql)
-      .then(async (data: any) => {
-        // console.log('data:');
-        // console.log(data);
-        queryData = data.map((r: any) => {
-          Object.keys(r)
-            .filter(y => y !== 'timestamp')
-            .forEach(x => {
-              r[x] = common.isDefined(r[x]) ? Number(r[x]) : undefined;
-            });
-
-          return r;
+            return r;
+          });
+        })
+        .catch(async (e: any) => {
+          topQueryError = e.message;
         });
-        // console.log('queryData:');
-        // console.log(queryData);
-      })
-      .catch(async (e: any) => {
-        queryError = e;
-        // console.log('query error:');
-        // console.log(e);
-      });
-
-    // console.log('Total pg - duration: ', Date.now() - pgStartTs);
-
-    //
+    }
 
     let lastCalculatedTs = Number(helper.makeTs());
 
@@ -607,29 +623,41 @@ FROM main;`;
       )
       .forEach(row => {
         if (
-          common.isDefined(queryError) &&
-          row.rowType === common.RowTypeEnum.Formula
+          row.rowType === common.RowTypeEnum.Formula &&
+          common.isDefined(row.formulaError)
         ) {
-          row.records = [
-            {
-              id: 1,
-              key: 0,
-              value: undefined,
-              error: queryError.message
-            }
-          ];
-        } else if (
-          common.isDefined(queryError) &&
-          row.rowType === common.RowTypeEnum.Metric
-        ) {
+          row.topQueryError = row.formulaError;
           row.records = recordsByColumn.map((y: any, index) => ({
             id: index + 1,
             key: Number(y.fields['timestamp'].toString().split('.')[0]),
-            value: y.fields[row.rowId] || 'NULL',
+            value: undefined,
             error: undefined
           }));
-        } else if (common.isUndefined(queryError)) {
-          row.records = queryData.map((y: any, index) => ({
+        } else if (
+          row.rowType === common.RowTypeEnum.Formula &&
+          common.isDefined(topQueryError)
+        ) {
+          row.topQueryError = topQueryError;
+          row.records = recordsByColumn.map((y: any, index) => ({
+            id: index + 1,
+            key: Number(y.fields['timestamp'].toString().split('.')[0]),
+            value: undefined,
+            error: undefined
+          }));
+        } else if (
+          row.rowType === common.RowTypeEnum.Metric &&
+          common.isDefined(topQueryError)
+        ) {
+          row.topQueryError = topQueryError;
+          row.records = recordsByColumn.map((y: any, index) => ({
+            id: index + 1,
+            key: Number(y.fields['timestamp'].toString().split('.')[0]),
+            value: y.fields[row.rowId],
+            error: undefined
+          }));
+        } else if (common.isUndefined(topQueryError)) {
+          row.topQueryError = undefined;
+          row.records = topQueryData.map((y: any, index) => ({
             id: index + 1,
             key: Number(y.timestamp.toString().split('.')[0]),
             value: y[row.rowId.toLowerCase()],

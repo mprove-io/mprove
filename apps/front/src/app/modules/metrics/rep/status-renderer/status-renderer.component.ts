@@ -16,7 +16,9 @@ export class StatusRendererComponent implements ICellRendererAngularComp {
   queryStatusEnum = common.QueryStatusEnum;
 
   isRunning = false;
-  formulaErrorsLength = 0;
+  topQueryError: string;
+
+  someRowsHaveFormulaErrors = common.SOME_ROWS_HAVE_FORMULA_ERRORS;
 
   agInit(params: ICellRendererParams<DataRow>) {
     this.setIsRunning(params);
@@ -32,9 +34,10 @@ export class StatusRendererComponent implements ICellRendererAngularComp {
   setIsRunning(params: ICellRendererParams<DataRow>) {
     this.params = params;
 
-    this.formulaErrorsLength = params.data.records.filter(x =>
-      common.isDefined(x.error)
-    ).length;
+    this.topQueryError =
+      params.data.rowType === common.RowTypeEnum.Formula
+        ? params.data.topQueryError
+        : undefined;
 
     this.isRunning =
       this.params.data.query?.status === common.QueryStatusEnum.Running ||

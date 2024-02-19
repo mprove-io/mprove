@@ -116,6 +116,7 @@ export class RepsService {
         formula: undefined,
         deps: undefined,
         xDeps: undefined,
+        formulaDeps: undefined,
         rqs: [],
         isCalculateParameters: false,
         mconfig: undefined,
@@ -200,6 +201,7 @@ export class RepsService {
         parametersFormula: undefined,
         formula: undefined,
         deps: undefined,
+        formulaDeps: undefined,
         xDeps: undefined,
         rqs: [],
         isCalculateParameters: false,
@@ -235,6 +237,7 @@ export class RepsService {
         parametersJson: undefined,
         parametersFormula: undefined,
         deps: undefined,
+        formulaDeps: undefined,
         xDeps: undefined,
         formula: rowChange.formula,
         rqs: [],
@@ -293,6 +296,7 @@ export class RepsService {
         parametersFormula: undefined,
         formula: undefined,
         deps: undefined,
+        formulaDeps: undefined,
         xDeps: undefined,
         rqs: [],
         isCalculateParameters: false,
@@ -406,6 +410,7 @@ export class RepsService {
             formula: undefined,
             deps: undefined,
             xDeps: undefined,
+            formulaDeps: undefined,
             rqs: [],
             isCalculateParameters: false,
             mconfig: undefined,
@@ -442,7 +447,8 @@ export class RepsService {
 
       processedRows = processRowIds({
         rows: processedRows,
-        targetRowIds: processedRows.map(pRow => pRow.rowId)
+        targetRowIds: processedRows.map(pRow => pRow.rowId),
+        replaceWithUndef: rowIds
       });
     } else if (changeType === common.ChangeTypeEnum.Move) {
       processedRows = processRowIds({

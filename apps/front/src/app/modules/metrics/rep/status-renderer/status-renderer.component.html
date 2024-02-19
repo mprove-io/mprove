@@ -25,9 +25,13 @@
   </div>
 
   <div
-    *ngIf="isRunning === false && formulaErrorsLength > 0"
-    class="text-red1 flex h-8 w-8 flex-shrink-0"
-    tippy="SQL Error: {{ params.data.records[0].error }}"
+    *ngIf="isRunning === false && !!topQueryError"
+    class="flex h-8 w-8 flex-shrink-0"
+    [ngClass]="{
+      'text-gray-400': topQueryError === someRowsHaveFormulaErrors,
+      'text-red1': topQueryError !== someRowsHaveFormulaErrors
+    }"
+    tippy="{{ topQueryError }}"
     placement="left"
   >
     <m-exclamation-icon></m-exclamation-icon>

@@ -3,8 +3,9 @@ import { common } from '~api-to-backend/barrels/common';
 export function processRowIds(item: {
   rows: common.Row[];
   targetRowIds: string[];
+  replaceWithUndef?: string[];
 }) {
-  let { rows, targetRowIds } = item;
+  let { rows, targetRowIds, replaceWithUndef } = item;
 
   let targets: { [from: string]: string } = {};
 
@@ -26,6 +27,9 @@ export function processRowIds(item: {
   rows.forEach(row => {
     if (row.rowType === common.RowTypeEnum.Formula) {
       //
+      // console.log('row.formula:');
+      // console.log(row.formula);
+
       let newFormula = row.formula;
       let formulaDeps: string[] = [];
       let reg = common.MyRegex.CAPTURE_ROW_REF();
@@ -45,7 +49,10 @@ export function processRowIds(item: {
           (targetRow.rowType === common.RowTypeEnum.Formula ||
             targetRow.rowType === common.RowTypeEnum.Metric)
             ? targets[reference]
-            : common.UNDEF;
+            : common.isDefined(replaceWithUndef) &&
+              replaceWithUndef.indexOf(reference) > -1
+            ? common.UNDEF
+            : reference;
 
         newFormula = common.MyRegex.replaceRowIds(
           newFormula,
@@ -67,6 +74,8 @@ export function processRowIds(item: {
           row.deps.push(x);
         }
       });
+
+      row.formulaDeps = formulaDeps;
     } else if (common.isDefined(row.parametersFormula)) {
       row.xDeps = [];
 
@@ -88,7 +97,10 @@ export function processRowIds(item: {
           common.isDefined(targetRow) &&
           targetRow.rowType === common.RowTypeEnum.Metric
             ? targets[reference]
-            : common.UNDEF;
+            : common.isDefined(replaceWithUndef) &&
+              replaceWithUndef.indexOf(reference) > -1
+            ? common.UNDEF
+            : reference;
 
         newParametersFormula = common.MyRegex.replaceRowIds(
           newParametersFormula,
@@ -144,7 +156,10 @@ export function processRowIds(item: {
             common.isDefined(targetRow) &&
             targetRow.rowType === common.RowTypeEnum.Metric
               ? targets[ref]
-              : common.UNDEF;
+              : common.isDefined(replaceWithUndef) &&
+                replaceWithUndef.indexOf(ref) > -1
+              ? common.UNDEF
+              : ref;
 
           newParId = common.MyRegex.replaceRowIds(newParId, ref, targetTo);
         }
@@ -174,7 +189,10 @@ export function processRowIds(item: {
               common.isDefined(targetRow) &&
               targetRow.rowType === common.RowTypeEnum.Metric
                 ? targets[reference]
-                : common.UNDEF;
+                : common.isDefined(replaceWithUndef) &&
+                  replaceWithUndef.indexOf(reference) > -1
+                ? common.UNDEF
+                : reference;
 
             newParFormula = common.MyRegex.replaceRowIds(
               newParFormula,

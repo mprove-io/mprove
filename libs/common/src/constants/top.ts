@@ -38,6 +38,8 @@ export const README_FILE_NAME = 'readme.md';
 export const TRIPLE_UNDERSCORE = '___';
 export const QUAD_UNDERSCORE = '____';
 
+export const SOME_ROWS_HAVE_FORMULA_ERRORS = 'Some rows have formula errors';
+
 export const USE_PROJECT_TIMEZONE_VALUE = 'USE_PROJECT_TIMEZONE';
 export const USE_PROJECT_TIMEZONE_LABEL = 'USE PROJECT CONFIG TIMEZONE';
 export const UTC = 'UTC';
