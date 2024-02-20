@@ -23,7 +23,9 @@ export class UserCodeService {
       // console.log(error.message);
       return { outError: error.message };
     } finally {
-      isolate.dispose();
+      if (isolate.isDisposed === false) {
+        isolate.dispose();
+      }
     }
   }
 

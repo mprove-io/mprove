@@ -195,7 +195,7 @@ export class DocService {
               refError = `Reference ${reference} not found`;
               break;
             } else if (common.isDefined(targetXColumn.outputError)) {
-              refError = `Referenced parameter ${reference} has error`;
+              refError = `Referenced value of ${reference} has error`;
               break;
             }
 
