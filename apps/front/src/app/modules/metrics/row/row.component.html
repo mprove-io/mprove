@@ -145,7 +145,7 @@
 
         <div [formGroup]="newFormulaForm" class="relative flex w-full">
           <textarea
-            data-cy="formulaInput"
+            data-cy="newFormulaInput"
             class="form-input border-gray3 focus:border-blue3 h-[90px] w-full resize-none rounded font-mono"
             [ngClass]="{
               'border-red-600':
@@ -274,34 +274,6 @@
     </div>
 
     <div
-      *ngIf="repSelectedNode.data.rowType === rowTypeFormula"
-      class="flex flex-1 flex-row items-start space-x-5"
-    >
-      <div class="text-gray1 mt-3 flex select-none items-center font-semibold"
-        >Formula</div
-      >
-
-      <div [formGroup]="formulaForm" class="relative flex w-full">
-        <textarea
-          data-cy="formulaInput"
-          class="form-input border-gray3 focus:border-blue3 h-[90px] w-full resize-none rounded font-mono"
-          [ngClass]="{
-            'border-red-600':
-              formulaForm.controls['formula'].invalid &&
-              formulaForm.controls['formula'].touched
-          }"
-          formControlName="formula"
-          placeholder="$A + $B"
-          (blur)="formulaBlur()"
-        ></textarea>
-        <m-validation
-          class="absolute -bottom-[22px] left-0"
-          [control]="formulaForm.controls['formula']"
-        ></m-validation>
-      </div>
-    </div>
-
-    <div
       *ngIf="
         repSelectedNode.data.rowType !== rowTypeEmpty &&
         repSelectedNode.data.rowType !== rowTypeMetric
@@ -330,6 +302,35 @@
           [control]="nameForm.controls['name']"
         ></m-validation>
       </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="repSelectedNode.data.rowType === rowTypeFormula"
+    class="flex flex-1 flex-row items-start space-x-5"
+  >
+    <div
+      class="text-gray1 mt-3 flex flex-shrink-0 select-none items-center font-semibold"
+      >Formula SQL</div
+    >
+
+    <div [formGroup]="formulaForm" class="relative flex max-w-[750px] flex-1">
+      <textarea
+        data-cy="formulaInput"
+        class="form-input border-gray3 focus:border-blue3 max-h-[150px] min-h-[70px] w-full min-w-[300px] resize-y rounded font-mono"
+        [ngClass]="{
+          'border-red-600':
+            formulaForm.controls['formula'].invalid &&
+            formulaForm.controls['formula'].touched
+        }"
+        formControlName="formula"
+        placeholder="$A + $B"
+        (blur)="formulaBlur()"
+      ></textarea>
+      <m-validation
+        class="absolute -bottom-[22px] left-0"
+        [control]="formulaForm.controls['formula']"
+      ></m-validation>
     </div>
   </div>
 
@@ -425,7 +426,7 @@
     *ngIf="repSelectedNode.data.rowType === rowTypeMetric"
   >
     <div
-      class="text-gray1 flex h-11 select-none flex-row items-start space-x-2 text-lg font-semibold"
+      class="text-gray1 flex h-11 select-none flex-row items-start space-x-2 font-semibold"
     >
       <div class="flex h-11 flex-row items-center space-x-2">
         <div class="truncate"> Parameters </div>
@@ -455,7 +456,7 @@
           >
             <textarea
               data-cy="parametersFormulaInput"
-              class="form-input border-gray3 focus:border-blue3 max-h-[115px] min-h-[70px] w-full min-w-[300px] resize-y rounded font-mono"
+              class="form-input border-gray3 focus:border-blue3 max-h-[150px] min-h-[70px] w-full min-w-[300px] resize-y rounded font-mono"
               [ngClass]="{
                 'border-red-600':
                   parametersFormulaForm.controls['formula'].invalid &&
