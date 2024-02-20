@@ -146,7 +146,7 @@
         <div [formGroup]="newFormulaForm" class="relative flex w-full">
           <textarea
             data-cy="newFormulaInput"
-            class="form-input border-gray3 focus:border-blue3 h-[90px] w-full resize-none rounded font-mono"
+            class="form-input border-gray3 focus:border-blue3 h-[90px] w-full resize-none rounded font-mono placeholder-gray-400"
             [ngClass]="{
               'border-red-600':
                 newFormulaForm.controls['formula'].invalid &&
@@ -317,7 +317,7 @@
     <div [formGroup]="formulaForm" class="relative flex max-w-[750px] flex-1">
       <textarea
         data-cy="formulaInput"
-        class="form-input border-gray3 focus:border-blue3 max-h-[150px] min-h-[70px] w-full min-w-[300px] resize-y rounded font-mono"
+        class="form-input border-gray3 focus:border-blue3 max-h-[150px] min-h-[70px] w-full min-w-[300px] resize-y rounded font-mono placeholder-gray-400"
         [ngClass]="{
           'border-red-600':
             formulaForm.controls['formula'].invalid &&

@@ -124,6 +124,17 @@
 
           <div class="flex-grow"></div>
 
+          <ui-switch
+            class="ml-5"
+            [checked]="isAutoRun"
+            (change)="toggleAutoRun()"
+          ></ui-switch>
+
+          <div
+            class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
+            >Auto Run</div
+          >
+
           <button
             type="button"
             data-cy="metricsRunButton"

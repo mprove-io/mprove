@@ -152,7 +152,6 @@ export class ModelComponent implements OnInit, OnDestroy {
         this.isAutoRun === true
       ) {
         setTimeout(() => {
-          // console.log('auto run');
           this.run();
         }, 0);
       }

@@ -59,6 +59,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
   rowTypeHeader = common.RowTypeEnum.Header;
   rowTypeEmpty = common.RowTypeEnum.Empty;
 
+  isAutoRun = true;
+
   isShow = true;
 
   isShowLeft = true;
@@ -78,6 +80,18 @@ export class MetricsComponent implements OnInit, OnDestroy {
       this.queriesLength = this.rep.rows.filter(row =>
         common.isDefined(row.query)
       ).length;
+
+      let newQueries = this.rep.rows.filter(
+        row =>
+          common.isDefined(row.query) &&
+          row.query.status === common.QueryStatusEnum.New
+      );
+
+      if (this.isAutoRun === true && newQueries.length > 0) {
+        setTimeout(() => {
+          this.run();
+        }, 0);
+      }
 
       this.cd.detectChanges();
     })
@@ -612,6 +626,10 @@ export class MetricsComponent implements OnInit, OnDestroy {
       ),
       rep: this.rep
     });
+  }
+
+  toggleAutoRun() {
+    this.isAutoRun = !this.isAutoRun;
   }
 
   toggleShowLeft() {
