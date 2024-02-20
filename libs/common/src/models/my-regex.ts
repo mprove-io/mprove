@@ -445,6 +445,8 @@ export class MyRegex {
     ref: string,
     val: string
   ): string {
+    // const regex = new RegExp(`\\$${ref}(?![A-Z_])`);
+    // return input.replace(regex, `(${val})`);
     return input.split(`\$${ref}`).join(`(${val})`);
   }
 
@@ -453,10 +455,14 @@ export class MyRegex {
     ref: string,
     val: string
   ): string {
+    // const regex = new RegExp(`\\$${ref}(?![A-Z_])`);
+    // return input.replace(regex, val);
     return input.split(`\$${ref}`).join(`${val}`);
   }
 
   static replaceXRefs(input: string, ref: string, val: string): string {
+    // const regex = new RegExp(`\\$${ref}(?![A-Z_])`);
+    // return input.replace(regex, val);
     return input.split(`\$${ref}`).join(`${val}`);
   }
 
