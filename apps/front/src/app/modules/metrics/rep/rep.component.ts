@@ -269,20 +269,20 @@ export class RepComponent {
               : ''
           });
 
-          // console.log(
-          //   'keys',
-          //   row.records.map(y => y.key)
-          // );
+          console.log(row.rowId);
+          console.log(row.records);
 
-          row.records
-            .filter(record => record.key !== 0)
-            .forEach(record => {
-              (dataRow as any)[record.key] = record.value;
-              let column = this.rep.columns.find(
-                c => c.columnId === record.key
-              );
-              record.columnLabel = column.label;
-            });
+          row.records.forEach(record => {
+            (dataRow as any)[record.key] = record.value;
+
+            let column = this.rep.columns.find(c => c.columnId === record.key);
+
+            // if (common.isUndefined(column)) {
+            //   console.log(record.key);
+            // }
+
+            record.columnLabel = column.label;
+          });
 
           return dataRow;
         });

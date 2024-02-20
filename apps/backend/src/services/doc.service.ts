@@ -500,6 +500,9 @@ Formula must return a valid JSON object.`;
       timeSpec: timeSpec
     });
 
+    // console.log('recordsByColumn:');
+    // console.log(recordsByColumn);
+
     let topQueryData: any[] = [];
     let topQueryError: any;
 
@@ -707,14 +710,7 @@ FROM main;`;
   }) {
     let { rep, timeSpec } = item;
 
-    let zeroColumnId = 0;
-
-    let zeroColumn: common.Column = {
-      columnId: zeroColumnId,
-      label: 'ZeroColumn'
-    };
-
-    let recordsByColumn = [zeroColumn, ...rep.columns].map((column, i) => {
+    let recordsByColumn = rep.columns.map((column, i) => {
       let tsDate = fromUnixTime(column.columnId);
 
       let timeValue =
@@ -735,7 +731,7 @@ FROM main;`;
           : undefined;
 
       let record: any = {
-        id: i + 1,
+        id: i,
         fields: {
           timestamp: column.columnId
         }
@@ -744,39 +740,35 @@ FROM main;`;
       rep.rows
         .filter(row => row.rowType === common.RowTypeEnum.Metric)
         .forEach((row: common.Row) => {
-          if (column.columnId === zeroColumnId) {
-            record.fields[row.rowId] = 0;
-          } else {
-            let timeFieldId = row.mconfig?.select[0]
-              .split('.')
-              .join('_')
-              .toLowerCase();
+          let timeFieldId = row.mconfig?.select[0]
+            .split('.')
+            .join('_')
+            .toLowerCase();
 
-            let fieldId = row.mconfig?.select[1]
-              .split('.')
-              .join('_')
-              .toLowerCase();
+          let fieldId = row.mconfig?.select[1]
+            .split('.')
+            .join('_')
+            .toLowerCase();
 
-            if (common.isDefined(row.query?.data)) {
-              row.query.data = row.query.data.map((x: any) =>
-                Object.keys(x).reduce((destination: any, key) => {
-                  destination[key.toLowerCase()] = x[key];
-                  return destination;
-                }, {})
-              );
-            }
-
-            let dataRow = row.query?.data?.find(
-              (r: any) => r[timeFieldId]?.toString().split('.')[0] === timeValue
+          if (common.isDefined(row.query?.data)) {
+            row.query.data = row.query.data.map((x: any) =>
+              Object.keys(x).reduce((destination: any, key) => {
+                destination[key.toLowerCase()] = x[key];
+                return destination;
+              }, {})
             );
+          }
 
-            if (common.isDefined(dataRow)) {
-              record.fields[row.rowId] = common.isUndefined(dataRow[fieldId])
-                ? undefined
-                : isNaN(dataRow[fieldId]) === false
-                ? Number(dataRow[fieldId])
-                : dataRow[fieldId];
-            }
+          let dataRow = row.query?.data?.find(
+            (r: any) => r[timeFieldId]?.toString().split('.')[0] === timeValue
+          );
+
+          if (common.isDefined(dataRow)) {
+            record.fields[row.rowId] = common.isUndefined(dataRow[fieldId])
+              ? undefined
+              : isNaN(dataRow[fieldId]) === false
+              ? Number(dataRow[fieldId])
+              : dataRow[fieldId];
           }
         });
 
