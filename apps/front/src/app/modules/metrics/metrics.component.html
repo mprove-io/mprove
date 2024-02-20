@@ -283,13 +283,18 @@
           <div
             class="flex flex-col"
             [ngClass]="{
-              'h-[55%]': showMetricsChart === true && isShowTable === true,
+              'h-[40%]':
+                (showMetricsChart === true || repSelectedNodes.length > 0) &&
+                isShowTable === true,
               'h-full': showMetricsChart === true && isShowTable === false
             }"
           >
-            <m-row
-              *ngIf="isShowTable === true || showMetricsChart === true"
-            ></m-row>
+            <div
+              class="flex h-2 flex-grow overflow-auto"
+              *ngIf="isShowTable === true && repSelectedNodes.length > 0"
+            >
+              <m-row class="w-full"></m-row>
+            </div>
 
             <div
               class="relative h-2 w-full flex-grow flex-row rounded bg-white shadow"

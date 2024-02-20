@@ -4,9 +4,8 @@
 >
   No rows selected
 </div> -->
-
 <div
-  class="mb-5 mr-9 flex h-11 flex-row items-center"
+  class="mb-5 mr-9 flex h-11 w-full flex-row items-center"
   *ngIf="repSelectedNodes.length > 1"
 >
   <div class="text-lg"> Multiple rows selected </div>
@@ -32,7 +31,7 @@
   </button>
 </div>
 
-<div class="mb-5 mr-9 flex flex-col space-y-7" *ngIf="!!repSelectedNode">
+<div class="mb-5 mr-9 flex w-full flex-col space-y-7" *ngIf="!!repSelectedNode">
   <div class="flex flex-row items-start space-x-10">
     <div class="flex h-11 flex-row items-center space-x-5 text-lg">
       <div class="text-gray1 flex select-none items-center font-semibold"
@@ -60,20 +59,22 @@
         <m-delete-icon></m-delete-icon>
       </button>
 
-      <button
-        *ngIf="
-          repSelectedNode.data.rowType !== rowTypeEmpty &&
-          repSelectedNode.data.rowType !== rowTypeHeader
-        "
-        class="ml-3 flex h-9 w-9 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
-        (click)="toggleShowFormatOptions()"
-      >
-        <m-adjustments-icon
-          [ngClass]="{
-            'text-blue-500': isShowFormatOptions === true
-          }"
-        ></m-adjustments-icon>
-      </button>
+      <div class="ml-3 w-16">
+        <button
+          *ngIf="
+            repSelectedNode.data.rowType !== rowTypeEmpty &&
+            repSelectedNode.data.rowType !== rowTypeHeader
+          "
+          class="flex h-9 w-9 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
+          (click)="toggleShowFormatOptions()"
+        >
+          <m-adjustments-icon
+            [ngClass]="{
+              'text-blue-500': isShowFormatOptions === true
+            }"
+          ></m-adjustments-icon>
+        </button>
+      </div>
     </div>
 
     <div class="flex h-11 flex-row items-center space-x-5">
@@ -273,71 +274,6 @@
     </div>
 
     <div
-      class="flex flex-grow flex-row items-start"
-      *ngIf="repSelectedNode.data.rowType === rowTypeMetric"
-    >
-      <div
-        class="text-gray1 flex h-11 flex-shrink-0 select-none items-center font-semibold"
-        >Parameters</div
-      >
-
-      <button
-        class="ml-3 mt-1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
-        (click)="toggleParametersFormula()"
-      >
-        <m-formula-icon
-          [ngClass]="{
-            'text-blue-500': !!repSelectedNode.data.parametersFormula
-          }"
-        ></m-formula-icon>
-      </button>
-
-      <div class="flex flex-grow flex-row">
-        <div
-          *ngIf="!!repSelectedNode.data.parametersFormula"
-          [formGroup]="parametersFormulaForm"
-          class="relative ml-5 flex flex-grow"
-        >
-          <textarea
-            data-cy="parametersFormulaInput"
-            class="form-input border-gray3 focus:border-blue3 max-h-[115px] min-h-[70px] w-full min-w-[300px] resize-y rounded font-mono"
-            [ngClass]="{
-              'border-red-600':
-                parametersFormulaForm.controls['formula'].invalid &&
-                parametersFormulaForm.controls['formula'].touched
-            }"
-            formControlName="formula"
-            placeholder="Formula to calculate parameters"
-            (blur)="parametersFormulaBlur()"
-          ></textarea>
-
-          <m-validation
-            class="absolute -bottom-[22px] left-0"
-            [control]="parametersFormulaForm.controls['formula']"
-          ></m-validation>
-        </div>
-      </div>
-
-      <ng-template #templateErrors>
-        <div *ngIf="repSelectedNode.data.isParamsSchemaValid === false">{{
-          repSelectedNode.data.paramsSchemaError
-        }}</div>
-      </ng-template>
-
-      <div
-        *ngIf="
-          !!repSelectedNode.data.parametersFormula &&
-          (repSelectedNode.data.isParamsJsonValid === false ||
-            repSelectedNode.data.isParamsSchemaValid === false)
-        "
-        class="text-red1 ml-5 mt-1 flex h-8 w-8 flex-shrink-0"
-        [tippy]="templateErrors"
-      >
-        <m-exclamation-icon></m-exclamation-icon>
-      </div>
-    </div>
-
-    <div
       *ngIf="repSelectedNode.data.rowType === rowTypeFormula"
       class="flex flex-1 flex-row items-start space-x-5"
     >
@@ -488,182 +424,202 @@
     class="flex min-h-[44px] flex-grow flex-row"
     *ngIf="repSelectedNode.data.rowType === rowTypeMetric"
   >
-    <!-- <div
-      (click)="toggleParametersPanel()"
-      class="text-gray1 flex h-11 select-none flex-row items-start space-x-2 text-lg font-semibold"
-      [ngClass]="{
-        'cursor-pointer': parametersFilters.length > 0
-      }"
-    >
-      <div class="flex h-11 flex-row items-center space-x-2">
-        <m-chevron-right-icon
-          *ngIf="!isExpandedParameters && parametersFilters.length > 0"
-        ></m-chevron-right-icon>
-
-        <m-chevron-down-icon
-          *ngIf="isExpandedParameters && parametersFilters.length > 0"
-        ></m-chevron-down-icon>
-
-        <div class="h-6 w-6" *ngIf="parametersFilters.length === 0"></div>
-
-        <div class="truncate"> Parameters </div>
-      </div>
-    </div> -->
-
     <div
       class="text-gray1 flex h-11 select-none flex-row items-start space-x-2 text-lg font-semibold"
     >
       <div class="flex h-11 flex-row items-center space-x-2">
-        <!-- <m-chevron-right-icon
-          *ngIf="!isExpandedParameters && parametersFilters.length > 0"
-        ></m-chevron-right-icon>
-
-        <m-chevron-down-icon
-          *ngIf="isExpandedParameters && parametersFilters.length > 0"
-        ></m-chevron-down-icon> -->
-
-        <!-- <div class="h-6 w-6" *ngIf="parametersFilters.length === 0"></div> -->
-
         <div class="truncate"> Parameters </div>
       </div>
     </div>
 
-    <div
-      tippy="Turn off formula to activate control"
-      [isEnabled]="!!repSelectedNode.data.parametersFormula"
+    <button
+      class="ml-3 mt-1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
+      (click)="toggleParametersFormula()"
     >
-      <button
-        type="button"
-        data-cy="rowAddParameterButton"
-        class="ml-7 h-11 select-none rounded border py-2 px-4 focus:outline-none"
+      <m-formula-icon
         [ngClass]="{
-          'border-gray-400 text-gray-500 hover:bg-white':
-            !repSelectedNode.data.parametersFormula,
-          'cursor-default border-gray-300 text-gray-400':
-            !!repSelectedNode.data.parametersFormula
+          'text-blue-500': !!repSelectedNode.data.parametersFormula
         }"
-        [disabled]="!!repSelectedNode.data.parametersFormula"
-        (click)="addParameter()"
-      >
-        Add
-      </button>
-    </div>
+      ></m-formula-icon>
+    </button>
 
-    <div class="min-h-[68px]"></div>
-
-    <div
-      class="ml-7 mr-5 flex flex-row items-start"
-      *ngIf="!isExpandedParameters && parametersFilters.length > 0"
-    >
-      <div class="min-h-11 flex flex-row items-end">
-        <m-bricks
-          class="flex max-h-[150px] max-w-max flex-row items-end justify-start overflow-auto"
-          [extendedFilters]="parametersFilters"
-          [isKeepBackgroundColor]="false"
-        ></m-bricks>
-      </div>
-    </div>
-
-    <div class="ml-7 w-2 flex-1" *ngIf="isExpandedParameters">
+    <div class="flex w-full flex-col">
       <div
-        class="flex flex-row"
-        *ngIf="isAddParameter === true"
-        [ngClass]="{
-          'mb-5 border-b border-gray-300 pb-5': parametersFilters.length > 0
-        }"
+        class="flex flex-grow flex-row items-start"
+        *ngIf="!!repSelectedNode.data.parametersFormula"
       >
-        <div
-          class="flex h-11 max-w-[700px] flex-1 flex-row items-center space-x-5"
-        >
+        <div class="flex flex-grow flex-row">
           <div
-            class="text-gray1 flex flex-shrink-0 select-none items-center font-semibold"
-            >Filter Metric by</div
+            [formGroup]="parametersFormulaForm"
+            class="relative ml-7 mb-5 flex max-w-[750px] flex-grow"
           >
+            <textarea
+              data-cy="parametersFormulaInput"
+              class="form-input border-gray3 focus:border-blue3 max-h-[115px] min-h-[70px] w-full min-w-[300px] resize-y rounded font-mono"
+              [ngClass]="{
+                'border-red-600':
+                  parametersFormulaForm.controls['formula'].invalid &&
+                  parametersFormulaForm.controls['formula'].touched
+              }"
+              formControlName="formula"
+              placeholder="Formula to calculate parameters"
+              (blur)="parametersFormulaBlur()"
+            ></textarea>
 
-          <div class="w-full">
-            <ng-select
-              data-cy="addParameterSelect"
-              class="custom mt-1 w-full text-base focus:outline-none"
-              [items]="fieldsList"
-              (open)="openAddParameterSelect()"
-              [loading]="fieldsListLoading"
-              [searchable]="true"
-              [clearable]="false"
-              [(ngModel)]="newParameterId"
-              (change)="addParameterChange()"
-              [dropdownPosition]="showMetricsChart === true ? 'bottom' : 'top'"
-              appendTo="body"
-              placeholder="Field"
-              bindLabel="partLabel"
-              bindValue="id"
-            >
-            </ng-select>
+            <m-validation
+              class="absolute -bottom-[22px] left-0"
+              [control]="parametersFormulaForm.controls['formula']"
+            ></m-validation>
           </div>
         </div>
 
-        <ng-template #templateApplyAddFilter>
-          <div *ngIf="isDisabledApplyTimeField === true"
-            >The time field related to this metric is filtered by the time
-            filter located at the top of this page. But you can select another
-            field to specify additional time filtering within the main time
-            range.</div
-          >
-
-          <div
-            *ngIf="
-              isDisabledApplyTimeField === false &&
-              isDisabledApplyAlreadyFiltered === true
-            "
-            >This field is already filtered. Click on + to add new filter
-            conditions.</div
-          >
+        <ng-template #templateErrors>
+          <div *ngIf="repSelectedNode.data.isParamsSchemaValid === false">{{
+            repSelectedNode.data.paramsSchemaError
+          }}</div>
         </ng-template>
 
         <div
-          class="flex"
-          [isEnabled]="
-            isDisabledApplyTimeField === true ||
-            isDisabledApplyAlreadyFiltered === true
+          *ngIf="
+            !!repSelectedNode.data.parametersFormula &&
+            (repSelectedNode.data.isParamsJsonValid === false ||
+              repSelectedNode.data.isParamsSchemaValid === false)
           "
-          [tippy]="templateApplyAddFilter"
+          class="text-red1 ml-5 mt-1 flex h-8 w-8 flex-shrink-0"
+          [tippy]="templateErrors"
         >
-          <button
-            data-cy="rowApplyAddParameterButton"
-            class="bg-blue3 ml-5 select-none rounded px-4 py-2 font-medium text-white focus:outline-none"
-            [ngClass]="{
-              'bg-blue3':
-                isDisabledApplyTimeField === false &&
-                isDisabledApplyAlreadyFiltered === false,
-              'cursor-default bg-gray-400':
-                isDisabledApplyTimeField === true ||
-                isDisabledApplyAlreadyFiltered === true
-            }"
-            type="button"
-            (click)="applyAddParameter()"
-            [disabled]="
-              isDisabledApplyTimeField === true ||
-              isDisabledApplyAlreadyFiltered === true
-            "
-            >Apply</button
-          >
+          <m-exclamation-icon></m-exclamation-icon>
         </div>
-
-        <button
-          type="button"
-          data-cy="rowCancelAddParameterButton"
-          class="border-blue3 text-blue3 ml-5 select-none rounded border px-4 py-2 font-medium focus:outline-none"
-          (click)="cancelAddParameter()"
-        >
-          Cancel
-        </button>
       </div>
 
-      <m-row-filters
-        *ngIf="parametersFilters.length > 0"
-        [repSelectedNode]="repSelectedNode"
-        [mconfig]="mconfig"
-        [parametersFilters]="parametersFilters"
-      ></m-row-filters>
+      <div class="flex max-h-max w-full flex-row overflow-auto">
+        <div
+          tippy="Turn off formula to activate control"
+          [isEnabled]="!!repSelectedNode.data.parametersFormula"
+        >
+          <button
+            type="button"
+            data-cy="rowAddParameterButton"
+            class="ml-7 h-11 select-none rounded border py-2 px-4 focus:outline-none"
+            [ngClass]="{
+              'border-gray-400 text-gray-500 hover:bg-white':
+                !repSelectedNode.data.parametersFormula,
+              'cursor-default border-gray-300 text-gray-400':
+                !!repSelectedNode.data.parametersFormula
+            }"
+            [disabled]="!!repSelectedNode.data.parametersFormula"
+            (click)="addParameter()"
+          >
+            Add
+          </button>
+        </div>
+
+        <div class="min-h-[68px]"></div>
+
+        <div class="ml-7 w-2 flex-1">
+          <div
+            class="flex flex-row"
+            *ngIf="isAddParameter === true"
+            [ngClass]="{
+              'mb-5 border-b border-gray-300 pb-5': parametersFilters.length > 0
+            }"
+          >
+            <div
+              class="flex h-11 max-w-[700px] flex-1 flex-row items-center space-x-5"
+            >
+              <div
+                class="text-gray1 flex flex-shrink-0 select-none items-center font-semibold"
+                >Filter Metric by</div
+              >
+
+              <div class="w-full">
+                <ng-select
+                  data-cy="addParameterSelect"
+                  class="custom mt-1 w-full text-base focus:outline-none"
+                  [items]="fieldsList"
+                  (open)="openAddParameterSelect()"
+                  [loading]="fieldsListLoading"
+                  [searchable]="true"
+                  [clearable]="false"
+                  [(ngModel)]="newParameterId"
+                  (change)="addParameterChange()"
+                  [dropdownPosition]="
+                    showMetricsChart === true ? 'bottom' : 'top'
+                  "
+                  appendTo="body"
+                  placeholder="Field"
+                  bindLabel="partLabel"
+                  bindValue="id"
+                >
+                </ng-select>
+              </div>
+            </div>
+
+            <ng-template #templateApplyAddFilter>
+              <div *ngIf="isDisabledApplyTimeField === true"
+                >The time field related to this metric is filtered by the time
+                filter located at the top of this page. But you can select
+                another field to specify additional time filtering within the
+                main time range.</div
+              >
+
+              <div
+                *ngIf="
+                  isDisabledApplyTimeField === false &&
+                  isDisabledApplyAlreadyFiltered === true
+                "
+                >This field is already filtered. Click on + to add new filter
+                conditions.</div
+              >
+            </ng-template>
+
+            <div
+              class="flex"
+              [isEnabled]="
+                isDisabledApplyTimeField === true ||
+                isDisabledApplyAlreadyFiltered === true
+              "
+              [tippy]="templateApplyAddFilter"
+            >
+              <button
+                data-cy="rowApplyAddParameterButton"
+                class="bg-blue3 ml-5 select-none rounded px-4 py-2 font-medium text-white focus:outline-none"
+                [ngClass]="{
+                  'bg-blue3':
+                    isDisabledApplyTimeField === false &&
+                    isDisabledApplyAlreadyFiltered === false,
+                  'cursor-default bg-gray-400':
+                    isDisabledApplyTimeField === true ||
+                    isDisabledApplyAlreadyFiltered === true
+                }"
+                type="button"
+                (click)="applyAddParameter()"
+                [disabled]="
+                  isDisabledApplyTimeField === true ||
+                  isDisabledApplyAlreadyFiltered === true
+                "
+                >Apply</button
+              >
+            </div>
+
+            <button
+              type="button"
+              data-cy="rowCancelAddParameterButton"
+              class="border-blue3 text-blue3 ml-5 select-none rounded border px-4 py-2 font-medium focus:outline-none"
+              (click)="cancelAddParameter()"
+            >
+              Cancel
+            </button>
+          </div>
+
+          <m-row-filters
+            *ngIf="parametersFilters.length > 0"
+            [repSelectedNode]="repSelectedNode"
+            [mconfig]="mconfig"
+            [parametersFilters]="parametersFilters"
+          ></m-row-filters>
+        </div>
+      </div>
     </div>
   </div>
 </div>
