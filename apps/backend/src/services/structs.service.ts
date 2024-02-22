@@ -69,7 +69,7 @@ SELECT
 FROM structs as s 
 LEFT JOIN bridges as b ON s.struct_id=b.struct_id 
 LEFT JOIN branches as c ON b.branch_id=c.branch_id 
-WHERE c.branch_id is NULL
+WHERE c.branch_id is NULL AND s.server_ts < (NOW() - INTERVAL 1 MINUTE)
 `);
     });
 
