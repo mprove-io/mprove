@@ -12,6 +12,12 @@ export class Rq {
   @IsEnum(enums.TimeSpecEnum)
   timeSpec: enums.TimeSpecEnum;
 
+  @IsInt()
+  timeStartTs: number;
+
+  @IsInt()
+  timeEndTs: number;
+
   @IsString()
   mconfigId: string;
 

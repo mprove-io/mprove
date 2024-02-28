@@ -633,6 +633,25 @@ export class RepsService {
           y.timezone === timezone
       );
 
+      // stage 1
+      if (common.isDefined(rq)) {
+        if (
+          rq.timeStartTs !== columns[0].columnId ||
+          rq.timeEndTs !== columns[columns.length - 1].columnId
+        ) {
+          x.rqs = x.rqs.filter(
+            y =>
+              !(
+                y.fractionBrick === timeRangeFraction.brick &&
+                y.timeSpec === timeSpec &&
+                y.timezone === timezone
+              )
+          );
+          rq = undefined;
+        }
+      }
+
+      // stage 2
       if (common.isDefined(rq)) {
         if (x.rowType === common.RowTypeEnum.Metric) {
           queryIds.push(rq.queryId);
@@ -746,6 +765,8 @@ export class RepsService {
           fractionBrick: timeRangeFraction.brick,
           timeSpec: timeSpec,
           timezone: timezone,
+          timeStartTs: columns[0].columnId,
+          timeEndTs: columns[columns.length - 1].columnId,
           mconfigId: newMconfig?.mconfigId,
           queryId: newMconfig?.queryId,
           kitId: undefined,
