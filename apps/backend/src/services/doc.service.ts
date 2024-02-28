@@ -525,14 +525,14 @@ Formula must return a valid JSON object.`;
       let timestampValues = recordsByColumn.map(x => x.fields['timestamp']);
 
       let mainSelect = [
-        `unnest(ARRAY[${timestampValues}]) AS timestamp`,
+        `unnest(ARRAY[${timestampValues}]::bigint[]) AS timestamp`,
         ...rep.rows
           .filter(row => row.rowType === common.RowTypeEnum.Metric)
           .map(row => {
             let values = recordsByColumn.map(
               r => r.fields[row.rowId] || 'NULL'
             );
-            let str = `    unnest(ARRAY[${values}]) AS ${row.rowId}`;
+            let str = `    unnest(ARRAY[${values}]::numeric[]) AS ${row.rowId}`;
             return str;
           })
       ];
@@ -592,6 +592,9 @@ Formula must return a valid JSON object.`;
 SELECT
 ${outerSelectReady}
 FROM main;`;
+
+      // console.log('querySql:');
+      // console.log(querySql);
 
       let pgp = pgPromise({ noWarnings: true });
       let pgDb = pgp(cn);
