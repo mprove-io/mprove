@@ -6,6 +6,7 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { LegendPosition } from '@swimlane/ngx-charts';
+import { AgChartOptions } from 'ag-charts-community';
 import { formatLocale } from 'd3-format';
 import { getChartCurve } from '~front/app/functions/get-chart-curve';
 import { getChartScheme } from '~front/app/functions/get-chart-scheme';
@@ -24,6 +25,7 @@ export class ChartViewComponent implements OnChanges {
   chartTypeEnum = common.ChartTypeEnum;
   chartSchemeTypeEnum = common.ChartSchemeTypeEnum;
   queryStatusEnum = common.QueryStatusEnum;
+  chartOptions: AgChartOptions;
 
   // isInitialized = false;
 
@@ -92,6 +94,38 @@ export class ChartViewComponent implements OnChanges {
 
   updateChart() {
     // console.log('updateChart');
+    this.chartOptions = {
+      title: {
+        text: `${this.chart.axVisible}`
+      },
+      type: 'line',
+      data: [
+        {
+          quarter: 'Q1',
+          petrol: 200,
+          diesel: 100
+        },
+        {
+          quarter: 'Q2',
+          petrol: 300,
+          diesel: 130
+        },
+        {
+          quarter: 'Q3',
+          petrol: 350,
+          diesel: 160
+        },
+        {
+          quarter: 'Q4',
+          petrol: 400,
+          diesel: 200
+        }
+      ],
+      series: [
+        { type: 'line', xKey: 'quarter', yKey: 'diesel', yName: 'Diesel' }
+      ]
+    };
+
     let checkSelectResult = getSelectValid({
       chart: this.chart,
       mconfigFields: this.mconfigFields
@@ -180,13 +214,11 @@ export class ChartViewComponent implements OnChanges {
   onSelect(event: any) {}
 
   dataLabelFormatting(value: any) {
-    let {
-      field,
-      formatNumber
-    } = this.formatNumberService.getFormatNumberDataLabel({
-      chart: this.chart,
-      mconfigFields: this.mconfigFields
-    });
+    let { field, formatNumber } =
+      this.formatNumberService.getFormatNumberDataLabel({
+        chart: this.chart,
+        mconfigFields: this.mconfigFields
+      });
 
     let locale = formatLocale({
       decimal: constants.FORMAT_NUMBER_DECIMAL,
@@ -280,13 +312,11 @@ export class ChartViewComponent implements OnChanges {
   }
 
   axisTickFormatting(value: any) {
-    let {
-      field,
-      formatNumber
-    } = this.formatNumberService.getFormatNumberAxisTick({
-      chart: this.chart,
-      mconfigFields: this.mconfigFields
-    });
+    let { field, formatNumber } =
+      this.formatNumberService.getFormatNumberAxisTick({
+        chart: this.chart,
+        mconfigFields: this.mconfigFields
+      });
 
     let locale = formatLocale({
       decimal: constants.FORMAT_NUMBER_DECIMAL,
@@ -308,13 +338,11 @@ export class ChartViewComponent implements OnChanges {
   }
 
   yAxisTickFormatting(value: any) {
-    let {
-      field,
-      formatNumber
-    } = this.formatNumberService.getFormatNumberYAxisTick({
-      chart: this.chart,
-      mconfigFields: this.mconfigFields
-    });
+    let { field, formatNumber } =
+      this.formatNumberService.getFormatNumberYAxisTick({
+        chart: this.chart,
+        mconfigFields: this.mconfigFields
+      });
 
     let locale = formatLocale({
       decimal: constants.FORMAT_NUMBER_DECIMAL,
@@ -336,13 +364,11 @@ export class ChartViewComponent implements OnChanges {
   }
 
   xAxisTickFormatting(value: any) {
-    let {
-      field,
-      formatNumber
-    } = this.formatNumberService.getFormatNumberXAxisTick({
-      chart: this.chart,
-      mconfigFields: this.mconfigFields
-    });
+    let { field, formatNumber } =
+      this.formatNumberService.getFormatNumberXAxisTick({
+        chart: this.chart,
+        mconfigFields: this.mconfigFields
+      });
 
     let locale = formatLocale({
       decimal: constants.FORMAT_NUMBER_DECIMAL,

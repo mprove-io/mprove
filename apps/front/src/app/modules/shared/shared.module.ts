@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyModule } from '@ngneat/helipopper';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { AgChartsAngularModule } from 'ag-charts-angular';
 import { ColorSketchModule } from 'ngx-color/sketch';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { AvatarComponent } from './avatar/avatar.component';
@@ -177,7 +178,8 @@ let sharedComponents = [
     NgxChartsModule,
     ColorSketchModule,
     NgxSpinnerModule,
-    TippyModule
+    TippyModule,
+    AgChartsAngularModule
   ],
   exports: [...sharedComponents, ...pipesArray],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

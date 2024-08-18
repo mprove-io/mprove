@@ -1,4 +1,5 @@
 export enum ChartTypeEnum {
+  AgLine = 'ag_line',
   Table = 'table',
   BarVertical = 'bar_vertical',
   BarVerticalGrouped = 'bar_vertical_grouped',

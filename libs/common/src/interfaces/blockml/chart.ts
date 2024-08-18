@@ -14,6 +14,11 @@ export class Chart {
 
   @IsEnum(enums.ChartTypeEnum)
   type: enums.ChartTypeEnum;
+  //
+  @IsOptional()
+  @IsBoolean()
+  axVisible?: boolean;
+  //
 
   @IsOptional()
   @IsString()

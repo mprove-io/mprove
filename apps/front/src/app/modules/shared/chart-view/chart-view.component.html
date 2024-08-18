@@ -57,6 +57,18 @@
     >Query Error</div
   >
 
+  <ag-charts-angular
+    *ngIf="
+      queryStatus !== queryStatusEnum.Error &&
+      isSelectValid === true &&
+      chart.type === chartTypeEnum.AgLine &&
+      chart.isValid === true &&
+      qData.length > 0
+    "
+    style="height: 100%"
+    [options]="chartOptions"
+  ></ag-charts-angular>
+
   <m-chart-table
     *ngIf="
       queryStatus !== queryStatusEnum.Error &&

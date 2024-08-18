@@ -283,6 +283,11 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   chartTypesList: ChartTypeItem[] = [
     {
+      label: 'Ag Line',
+      value: common.ChartTypeEnum.AgLine,
+      iconPath: 'assets/charts/line.svg'
+    },
+    {
       label: 'Table',
       value: common.ChartTypeEnum.Table,
       iconPath: 'assets/charts/table.svg'

@@ -2,10 +2,25 @@
   <!-- <div class="text-xl text-gray1 font-semibold mb-5">Data</div> -->
 
   <div
+    *ngIf="axVisibleChartTypes.indexOf(chart.type) > -1"
+    class="mb-5 flex flex-row items-center"
+  >
+    <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
+      >Visible</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.axVisible"
+      (change)="toggleAxVisible($event)"
+    ></ui-switch>
+  </div>
+
+  <div
     *ngIf="formatChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
-    <div class="flex h-9 select-none items-center text-base text-gray1"
+    <div class="text-gray1 flex h-9 select-none items-center text-base"
       >Format</div
     >
 
@@ -21,7 +36,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 select-none items-center text-base"
         >Page Size (visible rows)</div
       >
     </div>
@@ -30,7 +45,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorPageSizeInput"
-        class="form-input h-9 w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             pageSizeForm.controls['pageSize'].invalid &&
@@ -49,7 +64,7 @@
     *ngIf="hideColumnsChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-start"
   >
-    <div class="flex h-9 select-none items-center text-base text-gray1"
+    <div class="text-gray1 flex h-9 select-none items-center text-base"
       >Hide Columns</div
     >
 
@@ -60,7 +75,7 @@
       >
         <button
           data-cy="chartEditorHideColumnsCheckbox"
-          class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border-2 border-blue3 text-white focus:outline-none"
+          class="border-blue3 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border-2 text-white focus:outline-none"
           [ngClass]="{
             'bg-blue3 ': hideColumnsIsChecked(column.id)
           }"
@@ -79,7 +94,7 @@
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-32 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
         >xField</div
       >
     </div>
@@ -129,7 +144,7 @@
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-32 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
         >multiField</div
       >
     </div>
@@ -174,7 +189,7 @@
 
     <div
       *ngIf="sortedDimensions.length < 2"
-      class="ml-5 flex h-9 select-none items-center text-base text-gray1"
+      class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
       ><m-minus-sm-icon></m-minus-sm-icon
     ></div>
   </div>
@@ -184,7 +199,7 @@
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-32 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
         >Value Field</div
       >
     </div>
@@ -229,7 +244,7 @@
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-32 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
         >Previous Value Field</div
       >
     </div>
@@ -277,7 +292,7 @@
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-32 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
         >yField</div
       >
     </div>
@@ -321,7 +336,7 @@
     *ngIf="yFieldsChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-start"
   >
-    <div class="flex h-9 w-32 select-none items-center text-base text-gray1"
+    <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
       >yFields</div
     >
 
@@ -332,7 +347,7 @@
       >
         <button
           data-cy="chartEditorYFieldsCheckbox"
-          class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border-2 border-blue3 text-white focus:outline-none"
+          class="border-blue3 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border-2 text-white focus:outline-none"
           [ngClass]="{
             'bg-blue3 ': yFieldsIsChecked(column.id)
           }"
@@ -359,7 +374,7 @@
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-32 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
         >Color Scheme</div
       >
     </div>
@@ -394,7 +409,7 @@
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-32 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
         >Scheme Type</div
       >
     </div>
@@ -429,7 +444,7 @@
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-32 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
         >Interpolation</div
       >
     </div>
@@ -464,7 +479,7 @@
     class="mb-5 flex flex-row items-center"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >Card Color</div
       >
     </div>
@@ -481,7 +496,7 @@
     class="mb-5 flex flex-row items-center"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >Empty Card Color</div
       >
     </div>
@@ -498,7 +513,7 @@
     class="mb-5 flex flex-row items-center"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >Band Color</div
       >
     </div>
@@ -515,7 +530,7 @@
     class="mb-5 flex flex-row items-center"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >Text Color</div
       >
     </div>
@@ -532,7 +547,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-32 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
         >Units</div
       >
     </div>
@@ -541,7 +556,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorUnitsInput"
-        class="form-input h-9 w-56 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-56 rounded"
         [ngClass]="{
           'border-red-600':
             unitsForm.controls['units'].invalid &&
@@ -559,7 +574,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-32 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
         >Legend Title</div
       >
     </div>
@@ -574,7 +589,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorLegendTitleInput"
-        class="form-input h-9 w-56 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-56 rounded"
         [ngClass]="{
           'border-red-600':
             legendTitleForm.controls['legendTitle'].invalid &&
@@ -593,7 +608,7 @@
         chart.legend === false ||
         chart.schemeType === chartSchemeTypeEnum.Linear
       "
-      class="ml-5 mb-6 flex h-9 select-none items-center text-base text-gray1"
+      class="text-gray1 ml-5 mb-6 flex h-9 select-none items-center text-base"
       ><m-minus-sm-icon></m-minus-sm-icon
     ></div>
   </div>
@@ -603,7 +618,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-32 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
         >X Axis Label</div
       >
     </div>
@@ -616,7 +631,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorXAxisLabelInput"
-        class="form-input h-9 w-56 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-56 rounded"
         [ngClass]="{
           'border-red-600':
             xAxisLabelForm.controls['xAxisLabel'].invalid &&
@@ -632,7 +647,7 @@
 
     <div
       *ngIf="chart.showXAxisLabel === false || chart.xAxis === false"
-      class="ml-5 mb-6 flex h-9 select-none items-center text-base text-gray1"
+      class="text-gray1 ml-5 mb-6 flex h-9 select-none items-center text-base"
       ><m-minus-sm-icon></m-minus-sm-icon
     ></div>
   </div>
@@ -642,7 +657,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-32 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
         >Y Axis Label</div
       >
     </div>
@@ -655,7 +670,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorYAxisLabelInput"
-        class="form-input h-9 w-56 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-56 rounded"
         [ngClass]="{
           'border-red-600':
             yAxisLabelForm.controls['yAxisLabel'].invalid &&
@@ -671,7 +686,7 @@
 
     <div
       *ngIf="chart.showYAxisLabel === false || chart.yAxis === false"
-      class="ml-5 mb-6 flex h-9 select-none items-center text-base text-gray1"
+      class="text-gray1 ml-5 mb-6 flex h-9 select-none items-center text-base"
       ><m-minus-sm-icon></m-minus-sm-icon
     ></div>
   </div>
@@ -680,7 +695,7 @@
     *ngIf="labelsChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
-    <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+    <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
       >Labels</div
     >
 
@@ -695,7 +710,7 @@
     *ngIf="showDataLabelChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
-    <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+    <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
       >Show Data Label</div
     >
 
@@ -710,7 +725,7 @@
     *ngIf="legendChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
-    <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+    <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
       >Legend</div
     >
 
@@ -723,7 +738,7 @@
 
     <div
       *ngIf="chart.schemeType === chartSchemeTypeEnum.Linear"
-      class="ml-5 flex h-9 select-none items-center text-base text-gray1"
+      class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
       ><m-minus-sm-icon></m-minus-sm-icon
     ></div>
   </div>
@@ -732,7 +747,7 @@
     *ngIf="doughnutChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
-    <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+    <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
       >Doughnut</div
     >
 
@@ -747,7 +762,7 @@
     *ngIf="explodeSlicesChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
-    <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+    <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
       >Explode Slices (doughnut off)</div
     >
 
@@ -760,7 +775,7 @@
 
     <div
       *ngIf="chart.doughnut === true"
-      class="ml-5 flex h-9 select-none items-center text-base text-gray1"
+      class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
       ><m-minus-sm-icon></m-minus-sm-icon
     ></div>
   </div>
@@ -769,7 +784,7 @@
     *ngIf="xAxisChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
-    <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+    <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
       >X Axis</div
     >
 
@@ -784,7 +799,7 @@
     *ngIf="yAxisChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
-    <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+    <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
       >Y Axis</div
     >
 
@@ -799,7 +814,7 @@
     *ngIf="showXAxisLabelChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
-    <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+    <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
       >Show X Axis Label</div
     >
 
@@ -812,7 +827,7 @@
 
     <div
       *ngIf="chart.xAxis === false"
-      class="ml-5 flex h-9 select-none items-center text-base text-gray1"
+      class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
       ><m-minus-sm-icon></m-minus-sm-icon
     ></div>
   </div>
@@ -821,7 +836,7 @@
     *ngIf="showYAxisLabelChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
-    <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+    <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
       >Show Y Axis Label</div
     >
 
@@ -834,7 +849,7 @@
 
     <div
       *ngIf="chart.yAxis === false"
-      class="ml-5 flex h-9 select-none items-center text-base text-gray1"
+      class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
       ><m-minus-sm-icon></m-minus-sm-icon
     ></div>
   </div>
@@ -843,7 +858,7 @@
     *ngIf="showAxisChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
-    <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+    <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
       >Show Axis</div
     >
 
@@ -858,7 +873,7 @@
     *ngIf="roundDomainsChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
-    <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+    <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
       >Round Domains</div
     >
 
@@ -873,7 +888,7 @@
     *ngIf="showGridLinesChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
-    <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+    <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
       >Show Grid Lines</div
     >
 
@@ -903,7 +918,7 @@
     *ngIf="roundEdgesChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
-    <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+    <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
       >Round Bar Edges</div
     >
 
@@ -918,7 +933,7 @@
     *ngIf="tooltipDisabledChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
-    <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+    <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
       >Disable Tooltip</div
     >
 
@@ -933,7 +948,7 @@
     *ngIf="gradientChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
-    <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+    <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
       >Gradient</div
     >
 
@@ -948,7 +963,7 @@
     *ngIf="animationsChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
-    <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+    <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
       >Animations</div
     >
 
@@ -963,7 +978,7 @@
     *ngIf="autoScaleChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
-    <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+    <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
       >Auto Scale</div
     >
 
@@ -979,7 +994,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >Angle Span</div
       >
     </div>
@@ -988,7 +1003,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorAngleSpanInput"
-        class="form-input h-9 w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             angleSpanForm.controls['angleSpan'].invalid &&
@@ -1008,7 +1023,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >Start Angle</div
       >
     </div>
@@ -1017,7 +1032,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorStartAngleInput"
-        class="form-input h-9 w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             startAngleForm.controls['startAngle'].invalid &&
@@ -1037,7 +1052,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >Arc Width (doughnut)</div
       >
     </div>
@@ -1050,7 +1065,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorArcWidthInput"
-        class="form-input h-9 w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             arcWidthForm.controls['arcWidth'].invalid &&
@@ -1066,7 +1081,7 @@
 
     <div
       *ngIf="chart.doughnut === false"
-      class="ml-5 mb-6 flex h-9 select-none items-center text-base text-gray1"
+      class="text-gray1 ml-5 mb-6 flex h-9 select-none items-center text-base"
       ><m-minus-sm-icon></m-minus-sm-icon
     ></div>
   </div>
@@ -1076,7 +1091,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >Min</div
       >
     </div>
@@ -1085,7 +1100,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorMinInput"
-        class="form-input h-9 w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             minForm.controls['min'].invalid && minForm.controls['min'].touched
@@ -1102,7 +1117,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >Max</div
       >
     </div>
@@ -1111,7 +1126,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorMaxInput"
-        class="form-input h-9 w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             maxForm.controls['max'].invalid && maxForm.controls['max'].touched
@@ -1128,7 +1143,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >X Scale Max</div
       >
     </div>
@@ -1137,7 +1152,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorXScaleMaxInput"
-        class="form-input h-9 w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             xScaleMaxForm.controls['xScaleMax'].invalid &&
@@ -1157,7 +1172,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >Y Scale Min</div
       >
     </div>
@@ -1170,7 +1185,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorYScaleMinInput"
-        class="form-input h-9 w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             yScaleMinForm.controls['yScaleMin'].invalid &&
@@ -1186,7 +1201,7 @@
 
     <div
       *ngIf="chart.autoScale === true"
-      class="ml-5 mb-6 flex h-9 select-none items-center text-base text-gray1"
+      class="text-gray1 ml-5 mb-6 flex h-9 select-none items-center text-base"
       ><m-minus-sm-icon></m-minus-sm-icon
     ></div>
   </div>
@@ -1196,7 +1211,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >Y Scale Max</div
       >
     </div>
@@ -1209,7 +1224,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorYScaleMaxInput"
-        class="form-input h-9 w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             yScaleMaxForm.controls['yScaleMax'].invalid &&
@@ -1225,7 +1240,7 @@
 
     <div
       *ngIf="chart.autoScale === true"
-      class="ml-5 mb-6 flex h-9 select-none items-center text-base text-gray1"
+      class="text-gray1 ml-5 mb-6 flex h-9 select-none items-center text-base"
       ><m-minus-sm-icon></m-minus-sm-icon
     ></div>
   </div>
@@ -1235,7 +1250,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >Padding between bars</div
       >
     </div>
@@ -1244,7 +1259,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorBarPaddingInput"
-        class="form-input h-9 w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             barPaddingForm.controls['barPadding'].invalid &&
@@ -1264,7 +1279,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >Big Segments</div
       >
     </div>
@@ -1273,7 +1288,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorBigSegmentsInput"
-        class="form-input h-9 w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             bigSegmentsForm.controls['bigSegments'].invalid &&
@@ -1293,7 +1308,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >Small Segments</div
       >
     </div>
@@ -1302,7 +1317,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorSmallSegmentsInput"
-        class="form-input h-9 w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             smallSegmentsForm.controls['smallSegments'].invalid &&
@@ -1322,7 +1337,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >Group Padding</div
       >
     </div>
@@ -1331,7 +1346,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorGroupPaddingInput"
-        class="form-input h-9 w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             groupPaddingForm.controls['groupPadding'].invalid &&
@@ -1351,7 +1366,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >Inner Padding</div
       >
     </div>
@@ -1360,7 +1375,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorInnerPaddingInput"
-        class="form-input h-9 w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             innerPaddingForm.controls['innerPadding'].invalid &&
@@ -1380,7 +1395,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >Format # Data Label</div
       >
     </div>
@@ -1392,7 +1407,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorFormatNumberDataLabelInput"
-        class="form-input h-9 w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             formatNumberDataLabelForm.controls['formatNumberDataLabel']
@@ -1413,7 +1428,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >Format # Value</div
       >
     </div>
@@ -1425,7 +1440,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorFormatNumberValueInput"
-        class="form-input h-9 w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             formatNumberValueForm.controls['formatNumberValue'].invalid &&
@@ -1445,7 +1460,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >Format # Axis Tick</div
       >
     </div>
@@ -1457,7 +1472,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorFormatNumberAxisTickInput"
-        class="form-input h-9 w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             formatNumberAxisTickForm.controls['formatNumberAxisTick'].invalid &&
@@ -1477,7 +1492,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >Format # X Axis Tick</div
       >
     </div>
@@ -1489,7 +1504,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorFormatNumberXAxisTickInput"
-        class="form-input h-9 w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             formatNumberXAxisTickForm.controls['formatNumberXAxisTick']
@@ -1510,7 +1525,7 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-48 select-none items-center text-base text-gray1"
+      <div class="text-gray1 flex h-9 w-48 select-none items-center text-base"
         >Format # Y Axis Tick</div
       >
     </div>
@@ -1522,7 +1537,7 @@
       <input
         spellcheck="false"
         data-cy="chartEditorFormatNumberYAxisTickInput"
-        class="form-input h-9 w-32 rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             formatNumberYAxisTickForm.controls['formatNumberYAxisTick']
