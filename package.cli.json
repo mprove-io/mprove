@@ -34,7 +34,7 @@
     "module-alias": "^2.2.2",
     "nanoid": "^3.1.22",
     "nest-winston": "^1.8.0",
-    "nodegit": "0.28.0-alpha.20",
+    "@figma/nodegit": "0.28.0-figma.6",
     "p-iteration": "^1.1.8",
     "prettyjson": "^1.2.5",
     "reflect-metadata": "^0.1.13",

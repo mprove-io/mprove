@@ -1,4 +1,5 @@
-import * as nodegit from 'nodegit';
+import * as nodegit from '@figma/nodegit';
+// import { FetchOptions, Remote, Repository } from '@figma/nodegit';
 import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
 import { getRepoStatus } from './get-repo-status';

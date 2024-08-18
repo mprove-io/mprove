@@ -1,5 +1,5 @@
+import * as nodegit from '@figma/nodegit';
 import * as fse from 'fs-extra';
-import * as nodegit from 'nodegit';
 import { forEachSeries } from 'p-iteration';
 import { common } from '~node-common/barrels/common';
 import { gitLsFiles } from './git-ls-files';

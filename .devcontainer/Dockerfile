@@ -1,5 +1,6 @@
-# [Choice] Node.js version (use -bullseye variants on local arm64/Apple Silicon): 18, 16, 14, 18-bullseye, 16-bullseye, 14-bullseye, 18-buster, 16-buster, 14-buster
-ARG VARIANT=0.204.11-16-bullseye
+# node 18.20.3
+ARG VARIANT=1.1.2-18-bullseye
+# https://github.com/devcontainers/images/tree/main/src/javascript-node/history
 FROM mcr.microsoft.com/vscode/devcontainers/javascript-node:${VARIANT}
 
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
@@ -34,7 +35,7 @@ RUN apt-get install -y ./google-chrome-stable_current_amd64.deb
 RUN rm google-chrome-stable_current_amd64.deb
 
 # AMD64
-RUN curl -L -o devspace "https://github.com/loft-sh/devspace/releases/latest/download/devspace-linux-amd64" && chmod +x devspace;
+RUN curl -L -o devspace "https://github.com/devspace-sh/devspace/releases/latest/download/devspace-linux-amd64" && chmod +x devspace;
 RUN sudo install devspace /usr/local/bin;
 
 # direnv

@@ -1,4 +1,4 @@
-import * as nodegit from 'nodegit';
+import * as nodegit from '@figma/nodegit';
 import { forEachSeries } from 'p-iteration';
 import { common } from '~node-common/barrels/common';
 import { readFileCheckSize } from './read-file-check-size';

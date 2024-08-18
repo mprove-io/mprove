@@ -1,4 +1,4 @@
-import * as nodegit from 'nodegit';
+import * as nodegit from '@figma/nodegit';
 
 export async function deleteLocalBranch(item: {
   repoDir: string;
