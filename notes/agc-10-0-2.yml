@@ -1,0 +1,71 @@
+# bar / line
+type: 'bar'
+# bar / line
+xKey: 'string'
+# bar / line
+yKey: 'string'
+# bar / line
+errorBar: AgErrorBarOptions
+# bar 
+grouped: true
+# bar / line 
+stacked: true
+# bar / line
+stackGroup: 'id'
+# bar
+normalizedTo: 100
+# bar / line
+# default: auto-generated value
+id: 'string' 
+# bar
+data: TDatum[]
+# bar / line
+visible: true
+# bar / line
+cursor: 'pointer'
+# bar / line
+highlightStyle: # AgSeriesHighlightStyle
+  item: 
+    - fill: ### CssColor
+# bar / line
+nodeClickRange: InteractionRange
+# bar / line
+showInLegend: true
+# bar / line
+listeners: AgSeriesListeners
+# bar / line
+xName: 'x-name'
+# bar / line
+yName: 'y-name'
+# bar / line
+legendItemName: 'legend-name'
+# bar
+direction: 'horizontal'
+# bar
+crisp: false
+# bar
+shadow: AgDropShadowOptions
+# bar / line
+label: AgBarSeriesLabelOptions
+# bar / line
+tooltip: AgSeriesTooltip
+# bar
+itemStyler: itemStyler
+# bar
+cornerRadius: PixelSize
+# bar
+fill: CssColor
+# bar
+fillOpacity: Opacity
+# bar / line
+stroke: CssColor
+# bar / line
+strokeWidth: PixelSize
+# bar / line
+strokeOpacity: Opacity
+# bar / line
+lineDash: PixelSize[]
+# bar / line
+LineDashOffset: PixelSize
+# bar / line
+showInMiniChart: true
