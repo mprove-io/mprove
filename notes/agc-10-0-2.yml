@@ -5,10 +5,40 @@ xKey: 'string'
 # bar / line
 yKey: 'string'
 # bar / line
-errorBar: AgErrorBarOptions
-# bar 
+errorBar: 
+  xLowerKey: xLowerKey
+  xUpperKey: xUpperKey
+  yLowerKey: yLowerKey
+  yUpperKey: yUpperKey
+  xLowerName: xLowerName
+  xUpperName: xUpperName
+  yLowerName: yLowerName
+  yUpperName: yUpperName
+  itemStyler: ???
+  cap: 
+    length: 4
+    lengthRatio: 0.5
+    visible: true
+    stroke: \#151515
+    strokeWidth: 4
+    strokeOpacity: 0.7
+    lineDash:
+      - 5
+      - 4
+      - 10
+      - ...
+  visible: true
+  stroke: \#202020
+  strokeWidth: 4
+  strokeOpacity: 0.5
+  lineDash:
+    - 5
+    - 4
+    - 10
+    - ...
+# bar
 grouped: true
-# bar / line 
+# bar / line
 stacked: true
 # bar / line
 stackGroup: 'id'
@@ -16,23 +46,27 @@ stackGroup: 'id'
 normalizedTo: 100
 # bar / line
 # default: auto-generated value
-id: 'string' 
-# bar
-data: TDatum[]
+id: 'string'
 # bar / line
 visible: true
 # bar / line
 cursor: 'pointer'
 # bar / line
 highlightStyle: # AgSeriesHighlightStyle
-  item: 
-    - fill: ### CssColor
+  item:
+    fill: \#00FF00
+  series:
+    enabled: true
+    dimOpacity: 1
+    strokeWidth: 4
 # bar / line
-nodeClickRange: InteractionRange
+nodeClickRange: 'nearest'
 # bar / line
 showInLegend: true
 # bar / line
-listeners: AgSeriesListeners
+listeners: 
+  nodeClick: ...
+  nodeDoubleClick: ...
 # bar / line
 xName: 'x-name'
 # bar / line
@@ -44,28 +78,36 @@ direction: 'horizontal'
 # bar
 crisp: false
 # bar
-shadow: AgDropShadowOptions
+shadow: 
+  enabled: true
+  color: \#ABABAB
+  xOffset: 1
+  yOffset: 1
+  blur: 8
 # bar / line
 label: AgBarSeriesLabelOptions
 # bar / line
 tooltip: AgSeriesTooltip
 # bar
-itemStyler: itemStyler
+itemStyler: ??????
 # bar
-cornerRadius: PixelSize
+cornerRadius: 4
 # bar
-fill: CssColor
+fill: \#00FF00
 # bar
-fillOpacity: Opacity
+fillOpacity: 0.65
 # bar / line
-stroke: CssColor
+stroke: \#FF0000
 # bar / line
-strokeWidth: PixelSize
+strokeWidth: 4
 # bar / line
-strokeOpacity: Opacity
+strokeOpacity: 0.65
 # bar / line
-lineDash: PixelSize[]
+lineDash:
+  - 5
+  - 4
+  - 10
 # bar / line
-LineDashOffset: PixelSize
+LineDashOffset: 4
 # bar / line
 showInMiniChart: true
