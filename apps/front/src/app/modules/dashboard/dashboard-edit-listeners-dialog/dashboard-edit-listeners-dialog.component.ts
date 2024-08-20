@@ -17,6 +17,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { DashboardService } from '~front/app/services/dashboard.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { SharedModule } from '../../shared/shared.module';
 
 export class ReportX2 extends common.ReportX {
   modelFields?: { [a: string]: common.ModelField[] };
@@ -38,7 +39,7 @@ export interface DashboardEditListenersDialogData {
   templateUrl: './dashboard-edit-listeners-dialog.component.html',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, NgSelectModule]
+  imports: [CommonModule, NgSelectModule, SharedModule]
 })
 export class DashboardEditListenersDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')
@@ -50,7 +51,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
 
   models: common.Model[];
 
-  dashboard: DashboardX2;
+  dashboard: any; // DashboardX2
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -96,7 +97,9 @@ export class DashboardEditListenersDialogComponent implements OnInit {
       branchId: nav.branchId,
       envId: nav.envId,
       addFields: true,
-      filterByModelIds: this.dashboard.reports.map(report => report.modelId)
+      filterByModelIds: (this.dashboard as DashboardX2).reports.map(
+        report => report.modelId
+      )
     };
 
     apiService
@@ -112,7 +115,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
 
             this.models = resp.payload.models;
 
-            this.dashboard.reports.forEach(x => {
+            (this.dashboard as DashboardX2).reports.forEach(x => {
               let model = this.models.find(m => m.modelId === x.modelId);
 
               let swap: { [a: string]: string[] } = {};
@@ -129,7 +132,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
 
               let modelFields: { [a: string]: common.ModelField[] } = {};
 
-              this.dashboard.fields.forEach(f => {
+              (this.dashboard as DashboardX2).fields.forEach(f => {
                 modelFields[f.id] = [
                   <ModelField>{ id: undefined },
                   ...model.fields.filter(y => y.result === f.result)
@@ -184,7 +187,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
   apply() {
     this.ref.close();
 
-    this.dashboard.reports.forEach(x => {
+    (this.dashboard as DashboardX2).reports.forEach(x => {
       let newListen: { [a: string]: string } = {};
 
       Object.keys(x.mconfigListenSwap).forEach(dashboardFieldId => {

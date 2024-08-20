@@ -89,7 +89,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     })
   );
 
-  selectedDashboardId: string;
+  selectedDashboardId: any; // string
   selectedDashboardPath: string;
 
   dashboards: common.DashboardX[];

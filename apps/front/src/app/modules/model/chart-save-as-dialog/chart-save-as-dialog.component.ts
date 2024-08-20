@@ -96,11 +96,11 @@ export class ChartSaveAsDialogComponent implements OnInit {
     })
   );
 
-  selectedDashboardId: string;
+  selectedDashboardId: any; // string
   selectedDashboardPath: string;
   selectedDashboard: common.DashboardX;
 
-  selectedReportTitle: string;
+  selectedReportTitle: any; // string
 
   dashboards: common.DashboardX[];
 

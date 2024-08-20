@@ -31,7 +31,7 @@ export class EditUserTimezoneDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  timezone: string;
+  timezone: any; // string
 
   timezones = common.getUserTimezones();
 

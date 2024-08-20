@@ -95,7 +95,7 @@ export class RepSaveAsDialogComponent implements OnInit {
 
   fromRepId: string;
 
-  selectedRepId: string;
+  selectedRepId: any; // string
   selectedRepPath: string;
 
   reps: common.RepX[];

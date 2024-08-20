@@ -4,8 +4,13 @@ import {
 } from '~common/constants/top';
 import { getTimezones } from './get-timezones';
 
+export interface TzVL {
+  value: string;
+  label: string;
+}
+
 export function getUserTimezones() {
-  let tzs: { value: string; label: string }[] = getTimezones();
+  let tzs: TzVL[] = getTimezones();
 
   let userTimezones = [
     {

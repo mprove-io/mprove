@@ -133,9 +133,10 @@ export class MergeBranchDialogComponent implements OnInit {
       .subscribe();
   }
 
-  branchChange(branchItem: interfaces.BranchItem) {
+  // branchChange(branchItem: interfaces.BranchItem) {
+  branchChange(branchItem: any) {
     this.selectedBranchItem = this.branchesList.find(
-      x => x.extraId === branchItem.extraId
+      x => x.extraId === (branchItem as interfaces.BranchItem).extraId
     );
 
     this.cd.detectChanges();
