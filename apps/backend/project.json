@@ -1,19 +1,26 @@
 {
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "backend",
   "prefix": "backend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/backend/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/node:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "target": "node",
+        "compiler": "tsc",
         "outputPath": "dist/apps/backend",
         "main": "apps/backend/src/main.ts",
         "tsConfig": "apps/backend/tsconfig.app.json",
-        "assets": ["apps/backend/src/assets"]
+        "assets": ["apps/backend/src/assets"],
+        "isolatedConfig": true,
+        "webpackConfig": "apps/backend/webpack.config.js",
+        "sourceMap": true
       },
       "configurations": {
+        "development": {},
         "production": {
           "optimization": true,
           "extractLicenses": true,
@@ -22,17 +29,30 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "backend:build:production",
         "host": "0.0.0.0",
         "port": 9229,
         "inspect": "inspect",
         "watch": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "backend:build:development"
+        },
+        "production": {
+          "buildTarget": "backend:build:production",
+          "host": "0.0.0.0",
+          "port": 9229,
+          "inspect": "inspect",
+          "watch": true
+        }
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/backend/**/*.ts"]
       }

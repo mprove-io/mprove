@@ -1,19 +1,25 @@
 {
+  "name": "mcli",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "prefix": "mcli",
   "sourceRoot": "apps/mcli/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/node:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "target": "node",
+        "compiler": "tsc",
         "outputPath": "dist/apps/mcli",
         "main": "apps/mcli/src/main.ts",
         "tsConfig": "apps/mcli/tsconfig.app.json",
-        "assets": ["apps/mcli/src/assets"]
+        "assets": ["apps/mcli/src/assets"],
+        "isolatedConfig": true,
+        "webpackConfig": "apps/backend/webpack.config.js",
+        "sourceMap": true
       },
       "configurations": {
+        "development": {},
         "production": {
           "optimization": true,
           "extractLicenses": true,
@@ -22,7 +28,8 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/mcli/**/*.ts"]
       }

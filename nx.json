@@ -1,27 +1,10 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "npmScope": "mprove",
   "affected": {
     "defaultBase": "master"
   },
   "cli": {
     "defaultCollection": "@nrwl/nest"
-  },
-  "implicitDependencies": {
-    ".dockerignore": "*",
-    ".env": "*",
-    ".envrc": "*",
-    ".eslintignore": "*",
-    ".eslintrc.js": "*",
-    "ava-js-e2e.config.js": "*",
-    "ava-js.config.js": "*",
-    "ava.config.js": "*",
-    "nx.json": "*",
-    "package.json": { "dependencies": "*", "devDependencies": "*" },
-    "tailwind.config.js": "*",
-    "tsconfig.base.json": "*",
-    "tsconfig.json": "*",
-    "yarn.lock": "*"
   },
   "tasksRunnerOptions": {
     "default": {
@@ -46,6 +29,38 @@
         "projects": "dependencies"
       }
     ]
+  },
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    },
+    "test": {
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+    },
+    "lint": {
+      "inputs": [
+        "default",
+        "{workspaceRoot}/.eslintrc.js",
+        "{workspaceRoot}/.eslintignore"
+      ]
+    },
+    "e2e": {
+      "inputs": ["default", "^production"]
+    }
+  },
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "production": [
+      "default",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "!{projectRoot}/tsconfig.spec.json",
+      "!{projectRoot}/jest.config.[jt]s",
+      "!{projectRoot}/src/test-setup.[jt]s",
+      "!{projectRoot}/test-setup.[jt]s",
+      "!{projectRoot}/.eslintrc.json"
+    ],
+    "sharedGlobals": []
   },
   "generators": {
     "@nrwl/angular:application": {
