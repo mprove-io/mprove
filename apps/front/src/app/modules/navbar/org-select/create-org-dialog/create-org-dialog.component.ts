@@ -1,15 +1,23 @@
+import { CommonModule } from '@angular/common';
 import {
+  CUSTOM_ELEMENTS_SCHEMA,
   Component,
   ElementRef,
   HostListener,
   OnInit,
   ViewChild
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -22,7 +30,10 @@ export interface CreateOrgDialogData {
 
 @Component({
   selector: 'm-create-org-dialog',
-  templateUrl: './create-org-dialog.component.html'
+  templateUrl: './create-org-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule]
 })
 export class CreateOrgDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

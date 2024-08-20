@@ -1,11 +1,18 @@
+import { CommonModule } from '@angular/common';
 import {
+  CUSTOM_ELEMENTS_SCHEMA,
   Component,
   ElementRef,
   HostListener,
   OnInit,
   ViewChild
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { of } from 'rxjs';
@@ -17,6 +24,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+import { SharedModule } from '../../shared/shared.module';
 
 export interface CommitDialogDialogData {
   apiService: ApiService;
@@ -29,7 +37,10 @@ export interface CommitDialogDialogData {
 
 @Component({
   selector: 'm-commit-dialog',
-  templateUrl: './commit-dialog.component.html'
+  templateUrl: './commit-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule]
 })
 export class CommitDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

@@ -1,4 +1,10 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  Component,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ConnectionsQuery } from '~front/app/queries/connections.query';
@@ -15,7 +21,10 @@ export interface DeleteConnectionDialogData {
 
 @Component({
   selector: 'm-delete-connection-dialog',
-  templateUrl: './delete-connection-dialog.component.html'
+  templateUrl: './delete-connection-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule]
 })
 export class DeleteConnectionDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

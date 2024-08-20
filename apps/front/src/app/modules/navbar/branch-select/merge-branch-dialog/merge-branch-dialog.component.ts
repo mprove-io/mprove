@@ -1,14 +1,22 @@
+import { CommonModule } from '@angular/common';
 import {
+  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectorRef,
   Component,
   HostListener,
   OnInit
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { BranchItem } from '~front/app/interfaces/branch-item';
+import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
@@ -32,7 +40,10 @@ export interface MergeBranchDialogData {
 
 @Component({
   selector: 'm-merge-branch-dialog',
-  templateUrl: './merge-branch-dialog.component.html'
+  templateUrl: './merge-branch-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule]
 })
 export class MergeBranchDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

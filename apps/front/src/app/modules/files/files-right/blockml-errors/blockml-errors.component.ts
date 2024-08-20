@@ -1,14 +1,14 @@
 import {
+  IActionMapping,
+  TreeComponent,
+  TreeNode
+} from '@ali-hm/angular-tree-component';
+import {
   ChangeDetectorRef,
   Component,
   OnDestroy,
   ViewChild
 } from '@angular/core';
-import {
-  IActionMapping,
-  TreeComponent,
-  TreeNode
-} from '@bugsplat/angular-tree-component';
 import { Subscription } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { getFileExtension } from '~front/app/functions/get-file-extension';

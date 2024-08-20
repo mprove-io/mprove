@@ -131,7 +131,7 @@ export class RepComponent {
       cellRenderer: ParametersRendererComponent
     },
     {
-      field: 'status',
+      field: 'status' as any,
       pinned: 'right',
       resizable: false,
       width: 84,
@@ -139,7 +139,7 @@ export class RepComponent {
       cellRenderer: StatusRendererComponent
     },
     {
-      field: 'chart',
+      field: 'chart' as any,
       pinned: 'left',
       resizable: false,
       width: 60,
@@ -215,7 +215,7 @@ export class RepComponent {
 
         this.timeColumns = this.rep.columns.map(column => {
           let columnDef: ColDef<DataRow> = {
-            field: `${column.columnId}`,
+            field: `${column.columnId}` as any,
             headerName: column.label,
             cellRenderer: DataRendererComponent,
             type: 'numericColumn',
@@ -243,7 +243,9 @@ export class RepComponent {
           .map(row => row.query.status)
           .filter(status => status === common.QueryStatusEnum.Running).length;
 
-        let statusColumn = this.columns.find(c => c.field === 'status');
+        let statusColumn = this.columns.find(
+          c => c.field === ('status' as any)
+        );
 
         statusColumn.type = runningQueriesLength > 0 ? 'running' : undefined;
 

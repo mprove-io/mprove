@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { TippyModule } from '@ngneat/helipopper';
+import { TippyDirective } from '@ngneat/helipopper';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { ColorSketchModule } from 'ngx-color/sketch';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -177,7 +177,7 @@ let sharedComponents = [
     NgxChartsModule,
     ColorSketchModule,
     NgxSpinnerModule,
-    TippyModule
+    TippyDirective
   ],
   exports: [...sharedComponents, ...pipesArray],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

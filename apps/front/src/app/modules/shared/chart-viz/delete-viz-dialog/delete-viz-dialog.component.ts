@@ -1,4 +1,10 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  Component,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
@@ -18,7 +24,10 @@ export interface DeleteVizDialogData {
 
 @Component({
   selector: 'm-delete-viz-dialog',
-  templateUrl: './delete-viz-dialog.component.html'
+  templateUrl: './delete-viz-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule]
 })
 export class DeleteVizDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

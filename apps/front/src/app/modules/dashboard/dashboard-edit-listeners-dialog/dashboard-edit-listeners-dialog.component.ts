@@ -1,4 +1,6 @@
+import { CommonModule } from '@angular/common';
 import {
+  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectorRef,
   Component,
   HostListener,
@@ -32,7 +34,10 @@ export interface DashboardEditListenersDialogData {
 
 @Component({
   selector: 'm-dashboard-edit-listeners-dialog',
-  templateUrl: './dashboard-edit-listeners-dialog.component.html'
+  templateUrl: './dashboard-edit-listeners-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule]
 })
 export class DashboardEditListenersDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

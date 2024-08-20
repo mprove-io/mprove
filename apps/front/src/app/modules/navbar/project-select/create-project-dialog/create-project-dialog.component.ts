@@ -1,14 +1,22 @@
+import { CommonModule } from '@angular/common';
 import {
+  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectorRef,
   Component,
   HostListener,
   OnInit
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -21,7 +29,10 @@ export interface CreateProjectDialogData {
 
 @Component({
   selector: 'm-create-project-dialog',
-  templateUrl: './create-project-dialog.component.html'
+  templateUrl: './create-project-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule]
 })
 export class CreateProjectDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

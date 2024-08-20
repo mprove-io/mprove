@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import type { languages as languagesType } from 'monaco-editor';
 
 export const BLOCKML_LANGUAGE_DATA: languagesType.IMonarchLanguage = {

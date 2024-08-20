@@ -1,11 +1,23 @@
-import { Component, HostListener, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  Component,
+  HostListener,
+  OnInit
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { SharedModule } from '../../shared/shared.module';
 
 export interface EditNameDialogData {
   apiService: ApiService;
@@ -13,7 +25,10 @@ export interface EditNameDialogData {
 
 @Component({
   selector: 'm-edit-name-dialog',
-  templateUrl: './edit-name-dialog.component.html'
+  templateUrl: './edit-name-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule]
 })
 export class EditNameDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

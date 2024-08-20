@@ -1,7 +1,19 @@
-import { Component, HostListener, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  Component,
+  HostListener,
+  OnInit
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { EvsQuery } from '~front/app/queries/evs.query';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -15,7 +27,10 @@ export interface EditEvDialogData {
 
 @Component({
   selector: 'm-edit-ev-dialog',
-  templateUrl: './edit-ev-dialog.component.html'
+  templateUrl: './edit-ev-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule]
 })
 export class EditEvDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

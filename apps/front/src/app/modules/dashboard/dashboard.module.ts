@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { KtdGridModule } from '@katoid/angular-grid-layout';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { TippyModule } from '@ngneat/helipopper';
+import { TippyDirective } from '@ngneat/helipopper';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
@@ -28,7 +28,7 @@ import { DashboardComponent } from './dashboard.component';
     UiSwitchModule,
     NgxSpinnerModule,
     KtdGridModule,
-    TippyModule
+    TippyDirective
   ]
 })
 export class DashboardModule {}

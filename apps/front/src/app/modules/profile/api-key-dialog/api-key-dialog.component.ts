@@ -1,9 +1,18 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  Component,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 
 @Component({
   selector: 'm-api-key-dialog',
-  templateUrl: './api-key-dialog.component.html'
+  templateUrl: './api-key-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule]
 })
 export class ApiKeyDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

@@ -1,10 +1,10 @@
+import { TreeModule } from '@ali-hm/angular-tree-component';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { TreeModule } from '@bugsplat/angular-tree-component';
 import { VirtualScrollerModule } from '@iharbeck/ngx-virtual-scroller';
-import { TippyModule } from '@ngneat/helipopper';
+import { TippyDirective } from '@ngneat/helipopper';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
@@ -22,7 +22,7 @@ import { DashboardsComponent } from './dashboards.component';
     VirtualScrollerModule,
     UiSwitchModule,
     NgxSpinnerModule,
-    TippyModule
+    TippyDirective
   ]
 })
 export class DashboardsModule {}

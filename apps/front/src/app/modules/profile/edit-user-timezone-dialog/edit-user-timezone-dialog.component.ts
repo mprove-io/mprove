@@ -1,4 +1,6 @@
+import { CommonModule } from '@angular/common';
 import {
+  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectorRef,
   Component,
   HostListener,
@@ -17,7 +19,10 @@ export interface EditUserTimezoneDialogData {
 
 @Component({
   selector: 'm-edit-user-timezone-dialog',
-  templateUrl: './edit-user-timezone-dialog.component.html'
+  templateUrl: './edit-user-timezone-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule]
 })
 export class EditUserTimezoneDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

@@ -1,4 +1,10 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  Component,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { take, tap } from 'rxjs/operators';
@@ -13,7 +19,10 @@ export interface EditPhotoDialogData {
 
 @Component({
   selector: 'm-edit-photo-dialog',
-  templateUrl: './edit-photo-dialog.component.html'
+  templateUrl: './edit-photo-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule]
 })
 export class EditPhotoDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

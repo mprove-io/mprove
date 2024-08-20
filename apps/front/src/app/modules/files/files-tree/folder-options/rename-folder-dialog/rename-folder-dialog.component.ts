@@ -1,13 +1,21 @@
+import { CommonModule } from '@angular/common';
 import {
+  CUSTOM_ELEMENTS_SCHEMA,
   Component,
   ElementRef,
   HostListener,
   OnInit,
   ViewChild
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
@@ -28,7 +36,10 @@ export interface RenameFolderDialogData {
 
 @Component({
   selector: 'm-rename-folder-dialog',
-  templateUrl: './rename-folder-dialog.component.html'
+  templateUrl: './rename-folder-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule]
 })
 export class RenameFolderDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

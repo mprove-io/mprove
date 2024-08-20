@@ -1,8 +1,21 @@
-import { Component, HostListener, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  Component,
+  HostListener,
+  OnInit
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
+import { UiSwitchModule } from 'ngx-ui-switch';
 import { take, tap } from 'rxjs/operators';
 import { conditionalValidator } from '~front/app/functions/conditional-validator';
+import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { ConnectionsQuery } from '~front/app/queries/connections.query';
 import { ApiService } from '~front/app/services/api.service';
 import { ValidationService } from '~front/app/services/validation.service';
@@ -17,7 +30,10 @@ export interface EditConnectionDialogData {
 
 @Component({
   selector: 'm-edit-connection-dialog',
-  templateUrl: './edit-connection-dialog.component.html'
+  templateUrl: './edit-connection-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule, UiSwitchModule]
 })
 export class EditConnectionDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

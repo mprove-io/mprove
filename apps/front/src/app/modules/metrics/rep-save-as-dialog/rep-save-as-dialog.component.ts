@@ -1,10 +1,17 @@
+import { CommonModule } from '@angular/common';
 import {
+  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectorRef,
   Component,
   HostListener,
   OnInit
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
@@ -20,6 +27,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+import { SharedModule } from '../../shared/shared.module';
 
 enum RepSaveAsEnum {
   NEW_REP = 'NEW_REP',
@@ -34,7 +42,10 @@ export interface RepSaveAsDialogData {
 
 @Component({
   selector: 'm-rep-save-as-dialog',
-  templateUrl: './rep-save-as-dialog.component.html'
+  templateUrl: './rep-save-as-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule]
 })
 export class RepSaveAsDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

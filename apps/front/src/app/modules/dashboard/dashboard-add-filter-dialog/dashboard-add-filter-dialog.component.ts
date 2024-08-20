@@ -1,4 +1,6 @@
+import { CommonModule } from '@angular/common';
 import {
+  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -10,9 +12,11 @@ import {
   AbstractControl,
   FormBuilder,
   FormGroup,
+  ReactiveFormsModule,
   ValidationErrors,
   Validators
 } from '@angular/forms';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { tap } from 'rxjs/operators';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
@@ -20,6 +24,7 @@ import { UserQuery } from '~front/app/queries/user.query';
 import { DashboardService } from '~front/app/services/dashboard.service';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+import { SharedModule } from '../../shared/shared.module';
 
 export interface DashboardAddFilterDialogData {
   dashboardService: DashboardService;
@@ -28,7 +33,10 @@ export interface DashboardAddFilterDialogData {
 
 @Component({
   selector: 'm-dashboard-add-filter-dialog',
-  templateUrl: './dashboard-add-filter-dialog.component.html'
+  templateUrl: './dashboard-add-filter-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, ReactiveFormsModule, NgSelectModule, SharedModule]
 })
 export class DashboardAddFilterDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

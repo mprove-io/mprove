@@ -1,4 +1,10 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  Component,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { TeamQuery } from '~front/app/queries/team.query';
@@ -15,7 +21,10 @@ export interface RemoveMemberDialogData {
 
 @Component({
   selector: 'm-remove-member-dialog',
-  templateUrl: './remove-member-dialog.component.html'
+  templateUrl: './remove-member-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule]
 })
 export class RemoveMemberDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

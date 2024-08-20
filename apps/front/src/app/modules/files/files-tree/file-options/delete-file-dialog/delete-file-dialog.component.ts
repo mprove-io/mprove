@@ -1,4 +1,10 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  Component,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
@@ -21,7 +27,10 @@ export interface DeleteFileDialogData {
 
 @Component({
   selector: 'm-delete-file-dialog',
-  templateUrl: './delete-file-dialog.component.html'
+  templateUrl: './delete-file-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule]
 })
 export class DeleteFileDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

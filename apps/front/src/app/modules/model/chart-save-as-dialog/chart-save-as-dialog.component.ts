@@ -1,4 +1,6 @@
+import { CommonModule } from '@angular/common';
 import {
+  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectorRef,
   Component,
   HostListener,
@@ -8,6 +10,7 @@ import {
   AbstractControl,
   FormBuilder,
   FormGroup,
+  ReactiveFormsModule,
   ValidationErrors,
   Validators
 } from '@angular/forms';
@@ -23,6 +26,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+import { SharedModule } from '../../shared/shared.module';
 
 enum ChartSaveAsEnum {
   NEW_VIZ = 'NEW_VIZ',
@@ -43,7 +47,10 @@ export interface ChartSaveAsDialogData {
 
 @Component({
   selector: 'm-chart-save-as-dialog',
-  templateUrl: './chart-save-as-dialog.component.html'
+  templateUrl: './chart-save-as-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule]
 })
 export class ChartSaveAsDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

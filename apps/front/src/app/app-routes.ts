@@ -1,5 +1,4 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { common } from '~front/barrels/common';
 import { DeactivateGuard } from './guards/deactivate.guard';
 import { RegisterComponent } from './modules/auth/main/01-register/register.component';
@@ -64,7 +63,7 @@ import { StructModelsResolver } from './resolvers/struct-models.resolver';
 import { StructRepResolver } from './resolvers/struct-rep.resolver';
 import { StructVizsResolver } from './resolvers/struct-vizs.resolver';
 
-const routes: Routes = [
+export const appRoutes: Routes = [
   {
     path: '',
     redirectTo: common.PATH_LOGIN,
@@ -304,9 +303,3 @@ const routes: Routes = [
     path: '**'
   }
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
-})
-export class AppRoutingModule {}

@@ -12,11 +12,11 @@ import {
 import { IRowNode } from 'ag-grid-community';
 import { NgxSpinnerService } from 'ngx-spinner';
 import {
+  Subscription,
   combineLatest,
   concatMap,
   interval,
   of,
-  Subscription,
   take,
   tap
 } from 'rxjs';
@@ -24,7 +24,7 @@ import { makeRepQueryParams } from '~front/app/functions/make-query-params';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
-import { emptyRep, RepQuery } from '~front/app/queries/rep.query';
+import { RepQuery, emptyRep } from '~front/app/queries/rep.query';
 import { RepsQuery } from '~front/app/queries/reps.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { RepChartData, UiQuery } from '~front/app/queries/ui.query';
@@ -38,6 +38,7 @@ import { UiService } from '~front/app/services/ui.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+import { AgCharts } from 'ag-charts-angular';
 import { constants as frontConstants } from '~front/barrels/constants';
 import { DataRow } from './rep/rep.component';
 
@@ -49,7 +50,8 @@ export class TimeSpecItem {
 @Component({
   selector: 'm-metrics',
   styleUrls: ['metrics.component.scss'],
-  templateUrl: './metrics.component.html'
+  templateUrl: './metrics.component.html',
+  imports: [AgCharts]
 })
 export class MetricsComponent implements OnInit, OnDestroy {
   pageTitle = frontConstants.METRICS_PAGE_TITLE;
@@ -235,12 +237,12 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
                   let columnLabel = common.formatTs({
                     timeSpec: timeSpec,
-                    unixTime: params.xValue
+                    unixTime: Number(params.xName) // params.xValue
                   });
 
-                  let formattedValue = common.isDefined(params.yValue)
+                  let formattedValue = common.isDefined(params.yName) // params.yValue
                     ? this.queryService.formatValue({
-                        value: params.yValue,
+                        value: Number(params.yName), // params.yValue
                         formatNumber: row.formatNumber,
                         fieldResult: common.FieldResultEnum.Number,
                         currencyPrefix: row.currencyPrefix,

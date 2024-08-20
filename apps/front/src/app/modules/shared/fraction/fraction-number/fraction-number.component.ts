@@ -116,11 +116,11 @@ export class FractionNumberComponent implements OnInit {
     this.numberValuesForm = this.fb.group({
       numberValues: [
         this.fraction.numberValues,
-        Validators.compose([
+        [
           Validators.required,
           ValidationService.numberValuesOrEmptyValidator,
           Validators.maxLength(255)
-        ])
+        ]
       ]
     });
   }
@@ -129,11 +129,11 @@ export class FractionNumberComponent implements OnInit {
     this.numberSingleValueForm = this.fb.group({
       numberValue1: [
         this.fraction.numberValue1,
-        Validators.compose([
+        [
           Validators.required,
           ValidationService.numberOrEmptyValidator,
           Validators.maxLength(255)
-        ])
+        ]
       ]
     });
   }
@@ -142,19 +142,19 @@ export class FractionNumberComponent implements OnInit {
     this.numberBetweenForm = this.fb.group({
       numberBetweenFirstValue: [
         this.fraction.numberValue1,
-        Validators.compose([
+        [
           Validators.required,
           ValidationService.numberOrEmptyValidator,
           Validators.maxLength(255)
-        ])
+        ]
       ],
       numberBetweenSecondValue: [
         this.fraction.numberValue2,
-        Validators.compose([
+        [
           Validators.required,
           ValidationService.numberOrEmptyValidator,
           Validators.maxLength(255)
-        ])
+        ]
       ]
     });
   }

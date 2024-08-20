@@ -1,8 +1,20 @@
-import { Component, HostListener, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  Component,
+  HostListener,
+  OnInit
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { OrgQuery } from '~front/app/queries/org.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -18,7 +30,10 @@ export interface EditOrgOwnerDialogData {
 
 @Component({
   selector: 'm-edit-org-owner-dialog',
-  templateUrl: './edit-org-owner-dialog.component.html'
+  templateUrl: './edit-org-owner-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule]
 })
 export class EditOrgOwnerDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

@@ -1,15 +1,23 @@
+import { CommonModule } from '@angular/common';
 import {
+  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectorRef,
   Component,
   HostListener,
   OnInit
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { BranchItem } from '~front/app/interfaces/branch-item';
+import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { UserQuery, UserState } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -30,7 +38,10 @@ export interface CreateBranchDialogData {
 
 @Component({
   selector: 'm-create-branch-dialog',
-  templateUrl: './create-branch-dialog.component.html'
+  templateUrl: './create-branch-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule]
 })
 export class CreateBranchDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

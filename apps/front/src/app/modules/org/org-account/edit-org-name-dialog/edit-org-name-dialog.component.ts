@@ -1,13 +1,21 @@
+import { CommonModule } from '@angular/common';
 import {
+  CUSTOM_ELEMENTS_SCHEMA,
   Component,
   ElementRef,
   HostListener,
   OnInit,
   ViewChild
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { OrgQuery } from '~front/app/queries/org.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -22,7 +30,10 @@ export interface EditOrgNameDialogData {
 
 @Component({
   selector: 'm-edit-org-name-dialog',
-  templateUrl: './edit-org-name-dialog.component.html'
+  templateUrl: './edit-org-name-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule]
 })
 export class EditOrgNameDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

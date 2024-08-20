@@ -8,6 +8,14 @@ import { Query } from './query';
 import { Rq } from './rq';
 
 export class Row {
+  // @IsOptional()
+  // @IsString()
+  // status: string;
+
+  // @IsOptional()
+  // @IsString()
+  // chart: string;
+
   @IsString()
   rowId: string;
 
