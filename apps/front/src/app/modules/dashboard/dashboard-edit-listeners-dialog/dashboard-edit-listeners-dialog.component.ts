@@ -7,6 +7,7 @@ import {
   OnInit
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
@@ -37,7 +38,7 @@ export interface DashboardEditListenersDialogData {
   templateUrl: './dashboard-edit-listeners-dialog.component.html',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule]
+  imports: [CommonModule, NgSelectModule]
 })
 export class DashboardEditListenersDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

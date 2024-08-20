@@ -10,7 +10,7 @@
 
     <div class="mt-6 h-2 w-full flex-1 rounded bg-white shadow">
       <div class="h-full w-full overflow-auto">
-        <div class="mt-16 ml-32 flex flex-row">
+        <div class="ml-32 mt-16 flex flex-row">
           <div class="flex flex-col text-base">
             <div class="flex h-16 items-center justify-end font-semibold"
               >Project Name</div
@@ -58,9 +58,9 @@
               >{{ project?.publicKey }}</div
             >
             <div
-              class="mt-7 mb-5 flex items-center"
-              tippy="Admin role required"
-              [isEnabled]="isAdmin === false"
+              class="mb-5 mt-7 flex items-center"
+              tp="Admin role required"
+              [tpIsEnabled]="isAdmin === false"
             >
               <button
                 data-cy="projectSettingsDeleteProjectButton"
@@ -78,10 +78,10 @@
 
           <div class="ml-6 flex flex-col">
             <div class="flex h-16 items-center">
-              <div tippy="Admin role required" [isEnabled]="isAdmin === false">
+              <div tp="Admin role required" [tpIsEnabled]="isAdmin === false">
                 <button
                   data-cy="projectSettingsEditNameButton"
-                  class="rounded border py-2 px-3 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                  class="rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
                   [ngClass]="{
                     'cursor-default text-gray-400': isAdmin === false,
                     'border-gray3 text-gray1': isAdmin === true

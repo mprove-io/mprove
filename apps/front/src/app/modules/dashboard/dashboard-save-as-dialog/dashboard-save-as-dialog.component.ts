@@ -12,7 +12,9 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
+import { TippyDirective } from '@ngneat/helipopper';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
@@ -41,7 +43,13 @@ export interface DashboardSaveAsDialogData {
   templateUrl: './dashboard-save-as-dialog.component.html',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, ReactiveFormsModule, SharedModule]
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    SharedModule,
+    NgSelectModule,
+    TippyDirective
+  ]
 })
 export class DashboardSaveAsDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

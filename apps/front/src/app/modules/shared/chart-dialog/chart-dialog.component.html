@@ -3,7 +3,7 @@
     <div class="tems-center flex w-1/4 flex-1 flex-row justify-start"> </div>
 
     <div
-      class="text-gray1 line-clamp-2 mx-5 flex h-14 max-w-prose flex-shrink-0 flex-grow flex-row flex-wrap text-center"
+      class="text-gray1 mx-5 line-clamp-2 flex h-14 max-w-prose flex-shrink-0 flex-grow flex-row flex-wrap text-center"
       >{{ mconfig?.chart?.title }}
     </div>
 
@@ -67,8 +67,8 @@
 
       <div
         class="ml-5"
-        [tippy]="templateChartDialogExplore"
-        [isEnabled]="isExplorer === false || canAccessModel === false"
+        [tp]="templateChartDialogExplore"
+        [tpIsEnabled]="isExplorer === false || canAccessModel === false"
       >
         <button
           data-cy="chartDialogExploreButton"
@@ -160,8 +160,8 @@
 
     <div
       class="ml-2 flex flex-row items-center"
-      [tippy]="templateChartDialogModel"
-      [isEnabled]="canAccessModel === false"
+      [tp]="templateChartDialogModel"
+      [tpIsEnabled]="canAccessModel === false"
     >
       <div
         (click)="goToModel(mconfig.modelId, canAccessModel)"

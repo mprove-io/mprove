@@ -10,9 +10,9 @@
           </div>
 
           <div
-            class="mt-2 ml-10 flex h-10 flex-row items-center space-x-3 text-base"
+            class="ml-10 mt-2 flex h-10 flex-row items-center space-x-3 text-base"
           >
-            <div tippy="Need to Save changes" [isEnabled]="needSave === true">
+            <div tp="Need to Save changes" [tpIsEnabled]="needSave === true">
               <button
                 class="flex h-10 w-[50px] cursor-pointer items-center pl-2 focus:outline-none"
                 [ngClass]="{
@@ -24,7 +24,7 @@
               >
             </div>
 
-            <div tippy="Need to Save changes" [isEnabled]="needSave === true">
+            <div tp="Need to Save changes" [tpIsEnabled]="needSave === true">
               <button
                 class="flex h-10 w-[230px] flex-shrink-0 cursor-pointer flex-row items-center pl-2 focus:outline-none"
                 (click)="setPanel(panelChangesToCommit)"
@@ -66,8 +66,8 @@
             </ng-template>
 
             <div
-              [tippy]="templateChangesToPush"
-              [isEnabled]="
+              [tp]="templateChangesToPush"
+              [tpIsEnabled]="
                 needSave === true ||
                 repo?.changesToCommit?.length > 0 ||
                 (repo?.changesToPush?.length === 0 &&
@@ -114,7 +114,7 @@
           *ngIf="!!repo"
         >
           <div
-            tippy="Production repo is a read-only version of a Remote repo. Switch to the Dev repo to enter development mode."
+            tp="Production repo is a read-only version of a Remote repo. Switch to the Dev repo to enter development mode."
             *ngIf="nav?.isRepoProd === true"
             class="mr-5 flex h-11 flex-row items-center text-lg font-semibold text-gray-500"
           >
@@ -157,15 +157,15 @@
 
           <div
             *ngIf="isEditor === true"
-            [tippy]="templateCommit"
-            [isEnabled]="
+            [tp]="templateCommit"
+            [tpIsEnabled]="
               repo.repoStatus !== repoStatusNeedCommit || needSave === true
             "
           >
             <button
               type="button"
               data-cy="filesCommitButton"
-              class="ml-3 rounded py-2 px-5 text-base font-medium text-white focus:outline-none"
+              class="ml-3 rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
               [ngClass]="{
                 'cursor-default bg-gray-400':
                   repo.repoStatus !== repoStatusNeedCommit || needSave === true,
@@ -186,13 +186,13 @@
 
           <div
             *ngIf="isEditor === true && repo.repoStatus === repoStatusNeedPull"
-            [tippy]="templatePullFromRemote"
-            [isEnabled]="needSave === true"
+            [tp]="templatePullFromRemote"
+            [tpIsEnabled]="needSave === true"
           >
             <button
               type="button"
               data-cy="filesPullFromRemoteButton"
-              class="ml-3 rounded py-2 px-5 text-base font-medium text-white focus:outline-none"
+              class="ml-3 rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
               [ngClass]="{
                 'cursor-default bg-gray-400':
                   repo.repoStatus !== repoStatusNeedPull || needSave === true,
@@ -238,15 +238,15 @@
 
           <div
             *ngIf="isEditor === true"
-            [tippy]="templatePushToRemote"
-            [isEnabled]="
+            [tp]="templatePushToRemote"
+            [tpIsEnabled]="
               repo.repoStatus !== repoStatusNeedPush || needSave === true
             "
           >
             <button
               type="button"
               data-cy="filesPushButton"
-              class="ml-3 rounded py-2 px-5 text-base font-medium text-white focus:outline-none"
+              class="ml-3 rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
               [ngClass]="{
                 'cursor-default bg-gray-400':
                   repo.repoStatus !== repoStatusNeedPush || needSave === true,
@@ -262,7 +262,7 @@
           </div>
 
           <button
-            tippy="Click to refresh Repo status"
+            tp="Click to refresh Repo status"
             type="button"
             data-cy="filesRefreshButton"
             class="ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"

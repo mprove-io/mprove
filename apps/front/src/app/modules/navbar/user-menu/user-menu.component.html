@@ -1,12 +1,12 @@
 <div
   class="ml-5 h-10 w-10"
   #t1="tippy"
-  [tippy]="templateUserOptions"
-  [hideOnEscape]="true"
+  [tp]="templateUserOptions"
+  [tpHideOnEscape]="true"
   variation="menu"
   className="my-menu"
-  [offset]="[0, 5]"
-  [isEnabled]="needSave === false"
+  [tpOffset]="[0, 5]"
+  [tpIsEnabled]="needSave === false"
 >
   <button
     class="h-10 w-10 rounded-full bg-blue-200 text-base tracking-wider focus:outline-none"
@@ -19,13 +19,13 @@
   </button>
 
   <ng-template #templateUserOptions>
-    <div class="w-56 rounded-md border-2 border-gray4 bg-white shadow-xl">
+    <div class="border-gray4 w-56 rounded-md border-2 bg-white shadow-xl">
       <div class="mt-2 block px-4 py-2 text-sm font-bold text-gray-400"
         >User</div
       >
 
       <button
-        class="block w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
+        class="text-gray1 hover:bg-blue2 block w-full px-4 py-2 text-left text-base focus:outline-none"
         [ngClass]="{
           'font-semibold': lastUrl === pathProfile
         }"
@@ -35,7 +35,7 @@
       >
 
       <button
-        class="block w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
+        class="text-gray1 hover:bg-blue2 block w-full px-4 py-2 text-left text-base focus:outline-none"
         (click)="t1.hide(); logout()"
         >LogOut</button
       >
@@ -45,7 +45,7 @@
       >
 
       <a
-        class="block px-4 py-2 text-base text-gray1 hover:bg-blue2 hover:text-gray1"
+        class="text-gray1 hover:bg-blue2 hover:text-gray1 block px-4 py-2 text-base"
         target="_blank"
         href="https://docs.mprove.io"
         (click)="t1.hide()"

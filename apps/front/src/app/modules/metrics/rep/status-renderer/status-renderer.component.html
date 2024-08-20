@@ -18,7 +18,7 @@
       isRunning === false && params.data.query?.status === queryStatusEnum.Error
     "
     class="text-red1 flex h-8 w-8 flex-shrink-0"
-    tippy="Query Error: {{ params.data.query?.lastErrorMessage }}"
+    tp="Query Error: {{ params.data.query?.lastErrorMessage }}"
     placement="left"
   >
     <m-exclamation-icon></m-exclamation-icon>
@@ -31,7 +31,7 @@
       'text-gray-400': topQueryError === someRowsHaveFormulaErrors,
       'text-red1': topQueryError !== someRowsHaveFormulaErrors
     }"
-    tippy="{{ topQueryError }}"
+    tp="{{ topQueryError }}"
     placement="left"
   >
     <m-exclamation-icon></m-exclamation-icon>

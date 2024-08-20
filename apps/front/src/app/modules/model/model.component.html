@@ -84,9 +84,9 @@
 
             <div
               *ngIf="query?.status !== queryStatusEnum.Running"
-              tippy="No selected fields"
+              tp="No selected fields"
               class="ml-5"
-              [isEnabled]="mconfig?.select.length === 0"
+              [tpIsEnabled]="mconfig?.select.length === 0"
             >
               <button
                 type="button"
@@ -272,7 +272,7 @@
               </div>
 
               <div
-                class="mx-5 mt-5 mb-5 flex h-2 flex-grow"
+                class="mx-5 mb-5 mt-5 flex h-2 flex-grow"
                 *ngIf="dataIsExpanded"
               >
                 <div
@@ -310,7 +310,7 @@
             <div class="flex flex-col">
               <div class="mr-5 flex flex-shrink-0 flex-grow flex-row">
                 <div
-                  class="text-gray1 mt-4 ml-6 flex h-full min-h-[76px] w-full flex-shrink-0 select-none pt-4 text-xl"
+                  class="text-gray1 ml-6 mt-4 flex h-full min-h-[76px] w-full flex-shrink-0 select-none pt-4 text-xl"
                   *ngIf="mconfig?.extendedFilters.length === 0"
                   >No filters</div
                 >
@@ -321,7 +321,7 @@
                 >
                   <div
                     (click)="toggleFiltersPanel()"
-                    class="text-gray1 flex h-11 cursor-pointer select-none flex-row items-start space-x-2 py-3 px-5 text-2xl font-semibold"
+                    class="text-gray1 flex h-11 cursor-pointer select-none flex-row items-start space-x-2 px-5 py-3 text-2xl font-semibold"
                   >
                     <div class="flex flex-row items-center space-x-2">
                       <m-chevron-right-icon
@@ -348,7 +348,7 @@
                   </div>
 
                   <m-bricks
-                    class="mt-3 mb-5 ml-3 mr-5 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"
+                    class="mb-5 ml-3 mr-5 mt-3 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"
                     *ngIf="!filtersIsExpanded"
                     [extendedFilters]="mconfig.extendedFilters"
                     [isKeepBackgroundColor]="false"
@@ -484,8 +484,8 @@
                 <div
                   *ngIf="mconfig?.select.length > 0"
                   class="ml-[138px]"
-                  [tippy]="templateChartSaveAs"
-                  [isEnabled]="
+                  [tp]="templateChartSaveAs"
+                  [tpIsEnabled]="
                     isSelectValid === false ||
                     mconfig?.chart?.isValid === false ||
                     chartTitleForm?.valid === false ||
@@ -549,7 +549,7 @@
               </div>
 
               <div
-                class="mx-5 mt-5 mb-5 flex h-2 flex-grow"
+                class="mx-5 mb-5 mt-5 flex h-2 flex-grow"
                 *ngIf="chartIsExpanded"
               >
                 <div

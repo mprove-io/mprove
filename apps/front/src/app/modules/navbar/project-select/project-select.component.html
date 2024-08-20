@@ -35,9 +35,9 @@
 
   <ng-template ng-footer-tmp>
     <div
-      [tippy]="templateNewProject"
+      [tp]="templateNewProject"
       placement="left"
-      [isEnabled]="
+      [tpIsEnabled]="
         user.userId !== nav.orgOwnerId || nav.orgName === firstOrgName
       "
     >

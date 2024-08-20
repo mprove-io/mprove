@@ -8,6 +8,7 @@ import {
   OnInit
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
+import { TippyDirective } from '@ngneat/helipopper';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { Subscription, from, interval, of } from 'rxjs';
@@ -19,6 +20,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService, RData } from '~front/app/services/query.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { SharedModule } from '../shared.module';
 
 export interface ChartDialogData {
   apiService: ApiService;
@@ -39,7 +41,7 @@ export interface ChartDialogData {
   templateUrl: './chart-dialog.component.html',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, UiSwitchModule]
+  imports: [CommonModule, UiSwitchModule, TippyDirective, SharedModule]
 })
 export class ChartDialogComponent implements OnInit, OnDestroy {
   @HostListener('window:keyup.esc')

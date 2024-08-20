@@ -2,8 +2,8 @@
   class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded hover:bg-white focus:outline-none"
   data-cy="folderOptionsMenuButton"
   #t1="tippy"
-  [tippy]="templateFolderOptions"
-  [hideOnEscape]="true"
+  [tp]="templateFolderOptions"
+  [tpHideOnEscape]="true"
   variation="menu"
   className="my-menu"
   (click)="clickMenu($event)"
@@ -12,17 +12,17 @@
 </button>
 
 <ng-template #templateFolderOptions>
-  <div class="w-48 rounded-md border-2 border-gray4 bg-white shadow-xl">
+  <div class="border-gray4 w-48 rounded-md border-2 bg-white shadow-xl">
     <button
       data-cy="folderOptionsNewFolderButton"
-      class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
+      class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
       (click)="t1.hide(); newFolder(node, $event)"
       >New Folder</button
     >
 
     <button
       data-cy="folderOptionsNewFileButton"
-      class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
+      class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
       (click)="t1.hide(); newFile(node, $event)"
       >New File</button
     >
@@ -30,7 +30,7 @@
     <button
       *ngIf="!(node.parent === null || node.parent.data.virtual)"
       data-cy="folderOptionsDeleteFolderButton"
-      class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
+      class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
       (click)="t1.hide(); deleteFolder(node, $event)"
       >Delete Folder</button
     >
@@ -38,7 +38,7 @@
     <button
       *ngIf="!(node.parent === null || node.parent.data.virtual)"
       data-cy="folderOptionsRenameFolderButton"
-      class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
+      class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
       (click)="t1.hide(); renameFolder(node, $event)"
       >Rename Folder</button
     >

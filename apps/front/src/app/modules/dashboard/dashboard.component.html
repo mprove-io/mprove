@@ -49,8 +49,8 @@
           </ng-template>
 
           <div
-            [tippy]="templateAddReport"
-            [isEnabled]="
+            [tp]="templateAddReport"
+            [tpIsEnabled]="
               isExplorer === false ||
               dashboard.temp === true ||
               dashboard.canEditOrDeleteDashboard === false
@@ -126,8 +126,8 @@
 
             <div
               class="ml-16 flex h-12 flex-shrink-0"
-              [tippy]="templateDashboardSaveAs"
-              [isEnabled]="
+              [tp]="templateDashboardSaveAs"
+              [tpIsEnabled]="
                 isExplorer === false || alias === restrictedUserAlias
               "
             >
@@ -207,8 +207,8 @@
             </ng-template>
 
             <div
-              [tippy]="templateEditListeners"
-              [isEnabled]="
+              [tp]="templateEditListeners"
+              [tpIsEnabled]="
                 dashboard.reports.length === 0 || dashboard.fields.length === 0
               "
               class="h-11 flex-shrink-0"
@@ -216,7 +216,7 @@
               <button
                 type="button"
                 data-cy="dashboardEditListenButton"
-                class="flex h-11 flex-row items-center rounded border py-2 px-4 text-base font-medium focus:outline-none"
+                class="flex h-11 flex-row items-center rounded border px-4 py-2 text-base font-medium focus:outline-none"
                 (click)="editListeners()"
                 [ngClass]="{
                   'border-gray-400 text-gray-500 hover:bg-white':
@@ -248,7 +248,7 @@
 
             <div
               (click)="toggleFiltersPanel()"
-              class="text-gray1 mt-1 ml-3 flex h-11 cursor-pointer select-none flex-row items-start space-x-2 px-5 text-2xl font-semibold"
+              class="text-gray1 ml-3 mt-1 flex h-11 cursor-pointer select-none flex-row items-start space-x-2 px-5 text-2xl font-semibold"
             >
               <div class="flex flex-row items-center space-x-2">
                 <m-chevron-right-icon
@@ -270,7 +270,7 @@
             <button
               type="button"
               data-cy="dashboardAddFilterButton"
-              class="ml-4 h-11 flex-shrink-0 select-none rounded border border-gray-400 py-2 px-4 text-base font-medium text-gray-500 hover:bg-white focus:outline-none"
+              class="ml-4 h-11 flex-shrink-0 select-none rounded border border-gray-400 px-4 py-2 text-base font-medium text-gray-500 hover:bg-white focus:outline-none"
               (click)="addFilter()"
               >Add</button
             >
@@ -278,7 +278,7 @@
             <div class="min-h-[68px]"></div>
 
             <div
-              class="mt-1 ml-7 mr-5 flex flex-row items-start"
+              class="ml-7 mr-5 mt-1 flex flex-row items-start"
               *ngIf="!filtersIsExpanded && dashboard.fields.length > 0"
             >
               <m-bricks
@@ -289,7 +289,7 @@
             </div>
 
             <div
-              class="mt-1 ml-7 max-h-96 w-2 flex-1 overflow-auto"
+              class="ml-7 mt-1 max-h-96 w-2 flex-1 overflow-auto"
               *ngIf="filtersIsExpanded && dashboard.fields.length > 0"
             >
               <m-dashboard-filters
@@ -303,7 +303,7 @@
       <div class="flex min-w-[2px] flex-grow flex-col">
         <div
           #scrollable
-          class="mt-1 mr-6 flex h-2 flex-grow flex-row overflow-auto pl-6 pt-6"
+          class="mr-6 mt-1 flex h-2 flex-grow flex-row overflow-auto pl-6 pt-6"
         >
           <ktd-grid
             class="w-[97vw]"

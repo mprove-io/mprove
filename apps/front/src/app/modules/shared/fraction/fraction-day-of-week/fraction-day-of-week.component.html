@@ -1,7 +1,7 @@
 <div class="ml-2 flex h-16 flex-row space-x-5">
   <div
-    tippy="Turn off formula to activate control"
-    [isEnabled]="isDisabled === true"
+    tp="Turn off formula to activate control"
+    [tpIsEnabled]="isDisabled === true"
   >
     <ng-select
       #fractionDayOfWeekTypeSelect
@@ -36,8 +36,8 @@
       fraction.type === fractionTypeEnum.DayOfWeekIs ||
       fraction.type === fractionTypeEnum.DayOfWeekIsNot
     "
-    tippy="Turn off formula to activate control"
-    [isEnabled]="isDisabled === true"
+    tp="Turn off formula to activate control"
+    [tpIsEnabled]="isDisabled === true"
   >
     <ng-select
       #fractionDayOfWeekValueSelect

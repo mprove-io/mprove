@@ -89,8 +89,8 @@
           </ng-template>
 
           <div
-            [tippy]="templateNewViz"
-            [isEnabled]="
+            [tp]="templateNewViz"
+            [tpIsEnabled]="
               alias === restrictedUserAlias ||
               isExplorer === false ||
               hasAccessModels.length === 0
@@ -136,7 +136,7 @@
               <div class="mb-3 flex text-lg font-semibold">by Model</div>
 
               <div
-                class="flex flex-row justify-between rounded py-2 px-4 hover:cursor-pointer"
+                class="flex flex-row justify-between rounded px-4 py-2 hover:cursor-pointer"
                 [ngClass]="{
                   'bg-blue-100': !modelId,
                   'hover:bg-blue2': !!modelId
@@ -151,7 +151,7 @@
 
               <div
                 *ngFor="let model of vizsModels"
-                class="flex flex-row rounded py-2 px-4 hover:cursor-pointer"
+                class="flex flex-row rounded px-4 py-2 hover:cursor-pointer"
                 [ngClass]="{
                   'bg-blue-100': modelId === model.modelId,
                   'hover:bg-blue2': modelId !== model.modelId
@@ -173,7 +173,7 @@
         </div>
 
         <div
-          class="ml-6 mb-6 flex flex-grow rounded bg-white shadow"
+          class="mb-6 ml-6 flex flex-grow rounded bg-white shadow"
           *ngIf="showList === true"
         >
           <div
@@ -264,8 +264,10 @@
 
                       <div
                         class="flex flex-1 flex-row truncate py-3"
-                        [tippy]="templateVizsModel"
-                        [isEnabled]="item.reports[0].hasAccessToModel === false"
+                        [tp]="templateVizsModel"
+                        [tpIsEnabled]="
+                          item.reports[0].hasAccessToModel === false
+                        "
                       >
                         <button
                           class="flex cursor-default items-start truncate focus:outline-none"
@@ -324,8 +326,8 @@
                           data-cy="vizOptionsMenuButton"
                           class="invisible ml-3 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none group-hover:visible"
                           #t1="tippy"
-                          [tippy]="templateVizOptions"
-                          [hideOnEscape]="true"
+                          [tp]="templateVizOptions"
+                          [tpHideOnEscape]="true"
                           variation="menu"
                           className="my-menu"
                         >
@@ -346,9 +348,9 @@
                             </ng-template>
 
                             <div
-                              [tippy]="templateExploreViz"
+                              [tp]="templateExploreViz"
                               placement="left"
-                              [isEnabled]="item.canEditOrDeleteViz === false"
+                              [tpIsEnabled]="item.canEditOrDeleteViz === false"
                             >
                               <button
                                 data-cy="vizOptionsExplore"
@@ -366,9 +368,9 @@
                             </div>
 
                             <div
-                              tippy="Viz can be edited by author and project members with ProjectAdmin or FilesEditor role. Try to save viz as new to become an author."
+                              tp="Viz can be edited by author and project members with ProjectAdmin or FilesEditor role. Try to save viz as new to become an author."
                               placement="left"
-                              [isEnabled]="item.canEditOrDeleteViz === false"
+                              [tpIsEnabled]="item.canEditOrDeleteViz === false"
                             >
                               <button
                                 data-cy="vizOptionsEditInfo"
@@ -391,9 +393,9 @@
                             >
 
                             <div
-                              tippy="Viz can be deleted by author and project members with ProjectAdmin or FilesEditor role. Try to save viz as new to become an author."
+                              tp="Viz can be deleted by author and project members with ProjectAdmin or FilesEditor role. Try to save viz as new to become an author."
                               placement="left"
-                              [isEnabled]="item.canEditOrDeleteViz === false"
+                              [tpIsEnabled]="item.canEditOrDeleteViz === false"
                             >
                               <button
                                 data-cy="vizOptionsDelete"

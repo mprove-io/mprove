@@ -1,12 +1,12 @@
 <div
   class="ml-2 h-10 w-10"
   #t1="tippy"
-  [tippy]="templateOrgOptions"
-  [hideOnEscape]="true"
+  [tp]="templateOrgOptions"
+  [tpHideOnEscape]="true"
   variation="menu"
   className="my-menu"
-  [offset]="[0, 5]"
-  [isEnabled]="nav?.orgId !== undefined && needSave === false"
+  [tpOffset]="[0, 5]"
+  [tpIsEnabled]="nav?.orgId !== undefined && needSave === false"
 >
   <button
     class="h-10 w-10 rounded-full focus:outline-none"
@@ -19,14 +19,14 @@
 
   <ng-template #templateOrgOptions>
     <div
-      class="w-56 cursor-default rounded-md border-2 border-gray4 bg-white shadow-xl"
+      class="border-gray4 w-56 cursor-default rounded-md border-2 bg-white shadow-xl"
     >
       <div class="mt-2 block px-4 py-2 text-base font-semibold text-gray-400"
         >{{ nav?.orgName | capitalize }} Org</div
       >
 
       <button
-        class="block w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
+        class="text-gray1 hover:bg-blue2 block w-full px-4 py-2 text-left text-base focus:outline-none"
         [ngClass]="{
           'font-semibold': lastUrl === pathAccount
         }"
@@ -36,12 +36,12 @@
       >
 
       <div
-        tippy="Only organization owner can access"
+        tp="Only organization owner can access"
         placement="left"
-        [isEnabled]="user.userId !== nav.orgOwnerId"
+        [tpIsEnabled]="user.userId !== nav.orgOwnerId"
       >
         <button
-          class="block w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
+          class="text-gray1 hover:bg-blue2 block w-full px-4 py-2 text-left text-base focus:outline-none"
           [ngClass]="{
             'font-semibold': lastUrl === pathUsers,
             'text-gray-400': user.userId !== nav.orgOwnerId,

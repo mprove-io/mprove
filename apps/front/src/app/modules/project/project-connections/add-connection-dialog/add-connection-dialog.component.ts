@@ -11,6 +11,7 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { map, take, tap } from 'rxjs/operators';
@@ -32,7 +33,13 @@ export interface AddConnectionDialogData {
   templateUrl: './add-connection-dialog.component.html',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, UiSwitchModule, ReactiveFormsModule, SharedModule]
+  imports: [
+    CommonModule,
+    UiSwitchModule,
+    ReactiveFormsModule,
+    SharedModule,
+    NgSelectModule
+  ]
 })
 export class AddConnectionDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

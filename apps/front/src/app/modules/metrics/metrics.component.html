@@ -116,7 +116,7 @@
 
           <div
             class="ml-4 flex h-8 w-8 flex-shrink-0 text-amber-500"
-            tippy="Exceeded time columns limit ({{ rep.timeColumnsLimit }})"
+            tp="Exceeded time columns limit ({{ rep.timeColumnsLimit }})"
             *ngIf="rep?.isTimeColumnsLimitExceeded === true"
           >
             <m-exclamation-icon></m-exclamation-icon>
@@ -176,14 +176,14 @@
           <div class="flex w-full flex-grow rounded bg-white shadow">
             <div class="text-gray1 mr-5 mt-6 flex w-full flex-col text-base">
               <div class="flex flex-1 flex-col">
-                <div class="ml-5 mb-3 mr-5 flex h-11 flex-row items-center">
+                <div class="mb-3 ml-5 mr-5 flex h-11 flex-row items-center">
                   <div class="flex text-lg font-semibold">REPORTS</div>
 
                   <!-- <div class="flex flex-grow"></div> -->
 
                   <button
                     *ngIf="draftsLength > 0"
-                    class="ml-5 flex flex flex-row items-center rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-gray-100 focus:outline-none"
+                    class="ml-5 flex flex flex-row items-center rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-gray-100 focus:outline-none"
                     (click)="deleteDrafts()"
                   >
                     <m-trash-icon></m-trash-icon>
@@ -270,7 +270,7 @@
               </div>
 
               <div class="flex flex-1 flex-col">
-                <div class="ml-5 mb-3 mr-5 flex h-11 flex-row items-center">
+                <div class="mb-3 ml-5 mr-5 flex h-11 flex-row items-center">
                   <div class="flex text-lg font-semibold">METRICS</div>
                   <div class="flex flex-grow"></div>
                 </div>
@@ -313,7 +313,7 @@
             >
               <div class="h-full flex-1 flex-grow flex-col">
                 <div
-                  class="flex h-full flex-1 flex-row space-x-5 pl-5 pr-5 pt-5 pb-2"
+                  class="flex h-full flex-1 flex-row space-x-5 pb-2 pl-5 pr-5 pt-5"
                 >
                   <div
                     class="flex h-full flex-col"
@@ -322,14 +322,14 @@
                       'w-full': showMetricsChartSettings === false
                     }"
                   >
-                    <ag-charts-angular
+                    <ag-charts
                       *ngIf="
                         chartOptions?.data.length > 0 &&
                         recordsWithValuesLength > 0
                       "
                       style="height: 100%"
                       [options]="chartOptions"
-                    ></ag-charts-angular>
+                    ></ag-charts>
 
                     <div
                       *ngIf="
@@ -369,7 +369,7 @@
                   ></m-chart-settings>
 
                   <div
-                    class="absolute top-5 right-5 flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
+                    class="absolute right-5 top-5 flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
                     (click)="toggleShowMetricsChartSettings()"
                   >
                     <m-wrench-icon></m-wrench-icon>

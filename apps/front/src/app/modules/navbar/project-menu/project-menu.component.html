@@ -1,12 +1,12 @@
 <div
   class="ml-2 h-10 w-10"
   #t1="tippy"
-  [tippy]="templateProjectOptions"
-  [hideOnEscape]="true"
+  [tp]="templateProjectOptions"
+  [tpHideOnEscape]="true"
   variation="menu"
   className="my-menu"
-  [offset]="[0, 5]"
-  [isEnabled]="nav?.projectId !== undefined && needSave === false"
+  [tpOffset]="[0, 5]"
+  [tpIsEnabled]="nav?.projectId !== undefined && needSave === false"
 >
   <button
     class="h-10 w-10 rounded-full focus:outline-none"
@@ -36,9 +36,9 @@
       >
 
       <div
-        tippy="Admin or Editor role required"
+        tp="Admin or Editor role required"
         placement="left"
-        [isEnabled]="isAdmin === false && isEditor === false"
+        [tpIsEnabled]="isAdmin === false && isEditor === false"
       >
         <button
           class="text-gray1 hover:bg-blue2 block w-full px-4 py-2 text-left text-base focus:outline-none"
@@ -57,9 +57,9 @@
       </div>
 
       <div
-        tippy="Admin or Editor role required"
+        tp="Admin or Editor role required"
         placement="left"
-        [isEnabled]="isAdmin === false && isEditor === false"
+        [tpIsEnabled]="isAdmin === false && isEditor === false"
       >
         <button
           class="text-gray1 hover:bg-blue2 block w-full px-4 py-2 text-left text-base focus:outline-none"
@@ -78,9 +78,9 @@
       </div>
 
       <div
-        tippy="Project is restricted for demo purposes. Only admin can access."
+        tp="Project is restricted for demo purposes. Only admin can access."
         placement="left"
-        [isEnabled]="nav.orgName === firstOrgName && isAdmin === false"
+        [tpIsEnabled]="nav.orgName === firstOrgName && isAdmin === false"
       >
         <button
           class="text-gray1 hover:bg-blue2 block w-full px-4 py-2 text-left text-base focus:outline-none"

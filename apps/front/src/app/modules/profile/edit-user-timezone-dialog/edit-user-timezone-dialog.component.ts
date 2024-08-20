@@ -6,6 +6,7 @@ import {
   HostListener,
   OnInit
 } from '@angular/core';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { UserQuery } from '~front/app/queries/user.query';
@@ -22,7 +23,7 @@ export interface EditUserTimezoneDialogData {
   templateUrl: './edit-user-timezone-dialog.component.html',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule]
+  imports: [CommonModule, NgSelectModule]
 })
 export class EditUserTimezoneDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

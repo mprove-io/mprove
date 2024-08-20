@@ -38,7 +38,6 @@ import { UiService } from '~front/app/services/ui.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-import { AgCharts } from 'ag-charts-angular';
 import { constants as frontConstants } from '~front/barrels/constants';
 import { DataRow } from './rep/rep.component';
 
@@ -50,8 +49,7 @@ export class TimeSpecItem {
 @Component({
   selector: 'm-metrics',
   styleUrls: ['metrics.component.scss'],
-  templateUrl: './metrics.component.html',
-  imports: [AgCharts]
+  templateUrl: './metrics.component.html'
 })
 export class MetricsComponent implements OnInit, OnDestroy {
   pageTitle = frontConstants.METRICS_PAGE_TITLE;

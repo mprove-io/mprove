@@ -2,8 +2,8 @@
   data-cy="fileOptionsMenuButton"
   class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded hover:bg-white focus:outline-none"
   #t1="tippy"
-  [tippy]="templateFileOptions"
-  [hideOnEscape]="true"
+  [tp]="templateFileOptions"
+  [tpHideOnEscape]="true"
   variation="menu"
   className="my-menu"
   (click)="clickMenu($event)"
@@ -12,17 +12,17 @@
 </button>
 
 <ng-template #templateFileOptions>
-  <div class="w-48 rounded-md border-2 border-gray4 bg-white shadow-xl">
+  <div class="border-gray4 w-48 rounded-md border-2 bg-white shadow-xl">
     <button
       data-cy="fileOptionsDeleteFileButton"
-      class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
+      class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
       (click)="t1.hide(); deleteFile(node, $event)"
       >Delete File</button
     >
 
     <button
       data-cy="fileOptionsRenameFileButton"
-      class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
+      class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
       (click)="t1.hide(); renameFile(node, $event)"
       >Rename File</button
     >
