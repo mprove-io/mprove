@@ -10,6 +10,11 @@ module.exports = (config, context) => {
     // os: false,
   });
 
+  config.module.rules.push({
+    test: /node_modules[/\\]monaco-editor[/\\]esm[/\\].+\.css$/i,
+    use: ['style-loader', 'css-loader']
+  });
+
   return merge({
     ...config,
     plugins: [

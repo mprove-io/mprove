@@ -66,6 +66,7 @@
   },
   "resolutions": {
     "prettier": "2.8.1",
-    "webpack": "5.88.2"
+    "webpack": "5.88.2",
+    "string-width": "4.2.3"
   }
 }
