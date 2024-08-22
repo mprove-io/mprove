@@ -54,15 +54,16 @@ body {
 @import '~tippy.js/themes/light.css';
 @import '~tippy.js/animations/scale.css';
 
-.my-menu {
-  .tippy-box {
-    background-color: transparent;
-  }
+.tippy-variation-menu .tippy-box {
+  background-color: transparent;
+}
 
-  .tippy-content {
-    padding: 0;
-    background-color: transparent;
-  }
+.tippy-variation-menu .tippy-box .tippy-content {
+  padding: 0;
+}
+
+.tippy-variation-tooltip .tippy-box .tippy-content {
+  padding: 10px 15px;
 }
 
 @font-face {
