@@ -45,22 +45,9 @@ if (environment.production) {
   enableElfProdMode();
 }
 
-// platformBrowserDynamic()
-//   .bootstrapModule(AppModule)
-//   .catch(err => console.error(err));
-
 bootstrapApplication(AppComponent, {
   providers: [
-    {
-      provide: ErrorHandler,
-      useClass: ErrorHandlerService
-    },
-    NgxImageCompressService,
-    Title,
-    {
-      provide: MonacoProviderService,
-      useClass: CustomMonacoProviderService
-    },
+    // useClass must be last in list by order
     importProvidersFrom(
       BrowserModule,
       HttpClientModule,
@@ -131,6 +118,16 @@ bootstrapApplication(AppComponent, {
           offset: [0, 7]
         }
       }
-    })
+    }),
+    NgxImageCompressService,
+    Title,
+    {
+      provide: MonacoProviderService,
+      useClass: CustomMonacoProviderService
+    },
+    {
+      provide: ErrorHandler,
+      useClass: ErrorHandlerService
+    }
   ]
 }).catch(err => console.error(err));

@@ -7,7 +7,10 @@ export class CustomMonacoProviderService extends MonacoProviderService {
   private ready?: Promise<Monaco>;
 
   override async initMonaco() {
+    // console.log('initMonaco try');
     if (!this.ready) {
+      // console.log('initMonaco run');
+
       this.ready = new Promise((resolve, reject) => {
         super
           .initMonaco()
@@ -22,6 +25,7 @@ export class CustomMonacoProviderService extends MonacoProviderService {
           .catch(reject);
       });
     }
+    // console.log('initMonaco return');
     return this.ready;
   }
 }
