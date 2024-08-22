@@ -134,17 +134,17 @@
               <button
                 type="button"
                 data-cy="dashboardSaveAsButton"
-                class="h-12 rounded px-6 text-base font-medium text-white focus:outline-none"
+                class="h-12 rounded px-6 text-base font-medium focus:outline-none"
                 [ngClass]="{
                   'text-blue3 border-2':
                     isExplorer === true &&
                     dashboard.temp === false &&
                     alias !== restrictedUserAlias,
-                  'bg-pink-500':
+                  'bg-pink-500 text-white':
                     isExplorer === true &&
                     dashboard.temp === true &&
                     alias !== restrictedUserAlias,
-                  'cursor-default bg-gray-400':
+                  'cursor-default bg-gray-400 text-white':
                     isExplorer === false || alias === restrictedUserAlias
                 }"
                 (click)="saveAs()"
