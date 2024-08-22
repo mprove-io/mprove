@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyDirective } from '@ngneat/helipopper';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { MonacoEditorModule } from 'ng-monaco-editor';
 import { ColorSketchModule } from 'ngx-color/sketch';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { AvatarComponent } from './avatar/avatar.component';
@@ -82,6 +83,7 @@ import { CompletedRingComponent } from './rings/completed-ring/completed-ring.co
 import { DocumentRingComponent } from './rings/document-ring/document-ring.component';
 import { EmailRingComponent } from './rings/email-ring/email-ring.component';
 import { ValidationComponent } from './validation/validation.component';
+import { ViewBlockmlDialogComponent } from './view-blockml-dialog/view-blockml-dialog.component';
 
 let pipesArray = [
   ExtensionPipe,
@@ -164,7 +166,8 @@ let sharedComponents = [
   LinkIconComponent,
   LinkOffIconComponent,
   FormulaIconComponent,
-  ClockIconComponent
+  ClockIconComponent,
+  ViewBlockmlDialogComponent
 ];
 
 @NgModule({
@@ -177,7 +180,8 @@ let sharedComponents = [
     NgxChartsModule,
     ColorSketchModule,
     NgxSpinnerModule,
-    TippyDirective
+    TippyDirective,
+    MonacoEditorModule
   ],
   exports: [...sharedComponents, ...pipesArray],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

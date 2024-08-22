@@ -1,10 +1,4 @@
-import { CommonModule } from '@angular/common';
-import {
-  CUSTOM_ELEMENTS_SCHEMA,
-  Component,
-  HostListener,
-  OnInit
-} from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { MonacoEditorOptions, MonacoProviderService } from 'ng-monaco-editor';
 import { take, tap } from 'rxjs/operators';
@@ -19,9 +13,6 @@ export interface ViewBlockmlDialogData {
 @Component({
   selector: 'm-view-blockml-dialog',
   templateUrl: './view-blockml-dialog.component.html',
-  standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule],
   styleUrls: ['./view-blockml-dialog.component.scss']
 })
 export class ViewBlockmlDialogComponent implements OnInit {

@@ -64,10 +64,6 @@ import {
   ChartSaveAsDialogData
 } from '../modules/model/chart-save-as-dialog/chart-save-as-dialog.component';
 import {
-  ViewBlockmlDialogComponent,
-  ViewBlockmlDialogData
-} from '../modules/model/view-blockml-dialog/view-blockml-dialog.component';
-import {
   CreateBranchDialogComponent,
   CreateBranchDialogData
 } from '../modules/navbar/branch-select/create-branch-dialog/create-branch-dialog.component';
@@ -192,6 +188,10 @@ import {
   PhotoDialogComponent,
   PhotoDialogData
 } from '../modules/shared/photo-dialog/photo-dialog.component';
+import {
+  ViewBlockmlDialogComponent,
+  ViewBlockmlDialogData
+} from '../modules/shared/view-blockml-dialog/view-blockml-dialog.component';
 import { ErrorDialogComponent } from '../modules/special/error-dialog/error-dialog.component';
 import {
   NewVizDialogComponent,
