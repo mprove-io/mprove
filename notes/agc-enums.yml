@@ -1,0 +1,25 @@
+ChartType:
+  - line
+  - bar
+  - area
+  - scatter
+
+AgBarSeriesLabelPlacement:
+  - 'inside'
+  - 'outside'
+
+InteractionRange:
+  - 'exact'
+  - 'nearest'
+  # or PixelSize
+
+MarkerShape: 
+  - 'circle'
+  - 'cross'
+  - 'diamond'
+  - 'heart'
+  - 'plus'
+  - 'pin'
+  - 'square'
+  - 'start'
+  - 'triangle'
