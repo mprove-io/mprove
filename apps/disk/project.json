@@ -16,7 +16,7 @@
         "tsConfig": "apps/disk/tsconfig.app.json",
         "assets": ["apps/disk/src/assets"],
         "isolatedConfig": true,
-        "webpackConfig": "apps/backend/webpack.config.js",
+        "webpackConfig": "apps/disk/webpack.config.js",
         "sourceMap": true
       },
       "configurations": {
@@ -39,10 +39,10 @@
       },
       "configurations": {
         "development": {
-          "buildTarget": "backend:build:development"
+          "buildTarget": "disk:build:development"
         },
         "production": {
-          "buildTarget": "backend:build:production",
+          "buildTarget": "disk:build:production",
           "host": "0.0.0.0",
           "port": 9229,
           "inspect": "inspect",

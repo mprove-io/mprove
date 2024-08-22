@@ -1,6 +1,6 @@
-# node 18.20.3
-ARG VARIANT=1.1.2-18-bullseye
+# 18.20.4 (node -v) node 18.20.3 (in https://github.com/devcontainers/images/blob/main/src/javascript-node/history/1.1.2.md#variant-18-bullseye) 
 # https://github.com/devcontainers/images/tree/main/src/javascript-node/history
+ARG VARIANT=1.1.2-18-bullseye
 FROM mcr.microsoft.com/vscode/devcontainers/javascript-node:${VARIANT}
 
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \

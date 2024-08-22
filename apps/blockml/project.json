@@ -16,7 +16,7 @@
         "tsConfig": "apps/blockml/tsconfig.app.json",
         "assets": ["apps/blockml/src/assets"],
         "isolatedConfig": true,
-        "webpackConfig": "apps/backend/webpack.config.js",
+        "webpackConfig": "apps/blockml/webpack.config.js",
         "sourceMap": true
       },
       "configurations": {

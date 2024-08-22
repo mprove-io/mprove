@@ -15,7 +15,7 @@
         "tsConfig": "apps/mcli/tsconfig.app.json",
         "assets": ["apps/mcli/src/assets"],
         "isolatedConfig": true,
-        "webpackConfig": "apps/backend/webpack.config.js",
+        "webpackConfig": "apps/mcli/webpack.config.js",
         "sourceMap": true
       },
       "configurations": {
