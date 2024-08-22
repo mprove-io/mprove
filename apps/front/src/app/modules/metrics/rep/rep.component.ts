@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AgGridAngular } from 'ag-grid-angular';
 import {
   ColDef,
-  ColumnApi,
   ColumnResizedEvent,
   GridApi,
   GridReadyEvent,
@@ -56,8 +55,8 @@ export class RepComponent {
   updateColumnSizes = debounce(
     300,
     paramsColumn => {
-      if (common.isDefined(this.agGridColumnApi)) {
-        let columns = this.agGridColumnApi.getColumns();
+      if (common.isDefined(this.agGridApi)) {
+        let columns = this.agGridApi.getColumns();
 
         let nameColumn = columns.find(x => x.getColId() === 'name');
         let parametersColumn = columns.find(x => x.getColId() === 'parameters');
@@ -164,14 +163,13 @@ export class RepComponent {
   };
 
   agGridApi: GridApi<DataRow>;
-  agGridColumnApi: ColumnApi;
 
   // prevRepId: string;
 
   // repSelectedRowIdsDistinct$ = this.uiQuery.repSelectedRowIdsDistinct$.pipe(
   //   tap(x => {
   //     if (common.isDefined(this.agGridApi)) {
-  //       let rowIdColDef = this.agGridColumnApi.getColumn('rowId').getColDef();
+  //       let rowIdColDef = this.agGridApi.getColumn('rowId').getColDef();
 
   //       let newColDef = Object.assign({}, rowIdColDef, {
   //         cellStyle: (params: CellClassParams<any, any>) => x.indexOf(params.data.rowId) > -1
@@ -179,7 +177,7 @@ export class RepComponent {
   //             : { backgroundColor: '#f8f8f8' }
   //       });
 
-  //       this.agGridColumnApi
+  //       this.agGridApi
   //         .getColumn('rowId')
   //         .setColDef(newColDef, { field: 'rowId' });
   //     }
@@ -414,7 +412,6 @@ export class RepComponent {
 
   onGridReady(params: GridReadyEvent<DataRow>) {
     this.agGridApi = params.api;
-    this.agGridColumnApi = params.columnApi;
 
     this.uiQuery.updatePart({ gridApi: this.agGridApi });
     this.agGridApi.deselectAll();
