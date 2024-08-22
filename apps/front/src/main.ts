@@ -17,7 +17,6 @@ import { enableElfProdMode } from '@ngneat/elf';
 import { provideTippyConfig } from '@ngneat/helipopper';
 import { MonacoEditorModule, MonacoProviderService } from 'ng-monaco-editor';
 import { NgxImageCompressService } from 'ngx-image-compress';
-import { ImageCropperModule } from 'ngx-image-cropper';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { appRoutes } from './app/app-routes';
@@ -84,7 +83,6 @@ bootstrapApplication(AppComponent, {
       ReactiveFormsModule,
       FormsModule,
       NgSelectModule,
-      ImageCropperModule,
       VisualizationsModule,
       DashboardsModule,
       ModelsModule,

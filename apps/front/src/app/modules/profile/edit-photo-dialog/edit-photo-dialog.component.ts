@@ -5,8 +5,10 @@ import {
   HostListener,
   OnInit
 } from '@angular/core';
+// import { DomSanitizer } from '@angular/platform-browser';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxImageCompressService } from 'ngx-image-compress';
+import { ImageCropperComponent } from 'ngx-image-cropper';
 import { take, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -22,7 +24,7 @@ export interface EditPhotoDialogData {
   templateUrl: './edit-photo-dialog.component.html',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule]
+  imports: [CommonModule, ImageCropperComponent]
 })
 export class EditPhotoDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')
@@ -39,7 +41,8 @@ export class EditPhotoDialogComponent implements OnInit {
     public ref: DialogRef<EditPhotoDialogData>,
     private navQuery: NavQuery,
     private imageCompressService: NgxImageCompressService
-  ) {}
+  ) // private sanitizer: DomSanitizer
+  {}
 
   ngOnInit(): void {
     setTimeout(() => {
@@ -54,8 +57,9 @@ export class EditPhotoDialogComponent implements OnInit {
   async imageCropped(event: any) {
     // console.log('event:', event);
     this.croppedImage = event.base64;
+    // this.croppedImage = this.sanitizer.bypassSecurityTrustUrl(event.objectUrl);
 
-    let sizeBefore = this.imageCompressService.byteCount(this.croppedImage);
+    // let sizeBefore = this.imageCompressService.byteCount(this.croppedImage);
     // console.log('sizeBefore:', sizeBefore);
 
     await this.imageCompressService
@@ -63,9 +67,9 @@ export class EditPhotoDialogComponent implements OnInit {
       .then(result => {
         this.compressedImage = result;
 
-        let sizeAfter = this.imageCompressService.byteCount(
-          this.compressedImage
-        );
+        // let sizeAfter = this.imageCompressService.byteCount(
+        //   this.compressedImage
+        // );
         // console.log('sizeAfter:', sizeAfter);
       });
   }

@@ -14660,10 +14660,10 @@ ngx-image-compress@15.1.6:
   dependencies:
     tslib "^2.5.0"
 
-ngx-image-cropper@7.0.2:
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/ngx-image-cropper/-/ngx-image-cropper-7.0.2.tgz#f3f807826560f1bf8c807a91899ae98e6160945b"
-  integrity sha512-dbLME5kHdDQG6PPK0C0oczJuATYmjB0tOuotx/2sPaQZU8BUTKKOll+q1CGImFDT8Cn3+HpGAQk6vt6wlO9DrA==
+ngx-image-cropper@8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/ngx-image-cropper/-/ngx-image-cropper-8.0.0.tgz#2d7c5d365f85be1c086178d734d770c224a2d0eb"
+  integrity sha512-3f16nJYg2TK6QbwpxdeAh5wYG8huMUuX+vjSnMgZRsHnOAQ72gtFAJ6QBDIn3TYJmR/WhWEIx4pRVHxVnKAhJw==
   dependencies:
     tslib "^2.3.0"
 
