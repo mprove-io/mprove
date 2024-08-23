@@ -3,6 +3,8 @@ ChartType:
   - bar
   - area
   - scatter
+  - bubble
+  - donut
 
 AgBarSeriesLabelPlacement:
   - 'inside'
