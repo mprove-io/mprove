@@ -1,6 +1,8 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnInit
 } from '@angular/core';
@@ -20,7 +22,10 @@ export interface DashboardAddReportDialogData {
 
 @Component({
   selector: 'm-dashboard-add-report-dialog',
-  templateUrl: './dashboard-add-report-dialog.component.html'
+  templateUrl: './dashboard-add-report-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule]
 })
 export class DashboardAddReportDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

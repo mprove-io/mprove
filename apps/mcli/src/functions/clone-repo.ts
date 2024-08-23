@@ -1,5 +1,5 @@
+import * as nodegit from '@figma/nodegit';
 import * as fse from 'fs-extra';
-import * as nodegit from 'nodegit';
 import { common } from '~mcli/barrels/common';
 
 export async function cloneRepo(item: {
@@ -36,8 +36,8 @@ export async function cloneRepo(item: {
       fetchOpts: fetchOptions
     };
 
-    await nodegit.Clone.clone(gitUrl, repoPath, cloneOptions);
+    await nodegit.Clone(gitUrl, repoPath, cloneOptions);
   } else {
-    await nodegit.Clone.clone(gitUrl, repoPath);
+    await nodegit.Clone(gitUrl, repoPath);
   }
 }

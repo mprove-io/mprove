@@ -1,9 +1,12 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnInit
 } from '@angular/core';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { UserQuery } from '~front/app/queries/user.query';
@@ -17,7 +20,10 @@ export interface EditUserTimezoneDialogData {
 
 @Component({
   selector: 'm-edit-user-timezone-dialog',
-  templateUrl: './edit-user-timezone-dialog.component.html'
+  templateUrl: './edit-user-timezone-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, NgSelectModule]
 })
 export class EditUserTimezoneDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')
@@ -25,7 +31,7 @@ export class EditUserTimezoneDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  timezone: string;
+  timezone: any; // string
 
   timezones = common.getUserTimezones();
 

@@ -7,10 +7,10 @@
         >{{ pageTitle }}
       </div>
 
-      <div tippy="Admin role required" [isEnabled]="isAdmin === false">
+      <div tp="Admin role required" [tpIsEnabled]="isAdmin === false">
         <button
           data-cy="projectTeamInviteMemberButton"
-          class="rounded py-2 px-5 text-base font-medium text-white focus:outline-none"
+          class="rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
           type="submit"
           [ngClass]="{
             'bg-blue3': isAdmin === true,
@@ -23,7 +23,7 @@
       </div>
     </div>
 
-    <div class="mt-6 mb-4 flex-grow overflow-auto rounded bg-white shadow">
+    <div class="mb-4 mt-6 flex-grow overflow-auto rounded bg-white shadow">
       <div class="text-gray1 mx-5 mt-8">
         <table class="min-w-full divide-y divide-gray-500">
           <thead>
@@ -92,8 +92,8 @@
               <td class="w-64">
                 <div class="flex flex-row items-center">
                   <div
-                    tippy="Admin role required"
-                    [isEnabled]="isAdmin === false"
+                    tp="Admin role required"
+                    [tpIsEnabled]="isAdmin === false"
                   >
                     <button
                       data-cy="projectTeamAddEnvButton"
@@ -115,8 +115,8 @@
                       <div class="flex flex-row items-center text-base">
                         <div>{{ env }} </div>
                         <div
-                          tippy="Admin role required"
-                          [isEnabled]="isAdmin === false"
+                          tp="Admin role required"
+                          [tpIsEnabled]="isAdmin === false"
                         >
                           <button
                             data-cy="projectTeamRemoveEnvButton"
@@ -142,8 +142,8 @@
               <td class="w-64">
                 <div class="flex flex-row items-center">
                   <div
-                    tippy="Admin role required"
-                    [isEnabled]="isAdmin === false"
+                    tp="Admin role required"
+                    [tpIsEnabled]="isAdmin === false"
                   >
                     <button
                       data-cy="projectTeamAddRoleButton"
@@ -165,8 +165,8 @@
                       <div class="flex flex-row items-center text-base">
                         <div>{{ role }} </div>
                         <div
-                          tippy="Admin role required"
-                          [isEnabled]="isAdmin === false"
+                          tp="Admin role required"
+                          [tpIsEnabled]="isAdmin === false"
                         >
                           <button
                             data-cy="projectTeamRemoveRoleButton"
@@ -201,8 +201,8 @@
 
                   <div
                     class="w-fit"
-                    [tippy]="templateChangeAdminStatus"
-                    [isEnabled]="
+                    [tp]="templateChangeAdminStatus"
+                    [tpIsEnabled]="
                       member.memberId === userId || isAdmin === false
                     "
                   >
@@ -232,8 +232,8 @@
               <td>
                 <div class="flex justify-center">
                   <div
-                    tippy="Admin role required"
-                    [isEnabled]="isAdmin === false"
+                    tp="Admin role required"
+                    [tpIsEnabled]="isAdmin === false"
                   >
                     <button
                       data-cy="projectTeamIsEditorButton"
@@ -258,8 +258,8 @@
               <td>
                 <div class="flex justify-center">
                   <div
-                    tippy="Admin role required"
-                    [isEnabled]="isAdmin === false"
+                    tp="Admin role required"
+                    [tpIsEnabled]="isAdmin === false"
                   >
                     <button
                       data-cy="projectTeamIsExplorerButton"
@@ -292,8 +292,10 @@
 
                 <div
                   class="w-fit"
-                  [tippy]="templateRemoveMember"
-                  [isEnabled]="member.memberId === userId || isAdmin === false"
+                  [tp]="templateRemoveMember"
+                  [tpIsEnabled]="
+                    member.memberId === userId || isAdmin === false
+                  "
                 >
                   <button
                     data-cy="projectTeamRemoveMemberButton"

@@ -2,7 +2,7 @@
   <div class="mx-5 h-full">
     <div class="flex h-full w-full flex-col">
       <div
-        class="text-gray1 mx-5 mt-8 mb-5 flex flex-shrink-0 flex-row items-start justify-center text-lg"
+        class="text-gray1 mx-5 mb-5 mt-8 flex flex-shrink-0 flex-row items-start justify-center text-lg"
       >
         <div class="mr-3 w-9"></div>
         <div
@@ -42,9 +42,9 @@
           data-cy="repOptionsMenuButton"
           class="invisible ml-3 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none group-hover:visible"
           #t1="tippy"
-          [tippy]="templateRepOptions"
-          [hideOnEscape]="true"
-          variation="menu"
+          [tp]="templateRepOptions"
+          [tpHideOnEscape]="true"
+          tpVariation="menu"
           className="my-menu"
         >
           <m-dots-vertical-icon></m-dots-vertical-icon>
@@ -65,9 +65,9 @@
             </ng-template>
 
             <div
-              [tippy]="templateChartRepOptionsExplore"
+              [tp]="templateChartRepOptionsExplore"
               placement="left"
-              [isEnabled]="report.hasAccessToModel === false"
+              [tpIsEnabled]="report.hasAccessToModel === false"
             >
               <button
                 data-cy="repOptionsExplore"
@@ -103,7 +103,7 @@
       ></m-bricks>
 
       <div
-        class="flex w-full flex-grow cursor-default overflow-auto rounded bg-white px-7 pt-5 pb-10"
+        class="flex w-full flex-grow cursor-default overflow-auto rounded bg-white px-7 pb-10 pt-5"
         (click)="stopClick($event)"
       >
         <m-chart-view

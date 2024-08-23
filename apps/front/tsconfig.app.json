@@ -2,6 +2,8 @@
   "extends": "./tsconfig.base.json",
   "files": ["src/main.ts", "src/polyfills.ts"],
   "compilerOptions": {
-    "types": ["node"]
+    "types": ["node"],
+    "target": "ES2022",
+    "useDefineForClassFields": false
   }
 }

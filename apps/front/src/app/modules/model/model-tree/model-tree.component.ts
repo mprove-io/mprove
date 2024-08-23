@@ -1,4 +1,9 @@
 import {
+  IActionMapping,
+  TreeComponent,
+  TreeNode
+} from '@ali-hm/angular-tree-component';
+import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
@@ -6,11 +11,6 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import {
-  IActionMapping,
-  TreeComponent,
-  TreeNode
-} from '@bugsplat/angular-tree-component';
 import { combineLatest } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { ModelNode } from '~common/_index';

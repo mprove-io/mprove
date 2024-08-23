@@ -30,7 +30,7 @@ export class ViewBlockmlDialogComponent implements OnInit {
     fixedOverflowWidgets: true
   };
 
-  reportYaml: string;
+  reportYaml: any; // string
 
   constructor(
     public ref: DialogRef<ViewBlockmlDialogData>,

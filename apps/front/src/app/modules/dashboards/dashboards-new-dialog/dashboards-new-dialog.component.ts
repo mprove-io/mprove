@@ -1,12 +1,19 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
   HostListener,
   OnInit,
   ViewChild
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
@@ -18,6 +25,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+import { SharedModule } from '../../shared/shared.module';
 
 export interface DashboardsNewDialogData {
   apiService: ApiService;
@@ -25,7 +33,10 @@ export interface DashboardsNewDialogData {
 
 @Component({
   selector: 'm-dashboards-new-dialog',
-  templateUrl: './dashboards-new-dialog.component.html'
+  templateUrl: './dashboards-new-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule]
 })
 export class DashboardsNewDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

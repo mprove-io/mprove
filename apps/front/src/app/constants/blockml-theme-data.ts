@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import type { editor as editorType } from 'monaco-editor';
 
 export const BLOCKML_THEME_DATA: editorType.IStandaloneThemeData = {

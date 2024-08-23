@@ -1,13 +1,21 @@
+import { CommonModule } from '@angular/common';
 import {
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
   HostListener,
   OnInit,
   ViewChild
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ProjectQuery } from '~front/app/queries/project.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -22,7 +30,10 @@ export interface EditProjectNameDialogData {
 
 @Component({
   selector: 'm-edit-project-name-dialog',
-  templateUrl: './edit-project-name-dialog.component.html'
+  templateUrl: './edit-project-name-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, SharedModule, ReactiveFormsModule]
 })
 export class EditProjectNameDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

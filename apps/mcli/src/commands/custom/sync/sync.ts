@@ -1,6 +1,6 @@
+import * as nodegit from '@figma/nodegit';
 import { Command, Option } from 'clipanion';
 import * as fse from 'fs-extra';
-import * as nodegit from 'nodegit';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';

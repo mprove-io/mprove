@@ -1,7 +1,7 @@
 <div class="ml-2 flex h-16 flex-row space-x-5">
   <div
-    tippy="Turn off formula to activate control"
-    [isEnabled]="isDisabled === true"
+    tp="Turn off formula to activate control"
+    [tpIsEnabled]="isDisabled === true"
   >
     <ng-select
       #fractionTsTypeSelect
@@ -37,8 +37,8 @@
       fraction.type === fractionTypeEnum.TsIsBeforeDate ||
       fraction.type === fractionTypeEnum.TsIsAfterDate
     "
-    tippy="Disabled if time is not 00:00"
-    [isEnabled]="
+    tp="Disabled if time is not 00:00"
+    [tpIsEnabled]="
       timeStr !== zeroHoursMinutes ||
       (fraction.type === fractionTypeEnum.TsIsInRange &&
         timeToStr !== zeroHoursMinutes)
@@ -80,8 +80,8 @@
   <!-- on year -->
   <div
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnYear"
-    tippy="Turn off formula to activate control"
-    [isEnabled]="isDisabled === true"
+    tp="Turn off formula to activate control"
+    [tpIsEnabled]="isDisabled === true"
   >
     <vaadin-date-picker
       #datePickerOnYear
@@ -97,8 +97,8 @@
   <!-- on month -->
   <div
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnMonth"
-    tippy="Turn off formula to activate control"
-    [isEnabled]="isDisabled === true"
+    tp="Turn off formula to activate control"
+    [tpIsEnabled]="isDisabled === true"
   >
     <vaadin-date-picker
       #datePickerOnMonth
@@ -114,8 +114,8 @@
   <!-- on day -->
   <div
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnDay"
-    tippy="Turn off formula to activate control"
-    [isEnabled]="isDisabled === true"
+    tp="Turn off formula to activate control"
+    [tpIsEnabled]="isDisabled === true"
   >
     <vaadin-date-picker
       #datePickerOnDay
@@ -134,8 +134,8 @@
     class="flex flex-row space-x-5"
   >
     <div
-      tippy="Turn off formula to activate control"
-      [isEnabled]="isDisabled === true"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
     >
       <vaadin-date-picker
         #datePickerOnHour
@@ -149,8 +149,8 @@
     </div>
 
     <div
-      tippy="Turn off formula to activate control"
-      [isEnabled]="isDisabled === true"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
     >
       <vaadin-time-picker
         #timePickerOnHour
@@ -170,8 +170,8 @@
     class="flex flex-row space-x-5"
   >
     <div
-      tippy="Turn off formula to activate control"
-      [isEnabled]="isDisabled === true"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
     >
       <vaadin-date-picker
         #datePickerOnMinute
@@ -185,8 +185,8 @@
     </div>
 
     <div
-      tippy="Turn off formula to activate control"
-      [isEnabled]="isDisabled === true"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
     >
       <vaadin-time-picker
         #timePickerOnMinute
@@ -206,8 +206,8 @@
     class="flex flex-row space-x-5"
   >
     <div
-      tippy="Turn off formula to activate control"
-      [isEnabled]="isDisabled === true"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
     >
       <vaadin-date-picker
         #datePickerInRangeFrom
@@ -226,8 +226,8 @@
         timeStr !== zeroHoursMinutes ||
         timeToStr !== zeroHoursMinutes
       "
-      tippy="Turn off formula to activate control"
-      [isEnabled]="isDisabled === true"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
     >
       <vaadin-time-picker
         #timePickerInRangeFrom
@@ -243,8 +243,8 @@
     <div class="flex h-[36px] items-center justify-center">to</div>
 
     <div
-      tippy="Turn off formula to activate control"
-      [isEnabled]="isDisabled === true"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
     >
       <vaadin-date-picker
         #datePickerInRangeTo
@@ -263,8 +263,8 @@
         timeStr !== zeroHoursMinutes ||
         timeToStr !== zeroHoursMinutes
       "
-      tippy="Turn off formula to activate control"
-      [isEnabled]="isDisabled === true"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
     >
       <vaadin-time-picker
         #timePickerInRangeTo
@@ -284,8 +284,8 @@
     class="flex flex-row space-x-5"
   >
     <div
-      tippy="Turn off formula to activate control"
-      [isEnabled]="isDisabled === true"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
     >
       <vaadin-date-picker
         #datePickerBefore
@@ -300,8 +300,8 @@
 
     <div
       *ngIf="showHours === true || timeStr !== zeroHoursMinutes"
-      tippy="Turn off formula to activate control"
-      [isEnabled]="isDisabled === true"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
     >
       <vaadin-time-picker
         #timePickerBefore
@@ -321,8 +321,8 @@
     class="flex flex-row space-x-5"
   >
     <div
-      tippy="Turn off formula to activate control"
-      [isEnabled]="isDisabled === true"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
     >
       <vaadin-date-picker
         #datePickerAfter
@@ -337,8 +337,8 @@
 
     <div
       *ngIf="showHours === true || timeStr !== zeroHoursMinutes"
-      tippy="Turn off formula to activate control"
-      [isEnabled]="isDisabled === true"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
     >
       <vaadin-time-picker
         #timePickerAfter
@@ -362,8 +362,8 @@
   >
     <form [formGroup]="tsRelativeValueForm">
       <div
-        tippy="Turn off formula to activate control"
-        [isEnabled]="isDisabled === true"
+        tp="Turn off formula to activate control"
+        [tpIsEnabled]="isDisabled === true"
       >
         <fieldset [disabled]="isDisabled === true">
           <input
@@ -387,8 +387,8 @@
     </form>
 
     <div
-      tippy="Turn off formula to activate control"
-      [isEnabled]="isDisabled === true"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
     >
       <ng-select
         #tsRelativeUnitSelect
@@ -419,8 +419,8 @@
     </div>
 
     <div
-      tippy="Turn off formula to activate control"
-      [isEnabled]="isDisabled === true"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
     >
       <ng-select
         #tsRelativeCompleteOptionsSelect
@@ -451,8 +451,8 @@
     </div>
 
     <div
-      tippy="Turn off formula to activate control"
-      [isEnabled]="isDisabled === true"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
     >
       <ng-select
         #tsRelativeWhenOptionsSelect
@@ -494,8 +494,8 @@
     class="flex flex-row space-x-5"
   >
     <div
-      tippy="Turn off formula to activate control"
-      [isEnabled]="isDisabled === true"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
     >
       <ng-select
         #tsForOptionsSelect
@@ -530,8 +530,8 @@
       [formGroup]="tsForValueForm"
     >
       <div
-        tippy="Turn off formula to activate control"
-        [isEnabled]="isDisabled === true"
+        tp="Turn off formula to activate control"
+        [tpIsEnabled]="isDisabled === true"
       >
         <fieldset [disabled]="isDisabled === true">
           <input
@@ -556,8 +556,8 @@
 
     <div
       *ngIf="fraction.tsForOption === fractionTsForOptionEnum.For"
-      tippy="Turn off formula to activate control"
-      [isEnabled]="isDisabled === true"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
     >
       <ng-select
         #tsForUnitsSelect
@@ -595,8 +595,8 @@
   >
     <form [formGroup]="tsLastValueForm">
       <div
-        tippy="Turn off formula to activate control"
-        [isEnabled]="isDisabled === true"
+        tp="Turn off formula to activate control"
+        [tpIsEnabled]="isDisabled === true"
       >
         <fieldset [disabled]="isDisabled === true">
           <input
@@ -620,8 +620,8 @@
     </form>
 
     <div
-      tippy="Turn off formula to activate control"
-      [isEnabled]="isDisabled === true"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
     >
       <ng-select
         #tsLastUnitsSelect
@@ -652,8 +652,8 @@
     </div>
 
     <div
-      tippy="Turn off formula to activate control"
-      [isEnabled]="isDisabled === true"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
     >
       <ng-select
         #tsLastCompleteOptionsSelect

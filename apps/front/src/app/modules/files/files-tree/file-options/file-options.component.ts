@@ -1,6 +1,6 @@
+import { TreeNode } from '@ali-hm/angular-tree-component';
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { TreeNode } from '@bugsplat/angular-tree-component';
 import { tap } from 'rxjs/operators';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';

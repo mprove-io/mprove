@@ -1,4 +1,9 @@
 import {
+  IActionMapping,
+  TreeComponent,
+  TreeNode
+} from '@ali-hm/angular-tree-component';
+import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
@@ -6,11 +11,6 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import {
-  IActionMapping,
-  TreeComponent,
-  TreeNode
-} from '@bugsplat/angular-tree-component';
 import { tap } from 'rxjs/operators';
 import { MetricsQuery, MetricsState } from '~front/app/queries/metrics.query';
 import { RepQuery } from '~front/app/queries/rep.query';

@@ -1,4 +1,4 @@
-import * as nodegit from 'nodegit';
+import * as nodegit from '@figma/nodegit';
 import { common } from '~disk/barrels/common';
 import { constants } from '~disk/barrels/constants';
 
@@ -21,5 +21,5 @@ export async function cloneRemoteToDev(item: {
       : `${projectDir}/${constants.CENTRAL_REPO_ID}`;
   let dirDev = `${projectDir}/${devRepoId}`;
 
-  await nodegit.Clone.clone(remoteUrl, dirDev, item.cloneOptions);
+  await nodegit.Clone(remoteUrl, dirDev, item.cloneOptions);
 }

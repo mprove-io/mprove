@@ -7,7 +7,7 @@
     </div>
     <div class="mt-6 h-2 flex-1 rounded bg-white shadow">
       <div class="h-full w-full overflow-auto">
-        <div class="mt-16 ml-32 flex flex-row">
+        <div class="ml-32 mt-16 flex flex-row">
           <div class="flex flex-col text-base">
             <div class="flex h-24 items-center justify-end font-semibold"
               >Profile Photo</div
@@ -99,8 +99,8 @@
 
             <!-- <div class="mt-3 flex items-center">
               <div
-                tippy="User is restricted. Sign Up at https://mprove.io to get full access."
-                [isEnabled]="alias === restrictedUserAlias"
+                tp="User is restricted. Sign Up at https://mprove.io to get full access."
+                [tpIsEnabled]="alias === restrictedUserAlias"
               >
                 <button
                   data-cy="profileShowApiKeyButton"
@@ -119,8 +119,8 @@
 
             <div class="mt-3 flex items-center">
               <div
-                tippy="User is restricted. Sign Up at https://mprove.io to get full access."
-                [isEnabled]="alias === restrictedUserAlias"
+                tp="User is restricted. Sign Up at https://mprove.io to get full access."
+                [tpIsEnabled]="alias === restrictedUserAlias"
               >
                 <button
                   data-cy="profileChangePasswordButton"
@@ -137,10 +137,10 @@
               </div>
             </div>
 
-            <div class="mt-7 mb-5 flex items-center">
+            <div class="mb-5 mt-7 flex items-center">
               <div
-                tippy="User is restricted. Sign Up at https://mprove.io to get full access."
-                [isEnabled]="alias === restrictedUserAlias"
+                tp="User is restricted. Sign Up at https://mprove.io to get full access."
+                [tpIsEnabled]="alias === restrictedUserAlias"
               >
                 <button
                   data-cy="profileDeleteUserButton"
@@ -161,12 +161,12 @@
           <div class="ml-6 flex flex-col">
             <div class="flex h-24 items-center">
               <div
-                tippy="User is restricted. Sign Up at https://mprove.io to get full access."
-                [isEnabled]="alias === restrictedUserAlias"
+                tp="User is restricted. Sign Up at https://mprove.io to get full access."
+                [tpIsEnabled]="alias === restrictedUserAlias"
               >
                 <button
                   data-cy="profileEditPhotoButton"
-                  class="rounded border py-2 px-3 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                  class="rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
                   [ngClass]="{
                     'cursor-default text-gray-400':
                       alias === restrictedUserAlias,
@@ -181,12 +181,12 @@
 
             <div class="flex h-16 items-center">
               <div
-                tippy="User is restricted. Sign Up at https://mprove.io to get full access."
-                [isEnabled]="alias === restrictedUserAlias"
+                tp="User is restricted. Sign Up at https://mprove.io to get full access."
+                [tpIsEnabled]="alias === restrictedUserAlias"
               >
                 <button
                   data-cy="profileEditNameButton"
-                  class="rounded border py-2 px-3 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                  class="rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
                   [ngClass]="{
                     'cursor-default text-gray-400':
                       alias === restrictedUserAlias,
@@ -201,12 +201,12 @@
 
             <div class="flex h-16 items-center">
               <div
-                tippy="User is restricted. Sign Up at https://mprove.io to get full access."
-                [isEnabled]="alias === restrictedUserAlias"
+                tp="User is restricted. Sign Up at https://mprove.io to get full access."
+                [tpIsEnabled]="alias === restrictedUserAlias"
               >
                 <button
                   data-cy="profileEditUserTimezoneButton"
-                  class="rounded border py-2 px-3 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                  class="rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
                   [ngClass]="{
                     'cursor-default text-gray-400':
                       alias === restrictedUserAlias,

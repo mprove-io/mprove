@@ -233,14 +233,18 @@ export class MetricsComponent implements OnInit, OnDestroy {
                 renderer: (params: AgCartesianSeriesTooltipRendererParams) => {
                   let timeSpec = this.uiQuery.getValue().timeSpec;
 
+                  // console.log(params);
+
                   let columnLabel = common.formatTs({
                     timeSpec: timeSpec,
-                    unixTime: params.xValue
+                    unixTime: Number(params.datum[params.xKey])
                   });
 
-                  let formattedValue = common.isDefined(params.yValue)
+                  let formattedValue = common.isDefined(
+                    params.datum[params.yKey]
+                  )
                     ? this.queryService.formatValue({
-                        value: params.yValue,
+                        value: Number(params.datum[params.yKey]),
                         formatNumber: row.formatNumber,
                         fieldResult: common.FieldResultEnum.Number,
                         currencyPrefix: row.currencyPrefix,

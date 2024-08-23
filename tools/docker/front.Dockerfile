@@ -1,7 +1,7 @@
-FROM node:16.19.0 AS builder
+FROM node:18.20.4-bullseye AS builder
 
 WORKDIR /usr/src/app
-RUN npm config set scripts-prepend-node-path true
+# RUN npm config set scripts-prepend-node-path true
 COPY package.docker.json package.json
 COPY yarn.lock .
 RUN yarn --frozen-lockfile

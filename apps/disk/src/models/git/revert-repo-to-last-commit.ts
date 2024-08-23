@@ -1,4 +1,4 @@
-import * as nodegit from 'nodegit';
+import * as nodegit from '@figma/nodegit';
 
 export async function revertRepoToLastCommit(item: { repoDir: string }) {
   let gitRepo: nodegit.Repository = await nodegit.Repository.open(item.repoDir);

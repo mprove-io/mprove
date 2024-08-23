@@ -1,4 +1,10 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -22,7 +28,10 @@ export interface DeleteBranchDialogData {
 
 @Component({
   selector: 'm-delete-branch-dialog',
-  templateUrl: './delete-branch-dialog.component.html'
+  templateUrl: './delete-branch-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule]
 })
 export class DeleteBranchDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

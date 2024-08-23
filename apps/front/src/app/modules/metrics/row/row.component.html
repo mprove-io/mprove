@@ -13,7 +13,7 @@
   <button
     type="button"
     data-cy="deleteRowsButton"
-    class="ml-7 flex flex flex-row items-center rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
+    class="ml-7 flex flex flex-row items-center rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-white focus:outline-none"
     (click)="deleteRows()"
   >
     <m-trash-icon></m-trash-icon>
@@ -23,7 +23,7 @@
   <button
     type="button"
     data-cy="clearRowsButton"
-    class="ml-5 flex flex-row items-center rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
+    class="ml-5 flex flex-row items-center rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-white focus:outline-none"
     (click)="clearRows()"
   >
     <m-delete-icon></m-delete-icon>
@@ -110,7 +110,7 @@
         <button
           type="button"
           data-cy="rowToHeaderButton"
-          class="ml-5 flex rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
+          class="ml-5 flex rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-white focus:outline-none"
           (click)="toHeader()"
         >
           Header
@@ -119,7 +119,7 @@
         <button
           type="button"
           data-cy="rowToFormulaButton"
-          class="ml-5 flex rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
+          class="ml-5 flex rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-white focus:outline-none"
           (click)="toFormula()"
         >
           Formula
@@ -128,7 +128,7 @@
         <button
           type="button"
           data-cy="rowToMetricButton"
-          class="ml-5 flex rounded border border-gray-400 py-2 px-4 text-gray-500 hover:bg-white focus:outline-none"
+          class="ml-5 flex rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-white focus:outline-none"
           (click)="toMetric()"
         >
           Metric
@@ -452,7 +452,7 @@
         <div class="flex max-w-[750px] flex-grow flex-row">
           <div
             [formGroup]="parametersFormulaForm"
-            class="relative ml-7 mb-5 flex flex-grow"
+            class="relative mb-5 ml-7 flex flex-grow"
           >
             <textarea
               data-cy="parametersFormulaInput"
@@ -487,7 +487,7 @@
               repSelectedNode.data.isParamsSchemaValid === false)
           "
           class="text-red1 ml-5 mt-1 flex h-8 w-8 flex-shrink-0"
-          [tippy]="templateErrors"
+          [tp]="templateErrors"
         >
           <m-exclamation-icon></m-exclamation-icon>
         </div>
@@ -495,13 +495,13 @@
 
       <div class="flex max-h-max w-full flex-row overflow-auto">
         <div
-          tippy="Turn off formula to activate control"
-          [isEnabled]="!!repSelectedNode.data.parametersFormula"
+          tp="Turn off formula to activate control"
+          [tpIsEnabled]="!!repSelectedNode.data.parametersFormula"
         >
           <button
             type="button"
             data-cy="rowAddParameterButton"
-            class="ml-7 h-11 select-none rounded border py-2 px-4 focus:outline-none"
+            class="ml-7 h-11 select-none rounded border px-4 py-2 focus:outline-none"
             [ngClass]="{
               'border-gray-400 text-gray-500 hover:bg-white':
                 !repSelectedNode.data.parametersFormula,
@@ -576,11 +576,11 @@
 
             <div
               class="flex"
-              [isEnabled]="
+              [tpIsEnabled]="
                 isDisabledApplyTimeField === true ||
                 isDisabledApplyAlreadyFiltered === true
               "
-              [tippy]="templateApplyAddFilter"
+              [tp]="templateApplyAddFilter"
             >
               <button
                 data-cy="rowApplyAddParameterButton"

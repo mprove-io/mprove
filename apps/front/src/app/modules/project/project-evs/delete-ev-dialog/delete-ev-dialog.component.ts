@@ -1,4 +1,10 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { EvsQuery } from '~front/app/queries/evs.query';
@@ -13,7 +19,10 @@ export interface DeleteEvDialogData {
 
 @Component({
   selector: 'm-delete-ev-dialog',
-  templateUrl: './delete-ev-dialog.component.html'
+  templateUrl: './delete-ev-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule]
 })
 export class DeleteEvDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

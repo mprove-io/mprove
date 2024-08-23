@@ -1,9 +1,9 @@
+import { TreeModule } from '@ali-hm/angular-tree-component';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { TreeModule } from '@bugsplat/angular-tree-component';
-import { TippyModule } from '@ngneat/helipopper';
+import { TippyDirective } from '@ngneat/helipopper';
 import { MonacoEditorModule } from 'ng-monaco-editor';
 import { SharedModule } from '../shared/shared.module';
 import { FileEditorComponent } from './file-editor/file-editor.component';
@@ -35,7 +35,7 @@ import { RepoOptionsComponent } from './repo-options/repo-options.component';
     SharedModule,
     RouterModule,
     TreeModule,
-    TippyModule,
+    TippyDirective,
     MonacoEditorModule
   ]
 })

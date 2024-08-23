@@ -1,4 +1,4 @@
-import * as nodegit from 'nodegit';
+import * as nodegit from '@figma/nodegit';
 import { common } from '~disk/barrels/common';
 import { constants } from '~disk/barrels/constants';
 import { disk } from '~disk/barrels/disk';
@@ -32,7 +32,7 @@ export async function prepareRemoteAndProd(item: {
       ? item.gitUrl
       : centralDir;
 
-  await nodegit.Clone.clone(remoteUrl, prodDir, item.cloneOptions);
+  await nodegit.Clone(remoteUrl, prodDir, item.cloneOptions);
 
   if (item.remoteType === common.ProjectRemoteTypeEnum.Managed) {
     await createInitialCommitToProd({

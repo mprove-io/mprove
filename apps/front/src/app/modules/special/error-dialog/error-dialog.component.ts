@@ -1,4 +1,10 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { common } from '~front/barrels/common';
@@ -7,7 +13,10 @@ import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
   selector: 'm-error-dialog',
-  templateUrl: './error-dialog.component.html'
+  templateUrl: './error-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule]
 })
 export class ErrorDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

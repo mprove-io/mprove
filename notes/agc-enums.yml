@@ -4,6 +4,7 @@ ChartType:
   - area
   - scatter
   - bubble
+  - pie
   - donut
 
 AgBarSeriesLabelPlacement:

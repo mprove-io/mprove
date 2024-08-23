@@ -1,4 +1,4 @@
-import * as nodegit from 'nodegit';
+import * as nodegit from '@figma/nodegit';
 import { common } from '~disk/barrels/common';
 
 export async function getLastCommitFileContent(item: {

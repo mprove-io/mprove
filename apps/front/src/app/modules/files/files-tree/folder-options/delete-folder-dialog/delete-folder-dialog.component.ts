@@ -1,4 +1,10 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
@@ -21,7 +27,10 @@ export interface DeleteFolderDialogData {
 
 @Component({
   selector: 'm-delete-folder-dialog',
-  templateUrl: './delete-folder-dialog.component.html'
+  templateUrl: './delete-folder-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule]
 })
 export class DeleteFolderDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

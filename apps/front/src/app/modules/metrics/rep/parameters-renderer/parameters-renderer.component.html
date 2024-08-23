@@ -7,8 +7,8 @@
   <div
     *ngIf="params.data.isRepParametersHaveError === true"
     class="text-red1 mr-5 mt-1 flex h-8 w-8 flex-shrink-0"
-    tippy="Parameters have an error"
-    [isEnabled]="
+    tp="Parameters have an error"
+    [tpIsEnabled]="
       params.data.isParamsJsonValid === false ||
       params.data.isParamsSchemaValid === false
     "

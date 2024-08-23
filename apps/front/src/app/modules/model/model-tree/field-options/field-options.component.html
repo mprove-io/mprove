@@ -2,11 +2,11 @@
   data-cy="fieldOptionsMenuButton"
   class="ml-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded hover:bg-white focus:outline-none"
   #t1="tippy"
-  [tippy]="templateFieldOptions"
-  [hideOnEscape]="true"
-  variation="menu"
+  [tp]="templateFieldOptions"
+  [tpHideOnEscape]="true"
+  tpVariation="menu"
   className="my-menu"
-  [offset]="[0, 5]"
+  [tpOffset]="[0, 5]"
   (click)="clickMenu($event)"
 >
   <m-dots-vertical-icon></m-dots-vertical-icon>

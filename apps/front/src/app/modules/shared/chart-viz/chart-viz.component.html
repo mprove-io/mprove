@@ -2,7 +2,7 @@
   <div class="h-full">
     <div class="flex h-full w-full flex-col">
       <div
-        class="text-gray1 mx-5 mt-8 mb-5 flex flex-shrink-0 flex-row items-start justify-center text-lg"
+        class="text-gray1 mx-5 mb-5 mt-8 flex flex-shrink-0 flex-row items-start justify-center text-lg"
       >
         <div class="mr-3 w-9"></div>
 
@@ -37,9 +37,9 @@
           data-cy="vizOptionsMenuButton"
           class="invisible ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded hover:bg-blue-200 focus:outline-none group-hover:visible"
           #t1="tippy"
-          [tippy]="templateChartVizOptions"
-          [hideOnEscape]="true"
-          variation="menu"
+          [tp]="templateChartVizOptions"
+          [tpHideOnEscape]="true"
+          tpVariation="menu"
           className="my-menu"
         >
           <m-dots-vertical-icon></m-dots-vertical-icon>
@@ -60,9 +60,9 @@
             </ng-template>
 
             <div
-              [tippy]="templateChartVizOptionsExploreViz"
+              [tp]="templateChartVizOptionsExploreViz"
               placement="left"
-              [isEnabled]="viz.canEditOrDeleteViz === false"
+              [tpIsEnabled]="viz.canEditOrDeleteViz === false"
             >
               <button
                 data-cy="vizOptionsExplore"
@@ -78,9 +78,9 @@
             </div>
 
             <div
-              tippy="Viz can be edited by author and project members with ProjectAdmin or FilesEditor role. Try to save viz as new to become an author."
+              tp="Viz can be edited by author and project members with ProjectAdmin or FilesEditor role. Try to save viz as new to become an author."
               placement="left"
-              [isEnabled]="viz.canEditOrDeleteViz === false"
+              [tpIsEnabled]="viz.canEditOrDeleteViz === false"
             >
               <button
                 data-cy="vizOptionsEditInfo"
@@ -103,9 +103,9 @@
             >
 
             <div
-              tippy="Viz can be deleted by author and project members with ProjectAdmin or FilesEditor role. Try to save viz as new to become an author."
+              tp="Viz can be deleted by author and project members with ProjectAdmin or FilesEditor role. Try to save viz as new to become an author."
               placement="left"
-              [isEnabled]="viz.canEditOrDeleteViz === false"
+              [tpIsEnabled]="viz.canEditOrDeleteViz === false"
             >
               <button
                 data-cy="vizOptionsDelete"
@@ -131,7 +131,7 @@
       ></m-bricks>
 
       <div
-        class="flex w-full flex-grow cursor-default overflow-auto rounded bg-white px-7 pt-5 pb-10"
+        class="flex w-full flex-grow cursor-default overflow-auto rounded bg-white px-7 pb-10 pt-5"
         (click)="stopClick($event)"
       >
         <m-chart-view

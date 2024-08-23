@@ -67,8 +67,8 @@
 
       <div
         class="ml-5"
-        [tippy]="templateChartDialogExplore"
-        [isEnabled]="isExplorer === false || canAccessModel === false"
+        [tp]="templateChartDialogExplore"
+        [tpIsEnabled]="isExplorer === false || canAccessModel === false"
       >
         <button
           data-cy="chartDialogExploreButton"
@@ -160,8 +160,8 @@
 
     <div
       class="ml-2 flex flex-row items-center"
-      [tippy]="templateChartDialogModel"
-      [isEnabled]="canAccessModel === false"
+      [tp]="templateChartDialogModel"
+      [tpIsEnabled]="canAccessModel === false"
     >
       <div
         (click)="goToModel(mconfig.modelId, canAccessModel)"

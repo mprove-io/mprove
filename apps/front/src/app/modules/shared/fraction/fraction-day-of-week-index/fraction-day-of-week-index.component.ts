@@ -64,11 +64,11 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
     this.dayOfWeekIndexValuesForm = this.fb.group({
       dayOfWeekIndexValues: [
         this.fraction.dayOfWeekIndexValues,
-        Validators.compose([
+        [
           Validators.required,
           ValidationService.dayOfWeekIndexValuesValidator,
           Validators.maxLength(255)
-        ])
+        ]
       ]
     });
   }

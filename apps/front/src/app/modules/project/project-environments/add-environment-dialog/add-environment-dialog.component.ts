@@ -1,13 +1,21 @@
+import { CommonModule } from '@angular/common';
 import {
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
   HostListener,
   OnInit,
   ViewChild
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '~front/app/queries/environments.query';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -20,7 +28,10 @@ export interface AddEnvironmentDialogData {
 
 @Component({
   selector: 'm-add-environment-dialog',
-  templateUrl: './add-environment-dialog.component.html'
+  templateUrl: './add-environment-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule]
 })
 export class AddEnvironmentDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

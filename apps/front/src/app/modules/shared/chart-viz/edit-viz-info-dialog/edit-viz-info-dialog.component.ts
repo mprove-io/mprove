@@ -1,10 +1,17 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnInit
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -17,6 +24,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+import { SharedModule } from '../../shared.module';
 
 export interface EditVizInfoDialogData {
   apiService: ApiService;
@@ -30,7 +38,10 @@ export interface EditVizInfoDialogData {
 
 @Component({
   selector: 'm-edit-viz-info-dialog',
-  templateUrl: './edit-viz-info-dialog.component.html'
+  templateUrl: './edit-viz-info-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule]
 })
 export class EditVizInfoDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

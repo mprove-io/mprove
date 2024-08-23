@@ -1,4 +1,10 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { EnvironmentsQuery } from '~front/app/queries/environments.query';
@@ -16,7 +22,10 @@ export interface DeleteEnvironmentDialogData {
 
 @Component({
   selector: 'm-delete-environment-dialog',
-  templateUrl: './delete-environment-dialog.component.html'
+  templateUrl: './delete-environment-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule]
 })
 export class DeleteEnvironmentDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

@@ -1,19 +1,26 @@
 {
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "blockml",
   "prefix": "blockml",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/blockml/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/node:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "target": "node",
+        "compiler": "tsc",
         "outputPath": "dist/apps/blockml",
         "main": "apps/blockml/src/main.ts",
         "tsConfig": "apps/blockml/tsconfig.app.json",
-        "assets": ["apps/blockml/src/assets"]
+        "assets": ["apps/blockml/src/assets"],
+        "isolatedConfig": true,
+        "webpackConfig": "apps/blockml/webpack.config.js",
+        "sourceMap": true
       },
       "configurations": {
+        "development": {},
         "production": {
           "optimization": true,
           "extractLicenses": true,
@@ -22,17 +29,30 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "blockml:build:production",
         "host": "0.0.0.0",
         "port": 9229,
         "inspect": "inspect",
         "watch": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "blockml:build:development"
+        },
+        "production": {
+          "buildTarget": "blockml:build:production",
+          "host": "0.0.0.0",
+          "port": 9229,
+          "inspect": "inspect",
+          "watch": true
+        }
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/blockml/**/*.ts"]
       }

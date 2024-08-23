@@ -1,4 +1,10 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -14,7 +20,10 @@ export interface DeleteUserDialogData {
 
 @Component({
   selector: 'm-delete-user-dialog',
-  templateUrl: './delete-user-dialog.component.html'
+  templateUrl: './delete-user-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule]
 })
 export class DeleteUserDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

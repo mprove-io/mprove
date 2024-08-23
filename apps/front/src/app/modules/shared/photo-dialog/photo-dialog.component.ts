@@ -1,4 +1,10 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  HostListener,
+  OnInit
+} from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 
 export interface PhotoDialogData {
@@ -8,7 +14,10 @@ export interface PhotoDialogData {
 
 @Component({
   selector: 'm-photo-dialog',
-  templateUrl: './photo-dialog.component.html'
+  templateUrl: './photo-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule]
 })
 export class PhotoDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

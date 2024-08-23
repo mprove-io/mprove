@@ -31,7 +31,7 @@
                   class="mr-2 flex flex-shrink-0 flex-row items-center space-x-5 text-gray-500"
                 >
                   <m-link-icon
-                    tippy="Listens to dashboard filter {{
+                    tp="Listens to dashboard filter {{
                       listen[filter.fieldId].split('_').join(' ')
                         | capitalizeWords
                     }}"
@@ -39,7 +39,7 @@
                   ></m-link-icon>
 
                   <m-link-off-icon
-                    tippy="Does not listen to dashboard filter"
+                    tp="Does not listen to dashboard filter"
                     *ngIf="!!listen[filter.fieldId] === false"
                   ></m-link-off-icon>
                 </div>

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { TippyModule } from '@ngneat/helipopper';
+import { TippyDirective } from '@ngneat/helipopper';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { SharedModule } from '../shared/shared.module';
 import { ProjectConnectionsComponent } from './project-connections/project-connections.component';
@@ -25,7 +25,7 @@ import { ProjectTeamComponent } from './project-team/project-team.component';
     SharedModule,
     RouterModule,
     NgxPaginationModule,
-    TippyModule
+    TippyDirective
   ]
 })
 export class ProjectModule {}

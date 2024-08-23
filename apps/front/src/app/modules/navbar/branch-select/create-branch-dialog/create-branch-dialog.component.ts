@@ -1,15 +1,23 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnInit
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { BranchItem } from '~front/app/interfaces/branch-item';
+import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { UserQuery, UserState } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -30,7 +38,10 @@ export interface CreateBranchDialogData {
 
 @Component({
   selector: 'm-create-branch-dialog',
-  templateUrl: './create-branch-dialog.component.html'
+  templateUrl: './create-branch-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule]
 })
 export class CreateBranchDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')
@@ -193,9 +204,10 @@ export class CreateBranchDialogComponent implements OnInit {
       .subscribe();
   }
 
-  branchChange(branchItem: interfaces.BranchItem) {
+  // branchChange(branchItem: interfaces.BranchItem) {
+  branchChange(branchItem: any) {
     this.selectedBranchItem = this.branchesList.find(
-      x => x.extraId === branchItem.extraId
+      x => x.extraId === (branchItem as interfaces.BranchItem).extraId
     );
 
     this.cd.detectChanges();

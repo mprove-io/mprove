@@ -7,7 +7,7 @@
 
   <div
     data-cy="repSaveAsDialogTitle"
-    class="text-gray2 mt-5 mb-9 flex-grow text-left text-2xl font-semibold"
+    class="text-gray2 mb-9 mt-5 flex-grow text-left text-2xl font-semibold"
     >Save As
   </div>
 
@@ -88,8 +88,8 @@
         <ng-template ng-label-tmp ng-option-tmp let-item="item">
           <div
             class="ml-1 flex flex-row"
-            [isEnabled]="item.canEditOrDeleteRep === false"
-            tippy="Report can be modified by author and project members with ProjectAdmin or FilesEditor role. Try to save report as new to become an author."
+            [tpIsEnabled]="item.canEditOrDeleteRep === false"
+            tp="Report can be modified by author and project members with ProjectAdmin or FilesEditor role. Try to save report as new to become an author."
           >
             <div class="flex truncate">
               <div class="truncate">

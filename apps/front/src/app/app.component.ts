@@ -1,12 +1,14 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   NavigationCancel,
   NavigationEnd,
   NavigationError,
   NavigationStart,
-  Router
+  Router,
+  RouterModule
 } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { tap } from 'rxjs/operators';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -14,7 +16,9 @@ import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'm-root',
-  templateUrl: './app.component.html'
+  templateUrl: './app.component.html',
+  imports: [RouterModule, NgxSpinnerModule, CommonModule],
+  standalone: true
 })
 export class AppComponent implements OnInit {
   appSpinnerName = constants.APP_SPINNER_NAME;

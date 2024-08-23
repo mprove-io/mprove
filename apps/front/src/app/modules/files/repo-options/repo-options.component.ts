@@ -1,5 +1,5 @@
+import { TreeNode } from '@ali-hm/angular-tree-component';
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
-import { TreeNode } from '@bugsplat/angular-tree-component';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';

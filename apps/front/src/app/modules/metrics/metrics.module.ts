@@ -1,11 +1,11 @@
+import { TreeModule } from '@ali-hm/angular-tree-component';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { TreeModule } from '@bugsplat/angular-tree-component';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { TippyModule } from '@ngneat/helipopper';
-import { AgChartsAngularModule } from 'ag-charts-angular';
+import { TippyDirective } from '@ngneat/helipopper';
+import { AgCharts } from 'ag-charts-angular';
 import { AgGridModule } from 'ag-grid-angular';
 import { MonacoEditorModule } from 'ng-monaco-editor';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -63,10 +63,10 @@ import { RowComponent } from './row/row.component';
     NgSelectModule,
     UiSwitchModule,
     NgxSpinnerModule,
-    TippyModule,
+    TippyDirective,
     MonacoEditorModule,
     AgGridModule,
-    AgChartsAngularModule
+    AgCharts
   ]
 })
 export class MetricsModule {}

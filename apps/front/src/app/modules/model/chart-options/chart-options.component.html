@@ -2,19 +2,19 @@
   data-cy="chartOptionsMenuButton"
   class="flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
   #t1="tippy"
-  [tippy]="templateChartOptions"
-  [hideOnEscape]="true"
-  variation="menu"
+  [tp]="templateChartOptions"
+  [tpHideOnEscape]="true"
+  tpVariation="menu"
   className="my-menu"
 >
   <m-dots-vertical-icon></m-dots-vertical-icon>
 </button>
 
 <ng-template #templateChartOptions>
-  <div class="w-64 rounded-md border-2 border-gray4 bg-white shadow-xl">
+  <div class="border-gray4 w-64 rounded-md border-2 bg-white shadow-xl">
     <button
       data-cy="chartOptionsViewBlockML"
-      class="w-full px-4 py-2 text-left text-base text-gray1 hover:bg-blue2 focus:outline-none"
+      class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
       [ngClass]="{
         'cursor-default text-gray-400': isDisabled === true
       }"
