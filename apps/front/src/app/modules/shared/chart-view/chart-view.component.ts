@@ -98,7 +98,6 @@ export class ChartViewComponent implements OnChanges {
       title: {
         text: `${this.chart.axVisible}`
       },
-      type: 'line',
       data: [
         {
           quarter: 'Q1',
