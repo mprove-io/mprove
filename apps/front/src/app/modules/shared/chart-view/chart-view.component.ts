@@ -96,7 +96,7 @@ export class ChartViewComponent implements OnChanges {
     // console.log('updateChart');
     this.chartOptions = {
       title: {
-        text: `${this.chart.axVisible}`
+        text: 'Annual Fuel Expenditure'
       },
       data: [
         {
@@ -121,7 +121,39 @@ export class ChartViewComponent implements OnChanges {
         }
       ],
       series: [
-        { type: 'line', xKey: 'quarter', yKey: 'diesel', yName: 'Diesel' }
+        // {
+        //   xKey: 'quarter',
+        //   yKey: 'petrol',
+        //   yName: 'Petrol',
+        //   strokeWidth: 4,
+        //   marker: {
+        //     enabled: false
+        //   }
+        // },
+        // {
+        //   xKey: 'quarter',
+        //   yKey: 'diesel',
+        //   yName: 'Diesel',
+        //   stroke: 'black',
+        //   label: {
+        //     fontWeight: 'bold',
+        //     formatter: ({ value }: any) => value.toFixed(0)
+        //   },
+        //   marker: {
+        //     fill: 'orange',
+        //     size: 10,
+        //     stroke: 'black',
+        //     strokeWidth: 3,
+        //     shape: 'diamond'
+        //   }
+        // }
+        {
+          type: 'line',
+          xKey: 'quarter',
+          yKey: 'diesel',
+          yName: 'Diesel',
+          visible: this.chart.axVisible
+        }
       ]
     };
 
