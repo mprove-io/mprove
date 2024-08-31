@@ -93,69 +93,280 @@ export class ChartViewComponent implements OnChanges {
   // }
 
   updateChart() {
+    // let seriesType: string;
+    // let seriesElement;
+    if (this.chart.type === common.ChartTypeEnum.AgBar) {
+      // seriesType = 'bar';
+      this.chartOptions = {
+        title: {
+          text: 'Annual Fuel Expenditure'
+        },
+        data: [
+          {
+            quarter: 'Q1',
+            petrol: 200,
+            diesel: 100
+          },
+          {
+            quarter: 'Q2',
+            petrol: 300,
+            diesel: 130
+          },
+          {
+            quarter: 'Q3',
+            petrol: 350,
+            diesel: 160
+          },
+          {
+            quarter: 'Q4',
+            petrol: 400,
+            diesel: 200
+          }
+        ],
+        series: [
+          {
+            type: 'bar',
+            xKey: 'quarter',
+            yKey: 'diesel',
+            yName: 'Diesel',
+            visible: this.chart.axVisible
+          }
+        ]
+      };
+    }
+
+    if (this.chart.type === common.ChartTypeEnum.AgLine) {
+      this.chartOptions = {
+        title: {
+          text: 'Annual Fuel Expenditure'
+        },
+        data: [
+          {
+            quarter: 'Q1',
+            petrol: 200,
+            diesel: 100
+          },
+          {
+            quarter: 'Q2',
+            petrol: 300,
+            diesel: 130
+          },
+          {
+            quarter: 'Q3',
+            petrol: 350,
+            diesel: 160
+          },
+          {
+            quarter: 'Q4',
+            petrol: 400,
+            diesel: 200
+          }
+        ],
+        series: [
+          {
+            type: 'line',
+            xKey: 'quarter',
+            yKey: 'diesel',
+            yName: 'Diesel',
+            visible: this.chart.axVisible
+          }
+        ]
+      };
+    }
+
+    if (this.chart.type === common.ChartTypeEnum.AgArea) {
+      this.chartOptions = {
+        title: {
+          text: 'Annual Fuel Expenditure'
+        },
+        data: [
+          {
+            quarter: 'Q1',
+            petrol: 200,
+            diesel: 100
+          },
+          {
+            quarter: 'Q2',
+            petrol: 300,
+            diesel: 130
+          },
+          {
+            quarter: 'Q3',
+            petrol: 350,
+            diesel: 160
+          },
+          {
+            quarter: 'Q4',
+            petrol: 400,
+            diesel: 200
+          }
+        ],
+        series: [
+          {
+            type: 'area',
+            xKey: 'quarter',
+            yKey: 'diesel',
+            yName: 'Diesel',
+            visible: this.chart.axVisible
+          }
+        ]
+      };
+    }
+
+    if (this.chart.type === common.ChartTypeEnum.AgScatter) {
+      this.chartOptions = {
+        title: {
+          text: 'Annual Fuel Expenditure'
+        },
+        data: [
+          {
+            quarter: 'Q1',
+            petrol: 200,
+            diesel: 100
+          },
+          {
+            quarter: 'Q2',
+            petrol: 300,
+            diesel: 130
+          },
+          {
+            quarter: 'Q3',
+            petrol: 350,
+            diesel: 160
+          },
+          {
+            quarter: 'Q4',
+            petrol: 400,
+            diesel: 200
+          }
+        ],
+        series: [
+          {
+            type: 'scatter',
+            xKey: 'quarter',
+            yKey: 'diesel',
+            yName: 'Diesel',
+            visible: this.chart.axVisible
+          }
+        ]
+      };
+    }
+
+    if (this.chart.type === common.ChartTypeEnum.AgBubble) {
+      this.chartOptions = {
+        title: {
+          text: 'Annual Fuel Expenditure'
+        },
+        data: [
+          {
+            quarter: 'Q1',
+            petrol: 200,
+            diesel: 100
+          },
+          {
+            quarter: 'Q2',
+            petrol: 300,
+            diesel: 130
+          },
+          {
+            quarter: 'Q3',
+            petrol: 350,
+            diesel: 160
+          },
+          {
+            quarter: 'Q4',
+            petrol: 400,
+            diesel: 200
+          }
+        ],
+        series: [
+          {
+            type: 'bubble',
+            xKey: 'quarter',
+            yKey: 'diesel',
+            sizeKey: 'diesel',
+            yName: 'Diesel',
+            visible: this.chart.axVisible
+          }
+        ]
+      };
+    }
+
+    if (this.chart.type === common.ChartTypeEnum.AgPie) {
+      this.chartOptions = {
+        title: {
+          text: 'Annual Fuel Expenditure'
+        },
+        data: [
+          {
+            quarter: 'Q1',
+            petrol: 200,
+            diesel: 100
+          },
+          {
+            quarter: 'Q2',
+            petrol: 300,
+            diesel: 130
+          },
+          {
+            quarter: 'Q3',
+            petrol: 350,
+            diesel: 160
+          },
+          {
+            quarter: 'Q4',
+            petrol: 400,
+            diesel: 200
+          }
+        ],
+        series: [
+          {
+            type: 'pie',
+            angleKey: 'quarter',
+            visible: this.chart.axVisible
+          }
+        ]
+      };
+    }
+
+    if (this.chart.type === common.ChartTypeEnum.AgDonut) {
+      this.chartOptions = {
+        title: {
+          text: 'Annual Fuel Expenditure'
+        },
+        data: [
+          {
+            quarter: 'Q1',
+            petrol: 200,
+            diesel: 100
+          },
+          {
+            quarter: 'Q2',
+            petrol: 300,
+            diesel: 130
+          },
+          {
+            quarter: 'Q3',
+            petrol: 350,
+            diesel: 160
+          },
+          {
+            quarter: 'Q4',
+            petrol: 400,
+            diesel: 200
+          }
+        ],
+        series: [
+          {
+            type: 'donut',
+            angleKey: 'quarter',
+            visible: this.chart.axVisible
+          }
+        ]
+      };
+    }
+
     // console.log('updateChart');
-    this.chartOptions = {
-      title: {
-        text: 'Annual Fuel Expenditure'
-      },
-      data: [
-        {
-          quarter: 'Q1',
-          petrol: 200,
-          diesel: 100
-        },
-        {
-          quarter: 'Q2',
-          petrol: 300,
-          diesel: 130
-        },
-        {
-          quarter: 'Q3',
-          petrol: 350,
-          diesel: 160
-        },
-        {
-          quarter: 'Q4',
-          petrol: 400,
-          diesel: 200
-        }
-      ],
-      series: [
-        // {
-        //   xKey: 'quarter',
-        //   yKey: 'petrol',
-        //   yName: 'Petrol',
-        //   strokeWidth: 4,
-        //   marker: {
-        //     enabled: false
-        //   }
-        // },
-        // {
-        //   xKey: 'quarter',
-        //   yKey: 'diesel',
-        //   yName: 'Diesel',
-        //   stroke: 'black',
-        //   label: {
-        //     fontWeight: 'bold',
-        //     formatter: ({ value }: any) => value.toFixed(0)
-        //   },
-        //   marker: {
-        //     fill: 'orange',
-        //     size: 10,
-        //     stroke: 'black',
-        //     strokeWidth: 3,
-        //     shape: 'diamond'
-        //   }
-        // }
-        {
-          type: 'line',
-          xKey: 'quarter',
-          yKey: 'diesel',
-          yName: 'Diesel',
-          visible: this.chart.axVisible
-        }
-      ]
-    };
 
     let checkSelectResult = getSelectValid({
       chart: this.chart,
@@ -240,6 +451,8 @@ export class ChartViewComponent implements OnChanges {
     }
 
     this.cd.detectChanges();
+
+    console.log(this.chart);
   }
 
   onSelect(event: any) {}

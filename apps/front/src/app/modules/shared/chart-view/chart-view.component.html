@@ -57,18 +57,102 @@
     >Query Error</div
   >
 
-  <div class="flex h-full">
-    <ag-charts
-      *ngIf="
-        queryStatus !== queryStatusEnum.Error &&
-        isSelectValid === true &&
-        chart.type === chartTypeEnum.AgLine &&
-        chart.isValid === true &&
-        qData.length > 0
-      "
-      style="height: 100%; width: 100%"
-      [options]="chartOptions"
-    ></ag-charts>
+  <!-- ag bar -->
+  <div
+    class="flex h-full"
+    *ngIf="
+      queryStatus !== queryStatusEnum.Error &&
+      isSelectValid === true &&
+      chart.type === chartTypeEnum.AgBar &&
+      chart.isValid === true &&
+      qData.length > 0
+    "
+  >
+    <ag-charts style="width: 100%" [options]="chartOptions"></ag-charts>
+  </div>
+
+  <!-- ag line -->
+  <div
+    class="flex h-full"
+    *ngIf="
+      queryStatus !== queryStatusEnum.Error &&
+      isSelectValid === true &&
+      chart.type === chartTypeEnum.AgLine &&
+      chart.isValid === true &&
+      qData.length > 0
+    "
+  >
+    <ag-charts style="width: 100%" [options]="chartOptions"></ag-charts>
+  </div>
+
+  <!-- ag area -->
+  <div
+    class="flex h-full"
+    *ngIf="
+      queryStatus !== queryStatusEnum.Error &&
+      isSelectValid === true &&
+      chart.type === chartTypeEnum.AgArea &&
+      chart.isValid === true &&
+      qData.length > 0
+    "
+  >
+    <ag-charts style="width: 100%" [options]="chartOptions"></ag-charts>
+  </div>
+
+  <!-- ag scatter -->
+  <div
+    class="flex h-full"
+    *ngIf="
+      queryStatus !== queryStatusEnum.Error &&
+      isSelectValid === true &&
+      chart.type === chartTypeEnum.AgScatter &&
+      chart.isValid === true &&
+      qData.length > 0
+    "
+  >
+    <ag-charts style="width: 100%" [options]="chartOptions"></ag-charts>
+  </div>
+
+  <!-- ag bubble -->
+  <div
+    class="flex h-full"
+    *ngIf="
+      queryStatus !== queryStatusEnum.Error &&
+      isSelectValid === true &&
+      chart.type === chartTypeEnum.AgBubble &&
+      chart.isValid === true &&
+      qData.length > 0
+    "
+  >
+    <ag-charts style="width: 100%" [options]="chartOptions"></ag-charts>
+  </div>
+
+  <!-- ag pie -->
+  <div
+    class="flex h-full"
+    *ngIf="
+      queryStatus !== queryStatusEnum.Error &&
+      isSelectValid === true &&
+      chart.type === chartTypeEnum.AgBubble &&
+      chart.isValid === true &&
+      qData.length > 0
+    "
+  >
+    <ag-charts style="width: 100%" [options]="chartOptions"></ag-charts>
+  </div>
+
+  <!-- ag pie -->
+  <div
+    class="flex h-full"
+    *ngIf="
+      queryStatus !== queryStatusEnum.Error &&
+      isSelectValid === true &&
+      chart.type === chartTypeEnum.AgPie &&
+      chart.isValid === true &&
+      qData.length > 0
+    "
+  >
+    <ag-charts style="width: 100%" [options]="chartOptions"></ag-charts>
   </div>
 
   <m-chart-table

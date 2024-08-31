@@ -7,6 +7,9 @@ import {
   IsString
 } from 'class-validator';
 import { enums } from '~common/barrels/enums';
+import { AgHighlightStyle } from './ag/HighlightStyle';
+import { AxShadow } from './ag/Shadow';
+import { ClickRange, Direction } from './ag/enums';
 
 export class Chart {
   @IsBoolean()
@@ -18,8 +21,82 @@ export class Chart {
   @IsOptional()
   @IsBoolean()
   axVisible?: boolean;
+
+  @IsString()
+  axXKey: string;
+
+  @IsString()
+  axYKey: string;
+
+  @IsString()
+  axXName: string;
+
+  @IsString()
+  axYName: string;
+
+  @IsBoolean()
+  axGrouped: boolean;
+
+  @IsBoolean()
+  axStacked: boolean;
+
+  @IsString()
+  axStackGroup: string;
+
+  @IsNumber()
+  axNormalizedTo: number;
+
+  @IsString()
+  axCursor: string;
+  // id?
+
+  axHighlightStyle: AgHighlightStyle;
+
+  @IsEnum(ClickRange)
+  axNodeClickRange: ClickRange;
+
+  @IsBoolean()
+  axShowInLegend: boolean;
+
+  // Listeners
   //
 
+  @IsString()
+  axLegendItemName: string;
+
+  @IsEnum(Direction)
+  axDirection: Direction;
+
+  @IsBoolean()
+  axCrisp: boolean;
+
+  axShadow: AxShadow;
+
+  @IsNumber()
+  axCornerRadius: number;
+
+  @IsString()
+  axFill: string;
+
+  @IsNumber()
+  axFillOpacity: number;
+
+  @IsString()
+  axStroke: string;
+
+  @IsNumber()
+  axStrokeWidth: number;
+  @IsNumber()
+  axStrokeOpacity: number;
+
+  axLineDash: number[];
+
+  @IsNumber()
+  axLineDashOffset: number;
+
+  @IsBoolean()
+  axShowInMiniChart: boolean;
+  //
   @IsOptional()
   @IsString()
   title?: string;

@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { from, interval, of, Subscription } from 'rxjs';
+import { Subscription, from, interval, of } from 'rxjs';
 import {
   concatMap,
   delay,
@@ -286,6 +286,16 @@ export class ModelComponent implements OnInit, OnDestroy {
       label: 'Ag Line',
       value: common.ChartTypeEnum.AgLine,
       iconPath: 'assets/charts/line.svg'
+    },
+    {
+      label: 'Ag Bar',
+      value: common.ChartTypeEnum.AgBar,
+      iconPath: 'assets/charts/bar.svg'
+    },
+    {
+      label: 'Ag Area',
+      value: common.ChartTypeEnum.AgArea,
+      iconPath: 'assets/charts/area.svg'
     },
     {
       label: 'Table',

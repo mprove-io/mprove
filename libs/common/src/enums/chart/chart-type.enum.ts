@@ -1,5 +1,12 @@
 export enum ChartTypeEnum {
   AgLine = 'ag_line',
+  AgBar = 'ag_bar',
+  AgArea = 'ag_area',
+  AgScatter = 'ag_scatter',
+  AgBubble = 'ag_bubble',
+  AgPie = 'ag_pie',
+  AgDonut = 'ag_donut',
+
   Table = 'table',
   BarVertical = 'bar_vertical',
   BarVerticalGrouped = 'bar_vertical_grouped',
