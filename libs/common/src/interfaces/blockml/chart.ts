@@ -23,79 +23,80 @@ export class Chart {
   axVisible?: boolean;
 
   @IsString()
-  axXKey: string;
+  axXKey?: string;
 
   @IsString()
-  axYKey: string;
+  axYKey?: string;
 
   @IsString()
-  axXName: string;
+  axXName?: string;
 
   @IsString()
-  axYName: string;
+  axYName?: string;
 
   @IsBoolean()
-  axGrouped: boolean;
+  axGrouped?: boolean;
 
   @IsBoolean()
-  axStacked: boolean;
+  axStacked?: boolean;
 
   @IsString()
-  axStackGroup: string;
+  axStackGroup?: string;
 
   @IsNumber()
-  axNormalizedTo: number;
+  axNormalizedTo?: number;
 
   @IsString()
-  axCursor: string;
+  axCursor?: string;
   // id?
 
-  axHighlightStyle: AgHighlightStyle;
+  axHighlightStyle?: AgHighlightStyle;
 
   @IsEnum(ClickRange)
-  axNodeClickRange: ClickRange;
+  axNodeClickRange?: ClickRange;
 
   @IsBoolean()
-  axShowInLegend: boolean;
+  axShowInLegend?: boolean;
 
   // Listeners
   //
 
   @IsString()
-  axLegendItemName: string;
+  axLegendItemName?: string;
 
   @IsEnum(Direction)
-  axDirection: Direction;
+  axDirection?: Direction;
 
   @IsBoolean()
-  axCrisp: boolean;
+  axCrisp?: boolean;
 
-  axShadow: AxShadow;
+  axShadow?: AxShadow;
 
   @IsNumber()
-  axCornerRadius: number;
+  axCornerRadius?: number;
 
   @IsString()
-  axFill: string;
+  axFill?: string;
 
   @IsNumber()
-  axFillOpacity: number;
+  axFillOpacity?: number;
 
   @IsString()
-  axStroke: string;
+  axStroke?: string;
 
   @IsNumber()
-  axStrokeWidth: number;
+  axStrokeWidth?: number;
   @IsNumber()
-  axStrokeOpacity: number;
+  axStrokeOpacity?: number;
 
-  axLineDash: number[];
+  axLineDash?: number[];
 
   @IsNumber()
-  axLineDashOffset: number;
+  axLineDashOffset?: number;
 
   @IsBoolean()
-  axShowInMiniChart: boolean;
+  axShowInMiniChart?: boolean;
+
   //
   @IsOptional()
   @IsString()
