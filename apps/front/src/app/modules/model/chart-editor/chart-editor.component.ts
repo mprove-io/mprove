@@ -30,6 +30,7 @@ export class ChartEditorComponent implements OnChanges {
   chartTypeEnum = common.ChartTypeEnum;
   chartSchemeTypeEnum = common.ChartSchemeTypeEnum;
 
+  cm = common;
   axVisibleChartTypes = common.visibleChartTypes;
 
   hideColumnsChartTypes = common.hideColumnsChartTypes;

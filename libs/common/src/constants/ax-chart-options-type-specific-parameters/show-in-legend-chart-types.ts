@@ -1,6 +1,6 @@
 import { enums } from '~common/barrels/enums';
 
-export const nodeClickRangeChartTypes = [
+export const showInLegendChartTypes = [
   enums.ChartTypeEnum.AgLine,
   enums.ChartTypeEnum.AgBar,
   enums.ChartTypeEnum.AgArea,

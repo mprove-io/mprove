@@ -1,4 +1,4 @@
-export interface BarChartLabel {
+export interface AxBarChartLabel {
   placement: 'inside' | 'out';
   // formatter
   enabled: boolean;

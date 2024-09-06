@@ -127,13 +127,13 @@
     <ag-charts style="width: 100%" [options]="chartOptions"></ag-charts>
   </div>
 
-  <!-- ag pie -->
+  <!-- ag donut -->
   <div
     class="flex h-full"
     *ngIf="
       queryStatus !== queryStatusEnum.Error &&
       isSelectValid === true &&
-      chart.type === chartTypeEnum.AgBubble &&
+      chart.type === chartTypeEnum.AgDonut &&
       chart.isValid === true &&
       qData.length > 0
     "

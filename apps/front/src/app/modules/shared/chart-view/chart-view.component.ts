@@ -16,6 +16,7 @@ import { FormatNumberService } from '~front/app/services/format-number.service';
 import { RData } from '~front/app/services/query.service';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+import { femaleHeightWeight, maleHeightWeight } from './scatter-mock';
 
 @Component({
   selector: 'm-chart-view',
@@ -216,7 +217,10 @@ export class ChartViewComponent implements OnChanges {
     if (this.chart.type === common.ChartTypeEnum.AgScatter) {
       this.chartOptions = {
         title: {
-          text: 'Annual Fuel Expenditure'
+          text: 'Weight vs Height'
+        },
+        subtitle: {
+          text: 'by gender'
         },
         data: [
           {
@@ -243,10 +247,43 @@ export class ChartViewComponent implements OnChanges {
         series: [
           {
             type: 'scatter',
-            xKey: 'quarter',
-            yKey: 'diesel',
-            yName: 'Diesel',
-            visible: this.chart.axVisible
+            title: 'Male',
+            data: maleHeightWeight,
+            xKey: 'height',
+            xName: 'Height',
+            yKey: 'weight',
+            yName: 'Weight'
+          },
+          {
+            type: 'scatter',
+            title: 'Female',
+            data: femaleHeightWeight,
+            xKey: 'height',
+            xName: 'Height',
+            yKey: 'weight',
+            yName: 'Weight'
+          }
+        ],
+        axes: [
+          {
+            type: 'number',
+            position: 'bottom',
+            title: {
+              text: 'Height'
+            },
+            label: {
+              formatter: params => params.value + 'cm'
+            }
+          },
+          {
+            type: 'number',
+            position: 'left',
+            title: {
+              text: 'Weight'
+            },
+            label: {
+              formatter: params => params.value + 'kg'
+            }
           }
         ]
       };
@@ -255,38 +292,55 @@ export class ChartViewComponent implements OnChanges {
     if (this.chart.type === common.ChartTypeEnum.AgBubble) {
       this.chartOptions = {
         title: {
-          text: 'Annual Fuel Expenditure'
+          text: 'Weight vs Height'
         },
-        data: [
-          {
-            quarter: 'Q1',
-            petrol: 200,
-            diesel: 100
-          },
-          {
-            quarter: 'Q2',
-            petrol: 300,
-            diesel: 130
-          },
-          {
-            quarter: 'Q3',
-            petrol: 350,
-            diesel: 160
-          },
-          {
-            quarter: 'Q4',
-            petrol: 400,
-            diesel: 200
-          }
-        ],
+        subtitle: {
+          text: 'by gender'
+        },
         series: [
           {
             type: 'bubble',
-            xKey: 'quarter',
-            yKey: 'diesel',
-            sizeKey: 'diesel',
-            yName: 'Diesel',
-            visible: this.chart.axVisible
+            title: 'Male',
+            data: maleHeightWeight,
+            xKey: 'height',
+            xName: 'Height',
+            yKey: 'weight',
+            yName: 'Weight',
+            sizeKey: 'age',
+            sizeName: 'Age'
+          },
+          {
+            type: 'bubble',
+            title: 'Female',
+            data: femaleHeightWeight,
+            xKey: 'height',
+            xName: 'Height',
+            yKey: 'weight',
+            yName: 'Weight',
+            sizeKey: 'age',
+            sizeName: 'Age'
+          }
+        ],
+        axes: [
+          {
+            type: 'number',
+            position: 'bottom',
+            title: {
+              text: 'Height'
+            },
+            label: {
+              formatter: params => params.value + 'cm'
+            }
+          },
+          {
+            type: 'number',
+            position: 'left',
+            title: {
+              text: 'Weight'
+            },
+            label: {
+              formatter: params => params.value + 'kg'
+            }
           }
         ]
       };
@@ -297,33 +351,19 @@ export class ChartViewComponent implements OnChanges {
         title: {
           text: 'Annual Fuel Expenditure'
         },
+
         data: [
-          {
-            quarter: 'Q1',
-            petrol: 200,
-            diesel: 100
-          },
-          {
-            quarter: 'Q2',
-            petrol: 300,
-            diesel: 130
-          },
-          {
-            quarter: 'Q3',
-            petrol: 350,
-            diesel: 160
-          },
-          {
-            quarter: 'Q4',
-            petrol: 400,
-            diesel: 200
-          }
+          { asset: 'Stocks', amount: 60000 },
+          { asset: 'Bonds', amount: 40000 },
+          { asset: 'Cash', amount: 7000 },
+          { asset: 'Real Estate', amount: 5000 },
+          { asset: 'Commodities', amount: 3000 }
         ],
         series: [
           {
             type: 'pie',
-            angleKey: 'quarter',
-            visible: this.chart.axVisible
+            angleKey: 'amount',
+            legendItemKey: 'asset'
           }
         ]
       };
@@ -335,32 +375,18 @@ export class ChartViewComponent implements OnChanges {
           text: 'Annual Fuel Expenditure'
         },
         data: [
-          {
-            quarter: 'Q1',
-            petrol: 200,
-            diesel: 100
-          },
-          {
-            quarter: 'Q2',
-            petrol: 300,
-            diesel: 130
-          },
-          {
-            quarter: 'Q3',
-            petrol: 350,
-            diesel: 160
-          },
-          {
-            quarter: 'Q4',
-            petrol: 400,
-            diesel: 200
-          }
+          { asset: 'Stocks', amount: 60000 },
+          { asset: 'Bonds', amount: 40000 },
+          { asset: 'Cash', amount: 7000 },
+          { asset: 'Real Estate', amount: 5000 },
+          { asset: 'Commodities', amount: 3000 }
         ],
         series: [
           {
             type: 'donut',
-            angleKey: 'quarter',
-            visible: this.chart.axVisible
+            calloutLabelKey: 'asset',
+            angleKey: 'amount',
+            innerRadiusRatio: 0.7
           }
         ]
       };
@@ -378,6 +404,8 @@ export class ChartViewComponent implements OnChanges {
 
     this.scheme = getChartScheme(this.chart.colorScheme);
     this.curve = getChartCurve(this.chart.interpolation);
+
+    console.log(this.qData);
 
     if (
       this.chart.type === common.ChartTypeEnum.BarVertical ||
@@ -452,7 +480,7 @@ export class ChartViewComponent implements OnChanges {
 
     this.cd.detectChanges();
 
-    console.log(this.chart);
+    // console.log(this.chart);
   }
 
   onSelect(event: any) {}

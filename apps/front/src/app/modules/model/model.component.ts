@@ -298,6 +298,26 @@ export class ModelComponent implements OnInit, OnDestroy {
       iconPath: 'assets/charts/area.svg'
     },
     {
+      label: 'Ag Pie',
+      value: common.ChartTypeEnum.AgPie,
+      iconPath: 'assets/charts/Pie.svg'
+    },
+    {
+      label: 'Ag Scatter',
+      value: common.ChartTypeEnum.AgScatter,
+      iconPath: 'assets/charts/scatter.svg'
+    },
+    {
+      label: 'Ag Bubble',
+      value: common.ChartTypeEnum.AgBubble,
+      iconPath: 'assets/charts/bubble.svg'
+    },
+    {
+      label: 'Ag Donut',
+      value: common.ChartTypeEnum.AgDonut,
+      iconPath: 'assets/charts/donut.svg'
+    },
+    {
       label: 'Table',
       value: common.ChartTypeEnum.Table,
       iconPath: 'assets/charts/table.svg'
