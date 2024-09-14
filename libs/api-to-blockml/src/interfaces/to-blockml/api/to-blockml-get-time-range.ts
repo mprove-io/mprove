@@ -11,6 +11,9 @@ import { ToBlockmlRequest } from '~api-to-blockml/interfaces/to-blockml/to-block
 
 export class ToBlockmlGetTimeRangeRequestPayload {
   @IsString()
+  timezone: string;
+
+  @IsString()
   timeRangeFractionBrick: string;
 
   @IsInt()

@@ -574,6 +574,7 @@ export class RepsService {
       timeRangeFraction
     } = await this.blockmlService.getTimeColumns({
       traceId: traceId,
+      timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
       projectWeekStart: struct.week_start
