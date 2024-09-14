@@ -1,4 +1,5 @@
 /dist/**
 /nogit/**
+/_nogit/**
 apps/integra/cypress
 apps/backend/src/migrations

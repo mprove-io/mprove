@@ -8,6 +8,7 @@ import {
   startOfWeek,
   startOfYear
 } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
 import { common } from '~blockml/barrels/common';
 
 export function makeTimestampsCurrent(item: {
@@ -28,7 +29,14 @@ export function makeTimestampsCurrent(item: {
   let currentYearTimestamp: string;
 
   if (getTimeRange === true) {
-    let currentDate = new Date();
+    let currentDateUTC = new Date();
+    let currentDate = toZonedTime(currentDateUTC, timezone);
+
+    // console.log('timezone');
+    // console.log(timezone);
+    // console.log('timezone diff in seconds');
+    // console.log(getUnixTime(currentDateUTC) - getUnixTime(currentDate));
+
     currentTimestamp = getUnixTime(currentDate).toString();
     currentMinuteTimestamp = getUnixTime(startOfMinute(currentDate)).toString();
     currentHourTimestamp = getUnixTime(startOfHour(currentDate)).toString();

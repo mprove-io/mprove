@@ -212,11 +212,18 @@ export class BlockmlService {
 
   async getTimeColumns(item: {
     traceId: string;
+    timezone: string;
     timeSpec: common.TimeSpecEnum;
     timeRangeFractionBrick: string;
     projectWeekStart: common.ProjectWeekStartEnum;
   }) {
-    let { traceId, timeSpec, timeRangeFractionBrick, projectWeekStart } = item;
+    let {
+      traceId,
+      timezone,
+      timeSpec,
+      timeRangeFractionBrick,
+      projectWeekStart
+    } = item;
 
     let timeColumnsLimit = constants.TIME_COLUMNS_LIMIT;
 
@@ -229,7 +236,8 @@ export class BlockmlService {
         payload: {
           timeRangeFractionBrick: timeRangeFractionBrick,
           timeColumnsLimit: timeColumnsLimit,
-          timeSpec: timeSpec
+          timeSpec: timeSpec,
+          timezone: timezone
         }
       };
 

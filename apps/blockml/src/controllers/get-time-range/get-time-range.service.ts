@@ -33,7 +33,7 @@ export class GetTimeRangeService {
       logger: this.logger
     });
 
-    let { timeRangeFractionBrick, timeColumnsLimit, timeSpec } =
+    let { timeRangeFractionBrick, timeColumnsLimit, timeSpec, timezone } =
       reqValid.payload;
 
     let fractions: common.Fraction[] = [];
@@ -42,7 +42,8 @@ export class GetTimeRangeService {
       filterBricks: [timeRangeFractionBrick],
       result: common.FieldResultEnum.Ts,
       fractions: fractions,
-      getTimeRange: true
+      getTimeRange: true,
+      timezone: timezone
     });
 
     let timeRangeFraction = fractions[0];

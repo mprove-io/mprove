@@ -11,6 +11,7 @@ apps/integra/cypress
 dist
 node_modules
 nogit
+_nogit
 secrets
 
 docker-compose.yml
