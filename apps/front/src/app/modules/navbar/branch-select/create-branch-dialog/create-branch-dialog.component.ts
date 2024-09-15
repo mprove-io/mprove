@@ -13,6 +13,7 @@ import {
   Validators
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
@@ -41,7 +42,7 @@ export interface CreateBranchDialogData {
   templateUrl: './create-branch-dialog.component.html',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, ReactiveFormsModule, SharedModule]
+  imports: [CommonModule, ReactiveFormsModule, NgSelectModule, SharedModule]
 })
 export class CreateBranchDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

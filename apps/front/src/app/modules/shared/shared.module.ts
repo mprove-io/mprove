@@ -10,10 +10,12 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { AvatarComponent } from './avatar/avatar.component';
 import { BricksComponent } from './bricks/bricks.component';
 import { ChartRepComponent } from './chart-rep/chart-rep.component';
+import { ChartSaveAsDialogComponent } from './chart-save-as-dialog/chart-save-as-dialog.component';
 import { ChartTableComponent } from './chart-table/chart-table.component';
 import { ChartViewComponent } from './chart-view/chart-view.component';
 import { ChartVizComponent } from './chart-viz/chart-viz.component';
 import { ColorMenuComponent } from './color-menu/color-menu.component';
+import { DashboardSaveAsDialogComponent } from './dashboard-save-as-dialog/dashboard-save-as-dialog.component';
 import { FieldLabelComponent } from './field-label/field-label.component';
 import { FractionDayOfWeekIndexComponent } from './fraction/fraction-day-of-week-index/fraction-day-of-week-index.component';
 import { FractionDayOfWeekComponent } from './fraction/fraction-day-of-week/fraction-day-of-week.component';
@@ -78,6 +80,7 @@ import { MproveDirPipe } from './pipes/mprove-dir.pipe';
 import { PrettyJsonPipe } from './pipes/pretty-json.pipe';
 import { ResultPipe } from './pipes/result.pipe';
 import { QueryStatusComponent } from './query-status/query-status.component';
+import { RepSaveAsDialogComponent } from './rep-save-as-dialog/rep-save-as-dialog.component';
 import { AlertRingComponent } from './rings/alert-ring/alert-ring.component';
 import { CompletedRingComponent } from './rings/completed-ring/completed-ring.component';
 import { DocumentRingComponent } from './rings/document-ring/document-ring.component';
@@ -167,7 +170,10 @@ let sharedComponents = [
   LinkOffIconComponent,
   FormulaIconComponent,
   ClockIconComponent,
-  ViewBlockmlDialogComponent
+  ViewBlockmlDialogComponent,
+  RepSaveAsDialogComponent,
+  ChartSaveAsDialogComponent,
+  DashboardSaveAsDialogComponent
 ];
 
 @NgModule({
