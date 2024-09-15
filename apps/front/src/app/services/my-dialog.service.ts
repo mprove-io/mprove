@@ -16,10 +16,6 @@ import {
   DashboardEditListenersDialogData
 } from '../modules/dashboard/dashboard-edit-listeners-dialog/dashboard-edit-listeners-dialog.component';
 import {
-  DashboardSaveAsDialogComponent,
-  DashboardSaveAsDialogData
-} from '../modules/dashboard/dashboard-save-as-dialog/dashboard-save-as-dialog.component';
-import {
   DashboardsNewDialogComponent,
   DashboardsNewDialogData
 } from '../modules/dashboards/dashboards-new-dialog/dashboards-new-dialog.component';
@@ -55,14 +51,6 @@ import {
   DeleteRepDialogComponent,
   DeleteRepDialogData
 } from '../modules/metrics/delete-rep-dialog/delete-rep-dialog.component';
-import {
-  RepSaveAsDialogComponent,
-  RepSaveAsDialogData
-} from '../modules/metrics/rep-save-as-dialog/rep-save-as-dialog.component';
-import {
-  ChartSaveAsDialogComponent,
-  ChartSaveAsDialogData
-} from '../modules/model/chart-save-as-dialog/chart-save-as-dialog.component';
 import {
   CreateBranchDialogComponent,
   CreateBranchDialogData
@@ -173,6 +161,10 @@ import {
   ChartDialogData
 } from '../modules/shared/chart-dialog/chart-dialog.component';
 import {
+  ChartSaveAsDialogComponent,
+  ChartSaveAsDialogData
+} from '../modules/shared/chart-save-as-dialog/chart-save-as-dialog.component';
+import {
   DeleteVizDialogComponent,
   DeleteVizDialogData
 } from '../modules/shared/chart-viz/delete-viz-dialog/delete-viz-dialog.component';
@@ -181,6 +173,10 @@ import {
   EditVizInfoDialogData
 } from '../modules/shared/chart-viz/edit-viz-info-dialog/edit-viz-info-dialog.component';
 import {
+  DashboardSaveAsDialogComponent,
+  DashboardSaveAsDialogData
+} from '../modules/shared/dashboard-save-as-dialog/dashboard-save-as-dialog.component';
+import {
   DeleteDashboardDialogComponent,
   DeleteDashboardDialogData
 } from '../modules/shared/delete-dashboard-dialog/delete-dashboard-dialog.component';
@@ -188,6 +184,10 @@ import {
   PhotoDialogComponent,
   PhotoDialogData
 } from '../modules/shared/photo-dialog/photo-dialog.component';
+import {
+  RepSaveAsDialogComponent,
+  RepSaveAsDialogData
+} from '../modules/shared/rep-save-as-dialog/rep-save-as-dialog.component';
 import {
   ViewBlockmlDialogComponent,
   ViewBlockmlDialogData
