@@ -96,7 +96,8 @@ export class GetRepoController {
 
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.struct_id,
-      projectId: projectId
+      projectId: projectId,
+      skipError: true
     });
 
     let apiMember = wrapper.wrapToApiMember(userMember);
