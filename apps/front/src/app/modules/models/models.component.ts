@@ -22,9 +22,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   isShow = true;
 
-  bufferAmount = 10;
-  enableUnequalChildrenSizes = true;
-
   models: common.ModelX[];
   modelsFilteredByWord: common.ModelX[];
   filteredModels: common.ModelX[];
