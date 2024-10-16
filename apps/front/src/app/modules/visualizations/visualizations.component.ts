@@ -53,6 +53,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   vizs: common.VizX[];
   vizsFilteredByWord: common.VizX[];
   filteredVizs: common.VizX[];
+  filteredVizRows: common.VizX[][] = [];
 
   isExplorer = false;
   isExplorer$ = this.memberQuery.isExplorer$.pipe(
@@ -220,6 +221,11 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
 
       return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
     });
+
+    this.filteredVizRows = [];
+    for (let i = 0; i < this.filteredVizs.length; i += 2) {
+      this.filteredVizRows.push(this.filteredVizs.slice(i, i + 2));
+    }
 
     this.vizsModels = this.vizsModels
       .map(x =>

@@ -1,4 +1,5 @@
 import { TreeModule } from '@ali-hm/angular-tree-component';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -20,7 +21,8 @@ import { VisualizationsComponent } from './visualizations.component';
     TreeModule,
     UiSwitchModule,
     NgxSpinnerModule,
-    TippyDirective
+    TippyDirective,
+    ScrollingModule
   ]
 })
 export class VisualizationsModule {}

@@ -432,15 +432,21 @@
 
         <div class="ml-6 flex flex-grow" *ngIf="showList === false">
           <div class="h-full w-full">
-            <div
-              *ngIf="showList === false && filteredVizs?.length > 0"
-              class="h-full w-full overflow-y-scroll"
+            <cdk-virtual-scroll-viewport
+              itemSize="590"
+              minBufferPx="1180"
+              maxBufferPx="1180"
+              *ngIf="showList === false && filteredVizRows?.length > 0"
+              class="h-full w-full"
             >
               <div
-                *ngFor="let item of filteredVizs; trackBy: trackByFn"
-                class="inline-block h-[590px] w-1/2"
+                *cdkVirtualFor="let itemsRow of filteredVizRows"
+                class="inline-block flex h-[590px] w-full flex-row"
               >
-                <div class="h-full w-full pb-6 pr-5">
+                <div
+                  *ngFor="let item of itemsRow"
+                  class="h-full w-1/2 pb-6 pr-5"
+                >
                   <m-chart-viz
                     *ngIf="isShow === true"
                     [title]="item.title"
@@ -451,7 +457,7 @@
                   ></m-chart-viz>
                 </div>
               </div>
-            </div>
+            </cdk-virtual-scroll-viewport>
 
             <div
               class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
