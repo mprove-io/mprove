@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { VirtualScrollerModule } from '@iharbeck/ngx-virtual-scroller';
 import { TippyDirective } from '@ngneat/helipopper';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
@@ -18,7 +17,6 @@ import { ModelsComponent } from './models.component';
     SharedModule,
     RouterModule,
     TreeModule,
-    VirtualScrollerModule,
     UiSwitchModule,
     TippyDirective
   ]

@@ -41,9 +41,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   isShow = true;
 
-  bufferAmount = 10;
-  enableUnequalChildrenSizes = true;
-
   dashboardsModels: ModelXWithTotalDashboards[];
   hasAccessModels: common.ModelX[] = [];
 

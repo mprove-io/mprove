@@ -47,9 +47,6 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
 
   isShow = true;
 
-  bufferAmount = 10;
-  enableUnequalChildrenSizes = true;
-
   vizsModels: ModelXWithTotalVizs[];
   hasAccessModels: common.ModelX[] = [];
 
