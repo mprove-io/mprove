@@ -95,7 +95,6 @@
     "@depyronick/clickhouse-client": "1.0.14",
     "@golevelup/nestjs-rabbitmq": "5.4.0",
     "@google-cloud/bigquery": "5.12.0",
-    "@iharbeck/ngx-virtual-scroller": "17.0.2",
     "@katoid/angular-grid-layout": "2.2.0",
     "@nestjs-modules/mailer": "1.9.1",
     "@nestjs/common": "10.2.4",
