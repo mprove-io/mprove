@@ -1,36 +1,43 @@
-<div class="flex h-full flex-col items-center justify-center bg-blue1">
-  <div class="flex max-w-sm text-center text-2xl font-semibold text-gray2">{{
-    pageTitle
-  }}</div>
-
-  <div class="mt-5 flex text-center text-xl text-gray2">{{ email }}</div>
-  <form
-    class="flex w-96 flex-col"
-    [formGroup]="setPasswordForm"
-    (ngSubmit)="setPassword()"
+<div class="bg-blue1 flex h-full cursor-default flex-col">
+  <div
+    class="flex h-2 flex-1 flex-row items-center justify-center overflow-y-auto"
   >
-    <input
-      spellcheck="false"
-      data-cy="completeRegistrationPasswordInput"
-      class="form-input mt-9 rounded border-gray3 focus:border-blue3"
-      [ngClass]="{
-        'border-red-600':
-          setPasswordForm.controls['newPassword'].invalid &&
-          setPasswordForm.controls['newPassword'].touched
-      }"
-      type="password"
-      formControlName="newPassword"
-      placeholder="Password"
-    />
-    <m-validation
-      [control]="setPasswordForm.controls['newPassword']"
-    ></m-validation>
+    <div class="flex w-96 flex-col items-center">
+      <div
+        class="text-gray2 flex max-w-sm text-center text-2xl font-semibold"
+        >{{ pageTitle }}</div
+      >
 
-    <button
-      data-cy="completeRegistrationSignUpButton"
-      class="mt-1 rounded bg-blue3 py-3 text-base font-medium text-white focus:outline-none"
-      type="submit"
-      >SignUp</button
-    >
-  </form>
+      <div class="text-gray2 mt-5 flex text-center text-xl">{{ email }}</div>
+      <form
+        class="flex w-96 flex-col"
+        [formGroup]="setPasswordForm"
+        (ngSubmit)="setPassword()"
+      >
+        <input
+          spellcheck="false"
+          data-cy="completeRegistrationPasswordInput"
+          class="form-input border-gray3 focus:border-blue3 mt-9 rounded"
+          [ngClass]="{
+            'border-red-600':
+              setPasswordForm.controls['newPassword'].invalid &&
+              setPasswordForm.controls['newPassword'].touched
+          }"
+          type="password"
+          formControlName="newPassword"
+          placeholder="Password"
+        />
+        <m-validation
+          [control]="setPasswordForm.controls['newPassword']"
+        ></m-validation>
+
+        <button
+          data-cy="completeRegistrationSignUpButton"
+          class="bg-blue3 mt-1 rounded py-3 text-base font-medium text-white focus:outline-none"
+          type="submit"
+          >SignUp</button
+        >
+      </form>
+    </div>
+  </div>
 </div>
