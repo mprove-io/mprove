@@ -190,3 +190,12 @@ body {
 // .css-zoom {
 // 	zoom: 67%;
 // }
+
+cdk-virtual-scroll-viewport {
+  height: 100%;
+  width: 100%;
+
+  .cdk-virtual-scroll-content-wrapper {
+    max-width: 100% !important;
+  }
+}

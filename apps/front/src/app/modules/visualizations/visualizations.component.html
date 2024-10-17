@@ -125,16 +125,11 @@
       </div>
 
       <div class="mt-6 flex h-2 flex-1 flex-row">
-        <div class="mb-6 flex w-1/6">
+        <div class="mb-6 flex w-1/6 flex-shrink-0">
           <div class="flex w-full flex-grow rounded bg-white shadow">
             <div
               class="text-gray1 mr-5 mt-6 flex w-full flex-col pl-5 text-base"
             >
-              <!-- <div class="w-full flex flex-col text-gray-300">
-                <div></div>
-                <div></div>
-              </div> -->
-
               <div class="mb-3 flex text-lg font-semibold">by Model</div>
 
               <div class="flex h-2 flex-grow flex-col overflow-y-auto pr-5">
@@ -441,7 +436,7 @@
             >
               <div
                 *cdkVirtualFor="let itemsRow of filteredVizRows"
-                class="inline-block flex h-[590px] w-full flex-row"
+                class="flex h-[590px] w-full flex-row"
               >
                 <div
                   *ngFor="let item of itemsRow"
