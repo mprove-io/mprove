@@ -38,7 +38,9 @@ export function getDevConfig(envFilePath: any) {
       (process.env.BLOCKML_IS_WORKER || envFile.BLOCKML_IS_WORKER)
     ),
     concurrencyLimit: Number(
-      process.env.BLOCKML_CONCURRENCY_LIMIT || envFile.BLOCKML_CONCURRENCY_LIMIT
+      common.isDefined(process.env.BLOCKML_CONCURRENCY_LIMIT)
+        ? process.env.BLOCKML_CONCURRENCY_LIMIT
+        : envFile.BLOCKML_CONCURRENCY_LIMIT
     ),
 
     blockmlRabbitUser:

@@ -218,7 +218,9 @@ ${inputSub}
               userCode: userCode
             });
 
-            xColumn.outputValue = rs.outValue || 'Error';
+            xColumn.outputValue = common.isDefined(rs.outValue)
+              ? rs.outValue
+              : 'Error';
             xColumn.outputError = rs.outError;
           }
 
@@ -529,8 +531,10 @@ Formula must return a valid JSON object.`;
         ...rep.rows
           .filter(row => row.rowType === common.RowTypeEnum.Metric)
           .map(row => {
-            let values = recordsByColumn.map(
-              r => r.fields[row.rowId] || 'NULL'
+            let values = recordsByColumn.map(r =>
+              common.isDefined(r.fields[row.rowId])
+                ? r.fields[row.rowId]
+                : 'NULL'
             );
             let str = `    unnest(ARRAY[${values}]::numeric[]) AS ${row.rowId}`;
             return str;

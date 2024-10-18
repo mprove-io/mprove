@@ -449,8 +449,12 @@ export class FractionTsComponent implements OnInit {
   resetDateUsingFraction() {
     let now = new Date();
 
-    let year = this.fraction.tsDateYear || now.getFullYear();
-    let month = this.fraction.tsDateMonth || 1;
+    let year = common.isDefined(this.fraction.tsDateYear)
+      ? this.fraction.tsDateYear
+      : now.getFullYear();
+    let month = common.isDefined(this.fraction.tsDateMonth)
+      ? this.fraction.tsDateMonth
+      : 1;
     let day = common.isDefined(this.fraction.tsDateDay)
       ? this.fraction.tsDateDay
       : 1;
@@ -475,8 +479,12 @@ export class FractionTsComponent implements OnInit {
   resetDateToUsingFraction() {
     let now = new Date();
 
-    let year = this.fraction.tsDateToYear || now.getFullYear();
-    let month = this.fraction.tsDateToMonth || 1;
+    let year = common.isDefined(this.fraction.tsDateToYear)
+      ? this.fraction.tsDateToYear
+      : now.getFullYear();
+    let month = common.isDefined(this.fraction.tsDateToMonth)
+      ? this.fraction.tsDateToMonth
+      : 1;
     let day = common.isDefined(this.fraction.tsDateToDay)
       ? this.fraction.tsDateToDay
       : 1;
@@ -832,8 +840,9 @@ export class FractionTsComponent implements OnInit {
       timeValue: timeValue
     });
 
-    let newTsForOption =
-      this.fraction.tsForOption || common.FractionTsForOptionEnum.ForInfinity;
+    let newTsForOption = common.isDefined(this.fraction.tsForOption)
+      ? this.fraction.tsForOption
+      : common.FractionTsForOptionEnum.ForInfinity;
 
     this.fraction = {
       brick:
@@ -861,8 +870,9 @@ export class FractionTsComponent implements OnInit {
       timeValue: timeValue
     });
 
-    let newTsForOption =
-      this.fraction.tsForOption || common.FractionTsForOptionEnum.ForInfinity;
+    let newTsForOption = common.isDefined(this.fraction.tsForOption)
+      ? this.fraction.tsForOption
+      : common.FractionTsForOptionEnum.ForInfinity;
 
     this.fraction = {
       brick:

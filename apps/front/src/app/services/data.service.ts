@@ -22,7 +22,7 @@ export class DataService {
 
     let currentValueName = currentValueField.sqlName;
 
-    let currentValue = convertToNumberOrZero(data[0][currentValueName].value);
+    let currentValue = convertToNumberOrNull(data[0][currentValueName].value);
 
     let previousValueField;
 
@@ -34,7 +34,7 @@ export class DataService {
 
     let previousValueName = previousValueField.sqlName;
 
-    let previousValue = convertToNumberOrZero(data[0][previousValueName].value);
+    let previousValue = convertToNumberOrNull(data[0][previousValueName].value);
 
     return [currentValue, previousValue];
   }
@@ -55,7 +55,7 @@ export class DataService {
 
     let singleData = data.map((raw: RData) => ({
       name: common.isDefined(raw[xName].value) ? `${raw[xName].value}` : 'NULL',
-      value: convertToNumberOrZero(raw[yName].value)
+      value: convertToNumberOrNull(raw[yName].value)
     }));
 
     return singleData;
@@ -81,8 +81,12 @@ export class DataService {
     let singleData = data
       ? data.map((raw: RData) =>
           Object.assign({
-            name: common.isDefined(xField) ? raw[xName].value || 'NULL' : ' ',
-            value: convertToNumberOrZero(raw[yName].value)
+            name: common.isDefined(xField)
+              ? common.isDefined(raw[xName].value)
+                ? raw[xName].value
+                : 'NULL'
+              : ' ',
+            value: convertToNumberOrNull(raw[yName].value)
           })
         )
       : [];
@@ -180,9 +184,9 @@ export class DataService {
               name: common.isUndefined(xV)
                 ? 'NULL'
                 : xField.result === common.FieldResultEnum.Number
-                ? convertToNumberOrZero(xV)
+                ? convertToNumberOrNull(xV)
                 : xV,
-              value: convertToNumberOrZero(yV)
+              value: convertToNumberOrNull(yV)
             };
 
             if (prepareData[key]) {
@@ -428,8 +432,14 @@ export class DataService {
   }
 }
 
-function convertToNumberOrZero(x: any) {
-  let xNum = common.isDefined(x) ? Number(x) : 0;
-  let y = Number.isNaN(xNum) === false ? xNum : 0;
+function convertToNumberOrNull(x: any) {
+  let xNum = common.isDefined(x) ? Number(x) : null;
+  let y = common.isDefined(xNum) && Number.isNaN(xNum) === false ? xNum : null;
   return y;
 }
+
+// function convertToNumberOrZero(x: any) {
+//   let xNum = common.isDefined(x) ? Number(x) : 0;
+//   let y = Number.isNaN(xNum) === false ? xNum : 0;
+//   return y;
+// }

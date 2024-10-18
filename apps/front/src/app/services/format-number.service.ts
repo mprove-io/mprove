@@ -31,7 +31,9 @@ export class FormatNumberService {
         ? mconfigFields.find(f => f.id === chart.valueField)
         : mconfigFields.find(f => f.id === chart.yField);
 
-    let formatNumber = chart.formatNumberValue || field?.formatNumber;
+    let formatNumber = common.isDefined(chart.formatNumberValue)
+      ? chart.formatNumberValue
+      : field?.formatNumber;
 
     return { field: field, formatNumber: formatNumber };
   }

@@ -290,7 +290,9 @@ export class RepsService {
         partLabel: metric.part_label,
         timeLabel: metric.time_label,
         showChart: rowChange.showChart,
-        parameters: rowChange.parameters || [],
+        parameters: common.isDefined(rowChange.parameters)
+          ? rowChange.parameters
+          : [],
         parametersFiltersWithExcludedTime: [],
         parametersJson: undefined,
         parametersFormula: undefined,
