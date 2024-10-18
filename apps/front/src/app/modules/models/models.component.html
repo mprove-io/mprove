@@ -1,5 +1,5 @@
 <div class="bg-blue1 flex h-full cursor-default flex-col">
-  <div class="mx-6 mt-8 flex h-full flex-row">
+  <div class="mx-6 mt-8 flex h-2 flex-1 flex-row">
     <div class="flex flex-grow flex-col">
       <div class="flex h-11 flex-row items-center">
         <div
@@ -48,7 +48,7 @@
         <div class="flex-grow"></div>
       </div>
 
-      <div class="mt-6 flex flex-grow flex-row">
+      <div class="mt-6 flex h-2 flex-1 flex-row overflow-y-auto">
         <div class="mb-6 flex flex-grow rounded bg-white shadow">
           <div
             class="ml-5 mr-5 mt-10 flex w-full flex-col divide-y divide-gray-500"
@@ -65,16 +65,12 @@
               </div>
             </div>
 
-            <virtual-scroller
-              [enableUnequalChildrenSizes]="enableUnequalChildrenSizes"
-              [bufferAmount]="bufferAmount"
+            <div
+              class="h-2 flex-1 overflow-y-auto"
               *ngIf="isShow === true && filteredModels?.length > 0"
-              #scroll
-              [items]="filteredModels"
-              class="h-full w-full"
             >
               <div
-                *ngFor="let item of scroll.viewPortItems; trackBy: trackByFn"
+                *ngFor="let item of filteredModels; trackBy: trackByFn"
                 class="flex flex-row"
                 [ngStyle]="
                   item.modelId !==
@@ -109,7 +105,7 @@
                     </ng-template>
 
                     <div
-                      class="flex h-full w-1/3 flex-row py-3"
+                      class="flex w-1/3 flex-row py-3"
                       (click)="navigateToModel(item)"
                       [tp]="templateModelsModel"
                       [tpIsEnabled]="item.hasAccess === false"
@@ -196,7 +192,7 @@
               </div>
 
               <div class="h-12"></div>
-            </virtual-scroller>
+            </div>
 
             <div
               class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"

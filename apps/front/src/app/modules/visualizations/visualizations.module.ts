@@ -1,9 +1,9 @@
 import { TreeModule } from '@ali-hm/angular-tree-component';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { VirtualScrollerModule } from '@iharbeck/ngx-virtual-scroller';
 import { TippyDirective } from '@ngneat/helipopper';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
@@ -19,10 +19,10 @@ import { VisualizationsComponent } from './visualizations.component';
     SharedModule,
     RouterModule,
     TreeModule,
-    VirtualScrollerModule,
     UiSwitchModule,
     NgxSpinnerModule,
-    TippyDirective
+    TippyDirective,
+    ScrollingModule
   ]
 })
 export class VisualizationsModule {}

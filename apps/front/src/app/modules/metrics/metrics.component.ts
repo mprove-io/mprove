@@ -555,7 +555,38 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   timeSpecChange() {
     let timeSpec = this.timeSpecForm.controls['timeSpec'].value;
-    this.uiQuery.updatePart({ timeSpec: timeSpec });
+
+    let fraction = this.fractions[0];
+
+    if (fraction.type === common.FractionTypeEnum.TsIsInLast) {
+      let newFraction = common.makeCopy(fraction);
+
+      newFraction.tsLastUnit = timeSpec;
+
+      newFraction = {
+        brick:
+          newFraction.tsLastCompleteOption ===
+          common.FractionTsLastCompleteOptionEnum.Incomplete
+            ? `last ${newFraction.tsLastValue} ${newFraction.tsLastUnit}`
+            : newFraction.tsLastCompleteOption ===
+              common.FractionTsLastCompleteOptionEnum.Complete
+            ? `last ${newFraction.tsLastValue} ${newFraction.tsLastUnit} complete`
+            : `last ${newFraction.tsLastValue} ${newFraction.tsLastUnit} complete plus current`,
+        operator: common.FractionOperatorEnum.Or,
+        type: common.FractionTypeEnum.TsIsInLast,
+        tsLastValue: newFraction.tsLastValue,
+        tsLastUnit: newFraction.tsLastUnit,
+        tsLastCompleteOption: newFraction.tsLastCompleteOption
+      };
+
+      this.uiQuery.updatePart({
+        timeSpec: timeSpec,
+        timeRangeFraction: newFraction
+      });
+    } else {
+      this.uiQuery.updatePart({ timeSpec: timeSpec });
+    }
+
     this.getRep();
   }
 

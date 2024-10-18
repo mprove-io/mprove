@@ -1,25 +1,29 @@
-<div class="flex h-full items-center justify-center bg-blue1">
-  <div class="flex w-96 flex-col items-center">
-    <div>
-      <m-completed-ring></m-completed-ring>
+<div class="bg-blue1 flex h-full cursor-default flex-col">
+  <div
+    class="flex h-2 flex-1 flex-row items-center justify-center overflow-y-auto"
+  >
+    <div class="flex w-96 flex-col items-center">
+      <div>
+        <m-completed-ring></m-completed-ring>
+      </div>
+
+      <div
+        data-cy="userDeletedTitle"
+        class="text-gray2 mt-5 text-2xl font-semibold"
+        >{{ pageTitle }}</div
+      >
+      <div class="text-gray1 mt-5 text-center">{{ email }}</div>
+
+      <div class="text-gray1 text-center"
+        >To create new account, just click below.</div
+      >
+
+      <button
+        data-cy="userDeletedCreateNewAccountButton"
+        class="bg-blue3 mt-5 rounded px-5 py-3 font-medium text-white focus:outline-none"
+        (click)="createNewAccount()"
+        >Create new account</button
+      >
     </div>
-
-    <div
-      data-cy="userDeletedTitle"
-      class="mt-5 text-2xl font-semibold text-gray2"
-      >{{ pageTitle }}</div
-    >
-    <div class="mt-5 text-center text-gray1">{{ email }}</div>
-
-    <div class="text-center text-gray1"
-      >To create new account, just click below.</div
-    >
-
-    <button
-      data-cy="userDeletedCreateNewAccountButton"
-      class="mt-5 rounded bg-blue3 px-5 py-3 font-medium text-white focus:outline-none"
-      (click)="createNewAccount()"
-      >Create new account</button
-    >
   </div>
 </div>

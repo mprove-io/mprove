@@ -3,6 +3,7 @@ import { DataSource, In } from 'typeorm';
 import { common } from '~backend/barrels/common';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
+import { BoolEnum, ProjectWeekStartEnum } from '~common/_index';
 
 @Injectable()
 export class StructsService {
@@ -17,26 +18,32 @@ export class StructsService {
     private dataSource: DataSource
   ) {}
 
-  async getStructCheckExists(item: { structId: string; projectId: string }) {
-    let { structId, projectId } = item;
+  async getStructCheckExists(item: {
+    structId: string;
+    projectId: string;
+    skipError?: boolean;
+  }) {
+    let { structId, projectId, skipError } = item;
+
+    let emptyStruct = maker.makeStruct({
+      projectId: projectId,
+      structId: structId,
+      mproveDirValue: './data',
+      weekStart: ProjectWeekStartEnum.Monday,
+      allowTimezones: BoolEnum.TRUE,
+      defaultTimezone: 'UTC',
+      formatNumber: ',.0f',
+      currencyPrefix: '$',
+      currencySuffix: '',
+      errors: [],
+      views: [],
+      udfsDict: {}
+    });
 
     let struct;
 
     if (structId === common.EMPTY_STRUCT_ID) {
-      struct = maker.makeStruct({
-        projectId: projectId,
-        structId: structId,
-        mproveDirValue: undefined,
-        weekStart: undefined,
-        allowTimezones: undefined,
-        defaultTimezone: undefined,
-        formatNumber: undefined,
-        currencyPrefix: undefined,
-        currencySuffix: undefined,
-        errors: [],
-        views: [],
-        udfsDict: {}
-      });
+      struct = emptyStruct;
     } else {
       struct = await this.structsRepository.findOne({
         where: {
@@ -46,9 +53,13 @@ export class StructsService {
       });
 
       if (common.isUndefined(struct)) {
-        throw new common.ServerError({
-          message: common.ErEnum.BACKEND_STRUCT_DOES_NOT_EXIST
-        });
+        if (skipError === true) {
+          struct = emptyStruct;
+        } else {
+          throw new common.ServerError({
+            message: common.ErEnum.BACKEND_STRUCT_DOES_NOT_EXIST
+          });
+        }
       }
     }
 

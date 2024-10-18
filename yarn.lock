@@ -2850,13 +2850,6 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-2.0.3.tgz#4a2868d75d6d6963e423bcf90b7fd1be343409d3"
   integrity sha512-93zYdMES/c1D69yZiKDBj0V24vqNzB/koF26KPaagAfd3P/4gUlh3Dys5ogAK+Exi9QyzlD8x/08Zt7wIKcDcA==
 
-"@iharbeck/ngx-virtual-scroller@17.0.2":
-  version "17.0.2"
-  resolved "https://registry.yarnpkg.com/@iharbeck/ngx-virtual-scroller/-/ngx-virtual-scroller-17.0.2.tgz#f000412a707f61bbf1f77a659038c2e050220f8d"
-  integrity sha512-ixB4NZ4kwboYC/prWNkO7MohTx9pEilcBMQOmSxBn92P4GGbu5+HjiCDe+v5fj31bGIDiya2xXWouWkcuG/Y+w==
-  dependencies:
-    tslib "^2.3.0"
-
 "@isaacs/cliui@^8.0.2":
   version "8.0.2"
   resolved "https://registry.yarnpkg.com/@isaacs/cliui/-/cliui-8.0.2.tgz#b37667b7bc181c168782259bab42474fbf52b550"

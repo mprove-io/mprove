@@ -1,30 +1,36 @@
-<div class="flex h-full flex-col items-center justify-center bg-blue1">
-  <div>
-    <m-email-ring></m-email-ring>
-  </div>
+<div class="bg-blue1 flex h-full cursor-default flex-col">
+  <div
+    class="flex h-2 flex-1 flex-row items-center justify-center overflow-y-auto"
+  >
+    <div class="flex flex-col items-center justify-center">
+      <div>
+        <m-email-ring></m-email-ring>
+      </div>
 
-  <div class="mt-5 mb-8 text-center text-2xl font-semibold text-gray2">{{
-    pageTitle
-  }}</div>
-  <div class="text-base text-gray2"
-    >We sent an email to {{ email$ | async }}</div
-  >
-  <div class="text-base text-gray2"
-    >Please check your inbox and confirm your email</div
-  >
-  <div class="mt-8 text-base text-gray2">Didn't receive the email?</div>
-  <button
-    class="mt-1 text-base focus:outline-none"
-    [ngClass]="{
-      'text-blue4': isResendEnabled === true,
-      'text-gray1': isResendEnabled === false,
-      'cursor-default': isResendEnabled === false,
-      'text-left': isResendEnabled === false,
-      'font-semibold': isResendEnabled === false,
-      'w-72': isResendEnabled === false
-    }"
-    [disabled]="!isResendEnabled"
-    (click)="resendEmail()"
-    >{{ buttonText }}</button
-  >
+      <div class="text-gray2 mb-8 mt-5 text-center text-2xl font-semibold">{{
+        pageTitle
+      }}</div>
+      <div class="text-gray2 text-base"
+        >We sent an email to {{ email$ | async }}</div
+      >
+      <div class="text-gray2 text-base"
+        >Please check your inbox and confirm your email</div
+      >
+      <div class="text-gray2 mt-8 text-base">Didn't receive the email?</div>
+      <button
+        class="mt-1 text-base focus:outline-none"
+        [ngClass]="{
+          'text-blue4': isResendEnabled === true,
+          'text-gray1': isResendEnabled === false,
+          'cursor-default': isResendEnabled === false,
+          'text-left': isResendEnabled === false,
+          'font-semibold': isResendEnabled === false,
+          'w-72': isResendEnabled === false
+        }"
+        [disabled]="!isResendEnabled"
+        (click)="resendEmail()"
+        >{{ buttonText }}</button
+      >
+    </div>
+  </div>
 </div>

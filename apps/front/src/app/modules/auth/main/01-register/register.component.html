@@ -1,50 +1,56 @@
-<div class="flex h-full items-center justify-center bg-blue1">
-  <form
-    class="flex w-96 flex-col"
-    [formGroup]="registerForm"
-    (ngSubmit)="register()"
+<div class="bg-blue1 flex h-full cursor-default flex-col">
+  <div
+    class="flex h-2 flex-1 flex-row items-center justify-center overflow-y-auto"
   >
-    <div
-      data-cy="registerTitle"
-      class="text-center text-2xl font-semibold text-gray2"
-      >{{ pageTitle }}</div
+    <form
+      class="flex w-96 flex-col py-[50px]"
+      [formGroup]="registerForm"
+      (ngSubmit)="register()"
     >
+      <div
+        data-cy="registerTitle"
+        class="text-gray2 text-center text-2xl font-semibold"
+        >{{ pageTitle }}</div
+      >
 
-    <input
-      spellcheck="false"
-      data-cy="registerEmailInput"
-      class="form-input mt-9 rounded border-gray3 focus:border-blue3"
-      [ngClass]="{
-        'border-red-600':
-          registerForm.controls['email'].invalid &&
-          registerForm.controls['email'].touched
-      }"
-      type="email"
-      formControlName="email"
-      placeholder="Email"
-    />
-    <m-validation [control]="registerForm.controls['email']"></m-validation>
+      <input
+        spellcheck="false"
+        data-cy="registerEmailInput"
+        class="form-input border-gray3 focus:border-blue3 mt-9 rounded"
+        [ngClass]="{
+          'border-red-600':
+            registerForm.controls['email'].invalid &&
+            registerForm.controls['email'].touched
+        }"
+        type="email"
+        formControlName="email"
+        placeholder="Email"
+      />
+      <m-validation [control]="registerForm.controls['email']"></m-validation>
 
-    <input
-      spellcheck="false"
-      data-cy="registerPasswordInput"
-      class="form-input mt-1 rounded border-gray3 focus:border-blue3"
-      [ngClass]="{
-        'border-red-600':
-          registerForm.controls['password'].invalid &&
-          registerForm.controls['password'].touched
-      }"
-      type="password"
-      formControlName="password"
-      placeholder="Password"
-    />
-    <m-validation [control]="registerForm.controls['password']"></m-validation>
+      <input
+        spellcheck="false"
+        data-cy="registerPasswordInput"
+        class="form-input border-gray3 focus:border-blue3 mt-1 rounded"
+        [ngClass]="{
+          'border-red-600':
+            registerForm.controls['password'].invalid &&
+            registerForm.controls['password'].touched
+        }"
+        type="password"
+        formControlName="password"
+        placeholder="Password"
+      />
+      <m-validation
+        [control]="registerForm.controls['password']"
+      ></m-validation>
 
-    <button
-      data-cy="registerSignUpButton"
-      class="mt-1 rounded bg-blue3 py-3 font-medium text-white focus:outline-none"
-      type="submit"
-      >Sign Up</button
-    >
-  </form>
+      <button
+        data-cy="registerSignUpButton"
+        class="bg-blue3 mt-1 rounded py-3 font-medium text-white focus:outline-none"
+        type="submit"
+        >Sign Up</button
+      >
+    </form>
+  </div>
 </div>
