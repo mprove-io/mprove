@@ -85,60 +85,74 @@ export class FractionTsComponent implements OnInit {
   fractionTsTypesList: FractionTypeItem[] = [
     {
       label: 'is any value',
-      value: common.FractionTypeEnum.TsIsAnyValue
+      value: common.FractionTypeEnum.TsIsAnyValue,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is in last',
-      value: common.FractionTypeEnum.TsIsInLast
+      value: common.FractionTypeEnum.TsIsInLast,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is in range',
-      value: common.FractionTypeEnum.TsIsInRange
+      value: common.FractionTypeEnum.TsIsInRange,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is on Year',
-      value: common.FractionTypeEnum.TsIsOnYear
+      value: common.FractionTypeEnum.TsIsOnYear,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is on Month',
-      value: common.FractionTypeEnum.TsIsOnMonth
+      value: common.FractionTypeEnum.TsIsOnMonth,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is on Day',
-      value: common.FractionTypeEnum.TsIsOnDay
+      value: common.FractionTypeEnum.TsIsOnDay,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is on Hour',
-      value: common.FractionTypeEnum.TsIsOnHour
+      value: common.FractionTypeEnum.TsIsOnHour,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is on Minute',
-      value: common.FractionTypeEnum.TsIsOnMinute
+      value: common.FractionTypeEnum.TsIsOnMinute,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is before',
-      value: common.FractionTypeEnum.TsIsBeforeDate
+      value: common.FractionTypeEnum.TsIsBeforeDate,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is after',
-      value: common.FractionTypeEnum.TsIsAfterDate
+      value: common.FractionTypeEnum.TsIsAfterDate,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is before (relative)',
-      value: common.FractionTypeEnum.TsIsBeforeRelative
+      value: common.FractionTypeEnum.TsIsBeforeRelative,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is after (relative)',
-      value: common.FractionTypeEnum.TsIsAfterRelative
+      value: common.FractionTypeEnum.TsIsAfterRelative,
+      operator: common.FractionOperatorEnum.Or
     },
 
     {
       label: 'is null',
-      value: common.FractionTypeEnum.TsIsNull
+      value: common.FractionTypeEnum.TsIsNull,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is not null',
-      value: common.FractionTypeEnum.TsIsNotNull
+      value: common.FractionTypeEnum.TsIsNotNull,
+      operator: common.FractionOperatorEnum.And
     }
   ];
 
