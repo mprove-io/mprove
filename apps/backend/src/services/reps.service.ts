@@ -693,7 +693,9 @@ export class RepsService {
           let filters: common.Filter[] = [
             timeFilter,
             ...x.parametersFiltersWithExcludedTime
-          ];
+          ].sort((a, b) =>
+            a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
+          );
 
           let mconfig: common.Mconfig = {
             structId: struct.struct_id,
