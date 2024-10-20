@@ -213,17 +213,17 @@
     </div>
 
     <div [formGroup]="titleForm" class="ml-5 flex flex-col items-start">
-      <input
+      <textarea
         spellcheck="false"
         data-cy="chartSaveAsDialogTitleInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-96 rounded"
+        class="form-input border-gray3 focus:border-blue3 h-[120px] w-[600px] resize-none rounded"
         [ngClass]="{
           'border-red-600':
             titleForm.controls['title'].invalid &&
             titleForm.controls['title'].touched
         }"
         formControlName="title"
-      />
+      ></textarea>
       <m-validation [control]="titleForm.controls['title']"></m-validation>
     </div>
   </div>
