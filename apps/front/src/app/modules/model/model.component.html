@@ -163,7 +163,10 @@
                 <button
                   class="text-gray1 ml-5 w-24 select-none items-center py-3 text-lg focus:outline-none"
                   [ngClass]="{
-                    'font-semibold': resultsIsShow,
+                    'font-semibold':
+                      resultsIsShow === true &&
+                      sqlIsShow === false &&
+                      resultsIsShowTemp === false,
                     'cursor-default text-gray-400':
                       !dataIsExpanded || mconfig?.select.length === 0
                   }"
@@ -173,9 +176,23 @@
                 >
 
                 <button
+                  class="text-gray1 ml-5 w-24 select-none items-center py-3 text-lg focus:outline-none"
+                  [ngClass]="{
+                    'font-semibold':
+                      resultsIsShow === true && sqlIsShow === true,
+                    'cursor-default text-gray-400':
+                      !dataIsExpanded || mconfig?.select.length === 0
+                  }"
+                  (click)="toggleSplit()"
+                  [disabled]="!dataIsExpanded || mconfig?.select.length === 0"
+                  >Split</button
+                >
+
+                <button
                   class="text-gray1 ml-5 w-16 select-none items-center py-3 text-lg focus:outline-none"
                   [ngClass]="{
-                    'font-semibold': sqlIsShow,
+                    'font-semibold':
+                      sqlIsShow === true && resultsIsShow === false,
                     'cursor-default text-gray-400':
                       !dataIsExpanded || mconfig?.select.length === 0
                   }"

@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { from, interval, of, Subscription } from 'rxjs';
+import { Subscription, from, interval, of } from 'rxjs';
 import {
   concatMap,
   delay,
@@ -205,8 +205,9 @@ export class ModelComponent implements OnInit, OnDestroy {
   isAutoRun = true;
   isFormat = true;
 
-  sqlIsShow = false;
   resultsIsShow = true;
+  resultsIsShowTemp = false;
+  sqlIsShow = false;
 
   dryTimeAgo$ = interval(1000).pipe(
     startWith(0),
@@ -471,23 +472,29 @@ export class ModelComponent implements OnInit, OnDestroy {
     this.isFormat = !this.isFormat;
   }
 
-  toggleSql() {
-    this.sqlIsShow = !this.sqlIsShow;
-    if (this.resultsIsShow === false && this.sqlIsShow === false) {
+  toggleResults() {
+    if (this.resultsIsShow === false || this.sqlIsShow === true) {
       this.resultsIsShow = true;
+      this.sqlIsShow = false;
     }
   }
 
-  toggleResults() {
-    this.resultsIsShow = !this.resultsIsShow;
-
-    if (this.sqlIsShow === false && this.resultsIsShow === false) {
-      setTimeout(() => (this.sqlIsShow = true));
-    }
-
-    if (this.sqlIsShow === true) {
+  toggleSplit() {
+    if (this.resultsIsShow === false || this.sqlIsShow === false) {
+      this.resultsIsShow = true;
+      this.resultsIsShowTemp = true;
       this.sqlIsShow = false;
-      setTimeout(() => (this.sqlIsShow = true));
+      setTimeout(() => {
+        this.sqlIsShow = true;
+        this.resultsIsShowTemp = false;
+      });
+    }
+  }
+
+  toggleSql() {
+    if (this.resultsIsShow === true || this.sqlIsShow === false) {
+      this.resultsIsShow = false;
+      this.sqlIsShow = true;
     }
   }
 
