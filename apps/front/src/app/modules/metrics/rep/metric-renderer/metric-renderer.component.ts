@@ -15,6 +15,7 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
 
   rowTypeHeader = common.RowTypeEnum.Header;
   rowTypeMetric = common.RowTypeEnum.Metric;
+  rowTypeFormula = common.RowTypeEnum.Formula;
 
   agInit(params: ICellRendererParams<DataRow>) {
     this.params = params;

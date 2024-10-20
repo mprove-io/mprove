@@ -50,9 +50,25 @@ export function wrapReps(item: {
             row.type === common.RowTypeEnum.Metric
               ? metric.topLabel
               : undefined,
+          partNodeLabel:
+            row.type === common.RowTypeEnum.Metric
+              ? metric.partNodeLabel
+              : undefined,
+          partFieldLabel:
+            row.type === common.RowTypeEnum.Metric
+              ? metric.partFieldLabel
+              : undefined,
           partLabel:
             row.type === common.RowTypeEnum.Metric
               ? metric.partLabel
+              : undefined,
+          timeNodeLabel:
+            row.type === common.RowTypeEnum.Metric
+              ? metric.timeNodeLabel
+              : undefined,
+          timeFieldLabel:
+            row.type === common.RowTypeEnum.Metric
+              ? metric.timeFieldLabel
               : undefined,
           timeLabel:
             row.type === common.RowTypeEnum.Metric

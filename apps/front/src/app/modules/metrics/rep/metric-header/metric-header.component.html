@@ -3,7 +3,7 @@
 
   <button
     data-cy="metricsAddRowButton"
-    class="ml-10 rounded border border-gray-400 py-1 px-4 text-gray-500 hover:bg-white focus:outline-none"
+    class="ml-10 rounded border border-gray-400 px-4 py-1 text-gray-500 hover:bg-white focus:outline-none"
     type="button"
     (click)="addRow()"
     >Add Row</button
@@ -28,11 +28,11 @@
     <div
       class="flex h-9 cursor-pointer select-none items-center text-gray-500"
       [ngClass]="{
-        'font-semibold': showMetricsModelName === true,
-        'font-normal': showMetricsModelName === false
+        'font-semibold': showMetricsTimeFieldName === true,
+        'font-normal': showMetricsTimeFieldName === false
       }"
-      (click)="toggleShowMetricsModelName()"
-      >Model</div
+      (click)="toggleShowMetricsTimeFieldName()"
+      >Time</div
     >
   </div>
 
@@ -40,11 +40,11 @@
     <div
       class="flex h-9 cursor-pointer select-none items-center text-gray-500"
       [ngClass]="{
-        'font-semibold': showMetricsTimeFieldName === true,
-        'font-normal': showMetricsTimeFieldName === false
+        'font-semibold': showMetricsModelName === true,
+        'font-normal': showMetricsModelName === false
       }"
-      (click)="toggleShowMetricsTimeFieldName()"
-      >Time</div
+      (click)="toggleShowMetricsModelName()"
+      >Model</div
     >
   </div>
 </div>

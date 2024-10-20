@@ -29,7 +29,19 @@ export class MetricEntity {
   top_label: string;
 
   @Column({ type: constants.VARCHAR })
+  part_node_label: string;
+
+  @Column({ type: constants.VARCHAR })
+  part_field_label: string;
+
+  @Column({ type: constants.VARCHAR })
   part_label: string;
+
+  @Column({ type: constants.VARCHAR })
+  time_node_label: string;
+
+  @Column({ type: constants.VARCHAR })
+  time_field_label: string;
 
   @Column({ type: constants.VARCHAR })
   time_label: string;
