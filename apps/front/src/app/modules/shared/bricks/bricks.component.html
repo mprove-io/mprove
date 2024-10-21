@@ -1,7 +1,8 @@
 <div
-  class="font-ms flex h-full w-full flex-col rounded text-base"
+  class="font-ms flex h-full w-full flex-col rounded px-5 text-base"
   [ngClass]="{
-    'bg-gray-200 px-5': isKeepBackgroundColor === false
+    'border-gray3 border bg-gray-200': isKeepBackgroundColor === false,
+    'text-gray-500': isKeepBackgroundColor === true
   }"
 >
   <div class="pt-1">
@@ -84,7 +85,7 @@
         ? rData?.finalRowHeight - 16
         : rData?.finalRowHeight - 8
     "
-    class="my-1 mr-5 w-[400px] min-w-min select-text overflow-auto bg-gray-200 py-1 pl-3 pr-5 text-sm"
+    class="font-ms my-1 mr-5 w-[400px] min-w-min select-text overflow-auto bg-gray-200 py-1 pl-3 pr-5 text-sm text-black"
   >
     <pre [innerHtml]="rData?.parametersJson | prettyJson : [true, 3]"></pre>
   </div>

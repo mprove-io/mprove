@@ -21,8 +21,6 @@ import { ChartSettingsComponent } from './rep/chart-settings/chart-settings.comp
 import { DataRendererComponent } from './rep/data-renderer/data-renderer.component';
 import { MetricHeaderComponent } from './rep/metric-header/metric-header.component';
 import { MetricRendererComponent } from './rep/metric-renderer/metric-renderer.component';
-import { ParametersHeaderComponent } from './rep/parameters-header/parameters-header.component';
-import { ParametersRendererComponent } from './rep/parameters-renderer/parameters-renderer.component';
 import { RepComponent } from './rep/rep.component';
 import { RowIdHeaderComponent } from './rep/row-id-header/row-id-header.component';
 import { RowIdRendererComponent } from './rep/row-id-renderer/row-id-renderer.component';
@@ -39,7 +37,6 @@ import { RowComponent } from './row/row.component';
     RowComponent,
     RepOptionsComponent,
     MetricRendererComponent,
-    ParametersRendererComponent,
     StatusRendererComponent,
     DataRendererComponent,
     StatusHeaderComponent,
@@ -50,8 +47,7 @@ import { RowComponent } from './row/row.component';
     RowIdHeaderComponent,
     RowIdRendererComponent,
     RowFiltersComponent,
-    ParameterFormulaComponent,
-    ParametersHeaderComponent
+    ParameterFormulaComponent
   ],
   imports: [
     CommonModule,

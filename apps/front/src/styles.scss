@@ -33,8 +33,10 @@ body {
   font-family: monospace;
   --ag-font-size: 16px;
 
+  // --ag-selected-row-background-color: rgb(231, 242, 253);
   --ag-selected-row-background-color: rgb(255, 224, 129);
-  --ag-row-hover-color: rgb(231, 242, 253);
+  --ag-row-hover-color: rgb(0, 0, 0, 0);
+  // --ag-row-hover-color: rgb(231, 242, 253);
 
   --ag-odd-row-background-color: rgb(0, 0, 0, 0);
   --ag-background-color: rgb(0, 0, 0, 0);
@@ -199,7 +201,7 @@ body {
 //   visibility: hidden;
 // }
 
-.ag-row-hover .hov {
+.ag-row-selected .hov {
   visibility: visible;
 }
 
