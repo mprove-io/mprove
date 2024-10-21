@@ -454,7 +454,7 @@
 
     <div class="flex w-full flex-col">
       <div
-        class="flex flex-grow flex-row items-start"
+        class="flex items-start"
         *ngIf="!!repSelectedNode.data.parametersFormula"
       >
         <div class="flex max-w-[750px] flex-grow flex-row">
@@ -501,7 +501,7 @@
         </div>
       </div>
 
-      <div class="flex max-h-max w-full flex-row">
+      <div class="flex w-full flex-row">
         <div
           tp="Turn off formula to activate control"
           [tpIsEnabled]="!!repSelectedNode.data.parametersFormula"
