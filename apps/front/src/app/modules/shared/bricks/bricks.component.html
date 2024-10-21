@@ -1,21 +1,9 @@
 <div
-  class="font-ms flex h-full w-full flex-row rounded text-base"
+  class="font-ms flex h-full w-full flex-col rounded text-base"
   [ngClass]="{
     'bg-gray-200 px-5': isKeepBackgroundColor === false
   }"
 >
-  <div
-    *ngIf="showJson === true"
-    [style.max-height.px]="
-      rData?.parametersJson.length > 0
-        ? rData?.finalRowHeight - 16
-        : rData?.finalRowHeight - 8
-    "
-    class="my-1 mr-5 w-[400px] min-w-min select-text overflow-auto bg-gray-200 py-1 pl-3 pr-5 text-sm"
-  >
-    <pre [innerHtml]="rData?.parametersJson | prettyJson : [true, 3]"></pre>
-  </div>
-
   <div class="pt-1">
     <table>
       <tbody class="divide-y divide-gray-300">
@@ -87,5 +75,17 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <div
+    *ngIf="showJson === true"
+    [style.max-height.px]="
+      rData?.parametersJson.length > 0
+        ? rData?.finalRowHeight - 16
+        : rData?.finalRowHeight - 8
+    "
+    class="my-1 mr-5 w-[400px] min-w-min select-text overflow-auto bg-gray-200 py-1 pl-3 pr-5 text-sm"
+  >
+    <pre [innerHtml]="rData?.parametersJson | prettyJson : [true, 3]"></pre>
   </div>
 </div>

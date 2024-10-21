@@ -9,9 +9,6 @@ export class Ui {
   metricsColumnNameWidth: number;
 
   @IsInt()
-  metricsColumnParametersWidth: number;
-
-  @IsInt()
   metricsTimeColumnsNarrowWidth: number;
 
   @IsInt()

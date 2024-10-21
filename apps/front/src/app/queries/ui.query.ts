@@ -20,7 +20,6 @@ export class UiState {
   repChartData: RepChartData;
   repSelectedNodes: IRowNode<DataRow>[];
   metricsColumnNameWidth: number;
-  metricsColumnParametersWidth: number;
   metricsTimeColumnsNarrowWidth: number;
   metricsTimeColumnsWideWidth: number;
   showMetricsModelName: boolean;
@@ -47,7 +46,6 @@ let uiState: UiState = {
   },
   repSelectedNodes: [],
   metricsColumnNameWidth: undefined,
-  metricsColumnParametersWidth: undefined,
   metricsTimeColumnsNarrowWidth: undefined,
   metricsTimeColumnsWideWidth: undefined,
   showMetricsModelName: undefined,
