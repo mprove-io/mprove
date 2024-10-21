@@ -305,33 +305,9 @@
     </div>
   </div>
 
-  <div
-    *ngIf="repSelectedNode.data.rowType === rowTypeFormula"
-    class="flex flex-1 flex-row items-start space-x-5"
-  >
-    <div
-      class="text-gray1 mt-3 flex flex-shrink-0 select-none items-center font-semibold"
-      >Formula SQL</div
-    >
-
-    <div [formGroup]="formulaForm" class="relative flex max-w-[750px] flex-1">
-      <textarea
-        data-cy="formulaInput"
-        class="form-input border-gray3 focus:border-blue3 max-h-[150px] min-h-[70px] w-full min-w-[300px] resize-y rounded font-mono placeholder-gray-400"
-        [ngClass]="{
-          'border-red-600':
-            formulaForm.controls['formula'].invalid &&
-            formulaForm.controls['formula'].touched
-        }"
-        formControlName="formula"
-        placeholder="$A + $B"
-        (blur)="formulaBlur()"
-      ></textarea>
-      <m-validation
-        class="absolute -bottom-[22px] left-0"
-        [control]="formulaForm.controls['formula']"
-      ></m-validation>
-    </div>
+  <div class="ml-[25px] mr-[20px] divide-y divide-gray-300">
+    <div></div>
+    <div></div>
   </div>
 
   <div
@@ -418,6 +394,35 @@
           [control]="currencySuffixForm.controls['currencySuffix']"
         ></m-validation>
       </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="repSelectedNode.data.rowType === rowTypeFormula"
+    class="flex flex-1 flex-row items-start space-x-5"
+  >
+    <div
+      class="text-gray1 mt-3 flex flex-shrink-0 select-none items-center font-semibold"
+      >Formula SQL</div
+    >
+
+    <div [formGroup]="formulaForm" class="relative flex max-w-[750px] flex-1">
+      <textarea
+        data-cy="formulaInput"
+        class="form-input border-gray3 focus:border-blue3 max-h-[150px] min-h-[70px] w-full min-w-[300px] resize-y rounded font-mono placeholder-gray-400"
+        [ngClass]="{
+          'border-red-600':
+            formulaForm.controls['formula'].invalid &&
+            formulaForm.controls['formula'].touched
+        }"
+        formControlName="formula"
+        placeholder="$A + $B"
+        (blur)="formulaBlur()"
+      ></textarea>
+      <m-validation
+        class="absolute -bottom-[22px] left-0"
+        [control]="formulaForm.controls['formula']"
+      ></m-validation>
     </div>
   </div>
 
