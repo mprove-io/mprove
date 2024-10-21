@@ -58,7 +58,15 @@ body {
   background-color: transparent;
 }
 
+.tippy-variation-menuRow .tippy-box {
+  background-color: transparent;
+}
+
 .tippy-variation-menu .tippy-box .tippy-content {
+  padding: 0;
+}
+
+.tippy-variation-menuRow .tippy-box .tippy-content {
   padding: 0;
 }
 
@@ -185,6 +193,14 @@ body {
 
 .ngx-charts .card-band {
   cursor: default !important;
+}
+
+// .hov {
+//   visibility: hidden;
+// }
+
+.ag-row-hover .hov {
+  visibility: visible;
 }
 
 // .css-zoom {

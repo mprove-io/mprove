@@ -104,7 +104,7 @@ export class RepComponent {
       rowDrag: true,
       resizable: false,
       pinned: 'left',
-      width: 120,
+      width: 130,
       headerComponent: RowIdHeaderComponent,
       cellRenderer: RowIdRendererComponent
       // ,
