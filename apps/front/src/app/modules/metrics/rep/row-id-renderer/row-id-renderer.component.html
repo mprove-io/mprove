@@ -22,34 +22,19 @@
       <button
         data-cy="rowOptionsClearRow"
         class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
-        (click)="t1.hide()"
+        (click)="t1.hide(); clearRow()"
         >Clear Row</button
       >
 
       <button
         data-cy="rowOptionsDeleteRow"
         class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
-        (click)="t1.hide()"
+        (click)="t1.hide(); deleteRow()"
         >Delete Row</button
       >
-
-      <!-- <div
-        tp="Dashboard can be deleted by author and project members with ProjectAdmin or FilesEditor role. Try to save dashboard as new to become an author."
-        placement="left"
-        [tpIsEnabled]="item.canEditOrDeleteDashboard === false"
-      >
-        <button
-          data-cy="dashboardOptionsDelete"
-          class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
-          [ngClass]="{
-            'cursor-default text-gray-400':
-              item.canEditOrDeleteDashboard === false
-          }"
-          (click)="t1.hide(); deleteDashboard($event, item)"
-          [disabled]="item.canEditOrDeleteDashboard === false"
-          >Delete</button
-        >
-      </div> -->
     </div>
   </ng-template>
 </div>
+
+<div *ngIf="uiQuery$ | async"></div>
+<div *ngIf="rep$ | async"></div>
