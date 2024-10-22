@@ -1,7 +1,12 @@
-<div
-  class="truncate"
-  [ngClass]="{
-    'text-red1': isError === true
-  }"
-  >{{ formattedValue }}</div
->
+<div class="flex flex-row justify-end">
+  <div
+    class="flex truncate pl-5"
+    [ngClass]="{
+      'text-red1': isError === true,
+      'cursor-pointer hover:font-bold': params.data.rowType === rowTypeMetric,
+
+    }"
+    (click)="clickData()"
+    >{{ formattedValue }}</div
+  >
+</div>
