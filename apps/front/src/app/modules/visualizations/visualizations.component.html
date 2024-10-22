@@ -181,8 +181,9 @@
             class="ml-5 mr-5 mt-10 flex w-full flex-col divide-y divide-gray-500"
           >
             <div
-              class="text-gray1 mb-3 mr-4 flex flex-row space-x-5 px-5 text-base font-semibold"
+              class="text-gray1 mb-3 mr-5 flex flex-row space-x-5 px-5 text-base font-semibold"
             >
+              <div class="flex w-9"></div>
               <div class="flex w-1/6">File</div>
               <div class="flex w-1/3">Visualization</div>
               <div class="flex flex-1 flex-row space-x-5">
@@ -190,7 +191,6 @@
                 <div class="flex flex-1">Access Roles</div>
                 <div class="flex flex-1">Access Users</div>
                 <div class="flex flex-1">Author</div>
-                <div class="flex w-24"></div>
               </div>
             </div>
 
@@ -216,6 +216,98 @@
                   <div
                     class="text-gray1 hover:border-blue2 hover:bg-blue2 group mr-5 flex w-full flex-row items-start space-x-5 rounded border border-white bg-white px-5 focus:outline-none"
                   >
+                    <div class="flex w-9 pt-1">
+                      <button
+                        data-cy="vizOptionsMenuButton"
+                        class="invisible flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none group-hover:visible"
+                        #t1="tippy"
+                        [tp]="templateVizOptions"
+                        [tpHideOnEscape]="true"
+                        tpVariation="menu"
+                        className="my-menu"
+                      >
+                        <m-dots-vertical-icon></m-dots-vertical-icon>
+                      </button>
+
+                      <ng-template #templateVizOptions>
+                        <div
+                          class="border-gray4 w-64 rounded-md border-2 bg-white shadow-xl"
+                        >
+                          <ng-template #templateExploreViz>
+                            <div *ngIf="isExplorer === false"
+                              >Explorer role required</div
+                            >
+                            <div *ngIf="isExplorer === true"
+                              >No access to model</div
+                            >
+                          </ng-template>
+
+                          <!-- <div
+                          [tp]="templateExploreViz"
+                          placement="left"
+                          [tpIsEnabled]="item.canEditOrDeleteViz === false"
+                        >
+                          <button
+                            data-cy="vizOptionsExplore"
+                            class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
+                            [ngClass]="{
+                              'cursor-default text-gray-400':
+                                item.reports[0].hasAccessToModel === false
+                            }"
+                            (click)="t1.hide(); explore($event, item)"
+                            [disabled]="
+                              item.reports[0].hasAccessToModel === false
+                            "
+                            >Explore</button
+                          >
+                        </div> -->
+
+                          <div
+                            tp="Viz can be edited by author and project members with ProjectAdmin or FilesEditor role. Try to save viz as new to become an author."
+                            placement="left"
+                            [tpIsEnabled]="item.canEditOrDeleteViz === false"
+                          >
+                            <button
+                              data-cy="vizOptionsEditInfo"
+                              class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
+                              [ngClass]="{
+                                'cursor-default text-gray-400':
+                                  item.canEditOrDeleteViz === false
+                              }"
+                              (click)="t1.hide(); editVizInfo($event, item)"
+                              [disabled]="item.canEditOrDeleteViz === false"
+                              >Edit Info</button
+                            >
+                          </div>
+
+                          <!-- <button
+                          data-cy="vizOptionsGoToFile"
+                          class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
+                          (click)="t1.hide(); goToVizFile($event, item)"
+                          >Go to file</button
+                        > -->
+
+                          <div
+                            tp="Viz can be deleted by author and project members with ProjectAdmin or FilesEditor role. Try to save viz as new to become an author."
+                            placement="left"
+                            [tpIsEnabled]="item.canEditOrDeleteViz === false"
+                          >
+                            <button
+                              data-cy="vizOptionsDelete"
+                              class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
+                              [ngClass]="{
+                                'cursor-default text-gray-400':
+                                  item.canEditOrDeleteViz === false
+                              }"
+                              (click)="t1.hide(); deleteViz($event, item)"
+                              [disabled]="item.canEditOrDeleteViz === false"
+                              >Delete</button
+                            >
+                          </div>
+                        </div>
+                      </ng-template>
+                    </div>
+
                     <div
                       class="flex w-1/6 cursor-pointer items-start truncate py-3 hover:text-blue-500 focus:outline-none"
                       (click)="goToVizFile($event, item)"
@@ -316,98 +408,6 @@
                         <span>
                           {{ item.author }}
                         </span>
-                      </div>
-
-                      <div class="flex w-24 pt-1">
-                        <button
-                          data-cy="vizOptionsMenuButton"
-                          class="invisible ml-3 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none group-hover:visible"
-                          #t1="tippy"
-                          [tp]="templateVizOptions"
-                          [tpHideOnEscape]="true"
-                          tpVariation="menu"
-                          className="my-menu"
-                        >
-                          <m-dots-vertical-icon></m-dots-vertical-icon>
-                        </button>
-
-                        <ng-template #templateVizOptions>
-                          <div
-                            class="border-gray4 w-64 rounded-md border-2 bg-white shadow-xl"
-                          >
-                            <ng-template #templateExploreViz>
-                              <div *ngIf="isExplorer === false"
-                                >Explorer role required</div
-                              >
-                              <div *ngIf="isExplorer === true"
-                                >No access to model</div
-                              >
-                            </ng-template>
-
-                            <div
-                              [tp]="templateExploreViz"
-                              placement="left"
-                              [tpIsEnabled]="item.canEditOrDeleteViz === false"
-                            >
-                              <button
-                                data-cy="vizOptionsExplore"
-                                class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
-                                [ngClass]="{
-                                  'cursor-default text-gray-400':
-                                    item.reports[0].hasAccessToModel === false
-                                }"
-                                (click)="t1.hide(); explore($event, item)"
-                                [disabled]="
-                                  item.reports[0].hasAccessToModel === false
-                                "
-                                >Explore</button
-                              >
-                            </div>
-
-                            <div
-                              tp="Viz can be edited by author and project members with ProjectAdmin or FilesEditor role. Try to save viz as new to become an author."
-                              placement="left"
-                              [tpIsEnabled]="item.canEditOrDeleteViz === false"
-                            >
-                              <button
-                                data-cy="vizOptionsEditInfo"
-                                class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
-                                [ngClass]="{
-                                  'cursor-default text-gray-400':
-                                    item.canEditOrDeleteViz === false
-                                }"
-                                (click)="t1.hide(); editVizInfo($event, item)"
-                                [disabled]="item.canEditOrDeleteViz === false"
-                                >Edit Info</button
-                              >
-                            </div>
-
-                            <button
-                              data-cy="vizOptionsGoToFile"
-                              class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
-                              (click)="t1.hide(); goToVizFile($event, item)"
-                              >Go to file</button
-                            >
-
-                            <div
-                              tp="Viz can be deleted by author and project members with ProjectAdmin or FilesEditor role. Try to save viz as new to become an author."
-                              placement="left"
-                              [tpIsEnabled]="item.canEditOrDeleteViz === false"
-                            >
-                              <button
-                                data-cy="vizOptionsDelete"
-                                class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
-                                [ngClass]="{
-                                  'cursor-default text-gray-400':
-                                    item.canEditOrDeleteViz === false
-                                }"
-                                (click)="t1.hide(); deleteViz($event, item)"
-                                [disabled]="item.canEditOrDeleteViz === false"
-                                >Delete</button
-                              >
-                            </div>
-                          </div>
-                        </ng-template>
                       </div>
                     </div>
                   </div>
