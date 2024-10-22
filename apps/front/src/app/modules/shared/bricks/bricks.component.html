@@ -55,7 +55,12 @@
                 let fractionIndex = index
               "
             >
-              <div class="flex w-9 flex-shrink-0">
+              <div
+                class="flex flex-shrink-0"
+                [ngClass]="{
+                  'mr-5 w-9': filter.fractions.length > 1
+                }"
+              >
                 <div *ngIf="isFirst === true"></div>
                 <div *ngIf="isFirst === false">
                   {{
@@ -68,7 +73,7 @@
                   }}
                 </div>
               </div>
-              <div class="ml-5 flex max-w-[450px] flex-shrink-0 px-5">{{
+              <div class="flex max-w-[450px] flex-shrink-0 pr-5">{{
                 fraction.brick
               }}</div>
             </div>
