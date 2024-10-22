@@ -21,6 +21,7 @@ import { TimePicker } from '@vaadin/time-picker';
 import { tap } from 'rxjs';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { TimeService } from '~front/app/services/time.service';
 import { UiService } from '~front/app/services/ui.service';
 import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
@@ -370,6 +371,7 @@ export class FractionTsComponent implements OnInit {
     private uiQuery: UiQuery,
     private uiService: UiService,
     private structQuery: StructQuery,
+    private timeService: TimeService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -567,7 +569,9 @@ export class FractionTsComponent implements OnInit {
 
       case this.fractionTypeEnum.TsIsOnYear: {
         this.fraction = {
-          brick: `on ${this.getYearStr({ dateValue: this.dateStr })}`,
+          brick: `on ${this.timeService.getYearStr({
+            dateValue: this.dateStr
+          })}`,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
           tsDateYear: Number(this.dateStr.split('-')[0])
@@ -579,7 +583,9 @@ export class FractionTsComponent implements OnInit {
 
       case this.fractionTypeEnum.TsIsOnMonth: {
         this.fraction = {
-          brick: `on ${this.getMonthStr({ dateValue: this.dateStr })}`,
+          brick: `on ${this.timeService.getMonthStr({
+            dateValue: this.dateStr
+          })}`,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
           tsDateYear: Number(this.dateStr.split('-')[0]),
@@ -592,7 +598,9 @@ export class FractionTsComponent implements OnInit {
 
       case this.fractionTypeEnum.TsIsOnDay: {
         this.fraction = {
-          brick: `on ${this.getDayStr({ dateValue: this.dateStr })}`,
+          brick: `on ${this.timeService.getDayStr({
+            dateValue: this.dateStr
+          })}`,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
           tsDateYear: Number(this.dateStr.split('-')[0]),
@@ -606,7 +614,7 @@ export class FractionTsComponent implements OnInit {
 
       case this.fractionTypeEnum.TsIsOnHour: {
         this.fraction = {
-          brick: `on ${this.getHourStr({
+          brick: `on ${this.timeService.getHourStr({
             dateValue: this.dateStr,
             timeValue: this.timeStr
           })}`,
@@ -624,7 +632,7 @@ export class FractionTsComponent implements OnInit {
 
       case this.fractionTypeEnum.TsIsOnMinute: {
         this.fraction = {
-          brick: `on ${this.getMinuteStr({
+          brick: `on ${this.timeService.getMinuteStr({
             dateValue: this.dateStr,
             timeValue: this.timeStr
           })}`,
@@ -777,40 +785,6 @@ export class FractionTsComponent implements OnInit {
     }
   }
 
-  getYearStr(item: { dateValue: string }) {
-    let year = item.dateValue.split('-')[0];
-
-    return `${year}`;
-  }
-
-  getMonthStr(item: { dateValue: string }) {
-    let year = item.dateValue.split('-')[0];
-    let month = item.dateValue.split('-')[1];
-
-    return `${year}/${month}`;
-  }
-
-  getDayStr(item: { dateValue: string }) {
-    let date = item.dateValue.split('-').join('/');
-
-    return `${date}`;
-  }
-
-  getHourStr(item: { dateValue: string; timeValue: string }) {
-    let date = item.dateValue.split('-').join('/');
-    let hour = item.timeValue.split(':')[0];
-
-    return `${date} ${hour}`;
-  }
-
-  getMinuteStr(item: { dateValue: string; timeValue: string }) {
-    let date = item.dateValue.split('-').join('/');
-    let hour = item.timeValue.split(':')[0];
-    let minute = item.timeValue.split(':')[1];
-
-    return `${date} ${hour}:${minute}`;
-  }
-
   buildFractionRange(item: {
     dateValue: string;
     timeValue: string;
@@ -819,12 +793,12 @@ export class FractionTsComponent implements OnInit {
   }) {
     let { dateValue, timeValue, dateToValue, timeToValue } = item;
 
-    let minuteStr = this.getMinuteStr({
+    let minuteStr = this.timeService.getMinuteStr({
       dateValue: dateValue,
       timeValue: timeValue
     });
 
-    let minuteToStr = this.getMinuteStr({
+    let minuteToStr = this.timeService.getMinuteStr({
       dateValue: dateToValue,
       timeValue: timeToValue
     });
@@ -849,7 +823,7 @@ export class FractionTsComponent implements OnInit {
   buildFractionBeforeDate(item: { dateValue: string; timeValue: string }) {
     let { dateValue, timeValue } = item;
 
-    let minuteStr = this.getMinuteStr({
+    let minuteStr = this.timeService.getMinuteStr({
       dateValue: dateValue,
       timeValue: timeValue
     });
@@ -879,7 +853,7 @@ export class FractionTsComponent implements OnInit {
   buildFractionAfterDate(item: { dateValue: string; timeValue: string }) {
     let { dateValue, timeValue } = item;
 
-    let minuteStr = this.getMinuteStr({
+    let minuteStr = this.timeService.getMinuteStr({
       dateValue: dateValue,
       timeValue: timeValue
     });
@@ -974,7 +948,7 @@ export class FractionTsComponent implements OnInit {
       if (common.isDefinedAndNotEmpty(value)) {
         this.dateStr = value;
 
-        let onYearStr = this.getYearStr({
+        let onYearStr = this.timeService.getYearStr({
           dateValue: value
         });
 
@@ -1002,7 +976,7 @@ export class FractionTsComponent implements OnInit {
       if (common.isDefinedAndNotEmpty(value)) {
         this.dateStr = value;
 
-        let onMonthStr = this.getMonthStr({
+        let onMonthStr = this.timeService.getMonthStr({
           dateValue: value
         });
 
@@ -1031,7 +1005,7 @@ export class FractionTsComponent implements OnInit {
       if (common.isDefinedAndNotEmpty(value)) {
         this.dateStr = value;
 
-        let onDayStr = this.getDayStr({
+        let onDayStr = this.timeService.getDayStr({
           dateValue: value
         });
 
@@ -1061,7 +1035,7 @@ export class FractionTsComponent implements OnInit {
       if (common.isDefinedAndNotEmpty(value)) {
         this.dateStr = value;
 
-        let onHourStr = this.getHourStr({
+        let onHourStr = this.timeService.getHourStr({
           dateValue: value,
           timeValue: this.timeStr
         });
@@ -1093,7 +1067,7 @@ export class FractionTsComponent implements OnInit {
       if (common.isDefinedAndNotEmpty(value)) {
         this.timeStr = value;
 
-        let onHourStr = this.getHourStr({
+        let onHourStr = this.timeService.getHourStr({
           dateValue: this.dateStr,
           timeValue: value
         });
@@ -1137,7 +1111,7 @@ export class FractionTsComponent implements OnInit {
       if (common.isDefinedAndNotEmpty(value)) {
         this.dateStr = value;
 
-        let onMinuteStr = this.getMinuteStr({
+        let onMinuteStr = this.timeService.getMinuteStr({
           dateValue: value,
           timeValue: this.timeStr
         });
@@ -1169,7 +1143,7 @@ export class FractionTsComponent implements OnInit {
       if (common.isDefinedAndNotEmpty(value)) {
         this.timeStr = value;
 
-        let onMinuteStr = this.getMinuteStr({
+        let onMinuteStr = this.timeService.getMinuteStr({
           dateValue: this.dateStr,
           timeValue: value
         });

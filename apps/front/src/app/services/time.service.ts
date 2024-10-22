@@ -51,4 +51,62 @@ export class TimeService {
 
     return seconds;
   }
+
+  getYearStr(item: { dateValue: string }) {
+    let year = item.dateValue.split('-')[0];
+
+    return `${year}`;
+  }
+
+  getMonthStr(item: { dateValue: string }) {
+    let year = item.dateValue.split('-')[0];
+    let month = item.dateValue.split('-')[1];
+
+    return `${year}/${month}`;
+  }
+
+  getDayStr(item: { dateValue: string }) {
+    let date = item.dateValue.split('-').join('/');
+
+    return `${date}`;
+  }
+
+  getHourStr(item: { dateValue: string; timeValue: string }) {
+    let date = item.dateValue.split('-').join('/');
+    let hour = item.timeValue.split(':')[0];
+
+    return `${date} ${hour}`;
+  }
+
+  getMinuteStr(item: { dateValue: string; timeValue: string }) {
+    let date = item.dateValue.split('-').join('/');
+    let hour = item.timeValue.split(':')[0];
+    let minute = item.timeValue.split(':')[1];
+
+    return `${date} ${hour}:${minute}`;
+  }
+
+  getDateTimeStrFromEpochMs(item: { ts: number }) {
+    let ts = item.ts;
+
+    let date = new Date(ts);
+
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1; // Months are zero-based in JavaScript
+    let day = date.getDate();
+    let hour = date.getHours();
+    let minute = date.getMinutes();
+    let second = 0;
+
+    let monthD = month.toString().length === 1 ? `0${month}` : `${month}`;
+    let dayD = day.toString().length === 1 ? `0${day}` : `${day}`;
+    let hourD = hour.toString().length === 1 ? `0${hour}` : `${hour}`;
+    let minuteD = minute.toString().length === 1 ? `0${minute}` : `${minute}`;
+    let secondD = second.toString().length === 1 ? `0${second}` : `${second}`;
+
+    let dateStr = `${year}-${monthD}-${dayD}`;
+    let timeStr = `${hourD}:${minuteD}:${secondD}`;
+
+    return { date, dateStr, timeStr };
+  }
 }
