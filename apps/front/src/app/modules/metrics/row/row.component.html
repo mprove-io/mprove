@@ -554,18 +554,7 @@
             </div>
 
             <ng-template #templateApplyAddFilter>
-              <div *ngIf="isDisabledApplyTimeField === true"
-                >The time field related to this metric is filtered by the time
-                filter located at the top of this page. But you can select
-                another field to specify additional time filtering within the
-                main time range.</div
-              >
-
-              <div
-                *ngIf="
-                  isDisabledApplyTimeField === false &&
-                  isDisabledApplyAlreadyFiltered === true
-                "
+              <div *ngIf="isDisabledApplyAlreadyFiltered === true"
                 >This field is already filtered. Click on + to add new filter
                 conditions.</div
               >
@@ -573,29 +562,20 @@
 
             <div
               class="flex"
-              [tpIsEnabled]="
-                isDisabledApplyTimeField === true ||
-                isDisabledApplyAlreadyFiltered === true
-              "
+              [tpIsEnabled]="isDisabledApplyAlreadyFiltered === true"
               [tp]="templateApplyAddFilter"
             >
               <button
                 data-cy="rowApplyAddParameterButton"
                 class="bg-blue3 ml-5 select-none rounded px-4 py-2 font-medium text-white focus:outline-none"
                 [ngClass]="{
-                  'bg-blue3':
-                    isDisabledApplyTimeField === false &&
-                    isDisabledApplyAlreadyFiltered === false,
+                  'bg-blue3': isDisabledApplyAlreadyFiltered === false,
                   'cursor-default bg-gray-400':
-                    isDisabledApplyTimeField === true ||
                     isDisabledApplyAlreadyFiltered === true
                 }"
                 type="button"
                 (click)="applyAddParameter()"
-                [disabled]="
-                  isDisabledApplyTimeField === true ||
-                  isDisabledApplyAlreadyFiltered === true
-                "
+                [disabled]="isDisabledApplyAlreadyFiltered === true"
                 >Apply</button
               >
             </div>

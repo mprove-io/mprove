@@ -79,7 +79,6 @@ export class RowComponent {
   isToMetric = false;
 
   isAddParameter = false;
-  isDisabledApplyTimeField = false;
   isDisabledApplyAlreadyFiltered = false;
 
   isValid = false;
@@ -544,6 +543,17 @@ export class RowComponent {
       .getValue()
       .metrics.find(y => y.metricId === this.repSelectedNode.data.metricId);
 
+    let restrictedFilterFieldIds = [
+      `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Year}`,
+      `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Quarter}`,
+      `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Month}`,
+      `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Week}`,
+      `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Date}`,
+      `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Hour}`,
+      `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Minute}`,
+      `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Time}`
+    ];
+
     this.fieldsListLoading = true;
 
     let payload: apiToBackend.ToBackendGetModelRequestPayload = {
@@ -564,6 +574,7 @@ export class RowComponent {
         tap((resp: apiToBackend.ToBackendGetModelResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.fieldsList = resp.payload.model.fields
+              .filter(x => restrictedFilterFieldIds.indexOf(x.id) < 0)
               .map(x =>
                 Object.assign({}, x, {
                   partLabel: common.isDefined(x.groupLabel)
@@ -591,17 +602,13 @@ export class RowComponent {
   }
 
   addParameterChange() {
-    let metric = this.metricsQuery
-      .getValue()
-      .metrics.find(y => y.metricId === this.repSelectedNode.data.metricId);
+    // let metric = this.metricsQuery
+    //   .getValue()
+    //   .metrics.find(y => y.metricId === this.repSelectedNode.data.metricId);
 
-    let timeSpec = this.repQuery.getValue().timeSpec;
-
-    let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
-
-    let timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
-
-    this.isDisabledApplyTimeField = this.newParameterId === timeFieldIdSpec;
+    // let timeSpec = this.repQuery.getValue().timeSpec;
+    // let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
+    // let timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
     this.isDisabledApplyAlreadyFiltered =
       this.repSelectedNode.data.mconfig.extendedFilters
