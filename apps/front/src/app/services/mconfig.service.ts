@@ -164,6 +164,7 @@ export class MconfigService {
             this.mqQuery.update({ mconfig: mconfig, query: query });
 
             this.navigateService.navigateMconfigQuery({
+              modelId: mconfig.modelId,
               mconfigId: mconfig.mconfigId,
               queryId: mconfig.queryId
             });

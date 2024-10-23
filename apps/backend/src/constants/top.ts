@@ -32,7 +32,6 @@ export const DEFAULT_UI: common.Ui = {
   showHours: false,
   showParametersJson: false,
   metricsColumnNameWidth: 450,
-  metricsColumnParametersWidth: 150,
   metricsTimeColumnsNarrowWidth: 165,
   metricsTimeColumnsWideWidth: 220,
   modelTreeLevels: common.ModelTreeLevelsEnum.Flat

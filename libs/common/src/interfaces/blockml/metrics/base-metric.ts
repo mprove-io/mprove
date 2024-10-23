@@ -27,7 +27,19 @@ export class BaseMetric {
   topLabel?: string;
 
   @IsString()
+  partNodeLabel?: string;
+
+  @IsString()
+  partFieldLabel?: string;
+
+  @IsString()
   partLabel?: string;
+
+  @IsString()
+  timeNodeLabel?: string;
+
+  @IsString()
+  timeFieldLabel?: string;
 
   @IsString()
   timeLabel?: string;

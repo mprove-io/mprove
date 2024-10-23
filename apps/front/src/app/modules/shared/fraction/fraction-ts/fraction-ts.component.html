@@ -6,7 +6,7 @@
     <ng-select
       #fractionTsTypeSelect
       data-cy="fractionTsTypeSelect"
-      class="popup-55 w-48 focus:outline-none"
+      class="popup-55 w-[230px] focus:outline-none"
       [ngClass]="{
         custom: isDisabled !== true,
         'cursor-default': isDisabled === true
@@ -26,7 +26,10 @@
       </ng-template>
 
       <ng-template ng-option-tmp let-item="item">
-        <div class="ml-1 truncate">{{ item.label }}</div>
+        <div class="flex flex-row">
+          <div class="ml-1">{{ item.operator | uppercase }} -</div>
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </div>
       </ng-template>
     </ng-select>
   </div>

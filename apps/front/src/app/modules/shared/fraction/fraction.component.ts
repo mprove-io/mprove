@@ -5,6 +5,7 @@ import { interfaces } from '~front/barrels/interfaces';
 export class FractionTypeItem {
   label: string;
   value: common.FractionTypeEnum;
+  operator: common.FractionOperatorEnum;
 }
 
 export class FractionNumberBetweenOptionItem {

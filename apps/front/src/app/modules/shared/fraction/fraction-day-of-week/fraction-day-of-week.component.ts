@@ -31,23 +31,28 @@ export class FractionDayOfWeekComponent {
   fractionDayOfWeekTypesList: FractionTypeItem[] = [
     {
       label: 'is any value',
-      value: common.FractionTypeEnum.DayOfWeekIsAnyValue
+      value: common.FractionTypeEnum.DayOfWeekIsAnyValue,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is',
-      value: common.FractionTypeEnum.DayOfWeekIs
+      value: common.FractionTypeEnum.DayOfWeekIs,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is null',
-      value: common.FractionTypeEnum.DayOfWeekIsNull
+      value: common.FractionTypeEnum.DayOfWeekIsNull,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is not',
-      value: common.FractionTypeEnum.DayOfWeekIsNot
+      value: common.FractionTypeEnum.DayOfWeekIsNot,
+      operator: common.FractionOperatorEnum.And
     },
     {
       label: 'is not null',
-      value: common.FractionTypeEnum.DayOfWeekIsNotNull
+      value: common.FractionTypeEnum.DayOfWeekIsNotNull,
+      operator: common.FractionOperatorEnum.And
     }
   ];
 

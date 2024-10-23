@@ -12,7 +12,7 @@ import { FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { KtdGridLayout } from '@katoid/angular-grid-layout';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { from, fromEvent, merge, of, Subscription } from 'rxjs';
+import { Subscription, from, fromEvent, merge, of } from 'rxjs';
 import {
   concatMap,
   debounceTime,
@@ -141,10 +141,18 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         report =>
           <LayoutItem>{
             id: report.title,
-            x: report.tileX || common.REPORT_DEFAULT_TILE_X,
-            y: report.tileY || common.REPORT_DEFAULT_TILE_Y,
-            w: report.tileWidth || common.REPORT_DEFAULT_TILE_WIDTH,
-            h: report.tileHeight || common.REPORT_DEFAULT_TILE_HEIGHT,
+            x: common.isDefined(report.tileX)
+              ? report.tileX
+              : common.REPORT_DEFAULT_TILE_X,
+            y: common.isDefined(report.tileY)
+              ? report.tileY
+              : common.REPORT_DEFAULT_TILE_Y,
+            w: common.isDefined(report.tileWidth)
+              ? report.tileWidth
+              : common.REPORT_DEFAULT_TILE_WIDTH,
+            h: common.isDefined(report.tileHeight)
+              ? report.tileHeight
+              : common.REPORT_DEFAULT_TILE_HEIGHT,
             report: report
           }
       );

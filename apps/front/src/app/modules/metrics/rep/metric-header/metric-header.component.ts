@@ -6,7 +6,6 @@ import { RepQuery } from '~front/app/queries/rep.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { RepService } from '~front/app/services/rep.service';
 import { UiService } from '~front/app/services/ui.service';
-import { common } from '~front/barrels/common';
 import { DataRow } from '../rep.component';
 
 @Component({
@@ -26,11 +25,13 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
 
   showMetricsModelName = false;
   showMetricsTimeFieldName = false;
+  showParametersJson = false;
 
   uiQuery$ = this.uiQuery.select().pipe(
     tap(x => {
       this.showMetricsModelName = x.showMetricsModelName;
       this.showMetricsTimeFieldName = x.showMetricsTimeFieldName;
+      this.showParametersJson = x.showParametersJson;
 
       this.cd.detectChanges();
     })
@@ -81,25 +82,10 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
     });
   }
 
-  addRow() {
-    let repSelectedNodes = this.uiQuery.getValue().repSelectedNodes;
+  toggleShowParametersJson() {
+    let showParametersJson = !this.showParametersJson;
 
-    let rep = this.repQuery.getValue();
-
-    let rowChange: common.RowChange = {
-      rowId:
-        repSelectedNodes.length === 1
-          ? repSelectedNodes[0].data.rowId
-          : undefined,
-      rowType: common.RowTypeEnum.Empty,
-      showChart: false
-    };
-
-    this.repService.modifyRows({
-      rep: rep,
-      changeType: common.ChangeTypeEnum.AddEmpty,
-      rowChange: rowChange,
-      rowIds: undefined
-    });
+    this.uiQuery.updatePart({ showParametersJson: showParametersJson });
+    this.uiService.setUserUi({ showParametersJson: showParametersJson });
   }
 }

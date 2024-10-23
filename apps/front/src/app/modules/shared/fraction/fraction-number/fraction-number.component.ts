@@ -41,47 +41,58 @@ export class FractionNumberComponent implements OnInit {
   fractionNumberTypesList: FractionTypeItem[] = [
     {
       label: 'is any value',
-      value: common.FractionTypeEnum.NumberIsAnyValue
+      value: common.FractionTypeEnum.NumberIsAnyValue,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is equal to',
-      value: common.FractionTypeEnum.NumberIsEqualTo
+      value: common.FractionTypeEnum.NumberIsEqualTo,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is greater than',
-      value: common.FractionTypeEnum.NumberIsGreaterThan
+      value: common.FractionTypeEnum.NumberIsGreaterThan,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is greater or equal',
-      value: common.FractionTypeEnum.NumberIsGreaterThanOrEqualTo
+      value: common.FractionTypeEnum.NumberIsGreaterThanOrEqualTo,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is less than',
-      value: common.FractionTypeEnum.NumberIsLessThan
+      value: common.FractionTypeEnum.NumberIsLessThan,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is less or equal',
-      value: common.FractionTypeEnum.NumberIsLessThanOrEqualTo
+      value: common.FractionTypeEnum.NumberIsLessThanOrEqualTo,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is between',
-      value: common.FractionTypeEnum.NumberIsBetween
+      value: common.FractionTypeEnum.NumberIsBetween,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is null',
-      value: common.FractionTypeEnum.NumberIsNull
+      value: common.FractionTypeEnum.NumberIsNull,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is not equal to',
-      value: common.FractionTypeEnum.NumberIsNotEqualTo
+      value: common.FractionTypeEnum.NumberIsNotEqualTo,
+      operator: common.FractionOperatorEnum.And
     },
     {
       label: 'is not between',
-      value: common.FractionTypeEnum.NumberIsNotBetween
+      value: common.FractionTypeEnum.NumberIsNotBetween,
+      operator: common.FractionOperatorEnum.And
     },
     {
       label: 'is not null',
-      value: common.FractionTypeEnum.NumberIsNotNull
+      value: common.FractionTypeEnum.NumberIsNotNull,
+      operator: common.FractionOperatorEnum.And
     }
   ];
 

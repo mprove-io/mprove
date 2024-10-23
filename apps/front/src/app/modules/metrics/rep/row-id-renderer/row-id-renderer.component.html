@@ -1,3 +1,40 @@
-<div class="flex h-full flex-row items-center">
+<div class="flex h-full w-full flex-row items-center">
   <div class="truncate">{{ params.value }}</div>
+
+  <div class="flex flex-1"></div>
+
+  <button
+    data-cy="rowOptionsMenuButton"
+    class="hov invisible relative flex h-8 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
+    #t1="tippy"
+    [tp]="templateRowOptions"
+    [tpHideOnEscape]="true"
+    tpVariation="menuRow"
+    className="my-menu-row"
+  >
+    <m-dots-vertical-icon></m-dots-vertical-icon>
+  </button>
+
+  <ng-template #templateRowOptions>
+    <div
+      class="border-gray4 font-ms w-64 rounded-md border-2 bg-white shadow-xl"
+    >
+      <button
+        data-cy="rowOptionsClearRow"
+        class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
+        (click)="t1.hide(); clearRow()"
+        >Clear Row</button
+      >
+
+      <button
+        data-cy="rowOptionsDeleteRow"
+        class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
+        (click)="t1.hide(); deleteRow()"
+        >Delete Row</button
+      >
+    </div>
+  </ng-template>
 </div>
+
+<div *ngIf="uiQuery$ | async"></div>
+<div *ngIf="rep$ | async"></div>

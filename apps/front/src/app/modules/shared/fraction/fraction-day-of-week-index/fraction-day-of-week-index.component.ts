@@ -34,23 +34,28 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
   fractionDayOfWeekIndexTypesList: FractionTypeItem[] = [
     {
       label: 'is any value',
-      value: common.FractionTypeEnum.DayOfWeekIndexIsAnyValue
+      value: common.FractionTypeEnum.DayOfWeekIndexIsAnyValue,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is equal to',
-      value: common.FractionTypeEnum.DayOfWeekIndexIsEqualTo
+      value: common.FractionTypeEnum.DayOfWeekIndexIsEqualTo,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is null',
-      value: common.FractionTypeEnum.DayOfWeekIndexIsNull
+      value: common.FractionTypeEnum.DayOfWeekIndexIsNull,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is not equal to',
-      value: common.FractionTypeEnum.DayOfWeekIndexIsNotEqualTo
+      value: common.FractionTypeEnum.DayOfWeekIndexIsNotEqualTo,
+      operator: common.FractionOperatorEnum.And
     },
     {
       label: 'is not null',
-      value: common.FractionTypeEnum.DayOfWeekIndexIsNotNull
+      value: common.FractionTypeEnum.DayOfWeekIndexIsNotNull,
+      operator: common.FractionOperatorEnum.And
     }
   ];
 

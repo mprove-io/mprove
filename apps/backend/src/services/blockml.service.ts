@@ -25,6 +25,7 @@ import {
   startOfYear,
   sub
 } from 'date-fns';
+import { fromZonedTime } from 'date-fns-tz';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
@@ -422,13 +423,16 @@ export class BlockmlService {
     }
 
     let columns = timeColumns.map(x => {
-      let unixTime = getUnixTime(x);
+      let unixTimeZoned = getUnixTime(x);
+      let unixDateZoned = new Date(unixTimeZoned * 1000);
+      let tsShifted = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
       let column: common.Column = {
-        columnId: unixTime,
+        columnId: unixTimeZoned,
+        tsShifted: tsShifted,
         label: common.formatTs({
           timeSpec: timeSpec,
-          unixTime: unixTime
+          unixTimeZoned: unixTimeZoned
         })
       };
 

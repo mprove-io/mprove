@@ -107,7 +107,7 @@ bootstrapApplication(AppComponent, {
           arrow: false,
           offset: [0, 7]
         },
-        menuGrid: {
+        menuRow: {
           theme: undefined,
           placement: 'bottom-end',
           animation: undefined,

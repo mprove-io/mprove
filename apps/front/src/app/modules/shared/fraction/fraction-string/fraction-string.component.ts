@@ -32,55 +32,68 @@ export class FractionStringComponent implements OnInit {
   fractionStringTypesList: FractionTypeItem[] = [
     {
       label: 'is any value',
-      value: common.FractionTypeEnum.StringIsAnyValue
+      value: common.FractionTypeEnum.StringIsAnyValue,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is equal to',
-      value: common.FractionTypeEnum.StringIsEqualTo
+      value: common.FractionTypeEnum.StringIsEqualTo,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'contains',
-      value: common.FractionTypeEnum.StringContains
+      value: common.FractionTypeEnum.StringContains,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'starts with',
-      value: common.FractionTypeEnum.StringStartsWith
+      value: common.FractionTypeEnum.StringStartsWith,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'ends with',
-      value: common.FractionTypeEnum.StringEndsWith
+      value: common.FractionTypeEnum.StringEndsWith,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is null',
-      value: common.FractionTypeEnum.StringIsNull
+      value: common.FractionTypeEnum.StringIsNull,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is blank',
-      value: common.FractionTypeEnum.StringIsBlank
+      value: common.FractionTypeEnum.StringIsBlank,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is not equal to',
-      value: common.FractionTypeEnum.StringIsNotEqualTo
+      value: common.FractionTypeEnum.StringIsNotEqualTo,
+      operator: common.FractionOperatorEnum.And
     },
     {
       label: 'does not contain',
-      value: common.FractionTypeEnum.StringDoesNotContain
+      value: common.FractionTypeEnum.StringDoesNotContain,
+      operator: common.FractionOperatorEnum.And
     },
     {
       label: 'does not start with',
-      value: common.FractionTypeEnum.StringDoesNotStartWith
+      value: common.FractionTypeEnum.StringDoesNotStartWith,
+      operator: common.FractionOperatorEnum.And
     },
     {
       label: 'does not end with',
-      value: common.FractionTypeEnum.StringDoesNotEndWith
+      value: common.FractionTypeEnum.StringDoesNotEndWith,
+      operator: common.FractionOperatorEnum.And
     },
     {
       label: 'is not null',
-      value: common.FractionTypeEnum.StringIsNotNull
+      value: common.FractionTypeEnum.StringIsNotNull,
+      operator: common.FractionOperatorEnum.And
     },
     {
       label: 'is not blank',
-      value: common.FractionTypeEnum.StringIsNotBlank
+      value: common.FractionTypeEnum.StringIsNotBlank,
+      operator: common.FractionOperatorEnum.And
     }
   ];
 

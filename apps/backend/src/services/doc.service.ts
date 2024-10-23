@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { format, fromUnixTime } from 'date-fns';
+import { format, fromUnixTime, getUnixTime } from 'date-fns';
+import { fromZonedTime } from 'date-fns-tz';
 import { forEachSeries } from 'p-iteration';
 import * as pgPromise from 'pg-promise';
 import pg from 'pg-promise/typescript/pg-subset';
@@ -218,7 +219,9 @@ ${inputSub}
               userCode: userCode
             });
 
-            xColumn.outputValue = rs.outValue || 'Error';
+            xColumn.outputValue = common.isDefined(rs.outValue)
+              ? rs.outValue
+              : 'Error';
             xColumn.outputError = rs.outError;
           }
 
@@ -529,8 +532,10 @@ Formula must return a valid JSON object.`;
         ...rep.rows
           .filter(row => row.rowType === common.RowTypeEnum.Metric)
           .map(row => {
-            let values = recordsByColumn.map(
-              r => r.fields[row.rowId] || 'NULL'
+            let values = recordsByColumn.map(r =>
+              common.isDefined(r.fields[row.rowId])
+                ? r.fields[row.rowId]
+                : 'NULL'
             );
             let str = `    unnest(ARRAY[${values}]::numeric[]) AS ${row.rowId}`;
             return str;
@@ -633,42 +638,86 @@ FROM main;`;
           common.isDefined(row.formulaError)
         ) {
           row.topQueryError = row.formulaError;
-          row.records = recordsByColumn.map((y: any, index) => ({
-            id: index + 1,
-            key: Number(y.fields['timestamp'].toString().split('.')[0]),
-            value: undefined,
-            error: undefined
-          }));
+          row.records = recordsByColumn.map((y: any, index) => {
+            let unixTime = Number(
+              y.fields['timestamp'].toString().split('.')[0]
+            );
+            let unixDate = new Date(unixTime * 1000);
+            let tsShifted = getUnixTime(fromZonedTime(unixDate, timezone));
+
+            let record = {
+              id: index + 1,
+              key: unixTime,
+              tsShifted: tsShifted,
+              value: undefined as any,
+              error: undefined as any
+            };
+
+            return record;
+          });
         } else if (
           row.rowType === common.RowTypeEnum.Formula &&
           common.isDefined(topQueryError)
         ) {
           row.topQueryError = topQueryError;
-          row.records = recordsByColumn.map((y: any, index) => ({
-            id: index + 1,
-            key: Number(y.fields['timestamp'].toString().split('.')[0]),
-            value: undefined,
-            error: undefined
-          }));
+          row.records = recordsByColumn.map((y: any, index) => {
+            let unixTime = Number(
+              y.fields['timestamp'].toString().split('.')[0]
+            );
+            let unixDate = new Date(unixTime * 1000);
+            let tsShifted = getUnixTime(fromZonedTime(unixDate, timezone));
+
+            let record = {
+              id: index + 1,
+              key: unixTime,
+              tsShifted: tsShifted,
+              value: undefined as any,
+              error: undefined as any
+            };
+
+            return record;
+          });
         } else if (
           row.rowType === common.RowTypeEnum.Metric &&
           common.isDefined(topQueryError)
         ) {
           row.topQueryError = topQueryError;
-          row.records = recordsByColumn.map((y: any, index) => ({
-            id: index + 1,
-            key: Number(y.fields['timestamp'].toString().split('.')[0]),
-            value: y.fields[row.rowId],
-            error: undefined
-          }));
+
+          row.records = recordsByColumn.map((y: any, index) => {
+            let unixTime = Number(
+              y.fields['timestamp'].toString().split('.')[0]
+            );
+            let unixDate = new Date(unixTime * 1000);
+            let tsShifted = getUnixTime(fromZonedTime(unixDate, timezone));
+
+            let record = {
+              id: index + 1,
+              key: unixTime,
+              tsShifted: tsShifted,
+              value: y.fields[row.rowId],
+              error: undefined as any
+            };
+
+            return record;
+          });
         } else if (common.isUndefined(topQueryError)) {
           row.topQueryError = undefined;
-          row.records = topQueryData.map((y: any, index) => ({
-            id: index + 1,
-            key: Number(y.timestamp.toString().split('.')[0]),
-            value: y[row.rowId.toLowerCase()],
-            error: undefined
-          }));
+
+          row.records = topQueryData.map((y: any, index) => {
+            let unixTime = Number(y.timestamp.toString().split('.')[0]);
+            let unixDate = new Date(unixTime * 1000);
+            let tsShifted = getUnixTime(fromZonedTime(unixDate, timezone));
+
+            let record = {
+              id: index + 1,
+              key: unixTime,
+              tsShifted: tsShifted,
+              value: y[row.rowId.toLowerCase()],
+              error: undefined as any
+            };
+
+            return record;
+          });
         }
 
         let rq = row.rqs.find(

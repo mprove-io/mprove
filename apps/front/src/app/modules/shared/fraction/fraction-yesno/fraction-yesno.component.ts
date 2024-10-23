@@ -30,10 +30,12 @@ export class FractionYesnoComponent {
 
   fractionYesnoTypesList: FractionTypeItem[] = [
     {
+      operator: common.FractionOperatorEnum.Or,
       label: 'is any value',
       value: common.FractionTypeEnum.YesnoIsAnyValue
     },
     {
+      operator: common.FractionOperatorEnum.Or,
       label: 'is',
       value: common.FractionTypeEnum.YesnoIs
     }

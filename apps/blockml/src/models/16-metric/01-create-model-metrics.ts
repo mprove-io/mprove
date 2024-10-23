@@ -38,6 +38,8 @@ export function createModelMetrics(
       let timeAsName = timeAr[0];
       let timeFieldName = timeAr[1];
 
+      let timeNodeLabel: string;
+      let timeFieldLabel: string;
       let timeLabel: string;
 
       if (timeAsName === constants.MF) {
@@ -45,7 +47,9 @@ export function createModelMetrics(
           mField => mField.groupId === timeFieldName
         );
 
-        timeLabel = `Model Fields  ${timeFields[0].group_label}`;
+        timeNodeLabel = 'Model Fields';
+        timeFieldLabel = timeFields[0].group_label;
+        timeLabel = `${timeNodeLabel} ${timeFieldLabel}`;
       } else {
         let join = model.joins.find(j => j.as === timeAsName);
 
@@ -53,7 +57,9 @@ export function createModelMetrics(
           vField => vField.groupId === timeFieldName
         );
 
-        timeLabel = `${join.label} ${timeFields[0].group_label}`;
+        timeNodeLabel = join.label;
+        timeFieldLabel = timeFields[0].group_label;
+        timeLabel = `${timeNodeLabel} ${timeFieldLabel}`;
       }
 
       model.fields
@@ -128,7 +134,10 @@ export function createModelMetrics(
           let topLabel = model.label;
 
           let partId = `model_fields_${modelField.name}`;
-          let partLabel = `Model Fields ${modelField.label}`;
+
+          let partNodeLabel = 'Model Fields';
+          let partFieldLabel = modelField.label;
+          let partLabel = `${partNodeLabel} ${partFieldLabel}`;
 
           let modelMetric: common.ModelMetric = {
             metricId: `${model.name}_${partId}_by_${timeId}`,
@@ -140,11 +149,15 @@ export function createModelMetrics(
             fieldId: `mf.${modelField.name}`,
             fieldClass: modelField.fieldClass,
             timeFieldId: element.time,
+            timeNodeLabel: timeNodeLabel,
+            timeFieldLabel: timeFieldLabel,
             timeLabel: timeLabel,
             params: [],
             structId: structId,
             type: common.MetricTypeEnum.Model,
             label: `${topLabel} ${partLabel} by ${timeLabel}`,
+            partNodeLabel: partNodeLabel,
+            partFieldLabel: partFieldLabel,
             partLabel: partLabel,
             description: modelField.description,
             formatNumber: modelField.format_number,
@@ -205,7 +218,10 @@ export function createModelMetrics(
             let topLabel = model.label;
 
             let partId = `${join.as}_${viewField.name}`;
-            let partLabel = `${join.label} ${viewField.label}`;
+
+            let partNodeLabel = join.label;
+            let partFieldLabel = viewField.label;
+            let partLabel = `${partNodeLabel} ${partFieldLabel}`;
 
             let modelMetric: common.ModelMetric = {
               metricId: `${model.name}_${partId}_by_${timeId}`,
@@ -217,11 +233,15 @@ export function createModelMetrics(
               fieldId: `${join.as}.${viewField.name}`,
               fieldClass: viewField.fieldClass,
               timeFieldId: element.time,
+              timeNodeLabel: timeNodeLabel,
+              timeFieldLabel: timeFieldLabel,
               timeLabel: timeLabel,
               params: [],
               structId: structId,
               type: common.MetricTypeEnum.Model,
               label: `${topLabel} ${partLabel} by ${timeLabel}`,
+              partNodeLabel: partNodeLabel,
+              partFieldLabel: partFieldLabel,
               partLabel: partLabel,
               description: viewField.description,
               formatNumber: viewField.format_number,

@@ -31,23 +31,28 @@ export class FractionMonthNameComponent {
   fractionMonthNameTypesList: FractionTypeItem[] = [
     {
       label: 'is any value',
-      value: common.FractionTypeEnum.MonthNameIsAnyValue
+      value: common.FractionTypeEnum.MonthNameIsAnyValue,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is',
-      value: common.FractionTypeEnum.MonthNameIs
+      value: common.FractionTypeEnum.MonthNameIs,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is null',
-      value: common.FractionTypeEnum.MonthNameIsNull
+      value: common.FractionTypeEnum.MonthNameIsNull,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is not',
-      value: common.FractionTypeEnum.MonthNameIsNot
+      value: common.FractionTypeEnum.MonthNameIsNot,
+      operator: common.FractionOperatorEnum.And
     },
     {
       label: 'is not null',
-      value: common.FractionTypeEnum.MonthNameIsNotNull
+      value: common.FractionTypeEnum.MonthNameIsNotNull,
+      operator: common.FractionOperatorEnum.And
     }
   ];
 

@@ -31,23 +31,28 @@ export class FractionQuarterOfYearComponent {
   fractionQuarterOfYearTypesList: FractionTypeItem[] = [
     {
       label: 'is any value',
-      value: common.FractionTypeEnum.QuarterOfYearIsAnyValue
+      value: common.FractionTypeEnum.QuarterOfYearIsAnyValue,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is',
-      value: common.FractionTypeEnum.QuarterOfYearIs
+      value: common.FractionTypeEnum.QuarterOfYearIs,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is null',
-      value: common.FractionTypeEnum.QuarterOfYearIsNull
+      value: common.FractionTypeEnum.QuarterOfYearIsNull,
+      operator: common.FractionOperatorEnum.Or
     },
     {
       label: 'is not',
-      value: common.FractionTypeEnum.QuarterOfYearIsNot
+      value: common.FractionTypeEnum.QuarterOfYearIsNot,
+      operator: common.FractionOperatorEnum.And
     },
     {
       label: 'is not null',
-      value: common.FractionTypeEnum.QuarterOfYearIsNotNull
+      value: common.FractionTypeEnum.QuarterOfYearIsNotNull,
+      operator: common.FractionOperatorEnum.And
     }
   ];
 

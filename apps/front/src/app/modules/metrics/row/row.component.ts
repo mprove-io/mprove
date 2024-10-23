@@ -392,14 +392,12 @@ export class RowComponent {
     });
   }
 
-  deleteRow() {
-    this.uiQuery.getValue().gridApi.deselectAll();
-
+  clearRows() {
     this.repService.modifyRows({
       rep: this.rep,
-      changeType: common.ChangeTypeEnum.Delete,
+      changeType: common.ChangeTypeEnum.Clear,
       rowChange: undefined,
-      rowIds: [this.repSelectedNode.data.rowId]
+      rowIds: this.repSelectedNodes.map(node => node.data.rowId)
     });
   }
 
@@ -409,24 +407,6 @@ export class RowComponent {
     this.repService.modifyRows({
       rep: this.rep,
       changeType: common.ChangeTypeEnum.Delete,
-      rowChange: undefined,
-      rowIds: this.repSelectedNodes.map(node => node.data.rowId)
-    });
-  }
-
-  clearRow() {
-    this.repService.modifyRows({
-      rep: this.rep,
-      changeType: common.ChangeTypeEnum.Clear,
-      rowChange: undefined,
-      rowIds: [this.repSelectedNode.data.rowId]
-    });
-  }
-
-  clearRows() {
-    this.repService.modifyRows({
-      rep: this.rep,
-      changeType: common.ChangeTypeEnum.Clear,
       rowChange: undefined,
       rowIds: this.repSelectedNodes.map(node => node.data.rowId)
     });

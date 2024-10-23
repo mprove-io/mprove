@@ -237,7 +237,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
                   let columnLabel = common.formatTs({
                     timeSpec: timeSpec,
-                    unixTime: Number(params.datum[params.xKey])
+                    unixTimeZoned: Number(params.datum[params.xKey])
                   });
 
                   let formattedValue = common.isDefined(
@@ -283,7 +283,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
                   return common.formatTs({
                     timeSpec: timeSpec,
-                    unixTime: params.value
+                    unixTimeZoned: params.value
                   });
                 }
               }

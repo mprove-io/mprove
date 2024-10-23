@@ -423,7 +423,7 @@ export class RunCommand extends CustomCommand {
     let waitQueries: common.Query[] = [];
 
     if (this.wait === true) {
-      this.sleep = this.sleep || 3;
+      this.sleep = common.isDefined(this.sleep) ? this.sleep : 3;
 
       await common.sleep(this.sleep * 1000);
 

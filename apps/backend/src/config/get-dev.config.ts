@@ -139,7 +139,9 @@ export function getDevConfig(envFilePath: any) {
     smtpHost: process.env.BACKEND_SMTP_HOST || envFile.BACKEND_SMTP_HOST,
 
     smtpPort: Number(
-      process.env.BACKEND_SMTP_PORT || envFile.BACKEND_SMTP_PORT
+      common.isDefined(process.env.BACKEND_SMTP_PORT)
+        ? process.env.BACKEND_SMTP_PORT
+        : envFile.BACKEND_SMTP_PORT
     ),
 
     smtpSecure: <common.BoolEnum>(
@@ -172,7 +174,9 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_MYSQL_HOST || envFile.BACKEND_MYSQL_HOST,
 
     backendMysqlPort: Number(
-      process.env.BACKEND_MYSQL_PORT || envFile.BACKEND_MYSQL_PORT
+      common.isDefined(process.env.BACKEND_MYSQL_PORT)
+        ? process.env.BACKEND_MYSQL_PORT
+        : envFile.BACKEND_MYSQL_PORT
     ),
 
     backendMysqlUsername:

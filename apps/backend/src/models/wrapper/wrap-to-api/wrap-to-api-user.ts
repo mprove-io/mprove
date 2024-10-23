@@ -21,12 +21,6 @@ export function wrapToApiUser(user: entities.UserEntity): common.User {
         ? user.ui?.metricsColumnNameWidth
         : constants.DEFAULT_UI.metricsColumnNameWidth,
 
-      metricsColumnParametersWidth: common.isDefined(
-        user.ui?.metricsColumnParametersWidth
-      )
-        ? user.ui?.metricsColumnParametersWidth
-        : constants.DEFAULT_UI.metricsColumnParametersWidth,
-
       metricsTimeColumnsNarrowWidth: common.isDefined(
         user.ui?.metricsTimeColumnsNarrowWidth
       )

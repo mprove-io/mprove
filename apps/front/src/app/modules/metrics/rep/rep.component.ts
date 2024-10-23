@@ -26,8 +26,6 @@ import { ChartRendererComponent } from './chart-renderer/chart-renderer.componen
 import { DataRendererComponent } from './data-renderer/data-renderer.component';
 import { MetricHeaderComponent } from './metric-header/metric-header.component';
 import { MetricRendererComponent } from './metric-renderer/metric-renderer.component';
-import { ParametersHeaderComponent } from './parameters-header/parameters-header.component';
-import { ParametersRendererComponent } from './parameters-renderer/parameters-renderer.component';
 import { RowIdHeaderComponent } from './row-id-header/row-id-header.component';
 import { RowIdRendererComponent } from './row-id-renderer/row-id-renderer.component';
 import { StatusHeaderComponent } from './status-header/status-header.component';
@@ -59,13 +57,11 @@ export class RepComponent {
         let columns = this.agGridApi.getColumns();
 
         let nameColumn = columns.find(x => x.getColId() === 'name');
-        let parametersColumn = columns.find(x => x.getColId() === 'parameters');
 
         let uiState = this.uiQuery.getValue();
 
         this.uiQuery.updatePart({
           metricsColumnNameWidth: nameColumn.getActualWidth(),
-          metricsColumnParametersWidth: parametersColumn.getActualWidth(),
           metricsTimeColumnsNarrowWidth:
             ['name', 'parameters'].indexOf(paramsColumn.colId) > -1
               ? uiState.metricsTimeColumnsNarrowWidth
@@ -90,7 +86,6 @@ export class RepComponent {
 
         this.uiService.setUserUi({
           metricsColumnNameWidth: uiState.metricsColumnNameWidth,
-          metricsColumnParametersWidth: uiState.metricsColumnParametersWidth,
           metricsTimeColumnsNarrowWidth: uiState.metricsTimeColumnsNarrowWidth,
           metricsTimeColumnsWideWidth: uiState.metricsTimeColumnsWideWidth
         });
@@ -109,7 +104,7 @@ export class RepComponent {
       rowDrag: true,
       resizable: false,
       pinned: 'left',
-      width: 90,
+      width: 130,
       headerComponent: RowIdHeaderComponent,
       cellRenderer: RowIdRendererComponent
       // ,
@@ -118,16 +113,9 @@ export class RepComponent {
     {
       field: 'name',
       pinned: 'left',
-      minWidth: 314,
+      minWidth: 450, // metricsColumnNameWidth
       headerComponent: MetricHeaderComponent,
       cellRenderer: MetricRendererComponent
-    },
-    {
-      field: 'parameters',
-      pinned: 'left',
-      minWidth: 60,
-      headerComponent: ParametersHeaderComponent,
-      cellRenderer: ParametersRendererComponent
     },
     {
       field: 'status' as any,
@@ -205,11 +193,8 @@ export class RepComponent {
         let uiState = this.uiQuery.getValue();
 
         let nameColumn = this.columns.find(c => c.field === 'name');
-        let parametersColumn = this.columns.find(c => c.field === 'parameters');
 
         nameColumn.width = uiState.metricsColumnNameWidth;
-
-        parametersColumn.width = uiState.metricsColumnParametersWidth;
 
         this.timeColumns = this.rep.columns.map(column => {
           let columnDef: ColDef<DataRow> = {
@@ -450,7 +435,7 @@ export class RepComponent {
   }
 
   getRowHeight(params: RowHeightParams<DataRow>): number | undefined | null {
-    let rowHeight = 0;
+    let rowHeight = 42;
 
     if (common.isDefined(params.data.mconfig)) {
       let totalConditions = 0;
@@ -461,7 +446,7 @@ export class RepComponent {
         }
       });
 
-      if (totalConditions > 1) {
+      if (totalConditions > 0) {
         params.data.parameters.forEach(x => {
           if (common.isDefined(x.conditions)) {
             x.conditions.forEach(y => {
@@ -476,13 +461,21 @@ export class RepComponent {
       }
     }
 
-    let minRowHeight =
+    // let minRowHeight =
+    //   params.data.rowType === common.RowTypeEnum.Metric &&
+    //   params.data.showParametersJson === true
+    //     ? countLines({ input: params.data.parametersJson, lines: 1 }) * 20 + 8
+    //     : 42;
+
+    // let finalRowHeight = Math.max(rowHeight, minRowHeight);
+
+    let jsonRowHeight =
       params.data.rowType === common.RowTypeEnum.Metric &&
       params.data.showParametersJson === true
         ? countLines({ input: params.data.parametersJson, lines: 1 }) * 20 + 8
-        : 42;
+        : 0;
 
-    let finalRowHeight = Math.max(rowHeight, minRowHeight);
+    let finalRowHeight = rowHeight + jsonRowHeight;
 
     let heightLimit = 600;
 
