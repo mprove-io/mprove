@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { getUnixTime } from 'date-fns';
+import { fromZonedTime } from 'date-fns-tz';
 import { forEachSeries } from 'p-iteration';
 import { In } from 'typeorm';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
@@ -963,16 +965,27 @@ export class RepsService {
         );
 
         row.records = common.isDefined(row.query)
-          ? recordsByColumn.map((y: any) => ({
-              id: y.id,
-              key: Number(y.fields.timestamp.toString().split('.')[0]),
-              value: common.isDefined(y.fields)
-                ? y.fields[row.rowId]
-                : undefined,
-              error: common.isDefined(y.errors)
-                ? y.errors[row.rowId]
-                : undefined
-            }))
+          ? recordsByColumn.map((y: any) => {
+              let unixTime = Number(
+                y.fields.timestamp.toString().split('.')[0]
+              );
+              let unixDate = new Date(unixTime * 1000);
+              let tsShifted = getUnixTime(fromZonedTime(unixDate, timezone));
+
+              let record = {
+                id: y.id,
+                key: unixTime,
+                tsShifted: tsShifted,
+                value: common.isDefined(y.fields)
+                  ? y.fields[row.rowId]
+                  : undefined,
+                error: common.isDefined(y.errors)
+                  ? y.errors[row.rowId]
+                  : undefined
+              };
+
+              return record;
+            })
           : common.isDefined(rq.kitId)
           ? kits.find(k => k.kit_id === rq.kitId).data
           : [];

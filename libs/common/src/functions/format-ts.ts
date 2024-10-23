@@ -3,11 +3,11 @@ import { enums } from '~common/barrels/enums';
 
 export function formatTs(item: {
   timeSpec: enums.TimeSpecEnum;
-  unixTime: number;
+  unixTimeZoned: number;
 }) {
-  let { timeSpec, unixTime } = item;
+  let { timeSpec, unixTimeZoned } = item;
 
-  let date = fromUnixTime(unixTime);
+  let date = fromUnixTime(unixTimeZoned);
 
   return timeSpec === enums.TimeSpecEnum.Years
     ? format(date, 'yyyy')
@@ -23,5 +23,5 @@ export function formatTs(item: {
     ? format(date, 'HH:mm dd MMM yyyy')
     : timeSpec === enums.TimeSpecEnum.Minutes
     ? format(date, 'HH:mm dd MMM yyyy')
-    : `${unixTime}`;
+    : `${unixTimeZoned}`;
 }

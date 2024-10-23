@@ -56,7 +56,11 @@ export class DataRendererComponent implements ICellRendererAngularComp {
       common.isDefined(this.params.data.mconfig) &&
       this.params.data.rowType === common.RowTypeEnum.Metric
     ) {
-      let ts = Number(this.params.colDef.field) * 1000;
+      let rowDataRecord = this.params.data.records.find(
+        x => x.key === Number(this.params.colDef.field)
+      );
+
+      let ts = rowDataRecord.tsShifted * 1000;
 
       let { date, dateStr, timeStr } =
         this.timeService.getDateTimeStrFromEpochMs({
