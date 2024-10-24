@@ -73,7 +73,8 @@ export function transformTimes<T extends types.vmType>(
         common.TimeframeEnum.Week,
         common.TimeframeEnum.Date,
         common.TimeframeEnum.Hour,
-        common.TimeframeEnum.Minute
+        common.TimeframeEnum.Minute,
+        common.TimeframeEnum.Time
       ].forEach(timeframe => {
         if (field.timeframes.findIndex(t => t === timeframe) < 0) {
           field.timeframes.push(timeframe);

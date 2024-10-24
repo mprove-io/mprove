@@ -63,7 +63,7 @@ test('1', async t => {
   t.is(errors.length, 0);
   t.is(entViews.length, 1);
 
-  t.is(entViews[0].fields.length, 9);
+  t.is(entViews[0].fields.length, 10);
 
   t.is(entViews[0].fields[0].sqlReal, 'd1');
 
@@ -72,7 +72,7 @@ test('1', async t => {
     "TO_CHAR(DATE_TRUNC('month', mprovetimestampstart(d1) + t1mprovetimestampend), 'YYYY-MM')"
   );
   t.is(
-    entViews[0].fields[8].sqlReal,
+    entViews[0].fields[9].sqlReal,
     "(TO_CHAR(DATE_TRUNC('month', mprovetimestampstart(d1) + t1mprovetimestampend), 'YYYY-MM')) + d2"
   );
 
@@ -96,6 +96,9 @@ test('1', async t => {
     time1___quarter: {
       dim1: 8
     },
+    time1___time: {
+      dim1: 8
+    },
     time1___week: {
       dim1: 8
     },
@@ -112,6 +115,7 @@ test('1', async t => {
     time1___minute: {},
     time1___month: {},
     time1___quarter: {},
+    time1___time: {},
     time1___week: {},
     time1___year: {}
   });

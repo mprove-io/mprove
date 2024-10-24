@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildModelMetric;
 let func = common.FuncEnum.CheckBuildMetrics;
-let testId = 'e__build-metrics-unknown-parameter';
+let testId = 'e__wrong-time-view-field';
 
 test('1', async t => {
   let errors: BmError[];
@@ -62,6 +62,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entModels.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.BUILD_METRICS_UNKNOWN_PARAMETER);
+  t.is(errors[0].title, common.ErTitleEnum.WRONG_TIME_VIEW_FIELD);
   t.is(errors[0].lines[0].line, 4);
 });
