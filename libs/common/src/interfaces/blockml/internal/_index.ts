@@ -9,6 +9,7 @@ export * from './file-2-path-content';
 export * from './file-3';
 export * from './file-api';
 export * from './file-basic';
+export * from './file-build-metrics-time';
 export * from './file-chart-axis';
 export * from './file-chart-data';
 export * from './file-chart-options';
