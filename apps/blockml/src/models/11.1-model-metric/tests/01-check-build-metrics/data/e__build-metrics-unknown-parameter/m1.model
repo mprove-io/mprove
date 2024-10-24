@@ -1,0 +1,7 @@
+model: m1
+connection: c1
+build_metrics:
+- unk: orders.created
+joins:
+- from_view: v1
+  as: orders

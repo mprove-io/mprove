@@ -98,6 +98,9 @@ export enum FuncEnum {
   AwcCheckApplyFilter = '11-sql-always-where-calc/07-awc-check-apply-filter',
   AwcUpdateAlwaysJoinUnique = '11-sql-always-where-calc/08-awc-update-always-join-unique',
 
+  CheckBuildMetrics = '11.1-model-metric/01-check-build-metrics',
+  CreateModelMetrics = '11.1-model-metric/02-create-model-metrics',
+
   CheckDashboardAccess = '12-dashboard/01-check-dashboard-access',
   CheckDashboardFilterDefaults = '12-dashboard/02-check-dashboard-filter-defaults',
   CheckDashboardReportsExist = '12-dashboard/03-check-dashboard-reports-exist',
@@ -123,8 +126,6 @@ export enum FuncEnum {
   CheckChartAxisParameters = '15-chart/04-check-chart-axis-parameters',
   CheckChartOptionsParameters = '15-chart/05-check-chart-options-parameters',
   CheckChartTileParameters = '15-chart/06-check-chart-tile-parameters',
-
-  CreateModelMetrics = '16-metric/01-create-model-metrics',
 
   CheckRep = '17-rep/01-check-rep',
   CheckRepAccess = '17-rep/02-check-rep-access',

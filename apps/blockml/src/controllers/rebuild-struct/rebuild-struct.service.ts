@@ -389,6 +389,20 @@ export class RebuildStructService {
       this.cs
     );
 
+    let buildModelMetricResult = barBuilder.buildModelMetric(
+      {
+        metrics: metrics,
+        models: models,
+        structId: item.structId,
+        errors: errors,
+        caller: common.CallerEnum.BuildModelMetric
+      },
+      this.cs
+    );
+
+    models = buildModelMetricResult.models;
+    let commonMetrics = buildModelMetricResult.metrics;
+
     dashboards = barBuilder.buildDashboard(
       {
         dashboards: dashboards,
@@ -458,17 +472,6 @@ export class RebuildStructService {
         structId: item.structId,
         errors: errors,
         caller: common.CallerEnum.BuildVizChart
-      },
-      this.cs
-    );
-
-    let commonMetrics = barBuilder.buildMetric(
-      {
-        metrics: metrics,
-        models: models,
-        structId: item.structId,
-        errors: errors,
-        caller: common.CallerEnum.BuildMetric
       },
       this.cs
     );

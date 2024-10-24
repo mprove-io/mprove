@@ -14,6 +14,7 @@ export enum CallerEnum {
   BuildSortJoins = '09-BuildSortJoins',
   BuildSqlAlwaysWhere = '10-BuildSqlAlwaysWhere',
   BuildSqlAlwaysWhereCalc = '11-BuildSqlAlwaysWhereCalc',
+  BuildModelMetric = '11.1-BuildModelMetric',
   BuildDashboard = '12-BuildDashboard',
   BuildViz = '13-BuildViz',
 
@@ -22,8 +23,6 @@ export enum CallerEnum {
 
   BuildDashboardChart = '15-BuildDashboardChart',
   BuildVizChart = '15-BuildVizChart',
-
-  BuildMetric = '16-BuildMetric',
 
   BuildRep = '17-BuildRep',
 
