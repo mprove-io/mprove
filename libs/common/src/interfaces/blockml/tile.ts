@@ -1,0 +1,36 @@
+import { IsNumber, IsString } from 'class-validator';
+import { IsTimezone } from '~common/functions/is-timezone';
+
+export class Tile {
+  @IsString()
+  modelId: string;
+
+  @IsString()
+  modelLabel: string;
+
+  @IsString()
+  mconfigId: string;
+
+  @IsTimezone()
+  timezone: string;
+
+  @IsString()
+  queryId: string;
+
+  listen: { [a: string]: string };
+
+  @IsString()
+  title: string;
+
+  @IsNumber()
+  plateWidth: number;
+
+  @IsNumber()
+  plateHeight: number;
+
+  @IsNumber()
+  plateX: number;
+
+  @IsNumber()
+  plateY: number;
+}

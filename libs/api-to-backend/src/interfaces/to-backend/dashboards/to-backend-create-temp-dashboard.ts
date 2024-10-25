@@ -40,8 +40,8 @@ export class ToBackendCreateTempDashboardRequestPayload {
   newDashboardFields: common.DashboardField[];
 
   @ValidateNested()
-  @Type(() => common.Report)
-  reports: common.Report[];
+  @Type(() => common.Tile)
+  tiles: common.Tile[];
 }
 
 export class ToBackendCreateTempDashboardRequest extends ToBackendRequest {

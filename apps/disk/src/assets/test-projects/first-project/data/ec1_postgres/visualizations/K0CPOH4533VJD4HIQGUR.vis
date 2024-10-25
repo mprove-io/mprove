@@ -1,5 +1,5 @@
 vis: K0CPOH4533VJD4HIQGUR
-reports:
+tiles:
 - title: Dynamics of sales and profit
   model: ec1_m1
   select:

@@ -1,6 +1,6 @@
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
-import { makeReportsX } from '~backend/functions/make-reports-x';
+import { makeTilesX } from '~backend/functions/make-tiles-x';
 
 export function wrapToApiViz(item: {
   viz: entities.VizEntity;
@@ -39,8 +39,8 @@ export function wrapToApiViz(item: {
     accessRoles: viz.access_roles,
     gr: viz.gr,
     hidden: common.enumToBoolean(viz.hidden),
-    reports: makeReportsX({
-      reports: viz.reports,
+    tiles: makeTilesX({
+      tiles: viz.tiles,
       mconfigs: mconfigs,
       queries: queries,
       isAddMconfigAndQuery: isAddMconfigAndQuery,

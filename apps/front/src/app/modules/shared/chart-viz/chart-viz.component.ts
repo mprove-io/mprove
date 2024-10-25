@@ -6,7 +6,7 @@ import {
   OnInit
 } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { interval, of, Subscription } from 'rxjs';
+import { Subscription, interval, of } from 'rxjs';
 import { concatMap, take, tap } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -28,7 +28,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   queryStatusRunning = common.QueryStatusEnum.Running;
 
   @Input()
-  report: common.Report;
+  tile: common.Tile;
 
   @Input()
   title: string;
@@ -109,8 +109,8 @@ export class ChartVizComponent implements OnInit, OnDestroy {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
-            query = resp.payload.viz.reports[0].query;
-            mconfig = resp.payload.viz.reports[0].mconfig;
+            query = resp.payload.viz.tiles[0].query;
+            mconfig = resp.payload.viz.tiles[0].mconfig;
           }
         })
       )
@@ -179,11 +179,11 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   explore(event?: MouseEvent) {
     event.stopPropagation();
 
-    if (this.viz.reports[0].hasAccessToModel === true) {
+    if (this.viz.tiles[0].hasAccessToModel === true) {
       this.navigateService.navigateMconfigQuery({
-        modelId: this.report.modelId,
-        mconfigId: this.report.mconfigId,
-        queryId: this.report.queryId
+        modelId: this.tile.modelId,
+        mconfigId: this.tile.mconfigId,
+        queryId: this.tile.queryId
       });
     }
   }
@@ -254,7 +254,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       mconfig: this.mconfig,
       query: this.query,
       qData: this.qData,
-      canAccessModel: this.viz.reports[0].hasAccessToModel,
+      canAccessModel: this.viz.tiles[0].hasAccessToModel,
       showNav: true,
       isSelectValid: this.isSelectValid,
       dashboardId: undefined,

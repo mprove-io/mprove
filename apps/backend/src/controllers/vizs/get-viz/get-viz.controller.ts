@@ -91,7 +91,7 @@ export class GetVizController {
 
     let mconfig = await this.mconfigsService.getMconfigCheckExists({
       structId: bridge.struct_id,
-      mconfigId: viz.reports[0].mconfigId
+      mconfigId: viz.tiles[0].mconfigId
     });
 
     let model = await this.modelsService.getModelCheckExists({

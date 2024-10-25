@@ -423,7 +423,7 @@ export class RebuildStructService {
       this.cs
     );
 
-    dashboards = await barBuilder.buildReport(
+    dashboards = await barBuilder.buildTile(
       {
         traceId: item.traceId,
 
@@ -433,13 +433,13 @@ export class RebuildStructService {
         weekStart: projectConfig.week_start,
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildDashboardReport
+        caller: common.CallerEnum.BuildDashboardTile
       },
       this.cs,
       this.rabbitService
     );
 
-    vizs = await barBuilder.buildReport(
+    vizs = await barBuilder.buildTile(
       {
         traceId: item.traceId,
         entities: vizs,
@@ -448,7 +448,7 @@ export class RebuildStructService {
         weekStart: projectConfig.week_start,
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildVizReport
+        caller: common.CallerEnum.BuildVizTile
       },
       this.cs,
       this.rabbitService

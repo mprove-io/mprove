@@ -66,7 +66,7 @@ export class DashboardsService {
       });
     }
 
-    let mconfigIds = dashboard.reports.map(x => x.mconfigId);
+    let mconfigIds = dashboard.tiles.map(x => x.mconfigId);
     let mconfigs =
       mconfigIds.length === 0
         ? []
@@ -76,7 +76,7 @@ export class DashboardsService {
             }
           });
 
-    let queryIds = dashboard.reports.map(x => x.queryId);
+    let queryIds = dashboard.tiles.map(x => x.queryId);
     let queries =
       queryIds.length === 0
         ? []

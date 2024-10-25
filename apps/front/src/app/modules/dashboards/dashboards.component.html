@@ -35,12 +35,12 @@
 
         <div class="ml-10 flex flex-row items-center space-x-5">
           <ui-switch
-            [checked]="showReports"
-            (change)="toggleShowReports()"
+            [checked]="showTiles"
+            (change)="toggleShowTiles()"
           ></ui-switch>
 
           <div class="text-gray1 flex h-9 select-none items-center text-base"
-            >Show Reports</div
+            >Show Tiles</div
           >
         </div>
 
@@ -175,9 +175,7 @@
               <div class="flex w-1/6">File</div>
               <div class="flex w-1/3">Dashboard</div>
               <div class="flex flex-1 flex-row space-x-5">
-                <div class="flex flex-1" *ngIf="showReports === true"
-                  >Model</div
-                >
+                <div class="flex flex-1" *ngIf="showTiles === true">Model</div>
                 <div class="flex flex-1">Access Roles</div>
                 <div class="flex flex-1">Access Users</div>
                 <div class="flex flex-1">Author</div>
@@ -270,7 +268,7 @@
                     <div
                       class="flex w-1/3 cursor-pointer truncate py-3 hover:text-blue-500"
                       [ngClass]="{
-                        'font-semibold': showReports === true
+                        'font-semibold': showTiles === true
                       }"
                       (click)="navigateToDashboard(item.dashboardId)"
                     >
@@ -282,7 +280,7 @@
                     <div
                       class="flex flex-1 cursor-default flex-row space-x-5 text-base"
                     >
-                      <div class="flex flex-1" *ngIf="showReports === true">
+                      <div class="flex flex-1" *ngIf="showTiles === true">
                       </div>
 
                       <div
@@ -332,29 +330,29 @@
                   </div>
 
                   <div
-                    *ngIf="showReports === true"
+                    *ngIf="showTiles === true"
                     class="mb-5 mt-3 flex-1 flex-col space-y-3"
                   >
                     <div
-                      *ngFor="let report of item.reports"
+                      *ngFor="let tile of item.tiles"
                       class="flex flex-row space-x-5 text-base"
                     >
                       <div class="flex w-12 cursor-default"></div>
                       <div class="flex w-1/6 cursor-default"></div>
 
                       <div
-                        (click)="showChart(report, item.dashboardId)"
+                        (click)="showChart(tile, item.dashboardId)"
                         class="text-gray1 flex w-1/3 cursor-pointer flex-row items-center hover:text-blue-500"
                       >
                         <div class="flex flex-wrap truncate pl-5">
                           <span class="truncate">
-                            {{ report.title | capitalize }}
+                            {{ tile.title | capitalize }}
                           </span>
                         </div>
 
                         <div class="relative mx-5 flex h-2 w-9 flex-shrink-0">
                           <ngx-spinner
-                            [name]="report.mconfigId"
+                            [name]="tile.mconfigId"
                             color="rgba(54, 94, 224, 100)"
                             bdColor="rgba(0, 0, 0, 0)"
                             size="default"
@@ -367,7 +365,7 @@
                       ></div>
 
                       <div class="flex flex-1 flex-row space-x-5">
-                        <ng-template #templateDashboardsReportModel>
+                        <ng-template #templateDashboardsTileModel>
                           <div *ngIf="isExplorer === false"
                             >Explorer role required</div
                           >
@@ -378,28 +376,27 @@
 
                         <div
                           class="flex flex-1 flex-row truncate"
-                          [tp]="templateDashboardsReportModel"
-                          [tpIsEnabled]="report.hasAccessToModel === false"
+                          [tp]="templateDashboardsTileModel"
+                          [tpIsEnabled]="tile.hasAccessToModel === false"
                         >
                           <button
                             class="flex cursor-default items-start truncate pr-10 focus:outline-none"
                             [ngClass]="{
                               'cursor-pointer hover:text-blue-500':
-                                report.hasAccessToModel === true,
-                              'cursor-default':
-                                report.hasAccessToModel === false
+                                tile.hasAccessToModel === true,
+                              'cursor-default': tile.hasAccessToModel === false
                             }"
-                            (click)="goToModel(report.modelId)"
-                            [disabled]="!report.hasAccessToModel"
+                            (click)="goToModel(tile.modelId)"
+                            [disabled]="!tile.hasAccessToModel"
                           >
                             <span class="truncate">
-                              {{ report.modelLabel | capitalize }}
+                              {{ tile.modelLabel | capitalize }}
                             </span>
                           </button>
 
                           <m-lock-closed-icon
                             class="mb-1 ml-2 text-gray-400"
-                            *ngIf="report.hasAccessToModel === false"
+                            *ngIf="tile.hasAccessToModel === false"
                           ></m-lock-closed-icon>
                         </div>
 

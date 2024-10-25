@@ -1,9 +1,0 @@
-dashboard: d1
-reports:  
-- title: t1
-  model: m1
-  select: 
-  - a.dim5
-  default_filters:
-    mf.dim2:
-    - '-bar-'

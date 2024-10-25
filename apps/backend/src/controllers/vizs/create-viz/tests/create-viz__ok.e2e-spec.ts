@@ -109,7 +109,7 @@ test('1', async t => {
         req: req1
       });
 
-    let newMconfig = resp1.payload.dashboard.reports[0].mconfig;
+    let newMconfig = resp1.payload.dashboard.tiles[0].mconfig;
 
     let req: apiToBackend.ToBackendCreateVizRequest = {
       info: {
@@ -124,7 +124,7 @@ test('1', async t => {
         envId: common.PROJECT_ENV_PROD,
         vizId: vizId,
         mconfig: newMconfig,
-        reportTitle: newTitle
+        tileTitle: newTitle
       }
     };
 

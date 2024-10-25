@@ -68,7 +68,7 @@ export function buildChart<T extends types.dzType>(
     cs
   );
 
-  entities = barChart.checkChartTileParameters(
+  entities = barChart.checkChartPlateParameters(
     {
       entities: entities,
       structId: item.structId,

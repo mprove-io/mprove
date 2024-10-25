@@ -77,13 +77,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
       ? searcher.search(this.word)
       : this.models;
 
-    this.filteredModels =
-      // common.isDefined(this.modelId)
-      //   ? this.modelsFilteredByWord.filter(
-      //       d => d.reports.map(rp => rp.modelId).indexOf(this.modelId) > -1
-      //     )
-      //   :
-      this.modelsFilteredByWord;
+    this.filteredModels = this.modelsFilteredByWord;
 
     this.filteredModels = this.filteredModels.sort((a, b) => {
       let aLabel = a.label || a.modelId;

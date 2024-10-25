@@ -228,7 +228,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       accessRoles: roles,
       accessUsers: users,
       dashboardTitle: newTitle,
-      reportsGrid: this.dashboard.reports.map(x => {
+      tilesGrid: this.dashboard.tiles.map(x => {
         let y = common.makeCopy(x);
         delete y.mconfig;
         delete y.query;
@@ -278,7 +278,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       accessRoles: roles,
       accessUsers: users,
       dashboardTitle: newTitle,
-      reportsGrid: this.dashboard.reports.map(x => {
+      tilesGrid: this.dashboard.tiles.map(x => {
         let y = common.makeCopy(x);
         delete y.mconfig;
         delete y.query;

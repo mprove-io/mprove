@@ -1,5 +1,5 @@
 vis: s_s1
-reports:
+tiles:
 - title: 'k'
   model: s_m1
   select:

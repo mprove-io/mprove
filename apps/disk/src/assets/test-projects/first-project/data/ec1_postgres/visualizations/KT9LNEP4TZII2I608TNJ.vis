@@ -1,5 +1,5 @@
 vis: KT9LNEP4TZII2I608TNJ
-reports:
+tiles:
 - title: Users by Age Group
   model: ec1_m1
   select:

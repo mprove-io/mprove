@@ -1,6 +1,6 @@
 import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
-import { wrapReports } from './wrap-reports';
+import { wrapTiles } from './wrap-tiles';
 
 export function wrapDashboards(item: {
   structId: string;
@@ -30,12 +30,12 @@ export function wrapDashboards(item: {
       });
     });
 
-    let { apiReports, mconfigs, queries } = wrapReports({
+    let { apiTiles, mconfigs, queries } = wrapTiles({
       orgId: orgId,
       projectId: projectId,
       structId: structId,
       models: models,
-      reports: x.reports,
+      tiles: x.tiles,
       envId: envId
     });
 
@@ -54,7 +54,7 @@ export function wrapDashboards(item: {
       gr: x.group,
       hidden: helper.toBooleanFromLowercaseString(x.hidden),
       fields: dashFields,
-      reports: apiReports,
+      tiles: apiTiles,
       temp: false,
       serverTs: 1
     });

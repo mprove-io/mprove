@@ -8,9 +8,9 @@ import {
   DashboardAddFilterDialogData
 } from '../modules/dashboard/dashboard-add-filter-dialog/dashboard-add-filter-dialog.component';
 import {
-  DashboardAddReportDialogComponent,
-  DashboardAddReportDialogData
-} from '../modules/dashboard/dashboard-add-report-dialog/dashboard-add-report-dialog.component';
+  DashboardAddTileDialogComponent,
+  DashboardAddTileDialogData
+} from '../modules/dashboard/dashboard-add-tile-dialog/dashboard-add-tile-dialog.component';
 import {
   DashboardEditListenersDialogComponent,
   DashboardEditListenersDialogData
@@ -349,8 +349,8 @@ export class MyDialogService {
     });
   }
 
-  showDashboardAddReport(item: DashboardAddReportDialogData): void {
-    this.dialogService.open(DashboardAddReportDialogComponent, {
+  showDashboardAddTile(item: DashboardAddTileDialogData): void {
+    this.dialogService.open(DashboardAddTileDialogComponent, {
       enableClose: false,
       closeButton: true,
       data: item,

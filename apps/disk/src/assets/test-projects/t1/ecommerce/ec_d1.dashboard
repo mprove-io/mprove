@@ -10,7 +10,7 @@ fields:
   default:
   - '[25, 35]'   
 
-reports:
+tiles:
 
 - title: Average sale price by category
   model: ec_m1
@@ -22,9 +22,9 @@ reports:
     order_date: b.created___date
     customer_age: c.age   
   type: table
-  tile:
-    tile_width: '4'
-    tile_height: '500'
+  plate:
+    plate_width: '4'
+    plate_height: '500'
 
 - title: Customers by gender
   model: ec_m1
@@ -42,9 +42,9 @@ reports:
   options:
     explode_slices: true
     labels: true
-  tile:
-    tile_width: '4'
-    tile_height: '500'
+  plate:
+    plate_width: '4'
+    plate_height: '500'
 
 - title: Profit by traffic source
   model: ec_m1
@@ -58,9 +58,9 @@ reports:
   data:
     x_field: c.traffic_source
     y_field: mf.total_profit_int
-  tile:
-    tile_width: '4'
-    tile_height: '500'   
+  plate:
+    plate_width: '4'
+    plate_height: '500'   
     
 - title: Revenue by time, by first order year cohorts
   model: ec_m1
@@ -105,9 +105,9 @@ reports:
     y_field: c.count
   options:
     band_color: rgb(66,151,254)    
-  tile:
-    tile_width: '2'
-    tile_height: '300'  
+  plate:
+    plate_width: '2'
+    plate_height: '300'  
 
 - title: Orders
   model: ec_m1
@@ -121,9 +121,9 @@ reports:
     y_field: b.count
   options:
     band_color: rgb(66,151,254)    
-  tile:
-    tile_width: '2'
-    tile_height: '300'    
+  plate:
+    plate_width: '2'
+    plate_height: '300'    
 
 - title: Products
   model: ec_m1
@@ -137,9 +137,9 @@ reports:
     y_field: f.count
   options:
     band_color: rgb(66,151,254)    
-  tile:
-    tile_width: '2'
-    tile_height: '300'
+  plate:
+    plate_width: '2'
+    plate_height: '300'
 
 - title: $ Sales
   model: ec_m1
@@ -153,9 +153,9 @@ reports:
     y_field: a.total_sale_price_int
   options:
     band_color: rgb(0,173,19)    
-  tile:
-    tile_width: '2'
-    tile_height: '300'
+  plate:
+    plate_width: '2'
+    plate_height: '300'
 
 - title: $ Cost
   model: ec_m1
@@ -169,9 +169,9 @@ reports:
     y_field: e.total_actual_cost_int
   options:
     band_color: rgb(0,173,19)    
-  tile:
-    tile_width: '2'
-    tile_height: '300'
+  plate:
+    plate_width: '2'
+    plate_height: '300'
 
 - title: $ Profit
   model: ec_m1
@@ -185,6 +185,6 @@ reports:
     y_field: mf.total_profit_int
   options:
     band_color: rgb(0,173,19)    
-  tile:
-    tile_width: '2'
-    tile_height: '300'
+  plate:
+    plate_width: '2'
+    plate_height: '300'

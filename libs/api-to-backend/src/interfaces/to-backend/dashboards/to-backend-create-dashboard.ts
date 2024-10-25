@@ -42,8 +42,8 @@ export class ToBackendCreateDashboardRequestPayload {
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => common.ReportX)
-  reportsGrid?: common.ReportX[];
+  @Type(() => common.TileX)
+  tilesGrid?: common.TileX[];
 }
 
 export class ToBackendCreateDashboardRequest extends ToBackendRequest {

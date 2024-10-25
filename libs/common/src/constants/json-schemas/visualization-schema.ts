@@ -1,5 +1,5 @@
 import { JSONSchema7 } from 'json-schema';
-import { REPORT_SCHEMA } from './report-schema';
+import { TILE_SCHEMA } from './tile-schema';
 
 export const VISUALIZATION_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
@@ -22,10 +22,10 @@ export const VISUALIZATION_SCHEMA: JSONSchema7 = {
         type: 'string'
       }
     },
-    reports: {
+    tiles: {
       type: 'array',
-      items: REPORT_SCHEMA
+      items: TILE_SCHEMA
     }
   },
-  required: ['vis', 'reports']
+  required: ['vis', 'tiles']
 };

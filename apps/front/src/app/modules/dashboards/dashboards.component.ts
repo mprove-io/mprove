@@ -37,7 +37,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   // groups: string[];
 
   showBricks = false;
-  showReports = false;
+  showTiles = false;
 
   isShow = true;
 
@@ -85,7 +85,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
           this.dashboardsModels = ml.models.map(y =>
             Object.assign({}, y, <ModelXWithTotalDashboards>{
               totalDashboards: this.dashboards.filter(
-                v => v.reports.map(rp => rp.modelId).indexOf(y.modelId) > -1
+                v => v.tiles.map(rp => rp.modelId).indexOf(y.modelId) > -1
               ).length
             })
           );
@@ -192,7 +192,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     this.filteredDashboards = common.isDefined(this.modelId)
       ? this.dashboardsFilteredByWord.filter(
-          d => d.reports.map(rp => rp.modelId).indexOf(this.modelId) > -1
+          d => d.tiles.map(rp => rp.modelId).indexOf(this.modelId) > -1
         )
       : this.dashboardsFilteredByWord;
 
@@ -207,7 +207,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       .map(x =>
         Object.assign({}, x, {
           totalDashboards: this.dashboardsFilteredByWord.filter(
-            d => d.reports.map(rp => rp.modelId).indexOf(x.modelId) > -1
+            d => d.tiles.map(rp => rp.modelId).indexOf(x.modelId) > -1
           ).length
         })
       )
@@ -262,27 +262,27 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     });
   }
 
-  goToMconfig(report: common.ReportX) {
+  goToMconfig(tile: common.TileX) {
     this.navigateService.navigateMconfigQuery({
-      modelId: report.modelId,
-      mconfigId: report.mconfigId,
-      queryId: report.queryId
+      modelId: tile.modelId,
+      mconfigId: tile.mconfigId,
+      queryId: tile.queryId
     });
   }
 
-  async showChart(report: common.ReportX, dashboardId: string) {
-    this.spinner.show(report.mconfigId);
+  async showChart(tile: common.TileX, dashboardId: string) {
+    this.spinner.show(tile.mconfigId);
 
-    let reportX: common.ReportX;
+    let tileX: common.TileX;
 
-    let payloadGetDashboardReport: apiToBackend.ToBackendGetDashboardReportRequestPayload =
+    let payloadGetDashboardTile: apiToBackend.ToBackendGetDashboardTileRequestPayload =
       {
         projectId: this.nav.projectId,
         branchId: this.nav.branchId,
         envId: this.nav.envId,
         isRepoProd: this.nav.isRepoProd,
         dashboardId: dashboardId,
-        mconfigId: report.mconfigId
+        mconfigId: tile.mconfigId
       };
 
     let query: common.Query;
@@ -291,18 +291,18 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     await this.apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboardReport,
-        payload: payloadGetDashboardReport
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboardTile,
+        payload: payloadGetDashboardTile
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetDashboardReportResponse) => {
-          this.spinner.hide(report.mconfigId);
+        tap((resp: apiToBackend.ToBackendGetDashboardTileResponse) => {
+          this.spinner.hide(tile.mconfigId);
 
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
-            reportX = resp.payload.report;
-            query = resp.payload.report.query;
-            mconfig = resp.payload.report.mconfig;
+            tileX = resp.payload.tile;
+            query = resp.payload.tile.query;
+            mconfig = resp.payload.tile.mconfig;
           }
         })
       )
@@ -333,12 +333,12 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       mconfig: mconfig,
       query: query,
       qData: qData,
-      canAccessModel: reportX.hasAccessToModel,
+      canAccessModel: tileX.hasAccessToModel,
       showNav: true,
       isSelectValid: isSelectValid,
       dashboardId: dashboardId,
       vizId: undefined,
-      listen: reportX.listen
+      listen: tileX.listen
     });
   }
 
@@ -373,8 +373,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.refreshShow();
   }
 
-  toggleShowReports() {
-    this.showReports = !this.showReports;
+  toggleShowTiles() {
+    this.showTiles = !this.showTiles;
     this.refreshShow();
   }
 

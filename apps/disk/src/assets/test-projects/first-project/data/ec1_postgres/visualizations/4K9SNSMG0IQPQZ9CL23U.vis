@@ -1,5 +1,5 @@
 vis: 4K9SNSMG0IQPQZ9CL23U
-reports:
+tiles:
 - title: Average Sale Price
   model: ec1_m1
   select:

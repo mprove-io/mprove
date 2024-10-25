@@ -7,7 +7,7 @@ import {
   ValidateNested
 } from 'class-validator';
 import { DashboardField } from './dashboard-field';
-import { Report } from './report';
+import { Tile } from './tile';
 
 export class Dashboard {
   @IsString()
@@ -42,8 +42,8 @@ export class Dashboard {
   fields: DashboardField[];
 
   @ValidateNested()
-  @Type(() => Report)
-  reports: Report[];
+  @Type(() => Tile)
+  tiles: Tile[];
 
   @IsBoolean()
   temp: boolean;

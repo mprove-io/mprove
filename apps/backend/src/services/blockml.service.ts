@@ -159,6 +159,9 @@ export class BlockmlService {
       views: views,
       udfsDict: udfsDict
     });
+    // console.log('reps');
+    // console.log(reps);
+    // reps = [];
 
     reps.forEach(rep => {
       let newRows = processRowIds({

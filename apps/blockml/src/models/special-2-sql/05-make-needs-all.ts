@@ -5,7 +5,7 @@ let func = common.FuncEnum.MakeNeedsAll;
 export function makeNeedsAll(item: {
   needsDoubles: common.VarsSql['needsDoubles'];
   joins: common.VarsSql['joins'];
-  varsSqlSteps: common.FilePartReport['varsSqlSteps'];
+  varsSqlSteps: common.FilePartTile['varsSqlSteps'];
   model: common.FileModel;
 }) {
   let { needsDoubles, joins, varsSqlSteps, model } = item;

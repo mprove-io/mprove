@@ -25,12 +25,12 @@ export function checkChartAxisParameters<T extends types.dzType>(
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    x.reports.forEach(report => {
-      if (common.isUndefined(report.axis)) {
+    x.tiles.forEach(tile => {
+      if (common.isUndefined(tile.axis)) {
         return;
       }
 
-      Object.keys(report.axis)
+      Object.keys(tile.axis)
         .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
           if (
@@ -46,13 +46,13 @@ export function checkChartAxisParameters<T extends types.dzType>(
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.REPORT_AXIS_UNKNOWN_PARAMETER,
+                title: common.ErTitleEnum.TILE_AXIS_UNKNOWN_PARAMETER,
                 message:
                   `parameter "${parameter}" can not be used  ` +
-                  'inside Report Axis',
+                  'inside Tile Axis',
                 lines: [
                   {
-                    line: report.axis[
+                    line: tile.axis[
                       (parameter +
                         constants.LINE_NUM) as keyof common.FileChartAxis
                     ] as number,
@@ -67,16 +67,16 @@ export function checkChartAxisParameters<T extends types.dzType>(
 
           if (
             Array.isArray(
-              report.axis[parameter as keyof common.FileChartAxis] as any
+              tile.axis[parameter as keyof common.FileChartAxis] as any
             )
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.REPORT_AXIS_UNEXPECTED_LIST,
+                title: common.ErTitleEnum.TILE_AXIS_UNEXPECTED_LIST,
                 message: `parameter "${parameter}" can not be a List`,
                 lines: [
                   {
-                    line: report.axis[
+                    line: tile.axis[
                       (parameter +
                         constants.LINE_NUM) as keyof common.FileChartAxis
                     ] as number,
@@ -90,16 +90,16 @@ export function checkChartAxisParameters<T extends types.dzType>(
           }
 
           if (
-            (report.axis[parameter as keyof common.FileChartAxis] as any)
+            (tile.axis[parameter as keyof common.FileChartAxis] as any)
               ?.constructor === Object
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.REPORT_AXIS_UNEXPECTED_DICTIONARY,
+                title: common.ErTitleEnum.TILE_AXIS_UNEXPECTED_DICTIONARY,
                 message: `parameter "${parameter}" can not be a Dictionary`,
                 lines: [
                   {
-                    line: report.axis[
+                    line: tile.axis[
                       (parameter +
                         constants.LINE_NUM) as keyof common.FileChartAxis
                     ] as number,
@@ -120,19 +120,19 @@ export function checkChartAxisParameters<T extends types.dzType>(
               common.ParameterEnum.ShowYAxisLabel.toString(),
               common.ParameterEnum.ShowAxis.toString()
             ].indexOf(parameter) > -1 &&
-            !(report.axis[parameter as keyof common.FileChartAxis] as any)
+            !(tile.axis[parameter as keyof common.FileChartAxis] as any)
               .toString()
               .match(common.MyRegex.TRUE_FALSE())
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.REPORT_AXIS_WRONG_PARAMETER_VALUE,
+                title: common.ErTitleEnum.TILE_AXIS_WRONG_PARAMETER_VALUE,
                 message:
                   `parameter "${parameter}" value must be ` +
                   '"true" or "false" if specified',
                 lines: [
                   {
-                    line: report.axis[
+                    line: tile.axis[
                       (parameter +
                         constants.LINE_NUM) as keyof common.FileChartAxis
                     ] as number,

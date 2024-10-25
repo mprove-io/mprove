@@ -66,13 +66,13 @@ export class ModifyDashboardController {
       envId,
       toDashboardId,
       fromDashboardId,
-      selectedReportTitle,
-      newReport,
-      isReplaceReport,
+      selectedTileTitle,
+      newTile,
+      isReplaceTile,
       accessUsers,
       accessRoles,
       dashboardTitle,
-      reportsGrid
+      tilesGrid
     } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
@@ -169,10 +169,10 @@ export class ModifyDashboardController {
 
     let dashboardFileText: string;
 
-    if (common.isDefined(newReport)) {
+    if (common.isDefined(newTile)) {
       let mconfigModel = await this.modelsService.getModelCheckExists({
         structId: bridge.struct_id,
-        modelId: newReport.mconfig.modelId
+        modelId: newTile.mconfig.modelId
       });
 
       let isAccessGranted = helper.checkAccess({
@@ -187,31 +187,31 @@ export class ModifyDashboardController {
         });
       }
 
-      newReport.mconfig.chart.title = newReport.title;
+      newTile.mconfig.chart.title = newTile.title;
 
-      let tileY = 0;
+      let plateY = 0;
 
-      fromDashboard.reports.forEach(report => {
-        tileY = tileY + report.tileHeight;
+      fromDashboard.tiles.forEach(tile => {
+        plateY = plateY + tile.plateHeight;
       });
 
-      newReport.tileY = tileY;
+      newTile.plateY = plateY;
 
-      if (isReplaceReport === true) {
-        let oldReportIndex = fromDashboard.reports.findIndex(
-          x => x.title === selectedReportTitle
+      if (isReplaceTile === true) {
+        let oldTileIndex = fromDashboard.tiles.findIndex(
+          x => x.title === selectedTileTitle
         );
 
-        let oldReport = fromDashboard.reports[oldReportIndex];
+        let oldTile = fromDashboard.tiles[oldTileIndex];
 
-        newReport.tileWidth = oldReport.tileWidth;
-        newReport.tileHeight = oldReport.tileHeight;
-        newReport.tileX = oldReport.tileX;
-        newReport.tileY = oldReport.tileY;
+        newTile.plateWidth = oldTile.plateWidth;
+        newTile.plateHeight = oldTile.plateHeight;
+        newTile.plateX = oldTile.plateX;
+        newTile.plateY = oldTile.plateY;
 
-        fromDashboard.reports[oldReportIndex] = newReport;
+        fromDashboard.tiles[oldTileIndex] = newTile;
       } else {
-        fromDashboard.reports = [...fromDashboard.reports, newReport];
+        fromDashboard.tiles = [...fromDashboard.tiles, newTile];
       }
 
       dashboardFileText = makeDashboardFileText({
@@ -226,22 +226,20 @@ export class ModifyDashboardController {
       });
     } else {
       // dashboard save as - replace existing
-      let yReports: common.ReportX[] = [];
+      let yTiles: common.TileX[] = [];
 
-      reportsGrid.forEach(freshReport => {
-        let yReport = fromDashboard.reports.find(
-          y => freshReport.title === y.title
-        );
+      tilesGrid.forEach(freshTile => {
+        let yTile = fromDashboard.tiles.find(y => freshTile.title === y.title);
 
-        yReport.tileX = freshReport.tileX;
-        yReport.tileY = freshReport.tileY;
-        yReport.tileWidth = freshReport.tileWidth;
-        yReport.tileHeight = freshReport.tileHeight;
+        yTile.plateX = freshTile.plateX;
+        yTile.plateY = freshTile.plateY;
+        yTile.plateWidth = freshTile.plateWidth;
+        yTile.plateHeight = freshTile.plateHeight;
 
-        yReports.push(yReport);
+        yTiles.push(yTile);
       });
 
-      fromDashboard.reports = yReports;
+      fromDashboard.tiles = yTiles;
 
       dashboardFileText = makeDashboardFileText({
         dashboard: fromDashboard,
@@ -343,12 +341,12 @@ export class ModifyDashboardController {
       });
     }
 
-    let dashboardMconfigIds = newDashboard.reports.map(x => x.mconfigId);
+    let dashboardMconfigIds = newDashboard.tiles.map(x => x.mconfigId);
     let dashboardMconfigs = mconfigs.filter(
       x => dashboardMconfigIds.indexOf(x.mconfigId) > -1
     );
 
-    let dashboardQueryIds = newDashboard.reports.map(x => x.queryId);
+    let dashboardQueryIds = newDashboard.tiles.map(x => x.queryId);
     let dashboardQueries = queries.filter(
       x => dashboardQueryIds.indexOf(x.queryId) > -1
     );

@@ -1,5 +1,5 @@
 vis: C3ENGIP2LC00GUFMP333
-reports:
+tiles:
 - title: Users, Orders, Products
   model: ec1_m1
   select:

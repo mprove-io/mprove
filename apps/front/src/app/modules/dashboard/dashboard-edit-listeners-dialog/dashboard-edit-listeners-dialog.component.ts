@@ -19,13 +19,13 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { SharedModule } from '../../shared/shared.module';
 
-export class ReportX2 extends common.ReportX {
+export class TileX2 extends common.TileX {
   modelFields?: { [a: string]: common.ModelField[] };
   mconfigListenSwap?: { [a: string]: string[] };
 }
 
 export class DashboardX2 extends common.DashboardX {
-  reports: ReportX2[];
+  tiles: TileX2[];
 }
 
 export interface DashboardEditListenersDialogData {
@@ -97,8 +97,8 @@ export class DashboardEditListenersDialogComponent implements OnInit {
       branchId: nav.branchId,
       envId: nav.envId,
       addFields: true,
-      filterByModelIds: (this.dashboard as DashboardX2).reports.map(
-        report => report.modelId
+      filterByModelIds: (this.dashboard as DashboardX2).tiles.map(
+        tile => tile.modelId
       )
     };
 
@@ -115,7 +115,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
 
             this.models = resp.payload.models;
 
-            (this.dashboard as DashboardX2).reports.forEach(x => {
+            (this.dashboard as DashboardX2).tiles.forEach(x => {
               let model = this.models.find(m => m.modelId === x.modelId);
 
               let swap: { [a: string]: string[] } = {};
@@ -143,12 +143,12 @@ export class DashboardEditListenersDialogComponent implements OnInit {
                 }
               });
 
-              (x as ReportX2).modelFields = modelFields;
+              (x as TileX2).modelFields = modelFields;
 
-              (x as ReportX2).mconfigListenSwap = swap;
+              (x as TileX2).mconfigListenSwap = swap;
             });
 
-            // console.log(this.dashboard.reports);
+            // console.log(this.dashboard.tiles);
             this.cd.detectChanges();
           }
         })
@@ -162,32 +162,32 @@ export class DashboardEditListenersDialogComponent implements OnInit {
 
   fieldChange() {}
 
-  addListener(report: ReportX2, dashboardFieldId: string) {
-    report.mconfigListenSwap[dashboardFieldId].push(undefined);
+  addListener(tile: TileX2, dashboardFieldId: string) {
+    tile.mconfigListenSwap[dashboardFieldId].push(undefined);
   }
 
   removeListener(
     event: MouseEvent,
-    report: ReportX2,
+    tile: TileX2,
     dashboardFieldId: string,
     index: number
   ) {
     event.stopPropagation();
 
-    let mappings = report.mconfigListenSwap[dashboardFieldId];
+    let mappings = tile.mconfigListenSwap[dashboardFieldId];
 
     let newMappings = [
       ...mappings.slice(0, index),
       ...mappings.slice(index + 1)
     ];
 
-    report.mconfigListenSwap[dashboardFieldId] = newMappings;
+    tile.mconfigListenSwap[dashboardFieldId] = newMappings;
   }
 
   apply() {
     this.ref.close();
 
-    (this.dashboard as DashboardX2).reports.forEach(x => {
+    (this.dashboard as DashboardX2).tiles.forEach(x => {
       let newListen: { [a: string]: string } = {};
 
       Object.keys(x.mconfigListenSwap).forEach(dashboardFieldId => {
@@ -207,7 +207,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
     let dashboardService: DashboardService = this.ref.data.dashboardService;
 
     dashboardService.navCreateTempDashboard({
-      reports: this.dashboard.reports,
+      tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: this.dashboard.fields,

@@ -65,7 +65,7 @@ export class CreateDashboardController {
       dashboardTitle,
       accessUsers,
       accessRoles,
-      reportsGrid
+      tilesGrid
     } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
@@ -141,22 +141,20 @@ export class CreateDashboardController {
         }
       );
 
-      let yReports: common.ReportX[] = [];
+      let yTiles: common.TileX[] = [];
 
-      reportsGrid.forEach(freshReport => {
-        let yReport = fromDashboard.reports.find(
-          y => freshReport.title === y.title
-        );
+      tilesGrid.forEach(freshTile => {
+        let yTile = fromDashboard.tiles.find(y => freshTile.title === y.title);
 
-        yReport.tileX = freshReport.tileX;
-        yReport.tileY = freshReport.tileY;
-        yReport.tileWidth = freshReport.tileWidth;
-        yReport.tileHeight = freshReport.tileHeight;
+        yTile.plateX = freshTile.plateX;
+        yTile.plateY = freshTile.plateY;
+        yTile.plateWidth = freshTile.plateWidth;
+        yTile.plateHeight = freshTile.plateHeight;
 
-        yReports.push(yReport);
+        yTiles.push(yTile);
       });
 
-      fromDashboard.reports = yReports;
+      fromDashboard.tiles = yTiles;
 
       dashboardFileText = makeDashboardFileText({
         dashboard: fromDashboard,
@@ -178,7 +176,7 @@ export class CreateDashboardController {
         accessRoles: undefined,
         title: undefined,
         hidden: undefined,
-        reports: [],
+        tiles: [],
         author: undefined,
         canEditOrDeleteDashboard: undefined,
         serverTs: undefined,
@@ -300,12 +298,12 @@ export class CreateDashboardController {
       });
     }
 
-    let dashboardMconfigIds = dashboard.reports.map(x => x.mconfigId);
+    let dashboardMconfigIds = dashboard.tiles.map(x => x.mconfigId);
     let dashboardMconfigs = mconfigs.filter(
       x => dashboardMconfigIds.indexOf(x.mconfigId) > -1
     );
 
-    let dashboardQueryIds = dashboard.reports.map(x => x.queryId);
+    let dashboardQueryIds = dashboard.tiles.map(x => x.queryId);
     let dashboardQueries = queries.filter(
       x => dashboardQueryIds.indexOf(x.queryId) > -1
     );

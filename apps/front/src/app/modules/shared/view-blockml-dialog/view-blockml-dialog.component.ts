@@ -30,7 +30,7 @@ export class ViewBlockmlDialogComponent implements OnInit {
     fixedOverflowWidgets: true
   };
 
-  reportYaml: any; // string
+  tileYaml: any; // string
 
   constructor(
     public ref: DialogRef<ViewBlockmlDialogData>,
@@ -48,7 +48,7 @@ export class ViewBlockmlDialogComponent implements OnInit {
       )
       .subscribe();
 
-    let filePartReport: common.FilePartReport = common.prepareReport({
+    let filePartTile: common.FilePartTile = common.prepareTile({
       isForDashboard: false,
       mconfig: this.ref.data.mconfig,
       defaultTimezone: struct.defaultTimezone,
@@ -56,7 +56,7 @@ export class ViewBlockmlDialogComponent implements OnInit {
       deleteFilterMconfigId: undefined
     });
 
-    this.reportYaml = common.toYaml({ reports: [filePartReport] });
+    this.tileYaml = common.toYaml({ tiles: [filePartTile] });
 
     let monaco = await this.monacoService.initMonaco();
     monaco.languages.setMonarchTokensProvider(

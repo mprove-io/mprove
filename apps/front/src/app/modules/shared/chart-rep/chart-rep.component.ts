@@ -10,7 +10,7 @@ import {
   ViewChildren
 } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { interval, of, Subscription } from 'rxjs';
+import { Subscription, interval, of } from 'rxjs';
 import { concatMap, take, tap } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
@@ -37,7 +37,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
   @ViewChildren('chartView') chartViewComponents: QueryList<ChartViewComponent>;
 
   @Input()
-  report: common.ReportX;
+  tile: common.TileX;
 
   @Input()
   deleteFilterFn: (item: DeleteFilterFnItem) => void;
@@ -168,11 +168,11 @@ export class ChartRepComponent implements OnInit, OnDestroy {
   explore(event?: MouseEvent) {
     event.stopPropagation();
 
-    if (this.report.hasAccessToModel === true) {
+    if (this.tile.hasAccessToModel === true) {
       this.navigateService.navigateMconfigQuery({
-        modelId: this.report.modelId,
-        mconfigId: this.report.mconfigId,
-        queryId: this.report.queryId
+        modelId: this.tile.modelId,
+        mconfigId: this.tile.mconfigId,
+        queryId: this.tile.queryId
       });
     }
   }
@@ -220,7 +220,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
               data: this.query.data
             });
 
-            this.spinner.show(this.report.title);
+            this.spinner.show(this.tile.title);
           }
         }),
         take(1)
@@ -228,22 +228,22 @@ export class ChartRepComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  deleteReport(event: MouseEvent) {
+  deleteTile(event: MouseEvent) {
     event.stopPropagation();
 
-    let deleteReportIndex = this.dashboard.reports.findIndex(
+    let deleteTileIndex = this.dashboard.tiles.findIndex(
       x => x.mconfigId === this.mconfig.mconfigId
     );
 
-    let newReports = [
-      ...this.dashboard.reports.slice(0, deleteReportIndex),
-      ...this.dashboard.reports.slice(deleteReportIndex + 1)
+    let newTiles = [
+      ...this.dashboard.tiles.slice(0, deleteTileIndex),
+      ...this.dashboard.tiles.slice(deleteTileIndex + 1)
     ];
 
     this.repDeleted.emit();
 
     this.dashboardQuery.updatePart({
-      reports: newReports,
+      tiles: newTiles,
       temp: true
     });
   }
@@ -255,12 +255,12 @@ export class ChartRepComponent implements OnInit, OnDestroy {
       mconfig: this.mconfig,
       query: this.query,
       qData: this.qData,
-      canAccessModel: this.report.hasAccessToModel,
+      canAccessModel: this.tile.hasAccessToModel,
       showNav: true,
       isSelectValid: this.isSelectValid,
       dashboardId: this.dashboard.dashboardId,
       vizId: undefined,
-      listen: this.report.listen
+      listen: this.tile.listen
     });
   }
 
@@ -272,7 +272,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
     this.query = query;
 
     if (this.query.status !== common.QueryStatusEnum.Running) {
-      this.spinner.hide(this.report.title);
+      this.spinner.hide(this.tile.title);
     }
 
     this.qData =

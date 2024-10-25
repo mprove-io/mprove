@@ -25,12 +25,12 @@ export function checkChartData<T extends types.dzType>(
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    x.reports.forEach(report => {
-      if (common.isUndefined(report.data)) {
+    x.tiles.forEach(tile => {
+      if (common.isUndefined(tile.data)) {
         return;
       }
 
-      Object.keys(report.data)
+      Object.keys(tile.data)
         .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
           if (
@@ -46,13 +46,13 @@ export function checkChartData<T extends types.dzType>(
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.REPORT_DATA_UNKNOWN_PARAMETER,
+                title: common.ErTitleEnum.TILE_DATA_UNKNOWN_PARAMETER,
                 message:
                   `parameter "${parameter}" can not be used ` +
-                  'inside Report Data',
+                  'inside Tile Data',
                 lines: [
                   {
-                    line: report.data[
+                    line: tile.data[
                       (parameter +
                         constants.LINE_NUM) as keyof common.FileChartData
                     ] as number,
@@ -67,7 +67,7 @@ export function checkChartData<T extends types.dzType>(
 
           if (
             Array.isArray(
-              report.data[parameter as keyof common.FileChartData] as any
+              tile.data[parameter as keyof common.FileChartData] as any
             ) &&
             [
               common.ParameterEnum.YFields.toString(),
@@ -76,11 +76,11 @@ export function checkChartData<T extends types.dzType>(
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.REPORT_DATA_UNEXPECTED_LIST,
+                title: common.ErTitleEnum.TILE_DATA_UNEXPECTED_LIST,
                 message: `parameter "${parameter}" can not be a List`,
                 lines: [
                   {
-                    line: report.data[
+                    line: tile.data[
                       (parameter +
                         constants.LINE_NUM) as keyof common.FileChartData
                     ] as number,
@@ -94,16 +94,16 @@ export function checkChartData<T extends types.dzType>(
           }
 
           if (
-            (report.data[parameter as keyof common.FileChartData] as any)
+            (tile.data[parameter as keyof common.FileChartData] as any)
               ?.constructor === Object
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.REPORT_DATA_UNEXPECTED_DICTIONARY,
+                title: common.ErTitleEnum.TILE_DATA_UNEXPECTED_DICTIONARY,
                 message: `parameter "${parameter}" can not be a Dictionary`,
                 lines: [
                   {
-                    line: report.data[
+                    line: tile.data[
                       (parameter +
                         constants.LINE_NUM) as keyof common.FileChartData
                     ] as number,

@@ -1,6 +1,6 @@
 import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
-import { wrapReports } from './wrap-reports';
+import { wrapTiles } from './wrap-tiles';
 
 export function wrapVizs(item: {
   structId: string;
@@ -17,24 +17,24 @@ export function wrapVizs(item: {
   let vizQueries: common.Query[] = [];
 
   vizs.forEach(x => {
-    let { apiReports, mconfigs, queries } = wrapReports({
+    let { apiTiles, mconfigs, queries } = wrapTiles({
       orgId: orgId,
       projectId: projectId,
       structId: structId,
       models: models,
-      reports: x.reports,
+      tiles: x.tiles,
       envId: envId
     });
 
     vizMconfigs = [...vizMconfigs, ...mconfigs];
     vizQueries = [...vizQueries, ...queries];
 
-    let model = models.find(m => m.name === x.reports[0].model);
+    let model = models.find(m => m.name === x.tiles[0].model);
 
     apiVizs.push({
       structId: structId,
       vizId: x.name,
-      title: x.reports[0].title,
+      title: x.tiles[0].title,
       modelId: model.name,
       modelLabel: model.label,
       filePath: x.filePath,
@@ -42,7 +42,7 @@ export function wrapVizs(item: {
       accessRoles: x.access_roles || [],
       gr: x.group,
       hidden: helper.toBooleanFromLowercaseString(x.hidden),
-      reports: apiReports,
+      tiles: apiTiles,
       serverTs: 1
     });
   });

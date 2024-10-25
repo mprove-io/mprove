@@ -12,6 +12,6 @@ export * from './11-build-sql-always-where-calc';
 export * from './11.1-build-model-metric';
 export * from './12-build-dashboard';
 export * from './13-build-viz';
-export * from './14-build-report';
+export * from './14-build-tile';
 export * from './15-build-chart';
 export * from './17-build-rep';

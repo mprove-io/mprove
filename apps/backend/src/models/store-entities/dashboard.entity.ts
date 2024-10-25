@@ -35,7 +35,7 @@ export class DashboardEntity {
   fields: common.DashboardField[];
 
   @Column({ type: constants.JSON })
-  reports: common.Report[];
+  tiles: common.Tile[];
 
   @Column({ type: constants.VARCHAR })
   temp: common.BoolEnum;

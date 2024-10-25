@@ -26,12 +26,12 @@ import { constants } from '~front/barrels/constants';
 
 enum ChartSaveAsEnum {
   NEW_VIZ = 'NEW_VIZ',
-  REPORT_OF_DASHBOARD = 'REPORT_OF_DASHBOARD'
+  TILE_OF_DASHBOARD = 'TILE_OF_DASHBOARD'
 }
 
-enum ReportSaveAsEnum {
-  NEW_REPORT = 'NEW_REPORT',
-  REPLACE_EXISTING_REPORT = 'REPLACE_EXISTING_REPORT'
+enum TileSaveAsEnum {
+  NEW_TILE = 'NEW_TILE',
+  REPLACE_EXISTING_TILE = 'REPLACE_EXISTING_TILE'
 }
 
 export interface ChartSaveAsDialogData {
@@ -54,7 +54,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
   usersFolder = common.MPROVE_USERS_FOLDER;
 
   chartSaveAsEnum = ChartSaveAsEnum;
-  reportSaveAsEnum = ReportSaveAsEnum;
+  tileSaveAsEnum = TileSaveAsEnum;
 
   spinnerName = 'chartSaveAs';
 
@@ -76,7 +76,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
   });
 
   chartSaveAs: ChartSaveAsEnum = ChartSaveAsEnum.NEW_VIZ;
-  reportSaveAs: ReportSaveAsEnum = ReportSaveAsEnum.NEW_REPORT;
+  tileSaveAs: TileSaveAsEnum = TileSaveAsEnum.NEW_TILE;
 
   vizId = common.makeId();
 
@@ -92,7 +92,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
   selectedDashboardPath: string;
   selectedDashboard: common.DashboardX;
 
-  selectedReportTitle: any; // string
+  selectedTileTitle: any; // string
 
   dashboards: common.DashboardX[];
 
@@ -196,22 +196,20 @@ export class ChartSaveAsDialogComponent implements OnInit {
     let title: string = this.titleForm.controls['title'].value.toUpperCase();
 
     if (
-      this.chartSaveAs === this.chartSaveAsEnum.REPORT_OF_DASHBOARD &&
+      this.chartSaveAs === this.chartSaveAsEnum.TILE_OF_DASHBOARD &&
       common.isDefined(this.selectedDashboard)
     ) {
-      let titles = this.selectedDashboard.reports.map(x =>
-        x.title.toUpperCase()
-      );
+      let titles = this.selectedDashboard.tiles.map(x => x.title.toUpperCase());
 
       if (
-        this.reportSaveAs === this.reportSaveAsEnum.NEW_REPORT &&
+        this.tileSaveAs === this.tileSaveAsEnum.NEW_TILE &&
         titles.indexOf(title) > -1
       ) {
         this.titleForm.controls['title'].setErrors({ titleIsNotUnique: true });
       } else if (
-        this.reportSaveAs === this.reportSaveAsEnum.REPLACE_EXISTING_REPORT &&
+        this.tileSaveAs === this.tileSaveAsEnum.REPLACE_EXISTING_TILE &&
         titles.indexOf(title) > -1 &&
-        title !== this.selectedReportTitle?.toUpperCase()
+        title !== this.selectedTileTitle?.toUpperCase()
       ) {
         this.titleForm.controls['title'].setErrors({ titleIsNotUnique: true });
       } else {
@@ -240,9 +238,9 @@ export class ChartSaveAsDialogComponent implements OnInit {
           roles: roles,
           users: users
         });
-      } else if (this.chartSaveAs === ChartSaveAsEnum.REPORT_OF_DASHBOARD) {
+      } else if (this.chartSaveAs === ChartSaveAsEnum.TILE_OF_DASHBOARD) {
         this.ref.close();
-        this.saveAsReport({ newTitle: newTitle });
+        this.saveAsTile({ newTitle: newTitle });
       }
     }
   }
@@ -252,29 +250,29 @@ export class ChartSaveAsDialogComponent implements OnInit {
     this.titleForm.get('title').updateValueAndValidity();
   }
 
-  reportOfDashboardOnClick() {
-    this.chartSaveAs = ChartSaveAsEnum.REPORT_OF_DASHBOARD;
+  tileOfDashboardOnClick() {
+    this.chartSaveAs = ChartSaveAsEnum.TILE_OF_DASHBOARD;
     this.titleForm.get('title').updateValueAndValidity();
   }
 
-  newReportOnClick() {
-    this.reportSaveAs = ReportSaveAsEnum.NEW_REPORT;
+  newTileOnClick() {
+    this.tileSaveAs = TileSaveAsEnum.NEW_TILE;
     this.titleForm.get('title').updateValueAndValidity();
   }
 
-  replaceExistingReportOnClick() {
-    this.reportSaveAs = ReportSaveAsEnum.REPLACE_EXISTING_REPORT;
+  replaceExistingTileOnClick() {
+    this.tileSaveAs = TileSaveAsEnum.REPLACE_EXISTING_TILE;
     this.titleForm.get('title').updateValueAndValidity();
   }
 
   selectedDashboardChange() {
-    this.selectedReportTitle = undefined;
+    this.selectedTileTitle = undefined;
     this.setSelectedDashboard();
     this.makePath();
     this.titleForm.get('title').updateValueAndValidity();
   }
 
-  selectedReportChange() {
+  selectedTileChange() {
     this.titleForm.get('title').updateValueAndValidity();
   }
 
@@ -323,7 +321,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       vizId: this.vizId,
-      reportTitle: newTitle.trim(),
+      tileTitle: newTitle.trim(),
       accessRoles: roles,
       accessUsers: users,
       mconfig: this.ref.data.mconfig
@@ -352,14 +350,14 @@ export class ChartSaveAsDialogComponent implements OnInit {
       .subscribe();
   }
 
-  async saveAsReport(item: { newTitle: string }) {
+  async saveAsTile(item: { newTitle: string }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
     let { newTitle } = item;
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    let newReport: common.ReportX = {
+    let newTile: common.TileX = {
       mconfig: this.ref.data.mconfig,
       modelId: this.ref.data.mconfig.modelId,
       modelLabel: this.ref.data.model.label,
@@ -369,10 +367,10 @@ export class ChartSaveAsDialogComponent implements OnInit {
       queryId: this.ref.data.mconfig.queryId,
       hasAccessToModel: true,
       title: newTitle.trim(),
-      tileWidth: common.REPORT_DEFAULT_TILE_WIDTH,
-      tileHeight: common.REPORT_DEFAULT_TILE_HEIGHT,
-      tileX: common.REPORT_DEFAULT_TILE_X,
-      tileY: common.REPORT_DEFAULT_TILE_Y // recalculated on backend
+      plateWidth: common.TILE_DEFAULT_PLATE_WIDTH,
+      plateHeight: common.TILE_DEFAULT_PLATE_HEIGHT,
+      plateX: common.TILE_DEFAULT_PLATE_X,
+      plateY: common.TILE_DEFAULT_PLATE_Y // recalculated on backend
     };
 
     let payloadModifyDashboard: apiToBackend.ToBackendModifyDashboardRequestPayload =
@@ -383,10 +381,9 @@ export class ChartSaveAsDialogComponent implements OnInit {
         envId: this.nav.envId,
         toDashboardId: this.selectedDashboardId,
         fromDashboardId: this.selectedDashboardId,
-        selectedReportTitle: this.selectedReportTitle,
-        newReport: newReport,
-        isReplaceReport:
-          this.reportSaveAs === ReportSaveAsEnum.REPLACE_EXISTING_REPORT
+        selectedTileTitle: this.selectedTileTitle,
+        newTile: newTile,
+        isReplaceTile: this.tileSaveAs === TileSaveAsEnum.REPLACE_EXISTING_TILE
       };
 
     apiService

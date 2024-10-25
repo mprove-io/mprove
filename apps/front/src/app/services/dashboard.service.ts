@@ -27,7 +27,7 @@ export class DashboardService {
   }
 
   navCreateTempDashboard(item: {
-    reports: common.ReportX[];
+    tiles: common.TileX[];
     oldDashboardId: string;
     newDashboardId: string;
     newDashboardFields: common.DashboardField[];
@@ -37,7 +37,7 @@ export class DashboardService {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
     let {
-      reports,
+      tiles,
       oldDashboardId,
       newDashboardId,
       newDashboardFields,
@@ -45,13 +45,13 @@ export class DashboardService {
       deleteFilterMconfigId
     } = item;
 
-    let newReports: common.ReportX[] = [];
+    let newTiles: common.TileX[] = [];
 
-    reports.forEach(x => {
+    tiles.forEach(x => {
       let y: any = common.makeCopy(x);
       delete y.query;
       delete y.mconfig;
-      newReports.push(y);
+      newTiles.push(y);
     });
 
     let payload: apiToBackend.ToBackendCreateTempDashboardRequestPayload = {
@@ -62,7 +62,7 @@ export class DashboardService {
       oldDashboardId: oldDashboardId,
       newDashboardId: newDashboardId,
       newDashboardFields: newDashboardFields,
-      reports: newReports,
+      tiles: newTiles,
       deleteFilterFieldId: deleteFilterFieldId,
       deleteFilterMconfigId: deleteFilterMconfigId
     };

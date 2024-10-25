@@ -120,7 +120,7 @@ test('1', async t => {
       },
       payload: {
         projectId: projectId,
-        queryIds: [viz.reports[0].queryId]
+        queryIds: [viz.tiles[0].queryId]
       }
     };
 

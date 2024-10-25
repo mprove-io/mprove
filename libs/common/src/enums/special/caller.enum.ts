@@ -18,8 +18,8 @@ export enum CallerEnum {
   BuildDashboard = '12-BuildDashboard',
   BuildViz = '13-BuildViz',
 
-  BuildDashboardReport = '14-BuildDashboardReport',
-  BuildVizReport = '14-BuildVizReport',
+  BuildDashboardTile = '14-BuildDashboardTile',
+  BuildVizTile = '14-BuildVizTile',
 
   BuildDashboardChart = '15-BuildDashboardChart',
   BuildVizChart = '15-BuildVizChart',

@@ -19,7 +19,7 @@ export * from './is-user-timezone';
 export * from './is-user-timezone-valid';
 export * from './make-copy';
 export * from './make-id';
-export * from './prepare-report';
+export * from './prepare-tile';
 export * from './row-id-letter-to-number';
 export * from './row-id-number-to-letter';
 export * from './set-chart-fields';
