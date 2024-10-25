@@ -1,14 +1,21 @@
-<button
-  data-cy="repoOptionsMenuButton"
-  class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
-  #t1="tippy"
-  [tp]="templateRepoOptions"
-  [tpHideOnEscape]="true"
-  tpVariation="menu"
-  className="my-menu"
->
-  <m-dots-vertical-icon></m-dots-vertical-icon>
-</button>
+<div tp="Need to Save changes" [tpIsEnabled]="needSave === true">
+  <button
+    data-cy="repoOptionsMenuButton"
+    class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+    [ngClass]="{
+      'cursor-default': needSave === true,
+      'hover:bg-blue-200': needSave === false
+    }"
+    [disabled]="needSave === true"
+    #t1="tippy"
+    [tp]="templateRepoOptions"
+    [tpHideOnEscape]="true"
+    tpVariation="menu"
+    className="my-menu"
+  >
+    <m-dots-vertical-icon></m-dots-vertical-icon>
+  </button>
+</div>
 
 <ng-template #templateRepoOptions>
   <div class="border-gray4 w-64 rounded-md border-2 bg-white shadow-xl">

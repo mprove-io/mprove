@@ -261,15 +261,22 @@
             >
           </div>
 
-          <button
-            tp="Click to refresh Repo status"
-            type="button"
-            data-cy="filesRefreshButton"
-            class="ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
-            (click)="refresh()"
-          >
-            <m-refresh-icon></m-refresh-icon>
-          </button>
+          <div tp="Need to Save changes" [tpIsEnabled]="needSave === true">
+            <button
+              tp="Click to refresh Repo status"
+              type="button"
+              data-cy="filesRefreshButton"
+              class="ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+              [ngClass]="{
+                'cursor-default': needSave === true,
+                'hover:bg-blue-200': needSave === false
+              }"
+              [disabled]="needSave === true"
+              (click)="refresh()"
+            >
+              <m-refresh-icon></m-refresh-icon>
+            </button>
+          </div>
 
           <div class="relative ml-3" *ngIf="isEditor === true">
             <m-repo-options></m-repo-options>

@@ -71,11 +71,11 @@
 
               <div
                 class="h-9 w-9 flex-shrink-0"
-                *ngIf="nav.isRepoProd === true || needSave === true"
+                *ngIf="nav.isRepoProd === true"
               ></div>
 
               <div
-                *ngIf="nav.isRepoProd === false && needSave === false"
+                *ngIf="nav.isRepoProd === false"
                 class="invisible flex flex-shrink-0 group-hover:visible"
               >
                 <m-folder-options
