@@ -143,6 +143,7 @@ export class RepComponent {
   timeColumns: ColDef<DataRow>[] = [];
 
   defaultColDef: ColDef<DataRow> = {
+    sortable: false,
     suppressMovable: true,
     resizable: true,
     editable: false,
