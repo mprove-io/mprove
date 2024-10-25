@@ -5,7 +5,7 @@ export class Column {
   columnId: number;
 
   @IsInt()
-  tsShifted: number;
+  tsUTC: number;
 
   @IsString()
   label: string;

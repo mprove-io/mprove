@@ -60,7 +60,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
         x => x.key === Number(this.params.colDef.field)
       );
 
-      let ts = rowDataRecord.tsShifted * 1000;
+      let ts = rowDataRecord.tsUTC * 1000;
 
       let { date, dateStr, timeStr } =
         this.timeService.getDateTimeStrFromEpochMs({

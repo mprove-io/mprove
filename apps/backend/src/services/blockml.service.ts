@@ -425,11 +425,11 @@ export class BlockmlService {
     let columns = timeColumns.map(x => {
       let unixTimeZoned = getUnixTime(x);
       let unixDateZoned = new Date(unixTimeZoned * 1000);
-      let tsShifted = getUnixTime(fromZonedTime(unixDateZoned, timezone));
+      let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
       let column: common.Column = {
         columnId: unixTimeZoned,
-        tsShifted: tsShifted,
+        tsUTC: tsUTC,
         label: common.formatTs({
           timeSpec: timeSpec,
           unixTimeZoned: unixTimeZoned
