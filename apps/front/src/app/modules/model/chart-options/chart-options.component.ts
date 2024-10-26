@@ -15,7 +15,7 @@ export class ChartOptionsComponent {
 
   constructor(private myDialogService: MyDialogService) {}
 
-  viewBlockML(event?: MouseEvent) {
+  viewFile(event?: MouseEvent) {
     event.stopPropagation();
 
     this.myDialogService.showViewBlockml({

@@ -15,10 +15,10 @@ export class PushCommand extends CustomCommand {
 
   static usage = Command.Usage({
     description:
-      'Push committed changes from repo to Remote, validate BlockML for selected env',
+      'Push committed changes from repo to Remote, validate Mprove Files for selected env',
     examples: [
       [
-        'Push committed changes from Dev to Remote, validate BlockML for env prod',
+        'Push committed changes from Dev to Remote, validate Mprove Files for env prod',
         'mprove push --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
       ]
     ]

@@ -32,7 +32,7 @@ export function deduplicateFileNames(
         new BmError({
           title: common.ErTitleEnum.DUPLICATE_FILE_NAMES,
           message:
-            'BlockML file names should be unique across all folders. ' +
+            'Mprove Files file names must be unique across all folders. ' +
             `Found duplicate ${x.name} files`,
           lines: lines
         })

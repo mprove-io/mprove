@@ -15,14 +15,14 @@ export class PullCommand extends CustomCommand {
 
   static usage = Command.Usage({
     description:
-      'Pull committed changes from Remote to repo, validate BlockML for selected env',
+      'Pull committed changes from Remote to repo, validate Mprove Files for selected env',
     examples: [
       [
-        'Pull committed changes from Remote to Dev repo, validate BlockML for env prod',
+        'Pull committed changes from Remote to Dev repo, validate Mprove Files for env prod',
         'mprove pull --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
       ],
       [
-        'Pull committed changes from Remote to Production repo, validate BlockML for env prod',
+        'Pull committed changes from Remote to Production repo, validate Mprove Files for env prod',
         'mprove pull --project-id DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
       ]
     ]

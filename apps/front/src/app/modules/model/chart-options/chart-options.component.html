@@ -13,14 +13,14 @@
 <ng-template #templateChartOptions>
   <div class="border-gray4 w-64 rounded-md border-2 bg-white shadow-xl">
     <button
-      data-cy="chartOptionsViewBlockML"
+      data-cy="chartOptionsViewFile"
       class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
       [ngClass]="{
         'cursor-default text-gray-400': isDisabled === true
       }"
-      (click)="t1.hide(); viewBlockML($event)"
+      (click)="t1.hide(); viewFile($event)"
       [disabled]="isDisabled === true"
-      >View BlockML</button
+      >View File</button
     >
   </div>
 </ng-template>

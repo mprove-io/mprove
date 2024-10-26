@@ -13,10 +13,10 @@ export class MergeCommand extends CustomCommand {
 
   static usage = Command.Usage({
     description:
-      'Merge their-branch to branch for Dev repo, validate BlockML for selected env',
+      'Merge their-branch to branch for Dev repo, validate Mprove Files for selected env',
     examples: [
       [
-        'Merge their-branch to branch for Dev repo, validate BlockML for env prod',
+        'Merge their-branch to branch for Dev repo, validate Mprove Files for env prod',
         'mprove merge --project-id DXYE72ODCP5LWPWH2EXQ --their-branch b1 --branch main --env prod'
       ]
     ]

@@ -241,7 +241,7 @@ export function checkMeasures<T extends types.vmType>(
         item.errors.push(
           new BmError({
             title: common.ErTitleEnum.MEASURE_SQL_MISSING_BLOCKML_REFERENCE,
-            message: `${common.FieldClassEnum.Measure} ${common.ParameterEnum.Sql} must have a BlockML reference to ${common.FieldClassEnum.Dimension}`,
+            message: `${common.FieldClassEnum.Measure} ${common.ParameterEnum.Sql} must have a reference to ${common.FieldClassEnum.Dimension}`,
             lines: [
               {
                 line: field.sql_line_num,
@@ -261,7 +261,7 @@ export function checkMeasures<T extends types.vmType>(
         item.errors.push(
           new BmError({
             title: common.ErTitleEnum.MEASURE_SQL_KEY_MISSING_BLOCKML_REFERENCE,
-            message: `${common.FieldClassEnum.Measure} ${common.ParameterEnum.SqlKey} must have a BlockML reference to ${common.FieldClassEnum.Dimension}`,
+            message: `${common.FieldClassEnum.Measure} ${common.ParameterEnum.SqlKey} must have a reference to ${common.FieldClassEnum.Dimension}`,
             lines: [
               {
                 line: field.sql_key_line_num,
