@@ -1,11 +1,13 @@
 // 2019-06-27 12:32:02.230908+00
 export enum TimeframeEnum {
   Date = 'date', // 2019-06-27
+  DateTs = 'date_ts', //
   DayOfMonth = 'day_of_month', // 27
   DayOfWeek = 'day_of_week', // Thursday
   DayOfWeekIndex = 'day_of_week_index', // 5 or 4
   DayOfYear = 'day_of_year', // 178
   Hour = 'hour', // 2019-06-27 12
+  HourTs = 'hour_ts', //
   HourOfDay = 'hour_of_day', // 12
   Hour2 = 'hour2', // 2019-06-27 12
   Hour3 = 'hour3',
@@ -14,6 +16,7 @@ export enum TimeframeEnum {
   Hour8 = 'hour8',
   Hour12 = 'hour12',
   Minute = 'minute', // 2019-06-27 12:32
+  MinuteTs = 'minute_ts', //
   Minute2 = 'minute2', // 2019-06-27 12:32
   Minute3 = 'minute3',
   Minute5 = 'minute5',
@@ -21,14 +24,19 @@ export enum TimeframeEnum {
   Minute15 = 'minute15',
   Minute30 = 'minute30',
   Month = 'month', // 2019-06
+  MonthTs = 'month_ts', //
   MonthName = 'month_name', // June
   MonthNum = 'month_num', // 6
   Quarter = 'quarter', // 2019-04
+  QuarterTs = 'quarter_ts', //
   QuarterOfYear = 'quarter_of_year', // Q2
   Time = 'time', // 2019-06-27 12:32:02
   TimeOfDay = 'time_of_day', // 12:32
+  Ts = 'ts', //
   Week = 'week', // 2019-06-24
+  WeekTs = 'week_ts', //
   WeekOfYear = 'week_of_year', // 26
   Year = 'year', // 2019
+  YearTs = 'year_ts', //
   YesNoHasValue = 'yesno_has_value' // Yes
 }
