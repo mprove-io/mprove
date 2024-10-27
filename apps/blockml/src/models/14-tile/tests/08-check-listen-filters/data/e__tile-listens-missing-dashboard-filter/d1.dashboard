@@ -1,0 +1,17 @@
+dashboard: d1
+fields:
+- filter: f1
+  result: string
+  default: 
+  - -text-
+
+tiles:  
+- title: t1
+  model: m1
+  select: 
+  - a.dim1
+  listen_filters:
+    unk: a.dim1
+
+
+

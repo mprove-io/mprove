@@ -14,16 +14,15 @@ export enum CallerEnum {
   BuildSortJoins = '09-BuildSortJoins',
   BuildSqlAlwaysWhere = '10-BuildSqlAlwaysWhere',
   BuildSqlAlwaysWhereCalc = '11-BuildSqlAlwaysWhereCalc',
+  BuildModelMetric = '11.1-BuildModelMetric',
   BuildDashboard = '12-BuildDashboard',
   BuildViz = '13-BuildViz',
 
-  BuildDashboardReport = '14-BuildDashboardReport',
-  BuildVizReport = '14-BuildVizReport',
+  BuildDashboardTile = '14-BuildDashboardTile',
+  BuildVizTile = '14-BuildVizTile',
 
   BuildDashboardChart = '15-BuildDashboardChart',
   BuildVizChart = '15-BuildVizChart',
-
-  BuildMetric = '16-BuildMetric',
 
   BuildRep = '17-BuildRep',
 

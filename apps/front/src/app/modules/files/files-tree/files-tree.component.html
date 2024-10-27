@@ -71,11 +71,11 @@
 
               <div
                 class="h-9 w-9 flex-shrink-0"
-                *ngIf="nav.isRepoProd === true || needSave === true"
+                *ngIf="nav.isRepoProd === true"
               ></div>
 
               <div
-                *ngIf="nav.isRepoProd === false && needSave === false"
+                *ngIf="nav.isRepoProd === false"
                 class="invisible flex flex-shrink-0 group-hover:visible"
               >
                 <m-folder-options
@@ -101,7 +101,7 @@
   >
     <div
       *ngFor="let change of repo.changesToCommit"
-      class="flex flex-row items-end rounded py-2 px-7 hover:cursor-pointer"
+      class="flex flex-row items-end rounded px-7 py-2 hover:cursor-pointer"
       [ngClass]="{
         'bg-blue-100': fileId === change.fileId,
         'hover:bg-blue2': fileId !== change.fileId
@@ -130,7 +130,7 @@
   >
     <div
       *ngFor="let change of repo.changesToPush"
-      class="flex flex-row items-end rounded py-2 px-7 hover:cursor-pointer"
+      class="flex flex-row items-end rounded px-7 py-2 hover:cursor-pointer"
       [ngClass]="{
         'bg-blue-100': fileId === change.fileId,
         'hover:bg-blue2': fileId !== change.fileId
@@ -189,6 +189,7 @@
     <div class="mt-4 text-xl"> Push branch to Remote</div>
   </div>
 
+  <div *ngIf="struct$ | async"></div>
   <div *ngIf="repo$ | async"></div>
   <div *ngIf="nav$ | async"></div>
   <div *ngIf="needSave$ | async"></div>

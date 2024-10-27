@@ -23,10 +23,10 @@ export class SyncCommand extends CustomCommand {
 
   static usage = Command.Usage({
     description:
-      'Synchronize files (uncommitted changes) between Local and Dev repo, validate BlockML for selected env',
+      'Synchronize files (uncommitted changes) between Local and Dev repo, validate Mprove Files for selected env',
     examples: [
       [
-        'Synchronize files (uncommitted changes) between Local and Dev repo, validate BlockML for selected env',
+        'Synchronize files (uncommitted changes) between Local and Dev repo, validate Mprove Files for selected env',
         'mprove sync --project-id DXYE72ODCP5LWPWH2EXQ --env prod'
       ]
     ]

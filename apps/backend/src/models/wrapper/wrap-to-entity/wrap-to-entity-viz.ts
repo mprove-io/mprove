@@ -13,7 +13,7 @@ export function wrapToEntityViz(x: common.Viz): entities.VizEntity {
     access_roles: x.accessRoles,
     gr: x.gr,
     hidden: common.booleanToEnum(x.hidden),
-    reports: x.reports,
+    tiles: x.tiles,
     server_ts: x.serverTs.toString()
   };
 }

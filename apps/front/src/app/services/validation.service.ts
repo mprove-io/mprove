@@ -31,7 +31,7 @@ export class ValidationService {
       ['projectNameIsNotUnique', 'Project name already exists'],
       ['projectNameIsNotValid', 'Project name is not valid'],
       ['wrongFormatNumber', 'Wrong format number'],
-      ['titleIsNotUnique', 'Report title must be unique for dashboard'],
+      ['titleIsNotUnique', 'Tile title must be unique for dashboard'],
       ['fileNameWrongChars', 'Use only "a...z0...9_" chars'],
       ['envVariableNameWrongChars', 'Use only "A...Z0...9_" chars'],
       [

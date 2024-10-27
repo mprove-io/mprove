@@ -72,9 +72,9 @@ export function makeDashboardFileText(item: {
                 : undefined
           }))
         : undefined,
-    reports:
-      common.isDefined(dashboard.reports) && dashboard.reports.length > 0
-        ? dashboard.reports.map(x => {
+    tiles:
+      common.isDefined(dashboard.tiles) && dashboard.tiles.length > 0
+        ? dashboard.tiles.map(x => {
             let newMconfig = common.makeCopy(x.mconfig);
 
             // if (common.isDefined(x.listen)) {
@@ -87,8 +87,8 @@ export function makeDashboardFileText(item: {
             //   });
             // }
 
-            let filePartReport: common.FilePartReport = common.prepareReport({
-              report: x,
+            let filePartTile: common.FilePartTile = common.prepareTile({
+              tile: x,
               isForDashboard: true,
               mconfig: newMconfig,
               defaultTimezone: defaultTimezone,
@@ -96,7 +96,7 @@ export function makeDashboardFileText(item: {
               deleteFilterMconfigId: deleteFilterMconfigId
             });
 
-            return filePartReport;
+            return filePartTile;
           })
         : undefined
   };

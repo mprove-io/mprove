@@ -20,14 +20,14 @@ export class RevertCommand extends CustomCommand {
 
   static usage = Command.Usage({
     description:
-      'Revert (reset) repo to the state of a last commit or Remote repo, validate BlockML for selected env',
+      'Revert (reset) repo to the state of a last commit or Remote repo, validate Mprove Files for selected env',
     examples: [
       [
-        'Revert Dev repo to the state of a last commit, validate BlockML for env prod',
+        'Revert Dev repo to the state of a last commit, validate Mprove Files for env prod',
         'mprove revert --to last-commit --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
       ],
       [
-        'Revert Production repo to the state of Remote repo, validate BlockML for env prod',
+        'Revert Production repo to the state of Remote repo, validate Mprove Files for env prod',
         'mprove revert --to remote --project-id DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
       ]
     ]

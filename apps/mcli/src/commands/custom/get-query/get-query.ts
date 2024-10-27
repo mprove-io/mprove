@@ -22,10 +22,10 @@ interface DashboardPartQ {
   title: string;
   dashboardId: string;
   url: string;
-  reports: ReportPartQ[];
+  tiles: TilePartQ[];
 }
 
-interface ReportPartQ {
+interface TilePartQ {
   title: string;
   query: QueryPartQ;
 }
@@ -95,9 +95,9 @@ export class GetQueryCommand extends CustomCommand {
     description: '(dashboard-id or viz-id required) Dashboard Id (name)'
   });
 
-  reportIndex = Option.String('--report-index', {
+  tileIndex = Option.String('--tile-index', {
     validator: t.isNumber(),
-    description: '(optional) Dashboard Report Index starting with 0'
+    description: '(optional) Dashboard Tile Index starting with 0'
   });
 
   vizId = Option.String('--viz-id', {
@@ -156,12 +156,12 @@ export class GetQueryCommand extends CustomCommand {
     }
 
     if (
-      common.isDefined(this.reportIndex) &&
+      common.isDefined(this.tileIndex) &&
       common.isUndefined(this.dashboardId)
     ) {
       let serverError = new common.ServerError({
         message:
-          common.ErEnum.MCLI_REPORT_INDEX_DOES_NOT_WORK_WITHOUT_DASHBOARD_ID,
+          common.ErEnum.MCLI_TILE_INDEX_DOES_NOT_WORK_WITHOUT_DASHBOARD_ID,
         originalError: null
       });
       throw serverError;
@@ -217,31 +217,31 @@ export class GetQueryCommand extends CustomCommand {
       });
 
       let vizX = getVizResp.payload.viz;
-      let reportX = vizX.reports[0];
+      let tileX = vizX.tiles[0];
 
       let queryPartQ: QueryPartQ = {
-        connectionId: reportX.query.connectionId,
-        connectionType: reportX.query.connectionType,
-        queryId: reportX.query.queryId,
-        status: reportX.query.status,
-        lastRunBy: reportX.query.lastRunBy,
-        lastRunTs: reportX.query.lastRunTs,
-        lastCancelTs: reportX.query.lastCancelTs,
-        lastCompleteTs: reportX.query.lastCompleteTs,
-        lastCompleteDuration: reportX.query.lastCompleteDuration,
-        lastErrorMessage: reportX.query.lastErrorMessage,
-        lastErrorTs: reportX.query.lastErrorTs,
+        connectionId: tileX.query.connectionId,
+        connectionType: tileX.query.connectionType,
+        queryId: tileX.query.queryId,
+        status: tileX.query.status,
+        lastRunBy: tileX.query.lastRunBy,
+        lastRunTs: tileX.query.lastRunTs,
+        lastCancelTs: tileX.query.lastCancelTs,
+        lastCompleteTs: tileX.query.lastCompleteTs,
+        lastCompleteDuration: tileX.query.lastCompleteDuration,
+        lastErrorMessage: tileX.query.lastErrorMessage,
+        lastErrorTs: tileX.query.lastErrorTs,
         data: undefined,
         sql: undefined,
         sqlArray: undefined
       };
 
       if (this.getData) {
-        queryPartQ.data = reportX.query.data;
+        queryPartQ.data = tileX.query.data;
       }
 
       if (this.getSql) {
-        queryPartQ.sql = reportX.query.sql;
+        queryPartQ.sql = tileX.query.sql;
       }
 
       let url = getVisualizationUrl({
@@ -255,7 +255,7 @@ export class GetQueryCommand extends CustomCommand {
       });
 
       vizPartQ = {
-        title: reportX.mconfig.chart.title,
+        title: tileX.mconfig.chart.title,
         vizId: vizX.vizId,
         url: url,
         query: queryPartQ
@@ -285,46 +285,46 @@ export class GetQueryCommand extends CustomCommand {
 
       let dashboardX = getDashboardResp.payload.dashboard;
 
-      let reportPartQs = dashboardX.reports
+      let tilePartQs = dashboardX.tiles
         .filter((rep, i) => {
-          if (common.isDefined(this.reportIndex)) {
-            return this.reportIndex === i;
+          if (common.isDefined(this.tileIndex)) {
+            return this.tileIndex === i;
           }
 
           return true;
         })
-        .map(reportX => {
+        .map(tileX => {
           let queryPartQ: QueryPartQ = {
-            connectionId: reportX.query.connectionId,
-            connectionType: reportX.query.connectionType,
-            queryId: reportX.query.queryId,
-            status: reportX.query.status,
-            lastRunBy: reportX.query.lastRunBy,
-            lastRunTs: reportX.query.lastRunTs,
-            lastCancelTs: reportX.query.lastCancelTs,
-            lastCompleteTs: reportX.query.lastCompleteTs,
-            lastCompleteDuration: reportX.query.lastCompleteDuration,
-            lastErrorMessage: reportX.query.lastErrorMessage,
-            lastErrorTs: reportX.query.lastErrorTs,
+            connectionId: tileX.query.connectionId,
+            connectionType: tileX.query.connectionType,
+            queryId: tileX.query.queryId,
+            status: tileX.query.status,
+            lastRunBy: tileX.query.lastRunBy,
+            lastRunTs: tileX.query.lastRunTs,
+            lastCancelTs: tileX.query.lastCancelTs,
+            lastCompleteTs: tileX.query.lastCompleteTs,
+            lastCompleteDuration: tileX.query.lastCompleteDuration,
+            lastErrorMessage: tileX.query.lastErrorMessage,
+            lastErrorTs: tileX.query.lastErrorTs,
             data: undefined,
             sql: undefined,
             sqlArray: undefined
           };
 
           if (this.getData) {
-            queryPartQ.data = reportX.query.data;
+            queryPartQ.data = tileX.query.data;
           }
 
           if (this.getSql) {
-            queryPartQ.sql = reportX.query.sql;
+            queryPartQ.sql = tileX.query.sql;
           }
 
-          let reportPartQ: ReportPartQ = {
-            title: reportX.mconfig.chart.title,
+          let tilePartQ: TilePartQ = {
+            title: tileX.mconfig.chart.title,
             query: queryPartQ
           };
 
-          return reportPartQ;
+          return tilePartQ;
         });
 
       let url = getDashboardUrl({
@@ -341,7 +341,7 @@ export class GetQueryCommand extends CustomCommand {
         title: dashboardX.title,
         dashboardId: dashboardX.dashboardId,
         url: url,
-        reports: reportPartQs
+        tiles: tilePartQs
       };
     }
 

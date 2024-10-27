@@ -1,10 +1,10 @@
 import { JSONSchema7 } from 'json-schema';
 import { FILTER_SCHEMA } from './fields/filter-schema';
-import { REPORT_SCHEMA } from './report-schema';
+import { TILE_SCHEMA } from './tile-schema';
 
 export const DASHBOARD_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
-  $id: 'https://docs.mprove.io/top/blockml/dashboard',
+  $id: 'https://docs.mprove.io/top/reference/dashboard',
   type: 'object',
   additionalProperties: false,
   properties: {
@@ -33,10 +33,10 @@ export const DASHBOARD_SCHEMA: JSONSchema7 = {
       type: 'array',
       items: FILTER_SCHEMA
     },
-    reports: {
+    tiles: {
       type: 'array',
-      items: REPORT_SCHEMA
+      items: TILE_SCHEMA
     }
   },
-  required: ['dashboard', 'reports']
+  required: ['dashboard', 'tiles']
 };

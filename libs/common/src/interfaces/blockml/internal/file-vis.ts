@@ -1,5 +1,5 @@
 import { FileBasic } from './file-basic';
-import { FilePartReport } from './file-part-report';
+import { FilePartTile } from './file-part-tile';
 
 export interface FileVis extends FileBasic {
   vis?: string;
@@ -17,6 +17,6 @@ export interface FileVis extends FileBasic {
   access_roles?: string[];
   access_roles_line_num?: number;
 
-  reports?: FilePartReport[];
-  reports_line_num?: number;
+  tiles?: FilePartTile[];
+  tiles_line_num?: number;
 }

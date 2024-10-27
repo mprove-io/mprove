@@ -1,5 +1,5 @@
 vis: 4GI2L3ALYEO9LXWP3O92
-reports:
+tiles:
 - title: Total Profit
   model: ec1_m1
   select:

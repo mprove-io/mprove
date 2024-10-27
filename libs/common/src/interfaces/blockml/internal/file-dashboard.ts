@@ -1,7 +1,7 @@
 import { FilterBricksDictionary } from '../filter-bricks-dictionary';
 import { FieldAny } from './field-any';
 import { FileBasic } from './file-basic';
-import { FilePartReport } from './file-part-report';
+import { FilePartTile } from './file-part-tile';
 
 export interface FileDashboard extends FileBasic {
   dashboard?: string;
@@ -28,8 +28,8 @@ export interface FileDashboard extends FileBasic {
   fields?: FieldAny[];
   fields_line_num?: number;
 
-  reports?: FilePartReport[];
-  reports_line_num?: number;
+  tiles?: FilePartTile[];
+  tiles_line_num?: number;
 
   //
 

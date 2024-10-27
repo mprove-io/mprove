@@ -40,7 +40,7 @@ export function checkCalculations<T extends types.vmType>(
         item.errors.push(
           new BmError({
             title: common.ErTitleEnum.CALCULATION_SQL_MISSING_BLOCKML_REFERENCE,
-            message: `${common.FieldClassEnum.Calculation} ${common.ParameterEnum.Sql} must have a BlockML reference`,
+            message: `${common.FieldClassEnum.Calculation} ${common.ParameterEnum.Sql} must have a reference`,
             lines: [
               {
                 line: field.sql_line_num,

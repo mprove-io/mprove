@@ -619,7 +619,7 @@ export function processFilter(item: {
         currentMonthTs,
         currentQuarterTs,
         currentYearTs
-      } = barTimestamp.makeTimestampsCurrent({
+      } = barTimestamp.makeCurrentTimestamps({
         timezone: timezone,
         weekStart: weekStart,
         connection: connection,

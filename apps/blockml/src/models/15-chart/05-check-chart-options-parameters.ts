@@ -26,12 +26,12 @@ export function checkChartOptionsParameters<T extends types.dzType>(
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    x.reports.forEach(report => {
-      if (common.isUndefined(report.options)) {
+    x.tiles.forEach(tile => {
+      if (common.isUndefined(tile.options)) {
         return;
       }
 
-      Object.keys(report.options)
+      Object.keys(tile.options)
         .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
           if (
@@ -83,13 +83,13 @@ export function checkChartOptionsParameters<T extends types.dzType>(
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.REPORT_OPTIONS_UNKNOWN_PARAMETER,
+                title: common.ErTitleEnum.TILE_OPTIONS_UNKNOWN_PARAMETER,
                 message:
                   `parameter "${parameter}" can not be used ` +
-                  'inside Report options',
+                  'inside Tile options',
                 lines: [
                   {
-                    line: report.options[
+                    line: tile.options[
                       (parameter +
                         constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
@@ -104,16 +104,16 @@ export function checkChartOptionsParameters<T extends types.dzType>(
 
           if (
             Array.isArray(
-              report.options[parameter as keyof common.FileChartOptions] as any
+              tile.options[parameter as keyof common.FileChartOptions] as any
             )
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.REPORT_OPTIONS_UNEXPECTED_LIST,
+                title: common.ErTitleEnum.TILE_OPTIONS_UNEXPECTED_LIST,
                 message: `parameter "${parameter}" can not be a list`,
                 lines: [
                   {
-                    line: report.options[
+                    line: tile.options[
                       (parameter +
                         constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
@@ -127,16 +127,16 @@ export function checkChartOptionsParameters<T extends types.dzType>(
           }
 
           if (
-            (report.options[parameter as keyof common.FileChartOptions] as any)
+            (tile.options[parameter as keyof common.FileChartOptions] as any)
               ?.constructor === Object
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.REPORT_OPTIONS_UNEXPECTED_DICTIONARY,
+                title: common.ErTitleEnum.TILE_OPTIONS_UNEXPECTED_DICTIONARY,
                 message: `parameter "${parameter}" can not be a dictionary`,
                 lines: [
                   {
-                    line: report.options[
+                    line: tile.options[
                       (parameter +
                         constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
@@ -166,19 +166,19 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               common.ParameterEnum.ExplodeSlices.toString(),
               common.ParameterEnum.Labels.toString()
             ].indexOf(parameter) > -1 &&
-            !(report.options[parameter as keyof common.FileChartOptions] as any)
+            !(tile.options[parameter as keyof common.FileChartOptions] as any)
               .toString()
               .match(common.MyRegex.TRUE_FALSE())
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.REPORT_OPTIONS_WRONG_PARAMETER_VALUE,
+                title: common.ErTitleEnum.TILE_OPTIONS_WRONG_PARAMETER_VALUE,
                 message:
                   `parameter "${parameter}" value must be ` +
                   '"true" or "false" if specified',
                 lines: [
                   {
-                    line: report.options[
+                    line: tile.options[
                       (parameter +
                         constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
@@ -194,21 +194,21 @@ export function checkChartOptionsParameters<T extends types.dzType>(
           if (
             parameter === common.ParameterEnum.Interpolation &&
             common.CHART_INTERPOLATION_VALUES.indexOf(
-              report.options[parameter as keyof common.FileChartOptions] as any
+              tile.options[parameter as keyof common.FileChartOptions] as any
             ) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.REPORT_OPTIONS_WRONG_INTERPOLATION,
+                title: common.ErTitleEnum.TILE_OPTIONS_WRONG_INTERPOLATION,
                 message:
                   `"${
-                    report.options[
+                    tile.options[
                       parameter as keyof common.FileChartOptions
                     ] as any
                   }" is not valid ` + `"${parameter}" value`,
                 lines: [
                   {
-                    line: report.options[
+                    line: tile.options[
                       (parameter +
                         constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
@@ -224,21 +224,21 @@ export function checkChartOptionsParameters<T extends types.dzType>(
           if (
             parameter === common.ParameterEnum.ColorScheme &&
             common.CHART_COLOR_SCHEME_VALUES.indexOf(
-              report.options[parameter as keyof common.FileChartOptions] as any
+              tile.options[parameter as keyof common.FileChartOptions] as any
             ) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.REPORT_OPTIONS_WRONG_COLOR_SCHEME,
+                title: common.ErTitleEnum.TILE_OPTIONS_WRONG_COLOR_SCHEME,
                 message:
                   `"${
-                    report.options[
+                    tile.options[
                       parameter as keyof common.FileChartOptions
                     ] as any
                   }" is not valid ` + `"${parameter}" value`,
                 lines: [
                   {
-                    line: report.options[
+                    line: tile.options[
                       (parameter +
                         constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
@@ -254,21 +254,21 @@ export function checkChartOptionsParameters<T extends types.dzType>(
           if (
             parameter === common.ParameterEnum.SchemeType &&
             common.CHART_SCHEME_TYPE_VALUES.indexOf(
-              report.options[parameter as keyof common.FileChartOptions] as any
+              tile.options[parameter as keyof common.FileChartOptions] as any
             ) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.REPORT_OPTIONS_WRONG_SCHEME_TYPE,
+                title: common.ErTitleEnum.TILE_OPTIONS_WRONG_SCHEME_TYPE,
                 message:
                   `"${
-                    report.options[
+                    tile.options[
                       parameter as keyof common.FileChartOptions
                     ] as any
                   }" is not valid ` + `"${parameter}" value`,
                 lines: [
                   {
-                    line: report.options[
+                    line: tile.options[
                       (parameter +
                         constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
@@ -294,23 +294,23 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               common.ParameterEnum.Max.toString()
             ].indexOf(parameter) > -1 &&
             !(
-              report.options[parameter as keyof common.FileChartOptions] as any
+              tile.options[parameter as keyof common.FileChartOptions] as any
             ).match(common.MyRegex.CAPTURE_DIGITS_START_TO_END_G())
           ) {
             item.errors.push(
               new BmError({
                 title:
                   common.ErTitleEnum
-                    .REPORT_OPTIONS_PARAMETER_MUST_BE_A_POSITIVE_INTEGER,
+                    .TILE_OPTIONS_PARAMETER_MUST_BE_A_POSITIVE_INTEGER,
                 message:
                   `"${
-                    report.options[
+                    tile.options[
                       parameter as keyof common.FileChartOptions
                     ] as any
                   }" is not valid ` + `"${parameter}" value`,
                 lines: [
                   {
-                    line: report.options[
+                    line: tile.options[
                       (parameter +
                         constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
@@ -329,22 +329,22 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               common.ParameterEnum.RangeFillOpacity.toString()
             ].indexOf(parameter) > -1 &&
             !(
-              report.options[parameter as keyof common.FileChartOptions] as any
+              tile.options[parameter as keyof common.FileChartOptions] as any
             ).match(common.MyRegex.CAPTURE_FLOAT_START_TO_END_G())
           ) {
             item.errors.push(
               new BmError({
                 title:
-                  common.ErTitleEnum.REPORT_OPTIONS_PARAMETER_MUST_BE_A_NUMBER,
+                  common.ErTitleEnum.TILE_OPTIONS_PARAMETER_MUST_BE_A_NUMBER,
                 message:
                   `"${
-                    report.options[
+                    tile.options[
                       parameter as keyof common.FileChartOptions
                     ] as any
                   }" is not valid ` + `"${parameter}" value`,
                 lines: [
                   {
-                    line: report.options[
+                    line: tile.options[
                       (parameter +
                         constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
@@ -365,23 +365,22 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               common.ParameterEnum.YScaleMax.toString()
             ].indexOf(parameter) > -1 &&
             !(
-              report.options[parameter as keyof common.FileChartOptions] as any
+              tile.options[parameter as keyof common.FileChartOptions] as any
             ).match(common.MyRegex.CAPTURE_MINUS_DIGITS_START_TO_END_G())
           ) {
             item.errors.push(
               new BmError({
                 title:
-                  common.ErTitleEnum
-                    .REPORT_OPTIONS_PARAMETER_MUST_BE_AN_INTEGER,
+                  common.ErTitleEnum.TILE_OPTIONS_PARAMETER_MUST_BE_AN_INTEGER,
                 message:
                   `"${
-                    report.options[
+                    tile.options[
                       parameter as keyof common.FileChartOptions
                     ] as any
                   }" is not valid ` + `"${parameter}" value`,
                 lines: [
                   {
-                    line: report.options[
+                    line: tile.options[
                       (parameter +
                         constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
@@ -402,24 +401,24 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               common.ParameterEnum.EmptyColor.toString()
             ].indexOf(parameter) > -1 &&
             !(
-              report.options[parameter as keyof common.FileChartOptions] as any
+              tile.options[parameter as keyof common.FileChartOptions] as any
             ).match(common.MyRegex.CAPTURE_RGB_SPLIT_G()) &&
             !(
-              report.options[parameter as keyof common.FileChartOptions] as any
+              tile.options[parameter as keyof common.FileChartOptions] as any
             ).match(common.MyRegex.CAPTURE_RGBA_SPLIT_G())
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.REPORT_OPTIONS_WRONG_COLOR,
+                title: common.ErTitleEnum.TILE_OPTIONS_WRONG_COLOR,
                 message:
                   `"${
-                    report.options[
+                    tile.options[
                       parameter as keyof common.FileChartOptions
                     ] as any
                   }" is not valid ` + `"${parameter}" value`,
                 lines: [
                   {
-                    line: report.options[
+                    line: tile.options[
                       (parameter +
                         constants.LINE_NUM) as keyof common.FileChartOptions
                     ] as number,
@@ -441,7 +440,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               common.ParameterEnum.FormatNumberXAxisTick.toString()
             ].indexOf(parameter) > -1
           ) {
-            let value = report.options[
+            let value = tile.options[
               parameter as keyof common.FileChartOptions
             ] as any;
             try {
@@ -453,7 +452,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
                   message: ` ${parameter} value "${value}" is not valid`,
                   lines: [
                     {
-                      line: report.options[
+                      line: tile.options[
                         (parameter +
                           constants.LINE_NUM) as keyof common.FileChartOptions
                       ] as number,

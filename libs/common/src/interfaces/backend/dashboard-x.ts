@@ -2,7 +2,7 @@ import { Type } from 'class-transformer';
 import { IsBoolean, IsString, ValidateNested } from 'class-validator';
 import { Dashboard } from '../blockml/dashboard';
 import { FilterX } from './filter-x';
-import { ReportX } from './report-x';
+import { TileX } from './tile-x';
 
 export class DashboardX extends Dashboard {
   @ValidateNested()
@@ -10,8 +10,8 @@ export class DashboardX extends Dashboard {
   extendedFilters: FilterX[];
 
   @ValidateNested()
-  @Type(() => ReportX)
-  reports: ReportX[];
+  @Type(() => TileX)
+  tiles: TileX[];
 
   @IsString()
   author: string;

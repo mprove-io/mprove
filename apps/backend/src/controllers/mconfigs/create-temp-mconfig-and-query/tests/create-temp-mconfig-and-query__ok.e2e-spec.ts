@@ -106,8 +106,8 @@ test('1', async t => {
         req: req1
       });
 
-    let query = resp1.payload.dashboard.reports[0].query;
-    let mconfig = resp1.payload.dashboard.reports[0].mconfig;
+    let query = resp1.payload.dashboard.tiles[0].query;
+    let mconfig = resp1.payload.dashboard.tiles[0].mconfig;
     mconfig.mconfigId = common.makeId();
 
     let req2: apiToBackend.ToBackendCreateTempMconfigAndQueryRequest = {

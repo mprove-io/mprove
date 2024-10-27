@@ -26,8 +26,8 @@ export function checkChartDataParameters<T extends types.dzType>(
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    x.reports.forEach(report => {
-      let model = item.models.find(m => m.name === report.model);
+    x.tiles.forEach(tile => {
+      let model = item.models.find(m => m.name === tile.model);
 
       if (
         [
@@ -49,19 +49,18 @@ export function checkChartDataParameters<T extends types.dzType>(
           common.ChartTypeEnum.HeatMap,
           common.ChartTypeEnum.TreeMap,
           common.ChartTypeEnum.Gauge
-        ].indexOf(report.type) > -1 &&
-        (common.isUndefined(report.data) ||
-          common.isUndefined(report.data.x_field))
+        ].indexOf(tile.type) > -1 &&
+        (common.isUndefined(tile.data) || common.isUndefined(tile.data.x_field))
       ) {
         item.errors.push(
           new BmError({
-            title: common.ErTitleEnum.REPORT_DATA_MISSING_X_FIELD,
+            title: common.ErTitleEnum.TILE_DATA_MISSING_X_FIELD,
             message:
-              `report of type "${report.type}" must have ` +
+              `tile of type "${tile.type}" must have ` +
               `"${common.ParameterEnum.XField}" parameter in "${common.ParameterEnum.Data}"`,
             lines: [
               {
-                line: report.data_line_num,
+                line: tile.data_line_num,
                 name: x.fileName,
                 path: x.filePath
               }
@@ -81,19 +80,18 @@ export function checkChartDataParameters<T extends types.dzType>(
           common.ChartTypeEnum.TreeMap,
           common.ChartTypeEnum.NumberCard,
           common.ChartTypeEnum.Gauge
-        ].indexOf(report.type) > -1 &&
-        (common.isUndefined(report.data) ||
-          common.isUndefined(report.data.y_field))
+        ].indexOf(tile.type) > -1 &&
+        (common.isUndefined(tile.data) || common.isUndefined(tile.data.y_field))
       ) {
         item.errors.push(
           new BmError({
-            title: common.ErTitleEnum.REPORT_DATA_MISSING_Y_FIELD,
+            title: common.ErTitleEnum.TILE_DATA_MISSING_Y_FIELD,
             message:
-              `report of type "${report.type}" must have ` +
+              `tile of type "${tile.type}" must have ` +
               `"${common.ParameterEnum.YField}" parameter in "${common.ParameterEnum.Data}"`,
             lines: [
               {
-                line: report.data_line_num,
+                line: tile.data_line_num,
                 name: x.fileName,
                 path: x.filePath
               }
@@ -116,19 +114,19 @@ export function checkChartDataParameters<T extends types.dzType>(
           common.ChartTypeEnum.AreaStacked,
           common.ChartTypeEnum.AreaNormalized,
           common.ChartTypeEnum.HeatMap
-        ].indexOf(report.type) > -1 &&
-        (common.isUndefined(report.data) ||
-          common.isUndefined(report.data.y_fields))
+        ].indexOf(tile.type) > -1 &&
+        (common.isUndefined(tile.data) ||
+          common.isUndefined(tile.data.y_fields))
       ) {
         item.errors.push(
           new BmError({
-            title: common.ErTitleEnum.REPORT_DATA_MISSING_Y_FIELDS,
+            title: common.ErTitleEnum.TILE_DATA_MISSING_Y_FIELDS,
             message:
-              `report of type "${report.type}" must have ` +
+              `tile of type "${tile.type}" must have ` +
               `"${common.ParameterEnum.YFields}" parameter in "${common.ParameterEnum.Data}"`,
             lines: [
               {
-                line: report.data_line_num,
+                line: tile.data_line_num,
                 name: x.fileName,
                 path: x.filePath
               }
@@ -139,19 +137,19 @@ export function checkChartDataParameters<T extends types.dzType>(
       }
 
       if (
-        report.type === common.ChartTypeEnum.GaugeLinear &&
-        (common.isUndefined(report.data) ||
-          common.isUndefined(report.data.value_field))
+        tile.type === common.ChartTypeEnum.GaugeLinear &&
+        (common.isUndefined(tile.data) ||
+          common.isUndefined(tile.data.value_field))
       ) {
         item.errors.push(
           new BmError({
-            title: common.ErTitleEnum.REPORT_DATA_MISSING_VALUE_FIELD,
+            title: common.ErTitleEnum.TILE_DATA_MISSING_VALUE_FIELD,
             message:
-              `report of type "${report.type}" must have ` +
+              `tile of type "${tile.type}" must have ` +
               `"${common.ParameterEnum.ValueField}" parameter in "${common.ParameterEnum.Data}"`,
             lines: [
               {
-                line: report.data_line_num,
+                line: tile.data_line_num,
                 name: x.fileName,
                 path: x.filePath
               }
@@ -161,21 +159,21 @@ export function checkChartDataParameters<T extends types.dzType>(
         return;
       }
 
-      if (common.isUndefined(report.data)) {
+      if (common.isUndefined(tile.data)) {
         return;
       }
 
-      if (common.isDefined(report.data.x_field)) {
-        if (report.select.indexOf(report.data.x_field) < 0) {
+      if (common.isDefined(tile.data.x_field)) {
+        if (tile.select.indexOf(tile.data.x_field) < 0) {
           item.errors.push(
             new BmError({
-              title: common.ErTitleEnum.REPORT_DATA_WRONG_X_FIELD,
+              title: common.ErTitleEnum.TILE_DATA_WRONG_X_FIELD,
               message:
                 `"${common.ParameterEnum.XField}" value must be one of ` +
                 `"${common.ParameterEnum.Select}" elements`,
               lines: [
                 {
-                  line: report.data.x_field_line_num,
+                  line: tile.data.x_field_line_num,
                   name: x.fileName,
                   path: x.filePath
                 }
@@ -186,17 +184,17 @@ export function checkChartDataParameters<T extends types.dzType>(
         } else {
           let field = getField({
             model: model,
-            fieldId: report.data.x_field
+            fieldId: tile.data.x_field
           });
 
           if (field.fieldClass !== common.FieldClassEnum.Dimension) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.REPORT_DATA_WRONG_X_FIELD_CLASS,
+                title: common.ErTitleEnum.TILE_DATA_WRONG_X_FIELD_CLASS,
                 message: `"${common.ParameterEnum.XField}" must be a Dimension`,
                 lines: [
                   {
-                    line: report.data.x_field_line_num,
+                    line: tile.data.x_field_line_num,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -208,17 +206,17 @@ export function checkChartDataParameters<T extends types.dzType>(
         }
       }
 
-      if (common.isDefined(report.data.y_field)) {
-        if (report.select.indexOf(report.data.y_field) < 0) {
+      if (common.isDefined(tile.data.y_field)) {
+        if (tile.select.indexOf(tile.data.y_field) < 0) {
           item.errors.push(
             new BmError({
-              title: common.ErTitleEnum.REPORT_DATA_WRONG_Y_FIELD,
+              title: common.ErTitleEnum.TILE_DATA_WRONG_Y_FIELD,
               message:
                 `"${common.ParameterEnum.YField}" value must be one of ` +
                 `"${common.ParameterEnum.Select}" elements`,
               lines: [
                 {
-                  line: report.data.y_field_line_num,
+                  line: tile.data.y_field_line_num,
                   name: x.fileName,
                   path: x.filePath
                 }
@@ -229,7 +227,7 @@ export function checkChartDataParameters<T extends types.dzType>(
         } else {
           let field = getField({
             model: model,
-            fieldId: report.data.y_field
+            fieldId: tile.data.y_field
           });
 
           if (
@@ -238,11 +236,11 @@ export function checkChartDataParameters<T extends types.dzType>(
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.REPORT_DATA_WRONG_Y_FIELD_CLASS,
+                title: common.ErTitleEnum.TILE_DATA_WRONG_Y_FIELD_CLASS,
                 message: `"${common.ParameterEnum.YField}" must be a Measure or Calculation`,
                 lines: [
                   {
-                    line: report.data.y_field_line_num,
+                    line: tile.data.y_field_line_num,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -254,17 +252,17 @@ export function checkChartDataParameters<T extends types.dzType>(
         }
       }
 
-      if (common.isDefined(report.data.multi_field)) {
-        if (report.select.indexOf(report.data.multi_field) < 0) {
+      if (common.isDefined(tile.data.multi_field)) {
+        if (tile.select.indexOf(tile.data.multi_field) < 0) {
           item.errors.push(
             new BmError({
-              title: common.ErTitleEnum.REPORT_DATA_WRONG_MULTI_FIELD,
+              title: common.ErTitleEnum.TILE_DATA_WRONG_MULTI_FIELD,
               message:
                 `"${common.ParameterEnum.MultiField}" value must be one of ` +
                 `"${common.ParameterEnum.Select}" elements`,
               lines: [
                 {
-                  line: report.data.multi_field_line_num,
+                  line: tile.data.multi_field_line_num,
                   name: x.fileName,
                   path: x.filePath
                 }
@@ -275,17 +273,17 @@ export function checkChartDataParameters<T extends types.dzType>(
         } else {
           let field = getField({
             model: model,
-            fieldId: report.data.multi_field
+            fieldId: tile.data.multi_field
           });
 
           if (field.fieldClass !== common.FieldClassEnum.Dimension) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.REPORT_DATA_WRONG_MULTI_FIELD_CLASS,
+                title: common.ErTitleEnum.TILE_DATA_WRONG_MULTI_FIELD_CLASS,
                 message: `"${common.ParameterEnum.MultiField}" must be a Dimension`,
                 lines: [
                   {
-                    line: report.data.multi_field_line_num,
+                    line: tile.data.multi_field_line_num,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -297,17 +295,17 @@ export function checkChartDataParameters<T extends types.dzType>(
         }
       }
 
-      if (common.isDefined(report.data.value_field)) {
-        if (report.select.indexOf(report.data.value_field) < 0) {
+      if (common.isDefined(tile.data.value_field)) {
+        if (tile.select.indexOf(tile.data.value_field) < 0) {
           item.errors.push(
             new BmError({
-              title: common.ErTitleEnum.REPORT_DATA_WRONG_VALUE_FIELD,
+              title: common.ErTitleEnum.TILE_DATA_WRONG_VALUE_FIELD,
               message:
                 `"${common.ParameterEnum.ValueField}" value must be one of ` +
                 `"${common.ParameterEnum.Select}" elements`,
               lines: [
                 {
-                  line: report.data.value_field_line_num,
+                  line: tile.data.value_field_line_num,
                   name: x.fileName,
                   path: x.filePath
                 }
@@ -318,7 +316,7 @@ export function checkChartDataParameters<T extends types.dzType>(
         } else {
           let field = getField({
             model: model,
-            fieldId: report.data.value_field
+            fieldId: tile.data.value_field
           });
 
           if (
@@ -327,11 +325,11 @@ export function checkChartDataParameters<T extends types.dzType>(
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.REPORT_DATA_WRONG_VALUE_FIELD_CLASS,
+                title: common.ErTitleEnum.TILE_DATA_WRONG_VALUE_FIELD_CLASS,
                 message: `"${common.ParameterEnum.ValueField}" must be a Measure or Calculation`,
                 lines: [
                   {
-                    line: report.data.value_field_line_num,
+                    line: tile.data.value_field_line_num,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -343,17 +341,17 @@ export function checkChartDataParameters<T extends types.dzType>(
         }
       }
 
-      if (common.isDefined(report.data.previous_value_field)) {
-        if (report.select.indexOf(report.data.previous_value_field) < 0) {
+      if (common.isDefined(tile.data.previous_value_field)) {
+        if (tile.select.indexOf(tile.data.previous_value_field) < 0) {
           item.errors.push(
             new BmError({
-              title: common.ErTitleEnum.REPORT_DATA_WRONG_PREVIOUS_VALUE_FIELD,
+              title: common.ErTitleEnum.TILE_DATA_WRONG_PREVIOUS_VALUE_FIELD,
               message:
                 `"${common.ParameterEnum.PreviousValueField}" value must be one of ` +
                 `"${common.ParameterEnum.Select}" elements`,
               lines: [
                 {
-                  line: report.data.previous_value_field_line_num,
+                  line: tile.data.previous_value_field_line_num,
                   name: x.fileName,
                   path: x.filePath
                 }
@@ -364,7 +362,7 @@ export function checkChartDataParameters<T extends types.dzType>(
         } else {
           let field = getField({
             model: model,
-            fieldId: report.data.previous_value_field
+            fieldId: tile.data.previous_value_field
           });
 
           if (
@@ -374,12 +372,11 @@ export function checkChartDataParameters<T extends types.dzType>(
             item.errors.push(
               new BmError({
                 title:
-                  common.ErTitleEnum
-                    .REPORT_DATA_WRONG_PREVIOUS_VALUE_FIELD_CLASS,
+                  common.ErTitleEnum.TILE_DATA_WRONG_PREVIOUS_VALUE_FIELD_CLASS,
                 message: `"${common.ParameterEnum.PreviousValueField}" must be a Measure or Calculation`,
                 lines: [
                   {
-                    line: report.data.previous_value_field_line_num,
+                    line: tile.data.previous_value_field_line_num,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -391,15 +388,15 @@ export function checkChartDataParameters<T extends types.dzType>(
         }
       }
 
-      if (common.isDefined(report.data.y_fields)) {
-        if (!Array.isArray(report.data.y_fields)) {
+      if (common.isDefined(tile.data.y_fields)) {
+        if (!Array.isArray(tile.data.y_fields)) {
           item.errors.push(
             new BmError({
-              title: common.ErTitleEnum.REPORT_DATA_Y_FIELDS_MUST_BE_A_LIST,
+              title: common.ErTitleEnum.TILE_DATA_Y_FIELDS_MUST_BE_A_LIST,
               message: `parameter "${common.ParameterEnum.YFields}" must be a list`,
               lines: [
                 {
-                  line: report.data.y_fields_line_num,
+                  line: tile.data.y_fields_line_num,
                   name: x.fileName,
                   path: x.filePath
                 }
@@ -409,17 +406,17 @@ export function checkChartDataParameters<T extends types.dzType>(
           return;
         }
 
-        report.data.y_fields.forEach(element => {
-          if (report.select.indexOf(element) < 0) {
+        tile.data.y_fields.forEach(element => {
+          if (tile.select.indexOf(element) < 0) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.REPORT_DATA_WRONG_Y_FIELDS_ELEMENT,
+                title: common.ErTitleEnum.TILE_DATA_WRONG_Y_FIELDS_ELEMENT,
                 message:
                   `found element "${element}" that is not ` +
                   `listed in "${common.ParameterEnum.Select}"`,
                 lines: [
                   {
-                    line: report.data.y_fields_line_num,
+                    line: tile.data.y_fields_line_num,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -441,11 +438,11 @@ export function checkChartDataParameters<T extends types.dzType>(
                 new BmError({
                   title:
                     common.ErTitleEnum
-                      .REPORT_DATA_WRONG_Y_FIELDS_ELEMENT_FIELD_CLASS,
+                      .TILE_DATA_WRONG_Y_FIELDS_ELEMENT_FIELD_CLASS,
                   message: `"${common.ParameterEnum.YFields}" element must be a Measure or Calculation`,
                   lines: [
                     {
-                      line: report.data.y_fields_line_num,
+                      line: tile.data.y_fields_line_num,
                       name: x.fileName,
                       path: x.filePath
                     }
@@ -458,15 +455,15 @@ export function checkChartDataParameters<T extends types.dzType>(
         });
       }
 
-      if (common.isDefined(report.data.hide_columns)) {
-        if (!Array.isArray(report.data.hide_columns)) {
+      if (common.isDefined(tile.data.hide_columns)) {
+        if (!Array.isArray(tile.data.hide_columns)) {
           item.errors.push(
             new BmError({
-              title: common.ErTitleEnum.REPORT_DATA_HIDE_COLUMNS_MUST_BE_A_LIST,
+              title: common.ErTitleEnum.TILE_DATA_HIDE_COLUMNS_MUST_BE_A_LIST,
               message: `parameter "${common.ParameterEnum.HideColumns}" must be a list`,
               lines: [
                 {
-                  line: report.data.hide_columns_line_num,
+                  line: tile.data.hide_columns_line_num,
                   name: x.fileName,
                   path: x.filePath
                 }
@@ -476,18 +473,17 @@ export function checkChartDataParameters<T extends types.dzType>(
           return;
         }
 
-        report.data.hide_columns.forEach(element => {
-          if (report.select.indexOf(element) < 0) {
+        tile.data.hide_columns.forEach(element => {
+          if (tile.select.indexOf(element) < 0) {
             item.errors.push(
               new BmError({
-                title:
-                  common.ErTitleEnum.REPORT_DATA_WRONG_HIDE_COLUMNS_ELEMENT,
+                title: common.ErTitleEnum.TILE_DATA_WRONG_HIDE_COLUMNS_ELEMENT,
                 message:
                   `found element "${element}" that is not ` +
                   `listed in "${common.ParameterEnum.Select}"`,
                 lines: [
                   {
-                    line: report.data.hide_columns_line_num,
+                    line: tile.data.hide_columns_line_num,
                     name: x.fileName,
                     path: x.filePath
                   }

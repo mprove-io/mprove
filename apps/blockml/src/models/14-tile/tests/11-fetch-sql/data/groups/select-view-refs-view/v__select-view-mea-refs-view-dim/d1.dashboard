@@ -1,0 +1,6 @@
+dashboard: d1
+tiles:  
+- title: t1
+  model: m1
+  select: 
+  - a.mea1

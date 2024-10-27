@@ -25,7 +25,7 @@ export class ToBackendModifyVizRequestPayload {
   vizId: string;
 
   @IsString()
-  reportTitle: string;
+  tileTitle: string;
 
   @IsOptional()
   @IsString()

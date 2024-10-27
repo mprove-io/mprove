@@ -8,7 +8,7 @@
   <div
     data-cy="editListenDialogInfo"
     class="text-gray1 mb-6 mt-2 cursor-default text-left text-xl"
-    >Map dashboard filters to report's model fields</div
+    >Map dashboard filters to tile's model fields</div
   >
 
   <div class="flex flex-grow flex-col overflow-auto" *ngIf="!models">
@@ -34,7 +34,7 @@
     <div
       class="text-gray1 mb-3 flex cursor-default flex-row space-x-5 text-base"
     >
-      <div class="flex w-[500px] flex-shrink-0 font-semibold"> Report</div>
+      <div class="flex w-[500px] flex-shrink-0 font-semibold"> Tile</div>
 
       <div
         class="flex w-[480px] flex-shrink-0 flex-row"
@@ -54,19 +54,18 @@
       <div
         class="text-gray1 flex flex-row space-x-5 border-gray-300 py-4 text-base"
         [ngStyle]="
-          report.title !==
-            dashboard.reports[dashboard.reports.length - 1].title && {
+          tile.title !== dashboard.tiles[dashboard.tiles.length - 1].title && {
             'border-bottom-width': '1px'
           }
         "
-        *ngFor="let report of dashboard.reports"
+        *ngFor="let tile of dashboard.tiles"
       >
         <div
           class="flex w-[500px] flex-shrink-0 flex-row items-start justify-start"
         >
           <div class="items-start truncate">
             <div class="mt-2 cursor-default truncate">
-              {{ report.title }}
+              {{ tile.title }}
             </div>
           </div>
         </div>
@@ -78,7 +77,7 @@
           <div
             class="flex flex-row"
             *ngFor="
-              let y of report.mconfigListenSwap[dashboardField.id];
+              let y of tile.mconfigListenSwap[dashboardField.id];
               let i = index
             "
           >
@@ -86,13 +85,13 @@
               #fieldSelect
               data-cy="fieldSelect"
               class="custom w-96 text-base focus:outline-none"
-              [items]="report.modelFields[dashboardField.id]"
+              [items]="tile.modelFields[dashboardField.id]"
               [clearable]="false"
               [searchable]="false"
               (keyup.esc)="$event.stopImmediatePropagation()"
               (keyup.enter)="$event.stopImmediatePropagation()"
               (change)="fieldChange()"
-              [(ngModel)]="report.mconfigListenSwap[dashboardField.id][i]"
+              [(ngModel)]="tile.mconfigListenSwap[dashboardField.id][i]"
               appendTo="body"
               bindLabel="id"
               bindValue="id"
@@ -119,7 +118,7 @@
             <button
               *ngIf="i === 0"
               class="hover:bg-blue2 invisible ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
-              (click)="addListener(report, dashboardField.id)"
+              (click)="addListener(tile, dashboardField.id)"
             >
               <m-add-icon></m-add-icon>
             </button>
@@ -127,7 +126,7 @@
             <button
               *ngIf="i > 0"
               class="hover:bg-blue2 invisible ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
-              (click)="removeListener($event, report, dashboardField.id, i)"
+              (click)="removeListener($event, tile, dashboardField.id, i)"
             >
               <m-delete-icon></m-delete-icon>
             </button>

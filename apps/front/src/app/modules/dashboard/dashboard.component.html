@@ -21,19 +21,19 @@
             <ui-switch
               class="ml-5"
               [checked]="showBricks"
-              (change)="toggleShowReportFilters()"
+              (change)="toggleShowTileFilters()"
             ></ui-switch>
 
             <div class="text-gray1 flex h-9 select-none items-center text-base"
-              >Show Report Filters</div
+              >Show Tile Filters</div
             >
           </div>
 
-          <ng-template #templateAddReport>
+          <ng-template #templateAddTile>
             <div *ngIf="isExplorer === false">Explorer role required</div>
 
             <div *ngIf="isExplorer === true && dashboard.temp === true"
-              >Save changes to be able to add reports</div
+              >Save changes to be able to add tiles</div
             >
 
             <div
@@ -49,7 +49,7 @@
           </ng-template>
 
           <div
-            [tp]="templateAddReport"
+            [tp]="templateAddTile"
             [tpIsEnabled]="
               isExplorer === false ||
               dashboard.temp === true ||
@@ -59,7 +59,7 @@
           >
             <button
               type="button"
-              data-cy="dashboardAddReportButton"
+              data-cy="dashboardAddTileButton"
               class="ml-5 flex-shrink-0 rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
               [ngClass]="{
                 'bg-blue3':
@@ -71,13 +71,13 @@
                   dashboard.temp === true ||
                   dashboard.canEditOrDeleteDashboard === false
               }"
-              (click)="addReport()"
+              (click)="addTile()"
               [disabled]="
                 isExplorer === false ||
                 dashboard.temp === true ||
                 dashboard.canEditOrDeleteDashboard === false
               "
-              >Add Report</button
+              >Add Tile</button
             >
           </div>
 
@@ -95,7 +95,7 @@
                 [items]="timezones"
                 [clearable]="false"
                 (change)="timezoneChange()"
-                placeholder="Reports have different timezones"
+                placeholder="Tiles have different timezones"
                 appendTo="body"
                 bindLabel="label"
                 bindValue="value"
@@ -160,14 +160,14 @@
               data-cy="dashboardRunButton"
               class="ml-5 flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
               [ngClass]="{
-                'bg-blue3': dashboard.reports.length > 0,
+                'bg-blue3': dashboard.tiles.length > 0,
                 'cursor-default':
-                  dashboard.reports.length === 0 || isRunButtonPressed === true,
-                'bg-gray-400': dashboard.reports.length === 0
+                  dashboard.tiles.length === 0 || isRunButtonPressed === true,
+                'bg-gray-400': dashboard.tiles.length === 0
               }"
               (click)="run()"
               [disabled]="
-                dashboard.reports.length === 0 || isRunButtonPressed === true
+                dashboard.tiles.length === 0 || isRunButtonPressed === true
               "
             >
               <div *ngIf="isRunButtonPressed === false">Run</div>
@@ -202,14 +202,14 @@
         <div class="flex flex-col">
           <div class="mr-5 flex min-h-[44px] flex-shrink-0 flex-grow flex-row">
             <ng-template #templateEditListeners>
-              <div *ngIf="dashboard.reports.length === 0">No reports</div>
+              <div *ngIf="dashboard.tiles.length === 0">No tiles</div>
               <div *ngIf="dashboard.fields.length === 0">No filters</div>
             </ng-template>
 
             <div
               [tp]="templateEditListeners"
               [tpIsEnabled]="
-                dashboard.reports.length === 0 || dashboard.fields.length === 0
+                dashboard.tiles.length === 0 || dashboard.fields.length === 0
               "
               class="h-11 flex-shrink-0"
             >
@@ -220,24 +220,22 @@
                 (click)="editListeners()"
                 [ngClass]="{
                   'border-gray-400 text-gray-500 hover:bg-white':
-                    dashboard.reports.length > 0 && dashboard.fields.length > 0,
+                    dashboard.tiles.length > 0 && dashboard.fields.length > 0,
                   'cursor-default  border-gray-300 text-gray-400':
-                    dashboard.reports.length === 0 ||
+                    dashboard.tiles.length === 0 ||
                     dashboard.fields.length === 0
                 }"
                 [disabled]="
-                  dashboard.reports.length === 0 ||
-                  dashboard.fields.length === 0
+                  dashboard.tiles.length === 0 || dashboard.fields.length === 0
                 "
               >
                 <m-link-icon
                   class="text-gray-500"
                   [ngClass]="{
                     'text-gray-500':
-                      dashboard.reports.length > 0 &&
-                      dashboard.fields.length > 0,
+                      dashboard.tiles.length > 0 && dashboard.fields.length > 0,
                     'text-gray-400':
-                      dashboard.reports.length === 0 ||
+                      dashboard.tiles.length === 0 ||
                       dashboard.fields.length === 0
                   }"
                 ></m-link-icon>
@@ -307,7 +305,7 @@
         >
           <ktd-grid
             class="w-[97vw]"
-            *ngIf="dashboard.reports"
+            *ngIf="dashboard.tiles"
             [compactType]="compactType"
             [preventCollision]="preventCollision"
             [cols]="cols"
@@ -335,15 +333,15 @@
                 <m-chart-rep
                   #chartRep
                   [isShow]="isShow"
-                  [title]="item.report.title"
-                  [report]="item.report"
+                  [title]="item.tile.title"
+                  [tile]="item.tile"
                   [deleteFilterFn]="deleteFilterFnBindThis"
                   [dashboard]="dashboard"
                   [randomId]="randomId"
-                  [mconfig]="item.report.mconfig"
-                  [query]="item.report.query"
+                  [mconfig]="item.tile.mconfig"
+                  [query]="item.tile.query"
                   [showBricks]="showBricks"
-                  (repDeleted)="reportDeleted()"
+                  (repDeleted)="tileDeleted()"
                 ></m-chart-rep>
               </div>
               <m-resize-icon

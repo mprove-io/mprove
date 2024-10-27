@@ -19,7 +19,7 @@ interface VizPart {
   query: common.Query;
 }
 
-interface ReportPart {
+interface TilePart {
   title: string;
   query: common.Query;
 }
@@ -28,7 +28,7 @@ interface DashboardPart {
   title: string;
   dashboardId: string;
   url: string;
-  reports: ReportPart[];
+  tiles: TilePart[];
 }
 
 export class RunCommand extends CustomCommand {
@@ -270,10 +270,10 @@ export class RunCommand extends CustomCommand {
             title: x.title,
             vizId: x.vizId,
             url: url,
-            query: { queryId: x.reports[0].queryId } as common.Query
+            query: { queryId: x.tiles[0].queryId } as common.Query
           };
 
-          queryIdsWithDuplicates.push(x.reports[0].queryId);
+          queryIdsWithDuplicates.push(x.tiles[0].queryId);
 
           return vizPart;
         });
@@ -325,18 +325,18 @@ export class RunCommand extends CustomCommand {
             dashboardIds.indexOf(dashboard.dashboardId) > -1
         )
         .map(dashboard => {
-          let reportParts: ReportPart[] = [];
+          let tileParts: TilePart[] = [];
 
-          dashboard.reports.forEach(report => {
-            let reportPart: ReportPart = {
-              title: report.title,
+          dashboard.tiles.forEach(tile => {
+            let tilePart: TilePart = {
+              title: tile.title,
               query: {
-                queryId: report.queryId
+                queryId: tile.queryId
               } as common.Query
             };
 
-            reportParts.push(reportPart);
-            queryIdsWithDuplicates.push(report.queryId);
+            tileParts.push(tilePart);
+            queryIdsWithDuplicates.push(tile.queryId);
           });
 
           let url = getDashboardUrl({
@@ -353,7 +353,7 @@ export class RunCommand extends CustomCommand {
             title: dashboard.title,
             dashboardId: dashboard.dashboardId,
             url: url,
-            reports: reportParts
+            tiles: tileParts
           };
 
           return dashboardPart;
@@ -409,11 +409,11 @@ export class RunCommand extends CustomCommand {
 
     if (this.noDashboards === false && common.isUndefined(this.concurrency)) {
       dashboardParts.forEach(dashboardPart => {
-        dashboardPart.reports.forEach(reportPart => {
+        dashboardPart.tiles.forEach(tilePart => {
           let query = runQueriesResp.payload.runningQueries.find(
-            q => q.queryId === reportPart.query.queryId
+            q => q.queryId === tilePart.query.queryId
           );
-          reportPart.query.status = query.status;
+          tilePart.query.status = query.status;
         });
       });
     }
@@ -463,10 +463,8 @@ export class RunCommand extends CustomCommand {
 
             if (this.noDashboards === false) {
               dashboardParts.forEach(dp => {
-                dp.reports
-                  .filter(
-                    reportPart => reportPart.query.queryId === query.queryId
-                  )
+                dp.tiles
+                  .filter(tilePart => tilePart.query.queryId === query.queryId)
                   .forEach(x => (x.query = query));
               });
             }
@@ -512,7 +510,7 @@ export class RunCommand extends CustomCommand {
         : dashboardParts
             .filter(
               x =>
-                x.reports.filter(
+                x.tiles.filter(
                   y => y.query.status === common.QueryStatusEnum.Error
                 ).length > 0
             )
@@ -520,7 +518,7 @@ export class RunCommand extends CustomCommand {
               title: d.title,
               dashboardId: d.dashboardId,
               url: d.url,
-              reports: d.reports
+              tiles: d.tiles
                 .filter(q => q.query.status === common.QueryStatusEnum.Error)
                 .map(r => ({
                   title: r.title,

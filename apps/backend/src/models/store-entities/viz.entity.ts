@@ -35,7 +35,7 @@ export class VizEntity {
   hidden: common.BoolEnum;
 
   @Column({ type: constants.JSON })
-  reports: common.Report[];
+  tiles: common.Tile[];
 
   @Column({ type: constants.BIGINT })
   server_ts: string;

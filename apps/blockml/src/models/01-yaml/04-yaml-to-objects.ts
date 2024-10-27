@@ -142,7 +142,7 @@ export function yamlToObjects(
       item.errors.push(
         new BmError({
           title: common.ErTitleEnum.TOP_LEVEL_IS_NOT_DICTIONARY,
-          message: 'Top level of BlockML file must have key/value pairs',
+          message: 'Top level of the Mprove file must have key/value pairs',
           lines: [
             {
               line: 0,

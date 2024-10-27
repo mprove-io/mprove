@@ -4,7 +4,7 @@ import { getTimezonesValues } from '~common/functions/get-timezones-values';
 
 export const CONFIG_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
-  $id: 'https://docs.mprove.io/top/blockml/mprove-project-config',
+  $id: 'https://docs.mprove.io/top/reference/mprove-project-config',
   type: 'object',
   additionalProperties: false,
   properties: {

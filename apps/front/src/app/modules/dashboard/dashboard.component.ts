@@ -40,7 +40,7 @@ class LayoutItem {
   h: number;
   x: number;
   y: number;
-  report: common.ReportX;
+  tile: common.TileX;
 }
 
 export interface DeleteFilterFnItem {
@@ -109,8 +109,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
       let usedTimezones: string[] = [];
 
-      this.dashboard.reports.forEach(report => {
-        let mconfigTimezone = report.mconfig?.timezone;
+      this.dashboard.tiles.forEach(tile => {
+        let mconfigTimezone = tile.mconfig?.timezone;
 
         if (
           common.isDefined(mconfigTimezone) &&
@@ -137,23 +137,23 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         }`
       );
 
-      this.layout = this.dashboard.reports.map(
-        report =>
+      this.layout = this.dashboard.tiles.map(
+        tile =>
           <LayoutItem>{
-            id: report.title,
-            x: common.isDefined(report.tileX)
-              ? report.tileX
-              : common.REPORT_DEFAULT_TILE_X,
-            y: common.isDefined(report.tileY)
-              ? report.tileY
-              : common.REPORT_DEFAULT_TILE_Y,
-            w: common.isDefined(report.tileWidth)
-              ? report.tileWidth
-              : common.REPORT_DEFAULT_TILE_WIDTH,
-            h: common.isDefined(report.tileHeight)
-              ? report.tileHeight
-              : common.REPORT_DEFAULT_TILE_HEIGHT,
-            report: report
+            id: tile.title,
+            x: common.isDefined(tile.plateX)
+              ? tile.plateX
+              : common.TILE_DEFAULT_PLATE_X,
+            y: common.isDefined(tile.plateY)
+              ? tile.plateY
+              : common.TILE_DEFAULT_PLATE_Y,
+            w: common.isDefined(tile.plateWidth)
+              ? tile.plateWidth
+              : common.TILE_DEFAULT_PLATE_WIDTH,
+            h: common.isDefined(tile.plateHeight)
+              ? tile.plateHeight
+              : common.TILE_DEFAULT_PLATE_HEIGHT,
+            tile: tile
           }
       );
 
@@ -255,7 +255,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   trackByFn(index: number, item: any) {
-    return item.report.mconfigId;
+    return item.tile.mconfigId;
   }
 
   goToFile() {
@@ -283,7 +283,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 0);
   }
 
-  toggleShowReportFilters() {
+  toggleShowTileFilters() {
     this.showBricks = !this.showBricks;
     this.refreshShow();
   }
@@ -296,7 +296,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  reportDeleted() {
+  tileDeleted() {
     this.dashboardQuery.update(
       Object.assign({}, this.dashboard, {
         temp: true
@@ -322,13 +322,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     let newDashboard = Object.assign({}, this.dashboard, {
       temp: true,
-      reports: this.dashboard.reports.map((report, i: number) => {
-        report.tileX = layout[i].x;
-        report.tileY = layout[i].y;
-        report.tileWidth = layout[i].w;
-        report.tileHeight = layout[i].h;
+      tiles: this.dashboard.tiles.map((tile, i: number) => {
+        tile.plateX = layout[i].x;
+        tile.plateY = layout[i].y;
+        tile.plateWidth = layout[i].w;
+        tile.plateHeight = layout[i].h;
 
-        return report;
+        return tile;
       })
     });
 
@@ -340,12 +340,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   timezoneChange() {
     let timezone = this.timezoneForm.controls['timezone'].value;
 
-    this.dashboard.reports.forEach(x => {
+    this.dashboard.tiles.forEach(x => {
       x.timezone = timezone;
     });
 
     this.dashboardService.navCreateTempDashboard({
-      reports: this.dashboard.reports,
+      tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: this.dashboard.fields,
@@ -377,8 +377,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  addReport() {
-    this.myDialogService.showDashboardAddReport({
+  addTile() {
+    this.myDialogService.showDashboardAddTile({
       apiService: this.apiService,
       dashboard: this.dashboard
     });
@@ -415,7 +415,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     let { filterFieldId, mconfigId } = item;
 
     this.dashboardService.navCreateTempDashboard({
-      reports: this.dashboard.reports,
+      tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: this.dashboard.fields,

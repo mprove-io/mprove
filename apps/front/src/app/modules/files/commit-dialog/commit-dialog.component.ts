@@ -62,8 +62,10 @@ export class CommitDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    let epochTs = Math.floor(new Date().getTime() / 1000);
+
     this.commitForm = this.fb.group({
-      message: [undefined, [Validators.required, Validators.maxLength(255)]]
+      message: [`c${epochTs}`, [Validators.required, Validators.maxLength(255)]]
     });
 
     setTimeout(() => {

@@ -18,7 +18,7 @@ let dashboardState: DashboardState = {
   hidden: false,
   extendedFilters: [],
   fields: [],
-  reports: [],
+  tiles: [],
   description: undefined,
   serverTs: undefined,
   author: undefined,

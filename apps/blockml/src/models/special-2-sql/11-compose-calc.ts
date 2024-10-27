@@ -13,7 +13,7 @@ export function composeCalc(item: {
   whereCalc: common.VarsSql['whereCalc'];
   sorts: common.VarsSql['sorts'];
   limit: common.VarsSql['limit'];
-  varsSqlSteps: common.FilePartReport['varsSqlSteps'];
+  varsSqlSteps: common.FilePartTile['varsSqlSteps'];
   model: common.FileModel;
 }) {
   let {

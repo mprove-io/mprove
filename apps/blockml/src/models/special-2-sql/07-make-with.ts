@@ -12,7 +12,7 @@ export function makeWith(item: {
   filters: common.VarsSql['filters'];
   needsAll: common.VarsSql['needsAll'];
   mainUdfs: common.VarsSql['mainUdfs'];
-  varsSqlSteps: common.FilePartReport['varsSqlSteps'];
+  varsSqlSteps: common.FilePartTile['varsSqlSteps'];
   model: common.FileModel;
 }) {
   let {

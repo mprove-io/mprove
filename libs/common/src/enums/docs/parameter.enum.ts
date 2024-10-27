@@ -51,7 +51,7 @@ export enum ParameterEnum {
   MproveDir = 'mprove_dir',
   Percentile = 'percentile',
   Report = 'report',
-  Reports = 'reports',
+  Tiles = 'tiles',
   Result = 'result',
   Rows = 'rows',
   Select = 'select',
@@ -91,7 +91,7 @@ export enum ParameterEnum {
   Data = 'data',
   Options = 'options',
   Params = 'params',
-  Tile = 'tile',
+  Plate = 'plate',
   // chart data
   XField = 'x_field',
   YField = 'y_field',
@@ -151,9 +151,9 @@ export enum ParameterEnum {
   FormatNumberAxisTick = 'format_number_axis_tick',
   FormatNumberYAxisTick = 'format_number_y_axis_tick',
   FormatNumberXAxisTick = 'format_number_x_axis_tick',
-  // chart tile
-  TileWidth = 'tile_width',
-  TileHeight = 'tile_height',
-  TileX = 'tile_x',
-  TileY = 'tile_y'
+  // chart plate
+  PlateWidth = 'plate_width',
+  PlateHeight = 'plate_height',
+  PlateX = 'plate_x',
+  PlateY = 'plate_y'
 }

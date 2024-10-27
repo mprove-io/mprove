@@ -123,7 +123,7 @@ test('1', async t => {
         oldDashboardId: oldDashboardId,
         newDashboardId: common.makeId(),
         newDashboardFields: resp1.payload.dashboard.fields,
-        reports: resp1.payload.dashboard.reports,
+        tiles: resp1.payload.dashboard.tiles,
         deleteFilterFieldId: undefined,
         deleteFilterMconfigId: undefined
       }

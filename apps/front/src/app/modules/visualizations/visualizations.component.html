@@ -252,11 +252,11 @@
                             class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
                             [ngClass]="{
                               'cursor-default text-gray-400':
-                                item.reports[0].hasAccessToModel === false
+                                item.tiles[0].hasAccessToModel === false
                             }"
                             (click)="t1.hide(); explore($event, item)"
                             [disabled]="
-                              item.reports[0].hasAccessToModel === false
+                              item.tiles[0].hasAccessToModel === false
                             "
                             >Explore</button
                           >
@@ -354,29 +354,27 @@
                       <div
                         class="flex flex-1 flex-row truncate py-3"
                         [tp]="templateVizsModel"
-                        [tpIsEnabled]="
-                          item.reports[0].hasAccessToModel === false
-                        "
+                        [tpIsEnabled]="item.tiles[0].hasAccessToModel === false"
                       >
                         <button
                           class="flex cursor-default items-start truncate focus:outline-none"
                           [ngClass]="{
                             'cursor-pointer hover:text-blue-500':
-                              item.reports[0].hasAccessToModel === true,
+                              item.tiles[0].hasAccessToModel === true,
                             'cursor-default':
-                              item.reports[0].hasAccessToModel === false
+                              item.tiles[0].hasAccessToModel === false
                           }"
-                          (click)="goToModel(item.reports[0].modelId)"
-                          [disabled]="!item.reports[0].hasAccessToModel"
+                          (click)="goToModel(item.tiles[0].modelId)"
+                          [disabled]="!item.tiles[0].hasAccessToModel"
                         >
                           <span class="truncate">
-                            {{ item.reports[0].modelLabel | capitalize }}
+                            {{ item.tiles[0].modelLabel | capitalize }}
                           </span>
                         </button>
 
                         <m-lock-closed-icon
                           class="mb-1 ml-2 text-gray-400"
-                          *ngIf="item.reports[0].hasAccessToModel === false"
+                          *ngIf="item.tiles[0].hasAccessToModel === false"
                         ></m-lock-closed-icon>
                       </div>
 
@@ -445,7 +443,7 @@
                   <m-chart-viz
                     *ngIf="isShow === true"
                     [title]="item.title"
-                    [report]="item.reports[0]"
+                    [tile]="item.tiles[0]"
                     [viz]="item"
                     [showBricks]="showBricks"
                     [vizDeletedFnBindThis]="vizDeletedFnBindThis"

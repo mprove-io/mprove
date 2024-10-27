@@ -27,20 +27,20 @@ export class ToBackendModifyDashboardRequestPayload {
   @IsString()
   fromDashboardId: string;
 
-  // for add or replace report
+  // for add or replace tile
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => common.ReportX)
-  newReport?: common.ReportX;
+  @Type(() => common.TileX)
+  newTile?: common.TileX;
 
   @IsOptional()
   @IsBoolean()
-  isReplaceReport?: boolean;
+  isReplaceTile?: boolean;
 
   @IsOptional()
   @IsString()
-  selectedReportTitle?: string;
+  selectedTileTitle?: string;
 
   // for dashboard
 
@@ -58,8 +58,8 @@ export class ToBackendModifyDashboardRequestPayload {
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => common.ReportX)
-  reportsGrid?: common.ReportX[];
+  @Type(() => common.TileX)
+  tilesGrid?: common.TileX[];
 }
 
 export class ToBackendModifyDashboardRequest extends ToBackendRequest {

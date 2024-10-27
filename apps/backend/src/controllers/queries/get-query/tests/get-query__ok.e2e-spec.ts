@@ -117,8 +117,8 @@ test('1', async t => {
         isRepoProd: false,
         branchId: common.BRANCH_MASTER,
         envId: common.PROJECT_ENV_PROD,
-        mconfigId: resp1.payload.dashboard.reports[0].mconfigId,
-        queryId: resp1.payload.dashboard.reports[0].queryId
+        mconfigId: resp1.payload.dashboard.tiles[0].mconfigId,
+        queryId: resp1.payload.dashboard.tiles[0].queryId
       }
     };
 

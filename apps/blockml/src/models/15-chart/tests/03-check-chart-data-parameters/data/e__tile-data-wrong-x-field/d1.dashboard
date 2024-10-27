@@ -1,0 +1,10 @@
+dashboard: d1
+tiles:  
+- title: t1
+  model: m1
+  select: 
+  - a.dim1
+  type: bar_vertical
+  data:
+    x_field: unk     
+    y_field: a.dim1

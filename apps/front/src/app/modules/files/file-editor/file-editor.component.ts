@@ -362,7 +362,11 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     }
 
     this.monaco.editor.setModelMarkers(this.editor.getModel(), 'Conflicts', []);
-    this.monaco.editor.setModelMarkers(this.editor.getModel(), 'BlockML', []);
+    this.monaco.editor.setModelMarkers(
+      this.editor.getModel(),
+      'MproveYAML',
+      []
+    );
   }
 
   refreshMarkers() {
@@ -438,7 +442,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
       );
       this.monaco.editor.setModelMarkers(
         this.editor.getModel(),
-        'BlockML',
+        'MproveYAML',
         errorMarkers
       );
     }

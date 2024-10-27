@@ -6,7 +6,7 @@ let func = common.FuncEnum.MakeNeedsDoubles;
 export function makeNeedsDoubles(item: {
   selected: common.VarsSql['selected'];
   filters: common.VarsSql['filters'];
-  varsSqlSteps: common.FilePartReport['varsSqlSteps'];
+  varsSqlSteps: common.FilePartTile['varsSqlSteps'];
   model: common.FileModel;
 }) {
   let { selected, filters, varsSqlSteps, model } = item;

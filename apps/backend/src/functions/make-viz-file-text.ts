@@ -3,14 +3,14 @@ import { common } from '~backend/barrels/common';
 export function makeVizFileText(item: {
   mconfig: common.MconfigX;
   vizId: string;
-  reportTitle: string;
+  tileTitle: string;
   roles: string;
   users: string;
   defaultTimezone: string;
 }) {
-  let { mconfig, vizId, reportTitle, roles, users, defaultTimezone } = item;
+  let { mconfig, vizId, tileTitle, roles, users, defaultTimezone } = item;
 
-  let filePartReport: common.FilePartReport = common.prepareReport({
+  let filePartTile: common.FilePartTile = common.prepareTile({
     isForDashboard: false,
     mconfig: mconfig,
     defaultTimezone: defaultTimezone,
@@ -18,7 +18,7 @@ export function makeVizFileText(item: {
     deleteFilterMconfigId: undefined
   });
 
-  filePartReport.title = reportTitle;
+  filePartTile.title = tileTitle;
 
   let vizFileText = common.toYaml({
     vis: vizId,
@@ -30,7 +30,7 @@ export function makeVizFileText(item: {
       common.isDefined(users) && users.trim().length > 0
         ? users.split(',').map(x => x.trim())
         : undefined,
-    reports: [filePartReport]
+    tiles: [filePartTile]
   });
 
   return vizFileText;

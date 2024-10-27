@@ -5,7 +5,7 @@ let func = common.FuncEnum.FindJoinsUsingJoinsDeps;
 
 export function findJoinsUsingJoinsDeps(item: {
   needsDoubles: common.VarsSql['needsDoubles'];
-  varsSqlSteps: common.FilePartReport['varsSqlSteps'];
+  varsSqlSteps: common.FilePartTile['varsSqlSteps'];
   model: common.FileModel;
 }) {
   let { needsDoubles, varsSqlSteps, model } = item;

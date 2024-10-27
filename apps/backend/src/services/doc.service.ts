@@ -639,16 +639,16 @@ FROM main;`;
         ) {
           row.topQueryError = row.formulaError;
           row.records = recordsByColumn.map((y: any, index) => {
-            let unixTime = Number(
+            let unixTimeZoned = Number(
               y.fields['timestamp'].toString().split('.')[0]
             );
-            let unixDate = new Date(unixTime * 1000);
-            let tsShifted = getUnixTime(fromZonedTime(unixDate, timezone));
+            let unixDateZoned = new Date(unixTimeZoned * 1000);
+            let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
             let record = {
               id: index + 1,
-              key: unixTime,
-              tsShifted: tsShifted,
+              key: unixTimeZoned,
+              tsUTC: tsUTC,
               value: undefined as any,
               error: undefined as any
             };
@@ -661,16 +661,16 @@ FROM main;`;
         ) {
           row.topQueryError = topQueryError;
           row.records = recordsByColumn.map((y: any, index) => {
-            let unixTime = Number(
+            let unixTimeZoned = Number(
               y.fields['timestamp'].toString().split('.')[0]
             );
-            let unixDate = new Date(unixTime * 1000);
-            let tsShifted = getUnixTime(fromZonedTime(unixDate, timezone));
+            let unixDateZoned = new Date(unixTimeZoned * 1000);
+            let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
             let record = {
               id: index + 1,
-              key: unixTime,
-              tsShifted: tsShifted,
+              key: unixTimeZoned,
+              tsUTC: tsUTC,
               value: undefined as any,
               error: undefined as any
             };
@@ -684,16 +684,16 @@ FROM main;`;
           row.topQueryError = topQueryError;
 
           row.records = recordsByColumn.map((y: any, index) => {
-            let unixTime = Number(
+            let unixTimeZoned = Number(
               y.fields['timestamp'].toString().split('.')[0]
             );
-            let unixDate = new Date(unixTime * 1000);
-            let tsShifted = getUnixTime(fromZonedTime(unixDate, timezone));
+            let unixDateZoned = new Date(unixTimeZoned * 1000);
+            let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
             let record = {
               id: index + 1,
-              key: unixTime,
-              tsShifted: tsShifted,
+              key: unixTimeZoned,
+              tsUTC: tsUTC,
               value: y.fields[row.rowId],
               error: undefined as any
             };
@@ -704,14 +704,14 @@ FROM main;`;
           row.topQueryError = undefined;
 
           row.records = topQueryData.map((y: any, index) => {
-            let unixTime = Number(y.timestamp.toString().split('.')[0]);
-            let unixDate = new Date(unixTime * 1000);
-            let tsShifted = getUnixTime(fromZonedTime(unixDate, timezone));
+            let unixTimeZoned = Number(y.timestamp.toString().split('.')[0]);
+            let unixDateZoned = new Date(unixTimeZoned * 1000);
+            let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
             let record = {
               id: index + 1,
-              key: unixTime,
-              tsShifted: tsShifted,
+              key: unixTimeZoned,
+              tsUTC: tsUTC,
               value: y[row.rowId.toLowerCase()],
               error: undefined as any
             };

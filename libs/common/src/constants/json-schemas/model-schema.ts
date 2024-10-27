@@ -63,7 +63,7 @@ import { FIELD_SCHEMA } from './field-schema';
 
 export const MODEL_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
-  $id: 'https://docs.mprove.io/top/blockml/model-and-joins',
+  $id: 'https://docs.mprove.io/top/reference/model-and-joins',
   type: 'object',
   additionalProperties: false,
   properties: {

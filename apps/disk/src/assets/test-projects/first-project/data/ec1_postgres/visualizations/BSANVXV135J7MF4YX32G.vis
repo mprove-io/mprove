@@ -1,5 +1,5 @@
 vis: BSANVXV135J7MF4YX32G
-reports:
+tiles:
 - title: Profit by Traffic Source
   model: ec1_m1
   select:

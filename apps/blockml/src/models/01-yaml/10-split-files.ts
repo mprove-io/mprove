@@ -197,7 +197,7 @@ export function splitFiles(
               message: `filename ${file.name} does not match "report: ${file.report}"`,
               lines: [
                 {
-                  line: file.report_line_num,
+                  line: file.tile_line_num,
                   name: file.name,
                   path: file.path
                 }

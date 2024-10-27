@@ -10,7 +10,7 @@ export function makeTop(item: {
   withParts: common.VarsSql['withParts'];
   withDerivedTables: common.VarsSql['withDerivedTables'];
   withViews: common.VarsSql['withViews'];
-  varsSqlSteps: common.FilePartReport['varsSqlSteps'];
+  varsSqlSteps: common.FilePartTile['varsSqlSteps'];
   model: common.FileModel;
   udfsDict: common.UdfsDict;
 }) {

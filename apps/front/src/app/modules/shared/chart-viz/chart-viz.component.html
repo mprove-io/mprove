@@ -69,10 +69,10 @@
                 class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
                 [ngClass]="{
                   'cursor-default text-gray-400':
-                    viz.reports[0].hasAccessToModel === false
+                    viz.tiles[0].hasAccessToModel === false
                 }"
                 (click)="t1.hide(); explore($event)"
-                [disabled]="viz.reports[0].hasAccessToModel === false"
+                [disabled]="viz.tiles[0].hasAccessToModel === false"
                 >Explore</button
               >
             </div>

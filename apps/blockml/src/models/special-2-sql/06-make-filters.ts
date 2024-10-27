@@ -10,7 +10,7 @@ export function makeFilters(item: {
   weekStart: common.VarsSql['weekStart'];
   processedFields: common.VarsSql['processedFields'];
   timezone: common.VarsSql['timezone'];
-  varsSqlSteps: common.FilePartReport['varsSqlSteps'];
+  varsSqlSteps: common.FilePartTile['varsSqlSteps'];
   model: common.FileModel;
 }) {
   let {
@@ -37,7 +37,7 @@ export function makeFilters(item: {
   let whereMain: common.VarsSql['whereMain'] = {};
   let filterFieldsConditions: common.VarsSql['filterFieldsConditions'] = {};
 
-  // prepare model and view filters defaults that is not in report default
+  // prepare model and view filters defaults that is not in tile default
   // they will populate fractions
   let untouchedFilters: common.FilterBricksDictionary = {};
 

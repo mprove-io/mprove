@@ -61,7 +61,7 @@ fields:
   default:
   - '[25, 35]'   
 
-reports:
+tiles:
 
 - title: Average sale price by category
   model: ec_m1
@@ -73,6 +73,6 @@ reports:
     order_date: b.created___date
     customer_age: c.age   
   type: table
-  tile:
-    tile_width: '4'
-    tile_height: '500'
+  plate:
+    plate_width: '4'
+    plate_height: '500'

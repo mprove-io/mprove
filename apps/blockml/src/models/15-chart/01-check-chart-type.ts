@@ -24,15 +24,15 @@ export function checkChartType<T extends types.dzType>(
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    x.reports.forEach(report => {
-      if (common.isUndefined(report.type)) {
+    x.tiles.forEach(tile => {
+      if (common.isUndefined(tile.type)) {
         item.errors.push(
           new BmError({
-            title: common.ErTitleEnum.REPORT_MISSING_TYPE,
-            message: `report must have "${common.ParameterEnum.Type}" parameter`,
+            title: common.ErTitleEnum.TILE_MISSING_TYPE,
+            message: `tile must have "${common.ParameterEnum.Type}" parameter`,
             lines: [
               {
-                line: report.title_line_num,
+                line: tile.title_line_num,
                 name: x.fileName,
                 path: x.filePath
               }
@@ -42,14 +42,14 @@ export function checkChartType<T extends types.dzType>(
         return;
       }
 
-      if (common.CHART_TYPE_VALUES.indexOf(report.type) < 0) {
+      if (common.CHART_TYPE_VALUES.indexOf(tile.type) < 0) {
         item.errors.push(
           new BmError({
-            title: common.ErTitleEnum.REPORT_WRONG_TYPE,
-            message: `value "${report.type}" is not valid "${common.ParameterEnum.Type}"`,
+            title: common.ErTitleEnum.TILE_WRONG_TYPE,
+            message: `value "${tile.type}" is not valid "${common.ParameterEnum.Type}"`,
             lines: [
               {
-                line: report.type_line_num,
+                line: tile.type_line_num,
                 name: x.fileName,
                 path: x.filePath
               }

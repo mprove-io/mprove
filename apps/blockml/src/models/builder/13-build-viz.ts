@@ -25,7 +25,7 @@ export function buildViz(
     cs
   );
 
-  vizs = barViz.checkVizReportsExist(
+  vizs = barViz.checkVizTilesExist(
     {
       vizs: vizs,
       structId: item.structId,

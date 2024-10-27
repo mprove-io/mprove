@@ -541,7 +541,7 @@ export class RepsService {
     ) {
       throw new common.ServerError({
         message:
-          common.ErEnum.BACKEND_DRAFT_REPORT_IS_AVAILABLE_ONLY_TO_ITS_CREATOR
+          common.ErEnum.BACKEND_DRAFT_TILE_IS_AVAILABLE_ONLY_TO_ITS_CREATOR
       });
     }
 
@@ -966,16 +966,16 @@ export class RepsService {
 
         row.records = common.isDefined(row.query)
           ? recordsByColumn.map((y: any) => {
-              let unixTime = Number(
+              let unixTimeZoned = Number(
                 y.fields.timestamp.toString().split('.')[0]
               );
-              let unixDate = new Date(unixTime * 1000);
-              let tsShifted = getUnixTime(fromZonedTime(unixDate, timezone));
+              let unixDateZoned = new Date(unixTimeZoned * 1000);
+              let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
               let record = {
                 id: y.id,
-                key: unixTime,
-                tsShifted: tsShifted,
+                key: unixTimeZoned,
+                tsUTC: tsUTC,
                 value: common.isDefined(y.fields)
                   ? y.fields[row.rowId]
                   : undefined,

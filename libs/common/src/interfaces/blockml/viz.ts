@@ -6,7 +6,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { Report } from './report';
+import { Tile } from './tile';
 
 export class Viz {
   @IsString()
@@ -41,8 +41,8 @@ export class Viz {
   hidden: boolean;
 
   @ValidateNested()
-  @Type(() => Report)
-  reports: Report[];
+  @Type(() => Tile)
+  tiles: Tile[];
 
   @IsInt()
   serverTs: number;

@@ -26,7 +26,7 @@
           *ngIf="query?.status === queryStatusRunning"
         >
           <ngx-spinner
-            [name]="report?.title"
+            [name]="tile?.title"
             color="rgba(54, 94, 224, 100)"
             bdColor="rgba(0, 0, 0, 0)"
             size="default"
@@ -67,17 +67,17 @@
             <div
               [tp]="templateChartRepOptionsExplore"
               placement="left"
-              [tpIsEnabled]="report.hasAccessToModel === false"
+              [tpIsEnabled]="tile.hasAccessToModel === false"
             >
               <button
                 data-cy="repOptionsExplore"
                 class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
                 [ngClass]="{
                   'cursor-default text-gray-400':
-                    report.hasAccessToModel === false
+                    tile.hasAccessToModel === false
                 }"
                 (click)="t1.hide(); explore($event)"
-                [disabled]="report.hasAccessToModel === false"
+                [disabled]="tile.hasAccessToModel === false"
                 >Explore</button
               >
             </div>
@@ -85,7 +85,7 @@
             <button
               data-cy="repOptionsDelete"
               class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
-              (click)="t1.hide(); deleteReport($event)"
+              (click)="t1.hide(); deleteTile($event)"
               >Delete</button
             >
           </div>
@@ -96,8 +96,8 @@
         class="mx-7 mb-5 flex max-h-[120px] max-w-max flex-shrink-0 flex-row items-start justify-start overflow-auto"
         *ngIf="showBricks === true && mconfig?.filters.length > 0"
         [extendedFilters]="mconfig.extendedFilters"
-        [listen]="report.listen"
-        [mconfigId]="report.mconfig.mconfigId"
+        [listen]="tile.listen"
+        [mconfigId]="tile.mconfig.mconfigId"
         [deleteFilterFn]="deleteFilterFn"
         [isKeepBackgroundColor]="false"
       ></m-bricks>

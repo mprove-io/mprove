@@ -15,7 +15,7 @@ export function wrapToEntityDashboard(
     gr: x.gr,
     hidden: common.booleanToEnum(x.hidden),
     fields: x.fields,
-    reports: x.reports,
+    tiles: x.tiles,
     temp: common.booleanToEnum(x.temp),
     description: x.description,
     server_ts: x.serverTs.toString()

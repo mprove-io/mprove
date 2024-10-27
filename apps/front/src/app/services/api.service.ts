@@ -6,7 +6,7 @@ import {
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { combineLatest, EMPTY, Observable, TimeoutError, timer } from 'rxjs';
+import { EMPTY, Observable, TimeoutError, combineLatest, timer } from 'rxjs';
 import { catchError, finalize, map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -298,7 +298,7 @@ export class ApiService {
           common.ErEnum.BACKEND_MODIFY_REP_FAIL
         ].indexOf(infoErrorMessage) > -1
       ) {
-        errorData.description = `The changes were saved to the file, but it failed the BlockML validation. It's probably a bug.`;
+        errorData.description = `The changes were saved to the file, but it failed the validation. It's probably a bug.`;
         errorData.buttonText = 'Ok, go to file';
         errorData.onClickFnBindThis = (() => {
           this.navigateService.navigateToFileLine({

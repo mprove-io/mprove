@@ -5,7 +5,7 @@ let func = common.FuncEnum.ProcessTimezone;
 export function processTimezone(item: {
   mainQuery: common.VarsSql['mainQuery'];
   timezone: common.VarsSql['timezone'];
-  varsSqlSteps: common.FilePartReport['varsSqlSteps'];
+  varsSqlSteps: common.FilePartTile['varsSqlSteps'];
   model: common.FileModel;
 }) {
   let { mainQuery, timezone, varsSqlSteps, model } = item;

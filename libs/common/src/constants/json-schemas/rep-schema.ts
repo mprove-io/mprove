@@ -3,8 +3,7 @@ import { constants } from '~common/barrels/constants';
 
 export const REP_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
-  // TODO: adjust id name
-  $id: 'https://docs.mprove.io/top/blockml/rep',
+  $id: 'https://docs.mprove.io/top/reference/report',
   type: 'object',
   additionalProperties: false,
   properties: {

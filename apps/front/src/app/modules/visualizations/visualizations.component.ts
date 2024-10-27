@@ -308,9 +308,9 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     event.stopPropagation();
 
     this.navigateService.navigateMconfigQuery({
-      modelId: item.reports[0].modelId,
-      mconfigId: item.reports[0].mconfigId,
-      queryId: item.reports[0].queryId
+      modelId: item.tiles[0].modelId,
+      mconfigId: item.tiles[0].mconfigId,
+      queryId: item.tiles[0].queryId
     });
   }
 
@@ -340,8 +340,8 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
-            query = resp.payload.viz.reports[0].query;
-            mconfig = resp.payload.viz.reports[0].mconfig;
+            query = resp.payload.viz.tiles[0].query;
+            mconfig = resp.payload.viz.tiles[0].mconfig;
           }
         })
       )
@@ -372,7 +372,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
       mconfig: mconfig,
       query: query,
       qData: qData,
-      canAccessModel: item.reports[0].hasAccessToModel,
+      canAccessModel: item.tiles[0].hasAccessToModel,
       showNav: true,
       isSelectValid: isSelectValid,
       dashboardId: undefined,
@@ -400,7 +400,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd,
-      mconfigId: item.reports[0].mconfigId
+      mconfigId: item.tiles[0].mconfigId
     };
 
     let mconfig: common.MconfigX = await this.apiService

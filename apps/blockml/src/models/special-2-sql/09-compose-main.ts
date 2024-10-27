@@ -11,7 +11,7 @@ export function composeMain(item: {
   groupMainBy: common.VarsSql['groupMainBy'];
   havingMain: common.VarsSql['havingMain'];
   filterFieldsConditions: common.VarsSql['filterFieldsConditions'];
-  varsSqlSteps: common.FilePartReport['varsSqlSteps'];
+  varsSqlSteps: common.FilePartTile['varsSqlSteps'];
   model: common.FileModel;
 }) {
   let {

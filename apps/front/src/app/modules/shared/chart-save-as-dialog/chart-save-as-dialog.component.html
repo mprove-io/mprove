@@ -25,35 +25,33 @@
   </div>
 
   <div
-    data-cy="chartSaveAsDialogNewReportOfDashboardCheckbox"
+    data-cy="chartSaveAsDialogNewTileOfDashboardCheckbox"
     class="mt-5 flex h-9 cursor-pointer flex-row items-center"
-    (click)="reportOfDashboardOnClick()"
+    (click)="tileOfDashboardOnClick()"
   >
     <button
       class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
       [ngClass]="{
-        'bg-blue3 ': chartSaveAs === chartSaveAsEnum.REPORT_OF_DASHBOARD
+        'bg-blue3 ': chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD
       }"
     >
       <m-check-icon
-        *ngIf="chartSaveAs === chartSaveAsEnum.REPORT_OF_DASHBOARD"
+        *ngIf="chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD"
       ></m-check-icon>
     </button>
 
     <div class="flex flex-row items-center">
       <div class="ml-5 mr-5 flex flex-shrink-0 text-base"
-        >Report of Dashboard</div
+        >Tile of Dashboard</div
       >
 
       <div
         class="relative mx-5 flex h-2 w-9 flex-shrink-0"
-        *ngIf="
-          !dashboards && chartSaveAs === chartSaveAsEnum.REPORT_OF_DASHBOARD
-        "
+        *ngIf="!dashboards && chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD"
       >
         <ngx-spinner
           [ngClass]="{
-            invisible: chartSaveAs !== chartSaveAsEnum.REPORT_OF_DASHBOARD
+            invisible: chartSaveAs !== chartSaveAsEnum.TILE_OF_DASHBOARD
           }"
           class="invisible"
           [name]="spinnerName"
@@ -71,7 +69,7 @@
       <ng-select
         data-cy="chartSaveAsDialogDashboardSelect"
         *ngIf="
-          !!dashboards && chartSaveAs === chartSaveAsEnum.REPORT_OF_DASHBOARD
+          !!dashboards && chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD
         "
         class="custom w-[500px] flex-shrink-0 text-base focus:outline-none"
         [items]="dashboards"
@@ -111,60 +109,60 @@
       data-cy="chartSaveAsDialogNewVizCheckbox"
       class="flex h-9 cursor-pointer flex-row items-center"
       *ngIf="
-        chartSaveAs === chartSaveAsEnum.REPORT_OF_DASHBOARD &&
+        chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD &&
         !!selectedDashboardId
       "
-      (click)="newReportOnClick()"
+      (click)="newTileOnClick()"
     >
       <div
         class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
         [ngClass]="{
-          'bg-blue3 ': reportSaveAs === reportSaveAsEnum.NEW_REPORT
+          'bg-blue3 ': tileSaveAs === tileSaveAsEnum.NEW_TILE
         }"
       >
         <m-check-icon
-          *ngIf="reportSaveAs === reportSaveAsEnum.NEW_REPORT"
+          *ngIf="tileSaveAs === tileSaveAsEnum.NEW_TILE"
         ></m-check-icon>
       </div>
 
-      <div class="ml-5 text-base">New Report</div>
+      <div class="ml-5 text-base">New Tile</div>
     </div>
   </div>
 
   <div class="ml-12 mt-5 flex h-9 flex-col">
     <div
-      data-cy="chartSaveAsDialogNewReportOfDashboardCheckbox"
+      data-cy="chartSaveAsDialogNewTileOfDashboardCheckbox"
       class="flex h-9 cursor-pointer flex-row items-center"
       *ngIf="
-        chartSaveAs === chartSaveAsEnum.REPORT_OF_DASHBOARD &&
+        chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD &&
         !!selectedDashboardId
       "
-      (click)="replaceExistingReportOnClick()"
+      (click)="replaceExistingTileOnClick()"
     >
       <button
         class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
         [ngClass]="{
-          'bg-blue3 ': reportSaveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT
+          'bg-blue3 ': tileSaveAs === tileSaveAsEnum.REPLACE_EXISTING_TILE
         }"
       >
         <m-check-icon
-          *ngIf="reportSaveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT"
+          *ngIf="tileSaveAs === tileSaveAsEnum.REPLACE_EXISTING_TILE"
         ></m-check-icon>
       </button>
 
       <div class="flex flex-row items-center">
         <div class="ml-5 mr-5 flex flex-shrink-0 text-base"
-          >Replace Existing Report</div
+          >Replace Existing Tile</div
         >
         <ng-select
-          data-cy="chartSaveAsDialogReportSelect"
-          *ngIf="reportSaveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT"
+          data-cy="chartSaveAsDialogTileSelect"
+          *ngIf="tileSaveAs === tileSaveAsEnum.REPLACE_EXISTING_TILE"
           class="custom w-[500px] flex-shrink-0 text-base focus:outline-none"
-          [items]="selectedDashboard?.reports || []"
+          [items]="selectedDashboard?.tiles || []"
           [searchable]="false"
           [clearable]="false"
-          (change)="selectedReportChange()"
-          [(ngModel)]="selectedReportTitle"
+          (change)="selectedTileChange()"
+          [(ngModel)]="selectedTileTitle"
           (keyup.esc)="$event.stopImmediatePropagation()"
           (keyup.enter)="$event.stopImmediatePropagation()"
           appendTo="body"
@@ -191,7 +189,7 @@
 
     <div
       *ngIf="
-        chartSaveAs === chartSaveAsEnum.REPORT_OF_DASHBOARD &&
+        chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD &&
         !!selectedDashboardId
       "
       >{{ selectedDashboardPath | capitalize }}</div
@@ -199,7 +197,7 @@
 
     <!-- <div
       *ngIf="
-        chartSaveAs === chartSaveAsEnum.NEW_REPORT_OF_EXISTING_DASHBOARD &&
+        chartSaveAs === chartSaveAsEnum.NEW_TILE_OF_EXISTING_DASHBOARD &&
         !selectedDashboardId
       "
     ></div> -->
@@ -291,20 +289,19 @@
         'bg-blue3':
           chartSaveAs === chartSaveAsEnum.NEW_VIZ ||
           (!!selectedDashboardId &&
-            (reportSaveAs === reportSaveAsEnum.NEW_REPORT ||
-              !!selectedReportTitle)),
+            (tileSaveAs === tileSaveAsEnum.NEW_TILE || !!selectedTileTitle)),
         'cursor-default bg-gray-400':
-          chartSaveAs === chartSaveAsEnum.REPORT_OF_DASHBOARD &&
+          chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD &&
           (selectedDashboardId === undefined ||
-            (reportSaveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT &&
-              selectedReportTitle === undefined))
+            (tileSaveAs === tileSaveAsEnum.REPLACE_EXISTING_TILE &&
+              selectedTileTitle === undefined))
       }"
       (click)="save()"
       [disabled]="
-        chartSaveAs === chartSaveAsEnum.REPORT_OF_DASHBOARD &&
+        chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD &&
         (selectedDashboardId === undefined ||
-          (reportSaveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT &&
-            selectedReportTitle === undefined))
+          (tileSaveAs === tileSaveAsEnum.REPLACE_EXISTING_TILE &&
+            selectedTileTitle === undefined))
       "
       >Save</button
     >

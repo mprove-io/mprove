@@ -77,7 +77,7 @@ export class GetDashboardsController {
         'gr',
         'hidden',
         'fields',
-        'reports',
+        'tiles',
         'description'
       ],
       where: { struct_id: bridge.struct_id, temp: common.BoolEnum.FALSE }

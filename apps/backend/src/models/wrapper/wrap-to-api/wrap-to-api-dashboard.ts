@@ -1,7 +1,7 @@
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { makeDashboardFiltersX } from '~backend/functions/make-dashboard-filters-x';
-import { makeReportsX } from '~backend/functions/make-reports-x';
+import { makeTilesX } from '~backend/functions/make-tiles-x';
 
 export function wrapToApiDashboard(item: {
   dashboard: entities.DashboardEntity;
@@ -45,8 +45,8 @@ export function wrapToApiDashboard(item: {
     fields: dashboard.fields,
     extendedFilters: dashboardExtendedFilters,
     description: dashboard.description,
-    reports: makeReportsX({
-      reports: dashboard.reports,
+    tiles: makeTilesX({
+      tiles: dashboard.tiles,
       mconfigs: mconfigs,
       queries: queries,
       isAddMconfigAndQuery: isAddMconfigAndQuery,

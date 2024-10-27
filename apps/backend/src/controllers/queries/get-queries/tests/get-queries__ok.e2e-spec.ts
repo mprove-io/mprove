@@ -118,8 +118,8 @@ test('1', async t => {
         branchId: common.BRANCH_MASTER,
         envId: common.PROJECT_ENV_PROD,
         queryIds: [
-          resp1.payload.dashboard.reports[0].queryId,
-          resp1.payload.dashboard.reports[1].queryId
+          resp1.payload.dashboard.tiles[0].queryId,
+          resp1.payload.dashboard.tiles[1].queryId
         ]
       }
     };

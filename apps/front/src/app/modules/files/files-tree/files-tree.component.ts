@@ -16,7 +16,7 @@ import { FileQuery, FileState } from '~front/app/queries/file.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ProjectQuery } from '~front/app/queries/project.query';
 import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
-import { StructQuery } from '~front/app/queries/struct.query';
+import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -119,6 +119,14 @@ export class FilesTreeComponent implements OnDestroy {
     })
   );
 
+  struct: StructState;
+  struct$ = this.structQuery.select().pipe(
+    tap(x => {
+      this.struct = x;
+      this.cd.detectChanges();
+    })
+  );
+
   @ViewChild('itemsTree') itemsTree: TreeComponent;
 
   constructor(
@@ -138,7 +146,35 @@ export class FilesTreeComponent implements OnDestroy {
       return;
     }
 
-    this.itemsTree.treeModel.getNodeById(this.nav.projectId).expand();
+    let mproveDirValue = this.struct.mproveDirValue;
+
+    if (
+      common.isUndefined(mproveDirValue) ||
+      [
+        common.MPROVE_CONFIG_DIR_DOT,
+        common.MPROVE_CONFIG_DIR_DOT_SLASH
+      ].indexOf(mproveDirValue) > -1
+    ) {
+      this.itemsTree.treeModel.getNodeById(this.nav.projectId).expand();
+    } else {
+      let mproveDirValuePart;
+      if (mproveDirValue.startsWith('./')) {
+        mproveDirValuePart = mproveDirValue.slice(2);
+      } else if (mproveDirValue.startsWith('.')) {
+        mproveDirValuePart = mproveDirValue.slice(1);
+      }
+
+      let path = this.nav.projectId;
+
+      mproveDirValuePart.split('/').forEach(x => {
+        path = path + '/' + x;
+        let pathNodeId = `${path}`;
+        this.itemsTree.treeModel.getNodeById(pathNodeId).expand();
+      });
+
+      this.itemsTree.treeModel.getNodeById(this.nav.projectId).expand();
+    }
+
     this.cd.detectChanges();
 
     this.expandLevel$ = this.fileQuery

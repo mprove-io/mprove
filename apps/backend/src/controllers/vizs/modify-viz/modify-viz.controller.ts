@@ -65,7 +65,7 @@ export class ModifyVizController {
       branchId,
       envId,
       vizId,
-      reportTitle,
+      tileTitle,
       accessRoles,
       accessUsers,
       mconfig
@@ -159,7 +159,7 @@ export class ModifyVizController {
 
     let vizFileText = makeVizFileText({
       mconfig: mconfig,
-      reportTitle: reportTitle,
+      tileTitle: tileTitle,
       roles: accessRoles,
       users: accessUsers,
       vizId: vizId,
@@ -254,9 +254,9 @@ export class ModifyVizController {
       });
     }
 
-    let vizReport = viz.reports[0];
-    let vizMconfig = mconfigs.find(x => x.mconfigId === vizReport.mconfigId);
-    let vizQuery = queries.find(x => x.queryId === vizReport.queryId);
+    let vizTile = viz.tiles[0];
+    let vizMconfig = mconfigs.find(x => x.mconfigId === vizTile.mconfigId);
+    let vizQuery = queries.find(x => x.queryId === vizTile.queryId);
 
     await this.dbService.writeRecords({
       modify: false,

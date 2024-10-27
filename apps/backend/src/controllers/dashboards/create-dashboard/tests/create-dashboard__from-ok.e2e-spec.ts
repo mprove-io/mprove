@@ -130,7 +130,7 @@ test('1', async t => {
         dashboardTitle: newTitle,
         accessRoles: fromDashboard.accessRoles.join(', '),
         accessUsers: fromDashboard.accessUsers.join(', '),
-        reportsGrid: fromDashboard.reports
+        tilesGrid: fromDashboard.tiles
       }
     };
 

@@ -37,7 +37,7 @@ export class DashboardFiltersComponent {
     ];
 
     this.dashboardService.navCreateTempDashboard({
-      reports: this.dashboard.reports,
+      tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: newDashboardFields,
@@ -68,7 +68,7 @@ export class DashboardFiltersComponent {
     ];
 
     this.dashboardService.navCreateTempDashboard({
-      reports: this.dashboard.reports,
+      tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: newDashboardFields,
@@ -92,10 +92,10 @@ export class DashboardFiltersComponent {
         ...this.dashboard.fields.slice(fieldIndex + 1)
       ];
 
-      this.dashboard.reports.forEach(report => {
-        Object.keys(report.listen).forEach(key => {
-          if (report.listen[key] === dashboardField.id) {
-            delete report.listen[key];
+      this.dashboard.tiles.forEach(tile => {
+        Object.keys(tile.listen).forEach(key => {
+          if (tile.listen[key] === dashboardField.id) {
+            delete tile.listen[key];
           }
         });
       });
@@ -117,7 +117,7 @@ export class DashboardFiltersComponent {
     }
 
     this.dashboardService.navCreateTempDashboard({
-      reports: this.dashboard.reports,
+      tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: newDashboardFields,
@@ -131,16 +131,16 @@ export class DashboardFiltersComponent {
       x => x.id !== dashboardField.id
     );
 
-    this.dashboard.reports.forEach(report => {
-      Object.keys(report.listen).forEach(key => {
-        if (report.listen[key] === dashboardField.id) {
-          delete report.listen[key];
+    this.dashboard.tiles.forEach(tile => {
+      Object.keys(tile.listen).forEach(key => {
+        if (tile.listen[key] === dashboardField.id) {
+          delete tile.listen[key];
         }
       });
     });
 
     this.dashboardService.navCreateTempDashboard({
-      reports: this.dashboard.reports,
+      tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: newDashboardFields,

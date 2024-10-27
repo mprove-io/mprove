@@ -35,7 +35,7 @@ export function buildDashboard(
     cs
   );
 
-  dashboards = barDashboard.checkDashboardReportsExist(
+  dashboards = barDashboard.checkDashboardTilesExist(
     {
       dashboards: dashboards,
       structId: item.structId,

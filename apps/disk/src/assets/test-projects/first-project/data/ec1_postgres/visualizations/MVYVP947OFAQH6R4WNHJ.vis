@@ -1,5 +1,5 @@
 vis: MVYVP947OFAQH6R4WNHJ
-reports:
+tiles:
 - title: Profit by Traffic Source
   model: ec1_m1
   select:

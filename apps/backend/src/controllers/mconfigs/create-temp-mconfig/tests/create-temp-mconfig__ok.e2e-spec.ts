@@ -106,9 +106,9 @@ test('1', async t => {
         req: req1
       });
 
-    let oldMconfigId = resp1.payload.dashboard.reports[0].mconfigId;
+    let oldMconfigId = resp1.payload.dashboard.tiles[0].mconfigId;
 
-    let newMconfig = resp1.payload.dashboard.reports[0].mconfig;
+    let newMconfig = resp1.payload.dashboard.tiles[0].mconfig;
     newMconfig.mconfigId = common.makeId();
 
     let req2: apiToBackend.ToBackendCreateTempMconfigRequest = {

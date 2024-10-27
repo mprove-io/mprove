@@ -1,5 +1,5 @@
 vis: GXSO9LI1KW0GLRQXJ43V
-reports:
+tiles:
 - title: Users by State by Gender
   model: ec1_m1
   select:

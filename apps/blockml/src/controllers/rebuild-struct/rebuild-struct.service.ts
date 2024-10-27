@@ -389,6 +389,20 @@ export class RebuildStructService {
       this.cs
     );
 
+    let buildModelMetricResult = barBuilder.buildModelMetric(
+      {
+        metrics: metrics,
+        models: models,
+        structId: item.structId,
+        errors: errors,
+        caller: common.CallerEnum.BuildModelMetric
+      },
+      this.cs
+    );
+
+    models = buildModelMetricResult.models;
+    let commonMetrics = buildModelMetricResult.metrics;
+
     dashboards = barBuilder.buildDashboard(
       {
         dashboards: dashboards,
@@ -409,7 +423,7 @@ export class RebuildStructService {
       this.cs
     );
 
-    dashboards = await barBuilder.buildReport(
+    dashboards = await barBuilder.buildTile(
       {
         traceId: item.traceId,
 
@@ -419,13 +433,13 @@ export class RebuildStructService {
         weekStart: projectConfig.week_start,
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildDashboardReport
+        caller: common.CallerEnum.BuildDashboardTile
       },
       this.cs,
       this.rabbitService
     );
 
-    vizs = await barBuilder.buildReport(
+    vizs = await barBuilder.buildTile(
       {
         traceId: item.traceId,
         entities: vizs,
@@ -434,7 +448,7 @@ export class RebuildStructService {
         weekStart: projectConfig.week_start,
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildVizReport
+        caller: common.CallerEnum.BuildVizTile
       },
       this.cs,
       this.rabbitService
@@ -458,17 +472,6 @@ export class RebuildStructService {
         structId: item.structId,
         errors: errors,
         caller: common.CallerEnum.BuildVizChart
-      },
-      this.cs
-    );
-
-    let commonMetrics = barBuilder.buildMetric(
-      {
-        metrics: metrics,
-        models: models,
-        structId: item.structId,
-        errors: errors,
-        caller: common.CallerEnum.BuildMetric
       },
       this.cs
     );

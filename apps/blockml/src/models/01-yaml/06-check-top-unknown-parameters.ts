@@ -149,7 +149,7 @@ export function checkTopUnknownParameters(
                 common.ParameterEnum.AccessUsers.toString(),
                 common.ParameterEnum.AccessRoles.toString(),
                 common.ParameterEnum.Fields.toString(),
-                common.ParameterEnum.Reports.toString()
+                common.ParameterEnum.Tiles.toString()
               ].indexOf(parameter) < 0
             ) {
               item.errors.push(
@@ -180,7 +180,7 @@ export function checkTopUnknownParameters(
                 // common.ParameterEnum.Hidden.toString(),
                 common.ParameterEnum.AccessUsers.toString(),
                 common.ParameterEnum.AccessRoles.toString(),
-                common.ParameterEnum.Reports.toString()
+                common.ParameterEnum.Tiles.toString()
               ].indexOf(parameter) < 0
             ) {
               item.errors.push(
@@ -341,7 +341,7 @@ export function checkTopUnknownParameters(
           [
             common.ParameterEnum.Udfs.toString(),
             common.ParameterEnum.Fields.toString(),
-            common.ParameterEnum.Reports.toString(),
+            common.ParameterEnum.Tiles.toString(),
             common.ParameterEnum.BuildMetrics.toString(),
             common.ParameterEnum.Rows.toString(),
             common.ParameterEnum.Params.toString(),
@@ -391,7 +391,7 @@ export function checkTopUnknownParameters(
           [
             common.ParameterEnum.Udfs.toString(),
             common.ParameterEnum.Fields.toString(),
-            common.ParameterEnum.Reports.toString(),
+            common.ParameterEnum.Tiles.toString(),
             common.ParameterEnum.BuildMetrics.toString(),
             common.ParameterEnum.Rows.toString(),
             common.ParameterEnum.Params.toString(),

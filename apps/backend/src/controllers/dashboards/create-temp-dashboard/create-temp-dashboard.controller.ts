@@ -52,7 +52,7 @@ export class CreateTempDashboardController {
       oldDashboardId,
       newDashboardId,
       newDashboardFields,
-      reports,
+      tiles,
       deleteFilterFieldId,
       deleteFilterMconfigId
     } = reqValid.payload;
@@ -106,25 +106,23 @@ export class CreateTempDashboardController {
       projectId: projectId
     });
 
-    let yReports: common.ReportX[] = [];
+    let yTiles: common.TileX[] = [];
 
-    reports.forEach(freshReport => {
-      let yReport = fromDashboard.reports.find(
-        y => freshReport.title === y.title
-      );
+    tiles.forEach(freshTile => {
+      let yTile = fromDashboard.tiles.find(y => freshTile.title === y.title);
 
-      yReport.tileX = freshReport.tileX;
-      yReport.tileY = freshReport.tileY;
-      yReport.tileWidth = freshReport.tileWidth;
-      yReport.tileHeight = freshReport.tileHeight;
+      yTile.plateX = freshTile.plateX;
+      yTile.plateY = freshTile.plateY;
+      yTile.plateWidth = freshTile.plateWidth;
+      yTile.plateHeight = freshTile.plateHeight;
 
-      yReport.listen = freshReport.listen;
-      yReport.timezone = freshReport.timezone;
+      yTile.listen = freshTile.listen;
+      yTile.timezone = freshTile.timezone;
 
-      yReports.push(yReport);
+      yTiles.push(yTile);
     });
 
-    fromDashboard.reports = yReports;
+    fromDashboard.tiles = yTiles;
     fromDashboard.fields = newDashboardFields;
 
     let dashboardFileText = makeDashboardFileText({
@@ -243,12 +241,12 @@ export class CreateTempDashboardController {
 
     newDashboard.temp = true;
 
-    let dashboardMconfigIds = newDashboard.reports.map(x => x.mconfigId);
+    let dashboardMconfigIds = newDashboard.tiles.map(x => x.mconfigId);
     let dashboardMconfigs = mconfigs.filter(
       x => dashboardMconfigIds.indexOf(x.mconfigId) > -1
     );
 
-    let dashboardQueryIds = newDashboard.reports.map(x => x.queryId);
+    let dashboardQueryIds = newDashboard.tiles.map(x => x.queryId);
     let dashboardQueries = queries.filter(
       x => dashboardQueryIds.indexOf(x.queryId) > -1
     );

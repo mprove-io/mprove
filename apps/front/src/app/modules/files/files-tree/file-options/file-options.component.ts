@@ -3,6 +3,7 @@ import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
@@ -23,11 +24,15 @@ export class FileOptionsComponent {
     })
   );
 
+  needSave = false;
+  needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
+
   clickMenu(event: MouseEvent) {
     event.stopPropagation();
   }
 
   constructor(
+    private uiQuery: UiQuery,
     private navQuery: NavQuery,
     private authService: AuthService,
     private router: Router,
