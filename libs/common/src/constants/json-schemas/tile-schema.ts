@@ -4,7 +4,7 @@ import { getTimezonesValues } from '~common/functions/get-timezones-values';
 
 export const TILE_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
-  $id: 'https://docs.mprove.io/top/blockml/tile',
+  $id: 'https://docs.mprove.io/top/reference/tile',
   type: 'object',
   additionalProperties: false,
   properties: {

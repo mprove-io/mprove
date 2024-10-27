@@ -3,7 +3,7 @@ import { TILE_SCHEMA } from './tile-schema';
 
 export const VISUALIZATION_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
-  $id: 'https://docs.mprove.io/top/blockml/visualization',
+  $id: 'https://docs.mprove.io/top/reference/visualization',
   type: 'object',
   additionalProperties: false,
   properties: {

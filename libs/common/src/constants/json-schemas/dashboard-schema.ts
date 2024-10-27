@@ -4,7 +4,7 @@ import { TILE_SCHEMA } from './tile-schema';
 
 export const DASHBOARD_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
-  $id: 'https://docs.mprove.io/top/blockml/dashboard',
+  $id: 'https://docs.mprove.io/top/reference/dashboard',
   type: 'object',
   additionalProperties: false,
   properties: {

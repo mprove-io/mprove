@@ -2,7 +2,7 @@ import { JSONSchema7 } from 'json-schema';
 
 export const UDF_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
-  $id: 'https://docs.mprove.io/top/blockml/user-defined-function',
+  $id: 'https://docs.mprove.io/top/reference/user-defined-function',
   type: 'object',
   additionalProperties: false,
   properties: {

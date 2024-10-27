@@ -3,7 +3,7 @@
 
 // export const DIMENSION_SCHEMA: JSONSchema7 = {
 //   $schema: 'http://json-schema.org/draft-07/schema#',
-//   $id: 'https://docs.mprove.io/top/blockml/dimension',
+//   $id: 'https://docs.mprove.io/top/reference/fields/dimension',
 //   type: 'object',
 //   additionalProperties: false,
 //   properties: {

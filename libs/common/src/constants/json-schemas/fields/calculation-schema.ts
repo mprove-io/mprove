@@ -3,7 +3,7 @@
 
 // export const CALCULATION_SCHEMA: JSONSchema7 = {
 //   $schema: 'http://json-schema.org/draft-07/schema#',
-//   $id: 'https://docs.mprove.io/top/blockml/calculation',
+//   $id: 'https://docs.mprove.io/top/reference/fields/calculation',
 //   type: 'object',
 //   additionalProperties: false,
 //   properties: {

@@ -3,7 +3,7 @@ import { constants } from '~common/barrels/constants';
 
 export const FIELD_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
-  $id: 'https://docs.mprove.io/top/blockml/fields',
+  $id: 'https://docs.mprove.io/top/reference/fields',
   type: 'object',
   additionalProperties: false,
   properties: {
