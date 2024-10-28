@@ -12,22 +12,23 @@ import { apiToBackend } from './barrels/api-to-backend';
 import { common } from './barrels/common';
 import { constants } from './barrels/constants';
 import { entities } from './barrels/entities';
-import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
-import { repositories } from './barrels/repositories';
 import { logResponseBackend } from './functions/log-response-backend';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { makeErrorResponseBackend } from './functions/make-error-response-backend';
 import { makeOkResponseBackend } from './functions/make-ok-response-backend';
+import { makeTsNumber } from './helper/make-ts-number';
+import { Idemp } from './interfaces/idemp';
+import { RedisService } from './services/redis.service';
 
 let retry = require('async-retry');
 
 @Injectable()
 export class AppInterceptor implements NestInterceptor {
   constructor(
-    private idempsRepository: repositories.IdempsRepository,
     private cs: ConfigService<interfaces.Config>,
-    private logger: Logger
+    private logger: Logger,
+    private redisService: RedisService
   ) {}
 
   async intercept(
@@ -36,35 +37,40 @@ export class AppInterceptor implements NestInterceptor {
   ): Promise<Observable<common.MyResponse>> {
     let request = context.switchToHttp().getRequest();
 
+    // if (common.ToBackendRequestInfoNameEnum.ToBackendWebhookAnalyticsEvents) {
+    //   return next.handle();
+    // }
+
     request.start_ts = Date.now();
 
     let req: apiToBackend.ToBackendRequest = request.body;
     let user: entities.UserEntity = request.user;
+    // let sessionStId: string = request.session?.getUserId();
 
     let iKey = req?.info?.idempotencyKey;
-    let userId = common.isDefined(user?.user_id)
+    let stId = common.isDefined(user?.user_id)
       ? user.user_id
-      : constants.UNK_USER_ID;
+      : constants.UNK_ST_ID;
+    // let stId = common.isDefined(sessionStId)
+    // ? sessionStId
+    // : constants.ST_ID_UNK;
 
     let idemp = common.isUndefined(iKey)
       ? undefined
-      : await this.idempsRepository.findOne({
-          where: {
-            idempotency_key: iKey,
-            user_id: userId
-          }
-        });
-
+      : await this.redisService.find({ id: iKey }); // stId
     if (common.isUndefined(idemp) && common.isDefined(iKey)) {
-      let idempEntity: entities.IdempEntity = {
-        idempotency_key: iKey,
-        user_id: userId,
+      let idempWr: Idemp = {
+        idempotencyKey: iKey,
+        stId: stId,
         req: req,
         resp: undefined,
-        server_ts: helper.makeTs()
+        serverTs: makeTsNumber()
       };
 
-      await this.idempsRepository.insert(idempEntity);
+      await this.redisService.write({
+        id: idempWr.idempotencyKey,
+        data: idempWr
+      });
     }
 
     let respX;
@@ -73,12 +79,7 @@ export class AppInterceptor implements NestInterceptor {
       try {
         await retry(
           async (bail: any, num: number) => {
-            let idempX = await this.idempsRepository.findOne({
-              where: {
-                idempotency_key: iKey,
-                user_id: userId
-              }
-            });
+            let idempX = await this.redisService.find({ id: iKey }); // stId
 
             if (common.isUndefined(idempX.resp)) {
               bail(new Error(`Idemp resp is still empty, attempt ${num}`));
@@ -121,15 +122,18 @@ export class AppInterceptor implements NestInterceptor {
           logger: this.logger
         });
 
-        let idempEntity: entities.IdempEntity = {
-          idempotency_key: iKey,
-          user_id: userId,
+        let idempA: Idemp = {
+          idempotencyKey: iKey,
+          stId: stId,
           req: req,
           resp: respX,
-          server_ts: helper.makeTs()
+          serverTs: makeTsNumber()
         };
 
-        await this.idempsRepository.save(idempEntity);
+        await this.redisService.write({
+          id: idempA.idempotencyKey,
+          data: idempA
+        });
       }
     }
 
@@ -148,15 +152,18 @@ export class AppInterceptor implements NestInterceptor {
             });
 
             if (common.isDefined(iKey)) {
-              let idempEntity: entities.IdempEntity = {
-                idempotency_key: iKey,
-                user_id: userId,
+              let idempB: Idemp = {
+                idempotencyKey: iKey,
+                stId: stId,
                 req: req,
                 resp: resp,
-                server_ts: helper.makeTs()
+                serverTs: makeTsNumber()
               };
 
-              await this.idempsRepository.save(idempEntity);
+              await this.redisService.write({
+                id: idempB.idempotencyKey,
+                data: idempB
+              });
             }
 
             resp.info.duration = Date.now() - request.start_ts; // update
@@ -175,8 +182,10 @@ export class AppInterceptor implements NestInterceptor {
       : common.isDefined(idemp.resp)
       ? of(idemp.resp).pipe(
           map(x => {
-            x.info.duration = Date.now() - request.start_ts; // update
-            return x;
+            (x as common.MyResponse).info.duration =
+              Date.now() - request.start_ts; // update
+
+            return x as unknown as common.MyResponse;
           }),
           tap(x =>
             logResponseBackend({

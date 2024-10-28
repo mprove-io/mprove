@@ -120,6 +120,13 @@ export class Config {
 
   //
   @IsString()
+  backendRedisHost?: string;
+
+  @IsString()
+  backendRedisPassword?: string;
+
+  //
+  @IsString()
   backendRabbitUser?: string;
 
   @IsString()

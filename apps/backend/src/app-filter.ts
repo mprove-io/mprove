@@ -10,19 +10,20 @@ import { apiToBackend } from './barrels/api-to-backend';
 import { common } from './barrels/common';
 import { constants } from './barrels/constants';
 import { entities } from './barrels/entities';
-import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
-import { repositories } from './barrels/repositories';
 import { logResponseBackend } from './functions/log-response-backend';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { makeErrorResponseBackend } from './functions/make-error-response-backend';
+import { makeTsNumber } from './helper/make-ts-number';
+import { Idemp } from './interfaces/idemp';
+import { RedisService } from './services/redis.service';
 
 @Catch()
 export class AppFilter implements ExceptionFilter {
   constructor(
     private cs: ConfigService<interfaces.Config>,
-    private idempsRepository: repositories.IdempsRepository,
-    private logger: Logger
+    private logger: Logger,
+    private redisService: RedisService
   ) {}
 
   async catch(exception: unknown, host: ArgumentsHost) {
@@ -45,7 +46,6 @@ export class AppFilter implements ExceptionFilter {
           : exception;
 
       let req: apiToBackend.ToBackendRequest = request.body;
-      let user: entities.UserEntity = request.user;
 
       let resp = makeErrorResponseBackend({
         e: e,
@@ -62,17 +62,26 @@ export class AppFilter implements ExceptionFilter {
 
       if (common.isDefined(iKey)) {
         try {
-          let idempEntity: entities.IdempEntity = {
-            idempotency_key: iKey,
-            user_id: common.isDefined(user?.user_id)
+          let user: entities.UserEntity = request.user;
+          // let sessionStId: string = request.session?.getUserId();
+
+          let idemp: Idemp = {
+            idempotencyKey: iKey,
+            stId: common.isDefined(user?.user_id)
               ? user.user_id
-              : constants.UNK_USER_ID,
+              : constants.UNK_ST_ID,
+            // stId: common.isDefined(sessionStId)
+            //   ? sessionStId
+            //   : constants.UNK_ST_ID,
             req: req,
             resp: resp,
-            server_ts: helper.makeTs()
+            serverTs: makeTsNumber()
           };
 
-          await this.idempsRepository.save(idempEntity);
+          await this.redisService.write({
+            id: idemp.idempotencyKey,
+            data: idemp
+          });
         } catch (er) {
           logToConsoleBackend({
             log: new common.ServerError({

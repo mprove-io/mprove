@@ -34,8 +34,7 @@ export class DeleteRecordsController {
     private membersRepository: repositories.MembersRepository,
     private orgsRepository: repositories.OrgsRepository,
     private projectsRepository: repositories.ProjectsRepository,
-    private usersRepository: repositories.UsersRepository,
-    private idempsRepository: repositories.IdempsRepository
+    private usersRepository: repositories.UsersRepository
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords)
@@ -124,11 +123,6 @@ export class DeleteRecordsController {
 
     structIds = structs.map(struct => struct.struct_id);
 
-    if (common.isDefined(idempotencyKeys) && idempotencyKeys.length > 0) {
-      await this.idempsRepository.delete({
-        idempotency_key: In(idempotencyKeys)
-      });
-    }
     if (userIds.length > 0) {
       await this.usersRepository.delete({ user_id: In(userIds) });
     }

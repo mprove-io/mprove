@@ -6,11 +6,13 @@ export const APP_NAME_SCHEDULER = 'SCHEDULER';
 export const PASSWORD_EXPIRES_OFFSET = 86400000;
 export const TIME_COLUMNS_LIMIT = 100;
 
+export const IDEMP_EXPIRE_SECONDS = 600;
+
 export const SKIP_JWT = 'skipJwt';
 
 export const DEFAULT_QUERY_SIZE_LIMIT = 1;
 
-export const UNK_USER_ID = 'unk';
+export const UNK_ST_ID = 'unk';
 
 export const DEFAULT_UI: common.Ui = {
   timezone: common.UTC,

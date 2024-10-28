@@ -14,7 +14,6 @@ export const appRepositories = [
   repositories.AvatarsRepository,
   repositories.BranchesRepository,
   repositories.ConnectionsRepository,
-  repositories.IdempsRepository,
   repositories.MembersRepository,
   repositories.OrgsRepository,
   repositories.ProjectsRepository,
