@@ -60,7 +60,10 @@ export class DataRendererComponent implements ICellRendererAngularComp {
         x => x.key === Number(this.params.colDef.field)
       );
 
-      let ts = rowDataRecord.tsUTC * 1000;
+      // console.log(rowDataRecord.key);
+      // console.log(rowDataRecord.tsUTC);
+
+      let ts = rowDataRecord.key * 1000;
 
       let { date, dateStr, timeStr } =
         this.timeService.getDateTimeStrFromEpochMs({
@@ -81,25 +84,25 @@ export class DataRendererComponent implements ICellRendererAngularComp {
       let timeToStr;
 
       if (timeSpecWord === common.TimeframeEnum.Year) {
-        let nextYear = date.getFullYear() + 1;
+        let nextYear = date.getUTCFullYear() + 1;
         let nextYearDate = new Date(nextYear, 0, 1, 0, 0, 0, 0);
 
-        let tsNextYear = nextYearDate.getTime();
-
         let yearTo = this.timeService.getDateTimeStrFromEpochMs({
-          ts: tsNextYear
+          ts:
+            nextYearDate.getTime() -
+            nextYearDate.getTimezoneOffset() * 60 * 1000
         });
 
         dateToStr = yearTo.dateStr;
         timeToStr = yearTo.timeStr;
       } else if (timeSpecWord === common.TimeframeEnum.Quarter) {
-        let qMonth = date.getMonth(); // Months are 0-11
+        let qMonth = date.getUTCMonth(); // Months are 0-11
 
         let nextQuarterMonth = (Math.floor(qMonth / 3) * 3 + 3) % 12;
 
         let yearIncrement = qMonth >= 9 ? 1 : 0; // If current month is Oct-Dec, increment year
 
-        let nextQuarterYear = date.getFullYear() + yearIncrement;
+        let nextQuarterYear = date.getUTCFullYear() + yearIncrement;
 
         let nextQuarterDate = new Date(
           nextQuarterYear,
@@ -111,28 +114,28 @@ export class DataRendererComponent implements ICellRendererAngularComp {
           0
         );
 
-        let tsNextQuarter = nextQuarterDate.getTime();
-
         let quarterTo = this.timeService.getDateTimeStrFromEpochMs({
-          ts: tsNextQuarter
+          ts:
+            nextQuarterDate.getTime() -
+            nextQuarterDate.getTimezoneOffset() * 60 * 1000
         });
 
         dateToStr = quarterTo.dateStr;
         timeToStr = quarterTo.timeStr;
       } else if (timeSpecWord === common.TimeframeEnum.Month) {
-        let month = date.getMonth(); // Months are zero-based (0-11)
+        let month = date.getUTCMonth(); // Months are zero-based (0-11)
 
         let nextMonth = month === 11 ? 0 : month + 1;
 
         let yearTo =
-          nextMonth === 0 ? date.getFullYear() + 1 : date.getFullYear();
+          nextMonth === 0 ? date.getUTCFullYear() + 1 : date.getUTCFullYear();
 
         let nextMonthDate = new Date(yearTo, nextMonth, 1, 0, 0, 0, 0);
 
-        let tsNextMonth = nextMonthDate.getTime();
-
         let monthTo = this.timeService.getDateTimeStrFromEpochMs({
-          ts: tsNextMonth
+          ts:
+            nextMonthDate.getTime() -
+            nextMonthDate.getTimezoneOffset() * 60 * 1000
         });
 
         dateToStr = monthTo.dateStr;

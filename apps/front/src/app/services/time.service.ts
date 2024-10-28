@@ -91,11 +91,11 @@ export class TimeService {
 
     let date = new Date(ts);
 
-    let year = date.getFullYear();
-    let month = date.getMonth() + 1; // Months are zero-based in JavaScript
-    let day = date.getDate();
-    let hour = date.getHours();
-    let minute = date.getMinutes();
+    let year = date.getUTCFullYear();
+    let month = date.getUTCMonth() + 1; // Months are zero-based in JavaScript
+    let day = date.getUTCDate();
+    let hour = date.getUTCHours();
+    let minute = date.getUTCMinutes();
     let second = 0;
 
     let monthD = month.toString().length === 1 ? `0${month}` : `${month}`;
