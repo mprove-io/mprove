@@ -6,7 +6,6 @@ export * from './connection.entity';
 export * from './dashboard.entity';
 export * from './env.entity';
 export * from './ev.entity';
-export * from './idemp.entity';
 export * from './kit.entity';
 export * from './mconfig.entity';
 export * from './member.entity';

@@ -154,6 +154,14 @@ export function getDevConfig(envFilePath: any) {
     smtpAuthPassword:
       process.env.BACKEND_SMTP_AUTH_PASSWORD ||
       envFile.BACKEND_SMTP_AUTH_PASSWORD,
+
+    //
+    backendRedisHost:
+      process.env.BACKEND_REDIS_HOST || envFile.BACKEND_REDIS_HOST,
+
+    backendRedisPassword:
+      process.env.BACKEND_REDIS_PASSWORD || envFile.BACKEND_REDIS_PASSWORD,
+
     //
     backendRabbitUser:
       process.env.BACKEND_RABBIT_USER || envFile.BACKEND_RABBIT_USER,

@@ -4,7 +4,6 @@ import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
-import { repositories } from './barrels/repositories';
 import { BigQueryService } from './services/bigquery.service';
 import { BlockmlService } from './services/blockml.service';
 import { BranchesService } from './services/branches.service';
@@ -25,6 +24,7 @@ import { PgService } from './services/pg.service';
 import { ProjectsService } from './services/projects.service';
 import { QueriesService } from './services/queries.service';
 import { RabbitService } from './services/rabbit.service';
+import { RedisService } from './services/redis.service';
 import { RepsService } from './services/reps.service';
 import { SnowFlakeService } from './services/snowflake.service';
 import { StructsService } from './services/structs.service';
@@ -34,6 +34,7 @@ import { UsersService } from './services/users.service';
 import { VizsService } from './services/vizs.service';
 
 export const appProviders = [
+  RedisService,
   RabbitService,
   DbService,
   EmailService,
@@ -66,24 +67,12 @@ export const appProviders = [
       cs: ConfigService<interfaces.Config>,
       queriesService: QueriesService,
       structsService: StructsService,
-      idempsRepository: repositories.IdempsRepository,
       logger: Logger
     ) =>
       helper.isScheduler(cs)
-        ? new TasksService(
-            cs,
-            queriesService,
-            structsService,
-            idempsRepository,
-            logger
-          )
+        ? new TasksService(cs, queriesService, structsService, logger)
         : {},
-    inject: [
-      ConfigService,
-      QueriesService,
-      StructsService,
-      repositories.IdempsRepository
-    ]
+    inject: [ConfigService, QueriesService, StructsService]
   },
   LocalStrategy,
   JwtStrategy
