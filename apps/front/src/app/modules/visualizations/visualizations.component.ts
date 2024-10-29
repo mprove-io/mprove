@@ -380,6 +380,10 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     });
   }
 
+  rowMenuOnClick(event: any) {
+    event.stopPropagation();
+  }
+
   goToVizFile(event: MouseEvent, item: common.VizX) {
     event.stopPropagation();
 
