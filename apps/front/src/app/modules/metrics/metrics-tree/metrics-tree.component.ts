@@ -23,6 +23,8 @@ export class MetricNode {
   id: string;
   isTop: boolean;
   topLabel: string;
+  partNodeLabel: string;
+  partFieldLabel: string;
   timeLabel: string;
   isField: boolean;
   isSelected: boolean;
@@ -61,6 +63,8 @@ export class MetricsTreeComponent implements AfterViewInit {
           id: metric.metricId,
           isTop: false,
           topLabel: metric.topLabel,
+          partNodeLabel: metric.partNodeLabel,
+          partFieldLabel: metric.partFieldLabel,
           timeLabel: metric.timeLabel,
           isField: true,
           isSelected: false,
@@ -82,6 +86,8 @@ export class MetricsTreeComponent implements AfterViewInit {
             id: topNodeId,
             isTop: true,
             topLabel: metric.topLabel,
+            partNodeLabel: metric.partNodeLabel,
+            partFieldLabel: metric.partFieldLabel,
             timeLabel: metric.timeLabel,
             isField: false,
             isSelected: false,
