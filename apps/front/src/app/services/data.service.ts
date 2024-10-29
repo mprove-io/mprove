@@ -256,6 +256,9 @@ export class DataService {
       fieldValue = this.getDateFromWeek;
     } else if (fieldName.match(/(?:___year)$/g)) {
       fieldValue = this.getDateFromYear;
+    } else {
+      // *_ts
+      fieldValue = this.getRawValue;
     }
 
     return fieldValue;
