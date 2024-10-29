@@ -113,7 +113,7 @@ export class RepComponent {
     {
       field: 'name',
       pinned: 'left',
-      minWidth: 450, // metricsColumnNameWidth
+      minWidth: 480, // metricsColumnNameWidth
       headerComponent: MetricHeaderComponent,
       cellRenderer: MetricRendererComponent
     },
