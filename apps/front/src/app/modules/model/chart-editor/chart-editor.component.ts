@@ -90,6 +90,21 @@ export class ChartEditorComponent implements OnChanges {
   formatNumberXAxisTickChartTypes = common.formatNumberXAxisTickChartTypes;
   formatNumberYAxisTickChartTypes = common.formatNumberYAxisTickChartTypes;
 
+  formatNumberExamples = [
+    {
+      id: ',.2f',
+      labelFormat: ',.2f',
+      labelInput: '1000.12345',
+      labelOutput: '1000.12'
+    },
+    {
+      id: ',.3f',
+      labelFormat: ',.3f',
+      labelInput: '1000.12345',
+      labelOutput: '1000.123'
+    }
+  ];
+
   @Input()
   chart: common.Chart;
 
