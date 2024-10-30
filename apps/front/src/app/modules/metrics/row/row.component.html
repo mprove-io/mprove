@@ -310,24 +310,55 @@
           >Format Number</div
         >
 
-        <div [formGroup]="formatNumberForm" class="relative flex w-32">
-          <input
-            data-cy="formatNumberInput"
-            class="form-input border-gray3 focus:border-blue3 w-full resize-none rounded"
-            [ngClass]="{
-              'border-red-600':
-                formatNumberForm.controls['formatNumber'].invalid &&
-                formatNumberForm.controls['formatNumber'].touched
-            }"
+        <form [formGroup]="formatNumberForm" class="relative flex">
+          <ng-select
+            #formatNumberSelect
+            data-cy="formatNumberSelect"
+            class="custom custom-height h-15 mr-5 w-[260px] text-base focus:outline-none"
+            [items]="formatNumberExamples"
+            [clearable]="false"
+            [searchable]="false"
+            (change)="formatNumberBlur()"
+            appendTo="body"
+            bindValue="id"
             formControlName="formatNumber"
-            placeholder=""
-            (blur)="formatNumberBlur()"
-          />
-          <m-validation
-            class="absolute -bottom-[22px] left-0"
-            [control]="formatNumberForm.controls['formatNumber']"
-          ></m-validation>
-        </div>
+          >
+            <ng-template ng-label-tmp let-item="item">
+              <m-format-number
+                [inputItem]="item"
+                [isOption]="false"
+                class="ml-1 flex"
+              ></m-format-number>
+            </ng-template>
+
+            <ng-template ng-option-tmp let-item="item">
+              <m-format-number
+                [inputItem]="item"
+                [isOption]="true"
+                class="ml-1 flex"
+              ></m-format-number>
+            </ng-template>
+          </ng-select>
+
+          <div class="relative">
+            <input
+              data-cy="formatNumberInput"
+              class="form-input border-gray3 focus:border-blue3 w-[200px] resize-none rounded"
+              [ngClass]="{
+                'border-red-600':
+                  formatNumberForm.controls['formatNumber'].invalid &&
+                  formatNumberForm.controls['formatNumber'].touched
+              }"
+              formControlName="formatNumber"
+              placeholder=""
+              (blur)="formatNumberBlur()"
+            />
+            <m-validation
+              class="absolute -bottom-[22px] left-0"
+              [control]="formatNumberForm.controls['formatNumber']"
+            ></m-validation>
+          </div>
+        </form>
       </div>
 
       <div class="flex h-11 flex-row items-center space-x-5">
@@ -336,7 +367,7 @@
           >Currency Prefix</div
         >
 
-        <div [formGroup]="currencyPrefixForm" class="relative flex w-32">
+        <div [formGroup]="currencyPrefixForm" class="relative flex w-[100px]">
           <input
             data-cy="currencyPrefixInput"
             class="form-input border-gray3 focus:border-blue3 w-full resize-none rounded"
@@ -362,7 +393,7 @@
           >Currency Suffix</div
         >
 
-        <div [formGroup]="currencySuffixForm" class="relative flex w-32">
+        <div [formGroup]="currencySuffixForm" class="relative flex w-[100px]">
           <input
             data-cy="currencySuffixInput"
             class="form-input border-gray3 focus:border-blue3 w-full resize-none rounded"

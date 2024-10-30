@@ -155,6 +155,10 @@ body {
   cursor: pointer;
 }
 
+.ng-select.custom-height .ng-select-container {
+  height: 42px;
+}
+
 .ng-dropdown-panel.select-chart-type .scroll-host {
   max-height: 45vh;
 }

@@ -1,61 +1,23 @@
 <div class="select-none truncate" *ngIf="isOption === false">
-  <div
-    *ngIf="
-      !!inputItem.labelFormat &&
-      !!inputItem.labelOutput &&
-      !!inputItem.labelInput
-    "
-    class="truncate"
-  >
+  <div *ngIf="!!inputItem.id && !!inputItem.output" class="truncate">
     <span>
-      {{ inputItem.labelFormat }}
+      {{ inputItem.id }}
     </span>
 
-    <span class="ml-2">
-      {{ inputItem.labelOutput }}
-    </span>
-
-    <span class="ml-2"> << </span>
-
-    <span class="ml-2">
-      {{ inputItem.labelInput }}
+    <span class="ml-2 font-semibold text-gray-400">
+      {{ inputItem.output }}
     </span>
   </div>
 
-  <div
-    *ngIf="
-      !(
-        !!inputItem.labelFormat &&
-        !!inputItem.labelOutput &&
-        !!inputItem.labelInput
-      )
-    "
-    class="truncate"
-    >{{ inputItem.id }}</div
-  >
+  <div *ngIf="!inputItem.output" class="truncate">{{ inputItem.id }}</div>
 </div>
 
 <div class="select-none truncate" *ngIf="isOption === true">
   <span>
-    {{ inputItem.labelFormat }}
+    {{ inputItem.id }}
   </span>
 
-  <span class="ml-2">
-    {{ inputItem.labelOutput }}
-  </span>
-
-  <span class="ml-2"> << </span>
-
-  <span class="ml-2">
-    {{ inputItem.labelInput }}
+  <span class="ml-2 font-semibold text-gray-400">
+    {{ inputItem.output }}
   </span>
 </div>
-
-<!-- <span>{{ column.topLabel | capitalize }}</span>
-<span class="ml-2 font-semibold" *ngIf="column.groupLabel"
-  >{{ column.groupLabel | capitalize }} - {{ column.label | capitalize }}</span
->
-
-<span class="ml-2 font-semibold" *ngIf="!column.groupLabel">{{
-  column.label | capitalize
-}}</span> -->
