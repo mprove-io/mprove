@@ -57,102 +57,20 @@
     >Query Error</div
   >
 
-  <!-- ag bar -->
   <div
-    class="flex h-full"
+    class="flex h-full w-full"
     *ngIf="
       queryStatus !== queryStatusEnum.Error &&
       isSelectValid === true &&
-      chart.type === chartTypeEnum.AgBar &&
+      agChartTypes.indexOf(chart.type) > -1 &&
       chart.isValid === true &&
       qData.length > 0
     "
   >
-    <ag-charts style="width: 100%" [options]="chartOptions"></ag-charts>
-  </div>
-
-  <!-- ag line -->
-  <div
-    class="flex h-full"
-    *ngIf="
-      queryStatus !== queryStatusEnum.Error &&
-      isSelectValid === true &&
-      chart.type === chartTypeEnum.AgLine &&
-      chart.isValid === true &&
-      qData.length > 0
-    "
-  >
-    <ag-charts style="width: 100%" [options]="chartOptions"></ag-charts>
-  </div>
-
-  <!-- ag area -->
-  <div
-    class="flex h-full"
-    *ngIf="
-      queryStatus !== queryStatusEnum.Error &&
-      isSelectValid === true &&
-      chart.type === chartTypeEnum.AgArea &&
-      chart.isValid === true &&
-      qData.length > 0
-    "
-  >
-    <ag-charts style="width: 100%" [options]="chartOptions"></ag-charts>
-  </div>
-
-  <!-- ag scatter -->
-  <div
-    class="flex h-full"
-    *ngIf="
-      queryStatus !== queryStatusEnum.Error &&
-      isSelectValid === true &&
-      chart.type === chartTypeEnum.AgScatter &&
-      chart.isValid === true &&
-      qData.length > 0
-    "
-  >
-    <ag-charts style="width: 100%" [options]="chartOptions"></ag-charts>
-  </div>
-
-  <!-- ag bubble -->
-  <div
-    class="flex h-full"
-    *ngIf="
-      queryStatus !== queryStatusEnum.Error &&
-      isSelectValid === true &&
-      chart.type === chartTypeEnum.AgBubble &&
-      chart.isValid === true &&
-      qData.length > 0
-    "
-  >
-    <ag-charts style="width: 100%" [options]="chartOptions"></ag-charts>
-  </div>
-
-  <!-- ag donut -->
-  <div
-    class="flex h-full"
-    *ngIf="
-      queryStatus !== queryStatusEnum.Error &&
-      isSelectValid === true &&
-      chart.type === chartTypeEnum.AgDonut &&
-      chart.isValid === true &&
-      qData.length > 0
-    "
-  >
-    <ag-charts style="width: 100%" [options]="chartOptions"></ag-charts>
-  </div>
-
-  <!-- ag pie -->
-  <div
-    class="flex h-full"
-    *ngIf="
-      queryStatus !== queryStatusEnum.Error &&
-      isSelectValid === true &&
-      chart.type === chartTypeEnum.AgPie &&
-      chart.isValid === true &&
-      qData.length > 0
-    "
-  >
-    <ag-charts style="width: 100%" [options]="chartOptions"></ag-charts>
+    <ag-charts
+      [options]="this.chartOptions"
+      style="width: 100%; height: 100%"
+    ></ag-charts>
   </div>
 
   <m-chart-table

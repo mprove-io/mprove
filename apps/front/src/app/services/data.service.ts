@@ -102,6 +102,9 @@ export class DataService {
     yFieldsIds: string[];
     chartType: common.ChartTypeEnum;
   }) {
+    // console.log("====item====")
+    // console.log(item);
+
     let { selectFields, data, multiFieldId, xFieldId, yFieldsIds, chartType } =
       item;
 
@@ -205,6 +208,8 @@ export class DataService {
         series: prepareData[x]
       })
     );
+    // console.log("====multidata====")
+    // console.log(multiData);
 
     return multiData;
   }

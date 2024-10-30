@@ -16,6 +16,7 @@ import { FormatNumberService } from '~front/app/services/format-number.service';
 import { RData } from '~front/app/services/query.service';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+import { makeAgData } from '../../../functions/make-ag-data';
 import { femaleHeightWeight, maleHeightWeight } from './scatter-mock';
 
 @Component({
@@ -29,6 +30,25 @@ export class ChartViewComponent implements OnChanges {
   chartOptions: AgChartOptions;
 
   // isInitialized = false;
+
+  agChartTypes = [
+    common.ChartTypeEnum.AgBar,
+    common.ChartTypeEnum.AgLine,
+    common.ChartTypeEnum.AgArea,
+    common.ChartTypeEnum.AgPie,
+    common.ChartTypeEnum.AgDonut,
+    common.ChartTypeEnum.AgBubble,
+    common.ChartTypeEnum.AgScatter
+  ];
+  agMultiChartTypes = [
+    common.ChartTypeEnum.AgBar,
+    common.ChartTypeEnum.AgLine,
+    common.ChartTypeEnum.AgArea
+    // common.ChartTypeEnum.AgPie,
+    // common.ChartTypeEnum.AgDonut,
+    // common.ChartTypeEnum.AgBubble,
+    // common.ChartTypeEnum.AgScatter
+  ];
 
   @Input()
   mconfigFields: common.MconfigField[];
@@ -100,7 +120,7 @@ export class ChartViewComponent implements OnChanges {
       // seriesType = 'bar';
       this.chartOptions = {
         title: {
-          text: 'Annual Fuel Expenditure'
+          text: 'AG BAR'
         },
         data: [
           {
@@ -139,7 +159,7 @@ export class ChartViewComponent implements OnChanges {
     if (this.chart.type === common.ChartTypeEnum.AgLine) {
       this.chartOptions = {
         title: {
-          text: 'Annual Fuel Expenditure'
+          text: 'AG LINE'
         },
         data: [
           {
@@ -476,6 +496,107 @@ export class ChartViewComponent implements OnChanges {
             })
           : [];
       // console.log(this.multi);
+    } else if (this.agMultiChartTypes.indexOf(this.chart.type) > -1) {
+      this.multi =
+        this.qData.length > 0 &&
+        common.isDefined(this.chart.xField) &&
+        common.isDefined(this.chart.yFields) &&
+        this.chart.yFields.length > 0
+          ? this.dataService.getMultiData({
+              selectFields: this.mconfigFields,
+              xFieldId: this.chart.xField,
+              yFieldsIds: this.chart.yFields,
+              multiFieldId: this.chart.multiField,
+              data: this.qData,
+              chartType: this.chart.type
+            })
+          : [];
+
+      const xField = this.mconfigFields.find(v => v.id === this.chart.xField);
+
+      const yField = this.mconfigFields.find(v => v.id === this.chart.yField);
+
+      const multiField = this.mconfigFields.find(
+        v => v.id === this.chart.multiField
+      );
+
+      let series: any = [];
+      this.chartOptions.series = common.isDefined(this.chart.multiField)
+        ? this.multi.map(el => {
+            let a = {
+              type: this.chart.type.split('_')[1] as any,
+              xKey: xField.sqlName,
+              yKey: el.name
+            };
+            return a;
+          })
+        : // this.chart.yFields.map(x => {
+          //   let myYField = this.mconfigFields.find(f => f.id === x);
+
+          //   let a = {
+          //     type: this.chart.type.split('_')[1] as any,
+          //     xKey: xField.sqlName,
+          //     yKey: myYField.sqlName
+          //   };
+          //   return a;
+          // })
+          this.chart.yFields.map(x => {
+            let myYField = this.mconfigFields.find(f => f.id === x);
+
+            let a = {
+              type: this.chart.type.split('_')[1] as any,
+              xKey: xField.sqlName,
+              yKey: myYField.sqlName
+            };
+            return a;
+          });
+
+      // this.chartOptions.series = [
+      // {
+      //   type: this.chart.type.split('_')[1] as any,
+      //   xKey: xField.sqlName,
+      //   yKey: yField.sqlName
+      // }
+      // ];
+
+      let newData: any = [];
+
+      if (common.isDefined(this.chart.multiField)) {
+        this.multi.forEach(el => {
+          el.series.forEach((element: any) => {
+            let rowElement: any = newData.find(
+              (x: any) => x[xField.sqlName] === element.name
+            );
+            if (common.isUndefined(rowElement)) {
+              rowElement = {};
+              newData.push(rowElement);
+            }
+            rowElement[xField.sqlName] = element.name;
+            rowElement[el.name] = element.value;
+          });
+        });
+      }
+
+      this.chartOptions.data = common.isDefined(this.chart.multiField)
+        ? newData
+        : makeAgData(this.qData);
+      console.log(this.chartOptions.data);
+    } else if (
+      this.agChartTypes.indexOf(this.chart.type) > -1 &&
+      this.agMultiChartTypes.indexOf(this.chart.type) < 0
+    ) {
+      const xField = this.mconfigFields.find(v => v.id === this.chart.xField);
+
+      const yField = this.mconfigFields.find(v => v.id === this.chart.yField);
+      this.chartOptions.series = [
+        {
+          type: 'bar',
+          xKey: xField.sqlName,
+          yKey: yField.sqlName
+        }
+      ];
+
+      this.chartOptions.data = makeAgData(this.qData);
     }
 
     this.cd.detectChanges();
