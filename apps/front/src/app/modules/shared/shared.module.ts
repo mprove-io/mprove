@@ -18,6 +18,7 @@ import { ChartVizComponent } from './chart-viz/chart-viz.component';
 import { ColorMenuComponent } from './color-menu/color-menu.component';
 import { DashboardSaveAsDialogComponent } from './dashboard-save-as-dialog/dashboard-save-as-dialog.component';
 import { FieldLabelComponent } from './field-label/field-label.component';
+import { FormatNumberComponent } from './format-number/format-number.component';
 import { FractionDayOfWeekIndexComponent } from './fraction/fraction-day-of-week-index/fraction-day-of-week-index.component';
 import { FractionDayOfWeekComponent } from './fraction/fraction-day-of-week/fraction-day-of-week.component';
 import { FractionMonthNameComponent } from './fraction/fraction-month-name/fraction-month-name.component';
@@ -147,6 +148,7 @@ let sharedComponents = [
   ChartVizComponent,
   ChartRepComponent,
   FieldLabelComponent,
+  FormatNumberComponent,
   ColorMenuComponent,
   MinusSmIconComponent,
   QueryStatusComponent,

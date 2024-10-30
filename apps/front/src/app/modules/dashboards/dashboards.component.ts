@@ -250,6 +250,10 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     });
   }
 
+  rowMenuOnClick(event: any) {
+    event.stopPropagation();
+  }
+
   goToDashboardFile(event: any, dashboard: common.DashboardX) {
     event.stopPropagation();
 

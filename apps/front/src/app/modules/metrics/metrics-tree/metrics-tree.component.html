@@ -67,18 +67,18 @@
                     'ml-5': node.hasChildren === false
                   }"
                 >
-                  <span *ngIf="node.data.isField === true">{{
-                    node.data.metric.partLabel
-                  }}</span>
+                  <span *ngIf="node.data.isField === true">
+                    <span>{{ node.data.metric.partNodeLabel }}</span>
 
-                  <span class="">
-                    <span class="" *ngIf="node.data.isField === false">{{
-                      node.data.topLabel
+                    <span class="ml-2 font-semibold">{{
+                      node.data.metric.partFieldLabel
                     }}</span>
+                  </span>
 
-                    <span
-                      class="ml-3 font-semibold text-gray-400"
-                      *ngIf="node.data.isField === false"
+                  <span *ngIf="node.data.isField === false" class="">
+                    <span class="">{{ node.data.topLabel }}</span>
+
+                    <span class="ml-3 font-semibold text-gray-400"
                       >by {{ node.data.timeLabel }}</span
                     >
                   </span>

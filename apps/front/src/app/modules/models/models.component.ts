@@ -108,6 +108,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
+  rowMenuOnClick(event: any) {
+    event.stopPropagation();
+  }
+
   goToModelFile(event: any, model: common.ModelX) {
     event.stopPropagation();
 
