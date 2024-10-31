@@ -45,8 +45,25 @@
         repSelectedNode.data.rowId
       }}</div>
 
-      <div class="ml-3 w-9">
+      <div class="ml-3">
         <button
+          *ngIf="
+            repSelectedNode.data.rowType !== rowTypeEmpty &&
+            repSelectedNode.data.rowType !== rowTypeHeader
+          "
+          type="button"
+          data-cy="rowToHeaderButton"
+          class="ml-5 flex flex h-9 items-center justify-center rounded border px-2 text-sm hover:bg-white focus:outline-none"
+          [ngClass]="{
+            'border-blue-400 text-blue-500 ': isShowFormatOptions === true,
+            'border-gray-400 text-gray-500 ': isShowFormatOptions === false
+          }"
+          (click)="toggleShowFormatOptions()"
+        >
+          123
+        </button>
+
+        <!-- <button
           *ngIf="
             repSelectedNode.data.rowType !== rowTypeEmpty &&
             repSelectedNode.data.rowType !== rowTypeHeader
@@ -59,7 +76,7 @@
               'text-blue-500': isShowFormatOptions === true
             }"
           ></m-adjustments-icon>
-        </button>
+        </button> -->
       </div>
     </div>
     <div class="flex h-11 flex-row items-center space-x-5">
@@ -79,7 +96,7 @@
     </div>
 
     <div
-      class="flex flex-1 flex-row items-start space-x-5"
+      class="flex min-w-[2px] flex-1 flex-row items-start space-x-5 overflow-auto"
       *ngIf="repSelectedNode.data.rowType === rowTypeEmpty"
     >
       <div
@@ -94,11 +111,11 @@
 
         <button
           type="button"
-          data-cy="rowToHeaderButton"
+          data-cy="rowToMetricButton"
           class="ml-5 flex rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-white focus:outline-none"
-          (click)="toHeader()"
+          (click)="toMetric()"
         >
-          Header
+          Metric
         </button>
 
         <button
@@ -112,11 +129,11 @@
 
         <button
           type="button"
-          data-cy="rowToMetricButton"
+          data-cy="rowToHeaderButton"
           class="ml-5 flex rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-white focus:outline-none"
-          (click)="toMetric()"
+          (click)="toHeader()"
         >
-          Metric
+          Header
         </button>
       </div>
 
@@ -176,7 +193,7 @@
 
       <div
         *ngIf="isToMetric === true"
-        class="flex h-11 flex-1 flex-row items-center space-x-5"
+        class="flex h-11 min-w-[2px] max-w-[1000px] flex-grow flex-row items-center space-x-5"
       >
         <div
           class="text-gray1 flex flex-shrink-0 select-none items-center font-semibold"
@@ -185,20 +202,43 @@
 
         <ng-select
           data-cy="newMetricSelect"
-          class="custom w-full text-base focus:outline-none"
+          class="new-metric-select w-full min-w-[2px] text-base focus:outline-none"
           [items]="metrics"
           [searchable]="true"
           [clearable]="false"
           [(ngModel)]="newMetricId"
           appendTo="body"
+          placeholder="Select Metric"
           bindLabel="label"
           bindValue="metricId"
         >
+          <ng-template ng-label-tmp let-item="item">
+            <m-metric-field-label
+              [metric]="item"
+              [isShowTop]="true"
+              [isShowTime]="true"
+              class="ml-1 flex"
+            ></m-metric-field-label>
+          </ng-template>
+
+          <ng-template
+            ng-option-tmp
+            let-item="item"
+            let-index="index"
+            let-search="searchTerm"
+          >
+            <m-metric-field-label
+              [metric]="item"
+              [isShowTop]="true"
+              [isShowTime]="true"
+              class="ml-1 flex"
+            ></m-metric-field-label>
+          </ng-template>
         </ng-select>
       </div>
 
       <div
-        class="flex flex-row"
+        class="flex flex-shrink-0 flex-row"
         *ngIf="
           isToHeader === true || isToFormula === true || isToMetric === true
         "
@@ -214,7 +254,7 @@
         <button
           type="button"
           data-cy="rowCancelButton"
-          class="border-blue3 text-blue3 ml-5 select-none rounded border px-4 py-2 font-medium focus:outline-none"
+          class="ml-5 select-none rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-white focus:outline-none"
           (click)="cancelConvert()"
         >
           Cancel
@@ -310,24 +350,56 @@
           >Format Number</div
         >
 
-        <div [formGroup]="formatNumberForm" class="relative flex w-32">
-          <input
-            data-cy="formatNumberInput"
-            class="form-input border-gray3 focus:border-blue3 w-full resize-none rounded"
-            [ngClass]="{
-              'border-red-600':
-                formatNumberForm.controls['formatNumber'].invalid &&
-                formatNumberForm.controls['formatNumber'].touched
-            }"
+        <form [formGroup]="formatNumberForm" class="relative flex">
+          <ng-select
+            #formatNumberSelect
+            data-cy="formatNumberSelect"
+            class="format-number-select h-15 mr-5 w-[260px] text-base focus:outline-none"
+            [items]="formatNumberExamples"
+            [clearable]="false"
+            [searchable]="false"
+            (change)="formatNumberBlur()"
+            appendTo="body"
+            bindLabel="label"
+            bindValue="id"
             formControlName="formatNumber"
-            placeholder=""
-            (blur)="formatNumberBlur()"
-          />
-          <m-validation
-            class="absolute -bottom-[22px] left-0"
-            [control]="formatNumberForm.controls['formatNumber']"
-          ></m-validation>
-        </div>
+          >
+            <ng-template ng-label-tmp let-item="item">
+              <m-format-number
+                [inputItem]="item"
+                [isOption]="false"
+                class="ml-1 flex"
+              ></m-format-number>
+            </ng-template>
+
+            <ng-template ng-option-tmp let-item="item">
+              <m-format-number
+                [inputItem]="item"
+                [isOption]="true"
+                class="ml-1 flex"
+              ></m-format-number>
+            </ng-template>
+          </ng-select>
+
+          <div class="relative">
+            <input
+              data-cy="formatNumberInput"
+              class="form-input border-gray3 focus:border-blue3 w-[200px] resize-none rounded"
+              [ngClass]="{
+                'border-red-600':
+                  formatNumberForm.controls['formatNumber'].invalid &&
+                  formatNumberForm.controls['formatNumber'].touched
+              }"
+              formControlName="formatNumber"
+              placeholder=""
+              (blur)="formatNumberBlur()"
+            />
+            <m-validation
+              class="absolute -bottom-[22px] left-0"
+              [control]="formatNumberForm.controls['formatNumber']"
+            ></m-validation>
+          </div>
+        </form>
       </div>
 
       <div class="flex h-11 flex-row items-center space-x-5">
@@ -336,7 +408,7 @@
           >Currency Prefix</div
         >
 
-        <div [formGroup]="currencyPrefixForm" class="relative flex w-32">
+        <div [formGroup]="currencyPrefixForm" class="relative flex w-[100px]">
           <input
             data-cy="currencyPrefixInput"
             class="form-input border-gray3 focus:border-blue3 w-full resize-none rounded"
@@ -362,7 +434,7 @@
           >Currency Suffix</div
         >
 
-        <div [formGroup]="currencySuffixForm" class="relative flex w-32">
+        <div [formGroup]="currencySuffixForm" class="relative flex w-[100px]">
           <input
             data-cy="currencySuffixInput"
             class="form-input border-gray3 focus:border-blue3 w-full resize-none rounded"
@@ -523,34 +595,48 @@
             }"
           >
             <div
-              class="flex h-11 max-w-[700px] flex-1 flex-row items-center space-x-5"
+              class="flex h-11 max-w-[850px] flex-1 flex-row items-center space-x-5"
             >
               <div
                 class="text-gray1 flex flex-shrink-0 select-none items-center font-semibold"
                 >Filter Metric by</div
               >
 
-              <div class="w-full">
-                <ng-select
-                  data-cy="addParameterSelect"
-                  class="custom mt-1 w-full text-base focus:outline-none"
-                  [items]="fieldsList"
-                  (open)="openAddParameterSelect()"
-                  [loading]="fieldsListLoading"
-                  [searchable]="true"
-                  [clearable]="false"
-                  [(ngModel)]="newParameterId"
-                  (change)="addParameterChange()"
-                  [dropdownPosition]="
-                    showMetricsChart === true ? 'bottom' : 'top'
-                  "
-                  appendTo="body"
-                  placeholder="Field"
-                  bindLabel="partLabel"
-                  bindValue="id"
+              <ng-select
+                data-cy="addParameterSelect"
+                class="filter-metric-by-select w-full min-w-[2px] text-base focus:outline-none"
+                [items]="fieldsList"
+                (open)="openAddParameterSelect()"
+                [loading]="fieldsListLoading"
+                [searchable]="true"
+                [clearable]="false"
+                [(ngModel)]="newParameterId"
+                (change)="addParameterChange()"
+                [dropdownPosition]="'top'"
+                appendTo="body"
+                placeholder="Field"
+                bindLabel="partLabel"
+                bindValue="id"
+              >
+                <ng-template ng-label-tmp let-item="item">
+                  <m-field-label
+                    [column]="item"
+                    class="ml-1 flex"
+                  ></m-field-label>
+                </ng-template>
+
+                <ng-template
+                  ng-option-tmp
+                  let-item="item"
+                  let-index="index"
+                  let-search="searchTerm"
                 >
-                </ng-select>
-              </div>
+                  <m-field-label
+                    [column]="item"
+                    class="ml-1 flex"
+                  ></m-field-label>
+                </ng-template>
+              </ng-select>
             </div>
 
             <ng-template #templateApplyAddFilter>
@@ -583,7 +669,7 @@
             <button
               type="button"
               data-cy="rowCancelAddParameterButton"
-              class="border-blue3 text-blue3 ml-5 select-none rounded border px-4 py-2 font-medium focus:outline-none"
+              class="ml-5 select-none rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-white focus:outline-none"
               (click)="cancelAddParameter()"
             >
               Cancel

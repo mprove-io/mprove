@@ -9,10 +9,12 @@ import { RepQuery } from '~front/app/queries/rep.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
+import { QueryService } from '~front/app/services/query.service';
 import { RepService } from '~front/app/services/rep.service';
 import { ValidationService } from '~front/app/services/validation.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 import { DataRow } from '../rep/rep.component';
 
 export interface ParameterFilter extends common.FilterX {
@@ -126,6 +128,22 @@ export class RowComponent {
           ? this.repSelectedNodes[0]
           : undefined;
 
+      if (common.isDefined(this.repSelectedNode)) {
+        this.formatNumberExamples = constants.FORMAT_NUMBER_EXAMPLES.map(
+          example => {
+            example.output = this.queryService.formatValue({
+              value: example.input,
+              formatNumber: example.id,
+              fieldResult: common.FieldResultEnum.Number,
+              currencyPrefix: this.repSelectedNode.data.currencyPrefix,
+              currencySuffix: this.repSelectedNode.data.currencySuffix
+            });
+
+            return example;
+          }
+        );
+      }
+
       console.log('selectedRowNode', this.repSelectedNode);
 
       if (
@@ -232,6 +250,8 @@ export class RowComponent {
   fieldsList: ModelFieldY[] = [];
   fieldsListLoading = false;
 
+  formatNumberExamples: any = [];
+
   constructor(
     private cd: ChangeDetectorRef,
     private uiQuery: UiQuery,
@@ -240,6 +260,7 @@ export class RowComponent {
     private repService: RepService,
     private repQuery: RepQuery,
     private apiService: ApiService,
+    private queryService: QueryService,
     private navQuery: NavQuery,
     private mconfigService: MconfigService
   ) {}

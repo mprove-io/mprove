@@ -74,6 +74,7 @@ import { ViewListIconComponent } from './icons/view-list-icon/view-list-icon.com
 import { WrenchIconComponent } from './icons/wrench-icon/wrench-icon.component';
 import { LogoComponent } from './logo/logo.component';
 import { MainTableComponent } from './main-table/main-table.component';
+import { MetricFieldLabelComponent } from './metric-field-label/metric-field-label.component';
 import { CapitalizeWordsPipe } from './pipes/capitalize-words.pipe';
 import { CapitalizePipe } from './pipes/capitalize.pipe';
 import { ExtensionPipe } from './pipes/extension.pipe';
@@ -148,6 +149,7 @@ let sharedComponents = [
   ChartVizComponent,
   ChartRepComponent,
   FieldLabelComponent,
+  MetricFieldLabelComponent,
   FormatNumberComponent,
   ColorMenuComponent,
   MinusSmIconComponent,

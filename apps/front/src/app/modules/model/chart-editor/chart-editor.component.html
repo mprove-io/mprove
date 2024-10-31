@@ -1385,14 +1385,44 @@
       >
     </div>
 
-    <div
+    <form
       [formGroup]="formatNumberDataLabelForm"
-      class="ml-5 flex flex-col items-start"
+      class="ml-5 flex min-w-[2px] flex-grow flex-col items-start"
     >
+      <ng-select
+        #formatNumberDataLabelSelect
+        data-cy="formatNumberDataLabelSelect"
+        class="custom select-format-number w-full text-base focus:outline-none"
+        [items]="formatNumberExamples"
+        [clearable]="false"
+        [searchable]="false"
+        (change)="formatNumberDataLabelBlur()"
+        appendTo="body"
+        bindLabel="label"
+        bindValue="id"
+        formControlName="formatNumberDataLabel"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <m-format-number
+            [inputItem]="item"
+            [isOption]="false"
+            class="ml-1 flex"
+          ></m-format-number>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <m-format-number
+            [inputItem]="item"
+            [isOption]="true"
+            class="ml-1 flex"
+          ></m-format-number>
+        </ng-template>
+      </ng-select>
+
       <input
         spellcheck="false"
         data-cy="chartEditorFormatNumberDataLabelInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-blue3 mt-5 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             formatNumberDataLabelForm.controls['formatNumberDataLabel']
@@ -1405,7 +1435,7 @@
       <m-validation
         [control]="formatNumberDataLabelForm.controls['formatNumberDataLabel']"
       ></m-validation>
-    </div>
+    </form>
   </div>
 
   <div
@@ -1418,14 +1448,44 @@
       >
     </div>
 
-    <div
+    <form
       [formGroup]="formatNumberValueForm"
-      class="ml-5 flex flex-col items-start"
+      class="ml-5 flex min-w-[2px] flex-grow flex-col items-start"
     >
+      <ng-select
+        #formatNumberValueSelect
+        data-cy="formatNumberValueSelect"
+        class="custom select-format-number w-full text-base focus:outline-none"
+        [items]="formatNumberExamples"
+        [clearable]="false"
+        [searchable]="false"
+        (change)="formatNumberValueBlur()"
+        appendTo="body"
+        bindLabel="label"
+        bindValue="id"
+        formControlName="formatNumberValue"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <m-format-number
+            [inputItem]="item"
+            [isOption]="false"
+            class="ml-1 flex"
+          ></m-format-number>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <m-format-number
+            [inputItem]="item"
+            [isOption]="true"
+            class="ml-1 flex"
+          ></m-format-number>
+        </ng-template>
+      </ng-select>
+
       <input
         spellcheck="false"
         data-cy="chartEditorFormatNumberValueInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-blue3 mt-5 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             formatNumberValueForm.controls['formatNumberValue'].invalid &&
@@ -1437,7 +1497,7 @@
       <m-validation
         [control]="formatNumberValueForm.controls['formatNumberValue']"
       ></m-validation>
-    </div>
+    </form>
   </div>
 
   <div
@@ -1457,7 +1517,7 @@
       <ng-select
         #formatNumberAxisTickSelect
         data-cy="formatNumberAxisTickSelect"
-        class="custom w-full text-base focus:outline-none"
+        class="custom select-format-number w-full text-base focus:outline-none"
         [items]="formatNumberExamples"
         [clearable]="false"
         [searchable]="false"
@@ -1514,14 +1574,44 @@
       >
     </div>
 
-    <div
+    <form
       [formGroup]="formatNumberXAxisTickForm"
-      class="ml-5 flex flex-col items-start"
+      class="ml-5 flex min-w-[2px] flex-grow flex-col items-start"
     >
+      <ng-select
+        #formatNumberXAxisTickSelect
+        data-cy="formatNumberXAxisTickSelect"
+        class="custom select-format-number w-full text-base focus:outline-none"
+        [items]="formatNumberExamples"
+        [clearable]="false"
+        [searchable]="false"
+        (change)="formatNumberXAxisTickBlur()"
+        appendTo="body"
+        bindLabel="label"
+        bindValue="id"
+        formControlName="formatNumberXAxisTick"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <m-format-number
+            [inputItem]="item"
+            [isOption]="false"
+            class="ml-1 flex"
+          ></m-format-number>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <m-format-number
+            [inputItem]="item"
+            [isOption]="true"
+            class="ml-1 flex"
+          ></m-format-number>
+        </ng-template>
+      </ng-select>
+
       <input
         spellcheck="false"
         data-cy="chartEditorFormatNumberXAxisTickInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-blue3 mt-5 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             formatNumberXAxisTickForm.controls['formatNumberXAxisTick']
@@ -1534,7 +1624,7 @@
       <m-validation
         [control]="formatNumberXAxisTickForm.controls['formatNumberXAxisTick']"
       ></m-validation>
-    </div>
+    </form>
   </div>
 
   <div
@@ -1547,14 +1637,44 @@
       >
     </div>
 
-    <div
+    <form
       [formGroup]="formatNumberYAxisTickForm"
-      class="ml-5 flex flex-col items-start"
+      class="ml-5 flex min-w-[2px] flex-grow flex-col items-start"
     >
+      <ng-select
+        #formatNumberYAxisTickSelect
+        data-cy="formatNumberYAxisTickSelect"
+        class="custom select-format-number w-full text-base focus:outline-none"
+        [items]="formatNumberExamples"
+        [clearable]="false"
+        [searchable]="false"
+        (change)="formatNumberYAxisTickBlur()"
+        appendTo="body"
+        bindLabel="label"
+        bindValue="id"
+        formControlName="formatNumberYAxisTick"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <m-format-number
+            [inputItem]="item"
+            [isOption]="false"
+            class="ml-1 flex"
+          ></m-format-number>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <m-format-number
+            [inputItem]="item"
+            [isOption]="true"
+            class="ml-1 flex"
+          ></m-format-number>
+        </ng-template>
+      </ng-select>
+
       <input
         spellcheck="false"
         data-cy="chartEditorFormatNumberYAxisTickInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-blue3 mt-5 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             formatNumberYAxisTickForm.controls['formatNumberYAxisTick']
@@ -1567,6 +1687,6 @@
       <m-validation
         [control]="formatNumberYAxisTickForm.controls['formatNumberYAxisTick']"
       ></m-validation>
-    </div>
+    </form>
   </div>
 </div>

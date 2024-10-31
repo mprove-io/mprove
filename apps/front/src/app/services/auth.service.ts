@@ -50,7 +50,7 @@ export class AuthService {
       this.stopWatch();
     }
 
-    this.checkAuthSubscription = observableInterval(1000).subscribe(() => {
+    this.checkAuthSubscription = observableInterval(500).subscribe(() => {
       // let startTime = Date.now();
       // console.log(startTime);
 

@@ -155,12 +155,35 @@ body {
   cursor: pointer;
 }
 
-.ng-dropdown-panel.select-chart-type .scroll-host {
+.ng-dropdown-panel.popup-55 .scroll-host {
+  max-height: 55vh;
+}
+
+.ng-select.new-metric-select .ng-select-container {
+  cursor: pointer;
+  height: 44px;
+}
+
+.ng-select.format-number-select .ng-select-container {
+  cursor: pointer;
+  height: 42px;
+}
+
+.ng-dropdown-panel.format-number-select .scroll-host {
   max-height: 45vh;
 }
 
-.ng-dropdown-panel.popup-55 .scroll-host {
-  max-height: 55vh;
+.ng-select.filter-metric-by-select .ng-select-container {
+  cursor: pointer;
+  height: 44px;
+}
+
+.ng-dropdown-panel.filter-metric-by-select .scroll-host {
+  max-height: 45vh;
+}
+
+.ng-dropdown-panel.chart-type-select .scroll-host {
+  max-height: 45vh;
 }
 
 // .ngx-charts .tooltip-area {

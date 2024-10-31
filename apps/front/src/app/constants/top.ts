@@ -63,3 +63,69 @@ export const APP_SPINNER_NAME = 'app';
 export const FORMAT_NUMBER_DECIMAL = '.';
 export const FORMAT_NUMBER_THOUSANDS = ' ';
 export const FORMAT_NUMBER_GROUPING = [3];
+export const FORMAT_NUMBER_EXAMPLES: {
+  id: string;
+  input: number;
+  output: string;
+}[] = [
+  {
+    id: ',.0f',
+    input: 1000.12345,
+    output: undefined
+  },
+  {
+    id: ',.2f',
+    input: 1000.12345,
+    output: undefined
+  },
+  {
+    id: '$,.0f',
+    input: 1000.12345,
+    output: undefined
+  },
+  {
+    id: '$,.2f',
+    input: 1000.12345,
+    output: undefined
+  },
+  {
+    id: '$',
+    input: 1000.12345,
+    output: undefined
+  },
+  {
+    id: '.0%',
+    input: 1000.12345,
+    output: undefined
+  },
+  {
+    id: '.2%',
+    input: 1000.12345,
+    output: undefined
+  },
+  {
+    id: '%',
+    input: 1000.12345,
+    output: undefined
+  },
+  {
+    id: 's',
+    input: 1000.12345,
+    output: undefined
+  },
+  {
+    id: '+',
+    input: 300,
+    output: undefined
+  },
+  {
+    id: '-',
+    input: -900,
+    output: undefined
+  },
+  {
+    id: '(',
+    input: -900,
+    output: undefined
+  }
+];

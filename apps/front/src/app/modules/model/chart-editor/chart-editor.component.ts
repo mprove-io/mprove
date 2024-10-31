@@ -1,11 +1,14 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { FormatNumberService } from '~front/app/services/format-number.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
+import { QueryService } from '~front/app/services/query.service';
 import { StructService } from '~front/app/services/struct.service';
 import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 export class ColorSchemeItem {
   label: string;
@@ -93,20 +96,19 @@ export class ChartEditorComponent implements OnChanges {
   formatNumberXAxisTickChartTypes = common.formatNumberXAxisTickChartTypes;
   formatNumberYAxisTickChartTypes = common.formatNumberYAxisTickChartTypes;
 
-  formatNumberExamples = [
-    {
-      id: ',.2f',
-      labelFormat: ',.2f',
-      labelInput: '1000.12345',
-      labelOutput: '1000.12'
-    },
-    {
-      id: ',.3f',
-      labelFormat: ',.3f',
-      labelInput: '1000.12345',
-      labelOutput: '1000.123'
-    }
-  ];
+  formatNumberExamples: any[] = constants.FORMAT_NUMBER_EXAMPLES.map(x => {
+    let structState = this.structQuery.getValue();
+
+    x.output = this.queryService.formatValue({
+      value: x.input,
+      formatNumber: x.id,
+      fieldResult: common.FieldResultEnum.Number,
+      currencyPrefix: structState.currencyPrefix,
+      currencySuffix: structState.currencySuffix
+    });
+
+    return x;
+  });
 
   @Input()
   chart: common.Chart;
@@ -477,7 +479,9 @@ export class ChartEditorComponent implements OnChanges {
   constructor(
     private fb: FormBuilder,
     private structService: StructService,
+    private structQuery: StructQuery,
     private mconfigService: MconfigService,
+    private queryService: QueryService,
     private formatNumberService: FormatNumberService
   ) {}
 
