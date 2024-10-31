@@ -292,7 +292,7 @@
           </div>
 
           <div
-            class="flex flex-col"
+            class="flex w-full flex-col"
             [ngClass]="{
               'h-[40%]':
                 (showMetricsChart === true || repSelectedNodes.length > 0) &&
@@ -301,10 +301,10 @@
             }"
           >
             <div
-              class="flex h-2 flex-grow"
+              class="flex h-2 w-full flex-grow flex-row"
               *ngIf="isShowTable === true && repSelectedNodes.length > 0"
             >
-              <m-row class="w-full"></m-row>
+              <m-row class="flex w-full"></m-row>
             </div>
 
             <div
