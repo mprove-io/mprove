@@ -1,0 +1,22 @@
+<div class="select-none truncate" *ngIf="isShowTop === true">
+  <span *ngIf="isShowTop === true">
+    <span>{{ metric.topLabel | capitalize }}</span>
+    <span class="ml-2">-</span>
+  </span>
+
+  <span
+    [ngClass]="{
+    'ml-2': isShowTop === true,
+  }"
+    >{{ metric.partNodeLabel | capitalize }}</span
+  >
+
+  <span class="ml-2 font-semibold">{{
+    metric.partFieldLabel | capitalize
+  }}</span>
+
+  <span *ngIf="isShowTime === true" class="text-gray-400">
+    <span class="ml-2">by {{ metric.timeNodeLabel | capitalize }}</span>
+    <span class="ml-2">{{ metric.timeFieldLabel | capitalize }}</span>
+  </span>
+</div>

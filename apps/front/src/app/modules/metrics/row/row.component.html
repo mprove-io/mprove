@@ -111,11 +111,11 @@
 
         <button
           type="button"
-          data-cy="rowToHeaderButton"
+          data-cy="rowToMetricButton"
           class="ml-5 flex rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-white focus:outline-none"
-          (click)="toHeader()"
+          (click)="toMetric()"
         >
-          Header
+          Metric
         </button>
 
         <button
@@ -129,11 +129,11 @@
 
         <button
           type="button"
-          data-cy="rowToMetricButton"
+          data-cy="rowToHeaderButton"
           class="ml-5 flex rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-white focus:outline-none"
-          (click)="toMetric()"
+          (click)="toHeader()"
         >
-          Metric
+          Header
         </button>
       </div>
 
@@ -200,18 +200,43 @@
           >Metric</div
         >
 
-        <ng-select
-          data-cy="newMetricSelect"
-          class="new-metric-select w-full text-base focus:outline-none"
-          [items]="metrics"
-          [searchable]="true"
-          [clearable]="false"
-          [(ngModel)]="newMetricId"
-          appendTo="body"
-          bindLabel="label"
-          bindValue="metricId"
-        >
-        </ng-select>
+        <div class="flex min-w-[2px] flex-grow">
+          <ng-select
+            data-cy="newMetricSelect"
+            class="new-metric-select w-full text-base focus:outline-none"
+            [items]="metrics"
+            [searchable]="true"
+            [clearable]="false"
+            [(ngModel)]="newMetricId"
+            appendTo="body"
+            placeholder="Select Metric"
+            bindLabel="label"
+            bindValue="metricId"
+          >
+            <ng-template ng-label-tmp let-item="item">
+              <m-metric-field-label
+                [metric]="item"
+                [isShowTop]="true"
+                [isShowTime]="true"
+                class="ml-1 flex text-sm"
+              ></m-metric-field-label>
+            </ng-template>
+
+            <ng-template
+              ng-option-tmp
+              let-item="item"
+              let-index="index"
+              let-search="searchTerm"
+            >
+              <m-metric-field-label
+                [metric]="item"
+                [isShowTop]="true"
+                [isShowTime]="true"
+                class="ml-1 flex text-sm"
+              ></m-metric-field-label>
+            </ng-template>
+          </ng-select>
+        </div>
       </div>
 
       <div
@@ -596,6 +621,24 @@
                   bindLabel="partLabel"
                   bindValue="id"
                 >
+                  <ng-template ng-label-tmp let-item="item">
+                    <m-field-label
+                      [column]="item"
+                      class="ml-1 flex text-sm"
+                    ></m-field-label>
+                  </ng-template>
+
+                  <ng-template
+                    ng-option-tmp
+                    let-item="item"
+                    let-index="index"
+                    let-search="searchTerm"
+                  >
+                    <m-field-label
+                      [column]="item"
+                      class="ml-1 flex text-sm"
+                    ></m-field-label>
+                  </ng-template>
                 </ng-select>
               </div>
             </div>
