@@ -595,50 +595,48 @@
             }"
           >
             <div
-              class="flex h-11 max-w-[700px] flex-1 flex-row items-center space-x-5"
+              class="flex h-11 max-w-[850px] flex-1 flex-row items-center space-x-5"
             >
               <div
                 class="text-gray1 flex flex-shrink-0 select-none items-center font-semibold"
                 >Filter Metric by</div
               >
 
-              <div class="w-full">
-                <ng-select
-                  data-cy="addParameterSelect"
-                  class="filter-metric-by-select w-full text-base focus:outline-none"
-                  [items]="fieldsList"
-                  (open)="openAddParameterSelect()"
-                  [loading]="fieldsListLoading"
-                  [searchable]="true"
-                  [clearable]="false"
-                  [(ngModel)]="newParameterId"
-                  (change)="addParameterChange()"
-                  [dropdownPosition]="'top'"
-                  appendTo="body"
-                  placeholder="Field"
-                  bindLabel="partLabel"
-                  bindValue="id"
-                >
-                  <ng-template ng-label-tmp let-item="item">
-                    <m-field-label
-                      [column]="item"
-                      class="ml-1 flex text-sm"
-                    ></m-field-label>
-                  </ng-template>
+              <ng-select
+                data-cy="addParameterSelect"
+                class="filter-metric-by-select w-full min-w-[2px] text-base focus:outline-none"
+                [items]="fieldsList"
+                (open)="openAddParameterSelect()"
+                [loading]="fieldsListLoading"
+                [searchable]="true"
+                [clearable]="false"
+                [(ngModel)]="newParameterId"
+                (change)="addParameterChange()"
+                [dropdownPosition]="'top'"
+                appendTo="body"
+                placeholder="Field"
+                bindLabel="partLabel"
+                bindValue="id"
+              >
+                <ng-template ng-label-tmp let-item="item">
+                  <m-field-label
+                    [column]="item"
+                    class="ml-1 flex"
+                  ></m-field-label>
+                </ng-template>
 
-                  <ng-template
-                    ng-option-tmp
-                    let-item="item"
-                    let-index="index"
-                    let-search="searchTerm"
-                  >
-                    <m-field-label
-                      [column]="item"
-                      class="ml-1 flex text-sm"
-                    ></m-field-label>
-                  </ng-template>
-                </ng-select>
-              </div>
+                <ng-template
+                  ng-option-tmp
+                  let-item="item"
+                  let-index="index"
+                  let-search="searchTerm"
+                >
+                  <m-field-label
+                    [column]="item"
+                    class="ml-1 flex"
+                  ></m-field-label>
+                </ng-template>
+              </ng-select>
             </div>
 
             <ng-template #templateApplyAddFilter>
