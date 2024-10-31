@@ -1,6 +1,9 @@
 import { enums } from '~common/barrels/enums';
 
 export const xFieldChartTypes = [
+  enums.ChartTypeEnum.AgLine,
+  enums.ChartTypeEnum.AgBar,
+  // ===
   enums.ChartTypeEnum.BarVertical,
   enums.ChartTypeEnum.BarVerticalGrouped,
   enums.ChartTypeEnum.BarVerticalStacked,

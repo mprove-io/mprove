@@ -6,7 +6,7 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { LegendPosition } from '@swimlane/ngx-charts';
-import { AgChartOptions } from 'ag-charts-community';
+import { AgCartesianChartOptions, AgChartOptions } from 'ag-charts-community';
 import { formatLocale } from 'd3-format';
 import { getChartCurve } from '~front/app/functions/get-chart-curve';
 import { getChartScheme } from '~front/app/functions/get-chart-scheme';
@@ -198,7 +198,7 @@ export class ChartViewComponent implements OnChanges {
     if (this.chart.type === common.ChartTypeEnum.AgArea) {
       this.chartOptions = {
         title: {
-          text: 'Annual Fuel Expenditure'
+          text: 'AG AREA'
         },
         data: [
           {
@@ -237,10 +237,7 @@ export class ChartViewComponent implements OnChanges {
     if (this.chart.type === common.ChartTypeEnum.AgScatter) {
       this.chartOptions = {
         title: {
-          text: 'Weight vs Height'
-        },
-        subtitle: {
-          text: 'by gender'
+          text: 'AG SCATTER'
         },
         data: [
           {
@@ -312,10 +309,7 @@ export class ChartViewComponent implements OnChanges {
     if (this.chart.type === common.ChartTypeEnum.AgBubble) {
       this.chartOptions = {
         title: {
-          text: 'Weight vs Height'
-        },
-        subtitle: {
-          text: 'by gender'
+          text: 'AG BUBBLE'
         },
         series: [
           {
@@ -369,7 +363,7 @@ export class ChartViewComponent implements OnChanges {
     if (this.chart.type === common.ChartTypeEnum.AgPie) {
       this.chartOptions = {
         title: {
-          text: 'Annual Fuel Expenditure'
+          text: 'AG PIE'
         },
 
         data: [
@@ -392,7 +386,7 @@ export class ChartViewComponent implements OnChanges {
     if (this.chart.type === common.ChartTypeEnum.AgDonut) {
       this.chartOptions = {
         title: {
-          text: 'Annual Fuel Expenditure'
+          text: 'AG DONUT'
         },
         data: [
           { asset: 'Stocks', amount: 60000 },
@@ -497,6 +491,22 @@ export class ChartViewComponent implements OnChanges {
           : [];
       // console.log(this.multi);
     } else if (this.agMultiChartTypes.indexOf(this.chart.type) > -1) {
+      const xField = this.mconfigFields.find(v => v.id === this.chart.xField);
+
+      const yField = this.mconfigFields.find(v => v.id === this.chart.yField);
+
+      if (xField.result === common.FieldResultEnum.Ts) {
+        (this.chartOptions as AgCartesianChartOptions).axes = [
+          {
+            type: 'time',
+            position: 'bottom'
+          },
+          {
+            type: 'number',
+            position: 'left'
+          }
+        ];
+      }
       this.multi =
         this.qData.length > 0 &&
         common.isDefined(this.chart.xField) &&
@@ -511,10 +521,6 @@ export class ChartViewComponent implements OnChanges {
               chartType: this.chart.type
             })
           : [];
-
-      const xField = this.mconfigFields.find(v => v.id === this.chart.xField);
-
-      const yField = this.mconfigFields.find(v => v.id === this.chart.yField);
 
       const multiField = this.mconfigFields.find(
         v => v.id === this.chart.multiField
@@ -571,7 +577,10 @@ export class ChartViewComponent implements OnChanges {
               rowElement = {};
               newData.push(rowElement);
             }
-            rowElement[xField.sqlName] = element.name;
+            rowElement[xField.sqlName] =
+              xField.result === common.FieldResultEnum.Ts
+                ? Date.parse(element.name)
+                : element.name;
             rowElement[el.name] = element.value;
           });
         });
@@ -579,7 +588,7 @@ export class ChartViewComponent implements OnChanges {
 
       this.chartOptions.data = common.isDefined(this.chart.multiField)
         ? newData
-        : makeAgData(this.qData);
+        : makeAgData({ qData: this.qData, xField: xField });
       console.log(this.chartOptions.data);
     } else if (
       this.agChartTypes.indexOf(this.chart.type) > -1 &&
@@ -587,16 +596,32 @@ export class ChartViewComponent implements OnChanges {
     ) {
       const xField = this.mconfigFields.find(v => v.id === this.chart.xField);
 
+      if (xField.result === common.FieldResultEnum.Ts) {
+        (this.chartOptions as AgCartesianChartOptions).axes = [
+          {
+            type: 'time',
+            position: 'bottom'
+          },
+          {
+            type: 'number',
+            position: 'left'
+          }
+        ];
+      }
+
       const yField = this.mconfigFields.find(v => v.id === this.chart.yField);
       this.chartOptions.series = [
         {
-          type: 'bar',
+          type: this.chart.type.split('_')[1] as any,
           xKey: xField.sqlName,
           yKey: yField.sqlName
         }
       ];
 
-      this.chartOptions.data = makeAgData(this.qData);
+      this.chartOptions.data = makeAgData({
+        qData: this.qData,
+        xField: xField
+      });
     }
 
     this.cd.detectChanges();
