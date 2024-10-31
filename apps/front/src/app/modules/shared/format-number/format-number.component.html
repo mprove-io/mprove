@@ -1,11 +1,11 @@
 <div class="select-none truncate" *ngIf="isOption === false">
   <div *ngIf="!!inputItem.id && !!inputItem.output" class="truncate">
-    <span>
-      {{ inputItem.id }}
+    <span class="font-semibold text-gray-400">
+      {{ inputItem.output }}
     </span>
 
-    <span class="ml-2 font-semibold text-gray-400">
-      {{ inputItem.output }}
+    <span class="ml-2">
+      {{ inputItem.id }}
     </span>
   </div>
 
@@ -13,11 +13,11 @@
 </div>
 
 <div class="select-none truncate" *ngIf="isOption === true">
-  <span>
-    {{ inputItem.id }}
+  <span class="font-semibold text-gray-400">
+    {{ inputItem.output }}
   </span>
 
-  <span class="ml-2 font-semibold text-gray-400">
-    {{ inputItem.output }}
+  <span class="ml-2">
+    {{ inputItem.id }}
   </span>
 </div>
