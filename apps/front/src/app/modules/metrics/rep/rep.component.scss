@@ -2,6 +2,11 @@
   font-size: 17px;
 }
 
+::ng-deep .ag-header-cell .custom-header {
+  font-family: 'Montserrat';
+  font-size: 17px;
+}
+
 ::ng-deep .ag-header-cell {
   border-right: 1px solid #dde2eb;
 }

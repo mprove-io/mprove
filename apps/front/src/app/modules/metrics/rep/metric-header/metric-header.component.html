@@ -1,5 +1,5 @@
-<div class="flex flex-row items-center">
-  <div>Metric</div>
+<div class="custom-header flex flex-row items-center">
+  <div class="font-semibold">Metric</div>
 
   <div class="ml-5 flex flex-row items-center">
     <div
@@ -38,16 +38,16 @@
   </div>
 
   <button
-    data-cy="metricsEscButton"
-    class="ml-[50px] rounded border px-4 py-1 focus:outline-none"
+    data-cy="metricsDeselectButton"
+    class="ml-[50px] rounded border px-4 py-[6px] font-normal focus:outline-none"
     [ngClass]="{
-      'border-gray-400 text-gray-500 hover:bg-white':
+      'border-gray-500 text-gray-600 hover:bg-white':
         repSelectedNodes.length > 0,
       'cursor-default border-gray-300 text-gray-400':
         repSelectedNodes.length === 0
     }"
     type="button"
-    (click)="esc()"
+    (click)="deselect()"
     [disabled]="repSelectedNodes.length === 0"
     >Deselect</button
   >
