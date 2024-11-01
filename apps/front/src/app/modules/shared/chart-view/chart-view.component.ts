@@ -16,7 +16,6 @@ import { FormatNumberService } from '~front/app/services/format-number.service';
 import { RData } from '~front/app/services/query.service';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
-import { makeAgData } from '../../../functions/make-ag-data';
 import { femaleHeightWeight, maleHeightWeight } from './scatter-mock';
 
 @Component({
@@ -577,10 +576,7 @@ export class ChartViewComponent implements OnChanges {
               rowElement = {};
               newData.push(rowElement);
             }
-            rowElement[xField.sqlName] =
-              xField.result === common.FieldResultEnum.Ts
-                ? Date.parse(element.name)
-                : element.name;
+            rowElement[xField.sqlName] = element.name;
             rowElement[el.name] = element.value;
           });
         });
@@ -588,7 +584,7 @@ export class ChartViewComponent implements OnChanges {
 
       this.chartOptions.data = common.isDefined(this.chart.multiField)
         ? newData
-        : makeAgData({ qData: this.qData, xField: xField });
+        : this.dataService.makeAgData({ qData: this.qData, xField: xField });
       console.log(this.chartOptions.data);
     } else if (
       this.agChartTypes.indexOf(this.chart.type) > -1 &&
@@ -618,7 +614,7 @@ export class ChartViewComponent implements OnChanges {
         }
       ];
 
-      this.chartOptions.data = makeAgData({
+      this.chartOptions.data = this.dataService.makeAgData({
         qData: this.qData,
         xField: xField
       });
