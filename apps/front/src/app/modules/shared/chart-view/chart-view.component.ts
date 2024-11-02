@@ -6,7 +6,14 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { LegendPosition } from '@swimlane/ngx-charts';
-import { AgCartesianChartOptions, AgChartOptions } from 'ag-charts-community';
+import {
+  AgBubbleSeriesOptions,
+  AgCartesianChartOptions,
+  AgChartOptions,
+  AgDonutSeriesOptions,
+  AgPieSeriesOptions,
+  AgScatterSeriesOptions
+} from 'ag-charts-community';
 import { formatLocale } from 'd3-format';
 import { getChartCurve } from '~front/app/functions/get-chart-curve';
 import { getChartScheme } from '~front/app/functions/get-chart-scheme';
@@ -202,16 +209,13 @@ export class ChartViewComponent implements OnChanges {
               chartType: this.chart.type
             })
           : [];
-    } else if (
-      this.agChartTypes.indexOf(this.chart.type) > -1 &&
-      this.agMultiChartTypes.indexOf(this.chart.type) < 0
-    ) {
-      this.chartOptions.data = this.dataService.makeAgData({
-        qData: this.qData,
-        xField: xField
-      });
     } else if (this.agMultiChartTypes.indexOf(this.chart.type) > -1) {
-      if (common.isDefined(this.chart.multiField)) {
+      if (common.isUndefined(this.chart.multiField)) {
+        this.chartOptions.data = this.dataService.makeAgData({
+          qData: this.qData,
+          xField: xField
+        });
+      } else {
         this.multi =
           this.qData.length > 0 &&
           common.isDefined(this.chart.xField) &&
@@ -244,15 +248,15 @@ export class ChartViewComponent implements OnChanges {
         });
 
         this.chartOptions.data = agMultiData;
-      } else {
-        this.chartOptions.data = this.dataService.makeAgData({
-          qData: this.qData,
-          xField: xField
-        });
       }
+    } else if (this.agChartTypes.indexOf(this.chart.type) > -1) {
+      this.chartOptions.data = this.dataService.makeAgData({
+        qData: this.qData,
+        xField: xField
+      });
     }
 
-    // ag chart axes
+    // ag chart - axes
 
     if (this.agChartTypes.indexOf(this.chart.type) > -1) {
       if (xField.result === common.FieldResultEnum.Ts) {
@@ -269,7 +273,7 @@ export class ChartViewComponent implements OnChanges {
       }
     }
 
-    // ag chart series
+    // ag chart - series
 
     if (this.agMultiChartTypes.indexOf(this.chart.type) > -1) {
       this.chartOptions.series = common.isDefined(this.chart.multiField)
@@ -291,10 +295,43 @@ export class ChartViewComponent implements OnChanges {
             };
             return a;
           });
-    } else if (
-      this.agChartTypes.indexOf(this.chart.type) > -1 &&
-      this.agMultiChartTypes.indexOf(this.chart.type) < 0
-    ) {
+    } else if (this.chart.type === common.ChartTypeEnum.AgScatter) {
+      this.chartOptions.series = [
+        {
+          type: this.chart.type.split('_')[1] as any,
+          xKey: xField.sqlName,
+          yKey: yField.sqlName
+        } as AgScatterSeriesOptions
+      ];
+    } else if (this.chart.type === common.ChartTypeEnum.AgBubble) {
+      this.chartOptions.series = [
+        {
+          type: this.chart.type.split('_')[1] as any,
+          xKey: xField.sqlName,
+          yKey: yField.sqlName,
+          sizeKey: yField.sqlName // TODO: create sizeKey control
+        } as AgBubbleSeriesOptions
+      ];
+    } else if (this.chart.type === common.ChartTypeEnum.AgPie) {
+      this.chartOptions.series = [
+        {
+          type: this.chart.type.split('_')[1] as any,
+          angleKey: yField.sqlName,
+          sectorLabelKey: xField.sqlName,
+          calloutLabelKey: xField.sqlName
+        } as AgPieSeriesOptions
+      ];
+    } else if (this.chart.type === common.ChartTypeEnum.AgDonut) {
+      this.chartOptions.series = [
+        {
+          type: this.chart.type.split('_')[1] as any,
+          angleKey: yField.sqlName,
+          // sectorLabelKey: xField.sqlName,
+          calloutLabelKey: xField.sqlName,
+          innerRadiusRatio: 0.7
+        } as AgDonutSeriesOptions
+      ];
+    } else if (this.agChartTypes.indexOf(this.chart.type) > -1) {
       this.chartOptions.series = [
         {
           type: this.chart.type.split('_')[1] as any,
