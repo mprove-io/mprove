@@ -376,7 +376,7 @@ export class FractionTsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log(this.timeStr);
+    // console.log(this.timeStr);
     this.fractionTsTypesList = this.fractionTsTypesList.filter(x => {
       if (this.isMetrics === true) {
         return (

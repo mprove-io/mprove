@@ -207,7 +207,7 @@ services:
     build:
       context: ./
       dockerfile: tools/docker/dwh-postgres.Dockerfile
-    image: ghcr.io/mprove-io/mprove-dwh-postgres:$MPROVE_DWH_POSTGRES_TAG
+    image: ghcr.io/mprove-io/mprove-dwh-postgres:$MPROVE_RELEASE_TAG
     environment:
       - POSTGRES_PASSWORD=$COMPOSE_DWH_POSTGRES_PASSWORD
       - PGDATA=$COMPOSE_DWH_POSTGRES_PGDATA

@@ -284,14 +284,14 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   chartTypesList: ChartTypeItem[] = [
     {
+      label: 'Table',
+      value: common.ChartTypeEnum.Table,
+      iconPath: 'assets/charts/table.svg'
+    },
+    {
       label: 'Ag Line',
       value: common.ChartTypeEnum.AgLine,
       iconPath: 'assets/charts/line.svg'
-    },
-    {
-      label: 'Ag Bar',
-      value: common.ChartTypeEnum.AgBar,
-      iconPath: 'assets/charts/bar.svg'
     },
     {
       label: 'Ag Area',
@@ -299,9 +299,9 @@ export class ModelComponent implements OnInit, OnDestroy {
       iconPath: 'assets/charts/area.svg'
     },
     {
-      label: 'Ag Pie',
-      value: common.ChartTypeEnum.AgPie,
-      iconPath: 'assets/charts/Pie.svg'
+      label: 'Ag Bar',
+      value: common.ChartTypeEnum.AgBar,
+      iconPath: 'assets/charts/bar_vertical.svg'
     },
     {
       label: 'Ag Scatter',
@@ -314,14 +314,14 @@ export class ModelComponent implements OnInit, OnDestroy {
       iconPath: 'assets/charts/bubble.svg'
     },
     {
-      label: 'Ag Donut',
-      value: common.ChartTypeEnum.AgDonut,
-      iconPath: 'assets/charts/donut.svg'
+      label: 'Ag Pie',
+      value: common.ChartTypeEnum.AgPie,
+      iconPath: 'assets/charts/pie.svg'
     },
     {
-      label: 'Table',
-      value: common.ChartTypeEnum.Table,
-      iconPath: 'assets/charts/table.svg'
+      label: 'Ag Donut',
+      value: common.ChartTypeEnum.AgDonut,
+      iconPath: 'assets/charts/pie_advanced.svg'
     },
     {
       label: 'Bar Vertical',

@@ -255,8 +255,8 @@ export class RepComponent {
               : ''
           });
 
-          console.log(row.rowId);
-          console.log(row.records);
+          // console.log(row.rowId);
+          // console.log(row.records);
 
           row.records.forEach(record => {
             (dataRow as any)[record.key] = record.value;

@@ -631,7 +631,7 @@ export class RepsService {
           row.isCalculateParameters === true
       ).length > 0
     ) {
-      console.log('isCalculateParameters true');
+      // console.log('isCalculateParameters true');
 
       rep.rows = await this.docService.calculateParameters({
         rows: rep.rows,
@@ -640,7 +640,7 @@ export class RepsService {
         traceId: traceId
       });
     } else {
-      console.log('isCalculateParameters false');
+      // console.log('isCalculateParameters false');
     }
 
     let newMconfigs: common.Mconfig[] = [];
@@ -939,7 +939,7 @@ export class RepsService {
         formulaRows.length !== formulaRowsCalculated.length);
 
     if (isCalculateData === true) {
-      console.log('isCalculateData true');
+      // console.log('isCalculateData true');
 
       repApi = await this.docService.calculateData({
         rep: repApi,
@@ -949,7 +949,7 @@ export class RepsService {
         traceId: traceId
       });
     } else {
-      console.log('isCalculateData false');
+      // console.log('isCalculateData false');
 
       let recordsByColumn = this.docService.makeRecordsByColumn({
         rep: repApi,

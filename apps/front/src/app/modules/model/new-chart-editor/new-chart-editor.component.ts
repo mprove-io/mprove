@@ -86,7 +86,7 @@ export class NewChartEditorComponent implements OnChanges {
     let newMconfig = this.structService.makeMconfig();
 
     if (newMconfig.chart.type === common.ChartTypeEnum.AgBar) {
-      console.log(this.sortedDimensions);
+      // console.log(this.sortedDimensions);
       let newMultiFieldValue = this.sortedDimensions.filter(
         x => x.id !== xField
       )[0].id;

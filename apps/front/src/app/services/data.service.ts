@@ -7,6 +7,51 @@ import { RData } from './query.service';
 export class DataService {
   constructor() {}
 
+  isNumber(str: string) {
+    const num = Number(str);
+    return typeof str === 'string' && str.trim() !== '' && !isNaN(num);
+  }
+
+  makeAgData(item: { qData: RData[]; xField: common.MconfigField }) {
+    let { qData, xField } = item;
+    // console.log('xField ===========')
+    // console.log(xField)
+
+    // console.log('qData ===========')
+    // console.log(qData[0])
+
+    let newData = new Array(qData.length);
+
+    for (let i = 0; i < qData.length; i++) {
+      let row = qData[i];
+      let resRow: { [k: string]: any } = {};
+
+      for (const cellKey in row) {
+        if (Object.prototype.hasOwnProperty.call(row, cellKey)) {
+          let cell = row[cellKey];
+
+          if (
+            xField.result === common.FieldResultEnum.Ts &&
+            xField.sqlName === cell.id
+          ) {
+            let xName = xField.sqlName;
+            let xValueFn = this.getTsValueFn(xName);
+            resRow[cell.id] = xValueFn(row, xName);
+          } else if (this.isNumber(cell.value)) {
+            resRow[cell.id] = Number(cell.value);
+          } else {
+            resRow[cell.id] = cell.value;
+          }
+        }
+      }
+
+      newData[i] = resRow;
+    }
+    // console.log('newData ===========')
+    // console.log(newData[0])
+    return newData;
+  }
+
   getValueData(item: {
     mconfigFields: common.MconfigField[];
     data: RData[];
@@ -53,9 +98,9 @@ export class DataService {
     let xName = xField.sqlName;
     let yName = yField.sqlName;
 
-    let singleData = data.map((raw: RData) => ({
-      name: common.isDefined(raw[xName].value) ? `${raw[xName].value}` : 'NULL',
-      value: convertToNumberOrNull(raw[yName].value)
+    let singleData = data.map((row: RData) => ({
+      name: common.isDefined(row[xName].value) ? `${row[xName].value}` : 'NULL',
+      value: convertToNumberOrNull(row[yName].value)
     }));
 
     return singleData;
@@ -79,14 +124,14 @@ export class DataService {
     let yName = yField.sqlName;
 
     let singleData = data
-      ? data.map((raw: RData) =>
+      ? data.map((row: RData) =>
           Object.assign({
             name: common.isDefined(xField)
-              ? common.isDefined(raw[xName].value)
-                ? raw[xName].value
+              ? common.isDefined(row[xName].value)
+                ? row[xName].value
                 : 'NULL'
               : ' ',
-            value: convertToNumberOrNull(raw[yName].value)
+            value: convertToNumberOrNull(row[yName].value)
           })
         )
       : [];
@@ -144,7 +189,7 @@ export class DataService {
 
     let prepareData: any = {};
 
-    data.forEach((raw: RData) => {
+    data.forEach((row: RData) => {
       yFields.forEach(yField => {
         let yName = yField.sqlName;
 
@@ -159,20 +204,20 @@ export class DataService {
 
         if (multiName) {
           if (yFields.length > 1) {
-            key = raw[multiName].value
-              ? raw[multiName].value + ' ' + yLabel
+            key = row[multiName].value
+              ? row[multiName].value + ' ' + yLabel
               : 'NULL' + ' ' + yLabel;
           } else {
-            key = raw[multiName].value ? raw[multiName].value : 'NULL';
+            key = row[multiName].value ? row[multiName].value : 'NULL';
           }
         } else {
           key = yLabel;
         }
 
         // x null check
-        if (raw[xName]) {
-          let xV = xValueFn(raw, xName);
-          let yV = raw[yName].value;
+        if (row[xName]) {
+          let xV = xValueFn(row, xName);
+          let yV = row[yName].value;
 
           if (
             [
@@ -214,8 +259,8 @@ export class DataService {
     return multiData;
   }
 
-  private getRawValue(raw: any, fieldName: string) {
-    return raw[fieldName].value;
+  private getRawValue(row: any, fieldName: string) {
+    return row[fieldName].value;
   }
 
   private getTsValueFn(fieldName: string) {
@@ -223,6 +268,22 @@ export class DataService {
 
     if (fieldName.match(/(?:___date)$/g)) {
       fieldValue = this.getDateFromDate;
+    } else if (fieldName.match(/(?:___week)$/g)) {
+      fieldValue = this.getDateFromWeek;
+    } else if (fieldName.match(/(?:___month)$/g)) {
+      fieldValue = this.getDateFromMonth;
+    } else if (fieldName.match(/(?:___quarter)$/g)) {
+      fieldValue = this.getDateFromQuarter;
+    } else if (fieldName.match(/(?:___year)$/g)) {
+      fieldValue = this.getDateFromYear;
+    } else if (fieldName.match(/(?:___time)$/g)) {
+      fieldValue = this.getDateFromTime;
+    } else if (fieldName.match(/(?:___ts)$/g)) {
+      // _ts,
+      fieldValue = this.getDateFromTimestamp;
+    } else if (fieldName.match(/(?:_ts)$/g)) {
+      // date_ts, week_ts, month_ts, quarter_ts, year_ts, hour_ts, minute_ts
+      fieldValue = this.getDateFromTimestamp;
     } else if (fieldName.match(/(?:___hour)$/g)) {
       fieldValue = this.getDateFromHour;
     } else if (fieldName.match(/(?:___hour2)$/g)) {
@@ -251,26 +312,15 @@ export class DataService {
       fieldValue = this.getDateFromMinute;
     } else if (fieldName.match(/(?:___minute30)$/g)) {
       fieldValue = this.getDateFromMinute;
-    } else if (fieldName.match(/(?:___month)$/g)) {
-      fieldValue = this.getDateFromMonth;
-    } else if (fieldName.match(/(?:___quarter)$/g)) {
-      fieldValue = this.getDateFromQuarter;
-    } else if (fieldName.match(/(?:___time)$/g)) {
-      fieldValue = this.getDateFromTime;
-    } else if (fieldName.match(/(?:___week)$/g)) {
-      fieldValue = this.getDateFromWeek;
-    } else if (fieldName.match(/(?:___year)$/g)) {
-      fieldValue = this.getDateFromYear;
     } else {
-      // *_ts
       fieldValue = this.getRawValue;
     }
 
     return fieldValue;
   }
 
-  private getDateFromDate(raw: any, fieldName: string) {
-    let data = raw[fieldName].value;
+  private getDateFromDate(row: any, fieldName: string) {
+    let data = row[fieldName].value;
 
     let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)$/g;
 
@@ -291,8 +341,8 @@ export class DataService {
     return date;
   }
 
-  private getDateFromHour(raw: any, fieldName: string) {
-    let data = raw[fieldName].value;
+  private getDateFromHour(row: any, fieldName: string) {
+    let data = row[fieldName].value;
 
     let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)\s(\d\d)$/g;
 
@@ -314,8 +364,8 @@ export class DataService {
     return date;
   }
 
-  private getDateFromMinute(raw: any, fieldName: string) {
-    let data = raw[fieldName].value;
+  private getDateFromMinute(row: any, fieldName: string) {
+    let data = row[fieldName].value;
 
     let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)\s(\d\d)[:](\d\d)$/g;
 
@@ -338,8 +388,8 @@ export class DataService {
     return date;
   }
 
-  private getDateFromMonth(raw: any, fieldName: string) {
-    let data = raw[fieldName].value;
+  private getDateFromMonth(row: any, fieldName: string) {
+    let data = row[fieldName].value;
 
     let regEx = /(\d\d\d\d)[-](\d\d)$/g;
 
@@ -356,8 +406,8 @@ export class DataService {
     return date;
   }
 
-  private getDateFromQuarter(raw: any, fieldName: string) {
-    let data = raw[fieldName].value;
+  private getDateFromQuarter(row: any, fieldName: string) {
+    let data = row[fieldName].value;
 
     let regEx = /(\d\d\d\d)[-](\d\d)$/g;
 
@@ -374,8 +424,8 @@ export class DataService {
     return date;
   }
 
-  private getDateFromTime(raw: any, fieldName: string) {
-    let data = raw[fieldName].value;
+  private getDateFromTime(row: any, fieldName: string) {
+    let data = row[fieldName].value;
 
     let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)\s(\d\d)[:](\d\d)[:](\d\d)$/g;
 
@@ -395,6 +445,44 @@ export class DataService {
       parseInt(minute, 10),
       parseInt(second, 10)
     );
+
+    return date;
+  }
+
+  private getDateFromTimestamp(row: any, fieldName: string) {
+    let data = row[fieldName].value;
+
+    // let date = new Date(data); can be used if offset specified
+
+    let regEx =
+      /^(\d\d\d\d)[-](\d\d)[-](\d\d)[T](\d\d)[:](\d\d)[:](\d\d)\.(\d\d\d)/g;
+
+    let r = regEx.exec(data);
+
+    if (common.isUndefined(r)) {
+      return null;
+    }
+
+    let [full, year, month, day, hour, minute, second, ms] = r;
+
+    let date = common.isDefinedAndNotEmpty(ms)
+      ? new Date(
+          parseInt(year, 10),
+          parseInt(month, 10) - 1,
+          parseInt(day, 10),
+          parseInt(hour, 10),
+          parseInt(minute, 10),
+          parseInt(second, 10),
+          parseInt(ms, 10)
+        )
+      : new Date(
+          parseInt(year, 10),
+          parseInt(month, 10) - 1,
+          parseInt(day, 10),
+          parseInt(hour, 10),
+          parseInt(minute, 10),
+          parseInt(second, 10)
+        );
 
     return date;
   }

@@ -1,11 +1,12 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-metric-field-label',
   templateUrl: './metric-field-label.component.html'
 })
-export class MetricFieldLabelComponent implements OnChanges {
+// implements OnChanges
+export class MetricFieldLabelComponent {
   @Input()
   metric: common.MetricAny;
 
@@ -17,7 +18,7 @@ export class MetricFieldLabelComponent implements OnChanges {
 
   constructor() {}
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
-  }
+  // ngOnChanges(changes: SimpleChanges): void {
+  //   console.log(changes);
+  // }
 }

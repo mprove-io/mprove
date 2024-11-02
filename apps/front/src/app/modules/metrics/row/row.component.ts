@@ -144,7 +144,7 @@ export class RowComponent {
         );
       }
 
-      console.log('selectedRowNode', this.repSelectedNode);
+      // console.log('selectedRowNode', this.repSelectedNode);
 
       if (
         common.isDefined(this.repSelectedNode) &&
