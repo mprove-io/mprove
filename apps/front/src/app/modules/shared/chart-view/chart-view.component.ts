@@ -418,7 +418,7 @@ export class ChartViewComponent implements OnChanges {
     this.scheme = getChartScheme(this.chart.colorScheme);
     this.curve = getChartCurve(this.chart.interpolation);
 
-    console.log(this.qData);
+    // console.log(this.qData);
 
     if (
       this.chart.type === common.ChartTypeEnum.BarVertical ||
@@ -585,7 +585,7 @@ export class ChartViewComponent implements OnChanges {
       this.chartOptions.data = common.isDefined(this.chart.multiField)
         ? newData
         : this.dataService.makeAgData({ qData: this.qData, xField: xField });
-      console.log(this.chartOptions.data);
+      // console.log(this.chartOptions.data);
     } else if (
       this.agChartTypes.indexOf(this.chart.type) > -1 &&
       this.agMultiChartTypes.indexOf(this.chart.type) < 0
