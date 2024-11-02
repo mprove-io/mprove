@@ -11,8 +11,7 @@ import {
   AgCartesianChartOptions,
   AgChartOptions,
   AgDonutSeriesOptions,
-  AgPieSeriesOptions,
-  AgScatterSeriesOptions
+  AgPieSeriesOptions
 } from 'ag-charts-community';
 import { formatLocale } from 'd3-format';
 import { getChartCurve } from '~front/app/functions/get-chart-curve';
@@ -50,9 +49,9 @@ export class ChartViewComponent implements OnChanges {
   agMultiChartTypes = [
     common.ChartTypeEnum.AgLine,
     common.ChartTypeEnum.AgArea,
-    common.ChartTypeEnum.AgBar
-    // common.ChartTypeEnum.AgScatter,
-    // common.ChartTypeEnum.AgBubble,
+    common.ChartTypeEnum.AgBar,
+    common.ChartTypeEnum.AgScatter,
+    common.ChartTypeEnum.AgBubble
     // common.ChartTypeEnum.AgPie,
     // common.ChartTypeEnum.AgDonut
   ];
@@ -305,6 +304,11 @@ export class ChartViewComponent implements OnChanges {
               xKey: xField.sqlName,
               yKey: el.name
             };
+
+            if (this.chart.type === common.ChartTypeEnum.AgBubble) {
+              (a as AgBubbleSeriesOptions).sizeKey = el.name; // TODO: create sizeKey control
+            }
+
             return a;
           })
         : this.chart.yFields.map(x => {
@@ -315,25 +319,30 @@ export class ChartViewComponent implements OnChanges {
               xKey: xField.sqlName,
               yKey: myYField.sqlName
             };
+
+            if (this.chart.type === common.ChartTypeEnum.AgBubble) {
+              (a as AgBubbleSeriesOptions).sizeKey = myYField.sqlName; // TODO: create sizeKey control
+            }
+
             return a;
           });
-    } else if (this.chart.type === common.ChartTypeEnum.AgScatter) {
-      this.chartOptions.series = [
-        {
-          type: this.chart.type.split('_')[1] as any,
-          xKey: xField.sqlName,
-          yKey: yField.sqlName
-        } as AgScatterSeriesOptions
-      ];
-    } else if (this.chart.type === common.ChartTypeEnum.AgBubble) {
-      this.chartOptions.series = [
-        {
-          type: this.chart.type.split('_')[1] as any,
-          xKey: xField.sqlName,
-          yKey: yField.sqlName,
-          sizeKey: yField.sqlName // TODO: create sizeKey control
-        } as AgBubbleSeriesOptions
-      ];
+      // } else if (this.chart.type === common.ChartTypeEnum.AgScatter) {
+      //   this.chartOptions.series = [
+      //     {
+      //       type: this.chart.type.split('_')[1] as any,
+      //       xKey: xField.sqlName,
+      //       yKey: yField.sqlName
+      //     } as AgScatterSeriesOptions
+      //   ];
+      // } else if (this.chart.type === common.ChartTypeEnum.AgBubble) {
+      //   this.chartOptions.series = [
+      //     {
+      //       type: this.chart.type.split('_')[1] as any,
+      //       xKey: xField.sqlName,
+      //       yKey: yField.sqlName,
+      //       sizeKey: yField.sqlName // TODO: create sizeKey control
+      //     } as AgBubbleSeriesOptions
+      //   ];
     } else if (this.chart.type === common.ChartTypeEnum.AgPie) {
       this.chartOptions.series = [
         {
