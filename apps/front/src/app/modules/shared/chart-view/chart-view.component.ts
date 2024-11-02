@@ -270,6 +270,28 @@ export class ChartViewComponent implements OnChanges {
             position: 'left'
           }
         ];
+      } else if (xField.result === common.FieldResultEnum.Number) {
+        (this.chartOptions as AgCartesianChartOptions).axes = [
+          {
+            type: 'number',
+            position: 'bottom'
+          },
+          {
+            type: 'number',
+            position: 'left'
+          }
+        ];
+      } else {
+        (this.chartOptions as AgCartesianChartOptions).axes = [
+          {
+            type: 'category',
+            position: 'bottom'
+          },
+          {
+            type: 'number',
+            position: 'left'
+          }
+        ];
       }
     }
 
