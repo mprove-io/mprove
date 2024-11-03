@@ -14,7 +14,7 @@ import { interfaces } from './barrels/interfaces';
 import { logResponseBackend } from './functions/log-response-backend';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { makeErrorResponseBackend } from './functions/make-error-response-backend';
-import { makeTsNumber } from './helper/make-ts-number';
+import { makeTsNumber } from './functions/make-ts-number';
 import { Idemp } from './interfaces/idemp';
 import { RedisService } from './services/redis.service';
 

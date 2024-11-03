@@ -156,6 +156,15 @@ export class Config {
   @IsString()
   backendMysqlDatabase?: string;
 
+  @IsString()
+  backendPostgresDatabaseUrl?: string;
+
+  @IsEnum(common.BoolEnum)
+  backendIsPostgresTls?: common.BoolEnum;
+
+  @IsEnum(common.BoolEnum)
+  backendLogDrizzlePostgres?: common.BoolEnum;
+
   @IsEnum(common.BoolEnum)
   backendLogIsJson?: common.BoolEnum;
 

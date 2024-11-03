@@ -196,6 +196,19 @@ export function getDevConfig(envFilePath: any) {
     backendMysqlDatabase:
       process.env.BACKEND_MYSQL_DATABASE || envFile.BACKEND_MYSQL_DATABASE,
 
+    backendPostgresDatabaseUrl:
+      process.env.BACKEND_POSTGRES_DATABASE_URL ||
+      envFile.BACKEND_POSTGRES_DATABASE_URL,
+
+    backendIsPostgresTls: <common.BoolEnum>(
+      (process.env.BACKEND_IS_POSTGRES_TLS || envFile.BACKEND_IS_POSTGRES_TLS)
+    ),
+
+    backendLogDrizzlePostgres: <common.BoolEnum>(
+      (process.env.BACKEND_LOG_DRIZZLE_POSTGRES ||
+        envFile.BACKEND_LOG_DRIZZLE_POSTGRES)
+    ),
+
     backendLogIsJson: <common.BoolEnum>(
       (process.env.BACKEND_LOG_IS_JSON || envFile.BACKEND_LOG_IS_JSON)
     ),

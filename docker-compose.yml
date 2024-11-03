@@ -18,6 +18,20 @@ services:
         source: $COMPOSE_DB_VOLUME_SOURCE_PATH
         target: /var/lib/mysql
 
+  db-pg:
+    image: docker.io/bitnami/postgresql:17.0.0-debian-12-r9
+    environment:
+      POSTGRESQL_DATABASE: $COMPOSE_DB_PG_POSTGRESQL_DATABASE
+      POSTGRESQL_USERNAME: $COMPOSE_DB_PG_POSTGRESQL_USERNAME
+      POSTGRESQL_PASSWORD: $COMPOSE_DB_PG_POSTGRESQL_PASSWORD
+      POSTGRESQL_POSTGRES_PASSWORD: $COMPOSE_DB_PG_POSTGRESQL_POSTGRES_PASSWORD
+    ports:
+      - 5435:5432
+    volumes:
+      - type: bind
+        source: $COMPOSE_DB_PG_VOLUME_SOURCE_PATH
+        target: /bitnami/postgresql
+
   redis:
     image: bitnami/redis:$REDIS_RELEASE_TAG
     environment:

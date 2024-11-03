@@ -24,6 +24,7 @@ import { interfaces } from './barrels/interfaces';
 import { maker } from './barrels/maker';
 import { repositories } from './barrels/repositories';
 import { getConfig } from './config/get.config';
+import { DrizzleModule } from './drizzle/drizzle.module';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { DbService } from './services/db.service';
@@ -175,6 +176,7 @@ let mailerModule = MailerModule.forRootAsync({
     PassportModule,
     rabbitModule,
     mailerModule,
+    DrizzleModule,
     typeormRootModule,
     typeormFeatureModule
   ],
