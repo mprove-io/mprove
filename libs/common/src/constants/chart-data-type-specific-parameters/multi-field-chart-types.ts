@@ -4,8 +4,8 @@ export const multiFieldChartTypes = [
   enums.ChartTypeEnum.AgLine,
   enums.ChartTypeEnum.AgArea,
   enums.ChartTypeEnum.AgBar,
-  // enums.ChartTypeEnum.AgScatter,
-  // enums.ChartTypeEnum.AgBubble,
+  enums.ChartTypeEnum.AgScatter,
+  enums.ChartTypeEnum.AgBubble,
   // enums.ChartTypeEnum.AgPie,
   // enums.ChartTypeEnum.AgDonut,
   // ===
