@@ -76,8 +76,6 @@ test('1', async t => {
     "(TO_CHAR(DATE_TRUNC('month', mprovetimestampstart(d1) + t1mprovetimestampend), 'YYYY-MM')) + d2"
   );
 
-  console.log(entViews[0].fieldsDepsAfterSingles);
-
   t.deepEqual(entViews[0].fieldsDeps, {
     dim1: {},
     time1___month: { dim1: 8 },
