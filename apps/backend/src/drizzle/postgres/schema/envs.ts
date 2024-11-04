@@ -19,7 +19,7 @@ export const envsTable = pgTable(
   table => ({
     idxEnvsServerTs: index('idx_envs_server_ts').on(table.serverTs),
     idxEnvsProjectId: index('idx_envs_project_id').on(table.projectId),
-    idxEnvEnvId: index('idx_envs_env_id').on(table.envId),
+    idxEnvsEnvId: index('idx_envs_env_id').on(table.envId),
     //
     uidxEnvsProjectIdEnvId: uniqueIndex('uidx_envs_project_id_env_id').on(
       table.projectId,

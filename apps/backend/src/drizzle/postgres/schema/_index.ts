@@ -4,4 +4,5 @@ export * from './bridges';
 export * from './connections';
 export * from './dashboards';
 export * from './envs';
+export * from './evs';
 export * from './users';
