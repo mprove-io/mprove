@@ -8,4 +8,5 @@ export * from './evs';
 export * from './kits';
 export * from './mconfigs';
 export * from './members';
+export * from './metrics';
 export * from './users';
