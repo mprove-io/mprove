@@ -5,4 +5,7 @@ export * from './connections';
 export * from './dashboards';
 export * from './envs';
 export * from './evs';
+export * from './kits';
+export * from './mconfigs';
+export * from './members';
 export * from './users';
