@@ -12,12 +12,12 @@ import {
 export const bridgesTable = pgTable(
   'bridges',
   {
-    bridgeId: varchar('bridge_id', { length: 36 }).notNull().primaryKey(),
-    projectId: varchar('project_id', { length: 36 }).notNull(),
-    repoId: varchar('repo_id', { length: 36 }).notNull(),
-    branchId: varchar('branch_id', { length: 36 }).notNull(),
-    envId: varchar('env_id', { length: 36 }).notNull(),
-    structId: varchar('struct_id', { length: 36 }).notNull(),
+    bridgeId: varchar('bridge_id', { length: 32 }).notNull().primaryKey(),
+    projectId: varchar('project_id', { length: 32 }).notNull(),
+    repoId: varchar('repo_id', { length: 32 }).notNull(),
+    branchId: varchar('branch_id', { length: 32 }).notNull(), // name
+    envId: varchar('env_id', { length: 32 }).notNull(), // name
+    structId: varchar('struct_id', { length: 32 }).notNull(),
     needValidate: boolean('need_validate').notNull(),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

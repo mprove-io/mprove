@@ -1,0 +1,49 @@
+/* eslint-disable id-blacklist */
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
+import {
+  bigint,
+  boolean,
+  index,
+  json,
+  pgTable,
+  uniqueIndex,
+  varchar
+} from 'drizzle-orm/pg-core';
+import { common } from '~backend/barrels/common';
+
+export const dashboardsTable = pgTable(
+  'dashboards',
+  {
+    dashboardFullId: varchar('dashboard_full_id', { length: 32 })
+      .notNull()
+      .primaryKey(),
+    structId: varchar('struct_id', { length: 32 }).notNull(),
+    dashboardId: varchar('dashboard_id', { length: 32 }).notNull(), // name
+    filePath: varchar('file_path'),
+    content: json('content').notNull(),
+    accessUsers: json('access_users').$type<string[]>().notNull(),
+    accessRoles: json('access_roles').$type<string[]>().notNull(),
+    title: varchar('title'),
+    gr: varchar('gr'),
+    hidden: boolean('hidden').notNull(),
+    fields: json('fields').$type<common.DashboardField[]>().notNull(),
+    tiles: json('tiles').$type<common.Tile[]>().notNull(),
+    temp: boolean('temp').notNull(),
+    description: varchar('description'),
+    serverTs: bigint('server_ts', { mode: 'number' }).notNull()
+  },
+  table => ({
+    idxDashboardsServerTs: index('idx_dashboards_server_ts').on(table.serverTs),
+    idxDashboardsStructId: index('idx_dashboards_struct_id').on(table.structId),
+    idxDashboardsDashboardId: index('idx_dashboards_dashboard_id').on(
+      table.dashboardId
+    ),
+    //
+    uidxDashboardsStructIdDasboardId: uniqueIndex(
+      'uidx_dashboards_struct_id_dashboard_id'
+    ).on(table.structId, table.dashboardId)
+  })
+);
+
+export type DashboardEnt = InferSelectModel<typeof dashboardsTable>;
+export type DashboardEntIns = InferInsertModel<typeof dashboardsTable>;

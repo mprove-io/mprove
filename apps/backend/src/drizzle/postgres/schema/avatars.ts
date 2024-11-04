@@ -5,7 +5,7 @@ import { bigint, index, pgTable, text, varchar } from 'drizzle-orm/pg-core';
 export const avatarsTable = pgTable(
   'avatars',
   {
-    userId: varchar('user_id', { length: 36 }).notNull().primaryKey(),
+    userId: varchar('user_id', { length: 32 }).notNull().primaryKey(),
     avatarSmall: text('avatar_small'),
     avatarBig: text('avatar_big'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()

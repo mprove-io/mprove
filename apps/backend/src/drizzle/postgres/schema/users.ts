@@ -14,7 +14,7 @@ import { Ui } from '~common/interfaces/backend/ui';
 export const usersTable = pgTable(
   'users',
   {
-    userId: varchar('user_id', { length: 36 }).notNull().primaryKey(),
+    userId: varchar('user_id', { length: 32 }).notNull().primaryKey(),
     email: varchar('email').notNull(),
     alias: varchar('alias'),
     isEmailVerified: boolean('is_email_verified').notNull(),

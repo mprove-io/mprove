@@ -15,12 +15,12 @@ import { common } from '~backend/barrels/common';
 export const connectionsTable = pgTable(
   'connections',
   {
-    connectionFullId: varchar('connection_full_id', { length: 36 })
+    connectionFullId: varchar('connection_full_id', { length: 32 })
       .notNull()
       .primaryKey(),
-    projectId: varchar('project_id', { length: 36 }).notNull(),
-    envId: varchar('env_id', { length: 36 }).notNull(),
-    connectionId: varchar('connection_id', { length: 36 }).notNull(),
+    projectId: varchar('project_id', { length: 32 }).notNull(),
+    envId: varchar('env_id', { length: 32 }).notNull(), // name
+    connectionId: varchar('connection_id', { length: 32 }).notNull(), // name
     type: varchar('type').$type<common.ConnectionTypeEnum>().notNull(),
     bigqueryQuerySizeLimitGb: integer('bigquery_query_size_limit_gb'),
     bigqueryCredentials: json('bigquery_credentials'),

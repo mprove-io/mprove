@@ -11,12 +11,12 @@ import {
 export const branchesTable = pgTable(
   'branches',
   {
-    branchFullId: varchar('branch_full_id', { length: 36 })
+    branchFullId: varchar('branch_full_id', { length: 32 })
       .notNull()
       .primaryKey(),
-    projectId: varchar('project_id', { length: 36 }).notNull(),
-    repoId: varchar('repo_id', { length: 36 }).notNull(),
-    branchId: varchar('branch_id', { length: 36 }).notNull(),
+    projectId: varchar('project_id', { length: 32 }).notNull(),
+    repoId: varchar('repo_id', { length: 32 }).notNull(),
+    branchId: varchar('branch_id', { length: 32 }).notNull(), // name
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
