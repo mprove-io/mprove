@@ -1,6 +1,7 @@
 import { drizzle as drizzlePg } from 'drizzle-orm/node-postgres';
 import { migrate as migratePg } from 'drizzle-orm/node-postgres/migrator';
 import { Client, ClientConfig } from 'pg';
+import 'reflect-metadata';
 import { common } from '~backend/barrels/common';
 
 async function start() {

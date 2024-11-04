@@ -2,11 +2,11 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { IHeaderAngularComp } from 'ag-grid-angular';
 import { IHeaderParams, IRowNode } from 'ag-grid-community';
 import { tap } from 'rxjs';
+import { DataRow } from '~front/app/interfaces/data-row';
 import { RepQuery } from '~front/app/queries/rep.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { RepService } from '~front/app/services/rep.service';
 import { UiService } from '~front/app/services/ui.service';
-import { DataRow } from '../rep.component';
 
 @Component({
   selector: 'm-metric-header',

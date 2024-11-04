@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
+import { DataRow } from '~front/app/interfaces/data-row';
+import { DeleteFilterFnItem } from '~front/app/interfaces/delete-filter-fn-item';
 import { common } from '~front/barrels/common';
-import { DeleteFilterFnItem } from '../../dashboard/dashboard.component';
-import { DataRow } from '../../metrics/rep/rep.component';
 
 @Component({
   selector: 'm-bricks',

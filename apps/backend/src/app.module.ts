@@ -1,14 +1,21 @@
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { Logger, Module, OnModuleInit } from '@nestjs/common';
+import { Inject, Logger, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { DefaultLogger } from 'drizzle-orm';
+import {
+  NodePgDatabase,
+  drizzle as drizzlePg
+} from 'drizzle-orm/node-postgres';
+import { migrate as migratePg } from 'drizzle-orm/node-postgres/migrator';
 import * as fse from 'fs-extra';
 import * as mg from 'nodemailer-mailgun-transport';
+import { Client, ClientConfig } from 'pg';
 import { DataSource } from 'typeorm';
 import { appControllers } from './app-controllers';
 import { appEntities } from './app-entities';
@@ -23,8 +30,10 @@ import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
 import { maker } from './barrels/maker';
 import { repositories } from './barrels/repositories';
+import { schemaPostgres } from './barrels/schema-postgres';
 import { getConfig } from './config/get.config';
-import { DrizzleModule } from './drizzle/drizzle.module';
+import { DrizzleLogWriter } from './drizzle/drizzle-log-writer';
+import { DRIZZLE, Db, DrizzleModule } from './drizzle/drizzle.module';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { DbService } from './services/db.service';
@@ -212,7 +221,8 @@ export class AppModule implements OnModuleInit {
     private connectionsRepository: repositories.ConnectionsRepository,
     private evsRepository: repositories.EvsRepository,
     private dbService: DbService,
-    private logger: Logger
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   async onModuleInit() {
@@ -225,6 +235,8 @@ export class AppModule implements OnModuleInit {
       });
 
       if (helper.isScheduler(this.cs)) {
+        // Typeorm
+
         const migrationsPending = await this.dataSource.showMigrations();
 
         if (migrationsPending) {
@@ -233,7 +245,7 @@ export class AppModule implements OnModuleInit {
           });
           migrations.forEach(migration => {
             logToConsoleBackend({
-              log: `Migration ${migration.name} success`,
+              log: `Typeorm Migration ${migration.name} success`,
               logLevel: common.LogLevelEnum.Info,
               logger: this.logger,
               cs: this.cs
@@ -241,12 +253,59 @@ export class AppModule implements OnModuleInit {
           });
         } else {
           logToConsoleBackend({
-            log: 'No migrations pending',
+            log: 'Typeorm No migrations pending',
             logLevel: common.LogLevelEnum.Info,
             logger: this.logger,
             cs: this.cs
           });
         }
+
+        // Drizzle
+
+        let clientConfig: ClientConfig = {
+          connectionString: this.cs.get<
+            interfaces.Config['backendPostgresDatabaseUrl']
+          >('backendPostgresDatabaseUrl'),
+          ssl:
+            this.cs.get<interfaces.Config['backendIsPostgresTls']>(
+              'backendIsPostgresTls'
+            ) === common.BoolEnum.TRUE
+              ? {
+                  rejectUnauthorized: false
+                }
+              : false
+        };
+
+        let postgresSingleClient = new Client(clientConfig);
+
+        await postgresSingleClient.connect();
+
+        let isLogDrizzlePostgres =
+          this.cs.get<interfaces.Config['backendLogDrizzlePostgres']>(
+            'backendLogDrizzlePostgres'
+          ) === common.BoolEnum.TRUE;
+
+        let prefixPostgres = 'POSTGRES';
+
+        let postgresSingleDrizzle: NodePgDatabase<typeof schemaPostgres> =
+          drizzlePg(postgresSingleClient, {
+            logger:
+              isLogDrizzlePostgres === true
+                ? new DefaultLogger({
+                    writer: new DrizzleLogWriter(
+                      this.logger,
+                      this.cs,
+                      prefixPostgres
+                    )
+                  })
+                : undefined
+          });
+
+        await migratePg(postgresSingleDrizzle, {
+          migrationsFolder: 'apps/backend/src/drizzle/postgres/migrations'
+        });
+
+        //
 
         let email =
           this.cs.get<interfaces.Config['firstUserEmail']>('firstUserEmail');

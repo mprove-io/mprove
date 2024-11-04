@@ -38,8 +38,8 @@ import { UiService } from '~front/app/services/ui.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+import { DataRow } from '~front/app/interfaces/data-row';
 import { constants as frontConstants } from '~front/barrels/constants';
-import { DataRow } from './rep/rep.component';
 
 export class TimeSpecItem {
   label: string;

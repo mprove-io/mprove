@@ -6,6 +6,7 @@ export const usersTable = pgTable(
   'users',
   {
     userId: varchar('user_id', { length: 36 }).notNull().primaryKey(),
+    name: varchar('name', { length: 36 }),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

@@ -60,7 +60,7 @@ export class DbService {
 
     Object.keys(records).forEach(key => {
       if (common.isDefined(records[key as keyof interfaces.Records])) {
-        helper.refreshServerTs(
+        helper.refreshServerTsUnderscore(
           records[key as keyof interfaces.Records] as any,
           newServerTs
         );
@@ -218,7 +218,7 @@ export class DbService {
 
     Object.keys(records).forEach(key => {
       if (common.isDefined(records[key as keyof interfaces.Records])) {
-        helper.refreshServerTs(
+        helper.refreshServerTsUnderscore(
           records[key as keyof interfaces.Records] as any,
           newServerTs
         );
