@@ -1,0 +1,30 @@
+/* eslint-disable id-blacklist */
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
+import {
+  bigint,
+  index,
+  pgTable,
+  text,
+  uniqueIndex,
+  varchar
+} from 'drizzle-orm/pg-core';
+
+export const orgsTable = pgTable(
+  'orgs',
+  {
+    orgId: varchar('org_id', { length: 32 }).notNull().primaryKey(),
+    name: text('name').notNull(),
+    owner_id: text('owner_id').notNull(),
+    owner_email: text('owner_email').notNull(),
+    serverTs: bigint('server_ts', { mode: 'number' }).notNull()
+  },
+  table => ({
+    idxOrgsOwnerId: index('idx_orgs_owner_id').on(table.owner_id),
+    idxOrgsOwnerEmail: index('idx_orgs_owner_email').on(table.owner_email),
+    //
+    uidxOrgsName: uniqueIndex('uidx_orgs_name').on(table.name)
+  })
+);
+
+export type OrgEnt = InferSelectModel<typeof orgsTable>;
+export type OrgEntIns = InferInsertModel<typeof orgsTable>;

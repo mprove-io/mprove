@@ -34,7 +34,7 @@ export const metricsTable = pgTable(
     modelId: varchar('model_id'),
     timefieldId: varchar('timefield_id'),
     fieldId: varchar('field_id'),
-    fieldClass: json('field_class').$type<common.FieldClassEnum>(),
+    fieldClass: varchar('field_class').$type<common.FieldClassEnum>(),
     formula: varchar('formula'),
     sql: varchar('sql'),
     connectionId: varchar('connection_id'),
