@@ -15,4 +15,6 @@ export * from './orgs';
 export * from './projects';
 export * from './queries';
 export * from './reports';
+export * from './structs';
 export * from './users';
+export * from './vizs';
