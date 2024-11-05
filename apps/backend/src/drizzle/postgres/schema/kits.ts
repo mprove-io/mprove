@@ -7,14 +7,14 @@ export const kitsTable = pgTable(
   {
     kitId: varchar('kit_id', { length: 32 }).notNull().primaryKey(),
     structId: varchar('struct_id', { length: 32 }).notNull(),
-    repId: varchar('rep_id', { length: 64 }).notNull(),
+    reportId: varchar('report_id', { length: 64 }).notNull(),
     data: json('data'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
     idxKitsServerTs: index('idx_kits_server_ts').on(table.serverTs),
     idxKitsStructId: index('idx_kits_struct_id').on(table.structId),
-    idxKitsRepId: index('idx_kits_rep_id').on(table.repId)
+    idxKitsReportId: index('idx_kits_report_id').on(table.reportId)
   })
 );
 
