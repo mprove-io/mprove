@@ -35,38 +35,9 @@ export interface RecordsPackOutput {
 }
 
 export class DrizzlePacker {
-  constructor() // private postgresDrizzle: NodePgDatabase<typeof schemaPostgres>
-  {}
+  constructor() {}
 
-  // async writeRecords(item: RecordsPack): Promise<RecordsPack> {
-  //   let packPostgres: RecordsPack;
-
-  //   await retry(
-  //     async (bail: any) => {
-  //       packPostgres = await this.write(item);
-  //     },
-  //     {
-  //       retries: 3, // (default 10)
-  //       minTimeout: 1000, // ms (default 1000)
-  //       factor: 1, // (default 2)
-  //       randomize: true, // 1 to 2 (default true)
-  //       onRetry: (e: any) => {
-  //         logToConsoleBackend({
-  //           log: new common.ServerError({
-  //             message: common.ErEnum.BACKEND_TRANSACTION_RETRY,
-  //             originalError: e
-  //           }),
-  //           logLevel: common.LogLevelEnum.Error,
-  //           logger: this.logger,
-  //           cs: this.cs
-  //         });
-  //       }
-  //     }
-  //   );
-
-  //   return packPostgres;
-  // }
-  private async write(item: RecordsPack): Promise<RecordsPackOutput> {
+  async write(item: RecordsPack): Promise<RecordsPackOutput> {
     let {
       tx: tx,
       insert: insertRecords,

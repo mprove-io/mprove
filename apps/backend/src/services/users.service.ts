@@ -1,19 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { eq } from 'drizzle-orm';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
-import { maker } from '~backend/barrels/maker';
-import { repositories } from '~backend/barrels/repositories';
-import { DbService } from '~backend/services/db.service';
+import { constants } from '~backend/barrels/constants';
+import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { usersTable } from '~backend/drizzle/postgres/schema/users';
+import { getRetryOption } from '~backend/functions/get-retry-option';
+
+let retry = require('async-retry');
 
 @Injectable()
 export class UsersService {
   constructor(
-    private usersRepository: repositories.UsersRepository,
-    private dbService: DbService
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
-  checkUserHashIsDefined(item: { user: entities.UserEntity }) {
+  checkUserHashIsDefined(item: { user: schemaPostgres.UserEnt }) {
     let { user } = item;
 
     if (common.isUndefined(user.hash)) {
@@ -26,10 +33,14 @@ export class UsersService {
   async getUserCheckExists(item: { userId: string }) {
     let { userId } = item;
 
-    let user = await this.usersRepository.findOne({
-      where: {
-        user_id: userId
-      }
+    // await this.usersRepository.findOne({
+    //   where: {
+    //     user_id: userId
+    //   }
+    // });
+
+    let user = await this.db.drizzle.query.usersTable.findFirst({
+      where: eq(usersTable.userId, userId)
     });
 
     if (common.isUndefined(user)) {
@@ -44,10 +55,14 @@ export class UsersService {
   async getUserByEmailCheckExists(item: { email: string }) {
     let { email } = item;
 
-    let user = await this.usersRepository.findOne({
-      where: {
-        email: email
-      }
+    // let user = await this.usersRepository.findOne({
+    //   where: {
+    //     email: email
+    //   }
+    // });
+
+    let user = await this.db.drizzle.query.usersTable.findFirst({
+      where: eq(usersTable.email, email)
     });
 
     if (common.isUndefined(user)) {
@@ -71,6 +86,62 @@ export class UsersService {
     return { salt, hash };
   }
 
+  async addFirstUser(item: { email: string; password: string }) {
+    let { email, password } = item;
+
+    let { salt, hash } = await this.makeSaltAndHash(password);
+
+    let alias = await this.makeAlias(email);
+
+    let user: schemaPostgres.UserEnt = {
+      userId: common.makeId(),
+      email: email,
+      passwordResetToken: undefined,
+      passwordResetExpiresTs: undefined,
+      isEmailVerified: true,
+      emailVerificationToken: common.makeId(),
+      hash: hash,
+      salt: salt,
+      jwtMinIat: undefined,
+      alias: alias,
+      firstName: undefined, // null
+      lastName: undefined, // null
+      timezone: common.USE_PROJECT_TIMEZONE_VALUE,
+      ui: constants.DEFAULT_UI,
+      serverTs: undefined
+    };
+
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(async tx => {
+          await this.db.packer.write({
+            tx: tx,
+            insert: {
+              users: [user]
+            }
+          });
+        }),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    // let user = maker.makeUser({
+    //   email: email,
+    //   isEmailVerified: common.BoolEnum.TRUE,
+    //   salt: salt,
+    //   hash: hash,
+    //   alias: alias
+    // });
+
+    // let records = await this.dbService.writeRecords({
+    //   modify: false,
+    //   records: {
+    //     users: [user]
+    //   }
+    // });
+
+    return user;
+  }
+
   async makeAlias(email: string) {
     let reg = common.MyRegex.CAPTURE_ALIAS();
     let r = reg.exec(email);
@@ -88,8 +159,12 @@ export class UsersService {
     let restart = true;
 
     while (restart) {
-      let aliasUser = await this.usersRepository.findOne({
-        where: { alias: alias }
+      // let aliasUser = await this.usersRepository.findOne({
+      //   where: { alias: alias }
+      // });
+
+      let aliasUser = await this.db.drizzle.query.usersTable.findFirst({
+        where: eq(usersTable.alias, alias)
       });
 
       if (common.isDefined(aliasUser)) {
@@ -101,30 +176,5 @@ export class UsersService {
     }
 
     return alias;
-  }
-
-  async addFirstUser(item: { email: string; password: string }) {
-    let { email, password } = item;
-
-    let { salt, hash } = await this.makeSaltAndHash(password);
-
-    let alias = await this.makeAlias(email);
-
-    let user = maker.makeUser({
-      email: email,
-      isEmailVerified: common.BoolEnum.TRUE,
-      salt: salt,
-      hash: hash,
-      alias: alias
-    });
-
-    let records = await this.dbService.writeRecords({
-      modify: false,
-      records: {
-        users: [user]
-      }
-    });
-
-    return records.users[0];
   }
 }

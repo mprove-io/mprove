@@ -1,19 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { and, eq } from 'drizzle-orm';
 import { common } from '~backend/barrels/common';
-import { repositories } from '~backend/barrels/repositories';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { vizsTable } from '~backend/drizzle/postgres/schema/vizs';
 
 @Injectable()
 export class VizsService {
-  constructor(private vizsRepository: repositories.VizsRepository) {}
+  constructor(@Inject(DRIZZLE) private db: Db) {}
 
   async getVizCheckExists(item: { vizId: string; structId: string }) {
     let { vizId, structId } = item;
 
-    let viz = await this.vizsRepository.findOne({
-      where: {
-        struct_id: structId,
-        viz_id: vizId
-      }
+    // let viz = await this.vizsRepository.findOne({
+    //   where: {
+    //     struct_id: structId,
+    //     viz_id: vizId
+    //   }
+    // });
+
+    let viz = await this.db.drizzle.query.vizsTable.findFirst({
+      where: and(eq(vizsTable.structId, structId), eq(vizsTable.vizId, vizId))
     });
 
     if (common.isUndefined(viz)) {

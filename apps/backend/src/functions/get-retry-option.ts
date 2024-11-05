@@ -9,12 +9,10 @@ interface MyWrapOptions extends WrapOptions {
   onRetry: any;
 }
 
-export function getRetryOption(item: {
-  cs: ConfigService<interfaces.Config>;
-  logger: Logger;
-}) {
-  let { cs, logger } = item;
-
+export function getRetryOption(
+  cs: ConfigService<interfaces.Config>,
+  logger: Logger
+) {
   let w: MyWrapOptions = {
     retries: 3, // (default 10)
     minTimeout: 1000, // ms (default 1000)
