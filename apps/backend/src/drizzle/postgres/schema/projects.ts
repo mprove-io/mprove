@@ -16,11 +16,9 @@ export const projectsTable = pgTable(
     projectId: varchar('project_id', { length: 32 }).notNull().primaryKey(),
     orgId: varchar('org_id', { length: 32 }).notNull(),
     name: text('name').notNull(), // name is unique across org projects
-    defaultBranch: text('default_branch')
-      .default(common.BRANCH_MASTER)
-      .notNull(),
+    defaultBranch: text('default_branch').default('master').notNull(),
     remoteType: varchar('remote_type')
-      .default(common.ProjectRemoteTypeEnum.Managed)
+      .default('Managed')
       .$type<common.ProjectRemoteTypeEnum>()
       .notNull(),
     gitUrl: varchar('git_url'),
