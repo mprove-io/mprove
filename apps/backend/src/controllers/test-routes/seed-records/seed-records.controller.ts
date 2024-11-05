@@ -364,8 +364,8 @@ export class SeedRecordsController {
 
           reps = [
             ...reps,
-            ...devRepsApi.map(y => wrapper.wrapToEntityRep(y)),
-            ...prodRepsApi.map(y => wrapper.wrapToEntityRep(y))
+            ...devRepsApi.map(y => wrapper.wrapToEntityReport(y)),
+            ...prodRepsApi.map(y => wrapper.wrapToEntityReport(y))
           ];
 
           apis = [

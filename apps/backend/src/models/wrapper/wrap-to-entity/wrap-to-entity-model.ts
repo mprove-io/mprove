@@ -1,21 +1,27 @@
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 
-export function wrapToEntityModel(x: common.Model): entities.ModelEntity {
+export function wrapToEntityModel(item: {
+  model: common.Model;
+  modelFullId?: string;
+}): schemaPostgres.ModelEnt {
+  let { model, modelFullId } = item;
+
   return {
-    struct_id: x.structId,
-    model_id: x.modelId,
-    connection_id: x.connectionId,
-    file_path: x.filePath,
-    content: x.content,
-    access_users: x.accessUsers,
-    access_roles: x.accessRoles,
-    label: x.label,
-    gr: x.gr,
-    hidden: common.booleanToEnum(x.hidden),
-    fields: x.fields,
-    nodes: x.nodes,
-    description: x.description,
-    server_ts: x.serverTs.toString()
+    modelFullId: modelFullId || common.makeId(),
+    structId: model.structId,
+    modelId: model.modelId,
+    connectionId: model.connectionId,
+    filePath: model.filePath,
+    content: model.content,
+    accessUsers: model.accessUsers,
+    accessRoles: model.accessRoles,
+    label: model.label,
+    gr: model.gr,
+    hidden: model.hidden,
+    fields: model.fields,
+    nodes: model.nodes,
+    description: model.description,
+    serverTs: model.serverTs
   };
 }

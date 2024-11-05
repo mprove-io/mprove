@@ -1,19 +1,25 @@
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 
-export function wrapToEntityViz(x: common.Viz): entities.VizEntity {
+export function wrapToEntityViz(item: {
+  viz: common.Viz;
+  vizFullId?: string;
+}): schemaPostgres.VizEnt {
+  let { viz, vizFullId } = item;
+
   return {
-    struct_id: x.structId,
-    viz_id: x.vizId,
-    title: x.title,
-    model_id: x.modelId,
-    model_label: x.modelLabel,
-    file_path: x.filePath,
-    access_users: x.accessUsers,
-    access_roles: x.accessRoles,
-    gr: x.gr,
-    hidden: common.booleanToEnum(x.hidden),
-    tiles: x.tiles,
-    server_ts: x.serverTs.toString()
+    vizFullId: vizFullId || common.makeId(),
+    structId: viz.structId,
+    vizId: viz.vizId,
+    title: viz.title,
+    modelId: viz.modelId,
+    modelLabel: viz.modelLabel,
+    filePath: viz.filePath,
+    accessUsers: viz.accessUsers,
+    accessRoles: viz.accessRoles,
+    gr: viz.gr,
+    hidden: viz.hidden,
+    tiles: viz.tiles,
+    serverTs: viz.serverTs
   };
 }

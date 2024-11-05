@@ -1,19 +1,25 @@
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 
-export function wrapToEntityRep(x: common.Rep): entities.RepEntity {
+export function wrapToEntityReport(item: {
+  report: common.Rep;
+  reportFullId?: string;
+}): schemaPostgres.ReportEnt {
+  let { report, reportFullId } = item;
+
   return {
-    project_id: x.projectId,
-    struct_id: x.structId,
-    rep_id: x.repId,
-    file_path: x.filePath,
-    draft: common.booleanToEnum(x.draft),
-    creator_id: x.creatorId,
-    access_users: x.accessUsers,
-    access_roles: x.accessRoles,
-    title: x.title,
-    rows: x.rows,
-    draft_created_ts: x.draftCreatedTs.toString(),
-    server_ts: x.serverTs.toString()
+    reportFullId: reportFullId || common.makeId(),
+    projectId: report.projectId,
+    structId: report.structId,
+    reportId: report.repId,
+    filePath: report.filePath,
+    draft: report.draft,
+    creatorId: report.creatorId,
+    accessUsers: report.accessUsers,
+    accessRoles: report.accessRoles,
+    title: report.title,
+    rows: report.rows,
+    draftCreatedTs: report.draftCreatedTs,
+    serverTs: report.serverTs
   };
 }

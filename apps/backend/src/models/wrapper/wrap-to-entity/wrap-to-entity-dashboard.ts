@@ -1,23 +1,27 @@
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 
-export function wrapToEntityDashboard(
-  x: common.Dashboard
-): entities.DashboardEntity {
+export function wrapToEntityDashboard(item: {
+  dashboard: common.Dashboard;
+  dashboardFullId?: string;
+}): schemaPostgres.DashboardEnt {
+  let { dashboard, dashboardFullId } = item;
+
   return {
-    struct_id: x.structId,
-    dashboard_id: x.dashboardId,
-    file_path: x.filePath,
-    content: x.content,
-    access_users: x.accessUsers,
-    access_roles: x.accessRoles,
-    title: x.title,
-    gr: x.gr,
-    hidden: common.booleanToEnum(x.hidden),
-    fields: x.fields,
-    tiles: x.tiles,
-    temp: common.booleanToEnum(x.temp),
-    description: x.description,
-    server_ts: x.serverTs.toString()
+    dashboardFullId: dashboardFullId || common.makeId(),
+    structId: dashboard.structId,
+    dashboardId: dashboard.dashboardId,
+    filePath: dashboard.filePath,
+    content: dashboard.content,
+    accessUsers: dashboard.accessUsers,
+    accessRoles: dashboard.accessRoles,
+    title: dashboard.title,
+    gr: dashboard.gr,
+    hidden: dashboard.hidden,
+    fields: dashboard.fields,
+    tiles: dashboard.tiles,
+    temp: dashboard.temp,
+    description: dashboard.description,
+    serverTs: dashboard.serverTs
   };
 }

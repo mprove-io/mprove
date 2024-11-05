@@ -268,7 +268,7 @@ export class SaveModifyRepController {
     let records = await this.dbService.writeRecords({
       modify: true,
       records: {
-        reps: [wrapper.wrapToEntityRep(rep)]
+        reps: [wrapper.wrapToEntityReport(rep)]
       }
     });
 

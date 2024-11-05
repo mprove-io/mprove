@@ -1,21 +1,25 @@
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 
-export function wrapToEntityMconfig(x: common.Mconfig): entities.MconfigEntity {
+export function wrapToEntityMconfig(item: {
+  mconfig: common.Mconfig;
+}): schemaPostgres.MconfigEnt {
+  let { mconfig } = item;
+
   return {
-    struct_id: x.structId,
-    query_id: x.queryId,
-    mconfig_id: x.mconfigId,
-    model_id: x.modelId,
-    model_label: x.modelLabel,
-    select: x.select,
-    sortings: x.sortings,
-    sorts: x.sorts,
-    timezone: x.timezone,
-    limit: x.limit,
-    filters: x.filters,
-    chart: x.chart,
-    temp: common.booleanToEnum(x.temp),
-    server_ts: x.serverTs.toString()
+    structId: mconfig.structId,
+    queryId: mconfig.queryId,
+    mconfigId: mconfig.mconfigId,
+    modelId: mconfig.modelId,
+    modelLabel: mconfig.modelLabel,
+    select: mconfig.select,
+    sortings: mconfig.sortings,
+    sorts: mconfig.sorts,
+    timezone: mconfig.timezone,
+    limit: mconfig.limit,
+    filters: mconfig.filters,
+    chart: mconfig.chart,
+    temp: mconfig.temp,
+    serverTs: mconfig.serverTs
   };
 }

@@ -1,35 +1,39 @@
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 
-export function wrapToEntityQuery(x: common.Query): entities.QueryEntity {
+export function wrapToEntityQuery(item: {
+  query: common.Query;
+}): schemaPostgres.QueryEnt {
+  let { query } = item;
+
   return {
-    project_id: x.projectId,
-    env_id: x.envId,
-    connection_id: x.connectionId,
-    connection_type: x.connectionType,
-    query_id: x.queryId,
-    sql: x.sql,
-    data: x.data,
-    status: x.status,
-    last_run_by: x.lastRunBy,
-    last_run_ts: x.lastRunTs?.toString(),
-    last_cancel_ts: x.lastCancelTs?.toString(),
-    last_complete_ts: x.lastCompleteTs?.toString(),
-    last_complete_duration: x.lastCompleteDuration?.toString(),
-    last_error_message: x.lastErrorMessage,
-    last_error_ts: x.lastErrorTs?.toString(),
-    query_job_id: null,
-    bigquery_query_job_id: null,
-    bigquery_consecutive_errors_get_job: common.isDefined(
-      x.bigqueryConsecutiveErrorsGetJob
+    projectId: query.projectId,
+    envId: query.envId,
+    connectionId: query.connectionId,
+    connectionType: query.connectionType,
+    queryId: query.queryId,
+    sql: query.sql,
+    data: query.data,
+    status: query.status,
+    lastRunBy: query.lastRunBy,
+    lastRunTs: query.lastRunTs,
+    lastCancelTs: query.lastCancelTs,
+    lastCompleteTs: query.lastCompleteTs,
+    lastCompleteDuration: query.lastCompleteDuration,
+    lastErrorMessage: query.lastErrorMessage,
+    lastErrorTs: query.lastErrorTs,
+    queryJobId: undefined, // null
+    bigqueryQueryJobId: undefined, // null
+    bigqueryConsecutiveErrorsGetJob: common.isDefined(
+      query.bigqueryConsecutiveErrorsGetJob
     )
-      ? x.bigqueryConsecutiveErrorsGetJob
+      ? query.bigqueryConsecutiveErrorsGetJob
       : 0,
-    bigquery_consecutive_errors_get_results: common.isDefined(
-      x.bigqueryConsecutiveErrorsGetResults
+    bigqueryConsecutiveErrorsGetResults: common.isDefined(
+      query.bigqueryConsecutiveErrorsGetResults
     )
-      ? x.bigqueryConsecutiveErrorsGetResults
+      ? query.bigqueryConsecutiveErrorsGetResults
       : 0,
-    server_ts: x.serverTs?.toString()
+    serverTs: query.serverTs
   };
 }
