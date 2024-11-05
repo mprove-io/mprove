@@ -14,13 +14,13 @@ export const orgsTable = pgTable(
   {
     orgId: varchar('org_id', { length: 32 }).notNull().primaryKey(),
     name: text('name').notNull(),
-    owner_id: text('owner_id').notNull(),
-    owner_email: text('owner_email').notNull(),
+    ownerId: text('owner_id').notNull(),
+    ownerEmail: text('owner_email').notNull(),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
-    idxOrgsOwnerId: index('idx_orgs_owner_id').on(table.owner_id),
-    idxOrgsOwnerEmail: index('idx_orgs_owner_email').on(table.owner_email),
+    idxOrgsOwnerId: index('idx_orgs_owner_id').on(table.ownerId),
+    idxOrgsOwnerEmail: index('idx_orgs_owner_email').on(table.ownerEmail),
     //
     uidxOrgsName: uniqueIndex('uidx_orgs_name').on(table.name)
   })
