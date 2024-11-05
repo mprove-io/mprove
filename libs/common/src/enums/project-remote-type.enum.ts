@@ -1,4 +1,4 @@
 export enum ProjectRemoteTypeEnum {
-  Managed = 'Managed',
+  Managed = 'Managed', // set as string in db default value
   GitClone = 'GitClone'
 }
