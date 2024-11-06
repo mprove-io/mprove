@@ -1,18 +1,23 @@
-import { Injectable } from '@nestjs/common';
-import { In } from 'typeorm';
+import { Inject, Injectable } from '@nestjs/common';
+import { and, eq, inArray } from 'drizzle-orm';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
-import { repositories } from '~backend/barrels/repositories';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { wrapper } from '~backend/barrels/wrapper';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
+import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
+import { modelsTable } from '~backend/drizzle/postgres/schema/models';
+import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 
 @Injectable()
 export class DashboardsService {
   constructor(
-    private dashboardsRepository: repositories.DashboardsRepository,
-    private queriesRepository: repositories.QueriesRepository,
-    private mconfigsRepository: repositories.MconfigsRepository,
-    private modelsRepository: repositories.ModelsRepository
+    // private dashboardsRepository: repositories.DashboardsRepository,
+    // private queriesRepository: repositories.QueriesRepository,
+    // private mconfigsRepository: repositories.MconfigsRepository,
+    // private modelsRepository: repositories.ModelsRepository
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   async getDashboardCheckExists(item: {
@@ -21,12 +26,19 @@ export class DashboardsService {
   }) {
     let { dashboardId, structId } = item;
 
-    let dashboard = await this.dashboardsRepository.findOne({
-      where: {
-        struct_id: structId,
-        dashboard_id: dashboardId
-      }
+    let dashboard = await this.db.drizzle.query.dashboardsTable.findFirst({
+      where: and(
+        eq(dashboardsTable.structId, structId),
+        eq(dashboardsTable.dashboardId, dashboardId)
+      )
     });
+
+    // let dashboard = await this.dashboardsRepository.findOne({
+    //   where: {
+    //     struct_id: structId,
+    //     dashboard_id: dashboardId
+    //   }
+    // });
 
     if (common.isUndefined(dashboard)) {
       throw new common.ServerError({
@@ -47,10 +59,10 @@ export class DashboardsService {
 
   async getDashboardXCheckAccess(item: {
     projectId: string;
-    dashboard: entities.DashboardEntity;
-    member: entities.MemberEntity;
-    user: entities.UserEntity;
-    bridge: entities.BridgeEntity;
+    dashboard: schemaPostgres.DashboardEnt;
+    member: schemaPostgres.MemberEnt;
+    user: schemaPostgres.UserEnt;
+    bridge: schemaPostgres.BridgeEnt;
   }) {
     let { projectId, dashboard, member, user, bridge } = item;
 
@@ -70,28 +82,43 @@ export class DashboardsService {
     let mconfigs =
       mconfigIds.length === 0
         ? []
-        : await this.mconfigsRepository.find({
-            where: {
-              mconfig_id: In(mconfigIds)
-            }
+        : await this.db.drizzle.query.mconfigsTable.findMany({
+            where: inArray(mconfigsTable.mconfigId, mconfigIds)
           });
+
+    // await this.mconfigsRepository.find({
+    //     where: {
+    //       mconfig_id: In(mconfigIds)
+    //     }
+    //   })
 
     let queryIds = dashboard.tiles.map(x => x.queryId);
     let queries =
       queryIds.length === 0
         ? []
-        : await this.queriesRepository.find({
-            where: {
-              query_id: In(queryIds),
-              project_id: projectId
-            }
+        : await this.db.drizzle.query.queriesTable.findMany({
+            where: and(
+              inArray(queriesTable.queryId, queryIds),
+              eq(queriesTable.projectId, projectId)
+            )
           });
 
-    let models = await this.modelsRepository.find({
-      where: {
-        struct_id: bridge.struct_id
-      }
+    // await this.queriesRepository.find({
+    //     where: {
+    //       query_id: In(queryIds),
+    //       project_id: projectId
+    //     }
+    //   });
+
+    let models = await this.db.drizzle.query.modelsTable.findMany({
+      where: eq(modelsTable.structId, bridge.structId)
     });
+
+    // let models = await this.modelsRepository.find({
+    //   where: {
+    //     struct_id: bridge.struct_id
+    //   }
+    // });
 
     let apiModels = models.map(model =>
       wrapper.wrapToApiModel({
@@ -109,7 +136,7 @@ export class DashboardsService {
       mconfigs: mconfigs.map(x =>
         wrapper.wrapToApiMconfig({
           mconfig: x,
-          modelFields: apiModels.find(m => m.modelId === x.model_id).fields
+          modelFields: apiModels.find(m => m.modelId === x.modelId).fields
         })
       ),
       queries: queries.map(x => wrapper.wrapToApiQuery(x)),

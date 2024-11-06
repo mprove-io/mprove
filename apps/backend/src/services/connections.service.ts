@@ -1,14 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { common } from '~backend/barrels/common';
-import { repositories } from '~backend/barrels/repositories';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 
 @Injectable()
 export class ConnectionsService {
   constructor(
-    private connectionsRepository: repositories.ConnectionsRepository,
+    // private connectionsRepository: repositories.ConnectionsRepository,
     @Inject(DRIZZLE) private db: Db
   ) {}
 

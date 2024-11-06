@@ -1,10 +1,10 @@
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { makeDashboardFiltersX } from '~backend/functions/make-dashboard-filters-x';
 import { makeTilesX } from '~backend/functions/make-tiles-x';
 
 export function wrapToApiDashboard(item: {
-  dashboard: entities.DashboardEntity;
+  dashboard: schemaPostgres.DashboardEnt;
   mconfigs: common.MconfigX[];
   queries: common.Query[];
   member: common.Member;
@@ -14,7 +14,7 @@ export function wrapToApiDashboard(item: {
   let { dashboard, mconfigs, queries, isAddMconfigAndQuery, member, models } =
     item;
 
-  let filePathArray = dashboard.file_path.split('/');
+  let filePathArray = dashboard.filePath.split('/');
 
   let usersFolderIndex = filePathArray.findIndex(
     x => x === common.MPROVE_USERS_FOLDER
@@ -31,17 +31,17 @@ export function wrapToApiDashboard(item: {
   let dashboardExtendedFilters = makeDashboardFiltersX(dashboard);
 
   return {
-    structId: dashboard.struct_id,
-    dashboardId: dashboard.dashboard_id,
+    structId: dashboard.structId,
+    dashboardId: dashboard.dashboardId,
     author: author,
     canEditOrDeleteDashboard: canEditOrDeleteDashboard,
-    filePath: dashboard.file_path,
+    filePath: dashboard.filePath,
     content: dashboard.content,
-    accessUsers: dashboard.access_users,
-    accessRoles: dashboard.access_roles,
+    accessUsers: dashboard.accessUsers,
+    accessRoles: dashboard.accessRoles,
     title: dashboard.title,
     gr: dashboard.gr,
-    hidden: common.enumToBoolean(dashboard.hidden),
+    hidden: dashboard.hidden,
     fields: dashboard.fields,
     extendedFilters: dashboardExtendedFilters,
     description: dashboard.description,
@@ -53,7 +53,7 @@ export function wrapToApiDashboard(item: {
       models: models,
       dashboardExtendedFilters: dashboardExtendedFilters
     }),
-    temp: common.enumToBoolean(dashboard.temp),
-    serverTs: Number(dashboard.server_ts)
+    temp: dashboard.temp,
+    serverTs: dashboard.serverTs
   };
 }

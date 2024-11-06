@@ -1,23 +1,23 @@
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { makeFullName } from '~backend/functions/make-full-name';
 
-export function wrapToApiMember(x: entities.MemberEntity): common.Member {
+export function wrapToApiMember(x: schemaPostgres.MemberEnt): common.Member {
   return {
-    projectId: x.project_id,
-    memberId: x.member_id,
+    projectId: x.projectId,
+    memberId: x.memberId,
     email: x.email,
     alias: x.alias,
-    firstName: x.first_name,
-    lastName: x.last_name,
-    fullName: makeFullName({ firstName: x.first_name, lastName: x.last_name }),
+    firstName: x.firstName,
+    lastName: x.lastName,
+    fullName: makeFullName({ firstName: x.firstName, lastName: x.lastName }),
     avatarSmall: undefined,
     timezone: x.timezone,
-    isAdmin: common.enumToBoolean(x.is_admin),
-    isEditor: common.enumToBoolean(x.is_editor),
-    isExplorer: common.enumToBoolean(x.is_explorer),
+    isAdmin: x.isAdmin,
+    isEditor: x.isEditor,
+    isExplorer: x.isExplorer,
     roles: x.roles,
     envs: x.envs,
-    serverTs: Number(x.server_ts)
+    serverTs: x.serverTs
   };
 }
