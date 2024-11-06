@@ -226,7 +226,6 @@ export class BlockmlService {
 
     if (common.isUndefined(skipDb) || skipDb === false) {
       let records: RecordsPackOutput;
-
       await retry(async () => {
         records = await this.db.drizzle.transaction(
           async tx =>

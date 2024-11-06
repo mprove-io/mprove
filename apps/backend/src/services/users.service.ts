@@ -113,14 +113,15 @@ export class UsersService {
 
     await retry(
       async () =>
-        await this.db.drizzle.transaction(async tx => {
-          await this.db.packer.write({
-            tx: tx,
-            insert: {
-              users: [user]
-            }
-          });
-        }),
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insert: {
+                users: [user]
+              }
+            })
+        ),
       getRetryOption(this.cs, this.logger)
     );
 
