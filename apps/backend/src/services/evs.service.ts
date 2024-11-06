@@ -1,10 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { and, eq } from 'drizzle-orm';
 import { common } from '~backend/barrels/common';
-import { repositories } from '~backend/barrels/repositories';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { evsTable } from '~backend/drizzle/postgres/schema/evs';
 
 @Injectable()
 export class EvsService {
-  constructor(private evsRepository: repositories.EvsRepository) {}
+  constructor(
+    // private evsRepository: repositories.EvsRepository,
+    @Inject(DRIZZLE) private db: Db
+  ) {}
 
   async checkEvDoesNotExist(item: {
     projectId: string;
@@ -13,13 +18,21 @@ export class EvsService {
   }) {
     let { projectId, envId, evId } = item;
 
-    let ev = await this.evsRepository.findOne({
-      where: {
-        project_id: projectId,
-        env_id: envId,
-        ev_id: evId
-      }
+    let ev = await this.db.drizzle.query.evsTable.findFirst({
+      where: and(
+        eq(evsTable.projectId, projectId),
+        eq(evsTable.envId, envId),
+        eq(evsTable.evId, evId)
+      )
     });
+
+    // let ev = await this.evsRepository.findOne({
+    //   where: {
+    //     project_id: projectId,
+    //     env_id: envId,
+    //     ev_id: evId
+    //   }
+    // });
 
     if (common.isDefined(ev)) {
       throw new common.ServerError({
@@ -35,13 +48,21 @@ export class EvsService {
   }) {
     let { projectId, envId, evId } = item;
 
-    let ev = await this.evsRepository.findOne({
-      where: {
-        project_id: projectId,
-        env_id: envId,
-        ev_id: evId
-      }
+    let ev = await this.db.drizzle.query.evsTable.findFirst({
+      where: and(
+        eq(evsTable.projectId, projectId),
+        eq(evsTable.envId, envId),
+        eq(evsTable.evId, evId)
+      )
     });
+
+    // let ev = await this.evsRepository.findOne({
+    //   where: {
+    //     project_id: projectId,
+    //     env_id: envId,
+    //     ev_id: evId
+    //   }
+    // });
 
     if (common.isUndefined(ev)) {
       throw new common.ServerError({

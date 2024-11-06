@@ -1,40 +1,54 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
-import { maker } from '~backend/barrels/maker';
-import { repositories } from '~backend/barrels/repositories';
-import { UserEntity } from '~backend/models/store-entities/_index';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
+import { membersTable } from '~backend/drizzle/postgres/schema/members';
+import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { BlockmlService } from './blockml.service';
-import { DbService } from './db.service';
 import { RabbitService } from './rabbit.service';
+
+let retry = require('async-retry');
 
 @Injectable()
 export class MembersService {
   constructor(
-    private membersRepository: repositories.MembersRepository,
-    private cs: ConfigService<interfaces.Config>,
-    private branchesRepository: repositories.BranchesRepository,
-    private projectsRepository: repositories.ProjectsRepository,
-    private bridgesRepository: repositories.BridgesRepository,
+    // private membersRepository: repositories.MembersRepository,
+    // private branchesRepository: repositories.BranchesRepository,
+    // private projectsRepository: repositories.ProjectsRepository,
+    // private bridgesRepository: repositories.BridgesRepository,
+    // private dbService: DbService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
-    private dbService: DbService
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   async checkMemberIsAdmin(item: { memberId: string; projectId: string }) {
     let { projectId, memberId } = item;
 
-    let member = await this.membersRepository.findOne({
-      where: {
-        member_id: memberId,
-        project_id: projectId
-      }
+    let member = await this.db.drizzle.query.membersTable.findFirst({
+      where: and(
+        eq(membersTable.memberId, memberId),
+        eq(membersTable.projectId, projectId)
+      )
     });
+
+    // let member = await this.membersRepository.findOne({
+    //   where: {
+    //     member_id: memberId,
+    //     project_id: projectId
+    //   }
+    // });
 
     if (common.isUndefined(member)) {
       throw new common.ServerError({
@@ -42,7 +56,7 @@ export class MembersService {
       });
     }
 
-    if (member.is_admin !== common.BoolEnum.TRUE) {
+    if (member.isAdmin !== true) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_MEMBER_IS_NOT_ADMIN
       });
@@ -55,12 +69,19 @@ export class MembersService {
   }) {
     let { projectId, memberId } = item;
 
-    let member = await this.membersRepository.findOne({
-      where: {
-        member_id: memberId,
-        project_id: projectId
-      }
+    let member = await this.db.drizzle.query.membersTable.findFirst({
+      where: and(
+        eq(membersTable.memberId, memberId),
+        eq(membersTable.projectId, projectId)
+      )
     });
+
+    // let member = await this.membersRepository.findOne({
+    //   where: {
+    //     member_id: memberId,
+    //     project_id: projectId
+    //   }
+    // });
 
     if (common.isUndefined(member)) {
       throw new common.ServerError({
@@ -68,10 +89,7 @@ export class MembersService {
       });
     }
 
-    if (
-      member.is_editor !== common.BoolEnum.TRUE &&
-      member.is_admin !== common.BoolEnum.TRUE
-    ) {
+    if (member.isEditor !== true && member.isAdmin !== true) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
       });
@@ -83,12 +101,19 @@ export class MembersService {
   async getMemberCheckIsEditor(item: { memberId: string; projectId: string }) {
     let { projectId, memberId } = item;
 
-    let member = await this.membersRepository.findOne({
-      where: {
-        member_id: memberId,
-        project_id: projectId
-      }
+    let member = await this.db.drizzle.query.membersTable.findFirst({
+      where: and(
+        eq(membersTable.memberId, memberId),
+        eq(membersTable.projectId, projectId)
+      )
     });
+
+    // let member = await this.membersRepository.findOne({
+    //   where: {
+    //     member_id: memberId,
+    //     project_id: projectId
+    //   }
+    // });
 
     if (common.isUndefined(member)) {
       throw new common.ServerError({
@@ -96,7 +121,7 @@ export class MembersService {
       });
     }
 
-    if (member.is_editor !== common.BoolEnum.TRUE) {
+    if (member.isEditor !== true) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR
       });
@@ -108,12 +133,19 @@ export class MembersService {
   async getMemberCheckExists(item: { memberId: string; projectId: string }) {
     let { projectId, memberId } = item;
 
-    let member = await this.membersRepository.findOne({
-      where: {
-        member_id: memberId,
-        project_id: projectId
-      }
+    let member = await this.db.drizzle.query.membersTable.findFirst({
+      where: and(
+        eq(membersTable.memberId, memberId),
+        eq(membersTable.projectId, projectId)
+      )
     });
+
+    // let member = await this.membersRepository.findOne({
+    //   where: {
+    //     member_id: memberId,
+    //     project_id: projectId
+    //   }
+    // });
 
     if (common.isUndefined(member)) {
       throw new common.ServerError({
@@ -127,12 +159,19 @@ export class MembersService {
   async checkMemberDoesNotExist(item: { memberId: string; projectId: string }) {
     let { projectId, memberId } = item;
 
-    let member = await this.membersRepository.findOne({
-      where: {
-        member_id: memberId,
-        project_id: projectId
-      }
+    let member = await this.db.drizzle.query.membersTable.findFirst({
+      where: and(
+        eq(membersTable.memberId, memberId),
+        eq(membersTable.projectId, projectId)
+      )
     });
+
+    // let member = await this.membersRepository.findOne({
+    //   where: {
+    //     member_id: memberId,
+    //     project_id: projectId
+    //   }
+    // });
 
     if (common.isDefined(member)) {
       throw new common.ServerError({
@@ -141,35 +180,66 @@ export class MembersService {
     }
   }
 
-  async addMemberToFirstProject(item: { user: UserEntity; traceId: string }) {
+  async addMemberToFirstProject(item: {
+    user: schemaPostgres.UserEnt;
+    traceId: string;
+  }) {
     let { user, traceId } = item;
 
     let firstProjectId =
       this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
     if (common.isDefined(firstProjectId)) {
-      let project = await this.projectsRepository.findOne({
-        where: {
-          project_id: firstProjectId
-        }
+      let project = await this.db.drizzle.query.projectsTable.findFirst({
+        where: eq(projectsTable.projectId, firstProjectId)
       });
 
+      // let project = await this.projectsRepository.findOne({
+      //   where: {
+      //     project_id: firstProjectId
+      //   }
+      // });
+
       if (common.isDefined(project)) {
-        let member = await this.membersRepository.findOne({
-          where: {
-            member_id: user.user_id,
-            project_id: firstProjectId
-          }
+        let member = await this.db.drizzle.query.membersTable.findFirst({
+          where: and(
+            eq(membersTable.memberId, user.userId),
+            eq(membersTable.projectId, firstProjectId)
+          )
         });
 
+        // let member = await this.membersRepository.findOne({
+        //   where: {
+        //     member_id: user.user_id,
+        //     project_id: firstProjectId
+        //   }
+        // });
+
         if (common.isUndefined(member)) {
-          let newMember = maker.makeMember({
+          let newMember: schemaPostgres.MemberEnt = {
+            memberFullId: common.makeId(),
             projectId: firstProjectId,
-            user: user,
-            isAdmin: common.BoolEnum.FALSE,
-            isEditor: common.BoolEnum.TRUE,
-            isExplorer: common.BoolEnum.TRUE
-          });
+            memberId: user.userId,
+            email: user.email,
+            alias: user.alias,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            timezone: user.timezone,
+            roles: [],
+            envs: [],
+            isAdmin: false,
+            isEditor: true,
+            isExplorer: true,
+            serverTs: undefined
+          };
+
+          // let newMember = maker.makeMember({
+          //   projectId: firstProjectId,
+          //   user: user,
+          //   isAdmin: common.BoolEnum.FALSE,
+          //   isEditor: common.BoolEnum.TRUE,
+          //   isExplorer: common.BoolEnum.TRUE
+          // });
 
           let toDiskCreateDevRepoRequest: apiToDisk.ToDiskCreateDevRepoRequest =
             {
@@ -178,13 +248,13 @@ export class MembersService {
                 traceId: traceId
               },
               payload: {
-                orgId: project.org_id,
+                orgId: project.orgId,
                 projectId: firstProjectId,
-                devRepoId: newMember.member_id,
-                remoteType: project.remote_type,
-                gitUrl: project.git_url,
-                privateKey: project.private_key,
-                publicKey: project.public_key
+                devRepoId: newMember.memberId,
+                remoteType: project.remoteType,
+                gitUrl: project.gitUrl,
+                privateKey: project.privateKey,
+                publicKey: project.publicKey
               }
             };
 
@@ -192,7 +262,7 @@ export class MembersService {
             await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateDevRepoResponse>(
               {
                 routingKey: helper.makeRoutingKeyToDisk({
-                  orgId: project.org_id,
+                  orgId: project.orgId,
                   projectId: firstProjectId
                 }),
                 message: toDiskCreateDevRepoRequest,
@@ -200,73 +270,125 @@ export class MembersService {
               }
             );
 
-          let prodBranch = await this.branchesRepository.findOne({
-            where: {
-              project_id: firstProjectId,
-              repo_id: common.PROD_REPO_ID,
-              branch_id: project.default_branch
-            }
+          let prodBranch = await this.db.drizzle.query.branchesTable.findFirst({
+            where: and(
+              eq(branchesTable.projectId, firstProjectId),
+              eq(branchesTable.repoId, common.PROD_REPO_ID),
+              eq(branchesTable.branchId, project.defaultBranch)
+            )
           });
 
-          let devBranch = maker.makeBranch({
+          // let prodBranch = await this.branchesRepository.findOne({
+          //   where: {
+          //     project_id: firstProjectId,
+          //     repo_id: common.PROD_REPO_ID,
+          //     branch_id: project.default_branch
+          //   }
+          // });
+
+          let devBranch: schemaPostgres.BranchEnt = {
+            branchFullId: common.makeId(),
             projectId: firstProjectId,
-            repoId: newMember.member_id,
-            branchId: project.default_branch
-          });
+            repoId: newMember.memberId,
+            branchId: project.defaultBranch,
+            serverTs: undefined
+          };
 
-          let prodBranchBridges = await this.bridgesRepository.find({
-            where: {
-              project_id: prodBranch.project_id,
-              repo_id: prodBranch.repo_id,
-              branch_id: prodBranch.branch_id
-            }
-          });
+          // let devBranch = maker.makeBranch({
+          //   projectId: firstProjectId,
+          //   repoId: newMember.member_id,
+          //   branchId: project.default_branch
+          // });
 
-          let devBranchBridges: entities.BridgeEntity[] = [];
+          let prodBranchBridges =
+            await this.db.drizzle.query.bridgesTable.findMany({
+              where: and(
+                eq(bridgesTable.projectId, prodBranch.projectId),
+                eq(bridgesTable.repoId, prodBranch.repoId),
+                eq(bridgesTable.branchId, prodBranch.branchId)
+              )
+            });
+
+          // let prodBranchBridges = await this.bridgesRepository.find({
+          //   where: {
+          //     project_id: prodBranch.project_id,
+          //     repo_id: prodBranch.repo_id,
+          //     branch_id: prodBranch.branch_id
+          //   }
+          // });
+
+          let devBranchBridges: schemaPostgres.BridgeEnt[] = [];
 
           prodBranchBridges.forEach(x => {
-            let devBranchBridge = maker.makeBridge({
-              projectId: devBranch.project_id,
-              repoId: devBranch.repo_id,
-              branchId: devBranch.branch_id,
-              envId: x.env_id,
+            let devBranchBridge: schemaPostgres.BridgeEnt = {
+              bridgeId: common.makeId(),
+              projectId: devBranch.projectId,
+              repoId: devBranch.repoId,
+              branchId: devBranch.branchId,
+              envId: x.envId,
               structId: common.EMPTY_STRUCT_ID,
-              needValidate: common.BoolEnum.TRUE
-            });
+              needValidate: true,
+              serverTs: undefined
+            };
+
+            // let devBranchBridge = maker.makeBridge({
+            //   projectId: devBranch.project_id,
+            //   repoId: devBranch.repo_id,
+            //   branchId: devBranch.branch_id,
+            //   envId: x.env_id,
+            //   structId: common.EMPTY_STRUCT_ID,
+            //   needValidate: common.BoolEnum.TRUE
+            // });
 
             devBranchBridges.push(devBranchBridge);
           });
 
           await forEachSeries(devBranchBridges, async x => {
-            if (x.env_id === common.PROJECT_ENV_PROD) {
+            if (x.envId === common.PROJECT_ENV_PROD) {
               let structId = common.makeId();
 
               await this.blockmlService.rebuildStruct({
                 traceId,
-                orgId: project.org_id,
+                orgId: project.orgId,
                 projectId: firstProjectId,
                 structId,
                 diskFiles: diskResponse.payload.files,
                 mproveDir: diskResponse.payload.mproveDir,
-                envId: x.env_id
+                envId: x.envId
               });
 
-              x.struct_id = structId;
-              x.need_validate = common.BoolEnum.FALSE;
+              x.structId = structId;
+              x.needValidate = false;
             } else {
-              x.struct_id = common.EMPTY_STRUCT_ID;
-              x.need_validate = common.BoolEnum.TRUE;
+              x.structId = common.EMPTY_STRUCT_ID;
+              x.needValidate = true;
             }
           });
 
-          await this.dbService.writeRecords({
-            modify: true,
-            records: {
-              members: [newMember],
-              branches: [devBranch],
-              bridges: [...devBranchBridges]
-            }
-          });
+          await retry(
+            async () =>
+              await this.db.drizzle.transaction(
+                async tx =>
+                  await this.db.packer.write({
+                    tx: tx,
+                    insertOrUpdate: {
+                      members: [newMember],
+                      branches: [devBranch],
+                      bridges: [...devBranchBridges]
+                    }
+                  })
+              ),
+            getRetryOption(this.cs, this.logger)
+          );
+
+          // await this.dbService.writeRecords({
+          //   modify: true,
+          //   records: {
+          //     members: [newMember],
+          //     branches: [devBranch],
+          //     bridges: [...devBranchBridges]
+          //   }
+          // });
         }
       }
     }
