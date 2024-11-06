@@ -35,7 +35,6 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { RecordsPackOutput } from '~backend/drizzle/postgres/drizzle-packer';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { evsTable } from '~backend/drizzle/postgres/schema/evs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -226,9 +225,8 @@ export class BlockmlService {
     });
 
     if (common.isUndefined(skipDb) || skipDb === false) {
-      let records: RecordsPackOutput;
       await retry(async () => {
-        records = await this.db.drizzle.transaction(
+        await this.db.drizzle.transaction(
           async tx =>
             await this.db.packer.write({
               tx: tx,

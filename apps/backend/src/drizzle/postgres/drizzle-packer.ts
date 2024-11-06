@@ -281,7 +281,7 @@ export class DrizzlePacker {
           await tx
             .update(bridgesTable)
             .set(x)
-            .where(eq(bridgesTable.bridgeFullId, x.bridgeId));
+            .where(eq(bridgesTable.bridgeFullId, x.bridgeFullId));
         });
       }
 

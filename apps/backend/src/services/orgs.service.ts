@@ -1,25 +1,36 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { eq } from 'drizzle-orm';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
-import { maker } from '~backend/barrels/maker';
-import { repositories } from '~backend/barrels/repositories';
+import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { OrgEntity } from '~backend/models/store-entities/org.entity';
-import { DbService } from './db.service';
 import { RabbitService } from './rabbit.service';
+
+let retry = require('async-retry');
 
 @Injectable()
 export class OrgsService {
   constructor(
-    private orgsRepository: repositories.OrgsRepository,
     private rabbitService: RabbitService,
-    private dbService: DbService
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   async getOrgCheckExists(item: { orgId: string }) {
     let { orgId } = item;
 
-    let org = await this.orgsRepository.findOne({ where: { org_id: orgId } });
+    let org = await this.db.drizzle.query.orgsTable.findFirst({
+      where: eq(orgsTable.orgId, orgId)
+    });
+
+    // let org = await this.orgsRepository.findOne({ where: { org_id: orgId } });
 
     if (common.isUndefined(org)) {
       throw new common.ServerError({
@@ -51,12 +62,20 @@ export class OrgsService {
   }) {
     let { ownerId, ownerEmail, name, traceId, orgId } = item;
 
-    let newOrg = maker.makeOrg({
+    let newOrg: schemaPostgres.OrgEnt = {
+      orgId: orgId,
       name: name,
       ownerId: ownerId,
       ownerEmail: ownerEmail,
-      orgId: orgId
-    });
+      serverTs: undefined
+    };
+
+    // let newOrg = maker.makeOrg({
+    //   name: name,
+    //   ownerId: ownerId,
+    //   ownerEmail: ownerEmail,
+    //   orgId: orgId
+    // });
 
     let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
       info: {
@@ -64,26 +83,39 @@ export class OrgsService {
         traceId: traceId
       },
       payload: {
-        orgId: newOrg.org_id
+        orgId: newOrg.orgId
       }
     };
 
     await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateOrgResponse>({
       routingKey: helper.makeRoutingKeyToDisk({
-        orgId: newOrg.org_id,
+        orgId: newOrg.orgId,
         projectId: undefined
       }),
       message: createOrgRequest,
       checkIsOk: true
     });
 
-    let records = await this.dbService.writeRecords({
-      modify: false,
-      records: {
-        orgs: [newOrg]
-      }
-    });
+    await retry(async () => {
+      await this.db.drizzle.transaction(
+        async tx =>
+          await this.db.packer.write({
+            tx: tx,
+            insert: {
+              orgs: [newOrg]
+            }
+          })
+      );
+    }, getRetryOption(this.cs, this.logger));
 
-    return records.orgs[0];
+    // let records = await this.dbService.writeRecords({
+    //   modify: false,
+    //   records: {
+    //     orgs: [newOrg]
+    //   }
+    // });
+
+    return newOrg;
+    // return records.orgs[0];
   }
 }
