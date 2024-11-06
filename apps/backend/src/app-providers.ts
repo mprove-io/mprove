@@ -16,6 +16,7 @@ import { DocService } from './services/doc.service';
 import { EmailService } from './services/email.service';
 import { EnvsService } from './services/envs.service';
 import { EvsService } from './services/evs.service';
+import { HashService } from './services/hash.service';
 import { MconfigsService } from './services/mconfigs.service';
 import { MembersService } from './services/members.service';
 import { ModelsService } from './services/models.service';
@@ -32,8 +33,13 @@ import { TasksService } from './services/tasks.service';
 import { UserCodeService } from './services/user-code.service';
 import { UsersService } from './services/users.service';
 import { VizsService } from './services/vizs.service';
+import { WrapToApiService } from './services/wrap-to-api.service';
+import { WrapToEntService } from './services/wrap-to-ent.service';
 
 export const appProviders = [
+  WrapToEntService,
+  WrapToApiService,
+  HashService,
   RedisService,
   RabbitService,
   DbService,

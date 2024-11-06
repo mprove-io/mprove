@@ -281,7 +281,7 @@ export class DrizzlePacker {
           await tx
             .update(bridgesTable)
             .set(x)
-            .where(eq(bridgesTable.bridgeId, x.bridgeId));
+            .where(eq(bridgesTable.bridgeFullId, x.bridgeId));
         });
       }
 
@@ -633,7 +633,7 @@ export class DrizzlePacker {
           .insert(bridgesTable)
           .values(insertOrUpdateRecords.bridges)
           .onConflictDoUpdate({
-            target: bridgesTable.bridgeId,
+            target: bridgesTable.bridgeFullId,
             set: drizzleSetAllColumnsFull({ table: bridgesTable })
           });
       }

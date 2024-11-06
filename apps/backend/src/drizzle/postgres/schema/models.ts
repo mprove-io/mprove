@@ -14,7 +14,7 @@ import { common } from '~backend/barrels/common';
 export const modelsTable = pgTable(
   'models',
   {
-    modelFullId: varchar('model_full_id', { length: 32 })
+    modelFullId: varchar('model_full_id', { length: 64 })
       .notNull()
       .primaryKey(),
     structId: varchar('struct_id', { length: 32 }).notNull(),

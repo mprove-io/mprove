@@ -14,7 +14,7 @@ import { common } from '~backend/barrels/common';
 export const vizsTable = pgTable(
   'vizs',
   {
-    vizFullId: varchar('viz_full_id', { length: 32 }).notNull().primaryKey(),
+    vizFullId: varchar('viz_full_id', { length: 64 }).notNull().primaryKey(),
     structId: varchar('struct_id', { length: 32 }).notNull(),
     vizId: varchar('viz_id', { length: 32 }).notNull(), // name
     title: varchar('title').notNull(),

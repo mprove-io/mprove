@@ -11,7 +11,7 @@ import {
 export const envsTable = pgTable(
   'envs',
   {
-    envFullId: varchar('env_full_id', { length: 32 }).notNull().primaryKey(),
+    envFullId: varchar('env_full_id', { length: 64 }).notNull().primaryKey(),
     projectId: varchar('project_id', { length: 32 }).notNull(),
     envId: varchar('env_id', { length: 32 }).notNull(), // name
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()

@@ -13,7 +13,7 @@ import { common } from '~backend/barrels/common';
 export const metricsTable = pgTable(
   'metrics',
   {
-    metricFullId: varchar('metric_full_id', { length: 32 })
+    metricFullId: varchar('metric_full_id', { length: 64 })
       .notNull()
       .primaryKey(),
     structId: varchar('struct_id', { length: 32 }).notNull(),

@@ -3,12 +3,12 @@ import { and, eq, inArray } from 'drizzle-orm';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
-import { wrapper } from '~backend/barrels/wrapper';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
+import { WrapToApiService } from './wrap-to-api.service';
 
 @Injectable()
 export class DashboardsService {
@@ -17,6 +17,7 @@ export class DashboardsService {
     // private queriesRepository: repositories.QueriesRepository,
     // private mconfigsRepository: repositories.MconfigsRepository,
     // private modelsRepository: repositories.ModelsRepository
+    private wrapToApiService: WrapToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -121,7 +122,7 @@ export class DashboardsService {
     // });
 
     let apiModels = models.map(model =>
-      wrapper.wrapToApiModel({
+      this.wrapToApiService.wrapToApiModel({
         model: model,
         hasAccess: helper.checkAccess({
           userAlias: user.alias,
@@ -131,16 +132,16 @@ export class DashboardsService {
       })
     );
 
-    let dashboardX = wrapper.wrapToApiDashboard({
+    let dashboardX = this.wrapToApiService.wrapToApiDashboard({
       dashboard: dashboard,
       mconfigs: mconfigs.map(x =>
-        wrapper.wrapToApiMconfig({
+        this.wrapToApiService.wrapToApiMconfig({
           mconfig: x,
           modelFields: apiModels.find(m => m.modelId === x.modelId).fields
         })
       ),
-      queries: queries.map(x => wrapper.wrapToApiQuery(x)),
-      member: wrapper.wrapToApiMember(member),
+      queries: queries.map(x => this.wrapToApiService.wrapToApiQuery(x)),
+      member: this.wrapToApiService.wrapToApiMember(member),
       models: apiModels,
       isAddMconfigAndQuery: true
     });

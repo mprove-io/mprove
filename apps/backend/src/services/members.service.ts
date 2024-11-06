@@ -14,6 +14,7 @@ import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { BlockmlService } from './blockml.service';
+import { HashService } from './hash.service';
 import { RabbitService } from './rabbit.service';
 
 let retry = require('async-retry');
@@ -26,6 +27,7 @@ export class MembersService {
     // private projectsRepository: repositories.ProjectsRepository,
     // private bridgesRepository: repositories.BridgesRepository,
     // private dbService: DbService,
+    private hashService: HashService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
     private cs: ConfigService<interfaces.Config>,
@@ -217,7 +219,10 @@ export class MembersService {
 
         if (common.isUndefined(member)) {
           let newMember: schemaPostgres.MemberEnt = {
-            memberFullId: common.makeId(),
+            memberFullId: this.hashService.makeMemberFullId({
+              projectId: firstProjectId,
+              memberId: user.userId
+            }),
             projectId: firstProjectId,
             memberId: user.userId,
             email: user.email,
@@ -287,7 +292,11 @@ export class MembersService {
           // });
 
           let devBranch: schemaPostgres.BranchEnt = {
-            branchFullId: common.makeId(),
+            branchFullId: this.hashService.makeBranchFullId({
+              projectId: firstProjectId,
+              repoId: newMember.memberId,
+              branchId: project.defaultBranch
+            }),
             projectId: firstProjectId,
             repoId: newMember.memberId,
             branchId: project.defaultBranch,
@@ -321,7 +330,12 @@ export class MembersService {
 
           prodBranchBridges.forEach(x => {
             let devBranchBridge: schemaPostgres.BridgeEnt = {
-              bridgeId: common.makeId(),
+              bridgeFullId: this.hashService.makeBridgeFullId({
+                projectId: devBranch.projectId,
+                repoId: devBranch.repoId,
+                branchId: devBranch.branchId,
+                envId: x.envId
+              }),
               projectId: devBranch.projectId,
               repoId: devBranch.repoId,
               branchId: devBranch.branchId,

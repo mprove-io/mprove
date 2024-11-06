@@ -12,7 +12,9 @@ import {
 export const bridgesTable = pgTable(
   'bridges',
   {
-    bridgeId: varchar('bridge_id', { length: 32 }).notNull().primaryKey(),
+    bridgeFullId: varchar('bridge_full_id', { length: 32 })
+      .notNull()
+      .primaryKey(),
     projectId: varchar('project_id', { length: 32 }).notNull(),
     repoId: varchar('repo_id', { length: 32 }).notNull(),
     branchId: varchar('branch_id', { length: 32 }).notNull(), // name

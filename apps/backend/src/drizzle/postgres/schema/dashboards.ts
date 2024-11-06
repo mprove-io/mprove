@@ -14,7 +14,7 @@ import { common } from '~backend/barrels/common';
 export const dashboardsTable = pgTable(
   'dashboards',
   {
-    dashboardFullId: varchar('dashboard_full_id', { length: 32 })
+    dashboardFullId: varchar('dashboard_full_id', { length: 64 })
       .notNull()
       .primaryKey(),
     structId: varchar('struct_id', { length: 32 }).notNull(),

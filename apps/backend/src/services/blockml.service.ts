@@ -34,7 +34,6 @@ import { constants } from '~backend/barrels/constants';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
-import { wrapper } from '~backend/barrels/wrapper';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { RecordsPackOutput } from '~backend/drizzle/postgres/drizzle-packer';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
@@ -42,6 +41,7 @@ import { evsTable } from '~backend/drizzle/postgres/schema/evs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { processRowIds } from '~backend/functions/process-row-ids';
 import { RabbitService } from './rabbit.service';
+import { WrapToEntService } from './wrap-to-ent.service';
 
 let retry = require('async-retry');
 
@@ -52,6 +52,7 @@ export class BlockmlService {
     // private evsRepository: repositories.EvsRepository,
     // private dbService: DbService
     private rabbitService: RabbitService,
+    private wrapToEntService: WrapToEntService,
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -232,28 +233,30 @@ export class BlockmlService {
             await this.db.packer.write({
               tx: tx,
               insert: {
-                // apis: apis.map(x => wrapper.wrapToEntityApi(x)),
+                // apis: apis.map(x => this.wrapService.wrapToEntityApi(x)),
                 structs: [struct],
-                vizs: vizs.map(x => wrapper.wrapToEntityViz({ viz: x })),
+                vizs: vizs.map(x =>
+                  this.wrapToEntService.wrapToEntityViz({ viz: x })
+                ),
                 models: models.map(x =>
-                  wrapper.wrapToEntityModel({ model: x })
+                  this.wrapToEntService.wrapToEntityModel({ model: x })
                 ),
                 metrics: metrics.map(x =>
-                  wrapper.wrapToEntityMetric({ metric: x })
+                  this.wrapToEntService.wrapToEntityMetric({ metric: x })
                 ),
                 reports: reps.map(x =>
-                  wrapper.wrapToEntityReport({ report: x })
+                  this.wrapToEntService.wrapToEntityReport({ report: x })
                 ),
                 mconfigs: mconfigs.map(x =>
-                  wrapper.wrapToEntityMconfig({ mconfig: x })
+                  this.wrapToEntService.wrapToEntityMconfig({ mconfig: x })
                 ),
                 dashboards: dashboards.map(x =>
-                  wrapper.wrapToEntityDashboard({ dashboard: x })
+                  this.wrapToEntService.wrapToEntityDashboard({ dashboard: x })
                 )
               },
               insertOrUpdate: {
                 queries: queries.map(x =>
-                  wrapper.wrapToEntityQuery({ query: x })
+                  this.wrapToEntService.wrapToEntityQuery({ query: x })
                 )
               }
             })

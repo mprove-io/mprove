@@ -13,7 +13,7 @@ import {
 export const membersTable = pgTable(
   'members',
   {
-    memberFullId: varchar('member_full_id', { length: 32 })
+    memberFullId: varchar('member_full_id', { length: 64 })
       .notNull()
       .primaryKey(),
     projectId: varchar('project_id', { length: 32 }).notNull(),

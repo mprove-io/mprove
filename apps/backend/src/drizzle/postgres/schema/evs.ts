@@ -11,7 +11,7 @@ import {
 export const evsTable = pgTable(
   'evs',
   {
-    evFullId: varchar('ev_full_id', { length: 32 }).notNull().primaryKey(),
+    evFullId: varchar('ev_full_id', { length: 64 }).notNull().primaryKey(),
     projectId: varchar('project_id', { length: 32 }).notNull(),
     envId: varchar('env_id', { length: 32 }).notNull(), // name
     evId: varchar('ev_id', { length: 32 }).notNull(), // name

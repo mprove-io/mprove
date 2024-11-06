@@ -15,7 +15,7 @@ import { common } from '~backend/barrels/common';
 export const connectionsTable = pgTable(
   'connections',
   {
-    connectionFullId: varchar('connection_full_id', { length: 32 })
+    connectionFullId: varchar('connection_full_id', { length: 64 })
       .notNull()
       .primaryKey(),
     projectId: varchar('project_id', { length: 32 }).notNull(),

@@ -11,7 +11,7 @@ import {
 export const branchesTable = pgTable(
   'branches',
   {
-    branchFullId: varchar('branch_full_id', { length: 32 })
+    branchFullId: varchar('branch_full_id', { length: 64 })
       .notNull()
       .primaryKey(),
     projectId: varchar('project_id', { length: 32 }).notNull(),

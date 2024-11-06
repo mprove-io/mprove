@@ -14,12 +14,12 @@ import { common } from '~backend/barrels/common';
 export const reportsTable = pgTable(
   'reports',
   {
-    reportFullId: varchar('report_full_id', { length: 32 })
+    reportFullId: varchar('report_full_id', { length: 64 })
       .notNull()
       .primaryKey(),
-    projectId: varchar('project_id', { length: 32 }).notNull(),
     structId: varchar('struct_id', { length: 32 }).notNull(),
     reportId: varchar('report_id', { length: 64 }).notNull(), // name
+    projectId: varchar('project_id', { length: 32 }).notNull(),
     creatorId: varchar('creator_id', { length: 32 }), // user_id
     filePath: varchar('file_path'),
     accessUsers: json('access_users').$type<string[]>().notNull(),
@@ -32,13 +32,13 @@ export const reportsTable = pgTable(
   },
   table => ({
     idxReportsServerTs: index('idx_reports_server_ts').on(table.serverTs),
-    idxReportsProjectId: index('idx_reports_project_id').on(table.projectId),
     idxReportsStructId: index('idx_reports_struct_id').on(table.structId),
     idxReportsReportId: index('idx_reports_report_id').on(table.reportId),
+    idxReportsProjectId: index('idx_reports_project_id').on(table.projectId),
     //
-    uidxReportsProjectIdStructIdReportId: uniqueIndex(
-      'uidx_reports_project_id_struct_id_report_id'
-    ).on(table.projectId, table.structId, table.reportId)
+    uidxReportsStructIdReportId: uniqueIndex(
+      'uidx_reports_struct_id_report_id'
+    ).on(table.structId, table.reportId)
   })
 );
 
