@@ -11,16 +11,16 @@ export class VizsService {
   async getVizCheckExists(item: { vizId: string; structId: string }) {
     let { vizId, structId } = item;
 
+    let viz = await this.db.drizzle.query.vizsTable.findFirst({
+      where: and(eq(vizsTable.structId, structId), eq(vizsTable.vizId, vizId))
+    });
+
     // let viz = await this.vizsRepository.findOne({
     //   where: {
     //     struct_id: structId,
     //     viz_id: vizId
     //   }
     // });
-
-    let viz = await this.db.drizzle.query.vizsTable.findFirst({
-      where: and(eq(vizsTable.structId, structId), eq(vizsTable.vizId, vizId))
-    });
 
     if (common.isUndefined(viz)) {
       throw new common.ServerError({
