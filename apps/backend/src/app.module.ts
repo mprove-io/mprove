@@ -29,14 +29,12 @@ import { enums } from './barrels/enums';
 import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
 import { maker } from './barrels/maker';
-import { repositories } from './barrels/repositories';
 import { schemaPostgres } from './barrels/schema-postgres';
 import { getConfig } from './config/get.config';
 import { DrizzleLogWriter } from './drizzle/drizzle-log-writer';
 import { DRIZZLE, Db, DrizzleModule } from './drizzle/drizzle.module';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { DbService } from './services/db.service';
 import { OrgsService } from './services/orgs.service';
 import { ProjectsService } from './services/projects.service';
 import { UsersService } from './services/users.service';
@@ -215,12 +213,12 @@ export class AppModule implements OnModuleInit {
     private orgsService: OrgsService,
     private projectsService: ProjectsService,
     private cs: ConfigService<interfaces.Config>,
-    private usersRepository: repositories.UsersRepository,
-    private orgsRepository: repositories.OrgsRepository,
-    private projectsRepository: repositories.ProjectsRepository,
-    private connectionsRepository: repositories.ConnectionsRepository,
-    private evsRepository: repositories.EvsRepository,
-    private dbService: DbService,
+    // private usersRepository: repositories.UsersRepository,
+    // private orgsRepository: repositories.OrgsRepository,
+    // private projectsRepository: repositories.ProjectsRepository,
+    // private connectionsRepository: repositories.ConnectionsRepository,
+    // private evsRepository: repositories.EvsRepository,
+    // private dbService: DbService,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}

@@ -18,7 +18,7 @@ import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { RepsService } from '~backend/services/reps.service';
+import { ReportsService } from '~backend/services/reps.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -26,7 +26,7 @@ export class DeleteRepController {
   constructor(
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private repsService: RepsService,
+    private repsService: ReportsService,
     private repsRepository: repositories.RepsRepository,
     private bridgesRepository: repositories.BridgesRepository,
     private branchesService: BranchesService,

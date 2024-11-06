@@ -17,7 +17,7 @@ import { DocService } from './doc.service';
 import { RabbitService } from './rabbit.service';
 
 @Injectable()
-export class RepsService {
+export class ReportsService {
   constructor(
     private repsRepository: repositories.RepsRepository,
     private docService: DocService,

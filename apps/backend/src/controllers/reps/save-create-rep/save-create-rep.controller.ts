@@ -21,7 +21,7 @@ import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { RepsService } from '~backend/services/reps.service';
+import { ReportsService } from '~backend/services/reps.service';
 import { StructsService } from '~backend/services/structs.service';
 
 @UseGuards(ValidateRequestGuard)
@@ -34,7 +34,7 @@ export class SaveCreateRepController {
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
-    private repsService: RepsService,
+    private repsService: ReportsService,
     private dbService: DbService,
     private repsRepository: repositories.RepsRepository,
     private bridgesRepository: repositories.BridgesRepository,

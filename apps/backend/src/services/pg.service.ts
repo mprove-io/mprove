@@ -68,7 +68,7 @@ export class PgService {
 
         if (common.isDefined(q)) {
           q.status = common.QueryStatusEnum.Completed;
-          q.queryJobId = null;
+          q.queryJobId = undefined; // null;
           q.data = data;
           q.lastCompleteTs = makeTsNumber();
           q.lastCompleteDuration = Math.floor(

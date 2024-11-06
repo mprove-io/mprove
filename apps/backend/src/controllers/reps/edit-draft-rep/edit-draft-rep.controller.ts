@@ -11,7 +11,7 @@ import { BridgesService } from '~backend/services/bridges.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
-import { RepsService } from '~backend/services/reps.service';
+import { ReportsService } from '~backend/services/reps.service';
 import { StructsService } from '~backend/services/structs.service';
 
 @UseGuards(ValidateRequestGuard)
@@ -20,7 +20,7 @@ export class EditDraftRepController {
   constructor(
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private repsService: RepsService,
+    private repsService: ReportsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,

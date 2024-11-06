@@ -1,5 +1,5 @@
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 
 export function makeRepFileText(item: {
   repId: string;
@@ -7,12 +7,12 @@ export function makeRepFileText(item: {
   accessRoles: string[];
   accessUsers: string[];
   rows: common.Row[];
-  metrics: entities.MetricEntity[];
-  struct: entities.StructEntity;
+  metrics: schemaPostgres.MetricEnt[];
+  struct: schemaPostgres.StructEnt;
 }) {
   let { repId, title, rows, accessRoles, accessUsers, metrics, struct } = item;
 
-  let rep: common.FileRep = {
+  let fileReport: common.FileRep = {
     fileName: undefined,
     fileExt: undefined,
     filePath: undefined,
@@ -26,7 +26,7 @@ export function makeRepFileText(item: {
     rows: rows.map(x => {
       let metric =
         x.rowType === common.RowTypeEnum.Metric
-          ? metrics.find(m => m.metric_id === x.metricId)
+          ? metrics.find(m => m.metricId === x.metricId)
           : undefined;
 
       let row: common.FileRepRow = {
@@ -46,23 +46,23 @@ export function makeRepFileText(item: {
             : undefined,
         format_number:
           x.rowType === common.RowTypeEnum.Metric &&
-          metric.format_number === x.formatNumber
+          metric.formatNumber === x.formatNumber
             ? undefined
-            : struct.format_number === x.formatNumber
+            : struct.formatNumber === x.formatNumber
             ? undefined
             : x.formatNumber,
         currency_prefix:
           x.rowType === common.RowTypeEnum.Metric &&
-          metric.currency_prefix === x.currencyPrefix
+          metric.currencyPrefix === x.currencyPrefix
             ? undefined
-            : struct.currency_prefix === x.currencyPrefix
+            : struct.currencyPrefix === x.currencyPrefix
             ? undefined
             : x.currencyPrefix,
         currency_suffix:
           x.rowType === common.RowTypeEnum.Metric &&
-          metric.currency_suffix === x.currencySuffix
+          metric.currencySuffix === x.currencySuffix
             ? undefined
-            : struct.currency_suffix === x.currencySuffix
+            : struct.currencySuffix === x.currencySuffix
             ? undefined
             : x.currencySuffix,
         parameters_formula: common.isDefined(x.parametersFormula)
@@ -94,7 +94,7 @@ export function makeRepFileText(item: {
     })
   };
 
-  let repFileText = common.toYaml(rep);
+  let fileReportText = common.toYaml(fileReport);
 
-  return repFileText;
+  return fileReportText;
 }

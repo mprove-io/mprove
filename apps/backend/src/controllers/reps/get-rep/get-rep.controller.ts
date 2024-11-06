@@ -12,7 +12,7 @@ import { DbService } from '~backend/services/db.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
-import { RepsService } from '~backend/services/reps.service';
+import { ReportsService } from '~backend/services/reps.service';
 import { StructsService } from '~backend/services/structs.service';
 
 @UseGuards(ValidateRequestGuard)
@@ -21,7 +21,7 @@ export class GetRepController {
   constructor(
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private repsService: RepsService,
+    private repsService: ReportsService,
     private dbService: DbService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,

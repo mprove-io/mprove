@@ -26,7 +26,7 @@ import { ProjectsService } from './services/projects.service';
 import { QueriesService } from './services/queries.service';
 import { RabbitService } from './services/rabbit.service';
 import { RedisService } from './services/redis.service';
-import { RepsService } from './services/reps.service';
+import { ReportsService } from './services/reports.service';
 import { SnowFlakeService } from './services/snowflake.service';
 import { StructsService } from './services/structs.service';
 import { TasksService } from './services/tasks.service';
@@ -61,7 +61,7 @@ export const appProviders = [
   QueriesService,
   VizsService,
   DashboardsService,
-  RepsService,
+  ReportsService,
   MembersService,
   EnvsService,
   EvsService,
