@@ -937,11 +937,11 @@ export class ReportsService {
       );
 
       if (x.rowType === common.RowTypeEnum.Metric) {
-        let newMconfigsEntities = newMconfigs.map(m =>
+        let newMconfigsEnts = newMconfigs.map(m =>
           this.wapToEntService.wrapToEntityMconfig({ mconfig: m })
         );
 
-        let newMconfigsApi = newMconfigsEntities.map(y =>
+        let newMconfigsApi = newMconfigsEnts.map(y =>
           this.wrapToApiService.wrapToApiMconfig({
             mconfig: y,
             modelFields: modelsApi.find(m => m.modelId === y.modelId).fields

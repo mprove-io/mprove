@@ -7,8 +7,8 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -25,7 +25,7 @@ export class ClickHouseService {
   ) {}
 
   async runQuery(item: {
-    connection: entities.ConnectionEntity;
+    connection: schemaPostgres.ConnectionEnt;
     queryJobId: string;
     queryId: string;
     querySql: string;
@@ -35,7 +35,7 @@ export class ClickHouseService {
 
     let options: ClickHouseClientOptions = {
       protocol:
-        connection.is_ssl === common.BoolEnum.TRUE
+        connection.isSsl === true
           ? ClickHouseConnectionProtocol.HTTPS
           : ClickHouseConnectionProtocol.HTTP,
       host: connection.host,

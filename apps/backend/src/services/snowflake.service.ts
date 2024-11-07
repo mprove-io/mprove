@@ -3,8 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import * as snowflake from 'snowflake-sdk';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -22,7 +22,7 @@ export class SnowFlakeService {
   ) {}
 
   async runQuery(item: {
-    connection: entities.ConnectionEntity;
+    connection: schemaPostgres.ConnectionEnt;
     queryJobId: string;
     queryId: string;
     querySql: string;

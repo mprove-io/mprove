@@ -9,8 +9,8 @@ import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from './barrels/api-to-backend';
 import { common } from './barrels/common';
 import { constants } from './barrels/constants';
-import { entities } from './barrels/entities';
 import { interfaces } from './barrels/interfaces';
+import { schemaPostgres } from './barrels/schema-postgres';
 import { logResponseBackend } from './functions/log-response-backend';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { makeErrorResponseBackend } from './functions/make-error-response-backend';
@@ -62,13 +62,13 @@ export class AppFilter implements ExceptionFilter {
 
       if (common.isDefined(iKey)) {
         try {
-          let user: entities.UserEntity = request.user;
+          let user: schemaPostgres.UserEnt = request.user;
           // let sessionStId: string = request.session?.getUserId();
 
           let idemp: Idemp = {
             idempotencyKey: iKey,
-            stId: common.isDefined(user?.user_id)
-              ? user.user_id
+            stId: common.isDefined(user?.userId)
+              ? user.userId
               : constants.UNK_ST_ID,
             // stId: common.isDefined(sessionStId)
             //   ? sessionStId
