@@ -104,7 +104,7 @@ export class ClickHouseService {
                 async tx =>
                   await this.db.packer.write({
                     tx: tx,
-                    update: {
+                    insertOrUpdate: {
                       queries: [q]
                     }
                   })
@@ -152,7 +152,7 @@ export class ClickHouseService {
                 async tx =>
                   await this.db.packer.write({
                     tx: tx,
-                    update: {
+                    insertOrUpdate: {
                       queries: [q]
                     }
                   })

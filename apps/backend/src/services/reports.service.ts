@@ -1117,7 +1117,7 @@ export class ReportsService {
             async tx =>
               await this.db.packer.write({
                 tx: tx,
-                update: {
+                insertOrUpdate: {
                   reports: [rep]
                 }
               })

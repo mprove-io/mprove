@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { common } from '~backend/barrels/common';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { envsTable } from '~backend/drizzle/postgres/schema/envs';
-import { MemberEntity } from '~backend/models/store-entities/_index';
 
 @Injectable()
 export class EnvsService {
@@ -33,7 +33,7 @@ export class EnvsService {
   async getEnvCheckExistsAndAccess(item: {
     projectId: string;
     envId: string;
-    member: MemberEntity;
+    member: schemaPostgres.MemberEnt;
   }) {
     let { projectId, envId, member } = item;
 
@@ -56,7 +56,7 @@ export class EnvsService {
 
     if (
       envId !== common.PROJECT_ENV_PROD &&
-      member.is_admin === common.BoolEnum.FALSE &&
+      member.isAdmin === false &&
       member.envs.indexOf(envId) < 0
     ) {
       throw new common.ServerError({
