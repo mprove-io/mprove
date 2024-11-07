@@ -6,10 +6,7 @@ import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 
 @Injectable()
 export class ConnectionsService {
-  constructor(
-    // private connectionsRepository: repositories.ConnectionsRepository,
-    @Inject(DRIZZLE) private db: Db
-  ) {}
+  constructor(@Inject(DRIZZLE) private db: Db) {}
 
   async checkConnectionDoesNotExist(item: {
     projectId: string;

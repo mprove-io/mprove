@@ -40,9 +40,9 @@ export class EditPhotoDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<EditPhotoDialogData>,
     private navQuery: NavQuery,
+    // private sanitizer: DomSanitizer,
     private imageCompressService: NgxImageCompressService
-  ) // private sanitizer: DomSanitizer
-  {}
+  ) {}
 
   ngOnInit(): void {
     setTimeout(() => {

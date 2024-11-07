@@ -19,8 +19,6 @@ let retry = require('async-retry');
 @Injectable()
 export class ClickHouseService {
   constructor(
-    // private queriesRepository: repositories.QueriesRepository,
-    // private dbService: DbService
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db

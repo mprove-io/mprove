@@ -6,10 +6,7 @@ import { evsTable } from '~backend/drizzle/postgres/schema/evs';
 
 @Injectable()
 export class EvsService {
-  constructor(
-    // private evsRepository: repositories.EvsRepository,
-    @Inject(DRIZZLE) private db: Db
-  ) {}
+  constructor(@Inject(DRIZZLE) private db: Db) {}
 
   async checkEvDoesNotExist(item: {
     projectId: string;

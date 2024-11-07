@@ -6,10 +6,7 @@ import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 
 @Injectable()
 export class MconfigsService {
-  constructor(
-    // private mconfigsRepository: repositories.MconfigsRepository,
-    @Inject(DRIZZLE) private db: Db
-  ) {}
+  constructor(@Inject(DRIZZLE) private db: Db) {}
 
   async getMconfigCheckExists(item: { mconfigId: string; structId: string }) {
     let { mconfigId, structId } = item;

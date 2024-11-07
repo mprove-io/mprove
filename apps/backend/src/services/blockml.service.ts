@@ -47,9 +47,6 @@ let retry = require('async-retry');
 @Injectable()
 export class BlockmlService {
   constructor(
-    // private connectionsRepository: repositories.ConnectionsRepository,
-    // private evsRepository: repositories.EvsRepository,
-    // private dbService: DbService
     private rabbitService: RabbitService,
     private wrapToEntService: WrapToEntService,
     private cs: ConfigService<interfaces.Config>,

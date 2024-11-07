@@ -22,11 +22,6 @@ let retry = require('async-retry');
 @Injectable()
 export class MembersService {
   constructor(
-    // private membersRepository: repositories.MembersRepository,
-    // private branchesRepository: repositories.BranchesRepository,
-    // private projectsRepository: repositories.ProjectsRepository,
-    // private bridgesRepository: repositories.BridgesRepository,
-    // private dbService: DbService,
     private makerService: MakerService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,

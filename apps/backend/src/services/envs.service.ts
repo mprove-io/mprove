@@ -7,10 +7,7 @@ import { MemberEntity } from '~backend/models/store-entities/_index';
 
 @Injectable()
 export class EnvsService {
-  constructor(
-    // private envsRepository: repositories.EnvsRepository,
-    @Inject(DRIZZLE) private db: Db
-  ) {}
+  constructor(@Inject(DRIZZLE) private db: Db) {}
 
   async checkEnvDoesNotExist(item: { projectId: string; envId: string }) {
     let { projectId, envId } = item;

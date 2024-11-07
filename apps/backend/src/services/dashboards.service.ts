@@ -13,10 +13,6 @@ import { WrapToApiService } from './wrap-to-api.service';
 @Injectable()
 export class DashboardsService {
   constructor(
-    // private dashboardsRepository: repositories.DashboardsRepository,
-    // private queriesRepository: repositories.QueriesRepository,
-    // private mconfigsRepository: repositories.MconfigsRepository,
-    // private modelsRepository: repositories.ModelsRepository
     private wrapToApiService: WrapToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
