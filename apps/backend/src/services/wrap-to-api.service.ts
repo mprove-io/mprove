@@ -378,7 +378,7 @@ export class WrapToApiService {
     let canEditOrDeleteRep =
       member.isEditor || member.isAdmin || author === member.alias;
 
-    return {
+    let repX: common.RepX = {
       projectId: rep.projectId,
       structId: rep.structId,
       repId: rep.reportId,
@@ -406,6 +406,8 @@ export class WrapToApiService {
       draftCreatedTs: Number(rep.draftCreatedTs),
       serverTs: Number(rep.serverTs)
     };
+
+    return repX;
   }
 
   wrapToApiStruct(struct: schemaPostgres.StructEnt): common.Struct {

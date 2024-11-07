@@ -1,45 +1,63 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { getUnixTime } from 'date-fns';
 import { fromZonedTime } from 'date-fns-tz';
+import { and, eq, inArray } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
-import { In } from 'typeorm';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
-import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
+import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { kitsTable } from '~backend/drizzle/postgres/schema/kits';
+import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
+import { metricsTable } from '~backend/drizzle/postgres/schema/metrics';
+import { modelsTable } from '~backend/drizzle/postgres/schema/models';
+import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
+import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
 import { clearRowsCache } from '~backend/functions/clear-rows-cache';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { processRowIds } from '~backend/functions/process-row-ids';
 import { BlockmlService } from './blockml.service';
-import { DbService } from './db.service';
 import { DocService } from './doc.service';
+import { MakerService } from './maker.service';
 import { RabbitService } from './rabbit.service';
+import { WrapToApiService } from './wrap-to-api.service';
+import { WrapToEntService } from './wrap-to-ent.service';
+
+let retry = require('async-retry');
 
 @Injectable()
 export class ReportsService {
   constructor(
-    private repsRepository: repositories.RepsRepository,
+    private wrapToApiService: WrapToApiService,
+    private wapToEntService: WrapToEntService,
+    private makerService: MakerService,
     private docService: DocService,
+    private blockmlService: BlockmlService,
     private rabbitService: RabbitService,
-    private modelsRepository: repositories.ModelsRepository,
-    private metricsRepository: repositories.MetricsRepository,
-    private queriesRepository: repositories.QueriesRepository,
-    private kitsRepository: repositories.KitsRepository,
-    private mconfigsRepository: repositories.MconfigsRepository,
-    private dbService: DbService,
-    private blockmlService: BlockmlService
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   async getRepCheckExists(item: { repId: string; structId: string }) {
     let { repId, structId } = item;
 
-    let rep = await this.repsRepository.findOne({
-      where: {
-        struct_id: structId,
-        rep_id: repId
-      }
+    let rep = await this.db.drizzle.query.reportsTable.findFirst({
+      where: and(
+        eq(reportsTable.structId, structId),
+        eq(reportsTable.reportId, repId)
+      )
     });
+
+    // let rep = await this.repsRepository.findOne({
+    //   where: {
+    //     struct_id: structId,
+    //     rep_id: repId
+    //   }
+    // });
 
     if (common.isUndefined(rep)) {
       throw new common.ServerError({
@@ -61,13 +79,13 @@ export class ReportsService {
   getProcessedRows(item: {
     rowChange: common.RowChange;
     rowIds: string[];
-    metrics: entities.MetricEntity[];
+    metrics: schemaPostgres.MetricEnt[];
     rows: common.Row[];
     changeType: common.ChangeTypeEnum;
     timezone: string;
     timeSpec: common.TimeSpecEnum;
     timeRangeFractionBrick: string;
-    struct: entities.StructEntity;
+    struct: schemaPostgres.StructEnt;
   }) {
     let {
       rows,
@@ -188,22 +206,22 @@ export class ReportsService {
         row.rowId === editRow.rowId ? editRow : row
       );
     } else if (changeType === common.ChangeTypeEnum.ConvertToMetric) {
-      let metric: entities.MetricEntity = metrics.find(
-        m => m.metric_id === rowChange.metricId
+      let metric: schemaPostgres.MetricEnt = metrics.find(
+        m => m.metricId === rowChange.metricId
       );
 
       let editRow: common.Row = {
         rowId: rowChange.rowId,
         rowType: common.RowTypeEnum.Metric,
         name: undefined,
-        metricId: metric.metric_id,
-        topLabel: metric.top_label,
-        partNodeLabel: metric.part_node_label,
-        partFieldLabel: metric.part_field_label,
-        partLabel: metric.part_label,
-        timeNodeLabel: metric.time_node_label,
-        timeFieldLabel: metric.time_field_label,
-        timeLabel: metric.time_label,
+        metricId: metric.metricId,
+        topLabel: metric.topLabel,
+        partNodeLabel: metric.partNodeLabel,
+        partFieldLabel: metric.partFieldLabel,
+        partLabel: metric.partLabel,
+        timeNodeLabel: metric.timeNodeLabel,
+        timeFieldLabel: metric.timeFieldLabel,
+        timeLabel: metric.timeLabel,
         showChart: false,
         parameters: [],
         parametersFiltersWithExcludedTime: [],
@@ -219,9 +237,9 @@ export class ReportsService {
         query: undefined,
         hasAccessToModel: false,
         records: [],
-        formatNumber: metric.format_number,
-        currencyPrefix: metric.currency_prefix,
-        currencySuffix: metric.currency_suffix
+        formatNumber: metric.formatNumber,
+        currencyPrefix: metric.currencyPrefix,
+        currencySuffix: metric.currencySuffix
       };
 
       processedRows = processedRows.map(row =>
@@ -260,9 +278,9 @@ export class ReportsService {
         query: undefined,
         hasAccessToModel: false,
         records: [],
-        formatNumber: struct.format_number,
-        currencyPrefix: struct.currency_prefix,
-        currencySuffix: struct.currency_suffix
+        formatNumber: struct.formatNumber,
+        currencyPrefix: struct.currencyPrefix,
+        currencySuffix: struct.currencySuffix
       };
 
       processedRows = processedRows.map(row =>
@@ -291,8 +309,8 @@ export class ReportsService {
         rowId = common.rowIdNumberToLetter(rowIdNumber);
       }
 
-      let metric: entities.MetricEntity = metrics.find(
-        m => m.metric_id === rowChange.metricId
+      let metric: schemaPostgres.MetricEnt = metrics.find(
+        m => m.metricId === rowChange.metricId
       );
 
       let newRow: common.Row = {
@@ -300,13 +318,13 @@ export class ReportsService {
         rowType: rowChange.rowType,
         name: undefined,
         metricId: rowChange.metricId,
-        topLabel: metric.top_label,
-        partNodeLabel: metric.part_node_label,
-        partFieldLabel: metric.part_field_label,
-        partLabel: metric.part_label,
-        timeNodeLabel: metric.time_node_label,
-        timeFieldLabel: metric.time_field_label,
-        timeLabel: metric.time_label,
+        topLabel: metric.topLabel,
+        partNodeLabel: metric.partNodeLabel,
+        partFieldLabel: metric.partFieldLabel,
+        partLabel: metric.partLabel,
+        timeNodeLabel: metric.timeNodeLabel,
+        timeFieldLabel: metric.timeFieldLabel,
+        timeLabel: metric.timeLabel,
         showChart: rowChange.showChart,
         parameters: common.isDefined(rowChange.parameters)
           ? rowChange.parameters
@@ -324,9 +342,9 @@ export class ReportsService {
         query: undefined,
         hasAccessToModel: false,
         records: [],
-        formatNumber: metric.format_number,
-        currencyPrefix: metric.currency_prefix,
-        currencySuffix: metric.currency_suffix
+        formatNumber: metric.formatNumber,
+        currencyPrefix: metric.currencyPrefix,
+        currencySuffix: metric.currencySuffix
       };
 
       if (common.isDefined(rowChange.rowId)) {
@@ -488,8 +506,8 @@ export class ReportsService {
     projectId: string;
     repId: string;
     structId: string;
-    user: entities.UserEntity;
-    userMember: entities.MemberEntity;
+    user: schemaPostgres.UserEnt;
+    userMember: schemaPostgres.MemberEnt;
     checkExist: boolean;
     checkAccess: boolean;
   }) {
@@ -503,31 +521,52 @@ export class ReportsService {
       userMember
     } = item;
 
-    let emptyRep: entities.RepEntity = {
-      project_id: projectId,
-      struct_id: undefined,
-      rep_id: repId,
-      creator_id: undefined,
-      draft: common.BoolEnum.FALSE,
-      file_path: undefined,
+    let emptyRep = this.makerService.makeReport({
+      structId: undefined,
+      reportId: repId,
+      projectId: projectId,
+      creatorId: undefined,
+      filePath: undefined,
+      accessRoles: [],
+      accessUsers: [],
       title: repId,
-      access_roles: [],
-      access_users: [],
       rows: [],
-      draft_created_ts: undefined,
-      server_ts: undefined
-    };
+      draft: false
+    });
+
+    // let emptyRep: schemaPostgres.ReportEnt = {
+    //   projectId: projectId,
+    //   structId: undefined,
+    //   reportId: repId,
+    //   creatorId: undefined,
+    //   draft: false,
+    //   filePath: undefined,
+    //   title: repId,
+    //   accessRoles: [],
+    //   accessUsers: [],
+    //   rows: [],
+    //   draftCreatedTs: undefined,
+    //   serverTs: undefined
+    // };
 
     let rep =
       repId === common.EMPTY_REP_ID
         ? emptyRep
-        : await this.repsRepository.findOne({
-            where: {
-              project_id: projectId,
-              struct_id: structId,
-              rep_id: repId
-            }
+        : await this.db.drizzle.query.reportsTable.findFirst({
+            where: and(
+              eq(reportsTable.projectId, projectId),
+              eq(reportsTable.structId, structId),
+              eq(reportsTable.reportId, repId)
+            )
           });
+
+    // await this.repsRepository.findOne({
+    //     where: {
+    //       project_id: projectId,
+    //       struct_id: structId,
+    //       rep_id: repId
+    //     }
+    //   });
     if (checkExist === true && common.isUndefined(rep)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_REP_NOT_FOUND
@@ -536,8 +575,8 @@ export class ReportsService {
 
     if (
       repId !== common.EMPTY_REP_ID &&
-      rep.draft === common.BoolEnum.TRUE &&
-      rep.creator_id !== user.user_id
+      rep.draft === true &&
+      rep.creatorId !== user.userId
     ) {
       throw new common.ServerError({
         message:
@@ -545,7 +584,7 @@ export class ReportsService {
       });
     }
 
-    if (checkAccess === true && rep.draft === common.BoolEnum.FALSE) {
+    if (checkAccess === true && rep.draft === false) {
       let isAccessGranted = helper.checkAccess({
         userAlias: user.alias,
         member: userMember,
@@ -567,13 +606,13 @@ export class ReportsService {
     timezone: string;
     timeSpec: common.TimeSpecEnum;
     timeRangeFractionBrick: string;
-    struct: entities.StructEntity;
-    rep: entities.RepEntity;
-    project: entities.ProjectEntity;
+    struct: schemaPostgres.StructEnt;
+    rep: schemaPostgres.ReportEnt;
+    project: schemaPostgres.ProjectEnt;
     envId: string;
     userMemberApi: common.Member;
-    userMember: entities.MemberEntity;
-    user: entities.UserEntity;
+    userMember: schemaPostgres.MemberEnt;
+    user: schemaPostgres.UserEnt;
     isSaveToDb?: boolean;
   }) {
     let {
@@ -601,28 +640,42 @@ export class ReportsService {
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
-      projectWeekStart: struct.week_start
+      projectWeekStart: struct.weekStart
     });
 
     let metricIds = rep.rows.map(x => x.metricId);
 
-    let metrics = await this.metricsRepository.find({
-      where: {
-        metric_id: In(metricIds),
-        struct_id: struct.struct_id
-      }
+    let metrics = await this.db.drizzle.query.metricsTable.findMany({
+      where: and(
+        inArray(metricsTable.metricId, metricIds),
+        eq(metricsTable.structId, struct.structId)
+      )
     });
+
+    // let metrics = await this.metricsRepository.find({
+    //   where: {
+    //     metric_id: In(metricIds),
+    //     struct_id: struct.struct_id
+    //   }
+    // });
 
     let modelIds = metrics
-      .filter(m => common.isDefined(m.model_id))
-      .map(x => x.model_id);
+      .filter(m => common.isDefined(m.modelId))
+      .map(x => x.modelId);
 
-    let models = await this.modelsRepository.find({
-      where: {
-        model_id: In(modelIds),
-        struct_id: struct.struct_id
-      }
+    let models = await this.db.drizzle.query.modelsTable.findMany({
+      where: and(
+        inArray(modelsTable.modelId, modelIds),
+        eq(modelsTable.structId, struct.structId)
+      )
     });
+
+    // let models = await this.modelsRepository.find({
+    //   where: {
+    //     model_id: In(modelIds),
+    //     struct_id: struct.struct_id
+    //   }
+    // });
 
     if (
       rep.rows.filter(
@@ -692,15 +745,15 @@ export class ReportsService {
           let newMconfigId = common.makeId();
           let newQueryId = common.makeId();
 
-          let metric: entities.MetricEntity = metrics.find(
-            m => m.metric_id === x.metricId
+          let metric: schemaPostgres.MetricEnt = metrics.find(
+            m => m.metricId === x.metricId
           );
 
-          let model = models.find(ml => ml.model_id === metric.model_id);
+          let model = models.find(ml => ml.modelId === metric.modelId);
 
           let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
 
-          let timeFieldIdSpec = `${metric.timefield_id}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
+          let timeFieldIdSpec = `${metric.timefieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
           let timeSorting: common.Sorting = {
             desc: false,
@@ -720,12 +773,12 @@ export class ReportsService {
           );
 
           let mconfig: common.Mconfig = {
-            structId: struct.struct_id,
+            structId: struct.structId,
             mconfigId: newMconfigId,
             queryId: newQueryId,
-            modelId: model.model_id,
+            modelId: model.modelId,
             modelLabel: model.label,
-            select: [timeFieldIdSpec, metric.field_id],
+            select: [timeFieldIdSpec, metric.fieldId],
             sortings: [timeSorting],
             sorts: timeFieldIdSpec,
             timezone: timezone,
@@ -758,10 +811,10 @@ export class ReportsService {
                 traceId: traceId
               },
               payload: {
-                orgId: project.org_id,
-                projectId: project.project_id,
-                weekStart: struct.week_start,
-                udfsDict: struct.udfs_dict,
+                orgId: project.orgId,
+                projectId: project.projectId,
+                weekStart: struct.weekStart,
+                udfsDict: struct.udfsDict,
                 mconfig: mconfig,
                 modelContent: model.content,
                 envId: envId
@@ -804,46 +857,68 @@ export class ReportsService {
       }
     });
 
-    let mconfigs: entities.MconfigEntity[] = [];
+    let mconfigs: schemaPostgres.MconfigEnt[] = [];
     if (mconfigIds.length > 0) {
-      mconfigs = await this.mconfigsRepository.find({
-        where: {
-          mconfig_id: In(mconfigIds),
-          struct_id: struct.struct_id
-        }
+      mconfigs = await this.db.drizzle.query.mconfigsTable.findMany({
+        where: and(
+          inArray(mconfigsTable.mconfigId, mconfigIds),
+          eq(mconfigsTable.structId, struct.structId)
+        )
       });
+
+      // mconfigs = await this.mconfigsRepository.find({
+      //   where: {
+      //     mconfig_id: In(mconfigIds),
+      //     struct_id: struct.struct_id
+      //   }
+      // });
     }
 
-    let queries: entities.QueryEntity[] = [];
+    let queries: schemaPostgres.QueryEnt[] = [];
     if (queryIds.length > 0) {
-      queries = await this.queriesRepository.find({
-        where: {
-          query_id: In(queryIds),
-          project_id: project.project_id
-        }
+      queries = await this.db.drizzle.query.queriesTable.findMany({
+        where: and(
+          inArray(queriesTable.queryId, queryIds),
+          eq(queriesTable.projectId, project.projectId)
+        )
       });
+
+      // queries = await this.queriesRepository.find({
+      //   where: {
+      //     query_id: In(queryIds),
+      //     project_id: project.project_id
+      //   }
+      // });
     }
 
-    let kits: entities.KitEntity[] = [];
+    let kits: schemaPostgres.KitEnt[] = [];
     if (kitIds.length > 0) {
-      kits = await this.kitsRepository.find({
-        where: {
-          kit_id: In(kitIds),
-          struct_id: rep.struct_id
-        }
+      kits = await this.db.drizzle.query.kitsTable.findMany({
+        where: and(
+          inArray(kitsTable.kitId, kitIds),
+          eq(kitsTable.structId, rep.structId)
+        )
       });
+
+      // kits = await this.kitsRepository.find({
+      //   where: {
+      //     kit_id: In(kitIds),
+      //     struct_id: rep.struct_id
+      //   }
+      // });
     }
 
-    let queriesApi = queries.map(x => wrapper.wrapToApiQuery(x));
+    let queriesApi = queries.map(x => this.wrapToApiService.wrapToApiQuery(x));
+
     let mconfigsApi = mconfigs.map(x =>
-      wrapper.wrapToApiMconfig({
+      this.wrapToApiService.wrapToApiMconfig({
         mconfig: x,
-        modelFields: models.find(m => m.model_id === x.model_id).fields
+        modelFields: models.find(m => m.modelId === x.modelId).fields
       })
     );
 
     let modelsApi = models.map(model =>
-      wrapper.wrapToApiModel({
+      this.wrapToApiService.wrapToApiModel({
         model: model,
         hasAccess: helper.checkAccess({
           userAlias: user.alias,
@@ -863,13 +938,13 @@ export class ReportsService {
 
       if (x.rowType === common.RowTypeEnum.Metric) {
         let newMconfigsEntities = newMconfigs.map(m =>
-          wrapper.wrapToEntityMconfig(m)
+          this.wapToEntService.wrapToEntityMconfig({ mconfig: m })
         );
 
         let newMconfigsApi = newMconfigsEntities.map(y =>
-          wrapper.wrapToApiMconfig({
+          this.wrapToApiService.wrapToApiMconfig({
             mconfig: y,
-            modelFields: modelsApi.find(m => m.modelId === y.model_id).fields
+            modelFields: modelsApi.find(m => m.modelId === y.modelId).fields
           })
         );
 
@@ -883,7 +958,7 @@ export class ReportsService {
       }
     });
 
-    let repApi = wrapper.wrapToApiRep({
+    let repApi = this.wrapToApiService.wrapToApiRep({
       rep: rep,
       models: modelsApi,
       member: userMemberApi,
@@ -933,7 +1008,7 @@ export class ReportsService {
     });
 
     let isCalculateData =
-      rep.rep_id !== common.EMPTY_REP_ID &&
+      rep.reportId !== common.EMPTY_REP_ID &&
       queryRows.length === queryRowsCompleted.length &&
       (queryRowsCompleted.length !== queryRowsCompletedCalculated.length ||
         formulaRows.length !== formulaRowsCalculated.length);
@@ -987,19 +1062,38 @@ export class ReportsService {
               return record;
             })
           : common.isDefined(rq.kitId)
-          ? kits.find(k => k.kit_id === rq.kitId).data
+          ? (kits.find(k => k.kitId === rq.kitId).data as any[])
           : [];
       });
     }
 
     if (newMconfigs.length > 0 || newQueries.length > 0) {
-      await this.dbService.writeRecords({
-        modify: false,
-        records: {
-          mconfigs: newMconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
-          queries: newQueries.map(x => wrapper.wrapToEntityQuery(x))
-        }
-      });
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insert: {
+                  mconfigs: newMconfigs.map(x =>
+                    this.wapToEntService.wrapToEntityMconfig({ mconfig: x })
+                  ),
+                  queries: newQueries.map(x =>
+                    this.wapToEntService.wrapToEntityQuery({ query: x })
+                  )
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+
+      // await this.dbService.writeRecords({
+      //   modify: false,
+      //   records: {
+      //     mconfigs: newMconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
+      //     queries: newQueries.map(x => wrapper.wrapToEntityQuery(x))
+      //   }
+      // });
     }
 
     if (
@@ -1017,12 +1111,26 @@ export class ReportsService {
 
       rep.rows = dbRows;
 
-      await this.dbService.writeRecords({
-        modify: true,
-        records: {
-          reps: [rep]
-        }
-      });
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                update: {
+                  reports: [rep]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+
+      // await this.dbService.writeRecords({
+      //   modify: true,
+      //   records: {
+      //     reps: [rep]
+      //   }
+      // });
     }
 
     return repApi;

@@ -7,7 +7,6 @@ import * as pgPromise from 'pg-promise';
 import pg from 'pg-promise/typescript/pg-subset';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
@@ -33,15 +32,14 @@ export class DocService {
   constructor(
     private rabbitService: RabbitService,
     private userCodeService: UserCodeService,
-    // private dbService: DbService,
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   async calculateParameters(item: {
-    metrics: entities.MetricEntity[];
-    models: entities.ModelEntity[];
+    metrics: schemaPostgres.MetricEnt[];
+    models: schemaPostgres.ModelEnt[];
     rows: common.Row[];
     traceId: string;
   }) {
@@ -332,8 +330,8 @@ Formula must return a valid JSON object.`;
             let fieldId = parameter.filter.split('.').join('_').toUpperCase();
             parameter.parameterId = `${row.rowId}_${fieldId}`;
 
-            let metric = metrics.find(m => m.metric_id === row.metricId);
-            let model = models.find(ml => ml.model_id === metric.model_id);
+            let metric = metrics.find(m => m.metricId === row.metricId);
+            let model = models.find(ml => ml.modelId === metric.modelId);
             let field = model.fields.find(f => f.id === parameter.filter);
 
             if (common.isDefined(field)) {

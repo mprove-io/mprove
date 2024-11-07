@@ -8,6 +8,53 @@ import { HashService } from './hash.service';
 export class MakerService {
   constructor(private hashService: HashService) {}
 
+  makeReport(item: {
+    structId: string;
+    reportId: string;
+    projectId: string;
+    creatorId: string;
+    filePath: string;
+    accessUsers: string[];
+    accessRoles: string[];
+    title: string;
+    rows: common.Row[];
+    draft: boolean;
+  }) {
+    let {
+      structId,
+      reportId,
+      projectId,
+      creatorId,
+      filePath,
+      accessUsers,
+      accessRoles,
+      title,
+      rows,
+      draft
+    } = item;
+
+    let report: schemaPostgres.ReportEnt = {
+      reportFullId: this.hashService.makeReportFullId({
+        structId: structId,
+        reportId: reportId
+      }),
+      structId: structId,
+      reportId: reportId,
+      projectId: projectId,
+      creatorId: creatorId,
+      filePath: filePath,
+      accessUsers: accessUsers,
+      accessRoles: accessRoles,
+      title: title,
+      rows: rows,
+      draft: draft,
+      draftCreatedTs: undefined,
+      serverTs: undefined
+    };
+
+    return report;
+  }
+
   makeMember(item: {
     projectId: string;
     roles?: string[];
