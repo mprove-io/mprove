@@ -3,7 +3,6 @@ import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
@@ -28,7 +27,10 @@ export class GetNavController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetNav)
-  async getNav(@AttachUser() user: entities.UserEntity, @Req() request: any) {
+  async getNav(
+    @AttachUser() user: schemaPostgres.UserEntity,
+    @Req() request: any
+  ) {
     let reqValid: apiToBackend.ToBackendGetNavRequest = request.body;
 
     let { orgId, projectId, getRepo } = reqValid.payload;
@@ -87,7 +89,7 @@ export class GetNavController {
 
     let resultProject = projects.find(x => x.project_id === resultProjectId);
 
-    let bridge: entities.BridgeEntity;
+    let bridge: schemaPostgres.BridgeEntity;
 
     if (common.isDefined(resultProject)) {
       bridge = await this.bridgesRepository.findOne({

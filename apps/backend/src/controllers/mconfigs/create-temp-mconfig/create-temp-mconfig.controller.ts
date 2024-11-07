@@ -1,7 +1,6 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
@@ -33,7 +32,7 @@ export class CreateTempMconfigController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfig)
   async createTempMconfig(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEntity,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendCreateTempMconfigRequest = request.body;

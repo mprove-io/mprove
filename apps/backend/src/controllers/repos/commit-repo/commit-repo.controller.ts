@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { AttachUser } from '~backend/decorators/_index';
@@ -26,7 +25,7 @@ export class CommitRepoController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCommitRepo)
   async commitRepo(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEntity,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendCommitRepoRequest = request.body;

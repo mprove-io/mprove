@@ -3,7 +3,6 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
@@ -27,7 +26,7 @@ export class GetRebuildStructController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRebuildStruct)
   async getRebuildStruct(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEntity,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendGetRebuildStructRequest = request.body;

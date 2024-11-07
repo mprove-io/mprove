@@ -1,7 +1,7 @@
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 
 export class DbRecords {
-  avatars?: schemaPostgres.UserEnt[];
+  avatars?: schemaPostgres.AvatarEnt[];
   branches?: schemaPostgres.BranchEnt[];
   bridges?: schemaPostgres.BridgeEnt[];
   connections?: schemaPostgres.ConnectionEnt[];

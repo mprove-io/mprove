@@ -1,7 +1,6 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -17,7 +16,7 @@ export class IsProjectExistController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendIsProjectExist)
   async isProjectExist(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEntity,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendIsProjectExistRequest = request.body;

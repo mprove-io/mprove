@@ -2,7 +2,6 @@ import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
@@ -22,7 +21,10 @@ export class GetEnvsController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvs)
-  async getEnvs(@AttachUser() user: entities.UserEntity, @Req() request: any) {
+  async getEnvs(
+    @AttachUser() user: schemaPostgres.UserEntity,
+    @Req() request: any
+  ) {
     let reqValid: apiToBackend.ToBackendGetEnvsRequest = request.body;
 
     let { projectId, perPage, pageNum } = reqValid.payload;

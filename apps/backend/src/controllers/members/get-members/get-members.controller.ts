@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
@@ -25,7 +24,7 @@ export class GetMembersController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMembers)
   async getMembers(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEntity,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendGetMembersRequest = request.body;

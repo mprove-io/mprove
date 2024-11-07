@@ -1,7 +1,6 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { AttachUser } from '~backend/decorators/_index';
@@ -28,7 +27,7 @@ export class DeleteProjectController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteProject)
   async deleteProject(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEntity,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendDeleteProjectRequest = request.body;

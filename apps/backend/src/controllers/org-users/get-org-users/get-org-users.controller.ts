@@ -2,7 +2,6 @@ import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { DataSource, In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { AttachUser } from '~backend/decorators/_index';
 import { makeFullName } from '~backend/functions/make-full-name';
@@ -27,7 +26,7 @@ export class GetOrgUsersController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers)
   async getOrgUsers(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEntity,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendGetOrgUsersRequest = request.body;

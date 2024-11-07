@@ -1,7 +1,6 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
@@ -39,7 +38,7 @@ export class DuplicateMconfigAndQueryController {
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDuplicateMconfigAndQuery
   )
   async duplicateMconfigAndQuery(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEntity,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendDuplicateMconfigAndQueryRequest =
@@ -122,13 +121,15 @@ export class DuplicateMconfigAndQueryController {
     let newMconfigId = common.makeId();
     let newQueryId = common.makeId();
 
-    let newMconfig = Object.assign({}, oldMconfig, <entities.MconfigEntity>{
+    let newMconfig = Object.assign({}, oldMconfig, <
+      schemaPostgres.MconfigEntity
+    >{
       mconfig_id: newMconfigId,
       query_id: newQueryId,
       temp: common.BoolEnum.TRUE
     });
 
-    let newQuery = Object.assign({}, oldQuery, <entities.QueryEntity>{
+    let newQuery = Object.assign({}, oldQuery, <schemaPostgres.QueryEntity>{
       query_id: newQueryId
     });
 

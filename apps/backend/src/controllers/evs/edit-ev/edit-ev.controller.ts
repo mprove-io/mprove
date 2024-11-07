@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
@@ -29,7 +28,10 @@ export class EditEvController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditEv)
-  async editEv(@AttachUser() user: entities.UserEntity, @Req() request: any) {
+  async editEv(
+    @AttachUser() user: schemaPostgres.UserEntity,
+    @Req() request: any
+  ) {
     let reqValid: apiToBackend.ToBackendEditEvRequest = request.body;
 
     let { projectId, envId, evId, val: value } = reqValid.payload;

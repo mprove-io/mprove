@@ -2,7 +2,6 @@ import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import asyncPool from 'tiny-async-pool';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -25,7 +24,7 @@ export class RunQueriesDryController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry)
   async runQueriesDry(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEntity,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendRunQueriesDryRequest = request.body;
@@ -34,7 +33,7 @@ export class RunQueriesDryController {
 
     let results: {
       validEstimate: common.QueryEstimate;
-      errorQuery: entities.QueryEntity;
+      errorQuery: schemaPostgres.QueryEntity;
     }[] = await asyncPool(8, queryIds, async queryId => {
       let query = await this.queriesService.getQueryCheckExistsSkipData({
         projectId: projectId,

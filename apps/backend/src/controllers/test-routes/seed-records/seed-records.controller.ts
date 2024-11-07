@@ -4,7 +4,6 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { maker } from '~backend/barrels/maker';
 import { wrapper } from '~backend/barrels/wrapper';
@@ -44,24 +43,24 @@ export class SeedRecordsController {
 
     //
 
-    let users: entities.UserEntity[] = [];
-    let orgs: entities.OrgEntity[] = [];
-    let projects: entities.ProjectEntity[] = [];
-    let envs: entities.EnvEntity[] = [];
-    let evs: entities.EvEntity[] = [];
-    let members: entities.MemberEntity[] = [];
-    let connections: entities.ConnectionEntity[] = [];
-    let structs: entities.StructEntity[] = [];
-    let branches: entities.BranchEntity[] = [];
-    let bridges: entities.BridgeEntity[] = [];
-    let vizs: entities.VizEntity[] = [];
-    let queries: entities.QueryEntity[] = [];
-    let models: entities.ModelEntity[] = [];
-    let metrics: entities.MetricEntity[] = [];
-    let reps: entities.RepEntity[] = [];
-    let apis: entities.ApiEntity[] = [];
-    let mconfigs: entities.MconfigEntity[] = [];
-    let dashboards: entities.DashboardEntity[] = [];
+    let users: schemaPostgres.UserEntity[] = [];
+    let orgs: schemaPostgres.OrgEntity[] = [];
+    let projects: schemaPostgres.ProjectEntity[] = [];
+    let envs: schemaPostgres.EnvEntity[] = [];
+    let evs: schemaPostgres.EvEntity[] = [];
+    let members: schemaPostgres.MemberEntity[] = [];
+    let connections: schemaPostgres.ConnectionEntity[] = [];
+    let structs: schemaPostgres.StructEntity[] = [];
+    let branches: schemaPostgres.BranchEntity[] = [];
+    let bridges: schemaPostgres.BridgeEntity[] = [];
+    let vizs: schemaPostgres.VizEntity[] = [];
+    let queries: schemaPostgres.QueryEntity[] = [];
+    let models: schemaPostgres.ModelEntity[] = [];
+    let metrics: schemaPostgres.MetricEntity[] = [];
+    let reps: schemaPostgres.RepEntity[] = [];
+    let apis: schemaPostgres.ApiEntity[] = [];
+    let mconfigs: schemaPostgres.MconfigEntity[] = [];
+    let dashboards: schemaPostgres.DashboardEntity[] = [];
 
     if (common.isDefined(payloadUsers)) {
       await asyncPool(

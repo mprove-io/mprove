@@ -2,7 +2,6 @@ import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { interfaces } from '~backend/barrels/interfaces';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
@@ -31,7 +30,7 @@ export class RegisterUserController {
 
     let { email, password } = reqValid.payload;
 
-    let newUser: entities.UserEntity;
+    let newUser: schemaPostgres.UserEntity;
 
     let { salt, hash } = await this.usersService.makeSaltAndHash(password);
 

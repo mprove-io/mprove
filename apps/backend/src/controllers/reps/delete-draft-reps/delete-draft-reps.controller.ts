@@ -2,7 +2,6 @@ import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { In } from 'typeorm/find-options/operator/In';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -26,7 +25,7 @@ export class DeleteDraftRepsController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftReps)
   async deleteDraftReps(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEntity,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendDeleteDraftRepsRequest = request.body;

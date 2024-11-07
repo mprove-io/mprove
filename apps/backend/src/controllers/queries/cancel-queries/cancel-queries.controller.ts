@@ -5,7 +5,6 @@ import asyncPool from 'tiny-async-pool';
 import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
@@ -30,7 +29,7 @@ export class CancelQueriesController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries)
   async cancelQueries(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEntity,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendCancelQueriesRequest = request.body;
@@ -57,7 +56,7 @@ export class CancelQueriesController {
     await asyncPool(
       8,
       queries.filter(q => q.status === common.QueryStatusEnum.Running),
-      async (query: entities.QueryEntity) => {
+      async (query: schemaPostgres.QueryEntity) => {
         let connection = projectConnections.find(
           x => x.connection_id === query.connection_id
         );

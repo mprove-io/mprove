@@ -5,7 +5,6 @@ import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
@@ -49,7 +48,7 @@ export class SpecialRebuildStructsController {
     }
 
     let projectIds: string[] = [];
-    let members: entities.MemberEntity[] = [];
+    let members: schemaPostgres.MemberEntity[] = [];
 
     if (userIds.length > 0) {
       members = await this.membersRepository.find({
@@ -59,7 +58,7 @@ export class SpecialRebuildStructsController {
       projectIds = members.map(x => x.project_id);
     }
 
-    let projects: entities.ProjectEntity[] = [];
+    let projects: schemaPostgres.ProjectEntity[] = [];
 
     if (projectIds.length > 0) {
       projects = await this.projectsRepository.find({
@@ -69,7 +68,7 @@ export class SpecialRebuildStructsController {
       projects = await this.projectsRepository.find();
     }
 
-    let bridges: entities.BridgeEntity[];
+    let bridges: schemaPostgres.BridgeEntity[];
 
     if (userIds.length > 0) {
       bridges = await this.bridgesRepository.find({

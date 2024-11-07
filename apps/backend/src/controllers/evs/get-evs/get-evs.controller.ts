@@ -1,6 +1,5 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
@@ -20,7 +19,10 @@ export class GetEvsController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEvs)
-  async getEvs(@AttachUser() user: entities.UserEntity, @Req() request: any) {
+  async getEvs(
+    @AttachUser() user: schemaPostgres.UserEntity,
+    @Req() request: any
+  ) {
     let reqValid: apiToBackend.ToBackendGetEvsRequest = request.body;
 
     let { projectId, envId } = reqValid.payload;

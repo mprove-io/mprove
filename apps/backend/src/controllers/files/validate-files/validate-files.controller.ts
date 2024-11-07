@@ -4,7 +4,6 @@ import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
@@ -37,7 +36,10 @@ export class ValidateFilesController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendValidateFiles)
-  async saveFile(@AttachUser() user: entities.UserEntity, @Req() request: any) {
+  async saveFile(
+    @AttachUser() user: schemaPostgres.UserEntity,
+    @Req() request: any
+  ) {
     let reqValid: apiToBackend.ToBackendValidateFilesRequest = request.body;
 
     let { traceId } = reqValid.info;

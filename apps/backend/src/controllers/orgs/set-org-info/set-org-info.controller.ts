@@ -1,7 +1,6 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { common } from '~api-to-backend/barrels/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -15,7 +14,7 @@ export class SetOrgInfoController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgInfo)
   async setOrgInfo(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEntity,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendSetOrgInfoRequest = request.body;

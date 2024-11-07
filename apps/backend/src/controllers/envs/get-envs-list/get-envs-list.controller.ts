@@ -2,7 +2,6 @@ import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser } from '~backend/decorators/_index';
@@ -21,7 +20,7 @@ export class GetEnvsListController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvsList)
   async getEnvsList(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEntity,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendGetEnvsListRequest = request.body;
@@ -37,7 +36,7 @@ export class GetEnvsListController {
       memberId: user.user_id
     });
 
-    let envs: entities.EnvEntity[] = [];
+    let envs: schemaPostgres.EnvEntity[] = [];
 
     if (isFilter === true) {
       envs = await this.envsRepository.find({

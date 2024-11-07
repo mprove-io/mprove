@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { AttachUser } from '~backend/decorators/_index';
@@ -27,7 +26,10 @@ export class DeleteEvController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEv)
-  async deleteEv(@AttachUser() user: entities.UserEntity, @Req() request: any) {
+  async deleteEv(
+    @AttachUser() user: schemaPostgres.UserEntity,
+    @Req() request: any
+  ) {
     let reqValid: apiToBackend.ToBackendDeleteEvRequest = request.body;
 
     let { projectId, envId, evId } = reqValid.payload;

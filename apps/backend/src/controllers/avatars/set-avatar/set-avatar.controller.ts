@@ -1,24 +1,37 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { eq } from 'drizzle-orm';
 import { common } from '~api-to-backend/barrels/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { entities } from '~backend/barrels/entities';
-import { maker } from '~backend/barrels/maker';
-import { repositories } from '~backend/barrels/repositories';
+import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { DbService } from '~backend/services/db.service';
+
+let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class SetAvatarController {
   constructor(
-    private avatarsRepository: repositories.AvatarsRepository,
-    private dbService: DbService
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetAvatar)
   async setAvatar(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendSetAvatarRequest = request.body;
@@ -31,35 +44,58 @@ export class SetAvatarController {
 
     let { avatarSmall, avatarBig } = reqValid.payload;
 
-    let avatar: entities.AvatarEntity;
-
-    avatar = await this.avatarsRepository.findOne({
-      where: {
-        user_id: user.user_id
-      }
+    let avatar = await this.db.drizzle.query.avatarsTable.findFirst({
+      where: eq(avatarsTable.userId, user.userId)
     });
+
+    // avatar = await this.avatarsRepository.findOne({
+    //   where: {
+    //     user_id: user.user_id
+    //   }
+    // });
 
     if (common.isDefined(avatar)) {
-      avatar.avatar_small = avatarSmall;
-      avatar.avatar_big = avatarBig;
+      avatar.avatarSmall = avatarSmall;
+      avatar.avatarBig = avatarBig;
     } else {
-      avatar = maker.makeAvatar({
-        userId: user.user_id,
+      avatar = {
+        userId: user.userId,
         avatarSmall: avatarSmall,
-        avatarBig: avatarBig
-      });
+        avatarBig: avatarBig,
+        serverTs: undefined
+      };
+
+      // this.makerService.makeAvatar({
+      //   userId: user.userId,
+      //   avatarSmall: avatarSmall,
+      //   avatarBig: avatarBig
+      // });
     }
 
-    await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        avatars: [avatar]
-      }
-    });
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insertOrUpdate: {
+                avatars: [avatar]
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    // await this.dbService.writeRecords({
+    //   modify: true,
+    //   records: {
+    //     avatars: [avatar]
+    //   }
+    // });
 
     let payload: apiToBackend.ToBackendSetAvatarResponsePayload = {
-      avatarSmall: avatar.avatar_small,
-      avatarBig: avatar.avatar_big
+      avatarSmall: avatar.avatarSmall,
+      avatarBig: avatar.avatarBig
     };
 
     return payload;

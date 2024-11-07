@@ -1,7 +1,6 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, SkipJwtCheck } from '~backend/decorators/_index';
 import { LocalAuthGuard } from '~backend/guards/local-auth.guard';
@@ -16,7 +15,7 @@ export class LoginUserController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser)
   async loginUser(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEntity,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendLoginUserRequest = request.body;

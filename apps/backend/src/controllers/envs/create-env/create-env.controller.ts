@@ -1,7 +1,6 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
@@ -27,7 +26,7 @@ export class CreateEnvController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEnv)
   async createEnv(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEntity,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendCreateEnvRequest = request.body;
@@ -59,7 +58,7 @@ export class CreateEnvController {
       }
     });
 
-    let newBridges: entities.BridgeEntity[] = [];
+    let newBridges: schemaPostgres.BridgeEntity[] = [];
 
     branches.forEach(x => {
       let newBridge = maker.makeBridge({

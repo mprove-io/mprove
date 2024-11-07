@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
@@ -37,14 +36,14 @@ export class RunQueriesController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries)
   async runQueries(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEntity,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendRunQueriesRequest = request.body;
 
     let { projectId, queryIds, poolSize } = reqValid.payload;
 
-    let runningQueries: entities.QueryEntity[] = [];
+    let runningQueries: schemaPostgres.QueryEntity[] = [];
     let startedQueryIds: string[] = [];
 
     let pSize = 1;

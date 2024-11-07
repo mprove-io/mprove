@@ -2,7 +2,6 @@ import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
@@ -37,7 +36,7 @@ export class CreateDraftRepController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDraftRep)
   async createDraftRep(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEntity,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendCreateDraftRepRequest = request.body;
@@ -90,7 +89,7 @@ export class CreateDraftRepController {
       projectId: projectId
     });
 
-    let fromRep: entities.RepEntity = await this.repsService.getRep({
+    let fromRep: schemaPostgres.RepEntity = await this.repsService.getRep({
       projectId: projectId,
       repId: fromRepId,
       structId: bridge.struct_id,
@@ -168,16 +167,15 @@ export class CreateDraftRepController {
     let fromCopyMconfigIds = copyMconfigsMap.map(x => x.fromMconfigId);
     let fromCopyKitIds = copyKitsMap.map(x => x.fromKitId);
 
-    let copyQueries: entities.QueryEntity[] = await this.queriesRepository.find(
-      {
+    let copyQueries: schemaPostgres.QueryEntity[] =
+      await this.queriesRepository.find({
         where: {
           query_id: In(fromCopyQueryIds),
           project_id: projectId
         }
-      }
-    );
+      });
 
-    let copyMconfigs: entities.MconfigEntity[] =
+    let copyMconfigs: schemaPostgres.MconfigEntity[] =
       await this.mconfigsRepository.find({
         where: {
           mconfig_id: In(fromCopyMconfigIds),
@@ -185,7 +183,7 @@ export class CreateDraftRepController {
         }
       });
 
-    let copyKits: entities.KitEntity[] = await this.kitsRepository.find({
+    let copyKits: schemaPostgres.KitEntity[] = await this.kitsRepository.find({
       where: {
         kit_id: In(fromCopyKitIds),
         struct_id: struct.struct_id,
@@ -251,7 +249,7 @@ export class CreateDraftRepController {
       struct: struct
     });
 
-    let rep: entities.RepEntity = {
+    let rep: schemaPostgres.RepEntity = {
       project_id: projectId,
       struct_id: bridge.struct_id,
       rep_id: repId,

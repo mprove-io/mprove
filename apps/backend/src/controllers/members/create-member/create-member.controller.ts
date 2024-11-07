@@ -5,7 +5,6 @@ import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { maker } from '~backend/barrels/maker';
@@ -40,7 +39,7 @@ export class CreateMemberController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateMember)
   async createMember(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEntity,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendCreateMemberRequest = request.body;
@@ -138,7 +137,7 @@ export class CreateMemberController {
       }
     });
 
-    let devBranchBridges: entities.BridgeEntity[] = [];
+    let devBranchBridges: schemaPostgres.BridgeEntity[] = [];
 
     prodBranchBridges.forEach(x => {
       let devBranchBridge = maker.makeBridge({

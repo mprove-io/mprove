@@ -4,7 +4,6 @@ import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { AttachUser } from '~backend/decorators/_index';
@@ -25,7 +24,7 @@ export class DeleteUserController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteUser)
   async deleteUser(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEntity,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendDeleteUserRequest = request.body;
@@ -107,7 +106,7 @@ export class DeleteUserController {
             }
           });
 
-    await asyncPool(1, userMembers, async (m: entities.MemberEntity) => {
+    await asyncPool(1, userMembers, async (m: schemaPostgres.MemberEntity) => {
       let project = projects.find(p => p.project_id === m.project_id);
 
       let toDiskDeleteDevRepoRequest: apiToDisk.ToDiskDeleteDevRepoRequest = {
