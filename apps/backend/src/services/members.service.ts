@@ -14,7 +14,6 @@ import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { BlockmlService } from './blockml.service';
-import { HashService } from './hash.service';
 import { MakerService } from './maker.service';
 import { RabbitService } from './rabbit.service';
 
@@ -29,7 +28,6 @@ export class MembersService {
     // private bridgesRepository: repositories.BridgesRepository,
     // private dbService: DbService,
     private makerService: MakerService,
-    private hashService: HashService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
     private cs: ConfigService<interfaces.Config>,
