@@ -22,9 +22,9 @@ let retry = require('async-retry');
 @Injectable()
 export class MembersService {
   constructor(
-    private makerService: MakerService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
+    private makerService: MakerService,
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db

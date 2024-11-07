@@ -1,26 +1,29 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-import { In } from 'typeorm';
+import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { and, asc, eq, inArray } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class GetBranchesListController {
   constructor(
-    private branchesRepository: repositories.BranchesRepository,
     private projectsService: ProjectsService,
-    private membersService: MembersService
+    private membersService: MembersService,
+    private wrapToApiService: WrapToApiService,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetBranchesList)
   async getBranchesList(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendGetBranchesListRequest = request.body;
@@ -32,27 +35,35 @@ export class GetBranchesListController {
     });
 
     let userMember = await this.membersService.getMemberCheckExists({
-      memberId: user.user_id,
+      memberId: user.userId,
       projectId: projectId
     });
 
-    let branches = await this.branchesRepository.find({
-      where: {
-        project_id: projectId,
-        repo_id: In([common.PROD_REPO_ID, user.user_id])
-      },
-      order: {
-        branch_id: 'ASC'
-      }
+    let branches = await this.db.drizzle.query.branchesTable.findMany({
+      where: and(
+        eq(branchesTable.projectId, projectId),
+        inArray(branchesTable.repoId, [common.PROD_REPO_ID, user.userId])
+      ),
+      orderBy: asc(branchesTable.branchId)
     });
 
-    let apiMember = wrapper.wrapToApiMember(userMember);
+    // let branches = await this.branchesRepository.find({
+    //   where: {
+    //     project_id: projectId,
+    //     repo_id: In([common.PROD_REPO_ID, user.user_id])
+    //   },
+    //   order: {
+    //     branch_id: 'ASC'
+    //   }
+    // });
+
+    let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
     let payload: apiToBackend.ToBackendGetBranchesListResponsePayload = {
       userMember: apiMember,
       branchesList: branches.map(x => ({
-        branchId: x.branch_id,
-        isRepoProd: x.repo_id === common.PROD_REPO_ID
+        branchId: x.branchId,
+        isRepoProd: x.repoId === common.PROD_REPO_ID
       }))
     };
 
