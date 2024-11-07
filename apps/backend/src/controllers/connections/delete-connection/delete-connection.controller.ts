@@ -1,28 +1,44 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { repositories } from '~backend/barrels/repositories';
+import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
+import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+
+let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class DeleteConnectionController {
   constructor(
     private projectsService: ProjectsService,
-    private connectionsRepository: repositories.ConnectionsRepository,
-    private bridgesRepository: repositories.BridgesRepository,
-    private dbService: DbService,
-    private membersService: MembersService
+    private membersService: MembersService,
+    private wrapToApiService: WrapToApiService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteConnection)
   async deleteConnection(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendDeleteConnectionRequest = request.body;
@@ -35,33 +51,63 @@ export class DeleteConnectionController {
     });
 
     await this.membersService.checkMemberIsAdmin({
-      memberId: user.user_id,
+      memberId: user.userId,
       projectId: projectId
     });
 
-    await this.connectionsRepository.delete({
-      project_id: projectId,
-      env_id: envId,
-      connection_id: connectionId
+    let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
+      where: and(
+        eq(bridgesTable.projectId, projectId),
+        eq(bridgesTable.envId, envId)
+      )
     });
 
-    let branchBridges = await this.bridgesRepository.find({
-      where: {
-        project_id: projectId,
-        env_id: envId
-      }
-    });
+    // let branchBridges = await this.bridgesRepository.find({
+    //   where: {
+    //     project_id: projectId,
+    //     env_id: envId
+    //   }
+    // });
 
     await forEachSeries(branchBridges, async x => {
-      x.need_validate = common.BoolEnum.TRUE;
+      x.needValidate = true;
     });
 
-    await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        bridges: [...branchBridges]
-      }
-    });
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(async tx => {
+          await tx
+            .delete(connectionsTable)
+            .where(
+              and(
+                eq(connectionsTable.projectId, projectId),
+                eq(connectionsTable.envId, envId),
+                eq(connectionsTable.connectionId, connectionId)
+              )
+            );
+
+          await this.db.packer.write({
+            tx: tx,
+            insertOrUpdate: {
+              bridges: [...branchBridges]
+            }
+          });
+        }),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    // await this.connectionsRepository.delete({
+    //   project_id: projectId,
+    //   env_id: envId,
+    //   connection_id: connectionId
+    // });
+
+    // await this.dbService.writeRecords({
+    //   modify: true,
+    //   records: {
+    //     bridges: [...branchBridges]
+    //   }
+    // });
 
     let payload = {};
 

@@ -240,9 +240,16 @@ WHERE m.mconfig_id is NULL
     let orphanedQueryIds: string[] = rawData?.map((x: any) => x.query_id) || [];
 
     if (orphanedQueryIds.length > 0) {
-      await this.db.drizzle
-        .delete(queriesTable)
-        .where(inArray(queriesTable.queryId, orphanedQueryIds));
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await tx
+                .delete(queriesTable)
+                .where(inArray(queriesTable.queryId, orphanedQueryIds))
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
 
       // await this.queriesRepository.delete({ query_id: In(orphanedQueryIds) });
     }
