@@ -15,6 +15,7 @@ import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { BlockmlService } from './blockml.service';
 import { HashService } from './hash.service';
+import { MakerService } from './maker.service';
 import { RabbitService } from './rabbit.service';
 
 let retry = require('async-retry');
@@ -27,6 +28,7 @@ export class MembersService {
     // private projectsRepository: repositories.ProjectsRepository,
     // private bridgesRepository: repositories.BridgesRepository,
     // private dbService: DbService,
+    private makerService: MakerService,
     private hashService: HashService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
@@ -218,25 +220,14 @@ export class MembersService {
         // });
 
         if (common.isUndefined(member)) {
-          let newMember: schemaPostgres.MemberEnt = {
-            memberFullId: this.hashService.makeMemberFullId({
+          let newMember: schemaPostgres.MemberEnt =
+            this.makerService.makeMember({
               projectId: firstProjectId,
-              memberId: user.userId
-            }),
-            projectId: firstProjectId,
-            memberId: user.userId,
-            email: user.email,
-            alias: user.alias,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            timezone: user.timezone,
-            roles: [],
-            envs: [],
-            isAdmin: false,
-            isEditor: true,
-            isExplorer: true,
-            serverTs: undefined
-          };
+              user: user,
+              isAdmin: false,
+              isEditor: true,
+              isExplorer: true
+            });
 
           // let newMember = maker.makeMember({
           //   projectId: firstProjectId,
@@ -291,17 +282,11 @@ export class MembersService {
           //   }
           // });
 
-          let devBranch: schemaPostgres.BranchEnt = {
-            branchFullId: this.hashService.makeBranchFullId({
-              projectId: firstProjectId,
-              repoId: newMember.memberId,
-              branchId: project.defaultBranch
-            }),
+          let devBranch = this.makerService.makeBranch({
             projectId: firstProjectId,
             repoId: newMember.memberId,
-            branchId: project.defaultBranch,
-            serverTs: undefined
-          };
+            branchId: project.defaultBranch
+          });
 
           // let devBranch = maker.makeBranch({
           //   projectId: firstProjectId,
@@ -329,21 +314,14 @@ export class MembersService {
           let devBranchBridges: schemaPostgres.BridgeEnt[] = [];
 
           prodBranchBridges.forEach(x => {
-            let devBranchBridge: schemaPostgres.BridgeEnt = {
-              bridgeFullId: this.hashService.makeBridgeFullId({
-                projectId: devBranch.projectId,
-                repoId: devBranch.repoId,
-                branchId: devBranch.branchId,
-                envId: x.envId
-              }),
+            let devBranchBridge = this.makerService.makeBridge({
               projectId: devBranch.projectId,
               repoId: devBranch.repoId,
               branchId: devBranch.branchId,
               envId: x.envId,
               structId: common.EMPTY_STRUCT_ID,
-              needValidate: true,
-              serverTs: undefined
-            };
+              needValidate: true
+            });
 
             // let devBranchBridge = maker.makeBridge({
             //   projectId: devBranch.project_id,
