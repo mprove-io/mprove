@@ -1,13 +1,26 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { wrapper } from '~backend/barrels/wrapper';
+import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { ConnectionsService } from '~backend/services/connections.service';
-import { DbService } from '~backend/services/db.service';
+import { MakerService } from '~backend/services/maker.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+
+let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -16,12 +29,16 @@ export class EditConnectionController {
     private projectsService: ProjectsService,
     private connectionsService: ConnectionsService,
     private membersService: MembersService,
-    private dbService: DbService
+    private makerService: MakerService,
+    private wrapToApiService: WrapToApiService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditConnection)
   async editConnection(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendEditConnectionRequest = request.body;
@@ -46,7 +63,7 @@ export class EditConnectionController {
     });
 
     await this.membersService.checkMemberIsAdmin({
-      memberId: user.user_id,
+      memberId: user.userId,
       projectId: projectId
     });
 
@@ -63,21 +80,35 @@ export class EditConnectionController {
     connection.database = database;
     connection.username = username;
     connection.password = password;
-    connection.bigquery_credentials = bigqueryCredentials;
-    connection.bigquery_project = bigqueryCredentials?.project_id;
-    connection.bigquery_client_email = bigqueryCredentials?.client_email;
-    connection.bigquery_query_size_limit_gb = bigqueryQuerySizeLimitGb;
-    connection.is_ssl = common.booleanToEnum(isSSL);
+    connection.bigqueryCredentials = bigqueryCredentials;
+    connection.bigqueryProject = bigqueryCredentials?.project_id;
+    connection.bigqueryClientEmail = bigqueryCredentials?.client_email;
+    connection.bigqueryQuerySizeLimitGb = bigqueryQuerySizeLimitGb;
+    connection.isSsl = isSSL;
 
-    await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        connections: [connection]
-      }
-    });
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insertOrUpdate: {
+                connections: [connection]
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    // await this.dbService.writeRecords({
+    //   modify: true,
+    //   records: {
+    //     connections: [connection]
+    //   }
+    // });
 
     let payload: apiToBackend.ToBackendEditConnectionResponsePayload = {
-      connection: wrapper.wrapToApiConnection(connection)
+      connection: this.wrapToApiService.wrapToApiConnection(connection)
     };
 
     return payload;
