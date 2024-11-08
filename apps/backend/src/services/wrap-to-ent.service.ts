@@ -18,19 +18,14 @@ export class WrapToEntService {
   //   };
   // }
 
-  wrapToEntityDashboard(item: {
-    dashboard: common.Dashboard;
-    dashboardFullId?: string;
-  }): schemaPostgres.DashboardEnt {
-    let { dashboard, dashboardFullId } = item;
-
+  wrapToEntityDashboard(
+    dashboard: common.Dashboard
+  ): schemaPostgres.DashboardEnt {
     return {
-      dashboardFullId:
-        dashboardFullId ||
-        this.hashService.makeDashboardFullId({
-          structId: dashboard.structId,
-          dashboardId: dashboard.dashboardId
-        }),
+      dashboardFullId: this.hashService.makeDashboardFullId({
+        structId: dashboard.structId,
+        dashboardId: dashboard.dashboardId
+      }),
       structId: dashboard.structId,
       dashboardId: dashboard.dashboardId,
       filePath: dashboard.filePath,
@@ -48,11 +43,7 @@ export class WrapToEntService {
     };
   }
 
-  wrapToEntityMconfig(item: {
-    mconfig: common.Mconfig;
-  }): schemaPostgres.MconfigEnt {
-    let { mconfig } = item;
-
+  wrapToEntityMconfig(mconfig: common.Mconfig): schemaPostgres.MconfigEnt {
     return {
       structId: mconfig.structId,
       queryId: mconfig.queryId,
@@ -71,19 +62,12 @@ export class WrapToEntService {
     };
   }
 
-  wrapToEntityMetric(item: {
-    metric: common.MetricAny;
-    metricFullId?: string;
-  }): schemaPostgres.MetricEnt {
-    let { metric, metricFullId } = item;
-
+  wrapToEntityMetric(metric: common.MetricAny): schemaPostgres.MetricEnt {
     return {
-      metricFullId:
-        metricFullId ||
-        this.hashService.makeMetricFullId({
-          structId: metric.structId,
-          metricId: metric.metricId
-        }),
+      metricFullId: this.hashService.makeMetricFullId({
+        structId: metric.structId,
+        metricId: metric.metricId
+      }),
       structId: metric.structId,
       type: metric.type,
       filePath: metric.filePath,
@@ -115,19 +99,12 @@ export class WrapToEntService {
     };
   }
 
-  wrapToEntityModel(item: {
-    model: common.Model;
-    modelFullId?: string;
-  }): schemaPostgres.ModelEnt {
-    let { model, modelFullId } = item;
-
+  wrapToEntityModel(model: common.Model): schemaPostgres.ModelEnt {
     return {
-      modelFullId:
-        modelFullId ||
-        this.hashService.makeModelFullId({
-          structId: model.structId,
-          modelId: model.modelId
-        }),
+      modelFullId: this.hashService.makeModelFullId({
+        structId: model.structId,
+        modelId: model.modelId
+      }),
       structId: model.structId,
       modelId: model.modelId,
       connectionId: model.connectionId,
@@ -145,9 +122,7 @@ export class WrapToEntService {
     };
   }
 
-  wrapToEntityQuery(item: { query: common.Query }): schemaPostgres.QueryEnt {
-    let { query } = item;
-
+  wrapToEntityQuery(query: common.Query): schemaPostgres.QueryEnt {
     return {
       projectId: query.projectId,
       envId: query.envId,
@@ -180,19 +155,12 @@ export class WrapToEntService {
     };
   }
 
-  wrapToEntityReport(item: {
-    report: common.Rep;
-    reportFullId?: string;
-  }): schemaPostgres.ReportEnt {
-    let { report, reportFullId } = item;
-
+  wrapToEntityReport(report: common.Rep): schemaPostgres.ReportEnt {
     return {
-      reportFullId:
-        reportFullId ||
-        this.hashService.makeReportFullId({
-          structId: report.structId,
-          reportId: report.repId
-        }),
+      reportFullId: this.hashService.makeReportFullId({
+        structId: report.structId,
+        reportId: report.repId
+      }),
       projectId: report.projectId,
       structId: report.structId,
       reportId: report.repId,
@@ -208,19 +176,12 @@ export class WrapToEntService {
     };
   }
 
-  wrapToEntityViz(item: {
-    viz: common.Viz;
-    vizFullId?: string;
-  }): schemaPostgres.VizEnt {
-    let { viz, vizFullId } = item;
-
+  wrapToEntityViz(viz: common.Viz): schemaPostgres.VizEnt {
     return {
-      vizFullId:
-        vizFullId ||
-        this.hashService.makeVizFullId({
-          structId: viz.structId,
-          vizId: viz.vizId
-        }),
+      vizFullId: this.hashService.makeVizFullId({
+        structId: viz.structId,
+        vizId: viz.vizId
+      }),
       structId: viz.structId,
       vizId: viz.vizId,
       title: viz.title,

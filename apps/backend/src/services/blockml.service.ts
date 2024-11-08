@@ -230,28 +230,26 @@ export class BlockmlService {
               insert: {
                 // apis: apis.map(x => this.wrapService.wrapToEntityApi(x)),
                 structs: [struct],
-                vizs: vizs.map(x =>
-                  this.wrapToEntService.wrapToEntityViz({ viz: x })
-                ),
+                vizs: vizs.map(x => this.wrapToEntService.wrapToEntityViz(x)),
                 models: models.map(x =>
-                  this.wrapToEntService.wrapToEntityModel({ model: x })
+                  this.wrapToEntService.wrapToEntityModel(x)
                 ),
                 metrics: metrics.map(x =>
-                  this.wrapToEntService.wrapToEntityMetric({ metric: x })
+                  this.wrapToEntService.wrapToEntityMetric(x)
                 ),
                 reports: reps.map(x =>
-                  this.wrapToEntService.wrapToEntityReport({ report: x })
+                  this.wrapToEntService.wrapToEntityReport(x)
                 ),
                 mconfigs: mconfigs.map(x =>
-                  this.wrapToEntService.wrapToEntityMconfig({ mconfig: x })
+                  this.wrapToEntService.wrapToEntityMconfig(x)
                 ),
                 dashboards: dashboards.map(x =>
-                  this.wrapToEntService.wrapToEntityDashboard({ dashboard: x })
+                  this.wrapToEntService.wrapToEntityDashboard(x)
                 )
               },
               insertOrUpdate: {
                 queries: queries.map(x =>
-                  this.wrapToEntService.wrapToEntityQuery({ query: x })
+                  this.wrapToEntService.wrapToEntityQuery(x)
                 )
               }
             })

@@ -32,7 +32,7 @@ let retry = require('async-retry');
 export class ReportsService {
   constructor(
     private wrapToApiService: WrapToApiService,
-    private wapToEntService: WrapToEntService,
+    private wrapToEntService: WrapToEntService,
     private makerService: MakerService,
     private docService: DocService,
     private blockmlService: BlockmlService,
@@ -938,7 +938,7 @@ export class ReportsService {
 
       if (x.rowType === common.RowTypeEnum.Metric) {
         let newMconfigsEnts = newMconfigs.map(m =>
-          this.wapToEntService.wrapToEntityMconfig({ mconfig: m })
+          this.wrapToEntService.wrapToEntityMconfig(m)
         );
 
         let newMconfigsApi = newMconfigsEnts.map(y =>
@@ -1076,10 +1076,10 @@ export class ReportsService {
                 tx: tx,
                 insert: {
                   mconfigs: newMconfigs.map(x =>
-                    this.wapToEntService.wrapToEntityMconfig({ mconfig: x })
+                    this.wrapToEntService.wrapToEntityMconfig(x)
                   ),
                   queries: newQueries.map(x =>
-                    this.wapToEntService.wrapToEntityQuery({ query: x })
+                    this.wrapToEntService.wrapToEntityQuery(x)
                   )
                 }
               })
