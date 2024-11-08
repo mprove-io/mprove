@@ -1,23 +1,35 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
-import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
-import { DbService } from '~backend/services/db.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+
+let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -29,15 +41,16 @@ export class ValidateFilesController {
     private blockmlService: BlockmlService,
     private branchesService: BranchesService,
     private structsService: StructsService,
-    private dbService: DbService,
+    private envsService: EnvsService,
+    private wrapToApiService: WrapToApiService,
     private cs: ConfigService<interfaces.Config>,
-    private bridgesRepository: repositories.BridgesRepository,
-    private envsService: EnvsService
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendValidateFiles)
   async saveFile(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendValidateFilesRequest = request.body;
@@ -45,7 +58,7 @@ export class ValidateFilesController {
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, envId, branchId } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -53,14 +66,14 @@ export class ValidateFilesController {
 
     let member = await this.membersService.getMemberCheckIsEditor({
       projectId: projectId,
-      memberId: user.user_id
+      memberId: user.userId
     });
 
     let firstProjectId =
       this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
     if (
-      member.is_admin === common.BoolEnum.FALSE &&
+      member.isAdmin === false &&
       projectId === firstProjectId &&
       repoId === common.PROD_REPO_ID
     ) {
@@ -87,14 +100,14 @@ export class ValidateFilesController {
         traceId: reqValid.info.traceId
       },
       payload: {
-        orgId: project.org_id,
+        orgId: project.orgId,
         projectId: projectId,
         repoId: repoId,
         branch: branchId,
-        remoteType: project.remote_type,
-        gitUrl: project.git_url,
-        privateKey: project.private_key,
-        publicKey: project.public_key
+        remoteType: project.remoteType,
+        gitUrl: project.gitUrl,
+        privateKey: project.privateKey,
+        publicKey: project.publicKey
       }
     };
 
@@ -102,7 +115,7 @@ export class ValidateFilesController {
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
         {
           routingKey: helper.makeRoutingKeyToDisk({
-            orgId: project.org_id,
+            orgId: project.orgId,
             projectId: projectId
           }),
           message: getCatalogFilesRequest,
@@ -110,51 +123,73 @@ export class ValidateFilesController {
         }
       );
 
-    let branchBridges = await this.bridgesRepository.find({
-      where: {
-        project_id: branch.project_id,
-        repo_id: branch.repo_id,
-        branch_id: branch.branch_id
-      }
+    let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
+      where: and(
+        eq(bridgesTable.projectId, branch.projectId),
+        eq(bridgesTable.repoId, branch.repoId),
+        eq(bridgesTable.branchId, branch.branchId)
+      )
     });
 
+    // let branchBridges = await this.bridgesRepository.find({
+    //   where: {
+    //     project_id: branch.project_id,
+    //     repo_id: branch.repo_id,
+    //     branch_id: branch.branch_id
+    //   }
+    // });
+
     await forEachSeries(branchBridges, async x => {
-      if (x.env_id === envId) {
+      if (x.envId === envId) {
         let structId = common.makeId();
 
         await this.blockmlService.rebuildStruct({
-          traceId,
-          orgId: project.org_id,
-          projectId,
-          structId,
+          traceId: traceId,
+          orgId: project.orgId,
+          projectId: projectId,
+          structId: structId,
           diskFiles: diskResponse.payload.files,
           mproveDir: diskResponse.payload.mproveDir,
-          envId: x.env_id
+          envId: x.envId
         });
 
-        x.struct_id = structId;
-        x.need_validate = common.BoolEnum.FALSE;
+        x.structId = structId;
+        x.needValidate = false;
       }
     });
 
-    await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        bridges: [...branchBridges]
-      }
-    });
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insertOrUpdate: {
+                bridges: [...branchBridges]
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
 
-    let currentBridge = branchBridges.find(y => y.env_id === envId);
+    // await this.dbService.writeRecords({
+    //   modify: true,
+    //   records: {
+    //     bridges: [...branchBridges]
+    //   }
+    // });
+
+    let currentBridge = branchBridges.find(y => y.envId === envId);
 
     let struct = await this.structsService.getStructCheckExists({
-      structId: currentBridge.struct_id,
+      structId: currentBridge.structId,
       projectId: projectId
     });
 
     let payload: apiToBackend.ToBackendValidateFilesResponsePayload = {
       repo: diskResponse.payload.repo,
-      needValidate: common.enumToBoolean(currentBridge.need_validate),
-      struct: wrapper.wrapToApiStruct(struct)
+      needValidate: currentBridge.needValidate,
+      struct: this.wrapToApiService.wrapToApiStruct(struct)
     };
 
     return payload;
