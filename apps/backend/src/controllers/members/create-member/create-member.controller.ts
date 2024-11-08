@@ -1,45 +1,60 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
+import { constants } from '~backend/barrels/constants';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
-import { maker } from '~backend/barrels/maker';
-import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
+import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
+import { usersTable } from '~backend/drizzle/postgres/schema/users';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
-import { DbService } from '~backend/services/db.service';
+import { MakerService } from '~backend/services/maker.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { UsersService } from '~backend/services/users.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+
+let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class CreateMemberController {
   constructor(
-    private dbService: DbService,
     private rabbitService: RabbitService,
-    private avatarsRepository: repositories.AvatarsRepository,
-    private branchesRepository: repositories.BranchesRepository,
-    private bridgesRepository: repositories.BridgesRepository,
-    private usersRepository: repositories.UsersRepository,
     private projectsService: ProjectsService,
     private blockmlService: BlockmlService,
     private usersService: UsersService,
     private membersService: MembersService,
     private mailerService: MailerService,
-    private cs: ConfigService<interfaces.Config>
+    private wrapToApiService: WrapToApiService,
+    private makerService: MakerService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateMember)
   async createMember(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendCreateMemberRequest = request.body;
@@ -52,39 +67,61 @@ export class CreateMemberController {
     });
 
     await this.membersService.checkMemberIsAdmin({
-      memberId: user.user_id,
+      memberId: user.userId,
       projectId: projectId
     });
 
-    let invitedUser = await this.usersRepository.findOne({
-      where: { email: email }
+    let invitedUser = await this.db.drizzle.query.usersTable.findFirst({
+      where: eq(usersTable.email, email)
     });
 
-    let newUser;
+    // let invitedUser = await this.usersRepository.findOne({
+    //   where: { email: email }
+    // });
+
+    let newUser: schemaPostgres.UserEnt;
 
     if (common.isUndefined(invitedUser)) {
       let alias = await this.usersService.makeAlias(email);
 
-      newUser = maker.makeUser({
+      newUser = {
+        userId: common.makeId(),
         email: email,
-        isEmailVerified: common.BoolEnum.FALSE,
-        alias: alias
-      });
+        passwordResetToken: undefined,
+        passwordResetExpiresTs: undefined,
+        isEmailVerified: false,
+        emailVerificationToken: common.makeId(),
+        hash: undefined,
+        salt: undefined,
+        jwtMinIat: undefined,
+        alias: alias,
+        firstName: undefined,
+        lastName: undefined,
+        timezone: common.USE_PROJECT_TIMEZONE_VALUE,
+        ui: constants.DEFAULT_UI,
+        serverTs: undefined
+      };
+
+      // newUser = maker.makeUser({
+      //   email: email,
+      //   isEmailVerified: common.BoolEnum.FALSE,
+      //   alias: alias
+      // });
     }
 
     if (common.isDefined(invitedUser)) {
       await this.membersService.checkMemberDoesNotExist({
-        memberId: invitedUser.user_id,
+        memberId: invitedUser.userId,
         projectId: projectId
       });
     }
 
-    let newMember = maker.makeMember({
+    let newMember = this.makerService.makeMember({
       projectId: projectId,
       user: common.isDefined(invitedUser) ? invitedUser : newUser,
-      isAdmin: common.BoolEnum.FALSE,
-      isEditor: common.BoolEnum.TRUE,
-      isExplorer: common.BoolEnum.TRUE
+      isAdmin: false,
+      isEditor: true,
+      isExplorer: true
     });
 
     let toDiskCreateDevRepoRequest: apiToDisk.ToDiskCreateDevRepoRequest = {
@@ -93,13 +130,13 @@ export class CreateMemberController {
         traceId: traceId
       },
       payload: {
-        orgId: project.org_id,
+        orgId: project.orgId,
         projectId: projectId,
-        devRepoId: newMember.member_id,
-        remoteType: project.remote_type,
-        gitUrl: project.git_url,
-        privateKey: project.private_key,
-        publicKey: project.public_key
+        devRepoId: newMember.memberId,
+        remoteType: project.remoteType,
+        gitUrl: project.gitUrl,
+        privateKey: project.privateKey,
+        publicKey: project.publicKey
       }
     };
 
@@ -107,7 +144,7 @@ export class CreateMemberController {
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateDevRepoResponse>(
         {
           routingKey: helper.makeRoutingKeyToDisk({
-            orgId: project.org_id,
+            orgId: project.orgId,
             projectId: projectId
           }),
           message: toDiskCreateDevRepoRequest,
@@ -115,98 +152,138 @@ export class CreateMemberController {
         }
       );
 
-    let prodBranch = await this.branchesRepository.findOne({
-      where: {
-        project_id: projectId,
-        repo_id: common.PROD_REPO_ID,
-        branch_id: project.default_branch
-      }
+    let prodBranch = await this.db.drizzle.query.branchesTable.findFirst({
+      where: and(
+        eq(branchesTable.projectId, projectId),
+        eq(branchesTable.repoId, common.PROD_REPO_ID),
+        eq(branchesTable.branchId, project.defaultBranch)
+      )
     });
 
-    let devBranch = maker.makeBranch({
+    // let prodBranch = await this.branchesRepository.findOne({
+    //   where: {
+    //     project_id: projectId,
+    //     repo_id: common.PROD_REPO_ID,
+    //     branch_id: project.default_branch
+    //   }
+    // });
+
+    let devBranch = this.makerService.makeBranch({
       projectId: projectId,
-      repoId: newMember.member_id,
-      branchId: project.default_branch
+      repoId: newMember.memberId,
+      branchId: project.defaultBranch
     });
 
-    let prodBranchBridges = await this.bridgesRepository.find({
-      where: {
-        project_id: prodBranch.project_id,
-        repo_id: prodBranch.repo_id,
-        branch_id: prodBranch.branch_id
-      }
+    let prodBranchBridges = await this.db.drizzle.query.bridgesTable.findMany({
+      where: and(
+        eq(bridgesTable.projectId, prodBranch.projectId),
+        eq(bridgesTable.repoId, prodBranch.repoId),
+        eq(bridgesTable.branchId, prodBranch.branchId)
+      )
     });
 
-    let devBranchBridges: schemaPostgres.BridgeEntity[] = [];
+    // let prodBranchBridges = await this.bridgesRepository.find({
+    //   where: {
+    //     project_id: prodBranch.project_id,
+    //     repo_id: prodBranch.repo_id,
+    //     branch_id: prodBranch.branch_id
+    //   }
+    // });
+
+    let devBranchBridges: schemaPostgres.BridgeEnt[] = [];
 
     prodBranchBridges.forEach(x => {
-      let devBranchBridge = maker.makeBridge({
-        projectId: devBranch.project_id,
-        repoId: devBranch.repo_id,
-        branchId: devBranch.branch_id,
-        envId: x.env_id,
+      let devBranchBridge = this.makerService.makeBridge({
+        projectId: devBranch.projectId,
+        repoId: devBranch.repoId,
+        branchId: devBranch.branchId,
+        envId: x.envId,
         structId: common.EMPTY_STRUCT_ID,
-        needValidate: common.BoolEnum.TRUE
+        needValidate: true
       });
 
       devBranchBridges.push(devBranchBridge);
     });
 
     await forEachSeries(devBranchBridges, async x => {
-      if (x.env_id === common.PROJECT_ENV_PROD) {
+      if (x.envId === common.PROJECT_ENV_PROD) {
         let structId = common.makeId();
 
         await this.blockmlService.rebuildStruct({
-          traceId,
-          orgId: project.org_id,
-          projectId,
-          structId,
+          traceId: traceId,
+          orgId: project.orgId,
+          projectId: projectId,
+          structId: structId,
           diskFiles: diskResponse.payload.files,
           mproveDir: diskResponse.payload.mproveDir,
-          envId: x.env_id
+          envId: x.envId
         });
 
-        x.struct_id = structId;
-        x.need_validate = common.BoolEnum.FALSE;
+        x.structId = structId;
+        x.needValidate = false;
       } else {
-        x.struct_id = common.EMPTY_STRUCT_ID;
-        x.need_validate = common.BoolEnum.TRUE;
+        x.structId = common.EMPTY_STRUCT_ID;
+        x.needValidate = true;
       }
     });
 
-    await this.dbService.writeRecords({
-      modify: false,
-      records: {
-        members: [newMember],
-        users: common.isDefined(newUser) ? [newUser] : [],
-        branches: [devBranch],
-        bridges: [...devBranchBridges]
-      }
-    });
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insert: {
+                members: [newMember],
+                users: common.isDefined(newUser) ? [newUser] : [],
+                branches: [devBranch],
+                bridges: [...devBranchBridges]
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
 
-    let avatar = await this.avatarsRepository.findOne({
-      select: ['user_id', 'avatar_small'],
-      where: {
-        user_id: newMember.member_id
-      }
-    });
+    // await this.dbService.writeRecords({
+    //   modify: false,
+    //   records: {
+    //     members: [newMember],
+    //     users: common.isDefined(newUser) ? [newUser] : [],
+    //     branches: [devBranch],
+    //     bridges: [...devBranchBridges]
+    //   }
+    // });
+
+    let avatars = await this.db.drizzle
+      .select({
+        userId: avatarsTable.userId,
+        avatarSmall: avatarsTable.avatarSmall
+      })
+      .from(avatarsTable)
+      .where(eq(avatarsTable.userId, newMember.memberId));
+
+    let avatar = avatars.length > 0 ? avatars[0] : undefined;
+
+    // let avatar = await this.avatarsRepository.findOne({
+    //   select: ['user_id', 'avatar_small'],
+    //   where: {
+    //     user_id: newMember.member_id
+    //   }
+    // });
 
     let hostUrl = this.cs.get<interfaces.Config['hostUrl']>('hostUrl');
 
-    if (
-      common.isDefined(invitedUser) &&
-      invitedUser.is_email_verified === common.BoolEnum.TRUE
-    ) {
+    if (common.isDefined(invitedUser) && invitedUser.isEmailVerified === true) {
       let urlProjectVizs = [
         hostUrl,
         common.PATH_ORG,
-        project.org_id,
+        project.orgId,
         common.PATH_PROJECT,
         projectId,
         common.PATH_REPO,
         common.PROD_REPO_ID,
         common.PATH_BRANCH,
-        project.default_branch,
+        project.defaultBranch,
         common.PATH_ENV,
         common.PROJECT_ENV_PROD,
         common.PATH_METRICS,
@@ -221,8 +298,8 @@ export class CreateMemberController {
       });
     } else {
       let emailVerificationToken = common.isDefined(invitedUser)
-        ? invitedUser.email_verification_token
-        : newUser.email_verification_token;
+        ? invitedUser.emailVerificationToken
+        : newUser.emailVerificationToken;
 
       let emailBase64 = Buffer.from(email).toString('base64');
 
@@ -235,10 +312,10 @@ export class CreateMemberController {
       });
     }
 
-    let apiMember = wrapper.wrapToApiMember(newMember);
+    let apiMember = this.wrapToApiService.wrapToApiMember(newMember);
 
     if (common.isDefined(avatar)) {
-      apiMember.avatarSmall = avatar.avatar_small;
+      apiMember.avatarSmall = avatar.avatarSmall;
     }
 
     let payload: apiToBackend.ToBackendCreateMemberResponsePayload = {
