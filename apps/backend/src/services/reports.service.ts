@@ -1077,7 +1077,9 @@ export class ReportsService {
                 insert: {
                   mconfigs: newMconfigs.map(x =>
                     this.wrapToEntService.wrapToEntityMconfig(x)
-                  ),
+                  )
+                },
+                insertOrUpdate: {
                   queries: newQueries.map(x =>
                     this.wrapToEntService.wrapToEntityQuery(x)
                   )

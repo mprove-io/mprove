@@ -332,12 +332,12 @@ export class CreateDashboardController {
                 ],
                 mconfigs: dashboardMconfigs.map(x =>
                   this.wrapToEntService.wrapToEntityMconfig(x)
-                ),
-                queries: dashboardQueries.map(x =>
-                  this.wrapToEntService.wrapToEntityQuery(x)
                 )
               },
               insertOrUpdate: {
+                queries: dashboardQueries.map(x =>
+                  this.wrapToEntService.wrapToEntityQuery(x)
+                ),
                 structs: [struct],
                 bridges: [...branchBridges]
               }
