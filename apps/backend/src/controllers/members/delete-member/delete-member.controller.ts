@@ -1,30 +1,47 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { and, eq } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
-import { repositories } from '~backend/barrels/repositories';
+import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
+import { membersTable } from '~backend/drizzle/postgres/schema/members';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+
+let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class DeleteMemberController {
   constructor(
     private rabbitService: RabbitService,
-    private membersRepository: repositories.MembersRepository,
-    private branchesRepository: repositories.BranchesRepository,
-    private bridgesRepository: repositories.BridgesRepository,
     private projectsService: ProjectsService,
-    private membersService: MembersService
+    private membersService: MembersService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteMember)
   async deleteMember(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendDeleteMemberRequest = request.body;
@@ -37,11 +54,11 @@ export class DeleteMemberController {
     });
 
     await this.membersService.checkMemberIsAdmin({
-      memberId: user.user_id,
+      memberId: user.userId,
       projectId: projectId
     });
 
-    if (user.user_id === memberId) {
+    if (user.userId === memberId) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_ADMIN_CAN_NOT_DELETE_HIMSELF
       });
@@ -52,7 +69,7 @@ export class DeleteMemberController {
       projectId: projectId
     });
 
-    let devRepoId = member.member_id;
+    let devRepoId = member.memberId;
 
     let toDiskDeleteDevRepoRequest: apiToDisk.ToDiskDeleteDevRepoRequest = {
       info: {
@@ -60,7 +77,7 @@ export class DeleteMemberController {
         traceId: traceId
       },
       payload: {
-        orgId: project.org_id,
+        orgId: project.orgId,
         projectId: projectId,
         devRepoId: devRepoId
       }
@@ -68,27 +85,60 @@ export class DeleteMemberController {
 
     await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteDevRepoResponse>({
       routingKey: helper.makeRoutingKeyToDisk({
-        orgId: project.org_id,
+        orgId: project.orgId,
         projectId: projectId
       }),
       message: toDiskDeleteDevRepoRequest,
       checkIsOk: true
     });
 
-    await this.membersRepository.delete({
-      project_id: projectId,
-      member_id: memberId
-    });
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(async tx => {
+          await tx
+            .delete(membersTable)
+            .where(
+              and(
+                eq(membersTable.projectId, projectId),
+                eq(membersTable.memberId, memberId)
+              )
+            );
 
-    await this.branchesRepository.delete({
-      project_id: projectId,
-      repo_id: devRepoId
-    });
+          await tx
+            .delete(branchesTable)
+            .where(
+              and(
+                eq(branchesTable.projectId, projectId),
+                eq(branchesTable.repoId, devRepoId)
+              )
+            );
 
-    await this.bridgesRepository.delete({
-      project_id: projectId,
-      repo_id: devRepoId
-    });
+          await tx
+            .delete(bridgesTable)
+            .where(
+              and(
+                eq(bridgesTable.projectId, projectId),
+                eq(bridgesTable.repoId, devRepoId)
+              )
+            );
+        }),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    // await this.membersRepository.delete({
+    //   project_id: projectId,
+    //   member_id: memberId
+    // });
+
+    // await this.branchesRepository.delete({
+    //   project_id: projectId,
+    //   repo_id: devRepoId
+    // });
+
+    // await this.bridgesRepository.delete({
+    //   project_id: projectId,
+    //   repo_id: devRepoId
+    // });
 
     let payload = {};
 
