@@ -2,7 +2,7 @@ import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
@@ -12,6 +12,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { StructsService } from '~backend/services/structs.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -23,12 +24,13 @@ export class GetModelController {
     private structsService: StructsService,
     private modelsService: ModelsService,
     private bridgesService: BridgesService,
-    private envsService: EnvsService
+    private envsService: EnvsService,
+    private wrapToApiService: WrapToApiService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel)
   async getModel(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendGetModelRequest = request.body;
@@ -41,12 +43,12 @@ export class GetModelController {
 
     let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
-      memberId: user.user_id
+      memberId: user.userId
     });
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
+      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 
@@ -57,29 +59,29 @@ export class GetModelController {
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.project_id,
-      repoId: branch.repo_id,
-      branchId: branch.branch_id,
+      projectId: branch.projectId,
+      repoId: branch.repoId,
+      branchId: branch.branchId,
       envId: envId
     });
 
     let model = await this.modelsService.getModelCheckExists({
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       modelId: modelId
     });
 
     let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       projectId: projectId
     });
 
-    let apiMember = wrapper.wrapToApiMember(userMember);
+    let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
     let payload: apiToBackend.ToBackendGetModelResponsePayload = {
-      needValidate: common.enumToBoolean(bridge.need_validate),
-      struct: wrapper.wrapToApiStruct(struct),
+      needValidate: bridge.needValidate,
+      struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: apiMember,
-      model: wrapper.wrapToApiModel({
+      model: this.wrapToApiService.wrapToApiModel({
         model: model,
         hasAccess: helper.checkAccess({
           userAlias: user.alias,
