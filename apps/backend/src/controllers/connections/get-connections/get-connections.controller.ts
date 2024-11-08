@@ -67,7 +67,7 @@ export class GetConnectionsController {
       connections: connectionsResult.map(x =>
         this.wrapToApiService.wrapToApiConnection(x.record)
       ),
-      total: connectionsResult[0].total
+      total: connectionsResult.length > 0 ? connectionsResult[0].total : 0
     };
 
     return payload;

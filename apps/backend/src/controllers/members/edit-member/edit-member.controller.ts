@@ -1,27 +1,43 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { eq } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { wrapper } from '~backend/barrels/wrapper';
+import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { AvatarsRepository } from '~backend/models/store-repositories/_index';
-import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+
+let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class EditMemberController {
   constructor(
-    private dbService: DbService,
     private projectsService: ProjectsService,
-    private avatarsRepository: AvatarsRepository,
-    private membersService: MembersService
+    private membersService: MembersService,
+    private wrapToApiService: WrapToApiService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember)
   async editMember(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendEditMemberRequest = request.body;
@@ -34,11 +50,11 @@ export class EditMemberController {
     });
 
     await this.membersService.checkMemberIsAdmin({
-      memberId: user.user_id,
+      memberId: user.userId,
       projectId: projectId
     });
 
-    if (memberId === user.user_id && isAdmin === false) {
+    if (memberId === user.userId && isAdmin === false) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_ADMIN_CAN_NOT_CHANGE_HIS_ADMIN_STATUS
       });
@@ -49,30 +65,54 @@ export class EditMemberController {
       projectId: projectId
     });
 
-    member.is_admin = common.booleanToEnum(isAdmin);
-    member.is_editor = common.booleanToEnum(isEditor);
-    member.is_explorer = common.booleanToEnum(isExplorer);
+    member.isAdmin = isAdmin;
+    member.isEditor = isEditor;
+    member.isExplorer = isExplorer;
     member.roles = roles;
     member.envs = envs;
 
-    await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        members: [member]
-      }
-    });
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insertOrUpdate: {
+                members: [member]
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
 
-    let avatar = await this.avatarsRepository.findOne({
-      select: ['user_id', 'avatar_small'],
-      where: {
-        user_id: member.member_id
-      }
-    });
+    // await this.dbService.writeRecords({
+    //   modify: true,
+    //   records: {
+    //     members: [member]
+    //   }
+    // });
 
-    let apiMember = wrapper.wrapToApiMember(member);
+    let avatars = await this.db.drizzle
+      .select({
+        userId: avatarsTable.userId,
+        avatarSmall: avatarsTable.avatarSmall
+      })
+      .from(avatarsTable)
+      .where(eq(avatarsTable.userId, member.memberId));
+
+    let avatar = avatars.length > 0 ? avatars[0] : undefined;
+
+    // let avatar = await this.avatarsRepository.findOne({
+    //   select: ['user_id', 'avatar_small'],
+    //   where: {
+    //     user_id: member.member_id
+    //   }
+    // });
+
+    let apiMember = this.wrapToApiService.wrapToApiMember(member);
 
     if (common.isDefined(avatar)) {
-      apiMember.avatarSmall = avatar.avatar_small;
+      apiMember.avatarSmall = avatar.avatarSmall;
     }
 
     let payload: apiToBackend.ToBackendEditMemberResponsePayload = {

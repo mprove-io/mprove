@@ -1,30 +1,33 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { In } from 'typeorm';
+import { asc, eq, inArray, sql } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { interfaces } from '~backend/barrels/interfaces';
-import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
+import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class GetMembersController {
   constructor(
-    private membersRepository: repositories.MembersRepository,
-    private avatarsRepository: repositories.AvatarsRepository,
     private projectsService: ProjectsService,
     private membersService: MembersService,
-    private cs: ConfigService<interfaces.Config>
+    private wrapToApiService: WrapToApiService,
+    private cs: ConfigService<interfaces.Config>,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMembers)
   async getMembers(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendGetMembersRequest = request.body;
@@ -36,60 +39,79 @@ export class GetMembersController {
     });
 
     let userMember = await this.membersService.getMemberCheckExists({
-      memberId: user.user_id,
+      memberId: user.userId,
       projectId: projectId
     });
 
     let firstProjectId =
       this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
-    if (
-      userMember.is_admin === common.BoolEnum.FALSE &&
-      projectId === firstProjectId
-    ) {
+    if (userMember.isAdmin === false && projectId === firstProjectId) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
       });
     }
 
-    const [members, total] = await this.membersRepository.findAndCount({
-      where: {
-        project_id: projectId
-      },
-      order: {
-        email: 'ASC'
-      },
-      take: perPage,
-      skip: (pageNum - 1) * perPage
-    });
+    let membersResult = await this.db.drizzle
+      .select({
+        record: membersTable,
+        total: sql<number>`COUNT(*) OVER()` // Total count as a window function
+      })
+      .from(membersTable)
+      .where(eq(membersTable.projectId, projectId))
+      .orderBy(asc(membersTable.email))
+      .limit(perPage)
+      .offset((pageNum - 1) * perPage);
 
-    let memberIds = members.map(x => x.member_id);
+    // const [members, total] = await this.membersRepository.findAndCount({
+    //   where: {
+    //     project_id: projectId
+    //   },
+    //   order: {
+    //     email: 'ASC'
+    //   },
+    //   take: perPage,
+    //   skip: (pageNum - 1) * perPage
+    // });
+
+    let members = membersResult.map(x => x.record);
+
+    let memberIds = members.map(x => x.memberId);
 
     let avatars =
       memberIds.length === 0
         ? []
-        : await this.avatarsRepository.find({
-            select: ['user_id', 'avatar_small'],
-            where: {
-              user_id: In(memberIds)
-            }
-          });
+        : await this.db.drizzle
+            .select({
+              userId: avatarsTable.userId,
+              avatarSmall: avatarsTable.avatarSmall
+            })
+            .from(avatarsTable)
+            .where(inArray(avatarsTable.userId, memberIds));
 
-    let apiMembers = members.map(x => wrapper.wrapToApiMember(x));
+    // await this.avatarsRepository.find({
+    //     select: ['user_id', 'avatar_small'],
+    //     where: {
+    //       user_id: In(memberIds)
+    //     }
+    //   });
+
+    let apiMembers = members.map(x => this.wrapToApiService.wrapToApiMember(x));
 
     apiMembers.forEach(x => {
-      let av = avatars.find(a => a.user_id === x.memberId);
-      if (common.isDefined(av)) {
-        x.avatarSmall = av.avatar_small;
+      let avatar = avatars.find(a => a.userId === x.memberId);
+
+      if (common.isDefined(avatar)) {
+        x.avatarSmall = avatar.avatarSmall;
       }
     });
 
-    let apiMember = wrapper.wrapToApiMember(userMember);
+    let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
     let payload: apiToBackend.ToBackendGetMembersResponsePayload = {
       userMember: apiMember,
       members: apiMembers,
-      total: total
+      total: membersResult.length > 0 ? membersResult[0].total : 0
     };
 
     return payload;

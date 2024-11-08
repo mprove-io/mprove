@@ -108,7 +108,7 @@ export class GetEnvsController {
               : members.filter(m => m.envs.indexOf(x.envId) > -1)
         })
       ),
-      total: envsResult[0].total
+      total: envsResult.length > 0 ? envsResult[0].total : 0
     };
 
     return payload;
