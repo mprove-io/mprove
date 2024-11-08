@@ -1,7 +1,7 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
@@ -11,6 +11,7 @@ import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -22,12 +23,13 @@ export class GetMconfigController {
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private bridgesService: BridgesService,
-    private envsService: EnvsService
+    private envsService: EnvsService,
+    private wrapToApiService: WrapToApiService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig)
   async getMconfig(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendGetMconfigRequest = request.body;
@@ -35,7 +37,7 @@ export class GetMconfigController {
     let { projectId, isRepoProd, branchId, envId, mconfigId } =
       reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -43,7 +45,7 @@ export class GetMconfigController {
 
     let member = await this.membersService.getMemberCheckExists({
       projectId: projectId,
-      memberId: user.user_id
+      memberId: user.userId
     });
 
     let branch = await this.branchesService.getBranchCheckExists({
@@ -59,24 +61,24 @@ export class GetMconfigController {
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.project_id,
-      repoId: branch.repo_id,
-      branchId: branch.branch_id,
+      projectId: branch.projectId,
+      repoId: branch.repoId,
+      branchId: branch.branchId,
       envId: envId
     });
 
     let mconfig = await this.mconfigsService.getMconfigCheckExists({
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       mconfigId: mconfigId
     });
 
     let model = await this.modelsService.getModelCheckExists({
-      structId: bridge.struct_id,
-      modelId: mconfig.model_id
+      structId: bridge.structId,
+      modelId: mconfig.modelId
     });
 
     let payload: apiToBackend.ToBackendGetMconfigResponsePayload = {
-      mconfig: wrapper.wrapToApiMconfig({
+      mconfig: this.wrapToApiService.wrapToApiMconfig({
         mconfig: mconfig,
         modelFields: model.fields
       })
