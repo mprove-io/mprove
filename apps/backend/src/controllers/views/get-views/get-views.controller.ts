@@ -1,6 +1,7 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
@@ -24,14 +25,14 @@ export class GetViewsController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetViews)
   async getViews(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendGetViewsRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -39,7 +40,7 @@ export class GetViewsController {
 
     let member = await this.membersService.getMemberCheckExists({
       projectId: projectId,
-      memberId: user.user_id
+      memberId: user.userId
     });
 
     let branch = await this.branchesService.getBranchCheckExists({
@@ -55,14 +56,14 @@ export class GetViewsController {
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.project_id,
-      repoId: branch.repo_id,
-      branchId: branch.branch_id,
+      projectId: branch.projectId,
+      repoId: branch.repoId,
+      branchId: branch.branchId,
       envId: envId
     });
 
     let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       projectId: projectId
     });
 

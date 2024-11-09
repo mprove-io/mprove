@@ -1,18 +1,31 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { inArray } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
-import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
-import { repositories } from '~backend/barrels/repositories';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { SkipJwtCheck } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
+import { membersTable } from '~backend/drizzle/postgres/schema/members';
+import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
-import { DbService } from '~backend/services/db.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+
+let retry = require('async-retry');
 
 @SkipJwtCheck()
 @UseGuards(ValidateRequestGuard)
@@ -20,12 +33,10 @@ import { RabbitService } from '~backend/services/rabbit.service';
 export class SpecialRebuildStructsController {
   constructor(
     private rabbitService: RabbitService,
-    private projectsRepository: repositories.ProjectsRepository,
-    private bridgesRepository: repositories.BridgesRepository,
-    private membersRepository: repositories.MembersRepository,
     private blockmlService: BlockmlService,
-    private dbService: DbService,
-    private cs: ConfigService<interfaces.Config>
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(
@@ -48,34 +59,50 @@ export class SpecialRebuildStructsController {
     }
 
     let projectIds: string[] = [];
-    let members: schemaPostgres.MemberEntity[] = [];
+    let members: schemaPostgres.MemberEnt[] = [];
 
     if (userIds.length > 0) {
-      members = await this.membersRepository.find({
-        where: { member_id: In(userIds) }
+      members = await this.db.drizzle.query.membersTable.findMany({
+        where: inArray(membersTable.memberId, userIds)
       });
 
-      projectIds = members.map(x => x.project_id);
+      // members = await this.membersRepository.find({
+      //   where: { member_id: In(userIds) }
+      // });
+
+      projectIds = members.map(x => x.projectId);
     }
 
-    let projects: schemaPostgres.ProjectEntity[] = [];
+    let projects: schemaPostgres.ProjectEnt[] = [];
 
     if (projectIds.length > 0) {
-      projects = await this.projectsRepository.find({
-        where: { project_id: In(projectIds) }
+      projects = await this.db.drizzle.query.projectsTable.findMany({
+        where: inArray(projectsTable.projectId, projectIds)
       });
+
+      // projects = await this.projectsRepository.find({
+      //   where: { project_id: In(projectIds) }
+      // });
     } else {
-      projects = await this.projectsRepository.find();
+      projects = await this.db.drizzle.select().from(projectsTable);
+
+      // projects = await this.projectsRepository.find();
     }
 
-    let bridges: schemaPostgres.BridgeEntity[];
+    let bridges: schemaPostgres.BridgeEnt[];
 
     if (userIds.length > 0) {
-      bridges = await this.bridgesRepository.find({
-        where: { repo_id: In(userIds) }
+      bridges = await this.db.drizzle.query.bridgesTable.findMany({
+        where: inArray(bridgesTable.repoId, userIds)
       });
+
+      // bridges = await this.bridgesRepository.find({
+      //   where: { repo_id: In(userIds) }
+      // });
     } else {
-      bridges = await this.bridgesRepository.find();
+      bridges = await this.db.drizzle.select().from(bridgesTable);
+
+      // bridges = await this.bridgesRepository.find();
     }
 
     let notFoundProjectIds: string[] = [];
@@ -83,21 +110,21 @@ export class SpecialRebuildStructsController {
     let successBridgeItems: apiToBackend.BridgeItem[] = [];
 
     await asyncPool(1, bridges, async bridge => {
-      let project = projects.find(x => x.project_id === bridge.project_id);
+      let project = projects.find(x => x.projectId === bridge.projectId);
 
       if (common.isUndefined(project)) {
-        notFoundProjectIds.push(bridge.project_id);
+        notFoundProjectIds.push(bridge.projectId);
         return;
       }
 
       let bridgeItem: apiToBackend.BridgeItem = {
-        orgId: project.org_id,
-        projectId: project.project_id,
-        repoId: bridge.repo_id,
-        branchId: bridge.branch_id,
-        envId: bridge.env_id,
-        structId: bridge.struct_id,
-        needValidate: common.enumToBoolean(bridge.need_validate)
+        orgId: project.orgId,
+        projectId: project.projectId,
+        repoId: bridge.repoId,
+        branchId: bridge.branchId,
+        envId: bridge.envId,
+        structId: bridge.structId,
+        needValidate: bridge.needValidate
       };
 
       if (skipRebuild === false) {
@@ -107,14 +134,14 @@ export class SpecialRebuildStructsController {
             traceId: reqValid.info.traceId
           },
           payload: {
-            orgId: project.org_id,
-            projectId: project.project_id,
-            repoId: bridge.repo_id,
-            branch: bridge.branch_id,
-            remoteType: project.remote_type,
-            gitUrl: project.git_url,
-            privateKey: project.private_key,
-            publicKey: project.public_key
+            orgId: project.orgId,
+            projectId: project.projectId,
+            repoId: bridge.repoId,
+            branch: bridge.branchId,
+            remoteType: project.remoteType,
+            gitUrl: project.gitUrl,
+            privateKey: project.privateKey,
+            publicKey: project.publicKey
           }
         };
 
@@ -122,8 +149,8 @@ export class SpecialRebuildStructsController {
           await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
             {
               routingKey: helper.makeRoutingKeyToDisk({
-                orgId: project.org_id,
-                projectId: project.project_id
+                orgId: project.orgId,
+                projectId: project.projectId
               }),
               message: getCatalogFilesRequest,
               checkIsOk: false
@@ -142,31 +169,45 @@ export class SpecialRebuildStructsController {
         let structId = common.makeId();
 
         await this.blockmlService.rebuildStruct({
-          traceId,
-          orgId: project.org_id,
-          projectId: project.project_id,
+          traceId: traceId,
+          orgId: project.orgId,
+          projectId: project.projectId,
           structId: structId,
           diskFiles: getCatalogFilesResponse.payload.files,
           mproveDir: getCatalogFilesResponse.payload.mproveDir,
-          envId: bridge.env_id
+          envId: bridge.envId
         });
 
-        bridge.struct_id = structId;
-        bridge.need_validate = common.BoolEnum.FALSE;
+        bridge.structId = structId;
+        bridge.needValidate = false;
       } else {
-        bridge.struct_id = common.EMPTY_STRUCT_ID;
-        bridge.need_validate = common.BoolEnum.TRUE;
+        bridge.structId = common.EMPTY_STRUCT_ID;
+        bridge.needValidate = true;
       }
 
-      await this.dbService.writeRecords({
-        modify: true,
-        records: {
-          bridges: [bridge]
-        }
-      });
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insertOrUpdate: {
+                  bridges: [bridge]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
 
-      bridgeItem.structId = bridge.struct_id;
-      bridgeItem.needValidate = common.enumToBoolean(bridge.need_validate);
+      // await this.dbService.writeRecords({
+      //   modify: true,
+      //   records: {
+      //     bridges: [bridge]
+      //   }
+      // });
+
+      bridgeItem.structId = bridge.structId;
+      bridgeItem.needValidate = bridge.needValidate;
 
       successBridgeItems.push(bridgeItem);
     });
