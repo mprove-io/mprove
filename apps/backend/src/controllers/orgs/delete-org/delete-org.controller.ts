@@ -122,7 +122,6 @@ export class DeleteOrgController {
               .where(inArray(bridgesTable.projectId, projectIds));
           }
         }),
-
       getRetryOption(this.cs, this.logger)
     );
 
