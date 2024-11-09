@@ -1,22 +1,24 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class GetProjectController {
   constructor(
     private projectsService: ProjectsService,
-    private membersService: MembersService
+    private membersService: MembersService,
+    private wrapToApiService: WrapToApiService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject)
   async getProject(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendGetProjectRequest = request.body;
@@ -29,13 +31,13 @@ export class GetProjectController {
 
     let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
-      memberId: user.user_id
+      memberId: user.userId
     });
 
-    let apiMember = wrapper.wrapToApiMember(userMember);
+    let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
     let payload: apiToBackend.ToBackendGetProjectResponsePayload = {
-      project: wrapper.wrapToApiProject(project),
+      project: this.wrapToApiService.wrapToApiProject(project),
       userMember: apiMember
     };
 
