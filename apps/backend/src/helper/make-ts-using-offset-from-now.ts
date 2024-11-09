@@ -1,3 +1,3 @@
 export function makeTsUsingOffsetFromNow(add: number) {
-  return (Date.now() + add).toString();
+  return Date.now() + add;
 }

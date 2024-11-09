@@ -37,7 +37,7 @@ export class ToBackendSeedRecordsRequestPayloadUsersItem {
 
   @IsOptional()
   @IsString()
-  passwordResetExpiresTs?: string;
+  passwordResetExpiresTs?: number;
 }
 
 export class ToBackendSeedRecordsRequestPayloadOrgsItem {

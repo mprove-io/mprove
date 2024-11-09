@@ -22,7 +22,7 @@ describe('integra', () => {
           password: password,
           isEmailVerified: common.BoolEnum.FALSE,
           passwordResetToken: passwordResetToken,
-          passwordResetExpiresTs: '1'
+          passwordResetExpiresTs: 1
         }
       ]
     });
