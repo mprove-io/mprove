@@ -31,12 +31,12 @@ let retry = require('async-retry');
 @Injectable()
 export class ReportsService {
   constructor(
-    private wrapToApiService: WrapToApiService,
-    private wrapToEntService: WrapToEntService,
     private makerService: MakerService,
     private docService: DocService,
     private blockmlService: BlockmlService,
     private rabbitService: RabbitService,
+    private wrapToEntService: WrapToEntService,
+    private wrapToApiService: WrapToApiService,
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db

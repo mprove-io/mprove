@@ -1,35 +1,47 @@
 import { BigQuery } from '@google-cloud/bigquery';
-import { Controller, Logger, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { and, eq, inArray } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
-import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
+import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
+import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { QueriesService } from '~backend/services/queries.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+
+let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class CancelQueriesController {
   constructor(
-    private connectionsRepository: repositories.ConnectionsRepository,
     private membersService: MembersService,
     private queriesService: QueriesService,
-    private dbService: DbService,
+    private wrapToApiService: WrapToApiService,
+    private cs: ConfigService<interfaces.Config>,
     private logger: Logger,
-    private cs: ConfigService
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries)
   async cancelQueries(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendCancelQueriesRequest = request.body;
@@ -38,7 +50,7 @@ export class CancelQueriesController {
 
     let member = await this.membersService.getMemberCheckExists({
       projectId: projectId,
-      memberId: user.user_id
+      memberId: user.userId
     });
 
     let queries = await this.queriesService.getQueriesCheckExistSkipSqlData({
@@ -46,19 +58,30 @@ export class CancelQueriesController {
       projectId: projectId
     });
 
-    let projectConnections = await this.connectionsRepository.find({
-      where: {
-        project_id: projectId,
-        connection_id: In(queries.map(q => q.connection_id))
-      }
-    });
+    let projectConnections =
+      await this.db.drizzle.query.connectionsTable.findMany({
+        where: and(
+          inArray(
+            connectionsTable.connectionId,
+            queries.map(q => q.connectionId)
+          ),
+          eq(connectionsTable.projectId, projectId)
+        )
+      });
+
+    // let projectConnections = await this.connectionsRepository.find({
+    //   where: {
+    //     project_id: projectId,
+    //     connection_id: In(queries.map(q => q.connection_id))
+    //   }
+    // });
 
     await asyncPool(
       8,
       queries.filter(q => q.status === common.QueryStatusEnum.Running),
-      async (query: schemaPostgres.QueryEntity) => {
+      async (query: schemaPostgres.QueryEnt) => {
         let connection = projectConnections.find(
-          x => x.connection_id === query.connection_id
+          x => x.connectionId === query.connectionId
         );
 
         if (common.isUndefined(connection)) {
@@ -69,11 +92,11 @@ export class CancelQueriesController {
 
         if (connection.type === common.ConnectionTypeEnum.BigQuery) {
           let bigquery = new BigQuery({
-            projectId: connection.bigquery_project,
-            credentials: connection.bigquery_credentials
+            projectId: connection.bigqueryProject,
+            credentials: connection.bigqueryCredentials
           });
 
-          let bigqueryQueryJob = bigquery.job(query.bigquery_query_job_id);
+          let bigqueryQueryJob = bigquery.job(query.bigqueryQueryJobId);
 
           // do not await
           bigqueryQueryJob.cancel().catch((e: any) => {
@@ -91,8 +114,8 @@ export class CancelQueriesController {
 
         query.status = common.QueryStatusEnum.Canceled;
         query.data = [];
-        query.last_cancel_ts = helper.makeTs();
-        query.query_job_id = null;
+        query.lastCancelTs = makeTsNumber();
+        query.queryJobId = undefined; // null;
       }
     );
 
@@ -101,16 +124,30 @@ export class CancelQueriesController {
     );
 
     if (canceledQueries.length > 0) {
-      await this.dbService.writeRecords({
-        modify: true,
-        records: {
-          queries: canceledQueries
-        }
-      });
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insertOrUpdate: {
+                  queries: canceledQueries
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+
+      // await this.dbService.writeRecords({
+      //   modify: true,
+      //   records: {
+      //     queries: canceledQueries
+      //   }
+      // });
     }
 
     let payload: apiToBackend.ToBackendCancelQueriesResponsePayload = {
-      queries: canceledQueries.map(x => wrapper.wrapToApiQuery(x))
+      queries: canceledQueries.map(x => this.wrapToApiService.wrapToApiQuery(x))
     };
 
     return payload;
