@@ -1,63 +1,84 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-import { In } from 'typeorm';
+import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { eq, inArray } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { membersTable } from '~backend/drizzle/postgres/schema/members';
+import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
+import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class GetOrgsListController {
   constructor(
-    private membersRepository: repositories.MembersRepository,
-    private projectsRepository: repositories.ProjectsRepository,
-    private orgsRepository: repositories.OrgsRepository
+    private wrapToApiService: WrapToApiService,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgsList)
   async getOrgsList(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendGetOrgsListRequest = request.body;
 
-    let userMembers = await this.membersRepository.find({
-      where: {
-        member_id: user.user_id
-      }
+    let userMembers = await this.db.drizzle.query.membersTable.findMany({
+      where: eq(membersTable.memberId, user.userId)
     });
 
-    let userProjectIds = userMembers.map(m => m.project_id);
+    // let userMembers = await this.membersRepository.find({
+    //   where: {
+    //     member_id: user.user_id
+    //   }
+    // });
+
+    let userProjectIds = userMembers.map(m => m.projectId);
+
     let userProjects =
       userProjectIds.length === 0
         ? []
-        : await this.projectsRepository.find({
-            where: {
-              project_id: In(userProjectIds)
-            }
+        : await this.db.drizzle.query.projectsTable.findMany({
+            where: inArray(projectsTable.projectId, userProjectIds)
           });
 
-    let userOrgIds = userProjects.map(p => p.org_id);
+    // await this.projectsRepository.find({
+    //     where: {
+    //       project_id: In(userProjectIds)
+    //     }
+    //   });
+
+    let userOrgIds = userProjects.map(p => p.orgId);
+
     let userOrgs =
       userOrgIds.length === 0
         ? []
-        : await this.orgsRepository.find({
-            where: {
-              org_id: In(userOrgIds)
-            }
+        : await this.db.drizzle.query.orgsTable.findMany({
+            where: inArray(orgsTable.orgId, userOrgIds)
           });
 
-    let ownerOrgs = await this.orgsRepository.find({
-      where: {
-        owner_id: user.user_id
-      }
+    // await this.orgsRepository.find({
+    //   where: {
+    //     org_id: In(userOrgIds)
+    //   }
+    // });
+
+    let ownerOrgs = await this.db.drizzle.query.orgsTable.findMany({
+      where: eq(orgsTable.ownerId, user.userId)
     });
+
+    // let ownerOrgs = await this.orgsRepository.find({
+    //   where: {
+    //     owner_id: user.user_id
+    //   }
+    // });
 
     let orgs = [...userOrgs];
 
     ownerOrgs.forEach(x => {
-      if (orgs.map(y => y.org_id).indexOf(x.org_id) < 0) {
+      if (orgs.map(y => y.orgId).indexOf(x.orgId) < 0) {
         orgs.push(x);
       }
     });
@@ -67,7 +88,7 @@ export class GetOrgsListController {
     );
 
     let payload: apiToBackend.ToBackendGetOrgsListResponsePayload = {
-      orgsList: sortedOrgs.map(x => wrapper.wrapToApiOrgsItem(x))
+      orgsList: sortedOrgs.map(x => this.wrapToApiService.wrapToApiOrgsItem(x))
     };
 
     return payload;

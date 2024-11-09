@@ -1,25 +1,41 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { and, eq } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
+import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { usersTable } from '~backend/drizzle/postgres/schema/users';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { DbService } from '~backend/services/db.service';
 import { OrgsService } from '~backend/services/orgs.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+
+let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class SetOrgOwnerController {
   constructor(
     private orgsService: OrgsService,
-    private usersRepository: repositories.UsersRepository,
-    private dbService: DbService
+    private wrapToApiService: WrapToApiService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner)
   async setOrgOwner(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendSetOrgOwnerRequest = request.body;
@@ -30,15 +46,22 @@ export class SetOrgOwnerController {
 
     await this.orgsService.checkUserIsOrgOwner({
       org: org,
-      userId: user.user_id
+      userId: user.userId
     });
 
-    let newOwner = await this.usersRepository.findOne({
-      where: {
-        email: ownerEmail,
-        is_email_verified: common.BoolEnum.TRUE
-      }
+    let newOwner = await this.db.drizzle.query.usersTable.findFirst({
+      where: and(
+        eq(usersTable.email, ownerEmail),
+        eq(usersTable.isEmailVerified, true)
+      )
     });
+
+    // let newOwner = await this.usersRepository.findOne({
+    //   where: {
+    //     email: ownerEmail,
+    //     is_email_verified: common.BoolEnum.TRUE
+    //   }
+    // });
 
     if (common.isUndefined(newOwner)) {
       throw new common.ServerError({
@@ -46,18 +69,32 @@ export class SetOrgOwnerController {
       });
     }
 
-    org.owner_id = newOwner.user_id;
-    org.owner_email = newOwner.email;
+    org.ownerId = newOwner.userId;
+    org.ownerEmail = newOwner.email;
 
-    await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        orgs: [org]
-      }
-    });
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insertOrUpdate: {
+                orgs: [org]
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    // await this.dbService.writeRecords({
+    //   modify: true,
+    //   records: {
+    //     orgs: [org]
+    //   }
+    // });
 
     let payload: apiToBackend.ToBackendSetOrgOwnerResponsePayload = {
-      org: wrapper.wrapToApiOrg(org)
+      org: this.wrapToApiService.wrapToApiOrg(org)
     };
 
     return payload;
