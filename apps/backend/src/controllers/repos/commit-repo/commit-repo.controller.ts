@@ -5,6 +5,7 @@ import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
@@ -25,7 +26,7 @@ export class CommitRepoController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCommitRepo)
   async commitRepo(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendCommitRepoRequest = request.body;
@@ -41,7 +42,7 @@ export class CommitRepoController {
 
     let repoId =
       // isRepoProd === true ? common.PROD_REPO_ID :
-      user.user_id;
+      user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -49,14 +50,14 @@ export class CommitRepoController {
 
     let member = await this.membersService.getMemberCheckIsEditor({
       projectId: projectId,
-      memberId: user.user_id
+      memberId: user.userId
     });
 
     let firstProjectId =
       this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
     if (
-      member.is_admin === common.BoolEnum.FALSE &&
+      member.isAdmin === false &&
       projectId === firstProjectId &&
       repoId === common.PROD_REPO_ID
     ) {
@@ -77,23 +78,23 @@ export class CommitRepoController {
         traceId: reqValid.info.traceId
       },
       payload: {
-        orgId: project.org_id,
+        orgId: project.orgId,
         projectId: projectId,
         repoId: repoId,
         branch: branchId,
         userAlias: user.alias,
         commitMessage: commitMessage,
-        remoteType: project.remote_type,
-        gitUrl: project.git_url,
-        privateKey: project.private_key,
-        publicKey: project.public_key
+        remoteType: project.remoteType,
+        gitUrl: project.gitUrl,
+        privateKey: project.privateKey,
+        publicKey: project.publicKey
       }
     };
 
     let diskResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskCommitRepoResponse>({
         routingKey: helper.makeRoutingKeyToDisk({
-          orgId: project.org_id,
+          orgId: project.orgId,
           projectId: projectId
         }),
         message: toDiskCommitRepoRequest,
