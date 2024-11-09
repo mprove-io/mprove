@@ -9,7 +9,6 @@ import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
-import { OrgEntity } from '~backend/models/store-entities/org.entity';
 import { RabbitService } from './rabbit.service';
 
 let retry = require('async-retry');
@@ -41,10 +40,13 @@ export class OrgsService {
     return org;
   }
 
-  async checkUserIsOrgOwner(item: { userId: string; org: OrgEntity }) {
+  async checkUserIsOrgOwner(item: {
+    userId: string;
+    org: schemaPostgres.OrgEnt;
+  }) {
     let { org, userId } = item;
 
-    if (org.owner_id !== userId) {
+    if (org.ownerId !== userId) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_ONLY_ORG_OWNER_CAN_ACCESS
       });
