@@ -91,7 +91,7 @@ export class SeedRecordsController {
             : { salt: undefined, hash: undefined };
 
           let newUser: schemaPostgres.UserEnt = {
-            userId: x.userId,
+            userId: x.userId || common.makeId(),
             email: x.email,
             alias: alias,
             isEmailVerified: common.enumToBoolean(x.isEmailVerified),
