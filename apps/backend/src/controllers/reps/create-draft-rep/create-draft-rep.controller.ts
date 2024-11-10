@@ -1,20 +1,37 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-import { In } from 'typeorm';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { and, eq, inArray } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
+import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { kitsTable } from '~backend/drizzle/postgres/schema/kits';
+import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
+import { metricsTable } from '~backend/drizzle/postgres/schema/metrics';
+import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
+import { getRetryOption } from '~backend/functions/get-retry-option';
+import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
-import { DbService } from '~backend/services/db.service';
 import { EnvsService } from '~backend/services/envs.service';
+import { MakerService } from '~backend/services/maker.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
-import { ReportsService } from '~backend/services/reps.service';
+import { ReportsService } from '~backend/services/reports.service';
 import { StructsService } from '~backend/services/structs.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+
+let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -27,16 +44,16 @@ export class CreateDraftRepController {
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private envsService: EnvsService,
-    private dbService: DbService,
-    private metricsRepository: repositories.MetricsRepository,
-    private queriesRepository: repositories.QueriesRepository,
-    private mconfigsRepository: repositories.MconfigsRepository,
-    private kitsRepository: repositories.KitsRepository
+    private makerService: MakerService,
+    private wrapToApiService: WrapToApiService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDraftRep)
   async createDraftRep(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendCreateDraftRepRequest = request.body;
@@ -62,12 +79,12 @@ export class CreateDraftRepController {
 
     let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
-      memberId: user.user_id
+      memberId: user.userId
     });
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
+      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 
@@ -78,21 +95,21 @@ export class CreateDraftRepController {
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.project_id,
-      repoId: branch.repo_id,
-      branchId: branch.branch_id,
+      projectId: branch.projectId,
+      repoId: branch.repoId,
+      branchId: branch.branchId,
       envId: envId
     });
 
     let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       projectId: projectId
     });
 
-    let fromRep: schemaPostgres.RepEntity = await this.repsService.getRep({
+    let fromRep: schemaPostgres.ReportEnt = await this.repsService.getRep({
       projectId: projectId,
       repId: fromRepId,
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       checkExist: true,
       checkAccess: true,
       user: user,
@@ -167,61 +184,99 @@ export class CreateDraftRepController {
     let fromCopyMconfigIds = copyMconfigsMap.map(x => x.fromMconfigId);
     let fromCopyKitIds = copyKitsMap.map(x => x.fromKitId);
 
-    let copyQueries: schemaPostgres.QueryEntity[] =
-      await this.queriesRepository.find({
-        where: {
-          query_id: In(fromCopyQueryIds),
-          project_id: projectId
-        }
-      });
-
-    let copyMconfigs: schemaPostgres.MconfigEntity[] =
-      await this.mconfigsRepository.find({
-        where: {
-          mconfig_id: In(fromCopyMconfigIds),
-          struct_id: struct.struct_id
-        }
-      });
-
-    let copyKits: schemaPostgres.KitEntity[] = await this.kitsRepository.find({
-      where: {
-        kit_id: In(fromCopyKitIds),
-        struct_id: struct.struct_id,
-        rep_id: fromRepId
-      }
+    let copyQueries = await this.db.drizzle.query.queriesTable.findMany({
+      where: and(
+        inArray(queriesTable.queryId, fromCopyQueryIds),
+        eq(queriesTable.projectId, projectId)
+      )
     });
 
+    // let copyQueries: schemaPostgres.QueryEntity[] =
+    //   await this.queriesRepository.find({
+    //     where: {
+    //       query_id: In(fromCopyQueryIds),
+    //       project_id: projectId
+    //     }
+    //   });
+
+    let copyMconfigs = await this.db.drizzle.query.mconfigsTable.findMany({
+      where: and(
+        inArray(mconfigsTable.mconfigId, fromCopyMconfigIds),
+        eq(mconfigsTable.structId, struct.structId)
+      )
+    });
+
+    // let copyMconfigs: schemaPostgres.MconfigEntity[] =
+    //   await this.mconfigsRepository.find({
+    //     where: {
+    //       mconfig_id: In(fromCopyMconfigIds),
+    //       struct_id: struct.struct_id
+    //     }
+    //   });
+
+    let copyKits = await this.db.drizzle.query.kitsTable.findMany({
+      where: and(
+        inArray(kitsTable.kitId, fromCopyKitIds),
+        eq(kitsTable.structId, struct.structId),
+        eq(kitsTable.reportId, fromRepId)
+      )
+    });
+
+    // let copyKits: schemaPostgres.KitEntity[] = await this.kitsRepository.find({
+    //   where: {
+    //     kit_id: In(fromCopyKitIds),
+    //     struct_id: struct.struct_id,
+    //     rep_id: fromRepId
+    //   }
+    // });
+
     copyQueries.forEach(x => {
-      x.query_id = copyQueriesMap.find(
-        y => y.fromQueryId === x.query_id
+      x.queryId = copyQueriesMap.find(
+        y => y.fromQueryId === x.queryId
       ).toQueryId;
     });
 
     copyMconfigs.forEach(x => {
-      x.mconfig_id = copyMconfigsMap.find(
-        y => y.fromMconfigId === x.mconfig_id
+      x.mconfigId = copyMconfigsMap.find(
+        y => y.fromMconfigId === x.mconfigId
       ).toMconfigId;
 
-      x.query_id = copyQueriesMap.find(
-        y => y.fromQueryId === x.query_id
+      x.queryId = copyQueriesMap.find(
+        y => y.fromQueryId === x.queryId
       ).toQueryId;
 
-      x.temp = common.BoolEnum.TRUE;
+      x.temp = true;
     });
 
     copyKits.forEach(x => {
-      x.kit_id = copyKitsMap.find(y => y.fromKitId === x.kit_id).toKitId;
-      x.rep_id = repId;
+      x.kitId = copyKitsMap.find(y => y.fromKitId === x.kitId).toKitId;
+      x.reportId = repId;
     });
 
-    let records = await this.dbService.writeRecords({
-      modify: false,
-      records: {
-        queries: copyQueries,
-        mconfigs: copyMconfigs,
-        kits: copyKits
-      }
-    });
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insert: {
+                queries: copyQueries,
+                mconfigs: copyMconfigs,
+                kits: copyKits
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    // let records = await this.dbService.writeRecords({
+    //   modify: false,
+    //   records: {
+    //     queries: copyQueries,
+    //     mconfigs: copyMconfigs,
+    //     kits: copyKits
+    //   }
+    // });
 
     let metrics =
       [
@@ -229,13 +284,19 @@ export class CreateDraftRepController {
         common.ChangeTypeEnum.EditParameters,
         common.ChangeTypeEnum.ConvertToMetric
       ].indexOf(changeType) > -1
-        ? await this.metricsRepository.find({
-            where: {
-              struct_id: bridge.struct_id,
-              metric_id: rowChange.metricId
-            }
+        ? await this.db.drizzle.query.metricsTable.findMany({
+            where: and(
+              eq(metricsTable.structId, bridge.structId),
+              eq(metricsTable.metricId, rowChange.metricId)
+            )
           })
-        : [];
+        : // await this.metricsRepository.find({
+          //     where: {
+          //       struct_id: bridge.struct_id,
+          //       metric_id: rowChange.metricId
+          //     }
+          //   })
+          [];
 
     let processedRows: common.Row[] = this.repsService.getProcessedRows({
       rows: fromRep.rows,
@@ -249,22 +310,21 @@ export class CreateDraftRepController {
       struct: struct
     });
 
-    let rep: schemaPostgres.RepEntity = {
-      project_id: projectId,
-      struct_id: bridge.struct_id,
-      rep_id: repId,
-      draft: common.BoolEnum.TRUE,
-      access_roles: [],
-      access_users: [],
-      creator_id: user.user_id,
-      file_path: undefined,
+    let rep: schemaPostgres.ReportEnt = this.makerService.makeReport({
+      projectId: projectId,
+      structId: bridge.structId,
+      reportId: repId,
+      draft: true,
+      accessRoles: [],
+      accessUsers: [],
+      creatorId: user.userId,
+      filePath: undefined,
       title: repId,
       rows: processedRows,
-      draft_created_ts: helper.makeTs(),
-      server_ts: undefined
-    };
+      draftCreatedTs: makeTsNumber()
+    });
 
-    let userMemberApi = wrapper.wrapToApiMember(userMember);
+    let userMemberApi = this.wrapToApiService.wrapToApiMember(userMember);
 
     let repApi = await this.repsService.getRepData({
       rep: rep,
@@ -282,8 +342,8 @@ export class CreateDraftRepController {
     });
 
     let payload: apiToBackend.ToBackendCreateDraftRepResponsePayload = {
-      needValidate: common.enumToBoolean(bridge.need_validate),
-      struct: wrapper.wrapToApiStruct(struct),
+      needValidate: bridge.needValidate,
+      struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: userMemberApi,
       rep: repApi
     };

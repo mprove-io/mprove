@@ -18,6 +18,7 @@ export class MakerService {
     accessRoles: string[];
     title: string;
     rows: common.Row[];
+    draftCreatedTs?: number;
     draft: boolean;
   }) {
     let {
@@ -30,7 +31,8 @@ export class MakerService {
       accessRoles,
       title,
       rows,
-      draft
+      draft,
+      draftCreatedTs
     } = item;
 
     let report: schemaPostgres.ReportEnt = {
@@ -48,7 +50,7 @@ export class MakerService {
       title: title,
       rows: rows,
       draft: draft,
-      draftCreatedTs: undefined,
+      draftCreatedTs: draftCreatedTs,
       serverTs: undefined
     };
 
