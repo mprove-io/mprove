@@ -1,5 +1,5 @@
 {
-  "id": "ef54921c-8178-40f7-906b-719dc931665f",
+  "id": "9f098bb4-188e-487e-a7db-2436145b66a7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -194,7 +194,7 @@
       "columns": {
         "bridge_full_id": {
           "name": "bridge_full_id",
-          "type": "varchar(32)",
+          "type": "varchar(64)",
           "primaryKey": true,
           "notNull": true
         },
@@ -1011,7 +1011,7 @@
         },
         "report_id": {
           "name": "report_id",
-          "type": "varchar(64)",
+          "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true
         },
@@ -2281,7 +2281,7 @@
         },
         "report_id": {
           "name": "report_id",
-          "type": "varchar(64)",
+          "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true
         },

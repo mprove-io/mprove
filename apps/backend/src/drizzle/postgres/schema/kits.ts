@@ -7,7 +7,7 @@ export const kitsTable = pgTable(
   {
     kitId: varchar('kit_id', { length: 32 }).notNull().primaryKey(),
     structId: varchar('struct_id', { length: 32 }).notNull(),
-    reportId: varchar('report_id', { length: 64 }).notNull(),
+    reportId: varchar('report_id', { length: 32 }).notNull(),
     data: json('data'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

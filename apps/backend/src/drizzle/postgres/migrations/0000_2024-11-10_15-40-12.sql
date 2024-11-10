@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS "branches" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "bridges" (
-	"bridge_full_id" varchar(32) PRIMARY KEY NOT NULL,
+	"bridge_full_id" varchar(64) PRIMARY KEY NOT NULL,
 	"project_id" varchar(32) NOT NULL,
 	"repo_id" varchar(32) NOT NULL,
 	"branch_id" varchar(32) NOT NULL,
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS "evs" (
 CREATE TABLE IF NOT EXISTS "kits" (
 	"kit_id" varchar(32) PRIMARY KEY NOT NULL,
 	"struct_id" varchar(32) NOT NULL,
-	"report_id" varchar(64) NOT NULL,
+	"report_id" varchar(32) NOT NULL,
 	"data" json,
 	"server_ts" bigint NOT NULL
 );
@@ -223,7 +223,7 @@ CREATE TABLE IF NOT EXISTS "queries" (
 CREATE TABLE IF NOT EXISTS "reports" (
 	"report_full_id" varchar(64) PRIMARY KEY NOT NULL,
 	"struct_id" varchar(32) NOT NULL,
-	"report_id" varchar(64) NOT NULL,
+	"report_id" varchar(32) NOT NULL,
 	"project_id" varchar(32) NOT NULL,
 	"creator_id" varchar(32),
 	"file_path" varchar,

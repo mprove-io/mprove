@@ -18,7 +18,7 @@ export const reportsTable = pgTable(
       .notNull()
       .primaryKey(),
     structId: varchar('struct_id', { length: 32 }).notNull(),
-    reportId: varchar('report_id', { length: 64 }).notNull(), // name
+    reportId: varchar('report_id', { length: 32 }).notNull(), // name
     projectId: varchar('project_id', { length: 32 }).notNull(),
     creatorId: varchar('creator_id', { length: 32 }), // user_id
     filePath: varchar('file_path'),
