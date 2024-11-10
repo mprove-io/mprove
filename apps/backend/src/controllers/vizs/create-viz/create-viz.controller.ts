@@ -322,7 +322,7 @@ export class CreateVizController {
       })
       .from(modelsTable)
       .where(
-        and(eq(modelsTable.structId, bridge.structId))
+        eq(modelsTable.structId, bridge.structId)
       )) as schemaPostgres.ModelEnt[];
 
     // let modelsEntities = await this.modelsRepository.find({

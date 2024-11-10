@@ -1,10 +1,13 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { eq } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
-import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { modelsTable } from '~backend/drizzle/postgres/schema/models';
+import { vizsTable } from '~backend/drizzle/postgres/schema/vizs';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
@@ -13,6 +16,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { StructsService } from '~backend/services/structs.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -22,16 +26,16 @@ export class GetVizsController {
     private membersService: MembersService,
     private modelsService: ModelsService,
     private structsService: StructsService,
-    private modelsRepository: repositories.ModelsRepository,
     private projectsService: ProjectsService,
-    private vizsRepository: repositories.VizsRepository,
     private bridgesService: BridgesService,
-    private envsService: EnvsService
+    private envsService: EnvsService,
+    private wrapToApiService: WrapToApiService,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs)
   async getVizs(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendGetVizsRequest = request.body;
@@ -44,12 +48,12 @@ export class GetVizsController {
 
     let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
-      memberId: user.user_id
+      memberId: user.userId
     });
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
+      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 
@@ -60,17 +64,21 @@ export class GetVizsController {
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.project_id,
-      repoId: branch.repo_id,
-      branchId: branch.branch_id,
+      projectId: branch.projectId,
+      repoId: branch.repoId,
+      branchId: branch.branchId,
       envId: envId
     });
 
-    let vizs = await this.vizsRepository.find({
-      where: {
-        struct_id: bridge.struct_id
-      }
+    let vizs = await this.db.drizzle.query.vizsTable.findMany({
+      where: eq(vizsTable.structId, bridge.structId)
     });
+
+    // let vizs = await this.vizsRepository.find({
+    //   where: {
+    //     struct_id: bridge.struct_id
+    //   }
+    // });
 
     let vizsGrantedAccess = vizs.filter(x =>
       helper.checkAccess({
@@ -80,16 +88,29 @@ export class GetVizsController {
       })
     );
 
-    let models = await this.modelsRepository.find({
-      select: [
-        'model_id',
-        'access_users',
-        'access_roles',
-        'hidden',
-        'connection_id'
-      ],
-      where: { struct_id: bridge.struct_id }
-    });
+    let models = (await this.db.drizzle
+      .select({
+        modelId: modelsTable.modelId,
+        accessUsers: modelsTable.accessUsers,
+        accessRoles: modelsTable.accessRoles,
+        hidden: modelsTable.hidden,
+        connectionId: modelsTable.connectionId
+      })
+      .from(modelsTable)
+      .where(
+        eq(modelsTable.structId, bridge.structId)
+      )) as schemaPostgres.ModelEnt[];
+
+    // let models = await this.modelsRepository.find({
+    //   select: [
+    //     'model_id',
+    //     'access_users',
+    //     'access_roles',
+    //     'hidden',
+    //     'connection_id'
+    //   ],
+    //   where: { struct_id: bridge.struct_id }
+    // });
 
     let modelsY = await this.modelsService.getModelsY({
       bridge: bridge,
@@ -98,19 +119,19 @@ export class GetVizsController {
     });
 
     let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       projectId: projectId
     });
 
-    let apiMember = wrapper.wrapToApiMember(userMember);
+    let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
     let payload: apiToBackend.ToBackendGetVizsResponsePayload = {
-      needValidate: common.enumToBoolean(bridge.need_validate),
-      struct: wrapper.wrapToApiStruct(struct),
+      needValidate: bridge.needValidate,
+      struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: apiMember,
       models: modelsY
         .map(model =>
-          wrapper.wrapToApiModel({
+          this.wrapToApiService.wrapToApiModel({
             model: model,
             hasAccess: helper.checkAccess({
               userAlias: user.alias,
@@ -121,13 +142,13 @@ export class GetVizsController {
         )
         .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0)),
       vizs: vizsGrantedAccess.map(x =>
-        wrapper.wrapToApiViz({
+        this.wrapToApiService.wrapToApiViz({
           viz: x,
           mconfigs: [],
           queries: [],
-          member: wrapper.wrapToApiMember(userMember),
+          member: this.wrapToApiService.wrapToApiMember(userMember),
           models: models.map(model =>
-            wrapper.wrapToApiModel({
+            this.wrapToApiService.wrapToApiModel({
               model: model,
               hasAccess: helper.checkAccess({
                 userAlias: user.alias,
