@@ -61,7 +61,7 @@ export class DrizzlePacker {
       tx: tx,
       insert: insertRecords,
       update: updateRecords,
-      insertOrUpdate: insertOrUpdateRecords,
+      insertOrUpdate: insOrUpdRecords,
       rawQueries: rawQueries,
       serverTs: serverTs
     } = item;
@@ -570,32 +570,34 @@ export class DrizzlePacker {
     //
     //
 
-    if (common.isDefined(insertOrUpdateRecords)) {
-      Object.keys(insertOrUpdateRecords).forEach(key => {
+    if (common.isDefined(insOrUpdRecords)) {
+      Object.keys(insOrUpdRecords).forEach(key => {
         if (
-          common.isDefined(
-            insertOrUpdateRecords[key as keyof interfaces.DbRecords]
-          )
+          common.isDefined(insOrUpdRecords[key as keyof interfaces.DbRecords])
         ) {
           refreshServerTs(
-            insertOrUpdateRecords[key as keyof interfaces.DbRecords] as any,
+            insOrUpdRecords[key as keyof interfaces.DbRecords] as any,
             newServerTs
           );
         }
       });
 
       if (
-        common.isDefined(insertOrUpdateRecords.avatars) &&
-        insertOrUpdateRecords.avatars.length > 0
+        common.isDefined(insOrUpdRecords.avatars) &&
+        insOrUpdRecords.avatars.length > 0
       ) {
-        insertOrUpdateRecords.avatars = setUndefinedToNull({
-          ents: insertOrUpdateRecords.avatars,
+        insOrUpdRecords.avatars = Array.from(
+          new Set(insOrUpdRecords.avatars.map(x => x.userId))
+        ).map(id => insOrUpdRecords.avatars.find(x => x.userId === id));
+
+        insOrUpdRecords.avatars = setUndefinedToNull({
+          ents: insOrUpdRecords.avatars,
           table: avatarsTable
         });
 
         await tx
           .insert(avatarsTable)
-          .values(insertOrUpdateRecords.avatars)
+          .values(insOrUpdRecords.avatars)
           .onConflictDoUpdate({
             target: avatarsTable.userId,
             set: drizzleSetAllColumnsFull({ table: avatarsTable })
@@ -603,17 +605,21 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insertOrUpdateRecords.branches) &&
-        insertOrUpdateRecords.branches.length > 0
+        common.isDefined(insOrUpdRecords.branches) &&
+        insOrUpdRecords.branches.length > 0
       ) {
-        insertOrUpdateRecords.branches = setUndefinedToNull({
-          ents: insertOrUpdateRecords.branches,
+        insOrUpdRecords.branches = Array.from(
+          new Set(insOrUpdRecords.branches.map(x => x.branchFullId))
+        ).map(id => insOrUpdRecords.branches.find(x => x.branchFullId === id));
+
+        insOrUpdRecords.branches = setUndefinedToNull({
+          ents: insOrUpdRecords.branches,
           table: branchesTable
         });
 
         await tx
           .insert(branchesTable)
-          .values(insertOrUpdateRecords.branches)
+          .values(insOrUpdRecords.branches)
           .onConflictDoUpdate({
             target: branchesTable.branchFullId,
             set: drizzleSetAllColumnsFull({ table: branchesTable })
@@ -621,17 +627,21 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insertOrUpdateRecords.bridges) &&
-        insertOrUpdateRecords.bridges.length > 0
+        common.isDefined(insOrUpdRecords.bridges) &&
+        insOrUpdRecords.bridges.length > 0
       ) {
-        insertOrUpdateRecords.bridges = setUndefinedToNull({
-          ents: insertOrUpdateRecords.bridges,
+        insOrUpdRecords.bridges = Array.from(
+          new Set(insOrUpdRecords.bridges.map(x => x.bridgeFullId))
+        ).map(id => insOrUpdRecords.bridges.find(x => x.bridgeFullId === id));
+
+        insOrUpdRecords.bridges = setUndefinedToNull({
+          ents: insOrUpdRecords.bridges,
           table: bridgesTable
         });
 
         await tx
           .insert(bridgesTable)
-          .values(insertOrUpdateRecords.bridges)
+          .values(insOrUpdRecords.bridges)
           .onConflictDoUpdate({
             target: bridgesTable.bridgeFullId,
             set: drizzleSetAllColumnsFull({ table: bridgesTable })
@@ -639,17 +649,23 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insertOrUpdateRecords.connections) &&
-        insertOrUpdateRecords.connections.length > 0
+        common.isDefined(insOrUpdRecords.connections) &&
+        insOrUpdRecords.connections.length > 0
       ) {
-        insertOrUpdateRecords.connections = setUndefinedToNull({
-          ents: insertOrUpdateRecords.connections,
+        insOrUpdRecords.connections = Array.from(
+          new Set(insOrUpdRecords.connections.map(x => x.connectionFullId))
+        ).map(id =>
+          insOrUpdRecords.connections.find(x => x.connectionFullId === id)
+        );
+
+        insOrUpdRecords.connections = setUndefinedToNull({
+          ents: insOrUpdRecords.connections,
           table: connectionsTable
         });
 
         await tx
           .insert(connectionsTable)
-          .values(insertOrUpdateRecords.connections)
+          .values(insOrUpdRecords.connections)
           .onConflictDoUpdate({
             target: connectionsTable.connectionFullId,
             set: drizzleSetAllColumnsFull({ table: connectionsTable })
@@ -657,17 +673,23 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insertOrUpdateRecords.dashboards) &&
-        insertOrUpdateRecords.dashboards.length > 0
+        common.isDefined(insOrUpdRecords.dashboards) &&
+        insOrUpdRecords.dashboards.length > 0
       ) {
-        insertOrUpdateRecords.dashboards = setUndefinedToNull({
-          ents: insertOrUpdateRecords.dashboards,
+        insOrUpdRecords.dashboards = Array.from(
+          new Set(insOrUpdRecords.dashboards.map(x => x.dashboardFullId))
+        ).map(id =>
+          insOrUpdRecords.dashboards.find(x => x.dashboardFullId === id)
+        );
+
+        insOrUpdRecords.dashboards = setUndefinedToNull({
+          ents: insOrUpdRecords.dashboards,
           table: dashboardsTable
         });
 
         await tx
           .insert(dashboardsTable)
-          .values(insertOrUpdateRecords.dashboards)
+          .values(insOrUpdRecords.dashboards)
           .onConflictDoUpdate({
             target: dashboardsTable.dashboardFullId,
             set: drizzleSetAllColumnsFull({ table: dashboardsTable })
@@ -675,17 +697,21 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insertOrUpdateRecords.envs) &&
-        insertOrUpdateRecords.envs.length > 0
+        common.isDefined(insOrUpdRecords.envs) &&
+        insOrUpdRecords.envs.length > 0
       ) {
-        insertOrUpdateRecords.envs = setUndefinedToNull({
-          ents: insertOrUpdateRecords.envs,
+        insOrUpdRecords.envs = Array.from(
+          new Set(insOrUpdRecords.envs.map(x => x.envFullId))
+        ).map(id => insOrUpdRecords.envs.find(x => x.envFullId === id));
+
+        insOrUpdRecords.envs = setUndefinedToNull({
+          ents: insOrUpdRecords.envs,
           table: envsTable
         });
 
         await tx
           .insert(envsTable)
-          .values(insertOrUpdateRecords.envs)
+          .values(insOrUpdRecords.envs)
           .onConflictDoUpdate({
             target: envsTable.envFullId,
             set: drizzleSetAllColumnsFull({ table: envsTable })
@@ -693,17 +719,21 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insertOrUpdateRecords.evs) &&
-        insertOrUpdateRecords.evs.length > 0
+        common.isDefined(insOrUpdRecords.evs) &&
+        insOrUpdRecords.evs.length > 0
       ) {
-        insertOrUpdateRecords.evs = setUndefinedToNull({
-          ents: insertOrUpdateRecords.evs,
+        insOrUpdRecords.evs = Array.from(
+          new Set(insOrUpdRecords.evs.map(x => x.evFullId))
+        ).map(id => insOrUpdRecords.evs.find(x => x.evFullId === id));
+
+        insOrUpdRecords.evs = setUndefinedToNull({
+          ents: insOrUpdRecords.evs,
           table: evsTable
         });
 
         await tx
           .insert(evsTable)
-          .values(insertOrUpdateRecords.evs)
+          .values(insOrUpdRecords.evs)
           .onConflictDoUpdate({
             target: evsTable.evFullId,
             set: drizzleSetAllColumnsFull({ table: evsTable })
@@ -711,17 +741,21 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insertOrUpdateRecords.kits) &&
-        insertOrUpdateRecords.kits.length > 0
+        common.isDefined(insOrUpdRecords.kits) &&
+        insOrUpdRecords.kits.length > 0
       ) {
-        insertOrUpdateRecords.kits = setUndefinedToNull({
-          ents: insertOrUpdateRecords.kits,
+        insOrUpdRecords.kits = Array.from(
+          new Set(insOrUpdRecords.kits.map(x => x.kitId))
+        ).map(id => insOrUpdRecords.kits.find(x => x.kitId === id));
+
+        insOrUpdRecords.kits = setUndefinedToNull({
+          ents: insOrUpdRecords.kits,
           table: kitsTable
         });
 
         await tx
           .insert(kitsTable)
-          .values(insertOrUpdateRecords.kits)
+          .values(insOrUpdRecords.kits)
           .onConflictDoUpdate({
             target: kitsTable.kitId,
             set: drizzleSetAllColumnsFull({ table: kitsTable })
@@ -729,17 +763,21 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insertOrUpdateRecords.mconfigs) &&
-        insertOrUpdateRecords.mconfigs.length > 0
+        common.isDefined(insOrUpdRecords.mconfigs) &&
+        insOrUpdRecords.mconfigs.length > 0
       ) {
-        insertOrUpdateRecords.mconfigs = setUndefinedToNull({
-          ents: insertOrUpdateRecords.mconfigs,
+        insOrUpdRecords.mconfigs = Array.from(
+          new Set(insOrUpdRecords.mconfigs.map(x => x.mconfigId))
+        ).map(id => insOrUpdRecords.mconfigs.find(x => x.mconfigId === id));
+
+        insOrUpdRecords.mconfigs = setUndefinedToNull({
+          ents: insOrUpdRecords.mconfigs,
           table: mconfigsTable
         });
 
         await tx
           .insert(mconfigsTable)
-          .values(insertOrUpdateRecords.mconfigs)
+          .values(insOrUpdRecords.mconfigs)
           .onConflictDoUpdate({
             target: mconfigsTable.mconfigId,
             set: drizzleSetAllColumnsFull({ table: mconfigsTable })
@@ -747,17 +785,21 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insertOrUpdateRecords.members) &&
-        insertOrUpdateRecords.members.length > 0
+        common.isDefined(insOrUpdRecords.members) &&
+        insOrUpdRecords.members.length > 0
       ) {
-        insertOrUpdateRecords.members = setUndefinedToNull({
-          ents: insertOrUpdateRecords.members,
+        insOrUpdRecords.members = Array.from(
+          new Set(insOrUpdRecords.members.map(x => x.memberFullId))
+        ).map(id => insOrUpdRecords.members.find(x => x.memberFullId === id));
+
+        insOrUpdRecords.members = setUndefinedToNull({
+          ents: insOrUpdRecords.members,
           table: membersTable
         });
 
         await tx
           .insert(membersTable)
-          .values(insertOrUpdateRecords.members)
+          .values(insOrUpdRecords.members)
           .onConflictDoUpdate({
             target: membersTable.memberFullId,
             set: drizzleSetAllColumnsFull({ table: membersTable })
@@ -765,17 +807,21 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insertOrUpdateRecords.metrics) &&
-        insertOrUpdateRecords.metrics.length > 0
+        common.isDefined(insOrUpdRecords.metrics) &&
+        insOrUpdRecords.metrics.length > 0
       ) {
-        insertOrUpdateRecords.metrics = setUndefinedToNull({
-          ents: insertOrUpdateRecords.metrics,
+        insOrUpdRecords.metrics = Array.from(
+          new Set(insOrUpdRecords.metrics.map(x => x.metricFullId))
+        ).map(id => insOrUpdRecords.metrics.find(x => x.metricFullId === id));
+
+        insOrUpdRecords.metrics = setUndefinedToNull({
+          ents: insOrUpdRecords.metrics,
           table: metricsTable
         });
 
         await tx
           .insert(metricsTable)
-          .values(insertOrUpdateRecords.metrics)
+          .values(insOrUpdRecords.metrics)
           .onConflictDoUpdate({
             target: metricsTable.metricFullId,
             set: drizzleSetAllColumnsFull({ table: metricsTable })
@@ -783,17 +829,21 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insertOrUpdateRecords.models) &&
-        insertOrUpdateRecords.models.length > 0
+        common.isDefined(insOrUpdRecords.models) &&
+        insOrUpdRecords.models.length > 0
       ) {
-        insertOrUpdateRecords.models = setUndefinedToNull({
-          ents: insertOrUpdateRecords.models,
+        insOrUpdRecords.models = Array.from(
+          new Set(insOrUpdRecords.models.map(x => x.modelFullId))
+        ).map(id => insOrUpdRecords.models.find(x => x.modelFullId === id));
+
+        insOrUpdRecords.models = setUndefinedToNull({
+          ents: insOrUpdRecords.models,
           table: modelsTable
         });
 
         await tx
           .insert(modelsTable)
-          .values(insertOrUpdateRecords.models)
+          .values(insOrUpdRecords.models)
           .onConflictDoUpdate({
             target: modelsTable.modelFullId,
             set: drizzleSetAllColumnsFull({ table: modelsTable })
@@ -801,17 +851,21 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insertOrUpdateRecords.notes) &&
-        insertOrUpdateRecords.notes.length > 0
+        common.isDefined(insOrUpdRecords.notes) &&
+        insOrUpdRecords.notes.length > 0
       ) {
-        insertOrUpdateRecords.notes = setUndefinedToNull({
-          ents: insertOrUpdateRecords.notes,
+        insOrUpdRecords.notes = Array.from(
+          new Set(insOrUpdRecords.notes.map(x => x.noteId))
+        ).map(id => insOrUpdRecords.notes.find(x => x.noteId === id));
+
+        insOrUpdRecords.notes = setUndefinedToNull({
+          ents: insOrUpdRecords.notes,
           table: notesTable
         });
 
         await tx
           .insert(notesTable)
-          .values(insertOrUpdateRecords.notes)
+          .values(insOrUpdRecords.notes)
           .onConflictDoUpdate({
             target: notesTable.noteId,
             set: drizzleSetAllColumnsFull({ table: notesTable })
@@ -819,17 +873,21 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insertOrUpdateRecords.orgs) &&
-        insertOrUpdateRecords.orgs.length > 0
+        common.isDefined(insOrUpdRecords.orgs) &&
+        insOrUpdRecords.orgs.length > 0
       ) {
-        insertOrUpdateRecords.orgs = setUndefinedToNull({
-          ents: insertOrUpdateRecords.orgs,
+        insOrUpdRecords.orgs = Array.from(
+          new Set(insOrUpdRecords.orgs.map(x => x.orgId))
+        ).map(id => insOrUpdRecords.orgs.find(x => x.orgId === id));
+
+        insOrUpdRecords.orgs = setUndefinedToNull({
+          ents: insOrUpdRecords.orgs,
           table: orgsTable
         });
 
         await tx
           .insert(orgsTable)
-          .values(insertOrUpdateRecords.orgs)
+          .values(insOrUpdRecords.orgs)
           .onConflictDoUpdate({
             target: orgsTable.orgId,
             set: drizzleSetAllColumnsFull({ table: orgsTable })
@@ -837,17 +895,21 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insertOrUpdateRecords.projects) &&
-        insertOrUpdateRecords.projects.length > 0
+        common.isDefined(insOrUpdRecords.projects) &&
+        insOrUpdRecords.projects.length > 0
       ) {
-        insertOrUpdateRecords.projects = setUndefinedToNull({
-          ents: insertOrUpdateRecords.projects,
+        insOrUpdRecords.projects = Array.from(
+          new Set(insOrUpdRecords.projects.map(x => x.projectId))
+        ).map(id => insOrUpdRecords.projects.find(x => x.projectId === id));
+
+        insOrUpdRecords.projects = setUndefinedToNull({
+          ents: insOrUpdRecords.projects,
           table: projectsTable
         });
 
         await tx
           .insert(projectsTable)
-          .values(insertOrUpdateRecords.projects)
+          .values(insOrUpdRecords.projects)
           .onConflictDoUpdate({
             target: projectsTable.projectId,
             set: drizzleSetAllColumnsFull({ table: projectsTable })
@@ -855,17 +917,21 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insertOrUpdateRecords.queries) &&
-        insertOrUpdateRecords.queries.length > 0
+        common.isDefined(insOrUpdRecords.queries) &&
+        insOrUpdRecords.queries.length > 0
       ) {
-        insertOrUpdateRecords.queries = setUndefinedToNull({
-          ents: insertOrUpdateRecords.queries,
+        insOrUpdRecords.queries = Array.from(
+          new Set(insOrUpdRecords.queries.map(x => x.queryId))
+        ).map(id => insOrUpdRecords.queries.find(x => x.queryId === id));
+
+        insOrUpdRecords.queries = setUndefinedToNull({
+          ents: insOrUpdRecords.queries,
           table: queriesTable
         });
 
         await tx
           .insert(queriesTable)
-          .values(insertOrUpdateRecords.queries)
+          .values(insOrUpdRecords.queries)
           .onConflictDoUpdate({
             target: queriesTable.queryId,
             set: drizzleSetAllColumnsFull({ table: queriesTable })
@@ -873,17 +939,21 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insertOrUpdateRecords.reports) &&
-        insertOrUpdateRecords.reports.length > 0
+        common.isDefined(insOrUpdRecords.reports) &&
+        insOrUpdRecords.reports.length > 0
       ) {
-        insertOrUpdateRecords.reports = setUndefinedToNull({
-          ents: insertOrUpdateRecords.reports,
+        insOrUpdRecords.reports = Array.from(
+          new Set(insOrUpdRecords.reports.map(x => x.reportFullId))
+        ).map(id => insOrUpdRecords.reports.find(x => x.reportFullId === id));
+
+        insOrUpdRecords.reports = setUndefinedToNull({
+          ents: insOrUpdRecords.reports,
           table: reportsTable
         });
 
         await tx
           .insert(reportsTable)
-          .values(insertOrUpdateRecords.reports)
+          .values(insOrUpdRecords.reports)
           .onConflictDoUpdate({
             target: reportsTable.reportFullId,
             set: drizzleSetAllColumnsFull({ table: reportsTable })
@@ -891,17 +961,21 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insertOrUpdateRecords.structs) &&
-        insertOrUpdateRecords.structs.length > 0
+        common.isDefined(insOrUpdRecords.structs) &&
+        insOrUpdRecords.structs.length > 0
       ) {
-        insertOrUpdateRecords.structs = setUndefinedToNull({
-          ents: insertOrUpdateRecords.structs,
+        insOrUpdRecords.structs = Array.from(
+          new Set(insOrUpdRecords.structs.map(x => x.structId))
+        ).map(id => insOrUpdRecords.structs.find(x => x.structId === id));
+
+        insOrUpdRecords.structs = setUndefinedToNull({
+          ents: insOrUpdRecords.structs,
           table: structsTable
         });
 
         await tx
           .insert(structsTable)
-          .values(insertOrUpdateRecords.structs)
+          .values(insOrUpdRecords.structs)
           .onConflictDoUpdate({
             target: structsTable.structId,
             set: drizzleSetAllColumnsFull({ table: structsTable })
@@ -909,17 +983,21 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insertOrUpdateRecords.users) &&
-        insertOrUpdateRecords.users.length > 0
+        common.isDefined(insOrUpdRecords.users) &&
+        insOrUpdRecords.users.length > 0
       ) {
-        insertOrUpdateRecords.users = setUndefinedToNull({
-          ents: insertOrUpdateRecords.users,
+        insOrUpdRecords.users = Array.from(
+          new Set(insOrUpdRecords.users.map(x => x.userId))
+        ).map(id => insOrUpdRecords.users.find(x => x.userId === id));
+
+        insOrUpdRecords.users = setUndefinedToNull({
+          ents: insOrUpdRecords.users,
           table: usersTable
         });
 
         await tx
           .insert(usersTable)
-          .values(insertOrUpdateRecords.users)
+          .values(insOrUpdRecords.users)
           .onConflictDoUpdate({
             target: usersTable.userId,
             set: drizzleSetAllColumnsFull({ table: usersTable })
@@ -927,17 +1005,21 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insertOrUpdateRecords.vizs) &&
-        insertOrUpdateRecords.vizs.length > 0
+        common.isDefined(insOrUpdRecords.vizs) &&
+        insOrUpdRecords.vizs.length > 0
       ) {
-        insertOrUpdateRecords.vizs = setUndefinedToNull({
-          ents: insertOrUpdateRecords.vizs,
+        insOrUpdRecords.vizs = Array.from(
+          new Set(insOrUpdRecords.vizs.map(x => x.vizFullId))
+        ).map(id => insOrUpdRecords.vizs.find(x => x.vizFullId === id));
+
+        insOrUpdRecords.vizs = setUndefinedToNull({
+          ents: insOrUpdRecords.vizs,
           table: vizsTable
         });
 
         await tx
           .insert(vizsTable)
-          .values(insertOrUpdateRecords.vizs)
+          .values(insOrUpdRecords.vizs)
           .onConflictDoUpdate({
             target: vizsTable.vizFullId,
             set: drizzleSetAllColumnsFull({ table: vizsTable })
@@ -958,7 +1040,7 @@ export class DrizzlePacker {
     let pack: RecordsPackOutput = {
       insert: insertRecords,
       update: updateRecords,
-      insertOrUpdate: insertOrUpdateRecords
+      insertOrUpdate: insOrUpdRecords
     };
 
     return pack;
