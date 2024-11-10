@@ -178,7 +178,7 @@ CREATE TABLE IF NOT EXISTS "notes" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "orgs" (
-	"org_id" varchar(32) PRIMARY KEY NOT NULL,
+	"org_id" varchar(128) PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"owner_id" text NOT NULL,
 	"owner_email" text NOT NULL,
@@ -187,7 +187,7 @@ CREATE TABLE IF NOT EXISTS "orgs" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "projects" (
 	"project_id" varchar(32) PRIMARY KEY NOT NULL,
-	"org_id" varchar(32) NOT NULL,
+	"org_id" varchar(128) NOT NULL,
 	"name" text NOT NULL,
 	"default_branch" text DEFAULT 'master' NOT NULL,
 	"remote_type" varchar DEFAULT 'Managed' NOT NULL,

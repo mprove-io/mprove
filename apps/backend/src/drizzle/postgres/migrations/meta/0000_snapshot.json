@@ -1,5 +1,5 @@
 {
-  "id": "66ca84f3-e2d2-4be0-a044-b4a3d5221013",
+  "id": "6fe7c244-f98e-4e1a-a0a7-57a27b9b8f9d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1850,7 +1850,7 @@
       "columns": {
         "org_id": {
           "name": "org_id",
-          "type": "varchar(32)",
+          "type": "varchar(128)",
           "primaryKey": true,
           "notNull": true
         },
@@ -1945,7 +1945,7 @@
         },
         "org_id": {
           "name": "org_id",
-          "type": "varchar(32)",
+          "type": "varchar(128)",
           "primaryKey": false,
           "notNull": true
         },
