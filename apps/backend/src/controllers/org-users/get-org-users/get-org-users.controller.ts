@@ -172,7 +172,7 @@ export class GetOrgUsersController {
 
     let payload: apiToBackend.ToBackendGetOrgUsersResponsePayload = {
       orgUsersList: orgUsers,
-      total: usersResult[0].total
+      total: usersResult.length > 0 ? usersResult[0].total : 0
     };
 
     return payload;

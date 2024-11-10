@@ -19,6 +19,7 @@ let orgName = testId;
 
 let projectId = common.makeId();
 let projectName = testId;
+let projectNameNext = 'p2';
 
 let prep: interfaces.Prep;
 
@@ -33,7 +34,7 @@ test('1', async t => {
         emails: [email],
         orgIds: [orgId],
         projectIds: [projectId],
-        projectNames: [projectName]
+        projectNames: [projectName, projectNameNext]
       },
       seedRecordsPayload: {
         users: [
@@ -82,7 +83,7 @@ test('1', async t => {
       },
       payload: {
         projectId: projectId,
-        name: `p2`
+        name: projectNameNext
       }
     };
 

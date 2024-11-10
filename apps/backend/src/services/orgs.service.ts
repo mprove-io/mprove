@@ -9,6 +9,7 @@ import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
+import { makeId } from '~common/_index';
 import { RabbitService } from './rabbit.service';
 
 let retry = require('async-retry');
@@ -65,7 +66,7 @@ export class OrgsService {
     let { ownerId, ownerEmail, name, traceId, orgId } = item;
 
     let newOrg: schemaPostgres.OrgEnt = {
-      orgId: orgId,
+      orgId: orgId || makeId(),
       name: name,
       ownerId: ownerId,
       ownerEmail: ownerEmail,
