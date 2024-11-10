@@ -1,6 +1,6 @@
 version: '3.7'
 services:
-  db-pg:
+  db:
     image: docker.io/bitnami/postgresql:17.0.0-debian-12-r9
     environment:
       POSTGRESQL_DATABASE: $COMPOSE_DB_PG_POSTGRESQL_DATABASE

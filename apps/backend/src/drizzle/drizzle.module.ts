@@ -69,7 +69,8 @@ export interface Db {
         let postgresPoolDrizzle: NodePgDatabase<typeof schemaPostgres> =
           drizzlePg(postgresPool, pgDrizzleConfig);
 
-        let postgresPacker = new DrizzlePacker(cs, logger, postgresPoolDrizzle);
+        let postgresPacker = new DrizzlePacker();
+        // cs, logger, postgresPoolDrizzle
 
         //
 

@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS "avatars" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "branches" (
-	"branch_full_id" varchar(32) PRIMARY KEY NOT NULL,
+	"branch_full_id" varchar(64) PRIMARY KEY NOT NULL,
 	"project_id" varchar(32) NOT NULL,
 	"repo_id" varchar(32) NOT NULL,
 	"branch_id" varchar(32) NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS "branches" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "bridges" (
-	"bridge_id" varchar(32) PRIMARY KEY NOT NULL,
+	"bridge_full_id" varchar(32) PRIMARY KEY NOT NULL,
 	"project_id" varchar(32) NOT NULL,
 	"repo_id" varchar(32) NOT NULL,
 	"branch_id" varchar(32) NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS "bridges" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "connections" (
-	"connection_full_id" varchar(32) PRIMARY KEY NOT NULL,
+	"connection_full_id" varchar(64) PRIMARY KEY NOT NULL,
 	"project_id" varchar(32) NOT NULL,
 	"env_id" varchar(32) NOT NULL,
 	"connection_id" varchar(32) NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS "connections" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "dashboards" (
-	"dashboard_full_id" varchar(32) PRIMARY KEY NOT NULL,
+	"dashboard_full_id" varchar(64) PRIMARY KEY NOT NULL,
 	"struct_id" varchar(32) NOT NULL,
 	"dashboard_id" varchar(32) NOT NULL,
 	"file_path" varchar,
@@ -64,14 +64,14 @@ CREATE TABLE IF NOT EXISTS "dashboards" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "envs" (
-	"env_full_id" varchar(32) PRIMARY KEY NOT NULL,
+	"env_full_id" varchar(64) PRIMARY KEY NOT NULL,
 	"project_id" varchar(32) NOT NULL,
 	"env_id" varchar(32) NOT NULL,
 	"server_ts" bigint NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "evs" (
-	"ev_full_id" varchar(32) PRIMARY KEY NOT NULL,
+	"ev_full_id" varchar(64) PRIMARY KEY NOT NULL,
 	"project_id" varchar(32) NOT NULL,
 	"env_id" varchar(32) NOT NULL,
 	"ev_id" varchar(32) NOT NULL,
@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS "mconfigs" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "members" (
-	"member_full_id" varchar(32) PRIMARY KEY NOT NULL,
+	"member_full_id" varchar(64) PRIMARY KEY NOT NULL,
 	"project_id" varchar(32) NOT NULL,
 	"member_id" varchar(32) NOT NULL,
 	"email" varchar NOT NULL,
@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS "members" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "metrics" (
-	"metric_full_id" varchar(32) PRIMARY KEY NOT NULL,
+	"metric_full_id" varchar(64) PRIMARY KEY NOT NULL,
 	"struct_id" varchar(32) NOT NULL,
 	"metric_id" varchar(32) NOT NULL,
 	"top_node" varchar NOT NULL,
@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS "metrics" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "models" (
-	"model_full_id" varchar(32) PRIMARY KEY NOT NULL,
+	"model_full_id" varchar(64) PRIMARY KEY NOT NULL,
 	"struct_id" varchar(32) NOT NULL,
 	"model_id" varchar(32) NOT NULL,
 	"connection_id" varchar,
@@ -165,7 +165,6 @@ CREATE TABLE IF NOT EXISTS "models" (
 	"hidden" boolean NOT NULL,
 	"fields" json NOT NULL,
 	"nodes" json NOT NULL,
-	"temp" boolean NOT NULL,
 	"description" varchar,
 	"server_ts" bigint NOT NULL
 );
@@ -221,10 +220,10 @@ CREATE TABLE IF NOT EXISTS "queries" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "reports" (
-	"report_full_id" varchar(32) PRIMARY KEY NOT NULL,
-	"project_id" varchar(32) NOT NULL,
+	"report_full_id" varchar(64) PRIMARY KEY NOT NULL,
 	"struct_id" varchar(32) NOT NULL,
 	"report_id" varchar(64) NOT NULL,
+	"project_id" varchar(32) NOT NULL,
 	"creator_id" varchar(32),
 	"file_path" varchar,
 	"access_users" json NOT NULL,
@@ -271,7 +270,7 @@ CREATE TABLE IF NOT EXISTS "users" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "vizs" (
-	"viz_full_id" varchar(32) PRIMARY KEY NOT NULL,
+	"viz_full_id" varchar(64) PRIMARY KEY NOT NULL,
 	"struct_id" varchar(32) NOT NULL,
 	"viz_id" varchar(32) NOT NULL,
 	"title" varchar NOT NULL,
@@ -347,10 +346,10 @@ CREATE INDEX IF NOT EXISTS "idx_queries_connection_id" ON "queries" USING btree 
 CREATE INDEX IF NOT EXISTS "idx_queries_query_job_id" ON "queries" USING btree ("query_job_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_queries_bigquery_query_job_id" ON "queries" USING btree ("bigquery_query_job_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_reports_server_ts" ON "reports" USING btree ("server_ts");--> statement-breakpoint
-CREATE INDEX IF NOT EXISTS "idx_reports_project_id" ON "reports" USING btree ("project_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_reports_struct_id" ON "reports" USING btree ("struct_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_reports_report_id" ON "reports" USING btree ("report_id");--> statement-breakpoint
-CREATE UNIQUE INDEX IF NOT EXISTS "uidx_reports_project_id_struct_id_report_id" ON "reports" USING btree ("project_id","struct_id","report_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_reports_project_id" ON "reports" USING btree ("project_id");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "uidx_reports_struct_id_report_id" ON "reports" USING btree ("struct_id","report_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_structs_server_ts" ON "structs" USING btree ("server_ts");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_structs_project_id" ON "structs" USING btree ("project_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "idx_users_server_ts" ON "users" USING btree ("server_ts");--> statement-breakpoint

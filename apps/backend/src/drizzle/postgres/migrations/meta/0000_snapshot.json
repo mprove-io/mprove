@@ -1,5 +1,5 @@
 {
-  "id": "5d893ae7-9a3d-4aca-bd80-c18624b53257",
+  "id": "acd839ae-3b29-4a86-b2d0-ffc71bc6611e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -63,7 +63,7 @@
       "columns": {
         "branch_full_id": {
           "name": "branch_full_id",
-          "type": "varchar(32)",
+          "type": "varchar(64)",
           "primaryKey": true,
           "notNull": true
         },
@@ -192,8 +192,8 @@
       "name": "bridges",
       "schema": "",
       "columns": {
-        "bridge_id": {
-          "name": "bridge_id",
+        "bridge_full_id": {
+          "name": "bridge_full_id",
           "type": "varchar(32)",
           "primaryKey": true,
           "notNull": true
@@ -379,7 +379,7 @@
       "columns": {
         "connection_full_id": {
           "name": "connection_full_id",
-          "type": "varchar(32)",
+          "type": "varchar(64)",
           "primaryKey": true,
           "notNull": true
         },
@@ -588,7 +588,7 @@
       "columns": {
         "dashboard_full_id": {
           "name": "dashboard_full_id",
-          "type": "varchar(32)",
+          "type": "varchar(64)",
           "primaryKey": true,
           "notNull": true
         },
@@ -758,7 +758,7 @@
       "columns": {
         "env_full_id": {
           "name": "env_full_id",
-          "type": "varchar(32)",
+          "type": "varchar(64)",
           "primaryKey": true,
           "notNull": true
         },
@@ -862,7 +862,7 @@
       "columns": {
         "ev_full_id": {
           "name": "ev_full_id",
-          "type": "varchar(32)",
+          "type": "varchar(64)",
           "primaryKey": true,
           "notNull": true
         },
@@ -1225,7 +1225,7 @@
       "columns": {
         "member_full_id": {
           "name": "member_full_id",
-          "type": "varchar(32)",
+          "type": "varchar(64)",
           "primaryKey": true,
           "notNull": true
         },
@@ -1389,7 +1389,7 @@
       "columns": {
         "metric_full_id": {
           "name": "metric_full_id",
-          "type": "varchar(32)",
+          "type": "varchar(64)",
           "primaryKey": true,
           "notNull": true
         },
@@ -1637,7 +1637,7 @@
       "columns": {
         "model_full_id": {
           "name": "model_full_id",
-          "type": "varchar(32)",
+          "type": "varchar(64)",
           "primaryKey": true,
           "notNull": true
         },
@@ -1710,12 +1710,6 @@
         "nodes": {
           "name": "nodes",
           "type": "json",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "temp": {
-          "name": "temp",
-          "type": "boolean",
           "primaryKey": false,
           "notNull": true
         },
@@ -2269,14 +2263,8 @@
       "columns": {
         "report_full_id": {
           "name": "report_full_id",
-          "type": "varchar(32)",
+          "type": "varchar(64)",
           "primaryKey": true,
-          "notNull": true
-        },
-        "project_id": {
-          "name": "project_id",
-          "type": "varchar(32)",
-          "primaryKey": false,
           "notNull": true
         },
         "struct_id": {
@@ -2288,6 +2276,12 @@
         "report_id": {
           "name": "report_id",
           "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "project_id": {
+          "name": "project_id",
+          "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true
         },
@@ -2362,21 +2356,6 @@
           "method": "btree",
           "with": {}
         },
-        "idx_reports_project_id": {
-          "name": "idx_reports_project_id",
-          "columns": [
-            {
-              "expression": "project_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
         "idx_reports_struct_id": {
           "name": "idx_reports_struct_id",
           "columns": [
@@ -2407,15 +2386,24 @@
           "method": "btree",
           "with": {}
         },
-        "uidx_reports_project_id_struct_id_report_id": {
-          "name": "uidx_reports_project_id_struct_id_report_id",
+        "idx_reports_project_id": {
+          "name": "idx_reports_project_id",
           "columns": [
             {
               "expression": "project_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
-            },
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "uidx_reports_struct_id_report_id": {
+          "name": "uidx_reports_struct_id_report_id",
+          "columns": [
             {
               "expression": "struct_id",
               "isExpression": false,
@@ -2749,7 +2737,7 @@
       "columns": {
         "viz_full_id": {
           "name": "viz_full_id",
-          "type": "varchar(32)",
+          "type": "varchar(64)",
           "primaryKey": true,
           "notNull": true
         },
