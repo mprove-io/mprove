@@ -98,6 +98,7 @@ CREATE TABLE IF NOT EXISTS "mconfigs" (
 	"sorts" varchar,
 	"timezone" varchar NOT NULL,
 	"limit" integer NOT NULL,
+	"filters" json NOT NULL,
 	"chart" json NOT NULL,
 	"temp" boolean NOT NULL,
 	"server_ts" bigint NOT NULL

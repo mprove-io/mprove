@@ -1,5 +1,5 @@
 {
-  "id": "acd839ae-3b29-4a86-b2d0-ffc71bc6611e",
+  "id": "ef54921c-8178-40f7-906b-719dc931665f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1143,6 +1143,12 @@
         "limit": {
           "name": "limit",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "filters": {
+          "name": "filters",
+          "type": "json",
           "primaryKey": false,
           "notNull": true
         },

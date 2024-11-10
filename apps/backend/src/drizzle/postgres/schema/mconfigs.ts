@@ -24,7 +24,7 @@ export const mconfigsTable = pgTable(
     sorts: varchar('sorts'),
     timezone: varchar('timezone').notNull(),
     limit: integer('limit').notNull(),
-    filters: json('sortings').$type<common.Filter[]>().notNull(),
+    filters: json('filters').$type<common.Filter[]>().notNull(),
     chart: json('chart').$type<common.Chart>().notNull(),
     temp: boolean('temp').notNull(),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
