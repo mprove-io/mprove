@@ -12,7 +12,7 @@ import {
 export const orgsTable = pgTable(
   'orgs',
   {
-    orgId: varchar('org_id', { length: 32 }).notNull().primaryKey(),
+    orgId: varchar('org_id', { length: 128 }).notNull().primaryKey(), // length 128 required for tests
     name: text('name').notNull(),
     ownerId: text('owner_id').notNull(),
     ownerEmail: text('owner_email').notNull(),

@@ -14,7 +14,7 @@ export const projectsTable = pgTable(
   'projects',
   {
     projectId: varchar('project_id', { length: 32 }).notNull().primaryKey(),
-    orgId: varchar('org_id', { length: 32 }).notNull(),
+    orgId: varchar('org_id', { length: 128 }).notNull(),
     name: text('name').notNull(), // name is unique across org projects
     defaultBranch: text('default_branch').default('master').notNull(),
     remoteType: varchar('remote_type')

@@ -95,7 +95,7 @@ export class SeedRecordsController {
             email: x.email,
             alias: alias,
             isEmailVerified: common.enumToBoolean(x.isEmailVerified),
-            emailVerificationToken: x.emailVerificationToken,
+            emailVerificationToken: x.emailVerificationToken || common.makeId(),
             passwordResetToken: x.passwordResetToken,
             passwordResetExpiresTs: common.isDefined(x.passwordResetExpiresTs)
               ? x.passwordResetExpiresTs
