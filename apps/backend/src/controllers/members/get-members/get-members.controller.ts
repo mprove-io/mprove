@@ -55,7 +55,7 @@ export class GetMembersController {
     let membersResult = await this.db.drizzle
       .select({
         record: membersTable,
-        total: sql<number>`COUNT(*) OVER()` // Total count as a window function
+        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
       })
       .from(membersTable)
       .where(eq(membersTable.projectId, projectId))

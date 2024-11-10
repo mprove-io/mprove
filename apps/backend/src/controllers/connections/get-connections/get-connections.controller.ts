@@ -41,7 +41,7 @@ export class GetConnectionsController {
     let connectionsResult = await this.db.drizzle
       .select({
         record: connectionsTable,
-        total: sql<number>`COUNT(*) OVER()` // Total count as a window function
+        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
       })
       .from(connectionsTable)
       .where(eq(connectionsTable.projectId, projectId))

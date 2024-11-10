@@ -65,7 +65,7 @@ export class GetOrgUsersController {
     let usersResult = await this.db.drizzle
       .select({
         record: usersTable,
-        total: sql<number>`COUNT(*) OVER()` // Total count as a window function
+        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
       })
       .from(usersTable)
       .where(inArray(usersTable.userId, userIds))

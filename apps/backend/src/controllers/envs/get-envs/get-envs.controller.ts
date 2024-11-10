@@ -44,7 +44,7 @@ export class GetEnvsController {
     let envsResult = await this.db.drizzle
       .select({
         record: envsTable,
-        total: sql<number>`COUNT(*) OVER()` // Total count as a window function
+        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
       })
       .from(envsTable)
       .where(eq(envsTable.projectId, projectId))
