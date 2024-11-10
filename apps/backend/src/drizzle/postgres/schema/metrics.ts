@@ -17,7 +17,7 @@ export const metricsTable = pgTable(
       .notNull()
       .primaryKey(),
     structId: varchar('struct_id', { length: 32 }).notNull(),
-    metricId: varchar('metric_id', { length: 32 }).notNull(), // name
+    metricId: varchar('metric_id').notNull(), // name
     topNode: varchar('top_node').notNull(),
     partId: varchar('part_id').notNull(),
     filePath: varchar('file_path').notNull(),

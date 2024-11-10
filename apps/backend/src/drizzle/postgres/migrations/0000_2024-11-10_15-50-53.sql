@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS "members" (
 CREATE TABLE IF NOT EXISTS "metrics" (
 	"metric_full_id" varchar(64) PRIMARY KEY NOT NULL,
 	"struct_id" varchar(32) NOT NULL,
-	"metric_id" varchar(32) NOT NULL,
+	"metric_id" varchar NOT NULL,
 	"top_node" varchar NOT NULL,
 	"part_id" varchar NOT NULL,
 	"file_path" varchar NOT NULL,

@@ -1,5 +1,5 @@
 {
-  "id": "9f098bb4-188e-487e-a7db-2436145b66a7",
+  "id": "66ca84f3-e2d2-4be0-a044-b4a3d5221013",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1407,7 +1407,7 @@
         },
         "metric_id": {
           "name": "metric_id",
-          "type": "varchar(32)",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": true
         },
