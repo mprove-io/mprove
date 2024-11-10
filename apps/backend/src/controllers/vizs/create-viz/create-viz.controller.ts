@@ -1,26 +1,40 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
-import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
+import { modelsTable } from '~backend/drizzle/postgres/schema/models';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeVizFileText } from '~backend/functions/make-viz-file-text';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
-import { DbService } from '~backend/services/db.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
+
+let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -31,19 +45,20 @@ export class CreateVizController {
     private structsService: StructsService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private modelsRepository: repositories.ModelsRepository,
-    private bridgesRepository: repositories.BridgesRepository,
     private blockmlService: BlockmlService,
     private modelsService: ModelsService,
-    private dbService: DbService,
-    private cs: ConfigService<interfaces.Config>,
     private envsService: EnvsService,
-    private bridgesService: BridgesService
+    private bridgesService: BridgesService,
+    private wrapToEntService: WrapToEntService,
+    private wrapToApiService: WrapToApiService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateViz)
   async createEmptyDashboard(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendCreateVizRequest = request.body;
@@ -67,7 +82,7 @@ export class CreateVizController {
       envId
     } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -75,10 +90,10 @@ export class CreateVizController {
 
     let member = await this.membersService.getMemberCheckExists({
       projectId: projectId,
-      memberId: user.user_id
+      memberId: user.userId
     });
 
-    if (member.is_explorer === common.BoolEnum.FALSE) {
+    if (member.isExplorer === false) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
       });
@@ -97,14 +112,14 @@ export class CreateVizController {
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.project_id,
-      repoId: branch.repo_id,
-      branchId: branch.branch_id,
+      projectId: branch.projectId,
+      repoId: branch.repoId,
+      branchId: branch.branchId,
       envId: envId
     });
 
     let currentStruct = await this.structsService.getStructCheckExists({
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       projectId: projectId
     });
 
@@ -112,7 +127,7 @@ export class CreateVizController {
       this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
     if (
-      member.is_admin === common.BoolEnum.FALSE &&
+      member.isAdmin === false &&
       projectId === firstProjectId &&
       repoId === common.PROD_REPO_ID
     ) {
@@ -122,7 +137,7 @@ export class CreateVizController {
     }
 
     let mconfigModel = await this.modelsService.getModelCheckExists({
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       modelId: mconfig.modelId
     });
 
@@ -144,10 +159,10 @@ export class CreateVizController {
       roles: accessRoles,
       users: accessUsers,
       vizId: vizId,
-      defaultTimezone: currentStruct.default_timezone
+      defaultTimezone: currentStruct.defaultTimezone
     });
 
-    let mdir = currentStruct.mprove_dir_value;
+    let mdir = currentStruct.mproveDirValue;
 
     if (
       mdir.length > 2 &&
@@ -160,7 +175,7 @@ export class CreateVizController {
       [
         common.MPROVE_CONFIG_DIR_DOT,
         common.MPROVE_CONFIG_DIR_DOT_SLASH
-      ].indexOf(currentStruct.mprove_dir_value) > -1
+      ].indexOf(currentStruct.mproveDirValue) > -1
         ? `${projectId}/${common.MPROVE_USERS_FOLDER}/${user.alias}`
         : `${projectId}/${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}`;
 
@@ -172,7 +187,7 @@ export class CreateVizController {
         traceId: reqValid.info.traceId
       },
       payload: {
-        orgId: project.org_id,
+        orgId: project.orgId,
         projectId: projectId,
         repoId: repoId,
         branch: branchId,
@@ -180,44 +195,52 @@ export class CreateVizController {
         parentNodeId: parentNodeId,
         fileName: fileName,
         fileText: vizFileText,
-        remoteType: project.remote_type,
-        gitUrl: project.git_url,
-        privateKey: project.private_key,
-        publicKey: project.public_key
+        remoteType: project.remoteType,
+        gitUrl: project.gitUrl,
+        privateKey: project.privateKey,
+        publicKey: project.publicKey
       }
     };
 
     let diskResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateFileResponse>({
         routingKey: helper.makeRoutingKeyToDisk({
-          orgId: project.org_id,
+          orgId: project.orgId,
           projectId: projectId
         }),
         message: toDiskCreateFileRequest,
         checkIsOk: true
       });
 
-    let branchBridges = await this.bridgesRepository.find({
-      where: {
-        project_id: branch.project_id,
-        repo_id: branch.repo_id,
-        branch_id: branch.branch_id
-      }
+    let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
+      where: and(
+        eq(bridgesTable.projectId, branch.projectId),
+        eq(bridgesTable.repoId, branch.repoId),
+        eq(bridgesTable.branchId, branch.branchId)
+      )
     });
 
+    // let branchBridges = await this.bridgesRepository.find({
+    //   where: {
+    //     project_id: branch.project_id,
+    //     repo_id: branch.repo_id,
+    //     branch_id: branch.branch_id
+    //   }
+    // });
+
     await forEachSeries(branchBridges, async x => {
-      if (x.env_id !== envId) {
-        x.struct_id = common.EMPTY_STRUCT_ID;
-        x.need_validate = common.BoolEnum.TRUE;
+      if (x.envId !== envId) {
+        x.structId = common.EMPTY_STRUCT_ID;
+        x.needValidate = true;
       }
     });
 
     let { vizs, mconfigs, queries, struct } =
       await this.blockmlService.rebuildStruct({
-        traceId,
-        orgId: project.org_id,
-        projectId,
-        structId: bridge.struct_id,
+        traceId: traceId,
+        orgId: project.orgId,
+        projectId: projectId,
+        structId: bridge.structId,
         diskFiles: diskResponse.payload.files,
         mproveDir: diskResponse.payload.mproveDir,
         skipDb: true,
@@ -226,13 +249,55 @@ export class CreateVizController {
 
     let viz = vizs.find(x => x.vizId === vizId);
 
-    await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        structs: [struct],
-        bridges: [...branchBridges]
-      }
-    });
+    let vizEnt = common.isDefined(viz)
+      ? this.wrapToEntService.wrapToEntityViz(viz)
+      : undefined;
+
+    let vizTile = common.isDefined(viz) ? viz.tiles[0] : undefined;
+
+    let vizMconfig = common.isDefined(viz)
+      ? mconfigs.find(x => x.mconfigId === vizTile.mconfigId)
+      : undefined;
+
+    let vizQuery = common.isDefined(viz)
+      ? queries.find(x => x.queryId === vizTile.queryId)
+      : undefined;
+
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(async tx => {
+          await this.db.packer.write({
+            tx: tx,
+            insert: {
+              vizs: [vizEnt],
+              mconfigs: [vizMconfig]
+            },
+            insertOrUpdate: {
+              queries: [vizQuery],
+              structs: [struct],
+              bridges: [...branchBridges]
+            }
+          });
+        }),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    // await this.dbService.writeRecords({
+    //   modify: true,
+    //   records: {
+    //     structs: [struct],
+    //     bridges: [...branchBridges]
+    //   }
+    // });
+
+    // let records = await this.dbService.writeRecords({
+    //   modify: false,
+    //   records: {
+    //     vizs: [wrapper.wrapToEntityViz(viz)],
+    //     mconfigs: [wrapper.wrapToEntityMconfig(vizMconfig)],
+    //     queries: [wrapper.wrapToEntityQuery(vizQuery)]
+    //   }
+    // });
 
     if (common.isUndefined(viz)) {
       let fileId = `${parentNodeId}/${fileName}`;
@@ -248,32 +313,31 @@ export class CreateVizController {
       });
     }
 
-    let vizTile = viz.tiles[0];
-    let vizMconfig = mconfigs.find(x => x.mconfigId === vizTile.mconfigId);
-    let vizQuery = queries.find(x => x.queryId === vizTile.queryId);
+    let modelEnts = (await this.db.drizzle
+      .select({
+        modelId: modelsTable.modelId,
+        accessUsers: modelsTable.accessUsers,
+        accessRoles: modelsTable.accessRoles,
+        hidden: modelsTable.hidden
+      })
+      .from(modelsTable)
+      .where(
+        and(eq(modelsTable.structId, bridge.structId))
+      )) as schemaPostgres.ModelEnt[];
 
-    let records = await this.dbService.writeRecords({
-      modify: false,
-      records: {
-        vizs: [wrapper.wrapToEntityViz(viz)],
-        mconfigs: [wrapper.wrapToEntityMconfig(vizMconfig)],
-        queries: [wrapper.wrapToEntityQuery(vizQuery)]
-      }
-    });
-
-    let modelsEntities = await this.modelsRepository.find({
-      select: ['model_id', 'access_users', 'access_roles', 'hidden'],
-      where: { struct_id: bridge.struct_id }
-    });
+    // let modelsEntities = await this.modelsRepository.find({
+    //   select: ['model_id', 'access_users', 'access_roles', 'hidden'],
+    //   where: { struct_id: bridge.struct_id }
+    // });
 
     let payload: apiToBackend.ToBackendCreateVizResponsePayload = {
-      viz: wrapper.wrapToApiViz({
-        viz: records.vizs[0],
+      viz: this.wrapToApiService.wrapToApiViz({
+        viz: vizEnt,
         mconfigs: [],
         queries: [],
-        member: wrapper.wrapToApiMember(member),
-        models: modelsschemaPostgres.map(model =>
-          wrapper.wrapToApiModel({
+        member: this.wrapToApiService.wrapToApiMember(member),
+        models: modelEnts.map(model =>
+          this.wrapToApiService.wrapToApiModel({
             model: model,
             hasAccess: helper.checkAccess({
               userAlias: user.alias,

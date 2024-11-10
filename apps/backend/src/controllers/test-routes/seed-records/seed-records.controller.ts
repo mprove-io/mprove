@@ -528,12 +528,14 @@ export class SeedRecordsController {
                 bridges: bridges,
                 structs: structs,
                 vizs: vizs,
-                queries: queries,
                 models: models,
                 metrics: metrics,
                 reports: reports,
                 mconfigs: mconfigs,
                 dashboards: dashboards
+              },
+              insertOrUpdate: {
+                queries: queries
               }
             })
         ),

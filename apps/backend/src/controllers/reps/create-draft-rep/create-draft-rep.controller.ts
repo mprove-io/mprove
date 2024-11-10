@@ -260,9 +260,11 @@ export class CreateDraftRepController {
             await this.db.packer.write({
               tx: tx,
               insert: {
-                queries: copyQueries,
                 mconfigs: copyMconfigs,
                 kits: copyKits
+              },
+              insertOrUpdate: {
+                queries: copyQueries
               }
             })
         ),
