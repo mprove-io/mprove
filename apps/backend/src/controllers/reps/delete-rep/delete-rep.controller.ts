@@ -14,7 +14,6 @@ import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
-import { repositories } from '~backend/barrels/repositories';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
@@ -40,8 +39,6 @@ export class DeleteRepController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private repsService: ReportsService,
-    private repsRepository: repositories.RepsRepository,
-    private bridgesRepository: repositories.BridgesRepository,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,

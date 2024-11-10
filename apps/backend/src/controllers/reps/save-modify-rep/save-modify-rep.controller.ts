@@ -14,7 +14,6 @@ import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
-import { repositories } from '~backend/barrels/repositories';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
@@ -46,9 +45,6 @@ export class SaveModifyRepController {
     private projectsService: ProjectsService,
     private structsService: StructsService,
     private repsService: ReportsService,
-    private repsRepository: repositories.RepsRepository,
-    private bridgesRepository: repositories.BridgesRepository,
-    private metricsRepository: repositories.MetricsRepository,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
@@ -270,6 +266,17 @@ export class SaveModifyRepController {
     await retry(
       async () =>
         await this.db.drizzle.transaction(async tx => {
+          if (common.isUndefined(rep)) {
+            await tx
+              .delete(reportsTable)
+              .where(
+                and(
+                  eq(reportsTable.reportId, modRepId),
+                  eq(reportsTable.structId, bridge.structId)
+                )
+              );
+          }
+
           if (fromRep.draft === true) {
             await tx
               .delete(reportsTable)
@@ -320,10 +327,10 @@ export class SaveModifyRepController {
     // });
 
     if (common.isUndefined(rep)) {
-      await this.repsRepository.delete({
-        rep_id: modRepId,
-        struct_id: bridge.structId
-      });
+      // await this.repsRepository.delete({
+      //   rep_id: modRepId,
+      //   struct_id: bridge.structId
+      // });
 
       let fileIdAr = existingModRep.filePath.split('/');
       fileIdAr.shift();

@@ -18,7 +18,6 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
-import { DbService } from '~backend/services/db.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -35,7 +34,6 @@ export class GetRepController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private repsService: ReportsService,
-    private dbService: DbService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,

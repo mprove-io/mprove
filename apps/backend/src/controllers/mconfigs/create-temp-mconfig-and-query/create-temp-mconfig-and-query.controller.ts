@@ -21,7 +21,6 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
-import { DbService } from '~backend/services/db.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
@@ -37,7 +36,6 @@ let retry = require('async-retry');
 @Controller()
 export class CreateTempMconfigAndQueryController {
   constructor(
-    private dbService: DbService,
     private projectsService: ProjectsService,
     private modelsService: ModelsService,
     private membersService: MembersService,

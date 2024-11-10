@@ -7,14 +7,15 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { and, eq } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
-import { repositories } from '~backend/barrels/repositories';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
@@ -39,7 +40,6 @@ export class DuplicateMconfigAndQueryController {
     private branchesService: BranchesService,
     private structsService: StructsService,
     private mconfigsService: MconfigsService,
-    private queriesRepository: repositories.QueriesRepository,
     private bridgesService: BridgesService,
     private envsService: EnvsService,
     private wrapToApiService: WrapToApiService,
@@ -125,12 +125,19 @@ export class DuplicateMconfigAndQueryController {
       });
     }
 
-    let oldQuery = await this.queriesRepository.findOne({
-      where: {
-        query_id: oldMconfig.queryId,
-        project_id: projectId
-      }
+    let oldQuery = await this.db.drizzle.query.queriesTable.findFirst({
+      where: and(
+        eq(queriesTable.queryId, oldMconfig.queryId),
+        eq(queriesTable.projectId, projectId)
+      )
     });
+
+    // let oldQuery = await this.queriesRepository.findOne({
+    //   where: {
+    //     query_id: oldMconfig.queryId,
+    //     project_id: projectId
+    //   }
+    // });
 
     let newMconfigId = common.makeId();
     let newQueryId = common.makeId();

@@ -22,13 +22,11 @@ import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { DashboardsService } from '~backend/services/dashboards.service';
-import { DbService } from '~backend/services/db.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 
 let retry = require('async-retry');
@@ -44,10 +42,8 @@ export class CreateTempDashboardController {
     private blockmlService: BlockmlService,
     private structsService: StructsService,
     private dashboardsService: DashboardsService,
-    private dbService: DbService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
-    private wrapToApiService: WrapToApiService,
     private wrapToEntService: WrapToEntService,
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger,

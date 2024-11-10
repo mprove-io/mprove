@@ -6,7 +6,6 @@ import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { DefaultLogger, and, eq } from 'drizzle-orm';
 import {
   NodePgDatabase,
@@ -17,12 +16,9 @@ import * as fse from 'fs-extra';
 import * as mg from 'nodemailer-mailgun-transport';
 import { Client, ClientConfig } from 'pg';
 import { appControllers } from './app-controllers';
-import { appEntities } from './app-entities';
 import { AppFilter } from './app-filter';
 import { AppInterceptor } from './app-interceptor';
-import { appMigrations } from './app-migrations';
 import { appProviders } from './app-providers';
-import { appRepositories } from './app-repositories';
 import { common } from './barrels/common';
 import { enums } from './barrels/enums';
 import { helper } from './barrels/helper';
@@ -102,28 +98,6 @@ let rabbitModule = RabbitMQModule.forRootAsync(RabbitMQModule, {
   inject: [ConfigService]
 });
 
-let typeormRootModule = TypeOrmModule.forRootAsync({
-  useFactory: (cs: ConfigService<interfaces.Config>) => ({
-    type: 'mysql',
-    host: cs.get<interfaces.Config['backendMysqlHost']>('backendMysqlHost'),
-    port: cs.get<interfaces.Config['backendMysqlPort']>('backendMysqlPort'),
-    username: cs.get<interfaces.Config['backendMysqlUsername']>(
-      'backendMysqlUsername'
-    ),
-    password: cs.get<interfaces.Config['backendMysqlPassword']>(
-      'backendMysqlPassword'
-    ),
-    database: cs.get<interfaces.Config['backendMysqlDatabase']>(
-      'backendMysqlDatabase'
-    ),
-    entities: appEntities,
-    migrations: appMigrations
-  }),
-  inject: [ConfigService]
-});
-
-let typeormFeatureModule = TypeOrmModule.forFeature([...appEntities]);
-
 let mailerModule = MailerModule.forRootAsync({
   useFactory: (cs: ConfigService<interfaces.Config>) => {
     let transport;
@@ -190,15 +164,12 @@ let mailerModule = MailerModule.forRootAsync({
     PassportModule,
     rabbitModule,
     mailerModule,
-    DrizzleModule,
-    typeormRootModule,
-    typeormFeatureModule
+    DrizzleModule
   ],
   controllers: appControllers,
   providers: [
     Logger,
     ...appProviders,
-    ...appRepositories,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard
@@ -234,31 +205,6 @@ export class AppModule implements OnModuleInit {
       });
 
       if (helper.isScheduler(this.cs)) {
-        // Typeorm
-
-        // const migrationsPending = await this.dataSource.showMigrations();
-
-        // if (migrationsPending) {
-        //   const migrations = await this.dataSource.runMigrations({
-        //     transaction: 'all'
-        //   });
-        //   migrations.forEach(migration => {
-        //     logToConsoleBackend({
-        //       log: `Typeorm Migration ${migration.name} success`,
-        //       logLevel: common.LogLevelEnum.Info,
-        //       logger: this.logger,
-        //       cs: this.cs
-        //     });
-        //   });
-        // } else {
-        //   logToConsoleBackend({
-        //     log: 'Typeorm No migrations pending',
-        //     logLevel: common.LogLevelEnum.Info,
-        //     logger: this.logger,
-        //     cs: this.cs
-        //   });
-        // }
-
         // Drizzle
 
         let clientConfig: ClientConfig = {

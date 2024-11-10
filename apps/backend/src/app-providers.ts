@@ -11,7 +11,6 @@ import { BridgesService } from './services/bridges.service';
 import { ClickHouseService } from './services/clickhouse.service';
 import { ConnectionsService } from './services/connections.service';
 import { DashboardsService } from './services/dashboards.service';
-import { DbService } from './services/db.service';
 import { DocService } from './services/doc.service';
 import { EmailService } from './services/email.service';
 import { EnvsService } from './services/envs.service';
@@ -44,7 +43,6 @@ export const appProviders = [
   HashService,
   RedisService,
   RabbitService,
-  DbService,
   EmailService,
   BlockmlService,
   UserCodeService,

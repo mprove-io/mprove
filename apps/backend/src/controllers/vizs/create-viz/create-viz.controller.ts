@@ -325,7 +325,7 @@ export class CreateVizController {
         eq(modelsTable.structId, bridge.structId)
       )) as schemaPostgres.ModelEnt[];
 
-    // let modelsEntities = await this.modelsRepository.find({
+    // let models = await this.modelsRepository.find({
     //   select: ['model_id', 'access_users', 'access_roles', 'hidden'],
     //   where: { struct_id: bridge.struct_id }
     // });
