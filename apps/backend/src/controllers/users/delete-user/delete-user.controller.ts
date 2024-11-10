@@ -1,30 +1,46 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { and, eq, inArray } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
-import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
-import { repositories } from '~backend/barrels/repositories';
+import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
+import { membersTable } from '~backend/drizzle/postgres/schema/members';
+import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
+import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
+import { usersTable } from '~backend/drizzle/postgres/schema/users';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { RabbitService } from '~backend/services/rabbit.service';
+
+let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class DeleteUserController {
   constructor(
-    private usersRepository: repositories.UsersRepository,
-    private membersRepository: repositories.MembersRepository,
     private rabbitService: RabbitService,
-    private orgsRepository: repositories.OrgsRepository,
-    private projectsRepository: repositories.ProjectsRepository,
-    private branchesRepository: repositories.BranchesRepository
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteUser)
   async deleteUser(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendDeleteUserRequest = request.body;
@@ -37,44 +53,61 @@ export class DeleteUserController {
 
     let { traceId } = reqValid.info;
 
-    let ownerOrgs = await this.orgsRepository.find({
-      where: {
-        owner_id: user.user_id
-      }
+    let ownerOrgs = await this.db.drizzle.query.orgsTable.findMany({
+      where: eq(orgsTable.ownerId, user.userId)
     });
+
+    // let ownerOrgs = await this.orgsRepository.find({
+    //   where: {
+    //     owner_id: user.user_id
+    //   }
+    // });
 
     if (ownerOrgs.length > 0) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_USER_IS_ORG_OWNER,
         data: {
-          orgIds: ownerOrgs.map(x => x.org_id)
+          orgIds: ownerOrgs.map(x => x.orgId)
         }
       });
     }
 
-    let userAdminMembers = await this.membersRepository.find({
-      where: {
-        member_id: user.user_id,
-        is_admin: common.BoolEnum.TRUE
-      }
+    let userAdminMembers = await this.db.drizzle.query.membersTable.findMany({
+      where: and(
+        eq(membersTable.memberId, user.userId),
+        eq(membersTable.isAdmin, true)
+      )
     });
 
-    let userAdminProjectIds = userAdminMembers.map(x => x.project_id);
+    // let userAdminMembers = await this.membersRepository.find({
+    //   where: {
+    //     member_id: user.user_id,
+    //     is_admin: common.BoolEnum.TRUE
+    //   }
+    // });
+
+    let userAdminProjectIds = userAdminMembers.map(x => x.projectId);
 
     let admins =
       userAdminProjectIds.length === 0
         ? []
-        : await this.membersRepository.find({
-            where: {
-              project_id: In(userAdminProjectIds),
-              is_admin: common.BoolEnum.TRUE
-            }
+        : // await this.membersRepository.find({
+          //     where: {
+          //       project_id: In(userAdminProjectIds),
+          //       is_admin: common.BoolEnum.TRUE
+          //     }
+          //   });
+          await this.db.drizzle.query.membersTable.findMany({
+            where: and(
+              inArray(membersTable.projectId, userAdminProjectIds),
+              eq(membersTable.isAdmin, true)
+            )
           });
 
     let erProjectIds: string[] = [];
 
     userAdminProjectIds.forEach(projectId => {
-      let projectAdmins = admins.filter(x => x.project_id === projectId);
+      let projectAdmins = admins.filter(x => x.projectId === projectId);
       if (projectAdmins.length === 1) {
         erProjectIds.push(projectId);
       }
@@ -89,25 +122,32 @@ export class DeleteUserController {
       });
     }
 
-    let userMembers = await this.membersRepository.find({
-      where: {
-        member_id: user.user_id
-      }
+    let userMembers = await this.db.drizzle.query.membersTable.findMany({
+      where: eq(membersTable.memberId, user.userId)
     });
 
-    let projectIds = userMembers.map(x => x.project_id);
+    // let userMembers = await this.membersRepository.find({
+    //   where: {
+    //     member_id: user.user_id
+    //   }
+    // });
+
+    let projectIds = userMembers.map(x => x.projectId);
 
     let projects =
       projectIds.length === 0
         ? []
-        : await this.projectsRepository.find({
-            where: {
-              project_id: In(projectIds)
-            }
+        : await this.db.drizzle.query.projectsTable.findMany({
+            where: inArray(projectsTable.projectId, projectIds)
           });
+    // await this.projectsRepository.find({
+    //     where: {
+    //       project_id: In(projectIds)
+    //     }
+    //   });
 
-    await asyncPool(1, userMembers, async (m: schemaPostgres.MemberEntity) => {
-      let project = projects.find(p => p.project_id === m.project_id);
+    await asyncPool(1, userMembers, async (m: schemaPostgres.MemberEnt) => {
+      let project = projects.find(p => p.projectId === m.projectId);
 
       let toDiskDeleteDevRepoRequest: apiToDisk.ToDiskDeleteDevRepoRequest = {
         info: {
@@ -115,17 +155,17 @@ export class DeleteUserController {
           traceId: traceId
         },
         payload: {
-          orgId: project.org_id,
-          projectId: project.project_id,
-          devRepoId: user.user_id
+          orgId: project.orgId,
+          projectId: project.projectId,
+          devRepoId: user.userId
         }
       };
 
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteDevRepoResponse>(
         {
           routingKey: helper.makeRoutingKeyToDisk({
-            orgId: project.org_id,
-            projectId: project.project_id
+            orgId: project.orgId,
+            projectId: project.projectId
           }),
           message: toDiskDeleteDevRepoRequest,
           checkIsOk: true
@@ -133,9 +173,23 @@ export class DeleteUserController {
       );
     });
 
-    await this.usersRepository.delete({ user_id: user.user_id });
-    await this.membersRepository.delete({ member_id: user.user_id });
-    await this.branchesRepository.delete({ repo_id: user.alias });
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(async tx => {
+          await tx.delete(usersTable).where(eq(usersTable.userId, user.userId));
+          await tx
+            .delete(membersTable)
+            .where(eq(membersTable.memberId, user.userId));
+          await tx
+            .delete(branchesTable)
+            .where(eq(branchesTable.repoId, user.alias));
+        }),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    // await this.usersRepository.delete({ user_id: user.user_id });
+    // await this.membersRepository.delete({ member_id: user.user_id });
+    // await this.branchesRepository.delete({ repo_id: user.alias });
 
     let payload = {};
 

@@ -1,28 +1,32 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser, SkipJwtCheck } from '~backend/decorators/_index';
 import { LocalAuthGuard } from '~backend/guards/local-auth.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 @SkipJwtCheck()
 @UseGuards(LocalAuthGuard)
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class LoginUserController {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    private wrapToApiService: WrapToApiService
+  ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser)
   async loginUser(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendLoginUserRequest = request.body;
 
     let payload: apiToBackend.ToBackendLoginUserResponsePayload = {
-      token: this.jwtService.sign({ userId: user.user_id }),
-      user: wrapper.wrapToApiUser(user)
+      token: this.jwtService.sign({ userId: user.userId }),
+      user: this.wrapToApiService.wrapToApiUser(user)
     };
 
     return payload;
