@@ -1,9 +1,20 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
-import { wrapper } from '~backend/barrels/wrapper';
+import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
@@ -11,8 +22,11 @@ import { DbService } from '~backend/services/db.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
-import { ReportsService } from '~backend/services/reps.service';
+import { ReportsService } from '~backend/services/reports.service';
 import { StructsService } from '~backend/services/structs.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+
+let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -25,13 +39,16 @@ export class GetRepController {
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,
-
-    private envsService: EnvsService
+    private envsService: EnvsService,
+    private wrapToApiService: WrapToApiService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRep)
   async getRep(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendGetRepRequest = request.body;
@@ -54,12 +71,12 @@ export class GetRepController {
 
     let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
-      memberId: user.user_id
+      memberId: user.userId
     });
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
+      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 
@@ -70,28 +87,28 @@ export class GetRepController {
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.project_id,
-      repoId: branch.repo_id,
-      branchId: branch.branch_id,
+      projectId: branch.projectId,
+      repoId: branch.repoId,
+      branchId: branch.branchId,
       envId: envId
     });
 
     let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       projectId: projectId
     });
 
     let rep = await this.repsService.getRep({
       projectId: projectId,
       repId: repId,
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       checkExist: true,
       checkAccess: true,
       user: user,
       userMember: userMember
     });
 
-    let userMemberApi = wrapper.wrapToApiMember(userMember);
+    let userMemberApi = this.wrapToApiService.wrapToApiMember(userMember);
 
     let repApi = await this.repsService.getRepData({
       rep: rep,
@@ -112,16 +129,30 @@ export class GetRepController {
     user.ui.timeSpec = timeSpec;
     user.ui.timeRangeFraction = repApi.timeRangeFraction;
 
-    await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        users: [user]
-      }
-    });
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insertOrUpdate: {
+                users: [user]
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    // await this.dbService.writeRecords({
+    //   modify: true,
+    //   records: {
+    //     users: [user]
+    //   }
+    // });
 
     let payload: apiToBackend.ToBackendGetRepResponsePayload = {
-      needValidate: common.enumToBoolean(bridge.need_validate),
-      struct: wrapper.wrapToApiStruct(struct),
+      needValidate: bridge.needValidate,
+      struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: userMemberApi,
       rep: repApi
     };

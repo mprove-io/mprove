@@ -1,17 +1,20 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { and, eq } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { metricsTable } from '~backend/drizzle/postgres/schema/metrics';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
-import { ReportsService } from '~backend/services/reps.service';
+import { ReportsService } from '~backend/services/reports.service';
 import { StructsService } from '~backend/services/structs.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -24,12 +27,13 @@ export class EditDraftRepController {
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private envsService: EnvsService,
-    private metricsRepository: repositories.MetricsRepository
+    private wrapToApiService: WrapToApiService,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditDraftRep)
   async editDraftRep(
-    @AttachUser() user: schemaPostgres.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendEditDraftRepRequest = request.body;
@@ -55,12 +59,12 @@ export class EditDraftRepController {
 
     let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
-      memberId: user.user_id
+      memberId: user.userId
     });
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
+      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 
@@ -71,21 +75,21 @@ export class EditDraftRepController {
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.project_id,
-      repoId: branch.repo_id,
-      branchId: branch.branch_id,
+      projectId: branch.projectId,
+      repoId: branch.repoId,
+      branchId: branch.branchId,
       envId: envId
     });
 
     let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       projectId: projectId
     });
 
     let rep = await this.repsService.getRep({
       projectId: projectId,
       repId: repId,
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       checkExist: true,
       checkAccess: true,
       user: user,
@@ -98,13 +102,19 @@ export class EditDraftRepController {
         common.ChangeTypeEnum.EditParameters,
         common.ChangeTypeEnum.ConvertToMetric
       ].indexOf(changeType) > -1
-        ? await this.metricsRepository.find({
-            where: {
-              struct_id: bridge.struct_id,
-              metric_id: rowChange.metricId
-            }
+        ? await this.db.drizzle.query.metricsTable.findMany({
+            where: and(
+              eq(metricsTable.structId, bridge.structId),
+              eq(metricsTable.metricId, rowChange.metricId)
+            )
           })
-        : [];
+        : // await this.metricsRepository.find({
+          //     where: {
+          //       struct_id: bridge.struct_id,
+          //       metric_id: rowChange.metricId
+          //     }
+          //   })
+          [];
 
     let processedRows = this.repsService.getProcessedRows({
       rows: rep.rows,
@@ -120,7 +130,7 @@ export class EditDraftRepController {
 
     rep.rows = processedRows;
 
-    let userMemberApi = wrapper.wrapToApiMember(userMember);
+    let userMemberApi = this.wrapToApiService.wrapToApiMember(userMember);
 
     let repApi = await this.repsService.getRepData({
       rep: rep,
@@ -138,8 +148,8 @@ export class EditDraftRepController {
     });
 
     let payload: apiToBackend.ToBackendEditDraftRepResponsePayload = {
-      needValidate: common.enumToBoolean(bridge.need_validate),
-      struct: wrapper.wrapToApiStruct(struct),
+      needValidate: bridge.needValidate,
+      struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: userMemberApi,
       rep: repApi
     };
