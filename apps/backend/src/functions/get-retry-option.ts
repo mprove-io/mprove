@@ -13,7 +13,7 @@ export function getRetryOption(
   cs: ConfigService<interfaces.Config>,
   logger: Logger
 ) {
-  let w: MyWrapOptions = {
+  let myWrapOptions: MyWrapOptions = {
     retries: 3, // (default 10)
     minTimeout: 1000, // ms (default 1000)
     factor: 1, // (default 2)
@@ -30,4 +30,6 @@ export function getRetryOption(
       });
     }
   };
+
+  return myWrapOptions;
 }

@@ -260,7 +260,7 @@ export class AppModule implements OnModuleInit {
             'firstUserPassword'
           );
 
-        let firstUser: any;
+        let firstUser: schemaPostgres.UserEnt;
 
         if (
           common.isDefinedAndNotEmpty(email) &&
@@ -316,7 +316,7 @@ export class AppModule implements OnModuleInit {
 
           if (common.isUndefined(firstOrg)) {
             firstOrg = await this.orgsService.addOrg({
-              ownerId: firstUser.user_id,
+              ownerId: firstUser.userId,
               ownerEmail: firstUser.email,
               name: common.FIRST_ORG_NAME,
               traceId: common.makeId(),
