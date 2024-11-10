@@ -14,7 +14,7 @@ export function getRetryOption(
   logger: Logger
 ) {
   let myWrapOptions: MyWrapOptions = {
-    retries: 3, // (default 10)
+    retries: 1, // (default 10)
     minTimeout: 1000, // ms (default 1000)
     factor: 1, // (default 2)
     randomize: true, // 1 to 2 (default true)

@@ -81,31 +81,33 @@ export function wrapReps(item: {
           query: undefined,
           mconfig: undefined,
           hasAccessToModel: false,
-          parameters: row.parameters?.map(parameter => {
-            let result: common.FieldResultEnum;
+          parameters: common.isUndefined(row.parameters)
+            ? []
+            : row.parameters.map(parameter => {
+                let result: common.FieldResultEnum;
 
-            if (row.type === common.RowTypeEnum.Metric) {
-              result = models
-                .find(model => model.modelId === metric.modelId)
-                .fields.find(field => field.id === parameter.filter).result;
-            }
+                if (row.type === common.RowTypeEnum.Metric) {
+                  result = models
+                    .find(model => model.modelId === metric.modelId)
+                    .fields.find(field => field.id === parameter.filter).result;
+                }
 
-            let parameterApi: common.Parameter = {
-              parameterId: [row.row_id, ...parameter.filter.split('.')]
-                .join('_')
-                .toUpperCase(),
-              parameterType: common.isDefined(parameter.formula)
-                ? common.ParameterTypeEnum.Formula
-                : common.ParameterTypeEnum.Field,
-              filter: parameter.filter,
-              result: result,
-              formula: parameter.formula,
-              xDeps: undefined,
-              conditions: parameter.conditions
-            };
+                let parameterApi: common.Parameter = {
+                  parameterId: [row.row_id, ...parameter.filter.split('.')]
+                    .join('_')
+                    .toUpperCase(),
+                  parameterType: common.isDefined(parameter.formula)
+                    ? common.ParameterTypeEnum.Formula
+                    : common.ParameterTypeEnum.Field,
+                  filter: parameter.filter,
+                  result: result,
+                  formula: parameter.formula,
+                  xDeps: undefined,
+                  conditions: parameter.conditions
+                };
 
-            return parameterApi;
-          }),
+                return parameterApi;
+              }),
           isCalculateParameters: true,
           parametersFiltersWithExcludedTime: [],
           parametersJson: undefined,

@@ -217,7 +217,7 @@ export class QueriesService {
   }
 
   async removeOrphanedQueries() {
-    let rawData: any = await this.db.drizzle.execute(sql`
+    let rawData = await this.db.drizzle.execute(sql`
 SELECT
   q.query_id
 FROM queries as q
@@ -237,7 +237,8 @@ WHERE m.mconfig_id is NULL
     // `);
     //     });
 
-    let orphanedQueryIds: string[] = rawData?.map((x: any) => x.query_id) || [];
+    let orphanedQueryIds: string[] =
+      rawData.rows.map((x: any) => x.query_id) || [];
 
     if (orphanedQueryIds.length > 0) {
       await retry(

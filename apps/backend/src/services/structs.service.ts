@@ -95,10 +95,10 @@ SELECT
   b.repo_id,
   b.branch_id,
   b.env_id
-FROM structs as s
-LEFT JOIN bridges as b ON s.struct_id=b.struct_id
-LEFT JOIN branches as c ON b.branch_id=c.branch_id
-WHERE c.branch_id is NULL AND s.server_ts < (NOW() - INTERVAL 1 MINUTE)
+FROM structs AS s
+LEFT JOIN bridges AS b ON s.struct_id = b.struct_id
+LEFT JOIN branches AS c ON b.branch_id = c.branch_id
+WHERE c.branch_id IS NULL AND to_timestamp(s.server_ts) < (NOW() - INTERVAL '1 minute');
 `);
 
     //     let rawData: any;
@@ -119,7 +119,7 @@ WHERE c.branch_id is NULL AND s.server_ts < (NOW() - INTERVAL 1 MINUTE)
     //     });
 
     let orphanedStructIds: string[] =
-      rawData?.map((x: any) => x.struct_id) || [];
+      rawData.rows.map((x: any) => x.struct_id) || [];
 
     orphanedStructIds = orphanedStructIds.filter(
       x => [common.EMPTY_STRUCT_ID].indexOf(x) < 0
