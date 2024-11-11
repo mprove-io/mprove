@@ -1,3 +1,12 @@
-<m-chart-icon class="custom-header text-gray-400"></m-chart-icon>
+<!-- <m-chart-icon class="custom-header text-gray-400"></m-chart-icon> -->
+
+<m-insights-icon
+  class="flex-shrink-0 cursor-pointer"
+  [ngClass]="{
+    'text-gray-500': showMetricsChart === true,
+    'text-gray-400': showMetricsChart === false
+  }"
+  (click)="toggleShowMetricsChart()"
+></m-insights-icon>
 
 <div *ngIf="uiQuery$ | async"></div>

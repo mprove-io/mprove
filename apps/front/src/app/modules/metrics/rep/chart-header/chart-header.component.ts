@@ -3,6 +3,7 @@ import { IHeaderAngularComp } from 'ag-grid-angular';
 import { IHeaderParams } from 'ag-grid-community';
 import { tap } from 'rxjs';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { UiService } from '~front/app/services/ui.service';
 
 @Component({
   selector: 'm-chart-header',
@@ -20,7 +21,11 @@ export class ChartHeaderComponent implements IHeaderAngularComp {
     })
   );
 
-  constructor(private cd: ChangeDetectorRef, private uiQuery: UiQuery) {}
+  constructor(
+    private cd: ChangeDetectorRef,
+    private uiQuery: UiQuery,
+    private uiService: UiService
+  ) {}
 
   agInit(params: IHeaderParams) {
     this.params = params;
@@ -29,5 +34,17 @@ export class ChartHeaderComponent implements IHeaderAngularComp {
   refresh(params: IHeaderParams) {
     this.params = params;
     return true;
+  }
+
+  toggleShowMetricsChart() {
+    let showMetricsChart = !this.showMetricsChart;
+
+    this.uiQuery.updatePart({
+      showMetricsChart: showMetricsChart
+    });
+
+    this.uiService.setUserUi({
+      showMetricsChart: showMetricsChart
+    });
   }
 }
