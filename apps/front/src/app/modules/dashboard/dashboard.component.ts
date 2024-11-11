@@ -21,6 +21,7 @@ import {
   startWith,
   tap
 } from 'rxjs/operators';
+import { DeleteFilterFnItem } from '~front/app/interfaces/delete-filter-fn-item';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
@@ -41,11 +42,6 @@ class LayoutItem {
   x: number;
   y: number;
   tile: common.TileX;
-}
-
-export interface DeleteFilterFnItem {
-  filterFieldId: string;
-  mconfigId: string;
 }
 
 @Component({

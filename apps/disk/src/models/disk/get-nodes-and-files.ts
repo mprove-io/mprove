@@ -56,7 +56,6 @@ export async function getNodesAndFiles(item: {
 }
 
 async function getDirCatalogNodesAndFilesRecursive(item: {
-  // private
   dir: string;
   projectId: string;
   repoId: string;

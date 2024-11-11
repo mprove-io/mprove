@@ -3,15 +3,11 @@ import { PassportStrategy } from '@nestjs/passport';
 import * as bcrypt from 'bcrypt';
 import { Strategy } from 'passport-local';
 import { common } from '~backend/barrels/common';
-import { repositories } from '~backend/barrels/repositories';
 import { UsersService } from '~backend/services/users.service';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    private userRepository: repositories.UsersRepository,
-    private usersService: UsersService
-  ) {
+  constructor(private usersService: UsersService) {
     super({
       usernameField: 'payload[]email',
       passwordField: 'payload[]password'

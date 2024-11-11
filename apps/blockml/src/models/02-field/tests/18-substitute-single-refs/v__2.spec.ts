@@ -63,7 +63,7 @@ test('1', async t => {
   t.is(errors.length, 0);
   t.is(entViews.length, 1);
 
-  t.is(entViews[0].fields.length, 10);
+  t.is(entViews[0].fields.length, 18);
 
   t.is(entViews[0].fields[0].sqlReal, 'd1');
 
@@ -72,51 +72,49 @@ test('1', async t => {
     "TO_CHAR(DATE_TRUNC('month', mprovetimestampstart(d1) + t1mprovetimestampend), 'YYYY-MM')"
   );
   t.is(
-    entViews[0].fields[9].sqlReal,
+    entViews[0].fields[17].sqlReal,
     "(TO_CHAR(DATE_TRUNC('month', mprovetimestampstart(d1) + t1mprovetimestampend), 'YYYY-MM')) + d2"
   );
 
   t.deepEqual(entViews[0].fieldsDeps, {
     dim1: {},
-    dim2: {
-      time1___month: 13
-    },
-    time1___date: {
-      dim1: 8
-    },
-    time1___hour: {
-      dim1: 8
-    },
-    time1___minute: {
-      dim1: 8
-    },
-    time1___month: {
-      dim1: 8
-    },
-    time1___quarter: {
-      dim1: 8
-    },
-    time1___time: {
-      dim1: 8
-    },
-    time1___week: {
-      dim1: 8
-    },
-    time1___year: {
-      dim1: 8
-    }
+    time1___month: { dim1: 8 },
+    time1___date: { dim1: 8 },
+    time1___date_ts: { dim1: 8 },
+    time1___week: { dim1: 8 },
+    time1___week_ts: { dim1: 8 },
+    time1___month_ts: { dim1: 8 },
+    time1___quarter: { dim1: 8 },
+    time1___quarter_ts: { dim1: 8 },
+    time1___year: { dim1: 8 },
+    time1___year_ts: { dim1: 8 },
+    time1___time: { dim1: 8 },
+    time1___ts: { dim1: 8 },
+    time1___hour: { dim1: 8 },
+    time1___hour_ts: { dim1: 8 },
+    time1___minute: { dim1: 8 },
+    time1___minute_ts: { dim1: 8 },
+    dim2: { time1___month: 13 }
   });
 
   t.deepEqual(entViews[0].fieldsDepsAfterSingles, {
     dim1: {},
-    dim2: {},
-    time1___date: {},
-    time1___hour: {},
-    time1___minute: {},
     time1___month: {},
-    time1___quarter: {},
-    time1___time: {},
+    time1___date: {},
+    time1___date_ts: {},
     time1___week: {},
-    time1___year: {}
+    time1___week_ts: {},
+    time1___month_ts: {},
+    time1___quarter: {},
+    time1___quarter_ts: {},
+    time1___year: {},
+    time1___year_ts: {},
+    time1___time: {},
+    time1___ts: {},
+    time1___hour: {},
+    time1___hour_ts: {},
+    time1___minute: {},
+    time1___minute_ts: {},
+    dim2: {}
   });
 });

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IRowNode } from 'ag-grid-community';
 import { take, tap } from 'rxjs/operators';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
+import { DataRow } from '~front/app/interfaces/data-row';
 import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepQuery } from '~front/app/queries/rep.query';
@@ -15,7 +16,6 @@ import { ValidationService } from '~front/app/services/validation.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
-import { DataRow } from '../rep/rep.component';
 
 export interface ParameterFilter extends common.FilterX {
   parameterType: common.ParameterTypeEnum;

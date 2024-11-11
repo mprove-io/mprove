@@ -38,8 +38,8 @@ import { UiService } from '~front/app/services/ui.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+import { DataRow } from '~front/app/interfaces/data-row';
 import { constants as frontConstants } from '~front/barrels/constants';
-import { DataRow } from './rep/rep.component';
 
 export class TimeSpecItem {
   label: string;
@@ -671,9 +671,9 @@ export class MetricsComponent implements OnInit, OnDestroy {
     this.isShowLeft = !this.isShowLeft;
   }
 
-  toggleShowTable() {
-    this.isShowTable = !this.isShowTable;
-  }
+  // toggleShowTable() {
+  //   this.isShowTable = !this.isShowTable;
+  // }
 
   refreshShow() {
     this.isShow = false;
@@ -683,17 +683,17 @@ export class MetricsComponent implements OnInit, OnDestroy {
     });
   }
 
-  toggleShowMetricsChart() {
-    let showMetricsChart = !this.showMetricsChart;
+  // toggleShowMetricsChart() {
+  //   let showMetricsChart = !this.showMetricsChart;
 
-    this.uiQuery.updatePart({
-      showMetricsChart: showMetricsChart
-    });
+  //   this.uiQuery.updatePart({
+  //     showMetricsChart: showMetricsChart
+  //   });
 
-    this.uiService.setUserUi({
-      showMetricsChart: showMetricsChart
-    });
-  }
+  //   this.uiService.setUserUi({
+  //     showMetricsChart: showMetricsChart
+  //   });
+  // }
 
   toggleShowMetricsChartSettings() {
     let showMetricsChartSettings = !this.showMetricsChartSettings;

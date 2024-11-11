@@ -1,9 +1,8 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
@@ -16,6 +15,7 @@ import { ProjectsService } from '~backend/services/projects.service';
 import { QueriesService } from '~backend/services/queries.service';
 import { StructsService } from '~backend/services/structs.service';
 import { VizsService } from '~backend/services/vizs.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -30,11 +30,15 @@ export class GetVizController {
     private vizsService: VizsService,
     private projectsService: ProjectsService,
     private bridgesService: BridgesService,
-    private envsService: EnvsService
+    private envsService: EnvsService,
+    private wrapToApiService: WrapToApiService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetViz)
-  async getViz(@AttachUser() user: entities.UserEntity, @Req() request: any) {
+  async getViz(
+    @AttachUser() user: schemaPostgres.UserEnt,
+    @Req() request: any
+  ) {
     let reqValid: apiToBackend.ToBackendGetVizRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId, vizId } = reqValid.payload;
@@ -45,12 +49,12 @@ export class GetVizController {
 
     let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
-      memberId: user.user_id
+      memberId: user.userId
     });
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
+      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 
@@ -61,19 +65,19 @@ export class GetVizController {
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.project_id,
-      repoId: branch.repo_id,
-      branchId: branch.branch_id,
+      projectId: branch.projectId,
+      repoId: branch.repoId,
+      branchId: branch.branchId,
       envId: envId
     });
 
     await this.structsService.getStructCheckExists({
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       projectId: projectId
     });
 
     let viz = await this.vizsService.getVizCheckExists({
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       vizId: vizId
     });
 
@@ -90,36 +94,36 @@ export class GetVizController {
     }
 
     let mconfig = await this.mconfigsService.getMconfigCheckExists({
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       mconfigId: viz.tiles[0].mconfigId
     });
 
     let model = await this.modelsService.getModelCheckExists({
-      structId: bridge.struct_id,
-      modelId: mconfig.model_id
+      structId: bridge.structId,
+      modelId: mconfig.modelId
     });
 
     let query = await this.queriesService.getQueryCheckExists({
-      queryId: mconfig.query_id,
+      queryId: mconfig.queryId,
       projectId: projectId
     });
 
-    let apiMember = wrapper.wrapToApiMember(userMember);
+    let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
     let payload: apiToBackend.ToBackendGetVizResponsePayload = {
       userMember: apiMember,
-      viz: wrapper.wrapToApiViz({
+      viz: this.wrapToApiService.wrapToApiViz({
         viz: viz,
         mconfigs: [
-          wrapper.wrapToApiMconfig({
+          this.wrapToApiService.wrapToApiMconfig({
             mconfig: mconfig,
             modelFields: model.fields
           })
         ],
-        queries: [wrapper.wrapToApiQuery(query)],
+        queries: [this.wrapToApiService.wrapToApiQuery(query)],
         member: apiMember,
         models: [
-          wrapper.wrapToApiModel({
+          this.wrapToApiService.wrapToApiModel({
             model: model,
             hasAccess: helper.checkAccess({
               userAlias: user.alias,

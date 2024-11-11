@@ -1,22 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import { DataSource, In } from 'typeorm';
+import { Inject, Injectable } from '@nestjs/common';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 import { common } from '~backend/barrels/common';
-import { maker } from '~backend/barrels/maker';
-import { repositories } from '~backend/barrels/repositories';
-import { BoolEnum, ProjectWeekStartEnum } from '~common/_index';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
+import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
+import { metricsTable } from '~backend/drizzle/postgres/schema/metrics';
+import { modelsTable } from '~backend/drizzle/postgres/schema/models';
+import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
+import { structsTable } from '~backend/drizzle/postgres/schema/structs';
+import { vizsTable } from '~backend/drizzle/postgres/schema/vizs';
+import { ProjectWeekStartEnum } from '~common/_index';
 
 @Injectable()
 export class StructsService {
-  constructor(
-    private structsRepository: repositories.StructsRepository,
-    private dashboardsRepository: repositories.DashboardsRepository,
-    private mconfigsRepository: repositories.MconfigsRepository,
-    private modelsRepository: repositories.ModelsRepository,
-    private metricsRepository: repositories.MetricsRepository,
-    private repsRepository: repositories.RepsRepository,
-    private vizsRepository: repositories.VizsRepository,
-    private dataSource: DataSource
-  ) {}
+  constructor(@Inject(DRIZZLE) private db: Db) {}
 
   async getStructCheckExists(item: {
     structId: string;
@@ -25,32 +23,55 @@ export class StructsService {
   }) {
     let { structId, projectId, skipError } = item;
 
-    let emptyStruct = maker.makeStruct({
-      projectId: projectId,
+    let emptyStruct: schemaPostgres.StructEnt = {
       structId: structId,
+      projectId: projectId,
       mproveDirValue: './data',
       weekStart: ProjectWeekStartEnum.Monday,
-      allowTimezones: BoolEnum.TRUE,
+      allowTimezones: true,
       defaultTimezone: 'UTC',
       formatNumber: ',.0f',
       currencyPrefix: '$',
       currencySuffix: '',
       errors: [],
       views: [],
-      udfsDict: {}
-    });
+      udfsDict: {},
+      serverTs: undefined
+    };
+
+    // let emptyStruct = maker.makeStruct({
+    //   projectId: projectId,
+    //   structId: structId,
+    //   mproveDirValue: './data',
+    //   weekStart: ProjectWeekStartEnum.Monday,
+    //   allowTimezones: BoolEnum.TRUE,
+    //   defaultTimezone: 'UTC',
+    //   formatNumber: ',.0f',
+    //   currencyPrefix: '$',
+    //   currencySuffix: '',
+    //   errors: [],
+    //   views: [],
+    //   udfsDict: {}
+    // });
 
     let struct;
 
     if (structId === common.EMPTY_STRUCT_ID) {
       struct = emptyStruct;
     } else {
-      struct = await this.structsRepository.findOne({
-        where: {
-          struct_id: structId,
-          project_id: projectId
-        }
+      struct = await this.db.drizzle.query.structsTable.findFirst({
+        where: and(
+          eq(structsTable.structId, structId),
+          eq(structsTable.projectId, projectId)
+        )
       });
+
+      // struct = await this.structsRepository.findOne({
+      //   where: {
+      //     struct_id: structId,
+      //     project_id: projectId
+      //   }
+      // });
 
       if (common.isUndefined(struct)) {
         if (skipError === true) {
@@ -67,48 +88,83 @@ export class StructsService {
   }
 
   async removeOrphanedStructs() {
-    let rawData: any;
-
-    await this.dataSource.transaction(async manager => {
-      rawData = await manager.query(`
-SELECT 
+    let rawData: any = await this.db.drizzle.execute(sql`
+SELECT
   s.struct_id,
   b.project_id,
   b.repo_id,
   b.branch_id,
   b.env_id
-FROM structs as s 
-LEFT JOIN bridges as b ON s.struct_id=b.struct_id 
-LEFT JOIN branches as c ON b.branch_id=c.branch_id 
-WHERE c.branch_id is NULL AND s.server_ts < (NOW() - INTERVAL 1 MINUTE)
+FROM structs AS s
+LEFT JOIN bridges AS b ON s.struct_id = b.struct_id
+LEFT JOIN branches AS c ON b.branch_id = c.branch_id
+WHERE c.branch_id IS NULL AND to_timestamp(s.server_ts) < (NOW() - INTERVAL '1 minute');
 `);
-    });
 
-    // WHERE c.branch_id is NULL AND s.server_ts < (NOW() - INTERVAL 10 MINUTE)
+    //     let rawData: any;
 
-    // console.log(Date.now());
-    // console.log('orphanedRawData: ');
-    // console.log(rawData);
+    //     await this.dataSource.transaction(async manager => {
+    //       rawData = await manager.query(`
+    // SELECT
+    //   s.struct_id,
+    //   b.project_id,
+    //   b.repo_id,
+    //   b.branch_id,
+    //   b.env_id
+    // FROM structs as s
+    // LEFT JOIN bridges as b ON s.struct_id=b.struct_id
+    // LEFT JOIN branches as c ON b.branch_id=c.branch_id
+    // WHERE c.branch_id is NULL AND s.server_ts < (NOW() - INTERVAL 1 MINUTE)
+    // `);
+    //     });
 
     let orphanedStructIds: string[] =
-      rawData?.map((x: any) => x.struct_id) || [];
+      rawData.rows.map((x: any) => x.struct_id) || [];
 
     orphanedStructIds = orphanedStructIds.filter(
       x => [common.EMPTY_STRUCT_ID].indexOf(x) < 0
     );
 
     if (orphanedStructIds.length > 0) {
-      await this.structsRepository.delete({ struct_id: In(orphanedStructIds) });
-      await this.vizsRepository.delete({ struct_id: In(orphanedStructIds) });
-      await this.modelsRepository.delete({ struct_id: In(orphanedStructIds) });
-      await this.metricsRepository.delete({ struct_id: In(orphanedStructIds) });
-      await this.repsRepository.delete({ struct_id: In(orphanedStructIds) });
-      await this.mconfigsRepository.delete({
-        struct_id: In(orphanedStructIds)
-      });
-      await this.dashboardsRepository.delete({
-        struct_id: In(orphanedStructIds)
-      });
+      await this.db.drizzle
+        .delete(structsTable)
+        .where(inArray(structsTable.structId, orphanedStructIds));
+
+      await this.db.drizzle
+        .delete(vizsTable)
+        .where(inArray(vizsTable.structId, orphanedStructIds));
+
+      await this.db.drizzle
+        .delete(modelsTable)
+        .where(inArray(modelsTable.structId, orphanedStructIds));
+
+      await this.db.drizzle
+        .delete(metricsTable)
+        .where(inArray(metricsTable.structId, orphanedStructIds));
+
+      await this.db.drizzle
+        .delete(reportsTable)
+        .where(inArray(reportsTable.structId, orphanedStructIds));
+
+      await this.db.drizzle
+        .delete(mconfigsTable)
+        .where(inArray(mconfigsTable.structId, orphanedStructIds));
+
+      await this.db.drizzle
+        .delete(dashboardsTable)
+        .where(inArray(dashboardsTable.structId, orphanedStructIds));
+
+      // await this.structsRepository.delete({ struct_id: In(orphanedStructIds) });
+      // await this.vizsRepository.delete({ struct_id: In(orphanedStructIds) });
+      // await this.modelsRepository.delete({ struct_id: In(orphanedStructIds) });
+      // await this.metricsRepository.delete({ struct_id: In(orphanedStructIds) });
+      // await this.repsRepository.delete({ struct_id: In(orphanedStructIds) });
+      // await this.mconfigsRepository.delete({
+      //   struct_id: In(orphanedStructIds)
+      // });
+      // await this.dashboardsRepository.delete({
+      //   struct_id: In(orphanedStructIds)
+      // });
     }
   }
 }

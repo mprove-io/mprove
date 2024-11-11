@@ -2,9 +2,8 @@ import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
@@ -14,6 +13,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -25,16 +25,20 @@ export class GetRepoController {
     private structsService: StructsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
-    private envsService: EnvsService
+    private envsService: EnvsService,
+    private wrapToApiService: WrapToApiService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRepo)
-  async getRepo(@AttachUser() user: entities.UserEntity, @Req() request: any) {
+  async getRepo(
+    @AttachUser() user: schemaPostgres.UserEnt,
+    @Req() request: any
+  ) {
     let reqValid: apiToBackend.ToBackendGetRepoRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId, isFetch } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -42,12 +46,12 @@ export class GetRepoController {
 
     let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
-      memberId: user.user_id
+      memberId: user.userId
     });
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
+      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 
@@ -58,9 +62,9 @@ export class GetRepoController {
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.project_id,
-      repoId: branch.repo_id,
-      branchId: branch.branch_id,
+      projectId: branch.projectId,
+      repoId: branch.repoId,
+      branchId: branch.branchId,
       envId: envId
     });
 
@@ -70,15 +74,15 @@ export class GetRepoController {
         traceId: reqValid.info.traceId
       },
       payload: {
-        orgId: project.org_id,
+        orgId: project.orgId,
         projectId: projectId,
         repoId: repoId,
         branch: branchId,
         isFetch: isFetch,
-        remoteType: project.remote_type,
-        gitUrl: project.git_url,
-        privateKey: project.private_key,
-        publicKey: project.public_key
+        remoteType: project.remoteType,
+        gitUrl: project.gitUrl,
+        privateKey: project.privateKey,
+        publicKey: project.publicKey
       }
     };
 
@@ -86,7 +90,7 @@ export class GetRepoController {
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogNodesResponse>(
         {
           routingKey: helper.makeRoutingKeyToDisk({
-            orgId: project.org_id,
+            orgId: project.orgId,
             projectId: projectId
           }),
           message: toDiskGetCatalogNodesRequest,
@@ -95,18 +99,18 @@ export class GetRepoController {
       );
 
     let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       projectId: projectId,
       skipError: true
     });
 
-    let apiMember = wrapper.wrapToApiMember(userMember);
+    let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
     let payload: apiToBackend.ToBackendGetRepoResponsePayload = {
       userMember: apiMember,
-      user: wrapper.wrapToApiUser(user),
-      needValidate: common.enumToBoolean(bridge.need_validate),
-      struct: wrapper.wrapToApiStruct(struct),
+      user: this.wrapToApiService.wrapToApiUser(user),
+      needValidate: bridge.needValidate,
+      struct: this.wrapToApiService.wrapToApiStruct(struct),
       repo: diskResponse.payload.repo
     };
 

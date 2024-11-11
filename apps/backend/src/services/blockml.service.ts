@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
   add,
   differenceInDays,
@@ -26,24 +27,31 @@ import {
   sub
 } from 'date-fns';
 import { fromZonedTime } from 'date-fns-tz';
+import { and, eq } from 'drizzle-orm';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 import { helper } from '~backend/barrels/helper';
-import { maker } from '~backend/barrels/maker';
-import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
+import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
+import { evsTable } from '~backend/drizzle/postgres/schema/evs';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { processRowIds } from '~backend/functions/process-row-ids';
-import { DbService } from '~backend/services/db.service';
 import { RabbitService } from './rabbit.service';
+import { WrapToEntService } from './wrap-to-ent.service';
+
+let retry = require('async-retry');
 
 @Injectable()
 export class BlockmlService {
   constructor(
-    private connectionsRepository: repositories.ConnectionsRepository,
-    private evsRepository: repositories.EvsRepository,
     private rabbitService: RabbitService,
-    private dbService: DbService
+    private wrapToEntService: WrapToEntService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   async rebuildStruct(item: {
@@ -70,24 +78,37 @@ export class BlockmlService {
       evs
     } = item;
 
-    let connectionsEntities;
+    let connectionsEnts;
+
     if (common.isUndefined(connections)) {
-      connectionsEntities = await this.connectionsRepository.find({
-        where: {
-          project_id: projectId,
-          env_id: envId
-        }
+      connectionsEnts = await this.db.drizzle.query.connectionsTable.findMany({
+        where: and(
+          eq(connectionsTable.projectId, projectId),
+          eq(connectionsTable.envId, envId)
+        )
       });
+
+      // connectionsEntities = await this.connectionsRepository.find({
+      //   where: {
+      //     project_id: projectId,
+      //     env_id: envId
+      //   }
+      // });
     }
 
-    let evsEntities;
+    let evsEnts;
+
     if (common.isUndefined(evs)) {
-      evsEntities = await this.evsRepository.find({
-        where: {
-          project_id: projectId,
-          env_id: envId
-        }
+      evsEnts = await this.db.drizzle.query.evsTable.findMany({
+        where: and(eq(evsTable.projectId, projectId), eq(evsTable.envId, envId))
       });
+
+      // evsEntities = await this.evsRepository.find({
+      //   where: {
+      //     project_id: projectId,
+      //     env_id: envId
+      //   }
+      // });
     }
 
     let toBlockmlRebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest =
@@ -102,15 +123,26 @@ export class BlockmlService {
           orgId: orgId,
           projectId: projectId,
           envId: envId,
-          evs: evs || evsEntities.map(x => wrapper.wrapToApiEv(x)),
+          evs:
+            evs ||
+            evsEnts.map(
+              x =>
+                // wrapper.wrapToApiEv(x))
+                ({
+                  projectId: x.projectId,
+                  envId: x.envId,
+                  evId: x.evId,
+                  val: x.val
+                } as common.Ev)
+            ),
           mproveDir: item.mproveDir,
           files: helper.diskFilesToBlockmlFiles(diskFiles),
           connections:
             connections ||
-            connectionsEntities.map(x => ({
-              connectionId: x.connection_id,
+            connectionsEnts.map(x => ({
+              connectionId: x.connectionId,
               type: x.type,
-              bigqueryProject: x.bigquery_project
+              bigqueryProject: x.bigqueryProject
             }))
         }
       };
@@ -145,20 +177,37 @@ export class BlockmlService {
       models
     } = blockmlRebuildStructResponse.payload;
 
-    let struct = maker.makeStruct({
+    let struct: schemaPostgres.StructEnt = {
       projectId: projectId,
       structId: structId,
       mproveDirValue: mproveDirValue,
       weekStart: weekStart,
-      allowTimezones: common.booleanToEnum(allowTimezones),
+      allowTimezones: allowTimezones,
       defaultTimezone: defaultTimezone,
       formatNumber: formatNumber,
       currencyPrefix: currencyPrefix,
       currencySuffix: currencySuffix,
       errors: errors,
       views: views,
-      udfsDict: udfsDict
-    });
+      udfsDict: udfsDict,
+      serverTs: undefined
+    };
+
+    // let struct = maker.makeStruct({
+    //   projectId: projectId,
+    //   structId: structId,
+    //   mproveDirValue: mproveDirValue,
+    //   weekStart: weekStart,
+    //   allowTimezones: common.booleanToEnum(allowTimezones),
+    //   defaultTimezone: defaultTimezone,
+    //   formatNumber: formatNumber,
+    //   currencyPrefix: currencyPrefix,
+    //   currencySuffix: currencySuffix,
+    //   errors: errors,
+    //   views: views,
+    //   udfsDict: udfsDict
+    // });
+
     // console.log('reps');
     // console.log(reps);
     // reps = [];
@@ -173,33 +222,55 @@ export class BlockmlService {
     });
 
     if (common.isUndefined(skipDb) || skipDb === false) {
-      await this.dbService.writeRecords({
-        modify: false,
-        records: {
-          structs: [struct],
-          vizs: vizs.map(x => wrapper.wrapToEntityViz(x)),
-          queries: queries.map(x => wrapper.wrapToEntityQuery(x)),
-          models: models.map(x => wrapper.wrapToEntityModel(x)),
-          metrics: metrics.map(x => wrapper.wrapToEntityMetric(x)),
-          reps: reps.map(rep => wrapper.wrapToEntityRep(rep)),
-          apis: apis.map(x => wrapper.wrapToEntityApi(x)),
-          mconfigs: mconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
-          dashboards: dashboards.map(x => wrapper.wrapToEntityDashboard(x))
-        }
-      });
-    }
-    // else {
-    //   let modifiedStruct = Object.assign({}, oldStruct, {
-    //     errors: struct.errors
-    //   });
+      await retry(async () => {
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insert: {
+                // apis: apis.map(x => this.wrapService.wrapToEntityApi(x)),
+                structs: [struct],
+                vizs: vizs.map(x => this.wrapToEntService.wrapToEntityViz(x)),
+                models: models.map(x =>
+                  this.wrapToEntService.wrapToEntityModel(x)
+                ),
+                metrics: metrics.map(x =>
+                  this.wrapToEntService.wrapToEntityMetric(x)
+                ),
+                reports: reps.map(x =>
+                  this.wrapToEntService.wrapToEntityReport(x)
+                ),
+                mconfigs: mconfigs.map(x =>
+                  this.wrapToEntService.wrapToEntityMconfig(x)
+                ),
+                dashboards: dashboards.map(x =>
+                  this.wrapToEntService.wrapToEntityDashboard(x)
+                )
+              },
+              insertOrUpdate: {
+                queries: queries.map(x =>
+                  this.wrapToEntService.wrapToEntityQuery(x)
+                )
+              }
+            })
+        );
+      }, getRetryOption(this.cs, this.logger));
 
-    //   await this.dbService.writeRecords({
-    //     modify: true,
-    //     records: {
-    //       structs: [modifiedStruct]
-    //     }
-    //   });
-    // }
+      // await this.dbService.writeRecords({
+      //   modify: false,
+      //   records: {
+      //     structs: [struct],
+      //     vizs: vizs.map(x => wrapper.wrapToEntityViz(x)),
+      //     queries: queries.map(x => wrapper.wrapToEntityQuery(x)),
+      //     models: models.map(x => wrapper.wrapToEntityModel(x)),
+      //     metrics: metrics.map(x => wrapper.wrapToEntityMetric(x)),
+      //     reps: reps.map(rep => wrapper.wrapToEntityRep(rep)),
+      //     apis: apis.map(x => wrapper.wrapToEntityApi(x)),
+      //     mconfigs: mconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
+      //     dashboards: dashboards.map(x => wrapper.wrapToEntityDashboard(x))
+      //   }
+      // });
+    }
 
     return {
       struct: struct,

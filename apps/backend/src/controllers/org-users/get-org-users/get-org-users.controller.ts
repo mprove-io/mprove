@@ -1,33 +1,28 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-import { DataSource, In } from 'typeorm';
+import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { and, asc, eq, inArray, sql } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
-import { repositories } from '~backend/barrels/repositories';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
+import { membersTable } from '~backend/drizzle/postgres/schema/members';
+import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
+import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { makeFullName } from '~backend/functions/make-full-name';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import {
-  MemberEntity,
-  UserEntity
-} from '~backend/models/store-entities/_index';
 import { OrgsService } from '~backend/services/orgs.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class GetOrgUsersController {
   constructor(
-    private membersRepository: repositories.MembersRepository,
-    private usersRepository: repositories.UsersRepository,
-    private avatarsRepository: repositories.AvatarsRepository,
-    private projectsRepository: repositories.ProjectsRepository,
     private orgsService: OrgsService,
-    private dataSource: DataSource
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers)
   async getOrgUsers(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendGetOrgUsersRequest = request.body;
@@ -38,97 +33,136 @@ export class GetOrgUsersController {
 
     await this.orgsService.checkUserIsOrgOwner({
       org: org,
-      userId: user.user_id
+      userId: user.userId
     });
 
-    let projects = await this.projectsRepository.find({
-      where: { org_id: orgId }
+    let projects = await this.db.drizzle.query.projectsTable.findMany({
+      where: eq(projectsTable.orgId, orgId)
     });
 
-    let projectIds = projects.map(x => x.project_id);
+    // let projects = await this.projectsRepository.find({
+    //   where: { org_id: orgId }
+    // });
 
-    let membersPart: MemberEntity[] = await this.dataSource
-      .getRepository(MemberEntity)
-      .createQueryBuilder('members')
-      .select('DISTINCT member_id')
-      .where({ project_id: In(projectIds) })
-      .getRawMany();
+    let projectIds = projects.map(x => x.projectId);
 
-    let userIds = membersPart.map(x => x.member_id);
+    let memberParts = await this.db.drizzle
+      .select({
+        memberId: sql<string>`DISTINCT ${membersTable.memberId}`
+      })
+      .from(membersTable)
+      .where(inArray(membersTable.projectId, projectIds));
 
-    let [users, total]: [UserEntity[], number] =
-      await this.usersRepository.findAndCount({
-        where: {
-          user_id: In(userIds)
-        },
-        order: {
-          email: 'ASC'
-        },
-        take: perPage,
-        skip: (pageNum - 1) * perPage
-      });
+    // let membersPart: MemberEntity[] = await this.dataSource
+    //   .getRepository(MemberEntity)
+    //   .createQueryBuilder('members')
+    //   .select('DISTINCT member_id')
+    //   .where({ project_id: In(projectIds) })
+    //   .getRawMany();
+
+    let userIds = memberParts.map(x => x.memberId);
+
+    let usersResult = await this.db.drizzle
+      .select({
+        record: usersTable,
+        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
+      })
+      .from(usersTable)
+      .where(inArray(usersTable.userId, userIds))
+      .orderBy(asc(usersTable.email))
+      .limit(perPage)
+      .offset((pageNum - 1) * perPage);
+
+    // let [users, total]: [UserEntity[], number] =
+    //   await this.usersRepository.findAndCount({
+    //     where: {
+    //       user_id: In(userIds)
+    //     },
+    //     order: {
+    //       email: 'ASC'
+    //     },
+    //     take: perPage,
+    //     skip: (pageNum - 1) * perPage
+    //   });
+
+    let users = usersResult.map(x => x.record);
 
     let members =
       userIds.length === 0
         ? []
-        : await this.membersRepository.find({
-            where: {
-              member_id: In(userIds),
-              project_id: In(projectIds)
-            }
+        : await this.db.drizzle.query.membersTable.findMany({
+            where: and(
+              inArray(membersTable.memberId, userIds),
+              inArray(membersTable.projectId, projectIds)
+            )
           });
+
+    // await this.membersRepository.find({
+    //     where: {
+    //       member_id: In(userIds),
+    //       project_id: In(projectIds)
+    //     }
+    //   });
 
     let orgUsers: apiToBackend.OrgUsersItem[] = [];
 
     let avatars =
       userIds.length === 0
         ? []
-        : await this.avatarsRepository.find({
-            select: ['user_id', 'avatar_small'],
-            where: {
-              user_id: In(userIds)
-            }
-          });
+        : await this.db.drizzle
+            .select({
+              userId: avatarsTable.userId,
+              avatarSmall: avatarsTable.avatarSmall
+            })
+            .from(avatarsTable)
+            .where(inArray(avatarsTable.userId, userIds));
+
+    // await this.avatarsRepository.find({
+    //     select: ['user_id', 'avatar_small'],
+    //     where: {
+    //       user_id: In(userIds)
+    //     }
+    //   });
 
     users.forEach(x => {
-      let userMembers = members.filter(m => m.member_id === x.user_id);
+      let userMembers = members.filter(m => m.memberId === x.userId);
 
       let orgUser: apiToBackend.OrgUsersItem = {
-        userId: x.user_id,
-        avatarSmall: avatars.find(a => a.user_id === x.user_id)?.avatar_small,
+        userId: x.userId,
+        avatarSmall: avatars.find(a => a.userId === x.userId)?.avatarSmall,
         email: x.email,
         alias: x.alias,
-        firstName: x.first_name,
-        lastName: x.last_name,
+        firstName: x.firstName,
+        lastName: x.lastName,
         fullName: makeFullName({
-          firstName: x.first_name,
-          lastName: x.last_name
+          firstName: x.firstName,
+          lastName: x.lastName
         }),
         adminProjects: userMembers
-          .filter(m => m.is_admin === common.BoolEnum.TRUE)
-          .map(m => m.project_id)
+          .filter(m => m.isAdmin === true)
+          .map(m => m.projectId)
           .map(y => {
-            let project = projects.find(p => p.project_id === y);
+            let project = projects.find(p => p.projectId === y);
             return project.name;
           }),
         editorProjects: userMembers
-          .filter(m => m.is_editor === common.BoolEnum.TRUE)
-          .map(m => m.project_id)
+          .filter(m => m.isEditor === true)
+          .map(m => m.projectId)
           .map(y => {
-            let project = projects.find(p => p.project_id === y);
+            let project = projects.find(p => p.projectId === y);
             return project.name;
           }),
         explorerProjects: userMembers
-          .filter(m => m.is_explorer === common.BoolEnum.TRUE)
-          .map(m => m.project_id)
+          .filter(m => m.isExplorer === true)
+          .map(m => m.projectId)
           .map(y => {
-            let project = projects.find(p => p.project_id === y);
+            let project = projects.find(p => p.projectId === y);
             return project.name;
           }),
         projectUserProjects: userMembers
-          .map(m => m.project_id)
+          .map(m => m.projectId)
           .map(y => {
-            let project = projects.find(p => p.project_id === y);
+            let project = projects.find(p => p.projectId === y);
             return project.name;
           })
       };
@@ -138,7 +172,7 @@ export class GetOrgUsersController {
 
     let payload: apiToBackend.ToBackendGetOrgUsersResponsePayload = {
       orgUsersList: orgUsers,
-      total: total
+      total: usersResult.length > 0 ? usersResult[0].total : 0
     };
 
     return payload;

@@ -1,37 +1,33 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { and, eq } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { interfaces } from '~backend/barrels/interfaces';
-import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { notesTable } from '~backend/drizzle/postgres/schema/notes';
+import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { NoteEntity } from '~backend/models/store-entities/_index';
-import { BlockmlService } from '~backend/services/blockml.service';
-import { DbService } from '~backend/services/db.service';
 import { OrgsService } from '~backend/services/orgs.service';
 import { ProjectsService } from '~backend/services/projects.service';
-import { RabbitService } from '~backend/services/rabbit.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class CreateProjectController {
   constructor(
-    private dbService: DbService,
-    private rabbitService: RabbitService,
     private projectsService: ProjectsService,
     private orgsService: OrgsService,
+    private wrapToApiService: WrapToApiService,
     private cs: ConfigService<interfaces.Config>,
-    private projectsRepository: repositories.ProjectsRepository,
-    private notesRepository: repositories.NotesRepository,
-    private blockmlService: BlockmlService
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateProject)
   async createProject(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendCreateProjectRequest = request.body;
@@ -43,23 +39,27 @@ export class CreateProjectController {
 
     await this.orgsService.checkUserIsOrgOwner({
       org: org,
-      userId: user.user_id
+      userId: user.userId
     });
 
     let firstOrgId = this.cs.get<interfaces.Config['firstOrgId']>('firstOrgId');
 
-    if (org.org_id === firstOrgId) {
+    if (org.orgId === firstOrgId) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_RESTRICTED_ORGANIZATION
       });
     }
 
-    let project = await this.projectsRepository.findOne({
-      where: {
-        org_id: orgId,
-        name: name
-      }
+    let project = await this.db.drizzle.query.projectsTable.findFirst({
+      where: and(eq(projectsTable.orgId, orgId), eq(projectsTable.name, name))
     });
+
+    // let project = await this.projectsRepository.findOne({
+    //   where: {
+    //     org_id: orgId,
+    //     name: name
+    //   }
+    // });
 
     if (common.isDefined(project)) {
       throw new common.ServerError({
@@ -67,14 +67,18 @@ export class CreateProjectController {
       });
     }
 
-    let note: NoteEntity;
+    let note: schemaPostgres.NoteEnt;
 
     if (remoteType === common.ProjectRemoteTypeEnum.GitClone) {
-      note = await this.notesRepository.findOne({
-        where: {
-          note_id: noteId
-        }
+      note = await this.db.drizzle.query.notesTable.findFirst({
+        where: eq(notesTable.noteId, noteId)
       });
+
+      // note = await this.notesRepository.findOne({
+      //   where: {
+      //     note_id: noteId
+      //   }
+      // });
 
       if (common.isUndefined(note)) {
         throw new common.ServerError({
@@ -92,12 +96,12 @@ export class CreateProjectController {
       remoteType: remoteType,
       projectId: common.makeId(),
       gitUrl: gitUrl,
-      privateKey: note?.private_key,
-      publicKey: note?.public_key
+      privateKey: note?.privateKey,
+      publicKey: note?.publicKey
     });
 
     let payload: apiToBackend.ToBackendCreateProjectResponsePayload = {
-      project: wrapper.wrapToApiProject(newProject)
+      project: this.wrapToApiService.wrapToApiProject(newProject)
     };
 
     return payload;

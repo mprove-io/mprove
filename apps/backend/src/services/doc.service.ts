@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { format, fromUnixTime, getUnixTime } from 'date-fns';
 import { fromZonedTime } from 'date-fns-tz';
@@ -7,14 +7,16 @@ import * as pgPromise from 'pg-promise';
 import pg from 'pg-promise/typescript/pg-subset';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
-import { DbService } from './db.service';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { RabbitService } from './rabbit.service';
 import { UserCodeService } from './user-code.service';
 let Graph = require('tarjan-graph');
 let toposort = require('toposort');
+let retry = require('async-retry');
 
 interface XColumn {
   id: string;
@@ -28,15 +30,16 @@ interface XColumn {
 @Injectable()
 export class DocService {
   constructor(
-    private cs: ConfigService<interfaces.Config>,
     private rabbitService: RabbitService,
-    private dbService: DbService,
-    private userCodeService: UserCodeService
+    private userCodeService: UserCodeService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   async calculateParameters(item: {
-    metrics: entities.MetricEntity[];
-    models: entities.ModelEntity[];
+    metrics: schemaPostgres.MetricEnt[];
+    models: schemaPostgres.ModelEnt[];
     rows: common.Row[];
     traceId: string;
   }) {
@@ -327,8 +330,8 @@ Formula must return a valid JSON object.`;
             let fieldId = parameter.filter.split('.').join('_').toUpperCase();
             parameter.parameterId = `${row.rowId}_${fieldId}`;
 
-            let metric = metrics.find(m => m.metric_id === row.metricId);
-            let model = models.find(ml => ml.model_id === metric.model_id);
+            let metric = metrics.find(m => m.metricId === row.metricId);
+            let model = models.find(ml => ml.modelId === metric.modelId);
             let field = model.fields.find(f => f.id === parameter.filter);
 
             if (common.isDefined(field)) {
@@ -624,7 +627,7 @@ FROM main;`;
 
     let lastCalculatedTs = Number(helper.makeTs());
 
-    let newKits: entities.KitEntity[] = [];
+    let newKits: schemaPostgres.KitEnt[] = [];
 
     rep.rows
       .filter(
@@ -730,12 +733,12 @@ FROM main;`;
         if (row.rowType === common.RowTypeEnum.Formula) {
           rq.kitId = common.makeId();
 
-          let newKit: entities.KitEntity = {
-            struct_id: rep.structId,
-            kit_id: rq.kitId,
-            rep_id: rep.repId,
+          let newKit: schemaPostgres.KitEnt = {
+            structId: rep.structId,
+            kitId: rq.kitId,
+            reportId: rep.repId,
             data: row.records,
-            server_ts: undefined
+            serverTs: undefined
           };
 
           newKits.push(newKit);
@@ -745,12 +748,26 @@ FROM main;`;
       });
 
     if (newKits.length > 0) {
-      await this.dbService.writeRecords({
-        modify: false,
-        records: {
-          kits: newKits
-        }
-      });
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insert: {
+                  kits: newKits
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+
+      // await this.dbService.writeRecords({
+      //   modify: false,
+      //   records: {
+      //     kits: newKits
+      //   }
+      // });
     }
 
     return rep;

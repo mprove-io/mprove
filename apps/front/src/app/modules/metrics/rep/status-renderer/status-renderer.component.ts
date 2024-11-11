@@ -2,8 +2,8 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { DataRow } from '~front/app/interfaces/data-row';
 import { common } from '~front/barrels/common';
-import { DataRow } from '../rep.component';
 
 @Component({
   selector: 'm-status-renderer',

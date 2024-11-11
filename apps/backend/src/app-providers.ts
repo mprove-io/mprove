@@ -11,11 +11,12 @@ import { BridgesService } from './services/bridges.service';
 import { ClickHouseService } from './services/clickhouse.service';
 import { ConnectionsService } from './services/connections.service';
 import { DashboardsService } from './services/dashboards.service';
-import { DbService } from './services/db.service';
 import { DocService } from './services/doc.service';
 import { EmailService } from './services/email.service';
 import { EnvsService } from './services/envs.service';
 import { EvsService } from './services/evs.service';
+import { HashService } from './services/hash.service';
+import { MakerService } from './services/maker.service';
 import { MconfigsService } from './services/mconfigs.service';
 import { MembersService } from './services/members.service';
 import { ModelsService } from './services/models.service';
@@ -25,18 +26,23 @@ import { ProjectsService } from './services/projects.service';
 import { QueriesService } from './services/queries.service';
 import { RabbitService } from './services/rabbit.service';
 import { RedisService } from './services/redis.service';
-import { RepsService } from './services/reps.service';
+import { ReportsService } from './services/reports.service';
 import { SnowFlakeService } from './services/snowflake.service';
 import { StructsService } from './services/structs.service';
 import { TasksService } from './services/tasks.service';
 import { UserCodeService } from './services/user-code.service';
 import { UsersService } from './services/users.service';
 import { VizsService } from './services/vizs.service';
+import { WrapToApiService } from './services/wrap-to-api.service';
+import { WrapToEntService } from './services/wrap-to-ent.service';
 
 export const appProviders = [
+  WrapToEntService,
+  WrapToApiService,
+  MakerService,
+  HashService,
   RedisService,
   RabbitService,
-  DbService,
   EmailService,
   BlockmlService,
   UserCodeService,
@@ -55,7 +61,7 @@ export const appProviders = [
   QueriesService,
   VizsService,
   DashboardsService,
-  RepsService,
+  ReportsService,
   MembersService,
   EnvsService,
   EvsService,

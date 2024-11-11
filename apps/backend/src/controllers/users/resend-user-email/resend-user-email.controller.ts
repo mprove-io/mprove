@@ -1,8 +1,10 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { eq } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { repositories } from '~backend/barrels/repositories';
 import { SkipJwtCheck } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EmailService } from '~backend/services/email.service';
 
@@ -12,7 +14,7 @@ import { EmailService } from '~backend/services/email.service';
 export class ResendUserEmailController {
   constructor(
     private emailService: EmailService,
-    private userRepository: repositories.UsersRepository
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResendUserEmail)
@@ -21,9 +23,13 @@ export class ResendUserEmailController {
 
     let { userId } = reqValid.payload;
 
-    let user = await this.userRepository.findOne({
-      where: { user_id: userId }
+    let user = await this.db.drizzle.query.usersTable.findFirst({
+      where: eq(usersTable.userId, userId)
     });
+
+    // let user = await this.userRepository.findOne({
+    //   where: { user_id: userId }
+    // });
 
     if (common.isUndefined(user)) {
       throw new common.ServerError({
@@ -37,7 +43,7 @@ export class ResendUserEmailController {
       });
     }
 
-    if (user.is_email_verified === common.BoolEnum.TRUE) {
+    if (user.isEmailVerified === true) {
       let payload: apiToBackend.ToBackendResendUserEmailResponsePayload = {
         isEmailVerified: true
       };
@@ -46,7 +52,7 @@ export class ResendUserEmailController {
 
     await this.emailService.sendEmailVerification({
       email: user.email,
-      emailVerificationToken: user.email_verification_token
+      emailVerificationToken: user.emailVerificationToken
     });
 
     let payload: apiToBackend.ToBackendResendUserEmailResponsePayload = {

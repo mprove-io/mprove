@@ -194,7 +194,6 @@ truetype
 tryharddood
 tsconfig
 tsconfigs
-typeorm
 udf
 udf apdd
 udfs

@@ -1,21 +1,37 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { eq } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { repositories } from '~backend/barrels/repositories';
+import { interfaces } from '~backend/barrels/interfaces';
 import { SkipJwtCheck } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { usersTable } from '~backend/drizzle/postgres/schema/users';
+import { getRetryOption } from '~backend/functions/get-retry-option';
+import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { DbService } from '~backend/services/db.service';
 import { UsersService } from '~backend/services/users.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+
+let retry = require('async-retry');
 
 @SkipJwtCheck()
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class UpdateUserPasswordController {
   constructor(
-    private dbService: DbService,
     private usersService: UsersService,
-    private usersRepository: repositories.UsersRepository
+    private wrapToApiService: WrapToApiService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword)
@@ -25,11 +41,15 @@ export class UpdateUserPasswordController {
 
     let { passwordResetToken, newPassword } = reqValid.payload;
 
-    let user = await this.usersRepository.findOne({
-      where: {
-        password_reset_token: passwordResetToken
-      }
+    let user = await this.db.drizzle.query.usersTable.findFirst({
+      where: eq(usersTable.passwordResetToken, passwordResetToken)
     });
+
+    // let user = await this.usersRepository.findOne({
+    //   where: {
+    //     password_reset_token: passwordResetToken
+    //   }
+    // });
 
     if (common.isUndefined(user)) {
       throw new common.ServerError({
@@ -37,7 +57,7 @@ export class UpdateUserPasswordController {
       });
     }
 
-    if (Number(user.password_reset_expires_ts) < Number(helper.makeTs())) {
+    if (user.passwordResetExpiresTs < makeTsNumber()) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_UPDATE_PASSWORD_TOKEN_EXPIRED
       });
@@ -47,15 +67,29 @@ export class UpdateUserPasswordController {
 
     user.hash = hash;
     user.salt = salt;
-    user.password_reset_expires_ts = (1).toString();
-    user.jwt_min_iat = helper.makeTs();
+    user.passwordResetExpiresTs = 1;
+    user.jwtMinIat = makeTsNumber();
 
-    await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        users: [user]
-      }
-    });
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insertOrUpdate: {
+                users: [user]
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    // await this.dbService.writeRecords({
+    //   modify: true,
+    //   records: {
+    //     users: [user]
+    //   }
+    // });
 
     let payload = {};
 

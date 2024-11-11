@@ -103,7 +103,7 @@ bootstrapApplication(AppComponent, {
           animation: undefined,
           trigger: 'click manual',
           interactive: true,
-          appendTo: 'parent',
+          appendTo: (ref: Element) => document.body,
           arrow: false,
           offset: [0, 7]
         },

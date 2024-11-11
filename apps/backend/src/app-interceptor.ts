@@ -11,13 +11,13 @@ import { map, mergeMap, tap } from 'rxjs/operators';
 import { apiToBackend } from './barrels/api-to-backend';
 import { common } from './barrels/common';
 import { constants } from './barrels/constants';
-import { entities } from './barrels/entities';
 import { interfaces } from './barrels/interfaces';
+import { schemaPostgres } from './barrels/schema-postgres';
 import { logResponseBackend } from './functions/log-response-backend';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { makeErrorResponseBackend } from './functions/make-error-response-backend';
 import { makeOkResponseBackend } from './functions/make-ok-response-backend';
-import { makeTsNumber } from './helper/make-ts-number';
+import { makeTsNumber } from './functions/make-ts-number';
 import { Idemp } from './interfaces/idemp';
 import { RedisService } from './services/redis.service';
 
@@ -44,12 +44,12 @@ export class AppInterceptor implements NestInterceptor {
     request.start_ts = Date.now();
 
     let req: apiToBackend.ToBackendRequest = request.body;
-    let user: entities.UserEntity = request.user;
+    let user: schemaPostgres.UserEnt = request.user;
     // let sessionStId: string = request.session?.getUserId();
 
     let iKey = req?.info?.idempotencyKey;
-    let stId = common.isDefined(user?.user_id)
-      ? user.user_id
+    let stId = common.isDefined(user?.userId)
+      ? user.userId
       : constants.UNK_ST_ID;
     // let stId = common.isDefined(sessionStId)
     // ? sessionStId

@@ -16,6 +16,7 @@ import {
 import { combineLatest, tap } from 'rxjs';
 import { debounce } from 'throttle-debounce';
 import { makeRepQueryParams } from '~front/app/functions/make-query-params';
+import { DataRow } from '~front/app/interfaces/data-row';
 import { RepQuery } from '~front/app/queries/rep.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { RepService } from '~front/app/services/rep.service';
@@ -30,14 +31,6 @@ import { RowIdHeaderComponent } from './row-id-header/row-id-header.component';
 import { RowIdRendererComponent } from './row-id-renderer/row-id-renderer.component';
 import { StatusHeaderComponent } from './status-header/status-header.component';
 import { StatusRendererComponent } from './status-renderer/status-renderer.component';
-
-export interface DataRow extends common.Row {
-  showParametersJson: boolean;
-  isRepParametersHaveError: boolean;
-  strParameters: string;
-  finalRowHeight: number;
-  // [col: string]: any;
-}
 
 @Component({
   selector: 'm-rep',

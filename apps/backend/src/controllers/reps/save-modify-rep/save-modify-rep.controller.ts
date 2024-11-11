@@ -1,28 +1,41 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { and, eq, inArray } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
-import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
-import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
+import { metricsTable } from '~backend/drizzle/postgres/schema/metrics';
+import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRepFileText } from '~backend/functions/make-rep-file-text';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
-import { DbService } from '~backend/services/db.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { RepsService } from '~backend/services/reps.service';
+import { ReportsService } from '~backend/services/reports.service';
 import { StructsService } from '~backend/services/structs.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
+
+let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -31,22 +44,22 @@ export class SaveModifyRepController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private structsService: StructsService,
-    private repsService: RepsService,
-    private repsRepository: repositories.RepsRepository,
-    private bridgesRepository: repositories.BridgesRepository,
-    private metricsRepository: repositories.MetricsRepository,
+    private repsService: ReportsService,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
-    private dbService: DbService,
-    private cs: ConfigService<interfaces.Config>,
     private envsService: EnvsService,
-    private bridgesService: BridgesService
+    private bridgesService: BridgesService,
+    private wrapToEntService: WrapToEntService,
+    private wrapToApiService: WrapToApiService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveModifyRep)
   async saveModifyRep(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendSaveModifyRepRequest = request.body;
@@ -73,7 +86,7 @@ export class SaveModifyRepController {
       timezone
     } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -81,7 +94,7 @@ export class SaveModifyRepController {
 
     let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
-      memberId: user.user_id
+      memberId: user.userId
     });
 
     let branch = await this.branchesService.getBranchCheckExists({
@@ -97,14 +110,14 @@ export class SaveModifyRepController {
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.project_id,
-      repoId: branch.repo_id,
-      branchId: branch.branch_id,
+      projectId: branch.projectId,
+      repoId: branch.repoId,
+      branchId: branch.branchId,
       envId: envId
     });
 
     let currentStruct = await this.structsService.getStructCheckExists({
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       projectId: projectId
     });
 
@@ -112,7 +125,7 @@ export class SaveModifyRepController {
       this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
     if (
-      userMember.is_admin === common.BoolEnum.FALSE &&
+      userMember.isAdmin === false &&
       projectId === firstProjectId &&
       repoId === common.PROD_REPO_ID
     ) {
@@ -122,24 +135,21 @@ export class SaveModifyRepController {
     }
 
     let existingModRep = await this.repsService.getRepCheckExists({
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       repId: modRepId
     });
 
-    if (
-      userMember.is_admin === common.BoolEnum.FALSE &&
-      userMember.is_editor === common.BoolEnum.FALSE
-    ) {
+    if (userMember.isAdmin === false && userMember.isEditor === false) {
       this.repsService.checkRepPath({
         userAlias: user.alias,
-        filePath: existingModRep.file_path
+        filePath: existingModRep.filePath
       });
     }
 
     let fromRep = await this.repsService.getRep({
       projectId: projectId,
       repId: fromRepId,
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       checkExist: true,
       checkAccess: true,
       user: user,
@@ -152,13 +162,22 @@ export class SaveModifyRepController {
 
     let metrics =
       metricRows.length > 0
-        ? await this.metricsRepository.find({
-            where: {
-              struct_id: bridge.struct_id,
-              metric_id: In(metricRows.map(row => row.metricId))
-            }
+        ? await this.db.drizzle.query.metricsTable.findMany({
+            where: and(
+              eq(metricsTable.structId, bridge.structId),
+              inArray(
+                metricsTable.metricId,
+                metricRows.map(row => row.metricId)
+              )
+            )
           })
-        : [];
+        : // await this.metricsRepository.find({
+          //     where: {
+          //       struct_id: bridge.struct_id,
+          //       metric_id: In(metricRows.map(row => row.metricId))
+          //     }
+          //   })
+          [];
 
     let repFileText = makeRepFileText({
       repId: modRepId,
@@ -176,82 +195,144 @@ export class SaveModifyRepController {
         traceId: reqValid.info.traceId
       },
       payload: {
-        orgId: project.org_id,
+        orgId: project.orgId,
         projectId: projectId,
         repoId: repoId,
         branch: branchId,
-        fileNodeId: existingModRep.file_path,
+        fileNodeId: existingModRep.filePath,
         userAlias: user.alias,
         content: repFileText,
-        remoteType: project.remote_type,
-        gitUrl: project.git_url,
-        privateKey: project.private_key,
-        publicKey: project.public_key
+        remoteType: project.remoteType,
+        gitUrl: project.gitUrl,
+        privateKey: project.privateKey,
+        publicKey: project.publicKey
       }
     };
 
     let diskResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskSaveFileResponse>({
         routingKey: helper.makeRoutingKeyToDisk({
-          orgId: project.org_id,
+          orgId: project.orgId,
           projectId: projectId
         }),
         message: toDiskSaveFileRequest,
         checkIsOk: true
       });
 
-    let branchBridges = await this.bridgesRepository.find({
-      where: {
-        project_id: branch.project_id,
-        repo_id: branch.repo_id,
-        branch_id: branch.branch_id
-      }
+    let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
+      where: and(
+        eq(bridgesTable.projectId, branch.projectId),
+        eq(bridgesTable.repoId, branch.repoId),
+        eq(bridgesTable.branchId, branch.branchId)
+      )
     });
 
+    // let branchBridges = await this.bridgesRepository.find({
+    //   where: {
+    //     project_id: branch.project_id,
+    //     repo_id: branch.repo_id,
+    //     branch_id: branch.branch_id
+    //   }
+    // });
+
     await forEachSeries(branchBridges, async x => {
-      if (x.env_id !== envId) {
-        x.struct_id = common.EMPTY_STRUCT_ID;
-        x.need_validate = common.BoolEnum.TRUE;
+      if (x.envId !== envId) {
+        x.structId = common.EMPTY_STRUCT_ID;
+        x.needValidate = true;
       }
     });
 
     let { reps, struct } = await this.blockmlService.rebuildStruct({
-      traceId,
-      orgId: project.org_id,
-      projectId,
-      structId: bridge.struct_id,
+      traceId: traceId,
+      orgId: project.orgId,
+      projectId: projectId,
+      structId: bridge.structId,
       diskFiles: diskResponse.payload.files,
       mproveDir: diskResponse.payload.mproveDir,
       skipDb: true,
       envId: envId
     });
 
-    await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        structs: [struct],
-        bridges: [...branchBridges]
-      }
-    });
-
-    if (fromRep.draft === common.BoolEnum.TRUE) {
-      await this.repsRepository.delete({
-        project_id: projectId,
-        rep_id: fromRepId,
-        draft: common.BoolEnum.TRUE,
-        creator_id: user.user_id
-      });
-    }
-
     let rep = reps.find(x => x.repId === modRepId);
 
-    if (common.isUndefined(rep)) {
-      await this.repsRepository.delete({
-        rep_id: modRepId,
-        struct_id: bridge.struct_id
-      });
+    if (common.isDefined(rep)) {
+      rep.rows = fromRep.rows;
+    }
 
-      let fileIdAr = existingModRep.file_path.split('/');
+    let repEnt = common.isDefined(rep)
+      ? this.wrapToEntService.wrapToEntityReport(rep)
+      : undefined;
+
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(async tx => {
+          if (common.isUndefined(rep)) {
+            await tx
+              .delete(reportsTable)
+              .where(
+                and(
+                  eq(reportsTable.reportId, modRepId),
+                  eq(reportsTable.structId, bridge.structId)
+                )
+              );
+          }
+
+          if (fromRep.draft === true) {
+            await tx
+              .delete(reportsTable)
+              .where(
+                and(
+                  eq(reportsTable.projectId, projectId),
+                  eq(reportsTable.reportId, fromRepId),
+                  eq(reportsTable.draft, true),
+                  eq(reportsTable.creatorId, user.userId)
+                )
+              );
+          }
+
+          await this.db.packer.write({
+            tx: tx,
+            insertOrUpdate: {
+              reports: common.isDefined(repEnt) ? [repEnt] : [],
+              structs: [struct],
+              bridges: [...branchBridges]
+            }
+          });
+        }),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    // await this.dbService.writeRecords({
+    //   modify: true,
+    //   records: {
+    //     structs: [struct],
+    //     bridges: [...branchBridges]
+    //   }
+    // });
+
+    // if (fromRep.draft === common.BoolEnum.TRUE) {
+    //   await this.repsRepository.delete({
+    //     project_id: projectId,
+    //     rep_id: fromRepId,
+    //     draft: common.BoolEnum.TRUE,
+    //     creator_id: user.user_id
+    //   });
+    // }
+
+    // let records = await this.dbService.writeRecords({
+    //   modify: true,
+    //   records: {
+    //     reps: [wrapper.wrapToEntityReport(rep)]
+    //   }
+    // });
+
+    if (common.isUndefined(rep)) {
+      // await this.repsRepository.delete({
+      //   rep_id: modRepId,
+      //   struct_id: bridge.structId
+      // });
+
+      let fileIdAr = existingModRep.filePath.split('/');
       fileIdAr.shift();
       let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
 
@@ -263,19 +344,10 @@ export class SaveModifyRepController {
       });
     }
 
-    rep.rows = fromRep.rows;
-
-    let records = await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        reps: [wrapper.wrapToEntityRep(rep)]
-      }
-    });
-
-    let userMemberApi = wrapper.wrapToApiMember(userMember);
+    let userMemberApi = this.wrapToApiService.wrapToApiMember(userMember);
 
     let repApi = await this.repsService.getRepData({
-      rep: records.reps[0],
+      rep: repEnt,
       traceId: traceId,
       project: project,
       userMemberApi: userMemberApi,
@@ -289,8 +361,8 @@ export class SaveModifyRepController {
     });
 
     let payload: apiToBackend.ToBackendGetRepResponsePayload = {
-      needValidate: common.enumToBoolean(bridge.need_validate),
-      struct: wrapper.wrapToApiStruct(struct),
+      needValidate: bridge.needValidate,
+      struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: userMemberApi,
       rep: repApi
     };

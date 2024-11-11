@@ -1,25 +1,28 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { and, eq } from 'drizzle-orm';
 import * as snowflake from 'snowflake-sdk';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
-import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
-import { repositories } from '~backend/barrels/repositories';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
-import { DbService } from '~backend/services/db.service';
+import { makeTsNumber } from '~backend/functions/make-ts-number';
+
+let retry = require('async-retry');
 
 @Injectable()
 export class SnowFlakeService {
   constructor(
-    private queriesRepository: repositories.QueriesRepository,
-    private dbService: DbService,
     private cs: ConfigService<interfaces.Config>,
-    private logger: Logger
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   async runQuery(item: {
-    connection: entities.ConnectionEntity;
+    connection: schemaPostgres.ConnectionEnt;
     queryJobId: string;
     queryId: string;
     querySql: string;
@@ -97,54 +100,98 @@ export class SnowFlakeService {
       // fetchAsString: ['Number', 'Date']
     })
       .then(async (data: any) => {
-        let q = await this.queriesRepository.findOne({
-          where: {
-            query_id: queryId,
-            query_job_id: queryJobId,
-            project_id: projectId
-          }
+        let q = await this.db.drizzle.query.queriesTable.findFirst({
+          where: and(
+            eq(queriesTable.queryId, queryId),
+            eq(queriesTable.queryJobId, queryJobId),
+            eq(queriesTable.projectId, projectId)
+          )
         });
+
+        // let q = await this.queriesRepository.findOne({
+        //   where: {
+        //     query_id: queryId,
+        //     query_job_id: queryJobId,
+        //     project_id: projectId
+        //   }
+        // });
 
         if (common.isDefined(q)) {
           q.status = common.QueryStatusEnum.Completed;
-          q.query_job_id = null;
+          q.queryJobId = undefined; // null;
           q.data = data.rows;
-          q.last_complete_ts = helper.makeTs();
-          q.last_complete_duration = Math.floor(
-            (Number(q.last_complete_ts) - Number(q.last_run_ts)) / 1000
-          ).toString();
+          q.lastCompleteTs = makeTsNumber();
+          q.lastCompleteDuration = Math.floor(
+            (Number(q.lastCompleteTs) - Number(q.lastRunTs)) / 1000
+          );
 
-          await this.dbService.writeRecords({
-            modify: true,
-            records: {
-              queries: [q]
-            }
-          });
+          await retry(
+            async () =>
+              await this.db.drizzle.transaction(
+                async tx =>
+                  await this.db.packer.write({
+                    tx: tx,
+                    insertOrUpdate: {
+                      queries: [q]
+                    }
+                  })
+              ),
+            getRetryOption(this.cs, this.logger)
+          );
+
+          // await this.dbService.writeRecords({
+          //   modify: true,
+          //   records: {
+          //     queries: [q]
+          //   }
+          // });
         }
         this.snowflakeConnectionDestroy(snowflakeConnection);
       })
       .catch(async e => {
-        let q = await this.queriesRepository.findOne({
-          where: {
-            query_id: queryId,
-            query_job_id: queryJobId,
-            project_id: projectId
-          }
+        let q = await this.db.drizzle.query.queriesTable.findFirst({
+          where: and(
+            eq(queriesTable.queryId, queryId),
+            eq(queriesTable.queryJobId, queryJobId),
+            eq(queriesTable.projectId, projectId)
+          )
         });
+
+        // let q = await this.queriesRepository.findOne({
+        //   where: {
+        //     query_id: queryId,
+        //     query_job_id: queryJobId,
+        //     project_id: projectId
+        //   }
+        // });
 
         if (common.isDefined(q)) {
           q.status = common.QueryStatusEnum.Error;
           q.data = [];
-          q.query_job_id = null;
-          q.last_error_message = e.message;
-          q.last_error_ts = helper.makeTs();
+          q.queryJobId = undefined; // null
+          q.lastErrorMessage = e.message;
+          q.lastErrorTs = makeTsNumber();
 
-          await this.dbService.writeRecords({
-            modify: true,
-            records: {
-              queries: [q]
-            }
-          });
+          await retry(
+            async () =>
+              await this.db.drizzle.transaction(
+                async tx =>
+                  await this.db.packer.write({
+                    tx: tx,
+                    insertOrUpdate: {
+                      queries: [q]
+                    }
+                  })
+              ),
+            getRetryOption(this.cs, this.logger)
+          );
+
+          // await this.dbService.writeRecords({
+          //   modify: true,
+          //   records: {
+          //     queries: [q]
+          //   }
+          // });
         }
         this.snowflakeConnectionDestroy(snowflakeConnection);
       });

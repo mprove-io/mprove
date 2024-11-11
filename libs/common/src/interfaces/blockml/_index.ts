@@ -10,7 +10,6 @@ export * from './filter-bricks-dictionary';
 export * from './fraction';
 export * from './internal/_index';
 export * from './mconfig';
-export * from './metrics/api-metric';
 export * from './metrics/base-metric';
 export * from './metrics/formula-metric';
 export * from './metrics/metric-any';

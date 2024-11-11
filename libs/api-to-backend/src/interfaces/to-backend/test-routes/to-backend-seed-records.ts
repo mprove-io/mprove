@@ -3,6 +3,7 @@ import {
   IsBoolean,
   IsEnum,
   IsInt,
+  IsNumber,
   IsObject,
   IsOptional,
   IsString,
@@ -36,8 +37,8 @@ export class ToBackendSeedRecordsRequestPayloadUsersItem {
   passwordResetToken?: string;
 
   @IsOptional()
-  @IsString()
-  passwordResetExpiresTs?: string;
+  @IsNumber()
+  passwordResetExpiresTs?: number;
 }
 
 export class ToBackendSeedRecordsRequestPayloadOrgsItem {

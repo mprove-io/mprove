@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { and, eq } from 'drizzle-orm';
 import { common } from '~backend/barrels/common';
-import { repositories } from '~backend/barrels/repositories';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 
 @Injectable()
 export class BridgesService {
-  constructor(private bridgesRepository: repositories.BridgesRepository) {}
+  constructor(@Inject(DRIZZLE) private db: Db) {}
 
   async getBridgeCheckExists(item: {
     projectId: string;
@@ -14,14 +16,23 @@ export class BridgesService {
   }) {
     let { projectId, repoId, branchId, envId } = item;
 
-    let bridge = await this.bridgesRepository.findOne({
-      where: {
-        project_id: projectId,
-        repo_id: repoId,
-        branch_id: branchId,
-        env_id: envId
-      }
+    let bridge = await this.db.drizzle.query.bridgesTable.findFirst({
+      where: and(
+        eq(bridgesTable.projectId, projectId),
+        eq(bridgesTable.repoId, repoId),
+        eq(bridgesTable.branchId, branchId),
+        eq(bridgesTable.envId, envId)
+      )
     });
+
+    // let bridge = await this.bridgesRepository.findOne({
+    //   where: {
+    //     project_id: projectId,
+    //     repo_id: repoId,
+    //     branch_id: branchId,
+    //     env_id: envId
+    //   }
+    // });
 
     if (common.isUndefined(bridge)) {
       throw new common.ServerError({

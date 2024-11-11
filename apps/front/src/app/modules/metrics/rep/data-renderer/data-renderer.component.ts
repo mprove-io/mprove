@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
+import { DataRow } from '~front/app/interfaces/data-row';
 import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { RepQuery } from '~front/app/queries/rep.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { QueryService } from '~front/app/services/query.service';
 import { TimeService } from '~front/app/services/time.service';
 import { common } from '~front/barrels/common';
-import { DataRow } from '../rep.component';
 
 @Component({
   selector: 'm-data-renderer',

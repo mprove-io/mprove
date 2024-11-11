@@ -2,9 +2,8 @@ import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
@@ -14,6 +13,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -25,17 +25,21 @@ export class GetFileController {
     private structsService: StructsService,
     private rabbitService: RabbitService,
     private bridgesService: BridgesService,
-    private envsService: EnvsService
+    private envsService: EnvsService,
+    private wrapToApiService: WrapToApiService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetFile)
-  async getFile(@AttachUser() user: entities.UserEntity, @Req() request: any) {
+  async getFile(
+    @AttachUser() user: schemaPostgres.UserEnt,
+    @Req() request: any
+  ) {
     let reqValid: apiToBackend.ToBackendGetFileRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId, fileNodeId, panel } =
       reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -43,7 +47,7 @@ export class GetFileController {
 
     let member = await this.membersService.getMemberCheckExists({
       projectId: projectId,
-      memberId: user.user_id
+      memberId: user.userId
     });
 
     let toDiskGetFileRequest: apiToDisk.ToDiskGetFileRequest = {
@@ -52,23 +56,23 @@ export class GetFileController {
         traceId: reqValid.info.traceId
       },
       payload: {
-        orgId: project.org_id,
+        orgId: project.orgId,
         projectId: projectId,
         repoId: repoId,
         branch: branchId,
         fileNodeId: fileNodeId,
         panel: panel,
-        remoteType: project.remote_type,
-        gitUrl: project.git_url,
-        privateKey: project.private_key,
-        publicKey: project.public_key
+        remoteType: project.remoteType,
+        gitUrl: project.gitUrl,
+        privateKey: project.privateKey,
+        publicKey: project.publicKey
       }
     };
 
     let diskResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetFileResponse>({
         routingKey: helper.makeRoutingKeyToDisk({
-          orgId: project.org_id,
+          orgId: project.orgId,
           projectId: projectId
         }),
         message: toDiskGetFileRequest,
@@ -77,7 +81,7 @@ export class GetFileController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
+      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 
@@ -88,14 +92,14 @@ export class GetFileController {
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.project_id,
-      repoId: branch.repo_id,
-      branchId: branch.branch_id,
+      projectId: branch.projectId,
+      repoId: branch.repoId,
+      branchId: branch.branchId,
       envId: envId
     });
 
     let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       projectId: projectId,
       skipError: true
     });
@@ -104,8 +108,8 @@ export class GetFileController {
       repo: diskResponse.payload.repo,
       originalContent: diskResponse.payload.originalContent,
       content: diskResponse.payload.content,
-      struct: wrapper.wrapToApiStruct(struct),
-      needValidate: common.enumToBoolean(bridge.need_validate),
+      struct: this.wrapToApiService.wrapToApiStruct(struct),
+      needValidate: bridge.needValidate,
       isExist: diskResponse.payload.isExist
     };
 

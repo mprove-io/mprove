@@ -1,9 +1,8 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
@@ -16,6 +15,7 @@ import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { QueriesService } from '~backend/services/queries.service';
 import { VizsService } from '~backend/services/vizs.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -30,11 +30,15 @@ export class GetQueryController {
     private projectsService: ProjectsService,
     private mconfigsService: MconfigsService,
     private bridgesService: BridgesService,
-    private envsService: EnvsService
+    private envsService: EnvsService,
+    private wrapToApiService: WrapToApiService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery)
-  async getQuery(@AttachUser() user: entities.UserEntity, @Req() request: any) {
+  async getQuery(
+    @AttachUser() user: schemaPostgres.UserEnt,
+    @Req() request: any
+  ) {
     let reqValid: apiToBackend.ToBackendGetQueryRequest = request.body;
 
     let {
@@ -48,7 +52,7 @@ export class GetQueryController {
       envId
     } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -56,7 +60,7 @@ export class GetQueryController {
 
     let member = await this.membersService.getMemberCheckExists({
       projectId: projectId,
-      memberId: user.user_id
+      memberId: user.userId
     });
 
     let branch = await this.branchesService.getBranchCheckExists({
@@ -72,32 +76,32 @@ export class GetQueryController {
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.project_id,
-      repoId: branch.repo_id,
-      branchId: branch.branch_id,
+      projectId: branch.projectId,
+      repoId: branch.repoId,
+      branchId: branch.branchId,
       envId: envId
     });
 
     let mconfig = await this.mconfigsService.getMconfigCheckExists({
       mconfigId: mconfigId,
-      structId: bridge.struct_id
+      structId: bridge.structId
     });
 
-    if (mconfig.query_id !== queryId) {
+    if (mconfig.queryId !== queryId) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_MCONFIG_QUERY_ID_MISMATCH
       });
     }
 
     let model = await this.modelsService.getModelCheckExists({
-      structId: bridge.struct_id,
-      modelId: mconfig.model_id
+      structId: bridge.structId,
+      modelId: mconfig.modelId
     });
 
     let viz;
     if (common.isDefined(vizId)) {
       viz = await this.vizsService.getVizCheckExists({
-        structId: bridge.struct_id,
+        structId: bridge.structId,
         vizId: vizId
       });
     }
@@ -105,7 +109,7 @@ export class GetQueryController {
     let dashboard;
     if (common.isDefined(dashboardId)) {
       viz = await this.dashboardsService.getDashboardCheckExists({
-        structId: bridge.struct_id,
+        structId: bridge.structId,
         dashboardId: dashboardId
       });
     }
@@ -144,7 +148,7 @@ export class GetQueryController {
     });
 
     let payload: apiToBackend.ToBackendGetQueryResponsePayload = {
-      query: wrapper.wrapToApiQuery(query)
+      query: this.wrapToApiService.wrapToApiQuery(query)
     };
 
     return payload;

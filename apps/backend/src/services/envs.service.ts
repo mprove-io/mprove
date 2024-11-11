@@ -1,21 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { and, eq } from 'drizzle-orm';
 import { common } from '~backend/barrels/common';
-import { repositories } from '~backend/barrels/repositories';
-import { MemberEntity } from '~backend/models/store-entities/_index';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { envsTable } from '~backend/drizzle/postgres/schema/envs';
 
 @Injectable()
 export class EnvsService {
-  constructor(private envsRepository: repositories.EnvsRepository) {}
+  constructor(@Inject(DRIZZLE) private db: Db) {}
 
   async checkEnvDoesNotExist(item: { projectId: string; envId: string }) {
     let { projectId, envId } = item;
 
-    let env = await this.envsRepository.findOne({
-      where: {
-        env_id: envId,
-        project_id: projectId
-      }
+    let env = await this.db.drizzle.query.envsTable.findFirst({
+      where: and(eq(envsTable.envId, envId), eq(envsTable.projectId, projectId))
     });
+
+    // let env = await this.envsRepository.findOne({
+    //   where: {
+    //     env_id: envId,
+    //     project_id: projectId
+    //   }
+    // });
 
     if (common.isDefined(env)) {
       throw new common.ServerError({
@@ -27,16 +33,20 @@ export class EnvsService {
   async getEnvCheckExistsAndAccess(item: {
     projectId: string;
     envId: string;
-    member: MemberEntity;
+    member: schemaPostgres.MemberEnt;
   }) {
     let { projectId, envId, member } = item;
 
-    let env = await this.envsRepository.findOne({
-      where: {
-        env_id: envId,
-        project_id: projectId
-      }
+    let env = await this.db.drizzle.query.envsTable.findFirst({
+      where: and(eq(envsTable.envId, envId), eq(envsTable.projectId, projectId))
     });
+
+    // let env = await this.envsRepository.findOne({
+    //   where: {
+    //     env_id: envId,
+    //     project_id: projectId
+    //   }
+    // });
 
     if (common.isUndefined(env)) {
       throw new common.ServerError({
@@ -46,7 +56,7 @@ export class EnvsService {
 
     if (
       envId !== common.PROJECT_ENV_PROD &&
-      member.is_admin === common.BoolEnum.FALSE &&
+      member.isAdmin === false &&
       member.envs.indexOf(envId) < 0
     ) {
       throw new common.ServerError({

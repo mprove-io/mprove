@@ -1,16 +1,29 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-import { In } from 'typeorm/find-options/operator/In';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { and, eq, inArray } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
-import { repositories } from '~backend/barrels/repositories';
+import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
+
+let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -21,12 +34,14 @@ export class DeleteDraftRepsController {
     private branchesService: BranchesService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
-    private repsRepository: repositories.RepsRepository
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftReps)
   async deleteDraftReps(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendDeleteDraftRepsRequest = request.body;
@@ -34,7 +49,7 @@ export class DeleteDraftRepsController {
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, branchId, envId, repIds } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -42,7 +57,7 @@ export class DeleteDraftRepsController {
 
     let member = await this.membersService.getMemberCheckExists({
       projectId: projectId,
-      memberId: user.user_id
+      memberId: user.userId
     });
 
     let branch = await this.branchesService.getBranchCheckExists({
@@ -58,19 +73,37 @@ export class DeleteDraftRepsController {
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.project_id,
-      repoId: branch.repo_id,
-      branchId: branch.branch_id,
+      projectId: branch.projectId,
+      repoId: branch.repoId,
+      branchId: branch.branchId,
       envId: envId
     });
 
-    await this.repsRepository.delete({
-      rep_id: In(repIds),
-      project_id: projectId,
-      draft: common.BoolEnum.TRUE,
-      creator_id: user.user_id,
-      struct_id: bridge.struct_id
-    });
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(async tx => {
+          await tx
+            .delete(reportsTable)
+            .where(
+              and(
+                inArray(reportsTable.reportId, repIds),
+                eq(reportsTable.projectId, projectId),
+                eq(reportsTable.draft, true),
+                eq(reportsTable.creatorId, user.userId),
+                eq(reportsTable.structId, bridge.structId)
+              )
+            );
+        }),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    // await this.repsRepository.delete({
+    //   rep_id: In(repIds),
+    //   project_id: projectId,
+    //   draft: common.BoolEnum.TRUE,
+    //   creator_id: user.user_id,
+    //   struct_id: bridge.struct_id
+    // });
 
     let payload = {};
 

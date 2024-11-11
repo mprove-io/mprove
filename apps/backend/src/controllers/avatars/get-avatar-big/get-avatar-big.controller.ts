@@ -1,33 +1,39 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { eq } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { entities } from '~backend/barrels/entities';
-import { repositories } from '~backend/barrels/repositories';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class GetAvatarBigController {
-  constructor(private avatarsRepository: repositories.AvatarsRepository) {}
+  constructor(@Inject(DRIZZLE) private db: Db) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig)
   async getAvatarBig(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendGetAvatarBigRequest = request.body;
 
     let { avatarUserId } = reqValid.payload;
 
-    let avatar = await this.avatarsRepository.findOne({
-      where: {
-        user_id: avatarUserId
-      }
+    let avatar = await this.db.drizzle.query.avatarsTable.findFirst({
+      where: eq(avatarsTable.userId, avatarUserId)
     });
 
+    // let avatar = await this.avatarsRepository.findOne({
+    //   where: {
+    //     user_id: avatarUserId
+    //   }
+    // });
+
     let payload: apiToBackend.ToBackendGetAvatarBigResponsePayload = {
-      avatarSmall: avatar?.avatar_small,
-      avatarBig: avatar?.avatar_big
+      avatarSmall: avatar?.avatarSmall,
+      avatarBig: avatar?.avatarBig
     };
 
     return payload;
