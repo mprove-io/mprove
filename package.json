@@ -12,6 +12,7 @@
   "bin": "./main.js",
   "scripts": {
     "postinstall": "yarn pj",
+    "check:db": "node -r ts-node/register -r tsconfig-paths/register apps/backend/src/wait-for-db.ts",
     "mig:custom": "drizzle-kit generate --custom --config apps/backend/src/drizzle/postgres/drizzle.config.ts --name=$(date -u +\"%Y-%m-%d_%H-%M-%S\")",
     "mig:gen": "drizzle-kit generate --config apps/backend/src/drizzle/postgres/drizzle.config.ts --name=$(date -u +\"%Y-%m-%d_%H-%M-%S\")",
     "mig:run": "yarn node -r ts-node/register -r tsconfig-paths/register apps/backend/src/drizzle/postgres/drizzle-migrate.ts",
