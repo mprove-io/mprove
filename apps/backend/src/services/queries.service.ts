@@ -29,7 +29,7 @@ export class QueriesService {
   }) {
     let { queryId: queryId, projectId: projectId } = item;
 
-    let queries = await this.db.drizzle
+    let queries = (await this.db.drizzle
       .select({
         projectId: queriesTable.projectId,
         envId: queriesTable.envId,
@@ -38,7 +38,7 @@ export class QueriesService {
         queryId: queriesTable.queryId,
         sql: queriesTable.sql,
         status: queriesTable.status,
-        data: undefined, // queriesTable.data,
+        // data: ...,
         lastRunBy: queriesTable.lastRunBy,
         lastRunTs: queriesTable.lastRunTs,
         lastCancelTs: queriesTable.lastCancelTs,
@@ -60,7 +60,7 @@ export class QueriesService {
           eq(queriesTable.queryId, queryId),
           eq(queriesTable.projectId, projectId)
         )
-      );
+      )) as schemaPostgres.QueryEnt[];
 
     let query = queries.length < 0 ? undefined : queries[0];
 
@@ -134,7 +134,7 @@ export class QueriesService {
   }) {
     let { queryIds, projectId } = item;
 
-    let queries = await this.db.drizzle
+    let queries = (await this.db.drizzle
       .select({
         projectId: queriesTable.projectId,
         envId: queriesTable.envId,
@@ -143,7 +143,7 @@ export class QueriesService {
         queryId: queriesTable.queryId,
         sql: queriesTable.sql,
         status: queriesTable.status,
-        data: undefined, // queriesTable.data,
+        // data: ...,
         lastRunBy: queriesTable.lastRunBy,
         lastRunTs: queriesTable.lastRunTs,
         lastCancelTs: queriesTable.lastCancelTs,
@@ -165,7 +165,7 @@ export class QueriesService {
           inArray(queriesTable.queryId, queryIds),
           eq(queriesTable.projectId, projectId)
         )
-      );
+      )) as schemaPostgres.QueryEnt[];
 
     // let queries = await this.queriesRepository.find({
     //   select: [
