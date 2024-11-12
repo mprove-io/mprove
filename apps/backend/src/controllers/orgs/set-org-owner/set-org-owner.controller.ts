@@ -59,7 +59,7 @@ export class SetOrgOwnerController {
     // let newOwner = await this.usersRepository.findOne({
     //   where: {
     //     email: ownerEmail,
-    //     is_email_verified: common.BoolEnum.TRUE
+    //     is_email_verified: true
     //   }
     // });
 

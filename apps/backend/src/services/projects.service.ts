@@ -150,9 +150,9 @@ export class ProjectsService {
     // let newMember = maker.makeMember({
     //   projectId: newProject.project_id,
     //   user: user,
-    //   isAdmin: common.BoolEnum.TRUE,
-    //   isEditor: common.BoolEnum.TRUE,
-    //   isExplorer: common.BoolEnum.TRUE
+    //   isAdmin: true,
+    //   isEditor: true,
+    //   isExplorer: true
     // });
 
     let devStructId = common.makeId();
@@ -197,7 +197,7 @@ export class ProjectsService {
     //   branchId: prodBranch.branch_id,
     //   envId: prodEnv.env_id,
     //   structId: prodStructId,
-    //   needValidate: common.BoolEnum.FALSE
+    //   needValidate: false
     // });
 
     let devBranchBridgeProdEnv = this.makerService.makeBridge({
@@ -215,7 +215,7 @@ export class ProjectsService {
     //   branchId: devBranch.branch_id,
     //   envId: prodEnv.env_id,
     //   structId: devStructId,
-    //   needValidate: common.BoolEnum.FALSE
+    //   needValidate: false
     // });
 
     await this.blockmlService.rebuildStruct({

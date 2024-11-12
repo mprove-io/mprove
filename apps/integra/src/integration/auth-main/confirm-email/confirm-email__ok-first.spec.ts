@@ -14,7 +14,7 @@ describe('integra', () => {
         {
           email: email,
           password: password,
-          isEmailVerified: common.BoolEnum.FALSE,
+          isEmailVerified: false,
           emailVerificationToken: emailVerificationToken
         }
       ]

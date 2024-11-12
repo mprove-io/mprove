@@ -87,7 +87,7 @@ export class GetMetricsController {
 
     // let draftReps = await this.repsRepository.find({
     //   where: {
-    //     draft: common.BoolEnum.TRUE,
+    //     draft: true,
     //     creator_id: user.user_id,
     //     struct_id: bridge.struct_id
     //   }
@@ -102,7 +102,7 @@ export class GetMetricsController {
 
     // let structReps = await this.repsRepository.find({
     //   where: {
-    //     draft: common.BoolEnum.FALSE,
+    //     draft: false,
     //     struct_id: bridge.struct_id
     //   }
     // });

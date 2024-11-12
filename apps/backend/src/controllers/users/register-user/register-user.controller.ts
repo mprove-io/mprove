@@ -98,7 +98,7 @@ export class RegisterUserController {
 
         // newUser = maker.makeUser({
         //   email: email,
-        //   isEmailVerified: common.BoolEnum.FALSE,
+        //   isEmailVerified: false,
         //   hash: hash,
         //   salt: salt,
         //   alias: alias

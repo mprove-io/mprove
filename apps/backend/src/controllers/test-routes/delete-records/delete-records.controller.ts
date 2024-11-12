@@ -56,14 +56,8 @@ export class DeleteRecordsController {
   async deleteRecords(@Req() request: any) {
     let reqValid: apiToBackend.ToBackendDeleteRecordsRequest = request.body;
 
-    let {
-      orgIds,
-      projectIds,
-      emails,
-      orgNames,
-      projectNames,
-      idempotencyKeys
-    } = reqValid.payload;
+    let { orgIds, projectIds, emails, orgNames, projectNames } =
+      reqValid.payload;
 
     emails = emails || [];
     projectIds = projectIds || [];

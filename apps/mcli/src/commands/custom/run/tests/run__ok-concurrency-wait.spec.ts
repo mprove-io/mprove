@@ -66,7 +66,7 @@ test('1', async t => {
               userId,
               email: email,
               password: password,
-              isEmailVerified: common.BoolEnum.TRUE
+              isEmailVerified: true
             }
           ],
           orgs: [
@@ -94,9 +94,9 @@ test('1', async t => {
               memberId: userId,
               email,
               projectId,
-              isAdmin: common.BoolEnum.TRUE,
-              isEditor: common.BoolEnum.TRUE,
-              isExplorer: common.BoolEnum.TRUE
+              isAdmin: true,
+              isEditor: true,
+              isExplorer: true
             }
           ],
           connections: [

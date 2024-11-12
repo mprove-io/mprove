@@ -104,7 +104,7 @@ export class CreateMemberController {
 
       // newUser = maker.makeUser({
       //   email: email,
-      //   isEmailVerified: common.BoolEnum.FALSE,
+      //   isEmailVerified: false,
       //   alias: alias
       // });
     }

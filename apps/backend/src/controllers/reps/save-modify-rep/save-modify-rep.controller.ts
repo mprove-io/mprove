@@ -314,7 +314,7 @@ export class SaveModifyRepController {
     //   await this.repsRepository.delete({
     //     project_id: projectId,
     //     rep_id: fromRepId,
-    //     draft: common.BoolEnum.TRUE,
+    //     draft: true,
     //     creator_id: user.user_id
     //   });
     // }

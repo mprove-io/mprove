@@ -22,12 +22,12 @@ describe('integra', () => {
         {
           email: email,
           password: password,
-          isEmailVerified: common.BoolEnum.TRUE
+          isEmailVerified: true
         },
         {
           email: secondUserEmail,
           password: secondUserPassword,
-          isEmailVerified: common.BoolEnum.TRUE
+          isEmailVerified: true
         }
       ],
       orgs: [

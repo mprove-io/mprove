@@ -1,5 +1,7 @@
 model: ec_m1
 connection: c1
+build_metrics:
+- time: b.created
 joins:
 - from_view: ec_order_items
   as: a
