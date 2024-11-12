@@ -1,7 +1,8 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { IHeaderAngularComp } from 'ag-grid-angular';
-import { IHeaderParams } from 'ag-grid-community';
+import { IHeaderParams, IRowNode } from 'ag-grid-community';
 import { tap } from 'rxjs';
+import { DataRow } from '~front/app/interfaces/data-row';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { UiService } from '~front/app/services/ui.service';
 
@@ -17,6 +18,14 @@ export class ChartHeaderComponent implements IHeaderAngularComp {
   uiQuery$ = this.uiQuery.select().pipe(
     tap(x => {
       this.showMetricsChart = x.showMetricsChart;
+      this.cd.detectChanges();
+    })
+  );
+
+  repSelectedNodes: IRowNode<DataRow>[] = [];
+  repSelectedNodes$ = this.uiQuery.repSelectedNodes$.pipe(
+    tap(x => {
+      this.repSelectedNodes = x;
       this.cd.detectChanges();
     })
   );
@@ -37,6 +46,10 @@ export class ChartHeaderComponent implements IHeaderAngularComp {
   }
 
   toggleShowMetricsChart() {
+    if (this.repSelectedNodes.length > 0) {
+      return;
+    }
+
     let showMetricsChart = !this.showMetricsChart;
 
     this.uiQuery.updatePart({
