@@ -212,7 +212,7 @@ export class ApiService {
           common.ErEnum.BACKEND_REP_NOT_FOUND
         ].indexOf(infoErrorMessage) > -1
       ) {
-        errorData.description = `Don't worry, most likely the Project Editor has recently made new changes to the files of the current branch.`;
+        errorData.description = `This typically happens if a user with the editor role has recently made new changes to files in the current branch.`;
         errorData.buttonText = 'Ok, get changes';
         errorData.onClickFnBindThis = (() => {
           if (
