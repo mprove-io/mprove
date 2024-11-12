@@ -82,7 +82,7 @@ export class DeleteUserController {
     // let userAdminMembers = await this.membersRepository.find({
     //   where: {
     //     member_id: user.user_id,
-    //     is_admin: common.BoolEnum.TRUE
+    //     is_admin: true
     //   }
     // });
 
@@ -94,7 +94,7 @@ export class DeleteUserController {
         : // await this.membersRepository.find({
           //     where: {
           //       project_id: In(userAdminProjectIds),
-          //       is_admin: common.BoolEnum.TRUE
+          //       is_admin: true
           //     }
           //   });
           await this.db.drizzle.query.membersTable.findMany({

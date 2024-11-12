@@ -18,7 +18,7 @@ describe('integra', () => {
         {
           email: email,
           password: password,
-          isEmailVerified: common.BoolEnum.TRUE
+          isEmailVerified: true
         }
       ]
     });

@@ -94,7 +94,7 @@ export class SeedRecordsController {
             userId: x.userId || common.makeId(),
             email: x.email,
             alias: alias,
-            isEmailVerified: common.enumToBoolean(x.isEmailVerified),
+            isEmailVerified: x.isEmailVerified,
             emailVerificationToken: x.emailVerificationToken || common.makeId(),
             passwordResetToken: x.passwordResetToken,
             passwordResetExpiresTs: common.isDefined(x.passwordResetExpiresTs)
@@ -484,9 +484,9 @@ export class SeedRecordsController {
             user: user,
             roles: x.roles,
             envs: x.envs,
-            isAdmin: common.enumToBoolean(x.isAdmin),
-            isEditor: common.enumToBoolean(x.isEditor),
-            isExplorer: common.enumToBoolean(x.isExplorer)
+            isAdmin: x.isAdmin,
+            isEditor: x.isEditor,
+            isExplorer: x.isExplorer
           });
 
           members.push(newMember);

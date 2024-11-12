@@ -225,9 +225,9 @@ export class MembersService {
           // let newMember = maker.makeMember({
           //   projectId: firstProjectId,
           //   user: user,
-          //   isAdmin: common.BoolEnum.FALSE,
-          //   isEditor: common.BoolEnum.TRUE,
-          //   isExplorer: common.BoolEnum.TRUE
+          //   isAdmin: false,
+          //   isEditor: true,
+          //   isExplorer: true
           // });
 
           let toDiskCreateDevRepoRequest: apiToDisk.ToDiskCreateDevRepoRequest =
@@ -322,7 +322,7 @@ export class MembersService {
             //   branchId: devBranch.branch_id,
             //   envId: x.env_id,
             //   structId: common.EMPTY_STRUCT_ID,
-            //   needValidate: common.BoolEnum.TRUE
+            //   needValidate: true
             // });
 
             devBranchBridges.push(devBranchBridge);

@@ -104,7 +104,7 @@ export class GetDashboardsController {
     //     'tiles',
     //     'description'
     //   ],
-    //   where: { struct_id: bridge.struct_id, temp: common.BoolEnum.FALSE }
+    //   where: { struct_id: bridge.struct_id, temp: false }
     // });
 
     let dashboardsGrantedAccess = dashboards.filter(x =>

@@ -25,8 +25,8 @@ export class ToBackendSeedRecordsRequestPayloadUsersItem {
   password?: string;
 
   @IsOptional()
-  @IsEnum(common.BoolEnum)
-  isEmailVerified?: common.BoolEnum;
+  @IsBoolean()
+  isEmailVerified?: boolean;
 
   @IsOptional()
   @IsString()
@@ -109,14 +109,14 @@ export class ToBackendSeedRecordsRequestPayloadMembersItem {
   @IsString({ each: true })
   envs?: string[];
 
-  @IsEnum(common.BoolEnum)
-  isAdmin: common.BoolEnum;
+  @IsBoolean()
+  isAdmin: boolean;
 
-  @IsEnum(common.BoolEnum)
-  isEditor: common.BoolEnum;
+  @IsBoolean()
+  isEditor: boolean;
 
-  @IsEnum(common.BoolEnum)
-  isExplorer: common.BoolEnum;
+  @IsBoolean()
+  isExplorer: boolean;
 }
 
 export class ToBackendSeedRecordsRequestPayloadConnectionsItem {

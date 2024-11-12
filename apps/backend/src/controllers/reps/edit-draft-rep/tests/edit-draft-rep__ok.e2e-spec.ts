@@ -6,7 +6,7 @@ import { interfaces } from '~backend/barrels/interfaces';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-get-dashboard__forbidden-dashboard';
+let testId = 'backend-edit-draft-rep__ok';
 
 let traceId = testId;
 
@@ -24,7 +24,7 @@ let projectName = testId;
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendGetDashboardResponse;
+  let resp2: apiToBackend.ToBackendEditDraftRepResponse;
 
   try {
     prep = await prepareTest({
@@ -66,8 +66,8 @@ test('1', async t => {
             memberId: userId,
             email,
             projectId,
-            isAdmin: false,
-            isEditor: false,
+            isAdmin: true,
+            isEditor: true,
             isExplorer: true
           }
         ],
@@ -83,9 +83,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendGetDashboardRequest = {
+    let req1: apiToBackend.ToBackendCreateDraftRepRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDraftRep,
         traceId: traceId,
         idempotencyKey: common.makeId()
       },
@@ -94,16 +94,52 @@ test('1', async t => {
         isRepoProd: false,
         branchId: common.BRANCH_MASTER,
         envId: common.PROJECT_ENV_PROD,
-        dashboardId: 'ec_d2'
+        rowIds: undefined,
+        changeType: common.ChangeTypeEnum.AddEmpty,
+        fromRepId: 'new',
+        rowChange: { rowType: common.RowTypeEnum.Empty, showChart: false },
+        timeRangeFractionBrick: 'last 5 months',
+        timeSpec: common.TimeSpecEnum.Months,
+        timezone: 'UTC'
       }
     };
 
-    resp =
-      await helper.sendToBackend<apiToBackend.ToBackendGetDashboardResponse>({
+    let resp1 =
+      await helper.sendToBackend<apiToBackend.ToBackendCreateDraftRepResponse>({
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
-        req: req
+        req: req1
       });
+
+    let req2: apiToBackend.ToBackendEditDraftRepRequest = {
+      info: {
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditDraftRep,
+        traceId: traceId,
+        idempotencyKey: common.makeId()
+      },
+      payload: {
+        projectId: projectId,
+        isRepoProd: false,
+        branchId: common.BRANCH_MASTER,
+        envId: common.PROJECT_ENV_PROD,
+        repId: resp1.payload.rep.repId,
+        rowIds: undefined,
+        changeType: common.ChangeTypeEnum.AddEmpty,
+        rowChange: { rowType: common.RowTypeEnum.Empty, showChart: false },
+        timeRangeFractionBrick: 'last 5 months',
+        timeSpec: common.TimeSpecEnum.Months,
+        timezone: 'UTC'
+      }
+    };
+
+    resp2 =
+      await helper.sendToBackend<apiToBackend.ToBackendEditDraftRepResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: req2
+      });
+
+    // console.log(resp2);
 
     await prep.app.close();
   } catch (e) {
@@ -115,5 +151,6 @@ test('1', async t => {
     });
   }
 
-  t.is(resp.info.error.message, common.ErEnum.BACKEND_FORBIDDEN_DASHBOARD);
+  t.is(resp2.info.error, undefined);
+  t.is(resp2.info.status, common.ResponseInfoStatusEnum.Ok);
 });

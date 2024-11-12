@@ -127,7 +127,7 @@ export class UsersService {
 
     // let user = maker.makeUser({
     //   email: email,
-    //   isEmailVerified: common.BoolEnum.TRUE,
+    //   isEmailVerified: true,
     //   salt: salt,
     //   hash: hash,
     //   alias: alias

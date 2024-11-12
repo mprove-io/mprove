@@ -21,9 +21,7 @@ test('1', async t => {
   try {
     prep = await prepareTest({
       traceId: traceId,
-      deleteRecordsPayload: {
-        idempotencyKeys: [testId]
-      }
+      deleteRecordsPayload: {}
     });
 
     let completeUserRegistrationRequest: apiToBackend.ToBackendCompleteUserRegistrationRequest =
@@ -32,7 +30,7 @@ test('1', async t => {
           name: apiToBackend.ToBackendRequestInfoNameEnum
             .ToBackendCompleteUserRegistration,
           traceId: traceId,
-          idempotencyKey: testId
+          idempotencyKey: common.makeId()
         },
         payload: {
           emailConfirmationToken: emailToken,

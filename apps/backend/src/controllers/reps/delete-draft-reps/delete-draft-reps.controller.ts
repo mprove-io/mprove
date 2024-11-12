@@ -100,7 +100,7 @@ export class DeleteDraftRepsController {
     // await this.repsRepository.delete({
     //   rep_id: In(repIds),
     //   project_id: projectId,
-    //   draft: common.BoolEnum.TRUE,
+    //   draft: true,
     //   creator_id: user.user_id,
     //   struct_id: bridge.struct_id
     // });
