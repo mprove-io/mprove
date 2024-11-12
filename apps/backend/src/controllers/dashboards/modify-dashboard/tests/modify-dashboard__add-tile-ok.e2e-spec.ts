@@ -109,6 +109,9 @@ test('1', async t => {
 
     let fromDashboard = resp1.payload.dashboard;
 
+    let newTile = common.makeCopy(fromDashboard.tiles[0]);
+    newTile.title = 'new title';
+
     let req: apiToBackend.ToBackendModifyDashboardRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum
@@ -123,7 +126,7 @@ test('1', async t => {
         envId: common.PROJECT_ENV_PROD,
         toDashboardId: dashboardId,
         fromDashboardId: dashboardId,
-        newTile: fromDashboard.tiles[0],
+        newTile: newTile,
         isReplaceTile: false
       }
     };

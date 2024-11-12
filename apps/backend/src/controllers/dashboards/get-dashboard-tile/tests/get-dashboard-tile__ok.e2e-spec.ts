@@ -119,7 +119,7 @@ test('1', async t => {
         isRepoProd: false,
         branchId: common.BRANCH_MASTER,
         envId: common.PROJECT_ENV_PROD,
-        dashboardId: dashboardId,
+        dashboardId: getDashboardResponse.payload.dashboard.dashboardId,
         mconfigId: getDashboardResponse.payload.dashboard.tiles[0].mconfigId
       }
     };
