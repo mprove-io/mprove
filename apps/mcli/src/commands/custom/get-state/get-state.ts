@@ -8,6 +8,7 @@ import { getDashboardUrl } from '~mcli/functions/get-dashboard-url';
 import { getFilesUrl } from '~mcli/functions/get-files-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';
 import { getModelUrl } from '~mcli/functions/get-model-url';
+import { getReportUrl } from '~mcli/functions/get-report-url';
 import { getVisualizationUrl } from '~mcli/functions/get-visualization-url';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
@@ -26,7 +27,7 @@ export class GetStateCommand extends CustomCommand {
       ],
       [
         'Get Production repo state',
-        'mprove get-state --project-id DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --get-models --get-dashboards --get-vizs'
+        'mprove get-state --project-id DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --get-models --get-dashboards --get-vizs --get-metrics --get-reports'
       ]
     ]
   });
@@ -73,6 +74,14 @@ export class GetStateCommand extends CustomCommand {
 
   getVizs = Option.Boolean('--get-vizs', false, {
     description: '(default false), show vizIds in output'
+  });
+
+  getMetrics = Option.Boolean('--get-metrics', false, {
+    description: '(default false), show metricIds in output'
+  });
+
+  getReports = Option.Boolean('--get-reports', false, {
+    description: '(default false), show reportIds in output'
   });
 
   json = Option.Boolean('--json', false, {
@@ -163,6 +172,21 @@ export class GetStateCommand extends CustomCommand {
         host: this.context.config.mproveCliHost
       });
 
+    let getMetricsReqPayload: apiToBackend.ToBackendGetMetricsRequestPayload = {
+      projectId: this.projectId,
+      isRepoProd: isRepoProd,
+      branchId: this.branch,
+      envId: this.env
+    };
+
+    let getMetricsResp = await mreq<apiToBackend.ToBackendGetMetricsResponse>({
+      loginToken: loginToken,
+      pathInfoName:
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMetrics,
+      payload: getVizsReqPayload,
+      host: this.context.config.mproveCliHost
+    });
+
     let filesUrl = getFilesUrl({
       host: this.context.config.mproveCliHost,
       orgId: getRepoResp.payload.repo.orgId,
@@ -199,6 +223,41 @@ export class GetStateCommand extends CustomCommand {
         };
 
         return visualization;
+      });
+    }
+
+    if (this.getMetrics === true) {
+      log.metrics = getMetricsResp.payload.metrics.map(x => {
+        let metric: any = {
+          metricId: x.metricId,
+          name: `${x.partNodeLabel} ${x.partFieldLabel} by ${x.timeNodeLabel} ${x.timeFieldLabel} - ${x.topLabel}`
+        };
+
+        return metric;
+      });
+    }
+
+    if (this.getReports === true) {
+      log.reports = getMetricsResp.payload.reps.map(x => {
+        let url = getReportUrl({
+          host: this.context.config.mproveCliHost,
+          orgId: getRepoResp.payload.repo.orgId,
+          projectId: this.projectId,
+          repoId: getRepoResp.payload.repo.repoId,
+          branch: this.branch,
+          env: this.env,
+          reportId: x.repId,
+          timezone: 'UTC',
+          timeSpec: 'days',
+          timeRange: 'last 5 days complete plus current'
+        });
+
+        let report: any = {
+          reportId: x.repId,
+          url: url
+        };
+
+        return report;
       });
     }
 
@@ -261,7 +320,7 @@ export class GetStateCommand extends CustomCommand {
       log.validationErrors = getRepoResp.payload.struct.errors;
     }
 
-    log.url = filesUrl;
+    log.filesUrl = filesUrl;
 
     logToConsoleMcli({
       log: log,
