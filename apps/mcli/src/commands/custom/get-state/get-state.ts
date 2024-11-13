@@ -19,7 +19,7 @@ export class GetStateCommand extends CustomCommand {
 
   static usage = Command.Usage({
     description:
-      'Get state (models, dashboards, visualizations, errors, repo nodes)',
+      'Get state (models, dashboards, visualizations, reports, metrics, errors, repo nodes)',
     examples: [
       [
         'Get Dev repo state',
