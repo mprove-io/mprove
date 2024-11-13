@@ -1,0 +1,15 @@
+report: r2
+title: R2 
+rows:
+- row_id: A
+  type: empty
+
+- row_id: B
+  type: metric
+  metric: ec1_m1_model_fields_total_profit_by_b_created
+  parameters: []
+
+- row_id: C
+  type: formula
+  name: example
+  formula: $B

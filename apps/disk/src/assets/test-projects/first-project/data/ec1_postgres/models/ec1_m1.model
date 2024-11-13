@@ -1,6 +1,8 @@
 model: ec1_m1
 label: Ecommerce 1 (PostgreSQL)
 connection: c1_postgres
+build_metrics:
+- time: b.created
 joins:
 - from_view: ec1_order_items
   as: a
