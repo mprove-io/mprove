@@ -136,16 +136,18 @@
                 data-cy="dashboardSaveAsButton"
                 class="h-12 rounded px-6 text-base font-medium focus:outline-none"
                 [ngClass]="{
-                  'text-blue3 border-2':
-                    isExplorer === true &&
-                    dashboard.temp === false &&
-                    alias !== restrictedUserAlias,
-                  'bg-pink-500 text-white':
-                    isExplorer === true &&
+                  'text-white': dashboard.temp === true,
+                  'bg-pink-500':
                     dashboard.temp === true &&
+                    isExplorer === true &&
                     alias !== restrictedUserAlias,
-                  'cursor-default bg-gray-400 text-white':
-                    isExplorer === false || alias === restrictedUserAlias
+                  'cursor-default bg-gray-400':
+                    dashboard.temp === true &&
+                    (isExplorer === false || alias === restrictedUserAlias),
+                  'border border-gray-400 text-gray-500 hover:bg-white':
+                    dashboard.temp === false &&
+                    isExplorer === true &&
+                    alias !== restrictedUserAlias
                 }"
                 (click)="saveAs()"
                 [disabled]="
