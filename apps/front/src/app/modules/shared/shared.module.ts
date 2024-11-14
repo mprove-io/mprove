@@ -16,6 +16,7 @@ import { ChartTableComponent } from './chart-table/chart-table.component';
 import { ChartViewComponent } from './chart-view/chart-view.component';
 import { ChartVizComponent } from './chart-viz/chart-viz.component';
 import { ColorMenuComponent } from './color-menu/color-menu.component';
+import { DashboardEditListenersDialogComponent } from './dashboard-edit-listeners-dialog/dashboard-edit-listeners-dialog.component';
 import { DashboardSaveAsDialogComponent } from './dashboard-save-as-dialog/dashboard-save-as-dialog.component';
 import { FieldLabelComponent } from './field-label/field-label.component';
 import { FormatNumberComponent } from './format-number/format-number.component';
@@ -178,7 +179,8 @@ let sharedComponents = [
   ViewBlockmlDialogComponent,
   RepSaveAsDialogComponent,
   ChartSaveAsDialogComponent,
-  DashboardSaveAsDialogComponent
+  DashboardSaveAsDialogComponent,
+  DashboardEditListenersDialogComponent
 ];
 
 @NgModule({

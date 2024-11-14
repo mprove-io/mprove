@@ -50,7 +50,7 @@
       </div>
     </div>
 
-    <div>
+    <form [formGroup]="listenForm">
       <div
         class="text-gray1 flex flex-row space-x-5 border-gray-300 py-4 text-base"
         [ngStyle]="
@@ -58,7 +58,7 @@
             'border-bottom-width': '1px'
           }
         "
-        *ngFor="let tile of dashboard.tiles"
+        *ngFor="let tile of dashboard.tiles; let tileIndex = index"
       >
         <div
           class="flex w-[500px] flex-shrink-0 flex-row items-start justify-start"
@@ -82,7 +82,6 @@
             "
           >
             <ng-select
-              #fieldSelect
               data-cy="fieldSelect"
               class="custom w-96 text-base focus:outline-none"
               [items]="tile.modelFields[dashboardField.id]"
@@ -90,8 +89,19 @@
               [searchable]="false"
               (keyup.esc)="$event.stopImmediatePropagation()"
               (keyup.enter)="$event.stopImmediatePropagation()"
-              (change)="fieldChange()"
-              [(ngModel)]="tile.mconfigListenSwap[dashboardField.id][i]"
+              formControlName="{{ tileIndex }}-----{{
+                dashboardField.id
+              }}-----{{ i }}"
+              (change)="
+              listenerChange({
+                  dashboardFieldId: dashboardField.id,
+                  tile: tile,
+                  tileIndex: tileIndex,
+                  i: i,
+                  items: tile.modelFields[dashboardField.id],
+                  selected: $event,
+                })
+              "
               appendTo="body"
               bindLabel="id"
               bindValue="id"
@@ -119,7 +129,13 @@
             <button
               *ngIf="i === 0"
               class="hover:bg-blue2 invisible ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
-              (click)="addListener(tile, dashboardField.id)"
+              (click)="
+                addListener({
+                  tile: tile,
+                  tileIndex: tileIndex,
+                  dashboardFieldId: dashboardField.id
+                })
+              "
             >
               <m-add-icon></m-add-icon>
             </button>
@@ -127,14 +143,22 @@
             <button
               *ngIf="i > 0"
               class="hover:bg-blue2 invisible ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
-              (click)="removeListener($event, tile, dashboardField.id, i)"
+              (click)="
+                removeListener({
+                  event: $event,
+                  tile: tile,
+                  tileIndex: tileIndex,
+                  index: i,
+                  dashboardFieldId: dashboardField.id
+                })
+              "
             >
               <m-delete-icon></m-delete-icon>
             </button>
           </div>
         </div>
       </div>
-    </div>
+    </form>
   </div>
 
   <div class="mt-9">

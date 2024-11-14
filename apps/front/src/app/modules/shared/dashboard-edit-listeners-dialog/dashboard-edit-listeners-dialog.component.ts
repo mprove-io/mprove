@@ -1,13 +1,5 @@
-import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectorRef,
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-  HostListener,
-  OnInit
-} from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { NgSelectModule } from '@ng-select/ng-select';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
@@ -17,7 +9,6 @@ import { ApiService } from '~front/app/services/api.service';
 import { DashboardService } from '~front/app/services/dashboard.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { SharedModule } from '../../shared/shared.module';
 
 export class TileX2 extends common.TileX {
   modelFields?: { [a: string]: common.ModelField[] };
@@ -36,16 +27,13 @@ export interface DashboardEditListenersDialogData {
 
 @Component({
   selector: 'm-dashboard-edit-listeners-dialog',
-  templateUrl: './dashboard-edit-listeners-dialog.component.html',
-  standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, NgSelectModule, SharedModule]
+  templateUrl: './dashboard-edit-listeners-dialog.component.html'
 })
 export class DashboardEditListenersDialogComponent implements OnInit {
-  @HostListener('window:keyup.esc')
-  onEscKeyUp() {
-    this.ref.close();
-  }
+  // @HostListener('window:keyup.esc')
+  // onEscKeyUp() {
+  //   this.ref.close();
+  // }
 
   spinnerName = 'dashboardEditListen';
 
@@ -60,6 +48,8 @@ export class DashboardEditListenersDialogComponent implements OnInit {
       this.cd.detectChanges();
     })
   );
+
+  listenForm: FormGroup = this.fb.group({});
 
   constructor(
     public ref: DialogRef<DashboardEditListenersDialogData>,
@@ -87,8 +77,6 @@ export class DashboardEditListenersDialogComponent implements OnInit {
 
     this.spinner.show(this.spinnerName);
 
-    // await common.sleep(5000);
-
     let apiService: ApiService = this.ref.data.apiService;
 
     let payload: apiToBackend.ToBackendGetModelsRequestPayload = {
@@ -115,7 +103,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
 
             this.models = resp.payload.models;
 
-            (this.dashboard as DashboardX2).tiles.forEach(x => {
+            (this.dashboard as DashboardX2).tiles.forEach((x, tileIndex) => {
               let model = this.models.find(m => m.modelId === x.modelId);
 
               let swap: { [a: string]: string[] } = {};
@@ -146,9 +134,17 @@ export class DashboardEditListenersDialogComponent implements OnInit {
               (x as TileX2).modelFields = modelFields;
 
               (x as TileX2).mconfigListenSwap = swap;
+
+              Object.keys(swap).forEach(dFieldId => {
+                swap[dFieldId].forEach((id, ind) => {
+                  this.listenForm.addControl(
+                    `${tileIndex}-----${dFieldId}-----${ind}`,
+                    new FormControl(id)
+                  );
+                });
+              });
             });
 
-            // console.log(this.dashboard.tiles);
             this.cd.detectChanges();
           }
         })
@@ -160,18 +156,48 @@ export class DashboardEditListenersDialogComponent implements OnInit {
     }, 0);
   }
 
-  fieldChange() {}
+  listenerChange(item: {
+    tile: TileX2;
+    tileIndex: number;
+    dashboardFieldId: string;
+    i: number;
+    items: any;
+    selected: any;
+  }) {
+    // console.log(item);
 
-  addListener(tile: TileX2, dashboardFieldId: string) {
+    let { dashboardFieldId, tile, tileIndex, i, items, selected } = item;
+
+    tile.mconfigListenSwap[dashboardFieldId][i] =
+      this.listenForm.controls[
+        `${tileIndex}-----${dashboardFieldId}-----${i}`
+      ].value;
+  }
+
+  addListener(item: {
+    tile: TileX2;
+    tileIndex: number;
+    dashboardFieldId: string;
+  }) {
+    let { tile, tileIndex, dashboardFieldId } = item;
+
+    this.listenForm.addControl(
+      `${tileIndex}-----${dashboardFieldId}-----${tile.mconfigListenSwap[dashboardFieldId].length}`,
+      new FormControl(undefined)
+    );
+
     tile.mconfigListenSwap[dashboardFieldId].push(undefined);
   }
 
-  removeListener(
-    event: MouseEvent,
-    tile: TileX2,
-    dashboardFieldId: string,
-    index: number
-  ) {
+  removeListener(item: {
+    event: MouseEvent;
+    tile: TileX2;
+    tileIndex: number;
+    index: number;
+    dashboardFieldId: string;
+  }) {
+    let { event, tile, tileIndex, index, dashboardFieldId } = item;
+
     event.stopPropagation();
 
     let mappings = tile.mconfigListenSwap[dashboardFieldId];
@@ -182,6 +208,10 @@ export class DashboardEditListenersDialogComponent implements OnInit {
     ];
 
     tile.mconfigListenSwap[dashboardFieldId] = newMappings;
+
+    this.listenForm.removeControl(
+      `${tileIndex}-----${dashboardFieldId}-----${index}`
+    );
   }
 
   apply() {

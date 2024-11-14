@@ -12,10 +12,6 @@ import {
   DashboardAddTileDialogData
 } from '../modules/dashboard/dashboard-add-tile-dialog/dashboard-add-tile-dialog.component';
 import {
-  DashboardEditListenersDialogComponent,
-  DashboardEditListenersDialogData
-} from '../modules/dashboard/dashboard-edit-listeners-dialog/dashboard-edit-listeners-dialog.component';
-import {
   DashboardsNewDialogComponent,
   DashboardsNewDialogData
 } from '../modules/dashboards/dashboards-new-dialog/dashboards-new-dialog.component';
@@ -172,6 +168,10 @@ import {
   EditVizInfoDialogComponent,
   EditVizInfoDialogData
 } from '../modules/shared/chart-viz/edit-viz-info-dialog/edit-viz-info-dialog.component';
+import {
+  DashboardEditListenersDialogComponent,
+  DashboardEditListenersDialogData
+} from '../modules/shared/dashboard-edit-listeners-dialog/dashboard-edit-listeners-dialog.component';
 import {
   DashboardSaveAsDialogComponent,
   DashboardSaveAsDialogData
