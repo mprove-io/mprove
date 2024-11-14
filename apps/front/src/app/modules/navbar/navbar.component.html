@@ -76,19 +76,19 @@
       >
 
       <button
-        class="text-gray1 block flex h-10 w-[130px] items-center justify-center text-left text-base focus:outline-none"
+        class="text-gray1 block flex h-10 w-[80px] items-center justify-center text-left text-base focus:outline-none"
         [ngClass]="{
           'cursor-default text-gray-400':
             !nav || !nav.projectId || needSave === true,
           'font-semibold': isVizsRouteActive === true
         }"
-        (click)="navigateVisualizations()"
+        (click)="navigateCharts()"
         [disabled]="!nav || !nav.projectId || needSave === true"
-        >Visualizations</button
+        >Charts</button
       >
 
       <button
-        class="text-gray1 block flex h-10 w-[90px] items-center justify-center text-left text-base focus:outline-none"
+        class="text-gray1 block flex h-10 w-[80px] items-center justify-center text-left text-base focus:outline-none"
         [ngClass]="{
           'cursor-default text-gray-400':
             !nav || !nav.projectId || needSave === true,

@@ -74,6 +74,6 @@ test('1', async t => {
   t.is(dashboards.length, 0);
   t.is(vizs.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.WRONG_VIS_NAME);
+  t.is(errors[0].title, common.ErTitleEnum.WRONG_CHART_NAME);
   t.is(errors[0].lines[0].line, 1);
 });

@@ -22,6 +22,7 @@ import { UiSwitchModule } from 'ngx-ui-switch';
 import { appRoutes } from './app/app-routes';
 import { AppComponent } from './app/app.component';
 import { AuthModule } from './app/modules/auth/auth.module';
+import { ChartsModule } from './app/modules/charts/charts.module';
 import { DashboardModule } from './app/modules/dashboard/dashboard.module';
 import { DashboardsModule } from './app/modules/dashboards/dashboards.module';
 import { FilesModule } from './app/modules/files/files.module';
@@ -35,7 +36,6 @@ import { ProfileModule } from './app/modules/profile/profile.module';
 import { ProjectModule } from './app/modules/project/project.module';
 import { SharedModule } from './app/modules/shared/shared.module';
 import { SpecialModule } from './app/modules/special/special.module';
-import { VisualizationsModule } from './app/modules/visualizations/visualizations.module';
 import { CustomMonacoProviderService } from './app/services/custom-monaco-provider.service';
 import { ErrorHandlerService } from './app/services/error-handler.service';
 import { environment } from './environments/environment';
@@ -70,7 +70,7 @@ bootstrapApplication(AppComponent, {
       ReactiveFormsModule,
       FormsModule,
       NgSelectModule,
-      VisualizationsModule,
+      ChartsModule,
       DashboardsModule,
       ModelsModule,
       MetricsModule,

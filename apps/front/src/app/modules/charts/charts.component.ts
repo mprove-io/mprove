@@ -30,13 +30,13 @@ class ModelXWithTotalVizs extends common.ModelX {
 }
 
 @Component({
-  selector: 'm-visualizations',
-  templateUrl: './visualizations.component.html'
+  selector: 'm-charts',
+  templateUrl: './charts.component.html'
 })
-export class VisualizationsComponent implements OnInit, OnDestroy {
+export class ChartsComponent implements OnInit, OnDestroy {
   restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
 
-  pageTitle = constants.VISUALIZATIONS_PAGE_TITLE;
+  pageTitle = constants.CHARTS_PAGE_TITLE;
 
   vizDeletedFnBindThis = this.vizDeletedFn.bind(this);
 

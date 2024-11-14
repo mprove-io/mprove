@@ -147,9 +147,9 @@ test('1', async t => {
       `common.isDefined(parsedOutput.dashboards)`
     );
     assert.equal(
-      common.isDefined(parsedOutput.visualizations),
+      common.isDefined(parsedOutput.charts),
       true,
-      `common.isDefined(parsedOutput.visualizations)`
+      `common.isDefined(parsedOutput.charts)`
     );
     assert.equal(
       common.isDefined(queriesStats),

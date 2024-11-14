@@ -26,7 +26,7 @@ export function checkVizTilesExist(
     if (common.isUndefined(x.tiles)) {
       item.errors.push(
         new BmError({
-          title: common.ErTitleEnum.VIS_MISSING_TILES,
+          title: common.ErTitleEnum.CHART_MISSING_TILES,
           message:
             `${common.FileExtensionEnum.Vis} must have ` +
             `"${common.ParameterEnum.Tiles}" parameter`,
@@ -45,7 +45,7 @@ export function checkVizTilesExist(
     if (x.tiles.length > 1) {
       item.errors.push(
         new BmError({
-          title: common.ErTitleEnum.VIS_TOO_MANY_TILES,
+          title: common.ErTitleEnum.CHART_TOO_MANY_TILES,
           message: `${common.FileExtensionEnum.Vis} must have exactly one tile`,
           lines: [
             {

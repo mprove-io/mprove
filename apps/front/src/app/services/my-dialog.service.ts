@@ -4,6 +4,10 @@ import { constants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
 import { EmailConfirmedDialogComponent } from '../modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
 import {
+  NewVizDialogComponent,
+  NewVizDialogData
+} from '../modules/charts/new-viz-dialog/new-viz-dialog.component';
+import {
   DashboardAddFilterDialogComponent,
   DashboardAddFilterDialogData
 } from '../modules/dashboard/dashboard-add-filter-dialog/dashboard-add-filter-dialog.component';
@@ -193,10 +197,6 @@ import {
   ViewBlockmlDialogData
 } from '../modules/shared/view-blockml-dialog/view-blockml-dialog.component';
 import { ErrorDialogComponent } from '../modules/special/error-dialog/error-dialog.component';
-import {
-  NewVizDialogComponent,
-  NewVizDialogData
-} from '../modules/visualizations/new-viz-dialog/new-viz-dialog.component';
 
 export interface ErrorDialogData {
   errorData: interfaces.ErrorData;

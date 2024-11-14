@@ -62,6 +62,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(vizs.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.VIS_TOO_MANY_TILES);
+  t.is(errors[0].title, common.ErTitleEnum.CHART_TOO_MANY_TILES);
   t.is(errors[0].lines[0].line, 1);
 });

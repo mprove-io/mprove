@@ -274,7 +274,7 @@ export class CreateMemberController {
     let hostUrl = this.cs.get<interfaces.Config['hostUrl']>('hostUrl');
 
     if (common.isDefined(invitedUser) && invitedUser.isEmailVerified === true) {
-      let urlProjectVizs = [
+      let urlProjectMetrics = [
         hostUrl,
         common.PATH_ORG,
         project.orgId,
@@ -294,7 +294,7 @@ export class CreateMemberController {
       await this.mailerService.sendMail({
         to: email,
         subject: `[Mprove] ${user.alias} added you to ${project.name} project team`,
-        text: `Project visualizations: ${urlProjectVizs}`
+        text: `Project metrics: ${urlProjectMetrics}`
       });
     } else {
       let emailVerificationToken = common.isDefined(invitedUser)

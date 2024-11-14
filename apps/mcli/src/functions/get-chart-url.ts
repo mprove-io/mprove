@@ -1,4 +1,4 @@
-export function getVisualizationUrl(item: {
+export function getChartUrl(item: {
   host: string;
   orgId: string;
   projectId: string;
@@ -9,5 +9,5 @@ export function getVisualizationUrl(item: {
 }) {
   let { host, orgId, projectId, repoId, branch, env, vizId } = item;
 
-  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/visualizations?search=${vizId}`;
+  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/charts?search=${vizId}`;
 }

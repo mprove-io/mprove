@@ -191,7 +191,7 @@ export class NavigateService {
           this.nav.branchId,
           common.PATH_ENV,
           this.nav.envId,
-          common.PATH_VISUALIZATIONS
+          common.PATH_CHARTS
         ];
 
     if (common.isDefined(extra)) {
@@ -304,7 +304,7 @@ export class NavigateService {
         this.nav.branchId,
         common.PATH_ENV,
         this.nav.envId,
-        common.PATH_VISUALIZATIONS
+        common.PATH_CHARTS
       ])
     );
   }

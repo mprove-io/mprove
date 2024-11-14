@@ -9,7 +9,7 @@ import { GetQueryCommand } from '../get-query';
 let assert = require('node:assert/strict');
 let retry = require('async-retry');
 
-let testId = 'mcli__get-query__ok-visualization';
+let testId = 'mcli__get-query__ok-chart';
 
 test('1', async t => {
   let code: number;
@@ -133,9 +133,9 @@ test('1', async t => {
 
     assert.equal(code === 0, true, `code === 0`);
     assert.equal(
-      common.isDefined(parsedOutput?.visualization),
+      common.isDefined(parsedOutput?.chart),
       true,
-      `common.isDefined(parsedOutput?.visualization)`
+      `common.isDefined(parsedOutput?.chart)`
     );
 
     isPass = true;

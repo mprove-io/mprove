@@ -12,6 +12,7 @@ import { ForgotPasswordComponent } from './modules/auth/password/01-forgot-passw
 import { PasswordResetSentComponent } from './modules/auth/password/02-password-reset-sent/password-reset-sent.component';
 import { UpdatePasswordComponent } from './modules/auth/password/03-update-password/update-password.component';
 import { NewPasswordWasSetComponent } from './modules/auth/password/04-new-password-was-set/new-password-was-set.component';
+import { ChartsComponent } from './modules/charts/charts.component';
 import { DashboardComponent } from './modules/dashboard/dashboard.component';
 import { DashboardsComponent } from './modules/dashboards/dashboards.component';
 import { FileEditorComponent } from './modules/files/file-editor/file-editor.component';
@@ -37,7 +38,6 @@ import { NotFoundComponent } from './modules/special/not-found/not-found.compone
 import { OrgDeletedComponent } from './modules/special/org-deleted/org-deleted.component';
 import { OrgOwnerChangedComponent } from './modules/special/org-owner-changed/org-owner-changed.component';
 import { ProjectDeletedComponent } from './modules/special/project-deleted/project-deleted.component';
-import { VisualizationsComponent } from './modules/visualizations/visualizations.component';
 import { OrgAccountResolver } from './resolvers/org-account.resolver';
 import { OrgUsersResolver } from './resolvers/org-users.resolver';
 import { OrgResolver } from './resolvers/org.resolver';
@@ -222,8 +222,8 @@ export const appRoutes: Routes = [
                             ]
                           },
                           {
-                            component: VisualizationsComponent,
-                            path: common.PATH_VISUALIZATIONS,
+                            component: ChartsComponent,
+                            path: common.PATH_CHARTS,
                             resolve: [StructVizsResolver]
                           },
                           {

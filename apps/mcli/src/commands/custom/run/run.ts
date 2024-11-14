@@ -4,10 +4,10 @@ import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
+import { getChartUrl } from '~mcli/functions/get-chart-url';
 import { getDashboardUrl } from '~mcli/functions/get-dashboard-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';
 import { queriesToStats } from '~mcli/functions/get-query-stats';
-import { getVisualizationUrl } from '~mcli/functions/get-visualization-url';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
@@ -35,7 +35,7 @@ export class RunCommand extends CustomCommand {
   static paths = [['run']];
 
   static usage = Command.Usage({
-    description: 'Run dashboards and visualizations',
+    description: 'Run dashboards and charts',
     examples: [
       [
         'Run for Dev repo and wait for completion',
@@ -93,7 +93,7 @@ export class RunCommand extends CustomCommand {
 
   vizIds = Option.String('--viz-ids', {
     description:
-      '(optional) Filter visualizations to run by visualization names, separated by comma'
+      '(optional) Filter charts to run by chart names, separated by comma'
   });
 
   noDashboards = Option.Boolean('--no-dashboards', false, {
@@ -101,7 +101,7 @@ export class RunCommand extends CustomCommand {
   });
 
   noVizs = Option.Boolean('--no-vizs', false, {
-    description: '(default false) Do not run visualizations'
+    description: '(default false) Do not run charts'
   });
 
   getDashboards = Option.Boolean('--get-dashboards', false, {
@@ -109,7 +109,7 @@ export class RunCommand extends CustomCommand {
   });
 
   getVizs = Option.Boolean('--get-vizs', false, {
-    description: '(default false), show visualizations in output'
+    description: '(default false), show charts in output'
   });
 
   json = Option.Boolean('--json', false, {
@@ -234,13 +234,9 @@ export class RunCommand extends CustomCommand {
 
       if (common.isDefined(vizIds)) {
         vizIds.forEach(x => {
-          if (
-            getVizsResp.payload.vizs
-              .map(visualization => visualization.vizId)
-              .indexOf(x) < 0
-          ) {
+          if (getVizsResp.payload.vizs.map(viz => viz.vizId).indexOf(x) < 0) {
             let serverError = new common.ServerError({
-              message: common.ErEnum.MCLI_VISUALIZATION_NOT_FOUND,
+              message: common.ErEnum.MCLI_CHART_NOT_FOUND,
               data: { id: x },
               originalError: null
             });
@@ -251,12 +247,11 @@ export class RunCommand extends CustomCommand {
 
       vizParts = getVizsResp.payload.vizs
         .filter(
-          visualization =>
-            common.isUndefined(vizIds) ||
-            vizIds.indexOf(visualization.vizId) > -1
+          vizPart =>
+            common.isUndefined(vizIds) || vizIds.indexOf(vizPart.vizId) > -1
         )
         .map(x => {
-          let url = getVisualizationUrl({
+          let url = getChartUrl({
             host: this.context.config.mproveCliHost,
             orgId: getProjectResp.payload.project.orgId,
             projectId: this.projectId,
@@ -488,7 +483,7 @@ export class RunCommand extends CustomCommand {
         this.wait === true ? 0 : runQueriesResp.payload.startedQueryIds.length
     });
 
-    let errorVisualizations: VizPart[] =
+    let errorCharts: VizPart[] =
       queriesStats.error === 0
         ? []
         : vizParts
@@ -537,10 +532,10 @@ export class RunCommand extends CustomCommand {
     }
 
     if (this.getVizs === true) {
-      log.visualizations = vizParts;
+      log.charts = vizParts;
     }
 
-    log.errorVisualizations = errorVisualizations;
+    log.errorCharts = errorCharts;
     log.errorDashboards = errorDashboards;
     log.queriesStats = queriesStats;
 

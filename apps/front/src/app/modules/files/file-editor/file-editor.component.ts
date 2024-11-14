@@ -232,7 +232,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
           : dotExt === common.FileExtensionEnum.Dashboard
           ? common.DASHBOARD_SCHEMA
           : dotExt === common.FileExtensionEnum.Vis
-          ? common.VISUALIZATION_SCHEMA
+          ? common.CHART_SCHEMA
           : dotExt === common.FileExtensionEnum.Model
           ? common.MODEL_SCHEMA
           : dotExt === common.FileExtensionEnum.View

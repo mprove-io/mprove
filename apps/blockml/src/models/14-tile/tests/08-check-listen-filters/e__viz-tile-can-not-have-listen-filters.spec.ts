@@ -64,7 +64,7 @@ test('1', async t => {
 
   t.is(
     errors[0].title,
-    common.ErTitleEnum.VIS_TILE_CAN_NOT_HAVE_LISTEN_FILTERS
+    common.ErTitleEnum.CHART_TILE_CAN_NOT_HAVE_LISTEN_FILTERS
   );
   t.is(errors[0].lines[0].line, 7);
 });

@@ -40,7 +40,7 @@ export function checkListenFilters<T extends types.dzType>(
       ) {
         item.errors.push(
           new BmError({
-            title: common.ErTitleEnum.VIS_TILE_CAN_NOT_HAVE_LISTEN_FILTERS,
+            title: common.ErTitleEnum.CHART_TILE_CAN_NOT_HAVE_LISTEN_FILTERS,
             message:
               `${common.FileExtensionEnum.Vis} does not support ` +
               `"${common.ParameterEnum.ListenFilters}" parameter for tiles`,

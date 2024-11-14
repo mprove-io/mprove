@@ -185,7 +185,7 @@ export function checkTopUnknownParameters(
             ) {
               item.errors.push(
                 new BmError({
-                  title: common.ErTitleEnum.UNKNOWN_VIS_PARAMETER,
+                  title: common.ErTitleEnum.UNKNOWN_CHART_PARAMETER,
                   message:
                     `parameter "${parameter}" can not be used on top level of ` +
                     `${common.FileExtensionEnum.Vis} file`,

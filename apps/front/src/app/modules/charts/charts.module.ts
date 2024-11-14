@@ -8,10 +8,10 @@ import { TippyDirective } from '@ngneat/helipopper';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
-import { VisualizationsComponent } from './visualizations.component';
+import { ChartsComponent } from './charts.component';
 
 @NgModule({
-  declarations: [VisualizationsComponent],
+  declarations: [ChartsComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -25,4 +25,4 @@ import { VisualizationsComponent } from './visualizations.component';
     ScrollingModule
   ]
 })
-export class VisualizationsModule {}
+export class ChartsModule {}

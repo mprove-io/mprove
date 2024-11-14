@@ -32,7 +32,6 @@ confs
 dagit
 dagster
 darcula
-datatypes
 datetime
 dayofweek
 dayofyear

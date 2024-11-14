@@ -4,12 +4,12 @@ import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
+import { getChartUrl } from '~mcli/functions/get-chart-url';
 import { getDashboardUrl } from '~mcli/functions/get-dashboard-url';
 import { getFilesUrl } from '~mcli/functions/get-files-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';
 import { getModelUrl } from '~mcli/functions/get-model-url';
 import { getReportUrl } from '~mcli/functions/get-report-url';
-import { getVisualizationUrl } from '~mcli/functions/get-visualization-url';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
@@ -19,7 +19,7 @@ export class GetStateCommand extends CustomCommand {
 
   static usage = Command.Usage({
     description:
-      'Get state (models, dashboards, visualizations, reports, metrics, errors, repo nodes)',
+      'Get state (models, dashboards, charts, reports, metrics, errors, repo nodes)',
     examples: [
       [
         'Get Dev repo state',
@@ -200,14 +200,14 @@ export class GetStateCommand extends CustomCommand {
       validationErrorsTotal: getRepoResp.payload.struct.errors.length,
       modelsTotal: getModelsResp.payload.models.length,
       dashboardsTotal: getDashboardsResp.payload.dashboards.length,
-      visualizationsTotal: getVizsResp.payload.vizs.length,
+      chartsTotal: getVizsResp.payload.vizs.length,
       needValidate: getRepoResp.payload.needValidate,
       structId: getRepoResp.payload.struct.structId
     };
 
     if (this.getVizs === true) {
-      log.visualizations = getVizsResp.payload.vizs.map(x => {
-        let url = getVisualizationUrl({
+      log.charts = getVizsResp.payload.vizs.map(x => {
+        let url = getChartUrl({
           host: this.context.config.mproveCliHost,
           orgId: getRepoResp.payload.repo.orgId,
           projectId: this.projectId,
@@ -217,12 +217,12 @@ export class GetStateCommand extends CustomCommand {
           vizId: x.vizId
         });
 
-        let visualization: any = {
+        let chart: any = {
           vizId: x.vizId,
           url: url
         };
 
-        return visualization;
+        return chart;
       });
     }
 

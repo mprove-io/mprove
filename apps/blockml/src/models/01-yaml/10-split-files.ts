@@ -289,7 +289,7 @@ export function splitFiles(
         } else {
           item.errors.push(
             new BmError({
-              title: common.ErTitleEnum.WRONG_VIS_NAME,
+              title: common.ErTitleEnum.WRONG_CHART_NAME,
               message: `filename ${file.name} does not match "${common.ParameterEnum.Vis}: ${file.vis}"`,
               lines: [
                 {
