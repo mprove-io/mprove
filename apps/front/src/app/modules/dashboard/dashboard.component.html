@@ -29,58 +29,6 @@
             >
           </div>
 
-          <ng-template #templateAddTile>
-            <div *ngIf="isExplorer === false">Explorer role required</div>
-
-            <div *ngIf="isExplorer === true && dashboard.temp === true"
-              >Save changes to be able to add tiles</div
-            >
-
-            <div
-              *ngIf="
-                isExplorer === true &&
-                dashboard.temp === false &&
-                dashboard.canEditOrDeleteDashboard === false
-              "
-              >Only the dashboard author, project editors, and administrators
-              can edit this dashboard. Try saving this dashboard as a new one to
-              become an author.</div
-            >
-          </ng-template>
-
-          <div
-            [tp]="templateAddTile"
-            [tpIsEnabled]="
-              isExplorer === false ||
-              dashboard.temp === true ||
-              dashboard.canEditOrDeleteDashboard === false
-            "
-            class="ml-5 flex flex-shrink-0"
-          >
-            <button
-              type="button"
-              data-cy="dashboardAddTileButton"
-              class="ml-5 flex-shrink-0 rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
-              [ngClass]="{
-                'bg-blue3':
-                  isExplorer === true &&
-                  dashboard.temp === false &&
-                  dashboard.canEditOrDeleteDashboard === true,
-                'cursor-default bg-gray-400':
-                  isExplorer === false ||
-                  dashboard.temp === true ||
-                  dashboard.canEditOrDeleteDashboard === false
-              }"
-              (click)="addTile()"
-              [disabled]="
-                isExplorer === false ||
-                dashboard.temp === true ||
-                dashboard.canEditOrDeleteDashboard === false
-              "
-              >Add Tile</button
-            >
-          </div>
-
           <div class="flex-grow"></div>
 
           <div class="flex flex-row items-center space-x-5">
@@ -203,6 +151,58 @@
       <div class="mt-7 w-full px-6 shadow-md">
         <div class="flex flex-col">
           <div class="mr-5 flex min-h-[44px] flex-shrink-0 flex-grow flex-row">
+            <ng-template #templateAddTile>
+              <div *ngIf="isExplorer === false">Explorer role required</div>
+
+              <div *ngIf="isExplorer === true && dashboard.temp === true"
+                >Save changes to be able to add tiles</div
+              >
+
+              <div
+                *ngIf="
+                  isExplorer === true &&
+                  dashboard.temp === false &&
+                  dashboard.canEditOrDeleteDashboard === false
+                "
+                >Only the dashboard author, project editors, and administrators
+                can edit this dashboard. Try saving this dashboard as a new one
+                to become an author.</div
+              >
+            </ng-template>
+
+            <div
+              [tp]="templateAddTile"
+              [tpIsEnabled]="
+                isExplorer === false ||
+                dashboard.temp === true ||
+                dashboard.canEditOrDeleteDashboard === false
+              "
+              class="flex h-11 flex-shrink-0"
+            >
+              <button
+                type="button"
+                data-cy="dashboardAddTileButton"
+                class="flex-shrink-0 rounded px-5 py-2 text-base font-medium focus:outline-none"
+                [ngClass]="{
+                  'border border-gray-400 text-gray-500 hover:bg-white':
+                    isExplorer === true &&
+                    dashboard.temp === false &&
+                    dashboard.canEditOrDeleteDashboard === true,
+                  'cursor-default bg-gray-400  text-white':
+                    isExplorer === false ||
+                    dashboard.temp === true ||
+                    dashboard.canEditOrDeleteDashboard === false
+                }"
+                (click)="addTile()"
+                [disabled]="
+                  isExplorer === false ||
+                  dashboard.temp === true ||
+                  dashboard.canEditOrDeleteDashboard === false
+                "
+                >Add Tile</button
+              >
+            </div>
+
             <ng-template #templateEditListeners>
               <div *ngIf="dashboard.tiles.length === 0">No tiles</div>
               <div *ngIf="dashboard.fields.length === 0">No filters</div>
@@ -213,7 +213,7 @@
               [tpIsEnabled]="
                 dashboard.tiles.length === 0 || dashboard.fields.length === 0
               "
-              class="h-11 flex-shrink-0"
+              class="ml-5 h-11 flex-shrink-0"
             >
               <button
                 type="button"
@@ -272,7 +272,7 @@
               data-cy="dashboardAddFilterButton"
               class="ml-4 h-11 flex-shrink-0 select-none rounded border border-gray-400 px-4 py-2 text-base font-medium text-gray-500 hover:bg-white focus:outline-none"
               (click)="addFilter()"
-              >Add</button
+              >Add Filter</button
             >
 
             <div class="min-h-[68px]"></div>
