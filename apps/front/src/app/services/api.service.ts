@@ -257,7 +257,7 @@ export class ApiService {
               infoErrorMessage
             ) > -1
           ) {
-            this.navigateService.navigateToVizs();
+            this.navigateService.navigateToCharts();
           } else if (
             [
               common.ErEnum.BACKEND_MCONFIG_DOES_NOT_EXIST,

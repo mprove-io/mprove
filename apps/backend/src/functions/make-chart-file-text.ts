@@ -20,7 +20,7 @@ export function makeChartFileText(item: {
 
   filePartTile.title = tileTitle;
 
-  let vizFileText = common.toYaml({
+  let chartFileText = common.toYaml({
     chart: chartId,
     access_roles:
       common.isDefined(roles) && roles.trim().length > 0
@@ -33,5 +33,5 @@ export function makeChartFileText(item: {
     tiles: [filePartTile]
   });
 
-  return vizFileText;
+  return chartFileText;
 }

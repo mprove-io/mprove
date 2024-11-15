@@ -72,7 +72,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
   let ymlNodes: common.DiskCatalogNode[] = [];
   let mdNodes: common.DiskCatalogNode[] = [];
   let dashboardNodes: common.DiskCatalogNode[] = [];
-  let vizNodes: common.DiskCatalogNode[] = [];
+  let chartNodes: common.DiskCatalogNode[] = [];
   let modelNodes: common.DiskCatalogNode[] = [];
   let viewNodes: common.DiskCatalogNode[] = [];
   let udfNodes: common.DiskCatalogNode[] = [];
@@ -144,7 +144,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
             dashboardNodes.push(node);
             break;
           case common.FileExtensionEnum.Chart:
-            vizNodes.push(node);
+            chartNodes.push(node);
             break;
           case common.FileExtensionEnum.Udf:
             udfNodes.push(node);
@@ -205,7 +205,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
     ...sortNodes(ymlNodes),
     ...sortNodes(mdNodes),
     ...sortNodes(dashboardNodes),
-    ...sortNodes(vizNodes),
+    ...sortNodes(chartNodes),
     ...sortNodes(modelNodes),
     ...sortNodes(viewNodes),
     ...sortNodes(udfNodes),

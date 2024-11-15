@@ -34,13 +34,13 @@ export class ChartComponent implements OnInit, OnDestroy {
   title: string;
 
   @Input()
-  viz: common.ChartX;
+  chart: common.ChartX;
 
   @Input()
   showBricks: boolean;
 
   @Input()
-  vizDeletedFnBindThis: any;
+  chartDeletedFnBindThis: any;
 
   qData: RData[];
   query: common.Query;
@@ -88,12 +88,12 @@ export class ChartComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    let payloadGetViz: apiToBackend.ToBackendGetChartRequestPayload = {
+    let payloadGetChart: apiToBackend.ToBackendGetChartRequestPayload = {
       projectId: nav.projectId,
       branchId: nav.branchId,
       envId: nav.envId,
       isRepoProd: nav.isRepoProd,
-      chartId: this.viz.chartId
+      chartId: this.chart.chartId
     };
 
     let query: common.Query;
@@ -103,15 +103,15 @@ export class ChartComponent implements OnInit, OnDestroy {
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetChart,
-        payload: payloadGetViz
+        payload: payloadGetChart
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendGetChartResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
-            query = resp.payload.viz.tiles[0].query;
-            mconfig = resp.payload.viz.tiles[0].mconfig;
+            query = resp.payload.chart.tiles[0].query;
+            mconfig = resp.payload.chart.tiles[0].mconfig;
           }
         })
       )
@@ -143,7 +143,7 @@ export class ChartComponent implements OnInit, OnDestroy {
               isRepoProd: nav.isRepoProd,
               mconfigId: this.mconfig.mconfigId,
               queryId: this.query.queryId,
-              chartId: this.viz.chartId
+              chartId: this.chart.chartId
             };
 
             return this.apiService
@@ -180,7 +180,7 @@ export class ChartComponent implements OnInit, OnDestroy {
   explore(event?: MouseEvent) {
     event.stopPropagation();
 
-    if (this.viz.tiles[0].hasAccessToModel === true) {
+    if (this.chart.tiles[0].hasAccessToModel === true) {
       this.navigateService.navigateMconfigQuery({
         modelId: this.tile.modelId,
         mconfigId: this.tile.mconfigId,
@@ -205,7 +205,7 @@ export class ChartComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    this.spinner.show(this.viz.chartId);
+    this.spinner.show(this.chart.chartId);
 
     let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
       projectId: nav.projectId,
@@ -234,13 +234,13 @@ export class ChartComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  deleteViz(event?: MouseEvent) {
+  deleteChart(event?: MouseEvent) {
     event.stopPropagation();
 
-    this.myDialogService.showDeleteViz({
-      viz: this.viz,
+    this.myDialogService.showDeleteChart({
+      chart: this.chart,
       apiService: this.apiService,
-      vizDeletedFnBindThis: this.vizDeletedFnBindThis,
+      chartDeletedFnBindThis: this.chartDeletedFnBindThis,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
@@ -255,11 +255,11 @@ export class ChartComponent implements OnInit, OnDestroy {
       mconfig: this.mconfig,
       query: this.query,
       qData: this.qData,
-      canAccessModel: this.viz.tiles[0].hasAccessToModel,
+      canAccessModel: this.chart.tiles[0].hasAccessToModel,
       showNav: true,
       isSelectValid: this.isSelectValid,
       dashboardId: undefined,
-      chartId: this.viz.chartId
+      chartId: this.chart.chartId
     });
   }
 
@@ -267,16 +267,16 @@ export class ChartComponent implements OnInit, OnDestroy {
     event.stopPropagation();
   }
 
-  editVizInfo(event?: MouseEvent) {
+  editChartInfo(event?: MouseEvent) {
     event.stopPropagation();
 
-    this.myDialogService.showEditVizInfo({
+    this.myDialogService.showEditChartInfo({
       apiService: this.apiService,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd,
-      viz: this.viz,
+      chart: this.chart,
       mconfig: this.mconfig
     });
   }
@@ -284,7 +284,7 @@ export class ChartComponent implements OnInit, OnDestroy {
   goToFile(event?: MouseEvent) {
     event.stopPropagation();
 
-    let fileIdAr = this.viz.filePath.split('/');
+    let fileIdAr = this.chart.filePath.split('/');
     fileIdAr.shift();
 
     this.navigateService.navigateToFileLine({
@@ -297,7 +297,7 @@ export class ChartComponent implements OnInit, OnDestroy {
     this.query = query;
 
     if (this.query.status !== common.QueryStatusEnum.Running) {
-      this.spinner.hide(this.viz.chartId);
+      this.spinner.hide(this.chart.chartId);
     }
 
     this.qData =

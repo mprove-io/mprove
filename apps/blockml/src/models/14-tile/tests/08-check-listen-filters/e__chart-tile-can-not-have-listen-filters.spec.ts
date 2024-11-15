@@ -12,7 +12,7 @@ let testId = 'e__chart-tile-can-not-have-listen-filters';
 
 test('1', async t => {
   let errors: BmError[];
-  let entVizs: common.FileChart[];
+  let entCharts: common.FileChart[];
 
   let wLogger;
   let configService;
@@ -46,7 +46,7 @@ test('1', async t => {
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
-    entVizs = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
+    entCharts = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -60,7 +60,7 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(entVizs.length, 0);
+  t.is(entCharts.length, 0);
 
   t.is(
     errors[0].title,

@@ -8,10 +8,10 @@ import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
 export class ChartsService {
   constructor(@Inject(DRIZZLE) private db: Db) {}
 
-  async getVizCheckExists(item: { chartId: string; structId: string }) {
+  async getChartCheckExists(item: { chartId: string; structId: string }) {
     let { chartId, structId } = item;
 
-    let viz = await this.db.drizzle.query.chartsTable.findFirst({
+    let chart = await this.db.drizzle.query.chartsTable.findFirst({
       where: and(
         eq(chartsTable.structId, structId),
         eq(chartsTable.chartId, chartId)
@@ -25,16 +25,16 @@ export class ChartsService {
     //   }
     // });
 
-    if (common.isUndefined(viz)) {
+    if (common.isUndefined(chart)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_CHART_DOES_NOT_EXIST
       });
     }
 
-    return viz;
+    return chart;
   }
 
-  checkVizPath(item: { filePath: string; userAlias: string }) {
+  checkChartPath(item: { filePath: string; userAlias: string }) {
     let filePathArray = item.filePath.split('/');
 
     let usersFolderIndex = filePathArray.findIndex(

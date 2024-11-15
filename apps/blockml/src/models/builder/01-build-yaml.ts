@@ -22,7 +22,7 @@ export function buildYaml(
   let reps: common.FileRep[];
   let metrics: common.FileMetric[];
   let apis: common.FileApi[];
-  let vizs: common.FileChart[];
+  let charts: common.FileChart[];
   let confs: common.FileProjectConf[];
 
   let file2s: common.File2[] = barYaml.removeWrongExt(
@@ -137,7 +137,7 @@ export function buildYaml(
   reps = splitFilesResult.reps;
   udfs = splitFilesResult.udfs;
   views = splitFilesResult.views;
-  vizs = splitFilesResult.vizs;
+  charts = splitFilesResult.charts;
 
   let projectConfig = barYaml.checkProjectConfig(
     {
@@ -159,6 +159,6 @@ export function buildYaml(
     reps: reps,
     udfs: udfs,
     views: views,
-    vizs: vizs
+    charts: charts
   };
 }

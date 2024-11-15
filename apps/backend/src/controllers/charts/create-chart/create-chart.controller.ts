@@ -153,7 +153,7 @@ export class CreateChartController {
       });
     }
 
-    let vizFileText = makeChartFileText({
+    let chartFileText = makeChartFileText({
       mconfig: mconfig,
       tileTitle: tileTitle,
       roles: accessRoles,
@@ -194,7 +194,7 @@ export class CreateChartController {
         userAlias: user.alias,
         parentNodeId: parentNodeId,
         fileName: fileName,
-        fileText: vizFileText,
+        fileText: chartFileText,
         remoteType: project.remoteType,
         gitUrl: project.gitUrl,
         privateKey: project.privateKey,
@@ -235,7 +235,7 @@ export class CreateChartController {
       }
     });
 
-    let { vizs, mconfigs, queries, struct } =
+    let { charts, mconfigs, queries, struct } =
       await this.blockmlService.rebuildStruct({
         traceId: traceId,
         orgId: project.orgId,
@@ -247,20 +247,20 @@ export class CreateChartController {
         envId: envId
       });
 
-    let viz = vizs.find(x => x.chartId === chartId);
+    let chart = charts.find(x => x.chartId === chartId);
 
-    let vizEnt = common.isDefined(viz)
-      ? this.wrapToEntService.wrapToEntityViz(viz)
+    let chartEnt = common.isDefined(chart)
+      ? this.wrapToEntService.wrapToEntityChart(chart)
       : undefined;
 
-    let vizTile = common.isDefined(viz) ? viz.tiles[0] : undefined;
+    let chartTile = common.isDefined(chart) ? chart.tiles[0] : undefined;
 
-    let vizMconfig = common.isDefined(viz)
-      ? mconfigs.find(x => x.mconfigId === vizTile.mconfigId)
+    let chartMconfig = common.isDefined(chart)
+      ? mconfigs.find(x => x.mconfigId === chartTile.mconfigId)
       : undefined;
 
-    let vizQuery = common.isDefined(viz)
-      ? queries.find(x => x.queryId === vizTile.queryId)
+    let chartQuery = common.isDefined(chart)
+      ? queries.find(x => x.queryId === chartTile.queryId)
       : undefined;
 
     await retry(
@@ -269,11 +269,11 @@ export class CreateChartController {
           await this.db.packer.write({
             tx: tx,
             insert: {
-              vizs: [vizEnt],
-              mconfigs: [vizMconfig]
+              charts: [chartEnt],
+              mconfigs: [chartMconfig]
             },
             insertOrUpdate: {
-              queries: [vizQuery],
+              queries: [chartQuery],
               structs: [struct],
               bridges: [...branchBridges]
             }
@@ -299,7 +299,7 @@ export class CreateChartController {
     //   }
     // });
 
-    if (common.isUndefined(viz)) {
+    if (common.isUndefined(chart)) {
       let fileId = `${parentNodeId}/${fileName}`;
       let fileIdAr = fileId.split('/');
       fileIdAr.shift();
@@ -331,8 +331,8 @@ export class CreateChartController {
     // });
 
     let payload: apiToBackend.ToBackendCreateChartResponsePayload = {
-      viz: this.wrapToApiService.wrapToApiViz({
-        viz: vizEnt,
+      chart: this.wrapToApiService.wrapToApiChart({
+        chart: chartEnt,
         mconfigs: [],
         queries: [],
         member: this.wrapToApiService.wrapToApiMember(member),

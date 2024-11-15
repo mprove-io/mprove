@@ -33,7 +33,7 @@ export class ToBackendGetChartResponsePayload {
 
   @ValidateNested()
   @Type(() => common.ChartX)
-  viz: common.ChartX;
+  chart: common.ChartX;
 }
 
 export class ToBackendGetChartResponse extends common.MyResponse {

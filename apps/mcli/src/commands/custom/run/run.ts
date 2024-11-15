@@ -12,7 +12,7 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
-interface VizPart {
+interface ChartPart {
   title: string;
   chartId: string;
   url: string;
@@ -100,7 +100,7 @@ export class RunCommand extends CustomCommand {
     description: '(default false) Do not run dashboards'
   });
 
-  noVizs = Option.Boolean('--no-charts', false, {
+  noCharts = Option.Boolean('--no-charts', false, {
     description: '(default false) Do not run charts'
   });
 
@@ -108,7 +108,7 @@ export class RunCommand extends CustomCommand {
     description: '(default false), show dashboards in output'
   });
 
-  getVizs = Option.Boolean('--get-charts', false, {
+  getCharts = Option.Boolean('--get-charts', false, {
     description: '(default false), show charts in output'
   });
 
@@ -153,7 +153,7 @@ export class RunCommand extends CustomCommand {
       throw serverError;
     }
 
-    if (this.noVizs === true && this.getVizs === true) {
+    if (this.noCharts === true && this.getCharts === true) {
       let serverError = new common.ServerError({
         message: common.ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
         data: `no-charts and get-charts`,
@@ -162,7 +162,7 @@ export class RunCommand extends CustomCommand {
       throw serverError;
     }
 
-    if (this.noVizs === true && common.isDefined(this.chartIds)) {
+    if (this.noCharts === true && common.isDefined(this.chartIds)) {
       let serverError = new common.ServerError({
         message: common.ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
         data: `no-charts and chart-ids`,
@@ -212,21 +212,21 @@ export class RunCommand extends CustomCommand {
 
     let queryIdsWithDuplicates: string[] = [];
 
-    let vizParts: VizPart[] = [];
+    let chartParts: ChartPart[] = [];
 
-    if (this.noVizs === false) {
-      let getVizsReqPayload: apiToBackend.ToBackendGetChartsRequestPayload = {
+    if (this.noCharts === false) {
+      let getChartsReqPayload: apiToBackend.ToBackendGetChartsRequestPayload = {
         projectId: this.projectId,
         isRepoProd: isRepoProd,
         branchId: this.branch,
         envId: this.env
       };
 
-      let getVizsResp = await mreq<apiToBackend.ToBackendGetChartsResponse>({
+      let getChartsResp = await mreq<apiToBackend.ToBackendGetChartsResponse>({
         loginToken: loginToken,
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetCharts,
-        payload: getVizsReqPayload,
+        payload: getChartsReqPayload,
         host: this.context.config.mproveCliHost
       });
 
@@ -234,7 +234,11 @@ export class RunCommand extends CustomCommand {
 
       if (common.isDefined(chartIds)) {
         chartIds.forEach(x => {
-          if (getVizsResp.payload.vizs.map(viz => viz.chartId).indexOf(x) < 0) {
+          if (
+            getChartsResp.payload.charts
+              .map(chart => chart.chartId)
+              .indexOf(x) < 0
+          ) {
             let serverError = new common.ServerError({
               message: common.ErEnum.MCLI_CHART_NOT_FOUND,
               data: { id: x },
@@ -245,11 +249,11 @@ export class RunCommand extends CustomCommand {
         });
       }
 
-      vizParts = getVizsResp.payload.vizs
+      chartParts = getChartsResp.payload.charts
         .filter(
-          vizPart =>
+          chartPart =>
             common.isUndefined(chartIds) ||
-            chartIds.indexOf(vizPart.chartId) > -1
+            chartIds.indexOf(chartPart.chartId) > -1
         )
         .map(x => {
           let url = getChartUrl({
@@ -262,7 +266,7 @@ export class RunCommand extends CustomCommand {
             chartId: x.chartId
           });
 
-          let vizPart: VizPart = {
+          let chartPart: ChartPart = {
             title: x.title,
             chartId: x.chartId,
             url: url,
@@ -271,7 +275,7 @@ export class RunCommand extends CustomCommand {
 
           queryIdsWithDuplicates.push(x.tiles[0].queryId);
 
-          return vizPart;
+          return chartPart;
         });
     }
 
@@ -394,8 +398,8 @@ export class RunCommand extends CustomCommand {
       host: this.context.config.mproveCliHost
     });
 
-    if (this.noVizs === false && common.isUndefined(this.concurrency)) {
-      vizParts.forEach(v => {
+    if (this.noCharts === false && common.isUndefined(this.concurrency)) {
+      chartParts.forEach(v => {
         let query = runQueriesResp.payload.runningQueries.find(
           q => q.queryId === v.query.queryId
         );
@@ -451,9 +455,9 @@ export class RunCommand extends CustomCommand {
           ) {
             waitQueries.push(query);
 
-            if (this.noVizs === false) {
-              vizParts
-                .filter(vizPart => vizPart.query.queryId === query.queryId)
+            if (this.noCharts === false) {
+              chartParts
+                .filter(chartPart => chartPart.query.queryId === query.queryId)
                 .forEach(x => (x.query = query));
             }
 
@@ -484,10 +488,10 @@ export class RunCommand extends CustomCommand {
         this.wait === true ? 0 : runQueriesResp.payload.startedQueryIds.length
     });
 
-    let errorCharts: VizPart[] =
+    let errorCharts: ChartPart[] =
       queriesStats.error === 0
         ? []
-        : vizParts
+        : chartParts
             .filter(x => x.query.status === common.QueryStatusEnum.Error)
             .map(v => ({
               title: v.title,
@@ -532,8 +536,8 @@ export class RunCommand extends CustomCommand {
       log.dashboards = dashboardParts;
     }
 
-    if (this.getVizs === true) {
-      log.charts = vizParts;
+    if (this.getCharts === true) {
+      log.charts = chartParts;
     }
 
     log.errorCharts = errorCharts;

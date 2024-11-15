@@ -21,7 +21,7 @@
 
         <div class="relative mx-5 flex h-9 w-9 flex-shrink-0">
           <ngx-spinner
-            [name]="viz.chartId"
+            [name]="chart.chartId"
             color="rgba(54, 94, 224, 100)"
             bdColor="rgba(0, 0, 0, 0)"
             size="default"
@@ -34,7 +34,7 @@
         </div>
 
         <button
-          data-cy="vizOptionsMenuButton"
+          data-cy="chartOptionsMenuButton"
           class="invisible ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded hover:bg-blue-200 focus:outline-none group-hover:visible"
           #t1="tippy"
           [tp]="templateChartMenuOptions"
@@ -48,74 +48,74 @@
         <ng-template #templateChartMenuOptions>
           <div class="border-gray4 w-64 rounded-md border-2 bg-white shadow-xl">
             <button
-              data-cy="vizOptionsRun"
+              data-cy="chartOptionsRun"
               class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
               (click)="t1.hide(); run($event)"
               >Run</button
             >
 
-            <ng-template #templateChartMenuOptionsExploreViz>
+            <ng-template #templateChartMenuOptionsExploreChart>
               <div *ngIf="isExplorer === false">Explorer role required</div>
               <div *ngIf="isExplorer === true">No access to model</div>
             </ng-template>
 
             <div
-              [tp]="templateChartMenuOptionsExploreViz"
+              [tp]="templateChartMenuOptionsExploreChart"
               placement="left"
-              [tpIsEnabled]="viz.canEditOrDeleteViz === false"
+              [tpIsEnabled]="chart.canEditOrDeleteChart === false"
             >
               <button
-                data-cy="vizOptionsExplore"
+                data-cy="chartOptionsExplore"
                 class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
                 [ngClass]="{
                   'cursor-default text-gray-400':
-                    viz.tiles[0].hasAccessToModel === false
+                    chart.tiles[0].hasAccessToModel === false
                 }"
                 (click)="t1.hide(); explore($event)"
-                [disabled]="viz.tiles[0].hasAccessToModel === false"
+                [disabled]="chart.tiles[0].hasAccessToModel === false"
                 >Explore</button
               >
             </div>
 
             <div
-              tp="Viz can be edited by author and project members with ProjectAdmin or FilesEditor role. Try to save viz as new to become an author."
+              tp="Chart can be edited by author and project members with ProjectAdmin or FilesEditor role. Try to save chart as new to become an author."
               placement="left"
-              [tpIsEnabled]="viz.canEditOrDeleteViz === false"
+              [tpIsEnabled]="chart.canEditOrDeleteChart === false"
             >
               <button
-                data-cy="vizOptionsEditInfo"
+                data-cy="chartOptionsEditInfo"
                 class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
                 [ngClass]="{
                   'cursor-default text-gray-400':
-                    viz.canEditOrDeleteViz === false
+                    chart.canEditOrDeleteChart === false
                 }"
-                (click)="t1.hide(); editVizInfo($event)"
-                [disabled]="viz.canEditOrDeleteViz === false"
+                (click)="t1.hide(); editChartInfo($event)"
+                [disabled]="chart.canEditOrDeleteChart === false"
                 >Edit Info</button
               >
             </div>
 
             <button
-              data-cy="vizOptionsGoToFile"
+              data-cy="chartOptionsGoToFile"
               class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
               (click)="t1.hide(); goToFile($event)"
               >Go to file</button
             >
 
             <div
-              tp="Viz can be deleted by author and project members with ProjectAdmin or FilesEditor role. Try to save viz as new to become an author."
+              tp="Chart can be deleted by author and project members with ProjectAdmin or FilesEditor role. Try to save chart as new to become an author."
               placement="left"
-              [tpIsEnabled]="viz.canEditOrDeleteViz === false"
+              [tpIsEnabled]="chart.canEditOrDeleteChart === false"
             >
               <button
-                data-cy="vizOptionsDelete"
+                data-cy="chartOptionsDelete"
                 class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
                 [ngClass]="{
                   'cursor-default text-gray-400':
-                    viz.canEditOrDeleteViz === false
+                    chart.canEditOrDeleteChart === false
                 }"
-                (click)="t1.hide(); deleteViz($event)"
-                [disabled]="viz.canEditOrDeleteViz === false"
+                (click)="t1.hide(); deleteChart($event)"
+                [disabled]="chart.canEditOrDeleteChart === false"
                 >Delete</button
               >
             </div>

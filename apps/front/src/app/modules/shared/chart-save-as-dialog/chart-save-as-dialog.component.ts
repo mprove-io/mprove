@@ -233,7 +233,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
         let roles = this.rolesForm.controls['roles'].value;
         let users = this.usersForm.controls['users'].value;
 
-        this.saveAsNewViz({
+        this.saveAsNewChart({
           newTitle: newTitle,
           roles: roles,
           users: users
@@ -245,7 +245,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
     }
   }
 
-  newVizOnClick() {
+  newChartOnClick() {
     this.chartSaveAs = ChartSaveAsEnum.NEW_CHART;
     this.titleForm.get('title').updateValueAndValidity();
   }
@@ -310,7 +310,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
     }
   }
 
-  saveAsNewViz(item: { newTitle: string; roles: string; users: string }) {
+  saveAsNewChart(item: { newTitle: string; roles: string; users: string }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
     let { newTitle, roles, users } = item;
@@ -338,9 +338,9 @@ export class ChartSaveAsDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateChartResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.navigateService.navigateToVizs({
+            this.navigateService.navigateToCharts({
               extra: {
-                queryParams: { search: resp.payload.viz.chartId }
+                queryParams: { search: resp.payload.chart.chartId }
               }
             });
           }

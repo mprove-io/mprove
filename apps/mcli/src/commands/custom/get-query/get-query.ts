@@ -12,7 +12,7 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
-interface VizPartQ {
+interface ChartPartQ {
   title: string;
   chartId: string;
   url: string;
@@ -266,10 +266,10 @@ export class GetQueryCommand extends CustomCommand {
       host: this.context.config.mproveCliHost
     });
 
-    let vizPartQ: VizPartQ;
+    let chartPartQ: ChartPartQ;
 
     if (common.isDefined(this.chartId)) {
-      let getVizReqPayload: apiToBackend.ToBackendGetChartRequestPayload = {
+      let getChartReqPayload: apiToBackend.ToBackendGetChartRequestPayload = {
         projectId: this.projectId,
         isRepoProd: isRepoProd,
         branchId: this.branch,
@@ -277,16 +277,16 @@ export class GetQueryCommand extends CustomCommand {
         chartId: this.chartId
       };
 
-      let getVizResp = await mreq<apiToBackend.ToBackendGetChartResponse>({
+      let getChartResp = await mreq<apiToBackend.ToBackendGetChartResponse>({
         loginToken: loginToken,
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetChart,
-        payload: getVizReqPayload,
+        payload: getChartReqPayload,
         host: this.context.config.mproveCliHost
       });
 
-      let vizX = getVizResp.payload.viz;
-      let tileX = vizX.tiles[0];
+      let chartX = getChartResp.payload.chart;
+      let tileX = chartX.tiles[0];
 
       let queryPartQ: QueryPartQ = {
         connectionId: tileX.query.connectionId,
@@ -320,12 +320,12 @@ export class GetQueryCommand extends CustomCommand {
         repoId: getRepoResp.payload.repo.repoId,
         branch: this.branch,
         env: this.env,
-        chartId: vizX.chartId
+        chartId: chartX.chartId
       });
 
-      vizPartQ = {
+      chartPartQ = {
         title: tileX.mconfig.chart.title,
-        chartId: vizX.chartId,
+        chartId: chartX.chartId,
         url: url,
         query: queryPartQ
       };
@@ -517,7 +517,7 @@ export class GetQueryCommand extends CustomCommand {
     let log: any = {};
 
     if (common.isDefined(this.chartId)) {
-      log.chart = vizPartQ;
+      log.chart = chartPartQ;
     }
 
     if (common.isDefined(this.dashboardId)) {

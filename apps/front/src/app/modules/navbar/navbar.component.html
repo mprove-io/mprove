@@ -80,7 +80,7 @@
         [ngClass]="{
           'cursor-default text-gray-400':
             !nav || !nav.projectId || needSave === true,
-          'font-semibold': isVizsRouteActive === true
+          'font-semibold': isChartsRouteActive === true
         }"
         (click)="navigateCharts()"
         [disabled]="!nav || !nav.projectId || needSave === true"

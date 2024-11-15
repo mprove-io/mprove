@@ -108,15 +108,15 @@ export class DeleteChartController {
       });
     }
 
-    let existingViz = await this.chartsService.getVizCheckExists({
+    let existingChart = await this.chartsService.getChartCheckExists({
       structId: bridge.structId,
       chartId: chartId
     });
 
     if (member.isAdmin === false && member.isEditor === false) {
-      this.chartsService.checkVizPath({
+      this.chartsService.checkChartPath({
         userAlias: user.alias,
-        filePath: existingViz.filePath
+        filePath: existingChart.filePath
       });
     }
 
@@ -130,7 +130,7 @@ export class DeleteChartController {
         projectId: projectId,
         repoId: repoId,
         branch: branchId,
-        fileNodeId: existingViz.filePath,
+        fileNodeId: existingChart.filePath,
         userAlias: user.alias,
         remoteType: project.remoteType,
         gitUrl: project.gitUrl,

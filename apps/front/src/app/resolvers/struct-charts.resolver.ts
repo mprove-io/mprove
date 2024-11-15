@@ -19,7 +19,7 @@ export class StructChartsResolver implements Resolve<Observable<boolean>> {
     private navQuery: NavQuery,
     private userQuery: UserQuery,
     private apiService: ApiService,
-    private vizsQuery: ChartsQuery,
+    private chartsQuery: ChartsQuery,
     private modelsQuery: ModelsQuery,
     private structQuery: StructQuery,
     private memberQuery: MemberQuery,
@@ -74,7 +74,7 @@ export class StructChartsResolver implements Resolve<Observable<boolean>> {
             });
             this.modelsQuery.update({ models: resp.payload.models });
 
-            this.vizsQuery.update({ vizs: resp.payload.vizs });
+            this.chartsQuery.update({ charts: resp.payload.charts });
 
             return true;
           } else if (

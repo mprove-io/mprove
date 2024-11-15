@@ -112,7 +112,7 @@ test('1', async t => {
         req: req1
       });
 
-    let viz = resp1.payload.vizs.find(x => x.chartId === 's_s1');
+    let chart = resp1.payload.charts.find(x => x.chartId === 's_s1');
 
     let req2: apiToBackend.ToBackendRunQueriesDryRequest = {
       info: {
@@ -123,7 +123,7 @@ test('1', async t => {
       payload: {
         projectId: projectId,
         dryId: common.makeId(),
-        queryIds: [viz.tiles[0].queryId]
+        queryIds: [chart.tiles[0].queryId]
       }
     };
 

@@ -9,7 +9,7 @@ let func = common.FuncEnum.CheckChartAccess;
 
 export function checkChartAccess(
   item: {
-    vizs: common.FileChart[];
+    charts: common.FileChart[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
@@ -19,9 +19,9 @@ export function checkChartAccess(
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newVizs = barSpecial.checkAccess(
+  let newCharts = barSpecial.checkAccess(
     {
-      entities: item.vizs,
+      entities: item.charts,
       errors: item.errors,
       structId: item.structId,
       caller: item.caller
@@ -37,7 +37,7 @@ export function checkChartAccess(
     common.LogTypeEnum.Errors,
     item.errors
   );
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Charts, newVizs);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Charts, newCharts);
 
-  return newVizs;
+  return newCharts;
 }

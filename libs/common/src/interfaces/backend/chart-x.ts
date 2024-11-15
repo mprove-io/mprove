@@ -12,5 +12,5 @@ export class ChartX extends Chart {
   author: string;
 
   @IsBoolean()
-  canEditOrDeleteViz: boolean;
+  canEditOrDeleteChart: boolean;
 }

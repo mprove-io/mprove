@@ -12,7 +12,7 @@ let testId = 'e__chart-too-many-tiles';
 
 test('1', async t => {
   let errors: BmError[];
-  let vizs: common.FileChart[];
+  let charts: common.FileChart[];
 
   let wLogger;
   let configService;
@@ -46,7 +46,7 @@ test('1', async t => {
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
-    vizs = await helper.readLog(fromDir, common.LogTypeEnum.Charts);
+    charts = await helper.readLog(fromDir, common.LogTypeEnum.Charts);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -60,7 +60,7 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(vizs.length, 0);
+  t.is(charts.length, 0);
 
   t.is(errors[0].title, common.ErTitleEnum.CHART_TOO_MANY_TILES);
   t.is(errors[0].lines[0].line, 1);

@@ -176,24 +176,24 @@ export class WrapToEntService {
     };
   }
 
-  wrapToEntityViz(viz: common.Chart): schemaPostgres.ChartEnt {
+  wrapToEntityChart(chart: common.Chart): schemaPostgres.ChartEnt {
     return {
       chartFullId: this.hashService.makeChartFullId({
-        structId: viz.structId,
-        chartId: viz.chartId
+        structId: chart.structId,
+        chartId: chart.chartId
       }),
-      structId: viz.structId,
-      chartId: viz.chartId,
-      title: viz.title,
-      modelId: viz.modelId,
-      modelLabel: viz.modelLabel,
-      filePath: viz.filePath,
-      accessUsers: viz.accessUsers,
-      accessRoles: viz.accessRoles,
-      gr: viz.gr,
-      hidden: viz.hidden,
-      tiles: viz.tiles,
-      serverTs: viz.serverTs
+      structId: chart.structId,
+      chartId: chart.chartId,
+      title: chart.title,
+      modelId: chart.modelId,
+      modelLabel: chart.modelLabel,
+      filePath: chart.filePath,
+      accessUsers: chart.accessUsers,
+      accessRoles: chart.accessRoles,
+      gr: chart.gr,
+      hidden: chart.hidden,
+      tiles: chart.tiles,
+      serverTs: chart.serverTs
     };
   }
 }

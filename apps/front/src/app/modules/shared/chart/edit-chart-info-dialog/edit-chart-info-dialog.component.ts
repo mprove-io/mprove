@@ -33,7 +33,7 @@ export interface EditChartInfoDialogData {
   branchId: string;
   envId: string;
   mconfig: common.MconfigX;
-  viz: common.Chart;
+  chart: common.Chart;
 }
 
 @Component({
@@ -97,11 +97,11 @@ export class EditChartInfoDialogComponent implements OnInit {
     });
     setValueAndMark({
       control: this.rolesForm.controls['roles'],
-      value: this.ref.data.viz.accessRoles?.join(', ')
+      value: this.ref.data.chart.accessRoles?.join(', ')
     });
     setValueAndMark({
       control: this.usersForm.controls['users'],
-      value: this.ref.data.viz.accessUsers?.join(', ')
+      value: this.ref.data.chart.accessUsers?.join(', ')
     });
 
     setTimeout(() => {
@@ -128,7 +128,7 @@ export class EditChartInfoDialogComponent implements OnInit {
         isRepoProd: this.ref.data.isRepoProd,
         branchId: this.ref.data.branchId,
         envId: this.ref.data.envId,
-        chartId: this.ref.data.viz.chartId,
+        chartId: this.ref.data.chart.chartId,
         tileTitle: newTitle.trim(),
         accessRoles: roles,
         accessUsers: users,
@@ -146,7 +146,7 @@ export class EditChartInfoDialogComponent implements OnInit {
         .pipe(
           tap(async (resp: apiToBackend.ToBackendModifyChartResponse) => {
             if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-              this.navigateService.reloadVizs();
+              this.navigateService.reloadCharts();
             }
           }),
           take(1)

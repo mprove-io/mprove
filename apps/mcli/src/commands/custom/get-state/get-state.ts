@@ -141,18 +141,18 @@ export class GetStateCommand extends CustomCommand {
       host: this.context.config.mproveCliHost
     });
 
-    let getVizsReqPayload: apiToBackend.ToBackendGetChartsRequestPayload = {
+    let getChartsReqPayload: apiToBackend.ToBackendGetChartsRequestPayload = {
       projectId: this.projectId,
       isRepoProd: isRepoProd,
       branchId: this.branch,
       envId: this.env
     };
 
-    let getVizsResp = await mreq<apiToBackend.ToBackendGetChartsResponse>({
+    let getChartsResp = await mreq<apiToBackend.ToBackendGetChartsResponse>({
       loginToken: loginToken,
       pathInfoName:
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetCharts,
-      payload: getVizsReqPayload,
+      payload: getChartsReqPayload,
       host: this.context.config.mproveCliHost
     });
 
@@ -184,7 +184,7 @@ export class GetStateCommand extends CustomCommand {
       loginToken: loginToken,
       pathInfoName:
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMetrics,
-      payload: getVizsReqPayload,
+      payload: getChartsReqPayload,
       host: this.context.config.mproveCliHost
     });
 
@@ -201,13 +201,13 @@ export class GetStateCommand extends CustomCommand {
       validationErrorsTotal: getRepoResp.payload.struct.errors.length,
       modelsTotal: getModelsResp.payload.models.length,
       dashboardsTotal: getDashboardsResp.payload.dashboards.length,
-      chartsTotal: getVizsResp.payload.vizs.length,
+      chartsTotal: getChartsResp.payload.charts.length,
       needValidate: getRepoResp.payload.needValidate,
       structId: getRepoResp.payload.struct.structId
     };
 
     if (this.getCharts === true) {
-      log.charts = getVizsResp.payload.vizs.map(x => {
+      log.charts = getChartsResp.payload.charts.map(x => {
         let url = getChartUrl({
           host: this.context.config.mproveCliHost,
           orgId: getRepoResp.payload.repo.orgId,

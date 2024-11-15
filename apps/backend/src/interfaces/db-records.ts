@@ -20,5 +20,5 @@ export class DbRecords {
   reports?: schemaPostgres.ReportEnt[];
   structs?: schemaPostgres.StructEnt[];
   users?: schemaPostgres.UserEnt[];
-  vizs?: schemaPostgres.ChartEnt[];
+  charts?: schemaPostgres.ChartEnt[];
 }

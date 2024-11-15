@@ -211,10 +211,10 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insertRecords.vizs) &&
-        insertRecords.vizs.length > 0
+        common.isDefined(insertRecords.charts) &&
+        insertRecords.charts.length > 0
       ) {
-        await tx.insert(chartsTable).values(insertRecords.vizs);
+        await tx.insert(chartsTable).values(insertRecords.charts);
       }
     }
 
@@ -549,15 +549,15 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(updateRecords.vizs) &&
-        updateRecords.vizs.length > 0
+        common.isDefined(updateRecords.charts) &&
+        updateRecords.charts.length > 0
       ) {
-        updateRecords.vizs = setUndefinedToNull({
-          ents: updateRecords.vizs,
+        updateRecords.charts = setUndefinedToNull({
+          ents: updateRecords.charts,
           table: chartsTable
         });
 
-        await forEachSeries(updateRecords.vizs, async x => {
+        await forEachSeries(updateRecords.charts, async x => {
           await tx
             .update(chartsTable)
             .set(x)
@@ -1005,21 +1005,21 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insOrUpdRecords.vizs) &&
-        insOrUpdRecords.vizs.length > 0
+        common.isDefined(insOrUpdRecords.charts) &&
+        insOrUpdRecords.charts.length > 0
       ) {
-        insOrUpdRecords.vizs = Array.from(
-          new Set(insOrUpdRecords.vizs.map(x => x.chartFullId))
-        ).map(id => insOrUpdRecords.vizs.find(x => x.chartFullId === id));
+        insOrUpdRecords.charts = Array.from(
+          new Set(insOrUpdRecords.charts.map(x => x.chartFullId))
+        ).map(id => insOrUpdRecords.charts.find(x => x.chartFullId === id));
 
-        insOrUpdRecords.vizs = setUndefinedToNull({
-          ents: insOrUpdRecords.vizs,
+        insOrUpdRecords.charts = setUndefinedToNull({
+          ents: insOrUpdRecords.charts,
           table: chartsTable
         });
 
         await tx
           .insert(chartsTable)
-          .values(insOrUpdRecords.vizs)
+          .values(insOrUpdRecords.charts)
           .onConflictDoUpdate({
             target: chartsTable.chartFullId,
             set: drizzleSetAllColumnsFull({ table: chartsTable })

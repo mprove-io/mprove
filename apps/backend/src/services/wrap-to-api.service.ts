@@ -503,17 +503,18 @@ export class WrapToApiService {
     };
   }
 
-  wrapToApiViz(item: {
-    viz: schemaPostgres.ChartEnt;
+  wrapToApiChart(item: {
+    chart: schemaPostgres.ChartEnt;
     mconfigs: common.MconfigX[];
     queries: common.Query[];
     member: common.Member;
     isAddMconfigAndQuery: boolean;
     models: common.ModelX[];
   }): common.ChartX {
-    let { viz, mconfigs, queries, member, isAddMconfigAndQuery, models } = item;
+    let { chart, mconfigs, queries, member, isAddMconfigAndQuery, models } =
+      item;
 
-    let filePathArray = viz.filePath.split('/');
+    let filePathArray = chart.filePath.split('/');
 
     let usersFolderIndex = filePathArray.findIndex(
       x => x === common.MPROVE_USERS_FOLDER
@@ -524,31 +525,31 @@ export class WrapToApiService {
         ? filePathArray[usersFolderIndex + 1]
         : undefined;
 
-    let canEditOrDeleteViz =
+    let canEditOrDeleteChart =
       member.isEditor || member.isAdmin || author === member.alias;
 
     return {
-      structId: viz.structId,
-      chartId: viz.chartId,
+      structId: chart.structId,
+      chartId: chart.chartId,
       author: author,
-      canEditOrDeleteViz: canEditOrDeleteViz,
-      title: viz.title,
-      modelId: viz.modelId,
-      modelLabel: viz.modelLabel,
-      filePath: viz.filePath,
-      accessUsers: viz.accessUsers,
-      accessRoles: viz.accessRoles,
-      gr: viz.gr,
-      hidden: viz.hidden,
+      canEditOrDeleteChart: canEditOrDeleteChart,
+      title: chart.title,
+      modelId: chart.modelId,
+      modelLabel: chart.modelLabel,
+      filePath: chart.filePath,
+      accessUsers: chart.accessUsers,
+      accessRoles: chart.accessRoles,
+      gr: chart.gr,
+      hidden: chart.hidden,
       tiles: makeTilesX({
-        tiles: viz.tiles,
+        tiles: chart.tiles,
         mconfigs: mconfigs,
         queries: queries,
         isAddMconfigAndQuery: isAddMconfigAndQuery,
         models: models,
         dashboardExtendedFilters: undefined
       }),
-      serverTs: Number(viz.serverTs)
+      serverTs: Number(chart.serverTs)
     };
   }
 }

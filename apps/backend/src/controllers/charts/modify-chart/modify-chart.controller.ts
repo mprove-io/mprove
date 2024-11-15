@@ -138,15 +138,15 @@ export class ModifyChartController {
       });
     }
 
-    let existingViz = await this.chartsService.getVizCheckExists({
+    let existingChart = await this.chartsService.getChartCheckExists({
       structId: bridge.structId,
       chartId: chartId
     });
 
     if (member.isAdmin === false && member.isEditor === false) {
-      this.chartsService.checkVizPath({
+      this.chartsService.checkChartPath({
         userAlias: user.alias,
-        filePath: existingViz.filePath
+        filePath: existingChart.filePath
       });
     }
 
@@ -167,7 +167,7 @@ export class ModifyChartController {
       });
     }
 
-    let vizFileText = makeChartFileText({
+    let chartFileText = makeChartFileText({
       mconfig: mconfig,
       tileTitle: tileTitle,
       roles: accessRoles,
@@ -186,9 +186,9 @@ export class ModifyChartController {
         projectId: projectId,
         repoId: repoId,
         branch: branchId,
-        fileNodeId: existingViz.filePath,
+        fileNodeId: existingChart.filePath,
         userAlias: user.alias,
-        content: vizFileText,
+        content: chartFileText,
         remoteType: project.remoteType,
         gitUrl: project.gitUrl,
         privateKey: project.privateKey,
@@ -229,7 +229,7 @@ export class ModifyChartController {
       }
     });
 
-    let { struct, vizs, mconfigs, queries } =
+    let { struct, charts, mconfigs, queries } =
       await this.blockmlService.rebuildStruct({
         traceId: traceId,
         orgId: project.orgId,
@@ -241,26 +241,26 @@ export class ModifyChartController {
         envId: envId
       });
 
-    let viz = vizs.find(x => x.chartId === chartId);
+    let chart = charts.find(x => x.chartId === chartId);
 
-    let vizEnt = common.isDefined(viz)
-      ? this.wrapToEntService.wrapToEntityViz(viz)
+    let chartEnt = common.isDefined(chart)
+      ? this.wrapToEntService.wrapToEntityChart(chart)
       : undefined;
 
-    let vizTile = common.isDefined(viz) ? viz.tiles[0] : undefined;
+    let chartTile = common.isDefined(chart) ? chart.tiles[0] : undefined;
 
-    let vizMconfig = common.isDefined(viz)
-      ? mconfigs.find(x => x.mconfigId === vizTile.mconfigId)
+    let chartMconfig = common.isDefined(chart)
+      ? mconfigs.find(x => x.mconfigId === chartTile.mconfigId)
       : undefined;
 
-    let vizQuery = common.isDefined(viz)
-      ? queries.find(x => x.queryId === vizTile.queryId)
+    let chartQuery = common.isDefined(chart)
+      ? queries.find(x => x.queryId === chartTile.queryId)
       : undefined;
 
     await retry(
       async () =>
         await this.db.drizzle.transaction(async tx => {
-          if (common.isUndefined(viz)) {
+          if (common.isUndefined(chart)) {
             await tx
               .delete(chartsTable)
               .where(
@@ -274,11 +274,11 @@ export class ModifyChartController {
           await this.db.packer.write({
             tx: tx,
             insert: {
-              mconfigs: [vizMconfig]
+              mconfigs: [chartMconfig]
             },
             insertOrUpdate: {
-              vizs: common.isDefined(viz) ? [vizEnt] : undefined,
-              queries: [vizQuery],
+              charts: common.isDefined(chart) ? [chartEnt] : undefined,
+              queries: [chartQuery],
               structs: [struct],
               bridges: [...branchBridges]
             }
@@ -306,13 +306,13 @@ export class ModifyChartController {
     //   }
     // });
 
-    if (common.isUndefined(viz)) {
+    if (common.isUndefined(chart)) {
       // await this.vizsRepository.delete({
       //   viz_id: chartId,
       //   struct_id: bridge.struct_id
       // });
 
-      let fileIdAr = existingViz.filePath.split('/');
+      let fileIdAr = existingChart.filePath.split('/');
       fileIdAr.shift();
       let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
 

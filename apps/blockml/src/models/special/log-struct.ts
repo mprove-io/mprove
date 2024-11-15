@@ -15,7 +15,7 @@ export async function logStruct(
     reps: common.FileRep[];
     udfsDict: common.UdfsDict;
     views: common.FileView[];
-    vizs: common.FileChart[];
+    charts: common.FileChart[];
     structId: string;
     errors: BmError[];
     caller: common.CallerEnum;
@@ -30,7 +30,7 @@ export async function logStruct(
     metrics,
     apis,
     dashboards,
-    vizs,
+    charts,
     structId,
     caller
   } = item;
@@ -43,5 +43,5 @@ export async function logStruct(
   log(cs, caller, func, structId, common.LogTypeEnum.Reps, reps);
   log(cs, caller, func, structId, common.LogTypeEnum.UdfsDict, udfsDict);
   log(cs, caller, func, structId, common.LogTypeEnum.Views, views);
-  log(cs, caller, func, structId, common.LogTypeEnum.Charts, vizs);
+  log(cs, caller, func, structId, common.LogTypeEnum.Charts, charts);
 }

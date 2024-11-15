@@ -14,8 +14,8 @@ import { common } from '~front/barrels/common';
 
 export interface DeleteChartDialogData {
   apiService: ApiService;
-  vizDeletedFnBindThis: any;
-  viz: common.Chart;
+  chartDeletedFnBindThis: any;
+  chart: common.Chart;
   projectId: string;
   branchId: string;
   envId: string;
@@ -51,7 +51,7 @@ export class DeleteChartDialogComponent implements OnInit {
 
     let { projectId, branchId, isRepoProd } = this.ref.data;
 
-    let viz: common.Chart = this.ref.data.viz;
+    let chart: common.Chart = this.ref.data.chart;
     let apiService: ApiService = this.ref.data.apiService;
 
     let payload: apiToBackend.ToBackendDeleteChartRequestPayload = {
@@ -59,7 +59,7 @@ export class DeleteChartDialogComponent implements OnInit {
       branchId: branchId,
       envId: this.ref.data.envId,
       isRepoProd: isRepoProd,
-      chartId: viz.chartId
+      chartId: chart.chartId
     };
 
     apiService
@@ -72,7 +72,7 @@ export class DeleteChartDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteChartResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.ref.data.vizDeletedFnBindThis(viz.chartId);
+            this.ref.data.chartDeletedFnBindThis(chart.chartId);
           }
         }),
         take(1)

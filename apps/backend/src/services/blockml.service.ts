@@ -167,7 +167,7 @@ export class BlockmlService {
       errors,
       views,
       udfsDict,
-      vizs,
+      charts,
       metrics,
       reps,
       apis,
@@ -230,7 +230,9 @@ export class BlockmlService {
               insert: {
                 // apis: apis.map(x => this.wrapService.wrapToEntityApi(x)),
                 structs: [struct],
-                vizs: vizs.map(x => this.wrapToEntService.wrapToEntityViz(x)),
+                charts: charts.map(x =>
+                  this.wrapToEntService.wrapToEntityChart(x)
+                ),
                 models: models.map(x =>
                   this.wrapToEntService.wrapToEntityModel(x)
                 ),
@@ -278,7 +280,7 @@ export class BlockmlService {
       metrics: metrics,
       apis: apis,
       reps: reps,
-      vizs: vizs,
+      charts: charts,
       dashboards: dashboards,
       mconfigs: mconfigs,
       queries: queries

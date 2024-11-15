@@ -8,7 +8,7 @@ let func = common.FuncEnum.CheckChartTilesExist;
 
 export function checkChartTilesExist(
   item: {
-    vizs: common.FileChart[];
+    charts: common.FileChart[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
@@ -18,9 +18,9 @@ export function checkChartTilesExist(
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newVizs: common.FileChart[] = [];
+  let newCharts: common.FileChart[] = [];
 
-  item.vizs.forEach(x => {
+  item.charts.forEach(x => {
     let errorsOnStart = item.errors.length;
 
     if (common.isUndefined(x.tiles)) {
@@ -60,7 +60,7 @@ export function checkChartTilesExist(
     }
 
     if (errorsOnStart === item.errors.length) {
-      newVizs.push(x);
+      newCharts.push(x);
     }
   });
 
@@ -72,7 +72,7 @@ export function checkChartTilesExist(
     common.LogTypeEnum.Errors,
     item.errors
   );
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Charts, newVizs);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Charts, newCharts);
 
-  return newVizs;
+  return newCharts;
 }

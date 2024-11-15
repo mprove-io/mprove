@@ -1,13 +1,13 @@
 <div class="flex flex-col bg-white p-9">
   <div
-    data-cy="editVizInfoDialogTitle"
+    data-cy="editChartInfoDialogTitle"
     class="text-gray2 mb-9 mt-5 flex-grow text-left text-2xl font-semibold"
     >Edit Chart</div
   >
 
   <div class="text-base text-gray-400"
     >{{ struct?.mproveDirValue | mproveDir | capitalize }} / {{ usersFolder }} /
-    {{ alias }} / {{ ref.data.viz.chartId }}.chart</div
+    {{ alias }} / {{ ref.data.chart.chartId }}.chart</div
   >
 
   <div class="mt-9 flex flex-row items-start">
@@ -21,7 +21,7 @@
       <input
         autocomplete="off"
         spellcheck="false"
-        data-cy="editVizInfoDialogTitleInput"
+        data-cy="editChartInfoDialogTitleInput"
         class="form-input border-gray3 focus:border-blue3 h-9 w-96 rounded"
         [ngClass]="{
           'border-red-600':
@@ -45,7 +45,7 @@
       <input
         autocomplete="off"
         spellcheck="false"
-        data-cy="editVizInfoDialogRolesInput"
+        data-cy="editChartInfoDialogRolesInput"
         class="form-input border-gray3 focus:border-blue3 h-9 w-96 rounded"
         [ngClass]="{
           'border-red-600':
@@ -69,7 +69,7 @@
       <input
         autocomplete="off"
         spellcheck="false"
-        data-cy="editVizInfoDialogUsersInput"
+        data-cy="editChartInfoDialogUsersInput"
         class="form-input border-gray3 focus:border-blue3 h-9 w-96 rounded"
         [ngClass]="{
           'border-red-600':
@@ -84,7 +84,7 @@
 
   <div class="mt-9">
     <button
-      data-cy="editVizInfoDialogCreateButton"
+      data-cy="editChartInfoDialogCreateButton"
       class="bg-blue3 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
       type="button"
       (click)="save()"
@@ -92,7 +92,7 @@
     >
 
     <button
-      data-cy="editVizInfoDialogCancelButton"
+      data-cy="editChartInfoDialogCancelButton"
       class="border-blue3 text-blue3 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
       type="button"
       (click)="cancel()"

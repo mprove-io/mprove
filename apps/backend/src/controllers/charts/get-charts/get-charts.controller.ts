@@ -34,7 +34,7 @@ export class GetChartsController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetCharts)
-  async getVizs(
+  async getCharts(
     @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
@@ -70,7 +70,7 @@ export class GetChartsController {
       envId: envId
     });
 
-    let vizs = await this.db.drizzle.query.chartsTable.findMany({
+    let charts = await this.db.drizzle.query.chartsTable.findMany({
       where: eq(chartsTable.structId, bridge.structId)
     });
 
@@ -80,7 +80,7 @@ export class GetChartsController {
     //   }
     // });
 
-    let vizsGrantedAccess = vizs.filter(x =>
+    let chartsGrantedAccess = charts.filter(x =>
       helper.checkAccess({
         userAlias: user.alias,
         member: userMember,
@@ -141,9 +141,9 @@ export class GetChartsController {
           })
         )
         .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0)),
-      vizs: vizsGrantedAccess.map(x =>
-        this.wrapToApiService.wrapToApiViz({
-          viz: x,
+      charts: chartsGrantedAccess.map(x =>
+        this.wrapToApiService.wrapToApiChart({
+          chart: x,
           mconfigs: [],
           queries: [],
           member: this.wrapToApiService.wrapToApiMember(userMember),

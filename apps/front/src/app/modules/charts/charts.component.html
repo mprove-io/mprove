@@ -3,7 +3,7 @@
     <div class="flex flex-grow flex-col">
       <div class="flex h-11 flex-row items-center">
         <div
-          data-cy="vizsTitle"
+          data-cy="chartsTitle"
           class="text-gray1 flex items-center self-center text-2xl font-semibold"
           >{{ pageTitle }}
         </div>
@@ -13,7 +13,7 @@
         <input
           autocomplete="off"
           spellcheck="false"
-          data-cy="vizsSearchInput"
+          data-cy="chartsSearchInput"
           class="form-input bg-blue1 focus:border-blue3 ml-3 h-10 w-[400px] rounded border-gray-400"
           placeholder="Search by Title, File Name"
           [ngClass]="{
@@ -69,7 +69,7 @@
         <div class="flex-grow"></div>
 
         <div class="text-gray1 flex flex-row items-center text-base">
-          <ng-template #templateNewViz>
+          <ng-template #templateNewChart>
             <div *ngIf="alias === restrictedUserAlias"
               >User is restricted. Sign Up at https://mprove.io to get full
               access.</div
@@ -90,7 +90,7 @@
           </ng-template>
 
           <div
-            [tp]="templateNewViz"
+            [tp]="templateNewChart"
             [tpIsEnabled]="
               alias === restrictedUserAlias ||
               isExplorer === false ||
@@ -100,7 +100,7 @@
           >
             <button
               type="button"
-              data-cy="vizsNewButton"
+              data-cy="chartsNewButton"
               class="w-24 rounded py-2 text-base font-medium text-white focus:outline-none"
               [ngClass]="{
                 'bg-blue3 cursor-pointer':
@@ -112,7 +112,7 @@
                   isExplorer === false ||
                   hasAccessModels.length === 0
               }"
-              (click)="newViz()"
+              (click)="newChart()"
               [disabled]="
                 alias === restrictedUserAlias ||
                 isExplorer === false ||
@@ -144,12 +144,12 @@
                 >
                   <div class="text-gray1"> All Models </div>
                   <div class="ml-3 flex w-12 justify-end">
-                    {{ vizsFilteredByWord?.length }}
+                    {{ chartsFilteredByWord?.length }}
                   </div>
                 </div>
 
                 <div
-                  *ngFor="let model of vizsModels"
+                  *ngFor="let model of chartsModels"
                   class="flex w-full flex-row rounded px-4 py-2 hover:cursor-pointer"
                   [ngClass]="{
                     'bg-blue-100': modelId === model.modelId,
@@ -164,7 +164,7 @@
                   <div class="flex flex-grow"></div>
 
                   <div class="ml-3 flex w-12 justify-end">
-                    {{ model.totalVizs }}
+                    {{ model.totalCharts }}
                   </div>
                 </div>
 
@@ -196,22 +196,22 @@
             </div>
 
             <div
-              *ngIf="isShow === true && filteredVizs?.length > 0"
+              *ngIf="isShow === true && filteredCharts?.length > 0"
               class="h-2 flex-1 overflow-y-auto"
             >
               <div
-                *ngFor="let item of filteredVizs; trackBy: trackByFn"
+                *ngFor="let item of filteredCharts; trackBy: trackByFn"
                 class="flex flex-row"
                 [ngStyle]="
                   item.chartId !==
-                    filteredVizs[filteredVizs.length - 1].chartId && {
+                    filteredCharts[filteredCharts.length - 1].chartId && {
                     'border-bottom-width': '1px'
                   }
                 "
                 [ngClass]="{
                   'border-gray-300':
                     item.chartId !==
-                    filteredVizs[filteredVizs.length - 1].chartId
+                    filteredCharts[filteredCharts.length - 1].chartId
                 }"
               >
                 <div class="flex-grow flex-col">
@@ -221,10 +221,10 @@
                   >
                     <div class="flex w-9 pt-1">
                       <button
-                        data-cy="vizOptionsMenuButton"
+                        data-cy="chartOptionsMenuButton"
                         class="invisible flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none group-hover:visible"
                         #t1="tippy"
-                        [tp]="templateVizOptions"
+                        [tp]="templateChartOptions"
                         [tpHideOnEscape]="true"
                         tpVariation="menu"
                         className="my-menu"
@@ -233,49 +233,49 @@
                         <m-dots-vertical-icon></m-dots-vertical-icon>
                       </button>
 
-                      <ng-template #templateVizOptions>
+                      <ng-template #templateChartOptions>
                         <div
                           class="border-gray4 w-64 rounded-md border-2 bg-white shadow-xl"
                         >
                           <div
-                            tp="Viz can be edited by author and project members with ProjectAdmin or FilesEditor role. Try to save viz as new to become an author."
+                            tp="Chart can be edited by author and project members with ProjectAdmin or FilesEditor role. Try to save chart as new to become an author."
                             placement="left"
-                            [tpIsEnabled]="item.canEditOrDeleteViz === false"
+                            [tpIsEnabled]="item.canEditOrDeleteChart === false"
                           >
                             <button
-                              data-cy="vizOptionsEditInfo"
+                              data-cy="chartOptionsEditInfo"
                               class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
                               [ngClass]="{
                                 'cursor-default text-gray-400':
-                                  item.canEditOrDeleteViz === false
+                                  item.canEditOrDeleteChart === false
                               }"
-                              (click)="t1.hide(); editVizInfo($event, item)"
-                              [disabled]="item.canEditOrDeleteViz === false"
+                              (click)="t1.hide(); editChartInfo($event, item)"
+                              [disabled]="item.canEditOrDeleteChart === false"
                               >Edit Info</button
                             >
                           </div>
 
                           <button
-                            data-cy="vizOptionsGoToFile"
+                            data-cy="chartOptionsGoToFile"
                             class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
-                            (click)="t1.hide(); goToVizFile($event, item)"
+                            (click)="t1.hide(); goToChartFile($event, item)"
                             >Go to file</button
                           >
 
                           <div
-                            tp="Viz can be deleted by author and project members with ProjectAdmin or FilesEditor role. Try to save viz as new to become an author."
+                            tp="Chart can be deleted by author and project members with ProjectAdmin or FilesEditor role. Try to save chart as new to become an author."
                             placement="left"
-                            [tpIsEnabled]="item.canEditOrDeleteViz === false"
+                            [tpIsEnabled]="item.canEditOrDeleteChart === false"
                           >
                             <button
-                              data-cy="vizOptionsDelete"
+                              data-cy="chartOptionsDelete"
                               class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
                               [ngClass]="{
                                 'cursor-default text-gray-400':
-                                  item.canEditOrDeleteViz === false
+                                  item.canEditOrDeleteChart === false
                               }"
-                              (click)="t1.hide(); deleteViz($event, item)"
-                              [disabled]="item.canEditOrDeleteViz === false"
+                              (click)="t1.hide(); deleteChart($event, item)"
+                              [disabled]="item.canEditOrDeleteChart === false"
                               >Delete</button
                             >
                           </div>
@@ -311,7 +311,7 @@
                     </div>
 
                     <div class="flex flex-1 flex-row space-x-5 text-base">
-                      <ng-template #templateVizsModel>
+                      <ng-template #templateChartsModel>
                         <div *ngIf="isExplorer === false"
                           >Explorer role required</div
                         >
@@ -322,7 +322,7 @@
 
                       <div
                         class="flex flex-1 flex-row truncate py-3"
-                        [tp]="templateVizsModel"
+                        [tp]="templateChartsModel"
                         [tpIsEnabled]="item.tiles[0].hasAccessToModel === false"
                       >
                         <div
@@ -378,7 +378,7 @@
 
             <div
               class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
-              *ngIf="filteredVizs?.length === 0"
+              *ngIf="filteredCharts?.length === 0"
               >No charts</div
             >
           </div>
@@ -390,11 +390,11 @@
               itemSize="590"
               minBufferPx="1180"
               maxBufferPx="1180"
-              *ngIf="showList === false && filteredVizRows?.length > 0"
+              *ngIf="showList === false && filteredChartRows?.length > 0"
               class="h-full w-full"
             >
               <div
-                *cdkVirtualFor="let itemsRow of filteredVizRows"
+                *cdkVirtualFor="let itemsRow of filteredChartRows"
                 class="flex h-[590px] w-full flex-row"
               >
                 <div
@@ -405,9 +405,9 @@
                     *ngIf="isShow === true"
                     [title]="item.title"
                     [tile]="item.tiles[0]"
-                    [viz]="item"
+                    [chart]="item"
                     [showBricks]="showBricks"
-                    [vizDeletedFnBindThis]="vizDeletedFnBindThis"
+                    [chartDeletedFnBindThis]="chartDeletedFnBindThis"
                   ></m-chart>
                 </div>
               </div>
@@ -415,7 +415,7 @@
 
             <div
               class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
-              *ngIf="filteredVizs?.length === 0"
+              *ngIf="filteredCharts?.length === 0"
               >No charts</div
             >
           </div>
@@ -425,7 +425,7 @@
   </div>
 </div>
 
-<div *ngIf="vizs$ | async"></div>
+<div *ngIf="charts$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="member$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>

@@ -6,9 +6,9 @@
   >
 
   <div
-    data-cy="chartSaveAsDialogNewVizCheckbox"
+    data-cy="chartSaveAsDialogNewChartCheckbox"
     class="flex h-9 cursor-pointer flex-row items-center"
-    (click)="newVizOnClick()"
+    (click)="newChartOnClick()"
   >
     <div
       class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
@@ -106,7 +106,7 @@
 
   <div class="ml-12 mt-5 flex h-9 flex-col">
     <div
-      data-cy="chartSaveAsDialogNewVizCheckbox"
+      data-cy="chartSaveAsDialogNewChartCheckbox"
       class="flex h-9 cursor-pointer flex-row items-center"
       *ngIf="
         chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD &&

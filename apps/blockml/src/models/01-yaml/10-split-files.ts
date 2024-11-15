@@ -25,7 +25,7 @@ export function splitFiles(
   let reps: common.FileRep[] = [];
   let metrics: common.FileMetric[] = [];
   let apis: common.FileApi[] = [];
-  let vizs: common.FileChart[] = [];
+  let charts: common.FileChart[] = [];
   let confs: common.FileProjectConf[] = [];
 
   item.filesAny.forEach(file => {
@@ -278,14 +278,14 @@ export function splitFiles(
           delete file.name;
           delete file.path;
 
-          let newVizOptions: common.FileChart = {
+          let newChartOptions: common.FileChart = {
             name: file.chart,
             fileName: fileName,
             filePath: filePath,
             fileExt: fileExt
           };
 
-          vizs.push(Object.assign(file, newVizOptions));
+          charts.push(Object.assign(file, newChartOptions));
         } else {
           item.errors.push(
             new BmError({
@@ -334,7 +334,7 @@ export function splitFiles(
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Reps, reps);
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Udfs, udfs);
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Views, views);
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Charts, vizs);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Charts, charts);
   helper.log(
     cs,
     caller,
@@ -353,6 +353,6 @@ export function splitFiles(
     reps: reps,
     udfs: udfs,
     views: views,
-    vizs: vizs
+    charts: charts
   };
 }

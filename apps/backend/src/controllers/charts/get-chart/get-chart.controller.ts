@@ -35,7 +35,7 @@ export class GetChartController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetChart)
-  async getViz(
+  async getChart(
     @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
@@ -76,7 +76,7 @@ export class GetChartController {
       projectId: projectId
     });
 
-    let viz = await this.chartsService.getVizCheckExists({
+    let chart = await this.chartsService.getChartCheckExists({
       structId: bridge.structId,
       chartId: chartId
     });
@@ -84,7 +84,7 @@ export class GetChartController {
     let isAccessGranted = helper.checkAccess({
       userAlias: user.alias,
       member: userMember,
-      entity: viz
+      entity: chart
     });
 
     if (isAccessGranted === false) {
@@ -95,7 +95,7 @@ export class GetChartController {
 
     let mconfig = await this.mconfigsService.getMconfigCheckExists({
       structId: bridge.structId,
-      mconfigId: viz.tiles[0].mconfigId
+      mconfigId: chart.tiles[0].mconfigId
     });
 
     let model = await this.modelsService.getModelCheckExists({
@@ -112,8 +112,8 @@ export class GetChartController {
 
     let payload: apiToBackend.ToBackendGetChartResponsePayload = {
       userMember: apiMember,
-      viz: this.wrapToApiService.wrapToApiViz({
-        viz: viz,
+      chart: this.wrapToApiService.wrapToApiChart({
+        chart: chart,
         mconfigs: [
           this.wrapToApiService.wrapToApiMconfig({
             mconfig: mconfig,

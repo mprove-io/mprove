@@ -535,7 +535,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
         selectRowsNodeIds: []
       });
     } else if (dotExt === common.FileExtensionEnum.Chart) {
-      this.navigateService.navigateToVizs({
+      this.navigateService.navigateToCharts({
         extra: {
           queryParams: { search: id }
         }

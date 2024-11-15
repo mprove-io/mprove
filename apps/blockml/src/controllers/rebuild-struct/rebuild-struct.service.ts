@@ -61,7 +61,7 @@ export class RebuildStructService {
       reps,
       udfsDict,
       views,
-      vizs,
+      charts,
       mproveDirValue,
       weekStart,
       allowTimezones,
@@ -111,17 +111,17 @@ export class RebuildStructService {
         envId: envId
       });
 
-    let { apiVizs, vizMconfigs, vizQueries } = barWrapper.wrapCharts({
+    let { apiCharts, chartMconfigs, chartQueries } = barWrapper.wrapCharts({
       structId: structId,
       orgId: orgId,
       projectId: projectId,
       models: models,
-      vizs: vizs,
+      charts: charts,
       envId: envId
     });
 
-    let queries = [...dashQueries, ...vizQueries];
-    let mconfigs = [...dashMconfigs, ...vizMconfigs];
+    let queries = [...dashQueries, ...chartQueries];
+    let mconfigs = [...dashMconfigs, ...chartMconfigs];
 
     let payload: apiToBlockml.ToBlockmlRebuildStructResponsePayload = {
       errors: apiErrors,
@@ -131,7 +131,7 @@ export class RebuildStructService {
       dashboards: apiDashboards,
       apis: apiApis,
       reps: apiReps,
-      vizs: apiVizs,
+      charts: apiCharts,
       metrics: metrics,
       mconfigs: mconfigs,
       queries: queries,
@@ -212,7 +212,7 @@ export class RebuildStructService {
     let reps: common.FileRep[];
     let udfs: common.FileUdf[];
     let views: common.FileView[];
-    let vizs: common.FileChart[];
+    let charts: common.FileChart[];
     let projectConfig: common.FileProjectConf;
 
     let yamlBuildItem = barBuilder.buildYaml(
@@ -233,7 +233,7 @@ export class RebuildStructService {
     reps = yamlBuildItem.reps;
     udfs = yamlBuildItem.udfs;
     views = yamlBuildItem.views;
-    vizs = yamlBuildItem.vizs;
+    charts = yamlBuildItem.charts;
     projectConfig = yamlBuildItem.projectConfig;
 
     if (common.isUndefined(projectConfig)) {
@@ -246,7 +246,7 @@ export class RebuildStructService {
         reps: [],
         udfsDict: {},
         views: [],
-        vizs: [],
+        charts: [],
         mproveDirValue: undefined,
         weekStart: constants.PROJECT_CONFIG_WEEK_START,
         allowTimezones: helper.toBooleanFromLowercaseString(
@@ -413,9 +413,9 @@ export class RebuildStructService {
       this.cs
     );
 
-    vizs = barBuilder.buildChart(
+    charts = barBuilder.buildChart(
       {
-        vizs: vizs,
+        charts: charts,
         structId: item.structId,
         errors: errors,
         caller: common.CallerEnum.BuildChart
@@ -439,10 +439,10 @@ export class RebuildStructService {
       this.rabbitService
     );
 
-    vizs = await barBuilder.buildTile(
+    charts = await barBuilder.buildTile(
       {
         traceId: item.traceId,
-        entities: vizs,
+        entities: charts,
         models: models,
         udfsDict: udfsDict,
         weekStart: projectConfig.week_start,
@@ -465,9 +465,9 @@ export class RebuildStructService {
       this.cs
     );
 
-    vizs = barBuilder.buildMconfigChart(
+    charts = barBuilder.buildMconfigChart(
       {
-        entities: vizs,
+        entities: charts,
         models: models,
         structId: item.structId,
         errors: errors,
@@ -498,7 +498,7 @@ export class RebuildStructService {
         metrics: commonMetrics,
         dashboards: dashboards,
         reps: reps,
-        vizs: vizs,
+        charts: charts,
         structId: item.structId,
         caller: common.CallerEnum.RebuildStruct
       },
@@ -514,7 +514,7 @@ export class RebuildStructService {
       udfsDict: udfsDict,
       reps: reps,
       views: views,
-      vizs: vizs,
+      charts: charts,
       mproveDirValue: projectConfig.mprove_dir,
       weekStart: projectConfig.week_start,
       allowTimezones: helper.toBooleanFromLowercaseString(

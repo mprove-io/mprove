@@ -72,7 +72,7 @@ export class SeedRecordsController {
     let structs: schemaPostgres.StructEnt[] = [];
     let branches: schemaPostgres.BranchEnt[] = [];
     let bridges: schemaPostgres.BridgeEnt[] = [];
-    let vizs: schemaPostgres.ChartEnt[] = [];
+    let charts: schemaPostgres.ChartEnt[] = [];
     let queries: schemaPostgres.QueryEnt[] = [];
     let models: schemaPostgres.ModelEnt[] = [];
     let metrics: schemaPostgres.MetricEnt[] = [];
@@ -314,7 +314,7 @@ export class SeedRecordsController {
 
           let {
             struct: devStruct,
-            vizs: devVizsApi,
+            charts: devChartsApi,
             mconfigs: devMconfigsApi,
             queries: devQueriesApi,
             dashboards: devDashboardsApi,
@@ -339,7 +339,7 @@ export class SeedRecordsController {
 
           let {
             struct: prodStruct,
-            vizs: prodVizsApi,
+            charts: prodChartsApi,
             mconfigs: prodMconfigsApi,
             queries: prodQueriesApi,
             dashboards: prodDashboardsApi,
@@ -405,10 +405,14 @@ export class SeedRecordsController {
             prodBranchBridgeProdEnv
           ];
 
-          vizs = [
-            ...vizs,
-            ...devVizsApi.map(y => this.wrapToEntService.wrapToEntityViz(y)),
-            ...prodVizsApi.map(y => this.wrapToEntService.wrapToEntityViz(y))
+          charts = [
+            ...charts,
+            ...devChartsApi.map(y =>
+              this.wrapToEntService.wrapToEntityChart(y)
+            ),
+            ...prodChartsApi.map(y =>
+              this.wrapToEntService.wrapToEntityChart(y)
+            )
           ];
 
           models = [
@@ -527,7 +531,7 @@ export class SeedRecordsController {
                 branches: branches,
                 bridges: bridges,
                 structs: structs,
-                vizs: vizs,
+                charts: charts,
                 models: models,
                 metrics: metrics,
                 reports: reports,

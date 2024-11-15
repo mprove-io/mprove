@@ -8,15 +8,15 @@ export function wrapCharts(item: {
   projectId: string;
   envId: string;
   models: common.FileModel[];
-  vizs: common.FileChart[];
+  charts: common.FileChart[];
 }) {
-  let { structId, orgId, projectId, models, vizs, envId } = item;
+  let { structId, orgId, projectId, models, charts: charts, envId } = item;
 
-  let apiVizs: common.Chart[] = [];
-  let vizMconfigs: common.Mconfig[] = [];
-  let vizQueries: common.Query[] = [];
+  let apiCharts: common.Chart[] = [];
+  let chartMconfigs: common.Mconfig[] = [];
+  let chartQueries: common.Query[] = [];
 
-  vizs.forEach(x => {
+  charts.forEach(x => {
     let { apiTiles, mconfigs, queries } = wrapTiles({
       orgId: orgId,
       projectId: projectId,
@@ -26,12 +26,12 @@ export function wrapCharts(item: {
       envId: envId
     });
 
-    vizMconfigs = [...vizMconfigs, ...mconfigs];
-    vizQueries = [...vizQueries, ...queries];
+    chartMconfigs = [...chartMconfigs, ...mconfigs];
+    chartQueries = [...chartQueries, ...queries];
 
     let model = models.find(m => m.name === x.tiles[0].model);
 
-    apiVizs.push({
+    apiCharts.push({
       structId: structId,
       chartId: x.name,
       title: x.tiles[0].title,
@@ -48,8 +48,8 @@ export function wrapCharts(item: {
   });
 
   return {
-    apiVizs: apiVizs,
-    vizMconfigs: vizMconfigs,
-    vizQueries: vizQueries
+    apiCharts: apiCharts,
+    chartMconfigs: chartMconfigs,
+    chartQueries: chartQueries
   };
 }

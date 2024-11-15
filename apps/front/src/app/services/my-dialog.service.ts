@@ -386,7 +386,7 @@ export class MyDialogService {
     });
   }
 
-  showEditVizInfo(item: EditChartInfoDialogData): void {
+  showEditChartInfo(item: EditChartInfoDialogData): void {
     this.dialogService.open(EditChartInfoDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -395,7 +395,7 @@ export class MyDialogService {
     });
   }
 
-  showNewViz(item: NewChartDialogData): void {
+  showNewChart(item: NewChartDialogData): void {
     this.dialogService.open(NewChartDialogComponent, {
       enableClose: false,
       closeButton: true,
@@ -403,7 +403,7 @@ export class MyDialogService {
     });
   }
 
-  showDeleteViz(item: DeleteChartDialogData): void {
+  showDeleteChart(item: DeleteChartDialogData): void {
     this.dialogService.open(DeleteChartDialogComponent, {
       enableClose: false,
       closeButton: false,

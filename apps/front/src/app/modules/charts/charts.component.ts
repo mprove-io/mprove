@@ -25,8 +25,8 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-class ModelXWithTotalVizs extends common.ModelX {
-  totalVizs: number;
+class ModelXWithTotalCharts extends common.ModelX {
+  totalCharts: number;
 }
 
 @Component({
@@ -38,7 +38,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
   pageTitle = constants.CHARTS_PAGE_TITLE;
 
-  vizDeletedFnBindThis = this.vizDeletedFn.bind(this);
+  chartDeletedFnBindThis = this.chartDeletedFn.bind(this);
 
   // groups: string[];
 
@@ -47,13 +47,13 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
   isShow = true;
 
-  vizsModels: ModelXWithTotalVizs[];
+  chartsModels: ModelXWithTotalCharts[];
   hasAccessModels: common.ModelX[] = [];
 
-  vizs: common.ChartX[];
-  vizsFilteredByWord: common.ChartX[];
-  filteredVizs: common.ChartX[];
-  filteredVizRows: common.ChartX[][] = [];
+  charts: common.ChartX[];
+  chartsFilteredByWord: common.ChartX[];
+  filteredCharts: common.ChartX[];
+  filteredChartRows: common.ChartX[][] = [];
 
   isExplorer = false;
   isExplorer$ = this.memberQuery.isExplorer$.pipe(
@@ -79,9 +79,9 @@ export class ChartsComponent implements OnInit, OnDestroy {
     })
   );
 
-  vizs$ = this.vizsQuery.select().pipe(
+  charts$ = this.chartsQuery.select().pipe(
     tap(x => {
-      this.vizs = x.vizs;
+      this.charts = x.charts;
 
       this.modelsQuery
         .select()
@@ -89,9 +89,10 @@ export class ChartsComponent implements OnInit, OnDestroy {
         .subscribe(y => {
           this.hasAccessModels = y.models.filter(m => m.hasAccess === true);
 
-          this.vizsModels = y.models.map(m =>
-            Object.assign({}, m, <ModelXWithTotalVizs>{
-              totalVizs: this.vizs.filter(v => v.modelId === m.modelId).length
+          this.chartsModels = y.models.map(m =>
+            Object.assign({}, m, <ModelXWithTotalCharts>{
+              totalCharts: this.charts.filter(v => v.modelId === m.modelId)
+                .length
             })
           );
 
@@ -99,7 +100,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
           // let definedGroups = allGroups.filter(y => common.isDefined(y));
           // this.groups = [...new Set(definedGroups)];
 
-          this.makeFilteredVizs();
+          this.makeFilteredCharts();
 
           this.cd.detectChanges();
         });
@@ -128,7 +129,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
     private modelsQuery: ModelsQuery,
-    private vizsQuery: ChartsQuery,
+    private chartsQuery: ChartsQuery,
     private userQuery: UserQuery,
     private memberQuery: MemberQuery,
     private apiService: ApiService,
@@ -190,7 +191,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
     }
 
     this.modelId = modelId;
-    this.makeFilteredVizs();
+    this.makeFilteredCharts();
   }
 
   allModelsOnClick() {
@@ -199,38 +200,38 @@ export class ChartsComponent implements OnInit, OnDestroy {
     }
 
     this.modelId = undefined;
-    this.makeFilteredVizs();
+    this.makeFilteredCharts();
   }
 
-  makeFilteredVizs() {
-    const searcher = new FuzzySearch(this.vizs, ['title', 'chartId'], {
+  makeFilteredCharts() {
+    const searcher = new FuzzySearch(this.charts, ['title', 'chartId'], {
       caseSensitive: false
     });
 
-    this.vizsFilteredByWord = common.isDefined(this.word)
+    this.chartsFilteredByWord = common.isDefined(this.word)
       ? searcher.search(this.word)
-      : this.vizs;
+      : this.charts;
 
-    this.filteredVizs = common.isDefined(this.modelId)
-      ? this.vizsFilteredByWord.filter(v => v.modelId === this.modelId)
-      : this.vizsFilteredByWord;
+    this.filteredCharts = common.isDefined(this.modelId)
+      ? this.chartsFilteredByWord.filter(v => v.modelId === this.modelId)
+      : this.chartsFilteredByWord;
 
-    this.filteredVizs = this.filteredVizs.sort((a, b) => {
+    this.filteredCharts = this.filteredCharts.sort((a, b) => {
       let aTitle = a.title || a.chartId;
       let bTitle = b.title || b.chartId;
 
       return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
     });
 
-    this.filteredVizRows = [];
-    for (let i = 0; i < this.filteredVizs.length; i += 2) {
-      this.filteredVizRows.push(this.filteredVizs.slice(i, i + 2));
+    this.filteredChartRows = [];
+    for (let i = 0; i < this.filteredCharts.length; i += 2) {
+      this.filteredChartRows.push(this.filteredCharts.slice(i, i + 2));
     }
 
-    this.vizsModels = this.vizsModels
+    this.chartsModels = this.chartsModels
       .map(x =>
         Object.assign({}, x, {
-          totalVizs: this.vizsFilteredByWord.filter(
+          totalCharts: this.chartsFilteredByWord.filter(
             v => v.modelId === x.modelId
           ).length
         })
@@ -238,10 +239,10 @@ export class ChartsComponent implements OnInit, OnDestroy {
       .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0));
   }
 
-  vizDeletedFn(deletedChartId: string) {
-    this.vizs = this.vizs.filter(x => x.chartId !== deletedChartId);
+  chartDeletedFn(deletedChartId: string) {
+    this.charts = this.charts.filter(x => x.chartId !== deletedChartId);
 
-    this.makeFilteredVizs();
+    this.makeFilteredCharts();
     this.cd.detectChanges();
   }
 
@@ -255,19 +256,19 @@ export class ChartsComponent implements OnInit, OnDestroy {
     }
 
     this.timer = setTimeout(() => {
-      this.makeFilteredVizs();
+      this.makeFilteredCharts();
       this.cd.detectChanges();
     }, 600);
   }
 
   resetSearch() {
     this.word = undefined;
-    this.makeFilteredVizs();
+    this.makeFilteredCharts();
     this.cd.detectChanges();
   }
 
-  newViz() {
-    this.myDialogService.showNewViz({
+  newChart() {
+    this.myDialogService.showNewChart({
       models: this.hasAccessModels
     });
   }
@@ -302,7 +303,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
     this.refreshShow();
   }
 
-  navigateToViz(chartId: string) {}
+  navigateToChart(chartId: string) {}
 
   explore(event: any, item: common.ChartX) {
     event.stopPropagation();
@@ -317,7 +318,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
   async showChart(item: common.ChartX) {
     this.spinner.show(item.chartId);
 
-    let payloadGetViz: apiToBackend.ToBackendGetChartRequestPayload = {
+    let payloadGetChart: apiToBackend.ToBackendGetChartRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
@@ -332,7 +333,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetChart,
-        payload: payloadGetViz
+        payload: payloadGetChart
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendGetChartResponse) => {
@@ -341,8 +342,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
-            query = resp.payload.viz.tiles[0].query;
-            mconfig = resp.payload.viz.tiles[0].mconfig;
+            query = resp.payload.chart.tiles[0].query;
+            mconfig = resp.payload.chart.tiles[0].mconfig;
           }
         })
       )
@@ -385,7 +386,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
     event.stopPropagation();
   }
 
-  goToVizFile(event: MouseEvent, item: common.ChartX) {
+  goToChartFile(event: MouseEvent, item: common.ChartX) {
     event.stopPropagation();
 
     let fileIdAr = item.filePath.split('/');
@@ -397,7 +398,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
     });
   }
 
-  async editVizInfo(event: MouseEvent, item: common.ChartX) {
+  async editChartInfo(event: MouseEvent, item: common.ChartX) {
     event.stopPropagation();
 
     let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
@@ -427,24 +428,24 @@ export class ChartsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.myDialogService.showEditVizInfo({
+    this.myDialogService.showEditChartInfo({
       apiService: this.apiService,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd,
-      viz: item,
+      chart: item,
       mconfig: mconfig
     });
   }
 
-  deleteViz(event: MouseEvent, item: common.ChartX) {
+  deleteChart(event: MouseEvent, item: common.ChartX) {
     event.stopPropagation();
 
-    this.myDialogService.showDeleteViz({
-      viz: item,
+    this.myDialogService.showDeleteChart({
+      chart: item,
       apiService: this.apiService,
-      vizDeletedFnBindThis: this.vizDeletedFnBindThis,
+      chartDeletedFnBindThis: this.chartDeletedFnBindThis,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,

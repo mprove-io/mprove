@@ -6,18 +6,18 @@ import { BmError } from '~blockml/models/bm-error';
 
 export function buildChart(
   item: {
-    vizs: common.FileChart[];
+    charts: common.FileChart[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let vizs = item.vizs;
+  let charts = item.charts;
 
-  vizs = barChart.checkChartAccess(
+  charts = barChart.checkChartAccess(
     {
-      vizs: vizs,
+      charts: charts,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller
@@ -25,9 +25,9 @@ export function buildChart(
     cs
   );
 
-  vizs = barChart.checkChartTilesExist(
+  charts = barChart.checkChartTilesExist(
     {
-      vizs: vizs,
+      charts: charts,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller
@@ -35,5 +35,5 @@ export function buildChart(
     cs
   );
 
-  return vizs;
+  return charts;
 }

@@ -98,9 +98,9 @@ export class GetQueryController {
       modelId: mconfig.modelId
     });
 
-    let viz;
+    let chart;
     if (common.isDefined(chartId)) {
-      viz = await this.chartsService.getVizCheckExists({
+      chart = await this.chartsService.getChartCheckExists({
         structId: bridge.structId,
         chartId: chartId
       });
@@ -108,17 +108,17 @@ export class GetQueryController {
 
     let dashboard;
     if (common.isDefined(dashboardId)) {
-      viz = await this.dashboardsService.getDashboardCheckExists({
+      chart = await this.dashboardsService.getDashboardCheckExists({
         structId: bridge.structId,
         dashboardId: dashboardId
       });
     }
 
-    let isAccessGranted = common.isDefined(viz)
+    let isAccessGranted = common.isDefined(chart)
       ? helper.checkAccess({
           userAlias: user.alias,
           member: member,
-          entity: viz
+          entity: chart
         })
       : common.isDefined(dashboard)
       ? helper.checkAccess({
@@ -134,7 +134,7 @@ export class GetQueryController {
 
     if (isAccessGranted === false) {
       throw new common.ServerError({
-        message: common.isDefined(viz)
+        message: common.isDefined(chart)
           ? common.ErEnum.BACKEND_FORBIDDEN_CHART
           : common.isDefined(dashboard)
           ? common.ErEnum.BACKEND_FORBIDDEN_DASHBOARD
