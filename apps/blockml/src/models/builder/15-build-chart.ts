@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { barChart } from '~blockml/barrels/bar-chart';
+import { barMconfigChart } from '~blockml/barrels/bar-mconfig-chart';
 import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
@@ -17,7 +17,7 @@ export function buildChart<T extends types.dzType>(
 ) {
   let entities = item.entities;
 
-  entities = barChart.checkChartType(
+  entities = barMconfigChart.checkChartType(
     {
       entities: entities,
       structId: item.structId,
@@ -27,7 +27,7 @@ export function buildChart<T extends types.dzType>(
     cs
   );
 
-  entities = barChart.checkChartData(
+  entities = barMconfigChart.checkChartData(
     {
       entities: entities,
       structId: item.structId,
@@ -37,7 +37,7 @@ export function buildChart<T extends types.dzType>(
     cs
   );
 
-  entities = barChart.checkChartDataParameters(
+  entities = barMconfigChart.checkChartDataParameters(
     {
       entities: entities,
       models: item.models,
@@ -48,7 +48,7 @@ export function buildChart<T extends types.dzType>(
     cs
   );
 
-  entities = barChart.checkChartAxisParameters(
+  entities = barMconfigChart.checkChartAxisParameters(
     {
       entities: entities,
       structId: item.structId,
@@ -58,7 +58,7 @@ export function buildChart<T extends types.dzType>(
     cs
   );
 
-  entities = barChart.checkChartOptionsParameters(
+  entities = barMconfigChart.checkChartOptionsParameters(
     {
       entities: entities,
       structId: item.structId,
@@ -68,7 +68,7 @@ export function buildChart<T extends types.dzType>(
     cs
   );
 
-  entities = barChart.checkChartPlateParameters(
+  entities = barMconfigChart.checkChartPlateParameters(
     {
       entities: entities,
       structId: item.structId,
