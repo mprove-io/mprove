@@ -25,7 +25,7 @@ export function wrapTiles(item: {
       });
     });
 
-    let chart: common.Chart = {
+    let chart: common.MconfigChart = {
       isValid: true,
       title: tile.title,
       description: tile.description,

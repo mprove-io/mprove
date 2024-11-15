@@ -6,7 +6,7 @@ export class FormatNumberService {
   constructor() {}
 
   getFormatNumberDataLabel(item: {
-    chart: common.Chart;
+    chart: common.MconfigChart;
     mconfigFields: common.MconfigField[];
   }) {
     let { chart, mconfigFields } = item;
@@ -21,7 +21,7 @@ export class FormatNumberService {
   }
 
   getFormatNumberValue(item: {
-    chart: common.Chart;
+    chart: common.MconfigChart;
     mconfigFields: common.MconfigField[];
   }) {
     let { chart, mconfigFields } = item;
@@ -39,7 +39,7 @@ export class FormatNumberService {
   }
 
   getFormatNumberAxisTick(item: {
-    chart: common.Chart;
+    chart: common.MconfigChart;
     mconfigFields: common.MconfigField[];
   }) {
     let { chart, mconfigFields } = item;
@@ -52,7 +52,7 @@ export class FormatNumberService {
   }
 
   getFormatNumberYAxisTick(item: {
-    chart: common.Chart;
+    chart: common.MconfigChart;
     mconfigFields: common.MconfigField[];
   }) {
     let { chart, mconfigFields } = item;
@@ -67,7 +67,7 @@ export class FormatNumberService {
   }
 
   getFormatNumberXAxisTick(item: {
-    chart: common.Chart;
+    chart: common.MconfigChart;
     mconfigFields: common.MconfigField[];
   }) {
     let { chart, mconfigFields } = item;

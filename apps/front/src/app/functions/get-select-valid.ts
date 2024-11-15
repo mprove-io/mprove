@@ -1,7 +1,7 @@
 import { common } from '~front/barrels/common';
 
 export function getSelectValid(item: {
-  chart: common.Chart;
+  chart: common.MconfigChart;
   mconfigFields: common.MconfigField[];
 }) {
   let { chart, mconfigFields } = item;

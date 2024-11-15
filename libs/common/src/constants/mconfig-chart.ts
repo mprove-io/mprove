@@ -2,7 +2,7 @@ import { ChartColorSchemeEnum } from '~common/enums/chart/chart-color-scheme.enu
 import { ChartInterpolationEnum } from '~common/enums/chart/chart-interpolation.enum';
 import { ChartSchemeTypeEnum } from '~common/enums/chart/chart-scheme-type.enum';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
-import { Chart } from '~common/interfaces/blockml/chart';
+import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
 
 export const CHART_DEFAULT_TYPE = ChartTypeEnum.Table;
 export const CHART_DEFAULT_TITLE = 'Title';
@@ -64,7 +64,7 @@ export const CHART_DEFAULT_FORMAT_AXIS_TICK: string = undefined;
 export const CHART_DEFAULT_FORMAT_Y_AXIS_TICK: string = undefined;
 export const CHART_DEFAULT_FORMAT_X_AXIS_TICK: string = undefined;
 
-export const DEFAULT_CHART: Chart = {
+export const DEFAULT_CHART: MconfigChart = {
   isValid: true,
   type: CHART_DEFAULT_TYPE,
   title: CHART_DEFAULT_TITLE,

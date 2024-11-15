@@ -111,7 +111,7 @@ export class ChartEditorComponent implements OnChanges {
   });
 
   @Input()
-  chart: common.Chart;
+  chart: common.MconfigChart;
 
   @Input()
   queryId: string;

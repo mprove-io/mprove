@@ -4,7 +4,7 @@ export function makeMconfigFields(item: {
   modelFields: common.ModelField[];
   select: string[];
   sortings: common.Sorting[];
-  chart: common.Chart;
+  chart: common.MconfigChart;
 }) {
   let { modelFields, select, sortings, chart } = item;
 

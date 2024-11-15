@@ -1,5 +1,5 @@
+import { Mconfig, MconfigChart, ModelField, isDefined } from '~common/_index';
 import { enums } from '~common/barrels/enums';
-import { Chart, isDefined, Mconfig, ModelField } from '~common/_index';
 
 export function setChartFields<T extends Mconfig>(item: {
   mconfig: T;
@@ -99,7 +99,7 @@ export function setChartFields<T extends Mconfig>(item: {
         ? mconfig.chart.previousValueField
         : undefined;
 
-    mconfig.chart = Object.assign({}, mconfig.chart, <Chart>{
+    mconfig.chart = Object.assign({}, mconfig.chart, <MconfigChart>{
       xField: xField,
       yField: yField,
       yFields: yFields,

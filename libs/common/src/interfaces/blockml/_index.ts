@@ -1,7 +1,6 @@
 export * from './api';
 export * from './bml-error';
 export * from './bml-file';
-export * from './chart';
 export * from './column';
 export * from './dashboard';
 export * from './dashboard-field';
@@ -10,6 +9,7 @@ export * from './filter-bricks-dictionary';
 export * from './fraction';
 export * from './internal/_index';
 export * from './mconfig';
+export * from './mconfig-chart';
 export * from './metrics/base-metric';
 export * from './metrics/formula-metric';
 export * from './metrics/metric-any';

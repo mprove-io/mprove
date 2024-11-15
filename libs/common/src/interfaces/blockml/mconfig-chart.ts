@@ -14,7 +14,7 @@ import { AxShadow } from './ag/AxShadow';
 import { DirectionEnum } from './ag/enums/ax-direction.enum';
 import { ClickRangeEnum } from './ag/enums/click-range.enum';
 
-export class Chart {
+export class MconfigChart {
   @IsBoolean()
   isValid: boolean;
 
