@@ -13,11 +13,11 @@
     <div
       class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
       [ngClass]="{
-        'bg-blue3 ': chartSaveAs === chartSaveAsEnum.NEW_VIZ
+        'bg-blue3 ': chartSaveAs === chartSaveAsEnum.NEW_CHART
       }"
     >
       <m-check-icon
-        *ngIf="chartSaveAs === chartSaveAsEnum.NEW_VIZ"
+        *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART"
       ></m-check-icon>
     </div>
 
@@ -182,7 +182,7 @@
   </div>
 
   <div class="mt-9 h-7 text-base text-gray-400">
-    <div *ngIf="chartSaveAs === chartSaveAsEnum.NEW_VIZ"
+    <div *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART"
       >{{ struct?.mproveDirValue | mproveDir | capitalize }} /
       {{ usersFolder }} / {{ alias }} / {{ chartId }}.chart</div
     >
@@ -227,7 +227,10 @@
   </div>
 
   <div class="flex h-9 flex-row items-start">
-    <div class="flex flex-col" *ngIf="chartSaveAs === chartSaveAsEnum.NEW_VIZ">
+    <div
+      class="flex flex-col"
+      *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART"
+    >
       <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
         >Access Roles</div
       >
@@ -236,7 +239,7 @@
     <div
       [formGroup]="rolesForm"
       class="ml-5 flex flex-col items-start"
-      *ngIf="chartSaveAs === chartSaveAsEnum.NEW_VIZ"
+      *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART"
     >
       <input
         autocomplete="off"
@@ -255,7 +258,10 @@
   </div>
 
   <div class="mt-5 flex h-9 flex-row items-start">
-    <div class="flex flex-col" *ngIf="chartSaveAs === chartSaveAsEnum.NEW_VIZ">
+    <div
+      class="flex flex-col"
+      *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART"
+    >
       <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
         >Access Users</div
       >
@@ -264,7 +270,7 @@
     <div
       [formGroup]="usersForm"
       class="ml-5 flex flex-col items-start"
-      *ngIf="chartSaveAs === chartSaveAsEnum.NEW_VIZ"
+      *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART"
     >
       <input
         autocomplete="off"
@@ -289,7 +295,7 @@
       type="button"
       [ngClass]="{
         'bg-blue3':
-          chartSaveAs === chartSaveAsEnum.NEW_VIZ ||
+          chartSaveAs === chartSaveAsEnum.NEW_CHART ||
           (!!selectedDashboardId &&
             (tileSaveAs === tileSaveAsEnum.NEW_TILE || !!selectedTileTitle)),
         'cursor-default bg-gray-400':

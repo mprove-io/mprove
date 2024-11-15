@@ -37,7 +37,7 @@ export function checkChartAccess(
     common.LogTypeEnum.Errors,
     item.errors
   );
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Vizs, newVizs);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Charts, newVizs);
 
   return newVizs;
 }

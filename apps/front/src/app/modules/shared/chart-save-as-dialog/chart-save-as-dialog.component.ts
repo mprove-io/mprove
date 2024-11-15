@@ -25,7 +25,7 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 enum ChartSaveAsEnum {
-  NEW_VIZ = 'NEW_VIZ',
+  NEW_CHART = 'NEW_CHART',
   TILE_OF_DASHBOARD = 'TILE_OF_DASHBOARD'
 }
 
@@ -75,7 +75,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
     users: [undefined, [Validators.maxLength(255)]]
   });
 
-  chartSaveAs: ChartSaveAsEnum = ChartSaveAsEnum.NEW_VIZ;
+  chartSaveAs: ChartSaveAsEnum = ChartSaveAsEnum.NEW_CHART;
   tileSaveAs: TileSaveAsEnum = TileSaveAsEnum.NEW_TILE;
 
   chartId = common.makeId();
@@ -225,7 +225,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       let newTitle = this.titleForm.controls['title'].value;
 
       if (
-        this.chartSaveAs === ChartSaveAsEnum.NEW_VIZ &&
+        this.chartSaveAs === ChartSaveAsEnum.NEW_CHART &&
         this.rolesForm.controls['roles'].valid &&
         this.usersForm.controls['users'].valid
       ) {
@@ -246,7 +246,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
   }
 
   newVizOnClick() {
-    this.chartSaveAs = ChartSaveAsEnum.NEW_VIZ;
+    this.chartSaveAs = ChartSaveAsEnum.NEW_CHART;
     this.titleForm.get('title').updateValueAndValidity();
   }
 

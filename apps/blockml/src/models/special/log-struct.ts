@@ -43,5 +43,5 @@ export async function logStruct(
   log(cs, caller, func, structId, common.LogTypeEnum.Reps, reps);
   log(cs, caller, func, structId, common.LogTypeEnum.UdfsDict, udfsDict);
   log(cs, caller, func, structId, common.LogTypeEnum.Views, views);
-  log(cs, caller, func, structId, common.LogTypeEnum.Vizs, vizs);
+  log(cs, caller, func, structId, common.LogTypeEnum.Charts, vizs);
 }

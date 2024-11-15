@@ -334,7 +334,7 @@ export function splitFiles(
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Reps, reps);
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Udfs, udfs);
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Views, views);
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Vizs, vizs);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Charts, vizs);
   helper.log(
     cs,
     caller,

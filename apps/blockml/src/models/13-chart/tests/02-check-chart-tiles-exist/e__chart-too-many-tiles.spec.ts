@@ -46,7 +46,7 @@ test('1', async t => {
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
-    vizs = await helper.readLog(fromDir, common.LogTypeEnum.Vizs);
+    vizs = await helper.readLog(fromDir, common.LogTypeEnum.Charts);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }

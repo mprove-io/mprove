@@ -54,7 +54,7 @@ test('1', async t => {
     views = await helper.readLog(fromDir, common.LogTypeEnum.Views);
     models = await helper.readLog(fromDir, common.LogTypeEnum.Models);
     dashboards = await helper.readLog(fromDir, common.LogTypeEnum.Ds);
-    vizs = await helper.readLog(fromDir, common.LogTypeEnum.Vizs);
+    vizs = await helper.readLog(fromDir, common.LogTypeEnum.Charts);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
