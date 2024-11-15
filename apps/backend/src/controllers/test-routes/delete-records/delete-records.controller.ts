@@ -19,6 +19,7 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
+import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
 import { envsTable } from '~backend/drizzle/postgres/schema/envs';
@@ -32,7 +33,6 @@ import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { structsTable } from '~backend/drizzle/postgres/schema/structs';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
-import { vizsTable } from '~backend/drizzle/postgres/schema/vizs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -229,8 +229,8 @@ export class DeleteRecordsController {
           }
           if (structIds.length > 0) {
             await tx
-              .delete(vizsTable)
-              .where(inArray(vizsTable.structId, structIds));
+              .delete(chartsTable)
+              .where(inArray(chartsTable.structId, structIds));
 
             // await this.vizsRepository.delete({ struct_id: In(structIds) });
           }

@@ -176,14 +176,14 @@ export class WrapToEntService {
     };
   }
 
-  wrapToEntityViz(viz: common.Viz): schemaPostgres.VizEnt {
+  wrapToEntityViz(viz: common.Viz): schemaPostgres.ChartEnt {
     return {
-      vizFullId: this.hashService.makeVizFullId({
+      chartFullId: this.hashService.makeChartFullId({
         structId: viz.structId,
-        vizId: viz.vizId
+        chartId: viz.chartId
       }),
       structId: viz.structId,
-      vizId: viz.vizId,
+      chartId: viz.chartId,
       title: viz.title,
       modelId: viz.modelId,
       modelLabel: viz.modelLabel,

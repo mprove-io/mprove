@@ -14,7 +14,7 @@ import { CustomCommand } from '~mcli/models/custom-command';
 
 interface VizPartQ {
   title: string;
-  vizId: string;
+  chartId: string;
   url: string;
   query: QueryPartQ;
 }
@@ -82,7 +82,7 @@ export class GetQueryCommand extends CustomCommand {
     examples: [
       [
         'Get query for Dev repo Chart',
-        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --viz-id v1 --get-sql --get-data'
+        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --chart-id v1 --get-sql --get-data'
       ],
       [
         'Get query for Dev repo Dashboard',
@@ -117,7 +117,7 @@ export class GetQueryCommand extends CustomCommand {
 
   dashboardId = Option.String('--dashboard-id', {
     description:
-      '(dashboard-id, viz-id or report-id required) Dashboard Id (name)'
+      '(dashboard-id, chart-id or report-id required) Dashboard Id (name)'
   });
 
   tileIndex = Option.String('--tile-index', {
@@ -125,12 +125,14 @@ export class GetQueryCommand extends CustomCommand {
     description: '(optional) Dashboard Tile Index starting with 0'
   });
 
-  vizId = Option.String('--viz-id', {
-    description: '(dashboard-id, viz-id or report-id required) Chart Id (name)'
+  chartId = Option.String('--chart-id', {
+    description:
+      '(dashboard-id, chart-id or report-id required) Chart Id (name)'
   });
 
   reportId = Option.String('--report-id', {
-    description: '(dashboard-id, viz-id or report-id required) Report Id (name)'
+    description:
+      '(dashboard-id, chart-id or report-id required) Report Id (name)'
   });
 
   rowId = Option.String('--row-id', {
@@ -188,12 +190,12 @@ export class GetQueryCommand extends CustomCommand {
 
     if (
       common.isDefined(this.dashboardId) &&
-      common.isDefined(this.vizId) &&
+      common.isDefined(this.chartId) &&
       common.isDefined(this.reportId)
     ) {
       let serverError = new common.ServerError({
         message: common.ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
-        data: `dashboard-id, viz-id, report-id`,
+        data: `dashboard-id, chart-id, report-id`,
         originalError: null
       });
       throw serverError;
@@ -201,12 +203,13 @@ export class GetQueryCommand extends CustomCommand {
 
     if (
       common.isUndefined(this.dashboardId) &&
-      common.isUndefined(this.vizId) &&
+      common.isUndefined(this.chartId) &&
       common.isUndefined(this.reportId)
     ) {
       let serverError = new common.ServerError({
         message:
-          common.ErEnum.MCLI_DASHBOARD_ID_VIZ_ID_AND_REPORT_ID_ARE_NOT_DEFINED,
+          common.ErEnum
+            .MCLI_DASHBOARD_ID_CHART_ID_AND_REPORT_ID_ARE_NOT_DEFINED,
         originalError: null
       });
       throw serverError;
@@ -265,13 +268,13 @@ export class GetQueryCommand extends CustomCommand {
 
     let vizPartQ: VizPartQ;
 
-    if (common.isDefined(this.vizId)) {
+    if (common.isDefined(this.chartId)) {
       let getVizReqPayload: apiToBackend.ToBackendGetVizRequestPayload = {
         projectId: this.projectId,
         isRepoProd: isRepoProd,
         branchId: this.branch,
         envId: this.env,
-        vizId: this.vizId
+        chartId: this.chartId
       };
 
       let getVizResp = await mreq<apiToBackend.ToBackendGetVizResponse>({
@@ -316,12 +319,12 @@ export class GetQueryCommand extends CustomCommand {
         repoId: getRepoResp.payload.repo.repoId,
         branch: this.branch,
         env: this.env,
-        vizId: vizX.vizId
+        chartId: vizX.chartId
       });
 
       vizPartQ = {
         title: tileX.mconfig.chart.title,
-        vizId: vizX.vizId,
+        chartId: vizX.chartId,
         url: url,
         query: queryPartQ
       };
@@ -512,7 +515,7 @@ export class GetQueryCommand extends CustomCommand {
 
     let log: any = {};
 
-    if (common.isDefined(this.vizId)) {
+    if (common.isDefined(this.chartId)) {
       log.chart = vizPartQ;
     }
 

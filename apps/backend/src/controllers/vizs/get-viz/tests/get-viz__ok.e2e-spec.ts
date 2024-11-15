@@ -21,7 +21,7 @@ let testProjectId = 't1';
 let projectId = common.makeId();
 let projectName = testId;
 
-let vizId = 'ec_s1';
+let chartId = 'ec_s1';
 
 let prep: interfaces.Prep;
 
@@ -96,7 +96,7 @@ test('1', async t => {
         isRepoProd: false,
         branchId: common.BRANCH_MASTER,
         envId: common.PROJECT_ENV_PROD,
-        vizId: vizId
+        chartId: chartId
       }
     };
 

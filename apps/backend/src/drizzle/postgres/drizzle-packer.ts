@@ -12,6 +12,7 @@ import { setUndefinedToNull } from './drizzle-set-undefined-to-null';
 import { avatarsTable } from './schema/avatars';
 import { branchesTable } from './schema/branches';
 import { bridgesTable } from './schema/bridges';
+import { chartsTable } from './schema/charts';
 import { connectionsTable } from './schema/connections';
 import { dashboardsTable } from './schema/dashboards';
 import { envsTable } from './schema/envs';
@@ -28,7 +29,6 @@ import { queriesTable } from './schema/queries';
 import { reportsTable } from './schema/reports';
 import { structsTable } from './schema/structs';
 import { usersTable } from './schema/users';
-import { vizsTable } from './schema/vizs';
 
 // let retry = require('async-retry');
 
@@ -214,7 +214,7 @@ export class DrizzlePacker {
         common.isDefined(insertRecords.vizs) &&
         insertRecords.vizs.length > 0
       ) {
-        await tx.insert(vizsTable).values(insertRecords.vizs);
+        await tx.insert(chartsTable).values(insertRecords.vizs);
       }
     }
 
@@ -554,14 +554,14 @@ export class DrizzlePacker {
       ) {
         updateRecords.vizs = setUndefinedToNull({
           ents: updateRecords.vizs,
-          table: vizsTable
+          table: chartsTable
         });
 
         await forEachSeries(updateRecords.vizs, async x => {
           await tx
-            .update(vizsTable)
+            .update(chartsTable)
             .set(x)
-            .where(eq(vizsTable.vizFullId, x.vizFullId));
+            .where(eq(chartsTable.chartFullId, x.chartFullId));
         });
       }
     }
@@ -1009,20 +1009,20 @@ export class DrizzlePacker {
         insOrUpdRecords.vizs.length > 0
       ) {
         insOrUpdRecords.vizs = Array.from(
-          new Set(insOrUpdRecords.vizs.map(x => x.vizFullId))
-        ).map(id => insOrUpdRecords.vizs.find(x => x.vizFullId === id));
+          new Set(insOrUpdRecords.vizs.map(x => x.chartFullId))
+        ).map(id => insOrUpdRecords.vizs.find(x => x.chartFullId === id));
 
         insOrUpdRecords.vizs = setUndefinedToNull({
           ents: insOrUpdRecords.vizs,
-          table: vizsTable
+          table: chartsTable
         });
 
         await tx
-          .insert(vizsTable)
+          .insert(chartsTable)
           .values(insOrUpdRecords.vizs)
           .onConflictDoUpdate({
-            target: vizsTable.vizFullId,
-            set: drizzleSetAllColumnsFull({ table: vizsTable })
+            target: chartsTable.chartFullId,
+            set: drizzleSetAllColumnsFull({ table: chartsTable })
           });
       }
     }

@@ -22,7 +22,7 @@ export class ToBackendCreateVizRequestPayload {
   envId: string;
 
   @IsString()
-  vizId: string;
+  chartId: string;
 
   @IsString()
   tileTitle: string;

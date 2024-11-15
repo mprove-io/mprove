@@ -3,11 +3,12 @@
 <m-insights-icon
   class="flex-shrink-0"
   [ngClass]="{
-    'cursor-pointer text-gray-500':
+    'text-gray-500':
       showMetricsChart === true && repSelectedNodes.length === 0,
-    'cursor-pointer text-gray-400':
+    'text-gray-400':
       showMetricsChart === false && repSelectedNodes.length === 0,
-    'cursor-default text-gray-300': repSelectedNodes.length > 0
+    'cursor-default text-gray-300': repSelectedNodes.length > 0,
+    'cursor-pointer': repSelectedNodes.length === 0,
   }"
   (click)="toggleShowMetricsChart()"
 ></m-insights-icon>

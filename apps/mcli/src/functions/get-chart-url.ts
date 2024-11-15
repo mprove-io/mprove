@@ -5,9 +5,9 @@ export function getChartUrl(item: {
   repoId: string;
   branch: string;
   env: string;
-  vizId: string;
+  chartId: string;
 }) {
-  let { host, orgId, projectId, repoId, branch, env, vizId } = item;
+  let { host, orgId, projectId, repoId, branch, env, chartId } = item;
 
-  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/charts?search=${vizId}`;
+  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/charts?search=${chartId}`;
 }

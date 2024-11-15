@@ -1,7 +1,6 @@
 import {
   ChangeDetectorRef,
   Component,
-  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnInit
 } from '@angular/core';
@@ -79,7 +78,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
   chartSaveAs: ChartSaveAsEnum = ChartSaveAsEnum.NEW_VIZ;
   tileSaveAs: TileSaveAsEnum = TileSaveAsEnum.NEW_TILE;
 
-  vizId = common.makeId();
+  chartId = common.makeId();
 
   alias: string;
   alias$ = this.userQuery.alias$.pipe(
@@ -321,7 +320,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
-      vizId: this.vizId,
+      chartId: this.chartId,
       tileTitle: newTitle.trim(),
       accessRoles: roles,
       accessUsers: users,
@@ -341,7 +340,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.navigateService.navigateToVizs({
               extra: {
-                queryParams: { search: resp.payload.viz.vizId }
+                queryParams: { search: resp.payload.viz.chartId }
               }
             });
           }

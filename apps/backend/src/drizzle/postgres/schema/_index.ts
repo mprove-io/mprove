@@ -1,6 +1,7 @@
 export * from './avatars';
 export * from './branches';
 export * from './bridges';
+export * from './charts';
 export * from './connections';
 export * from './dashboards';
 export * from './envs';
@@ -17,4 +18,3 @@ export * from './queries';
 export * from './reports';
 export * from './structs';
 export * from './users';
-export * from './vizs';

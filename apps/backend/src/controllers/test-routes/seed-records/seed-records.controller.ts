@@ -72,7 +72,7 @@ export class SeedRecordsController {
     let structs: schemaPostgres.StructEnt[] = [];
     let branches: schemaPostgres.BranchEnt[] = [];
     let bridges: schemaPostgres.BridgeEnt[] = [];
-    let vizs: schemaPostgres.VizEnt[] = [];
+    let vizs: schemaPostgres.ChartEnt[] = [];
     let queries: schemaPostgres.QueryEnt[] = [];
     let models: schemaPostgres.ModelEnt[] = [];
     let metrics: schemaPostgres.MetricEnt[] = [];

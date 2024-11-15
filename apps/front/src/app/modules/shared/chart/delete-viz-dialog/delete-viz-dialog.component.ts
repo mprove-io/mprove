@@ -59,7 +59,7 @@ export class DeleteVizDialogComponent implements OnInit {
       branchId: branchId,
       envId: this.ref.data.envId,
       isRepoProd: isRepoProd,
-      vizId: viz.vizId
+      chartId: viz.chartId
     };
 
     apiService
@@ -72,7 +72,7 @@ export class DeleteVizDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteVizResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.ref.data.vizDeletedFnBindThis(viz.vizId);
+            this.ref.data.vizDeletedFnBindThis(viz.chartId);
           }
         }),
         take(1)

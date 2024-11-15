@@ -17,7 +17,7 @@ export class ToBackendDeleteVizRequestPayload {
   envId: string;
 
   @IsString()
-  vizId: string;
+  chartId: string;
 }
 
 export class ToBackendDeleteVizRequest extends ToBackendRequest {

@@ -19,10 +19,10 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
 @Component({
-  selector: 'm-chart-viz',
-  templateUrl: './chart-viz.component.html'
+  selector: 'm-chart',
+  templateUrl: './chart.component.html'
 })
-export class ChartVizComponent implements OnInit, OnDestroy {
+export class ChartComponent implements OnInit, OnDestroy {
   chartTypeEnumTable = common.ChartTypeEnum.Table;
   queryStatusEnum = common.QueryStatusEnum;
   queryStatusRunning = common.QueryStatusEnum.Running;
@@ -93,7 +93,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       branchId: nav.branchId,
       envId: nav.envId,
       isRepoProd: nav.isRepoProd,
-      vizId: this.viz.vizId
+      chartId: this.viz.chartId
     };
 
     let query: common.Query;
@@ -142,7 +142,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
               isRepoProd: nav.isRepoProd,
               mconfigId: this.mconfig.mconfigId,
               queryId: this.query.queryId,
-              vizId: this.viz.vizId
+              chartId: this.viz.chartId
             };
 
             return this.apiService
@@ -204,7 +204,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    this.spinner.show(this.viz.vizId);
+    this.spinner.show(this.viz.chartId);
 
     let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
       projectId: nav.projectId,
@@ -258,7 +258,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       showNav: true,
       isSelectValid: this.isSelectValid,
       dashboardId: undefined,
-      vizId: this.viz.vizId
+      chartId: this.viz.chartId
     });
   }
 
@@ -296,7 +296,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     this.query = query;
 
     if (this.query.status !== common.QueryStatusEnum.Running) {
-      this.spinner.hide(this.viz.vizId);
+      this.spinner.hide(this.viz.chartId);
     }
 
     this.qData =
@@ -311,7 +311,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // console.log('ngOnDestroyChartViz')
+    // console.log('ngOnDestroyChart')
     if (common.isDefined(this.checkRunning$)) {
       this.checkRunning$?.unsubscribe();
     }

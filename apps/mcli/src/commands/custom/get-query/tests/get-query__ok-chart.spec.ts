@@ -26,7 +26,7 @@ test('1', async t => {
 --repo dev \
 --branch ${defaultBranch} \
 --env prod \
---viz-id 4K9SNSMG0IQPQZ9CL23U \
+--chart-id 4K9SNSMG0IQPQZ9CL23U \
 --get-sql \
 --get-data \
 --json`;

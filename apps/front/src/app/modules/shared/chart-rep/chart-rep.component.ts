@@ -259,7 +259,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
       showNav: true,
       isSelectValid: this.isSelectValid,
       dashboardId: this.dashboard.dashboardId,
-      vizId: undefined,
+      chartId: undefined,
       listen: this.tile.listen
     });
   }
@@ -287,7 +287,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // console.log('ngOnDestroyChartViz')
+    // console.log('ngOnDestroyChart')
     if (common.isDefined(this.checkRunning$)) {
       this.checkRunning$?.unsubscribe();
     }

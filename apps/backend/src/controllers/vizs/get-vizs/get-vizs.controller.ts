@@ -6,8 +6,8 @@ import { helper } from '~backend/barrels/helper';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
-import { vizsTable } from '~backend/drizzle/postgres/schema/vizs';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
@@ -70,8 +70,8 @@ export class GetVizsController {
       envId: envId
     });
 
-    let vizs = await this.db.drizzle.query.vizsTable.findMany({
-      where: eq(vizsTable.structId, bridge.structId)
+    let vizs = await this.db.drizzle.query.chartsTable.findMany({
+      where: eq(chartsTable.structId, bridge.structId)
     });
 
     // let vizs = await this.vizsRepository.find({

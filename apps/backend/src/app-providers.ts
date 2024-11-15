@@ -8,6 +8,7 @@ import { BigQueryService } from './services/bigquery.service';
 import { BlockmlService } from './services/blockml.service';
 import { BranchesService } from './services/branches.service';
 import { BridgesService } from './services/bridges.service';
+import { ChartsService } from './services/charts.service';
 import { ClickHouseService } from './services/clickhouse.service';
 import { ConnectionsService } from './services/connections.service';
 import { DashboardsService } from './services/dashboards.service';
@@ -32,7 +33,6 @@ import { StructsService } from './services/structs.service';
 import { TasksService } from './services/tasks.service';
 import { UserCodeService } from './services/user-code.service';
 import { UsersService } from './services/users.service';
-import { VizsService } from './services/vizs.service';
 import { WrapToApiService } from './services/wrap-to-api.service';
 import { WrapToEntService } from './services/wrap-to-ent.service';
 
@@ -59,7 +59,7 @@ export const appProviders = [
   SnowFlakeService,
   StructsService,
   QueriesService,
-  VizsService,
+  ChartsService,
   DashboardsService,
   ReportsService,
   MembersService,

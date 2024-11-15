@@ -33,7 +33,7 @@ export function wrapVizs(item: {
 
     apiVizs.push({
       structId: structId,
-      vizId: x.name,
+      chartId: x.name,
       title: x.tiles[0].title,
       modelId: model.name,
       modelLabel: model.label,

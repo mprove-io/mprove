@@ -203,7 +203,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
   }
 
   makeFilteredVizs() {
-    const searcher = new FuzzySearch(this.vizs, ['title', 'vizId'], {
+    const searcher = new FuzzySearch(this.vizs, ['title', 'chartId'], {
       caseSensitive: false
     });
 
@@ -216,8 +216,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
       : this.vizsFilteredByWord;
 
     this.filteredVizs = this.filteredVizs.sort((a, b) => {
-      let aTitle = a.title || a.vizId;
-      let bTitle = b.title || b.vizId;
+      let aTitle = a.title || a.chartId;
+      let bTitle = b.title || b.chartId;
 
       return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
     });
@@ -238,15 +238,15 @@ export class ChartsComponent implements OnInit, OnDestroy {
       .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0));
   }
 
-  vizDeletedFn(deletedVizId: string) {
-    this.vizs = this.vizs.filter(x => x.vizId !== deletedVizId);
+  vizDeletedFn(deletedChartId: string) {
+    this.vizs = this.vizs.filter(x => x.chartId !== deletedChartId);
 
     this.makeFilteredVizs();
     this.cd.detectChanges();
   }
 
   trackByFn(index: number, item: common.VizX) {
-    return item.vizId;
+    return item.chartId;
   }
 
   searchWordChange() {
@@ -302,7 +302,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
     this.refreshShow();
   }
 
-  navigateToViz(vizId: string) {}
+  navigateToViz(chartId: string) {}
 
   explore(event: any, item: common.VizX) {
     event.stopPropagation();
@@ -315,14 +315,14 @@ export class ChartsComponent implements OnInit, OnDestroy {
   }
 
   async showChart(item: common.VizX) {
-    this.spinner.show(item.vizId);
+    this.spinner.show(item.chartId);
 
     let payloadGetViz: apiToBackend.ToBackendGetVizRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd,
-      vizId: item.vizId
+      chartId: item.chartId
     };
 
     let query: common.Query;
@@ -335,7 +335,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendGetVizResponse) => {
-          this.spinner.hide(item.vizId);
+          this.spinner.hide(item.chartId);
 
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
@@ -376,7 +376,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
       showNav: true,
       isSelectValid: isSelectValid,
       dashboardId: undefined,
-      vizId: item.vizId
+      chartId: item.chartId
     });
   }
 

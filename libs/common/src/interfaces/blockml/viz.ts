@@ -13,7 +13,7 @@ export class Viz {
   structId: string;
 
   @IsString()
-  vizId: string;
+  chartId: string;
 
   @IsString()
   title: string;

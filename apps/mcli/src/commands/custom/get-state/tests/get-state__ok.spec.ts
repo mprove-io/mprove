@@ -30,7 +30,7 @@ test('1', async t => {
 --get-repo \
 --get-repo-nodes \
 --get-dashboards \
---get-vizs \
+--get-charts \
 --get-models \
 --json`;
 

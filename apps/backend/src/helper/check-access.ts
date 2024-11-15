@@ -5,7 +5,7 @@ export function checkAccess(item: {
   userAlias: string;
   member: schemaPostgres.MemberEnt;
   entity:
-    | schemaPostgres.VizEnt
+    | schemaPostgres.ChartEnt
     | schemaPostgres.ModelEnt
     | schemaPostgres.DashboardEnt
     | schemaPostgres.ReportEnt;

@@ -98,10 +98,10 @@ export class HashService {
     return hash;
   }
 
-  makeVizFullId(item: { structId: string; vizId: string }) {
-    let { structId, vizId } = item;
+  makeChartFullId(item: { structId: string; chartId: string }) {
+    let { structId, chartId } = item;
 
-    let text = structId + vizId;
+    let text = structId + chartId;
     let hash = crypto.createHash('sha256').update(text).digest('hex');
     return hash;
   }

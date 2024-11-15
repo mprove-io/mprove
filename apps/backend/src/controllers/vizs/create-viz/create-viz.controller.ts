@@ -74,7 +74,7 @@ export class CreateVizController {
       projectId,
       isRepoProd,
       branchId,
-      vizId,
+      chartId,
       tileTitle,
       accessRoles,
       accessUsers,
@@ -158,7 +158,7 @@ export class CreateVizController {
       tileTitle: tileTitle,
       roles: accessRoles,
       users: accessUsers,
-      vizId: vizId,
+      chartId: chartId,
       defaultTimezone: currentStruct.defaultTimezone
     });
 
@@ -179,7 +179,7 @@ export class CreateVizController {
         ? `${projectId}/${common.MPROVE_USERS_FOLDER}/${user.alias}`
         : `${projectId}/${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}`;
 
-    let fileName = `${vizId}${common.FileExtensionEnum.Chart}`;
+    let fileName = `${chartId}${common.FileExtensionEnum.Chart}`;
 
     let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
       info: {
@@ -247,7 +247,7 @@ export class CreateVizController {
         envId: envId
       });
 
-    let viz = vizs.find(x => x.vizId === vizId);
+    let viz = vizs.find(x => x.chartId === chartId);
 
     let vizEnt = common.isDefined(viz)
       ? this.wrapToEntService.wrapToEntityViz(viz)

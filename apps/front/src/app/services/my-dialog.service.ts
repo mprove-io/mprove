@@ -167,11 +167,11 @@ import {
 import {
   DeleteVizDialogComponent,
   DeleteVizDialogData
-} from '../modules/shared/chart-viz/delete-viz-dialog/delete-viz-dialog.component';
+} from '../modules/shared/chart/delete-viz-dialog/delete-viz-dialog.component';
 import {
   EditVizInfoDialogComponent,
   EditVizInfoDialogData
-} from '../modules/shared/chart-viz/edit-viz-info-dialog/edit-viz-info-dialog.component';
+} from '../modules/shared/chart/edit-viz-info-dialog/edit-viz-info-dialog.component';
 import {
   DashboardEditListenersDialogComponent,
   DashboardEditListenersDialogData

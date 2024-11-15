@@ -3,13 +3,13 @@ import { and, eq, inArray, sql } from 'drizzle-orm';
 import { common } from '~backend/barrels/common';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
 import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { metricsTable } from '~backend/drizzle/postgres/schema/metrics';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
 import { structsTable } from '~backend/drizzle/postgres/schema/structs';
-import { vizsTable } from '~backend/drizzle/postgres/schema/vizs';
 import { ProjectWeekStartEnum } from '~common/_index';
 
 @Injectable()
@@ -131,8 +131,8 @@ WHERE c.branch_id IS NULL AND to_timestamp(s.server_ts) < (NOW() - INTERVAL '1 m
         .where(inArray(structsTable.structId, orphanedStructIds));
 
       await this.db.drizzle
-        .delete(vizsTable)
-        .where(inArray(vizsTable.structId, orphanedStructIds));
+        .delete(chartsTable)
+        .where(inArray(chartsTable.structId, orphanedStructIds));
 
       await this.db.drizzle
         .delete(modelsTable)

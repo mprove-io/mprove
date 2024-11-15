@@ -203,14 +203,15 @@
                 *ngFor="let item of filteredVizs; trackBy: trackByFn"
                 class="flex flex-row"
                 [ngStyle]="
-                  item.vizId !==
-                    filteredVizs[filteredVizs.length - 1].vizId && {
+                  item.chartId !==
+                    filteredVizs[filteredVizs.length - 1].chartId && {
                     'border-bottom-width': '1px'
                   }
                 "
                 [ngClass]="{
                   'border-gray-300':
-                    item.vizId !== filteredVizs[filteredVizs.length - 1].vizId
+                    item.chartId !==
+                    filteredVizs[filteredVizs.length - 1].chartId
                 }"
               >
                 <div class="flex-grow flex-col">
@@ -284,10 +285,10 @@
 
                     <div class="flex w-1/3 flex-row py-3 text-base">
                       <div class="flex flex-row items-center">
-                        <div>{{ item.title || item.vizId | capitalize }}</div>
+                        <div>{{ item.title || item.chartId | capitalize }}</div>
                         <div class="relative mx-5 flex h-2 w-9 flex-shrink-0">
                           <ngx-spinner
-                            [name]="item.vizId"
+                            [name]="item.chartId"
                             color="rgba(54, 94, 224, 100)"
                             bdColor="rgba(0, 0, 0, 0)"
                             size="default"
@@ -305,7 +306,7 @@
                       class="flex w-1/6 items-start truncate py-3 focus:outline-none"
                     >
                       <span class="truncate">
-                        {{ item.vizId }}
+                        {{ item.chartId }}
                       </span>
                     </div>
 
@@ -400,14 +401,14 @@
                   *ngFor="let item of itemsRow"
                   class="h-full w-1/2 pb-6 pr-5"
                 >
-                  <m-chart-viz
+                  <m-chart
                     *ngIf="isShow === true"
                     [title]="item.title"
                     [tile]="item.tiles[0]"
                     [viz]="item"
                     [showBricks]="showBricks"
                     [vizDeletedFnBindThis]="vizDeletedFnBindThis"
-                  ></m-chart-viz>
+                  ></m-chart>
                 </div>
               </div>
             </cdk-virtual-scroll-viewport>

@@ -7,6 +7,7 @@ import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
+import { ChartsService } from '~backend/services/charts.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
@@ -14,7 +15,6 @@ import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { QueriesService } from '~backend/services/queries.service';
 import { StructsService } from '~backend/services/structs.service';
-import { VizsService } from '~backend/services/vizs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 @UseGuards(ValidateRequestGuard)
@@ -27,7 +27,7 @@ export class GetVizController {
     private mconfigsService: MconfigsService,
     private queriesService: QueriesService,
     private structsService: StructsService,
-    private vizsService: VizsService,
+    private chartsService: ChartsService,
     private projectsService: ProjectsService,
     private bridgesService: BridgesService,
     private envsService: EnvsService,
@@ -41,7 +41,7 @@ export class GetVizController {
   ) {
     let reqValid: apiToBackend.ToBackendGetVizRequest = request.body;
 
-    let { projectId, isRepoProd, branchId, envId, vizId } = reqValid.payload;
+    let { projectId, isRepoProd, branchId, envId, chartId } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -76,9 +76,9 @@ export class GetVizController {
       projectId: projectId
     });
 
-    let viz = await this.vizsService.getVizCheckExists({
+    let viz = await this.chartsService.getVizCheckExists({
       structId: bridge.structId,
-      vizId: vizId
+      chartId: chartId
     });
 
     let isAccessGranted = helper.checkAccess({

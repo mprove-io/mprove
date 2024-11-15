@@ -11,12 +11,14 @@ import {
 } from 'drizzle-orm/pg-core';
 import { common } from '~backend/barrels/common';
 
-export const vizsTable = pgTable(
-  'vizs',
+export const chartsTable = pgTable(
+  'charts',
   {
-    vizFullId: varchar('viz_full_id', { length: 64 }).notNull().primaryKey(),
+    chartFullId: varchar('chart_full_id', { length: 64 })
+      .notNull()
+      .primaryKey(),
     structId: varchar('struct_id', { length: 32 }).notNull(),
-    vizId: varchar('viz_id', { length: 32 }).notNull(), // name
+    chartId: varchar('chart_id', { length: 32 }).notNull(), // name
     title: varchar('title').notNull(),
     modelId: varchar('model_id', { length: 32 }).notNull(),
     modelLabel: varchar('model_label').notNull(),
@@ -29,17 +31,17 @@ export const vizsTable = pgTable(
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
-    idxVizsServerTs: index('idx_vizs_server_ts').on(table.serverTs),
-    idxVizsStructId: index('idx_vizs_struct_id').on(table.structId),
-    idxVizsVizId: index('idx_vizs_viz_id').on(table.vizId),
-    idxVizsModelId: index('idx_vizs_model_id').on(table.modelId),
+    idxChartsServerTs: index('idx_charts_server_ts').on(table.serverTs),
+    idxChartsStructId: index('idx_charts_struct_id').on(table.structId),
+    idxChartsChartId: index('idx_charts_chart_id').on(table.chartId),
+    idxChartsModelId: index('idx_charts_model_id').on(table.modelId),
     //
-    uidxVizsStructIdVizId: uniqueIndex('uidx_vizs_struct_id_viz_id').on(
+    uidxChartsStructIdChartId: uniqueIndex('uidx_charts_struct_id_chart_id').on(
       table.structId,
-      table.vizId
+      table.chartId
     )
   })
 );
 
-export type VizEnt = InferSelectModel<typeof vizsTable>;
-export type VizEntIns = InferInsertModel<typeof vizsTable>;
+export type ChartEnt = InferSelectModel<typeof chartsTable>;
+export type ChartEntIns = InferInsertModel<typeof chartsTable>;

@@ -2,23 +2,26 @@ import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { common } from '~backend/barrels/common';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { vizsTable } from '~backend/drizzle/postgres/schema/vizs';
+import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
 
 @Injectable()
-export class VizsService {
+export class ChartsService {
   constructor(@Inject(DRIZZLE) private db: Db) {}
 
-  async getVizCheckExists(item: { vizId: string; structId: string }) {
-    let { vizId, structId } = item;
+  async getVizCheckExists(item: { chartId: string; structId: string }) {
+    let { chartId, structId } = item;
 
-    let viz = await this.db.drizzle.query.vizsTable.findFirst({
-      where: and(eq(vizsTable.structId, structId), eq(vizsTable.vizId, vizId))
+    let viz = await this.db.drizzle.query.chartsTable.findFirst({
+      where: and(
+        eq(chartsTable.structId, structId),
+        eq(chartsTable.chartId, chartId)
+      )
     });
 
     // let viz = await this.vizsRepository.findOne({
     //   where: {
     //     struct_id: structId,
-    //     viz_id: vizId
+    //     viz_id: chartId
     //   }
     // });
 

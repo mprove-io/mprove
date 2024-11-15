@@ -2,13 +2,13 @@ import { common } from '~backend/barrels/common';
 
 export function makeVizFileText(item: {
   mconfig: common.MconfigX;
-  vizId: string;
+  chartId: string;
   tileTitle: string;
   roles: string;
   users: string;
   defaultTimezone: string;
 }) {
-  let { mconfig, vizId, tileTitle, roles, users, defaultTimezone } = item;
+  let { mconfig, chartId, tileTitle, roles, users, defaultTimezone } = item;
 
   let filePartTile: common.FilePartTile = common.prepareTile({
     isForDashboard: false,
@@ -21,7 +21,7 @@ export function makeVizFileText(item: {
   filePartTile.title = tileTitle;
 
   let vizFileText = common.toYaml({
-    chart: vizId,
+    chart: chartId,
     access_roles:
       common.isDefined(roles) && roles.trim().length > 0
         ? roles.split(',').map(x => x.trim())

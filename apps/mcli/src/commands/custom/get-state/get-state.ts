@@ -27,7 +27,7 @@ export class GetStateCommand extends CustomCommand {
       ],
       [
         'Get Production repo state',
-        'mprove get-state --project-id DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --get-models --get-dashboards --get-vizs --get-metrics --get-reports'
+        'mprove get-state --project-id DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --get-models --get-dashboards --get-charts --get-metrics --get-reports'
       ]
     ]
   });
@@ -72,8 +72,8 @@ export class GetStateCommand extends CustomCommand {
     description: '(default false), show dashboardIds in output'
   });
 
-  getVizs = Option.Boolean('--get-vizs', false, {
-    description: '(default false), show vizIds in output'
+  getCharts = Option.Boolean('--get-charts', false, {
+    description: '(default false), show chartIds in output'
   });
 
   getMetrics = Option.Boolean('--get-metrics', false, {
@@ -205,7 +205,7 @@ export class GetStateCommand extends CustomCommand {
       structId: getRepoResp.payload.struct.structId
     };
 
-    if (this.getVizs === true) {
+    if (this.getCharts === true) {
       log.charts = getVizsResp.payload.vizs.map(x => {
         let url = getChartUrl({
           host: this.context.config.mproveCliHost,
@@ -214,11 +214,11 @@ export class GetStateCommand extends CustomCommand {
           repoId: getRepoResp.payload.repo.repoId,
           branch: this.branch,
           env: this.env,
-          vizId: x.vizId
+          chartId: x.chartId
         });
 
         let chart: any = {
-          vizId: x.vizId,
+          chartId: x.chartId,
           url: url
         };
 

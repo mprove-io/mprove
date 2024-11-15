@@ -30,7 +30,7 @@ export interface ChartDialogData {
   canAccessModel: boolean;
   showNav: boolean;
   isSelectValid: boolean;
-  vizId: string;
+  chartId: string;
   dashboardId: string;
   listen?: { [a: string]: string };
   updateQueryFn?: any;
@@ -121,7 +121,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
               isRepoProd: nav.isRepoProd,
               mconfigId: this.mconfig.mconfigId,
               queryId: this.query.queryId,
-              vizId: this.ref.data.vizId,
+              chartId: this.ref.data.chartId,
               dashboardId: this.ref.data.dashboardId
             };
 

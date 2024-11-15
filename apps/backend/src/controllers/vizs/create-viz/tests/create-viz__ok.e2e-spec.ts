@@ -21,7 +21,7 @@ let testProjectId = 't1';
 let projectId = common.makeId();
 let projectName = testId;
 
-let vizId = common.makeId();
+let chartId = common.makeId();
 let newTitle = testId;
 
 let prep: interfaces.Prep;
@@ -121,7 +121,7 @@ test('1', async t => {
         isRepoProd: false,
         branchId: common.BRANCH_MASTER,
         envId: common.PROJECT_ENV_PROD,
-        vizId: vizId,
+        chartId: chartId,
         mconfig: newMconfig,
         tileTitle: newTitle
       }

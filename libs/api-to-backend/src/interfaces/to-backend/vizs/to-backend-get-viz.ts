@@ -17,7 +17,7 @@ export class ToBackendGetVizRequestPayload {
   envId: string;
 
   @IsString()
-  vizId: string;
+  chartId: string;
 }
 
 export class ToBackendGetVizRequest extends ToBackendRequest {

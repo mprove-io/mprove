@@ -504,7 +504,7 @@ export class WrapToApiService {
   }
 
   wrapToApiViz(item: {
-    viz: schemaPostgres.VizEnt;
+    viz: schemaPostgres.ChartEnt;
     mconfigs: common.MconfigX[];
     queries: common.Query[];
     member: common.Member;
@@ -529,7 +529,7 @@ export class WrapToApiService {
 
     return {
       structId: viz.structId,
-      vizId: viz.vizId,
+      chartId: viz.chartId,
       author: author,
       canEditOrDeleteViz: canEditOrDeleteViz,
       title: viz.title,

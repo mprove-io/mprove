@@ -112,7 +112,7 @@ test('1', async t => {
         req: req1
       });
 
-    let viz = resp1.payload.vizs.find(x => x.vizId === 's_s1');
+    let viz = resp1.payload.vizs.find(x => x.chartId === 's_s1');
 
     let req2: apiToBackend.ToBackendRunQueriesDryRequest = {
       info: {
