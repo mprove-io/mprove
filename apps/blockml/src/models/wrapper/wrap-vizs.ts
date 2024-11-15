@@ -8,7 +8,7 @@ export function wrapVizs(item: {
   projectId: string;
   envId: string;
   models: common.FileModel[];
-  vizs: common.FileVis[];
+  vizs: common.FileChart[];
 }) {
   let { structId, orgId, projectId, models, vizs, envId } = item;
 

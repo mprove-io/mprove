@@ -12,7 +12,7 @@ let testId = 'e__viz-missing-tiles';
 
 test('1', async t => {
   let errors: BmError[];
-  let vizs: common.FileVis[];
+  let vizs: common.FileChart[];
 
   let wLogger;
   let configService;

@@ -131,7 +131,7 @@
           "*.view": "yaml",
           "*.model": "yaml",
           "*.dashboard": "yaml",
-          "*.vis": "yaml",
+          "*.chart": "yaml",
           "*.udf": "yaml",
           "*.metric": "yaml",
           "*.config": "yaml"

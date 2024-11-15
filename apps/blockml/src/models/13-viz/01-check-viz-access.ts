@@ -9,7 +9,7 @@ let func = common.FuncEnum.CheckVizAccess;
 
 export function checkVizAccess(
   item: {
-    vizs: common.FileVis[];
+    vizs: common.FileChart[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;

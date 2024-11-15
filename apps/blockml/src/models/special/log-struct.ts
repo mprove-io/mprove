@@ -15,7 +15,7 @@ export async function logStruct(
     reps: common.FileRep[];
     udfsDict: common.UdfsDict;
     views: common.FileView[];
-    vizs: common.FileVis[];
+    vizs: common.FileChart[];
     structId: string;
     errors: BmError[];
     caller: common.CallerEnum;

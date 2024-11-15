@@ -12,7 +12,7 @@ let testId = 'e__wrong-access-roles-element-3';
 
 test('1', async t => {
   let errors: BmError[];
-  let entVizs: common.FileVis[];
+  let entVizs: common.FileChart[];
 
   let wLogger;
   let configService;

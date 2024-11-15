@@ -16,7 +16,7 @@ test('1', async t => {
   let views: common.FileView[];
   let models: common.FileModel[];
   let dashboards: common.FileDashboard[];
-  let vizs: common.FileVis[];
+  let vizs: common.FileChart[];
 
   let wLogger;
   let configService;

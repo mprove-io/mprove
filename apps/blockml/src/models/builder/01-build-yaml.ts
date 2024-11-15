@@ -22,7 +22,7 @@ export function buildYaml(
   let reps: common.FileRep[];
   let metrics: common.FileMetric[];
   let apis: common.FileApi[];
-  let vizs: common.FileVis[];
+  let vizs: common.FileChart[];
   let confs: common.FileProjectConf[];
 
   let file2s: common.File2[] = barYaml.removeWrongExt(
@@ -54,10 +54,10 @@ export function buildYaml(
             common.FileExtensionEnum.Dashboard,
             common.FileExtensionEnum.Metric,
             common.FileExtensionEnum.Model,
-            common.FileExtensionEnum.Rep,
+            common.FileExtensionEnum.Report,
             common.FileExtensionEnum.Udf,
             common.FileExtensionEnum.View,
-            common.FileExtensionEnum.Vis,
+            common.FileExtensionEnum.Chart,
             common.FileExtensionEnum.Yml
           ].indexOf(x.ext) > -1
       ),

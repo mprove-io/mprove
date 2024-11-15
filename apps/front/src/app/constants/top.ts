@@ -40,9 +40,9 @@ export const BLOCKML_EXT_LIST: common.FileExtensionEnum[] = [
   common.FileExtensionEnum.View,
   common.FileExtensionEnum.Model,
   common.FileExtensionEnum.Dashboard,
-  common.FileExtensionEnum.Vis,
+  common.FileExtensionEnum.Chart,
   common.FileExtensionEnum.Udf,
-  common.FileExtensionEnum.Rep,
+  common.FileExtensionEnum.Report,
   common.FileExtensionEnum.Api,
   common.FileExtensionEnum.Metric
 ];

@@ -36,13 +36,13 @@ export function checkListenFilters<T extends types.dzType>(
 
       if (
         common.isDefined(tile.listen_filters) &&
-        x.fileExt === common.FileExtensionEnum.Vis
+        x.fileExt === common.FileExtensionEnum.Chart
       ) {
         item.errors.push(
           new BmError({
             title: common.ErTitleEnum.CHART_TILE_CAN_NOT_HAVE_LISTEN_FILTERS,
             message:
-              `${common.FileExtensionEnum.Vis} does not support ` +
+              `${common.FileExtensionEnum.Chart} does not support ` +
               `"${common.ParameterEnum.ListenFilters}" parameter for tiles`,
             lines: [
               {

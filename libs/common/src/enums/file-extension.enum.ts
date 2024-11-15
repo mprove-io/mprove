@@ -4,9 +4,9 @@ export enum FileExtensionEnum {
   Md = '.md',
   Metric = '.metric',
   Model = '.model',
-  Rep = '.report',
+  Report = '.report',
   Udf = '.udf',
   View = '.view',
-  Vis = '.vis',
+  Chart = '.chart',
   Yml = '.yml'
 }

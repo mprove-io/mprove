@@ -21,7 +21,7 @@ export function makeVizFileText(item: {
   filePartTile.title = tileTitle;
 
   let vizFileText = common.toYaml({
-    vis: vizId,
+    chart: vizId,
     access_roles:
       common.isDefined(roles) && roles.trim().length > 0
         ? roles.split(',').map(x => x.trim())

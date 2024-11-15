@@ -1,4 +1,4 @@
-vis: ec_s1
+chart: ec_s2
 tiles:
 - title: Average sale price by category
   model: ec_m1

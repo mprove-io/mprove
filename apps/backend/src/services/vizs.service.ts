@@ -24,7 +24,7 @@ export class VizsService {
 
     if (common.isUndefined(viz)) {
       throw new common.ServerError({
-        message: common.ErEnum.BACKEND_VIS_DOES_NOT_EXIST
+        message: common.ErEnum.BACKEND_CHART_DOES_NOT_EXIST
       });
     }
 
@@ -44,7 +44,7 @@ export class VizsService {
       filePathArray[usersFolderIndex + 1] !== item.userAlias
     ) {
       throw new common.ServerError({
-        message: common.ErEnum.BACKEND_FORBIDDEN_VIS_PATH
+        message: common.ErEnum.BACKEND_FORBIDDEN_CHART_PATH
       });
     }
   }

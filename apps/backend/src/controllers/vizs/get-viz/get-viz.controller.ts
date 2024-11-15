@@ -89,7 +89,7 @@ export class GetVizController {
 
     if (isAccessGranted === false) {
       throw new common.ServerError({
-        message: common.ErEnum.BACKEND_FORBIDDEN_VIS
+        message: common.ErEnum.BACKEND_FORBIDDEN_CHART
       });
     }
 

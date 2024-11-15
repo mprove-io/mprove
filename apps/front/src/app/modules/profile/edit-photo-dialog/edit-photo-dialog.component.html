@@ -6,7 +6,12 @@
   >
 
   <div class="mt-6">
-    <input spellcheck="false" type="file" (change)="fileChangeEvent($event)" />
+    <input
+      autocomplete="off"
+      spellcheck="false"
+      type="file"
+      (change)="fileChangeEvent($event)"
+    />
   </div>
 
   <div class="mt-6 h-[200px]">

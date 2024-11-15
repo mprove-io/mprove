@@ -174,6 +174,7 @@
 
         <div [formGroup]="newNameForm" class="relative flex w-full">
           <input
+            autocomplete="off"
             data-cy="newNameInput"
             class="form-input border-gray3 focus:border-blue3 w-full min-w-[100px] resize-none rounded"
             [ngClass]="{
@@ -311,6 +312,7 @@
 
       <div [formGroup]="nameForm" class="relative flex w-full">
         <input
+          autocomplete="off"
           data-cy="nameInput"
           class="form-input border-gray3 focus:border-blue3 w-full min-w-[100px] resize-none rounded"
           [ngClass]="{
@@ -383,6 +385,7 @@
 
           <div class="relative">
             <input
+              autocomplete="off"
               data-cy="formatNumberInput"
               class="form-input border-gray3 focus:border-blue3 w-[200px] resize-none rounded"
               [ngClass]="{
@@ -410,6 +413,7 @@
 
         <div [formGroup]="currencyPrefixForm" class="relative flex w-[100px]">
           <input
+            autocomplete="off"
             data-cy="currencyPrefixInput"
             class="form-input border-gray3 focus:border-blue3 w-full resize-none rounded"
             [ngClass]="{
@@ -436,6 +440,7 @@
 
         <div [formGroup]="currencySuffixForm" class="relative flex w-[100px]">
           <input
+            autocomplete="off"
             data-cy="currencySuffixInput"
             class="form-input border-gray3 focus:border-blue3 w-full resize-none rounded"
             [ngClass]="{

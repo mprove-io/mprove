@@ -6,7 +6,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 export function buildViz(
   item: {
-    vizs: common.FileVis[];
+    vizs: common.FileChart[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;

@@ -143,7 +143,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
           case common.FileExtensionEnum.Dashboard:
             dashboardNodes.push(node);
             break;
-          case common.FileExtensionEnum.Vis:
+          case common.FileExtensionEnum.Chart:
             vizNodes.push(node);
             break;
           case common.FileExtensionEnum.Udf:

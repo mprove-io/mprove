@@ -11,6 +11,7 @@
     (ngSubmit)="add()"
   >
     <input
+      autocomplete="off"
       spellcheck="false"
       data-cy="addConnectionDialogConnectionIdInput"
       class="form-input border-gray3 focus:border-blue3 mt-9 rounded"
@@ -93,6 +94,7 @@
 
       <div class="text-base">Query Size Limit, gb (default: 1)</div>
       <input
+        autocomplete="off"
         spellcheck="false"
         data-cy="addConnectionDialogBigqueryQuerySizeLimitGbInput"
         class="form-input border-gray3 focus:border-blue3 mt-1 w-80 rounded"
@@ -127,6 +129,7 @@
       </div>
 
       <input
+        autocomplete="off"
         spellcheck="false"
         data-cy="addConnectionDialogHostInput"
         class="form-input border-gray3 focus:border-blue3 mt-6 w-80 rounded"
@@ -143,6 +146,7 @@
       ></m-validation>
 
       <input
+        autocomplete="off"
         spellcheck="false"
         data-cy="addConnectionDialogPortInput"
         class="form-input border-gray3 focus:border-blue3 w-80 rounded"
@@ -159,6 +163,7 @@
       ></m-validation>
 
       <input
+        autocomplete="off"
         *ngIf="addConnectionForm.controls['type'].value !== typeClickHouse"
         spellcheck="false"
         data-cy="addConnectionDialogDatabaseInput"
@@ -179,6 +184,7 @@
 
     <div *ngIf="addConnectionForm.controls['type'].value === typeSnowFlake">
       <input
+        autocomplete="off"
         spellcheck="false"
         data-cy="addConnectionDialogAccountInput"
         class="form-input border-gray3 focus:border-blue3 mt-6 w-80 rounded"
@@ -197,6 +203,7 @@
 
     <div *ngIf="addConnectionForm.controls['type'].value === typeSnowFlake">
       <input
+        autocomplete="off"
         spellcheck="false"
         data-cy="addConnectionDialogWarehouseInput"
         class="form-input border-gray3 focus:border-blue3 w-80 rounded"
@@ -221,6 +228,7 @@
       "
     >
       <input
+        autocomplete="off"
         spellcheck="false"
         data-cy="addConnectionDialogUserInput"
         class="form-input border-gray3 focus:border-blue3 w-80 rounded"
@@ -237,6 +245,7 @@
       ></m-validation>
 
       <input
+        autocomplete="off"
         spellcheck="false"
         data-cy="addConnectionDialogPasswordInput"
         class="form-input border-gray3 focus:border-blue3 w-80 rounded"

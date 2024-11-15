@@ -212,7 +212,7 @@ export class RebuildStructService {
     let reps: common.FileRep[];
     let udfs: common.FileUdf[];
     let views: common.FileView[];
-    let vizs: common.FileVis[];
+    let vizs: common.FileChart[];
     let projectConfig: common.FileProjectConf;
 
     let yamlBuildItem = barBuilder.buildYaml(

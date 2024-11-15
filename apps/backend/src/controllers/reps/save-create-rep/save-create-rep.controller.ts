@@ -194,7 +194,7 @@ export class SaveCreateRepController {
         ? `${projectId}/${common.MPROVE_USERS_FOLDER}/${user.alias}`
         : `${projectId}/${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}`;
 
-    let fileName = `${newRepId}${common.FileExtensionEnum.Rep}`;
+    let fileName = `${newRepId}${common.FileExtensionEnum.Report}`;
 
     let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
       info: {

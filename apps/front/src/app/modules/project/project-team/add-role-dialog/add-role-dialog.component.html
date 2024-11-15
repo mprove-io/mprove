@@ -7,6 +7,7 @@
 
   <form class="flex w-80 flex-col" [formGroup]="addRoleForm" (ngSubmit)="add()">
     <input
+      autocomplete="off"
       #role
       spellcheck="false"
       data-cy="addRoleDialogRoleInput"

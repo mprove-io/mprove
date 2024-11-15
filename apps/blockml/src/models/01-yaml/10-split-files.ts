@@ -25,7 +25,7 @@ export function splitFiles(
   let reps: common.FileRep[] = [];
   let metrics: common.FileMetric[] = [];
   let apis: common.FileApi[] = [];
-  let vizs: common.FileVis[] = [];
+  let vizs: common.FileChart[] = [];
   let confs: common.FileProjectConf[] = [];
 
   item.filesAny.forEach(file => {
@@ -176,8 +176,8 @@ export function splitFiles(
         break;
       }
 
-      case common.FileExtensionEnum.Rep: {
-        if (file.name === file.report + common.FileExtensionEnum.Rep) {
+      case common.FileExtensionEnum.Report: {
+        if (file.name === file.report + common.FileExtensionEnum.Report) {
           delete file.ext;
           delete file.name;
           delete file.path;
@@ -272,14 +272,14 @@ export function splitFiles(
         break;
       }
 
-      case common.FileExtensionEnum.Vis: {
-        if (file.name === file.vis + common.FileExtensionEnum.Vis) {
+      case common.FileExtensionEnum.Chart: {
+        if (file.name === file.chart + common.FileExtensionEnum.Chart) {
           delete file.ext;
           delete file.name;
           delete file.path;
 
-          let newVizOptions: common.FileVis = {
-            name: file.vis,
+          let newVizOptions: common.FileChart = {
+            name: file.chart,
             fileName: fileName,
             filePath: filePath,
             fileExt: fileExt
@@ -290,10 +290,10 @@ export function splitFiles(
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.WRONG_CHART_NAME,
-              message: `filename ${file.name} does not match "${common.ParameterEnum.Vis}: ${file.vis}"`,
+              message: `filename ${file.name} does not match "${common.ParameterEnum.Chart}: ${file.chart}"`,
               lines: [
                 {
-                  line: file.vis_line_num,
+                  line: file.chart_line_num,
                   name: file.name,
                   path: file.path
                 }

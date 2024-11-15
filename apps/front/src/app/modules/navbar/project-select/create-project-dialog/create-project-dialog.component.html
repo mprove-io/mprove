@@ -1,7 +1,7 @@
 <div class="flex flex-col bg-white p-9">
   <div
     data-cy="createProjectDialogTitle"
-    class="mt-5 select-none text-left text-2xl font-semibold text-gray2"
+    class="text-gray2 mt-5 select-none text-left text-2xl font-semibold"
     >Create Project</div
   >
 
@@ -11,9 +11,10 @@
     (ngSubmit)="create()"
   >
     <input
+      autocomplete="off"
       spellcheck="false"
       data-cy="createProjectDialogProjectNameInput"
-      class="form-input mt-9 rounded border-gray3 focus:border-blue3"
+      class="form-input border-gray3 focus:border-blue3 mt-9 rounded"
       [ngClass]="{
         'border-red-600':
           createProjectForm.controls['projectName'].invalid &&
@@ -26,7 +27,7 @@
       [control]="createProjectForm.controls['projectName']"
     ></m-validation>
 
-    <div class="mt-5 select-none text-left text-lg font-semibold text-gray2"
+    <div class="text-gray2 mt-5 select-none text-left text-lg font-semibold"
       >Remote Repo</div
     >
 
@@ -36,7 +37,7 @@
       (click)="managedOnClick()"
     >
       <div
-        class="flex h-6 w-6 items-center justify-center rounded-full border-2 border-blue3 text-white focus:outline-none"
+        class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
         [ngClass]="{
           'bg-blue3 ':
             projectRemoteRepoType === projectRemoteRepoTypeEnum.Managed
@@ -56,7 +57,7 @@
       (click)="gitCloneOnClick()"
     >
       <div
-        class="flex h-6 w-6 items-center justify-center rounded-full border-2 border-blue3 text-white focus:outline-none"
+        class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
         [ngClass]="{
           'bg-blue3 ':
             projectRemoteRepoType === projectRemoteRepoTypeEnum.GitClone
@@ -77,9 +78,10 @@
       class="flex w-full flex-col"
     >
       <input
+        autocomplete="off"
         spellcheck="false"
         data-cy="createProjectDialogGitUrlInput"
-        class="form-input mt-9 w-full rounded border-gray3 focus:border-blue3"
+        class="form-input border-gray3 focus:border-blue3 mt-9 w-full rounded"
         [ngClass]="{
           'border-red-600':
             createProjectForm.controls['projectGitUrl'].invalid &&
@@ -92,11 +94,11 @@
         [control]="createProjectForm.controls['projectGitUrl']"
       ></m-validation>
 
-      <div class="mt-5 select-none text-left text-lg text-gray2"
+      <div class="text-gray2 mt-5 select-none text-left text-lg"
         >Add this <span class="font-semibold">Deploy Key</span> to your git
         provider and enable <span class="font-semibold">Write Access</span>
       </div>
-      <div class="text-left text-lg text-gray2"
+      <div class="text-gray2 text-left text-lg"
         >(for github.com use Github Repository Settings Page)</div
       >
 
@@ -131,7 +133,7 @@
       >
         <div
           data-cy="createProjectDialogDeployKeyAddedCheckbox"
-          class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border-2 border-blue3 text-white focus:outline-none"
+          class="border-blue3 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border-2 text-white focus:outline-none"
           [ngClass]="{
             'bg-blue3 ': isDeployKeyAdded === true
           }"
@@ -151,7 +153,7 @@
     <div class="mt-8">
       <button
         data-cy="createProjectDialogCreateButton"
-        class="w-28 select-none rounded bg-blue3 py-3 font-medium text-white focus:outline-none"
+        class="bg-blue3 w-28 select-none rounded py-3 font-medium text-white focus:outline-none"
         type="submit"
         [ngClass]="{
           'bg-blue3 ':
@@ -170,7 +172,7 @@
 
       <button
         data-cy="createProjectDialogCancelButton"
-        class="ml-3 w-28 select-none rounded border border-blue3 py-3 font-medium text-blue3 focus:outline-none"
+        class="border-blue3 text-blue3 ml-3 w-28 select-none rounded border py-3 font-medium focus:outline-none"
         type="button"
         (click)="cancel()"
         >Cancel</button

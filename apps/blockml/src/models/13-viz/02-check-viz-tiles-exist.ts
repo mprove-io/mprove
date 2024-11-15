@@ -8,7 +8,7 @@ let func = common.FuncEnum.CheckVizTilesExist;
 
 export function checkVizTilesExist(
   item: {
-    vizs: common.FileVis[];
+    vizs: common.FileChart[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
@@ -18,7 +18,7 @@ export function checkVizTilesExist(
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newVizs: common.FileVis[] = [];
+  let newVizs: common.FileChart[] = [];
 
   item.vizs.forEach(x => {
     let errorsOnStart = item.errors.length;
@@ -28,11 +28,11 @@ export function checkVizTilesExist(
         new BmError({
           title: common.ErTitleEnum.CHART_MISSING_TILES,
           message:
-            `${common.FileExtensionEnum.Vis} must have ` +
+            `${common.FileExtensionEnum.Chart} must have ` +
             `"${common.ParameterEnum.Tiles}" parameter`,
           lines: [
             {
-              line: x.vis_line_num,
+              line: x.chart_line_num,
               name: x.fileName,
               path: x.filePath
             }
@@ -46,10 +46,10 @@ export function checkVizTilesExist(
       item.errors.push(
         new BmError({
           title: common.ErTitleEnum.CHART_TOO_MANY_TILES,
-          message: `${common.FileExtensionEnum.Vis} must have exactly one tile`,
+          message: `${common.FileExtensionEnum.Chart} must have exactly one tile`,
           lines: [
             {
-              line: x.vis_line_num,
+              line: x.chart_line_num,
               name: x.fileName,
               path: x.filePath
             }

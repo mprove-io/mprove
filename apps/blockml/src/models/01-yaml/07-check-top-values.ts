@@ -68,7 +68,7 @@ export function checkTopValues(
             common.ParameterEnum.Report.toString(),
             common.ParameterEnum.Udf.toString(),
             common.ParameterEnum.View.toString(),
-            common.ParameterEnum.Vis.toString()
+            common.ParameterEnum.Chart.toString()
           ].indexOf(parameter) > -1 &&
           file[parameter]
             .toString()

@@ -213,8 +213,11 @@ function getContentFromFileName(item: { fileName: string }) {
     case common.FileExtensionEnum.Dashboard:
       content = `dashboard: ${part}`;
       break;
-    case common.FileExtensionEnum.Vis:
-      content = `vis: ${part}`;
+    case common.FileExtensionEnum.Chart:
+      content = `chart: ${part}`;
+      break;
+    case common.FileExtensionEnum.Report:
+      content = `report: ${part}`;
       break;
     case common.FileExtensionEnum.Udf:
       content = `udf: ${part}`;

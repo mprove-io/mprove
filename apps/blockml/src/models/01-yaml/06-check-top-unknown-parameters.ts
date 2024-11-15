@@ -172,10 +172,10 @@ export function checkTopUnknownParameters(
             break;
           }
 
-          case common.FileExtensionEnum.Vis: {
+          case common.FileExtensionEnum.Chart: {
             if (
               [
-                common.ParameterEnum.Vis.toString(),
+                common.ParameterEnum.Chart.toString(),
                 // common.ParameterEnum.Group.toString(),
                 // common.ParameterEnum.Hidden.toString(),
                 common.ParameterEnum.AccessUsers.toString(),
@@ -188,7 +188,7 @@ export function checkTopUnknownParameters(
                   title: common.ErTitleEnum.UNKNOWN_CHART_PARAMETER,
                   message:
                     `parameter "${parameter}" can not be used on top level of ` +
-                    `${common.FileExtensionEnum.Vis} file`,
+                    `${common.FileExtensionEnum.Chart} file`,
                   lines: [
                     {
                       line: file[parameter + constants.LINE_NUM],
@@ -203,7 +203,7 @@ export function checkTopUnknownParameters(
             break;
           }
 
-          case common.FileExtensionEnum.Rep: {
+          case common.FileExtensionEnum.Report: {
             if (
               [
                 common.ParameterEnum.Report.toString(),
@@ -218,7 +218,7 @@ export function checkTopUnknownParameters(
                   title: common.ErTitleEnum.UNKNOWN_REP_PARAMETER,
                   message:
                     `parameter "${parameter}" can not be used on top level of ` +
-                    `${common.FileExtensionEnum.Rep} file`,
+                    `${common.FileExtensionEnum.Report} file`,
                   lines: [
                     {
                       line: file[parameter + constants.LINE_NUM],

@@ -116,5 +116,5 @@ test('1', async t => {
     });
   }
 
-  t.is(resp.info.error.message, common.ErEnum.BACKEND_FORBIDDEN_VIS_PATH);
+  t.is(resp.info.error.message, common.ErEnum.BACKEND_FORBIDDEN_CHART_PATH);
 });

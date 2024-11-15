@@ -231,7 +231,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
           ? common.CONFIG_SCHEMA
           : dotExt === common.FileExtensionEnum.Dashboard
           ? common.DASHBOARD_SCHEMA
-          : dotExt === common.FileExtensionEnum.Vis
+          : dotExt === common.FileExtensionEnum.Chart
           ? common.CHART_SCHEMA
           : dotExt === common.FileExtensionEnum.Model
           ? common.MODEL_SCHEMA
@@ -239,7 +239,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
           ? common.VIEW_SCHEMA
           : dotExt === common.FileExtensionEnum.Udf
           ? common.UDF_SCHEMA
-          : dotExt === common.FileExtensionEnum.Rep
+          : dotExt === common.FileExtensionEnum.Report
           ? common.REP_SCHEMA
           : undefined;
 
@@ -529,12 +529,12 @@ export class FileEditorComponent implements OnInit, OnDestroy {
       this.navigateService.navigateToModel(id);
     } else if (dotExt === common.FileExtensionEnum.Dashboard) {
       this.navigateService.navigateToDashboard(id);
-    } else if (dotExt === common.FileExtensionEnum.Rep) {
+    } else if (dotExt === common.FileExtensionEnum.Report) {
       this.navigateService.navigateToMetricsRep({
         repId: id,
         selectRowsNodeIds: []
       });
-    } else if (dotExt === common.FileExtensionEnum.Vis) {
+    } else if (dotExt === common.FileExtensionEnum.Chart) {
       this.navigateService.navigateToVizs({
         extra: {
           queryParams: { search: id }

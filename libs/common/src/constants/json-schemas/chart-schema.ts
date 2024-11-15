@@ -7,7 +7,7 @@ export const CHART_SCHEMA: JSONSchema7 = {
   type: 'object',
   additionalProperties: false,
   properties: {
-    vis: {
+    chart: {
       type: 'string'
     },
     access_roles: {
@@ -27,5 +27,5 @@ export const CHART_SCHEMA: JSONSchema7 = {
       items: TILE_SCHEMA
     }
   },
-  required: ['vis', 'tiles']
+  required: ['chart', 'tiles']
 };
