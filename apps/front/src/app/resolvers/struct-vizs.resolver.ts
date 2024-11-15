@@ -50,7 +50,7 @@ export class StructVizsResolver implements Resolve<Observable<boolean>> {
       userId: userId
     });
 
-    let payload: apiToBackend.ToBackendGetVizsRequestPayload = {
+    let payload: apiToBackend.ToBackendGetChartsRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -60,11 +60,11 @@ export class StructVizsResolver implements Resolve<Observable<boolean>> {
     return this.apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetCharts,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetVizsResponse) => {
+        map((resp: apiToBackend.ToBackendGetChartsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 

@@ -15,7 +15,7 @@ import { common } from '~front/barrels/common';
 export interface DeleteVizDialogData {
   apiService: ApiService;
   vizDeletedFnBindThis: any;
-  viz: common.Viz;
+  viz: common.Chart;
   projectId: string;
   branchId: string;
   envId: string;
@@ -51,10 +51,10 @@ export class DeleteVizDialogComponent implements OnInit {
 
     let { projectId, branchId, isRepoProd } = this.ref.data;
 
-    let viz: common.Viz = this.ref.data.viz;
+    let viz: common.Chart = this.ref.data.viz;
     let apiService: ApiService = this.ref.data.apiService;
 
-    let payload: apiToBackend.ToBackendDeleteVizRequestPayload = {
+    let payload: apiToBackend.ToBackendDeleteChartRequestPayload = {
       projectId: projectId,
       branchId: branchId,
       envId: this.ref.data.envId,
@@ -65,12 +65,12 @@ export class DeleteVizDialogComponent implements OnInit {
     apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteViz,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteChart,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendDeleteVizResponse) => {
+        tap((resp: apiToBackend.ToBackendDeleteChartResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.ref.data.vizDeletedFnBindThis(viz.chartId);
           }

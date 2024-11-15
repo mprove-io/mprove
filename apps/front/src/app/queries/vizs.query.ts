@@ -4,7 +4,7 @@ import { common } from '~front/barrels/common';
 import { BaseQuery } from './base.query';
 
 export class VizsState {
-  vizs: common.VizX[];
+  vizs: common.ChartX[];
 }
 
 let vizsState: VizsState = {

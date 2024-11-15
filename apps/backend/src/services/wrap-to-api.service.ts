@@ -510,7 +510,7 @@ export class WrapToApiService {
     member: common.Member;
     isAddMconfigAndQuery: boolean;
     models: common.ModelX[];
-  }): common.VizX {
+  }): common.ChartX {
     let { viz, mconfigs, queries, member, isAddMconfigAndQuery, models } = item;
 
     let filePathArray = viz.filePath.split('/');

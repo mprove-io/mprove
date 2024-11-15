@@ -215,17 +215,17 @@ export class RunCommand extends CustomCommand {
     let vizParts: VizPart[] = [];
 
     if (this.noVizs === false) {
-      let getVizsReqPayload: apiToBackend.ToBackendGetVizsRequestPayload = {
+      let getVizsReqPayload: apiToBackend.ToBackendGetChartsRequestPayload = {
         projectId: this.projectId,
         isRepoProd: isRepoProd,
         branchId: this.branch,
         envId: this.env
       };
 
-      let getVizsResp = await mreq<apiToBackend.ToBackendGetVizsResponse>({
+      let getVizsResp = await mreq<apiToBackend.ToBackendGetChartsResponse>({
         loginToken: loginToken,
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetCharts,
         payload: getVizsReqPayload,
         host: this.context.config.mproveCliHost
       });

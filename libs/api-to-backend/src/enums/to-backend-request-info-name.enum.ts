@@ -112,11 +112,11 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendModifyDashboard = 'api/ToBackendModifyDashboard',
   ToBackendDeleteDashboard = 'api/ToBackendDeleteDashboard',
   //
-  ToBackendGetVizs = 'api/ToBackendGetVizs',
-  ToBackendGetViz = 'api/ToBackendGetViz',
-  ToBackendCreateViz = 'api/ToBackendCreateViz',
-  ToBackendModifyViz = 'api/ToBackendModifyViz',
-  ToBackendDeleteViz = 'api/ToBackendDeleteViz',
+  ToBackendGetCharts = 'api/ToBackendGetCharts',
+  ToBackendGetChart = 'api/ToBackendGetChart',
+  ToBackendCreateChart = 'api/ToBackendCreateChart',
+  ToBackendModifyChart = 'api/ToBackendModifyChart',
+  ToBackendDeleteChart = 'api/ToBackendDeleteChart',
   //
   ToBackendGetMconfig = 'api/ToBackendGetMconfig',
   ToBackendCreateTempMconfig = 'api/ToBackendCreateTempMconfig',

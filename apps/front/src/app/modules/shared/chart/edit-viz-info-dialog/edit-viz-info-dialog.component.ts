@@ -33,7 +33,7 @@ export interface EditVizInfoDialogData {
   branchId: string;
   envId: string;
   mconfig: common.MconfigX;
-  viz: common.Viz;
+  viz: common.Chart;
 }
 
 @Component({
@@ -123,7 +123,7 @@ export class EditVizInfoDialogComponent implements OnInit {
       let roles: string = this.rolesForm.controls['roles'].value;
       let users: string = this.usersForm.controls['users'].value;
 
-      let payload: apiToBackend.ToBackendModifyVizRequestPayload = {
+      let payload: apiToBackend.ToBackendModifyChartRequestPayload = {
         projectId: this.ref.data.projectId,
         isRepoProd: this.ref.data.isRepoProd,
         branchId: this.ref.data.branchId,
@@ -140,11 +140,11 @@ export class EditVizInfoDialogComponent implements OnInit {
       apiService
         .req({
           pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyViz,
+            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyChart,
           payload: payload
         })
         .pipe(
-          tap(async (resp: apiToBackend.ToBackendModifyVizResponse) => {
+          tap(async (resp: apiToBackend.ToBackendModifyChartResponse) => {
             if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
               this.navigateService.reloadVizs();
             }

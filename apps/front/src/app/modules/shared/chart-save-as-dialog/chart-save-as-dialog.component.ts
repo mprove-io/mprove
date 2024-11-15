@@ -315,7 +315,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
     let { newTitle, roles, users } = item;
 
-    let payload: apiToBackend.ToBackendCreateVizRequestPayload = {
+    let payload: apiToBackend.ToBackendCreateChartRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
@@ -332,11 +332,11 @@ export class ChartSaveAsDialogComponent implements OnInit {
     apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateViz,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateChart,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateVizResponse) => {
+        tap((resp: apiToBackend.ToBackendCreateChartResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.navigateService.navigateToVizs({
               extra: {

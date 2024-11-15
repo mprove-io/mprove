@@ -16,13 +16,13 @@ export enum CallerEnum {
   BuildSqlAlwaysWhereCalc = '11-BuildSqlAlwaysWhereCalc',
   BuildModelMetric = '11.1-BuildModelMetric',
   BuildDashboard = '12-BuildDashboard',
-  BuildViz = '13-BuildViz',
+  BuildChart = '13-BuildChart',
 
   BuildDashboardTile = '14-BuildDashboardTile',
-  BuildVizTile = '14-BuildVizTile',
+  BuildChartTile = '14-BuildChartTile',
 
-  BuildDashboardChart = '15-BuildDashboardChart',
-  BuildVizChart = '15-BuildVizChart',
+  BuildDashboardTileCharts = '15-BuildDashboardTileCharts',
+  BuildChartTileCharts = '15-BuildChartTileCharts',
 
   BuildRep = '17-BuildRep',
 

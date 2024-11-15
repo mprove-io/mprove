@@ -97,8 +97,8 @@ export class ToBlockmlRebuildStructResponsePayload {
   apis: common.Api[];
 
   @ValidateNested()
-  @Type(() => common.Viz)
-  vizs: common.Viz[];
+  @Type(() => common.Chart)
+  vizs: common.Chart[];
 
   metrics: common.MetricAny[];
 

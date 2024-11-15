@@ -105,8 +105,8 @@ export enum FuncEnum {
   CheckDashboardFilterDefaults = '12-dashboard/02-check-dashboard-filter-defaults',
   CheckDashboardTilesExist = '12-dashboard/03-check-dashboard-tiles-exist',
 
-  CheckVizAccess = '13-viz/01-check-viz-access',
-  CheckVizTilesExist = '13-viz/02-check-viz-tiles-exist',
+  CheckChartAccess = '13-chart/01-check-chart-access',
+  CheckChartTilesExist = '13-chart/02-check-chart-tiles-exist',
 
   CheckTileIsObject = '14-tile/01-check-tile-is-object',
   CheckTileUnknownParameters = '14-tile/02-check-tile-unknown-parameters',

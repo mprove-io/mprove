@@ -88,9 +88,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req1: apiToBackend.ToBackendGetVizsRequest = {
+    let req1: apiToBackend.ToBackendGetChartsRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetCharts,
         traceId: traceId,
         idempotencyKey: common.makeId()
       },
@@ -103,7 +103,7 @@ test('1', async t => {
     };
 
     let resp1 =
-      await helper.sendToBackend<apiToBackend.ToBackendGetVizsResponse>({
+      await helper.sendToBackend<apiToBackend.ToBackendGetChartsResponse>({
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req1

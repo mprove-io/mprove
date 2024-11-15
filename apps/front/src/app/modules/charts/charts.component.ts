@@ -50,10 +50,10 @@ export class ChartsComponent implements OnInit, OnDestroy {
   vizsModels: ModelXWithTotalVizs[];
   hasAccessModels: common.ModelX[] = [];
 
-  vizs: common.VizX[];
-  vizsFilteredByWord: common.VizX[];
-  filteredVizs: common.VizX[];
-  filteredVizRows: common.VizX[][] = [];
+  vizs: common.ChartX[];
+  vizsFilteredByWord: common.ChartX[];
+  filteredVizs: common.ChartX[];
+  filteredVizRows: common.ChartX[][] = [];
 
   isExplorer = false;
   isExplorer$ = this.memberQuery.isExplorer$.pipe(
@@ -245,7 +245,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
-  trackByFn(index: number, item: common.VizX) {
+  trackByFn(index: number, item: common.ChartX) {
     return item.chartId;
   }
 
@@ -304,7 +304,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
   navigateToViz(chartId: string) {}
 
-  explore(event: any, item: common.VizX) {
+  explore(event: any, item: common.ChartX) {
     event.stopPropagation();
 
     this.navigateService.navigateMconfigQuery({
@@ -314,10 +314,10 @@ export class ChartsComponent implements OnInit, OnDestroy {
     });
   }
 
-  async showChart(item: common.VizX) {
+  async showChart(item: common.ChartX) {
     this.spinner.show(item.chartId);
 
-    let payloadGetViz: apiToBackend.ToBackendGetVizRequestPayload = {
+    let payloadGetViz: apiToBackend.ToBackendGetChartRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
@@ -330,11 +330,12 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
     await this.apiService
       .req({
-        pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetViz,
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetChart,
         payload: payloadGetViz
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetVizResponse) => {
+        tap((resp: apiToBackend.ToBackendGetChartResponse) => {
           this.spinner.hide(item.chartId);
 
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
@@ -384,7 +385,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
     event.stopPropagation();
   }
 
-  goToVizFile(event: MouseEvent, item: common.VizX) {
+  goToVizFile(event: MouseEvent, item: common.ChartX) {
     event.stopPropagation();
 
     let fileIdAr = item.filePath.split('/');
@@ -396,7 +397,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
     });
   }
 
-  async editVizInfo(event: MouseEvent, item: common.VizX) {
+  async editVizInfo(event: MouseEvent, item: common.ChartX) {
     event.stopPropagation();
 
     let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
@@ -437,7 +438,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteViz(event: MouseEvent, item: common.VizX) {
+  deleteViz(event: MouseEvent, item: common.ChartX) {
     event.stopPropagation();
 
     this.myDialogService.showDeleteViz({

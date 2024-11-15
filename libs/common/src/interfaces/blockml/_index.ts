@@ -1,6 +1,7 @@
 export * from './api';
 export * from './bml-error';
 export * from './bml-file';
+export * from './chart';
 export * from './column';
 export * from './dashboard';
 export * from './dashboard-field';
@@ -29,4 +30,3 @@ export * from './sorting';
 export * from './tile';
 export * from './udfs-dict';
 export * from './view';
-export * from './viz';

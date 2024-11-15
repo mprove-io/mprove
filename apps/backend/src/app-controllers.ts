@@ -126,11 +126,11 @@ export const appControllers = [
 
   controllers.GetViewsController,
 
-  controllers.CreateVizController,
-  controllers.DeleteVizController,
-  controllers.GetVizsController,
-  controllers.GetVizController,
-  controllers.ModifyVizController,
+  controllers.CreateChartController,
+  controllers.DeleteChartController,
+  controllers.GetChartsController,
+  controllers.GetChartController,
+  controllers.ModifyChartController,
 
   controllers.CheckController
 ];

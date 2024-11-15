@@ -34,7 +34,7 @@ export class ChartComponent implements OnInit, OnDestroy {
   title: string;
 
   @Input()
-  viz: common.VizX;
+  viz: common.ChartX;
 
   @Input()
   showBricks: boolean;
@@ -88,7 +88,7 @@ export class ChartComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    let payloadGetViz: apiToBackend.ToBackendGetVizRequestPayload = {
+    let payloadGetViz: apiToBackend.ToBackendGetChartRequestPayload = {
       projectId: nav.projectId,
       branchId: nav.branchId,
       envId: nav.envId,
@@ -101,11 +101,12 @@ export class ChartComponent implements OnInit, OnDestroy {
 
     await this.apiService
       .req({
-        pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetViz,
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetChart,
         payload: payloadGetViz
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetVizResponse) => {
+        tap((resp: apiToBackend.ToBackendGetChartResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 

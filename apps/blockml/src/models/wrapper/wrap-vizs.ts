@@ -12,7 +12,7 @@ export function wrapVizs(item: {
 }) {
   let { structId, orgId, projectId, models, vizs, envId } = item;
 
-  let apiVizs: common.Viz[] = [];
+  let apiVizs: common.Chart[] = [];
   let vizMconfigs: common.Mconfig[] = [];
   let vizQueries: common.Query[] = [];
 

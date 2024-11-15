@@ -1,0 +1,226 @@
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { and, eq } from 'drizzle-orm';
+import { forEachSeries } from 'p-iteration';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { apiToDisk } from '~backend/barrels/api-to-disk';
+import { common } from '~backend/barrels/common';
+import { helper } from '~backend/barrels/helper';
+import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
+import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
+import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
+import { getRetryOption } from '~backend/functions/get-retry-option';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { BlockmlService } from '~backend/services/blockml.service';
+import { BranchesService } from '~backend/services/branches.service';
+import { BridgesService } from '~backend/services/bridges.service';
+import { ChartsService } from '~backend/services/charts.service';
+import { EnvsService } from '~backend/services/envs.service';
+import { MembersService } from '~backend/services/members.service';
+import { ProjectsService } from '~backend/services/projects.service';
+import { RabbitService } from '~backend/services/rabbit.service';
+
+let retry = require('async-retry');
+
+@UseGuards(ValidateRequestGuard)
+@Controller()
+export class DeleteChartController {
+  constructor(
+    private branchesService: BranchesService,
+    private rabbitService: RabbitService,
+    private membersService: MembersService,
+    private projectsService: ProjectsService,
+    private chartsService: ChartsService,
+    private blockmlService: BlockmlService,
+    private envsService: EnvsService,
+    private bridgesService: BridgesService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
+  ) {}
+
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteChart)
+  async createEmptyDashboard(
+    @AttachUser() user: schemaPostgres.UserEnt,
+    @Req() request: any
+  ) {
+    let reqValid: apiToBackend.ToBackendDeleteChartRequest = request.body;
+
+    if (user.alias === common.RESTRICTED_USER_ALIAS) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_RESTRICTED_USER
+      });
+    }
+
+    let { traceId } = reqValid.info;
+    let { projectId, isRepoProd, branchId, envId, chartId } = reqValid.payload;
+
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+
+    let project = await this.projectsService.getProjectCheckExists({
+      projectId: projectId
+    });
+
+    let member = await this.membersService.getMemberCheckExists({
+      projectId: projectId,
+      memberId: user.userId
+    });
+
+    let branch = await this.branchesService.getBranchCheckExists({
+      projectId: projectId,
+      repoId: repoId,
+      branchId: branchId
+    });
+
+    let env = await this.envsService.getEnvCheckExistsAndAccess({
+      projectId: projectId,
+      envId: envId,
+      member: member
+    });
+
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.projectId,
+      repoId: branch.repoId,
+      branchId: branch.branchId,
+      envId: envId
+    });
+
+    let firstProjectId =
+      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
+
+    if (
+      member.isAdmin === false &&
+      projectId === firstProjectId &&
+      repoId === common.PROD_REPO_ID
+    ) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
+      });
+    }
+
+    let existingViz = await this.chartsService.getVizCheckExists({
+      structId: bridge.structId,
+      chartId: chartId
+    });
+
+    if (member.isAdmin === false && member.isEditor === false) {
+      this.chartsService.checkVizPath({
+        userAlias: user.alias,
+        filePath: existingViz.filePath
+      });
+    }
+
+    let toDiskDeleteFileRequest: apiToDisk.ToDiskDeleteFileRequest = {
+      info: {
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteFile,
+        traceId: reqValid.info.traceId
+      },
+      payload: {
+        orgId: project.orgId,
+        projectId: projectId,
+        repoId: repoId,
+        branch: branchId,
+        fileNodeId: existingViz.filePath,
+        userAlias: user.alias,
+        remoteType: project.remoteType,
+        gitUrl: project.gitUrl,
+        privateKey: project.privateKey,
+        publicKey: project.publicKey
+      }
+    };
+
+    let diskResponse =
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteFileResponse>({
+        routingKey: helper.makeRoutingKeyToDisk({
+          orgId: project.orgId,
+          projectId: projectId
+        }),
+        message: toDiskDeleteFileRequest,
+        checkIsOk: true
+      });
+
+    let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
+      where: and(
+        eq(bridgesTable.projectId, branch.projectId),
+        eq(bridgesTable.repoId, branch.repoId),
+        eq(bridgesTable.branchId, branch.branchId)
+      )
+    });
+
+    // let branchBridges = await this.bridgesRepository.find({
+    //   where: {
+    //     project_id: branch.project_id,
+    //     repo_id: branch.repo_id,
+    //     branch_id: branch.branch_id
+    //   }
+    // });
+
+    await forEachSeries(branchBridges, async x => {
+      if (x.envId !== envId) {
+        x.structId = common.EMPTY_STRUCT_ID;
+        x.needValidate = true;
+      }
+    });
+
+    let { struct } = await this.blockmlService.rebuildStruct({
+      traceId: traceId,
+      orgId: project.orgId,
+      projectId: projectId,
+      structId: bridge.structId,
+      diskFiles: diskResponse.payload.files,
+      mproveDir: diskResponse.payload.mproveDir,
+      skipDb: true,
+      envId: envId
+    });
+
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(async tx => {
+          await tx
+            .delete(chartsTable)
+            .where(
+              and(
+                eq(chartsTable.chartId, chartId),
+                eq(chartsTable.structId, bridge.structId)
+              )
+            );
+
+          await this.db.packer.write({
+            tx: tx,
+            insertOrUpdate: {
+              structs: [struct],
+              bridges: [...branchBridges]
+            }
+          });
+        }),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    // await this.vizsRepository.delete({
+    //   viz_id: chartId,
+    //   struct_id: bridge.struct_id
+    // });
+
+    // await this.dbService.writeRecords({
+    //   modify: true,
+    //   records: {
+    //     structs: [struct],
+    //     bridges: [...branchBridges]
+    //   }
+    // });
+
+    let payload = {};
+
+    return payload;
+  }
+}

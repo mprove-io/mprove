@@ -413,12 +413,12 @@ export class RebuildStructService {
       this.cs
     );
 
-    vizs = barBuilder.buildViz(
+    vizs = barBuilder.buildChart(
       {
         vizs: vizs,
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildViz
+        caller: common.CallerEnum.BuildChart
       },
       this.cs
     );
@@ -448,30 +448,30 @@ export class RebuildStructService {
         weekStart: projectConfig.week_start,
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildVizTile
+        caller: common.CallerEnum.BuildChartTile
       },
       this.cs,
       this.rabbitService
     );
 
-    dashboards = barBuilder.buildChart(
+    dashboards = barBuilder.buildMconfigChart(
       {
         entities: dashboards,
         models: models,
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildDashboardChart
+        caller: common.CallerEnum.BuildDashboardTileCharts
       },
       this.cs
     );
 
-    vizs = barBuilder.buildChart(
+    vizs = barBuilder.buildMconfigChart(
       {
         entities: vizs,
         models: models,
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildVizChart
+        caller: common.CallerEnum.BuildChartTileCharts
       },
       this.cs
     );

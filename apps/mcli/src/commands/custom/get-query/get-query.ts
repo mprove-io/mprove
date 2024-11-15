@@ -269,7 +269,7 @@ export class GetQueryCommand extends CustomCommand {
     let vizPartQ: VizPartQ;
 
     if (common.isDefined(this.chartId)) {
-      let getVizReqPayload: apiToBackend.ToBackendGetVizRequestPayload = {
+      let getVizReqPayload: apiToBackend.ToBackendGetChartRequestPayload = {
         projectId: this.projectId,
         isRepoProd: isRepoProd,
         branchId: this.branch,
@@ -277,9 +277,10 @@ export class GetQueryCommand extends CustomCommand {
         chartId: this.chartId
       };
 
-      let getVizResp = await mreq<apiToBackend.ToBackendGetVizResponse>({
+      let getVizResp = await mreq<apiToBackend.ToBackendGetChartResponse>({
         loginToken: loginToken,
-        pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetViz,
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetChart,
         payload: getVizReqPayload,
         host: this.context.config.mproveCliHost
       });

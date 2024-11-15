@@ -141,16 +141,17 @@ export class GetStateCommand extends CustomCommand {
       host: this.context.config.mproveCliHost
     });
 
-    let getVizsReqPayload: apiToBackend.ToBackendGetVizsRequestPayload = {
+    let getVizsReqPayload: apiToBackend.ToBackendGetChartsRequestPayload = {
       projectId: this.projectId,
       isRepoProd: isRepoProd,
       branchId: this.branch,
       envId: this.env
     };
 
-    let getVizsResp = await mreq<apiToBackend.ToBackendGetVizsResponse>({
+    let getVizsResp = await mreq<apiToBackend.ToBackendGetChartsResponse>({
       loginToken: loginToken,
-      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs,
+      pathInfoName:
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetCharts,
       payload: getVizsReqPayload,
       host: this.context.config.mproveCliHost
     });

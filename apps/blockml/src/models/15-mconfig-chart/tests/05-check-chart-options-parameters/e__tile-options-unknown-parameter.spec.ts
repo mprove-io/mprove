@@ -6,7 +6,7 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildDashboardChart;
+let caller = common.CallerEnum.BuildDashboardTileCharts;
 let func = common.FuncEnum.CheckChartOptionsParameters;
 let testId = 'e__tile-options-unknown-parameter';
 

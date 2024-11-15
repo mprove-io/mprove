@@ -6,7 +6,7 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildVizTile;
+let caller = common.CallerEnum.BuildChartTile;
 let func = common.FuncEnum.CheckListenFilters;
 let testId = 'e__viz-tile-can-not-have-listen-filters';
 
