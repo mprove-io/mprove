@@ -2,7 +2,7 @@ import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { wrapTiles } from './wrap-tiles';
 
-export function wrapVizs(item: {
+export function wrapCharts(item: {
   structId: string;
   orgId: string;
   projectId: string;

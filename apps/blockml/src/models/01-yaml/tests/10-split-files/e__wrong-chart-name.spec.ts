@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildYaml;
 let func = common.FuncEnum.SplitFiles;
-let testId = 'e__wrong-viz-name';
+let testId = 'e__wrong-chart-name';
 
 test('1', async t => {
   let errors: BmError[];

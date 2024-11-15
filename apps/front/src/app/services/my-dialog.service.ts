@@ -4,9 +4,9 @@ import { constants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
 import { EmailConfirmedDialogComponent } from '../modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
 import {
-  NewVizDialogComponent,
-  NewVizDialogData
-} from '../modules/charts/new-viz-dialog/new-viz-dialog.component';
+  NewChartDialogComponent,
+  NewChartDialogData
+} from '../modules/charts/new-chart-dialog/new-chart-dialog.component';
 import {
   DashboardAddFilterDialogComponent,
   DashboardAddFilterDialogData
@@ -165,13 +165,13 @@ import {
   ChartSaveAsDialogData
 } from '../modules/shared/chart-save-as-dialog/chart-save-as-dialog.component';
 import {
-  DeleteVizDialogComponent,
-  DeleteVizDialogData
-} from '../modules/shared/chart/delete-viz-dialog/delete-viz-dialog.component';
+  DeleteChartDialogComponent,
+  DeleteChartDialogData
+} from '../modules/shared/chart/delete-chart-dialog/delete-chart-dialog.component';
 import {
-  EditVizInfoDialogComponent,
-  EditVizInfoDialogData
-} from '../modules/shared/chart/edit-viz-info-dialog/edit-viz-info-dialog.component';
+  EditChartInfoDialogComponent,
+  EditChartInfoDialogData
+} from '../modules/shared/chart/edit-chart-info-dialog/edit-chart-info-dialog.component';
 import {
   DashboardEditListenersDialogComponent,
   DashboardEditListenersDialogData
@@ -386,8 +386,8 @@ export class MyDialogService {
     });
   }
 
-  showEditVizInfo(item: EditVizInfoDialogData): void {
-    this.dialogService.open(EditVizInfoDialogComponent, {
+  showEditVizInfo(item: EditChartInfoDialogData): void {
+    this.dialogService.open(EditChartInfoDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item,
@@ -395,16 +395,16 @@ export class MyDialogService {
     });
   }
 
-  showNewViz(item: NewVizDialogData): void {
-    this.dialogService.open(NewVizDialogComponent, {
+  showNewViz(item: NewChartDialogData): void {
+    this.dialogService.open(NewChartDialogComponent, {
       enableClose: false,
       closeButton: true,
       data: item
     });
   }
 
-  showDeleteViz(item: DeleteVizDialogData): void {
-    this.dialogService.open(DeleteVizDialogComponent, {
+  showDeleteViz(item: DeleteChartDialogData): void {
+    this.dialogService.open(DeleteChartDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item

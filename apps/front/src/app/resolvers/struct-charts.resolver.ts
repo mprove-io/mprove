@@ -5,21 +5,21 @@ import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
+import { ChartsQuery } from '../queries/charts.query';
 import { MemberQuery } from '../queries/member.query';
 import { ModelsQuery } from '../queries/models.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { StructQuery } from '../queries/struct.query';
 import { UserQuery } from '../queries/user.query';
-import { VizsQuery } from '../queries/vizs.query';
 import { ApiService } from '../services/api.service';
 
 @Injectable({ providedIn: 'root' })
-export class StructVizsResolver implements Resolve<Observable<boolean>> {
+export class StructChartsResolver implements Resolve<Observable<boolean>> {
   constructor(
     private navQuery: NavQuery,
     private userQuery: UserQuery,
     private apiService: ApiService,
-    private vizsQuery: VizsQuery,
+    private vizsQuery: ChartsQuery,
     private modelsQuery: ModelsQuery,
     private structQuery: StructQuery,
     private memberQuery: MemberQuery,

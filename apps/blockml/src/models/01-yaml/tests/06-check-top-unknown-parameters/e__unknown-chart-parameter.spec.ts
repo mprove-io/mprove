@@ -6,13 +6,13 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildChartTile;
-let func = common.FuncEnum.CheckListenFilters;
-let testId = 'e__viz-tile-can-not-have-listen-filters';
+let caller = common.CallerEnum.BuildYaml;
+let func = common.FuncEnum.CheckTopUnknownParameters;
+let testId = 'e__unknown-chart-parameter';
 
 test('1', async t => {
   let errors: BmError[];
-  let entVizs: common.FileChart[];
+  let filesAny: any[];
 
   let wLogger;
   let configService;
@@ -31,22 +31,17 @@ test('1', async t => {
 
     wLogger = logger;
 
-    let connection: common.ProjectConnection = {
-      connectionId: 'c1',
-      type: common.ConnectionTypeEnum.PostgreSQL
-    };
-
     await structService.rebuildStruct({
       traceId: traceId,
       dir: dataDir,
       structId: structId,
       envId: common.PROJECT_ENV_PROD,
       evs: [],
-      connections: [connection]
+      connections: []
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
-    entVizs = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
+    filesAny = await helper.readLog(fromDir, common.LogTypeEnum.FilesAny);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -60,11 +55,8 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(entVizs.length, 0);
+  t.is(filesAny.length, 1);
 
-  t.is(
-    errors[0].title,
-    common.ErTitleEnum.CHART_TILE_CAN_NOT_HAVE_LISTEN_FILTERS
-  );
-  t.is(errors[0].lines[0].line, 7);
+  t.is(errors[0].title, common.ErTitleEnum.UNKNOWN_CHART_PARAMETER);
+  t.is(errors[0].lines[0].line, 2);
 });

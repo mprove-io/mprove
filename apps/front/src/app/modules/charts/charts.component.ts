@@ -12,11 +12,11 @@ import FuzzySearch from 'fuzzy-search';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
+import { ChartsQuery } from '~front/app/queries/charts.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
-import { VizsQuery } from '~front/app/queries/vizs.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -128,7 +128,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
     private modelsQuery: ModelsQuery,
-    private vizsQuery: VizsQuery,
+    private vizsQuery: ChartsQuery,
     private userQuery: UserQuery,
     private memberQuery: MemberQuery,
     private apiService: ApiService,

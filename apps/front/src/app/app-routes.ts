@@ -55,13 +55,13 @@ import { ProjectResolver } from './resolvers/project.resolver';
 import { RepoIdResolver } from './resolvers/repo-id.resolver';
 import { RepoStructFilesResolver } from './resolvers/repo-struct-files.resolver';
 import { RepoStructResolver } from './resolvers/repo-struct.resolver';
+import { StructChartsResolver } from './resolvers/struct-charts.resolver';
 import { StructDashboardResolver } from './resolvers/struct-dashboard.resolver';
 import { StructDashboardsResolver } from './resolvers/struct-dashboards.resolver';
 import { StructMetricsResolver } from './resolvers/struct-metrics.resolver';
 import { StructModelResolver } from './resolvers/struct-model.resolver';
 import { StructModelsResolver } from './resolvers/struct-models.resolver';
 import { StructRepResolver } from './resolvers/struct-rep.resolver';
-import { StructVizsResolver } from './resolvers/struct-vizs.resolver';
 
 export const appRoutes: Routes = [
   {
@@ -224,7 +224,7 @@ export const appRoutes: Routes = [
                           {
                             component: ChartsComponent,
                             path: common.PATH_CHARTS,
-                            resolve: [StructVizsResolver]
+                            resolve: [StructChartsResolver]
                           },
                           {
                             component: DashboardsComponent,

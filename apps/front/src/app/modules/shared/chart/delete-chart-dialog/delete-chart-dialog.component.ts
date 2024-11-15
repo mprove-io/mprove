@@ -12,7 +12,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-export interface DeleteVizDialogData {
+export interface DeleteChartDialogData {
   apiService: ApiService;
   vizDeletedFnBindThis: any;
   viz: common.Chart;
@@ -23,20 +23,20 @@ export interface DeleteVizDialogData {
 }
 
 @Component({
-  selector: 'm-delete-viz-dialog',
-  templateUrl: './delete-viz-dialog.component.html',
+  selector: 'm-delete-chart-dialog',
+  templateUrl: './delete-chart-dialog.component.html',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [CommonModule]
 })
-export class DeleteVizDialogComponent implements OnInit {
+export class DeleteChartDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.ref.close();
   }
 
   constructor(
-    public ref: DialogRef<DeleteVizDialogData>,
+    public ref: DialogRef<DeleteChartDialogData>,
     private router: Router
   ) {}
 

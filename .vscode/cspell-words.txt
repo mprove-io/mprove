@@ -204,7 +204,6 @@ uvwx
 validators
 varchar
 vcpu
-vizs
 voyek
 wavenet
 wayou

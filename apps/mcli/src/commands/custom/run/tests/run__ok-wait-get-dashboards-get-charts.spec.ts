@@ -10,7 +10,7 @@ import { RunCommand } from '../run';
 let assert = require('node:assert/strict');
 let retry = require('async-retry');
 
-let testId = 'mcli__run__ok-wait-get-dashboards-get-vizs';
+let testId = 'mcli__run__ok-wait-get-dashboards-get-charts';
 
 test('1', async t => {
   let code: number;

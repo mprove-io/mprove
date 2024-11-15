@@ -111,7 +111,7 @@ export class RebuildStructService {
         envId: envId
       });
 
-    let { apiVizs, vizMconfigs, vizQueries } = barWrapper.wrapVizs({
+    let { apiVizs, vizMconfigs, vizQueries } = barWrapper.wrapCharts({
       structId: structId,
       orgId: orgId,
       projectId: projectId,

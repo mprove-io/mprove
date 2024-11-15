@@ -26,7 +26,7 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { SharedModule } from '../../shared.module';
 
-export interface EditVizInfoDialogData {
+export interface EditChartInfoDialogData {
   apiService: ApiService;
   projectId: string;
   isRepoProd: boolean;
@@ -37,13 +37,13 @@ export interface EditVizInfoDialogData {
 }
 
 @Component({
-  selector: 'm-edit-viz-info-dialog',
-  templateUrl: './edit-viz-info-dialog.component.html',
+  selector: 'm-edit-chart-info-dialog',
+  templateUrl: './edit-chart-info-dialog.component.html',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [CommonModule, ReactiveFormsModule, SharedModule]
 })
-export class EditVizInfoDialogComponent implements OnInit {
+export class EditChartInfoDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.ref.close();
@@ -80,7 +80,7 @@ export class EditVizInfoDialogComponent implements OnInit {
   );
 
   constructor(
-    public ref: DialogRef<EditVizInfoDialogData>,
+    public ref: DialogRef<EditChartInfoDialogData>,
     private fb: FormBuilder,
     private router: Router,
     private userQuery: UserQuery,
