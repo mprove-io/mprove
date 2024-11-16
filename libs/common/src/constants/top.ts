@@ -11,7 +11,7 @@ export const MPROVE_CACHE_DIR = '.mprove';
 export const MPROVE_SYNC_FILENAME = 'sync.json';
 
 export const PROD_REPO_ID = 'production';
-export const BRANCH_MASTER = 'master';
+export const BRANCH_MASTER = 'master'; // set as string in db default value
 export const BRANCH_MAIN = 'main';
 export const PROJECT_ENV_PROD = 'prod';
 export const PASS_PHRASE = '';
@@ -64,7 +64,7 @@ export const PATH_LOGIN_SUCCESS = 'login-success';
 export const PATH_PASSWORD_RESET_SENT_AUTH = 'password-reset-sent-auth';
 export const PATH_PROFILE = 'profile';
 export const PATH_FILES = 'files';
-export const PATH_VISUALIZATIONS = 'visualizations';
+export const PATH_CHARTS = 'charts';
 export const PATH_ENV_VARIABLES = 'env-variables';
 export const PATH_DASHBOARDS = 'dashboards';
 export const PATH_MODELS = 'models';

@@ -4,6 +4,10 @@ import { constants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
 import { EmailConfirmedDialogComponent } from '../modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
 import {
+  NewChartDialogComponent,
+  NewChartDialogData
+} from '../modules/charts/new-chart-dialog/new-chart-dialog.component';
+import {
   DashboardAddFilterDialogComponent,
   DashboardAddFilterDialogData
 } from '../modules/dashboard/dashboard-add-filter-dialog/dashboard-add-filter-dialog.component';
@@ -11,10 +15,6 @@ import {
   DashboardAddTileDialogComponent,
   DashboardAddTileDialogData
 } from '../modules/dashboard/dashboard-add-tile-dialog/dashboard-add-tile-dialog.component';
-import {
-  DashboardEditListenersDialogComponent,
-  DashboardEditListenersDialogData
-} from '../modules/dashboard/dashboard-edit-listeners-dialog/dashboard-edit-listeners-dialog.component';
 import {
   DashboardsNewDialogComponent,
   DashboardsNewDialogData
@@ -165,13 +165,17 @@ import {
   ChartSaveAsDialogData
 } from '../modules/shared/chart-save-as-dialog/chart-save-as-dialog.component';
 import {
-  DeleteVizDialogComponent,
-  DeleteVizDialogData
-} from '../modules/shared/chart-viz/delete-viz-dialog/delete-viz-dialog.component';
+  DeleteChartDialogComponent,
+  DeleteChartDialogData
+} from '../modules/shared/chart/delete-chart-dialog/delete-chart-dialog.component';
 import {
-  EditVizInfoDialogComponent,
-  EditVizInfoDialogData
-} from '../modules/shared/chart-viz/edit-viz-info-dialog/edit-viz-info-dialog.component';
+  EditChartInfoDialogComponent,
+  EditChartInfoDialogData
+} from '../modules/shared/chart/edit-chart-info-dialog/edit-chart-info-dialog.component';
+import {
+  DashboardEditListenersDialogComponent,
+  DashboardEditListenersDialogData
+} from '../modules/shared/dashboard-edit-listeners-dialog/dashboard-edit-listeners-dialog.component';
 import {
   DashboardSaveAsDialogComponent,
   DashboardSaveAsDialogData
@@ -193,10 +197,6 @@ import {
   ViewBlockmlDialogData
 } from '../modules/shared/view-blockml-dialog/view-blockml-dialog.component';
 import { ErrorDialogComponent } from '../modules/special/error-dialog/error-dialog.component';
-import {
-  NewVizDialogComponent,
-  NewVizDialogData
-} from '../modules/visualizations/new-viz-dialog/new-viz-dialog.component';
 
 export interface ErrorDialogData {
   errorData: interfaces.ErrorData;
@@ -386,8 +386,8 @@ export class MyDialogService {
     });
   }
 
-  showEditVizInfo(item: EditVizInfoDialogData): void {
-    this.dialogService.open(EditVizInfoDialogComponent, {
+  showEditChartInfo(item: EditChartInfoDialogData): void {
+    this.dialogService.open(EditChartInfoDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item,
@@ -395,16 +395,16 @@ export class MyDialogService {
     });
   }
 
-  showNewViz(item: NewVizDialogData): void {
-    this.dialogService.open(NewVizDialogComponent, {
+  showNewChart(item: NewChartDialogData): void {
+    this.dialogService.open(NewChartDialogComponent, {
       enableClose: false,
       closeButton: true,
       data: item
     });
   }
 
-  showDeleteViz(item: DeleteVizDialogData): void {
-    this.dialogService.open(DeleteVizDialogComponent, {
+  showDeleteChart(item: DeleteChartDialogData): void {
+    this.dialogService.open(DeleteChartDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item

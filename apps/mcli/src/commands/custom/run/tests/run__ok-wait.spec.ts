@@ -33,7 +33,7 @@ test('1', async t => {
 --wait \
 --sleep 2 \
 --dashboard-ids ec1_d1 \
---viz-ids 4K9SNSMG0IQPQZ9CL23U,4V3KWMRA9MSH21EQZCJQ \
+--chart-ids 4K9SNSMG0IQPQZ9CL23U,4V3KWMRA9MSH21EQZCJQ \
 --json`;
 
     let userId = common.makeId();
@@ -63,7 +63,7 @@ test('1', async t => {
               userId,
               email: email,
               password: password,
-              isEmailVerified: common.BoolEnum.TRUE
+              isEmailVerified: true
             }
           ],
           orgs: [
@@ -91,9 +91,9 @@ test('1', async t => {
               memberId: userId,
               email,
               projectId,
-              isAdmin: common.BoolEnum.TRUE,
-              isEditor: common.BoolEnum.TRUE,
-              isExplorer: common.BoolEnum.TRUE
+              isAdmin: true,
+              isEditor: true,
+              isExplorer: true
             }
           ],
           connections: [

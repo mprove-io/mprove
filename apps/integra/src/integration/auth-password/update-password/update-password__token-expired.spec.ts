@@ -20,9 +20,9 @@ describe('integra', () => {
         {
           email: email,
           password: password,
-          isEmailVerified: common.BoolEnum.FALSE,
+          isEmailVerified: false,
           passwordResetToken: passwordResetToken,
-          passwordResetExpiresTs: '1'
+          passwordResetExpiresTs: 1
         }
       ]
     });

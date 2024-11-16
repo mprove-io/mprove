@@ -29,7 +29,7 @@ export class ToBackendGetQueryRequestPayload {
 
   @IsOptional()
   @IsString()
-  vizId?: string;
+  chartId?: string;
 
   @IsOptional()
   @IsString()

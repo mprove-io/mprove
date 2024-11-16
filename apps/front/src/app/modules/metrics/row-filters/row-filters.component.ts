@@ -1,12 +1,12 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { IRowNode } from 'ag-grid-community';
+import { DataRow } from '~front/app/interfaces/data-row';
 import { RepQuery } from '~front/app/queries/rep.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { RepService } from '~front/app/services/rep.service';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
-import { DataRow } from '../rep/rep.component';
 import { ParameterFilter } from '../row/row.component';
 
 @Component({

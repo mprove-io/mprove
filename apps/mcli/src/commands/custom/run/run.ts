@@ -4,17 +4,17 @@ import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
+import { getChartUrl } from '~mcli/functions/get-chart-url';
 import { getDashboardUrl } from '~mcli/functions/get-dashboard-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';
 import { queriesToStats } from '~mcli/functions/get-query-stats';
-import { getVisualizationUrl } from '~mcli/functions/get-visualization-url';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
-interface VizPart {
+interface ChartPart {
   title: string;
-  vizId: string;
+  chartId: string;
   url: string;
   query: common.Query;
 }
@@ -35,15 +35,15 @@ export class RunCommand extends CustomCommand {
   static paths = [['run']];
 
   static usage = Command.Usage({
-    description: 'Run dashboards and visualizations',
+    description: 'Run dashboards and charts',
     examples: [
       [
         'Run for Dev repo and wait for completion',
-        'mprove run --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --wait --get-dashboards --get-vizs'
+        'mprove run --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --wait --get-dashboards --get-charts'
       ],
       [
         'Run dashboards d1 and d2 for Dev repo',
-        'mprove run --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --no-vizs --dashboard-ids d1,d2'
+        'mprove run --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --no-charts --dashboard-ids d1,d2'
       ],
       [
         'Run for Production repo',
@@ -91,25 +91,25 @@ export class RunCommand extends CustomCommand {
       '(optional) Filter dashboards to run by dashboard names, separated by comma'
   });
 
-  vizIds = Option.String('--viz-ids', {
+  chartIds = Option.String('--chart-ids', {
     description:
-      '(optional) Filter visualizations to run by visualization names, separated by comma'
+      '(optional) Filter charts to run by chart names, separated by comma'
   });
 
   noDashboards = Option.Boolean('--no-dashboards', false, {
     description: '(default false) Do not run dashboards'
   });
 
-  noVizs = Option.Boolean('--no-vizs', false, {
-    description: '(default false) Do not run visualizations'
+  noCharts = Option.Boolean('--no-charts', false, {
+    description: '(default false) Do not run charts'
   });
 
   getDashboards = Option.Boolean('--get-dashboards', false, {
     description: '(default false), show dashboards in output'
   });
 
-  getVizs = Option.Boolean('--get-vizs', false, {
-    description: '(default false), show visualizations in output'
+  getCharts = Option.Boolean('--get-charts', false, {
+    description: '(default false), show charts in output'
   });
 
   json = Option.Boolean('--json', false, {
@@ -153,19 +153,19 @@ export class RunCommand extends CustomCommand {
       throw serverError;
     }
 
-    if (this.noVizs === true && this.getVizs === true) {
+    if (this.noCharts === true && this.getCharts === true) {
       let serverError = new common.ServerError({
         message: common.ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
-        data: `no-vizs and get-vizs`,
+        data: `no-charts and get-charts`,
         originalError: null
       });
       throw serverError;
     }
 
-    if (this.noVizs === true && common.isDefined(this.vizIds)) {
+    if (this.noCharts === true && common.isDefined(this.chartIds)) {
       let serverError = new common.ServerError({
         message: common.ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
-        data: `no-vizs and viz-ids`,
+        data: `no-charts and chart-ids`,
         originalError: null
       });
       throw serverError;
@@ -212,35 +212,35 @@ export class RunCommand extends CustomCommand {
 
     let queryIdsWithDuplicates: string[] = [];
 
-    let vizParts: VizPart[] = [];
+    let chartParts: ChartPart[] = [];
 
-    if (this.noVizs === false) {
-      let getVizsReqPayload: apiToBackend.ToBackendGetVizsRequestPayload = {
+    if (this.noCharts === false) {
+      let getChartsReqPayload: apiToBackend.ToBackendGetChartsRequestPayload = {
         projectId: this.projectId,
         isRepoProd: isRepoProd,
         branchId: this.branch,
         envId: this.env
       };
 
-      let getVizsResp = await mreq<apiToBackend.ToBackendGetVizsResponse>({
+      let getChartsResp = await mreq<apiToBackend.ToBackendGetChartsResponse>({
         loginToken: loginToken,
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs,
-        payload: getVizsReqPayload,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetCharts,
+        payload: getChartsReqPayload,
         host: this.context.config.mproveCliHost
       });
 
-      let vizIds = this.vizIds?.split(',');
+      let chartIds = this.chartIds?.split(',');
 
-      if (common.isDefined(vizIds)) {
-        vizIds.forEach(x => {
+      if (common.isDefined(chartIds)) {
+        chartIds.forEach(x => {
           if (
-            getVizsResp.payload.vizs
-              .map(visualization => visualization.vizId)
+            getChartsResp.payload.charts
+              .map(chart => chart.chartId)
               .indexOf(x) < 0
           ) {
             let serverError = new common.ServerError({
-              message: common.ErEnum.MCLI_VISUALIZATION_NOT_FOUND,
+              message: common.ErEnum.MCLI_CHART_NOT_FOUND,
               data: { id: x },
               originalError: null
             });
@@ -249,33 +249,33 @@ export class RunCommand extends CustomCommand {
         });
       }
 
-      vizParts = getVizsResp.payload.vizs
+      chartParts = getChartsResp.payload.charts
         .filter(
-          visualization =>
-            common.isUndefined(vizIds) ||
-            vizIds.indexOf(visualization.vizId) > -1
+          chartPart =>
+            common.isUndefined(chartIds) ||
+            chartIds.indexOf(chartPart.chartId) > -1
         )
         .map(x => {
-          let url = getVisualizationUrl({
+          let url = getChartUrl({
             host: this.context.config.mproveCliHost,
             orgId: getProjectResp.payload.project.orgId,
             projectId: this.projectId,
             repoId: getRepoResp.payload.repo.repoId,
             branch: this.branch,
             env: this.env,
-            vizId: x.vizId
+            chartId: x.chartId
           });
 
-          let vizPart: VizPart = {
+          let chartPart: ChartPart = {
             title: x.title,
-            vizId: x.vizId,
+            chartId: x.chartId,
             url: url,
             query: { queryId: x.tiles[0].queryId } as common.Query
           };
 
           queryIdsWithDuplicates.push(x.tiles[0].queryId);
 
-          return vizPart;
+          return chartPart;
         });
     }
 
@@ -398,8 +398,8 @@ export class RunCommand extends CustomCommand {
       host: this.context.config.mproveCliHost
     });
 
-    if (this.noVizs === false && common.isUndefined(this.concurrency)) {
-      vizParts.forEach(v => {
+    if (this.noCharts === false && common.isUndefined(this.concurrency)) {
+      chartParts.forEach(v => {
         let query = runQueriesResp.payload.runningQueries.find(
           q => q.queryId === v.query.queryId
         );
@@ -455,9 +455,9 @@ export class RunCommand extends CustomCommand {
           ) {
             waitQueries.push(query);
 
-            if (this.noVizs === false) {
-              vizParts
-                .filter(vizPart => vizPart.query.queryId === query.queryId)
+            if (this.noCharts === false) {
+              chartParts
+                .filter(chartPart => chartPart.query.queryId === query.queryId)
                 .forEach(x => (x.query = query));
             }
 
@@ -488,14 +488,14 @@ export class RunCommand extends CustomCommand {
         this.wait === true ? 0 : runQueriesResp.payload.startedQueryIds.length
     });
 
-    let errorVisualizations: VizPart[] =
+    let errorCharts: ChartPart[] =
       queriesStats.error === 0
         ? []
-        : vizParts
+        : chartParts
             .filter(x => x.query.status === common.QueryStatusEnum.Error)
             .map(v => ({
               title: v.title,
-              vizId: v.vizId,
+              chartId: v.chartId,
               url: v.url,
               query: {
                 lastErrorMessage: v.query.lastErrorMessage,
@@ -536,11 +536,11 @@ export class RunCommand extends CustomCommand {
       log.dashboards = dashboardParts;
     }
 
-    if (this.getVizs === true) {
-      log.visualizations = vizParts;
+    if (this.getCharts === true) {
+      log.charts = chartParts;
     }
 
-    log.errorVisualizations = errorVisualizations;
+    log.errorCharts = errorCharts;
     log.errorDashboards = errorDashboards;
     log.queriesStats = queriesStats;
 

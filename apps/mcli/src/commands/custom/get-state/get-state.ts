@@ -4,11 +4,12 @@ import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
+import { getChartUrl } from '~mcli/functions/get-chart-url';
 import { getDashboardUrl } from '~mcli/functions/get-dashboard-url';
 import { getFilesUrl } from '~mcli/functions/get-files-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';
 import { getModelUrl } from '~mcli/functions/get-model-url';
-import { getVisualizationUrl } from '~mcli/functions/get-visualization-url';
+import { getReportUrl } from '~mcli/functions/get-report-url';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
@@ -18,7 +19,7 @@ export class GetStateCommand extends CustomCommand {
 
   static usage = Command.Usage({
     description:
-      'Get state (models, dashboards, visualizations, errors, repo nodes)',
+      'Get state (models, dashboards, charts, reports, metrics, errors, repo nodes)',
     examples: [
       [
         'Get Dev repo state',
@@ -26,7 +27,7 @@ export class GetStateCommand extends CustomCommand {
       ],
       [
         'Get Production repo state',
-        'mprove get-state --project-id DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --get-models --get-dashboards --get-vizs'
+        'mprove get-state --project-id DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --get-models --get-dashboards --get-charts --get-metrics --get-reports'
       ]
     ]
   });
@@ -71,8 +72,16 @@ export class GetStateCommand extends CustomCommand {
     description: '(default false), show dashboardIds in output'
   });
 
-  getVizs = Option.Boolean('--get-vizs', false, {
-    description: '(default false), show vizIds in output'
+  getCharts = Option.Boolean('--get-charts', false, {
+    description: '(default false), show chartIds in output'
+  });
+
+  getMetrics = Option.Boolean('--get-metrics', false, {
+    description: '(default false), show metricIds in output'
+  });
+
+  getReports = Option.Boolean('--get-reports', false, {
+    description: '(default false), show reportIds in output'
   });
 
   json = Option.Boolean('--json', false, {
@@ -132,17 +141,18 @@ export class GetStateCommand extends CustomCommand {
       host: this.context.config.mproveCliHost
     });
 
-    let getVizsReqPayload: apiToBackend.ToBackendGetVizsRequestPayload = {
+    let getChartsReqPayload: apiToBackend.ToBackendGetChartsRequestPayload = {
       projectId: this.projectId,
       isRepoProd: isRepoProd,
       branchId: this.branch,
       envId: this.env
     };
 
-    let getVizsResp = await mreq<apiToBackend.ToBackendGetVizsResponse>({
+    let getChartsResp = await mreq<apiToBackend.ToBackendGetChartsResponse>({
       loginToken: loginToken,
-      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs,
-      payload: getVizsReqPayload,
+      pathInfoName:
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetCharts,
+      payload: getChartsReqPayload,
       host: this.context.config.mproveCliHost
     });
 
@@ -163,6 +173,21 @@ export class GetStateCommand extends CustomCommand {
         host: this.context.config.mproveCliHost
       });
 
+    let getMetricsReqPayload: apiToBackend.ToBackendGetMetricsRequestPayload = {
+      projectId: this.projectId,
+      isRepoProd: isRepoProd,
+      branchId: this.branch,
+      envId: this.env
+    };
+
+    let getMetricsResp = await mreq<apiToBackend.ToBackendGetMetricsResponse>({
+      loginToken: loginToken,
+      pathInfoName:
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMetrics,
+      payload: getChartsReqPayload,
+      host: this.context.config.mproveCliHost
+    });
+
     let filesUrl = getFilesUrl({
       host: this.context.config.mproveCliHost,
       orgId: getRepoResp.payload.repo.orgId,
@@ -176,29 +201,64 @@ export class GetStateCommand extends CustomCommand {
       validationErrorsTotal: getRepoResp.payload.struct.errors.length,
       modelsTotal: getModelsResp.payload.models.length,
       dashboardsTotal: getDashboardsResp.payload.dashboards.length,
-      visualizationsTotal: getVizsResp.payload.vizs.length,
+      chartsTotal: getChartsResp.payload.charts.length,
       needValidate: getRepoResp.payload.needValidate,
       structId: getRepoResp.payload.struct.structId
     };
 
-    if (this.getVizs === true) {
-      log.visualizations = getVizsResp.payload.vizs.map(x => {
-        let url = getVisualizationUrl({
+    if (this.getCharts === true) {
+      log.charts = getChartsResp.payload.charts.map(x => {
+        let url = getChartUrl({
           host: this.context.config.mproveCliHost,
           orgId: getRepoResp.payload.repo.orgId,
           projectId: this.projectId,
           repoId: getRepoResp.payload.repo.repoId,
           branch: this.branch,
           env: this.env,
-          vizId: x.vizId
+          chartId: x.chartId
         });
 
-        let visualization: any = {
-          vizId: x.vizId,
+        let chart: any = {
+          chartId: x.chartId,
           url: url
         };
 
-        return visualization;
+        return chart;
+      });
+    }
+
+    if (this.getMetrics === true) {
+      log.metrics = getMetricsResp.payload.metrics.map(x => {
+        let metric: any = {
+          metricId: x.metricId,
+          name: `${x.partNodeLabel} ${x.partFieldLabel} by ${x.timeNodeLabel} ${x.timeFieldLabel} - ${x.topLabel}`
+        };
+
+        return metric;
+      });
+    }
+
+    if (this.getReports === true) {
+      log.reports = getMetricsResp.payload.reps.map(x => {
+        let url = getReportUrl({
+          host: this.context.config.mproveCliHost,
+          orgId: getRepoResp.payload.repo.orgId,
+          projectId: this.projectId,
+          repoId: getRepoResp.payload.repo.repoId,
+          branch: this.branch,
+          env: this.env,
+          reportId: x.repId,
+          timezone: 'UTC',
+          timeSpec: 'days',
+          timeRange: 'last 5 days complete plus current'
+        });
+
+        let report: any = {
+          reportId: x.repId,
+          url: url
+        };
+
+        return report;
       });
     }
 
@@ -261,7 +321,7 @@ export class GetStateCommand extends CustomCommand {
       log.validationErrors = getRepoResp.payload.struct.errors;
     }
 
-    log.url = filesUrl;
+    log.filesUrl = filesUrl;
 
     logToConsoleMcli({
       log: log,

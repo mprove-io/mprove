@@ -1,7 +1,6 @@
 import {
   ChangeDetectorRef,
   Component,
-  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnInit
 } from '@angular/core';
@@ -26,7 +25,7 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 enum ChartSaveAsEnum {
-  NEW_VIZ = 'NEW_VIZ',
+  NEW_CHART = 'NEW_CHART',
   TILE_OF_DASHBOARD = 'TILE_OF_DASHBOARD'
 }
 
@@ -76,10 +75,10 @@ export class ChartSaveAsDialogComponent implements OnInit {
     users: [undefined, [Validators.maxLength(255)]]
   });
 
-  chartSaveAs: ChartSaveAsEnum = ChartSaveAsEnum.NEW_VIZ;
+  chartSaveAs: ChartSaveAsEnum = ChartSaveAsEnum.NEW_CHART;
   tileSaveAs: TileSaveAsEnum = TileSaveAsEnum.NEW_TILE;
 
-  vizId = common.makeId();
+  chartId = common.makeId();
 
   alias: string;
   alias$ = this.userQuery.alias$.pipe(
@@ -226,7 +225,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       let newTitle = this.titleForm.controls['title'].value;
 
       if (
-        this.chartSaveAs === ChartSaveAsEnum.NEW_VIZ &&
+        this.chartSaveAs === ChartSaveAsEnum.NEW_CHART &&
         this.rolesForm.controls['roles'].valid &&
         this.usersForm.controls['users'].valid
       ) {
@@ -234,7 +233,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
         let roles = this.rolesForm.controls['roles'].value;
         let users = this.usersForm.controls['users'].value;
 
-        this.saveAsNewViz({
+        this.saveAsNewChart({
           newTitle: newTitle,
           roles: roles,
           users: users
@@ -246,8 +245,8 @@ export class ChartSaveAsDialogComponent implements OnInit {
     }
   }
 
-  newVizOnClick() {
-    this.chartSaveAs = ChartSaveAsEnum.NEW_VIZ;
+  newChartOnClick() {
+    this.chartSaveAs = ChartSaveAsEnum.NEW_CHART;
     this.titleForm.get('title').updateValueAndValidity();
   }
 
@@ -311,17 +310,17 @@ export class ChartSaveAsDialogComponent implements OnInit {
     }
   }
 
-  saveAsNewViz(item: { newTitle: string; roles: string; users: string }) {
+  saveAsNewChart(item: { newTitle: string; roles: string; users: string }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
     let { newTitle, roles, users } = item;
 
-    let payload: apiToBackend.ToBackendCreateVizRequestPayload = {
+    let payload: apiToBackend.ToBackendCreateChartRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
-      vizId: this.vizId,
+      chartId: this.chartId,
       tileTitle: newTitle.trim(),
       accessRoles: roles,
       accessUsers: users,
@@ -333,15 +332,15 @@ export class ChartSaveAsDialogComponent implements OnInit {
     apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateViz,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateChart,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateVizResponse) => {
+        tap((resp: apiToBackend.ToBackendCreateChartResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.navigateService.navigateToVizs({
+            this.navigateService.navigateToCharts({
               extra: {
-                queryParams: { search: resp.payload.viz.vizId }
+                queryParams: { search: resp.payload.chart.chartId }
               }
             });
           }

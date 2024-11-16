@@ -6,13 +6,13 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildViz;
+let caller = common.CallerEnum.BuildChart;
 let func = common.FuncEnum.CheckAccess;
 let testId = 'e__wrong-access-users-element-3';
 
 test('1', async t => {
   let errors: BmError[];
-  let entVizs: common.FileVis[];
+  let entCharts: common.FileChart[];
 
   let wLogger;
   let configService;
@@ -46,7 +46,7 @@ test('1', async t => {
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
-    entVizs = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
+    entCharts = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -60,7 +60,7 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(entVizs.length, 0);
+  t.is(entCharts.length, 0);
 
   t.is(errors[0].title, common.ErTitleEnum.WRONG_ACCESS_USERS_ELEMENT);
   t.is(errors[0].lines[0].line, 2);

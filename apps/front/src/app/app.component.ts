@@ -88,7 +88,7 @@ export class AppComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private spinner: NgxSpinnerService,
-    private router: Router // , // private myDialogService: MyDialogService, // private apiService: ApiService
+    private router: Router
   ) {}
 
   ngOnInit() {

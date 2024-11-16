@@ -11,6 +11,7 @@
     (ngSubmit)="add()"
   >
     <input
+      autocomplete="off"
       spellcheck="false"
       data-cy="addEvDialogEvIdInput"
       class="form-input border-gray3 focus:border-blue3 mt-9 rounded"
@@ -25,6 +26,7 @@
     <m-validation [control]="addEvForm.controls['evId']"></m-validation>
 
     <input
+      autocomplete="off"
       spellcheck="false"
       data-cy="addEvDialogValInput"
       class="form-input border-gray3 focus:border-blue3 mt-1 rounded"

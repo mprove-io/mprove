@@ -1,0 +1,17 @@
+chart: W5LMN2TZJUKJ5EC5MK99
+tiles:
+- title: Revenue, Cost, Profit
+  model: ec1_m1
+  select:
+  - a.total_sale_price
+  - e.total_actual_cost
+  - mf.total_profit
+  default_filters:
+    c.gender:
+    - '-Female-'
+    c.state_name:
+    - '-Delaware-'
+    - '-Montana-'
+    b.created___date:
+    - on 2020
+  type: table

@@ -1,17 +1,28 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { eq } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
+import { constants } from '~backend/barrels/constants';
 import { interfaces } from '~backend/barrels/interfaces';
-import { maker } from '~backend/barrels/maker';
-import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { SkipJwtCheck } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { usersTable } from '~backend/drizzle/postgres/schema/users';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { DbService } from '~backend/services/db.service';
 import { EmailService } from '~backend/services/email.service';
 import { UsersService } from '~backend/services/users.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+
+let retry = require('async-retry');
 
 @SkipJwtCheck()
 @UseGuards(ValidateRequestGuard)
@@ -19,10 +30,11 @@ import { UsersService } from '~backend/services/users.service';
 export class RegisterUserController {
   constructor(
     private usersService: UsersService,
-    private dbService: DbService,
     private emailService: EmailService,
+    private wrapToApiService: WrapToApiService,
     private cs: ConfigService<interfaces.Config>,
-    private userRepository: repositories.UsersRepository
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRegisterUser)
@@ -31,11 +43,15 @@ export class RegisterUserController {
 
     let { email, password } = reqValid.payload;
 
-    let newUser: entities.UserEntity;
+    let newUser: schemaPostgres.UserEnt;
 
     let { salt, hash } = await this.usersService.makeSaltAndHash(password);
 
-    let user = await this.userRepository.findOne({ where: { email: email } });
+    let user = await this.db.drizzle.query.usersTable.findFirst({
+      where: eq(usersTable.email, email)
+    });
+
+    // let user = await this.userRepository.findOne({ where: { email: email } });
 
     if (common.isDefined(user)) {
       if (common.isDefined(user.hash)) {
@@ -62,30 +78,65 @@ export class RegisterUserController {
       } else {
         let alias = await this.usersService.makeAlias(email);
 
-        newUser = maker.makeUser({
+        newUser = {
+          userId: common.makeId(),
           email: email,
-          isEmailVerified: common.BoolEnum.FALSE,
+          passwordResetToken: undefined,
+          passwordResetExpiresTs: undefined,
+          isEmailVerified: false,
+          emailVerificationToken: common.makeId(),
           hash: hash,
           salt: salt,
-          alias: alias
-        });
+          jwtMinIat: undefined,
+          alias: alias,
+          firstName: undefined,
+          lastName: undefined,
+          timezone: common.USE_PROJECT_TIMEZONE_VALUE,
+          ui: constants.DEFAULT_UI,
+          serverTs: undefined
+        };
+
+        // newUser = maker.makeUser({
+        //   email: email,
+        //   isEmailVerified: false,
+        //   hash: hash,
+        //   salt: salt,
+        //   alias: alias
+        // });
       }
     }
 
-    await this.dbService.writeRecords({
-      modify: common.isDefined(user),
-      records: {
-        users: [newUser]
-      }
-    });
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insert: {
+                users: common.isDefined(user) ? [] : [newUser]
+              },
+              insertOrUpdate: {
+                users: common.isDefined(user) ? [newUser] : []
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    // await this.dbService.writeRecords({
+    //   modify: common.isDefined(user),
+    //   records: {
+    //     users: [newUser]
+    //   }
+    // });
 
     await this.emailService.sendEmailVerification({
       email: email,
-      emailVerificationToken: newUser.email_verification_token
+      emailVerificationToken: newUser.emailVerificationToken
     });
 
     let payload: apiToBackend.ToBackendRegisterUserResponsePayload = {
-      user: wrapper.wrapToApiUser(newUser)
+      user: this.wrapToApiService.wrapToApiUser(newUser)
     };
 
     return payload;

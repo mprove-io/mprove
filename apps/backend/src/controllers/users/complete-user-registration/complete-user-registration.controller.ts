@@ -1,25 +1,40 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { eq } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
+import { interfaces } from '~backend/barrels/interfaces';
 import { SkipJwtCheck } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { usersTable } from '~backend/drizzle/postgres/schema/users';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { UsersService } from '~backend/services/users.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+
+let retry = require('async-retry');
 
 @SkipJwtCheck()
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class CompleteUserRegistrationController {
   constructor(
-    private userRepository: repositories.UsersRepository,
-    private dbService: DbService,
     private jwtService: JwtService,
     private usersService: UsersService,
-    private membersService: MembersService
+    private membersService: MembersService,
+    private wrapToApiService: WrapToApiService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(
@@ -32,11 +47,15 @@ export class CompleteUserRegistrationController {
     let { traceId } = reqValid.info;
     let { emailConfirmationToken, newPassword } = reqValid.payload;
 
-    let user = await this.userRepository.findOne({
-      where: {
-        email_verification_token: emailConfirmationToken
-      }
+    let user = await this.db.drizzle.query.usersTable.findFirst({
+      where: eq(usersTable.emailVerificationToken, emailConfirmationToken)
     });
+
+    // let user = await this.userRepository.findOne({
+    //   where: {
+    //     email_verification_token: emailConfirmationToken
+    //   }
+    // });
 
     if (common.isUndefined(user)) {
       throw new common.ServerError({
@@ -44,10 +63,7 @@ export class CompleteUserRegistrationController {
       });
     }
 
-    if (
-      common.isDefined(user.hash) ||
-      user.is_email_verified === common.BoolEnum.TRUE
-    ) {
+    if (common.isDefined(user.hash) || user.isEmailVerified === true) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_USER_ALREADY_REGISTERED
       });
@@ -60,24 +76,38 @@ export class CompleteUserRegistrationController {
 
     let payload: apiToBackend.ToBackendConfirmUserEmailResponsePayload = {};
 
-    user.is_email_verified = common.BoolEnum.TRUE;
+    user.isEmailVerified = true;
 
     let { salt, hash } = await this.usersService.makeSaltAndHash(newPassword);
 
     user.hash = hash;
     user.salt = salt;
-    user.password_reset_expires_ts = (1).toString();
+    user.passwordResetExpiresTs = 1;
 
-    await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        users: [user]
-      }
-    });
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insertOrUpdate: {
+                users: [user]
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    // await this.dbService.writeRecords({
+    //   modify: true,
+    //   records: {
+    //     users: [user]
+    //   }
+    // });
 
     payload = {
-      token: this.jwtService.sign({ userId: user.user_id }),
-      user: wrapper.wrapToApiUser(user)
+      token: this.jwtService.sign({ userId: user.userId }),
+      user: this.wrapToApiService.wrapToApiUser(user)
     };
 
     return payload;

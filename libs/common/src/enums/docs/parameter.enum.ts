@@ -77,7 +77,7 @@ export enum ParameterEnum {
   Udfs = 'udfs',
   Unnest = 'unnest',
   View = 'view',
-  Vis = 'vis',
+  Chart = 'chart',
   // row
   Parameters = 'parameters',
   ParametersFormula = 'parameters_formula',

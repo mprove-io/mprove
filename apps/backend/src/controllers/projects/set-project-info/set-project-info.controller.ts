@@ -1,13 +1,25 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
-import { wrapper } from '~backend/barrels/wrapper';
+import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+
+let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -15,12 +27,15 @@ export class SetProjectInfoController {
   constructor(
     private projectsService: ProjectsService,
     private membersService: MembersService,
-    private dbService: DbService
+    private wrapToApiService: WrapToApiService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetProjectInfo)
   async setProjectInfo(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendSetProjectInfoRequest = request.body;
@@ -33,22 +48,36 @@ export class SetProjectInfoController {
 
     await this.membersService.checkMemberIsAdmin({
       projectId: projectId,
-      memberId: user.user_id
+      memberId: user.userId
     });
 
     if (common.isDefined(name)) {
       project.name = name;
     }
 
-    await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        projects: [project]
-      }
-    });
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insertOrUpdate: {
+                projects: [project]
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    // await this.dbService.writeRecords({
+    //   modify: true,
+    //   records: {
+    //     projects: [project]
+    //   }
+    // });
 
     let payload: apiToBackend.ToBackendSetProjectInfoResponsePayload = {
-      project: wrapper.wrapToApiProject(project)
+      project: this.wrapToApiService.wrapToApiProject(project)
     };
 
     return payload;

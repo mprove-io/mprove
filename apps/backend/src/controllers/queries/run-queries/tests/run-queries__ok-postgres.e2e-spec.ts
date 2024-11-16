@@ -30,7 +30,6 @@ test('1', async t => {
     prep = await prepareTest({
       traceId: traceId,
       deleteRecordsPayload: {
-        idempotencyKeys: [testId, testId + '2'],
         emails: [email],
         orgIds: [orgId],
         projectIds: [projectId],
@@ -42,7 +41,7 @@ test('1', async t => {
             userId,
             email,
             password,
-            isEmailVerified: common.BoolEnum.TRUE
+            isEmailVerified: true
           }
         ],
         orgs: [
@@ -67,9 +66,9 @@ test('1', async t => {
             memberId: userId,
             email,
             projectId,
-            isAdmin: common.BoolEnum.TRUE,
-            isEditor: common.BoolEnum.TRUE,
-            isExplorer: common.BoolEnum.TRUE
+            isAdmin: true,
+            isEditor: true,
+            isExplorer: true
           }
         ],
         connections: [
@@ -89,11 +88,11 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req1: apiToBackend.ToBackendGetVizsRequest = {
+    let req1: apiToBackend.ToBackendGetChartsRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetCharts,
         traceId: traceId,
-        idempotencyKey: testId
+        idempotencyKey: common.makeId()
       },
       payload: {
         projectId: projectId,
@@ -104,23 +103,23 @@ test('1', async t => {
     };
 
     let resp1 =
-      await helper.sendToBackend<apiToBackend.ToBackendGetVizsResponse>({
+      await helper.sendToBackend<apiToBackend.ToBackendGetChartsResponse>({
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req1
       });
 
-    let viz = resp1.payload.vizs.find(x => x.vizId === 's_s1');
+    let chart = resp1.payload.charts.find(x => x.chartId === 's_s1');
 
     let req2: apiToBackend.ToBackendRunQueriesRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
         traceId: traceId,
-        idempotencyKey: testId + '2'
+        idempotencyKey: common.makeId()
       },
       payload: {
         projectId: projectId,
-        queryIds: [viz.tiles[0].queryId]
+        queryIds: [chart.tiles[0].queryId]
       }
     };
 

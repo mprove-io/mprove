@@ -1,35 +1,46 @@
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { Logger, Module, OnModuleInit } from '@nestjs/common';
+import { Inject, Logger, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { DefaultLogger, and, eq } from 'drizzle-orm';
+import {
+  NodePgDatabase,
+  drizzle as drizzlePg
+} from 'drizzle-orm/node-postgres';
+import { migrate as migratePg } from 'drizzle-orm/node-postgres/migrator';
 import * as fse from 'fs-extra';
 import * as mg from 'nodemailer-mailgun-transport';
-import { DataSource } from 'typeorm';
+import { Client, ClientConfig } from 'pg';
 import { appControllers } from './app-controllers';
-import { appEntities } from './app-entities';
 import { AppFilter } from './app-filter';
 import { AppInterceptor } from './app-interceptor';
-import { appMigrations } from './app-migrations';
 import { appProviders } from './app-providers';
-import { appRepositories } from './app-repositories';
 import { common } from './barrels/common';
 import { enums } from './barrels/enums';
 import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
-import { maker } from './barrels/maker';
-import { repositories } from './barrels/repositories';
+import { schemaPostgres } from './barrels/schema-postgres';
 import { getConfig } from './config/get.config';
+import { DrizzleLogWriter } from './drizzle/drizzle-log-writer';
+import { DRIZZLE, Db, DrizzleModule } from './drizzle/drizzle.module';
+import { connectionsTable } from './drizzle/postgres/schema/connections';
+import { evsTable } from './drizzle/postgres/schema/evs';
+import { orgsTable } from './drizzle/postgres/schema/orgs';
+import { projectsTable } from './drizzle/postgres/schema/projects';
+import { usersTable } from './drizzle/postgres/schema/users';
+import { getRetryOption } from './functions/get-retry-option';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { DbService } from './services/db.service';
+import { MakerService } from './services/maker.service';
 import { OrgsService } from './services/orgs.service';
 import { ProjectsService } from './services/projects.service';
 import { UsersService } from './services/users.service';
+
+let retry = require('async-retry');
 
 let configModule = ConfigModule.forRoot({
   load: [getConfig],
@@ -86,28 +97,6 @@ let rabbitModule = RabbitMQModule.forRootAsync(RabbitMQModule, {
   },
   inject: [ConfigService]
 });
-
-let typeormRootModule = TypeOrmModule.forRootAsync({
-  useFactory: (cs: ConfigService<interfaces.Config>) => ({
-    type: 'mysql',
-    host: cs.get<interfaces.Config['backendMysqlHost']>('backendMysqlHost'),
-    port: cs.get<interfaces.Config['backendMysqlPort']>('backendMysqlPort'),
-    username: cs.get<interfaces.Config['backendMysqlUsername']>(
-      'backendMysqlUsername'
-    ),
-    password: cs.get<interfaces.Config['backendMysqlPassword']>(
-      'backendMysqlPassword'
-    ),
-    database: cs.get<interfaces.Config['backendMysqlDatabase']>(
-      'backendMysqlDatabase'
-    ),
-    entities: appEntities,
-    migrations: appMigrations
-  }),
-  inject: [ConfigService]
-});
-
-let typeormFeatureModule = TypeOrmModule.forFeature([...appEntities]);
 
 let mailerModule = MailerModule.forRootAsync({
   useFactory: (cs: ConfigService<interfaces.Config>) => {
@@ -175,14 +164,12 @@ let mailerModule = MailerModule.forRootAsync({
     PassportModule,
     rabbitModule,
     mailerModule,
-    typeormRootModule,
-    typeormFeatureModule
+    DrizzleModule
   ],
   controllers: appControllers,
   providers: [
     Logger,
     ...appProviders,
-    ...appRepositories,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard
@@ -199,18 +186,13 @@ let mailerModule = MailerModule.forRootAsync({
 })
 export class AppModule implements OnModuleInit {
   constructor(
-    private dataSource: DataSource,
     private usersService: UsersService,
     private orgsService: OrgsService,
     private projectsService: ProjectsService,
+    private makerService: MakerService,
     private cs: ConfigService<interfaces.Config>,
-    private usersRepository: repositories.UsersRepository,
-    private orgsRepository: repositories.OrgsRepository,
-    private projectsRepository: repositories.ProjectsRepository,
-    private connectionsRepository: repositories.ConnectionsRepository,
-    private evsRepository: repositories.EvsRepository,
-    private dbService: DbService,
-    private logger: Logger
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   async onModuleInit() {
@@ -223,28 +205,52 @@ export class AppModule implements OnModuleInit {
       });
 
       if (helper.isScheduler(this.cs)) {
-        const migrationsPending = await this.dataSource.showMigrations();
+        // Drizzle
 
-        if (migrationsPending) {
-          const migrations = await this.dataSource.runMigrations({
-            transaction: 'all'
+        let clientConfig: ClientConfig = {
+          connectionString: this.cs.get<
+            interfaces.Config['backendPostgresDatabaseUrl']
+          >('backendPostgresDatabaseUrl'),
+          ssl:
+            this.cs.get<interfaces.Config['backendIsPostgresTls']>(
+              'backendIsPostgresTls'
+            ) === common.BoolEnum.TRUE
+              ? {
+                  rejectUnauthorized: false
+                }
+              : false
+        };
+
+        let postgresSingleClient = new Client(clientConfig);
+
+        await postgresSingleClient.connect();
+
+        let isLogDrizzlePostgres =
+          this.cs.get<interfaces.Config['backendLogDrizzlePostgres']>(
+            'backendLogDrizzlePostgres'
+          ) === common.BoolEnum.TRUE;
+
+        let prefixPostgres = 'POSTGRES';
+
+        let postgresSingleDrizzle: NodePgDatabase<typeof schemaPostgres> =
+          drizzlePg(postgresSingleClient, {
+            logger:
+              isLogDrizzlePostgres === true
+                ? new DefaultLogger({
+                    writer: new DrizzleLogWriter(
+                      this.logger,
+                      this.cs,
+                      prefixPostgres
+                    )
+                  })
+                : undefined
           });
-          migrations.forEach(migration => {
-            logToConsoleBackend({
-              log: `Migration ${migration.name} success`,
-              logLevel: common.LogLevelEnum.Info,
-              logger: this.logger,
-              cs: this.cs
-            });
-          });
-        } else {
-          logToConsoleBackend({
-            log: 'No migrations pending',
-            logLevel: common.LogLevelEnum.Info,
-            logger: this.logger,
-            cs: this.cs
-          });
-        }
+
+        await migratePg(postgresSingleDrizzle, {
+          migrationsFolder: 'apps/backend/src/drizzle/postgres/migrations'
+        });
+
+        //
 
         let email =
           this.cs.get<interfaces.Config['firstUserEmail']>('firstUserEmail');
@@ -254,15 +260,19 @@ export class AppModule implements OnModuleInit {
             'firstUserPassword'
           );
 
-        let firstUser: any;
+        let firstUser: schemaPostgres.UserEnt;
 
         if (
           common.isDefinedAndNotEmpty(email) &&
           common.isDefinedAndNotEmpty(password)
         ) {
-          firstUser = await this.usersRepository.findOne({
-            where: { email: email }
+          firstUser = await this.db.drizzle.query.usersTable.findFirst({
+            where: eq(usersTable.email, email)
           });
+
+          // firstUser = await this.usersRepository.findOne({
+          //   where: { email: email }
+          // });
 
           if (common.isUndefined(firstUser)) {
             firstUser = await this.usersService.addFirstUser({
@@ -294,15 +304,19 @@ export class AppModule implements OnModuleInit {
           common.isDefinedAndNotEmpty(firstOrgId) &&
           common.isDefinedAndNotEmpty(firstProjectId)
         ) {
-          firstOrg = await this.orgsRepository.findOne({
-            where: {
-              org_id: firstOrgId
-            }
+          firstOrg = await this.db.drizzle.query.orgsTable.findFirst({
+            where: eq(orgsTable.orgId, firstOrgId)
           });
+
+          // firstOrg = await this.orgsRepository.findOne({
+          //   where: {
+          //     org_id: firstOrgId
+          //   }
+          // });
 
           if (common.isUndefined(firstOrg)) {
             firstOrg = await this.orgsService.addOrg({
-              ownerId: firstUser.user_id,
+              ownerId: firstUser.userId,
               ownerEmail: firstUser.email,
               name: common.FIRST_ORG_NAME,
               traceId: common.makeId(),
@@ -310,18 +324,26 @@ export class AppModule implements OnModuleInit {
             });
           }
 
-          let connections = [];
+          let connections: schemaPostgres.ConnectionEnt[] = [];
 
           if (firstProjectSeedConnections === common.BoolEnum.TRUE) {
-            let c1connection = await this.connectionsRepository.findOne({
-              where: {
-                project_id: firstProjectId,
-                connection_id: 'c1_postgres'
-              }
-            });
+            let c1connection =
+              await this.db.drizzle.query.connectionsTable.findFirst({
+                where: and(
+                  eq(connectionsTable.projectId, firstProjectId),
+                  eq(connectionsTable.connectionId, 'c1_postgres')
+                )
+              });
+
+            // let c1connection = await this.connectionsRepository.findOne({
+            //   where: {
+            //     project_id: firstProjectId,
+            //     connection_id: 'c1_postgres'
+            //   }
+            // });
 
             if (common.isUndefined(c1connection)) {
-              let c1 = maker.makeConnection({
+              let c1 = this.makerService.makeConnection({
                 projectId: firstProjectId,
                 envId: common.PROJECT_ENV_PROD,
                 connectionId: 'c1_postgres',
@@ -345,15 +367,23 @@ export class AppModule implements OnModuleInit {
               connections.push(c1);
             }
 
-            let c2connection = await this.connectionsRepository.findOne({
-              where: {
-                project_id: firstProjectId,
-                connection_id: 'c2_clickhouse'
-              }
-            });
+            let c2connection =
+              await this.db.drizzle.query.connectionsTable.findFirst({
+                where: and(
+                  eq(connectionsTable.projectId, firstProjectId),
+                  eq(connectionsTable.connectionId, 'c2_clickhouse')
+                )
+              });
+
+            // let c2connection = await this.connectionsRepository.findOne({
+            //   where: {
+            //     project_id: firstProjectId,
+            //     connection_id: 'c2_clickhouse'
+            //   }
+            // });
 
             if (common.isUndefined(c2connection)) {
-              let c2 = maker.makeConnection({
+              let c2 = this.makerService.makeConnection({
                 projectId: firstProjectId,
                 envId: common.PROJECT_ENV_PROD,
                 connectionId: 'c2_clickhouse',
@@ -375,12 +405,20 @@ export class AppModule implements OnModuleInit {
               connections.push(c2);
             }
 
-            let c3connection = await this.connectionsRepository.findOne({
-              where: {
-                project_id: firstProjectId,
-                connection_id: 'c3_bigquery'
-              }
-            });
+            let c3connection =
+              await this.db.drizzle.query.connectionsTable.findFirst({
+                where: and(
+                  eq(connectionsTable.projectId, firstProjectId),
+                  eq(connectionsTable.connectionId, 'c3_bigquery')
+                )
+              });
+
+            // let c3connection = await this.connectionsRepository.findOne({
+            //   where: {
+            //     project_id: firstProjectId,
+            //     connection_id: 'c3_bigquery'
+            //   }
+            // });
 
             if (common.isUndefined(c3connection)) {
               let firstProjectDwhBigqueryCredentialsPath = this.cs.get<
@@ -393,7 +431,7 @@ export class AppModule implements OnModuleInit {
                   .toString()
               );
 
-              let c3 = maker.makeConnection({
+              let c3 = this.makerService.makeConnection({
                 projectId: firstProjectId,
                 envId: common.PROJECT_ENV_PROD,
                 connectionId: 'c3_bigquery',
@@ -413,15 +451,23 @@ export class AppModule implements OnModuleInit {
               connections.push(c3);
             }
 
-            let c4connection = await this.connectionsRepository.findOne({
-              where: {
-                project_id: firstProjectId,
-                connection_id: 'c4_snowflake'
-              }
-            });
+            let c4connection =
+              await this.db.drizzle.query.connectionsTable.findFirst({
+                where: and(
+                  eq(connectionsTable.projectId, firstProjectId),
+                  eq(connectionsTable.connectionId, 'c4_snowflake')
+                )
+              });
+
+            // let c4connection = await this.connectionsRepository.findOne({
+            //   where: {
+            //     project_id: firstProjectId,
+            //     connection_id: 'c4_snowflake'
+            //   }
+            // });
 
             if (common.isUndefined(c4connection)) {
-              let c4 = maker.makeConnection({
+              let c4 = this.makerService.makeConnection({
                 projectId: firstProjectId,
                 envId: common.PROJECT_ENV_PROD,
                 connectionId: 'c4_snowflake',
@@ -450,18 +496,26 @@ export class AppModule implements OnModuleInit {
             }
           }
 
-          let evs = [];
+          let evs: schemaPostgres.EvEnt[] = [];
 
-          let ev = await this.evsRepository.findOne({
-            where: {
-              project_id: firstProjectId,
-              env_id: common.PROJECT_ENV_PROD,
-              ev_id: 'MPROVE_SNOWFLAKE_DATABASE'
-            }
+          let ev = await this.db.drizzle.query.evsTable.findFirst({
+            where: and(
+              eq(evsTable.projectId, firstProjectId),
+              eq(evsTable.envId, common.PROJECT_ENV_PROD),
+              eq(evsTable.evId, 'MPROVE_SNOWFLAKE_DATABASE')
+            )
           });
 
+          // let ev = await this.evsRepository.findOne({
+          //   where: {
+          //     project_id: firstProjectId,
+          //     env_id: common.PROJECT_ENV_PROD,
+          //     ev_id: 'MPROVE_SNOWFLAKE_DATABASE'
+          //   }
+          // });
+
           if (common.isUndefined(ev)) {
-            let ev1 = maker.makeEv({
+            let ev1 = this.makerService.makeEv({
               projectId: firstProjectId,
               envId: common.PROJECT_ENV_PROD,
               evId: 'MPROVE_SNOWFLAKE_DATABASE',
@@ -471,19 +525,39 @@ export class AppModule implements OnModuleInit {
             evs.push(ev1);
           }
 
-          await this.dbService.writeRecords({
-            modify: false,
-            records: {
-              connections: connections,
-              evs: evs
-            }
-          });
+          await retry(
+            async () =>
+              await this.db.drizzle.transaction(
+                async tx =>
+                  await this.db.packer.write({
+                    tx: tx,
+                    insert: {
+                      connections: connections,
+                      evs: evs
+                    }
+                  })
+              ),
+            getRetryOption(this.cs, this.logger)
+          );
 
-          let firstProject = await this.projectsRepository.findOne({
-            where: {
-              project_id: firstProjectId
-            }
-          });
+          // await this.dbService.writeRecords({
+          //   modify: false,
+          //   records: {
+          //     connections: connections,
+          //     evs: evs
+          //   }
+          // });
+
+          let firstProject =
+            await this.db.drizzle.query.projectsTable.findFirst({
+              where: eq(projectsTable.projectId, firstProjectId)
+            });
+
+          // let firstProject = await this.projectsRepository.findOne({
+          //   where: {
+          //     project_id: firstProjectId
+          //   }
+          // });
 
           if (common.isUndefined(firstProject)) {
             let firstProjectRemoteType = this.cs.get<
@@ -519,7 +593,7 @@ export class AppModule implements OnModuleInit {
             }
 
             firstProject = await this.projectsService.addProject({
-              orgId: firstOrg.org_id,
+              orgId: firstOrg.orgId,
               name: firstProjectName,
               user: firstUser,
               traceId: common.makeId(),

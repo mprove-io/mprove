@@ -56,7 +56,6 @@ export async function getNodesAndFiles(item: {
 }
 
 async function getDirCatalogNodesAndFilesRecursive(item: {
-  // private
   dir: string;
   projectId: string;
   repoId: string;
@@ -73,7 +72,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
   let ymlNodes: common.DiskCatalogNode[] = [];
   let mdNodes: common.DiskCatalogNode[] = [];
   let dashboardNodes: common.DiskCatalogNode[] = [];
-  let vizNodes: common.DiskCatalogNode[] = [];
+  let chartNodes: common.DiskCatalogNode[] = [];
   let modelNodes: common.DiskCatalogNode[] = [];
   let viewNodes: common.DiskCatalogNode[] = [];
   let udfNodes: common.DiskCatalogNode[] = [];
@@ -144,8 +143,8 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
           case common.FileExtensionEnum.Dashboard:
             dashboardNodes.push(node);
             break;
-          case common.FileExtensionEnum.Vis:
-            vizNodes.push(node);
+          case common.FileExtensionEnum.Chart:
+            chartNodes.push(node);
             break;
           case common.FileExtensionEnum.Udf:
             udfNodes.push(node);
@@ -206,7 +205,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
     ...sortNodes(ymlNodes),
     ...sortNodes(mdNodes),
     ...sortNodes(dashboardNodes),
-    ...sortNodes(vizNodes),
+    ...sortNodes(chartNodes),
     ...sortNodes(modelNodes),
     ...sortNodes(viewNodes),
     ...sortNodes(udfNodes),

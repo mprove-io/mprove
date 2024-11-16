@@ -1,0 +1,61 @@
+/* eslint-disable id-blacklist */
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
+import {
+  bigint,
+  index,
+  integer,
+  json,
+  pgTable,
+  text,
+  varchar
+} from 'drizzle-orm/pg-core';
+import { common } from '~backend/barrels/common';
+
+export const queriesTable = pgTable(
+  'queries',
+  {
+    queryId: varchar('query_id', { length: 64 }).notNull().primaryKey(),
+    projectId: varchar('project_id', { length: 32 }).notNull(),
+    envId: varchar('env_id', { length: 32 }).notNull(),
+    connectionId: varchar('connection_id', { length: 32 }).notNull(),
+    connectionType: varchar('connection_type')
+      .$type<common.ConnectionTypeEnum>()
+      .notNull(),
+    queryJobId: varchar('query_job_id'),
+    bigqueryQueryJobId: varchar('bigquery_query_job_id'),
+    sql: text('sql'),
+    status: varchar('status').$type<common.QueryStatusEnum>().notNull(),
+    data: json('data'),
+    lastRunBy: varchar('last_run_by'),
+    lastRunTs: bigint('last_run_ts', { mode: 'number' }),
+    lastCancelTs: bigint('last_cancel_ts', { mode: 'number' }),
+    lastCompleteTs: bigint('last_complete_ts', { mode: 'number' }),
+    lastCompleteDuration: bigint('last_complete_duration', { mode: 'number' }),
+    lastErrorTs: bigint('last_error_ts', { mode: 'number' }),
+    lastErrorMessage: text('last_error_message'),
+    bigqueryConsecutiveErrorsGetJob: integer(
+      'bigquery_consecutive_errors_get_job'
+    ),
+    bigqueryConsecutiveErrorsGetResults: integer(
+      'bigquery_consecutive_errors_get_results'
+    ),
+    serverTs: bigint('server_ts', { mode: 'number' }).notNull()
+  },
+  table => ({
+    idxQueriesServerTs: index('idx_queries_server_ts').on(table.serverTs),
+    idxQueriesProjectId: index('idx_queries_project_id').on(table.projectId),
+    idxQueriesEnvId: index('idx_queries_env_id').on(table.envId),
+    idxQueriesConnectionId: index('idx_queries_connection_id').on(
+      table.connectionId
+    ),
+    idxQueriesQueryJobId: index('idx_queries_query_job_id').on(
+      table.queryJobId
+    ),
+    idxQueriesBigqueryQueryJobId: index('idx_queries_bigquery_query_job_id').on(
+      table.bigqueryQueryJobId
+    )
+  })
+);
+
+export type QueryEnt = InferSelectModel<typeof queriesTable>;
+export type QueryEntIns = InferInsertModel<typeof queriesTable>;

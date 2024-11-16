@@ -1,9 +1,0 @@
-vis: 10MLKFYJPPMXZM0DD4MB
-tiles:
-- title: Sales, Cost, Profit
-  model: ec1_m1
-  select:
-  - a.total_sale_price
-  - e.total_actual_cost
-  - mf.total_profit
-  type: table

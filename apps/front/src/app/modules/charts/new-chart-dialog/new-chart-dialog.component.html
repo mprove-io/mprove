@@ -1,0 +1,23 @@
+<div class="flex max-h-[500px] flex-col bg-white p-9">
+  <div
+    data-cy="deleteUserDialogTitle"
+    class="text-gray2 mt-5 flex-grow text-left text-2xl font-semibold"
+    >New Chart</div
+  >
+
+  <div class="text-gray1 mt-9 text-lg"
+    >To create a new Chart, go to the model page and click Save As</div
+  >
+
+  <div class="text-gray2 mb-3 mt-9 text-lg font-semibold">Models:</div>
+
+  <div class="overflow-y-auto">
+    <div
+      class="text-gray1 hover:bg-blue2 rounded py-3 pl-5 text-base hover:cursor-pointer"
+      *ngFor="let model of ref.data.models"
+      (click)="navToModel(model.modelId)"
+    >
+      {{ model.label }}
+    </div>
+  </div>
+</div>

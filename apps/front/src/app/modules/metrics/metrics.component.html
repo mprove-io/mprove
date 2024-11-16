@@ -22,23 +22,23 @@
                   (click)="toggleShowLeft()"
                 ></m-menu-book-icon>
 
-                <m-table-cells-icon
+                <!-- <m-table-cells-icon
                   class="flex-shrink-0 cursor-pointer"
                   [ngClass]="{
                     'text-gray-500': isShowTable === true,
                     'text-gray-400': isShowTable === false
                   }"
                   (click)="toggleShowTable()"
-                ></m-table-cells-icon>
+                ></m-table-cells-icon> -->
 
-                <m-insights-icon
+                <!-- <m-insights-icon
                   class="flex-shrink-0 cursor-pointer"
                   [ngClass]="{
                     'text-gray-500': showMetricsChart === true,
                     'text-gray-400': showMetricsChart === false
                   }"
                   (click)="toggleShowMetricsChart()"
-                ></m-insights-icon>
+                ></m-insights-icon> -->
               </div>
             </div>
 
@@ -283,7 +283,7 @@
           </div>
         </div>
 
-        <div class="flex min-w-[2px] flex-grow flex-col space-y-6">
+        <div class="flex min-w-[2px] flex-grow flex-col">
           <div
             *ngIf="isShowTable === true"
             class="w-full flex-1 flex-shrink-0 rounded bg-white shadow"
@@ -297,7 +297,8 @@
               'h-[40%]':
                 (showMetricsChart === true || repSelectedNodes.length > 0) &&
                 isShowTable === true,
-              'h-full': showMetricsChart === true && isShowTable === false
+              'h-full': showMetricsChart === true && isShowTable === false,
+              'mt-6': showMetricsChart === true || repSelectedNodes.length > 0
             }"
           >
             <div

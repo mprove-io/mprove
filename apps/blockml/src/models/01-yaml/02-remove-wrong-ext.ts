@@ -38,10 +38,10 @@ export function removeWrongExt(
         common.FileExtensionEnum.Md,
         common.FileExtensionEnum.Metric,
         common.FileExtensionEnum.Model,
-        common.FileExtensionEnum.Rep,
+        common.FileExtensionEnum.Report,
         common.FileExtensionEnum.Udf,
         common.FileExtensionEnum.View,
-        common.FileExtensionEnum.Vis,
+        common.FileExtensionEnum.Chart,
         common.FileExtensionEnum.Yml
       ].indexOf(ext) > -1
     ) {

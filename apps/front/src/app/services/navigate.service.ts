@@ -172,7 +172,7 @@ export class NavigateService {
     this.router.navigate(navParts);
   }
 
-  navigateToVizs(item?: { navParts?: string[]; extra?: any }) {
+  navigateToCharts(item?: { navParts?: string[]; extra?: any }) {
     let { navParts, extra } = item;
 
     let repoId =
@@ -191,7 +191,7 @@ export class NavigateService {
           this.nav.branchId,
           common.PATH_ENV,
           this.nav.envId,
-          common.PATH_VISUALIZATIONS
+          common.PATH_CHARTS
         ];
 
     if (common.isDefined(extra)) {
@@ -275,7 +275,7 @@ export class NavigateService {
     }
   }
 
-  reloadVizs() {
+  reloadCharts() {
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
 
@@ -304,7 +304,7 @@ export class NavigateService {
         this.nav.branchId,
         common.PATH_ENV,
         this.nav.envId,
-        common.PATH_VISUALIZATIONS
+        common.PATH_CHARTS
       ])
     );
   }

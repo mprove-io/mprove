@@ -1,0 +1,14 @@
+chart: KT9LNEP4TZII2I608TNJ
+tiles:
+- title: Users by Age Group
+  model: ec1_m1
+  select:
+  - c.age_group
+  - c.count
+  sorts: c.age_group
+  type: bar_vertical
+  data:
+    x_field: c.age_group
+    y_field: c.count
+  options:
+    show_data_label: false

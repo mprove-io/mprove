@@ -1,5 +1,12 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
@@ -7,19 +14,23 @@ import { constants } from '~backend/barrels/constants';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { SkipJwtCheck } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { DbService } from '~backend/services/db.service';
 import { UsersService } from '~backend/services/users.service';
+
+let retry = require('async-retry');
 
 @SkipJwtCheck()
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class ResetUserPasswordController {
   constructor(
-    private dbService: DbService,
-    private cs: ConfigService<interfaces.Config>,
     private mailerService: MailerService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResetUserPassword)
@@ -40,21 +51,35 @@ export class ResetUserPasswordController {
 
     this.usersService.checkUserHashIsDefined({ user: user });
 
-    user.password_reset_token = common.makeId();
-    user.password_reset_expires_ts = helper.makeTsUsingOffsetFromNow(
+    user.passwordResetToken = common.makeId();
+    user.passwordResetExpiresTs = helper.makeTsUsingOffsetFromNow(
       constants.PASSWORD_EXPIRES_OFFSET
     );
 
-    await this.dbService.writeRecords({
-      modify: true,
-      records: {
-        users: [user]
-      }
-    });
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insertOrUpdate: {
+                users: [user]
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    // await this.dbService.writeRecords({
+    //   modify: true,
+    //   records: {
+    //     users: [user]
+    //   }
+    // });
 
     let hostUrl = this.cs.get<interfaces.Config['hostUrl']>('hostUrl');
 
-    let urlUpdatePassword = `${hostUrl}/${common.PATH_UPDATE_PASSWORD}?token=${user.password_reset_token}`;
+    let urlUpdatePassword = `${hostUrl}/${common.PATH_UPDATE_PASSWORD}?token=${user.passwordResetToken}`;
 
     await this.mailerService.sendMail({
       to: user.email,

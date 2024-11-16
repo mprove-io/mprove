@@ -1,12 +1,14 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-import { In } from 'typeorm';
+import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { and, eq, inArray } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
-import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { metricsTable } from '~backend/drizzle/postgres/schema/metrics';
+import { modelsTable } from '~backend/drizzle/postgres/schema/models';
+import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
@@ -14,6 +16,7 @@ import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { StructsService } from '~backend/services/structs.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -21,18 +24,17 @@ export class GetMetricsController {
   constructor(
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private metricsRepository: repositories.MetricsRepository,
-    private modelsRepository: repositories.ModelsRepository,
-    private repsRepository: repositories.RepsRepository,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,
-    private envsService: EnvsService
+    private envsService: EnvsService,
+    private wrapToApiService: WrapToApiService,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMetrics)
   async getMetrics(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendGetMetricsRequest = request.body;
@@ -45,12 +47,12 @@ export class GetMetricsController {
 
     let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
-      memberId: user.user_id
+      memberId: user.userId
     });
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
+      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 
@@ -61,30 +63,49 @@ export class GetMetricsController {
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.project_id,
-      repoId: branch.repo_id,
-      branchId: branch.branch_id,
+      projectId: branch.projectId,
+      repoId: branch.repoId,
+      branchId: branch.branchId,
       envId: envId
     });
 
-    let metrics = await this.metricsRepository.find({
-      where: { struct_id: bridge.struct_id }
+    let metrics = await this.db.drizzle.query.metricsTable.findMany({
+      where: eq(metricsTable.structId, bridge.structId)
     });
 
-    let draftReps = await this.repsRepository.find({
-      where: {
-        draft: common.BoolEnum.TRUE,
-        creator_id: user.user_id,
-        struct_id: bridge.struct_id
-      }
+    // let metrics = await this.metricsRepository.find({
+    //   where: { struct_id: bridge.struct_id }
+    // });
+
+    let draftReps = await this.db.drizzle.query.reportsTable.findMany({
+      where: and(
+        eq(reportsTable.draft, true),
+        eq(reportsTable.creatorId, user.userId),
+        eq(reportsTable.structId, bridge.structId)
+      )
     });
 
-    let structReps = await this.repsRepository.find({
-      where: {
-        draft: common.BoolEnum.FALSE,
-        struct_id: bridge.struct_id
-      }
+    // let draftReps = await this.repsRepository.find({
+    //   where: {
+    //     draft: true,
+    //     creator_id: user.user_id,
+    //     struct_id: bridge.struct_id
+    //   }
+    // });
+
+    let structReps = await this.db.drizzle.query.reportsTable.findMany({
+      where: and(
+        eq(reportsTable.draft, false),
+        eq(reportsTable.structId, bridge.structId)
+      )
     });
+
+    // let structReps = await this.repsRepository.find({
+    //   where: {
+    //     draft: false,
+    //     struct_id: bridge.struct_id
+    //   }
+    // });
 
     let repsGrantedAccess = structReps.filter(x =>
       helper.checkAccess({
@@ -97,51 +118,60 @@ export class GetMetricsController {
     let reps = [
       ...draftReps
         .sort((a, b) =>
-          Number(a.draft_created_ts) > Number(b.draft_created_ts)
+          a.draftCreatedTs > b.draftCreatedTs
             ? 1
-            : Number(b.draft_created_ts) > Number(a.draft_created_ts)
+            : b.draftCreatedTs > a.draftCreatedTs
             ? -1
             : 0
         )
         .reverse(),
       ...repsGrantedAccess.sort((a, b) => {
-        let aTitle = a.title.toLowerCase() || a.rep_id.toLowerCase();
-        let bTitle = b.title.toLowerCase() || a.rep_id.toLowerCase();
+        let aTitle = a.title.toLowerCase() || a.reportId.toLowerCase();
+        let bTitle = b.title.toLowerCase() || a.reportId.toLowerCase();
 
         return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
       })
     ];
 
     let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.struct_id,
+      structId: bridge.structId,
       projectId: projectId
     });
 
     let modelIds = metrics
-      .filter(m => common.isDefined(m.model_id))
-      .map(x => x.model_id);
+      .filter(m => common.isDefined(m.modelId))
+      .map(x => x.modelId);
 
-    let models = await this.modelsRepository.find({
-      where: {
-        model_id: In(modelIds),
-        struct_id: struct.struct_id
-      }
+    let models = await this.db.drizzle.query.modelsTable.findMany({
+      where: and(
+        inArray(modelsTable.modelId, modelIds),
+        eq(modelsTable.structId, struct.structId)
+      )
     });
 
-    let apiMember = wrapper.wrapToApiMember(userMember);
+    // let models = await this.modelsRepository.find({
+    //   where: {
+    //     model_id: In(modelIds),
+    //     struct_id: struct.structId
+    //   }
+    // });
+
+    let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
     let payload: apiToBackend.ToBackendGetMetricsResponsePayload = {
-      needValidate: common.enumToBoolean(bridge.need_validate),
-      struct: wrapper.wrapToApiStruct(struct),
+      needValidate: bridge.needValidate,
+      struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: apiMember,
-      metrics: metrics.map(x => wrapper.wrapToApiMetric({ metric: x })),
+      metrics: metrics.map(x =>
+        this.wrapToApiService.wrapToApiMetric({ metric: x })
+      ),
       reps: reps.map(x =>
-        wrapper.wrapToApiRep({
+        this.wrapToApiService.wrapToApiRep({
           rep: x,
           member: apiMember,
           columns: [],
           models: models.map(model =>
-            wrapper.wrapToApiModel({
+            this.wrapToApiService.wrapToApiModel({
               model: model,
               hasAccess: helper.checkAccess({
                 userAlias: user.alias,

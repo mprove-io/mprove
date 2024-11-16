@@ -203,7 +203,7 @@ export class ApiService {
         [
           common.ErEnum.BACKEND_MCONFIG_DOES_NOT_EXIST,
           common.ErEnum.BACKEND_MODEL_DOES_NOT_EXIST,
-          common.ErEnum.BACKEND_VIS_DOES_NOT_EXIST,
+          common.ErEnum.BACKEND_CHART_DOES_NOT_EXIST,
           common.ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST,
           common.ErEnum.BACKEND_STRUCT_ID_CHANGED,
           common.ErEnum.BACKEND_STRUCT_DOES_NOT_EXIST,
@@ -212,7 +212,7 @@ export class ApiService {
           common.ErEnum.BACKEND_REP_NOT_FOUND
         ].indexOf(infoErrorMessage) > -1
       ) {
-        errorData.description = `Don't worry, most likely the Project Editor has recently made new changes to the files of the current branch.`;
+        errorData.description = `This typically happens if a user with the editor role has recently made new changes to files in the current branch.`;
         errorData.buttonText = 'Ok, get changes';
         errorData.onClickFnBindThis = (() => {
           if (
@@ -253,11 +253,11 @@ export class ApiService {
           ) {
             this.navigateService.navigateToDashboards();
           } else if (
-            [common.ErEnum.BACKEND_VIS_DOES_NOT_EXIST].indexOf(
+            [common.ErEnum.BACKEND_CHART_DOES_NOT_EXIST].indexOf(
               infoErrorMessage
             ) > -1
           ) {
-            this.navigateService.navigateToVizs();
+            this.navigateService.navigateToCharts();
           } else if (
             [
               common.ErEnum.BACKEND_MCONFIG_DOES_NOT_EXIST,
@@ -292,8 +292,8 @@ export class ApiService {
         [
           common.ErEnum.BACKEND_CREATE_DASHBOARD_FAIL,
           common.ErEnum.BACKEND_MODIFY_DASHBOARD_FAIL,
-          common.ErEnum.BACKEND_CREATE_VIS_FAIL,
-          common.ErEnum.BACKEND_MODIFY_VIS_FAIL,
+          common.ErEnum.BACKEND_CREATE_CHART_FAIL,
+          common.ErEnum.BACKEND_MODIFY_CHART_FAIL,
           common.ErEnum.BACKEND_CREATE_REP_FAIL,
           common.ErEnum.BACKEND_MODIFY_REP_FAIL
         ].indexOf(infoErrorMessage) > -1

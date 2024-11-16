@@ -1,23 +1,38 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { eq } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
+import { interfaces } from '~backend/barrels/interfaces';
 import { SkipJwtCheck } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { usersTable } from '~backend/drizzle/postgres/schema/users';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+
+let retry = require('async-retry');
 
 @SkipJwtCheck()
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class ConfirmUserEmailController {
   constructor(
-    private userRepository: repositories.UsersRepository,
-    private dbService: DbService,
     private jwtService: JwtService,
-    private membersService: MembersService
+    private membersService: MembersService,
+    private wrapToApiService: WrapToApiService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail)
@@ -27,11 +42,15 @@ export class ConfirmUserEmailController {
     let { traceId } = reqValid.info;
     let { token } = reqValid.payload;
 
-    let user = await this.userRepository.findOne({
-      where: {
-        email_verification_token: token
-      }
+    let user = await this.db.drizzle.query.usersTable.findFirst({
+      where: eq(usersTable.emailVerificationToken, token)
     });
+
+    // let user = await this.userRepository.findOne({
+    //   where: {
+    //     email_verification_token: token
+    //   }
+    // });
 
     if (common.isUndefined(user)) {
       throw new common.ServerError({
@@ -52,19 +71,33 @@ export class ConfirmUserEmailController {
 
     let payload: apiToBackend.ToBackendConfirmUserEmailResponsePayload = {};
 
-    if (user.is_email_verified === common.BoolEnum.FALSE) {
-      user.is_email_verified = common.BoolEnum.TRUE;
+    if (user.isEmailVerified === false) {
+      user.isEmailVerified = true;
 
-      await this.dbService.writeRecords({
-        modify: true,
-        records: {
-          users: [user]
-        }
-      });
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insertOrUpdate: {
+                  users: [user]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+
+      // await this.dbService.writeRecords({
+      //   modify: true,
+      //   records: {
+      //     users: [user]
+      //   }
+      // });
 
       payload = {
-        token: this.jwtService.sign({ userId: user.user_id }),
-        user: wrapper.wrapToApiUser(user)
+        token: this.jwtService.sign({ userId: user.userId }),
+        user: this.wrapToApiService.wrapToApiUser(user)
       };
     }
 

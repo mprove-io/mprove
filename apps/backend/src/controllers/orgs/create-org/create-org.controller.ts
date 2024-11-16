@@ -1,31 +1,30 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { eq } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { interfaces } from '~backend/barrels/interfaces';
-import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { DbService } from '~backend/services/db.service';
 import { OrgsService } from '~backend/services/orgs.service';
-import { RabbitService } from '~backend/services/rabbit.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class CreateOrgController {
   constructor(
-    private dbService: DbService,
-    private rabbitService: RabbitService,
-    private orgsRepository: repositories.OrgsRepository,
     private orgsService: OrgsService,
-    private cs: ConfigService<interfaces.Config>
+    private wrapToApiService: WrapToApiService,
+    private cs: ConfigService<interfaces.Config>,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateOrg)
   async createOrg(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendCreateOrgRequest = request.body;
@@ -54,7 +53,11 @@ export class CreateOrgController {
 
     let { name } = reqValid.payload;
 
-    let org = await this.orgsRepository.findOne({ where: { name: name } });
+    let org = await this.db.drizzle.query.orgsTable.findFirst({
+      where: eq(orgsTable.name, name)
+    });
+
+    // let org = await this.orgsRepository.findOne({ where: { name: name } });
 
     if (name.toLowerCase() === common.FIRST_ORG_NAME.toLowerCase()) {
       throw new common.ServerError({
@@ -70,13 +73,13 @@ export class CreateOrgController {
 
     let newOrg = await this.orgsService.addOrg({
       name: name,
-      ownerId: user.user_id,
+      ownerId: user.userId,
       ownerEmail: user.email,
       traceId: reqValid.info.traceId
     });
 
     let payload: apiToBackend.ToBackendCreateOrgResponsePayload = {
-      org: wrapper.wrapToApiOrg(newOrg)
+      org: this.wrapToApiService.wrapToApiOrg(newOrg)
     };
 
     return payload;

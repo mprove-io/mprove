@@ -14,7 +14,7 @@ let email = `${testId}@example.com`;
 let password = '123456';
 let newPassword = '456';
 let passwordResetToken = 'dj293d4958734d95';
-let expiredPasswordResetExpiresTs = '1';
+let expiredPasswordResetExpiresTs = 1;
 
 let prep: interfaces.Prep;
 
@@ -25,7 +25,6 @@ test('1', async t => {
     prep = await prepareTest({
       traceId: traceId,
       deleteRecordsPayload: {
-        idempotencyKeys: [testId],
         emails: [email]
       },
       seedRecordsPayload: {
@@ -33,7 +32,7 @@ test('1', async t => {
           {
             email,
             password,
-            isEmailVerified: common.BoolEnum.TRUE,
+            isEmailVerified: true,
             passwordResetToken,
             passwordResetExpiresTs: expiredPasswordResetExpiresTs
           }
@@ -47,7 +46,7 @@ test('1', async t => {
           name: apiToBackend.ToBackendRequestInfoNameEnum
             .ToBackendUpdateUserPassword,
           traceId: traceId,
-          idempotencyKey: testId
+          idempotencyKey: common.makeId()
         },
         payload: {
           passwordResetToken,

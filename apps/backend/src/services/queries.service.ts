@@ -1,25 +1,26 @@
 import { BigQuery } from '@google-cloud/bigquery';
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
-import { DataSource, In } from 'typeorm';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
-import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
-import { repositories } from '~backend/barrels/repositories';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
+import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
-import { DbService } from '~backend/services/db.service';
+import { makeTsNumber } from '~backend/functions/make-ts-number';
+
+let retry = require('async-retry');
 
 @Injectable()
 export class QueriesService {
   constructor(
-    private queriesRepository: repositories.QueriesRepository,
-    private connectionsRepository: repositories.ConnectionsRepository,
-    private dbService: DbService,
     private cs: ConfigService<interfaces.Config>,
-    private dataSource: DataSource,
-    private logger: Logger
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   async getQueryCheckExistsSkipData(item: {
@@ -28,34 +29,69 @@ export class QueriesService {
   }) {
     let { queryId: queryId, projectId: projectId } = item;
 
-    let query = await this.queriesRepository.findOne({
-      select: [
-        'project_id',
-        'env_id',
-        'connection_id',
-        'connection_type',
-        'query_id',
-        'sql',
-        'status',
-        // 'data',
-        'last_run_by',
-        'last_run_ts',
-        'last_cancel_ts',
-        'last_complete_ts',
-        'last_complete_duration',
-        'last_error_message',
-        'last_error_ts',
-        'query_job_id',
-        'bigquery_query_job_id',
-        'bigquery_consecutive_errors_get_job',
-        'bigquery_consecutive_errors_get_results',
-        'server_ts'
-      ],
-      where: {
-        query_id: queryId,
-        project_id: projectId
-      }
-    });
+    let queries = (await this.db.drizzle
+      .select({
+        projectId: queriesTable.projectId,
+        envId: queriesTable.envId,
+        connectionId: queriesTable.connectionId,
+        connectionType: queriesTable.connectionType,
+        queryId: queriesTable.queryId,
+        sql: queriesTable.sql,
+        status: queriesTable.status,
+        // data: ...,
+        lastRunBy: queriesTable.lastRunBy,
+        lastRunTs: queriesTable.lastRunTs,
+        lastCancelTs: queriesTable.lastCancelTs,
+        lastCompleteTs: queriesTable.lastCompleteTs,
+        lastCompleteDuration: queriesTable.lastCompleteDuration,
+        lastErrorMessage: queriesTable.lastErrorMessage,
+        lastErrorTs: queriesTable.lastErrorTs,
+        queryJobId: queriesTable.queryJobId,
+        bigqueryQueryJobId: queriesTable.bigqueryQueryJobId,
+        bigqueryConsecutiveErrorsGetJob:
+          queriesTable.bigqueryConsecutiveErrorsGetJob,
+        bigqueryConsecutiveErrorsGetResults:
+          queriesTable.bigqueryConsecutiveErrorsGetResults,
+        serverTs: queriesTable.serverTs
+      })
+      .from(queriesTable)
+      .where(
+        and(
+          eq(queriesTable.queryId, queryId),
+          eq(queriesTable.projectId, projectId)
+        )
+      )) as schemaPostgres.QueryEnt[];
+
+    let query = queries.length < 0 ? undefined : queries[0];
+
+    // let query = await this.queriesRepository.findOne({
+    //   select: [
+    //     'project_id',
+    //     'env_id',
+    //     'connection_id',
+    //     'connection_type',
+    //     'query_id',
+    //     'sql',
+    //     'status',
+    //     // 'data',
+    //     'last_run_by',
+    //     'last_run_ts',
+    //     'last_cancel_ts',
+    //     'last_complete_ts',
+    //     'last_complete_duration',
+    //     'last_error_message',
+    //     'last_error_ts',
+    //     'query_job_id',
+    //     'bigquery_query_job_id',
+    //     'bigquery_consecutive_errors_get_job',
+    //     'bigquery_consecutive_errors_get_results',
+    //     'server_ts'
+    //   ],
+    //   where: {
+    //     query_id: queryId,
+    //     project_id: projectId
+    //   }
+    // });
 
     if (common.isUndefined(query)) {
       throw new common.ServerError({
@@ -69,12 +105,19 @@ export class QueriesService {
   async getQueryCheckExists(item: { queryId: string; projectId: string }) {
     let { queryId, projectId } = item;
 
-    let query = await this.queriesRepository.findOne({
-      where: {
-        query_id: queryId,
-        project_id: projectId
-      }
+    let query = await this.db.drizzle.query.queriesTable.findFirst({
+      where: and(
+        eq(queriesTable.queryId, queryId),
+        eq(queriesTable.projectId, projectId)
+      )
     });
+
+    // let query = await this.queriesRepository.findOne({
+    //   where: {
+    //     query_id: queryId,
+    //     project_id: projectId
+    //   }
+    // });
 
     if (common.isUndefined(query)) {
       throw new common.ServerError({
@@ -91,39 +134,72 @@ export class QueriesService {
   }) {
     let { queryIds, projectId } = item;
 
-    let queries = await this.queriesRepository.find({
-      select: [
-        'project_id',
-        'env_id',
-        'connection_id',
-        'connection_type',
-        'query_id',
-        // 'sql',
-        'status',
-        // 'data',
-        'last_run_by',
-        'last_run_ts',
-        'last_cancel_ts',
-        'last_complete_ts',
-        'last_complete_duration',
-        'last_error_message',
-        'last_error_ts',
-        'query_job_id',
-        'bigquery_query_job_id',
-        'bigquery_consecutive_errors_get_job',
-        'bigquery_consecutive_errors_get_results',
-        'server_ts'
-      ],
-      where: {
-        query_id: In(queryIds),
-        project_id: projectId
-      }
-    });
+    let queries = (await this.db.drizzle
+      .select({
+        projectId: queriesTable.projectId,
+        envId: queriesTable.envId,
+        connectionId: queriesTable.connectionId,
+        connectionType: queriesTable.connectionType,
+        queryId: queriesTable.queryId,
+        sql: queriesTable.sql,
+        status: queriesTable.status,
+        // data: ...,
+        lastRunBy: queriesTable.lastRunBy,
+        lastRunTs: queriesTable.lastRunTs,
+        lastCancelTs: queriesTable.lastCancelTs,
+        lastCompleteTs: queriesTable.lastCompleteTs,
+        lastCompleteDuration: queriesTable.lastCompleteDuration,
+        lastErrorMessage: queriesTable.lastErrorMessage,
+        lastErrorTs: queriesTable.lastErrorTs,
+        queryJobId: queriesTable.queryJobId,
+        bigqueryQueryJobId: queriesTable.bigqueryQueryJobId,
+        bigqueryConsecutiveErrorsGetJob:
+          queriesTable.bigqueryConsecutiveErrorsGetJob,
+        bigqueryConsecutiveErrorsGetResults:
+          queriesTable.bigqueryConsecutiveErrorsGetResults,
+        serverTs: queriesTable.serverTs
+      })
+      .from(queriesTable)
+      .where(
+        and(
+          inArray(queriesTable.queryId, queryIds),
+          eq(queriesTable.projectId, projectId)
+        )
+      )) as schemaPostgres.QueryEnt[];
+
+    // let queries = await this.queriesRepository.find({
+    //   select: [
+    //     'project_id',
+    //     'env_id',
+    //     'connection_id',
+    //     'connection_type',
+    //     'query_id',
+    //     // 'sql',
+    //     'status',
+    //     // 'data',
+    //     'last_run_by',
+    //     'last_run_ts',
+    //     'last_cancel_ts',
+    //     'last_complete_ts',
+    //     'last_complete_duration',
+    //     'last_error_message',
+    //     'last_error_ts',
+    //     'query_job_id',
+    //     'bigquery_query_job_id',
+    //     'bigquery_consecutive_errors_get_job',
+    //     'bigquery_consecutive_errors_get_results',
+    //     'server_ts'
+    //   ],
+    //   where: {
+    //     query_id: In(queryIds),
+    //     project_id: projectId
+    //   }
+    // });
 
     let notFoundQueryIds: string[] = [];
 
     queryIds.forEach(x => {
-      if (queries.map(query => query.query_id).indexOf(x) < -1) {
+      if (queries.map(query => query.queryId).indexOf(x) < -1) {
         notFoundQueryIds.push(x);
       }
     });
@@ -141,93 +217,174 @@ export class QueriesService {
   }
 
   async removeOrphanedQueries() {
-    let rawData: any;
-
-    await this.dataSource.transaction(async manager => {
-      rawData = await manager.query(`
-SELECT 
+    let rawData = await this.db.drizzle.execute(sql`
+SELECT
   q.query_id
-FROM queries as q 
-LEFT JOIN mconfigs as m ON q.query_id=m.query_id 
+FROM queries as q
+LEFT JOIN mconfigs as m ON q.query_id=m.query_id
 WHERE m.mconfig_id is NULL
-`);
-    });
+      `);
 
-    let orphanedQueryIds: string[] = rawData?.map((x: any) => x.query_id) || [];
+    //     let rawData: any;
+
+    //     await this.dataSource.transaction(async manager => {
+    //       rawData = await manager.query(`
+    // SELECT
+    //   q.query_id
+    // FROM queries as q
+    // LEFT JOIN mconfigs as m ON q.query_id=m.query_id
+    // WHERE m.mconfig_id is NULL
+    // `);
+    //     });
+
+    let orphanedQueryIds: string[] =
+      rawData.rows.map((x: any) => x.query_id) || [];
 
     if (orphanedQueryIds.length > 0) {
-      await this.queriesRepository.delete({ query_id: In(orphanedQueryIds) });
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await tx
+                .delete(queriesTable)
+                .where(inArray(queriesTable.queryId, orphanedQueryIds))
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+
+      // await this.queriesRepository.delete({ query_id: In(orphanedQueryIds) });
     }
   }
 
   async checkBigqueryRunningQueries() {
-    let queries = await this.queriesRepository.find({
-      where: {
-        status: common.QueryStatusEnum.Running,
-        connection_type: common.ConnectionTypeEnum.BigQuery
-      }
+    let queries = await this.db.drizzle.query.queriesTable.findMany({
+      where: and(
+        eq(queriesTable.status, common.QueryStatusEnum.Running),
+        eq(queriesTable.connectionType, common.ConnectionTypeEnum.BigQuery)
+      )
     });
 
-    await asyncPool(8, queries, async (query: entities.QueryEntity) => {
+    // let queries = await this.queriesRepository.find({
+    //   where: {
+    //     status: common.QueryStatusEnum.Running,
+    //     connection_type: common.ConnectionTypeEnum.BigQuery
+    //   }
+    // });
+
+    await asyncPool(8, queries, async (query: schemaPostgres.QueryEnt) => {
       try {
-        let connection = await this.connectionsRepository.findOne({
-          where: {
-            project_id: query.project_id,
-            connection_id: query.connection_id
+        let connection = await this.db.drizzle.query.connectionsTable.findFirst(
+          {
+            where: and(
+              eq(connectionsTable.projectId, query.projectId),
+              eq(connectionsTable.connectionId, query.connectionId)
+            )
           }
-        });
+        );
+
+        // let connection = await this.connectionsRepository.findOne({
+        //   where: {
+        //     project_id: query.project_id,
+        //     connection_id: query.connection_id
+        //   }
+        // });
 
         if (common.isUndefined(connection)) {
           query.status = common.QueryStatusEnum.Error;
           query.data = [];
-          query.last_error_message = `Project connection not found`;
-          query.last_error_ts = helper.makeTs();
+          query.lastErrorMessage = `Project connection not found`;
+          query.lastErrorTs = makeTsNumber();
 
-          await this.dbService.writeRecords({
-            modify: true,
-            records: {
-              queries: [query]
-            }
-          });
+          await retry(
+            async () =>
+              await this.db.drizzle.transaction(
+                async tx =>
+                  await this.db.packer.write({
+                    tx: tx,
+                    insertOrUpdate: {
+                      queries: [query]
+                    }
+                  })
+              ),
+            getRetryOption(this.cs, this.logger)
+          );
+
+          // await this.dbService.writeRecords({
+          //   modify: true,
+          //   records: {
+          //     queries: [query]
+          //   }
+          // });
+
           return;
         }
 
         let bigquery = new BigQuery({
-          credentials: connection.bigquery_credentials,
-          projectId: connection.bigquery_project
+          credentials: connection.bigqueryCredentials,
+          projectId: connection.bigqueryProject
         });
 
-        let bigqueryQueryJob = bigquery.job(query.bigquery_query_job_id);
+        let bigqueryQueryJob = bigquery.job(query.bigqueryQueryJobId);
 
         let itemQueryJob = await bigqueryQueryJob
           .get()
           .catch(async (e: any) => {
-            if (query.bigquery_consecutive_errors_get_job > 2) {
+            if (query.bigqueryConsecutiveErrorsGetJob > 2) {
               query.status = common.QueryStatusEnum.Error;
               query.data = [];
-              query.last_error_message = `Bigquery get Job fail`;
-              query.last_error_ts = helper.makeTs();
+              query.lastErrorMessage = `Bigquery get Job fail`;
+              query.lastErrorTs = makeTsNumber();
             } else {
-              query.bigquery_consecutive_errors_get_job =
-                query.bigquery_consecutive_errors_get_job + 1;
+              query.bigqueryConsecutiveErrorsGetJob =
+                query.bigqueryConsecutiveErrorsGetJob + 1;
             }
 
-            await this.dbService.writeRecords({
-              modify: true,
-              records: {
-                queries: [query]
-              }
-            });
+            await retry(
+              async () =>
+                await this.db.drizzle.transaction(
+                  async tx =>
+                    await this.db.packer.write({
+                      tx: tx,
+                      insertOrUpdate: {
+                        queries: [query]
+                      }
+                    })
+                ),
+              getRetryOption(this.cs, this.logger)
+            );
+
+            // await this.dbService.writeRecords({
+            //   modify: true,
+            //   records: {
+            //     queries: [query]
+            //   }
+            // });
+
             return;
           });
 
-        query.bigquery_consecutive_errors_get_job = 0;
-        await this.dbService.writeRecords({
-          modify: true,
-          records: {
-            queries: [query]
-          }
-        });
+        query.bigqueryConsecutiveErrorsGetJob = 0;
+
+        await retry(
+          async () =>
+            await this.db.drizzle.transaction(
+              async tx =>
+                await this.db.packer.write({
+                  tx: tx,
+                  insertOrUpdate: {
+                    queries: [query]
+                  }
+                })
+            ),
+          getRetryOption(this.cs, this.logger)
+        );
+
+        // await this.dbService.writeRecords({
+        //   modify: true,
+        //   records: {
+        //     queries: [query]
+        //   }
+        // });
 
         let queryJob = (itemQueryJob as any)[0];
         let queryJobGetResponse: any = (itemQueryJob as any)[1];
@@ -238,60 +395,103 @@ WHERE m.mconfig_id is NULL
 
             query.status = common.QueryStatusEnum.Error;
             query.data = [];
-            query.last_error_message =
+            query.lastErrorMessage =
               `Query fail. ` +
               `Message: '${errorResult.message}'. ` +
               `Reason: '${errorResult.reason}'. ` +
               `Location: '${errorResult.location}'.`;
-            query.last_error_ts = helper.makeTs();
+            query.lastErrorTs = makeTsNumber();
 
-            await this.dbService.writeRecords({
-              modify: true,
-              records: {
-                queries: [query]
-              }
-            });
+            await retry(
+              async () =>
+                await this.db.drizzle.transaction(
+                  async tx =>
+                    await this.db.packer.write({
+                      tx: tx,
+                      insertOrUpdate: {
+                        queries: [query]
+                      }
+                    })
+                ),
+              getRetryOption(this.cs, this.logger)
+            );
+
+            // await this.dbService.writeRecords({
+            //   modify: true,
+            //   records: {
+            //     queries: [query]
+            //   }
+            // });
           } else {
             let queryResultsItem = await queryJob
               .getQueryResults()
               .catch(async (e: any) => {
-                if (query.bigquery_consecutive_errors_get_results > 2) {
+                if (query.bigqueryConsecutiveErrorsGetResults > 2) {
                   query.status = common.QueryStatusEnum.Error;
                   query.data = [];
-                  query.last_error_message = `Bigquery get QueryResults fail`;
-                  query.last_error_ts = helper.makeTs();
+                  query.lastErrorMessage = `Bigquery get QueryResults fail`;
+                  query.lastErrorTs = makeTsNumber();
                 } else {
-                  query.bigquery_consecutive_errors_get_results =
-                    query.bigquery_consecutive_errors_get_results + 1;
+                  query.bigqueryConsecutiveErrorsGetResults =
+                    query.bigqueryConsecutiveErrorsGetResults + 1;
                 }
 
-                await this.dbService.writeRecords({
-                  modify: true,
-                  records: {
-                    queries: [query]
-                  }
-                });
+                await retry(
+                  async () =>
+                    await this.db.drizzle.transaction(
+                      async tx =>
+                        await this.db.packer.write({
+                          tx: tx,
+                          insertOrUpdate: {
+                            queries: [query]
+                          }
+                        })
+                    ),
+                  getRetryOption(this.cs, this.logger)
+                );
+
+                // await this.dbService.writeRecords({
+                //   modify: true,
+                //   records: {
+                //     queries: [query]
+                //   }
+                // });
+
                 return;
               });
 
-            let newLastCompleteTs = helper.makeTs();
+            let newLastCompleteTs = makeTsNumber();
             let newLastCompleteDuration = Math.floor(
-              (Number(newLastCompleteTs) - Number(query.last_run_ts)) / 1000
-            ).toString();
+              (Number(newLastCompleteTs) - Number(query.lastRunTs)) / 1000
+            );
 
             query.status = common.QueryStatusEnum.Completed;
             // no need for query.bigquery_consecutive_errors_get_results = 0
             // because status change to Completed
             query.data = queryResultsItem[0];
-            query.last_complete_ts = newLastCompleteTs;
-            query.last_complete_duration = newLastCompleteDuration;
+            query.lastCompleteTs = newLastCompleteTs;
+            query.lastCompleteDuration = newLastCompleteDuration;
 
-            await this.dbService.writeRecords({
-              modify: true,
-              records: {
-                queries: [query]
-              }
-            });
+            await retry(
+              async () =>
+                await this.db.drizzle.transaction(
+                  async tx =>
+                    await this.db.packer.write({
+                      tx: tx,
+                      insertOrUpdate: {
+                        queries: [query]
+                      }
+                    })
+                ),
+              getRetryOption(this.cs, this.logger)
+            );
+
+            // await this.dbService.writeRecords({
+            //   modify: true,
+            //   records: {
+            //     queries: [query]
+            //   }
+            // });
           }
         }
       } catch (e) {

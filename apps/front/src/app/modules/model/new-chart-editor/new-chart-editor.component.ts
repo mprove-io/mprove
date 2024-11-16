@@ -113,7 +113,7 @@ export class NewChartEditorComponent implements OnChanges {
 
     this.controls.forEach(x => {
       x.formControl.setValue(
-        this.mConfig.chart[x.mConfigName as keyof common.Chart]
+        this.mConfig.chart[x.mConfigName as keyof common.MconfigChart]
       );
       x.formControl.markAsTouched();
     });

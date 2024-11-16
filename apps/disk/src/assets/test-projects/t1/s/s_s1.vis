@@ -1,7 +1,0 @@
-vis: s_s1
-tiles:
-- title: 'k'
-  model: s_m1
-  select:
-  - a.k
-  type: table

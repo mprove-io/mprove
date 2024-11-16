@@ -320,8 +320,8 @@ export class BranchSelectComponent {
       urlParts[11] === common.PATH_DASHBOARD
     ) {
       navArray.push(common.PATH_DASHBOARDS);
-    } else if (urlParts[11] === common.PATH_VISUALIZATIONS) {
-      navArray.push(common.PATH_VISUALIZATIONS);
+    } else if (urlParts[11] === common.PATH_CHARTS) {
+      navArray.push(common.PATH_CHARTS);
     } else {
       navArray.push(common.PATH_FILES);
     }

@@ -4,16 +4,17 @@ import { apiToBackend } from '~mcli/barrels/api-to-backend';
 import { common } from '~mcli/barrels/common';
 import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
+import { getChartUrl } from '~mcli/functions/get-chart-url';
 import { getDashboardUrl } from '~mcli/functions/get-dashboard-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';
-import { getVisualizationUrl } from '~mcli/functions/get-visualization-url';
+import { getReportUrl } from '~mcli/functions/get-report-url';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
-interface VizPartQ {
+interface ChartPartQ {
   title: string;
-  vizId: string;
+  chartId: string;
   url: string;
   query: QueryPartQ;
 }
@@ -28,6 +29,25 @@ interface DashboardPartQ {
 interface TilePartQ {
   title: string;
   query: QueryPartQ;
+}
+
+interface ReportPartQ {
+  title: string;
+  reportId: string;
+  url: string;
+  rows: RowPartQ[];
+}
+
+interface RowPartQ {
+  rowId: string;
+  name: string;
+  rowType: common.RowTypeEnum;
+  metricId: string;
+  formula: string;
+  parametersFormula: string;
+  parameters: common.Parameter[];
+  query: QueryPartQ;
+  records: any[];
 }
 
 interface QueryPartQ {
@@ -61,12 +81,16 @@ export class GetQueryCommand extends CustomCommand {
     description: 'Get query',
     examples: [
       [
-        'Get query for Dev repo visualization',
-        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --viz-id v1 --get-sql --get-data'
+        'Get query for Dev repo Chart',
+        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --chart-id v1 --get-sql --get-data'
       ],
       [
-        'Get query for Dev repo dashboard',
+        'Get query for Dev repo Dashboard',
         'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --dashboard-id d1 --get-sql --get-data'
+      ],
+      [
+        'Get query for Dev repo Report',
+        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --report-id r1 --get-sql --get-data'
       ]
     ]
   });
@@ -92,7 +116,8 @@ export class GetQueryCommand extends CustomCommand {
   });
 
   dashboardId = Option.String('--dashboard-id', {
-    description: '(dashboard-id or viz-id required) Dashboard Id (name)'
+    description:
+      '(dashboard-id, chart-id or report-id required) Dashboard Id (name)'
   });
 
   tileIndex = Option.String('--tile-index', {
@@ -100,9 +125,37 @@ export class GetQueryCommand extends CustomCommand {
     description: '(optional) Dashboard Tile Index starting with 0'
   });
 
-  vizId = Option.String('--viz-id', {
-    description: '(dashboard-id or viz-id required) Visualization Id (name)'
+  chartId = Option.String('--chart-id', {
+    description:
+      '(dashboard-id, chart-id or report-id required) Chart Id (name)'
   });
+
+  reportId = Option.String('--report-id', {
+    description:
+      '(dashboard-id, chart-id or report-id required) Report Id (name)'
+  });
+
+  rowId = Option.String('--row-id', {
+    description: '(optional) Report Row Id'
+  });
+
+  timezone = Option.String('--timezone', 'UTC', {
+    description: '(default "UTC") Timezone'
+  });
+
+  timeSpec = Option.String('--timeSpec', 'days', {
+    description:
+      '(default "days") "minutes" | "hours" | "days" | "weeks" | "months" | "quarters" | "years"'
+  });
+
+  timeRange = Option.String(
+    '--timeRange',
+    'last 5 days complete plus current',
+    {
+      description:
+        '(default "last 5 days complete plus current") Ts Filter Expression'
+    }
+  );
 
   getSql = Option.Boolean('--get-sql', false, {
     description: '(default false), show query sql in output'
@@ -135,10 +188,14 @@ export class GetQueryCommand extends CustomCommand {
       throw serverError;
     }
 
-    if (common.isDefined(this.dashboardId) && common.isDefined(this.vizId)) {
+    if (
+      common.isDefined(this.dashboardId) &&
+      common.isDefined(this.chartId) &&
+      common.isDefined(this.reportId)
+    ) {
       let serverError = new common.ServerError({
         message: common.ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
-        data: `dashboard-id and viz-id`,
+        data: `dashboard-id, chart-id, report-id`,
         originalError: null
       });
       throw serverError;
@@ -146,10 +203,13 @@ export class GetQueryCommand extends CustomCommand {
 
     if (
       common.isUndefined(this.dashboardId) &&
-      common.isUndefined(this.vizId)
+      common.isUndefined(this.chartId) &&
+      common.isUndefined(this.reportId)
     ) {
       let serverError = new common.ServerError({
-        message: common.ErEnum.MCLI_DASHBOARD_ID_AND_VIZ_ID_ARE_NOT_DEFINED,
+        message:
+          common.ErEnum
+            .MCLI_DASHBOARD_ID_CHART_ID_AND_REPORT_ID_ARE_NOT_DEFINED,
         originalError: null
       });
       throw serverError;
@@ -162,6 +222,14 @@ export class GetQueryCommand extends CustomCommand {
       let serverError = new common.ServerError({
         message:
           common.ErEnum.MCLI_TILE_INDEX_DOES_NOT_WORK_WITHOUT_DASHBOARD_ID,
+        originalError: null
+      });
+      throw serverError;
+    }
+
+    if (common.isDefined(this.rowId) && common.isUndefined(this.reportId)) {
+      let serverError = new common.ServerError({
+        message: common.ErEnum.MCLI_ROW_ID_DOES_NOT_WORK_WITHOUT_REPORT_ID,
         originalError: null
       });
       throw serverError;
@@ -198,26 +266,27 @@ export class GetQueryCommand extends CustomCommand {
       host: this.context.config.mproveCliHost
     });
 
-    let vizPartQ: VizPartQ;
+    let chartPartQ: ChartPartQ;
 
-    if (common.isDefined(this.vizId)) {
-      let getVizReqPayload: apiToBackend.ToBackendGetVizRequestPayload = {
+    if (common.isDefined(this.chartId)) {
+      let getChartReqPayload: apiToBackend.ToBackendGetChartRequestPayload = {
         projectId: this.projectId,
         isRepoProd: isRepoProd,
         branchId: this.branch,
         envId: this.env,
-        vizId: this.vizId
+        chartId: this.chartId
       };
 
-      let getVizResp = await mreq<apiToBackend.ToBackendGetVizResponse>({
+      let getChartResp = await mreq<apiToBackend.ToBackendGetChartResponse>({
         loginToken: loginToken,
-        pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetViz,
-        payload: getVizReqPayload,
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetChart,
+        payload: getChartReqPayload,
         host: this.context.config.mproveCliHost
       });
 
-      let vizX = getVizResp.payload.viz;
-      let tileX = vizX.tiles[0];
+      let chartX = getChartResp.payload.chart;
+      let tileX = chartX.tiles[0];
 
       let queryPartQ: QueryPartQ = {
         connectionId: tileX.query.connectionId,
@@ -244,19 +313,19 @@ export class GetQueryCommand extends CustomCommand {
         queryPartQ.sql = tileX.query.sql;
       }
 
-      let url = getVisualizationUrl({
+      let url = getChartUrl({
         host: this.context.config.mproveCliHost,
         orgId: getProjectResp.payload.project.orgId,
         projectId: this.projectId,
         repoId: getRepoResp.payload.repo.repoId,
         branch: this.branch,
         env: this.env,
-        vizId: vizX.vizId
+        chartId: chartX.chartId
       });
 
-      vizPartQ = {
+      chartPartQ = {
         title: tileX.mconfig.chart.title,
-        vizId: vizX.vizId,
+        chartId: chartX.chartId,
         url: url,
         query: queryPartQ
       };
@@ -286,9 +355,9 @@ export class GetQueryCommand extends CustomCommand {
       let dashboardX = getDashboardResp.payload.dashboard;
 
       let tilePartQs = dashboardX.tiles
-        .filter((rep, i) => {
+        .filter((tile, i) => {
           if (common.isDefined(this.tileIndex)) {
-            return this.tileIndex === i;
+            return i === this.tileIndex;
           }
 
           return true;
@@ -345,14 +414,118 @@ export class GetQueryCommand extends CustomCommand {
       };
     }
 
+    let reportPartQ: ReportPartQ;
+
+    if (common.isDefined(this.reportId)) {
+      let getRepReqPayload: apiToBackend.ToBackendGetRepRequestPayload = {
+        projectId: this.projectId,
+        isRepoProd: isRepoProd,
+        branchId: this.branch,
+        envId: this.env,
+        repId: this.reportId,
+        timezone: this.timezone,
+        timeSpec: this.timeSpec as common.TimeSpecEnum,
+        timeRangeFractionBrick: this.timeRange
+      };
+
+      let getRepResp = await mreq<apiToBackend.ToBackendGetRepResponse>({
+        loginToken: loginToken,
+        pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRep,
+        payload: getRepReqPayload,
+        host: this.context.config.mproveCliHost
+      });
+
+      let repX = getRepResp.payload.rep;
+
+      let rowPartQs = repX.rows
+        .filter(row => {
+          if (common.isDefined(this.rowId)) {
+            return row.rowId === this.rowId;
+          }
+
+          return true;
+        })
+        .map(row => {
+          let queryPartQ: QueryPartQ;
+
+          if (row.rowType === common.RowTypeEnum.Metric) {
+            queryPartQ = {
+              connectionId: row.query.connectionId,
+              connectionType: row.query.connectionType,
+              queryId: row.query.queryId,
+              status: row.query.status,
+              lastRunBy: row.query.lastRunBy,
+              lastRunTs: row.query.lastRunTs,
+              lastCancelTs: row.query.lastCancelTs,
+              lastCompleteTs: row.query.lastCompleteTs,
+              lastCompleteDuration: row.query.lastCompleteDuration,
+              lastErrorMessage: row.query.lastErrorMessage,
+              lastErrorTs: row.query.lastErrorTs,
+              data: undefined,
+              sql: undefined,
+              sqlArray: undefined
+            };
+
+            if (this.getData) {
+              queryPartQ.data = row.query?.data;
+            }
+
+            if (this.getSql) {
+              queryPartQ.sql = row.query?.sql;
+            }
+          }
+
+          let rowPartQ: RowPartQ = {
+            rowId: row.rowId,
+            name:
+              row.rowType === common.RowTypeEnum.Metric
+                ? `${row.partNodeLabel} ${row.partFieldLabel} by ${row.timeNodeLabel} ${row.timeFieldLabel} - ${row.topLabel}`
+                : row.name,
+            rowType: row.rowType,
+            metricId: row.metricId,
+            formula: row.formula,
+            parametersFormula: row.parametersFormula,
+            parameters: row.parameters,
+            query: queryPartQ,
+            records: this.getData === true ? row.records : undefined
+          };
+
+          return rowPartQ;
+        });
+
+      let url = getReportUrl({
+        host: this.context.config.mproveCliHost,
+        orgId: getProjectResp.payload.project.orgId,
+        projectId: this.projectId,
+        repoId: getRepoResp.payload.repo.repoId,
+        branch: this.branch,
+        env: this.env,
+        reportId: repX.repId,
+        timezone: this.timezone,
+        timeSpec: this.timeSpec,
+        timeRange: this.timeRange
+      });
+
+      reportPartQ = {
+        title: repX.title,
+        reportId: repX.repId,
+        url: url,
+        rows: rowPartQs
+      };
+    }
+
     let log: any = {};
+
+    if (common.isDefined(this.chartId)) {
+      log.chart = chartPartQ;
+    }
 
     if (common.isDefined(this.dashboardId)) {
       log.dashboard = dashboardPartQ;
     }
 
-    if (common.isDefined(this.vizId)) {
-      log.visualization = vizPartQ;
+    if (common.isDefined(this.reportId)) {
+      log.report = reportPartQ;
     }
 
     logToConsoleMcli({

@@ -1,3 +1,4 @@
+export * from './chart-x';
 export * from './connection';
 export * from './dashboard-x';
 export * from './env';
@@ -18,4 +19,3 @@ export * from './struct';
 export * from './tile-x';
 export * from './ui';
 export * from './user';
-export * from './viz-x';

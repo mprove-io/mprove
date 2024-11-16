@@ -27,7 +27,7 @@ describe('integra', () => {
           userId,
           email: email,
           password: password,
-          isEmailVerified: common.BoolEnum.TRUE
+          isEmailVerified: true
         }
       ],
       orgs: [
@@ -52,9 +52,9 @@ describe('integra', () => {
           memberId: userId,
           email,
           projectId,
-          isAdmin: common.BoolEnum.TRUE,
-          isEditor: common.BoolEnum.TRUE,
-          isExplorer: common.BoolEnum.TRUE
+          isAdmin: true,
+          isEditor: true,
+          isExplorer: true
         }
       ]
     });

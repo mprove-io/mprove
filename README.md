@@ -23,8 +23,9 @@ git clone https://github.com/mprove-io/mprove.git
 - Create `mprove_data` with subfolders outside of `mprove` repo folder:
 
 ```
-mkdir -p ~/mprove_data/mysql \
+mkdir -p ~/mprove_data/db-main \
   ~/mprove_data/organizations \
+  ~/mprove_data/dwh-mysql \
   ~/mprove_data/dwh-postgres \
   ~/mprove_data/dwh-clickhouse \
   ~/mprove_data/dwh-clickhouse-logs \

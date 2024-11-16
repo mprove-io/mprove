@@ -16,7 +16,7 @@ test('1', async t => {
   let views: common.FileView[];
   let models: common.FileModel[];
   let dashboards: common.FileDashboard[];
-  let vizs: common.FileVis[];
+  let charts: common.FileChart[];
 
   let wLogger;
   let configService;
@@ -54,7 +54,7 @@ test('1', async t => {
     views = await helper.readLog(fromDir, common.LogTypeEnum.Views);
     models = await helper.readLog(fromDir, common.LogTypeEnum.Models);
     dashboards = await helper.readLog(fromDir, common.LogTypeEnum.Ds);
-    vizs = await helper.readLog(fromDir, common.LogTypeEnum.Vizs);
+    charts = await helper.readLog(fromDir, common.LogTypeEnum.Charts);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -72,7 +72,7 @@ test('1', async t => {
   t.is(views.length, 0);
   t.is(models.length, 0);
   t.is(dashboards.length, 0);
-  t.is(vizs.length, 0);
+  t.is(charts.length, 0);
 
   t.is(errors[0].title, common.ErTitleEnum.WRONG_DASHBOARD_NAME);
   t.is(errors[0].lines[0].line, 1);

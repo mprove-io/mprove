@@ -1,20 +1,33 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
-import { maker } from '~backend/barrels/maker';
-import { wrapper } from '~backend/barrels/wrapper';
+import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { SkipJwtCheck } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
-import { DbService } from '~backend/services/db.service';
+import { MakerService } from '~backend/services/maker.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { UsersService } from '~backend/services/users.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
+
+let retry = require('async-retry');
 
 @UseGuards(TestRoutesGuard)
 @SkipJwtCheck()
@@ -25,7 +38,12 @@ export class SeedRecordsController {
     private rabbitService: RabbitService,
     private usersService: UsersService,
     private blockmlService: BlockmlService,
-    private dbService: DbService
+    private makerService: MakerService,
+    private wrapToApiService: WrapToApiService,
+    private wrapToEntService: WrapToEntService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSeedRecords)
@@ -44,24 +62,23 @@ export class SeedRecordsController {
 
     //
 
-    let users: entities.UserEntity[] = [];
-    let orgs: entities.OrgEntity[] = [];
-    let projects: entities.ProjectEntity[] = [];
-    let envs: entities.EnvEntity[] = [];
-    let evs: entities.EvEntity[] = [];
-    let members: entities.MemberEntity[] = [];
-    let connections: entities.ConnectionEntity[] = [];
-    let structs: entities.StructEntity[] = [];
-    let branches: entities.BranchEntity[] = [];
-    let bridges: entities.BridgeEntity[] = [];
-    let vizs: entities.VizEntity[] = [];
-    let queries: entities.QueryEntity[] = [];
-    let models: entities.ModelEntity[] = [];
-    let metrics: entities.MetricEntity[] = [];
-    let reps: entities.RepEntity[] = [];
-    let apis: entities.ApiEntity[] = [];
-    let mconfigs: entities.MconfigEntity[] = [];
-    let dashboards: entities.DashboardEntity[] = [];
+    let users: schemaPostgres.UserEnt[] = [];
+    let orgs: schemaPostgres.OrgEnt[] = [];
+    let projects: schemaPostgres.ProjectEnt[] = [];
+    let envs: schemaPostgres.EnvEnt[] = [];
+    let evs: schemaPostgres.EvEnt[] = [];
+    let members: schemaPostgres.MemberEnt[] = [];
+    let connections: schemaPostgres.ConnectionEnt[] = [];
+    let structs: schemaPostgres.StructEnt[] = [];
+    let branches: schemaPostgres.BranchEnt[] = [];
+    let bridges: schemaPostgres.BridgeEnt[] = [];
+    let charts: schemaPostgres.ChartEnt[] = [];
+    let queries: schemaPostgres.QueryEnt[] = [];
+    let models: schemaPostgres.ModelEnt[] = [];
+    let metrics: schemaPostgres.MetricEnt[] = [];
+    let reports: schemaPostgres.ReportEnt[] = [];
+    let mconfigs: schemaPostgres.MconfigEnt[] = [];
+    let dashboards: schemaPostgres.DashboardEnt[] = [];
 
     if (common.isDefined(payloadUsers)) {
       await asyncPool(
@@ -73,23 +90,47 @@ export class SeedRecordsController {
             ? await this.usersService.makeSaltAndHash(x.password)
             : { salt: undefined, hash: undefined };
 
-          let newUser = maker.makeUser({
-            userId: x.userId,
+          let newUser: schemaPostgres.UserEnt = {
+            userId: x.userId || common.makeId(),
             email: x.email,
-            isEmailVerified: x.isEmailVerified,
-            emailVerificationToken: x.emailVerificationToken,
-            passwordResetToken: x.passwordResetToken,
-            hash: hash,
-            salt: salt,
             alias: alias,
+            isEmailVerified: x.isEmailVerified,
+            emailVerificationToken: x.emailVerificationToken || common.makeId(),
+            passwordResetToken: x.passwordResetToken,
             passwordResetExpiresTs: common.isDefined(x.passwordResetExpiresTs)
               ? x.passwordResetExpiresTs
               : common.isDefined(x.passwordResetToken)
               ? helper.makeTsUsingOffsetFromNow(
                   constants.PASSWORD_EXPIRES_OFFSET
                 )
-              : undefined
-          });
+              : undefined,
+            hash: hash,
+            salt: salt,
+            jwtMinIat: undefined,
+            firstName: undefined,
+            lastName: undefined,
+            timezone: common.USE_PROJECT_TIMEZONE_VALUE,
+            ui: constants.DEFAULT_UI,
+            serverTs: undefined
+          };
+
+          // let newUser = maker.makeUser({
+          //   userId: x.userId,
+          //   email: x.email,
+          //   isEmailVerified: x.isEmailVerified,
+          //   emailVerificationToken: x.emailVerificationToken,
+          //   passwordResetToken: x.passwordResetToken,
+          //   hash: hash,
+          //   salt: salt,
+          //   alias: alias,
+          //   passwordResetExpiresTs: common.isDefined(x.passwordResetExpiresTs)
+          //     ? x.passwordResetExpiresTs
+          //     : common.isDefined(x.passwordResetToken)
+          //     ? helper.makeTsUsingOffsetFromNow(
+          //         constants.PASSWORD_EXPIRES_OFFSET
+          //       )
+          //     : undefined
+          // });
 
           users.push(newUser);
         }
@@ -101,12 +142,20 @@ export class SeedRecordsController {
         1,
         payloadOrgs,
         async (x: apiToBackend.ToBackendSeedRecordsRequestPayloadOrgsItem) => {
-          let newOrg = maker.makeOrg({
+          let newOrg: schemaPostgres.OrgEnt = {
             orgId: x.orgId,
             name: x.name,
             ownerEmail: x.ownerEmail,
-            ownerId: users.find(u => u.email === x.ownerEmail).user_id
-          });
+            ownerId: users.find(u => u.email === x.ownerEmail).userId,
+            serverTs: undefined
+          };
+
+          // let newOrg = maker.makeOrg({
+          //   orgId: x.orgId,
+          //   name: x.name,
+          //   ownerEmail: x.ownerEmail,
+          //   ownerId: users.find(u => u.email === x.ownerEmail).userId
+          // });
 
           let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
             info: {
@@ -114,14 +163,14 @@ export class SeedRecordsController {
               traceId: reqValid.info.traceId
             },
             payload: {
-              orgId: newOrg.org_id
+              orgId: newOrg.orgId
             }
           };
 
           await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateOrgResponse>(
             {
               routingKey: helper.makeRoutingKeyToDisk({
-                orgId: newOrg.org_id,
+                orgId: newOrg.orgId,
                 projectId: null
               }),
               message: createOrgRequest,
@@ -136,7 +185,7 @@ export class SeedRecordsController {
 
     if (common.isDefined(payloadConnections)) {
       payloadConnections.forEach(x => {
-        let newConnection = maker.makeConnection({
+        let newConnection = this.makerService.makeConnection({
           projectId: x.projectId,
           envId: x.envId,
           connectionId: x.connectionId,
@@ -159,7 +208,7 @@ export class SeedRecordsController {
 
     if (common.isDefined(payloadEnvs)) {
       payloadEnvs.forEach(x => {
-        let newEnv = maker.makeEnv({
+        let newEnv = this.makerService.makeEnv({
           projectId: x.projectId,
           envId: x.envId
         });
@@ -170,7 +219,7 @@ export class SeedRecordsController {
 
     if (common.isDefined(payloadEvs)) {
       payloadEvs.forEach(x => {
-        let newEv = maker.makeEv({
+        let newEv = this.makerService.makeEv({
           projectId: x.projectId,
           envId: x.envId,
           evId: x.evId,
@@ -188,7 +237,7 @@ export class SeedRecordsController {
         async (
           x: apiToBackend.ToBackendSeedRecordsRequestPayloadProjectsItem
         ) => {
-          let newProject = maker.makeProject({
+          let newProject: schemaPostgres.ProjectEnt = {
             orgId: x.orgId,
             projectId: x.projectId || common.makeId(),
             name: x.name,
@@ -196,11 +245,23 @@ export class SeedRecordsController {
             remoteType: x.remoteType,
             gitUrl: x.gitUrl,
             privateKey: x.privateKey,
-            publicKey: x.publicKey
-          });
+            publicKey: x.publicKey,
+            serverTs: undefined
+          };
 
-          let prodEnv = maker.makeEnv({
-            projectId: newProject.project_id,
+          // let newProject = maker.makeProject({
+          //   orgId: x.orgId,
+          //   projectId: x.projectId || common.makeId(),
+          //   name: x.name,
+          //   defaultBranch: x.defaultBranch,
+          //   remoteType: x.remoteType,
+          //   gitUrl: x.gitUrl,
+          //   privateKey: x.privateKey,
+          //   publicKey: x.publicKey
+          // });
+
+          let prodEnv = this.makerService.makeEnv({
+            projectId: newProject.projectId,
             envId: common.PROJECT_ENV_PROD
           });
 
@@ -210,17 +271,17 @@ export class SeedRecordsController {
               traceId: reqValid.info.traceId
             },
             payload: {
-              orgId: newProject.org_id,
-              projectId: newProject.project_id,
+              orgId: newProject.orgId,
+              projectId: newProject.projectId,
               projectName: newProject.name,
               testProjectId: x.testProjectId,
-              devRepoId: users[0].user_id,
+              devRepoId: users[0].userId,
               userAlias: users[0].alias,
-              defaultBranch: newProject.default_branch,
-              remoteType: newProject.remote_type,
-              gitUrl: newProject.git_url,
-              privateKey: newProject.private_key,
-              publicKey: newProject.public_key
+              defaultBranch: newProject.defaultBranch,
+              remoteType: newProject.remoteType,
+              gitUrl: newProject.gitUrl,
+              privateKey: newProject.privateKey,
+              publicKey: newProject.publicKey
             }
           };
 
@@ -228,8 +289,8 @@ export class SeedRecordsController {
             await this.rabbitService.sendToDisk<apiToDisk.ToDiskSeedProjectResponse>(
               {
                 routingKey: helper.makeRoutingKeyToDisk({
-                  orgId: newProject.org_id,
-                  projectId: newProject.project_id
+                  orgId: newProject.orgId,
+                  projectId: newProject.projectId
                 }),
                 message: toDiskSeedProjectRequest,
                 checkIsOk: true
@@ -242,18 +303,18 @@ export class SeedRecordsController {
           let projectConnections = connections
             .filter(
               y =>
-                y.project_id === newProject.project_id &&
-                y.env_id === prodEnv.env_id
+                y.projectId === newProject.projectId &&
+                y.envId === prodEnv.envId
             )
             .map(c => ({
-              connectionId: c.connection_id,
+              connectionId: c.connectionId,
               type: c.type,
-              bigqueryProject: c.bigquery_project
+              bigqueryProject: c.bigqueryProject
             }));
 
           let {
             struct: devStruct,
-            vizs: devVizsApi,
+            charts: devChartsApi,
             mconfigs: devMconfigsApi,
             queries: devQueriesApi,
             dashboards: devDashboardsApi,
@@ -263,22 +324,22 @@ export class SeedRecordsController {
             apis: devApisApi
           } = await this.blockmlService.rebuildStruct({
             traceId: reqValid.info.traceId,
-            orgId: newProject.org_id,
-            projectId: newProject.project_id,
+            orgId: newProject.orgId,
+            projectId: newProject.projectId,
             structId: devStructId,
             diskFiles: diskResponse.payload.files,
             mproveDir: diskResponse.payload.mproveDir,
-            envId: prodEnv.env_id,
+            envId: prodEnv.envId,
             skipDb: true,
             connections: projectConnections,
             evs: evs
-              .map(evEntity => wrapper.wrapToApiEv(evEntity))
-              .filter(ev => ev.envId === prodEnv.env_id)
+              .map(evEntity => this.wrapToApiService.wrapToApiEv(evEntity))
+              .filter(ev => ev.envId === prodEnv.envId)
           });
 
           let {
             struct: prodStruct,
-            vizs: prodVizsApi,
+            charts: prodChartsApi,
             mconfigs: prodMconfigsApi,
             queries: prodQueriesApi,
             dashboards: prodDashboardsApi,
@@ -288,47 +349,47 @@ export class SeedRecordsController {
             apis: prodApisApi
           } = await this.blockmlService.rebuildStruct({
             traceId: reqValid.info.traceId,
-            orgId: newProject.org_id,
-            projectId: newProject.project_id,
+            orgId: newProject.orgId,
+            projectId: newProject.projectId,
             structId: prodStructId,
             diskFiles: diskResponse.payload.files,
             mproveDir: diskResponse.payload.mproveDir,
-            envId: prodEnv.env_id,
+            envId: prodEnv.envId,
             skipDb: true,
             connections: projectConnections,
             evs: evs
-              .map(evEntity => wrapper.wrapToApiEv(evEntity))
-              .filter(ev => ev.envId === prodEnv.env_id)
+              .map(evEntity => this.wrapToApiService.wrapToApiEv(evEntity))
+              .filter(ev => ev.envId === prodEnv.envId)
           });
 
-          let devBranch = maker.makeBranch({
-            projectId: newProject.project_id,
-            repoId: users[0].user_id,
-            branchId: newProject.default_branch
+          let devBranch = this.makerService.makeBranch({
+            projectId: newProject.projectId,
+            repoId: users[0].userId,
+            branchId: newProject.defaultBranch
           });
 
-          let prodBranch = maker.makeBranch({
-            projectId: newProject.project_id,
+          let prodBranch = this.makerService.makeBranch({
+            projectId: newProject.projectId,
             repoId: common.PROD_REPO_ID,
-            branchId: newProject.default_branch
+            branchId: newProject.defaultBranch
           });
 
-          let devBranchBridgeProdEnv = maker.makeBridge({
-            projectId: devBranch.project_id,
-            repoId: devBranch.repo_id,
-            branchId: devBranch.branch_id,
-            envId: prodEnv.env_id,
+          let devBranchBridgeProdEnv = this.makerService.makeBridge({
+            projectId: devBranch.projectId,
+            repoId: devBranch.repoId,
+            branchId: devBranch.branchId,
+            envId: prodEnv.envId,
             structId: devStructId,
-            needValidate: common.BoolEnum.FALSE
+            needValidate: false
           });
 
-          let prodBranchBridgeProdEnv = maker.makeBridge({
-            projectId: prodBranch.project_id,
-            repoId: prodBranch.repo_id,
-            branchId: prodBranch.branch_id,
-            envId: prodEnv.env_id,
+          let prodBranchBridgeProdEnv = this.makerService.makeBridge({
+            projectId: prodBranch.projectId,
+            repoId: prodBranch.repoId,
+            branchId: prodBranch.branchId,
+            envId: prodEnv.envId,
             structId: prodStructId,
-            needValidate: common.BoolEnum.FALSE
+            needValidate: false
           });
 
           projects.push(newProject);
@@ -344,52 +405,70 @@ export class SeedRecordsController {
             prodBranchBridgeProdEnv
           ];
 
-          vizs = [
-            ...vizs,
-            ...devVizsApi.map(y => wrapper.wrapToEntityViz(y)),
-            ...prodVizsApi.map(y => wrapper.wrapToEntityViz(y))
+          charts = [
+            ...charts,
+            ...devChartsApi.map(y =>
+              this.wrapToEntService.wrapToEntityChart(y)
+            ),
+            ...prodChartsApi.map(y =>
+              this.wrapToEntService.wrapToEntityChart(y)
+            )
           ];
 
           models = [
             ...models,
-            ...devModelsApi.map(y => wrapper.wrapToEntityModel(y)),
-            ...prodModelsApi.map(y => wrapper.wrapToEntityModel(y))
+            ...devModelsApi.map(y =>
+              this.wrapToEntService.wrapToEntityModel(y)
+            ),
+            ...prodModelsApi.map(y =>
+              this.wrapToEntService.wrapToEntityModel(y)
+            )
           ];
 
           metrics = [
             ...metrics,
-            ...devMetricsApi.map(y => wrapper.wrapToEntityMetric(y)),
-            ...prodMetricsApi.map(y => wrapper.wrapToEntityMetric(y))
+            ...devMetricsApi.map(y =>
+              this.wrapToEntService.wrapToEntityMetric(y)
+            ),
+            ...prodMetricsApi.map(y =>
+              this.wrapToEntService.wrapToEntityMetric(y)
+            )
           ];
 
-          reps = [
-            ...reps,
-            ...devRepsApi.map(y => wrapper.wrapToEntityRep(y)),
-            ...prodRepsApi.map(y => wrapper.wrapToEntityRep(y))
-          ];
-
-          apis = [
-            ...apis,
-            ...devApisApi.map(y => wrapper.wrapToEntityApi(y)),
-            ...prodApisApi.map(y => wrapper.wrapToEntityApi(y))
+          reports = [
+            ...reports,
+            ...devRepsApi.map(y => this.wrapToEntService.wrapToEntityReport(y)),
+            ...prodRepsApi.map(y => this.wrapToEntService.wrapToEntityReport(y))
           ];
 
           queries = [
             ...queries,
-            ...devQueriesApi.map(y => wrapper.wrapToEntityQuery(y)),
-            ...prodQueriesApi.map(y => wrapper.wrapToEntityQuery(y))
+            ...devQueriesApi.map(y =>
+              this.wrapToEntService.wrapToEntityQuery(y)
+            ),
+            ...prodQueriesApi.map(y =>
+              this.wrapToEntService.wrapToEntityQuery(y)
+            )
           ];
 
           dashboards = [
             ...dashboards,
-            ...devDashboardsApi.map(y => wrapper.wrapToEntityDashboard(y)),
-            ...prodDashboardsApi.map(y => wrapper.wrapToEntityDashboard(y))
+            ...devDashboardsApi.map(y =>
+              this.wrapToEntService.wrapToEntityDashboard(y)
+            ),
+            ...prodDashboardsApi.map(y =>
+              this.wrapToEntService.wrapToEntityDashboard(y)
+            )
           ];
 
           mconfigs = [
             ...mconfigs,
-            ...devMconfigsApi.map(y => wrapper.wrapToEntityMconfig(y)),
-            ...prodMconfigsApi.map(y => wrapper.wrapToEntityMconfig(y))
+            ...devMconfigsApi.map(y =>
+              this.wrapToEntService.wrapToEntityMconfig(y)
+            ),
+            ...prodMconfigsApi.map(y =>
+              this.wrapToEntService.wrapToEntityMconfig(y)
+            )
           ];
         }
       );
@@ -404,7 +483,7 @@ export class SeedRecordsController {
         ) => {
           let user = users.find(u => u.email === x.email);
 
-          let newMember = maker.makeMember({
+          let newMember = this.makerService.makeMember({
             projectId: x.projectId,
             user: user,
             roles: x.roles,
@@ -422,40 +501,74 @@ export class SeedRecordsController {
     if (common.isDefined(payloadQueries)) {
       queries = [
         ...queries,
-        ...payloadQueries.map(pq => wrapper.wrapToEntityQuery(pq))
+        ...payloadQueries.map(pq => this.wrapToEntService.wrapToEntityQuery(pq))
       ];
     }
 
     if (common.isDefined(payloadMconfigs)) {
       mconfigs = [
         ...mconfigs,
-        ...payloadMconfigs.map(mc => wrapper.wrapToEntityMconfig(mc))
+        ...payloadMconfigs.map(mc =>
+          this.wrapToEntService.wrapToEntityMconfig(mc)
+        )
       ];
     }
 
-    await this.dbService.writeRecords({
-      modify: false,
-      records: {
-        users: users,
-        orgs: orgs,
-        projects: projects,
-        envs: envs,
-        evs: evs,
-        members: members,
-        connections: connections,
-        branches: branches,
-        bridges: bridges,
-        structs: structs,
-        vizs: vizs,
-        queries: queries,
-        models: models,
-        metrics: metrics,
-        reps: reps,
-        apis: apis,
-        mconfigs: mconfigs,
-        dashboards: dashboards
-      }
-    });
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insert: {
+                users: users,
+                orgs: orgs,
+                projects: projects,
+                envs: envs,
+                evs: evs,
+                members: members,
+                connections: connections,
+                branches: branches,
+                bridges: bridges,
+                structs: structs,
+                charts: charts,
+                models: models,
+                metrics: metrics,
+                reports: reports,
+                mconfigs: mconfigs,
+                dashboards: dashboards
+              },
+              insertOrUpdate: {
+                queries: queries
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    // await this.dbService.writeRecords({
+    //   modify: false,
+    //   records: {
+    //     users: users,
+    //     orgs: orgs,
+    //     projects: projects,
+    //     envs: envs,
+    //     evs: evs,
+    //     members: members,
+    //     connections: connections,
+    //     branches: branches,
+    //     bridges: bridges,
+    //     structs: structs,
+    //     vizs: vizs,
+    //     queries: queries,
+    //     models: models,
+    //     metrics: metrics,
+    //     reps: reps,
+    //     apis: apis,
+    //     mconfigs: mconfigs,
+    //     dashboards: dashboards
+    //   }
+    // });
 
     let payload: apiToBackend.ToBackendSeedRecordsResponse['payload'] = {};
 

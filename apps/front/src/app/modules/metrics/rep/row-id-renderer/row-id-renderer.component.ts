@@ -2,11 +2,11 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams, IRowNode } from 'ag-grid-community';
 import { tap } from 'rxjs/operators';
+import { DataRow } from '~front/app/interfaces/data-row';
 import { RepQuery } from '~front/app/queries/rep.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { RepService } from '~front/app/services/rep.service';
 import { common } from '~front/barrels/common';
-import { DataRow } from '../rep.component';
 
 @Component({
   selector: 'm-row-id-renderer',

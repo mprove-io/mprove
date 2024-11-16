@@ -32,7 +32,6 @@ test('1', async t => {
     prep = await prepareTest({
       traceId: traceId,
       deleteRecordsPayload: {
-        idempotencyKeys: [testId],
         emails: [email],
         orgIds: [orgId],
         projectIds: [projectId],
@@ -44,7 +43,7 @@ test('1', async t => {
             userId,
             email,
             password,
-            isEmailVerified: common.BoolEnum.TRUE
+            isEmailVerified: true
           }
         ],
         orgs: [
@@ -69,9 +68,9 @@ test('1', async t => {
             memberId: userId,
             email,
             projectId,
-            isAdmin: common.BoolEnum.TRUE,
-            isEditor: common.BoolEnum.TRUE,
-            isExplorer: common.BoolEnum.TRUE
+            isAdmin: true,
+            isEditor: true,
+            isExplorer: true
           }
         ]
       },
@@ -83,7 +82,7 @@ test('1', async t => {
         name: apiToBackend.ToBackendRequestInfoNameEnum
           .ToBackendRenameCatalogNode,
         traceId: traceId,
-        idempotencyKey: testId
+        idempotencyKey: common.makeId()
       },
       payload: {
         projectId: projectId,

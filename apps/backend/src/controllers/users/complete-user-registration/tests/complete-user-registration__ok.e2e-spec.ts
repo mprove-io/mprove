@@ -23,14 +23,13 @@ test('1', async t => {
     prep = await prepareTest({
       traceId: traceId,
       deleteRecordsPayload: {
-        idempotencyKeys: [testId],
         emails: [email]
       },
       seedRecordsPayload: {
         users: [
           {
             email: email,
-            isEmailVerified: common.BoolEnum.FALSE,
+            isEmailVerified: false,
             emailVerificationToken: emailToken
           }
         ]
@@ -43,7 +42,7 @@ test('1', async t => {
           name: apiToBackend.ToBackendRequestInfoNameEnum
             .ToBackendCompleteUserRegistration,
           traceId: traceId,
-          idempotencyKey: testId
+          idempotencyKey: common.makeId()
         },
         payload: {
           emailConfirmationToken: emailToken,

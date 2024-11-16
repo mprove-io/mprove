@@ -341,7 +341,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       showNav: true,
       isSelectValid: isSelectValid,
       dashboardId: dashboardId,
-      vizId: undefined,
+      chartId: undefined,
       listen: tileX.listen
     });
   }

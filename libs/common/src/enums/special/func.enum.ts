@@ -105,8 +105,8 @@ export enum FuncEnum {
   CheckDashboardFilterDefaults = '12-dashboard/02-check-dashboard-filter-defaults',
   CheckDashboardTilesExist = '12-dashboard/03-check-dashboard-tiles-exist',
 
-  CheckVizAccess = '13-viz/01-check-viz-access',
-  CheckVizTilesExist = '13-viz/02-check-viz-tiles-exist',
+  CheckChartAccess = '13-chart/01-check-chart-access',
+  CheckChartTilesExist = '13-chart/02-check-chart-tiles-exist',
 
   CheckTileIsObject = '14-tile/01-check-tile-is-object',
   CheckTileUnknownParameters = '14-tile/02-check-tile-unknown-parameters',
@@ -120,12 +120,12 @@ export enum FuncEnum {
   CombineTileFilters = '14-tile/10-combine-tile-filters',
   FetchSql = '14-tile/11-fetch-sql',
 
-  CheckChartType = '15-chart/01-check-chart-type',
-  CheckChartData = '15-chart/02-check-chart-data',
-  CheckChartDataParameters = '15-chart/03-check-chart-data-parameters',
-  CheckChartAxisParameters = '15-chart/04-check-chart-axis-parameters',
-  CheckChartOptionsParameters = '15-chart/05-check-chart-options-parameters',
-  CheckChartPlateParameters = '15-chart/06-check-chart-plate-parameters',
+  CheckChartType = '15-mconfig-chart/01-check-chart-type',
+  CheckChartData = '15-mconfig-chart/02-check-chart-data',
+  CheckChartDataParameters = '15-mconfig-chart/03-check-chart-data-parameters',
+  CheckChartAxisParameters = '15-mconfig-chart/04-check-chart-axis-parameters',
+  CheckChartOptionsParameters = '15-mconfig-chart/05-check-chart-options-parameters',
+  CheckChartPlateParameters = '15-mconfig-chart/06-check-chart-plate-parameters',
 
   CheckRep = '17-rep/01-check-rep',
   CheckRepAccess = '17-rep/02-check-rep-access',

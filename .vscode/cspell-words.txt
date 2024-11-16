@@ -32,7 +32,6 @@ confs
 dagit
 dagster
 darcula
-datatypes
 datetime
 dayofweek
 dayofyear
@@ -194,7 +193,6 @@ truetype
 tryharddood
 tsconfig
 tsconfigs
-typeorm
 udf
 udf apdd
 udfs
@@ -206,7 +204,6 @@ uvwx
 validators
 varchar
 vcpu
-vizs
 voyek
 wavenet
 wayou

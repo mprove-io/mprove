@@ -28,7 +28,6 @@ test('1', async t => {
     prep = await prepareTest({
       traceId: traceId,
       deleteRecordsPayload: {
-        idempotencyKeys: [testId],
         emails: [email, newOwnerEmail],
         orgIds: [orgId]
       },
@@ -37,12 +36,12 @@ test('1', async t => {
           {
             email,
             password,
-            isEmailVerified: common.BoolEnum.TRUE
+            isEmailVerified: true
           },
           {
             email: newOwnerEmail,
             password: newOwnerPassword,
-            isEmailVerified: common.BoolEnum.TRUE
+            isEmailVerified: true
           }
         ],
         orgs: [
@@ -60,7 +59,7 @@ test('1', async t => {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner,
         traceId: traceId,
-        idempotencyKey: testId
+        idempotencyKey: common.makeId()
       },
       payload: {
         orgId: orgId,

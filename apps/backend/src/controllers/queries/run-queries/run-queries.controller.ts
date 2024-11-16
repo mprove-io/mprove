@@ -1,23 +1,33 @@
-import { Controller, Logger, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
-import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
+import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BigQueryService } from '~backend/services/bigquery.service';
 import { ClickHouseService } from '~backend/services/clickhouse.service';
 import { ConnectionsService } from '~backend/services/connections.service';
-import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { PgService } from '~backend/services/pg.service';
 import { QueriesService } from '~backend/services/queries.service';
 import { SnowFlakeService } from '~backend/services/snowflake.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+
+let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -26,25 +36,26 @@ export class RunQueriesController {
     private queriesService: QueriesService,
     private connectionsService: ConnectionsService,
     private membersService: MembersService,
-    private dbService: DbService,
     private pgService: PgService,
     private clickhouseService: ClickHouseService,
     private bigqueryService: BigQueryService,
     private snowflakeService: SnowFlakeService,
+    private wrapToApiService: WrapToApiService,
     private cs: ConfigService<interfaces.Config>,
-    private logger: Logger
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries)
   async runQueries(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendRunQueriesRequest = request.body;
 
     let { projectId, queryIds, poolSize } = reqValid.payload;
 
-    let runningQueries: entities.QueryEntity[] = [];
+    let runningQueries: schemaPostgres.QueryEnt[] = [];
     let startedQueryIds: string[] = [];
 
     let pSize = 1;
@@ -60,65 +71,93 @@ export class RunQueriesController {
         });
 
         let member = await this.membersService.getMemberCheckExists({
-          projectId: query.project_id,
-          memberId: user.user_id
+          projectId: query.projectId,
+          memberId: user.userId
         });
 
         let connection = await this.connectionsService.getConnectionCheckExists(
           {
-            projectId: query.project_id,
-            envId: query.env_id,
-            connectionId: query.connection_id
+            projectId: query.projectId,
+            envId: query.envId,
+            connectionId: query.connectionId
           }
         );
 
         if (connection.type === common.ConnectionTypeEnum.BigQuery) {
           query = await this.bigqueryService.runQuery({
-            userId: user.user_id,
+            userId: user.userId,
             query: query,
             connection: connection
           });
 
-          await this.dbService.writeRecords({
-            modify: true,
-            records: {
-              queries: [query]
-            }
-          });
+          await retry(
+            async () =>
+              await this.db.drizzle.transaction(
+                async tx =>
+                  await this.db.packer.write({
+                    tx: tx,
+                    insertOrUpdate: {
+                      queries: [query]
+                    }
+                  })
+              ),
+            getRetryOption(this.cs, this.logger)
+          );
+
+          // await this.dbService.writeRecords({
+          //   modify: true,
+          //   records: {
+          //     queries: [query]
+          //   }
+          // });
         } else {
           query.status = common.QueryStatusEnum.Running;
-          query.query_job_id = common.makeId();
-          query.last_run_by = user.user_id;
-          query.last_run_ts = helper.makeTs();
+          query.queryJobId = common.makeId();
+          query.lastRunBy = user.userId;
+          query.lastRunTs = makeTsNumber();
 
-          await this.dbService.writeRecords({
-            modify: true,
-            records: {
-              queries: [query]
-            }
-          });
+          await retry(
+            async () =>
+              await this.db.drizzle.transaction(
+                async tx =>
+                  await this.db.packer.write({
+                    tx: tx,
+                    insertOrUpdate: {
+                      queries: [query]
+                    }
+                  })
+              ),
+            getRetryOption(this.cs, this.logger)
+          );
+
+          // await this.dbService.writeRecords({
+          //   modify: true,
+          //   records: {
+          //     queries: [query]
+          //   }
+          // });
 
           if (connection.type === common.ConnectionTypeEnum.SnowFlake) {
             await this.snowflakeService.runQuery({
               connection: connection,
-              queryId: query.query_id,
-              queryJobId: query.query_job_id,
+              queryId: query.queryId,
+              queryJobId: query.queryJobId,
               querySql: query.sql,
               projectId: projectId
             });
           } else if (connection.type === common.ConnectionTypeEnum.ClickHouse) {
             await this.clickhouseService.runQuery({
               connection: connection,
-              queryId: query.query_id,
-              queryJobId: query.query_job_id,
+              queryId: query.queryId,
+              queryJobId: query.queryJobId,
               querySql: query.sql,
               projectId: projectId
             });
           } else if (connection.type === common.ConnectionTypeEnum.PostgreSQL) {
             await this.pgService.runQuery({
               connection: connection,
-              queryId: query.query_id,
-              queryJobId: query.query_job_id,
+              queryId: query.queryId,
+              queryJobId: query.queryJobId,
               querySql: query.sql,
               projectId: projectId
             });
@@ -143,54 +182,84 @@ export class RunQueriesController {
         });
 
         let member = await this.membersService.getMemberCheckExists({
-          projectId: query.project_id,
-          memberId: user.user_id
+          projectId: query.projectId,
+          memberId: user.userId
         });
 
         let connection = await this.connectionsService.getConnectionCheckExists(
           {
-            projectId: query.project_id,
-            envId: query.env_id,
-            connectionId: query.connection_id
+            projectId: query.projectId,
+            envId: query.envId,
+            connectionId: query.connectionId
           }
         );
 
         if (connection.type === common.ConnectionTypeEnum.BigQuery) {
           query = await this.bigqueryService.runQuery({
-            userId: user.user_id,
+            userId: user.userId,
             query: query,
             connection: connection
           });
 
-          let records = await this.dbService.writeRecords({
-            modify: true,
-            records: {
-              queries: [query]
-            }
-          });
+          await retry(
+            async () =>
+              await this.db.drizzle.transaction(
+                async tx =>
+                  await this.db.packer.write({
+                    tx: tx,
+                    insertOrUpdate: {
+                      queries: [query]
+                    }
+                  })
+              ),
+            getRetryOption(this.cs, this.logger)
+          );
 
-          runningQueries.push(records.queries[0]);
+          // let records = await this.dbService.writeRecords({
+          //   modify: true,
+          //   records: {
+          //     queries: [query]
+          //   }
+          // });
+
+          runningQueries.push(query);
+          // runningQueries.push(records.queries[0]);
         } else {
           query.status = common.QueryStatusEnum.Running;
-          query.query_job_id = common.makeId();
-          query.last_run_by = user.user_id;
-          query.last_run_ts = helper.makeTs();
+          query.queryJobId = common.makeId();
+          query.lastRunBy = user.userId;
+          query.lastRunTs = makeTsNumber();
 
-          let records = await this.dbService.writeRecords({
-            modify: true,
-            records: {
-              queries: [query]
-            }
-          });
+          await retry(
+            async () =>
+              await this.db.drizzle.transaction(
+                async tx =>
+                  await this.db.packer.write({
+                    tx: tx,
+                    insertOrUpdate: {
+                      queries: [query]
+                    }
+                  })
+              ),
+            getRetryOption(this.cs, this.logger)
+          );
 
-          runningQueries.push(records.queries[0]);
+          // let records = await this.dbService.writeRecords({
+          //   modify: true,
+          //   records: {
+          //     queries: [query]
+          //   }
+          // });
+
+          runningQueries.push(query);
+          // runningQueries.push(records.queries[0]);
 
           if (connection.type === common.ConnectionTypeEnum.SnowFlake) {
             this.snowflakeService
               .runQuery({
                 connection: connection,
-                queryId: query.query_id,
-                queryJobId: query.query_job_id,
+                queryId: query.queryId,
+                queryJobId: query.queryJobId,
                 querySql: query.sql,
                 projectId: projectId
               })
@@ -209,8 +278,8 @@ export class RunQueriesController {
             this.clickhouseService
               .runQuery({
                 connection: connection,
-                queryId: query.query_id,
-                queryJobId: query.query_job_id,
+                queryId: query.queryId,
+                queryJobId: query.queryJobId,
                 querySql: query.sql,
                 projectId: projectId
               })
@@ -229,8 +298,8 @@ export class RunQueriesController {
             this.pgService
               .runQuery({
                 connection: connection,
-                queryId: query.query_id,
-                queryJobId: query.query_job_id,
+                queryId: query.queryId,
+                queryJobId: query.queryJobId,
                 querySql: query.sql,
                 projectId: projectId
               })
@@ -253,7 +322,7 @@ export class RunQueriesController {
     let payload: apiToBackend.ToBackendRunQueriesResponsePayload = {
       runningQueries: runningQueries.map(x => {
         delete x.sql;
-        return wrapper.wrapToApiQuery(x);
+        return this.wrapToApiService.wrapToApiQuery(x);
       }),
       startedQueryIds: startedQueryIds
     };

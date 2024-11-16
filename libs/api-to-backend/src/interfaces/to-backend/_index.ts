@@ -1,6 +1,7 @@
 export * from './avatars/_index';
 export * from './branches/_index';
 export * from './catalogs/_index';
+export * from './charts/_index';
 export * from './connections/_index';
 export * from './dashboards/_index';
 export * from './envs/_index';
@@ -25,4 +26,3 @@ export * from './to-backend-request';
 export * from './to-backend-request-info';
 export * from './users/_index';
 export * from './views/_index';
-export * from './vizs/_index';

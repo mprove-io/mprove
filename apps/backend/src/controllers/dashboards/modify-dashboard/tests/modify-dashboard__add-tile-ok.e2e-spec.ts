@@ -32,7 +32,6 @@ test('1', async t => {
     prep = await prepareTest({
       traceId: traceId,
       deleteRecordsPayload: {
-        idempotencyKeys: [testId],
         emails: [email],
         orgIds: [orgId],
         projectIds: [projectId],
@@ -44,7 +43,7 @@ test('1', async t => {
             userId,
             email,
             password,
-            isEmailVerified: common.BoolEnum.TRUE
+            isEmailVerified: true
           }
         ],
         orgs: [
@@ -69,9 +68,9 @@ test('1', async t => {
             memberId: userId,
             email,
             projectId,
-            isAdmin: common.BoolEnum.TRUE,
-            isEditor: common.BoolEnum.TRUE,
-            isExplorer: common.BoolEnum.TRUE
+            isAdmin: true,
+            isEditor: true,
+            isExplorer: true
           }
         ],
         connections: [
@@ -90,7 +89,7 @@ test('1', async t => {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
         traceId: traceId,
-        idempotencyKey: testId
+        idempotencyKey: common.makeId()
       },
       payload: {
         projectId: projectId,
@@ -110,12 +109,15 @@ test('1', async t => {
 
     let fromDashboard = resp1.payload.dashboard;
 
+    let newTile = common.makeCopy(fromDashboard.tiles[0]);
+    newTile.title = 'new title';
+
     let req: apiToBackend.ToBackendModifyDashboardRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum
           .ToBackendModifyDashboard,
         traceId: traceId,
-        idempotencyKey: testId
+        idempotencyKey: common.makeId()
       },
       payload: {
         projectId: projectId,
@@ -124,7 +126,7 @@ test('1', async t => {
         envId: common.PROJECT_ENV_PROD,
         toDashboardId: dashboardId,
         fromDashboardId: dashboardId,
-        newTile: fromDashboard.tiles[0],
+        newTile: newTile,
         isReplaceTile: false
       }
     };

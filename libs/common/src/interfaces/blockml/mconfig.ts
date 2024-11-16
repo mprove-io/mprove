@@ -8,8 +8,8 @@ import {
   ValidateNested
 } from 'class-validator';
 import { IsTimezone } from '~common/functions/is-timezone';
-import { Chart } from './chart';
 import { Filter } from './filter';
+import { MconfigChart } from './mconfig-chart';
 import { Sorting } from './sorting';
 
 export class Mconfig {
@@ -50,8 +50,8 @@ export class Mconfig {
   filters: Filter[];
 
   @ValidateNested()
-  @Type(() => Chart)
-  chart: Chart;
+  @Type(() => MconfigChart)
+  chart: MconfigChart;
 
   @IsBoolean()
   temp: boolean;

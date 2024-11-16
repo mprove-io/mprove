@@ -49,6 +49,7 @@
       ></m-validation>
 
       <input
+        autocomplete="off"
         spellcheck="false"
         data-cy="editConnectionDialogBigqueryQuerySizeLimitGbInput"
         class="form-input border-gray3 focus:border-blue3 w-80 rounded"
@@ -84,6 +85,7 @@
       </div>
 
       <input
+        autocomplete="off"
         spellcheck="false"
         data-cy="editConnectionDialogHostInput"
         class="form-input border-gray3 focus:border-blue3 mt-6 w-80 rounded"
@@ -100,6 +102,7 @@
       ></m-validation>
 
       <input
+        autocomplete="off"
         spellcheck="false"
         data-cy="editConnectionDialogPortInput"
         class="form-input border-gray3 focus:border-blue3 w-80 rounded"
@@ -116,6 +119,7 @@
       ></m-validation>
 
       <input
+        autocomplete="off"
         *ngIf="editConnectionForm.controls['type'].value !== typeClickHouse"
         spellcheck="false"
         data-cy="editConnectionDialogDatabaseInput"
@@ -136,6 +140,7 @@
 
     <div *ngIf="editConnectionForm.controls['type'].value === typeSnowFlake">
       <input
+        autocomplete="off"
         spellcheck="false"
         data-cy="editConnectionDialogAccountInput"
         class="form-input border-gray3 focus:border-blue3 mt-6 w-80 rounded"
@@ -154,6 +159,7 @@
 
     <div *ngIf="editConnectionForm.controls['type'].value === typeSnowFlake">
       <input
+        autocomplete="off"
         spellcheck="false"
         data-cy="editConnectionDialogWarehouseInput"
         class="form-input border-gray3 focus:border-blue3 w-80 rounded"
@@ -178,6 +184,7 @@
       "
     >
       <input
+        autocomplete="off"
         spellcheck="false"
         data-cy="editConnectionDialogUserInput"
         class="form-input border-gray3 focus:border-blue3 w-80 rounded"
@@ -194,6 +201,7 @@
       ></m-validation>
 
       <input
+        autocomplete="off"
         spellcheck="false"
         data-cy="editConnectionDialogPasswordInput"
         class="form-input border-gray3 focus:border-blue3 w-80 rounded"

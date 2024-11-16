@@ -13,6 +13,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription, interval, of } from 'rxjs';
 import { concatMap, take, tap } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
+import { DeleteFilterFnItem } from '~front/app/interfaces/delete-filter-fn-item';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
@@ -22,7 +23,6 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService, RData } from '~front/app/services/query.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { DeleteFilterFnItem } from '../../dashboard/dashboard.component';
 import { ChartViewComponent } from '../chart-view/chart-view.component';
 
 @Component({
@@ -259,7 +259,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
       showNav: true,
       isSelectValid: this.isSelectValid,
       dashboardId: this.dashboard.dashboardId,
-      vizId: undefined,
+      chartId: undefined,
       listen: this.tile.listen
     });
   }
@@ -287,7 +287,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // console.log('ngOnDestroyChartViz')
+    // console.log('ngOnDestroyChart')
     if (common.isDefined(this.checkRunning$)) {
       this.checkRunning$?.unsubscribe();
     }

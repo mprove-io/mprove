@@ -1,51 +1,64 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { and, eq } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
-import { repositories } from '~backend/barrels/repositories';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+
+let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class DeleteBranchController {
   constructor(
     private projectsService: ProjectsService,
-    private branchesRepository: repositories.BranchesRepository,
-    private bridgesRepository: repositories.BridgesRepository,
     private rabbitService: RabbitService,
     private membersService: MembersService,
-    private cs: ConfigService<interfaces.Config>
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteBranch)
   async deleteBranch(
-    @AttachUser() user: entities.UserEntity,
+    @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendDeleteBranchRequest = request.body;
 
     let { projectId, isRepoProd, branchId } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
     });
 
     let member = await this.membersService.getMemberCheckIsEditor({
-      memberId: user.user_id,
+      memberId: user.userId,
       projectId: projectId
     });
 
-    if (branchId === project.default_branch) {
+    if (branchId === project.defaultBranch) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_DEFAULT_BRANCH_CAN_NOT_BE_DELETED
       });
@@ -55,7 +68,7 @@ export class DeleteBranchController {
       this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
     if (
-      member.is_admin === common.BoolEnum.FALSE &&
+      member.isAdmin === false &&
       projectId === firstProjectId &&
       repoId === common.PROD_REPO_ID
     ) {
@@ -70,15 +83,15 @@ export class DeleteBranchController {
         traceId: reqValid.info.traceId
       },
       payload: {
-        orgId: project.org_id,
+        orgId: project.orgId,
         projectId: projectId,
         repoId: repoId,
         branch: branchId,
-        defaultBranch: project.default_branch,
-        remoteType: project.remote_type,
-        gitUrl: project.git_url,
-        privateKey: project.private_key,
-        publicKey: project.public_key
+        defaultBranch: project.defaultBranch,
+        remoteType: project.remoteType,
+        gitUrl: project.gitUrl,
+        privateKey: project.privateKey,
+        publicKey: project.publicKey
       }
     };
 
@@ -86,7 +99,7 @@ export class DeleteBranchController {
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteBranchResponse>(
         {
           routingKey: helper.makeRoutingKeyToDisk({
-            orgId: project.org_id,
+            orgId: project.orgId,
             projectId: projectId
           }),
           message: toDiskDeleteBranchRequest,
@@ -94,17 +107,43 @@ export class DeleteBranchController {
         }
       );
 
-    await this.branchesRepository.delete({
-      project_id: projectId,
-      repo_id: repoId,
-      branch_id: branchId
-    });
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(async tx => {
+          await tx
+            .delete(branchesTable)
+            .where(
+              and(
+                eq(branchesTable.projectId, projectId),
+                eq(branchesTable.repoId, repoId),
+                eq(branchesTable.branchId, branchId)
+              )
+            );
 
-    await this.bridgesRepository.delete({
-      project_id: projectId,
-      repo_id: repoId,
-      branch_id: branchId
-    });
+          await tx
+            .delete(bridgesTable)
+            .where(
+              and(
+                eq(bridgesTable.projectId, projectId),
+                eq(bridgesTable.repoId, repoId),
+                eq(bridgesTable.branchId, branchId)
+              )
+            );
+        }),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    // await this.branchesRepository.delete({
+    //   project_id: projectId,
+    //   repo_id: repoId,
+    //   branch_id: branchId
+    // });
+
+    // await this.bridgesRepository.delete({
+    //   project_id: projectId,
+    //   repo_id: repoId,
+    //   branch_id: branchId
+    // });
 
     let payload = {};
 

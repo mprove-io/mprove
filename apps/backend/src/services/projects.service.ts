@@ -1,31 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { eq } from 'drizzle-orm';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
-import { maker } from '~backend/barrels/maker';
-import { repositories } from '~backend/barrels/repositories';
+import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { BlockmlService } from './blockml.service';
-import { DbService } from './db.service';
+import { HashService } from './hash.service';
+import { MakerService } from './maker.service';
 import { RabbitService } from './rabbit.service';
+
+let retry = require('async-retry');
 
 @Injectable()
 export class ProjectsService {
   constructor(
-    private projectsRepository: repositories.ProjectsRepository,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
-    private dbService: DbService
+    private hashService: HashService,
+    private makerService: MakerService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   async getProjectCheckExists(item: { projectId: string }) {
     let { projectId } = item;
 
-    let project = await this.projectsRepository.findOne({
-      where: {
-        project_id: projectId
-      }
+    let project = await this.db.drizzle.query.projectsTable.findFirst({
+      where: eq(projectsTable.projectId, projectId)
     });
+
+    // let project = await this.projectsRepository.findOne({
+    //   where: {
+    //     project_id: projectId
+    //   }
+    // });
 
     if (common.isUndefined(project)) {
       throw new common.ServerError({
@@ -39,7 +53,7 @@ export class ProjectsService {
   async addProject(item: {
     orgId: string;
     name: string;
-    user: entities.UserEntity;
+    user: schemaPostgres.UserEnt;
     traceId: string;
     testProjectId: string;
     projectId: string;
@@ -70,7 +84,7 @@ export class ProjectsService {
         orgId: orgId,
         projectId: projectId,
         projectName: name,
-        devRepoId: user.user_id,
+        devRepoId: user.userId,
         userAlias: user.alias,
         testProjectId: testProjectId,
         remoteType: remoteType,
@@ -92,67 +106,122 @@ export class ProjectsService {
         }
       );
 
-    let newProject = maker.makeProject({
+    let newProject: schemaPostgres.ProjectEnt = {
       orgId: orgId,
-      name: name,
       projectId: projectId,
+      name: name,
       defaultBranch: diskResponse.payload.defaultBranch,
       remoteType: remoteType,
       gitUrl: gitUrl,
+      privateKey: privateKey,
       publicKey: publicKey,
-      privateKey: privateKey
-    });
+      serverTs: undefined
+    };
 
-    let prodEnv = maker.makeEnv({
-      projectId: newProject.project_id,
+    // let newProject = maker.makeProject({
+    //   orgId: orgId,
+    //   name: name,
+    //   projectId: projectId,
+    //   defaultBranch: diskResponse.payload.defaultBranch,
+    //   remoteType: remoteType,
+    //   gitUrl: gitUrl,
+    //   publicKey: publicKey,
+    //   privateKey: privateKey
+    // });
+
+    let prodEnv = this.makerService.makeEnv({
+      projectId: newProject.projectId,
       envId: common.PROJECT_ENV_PROD
     });
 
-    let newMember = maker.makeMember({
-      projectId: newProject.project_id,
+    // let prodEnv = maker.makeEnv({
+    //   projectId: newProject.project_id,
+    //   envId: common.PROJECT_ENV_PROD
+    // });
+
+    let newMember = this.makerService.makeMember({
+      projectId: newProject.projectId,
       user: user,
-      isAdmin: common.BoolEnum.TRUE,
-      isEditor: common.BoolEnum.TRUE,
-      isExplorer: common.BoolEnum.TRUE
+      isAdmin: true,
+      isEditor: true,
+      isExplorer: true
     });
+
+    // let newMember = maker.makeMember({
+    //   projectId: newProject.project_id,
+    //   user: user,
+    //   isAdmin: true,
+    //   isEditor: true,
+    //   isExplorer: true
+    // });
 
     let devStructId = common.makeId();
     let prodStructId = common.makeId();
 
-    let prodBranch = maker.makeBranch({
-      projectId: newProject.project_id,
+    let prodBranch = this.makerService.makeBranch({
+      projectId: newProject.projectId,
       repoId: common.PROD_REPO_ID,
-      branchId: newProject.default_branch
+      branchId: newProject.defaultBranch
     });
 
-    let devBranch = maker.makeBranch({
-      projectId: newProject.project_id,
-      repoId: user.user_id,
-      branchId: newProject.default_branch
+    // let prodBranch = maker.makeBranch({
+    //   projectId: newProject.project_id,
+    //   repoId: common.PROD_REPO_ID,
+    //   branchId: newProject.default_branch
+    // });
+
+    let devBranch = this.makerService.makeBranch({
+      projectId: newProject.projectId,
+      repoId: user.userId,
+      branchId: newProject.defaultBranch
     });
 
-    let prodBranchBridgeProdEnv = maker.makeBridge({
-      projectId: prodBranch.project_id,
-      repoId: prodBranch.repo_id,
-      branchId: prodBranch.branch_id,
-      envId: prodEnv.env_id,
+    // let devBranch = maker.makeBranch({
+    //   projectId: newProject.project_id,
+    //   repoId: user.user_id,
+    //   branchId: newProject.default_branch
+    // });
+
+    let prodBranchBridgeProdEnv = this.makerService.makeBridge({
+      projectId: prodBranch.projectId,
+      repoId: prodBranch.repoId,
+      branchId: prodBranch.branchId,
+      envId: prodEnv.envId,
       structId: prodStructId,
-      needValidate: common.BoolEnum.FALSE
+      needValidate: false
     });
 
-    let devBranchBridgeProdEnv = maker.makeBridge({
-      projectId: devBranch.project_id,
-      repoId: devBranch.repo_id,
-      branchId: devBranch.branch_id,
-      envId: prodEnv.env_id,
+    // let prodBranchBridgeProdEnv = maker.makeBridge({
+    //   projectId: prodBranch.project_id,
+    //   repoId: prodBranch.repo_id,
+    //   branchId: prodBranch.branch_id,
+    //   envId: prodEnv.env_id,
+    //   structId: prodStructId,
+    //   needValidate: false
+    // });
+
+    let devBranchBridgeProdEnv = this.makerService.makeBridge({
+      projectId: devBranch.projectId,
+      repoId: devBranch.repoId,
+      branchId: devBranch.branchId,
+      envId: prodEnv.envId,
       structId: devStructId,
-      needValidate: common.BoolEnum.FALSE
+      needValidate: false
     });
+
+    // let devBranchBridgeProdEnv = maker.makeBridge({
+    //   projectId: devBranch.project_id,
+    //   repoId: devBranch.repo_id,
+    //   branchId: devBranch.branch_id,
+    //   envId: prodEnv.env_id,
+    //   structId: devStructId,
+    //   needValidate: false
+    // });
 
     await this.blockmlService.rebuildStruct({
       traceId,
-      orgId: newProject.org_id,
-      projectId: newProject.project_id,
+      orgId: newProject.orgId,
+      projectId: newProject.projectId,
       structId: prodStructId,
       diskFiles: diskResponse.payload.prodFiles,
       mproveDir: diskResponse.payload.mproveDir,
@@ -161,25 +230,44 @@ export class ProjectsService {
 
     await this.blockmlService.rebuildStruct({
       traceId,
-      orgId: newProject.org_id,
-      projectId: newProject.project_id,
+      orgId: newProject.orgId,
+      projectId: newProject.projectId,
       structId: devStructId,
       diskFiles: diskResponse.payload.prodFiles,
       mproveDir: diskResponse.payload.mproveDir,
       envId: common.PROJECT_ENV_PROD
     });
 
-    let records = await this.dbService.writeRecords({
-      modify: false,
-      records: {
-        projects: [newProject],
-        envs: [prodEnv],
-        members: [newMember],
-        branches: [prodBranch, devBranch],
-        bridges: [prodBranchBridgeProdEnv, devBranchBridgeProdEnv]
-      }
-    });
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insert: {
+                projects: [newProject],
+                envs: [prodEnv],
+                members: [newMember],
+                branches: [prodBranch, devBranch],
+                bridges: [prodBranchBridgeProdEnv, devBranchBridgeProdEnv]
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
 
-    return records.projects[0];
+    // let records = await this.dbService.writeRecords({
+    //   modify: false,
+    //   records: {
+    //     projects: [newProject],
+    //     envs: [prodEnv],
+    //     members: [newMember],
+    //     branches: [prodBranch, devBranch],
+    //     bridges: [prodBranchBridgeProdEnv, devBranchBridgeProdEnv]
+    //   }
+    // });
+
+    return newProject;
+    // return records.projects[0];
   }
 }

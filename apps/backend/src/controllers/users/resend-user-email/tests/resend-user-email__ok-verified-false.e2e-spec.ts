@@ -23,7 +23,6 @@ test('1', async t => {
     prep = await prepareTest({
       traceId: traceId,
       deleteRecordsPayload: {
-        idempotencyKeys: [testId],
         emails: [email]
       },
       seedRecordsPayload: {
@@ -32,7 +31,7 @@ test('1', async t => {
             userId: userId,
             email: email,
             password: password,
-            isEmailVerified: common.BoolEnum.FALSE
+            isEmailVerified: false
           }
         ]
       }
@@ -43,7 +42,7 @@ test('1', async t => {
         name: apiToBackend.ToBackendRequestInfoNameEnum
           .ToBackendResendUserEmail,
         traceId: traceId,
-        idempotencyKey: testId
+        idempotencyKey: common.makeId()
       },
       payload: {
         userId: userId

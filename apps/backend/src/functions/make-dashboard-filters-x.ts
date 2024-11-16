@@ -1,7 +1,7 @@
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 
-export function makeDashboardFiltersX(dashboard: entities.DashboardEntity) {
+export function makeDashboardFiltersX(dashboard: schemaPostgres.DashboardEnt) {
   let filtersX: common.FilterX[] = dashboard.fields.map(field => {
     let fractions = [
       ...field.fractions.filter(

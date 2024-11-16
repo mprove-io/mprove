@@ -788,7 +788,7 @@ export class ModelComponent implements OnInit, OnDestroy {
       showNav: false,
       isSelectValid: this.isSelectValid,
       dashboardId: undefined,
-      vizId: undefined
+      chartId: undefined
     });
   }
 

@@ -63,7 +63,7 @@ export class ChartViewComponent implements OnChanges {
   qData: RData[];
 
   @Input()
-  chart: common.Chart;
+  chart: common.MconfigChart;
 
   @Input()
   queryStatus: common.QueryStatusEnum;

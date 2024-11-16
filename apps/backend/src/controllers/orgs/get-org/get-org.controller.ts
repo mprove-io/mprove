@@ -1,53 +1,67 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-import { In } from 'typeorm';
+import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { and, eq, inArray } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
-import { wrapper } from '~backend/barrels/wrapper';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { membersTable } from '~backend/drizzle/postgres/schema/members';
+import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import {
-  MembersRepository,
-  ProjectsRepository
-} from '~backend/models/store-repositories/_index';
 import { OrgsService } from '~backend/services/orgs.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class GetOrgController {
   constructor(
     private orgsService: OrgsService,
-    private membersRepository: MembersRepository,
-    private projectsRepository: ProjectsRepository
+    private wrapToApiService: WrapToApiService,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrg)
-  async getOrg(@AttachUser() user: entities.UserEntity, @Req() request: any) {
+  async getOrg(
+    @AttachUser() user: schemaPostgres.UserEnt,
+    @Req() request: any
+  ) {
     let reqValid: apiToBackend.ToBackendGetOrgRequest = request.body;
 
     let { orgId } = reqValid.payload;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 
-    if (org.owner_id !== user.user_id) {
-      let userMembers = await this.membersRepository.find({
-        where: {
-          member_id: user.user_id
-        }
+    if (org.ownerId !== user.userId) {
+      let userMembers = await this.db.drizzle.query.membersTable.findMany({
+        where: eq(membersTable.memberId, user.userId)
       });
 
-      let projectIds = userMembers.map(m => m.project_id);
+      // let userMembers = await this.membersRepository.find({
+      //   where: {
+      //     member_id: user.user_id
+      //   }
+      // });
+
+      let projectIds = userMembers.map(m => m.projectId);
+
       let projects =
         projectIds.length === 0
           ? []
-          : await this.projectsRepository.find({
-              where: {
-                project_id: In(projectIds),
-                org_id: orgId
-              }
+          : await this.db.drizzle.query.projectsTable.findMany({
+              where: and(
+                inArray(projectsTable.projectId, projectIds),
+                eq(projectsTable.orgId, orgId)
+              )
             });
 
-      let orgIds = projects.map(x => x.org_id);
+      // await this.projectsRepository.find({
+      //     where: {
+      //       project_id: In(projectIds),
+      //       org_id: orgId
+      //     }
+      //   });
+
+      let orgIds = projects.map(x => x.orgId);
 
       if (orgIds.indexOf(orgId) < 0) {
         throw new common.ServerError({
@@ -57,7 +71,7 @@ export class GetOrgController {
     }
 
     let payload: apiToBackend.ToBackendGetOrgResponsePayload = {
-      org: wrapper.wrapToApiOrg(org)
+      org: this.wrapToApiService.wrapToApiOrg(org)
     };
 
     return payload;

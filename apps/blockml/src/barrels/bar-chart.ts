@@ -1,2 +1,2 @@
-import * as barChart from '~blockml/models/15-chart/_index';
+import * as barChart from '~blockml/models/13-chart/_index';
 export { barChart };

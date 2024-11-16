@@ -24,7 +24,7 @@ export const PROJECT_SETTINGS_PAGE_TITLE = 'Project - Settings';
 export const PROJECT_TEAM_PAGE_TITLE = 'Project - Team';
 
 export const FILES_PAGE_TITLE = 'Files';
-export const VISUALIZATIONS_PAGE_TITLE = 'Visualizations';
+export const CHARTS_PAGE_TITLE = 'Charts';
 export const DASHBOARDS_PAGE_TITLE = 'Dashboards';
 export const MODELS_PAGE_TITLE = 'Models';
 
