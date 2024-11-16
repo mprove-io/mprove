@@ -332,7 +332,7 @@
                 ><m-drag-icon></m-drag-icon
               ></div>
               <div class="h-full w-full pb-6 pr-5">
-                <m-chart-rep
+                <m-dashboard-tile-chart
                   #chartRep
                   [isShow]="isShow"
                   [title]="item.tile.title"
@@ -344,7 +344,7 @@
                   [query]="item.tile.query"
                   [showBricks]="showBricks"
                   (repDeleted)="tileDeleted()"
-                ></m-chart-rep>
+                ></m-dashboard-tile-chart>
               </div>
               <m-resize-icon
                 ktdGridResizeHandle

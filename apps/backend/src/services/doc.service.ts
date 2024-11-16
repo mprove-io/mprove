@@ -447,7 +447,7 @@ Formula must return a valid JSON object.`;
   }
 
   async calculateData(item: {
-    rep: common.RepX;
+    rep: common.ReportX;
     timezone: string;
     timeSpec: common.TimeSpecEnum;
     timeRangeFraction: common.Fraction;
@@ -774,7 +774,7 @@ FROM main;`;
   }
 
   makeRecordsByColumn(item: {
-    rep: common.RepX;
+    rep: common.ReportX;
     timeSpec: common.TimeSpecEnum;
   }) {
     let { rep, timeSpec } = item;

@@ -12,7 +12,7 @@ export async function logStruct(
     dashboards: common.FileDashboard[];
     metrics: common.MetricAny[];
     models: common.FileModel[];
-    reps: common.FileRep[];
+    reps: common.FileReport[];
     udfsDict: common.UdfsDict;
     views: common.FileView[];
     charts: common.FileChart[];

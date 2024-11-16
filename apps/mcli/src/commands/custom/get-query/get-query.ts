@@ -417,7 +417,7 @@ export class GetQueryCommand extends CustomCommand {
     let reportPartQ: ReportPartQ;
 
     if (common.isDefined(this.reportId)) {
-      let getRepReqPayload: apiToBackend.ToBackendGetRepRequestPayload = {
+      let getRepReqPayload: apiToBackend.ToBackendGetReportRequestPayload = {
         projectId: this.projectId,
         isRepoProd: isRepoProd,
         branchId: this.branch,
@@ -428,7 +428,7 @@ export class GetQueryCommand extends CustomCommand {
         timeRangeFractionBrick: this.timeRange
       };
 
-      let getRepResp = await mreq<apiToBackend.ToBackendGetRepResponse>({
+      let getRepResp = await mreq<apiToBackend.ToBackendGetReportResponse>({
         loginToken: loginToken,
         pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRep,
         payload: getRepReqPayload,

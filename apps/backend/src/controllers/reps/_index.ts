@@ -1,7 +1,0 @@
-export * from './create-draft-rep/create-draft-rep.controller';
-export * from './delete-draft-reps/delete-draft-reps.controller';
-export * from './delete-rep/delete-rep.controller';
-export * from './edit-draft-rep/edit-draft-rep.controller';
-export * from './get-rep/get-rep.controller';
-export * from './save-create-rep/save-create-rep.controller';
-export * from './save-modify-rep/save-modify-rep.controller';

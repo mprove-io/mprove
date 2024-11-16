@@ -19,7 +19,7 @@ export function buildYaml(
   let views: common.FileView[];
   let models: common.FileModel[];
   let dashboards: common.FileDashboard[];
-  let reps: common.FileRep[];
+  let reps: common.FileReport[];
   let metrics: common.FileMetric[];
   let apis: common.FileApi[];
   let charts: common.FileChart[];

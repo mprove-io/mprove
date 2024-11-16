@@ -155,7 +155,7 @@ export class WrapToEntService {
     };
   }
 
-  wrapToEntityReport(report: common.Rep): schemaPostgres.ReportEnt {
+  wrapToEntityReport(report: common.Report): schemaPostgres.ReportEnt {
     return {
       reportFullId: this.hashService.makeReportFullId({
         structId: report.structId,

@@ -22,7 +22,7 @@ export * from './model-node';
 export * from './parameter';
 export * from './project-connection';
 export * from './query';
-export * from './rep';
+export * from './report';
 export * from './row';
 export * from './row-change';
 export * from './rq';

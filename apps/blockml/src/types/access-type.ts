@@ -4,4 +4,4 @@ export type accessType =
   | common.FileModel
   | common.FileDashboard
   | common.FileChart
-  | common.FileRep;
+  | common.FileReport;

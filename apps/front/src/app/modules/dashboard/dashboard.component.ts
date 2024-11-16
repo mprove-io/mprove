@@ -33,7 +33,7 @@ import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
-import { ChartRepComponent } from '../shared/chart-rep/chart-rep.component';
+import { DashboardTileChartComponent } from '../shared/dashboard-tile-chart/dashboard-tile-chart.component';
 
 class LayoutItem {
   id: string;
@@ -60,7 +60,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('scrollable') scrollable: any;
 
-  @ViewChildren('chartRep') chartRepComponents: QueryList<ChartRepComponent>;
+  @ViewChildren('chartRep')
+  chartRepComponents: QueryList<DashboardTileChartComponent>;
 
   // @ViewChildren('chartRep', { read: ElementRef })
   // myItemElementRefs: QueryList<ElementRef>;

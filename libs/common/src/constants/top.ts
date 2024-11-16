@@ -16,6 +16,15 @@ export const BRANCH_MAIN = 'main';
 export const PROJECT_ENV_PROD = 'prod';
 export const PASS_PHRASE = '';
 
+export const REP_ROW_DEFAULT_SHOW_CHART = false;
+
+export const DASHBOARD_FIELD_DEFAULT_HIDDEN = false;
+
+export const TILE_DEFAULT_PLATE_WIDTH = 8;
+export const TILE_DEFAULT_PLATE_HEIGHT = 12;
+export const TILE_DEFAULT_PLATE_X = 0;
+export const TILE_DEFAULT_PLATE_Y = 0;
+
 export const UNDEF = 'UNDEF';
 
 export const EMPTY_STRUCT_ID = 'EMPTY_STRUCT_ID';

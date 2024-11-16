@@ -22,7 +22,7 @@ export function splitFiles(
   let views: common.FileView[] = [];
   let models: common.FileModel[] = [];
   let dashboards: common.FileDashboard[] = [];
-  let reps: common.FileRep[] = [];
+  let reps: common.FileReport[] = [];
   let metrics: common.FileMetric[] = [];
   let apis: common.FileApi[] = [];
   let charts: common.FileChart[] = [];
@@ -182,7 +182,7 @@ export function splitFiles(
           delete file.name;
           delete file.path;
 
-          let newRepOptions: common.FileRep = {
+          let newRepOptions: common.FileReport = {
             name: file.report,
             fileName: fileName,
             filePath: filePath,

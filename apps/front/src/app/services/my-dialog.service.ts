@@ -48,9 +48,9 @@ import {
   RenameFolderDialogData
 } from '../modules/files/files-tree/folder-options/rename-folder-dialog/rename-folder-dialog.component';
 import {
-  DeleteRepDialogComponent,
-  DeleteRepDialogData
-} from '../modules/metrics/delete-rep-dialog/delete-rep-dialog.component';
+  DeleteReportDialogComponent,
+  DeleteReportDialogData
+} from '../modules/metrics/delete-report-dialog/delete-report-dialog.component';
 import {
   CreateBranchDialogComponent,
   CreateBranchDialogData
@@ -189,9 +189,9 @@ import {
   PhotoDialogData
 } from '../modules/shared/photo-dialog/photo-dialog.component';
 import {
-  RepSaveAsDialogComponent,
-  RepSaveAsDialogData
-} from '../modules/shared/rep-save-as-dialog/rep-save-as-dialog.component';
+  ReportSaveAsDialogComponent,
+  ReportSaveAsDialogData
+} from '../modules/shared/report-save-as-dialog/report-save-as-dialog.component';
 import {
   ViewBlockmlDialogComponent,
   ViewBlockmlDialogData
@@ -340,8 +340,8 @@ export class MyDialogService {
     });
   }
 
-  showRepSaveAs(item: RepSaveAsDialogData): void {
-    this.dialogService.open(RepSaveAsDialogComponent, {
+  showRepSaveAs(item: ReportSaveAsDialogData): void {
+    this.dialogService.open(ReportSaveAsDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item,
@@ -419,8 +419,8 @@ export class MyDialogService {
     });
   }
 
-  showDeleteRep(item: DeleteRepDialogData): void {
-    this.dialogService.open(DeleteRepDialogComponent, {
+  showDeleteRep(item: DeleteReportDialogData): void {
+    this.dialogService.open(DeleteReportDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item

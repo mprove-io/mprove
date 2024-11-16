@@ -347,7 +347,7 @@ export class WrapToApiService {
     columns: common.Column[];
     timeColumnsLength: number;
     isTimeColumnsLimitExceeded: boolean;
-  }): common.RepX {
+  }): common.ReportX {
     let {
       rep,
       member,
@@ -378,7 +378,7 @@ export class WrapToApiService {
     let canEditOrDeleteRep =
       member.isEditor || member.isAdmin || author === member.alias;
 
-    let repX: common.RepX = {
+    let repX: common.ReportX = {
       projectId: rep.projectId,
       structId: rep.structId,
       repId: rep.reportId,

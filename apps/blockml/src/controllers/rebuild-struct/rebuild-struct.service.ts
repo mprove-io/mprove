@@ -88,7 +88,7 @@ export class RebuildStructService {
       models: models
     });
 
-    let apiReps = barWrapper.wrapReps({
+    let apiReps = barWrapper.wrapReports({
       projectId: projectId,
       structId: structId,
       reps: reps,
@@ -209,7 +209,7 @@ export class RebuildStructService {
     let dashboards: common.FileDashboard[];
     let metrics: common.FileMetric[];
     let models: common.FileModel[];
-    let reps: common.FileRep[];
+    let reps: common.FileReport[];
     let udfs: common.FileUdf[];
     let views: common.FileView[];
     let charts: common.FileChart[];
@@ -476,14 +476,14 @@ export class RebuildStructService {
       this.cs
     );
 
-    reps = barBuilder.buildRep(
+    reps = barBuilder.buildReport(
       {
         reps: reps,
         metrics: commonMetrics,
         models: models,
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildRep
+        caller: common.CallerEnum.BuildReport
       },
       this.cs
     );

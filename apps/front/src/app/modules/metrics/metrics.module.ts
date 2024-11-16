@@ -14,18 +14,18 @@ import { SharedModule } from '../shared/shared.module';
 import { MetricsTreeComponent } from './metrics-tree/metrics-tree.component';
 import { MetricsComponent } from './metrics.component';
 import { ParameterFormulaComponent } from './parameter-formula/parameter-formula.component';
-import { RepOptionsComponent } from './rep-options/rep-options.component';
-import { ChartHeaderComponent } from './rep/chart-header/chart-header.component';
-import { ChartRendererComponent } from './rep/chart-renderer/chart-renderer.component';
-import { ChartSettingsComponent } from './rep/chart-settings/chart-settings.component';
-import { DataRendererComponent } from './rep/data-renderer/data-renderer.component';
-import { MetricHeaderComponent } from './rep/metric-header/metric-header.component';
-import { MetricRendererComponent } from './rep/metric-renderer/metric-renderer.component';
-import { RepComponent } from './rep/rep.component';
-import { RowIdHeaderComponent } from './rep/row-id-header/row-id-header.component';
-import { RowIdRendererComponent } from './rep/row-id-renderer/row-id-renderer.component';
-import { StatusHeaderComponent } from './rep/status-header/status-header.component';
-import { StatusRendererComponent } from './rep/status-renderer/status-renderer.component';
+import { ReportOptionsComponent } from './report-options/report-options.component';
+import { ChartHeaderComponent } from './report/chart-header/chart-header.component';
+import { ChartRendererComponent } from './report/chart-renderer/chart-renderer.component';
+import { ChartSettingsComponent } from './report/chart-settings/chart-settings.component';
+import { DataRendererComponent } from './report/data-renderer/data-renderer.component';
+import { MetricHeaderComponent } from './report/metric-header/metric-header.component';
+import { MetricRendererComponent } from './report/metric-renderer/metric-renderer.component';
+import { ReportComponent } from './report/report.component';
+import { RowIdHeaderComponent } from './report/row-id-header/row-id-header.component';
+import { RowIdRendererComponent } from './report/row-id-renderer/row-id-renderer.component';
+import { StatusHeaderComponent } from './report/status-header/status-header.component';
+import { StatusRendererComponent } from './report/status-renderer/status-renderer.component';
 import { RowFiltersComponent } from './row-filters/row-filters.component';
 import { RowComponent } from './row/row.component';
 
@@ -33,9 +33,9 @@ import { RowComponent } from './row/row.component';
   declarations: [
     MetricsComponent,
     MetricsTreeComponent,
-    RepComponent,
+    ReportComponent,
     RowComponent,
-    RepOptionsComponent,
+    ReportOptionsComponent,
     MetricRendererComponent,
     StatusRendererComponent,
     DataRendererComponent,

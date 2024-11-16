@@ -18,7 +18,7 @@ import { DashboardsComponent } from './modules/dashboards/dashboards.component';
 import { FileEditorComponent } from './modules/files/file-editor/file-editor.component';
 import { FilesComponent } from './modules/files/files.component';
 import { MetricsComponent } from './modules/metrics/metrics.component';
-import { RepComponent } from './modules/metrics/rep/rep.component';
+import { ReportComponent } from './modules/metrics/report/report.component';
 import { MconfigComponent } from './modules/model/mconfig/mconfig.component';
 import { ModelComponent } from './modules/model/model.component';
 import { QueryComponent } from './modules/model/query/query.component';
@@ -61,7 +61,7 @@ import { StructDashboardsResolver } from './resolvers/struct-dashboards.resolver
 import { StructMetricsResolver } from './resolvers/struct-metrics.resolver';
 import { StructModelResolver } from './resolvers/struct-model.resolver';
 import { StructModelsResolver } from './resolvers/struct-models.resolver';
-import { StructRepResolver } from './resolvers/struct-rep.resolver';
+import { StructReportResolver } from './resolvers/struct-report.resolver';
 
 export const appRoutes: Routes = [
   {
@@ -269,11 +269,11 @@ export const appRoutes: Routes = [
                             resolve: [StructMetricsResolver],
                             children: [
                               {
-                                component: RepComponent,
+                                component: ReportComponent,
                                 path:
                                   common.PATH_REPORT +
                                   `/:${common.PARAMETER_REP_ID}`,
-                                resolve: [StructRepResolver]
+                                resolve: [StructReportResolver]
                               }
                             ]
                           },

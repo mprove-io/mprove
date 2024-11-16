@@ -13,10 +13,10 @@ import {
 } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { MetricsQuery, MetricsState } from '~front/app/queries/metrics.query';
-import { RepQuery } from '~front/app/queries/rep.query';
+import { ReportQuery } from '~front/app/queries/report.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { RepService } from '~front/app/services/rep.service';
+import { ReportService } from '~front/app/services/report.service';
 import { common } from '~front/barrels/common';
 
 export class MetricNode {
@@ -128,9 +128,9 @@ export class MetricsTreeComponent implements AfterViewInit {
   constructor(
     private metricsQuery: MetricsQuery,
     private cd: ChangeDetectorRef,
-    private repQuery: RepQuery,
+    private repQuery: ReportQuery,
     private uiQuery: UiQuery,
-    private repService: RepService,
+    private repService: ReportService,
     private navigateService: NavigateService
   ) {}
 

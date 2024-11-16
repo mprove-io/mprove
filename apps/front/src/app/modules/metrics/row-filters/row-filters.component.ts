@@ -2,9 +2,9 @@ import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { IRowNode } from 'ag-grid-community';
 import { DataRow } from '~front/app/interfaces/data-row';
-import { RepQuery } from '~front/app/queries/rep.query';
+import { ReportQuery } from '~front/app/queries/report.query';
 import { UiQuery } from '~front/app/queries/ui.query';
-import { RepService } from '~front/app/services/rep.service';
+import { ReportService } from '~front/app/services/report.service';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 import { ParameterFilter } from '../row/row.component';
@@ -34,8 +34,8 @@ export class RowFiltersComponent {
   constructor(
     private uiQuery: UiQuery,
     private fb: FormBuilder,
-    private repQuery: RepQuery,
-    private repService: RepService,
+    private repQuery: ReportQuery,
+    private repService: ReportService,
     private cd: ChangeDetectorRef
   ) {}
 

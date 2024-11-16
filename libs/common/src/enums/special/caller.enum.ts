@@ -24,7 +24,7 @@ export enum CallerEnum {
   BuildDashboardTileCharts = '15-BuildDashboardTileCharts',
   BuildChartTileCharts = '15-BuildChartTileCharts',
 
-  BuildRep = '17-BuildRep',
+  BuildReport = '17-BuildReport',
 
   RebuildStruct = 'RebuildStruct',
   ProcessQuery = 'ProcessQuery'

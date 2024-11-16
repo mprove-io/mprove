@@ -17,7 +17,7 @@ import { environment } from '~front/environments/environment';
 import { MemberQuery } from '../queries/member.query';
 import { MetricsQuery } from '../queries/metrics.query';
 import { NavQuery, NavState } from '../queries/nav.query';
-import { RepsQuery } from '../queries/reps.query';
+import { ReportsQuery } from '../queries/reports.query';
 import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
 import { AuthService } from './auth.service';
@@ -36,7 +36,7 @@ export class ApiService {
     private myDialogService: MyDialogService,
     private navigateService: NavigateService,
     private metricsQuery: MetricsQuery,
-    private repsQuery: RepsQuery,
+    private repsQuery: ReportsQuery,
     private structQuery: StructQuery,
     private memberQuery: MemberQuery
   ) {}

@@ -46,13 +46,13 @@ export const appControllers = [
 
   controllers.GetMetricsController,
 
-  controllers.GetRepController,
-  controllers.CreateDraftRepController,
-  controllers.EditDraftRepController,
-  controllers.DeleteDraftRepsController,
-  controllers.DeleteRepController,
-  controllers.SaveCreateRepController,
-  controllers.SaveModifyRepController,
+  controllers.GetReportController,
+  controllers.CreateDraftReportController,
+  controllers.EditDraftReportController,
+  controllers.DeleteDraftReportsController,
+  controllers.DeleteReportController,
+  controllers.SaveCreateReportController,
+  controllers.SaveModifyReportController,
 
   controllers.GetModelController,
   controllers.GetModelsController,

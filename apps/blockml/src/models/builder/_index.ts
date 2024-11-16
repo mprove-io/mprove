@@ -14,4 +14,4 @@ export * from './12-build-dashboard';
 export * from './13-build-chart';
 export * from './14-build-tile';
 export * from './15-build-mconfig-chart';
-export * from './17-build-rep';
+export * from './17-build-report';

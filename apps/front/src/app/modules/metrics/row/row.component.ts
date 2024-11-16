@@ -6,12 +6,12 @@ import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { NavQuery } from '~front/app/queries/nav.query';
-import { RepQuery } from '~front/app/queries/rep.query';
+import { ReportQuery } from '~front/app/queries/report.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { QueryService } from '~front/app/services/query.service';
-import { RepService } from '~front/app/services/rep.service';
+import { ReportService } from '~front/app/services/report.service';
 import { ValidationService } from '~front/app/services/validation.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -85,7 +85,7 @@ export class RowComponent {
 
   isValid = false;
 
-  rep: common.RepX;
+  rep: common.ReportX;
   rep$ = this.repQuery.select().pipe(
     tap(x => {
       this.resetInputs();
@@ -257,8 +257,8 @@ export class RowComponent {
     private uiQuery: UiQuery,
     private metricsQuery: MetricsQuery,
     private fb: FormBuilder,
-    private repService: RepService,
-    private repQuery: RepQuery,
+    private repService: ReportService,
+    private repQuery: ReportQuery,
     private apiService: ApiService,
     private queryService: QueryService,
     private navQuery: NavQuery,

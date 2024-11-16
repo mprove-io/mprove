@@ -240,7 +240,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
           : dotExt === common.FileExtensionEnum.Udf
           ? common.UDF_SCHEMA
           : dotExt === common.FileExtensionEnum.Report
-          ? common.REP_SCHEMA
+          ? common.REPORT_SCHEMA
           : undefined;
 
       setDiagnosticsOptions({

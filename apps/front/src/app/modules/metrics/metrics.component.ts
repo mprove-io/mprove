@@ -24,16 +24,16 @@ import { makeRepQueryParams } from '~front/app/functions/make-query-params';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
-import { RepQuery, emptyRep } from '~front/app/queries/rep.query';
-import { RepsQuery } from '~front/app/queries/reps.query';
+import { ReportQuery, emptyRep } from '~front/app/queries/report.query';
+import { ReportsQuery } from '~front/app/queries/reports.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { RepChartData, UiQuery } from '~front/app/queries/ui.query';
-import { StructRepResolver } from '~front/app/resolvers/struct-rep.resolver';
+import { StructReportResolver } from '~front/app/resolvers/struct-report.resolver';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService } from '~front/app/services/query.service';
-import { RepService } from '~front/app/services/rep.service';
+import { ReportService } from '~front/app/services/report.service';
 import { UiService } from '~front/app/services/ui.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -70,7 +70,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   queriesLength = 0;
 
-  rep: common.RepX;
+  rep: common.ReportX;
   rep$ = this.repQuery.select().pipe(
     tap(x => {
       this.rep = x;
@@ -99,7 +99,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   draftsLength: number;
 
-  reps: common.RepX[];
+  reps: common.ReportX[];
   reps$ = this.repsQuery.select().pipe(
     tap(x => {
       this.reps = [emptyRep, ...x.reps];
@@ -386,8 +386,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
-    private repsQuery: RepsQuery,
-    private repQuery: RepQuery,
+    private repsQuery: ReportsQuery,
+    private repQuery: ReportQuery,
     private uiQuery: UiQuery,
     private memberQuery: MemberQuery,
     private structQuery: StructQuery,
@@ -397,12 +397,12 @@ export class MetricsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private spinner: NgxSpinnerService,
     private uiService: UiService,
-    private repService: RepService,
+    private repService: ReportService,
     private queryService: QueryService,
     private navigateService: NavigateService,
     private myDialogService: MyDialogService,
     private apiService: ApiService,
-    private structRepResolver: StructRepResolver,
+    private structRepResolver: StructReportResolver,
     private title: Title
   ) {}
 
@@ -447,7 +447,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
     let uiState = this.uiQuery.getValue();
     let nav = this.navQuery.getValue();
 
-    let payload: apiToBackend.ToBackendGetRepRequestPayload = {
+    let payload: apiToBackend.ToBackendGetReportRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -464,7 +464,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetRepResponse) => {
+        tap((resp: apiToBackend.ToBackendGetReportResponse) => {
           if (
             resp.info?.status === common.ResponseInfoStatusEnum.Ok &&
             this.rep.repId === resp.payload.rep.repId
@@ -631,7 +631,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  navToRep(rep: common.RepX) {
+  navToRep(rep: common.ReportX) {
     this.uiQuery.getValue().gridApi.deselectAll();
 
     this.navigateService.navigateToMetricsRep({
@@ -646,7 +646,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteDraftRep(event: any, rep: common.RepX) {
+  deleteDraftRep(event: any, rep: common.ReportX) {
     event.stopPropagation();
     this.repService.deleteDraftReps({ repIds: [rep.repId] });
   }

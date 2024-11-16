@@ -6,13 +6,13 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildRep;
+let caller = common.CallerEnum.BuildReport;
 let func = common.FuncEnum.CheckAccess;
 let testId = 'e__wrong-access-users-element-4';
 
 test('1', async t => {
   let errors: BmError[];
-  let entReps: common.FileRep[];
+  let entReps: common.FileReport[];
 
   let wLogger;
   let configService;

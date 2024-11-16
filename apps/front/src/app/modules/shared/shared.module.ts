@@ -10,7 +10,6 @@ import { ColorSketchModule } from 'ngx-color/sketch';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { AvatarComponent } from './avatar/avatar.component';
 import { BricksComponent } from './bricks/bricks.component';
-import { ChartRepComponent } from './chart-rep/chart-rep.component';
 import { ChartSaveAsDialogComponent } from './chart-save-as-dialog/chart-save-as-dialog.component';
 import { ChartTableComponent } from './chart-table/chart-table.component';
 import { ChartViewComponent } from './chart-view/chart-view.component';
@@ -18,6 +17,7 @@ import { ChartComponent } from './chart/chart.component';
 import { ColorMenuComponent } from './color-menu/color-menu.component';
 import { DashboardEditListenersDialogComponent } from './dashboard-edit-listeners-dialog/dashboard-edit-listeners-dialog.component';
 import { DashboardSaveAsDialogComponent } from './dashboard-save-as-dialog/dashboard-save-as-dialog.component';
+import { DashboardTileChartComponent } from './dashboard-tile-chart/dashboard-tile-chart.component';
 import { FieldLabelComponent } from './field-label/field-label.component';
 import { FormatNumberComponent } from './format-number/format-number.component';
 import { FractionDayOfWeekIndexComponent } from './fraction/fraction-day-of-week-index/fraction-day-of-week-index.component';
@@ -84,7 +84,7 @@ import { MproveDirPipe } from './pipes/mprove-dir.pipe';
 import { PrettyJsonPipe } from './pipes/pretty-json.pipe';
 import { ResultPipe } from './pipes/result.pipe';
 import { QueryStatusComponent } from './query-status/query-status.component';
-import { RepSaveAsDialogComponent } from './rep-save-as-dialog/rep-save-as-dialog.component';
+import { ReportSaveAsDialogComponent } from './report-save-as-dialog/report-save-as-dialog.component';
 import { AlertRingComponent } from './rings/alert-ring/alert-ring.component';
 import { CompletedRingComponent } from './rings/completed-ring/completed-ring.component';
 import { DocumentRingComponent } from './rings/document-ring/document-ring.component';
@@ -148,7 +148,7 @@ let sharedComponents = [
   ChartTableComponent,
   ChartViewComponent,
   ChartComponent,
-  ChartRepComponent,
+  DashboardTileChartComponent,
   FieldLabelComponent,
   MetricFieldLabelComponent,
   FormatNumberComponent,
@@ -177,7 +177,7 @@ let sharedComponents = [
   FormulaIconComponent,
   ClockIconComponent,
   ViewBlockmlDialogComponent,
-  RepSaveAsDialogComponent,
+  ReportSaveAsDialogComponent,
   ChartSaveAsDialogComponent,
   DashboardSaveAsDialogComponent,
   DashboardEditListenersDialogComponent
