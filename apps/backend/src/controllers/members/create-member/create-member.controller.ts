@@ -288,7 +288,7 @@ export class CreateMemberController {
         common.PROJECT_ENV_PROD,
         common.PATH_METRICS,
         common.PATH_REPORT,
-        common.EMPTY_REP_ID
+        common.EMPTY_REPORT_ID
       ].join('/');
 
       await this.mailerService.sendMail({

@@ -1,46 +1,48 @@
 <div class="flex flex-col bg-white p-9">
   <div
-    data-cy="repSaveAsDialogTitle"
+    data-cy="reportSaveAsDialogTitle"
     class="text-gray2 mt-5 flex-grow text-left text-base font-semibold"
-    >Draft {{ fromRepId }}</div
+    >Draft {{ fromReportId }}</div
   >
 
   <div
-    data-cy="repSaveAsDialogTitle"
+    data-cy="reportSaveAsDialogTitle"
     class="text-gray2 mb-9 mt-5 flex-grow text-left text-2xl font-semibold"
     >Save As
   </div>
 
   <div
-    data-cy="repSaveAsDialogNewRepCheckbox"
+    data-cy="reportSaveAsDialogNewRepCheckbox"
     class="flex h-9 cursor-pointer flex-row items-center"
     (click)="newRepOnClick()"
   >
     <div
       class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
       [ngClass]="{
-        'bg-blue3 ': saveAs === repSaveAsEnum.NEW_REP
+        'bg-blue3 ': saveAs === reportSaveAsEnum.NEW_REPORT
       }"
     >
-      <m-check-icon *ngIf="saveAs === repSaveAsEnum.NEW_REP"></m-check-icon>
+      <m-check-icon
+        *ngIf="saveAs === reportSaveAsEnum.NEW_REPORT"
+      ></m-check-icon>
     </div>
 
     <div class="ml-5 text-base">New Report</div>
   </div>
 
   <div
-    data-cy="repSaveAsDialogExistingRepCheckbox"
+    data-cy="reportSaveAsDialogExistingRepCheckbox"
     class="mt-5 flex h-9 cursor-pointer flex-row items-center"
     (click)="existingRepOnClick()"
   >
     <button
       class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
       [ngClass]="{
-        'bg-blue3 ': saveAs === repSaveAsEnum.REPLACE_EXISTING_REP
+        'bg-blue3 ': saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT
       }"
     >
       <m-check-icon
-        *ngIf="saveAs === repSaveAsEnum.REPLACE_EXISTING_REP"
+        *ngIf="saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT"
       ></m-check-icon>
     </button>
 
@@ -51,11 +53,11 @@
 
       <div
         class="relative mx-5 flex h-2 w-9 flex-shrink-0"
-        *ngIf="!reps && saveAs === repSaveAsEnum.REPLACE_EXISTING_REP"
+        *ngIf="!reports && saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT"
       >
         <ngx-spinner
           [ngClass]="{
-            invisible: saveAs !== repSaveAsEnum.REPLACE_EXISTING_REP
+            invisible: saveAs !== reportSaveAsEnum.REPLACE_EXISTING_REPORT
           }"
           class="invisible"
           [name]="spinnerName"
@@ -71,19 +73,19 @@
       </div>
 
       <ng-select
-        data-cy="repSaveAsDialogExistingRepSelect"
-        *ngIf="!!reps && saveAs === repSaveAsEnum.REPLACE_EXISTING_REP"
+        data-cy="reportSaveAsDialogExistingReportSelect"
+        *ngIf="!!reports && saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT"
         class="custom w-[500px] flex-shrink-0 text-base focus:outline-none"
-        [items]="reps"
+        [items]="reports"
         [searchable]="false"
         [clearable]="false"
         (change)="selectedChange()"
-        [(ngModel)]="selectedRepId"
+        [(ngModel)]="selectedReportId"
         (keyup.esc)="$event.stopImmediatePropagation()"
         (keyup.enter)="$event.stopImmediatePropagation()"
         appendTo="body"
         bindLabel="title"
-        bindValue="repId"
+        bindValue="reportId"
       >
         <ng-template ng-label-tmp ng-option-tmp let-item="item">
           <div
@@ -93,7 +95,7 @@
           >
             <div class="flex truncate">
               <div class="truncate">
-                {{ item.title || item.repId }}
+                {{ item.title || item.reportId }}
               </div>
             </div>
             <div class="flex flex-grow"></div>
@@ -107,18 +109,23 @@
   </div>
 
   <div class="mt-9 h-7 text-base text-gray-400">
-    <div *ngIf="saveAs === repSaveAsEnum.NEW_REP"
+    <div *ngIf="saveAs === reportSaveAsEnum.NEW_REPORT"
       >{{ struct?.mproveDirValue | mproveDir | capitalize }} /
-      {{ usersFolder }} / {{ alias }} / {{ newRepId }}.report</div
+      {{ usersFolder }} / {{ alias }} / {{ newReportId }}.report</div
     >
 
     <div
-      *ngIf="saveAs === repSaveAsEnum.REPLACE_EXISTING_REP && !!selectedRepId"
+      *ngIf="
+        saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT &&
+        !!selectedReportId
+      "
       >{{ selectedRepPath | capitalize }}</div
     >
 
     <div
-      *ngIf="saveAs === repSaveAsEnum.REPLACE_EXISTING_REP && !selectedRepId"
+      *ngIf="
+        saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT && !selectedReportId
+      "
     ></div>
   </div>
 
@@ -133,7 +140,7 @@
       <input
         autocomplete="off"
         spellcheck="false"
-        data-cy="repSaveAsDialogTitleInput"
+        data-cy="reportSaveAsDialogTitleInput"
         class="form-input border-gray3 focus:border-blue3 h-9 w-96 rounded"
         [ngClass]="{
           'border-red-600':
@@ -157,7 +164,7 @@
       <input
         autocomplete="off"
         spellcheck="false"
-        data-cy="repSaveAsDialogRolesInput"
+        data-cy="reportSaveAsDialogRolesInput"
         class="form-input border-gray3 focus:border-blue3 h-9 w-96 rounded"
         [ngClass]="{
           'border-red-600':
@@ -181,7 +188,7 @@
       <input
         autocomplete="off"
         spellcheck="false"
-        data-cy="repSaveAsDialogUsersInput"
+        data-cy="reportSaveAsDialogUsersInput"
         class="form-input border-gray3 focus:border-blue3 h-9 w-96 rounded"
         [ngClass]="{
           'border-red-600':
@@ -196,25 +203,26 @@
 
   <div class="mt-9">
     <button
-      data-cy="repSaveAsDialogCreateButton"
+      data-cy="reportSaveAsDialogCreateButton"
       class="bg-blue3 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
       type="button"
       [ngClass]="{
-        'bg-blue3': saveAs === repSaveAsEnum.NEW_REP || !!selectedRepId,
+        'bg-blue3':
+          saveAs === reportSaveAsEnum.NEW_REPORT || !!selectedReportId,
         'cursor-default bg-gray-400':
-          saveAs === repSaveAsEnum.REPLACE_EXISTING_REP &&
-          selectedRepId === undefined
+          saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT &&
+          selectedReportId === undefined
       }"
       (click)="save()"
       [disabled]="
-        saveAs === repSaveAsEnum.REPLACE_EXISTING_REP &&
-        selectedRepId === undefined
+        saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT &&
+        selectedReportId === undefined
       "
       >Save</button
     >
 
     <button
-      data-cy="repSaveAsDialogCancelButton"
+      data-cy="reportSaveAsDialogCancelButton"
       class="border-blue3 text-blue3 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
       type="button"
       (click)="cancel()"

@@ -169,7 +169,7 @@ export class BlockmlService {
       udfsDict,
       charts,
       metrics,
-      reps,
+      reports: reports,
       apis,
       mconfigs,
       queries,
@@ -212,13 +212,13 @@ export class BlockmlService {
     // console.log(reps);
     // reps = [];
 
-    reps.forEach(rep => {
+    reports.forEach(report => {
       let newRows = processRowIds({
-        rows: rep.rows,
-        targetRowIds: rep.rows.map(r => r.rowId)
+        rows: report.rows,
+        targetRowIds: report.rows.map(r => r.rowId)
       });
 
-      rep.rows = newRows;
+      report.rows = newRows;
     });
 
     if (common.isUndefined(skipDb) || skipDb === false) {
@@ -239,7 +239,7 @@ export class BlockmlService {
                 metrics: metrics.map(x =>
                   this.wrapToEntService.wrapToEntityMetric(x)
                 ),
-                reports: reps.map(x =>
+                reports: reports.map(x =>
                   this.wrapToEntService.wrapToEntityReport(x)
                 ),
                 mconfigs: mconfigs.map(x =>
@@ -279,7 +279,7 @@ export class BlockmlService {
       models: models,
       metrics: metrics,
       apis: apis,
-      reps: reps,
+      reports: reports,
       charts: charts,
       dashboards: dashboards,
       mconfigs: mconfigs,

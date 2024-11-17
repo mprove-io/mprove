@@ -340,7 +340,7 @@ export class MyDialogService {
     });
   }
 
-  showRepSaveAs(item: ReportSaveAsDialogData): void {
+  showReportSaveAs(item: ReportSaveAsDialogData): void {
     this.dialogService.open(ReportSaveAsDialogComponent, {
       enableClose: false,
       closeButton: false,
@@ -419,7 +419,7 @@ export class MyDialogService {
     });
   }
 
-  showDeleteRep(item: DeleteReportDialogData): void {
+  showDeleteReport(item: DeleteReportDialogData): void {
     this.dialogService.open(DeleteReportDialogComponent, {
       enableClose: false,
       closeButton: false,

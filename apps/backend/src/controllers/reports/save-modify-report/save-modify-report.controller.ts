@@ -44,7 +44,7 @@ export class SaveModifyReportController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private structsService: StructsService,
-    private repsService: ReportsService,
+    private reportsService: ReportsService,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
@@ -57,7 +57,7 @@ export class SaveModifyReportController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveModifyRep)
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveModifyReport)
   async saveModifyRep(
     @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
@@ -76,8 +76,8 @@ export class SaveModifyReportController {
       isRepoProd,
       branchId,
       envId,
-      modRepId,
-      fromRepId,
+      modReportId,
+      fromReportId,
       accessRoles,
       accessUsers,
       title,
@@ -134,21 +134,21 @@ export class SaveModifyReportController {
       });
     }
 
-    let existingModRep = await this.repsService.getRepCheckExists({
+    let existingModReport = await this.reportsService.getReportCheckExists({
       structId: bridge.structId,
-      repId: modRepId
+      reportId: modReportId
     });
 
     if (userMember.isAdmin === false && userMember.isEditor === false) {
-      this.repsService.checkRepPath({
+      this.reportsService.checkRepPath({
         userAlias: user.alias,
-        filePath: existingModRep.filePath
+        filePath: existingModReport.filePath
       });
     }
 
-    let fromRep = await this.repsService.getRep({
+    let fromReport = await this.reportsService.getReport({
       projectId: projectId,
-      repId: fromRepId,
+      reportId: fromReportId,
       structId: bridge.structId,
       checkExist: true,
       checkAccess: true,
@@ -156,7 +156,7 @@ export class SaveModifyReportController {
       userMember: userMember
     });
 
-    let metricRows = fromRep.rows.filter(
+    let metricRows = fromReport.rows.filter(
       row => row.rowType === common.RowTypeEnum.Metric
     );
 
@@ -180,9 +180,9 @@ export class SaveModifyReportController {
           [];
 
     let repFileText = makeReportFileText({
-      repId: modRepId,
+      reportId: modReportId,
       title: title,
-      rows: fromRep.rows,
+      rows: fromReport.rows,
       accessRoles: accessRoles,
       accessUsers: accessUsers,
       metrics: metrics,
@@ -199,7 +199,7 @@ export class SaveModifyReportController {
         projectId: projectId,
         repoId: repoId,
         branch: branchId,
-        fileNodeId: existingModRep.filePath,
+        fileNodeId: existingModReport.filePath,
         userAlias: user.alias,
         content: repFileText,
         remoteType: project.remoteType,
@@ -242,7 +242,7 @@ export class SaveModifyReportController {
       }
     });
 
-    let { reps, struct } = await this.blockmlService.rebuildStruct({
+    let { reports: reports, struct } = await this.blockmlService.rebuildStruct({
       traceId: traceId,
       orgId: project.orgId,
       projectId: projectId,
@@ -253,37 +253,37 @@ export class SaveModifyReportController {
       envId: envId
     });
 
-    let rep = reps.find(x => x.repId === modRepId);
+    let report = reports.find(x => x.reportId === modReportId);
 
-    if (common.isDefined(rep)) {
-      rep.rows = fromRep.rows;
+    if (common.isDefined(report)) {
+      report.rows = fromReport.rows;
     }
 
-    let repEnt = common.isDefined(rep)
-      ? this.wrapToEntService.wrapToEntityReport(rep)
+    let repEnt = common.isDefined(report)
+      ? this.wrapToEntService.wrapToEntityReport(report)
       : undefined;
 
     await retry(
       async () =>
         await this.db.drizzle.transaction(async tx => {
-          if (common.isUndefined(rep)) {
+          if (common.isUndefined(report)) {
             await tx
               .delete(reportsTable)
               .where(
                 and(
-                  eq(reportsTable.reportId, modRepId),
+                  eq(reportsTable.reportId, modReportId),
                   eq(reportsTable.structId, bridge.structId)
                 )
               );
           }
 
-          if (fromRep.draft === true) {
+          if (fromReport.draft === true) {
             await tx
               .delete(reportsTable)
               .where(
                 and(
                   eq(reportsTable.projectId, projectId),
-                  eq(reportsTable.reportId, fromRepId),
+                  eq(reportsTable.reportId, fromReportId),
                   eq(reportsTable.draft, true),
                   eq(reportsTable.creatorId, user.userId)
                 )
@@ -326,18 +326,18 @@ export class SaveModifyReportController {
     //   }
     // });
 
-    if (common.isUndefined(rep)) {
+    if (common.isUndefined(report)) {
       // await this.repsRepository.delete({
       //   rep_id: modRepId,
       //   struct_id: bridge.structId
       // });
 
-      let fileIdAr = existingModRep.filePath.split('/');
+      let fileIdAr = existingModReport.filePath.split('/');
       fileIdAr.shift();
       let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
 
       throw new common.ServerError({
-        message: common.ErEnum.BACKEND_MODIFY_REP_FAIL,
+        message: common.ErEnum.BACKEND_MODIFY_REPORT_FAIL,
         data: {
           underscoreFileId: underscoreFileId
         }
@@ -346,8 +346,8 @@ export class SaveModifyReportController {
 
     let userMemberApi = this.wrapToApiService.wrapToApiMember(userMember);
 
-    let repApi = await this.repsService.getRepData({
-      rep: repEnt,
+    let repApi = await this.reportsService.getRepData({
+      report: repEnt,
       traceId: traceId,
       project: project,
       userMemberApi: userMemberApi,
@@ -364,7 +364,7 @@ export class SaveModifyReportController {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: userMemberApi,
-      rep: repApi
+      report: repApi
     };
 
     return payload;

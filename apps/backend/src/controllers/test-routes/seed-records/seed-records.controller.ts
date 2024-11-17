@@ -320,7 +320,7 @@ export class SeedRecordsController {
             dashboards: devDashboardsApi,
             models: devModelsApi,
             metrics: devMetricsApi,
-            reps: devRepsApi,
+            reports: devReportsApi,
             apis: devApisApi
           } = await this.blockmlService.rebuildStruct({
             traceId: reqValid.info.traceId,
@@ -345,7 +345,7 @@ export class SeedRecordsController {
             dashboards: prodDashboardsApi,
             models: prodModelsApi,
             metrics: prodMetricsApi,
-            reps: prodRepsApi,
+            reports: prodReportsApi,
             apis: prodApisApi
           } = await this.blockmlService.rebuildStruct({
             traceId: reqValid.info.traceId,
@@ -437,8 +437,12 @@ export class SeedRecordsController {
 
           reports = [
             ...reports,
-            ...devRepsApi.map(y => this.wrapToEntService.wrapToEntityReport(y)),
-            ...prodRepsApi.map(y => this.wrapToEntService.wrapToEntityReport(y))
+            ...devReportsApi.map(y =>
+              this.wrapToEntService.wrapToEntityReport(y)
+            ),
+            ...prodReportsApi.map(y =>
+              this.wrapToEntService.wrapToEntityReport(y)
+            )
           ];
 
           queries = [

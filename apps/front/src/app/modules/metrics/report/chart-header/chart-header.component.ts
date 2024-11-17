@@ -22,10 +22,10 @@ export class ChartHeaderComponent implements IHeaderAngularComp {
     })
   );
 
-  repSelectedNodes: IRowNode<DataRow>[] = [];
-  repSelectedNodes$ = this.uiQuery.repSelectedNodes$.pipe(
+  reportSelectedNodes: IRowNode<DataRow>[] = [];
+  reportSelectedNodes$ = this.uiQuery.reportSelectedNodes$.pipe(
     tap(x => {
-      this.repSelectedNodes = x;
+      this.reportSelectedNodes = x;
       this.cd.detectChanges();
     })
   );
@@ -46,7 +46,7 @@ export class ChartHeaderComponent implements IHeaderAngularComp {
   }
 
   toggleShowMetricsChart() {
-    if (this.repSelectedNodes.length > 0) {
+    if (this.reportSelectedNodes.length > 0) {
       return;
     }
 

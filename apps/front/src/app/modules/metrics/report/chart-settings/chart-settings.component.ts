@@ -23,15 +23,15 @@ export class ChartSettingsComponent {
     private cd: ChangeDetectorRef,
     private uiQuery: UiQuery,
     private uiService: UiService,
-    private repQuery: ReportQuery
+    private reportQuery: ReportQuery
   ) {}
 
   toggleShowChartForSelectedRows() {
     let showChartForSelectedRows = !this.showChartForSelectedRows;
 
-    let sNodes = this.uiQuery.getValue().repSelectedNodes;
+    let sNodes = this.uiQuery.getValue().reportSelectedNodes;
     let gridData = this.uiQuery.getValue().gridData;
-    let rep = this.repQuery.getValue();
+    let report = this.reportQuery.getValue();
 
     this.uiQuery.updatePart({
       showChartForSelectedRows: showChartForSelectedRows,
@@ -45,7 +45,7 @@ export class ChartSettingsComponent {
             : showChartForSelectedRows === true && sNodes.length > 1
             ? []
             : gridData.filter(row => row.showChart === true),
-        columns: rep.columns
+        columns: report.columns
       }
     });
 

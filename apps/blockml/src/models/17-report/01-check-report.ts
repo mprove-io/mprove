@@ -8,7 +8,7 @@ let func = common.FuncEnum.CheckReport;
 
 export function checkReport(
   item: {
-    reps: common.FileReport[];
+    reports: common.FileReport[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
@@ -18,15 +18,15 @@ export function checkReport(
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newReps: common.FileReport[] = [];
+  let newReports: common.FileReport[] = [];
 
-  item.reps.forEach(x => {
+  item.reports.forEach(x => {
     let errorsOnStart = item.errors.length;
 
     if (common.isUndefined(x.title)) {
       item.errors.push(
         new BmError({
-          title: common.ErTitleEnum.MISSING_REP_TITLE,
+          title: common.ErTitleEnum.MISSING_REPORT_TITLE,
           message: `parameter "${common.ParameterEnum.Title}" is required for report`,
           lines: [
             {
@@ -43,7 +43,7 @@ export function checkReport(
     if (common.isUndefined(x.rows)) {
       item.errors.push(
         new BmError({
-          title: common.ErTitleEnum.MISSING_REP_ROWS,
+          title: common.ErTitleEnum.MISSING_REPORT_ROWS,
           message: `parameter "${common.ParameterEnum.Rows}" is required for report`,
           lines: [
             {
@@ -58,7 +58,7 @@ export function checkReport(
     }
 
     if (errorsOnStart === item.errors.length) {
-      newReps.push(x);
+      newReports.push(x);
     }
   });
 
@@ -70,7 +70,14 @@ export function checkReport(
     common.LogTypeEnum.Errors,
     item.errors
   );
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Reps, newReps);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Reports,
+    newReports
+  );
 
-  return newReps;
+  return newReports;
 }

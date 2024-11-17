@@ -97,9 +97,9 @@ export class NavigateService {
       common.PATH_MODEL,
       toModelId,
       common.PATH_MCONFIG,
-      common.EMPTY_REP_ID,
+      common.EMPTY_REPORT_ID,
       common.PATH_QUERY,
-      common.EMPTY_REP_ID
+      common.EMPTY_REPORT_ID
     ]);
   }
 
@@ -160,7 +160,7 @@ export class NavigateService {
         common.PROJECT_ENV_PROD,
         common.PATH_METRICS,
         common.PATH_REPORT,
-        common.EMPTY_REP_ID
+        common.EMPTY_REPORT_ID
       ];
 
       this.router.navigate(navTo);
@@ -344,11 +344,11 @@ export class NavigateService {
   }
 
   navigateToMetricsRep(item: {
-    repId: string;
+    reportId: string;
     selectRowsNodeIds: string[];
     skipDeselect?: boolean;
   }) {
-    let { repId, selectRowsNodeIds, skipDeselect } = item;
+    let { reportId, selectRowsNodeIds, skipDeselect } = item;
 
     let uiState = this.uiQuery.getValue();
 
@@ -376,7 +376,7 @@ export class NavigateService {
       this.nav.envId,
       common.PATH_METRICS,
       common.PATH_REPORT,
-      repId
+      reportId
     ];
 
     this.router.navigate(navTo, {

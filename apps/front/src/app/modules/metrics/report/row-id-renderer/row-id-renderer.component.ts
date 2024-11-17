@@ -15,20 +15,22 @@ import { common } from '~front/barrels/common';
 export class RowIdRendererComponent implements ICellRendererAngularComp {
   params: ICellRendererParams<DataRow>;
 
-  repSelectedNode: IRowNode<DataRow>;
+  reportSelectedNode: IRowNode<DataRow>;
 
   uiQuery$ = this.uiQuery.select().pipe(
     tap(x => {
-      this.repSelectedNode =
-        x.repSelectedNodes.length === 1 ? x.repSelectedNodes[0] : undefined;
+      this.reportSelectedNode =
+        x.reportSelectedNodes.length === 1
+          ? x.reportSelectedNodes[0]
+          : undefined;
       this.cd.detectChanges();
     })
   );
 
-  rep: common.ReportX;
-  rep$ = this.repQuery.select().pipe(
+  report: common.ReportX;
+  report$ = this.reportQuery.select().pipe(
     tap(x => {
-      this.rep = x;
+      this.report = x;
       this.cd.detectChanges();
     })
   );
@@ -36,8 +38,8 @@ export class RowIdRendererComponent implements ICellRendererAngularComp {
   constructor(
     private cd: ChangeDetectorRef,
     private uiQuery: UiQuery,
-    private repService: ReportService,
-    private repQuery: ReportQuery
+    private reportService: ReportService,
+    private reportQuery: ReportQuery
   ) {}
 
   agInit(params: ICellRendererParams<DataRow>) {
@@ -50,22 +52,22 @@ export class RowIdRendererComponent implements ICellRendererAngularComp {
   }
 
   clearRow() {
-    this.repService.modifyRows({
-      rep: this.rep,
+    this.reportService.modifyRows({
+      report: this.report,
       changeType: common.ChangeTypeEnum.Clear,
       rowChange: undefined,
-      rowIds: [this.repSelectedNode.data.rowId]
+      rowIds: [this.reportSelectedNode.data.rowId]
     });
   }
 
   deleteRow() {
     this.uiQuery.getValue().gridApi.deselectAll();
 
-    this.repService.modifyRows({
-      rep: this.rep,
+    this.reportService.modifyRows({
+      report: this.report,
       changeType: common.ChangeTypeEnum.Delete,
       rowChange: undefined,
-      rowIds: [this.repSelectedNode.data.rowId]
+      rowIds: [this.reportSelectedNode.data.rowId]
     });
   }
 }

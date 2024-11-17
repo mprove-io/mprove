@@ -2,7 +2,7 @@ import { common } from '~backend/barrels/common';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 
 export function makeReportFileText(item: {
-  repId: string;
+  reportId: string;
   title: string;
   accessRoles: string[];
   accessUsers: string[];
@@ -10,14 +10,15 @@ export function makeReportFileText(item: {
   metrics: schemaPostgres.MetricEnt[];
   struct: schemaPostgres.StructEnt;
 }) {
-  let { repId, title, rows, accessRoles, accessUsers, metrics, struct } = item;
+  let { reportId, title, rows, accessRoles, accessUsers, metrics, struct } =
+    item;
 
   let fileReport: common.FileReport = {
     fileName: undefined,
     fileExt: undefined,
     filePath: undefined,
     name: undefined,
-    report: repId,
+    report: reportId,
     title: title,
     access_roles:
       accessRoles.length > 0 ? accessRoles.map(x => x.trim()) : undefined,
@@ -41,7 +42,7 @@ export function makeReportFileText(item: {
         formula: common.isDefined(x.formula) ? x.formula : undefined,
         show_chart:
           common.isDefined(x.showChart) &&
-          x.showChart !== common.REP_ROW_DEFAULT_SHOW_CHART
+          x.showChart !== common.REPORT_ROW_DEFAULT_SHOW_CHART
             ? <any>x.showChart
             : undefined,
         format_number:

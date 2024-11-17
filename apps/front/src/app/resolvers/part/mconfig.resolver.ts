@@ -13,7 +13,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { checkNavOrgProjectRepoBranchEnv } from '../../functions/check-nav-org-project-repo-branch-env';
-import { emptyMconfig, emptyQuery, MqQuery } from '../../queries/mq.query';
+import { MqQuery, emptyMconfig, emptyQuery } from '../../queries/mq.query';
 import { NavQuery, NavState } from '../../queries/nav.query';
 import { UserQuery } from '../../queries/user.query';
 import { ApiService } from '../../services/api.service';
@@ -94,8 +94,8 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
       return of(true);
     }
 
-    if (parametersMconfigId === common.EMPTY_REP_ID) {
-      if (mconfig.mconfigId !== common.EMPTY_REP_ID) {
+    if (parametersMconfigId === common.EMPTY_REPORT_ID) {
+      if (mconfig.mconfigId !== common.EMPTY_REPORT_ID) {
         this.mqQuery.updatePart({ mconfig: emptyMconfig, query: emptyQuery });
       }
 

@@ -19,7 +19,7 @@ export function buildYaml(
   let views: common.FileView[];
   let models: common.FileModel[];
   let dashboards: common.FileDashboard[];
-  let reps: common.FileReport[];
+  let reports: common.FileReport[];
   let metrics: common.FileMetric[];
   let apis: common.FileApi[];
   let charts: common.FileChart[];
@@ -134,7 +134,7 @@ export function buildYaml(
   dashboards = splitFilesResult.dashboards;
   metrics = splitFilesResult.metrics;
   models = splitFilesResult.models;
-  reps = splitFilesResult.reps;
+  reports = splitFilesResult.reports;
   udfs = splitFilesResult.udfs;
   views = splitFilesResult.views;
   charts = splitFilesResult.charts;
@@ -156,7 +156,7 @@ export function buildYaml(
     projectConfig: projectConfig,
     metrics: metrics,
     models: models,
-    reps: reps,
+    reports: reports,
     udfs: udfs,
     views: views,
     charts: charts

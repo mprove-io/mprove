@@ -4,18 +4,20 @@ import { common } from '~front/barrels/common';
 import { BaseQuery } from './base.query';
 
 export class ReportsState {
-  reps: common.ReportX[];
+  reports: common.ReportX[];
 }
 
-let repsState: ReportsState = {
-  reps: []
+let reportsState: ReportsState = {
+  reports: []
 };
 
 @Injectable({ providedIn: 'root' })
 export class ReportsQuery extends BaseQuery<ReportsState> {
-  reps$ = this.store.pipe(select(state => state.reps));
+  reports$ = this.store.pipe(select(state => state.reports));
 
   constructor() {
-    super(createStore({ name: 'reports' }, withProps<ReportsState>(repsState)));
+    super(
+      createStore({ name: 'reports' }, withProps<ReportsState>(reportsState))
+    );
   }
 }

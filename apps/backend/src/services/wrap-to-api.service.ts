@@ -337,7 +337,7 @@ export class WrapToApiService {
   }
 
   wrapToApiRep(item: {
-    rep: schemaPostgres.ReportEnt;
+    report: schemaPostgres.ReportEnt;
     member: common.Member;
     models: common.ModelX[];
     timezone: string;
@@ -349,7 +349,7 @@ export class WrapToApiService {
     isTimeColumnsLimitExceeded: boolean;
   }): common.ReportX {
     let {
-      rep,
+      report,
       member,
       columns,
       timezone,
@@ -362,8 +362,8 @@ export class WrapToApiService {
     } = item;
 
     let author;
-    if (common.isDefined(rep.filePath)) {
-      let filePathArray = rep.filePath.split('/');
+    if (common.isDefined(report.filePath)) {
+      let filePathArray = report.filePath.split('/');
 
       let usersFolderIndex = filePathArray.findIndex(
         x => x === common.MPROVE_USERS_FOLDER
@@ -379,21 +379,21 @@ export class WrapToApiService {
       member.isEditor || member.isAdmin || author === member.alias;
 
     let repX: common.ReportX = {
-      projectId: rep.projectId,
-      structId: rep.structId,
-      repId: rep.reportId,
-      canEditOrDeleteRep: canEditOrDeleteRep,
+      projectId: report.projectId,
+      structId: report.structId,
+      reportId: report.reportId,
+      canEditOrDeleteReport: canEditOrDeleteRep,
       author: author,
-      draft: rep.draft,
-      creatorId: rep.creatorId,
-      filePath: rep.filePath,
-      accessUsers: rep.accessUsers,
-      accessRoles: rep.accessRoles,
-      title: rep.title,
+      draft: report.draft,
+      creatorId: report.creatorId,
+      filePath: report.filePath,
+      accessUsers: report.accessUsers,
+      accessRoles: report.accessRoles,
+      title: report.title,
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFraction: timeRangeFraction,
-      rows: rep.rows.map(x => {
+      rows: report.rows.map(x => {
         x.hasAccessToModel = common.isDefined(x.mconfig)
           ? models.find(m => m.modelId === x.mconfig.modelId).hasAccess
           : false;
@@ -403,8 +403,8 @@ export class WrapToApiService {
       timeColumnsLimit: timeColumnsLimit,
       timeColumnsLength: timeColumnsLength,
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded,
-      draftCreatedTs: Number(rep.draftCreatedTs),
-      serverTs: Number(rep.serverTs)
+      draftCreatedTs: Number(report.draftCreatedTs),
+      serverTs: Number(report.serverTs)
     };
 
     return repX;

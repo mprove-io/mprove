@@ -12,7 +12,7 @@ let testId = 'e__missing-report-rows';
 
 test('1', async t => {
   let errors: BmError[];
-  let reps: common.FileReport[];
+  let reports: common.FileReport[];
 
   let wLogger;
   let configService;
@@ -46,7 +46,7 @@ test('1', async t => {
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
-    reps = await helper.readLog(fromDir, common.LogTypeEnum.Reps);
+    reports = await helper.readLog(fromDir, common.LogTypeEnum.Reports);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -60,8 +60,8 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(reps.length, 0);
+  t.is(reports.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.MISSING_REP_ROWS);
+  t.is(errors[0].title, common.ErTitleEnum.MISSING_REPORT_ROWS);
   t.is(errors[0].lines[0].line, 1);
 });

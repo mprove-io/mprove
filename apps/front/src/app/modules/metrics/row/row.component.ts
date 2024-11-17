@@ -85,18 +85,18 @@ export class RowComponent {
 
   isValid = false;
 
-  rep: common.ReportX;
-  rep$ = this.repQuery.select().pipe(
+  report: common.ReportX;
+  report$ = this.reportQuery.select().pipe(
     tap(x => {
       this.resetInputs();
-      this.rep = x;
+      this.report = x;
 
       this.cd.detectChanges();
     })
   );
 
-  repSelectedNodes: IRowNode<DataRow>[] = [];
-  repSelectedNode: IRowNode<DataRow>;
+  reportSelectedNodes: IRowNode<DataRow>[] = [];
+  reportSelectedNode: IRowNode<DataRow>;
 
   mconfig: common.MconfigX;
   parametersFilters: ParameterFilter[] = [];
@@ -110,33 +110,33 @@ export class RowComponent {
           this.isToFormula === true ||
           this.isToMetric === true ||
           this.isAddParameter === true) &&
-        (x.repSelectedNodes.length === 0 ||
-          x.repSelectedNodes.length > 1 ||
-          (x.repSelectedNodes.length === 1 &&
-            x.repSelectedNodes[0].data.rowId !==
-              this.repSelectedNode.data.rowId))
+        (x.reportSelectedNodes.length === 0 ||
+          x.reportSelectedNodes.length > 1 ||
+          (x.reportSelectedNodes.length === 1 &&
+            x.reportSelectedNodes[0].data.rowId !==
+              this.reportSelectedNode.data.rowId))
       ) {
         this.resetInputs();
       }
 
       this.showMetricsChart = x.showMetricsChart;
 
-      this.repSelectedNodes = x.repSelectedNodes;
+      this.reportSelectedNodes = x.reportSelectedNodes;
 
-      this.repSelectedNode =
-        this.repSelectedNodes.length === 1
-          ? this.repSelectedNodes[0]
+      this.reportSelectedNode =
+        this.reportSelectedNodes.length === 1
+          ? this.reportSelectedNodes[0]
           : undefined;
 
-      if (common.isDefined(this.repSelectedNode)) {
+      if (common.isDefined(this.reportSelectedNode)) {
         this.formatNumberExamples = constants.FORMAT_NUMBER_EXAMPLES.map(
           example => {
             example.output = this.queryService.formatValue({
               value: example.input,
               formatNumber: example.id,
               fieldResult: common.FieldResultEnum.Number,
-              currencyPrefix: this.repSelectedNode.data.currencyPrefix,
-              currencySuffix: this.repSelectedNode.data.currencySuffix
+              currencyPrefix: this.reportSelectedNode.data.currencyPrefix,
+              currencySuffix: this.reportSelectedNode.data.currencySuffix
             });
 
             return example;
@@ -147,10 +147,10 @@ export class RowComponent {
       // console.log('selectedRowNode', this.repSelectedNode);
 
       if (
-        common.isDefined(this.repSelectedNode) &&
-        this.repSelectedNode.data.rowType === common.RowTypeEnum.Metric
+        common.isDefined(this.reportSelectedNode) &&
+        this.reportSelectedNode.data.rowType === common.RowTypeEnum.Metric
       ) {
-        this.mconfig = this.repSelectedNode.data.mconfig;
+        this.mconfig = this.reportSelectedNode.data.mconfig;
 
         // let metric = this.metricsQuery
         //   .getValue()
@@ -163,15 +163,15 @@ export class RowComponent {
         // let timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
         this.parametersFilters =
-          this.repSelectedNode.data.mconfig.extendedFilters
+          this.reportSelectedNode.data.mconfig.extendedFilters
             .filter(
               filter =>
-                this.repSelectedNode.data.parametersFiltersWithExcludedTime
+                this.reportSelectedNode.data.parametersFiltersWithExcludedTime
                   .map(f => f.fieldId)
                   .indexOf(filter.fieldId) > -1
             )
             .map(filter => {
-              let parameter = this.repSelectedNode.data.parameters.find(
+              let parameter = this.reportSelectedNode.data.parameters.find(
                 y => y.filter === filter.fieldId
               );
 
@@ -185,48 +185,52 @@ export class RowComponent {
             });
       }
 
-      if (common.isDefined(this.repSelectedNode)) {
-        if (this.repSelectedNode.data.rowType === common.RowTypeEnum.Metric) {
+      if (common.isDefined(this.reportSelectedNode)) {
+        if (
+          this.reportSelectedNode.data.rowType === common.RowTypeEnum.Metric
+        ) {
           setValueAndMark({
             control: this.parametersFormulaForm.controls['formula'],
-            value: this.repSelectedNode.data.parametersFormula
-          });
-        }
-
-        if (this.repSelectedNode.data.rowType === common.RowTypeEnum.Formula) {
-          setValueAndMark({
-            control: this.formulaForm.controls['formula'],
-            value: this.repSelectedNode.data.formula
+            value: this.reportSelectedNode.data.parametersFormula
           });
         }
 
         if (
-          this.repSelectedNode.data.rowType === common.RowTypeEnum.Header ||
-          this.repSelectedNode.data.rowType === common.RowTypeEnum.Formula
+          this.reportSelectedNode.data.rowType === common.RowTypeEnum.Formula
+        ) {
+          setValueAndMark({
+            control: this.formulaForm.controls['formula'],
+            value: this.reportSelectedNode.data.formula
+          });
+        }
+
+        if (
+          this.reportSelectedNode.data.rowType === common.RowTypeEnum.Header ||
+          this.reportSelectedNode.data.rowType === common.RowTypeEnum.Formula
         ) {
           setValueAndMark({
             control: this.nameForm.controls['name'],
-            value: this.repSelectedNode.data.name
+            value: this.reportSelectedNode.data.name
           });
         }
 
         if (
-          this.repSelectedNode.data.rowType === common.RowTypeEnum.Formula ||
-          this.repSelectedNode.data.rowType === common.RowTypeEnum.Metric
+          this.reportSelectedNode.data.rowType === common.RowTypeEnum.Formula ||
+          this.reportSelectedNode.data.rowType === common.RowTypeEnum.Metric
         ) {
           setValueAndMark({
             control: this.formatNumberForm.controls['formatNumber'],
-            value: this.repSelectedNode.data.formatNumber
+            value: this.reportSelectedNode.data.formatNumber
           });
 
           setValueAndMark({
             control: this.currencyPrefixForm.controls['currencyPrefix'],
-            value: this.repSelectedNode.data.currencyPrefix
+            value: this.reportSelectedNode.data.currencyPrefix
           });
 
           setValueAndMark({
             control: this.currencySuffixForm.controls['currencySuffix'],
-            value: this.repSelectedNode.data.currencySuffix
+            value: this.reportSelectedNode.data.currencySuffix
           });
         }
       }
@@ -257,8 +261,8 @@ export class RowComponent {
     private uiQuery: UiQuery,
     private metricsQuery: MetricsQuery,
     private fb: FormBuilder,
-    private repService: ReportService,
-    private repQuery: ReportQuery,
+    private reportService: ReportService,
+    private reportQuery: ReportQuery,
     private apiService: ApiService,
     private queryService: QueryService,
     private navQuery: NavQuery,
@@ -270,20 +274,20 @@ export class RowComponent {
 
     if (
       !this.formulaForm.valid ||
-      this.repSelectedNode.data.formula === value
+      this.reportSelectedNode.data.formula === value
     ) {
       return;
     }
 
-    let rep = this.repQuery.getValue();
+    let report = this.reportQuery.getValue();
 
     let rowChange: common.RowChange = {
-      rowId: this.repSelectedNode.data.rowId,
+      rowId: this.reportSelectedNode.data.rowId,
       formula: value
     };
 
-    this.repService.modifyRows({
-      rep: rep,
+    this.reportService.modifyRows({
+      report: report,
       changeType: common.ChangeTypeEnum.EditFormula,
       rowChange: rowChange,
       rowIds: undefined
@@ -293,19 +297,19 @@ export class RowComponent {
   nameBlur() {
     let value = this.nameForm.controls['name'].value;
 
-    if (!this.nameForm.valid || this.repSelectedNode.data.name === value) {
+    if (!this.nameForm.valid || this.reportSelectedNode.data.name === value) {
       return;
     }
 
-    let rep = this.repQuery.getValue();
+    let report = this.reportQuery.getValue();
 
     let rowChange: common.RowChange = {
-      rowId: this.repSelectedNode.data.rowId,
+      rowId: this.reportSelectedNode.data.rowId,
       name: value
     };
 
-    this.repService.modifyRows({
-      rep: rep,
+    this.reportService.modifyRows({
+      report: report,
       changeType: common.ChangeTypeEnum.EditInfo,
       rowChange: rowChange,
       rowIds: undefined
@@ -317,20 +321,20 @@ export class RowComponent {
 
     if (
       !this.parametersFormulaForm.valid ||
-      this.repSelectedNode.data.parametersFormula === value
+      this.reportSelectedNode.data.parametersFormula === value
     ) {
       return;
     }
 
-    let rep = this.repQuery.getValue();
+    let report = this.reportQuery.getValue();
 
     let rowChange: common.RowChange = {
-      rowId: this.repSelectedNode.data.rowId,
+      rowId: this.reportSelectedNode.data.rowId,
       parametersFormula: value
     };
 
-    this.repService.modifyRows({
-      rep: rep,
+    this.reportService.modifyRows({
+      report: report,
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined
@@ -342,20 +346,20 @@ export class RowComponent {
 
     if (
       !this.formatNumberForm.valid ||
-      this.repSelectedNode.data.formatNumber === value
+      this.reportSelectedNode.data.formatNumber === value
     ) {
       return;
     }
 
-    let rep = this.repQuery.getValue();
+    let report = this.reportQuery.getValue();
 
     let rowChange: common.RowChange = {
-      rowId: this.repSelectedNode.data.rowId,
+      rowId: this.reportSelectedNode.data.rowId,
       formatNumber: value
     };
 
-    this.repService.modifyRows({
-      rep: rep,
+    this.reportService.modifyRows({
+      report: report,
       changeType: common.ChangeTypeEnum.EditInfo,
       rowChange: rowChange,
       rowIds: undefined
@@ -367,20 +371,20 @@ export class RowComponent {
 
     if (
       !this.currencyPrefixForm.valid ||
-      this.repSelectedNode.data.currencyPrefix === value
+      this.reportSelectedNode.data.currencyPrefix === value
     ) {
       return;
     }
 
-    let rep = this.repQuery.getValue();
+    let report = this.reportQuery.getValue();
 
     let rowChange: common.RowChange = {
-      rowId: this.repSelectedNode.data.rowId,
+      rowId: this.reportSelectedNode.data.rowId,
       currencyPrefix: value
     };
 
-    this.repService.modifyRows({
-      rep: rep,
+    this.reportService.modifyRows({
+      report: report,
       changeType: common.ChangeTypeEnum.EditInfo,
       rowChange: rowChange,
       rowIds: undefined
@@ -392,20 +396,20 @@ export class RowComponent {
 
     if (
       !this.currencySuffixForm.valid ||
-      this.repSelectedNode.data.currencySuffix === value
+      this.reportSelectedNode.data.currencySuffix === value
     ) {
       return;
     }
 
-    let rep = this.repQuery.getValue();
+    let report = this.reportQuery.getValue();
 
     let rowChange: common.RowChange = {
-      rowId: this.repSelectedNode.data.rowId,
+      rowId: this.reportSelectedNode.data.rowId,
       currencySuffix: value
     };
 
-    this.repService.modifyRows({
-      rep: rep,
+    this.reportService.modifyRows({
+      report: report,
       changeType: common.ChangeTypeEnum.EditInfo,
       rowChange: rowChange,
       rowIds: undefined
@@ -413,22 +417,22 @@ export class RowComponent {
   }
 
   clearRows() {
-    this.repService.modifyRows({
-      rep: this.rep,
+    this.reportService.modifyRows({
+      report: this.report,
       changeType: common.ChangeTypeEnum.Clear,
       rowChange: undefined,
-      rowIds: this.repSelectedNodes.map(node => node.data.rowId)
+      rowIds: this.reportSelectedNodes.map(node => node.data.rowId)
     });
   }
 
   deleteRows() {
     this.uiQuery.getValue().gridApi.deselectAll();
 
-    this.repService.modifyRows({
-      rep: this.rep,
+    this.reportService.modifyRows({
+      report: this.report,
       changeType: common.ChangeTypeEnum.Delete,
       rowChange: undefined,
-      rowIds: this.repSelectedNodes.map(node => node.data.rowId)
+      rowIds: this.reportSelectedNodes.map(node => node.data.rowId)
     });
   }
 
@@ -484,12 +488,12 @@ export class RowComponent {
       }
 
       let rowChange: common.RowChange = {
-        rowId: this.repSelectedNode.data.rowId,
+        rowId: this.reportSelectedNode.data.rowId,
         name: this.newNameForm.controls['name'].value
       };
 
-      this.repService.modifyRows({
-        rep: this.rep,
+      this.reportService.modifyRows({
+        report: this.report,
         changeType: common.ChangeTypeEnum.ConvertToHeader,
         rowChange: rowChange,
         rowIds: undefined
@@ -508,13 +512,13 @@ export class RowComponent {
       }
 
       let rowChange: common.RowChange = {
-        rowId: this.repSelectedNode.data.rowId,
+        rowId: this.reportSelectedNode.data.rowId,
         name: this.newNameForm.controls['name'].value,
         formula: this.newFormulaForm.controls['formula'].value
       };
 
-      this.repService.modifyRows({
-        rep: this.rep,
+      this.reportService.modifyRows({
+        report: this.report,
         changeType: common.ChangeTypeEnum.ConvertToFormula,
         rowChange: rowChange,
         rowIds: undefined
@@ -527,12 +531,12 @@ export class RowComponent {
       }
 
       let rowChange: common.RowChange = {
-        rowId: this.repSelectedNode.data.rowId,
+        rowId: this.reportSelectedNode.data.rowId,
         metricId: this.newMetricId
       };
 
-      this.repService.modifyRows({
-        rep: this.rep,
+      this.reportService.modifyRows({
+        report: this.report,
         changeType: common.ChangeTypeEnum.ConvertToMetric,
         rowChange: rowChange,
         rowIds: undefined
@@ -541,9 +545,9 @@ export class RowComponent {
   }
 
   explore() {
-    if (this.repSelectedNode.data.hasAccessToModel === true) {
+    if (this.reportSelectedNode.data.hasAccessToModel === true) {
       this.mconfigService.navDuplicateMconfigAndQuery({
-        oldMconfigId: this.repSelectedNode.data.mconfig.mconfigId
+        oldMconfigId: this.reportSelectedNode.data.mconfig.mconfigId
       });
     }
   }
@@ -562,7 +566,7 @@ export class RowComponent {
 
     let metric = this.metricsQuery
       .getValue()
-      .metrics.find(y => y.metricId === this.repSelectedNode.data.metricId);
+      .metrics.find(y => y.metricId === this.reportSelectedNode.data.metricId);
 
     let restrictedFilterFieldIds = [
       `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Year}`,
@@ -632,7 +636,7 @@ export class RowComponent {
     // let timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
     this.isDisabledApplyAlreadyFiltered =
-      this.repSelectedNode.data.mconfig.extendedFilters
+      this.reportSelectedNode.data.mconfig.extendedFilters
         .map(filter => filter.fieldId)
         .indexOf(this.newParameterId) > -1;
   }
@@ -646,8 +650,10 @@ export class RowComponent {
       return;
     }
 
-    let newParameters = common.isDefined(this.repSelectedNode.data.parameters)
-      ? [...this.repSelectedNode.data.parameters]
+    let newParameters = common.isDefined(
+      this.reportSelectedNode.data.parameters
+    )
+      ? [...this.reportSelectedNode.data.parameters]
       : [];
 
     let field = this.newParameterModel.fields.find(
@@ -655,7 +661,7 @@ export class RowComponent {
     );
 
     let newParameter: common.Parameter = {
-      parameterId: [this.repSelectedNode.data.rowId, ...field.id.split('.')]
+      parameterId: [this.reportSelectedNode.data.rowId, ...field.id.split('.')]
         .join('_')
         .toUpperCase(),
       parameterType: common.ParameterTypeEnum.Field,
@@ -668,15 +674,15 @@ export class RowComponent {
 
     newParameters = [...newParameters, newParameter];
 
-    let rep = this.repQuery.getValue();
+    let report = this.reportQuery.getValue();
 
     let rowChange: common.RowChange = {
-      rowId: this.repSelectedNode.data.rowId,
+      rowId: this.reportSelectedNode.data.rowId,
       parameters: newParameters
     };
 
-    this.repService.modifyRows({
-      rep: rep,
+    this.reportService.modifyRows({
+      report: report,
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined
@@ -684,26 +690,26 @@ export class RowComponent {
   }
 
   toggleParametersFormula() {
-    let rep = this.repQuery.getValue();
+    let report = this.reportQuery.getValue();
 
     let rowChange: common.RowChange;
 
-    if (common.isDefined(this.repSelectedNode.data.parametersFormula)) {
+    if (common.isDefined(this.reportSelectedNode.data.parametersFormula)) {
       rowChange = {
-        rowId: this.repSelectedNode.data.rowId,
-        parameters: this.repSelectedNode.data.parameters,
+        rowId: this.reportSelectedNode.data.rowId,
+        parameters: this.reportSelectedNode.data.parameters,
         parametersFormula: undefined
       };
     } else {
       rowChange = {
-        rowId: this.repSelectedNode.data.rowId,
+        rowId: this.reportSelectedNode.data.rowId,
         parameters: undefined,
         parametersFormula: `return []`
       };
     }
 
-    this.repService.modifyRows({
-      rep: rep,
+    this.reportService.modifyRows({
+      report: report,
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined

@@ -17,8 +17,8 @@ export class RowIdHeaderComponent implements IHeaderAngularComp {
   constructor(
     private uiQuery: UiQuery,
     private uiService: UiService,
-    private repService: ReportService,
-    private repQuery: ReportQuery,
+    private reportService: ReportService,
+    private reportQuery: ReportQuery,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -32,21 +32,21 @@ export class RowIdHeaderComponent implements IHeaderAngularComp {
   }
 
   addRow() {
-    let repSelectedNodes = this.uiQuery.getValue().repSelectedNodes;
+    let reportSelectedNodes = this.uiQuery.getValue().reportSelectedNodes;
 
-    let rep = this.repQuery.getValue();
+    let report = this.reportQuery.getValue();
 
     let rowChange: common.RowChange = {
       rowId:
-        repSelectedNodes.length === 1
-          ? repSelectedNodes[0].data.rowId
+        reportSelectedNodes.length === 1
+          ? reportSelectedNodes[0].data.rowId
           : undefined,
       rowType: common.RowTypeEnum.Empty,
       showChart: false
     };
 
-    this.repService.modifyRows({
-      rep: rep,
+    this.reportService.modifyRows({
+      report: report,
       changeType: common.ChangeTypeEnum.AddEmpty,
       rowChange: rowChange,
       rowIds: undefined

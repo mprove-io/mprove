@@ -85,7 +85,8 @@ test('1', async t => {
 
     let req1: apiToBackend.ToBackendCreateDraftReportRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDraftRep,
+        name: apiToBackend.ToBackendRequestInfoNameEnum
+          .ToBackendCreateDraftReport,
         traceId: traceId,
         idempotencyKey: common.makeId()
       },
@@ -96,7 +97,7 @@ test('1', async t => {
         envId: common.PROJECT_ENV_PROD,
         rowIds: undefined,
         changeType: common.ChangeTypeEnum.AddEmpty,
-        fromRepId: 'new',
+        fromReportId: 'new',
         rowChange: { rowType: common.RowTypeEnum.Empty, showChart: false },
         timeRangeFractionBrick: 'last 5 months',
         timeSpec: common.TimeSpecEnum.Months,
@@ -116,7 +117,7 @@ test('1', async t => {
     let req2: apiToBackend.ToBackendDeleteDraftReportsRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendDeleteDraftReps,
+          .ToBackendDeleteDraftReports,
         traceId: traceId,
         idempotencyKey: common.makeId()
       },
@@ -125,7 +126,7 @@ test('1', async t => {
         isRepoProd: false,
         branchId: common.BRANCH_MASTER,
         envId: common.PROJECT_ENV_PROD,
-        repIds: [resp1.payload.rep.repId]
+        reportIds: [resp1.payload.report.reportId]
       }
     };
 

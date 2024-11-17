@@ -57,6 +57,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(filesAny.length, 1);
 
-  t.is(errors[0].title, common.ErTitleEnum.UNKNOWN_REP_PARAMETER);
+  t.is(errors[0].title, common.ErTitleEnum.UNKNOWN_REPORT_PARAMETER);
   t.is(errors[0].lines[0].line, 2);
 });

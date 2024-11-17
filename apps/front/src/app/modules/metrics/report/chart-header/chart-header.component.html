@@ -4,14 +4,14 @@
   class="flex-shrink-0"
   [ngClass]="{
     'text-gray-500':
-      showMetricsChart === true && repSelectedNodes.length === 0,
+      showMetricsChart === true && reportSelectedNodes.length === 0,
     'text-gray-400':
-      showMetricsChart === false && repSelectedNodes.length === 0,
-    'cursor-default text-gray-300': repSelectedNodes.length > 0,
-    'cursor-pointer': repSelectedNodes.length === 0,
+      showMetricsChart === false && reportSelectedNodes.length === 0,
+    'cursor-default text-gray-300': reportSelectedNodes.length > 0,
+    'cursor-pointer': reportSelectedNodes.length === 0,
   }"
   (click)="toggleShowMetricsChart()"
 ></m-insights-icon>
 
 <div *ngIf="uiQuery$ | async"></div>
-<div *ngIf="repSelectedNodes$ | async"></div>
+<div *ngIf="reportSelectedNodes$ | async"></div>

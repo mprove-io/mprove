@@ -17,7 +17,7 @@ export class ToBackendDeleteReportRequestPayload {
   envId: string;
 
   @IsString()
-  repId: string;
+  reportId: string;
 }
 
 export class ToBackendDeleteReportRequest extends ToBackendRequest {

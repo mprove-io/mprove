@@ -1,8 +1,8 @@
 <button
-  data-cy="repOptionsMenuButton"
+  data-cy="reportOptionsMenuButton"
   class="ml-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded hover:bg-white focus:outline-none"
   #t1="tippy"
-  [tp]="templateRepOptions"
+  [tp]="templateReportOptions"
   [tpHideOnEscape]="true"
   tpVariation="menu"
   className="my-menu"
@@ -12,23 +12,23 @@
   <m-dots-vertical-icon></m-dots-vertical-icon>
 </button>
 
-<ng-template #templateRepOptions>
+<ng-template #templateReportOptions>
   <div class="border-gray4 w-48 rounded-md border-2 bg-white shadow-xl">
     <button
-      data-cy="repOptionsGoToFileButton"
+      data-cy="reportOptionsGoToFileButton"
       class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
       (click)="t1.hide(); goToFileLine($event)"
       >Go to File</button
     >
 
     <button
-      data-cy="repOptionsDelete"
+      data-cy="reportOptionsDelete"
       class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
       [ngClass]="{
-        'cursor-default text-gray-400': rep.canEditOrDeleteRep === false
+        'cursor-default text-gray-400': report.canEditOrDeleteReport === false
       }"
-      (click)="t1.hide(); deleteRep($event)"
-      [disabled]="rep.canEditOrDeleteRep === false"
+      (click)="t1.hide(); deleteReport($event)"
+      [disabled]="report.canEditOrDeleteReport === false"
       >Delete</button
     >
   </div>

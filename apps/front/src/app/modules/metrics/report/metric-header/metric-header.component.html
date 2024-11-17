@@ -42,16 +42,16 @@
     class="ml-[50px] rounded border px-4 py-[6px] font-normal focus:outline-none"
     [ngClass]="{
       'border-gray-500 text-gray-600 hover:bg-white':
-        repSelectedNodes.length > 0,
+        reportSelectedNodes.length > 0,
       'cursor-default border-gray-300 text-gray-400':
-        repSelectedNodes.length === 0
+        reportSelectedNodes.length === 0
     }"
     type="button"
     (click)="deselect()"
-    [disabled]="repSelectedNodes.length === 0"
+    [disabled]="reportSelectedNodes.length === 0"
     >Deselect</button
   >
 </div>
 
-<div *ngIf="repSelectedNodes$ | async"></div>
+<div *ngIf="reportSelectedNodes$ | async"></div>
 <div *ngIf="uiQuery$ | async"></div>

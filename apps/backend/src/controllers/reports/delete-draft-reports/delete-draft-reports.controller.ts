@@ -39,8 +39,8 @@ export class DeleteDraftReportsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftReps)
-  async deleteDraftReps(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftReports)
+  async deleteDraftReports(
     @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
@@ -48,7 +48,8 @@ export class DeleteDraftReportsController {
       request.body;
 
     let { traceId } = reqValid.info;
-    let { projectId, isRepoProd, branchId, envId, repIds } = reqValid.payload;
+    let { projectId, isRepoProd, branchId, envId, reportIds } =
+      reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
 
@@ -87,7 +88,7 @@ export class DeleteDraftReportsController {
             .delete(reportsTable)
             .where(
               and(
-                inArray(reportsTable.reportId, repIds),
+                inArray(reportsTable.reportId, reportIds),
                 eq(reportsTable.projectId, projectId),
                 eq(reportsTable.draft, true),
                 eq(reportsTable.creatorId, user.userId),

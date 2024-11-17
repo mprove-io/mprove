@@ -85,7 +85,7 @@ test('1', async t => {
 
     let req: apiToBackend.ToBackendGetReportRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRep,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetReport,
         traceId: traceId,
         idempotencyKey: common.makeId()
       },
@@ -94,7 +94,7 @@ test('1', async t => {
         branchId: common.BRANCH_MASTER,
         envId: common.PROJECT_ENV_PROD,
         isRepoProd: false,
-        repId: 'r1',
+        reportId: 'r1',
         timeRangeFractionBrick: 'last 5 months',
         timeSpec: common.TimeSpecEnum.Months,
         timezone: 'UTC'

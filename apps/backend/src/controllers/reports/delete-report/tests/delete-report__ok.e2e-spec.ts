@@ -85,7 +85,7 @@ test('1', async t => {
 
     let req: apiToBackend.ToBackendDeleteReportRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRep,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteReport,
         traceId: traceId,
         idempotencyKey: common.makeId()
       },
@@ -94,7 +94,7 @@ test('1', async t => {
         isRepoProd: false,
         branchId: common.BRANCH_MASTER,
         envId: common.PROJECT_ENV_PROD,
-        repId: 'r1'
+        reportId: 'r1'
       }
     };
 

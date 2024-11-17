@@ -85,7 +85,7 @@ export class LoginSuccessComponent implements OnInit {
               envId,
               common.PATH_METRICS,
               common.PATH_REPORT,
-              common.EMPTY_REP_ID
+              common.EMPTY_REPORT_ID
             ];
 
             this.navigateService.navigateTo({ navParts: navParts });

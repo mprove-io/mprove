@@ -18,7 +18,7 @@ export class RowFiltersComponent {
   parameterTypeFormula = common.ParameterTypeEnum.Formula;
 
   @Input()
-  repSelectedNode: IRowNode<DataRow>;
+  reportSelectedNode: IRowNode<DataRow>;
 
   @Input()
   mconfig: common.MconfigX;
@@ -34,8 +34,8 @@ export class RowFiltersComponent {
   constructor(
     private uiQuery: UiQuery,
     private fb: FormBuilder,
-    private repQuery: ReportQuery,
-    private repService: ReportService,
+    private reportQuery: ReportQuery,
+    private reportService: ReportService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -52,7 +52,7 @@ export class RowFiltersComponent {
     filterExtended: common.FilterX,
     eventFractionUpdate: interfaces.EventFractionUpdate
   ) {
-    let newParameters = [...this.repSelectedNode.data.parameters];
+    let newParameters = [...this.reportSelectedNode.data.parameters];
 
     let parametersIndex = newParameters.findIndex(
       p => p.filter === filterExtended.fieldId
@@ -76,15 +76,15 @@ export class RowFiltersComponent {
       ...newParameters.slice(parametersIndex + 1)
     ];
 
-    let rep = this.repQuery.getValue();
+    let report = this.reportQuery.getValue();
 
     let rowChange: common.RowChange = {
-      rowId: this.repSelectedNode.data.rowId,
+      rowId: this.reportSelectedNode.data.rowId,
       parameters: newParameters
     };
 
-    this.repService.modifyRows({
-      rep: rep,
+    this.reportService.modifyRows({
+      report: report,
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined
@@ -92,7 +92,7 @@ export class RowFiltersComponent {
   }
 
   addFraction(filterExtended: common.FilterX) {
-    let newParameters = [...this.repSelectedNode.data.parameters];
+    let newParameters = [...this.reportSelectedNode.data.parameters];
 
     let parametersIndex = newParameters.findIndex(
       p => p.filter === filterExtended.fieldId
@@ -118,15 +118,15 @@ export class RowFiltersComponent {
       ...newParameters.slice(parametersIndex + 1)
     ];
 
-    let rep = this.repQuery.getValue();
+    let report = this.reportQuery.getValue();
 
     let rowChange: common.RowChange = {
-      rowId: this.repSelectedNode.data.rowId,
+      rowId: this.reportSelectedNode.data.rowId,
       parameters: newParameters
     };
 
-    this.repService.modifyRows({
-      rep: rep,
+    this.reportService.modifyRows({
+      report: report,
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined
@@ -134,7 +134,7 @@ export class RowFiltersComponent {
   }
 
   deleteFraction(filterExtended: common.FilterX, fractionIndex: number) {
-    let newParameters = [...this.repSelectedNode.data.parameters];
+    let newParameters = [...this.reportSelectedNode.data.parameters];
 
     let parametersIndex = newParameters.findIndex(
       p => p.filter === filterExtended.fieldId
@@ -164,15 +164,15 @@ export class RowFiltersComponent {
       ];
     }
 
-    let rep = this.repQuery.getValue();
+    let report = this.reportQuery.getValue();
 
     let rowChange: common.RowChange = {
-      rowId: this.repSelectedNode.data.rowId,
+      rowId: this.reportSelectedNode.data.rowId,
       parameters: newParameters
     };
 
-    this.repService.modifyRows({
-      rep: rep,
+    this.reportService.modifyRows({
+      report: report,
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined
@@ -180,7 +180,7 @@ export class RowFiltersComponent {
   }
 
   deleteFilter(filterExtended: common.FilterX) {
-    let newParameters = [...this.repSelectedNode.data.parameters];
+    let newParameters = [...this.reportSelectedNode.data.parameters];
 
     let parametersIndex = newParameters.findIndex(
       p => p.filter === filterExtended.fieldId
@@ -191,15 +191,15 @@ export class RowFiltersComponent {
       ...newParameters.slice(parametersIndex + 1)
     ];
 
-    let rep = this.repQuery.getValue();
+    let report = this.reportQuery.getValue();
 
     let rowChange: common.RowChange = {
-      rowId: this.repSelectedNode.data.rowId,
+      rowId: this.reportSelectedNode.data.rowId,
       parameters: newParameters
     };
 
-    this.repService.modifyRows({
-      rep: rep,
+    this.reportService.modifyRows({
+      report: report,
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined
@@ -207,17 +207,18 @@ export class RowFiltersComponent {
   }
 
   toggleParFormula(filterExtended: common.FilterX) {
-    let rep = this.repQuery.getValue();
+    let report = this.reportQuery.getValue();
 
-    let newParameters = [...this.repSelectedNode.data.parameters];
+    let newParameters = [...this.reportSelectedNode.data.parameters];
 
-    let parameterIndex = this.repSelectedNode.data.parameters.findIndex(
+    let parameterIndex = this.reportSelectedNode.data.parameters.findIndex(
       x => x.filter === filterExtended.fieldId
     );
 
-    let parameter: common.Parameter = this.repSelectedNode.data.parameters.find(
-      x => x.filter === filterExtended.fieldId
-    );
+    let parameter: common.Parameter =
+      this.reportSelectedNode.data.parameters.find(
+        x => x.filter === filterExtended.fieldId
+      );
 
     let newParameter;
 
@@ -250,12 +251,12 @@ export class RowFiltersComponent {
     ];
 
     let rowChange: common.RowChange = {
-      rowId: this.repSelectedNode.data.rowId,
+      rowId: this.reportSelectedNode.data.rowId,
       parameters: newParameters
     };
 
-    this.repService.modifyRows({
-      rep: rep,
+    this.reportService.modifyRows({
+      report: report,
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined
@@ -266,7 +267,7 @@ export class RowFiltersComponent {
     eventParameterFormulaUpdate: interfaces.EventParameterFormulaUpdate,
     filterExtended: common.FilterX
   ) {
-    let newParameters = [...this.repSelectedNode.data.parameters];
+    let newParameters = [...this.reportSelectedNode.data.parameters];
 
     let parametersIndex = newParameters.findIndex(
       p => p.filter === filterExtended.fieldId
@@ -282,15 +283,15 @@ export class RowFiltersComponent {
       ...newParameters.slice(parametersIndex + 1)
     ];
 
-    let rep = this.repQuery.getValue();
+    let report = this.reportQuery.getValue();
 
     let rowChange: common.RowChange = {
-      rowId: this.repSelectedNode.data.rowId,
+      rowId: this.reportSelectedNode.data.rowId,
       parameters: newParameters
     };
 
-    this.repService.modifyRows({
-      rep: rep,
+    this.reportService.modifyRows({
+      report: report,
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined

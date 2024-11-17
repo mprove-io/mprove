@@ -14,15 +14,15 @@ import { common } from '~front/barrels/common';
 })
 export class ReportOptionsComponent {
   @Input()
-  rep: common.ReportX;
+  report: common.ReportX;
 
-  repDeletedFnBindThis = this.repDeletedFn.bind(this);
+  reportDeletedFnBindThis = this.reportDeletedFn.bind(this);
 
   constructor(
     private navigateService: NavigateService,
     private apiService: ApiService,
-    private repQuery: ReportQuery,
-    private repsQuery: ReportsQuery,
+    private reportQuery: ReportQuery,
+    private reportsQuery: ReportsQuery,
     private uiQuery: UiQuery,
     private navQuery: NavQuery,
     private myDialogService: MyDialogService
@@ -35,7 +35,7 @@ export class ReportOptionsComponent {
   goToFileLine(event: MouseEvent) {
     event.stopPropagation();
 
-    let fileIdAr = this.rep.filePath.split('/');
+    let fileIdAr = this.report.filePath.split('/');
     fileIdAr.shift();
 
     this.navigateService.navigateToFileLine({
@@ -45,41 +45,45 @@ export class ReportOptionsComponent {
     });
   }
 
-  deleteRep(event: MouseEvent) {
+  deleteReport(event: MouseEvent) {
     event.stopPropagation();
 
     let nav = this.navQuery.getValue();
-    let selectedRep = this.repQuery.getValue();
+    let selectedReport = this.reportQuery.getValue();
 
-    this.myDialogService.showDeleteRep({
-      rep: this.rep,
+    this.myDialogService.showDeleteReport({
+      report: this.report,
       apiService: this.apiService,
-      repDeletedFnBindThis: this.repDeletedFnBindThis,
+      reportDeletedFnBindThis: this.reportDeletedFnBindThis,
       projectId: nav.projectId,
       branchId: nav.branchId,
       envId: nav.envId,
       isRepoProd: nav.isRepoProd,
-      isStartSpinnerUntilNavEnd: selectedRep.repId === this.rep.repId
+      isStartSpinnerUntilNavEnd:
+        selectedReport.reportId === this.report.reportId
     });
   }
 
-  repDeletedFn(deletedRepId: string) {
-    let selectedRep = this.repQuery.getValue();
-    let reps = this.repsQuery.getValue().reps;
+  reportDeletedFn(deletedReportId: string) {
+    let selectedReport = this.reportQuery.getValue();
+    let reports = this.reportsQuery.getValue().reports;
 
-    let repIndex = reps.findIndex(x => x.repId === deletedRepId);
+    let reportIndex = reports.findIndex(x => x.reportId === deletedReportId);
 
-    let newReps = [...reps.slice(0, repIndex), ...reps.slice(repIndex + 1)];
+    let newReports = [
+      ...reports.slice(0, reportIndex),
+      ...reports.slice(reportIndex + 1)
+    ];
 
-    this.repsQuery.update({ reps: newReps });
+    this.reportsQuery.update({ reports: newReports });
 
     let uiState = this.uiQuery.getValue();
 
-    if (selectedRep.repId === deletedRepId) {
+    if (selectedReport.reportId === deletedReportId) {
       uiState.gridApi.deselectAll();
 
       this.navigateService.navigateToMetricsRep({
-        repId: common.EMPTY_REP_ID,
+        reportId: common.EMPTY_REPORT_ID,
         selectRowsNodeIds: []
       });
     }

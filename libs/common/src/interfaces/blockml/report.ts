@@ -20,7 +20,7 @@ export class Report {
   structId: string;
 
   @IsString()
-  repId: string;
+  reportId: string;
 
   @IsBoolean()
   draft: boolean;

@@ -43,7 +43,7 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
     private cd: ChangeDetectorRef,
     private metricsQuery: MetricsQuery,
     private uiQuery: UiQuery,
-    private repQuery: ReportQuery
+    private reportQuery: ReportQuery
   ) {}
 
   agInit(params: ICellRendererParams<DataRow>) {
@@ -66,7 +66,7 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
         .metrics.find(y => y.metricId === this.params.data.metricId);
 
       if (this.metric.type === common.MetricTypeEnum.Model) {
-        let timeSpec = this.repQuery.getValue().timeSpec;
+        let timeSpec = this.reportQuery.getValue().timeSpec;
 
         let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
 

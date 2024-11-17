@@ -22,7 +22,7 @@ export class EditDraftReportController {
   constructor(
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private repsService: ReportsService,
+    private reportsService: ReportsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,
@@ -31,7 +31,7 @@ export class EditDraftReportController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditDraftRep)
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditDraftReport)
   async editDraftRep(
     @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
@@ -44,7 +44,7 @@ export class EditDraftReportController {
       isRepoProd,
       branchId,
       envId,
-      repId,
+      reportId,
       changeType,
       rowChange,
       rowIds,
@@ -86,9 +86,9 @@ export class EditDraftReportController {
       projectId: projectId
     });
 
-    let rep = await this.repsService.getRep({
+    let report = await this.reportsService.getReport({
       projectId: projectId,
-      repId: repId,
+      reportId: reportId,
       structId: bridge.structId,
       checkExist: true,
       checkAccess: true,
@@ -116,8 +116,8 @@ export class EditDraftReportController {
           //   })
           [];
 
-    let processedRows = this.repsService.getProcessedRows({
-      rows: rep.rows,
+    let processedRows = this.reportsService.getProcessedRows({
+      rows: report.rows,
       rowChange: rowChange,
       rowIds: rowIds,
       changeType: changeType,
@@ -128,12 +128,12 @@ export class EditDraftReportController {
       struct: struct
     });
 
-    rep.rows = processedRows;
+    report.rows = processedRows;
 
     let userMemberApi = this.wrapToApiService.wrapToApiMember(userMember);
 
-    let repApi = await this.repsService.getRepData({
-      rep: rep,
+    let repApi = await this.reportsService.getRepData({
+      report: report,
       traceId: traceId,
       project: project,
       userMemberApi: userMemberApi,
@@ -151,7 +151,7 @@ export class EditDraftReportController {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: userMemberApi,
-      rep: repApi
+      report: repApi
     };
 
     return payload;

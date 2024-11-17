@@ -16,7 +16,7 @@ export const BRANCH_MAIN = 'main';
 export const PROJECT_ENV_PROD = 'prod';
 export const PASS_PHRASE = '';
 
-export const REP_ROW_DEFAULT_SHOW_CHART = false;
+export const REPORT_ROW_DEFAULT_SHOW_CHART = false;
 
 export const DASHBOARD_FIELD_DEFAULT_HIDDEN = false;
 
@@ -105,9 +105,9 @@ export const PARAMETER_MODEL_ID = 'modelId';
 export const PARAMETER_DASHBOARD_ID = 'dashboardId';
 export const PARAMETER_MCONFIG_ID = 'mconfigId';
 export const PARAMETER_QUERY_ID = 'queryId';
-export const PARAMETER_REP_ID = 'repId';
+export const PARAMETER_REPORT_ID = 'reportId';
 
-export const EMPTY_REP_ID = 'new';
+export const EMPTY_REPORT_ID = 'new';
 
 export const PATH_PROJECT = 'project';
 export const PATH_REPO = 'repo';

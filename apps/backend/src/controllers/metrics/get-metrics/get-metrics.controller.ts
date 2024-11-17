@@ -77,7 +77,7 @@ export class GetMetricsController {
     //   where: { struct_id: bridge.struct_id }
     // });
 
-    let draftReps = await this.db.drizzle.query.reportsTable.findMany({
+    let draftReports = await this.db.drizzle.query.reportsTable.findMany({
       where: and(
         eq(reportsTable.draft, true),
         eq(reportsTable.creatorId, user.userId),
@@ -93,7 +93,7 @@ export class GetMetricsController {
     //   }
     // });
 
-    let structReps = await this.db.drizzle.query.reportsTable.findMany({
+    let structReports = await this.db.drizzle.query.reportsTable.findMany({
       where: and(
         eq(reportsTable.draft, false),
         eq(reportsTable.structId, bridge.structId)
@@ -107,7 +107,7 @@ export class GetMetricsController {
     //   }
     // });
 
-    let repsGrantedAccess = structReps.filter(x =>
+    let reportsGrantedAccess = structReports.filter(x =>
       helper.checkAccess({
         userAlias: user.alias,
         member: userMember,
@@ -115,8 +115,8 @@ export class GetMetricsController {
       })
     );
 
-    let reps = [
-      ...draftReps
+    let reports = [
+      ...draftReports
         .sort((a, b) =>
           a.draftCreatedTs > b.draftCreatedTs
             ? 1
@@ -125,7 +125,7 @@ export class GetMetricsController {
             : 0
         )
         .reverse(),
-      ...repsGrantedAccess.sort((a, b) => {
+      ...reportsGrantedAccess.sort((a, b) => {
         let aTitle = a.title.toLowerCase() || a.reportId.toLowerCase();
         let bTitle = b.title.toLowerCase() || a.reportId.toLowerCase();
 
@@ -165,9 +165,9 @@ export class GetMetricsController {
       metrics: metrics.map(x =>
         this.wrapToApiService.wrapToApiMetric({ metric: x })
       ),
-      reps: reps.map(x =>
+      reports: reports.map(x =>
         this.wrapToApiService.wrapToApiRep({
-          rep: x,
+          report: x,
           member: apiMember,
           columns: [],
           models: models.map(model =>

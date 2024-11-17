@@ -159,11 +159,11 @@ export class WrapToEntService {
     return {
       reportFullId: this.hashService.makeReportFullId({
         structId: report.structId,
-        reportId: report.repId
+        reportId: report.reportId
       }),
       projectId: report.projectId,
       structId: report.structId,
-      reportId: report.repId,
+      reportId: report.reportId,
       filePath: report.filePath,
       draft: report.draft,
       creatorId: report.creatorId,

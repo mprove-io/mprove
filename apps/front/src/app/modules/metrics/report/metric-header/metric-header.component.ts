@@ -15,10 +15,10 @@ import { UiService } from '~front/app/services/ui.service';
 export class MetricHeaderComponent implements IHeaderAngularComp {
   params: IHeaderParams;
 
-  repSelectedNodes: IRowNode<DataRow>[] = [];
-  repSelectedNodes$ = this.uiQuery.repSelectedNodes$.pipe(
+  reportSelectedNodes: IRowNode<DataRow>[] = [];
+  reportSelectedNodes$ = this.uiQuery.reportSelectedNodes$.pipe(
     tap(x => {
-      this.repSelectedNodes = x;
+      this.reportSelectedNodes = x;
       this.cd.detectChanges();
     })
   );
@@ -40,8 +40,8 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
   constructor(
     private uiQuery: UiQuery,
     private uiService: UiService,
-    private repService: ReportService,
-    private repQuery: ReportQuery,
+    private reportService: ReportService,
+    private reportQuery: ReportQuery,
     private cd: ChangeDetectorRef
   ) {}
 

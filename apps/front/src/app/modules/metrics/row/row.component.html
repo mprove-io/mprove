@@ -1,12 +1,12 @@
 <!-- <div
   class="mb-5 mr-9 flex h-11 flex-row items-center text-lg"
-  *ngIf="repSelectedNodes.length === 0"
+  *ngIf="reportSelectedNodes.length === 0"
 >
   No rows selected
 </div> -->
 <div
   class="mb-5 mr-9 flex h-11 w-full flex-row items-center"
-  *ngIf="repSelectedNodes.length > 1"
+  *ngIf="reportSelectedNodes.length > 1"
 >
   <div class="text-lg"> Multiple rows selected </div>
 
@@ -33,7 +33,7 @@
 
 <div
   class="mb-5 mr-9 flex h-full w-full flex-col space-y-7"
-  *ngIf="!!repSelectedNode"
+  *ngIf="!!reportSelectedNode"
 >
   <div class="flex flex-row items-start space-x-10">
     <div class="flex h-11 flex-row items-center space-x-5 text-lg">
@@ -42,14 +42,14 @@
       >
 
       <div class="flex w-[26px] items-center">{{
-        repSelectedNode.data.rowId
+        reportSelectedNode.data.rowId
       }}</div>
 
       <div class="ml-3">
         <button
           *ngIf="
-            repSelectedNode.data.rowType !== rowTypeEmpty &&
-            repSelectedNode.data.rowType !== rowTypeHeader
+            reportSelectedNode.data.rowType !== rowTypeEmpty &&
+            reportSelectedNode.data.rowType !== rowTypeHeader
           "
           type="button"
           data-cy="rowToHeaderButton"
@@ -65,8 +65,8 @@
 
         <!-- <button
           *ngIf="
-            repSelectedNode.data.rowType !== rowTypeEmpty &&
-            repSelectedNode.data.rowType !== rowTypeHeader
+            reportSelectedNode.data.rowType !== rowTypeEmpty &&
+            reportSelectedNode.data.rowType !== rowTypeHeader
           "
           class="flex h-9 w-9 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
           (click)="toggleShowFormatOptions()"
@@ -91,13 +91,13 @@
           ? (rowTypeFormula | capitalize)
           : isToMetric === true
           ? (rowTypeMetric | capitalize)
-          : (repSelectedNode.data.rowType | capitalize)
+          : (reportSelectedNode.data.rowType | capitalize)
       }}</div>
     </div>
 
     <div
       class="flex min-w-[2px] flex-1 flex-row items-start space-x-5 overflow-auto"
-      *ngIf="repSelectedNode.data.rowType === rowTypeEmpty"
+      *ngIf="reportSelectedNode.data.rowType === rowTypeEmpty"
     >
       <div
         class="flex flex-row"
@@ -264,22 +264,22 @@
     </div>
 
     <button
-      *ngIf="repSelectedNode.data.rowType === rowTypeMetric"
+      *ngIf="reportSelectedNode.data.rowType === rowTypeMetric"
       type="button"
       data-cy="metricsExploreButton"
       class="ml-5 flex h-11 flex-shrink-0 items-center justify-center rounded px-6 text-base font-medium text-white focus:outline-none"
       [ngClass]="{
         'bg-blue3':
-          repSelectedNode.data.rowType === rowTypeMetric &&
-          repSelectedNode.data.hasAccessToModel === true,
+          reportSelectedNode.data.rowType === rowTypeMetric &&
+          reportSelectedNode.data.hasAccessToModel === true,
         'cursor-default bg-gray-400':
-          repSelectedNode.data.rowType !== rowTypeMetric ||
-          repSelectedNode.data.hasAccessToModel !== true
+          reportSelectedNode.data.rowType !== rowTypeMetric ||
+          reportSelectedNode.data.hasAccessToModel !== true
       }"
       (click)="explore()"
       [disabled]="
-        repSelectedNode.data.rowType !== rowTypeMetric &&
-        repSelectedNode.data.hasAccessToModel === true
+        reportSelectedNode.data.rowType !== rowTypeMetric &&
+        reportSelectedNode.data.hasAccessToModel === true
       "
     >
       Explore
@@ -287,7 +287,7 @@
 
     <!-- <div
       class="flex h-11 flex-row items-center space-x-5"
-      *ngIf="repSelectedNode.data.rowType === rowTypeMetric"
+      *ngIf="reportSelectedNode.data.rowType === rowTypeMetric"
     >
       <div
         class="text-gray1 flex flex-shrink-0 select-none items-center font-semibold"
@@ -295,14 +295,14 @@
       >
 
       <div class="flex items-center truncate">
-        <div class="truncate">{{ repSelectedNode.data.metricId }}</div>
+        <div class="truncate">{{ reportSelectedNode.data.metricId }}</div>
       </div>
     </div> -->
 
     <div
       *ngIf="
-        repSelectedNode.data.rowType !== rowTypeEmpty &&
-        repSelectedNode.data.rowType !== rowTypeMetric
+        reportSelectedNode.data.rowType !== rowTypeEmpty &&
+        reportSelectedNode.data.rowType !== rowTypeMetric
       "
       class="flex h-11 max-w-[600px] flex-1 flex-row items-center space-x-5"
     >
@@ -341,8 +341,8 @@
     class="flex flex-col"
     *ngIf="
       isShowFormatOptions === true &&
-      (repSelectedNode.data.rowType === rowTypeFormula ||
-        repSelectedNode.data.rowType === rowTypeMetric)
+      (reportSelectedNode.data.rowType === rowTypeFormula ||
+        reportSelectedNode.data.rowType === rowTypeMetric)
     "
   >
     <div class="flex h-11 flex-row items-start space-x-10">
@@ -467,7 +467,7 @@
   </div>
 
   <div
-    *ngIf="repSelectedNode.data.rowType === rowTypeFormula"
+    *ngIf="reportSelectedNode.data.rowType === rowTypeFormula"
     class="flex flex-1 flex-row items-start space-x-5"
   >
     <div
@@ -497,7 +497,7 @@
 
   <div
     class="flex min-h-[44px] flex-grow flex-row overflow-y-auto"
-    *ngIf="repSelectedNode.data.rowType === rowTypeMetric"
+    *ngIf="reportSelectedNode.data.rowType === rowTypeMetric"
   >
     <div
       class="text-gray1 flex h-11 select-none flex-row items-start space-x-2 font-semibold"
@@ -513,7 +513,7 @@
     >
       <m-formula-icon
         [ngClass]="{
-          'text-blue-500': !!repSelectedNode.data.parametersFormula
+          'text-blue-500': !!reportSelectedNode.data.parametersFormula
         }"
       ></m-formula-icon>
     </button>
@@ -521,7 +521,7 @@
     <div class="flex w-full flex-col">
       <div
         class="flex items-start"
-        *ngIf="!!repSelectedNode.data.parametersFormula"
+        *ngIf="!!reportSelectedNode.data.parametersFormula"
       >
         <div class="flex max-w-[750px] flex-grow flex-row">
           <div
@@ -549,16 +549,16 @@
         </div>
 
         <ng-template #templateErrors>
-          <div *ngIf="repSelectedNode.data.isParamsSchemaValid === false">{{
-            repSelectedNode.data.paramsSchemaError
+          <div *ngIf="reportSelectedNode.data.isParamsSchemaValid === false">{{
+            reportSelectedNode.data.paramsSchemaError
           }}</div>
         </ng-template>
 
         <div
           *ngIf="
-            !!repSelectedNode.data.parametersFormula &&
-            (repSelectedNode.data.isParamsJsonValid === false ||
-              repSelectedNode.data.isParamsSchemaValid === false)
+            !!reportSelectedNode.data.parametersFormula &&
+            (reportSelectedNode.data.isParamsJsonValid === false ||
+              reportSelectedNode.data.isParamsSchemaValid === false)
           "
           class="text-red1 ml-5 mt-1 flex h-8 w-8 flex-shrink-0"
           [tp]="templateErrors"
@@ -570,7 +570,7 @@
       <div class="flex w-full flex-row">
         <div
           tp="Turn off formula to activate control"
-          [tpIsEnabled]="!!repSelectedNode.data.parametersFormula"
+          [tpIsEnabled]="!!reportSelectedNode.data.parametersFormula"
         >
           <button
             type="button"
@@ -578,11 +578,11 @@
             class="ml-7 h-11 select-none rounded border px-4 py-2 focus:outline-none"
             [ngClass]="{
               'border-gray-400 text-gray-500 hover:bg-white':
-                !repSelectedNode.data.parametersFormula,
+                !reportSelectedNode.data.parametersFormula,
               'cursor-default border-gray-300 text-gray-400':
-                !!repSelectedNode.data.parametersFormula
+                !!reportSelectedNode.data.parametersFormula
             }"
-            [disabled]="!!repSelectedNode.data.parametersFormula"
+            [disabled]="!!reportSelectedNode.data.parametersFormula"
             (click)="addParameter()"
           >
             Add
@@ -683,7 +683,7 @@
 
           <m-row-filters
             *ngIf="parametersFilters.length > 0"
-            [repSelectedNode]="repSelectedNode"
+            [reportSelectedNode]="reportSelectedNode"
             [mconfig]="mconfig"
             [parametersFilters]="parametersFilters"
           ></m-row-filters>
@@ -695,4 +695,4 @@
 
 <div *ngIf="uiQuery$ | async"></div>
 <div *ngIf="metrics$ | async"></div>
-<div *ngIf="rep$ | async"></div>
+<div *ngIf="report$ | async"></div>

@@ -57,7 +57,7 @@ export class SaveCreateReportController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveCreateRep)
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveCreateReport)
   async saveCreateRep(
     @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
@@ -76,8 +76,8 @@ export class SaveCreateReportController {
       isRepoProd,
       branchId,
       envId,
-      newRepId,
-      fromRepId,
+      newReportId,
+      fromReportId,
       accessRoles,
       accessUsers,
       title,
@@ -134,9 +134,9 @@ export class SaveCreateReportController {
       });
     }
 
-    let fromRep = await this.reportsService.getRep({
+    let fromReport = await this.reportsService.getReport({
       projectId: projectId,
-      repId: fromRepId,
+      reportId: fromReportId,
       structId: bridge.structId,
       checkExist: true,
       checkAccess: true,
@@ -144,7 +144,7 @@ export class SaveCreateReportController {
       userMember: userMember
     });
 
-    let metricRows = fromRep.rows.filter(
+    let metricRows = fromReport.rows.filter(
       row => row.rowType === common.RowTypeEnum.Metric
     );
 
@@ -168,11 +168,11 @@ export class SaveCreateReportController {
           [];
 
     let repFileText = makeReportFileText({
-      repId: newRepId,
+      reportId: newReportId,
       accessRoles: accessRoles,
       accessUsers: accessUsers,
       title: title,
-      rows: fromRep.rows,
+      rows: fromReport.rows,
       metrics: metrics,
       struct: currentStruct
     });
@@ -194,7 +194,7 @@ export class SaveCreateReportController {
         ? `${projectId}/${common.MPROVE_USERS_FOLDER}/${user.alias}`
         : `${projectId}/${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}`;
 
-    let fileName = `${newRepId}${common.FileExtensionEnum.Report}`;
+    let fileName = `${newReportId}${common.FileExtensionEnum.Report}`;
 
     let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
       info: {
@@ -250,7 +250,7 @@ export class SaveCreateReportController {
       }
     });
 
-    let { reps, struct } = await this.blockmlService.rebuildStruct({
+    let { reports: reports, struct } = await this.blockmlService.rebuildStruct({
       traceId: traceId,
       orgId: project.orgId,
       projectId: projectId,
@@ -261,26 +261,26 @@ export class SaveCreateReportController {
       envId: envId
     });
 
-    let rep = reps.find(x => x.repId === newRepId);
+    let report = reports.find(x => x.reportId === newReportId);
 
-    if (common.isDefined(rep)) {
-      rep.rows = fromRep.rows;
+    if (common.isDefined(report)) {
+      report.rows = fromReport.rows;
     }
 
-    let repEnt = common.isDefined(rep)
-      ? this.wrapToEntService.wrapToEntityReport(rep)
+    let repEnt = common.isDefined(report)
+      ? this.wrapToEntService.wrapToEntityReport(report)
       : undefined;
 
     await retry(
       async () =>
         await this.db.drizzle.transaction(async tx => {
-          if (fromRep.draft === true) {
+          if (fromReport.draft === true) {
             await tx
               .delete(reportsTable)
               .where(
                 and(
                   eq(reportsTable.projectId, projectId),
-                  eq(reportsTable.reportId, fromRepId),
+                  eq(reportsTable.reportId, fromReportId),
                   eq(reportsTable.draft, true),
                   eq(reportsTable.creatorId, user.userId)
                 )
@@ -325,14 +325,14 @@ export class SaveCreateReportController {
     //   }
     // });
 
-    if (common.isUndefined(rep)) {
+    if (common.isUndefined(report)) {
       let fileId = `${parentNodeId}/${fileName}`;
       let fileIdAr = fileId.split('/');
       fileIdAr.shift();
       let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
 
       throw new common.ServerError({
-        message: common.ErEnum.BACKEND_CREATE_REP_FAIL,
+        message: common.ErEnum.BACKEND_CREATE_REPORT_FAIL,
         data: {
           underscoreFileId: underscoreFileId
         }
@@ -342,7 +342,7 @@ export class SaveCreateReportController {
     let userMemberApi = this.wrapToApiService.wrapToApiMember(userMember);
 
     let repApi = await this.reportsService.getRepData({
-      rep: repEnt,
+      report: repEnt,
       traceId: traceId,
       project: project,
       userMemberApi: userMemberApi,
@@ -359,7 +359,7 @@ export class SaveCreateReportController {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: userMemberApi,
-      rep: repApi
+      report: repApi
     };
 
     return payload;

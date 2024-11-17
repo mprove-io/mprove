@@ -22,14 +22,14 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 enum ReportSaveAsEnum {
-  NEW_REP = 'NEW_REP',
-  REPLACE_EXISTING_REP = 'REPLACE_EXISTING_REP'
+  NEW_REPORT = 'NEW_REPORT',
+  REPLACE_EXISTING_REPORT = 'REPLACE_EXISTING_REPORT'
 }
 
 export interface ReportSaveAsDialogData {
   apiService: ApiService;
-  reps: common.ReportX[];
-  rep: common.ReportX;
+  reports: common.ReportX[];
+  report: common.ReportX;
 }
 
 @Component({
@@ -44,11 +44,11 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
   usersFolder = common.MPROVE_USERS_FOLDER;
 
-  repSaveAsEnum = ReportSaveAsEnum;
+  reportSaveAsEnum = ReportSaveAsEnum;
 
-  spinnerName = 'repSaveAs';
+  spinnerName = 'reportSaveAs';
 
-  rep: common.ReportX;
+  report: common.ReportX;
 
   titleForm: FormGroup = this.fb.group({
     title: [undefined, [Validators.required, Validators.maxLength(255)]]
@@ -62,9 +62,9 @@ export class ReportSaveAsDialogComponent implements OnInit {
     users: [undefined, [Validators.maxLength(255)]]
   });
 
-  saveAs: ReportSaveAsEnum = ReportSaveAsEnum.NEW_REP;
+  saveAs: ReportSaveAsEnum = ReportSaveAsEnum.NEW_REPORT;
 
-  newRepId: string;
+  newReportId: string;
 
   alias: string;
   alias$ = this.userQuery.alias$.pipe(
@@ -74,12 +74,12 @@ export class ReportSaveAsDialogComponent implements OnInit {
     })
   );
 
-  fromRepId: string;
+  fromReportId: string;
 
-  selectedRepId: any; // string
+  selectedReportId: any; // string
   selectedRepPath: string;
 
-  reps: common.ReportX[];
+  reports: common.ReportX[];
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -102,8 +102,8 @@ export class ReportSaveAsDialogComponent implements OnInit {
     private fb: FormBuilder,
     private userQuery: UserQuery,
     private navQuery: NavQuery,
-    private repQuery: ReportQuery,
-    private repsQuery: ReportsQuery,
+    private reportQuery: ReportQuery,
+    private reportsQuery: ReportsQuery,
     private uiQuery: UiQuery,
     private structQuery: StructQuery,
     private navigateService: NavigateService,
@@ -112,28 +112,28 @@ export class ReportSaveAsDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.rep = this.ref.data.rep;
+    this.report = this.ref.data.report;
 
-    this.fromRepId = this.ref.data.rep.repId;
-    this.newRepId = this.ref.data.rep.repId;
+    this.fromReportId = this.ref.data.report.reportId;
+    this.newReportId = this.ref.data.report.reportId;
 
     setValueAndMark({
       control: this.titleForm.controls['title'],
-      value: this.rep.title
+      value: this.report.title
     });
 
     setValueAndMark({
       control: this.rolesForm.controls['roles'],
-      value: this.rep.accessRoles?.join(', ')
+      value: this.report.accessRoles?.join(', ')
     });
 
     setValueAndMark({
       control: this.usersForm.controls['users'],
-      value: this.rep.accessUsers?.join(', ')
+      value: this.report.accessUsers?.join(', ')
     });
 
-    this.reps = this.ref.data.reps.map(x => {
-      (x as any).disabled = !x.canEditOrDeleteRep;
+    this.reports = this.ref.data.reports.map(x => {
+      (x as any).disabled = !x.canEditOrDeleteReport;
       return x;
     });
 
@@ -156,13 +156,13 @@ export class ReportSaveAsDialogComponent implements OnInit {
       let roles = this.rolesForm.controls['roles'].value;
       let users = this.usersForm.controls['users'].value;
 
-      if (this.saveAs === ReportSaveAsEnum.NEW_REP) {
+      if (this.saveAs === ReportSaveAsEnum.NEW_REPORT) {
         this.saveAsNewRep({
           newTitle: newTitle,
           roles: roles,
           users: users
         });
-      } else if (this.saveAs === ReportSaveAsEnum.REPLACE_EXISTING_REP) {
+      } else if (this.saveAs === ReportSaveAsEnum.REPLACE_EXISTING_REPORT) {
         this.saveAsExistingRep({
           newTitle: newTitle,
           roles: roles,
@@ -173,11 +173,11 @@ export class ReportSaveAsDialogComponent implements OnInit {
   }
 
   newRepOnClick() {
-    this.saveAs = ReportSaveAsEnum.NEW_REP;
+    this.saveAs = ReportSaveAsEnum.NEW_REPORT;
   }
 
   existingRepOnClick() {
-    this.saveAs = ReportSaveAsEnum.REPLACE_EXISTING_REP;
+    this.saveAs = ReportSaveAsEnum.REPLACE_EXISTING_REPORT;
   }
 
   saveAsNewRep(item: { newTitle: string; roles: string; users: string }) {
@@ -190,8 +190,8 @@ export class ReportSaveAsDialogComponent implements OnInit {
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
-      newRepId: this.newRepId,
-      fromRepId: this.fromRepId,
+      newReportId: this.newReportId,
+      fromReportId: this.fromReportId,
       title: newTitle,
       accessRoles: common.isDefinedAndNotEmpty(roles?.trim())
         ? roles.split(',')
@@ -211,46 +211,48 @@ export class ReportSaveAsDialogComponent implements OnInit {
     apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveCreateRep,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveCreateReport,
         payload: payload
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendSaveCreateReportResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            let reps = this.repsQuery.getValue().reps;
+            let reports = this.reportsQuery.getValue().reports;
 
-            let draftRepIndex = reps.findIndex(
-              x => x.repId === this.fromRepId && x.draft === true
+            let draftRepIndex = reports.findIndex(
+              x => x.reportId === this.fromReportId && x.draft === true
             );
 
-            let newReps = [
-              ...reps.slice(0, draftRepIndex),
-              ...reps.slice(draftRepIndex + 1)
+            let newReports = [
+              ...reports.slice(0, draftRepIndex),
+              ...reports.slice(draftRepIndex + 1)
             ];
 
-            newReps.push(resp.payload.rep);
+            newReports.push(resp.payload.report);
 
-            let draftReps = newReps.filter(x => x.draft === true);
-            let structReps = newReps.filter(x => x.draft === false);
+            let draftReports = newReports.filter(x => x.draft === true);
+            let structReports = newReports.filter(x => x.draft === false);
 
-            newReps = [
-              ...draftReps,
-              ...structReps.sort((a, b) => {
-                let aTitle = a.title.toLowerCase() || a.repId.toLowerCase();
-                let bTitle = b.title.toLowerCase() || a.repId.toLowerCase();
+            newReports = [
+              ...draftReports,
+              ...structReports.sort((a, b) => {
+                let aTitle = a.title.toLowerCase() || a.reportId.toLowerCase();
+                let bTitle = b.title.toLowerCase() || a.reportId.toLowerCase();
 
                 return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
               })
             ];
 
-            this.repsQuery.update({ reps: newReps });
-            this.repQuery.update(resp.payload.rep);
+            this.reportsQuery.update({ reports: newReports });
+            this.reportQuery.update(resp.payload.report);
 
             this.spinner.hide(constants.APP_SPINNER_NAME); // route params do not change
 
             this.navigateService.navigateToMetricsRep({
-              repId: resp.payload.rep.repId,
-              selectRowsNodeIds: uiState.repSelectedNodes.map(node => node.id)
+              reportId: resp.payload.report.reportId,
+              selectRowsNodeIds: uiState.reportSelectedNodes.map(
+                node => node.id
+              )
             });
           }
         }),
@@ -271,8 +273,8 @@ export class ReportSaveAsDialogComponent implements OnInit {
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
-      modRepId: this.selectedRepId,
-      fromRepId: this.fromRepId,
+      modReportId: this.selectedReportId,
+      fromReportId: this.fromReportId,
       title: newTitle,
       accessRoles: common.isDefinedAndNotEmpty(roles?.trim())
         ? roles.split(',').map(x => x.trim())
@@ -290,56 +292,58 @@ export class ReportSaveAsDialogComponent implements OnInit {
     apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveModifyRep,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveModifyReport,
         payload: payload
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendSaveModifyReportResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            let reps = this.repsQuery.getValue().reps;
+            let reports = this.reportsQuery.getValue().reports;
 
-            let draftRepIndex = reps.findIndex(
-              x => x.repId === this.fromRepId && x.draft === true
+            let draftRepIndex = reports.findIndex(
+              x => x.reportId === this.fromReportId && x.draft === true
             );
 
-            let newRepsA = [
-              ...reps.slice(0, draftRepIndex),
-              ...reps.slice(draftRepIndex + 1)
+            let newReportsA = [
+              ...reports.slice(0, draftRepIndex),
+              ...reports.slice(draftRepIndex + 1)
             ];
 
-            let modRepIndex = newRepsA.findIndex(
-              x => x.repId === this.selectedRepId && x.draft === false
+            let modRepIndex = newReportsA.findIndex(
+              x => x.reportId === this.selectedReportId && x.draft === false
             );
 
-            let modRep = newRepsA[modRepIndex];
+            let modRep = newReportsA[modRepIndex];
             let modRepWithTitle = Object.assign({}, modRep, {
               title: newTitle
             });
 
-            let newRepsB = [
-              ...newRepsA.slice(0, modRepIndex),
+            let newReportsB = [
+              ...newReportsA.slice(0, modRepIndex),
               modRepWithTitle,
-              ...newRepsA.slice(modRepIndex + 1)
+              ...newReportsA.slice(modRepIndex + 1)
             ];
 
-            let draftReps = newRepsB.filter(x => x.draft === true);
-            let structReps = newRepsB.filter(x => x.draft === false);
+            let draftReports = newReportsB.filter(x => x.draft === true);
+            let structReports = newReportsB.filter(x => x.draft === false);
 
-            let newRepsC = [
-              ...draftReps,
-              ...structReps.sort((a, b) => {
-                let aTitle = a.title.toLowerCase() || a.repId.toLowerCase();
-                let bTitle = b.title.toLowerCase() || a.repId.toLowerCase();
+            let newReportsC = [
+              ...draftReports,
+              ...structReports.sort((a, b) => {
+                let aTitle = a.title.toLowerCase() || a.reportId.toLowerCase();
+                let bTitle = b.title.toLowerCase() || a.reportId.toLowerCase();
 
                 return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
               })
             ];
 
-            this.repsQuery.update({ reps: newRepsC });
+            this.reportsQuery.update({ reports: newReportsC });
 
             this.navigateService.navigateToMetricsRep({
-              repId: resp.payload.rep.repId,
-              selectRowsNodeIds: uiState.repSelectedNodes.map(node => node.id)
+              reportId: resp.payload.report.reportId,
+              selectRowsNodeIds: uiState.reportSelectedNodes.map(
+                node => node.id
+              )
             });
           }
         }),
@@ -350,24 +354,28 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
   selectedChange() {
     this.makePath();
-    if (common.isDefined(this.selectedRepId)) {
-      let selectedRep = this.reps.find(x => x.repId === this.selectedRepId);
-      this.titleForm.controls['title'].setValue(selectedRep.title);
+    if (common.isDefined(this.selectedReportId)) {
+      let selectedReport = this.reports.find(
+        x => x.reportId === this.selectedReportId
+      );
+      this.titleForm.controls['title'].setValue(selectedReport.title);
     }
   }
 
   makePath() {
     if (
-      common.isUndefined(this.selectedRepId) ||
-      common.isUndefined(this.reps)
+      common.isUndefined(this.selectedReportId) ||
+      common.isUndefined(this.reports)
     ) {
       return;
     }
 
-    let selectedRep = this.reps.find(x => x.repId === this.selectedRepId);
+    let selectedReport = this.reports.find(
+      x => x.reportId === this.selectedReportId
+    );
 
-    if (common.isDefined(selectedRep)) {
-      let parts = selectedRep.filePath.split('/');
+    if (common.isDefined(selectedReport)) {
+      let parts = selectedReport.filePath.split('/');
 
       parts.shift();
 

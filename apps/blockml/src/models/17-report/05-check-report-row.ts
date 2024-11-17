@@ -8,7 +8,7 @@ let func = common.FuncEnum.CheckReportRow;
 
 export function checkReportRow(
   item: {
-    reps: common.FileReport[];
+    reports: common.FileReport[];
     metrics: common.MetricAny[];
     errors: BmError[];
     structId: string;
@@ -19,9 +19,9 @@ export function checkReportRow(
   let { caller, structId, metrics } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newReps: common.FileReport[] = [];
+  let newReports: common.FileReport[] = [];
 
-  item.reps.forEach(x => {
+  item.reports.forEach(x => {
     let errorsOnStart = item.errors.length;
 
     x.rows.forEach(row => {
@@ -229,7 +229,7 @@ export function checkReportRow(
     });
 
     if (errorsOnStart === item.errors.length) {
-      newReps.push(x);
+      newReports.push(x);
     }
   });
 
@@ -241,7 +241,14 @@ export function checkReportRow(
     common.LogTypeEnum.Errors,
     item.errors
   );
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Entities, newReps);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
+    newReports
+  );
 
-  return newReps;
+  return newReports;
 }

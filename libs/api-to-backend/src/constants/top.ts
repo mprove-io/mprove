@@ -167,19 +167,19 @@ export const nameToClass = {
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetMetrics]:
     interfaces.ToBackendGetMetricsRequest,
   //
-  [enums.ToBackendRequestInfoNameEnum.ToBackendGetRep]:
+  [enums.ToBackendRequestInfoNameEnum.ToBackendGetReport]:
     interfaces.ToBackendGetReportRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendCreateDraftRep]:
+  [enums.ToBackendRequestInfoNameEnum.ToBackendCreateDraftReport]:
     interfaces.ToBackendCreateDraftReportRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendEditDraftRep]:
+  [enums.ToBackendRequestInfoNameEnum.ToBackendEditDraftReport]:
     interfaces.ToBackendEditDraftReportRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftReps]:
+  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftReports]:
     interfaces.ToBackendDeleteDraftReportsRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendSaveCreateRep]:
+  [enums.ToBackendRequestInfoNameEnum.ToBackendSaveCreateReport]:
     interfaces.ToBackendSaveCreateReportRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendSaveModifyRep]:
+  [enums.ToBackendRequestInfoNameEnum.ToBackendSaveModifyReport]:
     interfaces.ToBackendSaveModifyReportRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteRep]:
+  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteReport]:
     interfaces.ToBackendDeleteReportRequest,
   //
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetModels]:

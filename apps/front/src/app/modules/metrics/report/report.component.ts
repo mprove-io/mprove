@@ -166,9 +166,9 @@ export class ReportComponent {
   //   })
   // );
 
-  rep: common.ReportX;
-  rep$ = combineLatest([
-    this.repQuery.select(),
+  report: common.ReportX;
+  report$ = combineLatest([
+    this.reportQuery.select(),
     this.uiQuery.timeColumnsNarrowWidth$,
     this.uiQuery.timeColumnsWideWidth$,
     this.uiQuery.showChartForSelectedRows$,
@@ -182,7 +182,7 @@ export class ReportComponent {
         showChartForSelectedRows,
         showParametersJson
       ]: [common.ReportX, number, number, boolean, boolean]) => {
-        this.rep = rep;
+        this.report = rep;
 
         let uiState = this.uiQuery.getValue();
 
@@ -190,7 +190,7 @@ export class ReportComponent {
 
         nameColumn.width = uiState.metricsColumnNameWidth;
 
-        this.timeColumns = this.rep.columns.map(column => {
+        this.timeColumns = this.report.columns.map(column => {
           let columnDef: ColDef<DataRow> = {
             field: `${column.columnId}` as any,
             headerName: column.label,
@@ -215,7 +215,7 @@ export class ReportComponent {
           return columnDef;
         });
 
-        let runningQueriesLength = this.rep.rows
+        let runningQueriesLength = this.report.rows
           .filter(row => common.isDefined(row.query))
           .map(row => row.query.status)
           .filter(status => status === common.QueryStatusEnum.Running).length;
@@ -231,13 +231,13 @@ export class ReportComponent {
         // let metrics = this.metricsQuery.getValue();
 
         let isRepParametersHaveError =
-          this.rep.rows.filter(
+          this.report.rows.filter(
             row =>
               row.isParamsJsonValid === false ||
               row.isParamsSchemaValid === false
           ).length > 0;
 
-        this.data = this.rep.rows.map((row: common.Row) => {
+        this.data = this.report.rows.map((row: common.Row) => {
           // let metric = metrics.metrics.find(m => m.metricId === row.metricId);
 
           let dataRow: DataRow = Object.assign({}, row, <DataRow>{
@@ -254,7 +254,9 @@ export class ReportComponent {
           row.records.forEach(record => {
             (dataRow as any)[record.key] = record.value;
 
-            let column = this.rep.columns.find(c => c.columnId === record.key);
+            let column = this.report.columns.find(
+              c => c.columnId === record.key
+            );
 
             // if (common.isUndefined(column)) {
             //   console.log(record.key);
@@ -266,7 +268,7 @@ export class ReportComponent {
           return dataRow;
         });
 
-        let sNodes = this.uiQuery.getValue().repSelectedNodes;
+        let sNodes = this.uiQuery.getValue().reportSelectedNodes;
 
         this.updateRepChartData(sNodes);
 
@@ -278,7 +280,7 @@ export class ReportComponent {
         //   ) {
         // console.log('rep$ combined - prev repId is the same');
         if (common.isDefined(this.agGridApi)) {
-          this.uiQuery.getValue().repSelectedNodes.forEach(node => {
+          this.uiQuery.getValue().reportSelectedNodes.forEach(node => {
             let rowNode = this.agGridApi.getRowNode(node.id);
             if (common.isDefined(rowNode)) {
               // console.log('rep$ combined - set select node');
@@ -330,11 +332,11 @@ export class ReportComponent {
 
   constructor(
     private cd: ChangeDetectorRef,
-    private repQuery: ReportQuery,
+    private reportQuery: ReportQuery,
     private router: Router,
     private route: ActivatedRoute,
     private location: Location,
-    private repService: ReportService,
+    private reportService: ReportService,
     private uiQuery: UiQuery,
     private uiService: UiService
   ) {}
@@ -368,7 +370,7 @@ export class ReportComponent {
       this.uiQuery.getValue().showChartForSelectedRows;
 
     this.uiQuery.updatePart({
-      repSelectedNodes: sNodes,
+      reportSelectedNodes: sNodes,
       gridData: this.data,
       repChartData: {
         rows:
@@ -380,7 +382,7 @@ export class ReportComponent {
             : // : showChartForSelectedRows === true && sNodes.length > 1
               // ? []
               this.data.filter(row => row.showChart === true),
-        columns: this.rep.columns
+        columns: this.report.columns
       }
     });
   }
@@ -416,12 +418,12 @@ export class ReportComponent {
       rowIds.push(rowNode.data.rowId);
     }
 
-    let selectedRep = this.repQuery.getValue();
+    let selectedRep = this.reportQuery.getValue();
 
     this.agGridApi.deselectAll();
 
-    this.repService.modifyRows({
-      rep: selectedRep,
+    this.reportService.modifyRows({
+      report: selectedRep,
       changeType: common.ChangeTypeEnum.Move,
       rowChange: undefined,
       rowIds: rowIds

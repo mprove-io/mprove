@@ -12,7 +12,7 @@ export async function logStruct(
     dashboards: common.FileDashboard[];
     metrics: common.MetricAny[];
     models: common.FileModel[];
-    reps: common.FileReport[];
+    reports: common.FileReport[];
     udfsDict: common.UdfsDict;
     views: common.FileView[];
     charts: common.FileChart[];
@@ -26,7 +26,7 @@ export async function logStruct(
     udfsDict,
     views,
     models,
-    reps,
+    reports,
     metrics,
     apis,
     dashboards,
@@ -40,7 +40,7 @@ export async function logStruct(
   log(cs, caller, func, structId, common.LogTypeEnum.Ds, dashboards);
   log(cs, caller, func, structId, common.LogTypeEnum.Metrics, metrics);
   log(cs, caller, func, structId, common.LogTypeEnum.Models, models);
-  log(cs, caller, func, structId, common.LogTypeEnum.Reps, reps);
+  log(cs, caller, func, structId, common.LogTypeEnum.Reports, reports);
   log(cs, caller, func, structId, common.LogTypeEnum.UdfsDict, udfsDict);
   log(cs, caller, func, structId, common.LogTypeEnum.Views, views);
   log(cs, caller, func, structId, common.LogTypeEnum.Charts, charts);

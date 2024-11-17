@@ -447,27 +447,27 @@ Formula must return a valid JSON object.`;
   }
 
   async calculateData(item: {
-    rep: common.ReportX;
+    report: common.ReportX;
     timezone: string;
     timeSpec: common.TimeSpecEnum;
     timeRangeFraction: common.Fraction;
     traceId: string;
   }) {
-    let { rep, timeSpec, timeRangeFraction, timezone, traceId } = item;
+    let { report, timeSpec, timeRangeFraction, timezone, traceId } = item;
 
     // check for cycles - tarjan graph
     let g = new Graph();
     // graph for toposort
     let gr: string[][] = [];
 
-    rep.rows.forEach(x => {
+    report.rows.forEach(x => {
       x.formulaError = undefined;
 
       if (common.isDefined(x.formulaDeps) && x.formulaDeps.length > 0) {
         let wrongReferences: string[] = [];
 
         x.formulaDeps.forEach(dep => {
-          if (rep.rows.map(r => r.rowId).indexOf(dep) < 0) {
+          if (report.rows.map(r => r.rowId).indexOf(dep) < 0) {
             wrongReferences.push(dep);
           }
           g.add(x.rowId, [dep]);
@@ -491,7 +491,7 @@ Formula must return a valid JSON object.`;
 
       let cycledNamesStr = cycledNames.join(', ');
 
-      rep.rows
+      report.rows
         .filter(k => cycledNames.indexOf(k.rowId) > -1)
         .forEach(x => {
           if (common.isUndefined(x.formulaError)) {
@@ -502,7 +502,7 @@ Formula must return a valid JSON object.`;
     }
 
     let recordsByColumn = this.makeRecordsByColumn({
-      rep: rep,
+      report: report,
       timeSpec: timeSpec
     });
 
@@ -512,7 +512,7 @@ Formula must return a valid JSON object.`;
     let topQueryData: any[] = [];
     let topQueryError: any;
 
-    if (rep.rows.filter(x => common.isDefined(x.formulaError)).length > 0) {
+    if (report.rows.filter(x => common.isDefined(x.formulaError)).length > 0) {
       topQueryError = common.SOME_ROWS_HAVE_FORMULA_ERRORS;
     } else {
       let cn: pg.IConnectionParameters<pg.IClient> = {
@@ -532,7 +532,7 @@ Formula must return a valid JSON object.`;
 
       let mainSelect = [
         `unnest(ARRAY[${timestampValues}]::bigint[]) AS timestamp`,
-        ...rep.rows
+        ...report.rows
           .filter(row => row.rowType === common.RowTypeEnum.Metric)
           .map(row => {
             let values = recordsByColumn.map(r =>
@@ -549,10 +549,10 @@ Formula must return a valid JSON object.`;
 
       let outerSelect = [
         `  main.timestamp as timestamp`,
-        ...rep.rows
+        ...report.rows
           .filter(row => row.rowType === common.RowTypeEnum.Metric)
           .map(x => `  main.${x.rowId} AS ${x.rowId}`),
-        ...rep.rows
+        ...report.rows
           .filter(row => row.rowType === common.RowTypeEnum.Formula)
           .map(row => {
             let newFormula = row.formula;
@@ -562,7 +562,7 @@ Formula must return a valid JSON object.`;
             while ((r = reg.exec(newFormula))) {
               let reference = r[1];
 
-              let targetRow = rep.rows.find(y => y.rowId === reference);
+              let targetRow = report.rows.find(y => y.rowId === reference);
 
               let targetTo =
                 targetRow.rowType === common.RowTypeEnum.Formula
@@ -629,7 +629,7 @@ FROM main;`;
 
     let newKits: schemaPostgres.KitEnt[] = [];
 
-    rep.rows
+    report.rows
       .filter(
         row =>
           row.rowType === common.RowTypeEnum.Metric ||
@@ -734,9 +734,9 @@ FROM main;`;
           rq.kitId = common.makeId();
 
           let newKit: schemaPostgres.KitEnt = {
-            structId: rep.structId,
+            structId: report.structId,
             kitId: rq.kitId,
-            reportId: rep.repId,
+            reportId: report.reportId,
             data: row.records,
             serverTs: undefined
           };
@@ -770,16 +770,16 @@ FROM main;`;
       // });
     }
 
-    return rep;
+    return report;
   }
 
   makeRecordsByColumn(item: {
-    rep: common.ReportX;
+    report: common.ReportX;
     timeSpec: common.TimeSpecEnum;
   }) {
-    let { rep, timeSpec } = item;
+    let { report, timeSpec } = item;
 
-    let recordsByColumn = rep.columns.map((column, i) => {
+    let recordsByColumn = report.columns.map((column, i) => {
       let tsDate = fromUnixTime(column.columnId);
 
       let timeValue =
@@ -806,7 +806,7 @@ FROM main;`;
         }
       };
 
-      rep.rows
+      report.rows
         .filter(row => row.rowType === common.RowTypeEnum.Metric)
         .forEach((row: common.Row) => {
           let timeFieldId = row.mconfig?.select[0]

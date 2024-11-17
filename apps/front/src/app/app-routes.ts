@@ -272,7 +272,7 @@ export const appRoutes: Routes = [
                                 component: ReportComponent,
                                 path:
                                   common.PATH_REPORT +
-                                  `/:${common.PARAMETER_REP_ID}`,
+                                  `/:${common.PARAMETER_REPORT_ID}`,
                                 resolve: [StructReportResolver]
                               }
                             ]

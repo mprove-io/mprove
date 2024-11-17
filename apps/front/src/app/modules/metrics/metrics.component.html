@@ -116,8 +116,8 @@
 
           <div
             class="ml-4 flex h-8 w-8 flex-shrink-0 text-amber-500"
-            tp="Exceeded time columns limit ({{ rep.timeColumnsLimit }})"
-            *ngIf="rep?.isTimeColumnsLimitExceeded === true"
+            tp="Exceeded time columns limit ({{ report.timeColumnsLimit }})"
+            *ngIf="report?.isTimeColumnsLimitExceeded === true"
           >
             <m-exclamation-icon></m-exclamation-icon>
           </div>
@@ -193,8 +193,8 @@
 
                 <div class="mb-5 flex h-2 flex-grow flex-col overflow-y-auto">
                   <div
-                    *ngFor="let r of reps; let i = index"
-                    (click)="navToRep(r)"
+                    *ngFor="let r of reports; let i = index"
+                    (click)="navToReport(r)"
                   >
                     <div
                       *ngIf="draftsLength >= 0 && i === draftsLength + 1"
@@ -208,13 +208,13 @@
                     >
                       <div class="mr-3 flex h-2 items-center">
                         <div
-                          *ngIf="r.repId === rep.repId"
+                          *ngIf="r.reportId === report.reportId"
                           data-cy="reportsSelectedSymbol"
                           class="bg-blue3 h-7 w-1 rounded-full text-white focus:outline-none"
                         ></div>
 
                         <div
-                          *ngIf="r.repId !== rep.repId"
+                          *ngIf="r.reportId !== report.reportId"
                           class="h-7 w-1"
                         ></div>
                       </div>
@@ -226,11 +226,14 @@
                       <div class="flex flex-grow"></div>
 
                       <button
-                        *ngIf="rep.draft === true && r.repId === rep.repId"
+                        *ngIf="
+                          report.draft === true &&
+                          r.reportId === report.reportId
+                        "
                         type="button"
-                        data-cy="repSaveAsButton"
+                        data-cy="reportSaveAsButton"
                         class="ml-3 flex h-11 w-28 items-center justify-center rounded focus:outline-none"
-                        (click)="repSaveAs($event)"
+                        (click)="reportSaveAs($event)"
                       >
                         <div
                           class="flex h-8 flex-row items-center justify-start space-x-2 rounded px-3 hover:bg-white"
@@ -244,9 +247,12 @@
                       </button>
 
                       <button
-                        *ngIf="rep.draft === true && r.repId === rep.repId"
+                        *ngIf="
+                          report.draft === true &&
+                          r.reportId === report.reportId
+                        "
                         class="ml-3 flex h-9 w-9 items-center justify-center rounded text-gray-500 hover:bg-white focus:outline-none"
-                        (click)="deleteDraftRep($event, r)"
+                        (click)="deleteDraftReport($event, r)"
                       >
                         <m-trash-icon></m-trash-icon>
                       </button>
@@ -259,10 +265,12 @@
                       >
 
                       <div
-                        *ngIf="r.draft === false && r.repId !== emptyRepId"
+                        *ngIf="
+                          r.draft === false && r.reportId !== emptyReportId
+                        "
                         class="invisible ml-2 flex group-hover:visible"
                       >
-                        <m-report-options [rep]="r"></m-report-options>
+                        <m-report-options [report]="r"></m-report-options>
                       </div>
                     </div>
                   </div>
@@ -295,22 +303,25 @@
             class="flex w-full flex-col"
             [ngClass]="{
               'h-[40%]':
-                (showMetricsChart === true || repSelectedNodes.length > 0) &&
+                (showMetricsChart === true || reportSelectedNodes.length > 0) &&
                 isShowTable === true,
               'h-full': showMetricsChart === true && isShowTable === false,
-              'mt-6': showMetricsChart === true || repSelectedNodes.length > 0
+              'mt-6':
+                showMetricsChart === true || reportSelectedNodes.length > 0
             }"
           >
             <div
               class="flex h-2 w-full flex-grow flex-row"
-              *ngIf="isShowTable === true && repSelectedNodes.length > 0"
+              *ngIf="isShowTable === true && reportSelectedNodes.length > 0"
             >
               <m-row class="flex w-full"></m-row>
             </div>
 
             <div
               class="relative h-2 w-full flex-grow flex-row rounded bg-white shadow"
-              *ngIf="showMetricsChart === true && repSelectedNodes.length === 0"
+              *ngIf="
+                showMetricsChart === true && reportSelectedNodes.length === 0
+              "
             >
               <div class="h-full flex-1 flex-grow flex-col">
                 <div
@@ -356,7 +367,7 @@
                         chartOptions?.data.length === 0 &&
                         !(
                           showChartForSelectedRows === true &&
-                          repSelectedNodes.length > 1
+                          reportSelectedNodes.length > 1
                         )
                       "
                       class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
@@ -385,7 +396,7 @@
   </div>
 </div>
 
-<div *ngIf="rep$ | async"></div>
-<div *ngIf="reps$ | async"></div>
+<div *ngIf="report$ | async"></div>
+<div *ngIf="reports$ | async"></div>
+<div *ngIf="reportChartData$ | async"></div>
 <div *ngIf="uiQuery$ | async"></div>
-<div *ngIf="repChartData$ | async"></div>

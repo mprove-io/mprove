@@ -24,7 +24,7 @@ import { makeRepQueryParams } from '~front/app/functions/make-query-params';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
-import { ReportQuery, emptyRep } from '~front/app/queries/report.query';
+import { ReportQuery, emptyReport } from '~front/app/queries/report.query';
 import { ReportsQuery } from '~front/app/queries/reports.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { RepChartData, UiQuery } from '~front/app/queries/ui.query';
@@ -66,22 +66,22 @@ export class MetricsComponent implements OnInit, OnDestroy {
   isShowLeft = true;
   isShowTable = true;
 
-  emptyRepId = common.EMPTY_REP_ID;
+  emptyReportId = common.EMPTY_REPORT_ID;
 
   queriesLength = 0;
 
-  rep: common.ReportX;
-  rep$ = this.repQuery.select().pipe(
+  report: common.ReportX;
+  report$ = this.reportQuery.select().pipe(
     tap(x => {
-      this.rep = x;
+      this.report = x;
 
       // console.log('rep', x);
 
-      this.queriesLength = this.rep.rows.filter(row =>
+      this.queriesLength = this.report.rows.filter(row =>
         common.isDefined(row.query)
       ).length;
 
-      let newQueries = this.rep.rows.filter(
+      let newQueries = this.report.rows.filter(
         row =>
           common.isDefined(row.query) &&
           row.query.status === common.QueryStatusEnum.New
@@ -99,11 +99,11 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   draftsLength: number;
 
-  reps: common.ReportX[];
-  reps$ = this.repsQuery.select().pipe(
+  reports: common.ReportX[];
+  reports$ = this.reportsQuery.select().pipe(
     tap(x => {
-      this.reps = [emptyRep, ...x.reps];
-      this.draftsLength = this.reps.filter(y => y.draft === true).length;
+      this.reports = [emptyReport, ...x.reports];
+      this.draftsLength = this.reports.filter(y => y.draft === true).length;
 
       this.cd.detectChanges();
     })
@@ -157,7 +157,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
   recordsWithValuesLength = 0;
   selectedRowsWithQueriesLength = 0;
 
-  repChartData$ = combineLatest([
+  reportChartData$ = combineLatest([
     this.uiQuery.repChartData$,
     this.uiQuery.showMetricsModelName$,
     this.uiQuery.showMetricsTimeFieldName$
@@ -327,8 +327,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
   showMetricsChartSettings = false;
   showChartForSelectedRows = false;
 
-  repSelectedNodes: any[] = [];
-  repSelectedNode: IRowNode<DataRow>;
+  reportSelectedNodes: any[] = [];
+  reportSelectedNode: IRowNode<DataRow>;
 
   formulaForm: FormGroup = this.fb.group({
     formula: [undefined, [Validators.required]]
@@ -347,26 +347,30 @@ export class MetricsComponent implements OnInit, OnDestroy {
       this.showMetricsChart = x.showMetricsChart;
       this.showMetricsChartSettings = x.showMetricsChartSettings;
       this.showChartForSelectedRows = x.showChartForSelectedRows;
-      this.repSelectedNodes = x.repSelectedNodes;
+      this.reportSelectedNodes = x.reportSelectedNodes;
 
-      this.repSelectedNode =
-        x.repSelectedNodes.length === 1 ? x.repSelectedNodes[0] : undefined;
+      this.reportSelectedNode =
+        x.reportSelectedNodes.length === 1
+          ? x.reportSelectedNodes[0]
+          : undefined;
 
-      if (common.isDefined(this.repSelectedNode)) {
-        if (this.repSelectedNode.data.rowType === common.RowTypeEnum.Formula) {
+      if (common.isDefined(this.reportSelectedNode)) {
+        if (
+          this.reportSelectedNode.data.rowType === common.RowTypeEnum.Formula
+        ) {
           setValueAndMark({
             control: this.formulaForm.controls['formula'],
-            value: this.repSelectedNode.data.formula
+            value: this.reportSelectedNode.data.formula
           });
         }
 
         if (
-          this.repSelectedNode.data.rowType !== common.RowTypeEnum.Empty &&
-          this.repSelectedNode.data.rowType !== common.RowTypeEnum.Metric
+          this.reportSelectedNode.data.rowType !== common.RowTypeEnum.Empty &&
+          this.reportSelectedNode.data.rowType !== common.RowTypeEnum.Metric
         ) {
           setValueAndMark({
             control: this.nameForm.controls['name'],
-            value: this.repSelectedNode.data.name
+            value: this.reportSelectedNode.data.name
           });
         }
       }
@@ -386,8 +390,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
-    private repsQuery: ReportsQuery,
-    private repQuery: ReportQuery,
+    private reportsQuery: ReportsQuery,
+    private reportQuery: ReportQuery,
     private uiQuery: UiQuery,
     private memberQuery: MemberQuery,
     private structQuery: StructQuery,
@@ -397,7 +401,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private spinner: NgxSpinnerService,
     private uiService: UiService,
-    private repService: ReportService,
+    private reportService: ReportService,
     private queryService: QueryService,
     private navigateService: NavigateService,
     private myDialogService: MyDialogService,
@@ -423,7 +427,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
       .pipe(
         concatMap(() => {
           if (
-            this.rep?.rows
+            this.report?.rows
               .filter(row => common.isDefined(row.query))
               .map(row => row.query.status)
               .indexOf(common.QueryStatusEnum.Running) > -1
@@ -452,7 +456,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
       envId: nav.envId,
-      repId: this.rep.repId,
+      reportId: this.report.reportId,
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
       timeRangeFractionBrick: uiState.timeRangeFraction.brick
@@ -460,14 +464,15 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
     return this.apiService
       .req({
-        pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRep,
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetReport,
         payload: payload
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendGetReportResponse) => {
           if (
             resp.info?.status === common.ResponseInfoStatusEnum.Ok &&
-            this.rep.repId === resp.payload.rep.repId
+            this.report.reportId === resp.payload.report.reportId
           ) {
             this.memberQuery.update(resp.payload.userMember);
 
@@ -476,7 +481,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
               needValidate: resp.payload.needValidate
             });
 
-            this.repQuery.update(resp.payload.rep);
+            this.reportQuery.update(resp.payload.report);
           }
         })
       );
@@ -493,7 +498,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
     let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
       projectId: nav.projectId,
-      queryIds: this.rep.rows
+      queryIds: this.report.rows
         .filter(row => common.isDefined(row.query))
         .map(row => row.query.queryId)
     };
@@ -512,15 +517,15 @@ export class MetricsComponent implements OnInit, OnDestroy {
               runningQueries
                 .map(y => y.queryId)
                 .some(qId =>
-                  this.rep.rows
+                  this.report.rows
                     .filter(r => common.isDefined(r.query))
                     .map(r => r.query.queryId)
                     .includes(qId)
                 )
             ) {
-              let tRep = common.makeCopy(this.rep);
+              let tReport = common.makeCopy(this.report);
 
-              tRep.rows
+              tReport.rows
                 .filter(row => common.isDefined(row.query))
                 .forEach(row => {
                   let runningQuery = runningQueries.find(
@@ -532,7 +537,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
                   }
                 });
 
-              this.repQuery.update(tRep);
+              this.reportQuery.update(tReport);
             } else {
               this.getRepObservable().pipe(take(1)).subscribe();
             }
@@ -617,7 +622,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
                 timezone: uiStateB.timezone,
                 timeSpec: uiStateB.timeSpec,
                 timeRangeFraction: uiStateB.timeRangeFraction,
-                selectRowsNodeIds: uiStateB.repSelectedNodes.map(
+                selectRowsNodeIds: uiStateB.reportSelectedNodes.map(
                   node => node.id
                 )
               })
@@ -631,35 +636,37 @@ export class MetricsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  navToRep(rep: common.ReportX) {
+  navToReport(report: common.ReportX) {
     this.uiQuery.getValue().gridApi.deselectAll();
 
     this.navigateService.navigateToMetricsRep({
-      repId: rep.repId,
+      reportId: report.reportId,
       selectRowsNodeIds: []
     });
   }
 
   deleteDrafts() {
-    this.repService.deleteDraftReps({
-      repIds: this.reps.filter(rep => rep.draft === true).map(rep => rep.repId)
+    this.reportService.deleteDraftReports({
+      reportIds: this.reports
+        .filter(report => report.draft === true)
+        .map(report => report.reportId)
     });
   }
 
-  deleteDraftRep(event: any, rep: common.ReportX) {
+  deleteDraftReport(event: any, report: common.ReportX) {
     event.stopPropagation();
-    this.repService.deleteDraftReps({ repIds: [rep.repId] });
+    this.reportService.deleteDraftReports({ reportIds: [report.reportId] });
   }
 
-  repSaveAs(event: any) {
+  reportSaveAs(event: any) {
     event.stopPropagation();
 
-    this.myDialogService.showRepSaveAs({
+    this.myDialogService.showReportSaveAs({
       apiService: this.apiService,
-      reps: this.reps.filter(
-        x => x.draft === false && x.repId !== common.EMPTY_REP_ID
+      reports: this.reports.filter(
+        x => x.draft === false && x.reportId !== common.EMPTY_REPORT_ID
       ),
-      rep: this.rep
+      report: this.report
     });
   }
 

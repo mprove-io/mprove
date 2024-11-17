@@ -14,7 +14,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { checkNavOrgProjectRepoBranchEnv } from '../../functions/check-nav-org-project-repo-branch-env';
-import { emptyQuery, MqQuery } from '../../queries/mq.query';
+import { MqQuery, emptyQuery } from '../../queries/mq.query';
 import { NavQuery, NavState } from '../../queries/nav.query';
 import { UserQuery } from '../../queries/user.query';
 import { ApiService } from '../../services/api.service';
@@ -102,8 +102,8 @@ export class QueryResolver implements Resolve<Observable<boolean>> {
       return of(true);
     }
 
-    if (parametersQueryId === common.EMPTY_REP_ID) {
-      if (query.queryId !== common.EMPTY_REP_ID) {
+    if (parametersQueryId === common.EMPTY_REPORT_ID) {
+      if (query.queryId !== common.EMPTY_REPORT_ID) {
         this.mqQuery.updatePart({ query: emptyQuery });
       }
 

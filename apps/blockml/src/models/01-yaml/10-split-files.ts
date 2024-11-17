@@ -22,7 +22,7 @@ export function splitFiles(
   let views: common.FileView[] = [];
   let models: common.FileModel[] = [];
   let dashboards: common.FileDashboard[] = [];
-  let reps: common.FileReport[] = [];
+  let reports: common.FileReport[] = [];
   let metrics: common.FileMetric[] = [];
   let apis: common.FileApi[] = [];
   let charts: common.FileChart[] = [];
@@ -189,11 +189,11 @@ export function splitFiles(
             fileExt: fileExt
           };
 
-          reps.push(Object.assign(file, newRepOptions));
+          reports.push(Object.assign(file, newRepOptions));
         } else {
           item.errors.push(
             new BmError({
-              title: common.ErTitleEnum.WRONG_REP_NAME,
+              title: common.ErTitleEnum.WRONG_REPORT_NAME,
               message: `filename ${file.name} does not match "report: ${file.report}"`,
               lines: [
                 {
@@ -331,7 +331,7 @@ export function splitFiles(
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Confs, confs);
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Metrics, metrics);
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Models, models);
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Reps, reps);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Reports, reports);
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Udfs, udfs);
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Views, views);
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Charts, charts);
@@ -350,7 +350,7 @@ export function splitFiles(
     confs: confs,
     metrics: metrics,
     models: models,
-    reps: reps,
+    reports: reports,
     udfs: udfs,
     views: views,
     charts: charts

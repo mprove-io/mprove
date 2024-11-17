@@ -42,13 +42,13 @@ export class ReportsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async getRepCheckExists(item: { repId: string; structId: string }) {
-    let { repId, structId } = item;
+  async getReportCheckExists(item: { reportId: string; structId: string }) {
+    let { reportId, structId } = item;
 
-    let rep = await this.db.drizzle.query.reportsTable.findFirst({
+    let report = await this.db.drizzle.query.reportsTable.findFirst({
       where: and(
         eq(reportsTable.structId, structId),
-        eq(reportsTable.reportId, repId)
+        eq(reportsTable.reportId, reportId)
       )
     });
 
@@ -59,19 +59,19 @@ export class ReportsService {
     //   }
     // });
 
-    if (common.isUndefined(rep)) {
+    if (common.isUndefined(report)) {
       throw new common.ServerError({
-        message: common.ErEnum.BACKEND_REP_DOES_NOT_EXIST
+        message: common.ErEnum.BACKEND_REPORT_DOES_NOT_EXIST
       });
     }
 
-    return rep;
+    return report;
   }
 
   checkRepPath(item: { filePath: string; userAlias: string }) {
     if (item.filePath.split('/')[2] !== item.userAlias) {
       throw new common.ServerError({
-        message: common.ErEnum.BACKEND_FORBIDDEN_REP_PATH
+        message: common.ErEnum.BACKEND_FORBIDDEN_REPORT_PATH
       });
     }
   }
@@ -502,9 +502,9 @@ export class ReportsService {
     return processedRows;
   }
 
-  async getRep(item: {
+  async getReport(item: {
     projectId: string;
-    repId: string;
+    reportId: string;
     structId: string;
     user: schemaPostgres.UserEnt;
     userMember: schemaPostgres.MemberEnt;
@@ -513,7 +513,7 @@ export class ReportsService {
   }) {
     let {
       projectId,
-      repId,
+      reportId,
       structId,
       checkExist,
       checkAccess,
@@ -523,13 +523,13 @@ export class ReportsService {
 
     let emptyRep = this.makerService.makeReport({
       structId: undefined,
-      reportId: repId,
+      reportId: reportId,
       projectId: projectId,
       creatorId: undefined,
       filePath: undefined,
       accessRoles: [],
       accessUsers: [],
-      title: repId,
+      title: reportId,
       rows: [],
       draft: false
     });
@@ -549,14 +549,14 @@ export class ReportsService {
     //   serverTs: undefined
     // };
 
-    let rep =
-      repId === common.EMPTY_REP_ID
+    let report =
+      reportId === common.EMPTY_REPORT_ID
         ? emptyRep
         : await this.db.drizzle.query.reportsTable.findFirst({
             where: and(
               eq(reportsTable.projectId, projectId),
               eq(reportsTable.structId, structId),
-              eq(reportsTable.reportId, repId)
+              eq(reportsTable.reportId, reportId)
             )
           });
 
@@ -567,16 +567,16 @@ export class ReportsService {
     //       rep_id: repId
     //     }
     //   });
-    if (checkExist === true && common.isUndefined(rep)) {
+    if (checkExist === true && common.isUndefined(report)) {
       throw new common.ServerError({
-        message: common.ErEnum.BACKEND_REP_NOT_FOUND
+        message: common.ErEnum.BACKEND_REPORT_NOT_FOUND
       });
     }
 
     if (
-      repId !== common.EMPTY_REP_ID &&
-      rep.draft === true &&
-      rep.creatorId !== user.userId
+      reportId !== common.EMPTY_REPORT_ID &&
+      report.draft === true &&
+      report.creatorId !== user.userId
     ) {
       throw new common.ServerError({
         message:
@@ -584,21 +584,21 @@ export class ReportsService {
       });
     }
 
-    if (checkAccess === true && rep.draft === false) {
+    if (checkAccess === true && report.draft === false) {
       let isAccessGranted = helper.checkAccess({
         userAlias: user.alias,
         member: userMember,
-        entity: rep
+        entity: report
       });
 
       if (isAccessGranted === false) {
         throw new common.ServerError({
-          message: common.ErEnum.BACKEND_FORBIDDEN_REP
+          message: common.ErEnum.BACKEND_FORBIDDEN_REPORT
         });
       }
     }
 
-    return rep;
+    return report;
   }
 
   async getRepData(item: {
@@ -607,7 +607,7 @@ export class ReportsService {
     timeSpec: common.TimeSpecEnum;
     timeRangeFractionBrick: string;
     struct: schemaPostgres.StructEnt;
-    rep: schemaPostgres.ReportEnt;
+    report: schemaPostgres.ReportEnt;
     project: schemaPostgres.ProjectEnt;
     envId: string;
     userMemberApi: common.Member;
@@ -620,7 +620,7 @@ export class ReportsService {
       timeSpec,
       timeRangeFractionBrick,
       struct,
-      rep,
+      report,
       timezone,
       project,
       envId,
@@ -643,7 +643,7 @@ export class ReportsService {
       projectWeekStart: struct.weekStart
     });
 
-    let metricIds = rep.rows.map(x => x.metricId);
+    let metricIds = report.rows.map(x => x.metricId);
 
     let metrics = await this.db.drizzle.query.metricsTable.findMany({
       where: and(
@@ -678,7 +678,7 @@ export class ReportsService {
     // });
 
     if (
-      rep.rows.filter(
+      report.rows.filter(
         row =>
           row.rowType === common.RowTypeEnum.Metric &&
           row.isCalculateParameters === true
@@ -686,8 +686,8 @@ export class ReportsService {
     ) {
       // console.log('isCalculateParameters true');
 
-      rep.rows = await this.docService.calculateParameters({
-        rows: rep.rows,
+      report.rows = await this.docService.calculateParameters({
+        rows: report.rows,
         models: models,
         metrics: metrics,
         traceId: traceId
@@ -703,7 +703,7 @@ export class ReportsService {
     let queryIds: string[] = [];
     let kitIds: string[] = [];
 
-    await forEachSeries(rep.rows, async x => {
+    await forEachSeries(report.rows, async x => {
       let rq = x.rqs.find(
         y =>
           y.fractionBrick === timeRangeFraction.brick &&
@@ -896,7 +896,7 @@ export class ReportsService {
       kits = await this.db.drizzle.query.kitsTable.findMany({
         where: and(
           inArray(kitsTable.kitId, kitIds),
-          eq(kitsTable.structId, rep.structId)
+          eq(kitsTable.structId, report.structId)
         )
       });
 
@@ -928,7 +928,7 @@ export class ReportsService {
       })
     );
 
-    rep.rows.forEach(x => {
+    report.rows.forEach(x => {
       let rq = x.rqs.find(
         y =>
           y.fractionBrick === timeRangeFraction.brick &&
@@ -959,7 +959,7 @@ export class ReportsService {
     });
 
     let repApi = this.wrapToApiService.wrapToApiRep({
-      rep: rep,
+      report: report,
       models: modelsApi,
       member: userMemberApi,
       columns: columns,
@@ -1008,7 +1008,7 @@ export class ReportsService {
     });
 
     let isCalculateData =
-      rep.reportId !== common.EMPTY_REP_ID &&
+      report.reportId !== common.EMPTY_REPORT_ID &&
       queryRows.length === queryRowsCompleted.length &&
       (queryRowsCompleted.length !== queryRowsCompletedCalculated.length ||
         formulaRows.length !== formulaRowsCalculated.length);
@@ -1017,7 +1017,7 @@ export class ReportsService {
       // console.log('isCalculateData true');
 
       repApi = await this.docService.calculateData({
-        rep: repApi,
+        report: repApi,
         timezone: timezone,
         timeSpec: timeSpec,
         timeRangeFraction: timeRangeFraction,
@@ -1027,7 +1027,7 @@ export class ReportsService {
       // console.log('isCalculateData false');
 
       let recordsByColumn = this.docService.makeRecordsByColumn({
-        rep: repApi,
+        report: repApi,
         timeSpec: timeSpec
       });
 
@@ -1104,14 +1104,14 @@ export class ReportsService {
       newMconfigs.length > 0 ||
       newQueries.length > 0
     ) {
-      let dbRows = common.makeCopy(rep.rows);
+      let dbRows = common.makeCopy(report.rows);
 
       dbRows.forEach(x => {
         delete x.mconfig;
         delete x.query;
       });
 
-      rep.rows = dbRows;
+      report.rows = dbRows;
 
       await retry(
         async () =>
@@ -1120,7 +1120,7 @@ export class ReportsService {
               await this.db.packer.write({
                 tx: tx,
                 insertOrUpdate: {
-                  reports: [rep]
+                  reports: [report]
                 }
               })
           ),

@@ -6,5 +6,5 @@ export class ReportX extends Report {
   author: string;
 
   @IsBoolean()
-  canEditOrDeleteRep: boolean;
+  canEditOrDeleteReport: boolean;
 }

@@ -18,7 +18,7 @@ export class ToBackendGetReportRequestPayload {
   envId: string;
 
   @IsString()
-  repId: string;
+  reportId: string;
 
   @IsTimezone()
   timezone: string;
@@ -50,7 +50,7 @@ export class ToBackendGetReportResponsePayload {
 
   @ValidateNested()
   @Type(() => common.Report)
-  rep: common.ReportX;
+  report: common.ReportX;
 }
 
 export class ToBackendGetReportResponse extends common.MyResponse {

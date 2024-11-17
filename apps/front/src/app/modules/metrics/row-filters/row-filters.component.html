@@ -9,17 +9,17 @@
     <div class="flex flex-row items-start justify-center">
       <div
         tp="Turn off formula to activate control"
-        [tpIsEnabled]="!!repSelectedNode.data.parametersFormula"
+        [tpIsEnabled]="!!reportSelectedNode.data.parametersFormula"
       >
         <button
           class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
           [ngClass]="{
             'text-gray-500 hover:bg-blue-200':
-              !repSelectedNode.data.parametersFormula,
+              !reportSelectedNode.data.parametersFormula,
             'cursor-default text-gray-400':
-              !!repSelectedNode.data.parametersFormula
+              !!reportSelectedNode.data.parametersFormula
           }"
-          [disabled]="!!repSelectedNode.data.parametersFormula"
+          [disabled]="!!reportSelectedNode.data.parametersFormula"
           (click)="deleteFilter(filter)"
         >
           <m-trash-icon></m-trash-icon>
@@ -30,7 +30,7 @@
         tp="Turn off formula to activate control"
         [tpIsEnabled]="
           filter.parameterType === parameterTypeFormula ||
-          !!repSelectedNode.data.parametersFormula
+          !!reportSelectedNode.data.parametersFormula
         "
       >
         <button
@@ -39,14 +39,14 @@
           [ngClass]="{
             'text-gray-500 hover:bg-blue-200':
               filter.parameterType !== parameterTypeFormula &&
-              !repSelectedNode.data.parametersFormula,
+              !reportSelectedNode.data.parametersFormula,
             'cursor-default text-gray-400':
               filter.parameterType === parameterTypeFormula ||
-              !!repSelectedNode.data.parametersFormula
+              !!reportSelectedNode.data.parametersFormula
           }"
           [disabled]="
             filter.parameterType === parameterTypeFormula ||
-            !!repSelectedNode.data.parametersFormula
+            !!reportSelectedNode.data.parametersFormula
           "
         >
           <m-add-icon></m-add-icon>
@@ -74,12 +74,12 @@
         class="ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
         [ngClass]="{
           'text-gray-500 hover:bg-blue-200':
-            !repSelectedNode.data.parametersFormula,
+            !reportSelectedNode.data.parametersFormula,
           'cursor-default text-gray-400':
-            !!repSelectedNode.data.parametersFormula
+            !!reportSelectedNode.data.parametersFormula
         }"
         (click)="toggleParFormula(filter)"
-        [disabled]="!!repSelectedNode.data.parametersFormula"
+        [disabled]="!!reportSelectedNode.data.parametersFormula"
       >
         <m-formula-icon
           [ngClass]="{
@@ -116,7 +116,7 @@
           [fractionIndex]="fractionIndex"
           [isDisabled]="
             filter.parameterType === parameterTypeFormula ||
-            !!repSelectedNode.data.parametersFormula
+            !!reportSelectedNode.data.parametersFormula
           "
           [isFirst]="isFirst"
           (fractionUpdate)="fractionUpdate(filter, $event)"
@@ -127,7 +127,7 @@
           tp="Turn off formula to activate control"
           [tpIsEnabled]="
             filter.parameterType === parameterTypeFormula ||
-            !!repSelectedNode.data.parametersFormula
+            !!reportSelectedNode.data.parametersFormula
           "
         >
           <button
@@ -136,14 +136,14 @@
             [ngClass]="{
               'text-gray-500 hover:bg-blue-200':
                 filter.parameterType !== parameterTypeFormula &&
-                !repSelectedNode.data.parametersFormula,
+                !reportSelectedNode.data.parametersFormula,
               'cursor-default text-gray-400':
                 filter.parameterType === parameterTypeFormula ||
-                !!repSelectedNode.data.parametersFormula
+                !!reportSelectedNode.data.parametersFormula
             }"
             [disabled]="
               filter.parameterType === parameterTypeFormula ||
-              !!repSelectedNode.data.parametersFormula
+              !!reportSelectedNode.data.parametersFormula
             "
           >
             <m-delete-icon></m-delete-icon>

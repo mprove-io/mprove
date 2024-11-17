@@ -74,7 +74,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
         .getValue()
         .metrics.find(y => y.metricId === this.params.data.metricId);
 
-      let timeSpec = this.repQuery.getValue().timeSpec;
+      let timeSpec = this.reportQuery.getValue().timeSpec;
 
       let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
 
@@ -236,7 +236,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
     private queryService: QueryService,
     private mconfigService: MconfigService,
     private metricsQuery: MetricsQuery,
-    private repQuery: ReportQuery,
+    private reportQuery: ReportQuery,
     private timeService: TimeService
   ) {}
 }

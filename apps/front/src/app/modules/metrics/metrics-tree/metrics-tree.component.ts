@@ -128,9 +128,9 @@ export class MetricsTreeComponent implements AfterViewInit {
   constructor(
     private metricsQuery: MetricsQuery,
     private cd: ChangeDetectorRef,
-    private repQuery: ReportQuery,
+    private reportQuery: ReportQuery,
     private uiQuery: UiQuery,
-    private repService: ReportService,
+    private reportService: ReportService,
     private navigateService: NavigateService
   ) {}
 
@@ -167,9 +167,9 @@ export class MetricsTreeComponent implements AfterViewInit {
   }
 
   addMetricToRep(node: any) {
-    let repSelectedNodes = this.uiQuery.getValue().repSelectedNodes;
+    let reportSelectedNodes = this.uiQuery.getValue().reportSelectedNodes;
 
-    let rep = this.repQuery.getValue();
+    let report = this.reportQuery.getValue();
 
     let rowChange: common.RowChange = {
       rowId:
@@ -183,8 +183,8 @@ export class MetricsTreeComponent implements AfterViewInit {
       showChart: false
     };
 
-    this.repService.modifyRows({
-      rep: rep,
+    this.reportService.modifyRows({
+      report: report,
       changeType: common.ChangeTypeEnum.AddMetric,
       rowChange: rowChange,
       rowIds: undefined

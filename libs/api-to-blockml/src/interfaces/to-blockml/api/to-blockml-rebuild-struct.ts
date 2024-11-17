@@ -90,7 +90,7 @@ export class ToBlockmlRebuildStructResponsePayload {
 
   @ValidateNested()
   @Type(() => common.Report)
-  reps: common.Report[];
+  reports: common.Report[];
 
   @ValidateNested()
   @Type(() => common.Api)

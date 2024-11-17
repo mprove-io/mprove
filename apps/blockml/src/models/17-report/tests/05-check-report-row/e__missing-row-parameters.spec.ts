@@ -12,7 +12,7 @@ let testId = 'e__missing-row-parameters';
 
 test('1', async t => {
   let errors: BmError[];
-  let entReps: common.FileReport[];
+  let entReports: common.FileReport[];
 
   let wLogger;
   let configService;
@@ -46,7 +46,7 @@ test('1', async t => {
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
-    entReps = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
+    entReports = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -60,7 +60,7 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(entReps.length, 0);
+  t.is(entReports.length, 0);
 
   t.is(errors[0].title, common.ErTitleEnum.MISSING_ROW_PARAMETERS);
   t.is(errors[0].lines[0].line, 4);

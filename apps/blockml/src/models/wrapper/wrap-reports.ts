@@ -4,7 +4,7 @@ import { helper } from '~blockml/barrels/helper';
 export function wrapReports(item: {
   projectId: string;
   structId: string;
-  reps: common.FileReport[];
+  reports: common.FileReport[];
   metrics: common.MetricAny[];
   models: common.Model[];
   formatNumber: string;
@@ -14,7 +14,7 @@ export function wrapReports(item: {
   let {
     projectId,
     structId,
-    reps,
+    reports,
     metrics,
     models,
     currencyPrefix,
@@ -22,11 +22,11 @@ export function wrapReports(item: {
     formatNumber
   } = item;
 
-  let apiReps: common.Report[] = reps.map(x => {
-    let rep: common.Report = {
+  let apiReports: common.Report[] = reports.map(x => {
+    let report: common.Report = {
       projectId: projectId,
       structId: structId,
-      repId: x.name,
+      reportId: x.name,
       draft: false,
       creatorId: undefined,
       filePath: x.filePath,
@@ -140,8 +140,8 @@ export function wrapReports(item: {
       draftCreatedTs: 1,
       serverTs: 1
     };
-    return rep;
+    return report;
   });
 
-  return apiReps;
+  return apiReports;
 }

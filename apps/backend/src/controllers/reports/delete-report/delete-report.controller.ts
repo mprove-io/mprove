@@ -38,7 +38,7 @@ export class DeleteReportController {
   constructor(
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private repsService: ReportsService,
+    private reportsService: ReportsService,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
@@ -49,7 +49,7 @@ export class DeleteReportController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRep)
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteReport)
   async deleteRep(
     @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
@@ -57,7 +57,7 @@ export class DeleteReportController {
     let reqValid: apiToBackend.ToBackendDeleteReportRequest = request.body;
 
     let { traceId } = reqValid.info;
-    let { projectId, isRepoProd, branchId, envId, repId } = reqValid.payload;
+    let { projectId, isRepoProd, branchId, envId, reportId } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
 
@@ -102,15 +102,15 @@ export class DeleteReportController {
       });
     }
 
-    let existingRep = await this.repsService.getRepCheckExists({
+    let existingReport = await this.reportsService.getReportCheckExists({
       structId: bridge.structId,
-      repId: repId
+      reportId: reportId
     });
 
     if (member.isAdmin === false && member.isEditor === false) {
-      this.repsService.checkRepPath({
+      this.reportsService.checkRepPath({
         userAlias: user.alias,
-        filePath: existingRep.filePath
+        filePath: existingReport.filePath
       });
     }
 
@@ -124,7 +124,7 @@ export class DeleteReportController {
         projectId: projectId,
         repoId: repoId,
         branch: branchId,
-        fileNodeId: existingRep.filePath,
+        fileNodeId: existingReport.filePath,
         userAlias: user.alias,
         remoteType: project.remoteType,
         gitUrl: project.gitUrl,
@@ -184,7 +184,7 @@ export class DeleteReportController {
             .delete(reportsTable)
             .where(
               and(
-                eq(reportsTable.reportId, repId),
+                eq(reportsTable.reportId, reportId),
                 eq(reportsTable.structId, bridge.structId)
               )
             );

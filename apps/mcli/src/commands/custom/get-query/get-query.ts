@@ -422,7 +422,7 @@ export class GetQueryCommand extends CustomCommand {
         isRepoProd: isRepoProd,
         branchId: this.branch,
         envId: this.env,
-        repId: this.reportId,
+        reportId: this.reportId,
         timezone: this.timezone,
         timeSpec: this.timeSpec as common.TimeSpecEnum,
         timeRangeFractionBrick: this.timeRange
@@ -430,12 +430,13 @@ export class GetQueryCommand extends CustomCommand {
 
       let getRepResp = await mreq<apiToBackend.ToBackendGetReportResponse>({
         loginToken: loginToken,
-        pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRep,
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetReport,
         payload: getRepReqPayload,
         host: this.context.config.mproveCliHost
       });
 
-      let repX = getRepResp.payload.rep;
+      let repX = getRepResp.payload.report;
 
       let rowPartQs = repX.rows
         .filter(row => {
@@ -500,7 +501,7 @@ export class GetQueryCommand extends CustomCommand {
         repoId: getRepoResp.payload.repo.repoId,
         branch: this.branch,
         env: this.env,
-        reportId: repX.repId,
+        reportId: repX.reportId,
         timezone: this.timezone,
         timeSpec: this.timeSpec,
         timeRange: this.timeRange
@@ -508,7 +509,7 @@ export class GetQueryCommand extends CustomCommand {
 
       reportPartQ = {
         title: repX.title,
-        reportId: repX.repId,
+        reportId: repX.reportId,
         url: url,
         rows: rowPartQs
       };

@@ -30,52 +30,52 @@ export class ReportService {
     private navQuery: NavQuery,
     private memberQuery: MemberQuery,
     private structQuery: StructQuery,
-    private repQuery: ReportQuery,
-    private repsQuery: ReportsQuery
+    private reportQuery: ReportQuery,
+    private reportsQuery: ReportsQuery
   ) {
     this.nav$.subscribe();
   }
 
   modifyRows(item: {
-    rep: common.ReportX;
+    report: common.ReportX;
     changeType: common.ChangeTypeEnum;
     rowChange: common.RowChange;
     rowIds: string[];
   }) {
-    let { rep, changeType, rowChange, rowIds } = item;
+    let { report, changeType, rowChange, rowIds } = item;
 
-    if (rep.draft === true) {
+    if (report.draft === true) {
       this.editDraftRep({
-        repId: rep.repId,
+        reportId: report.reportId,
         changeType: changeType,
         rowIds: rowIds,
         rowChange: rowChange
       });
     } else {
-      this.navCreateDraftRep({
-        fromRepId: rep.repId,
+      this.navCreateDraftReport({
+        fromReportId: report.reportId,
         changeType: changeType,
         rowChange: rowChange,
         rowIds: rowIds,
         selectRows:
           changeType !== common.ChangeTypeEnum.Move &&
           changeType !== common.ChangeTypeEnum.Delete
-            ? this.uiQuery.getValue().repSelectedNodes.map(node => node.id)
+            ? this.uiQuery.getValue().reportSelectedNodes.map(node => node.id)
             : []
       });
     }
   }
 
-  navCreateDraftRep(item: {
+  navCreateDraftReport(item: {
     changeType: common.ChangeTypeEnum;
     rowChange: common.RowChange;
     rowIds: string[];
-    fromRepId: string;
+    fromReportId: string;
     selectRows: string[];
   }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { rowChange, rowIds, fromRepId, changeType, selectRows } = item;
+    let { rowChange, rowIds, fromReportId, changeType, selectRows } = item;
 
     let uiState = this.uiQuery.getValue();
 
@@ -84,7 +84,7 @@ export class ReportService {
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
-      fromRepId: fromRepId,
+      fromReportId: fromReportId,
       rowChange: rowChange,
       rowIds: rowIds,
       changeType: changeType,
@@ -96,20 +96,20 @@ export class ReportService {
     this.apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDraftRep,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDraftReport,
         payload: payload
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateDraftReportResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            let rep = resp.payload.rep;
+            let report = resp.payload.report;
 
-            let reps = this.repsQuery.getValue().reps;
-            let newReps = [rep, ...reps];
-            this.repsQuery.update({ reps: newReps });
+            let reports = this.reportsQuery.getValue().reports;
+            let newReports = [report, ...reports];
+            this.reportsQuery.update({ reports: newReports });
 
             this.navigateService.navigateToMetricsRep({
-              repId: rep.repId,
+              reportId: report.reportId,
               selectRowsNodeIds: selectRows
             });
           }
@@ -123,9 +123,9 @@ export class ReportService {
     changeType: common.ChangeTypeEnum;
     rowChange: common.RowChange;
     rowIds: string[];
-    repId: string;
+    reportId: string;
   }) {
-    let { rowChange, rowIds, repId, changeType } = item;
+    let { rowChange, rowIds, reportId, changeType } = item;
 
     let uiState = this.uiQuery.getValue();
 
@@ -134,7 +134,7 @@ export class ReportService {
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
-      repId: repId,
+      reportId: reportId,
       changeType: changeType,
       rowChange: rowChange,
       rowIds: rowIds,
@@ -146,7 +146,7 @@ export class ReportService {
     this.apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditDraftRep,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditDraftReport,
         payload: payload,
         showSpinner: true
       })
@@ -160,7 +160,7 @@ export class ReportService {
               needValidate: resp.payload.needValidate
             });
 
-            this.repQuery.update(resp.payload.rep);
+            this.reportQuery.update(resp.payload.report);
 
             return true;
           }
@@ -170,47 +170,47 @@ export class ReportService {
       .subscribe();
   }
 
-  deleteDraftReps(item: { repIds: string[] }) {
-    let { repIds } = item;
+  deleteDraftReports(item: { reportIds: string[] }) {
+    let { reportIds } = item;
 
-    let rep = this.repQuery.getValue();
+    let report = this.reportQuery.getValue();
 
     let payload: apiToBackend.ToBackendDeleteDraftReportsRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
-      repIds: repIds
+      reportIds: reportIds
     };
 
     this.apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftReps,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftReports,
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteDraftReportsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            let reps = this.repsQuery.getValue().reps;
+            let reports = this.reportsQuery.getValue().reports;
 
-            let newReps = [...reps];
+            let newReports = [...reports];
 
-            repIds.forEach(repId => {
-              let repIndex = newReps.findIndex(x => x.repId === repId);
+            reportIds.forEach(reportId => {
+              let repIndex = newReports.findIndex(x => x.reportId === reportId);
 
-              newReps = [
-                ...newReps.slice(0, repIndex),
-                ...newReps.slice(repIndex + 1)
+              newReports = [
+                ...newReports.slice(0, repIndex),
+                ...newReports.slice(repIndex + 1)
               ];
             });
 
-            this.repsQuery.update({ reps: newReps });
+            this.reportsQuery.update({ reports: newReports });
 
-            if (repIds.indexOf(rep.repId) > -1) {
+            if (reportIds.indexOf(report.reportId) > -1) {
               this.navigateService.navigateToMetricsRep({
-                repId: common.EMPTY_REP_ID,
+                reportId: common.EMPTY_REPORT_ID,
                 selectRowsNodeIds: []
               });
             }

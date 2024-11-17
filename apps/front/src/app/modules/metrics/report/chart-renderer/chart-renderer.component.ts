@@ -17,8 +17,8 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
   rowTypeEmpty = common.RowTypeEnum.Empty;
 
   constructor(
-    private repQuery: ReportQuery,
-    private repService: ReportService
+    private reportQuery: ReportQuery,
+    private reportService: ReportService
   ) {}
 
   agInit(params: ICellRendererParams<DataRow>) {
@@ -35,7 +35,7 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
 
     this.params.api.deselectAll();
     setTimeout(() => {
-      let rep = this.repQuery.getValue();
+      let report = this.reportQuery.getValue();
 
       let rowChange: common.RowChange = {
         rowId: this.params.data.rowId,
@@ -45,8 +45,8 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
         showChart: !this.params.data.showChart
       };
 
-      this.repService.modifyRows({
-        rep: rep,
+      this.reportService.modifyRows({
+        report: report,
         changeType: common.ChangeTypeEnum.EditInfo,
         rowChange: rowChange,
         rowIds: undefined

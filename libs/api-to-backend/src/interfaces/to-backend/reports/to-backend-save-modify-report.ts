@@ -18,10 +18,10 @@ export class ToBackendSaveModifyReportRequestPayload {
   envId: string;
 
   @IsString()
-  fromRepId: string;
+  fromReportId: string;
 
   @IsString()
-  modRepId: string;
+  modReportId: string;
 
   @IsString()
   title: string;
@@ -62,7 +62,7 @@ export class ToBackendSaveModifyReportResponsePayload {
 
   @ValidateNested()
   @Type(() => common.Report)
-  rep: common.ReportX;
+  report: common.ReportX;
 }
 
 export class ToBackendSaveModifyReportResponse extends common.MyResponse {

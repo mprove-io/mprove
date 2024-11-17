@@ -21,7 +21,7 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
     private uiQuery: UiQuery,
     private userQuery: UserQuery,
     private apiService: ApiService,
-    private repQuery: ReportQuery,
+    private reportQuery: ReportQuery,
     private structQuery: StructQuery,
     private memberQuery: MemberQuery,
     private router: Router
@@ -73,12 +73,12 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
         nav = x;
       });
 
-    let rep: common.ReportX;
-    this.repQuery
+    let report: common.ReportX;
+    this.reportQuery
       .select()
       .pipe(
         tap(x => {
-          rep = x;
+          report = x;
         }),
         take(1)
       )
@@ -99,14 +99,14 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
       userId: userId
     });
 
-    let parametersRepId = route.params[common.PARAMETER_REP_ID];
+    let parametersReportId = route.params[common.PARAMETER_REPORT_ID];
 
     let payload: apiToBackend.ToBackendGetReportRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
       envId: nav.envId,
-      repId: parametersRepId,
+      reportId: parametersReportId,
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick
@@ -114,7 +114,8 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
 
     return this.apiService
       .req({
-        pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRep,
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetReport,
         payload: payload,
         showSpinner: showSpinner
       })
@@ -128,22 +129,22 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
               needValidate: resp.payload.needValidate
             });
 
-            this.repQuery.update(resp.payload.rep);
+            this.reportQuery.update(resp.payload.report);
 
             let uiState = this.uiQuery.getValue();
 
             if (
-              uiState.timezone !== resp.payload.rep.timezone ||
-              uiState.timeSpec !== resp.payload.rep.timeSpec ||
+              uiState.timezone !== resp.payload.report.timezone ||
+              uiState.timeSpec !== resp.payload.report.timeSpec ||
               !equal(
                 uiState.timeRangeFraction,
-                resp.payload.rep.timeRangeFraction
+                resp.payload.report.timeRangeFraction
               )
             ) {
               this.uiQuery.updatePart({
-                timezone: resp.payload.rep.timezone,
-                timeSpec: resp.payload.rep.timeSpec,
-                timeRangeFraction: resp.payload.rep.timeRangeFraction
+                timezone: resp.payload.report.timezone,
+                timeSpec: resp.payload.report.timeSpec,
+                timeRangeFraction: resp.payload.report.timeRangeFraction
               });
             }
 

@@ -36,7 +36,7 @@ export class ApiService {
     private myDialogService: MyDialogService,
     private navigateService: NavigateService,
     private metricsQuery: MetricsQuery,
-    private repsQuery: ReportsQuery,
+    private reportsQuery: ReportsQuery,
     private structQuery: StructQuery,
     private memberQuery: MemberQuery
   ) {}
@@ -208,8 +208,8 @@ export class ApiService {
           common.ErEnum.BACKEND_STRUCT_ID_CHANGED,
           common.ErEnum.BACKEND_STRUCT_DOES_NOT_EXIST,
           common.ErEnum.BACKEND_QUERY_DOES_NOT_EXIST,
-          common.ErEnum.BACKEND_REP_DOES_NOT_EXIST,
-          common.ErEnum.BACKEND_REP_NOT_FOUND
+          common.ErEnum.BACKEND_REPORT_DOES_NOT_EXIST,
+          common.ErEnum.BACKEND_REPORT_NOT_FOUND
         ].indexOf(infoErrorMessage) > -1
       ) {
         errorData.description = `This typically happens if a user with the editor role has recently made new changes to files in the current branch.`;
@@ -217,8 +217,8 @@ export class ApiService {
         errorData.onClickFnBindThis = (() => {
           if (
             [
-              common.ErEnum.BACKEND_REP_DOES_NOT_EXIST,
-              common.ErEnum.BACKEND_REP_NOT_FOUND
+              common.ErEnum.BACKEND_REPORT_DOES_NOT_EXIST,
+              common.ErEnum.BACKEND_REPORT_NOT_FOUND
             ].indexOf(infoErrorMessage) > -1
           ) {
             let uiState = this.uiQuery.getValue();
@@ -233,7 +233,7 @@ export class ApiService {
               .pipe(
                 tap(x => {
                   this.navigateService.navigateToMetricsRep({
-                    repId: common.EMPTY_REP_ID,
+                    reportId: common.EMPTY_REPORT_ID,
                     selectRowsNodeIds: []
                   });
                 }),
@@ -294,8 +294,8 @@ export class ApiService {
           common.ErEnum.BACKEND_MODIFY_DASHBOARD_FAIL,
           common.ErEnum.BACKEND_CREATE_CHART_FAIL,
           common.ErEnum.BACKEND_MODIFY_CHART_FAIL,
-          common.ErEnum.BACKEND_CREATE_REP_FAIL,
-          common.ErEnum.BACKEND_MODIFY_REP_FAIL
+          common.ErEnum.BACKEND_CREATE_REPORT_FAIL,
+          common.ErEnum.BACKEND_MODIFY_REPORT_FAIL
         ].indexOf(infoErrorMessage) > -1
       ) {
         errorData.description = `The changes were saved to the file, but it failed the validation. It's probably a bug.`;
@@ -384,8 +384,8 @@ export class ApiService {
             metrics: resp.payload.metrics
           });
 
-          this.repsQuery.update({
-            reps: resp.payload.reps
+          this.reportsQuery.update({
+            reports: resp.payload.reports
           });
 
           return true;

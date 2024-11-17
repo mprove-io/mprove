@@ -215,7 +215,7 @@ export function checkTopUnknownParameters(
             ) {
               item.errors.push(
                 new BmError({
-                  title: common.ErTitleEnum.UNKNOWN_REP_PARAMETER,
+                  title: common.ErTitleEnum.UNKNOWN_REPORT_PARAMETER,
                   message:
                     `parameter "${parameter}" can not be used on top level of ` +
                     `${common.FileExtensionEnum.Report} file`,

@@ -39,7 +39,7 @@ export class CreateDraftReportController {
   constructor(
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private repsService: ReportsService,
+    private reportsService: ReportsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,
@@ -51,7 +51,7 @@ export class CreateDraftReportController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDraftRep)
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDraftReport)
   async createDraftRep(
     @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
@@ -64,7 +64,7 @@ export class CreateDraftReportController {
       isRepoProd,
       branchId,
       envId,
-      fromRepId,
+      fromReportId,
       changeType,
       rowChange,
       rowIds,
@@ -106,23 +106,24 @@ export class CreateDraftReportController {
       projectId: projectId
     });
 
-    let fromRep: schemaPostgres.ReportEnt = await this.repsService.getRep({
-      projectId: projectId,
-      repId: fromRepId,
-      structId: bridge.structId,
-      checkExist: true,
-      checkAccess: true,
-      user: user,
-      userMember: userMember
-    });
+    let fromReport: schemaPostgres.ReportEnt =
+      await this.reportsService.getReport({
+        projectId: projectId,
+        reportId: fromReportId,
+        structId: bridge.structId,
+        checkExist: true,
+        checkAccess: true,
+        user: user,
+        userMember: userMember
+      });
 
-    let repId = common.makeId();
+    let reportId = common.makeId();
 
     let copyMconfigsMap: { fromMconfigId: string; toMconfigId: string }[] = [];
     let copyQueriesMap: { fromQueryId: string; toQueryId: string }[] = [];
     let copyKitsMap: { fromKitId: string; toKitId: string }[] = [];
 
-    fromRep.rows.forEach(row => {
+    fromReport.rows.forEach(row => {
       if (
         row.rowType === common.RowTypeEnum.Metric ||
         row.rowType === common.RowTypeEnum.Formula
@@ -218,7 +219,7 @@ export class CreateDraftReportController {
       where: and(
         inArray(kitsTable.kitId, fromCopyKitIds),
         eq(kitsTable.structId, struct.structId),
-        eq(kitsTable.reportId, fromRepId)
+        eq(kitsTable.reportId, fromReportId)
       )
     });
 
@@ -250,7 +251,7 @@ export class CreateDraftReportController {
 
     copyKits.forEach(x => {
       x.kitId = copyKitsMap.find(y => y.fromKitId === x.kitId).toKitId;
-      x.reportId = repId;
+      x.reportId = reportId;
     });
 
     await retry(
@@ -300,8 +301,8 @@ export class CreateDraftReportController {
           //   })
           [];
 
-    let processedRows: common.Row[] = this.repsService.getProcessedRows({
-      rows: fromRep.rows,
+    let processedRows: common.Row[] = this.reportsService.getProcessedRows({
+      rows: fromReport.rows,
       rowChange: rowChange,
       rowIds: rowIds,
       changeType: changeType,
@@ -312,24 +313,24 @@ export class CreateDraftReportController {
       struct: struct
     });
 
-    let rep: schemaPostgres.ReportEnt = this.makerService.makeReport({
+    let report: schemaPostgres.ReportEnt = this.makerService.makeReport({
       projectId: projectId,
       structId: bridge.structId,
-      reportId: repId,
+      reportId: reportId,
       draft: true,
       accessRoles: [],
       accessUsers: [],
       creatorId: user.userId,
       filePath: undefined,
-      title: repId,
+      title: reportId,
       rows: processedRows,
       draftCreatedTs: makeTsNumber()
     });
 
     let userMemberApi = this.wrapToApiService.wrapToApiMember(userMember);
 
-    let repApi = await this.repsService.getRepData({
-      rep: rep,
+    let repApi = await this.reportsService.getRepData({
+      report: report,
       traceId: traceId,
       project: project,
       userMemberApi: userMemberApi,
@@ -347,7 +348,7 @@ export class CreateDraftReportController {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: userMemberApi,
-      rep: repApi
+      report: repApi
     };
 
     return payload;

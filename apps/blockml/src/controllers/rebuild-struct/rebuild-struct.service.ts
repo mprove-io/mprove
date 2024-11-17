@@ -58,7 +58,7 @@ export class RebuildStructService {
       dashboards,
       metrics,
       models,
-      reps,
+      reports,
       udfsDict,
       views,
       charts,
@@ -88,10 +88,10 @@ export class RebuildStructService {
       models: models
     });
 
-    let apiReps = barWrapper.wrapReports({
+    let apiReports = barWrapper.wrapReports({
       projectId: projectId,
       structId: structId,
-      reps: reps,
+      reports: reports,
       metrics: metrics,
       models: apiModels,
       formatNumber: formatNumber,
@@ -130,7 +130,7 @@ export class RebuildStructService {
       models: apiModels,
       dashboards: apiDashboards,
       apis: apiApis,
-      reps: apiReps,
+      reports: apiReports,
       charts: apiCharts,
       metrics: metrics,
       mconfigs: mconfigs,
@@ -209,7 +209,7 @@ export class RebuildStructService {
     let dashboards: common.FileDashboard[];
     let metrics: common.FileMetric[];
     let models: common.FileModel[];
-    let reps: common.FileReport[];
+    let reports: common.FileReport[];
     let udfs: common.FileUdf[];
     let views: common.FileView[];
     let charts: common.FileChart[];
@@ -230,7 +230,7 @@ export class RebuildStructService {
     dashboards = yamlBuildItem.dashboards;
     metrics = yamlBuildItem.metrics;
     models = yamlBuildItem.models;
-    reps = yamlBuildItem.reps;
+    reports = yamlBuildItem.reports;
     udfs = yamlBuildItem.udfs;
     views = yamlBuildItem.views;
     charts = yamlBuildItem.charts;
@@ -243,7 +243,7 @@ export class RebuildStructService {
         dashboards: [],
         metrics: [],
         models: [],
-        reps: [],
+        reports: [],
         udfsDict: {},
         views: [],
         charts: [],
@@ -476,9 +476,9 @@ export class RebuildStructService {
       this.cs
     );
 
-    reps = barBuilder.buildReport(
+    reports = barBuilder.buildReport(
       {
-        reps: reps,
+        reports: reports,
         metrics: commonMetrics,
         models: models,
         structId: item.structId,
@@ -497,7 +497,7 @@ export class RebuildStructService {
         models: models,
         metrics: commonMetrics,
         dashboards: dashboards,
-        reps: reps,
+        reports: reports,
         charts: charts,
         structId: item.structId,
         caller: common.CallerEnum.RebuildStruct
@@ -512,7 +512,7 @@ export class RebuildStructService {
       metrics: commonMetrics,
       models: models,
       udfsDict: udfsDict,
-      reps: reps,
+      reports: reports,
       views: views,
       charts: charts,
       mproveDirValue: projectConfig.mprove_dir,

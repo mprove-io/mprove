@@ -9,7 +9,7 @@ let func = common.FuncEnum.CheckReportAccess;
 
 export function checkReportAccess(
   item: {
-    reps: common.FileReport[];
+    reports: common.FileReport[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
@@ -19,9 +19,9 @@ export function checkReportAccess(
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newReps = barSpecial.checkAccess(
+  let newReports = barSpecial.checkAccess(
     {
-      entities: item.reps,
+      entities: item.reports,
       errors: item.errors,
       structId: item.structId,
       caller: item.caller
@@ -37,7 +37,14 @@ export function checkReportAccess(
     common.LogTypeEnum.Errors,
     item.errors
   );
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Reps, newReps);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Reports,
+    newReports
+  );
 
-  return newReps;
+  return newReports;
 }

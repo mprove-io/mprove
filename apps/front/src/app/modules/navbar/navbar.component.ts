@@ -180,7 +180,7 @@ export class NavbarComponent implements OnInit {
     }
 
     this.navigateService.navigateToMetricsRep({
-      repId: common.EMPTY_REP_ID,
+      reportId: common.EMPTY_REPORT_ID,
       selectRowsNodeIds: [],
       skipDeselect: true
     });

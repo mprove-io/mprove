@@ -12,7 +12,7 @@ export enum LogTypeEnum {
   Models = 'out_models.log',
   Metrics = 'out_metrics.log',
   Ds = 'out_dashboards.log',
-  Reps = 'out_reps.log',
+  Reports = 'out_reports.log',
   Apis = 'out_apis.log',
   Charts = 'out_charts.log',
   Confs = 'out_confs.log',

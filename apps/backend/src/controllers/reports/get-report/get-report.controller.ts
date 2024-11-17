@@ -33,7 +33,7 @@ export class GetReportController {
   constructor(
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private repsService: ReportsService,
+    private reportsService: ReportsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,
@@ -44,7 +44,7 @@ export class GetReportController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRep)
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetReport)
   async getRep(
     @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
@@ -57,7 +57,7 @@ export class GetReportController {
       isRepoProd,
       branchId,
       envId,
-      repId,
+      reportId,
       timeRangeFractionBrick,
       timeSpec,
       timezone
@@ -96,9 +96,9 @@ export class GetReportController {
       projectId: projectId
     });
 
-    let rep = await this.repsService.getRep({
+    let report = await this.reportsService.getReport({
       projectId: projectId,
-      repId: repId,
+      reportId: reportId,
       structId: bridge.structId,
       checkExist: true,
       checkAccess: true,
@@ -108,8 +108,8 @@ export class GetReportController {
 
     let userMemberApi = this.wrapToApiService.wrapToApiMember(userMember);
 
-    let repApi = await this.repsService.getRepData({
-      rep: rep,
+    let repApi = await this.reportsService.getRepData({
+      report: report,
       traceId: traceId,
       project: project,
       userMemberApi: userMemberApi,
@@ -152,7 +152,7 @@ export class GetReportController {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: userMemberApi,
-      rep: repApi
+      report: repApi
     };
 
     return payload;

@@ -239,7 +239,7 @@ export class GetStateCommand extends CustomCommand {
     }
 
     if (this.getReports === true) {
-      log.reports = getMetricsResp.payload.reps.map(x => {
+      log.reports = getMetricsResp.payload.reports.map(x => {
         let url = getReportUrl({
           host: this.context.config.mproveCliHost,
           orgId: getRepoResp.payload.repo.orgId,
@@ -247,14 +247,14 @@ export class GetStateCommand extends CustomCommand {
           repoId: getRepoResp.payload.repo.repoId,
           branch: this.branch,
           env: this.env,
-          reportId: x.repId,
+          reportId: x.reportId,
           timezone: 'UTC',
           timeSpec: 'days',
           timeRange: 'last 5 days complete plus current'
         });
 
         let report: any = {
-          reportId: x.repId,
+          reportId: x.reportId,
           url: url
         };
 

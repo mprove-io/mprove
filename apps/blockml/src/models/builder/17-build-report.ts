@@ -6,7 +6,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 export function buildReport(
   item: {
-    reps: common.FileReport[];
+    reports: common.FileReport[];
     metrics: common.MetricAny[];
     models: common.FileModel[];
     errors: BmError[];
@@ -15,11 +15,11 @@ export function buildReport(
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let reps = item.reps;
+  let reports = item.reports;
 
-  reps = barReport.checkReport(
+  reports = barReport.checkReport(
     {
-      reps: reps,
+      reports: reports,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller
@@ -27,9 +27,9 @@ export function buildReport(
     cs
   );
 
-  reps = barReport.checkReportAccess(
+  reports = barReport.checkReportAccess(
     {
-      reps: reps,
+      reports: reports,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller
@@ -37,9 +37,9 @@ export function buildReport(
     cs
   );
 
-  reps = barReport.checkReportRowUnknownParameters(
+  reports = barReport.checkReportRowUnknownParameters(
     {
-      reps: reps,
+      reports: reports,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller
@@ -47,9 +47,9 @@ export function buildReport(
     cs
   );
 
-  reps = barReport.checkReportRowUnknownParams(
+  reports = barReport.checkReportRowUnknownParams(
     {
-      reps: reps,
+      reports: reports,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller
@@ -57,9 +57,9 @@ export function buildReport(
     cs
   );
 
-  reps = barReport.checkReportRow(
+  reports = barReport.checkReportRow(
     {
-      reps: reps,
+      reports: reports,
       metrics: item.metrics,
       structId: item.structId,
       errors: item.errors,
@@ -68,9 +68,9 @@ export function buildReport(
     cs
   );
 
-  reps = barReport.checkReportRowIds(
+  reports = barReport.checkReportRowIds(
     {
-      reps: reps,
+      reports: reports,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller
@@ -78,9 +78,9 @@ export function buildReport(
     cs
   );
 
-  reps = barReport.checkReportRowParameters(
+  reports = barReport.checkReportRowParameters(
     {
-      reps: reps,
+      reports: reports,
       metrics: item.metrics,
       models: item.models,
       structId: item.structId,
@@ -90,5 +90,5 @@ export function buildReport(
     cs
   );
 
-  return reps;
+  return reports;
 }

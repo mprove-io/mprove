@@ -18,7 +18,7 @@ export class UiState {
   gridData: DataRow[];
   gridApi: GridApi<DataRow>;
   repChartData: RepChartData;
-  repSelectedNodes: IRowNode<DataRow>[];
+  reportSelectedNodes: IRowNode<DataRow>[];
   metricsColumnNameWidth: number;
   metricsTimeColumnsNarrowWidth: number;
   metricsTimeColumnsWideWidth: number;
@@ -44,7 +44,7 @@ let uiState: UiState = {
     rows: [],
     columns: []
   },
-  repSelectedNodes: [],
+  reportSelectedNodes: [],
   metricsColumnNameWidth: undefined,
   metricsTimeColumnsNarrowWidth: undefined,
   metricsTimeColumnsWideWidth: undefined,
@@ -88,10 +88,12 @@ export class UiQuery extends BaseQuery<UiState> {
     select(state => state.showMetricsTimeFieldName)
   );
 
-  repSelectedNodes$ = this.store.pipe(select(state => state.repSelectedNodes));
+  reportSelectedNodes$ = this.store.pipe(
+    select(state => state.reportSelectedNodes)
+  );
 
-  repSelectedRowIdsDistinct$ = this.store.pipe(
-    map(x => x.repSelectedNodes.map(node => node.data.rowId)),
+  reportSelectedRowIdsDistinct$ = this.store.pipe(
+    map(x => x.reportSelectedNodes.map(node => node.data.rowId)),
     distinctUntilChanged((prev, curr) => equal(prev, curr))
   );
 

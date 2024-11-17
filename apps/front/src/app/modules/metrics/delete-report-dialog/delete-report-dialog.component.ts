@@ -16,8 +16,8 @@ import { constants } from '~front/barrels/constants';
 
 export interface DeleteReportDialogData {
   apiService: ApiService;
-  repDeletedFnBindThis: any;
-  rep: common.ReportX;
+  reportDeletedFnBindThis: any;
+  report: common.ReportX;
   projectId: string;
   branchId: string;
   envId: string;
@@ -59,7 +59,7 @@ export class DeleteReportDialogComponent implements OnInit {
 
     let { projectId, branchId, isRepoProd } = this.ref.data;
 
-    let rep: common.ReportX = this.ref.data.rep;
+    let report: common.ReportX = this.ref.data.report;
     let apiService: ApiService = this.ref.data.apiService;
 
     let payload: apiToBackend.ToBackendDeleteReportRequestPayload = {
@@ -67,20 +67,20 @@ export class DeleteReportDialogComponent implements OnInit {
       branchId: branchId,
       envId: this.ref.data.envId,
       isRepoProd: isRepoProd,
-      repId: rep.repId
+      reportId: report.reportId
     };
 
     apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRep,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteReport,
         payload: payload,
         showSpinner: !this.ref.data.isStartSpinnerUntilNavEnd
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteReportResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.ref.data.repDeletedFnBindThis(rep.repId);
+            this.ref.data.reportDeletedFnBindThis(report.reportId);
           }
         }),
         take(1)

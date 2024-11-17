@@ -9,7 +9,7 @@ let func = common.FuncEnum.CheckReportRowUnknownParams;
 
 export function checkReportRowUnknownParams(
   item: {
-    reps: common.FileReport[];
+    reports: common.FileReport[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
@@ -19,9 +19,9 @@ export function checkReportRowUnknownParams(
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newReps: common.FileReport[] = [];
+  let newReports: common.FileReport[] = [];
 
-  item.reps.forEach(x => {
+  item.reports.forEach(x => {
     let errorsOnStart = item.errors.length;
 
     x.rows
@@ -169,7 +169,7 @@ export function checkReportRowUnknownParams(
       });
 
     if (errorsOnStart === item.errors.length) {
-      newReps.push(x);
+      newReports.push(x);
     }
   });
 
@@ -181,7 +181,14 @@ export function checkReportRowUnknownParams(
     common.LogTypeEnum.Errors,
     item.errors
   );
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Entities, newReps);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    common.LogTypeEnum.Entities,
+    newReports
+  );
 
-  return newReps;
+  return newReports;
 }

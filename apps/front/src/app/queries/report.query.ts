@@ -5,10 +5,10 @@ import { BaseQuery } from './base.query';
 
 export class ReportState extends common.ReportX {}
 
-export const emptyRep: ReportState = {
+export const emptyReport: ReportState = {
   projectId: undefined,
   structId: undefined,
-  repId: common.EMPTY_REP_ID,
+  reportId: common.EMPTY_REPORT_ID,
   draft: false,
   creatorId: undefined,
   filePath: undefined,
@@ -25,13 +25,13 @@ export const emptyRep: ReportState = {
   columns: [],
   draftCreatedTs: undefined,
   serverTs: undefined,
-  canEditOrDeleteRep: undefined,
+  canEditOrDeleteReport: undefined,
   author: undefined
 };
 
 @Injectable({ providedIn: 'root' })
 export class ReportQuery extends BaseQuery<ReportState> {
   constructor() {
-    super(createStore({ name: 'report' }, withProps<ReportState>(emptyRep)));
+    super(createStore({ name: 'report' }, withProps<ReportState>(emptyReport)));
   }
 }

@@ -24,7 +24,7 @@ export class ToBackendEditDraftReportRequestPayload {
   envId: string;
 
   @IsString()
-  repId: string;
+  reportId: string;
 
   @IsEnum(common.ChangeTypeEnum)
   changeType: common.ChangeTypeEnum;
@@ -68,7 +68,7 @@ export class ToBackendEditDraftReportResponsePayload {
 
   @ValidateNested()
   @Type(() => common.Report)
-  rep: common.ReportX;
+  report: common.ReportX;
 }
 
 export class ToBackendEditDraftReportResponse extends common.MyResponse {
