@@ -7,10 +7,12 @@ joins:
 - join_view: v1
   as: b
   sql_on: ${a.dim8} = ${b.dim8}
+  relationship: one_to_one
 
 - join_view: v2
   as: c
   sql_on: ${a.dim8} = ${c.dim1}
+  relationship: one_to_one
 
 fields:
 - dimension: dim1

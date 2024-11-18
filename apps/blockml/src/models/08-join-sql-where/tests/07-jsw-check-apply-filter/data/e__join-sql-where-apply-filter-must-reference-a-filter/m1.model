@@ -7,6 +7,7 @@ joins:
 - join_view: v1
   as: b
   sql_on: ${a.dim1} = ${b.dim1}
+  relationship: one_to_one
   sql_where: '{% apply_filter dim10 %} target {% end_apply_filter %}'
 
 fields:

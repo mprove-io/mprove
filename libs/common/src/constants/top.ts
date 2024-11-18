@@ -227,6 +227,13 @@ export const JOIN_TYPE_VALUES = [
   enums.JoinTypeEnum.RightOuter
 ];
 
+export const JOIN_RELATIONSHIP_VALUES = [
+  enums.JoinRelationshipEnum.OneToMany,
+  enums.JoinRelationshipEnum.OneToOne,
+  enums.JoinRelationshipEnum.ManyToOne,
+  enums.JoinRelationshipEnum.ManyToMany
+];
+
 export const PROJECT_WEEK_START_VALUES = [
   enums.ProjectWeekStartEnum.Sunday,
   enums.ProjectWeekStartEnum.Monday

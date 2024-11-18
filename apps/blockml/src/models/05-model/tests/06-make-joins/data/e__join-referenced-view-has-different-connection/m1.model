@@ -6,7 +6,8 @@ joins:
 
 - join_view: v2
   as: b  
-  sql_on: ${a.dim1} = ${b.dim1} 
+  sql_on: ${a.dim1} = ${b.dim1}
+  relationship: one_to_one 
 
 
 

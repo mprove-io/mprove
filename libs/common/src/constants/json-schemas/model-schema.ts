@@ -165,6 +165,10 @@ export const MODEL_SCHEMA: JSONSchema7 = {
           sql_on: {
             type: 'string'
           },
+          relationship: {
+            type: 'string',
+            enum: constants.JOIN_RELATIONSHIP_VALUES
+          },
           sql_where: {
             type: 'string'
           }

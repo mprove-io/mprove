@@ -7,3 +7,4 @@ joins:
 - join_view: v1
   as: b
   sql_on: ${! @ $ % ^ & * ( ) - + =}   
+  relationship: one_to_one

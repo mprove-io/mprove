@@ -7,6 +7,7 @@ joins:
 - join_view: v1
   as: b
   sql_on: ${b.dim1} = ${f1} 
+  relationship: one_to_one
 
 fields:
 - filter: f1

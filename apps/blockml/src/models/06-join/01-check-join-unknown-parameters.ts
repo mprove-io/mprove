@@ -92,6 +92,7 @@ export function checkJoinUnknownParameters(
             join.as !== x.fromAs &&
             [
               common.ParameterEnum.JoinView.toString(),
+              common.ParameterEnum.Relationship.toString(),
               common.ParameterEnum.Hidden.toString(),
               common.ParameterEnum.Label.toString(),
               common.ParameterEnum.Description.toString(),

@@ -63,5 +63,5 @@ test('1', async t => {
   t.is(models.length, 0);
 
   t.is(errors[0].title, common.ErTitleEnum.JOIN_SQL_WHERE_REFS_MEASURE);
-  t.is(errors[0].lines[0].line, 10);
+  t.is(errors[0].lines[0].line, 11);
 });

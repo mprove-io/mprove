@@ -8,7 +8,9 @@ joins:
 - join_view: v2
   as: b
   sql_on: 1 = 1
+  relationship: one_to_one
 
 - join_view: v3
   as: c
   sql_on: 1 = 1
+  relationship: one_to_one

@@ -64,10 +64,10 @@ test('1', async t => {
 
   t.deepEqual(models[0].joins[1].sqlOnDoubleDeps, {
     a: {
-      dim1: 8
+      dim1: 9
     },
     b: {
-      dim1: 8
+      dim1: 9
     }
   });
 });

@@ -7,7 +7,8 @@ joins:
 - join_view: v1
   as: b
   sql_on: ${a.dim1} = ${b.dim1}       
-  unk: 5        
+  relationship: one_to_one        
+  unk: 5
 
 
 

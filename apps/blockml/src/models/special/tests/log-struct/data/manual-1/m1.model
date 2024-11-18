@@ -6,3 +6,4 @@ joins:
 - join_view: v5
   as: z
   sql_on: ${x.dim5} = ${z.dim5} 
+  relationship: one_to_one

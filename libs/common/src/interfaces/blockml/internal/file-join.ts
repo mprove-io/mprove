@@ -23,6 +23,9 @@ export interface FileJoin {
   type: enums.JoinTypeEnum;
   type_line_num: number;
 
+  relationship: enums.JoinRelationshipEnum;
+  relationship_line_num: number;
+
   sql_on: string;
   sql_on_line_num: number;
 

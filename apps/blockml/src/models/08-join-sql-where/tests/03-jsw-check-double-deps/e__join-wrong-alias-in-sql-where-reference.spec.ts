@@ -66,5 +66,5 @@ test('1', async t => {
     errors[0].title,
     common.ErTitleEnum.JOIN_WRONG_ALIAS_IN_SQL_WHERE_REFERENCE
   );
-  t.is(errors[0].lines[0].line, 10);
+  t.is(errors[0].lines[0].line, 11);
 });

@@ -59,6 +59,7 @@ export enum FuncEnum {
 
   CheckJoinUnknownParameters = '06-join/01-check-join-unknown-parameters',
   CheckJoinType = '06-join/02-check-join-type',
+  CheckJoinRelationship = '06-join/05-check-join-relationship',
   CheckSqlOnExist = '06-join/03-check-sql-on-exist',
   CheckJoinHideShowFields = '06-join/04-check-join-hide-show-fields',
 

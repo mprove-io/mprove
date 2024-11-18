@@ -64,10 +64,10 @@ test('1', async t => {
 
   t.deepEqual(models[0].joins[1].sqlWhereDoubleDeps, {
     a: {
-      dim1: 10
+      dim1: 11
     },
     b: {
-      dim1: 10
+      dim1: 11
     }
   });
 });

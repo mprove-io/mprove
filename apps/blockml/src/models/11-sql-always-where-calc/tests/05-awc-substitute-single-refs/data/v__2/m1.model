@@ -8,6 +8,7 @@ joins:
 - join_view: v2
   as: b
   sql_on: 1 = 1
+  relationship: one_to_one
 
 fields:
 - calculation: calc10

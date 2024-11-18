@@ -13,6 +13,7 @@ export * from './field-type.enum';
 export * from './file-extension.enum';
 export * from './file-status.enum';
 export * from './fraction/_index';
+export * from './join-relationship.enum';
 export * from './join-type.enum';
 export * from './log-level.enum';
 export * from './metric-type.enum';

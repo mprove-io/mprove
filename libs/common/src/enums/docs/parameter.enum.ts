@@ -56,6 +56,7 @@ export enum ParameterEnum {
   Rows = 'rows',
   Select = 'select',
 
+  Relationship = 'relationship',
   ShowFields = 'show_fields',
   Sorts = 'sorts',
   Source = 'source',

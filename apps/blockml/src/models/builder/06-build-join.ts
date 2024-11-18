@@ -55,5 +55,15 @@ export function buildJoin(
     cs
   );
 
+  models = barJoin.checkJoinRelationship(
+    {
+      models: models,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
   return models;
 }

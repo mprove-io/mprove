@@ -6,7 +6,8 @@ joins:
 
 - join_view: v1
   as: b
-  sql_on: 1 = 1 
+  sql_on: 1 = 1
+  relationship: one_to_one 
   sql_where: ${b.dim1} = ${mea10} 
 
 fields:
