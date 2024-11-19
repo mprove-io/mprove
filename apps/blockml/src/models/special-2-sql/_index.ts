@@ -3,6 +3,7 @@ export * from './02-make-main-text';
 export * from './03-make-needs-doubles';
 export * from './04-find-joins-using-joins-deps';
 export * from './04.1-make-join-aggregations';
+export * from './04.2-make-unsafe-select';
 export * from './05-make-needs-all';
 export * from './06-make-filters';
 export * from './07-make-with';

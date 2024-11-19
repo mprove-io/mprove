@@ -99,6 +99,13 @@ export function genSqlPro(item: common.GenSqlItem): common.GenSqlProOutcome {
     model
   });
 
+  let { unsafeSelect } = barSql.makeUnsafeSelect({
+    select,
+    joinAggregations,
+    varsSqlSteps,
+    model
+  });
+
   let {
     filtersFractions,
     whereCalc,
@@ -166,5 +173,11 @@ export function genSqlPro(item: common.GenSqlItem): common.GenSqlProOutcome {
     model
   });
 
-  return { sql, filtersFractions, varsSqlSteps, joinAggregations };
+  return {
+    sql,
+    filtersFractions,
+    varsSqlSteps,
+    joinAggregations,
+    unsafeSelect
+  };
 }

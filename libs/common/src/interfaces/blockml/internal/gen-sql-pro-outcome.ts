@@ -8,5 +8,6 @@ export interface GenSqlProOutcome {
     [s: string]: Fraction[];
   };
   joinAggregations: JoinAggregation[];
+  unsafeSelect: string[];
   varsSqlSteps: VarsSqlStep[];
 }

@@ -41,6 +41,7 @@ test('1', async t => {
     modelId: 'abc',
     modelLabel: 'abc',
     select: [],
+    unsafeSelect: [],
     joinAggregations: [],
     sortings: [],
     sorts: undefined,

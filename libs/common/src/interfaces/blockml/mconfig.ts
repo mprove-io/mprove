@@ -36,6 +36,9 @@ export class Mconfig {
   @Type(() => JoinAggregation)
   joinAggregations: JoinAggregation[];
 
+  @IsString({ each: true })
+  unsafeSelect: string[];
+
   @ValidateNested()
   @Type(() => Sorting)
   sortings: Sorting[];

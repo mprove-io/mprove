@@ -152,6 +152,7 @@ export enum FuncEnum {
   MakeNeedsDoubles = 'special-2-sql/03-make-needs-doubles',
   FindJoinsUsingJoinsDeps = 'special-2-sql/04-find-joins-using-joins-deps',
   MakeJoinAggregations = 'special-2-sql/04.1-make-join-aggregations',
+  MakeUnsafeSelect = 'special-2-sql/04.2-make-unsafe-select',
   MakeNeedsAll = 'special-2-sql/05-make-needs-all',
   MakeFilters = 'special-2-sql/06-make-filters',
   MakeWith = 'special-2-sql/07-make-with',

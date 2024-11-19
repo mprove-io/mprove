@@ -72,5 +72,7 @@ export interface FilePartTile {
 
   joinAggregations?: JoinAggregation[];
 
+  unsafeSelect?: string[];
+
   varsSqlSteps?: VarsSqlStep[];
 }
