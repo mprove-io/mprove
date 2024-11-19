@@ -16,9 +16,7 @@ export function makeJoinAggregations(item: {
   let joinAggregations: common.JoinAggregation[] = [];
 
   model.joinsSorted
-    .filter(
-      asName => asName !== model.fromAs && common.isDefined(joins[asName])
-    )
+    .filter(asName => common.isDefined(joins[asName]))
     .forEach(asName => {
       let join = model.joins.find(j => j.as === asName);
 
@@ -28,13 +26,15 @@ export function makeJoinAggregations(item: {
       };
 
       if (join.as !== model.fromAs) {
-        Object.keys(join.sqlOnDoubleDeps).map(depAs => {
-          let depJoin = joinAggregations.find(y => y.joinAs === depAs);
+        Object.keys(join.sqlOnDoubleDeps)
+          .filter(depAs => depAs !== join.as)
+          .map(depAs => {
+            let depJoin = joinAggregations.find(y => y.joinAs === depAs);
 
-          if (depJoin.isSafeAggregation === false) {
-            joinAg.isSafeAggregation = false;
-          }
-        });
+            if (depJoin.isSafeAggregation === false) {
+              joinAg.isSafeAggregation = false;
+            }
+          });
       }
 
       if (

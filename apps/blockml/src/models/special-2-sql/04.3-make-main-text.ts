@@ -5,80 +5,26 @@ import { constants } from '~blockml/barrels/constants';
 let func = common.FuncEnum.MakeMainText;
 
 export function makeMainText(item: {
-  select: common.VarsSql['select'];
-  depMeasures: common.VarsSql['depMeasures'];
-  depDimensions: common.VarsSql['depDimensions'];
-  filters: common.VarsSql['filters'];
+  selected: common.VarsSql['selected'];
+  filtered: common.VarsSql['filtered'];
   varsSqlSteps: common.FilePartTile['varsSqlSteps'];
   model: common.FileModel;
 }) {
-  let { select, filters, depMeasures, depDimensions, model, varsSqlSteps } =
-    item;
+  let { selected, filtered, model, varsSqlSteps } = item;
 
   let connection = model.connection;
 
   let varsInput = common.makeCopy<common.VarsSql>({
-    select,
-    filters,
-    depMeasures,
-    depDimensions
+    selected,
+    filtered
   });
 
   let mainUdfs: common.VarsSql['mainUdfs'] = {};
   let mainText: common.VarsSql['mainText'] = [];
   let groupMainBy: common.VarsSql['groupMainBy'] = [];
-  let selected: common.VarsSql['selected'] = {};
-  let filtered: common.VarsSql['filtered'] = {};
   let processedFields: common.VarsSql['processedFields'] = {};
 
   let i = 0;
-
-  select.forEach(element => {
-    let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
-    let r = reg.exec(element);
-
-    let asName = r[1];
-    let fieldName = r[2];
-
-    selected[element] = { asName: asName, fieldName: fieldName };
-  });
-
-  Object.keys(depMeasures).forEach(asName => {
-    Object.keys(depMeasures[asName]).forEach(fieldName => {
-      let element = `${asName}.${fieldName}`;
-      selected[element] = { asName: asName, fieldName: fieldName };
-    });
-  });
-
-  Object.keys(depDimensions).forEach(asName => {
-    Object.keys(depDimensions[asName]).forEach(fieldName => {
-      let element = `${asName}.${fieldName}`;
-      selected[element] = { asName: asName, fieldName: fieldName };
-    });
-  });
-
-  Object.keys(filters)
-    .sort((a, b) => (a > b ? 1 : b > a ? -1 : 0))
-    .forEach(element => {
-      let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
-      let r = reg.exec(element);
-
-      let asName = r[1];
-      let fieldName = r[2];
-
-      let fieldClass: common.FieldClassEnum =
-        asName === constants.MF
-          ? model.fields.find(mField => mField.name === fieldName).fieldClass
-          : model.joins
-              .find(j => j.as === asName)
-              .view.fields.find(vField => vField.name === fieldName).fieldClass;
-
-      filtered[element] = { asName: asName, fieldName: fieldName };
-
-      if (fieldClass === common.FieldClassEnum.Measure) {
-        selected[element] = { asName: asName, fieldName: fieldName };
-      }
-    });
 
   let els = Object.assign({}, selected, filtered);
 
@@ -304,7 +250,6 @@ export function makeMainText(item: {
     mainUdfs,
     mainText,
     groupMainBy,
-    selected,
     processedFields
   };
 

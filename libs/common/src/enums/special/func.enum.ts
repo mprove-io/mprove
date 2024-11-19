@@ -148,11 +148,12 @@ export enum FuncEnum {
   SubComposeCalc = 'special-1-sub/06-sub-compose-calc',
 
   MakeDepMeasuresAndDimensions = 'special-2-sql/01-make-dep-measures-and-dimensions',
-  MakeMainText = 'special-2-sql/02-make-main-text',
+  MakeSelectedAndFiltered = 'special-2-sql/02-make-selected-and-filtered',
   MakeNeedsDoubles = 'special-2-sql/03-make-needs-doubles',
   FindJoinsUsingJoinsDeps = 'special-2-sql/04-find-joins-using-joins-deps',
   MakeJoinAggregations = 'special-2-sql/04.1-make-join-aggregations',
   MakeUnsafeSelect = 'special-2-sql/04.2-make-unsafe-select',
+  MakeMainText = 'special-2-sql/04.3-make-main-text',
   MakeNeedsAll = 'special-2-sql/05-make-needs-all',
   MakeFilters = 'special-2-sql/06-make-filters',
   MakeWith = 'special-2-sql/07-make-with',

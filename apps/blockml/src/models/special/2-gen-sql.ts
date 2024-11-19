@@ -63,15 +63,14 @@ export function genSqlPro(item: common.GenSqlItem): common.GenSqlProOutcome {
     varsSqlSteps
   });
 
-  let { mainUdfs, mainText, groupMainBy, selected, processedFields } =
-    barSql.makeMainText({
-      select,
-      filters,
-      depMeasures,
-      depDimensions,
-      varsSqlSteps,
-      model
-    });
+  let { selected, filtered } = barSql.makeSelectedAndFiltered({
+    select,
+    filters,
+    depMeasures,
+    depDimensions,
+    varsSqlSteps,
+    model
+  });
 
   let { needsDoubles } = barSql.makeNeedsDoubles({
     selected,
@@ -86,13 +85,6 @@ export function genSqlPro(item: common.GenSqlItem): common.GenSqlProOutcome {
     model
   });
 
-  let { needsAll } = barSql.makeNeedsAll({
-    needsDoubles,
-    joins,
-    varsSqlSteps,
-    model
-  });
-
   let { joinAggregations } = barSql.makeJoinAggregations({
     joins,
     varsSqlSteps,
@@ -102,6 +94,21 @@ export function genSqlPro(item: common.GenSqlItem): common.GenSqlProOutcome {
   let { unsafeSelect } = barSql.makeUnsafeSelect({
     select,
     joinAggregations,
+    varsSqlSteps,
+    model
+  });
+
+  let { mainUdfs, mainText, groupMainBy, processedFields } =
+    barSql.makeMainText({
+      selected,
+      filtered,
+      varsSqlSteps,
+      model
+    });
+
+  let { needsAll } = barSql.makeNeedsAll({
+    needsDoubles,
+    joins,
     varsSqlSteps,
     model
   });
