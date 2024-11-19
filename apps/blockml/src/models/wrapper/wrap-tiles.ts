@@ -266,6 +266,7 @@ export function wrapTiles(item: {
       modelId: tile.model,
       modelLabel: model.label,
       select: tile.select,
+      joinAggregations: tile.joinAggregations,
       sortings: tile.sortingsAry.map(s => ({
         fieldId: s.fieldId,
         desc: s.desc

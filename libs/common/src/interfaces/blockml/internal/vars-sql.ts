@@ -1,6 +1,7 @@
 import { enums } from '~common/barrels/enums';
 import { FilterBricksDictionary } from '../filter-bricks-dictionary';
 import { Fraction } from '../fraction';
+import { JoinAggregation } from '../join-aggregation';
 import { FileViewPart } from './file-view-part';
 
 export interface VarsSql {
@@ -36,4 +37,6 @@ export interface VarsSql {
   mainQueryProcessed?: string[];
   sql?: string[];
   mainUdfs?: { [s: string]: number };
+
+  joinAggregations?: JoinAggregation[];
 }

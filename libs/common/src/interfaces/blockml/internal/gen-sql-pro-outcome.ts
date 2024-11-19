@@ -1,4 +1,5 @@
 import { Fraction } from '../fraction';
+import { JoinAggregation } from '../join-aggregation';
 import { VarsSqlStep } from './vars-sql-step';
 
 export interface GenSqlProOutcome {
@@ -6,5 +7,6 @@ export interface GenSqlProOutcome {
   filtersFractions: {
     [s: string]: Fraction[];
   };
+  joinAggregations: JoinAggregation[];
   varsSqlSteps: VarsSqlStep[];
 }

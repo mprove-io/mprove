@@ -41,6 +41,7 @@ test('1', async t => {
     modelId: 'abc',
     modelLabel: 'abc',
     select: [],
+    joinAggregations: [],
     sortings: [],
     sorts: undefined,
     timezone: common.UTC,

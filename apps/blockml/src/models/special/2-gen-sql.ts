@@ -93,6 +93,12 @@ export function genSqlPro(item: common.GenSqlItem): common.GenSqlProOutcome {
     model
   });
 
+  let { joinAggregations } = barSql.makeJoinAggregations({
+    joins,
+    varsSqlSteps,
+    model
+  });
+
   let {
     filtersFractions,
     whereCalc,
@@ -160,5 +166,5 @@ export function genSqlPro(item: common.GenSqlItem): common.GenSqlProOutcome {
     model
   });
 
-  return { sql, filtersFractions, varsSqlSteps };
+  return { sql, filtersFractions, varsSqlSteps, joinAggregations };
 }

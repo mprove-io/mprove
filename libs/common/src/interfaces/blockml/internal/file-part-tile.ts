@@ -2,6 +2,7 @@ import { enums } from '~common/barrels/enums';
 import { FilterBricksDictionary } from '../filter-bricks-dictionary';
 import { Fraction } from '../fraction';
 import { VarsSqlStep } from '../internal/vars-sql-step';
+import { JoinAggregation } from '../join-aggregation';
 import { FileChartAxis } from './file-chart-axis';
 import { FileChartData } from './file-chart-data';
 import { FileChartOptions } from './file-chart-options';
@@ -68,6 +69,8 @@ export interface FilePartTile {
   };
 
   sql?: string[];
+
+  joinAggregations?: JoinAggregation[];
 
   varsSqlSteps?: VarsSqlStep[];
 }

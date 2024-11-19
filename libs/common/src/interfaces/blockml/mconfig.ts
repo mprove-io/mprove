@@ -9,6 +9,7 @@ import {
 } from 'class-validator';
 import { IsTimezone } from '~common/functions/is-timezone';
 import { Filter } from './filter';
+import { JoinAggregation } from './join-aggregation';
 import { MconfigChart } from './mconfig-chart';
 import { Sorting } from './sorting';
 
@@ -30,6 +31,10 @@ export class Mconfig {
 
   @IsString({ each: true })
   select: string[];
+
+  @ValidateNested()
+  @Type(() => JoinAggregation)
+  joinAggregations: JoinAggregation[];
 
   @ValidateNested()
   @Type(() => Sorting)

@@ -55,11 +55,8 @@ export async function fetchSql<T extends types.dzType>(
 
       tile.combinedFilters = filters;
 
-      let { sql, filtersFractions, varsSqlSteps } = await barSpecial.genSql(
-        rabbitService,
-        cs,
-        item.traceId,
-        {
+      let { sql, filtersFractions, varsSqlSteps, joinAggregations } =
+        await barSpecial.genSql(rabbitService, cs, item.traceId, {
           weekStart: item.weekStart,
           timezone: tile.timezone,
           select: tile.select,
@@ -68,11 +65,11 @@ export async function fetchSql<T extends types.dzType>(
           filters: tile.combinedFilters,
           model: model,
           udfsDict: item.udfsDict
-        }
-      );
+        });
 
       tile.sql = sql;
       tile.filtersFractions = filtersFractions;
+      tile.joinAggregations = joinAggregations;
       tile.varsSqlSteps = varsSqlSteps;
     }
   );
