@@ -51,8 +51,17 @@ export async function genSql(
 }
 
 export function genSqlPro(item: common.GenSqlItem): common.GenSqlProOutcome {
-  let { weekStart, timezone, select, sorts, limit, filters, model, udfsDict } =
-    item;
+  let {
+    weekStart,
+    timezone,
+    select,
+    sorts,
+    limit,
+    filters,
+    model,
+    udfsDict,
+    simplifySafeAggregates
+  } = item;
 
   let varsSqlSteps: common.VarsSqlStep[] = [];
 
@@ -102,6 +111,8 @@ export function genSqlPro(item: common.GenSqlItem): common.GenSqlProOutcome {
     barSql.makeMainText({
       selected,
       filtered,
+      unsafeSelect,
+      simplifySafeAggregates,
       varsSqlSteps,
       model
     });

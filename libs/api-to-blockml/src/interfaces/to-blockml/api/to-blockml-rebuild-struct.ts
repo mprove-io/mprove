@@ -59,6 +59,9 @@ export class ToBlockmlRebuildStructResponsePayload {
   @IsBoolean()
   allowTimezones: boolean;
 
+  @IsBoolean()
+  simplifySafeAggregates: boolean;
+
   @IsString()
   formatNumber: string;
 

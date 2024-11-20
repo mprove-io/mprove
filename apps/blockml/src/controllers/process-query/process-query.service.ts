@@ -39,6 +39,7 @@ export class ProcessQueryService {
       orgId,
       projectId,
       weekStart,
+      simplifySafeAggregates,
       udfsDict,
       mconfig,
       modelContent: model,
@@ -61,6 +62,7 @@ export class ProcessQueryService {
       reqValid.info.traceId,
       {
         weekStart: weekStart,
+        simplifySafeAggregates: simplifySafeAggregates,
         timezone: timezone,
         select: select,
         sorts: sorts,

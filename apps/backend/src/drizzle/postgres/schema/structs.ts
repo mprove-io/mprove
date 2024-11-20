@@ -20,6 +20,7 @@ export const structsTable = pgTable(
       .$type<common.ProjectWeekStartEnum>()
       .notNull(),
     allowTimezones: boolean('allow_timezones').notNull(),
+    simplifySafeAggregates: boolean('simplify_safe_aggregates'),
     defaultTimezone: varchar('default_timezone').notNull(),
     formatNumber: varchar('format_number'),
     currencyPrefix: varchar('currency_prefix'),

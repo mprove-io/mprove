@@ -66,6 +66,8 @@ export class StructService {
       modelId: this.model.modelId,
       modelLabel: this.model.label,
       select: [],
+      unsafeSelect: [],
+      joinAggregations: [],
       sortings: [],
       fields: [],
       sorts: null,

@@ -160,6 +160,8 @@ export class WrapToApiService {
       modelId: mconfig.modelId,
       modelLabel: mconfig.modelLabel,
       select: mconfig.select,
+      unsafeSelect: mconfig.unsafeSelect,
+      joinAggregations: mconfig.joinAggregations,
       fields: makeMconfigFields({
         modelFields: modelFields,
         select: mconfig.select,
@@ -417,6 +419,7 @@ export class WrapToApiService {
       mproveDirValue: struct.mproveDirValue,
       weekStart: struct.weekStart,
       allowTimezones: struct.allowTimezones,
+      simplifySafeAggregates: struct.simplifySafeAggregates,
       defaultTimezone: struct.defaultTimezone,
       formatNumber: struct.formatNumber,
       currencyPrefix: struct.currencyPrefix,

@@ -8,6 +8,7 @@ export enum ParameterEnum {
   WeekStart = 'week_start',
   DefaultTimezone = 'default_timezone',
   AllowTimezones = 'allow_timezones',
+  SimplifySafeAggregates = 'simplify_safe_aggregates',
   //
   Api = 'api',
   AccessRoles = 'access_roles',

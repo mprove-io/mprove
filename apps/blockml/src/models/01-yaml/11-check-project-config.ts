@@ -26,6 +26,7 @@ export function checkProjectConfig(
 
   let projectConfig: common.FileProjectConf = {
     allow_timezones: constants.PROJECT_CONFIG_ALLOW_TIMEZONES,
+    simplify_safe_aggregates: constants.PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES,
     default_timezone: constants.PROJECT_CONFIG_DEFAULT_TIMEZONE,
     week_start: constants.PROJECT_CONFIG_WEEK_START,
     currency_prefix: constants.PROJECT_CONFIG_CURRENCY_PREFIX,
@@ -111,7 +112,10 @@ export function checkProjectConfig(
       }
 
       if (
-        parameter === common.ParameterEnum.AllowTimezones.toString() &&
+        [
+          common.ParameterEnum.AllowTimezones.toString(),
+          common.ParameterEnum.SimplifySafeAggregates.toString()
+        ].indexOf(parameter) > -1 &&
         !conf[parameter as keyof common.FileProjectConf]
           .toString()
           .match(common.MyRegex.TRUE_FALSE())

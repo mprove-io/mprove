@@ -29,6 +29,7 @@ export class StructsService {
       mproveDirValue: './data',
       weekStart: ProjectWeekStartEnum.Monday,
       allowTimezones: true,
+      simplifySafeAggregates: true,
       defaultTimezone: 'UTC',
       formatNumber: ',.0f',
       currencyPrefix: '$',

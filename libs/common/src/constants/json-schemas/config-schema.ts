@@ -18,6 +18,9 @@ export const CONFIG_SCHEMA: JSONSchema7 = {
     allow_timezones: {
       type: 'boolean'
     },
+    simplify_safe_aggregates: {
+      type: 'boolean'
+    },
     default_timezone: {
       type: 'string',
       enum: getTimezonesValues()

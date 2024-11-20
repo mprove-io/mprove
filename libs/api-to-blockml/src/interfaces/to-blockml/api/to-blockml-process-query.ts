@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-blockml/barrels/common';
 import { ToBlockmlRequest } from '~api-to-blockml/interfaces/to-blockml/to-blockml-request';
 
@@ -15,6 +15,9 @@ export class ToBlockmlProcessQueryRequestPayload {
 
   @IsEnum(common.ProjectWeekStartEnum)
   weekStart: common.ProjectWeekStartEnum;
+
+  @IsBoolean()
+  simplifySafeAggregates: boolean;
 
   @ValidateNested()
   @Type(() => common.UdfsDict)

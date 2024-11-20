@@ -6,11 +6,20 @@ let func = common.FuncEnum.MakeMainText;
 
 export function makeMainText(item: {
   selected: common.VarsSql['selected'];
+  unsafeSelect: common.VarsSql['unsafeSelect'];
   filtered: common.VarsSql['filtered'];
+  simplifySafeAggregates: boolean;
   varsSqlSteps: common.FilePartTile['varsSqlSteps'];
   model: common.FileModel;
 }) {
-  let { selected, filtered, model, varsSqlSteps } = item;
+  let {
+    selected,
+    filtered,
+    unsafeSelect,
+    simplifySafeAggregates,
+    model,
+    varsSqlSteps
+  } = item;
 
   let connection = model.connection;
 
@@ -118,11 +127,18 @@ export function makeMainText(item: {
             mainUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
           }
 
-          sqlSelect = barMeasure.makeMeasureSumByKey({
-            sqlKeyFinal: sqlKeyFinal,
-            sqlFinal: sqlFinal,
-            connection: model.connection
-          });
+          sqlSelect =
+            simplifySafeAggregates === true &&
+            unsafeSelect.indexOf(`${asName}.${fieldName}`) < 0
+              ? barMeasure.makeMeasureSum({
+                  sqlFinal: sqlFinal,
+                  connection: model.connection
+                })
+              : barMeasure.makeMeasureSumByKey({
+                  sqlKeyFinal: sqlKeyFinal,
+                  sqlFinal: sqlFinal,
+                  connection: model.connection
+                });
 
           break;
         }
@@ -141,11 +157,18 @@ export function makeMainText(item: {
             mainUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
           }
 
-          sqlSelect = barMeasure.makeMeasureAverageByKey({
-            sqlKeyFinal: sqlKeyFinal,
-            sqlFinal: sqlFinal,
-            connection: model.connection
-          });
+          sqlSelect =
+            simplifySafeAggregates === true &&
+            unsafeSelect.indexOf(`${asName}.${fieldName}`) < 0
+              ? barMeasure.makeMeasureAverage({
+                  sqlFinal: sqlFinal,
+                  connection: model.connection
+                })
+              : barMeasure.makeMeasureAverageByKey({
+                  sqlKeyFinal: sqlKeyFinal,
+                  sqlFinal: sqlFinal,
+                  connection: model.connection
+                });
 
           break;
         }

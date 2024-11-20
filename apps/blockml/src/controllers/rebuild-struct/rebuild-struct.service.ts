@@ -65,6 +65,7 @@ export class RebuildStructService {
       mproveDirValue,
       weekStart,
       allowTimezones,
+      simplifySafeAggregates,
       defaultTimezone,
       formatNumber,
       currencyPrefix,
@@ -138,6 +139,7 @@ export class RebuildStructService {
       mproveDirValue: mproveDirValue,
       weekStart: weekStart,
       allowTimezones: allowTimezones,
+      simplifySafeAggregates: simplifySafeAggregates,
       defaultTimezone: defaultTimezone,
       formatNumber: formatNumber,
       currencyPrefix: currencyPrefix,
@@ -251,6 +253,9 @@ export class RebuildStructService {
         weekStart: constants.PROJECT_CONFIG_WEEK_START,
         allowTimezones: helper.toBooleanFromLowercaseString(
           constants.PROJECT_CONFIG_ALLOW_TIMEZONES
+        ),
+        simplifySafeAggregates: helper.toBooleanFromLowercaseString(
+          constants.PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES
         ),
         defaultTimezone: constants.PROJECT_CONFIG_DEFAULT_TIMEZONE,
         currencyPrefix: constants.PROJECT_CONFIG_CURRENCY_PREFIX,
@@ -426,11 +431,13 @@ export class RebuildStructService {
     dashboards = await barBuilder.buildTile(
       {
         traceId: item.traceId,
-
         entities: dashboards,
         models: models,
         udfsDict: udfsDict,
         weekStart: projectConfig.week_start,
+        simplifySafeAggregates: helper.toBooleanFromLowercaseString(
+          projectConfig.simplify_safe_aggregates
+        ),
         structId: item.structId,
         errors: errors,
         caller: common.CallerEnum.BuildDashboardTile
@@ -446,6 +453,9 @@ export class RebuildStructService {
         models: models,
         udfsDict: udfsDict,
         weekStart: projectConfig.week_start,
+        simplifySafeAggregates: helper.toBooleanFromLowercaseString(
+          projectConfig.simplify_safe_aggregates
+        ),
         structId: item.structId,
         errors: errors,
         caller: common.CallerEnum.BuildChartTile
@@ -519,6 +529,9 @@ export class RebuildStructService {
       weekStart: projectConfig.week_start,
       allowTimezones: helper.toBooleanFromLowercaseString(
         projectConfig.allow_timezones
+      ),
+      simplifySafeAggregates: helper.toBooleanFromLowercaseString(
+        projectConfig.simplify_safe_aggregates
       ),
       defaultTimezone: projectConfig.default_timezone,
       formatNumber: projectConfig.format_number,

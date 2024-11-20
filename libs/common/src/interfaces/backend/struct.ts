@@ -28,6 +28,9 @@ export class Struct {
   @IsBoolean()
   allowTimezones: boolean;
 
+  @IsBoolean()
+  simplifySafeAggregates: boolean;
+
   @IsTimezone()
   defaultTimezone: string;
 

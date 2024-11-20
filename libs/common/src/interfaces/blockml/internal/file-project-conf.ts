@@ -14,6 +14,9 @@ export interface FileProjectConf extends FileBasic {
   allow_timezones?: string; // boolean
   allow_timezones_line_num?: number;
 
+  simplify_safe_aggregates?: string; // boolean
+  simplify_safe_aggregates_line_num?: number;
+
   format_number?: string;
   format_number_line_num?: number;
 
