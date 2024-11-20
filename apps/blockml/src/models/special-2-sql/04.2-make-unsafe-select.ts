@@ -17,6 +17,7 @@ export function makeUnsafeSelect(item: {
   });
 
   let unsafeSelect: string[] = [];
+  let warnSelect: string[] = [];
 
   select.forEach(element => {
     let r =
@@ -41,6 +42,13 @@ export function makeUnsafeSelect(item: {
           unsafeSelect.indexOf(element) < 0
         ) {
           unsafeSelect.push(element);
+
+          if (
+            common.SAFE_AGGREGATION_MEASURE_TYPES.indexOf(field.type) < 0 &&
+            warnSelect.indexOf(element) < 0
+          ) {
+            warnSelect.push(element);
+          }
         }
       } else {
         if (common.isDefined(model.fieldsDoubleDepsAfterSingles[fieldName])) {
@@ -60,6 +68,14 @@ export function makeUnsafeSelect(item: {
                   unsafeSelect.indexOf(element) < 0
                 ) {
                   unsafeSelect.push(element);
+
+                  if (
+                    common.SAFE_AGGREGATION_MEASURE_TYPES.indexOf(field.type) <
+                      0 &&
+                    warnSelect.indexOf(element) < 0
+                  ) {
+                    warnSelect.push(element);
+                  }
                 }
               }
             }
@@ -85,6 +101,15 @@ export function makeUnsafeSelect(item: {
               unsafeSelect.indexOf(element) < 0
             ) {
               unsafeSelect.push(element);
+
+              if (
+                common.SAFE_AGGREGATION_MEASURE_TYPES.indexOf(
+                  depViewField.type
+                ) < 0 &&
+                warnSelect.indexOf(element) < 0
+              ) {
+                warnSelect.push(element);
+              }
             }
           }
         });
@@ -110,6 +135,15 @@ export function makeUnsafeSelect(item: {
                   unsafeSelect.indexOf(element) < 0
                 ) {
                   unsafeSelect.push(element);
+
+                  if (
+                    common.SAFE_AGGREGATION_MEASURE_TYPES.indexOf(
+                      depViewField.type
+                    ) < 0 &&
+                    warnSelect.indexOf(element) < 0
+                  ) {
+                    warnSelect.push(element);
+                  }
                 }
               }
             });
@@ -139,6 +173,15 @@ export function makeUnsafeSelect(item: {
                       unsafeSelect.indexOf(element) < 0
                     ) {
                       unsafeSelect.push(element);
+
+                      if (
+                        common.SAFE_AGGREGATION_MEASURE_TYPES.indexOf(
+                          depModelField.type
+                        ) < 0 &&
+                        warnSelect.indexOf(element) < 0
+                      ) {
+                        warnSelect.push(element);
+                      }
                     }
                   }
                 }
@@ -150,7 +193,10 @@ export function makeUnsafeSelect(item: {
     }
   });
 
-  let varsOutput: common.VarsSql = { unsafeSelect: unsafeSelect };
+  let varsOutput: common.VarsSql = {
+    unsafeSelect: unsafeSelect,
+    warnSelect: warnSelect
+  };
 
   varsSqlSteps.push({ func, varsInput, varsOutput });
 

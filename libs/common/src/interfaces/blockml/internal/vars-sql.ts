@@ -39,5 +39,6 @@ export interface VarsSql {
   mainUdfs?: { [s: string]: number };
 
   unsafeSelect?: string[];
+  warnSelect?: string[];
   joinAggregations?: JoinAggregation[];
 }

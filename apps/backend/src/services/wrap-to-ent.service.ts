@@ -52,6 +52,7 @@ export class WrapToEntService {
       modelLabel: mconfig.modelLabel,
       select: mconfig.select,
       unsafeSelect: mconfig.unsafeSelect,
+      warnSelect: mconfig.warnSelect,
       joinAggregations: mconfig.joinAggregations,
       sortings: mconfig.sortings,
       sorts: mconfig.sorts,

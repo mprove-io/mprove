@@ -74,5 +74,7 @@ export interface FilePartTile {
 
   unsafeSelect?: string[];
 
+  warnSelect?: string[];
+
   varsSqlSteps?: VarsSqlStep[];
 }

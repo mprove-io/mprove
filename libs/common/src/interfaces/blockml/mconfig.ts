@@ -39,6 +39,9 @@ export class Mconfig {
   @IsString({ each: true })
   unsafeSelect: string[];
 
+  @IsString({ each: true })
+  warnSelect: string[];
+
   @ValidateNested()
   @Type(() => Sorting)
   sortings: Sorting[];

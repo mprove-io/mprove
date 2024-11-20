@@ -1,0 +1,1 @@
+ALTER TABLE "mconfigs" ADD COLUMN "warn_select" json NOT NULL;

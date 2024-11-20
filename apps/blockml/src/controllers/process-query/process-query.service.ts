@@ -61,6 +61,7 @@ export class ProcessQueryService {
       filtersFractions,
       varsSqlSteps,
       unsafeSelect,
+      warnSelect,
       joinAggregations
     } = await barSpecial.genSql(
       this.rabbitService,
@@ -112,6 +113,7 @@ export class ProcessQueryService {
 
     mconfig.queryId = queryId;
     mconfig.unsafeSelect = unsafeSelect;
+    mconfig.warnSelect = warnSelect;
     mconfig.joinAggregations = joinAggregations;
     mconfig.temp = true;
 

@@ -161,6 +161,7 @@ export class WrapToApiService {
       modelLabel: mconfig.modelLabel,
       select: mconfig.select,
       unsafeSelect: mconfig.unsafeSelect,
+      warnSelect: mconfig.warnSelect,
       joinAggregations: mconfig.joinAggregations,
       fields: makeMconfigFields({
         modelFields: modelFields,

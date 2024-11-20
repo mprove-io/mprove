@@ -61,7 +61,8 @@ export async function fetchSql<T extends types.dzType>(
         filtersFractions,
         varsSqlSteps,
         joinAggregations,
-        unsafeSelect
+        unsafeSelect,
+        warnSelect
       } = await barSpecial.genSql(rabbitService, cs, item.traceId, {
         weekStart: item.weekStart,
         simplifySafeAggregates: item.simplifySafeAggregates,
@@ -78,6 +79,7 @@ export async function fetchSql<T extends types.dzType>(
       tile.filtersFractions = filtersFractions;
       tile.joinAggregations = joinAggregations;
       tile.unsafeSelect = unsafeSelect;
+      tile.warnSelect = warnSelect;
       tile.varsSqlSteps = varsSqlSteps;
     }
   );

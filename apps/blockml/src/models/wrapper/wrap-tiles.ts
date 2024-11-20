@@ -267,6 +267,7 @@ export function wrapTiles(item: {
       modelLabel: model.label,
       select: tile.select,
       unsafeSelect: tile.unsafeSelect,
+      warnSelect: tile.warnSelect,
       joinAggregations: tile.joinAggregations,
       sortings: tile.sortingsAry.map(s => ({
         fieldId: s.fieldId,

@@ -780,6 +780,7 @@ export class ReportsService {
             modelLabel: model.label,
             select: [timeFieldIdSpec, metric.fieldId],
             unsafeSelect: [],
+            warnSelect: [],
             joinAggregations: [],
             sortings: [timeSorting],
             sorts: timeFieldIdSpec,

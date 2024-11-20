@@ -100,7 +100,7 @@ export function genSqlPro(item: common.GenSqlItem): common.GenSqlProOutcome {
     model
   });
 
-  let { unsafeSelect } = barSql.makeUnsafeSelect({
+  let { unsafeSelect, warnSelect } = barSql.makeUnsafeSelect({
     select,
     joinAggregations,
     varsSqlSteps,
@@ -196,6 +196,7 @@ export function genSqlPro(item: common.GenSqlItem): common.GenSqlProOutcome {
     filtersFractions,
     varsSqlSteps,
     joinAggregations,
-    unsafeSelect
+    unsafeSelect,
+    warnSelect
   };
 }

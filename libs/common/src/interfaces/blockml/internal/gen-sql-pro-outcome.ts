@@ -9,5 +9,6 @@ export interface GenSqlProOutcome {
   };
   joinAggregations: JoinAggregation[];
   unsafeSelect: string[];
+  warnSelect: string[];
   varsSqlSteps: VarsSqlStep[];
 }

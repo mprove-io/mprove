@@ -335,3 +335,14 @@ export const ROW_TYPE_VALUES = [
   enums.RowTypeEnum.Metric,
   enums.RowTypeEnum.Formula
 ];
+
+export const SAFE_AGGREGATION_MEASURE_TYPES = [
+  enums.FieldTypeEnum.CountDistinct,
+  enums.FieldTypeEnum.Min,
+  enums.FieldTypeEnum.Max,
+  // enums.FieldTypeEnum.List,
+  enums.FieldTypeEnum.SumByKey,
+  enums.FieldTypeEnum.AverageByKey,
+  enums.FieldTypeEnum.PercentileByKey,
+  enums.FieldTypeEnum.MedianByKey
+];

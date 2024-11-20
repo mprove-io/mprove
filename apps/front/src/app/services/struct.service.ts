@@ -67,6 +67,7 @@ export class StructService {
       modelLabel: this.model.label,
       select: [],
       unsafeSelect: [],
+      warnSelect: [],
       joinAggregations: [],
       sortings: [],
       fields: [],

@@ -21,6 +21,7 @@ export const mconfigsTable = pgTable(
     modelLabel: varchar('model_label'),
     select: json('select').$type<string[]>().notNull(),
     unsafeSelect: json('unsafe_select').$type<string[]>().notNull(),
+    warnSelect: json('warn_select').$type<string[]>().notNull(),
     joinAggregations: json('join_aggregations')
       .$type<common.JoinAggregation[]>()
       .notNull(),
