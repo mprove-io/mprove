@@ -43,7 +43,7 @@
           *ngIf="!!mconfig && mconfig.warnSelect.length > 0"
           class="ml-3 mt-1 flex h-8 w-8 flex-shrink-0 text-amber-500"
           tp="Warning: The selected fields [{{
-            mconfig?.warnSelect.join(', ')
+            mconfig.warnSelect.join(', ')
           }}] may use unsafe aggregations and produce incorrect results"
           placement="left"
         >

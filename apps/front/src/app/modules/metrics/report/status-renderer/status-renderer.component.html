@@ -37,5 +37,22 @@
     <m-exclamation-icon></m-exclamation-icon>
   </div>
 
+  <div
+    *ngIf="
+      isRunning === false &&
+      params.data.query?.status !== queryStatusEnum.Error &&
+      !topQueryError &&
+      !!params.data.mconfig &&
+      params.data.mconfig.warnSelect.length > 0
+    "
+    class="flex h-8 w-8 flex-shrink-0 text-amber-500"
+    tp="Warning: The selected fields [{{
+      params.data.mconfig.warnSelect.join(', ')
+    }}] may use unsafe aggregations and produce incorrect results"
+    placement="left"
+  >
+    <m-exclamation-icon></m-exclamation-icon>
+  </div>
+
   <!-- <div>{{ params.value }}</div> -->
 </div>
