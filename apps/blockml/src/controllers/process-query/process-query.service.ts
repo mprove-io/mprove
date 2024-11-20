@@ -56,7 +56,13 @@ export class ProcessQueryService {
       newFilters[fieldId] = bricks;
     });
 
-    let { sql, filtersFractions, varsSqlSteps } = await barSpecial.genSql(
+    let {
+      sql,
+      filtersFractions,
+      varsSqlSteps,
+      unsafeSelect,
+      joinAggregations
+    } = await barSpecial.genSql(
       this.rabbitService,
       this.cs,
       reqValid.info.traceId,
@@ -105,6 +111,8 @@ export class ProcessQueryService {
     };
 
     mconfig.queryId = queryId;
+    mconfig.unsafeSelect = unsafeSelect;
+    mconfig.joinAggregations = joinAggregations;
     mconfig.temp = true;
 
     mconfig.filters = Object.keys(filtersFractions).map(fieldId => ({
