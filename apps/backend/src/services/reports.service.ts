@@ -816,6 +816,7 @@ export class ReportsService {
                 orgId: project.orgId,
                 projectId: project.projectId,
                 weekStart: struct.weekStart,
+                simplifySafeAggregates: struct.simplifySafeAggregates,
                 udfsDict: struct.udfsDict,
                 mconfig: mconfig,
                 modelContent: model.content,

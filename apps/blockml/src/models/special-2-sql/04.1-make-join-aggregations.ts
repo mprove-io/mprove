@@ -22,6 +22,7 @@ export function makeJoinAggregations(item: {
 
       let joinAg: common.JoinAggregation = {
         joinAs: join.as,
+        relationship: join.relationship,
         isSafeAggregation: true
       };
 

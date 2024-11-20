@@ -15,6 +15,8 @@ export const emptyMconfig: common.MconfigX = {
   modelId: undefined,
   modelLabel: undefined,
   select: [],
+  unsafeSelect: [],
+  joinAggregations: [],
   sortings: [],
   sorts: undefined,
   timezone: undefined,
