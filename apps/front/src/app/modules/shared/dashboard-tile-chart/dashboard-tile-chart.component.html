@@ -4,7 +4,14 @@
       <div
         class="text-gray1 mx-5 mb-5 mt-8 flex flex-shrink-0 flex-row items-start justify-center text-lg"
       >
-        <div class="mr-3 w-9"></div>
+        <div class="mr-5 w-9"></div>
+
+        <div
+          *ngIf="!!mconfig && mconfig.warnSelect.length > 0"
+          class="mr-3 mt-1 flex h-8 w-8 flex-shrink-0 text-amber-500"
+        >
+        </div>
+
         <div
           class="relative flex h-9 w-9 flex-shrink-0"
           *ngIf="query?.status === queryStatusRunning"
@@ -38,9 +45,20 @@
           </ngx-spinner>
         </div>
 
+        <div
+          *ngIf="!!mconfig && mconfig.warnSelect.length > 0"
+          class="ml-3 mt-1 flex h-8 w-8 flex-shrink-0 text-amber-500"
+          tp="Warning: The selected fields [{{
+            mconfig?.warnSelect.join(', ')
+          }}] may use unsafe aggregations and produce incorrect results"
+          placement="left"
+        >
+          <m-exclamation-icon></m-exclamation-icon>
+        </div>
+
         <button
           data-cy="repOptionsMenuButton"
-          class="invisible ml-3 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none group-hover:visible"
+          class="invisible ml-5 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none group-hover:visible"
           #t1="tippy"
           [tp]="templateRepOptions"
           [tpHideOnEscape]="true"
