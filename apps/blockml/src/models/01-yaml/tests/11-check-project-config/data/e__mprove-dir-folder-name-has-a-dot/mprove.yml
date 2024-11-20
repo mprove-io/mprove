@@ -1,2 +1,3 @@
 mprove_dir: .unk
 week_start: Sunday
+simplify_safe_aggregates: false
