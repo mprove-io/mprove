@@ -20,11 +20,10 @@ export const mconfigsTable = pgTable(
     modelId: varchar('model_id', { length: 32 }).notNull(),
     modelLabel: varchar('model_label'),
     select: json('select').$type<string[]>().notNull(),
-    unsafeSelect: json('unsafe_select').$type<string[]>().notNull(),
-    warnSelect: json('warn_select').$type<string[]>().notNull(),
-    joinAggregations: json('join_aggregations')
-      .$type<common.JoinAggregation[]>()
-      .notNull(),
+    unsafeSelect: json('unsafe_select').$type<string[]>(),
+    warnSelect: json('warn_select').$type<string[]>(),
+    joinAggregations:
+      json('join_aggregations').$type<common.JoinAggregation[]>(),
     sortings: json('sortings').$type<common.Sorting[]>().notNull(),
     sorts: varchar('sorts'),
     timezone: varchar('timezone').notNull(),

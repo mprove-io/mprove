@@ -1,1 +1,0 @@
-ALTER TABLE "structs" ADD COLUMN "simplify_safe_aggregates" boolean;

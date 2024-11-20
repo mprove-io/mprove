@@ -1,5 +1,5 @@
 {
-  "id": "205891b4-558a-4f34-ae0b-f86dffbe0367",
+  "id": "698e9654-d465-4bd3-bc12-7d0a27280b63",
   "prevId": "b454051e-615b-4795-8044-d5a0b5fa938e",
   "version": "7",
   "dialect": "postgresql",
@@ -1294,6 +1294,24 @@
           "type": "json",
           "primaryKey": false,
           "notNull": true
+        },
+        "unsafe_select": {
+          "name": "unsafe_select",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "warn_select": {
+          "name": "warn_select",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "join_aggregations": {
+          "name": "join_aggregations",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
         },
         "sortings": {
           "name": "sortings",
