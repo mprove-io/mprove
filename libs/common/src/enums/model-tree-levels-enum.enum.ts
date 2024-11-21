@@ -1,5 +1,6 @@
 export enum ModelTreeLevelsEnum {
+  Flat = 'Flat',
+  FlatTime = 'FlatTime',
   Nested = 'Nested',
-  Mid = 'Mid',
-  Flat = 'Flat'
+  NestedFlatTime = 'NestedFlatTime'
 }

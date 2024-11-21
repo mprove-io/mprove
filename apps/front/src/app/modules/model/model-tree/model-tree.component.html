@@ -1,5 +1,5 @@
 <div class="flex w-full flex-col rounded bg-white shadow">
-  <div class="ml-[56px] mb-6 mt-8 flex flex-row items-center space-x-3">
+  <div class="mb-6 ml-[56px] mt-8 flex flex-row items-center space-x-3">
     <div
       class="w-[40px] cursor-pointer select-none"
       [ngClass]="{
@@ -10,21 +10,30 @@
     >
 
     <div
-      class="w-[40px] cursor-pointer select-none"
+      class="w-[80px] cursor-pointer select-none"
       [ngClass]="{
-        'font-semibold': modelTreeLevels === modelTreeLevelsMid
+        'font-semibold': modelTreeLevels === modelTreeLevelsFlatTime
       }"
-      (click)="setModelTreeLevels(modelTreeLevelsMid)"
-      >Mid</div
+      (click)="setModelTreeLevels(modelTreeLevelsFlatTime)"
+      >FlatTime</div
     >
 
     <div
-      class="w-[62px] cursor-pointer select-none"
+      class="w-[70px] cursor-pointer select-none"
       [ngClass]="{
         'font-semibold': modelTreeLevels === modelTreeLevelsNested
       }"
       (click)="setModelTreeLevels(modelTreeLevelsNested)"
       >Nested</div
+    >
+
+    <div
+      class="w-[150px] cursor-pointer select-none"
+      [ngClass]="{
+        'font-semibold': modelTreeLevels === modelTreeLevelsNestedFlatTime
+      }"
+      (click)="setModelTreeLevels(modelTreeLevelsNestedFlatTime)"
+      >NestedFlatTime</div
     >
   </div>
 
@@ -134,7 +143,8 @@
                     class="truncate text-base"
                     *ngIf="
                       node.data.nodeClass !== nodeClassInfo &&
-                      modelTreeLevels === modelTreeLevelsFlat
+                      (modelTreeLevels === modelTreeLevelsFlatTime ||
+                        modelTreeLevels === modelTreeLevelsFlat)
                     "
                     [ngClass]="{
                       'ml-3':
@@ -152,11 +162,15 @@
                     class="truncate text-base"
                     *ngIf="
                       node.data.nodeClass !== nodeClassInfo &&
-                      (modelTreeLevels === modelTreeLevelsFlat ||
-                        modelTreeLevels === modelTreeLevelsMid)
+                      (modelTreeLevels === modelTreeLevelsFlatTime ||
+                        modelTreeLevels === modelTreeLevelsFlat ||
+                        modelTreeLevels === modelTreeLevelsNestedFlatTime ||
+                        modelTreeLevels === modelTreeLevelsNested)
                     "
                     [ngClass]="{
-                      'font-semibold': modelTreeLevels === modelTreeLevelsFlat
+                      'font-semibold':
+                        modelTreeLevels === modelTreeLevelsFlatTime ||
+                        modelTreeLevels === modelTreeLevelsFlat
                     }"
                   >
                     {{ node.data.timeLabel | capitalize }}
@@ -167,14 +181,17 @@
                     *ngIf="node.data.nodeClass !== nodeClassInfo"
                     [ngClass]="{
                       'font-semibold':
-                        node.data.children.length === 0 &&
-                        modelTreeLevels === modelTreeLevelsFlat,
+                        (node.data.children.length === 0 ||
+                          modelTreeLevels === modelTreeLevelsFlat) &&
+                        (modelTreeLevels === modelTreeLevelsFlatTime ||
+                          modelTreeLevels === modelTreeLevelsFlat),
                       'ml-3':
                         node.hasChildren &&
                         node.data.nodeClass !== nodeClassDimension,
                       'ml-2':
                         node.hasChildren &&
-                        node.data.nodeClass === nodeClassDimension
+                        node.data.nodeClass === nodeClassDimension &&
+                        modelTreeLevels !== modelTreeLevelsFlat
                     }"
                   >
                     {{ node.data.label | capitalize }}

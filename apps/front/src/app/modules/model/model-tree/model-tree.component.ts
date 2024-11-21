@@ -45,9 +45,10 @@ export class ModelTreeComponent implements AfterViewInit {
   nodeClassFilter = common.FieldClassEnum.Filter;
   fieldResultTs = common.FieldResultEnum.Ts;
 
-  modelTreeLevelsNested = common.ModelTreeLevelsEnum.Nested;
-  modelTreeLevelsMid = common.ModelTreeLevelsEnum.Mid;
+  modelTreeLevelsFlatTime = common.ModelTreeLevelsEnum.FlatTime;
   modelTreeLevelsFlat = common.ModelTreeLevelsEnum.Flat;
+  modelTreeLevelsNestedFlatTime = common.ModelTreeLevelsEnum.NestedFlatTime;
+  modelTreeLevelsNested = common.ModelTreeLevelsEnum.Nested;
 
   nodesExtra: ModelNodeExtra[] = [];
 
@@ -59,7 +60,7 @@ export class ModelTreeComponent implements AfterViewInit {
 
   model: ModelState;
   mconfig: common.MconfigX;
-  modelTreeLevels = common.ModelTreeLevelsEnum.Flat;
+  modelTreeLevels = common.ModelTreeLevelsEnum.FlatTime;
 
   nodesExtra$ = combineLatest([
     this.modelQuery.select(),
@@ -280,7 +281,10 @@ export class ModelTreeComponent implements AfterViewInit {
     let flatNodesMeasures: ModelNodeExtra[] = [];
     let flatNodesCalculations: ModelNodeExtra[] = [];
 
-    if (this.modelTreeLevels === common.ModelTreeLevelsEnum.Flat) {
+    if (
+      this.modelTreeLevels === common.ModelTreeLevelsEnum.FlatTime ||
+      this.modelTreeLevels === common.ModelTreeLevelsEnum.Flat
+    ) {
       nestedNodes.forEach(topNode => {
         topNode.children.forEach(middleNode => {
           middleNode.joinLabel = topNode.label;
@@ -290,16 +294,26 @@ export class ModelTreeComponent implements AfterViewInit {
               leafNode.joinLabel = topNode.label;
               leafNode.timeLabel = middleNode.label;
 
-              if (leafNode.nodeClass === common.FieldClassEnum.Dimension) {
-                flatNodesDimensions.push(leafNode);
-              } else if (leafNode.nodeClass === common.FieldClassEnum.Measure) {
-                flatNodesMeasures.push(leafNode);
-              } else if (
-                leafNode.nodeClass === common.FieldClassEnum.Calculation
+              if (
+                this.modelTreeLevels === common.ModelTreeLevelsEnum.FlatTime
               ) {
-                flatNodesCalculations.push(leafNode);
+                if (leafNode.nodeClass === common.FieldClassEnum.Dimension) {
+                  flatNodesDimensions.push(leafNode);
+                } else if (
+                  leafNode.nodeClass === common.FieldClassEnum.Measure
+                ) {
+                  flatNodesMeasures.push(leafNode);
+                } else if (
+                  leafNode.nodeClass === common.FieldClassEnum.Calculation
+                ) {
+                  flatNodesCalculations.push(leafNode);
+                }
               }
             });
+
+            if (this.modelTreeLevels === common.ModelTreeLevelsEnum.Flat) {
+              flatNodesDimensions.push(middleNode);
+            }
           } else {
             if (middleNode.nodeClass === common.FieldClassEnum.Dimension) {
               flatNodesDimensions.push(middleNode);
@@ -363,12 +377,27 @@ export class ModelTreeComponent implements AfterViewInit {
       }
     }
 
-    let midNodes: ModelNodeExtra[];
+    if (this.modelTreeLevels === common.ModelTreeLevelsEnum.Nested) {
+      nestedNodes.forEach(topNode => {
+        topNode.children.forEach(middleNode => {
+          // middleNode.joinLabel = topNode.label;
 
-    if (this.modelTreeLevels === common.ModelTreeLevelsEnum.Mid) {
-      midNodes = common.makeCopy(nestedNodes);
+          if (middleNode.children.length > 0) {
+            middleNode.children.forEach(leafNode => {
+              // leafNode.joinLabel = topNode.label;
+              leafNode.timeLabel = middleNode.label;
+            });
+          }
+        });
+      });
+    }
 
-      midNodes.forEach(topNode => {
+    let nestedFlatTimeNodes: ModelNodeExtra[];
+
+    if (this.modelTreeLevels === common.ModelTreeLevelsEnum.NestedFlatTime) {
+      nestedFlatTimeNodes = common.makeCopy(nestedNodes);
+
+      nestedFlatTimeNodes.forEach(topNode => {
         let newTopNodeChildren: ModelNodeExtra[] = [];
 
         topNode.children.forEach(middleNode => {
@@ -392,10 +421,11 @@ export class ModelTreeComponent implements AfterViewInit {
     }
 
     this.nodesExtra =
+      this.modelTreeLevels === common.ModelTreeLevelsEnum.FlatTime ||
       this.modelTreeLevels === common.ModelTreeLevelsEnum.Flat
         ? flatNodes
-        : this.modelTreeLevels === common.ModelTreeLevelsEnum.Mid
-        ? midNodes
+        : this.modelTreeLevels === common.ModelTreeLevelsEnum.NestedFlatTime
+        ? nestedFlatTimeNodes
         : nestedNodes;
   }
 
