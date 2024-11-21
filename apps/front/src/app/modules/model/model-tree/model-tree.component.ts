@@ -380,11 +380,11 @@ export class ModelTreeComponent implements AfterViewInit {
     if (this.modelTreeLevels === common.ModelTreeLevelsEnum.Nested) {
       nestedNodes.forEach(topNode => {
         topNode.children.forEach(middleNode => {
-          // middleNode.joinLabel = topNode.label;
+          middleNode.joinLabel = topNode.label;
 
           if (middleNode.children.length > 0) {
             middleNode.children.forEach(leafNode => {
-              // leafNode.joinLabel = topNode.label;
+              leafNode.joinLabel = topNode.label;
               leafNode.timeLabel = middleNode.label;
             });
           }
@@ -401,11 +401,11 @@ export class ModelTreeComponent implements AfterViewInit {
         let newTopNodeChildren: ModelNodeExtra[] = [];
 
         topNode.children.forEach(middleNode => {
-          // middleNode.joinLabel = topNode.label;
+          middleNode.joinLabel = topNode.label;
 
           if (middleNode.children.length > 0) {
             middleNode.children.forEach(leafNode => {
-              // leafNode.joinLabel = topNode.label;
+              leafNode.joinLabel = topNode.label;
 
               leafNode.timeLabel = middleNode.label;
 

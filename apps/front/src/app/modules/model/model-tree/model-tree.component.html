@@ -141,15 +141,13 @@
 
                   <span
                     class="truncate text-base"
-                    *ngIf="
-                      node.data.nodeClass !== nodeClassInfo &&
-                      (modelTreeLevels === modelTreeLevelsFlatTime ||
-                        modelTreeLevels === modelTreeLevelsFlat)
-                    "
+                    *ngIf="node.data.nodeClass !== nodeClassInfo"
                     [ngClass]="{
                       'ml-3':
                         node.hasChildren &&
-                        node.data.nodeClass !== nodeClassDimension,
+                        node.data.nodeClass !== nodeClassDimension &&
+                        (modelTreeLevels === modelTreeLevelsFlatTime ||
+                          modelTreeLevels === modelTreeLevelsFlat),
                       'ml-2':
                         node.hasChildren &&
                         node.data.nodeClass === nodeClassDimension
@@ -159,39 +157,27 @@
                   </span>
 
                   <span
-                    class="truncate text-base"
-                    *ngIf="
-                      node.data.nodeClass !== nodeClassInfo &&
-                      (modelTreeLevels === modelTreeLevelsFlatTime ||
-                        modelTreeLevels === modelTreeLevelsFlat ||
-                        modelTreeLevels === modelTreeLevelsNestedFlatTime ||
-                        modelTreeLevels === modelTreeLevelsNested)
-                    "
-                    [ngClass]="{
-                      'font-semibold':
-                        modelTreeLevels === modelTreeLevelsFlatTime ||
-                        modelTreeLevels === modelTreeLevelsFlat
-                    }"
+                    class="truncate text-base font-semibold"
+                    *ngIf="node.data.nodeClass !== nodeClassInfo"
                   >
                     {{ node.data.timeLabel | capitalize }}
                   </span>
 
                   <span
-                    class="truncate text-base"
+                    class="truncate text-base font-semibold"
                     *ngIf="node.data.nodeClass !== nodeClassInfo"
                     [ngClass]="{
                       'font-semibold':
-                        (node.data.children.length === 0 ||
-                          modelTreeLevels === modelTreeLevelsFlat) &&
-                        (modelTreeLevels === modelTreeLevelsFlatTime ||
-                          modelTreeLevels === modelTreeLevelsFlat),
+                        node.data.children.length === 0 ||
+                        node.data.nodeClass === nodeClassDimension,
                       'ml-3':
                         node.hasChildren &&
                         node.data.nodeClass !== nodeClassDimension,
                       'ml-2':
                         node.hasChildren &&
                         node.data.nodeClass === nodeClassDimension &&
-                        modelTreeLevels !== modelTreeLevelsFlat
+                        modelTreeLevels !== modelTreeLevelsFlat &&
+                        modelTreeLevels !== modelTreeLevelsNested
                     }"
                   >
                     {{ node.data.label | capitalize }}
