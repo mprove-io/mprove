@@ -10,6 +10,7 @@
     class="custom mt-6 w-96 text-base focus:outline-none"
     [items]="timezones"
     [clearable]="false"
+    [searchable]="true"
     [(ngModel)]="timezone"
     (keyup.esc)="$event.stopImmediatePropagation()"
     (keyup.enter)="$event.stopImmediatePropagation()"

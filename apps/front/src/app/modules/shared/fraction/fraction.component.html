@@ -20,6 +20,8 @@
 
   <m-fraction-string
     *ngSwitchCase="fieldResultEnum.String"
+    [mconfig]="mconfig"
+    [filter]="filter"
     [fraction]="fraction"
     [isFirst]="isFirst"
     [fractionIndex]="fractionIndex"

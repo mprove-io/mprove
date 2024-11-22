@@ -58,7 +58,39 @@
       [tpIsEnabled]="isDisabled === true"
     >
       <fieldset [disabled]="isDisabled === true">
+        <ng-select
+          *ngIf="
+            !!mconfig &&
+            (fraction.type === fractionTypeEnum.StringIsEqualTo ||
+              fraction.type === fractionTypeEnum.StringIsNotEqualTo)
+          "
+          #stringValueSelect
+          data-cy="stringValueSelect"
+          class="w-96 text-base focus:outline-none"
+          [ngClass]="{
+            custom: isDisabled !== true,
+            'cursor-default': isDisabled === true
+          }"
+          [items]="items"
+          [typeahead]="searchInput$"
+          [loading]="loading"
+          [clearable]="false"
+          [searchable]="true"
+          [disabled]="isDisabled === true"
+          (change)="stringValueBlur()"
+          appendTo="body"
+          bindLabel="name"
+          bindValue="name"
+          formControlName="stringValue"
+        >
+        </ng-select>
+
         <input
+          *ngIf="
+            !mconfig ||
+            (fraction.type !== fractionTypeEnum.StringIsEqualTo &&
+              fraction.type !== fractionTypeEnum.StringIsNotEqualTo)
+          "
           autocomplete="off"
           spellcheck="false"
           data-cy="fractionStringValueInput"

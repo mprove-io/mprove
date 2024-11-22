@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -7,6 +8,17 @@ import {
   Output
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  BehaviorSubject,
+  debounceTime,
+  distinctUntilChanged,
+  switchMap,
+  take,
+  tap
+} from 'rxjs';
+import { NavQuery } from '~front/app/queries/nav.query';
+import { ApiService } from '~front/app/services/api.service';
+import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 import { FractionTypeItem } from '../fraction.component';
@@ -19,6 +31,9 @@ import { FractionTypeItem } from '../fraction.component';
 export class FractionStringComponent implements OnInit {
   defaultStringValue = 'abc';
   fractionTypeEnum = common.FractionTypeEnum;
+
+  @Input() mconfig: common.MconfigX;
+  @Input() filter: common.FilterX;
 
   @Input() isDisabled: boolean;
   @Input() fraction: common.Fraction;
@@ -97,10 +112,174 @@ export class FractionStringComponent implements OnInit {
     }
   ];
 
-  constructor(private fb: FormBuilder) {}
+  loading = false;
+  items: any[] = [];
+  searchInput$ = new BehaviorSubject<string>('');
+
+  constructor(
+    private fb: FormBuilder,
+    private apiService: ApiService,
+    private navQuery: NavQuery,
+    private cd: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.buildFractionForm();
+
+    if (
+      !!this.mconfig &&
+      (this.fraction.type === common.FractionTypeEnum.StringIsEqualTo ||
+        this.fraction.type === common.FractionTypeEnum.StringIsNotEqualTo)
+    ) {
+      this.searchInput$
+        .pipe(
+          debounceTime(300), // Wait 300 ms after user stops typing
+          distinctUntilChanged(), // Only trigger if the input has changed
+          switchMap(async term => {
+            try {
+              this.loading = true;
+              this.cd.detectChanges();
+
+              let newMconfig: common.Mconfig = {
+                structId: this.mconfig.structId,
+                mconfigId: common.makeId(),
+                queryId: common.makeId(),
+                modelId: this.mconfig.modelId,
+                modelLabel: this.mconfig.modelLabel,
+                select: [this.filter.fieldId],
+                unsafeSelect: [],
+                warnSelect: [],
+                joinAggregations: [],
+                sortings: [],
+                sorts: `${this.filter.fieldId}`,
+                timezone: common.UTC,
+                limit: 500,
+                filters: common.isDefinedAndNotEmpty(term)
+                  ? [
+                      {
+                        fieldId: this.filter.fieldId,
+                        fractions: [
+                          {
+                            brick: `%${term}%`,
+                            type: common.FractionTypeEnum.StringContains,
+                            operator: common.FractionOperatorEnum.Or
+                          }
+                        ]
+                      }
+                    ]
+                  : [],
+                chart: common.DEFAULT_CHART,
+                temp: true,
+                serverTs: 1
+              };
+
+              let nav = this.navQuery.getValue();
+
+              let q1Resp = await this.apiService
+                .req({
+                  pathInfoName:
+                    apiToBackend.ToBackendRequestInfoNameEnum
+                      .ToBackendCreateTempMconfigAndQuery,
+                  payload: {
+                    projectId: nav.projectId,
+                    isRepoProd: nav.isRepoProd,
+                    branchId: nav.branchId,
+                    envId: nav.envId,
+                    mconfig: newMconfig
+                  } as apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload
+                })
+                .pipe(
+                  tap(
+                    (
+                      resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse
+                    ) => {
+                      if (
+                        resp.info?.status === common.ResponseInfoStatusEnum.Ok
+                      ) {
+                        return resp;
+                      }
+                    }
+                  ),
+                  take(1)
+                )
+                .toPromise();
+
+              let q2Resp = await this.apiService
+                .req({
+                  pathInfoName:
+                    apiToBackend.ToBackendRequestInfoNameEnum
+                      .ToBackendRunQueries,
+                  payload: {
+                    projectId: nav.projectId,
+                    queryIds: [q1Resp.payload.query.queryId]
+                  } as apiToBackend.ToBackendRunQueriesRequestPayload
+                })
+                .pipe(
+                  tap((resp: apiToBackend.ToBackendRunQueriesResponse) => {
+                    if (
+                      resp.info?.status === common.ResponseInfoStatusEnum.Ok
+                    ) {
+                      return resp;
+                    }
+                  }),
+                  take(1)
+                )
+                .toPromise();
+
+              let q3Resp: apiToBackend.ToBackendGetQueryResponse;
+
+              while (
+                q3Resp?.payload.query.status !==
+                common.QueryStatusEnum.Completed
+              ) {
+                await common.sleep(500);
+
+                q3Resp = await this.apiService
+                  .req({
+                    pathInfoName:
+                      apiToBackend.ToBackendRequestInfoNameEnum
+                        .ToBackendGetQuery,
+                    payload: {
+                      projectId: nav.projectId,
+                      isRepoProd: nav.isRepoProd,
+                      branchId: nav.branchId,
+                      envId: nav.envId,
+                      mconfigId: q1Resp.payload.mconfig.mconfigId,
+                      queryId: q2Resp.payload.runningQueries[0].queryId
+                    } as apiToBackend.ToBackendGetQueryRequestPayload
+                  })
+                  .pipe(
+                    tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
+                      if (
+                        resp.info?.status === common.ResponseInfoStatusEnum.Ok
+                      ) {
+                        return resp;
+                      }
+                    })
+                  )
+                  .toPromise();
+              }
+
+              this.items = q3Resp.payload.query.data.map(
+                (row: any, i: number) => ({
+                  id: i,
+                  name: row[this.filter.field.sqlName]
+                })
+              );
+            } catch (error: any) {
+              throw new Error(
+                `Failed to get filter suggestions: ${error.message}`
+              );
+            }
+
+            this.loading = false;
+            this.cd.detectChanges();
+
+            return;
+          })
+        )
+        .subscribe();
+    }
   }
 
   buildFractionForm() {
