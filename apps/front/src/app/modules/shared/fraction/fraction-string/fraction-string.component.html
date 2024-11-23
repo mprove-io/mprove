@@ -60,7 +60,7 @@
       <fieldset [disabled]="isDisabled === true">
         <ng-select
           *ngIf="
-            !!mconfig &&
+            filterFieldClass === fieldClassEnum.Dimension &&
             (fraction.type === fractionTypeEnum.StringIsEqualTo ||
               fraction.type === fractionTypeEnum.StringIsNotEqualTo)
           "
@@ -76,8 +76,10 @@
           [loading]="loading"
           [clearable]="false"
           [searchable]="true"
-          [disabled]="isDisabled === true"
           (change)="stringValueBlur()"
+          (search)="stringValueSearch($event)"
+          (open)="onOpenSelect()"
+          (close)="onCloseSelect()"
           appendTo="body"
           bindLabel="name"
           bindValue="name"
@@ -87,7 +89,7 @@
 
         <input
           *ngIf="
-            !mconfig ||
+            filterFieldClass !== fieldClassEnum.Dimension ||
             (fraction.type !== fractionTypeEnum.StringIsEqualTo &&
               fraction.type !== fractionTypeEnum.StringIsNotEqualTo)
           "

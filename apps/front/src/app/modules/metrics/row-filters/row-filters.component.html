@@ -111,8 +111,11 @@
         "
       >
         <m-fraction
-          [mconfig]="mconfig"
-          [filter]="filter"
+          [mconfigStructId]="mconfig.structId"
+          [mconfigModelId]="mconfig.modelId"
+          [filterFieldId]="filter.fieldId"
+          [filterFieldSqlName]="filter.field.sqlName"
+          [filterFieldClass]="filter.field.fieldClass"
           [fieldResult]="filter.field.result"
           [fraction]="fraction"
           [fractionIndex]="fractionIndex"

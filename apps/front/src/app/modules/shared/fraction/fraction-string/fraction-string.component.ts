@@ -4,12 +4,14 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   BehaviorSubject,
+  Subscription,
   debounceTime,
   distinctUntilChanged,
   switchMap,
@@ -28,12 +30,16 @@ import { FractionTypeItem } from '../fraction.component';
   templateUrl: 'fraction-string.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FractionStringComponent implements OnInit {
+export class FractionStringComponent implements OnInit, OnDestroy {
   defaultStringValue = 'abc';
   fractionTypeEnum = common.FractionTypeEnum;
+  fieldClassEnum = common.FieldClassEnum;
 
-  @Input() mconfig: common.MconfigX;
-  @Input() filter: common.FilterX;
+  @Input() mconfigStructId: string;
+  @Input() mconfigModelId: string;
+  @Input() filterFieldId: string;
+  @Input() filterFieldSqlName: string;
+  @Input() filterFieldClass: common.FieldClassEnum;
 
   @Input() isDisabled: boolean;
   @Input() fraction: common.Fraction;
@@ -116,6 +122,10 @@ export class FractionStringComponent implements OnInit {
   items: any[] = [];
   searchInput$ = new BehaviorSubject<string>('');
 
+  searchValue: string;
+
+  searchSubscription: Subscription;
+
   constructor(
     private fb: FormBuilder,
     private apiService: ApiService,
@@ -125,13 +135,30 @@ export class FractionStringComponent implements OnInit {
 
   ngOnInit() {
     this.buildFractionForm();
+  }
 
+  ngOnDestroy() {
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
+  }
+
+  onCloseSelect() {
+    this.searchValue = '';
+    this.items = [];
+
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
+  }
+
+  onOpenSelect() {
     if (
-      !!this.mconfig &&
+      this.filterFieldClass === common.FieldClassEnum.Dimension &&
       (this.fraction.type === common.FractionTypeEnum.StringIsEqualTo ||
         this.fraction.type === common.FractionTypeEnum.StringIsNotEqualTo)
     ) {
-      this.searchInput$
+      this.searchSubscription = this.searchInput$
         .pipe(
           debounceTime(300), // Wait 300 ms after user stops typing
           distinctUntilChanged(), // Only trigger if the input has changed
@@ -141,23 +168,23 @@ export class FractionStringComponent implements OnInit {
               this.cd.detectChanges();
 
               let newMconfig: common.Mconfig = {
-                structId: this.mconfig.structId,
+                structId: this.mconfigStructId,
                 mconfigId: common.makeId(),
                 queryId: common.makeId(),
-                modelId: this.mconfig.modelId,
-                modelLabel: this.mconfig.modelLabel,
-                select: [this.filter.fieldId],
+                modelId: this.mconfigModelId,
+                modelLabel: 'empty',
+                select: [this.filterFieldId],
                 unsafeSelect: [],
                 warnSelect: [],
                 joinAggregations: [],
                 sortings: [],
-                sorts: `${this.filter.fieldId}`,
+                sorts: `${this.filterFieldId}`,
                 timezone: common.UTC,
                 limit: 500,
                 filters: common.isDefinedAndNotEmpty(term)
                   ? [
                       {
-                        fieldId: this.filter.fieldId,
+                        fieldId: this.filterFieldId,
                         fractions: [
                           {
                             brick: `%${term}%`,
@@ -263,9 +290,25 @@ export class FractionStringComponent implements OnInit {
               this.items = q3Resp.payload.query.data.map(
                 (row: any, i: number) => ({
                   id: i,
-                  name: row[this.filter.field.sqlName]
+                  name: row[this.filterFieldSqlName]
                 })
               );
+
+              if (common.isDefinedAndNotEmpty(this.searchValue)) {
+                this.items = [
+                  {
+                    id: 0,
+                    name: this.searchValue
+                  },
+                  ...this.items.map(item => {
+                    let newItem = Object.assign(item, {
+                      id: item.id + 1
+                    });
+
+                    return newItem;
+                  })
+                ];
+              }
             } catch (error: any) {
               throw new Error(
                 `Failed to get filter suggestions: ${error.message}`
@@ -289,6 +332,10 @@ export class FractionStringComponent implements OnInit {
         Validators.compose([Validators.required, Validators.maxLength(255)])
       ]
     });
+  }
+
+  stringValueSearch(searchObj: any) {
+    this.searchValue = searchObj.term;
   }
 
   stringValueBlur() {

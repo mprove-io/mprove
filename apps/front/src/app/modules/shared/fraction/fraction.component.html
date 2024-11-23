@@ -20,8 +20,11 @@
 
   <m-fraction-string
     *ngSwitchCase="fieldResultEnum.String"
-    [mconfig]="mconfig"
-    [filter]="filter"
+    [mconfigStructId]="mconfigStructId"
+    [mconfigModelId]="mconfigModelId"
+    [filterFieldId]="filterFieldId"
+    [filterFieldSqlName]="filterFieldSqlName"
+    [filterFieldClass]="filterFieldClass"
     [fraction]="fraction"
     [isFirst]="isFirst"
     [fractionIndex]="fractionIndex"
