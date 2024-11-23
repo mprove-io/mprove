@@ -32,11 +32,12 @@ export class GetFractionsService {
       logger: this.logger
     });
 
-    let { bricks, result } = reqValid.payload;
+    let { bricks, result, caseSensitiveStringFilters } = reqValid.payload;
 
     let fractions: common.Fraction[] = [];
 
     let p = processFilter({
+      caseSensitiveStringFilters: caseSensitiveStringFilters,
       filterBricks: bricks,
       result: result,
       fractions: fractions,

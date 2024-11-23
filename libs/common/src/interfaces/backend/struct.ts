@@ -28,9 +28,6 @@ export class Struct {
   @IsBoolean()
   allowTimezones: boolean;
 
-  @IsBoolean()
-  simplifySafeAggregates: boolean;
-
   @IsTimezone()
   defaultTimezone: string;
 
@@ -42,6 +39,12 @@ export class Struct {
 
   @IsString()
   currencySuffix: string;
+
+  @IsBoolean()
+  caseSensitiveStringFilters: boolean;
+
+  @IsBoolean()
+  simplifySafeAggregates: boolean;
 
   @ValidateNested()
   @Type(() => BmlError)

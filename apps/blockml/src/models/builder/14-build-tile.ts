@@ -13,6 +13,7 @@ export async function buildTile<T extends types.dzType>(
     models: common.FileModel[];
     udfsDict: common.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;
+    caseSensitiveStringFilters: boolean;
     simplifySafeAggregates: boolean;
     errors: BmError[];
     structId: string;
@@ -111,6 +112,7 @@ export async function buildTile<T extends types.dzType>(
       entities: entities,
       models: item.models,
       structId: item.structId,
+      caseSensitiveStringFilters: item.caseSensitiveStringFilters,
       errors: item.errors,
       caller: item.caller
     },
@@ -134,6 +136,7 @@ export async function buildTile<T extends types.dzType>(
       models: item.models,
       udfsDict: item.udfsDict,
       weekStart: item.weekStart,
+      caseSensitiveStringFilters: item.caseSensitiveStringFilters,
       simplifySafeAggregates: item.simplifySafeAggregates,
       structId: item.structId,
       errors: item.errors,

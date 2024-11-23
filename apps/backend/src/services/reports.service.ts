@@ -640,7 +640,8 @@ export class ReportsService {
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
-      projectWeekStart: struct.weekStart
+      projectWeekStart: struct.weekStart,
+      caseSensitiveStringFilters: struct.caseSensitiveStringFilters
     });
 
     let metricIds = report.rows.map(x => x.metricId);
@@ -690,7 +691,8 @@ export class ReportsService {
         rows: report.rows,
         models: models,
         metrics: metrics,
-        traceId: traceId
+        traceId: traceId,
+        caseSensitiveStringFilters: struct.caseSensitiveStringFilters
       });
     } else {
       // console.log('isCalculateParameters false');
@@ -817,6 +819,7 @@ export class ReportsService {
                 orgId: project.orgId,
                 projectId: project.projectId,
                 weekStart: struct.weekStart,
+                caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
                 simplifySafeAggregates: struct.simplifySafeAggregates,
                 udfsDict: struct.udfsDict,
                 mconfig: mconfig,

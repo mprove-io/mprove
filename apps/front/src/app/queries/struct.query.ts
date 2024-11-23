@@ -11,6 +11,7 @@ let structState: StructState = {
   mproveDirValue: undefined,
   weekStart: undefined,
   allowTimezones: false,
+  caseSensitiveStringFilters: false,
   simplifySafeAggregates: false,
   defaultTimezone: undefined,
   errors: [],

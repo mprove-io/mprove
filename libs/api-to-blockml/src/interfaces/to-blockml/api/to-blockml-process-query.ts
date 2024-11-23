@@ -17,6 +17,9 @@ export class ToBlockmlProcessQueryRequestPayload {
   weekStart: common.ProjectWeekStartEnum;
 
   @IsBoolean()
+  caseSensitiveStringFilters: boolean;
+
+  @IsBoolean()
   simplifySafeAggregates: boolean;
 
   @ValidateNested()

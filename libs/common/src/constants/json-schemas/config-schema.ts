@@ -18,9 +18,6 @@ export const CONFIG_SCHEMA: JSONSchema7 = {
     allow_timezones: {
       type: 'boolean'
     },
-    simplify_safe_aggregates: {
-      type: 'boolean'
-    },
     default_timezone: {
       type: 'string',
       enum: getTimezonesValues()
@@ -33,6 +30,12 @@ export const CONFIG_SCHEMA: JSONSchema7 = {
     },
     currency_suffix: {
       type: 'string'
+    },
+    case_sensitive_string_filters: {
+      type: 'boolean'
+    },
+    simplify_safe_aggregates: {
+      type: 'boolean'
     }
   },
   required: ['mprove_dir']

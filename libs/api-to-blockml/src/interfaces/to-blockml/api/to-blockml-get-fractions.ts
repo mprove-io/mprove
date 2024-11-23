@@ -4,6 +4,9 @@ import { common } from '~api-to-blockml/barrels/common';
 import { ToBlockmlRequest } from '~api-to-blockml/interfaces/to-blockml/to-blockml-request';
 
 export class ToBlockmlGetFractionsRequestPayload {
+  @IsBoolean()
+  caseSensitiveStringFilters: boolean;
+
   @IsString({ each: true })
   bricks: string[];
 

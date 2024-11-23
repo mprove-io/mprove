@@ -12,11 +12,12 @@ export function checkViewFilterDefaults(
     views: common.FileView[];
     errors: BmError[];
     structId: string;
+    caseSensitiveStringFilters: boolean;
     caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId } = item;
+  let { caller, structId, caseSensitiveStringFilters } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newViews = barSpecial.checkVmdFilterDefaults(
@@ -24,6 +25,7 @@ export function checkViewFilterDefaults(
       entities: item.views,
       errors: item.errors,
       structId: item.structId,
+      caseSensitiveStringFilters: caseSensitiveStringFilters,
       caller: item.caller
     },
     cs

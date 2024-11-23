@@ -16,11 +16,12 @@ export const structsTable = pgTable(
     structId: varchar('struct_id', { length: 32 }).notNull().primaryKey(),
     projectId: varchar('project_id', { length: 32 }).notNull(),
     mproveDirValue: varchar('mprove_dir_value'),
+    caseSensitiveStringFilters: boolean('case_sensitive_string_filters'),
+    simplifySafeAggregates: boolean('simplify_safe_aggregates'),
     weekStart: varchar('week_start')
       .$type<common.ProjectWeekStartEnum>()
       .notNull(),
     allowTimezones: boolean('allow_timezones').notNull(),
-    simplifySafeAggregates: boolean('simplify_safe_aggregates'),
     defaultTimezone: varchar('default_timezone').notNull(),
     formatNumber: varchar('format_number'),
     currencyPrefix: varchar('currency_prefix'),

@@ -420,6 +420,7 @@ export class WrapToApiService {
       mproveDirValue: struct.mproveDirValue,
       weekStart: struct.weekStart,
       allowTimezones: struct.allowTimezones,
+      caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
       simplifySafeAggregates: struct.simplifySafeAggregates,
       defaultTimezone: struct.defaultTimezone,
       formatNumber: struct.formatNumber,

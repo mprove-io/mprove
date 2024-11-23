@@ -52,6 +52,7 @@ export const STANDARD_SQL = '#standardSQL';
 
 export const PROJECT_CONFIG_ALLOW_TIMEZONES = 'true';
 export const PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES = 'true';
+export const PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS = 'false';
 export const PROJECT_CONFIG_DEFAULT_TIMEZONE = common.UTC;
 export const PROJECT_CONFIG_WEEK_START = common.ProjectWeekStartEnum.Monday;
 export const PROJECT_CONFIG_CURRENCY_PREFIX = '$';

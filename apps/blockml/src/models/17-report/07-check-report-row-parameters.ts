@@ -10,6 +10,7 @@ let func = common.FuncEnum.CheckReportRowParameters;
 
 export function checkReportRowParameters(
   item: {
+    caseSensitiveStringFilters: boolean;
     reports: common.FileReport[];
     metrics: common.MetricAny[];
     models: common.FileModel[];
@@ -19,7 +20,7 @@ export function checkReportRowParameters(
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId, metrics, models } = item;
+  let { caller, structId, metrics, models, caseSensitiveStringFilters } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newReports: common.FileReport[] = [];
@@ -204,6 +205,7 @@ export function checkReportRowParameters(
                           .result;
 
                   let pf = barSpecial.processFilter({
+                    caseSensitiveStringFilters: caseSensitiveStringFilters,
                     filterBricks: p.conditions,
                     result: result
                   });

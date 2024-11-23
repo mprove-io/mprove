@@ -5,6 +5,7 @@ import { JoinAggregation } from '../join-aggregation';
 import { FileViewPart } from './file-view-part';
 
 export interface VarsSql {
+  caseSensitiveStringFilters?: boolean;
   weekStart?: enums.ProjectWeekStartEnum;
   timezone?: string;
   select?: string[];

@@ -65,11 +65,12 @@ export class RebuildStructService {
       mproveDirValue,
       weekStart,
       allowTimezones,
-      simplifySafeAggregates,
       defaultTimezone,
       formatNumber,
       currencyPrefix,
-      currencySuffix
+      currencySuffix,
+      caseSensitiveStringFilters,
+      simplifySafeAggregates
     } = await this.rebuildStructStateless({
       traceId: reqValid.info.traceId,
       files: files,
@@ -139,11 +140,12 @@ export class RebuildStructService {
       mproveDirValue: mproveDirValue,
       weekStart: weekStart,
       allowTimezones: allowTimezones,
-      simplifySafeAggregates: simplifySafeAggregates,
       defaultTimezone: defaultTimezone,
       formatNumber: formatNumber,
       currencyPrefix: currencyPrefix,
-      currencySuffix: currencySuffix
+      currencySuffix: currencySuffix,
+      caseSensitiveStringFilters: caseSensitiveStringFilters,
+      simplifySafeAggregates: simplifySafeAggregates
     };
 
     return payload;
@@ -254,13 +256,16 @@ export class RebuildStructService {
         allowTimezones: helper.toBooleanFromLowercaseString(
           constants.PROJECT_CONFIG_ALLOW_TIMEZONES
         ),
-        simplifySafeAggregates: helper.toBooleanFromLowercaseString(
-          constants.PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES
-        ),
         defaultTimezone: constants.PROJECT_CONFIG_DEFAULT_TIMEZONE,
         currencyPrefix: constants.PROJECT_CONFIG_CURRENCY_PREFIX,
         currencySuffix: constants.PROJECT_CONFIG_CURRENCY_SUFFIX,
-        formatNumber: constants.PROJECT_CONFIG_FORMAT_NUMBER
+        formatNumber: constants.PROJECT_CONFIG_FORMAT_NUMBER,
+        caseSensitiveStringFilters: helper.toBooleanFromLowercaseString(
+          constants.PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS
+        ),
+        simplifySafeAggregates: helper.toBooleanFromLowercaseString(
+          constants.PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES
+        )
       };
     }
 
@@ -314,6 +319,9 @@ export class RebuildStructService {
         udfsDict: udfsDict,
         weekStart: projectConfig.week_start,
         structId: item.structId,
+        caseSensitiveStringFilters: helper.toBooleanFromLowercaseString(
+          projectConfig.case_sensitive_string_filters
+        ),
         envId: item.envId,
         evs: item.evs,
         errors: errors,
@@ -328,6 +336,9 @@ export class RebuildStructService {
         views: views,
         udfs: udfs,
         structId: item.structId,
+        caseSensitiveStringFilters: helper.toBooleanFromLowercaseString(
+          projectConfig.case_sensitive_string_filters
+        ),
         errors: errors,
         caller: common.CallerEnum.BuildModel
       },
@@ -412,6 +423,9 @@ export class RebuildStructService {
       {
         dashboards: dashboards,
         structId: item.structId,
+        caseSensitiveStringFilters: helper.toBooleanFromLowercaseString(
+          projectConfig.case_sensitive_string_filters
+        ),
         errors: errors,
         caller: common.CallerEnum.BuildDashboard
       },
@@ -435,6 +449,9 @@ export class RebuildStructService {
         models: models,
         udfsDict: udfsDict,
         weekStart: projectConfig.week_start,
+        caseSensitiveStringFilters: helper.toBooleanFromLowercaseString(
+          projectConfig.case_sensitive_string_filters
+        ),
         simplifySafeAggregates: helper.toBooleanFromLowercaseString(
           projectConfig.simplify_safe_aggregates
         ),
@@ -453,6 +470,9 @@ export class RebuildStructService {
         models: models,
         udfsDict: udfsDict,
         weekStart: projectConfig.week_start,
+        caseSensitiveStringFilters: helper.toBooleanFromLowercaseString(
+          projectConfig.case_sensitive_string_filters
+        ),
         simplifySafeAggregates: helper.toBooleanFromLowercaseString(
           projectConfig.simplify_safe_aggregates
         ),
@@ -492,6 +512,9 @@ export class RebuildStructService {
         metrics: commonMetrics,
         models: models,
         structId: item.structId,
+        caseSensitiveStringFilters: helper.toBooleanFromLowercaseString(
+          projectConfig.case_sensitive_string_filters
+        ),
         errors: errors,
         caller: common.CallerEnum.BuildReport
       },
@@ -530,13 +553,16 @@ export class RebuildStructService {
       allowTimezones: helper.toBooleanFromLowercaseString(
         projectConfig.allow_timezones
       ),
-      simplifySafeAggregates: helper.toBooleanFromLowercaseString(
-        projectConfig.simplify_safe_aggregates
-      ),
       defaultTimezone: projectConfig.default_timezone,
       formatNumber: projectConfig.format_number,
       currencyPrefix: projectConfig.currency_prefix,
-      currencySuffix: projectConfig.currency_suffix
+      currencySuffix: projectConfig.currency_suffix,
+      caseSensitiveStringFilters: helper.toBooleanFromLowercaseString(
+        projectConfig.case_sensitive_string_filters
+      ),
+      simplifySafeAggregates: helper.toBooleanFromLowercaseString(
+        projectConfig.simplify_safe_aggregates
+      )
     };
   }
 }

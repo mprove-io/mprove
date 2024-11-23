@@ -9,6 +9,7 @@ export function buildDashboard(
     dashboards: common.FileDashboard[];
     errors: BmError[];
     structId: string;
+    caseSensitiveStringFilters: boolean;
     caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
@@ -29,6 +30,7 @@ export function buildDashboard(
     {
       dashboards: dashboards,
       structId: item.structId,
+      caseSensitiveStringFilters: item.caseSensitiveStringFilters,
       errors: item.errors,
       caller: item.caller
     },

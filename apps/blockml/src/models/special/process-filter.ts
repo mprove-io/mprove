@@ -18,6 +18,7 @@ export function processFilter(item: {
   notIns?: string[];
   fractions?: common.Fraction[];
   getTimeRange?: boolean;
+  caseSensitiveStringFilters: boolean;
 }): {
   valid: number;
   brick?: string;
@@ -37,7 +38,8 @@ export function processFilter(item: {
     ins,
     notIns,
     fractions,
-    getTimeRange
+    getTimeRange,
+    caseSensitiveStringFilters
   } = item;
 
   if (getTimeRange === true) {
@@ -400,7 +402,10 @@ export function processFilter(item: {
         not = r[1];
         value = r[2];
 
-        condition = `${proc} = '${value}'`;
+        condition =
+          caseSensitiveStringFilters === true
+            ? `${proc} = '${value}'`
+            : `LOWER(${proc}) = LOWER('${value}')`;
 
         if (not) {
           fractions.push({
@@ -424,7 +429,10 @@ export function processFilter(item: {
         not = r[1];
         value = r[2];
 
-        condition = `${proc} LIKE '%${value}%'`;
+        condition =
+          caseSensitiveStringFilters === true
+            ? `${proc} LIKE '%${value}%'`
+            : `LOWER(${proc}) LIKE LOWER('%${value}%')`;
 
         if (not) {
           fractions.push({
@@ -448,7 +456,10 @@ export function processFilter(item: {
         value = r[1];
         not = r[2];
 
-        condition = `${proc} LIKE '${value}%'`;
+        condition =
+          caseSensitiveStringFilters === true
+            ? `${proc} LIKE '${value}%'`
+            : `LOWER(${proc}) LIKE LOWER('${value}%')`;
 
         if (not) {
           fractions.push({
@@ -472,7 +483,10 @@ export function processFilter(item: {
         not = r[1];
         value = r[2];
 
-        condition = `${proc} LIKE '%${value}'`;
+        condition =
+          caseSensitiveStringFilters === true
+            ? `${proc} LIKE '%${value}'`
+            : `LOWER(${proc}) LIKE LOWER('%${value}')`;
 
         if (not) {
           fractions.push({

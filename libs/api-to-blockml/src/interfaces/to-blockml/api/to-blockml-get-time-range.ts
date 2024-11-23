@@ -10,6 +10,9 @@ import { common } from '~api-to-blockml/barrels/common';
 import { ToBlockmlRequest } from '~api-to-blockml/interfaces/to-blockml/to-blockml-request';
 
 export class ToBlockmlGetTimeRangeRequestPayload {
+  @IsBoolean()
+  caseSensitiveStringFilters: boolean;
+
   @IsString()
   timezone: string;
 

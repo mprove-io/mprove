@@ -26,12 +26,14 @@ export function checkProjectConfig(
 
   let projectConfig: common.FileProjectConf = {
     allow_timezones: constants.PROJECT_CONFIG_ALLOW_TIMEZONES,
-    simplify_safe_aggregates: constants.PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES,
     default_timezone: constants.PROJECT_CONFIG_DEFAULT_TIMEZONE,
     week_start: constants.PROJECT_CONFIG_WEEK_START,
     currency_prefix: constants.PROJECT_CONFIG_CURRENCY_PREFIX,
     currency_suffix: constants.PROJECT_CONFIG_CURRENCY_SUFFIX,
     format_number: constants.PROJECT_CONFIG_FORMAT_NUMBER,
+    case_sensitive_string_filters:
+      constants.PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS,
+    simplify_safe_aggregates: constants.PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES,
     fileName: undefined,
     fileExt: undefined,
     filePath: undefined,
@@ -114,6 +116,7 @@ export function checkProjectConfig(
       if (
         [
           common.ParameterEnum.AllowTimezones.toString(),
+          common.ParameterEnum.CaseSensitiveStringFilters.toString(),
           common.ParameterEnum.SimplifySafeAggregates.toString()
         ].indexOf(parameter) > -1 &&
         !conf[parameter as keyof common.FileProjectConf]
@@ -122,7 +125,17 @@ export function checkProjectConfig(
       ) {
         item.errors.push(
           new BmError({
-            title: common.ErTitleEnum.WRONG_ALLOW_TIMEZONES,
+            title:
+              parameter === common.ParameterEnum.AllowTimezones.toString()
+                ? common.ErTitleEnum.WRONG_ALLOW_TIMEZONES
+                : parameter ===
+                  common.ParameterEnum.CaseSensitiveStringFilters.toString()
+                ? common.ErTitleEnum.WRONG_CASE_SENSITIVE_STRING_FILTERS
+                : parameter ===
+                  common.ParameterEnum.SimplifySafeAggregates.toString()
+                ? common.ErTitleEnum.WRONG_SIMPLIFY_SAFE_AGGREGATES
+                : common.ErTitleEnum.WRONG_PROJECT_CONFIG_PARAMETER,
+
             message: `parameter "${parameter}:" must be "true" or "false" if specified`,
             lines: [
               {

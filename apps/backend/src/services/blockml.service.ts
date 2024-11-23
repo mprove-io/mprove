@@ -160,6 +160,7 @@ export class BlockmlService {
       mproveDirValue,
       weekStart,
       allowTimezones,
+      caseSensitiveStringFilters,
       simplifySafeAggregates,
       defaultTimezone,
       formatNumber,
@@ -184,6 +185,7 @@ export class BlockmlService {
       mproveDirValue: mproveDirValue,
       weekStart: weekStart,
       allowTimezones: allowTimezones,
+      caseSensitiveStringFilters: caseSensitiveStringFilters,
       simplifySafeAggregates: simplifySafeAggregates,
       defaultTimezone: defaultTimezone,
       formatNumber: formatNumber,
@@ -295,13 +297,15 @@ export class BlockmlService {
     timeSpec: common.TimeSpecEnum;
     timeRangeFractionBrick: string;
     projectWeekStart: common.ProjectWeekStartEnum;
+    caseSensitiveStringFilters: boolean;
   }) {
     let {
       traceId,
       timezone,
       timeSpec,
       timeRangeFractionBrick,
-      projectWeekStart
+      projectWeekStart,
+      caseSensitiveStringFilters
     } = item;
 
     let timeColumnsLimit = constants.TIME_COLUMNS_LIMIT;
@@ -316,7 +320,8 @@ export class BlockmlService {
           timeRangeFractionBrick: timeRangeFractionBrick,
           timeColumnsLimit: timeColumnsLimit,
           timeSpec: timeSpec,
-          timezone: timezone
+          timezone: timezone,
+          caseSensitiveStringFilters: caseSensitiveStringFilters
         }
       };
 

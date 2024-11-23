@@ -59,9 +59,6 @@ export class ToBlockmlRebuildStructResponsePayload {
   @IsBoolean()
   allowTimezones: boolean;
 
-  @IsBoolean()
-  simplifySafeAggregates: boolean;
-
   @IsString()
   formatNumber: string;
 
@@ -70,6 +67,12 @@ export class ToBlockmlRebuildStructResponsePayload {
 
   @IsString()
   currencySuffix: string;
+
+  @IsBoolean()
+  caseSensitiveStringFilters: boolean;
+
+  @IsBoolean()
+  simplifySafeAggregates: boolean;
 
   @ValidateNested()
   @Type(() => common.BmlError)

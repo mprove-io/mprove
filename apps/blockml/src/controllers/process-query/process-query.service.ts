@@ -39,6 +39,7 @@ export class ProcessQueryService {
       orgId,
       projectId,
       weekStart,
+      caseSensitiveStringFilters,
       simplifySafeAggregates,
       udfsDict,
       mconfig,
@@ -69,6 +70,7 @@ export class ProcessQueryService {
       reqValid.info.traceId,
       {
         weekStart: weekStart,
+        caseSensitiveStringFilters: caseSensitiveStringFilters,
         simplifySafeAggregates: simplifySafeAggregates,
         timezone: timezone,
         select: select,

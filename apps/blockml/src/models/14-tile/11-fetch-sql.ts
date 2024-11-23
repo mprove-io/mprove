@@ -18,6 +18,7 @@ export async function fetchSql<T extends types.dzType>(
     udfsDict: common.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;
     simplifySafeAggregates: boolean;
+    caseSensitiveStringFilters: boolean;
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
@@ -65,6 +66,7 @@ export async function fetchSql<T extends types.dzType>(
         warnSelect
       } = await barSpecial.genSql(rabbitService, cs, item.traceId, {
         weekStart: item.weekStart,
+        caseSensitiveStringFilters: item.caseSensitiveStringFilters,
         simplifySafeAggregates: item.simplifySafeAggregates,
         timezone: tile.timezone,
         select: tile.select,

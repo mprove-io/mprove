@@ -11,6 +11,7 @@ export function buildReport(
     models: common.FileModel[];
     errors: BmError[];
     structId: string;
+    caseSensitiveStringFilters: boolean;
     caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
@@ -84,6 +85,7 @@ export function buildReport(
       metrics: item.metrics,
       models: item.models,
       structId: item.structId,
+      caseSensitiveStringFilters: item.caseSensitiveStringFilters,
       errors: item.errors,
       caller: item.caller
     },

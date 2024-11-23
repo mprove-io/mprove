@@ -33,12 +33,18 @@ export class GetTimeRangeService {
       logger: this.logger
     });
 
-    let { timeRangeFractionBrick, timeColumnsLimit, timeSpec, timezone } =
-      reqValid.payload;
+    let {
+      timeRangeFractionBrick,
+      timeColumnsLimit,
+      timeSpec,
+      timezone,
+      caseSensitiveStringFilters
+    } = reqValid.payload;
 
     let fractions: common.Fraction[] = [];
 
     let p = processFilter({
+      caseSensitiveStringFilters: caseSensitiveStringFilters,
       filterBricks: [timeRangeFractionBrick],
       result: common.FieldResultEnum.Ts,
       fractions: fractions,

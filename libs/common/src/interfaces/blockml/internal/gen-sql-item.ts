@@ -5,6 +5,7 @@ import { FileModel } from './file-model';
 
 export interface GenSqlItem {
   weekStart: enums.ProjectWeekStartEnum;
+  caseSensitiveStringFilters: boolean;
   simplifySafeAggregates: boolean;
   timezone: string;
   select: string[];

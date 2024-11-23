@@ -60,6 +60,7 @@ export function genSqlPro(item: common.GenSqlItem): common.GenSqlProOutcome {
     filters,
     model,
     udfsDict,
+    caseSensitiveStringFilters,
     simplifySafeAggregates
   } = item;
 
@@ -137,7 +138,8 @@ export function genSqlPro(item: common.GenSqlItem): common.GenSqlProOutcome {
     weekStart,
     timezone,
     varsSqlSteps,
-    model
+    model,
+    caseSensitiveStringFilters
   });
 
   let { withParts, withDerivedTables, withViews } = barSql.makeWith({

@@ -11,6 +11,7 @@ export function buildModel(
     udfs: common.FileUdf[];
     errors: BmError[];
     structId: string;
+    caseSensitiveStringFilters: boolean;
     caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
@@ -114,6 +115,7 @@ export function buildModel(
     {
       models: models,
       structId: item.structId,
+      caseSensitiveStringFilters: item.caseSensitiveStringFilters,
       errors: item.errors,
       caller: item.caller
     },

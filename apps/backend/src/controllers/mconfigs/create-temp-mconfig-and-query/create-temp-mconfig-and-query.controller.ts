@@ -132,6 +132,7 @@ export class CreateTempMconfigAndQueryController {
           orgId: project.orgId,
           projectId: project.projectId,
           weekStart: struct.weekStart,
+          caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
           simplifySafeAggregates: struct.simplifySafeAggregates,
           udfsDict: struct.udfsDict,
           mconfig: mconfig,

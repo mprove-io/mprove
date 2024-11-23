@@ -310,10 +310,11 @@ export function checkTopUnknownParameters(
                 common.ParameterEnum.WeekStart.toString(),
                 common.ParameterEnum.DefaultTimezone.toString(),
                 common.ParameterEnum.AllowTimezones.toString(),
-                common.ParameterEnum.SimplifySafeAggregates.toString(),
                 common.ParameterEnum.FormatNumber.toString(),
                 common.ParameterEnum.CurrencyPrefix.toString(),
-                common.ParameterEnum.CurrencySuffix.toString()
+                common.ParameterEnum.CurrencySuffix.toString(),
+                common.ParameterEnum.CaseSensitiveStringFilters.toString(),
+                common.ParameterEnum.SimplifySafeAggregates.toString()
               ].indexOf(parameter) < 0
             ) {
               item.errors.push(

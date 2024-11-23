@@ -12,6 +12,7 @@ export function buildView(
     weekStart: common.ProjectWeekStartEnum;
     errors: BmError[];
     structId: string;
+    caseSensitiveStringFilters: boolean;
     envId: string;
     evs: common.Ev[];
     caller: common.CallerEnum;
@@ -69,6 +70,7 @@ export function buildView(
     {
       views: views,
       structId: item.structId,
+      caseSensitiveStringFilters: item.caseSensitiveStringFilters,
       errors: item.errors,
       caller: item.caller
     },

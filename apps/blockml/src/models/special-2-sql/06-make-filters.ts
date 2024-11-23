@@ -5,6 +5,7 @@ import { processFilter } from '~blockml/models/special/process-filter';
 let func = common.FuncEnum.MakeFilters;
 
 export function makeFilters(item: {
+  caseSensitiveStringFilters: common.VarsSql['caseSensitiveStringFilters'];
   joins: common.VarsSql['joins'];
   filters: common.VarsSql['filters'];
   weekStart: common.VarsSql['weekStart'];
@@ -14,6 +15,7 @@ export function makeFilters(item: {
   model: common.FileModel;
 }) {
   let {
+    caseSensitiveStringFilters,
     joins,
     filters,
     weekStart,
@@ -124,6 +126,7 @@ export function makeFilters(item: {
     filtersFractions[element] = [];
 
     processFilter({
+      caseSensitiveStringFilters: caseSensitiveStringFilters,
       result: field.result,
       filterBricks: filterBricks,
       proc: proc,

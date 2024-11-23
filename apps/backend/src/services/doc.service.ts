@@ -38,12 +38,13 @@ export class DocService {
   ) {}
 
   async calculateParameters(item: {
+    caseSensitiveStringFilters: boolean;
     metrics: schemaPostgres.MetricEnt[];
     models: schemaPostgres.ModelEnt[];
     rows: common.Row[];
     traceId: string;
   }) {
-    let { rows, models, metrics, traceId } = item;
+    let { rows, models, metrics, traceId, caseSensitiveStringFilters } = item;
 
     let xColumns: XColumn[] = [];
 
@@ -377,6 +378,7 @@ Formula must return a valid JSON object.`;
                 traceId: traceId
               },
               payload: {
+                caseSensitiveStringFilters: caseSensitiveStringFilters,
                 bricks: parameter.conditions,
                 result: parameter.result
               }

@@ -11,6 +11,7 @@ let func = common.FuncEnum.CheckDefaultFilters;
 
 export function checkDefaultFilters<T extends types.dzType>(
   item: {
+    caseSensitiveStringFilters: boolean;
     entities: T[];
     models: common.FileModel[];
     errors: BmError[];
@@ -19,7 +20,7 @@ export function checkDefaultFilters<T extends types.dzType>(
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId } = item;
+  let { caller, structId, caseSensitiveStringFilters } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
@@ -197,6 +198,7 @@ export function checkDefaultFilters<T extends types.dzType>(
                   .view.fields.find(vField => vField.name === fieldName).result;
 
           let p = barSpecial.processFilter({
+            caseSensitiveStringFilters: caseSensitiveStringFilters,
             filterBricks: tile.default_filters[defaultFilter],
             result: result
           });

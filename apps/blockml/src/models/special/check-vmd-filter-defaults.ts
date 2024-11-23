@@ -13,11 +13,12 @@ export function checkVmdFilterDefaults<T extends types.vmdType>(
     entities: T[];
     errors: BmError[];
     structId: string;
+    caseSensitiveStringFilters: boolean;
     caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId } = item;
+  let { caller, structId, caseSensitiveStringFilters } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
@@ -39,6 +40,7 @@ export function checkVmdFilterDefaults<T extends types.vmdType>(
       field.fractions = [];
 
       let p = processFilter({
+        caseSensitiveStringFilters: caseSensitiveStringFilters,
         filterBricks: field.default,
         result: field.result,
         fractions: field.fractions
