@@ -60,7 +60,7 @@
       <fieldset [disabled]="isDisabled === true">
         <ng-select
           *ngIf="
-            filterFieldClass === fieldClassEnum.Dimension &&
+            !!suggestModelDimension &&
             (fraction.type === fractionTypeEnum.StringIsEqualTo ||
               fraction.type === fractionTypeEnum.StringIsNotEqualTo)
           "
@@ -89,7 +89,7 @@
 
         <input
           *ngIf="
-            filterFieldClass !== fieldClassEnum.Dimension ||
+            !suggestModelDimension ||
             (fraction.type !== fractionTypeEnum.StringIsEqualTo &&
               fraction.type !== fractionTypeEnum.StringIsNotEqualTo)
           "

@@ -150,6 +150,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       hidden: false,
       label: label,
       result: result,
+      suggestModelDimension: undefined,
       fractions: [fraction],
       description: ''
     };

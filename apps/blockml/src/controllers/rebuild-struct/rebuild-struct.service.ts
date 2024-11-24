@@ -521,6 +521,17 @@ export class RebuildStructService {
       this.cs
     );
 
+    barSpecial.checkVmdSuggestModelDimension(
+      {
+        entities: [...views, ...models, ...dashboards],
+        models: models,
+        errors: errors,
+        structId: item.structId,
+        caller: common.CallerEnum.BuildCheckVmdSuggestModelDimension
+      },
+      this.cs
+    );
+
     barSpecial.logStruct(
       {
         errors: errors,

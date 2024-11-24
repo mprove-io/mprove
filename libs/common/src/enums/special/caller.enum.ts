@@ -26,6 +26,8 @@ export enum CallerEnum {
 
   BuildReport = '17-BuildReport',
 
+  BuildCheckVmdSuggestModelDimension = 'BuildCheckVmdSuggestModelDimension',
+
   RebuildStruct = 'RebuildStruct',
   ProcessQuery = 'ProcessQuery'
 }

@@ -17,6 +17,10 @@ export class ModelField {
   @IsEnum(enums.FieldResultEnum)
   result: enums.FieldResultEnum;
 
+  @IsOptional()
+  @IsString()
+  suggestModelDimension: string;
+
   @IsString()
   sqlName: string;
 

@@ -17,6 +17,9 @@ export interface FieldFilter {
   result?: enums.FieldResultEnum;
   result_line_num?: number;
 
+  suggest_model_dimension?: string;
+  suggest_model_dimension_line_num?: number;
+
   default?: string[];
   default_line_num?: number;
 

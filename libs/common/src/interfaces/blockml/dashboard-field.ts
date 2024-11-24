@@ -22,6 +22,10 @@ export class DashboardField {
   @IsEnum(enums.FieldResultEnum)
   result: enums.FieldResultEnum;
 
+  @IsOptional()
+  @IsString()
+  suggestModelDimension: string;
+
   @ValidateNested()
   @Type(() => Fraction)
   fractions: Fraction[];

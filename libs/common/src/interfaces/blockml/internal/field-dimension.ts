@@ -19,6 +19,9 @@ export interface FieldDimension {
   result?: enums.FieldResultEnum;
   result_line_num?: number;
 
+  suggest_model_dimension?: string;
+  suggest_model_dimension_line_num?: number;
+
   unnest?: string;
   unnest_line_num?: number;
 

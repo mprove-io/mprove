@@ -138,6 +138,7 @@ export enum FuncEnum {
 
   CheckAccess = 'special/check-access',
   CheckVmdFilterDefaults = 'special/check-vmd-filter-defaults',
+  CheckVmdSuggestModelDimension = 'special/check-vmd-suggest-model-dimension',
   LogStruct = 'special/log-struct',
 
   SubMakeDepMeasuresAndDimensions = 'special-1-sub/01-sub-make-dep-measures-and-dimensions',

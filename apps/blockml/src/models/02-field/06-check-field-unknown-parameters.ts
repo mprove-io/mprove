@@ -70,6 +70,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
                   common.ParameterEnum.Type.toString(),
                   common.ParameterEnum.Sql.toString(),
                   common.ParameterEnum.Result.toString(),
+                  common.ParameterEnum.SuggestModelDimension.toString(),
                   common.ParameterEnum.FormatNumber.toString(),
                   common.ParameterEnum.CurrencyPrefix.toString(),
                   common.ParameterEnum.CurrencySuffix.toString()
@@ -211,6 +212,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
                   common.ParameterEnum.Label.toString(),
                   common.ParameterEnum.Description.toString(),
                   common.ParameterEnum.Result.toString(),
+                  common.ParameterEnum.SuggestModelDimension.toString(),
                   common.ParameterEnum.Default.toString()
                 ].indexOf(parameter) < 0
               ) {

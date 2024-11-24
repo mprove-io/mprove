@@ -35,11 +35,8 @@ export class FractionStringComponent implements OnInit, OnDestroy {
   fractionTypeEnum = common.FractionTypeEnum;
   fieldClassEnum = common.FieldClassEnum;
 
-  @Input() mconfigStructId: string;
-  @Input() mconfigModelId: string;
-  @Input() filterFieldId: string;
-  @Input() filterFieldSqlName: string;
-  @Input() filterFieldClass: common.FieldClassEnum;
+  @Input() suggestModelDimension: string;
+  @Input() structId: string;
 
   @Input() isDisabled: boolean;
   @Input() fraction: common.Fraction;
@@ -154,10 +151,22 @@ export class FractionStringComponent implements OnInit, OnDestroy {
 
   onOpenSelect() {
     if (
-      this.filterFieldClass === common.FieldClassEnum.Dimension &&
+      common.isDefined(this.suggestModelDimension) &&
       (this.fraction.type === common.FractionTypeEnum.StringIsEqualTo ||
         this.fraction.type === common.FractionTypeEnum.StringIsNotEqualTo)
     ) {
+      let reg =
+        common.MyRegex.CAPTURE_TRIPLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
+
+      let r = reg.exec(this.suggestModelDimension);
+
+      let modelName = r[1];
+      let asName = r[2];
+      let fieldName = r[3];
+
+      let fieldId = `${asName}.${fieldName}`;
+      let fieldSqlName = `${asName}_${fieldName}`;
+
       this.searchSubscription = this.searchInput$
         .pipe(
           debounceTime(300), // Wait 300 ms after user stops typing
@@ -168,23 +177,23 @@ export class FractionStringComponent implements OnInit, OnDestroy {
               this.cd.detectChanges();
 
               let newMconfig: common.Mconfig = {
-                structId: this.mconfigStructId,
+                structId: this.structId,
                 mconfigId: common.makeId(),
                 queryId: common.makeId(),
-                modelId: this.mconfigModelId,
+                modelId: modelName,
                 modelLabel: 'empty',
-                select: [this.filterFieldId],
+                select: [fieldId],
                 unsafeSelect: [],
                 warnSelect: [],
                 joinAggregations: [],
                 sortings: [],
-                sorts: `${this.filterFieldId}`,
+                sorts: `${fieldId}`,
                 timezone: common.UTC,
                 limit: 500,
                 filters: common.isDefinedAndNotEmpty(term)
                   ? [
                       {
-                        fieldId: this.filterFieldId,
+                        fieldId: fieldId,
                         fractions: [
                           {
                             brick: `%${term}%`,
@@ -290,7 +299,7 @@ export class FractionStringComponent implements OnInit, OnDestroy {
               this.items = q3Resp.payload.query.data.map(
                 (row: any, i: number) => ({
                   id: i,
-                  name: row[this.filterFieldSqlName]
+                  name: row[fieldSqlName]
                 })
               );
 

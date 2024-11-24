@@ -26,7 +26,8 @@ export function wrapDashboards(item: {
         label: field.label,
         result: field.result,
         fractions: field.fractions,
-        description: field.description
+        description: field.description,
+        suggestModelDimension: field.suggest_model_dimension
       });
     });
 

@@ -77,11 +77,8 @@ export class FractionComponent {
 
   fieldResultEnum = common.FieldResultEnum;
 
-  @Input() mconfigStructId: string;
-  @Input() mconfigModelId: string;
-  @Input() filterFieldId: string;
-  @Input() filterFieldSqlName: string;
-  @Input() filterFieldClass: common.FieldClassEnum;
+  @Input() suggestModelDimension: string;
+  @Input() structId: string;
 
   @Input() isDisabled: boolean;
   @Input() fieldResult: common.FieldResultEnum;

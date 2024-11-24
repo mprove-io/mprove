@@ -498,6 +498,7 @@ export class ChartEditorComponent implements OnChanges {
       label: undefined,
       fieldClass: undefined,
       result: undefined,
+      suggestModelDimension: undefined,
       sqlName: undefined,
       topId: undefined,
       topLabel: 'Empty',

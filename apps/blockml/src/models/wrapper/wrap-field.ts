@@ -31,7 +31,8 @@ export function wrapField(item: {
     type: field.type,
     groupId: field.groupId,
     groupLabel: field.group_label,
-    groupDescription: field.group_description
+    groupDescription: field.group_description,
+    suggestModelDimension: field.suggest_model_dimension
   };
 
   wrappedFields.push(modelField);
