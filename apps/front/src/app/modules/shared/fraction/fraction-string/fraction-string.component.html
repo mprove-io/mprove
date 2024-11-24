@@ -76,7 +76,7 @@
           [loading]="loading"
           [clearable]="false"
           [searchable]="true"
-          (change)="stringValueBlur()"
+          (change)="stringValueChange($event)"
           (search)="stringValueSearch($event)"
           (open)="onOpenSelect()"
           (close)="onCloseSelect()"

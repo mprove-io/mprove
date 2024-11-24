@@ -347,6 +347,25 @@ export class FractionStringComponent implements OnInit, OnDestroy {
     this.searchValue = searchObj.term;
   }
 
+  stringValueChange(event: any) {
+    let value = this.fractionForm.controls['stringValue'].value;
+
+    if (value !== this.fraction.stringValue) {
+      let newBrick = this.getValueBrick(this.fraction.type, value);
+
+      this.fraction = {
+        brick: newBrick,
+        operator: this.fraction.operator,
+        type: this.fraction.type,
+        stringValue: value
+      };
+
+      if (this.fractionForm.valid) {
+        this.emitFractionUpdate();
+      }
+    }
+  }
+
   stringValueBlur() {
     let value = this.fractionForm.controls['stringValue'].value;
 
