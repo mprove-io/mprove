@@ -23,6 +23,9 @@ export const FILTER_SCHEMA: JSONSchema7 = {
       type: 'string',
       enum: constants.FILTER_RESULT_VALUES
     },
+    suggest_model_dimension: {
+      type: 'string'
+    },
     default: {
       type: 'array',
       items: {

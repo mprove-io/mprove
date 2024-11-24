@@ -27,6 +27,9 @@ export const FIELD_SCHEMA: JSONSchema7 = {
       type: 'string',
       enum: constants.FIELD_RESULT_VALUES
     },
+    suggest_model_dimension: {
+      type: 'string'
+    },
     sql: {
       type: 'string'
     },
