@@ -18,10 +18,12 @@ import {
 } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
-import { tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
+import { ApiService } from '~front/app/services/api.service';
 import { DashboardService } from '~front/app/services/dashboard.service';
+import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { SharedModule } from '../../shared/shared.module';
@@ -29,6 +31,7 @@ import { SharedModule } from '../../shared/shared.module';
 export interface DashboardAddFilterDialogData {
   dashboardService: DashboardService;
   dashboard: common.DashboardX;
+  apiService: ApiService;
 }
 
 @Component({
@@ -39,6 +42,8 @@ export interface DashboardAddFilterDialogData {
   imports: [CommonModule, ReactiveFormsModule, NgSelectModule, SharedModule]
 })
 export class DashboardAddFilterDialogComponent implements OnInit {
+  filterForm: FormGroup;
+
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.ref.close();
@@ -46,11 +51,11 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
   @ViewChild('filterLabel') filterLabelElement: ElementRef;
 
-  filterForm: FormGroup;
-
   resultList = constants.RESULT_LIST;
 
   fieldResult = common.FieldResultEnum.Number;
+
+  fieldResultString = common.FieldResultEnum.String;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -61,6 +66,11 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   );
 
   dashboard: common.DashboardX;
+
+  suggestFields: common.SuggestField[] = [];
+
+  suggestFieldsLoading: boolean;
+  suggestFieldsLoaded = false;
 
   constructor(
     public ref: DialogRef<DashboardAddFilterDialogData>,
@@ -121,6 +131,58 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
   resultChange(fieldResult: common.FieldResultEnum) {
     this.fieldResult = fieldResult;
+
+    if (
+      fieldResult === common.FieldResultEnum.String &&
+      this.suggestFieldsLoaded === false
+    ) {
+      this.suggestFieldsLoading = true;
+
+      let nav: NavState;
+      this.navQuery
+        .select()
+        .pipe(
+          tap(x => {
+            nav = x;
+          }),
+          take(1)
+        )
+        .subscribe();
+
+      let payload: apiToBackend.ToBackendGetSuggestFieldsRequestPayload = {
+        projectId: nav.projectId,
+        branchId: nav.branchId,
+        isRepoProd: nav.isRepoProd,
+        envId: nav.envId
+      };
+
+      let apiService: ApiService = this.ref.data.apiService;
+
+      // this.spinner.show(this.spinnerName);
+
+      apiService
+        .req({
+          pathInfoName:
+            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetSuggestFields,
+          payload: payload
+        })
+        .pipe(
+          tap((resp: apiToBackend.ToBackendGetSuggestFieldsResponse) => {
+            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+              this.suggestFields = resp.payload.suggestFields;
+
+              this.suggestFieldsLoading = false;
+              this.suggestFieldsLoaded = true;
+
+              // this.spinner.hide(this.spinnerName);
+
+              this.cd.detectChanges();
+            }
+          })
+        )
+        .toPromise();
+    }
+
     this.cd.detectChanges();
   }
 

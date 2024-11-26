@@ -98,6 +98,7 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendDeleteReport = 'api/ToBackendDeleteReport',
   //
   ToBackendGetMetrics = 'api/ToBackendGetMetrics',
+  ToBackendGetSuggestFields = 'api/ToBackendGetSuggestFields',
   //
   ToBackendGetModels = 'api/ToBackendGetModels',
   ToBackendGetModel = 'api/ToBackendGetModel',

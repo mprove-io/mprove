@@ -384,7 +384,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   addFilter() {
     this.myDialogService.showDashboardAddFilter({
       dashboardService: this.dashboardService,
-      dashboard: this.dashboard
+      dashboard: this.dashboard,
+      apiService: this.apiService
     });
   }
 

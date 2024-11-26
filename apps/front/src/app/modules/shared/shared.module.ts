@@ -89,6 +89,7 @@ import { AlertRingComponent } from './rings/alert-ring/alert-ring.component';
 import { CompletedRingComponent } from './rings/completed-ring/completed-ring.component';
 import { DocumentRingComponent } from './rings/document-ring/document-ring.component';
 import { EmailRingComponent } from './rings/email-ring/email-ring.component';
+import { SuggestFieldLabelComponent } from './suggest-field-label/suggest-field-label.component';
 import { ValidationComponent } from './validation/validation.component';
 import { ViewBlockmlDialogComponent } from './view-blockml-dialog/view-blockml-dialog.component';
 
@@ -151,6 +152,7 @@ let sharedComponents = [
   DashboardTileChartComponent,
   FieldLabelComponent,
   MetricFieldLabelComponent,
+  SuggestFieldLabelComponent,
   FormatNumberComponent,
   ColorMenuComponent,
   MinusSmIconComponent,

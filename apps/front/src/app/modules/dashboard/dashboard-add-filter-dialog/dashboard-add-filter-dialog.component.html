@@ -8,7 +8,8 @@
   <form class="flex flex-col" [formGroup]="filterForm" (ngSubmit)="save()">
     <div class="mt-9 flex flex-row items-start">
       <div class="flex flex-col">
-        <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
+        <div
+          class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
           >Label</div
         >
       </div>
@@ -33,7 +34,8 @@
 
     <div class="mt-2 flex flex-row items-start">
       <div class="flex flex-col">
-        <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
+        <div
+          class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
           >Type (result)</div
         >
       </div>
@@ -57,6 +59,62 @@
 
         <ng-template ng-option-tmp let-item="item">
           <div class="ml-1 truncate">{{ item }}</div>
+        </ng-template>
+      </ng-select>
+    </div>
+
+    <div
+      class="mt-8 flex min-w-[2px] max-w-[1000px] flex-grow select-none flex-row items-start items-center"
+    >
+      <div class="flex flex-col">
+        <div
+          *ngIf="filterForm.get('fieldResult').value !== fieldResultString"
+          class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
+        ></div>
+
+        <div
+          *ngIf="filterForm.get('fieldResult').value === fieldResultString"
+          class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
+          >Suggest values from</div
+        >
+      </div>
+
+      <ng-select
+        *ngIf="
+          !!suggestFieldsLoaded &&
+          filterForm.get('fieldResult').value === fieldResultString
+        "
+        data-cy="suggestFieldSelect"
+        class="w-full min-w-[2px] text-base focus:outline-none"
+        [loading]="suggestFieldsLoading"
+        [items]="suggestFields"
+        [clearable]="false"
+        [searchable]="true"
+        appendTo="body"
+        placeholder="Select Field"
+        bindValue="modelFieldRef"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <m-suggest-field-label
+            [suggestField]="item"
+            [isShowTop]="true"
+            [isShowTime]="true"
+            class="ml-1 flex"
+          ></m-suggest-field-label>
+        </ng-template>
+
+        <ng-template
+          ng-option-tmp
+          let-item="item"
+          let-index="index"
+          let-search="searchTerm"
+        >
+          <m-suggest-field-label
+            [suggestField]="item"
+            [isShowTop]="true"
+            [isShowTime]="true"
+            class="ml-1 flex"
+          ></m-suggest-field-label>
         </ng-template>
       </ng-select>
     </div>

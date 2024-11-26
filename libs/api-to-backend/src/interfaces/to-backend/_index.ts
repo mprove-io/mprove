@@ -21,6 +21,7 @@ export * from './reports/_index';
 export * from './repos/_index';
 export * from './special/_index';
 export * from './structs/_index';
+export * from './suggest-fields/_index';
 export * from './test-routes/_index';
 export * from './to-backend-request';
 export * from './to-backend-request-info';

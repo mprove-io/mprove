@@ -166,6 +166,8 @@ export const nameToClass = {
   //
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetMetrics]:
     interfaces.ToBackendGetMetricsRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendGetSuggestFields]:
+    interfaces.ToBackendGetSuggestFieldsRequest,
   //
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetReport]:
     interfaces.ToBackendGetReportRequest,
