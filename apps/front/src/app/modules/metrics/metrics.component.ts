@@ -22,6 +22,7 @@ import {
 } from 'rxjs';
 import { makeRepQueryParams } from '~front/app/functions/make-query-params';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
+import { DataRow } from '~front/app/interfaces/data-row';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ReportQuery, emptyReport } from '~front/app/queries/report.query';
@@ -37,9 +38,9 @@ import { ReportService } from '~front/app/services/report.service';
 import { UiService } from '~front/app/services/ui.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-
-import { DataRow } from '~front/app/interfaces/data-row';
 import { constants as frontConstants } from '~front/barrels/constants';
+
+import uFuzzy from '@leeoniya/ufuzzy';
 
 export class TimeSpecItem {
   label: string;
@@ -739,6 +740,16 @@ export class MetricsComponent implements OnInit, OnDestroy {
     }
 
     return `(${row.rowId}) ${name}`;
+  }
+
+  timezoneSearchFn(term: string, timezone: { value: string; label: string }) {
+    let haystack = [`${timezone.label}`];
+
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, term);
+
+    return idxs != null && idxs.length > 0;
   }
 
   ngOnDestroy() {

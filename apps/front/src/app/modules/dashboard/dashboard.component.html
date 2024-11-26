@@ -43,6 +43,7 @@
                 [items]="timezones"
                 [clearable]="false"
                 [searchable]="true"
+                [searchFn]="timezoneSearchFn"
                 (change)="timezoneChange()"
                 placeholder="Tiles have different timezones"
                 appendTo="body"

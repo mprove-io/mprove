@@ -11,6 +11,7 @@
     [items]="timezones"
     [clearable]="false"
     [searchable]="true"
+    [searchFn]="timezoneSearchFn"
     [(ngModel)]="timezone"
     (keyup.esc)="$event.stopImmediatePropagation()"
     (keyup.enter)="$event.stopImmediatePropagation()"

@@ -34,6 +34,8 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
 
+import uFuzzy from '@leeoniya/ufuzzy';
+
 export class ChartTypeItem {
   label: string;
   value: common.ChartTypeEnum;
@@ -871,6 +873,16 @@ export class ModelComponent implements OnInit, OnDestroy {
     this.mqQuery.reset();
     this.modelQuery.reset();
     return true;
+  }
+
+  timezoneSearchFn(term: string, timezone: { value: string; label: string }) {
+    let haystack = [`${timezone.label}`];
+
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, term);
+
+    return idxs != null && idxs.length > 0;
   }
 
   ngOnDestroy() {

@@ -35,6 +35,8 @@ import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
 import { DashboardTileChartComponent } from '../shared/dashboard-tile-chart/dashboard-tile-chart.component';
 
+import uFuzzy from '@leeoniya/ufuzzy';
+
 class LayoutItem {
   id: string;
   w: number;
@@ -420,6 +422,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       deleteFilterFieldId: filterFieldId,
       deleteFilterMconfigId: mconfigId
     });
+  }
+
+  timezoneSearchFn(term: string, timezone: { value: string; label: string }) {
+    let haystack = [`${timezone.label}`];
+
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, term);
+
+    return idxs != null && idxs.length > 0;
   }
 
   canDeactivate(): Promise<boolean> | boolean {

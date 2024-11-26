@@ -232,6 +232,7 @@
                     [items]="timezones"
                     [clearable]="false"
                     [searchable]="true"
+                    [searchFn]="timezoneSearchFn"
                     (change)="timezoneChange()"
                     appendTo="body"
                     bindLabel="label"

@@ -14,6 +14,8 @@ import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+import uFuzzy from '@leeoniya/ufuzzy';
+
 export interface EditUserTimezoneDialogData {
   apiService: ApiService;
 }
@@ -80,6 +82,16 @@ export class EditUserTimezoneDialogComponent implements OnInit {
         take(1)
       )
       .subscribe();
+  }
+
+  timezoneSearchFn(term: string, timezone: { value: string; label: string }) {
+    let haystack = [`${timezone.label}`];
+
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, term);
+
+    return idxs != null && idxs.length > 0;
   }
 
   cancel() {
