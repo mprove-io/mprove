@@ -1,13 +1,14 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import FuzzySearch from 'fuzzy-search';
 import { tap } from 'rxjs/operators';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+
+import uFuzzy from '@leeoniya/ufuzzy';
 
 @Component({
   selector: 'm-models',
@@ -69,12 +70,19 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   makeFilteredModels() {
-    const searcher = new FuzzySearch(this.models, ['label', 'modelId'], {
-      caseSensitive: false
-    });
+    let idxs;
 
-    this.modelsFilteredByWord = common.isDefined(this.word)
-      ? searcher.search(this.word)
+    if (common.isDefinedAndNotEmpty(this.word)) {
+      let haystack = this.models.map(x => `${x.label} ${x.modelId}`);
+      let opts = {};
+      let uf = new uFuzzy(opts);
+      idxs = uf.filter(haystack, this.word);
+    }
+
+    this.modelsFilteredByWord = common.isDefinedAndNotEmpty(this.word)
+      ? idxs != null && idxs.length > 0
+        ? idxs.map(idx => this.models[idx])
+        : []
       : this.models;
 
     this.filteredModels = this.modelsFilteredByWord;

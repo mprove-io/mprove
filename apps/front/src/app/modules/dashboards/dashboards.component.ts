@@ -2,7 +2,6 @@ import { Location } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import FuzzySearch from 'fuzzy-search';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
@@ -18,6 +17,8 @@ import { QueryService } from '~front/app/services/query.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+
+import uFuzzy from '@leeoniya/ufuzzy';
 
 export class ModelXWithTotalDashboards extends common.ModelX {
   totalDashboards: number;
@@ -178,16 +179,19 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   }
 
   makeFilteredDashboards() {
-    const searcher = new FuzzySearch(
-      this.dashboards,
-      ['title', 'dashboardId'],
-      {
-        caseSensitive: false
-      }
-    );
+    let idxs;
 
-    this.dashboardsFilteredByWord = common.isDefined(this.word)
-      ? searcher.search(this.word)
+    if (common.isDefinedAndNotEmpty(this.word)) {
+      let haystack = this.dashboards.map(x => `${x.title} ${x.dashboardId}`);
+      let opts = {};
+      let uf = new uFuzzy(opts);
+      idxs = uf.filter(haystack, this.word);
+    }
+
+    this.dashboardsFilteredByWord = common.isDefinedAndNotEmpty(this.word)
+      ? idxs != null && idxs.length > 0
+        ? idxs.map(idx => this.dashboards[idx])
+        : []
       : this.dashboards;
 
     this.filteredDashboards = common.isDefined(this.modelId)
