@@ -19,6 +19,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { SuggestField } from '~common/_index';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DashboardService } from '~front/app/services/dashboard.service';
@@ -26,6 +27,8 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { SharedModule } from '../../shared/shared.module';
+
+import uFuzzy from '@leeoniya/ufuzzy';
 
 export interface DashboardAddFilterDialogData {
   dashboardService: DashboardService;
@@ -60,7 +63,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
   resultList = constants.RESULT_LIST;
 
-  fieldResult = common.FieldResultEnum.Number;
+  fieldResult = common.FieldResultEnum.String;
 
   fieldResultString = common.FieldResultEnum.String;
 
@@ -108,6 +111,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
     setTimeout(() => {
       this.filterLabelElement.nativeElement.focus();
+      this.loadSuggestFields();
     }, 0);
   }
 
@@ -139,8 +143,13 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   resultChange(fieldResult: common.FieldResultEnum) {
     this.fieldResult = fieldResult;
 
+    this.loadSuggestFields();
+    this.cd.detectChanges();
+  }
+
+  loadSuggestFields() {
     if (
-      fieldResult === common.FieldResultEnum.String &&
+      this.fieldResult === common.FieldResultEnum.String &&
       this.suggestFieldsLoaded === false
     ) {
       this.suggestFieldsLoading = true;
@@ -189,8 +198,6 @@ export class DashboardAddFilterDialogComponent implements OnInit {
         )
         .toPromise();
     }
-
-    this.cd.detectChanges();
   }
 
   save() {
@@ -234,6 +241,18 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       deleteFilterFieldId: undefined,
       deleteFilterMconfigId: undefined
     });
+  }
+
+  searchFn(term: string, suggestField: SuggestField) {
+    let haystack = [
+      `${suggestField.topLabel} ${suggestField.partNodeLabel} ${suggestField.partFieldLabel}`
+    ];
+
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, term);
+
+    return idxs != null && idxs.length > 0;
   }
 
   cancel() {
