@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import FuzzySearch from 'fuzzy-search';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
@@ -24,6 +23,8 @@ import { QueryService } from '~front/app/services/query.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+
+import uFuzzy from '@leeoniya/ufuzzy';
 
 class ModelXWithTotalCharts extends common.ModelX {
   totalCharts: number;
@@ -204,12 +205,19 @@ export class ChartsComponent implements OnInit, OnDestroy {
   }
 
   makeFilteredCharts() {
-    const searcher = new FuzzySearch(this.charts, ['title', 'chartId'], {
-      caseSensitive: false
-    });
+    let idxs;
 
-    this.chartsFilteredByWord = common.isDefined(this.word)
-      ? searcher.search(this.word)
+    if (common.isDefinedAndNotEmpty(this.word)) {
+      let haystack = this.charts.map(x => `${x.title} ${x.chartId}`);
+      let opts = {};
+      let uf = new uFuzzy(opts);
+      idxs = uf.filter(haystack, this.word);
+    }
+
+    this.chartsFilteredByWord = common.isDefinedAndNotEmpty(this.word)
+      ? idxs != null && idxs.length > 0
+        ? idxs.map(idx => this.charts[idx])
+        : []
       : this.charts;
 
     this.filteredCharts = common.isDefined(this.modelId)
