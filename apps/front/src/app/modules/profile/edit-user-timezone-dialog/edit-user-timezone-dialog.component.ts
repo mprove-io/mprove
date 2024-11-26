@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import {
-  ChangeDetectorRef,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
@@ -14,6 +13,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import uFuzzy from '@leeoniya/ufuzzy';
 
 export interface EditUserTimezoneDialogData {
@@ -25,7 +25,7 @@ export interface EditUserTimezoneDialogData {
   templateUrl: './edit-user-timezone-dialog.component.html',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, NgSelectModule]
+  imports: [CommonModule, ReactiveFormsModule, NgSelectModule]
 })
 export class EditUserTimezoneDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')
@@ -33,24 +33,23 @@ export class EditUserTimezoneDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  timezone: any; // string
+  timezoneForm: FormGroup;
 
   timezones = common.getUserTimezones();
 
-  timezone$ = this.userQuery.timezone$.pipe(
-    tap(x => {
-      this.timezone = x;
-      this.cd.detectChanges();
-    })
-  );
-
   constructor(
     public ref: DialogRef<EditUserTimezoneDialogData>,
-    private userQuery: UserQuery,
-    private cd: ChangeDetectorRef
+    private fb: FormBuilder,
+    private userQuery: UserQuery
   ) {}
 
   ngOnInit(): void {
+    let timezone = this.userQuery.getValue().timezone;
+
+    this.timezoneForm = this.fb.group({
+      timezone: [timezone]
+    });
+
     setTimeout(() => {
       (document.activeElement as HTMLElement).blur();
     }, 0);
@@ -60,7 +59,7 @@ export class EditUserTimezoneDialogComponent implements OnInit {
     this.ref.close();
 
     let payload: apiToBackend.ToBackendSetUserTimezoneRequestPayload = {
-      timezone: this.timezone
+      timezone: this.timezoneForm.controls['timezone'].value
     };
 
     let apiService: ApiService = this.ref.data.apiService;

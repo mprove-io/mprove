@@ -1,32 +1,34 @@
-<div class="flex flex-col bg-white p-9">
+<div *ngIf="!!timezoneForm && !!timezones" class="flex flex-col bg-white p-9">
   <div
     data-cy="editUserTimezoneDialogTitle"
     class="text-gray2 mt-5 text-left text-2xl font-semibold"
     >Edit Timezone</div
   >
 
-  <ng-select
-    data-cy="editUserTimezoneDialogTimezoneSelect"
-    class="custom mt-6 w-96 text-base focus:outline-none"
-    [items]="timezones"
-    [clearable]="false"
-    [searchable]="true"
-    [searchFn]="timezoneSearchFn"
-    [(ngModel)]="timezone"
-    (keyup.esc)="$event.stopImmediatePropagation()"
-    (keyup.enter)="$event.stopImmediatePropagation()"
-    appendTo="body"
-    bindLabel="label"
-    bindValue="value"
-  >
-    <ng-template ng-label-tmp let-item="item">
-      <div class="flex">{{ item.label }}</div>
-    </ng-template>
+  <form [formGroup]="timezoneForm">
+    <ng-select
+      data-cy="editUserTimezoneDialogTimezoneSelect"
+      class="custom mt-6 w-96 text-base focus:outline-none"
+      [items]="timezones"
+      [clearable]="false"
+      [searchable]="true"
+      [searchFn]="timezoneSearchFn"
+      (keyup.esc)="$event.stopImmediatePropagation()"
+      (keyup.enter)="$event.stopImmediatePropagation()"
+      appendTo="body"
+      bindLabel="label"
+      bindValue="value"
+      formControlName="timezone"
+    >
+      <ng-template ng-label-tmp let-item="item">
+        <div class="flex">{{ item.label }}</div>
+      </ng-template>
 
-    <ng-template ng-option-tmp let-item="item">
-      <div class="flex">{{ item.label }}</div>
-    </ng-template>
-  </ng-select>
+      <ng-template ng-option-tmp let-item="item">
+        <div class="flex">{{ item.label }}</div>
+      </ng-template>
+    </ng-select>
+  </form>
 
   <div class="mt-9">
     <button
@@ -45,5 +47,3 @@
     >
   </div>
 </div>
-
-<div *ngIf="timezone$ | async"></div>
