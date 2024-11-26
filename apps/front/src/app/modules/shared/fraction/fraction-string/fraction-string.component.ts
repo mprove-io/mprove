@@ -265,8 +265,8 @@ export class FractionStringComponent implements OnInit, OnDestroy {
               let q3Resp: apiToBackend.ToBackendGetQueryResponse;
 
               while (
-                q3Resp?.payload.query.status !==
-                common.QueryStatusEnum.Completed
+                common.isUndefined(q3Resp) ||
+                q3Resp?.payload.query.status === common.QueryStatusEnum.Running
               ) {
                 await common.sleep(500);
 
@@ -296,12 +296,12 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                   .toPromise();
               }
 
-              this.items = q3Resp.payload.query.data.map(
-                (row: any, i: number) => ({
-                  id: i,
-                  name: row[fieldSqlName]
-                })
-              );
+              this.items = common.isDefined(q3Resp?.payload?.query?.data)
+                ? q3Resp.payload.query.data.map((row: any, i: number) => ({
+                    id: i,
+                    name: row[fieldSqlName]
+                  }))
+                : [];
 
               if (common.isDefinedAndNotEmpty(this.searchValue)) {
                 this.items = [
@@ -318,7 +318,18 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                   })
                 ];
               }
+
+              if (
+                q3Resp?.payload.query.status === common.QueryStatusEnum.Error
+              ) {
+                throw new Error(
+                  `Suggest Values Query Error: ${q3Resp.payload.query.lastErrorMessage}`
+                );
+              }
             } catch (error: any) {
+              this.loading = false;
+              this.cd.detectChanges();
+
               throw new Error(
                 `Failed to get filter suggestions: ${error.message}`
               );
