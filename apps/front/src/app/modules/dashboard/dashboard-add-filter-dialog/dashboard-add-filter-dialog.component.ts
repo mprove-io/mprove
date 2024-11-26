@@ -245,7 +245,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
   searchFn(term: string, suggestField: SuggestField) {
     let haystack = [
-      `${suggestField.topLabel} ${suggestField.partNodeLabel} ${suggestField.partFieldLabel}`
+      `${suggestField.topLabel} - ${suggestField.partNodeLabel} ${suggestField.partFieldLabel}`
     ];
 
     let opts = {};

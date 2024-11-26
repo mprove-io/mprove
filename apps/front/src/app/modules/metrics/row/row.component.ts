@@ -17,6 +17,8 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
+import uFuzzy from '@leeoniya/ufuzzy';
+
 export interface ParameterFilter extends common.FilterX {
   parameterType: common.ParameterTypeEnum;
   isJsonValid: boolean;
@@ -714,5 +716,31 @@ export class RowComponent {
       rowChange: rowChange,
       rowIds: undefined
     });
+  }
+
+  newMetricSearchFn(term: string, metric: common.MetricAny) {
+    let haystack = [
+      `${metric.topLabel} ${metric.partNodeLabel} ${metric.partFieldLabel} by ${metric.timeNodeLabel} ${metric.timeFieldLabel}`
+    ];
+
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, term);
+
+    return idxs != null && idxs.length > 0;
+  }
+
+  filterMetricBySearchFn(term: string, modelFieldY: ModelFieldY) {
+    let haystack = [
+      common.isDefinedAndNotEmpty(modelFieldY.groupLabel)
+        ? `${modelFieldY.topLabel} ${modelFieldY.groupLabel} - ${modelFieldY.label}`
+        : `${modelFieldY.topLabel} ${modelFieldY.label}`
+    ];
+
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, term);
+
+    return idxs != null && idxs.length > 0;
   }
 }
