@@ -357,72 +357,73 @@
                             [disableAnimation]="true"
                             [zIndex]="99998"
                           >
-                          </ngx-spinner> </div
-                      ></div>
-
-                      <div class="flex w-1/6"></div>
-
-                      <div class="flex flex-1 flex-row space-x-5">
-                        <ng-template #templateDashboardsTileModel>
-                          <div *ngIf="isExplorer === false"
-                            >Explorer role required</div
-                          >
-                          <div *ngIf="isExplorer === true"
-                            >No access to model</div
-                          >
-                        </ng-template>
-
-                        <div
-                          class="flex flex-1 cursor-default flex-row truncate"
-                          [tp]="templateDashboardsTileModel"
-                          [tpIsEnabled]="tile.hasAccessToModel === false"
-                        >
-                          <div
-                            class="flex items-start truncate pr-10 focus:outline-none"
-                          >
-                            <span class="truncate">
-                              {{ tile.modelLabel | capitalize }}
-                            </span>
-                          </div>
-
-                          <m-lock-closed-icon
-                            class="mb-1 ml-2 text-gray-400"
-                            *ngIf="tile.hasAccessToModel === false"
-                          ></m-lock-closed-icon>
+                          </ngx-spinner>
                         </div>
 
-                        <div class="flex flex-1"></div>
-                        <div class="flex flex-1"></div>
-                        <div class="flex flex-1"></div>
+                        <div class="flex w-1/6"></div>
+
+                        <div class="flex flex-1 flex-row space-x-5">
+                          <ng-template #templateDashboardsTileModel>
+                            <div *ngIf="isExplorer === false"
+                              >Explorer role required</div
+                            >
+                            <div *ngIf="isExplorer === true"
+                              >No access to model</div
+                            >
+                          </ng-template>
+
+                          <div
+                            class="flex flex-1 cursor-default flex-row truncate"
+                            [tp]="templateDashboardsTileModel"
+                            [tpIsEnabled]="tile.hasAccessToModel === false"
+                          >
+                            <div
+                              class="flex items-start truncate pr-10 focus:outline-none"
+                            >
+                              <span class="truncate">
+                                {{ tile.modelLabel | capitalize }}
+                              </span>
+                            </div>
+
+                            <m-lock-closed-icon
+                              class="mb-1 ml-2 text-gray-400"
+                              *ngIf="tile.hasAccessToModel === false"
+                            ></m-lock-closed-icon>
+                          </div>
+
+                          <div class="flex flex-1"></div>
+                          <div class="flex flex-1"></div>
+                          <div class="flex flex-1"></div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
+
+                <div class="h-12"></div>
               </div>
 
-              <div class="h-12"></div>
+              <div
+                class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+                *ngIf="filteredDashboards?.length === 0"
+                >No dashboards</div
+              >
             </div>
-
-            <div
-              class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
-              *ngIf="filteredDashboards?.length === 0"
-              >No dashboards</div
-            >
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<div *ngIf="dashboards$ | async"></div>
-<div *ngIf="nav$ | async"></div>
-<div *ngIf="member$ | async"></div>
-<div *ngIf="isExplorer$ | async"></div>
-<div *ngIf="alias$ | async"></div>
+  <div *ngIf="dashboards$ | async"></div>
+  <div *ngIf="nav$ | async"></div>
+  <div *ngIf="member$ | async"></div>
+  <div *ngIf="isExplorer$ | async"></div>
+  <div *ngIf="alias$ | async"></div>
 
-<!-- [ngClass]="{
+  <!-- [ngClass]="{
   'h-1/2': screenAspectRatio >= 1.5,
   'h-2/5': screenAspectRatio >= 1.2 && screenAspectRatio < 1.5,
   'h-1/3': screenAspectRatio < 1.2
 }" -->
+</div>

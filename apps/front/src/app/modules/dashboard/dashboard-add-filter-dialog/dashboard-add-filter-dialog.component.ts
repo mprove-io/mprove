@@ -4,7 +4,6 @@ import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
-  HostListener,
   OnInit,
   ViewChild
 } from '@angular/core';
@@ -18,9 +17,9 @@ import {
 } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DashboardService } from '~front/app/services/dashboard.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -39,15 +38,23 @@ export interface DashboardAddFilterDialogData {
   templateUrl: './dashboard-add-filter-dialog.component.html',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, ReactiveFormsModule, NgSelectModule, SharedModule]
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    NgSelectModule,
+    SharedModule,
+    NgxSpinnerModule
+  ]
 })
 export class DashboardAddFilterDialogComponent implements OnInit {
   filterForm: FormGroup;
 
-  @HostListener('window:keyup.esc')
-  onEscKeyUp() {
-    this.ref.close();
-  }
+  spinnerName = 'dashboardAddSuggestSpinnerName';
+
+  // @HostListener('window:keyup.esc')
+  // onEscKeyUp() {
+  //   this.ref.close();
+  // }
 
   @ViewChild('filterLabel') filterLabelElement: ElementRef;
 
@@ -75,7 +82,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<DashboardAddFilterDialogData>,
     private fb: FormBuilder,
-    private userQuery: UserQuery,
+    private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private cd: ChangeDetectorRef
   ) {}
@@ -91,9 +98,9 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     this.filterForm = this.fb.group(
       {
         label: [undefined, [Validators.required, Validators.maxLength(255)]],
-        fieldResult: [this.fieldResult]
+        fieldResult: [this.fieldResult],
+        suggestFieldRef: [undefined]
       },
-
       {
         validator: this.labelValidator.bind(this)
       }
@@ -158,7 +165,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
       let apiService: ApiService = this.ref.data.apiService;
 
-      // this.spinner.show(this.spinnerName);
+      this.spinner.show(this.spinnerName);
 
       apiService
         .req({
@@ -174,7 +181,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
               this.suggestFieldsLoading = false;
               this.suggestFieldsLoaded = true;
 
-              // this.spinner.hide(this.spinnerName);
+              this.spinner.hide(this.spinnerName);
 
               this.cd.detectChanges();
             }
@@ -212,9 +219,9 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       hidden: false,
       label: label,
       result: result,
-      suggestModelDimension: undefined,
+      suggestModelDimension: this.filterForm.controls['suggestFieldRef'].value,
       fractions: [fraction],
-      description: ''
+      description: undefined
     };
 
     let dashboardService: DashboardService = this.ref.data.dashboardService;

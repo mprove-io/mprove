@@ -79,6 +79,26 @@
         >
       </div>
 
+      <div
+        class="relative flex h-9 w-9 flex-shrink-0"
+        *ngIf="
+          !suggestFieldsLoaded &&
+          filterForm.get('fieldResult').value === fieldResultString
+        "
+      >
+        <ngx-spinner
+          [name]="spinnerName"
+          color="rgba(54, 94, 224, 100)"
+          bdColor="rgba(0, 0, 0, 0)"
+          size="default"
+          type="ball-clip-rotate"
+          [fullScreen]="false"
+          [disableAnimation]="true"
+          [zIndex]="99998"
+        >
+        </ngx-spinner>
+      </div>
+
       <ng-select
         *ngIf="
           !!suggestFieldsLoaded &&
@@ -93,6 +113,7 @@
         appendTo="body"
         placeholder="Select Field"
         bindValue="modelFieldRef"
+        formControlName="suggestFieldRef"
       >
         <ng-template ng-label-tmp let-item="item">
           <m-suggest-field-label
