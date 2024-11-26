@@ -100,7 +100,7 @@ export class GetSuggestFieldsController {
         )
         .forEach(field => {
           let suggestField: common.SuggestField = {
-            modelFieldRef: `${x.modelId}.${field.topId}.${field.id}`,
+            modelFieldRef: `${x.modelId}.${field.id}`,
             topLabel: x.label,
             partNodeLabel: `${field.topLabel}`,
             partFieldLabel: common.isDefined(field.groupLabel)
