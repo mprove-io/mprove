@@ -63,5 +63,5 @@ test('1', async t => {
   t.is(entViews.length, 0);
 
   t.is(errors[0].title, common.ErTitleEnum.FIELD_REFS_FILTER);
-  t.is(errors[0].lines[0].line, 5);
+  t.is(errors[0].lines[0].line, 9);
 });

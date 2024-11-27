@@ -75,6 +75,7 @@ export function checkTopUnknownParameters(
                 common.ParameterEnum.Udfs.toString(),
                 common.ParameterEnum.Table.toString(),
                 common.ParameterEnum.DerivedTable.toString(),
+                common.ParameterEnum.Parameters.toString(),
                 common.ParameterEnum.Fields.toString()
               ].indexOf(parameter) < 0
             ) {
@@ -115,6 +116,7 @@ export function checkTopUnknownParameters(
                 common.ParameterEnum.Udfs.toString(),
                 common.ParameterEnum.Joins.toString(),
                 common.ParameterEnum.BuildMetrics.toString(),
+                common.ParameterEnum.Parameters.toString(),
                 common.ParameterEnum.Fields.toString()
               ].indexOf(parameter) < 0
             ) {
@@ -148,7 +150,7 @@ export function checkTopUnknownParameters(
                 common.ParameterEnum.Description.toString(),
                 common.ParameterEnum.AccessUsers.toString(),
                 common.ParameterEnum.AccessRoles.toString(),
-                common.ParameterEnum.Fields.toString(),
+                common.ParameterEnum.Parameters.toString(),
                 common.ParameterEnum.Tiles.toString()
               ].indexOf(parameter) < 0
             ) {
@@ -342,6 +344,7 @@ export function checkTopUnknownParameters(
           Array.isArray(file[parameter]) &&
           [
             common.ParameterEnum.Udfs.toString(),
+            common.ParameterEnum.Parameters.toString(),
             common.ParameterEnum.Fields.toString(),
             common.ParameterEnum.Tiles.toString(),
             common.ParameterEnum.BuildMetrics.toString(),
@@ -392,6 +395,7 @@ export function checkTopUnknownParameters(
           !Array.isArray(file[parameter]) &&
           [
             common.ParameterEnum.Udfs.toString(),
+            common.ParameterEnum.Parameters.toString(),
             common.ParameterEnum.Fields.toString(),
             common.ParameterEnum.Tiles.toString(),
             common.ParameterEnum.BuildMetrics.toString(),

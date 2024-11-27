@@ -1,6 +1,6 @@
 dashboard: ec1_d1
 title: Ecommerce
-fields:
+parameters:
 
 - filter: order_date
   result: ts

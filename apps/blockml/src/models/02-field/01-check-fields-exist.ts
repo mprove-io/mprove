@@ -48,6 +48,10 @@ export function checkFieldsExist<T extends types.vmdType>(
       x.fields = [];
     }
 
+    if (common.isUndefined(x.parameters)) {
+      x.parameters = [];
+    }
+
     if (errorsOnStart === item.errors.length) {
       newEntities.push(x);
     }

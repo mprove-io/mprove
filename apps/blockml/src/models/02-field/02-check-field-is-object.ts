@@ -43,6 +43,25 @@ export function checkFieldIsObject<T extends types.vmdType>(
       }
     });
 
+    x.parameters.forEach(parameter => {
+      if (common.isDefined(parameter) && parameter.constructor !== Object) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.PARAMETER_IS_NOT_A_DICTIONARY,
+            message: 'found at least one parameter that is not a dictionary',
+            lines: [
+              {
+                line: x.parameters_line_num,
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+    });
+
     if (errorsOnStart === item.errors.length) {
       newEntities.push(x);
     }

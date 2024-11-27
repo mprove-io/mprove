@@ -3,4 +3,5 @@ access_users: 1
 fields: 1  
 udfs: 1
 joins: 1
+parameters: 1
 

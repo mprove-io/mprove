@@ -1,8 +1,12 @@
 view: v1
 connection: c1
 table: 1
-fields:
+parameters:
 - filter: size
   result: number
   default:      
   - 'abc'
+
+fields:
+- dimension: dim1
+  sql: d1

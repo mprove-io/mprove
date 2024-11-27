@@ -8,6 +8,7 @@ fields:
 - dimension: dim1
   sql: d1
 
+parameters:
 - filter: f1
   result: number  
 

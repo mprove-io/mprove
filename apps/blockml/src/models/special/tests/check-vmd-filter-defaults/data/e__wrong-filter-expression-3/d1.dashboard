@@ -1,5 +1,5 @@
 dashboard: d1
-fields:
+parameters:
 - filter: size
   result: number
   default:      

@@ -4,14 +4,15 @@ derived_table: |
   SELECT *
   FROM abc
   WHERE {% apply_filter f5 %} target5 {% end_apply_filter %}
-fields:
-- dimension: dim2
-  sql: d2
-
+parameters:
 - filter: f5
   result: string
   default:
   - '-abc-'
+
+fields:
+- dimension: dim2
+  sql: d2
 
 
 

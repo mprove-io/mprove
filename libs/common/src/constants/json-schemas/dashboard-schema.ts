@@ -1,5 +1,5 @@
 import { JSONSchema7 } from 'json-schema';
-import { FILTER_SCHEMA } from './fields/filter-schema';
+import { FILTER_SCHEMA } from './parameters/filter-schema';
 import { TILE_SCHEMA } from './tile-schema';
 
 export const DASHBOARD_SCHEMA: JSONSchema7 = {
@@ -29,7 +29,7 @@ export const DASHBOARD_SCHEMA: JSONSchema7 = {
         type: 'string'
       }
     },
-    fields: {
+    parameters: {
       type: 'array',
       items: FILTER_SCHEMA
     },

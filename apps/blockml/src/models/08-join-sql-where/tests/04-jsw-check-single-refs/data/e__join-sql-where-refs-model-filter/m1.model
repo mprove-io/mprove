@@ -10,7 +10,7 @@ joins:
   relationship: one_to_one
   sql_where: ${b.dim1} = ${f1} 
 
-fields:
+parameters:
 - filter: f1
   result: string
   default:

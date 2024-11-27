@@ -47,6 +47,9 @@ export interface FileModel extends FileBasic {
   }[];
   build_metrics_line_num?: number;
 
+  parameters?: FieldAny[];
+  parameters_line_num?: number;
+
   fields?: FieldAny[];
   fields_line_num?: number;
 

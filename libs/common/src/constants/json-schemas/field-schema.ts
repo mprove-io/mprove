@@ -78,15 +78,6 @@ export const FIELD_SCHEMA: JSONSchema7 = {
     },
     calculation: {
       type: 'string'
-    },
-    filter: {
-      type: 'string'
-    },
-    default: {
-      type: 'array',
-      items: {
-        type: 'string'
-      }
     }
   }
 };

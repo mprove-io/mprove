@@ -44,7 +44,7 @@ export function makeDashboardFileText(item: {
       common.isDefined(users) && users.trim().length > 0
         ? users.split(',').map(x => x.trim())
         : undefined,
-    fields:
+    parameters:
       common.isDefined(dashboard.fields) && dashboard.fields.length > 0
         ? dashboard.fields.map(field => ({
             filter: field.id,

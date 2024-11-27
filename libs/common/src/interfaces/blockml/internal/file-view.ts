@@ -26,6 +26,9 @@ export interface FileView extends FileBasic {
   udfs?: string[];
   udfs_line_num?: number;
 
+  parameters?: FieldAny[];
+  parameters_line_num?: number;
+
   fields?: FieldAny[];
   fields_line_num?: number;
 

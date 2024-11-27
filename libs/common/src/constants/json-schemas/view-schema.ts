@@ -1,5 +1,6 @@
 import { JSONSchema7 } from 'json-schema';
 import { FIELD_SCHEMA } from './field-schema';
+import { FILTER_SCHEMA } from './parameters/filter-schema';
 
 export const VIEW_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
@@ -31,6 +32,10 @@ export const VIEW_SCHEMA: JSONSchema7 = {
         type: 'string'
       }
     },
+    parameters: {
+      type: 'array',
+      items: FILTER_SCHEMA
+    },
     fields: {
       type: 'array',
       items: FIELD_SCHEMA
@@ -39,8 +44,7 @@ export const VIEW_SCHEMA: JSONSchema7 = {
       //     DIMENSION_SCHEMA,
       //     TIME_SCHEMA,
       //     MEASURE_SCHEMA,
-      //     CALCULATION_SCHEMA,
-      //     FILTER_SCHEMA
+      //     CALCULATION_SCHEMA
       //   ]
       // }
     }

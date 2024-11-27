@@ -10,7 +10,7 @@ joins:
   sql_on: 1 = 1 
   relationship: one_to_one
 
-fields:
+parameters:
 - filter: f1
   result: string
   default:

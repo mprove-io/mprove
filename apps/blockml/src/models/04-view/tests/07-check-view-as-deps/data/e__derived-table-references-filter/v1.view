@@ -1,8 +1,12 @@
 view: v1
 connection: c1
 table: tab1
-fields:
+parameters:
 - filter: f1
   result: string
   default:
-  - '-abc-' 
+  - '-abc-'
+
+fields:
+- dimension: dim1
+  sql: d1

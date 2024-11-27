@@ -1,6 +1,7 @@
 import { JSONSchema7 } from 'json-schema';
 import { constants } from '~common/barrels/constants';
 import { FIELD_SCHEMA } from './field-schema';
+import { FILTER_SCHEMA } from './parameters/filter-schema';
 
 // const commonJoinProperties: JSONSchema7['properties'] = {
 //   hidden: {
@@ -176,6 +177,10 @@ export const MODEL_SCHEMA: JSONSchema7 = {
         required: ['as']
       }
     },
+    parameters: {
+      type: 'array',
+      items: FILTER_SCHEMA
+    },
     fields: {
       type: 'array',
       items: FIELD_SCHEMA
@@ -184,8 +189,7 @@ export const MODEL_SCHEMA: JSONSchema7 = {
       //     DIMENSION_SCHEMA,
       //     TIME_SCHEMA,
       //     MEASURE_SCHEMA,
-      //     CALCULATION_SCHEMA,
-      //     FILTER_SCHEMA
+      //     CALCULATION_SCHEMA
       //   ]
       // }
     }

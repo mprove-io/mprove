@@ -14,6 +14,7 @@ export enum FuncEnum {
   CheckProjectConfig = '01-yaml/11-check-project-config',
 
   CheckFieldsExist = '02-field/01-check-fields-exist',
+  CheckParametersExist = '02-field/01.1-check-parameters-exist',
   CheckFieldIsObject = '02-field/02-check-field-is-object',
   CheckFieldDeclaration = '02-field/03-check-field-declaration',
   CheckSqlExist = '02-field/04-check-sql-exist',

@@ -3,7 +3,8 @@ connection: c1
 joins:
 - from_view: v1
   as: a
-fields: 
+  
+parameters: 
 - filter: size
   result: number
   default:      

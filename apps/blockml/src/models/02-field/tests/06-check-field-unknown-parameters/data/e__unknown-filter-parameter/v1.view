@@ -1,5 +1,9 @@
 view: v1
 connection: c1
-fields:
+parameters:
 - filter: f1
-  unk: 1       
+  unk: 1
+
+fields:
+- dimension: d1
+  sql: d1        

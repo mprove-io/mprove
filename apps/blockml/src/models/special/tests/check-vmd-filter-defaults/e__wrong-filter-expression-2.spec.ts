@@ -63,5 +63,5 @@ test('1', async t => {
   t.is(entModels.length, 0);
 
   t.is(errors[0].title, common.ErTitleEnum.WRONG_FILTER_EXPRESSION);
-  t.is(errors[0].lines[0].line, 9);
+  t.is(errors[0].lines[0].line, 10);
 });

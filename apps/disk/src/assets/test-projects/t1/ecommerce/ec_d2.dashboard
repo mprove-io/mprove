@@ -1,6 +1,6 @@
 dashboard: ec_d2
 access_roles: ['marketing']
-fields:
+parameters:
 - filter: order_date
   result: ts 
   default:

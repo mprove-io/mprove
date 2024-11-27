@@ -1,5 +1,5 @@
 dashboard: ec_d1
-fields:
+parameters:
 - filter: order_date
   result: ts 
   default:

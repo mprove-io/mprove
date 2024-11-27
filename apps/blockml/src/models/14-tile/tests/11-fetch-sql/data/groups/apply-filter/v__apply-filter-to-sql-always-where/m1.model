@@ -5,7 +5,8 @@ sql_always_where: |
 joins:
 - from_view: v1
   as: a
-fields:
+
+parameters:
 - filter: f1
   result: number
   default:
