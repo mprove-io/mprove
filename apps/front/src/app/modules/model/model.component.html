@@ -21,11 +21,14 @@
               (click)="goToFile()"
             >
               <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
-              <span class="ml-2 text-xl">{{ model.modelId }}</span>
-              <!-- <span class="ml-[2px] text-xl">.</span> -->
-              <span class="text-xl">
-                {{ model.isViewModel === true ? '.view' : '.model' }}</span
-              >
+
+              <span class="ml-2 text-xl">
+                {{
+                  model.filePath.split('/')[
+                    model.filePath.split('/').length - 1
+                  ]
+                }}
+              </span>
             </button>
           </div>
 

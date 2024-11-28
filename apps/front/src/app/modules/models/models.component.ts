@@ -19,7 +19,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   // groups: string[];
 
-  showViews = false;
+  showJoins = false;
 
   isShow = true;
 
@@ -153,8 +153,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
     });
   }
 
-  toggleShowViews() {
-    this.showViews = !this.showViews;
+  toggleShowJoins() {
+    this.showJoins = !this.showJoins;
     this.refreshShow();
   }
 
