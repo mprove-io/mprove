@@ -78,7 +78,7 @@ import { MainTableComponent } from './main-table/main-table.component';
 import { MetricFieldLabelComponent } from './metric-field-label/metric-field-label.component';
 import { CapitalizeWordsPipe } from './pipes/capitalize-words.pipe';
 import { CapitalizePipe } from './pipes/capitalize.pipe';
-import { ExtensionPipe } from './pipes/extension.pipe';
+import { GoFromFileExtPipe } from './pipes/go-from-file-ext.pipe';
 import { HideColumnsPipe } from './pipes/hide-columns.pipe';
 import { MproveDirPipe } from './pipes/mprove-dir.pipe';
 import { PrettyJsonPipe } from './pipes/pretty-json.pipe';
@@ -94,7 +94,7 @@ import { ValidationComponent } from './validation/validation.component';
 import { ViewBlockmlDialogComponent } from './view-blockml-dialog/view-blockml-dialog.component';
 
 let pipesArray = [
-  ExtensionPipe,
+  GoFromFileExtPipe,
   CapitalizePipe,
   MproveDirPipe,
   CapitalizeWordsPipe,

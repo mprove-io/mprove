@@ -21,7 +21,11 @@
               (click)="goToFile()"
             >
               <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
-              <div class="ml-2 text-xl">{{ model.modelId }}.model</div>
+              <span class="ml-2 text-xl">{{ model.modelId }}</span>
+              <!-- <span class="ml-[2px] text-xl">.</span> -->
+              <span class="text-xl">
+                {{ model.isViewModel === true ? '.view' : '.model' }}</span
+              >
             </button>
           </div>
 

@@ -11,16 +11,18 @@
         class="flex flex-shrink-0 flex-row items-center text-blue-500 focus:outline-none"
         (click)="goTo()"
         *ngIf="
-          ((file?.name | extension) === 'model' &&
+          ((file?.name | goFromFileExt) === 'model' &&
             member?.isExplorer === true) ||
-          (file?.name | extension) === 'chart' ||
-          (file?.name | extension) === 'dashboard' ||
-          (file?.name | extension) === 'report'
+          (file?.name | goFromFileExt) === 'view' ||
+          (file?.name | goFromFileExt) === 'chart' ||
+          (file?.name | goFromFileExt) === 'dashboard' ||
+          (file?.name | goFromFileExt) === 'report'
         "
       >
         <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
+
         <div class="ml-2 text-lg">
-          {{ file?.name | extension | capitalize }}</div
+          {{ file?.name | goFromFileExt | capitalize }}</div
         >
       </button>
     </div>
