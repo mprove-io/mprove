@@ -113,6 +113,7 @@ export class WrapToEntService {
       connectionId: model.connectionId,
       filePath: model.filePath,
       content: model.content,
+      isViewModel: model.isViewModel,
       accessUsers: model.accessUsers,
       accessRoles: model.accessRoles,
       label: model.label,

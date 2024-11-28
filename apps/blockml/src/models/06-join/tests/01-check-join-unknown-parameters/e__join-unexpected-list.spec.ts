@@ -46,6 +46,7 @@ test('1', async t => {
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
+
     models = await helper.readLog(fromDir, common.LogTypeEnum.Models);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
@@ -60,7 +61,7 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(models.length, 0);
+  t.is(models.filter(x => x.isViewModel !== true).length, 0);
 
   t.is(errors[0].title, common.ErTitleEnum.JOIN_UNEXPECTED_LIST);
   t.is(errors[0].lines[0].line, 6);

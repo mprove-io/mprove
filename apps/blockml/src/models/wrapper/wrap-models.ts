@@ -236,6 +236,7 @@ export function wrapModels(item: {
         connectionId: x.connection.connectionId,
         filePath: x.filePath,
         content: x,
+        isViewModel: x.isViewModel,
         accessUsers: x.access_users || [],
         accessRoles: x.access_roles || [],
         label: x.label,

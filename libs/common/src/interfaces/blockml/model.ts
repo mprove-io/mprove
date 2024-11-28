@@ -24,6 +24,9 @@ export class Model {
 
   content: any;
 
+  @IsBoolean()
+  isViewModel: boolean;
+
   @IsString({ each: true })
   accessUsers: string[];
 

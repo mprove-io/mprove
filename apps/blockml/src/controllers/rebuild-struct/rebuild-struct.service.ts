@@ -212,10 +212,10 @@ export class RebuildStructService {
     let apis: common.FileApi[];
     let dashboards: common.FileDashboard[];
     let metrics: common.FileMetric[];
+    let views: common.FileView[];
     let models: common.FileModel[];
     let reports: common.FileReport[];
     let udfs: common.FileUdf[];
-    let views: common.FileView[];
     let charts: common.FileChart[];
     let projectConfig: common.FileProjectConf;
 
@@ -280,28 +280,6 @@ export class RebuildStructService {
       this.cs
     );
 
-    models = barBuilder.buildField(
-      {
-        entities: models,
-        projectConfig: projectConfig,
-        structId: item.structId,
-        errors: errors,
-        caller: common.CallerEnum.BuildModelField
-      },
-      this.cs
-    );
-
-    dashboards = barBuilder.buildField(
-      {
-        entities: dashboards,
-        projectConfig: projectConfig,
-        structId: item.structId,
-        errors: errors,
-        caller: common.CallerEnum.BuildDashboardField
-      },
-      this.cs
-    );
-
     let udfsDict: common.UdfsDict = barBuilder.buildUdf(
       {
         udfs: udfs,
@@ -326,6 +304,50 @@ export class RebuildStructService {
         evs: item.evs,
         errors: errors,
         caller: common.CallerEnum.BuildView
+      },
+      this.cs
+    );
+
+    models = barSpecial.checkModelName(
+      {
+        models: models,
+        errors: errors,
+        structId: item.structId,
+        caller: common.CallerEnum.BuildViewModel
+      },
+      this.cs
+    );
+
+    let viewModels = barSpecial.buildViewModel(
+      {
+        views: views,
+        errors: errors,
+        structId: item.structId,
+        caller: common.CallerEnum.BuildViewModel
+      },
+      this.cs
+    );
+
+    models = [...models, ...viewModels];
+
+    models = barBuilder.buildField(
+      {
+        entities: models,
+        projectConfig: projectConfig,
+        structId: item.structId,
+        errors: errors,
+        caller: common.CallerEnum.BuildModelField
+      },
+      this.cs
+    );
+
+    dashboards = barBuilder.buildField(
+      {
+        entities: dashboards,
+        projectConfig: projectConfig,
+        structId: item.structId,
+        errors: errors,
+        caller: common.CallerEnum.BuildDashboardField
       },
       this.cs
     );

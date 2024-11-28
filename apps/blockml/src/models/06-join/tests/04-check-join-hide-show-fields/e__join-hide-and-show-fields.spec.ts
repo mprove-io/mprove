@@ -60,7 +60,7 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(models.length, 0);
+  t.is(models.filter(x => x.isViewModel !== true).length, 0);
 
   t.is(errors[0].title, common.ErTitleEnum.JOIN_HIDE_AND_SHOW_FIELDS);
   t.is(errors[0].lines.length, 2);

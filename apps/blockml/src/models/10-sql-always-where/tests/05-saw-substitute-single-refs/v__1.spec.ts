@@ -60,7 +60,10 @@ test('1', async t => {
   }
 
   t.is(errors.length, 0);
-  t.is(models.length, 1);
+  t.is(models.filter(x => x.isViewModel !== true).length, 1);
 
-  t.is(models[0].sqlAlwaysWhereReal, '(${b.dim1} + dim10) > 5');
+  t.is(
+    models.filter(x => x.isViewModel !== true)[0].sqlAlwaysWhereReal,
+    '(${b.dim1} + dim10) > 5'
+  );
 });

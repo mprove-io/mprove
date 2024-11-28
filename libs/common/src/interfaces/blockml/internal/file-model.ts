@@ -35,11 +35,11 @@ export interface FileModel extends FileBasic {
   sql_always_where_calc?: string;
   sql_always_where_calc_line_num?: number;
 
-  udfs?: string[];
-  udfs_line_num?: number;
-
   joins?: FileJoin[];
   joins_line_num?: number;
+
+  parameters?: FieldAny[];
+  parameters_line_num?: number;
 
   build_metrics?: {
     time: string;
@@ -47,15 +47,17 @@ export interface FileModel extends FileBasic {
   }[];
   build_metrics_line_num?: number;
 
-  parameters?: FieldAny[];
-  parameters_line_num?: number;
-
   fields?: FieldAny[];
   fields_line_num?: number;
+
+  udfs?: string[];
+  udfs_line_num?: number;
 
   //
 
   connection?: ProjectConnection;
+
+  isViewModel?: boolean;
 
   fieldsDeps?: {
     [fieldName: string]: {

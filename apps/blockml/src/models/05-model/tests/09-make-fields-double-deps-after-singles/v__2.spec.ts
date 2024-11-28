@@ -60,9 +60,15 @@ test('1', async t => {
   }
 
   t.is(errors.length, 0);
-  t.is(models.length, 1);
-  t.is(models[0].fields[0].sqlReal, '${a.dim1} + m10');
-  t.is(models[0].fields[0].sqlKeyReal, '${a.dim2} + m10');
+  t.is(models.filter(x => x.isViewModel !== true).length, 1);
+  t.is(
+    models.filter(x => x.isViewModel !== true)[0].fields[0].sqlReal,
+    '${a.dim1} + m10'
+  );
+  t.is(
+    models.filter(x => x.isViewModel !== true)[0].fields[0].sqlKeyReal,
+    '${a.dim2} + m10'
+  );
   t.deepEqual(models[0].fieldsDoubleDepsAfterSingles, {
     mea10: {
       a: {

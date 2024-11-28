@@ -26,7 +26,7 @@ export function checkVmdSuggestModelDimension<T extends types.vmdType>(
   item.entities.forEach(x => {
     checkSuggestFields({
       fields: x.fields,
-      isPushErrors: true,
+      isPushErrors: (x as common.FileModel).isViewModel === true ? false : true,
       models: item.models,
       errors: item.errors,
       fileName: x.fileName,
@@ -57,7 +57,7 @@ export function checkVmdSuggestModelDimension<T extends types.vmdType>(
         )
         .forEach(field => {
           if (common.isUndefined(field.suggest_model_dimension)) {
-            field.suggest_model_dimension = `${model.model}.${join.as}.${field.name}`;
+            field.suggest_model_dimension = `${model.name}.${join.as}.${field.name}`;
           }
         })
     );
@@ -70,7 +70,7 @@ export function checkVmdSuggestModelDimension<T extends types.vmdType>(
       )
       .forEach(field => {
         if (common.isUndefined(field.suggest_model_dimension)) {
-          field.suggest_model_dimension = `${model.model}.${constants.MF}.${field.name}`;
+          field.suggest_model_dimension = `${model.name}.${constants.MF}.${field.name}`;
         }
       });
   });

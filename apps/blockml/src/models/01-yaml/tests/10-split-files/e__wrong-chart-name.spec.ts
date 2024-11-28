@@ -70,7 +70,7 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(udfs.length, 0);
   t.is(views.length, 0);
-  t.is(models.length, 0);
+  t.is(models.filter(x => x.isViewModel !== true).length, 0);
   t.is(dashboards.length, 0);
   t.is(charts.length, 0);
 

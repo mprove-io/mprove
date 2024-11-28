@@ -11,6 +11,7 @@ let modelState: ModelState = {
   connectionId: undefined,
   filePath: undefined,
   content: undefined,
+  isViewModel: undefined,
   accessUsers: [],
   accessRoles: [],
   label: undefined,

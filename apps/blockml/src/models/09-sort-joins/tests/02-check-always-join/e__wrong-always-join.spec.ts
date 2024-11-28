@@ -12,7 +12,7 @@ let testId = 'e__wrong-always-join';
 
 test('1', async t => {
   let errors: BmError[];
-  let models;
+  let models: common.FileModel[];
 
   let wLogger;
   let configService;
@@ -60,7 +60,7 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(models.length, 0);
+  t.is(models.filter(x => x.isViewModel !== true).length, 0);
 
   t.is(errors[0].title, common.ErTitleEnum.WRONG_ALWAYS_JOIN);
   t.is(errors[0].lines[0].line, 3);

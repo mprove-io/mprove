@@ -77,7 +77,7 @@ export function checkReportRowParameters(
         )
         .forEach(row => {
           let metric = metrics.find(m => m.metricId === row.metric);
-          let model = models.find(y => y.model === metric.modelId);
+          let model = models.find(y => y.name === metric.modelId);
 
           row.parameters
             .filter(p => common.isDefined(p.filter))
