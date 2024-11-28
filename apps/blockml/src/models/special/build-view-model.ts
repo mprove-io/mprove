@@ -49,7 +49,7 @@ export function buildViewModel(
       hidden: 'false',
       hidden_line_num: 1,
 
-      label: `View ${view.label}`,
+      label: `View - ${view.label}`,
       label_line_num: 1,
 
       group: undefined,
