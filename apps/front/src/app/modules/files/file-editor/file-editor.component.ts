@@ -60,6 +60,8 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     // }
   };
 
+  showGoTo = false;
+
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
@@ -84,6 +86,8 @@ export class FileEditorComponent implements OnInit, OnDestroy {
   file$ = this.fileQuery.select().pipe(
     tap(x => {
       this.file = x;
+      // console.log(this.file.fileNodeId);
+      // console.log(this.file.fileId);
       this.originalContent = x.originalContent;
       this.content = x.content;
       this.startText = x.content;
@@ -107,6 +111,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
   struct$ = this.structQuery.select().pipe(
     tap(x => {
       this.struct = x;
+      // console.log(this.struct.mproveDirValue);
       this.refreshMarkers();
       this.cd.detectChanges();
     })
@@ -218,6 +223,8 @@ export class FileEditorComponent implements OnInit, OnDestroy {
         constants.BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >=
           0)
     ) {
+      this.showGoTo = true;
+
       let languageId = constants.YAML_LANGUAGE_ID;
 
       // this.monaco.languages.register({ id: languageId });
@@ -313,6 +320,8 @@ export class FileEditorComponent implements OnInit, OnDestroy {
 
       this.refreshMarkers();
     } else {
+      this.showGoTo = false;
+
       let languageId =
         this.monaco.languages
           .getLanguages()
