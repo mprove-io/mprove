@@ -72,6 +72,8 @@ export function checkTopUnknownParameters(
                 common.ParameterEnum.Connection.toString(),
                 common.ParameterEnum.Label.toString(),
                 common.ParameterEnum.Description.toString(),
+                common.ParameterEnum.AccessUsers.toString(),
+                common.ParameterEnum.AccessRoles.toString(),
                 common.ParameterEnum.Udfs.toString(),
                 common.ParameterEnum.Table.toString(),
                 common.ParameterEnum.DerivedTable.toString(),

@@ -1,6 +1,7 @@
 export * from './01-check-table';
 export * from './01a-check-table-env-refs';
 export * from './01b-check-derived-table-env-refs';
+export * from './01c-check-view-access';
 export * from './02-check-view-udfs';
 export * from './03-check-view-filter-defaults';
 export * from './04-check-derived-table-apply-filter';

@@ -55,6 +55,18 @@ export function buildView(
     cs
   );
 
+  views = barView.checkViewAccess(
+    {
+      views: views,
+      structId: item.structId,
+      envId: item.envId,
+      evs: item.evs,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
   views = barView.checkViewUdfs(
     {
       views: views,

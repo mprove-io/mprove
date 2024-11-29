@@ -26,6 +26,18 @@ export const VIEW_SCHEMA: JSONSchema7 = {
     derived_table: {
       type: 'string'
     },
+    access_users: {
+      type: 'array',
+      items: {
+        type: 'string'
+      }
+    },
+    access_roles: {
+      type: 'array',
+      items: {
+        type: 'string'
+      }
+    },
     udfs: {
       type: 'array',
       items: {
