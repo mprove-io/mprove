@@ -12,12 +12,13 @@
         (click)="goTo()"
         *ngIf="
           showGoTo === true &&
-          ((file?.name | goFromFileExt) === 'view' ||
-            (file?.name | goFromFileExt) === 'chart' ||
+          ((file?.name | goFromFileExt) === 'chart' ||
+            (file?.name | goFromFileExt) === 'dashboard' ||
+            (member?.isExplorer === true &&
+              (file?.name | goFromFileExt) === 'view') ||
             (member?.isExplorer === true &&
               (file?.name | goFromFileExt) === 'model') ||
-            (file?.name | goFromFileExt) === 'dashboard' ||
-            (mfile?.name | goFromFileExt) === 'report')
+            (file?.name | goFromFileExt) === 'report')
         "
       >
         <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
