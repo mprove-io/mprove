@@ -37,6 +37,18 @@
         <div class="flex flex-row items-center space-x-5">
           <ui-switch
             class="ml-5"
+            [checked]="showViewModels"
+            (change)="toggleShowViewModels()"
+          ></ui-switch>
+
+          <div class="text-gray1 flex h-9 select-none items-center text-base"
+            >Show View Models</div
+          >
+        </div>
+
+        <div class="flex flex-row items-center space-x-5">
+          <ui-switch
+            class="ml-5"
             [checked]="showJoins"
             (change)="toggleShowJoins()"
           ></ui-switch>

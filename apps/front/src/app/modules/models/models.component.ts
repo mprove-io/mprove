@@ -19,6 +19,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   // groups: string[];
 
+  showViewModels = false;
   showJoins = false;
 
   isShow = true;
@@ -72,8 +73,13 @@ export class ModelsComponent implements OnInit, OnDestroy {
   makeFilteredModels() {
     let idxs;
 
+    let modelsA =
+      this.showViewModels === true
+        ? this.models
+        : this.models.filter(x => x.isViewModel === false);
+
     if (common.isDefinedAndNotEmpty(this.word)) {
-      let haystack = this.models.map(x => `${x.label} ${x.modelId}`);
+      let haystack = modelsA.map(x => `${x.label} ${x.modelId}`);
       let opts = {};
       let uf = new uFuzzy(opts);
       idxs = uf.filter(haystack, this.word);
@@ -81,9 +87,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     this.modelsFilteredByWord = common.isDefinedAndNotEmpty(this.word)
       ? idxs != null && idxs.length > 0
-        ? idxs.map(idx => this.models[idx])
+        ? idxs.map(idx => modelsA[idx])
         : []
-      : this.models;
+      : modelsA;
 
     this.filteredModels = this.modelsFilteredByWord;
 
@@ -151,6 +157,12 @@ export class ModelsComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.isShow = true;
     });
+  }
+
+  toggleShowViewModels() {
+    this.showViewModels = !this.showViewModels;
+    this.makeFilteredModels();
+    this.refreshShow();
   }
 
   toggleShowJoins() {

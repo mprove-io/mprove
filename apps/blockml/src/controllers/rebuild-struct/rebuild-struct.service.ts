@@ -328,6 +328,10 @@ export class RebuildStructService {
       this.cs
     );
 
+    models.forEach(x => {
+      x.isViewModel = false;
+    });
+
     models = [...models, ...viewModels];
 
     models = barBuilder.buildField(

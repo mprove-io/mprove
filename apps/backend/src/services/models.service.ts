@@ -49,6 +49,7 @@ export class ModelsService {
       connectionId: modelsTable.connectionId,
       filePath: modelsTable.filePath,
       // 'content'
+      isViewModel: modelsTable.isViewModel,
       accessUsers: modelsTable.accessUsers,
       accessRoles: modelsTable.accessRoles,
       label: modelsTable.label,
