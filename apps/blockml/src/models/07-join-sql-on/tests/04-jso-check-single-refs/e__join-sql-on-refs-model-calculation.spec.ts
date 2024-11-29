@@ -60,7 +60,7 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(models.filter(x => x.isViewModel !== true).length, 0);
+  t.is(models.filter(x => x.isViewModel === false).length, 0);
 
   t.is(errors[0].title, common.ErTitleEnum.JOIN_SQL_ON_REFS_MODEL_CALCULATION);
   t.is(errors[0].lines[0].line, 9);

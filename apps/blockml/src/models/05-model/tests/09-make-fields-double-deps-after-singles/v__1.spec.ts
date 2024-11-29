@@ -60,9 +60,9 @@ test('1', async t => {
   }
 
   t.is(errors.length, 0);
-  t.is(models.filter(x => x.isViewModel !== true).length, 1);
+  t.is(models.filter(x => x.isViewModel === false).length, 1);
   t.is(
-    models.filter(x => x.isViewModel !== true)[0].fields[0].sqlReal,
+    models.filter(x => x.isViewModel === false)[0].fields[0].sqlReal,
     '(${a.dim1} + c1) + c10'
   );
   t.deepEqual(models[0].fieldsDoubleDepsAfterSingles, {
