@@ -53,6 +53,9 @@ export const USE_PROJECT_TIMEZONE_VALUE = 'USE_PROJECT_TIMEZONE';
 export const USE_PROJECT_TIMEZONE_LABEL = 'USE PROJECT CONFIG TIMEZONE';
 export const UTC = 'UTC';
 
+export const VIEW_MODEL_ALIAS = 'v';
+export const VIEW_MODEL_PREFIX = 'view_model';
+
 export const DEFAULT_LIMIT = '500';
 
 export const MPROVE_USERS_FOLDER = 'mprove-users';

@@ -16,7 +16,7 @@ export function buildModelMetric(
 ) {
   let models = item.models;
 
-  models = barModelMetric.checkBuildMetrics(
+  models = barModelMetric.checkModelBuildMetrics(
     {
       models: models,
       structId: item.structId,

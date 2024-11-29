@@ -18,7 +18,7 @@ export const modelsTable = pgTable(
       .notNull()
       .primaryKey(),
     structId: varchar('struct_id', { length: 32 }).notNull(),
-    modelId: varchar('model_id', { length: 32 }).notNull(), // name
+    modelId: varchar('model_id', { length: 64 }).notNull(), // name
     connectionId: varchar('connection_id'),
     filePath: varchar('file_path'),
     content: json('content').notNull(),

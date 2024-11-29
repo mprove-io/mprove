@@ -47,6 +47,7 @@ export enum FuncEnum {
   CheckViewAsDeps = '04-view/07-check-view-as-deps',
   PickUdfsFromAsDeps = '04-view/08-pick-udfs-from-as-deps',
   ProcessViewRefs = '04-view/09-process-view-refs',
+  CheckViewBuildMetrics = '04-view/10-check-view-build-metrics',
 
   CheckModelAccess = '05-model/01-check-model-access',
   CheckModelUdfs = '05-model/02-check-model-udfs',
@@ -101,7 +102,7 @@ export enum FuncEnum {
   AwcCheckApplyFilter = '11-sql-always-where-calc/07-awc-check-apply-filter',
   AwcUpdateAlwaysJoinUnique = '11-sql-always-where-calc/08-awc-update-always-join-unique',
 
-  CheckBuildMetrics = '11.1-model-metric/01-check-build-metrics',
+  CheckModelBuildMetrics = '11.1-model-metric/01-check-model-build-metrics',
   CreateModelMetrics = '11.1-model-metric/02-create-model-metrics',
 
   CheckDashboardAccess = '12-dashboard/01-check-dashboard-access',

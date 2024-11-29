@@ -7,8 +7,8 @@ import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildModelMetric;
-let func = common.FuncEnum.CheckBuildMetrics;
-let testId = 'e__time-unexpected-list';
+let func = common.FuncEnum.CheckModelBuildMetrics;
+let testId = 'e__wrong-time-model-field';
 
 test('1', async t => {
   let errors: BmError[];
@@ -62,6 +62,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entModels.filter(x => x.isViewModel === false).length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.TIME_UNEXPECTED_LIST);
+  t.is(errors[0].title, common.ErTitleEnum.WRONG_TIME_MODEL_FIELD);
   t.is(errors[0].lines[0].line, 4);
 });

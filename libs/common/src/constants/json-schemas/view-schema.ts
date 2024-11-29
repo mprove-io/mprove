@@ -20,6 +20,19 @@ export const VIEW_SCHEMA: JSONSchema7 = {
     description: {
       type: 'string'
     },
+    build_metrics: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          time: {
+            type: 'string'
+          }
+        },
+        required: ['time']
+      }
+    },
     table: {
       type: 'string'
     },

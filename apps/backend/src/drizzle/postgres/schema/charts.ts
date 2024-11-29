@@ -20,7 +20,7 @@ export const chartsTable = pgTable(
     structId: varchar('struct_id', { length: 32 }).notNull(),
     chartId: varchar('chart_id', { length: 32 }).notNull(), // name
     title: varchar('title').notNull(),
-    modelId: varchar('model_id', { length: 32 }).notNull(),
+    modelId: varchar('model_id', { length: 64 }).notNull(),
     modelLabel: varchar('model_label').notNull(),
     filePath: varchar('file_path'),
     accessUsers: json('access_users').$type<string[]>().notNull(),

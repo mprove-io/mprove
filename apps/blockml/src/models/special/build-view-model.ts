@@ -20,6 +20,9 @@ export function buildViewModel(
 
   let viewModels: common.FileModel[] = [];
 
+  let viewModelAlias = common.VIEW_MODEL_ALIAS;
+  let viewModelPrefix = common.VIEW_MODEL_PREFIX;
+
   item.views.forEach(view => {
     let fileJoin: common.FileJoin = {
       from_view: view.name,
@@ -31,25 +34,25 @@ export function buildViewModel(
       label: undefined,
       label_line_num: 1,
 
-      as: 'v',
+      as: viewModelAlias,
       as_line_num: 1
     } as common.FileJoin;
 
     let viewModel: common.FileModel = {
       isViewModel: true,
 
-      fileName: `view_${view.fileName}`,
+      fileName: `${viewModelPrefix}_${view.fileName}`,
       fileExt: common.FileExtensionEnum.Model,
       filePath: view.filePath,
-      name: `view_${view.name}`,
+      name: `${viewModelPrefix}_${view.name}`,
 
-      model: `view_${view.name}`,
+      model: `${viewModelPrefix}_${view.name}`,
       model_line_num: 1,
 
       hidden: 'false',
       hidden_line_num: 1,
 
-      label: `View - ${view.label}`,
+      label: `View Model - ${view.label}`,
       label_line_num: 1,
 
       group: undefined,
@@ -79,7 +82,12 @@ export function buildViewModel(
       parameters: [],
       parameters_line_num: 1,
 
-      build_metrics: [],
+      build_metrics: common.isUndefined(view.build_metrics)
+        ? []
+        : view.build_metrics.map(x => {
+            x.time = `${viewModelAlias}.${x.time}`;
+            return x;
+          }),
       build_metrics_line_num: 1,
 
       fields: [],

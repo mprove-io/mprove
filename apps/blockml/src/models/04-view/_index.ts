@@ -10,3 +10,4 @@ export * from './06-check-view-cycles';
 export * from './07-check-view-as-deps';
 export * from './08-pick-udfs-from-as-deps';
 export * from './09-process-view-refs';
+export * from './10-check-view-build-metrics';

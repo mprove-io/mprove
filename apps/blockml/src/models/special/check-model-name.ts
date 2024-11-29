@@ -23,14 +23,13 @@ export function checkModelName(
   item.models.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (x.name.split('_')[0] === 'view') {
-      // console.log('x.model:');
-      // console.log(x.model);
-
+    if (x.name.split('_')[0] === common.VIEW_MODEL_PREFIX.split('_')[0]) {
       item.errors.push(
         new BmError({
           title: common.ErTitleEnum.MODEL_NAME_STARTS_WITH_VIEW,
-          message: `Model name cannot start with "view". Found model name "${x.name}".`,
+          message: `Model name cannot start with "${
+            common.VIEW_MODEL_PREFIX.split('_')[0]
+          }". Found model name "${x.name}".`,
           lines: [
             {
               line: x.model_line_num,

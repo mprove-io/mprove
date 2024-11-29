@@ -32,6 +32,12 @@ export interface FileView extends FileBasic {
   parameters?: FieldAny[];
   parameters_line_num?: number;
 
+  build_metrics?: {
+    time: string;
+    time_line_num: number;
+  }[];
+  build_metrics_line_num?: number;
+
   fields?: FieldAny[];
   fields_line_num?: number;
 

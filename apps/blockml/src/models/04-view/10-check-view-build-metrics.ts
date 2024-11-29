@@ -5,11 +5,11 @@ import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = common.FuncEnum.CheckBuildMetrics;
+let func = common.FuncEnum.CheckViewBuildMetrics;
 
-export function checkBuildMetrics(
+export function checkViewBuildMetrics(
   item: {
-    models: common.FileModel[];
+    views: common.FileView[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
@@ -19,9 +19,9 @@ export function checkBuildMetrics(
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newModels: common.FileModel[] = [];
+  let newViews: common.FileView[] = [];
 
-  item.models.forEach(x => {
+  item.views.forEach(x => {
     let errorsOnStart = item.errors.length;
 
     if (common.isDefined(x.build_metrics)) {
@@ -93,19 +93,47 @@ export function checkBuildMetrics(
               return;
             }
 
-            let timeFieldRef = bm[common.TimeframeEnum.Time];
+            let timeFieldName = bm[common.TimeframeEnum.Time];
 
-            let reg =
-              common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
-            let r = reg.exec(timeFieldRef);
-
-            if (common.isUndefined(r)) {
+            if (
+              timeFieldName.match(
+                common.MyRegex.CAPTURE_NOT_ALLOWED_FILE_DECLARATION_CHARS_G()
+              )
+            ) {
               item.errors.push(
                 new BmError({
                   title: common.ErTitleEnum.WRONG_TIME_FIELD,
                   message:
-                    `Time field "${timeFieldRef}" is not valid.` +
-                    'Reference must be in form "alias.field_name"',
+                    `Time field "${timeFieldName}" is not valid. ` +
+                    `Parameter "${parameter}" contains wrong characters or whitespace (only snake_case "a...zA...Z0...9_" is allowed). ` +
+                    'Reference must be in form "field_name"',
+                  lines: [
+                    {
+                      line: (bm as any)[
+                        parameter + constants.LINE_NUM
+                      ] as number,
+                      name: x.fileName,
+                      path: x.filePath
+                    }
+                  ]
+                })
+              );
+
+              return;
+            }
+
+            let timeField = x.fields.find(
+              mField =>
+                mField.groupId === timeFieldName &&
+                mField.name ===
+                  `${timeFieldName}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Time}`
+            );
+
+            if (common.isUndefined(timeField)) {
+              item.errors.push(
+                new BmError({
+                  title: common.ErTitleEnum.WRONG_TIME_MODEL_FIELD,
+                  message: `found "${timeFieldName}" which does not refer to a time field`,
                   lines: [
                     {
                       line: (bm as any)[
@@ -119,92 +147,12 @@ export function checkBuildMetrics(
               );
               return;
             }
-
-            let asName = r[1];
-            let fieldName = r[2];
-            let asRef = `${asName}.${fieldName}`;
-
-            if (asName === constants.MF) {
-              let modelField = x.fields.find(
-                mField =>
-                  mField.groupId === fieldName &&
-                  mField.name ===
-                    `${fieldName}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Time}`
-              );
-
-              if (common.isUndefined(modelField)) {
-                item.errors.push(
-                  new BmError({
-                    title: common.ErTitleEnum.WRONG_TIME_MODEL_FIELD,
-                    message: `found "${asRef}" which does not refer to a time field`,
-                    lines: [
-                      {
-                        line: (bm as any)[
-                          parameter + constants.LINE_NUM
-                        ] as number,
-                        name: x.fileName,
-                        path: x.filePath
-                      }
-                    ]
-                  })
-                );
-                return;
-              }
-            } else {
-              let join = x.joins.find(j => j.as === asName);
-              if (common.isUndefined(join)) {
-                item.errors.push(
-                  new BmError({
-                    title: common.ErTitleEnum.WRONG_TIME_ALIAS,
-                    message:
-                      `found "${asRef}" references missing alias ` +
-                      `"${asName}" in joins section of model "${x.name}"`,
-                    lines: [
-                      {
-                        line: (bm as any)[
-                          parameter + constants.LINE_NUM
-                        ] as number,
-                        name: x.fileName,
-                        path: x.filePath
-                      }
-                    ]
-                  })
-                );
-                return;
-              }
-
-              let viewField = join.view.fields.find(
-                vField =>
-                  vField.groupId === fieldName &&
-                  vField.name ===
-                    `${fieldName}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Time}`
-              );
-
-              if (common.isUndefined(viewField)) {
-                item.errors.push(
-                  new BmError({
-                    title: common.ErTitleEnum.WRONG_TIME_VIEW_FIELD,
-                    message: `found "${asRef}" which does not refer to a time field`,
-                    lines: [
-                      {
-                        line: (bm as any)[
-                          parameter + constants.LINE_NUM
-                        ] as number,
-                        name: x.fileName,
-                        path: x.filePath
-                      }
-                    ]
-                  })
-                );
-                return;
-              }
-            }
           })
       );
     }
 
     if (errorsOnStart === item.errors.length) {
-      newModels.push(x);
+      newViews.push(x);
     }
   });
 
@@ -216,7 +164,7 @@ export function checkBuildMetrics(
     common.LogTypeEnum.Errors,
     item.errors
   );
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Models, newModels);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Views, newViews);
 
-  return newModels;
+  return newViews;
 }

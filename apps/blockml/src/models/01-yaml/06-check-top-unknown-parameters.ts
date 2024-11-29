@@ -78,6 +78,7 @@ export function checkTopUnknownParameters(
                 common.ParameterEnum.Table.toString(),
                 common.ParameterEnum.DerivedTable.toString(),
                 common.ParameterEnum.Parameters.toString(),
+                common.ParameterEnum.BuildMetrics.toString(),
                 common.ParameterEnum.Fields.toString()
               ].indexOf(parameter) < 0
             ) {

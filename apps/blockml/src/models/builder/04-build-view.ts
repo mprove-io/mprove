@@ -151,5 +151,15 @@ export function buildView(
     cs
   );
 
+  views = barView.checkViewBuildMetrics(
+    {
+      views: views,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
   return views;
 }
