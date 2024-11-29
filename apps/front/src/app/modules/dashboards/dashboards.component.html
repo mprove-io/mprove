@@ -269,7 +269,11 @@
                       class="flex w-1/6 items-start truncate py-3 focus:outline-none"
                     >
                       <span class="truncate">
-                        {{ item.dashboardId }}
+                        {{
+                          item.filePath.split('/')[
+                            item.filePath.split('/').length - 1
+                          ]
+                        }}
                       </span>
                     </div>
 
@@ -359,42 +363,42 @@
                           >
                           </ngx-spinner>
                         </div>
+                      </div>
 
-                        <div class="flex w-1/6"></div>
+                      <div class="flex w-1/6"></div>
 
-                        <div class="flex flex-1 flex-row space-x-5">
-                          <ng-template #templateDashboardsTileModel>
-                            <div *ngIf="isExplorer === false"
-                              >Explorer role required</div
-                            >
-                            <div *ngIf="isExplorer === true"
-                              >No access to model</div
-                            >
-                          </ng-template>
-
-                          <div
-                            class="flex flex-1 cursor-default flex-row truncate"
-                            [tp]="templateDashboardsTileModel"
-                            [tpIsEnabled]="tile.hasAccessToModel === false"
+                      <div class="flex flex-1 flex-row space-x-5">
+                        <ng-template #templateDashboardsTileModel>
+                          <div *ngIf="isExplorer === false"
+                            >Explorer role required</div
                           >
-                            <div
-                              class="flex items-start truncate pr-10 focus:outline-none"
-                            >
-                              <span class="truncate">
-                                {{ tile.modelLabel | capitalize }}
-                              </span>
-                            </div>
+                          <div *ngIf="isExplorer === true"
+                            >No access to model</div
+                          >
+                        </ng-template>
 
-                            <m-lock-closed-icon
-                              class="mb-1 ml-2 text-gray-400"
-                              *ngIf="tile.hasAccessToModel === false"
-                            ></m-lock-closed-icon>
+                        <div
+                          class="flex flex-1 cursor-default flex-row truncate"
+                          [tp]="templateDashboardsTileModel"
+                          [tpIsEnabled]="tile.hasAccessToModel === false"
+                        >
+                          <div
+                            class="flex items-start truncate pr-10 focus:outline-none"
+                          >
+                            <span class="truncate">
+                              {{ tile.modelLabel | capitalize }}
+                            </span>
                           </div>
 
-                          <div class="flex flex-1"></div>
-                          <div class="flex flex-1"></div>
-                          <div class="flex flex-1"></div>
+                          <m-lock-closed-icon
+                            class="mb-1 ml-2 text-gray-400"
+                            *ngIf="tile.hasAccessToModel === false"
+                          ></m-lock-closed-icon>
                         </div>
+
+                        <div class="flex flex-1"></div>
+                        <div class="flex flex-1"></div>
+                        <div class="flex flex-1"></div>
                       </div>
                     </div>
                   </div>

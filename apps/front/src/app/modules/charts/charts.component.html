@@ -306,7 +306,11 @@
                       class="flex w-1/6 items-start truncate py-3 focus:outline-none"
                     >
                       <span class="truncate">
-                        {{ item.chartId }}
+                        {{
+                          item.filePath.split('/')[
+                            item.filePath.split('/').length - 1
+                          ]
+                        }}
                       </span>
                     </div>
 
