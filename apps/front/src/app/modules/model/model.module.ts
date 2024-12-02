@@ -16,7 +16,6 @@ import { ModelFiltersComponent } from './model-filters/model-filters.component';
 import { FieldOptionsComponent } from './model-tree/field-options/field-options.component';
 import { ModelTreeComponent } from './model-tree/model-tree.component';
 import { ModelComponent } from './model.component';
-import { NewChartEditorComponent } from './new-chart-editor/new-chart-editor.component';
 import { PanelTitleComponent } from './panel-title/panel-title.component';
 import { QueryOptionsComponent } from './query-options/query-options.component';
 import { QueryComponent } from './query/query.component';
@@ -34,8 +33,7 @@ import { SqlComponent } from './sql/sql.component';
     ModelFiltersComponent,
     QueryOptionsComponent,
     ChartOptionsComponent,
-    ChartEditorComponent,
-    NewChartEditorComponent
+    ChartEditorComponent
   ],
   imports: [
     CommonModule,

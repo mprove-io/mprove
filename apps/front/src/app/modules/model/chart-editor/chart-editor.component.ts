@@ -33,9 +33,6 @@ export class ChartEditorComponent implements OnChanges {
   chartTypeEnum = common.ChartTypeEnum;
   chartSchemeTypeEnum = common.ChartSchemeTypeEnum;
 
-  cm = common;
-  axVisibleChartTypes = common.visibleChartTypes;
-
   hideColumnsChartTypes = common.hideColumnsChartTypes;
   xFieldChartTypes = common.xFieldChartTypes;
   yFieldChartTypes = common.yFieldChartTypes;
@@ -1650,14 +1647,6 @@ export class ChartEditorComponent implements OnChanges {
   toggleShowGridLines($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.showGridLines = $event;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
-
-  toggleAxVisible($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.axVisible = $event;
     this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });

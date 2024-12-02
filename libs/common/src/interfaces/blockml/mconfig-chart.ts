@@ -1,18 +1,12 @@
-import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
   IsInt,
   IsNumber,
   IsOptional,
-  IsString,
-  ValidateNested
+  IsString
 } from 'class-validator';
 import { enums } from '~common/barrels/enums';
-import { AgHighlightStyle } from './ag/AxHighlightStyle';
-import { AxShadow } from './ag/AxShadow';
-import { DirectionEnum } from './ag/enums/ax-direction.enum';
-import { ClickRangeEnum } from './ag/enums/click-range.enum';
 
 export class MconfigChart {
   @IsBoolean()
@@ -20,114 +14,7 @@ export class MconfigChart {
 
   @IsEnum(enums.ChartTypeEnum)
   type: enums.ChartTypeEnum;
-  //
-  @IsOptional()
-  @IsBoolean()
-  axVisible?: boolean;
 
-  @IsOptional()
-  @IsString()
-  axXKey?: string;
-
-  @IsOptional()
-  @IsString()
-  axYKey?: string;
-
-  @IsOptional()
-  @IsString()
-  axXName?: string;
-
-  @IsOptional()
-  @IsString()
-  axYName?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  axGrouped?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  axStacked?: boolean;
-
-  @IsOptional()
-  @IsString()
-  axStackGroup?: string;
-
-  @IsOptional()
-  @IsNumber()
-  axNormalizedTo?: number;
-
-  @IsOptional()
-  @IsString()
-  axCursor?: string;
-  // id?
-
-  @IsOptional()
-  axHighlightStyle?: AgHighlightStyle;
-
-  @IsEnum(ClickRangeEnum)
-  @IsOptional()
-  axNodeClickRange?: ClickRangeEnum;
-
-  @IsOptional()
-  @IsBoolean()
-  axShowInLegend?: boolean;
-
-  // Listeners
-  //
-
-  @IsString()
-  @IsOptional()
-  axLegendItemName?: string;
-
-  @IsOptional()
-  @IsEnum(DirectionEnum)
-  axDirection?: DirectionEnum;
-
-  @IsOptional()
-  @IsBoolean()
-  axCrisp?: boolean;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => AxShadow)
-  axShadow?: AxShadow;
-
-  @IsNumber()
-  @IsOptional()
-  axCornerRadius?: number;
-
-  @IsString()
-  @IsOptional()
-  axFill?: string;
-
-  @IsNumber()
-  @IsOptional()
-  axFillOpacity?: number;
-
-  @IsString()
-  @IsOptional()
-  axStroke?: string;
-
-  @IsNumber()
-  @IsOptional()
-  axStrokeWidth?: number;
-
-  @IsNumber()
-  @IsOptional()
-  axStrokeOpacity?: number;
-
-  axLineDash?: number[];
-
-  @IsOptional()
-  @IsNumber()
-  axLineDashOffset?: number;
-
-  @IsOptional()
-  @IsBoolean()
-  axShowInMiniChart?: boolean;
-
-  //
   @IsOptional()
   @IsString()
   title?: string;
