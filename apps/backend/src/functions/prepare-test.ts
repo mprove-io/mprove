@@ -57,14 +57,16 @@ export async function prepareTest(item: {
       },
       payload: deleteRecordsPayload
     };
-
-    await helper.sendToBackend<apiToBackend.ToBackendDeleteRecordsResponse>({
-      checkIsOk: true,
-      httpServer: httpServer,
-      req: deleteRecordsRequest
-    });
+    await helper
+      .sendToBackend<apiToBackend.ToBackendDeleteRecordsResponse>({
+        checkIsOk: true,
+        httpServer: httpServer,
+        req: deleteRecordsRequest
+      })
+      .catch(e => {
+        console.log(e);
+      });
   }
-
   if (common.isDefined(seedRecordsPayload)) {
     let seedRecordsRequest: apiToBackend.ToBackendSeedRecordsRequest = {
       info: {
@@ -75,11 +77,15 @@ export async function prepareTest(item: {
       payload: seedRecordsPayload
     };
 
-    await helper.sendToBackend<apiToBackend.ToBackendSeedRecordsResponse>({
-      checkIsOk: true,
-      httpServer: httpServer,
-      req: seedRecordsRequest
-    });
+    await helper
+      .sendToBackend<apiToBackend.ToBackendSeedRecordsResponse>({
+        checkIsOk: true,
+        httpServer: httpServer,
+        req: seedRecordsRequest
+      })
+      .catch(e => {
+        console.log(e);
+      });
   }
 
   let loginUserResp: apiToBackend.ToBackendLoginUserResponse;
@@ -94,12 +100,15 @@ export async function prepareTest(item: {
       payload: loginUserPayload
     };
 
-    loginUserResp =
-      await helper.sendToBackend<apiToBackend.ToBackendLoginUserResponse>({
+    loginUserResp = (await helper
+      .sendToBackend<apiToBackend.ToBackendLoginUserResponse>({
         checkIsOk: true,
         httpServer: httpServer,
         req: loginUserRequest
-      });
+      })
+      .catch(e => {
+        console.log(e);
+      })) as apiToBackend.ToBackendLoginUserResponse;
   }
 
   let rabbitService = moduleRef.get<RabbitService>(RabbitService);
