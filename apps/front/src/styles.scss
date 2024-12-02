@@ -240,3 +240,12 @@ cdk-virtual-scroll-viewport {
     max-width: 100% !important;
   }
 }
+
+ngneat-dialog {
+  .ngneat-dialog-backdrop {
+    overflow: hidden !important;
+    .ngneat-dialog-content {
+      overflow: auto !important;
+    }
+  }
+}
