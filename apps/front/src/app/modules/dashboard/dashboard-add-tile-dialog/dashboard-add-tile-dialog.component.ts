@@ -7,7 +7,7 @@ import {
   OnInit
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -25,7 +25,7 @@ export interface DashboardAddTileDialogData {
   templateUrl: './dashboard-add-tile-dialog.component.html',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule]
+  imports: [CommonModule, NgxSpinnerModule]
 })
 export class DashboardAddTileDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

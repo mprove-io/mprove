@@ -1,7 +1,7 @@
-<div class="flex max-h-[500px] flex-col bg-white p-9">
+<div class="flex h-[500px] flex-col bg-white p-9">
   <div
     data-cy="addTileDialogTitle"
-    class="text-gray2 mt-5 flex-grow text-left text-2xl font-semibold"
+    class="text-gray2 mt-5 text-left text-2xl font-semibold"
     >Add Tile</div
   >
 
@@ -11,18 +11,23 @@
 
   <div class="text-gray2 mb-3 mt-9 text-lg font-semibold">Models:</div>
 
-  <div class="relative flex h-9 w-9 flex-shrink-0" *ngIf="!models">
-    <ngx-spinner
-      [name]="spinnerName"
-      color="rgba(54, 94, 224, 100)"
-      bdColor="rgba(0, 0, 0, 0)"
-      size="default"
-      type="ball-clip-rotate"
-      [fullScreen]="false"
-      [disableAnimation]="true"
-      [zIndex]="99998"
-    >
-    </ngx-spinner>
+  <div
+    class="flex flex-1 flex-shrink-0 flex-row items-center justify-center"
+    *ngIf="!models"
+  >
+    <div class="relative flex h-9 w-9">
+      <ngx-spinner
+        [name]="spinnerName"
+        color="rgba(54, 94, 224, 100)"
+        bdColor="rgba(0, 0, 0, 0)"
+        size="default"
+        type="ball-clip-rotate"
+        [fullScreen]="false"
+        [disableAnimation]="true"
+        [zIndex]="99998"
+      >
+      </ngx-spinner>
+    </div>
   </div>
 
   <div class="overflow-y-auto" *ngIf="!!models">
