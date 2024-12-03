@@ -7,16 +7,18 @@ export function getSelectValid(item: {
   let { chart, mconfigFields } = item;
 
   let xField = mconfigFields.find(f => f.id === chart.xField);
-
   let yField = mconfigFields.find(f => f.id === chart.yField);
+  let sizeField = mconfigFields.find(f => f.id === chart.sizeField);
 
   let yFieldsIsOk = true;
 
   if (common.isDefined(chart.yFields)) {
     let yFields = mconfigFields.filter(f => chart.yFields.indexOf(f.id) > -1);
+
     let yFieldsResultIsNumber = yFields.filter(
       f => f.result === common.FieldResultEnum.Number
     );
+
     if (yFields.length !== yFieldsResultIsNumber.length) {
       yFieldsIsOk = false;
     }
@@ -51,6 +53,8 @@ export function getSelectValid(item: {
   if (chart.type === common.ChartTypeEnum.Table) {
     //
   } else if (
+    chart.type === common.ChartTypeEnum.AgPie ||
+    chart.type === common.ChartTypeEnum.AgDonut ||
     chart.type === common.ChartTypeEnum.BarVertical ||
     chart.type === common.ChartTypeEnum.BarHorizontal ||
     chart.type === common.ChartTypeEnum.Pie ||
@@ -91,6 +95,11 @@ export function getSelectValid(item: {
         'Measure or Calculation field must be selected for this chart type';
     }
   } else if (
+    chart.type === common.ChartTypeEnum.AgLine ||
+    chart.type === common.ChartTypeEnum.AgArea ||
+    chart.type === common.ChartTypeEnum.AgBar ||
+    chart.type === common.ChartTypeEnum.AgScatter ||
+    chart.type === common.ChartTypeEnum.AgBubble ||
     chart.type === common.ChartTypeEnum.BarVerticalGrouped ||
     chart.type === common.ChartTypeEnum.BarHorizontalGrouped ||
     chart.type === common.ChartTypeEnum.BarVerticalStacked ||
@@ -112,7 +121,9 @@ export function getSelectValid(item: {
         'A maximum of 2 dimension fields can be selected for this chart type';
     } else if (
       selectedDimensionsIsResultNumberOrTs.length === 0 &&
-      (chart.type === common.ChartTypeEnum.Line ||
+      (chart.type === common.ChartTypeEnum.AgLine ||
+        chart.type === common.ChartTypeEnum.AgArea ||
+        chart.type === common.ChartTypeEnum.Line ||
         chart.type === common.ChartTypeEnum.Area ||
         chart.type === common.ChartTypeEnum.AreaStacked ||
         chart.type === common.ChartTypeEnum.AreaNormalized)
@@ -124,7 +135,9 @@ export function getSelectValid(item: {
       common.isDefined(xField) &&
       xField.result !== common.FieldResultEnum.Ts &&
       xField.result !== common.FieldResultEnum.Number &&
-      (chart.type === common.ChartTypeEnum.Line ||
+      (chart.type === common.ChartTypeEnum.AgLine ||
+        chart.type === common.ChartTypeEnum.AgArea ||
+        chart.type === common.ChartTypeEnum.Line ||
         chart.type === common.ChartTypeEnum.Area ||
         chart.type === common.ChartTypeEnum.AreaStacked ||
         chart.type === common.ChartTypeEnum.AreaNormalized)
@@ -153,6 +166,13 @@ export function getSelectValid(item: {
       isSelectValid = false;
       errorMessage =
         'yField for this chart type must have result type "number"';
+    } else if (
+      common.isDefined(sizeField) &&
+      sizeField.result !== common.FieldResultEnum.Number
+    ) {
+      isSelectValid = false;
+      errorMessage =
+        'sizeField for this chart type must have result type "number"';
     } else if (
       common.isDefined(valueField) &&
       valueField.result !== common.FieldResultEnum.Number

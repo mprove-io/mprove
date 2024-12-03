@@ -135,6 +135,11 @@ export function prepareTile(item: {
         constants.previousValueFieldChartTypes.indexOf(chart.type) > -1 &&
         isDefined(chart.previousValueField)
           ? chart.previousValueField
+          : undefined,
+      size_field:
+        constants.sizeFieldChartTypes.indexOf(chart.type) > -1 &&
+        isDefined(chart.sizeField)
+          ? chart.sizeField
           : undefined
     },
     axis: {

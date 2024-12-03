@@ -99,6 +99,7 @@ export enum ParameterEnum {
   // chart data
   XField = 'x_field',
   YField = 'y_field',
+  SizeField = 'size_field',
   YFields = 'y_fields',
   HideColumns = 'hide_columns',
   MultiField = 'multi_field',

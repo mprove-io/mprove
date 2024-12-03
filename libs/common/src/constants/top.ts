@@ -196,6 +196,14 @@ export const FILTER_RESULT_VALUES = [
 ];
 
 export const CHART_TYPE_VALUES = [
+  enums.ChartTypeEnum.AgLine,
+  enums.ChartTypeEnum.AgArea,
+  enums.ChartTypeEnum.AgBar,
+  enums.ChartTypeEnum.AgScatter,
+  enums.ChartTypeEnum.AgBubble,
+  enums.ChartTypeEnum.AgPie,
+  enums.ChartTypeEnum.AgDonut,
+  //
   enums.ChartTypeEnum.Area,
   enums.ChartTypeEnum.AreaNormalized,
   enums.ChartTypeEnum.AreaStacked,

@@ -1,4 +1,5 @@
 export enum ChartTypeEnum {
+  // if remove _ then check for split('_') in code
   AgLine = 'ag_line',
   AgBar = 'ag_bar',
   AgArea = 'ag_area',
@@ -6,7 +7,7 @@ export enum ChartTypeEnum {
   AgBubble = 'ag_bubble',
   AgPie = 'ag_pie',
   AgDonut = 'ag_donut',
-
+  //
   Table = 'table',
   BarVertical = 'bar_vertical',
   BarVerticalGrouped = 'bar_vertical_grouped',

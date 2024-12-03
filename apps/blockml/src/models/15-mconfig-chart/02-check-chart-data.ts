@@ -37,6 +37,7 @@ export function checkChartData<T extends types.dzType>(
             [
               common.ParameterEnum.XField.toString(),
               common.ParameterEnum.YField.toString(),
+              common.ParameterEnum.SizeField.toString(),
               common.ParameterEnum.YFields.toString(),
               common.ParameterEnum.HideColumns.toString(),
               common.ParameterEnum.MultiField.toString(),

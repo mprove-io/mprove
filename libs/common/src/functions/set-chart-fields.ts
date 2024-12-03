@@ -68,6 +68,16 @@ export function setChartFields<T extends Mconfig>(item: {
         ? selectedMCsResultIsNotNumber[0]
         : undefined;
 
+    let sizeField =
+      isDefined(mconfig.chart.sizeField) &&
+      mconfig.select.indexOf(mconfig.chart.sizeField) > -1
+        ? mconfig.chart.sizeField
+        : selectedMCsResultIsNumber.length > 0
+        ? selectedMCsResultIsNumber[0]
+        : selectedMCsResultIsNotNumber.length > 0
+        ? selectedMCsResultIsNotNumber[0]
+        : undefined;
+
     let yFields =
       mconfig.chart.yFields?.length > 0 &&
       mconfig.chart.yFields.every(x => mconfig.select.includes(x))
@@ -105,7 +115,8 @@ export function setChartFields<T extends Mconfig>(item: {
       yFields: yFields,
       multiField: multiField,
       valueField: valueField,
-      previousValueField: previousValueField
+      previousValueField: previousValueField,
+      sizeField: sizeField
     });
   }
 

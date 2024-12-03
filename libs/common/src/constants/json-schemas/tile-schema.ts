@@ -78,6 +78,9 @@ export const TILE_SCHEMA: JSONSchema7 = {
         },
         previous_value_field: {
           type: 'string'
+        },
+        size_field: {
+          type: 'string'
         }
       }
     },

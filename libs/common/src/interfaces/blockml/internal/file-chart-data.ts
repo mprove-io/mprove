@@ -5,6 +5,9 @@ export interface FileChartData {
   y_field?: string;
   y_field_line_num?: number;
 
+  size_field?: string;
+  size_field_line_num?: number;
+
   y_fields?: string[];
   y_fields_line_num?: number;
 

@@ -102,6 +102,29 @@ export function checkChartDataParameters<T extends types.dzType>(
       }
 
       if (
+        [common.ChartTypeEnum.AgBubble].indexOf(tile.type) > -1 &&
+        (common.isUndefined(tile.data) ||
+          common.isUndefined(tile.data.size_field))
+      ) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.TILE_DATA_MISSING_SIZE_FIELD,
+            message:
+              `tile of type "${tile.type}" must have ` +
+              `"${common.ParameterEnum.SizeField}" parameter in "${common.ParameterEnum.Data}"`,
+            lines: [
+              {
+                line: tile.data_line_num,
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
+      if (
         [
           common.ChartTypeEnum.BarVerticalGrouped,
           common.ChartTypeEnum.BarVerticalStacked,
@@ -241,6 +264,52 @@ export function checkChartDataParameters<T extends types.dzType>(
                 lines: [
                   {
                     line: tile.data.y_field_line_num,
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+        }
+      }
+
+      if (common.isDefined(tile.data.size_field)) {
+        if (tile.select.indexOf(tile.data.size_field) < 0) {
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.TILE_DATA_WRONG_SIZE_FIELD,
+              message:
+                `"${common.ParameterEnum.SizeField}" value must be one of ` +
+                `"${common.ParameterEnum.Select}" elements`,
+              lines: [
+                {
+                  line: tile.data.size_field_line_num,
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        } else {
+          let field = getField({
+            model: model,
+            fieldId: tile.data.size_field
+          });
+
+          if (
+            field.fieldClass !== common.FieldClassEnum.Measure &&
+            field.fieldClass !== common.FieldClassEnum.Calculation
+          ) {
+            item.errors.push(
+              new BmError({
+                title: common.ErTitleEnum.TILE_DATA_WRONG_SIZE_FIELD_CLASS,
+                message: `"${common.ParameterEnum.SizeField}" must be a Measure or Calculation`,
+                lines: [
+                  {
+                    line: tile.data.size_field_line_num,
                     name: x.fileName,
                     path: x.filePath
                   }
