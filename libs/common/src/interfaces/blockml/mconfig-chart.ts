@@ -45,6 +45,10 @@ export class MconfigChart {
 
   @IsOptional()
   @IsString()
+  sizeField?: string;
+
+  @IsOptional()
+  @IsString()
   valueField?: string;
 
   @IsOptional()

@@ -347,6 +347,51 @@
     </div>
   </div>
 
+  <div
+    *ngIf="sizeFieldChartTypes.indexOf(chart.type) > -1"
+    class="mb-5 flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
+        >sizeField</div
+      >
+    </div>
+
+    <form [formGroup]="sizeFieldForm" class="ml-5 min-w-[2px] flex-grow">
+      <ng-select
+        #sizeFieldSelect
+        data-cy="sizeFieldSelect"
+        class="custom text-base focus:outline-none"
+        [items]="sortedMeasuresAndCalculations"
+        [clearable]="false"
+        [searchable]="false"
+        (change)="sizeFieldChange()"
+        appendTo="body"
+        bindLabel="label"
+        bindValue="id"
+        formControlName="sizeField"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <m-field-label
+            [column]="item"
+            class="ml-1 flex text-sm"
+          ></m-field-label>
+        </ng-template>
+        <ng-template
+          ng-option-tmp
+          let-item="item"
+          let-index="index"
+          let-search="searchTerm"
+        >
+          <m-field-label
+            [column]="item"
+            class="ml-1 flex text-sm"
+          ></m-field-label>
+        </ng-template>
+      </ng-select>
+    </form>
+  </div>
+
   <!-- <div
     class="text-xl text-gray1 font-semibold mb-5"
     *ngIf="chart.type !== chartTypeEnum.Table"

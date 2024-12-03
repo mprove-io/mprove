@@ -124,6 +124,8 @@ export class ChartViewComponent implements OnChanges {
 
     // this.setAgChartsDefaults();
 
+    this.chartOptions = {};
+
     let checkSelectResult = getSelectValid({
       chart: this.chart,
       mconfigFields: this.mconfigFields
@@ -137,6 +139,7 @@ export class ChartViewComponent implements OnChanges {
 
     let xField = this.mconfigFields.find(v => v.id === this.chart.xField);
     let yField = this.mconfigFields.find(v => v.id === this.chart.yField);
+    let sizeField = this.mconfigFields.find(v => v.id === this.chart.sizeField);
 
     // data
 
@@ -305,7 +308,11 @@ export class ChartViewComponent implements OnChanges {
             };
 
             if (this.chart.type === common.ChartTypeEnum.AgBubble) {
-              (a as AgBubbleSeriesOptions).sizeKey = el.name; // TODO: create sizeKey control
+              (a as AgBubbleSeriesOptions).sizeKey = common.isDefined(
+                sizeField?.sqlName
+              )
+                ? sizeField?.sqlName
+                : common.CHART_DEFAULT_SIZE_FIELD_VALUE;
             }
 
             return a;
@@ -320,7 +327,11 @@ export class ChartViewComponent implements OnChanges {
             };
 
             if (this.chart.type === common.ChartTypeEnum.AgBubble) {
-              (a as AgBubbleSeriesOptions).sizeKey = myYField.sqlName; // TODO: create sizeKey control
+              (a as AgBubbleSeriesOptions).sizeKey = common.isDefined(
+                sizeField?.sqlName
+              )
+                ? sizeField?.sqlName
+                : common.CHART_DEFAULT_SIZE_FIELD_VALUE;
             }
 
             return a;

@@ -45,6 +45,8 @@ export class DataService {
         }
       }
 
+      resRow[common.CHART_DEFAULT_SIZE_FIELD_VALUE] = 1;
+
       newData[i] = resRow;
     }
     // console.log('newData ===========')

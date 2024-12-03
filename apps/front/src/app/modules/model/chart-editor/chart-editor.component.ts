@@ -37,6 +37,7 @@ export class ChartEditorComponent implements OnChanges {
   xFieldChartTypes = common.xFieldChartTypes;
   yFieldChartTypes = common.yFieldChartTypes;
   yFieldsChartTypes = common.yFieldsChartTypes;
+  sizeFieldChartTypes = common.sizeFieldChartTypes;
   multiFieldChartTypes = common.multiFieldChartTypes;
   valueFieldChartTypes = common.valueFieldChartTypes;
   previousValueFieldChartTypes = common.previousValueFieldChartTypes;
@@ -129,6 +130,10 @@ export class ChartEditorComponent implements OnChanges {
 
   yFieldForm: FormGroup = this.fb.group({
     yField: [undefined]
+  });
+
+  sizeFieldForm: FormGroup = this.fb.group({
+    sizeField: [undefined]
   });
 
   multiFieldForm: FormGroup = this.fb.group({
@@ -539,6 +544,11 @@ export class ChartEditorComponent implements OnChanges {
     setValueAndMark({
       control: this.yFieldForm.controls['yField'],
       value: this.chart.yField
+    });
+
+    setValueAndMark({
+      control: this.sizeFieldForm.controls['sizeField'],
+      value: this.chart.sizeField
     });
 
     setValueAndMark({
@@ -1437,6 +1447,15 @@ export class ChartEditorComponent implements OnChanges {
     let yField = this.yFieldForm.controls['yField'].value;
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.yField = yField;
+    this.mconfigService.navCreateTempMconfig({
+      newMconfig: newMconfig
+    });
+  }
+
+  sizeFieldChange() {
+    let sizeField = this.sizeFieldForm.controls['sizeField'].value;
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.sizeField = sizeField;
     this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });

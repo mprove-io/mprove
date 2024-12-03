@@ -7,6 +7,8 @@ import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
 export const CHART_DEFAULT_TYPE = ChartTypeEnum.Table;
 export const CHART_DEFAULT_TITLE = 'Title';
 
+export const CHART_DEFAULT_SIZE_FIELD_VALUE = 'size_field_value';
+
 export const CHART_DEFAULT_INTERPOLATION = ChartInterpolationEnum.Linear;
 export const CHART_DEFAULT_COLOR_SCHEME = ChartColorSchemeEnum.Soft;
 export const CHART_DEFAULT_SCHEME_TYPE = ChartSchemeTypeEnum.Ordinal;
