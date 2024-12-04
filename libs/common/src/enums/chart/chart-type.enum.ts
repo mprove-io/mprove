@@ -1,4 +1,5 @@
 export enum ChartTypeEnum {
+  ELine = 'e_line',
   // if remove _ then check for split('_') in code
   AgLine = 'ag_line',
   AgBar = 'ag_bar',

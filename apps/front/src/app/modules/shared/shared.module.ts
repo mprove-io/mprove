@@ -7,6 +7,7 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { AgChartsModule } from 'ag-charts-angular';
 import { MonacoEditorModule } from 'ng-monaco-editor';
 import { ColorSketchModule } from 'ngx-color/sketch';
+import { NgxEchartsModule } from 'ngx-echarts';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { AvatarComponent } from './avatar/avatar.component';
 import { BricksComponent } from './bricks/bricks.component';
@@ -197,7 +198,10 @@ let sharedComponents = [
     NgxSpinnerModule,
     TippyDirective,
     MonacoEditorModule,
-    AgChartsModule
+    AgChartsModule,
+    NgxEchartsModule.forRoot({
+      echarts: () => import('echarts')
+    })
   ],
   exports: [...sharedComponents, ...pipesArray],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

@@ -291,6 +291,11 @@ export class ModelComponent implements OnInit, OnDestroy {
       iconPath: 'assets/charts/table.svg'
     },
     {
+      label: 'E Line',
+      value: common.ChartTypeEnum.ELine,
+      iconPath: 'assets/charts/line.svg'
+    },
+    {
       label: 'Ag Line',
       value: common.ChartTypeEnum.AgLine,
       iconPath: 'assets/charts/line.svg'

@@ -601,14 +601,16 @@
                   *ngIf="mconfig?.select.length > 0"
                   class="flex h-full w-2 flex-1 flex-row items-start justify-center space-x-5"
                 >
-                  <m-chart-view
-                    *ngIf="mconfig?.chart"
-                    class="h-full w-2/3 overflow-auto"
-                    [mconfigFields]="mconfig.fields"
-                    [qData]="qData"
-                    [chart]="mconfig.chart"
-                    [queryStatus]="query.status"
-                  ></m-chart-view>
+                  <div class="h-full w-full overflow-auto">
+                    <m-chart-view
+                      *ngIf="mconfig?.chart"
+                      class="h-full w-full"
+                      [mconfigFields]="mconfig.fields"
+                      [qData]="qData"
+                      [chart]="mconfig.chart"
+                      [queryStatus]="query.status"
+                    ></m-chart-view>
+                  </div>
 
                   <div
                     class="h-full w-1/3 flex-shrink-0 overflow-auto border-l"

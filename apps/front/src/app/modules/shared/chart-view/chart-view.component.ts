@@ -14,6 +14,7 @@ import {
   AgPieSeriesOptions
 } from 'ag-charts-community';
 import { formatLocale } from 'd3-format';
+import { EChartsInitOpts, EChartsOption } from 'echarts';
 import { getChartCurve } from '~front/app/functions/get-chart-curve';
 import { getChartScheme } from '~front/app/functions/get-chart-scheme';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
@@ -31,9 +32,15 @@ export class ChartViewComponent implements OnChanges {
   chartTypeEnum = common.ChartTypeEnum;
   chartSchemeTypeEnum = common.ChartSchemeTypeEnum;
   queryStatusEnum = common.QueryStatusEnum;
+
   chartOptions: AgChartOptions;
 
+  eChartInitOpts: any;
+  eChartOptions: EChartsOption;
+
   // isInitialized = false;
+
+  eChartTypes = [common.ChartTypeEnum.ELine];
 
   agChartTypes = [
     common.ChartTypeEnum.AgLine,
@@ -123,6 +130,34 @@ export class ChartViewComponent implements OnChanges {
     // let seriesElement;
 
     // this.setAgChartsDefaults();
+
+    let initOpts: EChartsInitOpts = {
+      renderer: 'svg'
+    };
+
+    this.eChartInitOpts = initOpts;
+
+    this.eChartOptions = {
+      // grid: {
+      //   left: '0%',
+      //   right: '0%',
+      //   top: '0%',
+      //   bottom: '0%'
+      // },
+      xAxis: {
+        type: 'category',
+        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [
+        {
+          data: [820, 932, 901, 934, 1290, 1330, 1320],
+          type: 'line'
+        }
+      ]
+    };
 
     this.chartOptions = {};
 
