@@ -7,9 +7,55 @@ import { RData } from './query.service';
 export class DataService {
   constructor() {}
 
-  isNumber(str: string) {
-    const num = Number(str);
-    return typeof str === 'string' && str.trim() !== '' && !isNaN(num);
+  // isNumber(v: string) {
+  //   const num = Number(v);
+  //   return typeof v === 'string' && v.trim() !== '' && !isNaN(num);
+  // }
+
+  private isNumber(v: unknown): boolean {
+    if (typeof v === 'number') {
+      return !isNaN(v) && isFinite(v);
+    }
+
+    if (typeof v === 'string') {
+      const trimmed = v.trim();
+      if (trimmed === '') return false;
+      return !isNaN(Number(trimmed)) && isFinite(Number(trimmed));
+    }
+
+    return false;
+  }
+
+  makeEData(item: { qData: RData[]; xField: common.MconfigField }) {
+    let { qData, xField } = item;
+
+    let eData = new Array(qData.length);
+
+    qData.forEach(row => {
+      let resRow: { [k: string]: any } = {};
+
+      Object.keys(row).forEach(key => {
+        let cell = row[key];
+
+        if (
+          xField.result === common.FieldResultEnum.Ts &&
+          xField.sqlName === cell.id
+        ) {
+          let xName = xField.sqlName;
+          let xValueFn = this.getTsValueFn(xName);
+
+          resRow[cell.id] = xValueFn(row, xName);
+        } else if (this.isNumber(cell.value)) {
+          resRow[cell.id] = Number(cell.value);
+        } else {
+          resRow[cell.id] = cell.value;
+        }
+      });
+
+      eData.push(resRow);
+    });
+
+    return eData;
   }
 
   makeAgData(item: { qData: RData[]; xField: common.MconfigField }) {
