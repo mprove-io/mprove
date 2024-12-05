@@ -4,7 +4,7 @@ export enum ChartTypeEnum {
   ELine = 'e_line',
   EBar = 'e_bar',
   EScatter = 'e_scatter',
-  EBubble = 'e_effect_scatter',
+  // EBubble = 'e_effect_scatter',
   EPie = 'e_pie',
   EHeatMap = 'e_heatmap',
   ETreeMap = 'e_treemap',

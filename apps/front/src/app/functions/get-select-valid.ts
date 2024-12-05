@@ -98,7 +98,7 @@ export function getSelectValid(item: {
     chart.type === common.ChartTypeEnum.ELine ||
     chart.type === common.ChartTypeEnum.EBar ||
     chart.type === common.ChartTypeEnum.EScatter ||
-    chart.type === common.ChartTypeEnum.EBubble ||
+    // chart.type === common.ChartTypeEnum.EBubble ||
     chart.type === common.ChartTypeEnum.AgLine ||
     chart.type === common.ChartTypeEnum.AgArea ||
     chart.type === common.ChartTypeEnum.AgBar ||

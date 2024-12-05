@@ -64,7 +64,7 @@ export class ChartViewComponent implements OnChanges {
     common.ChartTypeEnum.ELine,
     common.ChartTypeEnum.EBar,
     common.ChartTypeEnum.EScatter,
-    common.ChartTypeEnum.EBubble,
+    // common.ChartTypeEnum.EBubble,
     common.ChartTypeEnum.EPie,
     common.ChartTypeEnum.EHeatMap,
     common.ChartTypeEnum.ETreeMap,
@@ -74,8 +74,8 @@ export class ChartViewComponent implements OnChanges {
   eChartsMultiChartTypes = [
     common.ChartTypeEnum.ELine,
     common.ChartTypeEnum.EBar,
-    common.ChartTypeEnum.EScatter,
-    common.ChartTypeEnum.EBubble
+    common.ChartTypeEnum.EScatter
+    // common.ChartTypeEnum.EBubble
     // common.ChartTypeEnum.EPie,
     // common.ChartTypeEnum.EHeatMap,
     // common.ChartTypeEnum.ETreeMap,

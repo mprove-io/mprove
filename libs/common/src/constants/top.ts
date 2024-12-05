@@ -201,7 +201,7 @@ export const CHART_TYPE_VALUES = [
   enums.ChartTypeEnum.ELine,
   enums.ChartTypeEnum.EBar,
   enums.ChartTypeEnum.EScatter,
-  enums.ChartTypeEnum.EBubble,
+  // enums.ChartTypeEnum.EBubble,
   enums.ChartTypeEnum.EPie,
   enums.ChartTypeEnum.EHeatMap,
   enums.ChartTypeEnum.ETreeMap,

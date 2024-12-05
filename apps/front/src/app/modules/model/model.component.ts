@@ -306,11 +306,11 @@ export class ModelComponent implements OnInit, OnDestroy {
       value: common.ChartTypeEnum.EScatter,
       iconPath: 'assets/charts/scatter.svg'
     },
-    {
-      label: 'E Bubble',
-      value: common.ChartTypeEnum.EBubble,
-      iconPath: 'assets/charts/bubble.svg'
-    },
+    // {
+    //   label: 'E Bubble',
+    //   value: common.ChartTypeEnum.EBubble,
+    //   iconPath: 'assets/charts/bubble.svg'
+    // },
     {
       label: 'E Pie',
       value: common.ChartTypeEnum.EPie,
