@@ -290,11 +290,50 @@ export class ModelComponent implements OnInit, OnDestroy {
       value: common.ChartTypeEnum.Table,
       iconPath: 'assets/charts/table.svg'
     },
+    //
     {
       label: 'E Line',
       value: common.ChartTypeEnum.ELine,
       iconPath: 'assets/charts/line.svg'
     },
+    {
+      label: 'E Bar',
+      value: common.ChartTypeEnum.EBar,
+      iconPath: 'assets/charts/bar_vertical.svg'
+    },
+    {
+      label: 'E Scatter',
+      value: common.ChartTypeEnum.EScatter,
+      iconPath: 'assets/charts/scatter.svg'
+    },
+    {
+      label: 'E Bubble',
+      value: common.ChartTypeEnum.EBubble,
+      iconPath: 'assets/charts/bubble.svg'
+    },
+    {
+      label: 'E Pie',
+      value: common.ChartTypeEnum.EPie,
+      iconPath: 'assets/charts/pie.svg'
+    },
+    {
+      label: 'E Heat Map',
+      value: common.ChartTypeEnum.HeatMap,
+      iconPath: 'assets/charts/heat_map.svg'
+    },
+    {
+      label: 'E Tree Map',
+      value: common.ChartTypeEnum.TreeMap,
+      iconPath: 'assets/charts/tree_map.svg'
+    },
+    {
+      label: 'E Gauge',
+      value: common.ChartTypeEnum.Gauge,
+      iconPath: 'assets/charts/gauge.svg'
+    },
+    //
+    //
+    //
     {
       label: 'Ag Line',
       value: common.ChartTypeEnum.AgLine,
@@ -330,6 +369,9 @@ export class ModelComponent implements OnInit, OnDestroy {
       value: common.ChartTypeEnum.AgDonut,
       iconPath: 'assets/charts/pie_advanced.svg'
     },
+    //
+    //
+    //
     {
       label: 'Bar Vertical',
       value: common.ChartTypeEnum.BarVertical,

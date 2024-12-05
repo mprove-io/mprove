@@ -196,6 +196,17 @@ export const FILTER_RESULT_VALUES = [
 ];
 
 export const CHART_TYPE_VALUES = [
+  enums.ChartTypeEnum.Table,
+  //
+  enums.ChartTypeEnum.ELine,
+  enums.ChartTypeEnum.EBar,
+  enums.ChartTypeEnum.EScatter,
+  enums.ChartTypeEnum.EBubble,
+  enums.ChartTypeEnum.EPie,
+  enums.ChartTypeEnum.EHeatMap,
+  enums.ChartTypeEnum.ETreeMap,
+  enums.ChartTypeEnum.EGauge,
+  //
   enums.ChartTypeEnum.AgLine,
   enums.ChartTypeEnum.AgArea,
   enums.ChartTypeEnum.AgBar,
@@ -223,7 +234,6 @@ export const CHART_TYPE_VALUES = [
   enums.ChartTypeEnum.Pie,
   enums.ChartTypeEnum.PieAdvanced,
   enums.ChartTypeEnum.PieGrid,
-  enums.ChartTypeEnum.Table,
   enums.ChartTypeEnum.TreeMap
 ];
 

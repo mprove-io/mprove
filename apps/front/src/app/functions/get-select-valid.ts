@@ -95,6 +95,10 @@ export function getSelectValid(item: {
         'Measure or Calculation field must be selected for this chart type';
     }
   } else if (
+    chart.type === common.ChartTypeEnum.ELine ||
+    chart.type === common.ChartTypeEnum.EBar ||
+    chart.type === common.ChartTypeEnum.EScatter ||
+    chart.type === common.ChartTypeEnum.EBubble ||
     chart.type === common.ChartTypeEnum.AgLine ||
     chart.type === common.ChartTypeEnum.AgArea ||
     chart.type === common.ChartTypeEnum.AgBar ||
@@ -121,7 +125,8 @@ export function getSelectValid(item: {
         'A maximum of 2 dimension fields can be selected for this chart type';
     } else if (
       selectedDimensionsIsResultNumberOrTs.length === 0 &&
-      (chart.type === common.ChartTypeEnum.AgLine ||
+      (chart.type === common.ChartTypeEnum.ELine ||
+        chart.type === common.ChartTypeEnum.AgLine ||
         chart.type === common.ChartTypeEnum.AgArea ||
         chart.type === common.ChartTypeEnum.Line ||
         chart.type === common.ChartTypeEnum.Area ||
@@ -135,7 +140,8 @@ export function getSelectValid(item: {
       common.isDefined(xField) &&
       xField.result !== common.FieldResultEnum.Ts &&
       xField.result !== common.FieldResultEnum.Number &&
-      (chart.type === common.ChartTypeEnum.AgLine ||
+      (chart.type === common.ChartTypeEnum.ELine ||
+        chart.type === common.ChartTypeEnum.AgLine ||
         chart.type === common.ChartTypeEnum.AgArea ||
         chart.type === common.ChartTypeEnum.Line ||
         chart.type === common.ChartTypeEnum.Area ||

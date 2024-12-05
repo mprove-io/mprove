@@ -1,6 +1,16 @@
 export enum ChartTypeEnum {
-  ELine = 'e_line',
+  Table = 'table',
   // if remove _ then check for split('_') in code
+  ELine = 'e_line',
+  EBar = 'e_bar',
+  EScatter = 'e_scatter',
+  EBubble = 'e_effect_scatter',
+  EPie = 'e_pie',
+  EHeatMap = 'e_heatmap',
+  ETreeMap = 'e_treemap',
+  EGauge = 'e_gauge',
+  // ERadar = 'e_radar',
+  //
   AgLine = 'ag_line',
   AgBar = 'ag_bar',
   AgArea = 'ag_area',
@@ -9,7 +19,6 @@ export enum ChartTypeEnum {
   AgPie = 'ag_pie',
   AgDonut = 'ag_donut',
   //
-  Table = 'table',
   BarVertical = 'bar_vertical',
   BarVerticalGrouped = 'bar_vertical_grouped',
   BarVerticalStacked = 'bar_vertical_stacked',

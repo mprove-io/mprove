@@ -60,9 +60,27 @@ export class ChartViewComponent implements OnChanges {
     // common.ChartTypeEnum.AgDonut
   ];
 
-  eChartsTypes = [common.ChartTypeEnum.ELine];
+  eChartsTypes = [
+    common.ChartTypeEnum.ELine,
+    common.ChartTypeEnum.EBar,
+    common.ChartTypeEnum.EScatter,
+    common.ChartTypeEnum.EBubble,
+    common.ChartTypeEnum.EPie,
+    common.ChartTypeEnum.EHeatMap,
+    common.ChartTypeEnum.ETreeMap,
+    common.ChartTypeEnum.EGauge
+  ];
 
-  eChartsMultiChartTypes = [common.ChartTypeEnum.ELine];
+  eChartsMultiChartTypes = [
+    common.ChartTypeEnum.ELine,
+    common.ChartTypeEnum.EBar,
+    common.ChartTypeEnum.EScatter,
+    common.ChartTypeEnum.EBubble
+    // common.ChartTypeEnum.EPie,
+    // common.ChartTypeEnum.EHeatMap,
+    // common.ChartTypeEnum.ETreeMap,
+    // common.ChartTypeEnum.EGauge,
+  ];
 
   @Input()
   mconfigFields: common.MconfigField[];
