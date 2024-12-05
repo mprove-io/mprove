@@ -216,8 +216,9 @@ export class ChartViewComponent implements OnChanges {
     // echarts - axes
 
     if (
-      this.eChartsTypes.indexOf(this.chart.type) > -1 &&
-      this.chart.type !== common.ChartTypeEnum.EPie
+      this.chart.type === common.ChartTypeEnum.ELine ||
+      this.chart.type === common.ChartTypeEnum.EBar ||
+      this.chart.type === common.ChartTypeEnum.EScatter
     ) {
       this.eChartOptions.xAxis = {
         type:
@@ -236,6 +237,19 @@ export class ChartViewComponent implements OnChanges {
     // echarts - series
 
     if (this.chart.type === common.ChartTypeEnum.EPie) {
+      this.eChartOptions.series = [
+        {
+          type: this.chart.type.split('_')[1] as any,
+          name: yField.sqlName,
+          data: this.eData.map((y: any) => ({
+            value: y[yField.sqlName],
+            name: y[xField.sqlName]
+          }))
+          // ,
+          // radius: '50%'
+        }
+      ];
+    } else if (this.chart.type === common.ChartTypeEnum.EGauge) {
       this.eChartOptions.series = [
         {
           type: this.chart.type.split('_')[1] as any,
