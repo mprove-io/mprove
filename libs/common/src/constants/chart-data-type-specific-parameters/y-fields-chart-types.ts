@@ -6,7 +6,7 @@ export const yFieldsChartTypes = [
   enums.ChartTypeEnum.EScatter,
   // enums.ChartTypeEnum.EBubble,
   // enums.ChartTypeEnum.EPie,
-  // enums.ChartTypeEnum.EHeatMap,
+  enums.ChartTypeEnum.EHeatMap,
   // enums.ChartTypeEnum.ETreeMap,
   // enums.ChartTypeEnum.EGauge,
   //

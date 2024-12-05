@@ -29,7 +29,7 @@ export class DataService {
   makeEData(item: { qData: RData[]; xField: common.MconfigField }) {
     let { qData, xField } = item;
 
-    let eData = new Array(qData.length);
+    let eData: any[] = [];
 
     qData.forEach(row => {
       let resRow: { [k: string]: any } = {};

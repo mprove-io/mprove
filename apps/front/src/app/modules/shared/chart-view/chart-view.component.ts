@@ -186,6 +186,95 @@ export class ChartViewComponent implements OnChanges {
     let yField = this.mconfigFields.find(v => v.id === this.chart.yField);
     let sizeField = this.mconfigFields.find(v => v.id === this.chart.sizeField);
 
+    // echarts - data
+
+    if (
+      this.eChartsMultiChartTypes.indexOf(this.chart.type) > -1 &&
+      common.isDefined(this.chart.multiField)
+    ) {
+      this.multi =
+        this.qData.length > 0 &&
+        common.isDefined(this.chart.xField) &&
+        common.isDefined(this.chart.yFields) &&
+        this.chart.yFields.length > 0
+          ? this.dataService.getMultiData({
+              selectFields: this.mconfigFields,
+              xFieldId: this.chart.xField,
+              yFieldsIds: this.chart.yFields,
+              multiFieldId: this.chart.multiField,
+              data: this.qData,
+              chartType: this.chart.type
+            })
+          : [];
+    } else if (this.eChartsTypes.indexOf(this.chart.type) > -1) {
+      this.eData = this.dataService.makeEData({
+        qData: this.qData,
+        xField: xField
+      });
+    }
+
+    // echarts - axes
+
+    if (
+      this.eChartsTypes.indexOf(this.chart.type) > -1 &&
+      this.chart.type !== common.ChartTypeEnum.EPie
+    ) {
+      this.eChartOptions.xAxis = {
+        type:
+          xField.result === common.FieldResultEnum.Ts
+            ? 'time'
+            : xField.result === common.FieldResultEnum.Number
+            ? 'value'
+            : 'category'
+      };
+
+      this.eChartOptions.yAxis = {
+        type: 'value'
+      };
+    }
+
+    // echarts - series
+
+    if (this.chart.type === common.ChartTypeEnum.EPie) {
+      this.eChartOptions.series = [
+        {
+          type: this.chart.type.split('_')[1] as any,
+          name: yField.sqlName,
+          data: this.eData.map((y: any) => ({
+            value: y[yField.sqlName],
+            name: y[xField.sqlName]
+          }))
+          // ,
+          // radius: '50%'
+        }
+      ];
+    } else if (this.eChartsMultiChartTypes.indexOf(this.chart.type) > -1) {
+      this.eChartOptions.series = common.isDefined(this.chart.multiField)
+        ? this.multi.map(el => {
+            let a = {
+              type: this.chart.type.split('_')[1] as any,
+              name: el.name,
+              data: el.series.map((x: any) => [x.name, x.value])
+            };
+
+            return a;
+          })
+        : this.chart.yFields.map(x => {
+            let myYField = this.mconfigFields.find(f => f.id === x);
+
+            let a = {
+              type: this.chart.type.split('_')[1] as any,
+              name: myYField.sqlName,
+              data: this.eData.map((y: any) => [
+                y[xField.sqlName],
+                y[myYField.sqlName]
+              ])
+            };
+
+            return a;
+          });
+    }
+
     // data
 
     if (
@@ -300,50 +389,6 @@ export class ChartViewComponent implements OnChanges {
         qData: this.qData,
         xField: xField
       });
-    } else if (this.eChartsMultiChartTypes.indexOf(this.chart.type) > -1) {
-      if (common.isUndefined(this.chart.multiField)) {
-        this.eData = this.dataService.makeEData({
-          qData: this.qData,
-          xField: xField
-        });
-      } else {
-        this.multi =
-          this.qData.length > 0 &&
-          common.isDefined(this.chart.xField) &&
-          common.isDefined(this.chart.yFields) &&
-          this.chart.yFields.length > 0
-            ? this.dataService.getMultiData({
-                selectFields: this.mconfigFields,
-                xFieldId: this.chart.xField,
-                yFieldsIds: this.chart.yFields,
-                multiFieldId: this.chart.multiField,
-                data: this.qData,
-                chartType: this.chart.type
-              })
-            : [];
-      }
-    } else if (this.eChartsTypes.indexOf(this.chart.type) > -1) {
-      this.eData = this.dataService.makeEData({
-        qData: this.qData,
-        xField: xField
-      });
-    }
-
-    // echarts - axes
-
-    if (this.eChartsTypes.indexOf(this.chart.type) > -1) {
-      this.eChartOptions.xAxis = {
-        type:
-          xField.result === common.FieldResultEnum.Ts
-            ? 'time'
-            : xField.result === common.FieldResultEnum.Number
-            ? 'value'
-            : 'category'
-      };
-
-      this.eChartOptions.yAxis = {
-        type: 'value'
-      };
     }
 
     // ag chart - axes
@@ -452,47 +497,6 @@ export class ChartViewComponent implements OnChanges {
           yKey: yField.sqlName
         }
       ];
-    } else if (this.eChartsMultiChartTypes.indexOf(this.chart.type) > -1) {
-      this.eChartOptions.series = common.isDefined(this.chart.multiField)
-        ? this.multi.map(el => {
-            let a = {
-              type: this.chart.type.split('_')[1] as any,
-              name: el.name,
-              data: el.series.map((x: any) => [x.name, x.value])
-            };
-
-            // if (this.chart.type === common.ChartTypeEnum.AgBubble) {
-            //   (a as AgBubbleSeriesOptions).sizeKey = common.isDefined(
-            //     sizeField?.sqlName
-            //   )
-            //     ? sizeField?.sqlName
-            //     : common.CHART_DEFAULT_SIZE_FIELD_VALUE;
-            // }
-
-            return a;
-          })
-        : this.chart.yFields.map(x => {
-            let myYField = this.mconfigFields.find(f => f.id === x);
-
-            let a = {
-              type: this.chart.type.split('_')[1] as any,
-              name: myYField.sqlName,
-              data: this.eData.map((y: any) => [
-                y[xField.sqlName],
-                y[myYField.sqlName]
-              ])
-            };
-
-            // if (this.chart.type === common.ChartTypeEnum.AgBubble) {
-            //   (a as AgBubbleSeriesOptions).sizeKey = common.isDefined(
-            //     sizeField?.sqlName
-            //   )
-            //     ? sizeField?.sqlName
-            //     : common.CHART_DEFAULT_SIZE_FIELD_VALUE;
-            // }
-
-            return a;
-          });
     }
 
     console.log('this.eData:');

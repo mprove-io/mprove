@@ -1,6 +1,15 @@
 import { enums } from '~common/barrels/enums';
 
 export const yFieldChartTypes = [
+  // enums.ChartTypeEnum.ELine,
+  // enums.ChartTypeEnum.EBar,
+  // enums.ChartTypeEnum.EScatter,
+  // enums.ChartTypeEnum.EBubble,
+  enums.ChartTypeEnum.EPie,
+  // enums.ChartTypeEnum.EHeatMap,
+  enums.ChartTypeEnum.ETreeMap,
+  enums.ChartTypeEnum.EGauge,
+  //
   // enums.ChartTypeEnum.AgLine,
   // enums.ChartTypeEnum.AgArea,
   // enums.ChartTypeEnum.AgBar,
@@ -8,7 +17,7 @@ export const yFieldChartTypes = [
   // enums.ChartTypeEnum.AgBubble,
   enums.ChartTypeEnum.AgPie,
   enums.ChartTypeEnum.AgDonut,
-  // ===
+  //
   enums.ChartTypeEnum.BarVertical,
   enums.ChartTypeEnum.BarHorizontal,
   enums.ChartTypeEnum.Pie,

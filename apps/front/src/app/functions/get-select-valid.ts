@@ -53,6 +53,15 @@ export function getSelectValid(item: {
   if (chart.type === common.ChartTypeEnum.Table) {
     //
   } else if (
+    // chart.type === common.ChartTypeEnum.ELine,
+    // chart.type === common.ChartTypeEnum.EBar,
+    // chart.type === common.ChartTypeEnum.EScatter,
+    // chart.type === common.ChartTypeEnum.EBubble,
+    chart.type === common.ChartTypeEnum.EPie ||
+    // chart.type === common.ChartTypeEnum.EHeatMap,
+    chart.type === common.ChartTypeEnum.ETreeMap ||
+    chart.type === common.ChartTypeEnum.EGauge ||
+    //
     chart.type === common.ChartTypeEnum.AgPie ||
     chart.type === common.ChartTypeEnum.AgDonut ||
     chart.type === common.ChartTypeEnum.BarVertical ||

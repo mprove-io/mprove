@@ -182,6 +182,11 @@ body {
   max-height: 45vh;
 }
 
+.ng-select.chart-type-select .ng-select-container {
+  cursor: pointer;
+  // height: 44px;
+}
+
 .ng-dropdown-panel.chart-type-select .scroll-host {
   max-height: 45vh;
 }
