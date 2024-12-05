@@ -144,7 +144,11 @@
         #multiFieldSelect
         data-cy="multiFieldSelect"
         class="custom text-base focus:outline-none"
-        [items]="sortedDimensions"
+        [items]="
+          nullableMultiFieldChartTypes.indexOf(chart.type) > -1
+            ? sortedDimensionsPlusEmpty
+            : sortedDimensions
+        "
         [clearable]="false"
         [searchable]="false"
         (change)="multiFieldChange()"

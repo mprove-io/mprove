@@ -39,6 +39,7 @@ export class ChartEditorComponent implements OnChanges {
   yFieldsChartTypes = common.yFieldsChartTypes;
   sizeFieldChartTypes = common.sizeFieldChartTypes;
   multiFieldChartTypes = common.multiFieldChartTypes;
+  nullableMultiFieldChartTypes = common.nullableMultiFieldChartTypes;
   valueFieldChartTypes = common.valueFieldChartTypes;
   previousValueFieldChartTypes = common.previousValueFieldChartTypes;
 
@@ -523,7 +524,7 @@ export class ChartEditorComponent implements OnChanges {
       x => x.fieldClass === common.FieldClassEnum.Dimension
     );
 
-    this.sortedDimensionsPlusEmpty = [...this.sortedDimensions, emptyColumn];
+    this.sortedDimensionsPlusEmpty = [emptyColumn, ...this.sortedDimensions];
 
     this.sortedMeasuresAndCalculations = this.mconfigFields.filter(
       x =>
@@ -1414,7 +1415,10 @@ export class ChartEditorComponent implements OnChanges {
 
     let newMconfig = this.structService.makeMconfig();
 
-    if (common.multiFieldChartTypes.indexOf(newMconfig.chart.type) > -1) {
+    if (
+      common.multiFieldChartTypes.indexOf(newMconfig.chart.type) > -1 &&
+      common.nullableMultiFieldChartTypes.indexOf(newMconfig.chart.type) < 0
+    ) {
       let newMultiFieldValue = this.sortedDimensions.filter(
         x => x.id !== xField
       )[0].id;
@@ -1452,18 +1456,25 @@ export class ChartEditorComponent implements OnChanges {
   multiFieldChange() {
     let multiField = this.multiFieldForm.controls['multiField'].value;
 
-    let newXFieldValue = this.sortedDimensions.filter(
-      x => x.id !== multiField
-    )[0].id;
-
-    setValueAndMark({
-      control: this.xFieldForm.controls['xField'],
-      value: newXFieldValue
-    });
-
     let newMconfig = this.structService.makeMconfig();
+
+    // if (common.isDefinedAndNotEmpty(multiField)) {
+    if (
+      common.nullableMultiFieldChartTypes.indexOf(newMconfig.chart.type) < 0
+    ) {
+      let newXFieldValue = this.sortedDimensions.filter(
+        x => x.id !== multiField
+      )[0].id;
+
+      setValueAndMark({
+        control: this.xFieldForm.controls['xField'],
+        value: newXFieldValue
+      });
+
+      newMconfig.chart.xField = newXFieldValue;
+    }
+
     newMconfig.chart.multiField = multiField;
-    newMconfig.chart.xField = newXFieldValue;
     this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });

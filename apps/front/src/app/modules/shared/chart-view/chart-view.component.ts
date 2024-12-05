@@ -236,6 +236,18 @@ export class ChartViewComponent implements OnChanges {
 
     // echarts - series
 
+    // if (this.chart.type === common.ChartTypeEnum.EScatter) {
+    //   this.eChartOptions.series = [
+    //     {
+    //       type: this.chart.type.split('_')[1] as any,
+    //       name: yField.sqlName,
+    //       data: this.eData.map((y: any) => [
+    //         y[xField.sqlName],
+    //         y[yField.sqlName]
+    //       ])
+    //     }
+    //   ];
+    // } else
     if (this.chart.type === common.ChartTypeEnum.EPie) {
       this.eChartOptions.series = [
         {
