@@ -165,7 +165,8 @@ export class ChartViewComponent implements OnChanges {
         right: '5%',
         top: '10%',
         bottom: '10%'
-      }
+      },
+      tooltip: {}
     };
 
     this.chartOptions = {};

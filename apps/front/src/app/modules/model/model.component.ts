@@ -318,17 +318,17 @@ export class ModelComponent implements OnInit, OnDestroy {
     },
     {
       label: 'E Heat Map',
-      value: common.ChartTypeEnum.HeatMap,
+      value: common.ChartTypeEnum.EHeatMap,
       iconPath: 'assets/charts/heat_map.svg'
     },
     {
       label: 'E Tree Map',
-      value: common.ChartTypeEnum.TreeMap,
+      value: common.ChartTypeEnum.ETreeMap,
       iconPath: 'assets/charts/tree_map.svg'
     },
     {
       label: 'E Gauge',
-      value: common.ChartTypeEnum.Gauge,
+      value: common.ChartTypeEnum.EGauge,
       iconPath: 'assets/charts/gauge.svg'
     },
     //

@@ -1414,19 +1414,7 @@ export class ChartEditorComponent implements OnChanges {
 
     let newMconfig = this.structService.makeMconfig();
 
-    if (
-      newMconfig.chart.type === common.ChartTypeEnum.Area ||
-      newMconfig.chart.type === common.ChartTypeEnum.AreaNormalized ||
-      newMconfig.chart.type === common.ChartTypeEnum.AreaStacked ||
-      newMconfig.chart.type === common.ChartTypeEnum.BarHorizontalGrouped ||
-      newMconfig.chart.type === common.ChartTypeEnum.BarHorizontalNormalized ||
-      newMconfig.chart.type === common.ChartTypeEnum.BarHorizontalStacked ||
-      newMconfig.chart.type === common.ChartTypeEnum.BarVerticalGrouped ||
-      newMconfig.chart.type === common.ChartTypeEnum.BarVerticalNormalized ||
-      newMconfig.chart.type === common.ChartTypeEnum.BarVerticalStacked ||
-      newMconfig.chart.type === common.ChartTypeEnum.HeatMap ||
-      newMconfig.chart.type === common.ChartTypeEnum.Line
-    ) {
+    if (common.multiFieldChartTypes.indexOf(newMconfig.chart.type) > -1) {
       let newMultiFieldValue = this.sortedDimensions.filter(
         x => x.id !== xField
       )[0].id;
