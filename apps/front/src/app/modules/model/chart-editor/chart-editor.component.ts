@@ -120,6 +120,7 @@ export class ChartEditorComponent implements OnChanges {
 
   dimensionsMeasuresCalculations: common.MconfigField[];
 
+  numbersDimensionsMeasuresCalculationsPlusEmpty: common.MconfigField[];
   numbersDimensionsMeasuresCalculations: common.MconfigField[];
 
   dimensions: common.MconfigField[];
@@ -541,6 +542,11 @@ export class ChartEditorComponent implements OnChanges {
           common.FieldClassEnum.Calculation
         ].indexOf(x.fieldClass) > -1
     );
+
+    this.numbersDimensionsMeasuresCalculationsPlusEmpty = [
+      emptyColumn,
+      ...this.numbersDimensionsMeasuresCalculations
+    ];
 
     this.dimensions = this.mconfigFields.filter(
       x => x.fieldClass === common.FieldClassEnum.Dimension

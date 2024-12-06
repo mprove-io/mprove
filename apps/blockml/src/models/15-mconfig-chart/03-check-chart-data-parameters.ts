@@ -303,26 +303,26 @@ export function checkChartDataParameters<T extends types.dzType>(
             fieldId: tile.data.size_field
           });
 
-          if (
-            field.fieldClass !== common.FieldClassEnum.Measure &&
-            field.fieldClass !== common.FieldClassEnum.Calculation &&
-            tile.type !== common.ChartTypeEnum.EScatter
-          ) {
-            item.errors.push(
-              new BmError({
-                title: common.ErTitleEnum.TILE_DATA_WRONG_SIZE_FIELD_CLASS,
-                message: `"${common.ParameterEnum.SizeField}" must be a Measure or Calculation for this chart type`,
-                lines: [
-                  {
-                    line: tile.data.size_field_line_num,
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
+          // if (
+          //   field.fieldClass !== common.FieldClassEnum.Measure &&
+          //   field.fieldClass !== common.FieldClassEnum.Calculation &&
+          //   tile.type !== common.ChartTypeEnum.EScatter
+          // ) {
+          //   item.errors.push(
+          //     new BmError({
+          //       title: common.ErTitleEnum.TILE_DATA_WRONG_SIZE_FIELD_CLASS,
+          //       message: `"${common.ParameterEnum.SizeField}" must be a Measure or Calculation for this chart type`,
+          //       lines: [
+          //         {
+          //           line: tile.data.size_field_line_num,
+          //           name: x.fileName,
+          //           path: x.filePath
+          //         }
+          //       ]
+          //     })
+          //   );
+          //   return;
+          // }
         }
       }
 

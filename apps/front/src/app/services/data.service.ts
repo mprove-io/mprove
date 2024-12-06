@@ -58,148 +58,22 @@ export class DataService {
     return eData;
   }
 
-  makeAgData(item: { qData: RData[]; xField: common.MconfigField }) {
-    let { qData, xField } = item;
-    // console.log('xField ===========')
-    // console.log(xField)
-
-    // console.log('qData ===========')
-    // console.log(qData[0])
-
-    let newData = new Array(qData.length);
-
-    for (let i = 0; i < qData.length; i++) {
-      let row = qData[i];
-      let resRow: { [k: string]: any } = {};
-
-      for (const cellKey in row) {
-        if (Object.prototype.hasOwnProperty.call(row, cellKey)) {
-          let cell = row[cellKey];
-
-          if (
-            xField.result === common.FieldResultEnum.Ts &&
-            xField.sqlName === cell.id
-          ) {
-            let xName = xField.sqlName;
-            let xValueFn = this.getTsValueFn(xName);
-            resRow[cell.id] = xValueFn(row, xName);
-          } else if (this.isNumber(cell.value)) {
-            resRow[cell.id] = Number(cell.value);
-          } else {
-            resRow[cell.id] = cell.value;
-          }
-        }
-      }
-
-      resRow[common.CHART_DEFAULT_SIZE_FIELD_VALUE] = 1;
-
-      newData[i] = resRow;
-    }
-    // console.log('newData ===========')
-    // console.log(newData[0])
-    return newData;
-  }
-
-  getValueData(item: {
-    mconfigFields: common.MconfigField[];
-    data: RData[];
-    currentValueFieldId: string;
-    previousValueFieldId: string;
-  }) {
-    let { mconfigFields, data, currentValueFieldId, previousValueFieldId } =
-      item;
-
-    let currentValueField = mconfigFields.find(
-      f => f.id === currentValueFieldId
-    );
-
-    let currentValueName = currentValueField.sqlName;
-
-    let currentValue = convertToNumberOrNull(data[0][currentValueName].value);
-
-    let previousValueField;
-
-    previousValueField = mconfigFields.find(f => f.id === previousValueFieldId);
-
-    if (!previousValueField) {
-      return [currentValue, 0];
-    }
-
-    let previousValueName = previousValueField.sqlName;
-
-    let previousValue = convertToNumberOrNull(data[0][previousValueName].value);
-
-    return [currentValue, previousValue];
-  }
-
-  getSingleData(item: {
-    selectFields: common.MconfigField[];
-    data: RData[];
-    xFieldId: string;
-    yFieldId: string;
-  }) {
-    let { selectFields, data, xFieldId, yFieldId } = item;
-
-    let xField = selectFields.find(f => f.id === xFieldId);
-    let yField = selectFields.find(f => f.id === yFieldId);
-
-    let xName = xField.sqlName;
-    let yName = yField.sqlName;
-
-    let singleData = data.map((row: RData) => ({
-      name: common.isDefined(row[xName].value) ? `${row[xName].value}` : 'NULL',
-      value: convertToNumberOrNull(row[yName].value)
-    }));
-
-    return singleData;
-  }
-
-  getSingleDataForNumberCard(item: {
-    selectFields: common.MconfigField[];
-    data: any[];
-    xFieldId: string;
-    yFieldId: string;
-  }) {
-    let { selectFields, data, xFieldId, yFieldId } = item;
-
-    let xField = xFieldId
-      ? selectFields.find(f => f.id === xFieldId)
-      : undefined;
-
-    let yField = selectFields.find(f => f.id === yFieldId);
-
-    let xName = common.isDefined(xField) ? xField.sqlName : undefined;
-    let yName = yField.sqlName;
-
-    let singleData = data
-      ? data.map((row: RData) =>
-          Object.assign({
-            name: common.isDefined(xField)
-              ? common.isDefined(row[xName].value)
-                ? row[xName].value
-                : 'NULL'
-              : ' ',
-            value: convertToNumberOrNull(row[yName].value)
-          })
-        )
-      : [];
-
-    return singleData;
-  }
-
   getMultiData(item: {
     selectFields: common.MconfigField[];
     data: any[];
     multiFieldId: string;
     xFieldId: string;
+    sizeFieldId: string;
     yFieldsIds: string[];
-    chartType: common.ChartTypeEnum;
   }) {
-    // console.log("====item====")
-    // console.log(item);
-
-    let { selectFields, data, multiFieldId, xFieldId, yFieldsIds, chartType } =
-      item;
+    let {
+      selectFields,
+      data,
+      multiFieldId,
+      xFieldId,
+      sizeFieldId,
+      yFieldsIds
+    } = item;
 
     let xField = selectFields.find(f => f.id === xFieldId);
 
@@ -225,7 +99,7 @@ export class DataService {
         ? this.getTsValueFn(xName)
         : this.getRawValue;
 
-    let multiField = multiFieldId
+    let multiField = common.isDefined(multiFieldId)
       ? selectFields.find(f => f.id === multiFieldId)
       : undefined;
 
@@ -235,7 +109,42 @@ export class DataService {
 
     let multiName = multiField ? multiField.sqlName : undefined;
 
+    let sizeField = common.isDefined(sizeFieldId)
+      ? selectFields.find(f => f.id === sizeFieldId)
+      : undefined;
+
+    if (sizeField && !sizeField) {
+      return [];
+    }
+
+    let sizeName = sizeField ? sizeField.sqlName : undefined;
+
     let prepareData: any = {};
+
+    let addNorm = 0;
+    let sizeMin = 1;
+    let sizeMax = 1;
+
+    if (common.isDefined(sizeField)) {
+      let sizeValues = data
+        .map((x: RData) =>
+          this.isNumber(x[sizeField.sqlName].value)
+            ? Number(x[sizeField.sqlName].value)
+            : undefined
+        )
+        .filter(x => common.isDefined(x));
+
+      if (sizeValues.length > 0) {
+        sizeMin = Math.min(...sizeValues);
+        sizeMax = Math.max(...sizeValues);
+
+        if (sizeMin < 0) {
+          addNorm = 0 - sizeMin;
+          sizeMin = sizeMin + addNorm;
+          sizeMax = sizeMax + addNorm;
+        }
+      }
+    }
 
     data.forEach((row: RData) => {
       yFields.forEach(yField => {
@@ -266,14 +175,18 @@ export class DataService {
         if (row[xName]) {
           let xV = xValueFn(row, xName);
           let yV = row[yName].value;
+          let sV =
+            common.isDefined(sizeName) && this.isNumber(row[sizeName].value)
+              ? (Number(row[sizeName].value) + addNorm) / (sizeMax + sizeMin)
+              : 1;
 
           if (
-            [
-              common.ChartTypeEnum.Line,
-              common.ChartTypeEnum.Area,
-              common.ChartTypeEnum.AreaNormalized,
-              common.ChartTypeEnum.AreaStacked
-            ].indexOf(chartType) < 0 ||
+            // [
+            //   common.ChartTypeEnum.Line,
+            //   common.ChartTypeEnum.Area,
+            //   common.ChartTypeEnum.AreaNormalized,
+            //   common.ChartTypeEnum.AreaStacked
+            // ].indexOf(chartType) < 0 ||
             common.isDefined(xV)
           ) {
             let element = {
@@ -282,7 +195,8 @@ export class DataService {
                 : xField.result === common.FieldResultEnum.Number
                 ? convertToNumberOrNull(xV)
                 : xV,
-              value: convertToNumberOrNull(yV)
+              value: convertToNumberOrNull(yV),
+              sizeValue: sV
             };
 
             if (prepareData[key]) {
@@ -573,6 +487,135 @@ export class DataService {
     let date = new Date(parseInt(year, 10), 0, 1);
 
     return date;
+  }
+
+  makeAgData(item: { qData: RData[]; xField: common.MconfigField }) {
+    let { qData, xField } = item;
+    // console.log('xField ===========')
+    // console.log(xField)
+
+    // console.log('qData ===========')
+    // console.log(qData[0])
+
+    let newData = new Array(qData.length);
+
+    for (let i = 0; i < qData.length; i++) {
+      let row = qData[i];
+      let resRow: { [k: string]: any } = {};
+
+      for (const cellKey in row) {
+        if (Object.prototype.hasOwnProperty.call(row, cellKey)) {
+          let cell = row[cellKey];
+
+          if (
+            xField.result === common.FieldResultEnum.Ts &&
+            xField.sqlName === cell.id
+          ) {
+            let xName = xField.sqlName;
+            let xValueFn = this.getTsValueFn(xName);
+            resRow[cell.id] = xValueFn(row, xName);
+          } else if (this.isNumber(cell.value)) {
+            resRow[cell.id] = Number(cell.value);
+          } else {
+            resRow[cell.id] = cell.value;
+          }
+        }
+      }
+
+      resRow[common.CHART_DEFAULT_SIZE_FIELD_VALUE] = 1;
+
+      newData[i] = resRow;
+    }
+    // console.log('newData ===========')
+    // console.log(newData[0])
+    return newData;
+  }
+
+  getValueData(item: {
+    mconfigFields: common.MconfigField[];
+    data: RData[];
+    currentValueFieldId: string;
+    previousValueFieldId: string;
+  }) {
+    let { mconfigFields, data, currentValueFieldId, previousValueFieldId } =
+      item;
+
+    let currentValueField = mconfigFields.find(
+      f => f.id === currentValueFieldId
+    );
+
+    let currentValueName = currentValueField.sqlName;
+
+    let currentValue = convertToNumberOrNull(data[0][currentValueName].value);
+
+    let previousValueField;
+
+    previousValueField = mconfigFields.find(f => f.id === previousValueFieldId);
+
+    if (!previousValueField) {
+      return [currentValue, 0];
+    }
+
+    let previousValueName = previousValueField.sqlName;
+
+    let previousValue = convertToNumberOrNull(data[0][previousValueName].value);
+
+    return [currentValue, previousValue];
+  }
+
+  getSingleData(item: {
+    selectFields: common.MconfigField[];
+    data: RData[];
+    xFieldId: string;
+    yFieldId: string;
+  }) {
+    let { selectFields, data, xFieldId, yFieldId } = item;
+
+    let xField = selectFields.find(f => f.id === xFieldId);
+    let yField = selectFields.find(f => f.id === yFieldId);
+
+    let xName = xField.sqlName;
+    let yName = yField.sqlName;
+
+    let singleData = data.map((row: RData) => ({
+      name: common.isDefined(row[xName].value) ? `${row[xName].value}` : 'NULL',
+      value: convertToNumberOrNull(row[yName].value)
+    }));
+
+    return singleData;
+  }
+
+  getSingleDataForNumberCard(item: {
+    selectFields: common.MconfigField[];
+    data: any[];
+    xFieldId: string;
+    yFieldId: string;
+  }) {
+    let { selectFields, data, xFieldId, yFieldId } = item;
+
+    let xField = xFieldId
+      ? selectFields.find(f => f.id === xFieldId)
+      : undefined;
+
+    let yField = selectFields.find(f => f.id === yFieldId);
+
+    let xName = common.isDefined(xField) ? xField.sqlName : undefined;
+    let yName = yField.sqlName;
+
+    let singleData = data
+      ? data.map((row: RData) =>
+          Object.assign({
+            name: common.isDefined(xField)
+              ? common.isDefined(row[xName].value)
+                ? row[xName].value
+                : 'NULL'
+              : ' ',
+            value: convertToNumberOrNull(row[yName].value)
+          })
+        )
+      : [];
+
+    return singleData;
   }
 }
 

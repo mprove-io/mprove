@@ -1,3 +1,3 @@
 import { enums } from '~common/barrels/enums';
 
-export const sizeFieldChartTypes = [enums.ChartTypeEnum.AgBubble];
+export const sizeFieldChartTypes = [enums.ChartTypeEnum.EScatter];

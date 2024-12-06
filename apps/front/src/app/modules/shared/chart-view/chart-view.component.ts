@@ -182,16 +182,21 @@ export class ChartViewComponent implements OnChanges {
     this.scheme = getChartScheme(this.chart.colorScheme);
     this.curve = getChartCurve(this.chart.interpolation);
 
-    let xField = this.mconfigFields.find(v => v.id === this.chart.xField);
-    let yField = this.mconfigFields.find(v => v.id === this.chart.yField);
-    let sizeField = this.mconfigFields.find(v => v.id === this.chart.sizeField);
+    let xField = common.isDefined(this.chart.xField)
+      ? this.mconfigFields.find(v => v.id === this.chart.xField)
+      : undefined;
+
+    let yField = common.isDefined(this.chart.yField)
+      ? this.mconfigFields.find(v => v.id === this.chart.yField)
+      : undefined;
+
+    let sizeField = common.isDefined(this.chart.sizeField)
+      ? this.mconfigFields.find(v => v.id === this.chart.sizeField)
+      : undefined;
 
     // echarts - data
 
-    if (
-      this.eChartsMultiChartTypes.indexOf(this.chart.type) > -1 &&
-      common.isDefined(this.chart.multiField)
-    ) {
+    if (this.eChartsMultiChartTypes.indexOf(this.chart.type) > -1) {
       this.multi =
         this.qData.length > 0 &&
         common.isDefined(this.chart.xField) &&
@@ -200,10 +205,10 @@ export class ChartViewComponent implements OnChanges {
           ? this.dataService.getMultiData({
               selectFields: this.mconfigFields,
               xFieldId: this.chart.xField,
+              sizeFieldId: this.chart.sizeField,
               yFieldsIds: this.chart.yFields,
               multiFieldId: this.chart.multiField,
-              data: this.qData,
-              chartType: this.chart.type
+              data: this.qData
             })
           : [];
     } else if (this.eChartsTypes.indexOf(this.chart.type) > -1) {
@@ -236,18 +241,6 @@ export class ChartViewComponent implements OnChanges {
 
     // echarts - series
 
-    // if (this.chart.type === common.ChartTypeEnum.EScatter) {
-    //   this.eChartOptions.series = [
-    //     {
-    //       type: this.chart.type.split('_')[1] as any,
-    //       name: yField.sqlName,
-    //       data: this.eData.map((y: any) => [
-    //         y[xField.sqlName],
-    //         y[yField.sqlName]
-    //       ])
-    //     }
-    //   ];
-    // } else
     if (this.chart.type === common.ChartTypeEnum.EPie) {
       this.eChartOptions.series = [
         {
@@ -257,8 +250,7 @@ export class ChartViewComponent implements OnChanges {
             value: y[yField.sqlName],
             name: y[xField.sqlName]
           }))
-          // ,
-          // radius: '50%'
+          // , radius: '50%'
         }
       ];
     } else if (this.chart.type === common.ChartTypeEnum.EGauge) {
@@ -270,35 +262,27 @@ export class ChartViewComponent implements OnChanges {
             value: y[yField.sqlName],
             name: y[xField.sqlName]
           }))
-          // ,
-          // radius: '50%'
         }
       ];
     } else if (this.eChartsMultiChartTypes.indexOf(this.chart.type) > -1) {
-      this.eChartOptions.series = common.isDefined(this.chart.multiField)
-        ? this.multi.map(el => {
-            let a = {
-              type: this.chart.type.split('_')[1] as any,
-              name: el.name,
-              data: el.series.map((x: any) => [x.name, x.value])
-            };
+      this.eChartOptions.series = this.multi.map(el => {
+        let a = {
+          type: this.chart.type.split('_')[1] as any,
+          name: el.name,
+          data: el.series.map((x: any) => [x.name, x.value, x.sizeValue])
+        };
 
-            return a;
-          })
-        : this.chart.yFields.map(x => {
-            let myYField = this.mconfigFields.find(f => f.id === x);
+        if (
+          this.chart.type === common.ChartTypeEnum.EScatter &&
+          common.isDefined(this.chart.sizeField)
+        ) {
+          (a as any).symbolSize = function (data: any) {
+            return 5 + data[2] * 25;
+          };
+        }
 
-            let a = {
-              type: this.chart.type.split('_')[1] as any,
-              name: myYField.sqlName,
-              data: this.eData.map((y: any) => [
-                y[xField.sqlName],
-                y[myYField.sqlName]
-              ])
-            };
-
-            return a;
-          });
+        return a;
+      });
     }
 
     // data
@@ -364,10 +348,10 @@ export class ChartViewComponent implements OnChanges {
           ? this.dataService.getMultiData({
               selectFields: this.mconfigFields,
               xFieldId: this.chart.xField,
+              sizeFieldId: this.chart.sizeField,
               yFieldsIds: this.chart.yFields,
               multiFieldId: this.chart.multiField,
-              data: this.qData,
-              chartType: this.chart.type
+              data: this.qData
             })
           : [];
     } else if (this.agMultiChartTypes.indexOf(this.chart.type) > -1) {
@@ -385,10 +369,10 @@ export class ChartViewComponent implements OnChanges {
             ? this.dataService.getMultiData({
                 selectFields: this.mconfigFields,
                 xFieldId: this.chart.xField,
+                sizeFieldId: this.chart.sizeField,
                 yFieldsIds: this.chart.yFields,
                 multiFieldId: this.chart.multiField,
-                data: this.qData,
-                chartType: this.chart.type
+                data: this.qData
               })
             : [];
 
