@@ -210,11 +210,14 @@ export function checkChartDataParameters<T extends types.dzType>(
             fieldId: tile.data.x_field
           });
 
-          if (field.fieldClass !== common.FieldClassEnum.Dimension) {
+          if (
+            field.fieldClass !== common.FieldClassEnum.Dimension &&
+            tile.type !== common.ChartTypeEnum.EScatter
+          ) {
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.TILE_DATA_WRONG_X_FIELD_CLASS,
-                message: `"${common.ParameterEnum.XField}" must be a Dimension`,
+                message: `"${common.ParameterEnum.XField}" must be a Dimension for this chart type`,
                 lines: [
                   {
                     line: tile.data.x_field_line_num,
@@ -255,12 +258,13 @@ export function checkChartDataParameters<T extends types.dzType>(
 
           if (
             field.fieldClass !== common.FieldClassEnum.Measure &&
-            field.fieldClass !== common.FieldClassEnum.Calculation
+            field.fieldClass !== common.FieldClassEnum.Calculation &&
+            tile.type !== common.ChartTypeEnum.EScatter
           ) {
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.TILE_DATA_WRONG_Y_FIELD_CLASS,
-                message: `"${common.ParameterEnum.YField}" must be a Measure or Calculation`,
+                message: `"${common.ParameterEnum.YField}" must be a Measure or Calculation for this chart type`,
                 lines: [
                   {
                     line: tile.data.y_field_line_num,
@@ -301,12 +305,13 @@ export function checkChartDataParameters<T extends types.dzType>(
 
           if (
             field.fieldClass !== common.FieldClassEnum.Measure &&
-            field.fieldClass !== common.FieldClassEnum.Calculation
+            field.fieldClass !== common.FieldClassEnum.Calculation &&
+            tile.type !== common.ChartTypeEnum.EScatter
           ) {
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.TILE_DATA_WRONG_SIZE_FIELD_CLASS,
-                message: `"${common.ParameterEnum.SizeField}" must be a Measure or Calculation`,
+                message: `"${common.ParameterEnum.SizeField}" must be a Measure or Calculation for this chart type`,
                 lines: [
                   {
                     line: tile.data.size_field_line_num,
@@ -501,14 +506,15 @@ export function checkChartDataParameters<T extends types.dzType>(
 
             if (
               field.fieldClass !== common.FieldClassEnum.Measure &&
-              field.fieldClass !== common.FieldClassEnum.Calculation
+              field.fieldClass !== common.FieldClassEnum.Calculation &&
+              tile.type !== common.ChartTypeEnum.EScatter
             ) {
               item.errors.push(
                 new BmError({
                   title:
                     common.ErTitleEnum
                       .TILE_DATA_WRONG_Y_FIELDS_ELEMENT_FIELD_CLASS,
-                  message: `"${common.ParameterEnum.YFields}" element must be a Measure or Calculation`,
+                  message: `"${common.ParameterEnum.YFields}" element must be a Measure or Calculation for this chart type`,
                   lines: [
                     {
                       line: tile.data.y_fields_line_num,

@@ -92,8 +92,10 @@
         class="custom text-base focus:outline-none"
         [items]="
           chart.type === chartTypeEnum.NumberCard
-            ? sortedDimensionsPlusEmpty
-            : sortedDimensions
+            ? dimensionsPlusEmpty
+            : chart.type === chartTypeEnum.EScatter
+            ? dimensionsMeasuresCalculations
+            : dimensions
         "
         [clearable]="false"
         [searchable]="false"
@@ -138,7 +140,10 @@
     <form
       [formGroup]="multiFieldForm"
       class="ml-5 min-w-[2px] flex-grow"
-      *ngIf="sortedDimensions.length > 1"
+      *ngIf="
+        (chart.type !== chartTypeEnum.EScatter && dimensions.length > 1) ||
+        (chart.type === chartTypeEnum.EScatter && dimensions.length > 0)
+      "
     >
       <ng-select
         #multiFieldSelect
@@ -146,8 +151,8 @@
         class="custom text-base focus:outline-none"
         [items]="
           nullableMultiFieldChartTypes.indexOf(chart.type) > -1
-            ? sortedDimensionsPlusEmpty
-            : sortedDimensions
+            ? dimensionsPlusEmpty
+            : dimensions
         "
         [clearable]="false"
         [searchable]="false"
@@ -178,7 +183,10 @@
     </form>
 
     <div
-      *ngIf="sortedDimensions.length < 2"
+      *ngIf="
+        (chart.type !== chartTypeEnum.EScatter && dimensions.length < 2) ||
+        (chart.type === chartTypeEnum.EScatter && dimensions.length < 1)
+      "
       class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
       ><m-minus-sm-icon></m-minus-sm-icon
     ></div>
@@ -199,7 +207,7 @@
         #valueFieldSelect
         data-cy="valueFieldSelect"
         class="custom text-base focus:outline-none"
-        [items]="sortedMeasuresAndCalculations"
+        [items]="numbersMeasuresAndCalculations"
         [clearable]="false"
         [searchable]="false"
         (change)="valueFieldChange()"
@@ -247,7 +255,7 @@
         #previousValueFieldSelect
         data-cy="previousValueFieldSelect"
         class="custom text-base focus:outline-none"
-        [items]="sortedMeasuresAndCalculationsPlusEmpty"
+        [items]="numbersMeasuresAndCalculationsPlusEmpty"
         [clearable]="false"
         [searchable]="false"
         (change)="previousValueFieldChange()"
@@ -292,7 +300,7 @@
         #yFieldSelect
         data-cy="yFieldSelect"
         class="custom text-base focus:outline-none"
-        [items]="sortedMeasuresAndCalculations"
+        [items]="numbersMeasuresAndCalculations"
         [clearable]="false"
         [searchable]="false"
         (change)="yFieldChange()"
@@ -332,7 +340,7 @@
 
     <div class="ml-5 mt-2 flex flex-col items-start space-y-4">
       <div
-        *ngFor="let column of sortedMeasuresAndCalculations"
+        *ngFor="let column of numbersYFields"
         class="flex flex-row items-center"
       >
         <button
@@ -366,7 +374,7 @@
         #sizeFieldSelect
         data-cy="sizeFieldSelect"
         class="custom text-base focus:outline-none"
-        [items]="sortedMeasuresAndCalculations"
+        [items]="numbersDimensionsMeasuresCalculations"
         [clearable]="false"
         [searchable]="false"
         (change)="sizeFieldChange()"

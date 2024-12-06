@@ -117,13 +117,18 @@ export class ChartEditorComponent implements OnChanges {
 
   @Input()
   mconfigFields: common.MconfigField[];
-  mconfigFieldsPlusEmpty: common.MconfigField[];
 
-  sortedDimensions: common.MconfigField[];
-  sortedDimensionsPlusEmpty: common.MconfigField[];
+  dimensionsMeasuresCalculations: common.MconfigField[];
 
-  sortedMeasuresAndCalculations: common.MconfigField[];
-  sortedMeasuresAndCalculationsPlusEmpty: common.MconfigField[];
+  numbersDimensionsMeasuresCalculations: common.MconfigField[];
+
+  dimensions: common.MconfigField[];
+  dimensionsPlusEmpty: common.MconfigField[];
+
+  numbersMeasuresAndCalculations: common.MconfigField[];
+  numbersMeasuresAndCalculationsPlusEmpty: common.MconfigField[];
+
+  numbersYFields: common.MconfigField[];
 
   xFieldForm: FormGroup = this.fb.group({
     xField: [undefined]
@@ -518,24 +523,47 @@ export class ChartEditorComponent implements OnChanges {
       isHideColumn: undefined
     };
 
-    this.mconfigFieldsPlusEmpty = [...this.mconfigFields, emptyColumn];
+    this.dimensionsMeasuresCalculations = this.mconfigFields.filter(
+      x =>
+        [
+          common.FieldClassEnum.Dimension,
+          common.FieldClassEnum.Measure,
+          common.FieldClassEnum.Calculation
+        ].indexOf(x.fieldClass) > -1
+    );
 
-    this.sortedDimensions = this.mconfigFields.filter(
+    this.numbersDimensionsMeasuresCalculations = this.mconfigFields.filter(
+      x =>
+        x.result === common.FieldResultEnum.Number &&
+        [
+          common.FieldClassEnum.Dimension,
+          common.FieldClassEnum.Measure,
+          common.FieldClassEnum.Calculation
+        ].indexOf(x.fieldClass) > -1
+    );
+
+    this.dimensions = this.mconfigFields.filter(
       x => x.fieldClass === common.FieldClassEnum.Dimension
     );
 
-    this.sortedDimensionsPlusEmpty = [emptyColumn, ...this.sortedDimensions];
+    this.dimensionsPlusEmpty = [emptyColumn, ...this.dimensions];
 
-    this.sortedMeasuresAndCalculations = this.mconfigFields.filter(
+    this.numbersMeasuresAndCalculations = this.mconfigFields.filter(
       x =>
-        x.fieldClass === common.FieldClassEnum.Measure ||
-        x.fieldClass === common.FieldClassEnum.Calculation
+        x.result === common.FieldResultEnum.Number &&
+        (x.fieldClass === common.FieldClassEnum.Measure ||
+          x.fieldClass === common.FieldClassEnum.Calculation)
     );
 
-    this.sortedMeasuresAndCalculationsPlusEmpty = [
-      ...this.sortedMeasuresAndCalculations,
-      emptyColumn
+    this.numbersMeasuresAndCalculationsPlusEmpty = [
+      emptyColumn,
+      ...this.numbersMeasuresAndCalculations
     ];
+
+    this.numbersYFields =
+      this.chart.type === common.ChartTypeEnum.EScatter
+        ? this.numbersDimensionsMeasuresCalculations
+        : this.numbersMeasuresAndCalculations;
 
     setValueAndMark({
       control: this.xFieldForm.controls['xField'],
@@ -1419,9 +1447,8 @@ export class ChartEditorComponent implements OnChanges {
       common.multiFieldChartTypes.indexOf(newMconfig.chart.type) > -1 &&
       common.nullableMultiFieldChartTypes.indexOf(newMconfig.chart.type) < 0
     ) {
-      let newMultiFieldValue = this.sortedDimensions.filter(
-        x => x.id !== xField
-      )[0].id;
+      let newMultiFieldValue = this.dimensions.filter(x => x.id !== xField)[0]
+        .id;
       setValueAndMark({
         control: this.multiFieldForm.controls['multiField'],
         value: newMultiFieldValue
@@ -1462,9 +1489,8 @@ export class ChartEditorComponent implements OnChanges {
     if (
       common.nullableMultiFieldChartTypes.indexOf(newMconfig.chart.type) < 0
     ) {
-      let newXFieldValue = this.sortedDimensions.filter(
-        x => x.id !== multiField
-      )[0].id;
+      let newXFieldValue = this.dimensions.filter(x => x.id !== multiField)[0]
+        .id;
 
       setValueAndMark({
         control: this.xFieldForm.controls['xField'],

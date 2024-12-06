@@ -2,10 +2,20 @@ import { Mconfig, MconfigChart, ModelField, isDefined } from '~common/_index';
 import { enums } from '~common/barrels/enums';
 
 export function setChartFields<T extends Mconfig>(item: {
+  oldChartType?: enums.ChartTypeEnum;
+  newChartType?: enums.ChartTypeEnum;
   mconfig: T;
   fields: ModelField[];
 }) {
-  let { mconfig, fields } = item;
+  let { oldChartType, newChartType, mconfig, fields } = item;
+
+  if (
+    oldChartType === enums.ChartTypeEnum.EScatter &&
+    newChartType !== enums.ChartTypeEnum.EScatter
+  ) {
+    mconfig.chart.xField = undefined;
+    mconfig.chart.yFields = [];
+  }
 
   if (mconfig.select.length > 0) {
     let selectedDimensionsResultIsNumberOrTs: string[] = [];

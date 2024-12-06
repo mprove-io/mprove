@@ -128,7 +128,10 @@ export function getSelectValid(item: {
     if (selectedDimensions.length === 0) {
       isSelectValid = false;
       errorMessage = 'Dimension field must be selected for this chart type';
-    } else if (selectedDimensions.length > 2) {
+    } else if (
+      selectedDimensions.length > 2 &&
+      chart.type !== common.ChartTypeEnum.EScatter
+    ) {
       isSelectValid = false;
       errorMessage =
         'A maximum of 2 dimension fields can be selected for this chart type';
@@ -170,7 +173,10 @@ export function getSelectValid(item: {
       isSelectValid = false;
       errorMessage =
         'Two dimensions with result type TS from the same time group can be selected simultaneously only for the table chart';
-    } else if (selectedMeasuresAndCalculations.length === 0) {
+    } else if (
+      selectedMeasuresAndCalculations.length === 0 &&
+      chart.type !== common.ChartTypeEnum.EScatter
+    ) {
       isSelectValid = false;
       errorMessage =
         'Measure or Calculation field must be selected for this chart type';
@@ -205,7 +211,7 @@ export function getSelectValid(item: {
     } else if (yFieldsIsOk === false) {
       isSelectValid = false;
       errorMessage =
-        'Each yFields element for this chart type must have result type "number"';
+        'Each element of yFields for this chart type must have result type "number"';
     }
   }
 

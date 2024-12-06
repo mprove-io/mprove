@@ -792,7 +792,8 @@ export class ModelComponent implements OnInit, OnDestroy {
   }
 
   chartTypeChange() {
-    let chartType = this.chartTypeForm.controls['chartType'].value;
+    let oldChartType = this.mconfig.chart.type;
+    let newChartType = this.chartTypeForm.controls['chartType'].value;
 
     let newMconfig = this.structService.makeMconfig();
 
@@ -805,11 +806,13 @@ export class ModelComponent implements OnInit, OnDestroy {
       .subscribe();
 
     newMconfig = common.setChartFields({
+      oldChartType: oldChartType,
+      newChartType: newChartType,
       mconfig: newMconfig,
       fields: fields
     });
 
-    newMconfig.chart.type = chartType;
+    newMconfig.chart.type = newChartType;
 
     this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
