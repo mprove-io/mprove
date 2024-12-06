@@ -26,39 +26,7 @@ export class DataService {
     return false;
   }
 
-  makeEData(item: { qData: RData[]; xField: common.MconfigField }) {
-    let { qData, xField } = item;
-
-    let eData: any[] = [];
-
-    qData.forEach(row => {
-      let resRow: { [k: string]: any } = {};
-
-      Object.keys(row).forEach(key => {
-        let cell = row[key];
-
-        if (
-          xField.result === common.FieldResultEnum.Ts &&
-          xField.sqlName === cell.id
-        ) {
-          let xName = xField.sqlName;
-          let xValueFn = this.getTsValueFn(xName);
-
-          resRow[cell.id] = xValueFn(row, xName);
-        } else if (this.isNumber(cell.value)) {
-          resRow[cell.id] = Number(cell.value);
-        } else {
-          resRow[cell.id] = cell.value;
-        }
-      });
-
-      eData.push(resRow);
-    });
-
-    return eData;
-  }
-
-  getMultiData(item: {
+  getSeriesData(item: {
     selectFields: common.MconfigField[];
     data: any[];
     multiFieldId: string;
@@ -215,10 +183,40 @@ export class DataService {
         series: prepareData[x]
       })
     );
-    // console.log("====multidata====")
-    // console.log(multiData);
 
     return multiData;
+  }
+
+  makeEData(item: { qData: RData[]; xField: common.MconfigField }) {
+    let { qData, xField } = item;
+
+    let eData: any[] = [];
+
+    qData.forEach(row => {
+      let resRow: { [k: string]: any } = {};
+
+      Object.keys(row).forEach(key => {
+        let cell = row[key];
+
+        if (
+          xField.result === common.FieldResultEnum.Ts &&
+          xField.sqlName === cell.id
+        ) {
+          let xName = xField.sqlName;
+          let xValueFn = this.getTsValueFn(xName);
+
+          resRow[cell.id] = xValueFn(row, xName);
+        } else if (this.isNumber(cell.value)) {
+          resRow[cell.id] = Number(cell.value);
+        } else {
+          resRow[cell.id] = cell.value;
+        }
+      });
+
+      eData.push(resRow);
+    });
+
+    return eData;
   }
 
   private getRawValue(row: any, fieldName: string) {

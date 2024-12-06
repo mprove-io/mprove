@@ -237,6 +237,12 @@ export const CHART_TYPE_VALUES = [
   enums.ChartTypeEnum.TreeMap
 ];
 
+export const Y_FIELDS_CHART_TYPE_VALUES = [
+  enums.ChartTypeEnum.ELine,
+  enums.ChartTypeEnum.EBar,
+  enums.ChartTypeEnum.EScatter
+];
+
 export const JOIN_TYPE_VALUES = [
   enums.JoinTypeEnum.Cross,
   enums.JoinTypeEnum.Full,

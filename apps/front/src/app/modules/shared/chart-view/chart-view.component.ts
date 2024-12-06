@@ -15,6 +15,7 @@ import {
 } from 'ag-charts-community';
 import { formatLocale } from 'd3-format';
 import { EChartsInitOpts, EChartsOption } from 'echarts';
+import { MconfigField } from '~common/_index';
 import { getChartCurve } from '~front/app/functions/get-chart-curve';
 import { getChartScheme } from '~front/app/functions/get-chart-scheme';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
@@ -94,13 +95,13 @@ export class ChartViewComponent implements OnChanges {
   @Input()
   queryStatus: common.QueryStatusEnum;
 
+  seriesData: any[] = [];
+  eData: any[] = [];
+
   single: any[] = [];
   singleForNumberCard: any[] = [];
-  multi: any[] = [];
   value: number;
   previousValue: number;
-
-  eData: any[] = [];
 
   scheme: any;
   curve: any;
@@ -148,16 +149,12 @@ export class ChartViewComponent implements OnChanges {
   // }
 
   updateChart() {
-    // let seriesType: string;
-    // let seriesElement;
+    console.log('this.chart');
+    console.log(this.chart);
 
-    // this.setAgChartsDefaults();
-
-    let initOpts: EChartsInitOpts = {
+    this.eChartInitOpts = {
       renderer: 'svg'
-    };
-
-    this.eChartInitOpts = initOpts;
+    } as EChartsInitOpts;
 
     this.eChartOptions = {
       grid: {
@@ -179,341 +176,116 @@ export class ChartViewComponent implements OnChanges {
     this.isSelectValid = checkSelectResult.isSelectValid;
     this.errorMessage = checkSelectResult.errorMessage;
 
-    this.scheme = getChartScheme(this.chart.colorScheme);
-    this.curve = getChartCurve(this.chart.interpolation);
+    if (this.isSelectValid === false) {
+      this.seriesData = [];
+      this.eData = [];
+      this.single = [];
+      this.singleForNumberCard = [];
+      this.value = undefined;
+      this.previousValue = undefined;
+    } else {
+      let xField = common.isDefined(this.chart.xField)
+        ? this.mconfigFields.find(v => v.id === this.chart.xField)
+        : undefined;
 
-    let xField = common.isDefined(this.chart.xField)
-      ? this.mconfigFields.find(v => v.id === this.chart.xField)
-      : undefined;
+      let yField = common.isDefined(this.chart.yField)
+        ? this.mconfigFields.find(v => v.id === this.chart.yField)
+        : undefined;
 
-    let yField = common.isDefined(this.chart.yField)
-      ? this.mconfigFields.find(v => v.id === this.chart.yField)
-      : undefined;
+      let sizeField = common.isDefined(this.chart.sizeField)
+        ? this.mconfigFields.find(v => v.id === this.chart.sizeField)
+        : undefined;
 
-    let sizeField = common.isDefined(this.chart.sizeField)
-      ? this.mconfigFields.find(v => v.id === this.chart.sizeField)
-      : undefined;
+      // echarts - data
 
-    // echarts - data
-
-    if (this.eChartsMultiChartTypes.indexOf(this.chart.type) > -1) {
-      this.multi =
-        this.qData.length > 0 &&
-        common.isDefined(this.chart.xField) &&
-        common.isDefined(this.chart.yFields) &&
-        this.chart.yFields.length > 0
-          ? this.dataService.getMultiData({
-              selectFields: this.mconfigFields,
-              xFieldId: this.chart.xField,
-              sizeFieldId: this.chart.sizeField,
-              yFieldsIds: this.chart.yFields,
-              multiFieldId: this.chart.multiField,
-              data: this.qData
-            })
-          : [];
-    } else if (this.eChartsTypes.indexOf(this.chart.type) > -1) {
-      this.eData = this.dataService.makeEData({
-        qData: this.qData,
-        xField: xField
-      });
-    }
-
-    // echarts - axes
-
-    if (
-      this.chart.type === common.ChartTypeEnum.ELine ||
-      this.chart.type === common.ChartTypeEnum.EBar ||
-      this.chart.type === common.ChartTypeEnum.EScatter
-    ) {
-      this.eChartOptions.xAxis = {
-        type:
-          xField.result === common.FieldResultEnum.Ts
-            ? 'time'
-            : xField.result === common.FieldResultEnum.Number
-            ? 'value'
-            : 'category'
-      };
-
-      this.eChartOptions.yAxis = {
-        type: 'value'
-      };
-    }
-
-    // echarts - series
-
-    if (this.chart.type === common.ChartTypeEnum.EPie) {
-      this.eChartOptions.series = [
-        {
-          type: this.chart.type.split('_')[1] as any,
-          name: yField.sqlName,
-          data: this.eData.map((y: any) => ({
-            value: y[yField.sqlName],
-            name: y[xField.sqlName]
-          }))
-          // , radius: '50%'
-        }
-      ];
-    } else if (this.chart.type === common.ChartTypeEnum.EGauge) {
-      this.eChartOptions.series = [
-        {
-          type: this.chart.type.split('_')[1] as any,
-          name: yField.sqlName,
-          data: this.eData.map((y: any) => ({
-            value: y[yField.sqlName],
-            name: y[xField.sqlName]
-          }))
-        }
-      ];
-    } else if (this.eChartsMultiChartTypes.indexOf(this.chart.type) > -1) {
-      this.eChartOptions.series = this.multi.map(el => {
-        let a = {
-          type: this.chart.type.split('_')[1] as any,
-          name: el.name,
-          data: el.series.map((x: any) => [x.name, x.value, x.sizeValue])
-        };
-
-        if (
-          this.chart.type === common.ChartTypeEnum.EScatter &&
-          common.isDefined(this.chart.sizeField)
-        ) {
-          (a as any).symbolSize = function (data: any) {
-            return 5 + data[2] * 25;
-          };
-        }
-
-        return a;
-      });
-    }
-
-    // data
-
-    if (
-      this.chart.type === common.ChartTypeEnum.BarVertical ||
-      this.chart.type === common.ChartTypeEnum.BarHorizontal ||
-      this.chart.type === common.ChartTypeEnum.Pie ||
-      this.chart.type === common.ChartTypeEnum.PieAdvanced ||
-      this.chart.type === common.ChartTypeEnum.PieGrid ||
-      this.chart.type === common.ChartTypeEnum.TreeMap ||
-      this.chart.type === common.ChartTypeEnum.Gauge
-    ) {
-      this.single =
-        this.qData.length > 0 &&
-        common.isDefined(this.chart.xField) &&
-        common.isDefined(this.chart.yField)
-          ? this.dataService.getSingleData({
-              selectFields: this.mconfigFields,
-              xFieldId: this.chart.xField,
-              yFieldId: this.chart.yField,
-              data: this.qData
-            })
-          : [];
-    } else if (this.chart.type === common.ChartTypeEnum.NumberCard) {
-      this.singleForNumberCard =
-        this.qData.length > 0 && common.isDefined(this.chart.yField)
-          ? this.dataService.getSingleDataForNumberCard({
-              selectFields: this.mconfigFields,
-              xFieldId: this.chart.xField,
-              yFieldId: this.chart.yField,
-              data: this.qData
-            })
-          : [];
-    } else if (this.chart.type === common.ChartTypeEnum.GaugeLinear) {
-      [this.value, this.previousValue] =
-        this.qData.length > 0 && common.isDefined(this.chart.valueField)
-          ? this.dataService.getValueData({
-              mconfigFields: this.mconfigFields,
-              data: this.qData,
-              currentValueFieldId: this.chart.valueField,
-              previousValueFieldId: this.chart.previousValueField
-            })
-          : [0, 0];
-    } else if (
-      this.chart.type === common.ChartTypeEnum.BarVerticalGrouped ||
-      this.chart.type === common.ChartTypeEnum.BarHorizontalGrouped ||
-      this.chart.type === common.ChartTypeEnum.BarVerticalStacked ||
-      this.chart.type === common.ChartTypeEnum.BarHorizontalStacked ||
-      this.chart.type === common.ChartTypeEnum.BarVerticalNormalized ||
-      this.chart.type === common.ChartTypeEnum.BarHorizontalNormalized ||
-      this.chart.type === common.ChartTypeEnum.Line ||
-      this.chart.type === common.ChartTypeEnum.Area ||
-      this.chart.type === common.ChartTypeEnum.AreaStacked ||
-      this.chart.type === common.ChartTypeEnum.AreaNormalized ||
-      this.chart.type === common.ChartTypeEnum.HeatMap
-    ) {
-      this.multi =
-        this.qData.length > 0 &&
-        common.isDefined(this.chart.xField) &&
-        common.isDefined(this.chart.yFields) &&
-        this.chart.yFields.length > 0
-          ? this.dataService.getMultiData({
-              selectFields: this.mconfigFields,
-              xFieldId: this.chart.xField,
-              sizeFieldId: this.chart.sizeField,
-              yFieldsIds: this.chart.yFields,
-              multiFieldId: this.chart.multiField,
-              data: this.qData
-            })
-          : [];
-    } else if (this.agMultiChartTypes.indexOf(this.chart.type) > -1) {
-      if (common.isUndefined(this.chart.multiField)) {
-        this.chartOptions.data = this.dataService.makeAgData({
-          qData: this.qData,
-          xField: xField
-        });
-      } else {
-        this.multi =
+      if (this.eChartsTypes.indexOf(this.chart.type) > -1) {
+        this.seriesData =
           this.qData.length > 0 &&
           common.isDefined(this.chart.xField) &&
           common.isDefined(this.chart.yFields) &&
           this.chart.yFields.length > 0
-            ? this.dataService.getMultiData({
+            ? this.dataService.getSeriesData({
                 selectFields: this.mconfigFields,
                 xFieldId: this.chart.xField,
                 sizeFieldId: this.chart.sizeField,
-                yFieldsIds: this.chart.yFields,
+                yFieldsIds:
+                  common.yFieldsChartTypes.indexOf(this.chart.type) > -1
+                    ? this.chart.yFields
+                    : [this.chart.yField],
                 multiFieldId: this.chart.multiField,
                 data: this.qData
               })
             : [];
+      }
 
-        let agMultiData: any = [];
+      // echarts - axes
 
-        this.multi.forEach(el => {
-          el.series.forEach((element: any) => {
-            let rowElement: any = agMultiData.find(
-              (x: any) => x[xField.sqlName] === element.name
-            );
-            if (common.isUndefined(rowElement)) {
-              rowElement = {};
-              agMultiData.push(rowElement);
-            }
-            rowElement[xField.sqlName] = element.name;
-            rowElement[el.name] = element.value;
-          });
+      if (
+        this.chart.type === common.ChartTypeEnum.ELine ||
+        this.chart.type === common.ChartTypeEnum.EBar ||
+        this.chart.type === common.ChartTypeEnum.EScatter
+      ) {
+        this.eChartOptions.xAxis = {
+          type:
+            xField.result === common.FieldResultEnum.Ts
+              ? 'time'
+              : xField.result === common.FieldResultEnum.Number
+              ? 'value'
+              : 'category'
+        };
+
+        this.eChartOptions.yAxis = {
+          type: 'value'
+        };
+      }
+
+      // echarts - series
+
+      if (this.eChartsTypes.indexOf(this.chart.type) > -1) {
+        this.eChartOptions.series = this.seriesData.map(el => {
+          let a = {
+            type: this.chart.type.split('_')[1] as any,
+            name: el.name,
+            data: el.series.map((x: any) =>
+              this.chart.type === common.ChartTypeEnum.EScatter &&
+              common.isDefined(this.chart.sizeField)
+                ? [x.name, x.value, x.sizeValue]
+                : this.chart.type === common.ChartTypeEnum.EPie
+                ? {
+                    value: x.value,
+                    name: x.name
+                  }
+                : [x.name, x.value]
+            )
+          };
+
+          if (
+            this.chart.type === common.ChartTypeEnum.EScatter &&
+            common.isDefined(this.chart.sizeField)
+          ) {
+            (a as any).symbolSize = function (data: any) {
+              return 5 + data[2] * 25;
+            };
+          }
+
+          return a;
         });
-
-        this.chartOptions.data = agMultiData;
       }
-    } else if (this.agChartTypes.indexOf(this.chart.type) > -1) {
-      this.chartOptions.data = this.dataService.makeAgData({
-        qData: this.qData,
-        xField: xField
+
+      this.makeNgxCharts();
+
+      this.makeAgCharts({
+        xField: xField,
+        yField: yField,
+        sizeField: sizeField
       });
-    }
-
-    // ag chart - axes
-
-    if (this.agChartTypes.indexOf(this.chart.type) > -1) {
-      if (xField.result === common.FieldResultEnum.Ts) {
-        (this.chartOptions as AgCartesianChartOptions).axes = [
-          {
-            type: 'time',
-            position: 'bottom'
-          },
-          {
-            type: 'number',
-            position: 'left'
-          }
-        ];
-      } else if (xField.result === common.FieldResultEnum.Number) {
-        (this.chartOptions as AgCartesianChartOptions).axes = [
-          {
-            type: 'number',
-            position: 'bottom'
-          },
-          {
-            type: 'number',
-            position: 'left'
-          }
-        ];
-      } else {
-        (this.chartOptions as AgCartesianChartOptions).axes = [
-          {
-            type: 'category',
-            position: 'bottom'
-          },
-          {
-            type: 'number',
-            position: 'left'
-          }
-        ];
-      }
-    }
-
-    // ag chart - series
-
-    if (this.agMultiChartTypes.indexOf(this.chart.type) > -1) {
-      this.chartOptions.series = common.isDefined(this.chart.multiField)
-        ? this.multi.map(el => {
-            let a = {
-              type: this.chart.type.split('_')[1] as any,
-              xKey: xField.sqlName,
-              yKey: el.name
-            };
-
-            if (this.chart.type === common.ChartTypeEnum.AgBubble) {
-              (a as AgBubbleSeriesOptions).sizeKey = common.isDefined(
-                sizeField?.sqlName
-              )
-                ? sizeField?.sqlName
-                : common.CHART_DEFAULT_SIZE_FIELD_VALUE;
-            }
-
-            return a;
-          })
-        : this.chart.yFields.map(x => {
-            let myYField = this.mconfigFields.find(f => f.id === x);
-
-            let a = {
-              type: this.chart.type.split('_')[1] as any,
-              xKey: xField.sqlName,
-              yKey: myYField.sqlName
-            };
-
-            if (this.chart.type === common.ChartTypeEnum.AgBubble) {
-              (a as AgBubbleSeriesOptions).sizeKey = common.isDefined(
-                sizeField?.sqlName
-              )
-                ? sizeField?.sqlName
-                : common.CHART_DEFAULT_SIZE_FIELD_VALUE;
-            }
-
-            return a;
-          });
-    } else if (this.chart.type === common.ChartTypeEnum.AgPie) {
-      this.chartOptions.series = [
-        {
-          type: this.chart.type.split('_')[1] as any,
-          angleKey: yField.sqlName,
-          sectorLabelKey: xField.sqlName,
-          calloutLabelKey: xField.sqlName
-        } as AgPieSeriesOptions
-      ];
-    } else if (this.chart.type === common.ChartTypeEnum.AgDonut) {
-      this.chartOptions.series = [
-        {
-          type: this.chart.type.split('_')[1] as any,
-          angleKey: yField.sqlName,
-          // sectorLabelKey: xField.sqlName,
-          calloutLabelKey: xField.sqlName,
-          innerRadiusRatio: 0.7
-        } as AgDonutSeriesOptions
-      ];
-    } else if (this.agChartTypes.indexOf(this.chart.type) > -1) {
-      this.chartOptions.series = [
-        {
-          type: this.chart.type.split('_')[1] as any,
-          xKey: xField.sqlName,
-          yKey: yField.sqlName
-        }
-      ];
     }
 
     console.log('this.eData:');
     console.log(this.eData);
 
     console.log('this.multi:');
-    console.log(this.multi);
+    console.log(this.seriesData);
 
     console.log('this.eChartOptions:');
     console.log(this.eChartOptions);
@@ -702,4 +474,244 @@ export class ChartViewComponent implements OnChanges {
   }
 
   // xAxisTickFormattingForLinear(value: any) {}
+
+  makeNgxCharts() {
+    // ngx charts data
+    this.scheme = getChartScheme(this.chart.colorScheme);
+    this.curve = getChartCurve(this.chart.interpolation);
+
+    if (
+      this.chart.type === common.ChartTypeEnum.BarVertical ||
+      this.chart.type === common.ChartTypeEnum.BarHorizontal ||
+      this.chart.type === common.ChartTypeEnum.Pie ||
+      this.chart.type === common.ChartTypeEnum.PieAdvanced ||
+      this.chart.type === common.ChartTypeEnum.PieGrid ||
+      this.chart.type === common.ChartTypeEnum.TreeMap ||
+      this.chart.type === common.ChartTypeEnum.Gauge
+    ) {
+      this.single =
+        this.qData.length > 0 &&
+        common.isDefined(this.chart.xField) &&
+        common.isDefined(this.chart.yField)
+          ? this.dataService.getSingleData({
+              selectFields: this.mconfigFields,
+              xFieldId: this.chart.xField,
+              yFieldId: this.chart.yField,
+              data: this.qData
+            })
+          : [];
+    } else if (this.chart.type === common.ChartTypeEnum.NumberCard) {
+      this.singleForNumberCard =
+        this.qData.length > 0 && common.isDefined(this.chart.yField)
+          ? this.dataService.getSingleDataForNumberCard({
+              selectFields: this.mconfigFields,
+              xFieldId: this.chart.xField,
+              yFieldId: this.chart.yField,
+              data: this.qData
+            })
+          : [];
+    } else if (this.chart.type === common.ChartTypeEnum.GaugeLinear) {
+      [this.value, this.previousValue] =
+        this.qData.length > 0 && common.isDefined(this.chart.valueField)
+          ? this.dataService.getValueData({
+              mconfigFields: this.mconfigFields,
+              data: this.qData,
+              currentValueFieldId: this.chart.valueField,
+              previousValueFieldId: this.chart.previousValueField
+            })
+          : [0, 0];
+    } else if (
+      this.chart.type === common.ChartTypeEnum.BarVerticalGrouped ||
+      this.chart.type === common.ChartTypeEnum.BarHorizontalGrouped ||
+      this.chart.type === common.ChartTypeEnum.BarVerticalStacked ||
+      this.chart.type === common.ChartTypeEnum.BarHorizontalStacked ||
+      this.chart.type === common.ChartTypeEnum.BarVerticalNormalized ||
+      this.chart.type === common.ChartTypeEnum.BarHorizontalNormalized ||
+      this.chart.type === common.ChartTypeEnum.Line ||
+      this.chart.type === common.ChartTypeEnum.Area ||
+      this.chart.type === common.ChartTypeEnum.AreaStacked ||
+      this.chart.type === common.ChartTypeEnum.AreaNormalized ||
+      this.chart.type === common.ChartTypeEnum.HeatMap
+    ) {
+      this.seriesData =
+        this.qData.length > 0 &&
+        common.isDefined(this.chart.xField) &&
+        common.isDefined(this.chart.yFields) &&
+        this.chart.yFields.length > 0
+          ? this.dataService.getSeriesData({
+              selectFields: this.mconfigFields,
+              xFieldId: this.chart.xField,
+              sizeFieldId: this.chart.sizeField,
+              yFieldsIds: this.chart.yFields,
+              multiFieldId: this.chart.multiField,
+              data: this.qData
+            })
+          : [];
+    }
+  }
+
+  makeAgCharts(item: {
+    xField: MconfigField;
+    yField: MconfigField;
+    sizeField: MconfigField;
+  }) {
+    let { xField, yField, sizeField } = item;
+
+    // ag chart - data
+
+    if (this.agMultiChartTypes.indexOf(this.chart.type) > -1) {
+      if (common.isUndefined(this.chart.multiField)) {
+        this.chartOptions.data = this.dataService.makeAgData({
+          qData: this.qData,
+          xField: xField
+        });
+      } else {
+        this.seriesData =
+          this.qData.length > 0 &&
+          common.isDefined(this.chart.xField) &&
+          common.isDefined(this.chart.yFields) &&
+          this.chart.yFields.length > 0
+            ? this.dataService.getSeriesData({
+                selectFields: this.mconfigFields,
+                xFieldId: this.chart.xField,
+                sizeFieldId: this.chart.sizeField,
+                yFieldsIds: this.chart.yFields,
+                multiFieldId: this.chart.multiField,
+                data: this.qData
+              })
+            : [];
+
+        let agMultiData: any = [];
+
+        this.seriesData.forEach(el => {
+          el.series.forEach((element: any) => {
+            let rowElement: any = agMultiData.find(
+              (x: any) => x[xField.sqlName] === element.name
+            );
+            if (common.isUndefined(rowElement)) {
+              rowElement = {};
+              agMultiData.push(rowElement);
+            }
+            rowElement[xField.sqlName] = element.name;
+            rowElement[el.name] = element.value;
+          });
+        });
+
+        this.chartOptions.data = agMultiData;
+      }
+    } else if (this.agChartTypes.indexOf(this.chart.type) > -1) {
+      this.chartOptions.data = this.dataService.makeAgData({
+        qData: this.qData,
+        xField: xField
+      });
+    }
+
+    // ag chart - axes
+
+    if (this.agChartTypes.indexOf(this.chart.type) > -1) {
+      if (xField.result === common.FieldResultEnum.Ts) {
+        (this.chartOptions as AgCartesianChartOptions).axes = [
+          {
+            type: 'time',
+            position: 'bottom'
+          },
+          {
+            type: 'number',
+            position: 'left'
+          }
+        ];
+      } else if (xField.result === common.FieldResultEnum.Number) {
+        (this.chartOptions as AgCartesianChartOptions).axes = [
+          {
+            type: 'number',
+            position: 'bottom'
+          },
+          {
+            type: 'number',
+            position: 'left'
+          }
+        ];
+      } else {
+        (this.chartOptions as AgCartesianChartOptions).axes = [
+          {
+            type: 'category',
+            position: 'bottom'
+          },
+          {
+            type: 'number',
+            position: 'left'
+          }
+        ];
+      }
+    }
+
+    // ag chart - series
+
+    if (this.agMultiChartTypes.indexOf(this.chart.type) > -1) {
+      this.chartOptions.series = common.isDefined(this.chart.multiField)
+        ? this.seriesData.map(el => {
+            let a = {
+              type: this.chart.type.split('_')[1] as any,
+              xKey: xField.sqlName,
+              yKey: el.name
+            };
+
+            if (this.chart.type === common.ChartTypeEnum.AgBubble) {
+              (a as AgBubbleSeriesOptions).sizeKey = common.isDefined(
+                sizeField?.sqlName
+              )
+                ? sizeField?.sqlName
+                : common.CHART_DEFAULT_SIZE_FIELD_VALUE;
+            }
+
+            return a;
+          })
+        : this.chart.yFields.map(x => {
+            let myYField = this.mconfigFields.find(f => f.id === x);
+
+            let a = {
+              type: this.chart.type.split('_')[1] as any,
+              xKey: xField.sqlName,
+              yKey: myYField.sqlName
+            };
+
+            if (this.chart.type === common.ChartTypeEnum.AgBubble) {
+              (a as AgBubbleSeriesOptions).sizeKey = common.isDefined(
+                sizeField?.sqlName
+              )
+                ? sizeField?.sqlName
+                : common.CHART_DEFAULT_SIZE_FIELD_VALUE;
+            }
+
+            return a;
+          });
+    } else if (this.chart.type === common.ChartTypeEnum.AgPie) {
+      this.chartOptions.series = [
+        {
+          type: this.chart.type.split('_')[1] as any,
+          angleKey: yField.sqlName,
+          sectorLabelKey: xField.sqlName,
+          calloutLabelKey: xField.sqlName
+        } as AgPieSeriesOptions
+      ];
+    } else if (this.chart.type === common.ChartTypeEnum.AgDonut) {
+      this.chartOptions.series = [
+        {
+          type: this.chart.type.split('_')[1] as any,
+          angleKey: yField.sqlName,
+          // sectorLabelKey: xField.sqlName,
+          calloutLabelKey: xField.sqlName,
+          innerRadiusRatio: 0.7
+        } as AgDonutSeriesOptions
+      ];
+    } else if (this.agChartTypes.indexOf(this.chart.type) > -1) {
+      this.chartOptions.series = [
+        {
+          type: this.chart.type.split('_')[1] as any,
+          xKey: xField.sqlName,
+          yKey: yField.sqlName
+        }
+      ];
+    }
+  }
 }
