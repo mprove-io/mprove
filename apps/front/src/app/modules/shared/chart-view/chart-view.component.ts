@@ -213,7 +213,18 @@ export class ChartViewComponent implements OnChanges {
                     ? this.chart.yFields
                     : [this.chart.yField],
                 multiFieldId: this.chart.multiField,
-                data: this.qData
+                data:
+                  xField?.result === common.FieldResultEnum.Number
+                    ? [...this.qData].sort((a: RData, b: RData) =>
+                        Number(a[xField.sqlName].value) >
+                        Number(b[xField.sqlName].value)
+                          ? 1
+                          : Number(b[xField.sqlName].value) >
+                            Number(a[xField.sqlName].value)
+                          ? -1
+                          : 0
+                      )
+                    : this.qData
               })
             : [];
       }
