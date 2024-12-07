@@ -2,8 +2,8 @@ import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
 import { ModelQuery } from '~front/app/queries/model.query';
 import { MqQuery } from '~front/app/queries/mq.query';
+import { QDataRow } from '~front/app/services/data.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
-import { RData } from '~front/app/services/query.service';
 import { StructService } from '~front/app/services/struct.service';
 import { common } from '~front/barrels/common';
 
@@ -25,7 +25,7 @@ export class MainTableComponent {
   mconfigFields: common.MconfigField[];
 
   @Input()
-  qData: RData[];
+  qData: QDataRow[];
 
   @Input()
   mconfig: common.MconfigX;

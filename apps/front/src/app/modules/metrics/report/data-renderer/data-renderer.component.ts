@@ -4,8 +4,8 @@ import { ICellRendererParams } from 'ag-grid-community';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { ReportQuery } from '~front/app/queries/report.query';
+import { DataService } from '~front/app/services/data.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
-import { QueryService } from '~front/app/services/query.service';
 import { TimeService } from '~front/app/services/time.service';
 import { common } from '~front/barrels/common';
 
@@ -39,7 +39,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
     this.formattedValue =
       this.isError === false && common.isDefined(params.value)
-        ? this.queryService.formatValue({
+        ? this.dataService.formatValue({
             value: params.value,
             formatNumber: params.data.formatNumber,
             fieldResult: common.FieldResultEnum.Number,
@@ -233,7 +233,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
   }
 
   constructor(
-    private queryService: QueryService,
+    private dataService: DataService,
     private mconfigService: MconfigService,
     private metricsQuery: MetricsQuery,
     private reportQuery: ReportQuery,

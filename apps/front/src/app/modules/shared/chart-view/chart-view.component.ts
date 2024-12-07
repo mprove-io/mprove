@@ -19,9 +19,12 @@ import { MconfigField } from '~common/_index';
 import { getChartCurve } from '~front/app/functions/get-chart-curve';
 import { getChartScheme } from '~front/app/functions/get-chart-scheme';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
-import { DataService } from '~front/app/services/data.service';
+import {
+  DataService,
+  QDataRow,
+  SeriesDataElement
+} from '~front/app/services/data.service';
 import { FormatNumberService } from '~front/app/services/format-number.service';
-import { RData } from '~front/app/services/query.service';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
@@ -87,7 +90,7 @@ export class ChartViewComponent implements OnChanges {
   mconfigFields: common.MconfigField[];
 
   @Input()
-  qData: RData[];
+  qData: QDataRow[];
 
   @Input()
   chart: common.MconfigChart;
@@ -95,7 +98,7 @@ export class ChartViewComponent implements OnChanges {
   @Input()
   queryStatus: common.QueryStatusEnum;
 
-  seriesData: any[] = [];
+  seriesData: SeriesDataElement[] = [];
   eData: any[] = [];
 
   single: any[] = [];
@@ -204,7 +207,7 @@ export class ChartViewComponent implements OnChanges {
           common.isDefined(this.chart.xField) &&
           common.isDefined(this.chart.yFields) &&
           this.chart.yFields.length > 0
-            ? this.dataService.getSeriesData({
+            ? this.dataService.makeSeriesData({
                 selectFields: this.mconfigFields,
                 xFieldId: this.chart.xField,
                 sizeFieldId: this.chart.sizeField,
@@ -213,9 +216,10 @@ export class ChartViewComponent implements OnChanges {
                     ? this.chart.yFields
                     : [this.chart.yField],
                 multiFieldId: this.chart.multiField,
+                // TODO: time
                 data:
                   xField?.result === common.FieldResultEnum.Number
-                    ? [...this.qData].sort((a: RData, b: RData) =>
+                    ? [...this.qData].sort((a: QDataRow, b: QDataRow) =>
                         Number(a[xField.sqlName].value) >
                         Number(b[xField.sqlName].value)
                           ? 1
@@ -256,8 +260,8 @@ export class ChartViewComponent implements OnChanges {
         this.eChartOptions.series = this.seriesData.map(el => {
           let a = {
             type: this.chart.type.split('_')[1] as any,
-            name: el.name,
-            data: el.series.map((x: any) =>
+            name: el.seriesName,
+            data: el.seriesPoints.map((x: any) =>
               this.chart.type === common.ChartTypeEnum.EScatter &&
               common.isDefined(this.chart.sizeField)
                 ? [x.name, x.value, x.sizeValue]
@@ -549,7 +553,7 @@ export class ChartViewComponent implements OnChanges {
         common.isDefined(this.chart.xField) &&
         common.isDefined(this.chart.yFields) &&
         this.chart.yFields.length > 0
-          ? this.dataService.getSeriesData({
+          ? this.dataService.makeSeriesData({
               selectFields: this.mconfigFields,
               xFieldId: this.chart.xField,
               sizeFieldId: this.chart.sizeField,
@@ -582,7 +586,7 @@ export class ChartViewComponent implements OnChanges {
           common.isDefined(this.chart.xField) &&
           common.isDefined(this.chart.yFields) &&
           this.chart.yFields.length > 0
-            ? this.dataService.getSeriesData({
+            ? this.dataService.makeSeriesData({
                 selectFields: this.mconfigFields,
                 xFieldId: this.chart.xField,
                 sizeFieldId: this.chart.sizeField,
@@ -595,7 +599,7 @@ export class ChartViewComponent implements OnChanges {
         let agMultiData: any = [];
 
         this.seriesData.forEach(el => {
-          el.series.forEach((element: any) => {
+          el.seriesPoints.forEach((element: any) => {
             let rowElement: any = agMultiData.find(
               (x: any) => x[xField.sqlName] === element.name
             );
@@ -604,7 +608,7 @@ export class ChartViewComponent implements OnChanges {
               agMultiData.push(rowElement);
             }
             rowElement[xField.sqlName] = element.name;
-            rowElement[el.name] = element.value;
+            rowElement[el.seriesName] = element.value;
           });
         });
 
@@ -664,7 +668,7 @@ export class ChartViewComponent implements OnChanges {
             let a = {
               type: this.chart.type.split('_')[1] as any,
               xKey: xField.sqlName,
-              yKey: el.name
+              yKey: el.seriesName
             };
 
             if (this.chart.type === common.ChartTypeEnum.AgBubble) {

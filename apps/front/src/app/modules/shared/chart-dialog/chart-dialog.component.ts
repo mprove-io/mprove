@@ -16,8 +16,8 @@ import { concatMap, delay, startWith, take, tap } from 'rxjs/operators';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
+import { DataService, QDataRow } from '~front/app/services/data.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { QueryService, RData } from '~front/app/services/query.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { SharedModule } from '../shared.module';
@@ -26,7 +26,7 @@ export interface ChartDialogData {
   apiService: ApiService;
   mconfig: common.MconfigX;
   query: common.Query;
-  qData: RData[];
+  qData: QDataRow[];
   canAccessModel: boolean;
   showNav: boolean;
   isSelectValid: boolean;
@@ -63,7 +63,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   checkRunning$: Subscription;
 
   canAccessModel: boolean;
-  qData: RData[];
+  qData: QDataRow[];
   query: common.Query;
   mconfig: common.MconfigX;
   isSelectValid = false;
@@ -81,7 +81,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   constructor(
     public ref: DialogRef<ChartDialogData>,
     private cd: ChangeDetectorRef,
-    private queryService: QueryService,
+    private dataService: DataService,
     private memberQuery: MemberQuery,
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
@@ -138,7 +138,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
                     this.qData =
                       this.mconfig.queryId === this.query.queryId
-                        ? this.queryService.makeQData({
+                        ? this.dataService.makeQData({
                             data: this.query.data,
                             columns: this.mconfig.fields
                           })

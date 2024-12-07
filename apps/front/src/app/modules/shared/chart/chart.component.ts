@@ -12,9 +12,9 @@ import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
+import { DataService, QDataRow } from '~front/app/services/data.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { QueryService, RData } from '~front/app/services/query.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -42,7 +42,7 @@ export class ChartComponent implements OnInit, OnDestroy {
   @Input()
   chartDeletedFnBindThis: any;
 
-  qData: RData[];
+  qData: QDataRow[];
   query: common.Query;
   mconfig: common.MconfigX;
 
@@ -68,7 +68,7 @@ export class ChartComponent implements OnInit, OnDestroy {
   constructor(
     private apiService: ApiService,
     private navQuery: NavQuery,
-    private queryService: QueryService,
+    private dataService: DataService,
     private memberQuery: MemberQuery,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
@@ -123,7 +123,7 @@ export class ChartComponent implements OnInit, OnDestroy {
 
     this.qData =
       mconfig.queryId === query.queryId
-        ? this.queryService.makeQData({
+        ? this.dataService.makeQData({
             data: query.data,
             columns: mconfig.fields
           })
@@ -302,7 +302,7 @@ export class ChartComponent implements OnInit, OnDestroy {
 
     this.qData =
       this.mconfig.queryId === this.query.queryId
-        ? this.queryService.makeQData({
+        ? this.dataService.makeQData({
             data: this.query.data,
             columns: this.mconfig.fields
           })

@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { RData } from '~front/app/services/query.service';
+import { QDataRow } from '~front/app/services/data.service';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -23,7 +23,7 @@ export class ChartTableComponent {
   hideColumns: string[];
 
   @Input()
-  qData: RData[];
+  qData: QDataRow[];
 
   @Input()
   pageSize: number;

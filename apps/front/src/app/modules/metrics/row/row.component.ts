@@ -10,7 +10,6 @@ import { ReportQuery } from '~front/app/queries/report.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
-import { QueryService } from '~front/app/services/query.service';
 import { ReportService } from '~front/app/services/report.service';
 import { ValidationService } from '~front/app/services/validation.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -18,6 +17,7 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
+import { DataService } from '~front/app/services/data.service';
 
 export interface ParameterFilter extends common.FilterX {
   parameterType: common.ParameterTypeEnum;
@@ -133,7 +133,7 @@ export class RowComponent {
       if (common.isDefined(this.reportSelectedNode)) {
         this.formatNumberExamples = constants.FORMAT_NUMBER_EXAMPLES.map(
           example => {
-            example.output = this.queryService.formatValue({
+            example.output = this.dataService.formatValue({
               value: example.input,
               formatNumber: example.id,
               fieldResult: common.FieldResultEnum.Number,
@@ -266,7 +266,7 @@ export class RowComponent {
     private reportService: ReportService,
     private reportQuery: ReportQuery,
     private apiService: ApiService,
-    private queryService: QueryService,
+    private dataService: DataService,
     private navQuery: NavQuery,
     private mconfigService: MconfigService
   ) {}

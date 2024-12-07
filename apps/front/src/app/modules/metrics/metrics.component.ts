@@ -33,7 +33,6 @@ import { StructReportResolver } from '~front/app/resolvers/struct-report.resolve
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { QueryService } from '~front/app/services/query.service';
 import { ReportService } from '~front/app/services/report.service';
 import { UiService } from '~front/app/services/ui.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -41,6 +40,7 @@ import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
+import { DataService } from '~front/app/services/data.service';
 
 export class TimeSpecItem {
   label: string;
@@ -244,7 +244,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
                   let formattedValue = common.isDefined(
                     params.datum[params.yKey]
                   )
-                    ? this.queryService.formatValue({
+                    ? this.dataService.formatValue({
                         value: Number(params.datum[params.yKey]),
                         formatNumber: row.formatNumber,
                         fieldResult: common.FieldResultEnum.Number,
@@ -296,7 +296,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
               label: {
                 formatter: (params: AgAxisLabelFormatterParams) => {
                   let formattedValue = common.isDefined(params.value)
-                    ? this.queryService.formatValue({
+                    ? this.dataService.formatValue({
                         value: params.value,
                         formatNumber: structState.formatNumber,
                         fieldResult: common.FieldResultEnum.Number,
@@ -403,7 +403,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
     private spinner: NgxSpinnerService,
     private uiService: UiService,
     private reportService: ReportService,
-    private queryService: QueryService,
+    private dataService: DataService,
     private navigateService: NavigateService,
     private myDialogService: MyDialogService,
     private apiService: ApiService,

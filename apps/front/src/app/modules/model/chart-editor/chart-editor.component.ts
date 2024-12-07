@@ -2,9 +2,9 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { StructQuery } from '~front/app/queries/struct.query';
+import { DataService } from '~front/app/services/data.service';
 import { FormatNumberService } from '~front/app/services/format-number.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
-import { QueryService } from '~front/app/services/query.service';
 import { StructService } from '~front/app/services/struct.service';
 import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
@@ -98,7 +98,7 @@ export class ChartEditorComponent implements OnChanges {
   formatNumberExamples: any[] = constants.FORMAT_NUMBER_EXAMPLES.map(x => {
     let structState = this.structQuery.getValue();
 
-    x.output = this.queryService.formatValue({
+    x.output = this.dataService.formatValue({
       value: x.input,
       formatNumber: x.id,
       fieldResult: common.FieldResultEnum.Number,
@@ -490,7 +490,7 @@ export class ChartEditorComponent implements OnChanges {
     private structService: StructService,
     private structQuery: StructQuery,
     private mconfigService: MconfigService,
-    private queryService: QueryService,
+    private dataService: DataService,
     private formatNumberService: FormatNumberService
   ) {}
 

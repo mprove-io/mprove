@@ -13,12 +13,12 @@ import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { QueryService } from '~front/app/services/query.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
+import { DataService } from '~front/app/services/data.service';
 
 export class ModelXWithTotalDashboards extends common.ModelX {
   totalDashboards: number;
@@ -124,7 +124,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     private apiService: ApiService,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
-    private queryService: QueryService,
+    private dataService: DataService,
     private dashboardsQuery: DashboardsQuery,
     private spinner: NgxSpinnerService,
     private modelsQuery: ModelsQuery,
@@ -322,7 +322,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     let qData =
       mconfig.queryId === query.queryId
-        ? this.queryService.makeQData({
+        ? this.dataService.makeQData({
             data: query.data,
             columns: mconfig.fields
           })

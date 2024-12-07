@@ -18,9 +18,9 @@ import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
+import { DataService, QDataRow } from '~front/app/services/data.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { QueryService, RData } from '~front/app/services/query.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { ChartViewComponent } from '../chart-view/chart-view.component';
@@ -65,7 +65,7 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
 
   @Output() repDeleted = new EventEmitter<string>();
 
-  qData: RData[];
+  qData: QDataRow[];
 
   checkRunning$: Subscription;
 
@@ -90,7 +90,7 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
     private apiService: ApiService,
     private navQuery: NavQuery,
     private memberQuery: MemberQuery,
-    private queryService: QueryService,
+    private dataService: DataService,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
     private myDialogService: MyDialogService,
@@ -114,7 +114,7 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
 
     this.qData =
       this.mconfig.queryId === this.query.queryId
-        ? this.queryService.makeQData({
+        ? this.dataService.makeQData({
             data: this.query.data,
             columns: this.mconfig.fields
           })
@@ -277,7 +277,7 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
 
     this.qData =
       this.mconfig.queryId === this.query.queryId
-        ? this.queryService.makeQData({
+        ? this.dataService.makeQData({
             data: this.query.data,
             columns: this.mconfig.fields
           })

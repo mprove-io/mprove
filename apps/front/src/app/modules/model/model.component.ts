@@ -22,11 +22,11 @@ import { StructQuery } from '~front/app/queries/struct.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DataSizeService } from '~front/app/services/data-size.service';
+import { QDataRow } from '~front/app/services/data.service';
 import { FileService } from '~front/app/services/file.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { QueryService, RData } from '~front/app/services/query.service';
 import { StructService } from '~front/app/services/struct.service';
 import { TimeService } from '~front/app/services/time.service';
 import { ValidationService } from '~front/app/services/validation.service';
@@ -35,6 +35,7 @@ import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
+import { DataService } from '~front/app/services/data.service';
 
 export class ChartTypeItem {
   label: string;
@@ -132,7 +133,7 @@ export class ModelComponent implements OnInit, OnDestroy {
       ) {
         this.qData =
           this.mconfig.queryId === this.query.queryId
-            ? this.queryService.makeQData({
+            ? this.dataService.makeQData({
                 data: this.query.data,
                 columns: this.mconfig.fields
               })
@@ -259,7 +260,7 @@ export class ModelComponent implements OnInit, OnDestroy {
   dryQueryEstimate: common.QueryEstimate;
   dryDataSize: string;
 
-  qData: RData[];
+  qData: QDataRow[];
 
   isSelectValid = false;
   errorMessage = '';
@@ -492,7 +493,7 @@ export class ModelComponent implements OnInit, OnDestroy {
     private timeService: TimeService,
     private mconfigService: MconfigService,
     private dataSizeService: DataSizeService,
-    private queryService: QueryService,
+    private dataService: DataService,
     private myDialogService: MyDialogService,
     private title: Title
   ) {}
