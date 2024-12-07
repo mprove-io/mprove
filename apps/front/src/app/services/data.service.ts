@@ -24,7 +24,7 @@ export interface SeriesDataElement {
 }
 
 export interface SeriesPoint {
-  name: string | number | Date;
+  name: string | number;
   value: number;
   sizeValue: number;
 }
@@ -128,6 +128,9 @@ export class DataService {
 
       qData.push(r);
     });
+
+    console.log('qData');
+    console.log(qData);
 
     return qData;
   }
@@ -250,7 +253,7 @@ export class DataService {
           let xV =
             xField.result === common.FieldResultEnum.Ts
               ? common.isDefined(tsValueFn)
-                ? tsValueFn(row[xName].value)
+                ? tsValueFn(row[xName].value).getTime()
                 : row[xName].value
               : row[xName].value;
 
@@ -324,7 +327,7 @@ export class DataService {
           resRow[cell.id] =
             xField.result === common.FieldResultEnum.Ts
               ? common.isDefined(tsValueFn)
-                ? tsValueFn(row[xName].value)
+                ? tsValueFn(row[xName].value).getTime()
                 : row[xName].value
               : row[xName].value;
         } else if (this.isNumber(cell.value)) {
@@ -408,9 +411,7 @@ export class DataService {
     let [full, year, month, day] = r;
 
     let date = new Date(
-      parseInt(year, 10),
-      parseInt(month, 10) - 1,
-      parseInt(day, 10)
+      Date.UTC(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10))
     );
 
     return date;
@@ -430,10 +431,12 @@ export class DataService {
     let [full, year, month, day, hour] = r;
 
     let date = new Date(
-      parseInt(year, 10),
-      parseInt(month, 10) - 1,
-      parseInt(day, 10),
-      parseInt(hour, 10)
+      Date.UTC(
+        parseInt(year, 10),
+        parseInt(month, 10) - 1,
+        parseInt(day, 10),
+        parseInt(hour, 10)
+      )
     );
 
     return date;
@@ -453,11 +456,13 @@ export class DataService {
     let [full, year, month, day, hour, minute] = r;
 
     let date = new Date(
-      parseInt(year, 10),
-      parseInt(month, 10) - 1,
-      parseInt(day, 10),
-      parseInt(hour, 10),
-      parseInt(minute, 10)
+      Date.UTC(
+        parseInt(year, 10),
+        parseInt(month, 10) - 1,
+        parseInt(day, 10),
+        parseInt(hour, 10),
+        parseInt(minute, 10)
+      )
     );
 
     return date;
@@ -476,7 +481,9 @@ export class DataService {
 
     let [full, year, month] = r;
 
-    let date = new Date(parseInt(year, 10), parseInt(month, 10) - 1, 1);
+    let date = new Date(
+      Date.UTC(parseInt(year, 10), parseInt(month, 10) - 1, 1)
+    );
 
     return date;
   }
@@ -494,7 +501,9 @@ export class DataService {
 
     let [full, year, month] = r;
 
-    let date = new Date(parseInt(year, 10), parseInt(month, 10) - 1, 1);
+    let date = new Date(
+      Date.UTC(parseInt(year, 10), parseInt(month, 10) - 1, 1)
+    );
 
     return date;
   }
@@ -513,12 +522,14 @@ export class DataService {
     let [full, year, month, day, hour, minute, second] = r;
 
     let date = new Date(
-      parseInt(year, 10),
-      parseInt(month, 10) - 1,
-      parseInt(day, 10),
-      parseInt(hour, 10),
-      parseInt(minute, 10),
-      parseInt(second, 10)
+      Date.UTC(
+        parseInt(year, 10),
+        parseInt(month, 10) - 1,
+        parseInt(day, 10),
+        parseInt(hour, 10),
+        parseInt(minute, 10),
+        parseInt(second, 10)
+      )
     );
 
     return date;
@@ -542,21 +553,25 @@ export class DataService {
 
     let date = common.isDefinedAndNotEmpty(ms)
       ? new Date(
-          parseInt(year, 10),
-          parseInt(month, 10) - 1,
-          parseInt(day, 10),
-          parseInt(hour, 10),
-          parseInt(minute, 10),
-          parseInt(second, 10),
-          parseInt(ms, 10)
+          Date.UTC(
+            parseInt(year, 10),
+            parseInt(month, 10) - 1,
+            parseInt(day, 10),
+            parseInt(hour, 10),
+            parseInt(minute, 10),
+            parseInt(second, 10),
+            parseInt(ms, 10)
+          )
         )
       : new Date(
-          parseInt(year, 10),
-          parseInt(month, 10) - 1,
-          parseInt(day, 10),
-          parseInt(hour, 10),
-          parseInt(minute, 10),
-          parseInt(second, 10)
+          Date.UTC(
+            parseInt(year, 10),
+            parseInt(month, 10) - 1,
+            parseInt(day, 10),
+            parseInt(hour, 10),
+            parseInt(minute, 10),
+            parseInt(second, 10)
+          )
         );
 
     return date;
@@ -576,9 +591,7 @@ export class DataService {
     let [full, year, month, day] = r;
 
     let date = new Date(
-      parseInt(year, 10),
-      parseInt(month, 10) - 1,
-      parseInt(day, 10)
+      Date.UTC(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10))
     );
 
     return date;
@@ -597,7 +610,7 @@ export class DataService {
 
     let [full, year] = r;
 
-    let date = new Date(parseInt(year, 10), 0, 1);
+    let date = new Date(Date.UTC(parseInt(year, 10), 0, 1));
 
     return date;
   }
@@ -631,7 +644,7 @@ export class DataService {
             resRow[cell.id] =
               xField.result === common.FieldResultEnum.Ts
                 ? common.isDefined(tsValueFn)
-                  ? tsValueFn(row[xName].value)
+                  ? tsValueFn(row[xName].value).getTime()
                   : row[xName].value
                 : row[xName].value;
           } else if (this.isNumber(cell.value)) {

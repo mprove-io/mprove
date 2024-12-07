@@ -160,6 +160,7 @@ export class ChartViewComponent implements OnChanges {
     } as EChartsInitOpts;
 
     this.eChartOptions = {
+      useUTC: true,
       grid: {
         left: '8%',
         right: '5%',
@@ -167,7 +168,7 @@ export class ChartViewComponent implements OnChanges {
         bottom: '10%'
       },
       tooltip: {}
-    };
+    } as EChartsOption;
 
     this.chartOptions = {};
 

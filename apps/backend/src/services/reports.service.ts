@@ -796,7 +796,7 @@ export class ReportsService {
             // extendedFilters: [],
           };
 
-          mconfig.chart.type = common.ChartTypeEnum.Line;
+          mconfig.chart.type = common.ChartTypeEnum.ELine;
 
           mconfig = common.setChartTitleOnSelectChange({
             mconfig: mconfig,
