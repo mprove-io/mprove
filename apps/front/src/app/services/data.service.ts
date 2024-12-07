@@ -24,8 +24,8 @@ export interface SeriesDataElement {
 }
 
 export interface SeriesPoint {
-  name: string | number;
-  value: number;
+  xValue: string | number;
+  yValue: number;
   sizeValue: number;
 }
 
@@ -274,12 +274,12 @@ export class DataService {
             common.isDefined(xV)
           ) {
             let element: SeriesPoint = {
-              name: common.isUndefined(xV)
+              xValue: common.isUndefined(xV)
                 ? 'NULL'
                 : xField.result === common.FieldResultEnum.Number
                 ? this.convertToNumberOrNull(xV)
                 : xV,
-              value: this.convertToNumberOrNull(yV),
+              yValue: this.convertToNumberOrNull(yV),
               sizeValue: sV
             };
 
@@ -296,7 +296,17 @@ export class DataService {
     let seriesData: SeriesDataElement[] = Object.keys(prepareData).map(x =>
       Object.assign({
         seriesName: x,
-        seriesPoints: prepareData[x]
+        seriesPoints:
+          xField?.result === common.FieldResultEnum.Number ||
+          xField?.result === common.FieldResultEnum.Ts
+            ? prepareData[x].sort((a: SeriesPoint, b: SeriesPoint) =>
+                Number(a.xValue) > Number(b.xValue)
+                  ? 1
+                  : Number(b.xValue) > Number(a.xValue)
+                  ? -1
+                  : 0
+              )
+            : prepareData[x]
       } as SeriesDataElement)
     );
 

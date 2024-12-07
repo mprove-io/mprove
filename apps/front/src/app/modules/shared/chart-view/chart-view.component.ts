@@ -22,7 +22,8 @@ import { getSelectValid } from '~front/app/functions/get-select-valid';
 import {
   DataService,
   QDataRow,
-  SeriesDataElement
+  SeriesDataElement,
+  SeriesPoint
 } from '~front/app/services/data.service';
 import { FormatNumberService } from '~front/app/services/format-number.service';
 import { common } from '~front/barrels/common';
@@ -217,19 +218,7 @@ export class ChartViewComponent implements OnChanges {
                     ? this.chart.yFields
                     : [this.chart.yField],
                 multiFieldId: this.chart.multiField,
-                // TODO: time
-                data:
-                  xField?.result === common.FieldResultEnum.Number
-                    ? [...this.qData].sort((a: QDataRow, b: QDataRow) =>
-                        Number(a[xField.sqlName].value) >
-                        Number(b[xField.sqlName].value)
-                          ? 1
-                          : Number(b[xField.sqlName].value) >
-                            Number(a[xField.sqlName].value)
-                          ? -1
-                          : 0
-                      )
-                    : this.qData
+                data: this.qData
               })
             : [];
       }
@@ -262,16 +251,16 @@ export class ChartViewComponent implements OnChanges {
           let a = {
             type: this.chart.type.split('_')[1] as any,
             name: el.seriesName,
-            data: el.seriesPoints.map((x: any) =>
+            data: el.seriesPoints.map((x: SeriesPoint) =>
               this.chart.type === common.ChartTypeEnum.EScatter &&
               common.isDefined(this.chart.sizeField)
-                ? [x.name, x.value, x.sizeValue]
+                ? [x.xValue, x.yValue, x.sizeValue]
                 : this.chart.type === common.ChartTypeEnum.EPie
                 ? {
-                    value: x.value,
-                    name: x.name
+                    name: x.xValue,
+                    value: x.yValue
                   }
-                : [x.name, x.value]
+                : [x.xValue, x.yValue]
             )
           };
 
