@@ -40,6 +40,7 @@ import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
+import { EChartsInitOpts, EChartsOption, SeriesOption } from 'echarts';
 import { DataService } from '~front/app/services/data.service';
 
 export class TimeSpecItem {
@@ -155,6 +156,9 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   chartOptions: AgChartOptions;
 
+  eChartInitOpts: any;
+  eChartOptions: EChartsOption;
+
   recordsWithValuesLength = 0;
   selectedRowsWithQueriesLength = 0;
 
@@ -169,9 +173,16 @@ export class MetricsComponent implements OnInit, OnDestroy {
         boolean,
         boolean
       ]) => {
-        let dataPoints: any[] = [];
+        let dataPoints: {
+          columnId: number;
+          columnLabel: string;
+          [key: string]: any;
+        }[] = [];
 
         let recordsWithValuesLength = 0;
+
+        console.log('x');
+        console.log(x);
 
         if (x.rows.length > 0) {
           dataPoints = x.columns
@@ -267,6 +278,89 @@ export class MetricsComponent implements OnInit, OnDestroy {
           });
 
         let structState = this.structQuery.getValue();
+
+        this.eChartInitOpts = {
+          renderer: 'svg'
+        } as EChartsInitOpts;
+
+        this.eChartOptions = {
+          useUTC: true,
+          grid: {
+            left: '8%',
+            right: '5%',
+            top: '10%',
+            bottom: '10%'
+          },
+          tooltip: {},
+          xAxis: {
+            type: 'time'
+          },
+          yAxis: {
+            type: 'value'
+          },
+          series: x.rows
+            .filter(
+              row =>
+                [common.RowTypeEnum.Metric, common.RowTypeEnum.Formula].indexOf(
+                  row.rowType
+                ) > -1
+            )
+            .map(row => {
+              let rowName = this.makeRowName({
+                row: row,
+                showMetricsModelName: showMetricsModelName,
+                showMetricsTimeFieldName: showMetricsTimeFieldName
+              });
+
+              let seriesOption: SeriesOption = {
+                type: 'line',
+                name: rowName,
+                data: dataPoints.map(dataPoint => [
+                  dataPoint.columnId * 1000,
+                  dataPoint[rowName]
+                ])
+                // ,
+                // tooltip: {
+                //   renderer: (
+                //     params: AgCartesianSeriesTooltipRendererParams
+                //   ) => {
+                //     let timeSpec = this.uiQuery.getValue().timeSpec;
+
+                //     // console.log(params);
+
+                //     let columnLabel = common.formatTs({
+                //       timeSpec: timeSpec,
+                //       unixTimeZoned: Number(params.datum[params.xKey])
+                //     });
+
+                //     let formattedValue = common.isDefined(
+                //       params.datum[params.yKey]
+                //     )
+                //       ? this.dataService.formatValue({
+                //           value: Number(params.datum[params.yKey]),
+                //           formatNumber: row.formatNumber,
+                //           fieldResult: common.FieldResultEnum.Number,
+                //           currencyPrefix: row.currencyPrefix,
+                //           currencySuffix: row.currencySuffix
+                //         })
+                //       : 'undefined';
+
+                //     let result: AgTooltipRendererResult = {
+                //       title: params.title,
+                //       content: `${columnLabel}: ${formattedValue}`
+                //     };
+
+                //     return result;
+                //   }
+                // }
+              };
+
+              return seriesOption;
+            })
+        } as EChartsOption;
+
+        console.log('dataPoints');
+        console.log(dataPoints);
 
         this.chartOptions = {
           data: dataPoints,

@@ -142,6 +142,7 @@ export class DataService {
     xFieldId: string;
     sizeFieldId: string;
     yFieldsIds: string[];
+    chartType: common.ChartTypeEnum;
   }) {
     let {
       selectFields,
@@ -149,7 +150,8 @@ export class DataService {
       multiFieldId,
       xFieldId,
       sizeFieldId,
-      yFieldsIds
+      yFieldsIds,
+      chartType
     } = item;
 
     let xField = selectFields.find(f => f.id === xFieldId);
@@ -297,8 +299,9 @@ export class DataService {
       Object.assign({
         seriesName: x,
         seriesPoints:
-          xField?.result === common.FieldResultEnum.Number ||
-          xField?.result === common.FieldResultEnum.Ts
+          chartType === common.ChartTypeEnum.ELine &&
+          (xField?.result === common.FieldResultEnum.Number ||
+            xField?.result === common.FieldResultEnum.Ts)
             ? prepareData[x].sort((a: SeriesPoint, b: SeriesPoint) =>
                 Number(a.xValue) > Number(b.xValue)
                   ? 1

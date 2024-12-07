@@ -336,14 +336,16 @@
                       'w-full': showMetricsChartSettings === false
                     }"
                   >
-                    <ag-charts
+                    <m-chart-view-metrics
                       *ngIf="
-                        chartOptions?.data.length > 0 &&
-                        recordsWithValuesLength > 0
+                        recordsWithValuesLength > 0 &&
+                        !!eChartInitOpts &&
+                        !!eChartOptions
                       "
+                      [eChartInitOpts]="eChartInitOpts"
+                      [eChartOptions]="eChartOptions"
                       style="height: 100%"
-                      [options]="chartOptions"
-                    ></ag-charts>
+                    ></m-chart-view-metrics>
 
                     <div
                       *ngIf="

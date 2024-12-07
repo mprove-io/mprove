@@ -14,7 +14,7 @@ import {
   AgPieSeriesOptions
 } from 'ag-charts-community';
 import { formatLocale } from 'd3-format';
-import { EChartsInitOpts, EChartsOption } from 'echarts';
+import { EChartsInitOpts, EChartsOption, SeriesOption } from 'echarts';
 import { MconfigField } from '~common/_index';
 import { getChartCurve } from '~front/app/functions/get-chart-curve';
 import { getChartScheme } from '~front/app/functions/get-chart-scheme';
@@ -218,7 +218,8 @@ export class ChartViewComponent implements OnChanges {
                     ? this.chart.yFields
                     : [this.chart.yField],
                 multiFieldId: this.chart.multiField,
-                data: this.qData
+                data: this.qData,
+                chartType: this.chart.type
               })
             : [];
       }
@@ -248,7 +249,7 @@ export class ChartViewComponent implements OnChanges {
 
       if (this.eChartsTypes.indexOf(this.chart.type) > -1) {
         this.eChartOptions.series = this.seriesData.map(el => {
-          let a = {
+          let seriesOption: SeriesOption = {
             type: this.chart.type.split('_')[1] as any,
             name: el.seriesName,
             data: el.seriesPoints.map((x: SeriesPoint) =>
@@ -268,12 +269,12 @@ export class ChartViewComponent implements OnChanges {
             this.chart.type === common.ChartTypeEnum.EScatter &&
             common.isDefined(this.chart.sizeField)
           ) {
-            (a as any).symbolSize = function (data: any) {
+            (seriesOption as any).symbolSize = function (data: any) {
               return 5 + data[2] * 25;
             };
           }
 
-          return a;
+          return seriesOption;
         });
       }
 
@@ -549,7 +550,8 @@ export class ChartViewComponent implements OnChanges {
               sizeFieldId: this.chart.sizeField,
               yFieldsIds: this.chart.yFields,
               multiFieldId: this.chart.multiField,
-              data: this.qData
+              data: this.qData,
+              chartType: this.chart.type
             })
           : [];
     }
@@ -582,7 +584,8 @@ export class ChartViewComponent implements OnChanges {
                 sizeFieldId: this.chart.sizeField,
                 yFieldsIds: this.chart.yFields,
                 multiFieldId: this.chart.multiField,
-                data: this.qData
+                data: this.qData,
+                chartType: this.chart.type
               })
             : [];
 
