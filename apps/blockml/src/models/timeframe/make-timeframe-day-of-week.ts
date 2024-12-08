@@ -15,7 +15,7 @@ export function makeTimeframeDayOfWeek(item: {
     }
 
     case common.ConnectionTypeEnum.PostgreSQL: {
-      sql = `TO_CHAR(${sqlTimestamp}, 'Day')`;
+      sql = `TO_CHAR(${sqlTimestamp}, 'FMDay')`;
       break;
     }
 

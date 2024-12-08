@@ -3,6 +3,7 @@ import { formatLocale } from 'd3-format';
 import { capitalizeFirstLetter } from '~common/_index';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+import { StructQuery } from '../queries/struct.query';
 
 export interface SourceDataRow {
   [k: string]: string;
@@ -35,7 +36,7 @@ interface PrepareData {
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
-  constructor() {}
+  constructor(private structQuery: StructQuery) {}
 
   private isNumber(v: unknown): boolean {
     if (typeof v === 'number') {
@@ -295,18 +296,90 @@ export class DataService {
       });
     });
 
+    let structState = this.structQuery.getValue();
+
+    let sortedDaysOfWeek =
+      structState.weekStart === common.ProjectWeekStartEnum.Monday
+        ? [
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday',
+            'Sunday'
+          ]
+        : [
+            'Sunday',
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday'
+          ];
+
+    let sortedMonthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
+
+    let sortedQuartersOfYear = ['Q1', 'Q2', 'Q3', 'Q4'];
+
     let seriesData: SeriesDataElement[] = Object.keys(prepareData).map(x =>
       Object.assign({
         seriesName: x,
         seriesPoints:
-          chartType === common.ChartTypeEnum.ELine &&
-          (xField?.result === common.FieldResultEnum.Number ||
-            xField?.result === common.FieldResultEnum.Ts)
+          chartType !== common.ChartTypeEnum.EScatter &&
+          (xField?.result === common.FieldResultEnum.Ts ||
+            xField?.result === common.FieldResultEnum.Number ||
+            xField?.result === common.FieldResultEnum.DayOfWeek ||
+            xField?.result === common.FieldResultEnum.DayOfWeekIndex ||
+            xField?.result === common.FieldResultEnum.MonthName ||
+            xField?.result === common.FieldResultEnum.QuarterOfYear)
             ? prepareData[x].sort((a: SeriesPoint, b: SeriesPoint) =>
-                Number(a.xValue) > Number(b.xValue)
-                  ? 1
-                  : Number(b.xValue) > Number(a.xValue)
-                  ? -1
+                xField?.result === common.FieldResultEnum.Number ||
+                xField?.result === common.FieldResultEnum.DayOfWeekIndex ||
+                xField?.result === common.FieldResultEnum.Ts
+                  ? Number(a.xValue) > Number(b.xValue)
+                    ? 1
+                    : Number(b.xValue) > Number(a.xValue)
+                    ? -1
+                    : 0
+                  : xField?.result === common.FieldResultEnum.DayOfWeek
+                  ? sortedDaysOfWeek.indexOf(a.xValue as string) >
+                    sortedDaysOfWeek.indexOf(b.xValue as string)
+                    ? 1
+                    : sortedDaysOfWeek.indexOf(b.xValue as string) >
+                      sortedDaysOfWeek.indexOf(a.xValue as string)
+                    ? -1
+                    : 0
+                  : xField?.result === common.FieldResultEnum.MonthName
+                  ? sortedMonthNames.indexOf(a.xValue as string) >
+                    sortedMonthNames.indexOf(b.xValue as string)
+                    ? 1
+                    : sortedMonthNames.indexOf(b.xValue as string) >
+                      sortedMonthNames.indexOf(a.xValue as string)
+                    ? -1
+                    : 0
+                  : xField?.result === common.FieldResultEnum.QuarterOfYear
+                  ? sortedQuartersOfYear.indexOf(a.xValue as string) >
+                    sortedQuartersOfYear.indexOf(b.xValue as string)
+                    ? 1
+                    : sortedQuartersOfYear.indexOf(b.xValue as string) >
+                      sortedQuartersOfYear.indexOf(a.xValue as string)
+                    ? -1
+                    : 0
                   : 0
               )
             : prepareData[x]

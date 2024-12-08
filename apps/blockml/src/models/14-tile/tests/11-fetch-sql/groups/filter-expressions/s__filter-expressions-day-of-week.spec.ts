@@ -162,7 +162,7 @@ test('2', async t => {
   view__v1__a AS (
     SELECT
       d1 as dim1,
-      TO_CHAR((d2), 'Day') as time1___day_of_week
+      TO_CHAR((d2), 'FMDay') as time1___day_of_week
     FROM derived__v1__a
   ),
   main AS (

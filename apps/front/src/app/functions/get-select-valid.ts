@@ -37,11 +37,15 @@ export function getSelectValid(item: {
     x => x.fieldClass === common.FieldClassEnum.Dimension
   );
 
-  let selectedDimensionsIsResultNumberOrTs = mconfigFields.filter(
+  let selectedDimensionsResultForXField = mconfigFields.filter(
     x =>
       x.fieldClass === common.FieldClassEnum.Dimension &&
       (x.result === common.FieldResultEnum.Number ||
-        x.result === common.FieldResultEnum.Ts)
+        x.result === common.FieldResultEnum.Ts ||
+        x.result === common.FieldResultEnum.DayOfWeek ||
+        x.result === common.FieldResultEnum.DayOfWeekIndex ||
+        x.result === common.FieldResultEnum.MonthName ||
+        x.result === common.FieldResultEnum.QuarterOfYear)
   );
 
   let selectedMeasuresAndCalculations = mconfigFields.filter(
@@ -136,7 +140,7 @@ export function getSelectValid(item: {
       errorMessage =
         'A maximum of 2 dimension fields can be selected for this chart type';
     } else if (
-      selectedDimensionsIsResultNumberOrTs.length === 0 &&
+      selectedDimensionsResultForXField.length === 0 &&
       (chart.type === common.ChartTypeEnum.ELine ||
         chart.type === common.ChartTypeEnum.AgLine ||
         chart.type === common.ChartTypeEnum.AgArea ||
@@ -147,11 +151,15 @@ export function getSelectValid(item: {
     ) {
       isSelectValid = false;
       errorMessage =
-        'At least one of the selected dimensions for this chart type must have result type "number" or "ts"';
+        'At least one of the selected dimensions for this chart type must have result type "number", "ts", "day_of_week", "day_of_week_index", "month_name", "quarter_of_year"';
     } else if (
       common.isDefined(xField) &&
-      xField.result !== common.FieldResultEnum.Ts &&
       xField.result !== common.FieldResultEnum.Number &&
+      xField.result !== common.FieldResultEnum.Ts &&
+      xField.result !== common.FieldResultEnum.DayOfWeek &&
+      xField.result !== common.FieldResultEnum.DayOfWeekIndex &&
+      xField.result !== common.FieldResultEnum.MonthName &&
+      xField.result !== common.FieldResultEnum.QuarterOfYear &&
       (chart.type === common.ChartTypeEnum.ELine ||
         chart.type === common.ChartTypeEnum.AgLine ||
         chart.type === common.ChartTypeEnum.AgArea ||
@@ -162,7 +170,7 @@ export function getSelectValid(item: {
     ) {
       isSelectValid = false;
       errorMessage =
-        'xField for this chart type must have result type "number" or "ts"';
+        'xField for this chart type must have result type "number", "ts", "day_of_week", "day_of_week_index", "month_name", "quarter_of_year"';
     } else if (
       selectedDimensions.length === 2 &&
       selectedDimensions[0].topId === selectedDimensions[1].topId &&
