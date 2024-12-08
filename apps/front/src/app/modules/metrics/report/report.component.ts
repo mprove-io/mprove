@@ -111,20 +111,20 @@ export class ReportComponent {
       cellRenderer: MetricRendererComponent
     },
     {
-      field: 'status' as any,
-      pinned: 'right',
-      resizable: false,
-      width: 84,
-      headerComponent: StatusHeaderComponent,
-      cellRenderer: StatusRendererComponent
-    },
-    {
       field: 'chart' as any,
       pinned: 'left',
       resizable: false,
       width: 60,
       headerComponent: ChartHeaderComponent,
       cellRenderer: ChartRendererComponent
+    },
+    {
+      field: 'status' as any,
+      pinned: 'right',
+      resizable: false,
+      width: 84,
+      headerComponent: StatusHeaderComponent,
+      cellRenderer: StatusRendererComponent
     }
   ];
 

@@ -291,7 +291,10 @@ export class MetricsComponent implements OnInit, OnDestroy {
             top: '10%',
             bottom: '10%'
           },
-          tooltip: {},
+          legend: {},
+          tooltip: {
+            // trigger: 'axis'
+          },
           xAxis: {
             type: 'time'
           },
@@ -314,6 +317,16 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
               let seriesOption: SeriesOption = {
                 type: 'line',
+                symbol: 'circle',
+                symbolSize: 8,
+                // legendHoverLink: true,
+                lineStyle: {
+                  width: 3
+                },
+                // areaStyle: {},
+                emphasis: {
+                  disabled: true
+                },
                 name: rowName,
                 data: dataPoints.map(dataPoint => [
                   dataPoint.columnId * 1000,
