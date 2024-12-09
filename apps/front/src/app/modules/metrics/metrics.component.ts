@@ -329,10 +329,16 @@ export class MetricsComponent implements OnInit, OnDestroy {
           },
           legend: {},
           tooltip: {
-            trigger: 'axis',
-            valueFormatter: (value: any) =>
-              `${common.isDefined(value) ? value.toFixed(2) : 'Null'}`
+            trigger: 'item'
+            // ,
+            // valueFormatter: (value: any) =>
+            //   `${common.isDefined(value) ? value.toFixed(2) : 'Null'}`
           },
+          // tooltip: {
+          //   trigger: 'axis',
+          //   valueFormatter: (value: any) =>
+          //     `${common.isDefined(value) ? value.toFixed(2) : 'Null'}`
+          // },
           xAxis: {
             type: 'time',
             axisLabel:
@@ -380,11 +386,22 @@ export class MetricsComponent implements OnInit, OnDestroy {
                 emphasis: {
                   disabled: true
                 },
-                name: rowName,
-                data: dataPoints.map(dataPoint => [
-                  dataPoint.columnId * 1000,
-                  dataPoint[rowName]
-                ])
+                // name: rowName,
+                data: dataPoints.map(dataPoint => ({
+                  name: rowName,
+                  value: [dataPoint.columnId * 1000, dataPoint[rowName]]
+                })),
+                tooltip: {
+                  valueFormatter: (value: any) => '$' + value.toFixed(2)
+                  // ,
+                  // formatter: '{a} {b} {c} {d}',
+                  // formatter: (p: any) => {
+                  //   console.log(p);
+                  //   // return '€' + p.data[1] + ' ' + p.data[2] + '%';
+                  //   return '{a} {b} {c} {d}';
+                  // },
+                  // textStyle: {}
+                }
                 // ,
                 // tooltip: {
                 //   renderer: (
