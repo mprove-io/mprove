@@ -3,12 +3,7 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  AgAxisLabelFormatterParams,
-  AgCartesianSeriesTooltipRendererParams,
-  AgChartOptions,
-  AgTooltipRendererResult
-} from 'ag-charts-community';
+import { AgChartOptions } from 'ag-charts-community';
 import { IRowNode } from 'ag-grid-community';
 import { NgxSpinnerService } from 'ngx-spinner';
 import {
@@ -71,6 +66,12 @@ export class MetricsComponent implements OnInit, OnDestroy {
   emptyReportId = common.EMPTY_REPORT_ID;
 
   queriesLength = 0;
+
+  dataPoints: {
+    [key: string]: any;
+    columnId: number;
+    columnLabel: string;
+  }[] = [];
 
   report: common.ReportX;
   report$ = this.reportQuery.select().pipe(
@@ -159,8 +160,11 @@ export class MetricsComponent implements OnInit, OnDestroy {
   eChartInitOpts: any;
   eChartOptions: EChartsOption;
 
+  completedQueriesAndFormulasLength = 0;
+  runningQueriesLength = 0;
+  newQueriesLength = 0;
   recordsWithValuesLength = 0;
-  selectedRowsWithQueriesLength = 0;
+  selectedDataRowsLength = 0;
 
   reportChartData$ = combineLatest([
     this.uiQuery.repChartData$,
@@ -168,11 +172,46 @@ export class MetricsComponent implements OnInit, OnDestroy {
     this.uiQuery.showMetricsTimeFieldName$
   ]).pipe(
     tap(
-      ([x, showMetricsModelName, showMetricsTimeFieldName]: [
+      ([repChartData, showMetricsModelName, showMetricsTimeFieldName]: [
         RepChartData,
         boolean,
         boolean
       ]) => {
+        // console.log('repChartData');
+        // console.log(repChartData);
+
+        let newQueriesLength = 0;
+        let runningQueriesLength = 0;
+        let completedQueriesAndFormulasLength = 0;
+
+        repChartData.rows.forEach(row => {
+          if (
+            common.isDefined(row.formula) ||
+            row.query.status === common.QueryStatusEnum.Completed
+          ) {
+            completedQueriesAndFormulasLength++;
+          }
+
+          if (
+            common.isDefined(row.query) &&
+            row.query.status === common.QueryStatusEnum.New
+          ) {
+            newQueriesLength++;
+          }
+
+          if (
+            common.isDefined(row.query) &&
+            row.query.status === common.QueryStatusEnum.Running
+          ) {
+            runningQueriesLength++;
+          }
+        });
+
+        this.newQueriesLength = newQueriesLength;
+        this.runningQueriesLength = runningQueriesLength;
+        this.completedQueriesAndFormulasLength =
+          completedQueriesAndFormulasLength;
+
         let dataPoints: {
           columnId: number;
           columnLabel: string;
@@ -181,11 +220,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
         let recordsWithValuesLength = 0;
 
-        console.log('x');
-        console.log(x);
-
-        if (x.rows.length > 0) {
-          dataPoints = x.columns
+        if (repChartData.rows.length > 0) {
+          dataPoints = repChartData.columns
             .filter(column => column.columnId !== 0)
             .map(column => {
               let dataPoint: any = {
@@ -193,7 +229,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
                 columnLabel: column.label
               };
 
-              x.rows.forEach(row => {
+              repChartData.rows.forEach(row => {
                 let rowName = this.makeRowName({
                   row: row,
                   showMetricsModelName: showMetricsModelName,
@@ -215,67 +251,67 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
         this.recordsWithValuesLength = recordsWithValuesLength;
 
-        this.selectedRowsWithQueriesLength = x.rows.filter(
+        this.selectedDataRowsLength = repChartData.rows.filter(
           row =>
             [common.RowTypeEnum.Metric, common.RowTypeEnum.Formula].indexOf(
               row.rowType
             ) > -1
         ).length;
 
-        let series = x.rows
-          .filter(
-            row =>
-              [common.RowTypeEnum.Metric, common.RowTypeEnum.Formula].indexOf(
-                row.rowType
-              ) > -1
-          )
-          .map(row => {
-            let rowName = this.makeRowName({
-              row: row,
-              showMetricsModelName: showMetricsModelName,
-              showMetricsTimeFieldName: showMetricsTimeFieldName
-            });
+        // let series = repChartData.rows
+        //   .filter(
+        //     row =>
+        //       [common.RowTypeEnum.Metric, common.RowTypeEnum.Formula].indexOf(
+        //         row.rowType
+        //       ) > -1
+        //   )
+        //   .map(row => {
+        //     let rowName = this.makeRowName({
+        //       row: row,
+        //       showMetricsModelName: showMetricsModelName,
+        //       showMetricsTimeFieldName: showMetricsTimeFieldName
+        //     });
 
-            let srs = {
-              type: 'line',
-              xKey: 'columnId',
-              yKey: rowName,
-              yName: rowName,
-              tooltip: {
-                renderer: (params: AgCartesianSeriesTooltipRendererParams) => {
-                  let timeSpec = this.uiQuery.getValue().timeSpec;
+        //     let srs = {
+        //       type: 'line',
+        //       xKey: 'columnId',
+        //       yKey: rowName,
+        //       yName: rowName,
+        //       tooltip: {
+        //         renderer: (params: AgCartesianSeriesTooltipRendererParams) => {
+        //           let timeSpec = this.uiQuery.getValue().timeSpec;
 
-                  // console.log(params);
+        //           // console.log(params);
 
-                  let columnLabel = common.formatTs({
-                    timeSpec: timeSpec,
-                    unixTimeZoned: Number(params.datum[params.xKey])
-                  });
+        //           let columnLabel = common.formatTs({
+        //             timeSpec: timeSpec,
+        //             unixTimeZoned: Number(params.datum[params.xKey])
+        //           });
 
-                  let formattedValue = common.isDefined(
-                    params.datum[params.yKey]
-                  )
-                    ? this.dataService.formatValue({
-                        value: Number(params.datum[params.yKey]),
-                        formatNumber: row.formatNumber,
-                        fieldResult: common.FieldResultEnum.Number,
-                        currencyPrefix: row.currencyPrefix,
-                        currencySuffix: row.currencySuffix
-                      })
-                    : 'undefined';
+        //           let formattedValue = common.isDefined(
+        //             params.datum[params.yKey]
+        //           )
+        //             ? this.dataService.formatValue({
+        //                 value: Number(params.datum[params.yKey]),
+        //                 formatNumber: row.formatNumber,
+        //                 fieldResult: common.FieldResultEnum.Number,
+        //                 currencyPrefix: row.currencyPrefix,
+        //                 currencySuffix: row.currencySuffix
+        //               })
+        //             : 'undefined';
 
-                  let result: AgTooltipRendererResult = {
-                    title: params.title,
-                    content: `${columnLabel}: ${formattedValue}`
-                  };
+        //           let result: AgTooltipRendererResult = {
+        //             title: params.title,
+        //             content: `${columnLabel}: ${formattedValue}`
+        //           };
 
-                  return result;
-                }
-              }
-            };
+        //           return result;
+        //         }
+        //       }
+        //     };
 
-            return srs;
-          });
+        //     return srs;
+        //   });
 
         let structState = this.structQuery.getValue();
 
@@ -293,15 +329,32 @@ export class MetricsComponent implements OnInit, OnDestroy {
           },
           legend: {},
           tooltip: {
-            // trigger: 'axis'
+            trigger: 'axis',
+            valueFormatter: (value: any) =>
+              `${common.isDefined(value) ? value.toFixed(2) : 'Null'}`
           },
           xAxis: {
-            type: 'time'
+            type: 'time',
+            axisLabel:
+              [common.TimeSpecEnum.Hours, common.TimeSpecEnum.Minutes].indexOf(
+                this.uiQuery.getValue().timeSpec
+              ) > -1
+                ? {}
+                : {
+                    formatter: (value: any) => {
+                      let timeSpec = this.uiQuery.getValue().timeSpec;
+
+                      return common.formatTs({
+                        timeSpec: timeSpec,
+                        unixTimeZoned: value / 1000
+                      });
+                    }
+                  }
           },
           yAxis: {
             type: 'value'
           },
-          series: x.rows
+          series: repChartData.rows
             .filter(
               row =>
                 [common.RowTypeEnum.Metric, common.RowTypeEnum.Formula].indexOf(
@@ -372,56 +425,54 @@ export class MetricsComponent implements OnInit, OnDestroy {
             })
         } as EChartsOption;
 
-        console.log('dataPoints');
-        console.log(dataPoints);
+        // console.log('dataPoints');
+        // console.log(dataPoints);
 
-        this.chartOptions = {
-          data: dataPoints,
-          legend: {
-            position: 'top'
-          },
-          series: series as any,
-          axes: [
-            {
-              type: 'category',
-              position: 'bottom',
-              label: {
-                formatter: (params: AgAxisLabelFormatterParams) => {
-                  let timeSpec = this.uiQuery.getValue().timeSpec;
+        this.dataPoints = dataPoints;
 
-                  return common.formatTs({
-                    timeSpec: timeSpec,
-                    unixTimeZoned: params.value
-                  });
-                }
-              }
-            },
-            {
-              type: 'number',
-              position: 'left',
-              min: 0,
-              label: {
-                formatter: (params: AgAxisLabelFormatterParams) => {
-                  let formattedValue = common.isDefined(params.value)
-                    ? this.dataService.formatValue({
-                        value: params.value,
-                        formatNumber: structState.formatNumber,
-                        fieldResult: common.FieldResultEnum.Number,
-                        currencyPrefix: structState.currencyPrefix,
-                        currencySuffix: structState.currencySuffix
-                      })
-                    : 'undefined';
+        // this.chartOptions = {
+        //   data: dataPoints,
+        //   legend: {
+        //     position: 'top'
+        //   },
+        //   series: series as any,
+        //   axes: [
+        //     {
+        //       type: 'category',
+        //       position: 'bottom',
+        //       label: {
+        //         formatter: (params: AgAxisLabelFormatterParams) => {
+        //           let timeSpec = this.uiQuery.getValue().timeSpec;
 
-                  return formattedValue;
-                }
-              }
-            }
-          ]
-          // ,
-          // navigator: {
-          //   enabled: true
-          // }
-        };
+        //           return common.formatTs({
+        //             timeSpec: timeSpec,
+        //             unixTimeZoned: params.value
+        //           });
+        //         }
+        //       }
+        //     },
+        //     {
+        //       type: 'number',
+        //       position: 'left',
+        //       min: 0,
+        //       label: {
+        //         formatter: (params: AgAxisLabelFormatterParams) => {
+        //           let formattedValue = common.isDefined(params.value)
+        //             ? this.dataService.formatValue({
+        //                 value: params.value,
+        //                 formatNumber: structState.formatNumber,
+        //                 fieldResult: common.FieldResultEnum.Number,
+        //                 currencyPrefix: structState.currencyPrefix,
+        //                 currencySuffix: structState.currencySuffix
+        //               })
+        //             : 'undefined';
+
+        //           return formattedValue;
+        //         }
+        //       }
+        //     }
+        //   ]
+        // };
 
         this.cd.detectChanges();
       }

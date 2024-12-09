@@ -349,8 +349,7 @@
 
                     <div
                       *ngIf="
-                        chartOptions?.data.length > 0 &&
-                        selectedRowsWithQueriesLength === 0
+                        dataPoints.length > 0 && selectedDataRowsLength === 0
                       "
                       class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
                       >No data rows selected</div
@@ -358,17 +357,34 @@
 
                     <div
                       *ngIf="
-                        chartOptions?.data.length > 0 &&
-                        selectedRowsWithQueriesLength > 0 &&
+                        dataPoints.length > 0 &&
+                        selectedDataRowsLength > 0 &&
                         recordsWithValuesLength === 0
                       "
                       class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
-                      >Run queries to get data</div
                     >
+                      <div *ngIf="newQueriesLength > 0"
+                        >Run queries to get data</div
+                      >
+
+                      <div
+                        *ngIf="
+                          newQueriesLength === 0 && runningQueriesLength > 0
+                        "
+                        >Queries are running</div
+                      >
+
+                      <div
+                        *ngIf="
+                          newQueriesLength === 0 && runningQueriesLength === 0
+                        "
+                        >The result consists of rows with no data</div
+                      >
+                    </div>
 
                     <div
                       *ngIf="
-                        chartOptions?.data.length === 0 &&
+                        dataPoints.length === 0 &&
                         !(
                           showChartForSelectedRows === true &&
                           reportSelectedNodes.length > 1
