@@ -271,7 +271,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
             bottom: '10%'
           },
           textStyle: {
-            fontFamily: 'Montserrat'
+            fontFamily: 'sans-serif'
           },
           legend: {
             textStyle: {
@@ -293,9 +293,9 @@ export class MetricsComponent implements OnInit, OnDestroy {
               [common.TimeSpecEnum.Hours, common.TimeSpecEnum.Minutes].indexOf(
                 this.uiQuery.getValue().timeSpec
               ) > -1
-                ? { fontSize: 14 }
+                ? { fontSize: 13 }
                 : {
-                    fontSize: 14,
+                    fontSize: 13,
                     formatter: (value: any) => {
                       let timeSpec = this.uiQuery.getValue().timeSpec;
 
@@ -328,6 +328,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
                 type: 'line',
                 symbol: 'circle',
                 symbolSize: 8,
+                cursor: 'default',
                 // legendHoverLink: true,
                 lineStyle: {
                   width: 3
@@ -368,7 +369,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
                         })
                       : 'null';
 
-                    return `${p.name}<br/>${formattedValue}<br/>${columnLabel}`;
+                    return `${p.name}<br/><strong>${formattedValue}</strong><br/>${columnLabel}`;
                   }
                   // textStyle: {}
                 }

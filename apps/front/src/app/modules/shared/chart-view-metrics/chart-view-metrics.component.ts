@@ -12,5 +12,14 @@ export class ChartViewMetricsComponent {
   @Input()
   eChartOptions: EChartsOption;
 
+  echartsInstance: any;
+
   constructor() {}
+
+  onChartInit(ec: any) {
+    this.echartsInstance = ec;
+    ec.getZr().on('mousemove', function (params: any) {
+      ec.getZr().setCursorStyle('default');
+    });
+  }
 }

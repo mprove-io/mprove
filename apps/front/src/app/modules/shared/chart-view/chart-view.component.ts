@@ -133,11 +133,20 @@ export class ChartViewComponent implements OnChanges {
   // xAxisTickFormattingFn = (value: any) => this.xAxisTickFormatting(value);
   // xAxisTickFormattingForLinearFn = (value: any) => this.xAxisTickFormattingForLinear(value);
 
+  echartsInstance: any;
+
   constructor(
     private dataService: DataService,
     private formatNumberService: FormatNumberService,
     private cd: ChangeDetectorRef
   ) {}
+
+  onChartInit(ec: any) {
+    this.echartsInstance = ec;
+    ec.getZr().on('mousemove', function (params: any) {
+      ec.getZr().setCursorStyle('default');
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     // console.log('chart-view ngOnChanges');
