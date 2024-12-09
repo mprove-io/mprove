@@ -270,7 +270,14 @@ export class MetricsComponent implements OnInit, OnDestroy {
             top: '10%',
             bottom: '10%'
           },
-          legend: {},
+          textStyle: {
+            fontFamily: 'Montserrat'
+          },
+          legend: {
+            textStyle: {
+              fontSize: 14
+            }
+          },
           tooltip: {
             trigger: 'item'
             // , valueFormatter: (value: any) => `${common.isDefined(value) ? value.toFixed(2) : 'Null'}`
@@ -286,8 +293,9 @@ export class MetricsComponent implements OnInit, OnDestroy {
               [common.TimeSpecEnum.Hours, common.TimeSpecEnum.Minutes].indexOf(
                 this.uiQuery.getValue().timeSpec
               ) > -1
-                ? {}
+                ? { fontSize: 14 }
                 : {
+                    fontSize: 14,
                     formatter: (value: any) => {
                       let timeSpec = this.uiQuery.getValue().timeSpec;
 
@@ -299,7 +307,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
                   }
           },
           yAxis: {
-            type: 'value'
+            type: 'value',
+            axisLabel: { fontSize: 14 }
           },
           series: repChartData.rows
             .filter(
@@ -333,6 +342,11 @@ export class MetricsComponent implements OnInit, OnDestroy {
                   value: [dataPoint.columnId * 1000, dataPoint[rowName]]
                 })),
                 tooltip: {
+                  // position: 'top',
+                  borderWidth: 2,
+                  textStyle: {
+                    fontSize: 16
+                  },
                   // valueFormatter: ...
                   formatter: (p: any) => {
                     console.log(p);
@@ -354,7 +368,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
                         })
                       : 'null';
 
-                    return `${p.name}<br/><strong>${formattedValue}</strong><br/>${columnLabel}`;
+                    return `${p.name}<br/>${formattedValue}<br/>${columnLabel}`;
                   }
                   // textStyle: {}
                 }
