@@ -258,63 +258,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
             ) > -1
         ).length;
 
-        // let series = repChartData.rows
-        //   .filter(
-        //     row =>
-        //       [common.RowTypeEnum.Metric, common.RowTypeEnum.Formula].indexOf(
-        //         row.rowType
-        //       ) > -1
-        //   )
-        //   .map(row => {
-        //     let rowName = this.makeRowName({
-        //       row: row,
-        //       showMetricsModelName: showMetricsModelName,
-        //       showMetricsTimeFieldName: showMetricsTimeFieldName
-        //     });
-
-        //     let srs = {
-        //       type: 'line',
-        //       xKey: 'columnId',
-        //       yKey: rowName,
-        //       yName: rowName,
-        //       tooltip: {
-        //         renderer: (params: AgCartesianSeriesTooltipRendererParams) => {
-        //           let timeSpec = this.uiQuery.getValue().timeSpec;
-
-        //           // console.log(params);
-
-        //           let columnLabel = common.formatTs({
-        //             timeSpec: timeSpec,
-        //             unixTimeZoned: Number(params.datum[params.xKey])
-        //           });
-
-        //           let formattedValue = common.isDefined(
-        //             params.datum[params.yKey]
-        //           )
-        //             ? this.dataService.formatValue({
-        //                 value: Number(params.datum[params.yKey]),
-        //                 formatNumber: row.formatNumber,
-        //                 fieldResult: common.FieldResultEnum.Number,
-        //                 currencyPrefix: row.currencyPrefix,
-        //                 currencySuffix: row.currencySuffix
-        //               })
-        //             : 'undefined';
-
-        //           let result: AgTooltipRendererResult = {
-        //             title: params.title,
-        //             content: `${columnLabel}: ${formattedValue}`
-        //           };
-
-        //           return result;
-        //         }
-        //       }
-        //     };
-
-        //     return srs;
-        //   });
-
-        let structState = this.structQuery.getValue();
-
         this.eChartInitOpts = {
           renderer: 'svg'
         } as EChartsInitOpts;
@@ -330,9 +273,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
           legend: {},
           tooltip: {
             trigger: 'item'
-            // ,
-            // valueFormatter: (value: any) =>
-            //   `${common.isDefined(value) ? value.toFixed(2) : 'Null'}`
+            // , valueFormatter: (value: any) => `${common.isDefined(value) ? value.toFixed(2) : 'Null'}`
           },
           // tooltip: {
           //   trigger: 'axis',
@@ -386,56 +327,37 @@ export class MetricsComponent implements OnInit, OnDestroy {
                 emphasis: {
                   disabled: true
                 },
-                // name: rowName,
+                name: rowName,
                 data: dataPoints.map(dataPoint => ({
                   name: rowName,
                   value: [dataPoint.columnId * 1000, dataPoint[rowName]]
                 })),
                 tooltip: {
-                  valueFormatter: (value: any) => '$' + value.toFixed(2)
-                  // ,
-                  // formatter: '{a} {b} {c} {d}',
-                  // formatter: (p: any) => {
-                  //   console.log(p);
-                  //   // return '€' + p.data[1] + ' ' + p.data[2] + '%';
-                  //   return '{a} {b} {c} {d}';
-                  // },
+                  // valueFormatter: ...
+                  formatter: (p: any) => {
+                    console.log(p);
+
+                    let timeSpec = this.uiQuery.getValue().timeSpec;
+
+                    let columnLabel = common.formatTs({
+                      timeSpec: timeSpec,
+                      unixTimeZoned: p.data.value[0] / 1000
+                    });
+
+                    let formattedValue = common.isDefined(p.data.value[1])
+                      ? this.dataService.formatValue({
+                          value: Number(p.data.value[1]),
+                          formatNumber: row.formatNumber,
+                          fieldResult: common.FieldResultEnum.Number,
+                          currencyPrefix: row.currencyPrefix,
+                          currencySuffix: row.currencySuffix
+                        })
+                      : 'null';
+
+                    return `${p.name}<br/><strong>${formattedValue}</strong><br/>${columnLabel}`;
+                  }
                   // textStyle: {}
                 }
-                // ,
-                // tooltip: {
-                //   renderer: (
-                //     params: AgCartesianSeriesTooltipRendererParams
-                //   ) => {
-                //     let timeSpec = this.uiQuery.getValue().timeSpec;
-
-                //     // console.log(params);
-
-                //     let columnLabel = common.formatTs({
-                //       timeSpec: timeSpec,
-                //       unixTimeZoned: Number(params.datum[params.xKey])
-                //     });
-
-                //     let formattedValue = common.isDefined(
-                //       params.datum[params.yKey]
-                //     )
-                //       ? this.dataService.formatValue({
-                //           value: Number(params.datum[params.yKey]),
-                //           formatNumber: row.formatNumber,
-                //           fieldResult: common.FieldResultEnum.Number,
-                //           currencyPrefix: row.currencyPrefix,
-                //           currencySuffix: row.currencySuffix
-                //         })
-                //       : 'undefined';
-
-                //     let result: AgTooltipRendererResult = {
-                //       title: params.title,
-                //       content: `${columnLabel}: ${formattedValue}`
-                //     };
-
-                //     return result;
-                //   }
-                // }
               };
 
               return seriesOption;
@@ -447,6 +369,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
         this.dataPoints = dataPoints;
 
+        // let structState = this.structQuery.getValue();
+
         // this.chartOptions = {
         //   data: dataPoints,
         //   legend: {
@@ -454,20 +378,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
         //   },
         //   series: series as any,
         //   axes: [
-        //     {
-        //       type: 'category',
-        //       position: 'bottom',
-        //       label: {
-        //         formatter: (params: AgAxisLabelFormatterParams) => {
-        //           let timeSpec = this.uiQuery.getValue().timeSpec;
-
-        //           return common.formatTs({
-        //             timeSpec: timeSpec,
-        //             unixTimeZoned: params.value
-        //           });
-        //         }
-        //       }
-        //     },
         //     {
         //       type: 'number',
         //       position: 'left',
