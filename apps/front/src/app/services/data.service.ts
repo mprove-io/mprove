@@ -16,7 +16,7 @@ export interface QDataRow {
 export interface QCell {
   id: string;
   value: string;
-  fValue: string;
+  valueFmt: string;
 }
 
 export interface SeriesDataElement {
@@ -27,6 +27,7 @@ export interface SeriesDataElement {
 export interface SeriesPoint {
   xValue: string | number;
   yValue: number;
+  yValueFmt: string;
   sizeValue: number;
 }
 
@@ -113,7 +114,7 @@ export class DataService {
         let cell: QCell = {
           id: key.toLowerCase(),
           value: common.isDefined(value) ? value : 'NULL',
-          fValue: common.isDefined(value)
+          valueFmt: common.isDefined(value)
             ? this.formatValue({
                 value: value,
                 formatNumber: column?.formatNumber,
@@ -260,8 +261,6 @@ export class DataService {
                 : row[xName].value
               : row[xName].value;
 
-          let yV = row[yName].value;
-
           let sV =
             common.isDefined(sizeName) && this.isNumber(row[sizeName].value)
               ? (Number(row[sizeName].value) + addNorm) / (sizeMax + sizeMin)
@@ -282,7 +281,8 @@ export class DataService {
                 : xField.result === common.FieldResultEnum.Number
                 ? this.convertToNumberOrNull(xV)
                 : xV,
-              yValue: this.convertToNumberOrNull(yV),
+              yValue: this.convertToNumberOrNull(row[yName].value),
+              yValueFmt: row[yName].valueFmt,
               sizeValue: sV
             };
 

@@ -26,7 +26,7 @@
 
             <button
               *ngIf="column.sorting?.desc === false"
-              class="flex h-8 w-8 items-center justify-center rounded text-blue-500 hover:bg-blue2 focus:outline-none"
+              class="hover:bg-blue2 flex h-8 w-8 items-center justify-center rounded text-blue-500 focus:outline-none"
               (click)="sort(column.id, false)"
             >
               <m-asc-icon></m-asc-icon>
@@ -34,7 +34,7 @@
 
             <button
               *ngIf="column.sorting?.desc === true"
-              class="flex h-8 w-8 items-center justify-center rounded text-blue-500 hover:bg-blue2 focus:outline-none"
+              class="hover:bg-blue2 flex h-8 w-8 items-center justify-center rounded text-blue-500 focus:outline-none"
               (click)="sort(column.id, true)"
             >
               <m-desc-icon></m-desc-icon>
@@ -42,7 +42,7 @@
 
             <button
               *ngIf="!column.sorting"
-              class="invisible flex h-8 w-8 items-center justify-center rounded hover:bg-blue2 focus:outline-none group-hover:visible"
+              class="hover:bg-blue2 invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
               (click)="sort(column.id, true)"
             >
               <m-desc-icon></m-desc-icon>
@@ -88,7 +88,7 @@
           </button>
 
           <button
-            class="invisible flex h-8 w-8 items-center justify-center rounded hover:bg-blue2 focus:outline-none group-hover:visible"
+            class="hover:bg-blue2 invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
             (click)="remove(column.id)"
           >
             <m-delete-icon></m-delete-icon>
@@ -133,7 +133,7 @@
       >
         {{
           isFormat === true
-            ? row[column.sqlName]?.fValue
+            ? row[column.sqlName]?.valueFmt
             : row[column.sqlName]?.value
         }}
       </td>
@@ -155,7 +155,7 @@
       >
         {{
           isFormat === true
-            ? row[column.sqlName]?.fValue
+            ? row[column.sqlName]?.valueFmt
             : row[column.sqlName]?.value
         }}
       </td> -->

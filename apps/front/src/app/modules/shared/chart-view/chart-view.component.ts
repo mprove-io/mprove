@@ -14,7 +14,12 @@ import {
   AgPieSeriesOptions
 } from 'ag-charts-community';
 import { formatLocale } from 'd3-format';
-import { EChartsInitOpts, EChartsOption, SeriesOption } from 'echarts';
+import {
+  EChartsInitOpts,
+  EChartsOption,
+  LineSeriesOption,
+  SeriesOption
+} from 'echarts';
 import { MconfigField } from '~common/_index';
 import { getChartCurve } from '~front/app/functions/get-chart-curve';
 import { getChartScheme } from '~front/app/functions/get-chart-scheme';
@@ -177,7 +182,17 @@ export class ChartViewComponent implements OnChanges {
         top: '10%',
         bottom: '10%'
       },
-      tooltip: {}
+      textStyle: {
+        fontFamily: 'sans-serif'
+      },
+      legend: {
+        textStyle: {
+          fontSize: 14
+        }
+      },
+      tooltip: {
+        trigger: 'item'
+      }
     } as EChartsOption;
 
     this.chartOptions = {};
@@ -240,17 +255,66 @@ export class ChartViewComponent implements OnChanges {
         this.chart.type === common.ChartTypeEnum.EBar ||
         this.chart.type === common.ChartTypeEnum.EScatter
       ) {
-        this.eChartOptions.xAxis = {
-          type:
-            xField.result === common.FieldResultEnum.Ts
-              ? 'time'
-              : xField.result === common.FieldResultEnum.Number
-              ? 'value'
-              : 'category'
-        };
+        let tsFormatter = xField.sqlName.match(/(?:___year)$/g)
+          ? (value: any) =>
+              common.formatTs({
+                timeSpec: common.TimeSpecEnum.Years,
+                unixTimeZoned: value / 1000
+              })
+          : xField.sqlName.match(/(?:___quarter)$/g)
+          ? (value: any) =>
+              common.formatTs({
+                timeSpec: common.TimeSpecEnum.Quarters,
+                unixTimeZoned: value / 1000
+              })
+          : xField.sqlName.match(/(?:___month)$/g)
+          ? (value: any) =>
+              common.formatTs({
+                timeSpec: common.TimeSpecEnum.Months,
+                unixTimeZoned: value / 1000
+              })
+          : xField.sqlName.match(/(?:___week)$/g)
+          ? (value: any) =>
+              common.formatTs({
+                timeSpec: common.TimeSpecEnum.Weeks,
+                unixTimeZoned: value / 1000
+              })
+          : xField.sqlName.match(/(?:___date)$/g)
+          ? (value: any) =>
+              common.formatTs({
+                timeSpec: common.TimeSpecEnum.Days,
+                unixTimeZoned: value / 1000
+              })
+          : undefined;
+
+        this.eChartOptions.xAxis =
+          xField.result === common.FieldResultEnum.Ts
+            ? {
+                type: 'time',
+                axisLabel: {
+                  fontSize: 13,
+                  formatter: tsFormatter
+                }
+              }
+            : xField.result === common.FieldResultEnum.Number
+            ? {
+                type: 'value',
+                axisLabel: {
+                  fontSize: 13
+                }
+              }
+            : {
+                type: 'category',
+                axisLabel: {
+                  fontSize: 13
+                }
+              };
 
         this.eChartOptions.yAxis = {
-          type: 'value'
+          type: 'value',
+          axisLabel: {
+            fontSize: 14
+          }
         };
       }
 
@@ -258,7 +322,71 @@ export class ChartViewComponent implements OnChanges {
 
       if (this.eChartsTypes.indexOf(this.chart.type) > -1) {
         this.eChartOptions.series = this.seriesData.map(el => {
-          let seriesOption: SeriesOption = {
+          let lineSeriesOption: LineSeriesOption = {
+            type: 'line',
+            symbol: 'circle',
+            symbolSize: 8,
+            cursor: 'default',
+            // legendHoverLink: true,
+            lineStyle: {
+              width: 3
+            },
+            // areaStyle: {},
+            emphasis: {
+              disabled: true
+            },
+            name: el.seriesName,
+            data: el.seriesPoints.map(x => ({
+              name: el.seriesName,
+              value: [x.xValue, x.yValue, x.yValueFmt]
+            })),
+            tooltip: {
+              borderWidth: 2,
+              textStyle: {
+                fontSize: 16
+              },
+              formatter: (p: any) => {
+                console.log(p);
+
+                let xValueFmt = common.formatTs({
+                  timeSpec: xField.sqlName.match(/(?:___year)$/g)
+                    ? common.TimeSpecEnum.Years
+                    : xField.sqlName.match(/(?:___quarter)$/g)
+                    ? common.TimeSpecEnum.Quarters
+                    : xField.sqlName.match(/(?:___month)$/g)
+                    ? common.TimeSpecEnum.Months
+                    : xField.sqlName.match(/(?:___week)$/g)
+                    ? common.TimeSpecEnum.Weeks
+                    : xField.sqlName.match(/(?:___date)$/g)
+                    ? common.TimeSpecEnum.Days
+                    : xField.sqlName.match(/(?:___hour)$/g)
+                    ? common.TimeSpecEnum.Hours
+                    : xField.sqlName.match(/(?:___hour2)$/g)
+                    ? common.TimeSpecEnum.Hours
+                    : xField.sqlName.match(/(?:___hour3)$/g)
+                    ? common.TimeSpecEnum.Hours
+                    : xField.sqlName.match(/(?:___hour4)$/g)
+                    ? common.TimeSpecEnum.Hours
+                    : xField.sqlName.match(/(?:___hour6)$/g)
+                    ? common.TimeSpecEnum.Hours
+                    : xField.sqlName.match(/(?:___hour8)$/g)
+                    ? common.TimeSpecEnum.Hours
+                    : xField.sqlName.match(/(?:___hour12)$/g)
+                    ? common.TimeSpecEnum.Hours
+                    : common.TimeSpecEnum.Minutes,
+                  unixTimeZoned: p.data.value[0] / 1000
+                });
+
+                let sValueFmt = common.isDefined(p.data.value[2])
+                  ? p.data.value[2]
+                  : 'null';
+
+                return `${p.name}<br/><strong>${sValueFmt}</strong><br/>${xValueFmt}`;
+              }
+            }
+          };
+
+          let baseSeriesOption: SeriesOption = {
             type: this.chart.type.split('_')[1] as any,
             name: el.seriesName,
             data: el.seriesPoints.map((x: SeriesPoint) =>
@@ -270,9 +398,14 @@ export class ChartViewComponent implements OnChanges {
                     name: x.xValue,
                     value: x.yValue
                   }
-                : [x.xValue, x.yValue]
+                : [x.xValue, x.yValue, x.yValueFmt]
             )
           };
+
+          let seriesOption =
+            this.chart.type === common.ChartTypeEnum.ELine
+              ? lineSeriesOption
+              : baseSeriesOption;
 
           if (
             this.chart.type === common.ChartTypeEnum.EScatter &&
