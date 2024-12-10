@@ -187,7 +187,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
         repChartData.rows.forEach(row => {
           if (
             common.isDefined(row.formula) ||
-            row.query.status === common.QueryStatusEnum.Completed
+            (common.isDefined(row.query) &&
+              row.query.status === common.QueryStatusEnum.Completed)
           ) {
             completedQueriesAndFormulasLength++;
           }

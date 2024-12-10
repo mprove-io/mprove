@@ -433,7 +433,7 @@ export class ChartViewComponent implements OnChanges {
             name: el.seriesName,
             data: el.seriesPoints.map(x => ({
               name: x.xValue,
-              value: x.yValue
+              value: [x.yValue]
             })),
             tooltip: tooltip
           };
@@ -441,14 +441,11 @@ export class ChartViewComponent implements OnChanges {
           let baseSeriesOption: SeriesOption = {
             type: this.chart.type.split('_')[1] as any,
             name: el.seriesName,
-            data: el.seriesPoints.map((x: SeriesPoint) =>
-              this.chart.type === common.ChartTypeEnum.EPie
-                ? {
-                    name: x.xValue,
-                    value: x.yValue
-                  }
-                : [x.xValue, x.yValue, x.yValueFmt]
-            )
+            data: el.seriesPoints.map((x: SeriesPoint) => [
+              x.xValue,
+              x.yValue,
+              x.yValueFmt
+            ])
           };
 
           let seriesOption =
