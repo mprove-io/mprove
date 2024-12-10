@@ -22,13 +22,17 @@ export interface QCell {
 export interface SeriesDataElement {
   seriesName: string;
   seriesPoints: SeriesPoint[];
+  seriesSizeName: string;
 }
 
 export interface SeriesPoint {
   xValue: string | number;
   yValue: number;
   yValueFmt: string;
+  sizeValueMod: number;
   sizeValue: number;
+  sizeValueFmt: string;
+  sizeFieldName: string;
 }
 
 interface PrepareData {
@@ -204,7 +208,16 @@ export class DataService {
     let sizeMin = 1;
     let sizeMax = 1;
 
+    let sizeFieldLabel: string;
+
     if (common.isDefined(sizeField)) {
+      sizeFieldLabel =
+        sizeField.topLabel +
+        (common.isDefined(sizeField.groupLabel)
+          ? ` ${capitalizeFirstLetter(sizeField.groupLabel)}`
+          : '') +
+        ` ${capitalizeFirstLetter(sizeField.label)}`;
+
       let sizeValues = data
         .map((x: QDataRow) =>
           this.isNumber(x[sizeField.sqlName].value)
@@ -261,11 +274,6 @@ export class DataService {
                 : row[xName].value
               : row[xName].value;
 
-          let sV =
-            common.isDefined(sizeName) && this.isNumber(row[sizeName].value)
-              ? (Number(row[sizeName].value) + addNorm) / (sizeMax + sizeMin)
-              : 1;
-
           if (
             // [
             //   common.ChartTypeEnum.Line,
@@ -283,7 +291,20 @@ export class DataService {
                 : xV,
               yValue: this.convertToNumberOrNull(row[yName].value),
               yValueFmt: row[yName].valueFmt,
-              sizeValue: sV
+              sizeValueMod:
+                common.isDefined(sizeName) && this.isNumber(row[sizeName].value)
+                  ? (Number(row[sizeName].value) + addNorm) /
+                    (sizeMax + sizeMin)
+                  : 1,
+              sizeValue:
+                common.isDefined(sizeName) && this.isNumber(row[sizeName].value)
+                  ? Number(row[sizeName].value)
+                  : undefined,
+              sizeValueFmt:
+                common.isDefined(sizeName) && this.isNumber(row[sizeName].value)
+                  ? row[sizeName].valueFmt
+                  : undefined,
+              sizeFieldName: sizeFieldLabel
             };
 
             if (prepareData[key as keyof PrepareData]) {
@@ -339,6 +360,7 @@ export class DataService {
     let seriesData: SeriesDataElement[] = Object.keys(prepareData).map(x =>
       Object.assign({
         seriesName: x,
+        seriesSizeName: sizeField?.label,
         seriesPoints:
           chartType !== common.ChartTypeEnum.EScatter &&
           (xField?.result === common.FieldResultEnum.Ts ||

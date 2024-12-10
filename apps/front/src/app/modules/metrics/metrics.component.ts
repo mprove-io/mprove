@@ -260,6 +260,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
         this.eChartInitOpts = {
           renderer: 'svg'
+          // renderer: 'canvas'
         } as EChartsInitOpts;
 
         this.eChartOptions = {

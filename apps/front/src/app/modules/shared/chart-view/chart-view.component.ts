@@ -15,9 +15,12 @@ import {
 } from 'ag-charts-community';
 import { formatLocale } from 'd3-format';
 import {
+  BarSeriesOption,
   EChartsInitOpts,
   EChartsOption,
   LineSeriesOption,
+  PieSeriesOption,
+  ScatterSeriesOption,
   SeriesOption
 } from 'echarts';
 import { MconfigField } from '~common/_index';
@@ -172,6 +175,7 @@ export class ChartViewComponent implements OnChanges {
 
     this.eChartInitOpts = {
       renderer: 'svg'
+      // renderer: 'canvas'
     } as EChartsInitOpts;
 
     this.eChartOptions = {
@@ -321,79 +325,124 @@ export class ChartViewComponent implements OnChanges {
       // echarts - series
 
       if (this.eChartsTypes.indexOf(this.chart.type) > -1) {
+        let tooltipFormatter = (p: any) => {
+          console.log(p);
+
+          let xValueFmt = common.formatTs({
+            timeSpec: xField.sqlName.match(/(?:___year)$/g)
+              ? common.TimeSpecEnum.Years
+              : xField.sqlName.match(/(?:___quarter)$/g)
+              ? common.TimeSpecEnum.Quarters
+              : xField.sqlName.match(/(?:___month)$/g)
+              ? common.TimeSpecEnum.Months
+              : xField.sqlName.match(/(?:___week)$/g)
+              ? common.TimeSpecEnum.Weeks
+              : xField.sqlName.match(/(?:___date)$/g)
+              ? common.TimeSpecEnum.Days
+              : xField.sqlName.match(/(?:___hour)$/g)
+              ? common.TimeSpecEnum.Hours
+              : xField.sqlName.match(/(?:___hour2)$/g)
+              ? common.TimeSpecEnum.Hours
+              : xField.sqlName.match(/(?:___hour3)$/g)
+              ? common.TimeSpecEnum.Hours
+              : xField.sqlName.match(/(?:___hour4)$/g)
+              ? common.TimeSpecEnum.Hours
+              : xField.sqlName.match(/(?:___hour6)$/g)
+              ? common.TimeSpecEnum.Hours
+              : xField.sqlName.match(/(?:___hour8)$/g)
+              ? common.TimeSpecEnum.Hours
+              : xField.sqlName.match(/(?:___hour12)$/g)
+              ? common.TimeSpecEnum.Hours
+              : common.TimeSpecEnum.Minutes,
+            unixTimeZoned: p.data.value[0] / 1000
+          });
+
+          let sValueFmt = common.isDefined(p.data.value[2])
+            ? p.data.value[2]
+            : 'null';
+
+          let sizeValueFmt = common.isDefined(p.data.value[5])
+            ? p.data.value[5]
+            : 'null';
+
+          return this.chart.type === common.ChartTypeEnum.EScatter &&
+            common.isDefined(this.chart.sizeField) &&
+            p.name !== p.data.value[6]
+            ? `${p.name}: <strong>${sValueFmt}</strong><br/>${p.data.value[6]}: <strong>${sizeValueFmt}</strong><br/>${xValueFmt}`
+            : `${p.name}<br/><strong>${sValueFmt}</strong><br/>${xValueFmt}`;
+        };
+
+        let tooltip = {
+          borderWidth: 2,
+          textStyle: {
+            fontSize: 16
+          },
+          formatter: tooltipFormatter
+        };
+
         this.eChartOptions.series = this.seriesData.map(el => {
           let lineSeriesOption: LineSeriesOption = {
             type: 'line',
             symbol: 'circle',
             symbolSize: 8,
-            cursor: 'default',
-            // legendHoverLink: true,
             lineStyle: {
               width: 3
             },
             // areaStyle: {},
-            emphasis: {
-              disabled: true
-            },
             name: el.seriesName,
             data: el.seriesPoints.map(x => ({
               name: el.seriesName,
               value: [x.xValue, x.yValue, x.yValueFmt]
             })),
-            tooltip: {
-              borderWidth: 2,
-              textStyle: {
-                fontSize: 16
-              },
-              formatter: (p: any) => {
-                console.log(p);
+            tooltip: tooltip
+          };
 
-                let xValueFmt = common.formatTs({
-                  timeSpec: xField.sqlName.match(/(?:___year)$/g)
-                    ? common.TimeSpecEnum.Years
-                    : xField.sqlName.match(/(?:___quarter)$/g)
-                    ? common.TimeSpecEnum.Quarters
-                    : xField.sqlName.match(/(?:___month)$/g)
-                    ? common.TimeSpecEnum.Months
-                    : xField.sqlName.match(/(?:___week)$/g)
-                    ? common.TimeSpecEnum.Weeks
-                    : xField.sqlName.match(/(?:___date)$/g)
-                    ? common.TimeSpecEnum.Days
-                    : xField.sqlName.match(/(?:___hour)$/g)
-                    ? common.TimeSpecEnum.Hours
-                    : xField.sqlName.match(/(?:___hour2)$/g)
-                    ? common.TimeSpecEnum.Hours
-                    : xField.sqlName.match(/(?:___hour3)$/g)
-                    ? common.TimeSpecEnum.Hours
-                    : xField.sqlName.match(/(?:___hour4)$/g)
-                    ? common.TimeSpecEnum.Hours
-                    : xField.sqlName.match(/(?:___hour6)$/g)
-                    ? common.TimeSpecEnum.Hours
-                    : xField.sqlName.match(/(?:___hour8)$/g)
-                    ? common.TimeSpecEnum.Hours
-                    : xField.sqlName.match(/(?:___hour12)$/g)
-                    ? common.TimeSpecEnum.Hours
-                    : common.TimeSpecEnum.Minutes,
-                  unixTimeZoned: p.data.value[0] / 1000
-                });
+          let barSeriesOption: BarSeriesOption = {
+            type: 'bar',
+            name: el.seriesName,
+            data: el.seriesPoints.map(x => ({
+              name: el.seriesName,
+              value: [x.xValue, x.yValue, x.yValueFmt]
+            })),
+            tooltip: tooltip
+          };
 
-                let sValueFmt = common.isDefined(p.data.value[2])
-                  ? p.data.value[2]
-                  : 'null';
+          let scatterSeriesOption: ScatterSeriesOption = {
+            type: 'scatter',
+            symbolSize: common.isDefined(this.chart.sizeField)
+              ? (data: any) => 5 + data[3] * 25
+              : 10,
+            name: el.seriesName,
+            data: el.seriesPoints.map(x => ({
+              name: el.seriesName,
+              value: [
+                x.xValue,
+                x.yValue,
+                x.yValueFmt,
+                x.sizeValueMod,
+                x.sizeValue,
+                x.sizeValueFmt,
+                x.sizeFieldName
+              ]
+            })),
+            tooltip: tooltip
+          };
 
-                return `${p.name}<br/><strong>${sValueFmt}</strong><br/>${xValueFmt}`;
-              }
-            }
+          let pieSeriesOption: PieSeriesOption = {
+            type: 'pie',
+            name: el.seriesName,
+            data: el.seriesPoints.map(x => ({
+              name: x.xValue,
+              value: x.yValue
+            })),
+            tooltip: tooltip
           };
 
           let baseSeriesOption: SeriesOption = {
             type: this.chart.type.split('_')[1] as any,
             name: el.seriesName,
             data: el.seriesPoints.map((x: SeriesPoint) =>
-              this.chart.type === common.ChartTypeEnum.EScatter &&
-              common.isDefined(this.chart.sizeField)
-                ? [x.xValue, x.yValue, x.sizeValue]
-                : this.chart.type === common.ChartTypeEnum.EPie
+              this.chart.type === common.ChartTypeEnum.EPie
                 ? {
                     name: x.xValue,
                     value: x.yValue
@@ -405,16 +454,18 @@ export class ChartViewComponent implements OnChanges {
           let seriesOption =
             this.chart.type === common.ChartTypeEnum.ELine
               ? lineSeriesOption
+              : this.chart.type === common.ChartTypeEnum.EBar
+              ? barSeriesOption
+              : this.chart.type === common.ChartTypeEnum.EScatter
+              ? scatterSeriesOption
+              : this.chart.type === common.ChartTypeEnum.EPie
+              ? pieSeriesOption
               : baseSeriesOption;
 
-          if (
-            this.chart.type === common.ChartTypeEnum.EScatter &&
-            common.isDefined(this.chart.sizeField)
-          ) {
-            (seriesOption as any).symbolSize = function (data: any) {
-              return 5 + data[2] * 25;
-            };
-          }
+          seriesOption.cursor = 'default';
+          seriesOption.emphasis = {
+            disabled: true
+          };
 
           return seriesOption;
         });
