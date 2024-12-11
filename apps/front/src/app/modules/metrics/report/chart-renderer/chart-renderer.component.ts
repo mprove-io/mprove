@@ -3,6 +3,7 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { ReportQuery } from '~front/app/queries/report.query';
+import { MconfigService } from '~front/app/services/mconfig.service';
 import { ReportService } from '~front/app/services/report.service';
 import { common } from '~front/barrels/common';
 
@@ -18,7 +19,8 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
 
   constructor(
     private reportQuery: ReportQuery,
-    private reportService: ReportService
+    private reportService: ReportService,
+    private mconfigService: MconfigService
   ) {}
 
   agInit(params: ICellRendererParams<DataRow>) {
@@ -52,5 +54,15 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
         rowIds: undefined
       });
     }, 0);
+  }
+
+  explore(event?: MouseEvent) {
+    event.stopPropagation();
+
+    if (this.params.data.hasAccessToModel === true) {
+      this.mconfigService.navDuplicateMconfigAndQuery({
+        oldMconfigId: this.params.data.mconfig.mconfigId
+      });
+    }
   }
 }

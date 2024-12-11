@@ -39,6 +39,7 @@ import { ArrowNarrowRightIconComponent } from './icons/arrow-narrow-right-icon/a
 import { ArrowRightIconComponent } from './icons/arrow-right-icon/arrow-right-icon.component';
 import { AscIconComponent } from './icons/asc-icon/asc-icon.component';
 import { ChartIconComponent } from './icons/chart-icon/chart-icon.component';
+import { ChartViewIconComponent } from './icons/chart-view-icon/chart-view-icon.component';
 import { CheckIconComponent } from './icons/check-icon/check-icon.component';
 import { ChevronDownIconComponent } from './icons/chevron-down-icon/chevron-down-icon.component';
 import { ChevronLeftIconComponent } from './icons/chevron-left-icon/chevron-left-icon.component';
@@ -161,6 +162,7 @@ let sharedComponents = [
   MinusSmIconComponent,
   QueryStatusComponent,
   FullScreenIconComponent,
+  ChartViewIconComponent,
   DesktopIconComponent,
   SearchIconComponent,
   RefreshIconComponent,
