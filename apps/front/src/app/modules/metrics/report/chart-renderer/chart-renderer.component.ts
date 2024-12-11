@@ -14,6 +14,7 @@ import { common } from '~front/barrels/common';
 export class ChartRendererComponent implements ICellRendererAngularComp {
   params: ICellRendererParams<DataRow>;
 
+  rowTypeMetric = common.RowTypeEnum.Metric;
   rowTypeHeader = common.RowTypeEnum.Header;
   rowTypeEmpty = common.RowTypeEnum.Empty;
 
