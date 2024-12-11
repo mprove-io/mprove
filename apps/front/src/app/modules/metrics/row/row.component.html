@@ -70,9 +70,9 @@
           "
           type="button"
           data-cy="rowFormatButton"
-          class="ml-5 flex flex h-9 items-center justify-center rounded border border-2 px-2 text-sm text-gray-500 hover:bg-white focus:outline-none"
+          class="ml-5 flex flex h-9 w-[50px] items-center justify-center rounded border px-2 text-sm text-gray-500 hover:bg-white focus:outline-none"
           [ngClass]="{
-            'border-orange-400': isShowFormatOptions === true,
+            'border-2 border-orange-400 bg-white': isShowFormatOptions === true,
             'border-gray-400': isShowFormatOptions === false
           }"
           (click)="toggleShowFormatOptions()"
