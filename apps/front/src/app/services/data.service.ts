@@ -44,7 +44,7 @@ interface PrepareData {
 export class DataService {
   constructor(private structQuery: StructQuery) {}
 
-  private isNumber(v: unknown): boolean {
+  private isNumberString(v: unknown): boolean {
     if (typeof v === 'number') {
       return !isNaN(v) && isFinite(v);
     }
@@ -62,7 +62,7 @@ export class DataService {
     let xNum = common.isDefined(x) ? Number(x) : null;
     // let y =
     //   common.isDefined(xNum) && Number.isNaN(xNum) === false ? xNum : null;
-    let y = common.isDefined(xNum) && this.isNumber(xNum) ? xNum : null;
+    let y = common.isDefined(xNum) && this.isNumberString(xNum) ? xNum : null;
     return y;
   }
 
@@ -83,8 +83,8 @@ export class DataService {
       item;
 
     if (
-      !isNaN(value) &&
       fieldResult === common.FieldResultEnum.Number &&
+      this.isNumberString(value) &&
       common.isDefined(formatNumber)
     ) {
       let locale = formatLocale({
@@ -114,20 +114,38 @@ export class DataService {
 
       Object.keys(row).forEach(key => {
         let value = row[key];
-        let column = columns.find(x => x.sqlName === key.toLowerCase());
+
+        let fieldId = key.toLowerCase();
+
+        let field = columns.find(x => x.sqlName === fieldId);
+
+        let tsValue: number;
+
+        if (field.result === common.FieldResultEnum.Ts) {
+          let tsValueFn = this.getTsValueFn(field.sqlName);
+
+          tsValue = common.isDefined(tsValueFn)
+            ? tsValueFn(value).getTime()
+            : undefined;
+        }
 
         let cell: QCell = {
           id: key.toLowerCase(),
           value: common.isDefined(value) ? value : 'NULL',
-          valueFmt: common.isDefined(value)
-            ? this.formatValue({
-                value: value,
-                formatNumber: column?.formatNumber,
-                fieldResult: column?.result,
-                currencyPrefix: column?.currencyPrefix,
-                currencySuffix: column?.currencySuffix
+          valueFmt: common.isUndefined(value)
+            ? 'NULL'
+            : common.isDefined(tsValue)
+            ? common.formatTs({
+                timeSpec: this.getTimeSpecByFieldSqlName(field.sqlName),
+                unixTimeZoned: tsValue / 1000
               })
-            : 'NULL'
+            : this.formatValue({
+                value: value,
+                formatNumber: field?.formatNumber,
+                fieldResult: field?.result,
+                currencyPrefix: field?.currencyPrefix,
+                currencySuffix: field?.currencySuffix
+              })
         };
 
         r[key.toLowerCase()] = cell;
@@ -221,7 +239,7 @@ export class DataService {
 
       let sizeValues = data
         .map((x: QDataRow) =>
-          this.isNumber(x[sizeField.sqlName].value)
+          this.isNumberString(x[sizeField.sqlName].value)
             ? Number(x[sizeField.sqlName].value)
             : undefined
         )
@@ -294,16 +312,19 @@ export class DataService {
               xValueFmt: row[xName].valueFmt,
               yValueFmt: row[yName].valueFmt,
               sizeValueMod:
-                common.isDefined(sizeName) && this.isNumber(row[sizeName].value)
+                common.isDefined(sizeName) &&
+                this.isNumberString(row[sizeName].value)
                   ? (Number(row[sizeName].value) + addNorm) /
                     (sizeMax + sizeMin)
                   : 1,
               sizeValue:
-                common.isDefined(sizeName) && this.isNumber(row[sizeName].value)
+                common.isDefined(sizeName) &&
+                this.isNumberString(row[sizeName].value)
                   ? Number(row[sizeName].value)
                   : undefined,
               sizeValueFmt:
-                common.isDefined(sizeName) && this.isNumber(row[sizeName].value)
+                common.isDefined(sizeName) &&
+                this.isNumberString(row[sizeName].value)
                   ? row[sizeName].valueFmt
                   : undefined,
               sizeFieldName: sizeFieldLabel
@@ -440,7 +461,7 @@ export class DataService {
                 ? tsValueFn(row[xName].value).getTime()
                 : row[xName].value
               : row[xName].value;
-        } else if (this.isNumber(cell.value)) {
+        } else if (this.isNumberString(cell.value)) {
           resRow[cell.id] = Number(cell.value);
         } else {
           resRow[cell.id] = cell.value;
@@ -785,7 +806,7 @@ export class DataService {
                   ? tsValueFn(row[xName].value).getTime()
                   : row[xName].value
                 : row[xName].value;
-          } else if (this.isNumber(cell.value)) {
+          } else if (this.isNumberString(cell.value)) {
             resRow[cell.id] = Number(cell.value);
           } else {
             resRow[cell.id] = cell.value;

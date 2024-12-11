@@ -334,15 +334,9 @@ export class ChartViewComponent implements OnChanges {
               ? (p: any) => {
                   console.log(p);
 
-                  let xValueFmt =
-                    xField.result === common.FieldResultEnum.Ts
-                      ? common.formatTs({
-                          timeSpec: this.dataService.getTimeSpecByFieldSqlName(
-                            xField.sqlName
-                          ),
-                          unixTimeZoned: p.data.name / 1000
-                        })
-                      : p.data.name;
+                  let xValueFmt = common.isDefined(p.data.pXValueFmt)
+                    ? p.data.pXValueFmt
+                    : 'null';
 
                   let sValueFmt = common.isDefined(p.data.pYValueFmt)
                     ? p.data.pYValueFmt
@@ -353,12 +347,9 @@ export class ChartViewComponent implements OnChanges {
               : (p: any) => {
                   console.log(p);
 
-                  let xValueFmt = common.formatTs({
-                    timeSpec: this.dataService.getTimeSpecByFieldSqlName(
-                      xField.sqlName
-                    ),
-                    unixTimeZoned: p.data.value[0] / 1000
-                  });
+                  let xValueFmt = common.isDefined(p.data.pXValueFmt)
+                    ? p.data.pXValueFmt
+                    : 'null';
 
                   let sValueFmt = common.isDefined(p.data.pYValueFmt)
                     ? p.data.pYValueFmt
