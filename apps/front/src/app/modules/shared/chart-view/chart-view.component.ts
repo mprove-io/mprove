@@ -325,59 +325,56 @@ export class ChartViewComponent implements OnChanges {
       // echarts - series
 
       if (this.eChartsTypes.indexOf(this.chart.type) > -1) {
-        let tooltipFormatter = (p: any) => {
-          console.log(p);
-
-          let xValueFmt = common.formatTs({
-            timeSpec: xField.sqlName.match(/(?:___year)$/g)
-              ? common.TimeSpecEnum.Years
-              : xField.sqlName.match(/(?:___quarter)$/g)
-              ? common.TimeSpecEnum.Quarters
-              : xField.sqlName.match(/(?:___month)$/g)
-              ? common.TimeSpecEnum.Months
-              : xField.sqlName.match(/(?:___week)$/g)
-              ? common.TimeSpecEnum.Weeks
-              : xField.sqlName.match(/(?:___date)$/g)
-              ? common.TimeSpecEnum.Days
-              : xField.sqlName.match(/(?:___hour)$/g)
-              ? common.TimeSpecEnum.Hours
-              : xField.sqlName.match(/(?:___hour2)$/g)
-              ? common.TimeSpecEnum.Hours
-              : xField.sqlName.match(/(?:___hour3)$/g)
-              ? common.TimeSpecEnum.Hours
-              : xField.sqlName.match(/(?:___hour4)$/g)
-              ? common.TimeSpecEnum.Hours
-              : xField.sqlName.match(/(?:___hour6)$/g)
-              ? common.TimeSpecEnum.Hours
-              : xField.sqlName.match(/(?:___hour8)$/g)
-              ? common.TimeSpecEnum.Hours
-              : xField.sqlName.match(/(?:___hour12)$/g)
-              ? common.TimeSpecEnum.Hours
-              : common.TimeSpecEnum.Minutes,
-            unixTimeZoned: p.data.value[0] / 1000
-          });
-
-          let sValueFmt = common.isDefined(p.data.value[2])
-            ? p.data.value[2]
-            : 'null';
-
-          let sizeValueFmt = common.isDefined(p.data.value[5])
-            ? p.data.value[5]
-            : 'null';
-
-          return this.chart.type === common.ChartTypeEnum.EScatter &&
-            common.isDefined(this.chart.sizeField) &&
-            p.name !== p.data.value[6]
-            ? `${p.name}: <strong>${sValueFmt}</strong><br/>${p.data.value[6]}: <strong>${sizeValueFmt}</strong><br/>${xValueFmt}`
-            : `${p.name}<br/><strong>${sValueFmt}</strong><br/>${xValueFmt}`;
-        };
-
         let tooltip = {
           borderWidth: 2,
           textStyle: {
             fontSize: 16
           },
-          formatter: tooltipFormatter
+          formatter:
+            this.chart.type === common.ChartTypeEnum.EPie
+              ? (p: any) => {
+                  console.log(p);
+
+                  let xValueFmt =
+                    xField.result === common.FieldResultEnum.Ts
+                      ? common.formatTs({
+                          timeSpec: this.dataService.getTimeSpecByFieldSqlName(
+                            xField.sqlName
+                          ),
+                          unixTimeZoned: p.data.name / 1000
+                        })
+                      : p.data.name;
+
+                  let sValueFmt = common.isDefined(p.data.valueFmt)
+                    ? p.data.valueFmt
+                    : 'null';
+
+                  return `${xValueFmt}<br/><strong>${sValueFmt}</strong>`;
+                }
+              : (p: any) => {
+                  console.log(p);
+
+                  let xValueFmt = common.formatTs({
+                    timeSpec: this.dataService.getTimeSpecByFieldSqlName(
+                      xField.sqlName
+                    ),
+                    unixTimeZoned: p.data.value[0] / 1000
+                  });
+
+                  let sValueFmt = common.isDefined(p.data.value[2])
+                    ? p.data.value[2]
+                    : 'null';
+
+                  let sizeValueFmt = common.isDefined(p.data.value[5])
+                    ? p.data.value[5]
+                    : 'null';
+
+                  return this.chart.type === common.ChartTypeEnum.EScatter &&
+                    common.isDefined(this.chart.sizeField) &&
+                    p.name !== p.data.value[6]
+                    ? `${p.name}: <strong>${sValueFmt}</strong><br/>${p.data.value[6]}: <strong>${sizeValueFmt}</strong><br/>${xValueFmt}`
+                    : `${p.name}<br/><strong>${sValueFmt}</strong><br/>${xValueFmt}`;
+                }
         };
 
         this.eChartOptions.series = this.seriesData.map(el => {
@@ -433,7 +430,8 @@ export class ChartViewComponent implements OnChanges {
             name: el.seriesName,
             data: el.seriesPoints.map(x => ({
               name: x.xValue,
-              value: [x.yValue]
+              value: x.yValue,
+              valueFmt: x.yValueFmt
             })),
             tooltip: tooltip
           };

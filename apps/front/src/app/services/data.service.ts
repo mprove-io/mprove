@@ -451,58 +451,86 @@ export class DataService {
     return eData;
   }
 
-  private getTsValueFn(fieldName: string) {
+  private getTsValueFn(fieldSqlName: string) {
     let tsValueFn: (rValue: string) => Date;
 
-    if (fieldName.match(/(?:___date)$/g)) {
+    if (fieldSqlName.match(/(?:___date)$/g)) {
       tsValueFn = this.getDateFromDate;
-    } else if (fieldName.match(/(?:___week)$/g)) {
+    } else if (fieldSqlName.match(/(?:___week)$/g)) {
       tsValueFn = this.getDateFromWeek;
-    } else if (fieldName.match(/(?:___month)$/g)) {
+    } else if (fieldSqlName.match(/(?:___month)$/g)) {
       tsValueFn = this.getDateFromMonth;
-    } else if (fieldName.match(/(?:___quarter)$/g)) {
+    } else if (fieldSqlName.match(/(?:___quarter)$/g)) {
       tsValueFn = this.getDateFromQuarter;
-    } else if (fieldName.match(/(?:___year)$/g)) {
+    } else if (fieldSqlName.match(/(?:___year)$/g)) {
       tsValueFn = this.getDateFromYear;
-    } else if (fieldName.match(/(?:___time)$/g)) {
+    } else if (fieldSqlName.match(/(?:___time)$/g)) {
       tsValueFn = this.getDateFromTime;
-    } else if (fieldName.match(/(?:___ts)$/g)) {
+    } else if (fieldSqlName.match(/(?:___ts)$/g)) {
       // _ts,
       tsValueFn = this.getDateFromTimestamp;
-    } else if (fieldName.match(/(?:_ts)$/g)) {
+    } else if (fieldSqlName.match(/(?:_ts)$/g)) {
       // date_ts, week_ts, month_ts, quarter_ts, year_ts, hour_ts, minute_ts
       tsValueFn = this.getDateFromTimestamp;
-    } else if (fieldName.match(/(?:___hour)$/g)) {
+    } else if (fieldSqlName.match(/(?:___hour)$/g)) {
       tsValueFn = this.getDateFromHour;
-    } else if (fieldName.match(/(?:___hour2)$/g)) {
+    } else if (fieldSqlName.match(/(?:___hour2)$/g)) {
       tsValueFn = this.getDateFromHour;
-    } else if (fieldName.match(/(?:___hour3)$/g)) {
+    } else if (fieldSqlName.match(/(?:___hour3)$/g)) {
       tsValueFn = this.getDateFromHour;
-    } else if (fieldName.match(/(?:___hour4)$/g)) {
+    } else if (fieldSqlName.match(/(?:___hour4)$/g)) {
       tsValueFn = this.getDateFromHour;
-    } else if (fieldName.match(/(?:___hour6)$/g)) {
+    } else if (fieldSqlName.match(/(?:___hour6)$/g)) {
       tsValueFn = this.getDateFromHour;
-    } else if (fieldName.match(/(?:___hour8)$/g)) {
+    } else if (fieldSqlName.match(/(?:___hour8)$/g)) {
       tsValueFn = this.getDateFromHour;
-    } else if (fieldName.match(/(?:___hour12)$/g)) {
+    } else if (fieldSqlName.match(/(?:___hour12)$/g)) {
       tsValueFn = this.getDateFromHour;
-    } else if (fieldName.match(/(?:___minute)$/g)) {
+    } else if (fieldSqlName.match(/(?:___minute)$/g)) {
       tsValueFn = this.getDateFromMinute;
-    } else if (fieldName.match(/(?:___minute2)$/g)) {
+    } else if (fieldSqlName.match(/(?:___minute2)$/g)) {
       tsValueFn = this.getDateFromMinute;
-    } else if (fieldName.match(/(?:___minute3)$/g)) {
+    } else if (fieldSqlName.match(/(?:___minute3)$/g)) {
       tsValueFn = this.getDateFromMinute;
-    } else if (fieldName.match(/(?:___minute5)$/g)) {
+    } else if (fieldSqlName.match(/(?:___minute5)$/g)) {
       tsValueFn = this.getDateFromMinute;
-    } else if (fieldName.match(/(?:___minute10)$/g)) {
+    } else if (fieldSqlName.match(/(?:___minute10)$/g)) {
       tsValueFn = this.getDateFromMinute;
-    } else if (fieldName.match(/(?:___minute15)$/g)) {
+    } else if (fieldSqlName.match(/(?:___minute15)$/g)) {
       tsValueFn = this.getDateFromMinute;
-    } else if (fieldName.match(/(?:___minute30)$/g)) {
+    } else if (fieldSqlName.match(/(?:___minute30)$/g)) {
       tsValueFn = this.getDateFromMinute;
     }
 
     return tsValueFn;
+  }
+
+  getTimeSpecByFieldSqlName(fieldSqlName: string) {
+    return fieldSqlName.match(/(?:___year)$/g)
+      ? common.TimeSpecEnum.Years
+      : fieldSqlName.match(/(?:___quarter)$/g)
+      ? common.TimeSpecEnum.Quarters
+      : fieldSqlName.match(/(?:___month)$/g)
+      ? common.TimeSpecEnum.Months
+      : fieldSqlName.match(/(?:___week)$/g)
+      ? common.TimeSpecEnum.Weeks
+      : fieldSqlName.match(/(?:___date)$/g)
+      ? common.TimeSpecEnum.Days
+      : fieldSqlName.match(/(?:___hour)$/g)
+      ? common.TimeSpecEnum.Hours
+      : fieldSqlName.match(/(?:___hour2)$/g)
+      ? common.TimeSpecEnum.Hours
+      : fieldSqlName.match(/(?:___hour3)$/g)
+      ? common.TimeSpecEnum.Hours
+      : fieldSqlName.match(/(?:___hour4)$/g)
+      ? common.TimeSpecEnum.Hours
+      : fieldSqlName.match(/(?:___hour6)$/g)
+      ? common.TimeSpecEnum.Hours
+      : fieldSqlName.match(/(?:___hour8)$/g)
+      ? common.TimeSpecEnum.Hours
+      : fieldSqlName.match(/(?:___hour12)$/g)
+      ? common.TimeSpecEnum.Hours
+      : common.TimeSpecEnum.Minutes;
   }
 
   private getDateFromDate(rValue: string) {
