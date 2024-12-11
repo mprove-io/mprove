@@ -38,7 +38,12 @@ import { ArrowLeftIconComponent } from './icons/arrow-left-icon/arrow-left-icon.
 import { ArrowNarrowRightIconComponent } from './icons/arrow-narrow-right-icon/arrow-narrow-right-icon.component';
 import { ArrowRightIconComponent } from './icons/arrow-right-icon/arrow-right-icon.component';
 import { AscIconComponent } from './icons/asc-icon/asc-icon.component';
+import { ChartBarIconComponent } from './icons/chart-bar-icon/chart-bar-icon.component';
 import { ChartIconComponent } from './icons/chart-icon/chart-icon.component';
+import { ChartLineIconComponent } from './icons/chart-line-icon/chart-line-icon.component';
+import { ChartPieIconComponent } from './icons/chart-pie-icon/chart-pie-icon.component';
+import { ChartScatterIconComponent } from './icons/chart-scatter-icon/chart-scatter-icon.component';
+import { ChartTableIconComponent } from './icons/chart-table-icon/chart-table-icon.component';
 import { ChartViewIconComponent } from './icons/chart-view-icon/chart-view-icon.component';
 import { CheckIconComponent } from './icons/check-icon/check-icon.component';
 import { ChevronDownIconComponent } from './icons/chevron-down-icon/chevron-down-icon.component';
@@ -178,6 +183,11 @@ let sharedComponents = [
   AdjustmentsIconComponent,
   TableCellsIconComponent,
   InsightsIconComponent,
+  ChartTableIconComponent,
+  ChartLineIconComponent,
+  ChartBarIconComponent,
+  ChartScatterIconComponent,
+  ChartPieIconComponent,
   MenuBookIconComponent,
   LinkIconComponent,
   LinkOffIconComponent,

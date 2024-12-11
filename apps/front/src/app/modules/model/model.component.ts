@@ -62,6 +62,12 @@ export class ModelComponent implements OnInit, OnDestroy {
   connectionTypeEnum = common.ConnectionTypeEnum;
   chartTypeEnum = common.ChartTypeEnum;
 
+  chartTypeEnumTable = common.ChartTypeEnum.Table;
+  chartTypeEnumLine = common.ChartTypeEnum.ELine;
+  chartTypeEnumBar = common.ChartTypeEnum.EBar;
+  chartTypeEnumScatter = common.ChartTypeEnum.EScatter;
+  chartTypeEnumPie = common.ChartTypeEnum.EPie;
+
   lastUrl: string;
 
   model: ModelState;
@@ -792,7 +798,11 @@ export class ModelComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  chartTypeChange() {
+  chartTypeChange(newChartTypeValue?: common.ChartTypeEnum) {
+    if (common.isDefined(newChartTypeValue)) {
+      this.chartTypeForm.controls['chartType'].setValue(newChartTypeValue);
+    }
+
     let oldChartType = this.mconfig.chart.type;
     let newChartType = this.chartTypeForm.controls['chartType'].value;
 

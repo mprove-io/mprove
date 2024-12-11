@@ -417,11 +417,59 @@
                   (toggleEvent)="toggleChartPanel()"
                 ></m-panel-title>
 
-                <!-- <div
-                  *ngIf="mconfig?.select.length > 0"
-                  class="ml-5 text-gray1 text-base select-none"
-                  >Type</div
-                > -->
+                <div
+                  class="ml-10 flex flex-row items-center justify-start space-x-5"
+                >
+                  <m-chart-table-icon
+                    class="h-6 w-6 cursor-pointer"
+                    [ngClass]="{
+                      'text-blue-500':
+                        mconfig.chart?.type === chartTypeEnumTable,
+                      'text-gray-500':
+                        mconfig.chart?.type !== chartTypeEnumTable
+                    }"
+                    (click)="chartTypeChange(chartTypeEnumTable)"
+                  ></m-chart-table-icon>
+
+                  <m-chart-line-icon
+                    class="h-6 w-6 cursor-pointer"
+                    [ngClass]="{
+                      'text-blue-500':
+                        mconfig.chart?.type === chartTypeEnumLine,
+                      'text-gray-500': mconfig.chart?.type !== chartTypeEnumLine
+                    }"
+                    (click)="chartTypeChange(chartTypeEnumLine)"
+                  ></m-chart-line-icon>
+
+                  <m-chart-bar-icon
+                    class="h-6 w-6 cursor-pointer"
+                    [ngClass]="{
+                      'text-blue-500': mconfig.chart?.type === chartTypeEnumBar,
+                      'text-gray-500': mconfig.chart?.type !== chartTypeEnumBar
+                    }"
+                    (click)="chartTypeChange(chartTypeEnumBar)"
+                  ></m-chart-bar-icon>
+
+                  <m-chart-scatter-icon
+                    class="h-6 w-6 cursor-pointer"
+                    [ngClass]="{
+                      'text-blue-500':
+                        mconfig.chart?.type === chartTypeEnumScatter,
+                      'text-gray-500':
+                        mconfig.chart?.type !== chartTypeEnumScatter
+                    }"
+                    (click)="chartTypeChange(chartTypeEnumScatter)"
+                  ></m-chart-scatter-icon>
+
+                  <m-chart-pie-icon
+                    class="h-6 w-6 cursor-pointer"
+                    [ngClass]="{
+                      'text-blue-500': mconfig.chart?.type === chartTypeEnumPie,
+                      'text-gray-500': mconfig.chart?.type !== chartTypeEnumPie
+                    }"
+                    (click)="chartTypeChange(chartTypeEnumPie)"
+                  ></m-chart-pie-icon>
+                </div>
 
                 <form
                   [formGroup]="chartTypeForm"
