@@ -27,11 +27,12 @@ export interface SeriesDataElement {
 
 export interface SeriesPoint {
   xValue: string | number;
+  xValueFmt: string;
   yValue: number;
   yValueFmt: string;
-  sizeValueMod: number;
   sizeValue: number;
   sizeValueFmt: string;
+  sizeValueMod: number;
   sizeFieldName: string;
 }
 
@@ -290,6 +291,7 @@ export class DataService {
                 ? this.convertToNumberOrNull(xV)
                 : xV,
               yValue: this.convertToNumberOrNull(row[yName].value),
+              xValueFmt: row[xName].valueFmt,
               yValueFmt: row[yName].valueFmt,
               sizeValueMod:
                 common.isDefined(sizeName) && this.isNumber(row[sizeName].value)

@@ -389,6 +389,7 @@ export class ChartViewComponent implements OnChanges {
             data: el.seriesPoints.map(x => ({
               name: el.seriesName,
               value: [x.xValue, x.yValue],
+              pXValueFmt: x.xValueFmt,
               pYValueFmt: x.yValueFmt
             })),
             tooltip: tooltip
@@ -400,6 +401,7 @@ export class ChartViewComponent implements OnChanges {
             data: el.seriesPoints.map(x => ({
               name: el.seriesName,
               value: [x.xValue, x.yValue],
+              pXValueFmt: x.xValueFmt,
               pYValueFmt: x.yValueFmt
             })),
             tooltip: tooltip
@@ -414,6 +416,7 @@ export class ChartViewComponent implements OnChanges {
             data: el.seriesPoints.map(x => ({
               name: el.seriesName,
               value: [x.xValue, x.yValue, x.sizeValueMod],
+              pXValueFmt: x.xValueFmt,
               pYValueFmt: x.yValueFmt,
               pSizeValue: x.sizeValue,
               pSizeValueFmt: x.sizeValueFmt,
@@ -428,6 +431,7 @@ export class ChartViewComponent implements OnChanges {
             data: el.seriesPoints.map(x => ({
               name: x.xValue,
               value: x.yValue,
+              pXValueFmt: x.xValueFmt,
               pYValueFmt: x.yValueFmt
             })),
             tooltip: tooltip
@@ -439,6 +443,7 @@ export class ChartViewComponent implements OnChanges {
             data: el.seriesPoints.map(x => ({
               name: el.seriesName,
               value: [x.xValue, x.yValue],
+              pXValueFmt: x.xValueFmt,
               pYValueFmt: x.yValueFmt
             }))
           };
