@@ -30,8 +30,7 @@ import { getSelectValid } from '~front/app/functions/get-select-valid';
 import {
   DataService,
   QDataRow,
-  SeriesDataElement,
-  SeriesPoint
+  SeriesDataElement
 } from '~front/app/services/data.service';
 import { FormatNumberService } from '~front/app/services/format-number.service';
 import { common } from '~front/barrels/common';
@@ -345,8 +344,8 @@ export class ChartViewComponent implements OnChanges {
                         })
                       : p.data.name;
 
-                  let sValueFmt = common.isDefined(p.data.valueFmt)
-                    ? p.data.valueFmt
+                  let sValueFmt = common.isDefined(p.data.pYValueFmt)
+                    ? p.data.pYValueFmt
                     : 'null';
 
                   return `${xValueFmt}<br/><strong>${sValueFmt}</strong>`;
@@ -361,18 +360,18 @@ export class ChartViewComponent implements OnChanges {
                     unixTimeZoned: p.data.value[0] / 1000
                   });
 
-                  let sValueFmt = common.isDefined(p.data.value[2])
-                    ? p.data.value[2]
+                  let sValueFmt = common.isDefined(p.data.pYValueFmt)
+                    ? p.data.pYValueFmt
                     : 'null';
 
-                  let sizeValueFmt = common.isDefined(p.data.value[5])
-                    ? p.data.value[5]
+                  let sizeValueFmt = common.isDefined(p.data.pSizeValueFmt)
+                    ? p.data.pSizeValueFmt
                     : 'null';
 
                   return this.chart.type === common.ChartTypeEnum.EScatter &&
                     common.isDefined(this.chart.sizeField) &&
-                    p.name !== p.data.value[6]
-                    ? `${p.name}: <strong>${sValueFmt}</strong><br/>${p.data.value[6]}: <strong>${sizeValueFmt}</strong><br/>${xValueFmt}`
+                    p.name !== p.data.pSizeFieldName
+                    ? `${p.name}: <strong>${sValueFmt}</strong><br/>${p.data.pSizeFieldName}: <strong>${sizeValueFmt}</strong><br/>${xValueFmt}`
                     : `${p.name}<br/><strong>${sValueFmt}</strong><br/>${xValueFmt}`;
                 }
         };
@@ -383,13 +382,14 @@ export class ChartViewComponent implements OnChanges {
             symbol: 'circle',
             symbolSize: 8,
             lineStyle: {
-              width: 3
+              width: 2.5
             },
             // areaStyle: {},
             name: el.seriesName,
             data: el.seriesPoints.map(x => ({
               name: el.seriesName,
-              value: [x.xValue, x.yValue, x.yValueFmt]
+              value: [x.xValue, x.yValue],
+              pYValueFmt: x.yValueFmt
             })),
             tooltip: tooltip
           };
@@ -399,7 +399,8 @@ export class ChartViewComponent implements OnChanges {
             name: el.seriesName,
             data: el.seriesPoints.map(x => ({
               name: el.seriesName,
-              value: [x.xValue, x.yValue, x.yValueFmt]
+              value: [x.xValue, x.yValue],
+              pYValueFmt: x.yValueFmt
             })),
             tooltip: tooltip
           };
@@ -407,20 +408,16 @@ export class ChartViewComponent implements OnChanges {
           let scatterSeriesOption: ScatterSeriesOption = {
             type: 'scatter',
             symbolSize: common.isDefined(this.chart.sizeField)
-              ? (data: any) => 5 + data[3] * 25
+              ? (data: any) => 5 + data[2] * 25
               : 10,
             name: el.seriesName,
             data: el.seriesPoints.map(x => ({
               name: el.seriesName,
-              value: [
-                x.xValue,
-                x.yValue,
-                x.yValueFmt,
-                x.sizeValueMod,
-                x.sizeValue,
-                x.sizeValueFmt,
-                x.sizeFieldName
-              ]
+              value: [x.xValue, x.yValue, x.sizeValueMod],
+              pYValueFmt: x.yValueFmt,
+              pSizeValue: x.sizeValue,
+              pSizeValueFmt: x.sizeValueFmt,
+              pSizeFieldName: x.sizeFieldName
             })),
             tooltip: tooltip
           };
@@ -431,7 +428,7 @@ export class ChartViewComponent implements OnChanges {
             data: el.seriesPoints.map(x => ({
               name: x.xValue,
               value: x.yValue,
-              valueFmt: x.yValueFmt
+              pYValueFmt: x.yValueFmt
             })),
             tooltip: tooltip
           };
@@ -439,11 +436,11 @@ export class ChartViewComponent implements OnChanges {
           let baseSeriesOption: SeriesOption = {
             type: this.chart.type.split('_')[1] as any,
             name: el.seriesName,
-            data: el.seriesPoints.map((x: SeriesPoint) => [
-              x.xValue,
-              x.yValue,
-              x.yValueFmt
-            ])
+            data: el.seriesPoints.map(x => ({
+              name: el.seriesName,
+              value: [x.xValue, x.yValue],
+              pYValueFmt: x.yValueFmt
+            }))
           };
 
           let seriesOption =
