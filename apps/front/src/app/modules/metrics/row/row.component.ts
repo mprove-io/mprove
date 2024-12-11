@@ -546,12 +546,8 @@ export class RowComponent {
     }
   }
 
-  explore() {
-    if (this.reportSelectedNode.data.hasAccessToModel === true) {
-      this.mconfigService.navDuplicateMconfigAndQuery({
-        oldMconfigId: this.reportSelectedNode.data.mconfig.mconfigId
-      });
-    }
+  deselect() {
+    this.uiQuery.getValue().gridApi.deselectAll();
   }
 
   toggleShowFormatOptions() {

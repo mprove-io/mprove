@@ -10,6 +10,15 @@
 >
   <div class="text-lg"> Multiple rows selected </div>
 
+  <!-- <button
+    type="button"
+    data-cy="rowDeselectButton"
+    class="ml-5 flex flex h-11 items-center justify-center rounded border border-gray-400 px-5 text-gray-500 hover:bg-white focus:outline-none"
+    (click)="deselect()"
+  >
+    Deselect
+  </button> -->
+
   <button
     type="button"
     data-cy="deleteRowsButton"
@@ -19,7 +28,6 @@
     <m-trash-icon></m-trash-icon>
     <div class="ml-3"> Delete Rows </div>
   </button>
-
   <button
     type="button"
     data-cy="clearRowsButton"
@@ -45,6 +53,15 @@
         reportSelectedNode.data.rowId
       }}</div>
 
+      <!-- <button
+        type="button"
+        data-cy="rowDeselectButton"
+        class="ml-5 flex flex h-9 items-center justify-center rounded border border-gray-400 px-5 text-gray-500 hover:bg-white focus:outline-none"
+        (click)="deselect()"
+      >
+        Deselect
+      </button> -->
+
       <div class="ml-3">
         <button
           *ngIf="
@@ -52,11 +69,11 @@
             reportSelectedNode.data.rowType !== rowTypeHeader
           "
           type="button"
-          data-cy="rowToHeaderButton"
-          class="ml-5 flex flex h-9 items-center justify-center rounded border px-2 text-sm hover:bg-white focus:outline-none"
+          data-cy="rowFormatButton"
+          class="ml-5 flex flex h-9 items-center justify-center rounded border border-2 px-2 text-sm text-gray-500 hover:bg-white focus:outline-none"
           [ngClass]="{
-            'border-blue-400 text-blue-500 ': isShowFormatOptions === true,
-            'border-gray-400 text-gray-500 ': isShowFormatOptions === false
+            'border-orange-400': isShowFormatOptions === true,
+            'border-gray-400': isShowFormatOptions === false
           }"
           (click)="toggleShowFormatOptions()"
         >
@@ -264,7 +281,7 @@
       </div>
     </div>
 
-    <button
+    <!-- <button
       *ngIf="reportSelectedNode.data.rowType === rowTypeMetric"
       type="button"
       data-cy="metricsExploreButton"
@@ -284,7 +301,7 @@
       "
     >
       Explore
-    </button>
+    </button> -->
 
     <!-- <div
       class="flex h-11 flex-row items-center space-x-5"
