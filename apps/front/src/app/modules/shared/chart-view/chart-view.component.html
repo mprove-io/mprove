@@ -3,7 +3,7 @@
     *ngIf="isSelectValid === false"
     class="flex h-full w-full select-none flex-row items-center justify-center text-lg font-semibold text-gray-500"
     ><div class="w-3/5 text-center">
-      {{ errorMessage }}
+      {{ errorMessage || 'this chart type is not supported' }}
     </div>
   </div>
 

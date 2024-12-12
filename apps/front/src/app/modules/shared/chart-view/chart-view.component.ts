@@ -205,7 +205,13 @@ export class ChartViewComponent implements OnChanges {
       mconfigFields: this.mconfigFields
     });
 
-    this.isSelectValid = checkSelectResult.isSelectValid;
+    this.isSelectValid =
+      [common.ChartTypeEnum.Table, ...this.eChartsTypes].indexOf(
+        this.chart.type
+      ) > -1
+        ? checkSelectResult.isSelectValid
+        : false;
+
     this.errorMessage = checkSelectResult.errorMessage;
 
     if (this.isSelectValid === false) {
