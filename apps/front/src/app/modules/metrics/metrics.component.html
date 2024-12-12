@@ -336,7 +336,7 @@
                       'w-full': showMetricsChartSettings === false
                     }"
                   >
-                    <m-chart-view-metrics
+                    <m-chart-box
                       *ngIf="
                         recordsWithValuesLength > 0 &&
                         !!eChartInitOpts &&
@@ -344,8 +344,9 @@
                       "
                       [eChartInitOpts]="eChartInitOpts"
                       [eChartOptions]="eChartOptions"
+                      [chartInstanceId]="'metrics-chart'"
                       style="height: 100%"
-                    ></m-chart-view-metrics>
+                    ></m-chart-box>
 
                     <div
                       *ngIf="

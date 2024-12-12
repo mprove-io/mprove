@@ -95,6 +95,9 @@ export class ChartViewComponent implements OnChanges {
   ];
 
   @Input()
+  chartInstanceId: string;
+
+  @Input()
   mconfigFields: common.MconfigField[];
 
   @Input()
@@ -147,13 +150,6 @@ export class ChartViewComponent implements OnChanges {
     private formatNumberService: FormatNumberService,
     private cd: ChangeDetectorRef
   ) {}
-
-  onChartInit(ec: any) {
-    this.echartsInstance = ec;
-    ec.getZr().on('mousemove', function (params: any) {
-      ec.getZr().setCursorStyle('default');
-    });
-  }
 
   ngOnChanges(changes: SimpleChanges): void {
     // console.log('chart-view ngOnChanges');
@@ -338,7 +334,7 @@ export class ChartViewComponent implements OnChanges {
           formatter:
             this.chart.type === common.ChartTypeEnum.EPie
               ? (p: any) => {
-                  console.log(p);
+                  // console.log(p);
 
                   let xValueFmt = common.isDefined(p.data.pXValueFmt)
                     ? p.data.pXValueFmt
@@ -351,7 +347,7 @@ export class ChartViewComponent implements OnChanges {
                   return `${xValueFmt}<br/><strong>${sValueFmt}</strong>`;
                 }
               : (p: any) => {
-                  console.log(p);
+                  // console.log(p);
 
                   let xValueFmt = common.isDefined(p.data.pXValueFmt)
                     ? p.data.pXValueFmt
@@ -389,11 +385,10 @@ export class ChartViewComponent implements OnChanges {
               pXValueFmt: x.xValueFmt,
               pYValueFmt: x.yValueFmt
             })),
-            tooltip: tooltip
-            // ,
-            // emphasis: {
-            //   disabled: true
-            // }
+            tooltip: tooltip,
+            emphasis: {
+              disabled: true
+            }
           };
 
           let barSeriesOption: BarSeriesOption = {

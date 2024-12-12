@@ -11,9 +11,9 @@ import { NgxEchartsModule } from 'ngx-echarts';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { AvatarComponent } from './avatar/avatar.component';
 import { BricksComponent } from './bricks/bricks.component';
+import { ChartBoxComponent } from './chart-box/chart-box.component';
 import { ChartSaveAsDialogComponent } from './chart-save-as-dialog/chart-save-as-dialog.component';
 import { ChartTableComponent } from './chart-table/chart-table.component';
-import { ChartViewMetricsComponent } from './chart-view-metrics/chart-view-metrics.component';
 import { ChartViewComponent } from './chart-view/chart-view.component';
 import { ChartComponent } from './chart/chart.component';
 import { ColorMenuComponent } from './color-menu/color-menu.component';
@@ -156,7 +156,7 @@ let sharedComponents = [
   FractionTsComponent,
   ChartTableComponent,
   ChartViewComponent,
-  ChartViewMetricsComponent,
+  ChartBoxComponent,
   ChartComponent,
   DashboardTileChartComponent,
   FieldLabelComponent,

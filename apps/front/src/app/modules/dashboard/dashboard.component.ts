@@ -268,18 +268,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   refreshShow() {
-    // this.isShow = false;
-    // this.cd.detectChanges();
     // setTimeout(() => {
-    //   this.isShow = true;
-    //   this.cd.detectChanges();
-    // }, 500);
-
-    setTimeout(() => {
-      this.chartRepComponents.forEach(x => {
-        x.updateChartView();
-      });
-    }, 0);
+    //   this.chartRepComponents.forEach(x => {
+    //     x.updateChartView();
+    //   });
+    // }, 0);
   }
 
   toggleShowTileFilters() {

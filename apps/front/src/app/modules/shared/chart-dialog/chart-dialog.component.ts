@@ -174,10 +174,10 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   }
 
   refreshShow() {
-    this.isShow = false;
-    setTimeout(() => {
-      this.isShow = true;
-    });
+    // this.isShow = false;
+    // setTimeout(() => {
+    //   this.isShow = true;
+    // });
   }
 
   toggleFormat() {

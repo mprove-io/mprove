@@ -2,15 +2,18 @@ import { Component, Input } from '@angular/core';
 import { EChartsOption } from 'echarts';
 
 @Component({
-  selector: 'm-chart-view-metrics',
-  templateUrl: './chart-view-metrics.component.html'
+  selector: 'm-chart-box',
+  templateUrl: './chart-box.component.html'
 })
-export class ChartViewMetricsComponent {
+export class ChartBoxComponent {
   @Input()
   eChartInitOpts: any;
 
   @Input()
   eChartOptions: EChartsOption;
+
+  @Input()
+  chartInstanceId: string; // not in use - html - [id]="chartInstanceId"
 
   echartsInstance: any;
 

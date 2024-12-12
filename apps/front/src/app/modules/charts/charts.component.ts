@@ -282,10 +282,10 @@ export class ChartsComponent implements OnInit, OnDestroy {
   }
 
   refreshShow() {
-    this.isShow = false;
-    setTimeout(() => {
-      this.isShow = true;
-    });
+    // this.isShow = false;
+    // setTimeout(() => {
+    //   this.isShow = true;
+    // });
   }
 
   setShowListTrue() {

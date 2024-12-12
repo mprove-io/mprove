@@ -590,10 +590,10 @@ export class ModelComponent implements OnInit, OnDestroy {
   }
 
   refreshShow() {
-    this.isShow = false;
-    setTimeout(() => {
-      this.isShow = true;
-    });
+    // this.isShow = false;
+    // setTimeout(() => {
+    //   this.isShow = true;
+    // });
   }
 
   expandFiltersPanel() {

@@ -161,10 +161,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   refreshShow() {
-    this.isShow = false;
-    setTimeout(() => {
-      this.isShow = true;
-    });
+    // this.isShow = false;
+    // setTimeout(() => {
+    //   this.isShow = true;
+    // });
   }
 
   toggleShowViewModels() {

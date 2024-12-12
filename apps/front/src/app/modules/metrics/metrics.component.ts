@@ -786,11 +786,11 @@ export class MetricsComponent implements OnInit, OnDestroy {
   // }
 
   refreshShow() {
-    this.isShow = false;
-    setTimeout(() => {
-      this.isShow = true;
-      this.cd.detectChanges();
-    });
+    // this.isShow = false;
+    // setTimeout(() => {
+    //   this.isShow = true;
+    //   this.cd.detectChanges();
+    // });
   }
 
   // toggleShowMetricsChart() {
