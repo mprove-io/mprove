@@ -16,6 +16,7 @@
     [rowSelection]="'multiple'"
     [rowMultiSelectWithClick]="false"
     [getRowHeight]="getRowHeight"
+    (rowClicked)="onRowClicked($event)"
     (selectionChanged)="onSelectionChanged($event)"
     (rangeSelectionChanged)="onRangeSelectionChanged($event)"
     (gridReady)="onGridReady($event)"

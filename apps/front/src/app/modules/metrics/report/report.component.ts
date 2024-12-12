@@ -9,6 +9,7 @@ import {
   GridReadyEvent,
   IRowNode,
   RangeSelectionChangedEvent,
+  RowClickedEvent,
   RowDragEndEvent,
   RowHeightParams,
   SelectionChangedEvent
@@ -328,6 +329,9 @@ export class ReportComponent {
     })
   );
 
+  lastSelectionChangedTs = 0;
+  lastRowClickedTs = 0;
+
   @ViewChild(AgGridAngular) agGrid: AgGridAngular<DataRow>;
 
   constructor(
@@ -341,7 +345,33 @@ export class ReportComponent {
     private uiService: UiService
   ) {}
 
+  onRowClicked(event: RowClickedEvent<DataRow>) {
+    this.lastRowClickedTs = Date.now();
+
+    // console.log('onRowClicked');
+
+    let isSelected = event.node.isSelected();
+    // console.log(isSelected);
+
+    setTimeout(() => {
+      let diffClickedToSelection = Date.now() - this.lastSelectionChangedTs;
+      if (isSelected === true && diffClickedToSelection > 250) {
+        event.node.setSelected(false);
+      }
+      // console.log('diffClickedToSelection');
+      // console.log(diffClickedToSelection);
+    }, 0);
+  }
+
   onSelectionChanged(event: SelectionChangedEvent<DataRow>) {
+    let dateNow = Date.now();
+    let diffSelectionToClicked = dateNow - this.lastRowClickedTs;
+    this.lastSelectionChangedTs = dateNow;
+
+    // console.log('onSelectionChanged');
+    // console.log('diffSelectionToClicked');
+    // console.log(diffSelectionToClicked);
+
     let sNodes = event.api.getSelectedNodes();
     this.updateRepChartData(sNodes);
 
@@ -389,6 +419,7 @@ export class ReportComponent {
 
   onRangeSelectionChanged(event: RangeSelectionChangedEvent<DataRow>) {
     // console.log('onRangeSelectionChanged');
+    // console.log(event);
   }
 
   onGridReady(params: GridReadyEvent<DataRow>) {
