@@ -24,6 +24,8 @@ export class UiState {
   metricsTimeColumnsWideWidth: number;
   showMetricsModelName: boolean;
   showMetricsTimeFieldName: boolean;
+  showMetricsParameters: boolean;
+  showParametersJson: boolean;
   showMetricsChart: boolean;
   showMetricsChartSettings: boolean;
   showChartForSelectedRows: boolean;
@@ -32,7 +34,6 @@ export class UiState {
   timeSpec: common.TimeSpecEnum;
   timeRangeFraction: common.Fraction;
   showHours: boolean;
-  showParametersJson: boolean;
 }
 
 let uiState: UiState = {
@@ -50,6 +51,8 @@ let uiState: UiState = {
   metricsTimeColumnsWideWidth: undefined,
   showMetricsModelName: undefined,
   showMetricsTimeFieldName: undefined,
+  showMetricsParameters: undefined,
+  showParametersJson: undefined,
   showMetricsChart: undefined,
   showMetricsChartSettings: undefined,
   showChartForSelectedRows: undefined,
@@ -57,8 +60,7 @@ let uiState: UiState = {
   timezone: undefined,
   timeSpec: undefined,
   timeRangeFraction: undefined,
-  showHours: undefined,
-  showParametersJson: undefined
+  showHours: undefined
 };
 
 @Injectable({ providedIn: 'root' })
@@ -76,16 +78,20 @@ export class UiQuery extends BaseQuery<UiState> {
 
   showHours$ = this.store.pipe(select(state => state.showHours));
 
-  showParametersJson$ = this.store.pipe(
-    select(state => state.showParametersJson)
-  );
-
   showMetricsModelName$ = this.store.pipe(
     select(state => state.showMetricsModelName)
   );
 
   showMetricsTimeFieldName$ = this.store.pipe(
     select(state => state.showMetricsTimeFieldName)
+  );
+
+  showMetricsParameters$ = this.store.pipe(
+    select(state => state.showMetricsParameters)
+  );
+
+  showParametersJson$ = this.store.pipe(
+    select(state => state.showParametersJson)
   );
 
   reportSelectedNodes$ = this.store.pipe(

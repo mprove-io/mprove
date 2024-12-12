@@ -33,6 +33,9 @@ export class Ui {
   showHours: boolean;
 
   @IsBoolean()
+  showMetricsParameters: boolean;
+
+  @IsBoolean()
   showParametersJson: boolean;
 
   @IsEnum(enums.ModelTreeLevelsEnum)

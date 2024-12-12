@@ -88,7 +88,11 @@
     <div
       class="flex flex-row"
       *ngIf="
-        params.data.rowType === rowTypeMetric && metric.type === metricTypeModel
+        params.data.rowType === rowTypeMetric &&
+        metric.type === metricTypeModel &&
+        (showParameters === true ||
+          params.data.isParamsJsonValid === false ||
+          params.data.isParamsSchemaValid === false)
       "
     >
       <div

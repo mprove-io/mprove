@@ -107,7 +107,7 @@ export class ReportComponent {
     {
       field: 'name',
       pinned: 'left',
-      minWidth: 480, // metricsColumnNameWidth
+      minWidth: 470, // metricsColumnNameWidth
       headerComponent: MetricHeaderComponent,
       cellRenderer: MetricRendererComponent
     },
@@ -173,6 +173,7 @@ export class ReportComponent {
     this.uiQuery.timeColumnsNarrowWidth$,
     this.uiQuery.timeColumnsWideWidth$,
     this.uiQuery.showChartForSelectedRows$,
+    this.uiQuery.showMetricsParameters$,
     this.uiQuery.showParametersJson$
   ]).pipe(
     tap(
@@ -181,8 +182,9 @@ export class ReportComponent {
         timeColumnsNarrowWidth,
         timeColumnsWideWidth,
         showChartForSelectedRows,
+        showMetricsParameters,
         showParametersJson
-      ]: [common.ReportX, number, number, boolean, boolean]) => {
+      ]: [common.ReportX, number, number, boolean, boolean, boolean]) => {
         this.report = rep;
 
         let uiState = this.uiQuery.getValue();
@@ -242,6 +244,7 @@ export class ReportComponent {
           // let metric = metrics.metrics.find(m => m.metricId === row.metricId);
 
           let dataRow: DataRow = Object.assign({}, row, <DataRow>{
+            showMetricsParameters: showMetricsParameters,
             showParametersJson: showParametersJson,
             isRepParametersHaveError: isRepParametersHaveError,
             strParameters: common.isDefined(row.parameters)
@@ -464,7 +467,12 @@ export class ReportComponent {
   getRowHeight(params: RowHeightParams<DataRow>): number | undefined | null {
     let rowHeight = 42;
 
-    if (common.isDefined(params.data.mconfig)) {
+    let isShowParameters =
+      params.data.showMetricsParameters === true ||
+      params.data.isParamsJsonValid === false ||
+      params.data.isParamsSchemaValid === false;
+
+    if (common.isDefined(params.data.mconfig) && isShowParameters === true) {
       let totalConditions = 0;
 
       params.data.parameters.forEach(x => {
@@ -498,6 +506,7 @@ export class ReportComponent {
 
     let jsonRowHeight =
       params.data.rowType === common.RowTypeEnum.Metric &&
+      isShowParameters === true &&
       params.data.showParametersJson === true
         ? countLines({ input: params.data.parametersJson, lines: 1 }) * 20 + 8
         : 0;

@@ -15,12 +15,13 @@ export class UiService {
     metricsTimeColumnsWideWidth?: number;
     showMetricsModelName?: boolean;
     showMetricsTimeFieldName?: boolean;
+    showMetricsParameters?: boolean;
+    showParametersJson?: boolean;
     showMetricsChart?: boolean;
     showMetricsChartSettings?: boolean;
     showChartForSelectedRows?: boolean;
     modelTreeLevels?: common.ModelTreeLevelsEnum;
     showHours?: boolean;
-    showParametersJson?: boolean;
   }) {
     let {
       metricsColumnNameWidth,
@@ -28,12 +29,13 @@ export class UiService {
       metricsTimeColumnsWideWidth,
       showMetricsModelName,
       showMetricsTimeFieldName,
+      showMetricsParameters,
+      showParametersJson,
       showMetricsChart,
       showMetricsChartSettings,
       showChartForSelectedRows,
       modelTreeLevels,
-      showHours,
-      showParametersJson
+      showHours
     } = item;
 
     let uiState = this.uiQuery.getValue();
@@ -56,6 +58,12 @@ export class UiService {
       showMetricsTimeFieldName: common.isDefined(showMetricsTimeFieldName)
         ? showMetricsTimeFieldName
         : uiState.showMetricsTimeFieldName,
+      showMetricsParameters: common.isDefined(showMetricsParameters)
+        ? showMetricsParameters
+        : uiState.showMetricsParameters,
+      showParametersJson: common.isDefined(showParametersJson)
+        ? showParametersJson
+        : uiState.showParametersJson,
       showMetricsChart: common.isDefined(showMetricsChart)
         ? showMetricsChart
         : uiState.showMetricsChart,
@@ -66,9 +74,6 @@ export class UiService {
         ? showChartForSelectedRows
         : uiState.showChartForSelectedRows,
       showHours: common.isDefined(showHours) ? showHours : uiState.showHours,
-      showParametersJson: common.isDefined(showParametersJson)
-        ? showParametersJson
-        : uiState.showParametersJson,
       modelTreeLevels: common.isDefined(modelTreeLevels)
         ? modelTreeLevels
         : uiState.modelTreeLevels,

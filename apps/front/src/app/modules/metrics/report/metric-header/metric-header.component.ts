@@ -25,12 +25,14 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
 
   showMetricsModelName = false;
   showMetricsTimeFieldName = false;
+  showMetricsParameters = false;
   showParametersJson = false;
 
   uiQuery$ = this.uiQuery.select().pipe(
     tap(x => {
       this.showMetricsModelName = x.showMetricsModelName;
       this.showMetricsTimeFieldName = x.showMetricsTimeFieldName;
+      this.showMetricsParameters = x.showMetricsParameters;
       this.showParametersJson = x.showParametersJson;
 
       this.cd.detectChanges();
@@ -80,6 +82,13 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
     this.uiService.setUserUi({
       showMetricsTimeFieldName: showMetricsTimeFieldName
     });
+  }
+
+  toggleShowMetricsParameters() {
+    let showMetricsParameters = !this.showMetricsParameters;
+
+    this.uiQuery.updatePart({ showMetricsParameters: showMetricsParameters });
+    this.uiService.setUserUi({ showMetricsParameters: showMetricsParameters });
   }
 
   toggleShowParametersJson() {

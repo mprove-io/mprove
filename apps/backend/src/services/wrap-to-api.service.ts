@@ -477,6 +477,14 @@ export class WrapToApiService {
           ? user.ui?.showMetricsTimeFieldName
           : constants.DEFAULT_UI.showMetricsTimeFieldName,
 
+        showMetricsParameters: common.isDefined(user.ui?.showMetricsParameters)
+          ? user.ui?.showMetricsParameters
+          : constants.DEFAULT_UI.showMetricsParameters,
+
+        showParametersJson: common.isDefined(user.ui?.showParametersJson)
+          ? user.ui?.showParametersJson
+          : constants.DEFAULT_UI.showParametersJson,
+
         showMetricsChart: common.isDefined(user.ui?.showMetricsChart)
           ? user.ui?.showMetricsChart
           : constants.DEFAULT_UI.showMetricsChart,
@@ -496,10 +504,6 @@ export class WrapToApiService {
         showHours: common.isDefined(user.ui?.showHours)
           ? user.ui?.showHours
           : constants.DEFAULT_UI.showHours,
-
-        showParametersJson: common.isDefined(user.ui?.showParametersJson)
-          ? user.ui?.showParametersJson
-          : constants.DEFAULT_UI.showParametersJson,
 
         modelTreeLevels: common.isDefined(user.ui?.modelTreeLevels)
           ? user.ui?.modelTreeLevels
