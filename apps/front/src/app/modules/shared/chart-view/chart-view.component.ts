@@ -390,6 +390,10 @@ export class ChartViewComponent implements OnChanges {
               pYValueFmt: x.yValueFmt
             })),
             tooltip: tooltip
+            // ,
+            // emphasis: {
+            //   disabled: true
+            // }
           };
 
           let barSeriesOption: BarSeriesOption = {
@@ -457,9 +461,6 @@ export class ChartViewComponent implements OnChanges {
               : baseSeriesOption;
 
           seriesOption.cursor = 'default';
-          seriesOption.emphasis = {
-            disabled: true
-          };
 
           return seriesOption;
         });

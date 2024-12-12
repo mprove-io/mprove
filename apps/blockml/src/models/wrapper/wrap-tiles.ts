@@ -25,6 +25,9 @@ export function wrapTiles(item: {
       });
     });
 
+    let yField = tile.data?.y_field;
+    let yFields = tile.data?.y_fields || [];
+
     let chart: common.MconfigChart = {
       isValid: true,
       title: tile.title,
@@ -34,7 +37,12 @@ export function wrapTiles(item: {
       // data
       xField: tile.data?.x_field,
       yField: tile.data?.y_field,
-      yFields: tile.data?.y_fields || [],
+      yFields:
+        common.isDefined(yField) && yFields.indexOf(yField) > -1
+          ? yFields
+          : common.isDefined(yField)
+          ? [...yFields, yField]
+          : yFields,
       hideColumns: tile.data?.hide_columns || [],
       multiField: tile.data?.multi_field,
       valueField: tile.data?.value_field,
