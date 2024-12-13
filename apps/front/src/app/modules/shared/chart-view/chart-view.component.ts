@@ -176,8 +176,8 @@ export class ChartViewComponent implements OnChanges {
     this.eChartOptions = {
       useUTC: true,
       grid: {
-        left: '8%',
-        right: '5%',
+        left: '100',
+        right: '50',
         top: '10%',
         bottom: '10%'
       },
