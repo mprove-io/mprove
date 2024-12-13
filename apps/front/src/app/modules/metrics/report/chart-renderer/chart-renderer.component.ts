@@ -1,9 +1,13 @@
 import { Component } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
+import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { ReportQuery } from '~front/app/queries/report.query';
+import { ApiService } from '~front/app/services/api.service';
+import { DataService } from '~front/app/services/data.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
+import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { ReportService } from '~front/app/services/report.service';
 import { common } from '~front/barrels/common';
 
@@ -21,7 +25,10 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
   constructor(
     private reportQuery: ReportQuery,
     private reportService: ReportService,
-    private mconfigService: MconfigService
+    private mconfigService: MconfigService,
+    private dataService: DataService,
+    private apiService: ApiService,
+    private myDialogService: MyDialogService
   ) {}
 
   agInit(params: ICellRendererParams<DataRow>) {
@@ -60,10 +67,32 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
   explore(event?: MouseEvent) {
     event.stopPropagation();
 
-    if (this.params.data.hasAccessToModel === true) {
-      this.mconfigService.navDuplicateMconfigAndQuery({
-        oldMconfigId: this.params.data.mconfig.mconfigId
-      });
-    }
+    let qData =
+      this.params.data.mconfig.queryId === this.params.data.query.queryId
+        ? this.dataService.makeQData({
+            data: this.params.data.query.data,
+            columns: this.params.data.mconfig.fields
+          })
+        : [];
+
+    let checkSelectResult = getSelectValid({
+      chart: this.params.data.mconfig.chart,
+      mconfigFields: this.params.data.mconfig.fields
+    });
+
+    let isSelectValid = checkSelectResult.isSelectValid;
+    // let errorMessage = checkSelectResult.errorMessage;
+
+    this.myDialogService.showChart({
+      apiService: this.apiService,
+      mconfig: this.params.data.mconfig,
+      query: this.params.data.query,
+      qData: qData,
+      canAccessModel: this.params.data.hasAccessToModel,
+      showNav: true,
+      isSelectValid: isSelectValid,
+      dashboardId: undefined,
+      chartId: undefined
+    });
   }
 }
