@@ -4,9 +4,9 @@ import { ICellRendererParams } from 'ag-grid-community';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { ReportQuery } from '~front/app/queries/report.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DataService } from '~front/app/services/data.service';
-import { MconfigService } from '~front/app/services/mconfig.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { ReportService } from '~front/app/services/report.service';
 import { common } from '~front/barrels/common';
@@ -19,13 +19,14 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
   params: ICellRendererParams<DataRow>;
 
   rowTypeMetric = common.RowTypeEnum.Metric;
+  rowTypeFormula = common.RowTypeEnum.Formula;
   rowTypeHeader = common.RowTypeEnum.Header;
   rowTypeEmpty = common.RowTypeEnum.Empty;
 
   constructor(
     private reportQuery: ReportQuery,
     private reportService: ReportService,
-    private mconfigService: MconfigService,
+    private uiQuery: UiQuery,
     private dataService: DataService,
     private apiService: ApiService,
     private myDialogService: MyDialogService
@@ -67,32 +68,41 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
   explore(event?: MouseEvent) {
     event.stopPropagation();
 
-    let qData =
-      this.params.data.mconfig.queryId === this.params.data.query.queryId
-        ? this.dataService.makeQData({
-            data: this.params.data.query.data,
-            columns: this.params.data.mconfig.fields
-          })
-        : [];
+    // console.log('this.params.data');
+    // console.log(this.params.data);
 
-    let checkSelectResult = getSelectValid({
-      chart: this.params.data.mconfig.chart,
-      mconfigFields: this.params.data.mconfig.fields
-    });
+    if (this.params.data.rowType === common.RowTypeEnum.Metric) {
+      let qData =
+        this.params.data.mconfig.queryId === this.params.data.query.queryId
+          ? this.dataService.makeQData({
+              data: this.params.data.query.data,
+              columns: this.params.data.mconfig.fields
+            })
+          : [];
 
-    let isSelectValid = checkSelectResult.isSelectValid;
-    // let errorMessage = checkSelectResult.errorMessage;
+      let selectValidResult = getSelectValid({
+        chart: this.params.data.mconfig.chart,
+        mconfigFields: this.params.data.mconfig.fields
+      });
 
-    this.myDialogService.showChart({
-      apiService: this.apiService,
-      mconfig: this.params.data.mconfig,
-      query: this.params.data.query,
-      qData: qData,
-      canAccessModel: this.params.data.hasAccessToModel,
-      showNav: true,
-      isSelectValid: isSelectValid,
-      dashboardId: undefined,
-      chartId: undefined
-    });
+      this.myDialogService.showChart({
+        apiService: this.apiService,
+        mconfig: this.params.data.mconfig,
+        query: this.params.data.query,
+        qData: qData,
+        canAccessModel: this.params.data.hasAccessToModel,
+        showNav: this.params.data.rowType === common.RowTypeEnum.Metric,
+        isSelectValid: selectValidResult.isSelectValid,
+        dashboardId: undefined,
+        chartId: undefined
+      });
+    } else {
+      let chartFormulaData = this.uiQuery.getValue().chartFormulaData;
+
+      this.myDialogService.showChartFormula({
+        row: this.params.data,
+        chartFormulaData: chartFormulaData
+      });
+    }
   }
 }

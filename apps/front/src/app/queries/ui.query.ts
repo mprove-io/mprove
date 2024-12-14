@@ -5,6 +5,7 @@ import equal from 'fast-deep-equal';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { common } from '~front/barrels/common';
+import { ChartFormulaData } from '../interfaces/chart-formula-data';
 import { BaseQuery } from './base.query';
 
 export interface RepChartData {
@@ -18,6 +19,7 @@ export class UiState {
   gridData: DataRow[];
   gridApi: GridApi<DataRow>;
   repChartData: RepChartData;
+  chartFormulaData: ChartFormulaData;
   reportSelectedNodes: IRowNode<DataRow>[];
   metricsColumnNameWidth: number;
   metricsTimeColumnsNarrowWidth: number;
@@ -28,7 +30,6 @@ export class UiState {
   showParametersJson: boolean;
   showMetricsChart: boolean;
   showMetricsChartSettings: boolean;
-  showChartForSelectedRows: boolean;
   modelTreeLevels: common.ModelTreeLevelsEnum;
   timezone: string;
   timeSpec: common.TimeSpecEnum;
@@ -45,6 +46,14 @@ let uiState: UiState = {
     rows: [],
     columns: []
   },
+  chartFormulaData: {
+    eChartInitOpts: undefined,
+    eChartOptions: undefined,
+    dataPoints: undefined,
+    recordsWithValuesLength: undefined,
+    newQueriesLength: undefined,
+    runningQueriesLength: undefined
+  },
   reportSelectedNodes: [],
   metricsColumnNameWidth: undefined,
   metricsTimeColumnsNarrowWidth: undefined,
@@ -55,7 +64,6 @@ let uiState: UiState = {
   showParametersJson: undefined,
   showMetricsChart: undefined,
   showMetricsChartSettings: undefined,
-  showChartForSelectedRows: undefined,
   modelTreeLevels: undefined,
   timezone: undefined,
   timeSpec: undefined,
@@ -106,10 +114,6 @@ export class UiQuery extends BaseQuery<UiState> {
   repChartData$ = this.store.pipe(select(state => state.repChartData));
 
   showMetricsChart$ = this.store.pipe(select(state => state.showMetricsChart));
-
-  showChartForSelectedRows$ = this.store.pipe(
-    select(state => state.showChartForSelectedRows)
-  );
 
   showMetricsChartSettings$ = this.store.pipe(
     select(state => state.showMetricsChartSettings)

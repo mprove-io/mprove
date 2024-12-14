@@ -336,8 +336,24 @@
                       'w-full': showMetricsChartSettings === false
                     }"
                   >
+                    <div
+                      *ngIf="dataPoints.length === 0"
+                      class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+                      >No rows to display</div
+                    >
+
+                    <div
+                      *ngIf="
+                        dataPoints.length > 0 && selectedDataRowsLength === 0
+                      "
+                      class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+                      >No rows with charts enabled</div
+                    >
+
                     <m-chart-box
                       *ngIf="
+                        dataPoints.length > 0 &&
+                        selectedDataRowsLength > 0 &&
                         recordsWithValuesLength > 0 &&
                         !!eChartInitOpts &&
                         !!eChartOptions
@@ -347,14 +363,6 @@
                       [chartInstanceId]="'metrics-chart'"
                       style="height: 100%"
                     ></m-chart-box>
-
-                    <div
-                      *ngIf="
-                        dataPoints.length > 0 && selectedDataRowsLength === 0
-                      "
-                      class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
-                      >No data rows selected</div
-                    >
 
                     <div
                       *ngIf="
@@ -379,21 +387,9 @@
                         *ngIf="
                           newQueriesLength === 0 && runningQueriesLength === 0
                         "
-                        >The result consists of rows with no data</div
+                        >The result has no data</div
                       >
                     </div>
-
-                    <div
-                      *ngIf="
-                        dataPoints.length === 0 &&
-                        !(
-                          showChartForSelectedRows === true &&
-                          reportSelectedNodes.length > 1
-                        )
-                      "
-                      class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
-                      >No rows to display</div
-                    >
                   </div>
 
                   <m-chart-settings

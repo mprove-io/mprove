@@ -172,7 +172,6 @@ export class ReportComponent {
     this.reportQuery.select(),
     this.uiQuery.timeColumnsNarrowWidth$,
     this.uiQuery.timeColumnsWideWidth$,
-    this.uiQuery.showChartForSelectedRows$,
     this.uiQuery.showMetricsParameters$,
     this.uiQuery.showParametersJson$
   ]).pipe(
@@ -181,10 +180,9 @@ export class ReportComponent {
         rep,
         timeColumnsNarrowWidth,
         timeColumnsWideWidth,
-        showChartForSelectedRows,
         showMetricsParameters,
         showParametersJson
-      ]: [common.ReportX, number, number, boolean, boolean, boolean]) => {
+      ]: [common.ReportX, number, number, boolean, boolean]) => {
         this.report = rep;
 
         let uiState = this.uiQuery.getValue();
@@ -399,22 +397,11 @@ export class ReportComponent {
   }
 
   updateRepChartData(sNodes: IRowNode<DataRow>[]) {
-    let showChartForSelectedRows =
-      this.uiQuery.getValue().showChartForSelectedRows;
-
     this.uiQuery.updatePart({
       reportSelectedNodes: sNodes,
       gridData: this.data,
       repChartData: {
-        rows:
-          showChartForSelectedRows === true && sNodes.length > 0
-            ? this.data.filter(
-                row =>
-                  sNodes.map(node => node.data.rowId).indexOf(row.rowId) > -1
-              )
-            : // : showChartForSelectedRows === true && sNodes.length > 1
-              // ? []
-              this.data.filter(row => row.showChart === true),
+        rows: this.data,
         columns: this.report.columns
       }
     });

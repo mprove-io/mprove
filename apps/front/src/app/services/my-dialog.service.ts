@@ -161,6 +161,10 @@ import {
   ChartDialogData
 } from '../modules/shared/chart-dialog/chart-dialog.component';
 import {
+  ChartFormulaDialogComponent,
+  ChartFormulaDialogData
+} from '../modules/shared/chart-formula-dialog/chart-formula-dialog.component';
+import {
   ChartSaveAsDialogComponent,
   ChartSaveAsDialogData
 } from '../modules/shared/chart-save-as-dialog/chart-save-as-dialog.component';
@@ -319,6 +323,16 @@ export class MyDialogService {
       data: item,
       width: '80vw',
       height: '80vh'
+    });
+  }
+
+  showChartFormula(item: ChartFormulaDialogData): void {
+    this.dialogService.open(ChartFormulaDialogComponent, {
+      enableClose: false,
+      closeButton: true,
+      data: item,
+      width: '80vw',
+      height: '50vh'
     });
   }
 

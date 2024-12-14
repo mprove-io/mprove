@@ -1,0 +1,29 @@
+<div class="flex h-[50vh] w-[80vw] flex-col p-10" [hidden]="isShow === false">
+  <div
+    *ngIf="isShow === true"
+    class="mt-5 flex h-full w-full flex-grow overflow-auto"
+  >
+    <m-chart-box
+      *ngIf="recordsWithValuesLength > 0 && !!eChartInitOpts && !!eChartOptions"
+      [eChartInitOpts]="eChartInitOpts"
+      [eChartOptions]="eChartOptions"
+      [chartInstanceId]="'metrics-chart'"
+      style="height: 100%; width: 100%"
+    ></m-chart-box>
+
+    <div
+      *ngIf="dataPoints.length > 0 && recordsWithValuesLength === 0"
+      class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+    >
+      <div *ngIf="newQueriesLength > 0">Run queries to get data</div>
+
+      <div *ngIf="newQueriesLength === 0 && runningQueriesLength > 0"
+        >Queries are running</div
+      >
+
+      <div *ngIf="newQueriesLength === 0 && runningQueriesLength === 0"
+        >The result has no data</div
+      >
+    </div>
+  </div>
+</div>

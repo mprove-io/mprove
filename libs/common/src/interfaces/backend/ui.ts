@@ -27,9 +27,6 @@ export class Ui {
   showMetricsChartSettings: boolean;
 
   @IsBoolean()
-  showChartForSelectedRows: boolean;
-
-  @IsBoolean()
   showHours: boolean;
 
   @IsBoolean()

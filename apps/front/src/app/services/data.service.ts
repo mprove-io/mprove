@@ -1,9 +1,13 @@
 import { Injectable } from '@angular/core';
 import { formatLocale } from 'd3-format';
+import { SeriesOption } from 'echarts';
 import { capitalizeFirstLetter } from '~common/_index';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+import { DataPoint } from '../interfaces/data-point';
+import { DataRow } from '../interfaces/data-row';
 import { StructQuery } from '../queries/struct.query';
+import { UiQuery } from '../queries/ui.query';
 
 export interface SourceDataRow {
   [k: string]: string;
@@ -42,7 +46,7 @@ interface PrepareData {
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
-  constructor(private structQuery: StructQuery) {}
+  constructor(private structQuery: StructQuery, private uiQuery: UiQuery) {}
 
   private isNumberString(v: unknown): boolean {
     if (typeof v === 'number') {
@@ -912,5 +916,101 @@ export class DataService {
       : [];
 
     return singleData;
+  }
+
+  metricsMakeRowName(item: {
+    row: DataRow;
+    showMetricsModelName: boolean;
+    showMetricsTimeFieldName: boolean;
+  }) {
+    let { row, showMetricsModelName, showMetricsTimeFieldName } = item;
+    let { partLabel, topLabel, timeLabel } = item.row;
+
+    let name;
+
+    if (row.rowType !== common.RowTypeEnum.Metric) {
+      name = row.name;
+    } else {
+      name = partLabel;
+
+      if (showMetricsModelName === true) {
+        name = `${topLabel} ${name}`;
+      }
+
+      if (showMetricsTimeFieldName === true) {
+        name = `${name} by ${timeLabel}`;
+      }
+    }
+
+    return `(${row.rowId}) ${name}`;
+  }
+
+  metricsRowToSeries(item: {
+    row: DataRow;
+    dataPoints: DataPoint[];
+    showMetricsModelName: boolean;
+    showMetricsTimeFieldName: boolean;
+  }) {
+    let { row, dataPoints, showMetricsModelName, showMetricsTimeFieldName } =
+      item;
+
+    let rowName = this.metricsMakeRowName({
+      row: row,
+      showMetricsModelName: showMetricsModelName,
+      showMetricsTimeFieldName: showMetricsTimeFieldName
+    });
+
+    let seriesOption: SeriesOption = {
+      type: 'line',
+      symbol: 'circle',
+      symbolSize: 8,
+      cursor: 'default',
+      // legendHoverLink: true,
+      lineStyle: {
+        width: 3
+      },
+      // areaStyle: {},
+      emphasis: {
+        disabled: true
+      },
+      name: rowName,
+      data: dataPoints.map(dataPoint => ({
+        name: rowName,
+        value: [dataPoint.columnId * 1000, dataPoint[rowName]]
+      })),
+      tooltip: {
+        // position: 'top',
+        borderWidth: 2,
+        textStyle: {
+          fontSize: 16
+        },
+        // valueFormatter: ...
+        formatter: (p: any) => {
+          console.log(p);
+
+          let timeSpec = this.uiQuery.getValue().timeSpec;
+
+          let columnLabel = common.formatTs({
+            timeSpec: timeSpec,
+            unixTimeZoned: p.data.value[0] / 1000
+          });
+
+          let formattedValue = common.isDefined(p.data.value[1])
+            ? this.formatValue({
+                value: Number(p.data.value[1]),
+                formatNumber: row.formatNumber,
+                fieldResult: common.FieldResultEnum.Number,
+                currencyPrefix: row.currencyPrefix,
+                currencySuffix: row.currencySuffix
+              })
+            : 'null';
+
+          return `${p.name}<br/><strong>${formattedValue}</strong><br/>${columnLabel}`;
+        }
+        // textStyle: {}
+      }
+    };
+
+    return seriesOption;
   }
 }

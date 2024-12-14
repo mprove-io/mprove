@@ -495,12 +495,6 @@ export class WrapToApiService {
           ? user.ui?.showMetricsChartSettings
           : constants.DEFAULT_UI.showMetricsChartSettings,
 
-        showChartForSelectedRows: common.isDefined(
-          user.ui?.showChartForSelectedRows
-        )
-          ? user.ui?.showChartForSelectedRows
-          : constants.DEFAULT_UI.showChartForSelectedRows,
-
         showHours: common.isDefined(user.ui?.showHours)
           ? user.ui?.showHours
           : constants.DEFAULT_UI.showHours,

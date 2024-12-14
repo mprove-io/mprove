@@ -35,7 +35,8 @@ import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
-import { EChartsInitOpts, EChartsOption, SeriesOption } from 'echarts';
+import { EChartsInitOpts, EChartsOption } from 'echarts';
+import { DataPoint } from '~front/app/interfaces/data-point';
 import { DataService } from '~front/app/services/data.service';
 
 export class TimeSpecItem {
@@ -67,11 +68,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   queriesLength = 0;
 
-  dataPoints: {
-    [key: string]: any;
-    columnId: number;
-    columnLabel: string;
-  }[] = [];
+  dataPoints: DataPoint[] = [];
 
   report: common.ReportX;
   report$ = this.reportQuery.select().pipe(
@@ -161,8 +158,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
   eChartOptions: EChartsOption;
 
   completedQueriesAndFormulasLength = 0;
-  runningQueriesLength = 0;
   newQueriesLength = 0;
+  runningQueriesLength = 0;
   recordsWithValuesLength = 0;
   selectedDataRowsLength = 0;
 
@@ -213,11 +210,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
         this.completedQueriesAndFormulasLength =
           completedQueriesAndFormulasLength;
 
-        let dataPoints: {
-          columnId: number;
-          columnLabel: string;
-          [key: string]: any;
-        }[] = [];
+        let dataPoints: DataPoint[] = [];
 
         let recordsWithValuesLength = 0;
 
@@ -231,7 +224,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
               };
 
               repChartData.rows.forEach(row => {
-                let rowName = this.makeRowName({
+                let rowName = this.dataService.metricsMakeRowName({
                   row: row,
                   showMetricsModelName: showMetricsModelName,
                   showMetricsTimeFieldName: showMetricsTimeFieldName
@@ -254,6 +247,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
         this.selectedDataRowsLength = repChartData.rows.filter(
           row =>
+            row.showChart === true &&
             [common.RowTypeEnum.Metric, common.RowTypeEnum.Formula].indexOf(
               row.rowType
             ) > -1
@@ -264,7 +258,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
           // renderer: 'canvas'
         } as EChartsInitOpts;
 
-        this.eChartOptions = {
+        this.eChartOptions = (<EChartsOption>{
           useUTC: true,
           grid: {
             left: '100',
@@ -315,108 +309,36 @@ export class MetricsComponent implements OnInit, OnDestroy {
           series: repChartData.rows
             .filter(
               row =>
+                row.showChart === true &&
                 [common.RowTypeEnum.Metric, common.RowTypeEnum.Formula].indexOf(
                   row.rowType
                 ) > -1
             )
-            .map(row => {
-              let rowName = this.makeRowName({
+            .map(row =>
+              this.dataService.metricsRowToSeries({
                 row: row,
                 showMetricsModelName: showMetricsModelName,
-                showMetricsTimeFieldName: showMetricsTimeFieldName
-              });
-
-              let seriesOption: SeriesOption = {
-                type: 'line',
-                symbol: 'circle',
-                symbolSize: 8,
-                cursor: 'default',
-                // legendHoverLink: true,
-                lineStyle: {
-                  width: 3
-                },
-                // areaStyle: {},
-                emphasis: {
-                  disabled: true
-                },
-                name: rowName,
-                data: dataPoints.map(dataPoint => ({
-                  name: rowName,
-                  value: [dataPoint.columnId * 1000, dataPoint[rowName]]
-                })),
-                tooltip: {
-                  // position: 'top',
-                  borderWidth: 2,
-                  textStyle: {
-                    fontSize: 16
-                  },
-                  // valueFormatter: ...
-                  formatter: (p: any) => {
-                    console.log(p);
-
-                    let timeSpec = this.uiQuery.getValue().timeSpec;
-
-                    let columnLabel = common.formatTs({
-                      timeSpec: timeSpec,
-                      unixTimeZoned: p.data.value[0] / 1000
-                    });
-
-                    let formattedValue = common.isDefined(p.data.value[1])
-                      ? this.dataService.formatValue({
-                          value: Number(p.data.value[1]),
-                          formatNumber: row.formatNumber,
-                          fieldResult: common.FieldResultEnum.Number,
-                          currencyPrefix: row.currencyPrefix,
-                          currencySuffix: row.currencySuffix
-                        })
-                      : 'null';
-
-                    return `${p.name}<br/><strong>${formattedValue}</strong><br/>${columnLabel}`;
-                  }
-                  // textStyle: {}
-                }
-              };
-
-              return seriesOption;
-            })
-        } as EChartsOption;
+                showMetricsTimeFieldName: showMetricsTimeFieldName,
+                dataPoints: dataPoints
+              })
+            )
+        }) as EChartsOption;
 
         // console.log('dataPoints');
         // console.log(dataPoints);
 
         this.dataPoints = dataPoints;
 
-        // let structState = this.structQuery.getValue();
-
-        // this.chartOptions = {
-        //   data: dataPoints,
-        //   legend: {
-        //     position: 'top'
-        //   },
-        //   series: series as any,
-        //   axes: [
-        //     {
-        //       type: 'number',
-        //       position: 'left',
-        //       min: 0,
-        //       label: {
-        //         formatter: (params: AgAxisLabelFormatterParams) => {
-        //           let formattedValue = common.isDefined(params.value)
-        //             ? this.dataService.formatValue({
-        //                 value: params.value,
-        //                 formatNumber: structState.formatNumber,
-        //                 fieldResult: common.FieldResultEnum.Number,
-        //                 currencyPrefix: structState.currencyPrefix,
-        //                 currencySuffix: structState.currencySuffix
-        //               })
-        //             : 'undefined';
-
-        //           return formattedValue;
-        //         }
-        //       }
-        //     }
-        //   ]
-        // };
+        this.uiQuery.updatePart({
+          chartFormulaData: {
+            dataPoints: dataPoints,
+            eChartInitOpts: this.eChartInitOpts,
+            eChartOptions: this.eChartOptions,
+            newQueriesLength: newQueriesLength,
+            runningQueriesLength: runningQueriesLength,
+            recordsWithValuesLength: recordsWithValuesLength
+          }
+        });
 
         this.cd.detectChanges();
       }
@@ -428,7 +350,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
   showMetricsTimeFieldName = false;
   showMetricsChart = false;
   showMetricsChartSettings = false;
-  showChartForSelectedRows = false;
 
   reportSelectedNodes: any[] = [];
   reportSelectedNode: IRowNode<DataRow>;
@@ -449,7 +370,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
       this.showMetricsTimeFieldName = x.showMetricsTimeFieldName;
       this.showMetricsChart = x.showMetricsChart;
       this.showMetricsChartSettings = x.showMetricsChartSettings;
-      this.showChartForSelectedRows = x.showChartForSelectedRows;
       this.reportSelectedNodes = x.reportSelectedNodes;
 
       this.reportSelectedNode =
@@ -815,33 +735,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
     this.uiService.setUserUi({
       showMetricsChartSettings: showMetricsChartSettings
     });
-  }
-
-  makeRowName(item: {
-    row: DataRow;
-    showMetricsModelName: boolean;
-    showMetricsTimeFieldName: boolean;
-  }) {
-    let { row, showMetricsModelName, showMetricsTimeFieldName } = item;
-    let { partLabel, topLabel, timeLabel } = item.row;
-
-    let name;
-
-    if (row.rowType !== common.RowTypeEnum.Metric) {
-      name = row.name;
-    } else {
-      name = partLabel;
-
-      if (showMetricsModelName === true) {
-        name = `${topLabel} ${name}`;
-      }
-
-      if (showMetricsTimeFieldName === true) {
-        name = `${name} by ${timeLabel}`;
-      }
-    }
-
-    return `(${row.rowId}) ${name}`;
   }
 
   timezoneSearchFn(term: string, timezone: { value: string; label: string }) {
