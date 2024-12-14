@@ -19,6 +19,7 @@ export * from './metrics/model-metric';
 export * from './metrics/sql-metric';
 export * from './model';
 export * from './model-field';
+export * from './model-field-y';
 export * from './model-node';
 export * from './parameter';
 export * from './project-connection';

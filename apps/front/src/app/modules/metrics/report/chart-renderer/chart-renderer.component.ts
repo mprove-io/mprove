@@ -94,7 +94,8 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
         showNav: this.params.data.rowType === common.RowTypeEnum.Metric,
         isSelectValid: selectValidResult.isSelectValid,
         dashboardId: undefined,
-        chartId: undefined
+        chartId: undefined,
+        metricId: this.params.data.metricId
       });
     } else {
       let chartFormulaData = this.uiQuery.getValue().chartFormulaData;

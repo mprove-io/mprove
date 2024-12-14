@@ -9,6 +9,7 @@ import { NavQuery } from '~front/app/queries/nav.query';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
+import { DataService } from '~front/app/services/data.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { ReportService } from '~front/app/services/report.service';
 import { ValidationService } from '~front/app/services/validation.service';
@@ -17,7 +18,6 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
-import { DataService } from '~front/app/services/data.service';
 
 export interface ParameterFilter extends common.FilterX {
   parameterType: common.ParameterTypeEnum;
@@ -25,10 +25,6 @@ export interface ParameterFilter extends common.FilterX {
   isSchemaValid: boolean;
   schemaError: string;
   formula: string;
-}
-
-interface ModelFieldY extends common.ModelField {
-  partLabel: string;
 }
 
 @Component({
@@ -253,7 +249,7 @@ export class RowComponent {
     })
   );
 
-  fieldsList: ModelFieldY[] = [];
+  fieldsList: common.ModelFieldY[] = [];
   fieldsListLoading = false;
 
   formatNumberExamples: any = [];
@@ -603,7 +599,7 @@ export class RowComponent {
                   partLabel: common.isDefined(x.groupLabel)
                     ? `${x.topLabel} ${x.groupLabel} ${x.label}`
                     : `${x.topLabel} ${x.label}`
-                } as ModelFieldY)
+                } as common.ModelFieldY)
               )
               .sort((a, b) =>
                 a.partLabel > b.partLabel
@@ -726,7 +722,7 @@ export class RowComponent {
     return idxs != null && idxs.length > 0;
   }
 
-  filterMetricBySearchFn(term: string, modelFieldY: ModelFieldY) {
+  filterMetricBySearchFn(term: string, modelFieldY: common.ModelFieldY) {
     let haystack = [
       common.isDefinedAndNotEmpty(modelFieldY.groupLabel)
         ? `${modelFieldY.topLabel} ${modelFieldY.groupLabel} - ${modelFieldY.label}`
