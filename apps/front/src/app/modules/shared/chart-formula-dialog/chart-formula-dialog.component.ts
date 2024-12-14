@@ -14,6 +14,7 @@ import { DataPoint } from '~front/app/interfaces/data-point';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { DataService } from '~front/app/services/data.service';
+import { common } from '~front/barrels/common';
 import { SharedModule } from '../shared.module';
 
 export interface ChartFormulaDialogData {
@@ -61,7 +62,6 @@ export class ChartFormulaDialogComponent implements OnInit {
 
     this.dataPoints = this.ref.data.chartFormulaData.dataPoints;
     this.eChartInitOpts = this.ref.data.chartFormulaData.eChartInitOpts;
-    // this.eChartOptions = this.ref.data.chartFormulaData.eChartOptions;
 
     this.eChartOptions = Object.assign(
       {},
@@ -81,7 +81,20 @@ export class ChartFormulaDialogComponent implements OnInit {
     this.newQueriesLength = this.ref.data.chartFormulaData.newQueriesLength;
     this.runningQueriesLength =
       this.ref.data.chartFormulaData.runningQueriesLength;
-    this.recordsWithValuesLength =
-      this.ref.data.chartFormulaData.recordsWithValuesLength;
+
+    let recordsWithValuesLength = 0;
+
+    this.uiQuery
+      .getValue()
+      .repChartData.columns.filter(column => column.columnId !== 0)
+      .forEach(column => {
+        let record = row.records.find(rec => rec.key === column.columnId);
+
+        if (common.isDefined(record?.value)) {
+          recordsWithValuesLength++;
+        }
+      });
+
+    this.recordsWithValuesLength = recordsWithValuesLength;
   }
 }

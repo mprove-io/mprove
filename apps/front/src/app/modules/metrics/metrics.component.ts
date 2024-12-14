@@ -233,8 +233,10 @@ export class MetricsComponent implements OnInit, OnDestroy {
                 let record = row.records.find(
                   rec => rec.key === column.columnId
                 );
+
                 dataPoint[rowName] = record?.value;
-                if (common.isDefined(record?.value)) {
+
+                if (row.showChart === true && common.isDefined(record?.value)) {
                   recordsWithValuesLength++;
                 }
               });
@@ -335,8 +337,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
             eChartInitOpts: this.eChartInitOpts,
             eChartOptions: this.eChartOptions,
             newQueriesLength: newQueriesLength,
-            runningQueriesLength: runningQueriesLength,
-            recordsWithValuesLength: recordsWithValuesLength
+            runningQueriesLength: runningQueriesLength
           }
         });
 

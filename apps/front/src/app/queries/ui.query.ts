@@ -50,7 +50,6 @@ let uiState: UiState = {
     eChartInitOpts: undefined,
     eChartOptions: undefined,
     dataPoints: undefined,
-    recordsWithValuesLength: undefined,
     newQueriesLength: undefined,
     runningQueriesLength: undefined
   },
