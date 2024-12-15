@@ -129,3 +129,26 @@ export const FORMAT_NUMBER_EXAMPLES: {
     output: undefined
   }
 ];
+
+export const EMPTY_MCONFIG_FIELD: common.MconfigField = {
+  id: undefined,
+  hidden: undefined,
+  label: undefined,
+  fieldClass: undefined,
+  result: undefined,
+  suggestModelDimension: undefined,
+  sqlName: undefined,
+  topId: undefined,
+  topLabel: 'Empty',
+  description: undefined,
+  type: undefined,
+  groupId: undefined,
+  groupLabel: undefined,
+  groupDescription: undefined,
+  formatNumber: undefined,
+  currencyPrefix: undefined,
+  currencySuffix: undefined,
+  sorting: undefined,
+  sortingNumber: undefined,
+  isHideColumn: undefined
+};

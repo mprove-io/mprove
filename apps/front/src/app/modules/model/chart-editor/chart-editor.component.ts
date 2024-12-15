@@ -501,29 +501,6 @@ export class ChartEditorComponent implements OnChanges {
       return;
     }
 
-    let emptyColumn: common.MconfigField = {
-      id: undefined,
-      hidden: undefined,
-      label: undefined,
-      fieldClass: undefined,
-      result: undefined,
-      suggestModelDimension: undefined,
-      sqlName: undefined,
-      topId: undefined,
-      topLabel: 'Empty',
-      description: undefined,
-      type: undefined,
-      groupId: undefined,
-      groupLabel: undefined,
-      groupDescription: undefined,
-      formatNumber: undefined,
-      currencyPrefix: undefined,
-      currencySuffix: undefined,
-      sorting: undefined,
-      sortingNumber: undefined,
-      isHideColumn: undefined
-    };
-
     this.dimensionsMeasuresCalculations = this.mconfigFields.filter(
       x =>
         [
@@ -544,7 +521,7 @@ export class ChartEditorComponent implements OnChanges {
     );
 
     this.numbersDimensionsMeasuresCalculationsPlusEmpty = [
-      emptyColumn,
+      constants.EMPTY_MCONFIG_FIELD,
       ...this.numbersDimensionsMeasuresCalculations
     ];
 
@@ -552,7 +529,10 @@ export class ChartEditorComponent implements OnChanges {
       x => x.fieldClass === common.FieldClassEnum.Dimension
     );
 
-    this.dimensionsPlusEmpty = [emptyColumn, ...this.dimensions];
+    this.dimensionsPlusEmpty = [
+      constants.EMPTY_MCONFIG_FIELD,
+      ...this.dimensions
+    ];
 
     this.numbersMeasuresAndCalculations = this.mconfigFields.filter(
       x =>
@@ -562,7 +542,7 @@ export class ChartEditorComponent implements OnChanges {
     );
 
     this.numbersMeasuresAndCalculationsPlusEmpty = [
-      emptyColumn,
+      constants.EMPTY_MCONFIG_FIELD,
       ...this.numbersMeasuresAndCalculations
     ];
 

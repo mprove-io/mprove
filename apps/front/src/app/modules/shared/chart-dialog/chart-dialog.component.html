@@ -1,4 +1,4 @@
-<div class="flex h-[80vh] w-[80vw] flex-col p-10">
+<div class="flex h-[87vh] w-[80vw] flex-col p-10">
   <div class="min-h-9 mb-5 flex flex-1 flex-row justify-center text-xl">
     <div class="flex w-1/4 flex-1 flex-row items-center justify-start"> </div>
 
@@ -41,9 +41,11 @@
       </div>
     </div>
 
-    <div class="flex flex-1 flex-row items-center justify-center">
+    <div
+      *ngIf="!!ref.data.metricId"
+      class="flex flex-1 flex-row items-center justify-center"
+    >
       <div
-        *ngIf="!!ref.data.metricId"
         class="flex h-11 max-w-[850px] flex-1 flex-row items-center space-x-5"
       >
         <div class="text-gray1 flex flex-shrink-0 select-none items-center"
@@ -54,7 +56,7 @@
           <ng-select
             data-cy="groupBySelect"
             class="group-metric-by-select w-full min-w-[2px] text-base focus:outline-none"
-            [items]="fieldsList"
+            [items]="dimensionsPlusEmpty"
             (open)="openGroupBySelect()"
             [loading]="fieldsListLoading"
             [searchable]="true"

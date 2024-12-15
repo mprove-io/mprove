@@ -26,6 +26,7 @@ import { common } from '~front/barrels/common';
 import { SharedModule } from '../shared.module';
 
 import uFuzzy from '@leeoniya/ufuzzy';
+import { constants } from '~front/barrels/constants';
 
 export interface ChartDialogData {
   apiService: ApiService;
@@ -69,9 +70,9 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
   groupByFieldForm: FormGroup;
 
-  fieldsList: common.ModelFieldY[] = [];
+  dimensionsPlusEmpty: common.ModelFieldY[] = [];
   fieldsListLoading = false;
-  groupByModel: common.Model;
+  model: common.Model;
   isAlreadyFiltered = false;
 
   chartDialogRunButtonSpinnerName = 'chartDialogRunButtonSpinnerName';
@@ -91,6 +92,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   qData: QDataRow[];
   query: common.Query;
   mconfig: common.MconfigX;
+  emptyGroupMconfig: common.MconfigX;
   isSelectValid = false;
 
   isExplorer = false;
@@ -157,6 +159,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
                 let { mconfig, query } = resp.payload;
 
                 this.mconfig = mconfig;
+                this.emptyGroupMconfig = common.makeCopy(mconfig);
                 this.query = query;
 
                 this.qData =
@@ -384,6 +387,10 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
     let apiService = this.ref.data.apiService;
 
+    let emptyField = Object.assign({}, constants.EMPTY_MCONFIG_FIELD, {
+      partLabel: 'Empty'
+    } as common.ModelFieldY);
+
     apiService
       .req({
         pathInfoName:
@@ -393,25 +400,32 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       .pipe(
         tap((resp: apiToBackend.ToBackendGetModelResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.fieldsList = resp.payload.model.fields
-              .filter(x => restrictedFilterFieldIds.indexOf(x.id) < 0)
-              .map(x =>
-                Object.assign({}, x, {
-                  partLabel: common.isDefined(x.groupLabel)
-                    ? `${x.topLabel} ${x.groupLabel} ${x.label}`
-                    : `${x.topLabel} ${x.label}`
-                } as common.ModelFieldY)
-              )
-              .sort((a, b) =>
-                a.partLabel > b.partLabel
-                  ? 1
-                  : b.partLabel > a.partLabel
-                  ? -1
-                  : 0
-              );
+            this.dimensionsPlusEmpty = [
+              emptyField,
+              ...resp.payload.model.fields
+                .filter(
+                  x =>
+                    x.fieldClass === common.FieldClassEnum.Dimension &&
+                    restrictedFilterFieldIds.indexOf(x.id) < 0
+                )
+                .map(x =>
+                  Object.assign({}, x, {
+                    partLabel: common.isDefined(x.groupLabel)
+                      ? `${x.topLabel} ${x.groupLabel} ${x.label}`
+                      : `${x.topLabel} ${x.label}`
+                  } as common.ModelFieldY)
+                )
+                .sort((a, b) =>
+                  a.partLabel > b.partLabel
+                    ? 1
+                    : b.partLabel > a.partLabel
+                    ? -1
+                    : 0
+                )
+            ];
 
             // console.log(this.fieldsList[0]);
-            this.groupByModel = resp.payload.model;
+            this.model = resp.payload.model;
 
             this.fieldsListLoading = false;
           }
@@ -422,6 +436,8 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   }
 
   groupByChange() {
+    let groupByFieldId = this.groupByFieldForm.controls['groupByField'].value;
+
     // let metric = this.metricsQuery
     //   .getValue()
     //   .metrics.find(y => y.metricId === this.repSelectedNode.data.metricId);
@@ -433,16 +449,90 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     this.isAlreadyFiltered =
       this.mconfig.extendedFilters
         .map(filter => filter.fieldId)
-        .indexOf(this.groupByFieldForm.controls['groupByField'].value) > -1;
+        .indexOf(groupByFieldId) > -1;
 
-    console.log('this.mconfig.extendedFilters.map(filter => filter.fieldId)');
-    console.log(this.mconfig.extendedFilters.map(filter => filter.fieldId));
+    // console.log('this.mconfig.extendedFilters.map(filter => filter.fieldId)');
+    // console.log(this.mconfig.extendedFilters.map(filter => filter.fieldId));
 
-    console.log("this.groupByFieldForm.controls['groupByField'].value");
-    console.log(this.groupByFieldForm.controls['groupByField'].value);
+    // console.log("groupByFieldId");
+    // console.log(groupByFieldId);
 
-    console.log('this.isAlreadyFiltered');
-    console.log(this.isAlreadyFiltered);
+    // console.log('this.isAlreadyFiltered');
+    // console.log(this.isAlreadyFiltered);
+
+    let newMconfigId = common.makeId();
+    let newQueryId = common.makeId();
+
+    let mconfigCopy = common.makeCopy(this.emptyGroupMconfig);
+
+    let newMconfig = Object.assign(mconfigCopy, <common.MconfigX>{
+      mconfigId: newMconfigId,
+      queryId: newQueryId,
+      temp: true,
+      serverTs: 1
+    });
+
+    newMconfig.select = [...newMconfig.select, groupByFieldId];
+
+    newMconfig = common.setChartTitleOnSelectChange({
+      mconfig: newMconfig,
+      fields: this.model.fields
+    });
+
+    newMconfig = common.setChartFields({
+      mconfig: newMconfig,
+      fields: this.model.fields
+    });
+
+    newMconfig = common.sortChartFieldsOnSelectChange({
+      mconfig: newMconfig,
+      fields: this.model.fields
+    });
+
+    let nav = this.navQuery.getValue();
+
+    let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload =
+      {
+        projectId: nav.projectId,
+        isRepoProd: nav.isRepoProd,
+        branchId: nav.branchId,
+        envId: nav.envId,
+        mconfig: newMconfig
+      };
+
+    let apiService = this.ref.data.apiService;
+
+    apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum
+            .ToBackendCreateTempMconfigAndQuery,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let { mconfig, query } = resp.payload;
+
+            this.mconfig = mconfig;
+            this.query = query;
+
+            this.qData =
+              this.mconfig.queryId === this.query.queryId
+                ? this.dataService.makeQData({
+                    data: this.query.data,
+                    columns: this.mconfig.fields
+                  })
+                : [];
+
+            if (this.query.status !== common.QueryStatusEnum.Completed) {
+              this.run();
+            }
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 
   filterMetricBySearchFn(term: string, modelFieldY: common.ModelFieldY) {
