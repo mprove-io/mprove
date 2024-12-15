@@ -95,7 +95,8 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
         isSelectValid: selectValidResult.isSelectValid,
         dashboardId: undefined,
         chartId: undefined,
-        metricId: this.params.data.metricId
+        metricId: this.params.data.metricId,
+        isToDuplicateQuery: true
       });
     } else {
       let chartFormulaData = this.uiQuery.getValue().chartFormulaData;

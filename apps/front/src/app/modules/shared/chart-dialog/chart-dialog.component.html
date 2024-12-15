@@ -1,17 +1,17 @@
-<div class="flex h-[80vh] w-[80vw] flex-col p-10" [hidden]="isShow === false">
+<div class="flex h-[80vh] w-[80vw] flex-col p-10">
   <div class="min-h-9 mb-5 flex flex-1 flex-row justify-center text-xl">
     <div class="flex w-1/4 flex-1 flex-row items-center justify-start"> </div>
 
     <div
       class="text-gray1 mx-5 line-clamp-2 flex h-14 max-w-prose flex-shrink-0 flex-grow flex-row flex-wrap justify-center text-center font-semibold"
-      >{{ mconfig?.chart?.title }}
+      >{{ title }}
     </div>
 
     <div class="flex w-1/4 flex-1 flex-row items-center justify-end"> </div>
   </div>
 
   <div
-    *ngIf="showNav === true"
+    *ngIf="isShowInit === false && showNav === true"
     class="text-gray1 mb-5 flex w-full flex-row items-center justify-start"
   >
     <div class="flex flex-1 flex-row items-center justify-start"
@@ -26,9 +26,7 @@
       </div>
 
       <div
-        *ngIf="
-          isShow === true && isData === true && mconfig?.fields?.length > 0
-        "
+        *ngIf="isData === true && mconfig?.fields?.length > 0"
         class="ml-5 flex flex-row"
       >
         <ui-switch
@@ -88,8 +86,8 @@
         </form> </div
     ></div>
 
-    <div class="flex flex-1 flex-row items-center justify-end"
-      ><div class="flex flex-row items-center justify-end">
+    <div class="flex flex-1 flex-row items-center justify-end">
+      <div *ngIf="!!query" class="flex flex-row items-center justify-end">
         <m-query-status [query]="query"></m-query-status>
       </div>
 
@@ -106,30 +104,35 @@
 
       <button
         data-cy="chartDialogRunButton"
-        class="bg-blue3 ml-5 flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
+        class="ml-5 flex h-12 w-24 flex-shrink-0 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
         [ngClass]="{
-          'cursor-default': isRunButtonPressed === true
+          'cursor-default bg-gray-400':
+            isRunButtonPressed === true || query?.status === queryStatusRunning,
+          ' bg-blue3 cursor-pointer':
+            isRunButtonPressed === false && query?.status !== queryStatusRunning,
         }"
         (click)="run()"
-        [disabled]="isRunButtonPressed === true"
+        [disabled]="
+          isRunButtonPressed === true || query?.status === queryStatusRunning
+        "
       >
-        <div *ngIf="isRunButtonPressed === false">Run</div>
-        <div
-          *ngIf="isRunButtonPressed === true"
-          class="relative flex h-9 w-9 flex-shrink-0"
-        >
-          <ngx-spinner
-            [name]="chartDialogRunButtonSpinnerName"
-            color="rgba(255, 255, 255, 1)"
-            bdColor="rgba(0, 0, 0, 0)"
-            size="default"
-            type="ball-clip-rotate"
-            [fullScreen]="false"
-            [disableAnimation]="true"
-            [zIndex]="99998"
-          >
-          </ngx-spinner>
-        </div>
+        <div>Run</div>
+
+        <!-- <div *ngIf="isRunButtonPressed === true">
+          <div class="relative h-9 w-9 bg-amber-100">
+            <ngx-spinner
+              [name]="chartDialogRunButtonSpinnerName"
+              color="rgba(255, 255, 255, 1)"
+              bdColor="rgba(0, 0, 0, 0)"
+              size="default"
+              type="ball-clip-rotate"
+              [fullScreen]="false"
+              [disableAnimation]="true"
+              [zIndex]="99998"
+            >
+            </ngx-spinner>
+          </div>
+        </div> -->
       </button>
 
       <ng-template #templateChartDialogExplore>
@@ -162,9 +165,12 @@
     >
   </div>
 
-  <div class="flex max-h-[30%] min-h-[30%] flex-row">
+  <div
+    *ngIf="isShowInit === false"
+    class="flex max-h-[30%] min-h-[30%] flex-row"
+  >
     <div
-      *ngIf="isShow === true && isData === true && mconfig?.fields?.length > 0"
+      *ngIf="isData === true && mconfig?.fields?.length > 0"
       class="mr-16 flex w-full max-w-max overflow-auto"
     >
       <m-main-table
@@ -179,7 +185,7 @@
     <div class="flex h-full flex-col">
       <m-bricks
         class="flex max-w-max overflow-auto"
-        *ngIf="isShow === true && mconfig?.filters.length > 0"
+        *ngIf="mconfig?.filters.length > 0"
         [extendedFilters]="mconfig.extendedFilters"
         [listen]="ref.data.listen"
         [isKeepBackgroundColor]="false"
@@ -188,7 +194,7 @@
   </div>
 
   <div
-    *ngIf="isShow === true && mconfig?.fields?.length > 0"
+    *ngIf="isShowInit === false && mconfig?.fields?.length > 0"
     class="mt-7 flex h-full overflow-auto"
     [ngClass]="{
       'flex-grow': mconfig?.chart.type !== chartTypeEnumTable,
@@ -211,7 +217,7 @@
 
   <div
     class="mt-7 flex cursor-default flex-row items-center justify-start"
-    *ngIf="showNav === true"
+    *ngIf="isShowInit === false && showNav === true"
   >
     <div class="text-base font-semibold text-gray-400">Model:</div>
 

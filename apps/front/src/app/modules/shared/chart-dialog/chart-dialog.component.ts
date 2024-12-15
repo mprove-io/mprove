@@ -29,14 +29,15 @@ import uFuzzy from '@leeoniya/ufuzzy';
 
 export interface ChartDialogData {
   apiService: ApiService;
+  isSelectValid: boolean;
   mconfig: common.MconfigX;
   query: common.Query;
   qData: QDataRow[];
   canAccessModel: boolean;
   showNav: boolean;
-  isSelectValid: boolean;
   chartId: string;
   dashboardId: string;
+  isToDuplicateQuery?: boolean;
   metricId?: string;
   listen?: { [a: string]: string };
   updateQueryFn?: any;
@@ -62,6 +63,10 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     this.ref.close();
   }
 
+  queryStatusRunning = common.QueryStatusEnum.Running;
+
+  title: string;
+
   groupByFieldForm: FormGroup;
 
   fieldsList: common.ModelFieldY[] = [];
@@ -71,11 +76,11 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
   chartDialogRunButtonSpinnerName = 'chartDialogRunButtonSpinnerName';
 
+  isShowInit = true;
   isRunButtonPressed = false;
 
   chartTypeEnumTable = common.ChartTypeEnum.Table;
 
-  isShow = true;
   isData = false;
   isFormat = true;
   showNav = false;
@@ -111,17 +116,83 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    let nav = this.navQuery.getValue();
+
+    this.title = this.ref.data.mconfig.chart?.title;
+
     this.groupByFieldForm = this.fb.group({
       groupByField: [undefined]
     });
 
-    this.qData = this.ref.data.qData;
-    this.mconfig = this.ref.data.mconfig;
-    this.query = this.ref.data.query;
     this.canAccessModel = this.ref.data.canAccessModel;
     this.showNav = this.ref.data.showNav;
     this.isSelectValid = this.ref.data.isSelectValid;
 
+    if (this.ref.data.isToDuplicateQuery === true) {
+      let oldMconfigId = this.ref.data.mconfig.mconfigId;
+
+      let payload: apiToBackend.ToBackendDuplicateMconfigAndQueryRequestPayload =
+        {
+          projectId: nav.projectId,
+          isRepoProd: nav.isRepoProd,
+          branchId: nav.branchId,
+          envId: nav.envId,
+          oldMconfigId: oldMconfigId
+        };
+
+      let apiService = this.ref.data.apiService;
+
+      apiService
+        .req({
+          pathInfoName:
+            apiToBackend.ToBackendRequestInfoNameEnum
+              .ToBackendDuplicateMconfigAndQuery,
+          payload: payload,
+          showSpinner: true
+        })
+        .pipe(
+          tap(
+            (resp: apiToBackend.ToBackendDuplicateMconfigAndQueryResponse) => {
+              if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+                let { mconfig, query } = resp.payload;
+
+                this.mconfig = mconfig;
+                this.query = query;
+
+                this.qData =
+                  this.mconfig.queryId === this.query.queryId
+                    ? this.dataService.makeQData({
+                        data: this.query.data,
+                        columns: this.mconfig.fields
+                      })
+                    : [];
+              }
+
+              this.isShowInit = false;
+              this.cd.detectChanges();
+
+              this.startCheckRunning();
+            }
+          ),
+          take(1)
+        )
+        .subscribe();
+    } else {
+      this.isShowInit = false;
+
+      this.mconfig = this.ref.data.mconfig;
+      this.query = this.ref.data.query;
+      this.qData = this.ref.data.qData;
+
+      this.startCheckRunning();
+
+      setTimeout(() => {
+        (document.activeElement as HTMLElement).blur();
+      }, 0);
+    }
+  }
+
+  startCheckRunning() {
     let nav: NavState;
     this.navQuery
       .select()
@@ -132,9 +203,6 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         take(1)
       )
       .subscribe();
-
-    // removes scroll for gauge chart
-    this.refreshShow();
 
     this.checkRunning$ = interval(3000)
       .pipe(
@@ -151,7 +219,9 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
               dashboardId: this.ref.data.dashboardId
             };
 
-            return this.ref.data.apiService
+            let apiService = this.ref.data.apiService;
+
+            return apiService
               .req({
                 pathInfoName:
                   apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
@@ -188,22 +258,10 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-
-    setTimeout(() => {
-      (document.activeElement as HTMLElement).blur();
-    }, 0);
   }
 
   toggleData() {
     this.isData = !this.isData;
-    this.refreshShow();
-  }
-
-  refreshShow() {
-    // this.isShow = false;
-    // setTimeout(() => {
-    //   this.isShow = true;
-    // });
   }
 
   toggleFormat() {
@@ -243,7 +301,9 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       queryIds: [this.query.queryId]
     };
 
-    this.ref.data.apiService
+    let apiService = this.ref.data.apiService;
+
+    apiService
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
@@ -371,16 +431,12 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     // let timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
     this.isAlreadyFiltered =
-      this.ref.data.mconfig.extendedFilters
+      this.mconfig.extendedFilters
         .map(filter => filter.fieldId)
         .indexOf(this.groupByFieldForm.controls['groupByField'].value) > -1;
 
-    console.log(
-      'this.ref.data.mconfig.extendedFilters.map(filter => filter.fieldId)'
-    );
-    console.log(
-      this.ref.data.mconfig.extendedFilters.map(filter => filter.fieldId)
-    );
+    console.log('this.mconfig.extendedFilters.map(filter => filter.fieldId)');
+    console.log(this.mconfig.extendedFilters.map(filter => filter.fieldId));
 
     console.log("this.groupByFieldForm.controls['groupByField'].value");
     console.log(this.groupByFieldForm.controls['groupByField'].value);
