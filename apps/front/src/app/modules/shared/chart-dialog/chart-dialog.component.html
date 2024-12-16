@@ -63,7 +63,7 @@
             [searchable]="true"
             [searchFn]="filterMetricBySearchFn"
             [clearable]="false"
-            (change)="changeGroupMetricBy()"
+            (change)="groupMetricByChange()"
             (keyup.esc)="
               $event.stopImmediatePropagation(); groupMetricBySelect.blur()
             "

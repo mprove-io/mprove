@@ -227,7 +227,7 @@
           [searchable]="true"
           [searchFn]="newMetricSearchFn"
           [(ngModel)]="newMetricId"
-          (change)="changeNewMetric()"
+          (change)="newMetricChange()"
           (keyup.esc)="
             $event.stopImmediatePropagation(); newMetricSelect.blur()
           "
@@ -650,7 +650,7 @@
                 [searchFn]="filterMetricBySearchFn"
                 [clearable]="false"
                 [(ngModel)]="newParameterId"
-                (change)="changeFilterMetricBy()"
+                (change)="filterMetricByChange()"
                 (keyup.esc)="
                   $event.stopImmediatePropagation(); filterMetricBySelect.blur()
                 "

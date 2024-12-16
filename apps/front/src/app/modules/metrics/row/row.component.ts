@@ -353,11 +353,11 @@ export class RowComponent {
     });
   }
 
-  changeNewMetric() {
+  newMetricChange() {
     (document.activeElement as HTMLElement).blur();
   }
 
-  changeFilterMetricBy() {
+  filterMetricByChange() {
     (document.activeElement as HTMLElement).blur();
 
     this.isDisabledApplyAlreadyFiltered =

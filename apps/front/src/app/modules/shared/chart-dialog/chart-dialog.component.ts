@@ -447,7 +447,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  changeGroupMetricBy() {
+  groupMetricByChange() {
     (document.activeElement as HTMLElement).blur();
 
     let nav = this.navQuery.getValue();

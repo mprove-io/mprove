@@ -359,6 +359,8 @@ export class FractionStringComponent implements OnInit, OnDestroy {
   }
 
   stringValueChange(event: any) {
+    (document.activeElement as HTMLElement).blur();
+
     let value = this.fractionForm.controls['stringValue'].value;
 
     if (value !== this.fraction.stringValue) {

@@ -76,6 +76,12 @@
           [loading]="loading"
           [clearable]="false"
           [searchable]="true"
+          (keyup.esc)="
+            $event.stopImmediatePropagation(); stringValueSelect.blur()
+          "
+          (keyup.enter)="
+            $event.stopImmediatePropagation(); stringValueSelect.blur()
+          "
           (change)="stringValueChange($event)"
           (search)="stringValueSearch($event)"
           (open)="onOpenSelect()"

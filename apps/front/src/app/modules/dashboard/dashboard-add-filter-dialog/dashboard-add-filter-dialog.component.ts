@@ -243,6 +243,10 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     });
   }
 
+  suggestFieldChange() {
+    (document.activeElement as HTMLElement).blur();
+  }
+
   searchFn(term: string, suggestField: SuggestField) {
     let haystack = [
       `${suggestField.topLabel} - ${suggestField.partNodeLabel} ${suggestField.partFieldLabel}`

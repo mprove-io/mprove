@@ -100,17 +100,25 @@
       </div>
 
       <ng-select
+        #dashboardSuggestFieldSelect
         *ngIf="
           !!suggestFieldsLoaded &&
           filterForm.get('fieldResult').value === fieldResultString
         "
-        data-cy="suggestFieldSelect"
-        class="w-full min-w-[2px] text-base focus:outline-none"
+        data-cy="dashboardSuggestFieldSelect"
+        class="w-full min-w-[2px] text-base"
         [loading]="suggestFieldsLoading"
         [items]="suggestFields"
         [clearable]="false"
         [searchable]="true"
         [searchFn]="searchFn"
+        (change)="suggestFieldChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); dashboardSuggestFieldSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); dashboardSuggestFieldSelect.blur()
+        "
         appendTo="body"
         placeholder="Select Field"
         bindValue="modelFieldRef"
