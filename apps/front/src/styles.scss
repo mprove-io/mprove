@@ -258,13 +258,9 @@ ngneat-dialog {
 .ng-select.new-metric-select .ng-select-container {
   height: 44px;
 
-  .ng-value-container .ng-input > input {
-    margin-top: 3px;
+  .ng-value-container {
+    margin-top: 2px;
   }
-}
-
-.ng-select.format-number-select .ng-select-container {
-  height: 42px;
 
   .ng-value-container .ng-input > input {
     margin-top: 3px;
@@ -274,6 +270,34 @@ ngneat-dialog {
 .ng-select.filter-metric-by-select .ng-select-container {
   height: 44px;
 
+  .ng-value-container {
+    margin-top: 2px;
+  }
+
+  .ng-value-container .ng-input > input {
+    margin-top: 3px;
+  }
+}
+
+.ng-select.group-metric-by-select .ng-select-container {
+  height: 44px;
+
+  .ng-value-container {
+    margin-top: 2px;
+  }
+
+  .ng-value-container .ng-input > input {
+    margin-top: 3px;
+  }
+}
+
+.ng-select.format-number-select .ng-select-container {
+  height: 42px;
+
+  .ng-value-container {
+    margin-top: 2px;
+  }
+
   .ng-value-container .ng-input > input {
     margin-top: 3px;
   }
@@ -282,14 +306,6 @@ ngneat-dialog {
 // .ng-select.chart-type-select .ng-select-container {
 //   // height: 44px;
 // }
-
-.ng-select.group-metric-by-select .ng-select-container {
-  height: 44px;
-
-  .ng-value-container .ng-input > input {
-    margin-top: 3px;
-  }
-}
 
 //
 //

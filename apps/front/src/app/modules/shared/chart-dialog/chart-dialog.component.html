@@ -67,7 +67,9 @@
             (keyup.esc)="
               $event.stopImmediatePropagation(); groupBySelect.blur()
             "
-            (keyup.enter)="$event.stopImmediatePropagation()"
+            (keyup.enter)="
+              $event.stopImmediatePropagation(); groupBySelect.blur()
+            "
             [dropdownPosition]="'bottom'"
             appendTo="body"
             placeholder="Field"
