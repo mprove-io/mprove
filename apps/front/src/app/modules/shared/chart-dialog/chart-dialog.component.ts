@@ -369,7 +369,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  openGroupBySelect() {
+  openGroupMetricBy() {
     let nav = this.navQuery.getValue();
 
     let metric = this.metricsQuery
@@ -447,7 +447,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  groupByChange() {
+  changeGroupMetricBy() {
     (document.activeElement as HTMLElement).blur();
 
     // let metric = this.metricsQuery

@@ -555,7 +555,7 @@ export class RowComponent {
     this.isAddParameter = true;
   }
 
-  openAddParameterSelect() {
+  openFilterMetricBy() {
     let nav = this.navQuery.getValue();
 
     let metric = this.metricsQuery
@@ -620,7 +620,7 @@ export class RowComponent {
       .subscribe();
   }
 
-  addParameterChange() {
+  changeFilterMetricBy() {
     // let metric = this.metricsQuery
     //   .getValue()
     //   .metrics.find(y => y.metricId === this.repSelectedNode.data.metricId);

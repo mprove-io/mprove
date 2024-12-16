@@ -626,16 +626,16 @@
               >
 
               <ng-select
-                data-cy="addParameterSelect"
+                data-cy="filterMetricBySelect"
                 class="filter-metric-by-select w-full min-w-[2px] text-base focus:outline-none"
                 [items]="fieldsList"
-                (open)="openAddParameterSelect()"
+                (open)="openFilterMetricBy()"
                 [loading]="fieldsListLoading"
                 [searchable]="true"
                 [searchFn]="filterMetricBySearchFn"
                 [clearable]="false"
                 [(ngModel)]="newParameterId"
-                (change)="addParameterChange()"
+                (change)="changeFilterMetricBy()"
                 [dropdownPosition]="'top'"
                 appendTo="body"
                 placeholder="Field"
