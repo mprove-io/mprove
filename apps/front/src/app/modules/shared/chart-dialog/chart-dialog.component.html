@@ -196,19 +196,19 @@
   </div>
 
   <div
-    *ngIf="isShowInit === false && mconfig?.fields?.length > 0"
-    class="mt-7 flex h-full overflow-auto"
-    [ngClass]="{
-      'flex-grow': mconfig?.chart.type !== chartTypeEnumTable,
-      'w-full max-w-max':
-        mconfig?.chart.type === chartTypeEnumTable &&
-        isSelectValid === true &&
-        mconfig?.chart.isValid === true &&
-        qData?.length > 0
-    }"
+    *ngIf="
+      isShowInit === false &&
+      mconfig?.fields?.length > 0 &&
+      isSelectValid === true &&
+      mconfig?.chart.isValid === true
+    "
+    class="mt-7 flex h-full flex-grow flex-row justify-center overflow-auto"
   >
     <m-chart-view
-      class="h-full w-full overflow-auto"
+      class="h-full overflow-auto"
+      [ngClass]="{
+        'aspect-[3/1]': mconfig?.chart.type !== chartTypeEnumTable
+      }"
       [mconfigFields]="mconfig?.fields"
       [qData]="qData"
       [chart]="mconfig?.chart"
