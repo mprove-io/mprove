@@ -222,6 +222,14 @@ ngneat-dialog {
 //
 //
 
+.ng-dropdown-panel {
+  cursor: pointer !important;
+}
+
+.ng-select-container {
+  cursor: pointer !important;
+}
+
 .ng-input > input {
   cursor: pointer !important;
 }
@@ -232,6 +240,15 @@ ngneat-dialog {
 
 .ng-select .ng-select-container .ng-value-container .ng-input > input {
   caret-color: dodgerblue;
+}
+
+//
+//
+//
+
+.ng-select.ng-select-focused:not(.ng-select-opened) > .ng-select-container {
+  border-color: #ccc;
+  box-shadow: none;
 }
 
 //

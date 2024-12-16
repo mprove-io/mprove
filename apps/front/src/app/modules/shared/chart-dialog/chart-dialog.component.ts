@@ -595,12 +595,6 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  esc(event: any) {
-    event.stopImmediatePropagation();
-
-    (document.activeElement as HTMLElement).blur();
-  }
-
   filterMetricBySearchFn(term: string, modelFieldY: common.ModelFieldY) {
     let haystack = [
       common.isDefinedAndNotEmpty(modelFieldY.groupLabel)
