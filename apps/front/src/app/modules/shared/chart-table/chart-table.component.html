@@ -1,66 +1,64 @@
-<div class="flex flex-row items-center justify-center">
-  <table>
-    <thead>
-      <tr>
-        <th
-          style="min-width: 200px; max-width: 350px"
-          class="group border-4 border-white p-0 align-top"
-          [ngClass]="{
-            'bg-blue5': column.fieldClass === fieldClassDimension,
-            'bg-purple-300': column.fieldClass === fieldClassMeasure,
-            'bg-green1': column.fieldClass === fieldClassCalculation
-          }"
-          *ngFor="
-            let column of mconfigFields | hideColumns : hideColumns;
-            let columnIndex = index
-          "
+<table>
+  <thead>
+    <tr>
+      <th
+        style="min-width: 200px; max-width: 350px"
+        class="group border-4 border-white p-0 align-top"
+        [ngClass]="{
+          'bg-blue5': column.fieldClass === fieldClassDimension,
+          'bg-purple-300': column.fieldClass === fieldClassMeasure,
+          'bg-green1': column.fieldClass === fieldClassCalculation
+        }"
+        *ngFor="
+          let column of mconfigFields | hideColumns : hideColumns;
+          let columnIndex = index
+        "
+      >
+        <div
+          class="flex flex-col items-start justify-center overflow-hidden text-clip px-5 py-2"
+          *ngIf="column.isHideColumn === false"
         >
-          <div
-            class="flex flex-col items-start justify-center overflow-hidden text-clip px-5 py-2"
-            *ngIf="column.isHideColumn === false"
-          >
-            <div class="flex select-none flex-col items-start justify-center">
-              <div class="truncate text-sm font-normal">{{
-                column.topLabel | capitalize
+          <div class="flex select-none flex-col items-start justify-center">
+            <div class="truncate text-sm font-normal">{{
+              column.topLabel | capitalize
+            }}</div>
+
+            <div class="flex flex-row text-left font-semibold">
+              <div *ngIf="column.groupLabel"
+                >{{ column.groupLabel | capitalize }} -
+                {{ column.label | capitalize }}</div
+              >
+
+              <div *ngIf="!column.groupLabel">{{
+                column.label | capitalize
               }}</div>
-
-              <div class="flex flex-row text-left font-semibold">
-                <div *ngIf="column.groupLabel"
-                  >{{ column.groupLabel | capitalize }} -
-                  {{ column.label | capitalize }}</div
-                >
-
-                <div *ngIf="!column.groupLabel">{{
-                  column.label | capitalize
-                }}</div>
-              </div>
             </div>
           </div>
-        </th>
-      </tr>
-    </thead>
+        </div>
+      </th>
+    </tr>
+  </thead>
 
-    <tbody>
-      <ng-container *ngFor="let row of qData; let i = index">
-        <tr data-cy="chartTableRow" *ngIf="i < pageSize">
-          <td
-            style="min-width: 200px; max-width: 350px"
-            data-cy="chartTableCell"
-            *ngFor="let column of mconfigFields | hideColumns : hideColumns"
-            class="truncate px-5"
-            [ngClass]="{
-              'bg-gray-100': (i + 1) % 2 === 0,
-              'text-right': column.result === fieldResultNumber
-            }"
-          >
-            {{
-              isFormat === true
-                ? row[column.sqlName]?.valueFmt
-                : row[column.sqlName]?.value
-            }}
-          </td>
-        </tr>
-      </ng-container>
-    </tbody>
-  </table>
-</div>
+  <tbody>
+    <ng-container *ngFor="let row of qData; let i = index">
+      <tr data-cy="chartTableRow" *ngIf="i < pageSize">
+        <td
+          style="min-width: 200px; max-width: 350px"
+          data-cy="chartTableCell"
+          *ngFor="let column of mconfigFields | hideColumns : hideColumns"
+          class="truncate px-5"
+          [ngClass]="{
+            'bg-gray-100': (i + 1) % 2 === 0,
+            'text-right': column.result === fieldResultNumber
+          }"
+        >
+          {{
+            isFormat === true
+              ? row[column.sqlName]?.valueFmt
+              : row[column.sqlName]?.value
+          }}
+        </td>
+      </tr>
+    </ng-container>
+  </tbody>
+</table>

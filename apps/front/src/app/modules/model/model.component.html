@@ -650,15 +650,26 @@
                   class="flex h-full w-2 flex-1 flex-row items-start justify-center space-x-5"
                 >
                   <div class="h-full w-full overflow-auto">
-                    <m-chart-view
-                      *ngIf="mconfig?.chart"
+                    <div
                       class="h-full w-full"
-                      [mconfigFields]="mconfig.fields"
-                      [qData]="qData"
-                      [chart]="mconfig.chart"
-                      [queryStatus]="query.status"
-                      [chartInstanceId]="'model-chart'"
-                    ></m-chart-view>
+                      [ngClass]="{
+                        'max-w-max':
+                          mconfig?.chart.type === chartTypeEnumTable &&
+                          isSelectValid === true &&
+                          mconfig?.chart.isValid === true &&
+                          qData?.length > 0
+                      }"
+                    >
+                      <m-chart-view
+                        *ngIf="mconfig?.chart"
+                        class="h-full w-full"
+                        [mconfigFields]="mconfig.fields"
+                        [qData]="qData"
+                        [chart]="mconfig.chart"
+                        [queryStatus]="query.status"
+                        [chartInstanceId]="'model-chart'"
+                      ></m-chart-view>
+                    </div>
                   </div>
 
                   <div
