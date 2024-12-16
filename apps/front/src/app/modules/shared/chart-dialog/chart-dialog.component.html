@@ -169,7 +169,17 @@
 
   <div
     *ngIf="isShowInit === false"
-    class="flex max-h-[30%] min-h-[30%] flex-row"
+    class="flex flex-row"
+    [ngClass]="{
+      'max-h-[35%] min-h-[35%]':
+        mconfig?.chart.type === chartTypeEnumLine ||
+        mconfig?.chart.type === chartTypeEnumBar ||
+        mconfig?.chart.type === chartTypeEnumScatter,
+      'max-h-[30%] min-h-[30%]':
+        mconfig?.chart.type !== chartTypeEnumLine &&
+        mconfig?.chart.type !== chartTypeEnumBar &&
+        mconfig?.chart.type !== chartTypeEnumScatter
+    }"
   >
     <div
       *ngIf="isData === true && mconfig?.fields?.length > 0"
