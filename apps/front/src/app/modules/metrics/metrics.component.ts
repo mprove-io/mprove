@@ -578,6 +578,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
   }
 
   timezoneChange() {
+    (document.activeElement as HTMLElement).blur();
     this.uiQuery.updatePart({ timezone: this.timezone });
     this.getRep();
   }

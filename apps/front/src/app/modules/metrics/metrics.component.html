@@ -49,8 +49,8 @@
 
               <div class="flex max-w-[260px] flex-1">
                 <ng-select
-                  #timezoneSelect
-                  data-cy="timezoneSelect"
+                  #metricsTimezoneSelect
+                  data-cy="metricsTimezoneSelect"
                   class="custom w-full select-none text-base focus:outline-none"
                   [items]="timezones"
                   [(ngModel)]="timezone"
@@ -58,6 +58,14 @@
                   [searchable]="true"
                   [searchFn]="timezoneSearchFn"
                   (change)="timezoneChange()"
+                  (keyup.esc)="
+                    $event.stopImmediatePropagation();
+                    metricsTimezoneSelect.blur()
+                  "
+                  (keyup.enter)="
+                    $event.stopImmediatePropagation();
+                    metricsTimezoneSelect.blur()
+                  "
                   appendTo="body"
                   bindLabel="label"
                   bindValue="value"
