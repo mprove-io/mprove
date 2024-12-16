@@ -7,14 +7,18 @@
 
   <form [formGroup]="timezoneForm">
     <ng-select
+      #userTimezoneSelect
       data-cy="editUserTimezoneDialogTimezoneSelect"
       class="custom mt-6 w-96 text-base focus:outline-none"
       [items]="timezones"
       [clearable]="false"
       [searchable]="true"
       [searchFn]="timezoneSearchFn"
-      (keyup.esc)="$event.stopImmediatePropagation()"
-      (keyup.enter)="$event.stopImmediatePropagation()"
+      (change)="timezoneChange()"
+      (keyup.esc)="$event.stopImmediatePropagation(); userTimezoneSelect.blur()"
+      (keyup.enter)="
+        $event.stopImmediatePropagation(); userTimezoneSelect.blur()
+      "
       appendTo="body"
       bindLabel="label"
       bindValue="value"

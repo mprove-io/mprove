@@ -233,14 +233,22 @@
                   *ngIf="mconfig?.select.length > 0"
                 >
                   <ng-select
-                    #timezoneSelect
-                    data-cy="timezoneSelect"
-                    class="custom w-96 text-base focus:outline-none"
+                    #modelTimezoneSelect
+                    data-cy="modelTimezoneSelect"
+                    class="w-96 text-base"
                     [items]="timezones"
                     [clearable]="false"
                     [searchable]="true"
                     [searchFn]="timezoneSearchFn"
                     (change)="timezoneChange()"
+                    (keyup.esc)="
+                      $event.stopImmediatePropagation();
+                      modelTimezoneSelect.blur()
+                    "
+                    (keyup.enter)="
+                      $event.stopImmediatePropagation();
+                      modelTimezoneSelect.blur()
+                    "
                     appendTo="body"
                     bindLabel="label"
                     bindValue="value"

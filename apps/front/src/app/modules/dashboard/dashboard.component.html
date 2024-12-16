@@ -38,13 +38,22 @@
 
             <form [formGroup]="timezoneForm">
               <ng-select
+                #dashboardTimezoneSelect
                 data-cy="dashboardTimezoneSelect"
-                class="custom w-[300px] text-base focus:outline-none"
+                class="w-[300px] text-base"
                 [items]="timezones"
                 [clearable]="false"
                 [searchable]="true"
                 [searchFn]="timezoneSearchFn"
                 (change)="timezoneChange()"
+                (keyup.esc)="
+                  $event.stopImmediatePropagation();
+                  dashboardTimezoneSelect.blur()
+                "
+                (keyup.enter)="
+                  $event.stopImmediatePropagation();
+                  dashboardTimezoneSelect.blur()
+                "
                 placeholder="Tiles have different timezones"
                 appendTo="body"
                 bindLabel="label"

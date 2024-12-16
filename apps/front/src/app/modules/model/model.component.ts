@@ -653,6 +653,8 @@ export class ModelComponent implements OnInit, OnDestroy {
   }
 
   timezoneChange() {
+    (document.activeElement as HTMLElement).blur();
+
     let timezone = this.timezoneForm.controls['timezone'].value;
 
     let newMconfig = this.structService.makeMconfig();

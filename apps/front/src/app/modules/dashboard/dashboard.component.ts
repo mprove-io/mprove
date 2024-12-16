@@ -330,6 +330,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   timezoneChange() {
+    (document.activeElement as HTMLElement).blur();
+
     let timezone = this.timezoneForm.controls['timezone'].value;
 
     this.dashboard.tiles.forEach(x => {

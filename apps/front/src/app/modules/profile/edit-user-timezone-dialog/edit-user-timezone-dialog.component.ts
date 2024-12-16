@@ -83,6 +83,10 @@ export class EditUserTimezoneDialogComponent implements OnInit {
       .subscribe();
   }
 
+  timezoneChange() {
+    (document.activeElement as HTMLElement).blur();
+  }
+
   timezoneSearchFn(term: string, timezone: { value: string; label: string }) {
     let haystack = [`${timezone.label}`];
 
