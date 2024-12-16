@@ -448,6 +448,8 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   }
 
   groupByChange() {
+    (document.activeElement as HTMLElement).blur();
+
     // let metric = this.metricsQuery
     //   .getValue()
     //   .metrics.find(y => y.metricId === this.repSelectedNode.data.metricId);
@@ -591,6 +593,12 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         )
         .subscribe();
     }
+  }
+
+  esc(event: any) {
+    event.stopImmediatePropagation();
+
+    (document.activeElement as HTMLElement).blur();
   }
 
   filterMetricBySearchFn(term: string, modelFieldY: common.ModelFieldY) {

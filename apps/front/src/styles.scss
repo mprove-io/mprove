@@ -151,55 +151,6 @@ body {
 // @import '~@ali-hm/angular-tree-component/css/angular-tree-component.css';
 @import './tree.css';
 
-.ng-select.custom .ng-select-container {
-  cursor: pointer;
-}
-
-.ng-dropdown-panel.popup-55 .scroll-host {
-  max-height: 55vh;
-}
-
-.ng-select.new-metric-select .ng-select-container {
-  cursor: pointer;
-  height: 44px;
-}
-
-.ng-select.format-number-select .ng-select-container {
-  cursor: pointer;
-  height: 42px;
-}
-
-.ng-dropdown-panel.format-number-select .scroll-host {
-  max-height: 45vh;
-}
-
-.ng-select.filter-metric-by-select .ng-select-container {
-  cursor: pointer;
-  height: 44px;
-}
-
-.ng-dropdown-panel.filter-metric-by-select .scroll-host {
-  max-height: 45vh;
-}
-
-.ng-select.group-metric-by-select .ng-select-container {
-  cursor: pointer;
-  height: 44px;
-}
-
-.ng-dropdown-panel.group-metric-by-select .scroll-host {
-  max-height: 45vh;
-}
-
-.ng-select.chart-type-select .ng-select-container {
-  cursor: pointer;
-  // height: 44px;
-}
-
-.ng-dropdown-panel.chart-type-select .scroll-host {
-  max-height: 45vh;
-}
-
 // .ngx-charts .tooltip-area {
 //   cursor: default !important;
 // }
@@ -266,3 +217,83 @@ ngneat-dialog {
 
 // .my-echarts {
 // }
+
+//
+//
+//
+
+.ng-input > input {
+  cursor: pointer !important;
+}
+
+.ng-select .ng-input {
+  cursor: pointer !important;
+}
+
+.ng-select .ng-select-container .ng-value-container .ng-input > input {
+  caret-color: dodgerblue;
+}
+
+//
+//
+//
+
+.ng-select.new-metric-select .ng-select-container {
+  height: 44px;
+
+  .ng-value-container .ng-input > input {
+    margin-top: 3px;
+  }
+}
+
+.ng-select.format-number-select .ng-select-container {
+  height: 42px;
+
+  .ng-value-container .ng-input > input {
+    margin-top: 3px;
+  }
+}
+
+.ng-select.filter-metric-by-select .ng-select-container {
+  height: 44px;
+
+  .ng-value-container .ng-input > input {
+    margin-top: 3px;
+  }
+}
+
+// .ng-select.chart-type-select .ng-select-container {
+//   // height: 44px;
+// }
+
+.ng-select.group-metric-by-select .ng-select-container {
+  height: 44px;
+
+  .ng-value-container .ng-input > input {
+    margin-top: 3px;
+  }
+}
+
+//
+//
+//
+
+.ng-dropdown-panel.popup-55 .scroll-host {
+  max-height: 55vh;
+}
+
+.ng-dropdown-panel.format-number-select .scroll-host {
+  max-height: 45vh;
+}
+
+.ng-dropdown-panel.filter-metric-by-select .scroll-host {
+  max-height: 45vh;
+}
+
+.ng-dropdown-panel.group-metric-by-select .scroll-host {
+  max-height: 45vh;
+}
+
+.ng-dropdown-panel.chart-type-select .scroll-host {
+  max-height: 45vh;
+}
