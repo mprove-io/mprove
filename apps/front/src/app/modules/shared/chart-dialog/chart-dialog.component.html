@@ -54,8 +54,8 @@
 
         <form [formGroup]="groupByFieldForm" class="w-full">
           <ng-select
-            #groupMetricBy
-            data-cy="groupMetricBy"
+            #groupMetricBySelect
+            data-cy="groupMetricBySelect"
             class="group-metric-by-select w-full min-w-[2px] text-base"
             [items]="dimensionsPlusEmpty"
             (open)="openGroupMetricBy()"
@@ -65,10 +65,10 @@
             [clearable]="false"
             (change)="changeGroupMetricBy()"
             (keyup.esc)="
-              $event.stopImmediatePropagation(); groupMetricBy.blur()
+              $event.stopImmediatePropagation(); groupMetricBySelect.blur()
             "
             (keyup.enter)="
-              $event.stopImmediatePropagation(); groupMetricBy.blur()
+              $event.stopImmediatePropagation(); groupMetricBySelect.blur()
             "
             [dropdownPosition]="'bottom'"
             appendTo="body"

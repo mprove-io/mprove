@@ -219,13 +219,21 @@
         >
 
         <ng-select
+          #newMetricSelect
           data-cy="newMetricSelect"
-          class="new-metric-select w-full min-w-[2px] text-base focus:outline-none"
+          class="new-metric-select w-full min-w-[2px] text-base"
           [items]="metrics"
           [clearable]="false"
           [searchable]="true"
           [searchFn]="newMetricSearchFn"
           [(ngModel)]="newMetricId"
+          (change)="changeNewMetric()"
+          (keyup.esc)="
+            $event.stopImmediatePropagation(); newMetricSelect.blur()
+          "
+          (keyup.enter)="
+            $event.stopImmediatePropagation(); newMetricSelect.blur()
+          "
           appendTo="body"
           placeholder="Select Metric"
           bindLabel="label"
@@ -374,11 +382,17 @@
           <ng-select
             #formatNumberSelect
             data-cy="formatNumberSelect"
-            class="format-number-select h-15 mr-5 w-[260px] text-base focus:outline-none"
+            class="format-number-select h-15 mr-5 w-[260px] text-base"
             [items]="formatNumberExamples"
             [clearable]="false"
             [searchable]="false"
             (change)="formatNumberBlur()"
+            (keyup.esc)="
+              $event.stopImmediatePropagation(); formatNumberSelect.blur()
+            "
+            (keyup.enter)="
+              $event.stopImmediatePropagation(); formatNumberSelect.blur()
+            "
             appendTo="body"
             bindLabel="label"
             bindValue="id"
@@ -626,6 +640,7 @@
               >
 
               <ng-select
+                #filterMetricBySelect
                 data-cy="filterMetricBySelect"
                 class="filter-metric-by-select w-full min-w-[2px] text-base focus:outline-none"
                 [items]="fieldsList"
@@ -636,6 +651,12 @@
                 [clearable]="false"
                 [(ngModel)]="newParameterId"
                 (change)="changeFilterMetricBy()"
+                (keyup.esc)="
+                  $event.stopImmediatePropagation(); filterMetricBySelect.blur()
+                "
+                (keyup.enter)="
+                  $event.stopImmediatePropagation(); filterMetricBySelect.blur()
+                "
                 [dropdownPosition]="'top'"
                 appendTo="body"
                 placeholder="Field"

@@ -1,4 +1,9 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  ViewChild
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IRowNode } from 'ag-grid-community';
 import { take, tap } from 'rxjs/operators';
@@ -18,6 +23,7 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
+import { NgSelectComponent } from '@ng-select/ng-select';
 
 export interface ParameterFilter extends common.FilterX {
   parameterType: common.ParameterTypeEnum;
@@ -32,6 +38,14 @@ export interface ParameterFilter extends common.FilterX {
   templateUrl: './row.component.html'
 })
 export class RowComponent {
+  @ViewChild('formatNumberSelect', { static: false })
+  formatNumberSelectRef: NgSelectComponent;
+
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.formatNumberSelectRef.close();
+  }
+
   rowTypeFormula = common.RowTypeEnum.Formula;
   rowTypeMetric = common.RowTypeEnum.Metric;
   rowTypeHeader = common.RowTypeEnum.Header;
@@ -339,7 +353,30 @@ export class RowComponent {
     });
   }
 
+  changeNewMetric() {
+    (document.activeElement as HTMLElement).blur();
+  }
+
+  changeFilterMetricBy() {
+    (document.activeElement as HTMLElement).blur();
+
+    this.isDisabledApplyAlreadyFiltered =
+      this.reportSelectedNode.data.mconfig.extendedFilters
+        .map(filter => filter.fieldId)
+        .indexOf(this.newParameterId) > -1;
+
+    // let metric = this.metricsQuery
+    //   .getValue()
+    //   .metrics.find(y => y.metricId === this.repSelectedNode.data.metricId);
+
+    // let timeSpec = this.repQuery.getValue().timeSpec;
+    // let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
+    // let timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
+  }
+
   formatNumberBlur() {
+    (document.activeElement as HTMLElement).blur();
+
     let value = this.formatNumberForm.controls['formatNumber'].value;
 
     if (
@@ -618,21 +655,6 @@ export class RowComponent {
         take(1)
       )
       .subscribe();
-  }
-
-  changeFilterMetricBy() {
-    // let metric = this.metricsQuery
-    //   .getValue()
-    //   .metrics.find(y => y.metricId === this.repSelectedNode.data.metricId);
-
-    // let timeSpec = this.repQuery.getValue().timeSpec;
-    // let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
-    // let timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
-
-    this.isDisabledApplyAlreadyFiltered =
-      this.reportSelectedNode.data.mconfig.extendedFilters
-        .map(filter => filter.fieldId)
-        .indexOf(this.newParameterId) > -1;
   }
 
   cancelAddParameter() {

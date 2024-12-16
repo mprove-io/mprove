@@ -450,33 +450,11 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   changeGroupMetricBy() {
     (document.activeElement as HTMLElement).blur();
 
-    // let metric = this.metricsQuery
-    //   .getValue()
-    //   .metrics.find(y => y.metricId === this.repSelectedNode.data.metricId);
-
-    // let timeSpec = this.repQuery.getValue().timeSpec;
-    // let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
-    // let timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
-
     let nav = this.navQuery.getValue();
 
     let groupByFieldId = this.groupByFieldForm.controls['groupByField'].value;
 
     if (common.isDefined(groupByFieldId)) {
-      // this.isAlreadyFiltered =
-      //   this.mconfig.extendedFilters
-      //     .map(filter => filter.fieldId)
-      //     .indexOf(groupByFieldId) > -1;
-
-      // console.log('this.mconfig.extendedFilters.map(filter => filter.fieldId)');
-      // console.log(this.mconfig.extendedFilters.map(filter => filter.fieldId));
-
-      // console.log("groupByFieldId");
-      // console.log(groupByFieldId);
-
-      // console.log('this.isAlreadyFiltered');
-      // console.log(this.isAlreadyFiltered);
-
       let newMconfigId = common.makeId();
       let newQueryId = common.makeId();
 
