@@ -3,7 +3,8 @@ import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
-  OnInit
+  OnInit,
+  ViewChild
 } from '@angular/core';
 import {
   FormBuilder,
@@ -11,7 +12,7 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { NgSelectModule } from '@ng-select/ng-select';
+import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { map, take, tap } from 'rxjs/operators';
@@ -42,9 +43,17 @@ export interface AddConnectionDialogData {
   ]
 })
 export class AddConnectionDialogComponent implements OnInit {
+  @ViewChild('addConnectionDialogEnvSelect', { static: false })
+  addConnectionDialogEnvSelectElement: NgSelectComponent;
+
+  @ViewChild('addConnectionDialogTypeSelect', { static: false })
+  addConnectionDialogTypeSelectElement: NgSelectComponent;
+
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.ref.close();
+    this.addConnectionDialogEnvSelectElement.close();
+    this.addConnectionDialogTypeSelectElement.close();
+    // this.ref.close();
   }
 
   addConnectionForm: FormGroup;

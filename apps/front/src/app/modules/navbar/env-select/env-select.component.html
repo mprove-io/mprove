@@ -1,13 +1,13 @@
 <ng-select
   *ngIf="showEmptySelector === true"
-  class="custom w-56 text-base focus:outline-none"
+  class="w-56 text-base"
 ></ng-select>
 
 <ng-select
   *ngIf="showEmptySelector === false"
   #envSelect
   data-cy="envSelect"
-  class="custom w-56 text-base focus:outline-none"
+  class="w-56 text-base"
   (open)="openEnvSelect()"
   [loading]="envsListLoading"
   [items]="envsList"

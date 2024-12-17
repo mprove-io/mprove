@@ -1,5 +1,11 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  ViewChild
+} from '@angular/core';
 import { Router } from '@angular/router';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import { map, take, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -15,6 +21,14 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './org-select.component.html'
 })
 export class OrgSelectComponent {
+  @ViewChild('orgSelect', { static: false })
+  orgSelectElement: NgSelectComponent;
+
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.orgSelectElement.close();
+  }
+
   restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
 
   orgsList: common.OrgsItem[] = [];
@@ -75,8 +89,8 @@ export class OrgSelectComponent {
       .subscribe();
   }
 
-  createNewOrg(orgSelect: any) {
-    orgSelect.close();
+  createNewOrg() {
+    this.orgSelectElement.close();
 
     this.myDialogService.showCreateOrg({
       apiService: this.apiService

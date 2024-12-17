@@ -1,7 +1,7 @@
 <ng-select
   #projectSelect
   data-cy="projectSelect"
-  class="custom w-44 text-base focus:outline-none"
+  class="w-44 text-base"
   (open)="openProjectSelect()"
   [loading]="projectsListLoading"
   [items]="projectsList"
@@ -10,6 +10,8 @@
   [disabled]="selectedOrgId === undefined || needSave === true"
   [(ngModel)]="selectedProjectId"
   (change)="projectChange()"
+  (keyup.esc)="$event.stopImmediatePropagation(); projectSelect.blur()"
+  (keyup.enter)="$event.stopImmediatePropagation(); projectSelect.blur()"
   appendTo="body"
   placeholder="Project"
   bindLabel="name"
@@ -50,7 +52,7 @@
           'cursor-default text-gray-400':
             user.userId !== nav.orgOwnerId || nav.orgName === firstOrgName
         }"
-        (click)="createNewProject(projectSelect)"
+        (click)="createNewProject()"
         [disabled]="
           user.userId !== nav.orgOwnerId || nav.orgName === firstOrgName
         "

@@ -30,14 +30,18 @@
     <ng-select
       #addConnectionDialogEnvSelect
       data-cy="addConnectionDialogEnvSelect"
-      class="custom w-80 text-base focus:outline-none"
+      class="w-80 text-base"
       (open)="openEnvSelect()"
       [loading]="envsListLoading"
       [items]="envsList"
       [clearable]="false"
       [searchable]="false"
-      (keyup.esc)="$event.stopImmediatePropagation()"
-      (keyup.enter)="$event.stopImmediatePropagation()"
+      (keyup.esc)="
+        $event.stopImmediatePropagation(); addConnectionDialogEnvSelect.blur()
+      "
+      (keyup.enter)="
+        $event.stopImmediatePropagation(); addConnectionDialogEnvSelect.blur()
+      "
       appendTo="body"
       placeholder="Env"
       bindLabel="envId"
@@ -54,15 +58,19 @@
     </ng-select>
 
     <ng-select
-      #typeSelect
+      #addConnectionDialogTypeSelect
       data-cy="addConnectionDialogTypeSelect"
-      class="custom mt-6 w-80 text-base focus:outline-none"
+      class="mt-6 w-80 text-base"
       [items]="connectionTypes"
       [clearable]="false"
       [searchable]="false"
       (change)="changeType($event)"
-      (keyup.esc)="$event.stopImmediatePropagation()"
-      (keyup.enter)="$event.stopImmediatePropagation()"
+      (keyup.esc)="
+        $event.stopImmediatePropagation(); addConnectionDialogTypeSelect.blur()
+      "
+      (keyup.enter)="
+        $event.stopImmediatePropagation(); addConnectionDialogTypeSelect.blur()
+      "
       appendTo="body"
       formControlName="type"
     >

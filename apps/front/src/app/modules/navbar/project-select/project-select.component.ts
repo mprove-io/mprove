@@ -1,5 +1,11 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  ViewChild
+} from '@angular/core';
 import { Router } from '@angular/router';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import { map, take, tap } from 'rxjs/operators';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -15,6 +21,14 @@ import { common } from '~front/barrels/common';
   templateUrl: './project-select.component.html'
 })
 export class ProjectSelectComponent {
+  @ViewChild('projectSelect', { static: false })
+  projectSelectElement: NgSelectComponent;
+
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.projectSelectElement.close();
+  }
+
   firstOrgName = common.FIRST_ORG_NAME;
 
   projectsList: common.ProjectsItem[] = [];
@@ -96,8 +110,8 @@ export class ProjectSelectComponent {
       .subscribe();
   }
 
-  createNewProject(projectSelect: any) {
-    projectSelect.close();
+  createNewProject() {
+    this.projectSelectElement.close();
 
     this.myDialogService.showCreateProject({
       apiService: this.apiService,

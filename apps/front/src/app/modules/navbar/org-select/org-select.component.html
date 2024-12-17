@@ -1,7 +1,7 @@
 <ng-select
-  #orgsSelect
+  #orgSelect
   data-cy="orgSelect"
-  class="custom w-44 text-base focus:outline-none"
+  class="w-44 text-base"
   (open)="openOrgSelect()"
   [loading]="orgsListLoading"
   [items]="orgsList"
@@ -9,6 +9,8 @@
   [searchable]="false"
   [(ngModel)]="selectedOrgId"
   (change)="orgChange()"
+  (keyup.esc)="$event.stopImmediatePropagation(); orgSelect.blur()"
+  (keyup.enter)="$event.stopImmediatePropagation(); orgSelect.blur()"
   [disabled]="needSave === true"
   appendTo="body"
   placeholder="Organization"
@@ -36,7 +38,7 @@
           'text-blue3 hover:bg-blue2': alias !== restrictedUserAlias,
           'cursor-default bg-gray-400 text-white': alias === restrictedUserAlias
         }"
-        (click)="createNewOrg(orgsSelect)"
+        (click)="createNewOrg()"
         [disabled]="alias === restrictedUserAlias"
         >New Org</button
       >
