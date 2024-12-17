@@ -6,9 +6,8 @@
     <ng-select
       #fractionTsTypeSelect
       data-cy="fractionTsTypeSelect"
-      class="popup-55 w-[230px] focus:outline-none"
+      class="popup-55 w-[230px]"
       [ngClass]="{
-        custom: isDisabled !== true,
         'cursor-default': isDisabled === true
       }"
       [items]="fractionTsTypesList"
@@ -17,6 +16,12 @@
       [disabled]="isDisabled === true"
       [(ngModel)]="fraction.type"
       (change)="typeChange($event)"
+      (keyup.esc)="
+        $event.stopImmediatePropagation(); fractionTsTypeSelect.blur()
+      "
+      (keyup.enter)="
+        $event.stopImmediatePropagation(); fractionTsTypeSelect.blur()
+      "
       appendTo="body"
       bindLabel="label"
       bindValue="value"
@@ -397,9 +402,8 @@
       <ng-select
         #tsRelativeUnitSelect
         data-cy="tsRelativeUnitSelect"
-        class="popup-55 w-32 focus:outline-none"
+        class="popup-55 w-32"
         [ngClass]="{
-          custom: isDisabled !== true,
           'cursor-default': isDisabled === true
         }"
         [items]="fractionTsRelativeUnitsList"
@@ -408,6 +412,12 @@
         [disabled]="isDisabled === true"
         [(ngModel)]="fraction.tsRelativeUnit"
         (change)="relativeTsUnitOptionChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); tsRelativeUnitSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); tsRelativeUnitSelect.blur()
+        "
         appendTo="body"
         bindLabel="label"
         bindValue="value"
@@ -429,9 +439,8 @@
       <ng-select
         #tsRelativeCompleteOptionsSelect
         data-cy="tsRelativeCompleteOptionsSelect"
-        class="popup-55 w-[165px] focus:outline-none"
+        class="popup-55 w-[165px]"
         [ngClass]="{
-          custom: isDisabled !== true,
           'cursor-default': isDisabled === true
         }"
         [items]="fractionTsRelativeCompleteOptionsList"
@@ -440,6 +449,14 @@
         [disabled]="isDisabled === true"
         [(ngModel)]="fraction.tsRelativeCompleteOption"
         (change)="relativeTsCompleteOptionChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation();
+          tsRelativeCompleteOptionsSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation();
+          tsRelativeCompleteOptionsSelect.blur()
+        "
         appendTo="body"
         bindLabel="label"
         bindValue="value"
@@ -461,9 +478,8 @@
       <ng-select
         #tsRelativeWhenOptionsSelect
         data-cy="tsRelativeWhenOptionsSelect"
-        class="popup-55 w-32 focus:outline-none"
+        class="popup-55 w-32"
         [ngClass]="{
-          custom: isDisabled !== true,
           'cursor-default': isDisabled === true
         }"
         [items]="fractionTsRelativeWhenOptionsList"
@@ -472,6 +488,12 @@
         [disabled]="isDisabled === true"
         [(ngModel)]="fraction.tsRelativeWhenOption"
         (change)="relativeTsWhenOptionChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); tsRelativeWhenOptionsSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); tsRelativeWhenOptionsSelect.blur()
+        "
         appendTo="body"
         bindLabel="label"
         bindValue="value"
@@ -504,9 +526,8 @@
       <ng-select
         #tsForOptionsSelect
         data-cy="tsForOptionsSelect"
-        class="popup-55 w-[140px] focus:outline-none"
+        class="popup-55 w-[140px]"
         [ngClass]="{
-          custom: isDisabled !== true,
           'cursor-default': isDisabled === true
         }"
         [items]="fractionTsForOptionsList"
@@ -515,6 +536,12 @@
         [disabled]="isDisabled === true"
         [(ngModel)]="fraction.tsForOption"
         (change)="tsForOptionChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); tsForOptionsSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); tsForOptionsSelect.blur()
+        "
         appendTo="body"
         bindLabel="label"
         bindValue="value"
@@ -567,9 +594,8 @@
       <ng-select
         #tsForUnitsSelect
         data-cy="tsForUnitsSelect"
-        class="popup-55 w-32 focus:outline-none"
+        class="popup-55 w-32"
         [ngClass]="{
-          custom: isDisabled !== true,
           'cursor-default': isDisabled === true
         }"
         [items]="fractionTsForUnitsList"
@@ -578,6 +604,10 @@
         [disabled]="isDisabled === true"
         [(ngModel)]="fraction.tsForUnit"
         (change)="tsForUnitChange()"
+        (keyup.esc)="$event.stopImmediatePropagation(); tsForUnitsSelect.blur()"
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); tsForUnitsSelect.blur()
+        "
         appendTo="body"
         bindLabel="label"
         bindValue="value"
@@ -632,9 +662,8 @@
       <ng-select
         #tsLastUnitsSelect
         data-cy="tsLastUnitsSelect"
-        class="popup-55 w-32 focus:outline-none"
+        class="popup-55 w-32"
         [ngClass]="{
-          custom: isDisabled !== true,
           'cursor-default': isDisabled === true
         }"
         [items]="fractionTsLastUnitsList"
@@ -643,6 +672,12 @@
         [disabled]="isDisabled === true"
         [(ngModel)]="fraction.tsLastUnit"
         (change)="tsLastUnitChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); tsLastUnitsSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); tsLastUnitsSelect.blur()
+        "
         appendTo="body"
         bindLabel="label"
         bindValue="value"
@@ -664,9 +699,8 @@
       <ng-select
         #tsLastCompleteOptionsSelect
         data-cy="tsLastCompleteOptionsSelect"
-        class="popup-55 w-56 focus:outline-none"
+        class="popup-55 w-56"
         [ngClass]="{
-          custom: isDisabled !== true,
           'cursor-default': isDisabled === true
         }"
         [items]="fractionTsLastCompleteOptionsList"
@@ -675,6 +709,12 @@
         [disabled]="isDisabled === true"
         [(ngModel)]="fraction.tsLastCompleteOption"
         (change)="tsLastCompleteOptionChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); tsLastCompleteOptionsSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); tsLastCompleteOptionsSelect.blur()
+        "
         appendTo="body"
         bindLabel="label"
         bindValue="value"

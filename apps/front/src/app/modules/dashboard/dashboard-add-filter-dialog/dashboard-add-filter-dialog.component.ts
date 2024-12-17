@@ -53,11 +53,11 @@ export interface DashboardAddFilterDialogData {
 })
 export class DashboardAddFilterDialogComponent implements OnInit {
   @ViewChild('typeSelect', { static: false })
-  typeSelectRef: NgSelectComponent;
+  typeSelectElement: NgSelectComponent;
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.typeSelectRef.close();
+    this.typeSelectElement?.close();
     //   this.ref.close();
   }
 

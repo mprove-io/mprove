@@ -53,7 +53,7 @@ export class MergeBranchDialogComponent implements OnInit {
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.mergeBranchSelectElement.close();
+    this.mergeBranchSelectElement?.close();
     // this.ref.close();
   }
 

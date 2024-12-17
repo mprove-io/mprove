@@ -426,6 +426,7 @@
                 ></m-panel-title>
 
                 <div
+                  *ngIf="mconfig?.select.length > 0"
                   class="ml-10 flex flex-row items-center justify-start space-x-5"
                 >
                   <m-chart-table-icon

@@ -4,12 +4,14 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  HostListener,
   Input,
   OnInit,
   Output,
   ViewChild
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import '@vaadin/date-picker';
 import {
   DatePicker,
@@ -44,6 +46,42 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FractionTsComponent implements OnInit {
+  @ViewChild('fractionTsTypeSelect', { static: false })
+  fractionTsTypeSelectElement: NgSelectComponent;
+
+  @ViewChild('tsRelativeUnitSelect', { static: false })
+  tsRelativeUnitSelectElement: NgSelectComponent;
+
+  @ViewChild('tsRelativeCompleteOptionsSelect', { static: false })
+  tsRelativeCompleteOptionsSelectElement: NgSelectComponent;
+
+  @ViewChild('tsRelativeWhenOptionsSelect', { static: false })
+  tsRelativeWhenOptionsSelectElement: NgSelectComponent;
+
+  @ViewChild('tsForOptionsSelect', { static: false })
+  tsForOptionsSelectElement: NgSelectComponent;
+
+  @ViewChild('tsForUnitsSelect', { static: false })
+  tsForUnitsSelectElement: NgSelectComponent;
+
+  @ViewChild('tsLastUnitsSelect', { static: false })
+  tsLastUnitsSelectElement: NgSelectComponent;
+
+  @ViewChild('tsLastCompleteOptionsSelect', { static: false })
+  tsLastCompleteOptionsSelectElement: NgSelectComponent;
+
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.fractionTsTypeSelectElement?.close();
+    this.tsRelativeUnitSelectElement?.close();
+    this.tsRelativeCompleteOptionsSelectElement?.close();
+    this.tsRelativeWhenOptionsSelectElement?.close();
+    this.tsForOptionsSelectElement?.close();
+    this.tsForUnitsSelectElement?.close();
+    this.tsLastUnitsSelectElement?.close();
+    this.tsLastCompleteOptionsSelectElement?.close();
+  }
+
   fractionTypeEnum = common.FractionTypeEnum;
   fractionTsForOptionEnum = common.FractionTsForOptionEnum;
 

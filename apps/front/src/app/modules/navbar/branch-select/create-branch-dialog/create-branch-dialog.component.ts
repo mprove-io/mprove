@@ -51,7 +51,7 @@ export class CreateBranchDialogComponent implements OnInit {
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.createBranchSelectElement.close();
+    this.createBranchSelectElement?.close();
     // this.ref.close();
   }
 

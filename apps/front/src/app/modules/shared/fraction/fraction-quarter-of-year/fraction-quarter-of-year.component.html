@@ -6,9 +6,8 @@
     <ng-select
       #fractionQuarterOfYearTypeSelect
       data-cy="fractionQuarterOfYearTypeSelect"
-      class="popup-55 w-48 focus:outline-none"
+      class="popup-55 w-48"
       [ngClass]="{
-        custom: isDisabled !== true,
         'cursor-default': isDisabled === true
       }"
       [items]="fractionQuarterOfYearTypesList"
@@ -17,6 +16,14 @@
       [disabled]="isDisabled === true"
       [(ngModel)]="fraction.type"
       (change)="typeChange($event)"
+      (keyup.esc)="
+        $event.stopImmediatePropagation();
+        fractionQuarterOfYearTypeSelect.blur()
+      "
+      (keyup.enter)="
+        $event.stopImmediatePropagation();
+        fractionQuarterOfYearTypeSelect.blur()
+      "
       appendTo="body"
       bindLabel="label"
       bindValue="value"
@@ -45,9 +52,8 @@
     <ng-select
       #fractionQuarterOfYearValueSelect
       data-cy="fractionQuarterOfYearValueSelect"
-      class="popup-55 w-48 focus:outline-none"
+      class="popup-55 w-48"
       [ngClass]="{
-        custom: isDisabled !== true,
         'cursor-default': isDisabled === true
       }"
       [items]="fractionQuarterOfYearValuesList"
@@ -56,6 +62,14 @@
       [disabled]="isDisabled === true"
       [(ngModel)]="fraction.quarterOfYearValue"
       (change)="quarterOfYearValueChange($event)"
+      (keyup.esc)="
+        $event.stopImmediatePropagation();
+        fractionQuarterOfYearValueSelect.blur()
+      "
+      (keyup.enter)="
+        $event.stopImmediatePropagation();
+        fractionQuarterOfYearValueSelect.blur()
+      "
       appendTo="body"
       bindLabel="label"
       bindValue="value"

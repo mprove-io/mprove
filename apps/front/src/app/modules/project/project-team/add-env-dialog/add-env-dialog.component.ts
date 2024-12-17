@@ -40,7 +40,7 @@ export class AddEnvDialogComponent implements OnInit {
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.addEnvDialogEnvSelectElement.close();
+    this.addEnvDialogEnvSelectElement?.close();
     // this.ref.close();
   }
 

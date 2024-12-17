@@ -26,7 +26,7 @@ export class ProjectSelectComponent {
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.projectSelectElement.close();
+    this.projectSelectElement?.close();
   }
 
   firstOrgName = common.FIRST_ORG_NAME;
@@ -111,7 +111,7 @@ export class ProjectSelectComponent {
   }
 
   createNewProject() {
-    this.projectSelectElement.close();
+    this.projectSelectElement?.close();
 
     this.myDialogService.showCreateProject({
       apiService: this.apiService,

@@ -6,9 +6,8 @@
     <ng-select
       #fractionMonthNameTypeSelect
       data-cy="fractionMonthNameTypeSelect"
-      class="popup-55 w-48 focus:outline-none"
+      class="popup-55 w-48"
       [ngClass]="{
-        custom: isDisabled !== true,
         'cursor-default': isDisabled === true
       }"
       [items]="fractionMonthNameTypesList"
@@ -17,6 +16,12 @@
       [disabled]="isDisabled === true"
       [(ngModel)]="fraction.type"
       (change)="typeChange($event)"
+      (keyup.esc)="
+        $event.stopImmediatePropagation(); fractionMonthNameTypeSelect.blur()
+      "
+      (keyup.enter)="
+        $event.stopImmediatePropagation(); fractionMonthNameTypeSelect.blur()
+      "
       appendTo="body"
       bindLabel="label"
       bindValue="value"
@@ -45,9 +50,8 @@
     <ng-select
       #fractionMonthNameValueSelect
       data-cy="fractionMonthNameValueSelect"
-      class="popup-55 w-48 focus:outline-none"
+      class="popup-55 w-48"
       [ngClass]="{
-        custom: isDisabled !== true,
         'cursor-default': isDisabled === true
       }"
       [items]="fractionMonthNameValuesList"
@@ -56,6 +60,12 @@
       [disabled]="isDisabled === true"
       [(ngModel)]="fraction.monthNameValue"
       (change)="monthNameValueChange($event)"
+      (keyup.esc)="
+        $event.stopImmediatePropagation(); fractionMonthNameValueSelect.blur()
+      "
+      (keyup.enter)="
+        $event.stopImmediatePropagation(); fractionMonthNameValueSelect.blur()
+      "
       appendTo="body"
       bindLabel="label"
       bindValue="value"

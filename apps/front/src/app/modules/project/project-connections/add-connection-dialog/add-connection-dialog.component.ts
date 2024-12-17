@@ -51,8 +51,8 @@ export class AddConnectionDialogComponent implements OnInit {
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.addConnectionDialogEnvSelectElement.close();
-    this.addConnectionDialogTypeSelectElement.close();
+    this.addConnectionDialogEnvSelectElement?.close();
+    this.addConnectionDialogTypeSelectElement?.close();
     // this.ref.close();
   }
 

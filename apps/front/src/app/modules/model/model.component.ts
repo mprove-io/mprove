@@ -57,11 +57,11 @@ export class ChartTypeItem {
 })
 export class ModelComponent implements OnInit, OnDestroy {
   @ViewChild('chartTypeSelect', { static: false })
-  chartTypeSelectRef: NgSelectComponent;
+  chartTypeSelectElement: NgSelectComponent;
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.chartTypeSelectRef.close();
+    this.chartTypeSelectElement?.close();
   }
 
   restrictedUserAlias = common.RESTRICTED_USER_ALIAS;

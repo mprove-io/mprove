@@ -63,7 +63,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.timeSpecSelectElement.close();
+    this.timeSpecSelectElement?.close();
   }
 
   pageTitle = frontConstants.METRICS_PAGE_TITLE;

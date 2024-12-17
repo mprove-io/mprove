@@ -43,7 +43,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.fieldSelectElements.forEach(element => {
-      element.close();
+      element?.close();
     });
 
     // this.ref.close();

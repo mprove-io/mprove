@@ -3,12 +3,15 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  HostListener,
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  ViewChild
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import {
   BehaviorSubject,
   Subscription,
@@ -31,6 +34,18 @@ import { FractionTypeItem } from '../fraction.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FractionStringComponent implements OnInit, OnDestroy {
+  @ViewChild('fractionStringTypeSelect', { static: false })
+  fractionStringTypeSelectElement: NgSelectComponent;
+
+  @ViewChild('stringValueSelect', { static: false })
+  stringValueSelectElement: NgSelectComponent;
+
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.fractionStringTypeSelectElement?.close();
+    this.stringValueSelectElement?.close();
+  }
+
   defaultStringValue = 'abc';
   fractionTypeEnum = common.FractionTypeEnum;
   fieldClassEnum = common.FieldClassEnum;

@@ -2,11 +2,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  HostListener,
   Input,
   OnInit,
-  Output
+  Output,
+  ViewChild
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
@@ -18,6 +21,14 @@ import { FractionTypeItem } from '../fraction.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FractionDayOfWeekIndexComponent implements OnInit {
+  @ViewChild('fractionDayOfWeekIndexTypeSelect', { static: false })
+  fractionDayOfWeekIndexTypeSelectElement: NgSelectComponent;
+
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.fractionDayOfWeekIndexTypeSelectElement?.close();
+  }
+
   defaultDayOfWeekIndexValues = '1, 2, 3';
 
   fractionTypeEnum = common.FractionTypeEnum;

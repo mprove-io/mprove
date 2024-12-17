@@ -25,7 +25,7 @@ export class EnvSelectComponent {
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.envSelectElement.close();
+    this.envSelectElement?.close();
   }
 
   envsList: common.EnvsItem[] = [];

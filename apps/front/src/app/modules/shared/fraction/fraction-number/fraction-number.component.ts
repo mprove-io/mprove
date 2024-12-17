@@ -2,11 +2,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  HostListener,
   Input,
   OnInit,
-  Output
+  Output,
+  ViewChild
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
@@ -21,6 +24,18 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FractionNumberComponent implements OnInit {
+  @ViewChild('fractionNumberTypeSelect', { static: false })
+  fractionNumberTypeSelectElement: NgSelectComponent;
+
+  @ViewChild('fractionBetweenOptionSelect', { static: false })
+  fractionBetweenOptionSelectElement: NgSelectComponent;
+
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.fractionNumberTypeSelectElement?.close();
+    this.fractionBetweenOptionSelectElement?.close();
+  }
+
   defaultNumberValues = '100, 200, 300';
   defaultNumberValue1 = 100;
   defaultNumberValue2 = 200;

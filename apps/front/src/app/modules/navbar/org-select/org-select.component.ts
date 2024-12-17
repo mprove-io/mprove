@@ -26,7 +26,7 @@ export class OrgSelectComponent {
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.orgSelectElement.close();
+    this.orgSelectElement?.close();
   }
 
   restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
@@ -90,7 +90,7 @@ export class OrgSelectComponent {
   }
 
   createNewOrg() {
-    this.orgSelectElement.close();
+    this.orgSelectElement?.close();
 
     this.myDialogService.showCreateOrg({
       apiService: this.apiService

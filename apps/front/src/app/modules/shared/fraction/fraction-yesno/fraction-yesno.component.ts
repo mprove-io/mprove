@@ -2,10 +2,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  HostListener,
   Input,
-  Output
+  Output,
+  ViewChild
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 import {
@@ -19,6 +22,18 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FractionYesnoComponent {
+  @ViewChild('fractionYesnoTypeSelect', { static: false })
+  fractionYesnoTypeSelectElement: NgSelectComponent;
+
+  @ViewChild('fractionYesnoValueSelect', { static: false })
+  fractionYesnoValueSelectElement: NgSelectComponent;
+
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.fractionYesnoTypeSelectElement?.close();
+    this.fractionYesnoValueSelectElement?.close();
+  }
+
   fractionTypeEnum = common.FractionTypeEnum;
 
   @Input() isDisabled: boolean;

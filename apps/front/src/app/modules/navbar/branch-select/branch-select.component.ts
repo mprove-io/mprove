@@ -34,7 +34,7 @@ export class BranchSelectComponent {
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.branchSelectElement.close();
+    this.branchSelectElement?.close();
   }
 
   defaultBranch: string;

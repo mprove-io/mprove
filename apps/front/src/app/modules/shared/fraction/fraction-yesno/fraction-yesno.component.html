@@ -6,9 +6,8 @@
     <ng-select
       #fractionYesnoTypeSelect
       data-cy="fractionYesnoTypeSelect"
-      class="popup-55 w-48 focus:outline-none"
+      class="popup-55 w-48"
       [ngClass]="{
-        custom: isDisabled !== true,
         'cursor-default': isDisabled === true
       }"
       [items]="fractionYesnoTypesList"
@@ -17,6 +16,12 @@
       [disabled]="isDisabled === true"
       [(ngModel)]="fraction.type"
       (change)="typeChange($event)"
+      (keyup.esc)="
+        $event.stopImmediatePropagation(); fractionYesnoTypeSelect.blur()
+      "
+      (keyup.enter)="
+        $event.stopImmediatePropagation(); fractionYesnoTypeSelect.blur()
+      "
       appendTo="body"
       bindLabel="label"
       bindValue="value"
@@ -42,9 +47,8 @@
     <ng-select
       #fractionYesnoValueSelect
       data-cy="fractionYesnoValueSelect"
-      class="popup-55 w-48 focus:outline-none"
+      class="popup-55 w-48"
       [ngClass]="{
-        custom: isDisabled !== true,
         'cursor-default': isDisabled === true
       }"
       [items]="fractionYesnoValuesList"
@@ -53,6 +57,12 @@
       [disabled]="isDisabled === true"
       [(ngModel)]="fraction.yesnoValue"
       (change)="yesnoChange($event)"
+      (keyup.esc)="
+        $event.stopImmediatePropagation(); fractionYesnoValueSelect.blur()
+      "
+      (keyup.enter)="
+        $event.stopImmediatePropagation(); fractionYesnoValueSelect.blur()
+      "
       appendTo="body"
       bindLabel="label"
       bindValue="value"

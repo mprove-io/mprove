@@ -6,9 +6,8 @@
     <ng-select
       #fractionDayOfWeekIndexTypeSelect
       data-cy="fractionDayOfWeekIndexTypeSelect"
-      class="popup-55 w-[220px] focus:outline-none"
+      class="popup-55 w-[220px]"
       [ngClass]="{
-        custom: isDisabled !== true,
         'cursor-default': isDisabled === true
       }"
       [items]="fractionDayOfWeekIndexTypesList"
@@ -17,6 +16,14 @@
       [disabled]="isDisabled === true"
       [(ngModel)]="fraction.type"
       (change)="typeChange($event)"
+      (keyup.esc)="
+        $event.stopImmediatePropagation();
+        fractionDayOfWeekIndexTypeSelect.blur()
+      "
+      (keyup.enter)="
+        $event.stopImmediatePropagation();
+        fractionDayOfWeekIndexTypeSelect.blur()
+      "
       appendTo="body"
       bindLabel="label"
       bindValue="value"

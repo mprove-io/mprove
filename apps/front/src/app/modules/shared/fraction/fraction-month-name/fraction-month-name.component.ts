@@ -2,10 +2,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  HostListener,
   Input,
-  Output
+  Output,
+  ViewChild
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 import {
@@ -19,6 +22,18 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FractionMonthNameComponent {
+  @ViewChild('fractionMonthNameTypeSelect', { static: false })
+  fractionMonthNameTypeSelectElement: NgSelectComponent;
+
+  @ViewChild('fractionMonthNameValueSelect', { static: false })
+  fractionMonthNameValueSelectElement: NgSelectComponent;
+
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.fractionMonthNameTypeSelectElement?.close();
+    this.fractionMonthNameValueSelectElement?.close();
+  }
+
   fractionTypeEnum = common.FractionTypeEnum;
 
   @Input() isDisabled: boolean;
