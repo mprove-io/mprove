@@ -17,6 +17,12 @@
       [disabled]="isDisabled === true"
       [(ngModel)]="fraction.type"
       (change)="typeChange($event)"
+      (keyup.esc)="
+        $event.stopImmediatePropagation(); fractionDayOfWeekTypeSelect.blur()
+      "
+      (keyup.enter)="
+        $event.stopImmediatePropagation(); fractionDayOfWeekTypeSelect.blur()
+      "
       appendTo="body"
       bindLabel="label"
       bindValue="value"
@@ -54,6 +60,12 @@
       [clearable]="false"
       [searchable]="false"
       (change)="dayOfWeekValueChange($event)"
+      (keyup.esc)="
+        $event.stopImmediatePropagation(); fractionDayOfWeekValueSelect.blur()
+      "
+      (keyup.enter)="
+        $event.stopImmediatePropagation(); fractionDayOfWeekValueSelect.blur()
+      "
       [disabled]="isDisabled === true"
       [(ngModel)]="fraction.dayOfWeekValue"
       appendTo="body"
