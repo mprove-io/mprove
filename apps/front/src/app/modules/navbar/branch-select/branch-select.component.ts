@@ -1,5 +1,11 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  ViewChild
+} from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import { filter, take, tap } from 'rxjs/operators';
 import { makeBranchExtraId } from '~front/app/functions/make-branch-extra-id';
 import { makeBranchExtraName } from '~front/app/functions/make-branch-extra-name';
@@ -23,6 +29,14 @@ import { interfaces } from '~front/barrels/interfaces';
   templateUrl: './branch-select.component.html'
 })
 export class BranchSelectComponent {
+  @ViewChild('branchSelect', { static: false })
+  branchSelectElement: NgSelectComponent;
+
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.branchSelectElement.close();
+  }
+
   defaultBranch: string;
   prodRepoID = common.PROD_REPO_ID;
 

@@ -89,7 +89,7 @@
       <ng-select
         #xFieldSelect
         data-cy="xFieldSelect"
-        class="custom text-base focus:outline-none"
+        class="text-base"
         [items]="
           chart.type === chartTypeEnum.NumberCard
             ? dimensionsPlusEmpty
@@ -100,6 +100,8 @@
         [clearable]="false"
         [searchable]="false"
         (change)="xFieldChange()"
+        (keyup.esc)="$event.stopImmediatePropagation(); xFieldSelect.blur()"
+        (keyup.enter)="$event.stopImmediatePropagation(); xFieldSelect.blur()"
         appendTo="body"
         bindLabel="label"
         bindValue="id"
@@ -148,7 +150,7 @@
       <ng-select
         #multiFieldSelect
         data-cy="multiFieldSelect"
-        class="custom text-base focus:outline-none"
+        class="text-base"
         [items]="
           nullableMultiFieldChartTypes.indexOf(chart.type) > -1
             ? dimensionsPlusEmpty
@@ -157,6 +159,10 @@
         [clearable]="false"
         [searchable]="false"
         (change)="multiFieldChange()"
+        (keyup.esc)="$event.stopImmediatePropagation(); multiFieldSelect.blur()"
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); multiFieldSelect.blur()
+        "
         appendTo="body"
         bindLabel="label"
         bindValue="id"
@@ -206,11 +212,15 @@
       <ng-select
         #valueFieldSelect
         data-cy="valueFieldSelect"
-        class="custom text-base focus:outline-none"
+        class="text-base"
         [items]="numbersMeasuresAndCalculations"
         [clearable]="false"
         [searchable]="false"
         (change)="valueFieldChange()"
+        (keyup.esc)="$event.stopImmediatePropagation(); valueFieldSelect.blur()"
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); valueFieldSelect.blur()
+        "
         appendTo="body"
         bindLabel="label"
         bindValue="id"
@@ -254,11 +264,17 @@
       <ng-select
         #previousValueFieldSelect
         data-cy="previousValueFieldSelect"
-        class="custom text-base focus:outline-none"
+        class="text-base"
         [items]="numbersMeasuresAndCalculationsPlusEmpty"
         [clearable]="false"
         [searchable]="false"
         (change)="previousValueFieldChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); previousValueFieldSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); previousValueFieldSelect.blur()
+        "
         appendTo="body"
         bindLabel="label"
         bindValue="id"
@@ -299,11 +315,13 @@
       <ng-select
         #yFieldSelect
         data-cy="yFieldSelect"
-        class="custom text-base focus:outline-none"
+        class="text-base"
         [items]="numbersMeasuresAndCalculations"
         [clearable]="false"
         [searchable]="false"
         (change)="yFieldChange()"
+        (keyup.esc)="$event.stopImmediatePropagation(); yFieldSelect.blur()"
+        (keyup.enter)="$event.stopImmediatePropagation(); yFieldSelect.blur()"
         appendTo="body"
         bindLabel="label"
         bindValue="id"
@@ -373,11 +391,15 @@
       <ng-select
         #sizeFieldSelect
         data-cy="sizeFieldSelect"
-        class="custom text-base focus:outline-none"
+        class="text-base"
         [items]="numbersDimensionsMeasuresCalculationsPlusEmpty"
         [clearable]="false"
         [searchable]="false"
         (change)="sizeFieldChange()"
+        (keyup.esc)="$event.stopImmediatePropagation(); sizeFieldSelect.blur()"
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); sizeFieldSelect.blur()
+        "
         appendTo="body"
         bindLabel="label"
         bindValue="id"
@@ -426,11 +448,17 @@
       <ng-select
         #colorSchemeSelect
         data-cy="colorSchemeSelect"
-        class="custom text-base focus:outline-none"
+        class="text-base"
         [items]="colorSchemesList"
         [clearable]="false"
         [searchable]="false"
         (change)="colorSchemeChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); colorSchemeSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); colorSchemeSelect.blur()
+        "
         appendTo="body"
         bindLabel="label"
         bindValue="value"
@@ -461,11 +489,15 @@
       <ng-select
         #schemeTypeSelect
         data-cy="schemeTypeSelect"
-        class="custom text-base focus:outline-none"
+        class="text-base"
         [items]="schemeTypesList"
         [clearable]="false"
         [searchable]="false"
         (change)="schemeTypeChange()"
+        (keyup.esc)="$event.stopImmediatePropagation(); schemeTypeSelect.blur()"
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); schemeTypeSelect.blur()
+        "
         appendTo="body"
         bindLabel="label"
         bindValue="value"
@@ -496,11 +528,17 @@
       <ng-select
         #interpolationSelect
         data-cy="interpolationSelect"
-        class="custom text-base focus:outline-none"
+        class="text-base"
         [items]="interpolationsList"
         [clearable]="false"
         [searchable]="false"
         (change)="interpolationChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); interpolationSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); interpolationSelect.blur()
+        "
         appendTo="body"
         bindLabel="label"
         bindValue="value"
@@ -1467,11 +1505,17 @@
       <ng-select
         #formatNumberDataLabelSelect
         data-cy="formatNumberDataLabelSelect"
-        class="custom select-format-number w-full text-base focus:outline-none"
+        class="w-full text-base"
         [items]="formatNumberExamples"
         [clearable]="false"
         [searchable]="false"
         (change)="formatNumberDataLabelBlur()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); formatNumberDataLabelSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); formatNumberDataLabelSelect.blur()
+        "
         appendTo="body"
         bindLabel="label"
         bindValue="id"
@@ -1531,11 +1575,17 @@
       <ng-select
         #formatNumberValueSelect
         data-cy="formatNumberValueSelect"
-        class="custom select-format-number w-full text-base focus:outline-none"
+        class="w-full text-base"
         [items]="formatNumberExamples"
         [clearable]="false"
         [searchable]="false"
         (change)="formatNumberValueBlur()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); formatNumberValueSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); formatNumberValueSelect.blur()
+        "
         appendTo="body"
         bindLabel="label"
         bindValue="id"
@@ -1594,11 +1644,17 @@
       <ng-select
         #formatNumberAxisTickSelect
         data-cy="formatNumberAxisTickSelect"
-        class="custom select-format-number w-full text-base focus:outline-none"
+        class="w-full text-base"
         [items]="formatNumberExamples"
         [clearable]="false"
         [searchable]="false"
         (change)="formatNumberAxisTickBlur()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); formatNumberAxisTickSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); formatNumberAxisTickSelect.blur()
+        "
         appendTo="body"
         bindLabel="label"
         bindValue="id"
@@ -1659,11 +1715,17 @@
       <ng-select
         #formatNumberXAxisTickSelect
         data-cy="formatNumberXAxisTickSelect"
-        class="custom select-format-number w-full text-base focus:outline-none"
+        class="w-full text-base"
         [items]="formatNumberExamples"
         [clearable]="false"
         [searchable]="false"
         (change)="formatNumberXAxisTickBlur()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); formatNumberXAxisTickSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); formatNumberXAxisTickSelect.blur()
+        "
         appendTo="body"
         bindLabel="label"
         bindValue="id"
@@ -1723,11 +1785,17 @@
       <ng-select
         #formatNumberYAxisTickSelect
         data-cy="formatNumberYAxisTickSelect"
-        class="custom select-format-number w-full text-base focus:outline-none"
+        class="w-full text-base"
         [items]="formatNumberExamples"
         [clearable]="false"
         [searchable]="false"
         (change)="formatNumberYAxisTickBlur()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); formatNumberYAxisTickSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); formatNumberYAxisTickSelect.blur()
+        "
         appendTo="body"
         bindLabel="label"
         bindValue="id"

@@ -7,15 +7,17 @@
 
   <form class="mt-9 flex flex-col" [formGroup]="mergeForm" (ngSubmit)="merge()">
     <ng-select
-      #branchSelect
-      data-cy="branchSelect"
-      class="custom mt-2 w-96 text-base focus:outline-none"
+      #mergeBranchSelect
+      data-cy="mergeBranchSelect"
+      class="mt-2 w-96 text-base"
       [items]="branchesList"
       [clearable]="false"
       [searchable]="false"
       (change)="branchChange($event)"
-      (keyup.esc)="$event.stopImmediatePropagation()"
-      (keyup.enter)="$event.stopImmediatePropagation()"
+      (keyup.esc)="$event.stopImmediatePropagation(); mergeBranchSelect.blur()"
+      (keyup.enter)="
+        $event.stopImmediatePropagation(); mergeBranchSelect.blur()
+      "
       appendTo="body"
       formControlName="branch"
       placeholder="Branch"

@@ -59,11 +59,11 @@ export class TimeSpecItem {
 })
 export class MetricsComponent implements OnInit, OnDestroy {
   @ViewChild('timeSpecSelect', { static: false })
-  timeSpecSelectRef: NgSelectComponent;
+  timeSpecSelectElement: NgSelectComponent;
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.timeSpecSelectRef.close();
+    this.timeSpecSelectElement.close();
   }
 
   pageTitle = frontConstants.METRICS_PAGE_TITLE;

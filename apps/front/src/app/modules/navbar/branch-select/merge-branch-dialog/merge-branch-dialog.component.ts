@@ -4,7 +4,8 @@ import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
-  OnInit
+  OnInit,
+  ViewChild
 } from '@angular/core';
 import {
   FormBuilder,
@@ -12,7 +13,7 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { NgSelectModule } from '@ng-select/ng-select';
+import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
@@ -47,9 +48,13 @@ export interface MergeBranchDialogData {
   imports: [CommonModule, ReactiveFormsModule, SharedModule, NgSelectModule]
 })
 export class MergeBranchDialogComponent implements OnInit {
+  @ViewChild('mergeBranchSelect', { static: false })
+  mergeBranchSelectElement: NgSelectComponent;
+
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.ref.close();
+    this.mergeBranchSelectElement.close();
+    // this.ref.close();
   }
 
   mergeForm: FormGroup;

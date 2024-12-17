@@ -1,5 +1,13 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { DataService } from '~front/app/services/data.service';
@@ -30,6 +38,66 @@ export class InterpolationItem {
   templateUrl: './chart-editor.component.html'
 })
 export class ChartEditorComponent implements OnChanges {
+  @ViewChild('xFieldSelect', { static: false })
+  xFieldSelectElement: NgSelectComponent;
+
+  @ViewChild('multiFieldSelect', { static: false })
+  multiFieldSelectElement: NgSelectComponent;
+
+  @ViewChild('valueFieldSelect', { static: false })
+  valueFieldSelectElement: NgSelectComponent;
+
+  @ViewChild('previousValueFieldSelect', { static: false })
+  previousValueFieldSelectElement: NgSelectComponent;
+
+  @ViewChild('yFieldSelect', { static: false })
+  yFieldSelectElement: NgSelectComponent;
+
+  @ViewChild('sizeFieldSelect', { static: false })
+  sizeFieldSelectElement: NgSelectComponent;
+
+  @ViewChild('colorSchemeSelect', { static: false })
+  colorSchemeSelectElement: NgSelectComponent;
+
+  @ViewChild('schemeTypeSelect', { static: false })
+  schemeTypeSelectElement: NgSelectComponent;
+
+  @ViewChild('interpolationSelect', { static: false })
+  interpolationSelectElement: NgSelectComponent;
+
+  @ViewChild('formatNumberDataLabelSelect', { static: false })
+  formatNumberDataLabelSelectElement: NgSelectComponent;
+
+  @ViewChild('formatNumberValueSelect', { static: false })
+  formatNumberValueSelectElement: NgSelectComponent;
+
+  @ViewChild('formatNumberAxisTickSelect', { static: false })
+  formatNumberAxisTickSelectElement: NgSelectComponent;
+
+  @ViewChild('formatNumberXAxisTickSelect', { static: false })
+  formatNumberXAxisTickSelectElement: NgSelectComponent;
+
+  @ViewChild('formatNumberYAxisTickSelect', { static: false })
+  formatNumberYAxisTickSelectElement: NgSelectComponent;
+
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.xFieldSelectElement?.close();
+    this.multiFieldSelectElement?.close();
+    this.valueFieldSelectElement?.close();
+    this.previousValueFieldSelectElement?.close();
+    this.yFieldSelectElement?.close();
+    this.sizeFieldSelectElement?.close();
+    this.colorSchemeSelectElement?.close();
+    this.schemeTypeSelectElement?.close();
+    this.interpolationSelectElement?.close();
+    this.formatNumberDataLabelSelectElement?.close();
+    this.formatNumberValueSelectElement?.close();
+    this.formatNumberAxisTickSelectElement?.close();
+    this.formatNumberXAxisTickSelectElement?.close();
+    this.formatNumberYAxisTickSelectElement?.close();
+  }
+
   chartTypeEnum = common.ChartTypeEnum;
   chartSchemeTypeEnum = common.ChartSchemeTypeEnum;
 

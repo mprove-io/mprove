@@ -39,11 +39,11 @@ export interface ParameterFilter extends common.FilterX {
 })
 export class RowComponent {
   @ViewChild('formatNumberSelect', { static: false })
-  formatNumberSelectRef: NgSelectComponent;
+  formatNumberSelectElement: NgSelectComponent;
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.formatNumberSelectRef.close();
+    this.formatNumberSelectElement.close();
   }
 
   rowTypeFormula = common.RowTypeEnum.Formula;

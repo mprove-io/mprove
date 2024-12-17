@@ -4,7 +4,8 @@ import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
-  OnInit
+  OnInit,
+  ViewChild
 } from '@angular/core';
 import {
   FormBuilder,
@@ -13,7 +14,7 @@ import {
   Validators
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NgSelectModule } from '@ng-select/ng-select';
+import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
@@ -45,9 +46,13 @@ export interface CreateBranchDialogData {
   imports: [CommonModule, ReactiveFormsModule, NgSelectModule, SharedModule]
 })
 export class CreateBranchDialogComponent implements OnInit {
+  @ViewChild('createBranchSelect', { static: false })
+  createBranchSelectElement: NgSelectComponent;
+
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.ref.close();
+    this.createBranchSelectElement.close();
+    // this.ref.close();
   }
 
   createBranchForm: FormGroup;
