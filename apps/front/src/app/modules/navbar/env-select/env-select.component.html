@@ -16,6 +16,8 @@
   [disabled]="selectedProjectId === undefined || needSave === true"
   [(ngModel)]="selectedEnvId"
   (change)="envChange()"
+  (keyup.esc)="$event.stopImmediatePropagation(); envSelect.blur()"
+  (keyup.enter)="$event.stopImmediatePropagation(); envSelect.blur()"
   appendTo="body"
   placeholder="Env"
   bindLabel="envId"

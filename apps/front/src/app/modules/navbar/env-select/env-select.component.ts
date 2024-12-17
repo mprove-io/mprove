@@ -1,5 +1,11 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  ViewChild
+} from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import { filter, map, take, tap } from 'rxjs/operators';
 import { makeRepQueryParams } from '~front/app/functions/make-query-params';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
@@ -14,6 +20,14 @@ import { common } from '~front/barrels/common';
   templateUrl: './env-select.component.html'
 })
 export class EnvSelectComponent {
+  @ViewChild('envSelect', { static: false })
+  envSelectElement: NgSelectComponent;
+
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.envSelectElement.close();
+  }
+
   envsList: common.EnvsItem[] = [];
   envsListLoading = false;
   envsListLength = 0;
