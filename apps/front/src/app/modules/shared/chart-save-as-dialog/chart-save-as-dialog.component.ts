@@ -2,7 +2,8 @@ import {
   ChangeDetectorRef,
   Component,
   HostListener,
-  OnInit
+  OnInit,
+  ViewChild
 } from '@angular/core';
 import {
   AbstractControl,
@@ -11,6 +12,7 @@ import {
   ValidationErrors,
   Validators
 } from '@angular/forms';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
@@ -46,9 +48,17 @@ export interface ChartSaveAsDialogData {
   templateUrl: './chart-save-as-dialog.component.html'
 })
 export class ChartSaveAsDialogComponent implements OnInit {
+  @ViewChild('chartSaveAsDialogDashboardSelect', { static: false })
+  chartSaveAsDialogDashboardSelectElement: NgSelectComponent;
+
+  @ViewChild('chartSaveAsDialogTileSelect', { static: false })
+  chartSaveAsDialogTileSelectElement: NgSelectComponent;
+
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.ref.close();
+    this.chartSaveAsDialogDashboardSelectElement?.close();
+    this.chartSaveAsDialogTileSelectElement?.close();
+    // this.ref.close();
   }
 
   usersFolder = common.MPROVE_USERS_FOLDER;

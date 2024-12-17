@@ -43,7 +43,7 @@ export class RowComponent {
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.formatNumberSelectElement.close();
+    this.formatNumberSelectElement?.close();
   }
 
   rowTypeFormula = common.RowTypeEnum.Formula;

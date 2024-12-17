@@ -9,14 +9,18 @@
     <ng-select
       #addEnvDialogEnvSelect
       data-cy="addEnvDialogEnvSelect"
-      class="custom mt-12 w-80 text-base focus:outline-none"
+      class="mt-12 w-80 text-base"
       (open)="openEnvSelect()"
       [loading]="envsListLoading"
       [items]="envsList"
       [clearable]="false"
       [searchable]="false"
-      (keyup.esc)="$event.stopImmediatePropagation()"
-      (keyup.enter)="$event.stopImmediatePropagation()"
+      (keyup.esc)="
+        $event.stopImmediatePropagation(); addEnvDialogEnvSelect.blur()
+      "
+      (keyup.enter)="
+        $event.stopImmediatePropagation(); addEnvDialogEnvSelect.blur()
+      "
       appendTo="body"
       placeholder="Env"
       bindLabel="envId"

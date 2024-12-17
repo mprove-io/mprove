@@ -3,7 +3,8 @@ import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
-  OnInit
+  OnInit,
+  ViewChild
 } from '@angular/core';
 import {
   FormBuilder,
@@ -11,7 +12,7 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { NgSelectModule } from '@ng-select/ng-select';
+import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { map, take, tap } from 'rxjs/operators';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
@@ -34,9 +35,13 @@ export interface AddEnvDialogData {
   imports: [CommonModule, ReactiveFormsModule, SharedModule, NgSelectModule]
 })
 export class AddEnvDialogComponent implements OnInit {
+  @ViewChild('addEnvDialogEnvSelect', { static: false })
+  addEnvDialogEnvSelectElement: NgSelectComponent;
+
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.ref.close();
+    this.addEnvDialogEnvSelectElement.close();
+    // this.ref.close();
   }
 
   addEnvForm: FormGroup;

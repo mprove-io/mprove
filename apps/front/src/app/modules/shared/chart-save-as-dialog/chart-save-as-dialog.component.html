@@ -67,18 +67,25 @@
       </div>
 
       <ng-select
+        #chartSaveAsDialogDashboardSelect
         data-cy="chartSaveAsDialogDashboardSelect"
         *ngIf="
           !!dashboards && chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD
         "
-        class="custom w-[500px] flex-shrink-0 text-base focus:outline-none"
+        class="w-[500px] flex-shrink-0 text-base"
         [items]="dashboards"
         [searchable]="false"
         [clearable]="false"
-        (change)="selectedDashboardChange()"
         [(ngModel)]="selectedDashboardId"
-        (keyup.esc)="$event.stopImmediatePropagation()"
-        (keyup.enter)="$event.stopImmediatePropagation()"
+        (change)="selectedDashboardChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation();
+          chartSaveAsDialogDashboardSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation();
+          chartSaveAsDialogDashboardSelect.blur()
+        "
         appendTo="body"
         bindLabel="title"
         bindValue="dashboardId"
@@ -155,16 +162,23 @@
           >Replace Existing Tile</div
         >
         <ng-select
+          #chartSaveAsDialogTileSelect
           data-cy="chartSaveAsDialogTileSelect"
           *ngIf="tileSaveAs === tileSaveAsEnum.REPLACE_EXISTING_TILE"
-          class="custom w-[500px] flex-shrink-0 text-base focus:outline-none"
+          class="w-[500px] flex-shrink-0 text-base"
           [items]="selectedDashboard?.tiles || []"
           [searchable]="false"
           [clearable]="false"
           (change)="selectedTileChange()"
           [(ngModel)]="selectedTileTitle"
-          (keyup.esc)="$event.stopImmediatePropagation()"
-          (keyup.enter)="$event.stopImmediatePropagation()"
+          (keyup.esc)="
+            $event.stopImmediatePropagation();
+            chartSaveAsDialogTileSelect.blur()
+          "
+          (keyup.enter)="
+            $event.stopImmediatePropagation();
+            chartSaveAsDialogTileSelect.blur()
+          "
           appendTo="body"
           bindLabel="title"
           bindValue="title"
