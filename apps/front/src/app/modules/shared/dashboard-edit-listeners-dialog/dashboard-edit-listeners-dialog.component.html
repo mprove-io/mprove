@@ -82,13 +82,12 @@
             "
           >
             <ng-select
+              #fieldSelect
               data-cy="fieldSelect"
-              class="custom w-96 text-base focus:outline-none"
+              class="w-96 text-base"
               [items]="tile.modelFields[dashboardField.id]"
               [clearable]="false"
               [searchable]="false"
-              (keyup.esc)="$event.stopImmediatePropagation()"
-              (keyup.enter)="$event.stopImmediatePropagation()"
               formControlName="{{ tileIndex }}-----{{
                 dashboardField.id
               }}-----{{ i }}"
@@ -101,6 +100,12 @@
                   items: tile.modelFields[dashboardField.id],
                   selected: $event,
                 })
+              "
+              (keyup.esc)="
+                $event.stopImmediatePropagation(); fieldSelect.blur()
+              "
+              (keyup.enter)="
+                $event.stopImmediatePropagation(); fieldSelect.blur()
               "
               appendTo="body"
               bindLabel="id"

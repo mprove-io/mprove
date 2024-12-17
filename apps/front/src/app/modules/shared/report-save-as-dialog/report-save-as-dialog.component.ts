@@ -2,9 +2,11 @@ import {
   ChangeDetectorRef,
   Component,
   HostListener,
-  OnInit
+  OnInit,
+  ViewChild
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
@@ -37,9 +39,13 @@ export interface ReportSaveAsDialogData {
   templateUrl: './report-save-as-dialog.component.html'
 })
 export class ReportSaveAsDialogComponent implements OnInit {
+  @ViewChild('reportSaveAsDialogExistingReportSelect', { static: false })
+  reportSaveAsDialogExistingReportSelectElement: NgSelectComponent;
+
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.ref.close();
+    this.reportSaveAsDialogExistingReportSelectElement?.close();
+    // this.ref.close();
   }
 
   usersFolder = common.MPROVE_USERS_FOLDER;

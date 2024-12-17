@@ -1,5 +1,12 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  OnInit,
+  ViewChildren
+} from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
@@ -30,10 +37,17 @@ export interface DashboardEditListenersDialogData {
   templateUrl: './dashboard-edit-listeners-dialog.component.html'
 })
 export class DashboardEditListenersDialogComponent implements OnInit {
-  // @HostListener('window:keyup.esc')
-  // onEscKeyUp() {
-  //   this.ref.close();
-  // }
+  @ViewChildren('fieldSelect')
+  fieldSelectElements: NgSelectComponent[];
+
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.fieldSelectElements.forEach(element => {
+      element.close();
+    });
+
+    // this.ref.close();
+  }
 
   spinnerName = 'dashboardEditListen';
 

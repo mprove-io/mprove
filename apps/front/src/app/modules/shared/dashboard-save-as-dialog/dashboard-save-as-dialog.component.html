@@ -70,19 +70,26 @@
       </div>
 
       <ng-select
+        #dashboardSaveAsDialogExistingDashboardSelect
         data-cy="dashboardSaveAsDialogExistingDashboardSelect"
         *ngIf="
           !!dashboards &&
           saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD
         "
-        class="custom w-[500px] flex-shrink-0 text-base focus:outline-none"
+        class="w-[500px] flex-shrink-0 text-base"
         [items]="dashboards"
         [searchable]="false"
         [clearable]="false"
-        (change)="selectedChange()"
         [(ngModel)]="selectedDashboardId"
-        (keyup.esc)="$event.stopImmediatePropagation()"
-        (keyup.enter)="$event.stopImmediatePropagation()"
+        (change)="selectedChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation();
+          dashboardSaveAsDialogExistingDashboardSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation();
+          dashboardSaveAsDialogExistingDashboardSelect.blur()
+        "
         appendTo="body"
         bindLabel="title"
         bindValue="dashboardId"

@@ -73,14 +73,23 @@
       </div>
 
       <ng-select
+        #reportSaveAsDialogExistingReportSelect
         data-cy="reportSaveAsDialogExistingReportSelect"
         *ngIf="!!reports && saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT"
-        class="custom w-[500px] flex-shrink-0 text-base focus:outline-none"
+        class="w-[500px] flex-shrink-0 text-base"
         [items]="reports"
         [clearable]="false"
         [searchable]="false"
-        (change)="selectedChange()"
         [(ngModel)]="selectedReportId"
+        (change)="selectedChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation();
+          reportSaveAsDialogExistingReportSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation();
+          reportSaveAsDialogExistingReportSelect.blur()
+        "
         (keyup.esc)="$event.stopImmediatePropagation()"
         (keyup.enter)="$event.stopImmediatePropagation()"
         appendTo="body"

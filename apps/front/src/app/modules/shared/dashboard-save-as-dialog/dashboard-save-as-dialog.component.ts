@@ -1,11 +1,12 @@
 import {
   ChangeDetectorRef,
   Component,
-  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
-  OnInit
+  OnInit,
+  ViewChild
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
@@ -34,9 +35,13 @@ export interface DashboardSaveAsDialogData {
   templateUrl: './dashboard-save-as-dialog.component.html'
 })
 export class DashboardSaveAsDialogComponent implements OnInit {
+  @ViewChild('dashboardSaveAsDialogExistingDashboardSelect', { static: false })
+  dashboardSaveAsDialogExistingDashboardSelectElement: NgSelectComponent;
+
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.ref.close();
+    this.dashboardSaveAsDialogExistingDashboardSelectElement?.close();
+    // this.ref.close();
   }
 
   usersFolder = common.MPROVE_USERS_FOLDER;
