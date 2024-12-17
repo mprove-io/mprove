@@ -93,6 +93,12 @@
               [clearable]="false"
               [searchable]="false"
               (change)="timeSpecChange()"
+              (keyup.esc)="
+                $event.stopImmediatePropagation(); timeSpecSelect.blur()
+              "
+              (keyup.enter)="
+                $event.stopImmediatePropagation(); timeSpecSelect.blur()
+              "
               appendTo="body"
               bindLabel="label"
               bindValue="value"

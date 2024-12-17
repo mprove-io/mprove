@@ -1,5 +1,12 @@
 import { Location } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -35,6 +42,7 @@ import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import { EChartsInitOpts, EChartsOption } from 'echarts';
 import { DataPoint } from '~front/app/interfaces/data-point';
 import { DataService } from '~front/app/services/data.service';
@@ -50,6 +58,14 @@ export class TimeSpecItem {
   templateUrl: './metrics.component.html'
 })
 export class MetricsComponent implements OnInit, OnDestroy {
+  @ViewChild('timeSpecSelect', { static: false })
+  timeSpecSelectRef: NgSelectComponent;
+
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.timeSpecSelectRef.close();
+  }
+
   pageTitle = frontConstants.METRICS_PAGE_TITLE;
 
   rowTypeFormula = common.RowTypeEnum.Formula;

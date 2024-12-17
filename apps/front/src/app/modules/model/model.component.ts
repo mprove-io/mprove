@@ -1,4 +1,11 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
@@ -35,6 +42,7 @@ import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import { DataService } from '~front/app/services/data.service';
 
 export class ChartTypeItem {
@@ -48,6 +56,14 @@ export class ChartTypeItem {
   templateUrl: './model.component.html'
 })
 export class ModelComponent implements OnInit, OnDestroy {
+  @ViewChild('chartTypeSelect', { static: false })
+  chartTypeSelectRef: NgSelectComponent;
+
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.chartTypeSelectRef.close();
+  }
+
   restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
 
   pageTitle = frontConstants.MODEL_PAGE_TITLE;
@@ -801,6 +817,8 @@ export class ModelComponent implements OnInit, OnDestroy {
   }
 
   chartTypeChange(newChartTypeValue?: common.ChartTypeEnum) {
+    (document.activeElement as HTMLElement).blur();
+
     if (common.isDefined(newChartTypeValue)) {
       this.chartTypeForm.controls['chartType'].setValue(newChartTypeValue);
     }
