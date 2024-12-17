@@ -1,6 +1,6 @@
 <div class="select-none truncate">
   <span>{{ suggestField.topLabel | capitalize }}</span>
-  <span class="ml-2">-</span>
+  <span *ngIf="!!suggestField.modelFieldRef" class="ml-2">-</span>
 
   <span class="ml-2">{{ suggestField.partNodeLabel | capitalize }}</span>
 

@@ -4,18 +4,20 @@ import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
+  HostListener,
   OnInit,
   ViewChild
 } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
+  FormControl,
   FormGroup,
   ReactiveFormsModule,
   ValidationErrors,
   Validators
 } from '@angular/forms';
-import { NgSelectModule } from '@ng-select/ng-select';
+import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
@@ -50,16 +52,18 @@ export interface DashboardAddFilterDialogData {
   ]
 })
 export class DashboardAddFilterDialogComponent implements OnInit {
-  filterForm: FormGroup;
+  @ViewChild('typeSelect', { static: false })
+  typeSelectRef: NgSelectComponent;
 
-  spinnerName = 'dashboardAddSuggestSpinnerName';
-
-  // @HostListener('window:keyup.esc')
-  // onEscKeyUp() {
-  //   this.ref.close();
-  // }
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.typeSelectRef.close();
+    //   this.ref.close();
+  }
 
   @ViewChild('filterLabel') filterLabelElement: ElementRef;
+
+  spinnerName = 'dashboardAddSuggestSpinnerName';
 
   resultList = constants.RESULT_LIST;
 
@@ -82,6 +86,19 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   suggestFieldsLoading: boolean;
   suggestFieldsLoaded = false;
 
+  emptySuggestField = Object.assign({}, constants.EMPTY_MCONFIG_FIELD, {
+    modelFieldRef: undefined,
+    topLabel: 'Empty',
+    partNodeLabel: undefined,
+    partFieldLabel: undefined
+  } as common.SuggestField);
+
+  filterForm: FormGroup<{
+    label: FormControl<string>;
+    fieldResult: FormControl<common.FieldResultEnum>;
+    suggestField: FormControl<SuggestField>;
+  }>;
+
   constructor(
     public ref: DialogRef<DashboardAddFilterDialogData>,
     private fb: FormBuilder,
@@ -102,7 +119,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       {
         label: [undefined, [Validators.required, Validators.maxLength(255)]],
         fieldResult: [this.fieldResult],
-        suggestFieldRef: [undefined]
+        suggestField: [this.emptySuggestField]
       },
       {
         validator: this.labelValidator.bind(this)
@@ -185,7 +202,10 @@ export class DashboardAddFilterDialogComponent implements OnInit {
         .pipe(
           tap((resp: apiToBackend.ToBackendGetSuggestFieldsResponse) => {
             if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-              this.suggestFields = resp.payload.suggestFields;
+              this.suggestFields = [
+                this.emptySuggestField,
+                ...resp.payload.suggestFields
+              ];
 
               this.suggestFieldsLoading = false;
               this.suggestFieldsLoaded = true;
@@ -221,12 +241,16 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       type: common.getFractionTypeForAny(result)
     };
 
+    let suggestField = this.filterForm.controls['suggestField'].value;
+
     let field: common.DashboardField = {
       id: id,
       hidden: false,
       label: label,
       result: result,
-      suggestModelDimension: this.filterForm.controls['suggestFieldRef'].value,
+      suggestModelDimension: common.isDefined(suggestField.modelFieldRef)
+        ? suggestField.modelFieldRef
+        : undefined,
       fractions: [fraction],
       description: undefined
     };

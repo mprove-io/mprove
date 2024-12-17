@@ -47,8 +47,8 @@
         [items]="resultList"
         [clearable]="false"
         [searchable]="false"
-        (keyup.esc)="$event.stopImmediatePropagation()"
-        (keyup.enter)="$event.stopImmediatePropagation()"
+        (keyup.esc)="$event.stopImmediatePropagation(); typeSelect.blur()"
+        (keyup.enter)="$event.stopImmediatePropagation(); typeSelect.blur()"
         (change)="resultChange($event)"
         appendTo="body"
         formControlName="fieldResult"
@@ -121,8 +121,7 @@
         "
         appendTo="body"
         placeholder="Select Field"
-        bindValue="modelFieldRef"
-        formControlName="suggestFieldRef"
+        formControlName="suggestField"
       >
         <ng-template ng-label-tmp let-item="item">
           <m-suggest-field-label
