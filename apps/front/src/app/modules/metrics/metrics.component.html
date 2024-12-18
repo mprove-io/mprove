@@ -308,27 +308,20 @@
         </div>
 
         <div class="flex min-w-[2px] flex-grow flex-col">
-          <div
-            *ngIf="isShowTable === true"
-            class="w-full flex-1 flex-shrink-0 rounded bg-white shadow"
-          >
+          <div class="w-full flex-1 flex-shrink-0 rounded bg-white shadow">
             <router-outlet></router-outlet>
           </div>
 
           <div
             class="flex w-full flex-col"
             [ngClass]="{
-              'h-[40%]':
-                (showMetricsChart === true || reportSelectedNodes.length > 0) &&
-                isShowTable === true,
-              'h-full': showMetricsChart === true && isShowTable === false,
-              'mt-6':
+              'mt-6 h-[40%]':
                 showMetricsChart === true || reportSelectedNodes.length > 0
             }"
           >
             <div
               class="flex h-2 w-full flex-grow flex-row"
-              *ngIf="isShowTable === true && reportSelectedNodes.length > 0"
+              *ngIf="reportSelectedNodes.length > 0"
             >
               <m-row class="flex w-full"></m-row>
             </div>

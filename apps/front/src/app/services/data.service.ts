@@ -986,7 +986,7 @@ export class DataService {
         },
         // valueFormatter: ...
         formatter: (p: any) => {
-          console.log(p);
+          // console.log(p);
 
           let timeSpec = this.uiQuery.getValue().timeSpec;
 

@@ -78,7 +78,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
   isShow = true;
 
   isShowLeft = true;
-  isShowTable = true;
 
   emptyReportId = common.EMPTY_REPORT_ID;
 
@@ -190,7 +189,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
         boolean,
         boolean
       ]) => {
-        // console.log('repChartData');
         // console.log(repChartData);
 
         let newQueriesLength = 0;
@@ -719,10 +717,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
   toggleShowLeft() {
     this.isShowLeft = !this.isShowLeft;
   }
-
-  // toggleShowTable() {
-  //   this.isShowTable = !this.isShowTable;
-  // }
 
   refreshShow() {
     // this.isShow = false;

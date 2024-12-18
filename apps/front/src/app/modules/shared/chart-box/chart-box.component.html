@@ -1,7 +1,8 @@
 <div
+  #chartBoxEcharts
   echarts
-  [initOpts]="eChartInitOpts"
-  [options]="eChartOptions"
+  [initOpts]="localInitOpts"
+  [options]="localOptions"
   (chartInit)="onChartInit($event)"
   class="my-echarts overflow-hidden"
   style="width: 100%; height: 100%"
