@@ -36,6 +36,7 @@ export class UiState {
   timeRangeFraction: common.Fraction;
   showHours: boolean;
   projectReportLinks: common.ProjectReportLink[];
+  metricsLoadedTs: number;
 }
 
 let uiState: UiState = {
@@ -69,7 +70,8 @@ let uiState: UiState = {
   timeSpec: undefined,
   timeRangeFraction: undefined,
   showHours: undefined,
-  projectReportLinks: []
+  projectReportLinks: [],
+  metricsLoadedTs: 0
 };
 
 @Injectable({ providedIn: 'root' })

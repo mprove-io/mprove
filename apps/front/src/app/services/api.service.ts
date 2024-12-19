@@ -388,6 +388,8 @@ export class ApiService {
             reports: resp.payload.reports
           });
 
+          this.uiQuery.updatePart({ metricsLoadedTs: Date.now() });
+
           return true;
         } else if (
           resp.info?.status === common.ResponseInfoStatusEnum.Error &&
