@@ -21,6 +21,7 @@ export class UiService {
     showMetricsChartSettings?: boolean;
     modelTreeLevels?: common.ModelTreeLevelsEnum;
     showHours?: boolean;
+    projectReportLinks?: common.ProjectReportLink[];
   }) {
     let {
       metricsColumnNameWidth,
@@ -33,7 +34,8 @@ export class UiService {
       showMetricsChart,
       showMetricsChartSettings,
       modelTreeLevels,
-      showHours
+      showHours,
+      projectReportLinks
     } = item;
 
     let uiState = this.uiQuery.getValue();
@@ -68,13 +70,16 @@ export class UiService {
       showMetricsChartSettings: common.isDefined(showMetricsChartSettings)
         ? showMetricsChartSettings
         : uiState.showMetricsChartSettings,
-      showHours: common.isDefined(showHours) ? showHours : uiState.showHours,
       modelTreeLevels: common.isDefined(modelTreeLevels)
         ? modelTreeLevels
         : uiState.modelTreeLevels,
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
-      timeRangeFraction: uiState.timeRangeFraction
+      timeRangeFraction: uiState.timeRangeFraction,
+      showHours: common.isDefined(showHours) ? showHours : uiState.showHours,
+      projectReportLinks: common.isDefined(projectReportLinks)
+        ? projectReportLinks
+        : uiState.projectReportLinks
     };
 
     let payload: apiToBackend.ToBackendSetUserUiRequestPayload = {

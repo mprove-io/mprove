@@ -151,7 +151,7 @@ export class ModelComponent implements OnInit, OnDestroy {
       if (
         common.isDefined(this.mconfig) &&
         common.isDefined(this.mconfig.fields) &&
-        this.mconfig.mconfigId !== common.EMPTY_REPORT_ID
+        this.mconfig.mconfigId !== common.EMPTY_MCONFIG_ID
       ) {
         this.qData =
           this.mconfig.queryId === this.query.queryId
@@ -172,7 +172,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
       if (
         common.isDefined(this.query.queryId) &&
-        this.query.queryId !== common.EMPTY_REPORT_ID &&
+        this.query.queryId !== common.EMPTY_QUERY_ID &&
         this.query.status === common.QueryStatusEnum.New &&
         this.isAutoRun === true
       ) {
@@ -188,7 +188,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
       if (
         common.isDefined(oldMconfig) &&
-        oldMconfig.mconfigId !== common.EMPTY_REPORT_ID
+        oldMconfig.mconfigId !== common.EMPTY_MCONFIG_ID
       ) {
         if (
           oldMconfig.extendedFilters.length !==

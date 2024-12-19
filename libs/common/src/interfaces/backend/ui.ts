@@ -3,6 +3,7 @@ import { IsBoolean, IsEnum, IsInt, ValidateNested } from 'class-validator';
 import { enums } from '~common/barrels/enums';
 import { IsTimezone } from '~common/functions/is-timezone';
 import { Fraction } from '../blockml/fraction';
+import { ProjectReportLink } from './project-report-link';
 
 export class Ui {
   @IsInt()
@@ -28,6 +29,10 @@ export class Ui {
 
   @IsBoolean()
   showHours: boolean;
+
+  @ValidateNested()
+  @Type(() => ProjectReportLink)
+  projectReportLinks: ProjectReportLink[];
 
   @IsBoolean()
   showMetricsParameters: boolean;

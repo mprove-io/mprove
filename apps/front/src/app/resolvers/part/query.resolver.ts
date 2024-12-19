@@ -102,8 +102,8 @@ export class QueryResolver implements Resolve<Observable<boolean>> {
       return of(true);
     }
 
-    if (parametersQueryId === common.EMPTY_REPORT_ID) {
-      if (query.queryId !== common.EMPTY_REPORT_ID) {
+    if (parametersQueryId === common.EMPTY_QUERY_ID) {
+      if (query.queryId !== common.EMPTY_QUERY_ID) {
         this.mqQuery.updatePart({ query: emptyQuery });
       }
 

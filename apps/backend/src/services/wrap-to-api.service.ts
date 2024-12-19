@@ -499,6 +499,10 @@ export class WrapToApiService {
           ? user.ui?.showHours
           : constants.DEFAULT_UI.showHours,
 
+        projectReportLinks: common.isDefined(user.ui?.projectReportLinks)
+          ? user.ui?.projectReportLinks
+          : constants.DEFAULT_UI.projectReportLinks,
+
         modelTreeLevels: common.isDefined(user.ui?.modelTreeLevels)
           ? user.ui?.modelTreeLevels
           : constants.DEFAULT_UI.modelTreeLevels

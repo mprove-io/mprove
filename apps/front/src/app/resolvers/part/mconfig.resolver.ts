@@ -94,8 +94,8 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
       return of(true);
     }
 
-    if (parametersMconfigId === common.EMPTY_REPORT_ID) {
-      if (mconfig.mconfigId !== common.EMPTY_REPORT_ID) {
+    if (parametersMconfigId === common.EMPTY_MCONFIG_ID) {
+      if (mconfig.mconfigId !== common.EMPTY_MCONFIG_ID) {
         this.mqQuery.updatePart({ mconfig: emptyMconfig, query: emptyQuery });
       }
 

@@ -90,7 +90,47 @@ export class MetricsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.report = x;
 
-      // console.log('rep', x);
+      let links = this.uiQuery.getValue().projectReportLinks;
+
+      let link: common.ProjectReportLink = links.find(
+        r => r.projectId === x.projectId && r.draft === x.draft
+      );
+
+      let newProjectReportLinks;
+
+      if (common.isDefined(link)) {
+        let newLink = {
+          projectId: x.projectId,
+          draft: x.draft,
+          reportId: x.reportId,
+          lastNavTs: Date.now()
+        };
+
+        newProjectReportLinks = [
+          newLink,
+          ...links.filter(
+            r => r.projectId !== x.projectId || r.draft !== x.draft
+          )
+        ];
+      } else {
+        let newLink = {
+          projectId: x.projectId,
+          draft: x.draft,
+          reportId: x.reportId,
+          lastNavTs: Date.now()
+        };
+
+        newProjectReportLinks = [newLink, ...links];
+      }
+
+      let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
+
+      newProjectReportLinks = newProjectReportLinks.filter(
+        l => l.lastNavTs >= oneYearAgoTimestamp
+      );
+
+      this.uiQuery.updatePart({ projectReportLinks: newProjectReportLinks });
+      this.uiService.setUserUi({ projectReportLinks: newProjectReportLinks });
 
       this.queriesLength = this.report.rows.filter(row =>
         common.isDefined(row.query)

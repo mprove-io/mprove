@@ -97,9 +97,9 @@ export class NavigateService {
       common.PATH_MODEL,
       toModelId,
       common.PATH_MCONFIG,
-      common.EMPTY_REPORT_ID,
+      common.EMPTY_MCONFIG_ID,
       common.PATH_QUERY,
-      common.EMPTY_REPORT_ID
+      common.EMPTY_QUERY_ID
     ]);
   }
 

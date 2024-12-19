@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
 import equal from 'fast-deep-equal';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -9,10 +9,12 @@ import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-proj
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { ReportQuery } from '../queries/report.query';
+import { ReportsQuery } from '../queries/reports.query';
 import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
+import { NavigateService } from '../services/navigate.service';
 
 @Injectable({ providedIn: 'root' })
 export class StructReportResolver implements Resolve<Observable<boolean>> {
@@ -22,8 +24,10 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
     private userQuery: UserQuery,
     private apiService: ApiService,
     private reportQuery: ReportQuery,
+    private reportsQuery: ReportsQuery,
     private structQuery: StructQuery,
     private memberQuery: MemberQuery,
+    private navigateService: NavigateService,
     private router: Router
   ) {}
 
@@ -100,6 +104,77 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
     });
 
     let parametersReportId = route.params[common.PARAMETER_REPORT_ID];
+
+    if (parametersReportId === common.LAST_REPORT_ID) {
+      let projectReportLinks = this.uiQuery.getValue().projectReportLinks;
+      let reports = this.reportsQuery.getValue().reports;
+
+      let draftLink = projectReportLinks.find(
+        l => l.draft === true && l.projectId === nav.projectId
+      );
+
+      let pLink = projectReportLinks.find(
+        l => l.draft === false && l.projectId === nav.projectId
+      );
+
+      if (
+        common.isDefined(draftLink) &&
+        (common.isUndefined(pLink) || draftLink.lastNavTs > pLink.lastNavTs)
+      ) {
+        let draftReport = reports.find(
+          r => r.reportId === draftLink.reportId && r.draft === true
+        );
+
+        if (common.isDefined(draftReport)) {
+          this.navigateService.navigateToMetricsRep({
+            reportId: draftReport.reportId,
+            selectRowsNodeIds: []
+          });
+
+          return of(false);
+        } else if (
+          common.isDefined(pLink) &&
+          pLink.reportId !== common.EMPTY_REPORT_ID
+        ) {
+          let pReport = reports.find(
+            r => r.reportId === pLink.reportId && r.draft === false
+          );
+
+          if (common.isDefined(pReport)) {
+            this.navigateService.navigateToMetricsRep({
+              reportId: pReport.reportId,
+              selectRowsNodeIds: []
+            });
+
+            return of(false);
+          }
+        }
+      } else if (
+        common.isDefined(pLink) &&
+        pLink.reportId !== common.EMPTY_REPORT_ID
+      ) {
+        let pReport = reports.find(
+          r => r.reportId === pLink.reportId && r.draft === false
+        );
+
+        if (common.isDefined(pReport)) {
+          this.navigateService.navigateToMetricsRep({
+            reportId: pReport.reportId,
+            selectRowsNodeIds: []
+          });
+
+          return of(false);
+        }
+      } else {
+        this.navigateService.navigateToMetricsRep({
+          reportId: common.EMPTY_REPORT_ID,
+          selectRowsNodeIds: [],
+          skipDeselect: true
+        });
+
+        return of(false);
+      }
+    }
 
     let payload: apiToBackend.ToBackendGetReportRequestPayload = {
       projectId: nav.projectId,

@@ -33,6 +33,7 @@ export const DEFAULT_UI: common.Ui = {
   showMetricsChart: true,
   showMetricsChartSettings: true,
   showHours: false,
+  projectReportLinks: [],
   metricsColumnNameWidth: 450,
   metricsTimeColumnsNarrowWidth: 165,
   metricsTimeColumnsWideWidth: 220,

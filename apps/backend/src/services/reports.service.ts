@@ -580,7 +580,7 @@ export class ReportsService {
     ) {
       throw new common.ServerError({
         message:
-          common.ErEnum.BACKEND_DRAFT_TILE_IS_AVAILABLE_ONLY_TO_ITS_CREATOR
+          common.ErEnum.BACKEND_DRAFT_REPORT_IS_AVAILABLE_ONLY_TO_ITS_CREATOR
       });
     }
 
