@@ -128,7 +128,8 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
         if (common.isDefined(draftReport)) {
           this.navigateService.navigateToMetricsRep({
             reportId: draftReport.reportId,
-            selectRowsNodeIds: []
+            selectRowsNodeIds: [],
+            skipLocationChange: true
           });
 
           return of(false);
@@ -143,7 +144,8 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
           if (common.isDefined(pReport)) {
             this.navigateService.navigateToMetricsRep({
               reportId: pReport.reportId,
-              selectRowsNodeIds: []
+              selectRowsNodeIds: [],
+              skipLocationChange: true
             });
 
             return of(false);
@@ -160,7 +162,8 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
         if (common.isDefined(pReport)) {
           this.navigateService.navigateToMetricsRep({
             reportId: pReport.reportId,
-            selectRowsNodeIds: []
+            selectRowsNodeIds: [],
+            skipLocationChange: true
           });
 
           return of(false);
@@ -169,7 +172,8 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
         this.navigateService.navigateToMetricsRep({
           reportId: common.EMPTY_REPORT_ID,
           selectRowsNodeIds: [],
-          skipDeselect: true
+          skipDeselect: true,
+          skipLocationChange: true
         });
 
         return of(false);

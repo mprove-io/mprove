@@ -347,8 +347,10 @@ export class NavigateService {
     reportId: string;
     selectRowsNodeIds: string[];
     skipDeselect?: boolean;
+    skipLocationChange?: boolean;
   }) {
-    let { reportId, selectRowsNodeIds, skipDeselect } = item;
+    let { reportId, selectRowsNodeIds, skipDeselect, skipLocationChange } =
+      item;
 
     let uiState = this.uiQuery.getValue();
 
@@ -380,6 +382,9 @@ export class NavigateService {
     ];
 
     this.router.navigate(navTo, {
+      skipLocationChange: common.isDefined(skipLocationChange)
+        ? skipLocationChange
+        : false,
       queryParams: makeRepQueryParams({
         timezone: uiState.timezone,
         timeSpec: uiState.timeSpec,
