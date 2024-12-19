@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectorRef,
@@ -19,6 +20,7 @@ import {
   delay,
   filter,
   startWith,
+  take,
   tap
 } from 'rxjs/operators';
 import { DeleteFilterFnItem } from '~front/app/interfaces/delete-filter-fn-item';
@@ -35,7 +37,10 @@ import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
 import { DashboardTileChartComponent } from '../shared/dashboard-tile-chart/dashboard-tile-chart.component';
 
+import { ActivatedRoute, Router } from '@angular/router';
 import uFuzzy from '@leeoniya/ufuzzy';
+import { UiQuery } from '~front/app/queries/ui.query';
+import { StructDashboardResolver } from '~front/app/resolvers/struct-dashboard.resolver';
 
 class LayoutItem {
   id: string;
@@ -202,6 +207,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private dashboardQuery: DashboardQuery,
     private userQuery: UserQuery,
+    private router: Router,
+    private route: ActivatedRoute,
     private title: Title,
     private fb: FormBuilder,
     private structQuery: StructQuery,
@@ -212,6 +219,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private spinner: NgxSpinnerService,
     private apiService: ApiService,
     private navQuery: NavQuery,
+    private uiQuery: UiQuery,
+    private structDashboardResolver: StructDashboardResolver,
+    private location: Location,
     private cd: ChangeDetectorRef // @Inject(DOCUMENT) private _document: HTMLDocument,
   ) {}
 
@@ -334,18 +344,47 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     let timezone = this.timezoneForm.controls['timezone'].value;
 
-    this.dashboard.tiles.forEach(x => {
-      x.timezone = timezone;
-    });
+    // this.dashboard.tiles.forEach(x => {
+    //   x.timezone = timezone;
+    // });
 
-    this.dashboardService.navCreateTempDashboard({
-      tiles: this.dashboard.tiles,
-      oldDashboardId: this.dashboard.dashboardId,
-      newDashboardId: common.makeId(),
-      newDashboardFields: this.dashboard.fields,
-      deleteFilterFieldId: undefined,
-      deleteFilterMconfigId: undefined
-    });
+    // this.dashboardService.navCreateTempDashboard({
+    //   tiles: this.dashboard.tiles,
+    //   oldDashboardId: this.dashboard.dashboardId,
+    //   newDashboardId: common.makeId(),
+    //   newDashboardFields: this.dashboard.fields,
+    //   deleteFilterFieldId: undefined,
+    //   deleteFilterMconfigId: undefined
+    // });
+
+    this.uiQuery.updatePart({ timezone: timezone });
+
+    let uiState = this.uiQuery.getValue();
+
+    this.structDashboardResolver
+      .resolveRoute({
+        route: this.route.snapshot,
+        showSpinner: true,
+        timezone: uiState.timezone
+      })
+      .pipe(
+        tap(x => {
+          let uiStateB = this.uiQuery.getValue();
+
+          const url = this.router
+            .createUrlTree([], {
+              relativeTo: this.route,
+              queryParams: {
+                timezone: uiStateB.timezone.split('/').join('-')
+              }
+            })
+            .toString();
+
+          this.location.go(url);
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 
   run() {

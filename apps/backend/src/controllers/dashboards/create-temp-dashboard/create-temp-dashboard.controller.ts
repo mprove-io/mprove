@@ -78,7 +78,7 @@ export class CreateTempDashboardController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckExists({
+    let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
       memberId: user.userId
     });
@@ -92,7 +92,7 @@ export class CreateTempDashboardController {
     let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
-      member: member
+      member: userMember
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
@@ -115,7 +115,7 @@ export class CreateTempDashboardController {
 
     let fromDashboard = await this.dashboardsService.getDashboardXCheckAccess({
       user: user,
-      member: member,
+      member: userMember,
       dashboard: fromDashboardEntity,
       bridge: bridge,
       projectId: projectId

@@ -1,17 +1,36 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
+import { helper } from '~backend/barrels/helper';
+import { interfaces } from '~backend/barrels/interfaces';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { getRetryOption } from '~backend/functions/get-retry-option';
+import { makeDashboardFileText } from '~backend/functions/make-dashboard-file-text';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { DashboardsService } from '~backend/services/dashboards.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
+import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
+
+let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -19,12 +38,18 @@ export class GetDashboardController {
   constructor(
     private membersService: MembersService,
     private branchesService: BranchesService,
+    private rabbitService: RabbitService,
+    private blockmlService: BlockmlService,
     private structsService: StructsService,
     private projectsService: ProjectsService,
     private dashboardsService: DashboardsService,
     private bridgesService: BridgesService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapToApiService
+    private wrapToApiService: WrapToApiService,
+    private wrapToEntService: WrapToEntService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard)
@@ -34,10 +59,13 @@ export class GetDashboardController {
   ) {
     let reqValid: apiToBackend.ToBackendGetDashboardRequest = request.body;
 
-    let { projectId, isRepoProd, branchId, envId, dashboardId } =
+    let { traceId } = reqValid.info;
+    let { projectId, isRepoProd, branchId, envId, dashboardId, timezone } =
       reqValid.payload;
 
-    await this.projectsService.getProjectCheckExists({
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+
+    let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
     });
 
@@ -65,31 +93,229 @@ export class GetDashboardController {
       envId: envId
     });
 
-    let dashboard = await this.dashboardsService.getDashboardCheckExists({
+    // let dashboard = await this.dashboardsService.getDashboardCheckExists({
+    //   structId: bridge.structId,
+    //   dashboardId: dashboardId
+    // });
+
+    // let dashboardX = await this.dashboardsService.getDashboardXCheckAccess({
+    //   user: user,
+    //   member: userMember,
+    //   dashboard: dashboard,
+    //   bridge: bridge,
+    //   projectId: projectId
+    // });
+
+    let currentStruct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
-      dashboardId: dashboardId
+      projectId: projectId
     });
 
-    let dashboardX = await this.dashboardsService.getDashboardXCheckAccess({
+    //
+    //
+    //
+
+    let oldDashboardId = dashboardId;
+
+    let fromDashboardEntity =
+      await this.dashboardsService.getDashboardCheckExists({
+        structId: bridge.structId,
+        dashboardId: oldDashboardId
+      });
+
+    let fromDashboard = await this.dashboardsService.getDashboardXCheckAccess({
       user: user,
       member: userMember,
-      dashboard: dashboard,
+      dashboard: fromDashboardEntity,
       bridge: bridge,
       projectId: projectId
     });
 
-    let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
+    fromDashboard.tiles.forEach(freshTile => {
+      freshTile.timezone = timezone;
     });
 
+    // fromDashboard.fields = newDashboardFields;
+
+    let newDashboardId = fromDashboard.dashboardId;
+
+    let dashboardFileText = makeDashboardFileText({
+      dashboard: fromDashboard,
+      newDashboardId: newDashboardId,
+      newTitle: fromDashboard.title,
+      roles: fromDashboard.accessRoles.join(', '),
+      users: fromDashboard.accessUsers.join(', '),
+      defaultTimezone: currentStruct.defaultTimezone,
+      deleteFilterFieldId: undefined,
+      deleteFilterMconfigId: undefined
+    });
+
+    let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {
+      info: {
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
+        traceId: reqValid.info.traceId
+      },
+      payload: {
+        orgId: project.orgId,
+        projectId: projectId,
+        repoId: repoId,
+        branch: branchId,
+        remoteType: project.remoteType,
+        gitUrl: project.gitUrl,
+        privateKey: project.privateKey,
+        publicKey: project.publicKey
+      }
+    };
+
+    let diskResponse =
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
+        {
+          routingKey: helper.makeRoutingKeyToDisk({
+            orgId: project.orgId,
+            projectId: projectId
+          }),
+          message: getCatalogFilesRequest,
+          checkIsOk: true
+        }
+      );
+
+    // add dashboard file
+
+    let fileName = `${newDashboardId}${common.FileExtensionEnum.Dashboard}`;
+
+    let mdir = currentStruct.mproveDirValue;
+
+    if (
+      mdir.length > 2 &&
+      mdir.substring(0, 2) === common.MPROVE_CONFIG_DIR_DOT_SLASH
+    ) {
+      mdir = mdir.substring(2);
+    }
+
+    let dashboardFile = diskResponse.payload.files.find(
+      x =>
+        x.name ===
+        `${fromDashboard.dashboardId}${common.FileExtensionEnum.Dashboard}`
+    );
+
+    let relativePath =
+      [
+        common.MPROVE_CONFIG_DIR_DOT,
+        common.MPROVE_CONFIG_DIR_DOT_SLASH
+      ].indexOf(currentStruct.mproveDirValue) > -1
+        ? `${common.MPROVE_USERS_FOLDER}/${user.alias}/${fileName}`
+        : `${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}/${fileName}`;
+
+    let fileNodeId = `${projectId}/${relativePath}`;
+
+    let pathString = JSON.stringify(fileNodeId.split('/'));
+
+    let fileId = common.MyRegex.replaceSlashesWithUnderscores(relativePath);
+
+    let newDashboardFile: common.DiskCatalogFile = {
+      projectId: projectId,
+      repoId: repoId,
+      fileId: fromDashboard.temp === true ? fileId : dashboardFile.fileId,
+      pathString:
+        fromDashboard.temp === true ? pathString : dashboardFile.pathString,
+      fileNodeId:
+        fromDashboard.temp === true ? fileNodeId : dashboardFile.fileNodeId,
+      name: fileName,
+      content: dashboardFileText
+    };
+
+    let diskFiles = [
+      newDashboardFile,
+      ...diskResponse.payload.files.filter(x => {
+        let ar = x.name.split('.');
+        let ext = ar[ar.length - 1];
+        let allow =
+          [
+            common.FileExtensionEnum.Chart,
+            common.FileExtensionEnum.Dashboard
+          ].indexOf(`.${ext}` as common.FileExtensionEnum) < 0;
+        return allow;
+      })
+    ];
+
+    let { struct, dashboards, mconfigs, queries } =
+      await this.blockmlService.rebuildStruct({
+        traceId: traceId,
+        orgId: project.orgId,
+        projectId: projectId,
+        structId: bridge.structId,
+        diskFiles: diskFiles,
+        mproveDir: diskResponse.payload.mproveDir,
+        skipDb: true,
+        envId: envId
+      });
+
+    let newDashboard = dashboards.find(x => x.dashboardId === newDashboardId);
+
+    if (common.isUndefined(newDashboard)) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_GET_DASHBOARD_FAIL,
+        data: {
+          structErrors: struct.errors
+        }
+      });
+    }
+
+    newDashboard.temp = fromDashboard.temp;
+
+    let dashboardMconfigIds = newDashboard.tiles.map(x => x.mconfigId);
+    let dashboardMconfigs = mconfigs.filter(
+      x => dashboardMconfigIds.indexOf(x.mconfigId) > -1
+    );
+
+    let dashboardQueryIds = newDashboard.tiles.map(x => x.queryId);
+    let dashboardQueries = queries.filter(
+      x => dashboardQueryIds.indexOf(x.queryId) > -1
+    );
+
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insert: {
+                // dashboards: [
+                //   this.wrapToEntService.wrapToEntityDashboard(newDashboard)
+                // ],
+                mconfigs: dashboardMconfigs.map(x =>
+                  this.wrapToEntService.wrapToEntityMconfig(x)
+                )
+              },
+              insertOrUpdate: {
+                queries: dashboardQueries.map(x =>
+                  this.wrapToEntService.wrapToEntityQuery(x)
+                )
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    //
+    //
+    //
+
     let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
+
+    let newDashboardX = await this.dashboardsService.getDashboardXCheckAccess({
+      user: user,
+      member: userMember,
+      dashboard: this.wrapToEntService.wrapToEntityDashboard(newDashboard),
+      bridge: bridge,
+      projectId: projectId
+    });
 
     let payload: apiToBackend.ToBackendGetDashboardResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: apiMember,
-      dashboard: dashboardX
+      dashboard: newDashboardX
     };
 
     return payload;

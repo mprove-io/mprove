@@ -14,9 +14,9 @@ import { DashboardQuery } from '../queries/dashboard.query';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { StructQuery } from '../queries/struct.query';
+import { UiQuery } from '../queries/ui.query';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
-import { MyDialogService } from '../services/my-dialog.service';
 
 @Injectable({ providedIn: 'root' })
 export class StructDashboardResolver implements Resolve<Observable<boolean>> {
@@ -27,7 +27,7 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
     private dashboardQuery: DashboardQuery,
     private structQuery: StructQuery,
     private memberQuery: MemberQuery,
-    private myDialogService: MyDialogService,
+    private uiQuery: UiQuery,
     private router: Router
   ) {}
 
@@ -35,6 +35,26 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
   ): Observable<boolean> {
+    let timezoneParam: common.TimeSpecEnum = route.queryParams?.timezone;
+
+    let uiState = this.uiQuery.getValue();
+
+    return this.resolveRoute({
+      route: route,
+      showSpinner: false,
+      timezone: common.isDefined(timezoneParam)
+        ? timezoneParam.split('-').join('/')
+        : uiState.timezone
+    });
+  }
+
+  resolveRoute(item: {
+    route: ActivatedRouteSnapshot;
+    showSpinner: boolean;
+    timezone: string;
+  }): Observable<boolean> {
+    let { route, showSpinner, timezone } = item;
+
     let nav: NavState;
     this.navQuery
       .select()
@@ -65,14 +85,16 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
       envId: nav.envId,
-      dashboardId: parametersDashboardId
+      dashboardId: parametersDashboardId,
+      timezone: timezone
     };
 
     return this.apiService
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
-        payload: payload
+        payload: payload,
+        showSpinner: showSpinner
       })
       .pipe(
         map((resp: apiToBackend.ToBackendGetDashboardResponse) => {
@@ -84,6 +106,14 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
               needValidate: resp.payload.needValidate
             });
             this.dashboardQuery.update(resp.payload.dashboard);
+
+            let uiState = this.uiQuery.getValue();
+
+            if (uiState.timezone !== timezone) {
+              this.uiQuery.updatePart({
+                timezone: timezone
+              });
+            }
 
             return true;
           } else if (
