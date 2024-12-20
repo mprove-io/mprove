@@ -42,9 +42,13 @@
     class="flex flex-row items-center"
     *ngIf="query?.status === queryStatusEnum.Completed"
   >
-    <div class="ml-5"
+    <div class="ml-5" *ngIf="showDataRowsLength === true"
       >Completed - {{ completedTimeAgo }} - {{ query.lastCompleteDuration }}s -
       {{ query.data.length }} rows</div
+    >
+    <div class="ml-5" *ngIf="showDataRowsLength === false"
+      >Completed - {{ completedTimeAgo }} -
+      {{ query.lastCompleteDuration }}s</div
     >
   </div>
 </div>

@@ -95,7 +95,10 @@
 
     <div class="flex flex-1 flex-row items-center justify-end">
       <div *ngIf="!!query" class="flex flex-row items-center justify-end">
-        <m-query-status [query]="query"></m-query-status>
+        <m-query-status
+          [query]="query"
+          [showDataRowsLength]="true"
+        ></m-query-status>
       </div>
 
       <div

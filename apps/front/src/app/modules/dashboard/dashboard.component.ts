@@ -103,6 +103,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   timezones = common.getTimezones();
 
+  lastCompletedQuery: common.Query;
+
   dashboard: common.DashboardX;
   dashboard$ = this.dashboardQuery.select().pipe(
     filter(x => common.isDefined(x.dashboardId)),
