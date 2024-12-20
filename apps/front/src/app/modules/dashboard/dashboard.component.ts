@@ -108,27 +108,30 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     filter(x => common.isDefined(x.dashboardId)),
     tap(x => {
       this.dashboard = x;
-
       // console.log(this.dashboard);
 
-      let usedTimezones: string[] = [];
+      let uiState = this.uiQuery.getValue();
 
-      this.dashboard.tiles.forEach(tile => {
-        let mconfigTimezone = tile.mconfig?.timezone;
+      this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
 
-        if (
-          common.isDefined(mconfigTimezone) &&
-          usedTimezones.findIndex(t => mconfigTimezone === t) < 0
-        ) {
-          usedTimezones.push(mconfigTimezone);
-        }
-      });
+      // let usedTimezones: string[] = [];
 
-      if (usedTimezones.length > 1 || usedTimezones.length === 0) {
-        this.timezoneForm.controls['timezone'].setValue(undefined);
-      } else {
-        this.timezoneForm.controls['timezone'].setValue(usedTimezones[0]);
-      }
+      // this.dashboard.tiles.forEach(tile => {
+      //   let mconfigTimezone = tile.mconfig?.timezone;
+
+      //   if (
+      //     common.isDefined(mconfigTimezone) &&
+      //     usedTimezones.findIndex(t => mconfigTimezone === t) < 0
+      //   ) {
+      //     usedTimezones.push(mconfigTimezone);
+      //   }
+      // });
+
+      // if (usedTimezones.length > 1 || usedTimezones.length === 0) {
+      //   this.timezoneForm.controls['timezone'].setValue(undefined);
+      // } else {
+      //   this.timezoneForm.controls['timezone'].setValue(usedTimezones[0]);
+      // }
 
       this.filtersIsExpanded =
         this.filtersIsExpanded === false

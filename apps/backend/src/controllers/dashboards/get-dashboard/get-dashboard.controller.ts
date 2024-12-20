@@ -280,14 +280,11 @@ export class GetDashboardController {
             await this.db.packer.write({
               tx: tx,
               insert: {
-                // dashboards: [
-                //   this.wrapToEntService.wrapToEntityDashboard(newDashboard)
-                // ],
                 mconfigs: dashboardMconfigs.map(x =>
                   this.wrapToEntService.wrapToEntityMconfig(x)
                 )
               },
-              insertOrUpdate: {
+              insertOrDoNothing: {
                 queries: dashboardQueries.map(x =>
                   this.wrapToEntService.wrapToEntityQuery(x)
                 )

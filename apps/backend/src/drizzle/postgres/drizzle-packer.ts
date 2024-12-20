@@ -41,6 +41,7 @@ export interface RecordsPack {
   insert?: interfaces.DbRecords;
   update?: interfaces.DbRecords;
   insertOrUpdate?: interfaces.DbRecords;
+  insertOrDoNothing?: interfaces.DbRecords;
   rawQueries?: SQLWrapper[];
   serverTs?: number;
 }
@@ -49,6 +50,7 @@ export interface RecordsPackOutput {
   insert?: interfaces.DbRecords;
   update?: interfaces.DbRecords;
   insertOrUpdate?: interfaces.DbRecords;
+  insertOrDoNothing?: interfaces.DbRecords;
   rawQueries?: SQLWrapper[];
   serverTs?: number;
 }
@@ -62,6 +64,7 @@ export class DrizzlePacker {
       insert: insertRecords,
       update: updateRecords,
       insertOrUpdate: insOrUpdRecords,
+      insertOrDoNothing: insOrDoNothingRecords,
       rawQueries: rawQueries,
       serverTs: serverTs
     } = item;
@@ -1027,6 +1030,43 @@ export class DrizzlePacker {
       }
     }
 
+    //
+    //
+    //
+
+    if (common.isDefined(insOrDoNothingRecords)) {
+      Object.keys(insOrDoNothingRecords).forEach(key => {
+        if (
+          common.isDefined(
+            insOrDoNothingRecords[key as keyof interfaces.DbRecords]
+          )
+        ) {
+          refreshServerTs(
+            insOrDoNothingRecords[key as keyof interfaces.DbRecords] as any,
+            newServerTs
+          );
+        }
+      });
+
+      if (
+        common.isDefined(insOrDoNothingRecords.queries) &&
+        insOrDoNothingRecords.queries.length > 0
+      ) {
+        insOrDoNothingRecords.queries = Array.from(
+          new Set(insOrDoNothingRecords.queries.map(x => x.queryId))
+        ).map(id => insOrDoNothingRecords.queries.find(x => x.queryId === id));
+
+        insOrDoNothingRecords.queries = setUndefinedToNull({
+          ents: insOrDoNothingRecords.queries,
+          table: queriesTable
+        });
+
+        await tx
+          .insert(queriesTable)
+          .values(insOrDoNothingRecords.queries)
+          .onConflictDoNothing();
+      }
+    }
     //
     //
     //

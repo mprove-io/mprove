@@ -280,7 +280,7 @@ export class CreateTempDashboardController {
                   this.wrapToEntService.wrapToEntityMconfig(x)
                 )
               },
-              insertOrUpdate: {
+              insertOrDoNothing: {
                 queries: dashboardQueries.map(x =>
                   this.wrapToEntService.wrapToEntityQuery(x)
                 )

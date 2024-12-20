@@ -376,14 +376,16 @@ export class ModifyDashboardController {
               )
             },
             insertOrUpdate: {
-              queries: dashboardQueries.map(x =>
-                this.wrapToEntService.wrapToEntityQuery(x)
-              ),
               dashboards: common.isDefined(newDashboard)
                 ? [this.wrapToEntService.wrapToEntityDashboard(newDashboard)]
                 : undefined,
               structs: [struct],
               bridges: [...branchBridges]
+            },
+            insertOrDoNothing: {
+              queries: dashboardQueries.map(x =>
+                this.wrapToEntService.wrapToEntityQuery(x)
+              )
             }
           });
 

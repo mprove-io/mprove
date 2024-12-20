@@ -335,11 +335,13 @@ export class CreateDashboardController {
                 )
               },
               insertOrUpdate: {
-                queries: dashboardQueries.map(x =>
-                  this.wrapToEntService.wrapToEntityQuery(x)
-                ),
                 structs: [struct],
                 bridges: [...branchBridges]
+              },
+              insertOrDoNothing: {
+                queries: dashboardQueries.map(x =>
+                  this.wrapToEntService.wrapToEntityQuery(x)
+                )
               }
             })
         ),
