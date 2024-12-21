@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyDirective } from '@ngneat/helipopper';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
@@ -22,7 +23,8 @@ import { ChartsComponent } from './charts.component';
     UiSwitchModule,
     NgxSpinnerModule,
     TippyDirective,
-    ScrollingModule
+    ScrollingModule,
+    NgSelectModule
   ]
 })
 export class ChartsModule {}

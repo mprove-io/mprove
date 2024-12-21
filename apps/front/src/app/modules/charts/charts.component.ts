@@ -23,7 +23,10 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
+import { FormBuilder } from '@angular/forms';
 import uFuzzy from '@leeoniya/ufuzzy';
+import { StructQuery } from '~front/app/queries/struct.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { DataService } from '~front/app/services/data.service';
 
 class ModelXWithTotalCharts extends common.ModelX {
@@ -125,9 +128,30 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
   private timer: any;
 
+  timezoneForm = this.fb.group({
+    timezone: [
+      {
+        value: undefined
+      }
+    ]
+  });
+
+  timezones = common.getTimezones();
+
+  struct$ = this.structQuery.select().pipe(
+    tap(x => {
+      if (x.allowTimezones === false) {
+        this.timezoneForm.controls['timezone'].disable();
+      } else {
+        this.timezoneForm.controls['timezone'].enable();
+      }
+    })
+  );
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
+    private fb: FormBuilder,
     private cd: ChangeDetectorRef,
     private modelsQuery: ModelsQuery,
     private chartsQuery: ChartsQuery,
@@ -139,7 +163,9 @@ export class ChartsComponent implements OnInit, OnDestroy {
     private myDialogService: MyDialogService,
     private spinner: NgxSpinnerService,
     private navigateService: NavigateService,
+    private uiQuery: UiQuery,
     private location: Location,
+    private structQuery: StructQuery,
     private title: Title
   ) {}
 
@@ -155,10 +181,21 @@ export class ChartsComponent implements OnInit, OnDestroy {
     this.calculateAspectRatio();
   }
 
+  ngOnDestroy() {
+    // console.log('ngOnDestroyVizs')
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+  }
+
   ngOnInit() {
     this.calculateAspectRatio();
 
     this.title.setTitle(this.pageTitle);
+
+    let uiState = this.uiQuery.getValue();
+
+    this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
 
     // let searchFileName = this.route.snapshot.queryParamMap.get(
     //   'searchFileName'
@@ -331,7 +368,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd,
-      chartId: item.chartId
+      chartId: item.chartId,
+      timezone: this.timezoneForm.controls['timezone'].value
     };
 
     let query: common.Query;
@@ -465,10 +503,28 @@ export class ChartsComponent implements OnInit, OnDestroy {
     this.navigateService.navigateToModel(modelId);
   }
 
-  ngOnDestroy() {
-    // console.log('ngOnDestroyVizs')
-    if (this.timer) {
-      clearTimeout(this.timer);
+  timezoneChange() {
+    (document.activeElement as HTMLElement).blur();
+
+    let timezone = this.timezoneForm.controls['timezone'].value;
+
+    this.uiQuery.updatePart({ timezone: timezone });
+
+    if (this.showList === false) {
+      this.isShow = false;
+      setTimeout(() => {
+        this.isShow = true;
+      });
     }
+  }
+
+  timezoneSearchFn(term: string, timezone: { value: string; label: string }) {
+    let haystack = [`${timezone.label}`];
+
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, term);
+
+    return idxs != null && idxs.length > 0;
   }
 }

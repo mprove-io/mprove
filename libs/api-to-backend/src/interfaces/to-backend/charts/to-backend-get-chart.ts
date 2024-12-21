@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import { IsBoolean, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
+import { IsTimezone } from '~common/_index';
 
 export class ToBackendGetChartRequestPayload {
   @IsString()
@@ -18,6 +19,9 @@ export class ToBackendGetChartRequestPayload {
 
   @IsString()
   chartId: string;
+
+  @IsTimezone()
+  timezone: string;
 }
 
 export class ToBackendGetChartRequest extends ToBackendRequest {

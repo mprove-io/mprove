@@ -68,6 +68,44 @@
 
         <div class="flex-grow"></div>
 
+        <div class="flex flex-row items-center space-x-5">
+          <div class="text-gray1 flex h-9 select-none items-center text-base"
+            >Timezone</div
+          >
+
+          <form [formGroup]="timezoneForm">
+            <ng-select
+              #chartsTimezoneSelect
+              data-cy="chartsTimezoneSelect"
+              class="w-[300px] text-base"
+              [items]="timezones"
+              [clearable]="false"
+              [searchable]="true"
+              [searchFn]="timezoneSearchFn"
+              (change)="timezoneChange()"
+              (keyup.esc)="
+                $event.stopImmediatePropagation(); chartsTimezoneSelect.blur()
+              "
+              (keyup.enter)="
+                $event.stopImmediatePropagation(); chartsTimezoneSelect.blur()
+              "
+              placeholder="Tiles have different timezones"
+              appendTo="body"
+              bindLabel="label"
+              bindValue="value"
+              formControlName="timezone"
+            >
+              <ng-template ng-label-tmp let-item="item">
+                <div class="truncate">{{ item.label }}</div>
+              </ng-template>
+
+              <ng-template ng-option-tmp let-item="item">
+                <div class="truncate">{{ item.label }}</div>
+              </ng-template>
+            </ng-select>
+          </form>
+        </div>
+
         <div class="text-gray1 flex flex-row items-center text-base">
           <ng-template #templateNewChart>
             <div *ngIf="alias === restrictedUserAlias"
@@ -434,6 +472,7 @@
 <div *ngIf="member$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>
 <div *ngIf="alias$ | async"></div>
+<div *ngIf="struct$ | async"></div>
 
 <!-- [ngClass]="{
   'h-1/2': screenAspectRatio >= 1.5,

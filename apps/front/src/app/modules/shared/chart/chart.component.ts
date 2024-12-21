@@ -11,6 +11,7 @@ import { concatMap, take, tap } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DataService, QDataRow } from '~front/app/services/data.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
@@ -69,6 +70,7 @@ export class ChartComponent implements OnInit, OnDestroy {
     private apiService: ApiService,
     private navQuery: NavQuery,
     private dataService: DataService,
+    private uiQuery: UiQuery,
     private memberQuery: MemberQuery,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
@@ -93,7 +95,8 @@ export class ChartComponent implements OnInit, OnDestroy {
       branchId: nav.branchId,
       envId: nav.envId,
       isRepoProd: nav.isRepoProd,
-      chartId: this.chart.chartId
+      chartId: this.chart.chartId,
+      timezone: this.uiQuery.getValue().timezone
     };
 
     let query: common.Query;

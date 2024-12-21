@@ -153,6 +153,26 @@ export class CreateTempMconfigAndQueryController {
     let newMconfig = blockmlProcessQueryResponse.payload.mconfig;
     let newQuery = blockmlProcessQueryResponse.payload.query;
 
+    let newQueryEnt = this.wrapToEntService.wrapToEntityQuery(newQuery);
+    let newMconfigEnt = this.wrapToEntService.wrapToEntityMconfig(newMconfig);
+
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insert: {
+                mconfigs: [newMconfigEnt]
+              },
+              insertOrDoNothing: {
+                queries: [newQueryEnt]
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
+
     let query = await this.db.drizzle.query.queriesTable.findFirst({
       where: and(
         eq(queriesTable.queryId, newQuery.queryId),
@@ -166,26 +186,6 @@ export class CreateTempMconfigAndQueryController {
     //     project_id: newQuery.projectId
     //   }
     // });
-
-    let newQueryEnt = this.wrapToEntService.wrapToEntityQuery(newQuery);
-    let newMconfigEnt = this.wrapToEntService.wrapToEntityMconfig(newMconfig);
-
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              insert: {
-                mconfigs: [newMconfigEnt]
-              },
-              insertOrUpdate: {
-                queries: common.isDefined(query) ? [] : [newQueryEnt]
-              }
-            })
-        ),
-      getRetryOption(this.cs, this.logger)
-    );
 
     // let records = await this.dbService.writeRecords({
     //   modify: false,
