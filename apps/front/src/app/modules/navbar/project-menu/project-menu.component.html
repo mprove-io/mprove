@@ -25,6 +25,27 @@
         >{{ nav?.projectName | capitalize }} Project</div
       >
 
+      <div
+        tp="Project is restricted for demo purposes. Only admin can access."
+        placement="left"
+        [tpIsEnabled]="nav.orgName === firstOrgName && isAdmin === false"
+      >
+        <button
+          class="text-gray1 hover:bg-blue2 block w-full px-4 py-2 text-left text-base focus:outline-none"
+          [ngClass]="{
+            'font-semibold': lastUrl === pathTeam,
+            'text-gray-400': nav.orgName === firstOrgName && isAdmin === false,
+            'border-gray3': !(nav.orgName === firstOrgName && isAdmin === false)
+          }"
+          [disabled]="
+            lastUrl === pathTeam ||
+            (nav.orgName === firstOrgName && isAdmin === false)
+          "
+          (click)="t1.hide(); navigateTeam()"
+          >Team</button
+        >
+      </div>
+
       <button
         class="text-gray1 hover:bg-blue2 block w-full px-4 py-2 text-left text-base focus:outline-none"
         [ngClass]="{
@@ -74,27 +95,6 @@
           "
           (click)="t1.hide(); navigateConnections()"
           >Connections</button
-        >
-      </div>
-
-      <div
-        tp="Project is restricted for demo purposes. Only admin can access."
-        placement="left"
-        [tpIsEnabled]="nav.orgName === firstOrgName && isAdmin === false"
-      >
-        <button
-          class="text-gray1 hover:bg-blue2 block w-full px-4 py-2 text-left text-base focus:outline-none"
-          [ngClass]="{
-            'font-semibold': lastUrl === pathTeam,
-            'text-gray-400': nav.orgName === firstOrgName && isAdmin === false,
-            'border-gray3': !(nav.orgName === firstOrgName && isAdmin === false)
-          }"
-          [disabled]="
-            lastUrl === pathTeam ||
-            (nav.orgName === firstOrgName && isAdmin === false)
-          "
-          (click)="t1.hide(); navigateTeam()"
-          >Team</button
         >
       </div>
     </div>

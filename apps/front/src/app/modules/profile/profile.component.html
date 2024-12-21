@@ -15,9 +15,9 @@
             <div class="flex h-16 items-center justify-end font-semibold"
               >Name</div
             >
-            <div class="flex h-16 items-center justify-end font-semibold"
+            <!-- <div class="flex h-16 items-center justify-end font-semibold"
               >Default Time Zone</div
-            >
+            > -->
             <div class="flex h-16 items-center justify-end font-semibold"
               >Email</div
             >
@@ -81,11 +81,11 @@
               class="flex h-16 max-w-xl items-center truncate text-base"
               >{{ userQuery.fullName$ | async }}</div
             >
-            <div
+            <!-- <div
               data-cy="profileTimezone"
               class="flex h-16 items-center text-base"
               >{{ userTimezoneLabel }}</div
-            >
+            > -->
             <div
               data-cy="profileEmail"
               class="flex h-16 items-center text-base"
@@ -199,7 +199,7 @@
               >
             </div>
 
-            <div class="flex h-16 items-center">
+            <!-- <div class="flex h-16 items-center">
               <div
                 tp="User is restricted. Sign Up at https://mprove.io to get full access."
                 [tpIsEnabled]="alias === restrictedUserAlias"
@@ -217,7 +217,7 @@
                   >Edit</button
                 ></div
               >
-            </div>
+            </div> -->
             <div class="flex h-16 items-center"></div>
             <div class="flex h-16 items-center"></div>
             <div class="flex items-center"></div>

@@ -82,12 +82,17 @@ export class NavbarComponent implements OnInit {
 
   checkUrls(url: string) {
     this.isFilesRouteActive = url.split('/')[11] === constants.PATH_FILES;
+
     this.isChartsRouteActive =
-      url.split('/')[11].split('?')[0] === constants.PATH_CHARTS;
+      url.split('/')[11]?.split('?')[0] === constants.PATH_CHARTS;
+
     this.isDashboardsRouteActive =
       url.split('/')[11] === constants.PATH_DASHBOARDS;
+
     this.isModelsRouteActive = url.split('/')[11] === constants.PATH_MODELS;
+
     this.isMetricsRouteActive = url.split('/')[11] === constants.PATH_METRICS;
+
     this.cd.detectChanges();
   }
 

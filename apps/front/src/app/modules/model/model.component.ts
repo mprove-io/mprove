@@ -24,13 +24,11 @@ import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { ModelQuery, ModelState } from '~front/app/queries/model.query';
 import { MqQuery } from '~front/app/queries/mq.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DataSizeService } from '~front/app/services/data-size.service';
 import { QDataRow } from '~front/app/services/data.service';
-import { FileService } from '~front/app/services/file.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -43,7 +41,9 @@ import { constants as frontConstants } from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { DataService } from '~front/app/services/data.service';
+import { UiService } from '~front/app/services/ui.service';
 
 export class ChartTypeItem {
   label: string;
@@ -133,6 +133,8 @@ export class ModelComponent implements OnInit, OnDestroy {
 
       if (this.mconfig.timezone) {
         this.timezoneForm.controls['timezone'].setValue(this.mconfig.timezone);
+        this.uiQuery.updatePart({ timezone: this.mconfig.timezone });
+        this.uiService.setUserUi({ timezone: this.mconfig.timezone });
       }
 
       if (this.mconfig.limit) {
@@ -505,10 +507,10 @@ export class ModelComponent implements OnInit, OnDestroy {
     private modelQuery: ModelQuery,
     private userQuery: UserQuery,
     private mqQuery: MqQuery,
-    private repoQuery: RepoQuery,
+    private uiQuery: UiQuery,
+    private uiService: UiService,
     private apiService: ApiService,
     private structQuery: StructQuery,
-    private fileService: FileService,
     private navigateService: NavigateService,
     private structService: StructService,
     private spinner: NgxSpinnerService,
@@ -676,6 +678,9 @@ export class ModelComponent implements OnInit, OnDestroy {
     let newMconfig = this.structService.makeMconfig();
 
     newMconfig.timezone = timezone;
+
+    this.uiQuery.updatePart({ timezone: timezone });
+    this.uiService.setUserUi({ timezone: timezone });
 
     this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
   }
