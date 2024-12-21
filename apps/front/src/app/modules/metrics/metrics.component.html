@@ -48,36 +48,38 @@
               <div class="text-gray1 ml-6 select-none text-base">Tz</div>
 
               <div class="flex max-w-[260px] flex-1">
-                <ng-select
-                  #metricsTimezoneSelect
-                  data-cy="metricsTimezoneSelect"
-                  class="w-full text-base"
-                  [items]="timezones"
-                  [(ngModel)]="timezone"
-                  [clearable]="false"
-                  [searchable]="true"
-                  [searchFn]="timezoneSearchFn"
-                  (change)="timezoneChange()"
-                  (keyup.esc)="
-                    $event.stopImmediatePropagation();
-                    metricsTimezoneSelect.blur()
-                  "
-                  (keyup.enter)="
-                    $event.stopImmediatePropagation();
-                    metricsTimezoneSelect.blur()
-                  "
-                  appendTo="body"
-                  bindLabel="label"
-                  bindValue="value"
-                >
-                  <ng-template ng-label-tmp let-item="item">
-                    <div class="truncate">{{ item.label }}</div>
-                  </ng-template>
+                <form [formGroup]="timezoneForm" class="w-full">
+                  <ng-select
+                    #metricsTimezoneSelect
+                    data-cy="metricsTimezoneSelect"
+                    class="w-full text-base"
+                    [items]="timezones"
+                    [clearable]="false"
+                    [searchable]="true"
+                    [searchFn]="timezoneSearchFn"
+                    (change)="timezoneChange()"
+                    (keyup.esc)="
+                      $event.stopImmediatePropagation();
+                      metricsTimezoneSelect.blur()
+                    "
+                    (keyup.enter)="
+                      $event.stopImmediatePropagation();
+                      metricsTimezoneSelect.blur()
+                    "
+                    appendTo="body"
+                    bindLabel="label"
+                    bindValue="value"
+                    formControlName="timezone"
+                  >
+                    <ng-template ng-label-tmp let-item="item">
+                      <div class="truncate">{{ item.label }}</div>
+                    </ng-template>
 
-                  <ng-template ng-option-tmp let-item="item">
-                    <div class="truncate">{{ item.label }}</div>
-                  </ng-template>
-                </ng-select>
+                    <ng-template ng-option-tmp let-item="item">
+                      <div class="truncate">{{ item.label }}</div>
+                    </ng-template>
+                  </ng-select>
+                </form>
               </div>
             </div>
           </div>
@@ -424,3 +426,4 @@
 <div *ngIf="reports$ | async"></div>
 <div *ngIf="reportChartData$ | async"></div>
 <div *ngIf="uiQuery$ | async"></div>
+<div *ngIf="struct$ | async"></div>

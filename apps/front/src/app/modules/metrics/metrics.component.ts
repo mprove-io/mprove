@@ -164,7 +164,15 @@ export class MetricsComponent implements OnInit, OnDestroy {
     })
   );
 
-  timezone: string;
+  timezoneForm = this.fb.group({
+    timezone: [
+      {
+        value: undefined
+      }
+    ]
+  });
+
+  timezones = common.getTimezones();
 
   timeSpecForm = this.fb.group({
     timeSpec: [
@@ -204,8 +212,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
       value: common.TimeSpecEnum.Minutes
     }
   ];
-
-  timezones = common.getTimezones();
 
   chartOptions: AgChartOptions;
 
@@ -465,6 +471,16 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   runButtonTimerSubscription: Subscription;
 
+  struct$ = this.structQuery.select().pipe(
+    tap(x => {
+      if (x.allowTimezones === false) {
+        this.timezoneForm.controls['timezone'].disable();
+      } else {
+        this.timezoneForm.controls['timezone'].enable();
+      }
+    })
+  );
+
   constructor(
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
@@ -493,7 +509,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
     let uiState = this.uiQuery.getValue();
 
-    this.timezone = uiState.timezone;
+    this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
     this.timeSpecForm.controls['timeSpec'].setValue(uiState.timeSpec);
     this.fractions = [uiState.timeRangeFraction];
 
@@ -634,8 +650,10 @@ export class MetricsComponent implements OnInit, OnDestroy {
   timezoneChange() {
     (document.activeElement as HTMLElement).blur();
 
-    this.uiQuery.updatePart({ timezone: this.timezone });
-    this.uiService.setUserUi({ timezone: this.timezone });
+    let timezone = this.timezoneForm.controls['timezone'].value;
+
+    this.uiQuery.updatePart({ timezone: timezone });
+    this.uiService.setUserUi({ timezone: timezone });
 
     this.getRep();
   }
@@ -697,7 +715,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
         tap(x => {
           let uiStateB = this.uiQuery.getValue();
 
-          const url = this.router
+          let url = this.router
             .createUrlTree([], {
               relativeTo: this.route,
               queryParams: makeRepQueryParams({
