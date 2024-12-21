@@ -527,13 +527,14 @@ export class ChartsComponent implements OnInit, OnDestroy {
     this.uiService.setUserUi({ timezone: timezone });
 
     if (this.showList === false) {
+      // to rerender tiles with changed timezone
       this.isShow = false;
       setTimeout(() => {
         this.isShow = true;
       });
     }
 
-    const url = this.router
+    let url = this.router
       .createUrlTree([], {
         relativeTo: this.route,
         queryParams: { timezone: timezone.split('/').join('-') }

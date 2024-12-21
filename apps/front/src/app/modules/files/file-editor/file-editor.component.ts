@@ -529,6 +529,8 @@ export class FileEditorComponent implements OnInit, OnDestroy {
   }
 
   goTo() {
+    let uiState = this.uiQuery.getValue();
+
     let ar = this.file.name.split('.');
     let ext = ar.pop();
     let id = ar.join('.');
@@ -548,7 +550,10 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     } else if (dotExt === common.FileExtensionEnum.Chart) {
       this.navigateService.navigateToCharts({
         extra: {
-          queryParams: { search: id }
+          queryParams: {
+            search: id,
+            timezone: uiState.timezone.split('/').join('-')
+          }
         }
       });
     }

@@ -107,20 +107,25 @@ export class NavigateService {
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
 
-    this.router.navigate([
-      common.PATH_ORG,
-      this.nav.orgId,
-      common.PATH_PROJECT,
-      this.nav.projectId,
-      common.PATH_REPO,
-      repoId,
-      common.PATH_BRANCH,
-      this.nav.branchId,
-      common.PATH_ENV,
-      this.nav.envId,
-      common.PATH_DASHBOARD,
-      dashboardId
-    ]);
+    let uiState = this.uiQuery.getValue();
+
+    this.router.navigate(
+      [
+        common.PATH_ORG,
+        this.nav.orgId,
+        common.PATH_PROJECT,
+        this.nav.projectId,
+        common.PATH_REPO,
+        repoId,
+        common.PATH_BRANCH,
+        this.nav.branchId,
+        common.PATH_ENV,
+        this.nav.envId,
+        common.PATH_DASHBOARD,
+        dashboardId
+      ],
+      { queryParams: { timezone: uiState.timezone.split('/').join('-') } }
+    );
   }
 
   navigateToFiles(branchId?: string) {

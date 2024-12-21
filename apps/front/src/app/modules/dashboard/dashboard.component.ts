@@ -233,6 +233,32 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    let uiState = this.uiQuery.getValue();
+
+    let timezoneParam = this.route.snapshot.queryParamMap.get('timezone');
+
+    let timezone = common.isDefined(timezoneParam)
+      ? timezoneParam.split('-').join('/')
+      : uiState.timezone;
+
+    if (uiState.timezone !== timezone) {
+      this.uiQuery.updatePart({ timezone: timezone });
+      this.uiService.setUserUi({ timezone: timezone });
+    }
+
+    this.timezoneForm.controls['timezone'].setValue(timezone);
+
+    if (common.isUndefined(timezoneParam)) {
+      let url = this.router
+        .createUrlTree([], {
+          relativeTo: this.route,
+          queryParams: { timezone: timezone.split('/').join('-') }
+        })
+        .toString();
+
+      this.location.go(url);
+    }
+
     this.resizeSubscription = merge(
       fromEvent(window, 'resize'),
       fromEvent(window, 'orientationchange')
