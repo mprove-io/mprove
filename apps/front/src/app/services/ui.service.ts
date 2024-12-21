@@ -22,6 +22,7 @@ export class UiService {
     modelTreeLevels?: common.ModelTreeLevelsEnum;
     showHours?: boolean;
     projectReportLinks?: common.ProjectReportLink[];
+    timezone?: string;
   }) {
     let {
       metricsColumnNameWidth,
@@ -35,7 +36,8 @@ export class UiService {
       showMetricsChartSettings,
       modelTreeLevels,
       showHours,
-      projectReportLinks
+      projectReportLinks,
+      timezone
     } = item;
 
     let uiState = this.uiQuery.getValue();

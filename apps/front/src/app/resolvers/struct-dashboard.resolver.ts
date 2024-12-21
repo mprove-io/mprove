@@ -17,6 +17,7 @@ import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
+import { UiService } from '../services/ui.service';
 
 @Injectable({ providedIn: 'root' })
 export class StructDashboardResolver implements Resolve<Observable<boolean>> {
@@ -28,6 +29,7 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
     private structQuery: StructQuery,
     private memberQuery: MemberQuery,
     private uiQuery: UiQuery,
+    private uiService: UiService,
     private router: Router
   ) {}
 
@@ -113,6 +115,7 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
               this.uiQuery.updatePart({
                 timezone: timezone
               });
+              this.uiService.setUserUi({ timezone: timezone });
             }
 
             return true;

@@ -41,6 +41,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { StructDashboardResolver } from '~front/app/resolvers/struct-dashboard.resolver';
+import { UiService } from '~front/app/services/ui.service';
 
 class LayoutItem {
   id: string;
@@ -225,6 +226,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private apiService: ApiService,
     private navQuery: NavQuery,
     private uiQuery: UiQuery,
+    private uiService: UiService,
     private structDashboardResolver: StructDashboardResolver,
     private location: Location,
     private cd: ChangeDetectorRef // @Inject(DOCUMENT) private _document: HTMLDocument,
@@ -363,6 +365,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     // });
 
     this.uiQuery.updatePart({ timezone: timezone });
+    this.uiService.setUserUi({ timezone: timezone });
 
     let uiState = this.uiQuery.getValue();
 

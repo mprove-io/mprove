@@ -28,6 +28,7 @@ import uFuzzy from '@leeoniya/ufuzzy';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { DataService } from '~front/app/services/data.service';
+import { UiService } from '~front/app/services/ui.service';
 
 class ModelXWithTotalCharts extends common.ModelX {
   totalCharts: number;
@@ -164,6 +165,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
     private spinner: NgxSpinnerService,
     private navigateService: NavigateService,
     private uiQuery: UiQuery,
+    private uiService: UiService,
     private location: Location,
     private structQuery: StructQuery,
     private title: Title
@@ -195,7 +197,18 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
     let uiState = this.uiQuery.getValue();
 
-    this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
+    let timezoneParam = this.route.snapshot.queryParamMap.get('timezone');
+
+    let timezone = common.isDefined(timezoneParam)
+      ? timezoneParam.split('-').join('/')
+      : uiState.timezone;
+
+    if (uiState.timezone !== timezone) {
+      this.uiQuery.updatePart({ timezone: timezone });
+      this.uiService.setUserUi({ timezone: timezone });
+    }
+
+    this.timezoneForm.controls['timezone'].setValue(timezone);
 
     // let searchFileName = this.route.snapshot.queryParamMap.get(
     //   'searchFileName'
@@ -209,14 +222,16 @@ export class ChartsComponent implements OnInit, OnDestroy {
     this.word = this.route.snapshot.queryParamMap.get('search');
     this.searchWordChange();
 
-    if (
-      common.isDefined(this.word)
-      // || common.isDefined(this.fileName)
-    ) {
-      this.showList = false;
+    if (common.isDefined(this.word) || common.isUndefined(timezoneParam)) {
+      if (common.isDefined(this.word)) {
+        this.showList = false;
+      }
 
-      const url = this.router
-        .createUrlTree([], { relativeTo: this.route, queryParams: {} })
+      let url = this.router
+        .createUrlTree([], {
+          relativeTo: this.route,
+          queryParams: { timezone: timezone.split('/').join('-') }
+        })
         .toString();
 
       this.location.go(url);
@@ -509,6 +524,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
     let timezone = this.timezoneForm.controls['timezone'].value;
 
     this.uiQuery.updatePart({ timezone: timezone });
+    this.uiService.setUserUi({ timezone: timezone });
 
     if (this.showList === false) {
       this.isShow = false;
@@ -516,6 +532,15 @@ export class ChartsComponent implements OnInit, OnDestroy {
         this.isShow = true;
       });
     }
+
+    const url = this.router
+      .createUrlTree([], {
+        relativeTo: this.route,
+        queryParams: { timezone: timezone.split('/').join('-') }
+      })
+      .toString();
+
+    this.location.go(url);
   }
 
   timezoneSearchFn(term: string, timezone: { value: string; label: string }) {
