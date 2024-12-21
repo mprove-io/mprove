@@ -635,6 +635,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
     (document.activeElement as HTMLElement).blur();
 
     this.uiQuery.updatePart({ timezone: this.timezone });
+    this.uiService.setUserUi({ timezone: this.timezone });
+
     this.getRep();
   }
 

@@ -370,6 +370,8 @@ export class ReportComponent {
     this.lastSelectionChangedTs = dateNow;
 
     // console.log('onSelectionChanged');
+    // console.log('event');
+    // console.log(event);
     // console.log('diffSelectionToClicked');
     // console.log(diffSelectionToClicked);
 
