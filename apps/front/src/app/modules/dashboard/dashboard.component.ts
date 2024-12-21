@@ -248,9 +248,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.layout = [...this.layout];
     });
 
-    setTimeout(() => {
-      this.refreshShow();
-    });
+    // setTimeout(() => {
+    //   this.refreshShow();
+    // });
   }
 
   ngAfterViewInit() {
