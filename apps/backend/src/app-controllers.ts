@@ -21,7 +21,6 @@ export const appControllers = [
   controllers.CreateTempDashboardController,
   controllers.DeleteDashboardController,
   controllers.GetDashboardController,
-  controllers.GetDashboardTileController,
   controllers.GetDashboardsController,
   controllers.ModifyDashboardController,
 

@@ -4,7 +4,6 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
@@ -13,7 +12,6 @@ import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
@@ -275,78 +273,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       modelId: tile.modelId,
       mconfigId: tile.mconfigId,
       queryId: tile.queryId
-    });
-  }
-
-  async showChart(tile: common.TileX, dashboardId: string) {
-    this.spinner.show(tile.mconfigId);
-
-    let tileX: common.TileX;
-
-    let payloadGetDashboardTile: apiToBackend.ToBackendGetDashboardTileRequestPayload =
-      {
-        projectId: this.nav.projectId,
-        branchId: this.nav.branchId,
-        envId: this.nav.envId,
-        isRepoProd: this.nav.isRepoProd,
-        dashboardId: dashboardId,
-        mconfigId: tile.mconfigId
-      };
-
-    let query: common.Query;
-    let mconfig: common.MconfigX;
-
-    await this.apiService
-      .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboardTile,
-        payload: payloadGetDashboardTile
-      })
-      .pipe(
-        tap((resp: apiToBackend.ToBackendGetDashboardTileResponse) => {
-          this.spinner.hide(tile.mconfigId);
-
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
-            tileX = resp.payload.tile;
-            query = resp.payload.tile.query;
-            mconfig = resp.payload.tile.mconfig;
-          }
-        })
-      )
-      .toPromise();
-
-    if (common.isUndefined(query)) {
-      return;
-    }
-
-    let qData =
-      mconfig.queryId === query.queryId
-        ? this.dataService.makeQData({
-            data: query.data,
-            columns: mconfig.fields
-          })
-        : [];
-
-    let checkSelectResult = getSelectValid({
-      chart: mconfig.chart,
-      mconfigFields: mconfig.fields
-    });
-
-    let isSelectValid = checkSelectResult.isSelectValid;
-    // let errorMessage = checkSelectResult.errorMessage;
-
-    this.myDialogService.showChart({
-      apiService: this.apiService,
-      mconfig: mconfig,
-      query: query,
-      qData: qData,
-      canAccessModel: tileX.hasAccessToModel,
-      showNav: true,
-      isSelectValid: isSelectValid,
-      dashboardId: dashboardId,
-      chartId: undefined,
-      listen: tileX.listen
     });
   }
 
