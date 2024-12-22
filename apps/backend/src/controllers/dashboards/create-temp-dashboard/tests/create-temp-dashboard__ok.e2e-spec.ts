@@ -96,7 +96,8 @@ test('1', async t => {
         isRepoProd: false,
         branchId: common.BRANCH_MASTER,
         envId: common.PROJECT_ENV_PROD,
-        dashboardId: oldDashboardId
+        dashboardId: oldDashboardId,
+        timezone: 'UTC'
       }
     };
 
@@ -124,7 +125,8 @@ test('1', async t => {
         newDashboardFields: resp1.payload.dashboard.fields,
         tiles: resp1.payload.dashboard.tiles,
         deleteFilterFieldId: undefined,
-        deleteFilterMconfigId: undefined
+        deleteFilterMconfigId: undefined,
+        timezone: 'UTC'
       }
     };
 

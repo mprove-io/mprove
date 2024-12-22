@@ -131,10 +131,6 @@ export class GetDashboardController {
       projectId: projectId
     });
 
-    fromDashboard.tiles.forEach(freshTile => {
-      freshTile.timezone = timezone;
-    });
-
     // fromDashboard.fields = newDashboardFields;
 
     let newDashboardId = fromDashboard.dashboardId;
@@ -247,7 +243,8 @@ export class GetDashboardController {
         diskFiles: diskFiles,
         mproveDir: diskResponse.payload.mproveDir,
         skipDb: true,
-        envId: envId
+        envId: envId,
+        overrideTimezone: timezone
       });
 
     let newDashboard = dashboards.find(x => x.dashboardId === newDashboardId);

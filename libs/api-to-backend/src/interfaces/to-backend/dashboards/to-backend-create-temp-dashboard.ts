@@ -42,6 +42,9 @@ export class ToBackendCreateTempDashboardRequestPayload {
   @ValidateNested()
   @Type(() => common.Tile)
   tiles: common.Tile[];
+
+  @IsString()
+  timezone: string;
 }
 
 export class ToBackendCreateTempDashboardRequest extends ToBackendRequest {

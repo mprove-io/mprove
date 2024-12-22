@@ -42,7 +42,8 @@ test('1', async t => {
       structId: structId,
       envId: common.PROJECT_ENV_PROD,
       evs: [],
-      connections: [connection]
+      connections: [connection],
+      overrideTimezone: undefined
     });
 
     entViews = await helper.readLog(fromDir, common.LogTypeEnum.Entities);

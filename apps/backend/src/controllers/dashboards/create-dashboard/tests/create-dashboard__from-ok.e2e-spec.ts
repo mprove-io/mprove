@@ -99,7 +99,8 @@ test('1', async t => {
         envId: common.PROJECT_ENV_PROD,
         isRepoProd: false,
         branchId: common.BRANCH_MASTER,
-        dashboardId: fromDashboardId
+        dashboardId: fromDashboardId,
+        timezone: 'UTC'
       }
     };
 

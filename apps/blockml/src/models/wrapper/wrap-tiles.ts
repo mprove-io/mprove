@@ -8,8 +8,9 @@ export function wrapTiles(item: {
   envId: string;
   tiles: common.FilePartTile[];
   models: common.FileModel[];
+  timezone: string;
 }) {
-  let { structId, orgId, projectId, models, tiles, envId } = item;
+  let { structId, orgId, projectId, models, tiles, envId, timezone } = item;
 
   let apiTiles: common.Tile[] = [];
   let mconfigs: common.Mconfig[] = [];
@@ -282,7 +283,7 @@ export function wrapTiles(item: {
         desc: s.desc
       })),
       sorts: tile.sorts,
-      timezone: tile.timezone,
+      timezone: timezone,
       limit: tile.limit ? Number(tile.limit) : undefined,
       filters: filters.sort((a, b) =>
         a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
@@ -298,7 +299,6 @@ export function wrapTiles(item: {
       modelId: model.name,
       modelLabel: model.label,
       mconfigId: mconfigId,
-      timezone: tile.timezone,
       queryId: queryId,
       listen: tile.listen,
       title: chart.title,

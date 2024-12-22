@@ -225,7 +225,8 @@ export class ProjectsService {
       structId: prodStructId,
       diskFiles: diskResponse.payload.prodFiles,
       mproveDir: diskResponse.payload.mproveDir,
-      envId: common.PROJECT_ENV_PROD
+      envId: common.PROJECT_ENV_PROD,
+      overrideTimezone: undefined
     });
 
     await this.blockmlService.rebuildStruct({
@@ -235,7 +236,8 @@ export class ProjectsService {
       structId: devStructId,
       diskFiles: diskResponse.payload.prodFiles,
       mproveDir: diskResponse.payload.mproveDir,
-      envId: common.PROJECT_ENV_PROD
+      envId: common.PROJECT_ENV_PROD,
+      overrideTimezone: undefined
     });
 
     await retry(

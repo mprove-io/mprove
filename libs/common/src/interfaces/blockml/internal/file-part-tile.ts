@@ -24,9 +24,6 @@ export interface FilePartTile {
   sorts?: string;
   sorts_line_num?: number;
 
-  timezone?: string;
-  timezone_line_num?: number;
-
   limit?: string; // string
   limit_line_num?: number;
 

@@ -21,7 +21,8 @@ async function run() {
     structId: structId,
     envId: common.PROJECT_ENV_PROD,
     evs: [],
-    connections: [connection]
+    connections: [connection],
+    overrideTimezone: undefined
   });
 
   if (common.isDefined(toDir)) {

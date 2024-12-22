@@ -2,7 +2,6 @@ dashboard: d1
 tiles:  
 - title: t1
   model: m1
-  timezone: America/Adak
   select: 
   - a.dim1
   default_filters:

@@ -38,6 +38,10 @@ export class ToBlockmlRebuildStructRequestPayload {
   @ValidateNested()
   @Type(() => common.ProjectConnection)
   connections: common.ProjectConnection[];
+
+  @IsOptional()
+  @IsString()
+  overrideTimezone: string;
 }
 
 export class ToBlockmlRebuildStructRequest extends ToBlockmlRequest {

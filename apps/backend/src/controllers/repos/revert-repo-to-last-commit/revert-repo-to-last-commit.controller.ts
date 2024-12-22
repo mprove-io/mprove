@@ -142,7 +142,8 @@ export class RevertRepoToLastCommitController {
           structId: structId,
           diskFiles: diskResponse.payload.files,
           mproveDir: diskResponse.payload.mproveDir,
-          envId: x.envId
+          envId: x.envId,
+          overrideTimezone: undefined
         });
 
         x.structId = structId;

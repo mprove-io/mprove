@@ -125,7 +125,8 @@ test('1', async t => {
         projectId: projectId,
         repoId: devRepoId,
         branch: common.BRANCH_MASTER,
-        envId: envId
+        envId: envId,
+        overrideTimezone: undefined
       }
     };
 

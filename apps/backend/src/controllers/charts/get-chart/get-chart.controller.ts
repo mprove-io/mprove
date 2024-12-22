@@ -214,7 +214,6 @@ export class GetChartController {
         )
       });
 
-      chart.tiles[0].timezone = timezone;
       chart.tiles[0].mconfigId = newMconfig.mconfigId;
       chart.tiles[0].queryId = newMconfig.queryId;
     }

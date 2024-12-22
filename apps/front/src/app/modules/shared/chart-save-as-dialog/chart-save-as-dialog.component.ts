@@ -372,7 +372,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
       modelId: this.ref.data.mconfig.modelId,
       modelLabel: this.ref.data.model.label,
       mconfigId: this.ref.data.mconfig.mconfigId,
-      timezone: this.ref.data.mconfig.timezone,
       listen: {},
       queryId: this.ref.data.mconfig.queryId,
       hasAccessToModel: true,

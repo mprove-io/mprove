@@ -69,7 +69,8 @@ export class CreateTempDashboardController {
       newDashboardFields,
       tiles,
       deleteFilterFieldId,
-      deleteFilterMconfigId
+      deleteFilterMconfigId,
+      timezone
     } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
@@ -132,7 +133,6 @@ export class CreateTempDashboardController {
       yTile.plateHeight = freshTile.plateHeight;
 
       yTile.listen = freshTile.listen;
-      yTile.timezone = freshTile.timezone;
 
       yTiles.push(yTile);
     });
@@ -240,7 +240,8 @@ export class CreateTempDashboardController {
         diskFiles: diskFiles,
         mproveDir: diskResponse.payload.mproveDir,
         skipDb: true,
-        envId: envId
+        envId: envId,
+        overrideTimezone: timezone
       });
 
     let newDashboard = dashboards.find(x => x.dashboardId === newDashboardId);

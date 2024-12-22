@@ -488,7 +488,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       newDashboardId: common.makeId(),
       newDashboardFields: this.dashboard.fields,
       deleteFilterFieldId: filterFieldId,
-      deleteFilterMconfigId: mconfigId
+      deleteFilterMconfigId: mconfigId,
+      timezone: this.timezoneForm.controls['timezone'].value
     });
   }
 

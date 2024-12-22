@@ -65,6 +65,7 @@ export class BlockmlService {
     skipDb?: boolean;
     connections?: common.ProjectConnection[];
     evs?: common.Ev[];
+    overrideTimezone: string;
   }) {
     let {
       traceId,
@@ -75,7 +76,8 @@ export class BlockmlService {
       diskFiles,
       skipDb,
       connections,
-      evs
+      evs,
+      overrideTimezone
     } = item;
 
     let connectionsEnts;
@@ -143,7 +145,8 @@ export class BlockmlService {
               connectionId: x.connectionId,
               type: x.type,
               bigqueryProject: x.bigqueryProject
-            }))
+            })),
+          overrideTimezone: overrideTimezone
         }
       };
 

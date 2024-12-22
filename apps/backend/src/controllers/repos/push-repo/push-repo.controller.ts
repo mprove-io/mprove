@@ -204,7 +204,8 @@ export class PushRepoController {
           structId: structId,
           diskFiles: diskResponse.payload.productionFiles,
           mproveDir: diskResponse.payload.productionMproveDir,
-          envId: x.envId
+          envId: x.envId,
+          overrideTimezone: undefined
         });
 
         x.structId = structId;

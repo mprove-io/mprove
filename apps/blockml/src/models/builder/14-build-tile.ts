@@ -13,6 +13,7 @@ export async function buildTile<T extends types.dzType>(
     models: common.FileModel[];
     udfsDict: common.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;
+    timezone: string;
     caseSensitiveStringFilters: boolean;
     simplifySafeAggregates: boolean;
     errors: BmError[];
@@ -76,16 +77,6 @@ export async function buildTile<T extends types.dzType>(
     cs
   );
 
-  entities = barTile.checkTimezone(
-    {
-      entities: entities,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
   entities = barTile.checkLimit(
     {
       entities: entities,
@@ -136,6 +127,7 @@ export async function buildTile<T extends types.dzType>(
       models: item.models,
       udfsDict: item.udfsDict,
       weekStart: item.weekStart,
+      timezone: item.timezone,
       caseSensitiveStringFilters: item.caseSensitiveStringFilters,
       simplifySafeAggregates: item.simplifySafeAggregates,
       structId: item.structId,

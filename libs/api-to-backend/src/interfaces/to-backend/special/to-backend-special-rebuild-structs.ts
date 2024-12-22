@@ -45,6 +45,10 @@ export class ToBackendSpecialRebuildStructsRequestPayload {
 
   @IsBoolean()
   skipRebuild: boolean;
+
+  @IsOptional()
+  @IsString()
+  overrideTimezone: string;
 }
 
 export class ToBackendSpecialRebuildStructsRequest extends ToBackendRequest {

@@ -33,6 +33,7 @@ export class DashboardService {
     newDashboardFields: common.DashboardField[];
     deleteFilterFieldId: string;
     deleteFilterMconfigId: string;
+    timezone: string;
   }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
@@ -42,7 +43,8 @@ export class DashboardService {
       newDashboardId,
       newDashboardFields,
       deleteFilterFieldId,
-      deleteFilterMconfigId
+      deleteFilterMconfigId,
+      timezone
     } = item;
 
     let newTiles: common.TileX[] = [];
@@ -64,7 +66,8 @@ export class DashboardService {
       newDashboardFields: newDashboardFields,
       tiles: newTiles,
       deleteFilterFieldId: deleteFilterFieldId,
-      deleteFilterMconfigId: deleteFilterMconfigId
+      deleteFilterMconfigId: deleteFilterMconfigId,
+      timezone: timezone
     };
 
     this.apiService

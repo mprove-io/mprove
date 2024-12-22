@@ -117,7 +117,6 @@ export enum FuncEnum {
   CheckTileTitleModelSelect = '14-tile/03-check-tile-title-model-select',
   CheckSelectElements = '14-tile/04-check-select-elements',
   CheckSorts = '14-tile/05-check-sorts',
-  CheckTimezone = '14-tile/06-check-timezone',
   CheckLimit = '14-tile/07-check-limit',
   CheckListenFilters = '14-tile/08-check-listen-filters',
   CheckDefaultFilters = '14-tile/09-check-default-filters',

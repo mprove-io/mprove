@@ -35,7 +35,8 @@ export class GetRebuildStructController {
   ) {
     let reqValid: apiToBackend.ToBackendGetRebuildStructRequest = request.body;
 
-    let { orgId, projectId, repoId, branch, envId } = reqValid.payload;
+    let { orgId, projectId, repoId, branch, envId, overrideTimezone } =
+      reqValid.payload;
 
     let structId = common.makeId();
 
@@ -120,7 +121,8 @@ export class GetRebuildStructController {
           connectionId: x.connectionId,
           type: x.type,
           bigqueryProject: x.bigqueryProject
-        }))
+        })),
+        overrideTimezone: overrideTimezone
       }
     };
 

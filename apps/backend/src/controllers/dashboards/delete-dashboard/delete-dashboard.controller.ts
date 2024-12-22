@@ -182,7 +182,8 @@ export class DeleteDashboardController {
       diskFiles: diskResponse.payload.files,
       mproveDir: diskResponse.payload.mproveDir,
       skipDb: true,
-      envId: envId
+      envId: envId,
+      overrideTimezone: undefined
     });
 
     await retry(

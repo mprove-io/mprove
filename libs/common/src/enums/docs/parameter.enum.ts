@@ -73,7 +73,6 @@ export enum ParameterEnum {
   Table = 'table',
   Time = 'time',
   Timeframes = 'timeframes',
-  Timezone = 'timezone',
   TimeSpec = 'time_spec',
   Title = 'title',
   Type = 'type',

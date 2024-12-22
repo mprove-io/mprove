@@ -31,6 +31,7 @@ import { constants } from '~front/barrels/constants';
 import { SharedModule } from '../../shared/shared.module';
 
 import uFuzzy from '@leeoniya/ufuzzy';
+import { UiQuery } from '~front/app/queries/ui.query';
 
 export interface DashboardAddFilterDialogData {
   dashboardService: DashboardService;
@@ -104,6 +105,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     private fb: FormBuilder,
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
+    private uiQuery: UiQuery,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -263,7 +265,8 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       newDashboardId: common.makeId(),
       newDashboardFields: [...this.dashboard.fields, field],
       deleteFilterFieldId: undefined,
-      deleteFilterMconfigId: undefined
+      deleteFilterMconfigId: undefined,
+      timezone: this.uiQuery.getValue().timezone
     });
   }
 

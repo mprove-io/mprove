@@ -12,6 +12,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { ModelField } from '~common/_index';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DashboardService } from '~front/app/services/dashboard.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -70,6 +71,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
     private fb: FormBuilder,
     private navQuery: NavQuery,
     private spinner: NgxSpinnerService,
+    private uiQuery: UiQuery,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -256,7 +258,8 @@ export class DashboardEditListenersDialogComponent implements OnInit {
       newDashboardId: common.makeId(),
       newDashboardFields: this.dashboard.fields,
       deleteFilterFieldId: undefined,
-      deleteFilterMconfigId: undefined
+      deleteFilterMconfigId: undefined,
+      timezone: this.uiQuery.getValue().timezone
     });
   }
 

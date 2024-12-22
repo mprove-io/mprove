@@ -291,7 +291,8 @@ export class CreateDashboardController {
         diskFiles: diskResponse.payload.files,
         mproveDir: diskResponse.payload.mproveDir,
         skipDb: true,
-        envId: envId
+        envId: envId,
+        overrideTimezone: undefined
       });
 
     let dashboard = dashboards.find(x => x.dashboardId === newDashboardId);

@@ -77,10 +77,6 @@ export function prepareTile(item: {
     model: mconfig.modelId,
     select: mconfig.select,
     sorts: isDefined(mconfig.sorts) ? mconfig.sorts : undefined,
-    timezone:
-      isForDashboard === true && isDefined(tile) && isDefined(tile.timezone)
-        ? tile.timezone
-        : mconfig.timezone,
     limit:
       isDefined(mconfig.limit) &&
       mconfig.limit !== Number(constants.DEFAULT_LIMIT)

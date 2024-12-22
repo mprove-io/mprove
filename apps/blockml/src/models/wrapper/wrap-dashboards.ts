@@ -9,8 +9,10 @@ export function wrapDashboards(item: {
   dashboards: common.FileDashboard[];
   models: common.FileModel[];
   envId: string;
+  timezone: string;
 }) {
-  let { structId, orgId, projectId, models, dashboards, envId } = item;
+  let { structId, orgId, projectId, models, dashboards, envId, timezone } =
+    item;
 
   let apiDashboards: common.Dashboard[] = [];
   let dashMconfigs: common.Mconfig[] = [];
@@ -37,7 +39,8 @@ export function wrapDashboards(item: {
       structId: structId,
       models: models,
       tiles: x.tiles,
-      envId: envId
+      envId: envId,
+      timezone: timezone
     });
 
     dashMconfigs = [...dashMconfigs, ...mconfigs];

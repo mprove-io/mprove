@@ -49,7 +49,8 @@ export class RebuildStructService {
       connections,
       envId,
       evs,
-      mproveDir
+      mproveDir,
+      overrideTimezone
     } = reqValid.payload;
 
     let {
@@ -78,7 +79,8 @@ export class RebuildStructService {
       envId: envId,
       evs: evs,
       connections: connections,
-      mproveDir: mproveDir
+      mproveDir: mproveDir,
+      overrideTimezone: overrideTimezone
     });
 
     let apiErrors = barWrapper.wrapErrors({ errors: errors });
@@ -110,7 +112,8 @@ export class RebuildStructService {
         projectId: projectId,
         models: models,
         dashboards: dashboards,
-        envId: envId
+        envId: envId,
+        timezone: defaultTimezone
       });
 
     let { apiCharts, chartMconfigs, chartQueries } = barWrapper.wrapCharts({
@@ -119,7 +122,8 @@ export class RebuildStructService {
       projectId: projectId,
       models: models,
       charts: charts,
-      envId: envId
+      envId: envId,
+      timezone: defaultTimezone
     });
 
     let queries = [...dashQueries, ...chartQueries];
@@ -158,6 +162,7 @@ export class RebuildStructService {
     envId: string;
     evs: common.Ev[];
     connections: common.ProjectConnection[];
+    overrideTimezone: string;
   }) {
     let configPath = item.dir + '/' + common.MPROVE_CONFIG_FILENAME;
 
@@ -194,7 +199,8 @@ export class RebuildStructService {
       envId: item.envId,
       evs: item.evs,
       connections: item.connections,
-      mproveDir: mproveDir
+      mproveDir: mproveDir,
+      overrideTimezone: item.overrideTimezone
     });
   }
 
@@ -206,6 +212,7 @@ export class RebuildStructService {
     evs: common.Ev[];
     connections: common.ProjectConnection[];
     mproveDir: string;
+    overrideTimezone: string;
   }) {
     //
     let errors: BmError[] = [];
@@ -267,6 +274,10 @@ export class RebuildStructService {
           constants.PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES
         )
       };
+    }
+
+    if (common.isDefined(item.overrideTimezone)) {
+      projectConfig.default_timezone = item.overrideTimezone;
     }
 
     views = barBuilder.buildField(
@@ -475,6 +486,7 @@ export class RebuildStructService {
         models: models,
         udfsDict: udfsDict,
         weekStart: projectConfig.week_start,
+        timezone: projectConfig.default_timezone,
         caseSensitiveStringFilters: helper.toBooleanFromLowercaseString(
           projectConfig.case_sensitive_string_filters
         ),
@@ -496,6 +508,7 @@ export class RebuildStructService {
         models: models,
         udfsDict: udfsDict,
         weekStart: projectConfig.week_start,
+        timezone: projectConfig.default_timezone,
         caseSensitiveStringFilters: helper.toBooleanFromLowercaseString(
           projectConfig.case_sensitive_string_filters
         ),

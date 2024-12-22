@@ -334,7 +334,8 @@ export class SeedRecordsController {
             connections: projectConnections,
             evs: evs
               .map(evEntity => this.wrapToApiService.wrapToApiEv(evEntity))
-              .filter(ev => ev.envId === prodEnv.envId)
+              .filter(ev => ev.envId === prodEnv.envId),
+            overrideTimezone: undefined
           });
 
           let {
@@ -359,7 +360,8 @@ export class SeedRecordsController {
             connections: projectConnections,
             evs: evs
               .map(evEntity => this.wrapToApiService.wrapToApiEv(evEntity))
-              .filter(ev => ev.envId === prodEnv.envId)
+              .filter(ev => ev.envId === prodEnv.envId),
+            overrideTimezone: undefined
           });
 
           let devBranch = this.makerService.makeBranch({

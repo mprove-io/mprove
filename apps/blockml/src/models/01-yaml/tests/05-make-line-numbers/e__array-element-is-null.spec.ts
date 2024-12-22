@@ -37,7 +37,8 @@ test('1', async t => {
       structId: structId,
       envId: common.PROJECT_ENV_PROD,
       evs: [],
-      connections: []
+      connections: [],
+      overrideTimezone: undefined
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);

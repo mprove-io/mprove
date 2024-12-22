@@ -1,5 +1,4 @@
 import { IsNumber, IsString } from 'class-validator';
-import { IsTimezone } from '~common/functions/is-timezone';
 
 export class Tile {
   @IsString()
@@ -10,9 +9,6 @@ export class Tile {
 
   @IsString()
   mconfigId: string;
-
-  @IsTimezone()
-  timezone: string;
 
   @IsString()
   queryId: string;

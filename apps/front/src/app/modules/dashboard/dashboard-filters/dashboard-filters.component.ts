@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { DashboardService } from '~front/app/services/dashboard.service';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
@@ -11,7 +12,10 @@ export class DashboardFiltersComponent {
   @Input()
   dashboard: common.DashboardX;
 
-  constructor(private dashboardService: DashboardService) {}
+  constructor(
+    private dashboardService: DashboardService,
+    private uiQuery: UiQuery
+  ) {}
 
   fractionUpdate(
     dashboardField: common.DashboardField,
@@ -42,7 +46,8 @@ export class DashboardFiltersComponent {
       newDashboardId: common.makeId(),
       newDashboardFields: newDashboardFields,
       deleteFilterFieldId: undefined,
-      deleteFilterMconfigId: undefined
+      deleteFilterMconfigId: undefined,
+      timezone: this.uiQuery.getValue().timezone
     });
   }
 
@@ -73,7 +78,8 @@ export class DashboardFiltersComponent {
       newDashboardId: common.makeId(),
       newDashboardFields: newDashboardFields,
       deleteFilterFieldId: undefined,
-      deleteFilterMconfigId: undefined
+      deleteFilterMconfigId: undefined,
+      timezone: this.uiQuery.getValue().timezone
     });
   }
 
@@ -122,7 +128,8 @@ export class DashboardFiltersComponent {
       newDashboardId: common.makeId(),
       newDashboardFields: newDashboardFields,
       deleteFilterFieldId: undefined,
-      deleteFilterMconfigId: undefined
+      deleteFilterMconfigId: undefined,
+      timezone: this.uiQuery.getValue().timezone
     });
   }
 
@@ -145,7 +152,8 @@ export class DashboardFiltersComponent {
       newDashboardId: common.makeId(),
       newDashboardFields: newDashboardFields,
       deleteFilterFieldId: undefined,
-      deleteFilterMconfigId: undefined
+      deleteFilterMconfigId: undefined,
+      timezone: this.uiQuery.getValue().timezone
     });
   }
 }

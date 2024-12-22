@@ -17,6 +17,7 @@ export async function fetchSql<T extends types.dzType>(
     models: common.FileModel[];
     udfsDict: common.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;
+    timezone: string;
     simplifySafeAggregates: boolean;
     caseSensitiveStringFilters: boolean;
     errors: BmError[];
@@ -26,7 +27,7 @@ export async function fetchSql<T extends types.dzType>(
   rabbitService: RabbitService,
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId } = item;
+  let { caller, structId, timezone } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let tiles: common.FilePartTile[] = [];
@@ -68,7 +69,7 @@ export async function fetchSql<T extends types.dzType>(
         weekStart: item.weekStart,
         caseSensitiveStringFilters: item.caseSensitiveStringFilters,
         simplifySafeAggregates: item.simplifySafeAggregates,
-        timezone: tile.timezone,
+        timezone: timezone,
         select: tile.select,
         sorts: tile.sorts,
         limit: tile.limit,

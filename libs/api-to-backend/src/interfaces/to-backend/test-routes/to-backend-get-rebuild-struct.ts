@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsString, ValidateNested } from 'class-validator';
+import { IsOptional, IsString, ValidateNested } from 'class-validator';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
 export class ToBackendGetRebuildStructRequestPayload {
@@ -17,6 +17,10 @@ export class ToBackendGetRebuildStructRequestPayload {
 
   @IsString()
   envId: string;
+
+  @IsOptional()
+  @IsString()
+  overrideTimezone: string;
 }
 
 export class ToBackendGetRebuildStructRequest extends ToBackendRequest {

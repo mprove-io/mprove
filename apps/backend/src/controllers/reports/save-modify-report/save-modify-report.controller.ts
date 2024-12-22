@@ -250,7 +250,8 @@ export class SaveModifyReportController {
       diskFiles: diskResponse.payload.files,
       mproveDir: diskResponse.payload.mproveDir,
       skipDb: true,
-      envId: envId
+      envId: envId,
+      overrideTimezone: undefined
     });
 
     let report = reports.find(x => x.reportId === modReportId);

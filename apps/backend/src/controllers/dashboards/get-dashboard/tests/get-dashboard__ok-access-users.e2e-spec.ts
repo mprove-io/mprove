@@ -94,7 +94,8 @@ test('1', async t => {
         isRepoProd: false,
         branchId: common.BRANCH_MASTER,
         envId: common.PROJECT_ENV_PROD,
-        dashboardId: 'ec_d3'
+        dashboardId: 'ec_d3',
+        timezone: 'UTC'
       }
     };
 

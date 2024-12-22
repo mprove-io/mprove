@@ -7,10 +7,11 @@ export function wrapCharts(item: {
   orgId: string;
   projectId: string;
   envId: string;
+  timezone: string;
   models: common.FileModel[];
   charts: common.FileChart[];
 }) {
-  let { structId, orgId, projectId, models, charts: charts, envId } = item;
+  let { structId, orgId, projectId, models, charts, envId, timezone } = item;
 
   let apiCharts: common.Chart[] = [];
   let chartMconfigs: common.Mconfig[] = [];
@@ -23,7 +24,8 @@ export function wrapCharts(item: {
       structId: structId,
       models: models,
       tiles: x.tiles,
-      envId: envId
+      envId: envId,
+      timezone: timezone
     });
 
     chartMconfigs = [...chartMconfigs, ...mconfigs];

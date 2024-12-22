@@ -47,7 +47,8 @@ export class SpecialRebuildStructsController {
       request.body;
 
     let { traceId } = reqValid.info;
-    let { specialKey, userIds, skipRebuild } = reqValid.payload;
+    let { specialKey, userIds, skipRebuild, overrideTimezone } =
+      reqValid.payload;
 
     let envSpecialKey =
       this.cs.get<interfaces.Config['specialKey']>('specialKey');
@@ -175,7 +176,8 @@ export class SpecialRebuildStructsController {
           structId: structId,
           diskFiles: getCatalogFilesResponse.payload.files,
           mproveDir: getCatalogFilesResponse.payload.mproveDir,
-          envId: bridge.envId
+          envId: bridge.envId,
+          overrideTimezone: overrideTimezone
         });
 
         bridge.structId = structId;
