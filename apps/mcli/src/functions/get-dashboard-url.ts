@@ -6,8 +6,10 @@ export function getDashboardUrl(item: {
   branch: string;
   env: string;
   dashboardId: string;
+  timezone: string;
 }) {
-  let { host, orgId, projectId, repoId, branch, env, dashboardId } = item;
+  let { host, orgId, projectId, repoId, branch, env, dashboardId, timezone } =
+    item;
 
-  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/dashboard/${dashboardId}`;
+  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/dashboard/${dashboardId}?timezone=${timezone}`;
 }

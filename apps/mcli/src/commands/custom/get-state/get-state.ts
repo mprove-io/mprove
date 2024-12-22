@@ -215,7 +215,8 @@ export class GetStateCommand extends CustomCommand {
           repoId: getRepoResp.payload.repo.repoId,
           branch: this.branch,
           env: this.env,
-          chartId: x.chartId
+          chartId: x.chartId,
+          timezone: getRepoResp.payload.struct.defaultTimezone
         });
 
         let chart: any = {
@@ -248,7 +249,7 @@ export class GetStateCommand extends CustomCommand {
           branch: this.branch,
           env: this.env,
           reportId: x.reportId,
-          timezone: 'UTC',
+          timezone: getRepoResp.payload.struct.defaultTimezone,
           timeSpec: 'days',
           timeRange: 'last 5 days complete plus current'
         });
@@ -271,7 +272,8 @@ export class GetStateCommand extends CustomCommand {
           repoId: getRepoResp.payload.repo.repoId,
           branch: this.branch,
           env: this.env,
-          dashboardId: x.dashboardId
+          dashboardId: x.dashboardId,
+          timezone: getRepoResp.payload.struct.defaultTimezone
         });
 
         let dashboard: any = {

@@ -274,7 +274,8 @@ export class GetQueryCommand extends CustomCommand {
         isRepoProd: isRepoProd,
         branchId: this.branch,
         envId: this.env,
-        chartId: this.chartId
+        chartId: this.chartId,
+        timezone: this.timezone
       };
 
       let getChartResp = await mreq<apiToBackend.ToBackendGetChartResponse>({
@@ -320,7 +321,8 @@ export class GetQueryCommand extends CustomCommand {
         repoId: getRepoResp.payload.repo.repoId,
         branch: this.branch,
         env: this.env,
-        chartId: chartX.chartId
+        chartId: chartX.chartId,
+        timezone: this.timezone
       });
 
       chartPartQ = {
@@ -340,7 +342,8 @@ export class GetQueryCommand extends CustomCommand {
           isRepoProd: isRepoProd,
           branchId: this.branch,
           envId: this.env,
-          dashboardId: this.dashboardId
+          dashboardId: this.dashboardId,
+          timezone: this.timezone
         };
 
       let getDashboardResp =
@@ -403,7 +406,8 @@ export class GetQueryCommand extends CustomCommand {
         repoId: getRepoResp.payload.repo.repoId,
         branch: this.branch,
         env: this.env,
-        dashboardId: dashboardX.dashboardId
+        dashboardId: dashboardX.dashboardId,
+        timezone: this.timezone
       });
 
       dashboardPartQ = {

@@ -6,8 +6,9 @@ export function getChartUrl(item: {
   branch: string;
   env: string;
   chartId: string;
+  timezone: string;
 }) {
-  let { host, orgId, projectId, repoId, branch, env, chartId } = item;
+  let { host, orgId, projectId, repoId, branch, env, chartId, timezone } = item;
 
-  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/charts?search=${chartId}`;
+  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/charts?search=${chartId}&timezone=${timezone}`;
 }
