@@ -24,7 +24,6 @@ export const membersTable = pgTable(
     envs: json('envs').$type<string[]>().notNull(),
     firstName: varchar('first_name'),
     lastName: varchar('last_name'),
-    timezone: varchar('timezone').notNull(),
     isAdmin: boolean('is_admin').notNull(),
     isEditor: boolean('is_editor').notNull(),
     isExplorer: boolean('is_explorer').notNull(),

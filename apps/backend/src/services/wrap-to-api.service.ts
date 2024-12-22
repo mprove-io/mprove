@@ -194,7 +194,6 @@ export class WrapToApiService {
       lastName: x.lastName,
       fullName: makeFullName({ firstName: x.firstName, lastName: x.lastName }),
       avatarSmall: undefined,
-      timezone: x.timezone,
       isAdmin: x.isAdmin,
       isEditor: x.isEditor,
       isExplorer: x.isExplorer,
@@ -441,7 +440,6 @@ export class WrapToApiService {
       alias: user.alias,
       firstName: user.firstName,
       lastName: user.lastName,
-      timezone: user.timezone,
       isEmailVerified: user.isEmailVerified,
       ui: {
         timezone: user.ui?.timezone || constants.DEFAULT_UI.timezone,

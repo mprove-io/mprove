@@ -3,7 +3,6 @@ import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { getUserTimezoneLabelByValue } from '~common/_index';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -20,15 +19,6 @@ export class ProfileComponent implements OnInit {
   restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
 
   pageTitle = constants.PROFILE_PAGE_TITLE;
-
-  userTimezoneLabel: string;
-
-  userTimezone$ = this.userQuery.timezone$.pipe(
-    tap(x => {
-      this.userTimezoneLabel = getUserTimezoneLabelByValue(x);
-      this.cd.detectChanges();
-    })
-  );
 
   alias: string;
   alias$ = this.userQuery.alias$.pipe(
@@ -113,12 +103,6 @@ export class ProfileComponent implements OnInit {
 
   editName() {
     this.myDialogService.showEditName({
-      apiService: this.apiService
-    });
-  }
-
-  editUserTimezone() {
-    this.myDialogService.showEditUserTimezone({
       apiService: this.apiService
     });
   }

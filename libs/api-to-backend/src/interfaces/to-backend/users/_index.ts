@@ -8,6 +8,5 @@ export * from './to-backend-register-user';
 export * from './to-backend-resend-user-email';
 export * from './to-backend-reset-user-password';
 export * from './to-backend-set-user-name';
-export * from './to-backend-set-user-timezone';
 export * from './to-backend-set-user-ui';
 export * from './to-backend-update-user-password';

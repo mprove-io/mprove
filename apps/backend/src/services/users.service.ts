@@ -106,7 +106,6 @@ export class UsersService {
       alias: alias,
       firstName: undefined, // null
       lastName: undefined, // null
-      timezone: common.USE_PROJECT_TIMEZONE_VALUE,
       ui: constants.DEFAULT_UI,
       serverTs: undefined
     };

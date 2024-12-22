@@ -97,7 +97,6 @@ export class CreateMemberController {
         alias: alias,
         firstName: undefined,
         lastName: undefined,
-        timezone: common.USE_PROJECT_TIMEZONE_VALUE,
         ui: constants.DEFAULT_UI,
         serverTs: undefined
       };

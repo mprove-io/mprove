@@ -79,7 +79,6 @@ export class MakerService {
       alias: user.alias,
       firstName: user.firstName,
       lastName: user.lastName,
-      timezone: user.timezone,
       roles: roles || [],
       envs: envs || [],
       isAdmin: isAdmin,

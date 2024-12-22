@@ -13,7 +13,6 @@ let userState: UserState = {
   alias: undefined,
   firstName: undefined,
   lastName: undefined,
-  timezone: undefined,
   isEmailVerified: undefined,
   ui: undefined,
   serverTs: 1
@@ -38,7 +37,6 @@ export class UserQuery extends BaseQuery<UserState> {
   email$ = this.store.pipe(select(state => state.email));
   alias$ = this.store.pipe(select(state => state.alias));
   userId$ = this.store.pipe(select(state => state.userId));
-  timezone$ = this.store.pipe(select(state => state.timezone));
 
   constructor() {
     super(createStore({ name: 'user' }, withProps<UserState>(userState)));

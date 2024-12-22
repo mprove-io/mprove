@@ -14,7 +14,6 @@ let memberState: MemberState = {
   lastName: undefined,
   fullName: undefined,
   avatarSmall: undefined,
-  timezone: undefined,
   roles: undefined,
   envs: undefined,
   isAdmin: undefined,

@@ -28,7 +28,6 @@ export const usersTable = pgTable(
     jwtMinIat: bigint('jwt_min_iat', { mode: 'number' }),
     firstName: varchar('first_name'),
     lastName: varchar('last_name'),
-    timezone: varchar('timezone').notNull(),
     ui: json('ui').$type<Ui>(),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

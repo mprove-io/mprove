@@ -4,6 +4,7 @@ import { common } from '~front/barrels/common';
 import { ModelQuery, ModelState } from '../queries/model.query';
 import { MqQuery } from '../queries/mq.query';
 import { StructQuery, StructState } from '../queries/struct.query';
+import { UiQuery } from '../queries/ui.query';
 import { UserQuery, UserState } from '../queries/user.query';
 
 @Injectable({ providedIn: 'root' })
@@ -40,19 +41,13 @@ export class StructService {
     private userQuery: UserQuery,
     private structQuery: StructQuery,
     private modelQuery: ModelQuery,
+    private uiQuery: UiQuery,
     private mqQuery: MqQuery
   ) {
     this.user$.subscribe();
     this.struct$.subscribe();
     this.model$.subscribe();
     this.mconfig$.subscribe();
-  }
-
-  getTimezone() {
-    return this.struct.allowTimezones === true &&
-      this.user.timezone !== common.USE_PROJECT_TIMEZONE_VALUE
-      ? this.user.timezone
-      : this.struct.defaultTimezone;
   }
 
   makeMconfig(): common.MconfigX {
@@ -72,7 +67,7 @@ export class StructService {
       sortings: [],
       fields: [],
       sorts: null,
-      timezone: this.getTimezone(),
+      timezone: this.uiQuery.getValue().timezone,
       limit: 500,
       filters: [],
       extendedFilters: [],
