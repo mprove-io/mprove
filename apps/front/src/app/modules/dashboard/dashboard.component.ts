@@ -237,9 +237,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     let timezoneParam = this.route.snapshot.queryParamMap.get('timezone');
 
-    let timezone = common.isDefined(timezoneParam)
-      ? timezoneParam.split('-').join('/')
-      : uiState.timezone;
+    let structState = this.structQuery.getValue();
+
+    let timezone =
+      structState.allowTimezones === false
+        ? structState.defaultTimezone
+        : common.isDefined(timezoneParam)
+        ? timezoneParam.split('-').join('/')
+        : uiState.timezone;
 
     if (uiState.timezone !== timezone) {
       this.uiQuery.updatePart({ timezone: timezone });
@@ -248,7 +253,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.timezoneForm.controls['timezone'].setValue(timezone);
 
-    if (common.isUndefined(timezoneParam)) {
+    if (common.isUndefined(timezoneParam) || timezoneParam !== timezone) {
       let url = this.router
         .createUrlTree([], {
           relativeTo: this.route,

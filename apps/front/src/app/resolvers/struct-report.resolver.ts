@@ -37,13 +37,21 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
     let timeRangeParam: common.TimeSpecEnum = route.queryParams?.timeRange;
 
     let uiState = this.uiQuery.getValue();
+    let structState = this.structQuery.getValue();
+
+    let timezone =
+      structState.allowTimezones === false
+        ? structState.defaultTimezone
+        : common.isDefined(timezoneParam)
+        ? timezoneParam.split('-').join('/')
+        : uiState.timezone;
+
+    // timezoneParam changes by location.go in ReportComponent's onSelectionChanged
 
     return this.resolveRoute({
       route: route,
       showSpinner: false,
-      timezone: common.isDefined(timezoneParam)
-        ? timezoneParam.split('-').join('/')
-        : uiState.timezone,
+      timezone: timezone,
       timeSpec: common.isDefined(timeSpecParam)
         ? timeSpecParam
         : uiState.timeSpec,

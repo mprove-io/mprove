@@ -199,9 +199,14 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
     let timezoneParam = this.route.snapshot.queryParamMap.get('timezone');
 
-    let timezone = common.isDefined(timezoneParam)
-      ? timezoneParam.split('-').join('/')
-      : uiState.timezone;
+    let structState = this.structQuery.getValue();
+
+    let timezone =
+      structState.allowTimezones === false
+        ? structState.defaultTimezone
+        : common.isDefined(timezoneParam)
+        ? timezoneParam.split('-').join('/')
+        : uiState.timezone;
 
     if (uiState.timezone !== timezone) {
       this.uiQuery.updatePart({ timezone: timezone });
@@ -222,7 +227,11 @@ export class ChartsComponent implements OnInit, OnDestroy {
     this.word = this.route.snapshot.queryParamMap.get('search');
     this.searchWordChange();
 
-    if (common.isDefined(this.word) || common.isUndefined(timezoneParam)) {
+    if (
+      common.isDefined(this.word) ||
+      common.isUndefined(timezoneParam) ||
+      timezoneParam !== timezone
+    ) {
       if (common.isDefined(this.word)) {
         this.showList = false;
       }
