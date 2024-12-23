@@ -227,18 +227,9 @@ ngneat-dialog {
   background-color: #e5e7eb;
 }
 
-.ng-dropdown-panel {
-  cursor: pointer !important;
-}
-
-.ng-select-container {
-  cursor: pointer !important;
-}
-
-.ng-input > input {
-  cursor: pointer !important;
-}
-
+.ng-dropdown-panel,
+.ng-select-container,
+.ng-input > input,
 .ng-select .ng-input {
   cursor: pointer !important;
 }
