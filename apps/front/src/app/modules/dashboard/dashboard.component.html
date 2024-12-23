@@ -36,7 +36,13 @@
               >Timezone</div
             >
 
-            <form [formGroup]="timezoneForm">
+            <form
+              [formGroup]="timezoneForm"
+              tp="Timezone change is not allowed"
+              [tpIsEnabled]="
+                timezoneForm.controls['timezone'].disabled === true
+              "
+            >
               <ng-select
                 #dashboardTimezoneSelect
                 data-cy="dashboardTimezoneSelect"

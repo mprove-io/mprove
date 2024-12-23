@@ -48,7 +48,14 @@
               <div class="text-gray1 ml-6 select-none text-base">Tz</div>
 
               <div class="flex max-w-[260px] flex-1">
-                <form [formGroup]="timezoneForm" class="w-full">
+                <form
+                  class="w-full"
+                  [formGroup]="timezoneForm"
+                  tp="Timezone change is not allowed"
+                  [tpIsEnabled]="
+                    timezoneForm.controls['timezone'].disabled === true
+                  "
+                >
                   <ng-select
                     #metricsTimezoneSelect
                     data-cy="metricsTimezoneSelect"

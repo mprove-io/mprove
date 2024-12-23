@@ -231,6 +231,10 @@
                 <form
                   class="ml-3"
                   [formGroup]="timezoneForm"
+                  tp="Timezone change is not allowed"
+                  [tpIsEnabled]="
+                    timezoneForm.controls['timezone'].disabled === true
+                  "
                   *ngIf="mconfig?.select.length > 0"
                 >
                   <ng-select

@@ -222,6 +222,11 @@ ngneat-dialog {
 //
 //
 
+.ng-select.ng-select-disabled > .ng-select-container {
+  // background-color: #F3F4F6;
+  background-color: #e5e7eb;
+}
+
 .ng-dropdown-panel {
   cursor: pointer !important;
 }
