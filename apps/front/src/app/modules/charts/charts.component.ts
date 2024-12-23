@@ -227,23 +227,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
     this.word = this.route.snapshot.queryParamMap.get('search');
     this.searchWordChange();
 
-    if (
-      common.isDefined(this.word) ||
-      common.isUndefined(timezoneParam) ||
-      timezoneParam !== timezone
-    ) {
-      if (common.isDefined(this.word)) {
-        this.showList = false;
-      }
-
-      let url = this.router
-        .createUrlTree([], {
-          relativeTo: this.route,
-          queryParams: { timezone: timezone.split('/').join('-') }
-        })
-        .toString();
-
-      this.location.go(url);
+    if (common.isDefined(this.word)) {
+      this.showList = false;
     }
   }
 
@@ -327,6 +312,20 @@ export class ChartsComponent implements OnInit, OnDestroy {
     this.timer = setTimeout(() => {
       this.makeFilteredCharts();
       this.cd.detectChanges();
+
+      let url = this.router
+        .createUrlTree([], {
+          relativeTo: this.route,
+          queryParams: {
+            timezone: this.uiQuery.getValue().timezone.split('/').join('-'),
+            search: common.isDefinedAndNotEmpty(this.word)
+              ? this.word
+              : undefined
+          }
+        })
+        .toString();
+
+      this.location.replaceState(url);
     }, 600);
   }
 
@@ -334,6 +333,18 @@ export class ChartsComponent implements OnInit, OnDestroy {
     this.word = undefined;
     this.makeFilteredCharts();
     this.cd.detectChanges();
+
+    let url = this.router
+      .createUrlTree([], {
+        relativeTo: this.route,
+        queryParams: {
+          timezone: this.uiQuery.getValue().timezone.split('/').join('-'),
+          search: common.isDefinedAndNotEmpty(this.word) ? this.word : undefined
+        }
+      })
+      .toString();
+
+    this.location.replaceState(url);
   }
 
   newChart() {
@@ -546,7 +557,10 @@ export class ChartsComponent implements OnInit, OnDestroy {
     let url = this.router
       .createUrlTree([], {
         relativeTo: this.route,
-        queryParams: { timezone: timezone.split('/').join('-') }
+        queryParams: {
+          timezone: timezone.split('/').join('-'),
+          search: common.isDefinedAndNotEmpty(this.word) ? this.word : undefined
+        }
       })
       .toString();
 

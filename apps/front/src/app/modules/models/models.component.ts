@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -61,12 +62,14 @@ export class ModelsComponent implements OnInit, OnDestroy {
     private modelsQuery: ModelsQuery,
     private memberQuery: MemberQuery,
     private navigateService: NavigateService,
+    private location: Location,
     private title: Title
   ) {}
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
 
+    this.word = this.route.snapshot.queryParamMap.get('search');
     this.searchWordChange();
   }
 
@@ -121,6 +124,19 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.timer = setTimeout(() => {
       this.makeFilteredModels();
       this.cd.detectChanges();
+
+      let url = this.router
+        .createUrlTree([], {
+          relativeTo: this.route,
+          queryParams: {
+            search: common.isDefinedAndNotEmpty(this.word)
+              ? this.word
+              : undefined
+          }
+        })
+        .toString();
+
+      this.location.replaceState(url);
     }, 600);
   }
 
@@ -128,6 +144,17 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.word = undefined;
     this.makeFilteredModels();
     this.cd.detectChanges();
+
+    let url = this.router
+      .createUrlTree([], {
+        relativeTo: this.route,
+        queryParams: {
+          search: common.isDefinedAndNotEmpty(this.word) ? this.word : undefined
+        }
+      })
+      .toString();
+
+    this.location.replaceState(url);
   }
 
   rowMenuOnClick(event: any) {

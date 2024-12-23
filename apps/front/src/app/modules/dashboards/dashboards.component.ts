@@ -2,7 +2,6 @@ import { Location } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -16,7 +15,6 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
-import { DataService } from '~front/app/services/data.service';
 
 export class ModelXWithTotalDashboards extends common.ModelX {
   totalDashboards: number;
@@ -122,9 +120,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     private apiService: ApiService,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
-    private dataService: DataService,
     private dashboardsQuery: DashboardsQuery,
-    private spinner: NgxSpinnerService,
     private modelsQuery: ModelsQuery,
     private memberQuery: MemberQuery,
     private myDialogService: MyDialogService,
@@ -136,28 +132,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
 
-    // let searchFileName = this.route.snapshot.queryParamMap.get(
-    //   'searchFileName'
-    // );
-    // if (common.isDefined(searchFileName)) {
-    //   let fileNameAr = searchFileName.split('.');
-    //   fileNameAr.pop();
-    //   this.fileName = fileNameAr.join('.');
-    // }
-
     this.word = this.route.snapshot.queryParamMap.get('search');
     this.searchWordChange();
-
-    if (
-      common.isDefined(this.word)
-      // || common.isDefined(this.fileName)
-    ) {
-      const url = this.router
-        .createUrlTree([], { relativeTo: this.route, queryParams: {} })
-        .toString();
-
-      this.location.go(url);
-    }
   }
 
   modelOnClick(modelId: string) {
@@ -237,6 +213,19 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.timer = setTimeout(() => {
       this.makeFilteredDashboards();
       this.cd.detectChanges();
+
+      let url = this.router
+        .createUrlTree([], {
+          relativeTo: this.route,
+          queryParams: {
+            search: common.isDefinedAndNotEmpty(this.word)
+              ? this.word
+              : undefined
+          }
+        })
+        .toString();
+
+      this.location.replaceState(url);
     }, 600);
   }
 
@@ -244,6 +233,17 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.word = undefined;
     this.makeFilteredDashboards();
     this.cd.detectChanges();
+
+    let url = this.router
+      .createUrlTree([], {
+        relativeTo: this.route,
+        queryParams: {
+          search: common.isDefinedAndNotEmpty(this.word) ? this.word : undefined
+        }
+      })
+      .toString();
+
+    this.location.replaceState(url);
   }
 
   newDashboard() {

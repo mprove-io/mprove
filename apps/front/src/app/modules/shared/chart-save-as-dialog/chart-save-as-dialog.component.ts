@@ -19,6 +19,7 @@ import { take, tap } from 'rxjs/operators';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -126,6 +127,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
     public ref: DialogRef<ChartSaveAsDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
+    private uiQuery: UiQuery,
     private navigateService: NavigateService,
     private navQuery: NavQuery,
     private structQuery: StructQuery,
@@ -347,9 +349,12 @@ export class ChartSaveAsDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateChartResponse) => {
+          let uiState = this.uiQuery.getValue();
+
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.navigateService.navigateToCharts({
               extra: {
+                timezone: uiState.timezone.split('/').join('-'),
                 queryParams: { search: resp.payload.chart.chartId }
               }
             });

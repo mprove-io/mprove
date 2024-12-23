@@ -551,8 +551,8 @@ export class FileEditorComponent implements OnInit, OnDestroy {
       this.navigateService.navigateToCharts({
         extra: {
           queryParams: {
-            search: id,
-            timezone: uiState.timezone.split('/').join('-')
+            timezone: uiState.timezone.split('/').join('-'),
+            search: id
           }
         }
       });
