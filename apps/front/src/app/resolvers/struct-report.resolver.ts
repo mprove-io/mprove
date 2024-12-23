@@ -46,8 +46,6 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
         ? timezoneParam.split('-').join('/')
         : uiState.timezone;
 
-    // timezoneParam changes by location.go in ReportComponent's onSelectionChanged
-
     return this.resolveRoute({
       route: route,
       showSpinner: false,
@@ -135,9 +133,7 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
 
         if (common.isDefined(draftReport)) {
           this.navigateService.navigateToMetricsRep({
-            reportId: draftReport.reportId,
-            selectRowsNodeIds: [],
-            skipLocationChange: true
+            reportId: draftReport.reportId
           });
 
           return of(false);
@@ -151,9 +147,7 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
 
           if (common.isDefined(pReport)) {
             this.navigateService.navigateToMetricsRep({
-              reportId: pReport.reportId,
-              selectRowsNodeIds: [],
-              skipLocationChange: true
+              reportId: pReport.reportId
             });
 
             return of(false);
@@ -169,9 +163,7 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
 
         if (common.isDefined(pReport)) {
           this.navigateService.navigateToMetricsRep({
-            reportId: pReport.reportId,
-            selectRowsNodeIds: [],
-            skipLocationChange: true
+            reportId: pReport.reportId
           });
 
           return of(false);
@@ -179,9 +171,7 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
       } else {
         this.navigateService.navigateToMetricsRep({
           reportId: common.EMPTY_REPORT_ID,
-          selectRowsNodeIds: [],
-          skipDeselect: true,
-          skipLocationChange: true
+          skipDeselect: true
         });
 
         return of(false);

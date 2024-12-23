@@ -255,10 +255,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
             this.spinner.hide(constants.APP_SPINNER_NAME); // route params do not change
 
             this.navigateService.navigateToMetricsRep({
-              reportId: resp.payload.report.reportId,
-              selectRowsNodeIds: uiState.reportSelectedNodes.map(
-                node => node.id
-              )
+              reportId: resp.payload.report.reportId
             });
           }
         }),
@@ -346,10 +343,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
             this.reportsQuery.update({ reports: newReportsC });
 
             this.navigateService.navigateToMetricsRep({
-              reportId: resp.payload.report.reportId,
-              selectRowsNodeIds: uiState.reportSelectedNodes.map(
-                node => node.id
-              )
+              reportId: resp.payload.report.reportId
             });
           }
         }),

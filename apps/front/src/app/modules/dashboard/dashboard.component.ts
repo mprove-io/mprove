@@ -261,7 +261,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         })
         .toString();
 
-      this.location.go(url);
+      this.location.replaceState(url);
     }
 
     this.resizeSubscription = merge(
@@ -382,19 +382,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     let timezone = this.timezoneForm.controls['timezone'].value;
 
-    // this.dashboard.tiles.forEach(x => {
-    //   x.timezone = timezone;
-    // });
-
-    // this.dashboardService.navCreateTempDashboard({
-    //   tiles: this.dashboard.tiles,
-    //   oldDashboardId: this.dashboard.dashboardId,
-    //   newDashboardId: common.makeId(),
-    //   newDashboardFields: this.dashboard.fields,
-    //   deleteFilterFieldId: undefined,
-    //   deleteFilterMconfigId: undefined
-    // });
-
     this.uiQuery.updatePart({ timezone: timezone });
     this.uiService.setUserUi({ timezone: timezone });
 
@@ -410,7 +397,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         tap(x => {
           let uiStateB = this.uiQuery.getValue();
 
-          const url = this.router
+          let url = this.router
             .createUrlTree([], {
               relativeTo: this.route,
               queryParams: {

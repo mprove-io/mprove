@@ -721,10 +721,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
               queryParams: makeRepQueryParams({
                 timezone: uiStateB.timezone,
                 timeSpec: uiStateB.timeSpec,
-                timeRangeFraction: uiStateB.timeRangeFraction,
-                selectRowsNodeIds: uiStateB.reportSelectedNodes.map(
-                  node => node.id
-                )
+                timeRangeFraction: uiStateB.timeRangeFraction
               })
             })
             .toString();
@@ -740,8 +737,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
     this.uiQuery.getValue().gridApi.deselectAll();
 
     this.navigateService.navigateToMetricsRep({
-      reportId: report.reportId,
-      selectRowsNodeIds: []
+      reportId: report.reportId
     });
   }
 

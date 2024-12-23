@@ -16,7 +16,6 @@ import {
 } from 'ag-grid-community';
 import { combineLatest, tap } from 'rxjs';
 import { debounce } from 'throttle-debounce';
-import { makeRepQueryParams } from '~front/app/functions/make-query-params';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -299,36 +298,36 @@ export class ReportComponent {
     )
   );
 
-  queryParams$ = this.route.queryParams.pipe(
-    tap(queryParams => {
-      // console.log('queryParams - tap')
+  // queryParams$ = this.route.queryParams.pipe(
+  //   tap(queryParams => {
+  //     // console.log('queryParams - tap')
 
-      let selectRows = queryParams['selectRows'];
+  //     let selectRows = queryParams['selectRows'];
 
-      let nodeIds: string[] = common.isDefined(selectRows)
-        ? selectRows.split('-')
-        : [];
+  //     let nodeIds: string[] = common.isDefined(selectRows)
+  //       ? selectRows.split('-')
+  //       : [];
 
-      setTimeout(() => {
-        if (common.isUndefined(this.agGridApi)) {
-          return;
-        }
-        if (nodeIds.length > 0) {
-          nodeIds.forEach(nodeId => {
-            let rowNode = this.agGridApi.getRowNode(nodeId);
-            if (common.isDefined(rowNode)) {
-              // console.log('queryParams - set select node')
-              rowNode.setSelected(true);
-            }
-          });
-        } else {
-          // console.log('queryParams - deselect', nodeIds);
-          this.agGridApi.deselectAll();
-        }
-        this.cd.detectChanges();
-      }, 1);
-    })
-  );
+  //     setTimeout(() => {
+  //       if (common.isUndefined(this.agGridApi)) {
+  //         return;
+  //       }
+  //       if (nodeIds.length > 0) {
+  //         nodeIds.forEach(nodeId => {
+  //           let rowNode = this.agGridApi.getRowNode(nodeId);
+  //           if (common.isDefined(rowNode)) {
+  //             // console.log('queryParams - set select node')
+  //             rowNode.setSelected(true);
+  //           }
+  //         });
+  //       } else {
+  //         // console.log('queryParams - deselect', nodeIds);
+  //         this.agGridApi.deselectAll();
+  //       }
+  //       this.cd.detectChanges();
+  //     }, 1);
+  //   })
+  // );
 
   lastSelectionChangedTs = 0;
   lastRowClickedTs = 0;
@@ -380,22 +379,6 @@ export class ReportComponent {
 
     let nodeIds = sNodes.map(node => node.id);
     // console.log('onSelectionChanged', nodeIds);
-
-    let uiState = this.uiQuery.getValue();
-
-    const url = this.router
-      .createUrlTree([], {
-        relativeTo: this.route,
-        queryParams: makeRepQueryParams({
-          timezone: uiState.timezone,
-          timeSpec: uiState.timeSpec,
-          timeRangeFraction: uiState.timeRangeFraction,
-          selectRowsNodeIds: nodeIds
-        })
-      })
-      .toString();
-
-    this.location.go(url);
   }
 
   updateRepChartData(sNodes: IRowNode<DataRow>[]) {

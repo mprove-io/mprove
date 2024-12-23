@@ -4,9 +4,8 @@ export function makeRepQueryParams(item: {
   timezone: string;
   timeSpec: common.TimeSpecEnum;
   timeRangeFraction: common.Fraction;
-  selectRowsNodeIds: string[];
 }) {
-  let { timezone, timeSpec, timeRangeFraction, selectRowsNodeIds } = item;
+  let { timezone, timeSpec, timeRangeFraction } = item;
 
   let queryParams = {
     timezone: timezone.split('/').join('-'),
@@ -17,12 +16,8 @@ export function makeRepQueryParams(item: {
       .split(' ')
       .join('_')
       .split(':')
-      .join('~'),
-    selectRows:
-      selectRowsNodeIds.length > 0 ? selectRowsNodeIds.join('-') : undefined
+      .join('~')
   };
-
-  // console.log('makeRepQueryParams', queryParams);
 
   return queryParams;
 }

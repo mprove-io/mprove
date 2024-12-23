@@ -83,8 +83,7 @@ export class ReportOptionsComponent {
       uiState.gridApi.deselectAll();
 
       this.navigateService.navigateToMetricsRep({
-        reportId: common.EMPTY_REPORT_ID,
-        selectRowsNodeIds: []
+        reportId: common.EMPTY_REPORT_ID
       });
     }
   }

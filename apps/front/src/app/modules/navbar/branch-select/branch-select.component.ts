@@ -348,8 +348,7 @@ export class BranchSelectComponent {
         queryParams: makeRepQueryParams({
           timezone: uiState.timezone,
           timeSpec: uiState.timeSpec,
-          timeRangeFraction: uiState.timeRangeFraction,
-          selectRowsNodeIds: []
+          timeRangeFraction: uiState.timeRangeFraction
         })
       });
     } else {

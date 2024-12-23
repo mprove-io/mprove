@@ -5,12 +5,16 @@
 
   <button
     data-cy="rowOptionsMenuButton"
-    class="hov invisible relative flex h-8 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
+    class="invisible relative flex h-8 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
+    [ngClass]="{
+      hov: reportSelectedNodesLength === 1
+    }"
     #t1="tippy"
     [tp]="templateRowOptions"
     [tpHideOnEscape]="true"
     tpVariation="menuRow"
     className="my-menu-row"
+    (click)="clickMenu($event)"
   >
     <m-dots-vertical-icon></m-dots-vertical-icon>
   </button>

@@ -164,8 +164,7 @@ export class EnvSelectComponent {
         queryParams: makeRepQueryParams({
           timezone: uiState.timezone,
           timeSpec: uiState.timeSpec,
-          timeRangeFraction: uiState.timeRangeFraction,
-          selectRowsNodeIds: []
+          timeRangeFraction: uiState.timeRangeFraction
         })
       });
     } else {

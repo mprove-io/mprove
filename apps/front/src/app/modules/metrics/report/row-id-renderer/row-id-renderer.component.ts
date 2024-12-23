@@ -15,10 +15,13 @@ import { common } from '~front/barrels/common';
 export class RowIdRendererComponent implements ICellRendererAngularComp {
   params: ICellRendererParams<DataRow>;
 
+  reportSelectedNodesLength: number;
   reportSelectedNode: IRowNode<DataRow>;
 
   uiQuery$ = this.uiQuery.select().pipe(
     tap(x => {
+      this.reportSelectedNodesLength = x.reportSelectedNodes.length;
+
       this.reportSelectedNode =
         x.reportSelectedNodes.length === 1
           ? x.reportSelectedNodes[0]
@@ -69,5 +72,9 @@ export class RowIdRendererComponent implements ICellRendererAngularComp {
       rowChange: undefined,
       rowIds: [this.reportSelectedNode.data.rowId]
     });
+  }
+
+  clickMenu(event: MouseEvent) {
+    event.stopPropagation();
   }
 }

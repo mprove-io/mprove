@@ -233,8 +233,7 @@ export class ApiService {
               .pipe(
                 tap(x => {
                   this.navigateService.navigateToMetricsRep({
-                    reportId: common.EMPTY_REPORT_ID,
-                    selectRowsNodeIds: []
+                    reportId: common.EMPTY_REPORT_ID
                   });
                 }),
                 take(1)

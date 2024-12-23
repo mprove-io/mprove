@@ -348,22 +348,12 @@ export class NavigateService {
     });
   }
 
-  navigateToMetricsRep(item: {
-    reportId: string;
-    selectRowsNodeIds: string[];
-    skipDeselect?: boolean;
-    skipLocationChange?: boolean;
-  }) {
-    let { reportId, selectRowsNodeIds, skipDeselect, skipLocationChange } =
-      item;
+  navigateToMetricsRep(item: { reportId: string; skipDeselect?: boolean }) {
+    let { reportId, skipDeselect } = item;
 
     let uiState = this.uiQuery.getValue();
 
-    if (
-      selectRowsNodeIds.length === 0 &&
-      skipDeselect === false &&
-      common.isDefined(uiState.gridApi)
-    ) {
+    if (skipDeselect === false && common.isDefined(uiState.gridApi)) {
       uiState.gridApi.deselectAll();
     }
 
@@ -387,14 +377,10 @@ export class NavigateService {
     ];
 
     this.router.navigate(navTo, {
-      skipLocationChange: common.isDefined(skipLocationChange)
-        ? skipLocationChange
-        : false,
       queryParams: makeRepQueryParams({
         timezone: uiState.timezone,
         timeSpec: uiState.timeSpec,
-        timeRangeFraction: uiState.timeRangeFraction,
-        selectRowsNodeIds: selectRowsNodeIds
+        timeRangeFraction: uiState.timeRangeFraction
       })
     });
   }

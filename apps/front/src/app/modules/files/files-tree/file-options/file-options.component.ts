@@ -27,10 +27,6 @@ export class FileOptionsComponent {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
-  clickMenu(event: MouseEvent) {
-    event.stopPropagation();
-  }
-
   constructor(
     private uiQuery: UiQuery,
     private navQuery: NavQuery,
@@ -63,5 +59,9 @@ export class FileOptionsComponent {
       nodeId: node.data.id,
       fileName: node.data.name
     });
+  }
+
+  clickMenu(event: MouseEvent) {
+    event.stopPropagation();
   }
 }
