@@ -7,7 +7,7 @@ derived_table: |
 parameters:
 - filter: f1
   result: number  
-  default:
+  conditions:
   - '>50'
 
 fields:

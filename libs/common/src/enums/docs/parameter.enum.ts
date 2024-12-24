@@ -22,7 +22,6 @@ export enum ParameterEnum {
   CurrencyPrefix = 'currency_prefix',
   CurrencySuffix = 'currency_suffix',
   Dashboard = 'dashboard',
-  Default = 'default',
   DefaultFilters = 'default_filters',
   DerivedTable = 'derived_table',
   Dimension = 'dimension',

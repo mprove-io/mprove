@@ -3,12 +3,12 @@ access_users: ['backend-get-dashboard__ok-access-users']
 parameters:
 - filter: order_date
   result: ts 
-  default:
+  conditions:
   - last 3 years complete
   
 - filter: customer_age
   result: number 
-  default:
+  conditions:
   - '[25, 35]'   
 
 tiles:

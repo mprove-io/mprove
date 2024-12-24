@@ -2,7 +2,7 @@ dashboard: ec_d4
 parameters:
 - filter: order_date
   result: ts 
-  default:
+  conditions:
   - 'any'
   #on (year)/(month)/(day) (hour):(minute)
   - 'on 2016/07/16 10:52'         #on 10:52 minute of 2016/07/16
@@ -58,7 +58,7 @@ parameters:
   
 - filter: customer_age
   result: number 
-  default:
+  conditions:
   - '[25, 35]'   
 
 tiles:

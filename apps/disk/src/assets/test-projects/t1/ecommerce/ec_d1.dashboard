@@ -2,12 +2,12 @@ dashboard: ec_d1
 parameters:
 - filter: order_date
   result: ts 
-  default:
+  conditions:
   - last 3 years complete
   
 - filter: customer_age
   result: number 
-  default:
+  conditions:
   - '[25, 35]'   
 
 tiles:

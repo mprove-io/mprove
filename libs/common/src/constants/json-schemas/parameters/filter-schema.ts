@@ -26,7 +26,7 @@ export const FILTER_SCHEMA: JSONSchema7 = {
     suggest_model_dimension: {
       type: 'string'
     },
-    default: {
+    conditions: {
       type: 'array',
       items: {
         type: 'string'

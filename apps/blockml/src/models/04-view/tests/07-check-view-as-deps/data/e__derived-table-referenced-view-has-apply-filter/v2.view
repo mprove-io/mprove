@@ -7,7 +7,7 @@ derived_table: |
 parameters:
 - filter: f5
   result: string
-  default:
+  conditions:
   - '-abc-'
 
 fields:

@@ -2,5 +2,5 @@ dashboard: d1
 parameters:
 - filter: size
   result: number
-  default:      
+  conditions:      
   - 'abc'

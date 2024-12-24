@@ -12,5 +12,5 @@ joins:
 parameters:
 - filter: f1
   result: string
-  default:
+  conditions:
   - '-abc-'   

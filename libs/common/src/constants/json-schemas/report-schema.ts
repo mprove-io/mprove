@@ -1,5 +1,6 @@
 import { JSONSchema7 } from 'json-schema';
 import { constants } from '~common/barrels/constants';
+import { FILTER_SCHEMA } from './parameters/filter-schema';
 
 export const REPORT_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
@@ -12,6 +13,10 @@ export const REPORT_SCHEMA: JSONSchema7 = {
     },
     title: {
       type: 'string'
+    },
+    parameters: {
+      type: 'array',
+      items: FILTER_SCHEMA
     },
     access_users: {
       type: 'array',

@@ -67,7 +67,7 @@ export function makeDashboardFileText(item: {
                 : undefined,
             result: field.result,
             suggest_model_dimension: field.suggestModelDimension,
-            default:
+            conditions:
               common.isDefined(field.fractions) && field.fractions.length > 0
                 ? field.fractions.map(x => x.brick)
                 : undefined

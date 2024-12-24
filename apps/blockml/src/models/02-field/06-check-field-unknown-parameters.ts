@@ -213,7 +213,7 @@ export function checkFieldUnknownParameters<T extends types.vmdrType>(
                   common.ParameterEnum.Description.toString(),
                   common.ParameterEnum.Result.toString(),
                   common.ParameterEnum.SuggestModelDimension.toString(),
-                  common.ParameterEnum.Default.toString()
+                  common.ParameterEnum.Conditions.toString()
                 ].indexOf(parameter) < 0
               ) {
                 item.errors.push(
@@ -242,7 +242,7 @@ export function checkFieldUnknownParameters<T extends types.vmdrType>(
             Array.isArray(field[parameter as keyof common.FieldAny]) &&
             [
               common.ParameterEnum.Timeframes.toString(),
-              common.ParameterEnum.Default.toString()
+              common.ParameterEnum.Conditions.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(
@@ -288,7 +288,7 @@ export function checkFieldUnknownParameters<T extends types.vmdrType>(
           if (
             !Array.isArray(field[parameter as keyof common.FieldAny]) &&
             [
-              common.ParameterEnum.Default.toString(),
+              common.ParameterEnum.Conditions.toString(),
               common.ParameterEnum.Timeframes.toString()
             ].indexOf(parameter) > -1
           ) {

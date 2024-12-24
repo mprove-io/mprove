@@ -20,8 +20,8 @@ export interface FieldFilter {
   suggest_model_dimension?: string;
   suggest_model_dimension_line_num?: number;
 
-  default?: string[];
-  default_line_num?: number;
+  conditions?: string[];
+  conditions_line_num?: number;
 
   //
 

@@ -33,15 +33,15 @@ export function checkVmdFilterDefaults<T extends types.vmdrType>(
         return;
       }
 
-      if (common.isUndefined(field.default)) {
-        field.default = ['any'];
+      if (common.isUndefined(field.conditions)) {
+        field.conditions = ['any'];
       }
 
       field.fractions = [];
 
       let p = processFilter({
         caseSensitiveStringFilters: caseSensitiveStringFilters,
-        filterBricks: field.default,
+        filterBricks: field.conditions,
         result: field.result,
         fractions: field.fractions
       });
@@ -55,7 +55,7 @@ export function checkVmdFilterDefaults<T extends types.vmdrType>(
               `filter "${field.name}"`,
             lines: [
               {
-                line: field.default_line_num,
+                line: field.conditions_line_num,
                 name: x.fileName,
                 path: x.filePath
               }
@@ -65,7 +65,7 @@ export function checkVmdFilterDefaults<T extends types.vmdrType>(
         return;
       }
 
-      x.filters[field.name] = common.makeCopy(field.default);
+      x.filters[field.name] = common.makeCopy(field.conditions);
     });
 
     if (errorsOnStart === item.errors.length) {

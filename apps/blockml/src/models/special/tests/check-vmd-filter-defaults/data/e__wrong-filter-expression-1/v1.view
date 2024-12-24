@@ -4,7 +4,7 @@ table: 1
 parameters:
 - filter: size
   result: number
-  default:      
+  conditions:      
   - 'abc'
 
 fields:
