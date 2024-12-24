@@ -545,6 +545,17 @@ export class RebuildStructService {
       this.cs
     );
 
+    reports = barBuilder.buildField(
+      {
+        entities: reports,
+        projectConfig: projectConfig,
+        structId: item.structId,
+        errors: errors,
+        caller: common.CallerEnum.BuildReportField
+      },
+      this.cs
+    );
+
     reports = barBuilder.buildReport(
       {
         reports: reports,
@@ -562,7 +573,7 @@ export class RebuildStructService {
 
     barSpecial.checkVmdSuggestModelDimension(
       {
-        entities: [...views, ...models, ...dashboards],
+        entities: [...views, ...models, ...dashboards, ...reports],
         models: models,
         errors: errors,
         structId: item.structId,

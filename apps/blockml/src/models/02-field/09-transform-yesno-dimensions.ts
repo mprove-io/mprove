@@ -20,7 +20,10 @@ export function transformYesNoDimensions<T extends types.vmType>(
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   item.entities.forEach((x: T) => {
-    if (x.fileExt === common.FileExtensionEnum.Dashboard) {
+    if (
+      x.fileExt === common.FileExtensionEnum.Dashboard ||
+      x.fileExt === common.FileExtensionEnum.Report
+    ) {
       return;
     }
 

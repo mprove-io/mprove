@@ -7,7 +7,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.CheckSqlExist;
 
-export function checkSqlExist<T extends types.vmdType>(
+export function checkSqlExist<T extends types.vmdrType>(
   item: {
     entities: T[];
     errors: BmError[];

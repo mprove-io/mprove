@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.CheckFieldUnknownParameters;
 
-export function checkFieldUnknownParameters<T extends types.vmdType>(
+export function checkFieldUnknownParameters<T extends types.vmdrType>(
   item: {
     entities: T[];
     errors: BmError[];

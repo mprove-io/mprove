@@ -1,3 +1,5 @@
+import { FilterBricksDictionary } from '../filter-bricks-dictionary';
+import { FieldAny } from './field-any';
 import { FileBasic } from './file-basic';
 import { FileReportRow } from './file-report-row';
 
@@ -16,4 +18,14 @@ export interface FileReport extends FileBasic {
 
   rows?: FileReportRow[];
   rows_line_num?: number;
+
+  parameters?: FieldAny[];
+  parameters_line_num?: number;
+
+  fields?: FieldAny[];
+  fields_line_num?: number;
+
+  //
+
+  filters?: FilterBricksDictionary;
 }

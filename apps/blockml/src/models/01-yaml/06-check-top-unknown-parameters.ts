@@ -213,6 +213,7 @@ export function checkTopUnknownParameters(
               [
                 common.ParameterEnum.Report.toString(),
                 common.ParameterEnum.Title.toString(),
+                common.ParameterEnum.Parameters.toString(),
                 common.ParameterEnum.AccessUsers.toString(),
                 common.ParameterEnum.AccessRoles.toString(),
                 common.ParameterEnum.Rows.toString()

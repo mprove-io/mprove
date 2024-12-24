@@ -38,6 +38,17 @@ export function buildReport(
     cs
   );
 
+  reports = barReport.checkReportFilterDefaults(
+    {
+      reports: reports,
+      structId: item.structId,
+      caseSensitiveStringFilters: item.caseSensitiveStringFilters,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
   reports = barReport.checkReportRowUnknownParameters(
     {
       reports: reports,

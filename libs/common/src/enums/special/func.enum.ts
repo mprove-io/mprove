@@ -132,6 +132,7 @@ export enum FuncEnum {
 
   CheckReport = '17-report/01-check-report',
   CheckReportAccess = '17-report/02-check-report-access',
+  CheckReportFilterDefaults = '17-report/02.1-check-report-filter-defaults',
   CheckReportRowUnknownParameters = '17-report/03-check-report-row-unknown-parameters',
   CheckReportRowUnknownParams = '17-report/04-check-report-row-unknown-params',
   CheckReportRow = '17-report/05-check-report-row',

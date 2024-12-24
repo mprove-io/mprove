@@ -25,7 +25,10 @@ export function checkCycles<T extends types.vmType>(
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (x.fileExt === common.FileExtensionEnum.Dashboard) {
+    if (
+      x.fileExt === common.FileExtensionEnum.Dashboard ||
+      x.fileExt === common.FileExtensionEnum.Report
+    ) {
       newEntities.push(x);
       return;
     }
