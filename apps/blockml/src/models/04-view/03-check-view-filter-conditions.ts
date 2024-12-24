@@ -5,9 +5,9 @@ import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = common.FuncEnum.CheckViewFilterDefaults;
+let func = common.FuncEnum.CheckViewFilterConditions;
 
-export function checkViewFilterDefaults(
+export function checkViewFilterConditions(
   item: {
     views: common.FileView[];
     errors: BmError[];
@@ -20,7 +20,7 @@ export function checkViewFilterDefaults(
   let { caller, structId, caseSensitiveStringFilters } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newViews = barSpecial.checkVmdFilterDefaults(
+  let newViews = barSpecial.checkVmdrFilterConditions(
     {
       entities: item.views,
       errors: item.errors,

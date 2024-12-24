@@ -40,7 +40,7 @@ export enum FuncEnum {
   CheckDerivedTableEnvRefs = '04-view/01b-check-derived-table-env-refs',
   CheckViewAccess = '04-view/01c-check-view-access',
   CheckViewUdfs = '04-view/02-check-view-udfs',
-  CheckViewFilterDefaults = '04-view/03-check-view-filter-defaults',
+  CheckViewFilterConditions = '04-view/03-check-view-filter-conditions',
   CheckDerivedTableApplyFilter = '04-view/04-check-derived-table-apply-filter',
   MakeViewAsDeps = '04-view/05-make-view-as-deps',
   CheckViewCycles = '04-view/06-check-view-cycles',
@@ -58,7 +58,7 @@ export enum FuncEnum {
   MakeFieldsDoubleDeps = '05-model/07-make-fields-double-deps',
   CheckFieldsDoubleDeps = '05-model/08-check-fields-double-deps',
   MakeFieldsDoubleDepsAfterSingles = '05-model/09-make-fields-double-deps-after-singles',
-  CheckModelFilterDefaults = '05-model/10-check-model-filter-defaults',
+  CheckModelFilterConditions = '05-model/10-check-model-filter-conditions',
 
   CheckJoinUnknownParameters = '06-join/01-check-join-unknown-parameters',
   CheckJoinType = '06-join/02-check-join-type',
@@ -106,7 +106,7 @@ export enum FuncEnum {
   CreateModelMetrics = '11.1-model-metric/02-create-model-metrics',
 
   CheckDashboardAccess = '12-dashboard/01-check-dashboard-access',
-  CheckDashboardFilterDefaults = '12-dashboard/02-check-dashboard-filter-defaults',
+  CheckDashboardFilterConditions = '12-dashboard/02-check-dashboard-filter-conditions',
   CheckDashboardTilesExist = '12-dashboard/03-check-dashboard-tiles-exist',
 
   CheckChartAccess = '13-chart/01-check-chart-access',
@@ -132,7 +132,7 @@ export enum FuncEnum {
 
   CheckReport = '17-report/01-check-report',
   CheckReportAccess = '17-report/02-check-report-access',
-  CheckReportFilterDefaults = '17-report/02.1-check-report-filter-defaults',
+  CheckReportFilterConditions = '17-report/02.1-check-report-filter-conditions',
   CheckReportRowUnknownParameters = '17-report/03-check-report-row-unknown-parameters',
   CheckReportRowUnknownParams = '17-report/04-check-report-row-unknown-params',
   CheckReportRow = '17-report/05-check-report-row',
@@ -140,8 +140,8 @@ export enum FuncEnum {
   CheckReportRowParameters = '17-report/07-check-report-row-parameters',
 
   CheckAccess = 'special/check-access',
-  CheckVmdFilterDefaults = 'special/check-vmd-filter-defaults',
-  CheckVmdSuggestModelDimension = 'special/check-vmd-suggest-model-dimension',
+  CheckVmdrFilterConditions = 'special/check-vmdr-filter-conditions',
+  CheckVmdrSuggestModelDimension = 'special/check-vmdr-suggest-model-dimension',
   CheckModelName = 'special/check-model-name',
   BuildViewModel = 'special/build-view-model',
   LogStruct = 'special/log-struct',

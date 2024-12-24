@@ -571,7 +571,7 @@ export class RebuildStructService {
       this.cs
     );
 
-    barSpecial.checkVmdSuggestModelDimension(
+    barSpecial.checkVmdrSuggestModelDimension(
       {
         entities: [...views, ...models, ...dashboards, ...reports],
         models: models,

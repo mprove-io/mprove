@@ -5,11 +5,11 @@ import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = common.FuncEnum.CheckReportFilterDefaults;
+let func = common.FuncEnum.CheckModelFilterConditions;
 
-export function checkReportFilterDefaults(
+export function checkModelFilterConditions(
   item: {
-    reports: common.FileReport[];
+    models: common.FileModel[];
     errors: BmError[];
     structId: string;
     caseSensitiveStringFilters: boolean;
@@ -20,9 +20,9 @@ export function checkReportFilterDefaults(
   let { caller, structId, caseSensitiveStringFilters } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let newReports = barSpecial.checkVmdFilterDefaults(
+  let newModels = barSpecial.checkVmdrFilterConditions(
     {
-      entities: item.reports,
+      entities: item.models,
       errors: item.errors,
       structId: item.structId,
       caseSensitiveStringFilters: caseSensitiveStringFilters,
@@ -39,7 +39,7 @@ export function checkReportFilterDefaults(
     common.LogTypeEnum.Errors,
     item.errors
   );
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Ds, newReports);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Models, newModels);
 
-  return newReports;
+  return newModels;
 }

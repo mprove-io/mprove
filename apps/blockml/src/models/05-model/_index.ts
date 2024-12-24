@@ -7,4 +7,4 @@ export * from './06-make-joins';
 export * from './07-make-fields-double-deps';
 export * from './08-check-fields-double-deps';
 export * from './09-make-fields-double-deps-after-singles';
-export * from './10-check-model-filter-defaults';
+export * from './10-check-model-filter-conditions';

@@ -6,13 +6,13 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildDashboard;
-let func = common.FuncEnum.CheckVmdFilterDefaults;
-let testId = 'e__wrong-filter-expression-3';
+let caller = common.CallerEnum.BuildView;
+let func = common.FuncEnum.CheckVmdrFilterConditions;
+let testId = 'e__wrong-filter-expression-1';
 
 test('1', async t => {
   let errors: BmError[];
-  let entitiesDashboards: common.FileDashboard[];
+  let entViews: common.FileView[];
 
   let wLogger;
   let configService;
@@ -47,10 +47,7 @@ test('1', async t => {
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
-    entitiesDashboards = await helper.readLog(
-      fromDir,
-      common.LogTypeEnum.Entities
-    );
+    entViews = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -64,8 +61,8 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(entitiesDashboards.length, 0);
+  t.is(entViews.length, 0);
 
   t.is(errors[0].title, common.ErTitleEnum.WRONG_FILTER_EXPRESSION);
-  t.is(errors[0].lines[0].line, 5);
+  t.is(errors[0].lines[0].line, 7);
 });

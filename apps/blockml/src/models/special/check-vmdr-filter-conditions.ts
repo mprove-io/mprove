@@ -6,9 +6,9 @@ import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 import { processFilter } from './process-filter';
 
-let func = common.FuncEnum.CheckVmdFilterDefaults;
+let func = common.FuncEnum.CheckVmdrFilterConditions;
 
-export function checkVmdFilterDefaults<T extends types.vmdrType>(
+export function checkVmdrFilterConditions<T extends types.vmdrType>(
   item: {
     entities: T[];
     errors: BmError[];

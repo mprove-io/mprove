@@ -7,7 +7,7 @@ import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildModel;
-let func = common.FuncEnum.CheckVmdFilterDefaults;
+let func = common.FuncEnum.CheckVmdrFilterConditions;
 let testId = 'e__wrong-filter-expression-2';
 
 test('1', async t => {

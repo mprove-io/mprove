@@ -78,7 +78,7 @@ export function buildView(
     cs
   );
 
-  views = barView.checkViewFilterDefaults(
+  views = barView.checkViewFilterConditions(
     {
       views: views,
       structId: item.structId,

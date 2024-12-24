@@ -38,7 +38,7 @@ export function buildReport(
     cs
   );
 
-  reports = barReport.checkReportFilterDefaults(
+  reports = barReport.checkReportFilterConditions(
     {
       reports: reports,
       structId: item.structId,

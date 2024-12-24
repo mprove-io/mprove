@@ -26,7 +26,7 @@ export function buildDashboard(
     cs
   );
 
-  dashboards = barDashboard.checkDashboardFilterDefaults(
+  dashboards = barDashboard.checkDashboardFilterConditions(
     {
       dashboards: dashboards,
       structId: item.structId,

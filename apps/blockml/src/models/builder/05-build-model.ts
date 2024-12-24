@@ -111,7 +111,7 @@ export function buildModel(
     cs
   );
 
-  models = barModel.checkModelFilterDefaults(
+  models = barModel.checkModelFilterConditions(
     {
       models: models,
       structId: item.structId,
