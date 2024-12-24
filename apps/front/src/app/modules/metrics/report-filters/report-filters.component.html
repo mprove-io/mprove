@@ -1,0 +1,60 @@
+<div class="flex flex-col divide-y divide-gray-300">
+  <div
+    *ngFor="let filter of report.fields; let filterIndex = index"
+    class="flex flex-row items-start justify-start"
+    [ngClass]="{
+      'pt-6': filterIndex !== 0
+    }"
+  >
+    <div class="flex flex-row items-start justify-center">
+      <button
+        class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
+        (click)="deleteFilter(filter)"
+      >
+        <m-trash-icon></m-trash-icon>
+      </button>
+
+      <button
+        class="ml-3 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
+        (click)="addFraction(filter, filterIndex)"
+      >
+        <m-add-icon></m-add-icon>
+      </button>
+
+      <div class="mb-5 ml-5 mt-2 flex flex-col items-start justify-start">
+        <div class="text-left font-semibold">{{
+          filter.label | capitalizeWords
+        }}</div>
+      </div>
+    </div>
+
+    <div>
+      <div
+        class="flex flex-row items-start justify-start"
+        *ngFor="
+          let fraction of filter.fractions;
+          let isFirst = first;
+          let fractionIndex = index
+        "
+      >
+        <m-fraction
+          [suggestModelDimension]="filter.suggestModelDimension"
+          [structId]="report.structId"
+          [fieldResult]="filter.result"
+          [fraction]="fraction"
+          [fractionIndex]="fractionIndex"
+          [isFirst]="isFirst"
+          (fractionUpdate)="fractionUpdate(filter, filterIndex, $event)"
+        >
+        </m-fraction>
+
+        <button
+          class="ml-5 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
+          (click)="deleteFraction(filter, filterIndex, fractionIndex)"
+        >
+          <m-delete-icon></m-delete-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -302,7 +302,8 @@ export class RowComponent {
       report: report,
       changeType: common.ChangeTypeEnum.EditFormula,
       rowChange: rowChange,
-      rowIds: undefined
+      rowIds: undefined,
+      reportFields: report.fields
     });
   }
 
@@ -324,7 +325,8 @@ export class RowComponent {
       report: report,
       changeType: common.ChangeTypeEnum.EditInfo,
       rowChange: rowChange,
-      rowIds: undefined
+      rowIds: undefined,
+      reportFields: report.fields
     });
   }
 
@@ -349,7 +351,8 @@ export class RowComponent {
       report: report,
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
-      rowIds: undefined
+      rowIds: undefined,
+      reportFields: report.fields
     });
   }
 
@@ -397,7 +400,8 @@ export class RowComponent {
       report: report,
       changeType: common.ChangeTypeEnum.EditInfo,
       rowChange: rowChange,
-      rowIds: undefined
+      rowIds: undefined,
+      reportFields: report.fields
     });
   }
 
@@ -422,7 +426,8 @@ export class RowComponent {
       report: report,
       changeType: common.ChangeTypeEnum.EditInfo,
       rowChange: rowChange,
-      rowIds: undefined
+      rowIds: undefined,
+      reportFields: report.fields
     });
   }
 
@@ -447,7 +452,8 @@ export class RowComponent {
       report: report,
       changeType: common.ChangeTypeEnum.EditInfo,
       rowChange: rowChange,
-      rowIds: undefined
+      rowIds: undefined,
+      reportFields: report.fields
     });
   }
 
@@ -456,7 +462,8 @@ export class RowComponent {
       report: this.report,
       changeType: common.ChangeTypeEnum.Clear,
       rowChange: undefined,
-      rowIds: this.reportSelectedNodes.map(node => node.data.rowId)
+      rowIds: this.reportSelectedNodes.map(node => node.data.rowId),
+      reportFields: this.report.fields
     });
   }
 
@@ -467,7 +474,8 @@ export class RowComponent {
       report: this.report,
       changeType: common.ChangeTypeEnum.Delete,
       rowChange: undefined,
-      rowIds: this.reportSelectedNodes.map(node => node.data.rowId)
+      rowIds: this.reportSelectedNodes.map(node => node.data.rowId),
+      reportFields: this.report.fields
     });
   }
 
@@ -531,7 +539,8 @@ export class RowComponent {
         report: this.report,
         changeType: common.ChangeTypeEnum.ConvertToHeader,
         rowChange: rowChange,
-        rowIds: undefined
+        rowIds: undefined,
+        reportFields: this.report.fields
       });
     }
 
@@ -556,7 +565,8 @@ export class RowComponent {
         report: this.report,
         changeType: common.ChangeTypeEnum.ConvertToFormula,
         rowChange: rowChange,
-        rowIds: undefined
+        rowIds: undefined,
+        reportFields: this.report.fields
       });
     }
 
@@ -574,7 +584,8 @@ export class RowComponent {
         report: this.report,
         changeType: common.ChangeTypeEnum.ConvertToMetric,
         rowChange: rowChange,
-        rowIds: undefined
+        rowIds: undefined,
+        reportFields: this.report.fields
       });
     }
   }
@@ -701,7 +712,8 @@ export class RowComponent {
       report: report,
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
-      rowIds: undefined
+      rowIds: undefined,
+      reportFields: report.fields
     });
   }
 
@@ -728,7 +740,8 @@ export class RowComponent {
       report: report,
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
-      rowIds: undefined
+      rowIds: undefined,
+      reportFields: report.fields
     });
   }
 

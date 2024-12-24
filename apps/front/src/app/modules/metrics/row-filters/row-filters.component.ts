@@ -87,7 +87,8 @@ export class RowFiltersComponent {
       report: report,
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
-      rowIds: undefined
+      rowIds: undefined,
+      reportFields: report.fields
     });
   }
 
@@ -129,7 +130,8 @@ export class RowFiltersComponent {
       report: report,
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
-      rowIds: undefined
+      rowIds: undefined,
+      reportFields: report.fields
     });
   }
 
@@ -175,7 +177,8 @@ export class RowFiltersComponent {
       report: report,
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
-      rowIds: undefined
+      rowIds: undefined,
+      reportFields: report.fields
     });
   }
 
@@ -202,7 +205,8 @@ export class RowFiltersComponent {
       report: report,
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
-      rowIds: undefined
+      rowIds: undefined,
+      reportFields: report.fields
     });
   }
 
@@ -259,7 +263,8 @@ export class RowFiltersComponent {
       report: report,
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
-      rowIds: undefined
+      rowIds: undefined,
+      reportFields: report.fields
     });
   }
 
@@ -294,7 +299,8 @@ export class RowFiltersComponent {
       report: report,
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
-      rowIds: undefined
+      rowIds: undefined,
+      reportFields: report.fields
     });
   }
 }

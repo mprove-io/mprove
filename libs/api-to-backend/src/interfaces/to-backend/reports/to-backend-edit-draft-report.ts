@@ -46,6 +46,10 @@ export class ToBackendEditDraftReportRequestPayload {
 
   @IsString()
   timeRangeFractionBrick: string;
+
+  @ValidateNested()
+  @Type(() => common.ReportField)
+  newReportFields: common.ReportField[];
 }
 
 export class ToBackendEditDraftReportRequest extends ToBackendRequest {

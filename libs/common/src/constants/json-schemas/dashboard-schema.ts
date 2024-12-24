@@ -38,5 +38,5 @@ export const DASHBOARD_SCHEMA: JSONSchema7 = {
       items: TILE_SCHEMA
     }
   },
-  required: ['dashboard', 'tiles']
+  required: ['dashboard']
 };

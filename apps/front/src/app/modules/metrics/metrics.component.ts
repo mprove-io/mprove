@@ -733,6 +733,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
+  addFilter() {}
+
   navToReport(report: common.ReportX) {
     this.uiQuery.getValue().gridApi.deselectAll();
 

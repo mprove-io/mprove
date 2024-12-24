@@ -60,7 +60,8 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
         report: report,
         changeType: common.ChangeTypeEnum.EditInfo,
         rowChange: rowChange,
-        rowIds: undefined
+        rowIds: undefined,
+        reportFields: report.fields
       });
     }, 0);
   }

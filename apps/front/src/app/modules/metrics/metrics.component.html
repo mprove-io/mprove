@@ -321,6 +321,25 @@
             <router-outlet></router-outlet>
           </div>
 
+          <div class="mr-5 flex min-h-[44px] flex-shrink-0 flex-row">
+            <button
+              type="button"
+              data-cy="dashboardAddFilterButton"
+              class="mt-5 h-11 flex-shrink-0 select-none rounded border border-gray-400 px-4 py-2 text-base font-medium text-gray-500 hover:bg-white focus:outline-none"
+              (click)="addFilter()"
+              >Add Filter</button
+            >
+
+            <div class="min-h-[68px]"></div>
+
+            <div
+              class="ml-7 mt-1 max-h-96 w-2 flex-1 overflow-auto"
+              *ngIf="report?.fields.length > 0"
+            >
+              <m-report-filters [report]="report"></m-report-filters>
+            </div>
+          </div>
+
           <div
             class="flex w-full flex-col"
             [ngClass]="{
@@ -329,10 +348,10 @@
             }"
           >
             <div
-              class="flex h-2 w-full flex-grow flex-row"
+              class="flex h-2 w-full flex-grow flex-row rounded border border border-gray-400"
               *ngIf="reportSelectedNodes.length > 0"
             >
-              <m-row class="flex w-full"></m-row>
+              <m-row class="ml-5 mr-5 mt-5 flex w-full"></m-row>
             </div>
 
             <div

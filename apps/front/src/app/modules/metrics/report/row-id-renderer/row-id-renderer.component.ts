@@ -59,7 +59,8 @@ export class RowIdRendererComponent implements ICellRendererAngularComp {
       report: this.report,
       changeType: common.ChangeTypeEnum.Clear,
       rowChange: undefined,
-      rowIds: [this.reportSelectedNode.data.rowId]
+      rowIds: [this.reportSelectedNode.data.rowId],
+      reportFields: this.report.fields
     });
   }
 
@@ -70,7 +71,8 @@ export class RowIdRendererComponent implements ICellRendererAngularComp {
       report: this.report,
       changeType: common.ChangeTypeEnum.Delete,
       rowChange: undefined,
-      rowIds: [this.reportSelectedNode.data.rowId]
+      rowIds: [this.reportSelectedNode.data.rowId],
+      reportFields: this.report.fields
     });
   }
 

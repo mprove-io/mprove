@@ -424,15 +424,16 @@ export class ReportComponent {
       rowIds.push(rowNode.data.rowId);
     }
 
-    let selectedRep = this.reportQuery.getValue();
+    let report = this.reportQuery.getValue();
 
     this.agGridApi.deselectAll();
 
     this.reportService.modifyRows({
-      report: selectedRep,
+      report: report,
       changeType: common.ChangeTypeEnum.Move,
       rowChange: undefined,
-      rowIds: rowIds
+      rowIds: rowIds,
+      reportFields: report.fields
     });
   }
 

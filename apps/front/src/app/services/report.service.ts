@@ -41,15 +41,17 @@ export class ReportService {
     changeType: common.ChangeTypeEnum;
     rowChange: common.RowChange;
     rowIds: string[];
+    reportFields: common.ReportField[];
   }) {
-    let { report, changeType, rowChange, rowIds } = item;
+    let { report, changeType, rowChange, rowIds, reportFields } = item;
 
     if (report.draft === true) {
       this.editDraftReport({
         reportId: report.reportId,
         changeType: changeType,
         rowIds: rowIds,
-        rowChange: rowChange
+        rowChange: rowChange,
+        fields: reportFields
       });
     } else {
       this.navCreateDraftReport({
@@ -57,12 +59,12 @@ export class ReportService {
         changeType: changeType,
         rowChange: rowChange,
         rowIds: rowIds,
-        selectRows:
-          changeType !== common.ChangeTypeEnum.Move &&
-          changeType !== common.ChangeTypeEnum.Delete
-            ? this.uiQuery.getValue().reportSelectedNodes.map(node => node.id)
-            : [],
-        fields: report.fields
+        fields: reportFields
+        // selectRows:
+        //   changeType !== common.ChangeTypeEnum.Move &&
+        //   changeType !== common.ChangeTypeEnum.Delete
+        //     ? this.uiQuery.getValue().reportSelectedNodes.map(node => node.id)
+        //     : [],
       });
     }
   }
@@ -72,13 +74,11 @@ export class ReportService {
     rowChange: common.RowChange;
     rowIds: string[];
     fromReportId: string;
-    selectRows: string[];
     fields: common.ReportField[];
   }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { rowChange, rowIds, fromReportId, changeType, selectRows, fields } =
-      item;
+    let { rowChange, rowIds, fromReportId, changeType, fields } = item;
 
     let uiState = this.uiQuery.getValue();
 
@@ -127,8 +127,9 @@ export class ReportService {
     rowChange: common.RowChange;
     rowIds: string[];
     reportId: string;
+    fields: common.ReportField[];
   }) {
-    let { rowChange, rowIds, reportId, changeType } = item;
+    let { rowChange, rowIds, reportId, changeType, fields } = item;
 
     let uiState = this.uiQuery.getValue();
 
@@ -143,7 +144,8 @@ export class ReportService {
       rowIds: rowIds,
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
-      timeRangeFractionBrick: uiState.timeRangeFraction.brick
+      timeRangeFractionBrick: uiState.timeRangeFraction.brick,
+      newReportFields: fields
     };
 
     this.apiService
