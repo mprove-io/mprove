@@ -70,7 +70,8 @@ export class CreateDraftReportController {
       rowIds,
       timeSpec,
       timezone,
-      timeRangeFractionBrick
+      timeRangeFractionBrick,
+      newReportFields
     } = reqValid.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
@@ -324,7 +325,8 @@ export class CreateDraftReportController {
       filePath: undefined,
       title: reportId,
       rows: processedRows,
-      draftCreatedTs: makeTsNumber()
+      draftCreatedTs: makeTsNumber(),
+      fields: newReportFields
     });
 
     let userMemberApi = this.wrapToApiService.wrapToApiMember(userMember);

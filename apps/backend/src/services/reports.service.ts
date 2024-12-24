@@ -530,6 +530,7 @@ export class ReportsService {
       accessRoles: [],
       accessUsers: [],
       title: reportId,
+      fields: [],
       rows: [],
       draft: false
     });
@@ -965,7 +966,7 @@ export class ReportsService {
       }
     });
 
-    let repApi = this.wrapToApiService.wrapToApiRep({
+    let reportApi = this.wrapToApiService.wrapToApiReport({
       report: report,
       models: modelsApi,
       member: userMemberApi,
@@ -978,7 +979,7 @@ export class ReportsService {
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded
     });
 
-    let formulaRows = repApi.rows.filter(
+    let formulaRows = reportApi.rows.filter(
       row => row.rowType === common.RowTypeEnum.Formula
     );
 
@@ -993,7 +994,7 @@ export class ReportsService {
       return common.isDefined(rq) && rq.lastCalculatedTs > 0;
     });
 
-    let queryRows = repApi.rows.filter(
+    let queryRows = reportApi.rows.filter(
       row => row.rowType === common.RowTypeEnum.Metric
     );
 
@@ -1023,8 +1024,8 @@ export class ReportsService {
     if (isCalculateData === true) {
       // console.log('isCalculateData true');
 
-      repApi = await this.docService.calculateData({
-        report: repApi,
+      reportApi = await this.docService.calculateData({
+        report: reportApi,
         timezone: timezone,
         timeSpec: timeSpec,
         timeRangeFraction: timeRangeFraction,
@@ -1034,11 +1035,11 @@ export class ReportsService {
       // console.log('isCalculateData false');
 
       let recordsByColumn = this.docService.makeRecordsByColumn({
-        report: repApi,
+        report: reportApi,
         timeSpec: timeSpec
       });
 
-      repApi.rows.forEach(row => {
+      reportApi.rows.forEach(row => {
         let rq = row.rqs.find(
           y =>
             y.fractionBrick === timeRangeFraction.brick &&
@@ -1142,6 +1143,6 @@ export class ReportsService {
       // });
     }
 
-    return repApi;
+    return reportApi;
   }
 }

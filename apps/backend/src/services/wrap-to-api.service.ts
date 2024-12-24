@@ -6,6 +6,7 @@ import { makeDashboardFiltersX } from '~backend/functions/make-dashboard-filters
 import { makeFullName } from '~backend/functions/make-full-name';
 import { makeMconfigFields } from '~backend/functions/make-mconfig-fields';
 import { makeMconfigFiltersX } from '~backend/functions/make-mconfig-filters-x';
+import { makeReportFiltersX } from '~backend/functions/make-report-filters-x';
 import { makeTilesX } from '~backend/functions/make-tiles-x';
 
 @Injectable()
@@ -72,7 +73,7 @@ export class WrapToApiService {
 
     let dashboardExtendedFilters = makeDashboardFiltersX(dashboard);
 
-    return {
+    let dashboardX: common.DashboardX = {
       structId: dashboard.structId,
       dashboardId: dashboard.dashboardId,
       author: author,
@@ -98,6 +99,8 @@ export class WrapToApiService {
       temp: dashboard.temp,
       serverTs: dashboard.serverTs
     };
+
+    return dashboardX;
   }
 
   wrapToApiEnv(item: {
@@ -339,7 +342,7 @@ export class WrapToApiService {
     };
   }
 
-  wrapToApiRep(item: {
+  wrapToApiReport(item: {
     report: schemaPostgres.ReportEnt;
     member: common.Member;
     models: common.ModelX[];
@@ -381,7 +384,9 @@ export class WrapToApiService {
     let canEditOrDeleteRep =
       member.isEditor || member.isAdmin || author === member.alias;
 
-    let repX: common.ReportX = {
+    let reportExtendedFilters = makeReportFiltersX(report);
+
+    let reportX: common.ReportX = {
       projectId: report.projectId,
       structId: report.structId,
       reportId: report.reportId,
@@ -396,6 +401,8 @@ export class WrapToApiService {
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFraction: timeRangeFraction,
+      fields: report.fields,
+      extendedFilters: reportExtendedFilters,
       rows: report.rows.map(x => {
         x.hasAccessToModel = common.isDefined(x.mconfig)
           ? models.find(m => m.modelId === x.mconfig.modelId).hasAccess
@@ -410,7 +417,7 @@ export class WrapToApiService {
       serverTs: Number(report.serverTs)
     };
 
-    return repX;
+    return reportX;
   }
 
   wrapToApiStruct(struct: schemaPostgres.StructEnt): common.Struct {

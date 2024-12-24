@@ -23,6 +23,20 @@ export function wrapReports(item: {
   } = item;
 
   let apiReports: common.Report[] = reports.map(x => {
+    let reportFields: common.DashboardField[] = [];
+
+    x.fields.forEach(field => {
+      reportFields.push({
+        id: field.name,
+        hidden: helper.toBooleanFromLowercaseString(field.hidden),
+        label: field.label,
+        result: field.result,
+        fractions: field.fractions,
+        description: field.description,
+        suggestModelDimension: field.suggest_model_dimension
+      });
+    });
+
     let report: common.Report = {
       projectId: projectId,
       structId: structId,
@@ -30,6 +44,7 @@ export function wrapReports(item: {
       draft: false,
       creatorId: undefined,
       filePath: x.filePath,
+      fields: reportFields,
       accessUsers: x.access_users || [],
       accessRoles: x.access_roles || [],
       title: x.title,

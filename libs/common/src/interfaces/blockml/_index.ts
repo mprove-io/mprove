@@ -25,6 +25,7 @@ export * from './parameter';
 export * from './project-connection';
 export * from './query';
 export * from './report';
+export * from './report-field';
 export * from './row';
 export * from './row-change';
 export * from './rq';

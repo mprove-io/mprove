@@ -101,7 +101,8 @@ test('1', async t => {
         rowChange: { rowType: common.RowTypeEnum.Empty, showChart: false },
         timeRangeFractionBrick: 'last 5 months',
         timeSpec: common.TimeSpecEnum.Months,
-        timezone: 'UTC'
+        timezone: 'UTC',
+        newReportFields: []
       }
     };
 

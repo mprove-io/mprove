@@ -169,6 +169,7 @@ export class WrapToEntService {
       structId: report.structId,
       reportId: report.reportId,
       filePath: report.filePath,
+      fields: report.fields,
       draft: report.draft,
       creatorId: report.creatorId,
       accessUsers: report.accessUsers,

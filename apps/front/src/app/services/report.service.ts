@@ -45,7 +45,7 @@ export class ReportService {
     let { report, changeType, rowChange, rowIds } = item;
 
     if (report.draft === true) {
-      this.editDraftRep({
+      this.editDraftReport({
         reportId: report.reportId,
         changeType: changeType,
         rowIds: rowIds,
@@ -61,7 +61,8 @@ export class ReportService {
           changeType !== common.ChangeTypeEnum.Move &&
           changeType !== common.ChangeTypeEnum.Delete
             ? this.uiQuery.getValue().reportSelectedNodes.map(node => node.id)
-            : []
+            : [],
+        fields: report.fields
       });
     }
   }
@@ -72,10 +73,12 @@ export class ReportService {
     rowIds: string[];
     fromReportId: string;
     selectRows: string[];
+    fields: common.ReportField[];
   }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { rowChange, rowIds, fromReportId, changeType, selectRows } = item;
+    let { rowChange, rowIds, fromReportId, changeType, selectRows, fields } =
+      item;
 
     let uiState = this.uiQuery.getValue();
 
@@ -90,7 +93,8 @@ export class ReportService {
       changeType: changeType,
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
-      timeRangeFractionBrick: uiState.timeRangeFraction.brick
+      timeRangeFractionBrick: uiState.timeRangeFraction.brick,
+      newReportFields: fields
     };
 
     this.apiService
@@ -118,7 +122,7 @@ export class ReportService {
       .subscribe();
   }
 
-  editDraftRep(item: {
+  editDraftReport(item: {
     changeType: common.ChangeTypeEnum;
     rowChange: common.RowChange;
     rowIds: string[];

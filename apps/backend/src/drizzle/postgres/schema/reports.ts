@@ -25,6 +25,7 @@ export const reportsTable = pgTable(
     accessUsers: json('access_users').$type<string[]>().notNull(),
     accessRoles: json('access_roles').$type<string[]>().notNull(),
     title: varchar('title').notNull(),
+    fields: json('fields').$type<common.ReportField[]>(),
     rows: json('rows').$type<common.Row[]>().notNull(),
     draft: boolean('draft').notNull(),
     draftCreatedTs: bigint('draft_created_ts', { mode: 'number' }).notNull(),

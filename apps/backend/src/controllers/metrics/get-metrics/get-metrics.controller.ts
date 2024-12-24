@@ -166,7 +166,7 @@ export class GetMetricsController {
         this.wrapToApiService.wrapToApiMetric({ metric: x })
       ),
       reports: reports.map(x =>
-        this.wrapToApiService.wrapToApiRep({
+        this.wrapToApiService.wrapToApiReport({
           report: x,
           member: apiMember,
           columns: [],

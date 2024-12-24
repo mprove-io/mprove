@@ -10,6 +10,7 @@ import { enums } from '~common/barrels/enums';
 import { IsTimezone } from '~common/functions/is-timezone';
 import { Column } from './column';
 import { Fraction } from './fraction';
+import { ReportField } from './report-field';
 import { Row } from './row';
 
 export class Report {
@@ -30,6 +31,10 @@ export class Report {
 
   @IsString()
   filePath: string;
+
+  @ValidateNested()
+  @Type(() => ReportField)
+  fields: ReportField[];
 
   @IsString({ each: true })
   accessUsers: string[];

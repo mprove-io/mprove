@@ -17,6 +17,7 @@ export class MakerService {
     accessUsers: string[];
     accessRoles: string[];
     title: string;
+    fields: common.ReportField[];
     rows: common.Row[];
     draftCreatedTs?: number;
     draft: boolean;
@@ -30,6 +31,7 @@ export class MakerService {
       accessUsers,
       accessRoles,
       title,
+      fields,
       rows,
       draft,
       draftCreatedTs
@@ -48,6 +50,7 @@ export class MakerService {
       accessUsers: accessUsers,
       accessRoles: accessRoles,
       title: title,
+      fields: fields,
       rows: rows,
       draft: draft,
       draftCreatedTs: draftCreatedTs,
