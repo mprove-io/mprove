@@ -444,6 +444,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   addFilter() {
+    this.filtersIsExpanded = true;
+
     this.myDialogService.showDashboardAddFilter({
       dashboardService: this.dashboardService,
       dashboard: this.dashboard,

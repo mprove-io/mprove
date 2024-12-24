@@ -264,7 +264,11 @@
 
             <div
               (click)="toggleFiltersPanel()"
-              class="text-gray1 ml-3 mt-1 flex h-11 cursor-pointer select-none flex-row items-start space-x-2 px-5 text-2xl font-semibold"
+              class="text-gray1 ml-3 mt-1 flex h-11 select-none flex-row items-start space-x-2 px-5 text-2xl font-semibold"
+              [ngClass]="{
+                'cursor-pointer': dashboard.fields.length > 0,
+                'cursor-default': dashboard.fields.length === 0
+              }"
             >
               <div class="flex flex-row items-center space-x-2">
                 <m-chevron-right-icon
