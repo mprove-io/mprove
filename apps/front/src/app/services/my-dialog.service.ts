@@ -52,6 +52,10 @@ import {
   DeleteReportDialogData
 } from '../modules/metrics/delete-report-dialog/delete-report-dialog.component';
 import {
+  ReportAddFilterDialogComponent,
+  ReportAddFilterDialogData
+} from '../modules/metrics/report-add-filter-dialog/report-add-filter-dialog.component';
+import {
   CreateBranchDialogComponent,
   CreateBranchDialogData
 } from '../modules/navbar/branch-select/create-branch-dialog/create-branch-dialog.component';
@@ -362,6 +366,15 @@ export class MyDialogService {
 
   showDashboardAddFilter(item: DashboardAddFilterDialogData): void {
     this.dialogService.open(DashboardAddFilterDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item,
+      width: 1024
+    });
+  }
+
+  showReportAddFilter(item: ReportAddFilterDialogData): void {
+    this.dialogService.open(ReportAddFilterDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item,

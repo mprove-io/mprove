@@ -12,4 +12,8 @@ export interface FileReportRowParameter {
 
   conditions?: string[];
   conditions_line_num?: number;
+
+  //
+
+  globalFieldResult: enums.FieldResultEnum;
 }

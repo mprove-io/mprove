@@ -362,6 +362,7 @@ export const CHART_INTERPOLATION_VALUES = [
 export const ROW_TYPE_VALUES = [
   enums.RowTypeEnum.Empty,
   enums.RowTypeEnum.Header,
+  enums.RowTypeEnum.Global,
   enums.RowTypeEnum.Metric,
   enums.RowTypeEnum.Formula
 ];

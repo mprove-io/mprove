@@ -24,75 +24,78 @@ export function makeReportFileText(item: {
       accessRoles.length > 0 ? accessRoles.map(x => x.trim()) : undefined,
     access_users:
       accessUsers.length > 0 ? accessUsers.map(x => x.trim()) : undefined,
-    rows: rows.map(x => {
-      let metric =
-        x.rowType === common.RowTypeEnum.Metric
-          ? metrics.find(m => m.metricId === x.metricId)
-          : undefined;
-
-      let row: common.FileReportRow = {
-        row_id: x.rowId,
-        type: x.rowType,
-        name:
-          x.rowType === common.RowTypeEnum.Empty ||
+    rows: rows
+      .filter(r => r.rowType !== common.RowTypeEnum.Global)
+      .map(x => {
+        let metric =
           x.rowType === common.RowTypeEnum.Metric
-            ? undefined
-            : x.name,
-        metric: x.metricId,
-        formula: common.isDefined(x.formula) ? x.formula : undefined,
-        show_chart:
-          common.isDefined(x.showChart) &&
-          x.showChart !== common.REPORT_ROW_DEFAULT_SHOW_CHART
-            ? <any>x.showChart
+            ? metrics.find(m => m.metricId === x.metricId)
+            : undefined;
+
+        let row: common.FileReportRow = {
+          row_id: x.rowId,
+          type: x.rowType,
+          name:
+            x.rowType === common.RowTypeEnum.Empty ||
+            x.rowType === common.RowTypeEnum.Metric
+              ? undefined
+              : x.name,
+          metric: x.metricId,
+          formula: common.isDefined(x.formula) ? x.formula : undefined,
+          show_chart:
+            common.isDefined(x.showChart) &&
+            x.showChart !== common.REPORT_ROW_DEFAULT_SHOW_CHART
+              ? <any>x.showChart
+              : undefined,
+          format_number:
+            x.rowType === common.RowTypeEnum.Metric &&
+            metric.formatNumber === x.formatNumber
+              ? undefined
+              : struct.formatNumber === x.formatNumber
+              ? undefined
+              : x.formatNumber,
+          currency_prefix:
+            x.rowType === common.RowTypeEnum.Metric &&
+            metric.currencyPrefix === x.currencyPrefix
+              ? undefined
+              : struct.currencyPrefix === x.currencyPrefix
+              ? undefined
+              : x.currencyPrefix,
+          currency_suffix:
+            x.rowType === common.RowTypeEnum.Metric &&
+            metric.currencySuffix === x.currencySuffix
+              ? undefined
+              : struct.currencySuffix === x.currencySuffix
+              ? undefined
+              : x.currencySuffix,
+          parameters_formula: common.isDefined(x.parametersFormula)
+            ? x.parametersFormula
             : undefined,
-        format_number:
-          x.rowType === common.RowTypeEnum.Metric &&
-          metric.formatNumber === x.formatNumber
-            ? undefined
-            : struct.formatNumber === x.formatNumber
-            ? undefined
-            : x.formatNumber,
-        currency_prefix:
-          x.rowType === common.RowTypeEnum.Metric &&
-          metric.currencyPrefix === x.currencyPrefix
-            ? undefined
-            : struct.currencyPrefix === x.currencyPrefix
-            ? undefined
-            : x.currencyPrefix,
-        currency_suffix:
-          x.rowType === common.RowTypeEnum.Metric &&
-          metric.currencySuffix === x.currencySuffix
-            ? undefined
-            : struct.currencySuffix === x.currencySuffix
-            ? undefined
-            : x.currencySuffix,
-        parameters_formula: common.isDefined(x.parametersFormula)
-          ? x.parametersFormula
-          : undefined,
-        parameters:
-          [common.RowTypeEnum.Metric].indexOf(x.rowType) < 0
-            ? undefined
-            : common.isDefined(x.parametersFormula)
-            ? undefined
-            : common.isDefined(x.parameters)
-            ? x.parameters.map(parameter => {
-                let p: common.FileReportRowParameter = {
-                  // type: parameter.parameterType,
-                  filter: parameter.filter,
-                  // result: parameter.result,
-                  formula: parameter.formula,
-                  conditions: common.isUndefined(parameter.formula)
-                    ? parameter.conditions
-                    : undefined
-                };
+          parameters:
+            [common.RowTypeEnum.Metric].indexOf(x.rowType) < 0
+              ? undefined
+              : common.isDefined(x.parametersFormula)
+              ? undefined
+              : common.isDefined(x.parameters)
+              ? x.parameters.map(parameter => {
+                  let p: common.FileReportRowParameter = {
+                    // type: parameter.parameterType,
+                    filter: parameter.filter,
+                    // result: parameter.result,
+                    formula: parameter.formula,
+                    conditions: common.isUndefined(parameter.formula)
+                      ? parameter.conditions
+                      : undefined,
+                    globalFieldResult: undefined
+                  };
 
-                return p;
-              })
-            : []
-      };
+                  return p;
+                })
+              : []
+        };
 
-      return row;
-    })
+        return row;
+      })
   };
 
   let fileReportText = common.toYaml(fileReport);

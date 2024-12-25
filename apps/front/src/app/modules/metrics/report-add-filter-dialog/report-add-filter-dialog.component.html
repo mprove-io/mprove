@@ -1,0 +1,170 @@
+<div class="flex flex-col bg-white p-9">
+  <div
+    data-cy="reportAddFilterDialogTitle"
+    class="text-gray2 mb-9 mt-5 flex-grow text-left text-2xl font-semibold"
+    >Add Filter</div
+  >
+
+  <form class="flex flex-col" [formGroup]="filterForm" (ngSubmit)="save()">
+    <div class="mt-9 flex flex-row items-start">
+      <div class="flex flex-col">
+        <div
+          class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
+          >Label</div
+        >
+      </div>
+
+      <div [formGroup]="filterForm" class="flex flex-col items-start">
+        <input
+          #filterLabel
+          autocomplete="off"
+          spellcheck="false"
+          data-cy="reportAddFilterDialogLabelInput"
+          class="form-input border-gray3 focus:border-blue3 h-9 w-96 rounded"
+          [ngClass]="{
+            'border-red-600':
+              filterForm.controls['label'].invalid &&
+              filterForm.controls['label'].touched
+          }"
+          formControlName="label"
+        />
+        <m-validation [control]="filterForm.controls['label']"></m-validation>
+      </div>
+    </div>
+
+    <div class="mt-2 flex flex-row items-start">
+      <div class="flex flex-col">
+        <div
+          class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
+          >Type (result)</div
+        >
+      </div>
+
+      <ng-select
+        #typeSelect
+        data-cy="resultSelect"
+        class="w-72 text-base"
+        [items]="resultList"
+        [clearable]="false"
+        [searchable]="false"
+        (keyup.esc)="$event.stopImmediatePropagation(); typeSelect.blur()"
+        (keyup.enter)="$event.stopImmediatePropagation(); typeSelect.blur()"
+        (change)="resultChange($event)"
+        appendTo="body"
+        formControlName="fieldResult"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item }}</div>
+        </ng-template>
+      </ng-select>
+    </div>
+
+    <div
+      class="mt-8 flex min-w-[2px] max-w-[1000px] flex-grow select-none flex-row items-start items-center"
+    >
+      <div class="flex flex-col">
+        <div
+          *ngIf="filterForm.get('fieldResult').value !== fieldResultString"
+          class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
+        ></div>
+
+        <div
+          *ngIf="filterForm.get('fieldResult').value === fieldResultString"
+          class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
+          >Suggest values from</div
+        >
+      </div>
+
+      <div
+        class="relative flex h-9 w-9 flex-shrink-0"
+        *ngIf="
+          !suggestFieldsLoaded &&
+          filterForm.get('fieldResult').value === fieldResultString
+        "
+      >
+        <ngx-spinner
+          [name]="spinnerName"
+          color="rgba(54, 94, 224, 100)"
+          bdColor="rgba(0, 0, 0, 0)"
+          size="default"
+          type="ball-clip-rotate"
+          [fullScreen]="false"
+          [disableAnimation]="true"
+          [zIndex]="99998"
+        >
+        </ngx-spinner>
+      </div>
+
+      <ng-select
+        #reportSuggestFieldSelect
+        *ngIf="
+          !!suggestFieldsLoaded &&
+          filterForm.get('fieldResult').value === fieldResultString
+        "
+        data-cy="reportSuggestFieldSelect"
+        class="w-full min-w-[2px] text-base"
+        [loading]="suggestFieldsLoading"
+        [items]="suggestFields"
+        [clearable]="false"
+        [searchable]="true"
+        [searchFn]="searchFn"
+        (change)="suggestFieldChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); reportSuggestFieldSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); reportSuggestFieldSelect.blur()
+        "
+        appendTo="body"
+        placeholder="Select Field"
+        formControlName="suggestField"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <m-suggest-field-label
+            [suggestField]="item"
+            [isShowTop]="true"
+            [isShowTime]="true"
+            class="ml-1 flex"
+          ></m-suggest-field-label>
+        </ng-template>
+
+        <ng-template
+          ng-option-tmp
+          let-item="item"
+          let-index="index"
+          let-search="searchTerm"
+        >
+          <m-suggest-field-label
+            [suggestField]="item"
+            [isShowTop]="true"
+            [isShowTime]="true"
+            class="ml-1 flex"
+          ></m-suggest-field-label>
+        </ng-template>
+      </ng-select>
+    </div>
+
+    <div class="mt-14 flex">
+      <button
+        data-cy="reportAddFilterDialogSaveButton"
+        class="bg-blue3 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
+        type="submit"
+        >Save</button
+      >
+
+      <button
+        data-cy="reportAddFilterDialogCancelButton"
+        class="border-blue3 text-blue3 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
+        type="button"
+        (click)="cancel()"
+        >Cancel</button
+      >
+    </div>
+  </form>
+</div>
+
+<div *ngIf="nav$ | async"></div>

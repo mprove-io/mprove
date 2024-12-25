@@ -54,7 +54,6 @@ export class TimeSpecItem {
 
 @Component({
   selector: 'm-metrics',
-  styleUrls: ['metrics.component.scss'],
   templateUrl: './metrics.component.html'
 })
 export class MetricsComponent implements OnInit, OnDestroy {
@@ -733,7 +732,13 @@ export class MetricsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  addFilter() {}
+  addFilter() {
+    this.myDialogService.showReportAddFilter({
+      reportService: this.reportService,
+      report: this.report,
+      apiService: this.apiService
+    });
+  }
 
   navToReport(report: common.ReportX) {
     this.uiQuery.getValue().gridApi.deselectAll();

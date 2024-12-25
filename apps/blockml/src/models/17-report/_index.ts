@@ -1,6 +1,7 @@
 export * from './01-check-report';
 export * from './02-check-report-access';
 export * from './02.1-check-report-filter-conditions';
+export * from './02.2-make-report-parameters';
 export * from './03-check-report-row-unknown-parameters';
 export * from './04-check-report-row-unknown-params';
 export * from './05-check-report-row';

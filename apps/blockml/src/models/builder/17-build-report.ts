@@ -49,6 +49,16 @@ export function buildReport(
     cs
   );
 
+  reports = barReport.makeReportParameters(
+    {
+      reports: reports,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
   reports = barReport.checkReportRowUnknownParameters(
     {
       reports: reports,

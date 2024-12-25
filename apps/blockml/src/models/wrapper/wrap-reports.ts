@@ -23,7 +23,7 @@ export function wrapReports(item: {
   } = item;
 
   let apiReports: common.Report[] = reports.map(x => {
-    let reportFields: common.DashboardField[] = [];
+    let reportFields: common.ReportField[] = [];
 
     x.fields.forEach(field => {
       reportFields.push({
@@ -105,6 +105,8 @@ export function wrapReports(item: {
                   result = models
                     .find(model => model.modelId === metric.modelId)
                     .fields.find(field => field.id === parameter.filter).result;
+                } else if (row.type === common.RowTypeEnum.Global) {
+                  result = parameter.globalFieldResult;
                 }
 
                 let parameterApi: common.Parameter = {
