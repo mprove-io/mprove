@@ -30,7 +30,7 @@ import { constants } from '~front/barrels/constants';
 import { SharedModule } from '../../shared/shared.module';
 
 import uFuzzy from '@leeoniya/ufuzzy';
-import { UiQuery } from '~front/app/queries/ui.query';
+import { ReportQuery } from '~front/app/queries/report.query';
 import { ReportService } from '~front/app/services/report.service';
 
 export interface ReportAddFilterDialogData {
@@ -105,7 +105,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
     private fb: FormBuilder,
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
-    private uiQuery: UiQuery,
+    private reportQuery: ReportQuery,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -233,7 +233,8 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
     let label: string = this.filterForm.controls['label'].value;
 
-    let id = common.MyRegex.replaceSpacesWithUnderscores(label).toLowerCase();
+    let id =
+      common.MyRegex.replaceNonLettersWithUnderscores(label).toLowerCase();
 
     let result = this.filterForm.controls['fieldResult'].value;
 
@@ -257,12 +258,37 @@ export class ReportAddFilterDialogComponent implements OnInit {
       description: undefined
     };
 
+    let globalRow = this.reportQuery
+      .getValue()
+      .rows.find(row => row.rowId === common.GLOBAL_ROW_ID);
+
+    let newParameters = common.isDefined(globalRow.parameters)
+      ? [...globalRow.parameters]
+      : [];
+
+    let newParameter: common.Parameter = {
+      parameterId: [globalRow.rowId, field.id].join('_').toUpperCase(),
+      parameterType: common.ParameterTypeEnum.Field,
+      filter: field.id,
+      result: result,
+      formula: undefined,
+      xDeps: undefined,
+      conditions: ['any']
+    };
+
+    newParameters = [...newParameters, newParameter];
+
+    let rowChange: common.RowChange = {
+      rowId: common.GLOBAL_ROW_ID,
+      parameters: newParameters
+    };
+
     let reportService: ReportService = this.ref.data.reportService;
 
     reportService.modifyRows({
       report: this.report,
       changeType: common.ChangeTypeEnum.EditParameters,
-      rowChange: undefined,
+      rowChange: rowChange,
       rowIds: undefined,
       reportFields: [...this.report.fields, field]
     });

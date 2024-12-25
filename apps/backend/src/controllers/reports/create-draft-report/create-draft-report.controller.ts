@@ -285,7 +285,7 @@ export class CreateDraftReportController {
     let metrics =
       [
         common.ChangeTypeEnum.AddMetric,
-        common.ChangeTypeEnum.EditParameters,
+        // common.ChangeTypeEnum.EditParameters,
         common.ChangeTypeEnum.ConvertToMetric
       ].indexOf(changeType) > -1
         ? await this.db.drizzle.query.metricsTable.findMany({

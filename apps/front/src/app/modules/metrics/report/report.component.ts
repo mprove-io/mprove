@@ -237,37 +237,37 @@ export class ReportComponent {
               row.isParamsSchemaValid === false
           ).length > 0;
 
-        this.data = this.report.rows.map((row: common.Row) => {
-          // let metric = metrics.metrics.find(m => m.metricId === row.metricId);
+        this.data = this.report.rows
+          // .filter(row => row.rowId !== common.GLOBAL_ROW_ID)
+          .map((row: common.Row) => {
+            let dataRow: DataRow = Object.assign({}, row, <DataRow>{
+              showMetricsParameters: showMetricsParameters,
+              showParametersJson: showParametersJson,
+              isRepParametersHaveError: isRepParametersHaveError,
+              strParameters: common.isDefined(row.parameters)
+                ? JSON.stringify(row.parameters)
+                : ''
+            });
 
-          let dataRow: DataRow = Object.assign({}, row, <DataRow>{
-            showMetricsParameters: showMetricsParameters,
-            showParametersJson: showParametersJson,
-            isRepParametersHaveError: isRepParametersHaveError,
-            strParameters: common.isDefined(row.parameters)
-              ? JSON.stringify(row.parameters)
-              : ''
+            // console.log(row.rowId);
+            // console.log(row.records);
+
+            row.records.forEach(record => {
+              (dataRow as any)[record.key] = record.value;
+
+              let column = this.report.columns.find(
+                c => c.columnId === record.key
+              );
+
+              // if (common.isUndefined(column)) {
+              //   console.log(record.key);
+              // }
+
+              record.columnLabel = column.label;
+            });
+
+            return dataRow;
           });
-
-          // console.log(row.rowId);
-          // console.log(row.records);
-
-          row.records.forEach(record => {
-            (dataRow as any)[record.key] = record.value;
-
-            let column = this.report.columns.find(
-              c => c.columnId === record.key
-            );
-
-            // if (common.isUndefined(column)) {
-            //   console.log(record.key);
-            // }
-
-            record.columnLabel = column.label;
-          });
-
-          return dataRow;
-        });
 
         let sNodes = this.uiQuery.getValue().reportSelectedNodes;
 

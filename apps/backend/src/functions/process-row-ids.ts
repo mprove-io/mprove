@@ -7,6 +7,16 @@ export function processRowIds(item: {
 }) {
   let { rows, targetRowIds, replaceWithUndef } = item;
 
+  rows = [
+    ...rows.filter(row => row.rowId !== common.GLOBAL_ROW_ID),
+    rows.find(row => row.rowId === common.GLOBAL_ROW_ID)
+  ];
+
+  targetRowIds = [
+    ...targetRowIds.filter(rowId => rowId !== common.GLOBAL_ROW_ID),
+    common.GLOBAL_ROW_ID
+  ];
+
   let targets: { [from: string]: string } = {};
 
   rows.forEach(row => {
@@ -15,13 +25,21 @@ export function processRowIds(item: {
       targetRowId => targetRowId === rowId
     );
 
-    targets[rowId] = common.rowIdNumberToLetter(targetIndex);
+    targets[rowId] =
+      rowId === common.GLOBAL_ROW_ID
+        ? common.GLOBAL_ROW_ID
+        : common.rowIdNumberToLetter(targetIndex);
   });
 
-  rows = rows.map(row => {
+  // rows = rows.map(row => {
+  //   row.rowId = targets[row.rowId];
+  //   row.deps = [];
+  //   return row;
+  // });
+
+  rows.forEach(row => {
     row.rowId = targets[row.rowId];
     row.deps = [];
-    return row;
   });
 
   rows.forEach(row => {

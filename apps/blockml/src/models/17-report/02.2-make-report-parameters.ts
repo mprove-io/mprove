@@ -23,9 +23,6 @@ export function makeReportParameters(
   item.reports.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    let globalRowId = 'REPORT';
-    let globalRowName = 'REPORT';
-
     let globalParameters: common.FileReportRowParameter[] = [];
 
     // if (common.isUndefined(x.parameters)) {
@@ -35,7 +32,9 @@ export function makeReportParameters(
     x.fields.forEach(filter => {
       let newGlobalParameter: common.FileReportRowParameter = {
         type: common.ParameterTypeEnum.Field,
-        filter: filter.name.replace(/[^a-zA-Z]/g, '_'),
+        filter: common.MyRegex.replaceNonLettersWithUnderscores(
+          filter.name
+        ).toLowerCase(),
         conditions: filter.conditions,
         globalFieldResult: filter.result
       };
@@ -44,8 +43,8 @@ export function makeReportParameters(
     });
 
     let globalRow: common.FileReportRow = {
-      row_id: globalRowId,
-      name: globalRowName,
+      row_id: common.GLOBAL_ROW_ID,
+      name: common.GLOBAL_ROW_NAME,
       type: common.RowTypeEnum.Global,
       parameters: globalParameters
     };

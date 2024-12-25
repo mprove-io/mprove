@@ -110,14 +110,17 @@ export class ReportsService {
         );
       }
 
-      let rowIdsNumbers = processedRows.map(y =>
-        common.rowIdLetterToNumber(y.rowId)
-      );
+      let rowIdsNumbers = processedRows
+        .filter(y => y.rowId !== common.GLOBAL_ROW_ID)
+        .map(y => common.rowIdLetterToNumber(y.rowId));
+
       let maxRowIdNumber =
         rowIdsNumbers.length > 0 ? Math.max(...rowIdsNumbers) : undefined;
+
       let rowIdNumber = common.isDefined(maxRowIdNumber)
         ? maxRowIdNumber + 1
         : 0;
+
       let rowId = common.rowIdNumberToLetter(rowIdNumber);
 
       let newRow: common.Row = {
@@ -295,9 +298,9 @@ export class ReportsService {
       let rowId = rowChange.rowId;
 
       if (common.isUndefined(rowId)) {
-        let rowIdsNumbers = processedRows.map(y =>
-          common.rowIdLetterToNumber(y.rowId)
-        );
+        let rowIdsNumbers = processedRows
+          .filter(y => y.rowId !== common.GLOBAL_ROW_ID)
+          .map(y => common.rowIdLetterToNumber(y.rowId));
 
         let maxRowIdNumber =
           rowIdsNumbers.length > 0 ? Math.max(...rowIdsNumbers) : undefined;
@@ -521,6 +524,38 @@ export class ReportsService {
       userMember
     } = item;
 
+    let globalRow: common.Row = {
+      rowId: common.GLOBAL_ROW_ID,
+      rowType: common.RowTypeEnum.Global,
+      name: common.GLOBAL_ROW_NAME,
+      topLabel: undefined,
+      partNodeLabel: undefined,
+      partFieldLabel: undefined,
+      partLabel: undefined,
+      timeNodeLabel: undefined,
+      timeFieldLabel: undefined,
+      timeLabel: undefined,
+      metricId: undefined,
+      showChart: false,
+      formula: undefined,
+      rqs: [],
+      query: undefined,
+      mconfig: undefined,
+      hasAccessToModel: false,
+      parameters: [],
+      isCalculateParameters: true,
+      parametersFiltersWithExcludedTime: [],
+      parametersJson: undefined,
+      parametersFormula: undefined,
+      deps: undefined,
+      xDeps: undefined,
+      formulaDeps: undefined,
+      records: [],
+      formatNumber: undefined,
+      currencyPrefix: undefined,
+      currencySuffix: undefined
+    };
+
     let emptyRep = this.makerService.makeReport({
       structId: undefined,
       reportId: reportId,
@@ -531,7 +566,7 @@ export class ReportsService {
       accessUsers: [],
       title: reportId,
       fields: [],
-      rows: [],
+      rows: [globalRow],
       draft: false
     });
 
@@ -645,7 +680,9 @@ export class ReportsService {
       caseSensitiveStringFilters: struct.caseSensitiveStringFilters
     });
 
-    let metricIds = report.rows.map(x => x.metricId);
+    let metricIds = report.rows
+      .map(x => x.metricId)
+      .filter(x => common.isDefined(x));
 
     let metrics = await this.db.drizzle.query.metricsTable.findMany({
       where: and(
