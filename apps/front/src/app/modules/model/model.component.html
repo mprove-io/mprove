@@ -399,12 +399,16 @@
                     </div>
                   </div>
 
-                  <m-bricks
-                    class="mb-5 ml-3 mr-5 mt-3 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"
+                  <div
+                    class="flex flex-row items-start"
                     *ngIf="!filtersIsExpanded"
-                    [extendedFilters]="mconfig.extendedFilters"
-                    [isKeepBackgroundColor]="false"
-                  ></m-bricks>
+                  >
+                    <m-bricks
+                      class="mb-5 ml-3 mr-5 mt-3 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"
+                      [extendedFilters]="mconfig.extendedFilters"
+                      [isKeepBackgroundColor]="false"
+                    ></m-bricks>
+                  </div>
 
                   <div
                     class="ml-3 max-h-[350px] w-2 flex-1 overflow-auto"
