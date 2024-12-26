@@ -112,6 +112,12 @@ export class ModelComponent implements OnInit, OnDestroy {
     })
   );
 
+  isShow = true;
+
+  filtersIsExpanded = false;
+  chartIsExpanded = true;
+  dataIsExpanded = true;
+
   mconfig: common.MconfigX;
   query: common.Query;
 
@@ -126,10 +132,10 @@ export class ModelComponent implements OnInit, OnDestroy {
 
       // console.log(this.mconfig);
 
-      this.filtersIsExpanded =
-        this.filtersIsExpanded === false
-          ? false
-          : this.mconfig.extendedFilters.length > 0;
+      // this.filtersIsExpanded =
+      //   this.mconfig.extendedFilters.length === 0
+      //     ? true
+      //     : this.filtersIsExpanded;
 
       if (this.mconfig.timezone) {
         this.timezoneForm.controls['timezone'].setValue(this.mconfig.timezone);
@@ -222,12 +228,6 @@ export class ModelComponent implements OnInit, OnDestroy {
       //
     })
   );
-
-  isShow = true;
-
-  filtersIsExpanded = true;
-  chartIsExpanded = true;
-  dataIsExpanded = true;
 
   isAutoRun = true;
   isFormat = true;

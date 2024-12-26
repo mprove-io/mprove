@@ -183,7 +183,7 @@ export function makeWith(item: {
       }
 
       if (i === 0) {
-        withViews.push(`      1 as ${constants.NO_FIELDS_SELECTED},`);
+        withViews.push(`      1 as ${common.NO_FIELDS_SELECTED},`);
       }
 
       helper.chopLastElement(withViews);
@@ -199,7 +199,7 @@ export function makeWith(item: {
   withViews.push(`    ${constants.SELECT}`);
 
   if (mainText.length === 0) {
-    withViews.push(`    1 as ${constants.NO_FIELDS_SELECTED},`);
+    withViews.push(`    1 as ${common.NO_FIELDS_SELECTED},`);
   }
 
   withViews = withViews.concat(mainText.map(s => `    ${s}`));

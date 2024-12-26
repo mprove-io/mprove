@@ -28,7 +28,7 @@ export function subComposeCalc(item: {
   sub.push(`  ${constants.SELECT}`);
 
   if (select.length === 0) {
-    sub.push(`      1 as ${constants.NO_FIELDS_SELECTED},`);
+    sub.push(`      1 as ${common.NO_FIELDS_SELECTED},`);
   }
 
   select.forEach(fieldName => {

@@ -41,8 +41,6 @@ export const DERIVED = 'derived';
 export const VIEW = 'view';
 export const MAIN = 'main';
 
-export const NO_FIELDS_SELECTED = 'no_fields_selected';
-
 export const UNKNOWN_FIELD_CLASS = 'unknown_field_class';
 export const UNKNOWN_JOIN_TYPE = 'unknown_join_type';
 

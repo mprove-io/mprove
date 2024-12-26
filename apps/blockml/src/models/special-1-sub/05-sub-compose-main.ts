@@ -27,7 +27,7 @@ export function subComposeMain(item: {
   mainQuery.push(`    ${constants.SELECT}`);
 
   if (mainText.length === 0) {
-    mainQuery.push(`    1 as ${constants.NO_FIELDS_SELECTED},`);
+    mainQuery.push(`    1 as ${common.NO_FIELDS_SELECTED},`);
   }
 
   mainQuery = mainQuery.concat(mainText.map(s => `    ${s}`));

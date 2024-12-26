@@ -45,7 +45,7 @@ export function composeCalc(item: {
   sql.push(`${constants.SELECT}`);
 
   if (select.length === 0) {
-    sql.push(`    1 as ${constants.NO_FIELDS_SELECTED},`);
+    sql.push(`    1 as ${common.NO_FIELDS_SELECTED},`);
   }
 
   select.forEach(element => {

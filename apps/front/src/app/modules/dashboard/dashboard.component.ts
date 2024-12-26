@@ -88,7 +88,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isRunButtonPressed = false;
 
-  filtersIsExpanded = true;
+  filtersIsExpanded = false;
 
   showBricks = false;
 
@@ -113,6 +113,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dashboard = x;
       // console.log(this.dashboard);
 
+      // this.filtersIsExpanded =
+      //   this.dashboard.extendedFilters.length === 0
+      //     ? true
+      //     : this.filtersIsExpanded;
+
       let uiState = this.uiQuery.getValue();
 
       this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
@@ -135,11 +140,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       // } else {
       //   this.timezoneForm.controls['timezone'].setValue(usedTimezones[0]);
       // }
-
-      this.filtersIsExpanded =
-        this.filtersIsExpanded === false
-          ? false
-          : this.dashboard.extendedFilters.length > 0;
 
       this.title.setTitle(
         `${this.pageTitle} - ${

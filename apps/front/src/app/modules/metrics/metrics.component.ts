@@ -80,6 +80,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   emptyReportId = common.EMPTY_REPORT_ID;
 
+  filtersIsExpanded = false;
+
   queriesLength = 0;
 
   dataPoints: DataPoint[] = [];
@@ -88,6 +90,11 @@ export class MetricsComponent implements OnInit, OnDestroy {
   report$ = this.reportQuery.select().pipe(
     tap(x => {
       this.report = x;
+
+      // this.filtersIsExpanded =
+      //   this.report.extendedFilters.length === 0
+      //     ? true
+      //     : this.filtersIsExpanded;
 
       let links = this.uiQuery.getValue().projectReportLinks;
 
@@ -730,6 +737,10 @@ export class MetricsComponent implements OnInit, OnDestroy {
         take(1)
       )
       .subscribe();
+  }
+
+  toggleFiltersPanel() {
+    this.filtersIsExpanded = !this.filtersIsExpanded;
   }
 
   addFilter() {

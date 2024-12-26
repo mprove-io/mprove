@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { formatLocale } from 'd3-format';
 import { SeriesOption } from 'echarts';
-import { capitalizeFirstLetter } from '~common/_index';
+import { NO_FIELDS_SELECTED, capitalizeFirstLetter } from '~common/_index';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { DataPoint } from '../interfaces/data-point';
@@ -107,6 +107,11 @@ export class DataService {
   makeQData(item: { data: SourceDataRow[]; columns: common.MconfigField[] }) {
     let { data, columns } = item;
 
+    // console.log('data');
+    // console.log(data);
+    // console.log('columns');
+    // console.log(columns);
+
     if (common.isUndefined(data)) {
       return [];
     }
@@ -116,44 +121,46 @@ export class DataService {
     data.forEach((row: SourceDataRow) => {
       let r: QDataRow = {};
 
-      Object.keys(row).forEach(key => {
-        let value = row[key];
+      Object.keys(row)
+        .filter(k => k !== NO_FIELDS_SELECTED)
+        .forEach(key => {
+          let value = row[key];
 
-        let fieldId = key.toLowerCase();
+          let fieldId = key.toLowerCase();
 
-        let field = columns.find(x => x.sqlName === fieldId);
+          let field = columns.find(x => x.sqlName === fieldId);
 
-        let tsValue: number;
+          let tsValue: number;
 
-        if (field.result === common.FieldResultEnum.Ts) {
-          let tsValueFn = this.getTsValueFn(field.sqlName);
+          if (field.result === common.FieldResultEnum.Ts) {
+            let tsValueFn = this.getTsValueFn(field.sqlName);
 
-          tsValue = common.isDefined(tsValueFn)
-            ? tsValueFn(value).getTime()
-            : undefined;
-        }
+            tsValue = common.isDefined(tsValueFn)
+              ? tsValueFn(value).getTime()
+              : undefined;
+          }
 
-        let cell: QCell = {
-          id: key.toLowerCase(),
-          value: common.isDefined(value) ? value : 'NULL',
-          valueFmt: common.isUndefined(value)
-            ? 'NULL'
-            : common.isDefined(tsValue)
-            ? common.formatTs({
-                timeSpec: this.getTimeSpecByFieldSqlName(field.sqlName),
-                unixTimeZoned: tsValue / 1000
-              })
-            : this.formatValue({
-                value: value,
-                formatNumber: field?.formatNumber,
-                fieldResult: field?.result,
-                currencyPrefix: field?.currencyPrefix,
-                currencySuffix: field?.currencySuffix
-              })
-        };
+          let cell: QCell = {
+            id: key.toLowerCase(),
+            value: common.isDefined(value) ? value : 'NULL',
+            valueFmt: common.isUndefined(value)
+              ? 'NULL'
+              : common.isDefined(tsValue)
+              ? common.formatTs({
+                  timeSpec: this.getTimeSpecByFieldSqlName(field.sqlName),
+                  unixTimeZoned: tsValue / 1000
+                })
+              : this.formatValue({
+                  value: value,
+                  formatNumber: field?.formatNumber,
+                  fieldResult: field?.result,
+                  currencyPrefix: field?.currencyPrefix,
+                  currencySuffix: field?.currencySuffix
+                })
+          };
 
-        r[key.toLowerCase()] = cell;
-      });
+          r[key.toLowerCase()] = cell;
+        });
 
       qData.push(r);
     });

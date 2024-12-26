@@ -130,6 +130,8 @@ export const METHOD_RABBIT = 'RABBIT';
 export const GLOBAL_ROW_ID = 'GL';
 export const GLOBAL_ROW_NAME = 'GL';
 
+export const NO_FIELDS_SELECTED = 'no_fields_selected';
+
 export const FIELD_TYPE_VALUES = [
   enums.FieldTypeEnum.CountDistinct,
   enums.FieldTypeEnum.Sum,
