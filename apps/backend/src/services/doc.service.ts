@@ -55,7 +55,11 @@ export class DocService {
       });
 
     rows
-      .filter(row => row.rowType === common.RowTypeEnum.Metric)
+      .filter(
+        row =>
+          row.rowType === common.RowTypeEnum.Metric ||
+          row.rowType === common.RowTypeEnum.Global
+      )
       .forEach(row => {
         let xColumnsRow: XColumn[] = [];
 
@@ -235,7 +239,11 @@ ${inputSub}
     }
 
     await forEachSeries(
-      rows.filter(row => row.rowType === common.RowTypeEnum.Metric),
+      rows.filter(
+        row =>
+          row.rowType === common.RowTypeEnum.Metric ||
+          row.rowType === common.RowTypeEnum.Global
+      ),
       async row => {
         let parametersXColumn = processedXColumns.find(
           x => x.id === `${row.rowId}_PARAMETERS`
@@ -365,6 +373,17 @@ Formula must return a valid JSON object.`;
               }
             });
           }
+
+          //
+          // console.log('------')
+          // console.log('schemaError')
+          // console.log(schemaError)
+          // console.log('parameter.conditions')
+          // console.log(parameter.conditions)
+          // console.log('parameter.result')
+          // console.log(parameter.result)
+          // console.log('caseSensitiveStringFilters')
+          // console.log(caseSensitiveStringFilters)
 
           if (common.isDefined(schemaError)) {
             parameter.conditions = ['any'];

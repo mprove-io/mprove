@@ -36,10 +36,33 @@ export class ReportFiltersComponent {
       ...this.report.fields.slice(fieldIndex + 1)
     ];
 
+    let globalRow = this.report.rows.find(
+      row => row.rowId === common.GLOBAL_ROW_ID
+    );
+
+    let newParameters = newReportFields.map(field => {
+      let newParameter: common.Parameter = {
+        parameterId: [globalRow.rowId, field.id].join('_').toUpperCase(),
+        parameterType: common.ParameterTypeEnum.Field,
+        filter: field.id,
+        result: field.result,
+        formula: undefined,
+        xDeps: undefined,
+        conditions: field.fractions.map(fr => fr.brick)
+      };
+
+      return newParameter;
+    });
+
+    let rowChange: common.RowChange = {
+      rowId: common.GLOBAL_ROW_ID,
+      parameters: newParameters
+    };
+
     this.reportService.modifyRows({
       report: this.report,
       changeType: common.ChangeTypeEnum.EditParameters,
-      rowChange: undefined,
+      rowChange: rowChange,
       rowIds: undefined,
       reportFields: newReportFields
     });
@@ -66,10 +89,33 @@ export class ReportFiltersComponent {
       ...this.report.fields.slice(fieldIndex + 1)
     ];
 
+    let globalRow = this.report.rows.find(
+      row => row.rowId === common.GLOBAL_ROW_ID
+    );
+
+    let newParameters = newReportFields.map(field => {
+      let newParameter: common.Parameter = {
+        parameterId: [globalRow.rowId, field.id].join('_').toUpperCase(),
+        parameterType: common.ParameterTypeEnum.Field,
+        filter: field.id,
+        result: field.result,
+        formula: undefined,
+        xDeps: undefined,
+        conditions: field.fractions.map(fr => fr.brick)
+      };
+
+      return newParameter;
+    });
+
+    let rowChange: common.RowChange = {
+      rowId: common.GLOBAL_ROW_ID,
+      parameters: newParameters
+    };
+
     this.reportService.modifyRows({
       report: this.report,
       changeType: common.ChangeTypeEnum.EditParameters,
-      rowChange: undefined,
+      rowChange: rowChange,
       rowIds: undefined,
       reportFields: newReportFields
     });
@@ -106,10 +152,33 @@ export class ReportFiltersComponent {
       ];
     }
 
+    let globalRow = this.report.rows.find(
+      row => row.rowId === common.GLOBAL_ROW_ID
+    );
+
+    let newParameters = newReportFields.map(field => {
+      let newParameter: common.Parameter = {
+        parameterId: [globalRow.rowId, field.id].join('_').toUpperCase(),
+        parameterType: common.ParameterTypeEnum.Field,
+        filter: field.id,
+        result: field.result,
+        formula: undefined,
+        xDeps: undefined,
+        conditions: field.fractions.map(fr => fr.brick)
+      };
+
+      return newParameter;
+    });
+
+    let rowChange: common.RowChange = {
+      rowId: common.GLOBAL_ROW_ID,
+      parameters: newParameters
+    };
+
     this.reportService.modifyRows({
       report: this.report,
       changeType: common.ChangeTypeEnum.EditParameters,
-      rowChange: undefined,
+      rowChange: rowChange,
       rowIds: undefined,
       reportFields: newReportFields
     });
@@ -120,10 +189,25 @@ export class ReportFiltersComponent {
       x => x.id !== reportField.id
     );
 
+    let globalRow = this.report.rows.find(
+      row => row.rowId === common.GLOBAL_ROW_ID
+    );
+
+    let parameterId = [globalRow.rowId, reportField.id].join('_').toUpperCase();
+
+    let newParameters = globalRow.parameters.filter(
+      x => x.parameterId !== parameterId
+    );
+
+    let rowChange: common.RowChange = {
+      rowId: common.GLOBAL_ROW_ID,
+      parameters: newParameters
+    };
+
     this.reportService.modifyRows({
       report: this.report,
       changeType: common.ChangeTypeEnum.EditParameters,
-      rowChange: undefined,
+      rowChange: rowChange,
       rowIds: undefined,
       reportFields: newReportFields
     });
