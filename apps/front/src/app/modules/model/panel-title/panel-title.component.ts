@@ -11,12 +11,17 @@ export class PanelTitleComponent {
   @Input()
   isExpanded: boolean;
 
+  @Input()
+  showToggle: boolean;
+
   @Output()
   toggleEvent = new EventEmitter();
 
   constructor() {}
 
   toggle() {
-    this.toggleEvent.emit();
+    if (this.showToggle === true) {
+      this.toggleEvent.emit();
+    }
   }
 }

@@ -166,6 +166,7 @@
                   [title]="'Data'"
                   [isExpanded]="dataIsExpanded"
                   (toggleEvent)="toggleDataPanel()"
+                  [showToggle]="false"
                 ></m-panel-title>
 
                 <button
@@ -406,7 +407,7 @@
                   ></m-bricks>
 
                   <div
-                    class="ml-3 max-h-96 w-2 flex-1 overflow-auto"
+                    class="ml-3 max-h-[350px] w-2 flex-1 overflow-auto"
                     *ngIf="filtersIsExpanded"
                   >
                     <m-model-filters></m-model-filters>
@@ -419,7 +420,7 @@
           <div
             class="w-full rounded bg-white shadow"
             [ngClass]="{
-              'flex-1': chartIsExpanded
+              'h-[40%]': chartIsExpanded
             }"
           >
             <div class="flex h-full flex-col">
@@ -428,6 +429,7 @@
                   [title]="'Chart'"
                   [isExpanded]="chartIsExpanded"
                   (toggleEvent)="toggleChartPanel()"
+                  [showToggle]="true"
                 ></m-panel-title>
 
                 <div

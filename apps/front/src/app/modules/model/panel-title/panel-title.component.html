@@ -1,8 +1,20 @@
 <div
   (click)="toggle()"
-  class="text-gray1 flex cursor-pointer select-none flex-row items-center space-x-2 py-3 px-5 text-2xl font-semibold"
+  class="text-gray1 flex select-none flex-row items-center space-x-2 px-5 py-3 text-2xl font-semibold"
+  [ngClass]="{
+    'cursor-pointer': showToggle === true,
+    'cursor-default': showToggle === false
+  }"
 >
-  <m-chevron-right-icon *ngIf="!isExpanded"></m-chevron-right-icon>
-  <m-chevron-down-icon *ngIf="isExpanded"></m-chevron-down-icon>
+  <div class="h-6 w-6" *ngIf="showToggle === false"></div>
+
+  <m-chevron-right-icon
+    *ngIf="showToggle === true && !isExpanded"
+  ></m-chevron-right-icon>
+
+  <m-chevron-down-icon
+    *ngIf="showToggle === true && isExpanded"
+  ></m-chevron-down-icon>
+
   <div> {{ title }} </div>
 </div>
