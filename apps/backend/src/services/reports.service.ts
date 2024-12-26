@@ -547,7 +547,7 @@ export class ReportsService {
       parametersFiltersWithExcludedTime: [],
       parametersJson: undefined,
       parametersFormula: undefined,
-      deps: undefined,
+      deps: [],
       xDeps: undefined,
       formulaDeps: undefined,
       records: [],

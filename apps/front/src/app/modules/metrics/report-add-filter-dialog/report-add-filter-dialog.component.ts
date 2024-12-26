@@ -234,7 +234,9 @@ export class ReportAddFilterDialogComponent implements OnInit {
     let label: string = this.filterForm.controls['label'].value;
 
     let id =
-      common.MyRegex.replaceNonLettersWithUnderscores(label).toLowerCase();
+      common.MyRegex.replaceNonLettersNumbersWithUnderscores(
+        label
+      ).toLowerCase();
 
     let result = this.filterForm.controls['fieldResult'].value;
 

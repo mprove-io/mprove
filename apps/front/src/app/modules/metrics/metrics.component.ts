@@ -744,6 +744,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
   }
 
   addFilter() {
+    this.filtersIsExpanded = true;
+
     this.myDialogService.showReportAddFilter({
       reportService: this.reportService,
       report: this.report,

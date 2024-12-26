@@ -45,7 +45,7 @@
             <div
               class="flex flex-1 flex-row items-center justify-end space-x-5"
             >
-              <div class="text-gray1 ml-6 select-none text-base">Tz</div>
+              <div class="text-gray1 ml-6 select-none text-base">Timezone</div>
 
               <div class="flex max-w-[260px] flex-1">
                 <form
@@ -367,7 +367,7 @@
             </div>
 
             <div
-              class="ml-7 mt-1 max-h-96 w-2 flex-1 overflow-auto"
+              class="ml-7 mt-1 max-h-[250px] w-2 flex-1 overflow-auto"
               *ngIf="filtersIsExpanded && report?.fields.length > 0"
             >
               <m-report-filters [report]="report"></m-report-filters>

@@ -10,8 +10,8 @@ export class MyRegex {
     return input.split(' ').join('_');
   }
 
-  static replaceNonLettersWithUnderscores(input: string): string {
-    return input.replace(/[^a-zA-Z]/g, '_');
+  static replaceNonLettersNumbersWithUnderscores(input: string): string {
+    return input.replace(/[^a-zA-Z0-9]/g, '_');
   }
 
   static SLASH_G(): RegExp {

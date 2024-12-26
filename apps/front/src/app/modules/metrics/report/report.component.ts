@@ -184,6 +184,12 @@ export class ReportComponent {
       ]: [common.ReportX, number, number, boolean, boolean]) => {
         this.report = rep;
 
+        console.log('this.report.fields');
+        console.log(this.report.fields);
+
+        console.log('this.report.rows');
+        console.log(this.report.rows);
+
         let uiState = this.uiQuery.getValue();
 
         let nameColumn = this.columns.find(c => c.field === 'name');
