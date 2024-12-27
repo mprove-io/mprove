@@ -163,6 +163,7 @@
             <div class="flex h-full flex-col">
               <div class="mr-5 flex h-20 flex-shrink-0 flex-row items-center">
                 <m-panel-title
+                  class="mb-1"
                   [title]="'Data'"
                   [isExpanded]="dataIsExpanded"
                   (toggleEvent)="toggleDataPanel()"
@@ -364,7 +365,7 @@
                 <div
                   class="text-gray1 ml-6 mt-4 flex h-full min-h-[76px] w-full flex-shrink-0 select-none pt-4 text-xl"
                   *ngIf="mconfig?.extendedFilters.length === 0"
-                  >No filters</div
+                  >No parameters</div
                 >
 
                 <div
@@ -373,7 +374,7 @@
                 >
                   <div
                     (click)="toggleFiltersPanel()"
-                    class="text-gray1 flex h-11 cursor-pointer select-none flex-row items-start space-x-2 px-5 py-3 text-2xl font-semibold"
+                    class="text-gray1 mt-1 flex h-11 cursor-pointer select-none flex-row items-start space-x-2 px-5 py-3 text-xl font-semibold"
                   >
                     <div class="flex flex-row items-center space-x-2">
                       <m-chevron-right-icon
@@ -395,7 +396,7 @@
                         *ngIf="mconfig?.extendedFilters.length === 0"
                       ></div>
 
-                      <div> Filters </div>
+                      <div> Parameters </div>
                     </div>
                   </div>
 
