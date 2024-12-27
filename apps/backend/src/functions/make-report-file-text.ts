@@ -9,9 +9,18 @@ export function makeReportFileText(item: {
   rows: common.Row[];
   metrics: schemaPostgres.MetricEnt[];
   struct: schemaPostgres.StructEnt;
+  newReportFields: common.ReportField[];
 }) {
-  let { reportId, title, rows, accessRoles, accessUsers, metrics, struct } =
-    item;
+  let {
+    reportId,
+    title,
+    rows,
+    accessRoles,
+    accessUsers,
+    metrics,
+    struct,
+    newReportFields
+  } = item;
 
   let fileReport: common.FileReport = {
     fileName: undefined,
@@ -20,6 +29,35 @@ export function makeReportFileText(item: {
     name: undefined,
     report: reportId,
     title: title,
+    parameters:
+      common.isDefined(newReportFields) && newReportFields.length > 0
+        ? newReportFields.map(field => ({
+            filter: field.id,
+            hidden:
+              common.isDefined(field.hidden) &&
+              field.hidden !== common.REPORT_FIELD_DEFAULT_HIDDEN
+                ? <any>field.hidden
+                : undefined,
+            label:
+              common.isDefined(field.label) &&
+              field.label.toUpperCase() !==
+                common.MyRegex.replaceUnderscoresWithSpaces(
+                  field.id
+                ).toUpperCase()
+                ? field.label
+                : undefined,
+            description:
+              common.isDefined(field.description) && field.description !== ''
+                ? field.description
+                : undefined,
+            result: field.result,
+            suggest_model_dimension: field.suggestModelDimension,
+            conditions:
+              common.isDefined(field.fractions) && field.fractions.length > 0
+                ? field.fractions.map(x => x.brick)
+                : undefined
+          }))
+        : undefined,
     access_roles:
       accessRoles.length > 0 ? accessRoles.map(x => x.trim()) : undefined,
     access_users:

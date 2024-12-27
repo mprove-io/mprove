@@ -83,7 +83,8 @@ export class SaveCreateReportController {
       title,
       timeSpec,
       timeRangeFractionBrick,
-      timezone
+      timezone,
+      newReportFields
     } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
@@ -174,7 +175,8 @@ export class SaveCreateReportController {
       title: title,
       rows: fromReport.rows,
       metrics: metrics,
-      struct: currentStruct
+      struct: currentStruct,
+      newReportFields: newReportFields
     });
 
     let mdir = currentStruct.mproveDirValue;
@@ -250,7 +252,7 @@ export class SaveCreateReportController {
       }
     });
 
-    let { reports: reports, struct } = await this.blockmlService.rebuildStruct({
+    let { reports, struct } = await this.blockmlService.rebuildStruct({
       traceId: traceId,
       orgId: project.orgId,
       projectId: projectId,
