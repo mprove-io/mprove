@@ -102,54 +102,56 @@
         ></m-parameter-formula>
       </div>
 
-      <div
-        class="flex flex-row items-start justify-start"
-        *ngFor="
-          let fraction of filter.fractions;
-          let isFirst = first;
-          let fractionIndex = index
-        "
-      >
-        <m-fraction
-          [suggestModelDimension]="filter.field.suggestModelDimension"
-          [structId]="mconfig.structId"
-          [fieldResult]="filter.field.result"
-          [fraction]="fraction"
-          [fractionIndex]="fractionIndex"
-          [isDisabled]="
-            filter.parameterType === parameterTypeFormula ||
-            !!reportSelectedNode.data.parametersFormula
-          "
-          [isFirst]="isFirst"
-          (fractionUpdate)="fractionUpdate(filter, $event)"
-        >
-        </m-fraction>
-
+      <div *ngIf="filter.parameterType !== parameterTypeFormula">
         <div
-          tp="Turn off formula to activate control"
-          [tpIsEnabled]="
-            filter.parameterType === parameterTypeFormula ||
-            !!reportSelectedNode.data.parametersFormula
+          class="flex flex-row items-start justify-start"
+          *ngFor="
+            let fraction of filter.fractions;
+            let isFirst = first;
+            let fractionIndex = index
           "
         >
-          <button
-            class="ml-5 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
-            (click)="deleteFraction(filter, fractionIndex)"
-            [ngClass]="{
-              'text-gray-500 hover:bg-blue-200':
-                filter.parameterType !== parameterTypeFormula &&
-                !reportSelectedNode.data.parametersFormula,
-              'cursor-default text-gray-400':
-                filter.parameterType === parameterTypeFormula ||
-                !!reportSelectedNode.data.parametersFormula
-            }"
-            [disabled]="
+          <m-fraction
+            [suggestModelDimension]="filter.field.suggestModelDimension"
+            [structId]="mconfig.structId"
+            [fieldResult]="filter.field.result"
+            [fraction]="fraction"
+            [fractionIndex]="fractionIndex"
+            [isDisabled]="
+              filter.parameterType === parameterTypeFormula ||
+              !!reportSelectedNode.data.parametersFormula
+            "
+            [isFirst]="isFirst"
+            (fractionUpdate)="fractionUpdate(filter, $event)"
+          >
+          </m-fraction>
+
+          <div
+            tp="Turn off formula to activate control"
+            [tpIsEnabled]="
               filter.parameterType === parameterTypeFormula ||
               !!reportSelectedNode.data.parametersFormula
             "
           >
-            <m-delete-icon></m-delete-icon>
-          </button>
+            <button
+              class="ml-5 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
+              (click)="deleteFraction(filter, fractionIndex)"
+              [ngClass]="{
+                'text-gray-500 hover:bg-blue-200':
+                  filter.parameterType !== parameterTypeFormula &&
+                  !reportSelectedNode.data.parametersFormula,
+                'cursor-default text-gray-400':
+                  filter.parameterType === parameterTypeFormula ||
+                  !!reportSelectedNode.data.parametersFormula
+              }"
+              [disabled]="
+                filter.parameterType === parameterTypeFormula ||
+                !!reportSelectedNode.data.parametersFormula
+              "
+            >
+              <m-delete-icon></m-delete-icon>
+            </button>
+          </div>
         </div>
       </div>
     </div>

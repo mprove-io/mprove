@@ -245,7 +245,7 @@ export class ReportComponent {
           ).length > 0;
 
         this.data = this.report.rows
-          // .filter(row => row.rowId !== common.GLOBAL_ROW_ID)
+          .filter(row => row.rowId !== common.GLOBAL_ROW_ID)
           .map((row: common.Row) => {
             let dataRow: DataRow = Object.assign({}, row, <DataRow>{
               showMetricsParameters: showMetricsParameters,

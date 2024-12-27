@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { DataRow } from '~front/app/interfaces/data-row';
 import { DeleteFilterFnItem } from '~front/app/interfaces/delete-filter-fn-item';
 import { common } from '~front/barrels/common';
 
@@ -21,7 +20,13 @@ export class BricksComponent {
   showJson?: boolean;
 
   @Input()
-  rData?: DataRow;
+  onlyJson?: boolean;
+
+  @Input()
+  parametersJson?: any[];
+
+  @Input()
+  jsonMaxHeight?: number;
 
   @Input()
   deleteFilterFn: (item: DeleteFilterFnItem) => void;

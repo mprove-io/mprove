@@ -118,8 +118,14 @@
             class="flex max-w-max flex-shrink-0 flex-row items-end justify-start overflow-auto"
             [extendedFilters]="parametersFilters"
             [isKeepBackgroundColor]="true"
-            [rData]="params.data"
+            [parametersJson]="params.data.parametersJson"
             [showJson]="showJson"
+            [onlyJson]="false"
+            [jsonMaxHeight]="
+              (params.data?.parametersJson || []).length > 0
+                ? params.data?.finalRowHeight - 16
+                : params.data?.finalRowHeight - 8
+            "
           ></m-bricks>
         </div>
       </div>

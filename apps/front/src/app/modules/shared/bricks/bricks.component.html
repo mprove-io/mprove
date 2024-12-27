@@ -5,7 +5,7 @@
     'text-gray-500': isKeepBackgroundColor === true
   }"
 >
-  <div class="pt-1">
+  <div class="pt-1" *ngIf="!onlyJson">
     <table>
       <tbody class="divide-y divide-gray-300">
         <tr
@@ -84,16 +84,17 @@
   </div>
 
   <div
-    *ngIf="showJson === true"
-    [style.max-height.px]="
-      (rData?.parametersJson || []).length > 0
-        ? rData?.finalRowHeight - 16
-        : rData?.finalRowHeight - 8
-    "
+    *ngIf="showJson === true && !jsonMaxHeight"
     class="font-ms my-1 mr-5 w-[400px] min-w-min select-text overflow-auto bg-gray-200 py-1 pl-3 pr-5 text-sm text-black"
   >
-    <pre
-      [innerHtml]="rData?.parametersJson || [] | prettyJson : [true, 3]"
-    ></pre>
+    <pre [innerHtml]="parametersJson || [] | prettyJson : [true, 3]"></pre>
+  </div>
+
+  <div
+    *ngIf="showJson === true && !!jsonMaxHeight"
+    [style.max-height.px]="jsonMaxHeight"
+    class="font-ms my-1 mr-5 w-[400px] min-w-min select-text overflow-auto bg-gray-200 py-1 pl-3 pr-5 text-sm text-black"
+  >
+    <pre [innerHtml]="parametersJson || [] | prettyJson : [true, 3]"></pre>
   </div>
 </div>

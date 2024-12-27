@@ -86,10 +86,16 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   dataPoints: DataPoint[] = [];
 
+  reportGlobalRow: common.Row;
+
   report: common.ReportX;
   report$ = this.reportQuery.select().pipe(
     tap(x => {
       this.report = x;
+
+      this.reportGlobalRow = this.report.rows.find(
+        row => row.rowId === common.GLOBAL_ROW_ID
+      );
 
       // this.filtersIsExpanded =
       //   this.report.extendedFilters.length === 0
@@ -413,6 +419,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
   );
 
   fractions: common.Fraction[] = [];
+  showParametersJson = false;
   showMetricsModelName = false;
   showMetricsTimeFieldName = false;
   showMetricsChart = false;
@@ -432,6 +439,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
   uiQuery$ = this.uiQuery.select().pipe(
     tap(x => {
       this.fractions = [x.timeRangeFraction];
+
+      this.showParametersJson = x.showParametersJson;
 
       this.showMetricsModelName = x.showMetricsModelName;
       this.showMetricsTimeFieldName = x.showMetricsTimeFieldName;
