@@ -1107,7 +1107,7 @@ export class ReportsService {
               return record;
             })
           : common.isDefined(rq.kitId)
-          ? (kits.find(k => k.kitId === rq.kitId).data as any[])
+          ? (kits.find(k => k.kitId === rq.kitId)?.data as any[]) || []
           : [];
       });
     }
