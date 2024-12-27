@@ -261,13 +261,12 @@
                         (click)="reportSaveAs($event)"
                       >
                         <div
-                          class="flex h-8 flex-row items-center justify-start space-x-2 rounded px-3 hover:bg-white"
+                          class="flex h-8 flex-shrink-0 flex-row items-center justify-start space-x-2 rounded px-3 hover:bg-white"
                         >
-                          <div
-                            class="flex w-[60px] flex-shrink-0 justify-start text-sm text-gray-500"
+                          <m-save-icon class="text-gray-500"></m-save-icon>
+                          <div class="flex justify-start text-gray-500"
                             >Save As</div
                           >
-                          <m-save-icon class="text-gray-500"></m-save-icon>
                         </div>
                       </button>
 
@@ -276,18 +275,15 @@
                           report.draft === true &&
                           r.reportId === report.reportId
                         "
-                        class="ml-3 flex h-9 w-9 items-center justify-center rounded text-gray-500 hover:bg-white focus:outline-none"
+                        class="ml-3 flex h-9 flex-shrink-0 items-center justify-center space-x-2 rounded px-3 text-gray-500 hover:bg-white focus:outline-none"
                         (click)="deleteDraftReport($event, r)"
                       >
                         <m-trash-icon></m-trash-icon>
-                      </button>
 
-                      <div
-                        *ngIf="r.draft === true"
-                        class="ml-5 flex select-none items-center justify-center text-gray-500 focus:outline-none"
-                      >
-                        Draft</div
-                      >
+                        <div class="flex justify-start text-gray-500"
+                          >Draft</div
+                        >
+                      </button>
 
                       <div
                         *ngIf="
