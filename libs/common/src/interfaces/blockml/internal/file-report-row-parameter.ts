@@ -7,6 +7,9 @@ export interface FileReportRowParameter {
   filter?: string;
   filter_line_num?: number;
 
+  listen?: string;
+  listen_line_num?: number;
+
   formula?: string;
   formula_line_num?: number;
 

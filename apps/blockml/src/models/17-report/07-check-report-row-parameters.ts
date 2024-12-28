@@ -178,6 +178,72 @@ export function checkReportRowParameters(
                 }
               }
 
+              if (common.isDefined(p.listen) && common.isDefined(p.formula)) {
+                item.errors.push(
+                  new BmError({
+                    title: common.ErTitleEnum.ROW_PARAMETER_WRONG_COMBINATION,
+                    message: `found that both parameters "formula" and "listen" are specified`,
+                    lines: [
+                      {
+                        line: p.filter_line_num,
+                        name: x.fileName,
+                        path: x.filePath
+                      }
+                    ]
+                  })
+                );
+                return;
+              }
+
+              if (
+                common.isDefined(p.listen) &&
+                common.isDefined(p.conditions)
+              ) {
+                item.errors.push(
+                  new BmError({
+                    title: common.ErTitleEnum.ROW_PARAMETER_WRONG_COMBINATION,
+                    message: `found that both parameters "conditions" and "listen" are specified`,
+                    lines: [
+                      {
+                        line: p.filter_line_num,
+                        name: x.fileName,
+                        path: x.filePath
+                      }
+                    ]
+                  })
+                );
+                return;
+              }
+
+              if (
+                common.isDefined(p.formula) &&
+                common.isDefined(p.conditions)
+              ) {
+                item.errors.push(
+                  new BmError({
+                    title: common.ErTitleEnum.ROW_PARAMETER_WRONG_COMBINATION,
+                    message: `found that both parameters "formula" and "conditions" are specified`,
+                    lines: [
+                      {
+                        line: p.filter_line_num,
+                        name: x.fileName,
+                        path: x.filePath
+                      }
+                    ]
+                  })
+                );
+                return;
+              }
+
+              let pResult =
+                asName === constants.MF
+                  ? model.fields.find(mField => mField.name === fieldName)
+                      .result
+                  : model.joins
+                      .find(j => j.as === asName)
+                      .view.fields.find(vField => vField.name === fieldName)
+                      .result;
+
               if (common.isDefined(p.conditions)) {
                 if (p.conditions.length === 0) {
                   item.errors.push(
@@ -194,40 +260,75 @@ export function checkReportRowParameters(
                     })
                   );
                   return;
-                } else {
-                  let result =
-                    asName === constants.MF
-                      ? model.fields.find(mField => mField.name === fieldName)
-                          .result
-                      : model.joins
-                          .find(j => j.as === asName)
-                          .view.fields.find(vField => vField.name === fieldName)
-                          .result;
+                }
 
-                  let pf = barSpecial.processFilter({
-                    caseSensitiveStringFilters: caseSensitiveStringFilters,
-                    filterBricks: p.conditions,
-                    result: result
-                  });
+                let pf = barSpecial.processFilter({
+                  caseSensitiveStringFilters: caseSensitiveStringFilters,
+                  filterBricks: p.conditions,
+                  result: pResult
+                });
 
-                  if (pf.valid === 0) {
-                    item.errors.push(
-                      new BmError({
-                        title: common.ErTitleEnum.ROW_FILTER_WRONG_CONDITIONS,
-                        message:
-                          `wrong expression "${pf.brick}" of filter "${p.filter}" ` +
-                          `for ${common.ParameterEnum.Result} "${result}" `,
-                        lines: [
-                          {
-                            line: p.conditions_line_num,
-                            name: x.fileName,
-                            path: x.filePath
-                          }
-                        ]
-                      })
-                    );
-                    return;
-                  }
+                if (pf.valid === 0) {
+                  item.errors.push(
+                    new BmError({
+                      title: common.ErTitleEnum.ROW_FILTER_WRONG_CONDITIONS,
+                      message:
+                        `wrong expression "${pf.brick}" of filter "${p.filter}" ` +
+                        `for ${common.ParameterEnum.Result} "${pResult}" `,
+                      lines: [
+                        {
+                          line: p.conditions_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        }
+                      ]
+                    })
+                  );
+                  return;
+                }
+              }
+
+              if (common.isDefined(p.listen)) {
+                let reportField = x.fields.find(f => f.name === p.listen);
+
+                if (common.isUndefined(reportField)) {
+                  item.errors.push(
+                    new BmError({
+                      title:
+                        common.ErTitleEnum
+                          .ROW_PARAMETER_LISTENS_TO_MISSING_REPORT_FILTER,
+                      message:
+                        `row parameter listens report filter "${p.listen}" ` +
+                        'that is missing or not valid',
+                      lines: [
+                        {
+                          line: p.listen_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        }
+                      ]
+                    })
+                  );
+                  return;
+                } else if (reportField.result !== pResult) {
+                  item.errors.push(
+                    new BmError({
+                      title:
+                        common.ErTitleEnum
+                          .ROW_PARAMETER_AND_LISTEN_RESULT_MISMATCH,
+                      message:
+                        `"${p.listen}" result "${reportField.result}" does not match ` +
+                        `listener "${p.filter}" result "${pResult}"`,
+                      lines: [
+                        {
+                          line: p.listen_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        }
+                      ]
+                    })
+                  );
+                  return;
                 }
               }
             });

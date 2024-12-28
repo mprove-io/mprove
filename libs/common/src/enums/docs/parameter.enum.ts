@@ -46,6 +46,7 @@ export enum ParameterEnum {
   Label = 'label',
   Limit = 'limit',
   ListenFilters = 'listen_filters',
+  Listen = 'listen',
   Measure = 'measure',
 
   Model = 'model',

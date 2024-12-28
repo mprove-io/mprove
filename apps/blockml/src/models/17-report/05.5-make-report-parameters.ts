@@ -25,10 +25,6 @@ export function makeReportParameters(
 
     let globalParameters: common.FileReportRowParameter[] = [];
 
-    // if (common.isUndefined(x.parameters)) {
-    //   x.parameters = [];
-    // }
-
     x.fields.forEach(filter => {
       let newGlobalParameter: common.FileReportRowParameter = {
         type: common.ParameterTypeEnum.Field,

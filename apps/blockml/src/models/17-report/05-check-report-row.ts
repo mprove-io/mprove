@@ -204,15 +204,17 @@ export function checkReportRow(
           }
 
           if (
-            common.isUndefined(p.conditions) &&
-            common.isUndefined(p.formula)
+            common.isUndefined(p.listen) &&
+            common.isUndefined(p.formula) &&
+            common.isUndefined(p.conditions)
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.MISSING_CONDITIONS_OR_FORMULA,
+                title:
+                  common.ErTitleEnum.MISSING_LISTEN_OR_FORMULA_OR_CONDITIONS,
                 message:
-                  `one of parameters "${common.ParameterEnum.Conditions}", ` +
-                  `"${common.ParameterEnum.Formula}" is required for a parameter`,
+                  `"${common.ParameterEnum.Listen}", "${common.ParameterEnum.Formula}" or ` +
+                  `"${common.ParameterEnum.Conditions}" must be specified for a parameter`,
                 lines: [
                   {
                     line: Math.min(...pKeysLineNums),

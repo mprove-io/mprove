@@ -34,8 +34,9 @@ export function checkReportRowUnknownParams(
               if (
                 [
                   common.ParameterEnum.Filter.toString(),
-                  common.ParameterEnum.Conditions.toString(),
-                  common.ParameterEnum.Formula.toString()
+                  common.ParameterEnum.Listen.toString(),
+                  common.ParameterEnum.Formula.toString(),
+                  common.ParameterEnum.Conditions.toString()
                 ].indexOf(parameter) < 0
               ) {
                 item.errors.push(
