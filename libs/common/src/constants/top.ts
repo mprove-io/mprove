@@ -128,8 +128,8 @@ export const PATH_TEAM = 'team';
 
 export const METHOD_RABBIT = 'RABBIT';
 
-export const GLOBAL_ROW_ID = 'GL';
-export const GLOBAL_ROW_NAME = 'GL';
+export const GLOBAL_ROW_ID = 'RGL';
+export const GLOBAL_ROW_NAME = 'RGL';
 
 export const NO_FIELDS_SELECTED = 'no_fields_selected';
 

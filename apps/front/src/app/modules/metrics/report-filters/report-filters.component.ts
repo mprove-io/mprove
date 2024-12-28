@@ -46,9 +46,10 @@ export class ReportFiltersComponent {
         parameterType: common.ParameterTypeEnum.Field,
         filter: field.id,
         result: field.result,
+        conditions: field.fractions.map(fr => fr.brick),
         formula: undefined,
-        xDeps: undefined,
-        conditions: field.fractions.map(fr => fr.brick)
+        listen: undefined,
+        xDeps: undefined
       };
 
       return newParameter;
@@ -99,9 +100,10 @@ export class ReportFiltersComponent {
         parameterType: common.ParameterTypeEnum.Field,
         filter: field.id,
         result: field.result,
+        conditions: field.fractions.map(fr => fr.brick),
         formula: undefined,
-        xDeps: undefined,
-        conditions: field.fractions.map(fr => fr.brick)
+        listen: undefined,
+        xDeps: undefined
       };
 
       return newParameter;
@@ -162,9 +164,10 @@ export class ReportFiltersComponent {
         parameterType: common.ParameterTypeEnum.Field,
         filter: field.id,
         result: field.result,
+        conditions: field.fractions.map(fr => fr.brick),
         formula: undefined,
-        xDeps: undefined,
-        conditions: field.fractions.map(fr => fr.brick)
+        listen: undefined,
+        xDeps: undefined
       };
 
       return newParameter;

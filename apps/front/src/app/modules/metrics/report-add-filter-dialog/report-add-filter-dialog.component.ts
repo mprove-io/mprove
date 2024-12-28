@@ -273,9 +273,10 @@ export class ReportAddFilterDialogComponent implements OnInit {
       parameterType: common.ParameterTypeEnum.Field,
       filter: field.id,
       result: result,
+      conditions: ['any'],
       formula: undefined,
-      xDeps: undefined,
-      conditions: ['any']
+      listen: undefined,
+      xDeps: undefined
     };
 
     newParameters = [...newParameters, newParameter];

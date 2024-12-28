@@ -109,18 +109,29 @@ export function wrapReports(item: {
                   result = parameter.globalFieldResult;
                 }
 
+                let globalParameterId = common.isDefined(parameter.listen)
+                  ? [common.GLOBAL_ROW_ID, parameter.listen]
+                      .join('_')
+                      .toUpperCase()
+                  : undefined;
+
+                let formula = common.isDefined(parameter.listen)
+                  ? `let p = $${globalParameterId}; p.filter = '${parameter.filter}'; return p`
+                  : parameter.formula;
+
                 let parameterApi: common.Parameter = {
                   parameterId: [row.row_id, ...parameter.filter.split('.')]
                     .join('_')
                     .toUpperCase(),
-                  parameterType: common.isDefined(parameter.formula)
+                  parameterType: common.isDefined(formula)
                     ? common.ParameterTypeEnum.Formula
                     : common.ParameterTypeEnum.Field,
                   filter: parameter.filter,
                   result: result,
-                  formula: parameter.formula,
-                  xDeps: undefined,
-                  conditions: parameter.conditions
+                  conditions: parameter.conditions,
+                  formula: formula,
+                  listen: parameter.listen,
+                  xDeps: undefined
                 };
 
                 return parameterApi;

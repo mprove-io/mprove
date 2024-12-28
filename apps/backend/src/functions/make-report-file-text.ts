@@ -116,14 +116,21 @@ export function makeReportFileText(item: {
               ? undefined
               : common.isDefined(x.parameters)
               ? x.parameters.map(parameter => {
+                  let formula = common.isDefined(parameter.listen)
+                    ? undefined
+                    : parameter.formula;
+
                   let p: common.FileReportRowParameter = {
                     // type: parameter.parameterType,
                     filter: parameter.filter,
                     // result: parameter.result,
-                    formula: parameter.formula,
-                    conditions: common.isUndefined(parameter.formula)
-                      ? parameter.conditions
-                      : undefined,
+                    conditions:
+                      common.isDefined(formula) ||
+                      common.isDefined(parameter.listen)
+                        ? undefined
+                        : parameter.conditions,
+                    formula: formula,
+                    listen: parameter.listen,
                     globalFieldResult: undefined
                   };
 

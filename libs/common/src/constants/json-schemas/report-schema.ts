@@ -76,6 +76,9 @@ export const REPORT_SCHEMA: JSONSchema7 = {
                 filter: {
                   type: 'string'
                 },
+                listen: {
+                  type: 'string'
+                },
                 formula: {
                   type: 'string'
                 },

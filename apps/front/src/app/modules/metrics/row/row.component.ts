@@ -31,6 +31,7 @@ export interface ParameterFilter extends common.FilterX {
   isSchemaValid: boolean;
   schemaError: string;
   formula: string;
+  listen: string;
 }
 
 @Component({
@@ -190,6 +191,7 @@ export class RowComponent {
               return Object.assign({}, filter, {
                 parameterType: parameter.parameterType,
                 formula: parameter.formula,
+                listen: parameter.listen,
                 isJsonValid: parameter.isJsonValid,
                 isSchemaValid: parameter.isSchemaValid,
                 schemaError: parameter.schemaError
@@ -694,9 +696,10 @@ export class RowComponent {
       parameterType: common.ParameterTypeEnum.Field,
       filter: field.id,
       result: field.result,
+      conditions: ['any'],
       formula: undefined,
-      xDeps: undefined,
-      conditions: ['any']
+      listen: undefined,
+      xDeps: undefined
     };
 
     newParameters = [...newParameters, newParameter];

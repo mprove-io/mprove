@@ -134,7 +134,8 @@ test('1', async t => {
         accessUsers: [],
         timezone: 'UTC',
         timeSpec: common.TimeSpecEnum.Months,
-        timeRangeFractionBrick: 'last 5 months'
+        timeRangeFractionBrick: 'last 5 months',
+        newReportFields: []
       }
     };
 

@@ -233,7 +233,8 @@ export class RowFiltersComponent {
       newParameter = Object.assign({}, parameter, {
         parameterType: common.ParameterTypeEnum.Field,
         conditions: newConditions,
-        formula: undefined
+        formula: undefined,
+        listen: undefined
       } as common.Parameter);
     } else {
       let newConditions = ['any'];
@@ -244,7 +245,8 @@ export class RowFiltersComponent {
       newParameter = Object.assign({}, parameter, {
         parameterType: common.ParameterTypeEnum.Formula,
         conditions: newConditions,
-        formula: `return {"filter": "${parameter.filter}", "conditions": ["${newConditionsStr}"]}`
+        formula: `return {"filter": "${parameter.filter}", "conditions": ["${newConditionsStr}"]}`,
+        listen: undefined
       } as common.Parameter);
     }
 
