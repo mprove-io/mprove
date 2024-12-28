@@ -97,7 +97,7 @@ export class ReportComponent {
       rowDrag: true,
       resizable: false,
       pinned: 'left',
-      width: 130,
+      width: 90,
       headerComponent: RowIdHeaderComponent,
       cellRenderer: RowIdRendererComponent
       // ,

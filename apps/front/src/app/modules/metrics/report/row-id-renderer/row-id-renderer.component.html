@@ -1,7 +1,7 @@
 <div class="flex h-full w-full flex-row items-center">
   <div class="truncate">{{ params.value }}</div>
 
-  <div class="flex flex-1"></div>
+  <!-- <div class="flex flex-1"></div>
 
   <button
     data-cy="rowOptionsMenuButton"
@@ -17,9 +17,9 @@
     (click)="clickMenu($event)"
   >
     <m-dots-vertical-icon></m-dots-vertical-icon>
-  </button>
+  </button> -->
 
-  <ng-template #templateRowOptions>
+  <!-- <ng-template #templateRowOptions>
     <div
       class="border-gray4 font-ms w-64 rounded-md border-2 bg-white shadow-xl"
     >
@@ -37,7 +37,7 @@
         >Delete Row</button
       >
     </div>
-  </ng-template>
+  </ng-template> -->
 </div>
 
 <div *ngIf="uiQuery$ | async"></div>

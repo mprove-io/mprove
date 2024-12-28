@@ -10,15 +10,6 @@
 >
   <div class="text-lg"> Multiple rows selected </div>
 
-  <!-- <button
-    type="button"
-    data-cy="rowDeselectButton"
-    class="ml-5 flex flex h-11 items-center justify-center rounded border border-gray-400 px-5 text-gray-500 hover:bg-white focus:outline-none"
-    (click)="deselect()"
-  >
-    Deselect
-  </button> -->
-
   <button
     type="button"
     data-cy="deleteRowsButton"
@@ -28,6 +19,7 @@
     <m-trash-icon></m-trash-icon>
     <div class="ml-3"> Delete Rows </div>
   </button>
+
   <button
     type="button"
     data-cy="clearRowsButton"
@@ -43,34 +35,47 @@
   class="mb-5 mr-9 flex h-full w-full flex-col space-y-7"
   *ngIf="!!reportSelectedNode"
 >
-  <div class="flex flex-row items-start space-x-10">
-    <div class="flex h-11 flex-row items-center space-x-5 text-lg">
+  <div class="flex flex-row items-start">
+    <div class="flex h-11 flex-row items-center text-lg">
       <div class="text-gray1 flex select-none items-center font-semibold"
         >Row</div
       >
 
-      <div class="flex w-[26px] items-center">{{
+      <div class="ml-5 flex w-[26px] items-center">{{
         reportSelectedNode.data.rowId
       }}</div>
 
-      <!-- <button
-        type="button"
-        data-cy="rowDeselectButton"
-        class="ml-5 flex flex h-9 items-center justify-center rounded border border-gray-400 px-5 text-gray-500 hover:bg-white focus:outline-none"
-        (click)="deselect()"
-      >
-        Deselect
-      </button> -->
-
-      <div class="ml-3">
+      <div class="ml-5 flex flex-row">
         <button
-          *ngIf="
-            reportSelectedNode.data.rowType !== rowTypeEmpty &&
-            reportSelectedNode.data.rowType !== rowTypeHeader
-          "
+          type="button"
+          data-cy="deleteRowButton"
+          class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
+          (click)="deleteRows()"
+        >
+          <m-trash-icon></m-trash-icon>
+        </button>
+
+        <button
+          type="button"
+          data-cy="clearRowButton"
+          class="ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
+          (click)="clearRows()"
+        >
+          <m-delete-icon></m-delete-icon>
+        </button>
+      </div>
+
+      <div
+        class="ml-8"
+        *ngIf="
+          reportSelectedNode.data.rowType !== rowTypeEmpty &&
+          reportSelectedNode.data.rowType !== rowTypeHeader
+        "
+      >
+        <button
           type="button"
           data-cy="rowFormatButton"
-          class="ml-5 flex flex h-9 w-[50px] items-center justify-center rounded border px-2 text-sm text-gray-500 hover:bg-white focus:outline-none"
+          class="flex flex h-9 w-[50px] items-center justify-center rounded border px-2 text-sm text-gray-500 hover:bg-white focus:outline-none"
           [ngClass]="{
             'border-2 border-orange-400 bg-white': isShowFormatOptions === true,
             'border-gray-400': isShowFormatOptions === false
@@ -79,24 +84,10 @@
         >
           123
         </button>
-
-        <!-- <button
-          *ngIf="
-            reportSelectedNode.data.rowType !== rowTypeEmpty &&
-            reportSelectedNode.data.rowType !== rowTypeHeader
-          "
-          class="flex h-9 w-9 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
-          (click)="toggleShowFormatOptions()"
-        >
-          <m-adjustments-icon
-            [ngClass]="{
-              'text-blue-500': isShowFormatOptions === true
-            }"
-          ></m-adjustments-icon>
-        </button> -->
       </div>
     </div>
-    <div class="flex h-11 flex-row items-center space-x-5">
+
+    <div class="ml-9 flex h-11 flex-row items-center space-x-5">
       <div class="text-gray1 flex select-none items-center font-semibold"
         >Type</div
       >
@@ -113,7 +104,7 @@
     </div>
 
     <div
-      class="flex min-w-[2px] flex-1 flex-row items-start space-x-5 overflow-auto"
+      class="ml-10 flex min-w-[2px] flex-1 flex-row items-start space-x-5 overflow-auto"
       *ngIf="reportSelectedNode.data.rowType === rowTypeEmpty"
     >
       <div
@@ -289,48 +280,12 @@
       </div>
     </div>
 
-    <!-- <button
-      *ngIf="reportSelectedNode.data.rowType === rowTypeMetric"
-      type="button"
-      data-cy="metricsExploreButton"
-      class="ml-5 flex h-11 flex-shrink-0 items-center justify-center rounded px-6 text-base font-medium text-white focus:outline-none"
-      [ngClass]="{
-        'bg-blue3':
-          reportSelectedNode.data.rowType === rowTypeMetric &&
-          reportSelectedNode.data.hasAccessToModel === true,
-        'cursor-default bg-gray-400':
-          reportSelectedNode.data.rowType !== rowTypeMetric ||
-          reportSelectedNode.data.hasAccessToModel !== true
-      }"
-      (click)="explore()"
-      [disabled]="
-        reportSelectedNode.data.rowType !== rowTypeMetric &&
-        reportSelectedNode.data.hasAccessToModel === true
-      "
-    >
-      Explore
-    </button> -->
-
-    <!-- <div
-      class="flex h-11 flex-row items-center space-x-5"
-      *ngIf="reportSelectedNode.data.rowType === rowTypeMetric"
-    >
-      <div
-        class="text-gray1 flex flex-shrink-0 select-none items-center font-semibold"
-        >Metric Id</div
-      >
-
-      <div class="flex items-center truncate">
-        <div class="truncate">{{ reportSelectedNode.data.metricId }}</div>
-      </div>
-    </div> -->
-
     <div
       *ngIf="
         reportSelectedNode.data.rowType !== rowTypeEmpty &&
         reportSelectedNode.data.rowType !== rowTypeMetric
       "
-      class="flex h-11 max-w-[600px] flex-1 flex-row items-center space-x-5"
+      class="ml-10 flex h-11 max-w-[600px] flex-1 flex-row items-center space-x-5"
     >
       <div class="text-gray1 flex select-none items-center font-semibold"
         >Name</div
