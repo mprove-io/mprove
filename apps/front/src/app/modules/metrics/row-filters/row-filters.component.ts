@@ -26,6 +26,9 @@ export class RowFiltersComponent {
   @Input()
   parametersFilters: ParameterFilter[];
 
+  @Input()
+  report: common.ReportX;
+
   // uiQuery$ = this.uiQuery.select().pipe(
   //   tap(x => {
   //   })
@@ -209,6 +212,10 @@ export class RowFiltersComponent {
       reportFields: report.fields
     });
   }
+
+  toggleListen(filterExtended: common.FilterX) {}
+
+  listenChange() {}
 
   toggleParFormula(filterExtended: common.FilterX) {
     let report = this.reportQuery.getValue();

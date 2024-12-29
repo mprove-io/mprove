@@ -83,16 +83,38 @@
       >
         <m-formula-icon
           [ngClass]="{
-            'text-blue-500': filter.parameterType === parameterTypeFormula
+            'text-blue-500':
+              filter.parameterType === parameterTypeFormula && !filter.listen
           }"
         ></m-formula-icon>
       </button>
+
+      <div
+        tp="Report parameters is empty"
+        [tpIsEnabled]="report.fields.length === 0"
+      >
+        <button
+          class="ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+          [ngClass]="{
+            'text-gray-500 hover:bg-blue-200': report.fields.length > 0,
+            'cursor-default text-gray-400': report.fields.length === 0
+          }"
+          (click)="toggleListen(filter)"
+          [disabled]="report.fields.length === 0"
+        >
+          <m-link-icon
+            [ngClass]="{
+              'text-blue-500': !!filter.listen
+            }"
+          ></m-link-icon>
+        </button>
+      </div>
     </div>
 
     <div class="flex w-full flex-col">
       <div
-        *ngIf="filter.parameterType === parameterTypeFormula"
-        class="mb-6 flex flex-grow flex-row"
+        *ngIf="filter.parameterType === parameterTypeFormula && !filter.listen"
+        class="mb-6 ml-5 flex flex-grow flex-row"
       >
         <m-parameter-formula
           class="w-full"
@@ -100,6 +122,39 @@
           [isDisabled]="filter.parameterType === parameterTypeFormula"
           (parameterFormulaUpdate)="parameterFormulaUpdate($event, filter)"
         ></m-parameter-formula>
+      </div>
+
+      <div
+        *ngIf="!!filter.listen"
+        class="mb-6 ml-5 flex w-[300px] flex-grow flex-row"
+      >
+        <ng-select
+          #rowFiltersListenSelect
+          data-cy="rowFiltersListenSelect"
+          class="w-full text-base"
+          [items]="report.fields"
+          [clearable]="false"
+          [searchable]="false"
+          [(ngModel)]="filter.listen"
+          (change)="listenChange()"
+          (keyup.esc)="
+            $event.stopImmediatePropagation(); rowFiltersListenSelect.blur()
+          "
+          (keyup.enter)="
+            $event.stopImmediatePropagation(); rowFiltersListenSelect.blur()
+          "
+          appendTo="body"
+          bindLabel="label"
+          bindValue="id"
+        >
+          <ng-template ng-label-tmp let-item="item">
+            <div class="truncate">{{ item.label }}</div>
+          </ng-template>
+
+          <ng-template ng-option-tmp let-item="item">
+            <div class="truncate">{{ item.label }}</div>
+          </ng-template>
+        </ng-select>
       </div>
 
       <div *ngIf="filter.parameterType !== parameterTypeFormula">
