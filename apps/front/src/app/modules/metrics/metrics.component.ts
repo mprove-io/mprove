@@ -72,6 +72,14 @@ export class MetricsComponent implements OnInit, OnDestroy {
   rowTypeHeader = common.RowTypeEnum.Header;
   rowTypeEmpty = common.RowTypeEnum.Empty;
 
+  timeSpecYears = common.TimeSpecEnum.Years;
+  timeSpecQuarters = common.TimeSpecEnum.Quarters;
+  timeSpecMonths = common.TimeSpecEnum.Months;
+  timeSpecWeeks = common.TimeSpecEnum.Weeks;
+  timeSpecDays = common.TimeSpecEnum.Days;
+  timeSpecHours = common.TimeSpecEnum.Hours;
+  timeSpecMinutes = common.TimeSpecEnum.Minutes;
+
   isAutoRun = true;
 
   isShow = true;
@@ -673,7 +681,15 @@ export class MetricsComponent implements OnInit, OnDestroy {
     this.getRep();
   }
 
-  timeSpecChange() {
+  timeSpecChange(timeSpecValue?: common.TimeSpecEnum) {
+    if (timeSpecValue === this.timeSpecForm.controls['timeSpec'].value) {
+      return;
+    }
+
+    if (common.isDefined(timeSpecValue)) {
+      this.timeSpecForm.controls['timeSpec'].setValue(timeSpecValue);
+    }
+
     let timeSpec = this.timeSpecForm.controls['timeSpec'].value;
 
     let fraction = this.fractions[0];

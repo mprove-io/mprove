@@ -43,7 +43,7 @@
             </div>
 
             <div
-              class="flex flex-1 flex-row items-center justify-end space-x-5"
+              class="flex flex-1 flex-row items-center justify-start space-x-5"
             >
               <div class="text-gray1 ml-6 select-none text-base">Timezone</div>
 
@@ -88,10 +88,126 @@
                   </ng-select>
                 </form>
               </div>
+
+              <!-- <div class="flex-1"></div> -->
             </div>
           </div>
 
-          <div class="text-gray1 ml-6 select-none text-base">Spec</div>
+          <div
+            class="text-gray1 mb-[6px] ml-16 select-none text-xl font-semibold"
+            >Time</div
+          >
+
+          <div
+            class="flex flex-row items-start justify-start"
+            *ngFor="let fraction of fractions"
+          >
+            <m-fraction-ts
+              class="ml-3 pt-6"
+              [fraction]="fraction"
+              [isFirst]="true"
+              [isMetrics]="true"
+              [fractionIndex]="0"
+              (fractionUpdate)="fractionUpdate($event)"
+            ></m-fraction-ts>
+          </div>
+
+          <div
+            class="ml-4 flex h-8 w-8 flex-shrink-0 text-amber-500"
+            tp="Exceeded time columns limit ({{ report.timeColumnsLimit }})"
+            *ngIf="report?.isTimeColumnsLimitExceeded === true"
+          >
+            <m-exclamation-icon></m-exclamation-icon>
+          </div>
+
+          <div class="flex-grow"></div>
+
+          <button
+            class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border py-3 text-lg font-semibold focus:outline-none"
+            [ngClass]="{
+              'text-blue-500':
+                timeSpecForm.controls['timeSpec'].value === timeSpecYears,
+              'border-transparent text-gray-500':
+                timeSpecForm.controls['timeSpec'].value !== timeSpecYears
+            }"
+            (click)="timeSpecChange(timeSpecYears)"
+            >Y</button
+          >
+
+          <button
+            class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border py-3 text-lg font-semibold focus:outline-none"
+            [ngClass]="{
+              'text-blue-500':
+                timeSpecForm.controls['timeSpec'].value === timeSpecQuarters,
+              'border-transparent text-gray-500':
+                timeSpecForm.controls['timeSpec'].value !== timeSpecQuarters
+            }"
+            (click)="timeSpecChange(timeSpecQuarters)"
+            >Q</button
+          >
+
+          <button
+            class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border py-3 text-lg font-semibold focus:outline-none"
+            [ngClass]="{
+              'text-blue-500':
+                timeSpecForm.controls['timeSpec'].value === timeSpecMonths,
+              'border-transparent text-gray-500':
+                timeSpecForm.controls['timeSpec'].value !== timeSpecMonths
+            }"
+            (click)="timeSpecChange(timeSpecMonths)"
+            >M</button
+          >
+
+          <button
+            class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border py-3 text-lg font-semibold focus:outline-none"
+            [ngClass]="{
+              'text-blue-500':
+                timeSpecForm.controls['timeSpec'].value === timeSpecWeeks,
+              'border-transparent text-gray-500':
+                timeSpecForm.controls['timeSpec'].value !== timeSpecWeeks
+            }"
+            (click)="timeSpecChange(timeSpecWeeks)"
+            >W</button
+          >
+
+          <button
+            class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border py-3 text-lg font-semibold focus:outline-none"
+            [ngClass]="{
+              'text-blue-500':
+                timeSpecForm.controls['timeSpec'].value === timeSpecDays,
+              'border-transparent text-gray-500':
+                timeSpecForm.controls['timeSpec'].value !== timeSpecDays
+            }"
+            (click)="timeSpecChange(timeSpecDays)"
+          >
+            <div> D </div>
+          </button>
+
+          <!-- <button
+            class="ml-2 flex h-9 select-none items-center justify-center rounded border w-[36px] py-3 text-lg font-semibold focus:outline-none"
+            [ngClass]="{
+              'text-blue-500':
+                timeSpecForm.controls['timeSpec'].value === timeSpecHours,
+              'border-transparent text-gray-500':
+                timeSpecForm.controls['timeSpec'].value !== timeSpecHours
+            }"
+            (click)="timeSpecChange(timeSpecHours)"
+            >H</button
+          > -->
+
+          <!-- <button
+            class="ml-2 flex h-9 select-none items-center justify-center rounded border w-[36px] py-3 text-lg font-semibold focus:outline-none"
+            [ngClass]="{
+              'text-blue-500':
+                timeSpecForm.controls['timeSpec'].value === timeSpecMinutes,
+              'border-transparent text-gray-500':
+                timeSpecForm.controls['timeSpec'].value !== timeSpecMinutes
+            }"
+            (click)="timeSpecChange(timeSpecMinutes)"
+            >M</button
+          > -->
+
+          <!-- <div class="text-gray1 ml-6 select-none text-base">Spec</div> -->
 
           <form class="ml-5" [formGroup]="timeSpecForm">
             <ng-select
@@ -122,32 +238,6 @@
               </ng-template>
             </ng-select>
           </form>
-
-          <div class="text-gray1 ml-6 select-none text-base">Time</div>
-
-          <div
-            class="flex flex-row items-start justify-start"
-            *ngFor="let fraction of fractions"
-          >
-            <m-fraction-ts
-              class="ml-3 pt-6"
-              [fraction]="fraction"
-              [isFirst]="true"
-              [isMetrics]="true"
-              [fractionIndex]="0"
-              (fractionUpdate)="fractionUpdate($event)"
-            ></m-fraction-ts>
-          </div>
-
-          <div
-            class="ml-4 flex h-8 w-8 flex-shrink-0 text-amber-500"
-            tp="Exceeded time columns limit ({{ report.timeColumnsLimit }})"
-            *ngIf="report?.isTimeColumnsLimitExceeded === true"
-          >
-            <m-exclamation-icon></m-exclamation-icon>
-          </div>
-
-          <div class="flex-grow"></div>
 
           <ui-switch
             class="ml-5"
@@ -340,7 +430,7 @@
               </div>
             </div>
 
-            <div class="ml-3 flex max-h-[250px] w-full flex-col overflow-auto">
+            <div class="ml-3 flex max-h-[270px] w-full flex-col overflow-auto">
               <div
                 class="mr-5 mt-1 flex flex-row items-start"
                 *ngIf="!filtersIsExpanded && report?.fields.length > 0"
@@ -399,7 +489,7 @@
             }"
           >
             <div
-              class="flex h-2 w-full flex-grow flex-row rounded border border-2 border-orange-400"
+              class="flex h-2 w-full flex-grow flex-row rounded border border border-blue-500"
               *ngIf="reportSelectedNodes.length > 0"
             >
               <m-row class="ml-5 mr-5 mt-5 flex w-full"></m-row>
