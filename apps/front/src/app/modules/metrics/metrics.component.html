@@ -490,7 +490,7 @@
           >
             <div
               class="flex h-2 w-full flex-grow flex-row rounded border border-2 border-blue-500"
-              *ngIf="reportSelectedNodes.length > 0"
+              *ngIf="isShow === true && reportSelectedNodes.length > 0"
             >
               <m-row class="ml-5 mr-5 mt-5 flex w-full"></m-row>
             </div>
@@ -498,7 +498,9 @@
             <div
               class="relative h-2 w-full flex-grow flex-row rounded bg-white shadow"
               *ngIf="
-                showMetricsChart === true && reportSelectedNodes.length === 0
+                isShow === true &&
+                showMetricsChart === true &&
+                reportSelectedNodes.length === 0
               "
             >
               <div class="h-full flex-1 flex-grow flex-col">

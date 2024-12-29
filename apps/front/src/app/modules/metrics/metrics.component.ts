@@ -101,6 +101,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.report = x;
 
+      this.isShow = true;
+
       this.reportGlobalRow = this.report.rows.find(
         row => row.rowId === common.GLOBAL_ROW_ID
       );
@@ -779,6 +781,10 @@ export class MetricsComponent implements OnInit, OnDestroy {
   }
 
   navToReport(report: common.ReportX) {
+    if (this.reportSelectedNodes.length > 0) {
+      this.isShow = false;
+    }
+
     this.uiQuery.getValue().gridApi.deselectAll();
 
     this.navigateService.navigateToMetricsRep({
