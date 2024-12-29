@@ -362,19 +362,22 @@
           <div class="w-full">
             <div class="flex flex-col">
               <div class="mr-5 flex flex-shrink-0 flex-grow flex-row">
-                <div
+                <!-- <div
                   class="text-gray1 ml-6 mt-4 flex h-full min-h-[76px] w-full flex-shrink-0 select-none pt-4 text-xl"
                   *ngIf="mconfig?.extendedFilters.length === 0"
                   >No parameters</div
-                >
+                > -->
 
                 <div
                   class="mt-4 flex min-h-[76px] flex-shrink-0 flex-grow flex-row"
-                  *ngIf="mconfig?.extendedFilters.length > 0"
                 >
                   <div
                     (click)="toggleFiltersPanel()"
-                    class="text-gray1 mt-1 flex h-11 cursor-pointer select-none flex-row items-start space-x-2 px-5 py-3 text-xl font-semibold"
+                    class="text-gray1 mt-1 flex h-11 select-none flex-row items-start space-x-2 px-5 py-3 text-xl font-semibold"
+                    [ngClass]="{
+                      'cursor-pointer': mconfig?.extendedFilters.length > 0,
+                      'cursor-default': mconfig?.extendedFilters.length === 0
+                    }"
                   >
                     <div class="flex flex-row items-center space-x-2">
                       <m-chevron-right-icon
@@ -402,7 +405,9 @@
 
                   <div
                     class="flex flex-row items-start"
-                    *ngIf="!filtersIsExpanded"
+                    *ngIf="
+                      !filtersIsExpanded && mconfig?.extendedFilters.length > 0
+                    "
                   >
                     <m-bricks
                       class="mb-5 ml-3 mr-5 mt-3 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"

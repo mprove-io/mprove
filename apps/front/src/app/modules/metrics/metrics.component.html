@@ -94,7 +94,7 @@
           </div>
 
           <div
-            class="text-gray1 mb-[6px] ml-16 select-none text-xl font-semibold"
+            class="text-gray1 mb-[6px] ml-[58px] select-none text-xl font-semibold"
             >Time</div
           >
 
@@ -103,7 +103,7 @@
             *ngFor="let fraction of fractions"
           >
             <m-fraction-ts
-              class="ml-3 pt-6"
+              class="ml-4 pt-6"
               [fraction]="fraction"
               [isFirst]="true"
               [isMetrics]="true"
@@ -424,7 +424,7 @@
                   *ngIf="filtersIsExpanded && report?.fields.length > 0"
                 ></m-chevron-down-icon>
 
-                <div class="h-6 w-6" *ngIf="report?.fields.length === 0"></div>
+                <!-- <div class="h-6 w-6" *ngIf="report?.fields.length === 0"></div> -->
 
                 <div> Parameters </div>
               </div>
@@ -489,7 +489,7 @@
             }"
           >
             <div
-              class="flex h-2 w-full flex-grow flex-row rounded border border border-blue-500"
+              class="flex h-2 w-full flex-grow flex-row rounded border border-2 border-blue-500"
               *ngIf="reportSelectedNodes.length > 0"
             >
               <m-row class="ml-5 mr-5 mt-5 flex w-full"></m-row>
