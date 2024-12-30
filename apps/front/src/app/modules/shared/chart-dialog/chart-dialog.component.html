@@ -1,4 +1,4 @@
-<div class="flex h-[87vh] w-[80vw] flex-col p-10">
+<div class="flex h-[87vh] w-[70vw] flex-col p-10">
   <div class="min-h-9 mb-5 flex flex-1 flex-row justify-center text-xl">
     <div class="flex w-1/4 flex-1 flex-row items-center justify-start"> </div>
 
@@ -14,7 +14,7 @@
     *ngIf="isShowInit === false && showNav === true"
     class="text-gray1 mb-5 flex w-full flex-row items-center justify-start"
   >
-    <div class="flex flex-1 flex-row items-center justify-start"
+    <!-- <div class="flex flex-1 flex-row items-center justify-start"
       ><ui-switch
         class="mb-1"
         [checked]="isData"
@@ -39,11 +39,11 @@
           >Format Numbers
         </div>
       </div>
-    </div>
+    </div> -->
 
     <div
       *ngIf="!!ref.data.metricId"
-      class="flex flex-1 flex-row items-center justify-center"
+      class="flex flex-1 flex-row items-center justify-start"
     >
       <div
         class="flex h-11 max-w-[850px] flex-1 flex-row items-center space-x-5"
@@ -177,9 +177,9 @@
 
   <div
     *ngIf="isShowInit === false"
-    class="flex flex-row"
+    class="flex flex-col"
     [ngClass]="{
-      'max-h-[35%] min-h-[35%]':
+      'max-h-[31%] min-h-[31%]':
         mconfig?.chart.type === chartTypeEnumLine ||
         mconfig?.chart.type === chartTypeEnumBar ||
         mconfig?.chart.type === chartTypeEnumScatter,
@@ -191,7 +191,7 @@
   >
     <div
       *ngIf="isData === true && mconfig?.fields?.length > 0"
-      class="mr-16 flex w-full max-w-max overflow-auto"
+      class="flex w-full max-w-max flex-1 overflow-auto"
     >
       <m-main-table
         [isEdit]="false"
@@ -202,9 +202,9 @@
       ></m-main-table>
     </div>
 
-    <div class="flex h-full flex-col">
+    <div class="flex flex-row items-start">
       <m-bricks
-        class="flex max-w-max overflow-auto"
+        class="mt-7 flex max-h-[150px] max-w-max overflow-auto"
         *ngIf="mconfig?.filters.length > 0"
         [extendedFilters]="mconfig.extendedFilters"
         [listen]="ref.data.listen"
@@ -220,12 +220,17 @@
       isSelectValid === true &&
       mconfig?.chart.isValid === true
     "
-    class="mt-7 flex h-full flex-grow flex-row justify-center overflow-auto"
+    class="mt-10 flex h-full flex-grow flex-row overflow-auto"
+    [ngClass]="{
+      'justify-center': mconfig?.chart.type !== chartTypeEnumTable,
+      'justify-start': mconfig?.chart.type === chartTypeEnumTable
+    }"
   >
     <m-chart-view
-      class="h-full overflow-auto"
+      class="h-full overflow-auto rounded pt-5"
       [ngClass]="{
-        'aspect-[3/1]': mconfig?.chart.type !== chartTypeEnumTable
+        'aspect-[3/1] border border-gray-300':
+          mconfig?.chart.type !== chartTypeEnumTable
       }"
       [mconfigFields]="mconfig?.fields"
       [qData]="qData"

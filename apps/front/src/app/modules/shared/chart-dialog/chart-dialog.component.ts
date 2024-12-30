@@ -85,7 +85,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   chartTypeEnumScatter = common.ChartTypeEnum.EScatter;
   chartTypeEnumBar = common.ChartTypeEnum.EBar;
 
-  isData = false;
+  isData = true;
   isFormat = true;
   showNav = false;
 
@@ -417,6 +417,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
               ...resp.payload.model.fields
                 .filter(
                   x =>
+                    x.result !== common.FieldResultEnum.Ts &&
                     x.fieldClass === common.FieldClassEnum.Dimension &&
                     restrictedFilterFieldIds.indexOf(x.id) < 0
                 )

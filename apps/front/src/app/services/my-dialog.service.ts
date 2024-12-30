@@ -313,7 +313,7 @@ export class MyDialogService {
       enableClose: false,
       closeButton: true,
       data: item,
-      width: '80vw',
+      width: '70vw',
       height: '87vh'
     });
   }
@@ -323,7 +323,7 @@ export class MyDialogService {
       enableClose: false,
       closeButton: true,
       data: item,
-      width: '80vw',
+      width: '60vw',
       height: '50vh'
     });
   }
