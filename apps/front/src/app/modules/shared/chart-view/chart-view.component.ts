@@ -189,9 +189,19 @@ export class ChartViewComponent implements OnChanges {
           fontSize: 14
         }
       },
-      tooltip: {
-        trigger: 'item'
-      }
+      tooltip:
+        this.chart.type === common.ChartTypeEnum.ELine ||
+        this.chart.type === common.ChartTypeEnum.EBar ||
+        this.chart.type === common.ChartTypeEnum.EScatter
+          ? {
+              trigger: 'axis',
+              order: 'valueDesc',
+              valueFormatter: (value: any) =>
+                `${common.isDefined(value) ? value.toFixed(2) : 'Null'}`
+            }
+          : {
+              trigger: 'item'
+            }
     } as EChartsOption;
 
     this.chartOptions = {};

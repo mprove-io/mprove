@@ -129,7 +129,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     );
 
     setTimeout(() => {
-      this.filterLabelElement.nativeElement.focus();
+      // this.filterLabelElement.nativeElement.focus();
       this.loadSuggestFields();
     }, 0);
   }
