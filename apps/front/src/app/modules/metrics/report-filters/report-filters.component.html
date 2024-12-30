@@ -14,13 +14,6 @@
         <m-trash-icon></m-trash-icon>
       </button>
 
-      <button
-        class="ml-3 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
-        (click)="addFraction(filter, filterIndex)"
-      >
-        <m-add-icon></m-add-icon>
-      </button>
-
       <div class="mb-5 ml-5 mt-2 flex flex-col items-start justify-start">
         <div class="text-left font-semibold">{{
           filter.label | capitalizeWords
@@ -49,10 +42,17 @@
         </m-fraction>
 
         <button
-          class="ml-5 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
+          class="ml-3 flex h-9 w-9 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
+          (click)="addFraction(filter, filterIndex)"
+        >
+          <m-add-icon></m-add-icon>
+        </button>
+
+        <button
+          class="ml-3 flex h-9 w-9 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
           (click)="deleteFraction(filter, filterIndex, fractionIndex)"
         >
-          <m-delete-icon></m-delete-icon>
+          <m-trash-icon></m-trash-icon>
         </button>
       </div>
     </div>

@@ -565,7 +565,7 @@
           <button
             type="button"
             data-cy="rowAddParameterButton"
-            class="ml-7 h-11 select-none rounded border px-4 py-2 focus:outline-none"
+            class="ml-7 h-11 flex-shrink-0 select-none rounded border px-4 py-2 focus:outline-none"
             [ngClass]="{
               'border-gray-400 text-gray-500 hover:bg-white':
                 !reportSelectedNode.data.parametersFormula,
@@ -575,7 +575,7 @@
             [disabled]="!!reportSelectedNode.data.parametersFormula"
             (click)="addParameter()"
           >
-            Add
+            Add Filter
           </button>
         </div>
 
