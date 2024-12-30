@@ -1,5 +1,11 @@
-import { ChangeDetectorRef, Component, Input } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges
+} from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { IRowNode } from 'ag-grid-community';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { ReportQuery } from '~front/app/queries/report.query';
@@ -13,8 +19,7 @@ import { ParameterFilter } from '../row/row.component';
   selector: 'm-row-filters',
   templateUrl: './row-filters.component.html'
 })
-// implements OnChanges
-export class RowFiltersComponent {
+export class RowFiltersComponent implements OnChanges {
   parameterTypeFormula = common.ParameterTypeEnum.Formula;
 
   @Input()
@@ -29,10 +34,9 @@ export class RowFiltersComponent {
   @Input()
   report: common.ReportX;
 
-  // uiQuery$ = this.uiQuery.select().pipe(
-  //   tap(x => {
-  //   })
-  // );
+  myForm: FormGroup;
+
+  waitMconfigChangeFilterId: string;
 
   constructor(
     private uiQuery: UiQuery,
@@ -42,14 +46,18 @@ export class RowFiltersComponent {
     private cd: ChangeDetectorRef
   ) {}
 
-  // ngOnChanges(changes: SimpleChanges) {
-  // if (this.repSelectedNode.data.rowType === common.RowTypeEnum.Metric) {
-  //   setValueAndMark({
-  //     // control: this.parFormulaForm.controls['formula'],
-  //     // value: this.repSelectedNode.data.parametersFormula
-  //   });
-  // }
-  // }
+  ngOnChanges(changes: SimpleChanges) {
+    // console.log('ngOnChanges');
+    // console.log(changes);
+
+    if (common.isDefined(changes.mconfig)) {
+      this.waitMconfigChangeFilterId = undefined;
+    }
+
+    let opts: any = {};
+    this.parametersFilters.forEach(x => (opts[x.fieldId] = [x.listen]));
+    this.myForm = this.fb.group(opts);
+  }
 
   fractionUpdate(
     filterExtended: common.FilterX,
@@ -213,10 +221,6 @@ export class RowFiltersComponent {
     });
   }
 
-  toggleListen(filterExtended: common.FilterX) {}
-
-  listenChange() {}
-
   toggleParFormula(filterExtended: common.FilterX) {
     let report = this.reportQuery.getValue();
 
@@ -234,7 +238,6 @@ export class RowFiltersComponent {
     let newParameter;
 
     if (parameter.parameterType === common.ParameterTypeEnum.Formula) {
-      // let newConditions = ['any'];
       let newConditions = parameter.conditions;
 
       newParameter = Object.assign({}, parameter, {
@@ -245,7 +248,6 @@ export class RowFiltersComponent {
       } as common.Parameter);
     } else {
       let newConditions = ['any'];
-      // let newConditions = parameter.conditions;
 
       let newConditionsStr = newConditions.join('", "');
 
@@ -262,6 +264,61 @@ export class RowFiltersComponent {
       newParameter,
       ...newParameters.slice(parameterIndex + 1)
     ];
+
+    let rowChange: common.RowChange = {
+      rowId: this.reportSelectedNode.data.rowId,
+      parameters: newParameters
+    };
+
+    this.reportService.modifyRows({
+      report: report,
+      changeType: common.ChangeTypeEnum.EditParameters,
+      rowChange: rowChange,
+      rowIds: undefined,
+      reportFields: report.fields
+    });
+  }
+
+  toggleListen(filterExtended: ParameterFilter) {}
+
+  listenChange(pFilter: ParameterFilter) {
+    // console.log('listenChange');
+
+    let newListenValue = this.myForm.controls[pFilter.fieldId].value;
+
+    this.waitMconfigChangeFilterId = pFilter.fieldId;
+
+    let newParameters = [...this.reportSelectedNode.data.parameters];
+
+    let parametersIndex = newParameters.findIndex(
+      p => p.filter === pFilter.fieldId
+    );
+
+    let parameter = newParameters[parametersIndex];
+
+    let globalField = this.report.fields.find(x => x.id === newListenValue);
+
+    let globalParameterId = [common.GLOBAL_ROW_ID, newListenValue]
+      .join('_')
+      .toUpperCase();
+
+    let formula = `let p = $${globalParameterId}; p.filter = '${parameter.filter}'; return p`;
+
+    let newParameter: common.Parameter = Object.assign({}, parameter, {
+      result: globalField.result,
+      conditions: undefined,
+      formula: formula,
+      listen: newListenValue,
+      xDeps: undefined
+    } as common.Parameter);
+
+    newParameters = [
+      ...newParameters.slice(0, parametersIndex),
+      newParameter,
+      ...newParameters.slice(parametersIndex + 1)
+    ];
+
+    let report = this.reportQuery.getValue();
 
     let rowChange: common.RowChange = {
       rowId: this.reportSelectedNode.data.rowId,

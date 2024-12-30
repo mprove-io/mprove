@@ -128,33 +128,41 @@
         *ngIf="!!filter.listen"
         class="mb-6 ml-5 flex w-[300px] flex-grow flex-row"
       >
-        <ng-select
-          #rowFiltersListenSelect
-          data-cy="rowFiltersListenSelect"
-          class="w-full text-base"
-          [items]="report.fields"
-          [clearable]="false"
-          [searchable]="false"
-          [(ngModel)]="filter.listen"
-          (change)="listenChange()"
-          (keyup.esc)="
-            $event.stopImmediatePropagation(); rowFiltersListenSelect.blur()
-          "
-          (keyup.enter)="
-            $event.stopImmediatePropagation(); rowFiltersListenSelect.blur()
-          "
-          appendTo="body"
-          bindLabel="label"
-          bindValue="id"
-        >
-          <ng-template ng-label-tmp let-item="item">
-            <div class="truncate">{{ item.label }}</div>
-          </ng-template>
+        <form [formGroup]="myForm" class="relative flex w-full">
+          <ng-select
+            *ngIf="filter.fieldId === waitMconfigChangeFilterId"
+            class="w-full text-base"
+          ></ng-select>
 
-          <ng-template ng-option-tmp let-item="item">
-            <div class="truncate">{{ item.label }}</div>
-          </ng-template>
-        </ng-select>
+          <ng-select
+            *ngIf="filter.fieldId !== waitMconfigChangeFilterId"
+            #rowFiltersListenSelect
+            data-cy="rowFiltersListenSelect"
+            class="w-full text-base"
+            [items]="report.fields"
+            [clearable]="false"
+            [searchable]="false"
+            (change)="listenChange(filter)"
+            (keyup.esc)="
+              $event.stopImmediatePropagation(); rowFiltersListenSelect.blur()
+            "
+            (keyup.enter)="
+              $event.stopImmediatePropagation(); rowFiltersListenSelect.blur()
+            "
+            appendTo="body"
+            bindLabel="label"
+            bindValue="id"
+            formControlName="{{ filter.fieldId }}"
+          >
+            <ng-template ng-label-tmp let-item="item">
+              <div class="truncate">{{ item.label }}</div>
+            </ng-template>
+
+            <ng-template ng-option-tmp let-item="item">
+              <div class="truncate">{{ item.label }}</div>
+            </ng-template>
+          </ng-select>
+        </form>
       </div>
 
       <div *ngIf="filter.parameterType !== parameterTypeFormula">
