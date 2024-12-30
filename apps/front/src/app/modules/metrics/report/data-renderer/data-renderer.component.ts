@@ -51,7 +51,9 @@ export class DataRendererComponent implements ICellRendererAngularComp {
         : undefined;
   }
 
-  clickData() {
+  clickData(event: MouseEvent) {
+    event.stopPropagation();
+
     if (
       common.isDefined(this.params.data.mconfig) &&
       this.params.data.rowType === common.RowTypeEnum.Metric

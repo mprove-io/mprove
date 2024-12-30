@@ -6,7 +6,7 @@
       'cursor-pointer hover:font-bold': params.data.rowType === rowTypeMetric,
 
     }"
-    (click)="clickData()"
+    (click)="clickData($event)"
     >{{ formattedValue }}</div
   >
 </div>
