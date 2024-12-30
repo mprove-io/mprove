@@ -358,15 +358,16 @@ export class MetricsComponent implements OnInit, OnDestroy {
               fontSize: 14
             }
           },
-          tooltip: {
-            trigger: 'item'
-            // , valueFormatter: (value: any) => `${common.isDefined(value) ? value.toFixed(2) : 'Null'}`
-          },
           // tooltip: {
-          //   trigger: 'axis',
-          //   valueFormatter: (value: any) =>
-          //     `${common.isDefined(value) ? value.toFixed(2) : 'Null'}`
+          //   trigger: 'item'
+          //   // , valueFormatter: (value: any) => `${common.isDefined(value) ? value.toFixed(2) : 'Null'}`
           // },
+          tooltip: {
+            trigger: 'axis',
+            order: 'valueDesc',
+            valueFormatter: (value: any) =>
+              `${common.isDefined(value) ? value.toFixed(2) : 'Null'}`
+          },
           xAxis: {
             type: 'time',
             axisLabel:
