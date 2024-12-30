@@ -122,28 +122,53 @@
 
           <div class="flex-grow"></div>
 
-          <button
-            class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
+          <!-- <button
+            class="ml-2 flex h-9 select-none items-center justify-center rounded border border-2 w-[36px] py-3 text-lg font-semibold focus:outline-none"
             [ngClass]="{
               'text-blue-500':
-                timeSpecForm.controls['timeSpec'].value === timeSpecYears,
+                timeSpecForm.controls['timeSpec'].value === timeSpecMinutes,
               'border-transparent text-gray-500':
-                timeSpecForm.controls['timeSpec'].value !== timeSpecYears
+                timeSpecForm.controls['timeSpec'].value !== timeSpecMinutes
             }"
-            (click)="timeSpecChange(timeSpecYears)"
-            >Y</button
-          >
+            (click)="timeSpecChange(timeSpecMinutes)"
+            >M</button
+          > -->
+
+          <!-- <button
+            class="ml-2 flex h-9 select-none items-center justify-center rounded border border-2 w-[36px] py-3 text-lg font-semibold focus:outline-none"
+            [ngClass]="{
+              'text-blue-500':
+                timeSpecForm.controls['timeSpec'].value === timeSpecHours,
+              'border-transparent text-gray-500':
+                timeSpecForm.controls['timeSpec'].value !== timeSpecHours
+            }"
+            (click)="timeSpecChange(timeSpecHours)"
+            >H</button
+          > -->
 
           <button
             class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
             [ngClass]="{
               'text-blue-500':
-                timeSpecForm.controls['timeSpec'].value === timeSpecQuarters,
+                timeSpecForm.controls['timeSpec'].value === timeSpecDays,
               'border-transparent text-gray-500':
-                timeSpecForm.controls['timeSpec'].value !== timeSpecQuarters
+                timeSpecForm.controls['timeSpec'].value !== timeSpecDays
             }"
-            (click)="timeSpecChange(timeSpecQuarters)"
-            >Q</button
+            (click)="timeSpecChange(timeSpecDays)"
+          >
+            <div> D </div>
+          </button>
+
+          <button
+            class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
+            [ngClass]="{
+              'text-blue-500':
+                timeSpecForm.controls['timeSpec'].value === timeSpecWeeks,
+              'border-transparent text-gray-500':
+                timeSpecForm.controls['timeSpec'].value !== timeSpecWeeks
+            }"
+            (click)="timeSpecChange(timeSpecWeeks)"
+            >W</button
           >
 
           <button
@@ -162,50 +187,25 @@
             class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
             [ngClass]="{
               'text-blue-500':
-                timeSpecForm.controls['timeSpec'].value === timeSpecWeeks,
+                timeSpecForm.controls['timeSpec'].value === timeSpecQuarters,
               'border-transparent text-gray-500':
-                timeSpecForm.controls['timeSpec'].value !== timeSpecWeeks
+                timeSpecForm.controls['timeSpec'].value !== timeSpecQuarters
             }"
-            (click)="timeSpecChange(timeSpecWeeks)"
-            >W</button
+            (click)="timeSpecChange(timeSpecQuarters)"
+            >Q</button
           >
 
           <button
             class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
             [ngClass]="{
               'text-blue-500':
-                timeSpecForm.controls['timeSpec'].value === timeSpecDays,
+                timeSpecForm.controls['timeSpec'].value === timeSpecYears,
               'border-transparent text-gray-500':
-                timeSpecForm.controls['timeSpec'].value !== timeSpecDays
+                timeSpecForm.controls['timeSpec'].value !== timeSpecYears
             }"
-            (click)="timeSpecChange(timeSpecDays)"
+            (click)="timeSpecChange(timeSpecYears)"
+            >Y</button
           >
-            <div> D </div>
-          </button>
-
-          <!-- <button
-            class="ml-2 flex h-9 select-none items-center justify-center rounded border border-2 w-[36px] py-3 text-lg font-semibold focus:outline-none"
-            [ngClass]="{
-              'text-blue-500':
-                timeSpecForm.controls['timeSpec'].value === timeSpecHours,
-              'border-transparent text-gray-500':
-                timeSpecForm.controls['timeSpec'].value !== timeSpecHours
-            }"
-            (click)="timeSpecChange(timeSpecHours)"
-            >H</button
-          > -->
-
-          <!-- <button
-            class="ml-2 flex h-9 select-none items-center justify-center rounded border border-2 w-[36px] py-3 text-lg font-semibold focus:outline-none"
-            [ngClass]="{
-              'text-blue-500':
-                timeSpecForm.controls['timeSpec'].value === timeSpecMinutes,
-              'border-transparent text-gray-500':
-                timeSpecForm.controls['timeSpec'].value !== timeSpecMinutes
-            }"
-            (click)="timeSpecChange(timeSpecMinutes)"
-            >M</button
-          > -->
 
           <!-- <div class="text-gray1 ml-6 select-none text-base">Spec</div> -->
 
