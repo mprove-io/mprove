@@ -237,7 +237,10 @@ export class RowFiltersComponent implements OnChanges {
 
     let newParameter;
 
-    if (parameter.parameterType === common.ParameterTypeEnum.Formula) {
+    if (
+      parameter.parameterType === common.ParameterTypeEnum.Formula &&
+      common.isUndefined(parameter.listen)
+    ) {
       let newConditions = parameter.conditions;
 
       newParameter = Object.assign({}, parameter, {
@@ -279,7 +282,69 @@ export class RowFiltersComponent implements OnChanges {
     });
   }
 
-  toggleListen(filterExtended: ParameterFilter) {}
+  toggleListen(pFilter: ParameterFilter) {
+    let report = this.reportQuery.getValue();
+
+    let newParameters = [...this.reportSelectedNode.data.parameters];
+
+    let parameterIndex = this.reportSelectedNode.data.parameters.findIndex(
+      x => x.filter === pFilter.fieldId
+    );
+
+    let parameter: common.Parameter =
+      this.reportSelectedNode.data.parameters.find(
+        x => x.filter === pFilter.fieldId
+      );
+
+    let newParameter;
+
+    if (common.isDefined(parameter.listen)) {
+      let newConditions = parameter.conditions;
+
+      newParameter = Object.assign({}, parameter, {
+        parameterType: common.ParameterTypeEnum.Field,
+        conditions: newConditions,
+        formula: undefined,
+        listen: undefined,
+        xDeps: undefined
+      } as common.Parameter);
+    } else {
+      let firstGlobalField = this.report.fields[0];
+
+      let globalParameterId = [common.GLOBAL_ROW_ID, firstGlobalField.id]
+        .join('_')
+        .toUpperCase();
+
+      let formula = `let p = $${globalParameterId}; p.filter = '${parameter.filter}'; return p`;
+
+      newParameter = Object.assign({}, parameter, {
+        parameterType: common.ParameterTypeEnum.Formula,
+        conditions: undefined,
+        formula: formula,
+        listen: firstGlobalField.id,
+        xDeps: undefined
+      } as common.Parameter);
+    }
+
+    newParameters = [
+      ...newParameters.slice(0, parameterIndex),
+      newParameter,
+      ...newParameters.slice(parameterIndex + 1)
+    ];
+
+    let rowChange: common.RowChange = {
+      rowId: this.reportSelectedNode.data.rowId,
+      parameters: newParameters
+    };
+
+    this.reportService.modifyRows({
+      report: report,
+      changeType: common.ChangeTypeEnum.EditParameters,
+      rowChange: rowChange,
+      rowIds: undefined,
+      reportFields: report.fields
+    });
+  }
 
   listenChange(pFilter: ParameterFilter) {
     // console.log('listenChange');
