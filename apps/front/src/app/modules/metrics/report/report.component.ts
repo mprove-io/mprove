@@ -493,11 +493,11 @@ export class ReportComponent {
 
     let finalRowHeight = rowHeight + jsonRowHeight;
 
-    let heightLimit = 600;
+    // let heightLimit = 600;
 
-    if (finalRowHeight > heightLimit) {
-      finalRowHeight = heightLimit;
-    }
+    // if (finalRowHeight > heightLimit) {
+    //   finalRowHeight = heightLimit;
+    // }
 
     params.data.finalRowHeight = finalRowHeight;
 
