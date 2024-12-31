@@ -14,7 +14,7 @@ export class BricksComponent {
   listen: { [a: string]: string };
 
   @Input()
-  mconfigId: string;
+  tileTitle: string;
 
   @Input()
   showJson?: boolean;
@@ -41,7 +41,7 @@ export class BricksComponent {
   deleteFilter(filterFieldId: string) {
     this.deleteFilterFn({
       filterFieldId: filterFieldId,
-      mconfigId: this.mconfigId
+      tileTitle: this.tileTitle
     });
   }
 }

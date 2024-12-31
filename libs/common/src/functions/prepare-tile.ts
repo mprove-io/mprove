@@ -1,4 +1,4 @@
-import { FilePartTile } from '~common/_index';
+import { FilePartTile, isUndefined } from '~common/_index';
 import { constants } from '~common/barrels/constants';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
 import { TileX } from '~common/interfaces/backend/tile-x';
@@ -8,17 +8,15 @@ export function prepareTile(item: {
   tile?: TileX;
   mconfig: MconfigX;
   isForDashboard: boolean;
-  defaultTimezone: string;
   deleteFilterFieldId: string;
-  deleteFilterMconfigId: string;
+  deleteFilterTileTitle: string;
 }): FilePartTile {
   let {
     tile,
     mconfig,
     isForDashboard,
-    defaultTimezone,
     deleteFilterFieldId,
-    deleteFilterMconfigId
+    deleteFilterTileTitle
   } = item;
 
   let chart = mconfig.chart;
@@ -31,7 +29,8 @@ export function prepareTile(item: {
       x.fractions.forEach(fraction => bricks.push(fraction.brick));
 
       if (
-        mconfig.mconfigId !== deleteFilterMconfigId ||
+        isUndefined(deleteFilterTileTitle) ||
+        tile.title !== deleteFilterTileTitle ||
         x.fieldId !== deleteFilterFieldId
       ) {
         defaultFilters[x.fieldId] = bricks;
@@ -49,7 +48,8 @@ export function prepareTile(item: {
   ) {
     Object.keys(tile.listen).forEach(x => {
       if (
-        mconfig.mconfigId !== deleteFilterMconfigId ||
+        isUndefined(deleteFilterTileTitle) ||
+        tile.title !== deleteFilterTileTitle ||
         x !== deleteFilterFieldId
       ) {
         let dashboardFieldName = tile.listen[x];

@@ -6,16 +6,14 @@ export function makeChartFileText(item: {
   tileTitle: string;
   roles: string;
   users: string;
-  defaultTimezone: string;
 }) {
-  let { mconfig, chartId, tileTitle, roles, users, defaultTimezone } = item;
+  let { mconfig, chartId, tileTitle, roles, users } = item;
 
   let filePartTile: common.FilePartTile = common.prepareTile({
     isForDashboard: false,
     mconfig: mconfig,
-    defaultTimezone: defaultTimezone,
     deleteFilterFieldId: undefined,
-    deleteFilterMconfigId: undefined
+    deleteFilterTileTitle: undefined
   });
 
   filePartTile.title = tileTitle;

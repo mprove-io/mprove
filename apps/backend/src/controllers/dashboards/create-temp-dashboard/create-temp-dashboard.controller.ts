@@ -69,7 +69,7 @@ export class CreateTempDashboardController {
       newDashboardFields,
       tiles,
       deleteFilterFieldId,
-      deleteFilterMconfigId,
+      deleteFilterTileTitle,
       timezone
     } = reqValid.payload;
 
@@ -146,9 +146,8 @@ export class CreateTempDashboardController {
       newTitle: fromDashboard.title,
       roles: fromDashboard.accessRoles.join(', '),
       users: fromDashboard.accessUsers.join(', '),
-      defaultTimezone: currentStruct.defaultTimezone,
       deleteFilterFieldId: deleteFilterFieldId,
-      deleteFilterMconfigId: deleteFilterMconfigId
+      deleteFilterTileTitle: deleteFilterTileTitle
     });
 
     let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {

@@ -7,9 +7,8 @@ export function makeDashboardFileText(item: {
   // group: string;
   roles: string;
   users: string;
-  defaultTimezone: string;
   deleteFilterFieldId: string;
-  deleteFilterMconfigId: string;
+  deleteFilterTileTitle: string;
 }) {
   let {
     dashboard,
@@ -17,9 +16,8 @@ export function makeDashboardFileText(item: {
     newTitle,
     roles,
     users,
-    defaultTimezone,
     deleteFilterFieldId,
-    deleteFilterMconfigId
+    deleteFilterTileTitle
   } = item;
 
   let dashboardFile: common.FileDashboard = {
@@ -92,9 +90,8 @@ export function makeDashboardFileText(item: {
               tile: x,
               isForDashboard: true,
               mconfig: newMconfig,
-              defaultTimezone: defaultTimezone,
               deleteFilterFieldId: deleteFilterFieldId,
-              deleteFilterMconfigId: deleteFilterMconfigId
+              deleteFilterTileTitle: deleteFilterTileTitle
             });
 
             return filePartTile;

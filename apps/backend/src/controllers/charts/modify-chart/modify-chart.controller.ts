@@ -172,8 +172,7 @@ export class ModifyChartController {
       tileTitle: tileTitle,
       roles: accessRoles,
       users: accessUsers,
-      chartId: chartId,
-      defaultTimezone: currentStruct.defaultTimezone
+      chartId: chartId
     });
 
     let toDiskSaveFileRequest: apiToDisk.ToDiskSaveFileRequest = {

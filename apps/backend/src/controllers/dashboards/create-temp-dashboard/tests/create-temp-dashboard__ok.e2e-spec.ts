@@ -125,7 +125,7 @@ test('1', async t => {
         newDashboardFields: resp1.payload.dashboard.fields,
         tiles: resp1.payload.dashboard.tiles,
         deleteFilterFieldId: undefined,
-        deleteFilterMconfigId: undefined,
+        deleteFilterTileTitle: undefined,
         timezone: 'UTC'
       }
     };

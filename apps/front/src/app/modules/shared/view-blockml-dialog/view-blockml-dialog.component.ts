@@ -51,9 +51,8 @@ export class ViewBlockmlDialogComponent implements OnInit {
     let filePartTile: common.FilePartTile = common.prepareTile({
       isForDashboard: false,
       mconfig: this.ref.data.mconfig,
-      defaultTimezone: struct.defaultTimezone,
       deleteFilterFieldId: undefined,
-      deleteFilterMconfigId: undefined
+      deleteFilterTileTitle: undefined
     });
 
     this.tileYaml = common.toYaml({ tiles: [filePartTile] });

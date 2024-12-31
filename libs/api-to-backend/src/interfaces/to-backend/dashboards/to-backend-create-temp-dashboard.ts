@@ -29,7 +29,7 @@ export class ToBackendCreateTempDashboardRequestPayload {
 
   @IsOptional()
   @IsString()
-  deleteFilterMconfigId: string;
+  deleteFilterTileTitle: string;
 
   @IsOptional()
   @IsString()

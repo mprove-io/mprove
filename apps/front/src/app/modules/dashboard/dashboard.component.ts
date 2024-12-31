@@ -474,7 +474,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteFilterFn(item: DeleteFilterFnItem) {
-    let { filterFieldId, mconfigId } = item;
+    let { filterFieldId, tileTitle } = item;
 
     this.dashboardService.navCreateTempDashboard({
       tiles: this.dashboard.tiles,
@@ -482,7 +482,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       newDashboardId: common.makeId(),
       newDashboardFields: this.dashboard.fields,
       deleteFilterFieldId: filterFieldId,
-      deleteFilterMconfigId: mconfigId,
+      deleteFilterTileTitle: tileTitle,
       timezone: this.timezoneForm.controls['timezone'].value
     });
   }

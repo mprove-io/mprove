@@ -115,7 +115,7 @@
         *ngIf="showBricks === true && mconfig?.filters.length > 0"
         [extendedFilters]="mconfig.extendedFilters"
         [listen]="tile.listen"
-        [mconfigId]="tile.mconfig.mconfigId"
+        [tileTitle]="tile.title"
         [deleteFilterFn]="deleteFilterFn"
         [isKeepBackgroundColor]="false"
       ></m-bricks>

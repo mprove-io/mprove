@@ -158,8 +158,7 @@ export class CreateChartController {
       tileTitle: tileTitle,
       roles: accessRoles,
       users: accessUsers,
-      chartId: chartId,
-      defaultTimezone: currentStruct.defaultTimezone
+      chartId: chartId
     });
 
     let mdir = currentStruct.mproveDirValue;

@@ -228,9 +228,8 @@ export class ModifyDashboardController {
         newTitle: fromDashboard.title,
         roles: fromDashboard.accessRoles.join(', '),
         users: fromDashboard.accessUsers.join(', '),
-        defaultTimezone: currentStruct.defaultTimezone,
         deleteFilterFieldId: undefined,
-        deleteFilterMconfigId: undefined
+        deleteFilterTileTitle: undefined
       });
     } else {
       // dashboard save as - replace existing
@@ -255,9 +254,8 @@ export class ModifyDashboardController {
         newTitle: dashboardTitle,
         roles: accessRoles,
         users: accessUsers,
-        defaultTimezone: currentStruct.defaultTimezone,
         deleteFilterFieldId: undefined,
-        deleteFilterMconfigId: undefined
+        deleteFilterTileTitle: undefined
       });
     }
 

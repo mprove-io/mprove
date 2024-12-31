@@ -265,7 +265,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       newDashboardId: common.makeId(),
       newDashboardFields: [...this.dashboard.fields, field],
       deleteFilterFieldId: undefined,
-      deleteFilterMconfigId: undefined,
+      deleteFilterTileTitle: undefined,
       timezone: this.uiQuery.getValue().timezone
     });
   }
