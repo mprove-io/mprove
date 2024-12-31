@@ -85,8 +85,16 @@ export class WrapToApiService {
       title: dashboard.title,
       gr: dashboard.gr,
       hidden: dashboard.hidden,
-      fields: dashboard.fields,
-      extendedFilters: dashboardExtendedFilters,
+      fields: dashboard.fields.sort((a, b) => {
+        let labelA = a.label.toUpperCase();
+        let labelB = b.label.toUpperCase();
+        return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
+      }),
+      extendedFilters: dashboardExtendedFilters.sort((a, b) => {
+        let labelA = a.fieldId.toUpperCase();
+        let labelB = b.fieldId.toUpperCase();
+        return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
+      }),
       description: dashboard.description,
       tiles: makeTilesX({
         tiles: dashboard.tiles,
@@ -401,8 +409,16 @@ export class WrapToApiService {
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFraction: timeRangeFraction,
-      fields: report.fields,
-      extendedFilters: reportExtendedFilters,
+      fields: report.fields.sort((a, b) => {
+        let labelA = a.label.toUpperCase();
+        let labelB = b.label.toUpperCase();
+        return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
+      }),
+      extendedFilters: reportExtendedFilters.sort((a, b) => {
+        let labelA = a.fieldId.toUpperCase();
+        let labelB = b.fieldId.toUpperCase();
+        return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
+      }),
       rows: report.rows.map(x => {
         x.hasAccessToModel = common.isDefined(x.mconfig)
           ? models.find(m => m.modelId === x.mconfig.modelId).hasAccess

@@ -40,6 +40,8 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
     })
   );
 
+  listen: { [a: string]: string } = {};
+
   constructor(
     private cd: ChangeDetectorRef,
     private metricsQuery: MetricsQuery,
@@ -77,6 +79,16 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
           this.params.data.mconfig.extendedFilters.filter(
             filter => filter.fieldId !== timeFieldIdSpec
           );
+
+        let listen: { [a: string]: string } = {};
+
+        this.params.data.parameters
+          .filter(x => common.isDefined(x.listen))
+          .forEach(x => {
+            listen[x.filter] = x.listen;
+          });
+
+        this.listen = listen;
       }
     }
 

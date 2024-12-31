@@ -20,16 +20,16 @@
                   class="mr-2 flex flex-shrink-0 flex-row items-center space-x-5 text-gray-500"
                 >
                   <m-link-icon
+                    *ngIf="!!listen[filter.fieldId] === true"
                     tp="Listens to dashboard filter {{
                       listen[filter.fieldId].split('_').join(' ')
                         | capitalizeWords
                     }}"
-                    *ngIf="!!listen[filter.fieldId] === true"
                   ></m-link-icon>
 
                   <m-link-off-icon
-                    tp="Does not listen to dashboard filter"
                     *ngIf="!!listen[filter.fieldId] === false"
+                    tp="Does not listen to dashboard filter"
                   ></m-link-off-icon>
                 </div>
 
