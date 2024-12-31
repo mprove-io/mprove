@@ -187,13 +187,13 @@ export class MyRegex {
     return cloneRegexp(/\$\{env\.(\w+)\}/g);
   }
   static CAPTURE_ROW_REF(): RegExp {
-    return cloneRegexp(/\$([A-Z]+)/);
+    return cloneRegexp(/\$([A-Z0-9]+)/);
   }
   static CAPTURE_X_REF(): RegExp {
-    return cloneRegexp(/\$([A-Z_]+)/);
+    return cloneRegexp(/\$([A-Z0-9_]+)/);
   }
   static CAPTURE_X_REF_G(): RegExp {
-    return cloneRegexp(/\$([A-Z_]+)/g);
+    return cloneRegexp(/\$([A-Z0-9_]+)/g);
   }
   static WORD_CHARACTERS(): RegExp {
     return cloneRegexp(/^(?:\w+)$/);

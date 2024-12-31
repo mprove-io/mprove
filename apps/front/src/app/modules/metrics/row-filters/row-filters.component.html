@@ -128,11 +128,11 @@
             formControlName="{{ filter.fieldId }}"
           >
             <ng-template ng-label-tmp let-item="item">
-              <div class="truncate">{{ item.label }}</div>
+              <div class="truncate">{{ item.label | capitalize }}</div>
             </ng-template>
 
             <ng-template ng-option-tmp let-item="item">
-              <div class="truncate">{{ item.label }}</div>
+              <div class="truncate">{{ item.label | capitalize }}</div>
             </ng-template>
           </ng-select>
         </form>
