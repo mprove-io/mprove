@@ -191,8 +191,7 @@ export class ChartViewComponent implements OnChanges {
       },
       tooltip:
         this.chart.type === common.ChartTypeEnum.ELine ||
-        this.chart.type === common.ChartTypeEnum.EBar ||
-        this.chart.type === common.ChartTypeEnum.EScatter
+        this.chart.type === common.ChartTypeEnum.EBar
           ? {
               trigger: 'axis',
               order: 'valueDesc',
