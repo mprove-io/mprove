@@ -416,6 +416,29 @@ export class ReportsService {
         query: undefined
       });
 
+      if (editRow.rowId === common.GLOBAL_ROW_ID) {
+        let listenIds = editRow.parameters.map(x => x.filter);
+
+        // console.log('listenIds');
+        // console.log(listenIds);
+
+        processedRows
+          .filter(x => x.rowId !== common.GLOBAL_ROW_ID)
+          .forEach(x => {
+            x.parameters = x.parameters.map(p => {
+              if (
+                common.isDefined(p.listen) &&
+                listenIds.indexOf(p.listen) < 0
+              ) {
+                p.parameterType = common.ParameterTypeEnum.Field;
+                p.listen = undefined;
+                p.formula = undefined;
+              }
+              return p;
+            });
+          });
+      }
+
       processedRows = processedRows.map(row =>
         row.rowId === editRow.rowId ? editRow : row
       );

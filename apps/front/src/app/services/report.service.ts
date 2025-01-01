@@ -60,11 +60,6 @@ export class ReportService {
         rowChange: rowChange,
         rowIds: rowIds,
         fields: reportFields
-        // selectRows:
-        //   changeType !== common.ChangeTypeEnum.Move &&
-        //   changeType !== common.ChangeTypeEnum.Delete
-        //     ? this.uiQuery.getValue().reportSelectedNodes.map(node => node.id)
-        //     : [],
       });
     }
   }
