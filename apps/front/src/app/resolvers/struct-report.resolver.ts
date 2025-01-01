@@ -111,16 +111,16 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
 
     let parametersReportId = route.params[common.PARAMETER_REPORT_ID];
 
-    if (parametersReportId === common.LAST_REPORT_ID) {
+    if (parametersReportId === common.LAST_SELECTED_REPORT_ID) {
       let projectReportLinks = this.uiQuery.getValue().projectReportLinks;
       let reports = this.reportsQuery.getValue().reports;
 
       let draftLink = projectReportLinks.find(
-        l => l.draft === true && l.projectId === nav.projectId
+        link => link.draft === true && link.projectId === nav.projectId
       );
 
       let pLink = projectReportLinks.find(
-        l => l.draft === false && l.projectId === nav.projectId
+        link => link.draft === false && link.projectId === nav.projectId
       );
 
       if (
@@ -149,9 +149,14 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
             this.navigateService.navigateToMetricsRep({
               reportId: pReport.reportId
             });
-
-            return of(false);
+          } else {
+            this.navigateService.navigateToMetricsRep({
+              reportId: common.EMPTY_REPORT_ID,
+              skipDeselect: true
+            });
           }
+
+          return of(false);
         }
       } else if (
         common.isDefined(pLink) &&
@@ -165,9 +170,14 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
           this.navigateService.navigateToMetricsRep({
             reportId: pReport.reportId
           });
-
-          return of(false);
+        } else {
+          this.navigateService.navigateToMetricsRep({
+            reportId: common.EMPTY_REPORT_ID,
+            skipDeselect: true
+          });
         }
+
+        return of(false);
       } else {
         this.navigateService.navigateToMetricsRep({
           reportId: common.EMPTY_REPORT_ID,

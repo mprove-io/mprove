@@ -45,6 +45,7 @@ import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { EChartsInitOpts, EChartsOption } from 'echarts';
 import { DataPoint } from '~front/app/interfaces/data-point';
+import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { DataService } from '~front/app/services/data.service';
 
 export class TimeSpecItem {
@@ -106,11 +107,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
       this.reportGlobalRow = this.report.rows.find(
         row => row.rowId === common.GLOBAL_ROW_ID
       );
-
-      // this.filtersIsExpanded =
-      //   this.report.extendedFilters.length === 0
-      //     ? true
-      //     : this.filtersIsExpanded;
 
       let links = this.uiQuery.getValue().projectReportLinks;
 
@@ -510,6 +506,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
+    private metricsQuery: MetricsQuery,
     private reportsQuery: ReportsQuery,
     private reportQuery: ReportQuery,
     private uiQuery: UiQuery,
@@ -870,5 +867,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopCheckRunning();
+    this.metricsQuery.reset();
+    this.reportsQuery.reset();
+    this.reportQuery.reset();
   }
 }
