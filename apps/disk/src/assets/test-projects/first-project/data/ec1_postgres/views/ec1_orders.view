@@ -3,6 +3,9 @@ label: Orders
 connection: c1_postgres
 table: ecommerce.orders
 
+build_metrics:
+- time: created
+
 fields:
 - dimension: order_id
   sql: order_id
@@ -24,38 +27,46 @@ fields:
   
 - time: created
   sql: ${created_at_ts}
-  timeframes:
-  - year
-  - quarter
-  - quarter_of_year  
-  - month
-  - month_name
-  - month_num  
-  - week
-  - week_of_year  
-  - date
-  - day_of_week
-  - day_of_week_index
-  - day_of_month  
-  - day_of_year
-  - hour
+  # timeframes:
+  # - date
+  # - date_ts
+  # - day_of_week
+  # - day_of_week_index
+  # - day_of_month  
+  # - day_of_year
+  # - week
+  # - week_ts
+  # - week_of_year  
+  # - month
+  # - month_ts
+  # - month_name
+  # - month_num 
+  # - quarter
+  # - quarter_ts
+  # - quarter_of_year  
+  # - year
+  # - year_ts
+  # - time_of_day
+  # - time
+  # - ts
+  # - hour_of_day
+  # - hour
+  # - hour_ts
   # - hour2
   # - hour3
   # - hour4
   # - hour6
   # - hour8
   # - hour12
-  - hour_of_day
-  - minute
+  # - minute
+  # - minute_ts
   # - minute2
   # - minute3
   # - minute5
   # - minute10
   # - minute15
   # - minute30
-  - time
-  - time_of_day
-  - yesno_has_value
+  # - yesno_has_value
   
 - measure: count 
   type: count_distinct

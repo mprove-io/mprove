@@ -8,7 +8,7 @@ fields:
   sql: inventory_item_id
   label: Id  
 
-- dimension: product_id
+- dimension: product_id 
   sql: product_id
 
 - dimension: distribution_center_id

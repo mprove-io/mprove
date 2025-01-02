@@ -35,7 +35,7 @@ tiles:
   listen_filters:
     order_date: b.created___date
     customer_age: c.age    
-  type: pie
+  type: e_pie
   data:
     x_field: c.gender
     y_field: c.count
@@ -54,7 +54,7 @@ tiles:
   listen_filters:
     order_date: b.created___date
     customer_age: c.age  
-  type: pie_grid
+  type: e_pie
   data:
     x_field: c.traffic_source
     y_field: mf.total_profit_int
@@ -71,7 +71,7 @@ tiles:
   listen_filters:
     order_date: b.created___date
     customer_age: c.age  
-  type: area_stacked
+  type: e_line
   data:
     x_field: b.created___quarter
     y_fields:
@@ -88,7 +88,7 @@ tiles:
     order_date: b.created___date
     customer_age: c.age  
   limit: 20
-  type: number_card
+  type: e_pie
   data:
     x_field: f.brand
     y_field: a.total_sale_price_int
@@ -100,11 +100,7 @@ tiles:
   listen_filters:
     order_date: b.created___date
     customer_age: c.age
-  type: number_card
-  data:
-    y_field: c.count
-  options:
-    band_color: rgb(66,151,254)    
+  type: table
   plate:
     plate_width: '2'
     plate_height: '300'  
@@ -116,11 +112,7 @@ tiles:
   listen_filters:
     order_date: b.created___date
     customer_age: c.age   
-  type: number_card
-  data:
-    y_field: b.count
-  options:
-    band_color: rgb(66,151,254)    
+  type: table
   plate:
     plate_width: '2'
     plate_height: '300'    
@@ -132,11 +124,7 @@ tiles:
   listen_filters:
     order_date: b.created___date
     customer_age: c.age    
-  type: number_card
-  data:
-    y_field: f.count
-  options:
-    band_color: rgb(66,151,254)    
+  type: table
   plate:
     plate_width: '2'
     plate_height: '300'
@@ -148,11 +136,7 @@ tiles:
   listen_filters:
     order_date: b.created___date
     customer_age: c.age    
-  type: number_card
-  data:
-    y_field: a.total_sale_price_int
-  options:
-    band_color: rgb(0,173,19)    
+  type: table
   plate:
     plate_width: '2'
     plate_height: '300'
@@ -164,11 +148,7 @@ tiles:
   listen_filters:
     order_date: b.created___date
     customer_age: c.age    
-  type: number_card
-  data:
-    y_field: e.total_actual_cost_int
-  options:
-    band_color: rgb(0,173,19)    
+  type: table
   plate:
     plate_width: '2'
     plate_height: '300'
@@ -180,11 +160,7 @@ tiles:
   listen_filters:
     order_date: b.created___date
     customer_age: c.age    
-  type: number_card
-  data:
-    y_field: mf.total_profit_int
-  options:
-    band_color: rgb(0,173,19)    
+  type: table
   plate:
     plate_width: '2'
     plate_height: '300'

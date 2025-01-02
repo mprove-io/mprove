@@ -3,9 +3,9 @@ tiles:
 - title: Average Sale Price by Category
   model: ec1_m1
   select:
-  - f.category
-  - a.average_sale_price
-  sorts: a.average_sale_price desc
+  - products.category
+  - order_items.average_sale_price
+  sorts: order_items.average_sale_price desc
   type: table
   options:
     page_size: 500

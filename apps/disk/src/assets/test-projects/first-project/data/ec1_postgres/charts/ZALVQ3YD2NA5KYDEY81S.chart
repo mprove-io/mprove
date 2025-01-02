@@ -3,11 +3,11 @@ tiles:
 - title: Top 10 Brands by Sales
   model: ec1_m1
   select:
-  - f.brand
-  - a.total_sale_price
-  sorts: a.total_sale_price desc
+  - products.brand
+  - order_items.total_sale_price
+  sorts: order_items.total_sale_price desc
   limit: 10
-  type: tree_map
+  type: e_pie
   data:
-    x_field: f.brand
-    y_field: a.total_sale_price
+    x_field: products.brand
+    y_field: order_items.total_sale_price

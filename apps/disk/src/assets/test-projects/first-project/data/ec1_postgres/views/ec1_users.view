@@ -7,7 +7,7 @@ fields:
 - dimension: user_id
   sql: user_id
   label: Id
-  
+
 - dimension: age
   result: number
   sql: age
@@ -110,10 +110,34 @@ fields:
   type: count_distinct
   sql: ${user_id}   
   
-- measure: men_count
+- measure: male_count
   type: count_distinct
   sql: CASE WHEN ${gender} = 'Male' THEN ${user_id} ELSE NULL END  
   
 - measure: female_count
   type: count_distinct
   sql: CASE WHEN ${gender} = 'Female' THEN ${user_id} ELSE NULL END
+
+- measure: total_users_age
+  type: sum_by_key
+  sql: ${age}  
+  sql_key: ${user_id}
+  format_number: ',.0f'  
+
+# - measure: total_users_age_sum
+#   type: sum
+#   sql: ${age}  
+#   format_number: ',.0f' 
+
+# - measure: total_users_age_custom
+#   type: custom
+#   sql: COALESCE(SUM(${age}), 0)
+#   format_number: ',.0f'
+
+# - measure: total_users_age_abc
+#   type: custom
+#   sql: COALESCE(SUM(${abc}), 0)
+#   format_number: ',.0f'
+
+# - dimension: abc
+#   sql: abc

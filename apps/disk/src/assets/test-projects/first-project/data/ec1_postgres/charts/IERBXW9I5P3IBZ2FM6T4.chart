@@ -3,7 +3,5 @@ tiles:
 - title: Total Sale Price
   model: ec1_m1
   select:
-  - a.total_sale_price
-  type: number_card
-  data:
-    y_field: a.total_sale_price
+  - order_items.total_sale_price
+  type: table

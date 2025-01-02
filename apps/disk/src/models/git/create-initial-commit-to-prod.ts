@@ -16,6 +16,9 @@ export async function createInitialCommitToProd(item: {
 
   let isSourceExist = await disk.isPathExist(sourceDir);
 
+  // console.log('isSourceExist');
+  // console.log(isSourceExist);
+
   if (common.isDefined(item.testProjectId) && isSourceExist) {
     await disk.copyPath({
       sourcePath: sourceDir,

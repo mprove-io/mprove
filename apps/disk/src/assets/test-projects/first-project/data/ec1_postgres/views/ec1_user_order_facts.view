@@ -4,7 +4,7 @@ connection: c1_postgres
 derived_table: |
   SELECT
     user_id,
-    MIN(TIMESTAMP 'epoch' + created_at * INTERVAL '1 second') AS first_order_ts
+    MIN(TIMESTAMP 'epoch' + created_at * INTERVAL '1 second') AS first_order_created_ts
   FROM 
     ecommerce.orders
   GROUP BY
@@ -14,9 +14,8 @@ fields:
 - dimension: user_id
   sql: user_id
   
-- time: first_order
-  sql: first_order_ts
-  group_label: First Order  
+- time: first_order_created
+  sql: first_order_created_ts
+  group_label: First Order Created
   timeframes:
-  - year
-  - date
+  - month_name

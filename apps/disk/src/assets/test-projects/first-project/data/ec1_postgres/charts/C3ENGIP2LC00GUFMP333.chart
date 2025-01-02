@@ -3,7 +3,7 @@ tiles:
 - title: Users, Orders, Products
   model: ec1_m1
   select:
-  - c.count
-  - b.count
-  - f.count
+  - users.count
+  - orders.count
+  - products.count
   type: table

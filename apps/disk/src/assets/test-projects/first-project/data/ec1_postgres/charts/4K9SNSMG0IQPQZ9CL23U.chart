@@ -3,7 +3,5 @@ tiles:
 - title: Average Sale Price
   model: ec1_m1
   select:
-  - a.average_sale_price
-  type: number_card
-  data:
-    y_field: a.average_sale_price
+  - order_items.average_sale_price
+  type: table

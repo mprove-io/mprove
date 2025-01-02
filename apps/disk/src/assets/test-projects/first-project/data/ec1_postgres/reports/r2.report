@@ -1,15 +1,58 @@
 report: r2
 title: R2 
+parameters:
+- filter: products_brand
+  result: string
+  suggest_model_dimension: ec1_m1.products.brand
+  conditions:
+  - '%c%'
+
+- filter: users_city
+  result: string
+  suggest_model_dimension: view_model_ec1_users.v.city
+  conditions:
+  - '%a%'
 rows:
 - row_id: A
-  type: empty
+  type: header
+  name: Profit = Price - Cost (using SQL and formula)
 
 - row_id: B
   type: metric
-  metric: ec1_m1_model_fields_total_profit_by_b_created
-  parameters: []
+  metric: ec1_m1_model_fields_total_profit_by_orders_created
+  show_chart: true
+  parameters:
+  - apply_to: products.brand
+    listen: products_brand
+
+  - apply_to: users.city
+    listen: users_city
 
 - row_id: C
   type: formula
-  name: example
-  formula: $B
+  name: Profit (using formula)
+  formula: $D - $E
+  format_number: $,.0f
+
+- row_id: D
+  type: metric
+  metric: ec1_m1_order_items_total_sale_price_by_orders_created
+  show_chart: true
+  parameters:
+  - apply_to: products.brand
+    listen: products_brand
+
+  - apply_to: users.city
+    listen: users_city
+
+- row_id: E
+  type: metric
+  metric: ec1_m1_inventory_items_total_actual_cost_by_orders_created
+  show_chart: true
+  parameters:
+  - apply_to: products.brand
+    listen: products_brand
+
+  - apply_to: users.city
+    listen: users_city
+

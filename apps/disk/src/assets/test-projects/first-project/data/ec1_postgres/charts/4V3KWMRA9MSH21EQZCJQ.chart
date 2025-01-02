@@ -3,15 +3,13 @@ tiles:
 - title: Revenue by Quarters by User Cohorts (First Order Year)
   model: ec1_m1
   select:
-  - d.first_order___year
-  - a.total_sale_price
-  - b.created___quarter
-  sorts: b.created___quarter
-  type: area_stacked
+  - user_order_facts.first_order_created___year
+  - order_items.total_sale_price
+  - orders.created___quarter
+  sorts: orders.created___quarter
+  type: e_line
   data:
-    x_field: b.created___quarter
+    x_field: orders.created___quarter
     y_fields:
-    - a.total_sale_price
-    multi_field: d.first_order___year
-  options:
-    legend_title: First Order Year
+    - order_items.total_sale_price
+    multi_field: user_order_facts.first_order_created___year

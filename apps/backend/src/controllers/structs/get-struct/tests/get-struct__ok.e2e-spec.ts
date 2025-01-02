@@ -17,6 +17,7 @@ let password = '123456';
 let orgId = testId;
 let orgName = testId;
 
+// let testProjectId = 't1';
 let projectId = common.makeId();
 let projectName = testId;
 
@@ -56,6 +57,7 @@ test('1', async t => {
           {
             orgId,
             projectId,
+            // testProjectId,
             name: projectName,
             remoteType: common.ProjectRemoteTypeEnum.Managed,
             defaultBranch: common.BRANCH_MASTER
@@ -69,6 +71,14 @@ test('1', async t => {
             isAdmin: true,
             isEditor: true,
             isExplorer: true
+          }
+        ],
+        connections: [
+          {
+            projectId: projectId,
+            connectionId: 'c1',
+            envId: common.PROJECT_ENV_PROD,
+            type: common.ConnectionTypeEnum.PostgreSQL
           }
         ]
       },
@@ -94,6 +104,9 @@ test('1', async t => {
       loginToken: prep.loginToken,
       req: req
     });
+
+    // console.log('struct');
+    // console.log(resp.payload.struct);
 
     await prep.app.close();
   } catch (e) {

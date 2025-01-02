@@ -3,15 +3,15 @@ tiles:
 - title: Revenue, Cost, Profit
   model: ec1_m1
   select:
-  - a.total_sale_price
-  - e.total_actual_cost
+  - order_items.total_sale_price
+  - inventory_items.total_actual_cost
   - mf.total_profit
   default_filters:
-    c.gender:
+    users.gender:
     - '-Female-'
-    c.state_name:
+    users.state_name:
     - '-Delaware-'
     - '-Montana-'
-    b.created___date:
+    orders.created___date:
     - on 2020
   type: table

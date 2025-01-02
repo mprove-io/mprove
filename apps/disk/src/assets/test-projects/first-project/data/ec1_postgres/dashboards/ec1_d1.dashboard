@@ -1,28 +1,26 @@
 dashboard: ec1_d1
 title: Ecommerce
 parameters:
-
 - filter: order_date
   result: ts
   conditions:
-  - last 3 years complete
+  - last 5 years complete
 
-- filter: customer_age
-  result: number
+- filter: product_brand
+  result: string
+  suggest_model_dimension: ec1_m1.products.brand
   conditions:
   - any
-
 tiles:
-
 - title: Average Sale Price by Category
   model: ec1_m1
   select:
-  - f.category
-  - a.average_sale_price
-  sorts: a.average_sale_price desc
+  - products.category
+  - order_items.average_sale_price
+  sorts: order_items.average_sale_price desc
   listen_filters:
-    customer_age: c.age
-    order_date: b.created___date
+    order_date: orders.created___date
+    product_brand: products.brand
   type: table
   plate:
     plate_width: 8
@@ -33,18 +31,16 @@ tiles:
 - title: Customers by Gender
   model: ec1_m1
   select:
-  - c.gender
-  - c.count
-  sorts: c.gender desc
+  - users.gender
+  - users.count
+  sorts: users.gender desc
   listen_filters:
-    customer_age: c.age
-    order_date: b.created___date
-  type: pie
+    order_date: orders.created___date
+    product_brand: products.brand
+  type: e_pie
   data:
-    x_field: c.gender
-    y_field: c.count
-  options:
-    explode_slices: true
+    x_field: users.gender
+    y_field: users.count
   plate:
     plate_width: 8
     plate_height: 12
@@ -55,13 +51,13 @@ tiles:
   model: ec1_m1
   select:
   - mf.total_profit
-  - c.traffic_source
+  - users.traffic_source
   listen_filters:
-    customer_age: c.age
-    order_date: b.created___date
-  type: pie_grid
+    order_date: orders.created___date
+    product_brand: products.brand
+  type: e_pie
   data:
-    x_field: c.traffic_source
+    x_field: users.traffic_source
     y_field: mf.total_profit
   plate:
     plate_width: 8
@@ -72,18 +68,18 @@ tiles:
 - title: Revenue by Time, by First Order Year Cohorts
   model: ec1_m1
   select:
-  - d.first_order___year
-  - a.total_sale_price
-  - b.created___quarter
+  - user_order_facts.first_order_created___year
+  - order_items.total_sale_price
+  - orders.created___quarter
   listen_filters:
-    customer_age: c.age
-    order_date: b.created___date
-  type: area_stacked
+    order_date: orders.created___date
+    product_brand: products.brand
+  type: e_line
   data:
-    x_field: b.created___quarter
+    x_field: orders.created___quarter
     y_fields:
-    - a.total_sale_price
-    multi_field: d.first_order___year
+    - order_items.total_sale_price
+    multi_field: user_order_facts.first_order_created___year
   plate:
     plate_width: 12
     plate_height: 12
@@ -93,17 +89,17 @@ tiles:
 - title: Top 10 Brands by Sales
   model: ec1_m1
   select:
-  - f.brand
-  - a.total_sale_price
-  sorts: a.total_sale_price desc
+  - products.brand
+  - order_items.total_sale_price
+  sorts: order_items.total_sale_price desc
   limit: 10
   listen_filters:
-    customer_age: c.age
-    order_date: b.created___date
-  type: tree_map
+    order_date: orders.created___date
+    product_brand: products.brand
+  type: e_pie
   data:
-    x_field: f.brand
-    y_field: a.total_sale_price
+    x_field: products.brand
+    y_field: order_items.total_sale_price
   plate:
     plate_width: 12
     plate_height: 12
@@ -113,15 +109,11 @@ tiles:
 - title: Customers
   model: ec1_m1
   select:
-  - c.count
+  - users.count
   listen_filters:
-    customer_age: c.age
-    order_date: b.created___date
-  type: number_card
-  data:
-    y_field: c.count
-  options:
-    band_color: rgb(66,151,254)
+    order_date: orders.created___date
+    product_brand: products.brand
+  type: table
   plate:
     plate_width: 4
     plate_height: 8
@@ -131,15 +123,11 @@ tiles:
 - title: Orders
   model: ec1_m1
   select:
-  - b.count
+  - orders.count
   listen_filters:
-    customer_age: c.age
-    order_date: b.created___date
-  type: number_card
-  data:
-    y_field: b.count
-  options:
-    band_color: rgb(66,151,254)
+    order_date: orders.created___date
+    product_brand: products.brand
+  type: table
   plate:
     plate_width: 4
     plate_height: 8
@@ -149,15 +137,11 @@ tiles:
 - title: Products
   model: ec1_m1
   select:
-  - f.count
+  - products.count
   listen_filters:
-    customer_age: c.age
-    order_date: b.created___date
-  type: number_card
-  data:
-    y_field: f.count
-  options:
-    band_color: rgb(66,151,254)
+    order_date: orders.created___date
+    product_brand: products.brand
+  type: table
   plate:
     plate_width: 4
     plate_height: 8
@@ -167,15 +151,11 @@ tiles:
 - title: $ Sales
   model: ec1_m1
   select:
-  - a.total_sale_price
+  - order_items.total_sale_price
   listen_filters:
-    customer_age: c.age
-    order_date: b.created___date
-  type: number_card
-  data:
-    y_field: a.total_sale_price
-  options:
-    band_color: rgb(0,173,19)
+    order_date: orders.created___date
+    product_brand: products.brand
+  type: table
   plate:
     plate_width: 4
     plate_height: 8
@@ -185,15 +165,11 @@ tiles:
 - title: $ Cost
   model: ec1_m1
   select:
-  - e.total_actual_cost
+  - inventory_items.total_actual_cost
   listen_filters:
-    customer_age: c.age
-    order_date: b.created___date
-  type: number_card
-  data:
-    y_field: e.total_actual_cost
-  options:
-    band_color: rgb(0,173,19)
+    order_date: orders.created___date
+    product_brand: products.brand
+  type: table
   plate:
     plate_width: 4
     plate_height: 8
@@ -205,13 +181,9 @@ tiles:
   select:
   - mf.total_profit
   listen_filters:
-    customer_age: c.age
-    order_date: b.created___date
-  type: number_card
-  data:
-    y_field: mf.total_profit
-  options:
-    band_color: rgb(0,173,19)
+    order_date: orders.created___date
+    product_brand: products.brand
+  type: table
   plate:
     plate_width: 4
     plate_height: 8
@@ -221,18 +193,18 @@ tiles:
 - title: Dynamics of Sales and Profit
   model: ec1_m1
   select:
-  - b.created___month
-  - a.total_sale_price
+  - orders.created___month
+  - order_items.total_sale_price
   - mf.total_profit
-  sorts: b.created___month
+  sorts: orders.created___month
   listen_filters:
-    customer_age: c.age
-    order_date: b.created___date
+    order_date: orders.created___date
+    product_brand: products.brand
   type: e_line
   data:
-    x_field: b.created___month
+    x_field: orders.created___month
     y_fields:
-    - a.total_sale_price
+    - order_items.total_sale_price
     - mf.total_profit
   plate:
     plate_width: 12
@@ -243,20 +215,36 @@ tiles:
 - title: Users by Age Group
   model: ec1_m1
   select:
-  - c.age_group
-  - c.count
-  sorts: c.age_group
+  - users.age_group
+  - users.count
+  sorts: users.age_group
   listen_filters:
-    customer_age: c.age
-    order_date: b.created___date
-  type: bar_vertical
+    order_date: orders.created___date
+    product_brand: products.brand
+  type: e_bar
   data:
-    x_field: c.age_group
-    y_field: c.count
-  options:
-    show_data_label: false
+    x_field: users.age_group
+    y_fields:
+    - users.count
   plate:
     plate_width: 12
     plate_height: 12
     plate_x: 12
     plate_y: 32
+
+- title: Orders Count by Users Age
+  model: ec1_m1
+  select:
+  - orders.count
+  - users.age
+  sorts: users.age
+  type: e_scatter
+  data:
+    x_field: users.age
+    y_fields:
+    - orders.count
+  plate:
+    plate_width: 12
+    plate_height: 12
+    plate_x: 0
+    plate_y: 44

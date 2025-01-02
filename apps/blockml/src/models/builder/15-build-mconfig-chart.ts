@@ -58,15 +58,15 @@ export function buildMconfigChart<T extends types.dzType>(
   //   cs
   // );
 
-  // entities = barMconfigChart.checkChartOptionsParameters(
-  //   {
-  //     entities: entities,
-  //     structId: item.structId,
-  //     errors: item.errors,
-  //     caller: item.caller
-  //   },
-  //   cs
-  // );
+  entities = barMconfigChart.checkChartOptionsParameters(
+    {
+      entities: entities,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
 
   entities = barMconfigChart.checkChartPlateParameters(
     {

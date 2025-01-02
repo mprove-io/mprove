@@ -12,7 +12,6 @@ parameters:
   - '[25, 35]'   
 
 tiles:
-
 - title: Average sale price by category
   model: ec_m1
   select:
