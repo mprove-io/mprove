@@ -30,6 +30,7 @@ export enum ParameterEnum {
   Field = 'field',
   Fields = 'fields',
   Filter = 'filter',
+  ApplyTo = 'apply_to',
   FormatNumber = 'format_number',
   Formula = 'formula',
   FromView = 'from_view',

@@ -67,5 +67,5 @@ test('1', async t => {
     errors[0].title,
     common.ErTitleEnum.TILE_PLATE_PARAMETER_MUST_BE_A_POSITIVE_INTEGER
   );
-  t.is(errors[0].lines[0].line, 12);
+  t.is(errors[0].lines[0].line, 10);
 });

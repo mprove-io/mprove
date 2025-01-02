@@ -122,7 +122,7 @@ export function makeReportFileText(item: {
 
                   let p: common.FileReportRowParameter = {
                     // type: parameter.parameterType,
-                    filter: parameter.filter,
+                    apply_to: parameter.apply_to,
                     // result: parameter.result,
                     conditions:
                       common.isDefined(formula) ||

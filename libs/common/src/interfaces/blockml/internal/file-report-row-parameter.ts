@@ -4,8 +4,8 @@ export interface FileReportRowParameter {
   type?: enums.ParameterTypeEnum;
   type_line_num?: number;
 
-  filter?: string;
-  filter_line_num?: number;
+  apply_to?: string;
+  apply_to_line_num?: number;
 
   listen?: string;
   listen_line_num?: number;

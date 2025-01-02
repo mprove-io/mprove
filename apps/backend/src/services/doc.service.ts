@@ -69,7 +69,7 @@ export class DocService {
         ) {
           row.parameters
             .sort((a, b) =>
-              a.filter > b.filter ? 1 : b.filter > a.filter ? -1 : 0
+              a.apply_to > b.apply_to ? 1 : b.apply_to > a.apply_to ? -1 : 0
             )
             .forEach(parameter => {
               let columnX: XColumn;
@@ -87,7 +87,7 @@ export class DocService {
                 };
               } else {
                 let prep = {
-                  filter: parameter.filter,
+                  apply_to: parameter.apply_to,
                   conditions: parameter.conditions
                 };
 
@@ -125,7 +125,7 @@ export class DocService {
               : JSON.stringify(
                   row.parameters.map(x => {
                     let prep = {
-                      filter: x.filter,
+                      apply_to: x.apply_to,
                       conditions: x.conditions
                     };
                     return prep;
@@ -327,27 +327,26 @@ Formula must return a valid JSON object.`;
 
           if (parameter.constructor !== Object) {
             schemaError = 'Parameter must be an object';
-          } else if (common.isUndefined(parameter.filter)) {
-            schemaError = 'Parameter must have a "filter" property';
+          } else if (common.isUndefined(parameter.apply_to)) {
+            schemaError = 'Parameter must have "apply_to" property';
           } else if (
-            Array.isArray(parameter.filter) ||
-            parameter.filter.constructor === Object
+            Array.isArray(parameter.apply_to) ||
+            parameter.apply_to.constructor === Object
           ) {
             schemaError =
-              'Parameter filter must be a string in a form of "alias.field_id"';
+              'Parameter apply_to must be a string in a form of "alias.field_id"';
           } else if (common.isDefined(row.parametersFormula)) {
-            let fieldId = parameter.filter.split('.').join('_').toUpperCase();
+            let fieldId = parameter.apply_to.split('.').join('_').toUpperCase();
             parameter.parameterId = `${row.rowId}_${fieldId}`;
 
             let metric = metrics.find(m => m.metricId === row.metricId);
             let model = models.find(ml => ml.modelId === metric.modelId);
-            let field = model.fields.find(f => f.id === parameter.filter);
+            let field = model.fields.find(f => f.id === parameter.apply_to);
 
             if (common.isDefined(field)) {
               parameter.result = field.result;
             } else {
-              schemaError =
-                'Wrong parameter filter value. Model field is not found.';
+              schemaError = 'Wrong apply_to value. Model field is not found.';
             }
           }
 
@@ -414,11 +413,11 @@ Formula must return a valid JSON object.`;
             );
 
           if (blockmlGetFractionsResponse.payload.isValid === false) {
-            schemaError = `Parameter conditions are not valid for filter result "${parameter.result}"`;
+            schemaError = `Parameter conditions are not valid for result "${parameter.result}"`;
           }
 
           let filter: common.Filter = {
-            fieldId: parameter.filter,
+            fieldId: parameter.apply_to,
             fractions: blockmlGetFractionsResponse.payload.fractions
           };
 
@@ -428,10 +427,10 @@ Formula must return a valid JSON object.`;
             common.isUndefined(schemaError) &&
             common.isDefined(parsedParameter)
           ) {
-            if (common.isUndefined(parsedParameter.filter)) {
-              schemaError = `Parameter "${parameter.filter}" must have a "filter" property`;
-            } else if (parameter.filter !== parsedParameter.filter) {
-              schemaError = `parameter filter "${parameter.filter}" does not match "${parsedParameter.filter}"`;
+            if (common.isUndefined(parsedParameter.apply_to)) {
+              schemaError = `Parameter "${parameter.apply_to}" must have "apply_to" property`;
+            } else if (parameter.apply_to !== parsedParameter.apply_to) {
+              schemaError = `parameter apply_to "${parameter.apply_to}" does not match "${parsedParameter.apply_to}"`;
             }
           }
 
@@ -450,7 +449,7 @@ Formula must return a valid JSON object.`;
             : common.makeCopy(
                 row.parameters.map(x => {
                   let p = common.makeCopy({
-                    filter: x.filter,
+                    apply_to: x.apply_to,
                     conditions: x.conditions
                   });
                   return p;

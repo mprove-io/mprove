@@ -31,24 +31,10 @@ export function checkChartDataParameters<T extends types.dzType>(
 
       if (
         [
-          common.ChartTypeEnum.BarVertical,
-          common.ChartTypeEnum.BarVerticalGrouped,
-          common.ChartTypeEnum.BarVerticalStacked,
-          common.ChartTypeEnum.BarVerticalNormalized,
-          common.ChartTypeEnum.BarHorizontal,
-          common.ChartTypeEnum.BarHorizontalGrouped,
-          common.ChartTypeEnum.BarHorizontalStacked,
-          common.ChartTypeEnum.BarHorizontalNormalized,
-          common.ChartTypeEnum.Pie,
-          common.ChartTypeEnum.PieAdvanced,
-          common.ChartTypeEnum.PieGrid,
-          common.ChartTypeEnum.Line,
-          common.ChartTypeEnum.Area,
-          common.ChartTypeEnum.AreaStacked,
-          common.ChartTypeEnum.AreaNormalized,
-          common.ChartTypeEnum.HeatMap,
-          common.ChartTypeEnum.TreeMap,
-          common.ChartTypeEnum.Gauge
+          common.ChartTypeEnum.EPie,
+          common.ChartTypeEnum.ELine,
+          common.ChartTypeEnum.EBar,
+          common.ChartTypeEnum.EScatter
         ].indexOf(tile.type) > -1 &&
         (common.isUndefined(tile.data) || common.isUndefined(tile.data.x_field))
       ) {
@@ -71,16 +57,7 @@ export function checkChartDataParameters<T extends types.dzType>(
       }
 
       if (
-        [
-          common.ChartTypeEnum.BarVertical,
-          common.ChartTypeEnum.BarHorizontal,
-          common.ChartTypeEnum.Pie,
-          common.ChartTypeEnum.PieAdvanced,
-          common.ChartTypeEnum.PieGrid,
-          common.ChartTypeEnum.TreeMap,
-          common.ChartTypeEnum.NumberCard,
-          common.ChartTypeEnum.Gauge
-        ].indexOf(tile.type) > -1 &&
+        [common.ChartTypeEnum.EPie].indexOf(tile.type) > -1 &&
         (common.isUndefined(tile.data) || common.isUndefined(tile.data.y_field))
       ) {
         item.errors.push(
@@ -126,17 +103,9 @@ export function checkChartDataParameters<T extends types.dzType>(
 
       if (
         [
-          common.ChartTypeEnum.BarVerticalGrouped,
-          common.ChartTypeEnum.BarVerticalStacked,
-          common.ChartTypeEnum.BarVerticalNormalized,
-          common.ChartTypeEnum.BarHorizontalGrouped,
-          common.ChartTypeEnum.BarHorizontalStacked,
-          common.ChartTypeEnum.BarHorizontalNormalized,
-          common.ChartTypeEnum.Line,
-          common.ChartTypeEnum.Area,
-          common.ChartTypeEnum.AreaStacked,
-          common.ChartTypeEnum.AreaNormalized,
-          common.ChartTypeEnum.HeatMap
+          common.ChartTypeEnum.EBar,
+          common.ChartTypeEnum.ELine,
+          common.ChartTypeEnum.EScatter
         ].indexOf(tile.type) > -1 &&
         (common.isUndefined(tile.data) ||
           common.isUndefined(tile.data.y_fields))
@@ -159,28 +128,28 @@ export function checkChartDataParameters<T extends types.dzType>(
         return;
       }
 
-      if (
-        tile.type === common.ChartTypeEnum.GaugeLinear &&
-        (common.isUndefined(tile.data) ||
-          common.isUndefined(tile.data.value_field))
-      ) {
-        item.errors.push(
-          new BmError({
-            title: common.ErTitleEnum.TILE_DATA_MISSING_VALUE_FIELD,
-            message:
-              `tile of type "${tile.type}" must have ` +
-              `"${common.ParameterEnum.ValueField}" parameter in "${common.ParameterEnum.Data}"`,
-            lines: [
-              {
-                line: tile.data_line_num,
-                name: x.fileName,
-                path: x.filePath
-              }
-            ]
-          })
-        );
-        return;
-      }
+      // if (
+      //   tile.type === common.ChartTypeEnum.GaugeLinear &&
+      //   (common.isUndefined(tile.data) ||
+      //     common.isUndefined(tile.data.value_field))
+      // ) {
+      //   item.errors.push(
+      //     new BmError({
+      //       title: common.ErTitleEnum.TILE_DATA_MISSING_VALUE_FIELD,
+      //       message:
+      //         `tile of type "${tile.type}" must have ` +
+      //         `"${common.ParameterEnum.ValueField}" parameter in "${common.ParameterEnum.Data}"`,
+      //       lines: [
+      //         {
+      //           line: tile.data_line_num,
+      //           name: x.fileName,
+      //           path: x.filePath
+      //         }
+      //       ]
+      //     })
+      //   );
+      //   return;
+      // }
 
       if (common.isUndefined(tile.data)) {
         return;
@@ -369,98 +338,98 @@ export function checkChartDataParameters<T extends types.dzType>(
         }
       }
 
-      if (common.isDefined(tile.data.value_field)) {
-        if (tile.select.indexOf(tile.data.value_field) < 0) {
-          item.errors.push(
-            new BmError({
-              title: common.ErTitleEnum.TILE_DATA_WRONG_VALUE_FIELD,
-              message:
-                `"${common.ParameterEnum.ValueField}" value must be one of ` +
-                `"${common.ParameterEnum.Select}" elements`,
-              lines: [
-                {
-                  line: tile.data.value_field_line_num,
-                  name: x.fileName,
-                  path: x.filePath
-                }
-              ]
-            })
-          );
-          return;
-        } else {
-          let field = getField({
-            model: model,
-            fieldId: tile.data.value_field
-          });
+      // if (common.isDefined(tile.data.value_field)) {
+      //   if (tile.select.indexOf(tile.data.value_field) < 0) {
+      //     item.errors.push(
+      //       new BmError({
+      //         title: common.ErTitleEnum.TILE_DATA_WRONG_VALUE_FIELD,
+      //         message:
+      //           `"${common.ParameterEnum.ValueField}" value must be one of ` +
+      //           `"${common.ParameterEnum.Select}" elements`,
+      //         lines: [
+      //           {
+      //             line: tile.data.value_field_line_num,
+      //             name: x.fileName,
+      //             path: x.filePath
+      //           }
+      //         ]
+      //       })
+      //     );
+      //     return;
+      //   } else {
+      //     let field = getField({
+      //       model: model,
+      //       fieldId: tile.data.value_field
+      //     });
 
-          if (
-            field.fieldClass !== common.FieldClassEnum.Measure &&
-            field.fieldClass !== common.FieldClassEnum.Calculation
-          ) {
-            item.errors.push(
-              new BmError({
-                title: common.ErTitleEnum.TILE_DATA_WRONG_VALUE_FIELD_CLASS,
-                message: `"${common.ParameterEnum.ValueField}" must be a Measure or Calculation`,
-                lines: [
-                  {
-                    line: tile.data.value_field_line_num,
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
-        }
-      }
+      //     if (
+      //       field.fieldClass !== common.FieldClassEnum.Measure &&
+      //       field.fieldClass !== common.FieldClassEnum.Calculation
+      //     ) {
+      //       item.errors.push(
+      //         new BmError({
+      //           title: common.ErTitleEnum.TILE_DATA_WRONG_VALUE_FIELD_CLASS,
+      //           message: `"${common.ParameterEnum.ValueField}" must be a Measure or Calculation`,
+      //           lines: [
+      //             {
+      //               line: tile.data.value_field_line_num,
+      //               name: x.fileName,
+      //               path: x.filePath
+      //             }
+      //           ]
+      //         })
+      //       );
+      //       return;
+      //     }
+      //   }
+      // }
 
-      if (common.isDefined(tile.data.previous_value_field)) {
-        if (tile.select.indexOf(tile.data.previous_value_field) < 0) {
-          item.errors.push(
-            new BmError({
-              title: common.ErTitleEnum.TILE_DATA_WRONG_PREVIOUS_VALUE_FIELD,
-              message:
-                `"${common.ParameterEnum.PreviousValueField}" value must be one of ` +
-                `"${common.ParameterEnum.Select}" elements`,
-              lines: [
-                {
-                  line: tile.data.previous_value_field_line_num,
-                  name: x.fileName,
-                  path: x.filePath
-                }
-              ]
-            })
-          );
-          return;
-        } else {
-          let field = getField({
-            model: model,
-            fieldId: tile.data.previous_value_field
-          });
+      // if (common.isDefined(tile.data.previous_value_field)) {
+      //   if (tile.select.indexOf(tile.data.previous_value_field) < 0) {
+      //     item.errors.push(
+      //       new BmError({
+      //         title: common.ErTitleEnum.TILE_DATA_WRONG_PREVIOUS_VALUE_FIELD,
+      //         message:
+      //           `"${common.ParameterEnum.PreviousValueField}" value must be one of ` +
+      //           `"${common.ParameterEnum.Select}" elements`,
+      //         lines: [
+      //           {
+      //             line: tile.data.previous_value_field_line_num,
+      //             name: x.fileName,
+      //             path: x.filePath
+      //           }
+      //         ]
+      //       })
+      //     );
+      //     return;
+      //   } else {
+      //     let field = getField({
+      //       model: model,
+      //       fieldId: tile.data.previous_value_field
+      //     });
 
-          if (
-            field.fieldClass !== common.FieldClassEnum.Measure &&
-            field.fieldClass !== common.FieldClassEnum.Calculation
-          ) {
-            item.errors.push(
-              new BmError({
-                title:
-                  common.ErTitleEnum.TILE_DATA_WRONG_PREVIOUS_VALUE_FIELD_CLASS,
-                message: `"${common.ParameterEnum.PreviousValueField}" must be a Measure or Calculation`,
-                lines: [
-                  {
-                    line: tile.data.previous_value_field_line_num,
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
-        }
-      }
+      //     if (
+      //       field.fieldClass !== common.FieldClassEnum.Measure &&
+      //       field.fieldClass !== common.FieldClassEnum.Calculation
+      //     ) {
+      //       item.errors.push(
+      //         new BmError({
+      //           title:
+      //             common.ErTitleEnum.TILE_DATA_WRONG_PREVIOUS_VALUE_FIELD_CLASS,
+      //           message: `"${common.ParameterEnum.PreviousValueField}" must be a Measure or Calculation`,
+      //           lines: [
+      //             {
+      //               line: tile.data.previous_value_field_line_num,
+      //               name: x.fileName,
+      //               path: x.filePath
+      //             }
+      //           ]
+      //         })
+      //       );
+      //       return;
+      //     }
+      //   }
+      // }
 
       if (common.isDefined(tile.data.y_fields)) {
         if (!Array.isArray(tile.data.y_fields)) {

@@ -4,8 +4,6 @@ tiles:
   model: m1
   select: 
   - a.mea1
-  type: gauge_linear
-  data:
-    value_field: a.mea1
+  type: table
   plate:
     unk: abc

@@ -4,6 +4,6 @@ tiles:
   model: m1
   select: 
   - a.dim1
-  type: bar_vertical
+  type: e_pie
   data:         
     x_field: a.dim1

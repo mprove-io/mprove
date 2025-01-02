@@ -186,11 +186,11 @@ export function checkReportRow(
             .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
             .map(y => p[y as keyof common.FileReportRowParameter] as number);
 
-          if (common.isUndefined(p.filter)) {
+          if (common.isUndefined(p.apply_to)) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.MISSING_FILTER,
-                message: `parameter "${common.ParameterEnum.Filter}" is required`,
+                title: common.ErTitleEnum.MISSING_APPLY_TO,
+                message: `parameter "${common.ParameterEnum.ApplyTo}" is required`,
                 lines: [
                   {
                     line: Math.min(...pKeysLineNums),

@@ -33,7 +33,7 @@ export function checkReportRowUnknownParams(
             .forEach(parameter => {
               if (
                 [
-                  common.ParameterEnum.Filter.toString(),
+                  common.ParameterEnum.ApplyTo.toString(),
                   common.ParameterEnum.Listen.toString(),
                   common.ParameterEnum.Formula.toString(),
                   common.ParameterEnum.Conditions.toString()

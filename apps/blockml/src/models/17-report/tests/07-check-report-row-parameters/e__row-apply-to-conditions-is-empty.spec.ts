@@ -6,13 +6,13 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildDashboardTileCharts;
-let func = common.FuncEnum.CheckChartPlateParameters;
-let testId = 'e__tile-plate-unknown-parameter';
+let caller = common.CallerEnum.BuildReport;
+let func = common.FuncEnum.CheckReportRowParameters;
+let testId = 'e__row-apply-to-conditions-is-empty';
 
 test('1', async t => {
   let errors: BmError[];
-  let entDashboards: common.FileDashboard[];
+  let entReports: common.FileReport[];
 
   let wLogger;
   let configService;
@@ -47,7 +47,7 @@ test('1', async t => {
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
-    entDashboards = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
+    entReports = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -61,8 +61,8 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(entDashboards.length, 0);
+  t.is(entReports.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.TILE_PLATE_UNKNOWN_PARAMETER);
+  t.is(errors[0].title, common.ErTitleEnum.ROW_APPLY_TO_CONDITIONS_IS_EMPTY);
   t.is(errors[0].lines[0].line, 9);
 });

@@ -5,7 +5,13 @@ rows:
   type: metric
   metric: m1_orders_mea1_by_orders_created  
   parameters:
-  - apply_to: a
+  - apply_to: 'a'
+    conditions:
+    - 'any'
+
+  - apply_to: 'a'
+    conditions:
+    - 'any'
 
 
 

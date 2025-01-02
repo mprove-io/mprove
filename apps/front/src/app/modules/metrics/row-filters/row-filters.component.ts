@@ -66,7 +66,7 @@ export class RowFiltersComponent implements OnChanges {
     let newParameters = [...this.reportSelectedNode.data.parameters];
 
     let parametersIndex = newParameters.findIndex(
-      p => p.filter === filterExtended.fieldId
+      p => p.apply_to === filterExtended.fieldId
     );
 
     let fractions = filterExtended.fractions;
@@ -107,7 +107,7 @@ export class RowFiltersComponent implements OnChanges {
     let newParameters = [...this.reportSelectedNode.data.parameters];
 
     let parametersIndex = newParameters.findIndex(
-      p => p.filter === filterExtended.fieldId
+      p => p.apply_to === filterExtended.fieldId
     );
 
     let fractions = filterExtended.fractions;
@@ -150,7 +150,7 @@ export class RowFiltersComponent implements OnChanges {
     let newParameters = [...this.reportSelectedNode.data.parameters];
 
     let parametersIndex = newParameters.findIndex(
-      p => p.filter === filterExtended.fieldId
+      p => p.apply_to === filterExtended.fieldId
     );
 
     let fractions = filterExtended.fractions;
@@ -197,7 +197,7 @@ export class RowFiltersComponent implements OnChanges {
     let newParameters = [...this.reportSelectedNode.data.parameters];
 
     let parametersIndex = newParameters.findIndex(
-      p => p.filter === filterExtended.fieldId
+      p => p.apply_to === filterExtended.fieldId
     );
 
     newParameters = [
@@ -227,12 +227,12 @@ export class RowFiltersComponent implements OnChanges {
     let newParameters = [...this.reportSelectedNode.data.parameters];
 
     let parameterIndex = this.reportSelectedNode.data.parameters.findIndex(
-      x => x.filter === filterExtended.fieldId
+      x => x.apply_to === filterExtended.fieldId
     );
 
     let parameter: common.Parameter =
       this.reportSelectedNode.data.parameters.find(
-        x => x.filter === filterExtended.fieldId
+        x => x.apply_to === filterExtended.fieldId
       );
 
     let newParameter;
@@ -257,7 +257,7 @@ export class RowFiltersComponent implements OnChanges {
       newParameter = Object.assign({}, parameter, {
         parameterType: common.ParameterTypeEnum.Formula,
         conditions: newConditions,
-        formula: `return {"filter": "${parameter.filter}", "conditions": ["${newConditionsStr}"]}`,
+        formula: `return {"apply_to": "${parameter.apply_to}", "conditions": ["${newConditionsStr}"]}`,
         listen: undefined
       } as common.Parameter);
     }
@@ -288,12 +288,12 @@ export class RowFiltersComponent implements OnChanges {
     let newParameters = [...this.reportSelectedNode.data.parameters];
 
     let parameterIndex = this.reportSelectedNode.data.parameters.findIndex(
-      x => x.filter === pFilter.fieldId
+      x => x.apply_to === pFilter.fieldId
     );
 
     let parameter: common.Parameter =
       this.reportSelectedNode.data.parameters.find(
-        x => x.filter === pFilter.fieldId
+        x => x.apply_to === pFilter.fieldId
       );
 
     let newParameter;
@@ -315,7 +315,7 @@ export class RowFiltersComponent implements OnChanges {
         .join('_')
         .toUpperCase();
 
-      let formula = `let p = $${globalParameterId}; p.filter = '${parameter.filter}'; return p`;
+      let formula = `let p = $${globalParameterId}; p.apply_to = '${parameter.apply_to}'; return p`;
 
       newParameter = Object.assign({}, parameter, {
         parameterType: common.ParameterTypeEnum.Formula,
@@ -356,7 +356,7 @@ export class RowFiltersComponent implements OnChanges {
     let newParameters = [...this.reportSelectedNode.data.parameters];
 
     let parametersIndex = newParameters.findIndex(
-      p => p.filter === pFilter.fieldId
+      p => p.apply_to === pFilter.fieldId
     );
 
     let parameter = newParameters[parametersIndex];
@@ -367,7 +367,7 @@ export class RowFiltersComponent implements OnChanges {
       .join('_')
       .toUpperCase();
 
-    let formula = `let p = $${globalParameterId}; p.filter = '${parameter.filter}'; return p`;
+    let formula = `let p = $${globalParameterId}; p.apply_to = '${parameter.apply_to}'; return p`;
 
     let newParameter: common.Parameter = Object.assign({}, parameter, {
       result: globalField.result,
@@ -406,7 +406,7 @@ export class RowFiltersComponent implements OnChanges {
     let newParameters = [...this.reportSelectedNode.data.parameters];
 
     let parametersIndex = newParameters.findIndex(
-      p => p.filter === filterExtended.fieldId
+      p => p.apply_to === filterExtended.fieldId
     );
 
     let newParameter = Object.assign({}, newParameters[parametersIndex], {

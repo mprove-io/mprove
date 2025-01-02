@@ -228,7 +228,7 @@ tiles:
   listen_filters:
     customer_age: c.age
     order_date: b.created___date
-  type: line
+  type: e_line
   data:
     x_field: b.created___month
     y_fields:

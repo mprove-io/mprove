@@ -73,7 +73,7 @@ export const REPORT_SCHEMA: JSONSchema7 = {
               type: 'object',
               additionalProperties: false,
               properties: {
-                filter: {
+                apply_to: {
                   type: 'string'
                 },
                 listen: {
@@ -89,7 +89,7 @@ export const REPORT_SCHEMA: JSONSchema7 = {
                   }
                 }
               },
-              required: ['filter']
+              required: ['apply_to']
             }
           }
         },

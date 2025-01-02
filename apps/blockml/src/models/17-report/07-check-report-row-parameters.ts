@@ -31,24 +31,25 @@ export function checkReportRowParameters(
     x.rows
       .filter(row => common.isDefined(row.parameters))
       .forEach(row => {
-        let pFilterMaps: Array<{ filter: string; lineNumbers: number[] }> = [];
+        let pApplyToMaps: Array<{ applyTo: string; lineNumbers: number[] }> =
+          [];
 
         row.parameters.forEach(p => {
-          let pFilterMap = pFilterMaps.find(
-            element => element.filter === p.filter
+          let pApplyToMap = pApplyToMaps.find(
+            element => element.applyTo === p.apply_to
           );
 
-          if (pFilterMap) {
-            pFilterMap.lineNumbers.push(p.filter_line_num);
+          if (pApplyToMap) {
+            pApplyToMap.lineNumbers.push(p.apply_to_line_num);
           } else {
-            pFilterMaps.push({
-              filter: p.filter,
-              lineNumbers: [p.filter_line_num]
+            pApplyToMaps.push({
+              applyTo: p.apply_to,
+              lineNumbers: [p.apply_to_line_num]
             });
           }
         });
 
-        pFilterMaps.forEach(n => {
+        pApplyToMaps.forEach(n => {
           if (n.lineNumbers.length > 1) {
             let lines: common.FileErrorLine[] = n.lineNumbers.map(y => ({
               line: y,
@@ -58,8 +59,8 @@ export function checkReportRowParameters(
 
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.DUPLICATE_FILTERS,
-                message: 'Row filters must be unique',
+                title: common.ErTitleEnum.DUPLICATE_APPLY_TO,
+                message: 'Row apply_to values must be unique',
                 lines: lines
               })
             );
@@ -80,20 +81,20 @@ export function checkReportRowParameters(
           let model = models.find(y => y.name === metric.modelId);
 
           row.parameters
-            .filter(p => common.isDefined(p.filter))
+            .filter(p => common.isDefined(p.apply_to))
             .forEach(p => {
               let reg =
                 common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
-              let r = reg.exec(p.filter);
+              let r = reg.exec(p.apply_to);
 
               if (common.isUndefined(r)) {
                 item.errors.push(
                   new BmError({
-                    title: common.ErTitleEnum.ROW_FILTER_WRONG_REFERENCE,
-                    message: 'row filter must be in form "alias.field_name"',
+                    title: common.ErTitleEnum.ROW_APPLY_TO_WRONG_REFERENCE,
+                    message: 'row apply_to must be in form "alias.field_name"',
                     lines: [
                       {
-                        line: p.filter_line_num,
+                        line: p.apply_to_line_num,
                         name: x.fileName,
                         path: x.filePath
                       }
@@ -115,13 +116,14 @@ export function checkReportRowParameters(
                   item.errors.push(
                     new BmError({
                       title:
-                        common.ErTitleEnum.ROW_FILTER_REFS_MISSING_MODEL_FIELD,
+                        common.ErTitleEnum
+                          .ROW_APPLY_TO_REFS_MISSING_MODEL_FIELD,
                       message:
-                        `"${p.filter}" references missing or not valid field ` +
+                        `"${p.apply_to}" references missing or not valid field ` +
                         `"${fieldName}" of model "${model.name}" fields section`,
                       lines: [
                         {
-                          line: p.filter_line_num,
+                          line: p.apply_to_line_num,
                           name: x.fileName,
                           path: x.filePath
                         }
@@ -136,13 +138,13 @@ export function checkReportRowParameters(
                 if (common.isUndefined(join)) {
                   item.errors.push(
                     new BmError({
-                      title: common.ErTitleEnum.ROW_FILTER_REFS_MISSING_ALIAS,
+                      title: common.ErTitleEnum.ROW_APPLY_TO_REFS_MISSING_ALIAS,
                       message:
-                        `"${p.filter}" references missing alias ` +
+                        `"${p.apply_to}" references missing alias ` +
                         `"${asName}" of model "${model.name}" joins section`,
                       lines: [
                         {
-                          line: p.filter_line_num,
+                          line: p.apply_to_line_num,
                           name: x.fileName,
                           path: x.filePath
                         }
@@ -160,14 +162,14 @@ export function checkReportRowParameters(
                   item.errors.push(
                     new BmError({
                       title:
-                        common.ErTitleEnum.ROW_FILTER_REFS_MISSING_VIEW_FIELD,
+                        common.ErTitleEnum.ROW_APPLY_TO_REFS_MISSING_VIEW_FIELD,
                       message:
-                        `"${p.filter}" references missing or not valid field ` +
+                        `"${p.apply_to}" references missing or not valid field ` +
                         `"${fieldName}" of view "${join.view.name}". ` +
                         `View has "${asName}" alias in "${model.name}" model.`,
                       lines: [
                         {
-                          line: p.filter_line_num,
+                          line: p.apply_to_line_num,
                           name: x.fileName,
                           path: x.filePath
                         }
@@ -185,7 +187,7 @@ export function checkReportRowParameters(
                     message: `found that both parameters "formula" and "listen" are specified`,
                     lines: [
                       {
-                        line: p.filter_line_num,
+                        line: p.apply_to_line_num,
                         name: x.fileName,
                         path: x.filePath
                       }
@@ -205,7 +207,7 @@ export function checkReportRowParameters(
                     message: `found that both parameters "conditions" and "listen" are specified`,
                     lines: [
                       {
-                        line: p.filter_line_num,
+                        line: p.apply_to_line_num,
                         name: x.fileName,
                         path: x.filePath
                       }
@@ -225,7 +227,7 @@ export function checkReportRowParameters(
                     message: `found that both parameters "formula" and "conditions" are specified`,
                     lines: [
                       {
-                        line: p.filter_line_num,
+                        line: p.apply_to_line_num,
                         name: x.fileName,
                         path: x.filePath
                       }
@@ -248,8 +250,9 @@ export function checkReportRowParameters(
                 if (p.conditions.length === 0) {
                   item.errors.push(
                     new BmError({
-                      title: common.ErTitleEnum.ROW_FILTER_CONDITIONS_IS_EMPTY,
-                      message: `filter contidions can not be empty`,
+                      title:
+                        common.ErTitleEnum.ROW_APPLY_TO_CONDITIONS_IS_EMPTY,
+                      message: `apply_to conditions can not be empty`,
                       lines: [
                         {
                           line: p.conditions_line_num,
@@ -271,9 +274,9 @@ export function checkReportRowParameters(
                 if (pf.valid === 0) {
                   item.errors.push(
                     new BmError({
-                      title: common.ErTitleEnum.ROW_FILTER_WRONG_CONDITIONS,
+                      title: common.ErTitleEnum.ROW_APPLY_TO_WRONG_CONDITIONS,
                       message:
-                        `wrong expression "${pf.brick}" of filter "${p.filter}" ` +
+                        `wrong expression "${pf.brick}" of apply_to "${p.apply_to}" ` +
                         `for ${common.ParameterEnum.Result} "${pResult}" `,
                       lines: [
                         {
@@ -318,7 +321,7 @@ export function checkReportRowParameters(
                           .ROW_PARAMETER_AND_LISTEN_RESULT_MISMATCH,
                       message:
                         `"${p.listen}" result "${reportField.result}" does not match ` +
-                        `listener "${p.filter}" result "${pResult}"`,
+                        `listener "${p.apply_to}" result "${pResult}"`,
                       lines: [
                         {
                           line: p.listen_line_num,

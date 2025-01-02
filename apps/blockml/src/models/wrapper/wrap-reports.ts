@@ -104,7 +104,9 @@ export function wrapReports(item: {
                 if (row.type === common.RowTypeEnum.Metric) {
                   result = models
                     .find(model => model.modelId === metric.modelId)
-                    .fields.find(field => field.id === parameter.filter).result;
+                    .fields.find(
+                      field => field.id === parameter.apply_to
+                    ).result;
                 } else if (row.type === common.RowTypeEnum.Global) {
                   result = parameter.globalFieldResult;
                 }
@@ -116,17 +118,17 @@ export function wrapReports(item: {
                   : undefined;
 
                 let formula = common.isDefined(parameter.listen)
-                  ? `let p = $${globalParameterId}; p.filter = '${parameter.filter}'; return p`
+                  ? `let p = $${globalParameterId}; p.apply_to = '${parameter.apply_to}'; return p`
                   : parameter.formula;
 
                 let parameterApi: common.Parameter = {
-                  parameterId: [row.row_id, ...parameter.filter.split('.')]
+                  parameterId: [row.row_id, ...parameter.apply_to.split('.')]
                     .join('_')
                     .toUpperCase(),
                   parameterType: common.isDefined(formula)
                     ? common.ParameterTypeEnum.Formula
                     : common.ParameterTypeEnum.Field,
-                  filter: parameter.filter,
+                  apply_to: parameter.apply_to,
                   result: result,
                   conditions: parameter.conditions,
                   formula: formula,

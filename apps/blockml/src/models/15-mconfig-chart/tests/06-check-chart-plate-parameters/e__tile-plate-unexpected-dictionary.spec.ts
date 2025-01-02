@@ -64,5 +64,5 @@ test('1', async t => {
   t.is(entDashboards.length, 0);
 
   t.is(errors[0].title, common.ErTitleEnum.TILE_PLATE_UNEXPECTED_DICTIONARY);
-  t.is(errors[0].lines[0].line, 11);
+  t.is(errors[0].lines[0].line, 9);
 });

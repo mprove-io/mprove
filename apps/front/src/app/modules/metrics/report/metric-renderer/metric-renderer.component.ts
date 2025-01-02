@@ -85,7 +85,7 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
         this.params.data.parameters
           .filter(x => common.isDefined(x.listen))
           .forEach(x => {
-            listen[x.filter] = x.listen;
+            listen[x.apply_to] = x.listen;
           });
 
         this.listen = listen;

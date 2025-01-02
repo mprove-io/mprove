@@ -41,8 +41,8 @@ export function checkTileUnknownParameters<T extends types.dzType>(
               common.ParameterEnum.DefaultFilters.toString(),
               common.ParameterEnum.ListenFilters.toString(),
               common.ParameterEnum.Data.toString(),
-              common.ParameterEnum.Axis.toString(),
-              common.ParameterEnum.Options.toString(),
+              // common.ParameterEnum.Axis.toString(),
+              // common.ParameterEnum.Options.toString(),
               common.ParameterEnum.Plate.toString()
             ].indexOf(parameter) < 0
           ) {
@@ -95,8 +95,8 @@ export function checkTileUnknownParameters<T extends types.dzType>(
               common.ParameterEnum.DefaultFilters.toString(),
               common.ParameterEnum.ListenFilters.toString(),
               common.ParameterEnum.Data.toString(),
-              common.ParameterEnum.Axis.toString(),
-              common.ParameterEnum.Options.toString(),
+              // common.ParameterEnum.Axis.toString(),
+              // common.ParameterEnum.Options.toString(),
               common.ParameterEnum.Plate.toString()
             ].indexOf(parameter) < 0
           ) {
@@ -151,8 +151,8 @@ export function checkTileUnknownParameters<T extends types.dzType>(
               common.ParameterEnum.DefaultFilters.toString(),
               common.ParameterEnum.ListenFilters.toString(),
               common.ParameterEnum.Data.toString(),
-              common.ParameterEnum.Axis.toString(),
-              common.ParameterEnum.Options.toString(),
+              // common.ParameterEnum.Axis.toString(),
+              // common.ParameterEnum.Options.toString(),
               common.ParameterEnum.Plate.toString()
             ].indexOf(parameter) > -1
           ) {

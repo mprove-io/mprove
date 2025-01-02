@@ -417,7 +417,7 @@ export class ReportsService {
       });
 
       if (editRow.rowId === common.GLOBAL_ROW_ID) {
-        let listenIds = editRow.parameters.map(x => x.filter);
+        let listenIds = editRow.parameters.map(x => x.apply_to);
 
         // console.log('listenIds');
         // console.log(listenIds);

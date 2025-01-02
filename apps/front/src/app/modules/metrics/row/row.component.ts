@@ -185,7 +185,7 @@ export class RowComponent {
             )
             .map(filter => {
               let parameter = this.reportSelectedNode.data.parameters.find(
-                y => y.filter === filter.fieldId
+                y => y.apply_to === filter.fieldId
               );
 
               return Object.assign({}, filter, {
@@ -694,7 +694,7 @@ export class RowComponent {
         .join('_')
         .toUpperCase(),
       parameterType: common.ParameterTypeEnum.Field,
-      filter: field.id,
+      apply_to: field.id,
       result: field.result,
       conditions: ['any'],
       formula: undefined,
