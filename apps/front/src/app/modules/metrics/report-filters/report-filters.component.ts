@@ -42,9 +42,10 @@ export class ReportFiltersComponent {
 
     let newParameters = newReportFields.map(field => {
       let newParameter: common.Parameter = {
+        topParId: field.id,
         parameterId: [globalRow.rowId, field.id].join('_').toUpperCase(),
         parameterType: common.ParameterTypeEnum.Field,
-        apply_to: field.id,
+        apply_to: undefined,
         result: field.result,
         conditions: field.fractions.map(fr => fr.brick),
         formula: undefined,
@@ -96,9 +97,10 @@ export class ReportFiltersComponent {
 
     let newParameters = newReportFields.map(field => {
       let newParameter: common.Parameter = {
+        topParId: field.id,
         parameterId: [globalRow.rowId, field.id].join('_').toUpperCase(),
         parameterType: common.ParameterTypeEnum.Field,
-        apply_to: field.id,
+        apply_to: undefined,
         result: field.result,
         conditions: field.fractions.map(fr => fr.brick),
         formula: undefined,
@@ -160,9 +162,10 @@ export class ReportFiltersComponent {
 
     let newParameters = newReportFields.map(field => {
       let newParameter: common.Parameter = {
+        topParId: field.id,
         parameterId: [globalRow.rowId, field.id].join('_').toUpperCase(),
         parameterType: common.ParameterTypeEnum.Field,
-        apply_to: field.id,
+        apply_to: undefined,
         result: field.result,
         conditions: field.fractions.map(fr => fr.brick),
         formula: undefined,

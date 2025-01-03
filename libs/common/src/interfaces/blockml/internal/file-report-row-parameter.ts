@@ -18,5 +18,7 @@ export interface FileReportRowParameter {
 
   //
 
+  topParId?: string;
+
   globalFieldResult: enums.FieldResultEnum;
 }

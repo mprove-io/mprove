@@ -690,6 +690,7 @@ export class RowComponent {
     );
 
     let newParameter: common.Parameter = {
+      topParId: undefined,
       parameterId: [this.reportSelectedNode.data.rowId, ...field.id.split('.')]
         .join('_')
         .toUpperCase(),

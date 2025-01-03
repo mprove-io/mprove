@@ -5,6 +5,9 @@ export class Parameter {
   @IsString()
   parameterId: string;
 
+  @IsString()
+  topParId: string;
+
   @IsEnum(enums.ParameterTypeEnum)
   parameterType: enums.ParameterTypeEnum;
 

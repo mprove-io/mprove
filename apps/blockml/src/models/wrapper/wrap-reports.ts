@@ -122,9 +122,13 @@ export function wrapReports(item: {
                   : parameter.formula;
 
                 let parameterApi: common.Parameter = {
-                  parameterId: [row.row_id, ...parameter.apply_to.split('.')]
-                    .join('_')
-                    .toUpperCase(),
+                  topParId: parameter.topParId,
+                  parameterId:
+                    row.row_id === common.GLOBAL_ROW_ID
+                      ? [row.row_id, parameter.topParId].join('_').toUpperCase()
+                      : [row.row_id, ...parameter.apply_to.split('.')]
+                          .join('_')
+                          .toUpperCase(),
                   parameterType: common.isDefined(formula)
                     ? common.ParameterTypeEnum.Formula
                     : common.ParameterTypeEnum.Field,

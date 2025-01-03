@@ -269,9 +269,10 @@ export class ReportAddFilterDialogComponent implements OnInit {
       : [];
 
     let newParameter: common.Parameter = {
+      topParId: field.id,
       parameterId: [globalRow.rowId, field.id].join('_').toUpperCase(),
       parameterType: common.ParameterTypeEnum.Field,
-      apply_to: field.id,
+      apply_to: undefined,
       result: result,
       conditions: ['any'],
       formula: undefined,

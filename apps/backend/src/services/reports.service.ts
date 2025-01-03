@@ -417,10 +417,8 @@ export class ReportsService {
       });
 
       if (editRow.rowId === common.GLOBAL_ROW_ID) {
-        let listenIds = editRow.parameters.map(x => x.apply_to);
-
-        // console.log('listenIds');
-        // console.log(listenIds);
+        // console.log(editRow.parameters);
+        let topParIds = editRow.parameters.map(x => x.topParId);
 
         processedRows
           .filter(x => x.rowId !== common.GLOBAL_ROW_ID)
@@ -428,7 +426,7 @@ export class ReportsService {
             x.parameters = x.parameters.map(p => {
               if (
                 common.isDefined(p.listen) &&
-                listenIds.indexOf(p.listen) < 0
+                topParIds.indexOf(p.listen) < 0
               ) {
                 p.parameterType = common.ParameterTypeEnum.Field;
                 p.listen = undefined;

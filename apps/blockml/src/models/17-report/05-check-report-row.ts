@@ -186,7 +186,10 @@ export function checkReportRow(
             .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
             .map(y => p[y as keyof common.FileReportRowParameter] as number);
 
-          if (common.isUndefined(p.apply_to)) {
+          if (
+            common.isUndefined(p.apply_to) &&
+            row.row_id !== common.GLOBAL_ROW_ID
+          ) {
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.MISSING_APPLY_TO,
