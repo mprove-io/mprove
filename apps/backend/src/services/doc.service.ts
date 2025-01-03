@@ -327,11 +327,15 @@ Formula must return a valid JSON object.`;
 
           if (parameter.constructor !== Object) {
             schemaError = 'Parameter must be an object';
-          } else if (common.isUndefined(parameter.apply_to)) {
+          } else if (
+            row.rowType !== common.RowTypeEnum.Global &&
+            common.isUndefined(parameter.apply_to)
+          ) {
             schemaError = 'Parameter must have "apply_to" property';
           } else if (
-            Array.isArray(parameter.apply_to) ||
-            parameter.apply_to.constructor === Object
+            row.rowType !== common.RowTypeEnum.Global &&
+            (Array.isArray(parameter.apply_to) ||
+              parameter.apply_to.constructor === Object)
           ) {
             schemaError =
               'Parameter apply_to must be a string in a form of "alias.field_id"';
@@ -427,9 +431,15 @@ Formula must return a valid JSON object.`;
             common.isUndefined(schemaError) &&
             common.isDefined(parsedParameter)
           ) {
-            if (common.isUndefined(parsedParameter.apply_to)) {
+            if (
+              row.rowType !== common.RowTypeEnum.Global &&
+              common.isUndefined(parsedParameter.apply_to)
+            ) {
               schemaError = `Parameter "${parameter.apply_to}" must have "apply_to" property`;
-            } else if (parameter.apply_to !== parsedParameter.apply_to) {
+            } else if (
+              row.rowType !== common.RowTypeEnum.Global &&
+              parameter.apply_to !== parsedParameter.apply_to
+            ) {
               schemaError = `parameter apply_to "${parameter.apply_to}" does not match "${parsedParameter.apply_to}"`;
             }
           }
@@ -455,6 +465,22 @@ Formula must return a valid JSON object.`;
                   return p;
                 })
               );
+
+        if (Array.isArray(row.parametersJson)) {
+          row.parametersJson = row.parametersJson
+            .filter(element => element?.constructor === Object)
+            .map(x => {
+              if (x?.constructor === Object) {
+                return Object.fromEntries(
+                  Object.entries(x).sort(([keyA], [keyB]) =>
+                    keyA > keyB ? 1 : keyB > keyA ? -1 : 0
+                  )
+                );
+              } else {
+                return x;
+              }
+            });
+        }
 
         row.isParamsSchemaValid = common.isUndefined(row.paramsSchemaError);
 
