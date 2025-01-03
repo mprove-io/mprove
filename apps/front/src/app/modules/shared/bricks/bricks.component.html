@@ -16,7 +16,7 @@
             <div class="flex flex-col items-start justify-start">
               <div class="flex flex-row items-center">
                 <div
-                  *ngIf="!!listen"
+                  *ngIf="!!listen || !!formulas"
                   class="mr-2 flex flex-shrink-0 flex-row items-center space-x-5 text-gray-500"
                 >
                   <m-link-icon
@@ -27,8 +27,20 @@
                     }}"
                   ></m-link-icon>
 
+                  <m-formula-icon
+                    *ngIf="
+                      !!listen[filter.fieldId] === false &&
+                      !!formulas &&
+                      !!formulas[filter.fieldId] === true
+                    "
+                    tp="Parameter formula enabled"
+                  ></m-formula-icon>
+
                   <m-link-off-icon
-                    *ngIf="!!listen[filter.fieldId] === false"
+                    *ngIf="
+                      !!listen[filter.fieldId] === false &&
+                      (!formulas || !!formulas[filter.fieldId] === false)
+                    "
                     tp="Does not listen to dashboard filter"
                   ></m-link-off-icon>
                 </div>

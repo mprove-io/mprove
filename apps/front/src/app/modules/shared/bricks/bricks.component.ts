@@ -14,6 +14,9 @@ export class BricksComponent {
   listen: { [a: string]: string };
 
   @Input()
+  formulas: { [a: string]: boolean };
+
+  @Input()
   tileTitle: string;
 
   @Input()
