@@ -49,16 +49,17 @@
               [showDataRowsLength]="true"
             ></m-query-status>
 
-            <ui-switch
-              class="ml-5"
-              [checked]="isAutoRun"
-              (change)="toggleAutoRun()"
-            ></ui-switch>
-
             <div
-              class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
-              >Auto Run</div
+              class="ml-5 flex cursor-pointer flex-row items-center"
+              (click)="toggleAutoRun()"
             >
+              <ui-switch [checked]="isAutoRun"></ui-switch>
+
+              <div
+                class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
+                >Auto Run</div
+              >
+            </div>
 
             <button
               type="button"
@@ -305,15 +306,16 @@
                 </div>
 
                 <div
-                  class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
-                  >Format</div
+                  class="ml-5 flex cursor-pointer flex-row items-center"
+                  (click)="toggleFormat()"
                 >
+                  <div
+                    class="text-gray1 flex h-9 select-none items-center text-base"
+                    >Format</div
+                  >
 
-                <ui-switch
-                  class="ml-5"
-                  [checked]="isFormat"
-                  (change)="toggleFormat()"
-                ></ui-switch>
+                  <ui-switch class="ml-5" [checked]="isFormat"></ui-switch>
+                </div>
               </div>
 
               <div

@@ -72,16 +72,16 @@
         editConnectionForm.controls['type'].value === typeClickHouse
       "
     >
-      <div class="mt-6 flex flex-row items-center">
-        <div class="text-gray1 flex h-9 select-none items-center text-base"
+      <div
+        class="mt-6 flex max-w-min cursor-pointer flex-row items-center"
+        (click)="toggleSSL()"
+      >
+        <div
+          class="text-gray1 flex h-9 w-[90px] select-none items-center text-base"
           >SSL (https)</div
         >
 
-        <ui-switch
-          class="mb-1 ml-5"
-          [checked]="isSSL"
-          (change)="toggleSSL($event)"
-        ></ui-switch>
+        <ui-switch class="ml-5" [checked]="isSSL"></ui-switch>
       </div>
 
       <input

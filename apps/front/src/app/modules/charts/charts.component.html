@@ -53,15 +53,14 @@
         </div>
 
         <div
-          class="ml-10 flex flex-row items-center space-x-5"
           *ngIf="showList === false"
+          class="ml-10 flex cursor-pointer flex-row items-center"
+          (click)="toggleShowFilters()"
         >
-          <ui-switch
-            [checked]="showBricks"
-            (change)="toggleShowFilters()"
-          ></ui-switch>
+          <ui-switch [checked]="showBricks"></ui-switch>
 
-          <div class="text-gray1 flex h-9 select-none items-center text-base"
+          <div
+            class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
             >Show Parameters</div
           >
         </div>

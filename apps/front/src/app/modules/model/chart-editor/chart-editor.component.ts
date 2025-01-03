@@ -1810,9 +1810,9 @@ export class ChartEditorComponent implements OnChanges {
     });
   }
 
-  toggleFormat($event: any) {
+  toggleFormat() {
     let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.format = $event;
+    newMconfig.chart.format = !newMconfig.chart.format;
     this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });

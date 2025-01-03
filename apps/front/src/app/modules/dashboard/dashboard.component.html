@@ -17,14 +17,14 @@
             }}</div>
           </div>
 
-          <div class="flex flex-row items-center space-x-5">
-            <ui-switch
-              class="ml-5"
-              [checked]="showBricks"
-              (change)="toggleShowTileFilters()"
-            ></ui-switch>
+          <div
+            class="ml-5 flex cursor-pointer flex-row items-center"
+            (click)="toggleShowTileFilters()"
+          >
+            <ui-switch [checked]="showBricks"></ui-switch>
 
-            <div class="text-gray1 flex h-9 select-none items-center text-base"
+            <div
+              class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
               >Show Tile Parameters</div
             >
           </div>

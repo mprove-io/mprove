@@ -34,26 +34,27 @@
           ></m-delete-icon>
         </div>
 
-        <div class="ml-10 flex flex-row items-center space-x-5">
-          <ui-switch
-            [checked]="showTiles"
-            (change)="toggleShowTiles()"
-          ></ui-switch>
+        <div
+          class="ml-10 flex cursor-pointer flex-row items-center"
+          (click)="toggleShowFilters()"
+        >
+          <ui-switch [checked]="showBricks"></ui-switch>
 
-          <div class="text-gray1 flex h-9 select-none items-center text-base"
-            >Show Tiles</div
+          <div
+            class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
+            >Show Parameters</div
           >
         </div>
 
-        <div class="flex flex-row items-center space-x-5">
-          <ui-switch
-            class="ml-5"
-            [checked]="showBricks"
-            (change)="toggleShowFilters()"
-          ></ui-switch>
+        <div
+          class="ml-5 flex cursor-pointer flex-row items-center"
+          (click)="toggleShowTiles()"
+        >
+          <ui-switch [checked]="showTiles"></ui-switch>
 
-          <div class="text-gray1 flex h-9 select-none items-center text-base"
-            >Show Parameters</div
+          <div
+            class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
+            >Show Tiles</div
           >
         </div>
 

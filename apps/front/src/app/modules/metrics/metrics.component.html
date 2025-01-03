@@ -239,16 +239,17 @@
             </ng-select>
           </form>
 
-          <ui-switch
-            class="ml-7 mt-1"
-            [checked]="isAutoRun"
-            (change)="toggleAutoRun()"
-          ></ui-switch>
-
           <div
-            class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
-            >Auto Run</div
+            class="flex cursor-pointer flex-row items-center"
+            (click)="toggleAutoRun()"
           >
+            <ui-switch class="ml-7 mt-1" [checked]="isAutoRun"></ui-switch>
+
+            <div
+              class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
+              >Auto Run</div
+            >
+          </div>
 
           <button
             type="button"

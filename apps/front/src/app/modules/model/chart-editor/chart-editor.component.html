@@ -3,17 +3,15 @@
 
   <div
     *ngIf="formatChartTypes.indexOf(chart.type) > -1"
-    class="mb-5 flex flex-row items-center"
+    class="mb-5 flex max-w-min cursor-pointer flex-row items-center"
+    (click)="toggleFormat()"
   >
-    <div class="text-gray1 flex h-9 select-none items-center text-base"
+    <div
+      class="text-gray1 flex h-9 flex-shrink-0 select-none items-center text-base"
       >Format</div
     >
 
-    <ui-switch
-      class="ml-5"
-      [checked]="chart.format"
-      (change)="toggleFormat($event)"
-    ></ui-switch>
+    <ui-switch class="ml-5" [checked]="chart.format"></ui-switch>
   </div>
 
   <div

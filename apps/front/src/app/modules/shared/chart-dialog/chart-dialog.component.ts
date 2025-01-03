@@ -65,6 +65,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   }
 
   queryStatusRunning = common.QueryStatusEnum.Running;
+  queryStatusCompleted = common.QueryStatusEnum.Completed;
 
   title: string;
 

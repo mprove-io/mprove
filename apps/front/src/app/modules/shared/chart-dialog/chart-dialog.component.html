@@ -14,30 +14,25 @@
     *ngIf="isShowInit === false && showNav === true"
     class="text-gray1 mb-5 flex w-full flex-row items-center justify-start"
   >
-    <!-- <div class="flex flex-1 flex-row items-center justify-start"
-      ><ui-switch
-        class="mb-1"
-        [checked]="isData"
-        (change)="toggleData()"
-      ></ui-switch>
+    <!-- <div
+      class="flex cursor-pointer flex-row items-center justify-start"
+      (click)="toggleData()"
+      ><ui-switch class="mb-1" [checked]="isData"></ui-switch>
 
       <div class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
         >Show Data
       </div>
+    </div> -->
 
-      <div
-        *ngIf="isData === true && mconfig?.fields?.length > 0"
-        class="ml-5 flex flex-row"
-      >
-        <ui-switch
-          class="mb-1"
-          [checked]="isFormat"
-          (change)="toggleFormat()"
-        ></ui-switch>
+    <!-- <div
+      *ngIf="isData === true && mconfig?.fields?.length > 0"
+      class="ml-5 flex cursor-pointer flex-row items-center"
+      (click)="toggleFormat()"
+    >
+      <ui-switch class="mb-1" [checked]="isFormat"></ui-switch>
 
-        <div class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
-          >Format Numbers
-        </div>
+      <div class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
+        >Format Numbers
       </div>
     </div> -->
 
@@ -90,8 +85,9 @@
               <m-field-label [column]="item" class="ml-1 flex"></m-field-label>
             </ng-template>
           </ng-select>
-        </form> </div
-    ></div>
+        </form>
+      </div>
+    </div>
 
     <div class="flex flex-1 flex-row items-center justify-end">
       <div *ngIf="!!query" class="flex flex-row items-center justify-end">
@@ -222,8 +218,12 @@
     "
     class="mt-10 flex h-full flex-grow flex-row overflow-auto"
     [ngClass]="{
-      'justify-center': mconfig?.chart.type !== chartTypeEnumTable,
-      'justify-start': mconfig?.chart.type === chartTypeEnumTable
+      'justify-center':
+        mconfig?.chart.type !== chartTypeEnumTable ||
+        query?.status !== queryStatusCompleted,
+      'justify-start':
+        mconfig?.chart.type === chartTypeEnumTable &&
+        query?.status === queryStatusCompleted
     }"
   >
     <m-chart-view

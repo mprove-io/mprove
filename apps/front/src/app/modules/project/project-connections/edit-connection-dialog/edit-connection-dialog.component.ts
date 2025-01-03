@@ -243,8 +243,8 @@ export class EditConnectionDialogComponent implements OnInit {
     }
   }
 
-  toggleSSL($event: any) {
-    this.isSSL = $event;
+  toggleSSL() {
+    this.isSSL = !this.isSSL;
   }
 
   save() {
