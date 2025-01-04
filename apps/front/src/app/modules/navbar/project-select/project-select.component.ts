@@ -137,7 +137,7 @@ export class ProjectSelectComponent {
       common.PROJECT_ENV_PROD,
       common.PATH_METRICS,
       common.PATH_REPORT,
-      common.EMPTY_REPORT_ID
+      common.LAST_SELECTED_REPORT_ID
     ];
 
     this.navigateService.navigateTo({ navParts: navParts });

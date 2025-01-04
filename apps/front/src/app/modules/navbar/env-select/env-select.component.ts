@@ -139,7 +139,7 @@ export class EnvSelectComponent {
     if (urlParts[11] === common.PATH_METRICS) {
       navArray.push(common.PATH_METRICS);
       navArray.push(common.PATH_REPORT);
-      navArray.push(common.EMPTY_REPORT_ID);
+      navArray.push(common.LAST_SELECTED_REPORT_ID);
     } else if (
       urlParts[11] === common.PATH_MODELS ||
       urlParts[11] === common.PATH_MODEL

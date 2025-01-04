@@ -152,6 +152,9 @@ export class NavigateService {
       common.isDefined(this.nav.orgId) &&
       common.isDefined(this.nav.projectId)
     ) {
+      // let repoId =
+      //   this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
+
       let navTo = [
         common.PATH_ORG,
         this.nav.orgId,
@@ -165,7 +168,7 @@ export class NavigateService {
         common.PROJECT_ENV_PROD,
         common.PATH_METRICS,
         common.PATH_REPORT,
-        common.EMPTY_REPORT_ID
+        common.LAST_SELECTED_REPORT_ID
       ];
 
       this.router.navigate(navTo);

@@ -13,10 +13,10 @@ export class LogoComponent {
   ) {}
 
   goTo() {
-    if (this.auth.authenticated()) {
-      this.navigateService.navigateToProductionDefaultBranchProdMetrics();
-    } else {
-      window.open('https://mprove.io');
-    }
+    // if (this.auth.authenticated()) {
+    //   this.navigateService.navigateToProductionDefaultBranchProdMetrics();
+    // } else {
+    //   window.open('https://mprove.io');
+    // }
   }
 }
