@@ -208,7 +208,6 @@ export function checkFieldUnknownParameters<T extends types.vmdrType>(
               if (
                 [
                   common.ParameterEnum.Filter.toString(),
-                  common.ParameterEnum.Hidden.toString(),
                   common.ParameterEnum.Label.toString(),
                   common.ParameterEnum.Description.toString(),
                   common.ParameterEnum.Result.toString(),
