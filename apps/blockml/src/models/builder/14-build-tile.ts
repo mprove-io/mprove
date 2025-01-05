@@ -87,6 +87,18 @@ export async function buildTile<T extends types.dzType>(
     cs
   );
 
+  entities = barTile.checkTileParameters(
+    {
+      entities: entities,
+      caseSensitiveStringFilters: item.caseSensitiveStringFilters,
+      models: item.models,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
   entities = barTile.checkListenFilters(
     {
       entities: entities,

@@ -38,6 +38,7 @@ export function checkTileUnknownParameters<T extends types.dzType>(
               common.ParameterEnum.Sorts.toString(),
               common.ParameterEnum.Limit.toString(),
               common.ParameterEnum.Type.toString(),
+              common.ParameterEnum.Parameters.toString(),
               common.ParameterEnum.DefaultFilters.toString(),
               common.ParameterEnum.ListenFilters.toString(),
               common.ParameterEnum.Data.toString(),
@@ -66,7 +67,10 @@ export function checkTileUnknownParameters<T extends types.dzType>(
           }
 
           if (
-            [common.ParameterEnum.Select.toString()].indexOf(parameter) < 0 &&
+            [
+              common.ParameterEnum.Select.toString(),
+              common.ParameterEnum.Parameters.toString()
+            ].indexOf(parameter) < 0 &&
             Array.isArray(tile[parameter as keyof common.FilePartTile])
           ) {
             item.errors.push(
@@ -121,7 +125,10 @@ export function checkTileUnknownParameters<T extends types.dzType>(
           }
 
           if (
-            [common.ParameterEnum.Select.toString()].indexOf(parameter) > -1 &&
+            [
+              common.ParameterEnum.Select.toString(),
+              common.ParameterEnum.Parameters.toString()
+            ].indexOf(parameter) > -1 &&
             !Array.isArray(tile[parameter as keyof common.FilePartTile])
           ) {
             item.errors.push(

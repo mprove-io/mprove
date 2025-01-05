@@ -217,7 +217,7 @@ export function checkReportRow(
                   common.ErTitleEnum.MISSING_LISTEN_OR_FORMULA_OR_CONDITIONS,
                 message:
                   `"${common.ParameterEnum.Listen}", "${common.ParameterEnum.Formula}" or ` +
-                  `"${common.ParameterEnum.Conditions}" must be specified for a parameter`,
+                  `"${common.ParameterEnum.Conditions}" must be specified for a row parameter`,
                 lines: [
                   {
                     line: Math.min(...pKeysLineNums),

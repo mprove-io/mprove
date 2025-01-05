@@ -63,9 +63,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entReports.length, 0);
 
-  t.is(
-    errors[0].title,
-    common.ErTitleEnum.ROW_APPLY_TO_REFS_MISSING_VIEW_FIELD
-  );
+  t.is(errors[0].title, common.ErTitleEnum.APPLY_TO_REFS_MISSING_VIEW_FIELD);
   t.is(errors[0].lines[0].line, 8);
 });

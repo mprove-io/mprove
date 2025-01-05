@@ -25,6 +25,7 @@ export * from './file-project-conf';
 export * from './file-report';
 export * from './file-report-row';
 export * from './file-report-row-parameter';
+export * from './file-tile-parameter';
 export * from './file-udf';
 export * from './file-view';
 export * from './file-view-part';

@@ -63,7 +63,7 @@ export function checkReportRowParameters(
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.DUPLICATE_APPLY_TO,
-                message: 'Row apply_to values must be unique',
+                message: 'Row parameter apply_to must be unique',
                 lines: lines
               })
             );
@@ -94,7 +94,7 @@ export function checkReportRowParameters(
               if (common.isUndefined(r)) {
                 item.errors.push(
                   new BmError({
-                    title: common.ErTitleEnum.ROW_APPLY_TO_WRONG_REFERENCE,
+                    title: common.ErTitleEnum.APPLY_TO_WRONG_REFERENCE,
                     message: 'row apply_to must be in form "alias.field_name"',
                     lines: [
                       {
@@ -120,8 +120,7 @@ export function checkReportRowParameters(
                   item.errors.push(
                     new BmError({
                       title:
-                        common.ErTitleEnum
-                          .ROW_APPLY_TO_REFS_MISSING_MODEL_FIELD,
+                        common.ErTitleEnum.APPLY_TO_REFS_MISSING_MODEL_FIELD,
                       message:
                         `"${p.apply_to}" references missing or not valid field ` +
                         `"${fieldName}" of model "${model.name}" fields section`,
@@ -142,7 +141,7 @@ export function checkReportRowParameters(
                 if (common.isUndefined(join)) {
                   item.errors.push(
                     new BmError({
-                      title: common.ErTitleEnum.ROW_APPLY_TO_REFS_MISSING_ALIAS,
+                      title: common.ErTitleEnum.APPLY_TO_REFS_MISSING_ALIAS,
                       message:
                         `"${p.apply_to}" references missing alias ` +
                         `"${asName}" of model "${model.name}" joins section`,
@@ -166,7 +165,7 @@ export function checkReportRowParameters(
                   item.errors.push(
                     new BmError({
                       title:
-                        common.ErTitleEnum.ROW_APPLY_TO_REFS_MISSING_VIEW_FIELD,
+                        common.ErTitleEnum.APPLY_TO_REFS_MISSING_VIEW_FIELD,
                       message:
                         `"${p.apply_to}" references missing or not valid field ` +
                         `"${fieldName}" of view "${join.view.name}". ` +
@@ -187,7 +186,7 @@ export function checkReportRowParameters(
               if (common.isDefined(p.listen) && common.isDefined(p.formula)) {
                 item.errors.push(
                   new BmError({
-                    title: common.ErTitleEnum.ROW_PARAMETER_WRONG_COMBINATION,
+                    title: common.ErTitleEnum.PARAMETER_WRONG_COMBINATION,
                     message: `found that both parameters "formula" and "listen" are specified`,
                     lines: [
                       {
@@ -207,7 +206,7 @@ export function checkReportRowParameters(
               ) {
                 item.errors.push(
                   new BmError({
-                    title: common.ErTitleEnum.ROW_PARAMETER_WRONG_COMBINATION,
+                    title: common.ErTitleEnum.PARAMETER_WRONG_COMBINATION,
                     message: `found that both parameters "conditions" and "listen" are specified`,
                     lines: [
                       {
@@ -227,7 +226,7 @@ export function checkReportRowParameters(
               ) {
                 item.errors.push(
                   new BmError({
-                    title: common.ErTitleEnum.ROW_PARAMETER_WRONG_COMBINATION,
+                    title: common.ErTitleEnum.PARAMETER_WRONG_COMBINATION,
                     message: `found that both parameters "formula" and "conditions" are specified`,
                     lines: [
                       {
@@ -254,8 +253,7 @@ export function checkReportRowParameters(
                 if (p.conditions.length === 0) {
                   item.errors.push(
                     new BmError({
-                      title:
-                        common.ErTitleEnum.ROW_APPLY_TO_CONDITIONS_IS_EMPTY,
+                      title: common.ErTitleEnum.APPLY_TO_CONDITIONS_IS_EMPTY,
                       message: `apply_to conditions can not be empty`,
                       lines: [
                         {
@@ -278,7 +276,7 @@ export function checkReportRowParameters(
                 if (pf.valid === 0) {
                   item.errors.push(
                     new BmError({
-                      title: common.ErTitleEnum.ROW_APPLY_TO_WRONG_CONDITIONS,
+                      title: common.ErTitleEnum.APPLY_TO_WRONG_CONDITIONS,
                       message:
                         `wrong expression "${pf.brick}" of apply_to "${p.apply_to}" ` +
                         `for ${common.ParameterEnum.Result} "${pResult}" `,

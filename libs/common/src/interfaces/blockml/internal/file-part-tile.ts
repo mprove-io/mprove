@@ -7,6 +7,7 @@ import { FileChartAxis } from './file-chart-axis';
 import { FileChartData } from './file-chart-data';
 import { FileChartOptions } from './file-chart-options';
 import { FileChartPlate } from './file-chart-plate';
+import { FileTileParameter } from './file-tile-parameter';
 
 export interface FilePartTile {
   title?: string;
@@ -41,6 +42,9 @@ export interface FilePartTile {
 
   plate?: FileChartPlate;
   plate_line_num?: number;
+
+  parameters?: FileTileParameter[];
+  parameters_line_num?: number;
 
   listen_filters?: {
     [dashboardFilterName: string]: string;
