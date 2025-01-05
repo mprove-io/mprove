@@ -99,39 +99,6 @@ export async function buildTile<T extends types.dzType>(
     cs
   );
 
-  entities = barTile.checkListenFilters(
-    {
-      entities: entities,
-      models: item.models,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
-  entities = barTile.checkDefaultFilters(
-    {
-      entities: entities,
-      models: item.models,
-      structId: item.structId,
-      caseSensitiveStringFilters: item.caseSensitiveStringFilters,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
-  entities = barTile.combineTileFilters(
-    {
-      entities: entities,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
   entities = await barTile.fetchSql(
     {
       traceId: item.traceId,

@@ -33,15 +33,26 @@ export const TILE_SCHEMA: JSONSchema7 = {
     limit: {
       type: 'integer'
     },
-    listen_filters: {
-      additionalProperties: { type: 'string' }
-    },
-    default_filters: {
-      additionalProperties: {
-        type: 'array',
-        items: {
-          type: 'string'
-        }
+    parameters: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          apply_to: {
+            type: 'string'
+          },
+          listen: {
+            type: 'string'
+          },
+          conditions: {
+            type: 'array',
+            items: {
+              type: 'string'
+            }
+          }
+        },
+        required: ['apply_to']
       }
     },
     type: {

@@ -1,4 +1,4 @@
-import { FilePartTile, isUndefined } from '~common/_index';
+import { FilePartTile, FileTileParameter, isUndefined } from '~common/_index';
 import { constants } from '~common/barrels/constants';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
 import { TileX } from '~common/interfaces/backend/tile-x';
@@ -21,7 +21,7 @@ export function prepareTile(item: {
 
   let chart = mconfig.chart;
 
-  let defaultFilters: any = {};
+  let parameters: FileTileParameter[] = [];
 
   if (isDefined(mconfig.filters) && mconfig.filters.length > 0) {
     mconfig.filters.forEach(x => {
@@ -33,12 +33,15 @@ export function prepareTile(item: {
         tile.title !== deleteFilterTileTitle ||
         x.fieldId !== deleteFilterFieldId
       ) {
-        defaultFilters[x.fieldId] = bricks;
+        let parameter: FileTileParameter = {
+          apply_to: x.fieldId,
+          conditions: bricks
+        };
+
+        parameters.push(parameter);
       }
     });
   }
-
-  let listenFilters: { [a: string]: string } = {};
 
   if (
     isForDashboard === true &&
@@ -54,19 +57,18 @@ export function prepareTile(item: {
       ) {
         let dashboardFieldName = tile.listen[x];
 
-        if (isDefined(listenFilters[dashboardFieldName])) {
-          listenFilters[dashboardFieldName] = listenFilters[
-            dashboardFieldName
-          ].concat(`, ${x}`);
-        } else {
-          listenFilters[dashboardFieldName] = x;
-        }
-      }
-    });
+        let parameter = parameters.find(p => p.apply_to === x);
 
-    Object.keys(defaultFilters).forEach(y => {
-      if (isDefined(tile.listen[y])) {
-        delete defaultFilters[y];
+        if (isDefined(parameter)) {
+          parameter.listen = dashboardFieldName;
+          parameter.conditions = undefined;
+        } else {
+          parameter = {
+            apply_to: x,
+            listen: dashboardFieldName
+          };
+          parameters.push(parameter);
+        }
       }
     });
   }
@@ -82,12 +84,7 @@ export function prepareTile(item: {
       mconfig.limit !== Number(constants.DEFAULT_LIMIT)
         ? <any>mconfig.limit
         : undefined,
-    default_filters:
-      Object.keys(defaultFilters).length > 0 ? defaultFilters : undefined,
-    listen_filters:
-      isForDashboard === true && Object.keys(listenFilters).length > 0
-        ? listenFilters
-        : undefined,
+    parameters: Object.keys(parameters).length > 0 ? parameters : undefined,
     type: chart.type,
     data: {
       x_field:

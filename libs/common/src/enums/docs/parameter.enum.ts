@@ -22,7 +22,6 @@ export enum ParameterEnum {
   CurrencyPrefix = 'currency_prefix',
   CurrencySuffix = 'currency_suffix',
   Dashboard = 'dashboard',
-  DefaultFilters = 'default_filters',
   DerivedTable = 'derived_table',
   Dimension = 'dimension',
   Description = 'description',
@@ -46,7 +45,6 @@ export enum ParameterEnum {
   Joins = 'joins',
   Label = 'label',
   Limit = 'limit',
-  ListenFilters = 'listen_filters',
   Listen = 'listen',
   Measure = 'measure',
 

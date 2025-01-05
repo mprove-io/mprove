@@ -118,11 +118,8 @@ export enum FuncEnum {
   CheckSelectElements = '14-tile/04-check-select-elements',
   CheckSorts = '14-tile/05-check-sorts',
   CheckLimit = '14-tile/07-check-limit',
-  CheckTileParameters = '14-tile/07.1-check-tile-parameters',
-  CheckListenFilters = '14-tile/08-check-listen-filters',
-  CheckDefaultFilters = '14-tile/09-check-default-filters',
-  CombineTileFilters = '14-tile/10-combine-tile-filters',
-  FetchSql = '14-tile/11-fetch-sql',
+  CheckTileParameters = '14-tile/08-check-tile-parameters',
+  FetchSql = '14-tile/09-fetch-sql',
 
   CheckChartType = '15-mconfig-chart/01-check-chart-type',
   CheckChartData = '15-mconfig-chart/02-check-chart-data',

@@ -46,14 +46,6 @@ export interface FilePartTile {
   parameters?: FileTileParameter[];
   parameters_line_num?: number;
 
-  listen_filters?: {
-    [dashboardFilterName: string]: string;
-  };
-  listen_filters_line_num?: number;
-
-  default_filters?: FilterBricksDictionary;
-  default_filters_line_num?: number;
-
   //
 
   sortingsAry?: {

@@ -39,8 +39,6 @@ export function checkTileUnknownParameters<T extends types.dzType>(
               common.ParameterEnum.Limit.toString(),
               common.ParameterEnum.Type.toString(),
               common.ParameterEnum.Parameters.toString(),
-              common.ParameterEnum.DefaultFilters.toString(),
-              common.ParameterEnum.ListenFilters.toString(),
               common.ParameterEnum.Data.toString(),
               // common.ParameterEnum.Axis.toString(),
               common.ParameterEnum.Options.toString(),
@@ -96,8 +94,6 @@ export function checkTileUnknownParameters<T extends types.dzType>(
             tile[parameter as keyof common.FilePartTile]?.constructor ===
               Object &&
             [
-              common.ParameterEnum.DefaultFilters.toString(),
-              common.ParameterEnum.ListenFilters.toString(),
               common.ParameterEnum.Data.toString(),
               // common.ParameterEnum.Axis.toString(),
               common.ParameterEnum.Options.toString(),
@@ -155,8 +151,6 @@ export function checkTileUnknownParameters<T extends types.dzType>(
             tile[parameter as keyof common.FilePartTile].constructor !==
               Object &&
             [
-              common.ParameterEnum.DefaultFilters.toString(),
-              common.ParameterEnum.ListenFilters.toString(),
               common.ParameterEnum.Data.toString(),
               // common.ParameterEnum.Axis.toString(),
               common.ParameterEnum.Options.toString(),

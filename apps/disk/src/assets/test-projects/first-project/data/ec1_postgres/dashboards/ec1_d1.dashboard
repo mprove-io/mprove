@@ -18,9 +18,11 @@ tiles:
   - products.category
   - order_items.average_sale_price
   sorts: order_items.average_sale_price desc
-  listen_filters:
-    order_date: orders.created___date
-    product_brand: products.brand
+  parameters:
+  - apply_to: orders.created___date
+    listen: order_date
+  - apply_to: products.brand
+    listen: product_brand
   type: table
   plate:
     plate_width: 8
@@ -34,9 +36,11 @@ tiles:
   - users.gender
   - users.count
   sorts: users.gender desc
-  listen_filters:
-    order_date: orders.created___date
-    product_brand: products.brand
+  parameters:
+  - apply_to: orders.created___date
+    listen: order_date
+  - apply_to: products.brand
+    listen: product_brand
   type: e_pie
   data:
     x_field: users.gender
@@ -52,9 +56,11 @@ tiles:
   select:
   - mf.total_profit
   - users.traffic_source
-  listen_filters:
-    order_date: orders.created___date
-    product_brand: products.brand
+  parameters:
+  - apply_to: orders.created___date
+    listen: order_date
+  - apply_to: products.brand
+    listen: product_brand
   type: e_pie
   data:
     x_field: users.traffic_source
@@ -71,9 +77,11 @@ tiles:
   - user_order_facts.first_order_created___year
   - order_items.total_sale_price
   - orders.created___quarter
-  listen_filters:
-    order_date: orders.created___date
-    product_brand: products.brand
+  parameters:
+  - apply_to: orders.created___date
+    listen: order_date
+  - apply_to: products.brand
+    listen: product_brand
   type: e_line
   data:
     x_field: orders.created___quarter
@@ -93,9 +101,11 @@ tiles:
   - order_items.total_sale_price
   sorts: order_items.total_sale_price desc
   limit: 10
-  listen_filters:
-    order_date: orders.created___date
-    product_brand: products.brand
+  parameters:
+  - apply_to: orders.created___date
+    listen: order_date
+  - apply_to: products.brand
+    listen: product_brand
   type: e_pie
   data:
     x_field: products.brand
@@ -110,9 +120,11 @@ tiles:
   model: ec1_m1
   select:
   - users.count
-  listen_filters:
-    order_date: orders.created___date
-    product_brand: products.brand
+  parameters:
+  - apply_to: orders.created___date
+    listen: order_date
+  - apply_to: products.brand
+    listen: product_brand
   type: table
   plate:
     plate_width: 4
@@ -124,9 +136,11 @@ tiles:
   model: ec1_m1
   select:
   - orders.count
-  listen_filters:
-    order_date: orders.created___date
-    product_brand: products.brand
+  parameters:
+  - apply_to: orders.created___date
+    listen: order_date
+  - apply_to: products.brand
+    listen: product_brand
   type: table
   plate:
     plate_width: 4
@@ -138,9 +152,11 @@ tiles:
   model: ec1_m1
   select:
   - products.count
-  listen_filters:
-    order_date: orders.created___date
-    product_brand: products.brand
+  parameters:
+  - apply_to: orders.created___date
+    listen: order_date
+  - apply_to: products.brand
+    listen: product_brand
   type: table
   plate:
     plate_width: 4
@@ -152,9 +168,11 @@ tiles:
   model: ec1_m1
   select:
   - order_items.total_sale_price
-  listen_filters:
-    order_date: orders.created___date
-    product_brand: products.brand
+  parameters:
+  - apply_to: orders.created___date
+    listen: order_date
+  - apply_to: products.brand
+    listen: product_brand
   type: table
   plate:
     plate_width: 4
@@ -166,9 +184,11 @@ tiles:
   model: ec1_m1
   select:
   - inventory_items.total_actual_cost
-  listen_filters:
-    order_date: orders.created___date
-    product_brand: products.brand
+  parameters:
+  - apply_to: orders.created___date
+    listen: order_date
+  - apply_to: products.brand
+    listen: product_brand
   type: table
   plate:
     plate_width: 4
@@ -180,9 +200,11 @@ tiles:
   model: ec1_m1
   select:
   - mf.total_profit
-  listen_filters:
-    order_date: orders.created___date
-    product_brand: products.brand
+  parameters:
+  - apply_to: orders.created___date
+    listen: order_date
+  - apply_to: products.brand
+    listen: product_brand
   type: table
   plate:
     plate_width: 4
@@ -197,9 +219,11 @@ tiles:
   - order_items.total_sale_price
   - mf.total_profit
   sorts: orders.created___month
-  listen_filters:
-    order_date: orders.created___date
-    product_brand: products.brand
+  parameters:
+  - apply_to: orders.created___date
+    listen: order_date
+  - apply_to: products.brand
+    listen: product_brand
   type: e_line
   data:
     x_field: orders.created___month
@@ -218,9 +242,11 @@ tiles:
   - users.age_group
   - users.count
   sorts: users.age_group
-  listen_filters:
-    order_date: orders.created___date
-    product_brand: products.brand
+  parameters:
+  - apply_to: orders.created___date
+    listen: order_date
+  - apply_to: products.brand
+    listen: product_brand
   type: e_bar
   data:
     x_field: users.age_group

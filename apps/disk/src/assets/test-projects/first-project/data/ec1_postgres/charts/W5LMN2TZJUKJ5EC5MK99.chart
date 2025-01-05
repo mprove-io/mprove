@@ -6,12 +6,18 @@ tiles:
   - order_items.total_sale_price
   - inventory_items.total_actual_cost
   - mf.total_profit
-  default_filters:
-    users.gender:
+  type: table
+  parameters:
+  - apply_to: users.gender
+    conditions:
     - '-Female-'
-    users.state_name:
+
+  - apply_to: users.state_name
+    conditions:
     - '-Delaware-'
     - '-Montana-'
-    orders.created___date:
+  
+  - apply_to: orders.created___date
+    conditions:
     - on 2020
-  type: table
+
