@@ -64,8 +64,6 @@ export class DataService {
 
   private convertToNumberOrNull(x: any) {
     let xNum = common.isDefined(x) ? Number(x) : null;
-    // let y =
-    //   common.isDefined(xNum) && Number.isNaN(xNum) === false ? xNum : null;
     let y = common.isDefined(xNum) && this.isNumberString(xNum) ? xNum : null;
     return y;
   }

@@ -15,6 +15,7 @@ export * from './project';
 export * from './project-report-link';
 export * from './projects-item';
 export * from './query-estimate';
+export * from './report-data-column';
 export * from './report-x';
 export * from './struct';
 export * from './suggest-field';

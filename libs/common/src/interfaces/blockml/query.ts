@@ -33,6 +33,9 @@ export class Query {
   @IsOptional()
   @IsJSON()
   data: any;
+  // data: {
+  //   [key: string]: any;
+  // }[];
 
   @IsOptional()
   @IsString()

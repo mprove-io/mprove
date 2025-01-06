@@ -1092,7 +1092,7 @@ export class ReportsService {
     } else {
       // console.log('isCalculateData false');
 
-      let recordsByColumn = this.docService.makeRecordsByColumn({
+      let reportDataColumns = this.docService.makeReportDataColumns({
         report: reportApi,
         timeSpec: timeSpec
       });
@@ -1106,23 +1106,26 @@ export class ReportsService {
         );
 
         row.records = common.isDefined(row.query)
-          ? recordsByColumn.map((y: any) => {
+          ? reportDataColumns.map(y => {
               let unixTimeZoned = Number(
                 y.fields.timestamp.toString().split('.')[0]
               );
               let unixDateZoned = new Date(unixTimeZoned * 1000);
               let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
-              let record = {
+              let record: common.RowRecord = {
                 id: y.id,
+                columnLabel: undefined,
                 key: unixTimeZoned,
                 tsUTC: tsUTC,
                 value: common.isDefined(y.fields)
                   ? y.fields[row.rowId]
                   : undefined,
-                error: common.isDefined(y.errors)
-                  ? y.errors[row.rowId]
-                  : undefined
+                error:
+                  // common.isDefined(y.errors)
+                  //   ? y.errors[row.rowId]
+                  //   :
+                  undefined
               };
 
               return record;

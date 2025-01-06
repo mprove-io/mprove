@@ -547,13 +547,13 @@ Formula must return a valid JSON object.`;
         });
     }
 
-    let recordsByColumn = this.makeRecordsByColumn({
+    let reportDataColumns = this.makeReportDataColumns({
       report: report,
       timeSpec: timeSpec
     });
 
-    // console.log('recordsByColumn:');
-    // console.log(recordsByColumn);
+    // console.log('reportDataColumns:');
+    // console.log(reportDataColumns);
 
     let topQueryData: any[] = [];
     let topQueryError: any;
@@ -574,14 +574,14 @@ Formula must return a valid JSON object.`;
         ssl: false
       };
 
-      let timestampValues = recordsByColumn.map(x => x.fields['timestamp']);
+      let timestampValues = reportDataColumns.map(x => x.fields['timestamp']);
 
       let mainSelect = [
         `unnest(ARRAY[${timestampValues}]::bigint[]) AS timestamp`,
         ...report.rows
           .filter(row => row.rowType === common.RowTypeEnum.Metric)
           .map(row => {
-            let values = recordsByColumn.map(r =>
+            let values = reportDataColumns.map(r =>
               common.isDefined(r.fields[row.rowId])
                 ? r.fields[row.rowId]
                 : 'NULL'
@@ -687,19 +687,20 @@ FROM main;`;
           common.isDefined(row.formulaError)
         ) {
           row.topQueryError = row.formulaError;
-          row.records = recordsByColumn.map((y: any, index) => {
+          row.records = reportDataColumns.map((y: any, index) => {
             let unixTimeZoned = Number(
               y.fields['timestamp'].toString().split('.')[0]
             );
             let unixDateZoned = new Date(unixTimeZoned * 1000);
             let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
-            let record = {
+            let record: common.RowRecord = {
+              columnLabel: undefined,
               id: index + 1,
               key: unixTimeZoned,
               tsUTC: tsUTC,
-              value: undefined as any,
-              error: undefined as any
+              value: undefined,
+              error: undefined
             };
 
             return record;
@@ -709,19 +710,20 @@ FROM main;`;
           common.isDefined(topQueryError)
         ) {
           row.topQueryError = topQueryError;
-          row.records = recordsByColumn.map((y: any, index) => {
+          row.records = reportDataColumns.map((y: any, index) => {
             let unixTimeZoned = Number(
               y.fields['timestamp'].toString().split('.')[0]
             );
             let unixDateZoned = new Date(unixTimeZoned * 1000);
             let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
-            let record = {
+            let record: common.RowRecord = {
+              columnLabel: undefined,
               id: index + 1,
               key: unixTimeZoned,
               tsUTC: tsUTC,
-              value: undefined as any,
-              error: undefined as any
+              value: undefined,
+              error: undefined
             };
 
             return record;
@@ -732,19 +734,20 @@ FROM main;`;
         ) {
           row.topQueryError = topQueryError;
 
-          row.records = recordsByColumn.map((y: any, index) => {
+          row.records = reportDataColumns.map((y: any, index) => {
             let unixTimeZoned = Number(
               y.fields['timestamp'].toString().split('.')[0]
             );
             let unixDateZoned = new Date(unixTimeZoned * 1000);
             let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
-            let record = {
+            let record: common.RowRecord = {
+              columnLabel: undefined,
               id: index + 1,
               key: unixTimeZoned,
               tsUTC: tsUTC,
               value: y.fields[row.rowId],
-              error: undefined as any
+              error: undefined
             };
 
             return record;
@@ -757,12 +760,13 @@ FROM main;`;
             let unixDateZoned = new Date(unixTimeZoned * 1000);
             let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
-            let record = {
+            let record: common.RowRecord = {
+              columnLabel: undefined,
               id: index + 1,
               key: unixTimeZoned,
               tsUTC: tsUTC,
               value: y[row.rowId.toLowerCase()],
-              error: undefined as any
+              error: undefined
             };
 
             return record;
@@ -819,13 +823,13 @@ FROM main;`;
     return report;
   }
 
-  makeRecordsByColumn(item: {
+  makeReportDataColumns(item: {
     report: common.ReportX;
     timeSpec: common.TimeSpecEnum;
   }) {
     let { report, timeSpec } = item;
 
-    let recordsByColumn = report.columns.map((column, i) => {
+    let reportDataColumns = report.columns.map((column, i) => {
       let tsDate = fromUnixTime(column.columnId);
 
       let timeValue =
@@ -845,7 +849,7 @@ FROM main;`;
           ? format(tsDate, 'yyyy-MM-dd HH:mm')
           : undefined;
 
-      let record: any = {
+      let reportDataColumn: common.ReportDataColumn = {
         id: i,
         fields: {
           timestamp: column.columnId
@@ -879,7 +883,9 @@ FROM main;`;
           );
 
           if (common.isDefined(dataRow)) {
-            record.fields[row.rowId] = common.isUndefined(dataRow[fieldId])
+            reportDataColumn.fields[row.rowId] = common.isUndefined(
+              dataRow[fieldId]
+            )
               ? undefined
               : isNaN(dataRow[fieldId]) === false
               ? Number(dataRow[fieldId])
@@ -887,9 +893,9 @@ FROM main;`;
           }
         });
 
-      return record;
+      return reportDataColumn;
     });
 
-    return recordsByColumn;
+    return reportDataColumns;
   }
 }

@@ -5,6 +5,7 @@ import { MconfigX } from '../backend/mconfig-x';
 import { Filter } from './filter';
 import { Parameter } from './parameter';
 import { Query } from './query';
+import { RowRecord } from './row-record';
 import { Rq } from './rq';
 
 export class Row {
@@ -105,7 +106,7 @@ export class Row {
   @Type(() => Rq)
   rqs: Rq[];
 
-  records: any[];
+  records: RowRecord[];
 
   @IsString()
   formatNumber: string;

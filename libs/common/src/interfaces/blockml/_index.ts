@@ -28,6 +28,7 @@ export * from './report';
 export * from './report-field';
 export * from './row';
 export * from './row-change';
+export * from './row-record';
 export * from './rq';
 export * from './sorting';
 export * from './tile';
