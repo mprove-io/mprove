@@ -3,7 +3,9 @@
     <div class="mx-6 mb-6 mt-8 flex min-w-[2px] flex-grow flex-col">
       <div class="flex h-11 flex-row items-center justify-between">
         <div class="flex w-full flex-row items-center">
-          <div class="flex w-1/4 flex-row items-center justify-between">
+          <div
+            class="flex w-1/4 flex-shrink-0 flex-row items-center justify-between"
+          >
             <div class="flex flex-row">
               <div
                 data-cy="metricsTitle"
@@ -42,54 +44,153 @@
               </div>
             </div>
 
-            <div
-              class="flex flex-1 flex-row items-center justify-start space-x-5"
-            >
-              <div class="text-gray1 ml-6 select-none text-base">Timezone</div>
+            <div class="flex-grow"></div>
 
-              <div class="flex max-w-[260px] flex-1">
-                <form
-                  class="w-full"
-                  [formGroup]="timezoneForm"
-                  tp="Timezone change is not allowed"
-                  [tpIsEnabled]="
-                    timezoneForm.controls['timezone'].disabled === true
+            <div class="flex flex-1 flex-row items-center justify-start">
+              <!-- <div class="text-gray1 ml-6 select-none text-base">Spec</div> -->
+
+              <form class="ml-5" [formGroup]="timeSpecForm">
+                <ng-select
+                  #timeSpecSelect
+                  data-cy="timeSpecSelect"
+                  class="popup-55 w-[160px]"
+                  [items]="timeSpecList"
+                  [clearable]="false"
+                  [searchable]="false"
+                  (change)="timeSpecChange()"
+                  (keyup.esc)="
+                    $event.stopImmediatePropagation(); timeSpecSelect.blur()
                   "
+                  (keyup.enter)="
+                    $event.stopImmediatePropagation(); timeSpecSelect.blur()
+                  "
+                  appendTo="body"
+                  bindLabel="label"
+                  bindValue="value"
+                  formControlName="timeSpec"
                 >
-                  <ng-select
-                    #metricsTimezoneSelect
-                    data-cy="metricsTimezoneSelect"
-                    class="w-full text-base"
-                    [items]="timezones"
-                    [clearable]="false"
-                    [searchable]="true"
-                    [searchFn]="timezoneSearchFn"
-                    (change)="timezoneChange()"
-                    (keyup.esc)="
-                      $event.stopImmediatePropagation();
-                      metricsTimezoneSelect.blur()
-                    "
-                    (keyup.enter)="
-                      $event.stopImmediatePropagation();
-                      metricsTimezoneSelect.blur()
-                    "
-                    appendTo="body"
-                    bindLabel="label"
-                    bindValue="value"
-                    formControlName="timezone"
-                  >
-                    <ng-template ng-label-tmp let-item="item">
-                      <div class="truncate">{{ item.label }}</div>
-                    </ng-template>
+                  <ng-template ng-label-tmp let-item="item">
+                    <div class="ml-1 truncate">{{ item.label }}</div>
+                  </ng-template>
 
-                    <ng-template ng-option-tmp let-item="item">
-                      <div class="truncate">{{ item.label }}</div>
-                    </ng-template>
-                  </ng-select>
-                </form>
-              </div>
+                  <ng-template ng-option-tmp let-item="item">
+                    <div class="ml-1 truncate">{{ item.label }}</div>
+                  </ng-template>
+                </ng-select>
+              </form>
 
-              <!-- <div class="flex-1"></div> -->
+              <!-- <button
+            class="ml-2 flex h-9 select-none items-center justify-center rounded border border-2 w-[36px] py-3 text-lg font-semibold focus:outline-none"
+            [ngClass]="{
+              'text-blue-500':
+                timeSpecForm.controls['timeSpec'].value === timeSpecTimestamps,
+              'border-transparent text-gray-500':
+                timeSpecForm.controls['timeSpec'].value !== timeSpecTimestamps
+            }"
+            (click)="timeSpecChange(timeSpecTimestamps)"
+            >T</button
+          > -->
+
+              <!-- <button
+            class="ml-2 flex h-9 select-none items-center justify-center rounded border border-2 w-[36px] py-3 text-lg font-semibold focus:outline-none"
+            [ngClass]="{
+              'text-blue-500':
+                timeSpecForm.controls['timeSpec'].value === timeSpecMinutes,
+              'border-transparent text-gray-500':
+                timeSpecForm.controls['timeSpec'].value !== timeSpecMinutes
+            }"
+            (click)="timeSpecChange(timeSpecMinutes)"
+            >M</button
+          > -->
+
+              <!-- <button
+            class="ml-2 flex h-9 select-none items-center justify-center rounded border border-2 w-[36px] py-3 text-lg font-semibold focus:outline-none"
+            [ngClass]="{
+              'text-blue-500':
+                timeSpecForm.controls['timeSpec'].value === timeSpecHours,
+              'border-transparent text-gray-500':
+                timeSpecForm.controls['timeSpec'].value !== timeSpecHours
+            }"
+            (click)="timeSpecChange(timeSpecHours)"
+            >H</button
+          > -->
+
+              <button
+                class="ml-5 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
+                [ngClass]="{
+                  'text-blue-500':
+                    timeSpecForm.controls['timeSpec'].value ===
+                    timeSpecTimestamps,
+                  'border-transparent text-gray-500':
+                    timeSpecForm.controls['timeSpec'].value !==
+                    timeSpecTimestamps
+                }"
+                (click)="timeSpecChange(timeSpecTimestamps)"
+              >
+                <div> T </div>
+              </button>
+
+              <button
+                class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
+                [ngClass]="{
+                  'text-blue-500':
+                    timeSpecForm.controls['timeSpec'].value === timeSpecDays,
+                  'border-transparent text-gray-500':
+                    timeSpecForm.controls['timeSpec'].value !== timeSpecDays
+                }"
+                (click)="timeSpecChange(timeSpecDays)"
+              >
+                <div> D </div>
+              </button>
+
+              <button
+                class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
+                [ngClass]="{
+                  'text-blue-500':
+                    timeSpecForm.controls['timeSpec'].value === timeSpecWeeks,
+                  'border-transparent text-gray-500':
+                    timeSpecForm.controls['timeSpec'].value !== timeSpecWeeks
+                }"
+                (click)="timeSpecChange(timeSpecWeeks)"
+                >W</button
+              >
+
+              <button
+                class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
+                [ngClass]="{
+                  'text-blue-500':
+                    timeSpecForm.controls['timeSpec'].value === timeSpecMonths,
+                  'border-transparent text-gray-500':
+                    timeSpecForm.controls['timeSpec'].value !== timeSpecMonths
+                }"
+                (click)="timeSpecChange(timeSpecMonths)"
+                >M</button
+              >
+
+              <!-- <button
+                class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
+                [ngClass]="{
+                  'text-blue-500':
+                    timeSpecForm.controls['timeSpec'].value ===
+                    timeSpecQuarters,
+                  'border-transparent text-gray-500':
+                    timeSpecForm.controls['timeSpec'].value !== timeSpecQuarters
+                }"
+                (click)="timeSpecChange(timeSpecQuarters)"
+                >Q</button
+              > -->
+
+              <!-- <button
+                class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
+                [ngClass]="{
+                  'text-blue-500':
+                    timeSpecForm.controls['timeSpec'].value === timeSpecYears,
+                  'border-transparent text-gray-500':
+                    timeSpecForm.controls['timeSpec'].value !== timeSpecYears
+                }"
+                (click)="timeSpecChange(timeSpecYears)"
+                >Y</button
+              > -->
             </div>
           </div>
 
@@ -122,168 +223,64 @@
 
           <div class="flex-grow"></div>
 
-          <!-- <button
-            class="ml-2 flex h-9 select-none items-center justify-center rounded border border-2 w-[36px] py-3 text-lg font-semibold focus:outline-none"
-            [ngClass]="{
-              'text-blue-500':
-                timeSpecForm.controls['timeSpec'].value === timeSpecMinutes,
-              'border-transparent text-gray-500':
-                timeSpecForm.controls['timeSpec'].value !== timeSpecMinutes
-            }"
-            (click)="timeSpecChange(timeSpecMinutes)"
-            >M</button
-          > -->
-
-          <!-- <button
-            class="ml-2 flex h-9 select-none items-center justify-center rounded border border-2 w-[36px] py-3 text-lg font-semibold focus:outline-none"
-            [ngClass]="{
-              'text-blue-500':
-                timeSpecForm.controls['timeSpec'].value === timeSpecHours,
-              'border-transparent text-gray-500':
-                timeSpecForm.controls['timeSpec'].value !== timeSpecHours
-            }"
-            (click)="timeSpecChange(timeSpecHours)"
-            >H</button
-          > -->
-
-          <button
-            class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
-            [ngClass]="{
-              'text-blue-500':
-                timeSpecForm.controls['timeSpec'].value === timeSpecDays,
-              'border-transparent text-gray-500':
-                timeSpecForm.controls['timeSpec'].value !== timeSpecDays
-            }"
-            (click)="timeSpecChange(timeSpecDays)"
-          >
-            <div> D </div>
-          </button>
-
-          <button
-            class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
-            [ngClass]="{
-              'text-blue-500':
-                timeSpecForm.controls['timeSpec'].value === timeSpecWeeks,
-              'border-transparent text-gray-500':
-                timeSpecForm.controls['timeSpec'].value !== timeSpecWeeks
-            }"
-            (click)="timeSpecChange(timeSpecWeeks)"
-            >W</button
-          >
-
-          <button
-            class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
-            [ngClass]="{
-              'text-blue-500':
-                timeSpecForm.controls['timeSpec'].value === timeSpecMonths,
-              'border-transparent text-gray-500':
-                timeSpecForm.controls['timeSpec'].value !== timeSpecMonths
-            }"
-            (click)="timeSpecChange(timeSpecMonths)"
-            >M</button
-          >
-
-          <button
-            class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
-            [ngClass]="{
-              'text-blue-500':
-                timeSpecForm.controls['timeSpec'].value === timeSpecQuarters,
-              'border-transparent text-gray-500':
-                timeSpecForm.controls['timeSpec'].value !== timeSpecQuarters
-            }"
-            (click)="timeSpecChange(timeSpecQuarters)"
-            >Q</button
-          >
-
-          <button
-            class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
-            [ngClass]="{
-              'text-blue-500':
-                timeSpecForm.controls['timeSpec'].value === timeSpecYears,
-              'border-transparent text-gray-500':
-                timeSpecForm.controls['timeSpec'].value !== timeSpecYears
-            }"
-            (click)="timeSpecChange(timeSpecYears)"
-            >Y</button
-          >
-
-          <!-- <div class="text-gray1 ml-6 select-none text-base">Spec</div> -->
-
-          <form class="ml-5" [formGroup]="timeSpecForm">
-            <ng-select
-              #timeSpecSelect
-              data-cy="timeSpecSelect"
-              class="popup-55 w-32"
-              [items]="timeSpecList"
-              [clearable]="false"
-              [searchable]="false"
-              (change)="timeSpecChange()"
-              (keyup.esc)="
-                $event.stopImmediatePropagation(); timeSpecSelect.blur()
-              "
-              (keyup.enter)="
-                $event.stopImmediatePropagation(); timeSpecSelect.blur()
-              "
-              appendTo="body"
-              bindLabel="label"
-              bindValue="value"
-              formControlName="timeSpec"
-            >
-              <ng-template ng-label-tmp let-item="item">
-                <div class="ml-1 truncate">{{ item.label }}</div>
-              </ng-template>
-
-              <ng-template ng-option-tmp let-item="item">
-                <div class="ml-1 truncate">{{ item.label }}</div>
-              </ng-template>
-            </ng-select>
-          </form>
-
           <div
-            class="flex cursor-pointer flex-row items-center"
-            (click)="toggleAutoRun()"
+            *ngIf="!!lastCompletedQuery"
+            class="flex flex-row items-center justify-end"
           >
-            <ui-switch class="ml-7 mt-1" [checked]="isAutoRun"></ui-switch>
-
-            <div
-              class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
-              >Auto Run</div
-            >
+            <m-query-status
+              [query]="lastCompletedQuery"
+              [showDataRowsLength]="false"
+              [showLastCompleteDuration]="false"
+            ></m-query-status>
           </div>
 
-          <button
-            type="button"
-            data-cy="metricsRunButton"
-            class="ml-5 mr-9 flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
-            [ngClass]="{
-              'bg-blue3': queriesLength > 0,
-              'cursor-default':
-                queriesLength === 0 || isRunButtonPressed === true,
-              'bg-gray-400': queriesLength === 0
-            }"
-            (click)="run()"
-            [disabled]="queriesLength === 0 || isRunButtonPressed === true"
-          >
-            <div *ngIf="isRunButtonPressed === false">Run</div>
+          <div class="flex flex-shrink-0 flex-row">
             <div
-              *ngIf="isRunButtonPressed === true"
-              class="relative flex h-9 w-9 flex-shrink-0"
+              class="flex cursor-pointer flex-row items-center"
+              (click)="toggleAutoRun()"
             >
-              <ngx-spinner
-                [name]="metricsRunButtonSpinnerName"
-                color="rgba(255, 255, 255, 1)"
-                bdColor="rgba(0, 0, 0, 0)"
-                size="default"
-                type="ball-clip-rotate"
-                [fullScreen]="false"
-                [disableAnimation]="true"
-                [zIndex]="99998"
-              >
-              </ngx-spinner>
-            </div>
-          </button>
+              <ui-switch class="ml-7 mt-1" [checked]="isAutoRun"></ui-switch>
 
-          <div class="text-gray1 flex flex-row items-center text-base"> </div>
+              <div
+                class="text-gray1 ml-5 flex h-9 flex-shrink-0 select-none items-center text-base"
+                >Auto Run</div
+              >
+            </div>
+
+            <button
+              type="button"
+              data-cy="metricsRunButton"
+              class="ml-5 mr-9 flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
+              [ngClass]="{
+                'bg-blue3': queriesLength > 0,
+                'cursor-default':
+                  queriesLength === 0 || isRunButtonPressed === true,
+                'bg-gray-400': queriesLength === 0
+              }"
+              (click)="run()"
+              [disabled]="queriesLength === 0 || isRunButtonPressed === true"
+            >
+              <div *ngIf="isRunButtonPressed === false">Run</div>
+              <div
+                *ngIf="isRunButtonPressed === true"
+                class="relative flex h-9 w-9 flex-shrink-0"
+              >
+                <ngx-spinner
+                  [name]="metricsRunButtonSpinnerName"
+                  color="rgba(255, 255, 255, 1)"
+                  bdColor="rgba(0, 0, 0, 0)"
+                  size="default"
+                  type="ball-clip-rotate"
+                  [fullScreen]="false"
+                  [disableAnimation]="true"
+                  [zIndex]="99998"
+                >
+                </ngx-spinner>
+              </div>
+            </button>
+          </div>
+
+          <!-- <div class="text-gray1 flex flex-row items-center text-base"> </div> -->
         </div>
       </div>
 
@@ -305,6 +302,8 @@
                     <m-trash-icon></m-trash-icon>
                     <div class="ml-3">Drafts</div>
                   </button>
+
+                  <div class="flex flex-grow"></div>
                 </div>
 
                 <div class="mb-5 flex h-2 flex-grow flex-col overflow-y-auto">
@@ -398,6 +397,54 @@
                 <m-metrics-tree
                   class="flex w-full flex-1 flex-shrink-0"
                 ></m-metrics-tree>
+              </div>
+
+              <div class="mb-5 mr-5 mt-5 flex h-11 flex-row items-center">
+                <div class="text-gray1 ml-6 select-none text-base"
+                  >Timezone</div
+                >
+
+                <div class="ml-5 flex max-w-[260px] flex-1">
+                  <form
+                    class="w-full"
+                    [formGroup]="timezoneForm"
+                    tp="Timezone change is not allowed"
+                    [tpIsEnabled]="
+                      timezoneForm.controls['timezone'].disabled === true
+                    "
+                  >
+                    <ng-select
+                      #metricsTimezoneSelect
+                      data-cy="metricsTimezoneSelect"
+                      class="w-full text-base"
+                      [items]="timezones"
+                      [clearable]="false"
+                      [searchable]="true"
+                      [searchFn]="timezoneSearchFn"
+                      (change)="timezoneChange()"
+                      (keyup.esc)="
+                        $event.stopImmediatePropagation();
+                        metricsTimezoneSelect.blur()
+                      "
+                      (keyup.enter)="
+                        $event.stopImmediatePropagation();
+                        metricsTimezoneSelect.blur()
+                      "
+                      appendTo="body"
+                      bindLabel="label"
+                      bindValue="value"
+                      formControlName="timezone"
+                    >
+                      <ng-template ng-label-tmp let-item="item">
+                        <div class="truncate">{{ item.label }}</div>
+                      </ng-template>
+
+                      <ng-template ng-option-tmp let-item="item">
+                        <div class="truncate">{{ item.label }}</div>
+                      </ng-template>
+                    </ng-select>
+                  </form>
+                </div>
               </div>
             </div>
           </div>

@@ -349,11 +349,18 @@ export class BlockmlService {
     let rangeStart = blockmlGetTimeRangeResponse.payload.rangeStart;
     let rangeEnd = blockmlGetTimeRangeResponse.payload.rangeEnd;
 
-    let startDate = new Date(rangeStart * 1000);
-    let endDate = new Date(rangeEnd * 1000);
+    let startDate = common.isDefined(rangeStart)
+      ? new Date(rangeStart * 1000)
+      : undefined;
+
+    let endDate = common.isDefined(rangeEnd)
+      ? new Date(rangeEnd * 1000)
+      : undefined;
 
     let diffColumnsLength =
-      timeSpec === common.TimeSpecEnum.Years
+      timeSpec === common.TimeSpecEnum.Timestamps
+        ? 0
+        : timeSpec === common.TimeSpecEnum.Years
         ? differenceInYears(endDate, startDate)
         : timeSpec === common.TimeSpecEnum.Quarters
         ? differenceInQuarters(endDate, startDate)
@@ -421,8 +428,12 @@ export class BlockmlService {
     }
 
     let timeColumns =
+      common.isDefined(startDate) &&
+      common.isDefined(endDate) &&
       getUnixTime(startDate) === getUnixTime(endDate)
-        ? timeSpec === common.TimeSpecEnum.Years
+        ? timeSpec === common.TimeSpecEnum.Timestamps
+          ? [startDate]
+          : timeSpec === common.TimeSpecEnum.Years
           ? [startOfYear(startDate)]
           : timeSpec === common.TimeSpecEnum.Quarters
           ? [startOfQuarter(startDate)]
@@ -485,9 +496,20 @@ export class BlockmlService {
             start: startDate,
             end: endDate
           })
+        : timeSpec === common.TimeSpecEnum.Timestamps &&
+          common.isDefined(startDate) &&
+          common.isDefined(endDate)
+        ? [startDate, endDate]
+        : timeSpec === common.TimeSpecEnum.Timestamps &&
+          common.isDefined(startDate)
+        ? [startDate]
+        : timeSpec === common.TimeSpecEnum.Timestamps &&
+          common.isDefined(endDate)
+        ? [endDate]
         : undefined;
 
     if (
+      timeSpec !== common.TimeSpecEnum.Timestamps &&
       timeColumns.length > 1 &&
       getUnixTime(timeColumns[timeColumns.length - 1]) === getUnixTime(endDate)
     ) {

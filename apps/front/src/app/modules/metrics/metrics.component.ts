@@ -80,6 +80,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
   timeSpecDays = common.TimeSpecEnum.Days;
   timeSpecHours = common.TimeSpecEnum.Hours;
   timeSpecMinutes = common.TimeSpecEnum.Minutes;
+  timeSpecTimestamps = common.TimeSpecEnum.Timestamps;
 
   isAutoRun = true;
 
@@ -228,6 +229,10 @@ export class MetricsComponent implements OnInit, OnDestroy {
     {
       label: 'Minutes',
       value: common.TimeSpecEnum.Minutes
+    },
+    {
+      label: 'Timestamps',
+      value: common.TimeSpecEnum.Timestamps
     }
   ];
 
@@ -235,6 +240,9 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   eChartInitOpts: any;
   eChartOptions: EChartsOption;
+
+  isCompleted = false;
+  lastCompletedQuery: common.Query;
 
   completedQueriesAndFormulasLength = 0;
   newQueriesLength = 0;
@@ -287,6 +295,35 @@ export class MetricsComponent implements OnInit, OnDestroy {
         this.runningQueriesLength = runningQueriesLength;
         this.completedQueriesAndFormulasLength =
           completedQueriesAndFormulasLength;
+
+        let completedQueries = [
+          ...repChartData.rows.filter(
+            r =>
+              common.isDefined(r.query) &&
+              r.query.status === common.QueryStatusEnum.Completed
+          )
+        ]
+          .map(r => r.query)
+          .sort((a, b) =>
+            a.lastCompleteTs > b.lastCompleteTs
+              ? 1
+              : b.lastCompleteTs > a.lastCompleteTs
+              ? -1
+              : 0
+          );
+
+        if (
+          this.newQueriesLength === 0 &&
+          this.runningQueriesLength === 0 &&
+          completedQueries.length > 0
+        ) {
+          this.isCompleted = true;
+          this.lastCompletedQuery =
+            completedQueries[completedQueries.length - 1];
+        } else {
+          this.isCompleted = false;
+          this.lastCompletedQuery = undefined;
+        }
 
         let dataPoints: DataPoint[] = [];
 
@@ -367,9 +404,11 @@ export class MetricsComponent implements OnInit, OnDestroy {
           xAxis: {
             type: 'time',
             axisLabel:
-              [common.TimeSpecEnum.Hours, common.TimeSpecEnum.Minutes].indexOf(
-                this.uiQuery.getValue().timeSpec
-              ) > -1
+              [
+                common.TimeSpecEnum.Hours,
+                common.TimeSpecEnum.Minutes,
+                common.TimeSpecEnum.Timestamps
+              ].indexOf(this.uiQuery.getValue().timeSpec) > -1
                 ? { fontSize: 13 }
                 : {
                     fontSize: 13,
@@ -697,7 +736,10 @@ export class MetricsComponent implements OnInit, OnDestroy {
     if (fraction.type === common.FractionTypeEnum.TsIsInLast) {
       let newFraction = common.makeCopy(fraction);
 
-      newFraction.tsLastUnit = timeSpec;
+      newFraction.tsLastUnit =
+        timeSpec === common.TimeSpecEnum.Timestamps
+          ? common.FractionTsLastUnitEnum.Minutes
+          : timeSpec;
 
       newFraction = {
         brick:

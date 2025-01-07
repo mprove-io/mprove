@@ -562,6 +562,8 @@ export class DataService {
       ? common.TimeSpecEnum.Hours
       : fieldSqlName.match(/(?:___hour12)$/g)
       ? common.TimeSpecEnum.Hours
+      : fieldSqlName.match(/(?:___ts)$/g)
+      ? common.TimeSpecEnum.Timestamps
       : common.TimeSpecEnum.Minutes;
   }
 

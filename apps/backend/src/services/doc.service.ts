@@ -830,6 +830,9 @@ FROM main;`;
     let { report, timeSpec } = item;
 
     let reportDataColumns = report.columns.map((column, i) => {
+      // console.log('column.columnId');
+      // console.log(column.columnId);
+
       let tsDate = fromUnixTime(column.columnId);
 
       let timeValue =
@@ -847,7 +850,11 @@ FROM main;`;
           ? format(tsDate, 'yyyy-MM-dd HH')
           : timeSpec === common.TimeSpecEnum.Minutes
           ? format(tsDate, 'yyyy-MM-dd HH:mm')
-          : undefined;
+          : timeSpec === common.TimeSpecEnum.Timestamps
+          ? tsDate.toISOString() // TODO: toISOString
+          : // ? format(tsDate, 'yyyy-MM-dd HH:mm:ss')
+
+            undefined;
 
       let reportDataColumn: common.ReportDataColumn = {
         id: i,

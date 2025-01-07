@@ -76,7 +76,8 @@ export class GetTimeRangeService {
         : [
             common.FractionTypeEnum.TsIsBeforeDate,
             common.FractionTypeEnum.TsIsBeforeRelative
-          ].indexOf(timeRangeFraction.type) > -1
+          ].indexOf(timeRangeFraction.type) > -1 &&
+          timeSpec !== common.TimeSpecEnum.Timestamps
         ? getUnixTime(
             sub(
               fromUnixTime(rangeOpen),
@@ -117,7 +118,8 @@ export class GetTimeRangeService {
         : [
             common.FractionTypeEnum.TsIsAfterDate,
             common.FractionTypeEnum.TsIsAfterRelative
-          ].indexOf(timeRangeFraction.type) > -1
+          ].indexOf(timeRangeFraction.type) > -1 &&
+          timeSpec !== common.TimeSpecEnum.Timestamps
         ? getUnixTime(
             add(
               fromUnixTime(rangeOpen),

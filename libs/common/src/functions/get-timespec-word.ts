@@ -18,6 +18,8 @@ export function getTimeSpecWord(item: { timeSpec: enums.TimeSpecEnum }) {
       ? enums.TimeframeEnum.Hour
       : timeSpec === enums.TimeSpecEnum.Minutes
       ? enums.TimeframeEnum.Minute
+      : timeSpec === enums.TimeSpecEnum.Timestamps
+      ? enums.TimeframeEnum.Ts
       : undefined;
 
   return timeSpecWord;

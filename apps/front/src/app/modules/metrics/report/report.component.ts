@@ -59,8 +59,9 @@ export class ReportComponent {
             ['name', 'parameters'].indexOf(paramsColumn.colId) > -1
               ? uiState.metricsTimeColumnsNarrowWidth
               : [
-                  common.TimeSpecEnum.Hours,
-                  common.TimeSpecEnum.Minutes
+                  common.TimeSpecEnum.Timestamps,
+                  common.TimeSpecEnum.Minutes,
+                  common.TimeSpecEnum.Hours
                 ].indexOf(uiState.timeSpec) > -1
               ? uiState.metricsTimeColumnsNarrowWidth
               : paramsColumn.getActualWidth(),
@@ -68,8 +69,9 @@ export class ReportComponent {
             ['name', 'parameters'].indexOf(paramsColumn.colId) > -1
               ? uiState.metricsTimeColumnsWideWidth
               : [
-                  common.TimeSpecEnum.Hours,
-                  common.TimeSpecEnum.Minutes
+                  common.TimeSpecEnum.Timestamps,
+                  common.TimeSpecEnum.Minutes,
+                  common.TimeSpecEnum.Hours
                 ].indexOf(uiState.timeSpec) > -1
               ? paramsColumn.getActualWidth()
               : uiState.metricsTimeColumnsWideWidth
@@ -204,15 +206,19 @@ export class ReportComponent {
             cellRenderer: DataRendererComponent,
             type: 'numericColumn',
             width:
-              [common.TimeSpecEnum.Minutes, common.TimeSpecEnum.Hours].indexOf(
-                uiState.timeSpec
-              ) > -1
+              [
+                common.TimeSpecEnum.Timestamps,
+                common.TimeSpecEnum.Minutes,
+                common.TimeSpecEnum.Hours
+              ].indexOf(uiState.timeSpec) > -1
                 ? Math.max(220, timeColumnsWideWidth)
                 : Math.max(155, timeColumnsNarrowWidth),
             minWidth:
-              [common.TimeSpecEnum.Minutes, common.TimeSpecEnum.Hours].indexOf(
-                uiState.timeSpec
-              ) > -1
+              [
+                common.TimeSpecEnum.Timestamps,
+                common.TimeSpecEnum.Minutes,
+                common.TimeSpecEnum.Hours
+              ].indexOf(uiState.timeSpec) > -1
                 ? 220
                 : 155,
             maxWidth: 300,
@@ -270,7 +276,7 @@ export class ReportComponent {
               //   console.log(record.key);
               // }
 
-              record.columnLabel = column.label;
+              record.columnLabel = column?.label; // TODO: question mark
             });
 
             return dataRow;

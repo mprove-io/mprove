@@ -39,16 +39,28 @@
   >
 
   <div
-    class="flex flex-row items-center"
+    class="ml-5 flex flex-row items-center"
     *ngIf="query?.status === queryStatusEnum.Completed"
   >
-    <div class="ml-5" *ngIf="showDataRowsLength === true"
+    <div
+      *ngIf="showDataRowsLength === true && showLastCompleteDuration === true"
       >Completed - {{ completedTimeAgo }} - {{ query.lastCompleteDuration }}s -
       {{ query.data.length }} rows</div
     >
-    <div class="ml-5" *ngIf="showDataRowsLength === false"
+    <div
+      *ngIf="showDataRowsLength === true && showLastCompleteDuration === false"
+      >Completed - {{ completedTimeAgo }} - {{ query.data.length }} rows</div
+    >
+
+    <div
+      *ngIf="showDataRowsLength === false && showLastCompleteDuration === true"
       >Completed - {{ completedTimeAgo }} -
       {{ query.lastCompleteDuration }}s</div
+    >
+
+    <div
+      *ngIf="showDataRowsLength === false && showLastCompleteDuration === false"
+      >Completed - {{ completedTimeAgo }}</div
     >
   </div>
 </div>

@@ -772,23 +772,27 @@ export class ReportsService {
           y.timezone === timezone
       );
 
-      // stage 1
-      if (common.isDefined(rq)) {
-        if (
-          rq.timeStartTs !== columns[0].columnId ||
-          rq.timeEndTs !== columns[columns.length - 1].columnId
-        ) {
-          x.rqs = x.rqs.filter(
-            y =>
-              !(
-                y.fractionBrick === timeRangeFraction.brick &&
-                y.timeSpec === timeSpec &&
-                y.timezone === timezone
-              )
-          );
-          rq = undefined;
-        }
-      }
+      // stage 1 // TODO: stage
+      // if (common.isDefined(rq)) {
+      //   console.log('===')
+      //   console.log('rq');
+      //   console.log(rq);
+      //   if (
+      //     rq.timeStartTs !== columns[0].columnId ||
+      //     rq.timeEndTs !== columns[columns.length - 1].columnId
+      //   ) {
+      //     console.log('filtered')
+      //     x.rqs = x.rqs.filter(
+      //       y =>
+      //         !(
+      //           y.fractionBrick === timeRangeFraction.brick &&
+      //           y.timeSpec === timeSpec &&
+      //           y.timezone === timezone
+      //         )
+      //     );
+      //     rq = undefined;
+      //   }
+      // }
 
       // stage 2
       if (common.isDefined(rq)) {

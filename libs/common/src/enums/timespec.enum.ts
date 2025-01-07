@@ -1,4 +1,5 @@
 export enum TimeSpecEnum {
+  Timestamps = 'timestamps',
   Minutes = 'minutes',
   Hours = 'hours',
   Days = 'days',
