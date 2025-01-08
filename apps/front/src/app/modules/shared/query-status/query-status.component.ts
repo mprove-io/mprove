@@ -30,6 +30,9 @@ export class QueryStatusComponent implements OnChanges {
   @Input()
   showLastCompleteDuration: boolean;
 
+  @Input()
+  completedWord: string;
+
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
     tap(x => {

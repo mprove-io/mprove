@@ -105,66 +105,19 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   timezones = common.getTimezones();
 
   isCompleted = false;
-  lastCompletedQuery: common.Query;
+  firstCompletedQuery: common.Query;
 
   dashboard: common.DashboardX;
   dashboard$ = this.dashboardQuery.select().pipe(
     filter(x => common.isDefined(x.dashboardId)),
     tap(x => {
       this.dashboard = x;
-      // console.log(this.dashboard);
 
-      // this.filtersIsExpanded =
-      //   this.dashboard.extendedFilters.length === 0
-      //     ? true
-      //     : this.filtersIsExpanded;
-
-      let completedQueries = [
-        ...this.dashboard.tiles.filter(
-          r =>
-            common.isDefined(r.query) &&
-            r.query.status === common.QueryStatusEnum.Completed
-        )
-      ]
-        .map(r => r.query)
-        .sort((a, b) =>
-          a.lastCompleteTs > b.lastCompleteTs
-            ? 1
-            : b.lastCompleteTs > a.lastCompleteTs
-            ? -1
-            : 0
-        );
-
-      if (completedQueries.length === this.dashboard.tiles.length) {
-        this.isCompleted = true;
-        this.lastCompletedQuery = completedQueries[completedQueries.length - 1];
-      } else {
-        this.isCompleted = false;
-        this.lastCompletedQuery = undefined;
-      }
+      this.checkQueries();
 
       let uiState = this.uiQuery.getValue();
 
       this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
-
-      // let usedTimezones: string[] = [];
-
-      // this.dashboard.tiles.forEach(tile => {
-      //   let mconfigTimezone = tile.mconfig?.timezone;
-
-      //   if (
-      //     common.isDefined(mconfigTimezone) &&
-      //     usedTimezones.findIndex(t => mconfigTimezone === t) < 0
-      //   ) {
-      //     usedTimezones.push(mconfigTimezone);
-      //   }
-      // });
-
-      // if (usedTimezones.length > 1 || usedTimezones.length === 0) {
-      //   this.timezoneForm.controls['timezone'].setValue(undefined);
-      // } else {
-      //   this.timezoneForm.controls['timezone'].setValue(usedTimezones[0]);
-      // }
 
       this.title.setTitle(
         `${this.pageTitle} - ${
@@ -369,15 +322,40 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  tileQueryUpdated(event: common.Query, tileTitle: string) {
-    console.log(tileTitle);
-    console.log(event);
+  tileQueryUpdated(query: common.Query, tileTitle: string) {
+    let tile = this.dashboard.tiles.find(x => x.title === tileTitle);
+    if (common.isDefined(tile) && tile.query.queryId === query.queryId) {
+      tile.query = query;
+    }
 
-    // this.dashboardQuery.update(
-    //   Object.assign({}, this.dashboard, {
-    //     temp: true
-    //   })
-    // );
+    this.checkQueries();
+    this.cd.detectChanges();
+  }
+
+  checkQueries() {
+    let completedQueries = [
+      ...this.dashboard.tiles.filter(
+        r =>
+          common.isDefined(r.query) &&
+          r.query.status === common.QueryStatusEnum.Completed
+      )
+    ]
+      .map(r => r.query)
+      .sort((a, b) =>
+        a.lastCompleteTs > b.lastCompleteTs
+          ? 1
+          : b.lastCompleteTs > a.lastCompleteTs
+          ? -1
+          : 0
+      );
+
+    if (completedQueries.length === this.dashboard.tiles.length) {
+      this.isCompleted = true;
+      this.firstCompletedQuery = completedQueries[0];
+    } else {
+      this.isCompleted = false;
+      this.firstCompletedQuery = undefined;
+    }
   }
 
   onDragStarted(event: any) {

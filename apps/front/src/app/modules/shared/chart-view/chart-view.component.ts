@@ -165,8 +165,8 @@ export class ChartViewComponent implements OnChanges {
   // }
 
   updateChart() {
-    console.log('this.chart');
-    console.log(this.chart);
+    // console.log('this.chart');
+    // console.log(this.chart);
 
     this.eChartInitOpts = {
       renderer: 'svg'
@@ -479,14 +479,14 @@ export class ChartViewComponent implements OnChanges {
       });
     }
 
-    console.log('this.eData:');
-    console.log(this.eData);
+    // console.log('this.eData:');
+    // console.log(this.eData);
 
-    console.log('this.multi:');
-    console.log(this.seriesData);
+    // console.log('this.multi:');
+    // console.log(this.seriesData);
 
-    console.log('this.eChartOptions:');
-    console.log(this.eChartOptions);
+    // console.log('this.eChartOptions:');
+    // console.log(this.eChartOptions);
 
     // console.log('this.chart');
     // console.log(this.chart);

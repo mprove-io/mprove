@@ -82,13 +82,14 @@
 
           <div class="flex flex-1 flex-row justify-end">
             <div
-              *ngIf="!!lastCompletedQuery"
+              *ngIf="!!firstCompletedQuery"
               class="flex flex-row items-center justify-end"
             >
               <m-query-status
-                [query]="lastCompletedQuery"
+                [query]="firstCompletedQuery"
                 [showDataRowsLength]="false"
                 [showLastCompleteDuration]="false"
+                [completedWord]="'Completed - last run'"
               ></m-query-status>
             </div>
 

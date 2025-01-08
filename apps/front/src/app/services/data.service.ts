@@ -163,8 +163,8 @@ export class DataService {
       qData.push(r);
     });
 
-    console.log('qData');
-    console.log(qData);
+    // console.log('qData');
+    // console.log(qData);
 
     return qData;
   }
@@ -440,8 +440,8 @@ export class DataService {
       } as SeriesDataElement)
     );
 
-    console.log('seriesData');
-    console.log(seriesData);
+    // console.log('seriesData');
+    // console.log(seriesData);
 
     return seriesData;
   }

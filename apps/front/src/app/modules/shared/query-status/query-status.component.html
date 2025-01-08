@@ -44,23 +44,24 @@
   >
     <div
       *ngIf="showDataRowsLength === true && showLastCompleteDuration === true"
-      >Completed - {{ completedTimeAgo }} - {{ query.lastCompleteDuration }}s -
-      {{ query.data.length }} rows</div
+      >{{ completedWord }} - {{ completedTimeAgo }} -
+      {{ query.lastCompleteDuration }}s - {{ query.data.length }} rows</div
     >
     <div
       *ngIf="showDataRowsLength === true && showLastCompleteDuration === false"
-      >Completed - {{ completedTimeAgo }} - {{ query.data.length }} rows</div
+      >{{ completedWord }} - {{ completedTimeAgo }} -
+      {{ query.data.length }} rows</div
     >
 
     <div
       *ngIf="showDataRowsLength === false && showLastCompleteDuration === true"
-      >Completed - {{ completedTimeAgo }} -
+      >{{ completedWord }} - {{ completedTimeAgo }} -
       {{ query.lastCompleteDuration }}s</div
     >
 
     <div
       *ngIf="showDataRowsLength === false && showLastCompleteDuration === false"
-      >Completed - {{ completedTimeAgo }}</div
+      >{{ completedWord }} - {{ completedTimeAgo }}</div
     >
   </div>
 </div>
