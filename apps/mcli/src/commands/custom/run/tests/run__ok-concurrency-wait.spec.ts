@@ -153,9 +153,9 @@ test('1', async t => {
       `queriesStats.running === 0`
     );
     assert.equal(
-      queriesStats.completed === 15,
+      queriesStats.completed === 16,
       true,
-      `queriesStats.completed === 15`
+      `queriesStats.completed === 16`
     );
     assert.equal(queriesStats.error === 0, true, `queriesStats.error === 0`);
     assert.equal(

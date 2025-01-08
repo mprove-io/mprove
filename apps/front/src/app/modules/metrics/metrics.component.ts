@@ -415,7 +415,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
                     formatter: (value: any) => {
                       let timeSpec = this.uiQuery.getValue().timeSpec;
 
-                      return common.formatTs({
+                      return common.formatTsUTC({
                         timeSpec: timeSpec,
                         unixTimeZoned: value / 1000
                       });

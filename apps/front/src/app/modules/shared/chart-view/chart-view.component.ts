@@ -271,31 +271,31 @@ export class ChartViewComponent implements OnChanges {
       ) {
         let tsFormatter = xField.sqlName.match(/(?:___year)$/g)
           ? (value: any) =>
-              common.formatTs({
+              common.formatTsUTC({
                 timeSpec: common.TimeSpecEnum.Years,
                 unixTimeZoned: value / 1000
               })
           : xField.sqlName.match(/(?:___quarter)$/g)
           ? (value: any) =>
-              common.formatTs({
+              common.formatTsUTC({
                 timeSpec: common.TimeSpecEnum.Quarters,
                 unixTimeZoned: value / 1000
               })
           : xField.sqlName.match(/(?:___month)$/g)
           ? (value: any) =>
-              common.formatTs({
+              common.formatTsUTC({
                 timeSpec: common.TimeSpecEnum.Months,
                 unixTimeZoned: value / 1000
               })
           : xField.sqlName.match(/(?:___week)$/g)
           ? (value: any) =>
-              common.formatTs({
+              common.formatTsUTC({
                 timeSpec: common.TimeSpecEnum.Weeks,
                 unixTimeZoned: value / 1000
               })
           : xField.sqlName.match(/(?:___date)$/g)
           ? (value: any) =>
-              common.formatTs({
+              common.formatTsUTC({
                 timeSpec: common.TimeSpecEnum.Days,
                 unixTimeZoned: value / 1000
               })

@@ -538,7 +538,7 @@ export class BlockmlService {
       let column: common.Column = {
         columnId: unixTimeZoned,
         tsUTC: tsUTC,
-        label: common.formatTs({
+        label: common.formatTsUTC({
           timeSpec: timeSpec,
           unixTimeZoned: unixTimeZoned
         })
