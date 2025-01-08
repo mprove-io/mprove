@@ -104,6 +104,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   timezones = common.getTimezones();
 
+  isCompleted = false;
   lastCompletedQuery: common.Query;
 
   dashboard: common.DashboardX;
@@ -117,6 +118,30 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       //   this.dashboard.extendedFilters.length === 0
       //     ? true
       //     : this.filtersIsExpanded;
+
+      let completedQueries = [
+        ...this.dashboard.tiles.filter(
+          r =>
+            common.isDefined(r.query) &&
+            r.query.status === common.QueryStatusEnum.Completed
+        )
+      ]
+        .map(r => r.query)
+        .sort((a, b) =>
+          a.lastCompleteTs > b.lastCompleteTs
+            ? 1
+            : b.lastCompleteTs > a.lastCompleteTs
+            ? -1
+            : 0
+        );
+
+      if (completedQueries.length === this.dashboard.tiles.length) {
+        this.isCompleted = true;
+        this.lastCompletedQuery = completedQueries[completedQueries.length - 1];
+      } else {
+        this.isCompleted = false;
+        this.lastCompletedQuery = undefined;
+      }
 
       let uiState = this.uiQuery.getValue();
 
@@ -342,6 +367,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         temp: true
       })
     );
+  }
+
+  tileQueryUpdated(event: common.Query, tileTitle: string) {
+    console.log(tileTitle);
+    console.log(event);
+
+    // this.dashboardQuery.update(
+    //   Object.assign({}, this.dashboard, {
+    //     temp: true
+    //   })
+    // );
   }
 
   onDragStarted(event: any) {

@@ -1,9 +1,9 @@
 <div class="bg-blue1 flex h-full cursor-default flex-col">
   <div class="flex h-2 flex-1 flex-row overflow-y-auto">
-    <div class="mt-9 flex min-w-[2px] flex-grow flex-col" *ngIf="!!dashboard">
+    <div class="mt-8 flex min-w-[2px] flex-grow flex-col" *ngIf="!!dashboard">
       <div class="flex h-11 flex-row items-center justify-between px-6">
         <div class="flex w-full flex-row items-center">
-          <div class="flex flex-row items-center space-x-5">
+          <div class="flex flex-1 flex-row items-center space-x-5">
             <div
               data-cy="dashboardTitle"
               class="text-gray1 flex items-center self-center text-2xl font-semibold"
@@ -17,26 +17,26 @@
             }}</div>
           </div>
 
-          <div
-            class="ml-5 flex cursor-pointer flex-row items-center"
-            (click)="toggleShowTileFilters()"
-          >
-            <ui-switch [checked]="showBricks"></ui-switch>
+          <div class="ml-5 flex flex-1 flex-row items-center justify-center">
+            <div
+              class="ml-5 flex cursor-pointer flex-row items-center"
+              (click)="toggleShowTileFilters()"
+            >
+              <ui-switch class="ml-5" [checked]="showBricks"></ui-switch>
+
+              <div
+                class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
+                >Show Tile Parameters</div
+              >
+            </div>
 
             <div
-              class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
-              >Show Tile Parameters</div
-            >
-          </div>
-
-          <div class="flex-grow"></div>
-
-          <div class="flex flex-row items-center space-x-5">
-            <div class="text-gray1 flex h-9 select-none items-center text-base"
+              class="text-gray1 ml-10 flex h-9 select-none items-center text-base"
               >Timezone</div
             >
 
             <form
+              class="ml-5"
               [formGroup]="timezoneForm"
               tp="Timezone change is not allowed"
               [tpIsEnabled]="
@@ -78,142 +78,165 @@
 
           <!-- <div class="flex-grow"></div> -->
 
-          <div class="text-gray1 flex flex-row items-center text-base">
-            <ng-template #templateAddTile>
-              <div *ngIf="isExplorer === false">Explorer role required</div>
+          <!-- <div class="flex-grow"></div> -->
 
-              <div *ngIf="isExplorer === true && dashboard.temp === true"
-                >Save changes to be able to add tiles</div
-              >
-
-              <div
-                *ngIf="
-                  isExplorer === true &&
-                  dashboard.temp === false &&
-                  dashboard.canEditOrDeleteDashboard === false
-                "
-                >Only the dashboard author, project editors, and administrators
-                can edit this dashboard. Try saving this dashboard as a new one
-                to become an author.</div
-              >
-            </ng-template>
-
+          <div class="flex flex-1 flex-row justify-end">
             <div
-              [tp]="templateAddTile"
-              [tpIsEnabled]="
-                isExplorer === false ||
-                dashboard.temp === true ||
-                dashboard.canEditOrDeleteDashboard === false
-              "
-              class="ml-10 flex h-12 flex-shrink-0"
+              *ngIf="!!lastCompletedQuery"
+              class="flex flex-row items-center justify-end"
             >
-              <button
-                type="button"
-                data-cy="dashboardAddTileButton"
-                class="flex-shrink-0 rounded border px-5 py-2 text-base font-medium focus:outline-none"
-                [ngClass]="{
-                  'border-gray-400 text-gray-500 hover:bg-white':
+              <m-query-status
+                [query]="lastCompletedQuery"
+                [showDataRowsLength]="false"
+                [showLastCompleteDuration]="false"
+              ></m-query-status>
+            </div>
+
+            <!-- <div class="flex-grow"></div> -->
+
+            <div class="text-gray1 flex flex-row items-center text-base">
+              <ng-template #templateAddTile>
+                <div *ngIf="isExplorer === false">Explorer role required</div>
+
+                <div *ngIf="isExplorer === true && dashboard.temp === true"
+                  >Save changes to be able to add tiles</div
+                >
+
+                <div
+                  *ngIf="
                     isExplorer === true &&
                     dashboard.temp === false &&
-                    dashboard.canEditOrDeleteDashboard === true,
-                  'cursor-default bg-gray-400  text-white':
-                    isExplorer === false ||
-                    dashboard.temp === true ||
                     dashboard.canEditOrDeleteDashboard === false
-                }"
-                (click)="addTile()"
-                [disabled]="
+                  "
+                  >Only the dashboard author, project editors, and
+                  administrators can edit this dashboard. Try saving this
+                  dashboard as a new one to become an author.</div
+                >
+              </ng-template>
+
+              <div
+                [tp]="templateAddTile"
+                [tpIsEnabled]="
                   isExplorer === false ||
                   dashboard.temp === true ||
                   dashboard.canEditOrDeleteDashboard === false
                 "
-                >Add Tile</button
+                class="ml-10 flex h-12 flex-shrink-0"
               >
-            </div>
+                <button
+                  type="button"
+                  data-cy="dashboardAddTileButton"
+                  class="flex-shrink-0 rounded border px-5 py-2 text-base font-medium focus:outline-none"
+                  [ngClass]="{
+                    'border-gray-400 text-gray-500 hover:bg-white':
+                      isExplorer === true &&
+                      dashboard.temp === false &&
+                      dashboard.canEditOrDeleteDashboard === true,
+                    'cursor-default bg-gray-400  text-white':
+                      isExplorer === false ||
+                      dashboard.temp === true ||
+                      dashboard.canEditOrDeleteDashboard === false
+                  }"
+                  (click)="addTile()"
+                  [disabled]="
+                    isExplorer === false ||
+                    dashboard.temp === true ||
+                    dashboard.canEditOrDeleteDashboard === false
+                  "
+                  >Add Tile</button
+                >
+              </div>
 
-            <ng-template #templateDashboardSaveAs>
-              <div *ngIf="isExplorer === false">Explorer role required</div>
+              <ng-template #templateDashboardSaveAs>
+                <div *ngIf="isExplorer === false">Explorer role required</div>
 
-              <div *ngIf="isExplorer === true && alias === restrictedUserAlias"
-                >User is restricted. Sign Up at https://mprove.io to get full
-                access.</div
-              >
-            </ng-template>
+                <div
+                  *ngIf="isExplorer === true && alias === restrictedUserAlias"
+                  >User is restricted. Sign Up at https://mprove.io to get full
+                  access.</div
+                >
+              </ng-template>
 
-            <div
-              class="ml-5 flex h-12 flex-shrink-0"
-              [tp]="templateDashboardSaveAs"
-              [tpIsEnabled]="
-                isExplorer === false || alias === restrictedUserAlias
-              "
-            >
-              <button
-                type="button"
-                data-cy="dashboardSaveAsButton"
-                class="h-12 rounded border px-6 text-base font-medium focus:outline-none"
-                [ngClass]="{
-                  'text-white': dashboard.temp === true,
-                  'bg-pink-500':
-                    dashboard.temp === true &&
-                    isExplorer === true &&
-                    alias !== restrictedUserAlias,
-                  'cursor-default bg-gray-400':
-                    dashboard.temp === true &&
-                    (isExplorer === false || alias === restrictedUserAlias),
-                  ' border-gray-400 text-gray-500 hover:bg-white':
-                    dashboard.temp === false &&
-                    isExplorer === true &&
-                    alias !== restrictedUserAlias
-                }"
-                (click)="saveAs()"
-                [disabled]="
+              <div
+                class="ml-5 flex h-12 flex-shrink-0"
+                [tp]="templateDashboardSaveAs"
+                [tpIsEnabled]="
                   isExplorer === false || alias === restrictedUserAlias
                 "
-                >Save As</button
               >
-            </div>
-
-            <button
-              type="button"
-              data-cy="dashboardRunButton"
-              class="ml-5 flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
-              [ngClass]="{
-                'bg-blue3': dashboard.tiles.length > 0,
-                'cursor-default':
-                  dashboard.tiles.length === 0 || isRunButtonPressed === true,
-                'bg-gray-400': dashboard.tiles.length === 0
-              }"
-              (click)="run()"
-              [disabled]="
-                dashboard.tiles.length === 0 || isRunButtonPressed === true
-              "
-            >
-              <div *ngIf="isRunButtonPressed === false">Run</div>
-              <div
-                *ngIf="isRunButtonPressed === true"
-                class="relative flex h-9 w-9 flex-shrink-0"
-              >
-                <ngx-spinner
-                  [name]="dashboardRunButtonSpinnerName"
-                  color="rgba(255, 255, 255, 1)"
-                  bdColor="rgba(0, 0, 0, 0)"
-                  size="default"
-                  type="ball-clip-rotate"
-                  [fullScreen]="false"
-                  [disableAnimation]="true"
-                  [zIndex]="99998"
+                <button
+                  type="button"
+                  data-cy="dashboardSaveAsButton"
+                  class="h-12 rounded border px-6 text-base font-medium focus:outline-none"
+                  [ngClass]="{
+                    'text-white': dashboard.temp === true,
+                    'bg-pink-500':
+                      dashboard.temp === true &&
+                      isExplorer === true &&
+                      alias !== restrictedUserAlias,
+                    'cursor-default bg-gray-400':
+                      dashboard.temp === true &&
+                      (isExplorer === false || alias === restrictedUserAlias),
+                    ' border-gray-400 text-gray-500 hover:bg-white':
+                      dashboard.temp === false &&
+                      isExplorer === true &&
+                      alias !== restrictedUserAlias
+                  }"
+                  (click)="saveAs()"
+                  [disabled]="
+                    isExplorer === false || alias === restrictedUserAlias
+                  "
+                  >Save As</button
                 >
-                </ngx-spinner>
               </div>
-            </button>
 
-            <div class="relative ml-5">
-              <m-dashboard-options
-                [dashboard]="dashboard"
-              ></m-dashboard-options>
+              <button
+                type="button"
+                data-cy="dashboardRunButton"
+                class="ml-5 flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
+                [ngClass]="{
+                  'bg-blue3': dashboard.tiles.length > 0,
+                  'cursor-default':
+                    dashboard.tiles.length === 0 || isRunButtonPressed === true,
+                  'bg-gray-400': dashboard.tiles.length === 0
+                }"
+                (click)="run()"
+                [disabled]="
+                  dashboard.tiles.length === 0 || isRunButtonPressed === true
+                "
+              >
+                <div *ngIf="isRunButtonPressed === false">Run</div>
+                <div
+                  *ngIf="isRunButtonPressed === true"
+                  class="relative flex h-9 w-9 flex-shrink-0"
+                >
+                  <ngx-spinner
+                    [name]="dashboardRunButtonSpinnerName"
+                    color="rgba(255, 255, 255, 1)"
+                    bdColor="rgba(0, 0, 0, 0)"
+                    size="default"
+                    type="ball-clip-rotate"
+                    [fullScreen]="false"
+                    [disableAnimation]="true"
+                    [zIndex]="99998"
+                  >
+                  </ngx-spinner>
+                </div>
+              </button>
+
+              <div class="relative ml-5">
+                <m-dashboard-options
+                  [dashboard]="dashboard"
+                ></m-dashboard-options>
+              </div>
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="ml-[25px] mr-[25px] mt-7 divide-y divide-gray-300">
+        <div></div>
+        <div></div>
       </div>
 
       <div class="mt-7 w-full px-6 shadow-md">
@@ -367,6 +390,7 @@
                   [query]="item.tile.query"
                   [showBricks]="showBricks"
                   (repDeleted)="tileDeleted()"
+                  (queryUpdated)="tileQueryUpdated($event, item.tile.title)"
                 ></m-dashboard-tile-chart>
               </div>
               <m-resize-icon

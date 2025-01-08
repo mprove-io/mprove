@@ -414,7 +414,8 @@ export class MyDialogService {
     this.dialogService.open(NewChartDialogComponent, {
       enableClose: false,
       closeButton: true,
-      data: item
+      data: item,
+      height: '50vh'
     });
   }
 

@@ -64,6 +64,7 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
   isShow: boolean;
 
   @Output() repDeleted = new EventEmitter<string>();
+  @Output() queryUpdated = new EventEmitter<common.Query>();
 
   qData: QDataRow[];
 
@@ -220,6 +221,8 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
               data: this.query.data
             });
 
+            this.queryUpdated.emit(this.query);
+
             this.spinner.show(this.tile.title);
           }
         }),
@@ -270,6 +273,8 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
 
   updateQuery(query: common.Query) {
     this.query = query;
+
+    this.queryUpdated.emit(this.query);
 
     if (this.query.status !== common.QueryStatusEnum.Running) {
       this.spinner.hide(this.tile.title);

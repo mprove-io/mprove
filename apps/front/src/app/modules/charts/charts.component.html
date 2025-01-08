@@ -65,9 +65,7 @@
           >
         </div>
 
-        <div class="flex-grow"></div>
-
-        <div class="flex flex-row items-center space-x-5">
+        <div class="ml-10 flex flex-row items-center space-x-5">
           <div class="text-gray1 flex h-9 select-none items-center text-base"
             >Timezone</div
           >
@@ -108,6 +106,8 @@
           </form>
         </div>
 
+        <div class="flex-grow"></div>
+
         <div class="text-gray1 flex flex-row items-center text-base">
           <ng-template #templateNewChart>
             <div *ngIf="alias === restrictedUserAlias"
@@ -141,7 +141,7 @@
             <button
               type="button"
               data-cy="chartsNewButton"
-              class="w-24 rounded py-2 text-base font-medium text-white focus:outline-none"
+              class="h-12 w-24 rounded py-2 text-base font-medium text-white focus:outline-none"
               [ngClass]="{
                 'bg-blue3 cursor-pointer':
                   alias !== restrictedUserAlias &&
