@@ -344,7 +344,7 @@ export class ModelTreeComponent implements AfterViewInit {
         flatNodes = [...flatNodes, ...flatNodesDimensions];
       }
 
-      if (flatNodesDimensions.length > 0) {
+      if (flatNodesMeasures.length > 0) {
         flatNodes.push({
           id: `${common.ModelNodeIdSuffixEnum.Measures}`,
           label: common.ModelNodeLabelEnum.Measures,
@@ -360,7 +360,7 @@ export class ModelTreeComponent implements AfterViewInit {
         flatNodes = [...flatNodes, ...flatNodesMeasures];
       }
 
-      if (flatNodesDimensions.length > 0) {
+      if (flatNodesCalculations.length > 0) {
         flatNodes.push({
           id: `${common.ModelNodeIdSuffixEnum.Calculations}`,
           label: common.ModelNodeLabelEnum.Calculations,
