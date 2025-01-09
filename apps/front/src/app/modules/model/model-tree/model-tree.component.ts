@@ -277,6 +277,7 @@ export class ModelTreeComponent implements AfterViewInit {
 
     let flatNodes: ModelNodeExtra[] = [];
 
+    let flatNodesFilters: ModelNodeExtra[] = [];
     let flatNodesDimensions: ModelNodeExtra[] = [];
     let flatNodesMeasures: ModelNodeExtra[] = [];
     let flatNodesCalculations: ModelNodeExtra[] = [];
@@ -297,7 +298,11 @@ export class ModelTreeComponent implements AfterViewInit {
               if (
                 this.modelTreeLevels === common.ModelTreeLevelsEnum.FlatTime
               ) {
-                if (leafNode.nodeClass === common.FieldClassEnum.Dimension) {
+                if (leafNode.nodeClass === common.FieldClassEnum.Filter) {
+                  flatNodesFilters.push(leafNode);
+                } else if (
+                  leafNode.nodeClass === common.FieldClassEnum.Dimension
+                ) {
                   flatNodesDimensions.push(leafNode);
                 } else if (
                   leafNode.nodeClass === common.FieldClassEnum.Measure
@@ -315,7 +320,11 @@ export class ModelTreeComponent implements AfterViewInit {
               flatNodesDimensions.push(middleNode);
             }
           } else {
-            if (middleNode.nodeClass === common.FieldClassEnum.Dimension) {
+            if (middleNode.nodeClass === common.FieldClassEnum.Filter) {
+              flatNodesFilters.push(middleNode);
+            } else if (
+              middleNode.nodeClass === common.FieldClassEnum.Dimension
+            ) {
               flatNodesDimensions.push(middleNode);
             } else if (middleNode.nodeClass === common.FieldClassEnum.Measure) {
               flatNodesMeasures.push(middleNode);
@@ -342,6 +351,22 @@ export class ModelTreeComponent implements AfterViewInit {
         });
 
         flatNodes = [...flatNodes, ...flatNodesDimensions];
+      }
+
+      if (flatNodesFilters.length > 0) {
+        flatNodes.push({
+          id: `${common.ModelNodeIdSuffixEnum.Filters}`,
+          label: common.ModelNodeLabelEnum.FilterOnlyFields,
+          description: undefined,
+          hidden: false,
+          isField: false,
+          children: [],
+          nodeClass: common.FieldClassEnum.Info,
+          isSelected: false,
+          isFiltered: false
+        });
+
+        flatNodes = [...flatNodes, ...flatNodesFilters];
       }
 
       if (flatNodesMeasures.length > 0) {
