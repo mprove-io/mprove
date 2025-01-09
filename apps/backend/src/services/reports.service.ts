@@ -846,7 +846,13 @@ export class ReportsService {
             warnSelect: [],
             joinAggregations: [],
             sortings: [timeSorting],
-            sorts: timeFieldIdSpec,
+            sorts:
+              [
+                common.FractionTypeEnum.TsIsAfterDate,
+                common.FractionTypeEnum.TsIsAfterRelative
+              ].indexOf(timeRangeFraction.type) > -1
+                ? `${timeFieldIdSpec}`
+                : `${timeFieldIdSpec} desc`,
             timezone: timezone,
             limit: timeColumnsLimit,
             filters: filters,

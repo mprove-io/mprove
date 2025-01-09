@@ -376,7 +376,11 @@ export class BlockmlService {
         ? differenceInMinutes(endDate, startDate)
         : undefined;
 
-    let isTimeColumnsLimitExceeded = false;
+    let isTimeColumnsLimitExceeded =
+      timeRangeFraction.tsForOption ===
+      common.FractionTsForOptionEnum.ForInfinity
+        ? true
+        : false;
 
     if (diffColumnsLength > timeColumnsLimit) {
       isTimeColumnsLimitExceeded = true;
