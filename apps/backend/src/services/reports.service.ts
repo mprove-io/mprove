@@ -772,7 +772,6 @@ export class ReportsService {
           y.timezone === timezone
       );
 
-      // stage 1 // TODO: stage
       // if (common.isDefined(rq)) {
       //   console.log('===')
       //   console.log('rq');
@@ -794,7 +793,6 @@ export class ReportsService {
       //   }
       // }
 
-      // stage 2
       if (common.isDefined(rq)) {
         if (x.rowType === common.RowTypeEnum.Metric) {
           queryIds.push(rq.queryId);

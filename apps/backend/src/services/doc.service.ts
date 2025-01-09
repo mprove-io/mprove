@@ -851,10 +851,8 @@ FROM main;`;
           : timeSpec === common.TimeSpecEnum.Minutes
           ? format(tsDate, 'yyyy-MM-dd HH:mm')
           : timeSpec === common.TimeSpecEnum.Timestamps
-          ? tsDate.toISOString() // TODO: toISOString
-          : // ? format(tsDate, 'yyyy-MM-dd HH:mm:ss')
-
-            undefined;
+          ? format(tsDate, 'yyyy-MM-dd HH:mm:ss.SSS')
+          : undefined;
 
       let reportDataColumn: common.ReportDataColumn = {
         id: i,
