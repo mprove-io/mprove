@@ -1,7 +1,6 @@
 export * from './boolean-to-enum';
 export * from './capitalize-first-letter';
 export * from './enum-to-boolean';
-export * from './format-ts';
 export * from './format-ts-utc';
 export * from './get-fraction-type-for-any';
 export * from './get-timespec-word';
