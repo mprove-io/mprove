@@ -63,7 +63,6 @@ export class DataRendererComponent implements ICellRendererAngularComp {
       );
 
       // console.log(rowDataRecord.key);
-      // console.log(rowDataRecord.tsUTC);
 
       let ts = rowDataRecord.key * 1000;
 

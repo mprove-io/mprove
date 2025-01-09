@@ -5,7 +5,7 @@ export class RowRecord {
 
   key: number; // unixTimeZoned
 
-  tsUTC: number;
+  // tsUTC: number;
 
   value: any;
 

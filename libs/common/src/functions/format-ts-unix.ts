@@ -11,7 +11,7 @@ dayjs.extend(timezone);
 dayjs.extend(customParseFormat);
 dayjs.extend(advancedFormat);
 
-export function formatTsUTC(item: {
+export function formatTsUnix(item: {
   timeSpec: enums.TimeSpecEnum;
   unixTimeZoned: number;
 }) {

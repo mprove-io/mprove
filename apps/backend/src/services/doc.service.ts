@@ -1,7 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { format, fromUnixTime, getUnixTime } from 'date-fns';
-import { fromZonedTime } from 'date-fns-tz';
+import { format, fromUnixTime } from 'date-fns';
 import { forEachSeries } from 'p-iteration';
 import * as pgPromise from 'pg-promise';
 import pg from 'pg-promise/typescript/pg-subset';
@@ -17,6 +16,7 @@ import { UserCodeService } from './user-code.service';
 let Graph = require('tarjan-graph');
 let toposort = require('toposort');
 let retry = require('async-retry');
+let dayjs = require('dayjs');
 
 interface XColumn {
   id: string;
@@ -691,14 +691,14 @@ FROM main;`;
             let unixTimeZoned = Number(
               y.fields['timestamp'].toString().split('.')[0]
             );
-            let unixDateZoned = new Date(unixTimeZoned * 1000);
-            let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
+            // let unixDateZoned = new Date(unixTimeZoned * 1000);
+            // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
             let record: common.RowRecord = {
               columnLabel: undefined,
               id: index + 1,
               key: unixTimeZoned,
-              tsUTC: tsUTC,
+              // tsUTC: tsUTC,
               value: undefined,
               error: undefined
             };
@@ -714,14 +714,14 @@ FROM main;`;
             let unixTimeZoned = Number(
               y.fields['timestamp'].toString().split('.')[0]
             );
-            let unixDateZoned = new Date(unixTimeZoned * 1000);
-            let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
+            // let unixDateZoned = new Date(unixTimeZoned * 1000);
+            // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
             let record: common.RowRecord = {
               columnLabel: undefined,
               id: index + 1,
               key: unixTimeZoned,
-              tsUTC: tsUTC,
+              // tsUTC: tsUTC,
               value: undefined,
               error: undefined
             };
@@ -738,14 +738,14 @@ FROM main;`;
             let unixTimeZoned = Number(
               y.fields['timestamp'].toString().split('.')[0]
             );
-            let unixDateZoned = new Date(unixTimeZoned * 1000);
-            let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
+            // let unixDateZoned = new Date(unixTimeZoned * 1000);
+            // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
             let record: common.RowRecord = {
               columnLabel: undefined,
               id: index + 1,
               key: unixTimeZoned,
-              tsUTC: tsUTC,
+              // tsUTC: tsUTC,
               value: y.fields[row.rowId],
               error: undefined
             };
@@ -757,14 +757,14 @@ FROM main;`;
 
           row.records = topQueryData.map((y: any, index) => {
             let unixTimeZoned = Number(y.timestamp.toString().split('.')[0]);
-            let unixDateZoned = new Date(unixTimeZoned * 1000);
-            let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
+            // let unixDateZoned = new Date(unixTimeZoned * 1000);
+            // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
             let record: common.RowRecord = {
               columnLabel: undefined,
               id: index + 1,
               key: unixTimeZoned,
-              tsUTC: tsUTC,
+              // tsUTC: tsUTC,
               value: y[row.rowId.toLowerCase()],
               error: undefined
             };
@@ -829,38 +829,81 @@ FROM main;`;
   }) {
     let { report, timeSpec } = item;
 
-    let reportDataColumns = report.columns.map((column, i) => {
-      // console.log('column.columnId');
-      // console.log(column.columnId);
+    let reportDataColumns: common.ReportDataColumn[] = [];
 
-      let tsDate = fromUnixTime(column.columnId);
+    if (timeSpec !== common.TimeSpecEnum.Timestamps) {
+      reportDataColumns = report.columns.map((column, i) => {
+        // console.log('column.columnId');
+        // console.log(column.columnId);
 
-      let timeValue =
-        timeSpec === common.TimeSpecEnum.Years
-          ? format(tsDate, 'yyyy')
-          : timeSpec === common.TimeSpecEnum.Quarters
-          ? format(tsDate, 'yyyy-MM')
-          : timeSpec === common.TimeSpecEnum.Months
-          ? format(tsDate, 'yyyy-MM')
-          : timeSpec === common.TimeSpecEnum.Weeks
-          ? format(tsDate, 'yyyy-MM-dd')
-          : timeSpec === common.TimeSpecEnum.Days
-          ? format(tsDate, 'yyyy-MM-dd')
-          : timeSpec === common.TimeSpecEnum.Hours
-          ? format(tsDate, 'yyyy-MM-dd HH')
-          : timeSpec === common.TimeSpecEnum.Minutes
-          ? format(tsDate, 'yyyy-MM-dd HH:mm')
-          : timeSpec === common.TimeSpecEnum.Timestamps
-          ? format(tsDate, 'yyyy-MM-dd HH:mm:ss.SSS')
-          : undefined;
+        let tsDate = fromUnixTime(column.columnId);
 
-      let reportDataColumn: common.ReportDataColumn = {
-        id: i,
-        fields: {
-          timestamp: column.columnId
-        }
-      };
+        let timeValue =
+          timeSpec === common.TimeSpecEnum.Years
+            ? format(tsDate, 'yyyy')
+            : timeSpec === common.TimeSpecEnum.Quarters
+            ? format(tsDate, 'yyyy-MM')
+            : timeSpec === common.TimeSpecEnum.Months
+            ? format(tsDate, 'yyyy-MM')
+            : timeSpec === common.TimeSpecEnum.Weeks
+            ? format(tsDate, 'yyyy-MM-dd')
+            : timeSpec === common.TimeSpecEnum.Days
+            ? format(tsDate, 'yyyy-MM-dd')
+            : timeSpec === common.TimeSpecEnum.Hours
+            ? format(tsDate, 'yyyy-MM-dd HH')
+            : timeSpec === common.TimeSpecEnum.Minutes
+            ? format(tsDate, 'yyyy-MM-dd HH:mm')
+            : // : timeSpec === common.TimeSpecEnum.Timestamps
+              // ? format(tsDate, 'yyyy-MM-dd HH:mm:ss.SSS')
+              undefined;
 
+        let reportDataColumn: common.ReportDataColumn = {
+          id: i,
+          fields: {
+            timestamp: column.columnId
+          }
+        };
+
+        report.rows
+          .filter(row => row.rowType === common.RowTypeEnum.Metric)
+          .forEach((row: common.Row) => {
+            let timeFieldId = row.mconfig?.select[0]
+              .split('.')
+              .join('_')
+              .toLowerCase();
+
+            let fieldId = row.mconfig?.select[1]
+              .split('.')
+              .join('_')
+              .toLowerCase();
+
+            if (common.isDefined(row.query?.data)) {
+              row.query.data = row.query.data.map((x: any) =>
+                Object.keys(x).reduce((destination: any, key) => {
+                  destination[key.toLowerCase()] = x[key];
+                  return destination;
+                }, {})
+              );
+            }
+
+            let dataRow = row.query?.data?.find(
+              (r: any) => r[timeFieldId]?.toString().split('.')[0] === timeValue
+            );
+
+            if (common.isDefined(dataRow)) {
+              reportDataColumn.fields[row.rowId] = common.isUndefined(
+                dataRow[fieldId]
+              )
+                ? undefined
+                : isNaN(dataRow[fieldId]) === false
+                ? Number(dataRow[fieldId])
+                : dataRow[fieldId];
+            }
+          });
+
+        return reportDataColumn;
+      });
+    } else {
       report.rows
         .filter(row => row.rowType === common.RowTypeEnum.Metric)
         .forEach((row: common.Row) => {
@@ -883,23 +926,69 @@ FROM main;`;
             );
           }
 
-          let dataRow = row.query?.data?.find(
-            (r: any) => r[timeFieldId]?.toString().split('.')[0] === timeValue
-          );
+          (row.query?.data as any[])?.forEach(dataRow => {
+            let timestampString = dataRow[timeFieldId]?.toString();
 
-          if (common.isDefined(dataRow)) {
-            reportDataColumn.fields[row.rowId] = common.isUndefined(
-              dataRow[fieldId]
-            )
+            let columnId = dayjs(timestampString).valueOf() / 1000;
+
+            let dataValue = common.isUndefined(dataRow[fieldId])
               ? undefined
               : isNaN(dataRow[fieldId]) === false
               ? Number(dataRow[fieldId])
               : dataRow[fieldId];
-          }
+
+            let reportDataColumn = reportDataColumns.find(
+              x => x.fields.timestamp === columnId
+            );
+
+            if (common.isDefined(reportDataColumn)) {
+              reportDataColumn.fields[row.rowId] = dataValue;
+            } else {
+              reportDataColumn = {
+                id: undefined,
+                fields: {
+                  timestamp: columnId,
+                  [row.rowId]: dataValue
+                }
+              };
+              reportDataColumns.push(reportDataColumn);
+            }
+
+            let reportColumn = report.columns.find(
+              x => x.columnId === columnId
+            );
+
+            if (common.isUndefined(reportColumn)) {
+              reportColumn = {
+                columnId: columnId,
+                // tsUTC: undefined,
+                label: common.formatTsUnix({
+                  timeSpec: timeSpec,
+                  unixTimeZoned: columnId
+                })
+              };
+              report.columns.push(reportColumn);
+            }
+          });
         });
 
-      return reportDataColumn;
-    });
+      report.columns.sort((a, b) =>
+        a.columnId > b.columnId ? 1 : b.columnId > a.columnId ? -1 : 0
+      );
+
+      reportDataColumns.sort((a, b) =>
+        a.fields.timestamp > b.fields.timestamp
+          ? 1
+          : b.fields.timestamp > a.fields.timestamp
+          ? -1
+          : 0
+      );
+
+      reportDataColumns.map((x, i) => {
+        x.id = i;
+        return x;
+      });
+    }
 
     return reportDataColumns;
   }

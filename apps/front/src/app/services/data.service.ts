@@ -144,7 +144,7 @@ export class DataService {
             valueFmt: common.isUndefined(value)
               ? 'NULL'
               : common.isDefined(tsValue)
-              ? common.formatTsUTC({
+              ? common.formatTsUnix({
                   timeSpec: this.getTimeSpecByFieldSqlName(field.sqlName),
                   unixTimeZoned: tsValue / 1000
                 })
@@ -997,7 +997,7 @@ export class DataService {
 
           let timeSpec = this.uiQuery.getValue().timeSpec;
 
-          let columnLabel = common.formatTsUTC({
+          let columnLabel = common.formatTsUnix({
             timeSpec: timeSpec,
             unixTimeZoned: p.data.value[0] / 1000
           });

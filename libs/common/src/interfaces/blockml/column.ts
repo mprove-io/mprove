@@ -4,8 +4,8 @@ export class Column {
   @IsInt()
   columnId: number;
 
-  @IsInt()
-  tsUTC: number;
+  // @IsInt()
+  // tsUTC: number;
 
   @IsString()
   label: string;

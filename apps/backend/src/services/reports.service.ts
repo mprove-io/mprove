@@ -1,7 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { getUnixTime } from 'date-fns';
-import { fromZonedTime } from 'date-fns-tz';
 import { and, eq, inArray } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
@@ -1118,14 +1116,14 @@ export class ReportsService {
               let unixTimeZoned = Number(
                 y.fields.timestamp.toString().split('.')[0]
               );
-              let unixDateZoned = new Date(unixTimeZoned * 1000);
-              let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
+              // let unixDateZoned = new Date(unixTimeZoned * 1000);
+              // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
               let record: common.RowRecord = {
                 id: y.id,
                 columnLabel: undefined,
                 key: unixTimeZoned,
-                tsUTC: tsUTC,
+                // tsUTC: tsUTC,
                 value: common.isDefined(y.fields)
                   ? y.fields[row.rowId]
                   : undefined,

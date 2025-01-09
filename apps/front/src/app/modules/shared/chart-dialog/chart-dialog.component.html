@@ -24,18 +24,6 @@
       </div>
     </div> -->
 
-    <!-- <div
-      *ngIf="isData === true && mconfig?.fields?.length > 0"
-      class="ml-5 flex cursor-pointer flex-row items-center"
-      (click)="toggleFormat()"
-    >
-      <ui-switch class="mb-1" [checked]="isFormat"></ui-switch>
-
-      <div class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
-        >Format Numbers
-      </div>
-    </div> -->
-
     <div
       *ngIf="!!ref.data.metricId"
       class="flex flex-1 flex-row items-center justify-start"
@@ -43,7 +31,8 @@
       <div
         class="flex h-11 max-w-[850px] flex-1 flex-row items-center space-x-5"
       >
-        <div class="text-gray1 flex flex-shrink-0 select-none items-center"
+        <div
+          class="text-gray1 ml-5 flex flex-shrink-0 select-none items-center text-lg font-semibold"
           >Group by</div
         >
 
@@ -86,6 +75,21 @@
             </ng-template>
           </ng-select>
         </form>
+      </div>
+    </div>
+
+    <div
+      *ngIf="isData === true && mconfig?.fields?.length > 0"
+      class="ml-10 flex h-11 cursor-pointer flex-row items-center"
+      (click)="toggleFormat()"
+    >
+      <ui-switch
+        class="mb-1 flex flex-row items-center"
+        [checked]="isFormat"
+      ></ui-switch>
+
+      <div class="text-gray1 ml-5 flex h-11 select-none items-center text-base"
+        >Format
       </div>
     </div>
 

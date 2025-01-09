@@ -26,7 +26,6 @@ import {
   startOfYear,
   sub
 } from 'date-fns';
-import { fromZonedTime } from 'date-fns-tz';
 import { and, eq } from 'drizzle-orm';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
@@ -376,11 +375,7 @@ export class BlockmlService {
         ? differenceInMinutes(endDate, startDate)
         : undefined;
 
-    let isTimeColumnsLimitExceeded =
-      timeRangeFraction.tsForOption ===
-      common.FractionTsForOptionEnum.ForInfinity
-        ? true
-        : false;
+    let isTimeColumnsLimitExceeded = false;
 
     if (diffColumnsLength > timeColumnsLimit) {
       isTimeColumnsLimitExceeded = true;
@@ -536,13 +531,13 @@ export class BlockmlService {
 
     let columns = timeColumns.map(x => {
       let unixTimeZoned = getUnixTime(x);
-      let unixDateZoned = new Date(unixTimeZoned * 1000);
-      let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
+      // let unixDateZoned = new Date(unixTimeZoned * 1000);
+      // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
       let column: common.Column = {
         columnId: unixTimeZoned,
-        tsUTC: tsUTC,
-        label: common.formatTsUTC({
+        // tsUTC: tsUTC,
+        label: common.formatTsUnix({
           timeSpec: timeSpec,
           unixTimeZoned: unixTimeZoned
         })
