@@ -47,7 +47,7 @@
             <div class="flex-grow"></div>
 
             <div class="flex flex-1 flex-row items-center justify-start">
-              <!-- <div class="text-gray1 ml-6 select-none text-base">Spec</div> -->
+              <div class="text-gray1 ml-6 select-none text-base">Detail</div>
 
               <form class="ml-5" [formGroup]="timeSpecForm">
                 <ng-select
@@ -215,7 +215,9 @@
 
           <div
             class="ml-4 flex h-8 w-8 flex-shrink-0 text-amber-500"
-            tp="Exceeded time columns limit ({{ report.timeColumnsLimit }})"
+            tp="Exceeded time columns limit ({{
+              report.timeColumnsLimit
+            }}). Change time detail or reduce time filter window."
             *ngIf="report?.isTimeColumnsLimitExceeded === true"
           >
             <m-exclamation-icon></m-exclamation-icon>

@@ -4,7 +4,6 @@ export const APP_NAME_BACKEND = 'BACKEND';
 export const APP_NAME_SCHEDULER = 'SCHEDULER';
 
 export const PASSWORD_EXPIRES_OFFSET = 86400000;
-export const TIME_COLUMNS_LIMIT = 100;
 
 export const IDEMP_EXPIRE_SECONDS = 600;
 

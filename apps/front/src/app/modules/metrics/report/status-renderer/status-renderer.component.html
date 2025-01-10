@@ -38,14 +38,25 @@
   </div>
 
   <div
+    *ngIf="!topQueryError && isLimitReached === true"
+    class="flex h-8 w-8 flex-shrink-0 text-amber-500"
+    tp="Row limit reached ({{
+      timeColumnsLimit
+    }}). Therefore, the result may contain incomplete data. Change time detail or reduce time filter window."
+  >
+    <m-exclamation-icon></m-exclamation-icon>
+  </div>
+
+  <div
     *ngIf="
       isRunning === false &&
       params.data.query?.status !== queryStatusEnum.Error &&
       !topQueryError &&
+      isLimitReached === false &&
       !!params.data.mconfig &&
       params.data.mconfig.warnSelect.length > 0
     "
-    class="flex h-8 w-8 flex-shrink-0 text-amber-500"
+    class="flex h-8 w-8 flex-shrink-0 text-purple-500"
     tp="Warning: The selected fields [{{
       params.data.mconfig.warnSelect.join(', ')
     }}] may use unsafe aggregations and produce incorrect results"

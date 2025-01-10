@@ -29,7 +29,6 @@ import {
 import { and, eq } from 'drizzle-orm';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
-import { constants } from '~backend/barrels/constants';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
@@ -310,7 +309,7 @@ export class BlockmlService {
       caseSensitiveStringFilters
     } = item;
 
-    let timeColumnsLimit = constants.TIME_COLUMNS_LIMIT;
+    let timeColumnsLimit = common.TIME_COLUMNS_LIMIT;
 
     let toBlockmlGetTimeRangeRequest: apiToBlockml.ToBlockmlGetTimeRangeRequest =
       {

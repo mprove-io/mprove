@@ -54,6 +54,8 @@ export const USE_PROJECT_TIMEZONE_VALUE = 'USE_PROJECT_TIMEZONE';
 export const USE_PROJECT_TIMEZONE_LABEL = 'USE PROJECT CONFIG TIMEZONE';
 export const UTC = 'UTC';
 
+export const TIME_COLUMNS_LIMIT = 100;
+
 export const VIEW_MODEL_ALIAS = 'v';
 export const VIEW_MODEL_PREFIX = 'view_model';
 
