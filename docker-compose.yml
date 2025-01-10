@@ -191,13 +191,13 @@ services:
     ports:
       - 3003:80
 
-  frontnode:
-    build:
-      context: ./
-      dockerfile: tools/docker/frontnode.Dockerfile
-    image: ghcr.io/mprove-io/mprove-frontnode:$MPROVE_RELEASE_TAG
-    ports:
-      - 4200:4200
+  # frontnode:
+  #   build:
+  #     context: ./
+  #     dockerfile: tools/docker/frontnode.Dockerfile
+  #   image: ghcr.io/mprove-io/mprove-frontnode:$MPROVE_RELEASE_TAG
+  #   ports:
+  #     - 4200:4200
 
   dwh-postgres:
     build:
@@ -252,11 +252,11 @@ services:
         source: $COMPOSE_DWH_CLICKHOUSE_LOGS_VOLUME_SOURCE_PATH
         target: /var/log/clickhouse-server
 
-  integra:
-    build:
-      context: ./
-      dockerfile: tools/docker/integra.Dockerfile
-    image: ghcr.io/mprove-io/mprove-integra:$MPROVE_RELEASE_TAG
+  # integra:
+  #   build:
+  #     context: ./
+  #     dockerfile: tools/docker/integra.Dockerfile
+  #   image: ghcr.io/mprove-io/mprove-integra:$MPROVE_RELEASE_TAG
 
   mcli:
     build:
