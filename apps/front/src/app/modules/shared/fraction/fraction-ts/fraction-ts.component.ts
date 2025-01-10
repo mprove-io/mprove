@@ -541,7 +541,7 @@ export class FractionTsComponent implements OnInit {
       : 1;
     let day = common.isDefined(this.fraction.tsDateToDay)
       ? this.fraction.tsDateToDay
-      : 1;
+      : 2;
     let hour = common.isDefined(this.fraction.tsDateToHour)
       ? this.fraction.tsDateToHour
       : 0;
