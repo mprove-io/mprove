@@ -31,6 +31,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
   applyFormat(params: ICellRendererParams<DataRow>) {
     this.params = params;
+
     let rowDataRecord = params.data.records.find(
       x => x.key === Number(params.colDef.field)
     );
@@ -59,7 +60,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
       this.params.data.rowType === common.RowTypeEnum.Metric
     ) {
       let rowDataRecord = this.params.data.records.find(
-        x => x.key === Number(this.params.colDef.field)
+        x => x.key * 1000 === Number(this.params.colDef.field)
       );
 
       // console.log(rowDataRecord.key);
@@ -169,6 +170,15 @@ export class DataRendererComponent implements ICellRendererAngularComp {
         dateToStr = hourTo.dateStr;
         timeToStr = hourTo.timeStr;
       } else if (timeSpecWord === common.TimeframeEnum.Minute) {
+        let tsNextMinute = ts + 60 * 1000;
+
+        let minuteTo = this.timeService.getDateTimeStrFromEpochMs({
+          ts: tsNextMinute
+        });
+
+        dateToStr = minuteTo.dateStr;
+        timeToStr = minuteTo.timeStr;
+      } else {
         let tsNextMinute = ts + 60 * 1000;
 
         let minuteTo = this.timeService.getDateTimeStrFromEpochMs({

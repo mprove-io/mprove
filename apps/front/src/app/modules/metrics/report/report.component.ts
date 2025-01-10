@@ -201,7 +201,7 @@ export class ReportComponent {
 
         this.timeColumns = this.report.columns.map(column => {
           let columnDef: ColDef<DataRow> = {
-            field: `${column.columnId}` as any,
+            field: `${column.columnId * 1000}` as any,
             headerName: column.label,
             cellRenderer: DataRendererComponent,
             type: 'numericColumn',
@@ -266,17 +266,15 @@ export class ReportComponent {
             // console.log(row.records);
 
             row.records.forEach(record => {
-              (dataRow as any)[record.key] = record.value;
-
               let column = this.report.columns.find(
                 c => c.columnId === record.key
               );
 
-              // if (common.isUndefined(column)) {
-              //   console.log(record.key);
-              // }
+              record.columnLabel = column?.label;
 
-              record.columnLabel = column?.label; // TODO: question mark
+              if (common.isDefined(record.columnLabel)) {
+                (dataRow as any)[record.key * 1000] = record.value;
+              }
             });
 
             return dataRow;

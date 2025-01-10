@@ -552,9 +552,6 @@ Formula must return a valid JSON object.`;
       timeSpec: timeSpec
     });
 
-    // console.log('reportDataColumns:');
-    // console.log(reportDataColumns);
-
     let topQueryData: any[] = [];
     let topQueryError: any;
 
@@ -574,7 +571,11 @@ Formula must return a valid JSON object.`;
         ssl: false
       };
 
-      let timestampValues = reportDataColumns.map(x => x.fields['timestamp']);
+      let timestampValues = reportDataColumns.map(
+        x => x.fields['timestamp'] * 1000
+      );
+
+      // console.log(timestampValues);
 
       let mainSelect = [
         `unnest(ARRAY[${timestampValues}]::bigint[]) AS timestamp`,
@@ -669,6 +670,9 @@ FROM main;`;
         .catch(async (e: any) => {
           topQueryError = e.message;
         });
+
+      // console.log('topQueryData');
+      // console.log(topQueryData);
     }
 
     let lastCalculatedTs = Number(helper.makeTs());
@@ -688,9 +692,7 @@ FROM main;`;
         ) {
           row.topQueryError = row.formulaError;
           row.records = reportDataColumns.map((y: any, index) => {
-            let unixTimeZoned = Number(
-              y.fields['timestamp'].toString().split('.')[0]
-            );
+            let unixTimeZoned = y.fields['timestamp'];
             // let unixDateZoned = new Date(unixTimeZoned * 1000);
             // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
@@ -711,9 +713,7 @@ FROM main;`;
         ) {
           row.topQueryError = topQueryError;
           row.records = reportDataColumns.map((y: any, index) => {
-            let unixTimeZoned = Number(
-              y.fields['timestamp'].toString().split('.')[0]
-            );
+            let unixTimeZoned = y.fields['timestamp'];
             // let unixDateZoned = new Date(unixTimeZoned * 1000);
             // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
@@ -735,9 +735,7 @@ FROM main;`;
           row.topQueryError = topQueryError;
 
           row.records = reportDataColumns.map((y: any, index) => {
-            let unixTimeZoned = Number(
-              y.fields['timestamp'].toString().split('.')[0]
-            );
+            let unixTimeZoned = y.fields['timestamp'];
             // let unixDateZoned = new Date(unixTimeZoned * 1000);
             // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
@@ -756,7 +754,7 @@ FROM main;`;
           row.topQueryError = undefined;
 
           row.records = topQueryData.map((y: any, index) => {
-            let unixTimeZoned = Number(y.timestamp.toString().split('.')[0]);
+            let unixTimeZoned = y.timestamp / 1000;
             // let unixDateZoned = new Date(unixTimeZoned * 1000);
             // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
@@ -887,7 +885,7 @@ FROM main;`;
             }
 
             let dataRow = row.query?.data?.find(
-              (r: any) => r[timeFieldId]?.toString().split('.')[0] === timeValue
+              (r: any) => r[timeFieldId]?.toString() === timeValue
             );
 
             if (common.isDefined(dataRow)) {
@@ -904,6 +902,8 @@ FROM main;`;
         return reportDataColumn;
       });
     } else {
+      report.columns = [];
+
       report.rows
         .filter(row => row.rowType === common.RowTypeEnum.Metric)
         .forEach((row: common.Row) => {
@@ -941,9 +941,7 @@ FROM main;`;
               x => x.fields.timestamp === columnId
             );
 
-            if (common.isDefined(reportDataColumn)) {
-              reportDataColumn.fields[row.rowId] = dataValue;
-            } else {
+            if (common.isUndefined(reportDataColumn)) {
               reportDataColumn = {
                 id: undefined,
                 fields: {
@@ -952,6 +950,8 @@ FROM main;`;
                 }
               };
               reportDataColumns.push(reportDataColumn);
+            } else {
+              reportDataColumn.fields[row.rowId] = dataValue;
             }
 
             let reportColumn = report.columns.find(
@@ -984,7 +984,7 @@ FROM main;`;
           : 0
       );
 
-      reportDataColumns.map((x, i) => {
+      reportDataColumns = reportDataColumns.map((x, i) => {
         x.id = i;
         return x;
       });

@@ -1113,9 +1113,7 @@ export class ReportsService {
 
         row.records = common.isDefined(row.query)
           ? reportDataColumns.map(y => {
-              let unixTimeZoned = Number(
-                y.fields.timestamp.toString().split('.')[0]
-              );
+              let unixTimeZoned = y.fields.timestamp;
               // let unixDateZoned = new Date(unixTimeZoned * 1000);
               // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 

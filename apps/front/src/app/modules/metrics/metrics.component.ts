@@ -733,7 +733,10 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
     let fraction = this.fractions[0];
 
-    if (fraction.type === common.FractionTypeEnum.TsIsInLast) {
+    if (
+      fraction.type === common.FractionTypeEnum.TsIsInLast &&
+      timeSpec !== common.TimeSpecEnum.Timestamps
+    ) {
       let newFraction = common.makeCopy(fraction);
 
       newFraction.tsLastUnit =
