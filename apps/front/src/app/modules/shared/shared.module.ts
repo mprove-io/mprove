@@ -3,8 +3,6 @@ import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyDirective } from '@ngneat/helipopper';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { AgChartsModule } from 'ag-charts-angular';
 import { MonacoEditorModule } from 'ng-monaco-editor';
 import { ColorSketchModule } from 'ngx-color/sketch';
 import { NgxEchartsModule } from 'ngx-echarts';
@@ -207,12 +205,10 @@ let sharedComponents = [
     ReactiveFormsModule,
     FormsModule,
     NgSelectModule,
-    NgxChartsModule,
     ColorSketchModule,
     NgxSpinnerModule,
     TippyDirective,
     MonacoEditorModule,
-    AgChartsModule,
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
     })

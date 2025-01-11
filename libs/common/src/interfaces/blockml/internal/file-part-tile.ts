@@ -3,7 +3,6 @@ import { FilterBricksDictionary } from '../filter-bricks-dictionary';
 import { Fraction } from '../fraction';
 import { VarsSqlStep } from '../internal/vars-sql-step';
 import { JoinAggregation } from '../join-aggregation';
-import { FileChartAxis } from './file-chart-axis';
 import { FileChartData } from './file-chart-data';
 import { FileChartOptions } from './file-chart-options';
 import { FileChartPlate } from './file-chart-plate';
@@ -34,8 +33,8 @@ export interface FilePartTile {
   data?: FileChartData;
   data_line_num?: number;
 
-  axis?: FileChartAxis;
-  axis_line_num?: number;
+  // axis?: FileChartAxis;
+  // axis_line_num?: number;
 
   options?: FileChartOptions;
   options_line_num?: number;

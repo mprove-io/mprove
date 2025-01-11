@@ -64,17 +64,7 @@ export function getSelectValid(item: {
     chart.type === common.ChartTypeEnum.EPie ||
     // chart.type === common.ChartTypeEnum.EHeatMap,
     chart.type === common.ChartTypeEnum.ETreeMap ||
-    chart.type === common.ChartTypeEnum.EGauge ||
-    //
-    chart.type === common.ChartTypeEnum.AgPie ||
-    chart.type === common.ChartTypeEnum.AgDonut ||
-    chart.type === common.ChartTypeEnum.BarVertical ||
-    chart.type === common.ChartTypeEnum.BarHorizontal ||
-    chart.type === common.ChartTypeEnum.Pie ||
-    chart.type === common.ChartTypeEnum.PieAdvanced ||
-    chart.type === common.ChartTypeEnum.PieGrid ||
-    chart.type === common.ChartTypeEnum.TreeMap ||
-    chart.type === common.ChartTypeEnum.Gauge
+    chart.type === common.ChartTypeEnum.EGauge
   ) {
     if (selectedDimensions.length === 0) {
       isSelectValid = false;
@@ -88,46 +78,11 @@ export function getSelectValid(item: {
       errorMessage =
         'Measure or Calculation field must be selected for this chart type';
     }
-  } else if (chart.type === common.ChartTypeEnum.NumberCard) {
-    if (selectedDimensions.length > 1) {
-      isSelectValid = false;
-      errorMessage =
-        'Only one Dimension field can be selected for this chart type';
-    } else if (selectedMeasuresAndCalculations.length === 0) {
-      isSelectValid = false;
-      errorMessage =
-        'Measure or Calculation field must be selected for this chart type';
-    }
-  } else if (chart.type === common.ChartTypeEnum.GaugeLinear) {
-    if (selectedDimensions.length > 0) {
-      isSelectValid = false;
-      errorMessage = 'Dimension fields can not be selected for this chart type';
-    } else if (selectedMeasuresAndCalculations.length === 0) {
-      isSelectValid = false;
-      errorMessage =
-        'Measure or Calculation field must be selected for this chart type';
-    }
   } else if (
     chart.type === common.ChartTypeEnum.ELine ||
     chart.type === common.ChartTypeEnum.EBar ||
-    chart.type === common.ChartTypeEnum.EScatter ||
+    chart.type === common.ChartTypeEnum.EScatter
     // chart.type === common.ChartTypeEnum.EBubble ||
-    chart.type === common.ChartTypeEnum.AgLine ||
-    chart.type === common.ChartTypeEnum.AgArea ||
-    chart.type === common.ChartTypeEnum.AgBar ||
-    chart.type === common.ChartTypeEnum.AgScatter ||
-    chart.type === common.ChartTypeEnum.AgBubble ||
-    chart.type === common.ChartTypeEnum.BarVerticalGrouped ||
-    chart.type === common.ChartTypeEnum.BarHorizontalGrouped ||
-    chart.type === common.ChartTypeEnum.BarVerticalStacked ||
-    chart.type === common.ChartTypeEnum.BarHorizontalStacked ||
-    chart.type === common.ChartTypeEnum.BarVerticalNormalized ||
-    chart.type === common.ChartTypeEnum.BarHorizontalNormalized ||
-    chart.type === common.ChartTypeEnum.Line ||
-    chart.type === common.ChartTypeEnum.Area ||
-    chart.type === common.ChartTypeEnum.AreaStacked ||
-    chart.type === common.ChartTypeEnum.AreaNormalized ||
-    chart.type === common.ChartTypeEnum.HeatMap
   ) {
     if (selectedDimensions.length === 0) {
       isSelectValid = false;
@@ -141,13 +96,7 @@ export function getSelectValid(item: {
         'A maximum of 2 dimension fields can be selected for this chart type';
     } else if (
       selectedDimensionsResultForXField.length === 0 &&
-      (chart.type === common.ChartTypeEnum.ELine ||
-        chart.type === common.ChartTypeEnum.AgLine ||
-        chart.type === common.ChartTypeEnum.AgArea ||
-        chart.type === common.ChartTypeEnum.Line ||
-        chart.type === common.ChartTypeEnum.Area ||
-        chart.type === common.ChartTypeEnum.AreaStacked ||
-        chart.type === common.ChartTypeEnum.AreaNormalized)
+      chart.type === common.ChartTypeEnum.ELine
     ) {
       isSelectValid = false;
       errorMessage =
@@ -160,13 +109,7 @@ export function getSelectValid(item: {
       xField.result !== common.FieldResultEnum.DayOfWeekIndex &&
       xField.result !== common.FieldResultEnum.MonthName &&
       xField.result !== common.FieldResultEnum.QuarterOfYear &&
-      (chart.type === common.ChartTypeEnum.ELine ||
-        chart.type === common.ChartTypeEnum.AgLine ||
-        chart.type === common.ChartTypeEnum.AgArea ||
-        chart.type === common.ChartTypeEnum.Line ||
-        chart.type === common.ChartTypeEnum.Area ||
-        chart.type === common.ChartTypeEnum.AreaStacked ||
-        chart.type === common.ChartTypeEnum.AreaNormalized)
+      chart.type === common.ChartTypeEnum.ELine
     ) {
       isSelectValid = false;
       errorMessage =

@@ -108,60 +108,60 @@ export class ChartEditorComponent implements OnChanges {
   sizeFieldChartTypes = common.sizeFieldChartTypes;
   multiFieldChartTypes = common.multiFieldChartTypes;
   nullableMultiFieldChartTypes = common.nullableMultiFieldChartTypes;
-  valueFieldChartTypes = common.valueFieldChartTypes;
-  previousValueFieldChartTypes = common.previousValueFieldChartTypes;
+  // valueFieldChartTypes = common.valueFieldChartTypes;
+  // previousValueFieldChartTypes = common.previousValueFieldChartTypes;
 
-  xAxisLabelChartTypes = common.xAxisLabelChartTypes;
-  yAxisLabelChartTypes = common.yAxisLabelChartTypes;
-  showXAxisLabelChartTypes = common.showXAxisLabelChartTypes;
-  showYAxisLabelChartTypes = common.showYAxisLabelChartTypes;
-  xAxisChartTypes = common.xAxisChartTypes;
-  yAxisChartTypes = common.yAxisChartTypes;
-  showAxisChartTypes = common.showAxisChartTypes;
+  // xAxisLabelChartTypes = common.xAxisLabelChartTypes;
+  // yAxisLabelChartTypes = common.yAxisLabelChartTypes;
+  // showXAxisLabelChartTypes = common.showXAxisLabelChartTypes;
+  // showYAxisLabelChartTypes = common.showYAxisLabelChartTypes;
+  // xAxisChartTypes = common.xAxisChartTypes;
+  // yAxisChartTypes = common.yAxisChartTypes;
+  // showAxisChartTypes = common.showAxisChartTypes;
 
-  angleSpanChartTypes = common.angleSpanChartTypes;
-  animationsChartTypes = common.animationsChartTypes;
-  arcWidthChartTypes = common.arcWidthChartTypes;
-  autoScaleChartTypes = common.autoScaleChartTypes;
-  bandColorChartTypes = common.bandColorChartTypes;
-  barPaddingChartTypes = common.barPaddingChartTypes;
-  bigSegmentsChartTypes = common.bigSegmentsChartTypes;
-  cardColorChartTypes = common.cardColorChartTypes;
-  colorSchemeChartTypes = common.colorSchemeChartTypes;
-  doughnutChartTypes = common.doughnutChartTypes;
-  emptyColorChartTypes = common.emptyColorChartTypes;
-  explodeSlicesChartTypes = common.explodeSlicesChartTypes;
-  gradientChartTypes = common.gradientChartTypes;
-  groupPaddingChartTypes = common.groupPaddingChartTypes;
-  innerPaddingChartTypes = common.innerPaddingChartTypes;
-  interpolationChartTypes = common.interpolationChartTypes;
-  labelsChartTypes = common.labelsChartTypes;
-  legendChartTypes = common.legendChartTypes;
-  legendTitleChartTypes = common.legendTitleChartTypes;
-  maxChartTypes = common.maxChartTypes;
-  minChartTypes = common.minChartTypes;
-  pageSizeChartTypes = common.pageSizeChartTypes;
-  rangeFillOpacityChartTypes = common.rangeFillOpacityChartTypes;
-  roundDomainsChartTypes = common.roundDomainsChartTypes;
-  roundEdgesChartTypes = common.roundEdgesChartTypes;
-  schemeTypeChartTypes = common.schemeTypeChartTypes;
-  showDataLabelChartTypes = common.showDataLabelChartTypes;
   formatChartTypes = common.formatChartTypes;
-  showGridLinesChartTypes = common.showGridLinesChartTypes;
-  smallSegmentsChartTypes = common.smallSegmentsChartTypes;
-  startAngleChartTypes = common.startAngleChartTypes;
-  textColorChartTypes = common.textColorChartTypes;
-  timelineChartTypes = common.timelineChartTypes;
-  tooltipDisabledChartTypes = common.tooltipDisabledChartTypes;
-  unitsChartTypes = common.unitsChartTypes;
-  xScaleMaxChartTypes = common.xScaleMaxChartTypes;
-  yScaleMaxChartTypes = common.yScaleMaxChartTypes;
-  yScaleMinChartTypes = common.yScaleMinChartTypes;
-  formatNumberDataLabelChartTypes = common.formatNumberDataLabelChartTypes;
-  formatNumberValueChartTypes = common.formatNumberValueChartTypes;
-  formatNumberAxisTickChartTypes = common.formatNumberAxisTickChartTypes;
-  formatNumberXAxisTickChartTypes = common.formatNumberXAxisTickChartTypes;
-  formatNumberYAxisTickChartTypes = common.formatNumberYAxisTickChartTypes;
+  // angleSpanChartTypes = common.angleSpanChartTypes;
+  // animationsChartTypes = common.animationsChartTypes;
+  // arcWidthChartTypes = common.arcWidthChartTypes;
+  // autoScaleChartTypes = common.autoScaleChartTypes;
+  // bandColorChartTypes = common.bandColorChartTypes;
+  // barPaddingChartTypes = common.barPaddingChartTypes;
+  // bigSegmentsChartTypes = common.bigSegmentsChartTypes;
+  // cardColorChartTypes = common.cardColorChartTypes;
+  // colorSchemeChartTypes = common.colorSchemeChartTypes;
+  // doughnutChartTypes = common.doughnutChartTypes;
+  // emptyColorChartTypes = common.emptyColorChartTypes;
+  // explodeSlicesChartTypes = common.explodeSlicesChartTypes;
+  // gradientChartTypes = common.gradientChartTypes;
+  // groupPaddingChartTypes = common.groupPaddingChartTypes;
+  // innerPaddingChartTypes = common.innerPaddingChartTypes;
+  // interpolationChartTypes = common.interpolationChartTypes;
+  // labelsChartTypes = common.labelsChartTypes;
+  // legendChartTypes = common.legendChartTypes;
+  // legendTitleChartTypes = common.legendTitleChartTypes;
+  // maxChartTypes = common.maxChartTypes;
+  // minChartTypes = common.minChartTypes;
+  pageSizeChartTypes = common.pageSizeChartTypes;
+  // rangeFillOpacityChartTypes = common.rangeFillOpacityChartTypes;
+  // roundDomainsChartTypes = common.roundDomainsChartTypes;
+  // roundEdgesChartTypes = common.roundEdgesChartTypes;
+  // schemeTypeChartTypes = common.schemeTypeChartTypes;
+  // showDataLabelChartTypes = common.showDataLabelChartTypes;
+  // showGridLinesChartTypes = common.showGridLinesChartTypes;
+  // smallSegmentsChartTypes = common.smallSegmentsChartTypes;
+  // startAngleChartTypes = common.startAngleChartTypes;
+  // textColorChartTypes = common.textColorChartTypes;
+  // timelineChartTypes = common.timelineChartTypes;
+  // tooltipDisabledChartTypes = common.tooltipDisabledChartTypes;
+  // unitsChartTypes = common.unitsChartTypes;
+  // xScaleMaxChartTypes = common.xScaleMaxChartTypes;
+  // yScaleMaxChartTypes = common.yScaleMaxChartTypes;
+  // yScaleMinChartTypes = common.yScaleMinChartTypes;
+  // formatNumberDataLabelChartTypes = common.formatNumberDataLabelChartTypes;
+  // formatNumberValueChartTypes = common.formatNumberValueChartTypes;
+  // formatNumberAxisTickChartTypes = common.formatNumberAxisTickChartTypes;
+  // formatNumberXAxisTickChartTypes = common.formatNumberXAxisTickChartTypes;
+  // formatNumberYAxisTickChartTypes = common.formatNumberYAxisTickChartTypes;
 
   formatNumberExamples: any[] = constants.FORMAT_NUMBER_EXAMPLES.map(x => {
     let structState = this.structQuery.getValue();
@@ -800,221 +800,223 @@ export class ChartEditorComponent implements OnChanges {
 
     if (this.chart.type === common.ChartTypeEnum.Table) {
       isChartValid = this.pageSizeForm.controls['pageSize'].valid;
-    } else if (this.chart.type === common.ChartTypeEnum.BarVertical) {
-      isChartValid =
-        (this.chart.legend === false ||
-          this.legendTitleForm.controls['legendTitle'].valid) &&
-        (this.chart.xAxis === false ||
-          this.chart.showXAxisLabel === false ||
-          this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
-        (this.chart.yAxis === false ||
-          this.chart.showYAxisLabel === false ||
-          this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
-        this.yScaleMaxForm.controls['yScaleMax'].valid &&
-        this.barPaddingForm.controls['barPadding'].valid &&
-        this.formatNumberDataLabelForm.controls['formatNumberDataLabel']
-          .valid &&
-        this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].valid;
-    } else if (this.chart.type === common.ChartTypeEnum.BarVerticalGrouped) {
-      isChartValid =
-        (this.chart.legend === false ||
-          this.legendTitleForm.controls['legendTitle'].valid) &&
-        (this.chart.xAxis === false ||
-          this.chart.showXAxisLabel === false ||
-          this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
-        (this.chart.yAxis === false ||
-          this.chart.showYAxisLabel === false ||
-          this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
-        this.yScaleMaxForm.controls['yScaleMax'].valid &&
-        this.barPaddingForm.controls['barPadding'].valid &&
-        this.groupPaddingForm.controls['groupPadding'].valid &&
-        this.formatNumberDataLabelForm.controls['formatNumberDataLabel']
-          .valid &&
-        this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].valid;
-    } else if (this.chart.type === common.ChartTypeEnum.BarVerticalStacked) {
-      isChartValid =
-        (this.chart.legend === false ||
-          this.legendTitleForm.controls['legendTitle'].valid) &&
-        (this.chart.xAxis === false ||
-          this.chart.showXAxisLabel === false ||
-          this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
-        (this.chart.yAxis === false ||
-          this.chart.showYAxisLabel === false ||
-          this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
-        this.yScaleMaxForm.controls['yScaleMax'].valid &&
-        this.barPaddingForm.controls['barPadding'].valid &&
-        this.formatNumberDataLabelForm.controls['formatNumberDataLabel']
-          .valid &&
-        this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].valid;
-    } else if (this.chart.type === common.ChartTypeEnum.BarVerticalNormalized) {
-      isChartValid =
-        (this.chart.legend === false ||
-          this.legendTitleForm.controls['legendTitle'].valid) &&
-        (this.chart.xAxis === false ||
-          this.chart.showXAxisLabel === false ||
-          this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
-        (this.chart.yAxis === false ||
-          this.chart.showYAxisLabel === false ||
-          this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
-        this.barPaddingForm.controls['barPadding'].valid &&
-        this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].valid;
-    } else if (this.chart.type === common.ChartTypeEnum.BarHorizontal) {
-      isChartValid =
-        (this.chart.legend === false ||
-          this.legendTitleForm.controls['legendTitle'].valid) &&
-        (this.chart.xAxis === false ||
-          this.chart.showXAxisLabel === false ||
-          this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
-        (this.chart.yAxis === false ||
-          this.chart.showYAxisLabel === false ||
-          this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
-        this.xScaleMaxForm.controls['xScaleMax'].valid &&
-        this.barPaddingForm.controls['barPadding'].valid &&
-        this.formatNumberDataLabelForm.controls['formatNumberDataLabel']
-          .valid &&
-        this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'].valid;
-    } else if (this.chart.type === common.ChartTypeEnum.BarHorizontalGrouped) {
-      isChartValid =
-        (this.chart.legend === false ||
-          this.legendTitleForm.controls['legendTitle'].valid) &&
-        (this.chart.xAxis === false ||
-          this.chart.showXAxisLabel === false ||
-          this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
-        (this.chart.yAxis === false ||
-          this.chart.showYAxisLabel === false ||
-          this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
-        this.xScaleMaxForm.controls['xScaleMax'].valid &&
-        this.barPaddingForm.controls['barPadding'].valid &&
-        this.groupPaddingForm.controls['groupPadding'].valid &&
-        this.formatNumberDataLabelForm.controls['formatNumberDataLabel']
-          .valid &&
-        this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'].valid;
-    } else if (this.chart.type === common.ChartTypeEnum.BarHorizontalStacked) {
-      isChartValid =
-        (this.chart.legend === false ||
-          this.legendTitleForm.controls['legendTitle'].valid) &&
-        (this.chart.xAxis === false ||
-          this.chart.showXAxisLabel === false ||
-          this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
-        (this.chart.yAxis === false ||
-          this.chart.showYAxisLabel === false ||
-          this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
-        this.xScaleMaxForm.controls['xScaleMax'].valid &&
-        this.barPaddingForm.controls['barPadding'].valid &&
-        this.formatNumberDataLabelForm.controls['formatNumberDataLabel']
-          .valid &&
-        this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'].valid;
-    } else if (
-      this.chart.type === common.ChartTypeEnum.BarHorizontalNormalized
-    ) {
-      isChartValid =
-        (this.chart.legend === false ||
-          this.legendTitleForm.controls['legendTitle'].valid) &&
-        (this.chart.xAxis === false ||
-          this.chart.showXAxisLabel === false ||
-          this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
-        (this.chart.yAxis === false ||
-          this.chart.showYAxisLabel === false ||
-          this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
-        this.barPaddingForm.controls['barPadding'].valid &&
-        this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'].valid;
-    } else if (this.chart.type === common.ChartTypeEnum.Pie) {
-      isChartValid =
-        (this.chart.legend === false ||
-          this.legendTitleForm.controls['legendTitle'].valid) &&
-        (this.chart.doughnut === false ||
-          this.arcWidthForm.controls['arcWidth'].valid);
-    } else if (this.chart.type === common.ChartTypeEnum.PieAdvanced) {
-      isChartValid =
-        this.formatNumberValueForm.controls['formatNumberValue'].valid;
-    } else if (this.chart.type === common.ChartTypeEnum.PieGrid) {
-      isChartValid = true;
-    } else if (this.chart.type === common.ChartTypeEnum.Line) {
-      isChartValid =
-        (this.chart.legend === false ||
-          this.legendTitleForm.controls['legendTitle'].valid) &&
-        (this.chart.xAxis === false ||
-          this.chart.showXAxisLabel === false ||
-          this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
-        (this.chart.yAxis === false ||
-          this.chart.showYAxisLabel === false ||
-          this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
-        this.yScaleMinForm.controls['yScaleMin'].valid &&
-        this.yScaleMaxForm.controls['yScaleMax'].valid &&
-        this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].valid;
-    } else if (this.chart.type === common.ChartTypeEnum.Area) {
-      isChartValid =
-        (this.chart.legend === false ||
-          this.legendTitleForm.controls['legendTitle'].valid) &&
-        (this.chart.xAxis === false ||
-          this.chart.showXAxisLabel === false ||
-          this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
-        (this.chart.yAxis === false ||
-          this.chart.showYAxisLabel === false ||
-          this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
-        this.yScaleMinForm.controls['yScaleMin'].valid &&
-        this.yScaleMaxForm.controls['yScaleMax'].valid &&
-        this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].valid;
-    } else if (this.chart.type === common.ChartTypeEnum.AreaStacked) {
-      isChartValid =
-        (this.chart.legend === false ||
-          this.legendTitleForm.controls['legendTitle'].valid) &&
-        (this.chart.xAxis === false ||
-          this.chart.showXAxisLabel === false ||
-          this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
-        (this.chart.yAxis === false ||
-          this.chart.showYAxisLabel === false ||
-          this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
-        this.yScaleMinForm.controls['yScaleMin'].valid &&
-        this.yScaleMaxForm.controls['yScaleMax'].valid &&
-        this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].valid;
-    } else if (this.chart.type === common.ChartTypeEnum.AreaNormalized) {
-      isChartValid =
-        (this.chart.legend === false ||
-          this.legendTitleForm.controls['legendTitle'].valid) &&
-        (this.chart.xAxis === false ||
-          this.chart.showXAxisLabel === false ||
-          this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
-        (this.chart.yAxis === false ||
-          this.chart.showYAxisLabel === false ||
-          this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
-        this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].valid;
-    } else if (this.chart.type === common.ChartTypeEnum.HeatMap) {
-      isChartValid =
-        (this.chart.xAxis === false ||
-          this.chart.showXAxisLabel === false ||
-          this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
-        (this.chart.yAxis === false ||
-          this.chart.showYAxisLabel === false ||
-          this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
-        this.innerPaddingForm.controls['innerPadding'].valid;
-    } else if (this.chart.type === common.ChartTypeEnum.TreeMap) {
-      isChartValid =
-        this.formatNumberValueForm.controls['formatNumberValue'].valid;
-    } else if (this.chart.type === common.ChartTypeEnum.NumberCard) {
-      isChartValid =
-        this.innerPaddingForm.controls['innerPadding'].valid &&
-        this.formatNumberValueForm.controls['formatNumberValue'].valid;
-    } else if (this.chart.type === common.ChartTypeEnum.Gauge) {
-      isChartValid =
-        this.unitsForm.controls['units'].valid &&
-        (this.chart.legend === false ||
-          this.legendTitleForm.controls['legendTitle'].valid) &&
-        this.angleSpanForm.controls['angleSpan'].valid &&
-        this.startAngleForm.controls['startAngle'].valid &&
-        this.minForm.controls['min'].valid &&
-        this.maxForm.controls['max'].valid &&
-        this.bigSegmentsForm.controls['bigSegments'].valid &&
-        this.smallSegmentsForm.controls['smallSegments'].valid &&
-        this.formatNumberValueForm.controls['formatNumberValue'].valid &&
-        this.formatNumberAxisTickForm.controls['formatNumberAxisTick'].valid;
-    } else if (this.chart.type === common.ChartTypeEnum.GaugeLinear) {
-      isChartValid =
-        this.unitsForm.controls['units'].valid &&
-        this.minForm.controls['min'].valid &&
-        this.maxForm.controls['max'].valid &&
-        this.formatNumberValueForm.controls['formatNumberValue'].valid;
-    } else {
+    }
+    // else if (this.chart.type === common.ChartTypeEnum.BarVertical) {
+    //   isChartValid =
+    //     (this.chart.legend === false ||
+    //       this.legendTitleForm.controls['legendTitle'].valid) &&
+    //     (this.chart.xAxis === false ||
+    //       this.chart.showXAxisLabel === false ||
+    //       this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
+    //     (this.chart.yAxis === false ||
+    //       this.chart.showYAxisLabel === false ||
+    //       this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
+    //     this.yScaleMaxForm.controls['yScaleMax'].valid &&
+    //     this.barPaddingForm.controls['barPadding'].valid &&
+    //     this.formatNumberDataLabelForm.controls['formatNumberDataLabel']
+    //       .valid &&
+    //     this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].valid;
+    // } else if (this.chart.type === common.ChartTypeEnum.BarVerticalGrouped) {
+    //   isChartValid =
+    //     (this.chart.legend === false ||
+    //       this.legendTitleForm.controls['legendTitle'].valid) &&
+    //     (this.chart.xAxis === false ||
+    //       this.chart.showXAxisLabel === false ||
+    //       this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
+    //     (this.chart.yAxis === false ||
+    //       this.chart.showYAxisLabel === false ||
+    //       this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
+    //     this.yScaleMaxForm.controls['yScaleMax'].valid &&
+    //     this.barPaddingForm.controls['barPadding'].valid &&
+    //     this.groupPaddingForm.controls['groupPadding'].valid &&
+    //     this.formatNumberDataLabelForm.controls['formatNumberDataLabel']
+    //       .valid &&
+    //     this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].valid;
+    // } else if (this.chart.type === common.ChartTypeEnum.BarVerticalStacked) {
+    //   isChartValid =
+    //     (this.chart.legend === false ||
+    //       this.legendTitleForm.controls['legendTitle'].valid) &&
+    //     (this.chart.xAxis === false ||
+    //       this.chart.showXAxisLabel === false ||
+    //       this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
+    //     (this.chart.yAxis === false ||
+    //       this.chart.showYAxisLabel === false ||
+    //       this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
+    //     this.yScaleMaxForm.controls['yScaleMax'].valid &&
+    //     this.barPaddingForm.controls['barPadding'].valid &&
+    //     this.formatNumberDataLabelForm.controls['formatNumberDataLabel']
+    //       .valid &&
+    //     this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].valid;
+    // } else if (this.chart.type === common.ChartTypeEnum.BarVerticalNormalized) {
+    //   isChartValid =
+    //     (this.chart.legend === false ||
+    //       this.legendTitleForm.controls['legendTitle'].valid) &&
+    //     (this.chart.xAxis === false ||
+    //       this.chart.showXAxisLabel === false ||
+    //       this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
+    //     (this.chart.yAxis === false ||
+    //       this.chart.showYAxisLabel === false ||
+    //       this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
+    //     this.barPaddingForm.controls['barPadding'].valid &&
+    //     this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].valid;
+    // } else if (this.chart.type === common.ChartTypeEnum.BarHorizontal) {
+    //   isChartValid =
+    //     (this.chart.legend === false ||
+    //       this.legendTitleForm.controls['legendTitle'].valid) &&
+    //     (this.chart.xAxis === false ||
+    //       this.chart.showXAxisLabel === false ||
+    //       this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
+    //     (this.chart.yAxis === false ||
+    //       this.chart.showYAxisLabel === false ||
+    //       this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
+    //     this.xScaleMaxForm.controls['xScaleMax'].valid &&
+    //     this.barPaddingForm.controls['barPadding'].valid &&
+    //     this.formatNumberDataLabelForm.controls['formatNumberDataLabel']
+    //       .valid &&
+    //     this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'].valid;
+    // } else if (this.chart.type === common.ChartTypeEnum.BarHorizontalGrouped) {
+    //   isChartValid =
+    //     (this.chart.legend === false ||
+    //       this.legendTitleForm.controls['legendTitle'].valid) &&
+    //     (this.chart.xAxis === false ||
+    //       this.chart.showXAxisLabel === false ||
+    //       this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
+    //     (this.chart.yAxis === false ||
+    //       this.chart.showYAxisLabel === false ||
+    //       this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
+    //     this.xScaleMaxForm.controls['xScaleMax'].valid &&
+    //     this.barPaddingForm.controls['barPadding'].valid &&
+    //     this.groupPaddingForm.controls['groupPadding'].valid &&
+    //     this.formatNumberDataLabelForm.controls['formatNumberDataLabel']
+    //       .valid &&
+    //     this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'].valid;
+    // } else if (this.chart.type === common.ChartTypeEnum.BarHorizontalStacked) {
+    //   isChartValid =
+    //     (this.chart.legend === false ||
+    //       this.legendTitleForm.controls['legendTitle'].valid) &&
+    //     (this.chart.xAxis === false ||
+    //       this.chart.showXAxisLabel === false ||
+    //       this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
+    //     (this.chart.yAxis === false ||
+    //       this.chart.showYAxisLabel === false ||
+    //       this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
+    //     this.xScaleMaxForm.controls['xScaleMax'].valid &&
+    //     this.barPaddingForm.controls['barPadding'].valid &&
+    //     this.formatNumberDataLabelForm.controls['formatNumberDataLabel']
+    //       .valid &&
+    //     this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'].valid;
+    // } else if (
+    //   this.chart.type === common.ChartTypeEnum.BarHorizontalNormalized
+    // ) {
+    //   isChartValid =
+    //     (this.chart.legend === false ||
+    //       this.legendTitleForm.controls['legendTitle'].valid) &&
+    //     (this.chart.xAxis === false ||
+    //       this.chart.showXAxisLabel === false ||
+    //       this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
+    //     (this.chart.yAxis === false ||
+    //       this.chart.showYAxisLabel === false ||
+    //       this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
+    //     this.barPaddingForm.controls['barPadding'].valid &&
+    //     this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'].valid;
+    // } else if (this.chart.type === common.ChartTypeEnum.Pie) {
+    //   isChartValid =
+    //     (this.chart.legend === false ||
+    //       this.legendTitleForm.controls['legendTitle'].valid) &&
+    //     (this.chart.doughnut === false ||
+    //       this.arcWidthForm.controls['arcWidth'].valid);
+    // } else if (this.chart.type === common.ChartTypeEnum.PieAdvanced) {
+    //   isChartValid =
+    //     this.formatNumberValueForm.controls['formatNumberValue'].valid;
+    // } else if (this.chart.type === common.ChartTypeEnum.PieGrid) {
+    //   isChartValid = true;
+    // } else if (this.chart.type === common.ChartTypeEnum.Line) {
+    //   isChartValid =
+    //     (this.chart.legend === false ||
+    //       this.legendTitleForm.controls['legendTitle'].valid) &&
+    //     (this.chart.xAxis === false ||
+    //       this.chart.showXAxisLabel === false ||
+    //       this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
+    //     (this.chart.yAxis === false ||
+    //       this.chart.showYAxisLabel === false ||
+    //       this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
+    //     this.yScaleMinForm.controls['yScaleMin'].valid &&
+    //     this.yScaleMaxForm.controls['yScaleMax'].valid &&
+    //     this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].valid;
+    // } else if (this.chart.type === common.ChartTypeEnum.Area) {
+    //   isChartValid =
+    //     (this.chart.legend === false ||
+    //       this.legendTitleForm.controls['legendTitle'].valid) &&
+    //     (this.chart.xAxis === false ||
+    //       this.chart.showXAxisLabel === false ||
+    //       this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
+    //     (this.chart.yAxis === false ||
+    //       this.chart.showYAxisLabel === false ||
+    //       this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
+    //     this.yScaleMinForm.controls['yScaleMin'].valid &&
+    //     this.yScaleMaxForm.controls['yScaleMax'].valid &&
+    //     this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].valid;
+    // } else if (this.chart.type === common.ChartTypeEnum.AreaStacked) {
+    //   isChartValid =
+    //     (this.chart.legend === false ||
+    //       this.legendTitleForm.controls['legendTitle'].valid) &&
+    //     (this.chart.xAxis === false ||
+    //       this.chart.showXAxisLabel === false ||
+    //       this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
+    //     (this.chart.yAxis === false ||
+    //       this.chart.showYAxisLabel === false ||
+    //       this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
+    //     this.yScaleMinForm.controls['yScaleMin'].valid &&
+    //     this.yScaleMaxForm.controls['yScaleMax'].valid &&
+    //     this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].valid;
+    // } else if (this.chart.type === common.ChartTypeEnum.AreaNormalized) {
+    //   isChartValid =
+    //     (this.chart.legend === false ||
+    //       this.legendTitleForm.controls['legendTitle'].valid) &&
+    //     (this.chart.xAxis === false ||
+    //       this.chart.showXAxisLabel === false ||
+    //       this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
+    //     (this.chart.yAxis === false ||
+    //       this.chart.showYAxisLabel === false ||
+    //       this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
+    //     this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].valid;
+    // } else if (this.chart.type === common.ChartTypeEnum.HeatMap) {
+    //   isChartValid =
+    //     (this.chart.xAxis === false ||
+    //       this.chart.showXAxisLabel === false ||
+    //       this.xAxisLabelForm.controls['xAxisLabel'].valid) &&
+    //     (this.chart.yAxis === false ||
+    //       this.chart.showYAxisLabel === false ||
+    //       this.yAxisLabelForm.controls['yAxisLabel'].valid) &&
+    //     this.innerPaddingForm.controls['innerPadding'].valid;
+    // } else if (this.chart.type === common.ChartTypeEnum.TreeMap) {
+    //   isChartValid =
+    //     this.formatNumberValueForm.controls['formatNumberValue'].valid;
+    // } else if (this.chart.type === common.ChartTypeEnum.NumberCard) {
+    //   isChartValid =
+    //     this.innerPaddingForm.controls['innerPadding'].valid &&
+    //     this.formatNumberValueForm.controls['formatNumberValue'].valid;
+    // } else if (this.chart.type === common.ChartTypeEnum.Gauge) {
+    //   isChartValid =
+    //     this.unitsForm.controls['units'].valid &&
+    //     (this.chart.legend === false ||
+    //       this.legendTitleForm.controls['legendTitle'].valid) &&
+    //     this.angleSpanForm.controls['angleSpan'].valid &&
+    //     this.startAngleForm.controls['startAngle'].valid &&
+    //     this.minForm.controls['min'].valid &&
+    //     this.maxForm.controls['max'].valid &&
+    //     this.bigSegmentsForm.controls['bigSegments'].valid &&
+    //     this.smallSegmentsForm.controls['smallSegments'].valid &&
+    //     this.formatNumberValueForm.controls['formatNumberValue'].valid &&
+    //     this.formatNumberAxisTickForm.controls['formatNumberAxisTick'].valid;
+    // } else if (this.chart.type === common.ChartTypeEnum.GaugeLinear) {
+    //   isChartValid =
+    //     this.unitsForm.controls['units'].valid &&
+    //     this.minForm.controls['min'].valid &&
+    //     this.maxForm.controls['max'].valid &&
+    //     this.formatNumberValueForm.controls['formatNumberValue'].valid;
+    // }
+    else {
       isChartValid = true;
     }
 

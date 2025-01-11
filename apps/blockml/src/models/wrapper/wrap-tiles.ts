@@ -50,29 +50,29 @@ export function wrapTiles(item: {
       previousValueField: tile.data?.previous_value_field,
 
       // axis
-      xAxis: common.isDefined(tile.axis?.x_axis)
-        ? helper.toBooleanFromLowercaseString(tile.axis?.x_axis)
-        : common.CHART_DEFAULT_X_AXIS,
+      // xAxis: common.isDefined(tile.axis?.x_axis)
+      //   ? helper.toBooleanFromLowercaseString(tile.axis?.x_axis)
+      //   : common.CHART_DEFAULT_X_AXIS,
 
-      showXAxisLabel: common.isDefined(tile.axis?.show_x_axis_label)
-        ? helper.toBooleanFromLowercaseString(tile.axis?.show_x_axis_label)
-        : common.CHART_DEFAULT_SHOW_X_AXIS_LABEL,
+      // showXAxisLabel: common.isDefined(tile.axis?.show_x_axis_label)
+      //   ? helper.toBooleanFromLowercaseString(tile.axis?.show_x_axis_label)
+      //   : common.CHART_DEFAULT_SHOW_X_AXIS_LABEL,
 
-      xAxisLabel: tile.axis?.x_axis_label || common.CHART_DEFAULT_X_AXIS_LABEL,
+      // xAxisLabel: tile.axis?.x_axis_label || common.CHART_DEFAULT_X_AXIS_LABEL,
 
-      yAxis: common.isDefined(tile.axis?.y_axis)
-        ? helper.toBooleanFromLowercaseString(tile.axis?.y_axis)
-        : common.CHART_DEFAULT_Y_AXIS,
+      // yAxis: common.isDefined(tile.axis?.y_axis)
+      //   ? helper.toBooleanFromLowercaseString(tile.axis?.y_axis)
+      //   : common.CHART_DEFAULT_Y_AXIS,
 
-      showYAxisLabel: common.isDefined(tile.axis?.show_y_axis_label)
-        ? helper.toBooleanFromLowercaseString(tile.axis?.show_y_axis_label)
-        : common.CHART_DEFAULT_SHOW_Y_AXIS_LABEL,
+      // showYAxisLabel: common.isDefined(tile.axis?.show_y_axis_label)
+      //   ? helper.toBooleanFromLowercaseString(tile.axis?.show_y_axis_label)
+      //   : common.CHART_DEFAULT_SHOW_Y_AXIS_LABEL,
 
-      yAxisLabel: tile.axis?.y_axis_label || common.CHART_DEFAULT_Y_AXIS_LABEL,
+      // yAxisLabel: tile.axis?.y_axis_label || common.CHART_DEFAULT_Y_AXIS_LABEL,
 
-      showAxis: common.isDefined(tile.axis?.show_axis)
-        ? helper.toBooleanFromLowercaseString(tile.axis?.show_axis)
-        : common.CHART_DEFAULT_SHOW_AXIS,
+      // showAxis: common.isDefined(tile.axis?.show_axis)
+      //   ? helper.toBooleanFromLowercaseString(tile.axis?.show_axis)
+      //   : common.CHART_DEFAULT_SHOW_AXIS,
 
       // options
       animations: common.isDefined(tile.options?.animations)

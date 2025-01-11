@@ -10,7 +10,6 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AgChartOptions } from 'ag-charts-community';
 import { IRowNode } from 'ag-grid-community';
 import { NgxSpinnerService } from 'ngx-spinner';
 import {
@@ -235,8 +234,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
       value: common.TimeSpecEnum.Timestamps
     }
   ];
-
-  chartOptions: AgChartOptions;
 
   eChartInitOpts: any;
   eChartOptions: EChartsOption;

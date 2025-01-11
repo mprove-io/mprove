@@ -84,41 +84,8 @@ export const TILE_SCHEMA: JSONSchema7 = {
         multi_field: {
           type: 'string'
         },
-        value_field: {
-          type: 'string'
-        },
-        previous_value_field: {
-          type: 'string'
-        },
         size_field: {
           type: 'string'
-        }
-      }
-    },
-    axis: {
-      type: 'object',
-      additionalProperties: false,
-      properties: {
-        x_axis_label: {
-          type: 'string'
-        },
-        y_axis_label: {
-          type: 'string'
-        },
-        show_x_axis_label: {
-          type: 'boolean'
-        },
-        show_y_axis_label: {
-          type: 'boolean'
-        },
-        x_axis: {
-          type: 'boolean'
-        },
-        y_axis: {
-          type: 'boolean'
-        },
-        show_axis: {
-          type: 'boolean'
         }
       }
     },
@@ -126,131 +93,8 @@ export const TILE_SCHEMA: JSONSchema7 = {
       type: 'object',
       additionalProperties: false,
       properties: {
-        color_scheme: {
-          type: 'string',
-          enum: constants.CHART_COLOR_SCHEME_VALUES
-        },
-        scheme_type: {
-          type: 'string',
-          enum: constants.CHART_SCHEME_TYPE_VALUES
-        },
-        interpolation: {
-          type: 'string',
-          enum: constants.CHART_INTERPOLATION_VALUES
-        },
-        card_color: {
-          type: 'string'
-        },
-        empty_color: {
-          type: 'string'
-        },
-        band_color: {
-          type: 'string'
-        },
-        text_color: {
-          type: 'string'
-        },
-        units: {
-          type: 'string'
-        },
-        legend_title: {
-          type: 'string'
-        },
-        legend: {
-          type: 'boolean'
-        },
-        labels: {
-          type: 'boolean'
-        },
         format: {
           type: 'boolean'
-        },
-        show_data_label: {
-          type: 'boolean'
-        },
-        tooltip_disabled: {
-          type: 'boolean'
-        },
-        round_edges: {
-          type: 'boolean'
-        },
-        round_domains: {
-          type: 'boolean'
-        },
-        show_grid_lines: {
-          type: 'boolean'
-        },
-        auto_scale: {
-          type: 'boolean'
-        },
-        doughnut: {
-          type: 'boolean'
-        },
-        explode_slices: {
-          type: 'boolean'
-        },
-        gradient: {
-          type: 'boolean'
-        },
-        animations: {
-          type: 'boolean'
-        },
-        page_size: {
-          type: 'integer'
-        },
-        arc_width: {
-          type: 'number'
-        },
-        bar_padding: {
-          type: 'integer'
-        },
-        group_padding: {
-          type: 'integer'
-        },
-        inner_padding: {
-          type: 'integer'
-        },
-        angle_span: {
-          type: 'integer'
-        },
-        start_angle: {
-          type: 'integer'
-        },
-        big_segments: {
-          type: 'integer'
-        },
-        small_segments: {
-          type: 'integer'
-        },
-        min: {
-          type: 'integer'
-        },
-        max: {
-          type: 'integer'
-        },
-        y_scale_min: {
-          type: 'number'
-        },
-        y_scale_max: {
-          type: 'number'
-        },
-        x_scale_max: {
-          type: 'number'
-        },
-        format_number_data_label: {
-          type: 'string'
-        },
-        format_number_value: {
-          type: 'string'
-        },
-        format_number_axis_tick: {
-          type: 'string'
-        },
-        format_number_y_axis_tick: {
-          type: 'string'
-        },
-        format_number_x_axis_tick: {
-          type: 'string'
         }
       }
     },

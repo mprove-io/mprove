@@ -26,10 +26,7 @@ export class FormatNumberService {
   }) {
     let { chart, mconfigFields } = item;
 
-    let field =
-      chart.type === common.ChartTypeEnum.GaugeLinear
-        ? mconfigFields.find(f => f.id === chart.valueField)
-        : mconfigFields.find(f => f.id === chart.yField);
+    let field = mconfigFields.find(f => f.id === chart.yField);
 
     let formatNumber = common.isDefined(chart.formatNumberValue)
       ? chart.formatNumberValue

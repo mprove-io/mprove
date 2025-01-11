@@ -151,20 +151,6 @@ body {
 // @import '~@ali-hm/angular-tree-component/css/angular-tree-component.css';
 @import './tree.css';
 
-// .ngx-charts .tooltip-area {
-//   cursor: default !important;
-// }
-
-.ngx-charts .circle {
-  &:hover {
-    cursor: default !important;
-  }
-}
-
-.ngx-charts .arc {
-  cursor: default !important;
-}
-
 .advanced-pie-legend .legend-item {
   cursor: default !important;
 }
@@ -174,14 +160,6 @@ body {
 }
 
 .linear-gauge {
-  cursor: default !important;
-}
-
-.ngx-charts .card {
-  cursor: default !important;
-}
-
-.ngx-charts .card-band {
   cursor: default !important;
 }
 

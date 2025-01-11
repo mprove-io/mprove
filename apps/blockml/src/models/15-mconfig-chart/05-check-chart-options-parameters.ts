@@ -191,95 +191,95 @@ export function checkChartOptionsParameters<T extends types.dzType>(
             return;
           }
 
-          if (
-            parameter === common.ParameterEnum.Interpolation &&
-            common.CHART_INTERPOLATION_VALUES.indexOf(
-              tile.options[parameter as keyof common.FileChartOptions] as any
-            ) < 0
-          ) {
-            item.errors.push(
-              new BmError({
-                title: common.ErTitleEnum.TILE_OPTIONS_WRONG_INTERPOLATION,
-                message:
-                  `"${
-                    tile.options[
-                      parameter as keyof common.FileChartOptions
-                    ] as any
-                  }" is not valid ` + `"${parameter}" value`,
-                lines: [
-                  {
-                    line: tile.options[
-                      (parameter +
-                        constants.LINE_NUM) as keyof common.FileChartOptions
-                    ] as number,
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
+          // if (
+          //   parameter === common.ParameterEnum.Interpolation &&
+          //   common.CHART_INTERPOLATION_VALUES.indexOf(
+          //     tile.options[parameter as keyof common.FileChartOptions] as any
+          //   ) < 0
+          // ) {
+          //   item.errors.push(
+          //     new BmError({
+          //       title: common.ErTitleEnum.TILE_OPTIONS_WRONG_INTERPOLATION,
+          //       message:
+          //         `"${
+          //           tile.options[
+          //             parameter as keyof common.FileChartOptions
+          //           ] as any
+          //         }" is not valid ` + `"${parameter}" value`,
+          //       lines: [
+          //         {
+          //           line: tile.options[
+          //             (parameter +
+          //               constants.LINE_NUM) as keyof common.FileChartOptions
+          //           ] as number,
+          //           name: x.fileName,
+          //           path: x.filePath
+          //         }
+          //       ]
+          //     })
+          //   );
+          //   return;
+          // }
 
-          if (
-            parameter === common.ParameterEnum.ColorScheme &&
-            common.CHART_COLOR_SCHEME_VALUES.indexOf(
-              tile.options[parameter as keyof common.FileChartOptions] as any
-            ) < 0
-          ) {
-            item.errors.push(
-              new BmError({
-                title: common.ErTitleEnum.TILE_OPTIONS_WRONG_COLOR_SCHEME,
-                message:
-                  `"${
-                    tile.options[
-                      parameter as keyof common.FileChartOptions
-                    ] as any
-                  }" is not valid ` + `"${parameter}" value`,
-                lines: [
-                  {
-                    line: tile.options[
-                      (parameter +
-                        constants.LINE_NUM) as keyof common.FileChartOptions
-                    ] as number,
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
+          // if (
+          //   parameter === common.ParameterEnum.ColorScheme &&
+          //   common.CHART_COLOR_SCHEME_VALUES.indexOf(
+          //     tile.options[parameter as keyof common.FileChartOptions] as any
+          //   ) < 0
+          // ) {
+          //   item.errors.push(
+          //     new BmError({
+          //       title: common.ErTitleEnum.TILE_OPTIONS_WRONG_COLOR_SCHEME,
+          //       message:
+          //         `"${
+          //           tile.options[
+          //             parameter as keyof common.FileChartOptions
+          //           ] as any
+          //         }" is not valid ` + `"${parameter}" value`,
+          //       lines: [
+          //         {
+          //           line: tile.options[
+          //             (parameter +
+          //               constants.LINE_NUM) as keyof common.FileChartOptions
+          //           ] as number,
+          //           name: x.fileName,
+          //           path: x.filePath
+          //         }
+          //       ]
+          //     })
+          //   );
+          //   return;
+          // }
 
-          if (
-            parameter === common.ParameterEnum.SchemeType &&
-            common.CHART_SCHEME_TYPE_VALUES.indexOf(
-              tile.options[parameter as keyof common.FileChartOptions] as any
-            ) < 0
-          ) {
-            item.errors.push(
-              new BmError({
-                title: common.ErTitleEnum.TILE_OPTIONS_WRONG_SCHEME_TYPE,
-                message:
-                  `"${
-                    tile.options[
-                      parameter as keyof common.FileChartOptions
-                    ] as any
-                  }" is not valid ` + `"${parameter}" value`,
-                lines: [
-                  {
-                    line: tile.options[
-                      (parameter +
-                        constants.LINE_NUM) as keyof common.FileChartOptions
-                    ] as number,
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
+          // if (
+          //   parameter === common.ParameterEnum.SchemeType &&
+          //   common.CHART_SCHEME_TYPE_VALUES.indexOf(
+          //     tile.options[parameter as keyof common.FileChartOptions] as any
+          //   ) < 0
+          // ) {
+          //   item.errors.push(
+          //     new BmError({
+          //       title: common.ErTitleEnum.TILE_OPTIONS_WRONG_SCHEME_TYPE,
+          //       message:
+          //         `"${
+          //           tile.options[
+          //             parameter as keyof common.FileChartOptions
+          //           ] as any
+          //         }" is not valid ` + `"${parameter}" value`,
+          //       lines: [
+          //         {
+          //           line: tile.options[
+          //             (parameter +
+          //               constants.LINE_NUM) as keyof common.FileChartOptions
+          //           ] as number,
+          //           name: x.fileName,
+          //           path: x.filePath
+          //         }
+          //       ]
+          //     })
+          //   );
+          //   return;
+          // }
 
           if (
             [

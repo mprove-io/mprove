@@ -78,28 +78,28 @@ export function checkChartDataParameters<T extends types.dzType>(
         return;
       }
 
-      if (
-        [common.ChartTypeEnum.AgBubble].indexOf(tile.type) > -1 &&
-        (common.isUndefined(tile.data) ||
-          common.isUndefined(tile.data.size_field))
-      ) {
-        item.errors.push(
-          new BmError({
-            title: common.ErTitleEnum.TILE_DATA_MISSING_SIZE_FIELD,
-            message:
-              `tile of type "${tile.type}" must have ` +
-              `"${common.ParameterEnum.SizeField}" parameter in "${common.ParameterEnum.Data}"`,
-            lines: [
-              {
-                line: tile.data_line_num,
-                name: x.fileName,
-                path: x.filePath
-              }
-            ]
-          })
-        );
-        return;
-      }
+      // if (
+      //   [common.ChartTypeEnum.EScatter].indexOf(tile.type) > -1 &&
+      //   (common.isUndefined(tile.data) ||
+      //     common.isUndefined(tile.data.size_field))
+      // ) {
+      //   item.errors.push(
+      //     new BmError({
+      //       title: common.ErTitleEnum.TILE_DATA_MISSING_SIZE_FIELD,
+      //       message:
+      //         `tile of type "${tile.type}" must have ` +
+      //         `"${common.ParameterEnum.SizeField}" parameter in "${common.ParameterEnum.Data}"`,
+      //       lines: [
+      //         {
+      //           line: tile.data_line_num,
+      //           name: x.fileName,
+      //           path: x.filePath
+      //         }
+      //       ]
+      //     })
+      //   );
+      //   return;
+      // }
 
       if (
         [
@@ -272,26 +272,22 @@ export function checkChartDataParameters<T extends types.dzType>(
             fieldId: tile.data.size_field
           });
 
-          // if (
-          //   field.fieldClass !== common.FieldClassEnum.Measure &&
-          //   field.fieldClass !== common.FieldClassEnum.Calculation &&
-          //   tile.type !== common.ChartTypeEnum.EScatter
-          // ) {
-          //   item.errors.push(
-          //     new BmError({
-          //       title: common.ErTitleEnum.TILE_DATA_WRONG_SIZE_FIELD_CLASS,
-          //       message: `"${common.ParameterEnum.SizeField}" must be a Measure or Calculation for this chart type`,
-          //       lines: [
-          //         {
-          //           line: tile.data.size_field_line_num,
-          //           name: x.fileName,
-          //           path: x.filePath
-          //         }
-          //       ]
-          //     })
-          //   );
-          //   return;
-          // }
+          if (field.result !== common.FieldResultEnum.Number) {
+            item.errors.push(
+              new BmError({
+                title: common.ErTitleEnum.TILE_DATA_WRONG_SIZE_FIELD_RESULT,
+                message: `"${common.ParameterEnum.SizeField}" result must be a number`,
+                lines: [
+                  {
+                    line: tile.data.size_field_line_num,
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
         }
       }
 

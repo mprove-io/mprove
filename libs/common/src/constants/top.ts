@@ -324,47 +324,47 @@ export const TIMEFRAME_VALUES = [
   enums.TimeframeEnum.YesNoHasValue
 ];
 
-export const CHART_COLOR_SCHEME_VALUES = [
-  enums.ChartColorSchemeEnum.Soft,
-  enums.ChartColorSchemeEnum.Air,
-  enums.ChartColorSchemeEnum.Aqua,
-  enums.ChartColorSchemeEnum.Cool,
-  enums.ChartColorSchemeEnum.Fire,
-  enums.ChartColorSchemeEnum.Flame,
-  enums.ChartColorSchemeEnum.Forest,
-  enums.ChartColorSchemeEnum.Horizon,
-  enums.ChartColorSchemeEnum.Natural,
-  enums.ChartColorSchemeEnum.Neons,
-  enums.ChartColorSchemeEnum.Night,
-  enums.ChartColorSchemeEnum.NightLights,
-  enums.ChartColorSchemeEnum.Ocean,
-  enums.ChartColorSchemeEnum.Picnic,
-  enums.ChartColorSchemeEnum.Solar,
-  enums.ChartColorSchemeEnum.Vivid
-];
+// export const CHART_COLOR_SCHEME_VALUES = [
+//   enums.ChartColorSchemeEnum.Soft,
+//   enums.ChartColorSchemeEnum.Air,
+//   enums.ChartColorSchemeEnum.Aqua,
+//   enums.ChartColorSchemeEnum.Cool,
+//   enums.ChartColorSchemeEnum.Fire,
+//   enums.ChartColorSchemeEnum.Flame,
+//   enums.ChartColorSchemeEnum.Forest,
+//   enums.ChartColorSchemeEnum.Horizon,
+//   enums.ChartColorSchemeEnum.Natural,
+//   enums.ChartColorSchemeEnum.Neons,
+//   enums.ChartColorSchemeEnum.Night,
+//   enums.ChartColorSchemeEnum.NightLights,
+//   enums.ChartColorSchemeEnum.Ocean,
+//   enums.ChartColorSchemeEnum.Picnic,
+//   enums.ChartColorSchemeEnum.Solar,
+//   enums.ChartColorSchemeEnum.Vivid
+// ];
 
-export const CHART_SCHEME_TYPE_VALUES = [
-  enums.ChartSchemeTypeEnum.Linear,
-  enums.ChartSchemeTypeEnum.Ordinal
-];
+// export const CHART_SCHEME_TYPE_VALUES = [
+//   enums.ChartSchemeTypeEnum.Linear,
+//   enums.ChartSchemeTypeEnum.Ordinal
+// ];
 
-export const CHART_INTERPOLATION_VALUES = [
-  enums.ChartInterpolationEnum.Basis,
-  enums.ChartInterpolationEnum.BasisClosed,
-  enums.ChartInterpolationEnum.Bundle,
-  enums.ChartInterpolationEnum.Cardinal,
-  enums.ChartInterpolationEnum.CardinalClosed,
-  enums.ChartInterpolationEnum.CatmullRomClosed,
-  enums.ChartInterpolationEnum.CatmullRom,
-  enums.ChartInterpolationEnum.Linear,
-  enums.ChartInterpolationEnum.LinearClosed,
-  enums.ChartInterpolationEnum.MonotoneX,
-  enums.ChartInterpolationEnum.MonotoneY,
-  enums.ChartInterpolationEnum.Natural,
-  enums.ChartInterpolationEnum.Step,
-  enums.ChartInterpolationEnum.StepAfter,
-  enums.ChartInterpolationEnum.StepBefore
-];
+// export const CHART_INTERPOLATION_VALUES = [
+//   enums.ChartInterpolationEnum.Basis,
+//   enums.ChartInterpolationEnum.BasisClosed,
+//   enums.ChartInterpolationEnum.Bundle,
+//   enums.ChartInterpolationEnum.Cardinal,
+//   enums.ChartInterpolationEnum.CardinalClosed,
+//   enums.ChartInterpolationEnum.CatmullRomClosed,
+//   enums.ChartInterpolationEnum.CatmullRom,
+//   enums.ChartInterpolationEnum.Linear,
+//   enums.ChartInterpolationEnum.LinearClosed,
+//   enums.ChartInterpolationEnum.MonotoneX,
+//   enums.ChartInterpolationEnum.MonotoneY,
+//   enums.ChartInterpolationEnum.Natural,
+//   enums.ChartInterpolationEnum.Step,
+//   enums.ChartInterpolationEnum.StepAfter,
+//   enums.ChartInterpolationEnum.StepBefore
+// ];
 
 export const ROW_TYPE_VALUES = [
   enums.RowTypeEnum.Empty,
