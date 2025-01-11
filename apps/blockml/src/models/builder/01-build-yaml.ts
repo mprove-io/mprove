@@ -50,14 +50,12 @@ export function buildYaml(
       file3s: file3s.filter(
         x =>
           [
-            common.FileExtensionEnum.Api,
-            common.FileExtensionEnum.Dashboard,
-            common.FileExtensionEnum.Metric,
+            common.FileExtensionEnum.View,
             common.FileExtensionEnum.Model,
             common.FileExtensionEnum.Report,
-            common.FileExtensionEnum.Udf,
-            common.FileExtensionEnum.View,
+            common.FileExtensionEnum.Dashboard,
             common.FileExtensionEnum.Chart,
+            common.FileExtensionEnum.Udf,
             common.FileExtensionEnum.Yml
           ].indexOf(x.ext) > -1
       ),

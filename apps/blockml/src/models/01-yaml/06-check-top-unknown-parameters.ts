@@ -239,76 +239,6 @@ export function checkTopUnknownParameters(
             break;
           }
 
-          case common.FileExtensionEnum.Api: {
-            if (
-              [
-                common.ParameterEnum.Api.toString(),
-                common.ParameterEnum.Label.toString(),
-                common.ParameterEnum.Https.toString(),
-                common.ParameterEnum.Host.toString(),
-                common.ParameterEnum.Headers.toString(),
-                common.ParameterEnum.Steps.toString()
-              ].indexOf(parameter) < 0
-            ) {
-              item.errors.push(
-                new BmError({
-                  title: common.ErTitleEnum.UNKNOWN_API_PARAMETER,
-                  message:
-                    `parameter "${parameter}" can not be used on top level of ` +
-                    `${common.FileExtensionEnum.Api} file`,
-                  lines: [
-                    {
-                      line: file[parameter + constants.LINE_NUM],
-                      name: file.name,
-                      path: file.path
-                    }
-                  ]
-                })
-              );
-              return;
-            }
-            break;
-          }
-
-          case common.FileExtensionEnum.Metric: {
-            if (
-              [
-                common.ParameterEnum.Metric.toString(),
-                common.ParameterEnum.Type.toString(),
-                common.ParameterEnum.Label.toString(),
-                common.ParameterEnum.TimeSpec.toString(),
-                common.ParameterEnum.Model.toString(),
-                common.ParameterEnum.Time.toString(),
-                common.ParameterEnum.Field.toString(),
-                common.ParameterEnum.Api.toString(),
-                common.ParameterEnum.Formula.toString(),
-                common.ParameterEnum.Sql.toString(),
-                common.ParameterEnum.Connection.toString(),
-                common.ParameterEnum.Description.toString(),
-                common.ParameterEnum.Params.toString(),
-                common.ParameterEnum.Entries.toString()
-              ].indexOf(parameter) < 0
-            ) {
-              item.errors.push(
-                new BmError({
-                  title: common.ErTitleEnum.UNKNOWN_METRIC_PARAMETER,
-                  message:
-                    `parameter "${parameter}" can not be used on top level of ` +
-                    `${common.FileExtensionEnum.Metric} file`,
-                  lines: [
-                    {
-                      line: file[parameter + constants.LINE_NUM],
-                      name: file.name,
-                      path: file.path
-                    }
-                  ]
-                })
-              );
-              return;
-            }
-            break;
-          }
-
           case common.FileExtensionEnum.Yml: {
             if (
               [
@@ -353,10 +283,6 @@ export function checkTopUnknownParameters(
             common.ParameterEnum.Tiles.toString(),
             common.ParameterEnum.BuildMetrics.toString(),
             common.ParameterEnum.Rows.toString(),
-            common.ParameterEnum.Params.toString(),
-            common.ParameterEnum.Entries.toString(),
-            common.ParameterEnum.Headers.toString(),
-            common.ParameterEnum.Steps.toString(),
             common.ParameterEnum.Joins.toString(),
             common.ParameterEnum.AccessUsers.toString(),
             common.ParameterEnum.AccessRoles.toString()
@@ -404,10 +330,6 @@ export function checkTopUnknownParameters(
             common.ParameterEnum.Tiles.toString(),
             common.ParameterEnum.BuildMetrics.toString(),
             common.ParameterEnum.Rows.toString(),
-            common.ParameterEnum.Params.toString(),
-            common.ParameterEnum.Entries.toString(),
-            common.ParameterEnum.Headers.toString(),
-            common.ParameterEnum.Steps.toString(),
             common.ParameterEnum.Joins.toString(),
             common.ParameterEnum.AccessUsers.toString(),
             common.ParameterEnum.AccessRoles.toString()

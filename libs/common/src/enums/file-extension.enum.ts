@@ -1,12 +1,10 @@
 export enum FileExtensionEnum {
-  Api = '.api',
-  Dashboard = '.dashboard',
-  Md = '.md',
-  Metric = '.metric',
+  View = '.view',
   Model = '.model',
   Report = '.report',
-  Udf = '.udf',
-  View = '.view',
+  Dashboard = '.dashboard',
   Chart = '.chart',
-  Yml = '.yml'
+  Udf = '.udf',
+  Yml = '.yml',
+  Md = '.md'
 }

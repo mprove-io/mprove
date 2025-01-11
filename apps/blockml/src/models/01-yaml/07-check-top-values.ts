@@ -61,14 +61,12 @@ export function checkTopValues(
 
         if (
           [
-            common.ParameterEnum.Api.toString(),
-            common.ParameterEnum.Dashboard.toString(),
-            common.ParameterEnum.Metric.toString(),
+            common.ParameterEnum.View.toString(),
             common.ParameterEnum.Model.toString(),
             common.ParameterEnum.Report.toString(),
-            common.ParameterEnum.Udf.toString(),
-            common.ParameterEnum.View.toString(),
-            common.ParameterEnum.Chart.toString()
+            common.ParameterEnum.Dashboard.toString(),
+            common.ParameterEnum.Chart.toString(),
+            common.ParameterEnum.Udf.toString()
           ].indexOf(parameter) > -1 &&
           file[parameter]
             .toString()

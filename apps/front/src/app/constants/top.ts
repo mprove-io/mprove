@@ -39,12 +39,10 @@ export const BLOCKML_THEME = 'blockml';
 export const BLOCKML_EXT_LIST: common.FileExtensionEnum[] = [
   common.FileExtensionEnum.View,
   common.FileExtensionEnum.Model,
+  common.FileExtensionEnum.Report,
   common.FileExtensionEnum.Dashboard,
   common.FileExtensionEnum.Chart,
-  common.FileExtensionEnum.Udf,
-  common.FileExtensionEnum.Report,
-  common.FileExtensionEnum.Api,
-  common.FileExtensionEnum.Metric
+  common.FileExtensionEnum.Udf
 ];
 
 export const RESULT_LIST: common.FieldResultEnum[] = [
