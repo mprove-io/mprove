@@ -74,30 +74,24 @@ export class ChartViewComponent implements OnChanges {
   @Input()
   queryStatus: common.QueryStatusEnum;
 
+  echartsInstance: any;
+
   seriesData: SeriesDataElement[] = [];
-  eData: any[] = [];
-
-  single: any[] = [];
-  singleForNumberCard: any[] = [];
-  value: number;
-  previousValue: number;
-
-  scheme: any;
-  curve: any;
 
   isSelectValid = false;
   errorMessage = '';
 
-  timeline = common.CHART_DEFAULT_TIMELINE;
-  rangeFillOpacity = common.CHART_DEFAULT_RANGE_FILL_OPACITY;
-  legendForHeatMap = false;
+  // timeline = common.CHART_DEFAULT_TIMELINE;
+  // rangeFillOpacity = common.CHART_DEFAULT_RANGE_FILL_OPACITY;
+  // legendForHeatMap = false;
 
-  labelFormattingFn = this.labelFormatting.bind(this);
-  dataLabelFormattingFn = this.dataLabelFormatting.bind(this);
-  valueFormattingFn = this.valueFormatting.bind(this);
-  axisTickFormattingFn = this.axisTickFormatting.bind(this);
-  yAxisTickFormattingFn = this.yAxisTickFormatting.bind(this);
-  xAxisTickFormattingFn = this.xAxisTickFormatting.bind(this);
+  // labelFormattingFn = this.labelFormatting.bind(this);
+  // dataLabelFormattingFn = this.dataLabelFormatting.bind(this);
+  // valueFormattingFn = this.valueFormatting.bind(this);
+  // axisTickFormattingFn = this.axisTickFormatting.bind(this);
+  // yAxisTickFormattingFn = this.yAxisTickFormatting.bind(this);
+  // xAxisTickFormattingFn = this.xAxisTickFormatting.bind(this);
+
   // xAxisTickFormattingForLinearFn = this.xAxisTickFormattingForLinear.bind(this);
 
   // dataLabelFormattingFn = (value: any) => this.dataLabelFormatting(value);
@@ -106,8 +100,6 @@ export class ChartViewComponent implements OnChanges {
   // yAxisTickFormattingFn = (value: any) => this.yAxisTickFormatting(value);
   // xAxisTickFormattingFn = (value: any) => this.xAxisTickFormatting(value);
   // xAxisTickFormattingForLinearFn = (value: any) => this.xAxisTickFormattingForLinear(value);
-
-  echartsInstance: any;
 
   constructor(
     private dataService: DataService,
@@ -183,11 +175,6 @@ export class ChartViewComponent implements OnChanges {
 
     if (this.isSelectValid === false) {
       this.seriesData = [];
-      this.eData = [];
-      this.single = [];
-      this.singleForNumberCard = [];
-      this.value = undefined;
-      this.previousValue = undefined;
     } else {
       let xField = common.isDefined(this.chart.xField)
         ? this.mconfigFields.find(v => v.id === this.chart.xField)

@@ -640,39 +640,29 @@ export class ChartEditorComponent implements OnChanges {
     });
 
     setValueAndMark({
-      control: this.valueFieldForm.controls['valueField'],
-      value: this.chart.valueField
-    });
-
-    setValueAndMark({
-      control: this.previousValueFieldForm.controls['previousValueField'],
-      value: this.chart.previousValueField
-    });
-
-    setValueAndMark({
-      control: this.colorSchemeForm.controls['colorScheme'],
-      value: this.chart.colorScheme
-    });
-
-    setValueAndMark({
-      control: this.schemeTypeForm.controls['schemeType'],
-      value: this.chart.schemeType
-    });
-
-    setValueAndMark({
-      control: this.interpolationForm.controls['interpolation'],
-      value: this.chart.interpolation
-    });
-
-    setValueAndMark({
       control: this.pageSizeForm.controls['pageSize'],
       value: this.chart.pageSize
     });
 
-    setValueAndMark({
-      control: this.unitsForm.controls['units'],
-      value: this.chart.units
-    });
+    // setValueAndMark({
+    //   control: this.colorSchemeForm.controls['colorScheme'],
+    //   value: this.chart.colorScheme
+    // });
+
+    // setValueAndMark({
+    //   control: this.schemeTypeForm.controls['schemeType'],
+    //   value: this.chart.schemeType
+    // });
+
+    // setValueAndMark({
+    //   control: this.interpolationForm.controls['interpolation'],
+    //   value: this.chart.interpolation
+    // });
+
+    // setValueAndMark({
+    //   control: this.unitsForm.controls['units'],
+    //   value: this.chart.units
+    // });
 
     setValueAndMark({
       control: this.formatNumberDataLabelForm.controls['formatNumberDataLabel'],
@@ -714,85 +704,85 @@ export class ChartEditorComponent implements OnChanges {
       }).formatNumber
     });
 
-    setValueAndMark({
-      control: this.angleSpanForm.controls['angleSpan'],
-      value: this.chart.angleSpan
-    });
+    // setValueAndMark({
+    //   control: this.angleSpanForm.controls['angleSpan'],
+    //   value: this.chart.angleSpan
+    // });
 
-    setValueAndMark({
-      control: this.startAngleForm.controls['startAngle'],
-      value: this.chart.startAngle
-    });
+    // setValueAndMark({
+    //   control: this.startAngleForm.controls['startAngle'],
+    //   value: this.chart.startAngle
+    // });
 
-    setValueAndMark({
-      control: this.arcWidthForm.controls['arcWidth'],
-      value: this.chart.arcWidth
-    });
+    // setValueAndMark({
+    //   control: this.arcWidthForm.controls['arcWidth'],
+    //   value: this.chart.arcWidth
+    // });
 
-    setValueAndMark({
-      control: this.minForm.controls['min'],
-      value: this.chart.min
-    });
+    // setValueAndMark({
+    //   control: this.minForm.controls['min'],
+    //   value: this.chart.min
+    // });
 
-    setValueAndMark({
-      control: this.maxForm.controls['max'],
-      value: this.chart.max
-    });
+    // setValueAndMark({
+    //   control: this.maxForm.controls['max'],
+    //   value: this.chart.max
+    // });
 
-    setValueAndMark({
-      control: this.xScaleMaxForm.controls['xScaleMax'],
-      value: this.chart.xScaleMax
-    });
+    // setValueAndMark({
+    //   control: this.xScaleMaxForm.controls['xScaleMax'],
+    //   value: this.chart.xScaleMax
+    // });
 
-    setValueAndMark({
-      control: this.yScaleMinForm.controls['yScaleMin'],
-      value: this.chart.yScaleMin
-    });
+    // setValueAndMark({
+    //   control: this.yScaleMinForm.controls['yScaleMin'],
+    //   value: this.chart.yScaleMin
+    // });
 
-    setValueAndMark({
-      control: this.yScaleMaxForm.controls['yScaleMax'],
-      value: this.chart.yScaleMax
-    });
+    // setValueAndMark({
+    //   control: this.yScaleMaxForm.controls['yScaleMax'],
+    //   value: this.chart.yScaleMax
+    // });
 
-    setValueAndMark({
-      control: this.barPaddingForm.controls['barPadding'],
-      value: this.chart.barPadding
-    });
+    // setValueAndMark({
+    //   control: this.barPaddingForm.controls['barPadding'],
+    //   value: this.chart.barPadding
+    // });
 
-    setValueAndMark({
-      control: this.bigSegmentsForm.controls['bigSegments'],
-      value: this.chart.bigSegments
-    });
+    // setValueAndMark({
+    //   control: this.bigSegmentsForm.controls['bigSegments'],
+    //   value: this.chart.bigSegments
+    // });
 
-    setValueAndMark({
-      control: this.smallSegmentsForm.controls['smallSegments'],
-      value: this.chart.smallSegments
-    });
+    // setValueAndMark({
+    //   control: this.smallSegmentsForm.controls['smallSegments'],
+    //   value: this.chart.smallSegments
+    // });
 
-    setValueAndMark({
-      control: this.groupPaddingForm.controls['groupPadding'],
-      value: this.chart.groupPadding
-    });
+    // setValueAndMark({
+    //   control: this.groupPaddingForm.controls['groupPadding'],
+    //   value: this.chart.groupPadding
+    // });
 
-    setValueAndMark({
-      control: this.innerPaddingForm.controls['innerPadding'],
-      value: this.chart.innerPadding
-    });
+    // setValueAndMark({
+    //   control: this.innerPaddingForm.controls['innerPadding'],
+    //   value: this.chart.innerPadding
+    // });
 
-    setValueAndMark({
-      control: this.legendTitleForm.controls['legendTitle'],
-      value: this.chart.legendTitle
-    });
+    // setValueAndMark({
+    //   control: this.legendTitleForm.controls['legendTitle'],
+    //   value: this.chart.legendTitle
+    // });
 
-    setValueAndMark({
-      control: this.xAxisLabelForm.controls['xAxisLabel'],
-      value: this.chart.xAxisLabel
-    });
+    // setValueAndMark({
+    //   control: this.xAxisLabelForm.controls['xAxisLabel'],
+    //   value: this.chart.xAxisLabel
+    // });
 
-    setValueAndMark({
-      control: this.yAxisLabelForm.controls['yAxisLabel'],
-      value: this.chart.yAxisLabel
-    });
+    // setValueAndMark({
+    //   control: this.yAxisLabelForm.controls['yAxisLabel'],
+    //   value: this.chart.yAxisLabel
+    // });
   }
 
   getIsValid() {
@@ -1034,82 +1024,82 @@ export class ChartEditorComponent implements OnChanges {
     }
   }
 
-  unitsBlur() {
-    let units = this.unitsForm.controls['units'].value;
+  // unitsBlur() {
+  //   let units = this.unitsForm.controls['units'].value;
 
-    if (units === this.chart.units) {
-      return;
-    }
+  //   if (units === this.chart.units) {
+  //     return;
+  //   }
 
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.units = units;
-    this.updateMconfig(newMconfig);
-  }
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.units = units;
+  //   this.updateMconfig(newMconfig);
+  // }
 
-  formatNumberDataLabelBlur() {
-    let formatNumberDataLabel =
-      this.formatNumberDataLabelForm.controls['formatNumberDataLabel'].value;
+  // formatNumberDataLabelBlur() {
+  //   let formatNumberDataLabel =
+  //     this.formatNumberDataLabelForm.controls['formatNumberDataLabel'].value;
 
-    if (formatNumberDataLabel === this.chart.formatNumberDataLabel) {
-      return;
-    }
+  //   if (formatNumberDataLabel === this.chart.formatNumberDataLabel) {
+  //     return;
+  //   }
 
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.formatNumberDataLabel = formatNumberDataLabel;
-    this.updateMconfig(newMconfig);
-  }
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.formatNumberDataLabel = formatNumberDataLabel;
+  //   this.updateMconfig(newMconfig);
+  // }
 
-  formatNumberValueBlur() {
-    let formatNumberValue =
-      this.formatNumberValueForm.controls['formatNumberValue'].value;
+  // formatNumberValueBlur() {
+  //   let formatNumberValue =
+  //     this.formatNumberValueForm.controls['formatNumberValue'].value;
 
-    if (formatNumberValue === this.chart.formatNumberValue) {
-      return;
-    }
+  //   if (formatNumberValue === this.chart.formatNumberValue) {
+  //     return;
+  //   }
 
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.formatNumberValue = formatNumberValue;
-    this.updateMconfig(newMconfig);
-  }
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.formatNumberValue = formatNumberValue;
+  //   this.updateMconfig(newMconfig);
+  // }
 
-  formatNumberAxisTickBlur() {
-    let formatNumberAxisTick =
-      this.formatNumberAxisTickForm.controls['formatNumberAxisTick'].value;
+  // formatNumberAxisTickBlur() {
+  //   let formatNumberAxisTick =
+  //     this.formatNumberAxisTickForm.controls['formatNumberAxisTick'].value;
 
-    if (formatNumberAxisTick === this.chart.formatNumberAxisTick) {
-      return;
-    }
+  //   if (formatNumberAxisTick === this.chart.formatNumberAxisTick) {
+  //     return;
+  //   }
 
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.formatNumberAxisTick = formatNumberAxisTick;
-    this.updateMconfig(newMconfig);
-  }
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.formatNumberAxisTick = formatNumberAxisTick;
+  //   this.updateMconfig(newMconfig);
+  // }
 
-  formatNumberYAxisTickBlur() {
-    let formatNumberYAxisTick =
-      this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].value;
+  // formatNumberYAxisTickBlur() {
+  //   let formatNumberYAxisTick =
+  //     this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].value;
 
-    if (formatNumberYAxisTick === this.chart.formatNumberYAxisTick) {
-      return;
-    }
+  //   if (formatNumberYAxisTick === this.chart.formatNumberYAxisTick) {
+  //     return;
+  //   }
 
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.formatNumberYAxisTick = formatNumberYAxisTick;
-    this.updateMconfig(newMconfig);
-  }
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.formatNumberYAxisTick = formatNumberYAxisTick;
+  //   this.updateMconfig(newMconfig);
+  // }
 
-  formatNumberXAxisTickBlur() {
-    let formatNumberXAxisTick =
-      this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'].value;
+  // formatNumberXAxisTickBlur() {
+  //   let formatNumberXAxisTick =
+  //     this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'].value;
 
-    if (formatNumberXAxisTick === this.chart.formatNumberXAxisTick) {
-      return;
-    }
+  //   if (formatNumberXAxisTick === this.chart.formatNumberXAxisTick) {
+  //     return;
+  //   }
 
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.formatNumberXAxisTick = formatNumberXAxisTick;
-    this.updateMconfig(newMconfig);
-  }
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.formatNumberXAxisTick = formatNumberXAxisTick;
+  //   this.updateMconfig(newMconfig);
+  // }
 
   pageSizeBlur() {
     let value = this.pageSizeForm.controls['pageSize'].value;
@@ -1132,327 +1122,327 @@ export class ChartEditorComponent implements OnChanges {
     this.updateMconfig(newMconfig);
   }
 
-  angleSpanBlur() {
-    let value = this.angleSpanForm.controls['angleSpan'].value;
-
-    let angleSpan = common.isUndefinedOrEmpty(value)
-      ? undefined
-      : Number(value);
-
-    if (
-      common.isUndefined(angleSpan) &&
-      common.isUndefined(this.chart.angleSpan)
-    ) {
-      return;
-    }
-
-    if (angleSpan === this.chart.angleSpan) {
-      return;
-    }
-
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.angleSpan = angleSpan;
-    this.updateMconfig(newMconfig);
-  }
-
-  startAngleBlur() {
-    let value = this.startAngleForm.controls['startAngle'].value;
-
-    let startAngle = common.isUndefinedOrEmpty(value)
-      ? undefined
-      : Number(value);
-
-    if (
-      common.isUndefined(startAngle) &&
-      common.isUndefined(this.chart.startAngle)
-    ) {
-      return;
-    }
-
-    if (startAngle === this.chart.startAngle) {
-      return;
-    }
-
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.startAngle = startAngle;
-    this.updateMconfig(newMconfig);
-  }
-
-  arcWidthBlur() {
-    let value = this.arcWidthForm.controls['arcWidth'].value;
-
-    let arcWidth = common.isUndefinedOrEmpty(value) ? undefined : Number(value);
-
-    if (
-      common.isUndefined(arcWidth) &&
-      common.isUndefined(this.chart.arcWidth)
-    ) {
-      return;
-    }
-
-    if (arcWidth === this.chart.arcWidth) {
-      return;
-    }
-
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.arcWidth = arcWidth;
-    this.updateMconfig(newMconfig);
-  }
-
-  minBlur() {
-    let value = this.minForm.controls['min'].value;
-
-    let min = common.isUndefinedOrEmpty(value) ? undefined : Number(value);
-
-    if (common.isUndefined(min) && common.isUndefined(this.chart.min)) {
-      return;
-    }
-
-    if (min === this.chart.min) {
-      return;
-    }
-
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.min = min;
-    this.updateMconfig(newMconfig);
-  }
-
-  maxBlur() {
-    let value = this.maxForm.controls['max'].value;
-
-    let max = common.isUndefinedOrEmpty(value) ? undefined : Number(value);
-
-    if (common.isUndefined(max) && common.isUndefined(this.chart.max)) {
-      return;
-    }
-
-    if (max === this.chart.max) {
-      return;
-    }
-
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.max = max;
-    this.updateMconfig(newMconfig);
-  }
-
-  xScaleMaxBlur() {
-    let value = this.xScaleMaxForm.controls['xScaleMax'].value;
-
-    let xScaleMax = common.isUndefinedOrEmpty(value)
-      ? undefined
-      : Number(value);
-
-    if (
-      common.isUndefined(xScaleMax) &&
-      common.isUndefined(this.chart.xScaleMax)
-    ) {
-      return;
-    }
-
-    if (xScaleMax === this.chart.xScaleMax) {
-      return;
-    }
-
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.xScaleMax = xScaleMax;
-    this.updateMconfig(newMconfig);
-  }
-
-  yScaleMinBlur() {
-    let value = this.yScaleMinForm.controls['yScaleMin'].value;
-
-    let yScaleMin = common.isUndefinedOrEmpty(value)
-      ? undefined
-      : Number(value);
-
-    if (
-      common.isUndefined(yScaleMin) &&
-      common.isUndefined(this.chart.yScaleMin)
-    ) {
-      return;
-    }
-
-    if (yScaleMin === this.chart.yScaleMin) {
-      return;
-    }
-
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.yScaleMin = yScaleMin;
-    this.updateMconfig(newMconfig);
-  }
-
-  yScaleMaxBlur() {
-    let value = this.yScaleMaxForm.controls['yScaleMax'].value;
-
-    let yScaleMax = common.isUndefinedOrEmpty(value)
-      ? undefined
-      : Number(value);
-
-    if (
-      common.isUndefined(yScaleMax) &&
-      common.isUndefined(this.chart.yScaleMax)
-    ) {
-      return;
-    }
-
-    if (yScaleMax === this.chart.yScaleMax) {
-      return;
-    }
-
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.yScaleMax = yScaleMax;
-    this.updateMconfig(newMconfig);
-  }
-
-  barPaddingBlur() {
-    let value = this.barPaddingForm.controls['barPadding'].value;
-
-    let barPadding = common.isUndefinedOrEmpty(value)
-      ? undefined
-      : Number(value);
-
-    if (
-      common.isUndefined(barPadding) &&
-      common.isUndefined(this.chart.barPadding)
-    ) {
-      return;
-    }
-
-    if (barPadding === this.chart.barPadding) {
-      return;
-    }
-
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.barPadding = barPadding;
-    this.updateMconfig(newMconfig);
-  }
-
-  bigSegmentsBlur() {
-    let value = this.bigSegmentsForm.controls['bigSegments'].value;
-
-    let bigSegments = common.isUndefinedOrEmpty(value)
-      ? undefined
-      : Number(value);
-
-    if (
-      common.isUndefined(bigSegments) &&
-      common.isUndefined(this.chart.bigSegments)
-    ) {
-      return;
-    }
-
-    if (bigSegments === this.chart.bigSegments) {
-      return;
-    }
-
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.bigSegments = bigSegments;
-    this.updateMconfig(newMconfig);
-  }
-
-  smallSegmentsBlur() {
-    let value = this.smallSegmentsForm.controls['smallSegments'].value;
-
-    let smallSegments = common.isUndefinedOrEmpty(value)
-      ? undefined
-      : Number(value);
-
-    if (
-      common.isUndefined(smallSegments) &&
-      common.isUndefined(this.chart.smallSegments)
-    ) {
-      return;
-    }
-
-    if (smallSegments === this.chart.smallSegments) {
-      return;
-    }
-
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.smallSegments = smallSegments;
-    this.updateMconfig(newMconfig);
-  }
-
-  groupPaddingBlur() {
-    let value = this.groupPaddingForm.controls['groupPadding'].value;
-
-    let groupPadding = common.isUndefinedOrEmpty(value)
-      ? undefined
-      : Number(value);
-
-    if (
-      common.isUndefined(groupPadding) &&
-      common.isUndefined(this.chart.groupPadding)
-    ) {
-      return;
-    }
-
-    if (groupPadding === this.chart.groupPadding) {
-      return;
-    }
-
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.groupPadding = groupPadding;
-    this.updateMconfig(newMconfig);
-  }
-
-  innerPaddingBlur() {
-    let value = this.innerPaddingForm.controls['innerPadding'].value;
-
-    let innerPadding = common.isUndefinedOrEmpty(value)
-      ? undefined
-      : Number(value);
-
-    if (
-      common.isUndefined(innerPadding) &&
-      common.isUndefined(this.chart.innerPadding)
-    ) {
-      return;
-    }
-
-    if (innerPadding === this.chart.innerPadding) {
-      return;
-    }
-
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.innerPadding = innerPadding;
-    this.updateMconfig(newMconfig);
-  }
-
-  legendTitleBlur() {
-    let legendTitle = this.legendTitleForm.controls['legendTitle'].value;
-    if (legendTitle === this.chart.legendTitle) {
-      return;
-    }
-
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.legendTitle = legendTitle;
-    this.updateMconfig(newMconfig);
-  }
-
-  xAxisLabelBlur() {
-    let xAxisLabel = this.xAxisLabelForm.controls['xAxisLabel'].value;
-
-    if (xAxisLabel === this.chart.xAxisLabel) {
-      return;
-    }
-
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.xAxisLabel = xAxisLabel;
-    this.updateMconfig(newMconfig);
-  }
-
-  yAxisLabelBlur() {
-    let yAxisLabel = this.yAxisLabelForm.controls['yAxisLabel'].value;
-
-    if (yAxisLabel === this.chart.yAxisLabel) {
-      return;
-    }
-
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.yAxisLabel = yAxisLabel;
-    this.updateMconfig(newMconfig);
-  }
+  // angleSpanBlur() {
+  //   let value = this.angleSpanForm.controls['angleSpan'].value;
+
+  //   let angleSpan = common.isUndefinedOrEmpty(value)
+  //     ? undefined
+  //     : Number(value);
+
+  //   if (
+  //     common.isUndefined(angleSpan) &&
+  //     common.isUndefined(this.chart.angleSpan)
+  //   ) {
+  //     return;
+  //   }
+
+  //   if (angleSpan === this.chart.angleSpan) {
+  //     return;
+  //   }
+
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.angleSpan = angleSpan;
+  //   this.updateMconfig(newMconfig);
+  // }
+
+  // startAngleBlur() {
+  //   let value = this.startAngleForm.controls['startAngle'].value;
+
+  //   let startAngle = common.isUndefinedOrEmpty(value)
+  //     ? undefined
+  //     : Number(value);
+
+  //   if (
+  //     common.isUndefined(startAngle) &&
+  //     common.isUndefined(this.chart.startAngle)
+  //   ) {
+  //     return;
+  //   }
+
+  //   if (startAngle === this.chart.startAngle) {
+  //     return;
+  //   }
+
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.startAngle = startAngle;
+  //   this.updateMconfig(newMconfig);
+  // }
+
+  // arcWidthBlur() {
+  //   let value = this.arcWidthForm.controls['arcWidth'].value;
+
+  //   let arcWidth = common.isUndefinedOrEmpty(value) ? undefined : Number(value);
+
+  //   if (
+  //     common.isUndefined(arcWidth) &&
+  //     common.isUndefined(this.chart.arcWidth)
+  //   ) {
+  //     return;
+  //   }
+
+  //   if (arcWidth === this.chart.arcWidth) {
+  //     return;
+  //   }
+
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.arcWidth = arcWidth;
+  //   this.updateMconfig(newMconfig);
+  // }
+
+  // minBlur() {
+  //   let value = this.minForm.controls['min'].value;
+
+  //   let min = common.isUndefinedOrEmpty(value) ? undefined : Number(value);
+
+  //   if (common.isUndefined(min) && common.isUndefined(this.chart.min)) {
+  //     return;
+  //   }
+
+  //   if (min === this.chart.min) {
+  //     return;
+  //   }
+
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.min = min;
+  //   this.updateMconfig(newMconfig);
+  // }
+
+  // maxBlur() {
+  //   let value = this.maxForm.controls['max'].value;
+
+  //   let max = common.isUndefinedOrEmpty(value) ? undefined : Number(value);
+
+  //   if (common.isUndefined(max) && common.isUndefined(this.chart.max)) {
+  //     return;
+  //   }
+
+  //   if (max === this.chart.max) {
+  //     return;
+  //   }
+
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.max = max;
+  //   this.updateMconfig(newMconfig);
+  // }
+
+  // xScaleMaxBlur() {
+  //   let value = this.xScaleMaxForm.controls['xScaleMax'].value;
+
+  //   let xScaleMax = common.isUndefinedOrEmpty(value)
+  //     ? undefined
+  //     : Number(value);
+
+  //   if (
+  //     common.isUndefined(xScaleMax) &&
+  //     common.isUndefined(this.chart.xScaleMax)
+  //   ) {
+  //     return;
+  //   }
+
+  //   if (xScaleMax === this.chart.xScaleMax) {
+  //     return;
+  //   }
+
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.xScaleMax = xScaleMax;
+  //   this.updateMconfig(newMconfig);
+  // }
+
+  // yScaleMinBlur() {
+  //   let value = this.yScaleMinForm.controls['yScaleMin'].value;
+
+  //   let yScaleMin = common.isUndefinedOrEmpty(value)
+  //     ? undefined
+  //     : Number(value);
+
+  //   if (
+  //     common.isUndefined(yScaleMin) &&
+  //     common.isUndefined(this.chart.yScaleMin)
+  //   ) {
+  //     return;
+  //   }
+
+  //   if (yScaleMin === this.chart.yScaleMin) {
+  //     return;
+  //   }
+
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.yScaleMin = yScaleMin;
+  //   this.updateMconfig(newMconfig);
+  // }
+
+  // yScaleMaxBlur() {
+  //   let value = this.yScaleMaxForm.controls['yScaleMax'].value;
+
+  //   let yScaleMax = common.isUndefinedOrEmpty(value)
+  //     ? undefined
+  //     : Number(value);
+
+  //   if (
+  //     common.isUndefined(yScaleMax) &&
+  //     common.isUndefined(this.chart.yScaleMax)
+  //   ) {
+  //     return;
+  //   }
+
+  //   if (yScaleMax === this.chart.yScaleMax) {
+  //     return;
+  //   }
+
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.yScaleMax = yScaleMax;
+  //   this.updateMconfig(newMconfig);
+  // }
+
+  // barPaddingBlur() {
+  //   let value = this.barPaddingForm.controls['barPadding'].value;
+
+  //   let barPadding = common.isUndefinedOrEmpty(value)
+  //     ? undefined
+  //     : Number(value);
+
+  //   if (
+  //     common.isUndefined(barPadding) &&
+  //     common.isUndefined(this.chart.barPadding)
+  //   ) {
+  //     return;
+  //   }
+
+  //   if (barPadding === this.chart.barPadding) {
+  //     return;
+  //   }
+
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.barPadding = barPadding;
+  //   this.updateMconfig(newMconfig);
+  // }
+
+  // bigSegmentsBlur() {
+  //   let value = this.bigSegmentsForm.controls['bigSegments'].value;
+
+  //   let bigSegments = common.isUndefinedOrEmpty(value)
+  //     ? undefined
+  //     : Number(value);
+
+  //   if (
+  //     common.isUndefined(bigSegments) &&
+  //     common.isUndefined(this.chart.bigSegments)
+  //   ) {
+  //     return;
+  //   }
+
+  //   if (bigSegments === this.chart.bigSegments) {
+  //     return;
+  //   }
+
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.bigSegments = bigSegments;
+  //   this.updateMconfig(newMconfig);
+  // }
+
+  // smallSegmentsBlur() {
+  //   let value = this.smallSegmentsForm.controls['smallSegments'].value;
+
+  //   let smallSegments = common.isUndefinedOrEmpty(value)
+  //     ? undefined
+  //     : Number(value);
+
+  //   if (
+  //     common.isUndefined(smallSegments) &&
+  //     common.isUndefined(this.chart.smallSegments)
+  //   ) {
+  //     return;
+  //   }
+
+  //   if (smallSegments === this.chart.smallSegments) {
+  //     return;
+  //   }
+
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.smallSegments = smallSegments;
+  //   this.updateMconfig(newMconfig);
+  // }
+
+  // groupPaddingBlur() {
+  //   let value = this.groupPaddingForm.controls['groupPadding'].value;
+
+  //   let groupPadding = common.isUndefinedOrEmpty(value)
+  //     ? undefined
+  //     : Number(value);
+
+  //   if (
+  //     common.isUndefined(groupPadding) &&
+  //     common.isUndefined(this.chart.groupPadding)
+  //   ) {
+  //     return;
+  //   }
+
+  //   if (groupPadding === this.chart.groupPadding) {
+  //     return;
+  //   }
+
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.groupPadding = groupPadding;
+  //   this.updateMconfig(newMconfig);
+  // }
+
+  // innerPaddingBlur() {
+  //   let value = this.innerPaddingForm.controls['innerPadding'].value;
+
+  //   let innerPadding = common.isUndefinedOrEmpty(value)
+  //     ? undefined
+  //     : Number(value);
+
+  //   if (
+  //     common.isUndefined(innerPadding) &&
+  //     common.isUndefined(this.chart.innerPadding)
+  //   ) {
+  //     return;
+  //   }
+
+  //   if (innerPadding === this.chart.innerPadding) {
+  //     return;
+  //   }
+
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.innerPadding = innerPadding;
+  //   this.updateMconfig(newMconfig);
+  // }
+
+  // legendTitleBlur() {
+  //   let legendTitle = this.legendTitleForm.controls['legendTitle'].value;
+  //   if (legendTitle === this.chart.legendTitle) {
+  //     return;
+  //   }
+
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.legendTitle = legendTitle;
+  //   this.updateMconfig(newMconfig);
+  // }
+
+  // xAxisLabelBlur() {
+  //   let xAxisLabel = this.xAxisLabelForm.controls['xAxisLabel'].value;
+
+  //   if (xAxisLabel === this.chart.xAxisLabel) {
+  //     return;
+  //   }
+
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.xAxisLabel = xAxisLabel;
+  //   this.updateMconfig(newMconfig);
+  // }
+
+  // yAxisLabelBlur() {
+  //   let yAxisLabel = this.yAxisLabelForm.controls['yAxisLabel'].value;
+
+  //   if (yAxisLabel === this.chart.yAxisLabel) {
+  //     return;
+  //   }
+
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.yAxisLabel = yAxisLabel;
+  //   this.updateMconfig(newMconfig);
+  // }
 
   hideColumnsIsChecked(id: string) {
     return this.chart.hideColumns.findIndex(x => x === id) > -1;
@@ -1562,255 +1552,236 @@ export class ChartEditorComponent implements OnChanges {
     });
   }
 
-  valueFieldChange() {
-    let valueField = this.valueFieldForm.controls['valueField'].value;
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.valueField = valueField;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // colorSchemeChange() {
+  //   let colorScheme = this.colorSchemeForm.controls['colorScheme'].value;
 
-  previousValueFieldChange() {
-    let previousValueField =
-      this.previousValueFieldForm.controls['previousValueField'].value;
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.previousValueField = previousValueField;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  //   let newSchemeTypeValue: common.ChartSchemeTypeEnum =
+  //     [
+  //       common.ChartColorSchemeEnum.Solar,
+  //       common.ChartColorSchemeEnum.Air,
+  //       common.ChartColorSchemeEnum.Aqua
+  //     ].indexOf(colorScheme) > -1
+  //       ? common.ChartSchemeTypeEnum.Linear
+  //       : common.ChartSchemeTypeEnum.Ordinal;
 
-  colorSchemeChange() {
-    let colorScheme = this.colorSchemeForm.controls['colorScheme'].value;
+  //   setValueAndMark({
+  //     control: this.schemeTypeForm.controls['schemeType'],
+  //     value: newSchemeTypeValue
+  //   });
 
-    let newSchemeTypeValue: common.ChartSchemeTypeEnum =
-      [
-        common.ChartColorSchemeEnum.Solar,
-        common.ChartColorSchemeEnum.Air,
-        common.ChartColorSchemeEnum.Aqua
-      ].indexOf(colorScheme) > -1
-        ? common.ChartSchemeTypeEnum.Linear
-        : common.ChartSchemeTypeEnum.Ordinal;
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.colorScheme = colorScheme;
+  //   newMconfig.chart.schemeType = newSchemeTypeValue;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-    setValueAndMark({
-      control: this.schemeTypeForm.controls['schemeType'],
-      value: newSchemeTypeValue
-    });
+  // schemeTypeChange() {
+  //   let schemeType = this.schemeTypeForm.controls['schemeType'].value;
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.schemeType = schemeType;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.colorScheme = colorScheme;
-    newMconfig.chart.schemeType = newSchemeTypeValue;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // interpolationChange() {
+  //   let interpolation = this.interpolationForm.controls['interpolation'].value;
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.interpolation = interpolation;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-  schemeTypeChange() {
-    let schemeType = this.schemeTypeForm.controls['schemeType'].value;
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.schemeType = schemeType;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // bandColorChange($event: any) {
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.bandColor = $event.color;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-  interpolationChange() {
-    let interpolation = this.interpolationForm.controls['interpolation'].value;
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.interpolation = interpolation;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // cardColorChange($event: any) {
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.cardColor = $event.color;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-  bandColorChange($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.bandColor = $event.color;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // textColorChange($event: any) {
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.textColor = $event.color;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-  cardColorChange($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.cardColor = $event.color;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // emptyColorChange($event: any) {
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.emptyColor = $event.color;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-  textColorChange($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.textColor = $event.color;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // toggleXAxis($event: any) {
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.xAxis = $event;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-  emptyColorChange($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.emptyColor = $event.color;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // toggleYAxis($event: any) {
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.yAxis = $event;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-  toggleXAxis($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.xAxis = $event;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // toggleShowXAxisLabel($event: any) {
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.showXAxisLabel = $event;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-  toggleYAxis($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.yAxis = $event;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // toggleShowYAxisLabel($event: any) {
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.showYAxisLabel = $event;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-  toggleShowXAxisLabel($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.showXAxisLabel = $event;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // toggleShowAxis($event: any) {
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.showAxis = $event;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-  toggleShowYAxisLabel($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.showYAxisLabel = $event;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // toggleAnimations($event: any) {
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.animations = $event;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-  toggleShowAxis($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.showAxis = $event;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // toggleGradient($event: any) {
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.gradient = $event;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-  toggleAnimations($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.animations = $event;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // toggleLegend($event: any) {
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.legend = $event;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-  toggleGradient($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.gradient = $event;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // toggleTooltipDisabled($event: any) {
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.tooltipDisabled = $event;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-  toggleLegend($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.legend = $event;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // toggleRoundEdges($event: any) {
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.roundEdges = $event;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-  toggleTooltipDisabled($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.tooltipDisabled = $event;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // toggleRoundDomains($event: any) {
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.roundDomains = $event;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-  toggleRoundEdges($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.roundEdges = $event;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // toggleShowGridLines($event: any) {
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.showGridLines = $event;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-  toggleRoundDomains($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.roundDomains = $event;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // toggleTimeline($event: any) {
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.timeline = $event;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-  toggleShowGridLines($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.showGridLines = $event;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // toggleAutoScale($event: any) {
+  //   setValueAndMark({
+  //     control: this.yScaleMinForm.controls['yScaleMin'],
+  //     value: null
+  //   });
 
-  toggleTimeline($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.timeline = $event;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  //   setValueAndMark({
+  //     control: this.yScaleMaxForm.controls['yScaleMax'],
+  //     value: null
+  //   });
 
-  toggleAutoScale($event: any) {
-    setValueAndMark({
-      control: this.yScaleMinForm.controls['yScaleMin'],
-      value: null
-    });
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.autoScale = $event;
+  //   newMconfig.chart.yScaleMin = null;
+  //   newMconfig.chart.yScaleMax = null;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-    setValueAndMark({
-      control: this.yScaleMaxForm.controls['yScaleMax'],
-      value: null
-    });
+  // toggleDoughnut($event: any) {
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.doughnut = $event;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.autoScale = $event;
-    newMconfig.chart.yScaleMin = null;
-    newMconfig.chart.yScaleMax = null;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // toggleExplodeSlices($event: any) {
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.explodeSlices = $event;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-  toggleDoughnut($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.doughnut = $event;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // toggleLabels($event: any) {
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.labels = $event;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
-  toggleExplodeSlices($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.explodeSlices = $event;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
-
-  toggleLabels($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.labels = $event;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
-
-  toggleShowDataLabel($event: any) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.showDataLabel = $event;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
-  }
+  // toggleShowDataLabel($event: any) {
+  //   let newMconfig = this.structService.makeMconfig();
+  //   newMconfig.chart.showDataLabel = $event;
+  //   this.mconfigService.navCreateTempMconfig({
+  //     newMconfig: newMconfig
+  //   });
+  // }
 
   toggleFormat() {
     let newMconfig = this.structService.makeMconfig();

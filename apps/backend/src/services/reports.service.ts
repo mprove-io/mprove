@@ -854,7 +854,7 @@ export class ReportsService {
             timezone: timezone,
             limit: timeColumnsLimit,
             filters: filters,
-            chart: common.DEFAULT_CHART,
+            chart: common.makeCopy(common.DEFAULT_CHART),
             temp: true,
             serverTs: 1
             // fields: [],

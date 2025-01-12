@@ -71,7 +71,7 @@ export class StructService {
       limit: 500,
       filters: [],
       extendedFilters: [],
-      chart: common.DEFAULT_CHART,
+      chart: common.makeCopy(common.DEFAULT_CHART),
       temp: true,
       serverTs: 1
     };

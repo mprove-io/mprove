@@ -24,12 +24,6 @@ export function getSelectValid(item: {
     }
   }
 
-  let valueField = mconfigFields.find(f => f.id === chart.valueField);
-
-  let previousValueField = mconfigFields.find(
-    f => f.id === chart.previousValueField
-  );
-
   let isSelectValid = true;
   let errorMessage;
 
@@ -145,20 +139,6 @@ export function getSelectValid(item: {
       isSelectValid = false;
       errorMessage =
         'sizeField for this chart type must have result type "number"';
-    } else if (
-      common.isDefined(valueField) &&
-      valueField.result !== common.FieldResultEnum.Number
-    ) {
-      isSelectValid = false;
-      errorMessage =
-        'valueField for this chart type must have result type "number"';
-    } else if (
-      common.isDefined(previousValueField) &&
-      previousValueField.result !== common.FieldResultEnum.Number
-    ) {
-      isSelectValid = false;
-      errorMessage =
-        'previousValueField for this chart type must have result type "number"';
     } else if (yFieldsIsOk === false) {
       isSelectValid = false;
       errorMessage =

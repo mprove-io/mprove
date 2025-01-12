@@ -36,49 +36,8 @@ export function checkChartOptionsParameters<T extends types.dzType>(
         .forEach(parameter => {
           if (
             [
-              common.ParameterEnum.ShowDataLabel.toString(),
               common.ParameterEnum.Format.toString(),
-              common.ParameterEnum.Gradient.toString(),
-              common.ParameterEnum.Legend.toString(),
-              common.ParameterEnum.TooltipDisabled.toString(),
-              common.ParameterEnum.RoundDomains.toString(),
-              common.ParameterEnum.ShowGridLines.toString(),
-              common.ParameterEnum.Timeline.toString(),
-              common.ParameterEnum.AutoScale.toString(),
-              common.ParameterEnum.Doughnut.toString(),
-              common.ParameterEnum.ExplodeSlices.toString(),
-              common.ParameterEnum.Labels.toString(),
-              common.ParameterEnum.ColorScheme.toString(),
-              common.ParameterEnum.SchemeType.toString(),
-              common.ParameterEnum.PageSize.toString(),
-              common.ParameterEnum.ArcWidth.toString(),
-              common.ParameterEnum.BarPadding.toString(),
-              common.ParameterEnum.GroupPadding.toString(),
-              common.ParameterEnum.InnerPadding.toString(),
-              common.ParameterEnum.RangeFillOpacity.toString(),
-              common.ParameterEnum.AngleSpan.toString(),
-              common.ParameterEnum.StartAngle.toString(),
-              common.ParameterEnum.BigSegments.toString(),
-              common.ParameterEnum.SmallSegments.toString(),
-              common.ParameterEnum.Min.toString(),
-              common.ParameterEnum.Max.toString(),
-              common.ParameterEnum.Units.toString(),
-              common.ParameterEnum.BandColor.toString(),
-              common.ParameterEnum.CardColor.toString(),
-              common.ParameterEnum.TextColor.toString(),
-              common.ParameterEnum.EmptyColor.toString(),
-              common.ParameterEnum.Animations.toString(),
-              common.ParameterEnum.LegendTitle.toString(),
-              common.ParameterEnum.RoundEdges.toString(),
-              common.ParameterEnum.Interpolation.toString(),
-              common.ParameterEnum.XScaleMax.toString(),
-              common.ParameterEnum.YScaleMin.toString(),
-              common.ParameterEnum.YScaleMax.toString(),
-              common.ParameterEnum.FormatNumberDataLabel.toString(),
-              common.ParameterEnum.FormatNumberValue.toString(),
-              common.ParameterEnum.FormatNumberAxisTick.toString(),
-              common.ParameterEnum.FormatNumberYAxisTick.toString(),
-              common.ParameterEnum.FormatNumberXAxisTick.toString()
+              common.ParameterEnum.PageSize.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(
@@ -150,22 +109,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
           }
 
           if (
-            [
-              common.ParameterEnum.Animations.toString(),
-              common.ParameterEnum.RoundEdges.toString(),
-              common.ParameterEnum.ShowDataLabel.toString(),
-              common.ParameterEnum.Format.toString(),
-              common.ParameterEnum.Gradient.toString(),
-              common.ParameterEnum.Legend.toString(),
-              common.ParameterEnum.TooltipDisabled.toString(),
-              common.ParameterEnum.RoundDomains.toString(),
-              common.ParameterEnum.ShowGridLines.toString(),
-              common.ParameterEnum.Timeline.toString(),
-              common.ParameterEnum.AutoScale.toString(),
-              common.ParameterEnum.Doughnut.toString(),
-              common.ParameterEnum.ExplodeSlices.toString(),
-              common.ParameterEnum.Labels.toString()
-            ].indexOf(parameter) > -1 &&
+            [common.ParameterEnum.Format.toString()].indexOf(parameter) > -1 &&
             !(tile.options[parameter as keyof common.FileChartOptions] as any)
               .toString()
               .match(common.MyRegex.TRUE_FALSE())
@@ -282,17 +226,8 @@ export function checkChartOptionsParameters<T extends types.dzType>(
           // }
 
           if (
-            [
-              common.ParameterEnum.PageSize.toString(),
-              common.ParameterEnum.BarPadding.toString(),
-              common.ParameterEnum.GroupPadding.toString(),
-              common.ParameterEnum.InnerPadding.toString(),
-              common.ParameterEnum.AngleSpan.toString(),
-              common.ParameterEnum.BigSegments.toString(),
-              common.ParameterEnum.SmallSegments.toString(),
-              common.ParameterEnum.Min.toString(),
-              common.ParameterEnum.Max.toString()
-            ].indexOf(parameter) > -1 &&
+            [common.ParameterEnum.PageSize.toString()].indexOf(parameter) >
+              -1 &&
             !(
               tile.options[parameter as keyof common.FileChartOptions] as any
             ).match(common.MyRegex.CAPTURE_DIGITS_START_TO_END_G())
@@ -325,8 +260,8 @@ export function checkChartOptionsParameters<T extends types.dzType>(
 
           if (
             [
-              common.ParameterEnum.ArcWidth.toString(),
-              common.ParameterEnum.RangeFillOpacity.toString()
+              // common.ParameterEnum.ArcWidth.toString(),
+              // common.ParameterEnum.RangeFillOpacity.toString()
             ].indexOf(parameter) > -1 &&
             !(
               tile.options[parameter as keyof common.FileChartOptions] as any
@@ -359,10 +294,10 @@ export function checkChartOptionsParameters<T extends types.dzType>(
 
           if (
             [
-              common.ParameterEnum.StartAngle.toString(),
-              common.ParameterEnum.XScaleMax.toString(),
-              common.ParameterEnum.YScaleMin.toString(),
-              common.ParameterEnum.YScaleMax.toString()
+              // common.ParameterEnum.StartAngle.toString(),
+              // common.ParameterEnum.XScaleMax.toString(),
+              // common.ParameterEnum.YScaleMin.toString(),
+              // common.ParameterEnum.YScaleMax.toString()
             ].indexOf(parameter) > -1 &&
             !(
               tile.options[parameter as keyof common.FileChartOptions] as any
@@ -395,10 +330,10 @@ export function checkChartOptionsParameters<T extends types.dzType>(
 
           if (
             [
-              common.ParameterEnum.BandColor.toString(),
-              common.ParameterEnum.CardColor.toString(),
-              common.ParameterEnum.TextColor.toString(),
-              common.ParameterEnum.EmptyColor.toString()
+              // common.ParameterEnum.BandColor.toString(),
+              // common.ParameterEnum.CardColor.toString(),
+              // common.ParameterEnum.TextColor.toString(),
+              // common.ParameterEnum.EmptyColor.toString()
             ].indexOf(parameter) > -1 &&
             !(
               tile.options[parameter as keyof common.FileChartOptions] as any
@@ -433,11 +368,11 @@ export function checkChartOptionsParameters<T extends types.dzType>(
 
           if (
             [
-              common.ParameterEnum.FormatNumberDataLabel.toString(),
-              common.ParameterEnum.FormatNumberValue.toString(),
-              common.ParameterEnum.FormatNumberAxisTick.toString(),
-              common.ParameterEnum.FormatNumberYAxisTick.toString(),
-              common.ParameterEnum.FormatNumberXAxisTick.toString()
+              // common.ParameterEnum.FormatNumberDataLabel.toString(),
+              // common.ParameterEnum.FormatNumberValue.toString(),
+              // common.ParameterEnum.FormatNumberAxisTick.toString(),
+              // common.ParameterEnum.FormatNumberYAxisTick.toString(),
+              // common.ParameterEnum.FormatNumberXAxisTick.toString()
             ].indexOf(parameter) > -1
           ) {
             let value = tile.options[

@@ -165,6 +165,18 @@ export function prepareTile(item: {
     //       : undefined
     // },
     options: {
+      format:
+        constants.formatChartTypes.indexOf(chart.type) > -1 &&
+        chart.format !== constants.DEFAULT_CHART.format &&
+        isDefined(chart.format)
+          ? <any>chart.format
+          : undefined,
+      page_size:
+        constants.pageSizeChartTypes.indexOf(chart.type) > -1 &&
+        chart.pageSize !== constants.DEFAULT_CHART.pageSize &&
+        isDefined(chart.pageSize)
+          ? <any>chart.pageSize
+          : undefined
       // color_scheme:
       //   constants.colorSchemeChartTypes.indexOf(chart.type) > -1 &&
       //   chart.colorScheme !== constants.CHART_DEFAULT_COLOR_SCHEME &&
@@ -237,12 +249,6 @@ export function prepareTile(item: {
       //   isDefined(chart.showDataLabel)
       //     ? <any>chart.showDataLabel
       //     : undefined,
-      format:
-        constants.formatChartTypes.indexOf(chart.type) > -1 &&
-        chart.format !== constants.CHART_DEFAULT_FORMAT &&
-        isDefined(chart.format)
-          ? <any>chart.format
-          : undefined
       // tooltip_disabled:
       //   constants.tooltipDisabledChartTypes.indexOf(chart.type) > -1 &&
       //   chart.tooltipDisabled !== constants.CHART_DEFAULT_TOOLTIP_DISABLED &&
@@ -296,12 +302,6 @@ export function prepareTile(item: {
       //   chart.animations !== constants.CHART_DEFAULT_ANIMATIONS &&
       //   isDefined(chart.animations)
       //     ? <any>chart.animations
-      //     : undefined,
-      // page_size:
-      //   constants.pageSizeChartTypes.indexOf(chart.type) > -1 &&
-      //   chart.pageSize !== constants.CHART_DEFAULT_PAGE_SIZE &&
-      //   isDefined(chart.pageSize)
-      //     ? <any>chart.pageSize
       //     : undefined,
       // arc_width:
       //   constants.arcWidthChartTypes.indexOf(chart.type) > -1 &&

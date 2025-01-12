@@ -15,7 +15,9 @@ export class FormatNumberService {
       ? mconfigFields.find(f => f.id === chart.yField)
       : mconfigFields.filter(f => chart.yFields.indexOf(f.id) > -1)[0];
 
-    let formatNumber = chart.formatNumberDataLabel || field?.formatNumber;
+    let formatNumber =
+      // chart.formatNumberDataLabel ||
+      field?.formatNumber;
 
     return { field: field, formatNumber: formatNumber };
   }
@@ -28,9 +30,11 @@ export class FormatNumberService {
 
     let field = mconfigFields.find(f => f.id === chart.yField);
 
-    let formatNumber = common.isDefined(chart.formatNumberValue)
-      ? chart.formatNumberValue
-      : field?.formatNumber;
+    let formatNumber =
+      // common.isDefined(chart.formatNumberValue)
+      //   ? chart.formatNumberValue
+      //   :
+      field?.formatNumber;
 
     return { field: field, formatNumber: formatNumber };
   }
@@ -43,7 +47,9 @@ export class FormatNumberService {
 
     let field = mconfigFields.find(f => f.id === chart.yField);
 
-    let formatNumber = chart.formatNumberAxisTick || field?.formatNumber;
+    let formatNumber =
+      // chart.formatNumberAxisTick ||
+      field?.formatNumber;
 
     return { field: field, formatNumber: formatNumber };
   }
@@ -58,7 +64,9 @@ export class FormatNumberService {
       ? mconfigFields.find(f => f.id === chart.yField)
       : mconfigFields.filter(f => chart.yFields.indexOf(f.id) > -1)[0];
 
-    let formatNumber = chart.formatNumberYAxisTick || field?.formatNumber;
+    let formatNumber =
+      // chart.formatNumberYAxisTick ||
+      field?.formatNumber;
 
     return { field: field, formatNumber: formatNumber };
   }
@@ -71,7 +79,9 @@ export class FormatNumberService {
 
     let field = mconfigFields.find(f => f.id === chart.yField);
 
-    let formatNumber = chart.formatNumberXAxisTick || field?.formatNumber;
+    let formatNumber =
+      // chart.formatNumberXAxisTick ||
+      field?.formatNumber;
 
     return { field: field, formatNumber: formatNumber };
   }

@@ -43,9 +43,6 @@ tiles:
   data:
     x_field: c.gender
     y_field: c.count
-  options:
-    explode_slices: true
-    labels: true
   plate:
     plate_width: '4'
     plate_height: '500'

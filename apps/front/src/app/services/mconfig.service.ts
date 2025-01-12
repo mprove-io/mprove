@@ -102,14 +102,6 @@ export class MconfigService {
       newMconfig.chart.multiField = null;
     }
 
-    if (newMconfig.chart.valueField === fieldId) {
-      newMconfig.chart.valueField = null;
-    }
-
-    if (newMconfig.chart.previousValueField === fieldId) {
-      newMconfig.chart.previousValueField = null;
-    }
-
     if (newMconfig.chart.yFields.length > 0) {
       let index = newMconfig.chart.yFields.findIndex(yId => yId === fieldId);
 

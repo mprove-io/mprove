@@ -2,7 +2,7 @@ import {
   IsBoolean,
   IsEnum,
   IsInt,
-  IsNumber,
+  // IsNumber,
   IsOptional,
   IsString
 } from 'class-validator';
@@ -48,210 +48,206 @@ export class MconfigChart {
   sizeField?: string;
 
   @IsOptional()
-  @IsString()
-  valueField?: string;
-
-  @IsOptional()
-  @IsString()
-  previousValueField?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  xAxis?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  showXAxisLabel?: boolean;
-
-  @IsOptional()
-  @IsString()
-  xAxisLabel?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  yAxis?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  showYAxisLabel?: boolean;
-
-  @IsOptional()
-  @IsString()
-  yAxisLabel?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  showAxis?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  animations?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  showDataLabel?: boolean;
-
-  @IsOptional()
   @IsBoolean()
   format?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  gradient?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  legend?: boolean;
-
-  @IsOptional()
-  @IsString()
-  legendTitle?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  tooltipDisabled?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  roundEdges?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  roundDomains?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  showGridLines?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  timeline?: boolean;
-
-  @IsOptional()
-  @IsEnum(enums.ChartInterpolationEnum)
-  interpolation?: enums.ChartInterpolationEnum;
-
-  @IsOptional()
-  @IsBoolean()
-  autoScale?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  doughnut?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  explodeSlices?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  labels?: boolean;
-
-  @IsOptional()
-  @IsEnum(enums.ChartColorSchemeEnum)
-  colorScheme?: enums.ChartColorSchemeEnum;
-
-  @IsOptional()
-  @IsEnum(enums.ChartSchemeTypeEnum)
-  schemeType?: any;
 
   @IsOptional()
   @IsInt()
   pageSize?: number;
 
-  @IsOptional()
-  @IsNumber()
-  arcWidth?: number;
+  // @IsOptional()
+  // @IsBoolean()
+  // gradient?: boolean;
 
-  @IsOptional()
-  @IsInt()
-  barPadding?: number;
+  // @IsOptional()
+  // @IsBoolean()
+  // legend?: boolean;
 
-  @IsOptional()
-  @IsInt()
-  groupPadding?: number;
+  // @IsOptional()
+  // @IsString()
+  // legendTitle?: string;
 
-  @IsOptional()
-  @IsInt()
-  innerPadding?: number;
+  // @IsOptional()
+  // @IsBoolean()
+  // tooltipDisabled?: boolean;
 
-  @IsOptional() // absent in docs
-  @IsNumber()
-  rangeFillOpacity?: number;
+  // @IsOptional()
+  // @IsBoolean()
+  // roundEdges?: boolean;
 
-  @IsOptional()
-  @IsInt()
-  angleSpan?: number;
+  // @IsOptional()
+  // @IsBoolean()
+  // roundDomains?: boolean;
 
-  @IsOptional()
-  @IsInt()
-  startAngle?: number;
+  // @IsOptional()
+  // @IsBoolean()
+  // showGridLines?: boolean;
 
-  @IsOptional()
-  @IsInt()
-  bigSegments?: number;
+  // @IsOptional()
+  // @IsBoolean()
+  // timeline?: boolean;
 
-  @IsOptional()
-  @IsInt()
-  smallSegments?: number;
+  // @IsOptional()
+  // @IsEnum(enums.ChartInterpolationEnum)
+  // interpolation?: enums.ChartInterpolationEnum;
 
-  @IsOptional()
-  @IsInt()
-  min?: number;
+  // @IsOptional()
+  // @IsBoolean()
+  // autoScale?: boolean;
 
-  @IsOptional()
-  @IsInt()
-  max?: number;
+  // @IsOptional()
+  // @IsBoolean()
+  // doughnut?: boolean;
 
-  @IsOptional()
-  @IsString()
-  units?: string;
+  // @IsOptional()
+  // @IsBoolean()
+  // explodeSlices?: boolean;
 
-  @IsOptional()
-  @IsNumber()
-  yScaleMin?: number;
+  // @IsOptional()
+  // @IsBoolean()
+  // labels?: boolean;
 
-  @IsOptional()
-  @IsNumber()
-  yScaleMax?: number;
+  // @IsOptional()
+  // @IsEnum(enums.ChartColorSchemeEnum)
+  // colorScheme?: enums.ChartColorSchemeEnum;
 
-  @IsOptional()
-  @IsNumber()
-  xScaleMax?: number;
+  // @IsOptional()
+  // @IsEnum(enums.ChartSchemeTypeEnum)
+  // schemeType?: any;
 
-  @IsOptional()
-  @IsString()
-  bandColor?: string;
+  // @IsOptional()
+  // @IsNumber()
+  // arcWidth?: number;
 
-  @IsOptional()
-  @IsString()
-  cardColor?: string;
+  // @IsOptional()
+  // @IsInt()
+  // barPadding?: number;
 
-  @IsOptional()
-  @IsString()
-  textColor?: string;
+  // @IsOptional()
+  // @IsInt()
+  // groupPadding?: number;
 
-  @IsOptional()
-  @IsString()
-  emptyColor?: string;
+  // @IsOptional()
+  // @IsInt()
+  // innerPadding?: number;
 
-  @IsOptional()
-  @IsString()
-  formatNumberDataLabel?: string;
+  // @IsOptional() // absent in docs
+  // @IsNumber()
+  // rangeFillOpacity?: number;
 
-  @IsOptional()
-  @IsString()
-  formatNumberValue?: string;
+  // @IsOptional()
+  // @IsInt()
+  // angleSpan?: number;
 
-  @IsOptional()
-  @IsString()
-  formatNumberAxisTick?: string;
+  // @IsOptional()
+  // @IsInt()
+  // startAngle?: number;
 
-  @IsOptional()
-  @IsString()
-  formatNumberYAxisTick?: string;
+  // @IsOptional()
+  // @IsInt()
+  // bigSegments?: number;
 
-  @IsOptional()
-  @IsString()
-  formatNumberXAxisTick?: string;
+  // @IsOptional()
+  // @IsInt()
+  // smallSegments?: number;
+
+  // @IsOptional()
+  // @IsInt()
+  // min?: number;
+
+  // @IsOptional()
+  // @IsInt()
+  // max?: number;
+
+  // @IsOptional()
+  // @IsString()
+  // units?: string;
+
+  // @IsOptional()
+  // @IsNumber()
+  // yScaleMin?: number;
+
+  // @IsOptional()
+  // @IsNumber()
+  // yScaleMax?: number;
+
+  // @IsOptional()
+  // @IsNumber()
+  // xScaleMax?: number;
+
+  // @IsOptional()
+  // @IsString()
+  // bandColor?: string;
+
+  // @IsOptional()
+  // @IsString()
+  // cardColor?: string;
+
+  // @IsOptional()
+  // @IsString()
+  // textColor?: string;
+
+  // @IsOptional()
+  // @IsString()
+  // emptyColor?: string;
+
+  // @IsOptional()
+  // @IsString()
+  // formatNumberDataLabel?: string;
+
+  // @IsOptional()
+  // @IsString()
+  // formatNumberValue?: string;
+
+  // @IsOptional()
+  // @IsString()
+  // formatNumberAxisTick?: string;
+
+  // @IsOptional()
+  // @IsString()
+  // formatNumberYAxisTick?: string;
+
+  // @IsOptional()
+  // @IsString()
+  // formatNumberXAxisTick?: string;
+
+  //
+  // axis
+  //
+
+  // @IsOptional()
+  // @IsBoolean()
+  // xAxis?: boolean;
+
+  // @IsOptional()
+  // @IsBoolean()
+  // showXAxisLabel?: boolean;
+
+  // @IsOptional()
+  // @IsString()
+  // xAxisLabel?: string;
+
+  // @IsOptional()
+  // @IsBoolean()
+  // yAxis?: boolean;
+
+  // @IsOptional()
+  // @IsBoolean()
+  // showYAxisLabel?: boolean;
+
+  // @IsOptional()
+  // @IsString()
+  // yAxisLabel?: string;
+
+  // @IsOptional()
+  // @IsBoolean()
+  // showAxis?: boolean;
+
+  // @IsOptional()
+  // @IsBoolean()
+  // animations?: boolean;
+
+  // @IsOptional()
+  // @IsBoolean()
+  // showDataLabel?: boolean;
 }

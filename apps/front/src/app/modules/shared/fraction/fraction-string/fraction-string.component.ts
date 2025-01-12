@@ -219,7 +219,7 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                       }
                     ]
                   : [],
-                chart: common.DEFAULT_CHART,
+                chart: common.makeCopy(common.DEFAULT_CHART),
                 temp: true,
                 serverTs: 1
               };
