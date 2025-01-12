@@ -5,7 +5,7 @@ tiles:
   select: 
   - a.dim1
   - a.mea1
-  type: e_line
+  type: line
   data:
     x_field: a.dim1
     hide_columns:       

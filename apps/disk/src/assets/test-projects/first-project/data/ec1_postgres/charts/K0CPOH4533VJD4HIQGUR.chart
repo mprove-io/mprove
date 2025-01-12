@@ -7,7 +7,7 @@ tiles:
   - order_items.total_sale_price
   - mf.total_profit
   sorts: orders.created___month
-  type: e_line
+  type: line
   data:
     x_field: orders.created___month
     y_fields:

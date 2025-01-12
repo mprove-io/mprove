@@ -38,25 +38,19 @@ export class ChartViewComponent implements OnChanges {
   eChartOptions: EChartsOption;
 
   eChartsTypes = [
-    common.ChartTypeEnum.ELine,
-    common.ChartTypeEnum.EBar,
-    common.ChartTypeEnum.EScatter,
-    // common.ChartTypeEnum.EBubble,
-    common.ChartTypeEnum.EPie,
-    common.ChartTypeEnum.EHeatMap,
-    common.ChartTypeEnum.ETreeMap,
-    common.ChartTypeEnum.EGauge
+    common.ChartTypeEnum.Line,
+    common.ChartTypeEnum.Bar,
+    common.ChartTypeEnum.Scatter,
+    common.ChartTypeEnum.Pie,
+    common.ChartTypeEnum.HeatMap,
+    common.ChartTypeEnum.TreeMap,
+    common.ChartTypeEnum.Gauge
   ];
 
   eChartsMultiChartTypes = [
-    common.ChartTypeEnum.ELine,
-    common.ChartTypeEnum.EBar,
-    common.ChartTypeEnum.EScatter
-    // common.ChartTypeEnum.EBubble
-    // common.ChartTypeEnum.EPie,
-    // common.ChartTypeEnum.EHeatMap,
-    // common.ChartTypeEnum.ETreeMap,
-    // common.ChartTypeEnum.EGauge,
+    common.ChartTypeEnum.Line,
+    common.ChartTypeEnum.Bar,
+    common.ChartTypeEnum.Scatter
   ];
 
   @Input()
@@ -146,8 +140,8 @@ export class ChartViewComponent implements OnChanges {
         }
       },
       tooltip:
-        this.chart.type === common.ChartTypeEnum.ELine ||
-        this.chart.type === common.ChartTypeEnum.EBar
+        this.chart.type === common.ChartTypeEnum.Line ||
+        this.chart.type === common.ChartTypeEnum.Bar
           ? {
               trigger: 'axis',
               order: 'valueDesc',
@@ -214,9 +208,9 @@ export class ChartViewComponent implements OnChanges {
       // echarts - axes
 
       if (
-        this.chart.type === common.ChartTypeEnum.ELine ||
-        this.chart.type === common.ChartTypeEnum.EBar ||
-        this.chart.type === common.ChartTypeEnum.EScatter
+        this.chart.type === common.ChartTypeEnum.Line ||
+        this.chart.type === common.ChartTypeEnum.Bar ||
+        this.chart.type === common.ChartTypeEnum.Scatter
       ) {
         let tsFormatter = xField.sqlName.match(/(?:___year)$/g)
           ? (value: any) =>
@@ -290,7 +284,7 @@ export class ChartViewComponent implements OnChanges {
             fontSize: 16
           },
           formatter:
-            this.chart.type === common.ChartTypeEnum.EPie
+            this.chart.type === common.ChartTypeEnum.Pie
               ? (p: any) => {
                   // console.log(p);
 
@@ -319,7 +313,7 @@ export class ChartViewComponent implements OnChanges {
                     ? p.data.pSizeValueFmt
                     : 'null';
 
-                  return this.chart.type === common.ChartTypeEnum.EScatter &&
+                  return this.chart.type === common.ChartTypeEnum.Scatter &&
                     common.isDefined(this.chart.sizeField) &&
                     p.name !== p.data.pSizeFieldName
                     ? `${p.name}: <strong>${sValueFmt}</strong><br/>${p.data.pSizeFieldName}: <strong>${sizeValueFmt}</strong><br/>${xValueFmt}`
@@ -392,7 +386,7 @@ export class ChartViewComponent implements OnChanges {
           };
 
           let baseSeriesOption: SeriesOption = {
-            type: this.chart.type.split('_')[1] as any,
+            type: this.chart.type as any,
             name: el.seriesName,
             data: el.seriesPoints.map(x => ({
               name: el.seriesName,
@@ -403,13 +397,13 @@ export class ChartViewComponent implements OnChanges {
           };
 
           let seriesOption =
-            this.chart.type === common.ChartTypeEnum.ELine
+            this.chart.type === common.ChartTypeEnum.Line
               ? lineSeriesOption
-              : this.chart.type === common.ChartTypeEnum.EBar
+              : this.chart.type === common.ChartTypeEnum.Bar
               ? barSeriesOption
-              : this.chart.type === common.ChartTypeEnum.EScatter
+              : this.chart.type === common.ChartTypeEnum.Scatter
               ? scatterSeriesOption
-              : this.chart.type === common.ChartTypeEnum.EPie
+              : this.chart.type === common.ChartTypeEnum.Pie
               ? pieSeriesOption
               : baseSeriesOption;
 

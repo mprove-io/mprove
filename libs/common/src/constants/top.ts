@@ -209,48 +209,19 @@ export const FILTER_RESULT_VALUES = [
 export const CHART_TYPE_VALUES = [
   enums.ChartTypeEnum.Table,
   //
-  enums.ChartTypeEnum.ELine,
-  enums.ChartTypeEnum.EBar,
-  enums.ChartTypeEnum.EScatter,
-  enums.ChartTypeEnum.EPie,
-  enums.ChartTypeEnum.EHeatMap,
-  enums.ChartTypeEnum.ETreeMap,
-  enums.ChartTypeEnum.EGauge
-  //
-  // enums.ChartTypeEnum.AgLine,
-  // enums.ChartTypeEnum.AgArea,
-  // enums.ChartTypeEnum.AgBar,
-  // enums.ChartTypeEnum.AgScatter,
-  // enums.ChartTypeEnum.AgBubble,
-  // enums.ChartTypeEnum.AgPie,
-  // enums.ChartTypeEnum.AgDonut,
-  //
-  // enums.ChartTypeEnum.Area,
-  // enums.ChartTypeEnum.AreaNormalized,
-  // enums.ChartTypeEnum.AreaStacked,
-  // enums.ChartTypeEnum.BarHorizontal,
-  // enums.ChartTypeEnum.BarHorizontalGrouped,
-  // enums.ChartTypeEnum.BarHorizontalNormalized,
-  // enums.ChartTypeEnum.BarHorizontalStacked,
-  // enums.ChartTypeEnum.BarVertical,
-  // enums.ChartTypeEnum.BarVerticalGrouped,
-  // enums.ChartTypeEnum.BarVerticalNormalized,
-  // enums.ChartTypeEnum.BarVerticalStacked,
-  // enums.ChartTypeEnum.Gauge,
-  // enums.ChartTypeEnum.GaugeLinear,
-  // enums.ChartTypeEnum.HeatMap,
-  // enums.ChartTypeEnum.Line,
-  // enums.ChartTypeEnum.NumberCard,
-  // enums.ChartTypeEnum.Pie,
-  // enums.ChartTypeEnum.PieAdvanced,
-  // enums.ChartTypeEnum.PieGrid,
-  // enums.ChartTypeEnum.TreeMap
+  enums.ChartTypeEnum.Line,
+  enums.ChartTypeEnum.Bar,
+  enums.ChartTypeEnum.Scatter,
+  enums.ChartTypeEnum.Pie,
+  enums.ChartTypeEnum.HeatMap,
+  enums.ChartTypeEnum.TreeMap,
+  enums.ChartTypeEnum.Gauge
 ];
 
 export const Y_FIELDS_CHART_TYPE_VALUES = [
-  enums.ChartTypeEnum.ELine,
-  enums.ChartTypeEnum.EBar,
-  enums.ChartTypeEnum.EScatter
+  enums.ChartTypeEnum.Line,
+  enums.ChartTypeEnum.Bar,
+  enums.ChartTypeEnum.Scatter
 ];
 
 export const JOIN_TYPE_VALUES = [

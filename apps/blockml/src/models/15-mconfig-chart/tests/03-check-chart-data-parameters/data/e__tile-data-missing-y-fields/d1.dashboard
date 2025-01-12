@@ -4,6 +4,6 @@ tiles:
   model: m1
   select: 
   - a.dim1
-  type: e_line
+  type: line
   data:            
     x_field: a.dim1

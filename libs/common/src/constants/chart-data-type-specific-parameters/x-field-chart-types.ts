@@ -1,12 +1,11 @@
 import { enums } from '~common/barrels/enums';
 
 export const xFieldChartTypes = [
-  enums.ChartTypeEnum.ELine,
-  enums.ChartTypeEnum.EBar,
-  enums.ChartTypeEnum.EScatter,
-  // enums.ChartTypeEnum.EBubble,
-  enums.ChartTypeEnum.EPie,
-  enums.ChartTypeEnum.EHeatMap,
-  enums.ChartTypeEnum.ETreeMap,
-  enums.ChartTypeEnum.EGauge
+  enums.ChartTypeEnum.Line,
+  enums.ChartTypeEnum.Bar,
+  enums.ChartTypeEnum.Scatter,
+  enums.ChartTypeEnum.Pie,
+  enums.ChartTypeEnum.HeatMap,
+  enums.ChartTypeEnum.TreeMap,
+  enums.ChartTypeEnum.Gauge
 ];

@@ -89,7 +89,7 @@
         data-cy="xFieldSelect"
         class="text-base"
         [items]="
-          chart.type === chartTypeEnum.EScatter
+          chart.type === chartTypeEnum.Scatter
             ? dimensionsMeasuresCalculations
             : dimensions
         "
@@ -139,8 +139,8 @@
       [formGroup]="multiFieldForm"
       class="ml-5 min-w-[2px] flex-grow"
       *ngIf="
-        (chart.type !== chartTypeEnum.EScatter && dimensions.length > 1) ||
-        (chart.type === chartTypeEnum.EScatter && dimensions.length > 0)
+        (chart.type !== chartTypeEnum.Scatter && dimensions.length > 1) ||
+        (chart.type === chartTypeEnum.Scatter && dimensions.length > 0)
       "
     >
       <ng-select
@@ -186,8 +186,8 @@
 
     <div
       *ngIf="
-        (chart.type !== chartTypeEnum.EScatter && dimensions.length < 2) ||
-        (chart.type === chartTypeEnum.EScatter && dimensions.length < 1)
+        (chart.type !== chartTypeEnum.Scatter && dimensions.length < 2) ||
+        (chart.type === chartTypeEnum.Scatter && dimensions.length < 1)
       "
       class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
       ><m-minus-sm-icon></m-minus-sm-icon

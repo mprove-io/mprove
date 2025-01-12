@@ -10,8 +10,8 @@ export function setChartFields<T extends Mconfig>(item: {
   let { oldChartType, newChartType, mconfig, fields } = item;
 
   if (
-    oldChartType === enums.ChartTypeEnum.EScatter &&
-    newChartType !== enums.ChartTypeEnum.EScatter
+    oldChartType === enums.ChartTypeEnum.Scatter &&
+    newChartType !== enums.ChartTypeEnum.Scatter
   ) {
     mconfig.chart.xField = undefined;
     mconfig.chart.yFields = [];

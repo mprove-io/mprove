@@ -302,15 +302,7 @@ export class DataService {
                 : row[xName].value
               : row[xName].value;
 
-          if (
-            // [
-            //   common.ChartTypeEnum.Line,
-            //   common.ChartTypeEnum.Area,
-            //   common.ChartTypeEnum.AreaNormalized,
-            //   common.ChartTypeEnum.AreaStacked
-            // ].indexOf(chartType) < 0 ||
-            common.isDefined(xV)
-          ) {
+          if (common.isDefined(xV)) {
             let element: SeriesPoint = {
               xValue: common.isUndefined(xV)
                 ? 'NULL'
@@ -394,7 +386,7 @@ export class DataService {
         seriesName: x,
         seriesSizeName: sizeField?.label,
         seriesPoints:
-          chartType !== common.ChartTypeEnum.EScatter &&
+          chartType !== common.ChartTypeEnum.Scatter &&
           (xField?.result === common.FieldResultEnum.Ts ||
             xField?.result === common.FieldResultEnum.Number ||
             xField?.result === common.FieldResultEnum.DayOfWeek ||

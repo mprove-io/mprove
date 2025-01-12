@@ -7,7 +7,7 @@ tiles:
   - users.gender
   - users.count
   sorts: users.state_name, users.gender
-  type: e_bar
+  type: bar
   data:
     x_field: users.gender
     y_fields:

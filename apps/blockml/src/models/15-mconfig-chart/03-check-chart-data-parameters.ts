@@ -31,10 +31,10 @@ export function checkChartDataParameters<T extends types.dzType>(
 
       if (
         [
-          common.ChartTypeEnum.EPie,
-          common.ChartTypeEnum.ELine,
-          common.ChartTypeEnum.EBar,
-          common.ChartTypeEnum.EScatter
+          common.ChartTypeEnum.Pie,
+          common.ChartTypeEnum.Line,
+          common.ChartTypeEnum.Bar,
+          common.ChartTypeEnum.Scatter
         ].indexOf(tile.type) > -1 &&
         (common.isUndefined(tile.data) || common.isUndefined(tile.data.x_field))
       ) {
@@ -57,7 +57,7 @@ export function checkChartDataParameters<T extends types.dzType>(
       }
 
       if (
-        [common.ChartTypeEnum.EPie].indexOf(tile.type) > -1 &&
+        [common.ChartTypeEnum.Pie].indexOf(tile.type) > -1 &&
         (common.isUndefined(tile.data) || common.isUndefined(tile.data.y_field))
       ) {
         item.errors.push(
@@ -78,34 +78,11 @@ export function checkChartDataParameters<T extends types.dzType>(
         return;
       }
 
-      // if (
-      //   [common.ChartTypeEnum.EScatter].indexOf(tile.type) > -1 &&
-      //   (common.isUndefined(tile.data) ||
-      //     common.isUndefined(tile.data.size_field))
-      // ) {
-      //   item.errors.push(
-      //     new BmError({
-      //       title: common.ErTitleEnum.TILE_DATA_MISSING_SIZE_FIELD,
-      //       message:
-      //         `tile of type "${tile.type}" must have ` +
-      //         `"${common.ParameterEnum.SizeField}" parameter in "${common.ParameterEnum.Data}"`,
-      //       lines: [
-      //         {
-      //           line: tile.data_line_num,
-      //           name: x.fileName,
-      //           path: x.filePath
-      //         }
-      //       ]
-      //     })
-      //   );
-      //   return;
-      // }
-
       if (
         [
-          common.ChartTypeEnum.EBar,
-          common.ChartTypeEnum.ELine,
-          common.ChartTypeEnum.EScatter
+          common.ChartTypeEnum.Bar,
+          common.ChartTypeEnum.Line,
+          common.ChartTypeEnum.Scatter
         ].indexOf(tile.type) > -1 &&
         (common.isUndefined(tile.data) ||
           common.isUndefined(tile.data.y_fields))
@@ -127,29 +104,6 @@ export function checkChartDataParameters<T extends types.dzType>(
         );
         return;
       }
-
-      // if (
-      //   tile.type === common.ChartTypeEnum.GaugeLinear &&
-      //   (common.isUndefined(tile.data) ||
-      //     common.isUndefined(tile.data.value_field))
-      // ) {
-      //   item.errors.push(
-      //     new BmError({
-      //       title: common.ErTitleEnum.TILE_DATA_MISSING_VALUE_FIELD,
-      //       message:
-      //         `tile of type "${tile.type}" must have ` +
-      //         `"${common.ParameterEnum.ValueField}" parameter in "${common.ParameterEnum.Data}"`,
-      //       lines: [
-      //         {
-      //           line: tile.data_line_num,
-      //           name: x.fileName,
-      //           path: x.filePath
-      //         }
-      //       ]
-      //     })
-      //   );
-      //   return;
-      // }
 
       if (common.isUndefined(tile.data)) {
         return;
@@ -181,7 +135,7 @@ export function checkChartDataParameters<T extends types.dzType>(
 
           if (
             field.fieldClass !== common.FieldClassEnum.Dimension &&
-            tile.type !== common.ChartTypeEnum.EScatter
+            tile.type !== common.ChartTypeEnum.Scatter
           ) {
             item.errors.push(
               new BmError({
@@ -228,7 +182,7 @@ export function checkChartDataParameters<T extends types.dzType>(
           if (
             field.fieldClass !== common.FieldClassEnum.Measure &&
             field.fieldClass !== common.FieldClassEnum.Calculation &&
-            tile.type !== common.ChartTypeEnum.EScatter
+            tile.type !== common.ChartTypeEnum.Scatter
           ) {
             item.errors.push(
               new BmError({
@@ -472,7 +426,7 @@ export function checkChartDataParameters<T extends types.dzType>(
             if (
               field.fieldClass !== common.FieldClassEnum.Measure &&
               field.fieldClass !== common.FieldClassEnum.Calculation &&
-              tile.type !== common.ChartTypeEnum.EScatter
+              tile.type !== common.ChartTypeEnum.Scatter
             ) {
               item.errors.push(
                 new BmError({

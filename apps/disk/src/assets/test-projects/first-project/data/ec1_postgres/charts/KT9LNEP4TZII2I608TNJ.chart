@@ -6,7 +6,7 @@ tiles:
   - users.age_group
   - users.count
   sorts: users.age_group
-  type: e_bar
+  type: bar
   data:
     x_field: users.age_group
     y_fields: 

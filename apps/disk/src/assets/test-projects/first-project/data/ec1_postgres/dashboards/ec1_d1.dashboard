@@ -41,7 +41,7 @@ tiles:
     listen: order_date
   - apply_to: products.brand
     listen: product_brand
-  type: e_pie
+  type: pie
   data:
     x_field: users.gender
     y_field: users.count
@@ -61,7 +61,7 @@ tiles:
     listen: order_date
   - apply_to: products.brand
     listen: product_brand
-  type: e_pie
+  type: pie
   data:
     x_field: users.traffic_source
     y_field: mf.total_profit
@@ -82,7 +82,7 @@ tiles:
     listen: order_date
   - apply_to: products.brand
     listen: product_brand
-  type: e_line
+  type: line
   data:
     x_field: orders.created___quarter
     y_fields:
@@ -106,7 +106,7 @@ tiles:
     listen: order_date
   - apply_to: products.brand
     listen: product_brand
-  type: e_pie
+  type: pie
   data:
     x_field: products.brand
     y_field: order_items.total_sale_price
@@ -224,7 +224,7 @@ tiles:
     listen: order_date
   - apply_to: products.brand
     listen: product_brand
-  type: e_line
+  type: line
   data:
     x_field: orders.created___month
     y_fields:
@@ -247,7 +247,7 @@ tiles:
     listen: order_date
   - apply_to: products.brand
     listen: product_brand
-  type: e_bar
+  type: bar
   data:
     x_field: users.age_group
     y_fields:
@@ -264,7 +264,7 @@ tiles:
   - orders.count
   - users.age
   sorts: users.age
-  type: e_scatter
+  type: scatter
   data:
     x_field: users.age
     y_fields:

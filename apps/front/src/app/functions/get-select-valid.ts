@@ -51,14 +51,9 @@ export function getSelectValid(item: {
   if (chart.type === common.ChartTypeEnum.Table) {
     //
   } else if (
-    // chart.type === common.ChartTypeEnum.ELine,
-    // chart.type === common.ChartTypeEnum.EBar,
-    // chart.type === common.ChartTypeEnum.EScatter,
-    // chart.type === common.ChartTypeEnum.EBubble,
-    chart.type === common.ChartTypeEnum.EPie ||
-    // chart.type === common.ChartTypeEnum.EHeatMap,
-    chart.type === common.ChartTypeEnum.ETreeMap ||
-    chart.type === common.ChartTypeEnum.EGauge
+    chart.type === common.ChartTypeEnum.Pie ||
+    chart.type === common.ChartTypeEnum.TreeMap ||
+    chart.type === common.ChartTypeEnum.Gauge
   ) {
     if (selectedDimensions.length === 0) {
       isSelectValid = false;
@@ -73,24 +68,23 @@ export function getSelectValid(item: {
         'Measure or Calculation field must be selected for this chart type';
     }
   } else if (
-    chart.type === common.ChartTypeEnum.ELine ||
-    chart.type === common.ChartTypeEnum.EBar ||
-    chart.type === common.ChartTypeEnum.EScatter
-    // chart.type === common.ChartTypeEnum.EBubble ||
+    chart.type === common.ChartTypeEnum.Line ||
+    chart.type === common.ChartTypeEnum.Bar ||
+    chart.type === common.ChartTypeEnum.Scatter
   ) {
     if (selectedDimensions.length === 0) {
       isSelectValid = false;
       errorMessage = 'Dimension field must be selected for this chart type';
     } else if (
       selectedDimensions.length > 2 &&
-      chart.type !== common.ChartTypeEnum.EScatter
+      chart.type !== common.ChartTypeEnum.Scatter
     ) {
       isSelectValid = false;
       errorMessage =
         'A maximum of 2 dimension fields can be selected for this chart type';
     } else if (
       selectedDimensionsResultForXField.length === 0 &&
-      chart.type === common.ChartTypeEnum.ELine
+      chart.type === common.ChartTypeEnum.Line
     ) {
       isSelectValid = false;
       errorMessage =
@@ -103,7 +97,7 @@ export function getSelectValid(item: {
       xField.result !== common.FieldResultEnum.DayOfWeekIndex &&
       xField.result !== common.FieldResultEnum.MonthName &&
       xField.result !== common.FieldResultEnum.QuarterOfYear &&
-      chart.type === common.ChartTypeEnum.ELine
+      chart.type === common.ChartTypeEnum.Line
     ) {
       isSelectValid = false;
       errorMessage =
@@ -120,7 +114,7 @@ export function getSelectValid(item: {
         'Two dimensions with result type TS from the same time group can be selected simultaneously only for the table chart';
     } else if (
       selectedMeasuresAndCalculations.length === 0 &&
-      chart.type !== common.ChartTypeEnum.EScatter
+      chart.type !== common.ChartTypeEnum.Scatter
     ) {
       isSelectValid = false;
       errorMessage =

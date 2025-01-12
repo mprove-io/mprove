@@ -6,7 +6,7 @@ tiles:
   - users.state_name
   - mf.total_profit
   sorts: mf.total_profit desc
-  type: e_bar
+  type: bar
   data:
     x_field: users.state_name
     y_fields: 

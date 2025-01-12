@@ -79,10 +79,10 @@ export class ModelComponent implements OnInit, OnDestroy {
   chartTypeEnum = common.ChartTypeEnum;
 
   chartTypeEnumTable = common.ChartTypeEnum.Table;
-  chartTypeEnumLine = common.ChartTypeEnum.ELine;
-  chartTypeEnumBar = common.ChartTypeEnum.EBar;
-  chartTypeEnumScatter = common.ChartTypeEnum.EScatter;
-  chartTypeEnumPie = common.ChartTypeEnum.EPie;
+  chartTypeEnumLine = common.ChartTypeEnum.Line;
+  chartTypeEnumBar = common.ChartTypeEnum.Bar;
+  chartTypeEnumScatter = common.ChartTypeEnum.Scatter;
+  chartTypeEnumPie = common.ChartTypeEnum.Pie;
 
   lastUrl: string;
 
@@ -317,186 +317,48 @@ export class ModelComponent implements OnInit, OnDestroy {
     },
     //
     {
-      label: 'E Line',
-      value: common.ChartTypeEnum.ELine,
+      label: 'Line',
+      value: common.ChartTypeEnum.Line,
       iconPath: 'assets/charts/line.svg'
     },
     {
-      label: 'E Bar',
-      value: common.ChartTypeEnum.EBar,
+      label: 'Bar',
+      value: common.ChartTypeEnum.Bar,
       iconPath: 'assets/charts/bar_vertical.svg'
     },
     {
-      label: 'E Scatter',
-      value: common.ChartTypeEnum.EScatter,
+      label: 'Scatter',
+      value: common.ChartTypeEnum.Scatter,
       iconPath: 'assets/charts/scatter.svg'
     },
-    // {
-    //   label: 'E Bubble',
-    //   value: common.ChartTypeEnum.EBubble,
-    //   iconPath: 'assets/charts/bubble.svg'
-    // },
     {
-      label: 'E Pie',
-      value: common.ChartTypeEnum.EPie,
+      label: 'Pie',
+      value: common.ChartTypeEnum.Pie,
       iconPath: 'assets/charts/pie.svg'
     }
-    // {
-    //   label: 'E Heat Map',
-    //   value: common.ChartTypeEnum.EHeatMap,
-    //   iconPath: 'assets/charts/heat_map.svg'
-    // },
-    // {
-    //   label: 'E Tree Map',
-    //   value: common.ChartTypeEnum.ETreeMap,
-    //   iconPath: 'assets/charts/tree_map.svg'
-    // },
-    // {
-    //   label: 'E Gauge',
-    //   value: common.ChartTypeEnum.EGauge,
-    //   iconPath: 'assets/charts/gauge.svg'
-    // },
-    //
-    //
-    //
-    // {
-    //   label: 'Ag Line',
-    //   value: common.ChartTypeEnum.AgLine,
-    //   iconPath: 'assets/charts/line.svg'
-    // },
-    // {
-    //   label: 'Ag Area',
-    //   value: common.ChartTypeEnum.AgArea,
-    //   iconPath: 'assets/charts/area.svg'
-    // },
-    // {
-    //   label: 'Ag Bar',
-    //   value: common.ChartTypeEnum.AgBar,
-    //   iconPath: 'assets/charts/bar_vertical.svg'
-    // },
-    // {
-    //   label: 'Ag Scatter',
-    //   value: common.ChartTypeEnum.AgScatter,
-    //   iconPath: 'assets/charts/scatter.svg'
-    // },
-    // {
-    //   label: 'Ag Bubble',
-    //   value: common.ChartTypeEnum.AgBubble,
     //   iconPath: 'assets/charts/bubble.svg'
-    // },
-    // {
-    //   label: 'Ag Pie',
-    //   value: common.ChartTypeEnum.AgPie,
-    //   iconPath: 'assets/charts/pie.svg'
-    // },
-    // {
-    //   label: 'Ag Donut',
-    //   value: common.ChartTypeEnum.AgDonut,
-    //   iconPath: 'assets/charts/pie_advanced.svg'
-    // },
-    //
-    //
-    //
-    // {
-    //   label: 'Bar Vertical',
-    //   value: common.ChartTypeEnum.BarVertical,
-    //   iconPath: 'assets/charts/bar_vertical.svg'
-    // },
-    // {
-    //   label: 'Bar Vertical Grouped',
-    //   value: common.ChartTypeEnum.BarVerticalGrouped,
-    //   iconPath: 'assets/charts/bar_vertical_grouped.svg'
-    // },
-    // {
-    //   label: 'Bar Vertical Stacked',
-    //   value: common.ChartTypeEnum.BarVerticalStacked,
-    //   iconPath: 'assets/charts/bar_vertical_stacked.svg'
-    // },
-    // {
-    //   label: 'Bar Vertical Normalized',
-    //   value: common.ChartTypeEnum.BarVerticalNormalized,
-    //   iconPath: 'assets/charts/bar_vertical_normalized.svg'
-    // },
-    // {
-    //   label: 'Bar Horizontal',
-    //   value: common.ChartTypeEnum.BarHorizontal,
-    //   iconPath: 'assets/charts/bar_horizontal.svg'
-    // },
-    // {
-    //   label: 'Bar Horizontal Grouped',
-    //   value: common.ChartTypeEnum.BarHorizontalGrouped,
-    //   iconPath: 'assets/charts/bar_horizontal_grouped.svg'
-    // },
-    // {
-    //   label: 'Bar Horizontal Stacked',
-    //   value: common.ChartTypeEnum.BarHorizontalStacked,
-    //   iconPath: 'assets/charts/bar_horizontal_stacked.svg'
-    // },
-    // {
-    //   label: 'Bar Horizontal Normalized',
-    //   value: common.ChartTypeEnum.BarHorizontalNormalized,
-    //   iconPath: 'assets/charts/bar_horizontal_normalized.svg'
-    // },
-    // {
-    //   label: 'Pie',
-    //   value: common.ChartTypeEnum.Pie,
-    //   iconPath: 'assets/charts/pie.svg'
-    // },
-    // {
-    //   label: 'Pie Advanced',
-    //   value: common.ChartTypeEnum.PieAdvanced,
-    //   iconPath: 'assets/charts/pie_advanced.svg'
-    // },
-    // {
-    //   label: 'Pie Grid',
-    //   value: common.ChartTypeEnum.PieGrid,
-    //   iconPath: 'assets/charts/pie_grid.svg'
-    // },
-    // {
-    //   label: 'Line',
-    //   value: common.ChartTypeEnum.Line,
-    //   iconPath: 'assets/charts/line.svg'
-    // },
-    // {
-    //   label: 'Area',
-    //   value: common.ChartTypeEnum.Area,
-    //   iconPath: 'assets/charts/area.svg'
-    // },
-    // {
-    //   label: 'Area Stacked',
-    //   value: common.ChartTypeEnum.AreaStacked,
-    //   iconPath: 'assets/charts/area_stacked.svg'
-    // },
-    // {
-    //   label: 'Area Normalized',
-    //   value: common.ChartTypeEnum.AreaNormalized,
-    //   iconPath: 'assets/charts/area_normalized.svg'
-    // },
-    // {
-    //   label: 'Heat Map',
-    //   value: common.ChartTypeEnum.HeatMap,
     //   iconPath: 'assets/charts/heat_map.svg'
-    // },
-    // {
-    //   label: 'Tree Map',
-    //   value: common.ChartTypeEnum.TreeMap,
     //   iconPath: 'assets/charts/tree_map.svg'
-    // },
-    // {
-    //   label: 'Number Card',
-    //   value: common.ChartTypeEnum.NumberCard,
-    //   iconPath: 'assets/charts/number_card.svg'
-    // },
-    // {
-    //   label: 'Gauge',
-    //   value: common.ChartTypeEnum.Gauge,
     //   iconPath: 'assets/charts/gauge.svg'
-    // },
-    // {
-    //   label: 'Gauge Linear',
-    //   value: common.ChartTypeEnum.GaugeLinear,
+    //   iconPath: 'assets/charts/bar_vertical.svg'
+    //   iconPath: 'assets/charts/bar_vertical_grouped.svg'
+    //   iconPath: 'assets/charts/bar_vertical_stacked.svg'
+    //   iconPath: 'assets/charts/bar_vertical_normalized.svg'
+    //   iconPath: 'assets/charts/bar_horizontal.svg'
+    //   iconPath: 'assets/charts/bar_horizontal_grouped.svg'
+    //   iconPath: 'assets/charts/bar_horizontal_stacked.svg'
+    //   iconPath: 'assets/charts/bar_horizontal_normalized.svg'
+    //   iconPath: 'assets/charts/pie.svg'
+    //   iconPath: 'assets/charts/pie_advanced.svg'
+    //   iconPath: 'assets/charts/pie_grid.svg'
+    //   iconPath: 'assets/charts/area.svg'
+    //   iconPath: 'assets/charts/area_stacked.svg'
+    //   iconPath: 'assets/charts/area_normalized.svg'
+    //   iconPath: 'assets/charts/heat_map.svg'
+    //   iconPath: 'assets/charts/tree_map.svg'
+    //   iconPath: 'assets/charts/number_card.svg'
+    //   iconPath: 'assets/charts/gauge.svg'
     //   iconPath: 'assets/charts/gauge_linear.svg'
-    // }
   ];
 
   constructor(

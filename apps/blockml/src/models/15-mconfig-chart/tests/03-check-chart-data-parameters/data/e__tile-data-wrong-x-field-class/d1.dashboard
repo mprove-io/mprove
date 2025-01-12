@@ -4,7 +4,7 @@ tiles:
   model: m1
   select: 
   - a.mea1
-  type: e_pie
+  type: pie
   data:
     x_field: a.mea1  
     y_field: a.mea1

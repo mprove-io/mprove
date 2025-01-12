@@ -39,7 +39,7 @@ tiles:
     listen: order_date
   - apply_to: c.age
     listen: customer_age    
-  type: e_pie
+  type: pie
   data:
     x_field: c.gender
     y_field: c.count
@@ -57,7 +57,7 @@ tiles:
     listen: order_date
   - apply_to: c.age
     listen: customer_age  
-  type: e_pie
+  type: pie
   data:
     x_field: c.traffic_source
     y_field: mf.total_profit_int
@@ -76,7 +76,7 @@ tiles:
     listen: order_date
   - apply_to: c.age
     listen: customer_age  
-  type: e_line
+  type: line
   data:
     x_field: b.created___quarter
     y_fields:
@@ -95,7 +95,7 @@ tiles:
   - apply_to: c.age
     listen: customer_age  
   limit: 20
-  type: e_pie
+  type: pie
   data:
     x_field: f.brand
     y_field: a.total_sale_price_int

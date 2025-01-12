@@ -7,7 +7,7 @@ tiles:
   - order_items.total_sale_price
   sorts: order_items.total_sale_price desc
   limit: 10
-  type: e_pie
+  type: pie
   data:
     x_field: products.brand
     y_field: order_items.total_sale_price
