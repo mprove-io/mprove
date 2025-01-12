@@ -7,7 +7,6 @@ export function getSelectValid(item: {
   let { chart, mconfigFields } = item;
 
   let xField = mconfigFields.find(f => f.id === chart.xField);
-  let yField = mconfigFields.find(f => f.id === chart.yField);
   let sizeField = mconfigFields.find(f => f.id === chart.sizeField);
 
   let yFieldsIsOk = true;
@@ -119,13 +118,6 @@ export function getSelectValid(item: {
       isSelectValid = false;
       errorMessage =
         'Measure or Calculation field must be selected for this chart type';
-    } else if (
-      common.isDefined(yField) &&
-      yField.result !== common.FieldResultEnum.Number
-    ) {
-      isSelectValid = false;
-      errorMessage =
-        'yField for this chart type must have result type "number"';
     } else if (
       common.isDefined(sizeField) &&
       sizeField.result !== common.FieldResultEnum.Number

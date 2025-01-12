@@ -94,10 +94,6 @@ export class MconfigService {
       newMconfig.chart.xField = null;
     }
 
-    if (newMconfig.chart.yField === fieldId) {
-      newMconfig.chart.yField = null;
-    }
-
     if (newMconfig.chart.multiField === fieldId) {
       newMconfig.chart.multiField = null;
     }

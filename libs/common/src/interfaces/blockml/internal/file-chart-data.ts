@@ -2,9 +2,6 @@ export interface FileChartData {
   x_field?: string;
   x_field_line_num?: number;
 
-  y_field?: string;
-  y_field_line_num?: number;
-
   size_field?: string;
   size_field_line_num?: number;
 

@@ -44,7 +44,8 @@ tiles:
   type: pie
   data:
     x_field: users.gender
-    y_field: users.count
+    y_fields: 
+    - users.count
   plate:
     plate_width: 8
     plate_height: 12
@@ -64,7 +65,8 @@ tiles:
   type: pie
   data:
     x_field: users.traffic_source
-    y_field: mf.total_profit
+    y_fields: 
+    - mf.total_profit
   plate:
     plate_width: 8
     plate_height: 12
@@ -109,7 +111,8 @@ tiles:
   type: pie
   data:
     x_field: products.brand
-    y_field: order_items.total_sale_price
+    y_fields: 
+    - order_items.total_sale_price
   plate:
     plate_width: 12
     plate_height: 12

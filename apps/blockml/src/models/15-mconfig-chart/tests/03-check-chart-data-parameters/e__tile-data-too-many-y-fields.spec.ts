@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildDashboardTileCharts;
 let func = common.FuncEnum.CheckChartDataParameters;
-let testId = 'e__tile-data-missing-y-field';
+let testId = 'e__tile-data-too-many-y-fields';
 
 test('1', async t => {
   let errors: BmError[];
@@ -63,6 +63,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entDashboards.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.TILE_DATA_MISSING_Y_FIELD);
-  t.is(errors[0].lines[0].line, 8);
+  t.is(errors[0].title, common.ErTitleEnum.TILE_DATA_TOO_MANY_Y_FIELDS);
+  t.is(errors[0].lines[0].line, 10);
 });

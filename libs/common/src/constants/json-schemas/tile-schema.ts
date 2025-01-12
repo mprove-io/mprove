@@ -72,9 +72,6 @@ export const TILE_SCHEMA: JSONSchema7 = {
         x_field: {
           type: 'string'
         },
-        y_field: {
-          type: 'string'
-        },
         y_fields: {
           type: 'array',
           items: {

@@ -103,8 +103,8 @@ export class ChartEditorComponent implements OnChanges {
 
   hideColumnsChartTypes = common.hideColumnsChartTypes;
   xFieldChartTypes = common.xFieldChartTypes;
-  yFieldChartTypes = common.yFieldChartTypes;
-  yFieldsChartTypes = common.yFieldsChartTypes;
+  yFieldChartTypes = common.yFieldUiChartTypes;
+  yFieldsChartTypes = common.yFieldsUiChartTypes;
   sizeFieldChartTypes = common.sizeFieldChartTypes;
   multiFieldChartTypes = common.multiFieldChartTypes;
   nullableMultiFieldChartTypes = common.nullableMultiFieldChartTypes;
@@ -626,7 +626,7 @@ export class ChartEditorComponent implements OnChanges {
 
     setValueAndMark({
       control: this.yFieldForm.controls['yField'],
-      value: this.chart.yField
+      value: this.chart.yFields[0]
     });
 
     setValueAndMark({
@@ -672,21 +672,21 @@ export class ChartEditorComponent implements OnChanges {
       }).formatNumber
     });
 
-    setValueAndMark({
-      control: this.formatNumberValueForm.controls['formatNumberValue'],
-      value: this.formatNumberService.getFormatNumberValue({
-        chart: this.chart,
-        mconfigFields: this.mconfigFields
-      }).formatNumber
-    });
+    // setValueAndMark({
+    //   control: this.formatNumberValueForm.controls['formatNumberValue'],
+    //   value: this.formatNumberService.getFormatNumberValue({
+    //     chart: this.chart,
+    //     mconfigFields: this.mconfigFields
+    //   }).formatNumber
+    // });
 
-    setValueAndMark({
-      control: this.formatNumberAxisTickForm.controls['formatNumberAxisTick'],
-      value: this.formatNumberService.getFormatNumberAxisTick({
-        chart: this.chart,
-        mconfigFields: this.mconfigFields
-      }).formatNumber
-    });
+    // setValueAndMark({
+    //   control: this.formatNumberAxisTickForm.controls['formatNumberAxisTick'],
+    //   value: this.formatNumberService.getFormatNumberAxisTick({
+    //     chart: this.chart,
+    //     mconfigFields: this.mconfigFields
+    //   }).formatNumber
+    // });
 
     setValueAndMark({
       control: this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'],
@@ -696,13 +696,13 @@ export class ChartEditorComponent implements OnChanges {
       }).formatNumber
     });
 
-    setValueAndMark({
-      control: this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'],
-      value: this.formatNumberService.getFormatNumberXAxisTick({
-        chart: this.chart,
-        mconfigFields: this.mconfigFields
-      }).formatNumber
-    });
+    // setValueAndMark({
+    //   control: this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'],
+    //   value: this.formatNumberService.getFormatNumberXAxisTick({
+    //     chart: this.chart,
+    //     mconfigFields: this.mconfigFields
+    //   }).formatNumber
+    // });
 
     // setValueAndMark({
     //   control: this.angleSpanForm.controls['angleSpan'],
@@ -1311,8 +1311,11 @@ export class ChartEditorComponent implements OnChanges {
 
   yFieldChange() {
     let yField = this.yFieldForm.controls['yField'].value;
+
     let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.yField = yField;
+
+    newMconfig.chart.yFields = [yField];
+
     this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });

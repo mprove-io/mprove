@@ -42,7 +42,8 @@ tiles:
   type: pie
   data:
     x_field: c.gender
-    y_field: c.count
+    y_fields: 
+    - c.count
   plate:
     plate_width: '4'
     plate_height: '500'
@@ -60,7 +61,8 @@ tiles:
   type: pie
   data:
     x_field: c.traffic_source
-    y_field: mf.total_profit_int
+    y_fields: 
+    - mf.total_profit_int
   plate:
     plate_width: '4'
     plate_height: '500'   
@@ -98,7 +100,8 @@ tiles:
   type: pie
   data:
     x_field: f.brand
-    y_field: a.total_sale_price_int
+    y_fields: 
+    - a.total_sale_price_int
 
 - title: Customers
   model: ec_m1

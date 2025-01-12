@@ -10,4 +10,5 @@ tiles:
   type: pie
   data:
     x_field: products.brand
-    y_field: order_items.total_sale_price
+    y_fields: 
+    - order_items.total_sale_price

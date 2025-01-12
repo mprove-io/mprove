@@ -7,4 +7,5 @@ tiles:
   type: pie
   data:
     x_field: a.mea1  
-    y_field: a.mea1
+    y_fields: 
+    - a.mea1

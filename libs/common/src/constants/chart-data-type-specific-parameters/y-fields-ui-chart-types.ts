@@ -1,6 +1,6 @@
 import { enums } from '~common/barrels/enums';
 
-export const yFieldsChartTypes = [
+export const yFieldsUiChartTypes = [
   enums.ChartTypeEnum.Line,
   enums.ChartTypeEnum.Bar,
   enums.ChartTypeEnum.Scatter,

@@ -9,7 +9,6 @@ export const DEFAULT_CHART: MconfigChart = {
   title: 'Title',
 
   xField: null,
-  yField: null,
   yFields: [],
   hideColumns: [],
   multiField: null,

@@ -57,32 +57,11 @@ export function checkChartDataParameters<T extends types.dzType>(
       }
 
       if (
-        [common.ChartTypeEnum.Pie].indexOf(tile.type) > -1 &&
-        (common.isUndefined(tile.data) || common.isUndefined(tile.data.y_field))
-      ) {
-        item.errors.push(
-          new BmError({
-            title: common.ErTitleEnum.TILE_DATA_MISSING_Y_FIELD,
-            message:
-              `tile of type "${tile.type}" must have ` +
-              `"${common.ParameterEnum.YField}" parameter in "${common.ParameterEnum.Data}"`,
-            lines: [
-              {
-                line: tile.data_line_num,
-                name: x.fileName,
-                path: x.filePath
-              }
-            ]
-          })
-        );
-        return;
-      }
-
-      if (
         [
           common.ChartTypeEnum.Bar,
           common.ChartTypeEnum.Line,
-          common.ChartTypeEnum.Scatter
+          common.ChartTypeEnum.Scatter,
+          common.ChartTypeEnum.Pie
         ].indexOf(tile.type) > -1 &&
         (common.isUndefined(tile.data) ||
           common.isUndefined(tile.data.y_fields))
@@ -96,6 +75,28 @@ export function checkChartDataParameters<T extends types.dzType>(
             lines: [
               {
                 line: tile.data_line_num,
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
+      if (
+        [common.ChartTypeEnum.Pie].indexOf(tile.type) > -1 &&
+        tile.data.y_fields.length > 1
+      ) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.TILE_DATA_TOO_MANY_Y_FIELDS,
+            message:
+              `tile of type "${tile.type}" can have only one element inside ` +
+              `"${common.ParameterEnum.YFields}" list`,
+            lines: [
+              {
+                line: tile.data.y_fields_line_num,
                 name: x.fileName,
                 path: x.filePath
               }
@@ -144,53 +145,6 @@ export function checkChartDataParameters<T extends types.dzType>(
                 lines: [
                   {
                     line: tile.data.x_field_line_num,
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
-        }
-      }
-
-      if (common.isDefined(tile.data.y_field)) {
-        if (tile.select.indexOf(tile.data.y_field) < 0) {
-          item.errors.push(
-            new BmError({
-              title: common.ErTitleEnum.TILE_DATA_WRONG_Y_FIELD,
-              message:
-                `"${common.ParameterEnum.YField}" value must be one of ` +
-                `"${common.ParameterEnum.Select}" elements`,
-              lines: [
-                {
-                  line: tile.data.y_field_line_num,
-                  name: x.fileName,
-                  path: x.filePath
-                }
-              ]
-            })
-          );
-          return;
-        } else {
-          let field = getField({
-            model: model,
-            fieldId: tile.data.y_field
-          });
-
-          if (
-            field.fieldClass !== common.FieldClassEnum.Measure &&
-            field.fieldClass !== common.FieldClassEnum.Calculation &&
-            tile.type !== common.ChartTypeEnum.Scatter
-          ) {
-            item.errors.push(
-              new BmError({
-                title: common.ErTitleEnum.TILE_DATA_WRONG_Y_FIELD_CLASS,
-                message: `"${common.ParameterEnum.YField}" must be a Measure or Calculation for this chart type`,
-                lines: [
-                  {
-                    line: tile.data.y_field_line_num,
                     name: x.fileName,
                     path: x.filePath
                   }

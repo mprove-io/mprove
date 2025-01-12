@@ -6,4 +6,5 @@ tiles:
   - a.dim1
   type: pie
   data:         
-    y_field: a.dim1
+    y_fields: 
+    - a.dim1

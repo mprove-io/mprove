@@ -28,10 +28,6 @@ export class MconfigChart {
   xField?: string;
 
   @IsOptional()
-  @IsString()
-  yField?: string;
-
-  @IsOptional()
   @IsString({ each: true })
   yFields?: string[];
 

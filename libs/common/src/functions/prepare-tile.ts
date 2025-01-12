@@ -92,13 +92,9 @@ export function prepareTile(item: {
         isDefined(chart.xField)
           ? chart.xField
           : undefined,
-      y_field:
-        constants.yFieldChartTypes.indexOf(chart.type) > -1 &&
-        isDefined(chart.yField)
-          ? chart.yField
-          : undefined,
       y_fields:
-        constants.yFieldsChartTypes.indexOf(chart.type) > -1 &&
+        (constants.yFieldsUiChartTypes.indexOf(chart.type) > -1 ||
+          constants.yFieldUiChartTypes.indexOf(chart.type) > -1) &&
         isDefined(chart.yFields) &&
         chart.yFields.length > 0
           ? chart.yFields

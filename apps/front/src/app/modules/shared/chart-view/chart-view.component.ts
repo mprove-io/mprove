@@ -194,10 +194,7 @@ export class ChartViewComponent implements OnChanges {
                 selectFields: this.mconfigFields,
                 xFieldId: this.chart.xField,
                 sizeFieldId: this.chart.sizeField,
-                yFieldsIds:
-                  common.yFieldsChartTypes.indexOf(this.chart.type) > -1
-                    ? this.chart.yFields
-                    : [this.chart.yField],
+                yFieldsIds: this.chart.yFields,
                 multiFieldId: this.chart.multiField,
                 data: this.qData,
                 chartType: this.chart.type
@@ -498,62 +495,62 @@ export class ChartViewComponent implements OnChanges {
     return value;
   }
 
-  valueFormatting(value: any) {
-    let { field, formatNumber } = this.formatNumberService.getFormatNumberValue(
-      {
-        chart: this.chart,
-        mconfigFields: this.mconfigFields
-      }
-    );
+  // valueFormatting(value: any) {
+  //   let { field, formatNumber } = this.formatNumberService.getFormatNumberValue(
+  //     {
+  //       chart: this.chart,
+  //       mconfigFields: this.mconfigFields
+  //     }
+  //   );
 
-    let locale = formatLocale({
-      decimal: constants.FORMAT_NUMBER_DECIMAL,
-      thousands: constants.FORMAT_NUMBER_THOUSANDS,
-      grouping: constants.FORMAT_NUMBER_GROUPING,
-      currency: [field.currencyPrefix, field.currencySuffix]
-    });
+  //   let locale = formatLocale({
+  //     decimal: constants.FORMAT_NUMBER_DECIMAL,
+  //     thousands: constants.FORMAT_NUMBER_THOUSANDS,
+  //     grouping: constants.FORMAT_NUMBER_GROUPING,
+  //     currency: [field.currencyPrefix, field.currencySuffix]
+  //   });
 
-    // ngx-charts-number-card passes data instead of value
-    if (common.isDefined(value.value)) {
-      value = value.value;
-    }
+  //   // ngx-charts-number-card passes data instead of value
+  //   if (common.isDefined(value.value)) {
+  //     value = value.value;
+  //   }
 
-    if (isNaN(value) === true) {
-      value = value.split(',').join('');
-    }
+  //   if (isNaN(value) === true) {
+  //     value = value.split(',').join('');
+  //   }
 
-    if (isNaN(value) === false && common.isDefined(formatNumber)) {
-      value = locale.format(formatNumber)(Number(value));
-    }
+  //   if (isNaN(value) === false && common.isDefined(formatNumber)) {
+  //     value = locale.format(formatNumber)(Number(value));
+  //   }
 
-    return value;
-  }
+  //   return value;
+  // }
 
-  axisTickFormatting(value: any) {
-    let { field, formatNumber } =
-      this.formatNumberService.getFormatNumberAxisTick({
-        chart: this.chart,
-        mconfigFields: this.mconfigFields
-      });
+  // axisTickFormatting(value: any) {
+  //   let { field, formatNumber } =
+  //     this.formatNumberService.getFormatNumberAxisTick({
+  //       chart: this.chart,
+  //       mconfigFields: this.mconfigFields
+  //     });
 
-    let locale = formatLocale({
-      decimal: constants.FORMAT_NUMBER_DECIMAL,
-      thousands: constants.FORMAT_NUMBER_THOUSANDS,
-      grouping: constants.FORMAT_NUMBER_GROUPING,
-      currency: [field.currencyPrefix, field.currencySuffix]
-    });
+  //   let locale = formatLocale({
+  //     decimal: constants.FORMAT_NUMBER_DECIMAL,
+  //     thousands: constants.FORMAT_NUMBER_THOUSANDS,
+  //     grouping: constants.FORMAT_NUMBER_GROUPING,
+  //     currency: [field.currencyPrefix, field.currencySuffix]
+  //   });
 
-    // ngx-charts-gauge passes string with commas instead of number
-    if (isNaN(value) === true) {
-      value = value.split(',').join('');
-    }
+  //   // ngx-charts-gauge passes string with commas instead of number
+  //   if (isNaN(value) === true) {
+  //     value = value.split(',').join('');
+  //   }
 
-    if (isNaN(value) === false && common.isDefined(formatNumber)) {
-      value = locale.format(formatNumber)(Number(value));
-    }
+  //   if (isNaN(value) === false && common.isDefined(formatNumber)) {
+  //     value = locale.format(formatNumber)(Number(value));
+  //   }
 
-    return value;
-  }
+  //   return value;
+  // }
 
   yAxisTickFormatting(value: any) {
     let { field, formatNumber } =
@@ -581,28 +578,28 @@ export class ChartViewComponent implements OnChanges {
     return value;
   }
 
-  xAxisTickFormatting(value: any) {
-    let { field, formatNumber } =
-      this.formatNumberService.getFormatNumberXAxisTick({
-        chart: this.chart,
-        mconfigFields: this.mconfigFields
-      });
+  // xAxisTickFormatting(value: any) {
+  //   let { field, formatNumber } =
+  //     this.formatNumberService.getFormatNumberXAxisTick({
+  //       chart: this.chart,
+  //       mconfigFields: this.mconfigFields
+  //     });
 
-    let locale = formatLocale({
-      decimal: constants.FORMAT_NUMBER_DECIMAL,
-      thousands: constants.FORMAT_NUMBER_THOUSANDS,
-      grouping: constants.FORMAT_NUMBER_GROUPING,
-      currency: [field.currencyPrefix, field.currencySuffix]
-    });
+  //   let locale = formatLocale({
+  //     decimal: constants.FORMAT_NUMBER_DECIMAL,
+  //     thousands: constants.FORMAT_NUMBER_THOUSANDS,
+  //     grouping: constants.FORMAT_NUMBER_GROUPING,
+  //     currency: [field.currencyPrefix, field.currencySuffix]
+  //   });
 
-    if (common.isDefined(value.value)) {
-      value = value.value;
-    }
+  //   if (common.isDefined(value.value)) {
+  //     value = value.value;
+  //   }
 
-    if (isNaN(value) === false && common.isDefined(formatNumber)) {
-      value = locale.format(formatNumber)(Number(value));
-    }
+  //   if (isNaN(value) === false && common.isDefined(formatNumber)) {
+  //     value = locale.format(formatNumber)(Number(value));
+  //   }
 
-    return value;
-  }
+  //   return value;
+  // }
 }

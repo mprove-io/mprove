@@ -5,6 +5,8 @@ tiles:
   select: 
   - a.dim1
   type: pie
-  data:
+  data:         
     x_field: a.dim1
-    y_field: unk 
+    y_fields:
+    - a.mea1
+    - a.mea2

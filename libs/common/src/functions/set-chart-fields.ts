@@ -68,16 +68,6 @@ export function setChartFields<T extends Mconfig>(item: {
         ? selectedDimensionsResultIsNotNumberOrTs[0]
         : undefined;
 
-    let yField =
-      isDefined(mconfig.chart.yField) &&
-      mconfig.select.indexOf(mconfig.chart.yField) > -1
-        ? mconfig.chart.yField
-        : selectedMCsResultIsNumber.length > 0
-        ? selectedMCsResultIsNumber[0]
-        : selectedMCsResultIsNotNumber.length > 0
-        ? selectedMCsResultIsNotNumber[0]
-        : undefined;
-
     let sizeField =
       isDefined(mconfig.chart.sizeField) &&
       mconfig.select.indexOf(mconfig.chart.sizeField) > -1
@@ -101,29 +91,10 @@ export function setChartFields<T extends Mconfig>(item: {
         ? selectedDimensions.filter(x => x !== xField)[0]
         : undefined;
 
-    // let valueField =
-    //   isDefined(mconfig.chart.valueField) &&
-    //   mconfig.select.indexOf(mconfig.chart.valueField) > -1
-    //     ? mconfig.chart.valueField
-    //     : selectedMCsResultIsNumber.length > 0
-    //     ? selectedMCsResultIsNumber[0]
-    //     : selectedMCsResultIsNotNumber.length > 0
-    //     ? selectedMCsResultIsNotNumber[0]
-    //     : undefined;
-
-    // let previousValueField =
-    //   isDefined(mconfig.chart.previousValueField) &&
-    //   mconfig.select.indexOf(mconfig.chart.previousValueField) > -1
-    //     ? mconfig.chart.previousValueField
-    //     : undefined;
-
     mconfig.chart = Object.assign({}, mconfig.chart, <MconfigChart>{
       xField: xField,
-      yField: yField,
       yFields: yFields,
       multiField: multiField,
-      // valueField: valueField,
-      // previousValueField: previousValueField,
       sizeField: sizeField
     });
   }
