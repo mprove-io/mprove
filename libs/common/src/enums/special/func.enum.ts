@@ -124,8 +124,10 @@ export enum FuncEnum {
   CheckChartType = '15-mconfig-chart/01-check-chart-type',
   CheckChartData = '15-mconfig-chart/02-check-chart-data',
   CheckChartDataParameters = '15-mconfig-chart/03-check-chart-data-parameters',
+  CheckChartPlateParameters = '15-mconfig-chart/04-check-chart-plate-parameters',
   CheckChartOptionsParameters = '15-mconfig-chart/05-check-chart-options-parameters',
-  CheckChartPlateParameters = '15-mconfig-chart/06-check-chart-plate-parameters',
+  CheckChartOptionsXAxisParameters = '15-mconfig-chart/06-check-chart-options-x-axis-parameters',
+  CheckChartOptionsYAxisParameters = '15-mconfig-chart/07-check-chart-options-y-axis-parameters',
 
   CheckReport = '17-report/01-check-report',
   CheckReportAccess = '17-report/02-check-report-access',

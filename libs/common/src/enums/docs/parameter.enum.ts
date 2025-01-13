@@ -93,6 +93,10 @@ export enum ParameterEnum {
   // chart options
   Format = 'format',
   PageSize = 'page_size',
+  XAxis = 'x_axis',
+  YAxis = 'y_axis',
+  Series = 'series',
+  Show = 'show',
   // ShowDataLabel = 'show_data_label',
   // Gradient = 'gradient',
   // Legend = 'legend',

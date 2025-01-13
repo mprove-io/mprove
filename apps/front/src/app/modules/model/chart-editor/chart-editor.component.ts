@@ -626,7 +626,7 @@ export class ChartEditorComponent implements OnChanges {
 
     setValueAndMark({
       control: this.yFieldForm.controls['yField'],
-      value: this.chart.yFields[0]
+      value: this.chart.yFields.length > 0 ? this.chart.yFields[0] : undefined
     });
 
     setValueAndMark({
