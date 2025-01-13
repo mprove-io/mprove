@@ -128,6 +128,7 @@ export enum FuncEnum {
   CheckChartOptionsParameters = '15-mconfig-chart/05-check-chart-options-parameters',
   CheckChartOptionsXAxisParameters = '15-mconfig-chart/06-check-chart-options-x-axis-parameters',
   CheckChartOptionsYAxisParameters = '15-mconfig-chart/07-check-chart-options-y-axis-parameters',
+  CheckChartOptionsSeriesParameters = '15-mconfig-chart/08-check-chart-options-series-parameters',
 
   CheckReport = '17-report/01-check-report',
   CheckReportAccess = '17-report/02-check-report-access',

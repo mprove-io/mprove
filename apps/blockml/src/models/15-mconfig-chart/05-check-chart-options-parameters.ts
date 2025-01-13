@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { formatSpecifier } from 'd3-format';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { helper } from '~blockml/barrels/helper';
@@ -66,7 +65,6 @@ export function checkChartOptionsParameters<T extends types.dzType>(
 
           if (
             [
-              common.ParameterEnum.XAxis.toString(),
               common.ParameterEnum.YAxis.toString(),
               common.ParameterEnum.Series.toString()
             ].indexOf(parameter) < 0 &&
@@ -94,6 +92,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
           }
 
           if (
+            [common.ParameterEnum.XAxis.toString()].indexOf(parameter) < 0 &&
             (tile.options[parameter as keyof common.FileChartOptions] as any)
               ?.constructor === Object
           ) {
@@ -118,9 +117,9 @@ export function checkChartOptionsParameters<T extends types.dzType>(
 
           if (
             [common.ParameterEnum.Format.toString()].indexOf(parameter) > -1 &&
-            (tile.options[parameter as keyof common.FileChartOptions] as any)
+            !(tile.options[parameter as keyof common.FileChartOptions] as any)
               .toString()
-              .match(common.MyRegex.TRUE_FALSE()) === false
+              .match(common.MyRegex.TRUE_FALSE())
           ) {
             item.errors.push(
               new BmError({
@@ -175,149 +174,6 @@ export function checkChartOptionsParameters<T extends types.dzType>(
             );
             return;
           }
-
-          if (
-            [
-              // common.ParameterEnum.ArcWidth.toString(),
-              // common.ParameterEnum.RangeFillOpacity.toString()
-            ].indexOf(parameter) > -1 &&
-            !(
-              tile.options[parameter as keyof common.FileChartOptions] as any
-            ).match(common.MyRegex.CAPTURE_FLOAT_START_TO_END_G())
-          ) {
-            item.errors.push(
-              new BmError({
-                title:
-                  common.ErTitleEnum.TILE_OPTIONS_PARAMETER_MUST_BE_A_NUMBER,
-                message:
-                  `"${
-                    tile.options[
-                      parameter as keyof common.FileChartOptions
-                    ] as any
-                  }" is not valid ` + `"${parameter}" value`,
-                lines: [
-                  {
-                    line: tile.options[
-                      (parameter +
-                        constants.LINE_NUM) as keyof common.FileChartOptions
-                    ] as number,
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
-
-          if (
-            [
-              // common.ParameterEnum.StartAngle.toString(),
-              // common.ParameterEnum.XScaleMax.toString(),
-              // common.ParameterEnum.YScaleMin.toString(),
-              // common.ParameterEnum.YScaleMax.toString()
-            ].indexOf(parameter) > -1 &&
-            !(
-              tile.options[parameter as keyof common.FileChartOptions] as any
-            ).match(common.MyRegex.CAPTURE_MINUS_DIGITS_START_TO_END_G())
-          ) {
-            item.errors.push(
-              new BmError({
-                title:
-                  common.ErTitleEnum.TILE_OPTIONS_PARAMETER_MUST_BE_AN_INTEGER,
-                message:
-                  `"${
-                    tile.options[
-                      parameter as keyof common.FileChartOptions
-                    ] as any
-                  }" is not valid ` + `"${parameter}" value`,
-                lines: [
-                  {
-                    line: tile.options[
-                      (parameter +
-                        constants.LINE_NUM) as keyof common.FileChartOptions
-                    ] as number,
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
-
-          if (
-            [
-              // common.ParameterEnum.BandColor.toString(),
-              // common.ParameterEnum.CardColor.toString(),
-              // common.ParameterEnum.TextColor.toString(),
-              // common.ParameterEnum.EmptyColor.toString()
-            ].indexOf(parameter) > -1 &&
-            !(
-              tile.options[parameter as keyof common.FileChartOptions] as any
-            ).match(common.MyRegex.CAPTURE_RGB_SPLIT_G()) &&
-            !(
-              tile.options[parameter as keyof common.FileChartOptions] as any
-            ).match(common.MyRegex.CAPTURE_RGBA_SPLIT_G())
-          ) {
-            item.errors.push(
-              new BmError({
-                title: common.ErTitleEnum.TILE_OPTIONS_WRONG_COLOR,
-                message:
-                  `"${
-                    tile.options[
-                      parameter as keyof common.FileChartOptions
-                    ] as any
-                  }" is not valid ` + `"${parameter}" value`,
-                lines: [
-                  {
-                    line: tile.options[
-                      (parameter +
-                        constants.LINE_NUM) as keyof common.FileChartOptions
-                    ] as number,
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
-
-          if (
-            [
-              // common.ParameterEnum.FormatNumberDataLabel.toString(),
-              // common.ParameterEnum.FormatNumberValue.toString(),
-              // common.ParameterEnum.FormatNumberAxisTick.toString(),
-              // common.ParameterEnum.FormatNumberYAxisTick.toString(),
-              // common.ParameterEnum.FormatNumberXAxisTick.toString()
-            ].indexOf(parameter) > -1
-          ) {
-            let value = tile.options[
-              parameter as keyof common.FileChartOptions
-            ] as any;
-            try {
-              formatSpecifier(value);
-            } catch (e) {
-              item.errors.push(
-                new BmError({
-                  title: common.ErTitleEnum.WRONG_FORMAT_NUMBER,
-                  message: ` ${parameter} value "${value}" is not valid`,
-                  lines: [
-                    {
-                      line: tile.options[
-                        (parameter +
-                          constants.LINE_NUM) as keyof common.FileChartOptions
-                      ] as number,
-                      name: x.fileName,
-                      path: x.filePath
-                    }
-                  ]
-                })
-              );
-              return;
-            }
-          }
         });
     });
 
@@ -345,6 +201,149 @@ export function checkChartOptionsParameters<T extends types.dzType>(
 
   return newEntities;
 }
+
+// if (
+//   [
+//     // common.ParameterEnum.ArcWidth.toString(),
+//     // common.ParameterEnum.RangeFillOpacity.toString()
+//   ].indexOf(parameter) > -1 &&
+//   !(
+//     tile.options[parameter as keyof common.FileChartOptions] as any
+//   ).match(common.MyRegex.CAPTURE_FLOAT_START_TO_END_G())
+// ) {
+//   item.errors.push(
+//     new BmError({
+//       title:
+//         common.ErTitleEnum.TILE_OPTIONS_PARAMETER_MUST_BE_A_NUMBER,
+//       message:
+//         `"${
+//           tile.options[
+//             parameter as keyof common.FileChartOptions
+//           ] as any
+//         }" is not valid ` + `"${parameter}" value`,
+//       lines: [
+//         {
+//           line: tile.options[
+//             (parameter +
+//               constants.LINE_NUM) as keyof common.FileChartOptions
+//           ] as number,
+//           name: x.fileName,
+//           path: x.filePath
+//         }
+//       ]
+//     })
+//   );
+//   return;
+// }
+
+// if (
+//   [
+//     // common.ParameterEnum.StartAngle.toString(),
+//     // common.ParameterEnum.XScaleMax.toString(),
+//     // common.ParameterEnum.YScaleMin.toString(),
+//     // common.ParameterEnum.YScaleMax.toString()
+//   ].indexOf(parameter) > -1 &&
+//   !(
+//     tile.options[parameter as keyof common.FileChartOptions] as any
+//   ).match(common.MyRegex.CAPTURE_MINUS_DIGITS_START_TO_END_G())
+// ) {
+//   item.errors.push(
+//     new BmError({
+//       title:
+//         common.ErTitleEnum.TILE_OPTIONS_PARAMETER_MUST_BE_AN_INTEGER,
+//       message:
+//         `"${
+//           tile.options[
+//             parameter as keyof common.FileChartOptions
+//           ] as any
+//         }" is not valid ` + `"${parameter}" value`,
+//       lines: [
+//         {
+//           line: tile.options[
+//             (parameter +
+//               constants.LINE_NUM) as keyof common.FileChartOptions
+//           ] as number,
+//           name: x.fileName,
+//           path: x.filePath
+//         }
+//       ]
+//     })
+//   );
+//   return;
+// }
+
+// if (
+//   [
+//     // common.ParameterEnum.BandColor.toString(),
+//     // common.ParameterEnum.CardColor.toString(),
+//     // common.ParameterEnum.TextColor.toString(),
+//     // common.ParameterEnum.EmptyColor.toString()
+//   ].indexOf(parameter) > -1 &&
+//   !(
+//     tile.options[parameter as keyof common.FileChartOptions] as any
+//   ).match(common.MyRegex.CAPTURE_RGB_SPLIT_G()) &&
+//   !(
+//     tile.options[parameter as keyof common.FileChartOptions] as any
+//   ).match(common.MyRegex.CAPTURE_RGBA_SPLIT_G())
+// ) {
+//   item.errors.push(
+//     new BmError({
+//       title: common.ErTitleEnum.TILE_OPTIONS_WRONG_COLOR,
+//       message:
+//         `"${
+//           tile.options[
+//             parameter as keyof common.FileChartOptions
+//           ] as any
+//         }" is not valid ` + `"${parameter}" value`,
+//       lines: [
+//         {
+//           line: tile.options[
+//             (parameter +
+//               constants.LINE_NUM) as keyof common.FileChartOptions
+//           ] as number,
+//           name: x.fileName,
+//           path: x.filePath
+//         }
+//       ]
+//     })
+//   );
+//   return;
+// }
+
+// if (
+//   [
+//     // common.ParameterEnum.FormatNumberDataLabel.toString(),
+//     // common.ParameterEnum.FormatNumberValue.toString(),
+//     // common.ParameterEnum.FormatNumberAxisTick.toString(),
+//     // common.ParameterEnum.FormatNumberYAxisTick.toString(),
+//     // common.ParameterEnum.FormatNumberXAxisTick.toString()
+//   ].indexOf(parameter) > -1
+// ) {
+//   let value = tile.options[
+//     parameter as keyof common.FileChartOptions
+//   ] as any;
+//   try {
+//     formatSpecifier(value);
+//   } catch (e) {
+//     item.errors.push(
+//       new BmError({
+//         title: common.ErTitleEnum.WRONG_FORMAT_NUMBER,
+//         message: ` ${parameter} value "${value}" is not valid`,
+//         lines: [
+//           {
+//             line: tile.options[
+//               (parameter +
+//                 constants.LINE_NUM) as keyof common.FileChartOptions
+//             ] as number,
+//             name: x.fileName,
+//             path: x.filePath
+//           }
+//         ]
+//       })
+//     );
+//     return;
+//   }
+// }
 
 // if (
 //   parameter === common.ParameterEnum.Interpolation &&

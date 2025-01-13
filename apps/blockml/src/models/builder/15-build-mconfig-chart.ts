@@ -48,15 +48,15 @@ export function buildMconfigChart<T extends types.dzType>(
     cs
   );
 
-  // entities = barMconfigChart.checkChartAxisParameters(
-  //   {
-  //     entities: entities,
-  //     structId: item.structId,
-  //     errors: item.errors,
-  //     caller: item.caller
-  //   },
-  //   cs
-  // );
+  entities = barMconfigChart.checkChartPlateParameters(
+    {
+      entities: entities,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
 
   entities = barMconfigChart.checkChartOptionsParameters(
     {
@@ -88,7 +88,7 @@ export function buildMconfigChart<T extends types.dzType>(
     cs
   );
 
-  entities = barMconfigChart.checkChartPlateParameters(
+  entities = barMconfigChart.checkChartOptionsSeriesParameters(
     {
       entities: entities,
       structId: item.structId,

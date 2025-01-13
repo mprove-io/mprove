@@ -96,7 +96,13 @@ export enum ParameterEnum {
   XAxis = 'x_axis',
   YAxis = 'y_axis',
   Series = 'series',
+  // x_axis, y_axis
   Show = 'show',
+  // series
+  DataField = 'data_field',
+  DataRowId = 'data_row_id',
+  YAxisIndex = 'y_axis_index',
+  //
   // ShowDataLabel = 'show_data_label',
   // Gradient = 'gradient',
   // Legend = 'legend',
