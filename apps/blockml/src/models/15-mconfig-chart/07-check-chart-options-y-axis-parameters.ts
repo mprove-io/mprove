@@ -119,7 +119,9 @@ export function checkChartOptionsYAxisParameters<T extends types.dzType>(
             ) {
               item.errors.push(
                 new BmError({
-                  title: common.ErTitleEnum.TILE_OPTIONS_Y_AXIS_WRONG_BOOLEAN,
+                  title:
+                    common.ErTitleEnum
+                      .TILE_OPTIONS_Y_AXIS_WRONG_PARAMETER_VALUE,
                   message: `parameter "${parameter}" must be 'true' or 'false' if specified`,
                   lines: [
                     {

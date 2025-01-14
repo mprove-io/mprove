@@ -1,0 +1,14 @@
+dashboard: d1
+tiles:  
+- title: t1
+  model: m1
+  select: 
+  - a.dim1
+  - a.dim2
+  - a.mea1
+  type: scatter
+  data:
+    x_field: a.dim1
+    y_fields:
+    - a.mea1
+    size_field: a.dim2
