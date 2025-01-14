@@ -97,7 +97,7 @@ export enum ParameterEnum {
   YAxis = 'y_axis',
   Series = 'series',
   // x_axis, y_axis
-  Show = 'show',
+  Scale = 'scale',
   // series
   DataField = 'data_field',
   DataRowId = 'data_row_id',

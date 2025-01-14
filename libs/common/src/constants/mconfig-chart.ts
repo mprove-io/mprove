@@ -15,7 +15,19 @@ export const DEFAULT_CHART: MconfigChart = {
   // sizeField: null,
 
   format: true,
-  pageSize: 5
+  pageSize: 5,
+
+  xAxis: {
+    scale: false
+  },
+
+  yAxis: [
+    {
+      scale: false
+    }
+  ],
+
+  series: []
 
   // interpolation: CHART_DEFAULT_INTERPOLATION,
   // colorScheme: CHART_DEFAULT_COLOR_SCHEME,

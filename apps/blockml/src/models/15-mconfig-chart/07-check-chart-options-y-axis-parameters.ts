@@ -34,7 +34,9 @@ export function checkChartOptionsYAxisParameters<T extends types.dzType>(
         Object.keys(yAxisElement)
           .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
           .forEach(parameter => {
-            if ([common.ParameterEnum.Show.toString()].indexOf(parameter) < 0) {
+            if (
+              [common.ParameterEnum.Scale.toString()].indexOf(parameter) < 0
+            ) {
               item.errors.push(
                 new BmError({
                   title:
@@ -114,17 +116,17 @@ export function checkChartOptionsYAxisParameters<T extends types.dzType>(
       if (errorsOnStart === item.errors.length) {
         tile.options.y_axis.forEach(yAxisElement => {
           if (
-            common.isDefined(yAxisElement.show) &&
-            !yAxisElement.show.toString().match(common.MyRegex.TRUE_FALSE())
+            common.isDefined(yAxisElement.scale) &&
+            !yAxisElement.scale.toString().match(common.MyRegex.TRUE_FALSE())
           ) {
             item.errors.push(
               new BmError({
                 title:
                   common.ErTitleEnum.TILE_OPTIONS_Y_AXIS_WRONG_PARAMETER_VALUE,
-                message: `parameter "${common.ParameterEnum.Show}" must be 'true' or 'false' if specified`,
+                message: `parameter "${common.ParameterEnum.Scale}" must be 'true' or 'false' if specified`,
                 lines: [
                   {
-                    line: yAxisElement.show_line_num,
+                    line: yAxisElement.scale_line_num,
                     name: x.fileName,
                     path: x.filePath
                   }

@@ -1,12 +1,17 @@
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
   IsInt,
   // IsNumber,
   IsOptional,
-  IsString
+  IsString,
+  ValidateNested
 } from 'class-validator';
 import { enums } from '~common/barrels/enums';
+import { MconfigChartSeries } from './mconfig-chart-series';
+import { MconfigChartXAxis } from './mconfig-chart-x-axis';
+import { MconfigChartYAxis } from './mconfig-chart-y-axis';
 
 export class MconfigChart {
   @IsBoolean()
@@ -50,6 +55,18 @@ export class MconfigChart {
   @IsOptional()
   @IsInt()
   pageSize?: number;
+
+  @ValidateNested()
+  @Type(() => MconfigChartXAxis)
+  xAxis: MconfigChartXAxis;
+
+  @ValidateNested()
+  @Type(() => MconfigChartYAxis)
+  yAxis: MconfigChartYAxis[];
+
+  @ValidateNested()
+  @Type(() => MconfigChartSeries)
+  series: MconfigChartSeries[];
 
   // @IsOptional()
   // @IsBoolean()

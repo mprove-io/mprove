@@ -1,6 +1,4 @@
-// import { enums } from '~common/barrels/enums';
-
 export interface FileChartOptionsYAxisElement {
-  show: string; // boolean
-  show_line_num?: number;
+  scale: string; // boolean
+  scale_line_num?: number;
 }

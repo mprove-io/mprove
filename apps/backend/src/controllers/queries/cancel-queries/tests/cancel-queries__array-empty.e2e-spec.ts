@@ -49,10 +49,7 @@ test('1', async t => {
     timezone: common.UTC,
     limit: 500,
     filters: [],
-    chart: {
-      isValid: true,
-      type: common.ChartTypeEnum.Table
-    },
+    chart: common.makeCopy(common.DEFAULT_CHART),
     temp: true,
     serverTs: 1
   };

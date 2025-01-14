@@ -7,4 +7,4 @@ tiles:
   type: table
   options:
     x_axis:        
-      show: 1
+      scale: 1

@@ -1,5 +1,8 @@
 import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
+import { MconfigChartSeries } from '~common/interfaces/blockml/mconfig-chart-series';
+import { MconfigChartXAxis } from '~common/interfaces/blockml/mconfig-chart-x-axis';
+import { MconfigChartYAxis } from '~common/interfaces/blockml/mconfig-chart-y-axis';
 
 export function wrapTiles(item: {
   structId: string;
@@ -26,6 +29,57 @@ export function wrapTiles(item: {
       });
     });
 
+    let xAxis: MconfigChartXAxis = {
+      scale: common.isDefined(tile.options?.x_axis?.scale)
+        ? helper.toBooleanFromLowercaseString(tile.options?.x_axis?.scale)
+        : common.DEFAULT_CHART.xAxis.scale
+    };
+
+    let yAxis: MconfigChartYAxis[] = [];
+
+    if (
+      common.isDefined(tile.options?.y_axis) &&
+      tile.options?.y_axis.length > 0
+    ) {
+      yAxis = tile.options?.y_axis.map(yAxisPart => {
+        let yAxisElement = {
+          scale: common.isDefined(yAxisPart.scale)
+            ? helper.toBooleanFromLowercaseString(yAxisPart.scale)
+            : common.DEFAULT_CHART.yAxis[0].scale
+        };
+
+        return yAxisElement;
+      });
+    } else {
+      yAxis = [common.DEFAULT_CHART.yAxis[0]];
+    }
+
+    let series: MconfigChartSeries[] = [];
+
+    if (
+      common.isDefined(tile.data?.y_fields) &&
+      tile.data?.y_fields.length > 0
+    ) {
+      series = tile.data?.y_fields.map(yFieldId => {
+        let seriesPart = tile.options?.series?.find(
+          s => s.data_field === yFieldId
+        );
+
+        let seriesElement: MconfigChartSeries = {
+          dataField: yFieldId,
+          dataRowId: undefined,
+          type: common.isDefined(seriesPart?.type)
+            ? seriesPart.type
+            : tile.type,
+          yAxisIndex: common.isDefined(seriesPart?.y_axis_index)
+            ? Number(seriesPart.y_axis_index)
+            : 0
+        };
+
+        return seriesElement;
+      });
+    }
+
     let chart: common.MconfigChart = {
       isValid: true,
       title: tile.title,
@@ -46,7 +100,11 @@ export function wrapTiles(item: {
 
       pageSize: common.isDefined(tile.options?.page_size)
         ? Number(tile.options.page_size)
-        : common.DEFAULT_CHART.pageSize
+        : common.DEFAULT_CHART.pageSize,
+
+      xAxis: xAxis,
+      yAxis: yAxis,
+      series: series
 
       // animations: common.isDefined(tile.options?.animations)
       //   ? helper.toBooleanFromLowercaseString(tile.options?.animations)

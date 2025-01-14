@@ -33,7 +33,7 @@ export function checkChartOptionsXAxisParameters<T extends types.dzType>(
       Object.keys(tile.options.x_axis)
         .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
-          if ([common.ParameterEnum.Show.toString()].indexOf(parameter) < 0) {
+          if ([common.ParameterEnum.Scale.toString()].indexOf(parameter) < 0) {
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.TILE_OPTIONS_X_AXIS_UNKNOWN_PARAMETER,
@@ -107,7 +107,7 @@ export function checkChartOptionsXAxisParameters<T extends types.dzType>(
           }
 
           if (
-            [common.ParameterEnum.Show.toString()].indexOf(parameter) > -1 &&
+            [common.ParameterEnum.Scale.toString()].indexOf(parameter) > -1 &&
             !tile.options.x_axis[
               parameter as keyof common.FileChartOptionsXAxisElement
             ]
@@ -137,8 +137,8 @@ export function checkChartOptionsXAxisParameters<T extends types.dzType>(
 
       if (errorsOnStart === item.errors.length) {
         if (
-          common.isDefined(tile.options.x_axis.show) &&
-          !tile.options.x_axis.show
+          common.isDefined(tile.options.x_axis.scale) &&
+          !tile.options.x_axis.scale
             .toString()
             .match(common.MyRegex.TRUE_FALSE())
         ) {
@@ -146,10 +146,10 @@ export function checkChartOptionsXAxisParameters<T extends types.dzType>(
             new BmError({
               title:
                 common.ErTitleEnum.TILE_OPTIONS_X_AXIS_WRONG_PARAMETER_VALUE,
-              message: `parameter "${common.ParameterEnum.Show}" must be 'true' or 'false' if specified`,
+              message: `parameter "${common.ParameterEnum.Scale}" must be 'true' or 'false' if specified`,
               lines: [
                 {
-                  line: tile.options.x_axis.show_line_num,
+                  line: tile.options.x_axis.scale_line_num,
                   name: x.fileName,
                   path: x.filePath
                 }

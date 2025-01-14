@@ -120,6 +120,8 @@ export class ChartEditorComponent implements OnChanges {
   // showAxisChartTypes = common.showAxisChartTypes;
 
   formatChartTypes = common.formatChartTypes;
+  xAxisScaleChartTypes = common.xAxisScaleChartTypes;
+  yAxisScaleChartTypes = common.xAxisScaleChartTypes;
   // angleSpanChartTypes = common.angleSpanChartTypes;
   // animationsChartTypes = common.animationsChartTypes;
   // arcWidthChartTypes = common.arcWidthChartTypes;
@@ -1590,6 +1592,22 @@ export class ChartEditorComponent implements OnChanges {
   toggleFormat() {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.format = !newMconfig.chart.format;
+    this.mconfigService.navCreateTempMconfig({
+      newMconfig: newMconfig
+    });
+  }
+
+  toggleXAxisScale() {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.xAxis.scale = !newMconfig.chart.xAxis.scale;
+    this.mconfigService.navCreateTempMconfig({
+      newMconfig: newMconfig
+    });
+  }
+
+  toggleYAxisScale(i: number) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.yAxis[i].scale = !newMconfig.chart.yAxis[i].scale;
     this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });

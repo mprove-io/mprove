@@ -253,6 +253,7 @@ export class ChartViewComponent implements OnChanges {
             : xField.result === common.FieldResultEnum.Number
             ? {
                 type: 'value',
+                scale: this.chart.xAxis.scale,
                 axisLabel: {
                   fontSize: 13
                 }
@@ -264,12 +265,19 @@ export class ChartViewComponent implements OnChanges {
                 }
               };
 
-        this.eChartOptions.yAxis = {
-          type: 'value',
-          axisLabel: {
+        this.eChartOptions.yAxis = this.chart.yAxis.map(y => {
+          (y as any).type = 'value';
+          (y as any).axisLabel = {
             fontSize: 14
-          }
-        };
+          };
+          return y;
+        });
+        // {
+        //   type: 'value',
+        //   axisLabel: {
+        //     fontSize: 14
+        //   }
+        // };
       }
 
       // echarts - series
