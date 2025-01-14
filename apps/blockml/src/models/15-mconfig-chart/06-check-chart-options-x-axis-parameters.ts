@@ -134,6 +134,31 @@ export function checkChartOptionsXAxisParameters<T extends types.dzType>(
             return;
           }
         });
+
+      if (errorsOnStart === item.errors.length) {
+        if (
+          common.isDefined(tile.options.x_axis.show) &&
+          !tile.options.x_axis.show
+            .toString()
+            .match(common.MyRegex.TRUE_FALSE())
+        ) {
+          item.errors.push(
+            new BmError({
+              title:
+                common.ErTitleEnum.TILE_OPTIONS_X_AXIS_WRONG_PARAMETER_VALUE,
+              message: `parameter "${common.ParameterEnum.Show}" must be 'true' or 'false' if specified`,
+              lines: [
+                {
+                  line: tile.options.x_axis.show_line_num,
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
+      }
     });
 
     if (errorsOnStart === item.errors.length) {

@@ -108,37 +108,33 @@ export function checkChartOptionsYAxisParameters<T extends types.dzType>(
               );
               return;
             }
-
-            if (
-              [common.ParameterEnum.Show.toString()].indexOf(parameter) > -1 &&
-              !yAxisElement[
-                parameter as keyof common.FileChartOptionsYAxisElement
-              ]
-                .toString()
-                .match(common.MyRegex.TRUE_FALSE())
-            ) {
-              item.errors.push(
-                new BmError({
-                  title:
-                    common.ErTitleEnum
-                      .TILE_OPTIONS_Y_AXIS_WRONG_PARAMETER_VALUE,
-                  message: `parameter "${parameter}" must be 'true' or 'false' if specified`,
-                  lines: [
-                    {
-                      line: yAxisElement[
-                        (parameter +
-                          constants.LINE_NUM) as keyof common.FileChartOptionsYAxisElement
-                      ] as number,
-                      name: x.fileName,
-                      path: x.filePath
-                    }
-                  ]
-                })
-              );
-              return;
-            }
           })
       );
+
+      if (errorsOnStart === item.errors.length) {
+        tile.options.y_axis.forEach(yAxisElement => {
+          if (
+            common.isDefined(yAxisElement.show) &&
+            !yAxisElement.show.toString().match(common.MyRegex.TRUE_FALSE())
+          ) {
+            item.errors.push(
+              new BmError({
+                title:
+                  common.ErTitleEnum.TILE_OPTIONS_Y_AXIS_WRONG_PARAMETER_VALUE,
+                message: `parameter "${common.ParameterEnum.Show}" must be 'true' or 'false' if specified`,
+                lines: [
+                  {
+                    line: yAxisElement.show_line_num,
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+        });
+      }
     });
 
     if (errorsOnStart === item.errors.length) {

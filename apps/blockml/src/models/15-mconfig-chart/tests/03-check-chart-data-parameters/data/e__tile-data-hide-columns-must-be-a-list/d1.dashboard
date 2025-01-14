@@ -5,9 +5,6 @@ tiles:
   select: 
   - a.dim1
   - a.mea1 
-  type: line
+  type: table
   data:
-    x_field: a.dim1
     hide_columns: a.dim1  
-    y_fields: 
-    - a.mea1

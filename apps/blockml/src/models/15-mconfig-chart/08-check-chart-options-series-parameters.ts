@@ -117,6 +117,106 @@ export function checkChartOptionsSeriesParameters<T extends types.dzType>(
             }
           })
       );
+
+      if (errorsOnStart === item.errors.length) {
+        tile.options.series.forEach(seriesElement => {
+          let pKeysLineNums: number[] = Object.keys(seriesElement)
+            .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
+            .map(
+              y =>
+                seriesElement[
+                  y as keyof common.FileChartOptionsSeriesElement
+                ] as number
+            );
+
+          if (common.isUndefined(seriesElement.data_field)) {
+            item.errors.push(
+              new BmError({
+                title:
+                  common.ErTitleEnum.TILE_OPTIONS_SERIES_MISSING_DATA_FIELD,
+                message: `Series element must have "${common.ParameterEnum.DataField}" parameter`,
+                lines: [
+                  {
+                    line: Math.min(...pKeysLineNums),
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+
+          if (common.isDefined(seriesElement.data_field)) {
+            if (
+              common.isUndefined(tile.data.y_fields) ||
+              tile.data.y_fields.indexOf(seriesElement.data_field) < 0
+            ) {
+              item.errors.push(
+                new BmError({
+                  title:
+                    common.ErTitleEnum.TILE_OPTIONS_SERIES_WRONG_DATA_FIELD,
+                  message:
+                    `"${common.ParameterEnum.DataField}" value must be one of ` +
+                    `"${common.ParameterEnum.YFields}" elements`,
+                  lines: [
+                    {
+                      line: seriesElement.data_field_line_num,
+                      name: x.fileName,
+                      path: x.filePath
+                    }
+                  ]
+                })
+              );
+              return;
+            }
+          }
+
+          if (
+            common.isDefined(seriesElement.y_axis_index) &&
+            Number(seriesElement.y_axis_index) > 0 &&
+            (common.isUndefined(tile.options.y_axis) ||
+              Number(seriesElement.y_axis_index) >
+                tile.options.y_axis.length - 1)
+          ) {
+            item.errors.push(
+              new BmError({
+                title:
+                  common.ErTitleEnum.TILE_OPTIONS_SERIES_WRONG_Y_AXIS_INDEX,
+                message: `"${common.ParameterEnum.YAxisIndex}" must be index of ${common.ParameterEnum.YAxis} elements starting from 0`,
+                lines: [
+                  {
+                    line: seriesElement.y_axis_index_line_num,
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+
+          if (
+            common.isDefined(seriesElement.type) &&
+            common.CHART_TYPE_VALUES.indexOf(seriesElement.type) < 0
+          ) {
+            item.errors.push(
+              new BmError({
+                title: common.ErTitleEnum.TILE_OPTIONS_SERIES_WRONG_TYPE,
+                message: `value "${seriesElement.type}" is not valid series "${common.ParameterEnum.Type}"`,
+                lines: [
+                  {
+                    line: seriesElement.type_line_num,
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+        });
+      }
     });
 
     if (errorsOnStart === item.errors.length) {
