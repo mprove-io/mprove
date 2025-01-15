@@ -216,6 +216,7 @@ export function checkTopUnknownParameters(
                 common.ParameterEnum.Parameters.toString(),
                 common.ParameterEnum.AccessUsers.toString(),
                 common.ParameterEnum.AccessRoles.toString(),
+                common.ParameterEnum.Options.toString(),
                 common.ParameterEnum.Rows.toString()
               ].indexOf(parameter) < 0
             ) {
@@ -304,11 +305,34 @@ export function checkTopUnknownParameters(
           return;
         }
 
-        if (file[parameter]?.constructor === Object) {
+        if (
+          file[parameter]?.constructor === Object &&
+          [common.ParameterEnum.Options.toString()].indexOf(parameter) < 0
+        ) {
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.UNEXPECTED_DICTIONARY,
               message: `parameter "${parameter}" must have a single value`,
+              lines: [
+                {
+                  line: file[parameter + constants.LINE_NUM],
+                  name: file.name,
+                  path: file.path
+                }
+              ]
+            })
+          );
+          return;
+        }
+
+        if (
+          [common.ParameterEnum.Options.toString()].indexOf(parameter) > -1 &&
+          file[parameter]?.constructor !== Object
+        ) {
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.PARAMETER_MUST_BE_A_DICTIONARY,
+              message: `parameter "${parameter}" must be a dictionary`,
               lines: [
                 {
                   line: file[parameter + constants.LINE_NUM],

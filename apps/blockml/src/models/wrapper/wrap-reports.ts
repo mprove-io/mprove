@@ -1,5 +1,6 @@
 import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
+import { wrapMconfigChart } from './wrap-mconfig-chart';
 
 export function wrapReports(item: {
   projectId: string;
@@ -35,6 +36,14 @@ export function wrapReports(item: {
         description: field.description,
         suggestModelDimension: field.suggest_model_dimension
       });
+    });
+
+    let mconfigChart = wrapMconfigChart({
+      title: undefined,
+      description: undefined,
+      type: common.ChartTypeEnum.Line,
+      data: undefined,
+      options: x.options
     });
 
     let report: common.Report = {
@@ -171,6 +180,7 @@ export function wrapReports(item: {
       timeColumnsLength: undefined,
       timeColumnsLimit: undefined,
       isTimeColumnsLimitExceeded: false,
+      chart: mconfigChart,
       draftCreatedTs: 1,
       serverTs: 1
     };

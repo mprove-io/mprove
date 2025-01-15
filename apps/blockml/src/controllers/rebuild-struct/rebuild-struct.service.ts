@@ -545,6 +545,25 @@ export class RebuildStructService {
       this.cs
     );
 
+    reports.forEach(x => {
+      x.tiles = [
+        {
+          options: x.options
+        }
+      ];
+    });
+
+    reports = barBuilder.buildMconfigChart(
+      {
+        entities: reports,
+        models: models,
+        structId: item.structId,
+        errors: errors,
+        caller: common.CallerEnum.BuildReportCharts
+      },
+      this.cs
+    );
+
     reports = barBuilder.buildField(
       {
         entities: reports,

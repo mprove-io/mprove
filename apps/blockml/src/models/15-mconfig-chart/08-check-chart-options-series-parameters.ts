@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.CheckChartOptionsSeriesParameters;
 
-export function checkChartOptionsSeriesParameters<T extends types.dzType>(
+export function checkChartOptionsSeriesParameters<T extends types.dcrType>(
   item: {
     entities: T[];
     errors: BmError[];

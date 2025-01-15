@@ -24,6 +24,7 @@ export enum CallerEnum {
 
   BuildDashboardTileCharts = '15-BuildDashboardTileCharts',
   BuildChartTileCharts = '15-BuildChartTileCharts',
+  BuildReportCharts = '15-BuildReportCharts',
 
   BuildReport = '17-BuildReport',
 

@@ -10,6 +10,7 @@ import { enums } from '~common/barrels/enums';
 import { IsTimezone } from '~common/functions/is-timezone';
 import { Column } from './column';
 import { Fraction } from './fraction';
+import { MconfigChart } from './mconfig-chart';
 import { ReportField } from './report-field';
 import { Row } from './row';
 
@@ -74,6 +75,10 @@ export class Report {
 
   @IsInt()
   draftCreatedTs: number;
+
+  @ValidateNested()
+  @Type(() => MconfigChart)
+  chart: MconfigChart;
 
   @IsInt()
   serverTs: number;
