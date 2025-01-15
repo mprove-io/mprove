@@ -2,7 +2,7 @@
   <!-- <div class="text-xl text-gray1 font-semibold mb-5">Data</div> -->
 
   <div
-    *ngIf="formatChartTypes.indexOf(chart.type) > -1"
+    *ngIf="uiChartTypes.format.indexOf(chart.type) > -1"
     class="mb-5 flex max-w-min cursor-pointer flex-row items-center"
     (click)="toggleFormat()"
   >
@@ -15,7 +15,7 @@
   </div>
 
   <div
-    *ngIf="pageSizeChartTypes.indexOf(chart.type) > -1"
+    *ngIf="uiChartTypes.pageSize.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -45,7 +45,7 @@
   </div>
 
   <div
-    *ngIf="hideColumnsChartTypes.indexOf(chart.type) > -1"
+    *ngIf="uiChartTypes.hideColumns.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-start"
   >
     <div class="text-gray1 flex h-9 select-none items-center text-base"
@@ -74,7 +74,7 @@
   </div>
 
   <div
-    *ngIf="xFieldChartTypes.indexOf(chart.type) > -1"
+    *ngIf="uiChartTypes.xField.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -126,7 +126,7 @@
   </div>
 
   <div
-    *ngIf="multiFieldChartTypes.indexOf(chart.type) > -1"
+    *ngIf="uiChartTypes.multiField.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -148,7 +148,7 @@
         data-cy="multiFieldSelect"
         class="text-base"
         [items]="
-          nullableMultiFieldChartTypes.indexOf(chart.type) > -1
+          uiChartTypes.nullableMultiField.indexOf(chart.type) > -1
             ? dimensionsPlusEmpty
             : dimensions
         "
@@ -194,111 +194,8 @@
     ></div>
   </div>
 
-  <!-- <div
-    *ngIf="valueFieldChartTypes.indexOf(chart.type) > -1"
-    class="mb-5 flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
-        >Value Field</div
-      >
-    </div>
-
-    <form [formGroup]="valueFieldForm" class="ml-5 min-w-[2px] flex-grow">
-      <ng-select
-        #valueFieldSelect
-        data-cy="valueFieldSelect"
-        class="text-base"
-        [items]="numbersMeasuresAndCalculations"
-        [clearable]="false"
-        [searchable]="false"
-        (change)="valueFieldChange()"
-        (keyup.esc)="$event.stopImmediatePropagation(); valueFieldSelect.blur()"
-        (keyup.enter)="
-          $event.stopImmediatePropagation(); valueFieldSelect.blur()
-        "
-        appendTo="body"
-        bindLabel="label"
-        bindValue="id"
-        formControlName="valueField"
-      >
-        <ng-template ng-label-tmp let-item="item">
-          <m-field-label
-            [column]="item"
-            class="ml-1 flex text-sm"
-          ></m-field-label>
-        </ng-template>
-        <ng-template
-          ng-option-tmp
-          let-item="item"
-          let-index="index"
-          let-search="searchTerm"
-        >
-          <m-field-label
-            [column]="item"
-            class="ml-1 flex text-sm"
-          ></m-field-label>
-        </ng-template>
-      </ng-select>
-    </form>
-  </div> -->
-
-  <!-- <div
-    *ngIf="previousValueFieldChartTypes.indexOf(chart.type) > -1"
-    class="mb-5 flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
-        >Previous Value Field</div
-      >
-    </div>
-
-    <form
-      [formGroup]="previousValueFieldForm"
-      class="ml-5 min-w-[2px] flex-grow"
-    >
-      <ng-select
-        #previousValueFieldSelect
-        data-cy="previousValueFieldSelect"
-        class="text-base"
-        [items]="numbersMeasuresAndCalculationsPlusEmpty"
-        [clearable]="false"
-        [searchable]="false"
-        (change)="previousValueFieldChange()"
-        (keyup.esc)="
-          $event.stopImmediatePropagation(); previousValueFieldSelect.blur()
-        "
-        (keyup.enter)="
-          $event.stopImmediatePropagation(); previousValueFieldSelect.blur()
-        "
-        appendTo="body"
-        bindLabel="label"
-        bindValue="id"
-        formControlName="previousValueField"
-      >
-        <ng-template ng-label-tmp let-item="item">
-          <m-field-label
-            [column]="item"
-            class="ml-1 flex text-sm"
-          ></m-field-label>
-        </ng-template>
-        <ng-template
-          ng-option-tmp
-          let-item="item"
-          let-index="index"
-          let-search="searchTerm"
-        >
-          <m-field-label
-            [column]="item"
-            class="ml-1 flex text-sm"
-          ></m-field-label>
-        </ng-template>
-      </ng-select>
-    </form>
-  </div> -->
-
   <div
-    *ngIf="yFieldChartTypes.indexOf(chart.type) > -1"
+    *ngIf="uiChartTypes.yField.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -345,7 +242,7 @@
   </div>
 
   <div
-    *ngIf="yFieldsChartTypes.indexOf(chart.type) > -1"
+    *ngIf="uiChartTypes.yFields.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-start"
   >
     <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
@@ -374,7 +271,7 @@
   </div>
 
   <div
-    *ngIf="sizeFieldChartTypes.indexOf(chart.type) > -1"
+    *ngIf="uiChartTypes.sizeField.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -422,71 +319,83 @@
     </form>
   </div>
 
-  <!-- <div
-    class="text-xl text-gray1 font-semibold mb-5"
-    *ngIf="chart.type !== chartTypeEnum.Table"
-    >Axis</div
-  > -->
-
-  <div class="text-gray1 mb-5 text-xl font-semibold">X Axis</div>
-
   <div
-    *ngIf="xAxisScaleChartTypes.indexOf(chart.type) > -1"
-    class="mb-5 flex max-w-min cursor-pointer flex-row items-center"
-    (click)="toggleXAxisScale()"
+    *ngIf="uiChartTypes.xAxisGroup.indexOf(chart.type) > -1"
+    class="flex flex-col"
   >
-    <div
-      class="text-gray1 flex h-9 flex-shrink-0 select-none items-center text-base"
-      >Scale</div
-    >
-
-    <ui-switch class="ml-5" [checked]="chart.xAxis.scale"></ui-switch>
-  </div>
-
-  <div class="text-gray1 mb-5 text-xl font-semibold">Y Axis</div>
-
-  <div
-    *ngFor="let yAxisElement of chart.yAxis; let i = index"
-    class="flex flex-row items-center"
-  >
-    <div class="text-gray1 mb-5 text-xl font-semibold">Index {{ i }}</div>
+    <div class="text-gray1 mb-5 text-lg font-semibold">X Axis</div>
 
     <div
-      *ngIf="yAxisScaleChartTypes.indexOf(chart.type) > -1"
+      *ngIf="uiChartTypes.xAxis.scale.indexOf(chart.type) > -1"
       class="mb-5 flex max-w-min cursor-pointer flex-row items-center"
-      (click)="toggleYAxisScale(i)"
+      (click)="toggleXAxisScale()"
     >
       <div
         class="text-gray1 flex h-9 flex-shrink-0 select-none items-center text-base"
         >Scale</div
       >
 
-      <ui-switch class="ml-5" [checked]="yAxisElement.scale"></ui-switch>
+      <ui-switch class="ml-5" [checked]="chart.xAxis.scale"></ui-switch>
     </div>
   </div>
 
-  <div class="text-gray1 mb-5 text-xl font-semibold">Series</div>
+  <div
+    *ngIf="uiChartTypes.yAxisGroup.indexOf(chart.type) > -1"
+    class="flex flex-col"
+  >
+    <div class="text-gray1 mb-5 text-lg font-semibold">Y Axis</div>
+
+    <div
+      *ngFor="let yAxisElement of chart.yAxis; let i = index"
+      class="flex flex-col"
+    >
+      <div class="text-gray1 mb-5 text-base">Index {{ i }}</div>
+
+      <div
+        *ngIf="uiChartTypes.yAxis.scale.indexOf(chart.type) > -1"
+        class="mb-5 flex max-w-min cursor-pointer flex-row items-center"
+        (click)="toggleYAxisScale(i)"
+      >
+        <div
+          class="text-gray1 flex h-9 flex-shrink-0 select-none items-center text-base"
+          >Scale</div
+        >
+
+        <ui-switch class="ml-5" [checked]="yAxisElement.scale"></ui-switch>
+      </div>
+
+      <div
+        *ngIf="i !== chart.yAxis.length - 1"
+        class="mb-5 mr-[25px] mt-0 divide-y divide-gray-300"
+      >
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+  </div>
 
   <div
-    *ngFor="let seriesElement of chart.series"
-    class="flex flex-row items-center"
+    *ngIf="uiChartTypes.seriesGroup.indexOf(chart.type) > -1"
+    class="flex flex-col"
   >
-    <div class="text-gray1 mb-5 text-xl font-semibold"
-      >Data Field - {{ seriesElement.dataField }}</div
-    >
+    <div class="text-gray1 mb-5 text-lg font-semibold">Series</div>
 
-    <!-- <div
-      *ngIf="yAxisScaleChartTypes.indexOf(chart.type) > -1"
-      class="mb-5 flex max-w-min cursor-pointer flex-row items-center"
-      (click)="toggleYAxisScale(i)"
+    <div
+      *ngFor="let seriesElement of chart.series; let i = index"
+      class="flex flex-col"
     >
-      <div
-        class="text-gray1 flex h-9 flex-shrink-0 select-none items-center text-base"
-        >Scale</div
+      <div class="text-gray1 mb-5 text-base"
+        >Data Field - {{ seriesElement.dataField }}</div
       >
 
-      <ui-switch class="ml-5" [checked]="yAxisElement.scale"></ui-switch>
-    </div> -->
+      <div
+        *ngIf="i !== chart.series.length - 1"
+        class="mb-5 mr-[25px] mt-0 divide-y divide-gray-300"
+      >
+        <div></div>
+        <div></div>
+      </div>
+    </div>
   </div>
 
   <!-- <div

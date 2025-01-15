@@ -88,30 +88,30 @@ export function prepareTile(item: {
     type: chart.type,
     data: {
       x_field:
-        constants.xFieldChartTypes.indexOf(chart.type) > -1 &&
+        constants.UI_CHART_TYPES.xField.indexOf(chart.type) > -1 &&
         isDefined(chart.xField)
           ? chart.xField
           : undefined,
       y_fields:
-        (constants.yFieldsUiChartTypes.indexOf(chart.type) > -1 ||
-          constants.yFieldUiChartTypes.indexOf(chart.type) > -1) &&
+        (constants.UI_CHART_TYPES.yFields.indexOf(chart.type) > -1 ||
+          constants.UI_CHART_TYPES.yField.indexOf(chart.type) > -1) &&
         isDefined(chart.yFields) &&
         chart.yFields.length > 0
           ? chart.yFields
           : undefined,
       hide_columns:
-        constants.hideColumnsChartTypes.indexOf(chart.type) > -1 &&
+        constants.UI_CHART_TYPES.hideColumns.indexOf(chart.type) > -1 &&
         isDefined(chart.hideColumns) &&
         chart.hideColumns.length > 0
           ? chart.hideColumns
           : undefined,
       multi_field:
-        constants.multiFieldChartTypes.indexOf(chart.type) > -1 &&
+        constants.UI_CHART_TYPES.multiField.indexOf(chart.type) > -1 &&
         isDefined(chart.multiField)
           ? chart.multiField
           : undefined,
       size_field:
-        constants.sizeFieldChartTypes.indexOf(chart.type) > -1 &&
+        constants.UI_CHART_TYPES.sizeField.indexOf(chart.type) > -1 &&
         isDefined(chart.sizeField)
           ? chart.sizeField
           : undefined
@@ -162,13 +162,13 @@ export function prepareTile(item: {
     // },
     options: {
       format:
-        constants.formatChartTypes.indexOf(chart.type) > -1 &&
+        constants.UI_CHART_TYPES.format.indexOf(chart.type) > -1 &&
         chart.format !== constants.DEFAULT_CHART.format &&
         isDefined(chart.format)
           ? <any>chart.format
           : undefined,
       page_size:
-        constants.pageSizeChartTypes.indexOf(chart.type) > -1 &&
+        constants.UI_CHART_TYPES.pageSize.indexOf(chart.type) > -1 &&
         chart.pageSize !== constants.DEFAULT_CHART.pageSize &&
         isDefined(chart.pageSize)
           ? <any>chart.pageSize
