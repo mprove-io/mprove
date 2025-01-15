@@ -129,39 +129,139 @@ export function checkChartOptionsSeriesParameters<T extends types.dcrType>(
                 ] as number
             );
 
-          if (common.isUndefined(seriesElement.data_field)) {
-            item.errors.push(
-              new BmError({
-                title:
-                  common.ErTitleEnum.TILE_OPTIONS_SERIES_MISSING_DATA_FIELD,
-                message: `Series element must have "${common.ParameterEnum.DataField}" parameter`,
-                lines: [
-                  {
-                    line: Math.min(...pKeysLineNums),
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
-
-          if (common.isDefined(seriesElement.data_field)) {
-            if (
-              common.isUndefined(tile.data.y_fields) ||
-              tile.data.y_fields.indexOf(seriesElement.data_field) < 0
-            ) {
+          if (
+            [
+              common.CallerEnum.BuildDashboardTileCharts,
+              common.CallerEnum.BuildChartTileCharts
+            ].indexOf(caller) > -1
+          ) {
+            if (common.isUndefined(seriesElement.data_field)) {
               item.errors.push(
                 new BmError({
                   title:
-                    common.ErTitleEnum.TILE_OPTIONS_SERIES_WRONG_DATA_FIELD,
-                  message:
-                    `"${common.ParameterEnum.DataField}" value must be one of ` +
-                    `"${common.ParameterEnum.YFields}" elements`,
+                    common.ErTitleEnum.TILE_OPTIONS_SERIES_MISSING_DATA_FIELD,
+                  message: `Series element must have "${common.ParameterEnum.DataField}" parameter`,
                   lines: [
                     {
-                      line: seriesElement.data_field_line_num,
+                      line: Math.min(...pKeysLineNums),
+                      name: x.fileName,
+                      path: x.filePath
+                    }
+                  ]
+                })
+              );
+              return;
+            }
+
+            if (common.isDefined(seriesElement.data_field)) {
+              if (
+                common.isUndefined(
+                  (tile as common.FilePartTile).data.y_fields
+                ) ||
+                (tile as common.FilePartTile).data.y_fields.indexOf(
+                  seriesElement.data_field
+                ) < 0
+              ) {
+                item.errors.push(
+                  new BmError({
+                    title:
+                      common.ErTitleEnum.TILE_OPTIONS_SERIES_WRONG_DATA_FIELD,
+                    message:
+                      `"${common.ParameterEnum.DataField}" value must be one of ` +
+                      `"${common.ParameterEnum.YFields}" elements`,
+                    lines: [
+                      {
+                        line: seriesElement.data_field_line_num,
+                        name: x.fileName,
+                        path: x.filePath
+                      }
+                    ]
+                  })
+                );
+                return;
+              }
+            }
+
+            if (common.isDefined(seriesElement.data_row_id)) {
+              item.errors.push(
+                new BmError({
+                  title:
+                    common.ErTitleEnum
+                      .TILE_OPTIONS_SERIES_WRONG_USE_OF_DATA_ROW_ID,
+                  message: `"${common.ParameterEnum.DataRowId}" can only be used inside report`,
+                  lines: [
+                    {
+                      line: Math.min(...pKeysLineNums),
+                      name: x.fileName,
+                      path: x.filePath
+                    }
+                  ]
+                })
+              );
+              return;
+            }
+          }
+
+          if (caller === common.CallerEnum.BuildReportCharts) {
+            if (common.isUndefined(seriesElement.data_row_id)) {
+              item.errors.push(
+                new BmError({
+                  title:
+                    common.ErTitleEnum.TILE_OPTIONS_SERIES_MISSING_DATA_ROW_ID,
+                  message: `Series element must have "${common.ParameterEnum.DataRowId}" parameter`,
+                  lines: [
+                    {
+                      line: Math.min(...pKeysLineNums),
+                      name: x.fileName,
+                      path: x.filePath
+                    }
+                  ]
+                })
+              );
+              return;
+            }
+
+            if (common.isDefined(seriesElement.data_row_id)) {
+              if (
+                (x as common.FileReport).rows
+                  .filter(
+                    row =>
+                      helper.toBooleanFromLowercaseString(row.show_chart) ===
+                      true
+                  )
+                  .map(row => row.row_id)
+                  .indexOf(seriesElement.data_row_id) < 0
+              ) {
+                item.errors.push(
+                  new BmError({
+                    title:
+                      common.ErTitleEnum.TILE_OPTIONS_SERIES_WRONG_DATA_ROW_ID,
+                    message:
+                      `"${common.ParameterEnum.DataRowId}" value must be one of ` +
+                      `row_ids with "${common.ParameterEnum.ShowChart}" enabled`,
+                    lines: [
+                      {
+                        line: seriesElement.data_field_line_num,
+                        name: x.fileName,
+                        path: x.filePath
+                      }
+                    ]
+                  })
+                );
+                return;
+              }
+            }
+
+            if (common.isDefined(seriesElement.data_field)) {
+              item.errors.push(
+                new BmError({
+                  title:
+                    common.ErTitleEnum
+                      .TILE_OPTIONS_SERIES_WRONG_USE_OF_DATA_FIELD,
+                  message: `"${common.ParameterEnum.DataField}" can only be used inside dashboard or chart`,
+                  lines: [
+                    {
+                      line: Math.min(...pKeysLineNums),
                       name: x.fileName,
                       path: x.filePath
                     }

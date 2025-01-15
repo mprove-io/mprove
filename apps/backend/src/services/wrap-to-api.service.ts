@@ -429,6 +429,7 @@ export class WrapToApiService {
       timeColumnsLimit: timeColumnsLimit,
       timeColumnsLength: timeColumnsLength,
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded,
+      chart: report.chart,
       draftCreatedTs: Number(report.draftCreatedTs),
       serverTs: Number(report.serverTs)
     };

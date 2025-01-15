@@ -325,6 +325,7 @@ export class CreateDraftReportController {
       filePath: undefined,
       title: reportId,
       rows: processedRows,
+      chart: common.DEFAULT_CHART,
       draftCreatedTs: makeTsNumber(),
       fields: newReportFields
     });

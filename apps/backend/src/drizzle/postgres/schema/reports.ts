@@ -27,6 +27,7 @@ export const reportsTable = pgTable(
     title: varchar('title').notNull(),
     fields: json('fields').$type<common.ReportField[]>(),
     rows: json('rows').$type<common.Row[]>().notNull(),
+    chart: json('chart').$type<common.MconfigChart>(),
     draft: boolean('draft').notNull(),
     draftCreatedTs: bigint('draft_created_ts', { mode: 'number' }).notNull(),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()

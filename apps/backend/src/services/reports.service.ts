@@ -586,6 +586,7 @@ export class ReportsService {
       title: reportId,
       fields: [],
       rows: [globalRow],
+      chart: common.DEFAULT_CHART,
       draft: false
     });
 

@@ -1,8 +1,8 @@
-<div class="mx-5 mt-2" *ngIf="mconfigFields?.length > 0">
+<div class="mx-5 mt-2" *ngIf="!!chart">
   <!-- <div class="text-xl text-gray1 font-semibold mb-5">Data</div> -->
 
   <div
-    *ngIf="uiChartTypes.format.indexOf(chart.type) > -1"
+    *ngIf="isReport === false && uiChartTypes.format.indexOf(chart.type) > -1"
     class="mb-5 flex max-w-min cursor-pointer flex-row items-center"
     (click)="toggleFormat()"
   >
@@ -15,7 +15,7 @@
   </div>
 
   <div
-    *ngIf="uiChartTypes.pageSize.indexOf(chart.type) > -1"
+    *ngIf="isReport === false && uiChartTypes.pageSize.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -45,7 +45,9 @@
   </div>
 
   <div
-    *ngIf="uiChartTypes.hideColumns.indexOf(chart.type) > -1"
+    *ngIf="
+      isReport === false && uiChartTypes.hideColumns.indexOf(chart.type) > -1
+    "
     class="mb-5 flex flex-row items-start"
   >
     <div class="text-gray1 flex h-9 select-none items-center text-base"
@@ -74,7 +76,7 @@
   </div>
 
   <div
-    *ngIf="uiChartTypes.xField.indexOf(chart.type) > -1"
+    *ngIf="isReport === false && uiChartTypes.xField.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -126,7 +128,9 @@
   </div>
 
   <div
-    *ngIf="uiChartTypes.multiField.indexOf(chart.type) > -1"
+    *ngIf="
+      isReport === false && uiChartTypes.multiField.indexOf(chart.type) > -1
+    "
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -195,7 +199,7 @@
   </div>
 
   <div
-    *ngIf="uiChartTypes.yField.indexOf(chart.type) > -1"
+    *ngIf="isReport === false && uiChartTypes.yField.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -242,7 +246,7 @@
   </div>
 
   <div
-    *ngIf="uiChartTypes.yFields.indexOf(chart.type) > -1"
+    *ngIf="isReport === false && uiChartTypes.yFields.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-start"
   >
     <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
@@ -271,7 +275,9 @@
   </div>
 
   <div
-    *ngIf="uiChartTypes.sizeField.indexOf(chart.type) > -1"
+    *ngIf="
+      isReport === false && uiChartTypes.sizeField.indexOf(chart.type) > -1
+    "
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex flex-col">

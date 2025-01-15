@@ -19,6 +19,7 @@ export class MakerService {
     title: string;
     fields: common.ReportField[];
     rows: common.Row[];
+    chart: common.MconfigChart;
     draftCreatedTs?: number;
     draft: boolean;
   }) {
@@ -33,6 +34,7 @@ export class MakerService {
       title,
       fields,
       rows,
+      chart,
       draft,
       draftCreatedTs
     } = item;
@@ -52,6 +54,7 @@ export class MakerService {
       title: title,
       fields: fields,
       rows: rows,
+      chart: chart,
       draft: draft,
       draftCreatedTs: draftCreatedTs,
       serverTs: undefined

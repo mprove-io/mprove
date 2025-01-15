@@ -102,6 +102,9 @@ export class MetricsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.report = x;
 
+      // console.log('this.report.chart');
+      // console.log(this.report.chart);
+
       this.isShow = true;
 
       this.reportGlobalRow = this.report.rows.find(

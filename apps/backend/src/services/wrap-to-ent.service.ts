@@ -176,6 +176,7 @@ export class WrapToEntService {
       accessRoles: report.accessRoles,
       title: report.title,
       rows: report.rows,
+      chart: report.chart,
       draftCreatedTs: report.draftCreatedTs,
       serverTs: report.serverTs
     };

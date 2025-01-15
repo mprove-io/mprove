@@ -65,10 +65,13 @@ export class ChartEditorComponent implements OnChanges {
   chart: common.MconfigChart;
 
   @Input()
-  queryId: string;
+  queryId?: string;
 
   @Input()
-  mconfigFields: common.MconfigField[];
+  mconfigFields?: common.MconfigField[];
+
+  @Input()
+  isReport: boolean;
 
   dimensionsMeasuresCalculations: common.MconfigField[];
 
@@ -123,84 +126,82 @@ export class ChartEditorComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     // console.log(changes);
 
-    if (common.isUndefined(this.mconfigFields)) {
-      return;
+    if (common.isDefined(this.mconfigFields)) {
+      this.dimensionsMeasuresCalculations = this.mconfigFields.filter(
+        x =>
+          [
+            common.FieldClassEnum.Dimension,
+            common.FieldClassEnum.Measure,
+            common.FieldClassEnum.Calculation
+          ].indexOf(x.fieldClass) > -1
+      );
+
+      this.numbersDimensionsMeasuresCalculations = this.mconfigFields.filter(
+        x =>
+          x.result === common.FieldResultEnum.Number &&
+          [
+            common.FieldClassEnum.Dimension,
+            common.FieldClassEnum.Measure,
+            common.FieldClassEnum.Calculation
+          ].indexOf(x.fieldClass) > -1
+      );
+
+      this.numbersDimensionsMeasuresCalculationsPlusEmpty = [
+        constants.EMPTY_MCONFIG_FIELD,
+        ...this.numbersDimensionsMeasuresCalculations
+      ];
+
+      this.dimensions = this.mconfigFields.filter(
+        x => x.fieldClass === common.FieldClassEnum.Dimension
+      );
+
+      this.dimensionsPlusEmpty = [
+        constants.EMPTY_MCONFIG_FIELD,
+        ...this.dimensions
+      ];
+
+      this.numbersMeasuresAndCalculations = this.mconfigFields.filter(
+        x =>
+          x.result === common.FieldResultEnum.Number &&
+          (x.fieldClass === common.FieldClassEnum.Measure ||
+            x.fieldClass === common.FieldClassEnum.Calculation)
+      );
+
+      this.numbersMeasuresAndCalculationsPlusEmpty = [
+        constants.EMPTY_MCONFIG_FIELD,
+        ...this.numbersMeasuresAndCalculations
+      ];
+
+      this.numbersYFields =
+        this.chart.type === common.ChartTypeEnum.Scatter
+          ? this.numbersDimensionsMeasuresCalculations
+          : this.numbersMeasuresAndCalculations;
+
+      setValueAndMark({
+        control: this.xFieldForm.controls['xField'],
+        value: this.chart.xField
+      });
+
+      setValueAndMark({
+        control: this.yFieldForm.controls['yField'],
+        value: this.chart.yFields.length > 0 ? this.chart.yFields[0] : undefined
+      });
+
+      setValueAndMark({
+        control: this.sizeFieldForm.controls['sizeField'],
+        value: this.chart.sizeField
+      });
+
+      setValueAndMark({
+        control: this.multiFieldForm.controls['multiField'],
+        value: this.chart.multiField
+      });
+
+      setValueAndMark({
+        control: this.pageSizeForm.controls['pageSize'],
+        value: this.chart.pageSize
+      });
     }
-
-    this.dimensionsMeasuresCalculations = this.mconfigFields.filter(
-      x =>
-        [
-          common.FieldClassEnum.Dimension,
-          common.FieldClassEnum.Measure,
-          common.FieldClassEnum.Calculation
-        ].indexOf(x.fieldClass) > -1
-    );
-
-    this.numbersDimensionsMeasuresCalculations = this.mconfigFields.filter(
-      x =>
-        x.result === common.FieldResultEnum.Number &&
-        [
-          common.FieldClassEnum.Dimension,
-          common.FieldClassEnum.Measure,
-          common.FieldClassEnum.Calculation
-        ].indexOf(x.fieldClass) > -1
-    );
-
-    this.numbersDimensionsMeasuresCalculationsPlusEmpty = [
-      constants.EMPTY_MCONFIG_FIELD,
-      ...this.numbersDimensionsMeasuresCalculations
-    ];
-
-    this.dimensions = this.mconfigFields.filter(
-      x => x.fieldClass === common.FieldClassEnum.Dimension
-    );
-
-    this.dimensionsPlusEmpty = [
-      constants.EMPTY_MCONFIG_FIELD,
-      ...this.dimensions
-    ];
-
-    this.numbersMeasuresAndCalculations = this.mconfigFields.filter(
-      x =>
-        x.result === common.FieldResultEnum.Number &&
-        (x.fieldClass === common.FieldClassEnum.Measure ||
-          x.fieldClass === common.FieldClassEnum.Calculation)
-    );
-
-    this.numbersMeasuresAndCalculationsPlusEmpty = [
-      constants.EMPTY_MCONFIG_FIELD,
-      ...this.numbersMeasuresAndCalculations
-    ];
-
-    this.numbersYFields =
-      this.chart.type === common.ChartTypeEnum.Scatter
-        ? this.numbersDimensionsMeasuresCalculations
-        : this.numbersMeasuresAndCalculations;
-
-    setValueAndMark({
-      control: this.xFieldForm.controls['xField'],
-      value: this.chart.xField
-    });
-
-    setValueAndMark({
-      control: this.yFieldForm.controls['yField'],
-      value: this.chart.yFields.length > 0 ? this.chart.yFields[0] : undefined
-    });
-
-    setValueAndMark({
-      control: this.sizeFieldForm.controls['sizeField'],
-      value: this.chart.sizeField
-    });
-
-    setValueAndMark({
-      control: this.multiFieldForm.controls['multiField'],
-      value: this.chart.multiField
-    });
-
-    setValueAndMark({
-      control: this.pageSizeForm.controls['pageSize'],
-      value: this.chart.pageSize
-    });
   }
 
   getIsValid() {

@@ -621,10 +621,19 @@
                     </div>
                   </div>
 
-                  <m-chart-settings
-                    class="flex w-1/3 flex-col border-l border-gray-300"
+                  <div
                     *ngIf="showMetricsChartSettings === true"
-                  ></m-chart-settings>
+                    class="flex h-full w-1/3 flex-shrink-0 overflow-auto border-l"
+                    [ngClass]="{
+                      'border-gray-300': report.chart.isValid === true,
+                      'border-red-600': report.chart.isValid === false
+                    }"
+                  >
+                    <m-chart-editor
+                      [chart]="report.chart"
+                      [isReport]="true"
+                    ></m-chart-editor>
+                  </div>
 
                   <div
                     class="absolute right-5 top-5 flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded hover:bg-blue-200 focus:outline-none"

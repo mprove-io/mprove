@@ -7,9 +7,11 @@ import { MonacoEditorModule } from 'ng-monaco-editor';
 import { ColorSketchModule } from 'ngx-color/sketch';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { UiSwitchModule } from 'ngx-ui-switch';
 import { AvatarComponent } from './avatar/avatar.component';
 import { BricksComponent } from './bricks/bricks.component';
 import { ChartBoxComponent } from './chart-box/chart-box.component';
+import { ChartEditorComponent } from './chart-editor/chart-editor.component';
 import { ChartSaveAsDialogComponent } from './chart-save-as-dialog/chart-save-as-dialog.component';
 import { ChartTableComponent } from './chart-table/chart-table.component';
 import { ChartViewComponent } from './chart-view/chart-view.component';
@@ -195,7 +197,8 @@ let sharedComponents = [
   ReportSaveAsDialogComponent,
   ChartSaveAsDialogComponent,
   DashboardSaveAsDialogComponent,
-  DashboardEditListenersDialogComponent
+  DashboardEditListenersDialogComponent,
+  ChartEditorComponent
 ];
 
 @NgModule({
@@ -208,6 +211,7 @@ let sharedComponents = [
     ColorSketchModule,
     NgxSpinnerModule,
     TippyDirective,
+    UiSwitchModule,
     MonacoEditorModule,
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')

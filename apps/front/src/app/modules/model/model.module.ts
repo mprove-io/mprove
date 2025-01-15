@@ -9,7 +9,6 @@ import { MonacoEditorModule } from 'ng-monaco-editor';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
-import { ChartEditorComponent } from './chart-editor/chart-editor.component';
 import { ChartOptionsComponent } from './chart-options/chart-options.component';
 import { MconfigComponent } from './mconfig/mconfig.component';
 import { ModelFiltersComponent } from './model-filters/model-filters.component';
@@ -32,8 +31,7 @@ import { SqlComponent } from './sql/sql.component';
     FieldOptionsComponent,
     ModelFiltersComponent,
     QueryOptionsComponent,
-    ChartOptionsComponent,
-    ChartEditorComponent
+    ChartOptionsComponent
   ],
   imports: [
     CommonModule,

@@ -17,7 +17,6 @@ import { ReportFiltersComponent } from './report-filters/report-filters.componen
 import { ReportOptionsComponent } from './report-options/report-options.component';
 import { ChartHeaderComponent } from './report/chart-header/chart-header.component';
 import { ChartRendererComponent } from './report/chart-renderer/chart-renderer.component';
-import { ChartSettingsComponent } from './report/chart-settings/chart-settings.component';
 import { DataRendererComponent } from './report/data-renderer/data-renderer.component';
 import { MetricHeaderComponent } from './report/metric-header/metric-header.component';
 import { MetricRendererComponent } from './report/metric-renderer/metric-renderer.component';
@@ -44,7 +43,6 @@ import { RowComponent } from './row/row.component';
     MetricHeaderComponent,
     ChartHeaderComponent,
     ChartRendererComponent,
-    ChartSettingsComponent,
     RowIdHeaderComponent,
     RowIdRendererComponent,
     RowFiltersComponent,
