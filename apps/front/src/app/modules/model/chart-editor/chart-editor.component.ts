@@ -18,21 +18,6 @@ import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-export class ColorSchemeItem {
-  label: string;
-  value: common.ChartColorSchemeEnum;
-}
-
-export class SchemeTypeItem {
-  label: string;
-  value: common.ChartSchemeTypeEnum;
-}
-
-export class InterpolationItem {
-  label: string;
-  value: common.ChartInterpolationEnum;
-}
-
 @Component({
   selector: 'm-chart-editor',
   templateUrl: './chart-editor.component.html'
