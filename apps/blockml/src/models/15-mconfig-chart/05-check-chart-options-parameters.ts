@@ -212,7 +212,7 @@ export function checkChartOptionsParameters<T extends types.dcrType>(
 //   item.errors.push(
 //     new BmError({
 //       title:
-//         common.ErTitleEnum.TILE_OPTIONS_PARAMETER_MUST_BE_A_NUMBER,
+//         common.ErTitleEnum.OPTIONS_PARAMETER_MUST_BE_A_NUMBER,
 //       message:
 //         `"${
 //           tile.options[
@@ -248,7 +248,7 @@ export function checkChartOptionsParameters<T extends types.dcrType>(
 //   item.errors.push(
 //     new BmError({
 //       title:
-//         common.ErTitleEnum.TILE_OPTIONS_PARAMETER_MUST_BE_AN_INTEGER,
+//         common.ErTitleEnum.OPTIONS_PARAMETER_MUST_BE_AN_INTEGER,
 //       message:
 //         `"${
 //           tile.options[
@@ -286,7 +286,7 @@ export function checkChartOptionsParameters<T extends types.dcrType>(
 // ) {
 //   item.errors.push(
 //     new BmError({
-//       title: common.ErTitleEnum.TILE_OPTIONS_WRONG_COLOR,
+//       title: common.ErTitleEnum.OPTIONS_WRONG_COLOR,
 //       message:
 //         `"${
 //           tile.options[
@@ -351,7 +351,7 @@ export function checkChartOptionsParameters<T extends types.dcrType>(
 // ) {
 //   item.errors.push(
 //     new BmError({
-//       title: common.ErTitleEnum.TILE_OPTIONS_WRONG_INTERPOLATION,
+//       title: common.ErTitleEnum.OPTIONS_WRONG_INTERPOLATION,
 //       message:
 //         `"${
 //           tile.options[
@@ -381,7 +381,7 @@ export function checkChartOptionsParameters<T extends types.dcrType>(
 // ) {
 //   item.errors.push(
 //     new BmError({
-//       title: common.ErTitleEnum.TILE_OPTIONS_WRONG_COLOR_SCHEME,
+//       title: common.ErTitleEnum.OPTIONS_WRONG_COLOR_SCHEME,
 //       message:
 //         `"${
 //           tile.options[
@@ -411,7 +411,7 @@ export function checkChartOptionsParameters<T extends types.dcrType>(
 // ) {
 //   item.errors.push(
 //     new BmError({
-//       title: common.ErTitleEnum.TILE_OPTIONS_WRONG_SCHEME_TYPE,
+//       title: common.ErTitleEnum.OPTIONS_WRONG_SCHEME_TYPE,
 //       message:
 //         `"${
 //           tile.options[
